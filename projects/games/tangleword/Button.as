@@ -26,18 +26,18 @@ public class Button extends Sprite
         _currentDisplay = _mouseOut;
         addChild(_currentDisplay);
         
-        addEventListener (MouseEvent.MOUSE_OVER, function (event :MouseEvent) :void {
+        addEventListener(MouseEvent.MOUSE_OVER, function (event :MouseEvent) :void {
                 removeChild(_currentDisplay);
                 _currentDisplay = _mouseOver;
                 addChild(_currentDisplay);
             });
-        addEventListener (MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
+        addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
                 removeChild(_currentDisplay);
                 _currentDisplay = _mouseOut;
                 addChild(_currentDisplay);
             });
 
-        addEventListener (MouseEvent.CLICK, function (event :MouseEvent) :void {
+        addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 _onClick();
             });
     }

@@ -36,7 +36,7 @@ public class Model
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         
         // Initialize game data storage
-        initializeStorage ();
+        initializeStorage();
 
         _trophies = new Trophies(_gameCtrl);
     }
@@ -90,7 +90,7 @@ public class Model
             }
         }
 
-        removeAllSelectedLetters ();
+        removeAllSelectedLetters();
 
         _display.roundEnded(this, _scoreboard);
     }
@@ -102,9 +102,7 @@ public class Model
     /** If this board letter is already selected as part of the word, returns true.  */
     public function isLetterSelectedAtPosition (position :Point) :Boolean
     {
-        var pointMatches :Function =
-            function (item :Point, index :int, array :Array) :Boolean
-            {
+        var pointMatches :Function = function (item :Point, index :int, array :Array) :Boolean {
                 return (item.equals(position));
             };
 
@@ -114,8 +112,7 @@ public class Model
     /** Returns coordinates of the most recently added word, or null. */
     public function getLastLetterPosition () :Point
     {
-        if (_word.length > 0)
-        {
+        if (_word.length > 0) {
             return _word[_word.length - 1] as Point;
         }
 
@@ -125,16 +122,15 @@ public class Model
     /** Adds a new letter to the word (by adding a pair of coordinates) */
     public function selectLetterAtPosition (position :Point) :void
     {
-        _word.push (position);
-        _display.updateLetterSelection (_word);
+        _word.push(position);
+        _display.updateLetterSelection(_word);
     }
 
     /** Removes last selected letter from the word (if applicable) */
     public function removeLastSelectedLetter () :void
     {
-        if (_word.length > 0)
-        {
-            _word.pop ();
+        if (_word.length > 0) {
+            _word.pop();
             _display.updateLetterSelection(_word);
         }
     }
@@ -142,7 +138,7 @@ public class Model
     /** Removes all selected letters, resetting the word. */
     public function removeAllSelectedLetters () :void
     {
-        _word = new Array ();
+        _word = new Array();
         _display.updateLetterSelection(_word);
     }
 
@@ -157,8 +153,9 @@ public class Model
 
         for (var x :int = 0; x < Properties.LETTERS; x++) {
             for (var y :int = 0; y < Properties.LETTERS; y++) {
-                if (wordExists (word, 0, x, y, new Array()))
+                if (wordExists (word, 0, x, y, new Array())) {
                     return true;
+                }
             }
         }
 
@@ -173,8 +170,9 @@ public class Model
 
         // if the letter doesn't match, fail.
         var l :String = _board[x][y];
-        if (start + l.length > word.length || word.indexOf (l, start) != start)
+        if (start + l.length > word.length || word.indexOf (l, start) != start) {
             return false;
+        }
 
         // if we've seen it before, fail.
         for each (var p :Point in visited) {
@@ -182,16 +180,14 @@ public class Model
         }
 
         // finally, check all neighbors
-        visited.push (new Point (x, y));
+        visited.push(new Point (x, y));
         for (var dx :int = -1; dx <= 1; dx++) {
             for (var dy :int = -1; dy <= 1; dy++) {
                 var xx :int = x + dx;
                 var yy :int = y + dy;
-                if (xx >= 0 && xx < Properties.LETTERS &&
-                    yy >= 0 && yy < Properties.LETTERS)
-                {
-                    if (wordExists (word, start + l.length, xx, yy, visited))
-                        return true;
+                if (xx >= 0 && xx < Properties.LETTERS && yy >= 0 && yy < Properties.LETTERS &&
+                        wordExists(word, start + l.length, xx, yy, visited)) {
+                    return true;
                 }
             }
         }
@@ -208,7 +204,7 @@ public class Model
      *  the new word to their lists. */
     public function addScore (word :String, score :Number, isvalid :Boolean) :void
     {
-        var obj :Object = new Object ();
+        var obj :Object = new Object();
         obj.playerId = _gameCtrl.game.getMyId(); 
         obj.word = word;
         obj.score = score;
@@ -219,11 +215,10 @@ public class Model
             _trophies.handleAddWord(word, score, _scoreboard);
         }
 
-        addWordToScoreboard(
-                obj.playerId, obj.word, obj.score, obj.isvalid);
+        addWordToScoreboard(obj.playerId, obj.word, obj.score, obj.isvalid);
 
         // reset selection
-        removeAllSelectedLetters ();
+        removeAllSelectedLetters();
     }
 
     /** Sends out a message to everyone, informing them about a new letter set.
@@ -279,14 +274,14 @@ public class Model
     /** Resets the currently guessed word */
     private function resetWord () :void
     {
-        _word = new Array ();
+        _word = new Array();
     }
 
     /** Initializes letter and word storage */
     private function initializeStorage () :void
     {
         // First, the board
-        _board = new Array (Properties.LETTERS);
+        _board = new Array(Properties.LETTERS);
         for (var x :int = 0; x < _board.length; x++) {
             _board[x] = new Array (Properties.LETTERS);
             for (var y :int = 0; y < _board[x].length; y++) {
@@ -295,10 +290,10 @@ public class Model
         }
 
         // Second, the currently assembled word
-        resetWord ();
+        resetWord();
 
         // Third, make a new scoreboard
-        _scoreboard = new Scoreboard (_gameCtrl);
+        _scoreboard = new Scoreboard(_gameCtrl);
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
@@ -307,7 +302,7 @@ public class Model
         // Copy them over to the data set
         for (var x :int = 0; x < Properties.LETTERS; x++) {
             for (var y :int = 0; y < Properties.LETTERS; y++) {
-                updateBoardLetter(new Point (x, y), s [x * Properties.LETTERS + y]);
+                updateBoardLetter(new Point(x, y), s [x * Properties.LETTERS + y]);
             }
         }
     }
@@ -469,6 +464,3 @@ public class Model
     private var _trophies :Trophies;
 }
 }
-
-
-

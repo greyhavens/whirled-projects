@@ -53,13 +53,13 @@ public class Trophies {
         var oldscore :int = scoreboard.getScore(_gameCtrl.game.getMyId());
         var newscore :int = oldscore + wordscore;
         for each (var boundary :int in pointsBoundaries) {
-                trophy = String(boundary) + pointsTrophySuffix;
-                if (oldscore < boundary && newscore >= boundary && // check if score is high enough
-                    ! _player.holdsTrophy(trophy))               // ...and if it's a new award
-                {
-                    _player.awardTrophy(trophy);
-                }
-            }                    
+            trophy = String(boundary) + pointsTrophySuffix;
+            if (oldscore < boundary && newscore >= boundary && // check if score is high enough
+                ! _player.holdsTrophy(trophy))               // ...and if it's a new award
+            {
+                _player.awardTrophy(trophy);
+            }
+        }                    
     }
 
     public function handleRoundEnded (scoreboard :Scoreboard) :void
@@ -70,11 +70,11 @@ public class Trophies {
             // see if we need to grant a per-session round award
             _sessionRoundsEnded++;
             for each (var round :int in roundsBoundaries) {
-                    var trophy :String = roundsTrophyPrefix + String(round);
-                    if (_sessionRoundsEnded == round && ! _player.holdsTrophy(trophy)) {
-                        _player.awardTrophy(trophy);
-                    }
+                var trophy :String = roundsTrophyPrefix + String(round);
+                if (_sessionRoundsEnded == round && ! _player.holdsTrophy(trophy)) {
+                    _player.awardTrophy(trophy);
                 }
+            }
 
             // if the player won this round, count those up as well, but only for multiplayer
             if (scoreboard.getPlayerIds().length > 1) {
@@ -82,11 +82,11 @@ public class Trophies {
                 if (winners.indexOf(_gameCtrl.game.getMyId()) != -1) {
                     _multiplayerWins++;
                     for each (var boundary :int in multiplayerWinsBoundaries) {
-                            trophy = multiplayerWinsTrophyPrefix + String(boundary);
-                            if (_multiplayerWins == boundary && ! _player.holdsTrophy(trophy)) {
-                                _player.awardTrophy(trophy);
-                            }
+                        trophy = multiplayerWinsTrophyPrefix + String(boundary);
+                        if (_multiplayerWins == boundary && ! _player.holdsTrophy(trophy)) {
+                            _player.awardTrophy(trophy);
                         }
+                    }
                 }
             }
             
@@ -95,11 +95,11 @@ public class Trophies {
                 _cookie.totalRounds++;
                 _player.setUserCookie(_cookie);
                 for each (round in totalRoundsBoundaries) {
-                        trophy = totalRoundsTrophyPrefix + String(round);
-                        if (_cookie.totalRounds == round && ! _player.holdsTrophy(trophy)) {
-                            _player.awardTrophy(trophy);
-                        }
+                    trophy = totalRoundsTrophyPrefix + String(round);
+                    if (_cookie.totalRounds == round && ! _player.holdsTrophy(trophy)) {
+                        _player.awardTrophy(trophy);
                     }
+                }
             }
         }
     }

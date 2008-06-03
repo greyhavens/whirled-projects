@@ -63,18 +63,19 @@ public class Logger extends ScrollPane
     }
 
     /** Adds a line of text to the bottom of the logger */
-    public function Log (message : String, styleClass :String = "") : void
+    public function Log (message :String, styleClass :String = "") :void
     {
         _text.htmlText += "<p class='" + styleClass + "'>" + message + "</p>";
         update();
 
         // If we can scroll to the bottom, do it
-        if (verticalScrollPosition)
+        if (verticalScrollPosition) {
             verticalScrollPosition = _text.height;
+        }
     }
 
     /** Clears the log */
-    public function Clear () : void
+    public function Clear () :void
     {
         _text.htmlText = "";
         update();

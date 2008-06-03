@@ -18,9 +18,10 @@ public class Controller
 
     // TODO: It would be cool if this scaled exponentially instead of linearly
     // to give an incentive to look for longer words
-    public static function getWordScore(word :String) :Number
+    public static function getWordScore (word :String) :Number
     {
-        return 3 + 3*(word.length-3);
+        // return 1 point for 4 letter words, and 1 additional point for each additional letter
+        return (word.length - 3);
     }
     
     // PUBLIC METHODS
@@ -46,7 +47,7 @@ public class Controller
     /** Called when the round starts - enables user input, randomizes data. */
     public function roundStarted () :void
     {
-        initializeLetterSet ();
+        initializeLetterSet();
         enabled = true;
     }
 
@@ -77,35 +78,31 @@ public class Controller
     /** Takes a new letter from the UI, and checks it against game logic. */
     public function tryAddLetter (position :Point) :void
     {
-        if (enabled)
-        {
+        if (enabled) {
             // Position of the letter on top of the stack 
-            var lastLetterPosition :Point = _model.getLastLetterPosition ();
+            var lastLetterPosition :Point = _model.getLastLetterPosition();
             
             // Did the player click on the first letter? If so, clear out
             // the current word field, and add it.
             var noPreviousLetterFound :Boolean = (lastLetterPosition == null);
-            if (noPreviousLetterFound)
-            {
-                _model.removeAllSelectedLetters (); 
-                _model.selectLetterAtPosition (position);
+            if (noPreviousLetterFound) {
+                _model.removeAllSelectedLetters();
+                _model.selectLetterAtPosition(position);
                 return;
             }
             
             // Did the player click on the last letter they added? If so, remove it.
-            if (position.equals (lastLetterPosition))
-            {
-                _model.removeLastSelectedLetter ();
+            if (position.equals(lastLetterPosition)) {
+                _model.removeLastSelectedLetter();
                 return;
             }
             
             // Did the player click on an empty letter next to the last selected one?
             // If so, add it.
-            var isValidNeighbor :Boolean = (areNeighbors (position, lastLetterPosition) &&
-                                             ! _model.isLetterSelectedAtPosition (position));
-            if (isValidNeighbor)
-            {
-                _model.selectLetterAtPosition (position);
+            var isValidNeighbor :Boolean = (areNeighbors(position, lastLetterPosition) &&
+                                             ! _model.isLetterSelectedAtPosition(position));
+            if (isValidNeighbor) {
+                _model.selectLetterAtPosition(position);
                 return;
             }
             
@@ -114,23 +111,22 @@ public class Controller
     }
 
     /** Signals that the currently selected word is a candidate for scoring.
-        It will be matched against the dictionary, and added to the model.
-        @return True if this word passed initial validation and was sent to the server,
-                otherwise false.
+     *  It will be matched against the dictionary, and added to the model.
+     *  @return True if this word passed initial validation and was sent to the server,
+     *          otherwise false.
      */
     public function tryScoreWord (word :String) :Boolean
     {
         // This is the callback that gets called after the word is successfully
         // checked against the dictionary
-        var success :Function = function (word :String, isvalid :Boolean) :void
-        {
+        var success :Function = function (word :String, isvalid :Boolean) :void {
             // Check if this word exists on the board
-            isvalid = isvalid && _model.wordExistsOnBoard (word.toLowerCase());
+            isvalid = isvalid && _model.wordExistsOnBoard(word.toLowerCase());
 
             // Finally, process the new word. Notice that we don't check if it's already
             // been claimed - the model will take care of that, because there's a network
             // round-trip involved, and therefore potential of contention.
-            _model.addScore (word, getWordScore(word), isvalid);
+            _model.addScore(word, getWordScore(word), isvalid);
         }
         
         // First, check to make sure it's of the correct length (in characters)
@@ -139,10 +135,10 @@ public class Controller
         }
 
         // Normalize the word
-        word = word.toLowerCase ();
+        word = word.toLowerCase();
 
         // Now check if it's an actual word.
-        _gameCtrl.services.checkDictionaryWord (Properties.LOCALE, null, word, success);
+        _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
 
         return true;
     }
@@ -155,9 +151,8 @@ public class Controller
         // The user typed in some character. Typing is incompatible
         // with mouse selection, so if there's already anything selected
         // by clicking, clear it all, and start afresh.
-        if (_model.getLastLetterPosition () != null)
-        {
-            _model.removeAllSelectedLetters ();
+        if (_model.getLastLetterPosition() != null) {
+            _model.removeAllSelectedLetters();
         }
     }
 
@@ -169,22 +164,17 @@ public class Controller
         position (defined as being one square away from each other). */
     private function areNeighbors (position :Point, origin :Point) :Boolean
     {
-        return (! position.equals (origin) &&
-                Math.abs (position.x - origin.x) <= 1 &&
-                Math.abs (position.y - origin.y) <= 1);
+        return (! position.equals(origin) &&
+                Math.abs(position.x - origin.x) <= 1 &&
+                Math.abs(position.y - origin.y) <= 1);
     }
     
     /** If this client is the host, initializes a new letter set. */
     private function initializeLetterSet () :void
     {
-        if (_gameCtrl.game.amInControl ())
-        {
-            var success :Function = function (a :Array) :void
-            {
-                _model.sendNewLetterSet (a);
-            }
-            _gameCtrl.services.getDictionaryLetterSet (
-                Properties.LOCALE, null, Properties.LETTER_COUNT, success);
+        if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.services.getDictionaryLetterSet(
+                Properties.LOCALE, null, Properties.LETTER_COUNT, _model.sendNewLetterSet);
         }
     }
 
@@ -201,6 +191,4 @@ public class Controller
     /** Does the controller accept user input? */
     private var _enabled :Boolean;
 }
-
 }
-

@@ -100,7 +100,7 @@ public class Resources
     }
 
     /** Returns a default border color */
-    public static const defaultBorderColor :uint = uint (0xeeeeff);
+    public static const defaultBorderColor :uint = 0xeeeeff;
 
     
 
@@ -109,7 +109,7 @@ public class Resources
     /** Returns a new instance of a filter suitable for a cursor */
     public static function makeCursorFilter () :GlowFilter
     {
-        var filter :GlowFilter = new GlowFilter ();
+        var filter :GlowFilter = new GlowFilter();
         filter.color = uint(0xeeeeff);
         filter.inner = true;
         return filter;
@@ -118,7 +118,7 @@ public class Resources
     /** Returns a new instance of a filter suitable for a selected letter */
     public static function makeSelectedFilter () :GlowFilter
     {
-        var filter :GlowFilter = new GlowFilter ();
+        var filter :GlowFilter = new GlowFilter();
         filter.color = uint(0x446677);
         filter.inner = true;
         filter.blurX = filter.blurY = 32;
@@ -128,13 +128,12 @@ public class Resources
     /** Returns a new instance of a filter for rolled-over button */
     public static function makeButtonOverFilter () :GlowFilter
     {
-        var filter :GlowFilter = new GlowFilter ();
+        var filter :GlowFilter = new GlowFilter();
         filter.color = uint(0xeeeeff);
         filter.inner = true;
         filter.blurX = filter.blurY = 8;
         return filter;
     }
-
 
     
     // RESOURCE DEFINITIONS
@@ -170,6 +169,4 @@ public class Resources
     [Embed(source="rsrc/help.png")]
     public static const buttonHelpOut :Class;
 }
-
-
 } // package

@@ -111,10 +111,8 @@ public class Display extends Sprite
         Assert.isNotNull(points, "Invalid points array!");
 
         // First, deselect everything
-        for (var x :int = 0; x < _letters.length; x++)
-        {
-            for (var y :int = 0; y < _letters[x].length; y++)
-            {
+        for (var x :int = 0; x < _letters.length; x++) {
+            for (var y :int = 0; y < _letters[x].length; y++) {
                 _letters[x][y].setSelection(false);
             }
         }
@@ -122,8 +120,7 @@ public class Display extends Sprite
         // Now select just the word - and, at the same time,
         // assemble the word string.
         var word :String = "";
-        for each (var p :Point in points)
-        {
+        for each (var p :Point in points) {
             var l :Letter = _letters[p.x][p.y];
             l.setSelection(true);
             word += l.getText();
@@ -214,8 +211,7 @@ public class Display extends Sprite
     {
         var p :Point = new Point(event.stageX, event.stageY);
         var i :Point = screenToBoard(p);
-        if (i != null)
-        {
+        if (i != null) {
             _controller.tryAddLetter(i);
         }
     }
@@ -239,8 +235,7 @@ public class Display extends Sprite
     /** Called when the user types a letter inside the word field. */
     public function typingHandler (event :KeyboardEvent) :void
     {
-        switch (event.keyCode)
-        {
+        switch (event.keyCode) {
         case 13:
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "") {
@@ -251,6 +246,7 @@ public class Display extends Sprite
         default:
             // It's just a regular keystroke. Let the controller know.
             _controller.processKeystroke(event);
+            break;
         }
     }
 
@@ -264,11 +260,9 @@ public class Display extends Sprite
         // Create the 2D array
         var count :int = Properties.LETTERS;
         _letters = new Array(count);
-        for (var x :int = 0; x < count; x++)
-        {
+        for (var x :int = 0; x < count; x++) {
             _letters[x] = new Array(count);
-            for (var y :int = 0; y < count; y++)
-            {
+            for (var y :int = 0; y < count; y++) {
                 var l :Letter = new Letter(this);   // make a new instance
                 var p :Point = boardToScreen(new Point(x, y));
                 l.x = p.x;
@@ -365,10 +359,8 @@ public class Display extends Sprite
     private function setEnableState (value :Boolean) :void
     {
         // Set each letter
-        for (var x :int = 0; x < _letters.length; x++)
-        {
-            for (var y :int = 0; y < _letters[x].length; y++)
-            {
+        for (var x :int = 0; x < _letters.length; x++) {
+            for (var y :int = 0; y < _letters[x].length; y++) {
                 _letters[x][y].isLetterEnabled = value;
             }
         }
@@ -383,7 +375,6 @@ public class Display extends Sprite
         return _okbutton.visible; // this is controlled directly by enabled state
     }
     
-
     /**
      * Set cursor over a letter at specified board /location/, and removes the cursor
      * from the previous letter. If the location point is null, it just removes
@@ -392,26 +383,20 @@ public class Display extends Sprite
     private function setCursor (location :Point) :void
     {
         var l :Letter = null;
-
-        if (location != null &&
-            _lastCursor != null &&
-            location.equals(_lastCursor))
-        {
+        if (location != null && _lastCursor != null && location.equals(_lastCursor)) {
             // Cursor hasn't changed; ignore.
             return;
         }
 
         // Remove old cursor, if any
-        if (_lastCursor != null)
-        {
+        if (_lastCursor != null) {
             l = _letters[_lastCursor.x][_lastCursor.y];
             l.isCursorEnabled = false;
             _lastCursor = null;
         }
 
         // Set the new cursor
-        if (location != null)
-        {
+        if (location != null) {
             l = _letters[location.x][location.y];
             l.isCursorEnabled = true;
             _lastCursor = location;
@@ -432,12 +417,7 @@ public class Display extends Sprite
         newp.y = Math.floor(newp.y / Properties.LETTER_SIZE);
 
         // check bounds and return
-        if (! isValidBoardPosition(newp))
-        {
-            return null;
-        }
-
-        return newp;
+        return isValidBoardPosition(newp) ? newp : null;
     }
 
     /** Helper function: converts board square coordinate into the screen coordinates
@@ -445,8 +425,7 @@ public class Display extends Sprite
         the board, returns /null/. */
     private function boardToScreen (p :Point) :Point
     {
-        if (! isValidBoardPosition(p))
-        {
+        if (! isValidBoardPosition(p)) {
             return null;
         }
 
@@ -459,10 +438,9 @@ public class Display extends Sprite
     /** Checks if a given point is inside board dimension bounds */
     private function isValidBoardPosition (p :Point) :Boolean
     {
-        return(p.x >= 0 && p.x < Properties.LETTERS &&
+        return (p.x >= 0 && p.x < Properties.LETTERS &&
                 p.y >= 0 && p.y < Properties.LETTERS);
     }
-
 
 
     // PRIVATE VARIABLES

@@ -37,11 +37,10 @@ public class TangleWord extends Sprite
         // Initialize game data
         _gameCtrl = new GameControl(this);
         
-        if (!_gameCtrl.net.isConnected())
-        {
+        if (!_gameCtrl.net.isConnected()) {
             // Initialize the background bitmap
             var background :DisplayObject = new Resources.logo();
-            Assert.isNotNull (background, "Background bitmap failed to initialize!");
+            Assert.isNotNull(background, "Background bitmap failed to initialize!");
             addChild (background);
             // Error message
             var label :TextField = new TextField();
@@ -61,10 +60,10 @@ public class TangleWord extends Sprite
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         // Create MVC elements
-        _controller = new Controller (_gameCtrl, null); // we'll set the model later...
-        _display = new Display (_gameCtrl, _controller, "Tangleword v. 1.4.1");
-        _model = new Model (_gameCtrl, _display);
-        _controller.setModel (_model); // ... as in, right here :)
+        _controller = new Controller(_gameCtrl, null); // we'll set the model later...
+        _display = new Display(_gameCtrl, _controller, "Tangleword v. 1.4.1");
+        _model = new Model(_gameCtrl, _display);
+        _controller.setModel(_model); // ... as in, right here :)
         addChild (_display);
 
         // If I'm in control, initialize the scoreboard
@@ -147,7 +146,7 @@ public class TangleWord extends Sprite
     {
         // Create a new instance, and fill in the names
         // TODO: There are 2 scoreboards created?
-        var board :Scoreboard = new Scoreboard (_gameCtrl);
+        var board :Scoreboard = new Scoreboard(_gameCtrl);
         /*var occupants :Array = _gameCtrl.game.getOccupantIds();
         for each (var id :int in occupants)
         {

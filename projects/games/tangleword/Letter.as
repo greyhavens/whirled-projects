@@ -15,11 +15,11 @@ import com.threerings.util.Assert;
 
 
 /**
-   Letter is a graphical element that sits on the board. Note that the 'letter'
-   is actually an arbitrary string, not just a character - this is because
-   we may find that, in certain languages, it might make more sense to treat
-   digraphs as basic units in addition to single letters.
-*/
+ * Letter is a graphical element that sits on the board. Note that the 'letter'
+ * is actually an arbitrary string, not just a character - this is because
+ * we may find that, in certain languages, it might make more sense to treat
+ * digraphs as basic units in addition to single letters.
+ */
 public class Letter extends Sprite
 {
     /** Constructor */
@@ -28,22 +28,22 @@ public class Letter extends Sprite
         _display = display;
 
         // set background bitmap
-        _background = new Resources.square ();
-        addChild (_background);
+        _background = new Resources.square();
+        addChild(_background);
 
         // Make a new text label on top of the bitmap.
-        _label = makeNewLabel ();
-        addChild (_label);
-        setText ("?");
+        _label = makeNewLabel();
+        addChild(_label);
+        setText("?");
 
         // Load resources
-        makeFilters ();
+        makeFilters();
     }
 
     /** Set the letter on this label. We set its position based on text height. */
     public function setText (str :String) :void
     {
-        Assert.isTrue (_background != null && _label != null,
+        Assert.isTrue(_background != null && _label != null,
                      "I expected background and text to be initialized by now.");
                     
         _label.text = str.toUpperCase();
@@ -69,14 +69,12 @@ public class Letter extends Sprite
     /** Sets or clears cursor highlight value */
     public function set isCursorEnabled (newValue :Boolean) :void
     {
-        Assert.isNotNull (_cursorFilter, "Letter filters failed to initialize");
-        if (newValue != _cursorEnabled)
-        {
+        Assert.isNotNull(_cursorFilter, "Letter filters failed to initialize");
+        if (newValue != _cursorEnabled) {
             // do visual updates!
-            var filters :Array = new Array ();
-            if (newValue)
-            {
-                filters.push (_cursorFilter);
+            var filters :Array = new Array();
+            if (newValue) {
+                filters.push(_cursorFilter);
             }
             _background.filters = filters;
 
@@ -94,17 +92,17 @@ public class Letter extends Sprite
     /** Sets whether the letter should be displayed in an enabled state */
     public function set isLetterEnabled (newValue :Boolean) :void
     {
-        _letterEnabled = _background.visible = newValue;
+        _letterEnabled = newValue;
+        _background.visible = newValue;
     }
     
 
     /** Sets the letter's selection value */
     public function setSelection (value :Boolean) :void
     {
-        var filters :Array = new Array ();
-        if (value)
-        {
-            filters.push (_selectedFilter);
+        var filters :Array = new Array();
+        if (value) {
+            filters.push(_selectedFilter);
         }
         _label.filters = filters;
     }
@@ -115,8 +113,8 @@ public class Letter extends Sprite
     private function makeNewLabel () :TextField
     {
         // Create text field
-        var format :TextFormat = Resources.makeFormatForBoardLetters ();
-        var t :TextField = new TextField ();
+        var format :TextFormat = Resources.makeFormatForBoardLetters();
+        var t :TextField = new TextField();
         t.autoSize = TextFieldAutoSize.CENTER;
         t.selectable = false;
         t.defaultTextFormat = format;
@@ -128,12 +126,11 @@ public class Letter extends Sprite
 
     private function makeFilters () :void
     {
-        _cursorFilter = Resources.makeCursorFilter ();
-        _selectedFilter = Resources.makeSelectedFilter ();
+        _cursorFilter = Resources.makeCursorFilter();
+        _selectedFilter = Resources.makeSelectedFilter();
     }
         
     
-
     // PRIVATE MEMBERS
     
     /** Text label in front */
@@ -161,6 +158,4 @@ public class Letter extends Sprite
     private var _selectedFilter :GlowFilter;
 
 }
-
-
 }

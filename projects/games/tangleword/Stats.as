@@ -30,7 +30,6 @@ public class Stats extends Sprite
     // (but it's okay if the value is a bit off)
     public static const HIDE_DELAY :int = int((HIDE_BG_FRAME - INTERRUPT_FRAME) / 30.0); 
     
-        
     public static function makeDictionaryAnchor (word :String) :String
     {
         return "<u><a href=\"http://www.answers.com/" + word + "\" target=\"_blank\">" +
@@ -125,7 +124,8 @@ public class Stats extends Sprite
         }
 
         // find top player and scores
-        var topWords :Array = model.getWords().sortOn("score", Array.DESCENDING | Array.NUMERIC).slice(0, 5);//, nmodel.getTopWords(5);
+        var topWords :Array = model.getWords().sortOn("score", Array.DESCENDING | Array.NUMERIC);
+        topWords = topWords.slice(0, 5);//, nmodel.getTopWords(5);
         var topPlayers :Array = scoreboard.getWinnerIds().map(model.getName);
         var topScore :int = scoreboard.getTopScore();
 
@@ -154,9 +154,9 @@ public class Stats extends Sprite
 
         var words :String = "Top words this round: <br><br><ul>";
         for each (var wordDef :Object in topWords) {
-                words += makeDictionaryAnchor(wordDef.word) + ": " +
-                    wordDef.score + " pts.  (" +
-                    StringUtil.truncate(wordDef.playerIds.map(model.getName).join(", "), 30, "...") + ")<br>";
+            words += makeDictionaryAnchor(wordDef.word) + ": " + wordDef.score + " pts.  (" +
+                StringUtil.truncate(wordDef.playerIds.map(model.getName).join(", "), 30, "...") +
+                ")<br>";
         }
         words += "</ul>";
         wordlist.htmlText = words;
