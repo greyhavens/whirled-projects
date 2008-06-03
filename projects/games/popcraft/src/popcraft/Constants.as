@@ -23,7 +23,7 @@ public class Constants
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
+    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
@@ -36,8 +36,6 @@ public class Constants
     public static const FIRST_SPELL_BUTTON_LOC :Point = new Point(220, 320);
 
     /* Puzzle stuff */
-    public static const MIN_GROUP_SIZE :int = 1; // no min group size right now
-
     public static const PUZZLE_HEIGHT :int = 110;
 
     public static const PUZZLE_COLS :int = 12;

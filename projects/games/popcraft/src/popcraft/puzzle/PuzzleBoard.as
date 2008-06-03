@@ -136,10 +136,6 @@ public class PuzzleBoard extends SceneObject
 
         Assert.isTrue(clearPieces.length > 0);
 
-        if (clearPieces.length < Constants.MIN_GROUP_SIZE) {
-            return;
-        }
-
         // update the player's resource count
         var resourceType :uint = Piece(clearPieces[0]).resourceType;
         var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
