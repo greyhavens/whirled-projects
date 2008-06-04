@@ -8,6 +8,7 @@ public class UnitWaveData
     public var delayBefore :Number = 0;
     public var spellCastChance :Number = 0;
     public var units :Array = [];
+    public var targetPlayerName :String;
 
     public static function fromXml (xmlData :XML, totalDelay :Number) :UnitWaveData
     {
@@ -30,6 +31,8 @@ public class UnitWaveData
                 unitWave.units.push(unitType);
             }
         }
+
+        unitWave.targetPlayerName = XmlReader.getAttributeAsString(xmlData, "targetPlayerName", null);
 
         return unitWave;
     }

@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
@@ -42,6 +43,13 @@ public class GameContext
     public static function get baseLocs () :Array
     {
         return gameData.getBaseLocsForGameSize(numPlayers);
+    }
+
+    public static function getPlayerByName (playerName :String) :PlayerInfo
+    {
+        return ArrayUtil.findIf(
+            playerInfos,
+            function (info :PlayerInfo) :Boolean { return info.playerName == playerName; });
     }
 
     public static function findEnemyForPlayer (playerId :uint) :PlayerInfo

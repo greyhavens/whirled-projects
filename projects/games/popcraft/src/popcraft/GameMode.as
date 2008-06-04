@@ -720,9 +720,14 @@ public class GameMode extends AppMode
             this.updateTargetEnemyBadgeLocation(newTargetEnemyId);
 
             // send a message to everyone
-            _messageMgr.sendMessage(new SelectTargetEnemyMessage(GameContext.localPlayerId, newTargetEnemyId));
+            this.selectTargetEnemy(GameContext.localPlayerId, newTargetEnemyId);
         }
 
+    }
+
+    public function selectTargetEnemy (playerId :uint, enemyId :uint) :void
+    {
+        _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerId, enemyId));
     }
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void

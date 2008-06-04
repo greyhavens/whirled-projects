@@ -77,6 +77,14 @@ public class ComputerPlayer extends SimObject
                 }
             }
 
+            // should we switch our targeted enemy?
+            if (null != _nextWave.targetPlayerName) {
+                var targetPlayer :PlayerInfo = GameContext.getPlayerByName(_nextWave.targetPlayerName);
+                if (null != targetPlayer) {
+                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerId, targetPlayer.playerId);
+                }
+            }
+
             for each (var unitType :uint in _nextWave.units) {
                 this.buildUnit(unitType);
             }

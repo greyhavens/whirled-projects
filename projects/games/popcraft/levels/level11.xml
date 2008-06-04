@@ -1,0 +1,90 @@
+<root>
+    <Level
+        parDays="1"
+        backgroundName="Level1"
+        introText="You enlisted the aid of Pigsley, your most loyal sycophant, to topple your enemies."
+        disableDiurnalCycle="false"
+        playerName="Jack"
+        playerBaseHealth="120">
+
+        <XGameDataOverride
+            spellDropScatterMin="15"
+            spellDropScatterMax="30">
+            <GameSizes>
+                <GameSize numPlayers="4" customSpellDropLocation="true">
+                    <BaseLocation x="70" y="185"/>
+                    <BaseLocation x="642" y="185"/>
+                    <BaseLocation x="590" y="90"/>
+                    <BaseLocation x="590" y="325"/>
+                    <CustomSpellDropLocation x="250" y="150"/>
+                </GameSize>
+            </GameSizes>
+        </XGameDataOverride>
+
+        <InitialResources/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+            <Unit type="colossus"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+            <Spell type="bloodlust"/>
+        </AvailableSpells>
+
+		<Computer
+			playerName="Pigsley"
+			baseHealth="120"
+			team="0">
+			<StartingSpells/>
+		</Computer>
+
+        <Computer
+            playerName="Ralph"
+            baseHealth="120"
+            team="1">
+            <StartingSpells/>
+            <InitialDays>
+                <Day repeatWaves="false"
+                    spellDropCourierGroupSizeMin="0"
+                    spellDropCourierGroupSizeMax="0">
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+				<Day repeatWaves="false"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="6"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+        <Computer
+            playerName="Sam"
+            baseHealth="80"
+            team="1">
+            <StartingSpells/>
+            <InitialDays>
+                <Day repeatWaves="false"
+                    spellDropCourierGroupSizeMin="0"
+                    spellDropCourierGroupSizeMax="0">
+                </Day>
+            </InitialDays>
+            <RepeatingDays>
+				<Day repeatWaves="false"
+                    noticeSpellDropAfterMin="5"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>
