@@ -2,7 +2,8 @@
 <project name="roomba" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"  value="Roomba"/>
+  <property name="app.name" value="Roomba"/>
+  <property name="app.type" value="pet"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>

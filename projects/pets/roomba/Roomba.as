@@ -28,9 +28,9 @@ public class Roomba extends Sprite
 
     protected function tick (event :TimerEvent) :void
     {
-        var oxpos :Number = _ctrl.getLocation()[0];
+        var oxpos :Number = _ctrl.getLogicalLocation()[0];
         var nxpos :Number = Math.random();
-        _ctrl.setLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
+        _ctrl.setLogicalLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
     }
 
     protected function appearanceChanged (event :ControlEvent) :void
