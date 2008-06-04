@@ -34,7 +34,7 @@
         </AvailableUnits>
 
         <AvailableSpells>
-            <Spell type="puzzlereset"/>
+            <Spell type="shuffle"/>
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="999999" team="1"/>

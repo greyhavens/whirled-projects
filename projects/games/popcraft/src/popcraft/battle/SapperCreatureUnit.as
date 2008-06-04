@@ -51,11 +51,6 @@ public class SapperCreatureUnit extends CreatureUnit
         return damageTaken;
     }
 
-    override public function get deathAnimationDuration () :Number
-    {
-        return 0.5;
-    }
-
     protected var _sapperAI :SapperAI;
 }
 

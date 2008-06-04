@@ -20,7 +20,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: Resources.IMAGE_FRIENDLYBASEBADGE });
         rm.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: Resources.IMAGE_BLOODLUSTICON });
         rm.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: Resources.IMAGE_RIGORMORTISICON });
-        rm.pendResourceLoad("image", "puzzlereset_icon", { embeddedClass: Resources.IMAGE_PUZZLERESETICON });
+        rm.pendResourceLoad("image", "shuffle_icon", { embeddedClass: Resources.IMAGE_PUZZLERESETICON });
 
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
@@ -32,6 +32,7 @@ public class LoadingMode extends AppMode
 
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });
+        rm.pendResourceLoad("swf", "infusions", { embeddedClass: Resources.SWF_INFUSIONS });
 
         // sfx
         rm.pendResourceLoad("sound", "mus_night", { embeddedClass: Resources.MUSIC_NIGHT, type: "music", volume: 0.7, priority: 10 });

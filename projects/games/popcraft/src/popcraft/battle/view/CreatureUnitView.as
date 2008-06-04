@@ -112,7 +112,8 @@ public class CreatureUnitView extends SceneObject
         var icons :Array = [];
         var totalWidth :Number = 0;
         for each (var spell :SpellData in spellSet.spells) {
-            var icon :DisplayObject = ImageResource.instantiateBitmap(spell.name + "_icon");
+            var icon :MovieClip = SwfResource.instantiateMovieClip("infusions", "infusion_" + spell.name);
+            icon.cacheAsBitmap = true;
             if (null != icon) {
                 totalWidth += icon.width;
                 icons.push(icon);
@@ -123,7 +124,7 @@ public class CreatureUnitView extends SceneObject
         var xLoc :Number = -(totalWidth * 0.5);
         for each (icon in icons) {
             icon.x = xLoc;
-            icon.y = yLoc - icon.height;
+            icon.y = yLoc;
             xLoc += icon.width;
             _unitSpellIconParent.addChild(icon);
         }

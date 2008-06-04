@@ -235,11 +235,6 @@ public class CreatureUnit extends Unit
         return _lastUpdateTimestamp;
     }
 
-    public function get deathAnimationDuration () :Number
-    {
-        return 1.5;
-    }
-
     public function get preventDeathAnimation () :Boolean
     {
         return false;

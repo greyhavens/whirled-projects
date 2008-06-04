@@ -5,7 +5,6 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.battle.CreatureUnit;
@@ -26,36 +25,30 @@ public class DeadCreatureUnitView extends SceneObject
         var playerColor :uint = GameContext.gameData.playerColors[creature.owningPlayerId];
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
-        var movie :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);
-        if (null == movie) {
-            movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
+        _movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);
+        if (null == _movie) {
+            _movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
         }
 
-        if (null != movie) {
-            if (flipX) {
-                movie.scaleX = -1;
-            }
-
-            movie.x = creature.x;
-            movie.y = creature.y;
-
-            _displayObj = movie;
-        } else {
-            // if we don't have a movie, prevent crashes by creating a dummy sprite
-            _displayObj = new Sprite();
+        if (flipX) {
+            _movie.scaleX = -1;
         }
 
-        this.addTask(After(creature.deathAnimationDuration, new SelfDestructTask()));
+        _movie.x = creature.x;
+        _movie.y = creature.y;
+
+        // when the movie gets to the end, self-destruct
+        this.addTask(new SerialTask(new WaitForFrameTask("end"), new SelfDestructTask()));
 
         GameContext.playGameSound("sfx_death_" + creature.unitData.name);
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _displayObj;
+        return _movie;
     }
 
-    protected var _displayObj :DisplayObject;
+    protected var _movie :MovieClip;
 }
 
 }

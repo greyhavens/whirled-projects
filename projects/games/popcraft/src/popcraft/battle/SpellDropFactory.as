@@ -20,7 +20,9 @@ public class SpellDropFactory
         // create the view after adding the spellDrop to the game, so that its
         // SimObjectRef is valid
         var spellDropView :SpellDropView = new SpellDropView(spellDrop);
-        GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.spellDropViewParent);
+        spellDropView.x = loc.x;
+        spellDropView.y = loc.y;
+        GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.unitViewParent);
 
         if (playSound) {
             GameContext.playGameSound("sfx_spelldrop");

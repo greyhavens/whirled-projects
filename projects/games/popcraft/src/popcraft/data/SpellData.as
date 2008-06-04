@@ -16,7 +16,7 @@ public class SpellData
 
     public function get iconName () :String
     {
-        return this.name + "_icon";
+        return "infusion_" + this.name;
     }
 
     public function clone (theClone :SpellData = null) :SpellData

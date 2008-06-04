@@ -55,6 +55,9 @@ public class Resources
     [Embed(source="../../rsrc/dashboard.swf", mimeType="application/octet-stream")]
     public static const SWF_DASHBOARD :Class;
 
+    [Embed(source="../../rsrc/infusions.swf", mimeType="application/octet-stream")]
+    public static const SWF_INFUSIONS :Class;
+
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
     public static const MUSIC_NIGHT :Class;

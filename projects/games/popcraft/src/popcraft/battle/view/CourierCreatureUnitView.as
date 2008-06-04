@@ -2,7 +2,6 @@ package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Bitmap;
 import flash.display.MovieClip;
 
 import popcraft.*;
@@ -22,8 +21,8 @@ public class CourierCreatureUnitView extends CreatureUnitView
         // if the Courier is carrying a spell, display it
         var carriedSpell :SpellData = _courier.carriedSpell;
         if (null != carriedSpell && null == _carriedSpellIcon) {
-            _carriedSpellIcon = ImageResource.instantiateBitmap(carriedSpell.iconName);
-            _carriedSpellIcon.y = -_carriedSpellIcon.height;
+            _carriedSpellIcon = SwfResource.instantiateMovieClip("infusions", carriedSpell.iconName);
+            _carriedSpellIcon.cacheAsBitmap = true;
             _sprite.addChild(_carriedSpellIcon);
         } else if (null == carriedSpell && null != _carriedSpellIcon) {
             _sprite.removeChild(_carriedSpellIcon);
@@ -33,22 +32,8 @@ public class CourierCreatureUnitView extends CreatureUnitView
         super.update(dt);
     }
 
-    /*override protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
-    {
-        // don't interrupt the courier's movement animation - allow it to play to completion
-        // (completion means currentLabel == "end")
-        if (_lastViewState.moving) {
-            var curAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
-            if (curAnim.currentLabel != "end") {
-                return;
-            }
-        }
-
-        super.setNewAnimation(anim, newViewState, initialFrame);
-    }*/
-
     protected var _courier :CourierCreatureUnit;
-    protected var _carriedSpellIcon :Bitmap;
+    protected var _carriedSpellIcon :MovieClip;
 
 }
 

@@ -203,7 +203,7 @@
                 damageScaleOffset="-0.4"/>
 
             <Spell
-                type="puzzlereset"
+                type="shuffle"
                 displayName="Clean House"
                 description="CLEAN HOUSE: Refills your resource console with a new set of resources."
                 />

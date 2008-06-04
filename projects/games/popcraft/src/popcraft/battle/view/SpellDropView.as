@@ -4,8 +4,8 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import popcraft.*;
@@ -19,24 +19,13 @@ public class SpellDropView extends SceneObject
         _spellObjRef = spellDrop.ref;
 
         var spellData :SpellData = spellDrop.spellData;
-
-        var bitmap :Bitmap = ImageResource.instantiateBitmap(spellData.iconName);
-        var scale :Number = Math.min(SpellDropObject.RADIUS / bitmap.width, SpellDropObject.RADIUS / bitmap.height);
-        bitmap.scaleX = scale;
-        bitmap.scaleY = scale;
-        bitmap.x = -(bitmap.width * 0.5);
-        bitmap.y = -(bitmap.height * 0.5);
-
-        _sprite = new Sprite();
-        _sprite.addChild(bitmap);
-
-        _sprite.x = spellDrop.x;
-        _sprite.y = spellDrop.y;
+        _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName);
+        _movie.cacheAsBitmap = true;
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
     override protected function update (dt :Number) :void
@@ -49,7 +38,7 @@ public class SpellDropView extends SceneObject
     }
 
     protected var _spellObjRef :SimObjectRef;
-    protected var _sprite :Sprite
+    protected var _movie :MovieClip;
 }
 
 }
