@@ -130,27 +130,23 @@ public class Display extends Sprite
         _wordfield.text = word;
     }
 
-    /** Updates the log with a success message */
     public function logSuccess (player :String, word :String, score :Number, bonus :Number) :void
     {
-        var msg :String = word + ": " + score + " pts";
-        if (bonus > 0) {
-            _logger.log(msg + " (" + "+"+bonus+" bonus)", Logger.FOUND_WORD_FIRST);
-        } else {
-            _logger.log(msg, Logger.FOUND_WORD);
-        }
+        var msg :String = word + " (" + (score+bonus) + ")";
+
+        _logger.logListItem(msg, (bonus > 0 ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD));
     }
 
     /** Updates the log with a failure message */
     public function logAlreadyClaimed (player :String, word :String) :void
     {
-        _logger.log("You already found that word.", Logger.INVALID_WORD);
+        _logger.logListItem(word, Logger.INVALID_WORD);
     }
 
     /** Updates the log with an invalid word message */
     public function logInvalidWord (player :String, word :String) :void
     {
-        _logger.log(word + " is not valid.", Logger.INVALID_WORD);
+        _logger.logListItem(word, Logger.INVALID_WORD);
     }
 
     /** Adds a "please wait" message */

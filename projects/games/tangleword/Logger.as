@@ -6,6 +6,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.StyleSheet;
 
+import com.threerings.util.Util;
+
 import fl.containers.ScrollPane;
 import fl.controls.ScrollPolicy;
 import fl.skins.DefaultScrollPaneSkins;
@@ -44,33 +46,66 @@ public class Logger extends ScrollPane
 
         _text.styleSheet = new StyleSheet();
 
-        _text.styleSheet.setStyle("body", {
+        var style :Object, common :Object = {
                 fontSize: 10,
                 fontFamily: "Verdana"
-            });
-        _text.styleSheet.setStyle('.'+FOUND_WORD_FIRST, {
+            };
+
+        _text.styleSheet.setStyle("body", common);
+
+        // A bit of a hack to get around the fact that <span>s don't
+        // inherit style properties like true CSS, so do a hard copy
+        Util.init(style = {
                 color: "#0000ff",
                 fontWeight: "bold"
-            });
-        _text.styleSheet.setStyle('.'+FOUND_WORD, {
+            }, common);
+        _text.styleSheet.setStyle('.'+FOUND_WORD_FIRST, style);
+
+        Util.init(style = {
                 color: "#0000ff"
-            });
-        _text.styleSheet.setStyle('.'+INVALID_WORD, {
+            }, common);
+        _text.styleSheet.setStyle('.'+FOUND_WORD, style);
+
+        Util.init(style = {
                 color: "#ff0000"
-            });
+            }, common);
+        _text.styleSheet.setStyle('.'+INVALID_WORD, style);
     }
 
     /** Adds a line of text to the bottom of the logger */
     public function log (message :String, styleClass :String = "") :void
     {
+        // Cancel out of listing mode
+        if (_totalListed > 0) {
+            _text.htmlText += "<br/>"
+        }
+        _totalListed = 0;
+
         _text.htmlText += "<p class='" + styleClass + "'>" + message + "</p>";
         update();
+    }
+
+    public override function update () :void
+    {
+        super.update();
 
         // If we can scroll to the bottom, do it
         if (verticalScrollBar.enabled) {
             // This throws an error if verticalScrollBar isn't enabled
             verticalScrollPosition = _text.height;
         }
+    }
+
+    public function logListItem (message :String, styleClass :String = "") :void
+    {
+        if (_totalListed > 0) {
+            _text.htmlText += ", ";
+        }
+
+        _text.htmlText += "<span class='" + styleClass + "'>" + message + "</span>";
+        _totalListed += 1;
+
+        update();
     }
 
     /** Clears the log */
@@ -80,6 +115,7 @@ public class Logger extends ScrollPane
         update();
     }
 
+    protected var _totalListed :int = 0;
     protected var _text :TextField = new TextField();
 }
 
