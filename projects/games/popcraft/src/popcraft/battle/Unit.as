@@ -313,8 +313,6 @@ public class Unit extends SimObject
 
     protected var _loc :Vector2 = new Vector2();
 
-    protected static var g_groups :Array;
-
     protected static const PREVENT_ATTACK_TASK_NAME :String = "PreventAttack";
 }
 

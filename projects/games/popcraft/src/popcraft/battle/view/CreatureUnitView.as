@@ -10,10 +10,9 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -132,6 +131,24 @@ public class CreatureUnitView extends SceneObject
 
     protected function handleUnitAttacked (...ignored) :void
     {
+        // show a blood splatter
+        if (null == g_bloodClass) {
+            var swf :SwfResource = ResourceManager.instance.getResource("blood") as SwfResource;
+            g_bloodClass = swf.getClass("blood");
+        }
+
+        var bloodObj :SimpleSceneObject = new SimpleSceneObject(new g_bloodClass());
+        bloodObj.addTask(After(0.3, new SelfDestructTask()));
+
+        // pick a random location for the blood
+        var bounds :Rectangle = _sprite.getBounds(_sprite);
+        var x :Number = Rand.nextNumberRange(bounds.left, bounds.right, Rand.STREAM_COSMETIC);
+        var y :Number = Rand.nextNumberRange(bounds.top, bounds.bottom, Rand.STREAM_COSMETIC);
+        bloodObj.x = x;
+        bloodObj.y = y;
+
+        this.db.addObject(bloodObj, _sprite);
+
         // play a sound
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
         GameContext.playGameSound(soundName);
@@ -373,10 +390,9 @@ public class CreatureUnitView extends SceneObject
     protected var _lastUnitUpdateTimestamp :Number = 0;
     protected var _unitUpdateTimeDelta :Number = 0;
 
-    protected static var g_groups :Array;
+    protected static var g_bloodClass :Class;
 
     protected static const log :Log = Log.getLog(CreatureUnitView);
-
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
 }
 

@@ -256,8 +256,6 @@ public class CreatureUnit extends Unit
 
     protected var _unitSpells :CreatureSpellSet;
 
-    protected static var g_groups :Array;
-
     protected static const MOVEMENT_EPSILON :Number = 0.4;
     protected static const ENABLE_COLLISIONS_TASK :String = "EnableCollisionsTask";
 }
