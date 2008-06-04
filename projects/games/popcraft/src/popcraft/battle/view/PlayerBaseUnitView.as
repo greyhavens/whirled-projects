@@ -10,6 +10,8 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -63,6 +65,20 @@ public class PlayerBaseUnitView extends SceneObject
         _friendlyBadge.x = -(_friendlyBadge.width * 0.5);
         _friendlyBadge.y = -(_friendlyBadge.height);
         _sprite.addChild(_friendlyBadge);
+
+        // player name
+        var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
+        var isEnemyBase :Boolean = (owningPlayer.teamId != GameContext.localPlayerInfo.teamId);
+        var nameText :TextField = new TextField();
+        nameText.selectable = false;
+        nameText.autoSize = TextFieldAutoSize.LEFT;
+        nameText.background = true;
+        nameText.backgroundColor = (isEnemyBase ? 0xFF0000 : 0xFFFFFF);
+        nameText.textColor = (isEnemyBase ? 0xFFFFFF : 0x000000);
+        nameText.text = owningPlayer.playerName;
+        nameText.x =  -(nameText.width * 0.5);
+        nameText.y = -(image.height * 0.5) - (nameText.height * 0.5);
+        _sprite.addChild(nameText);
     }
 
     public function scaleHealthMeter () :void
