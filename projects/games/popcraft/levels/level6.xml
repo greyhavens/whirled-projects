@@ -14,12 +14,12 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
         <GameDataOverride
             spellDropTimeMin="30"
             spellDropTimeMax="30">
-            <BaseLocations>
+            <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="60" y="185"/>
                     <BaseLocation x="642" y="175"/>
                 </GameSize>
-            </BaseLocations>
+            </GameSizes>
         </GameDataOverride>
 
         <InitialResources/>

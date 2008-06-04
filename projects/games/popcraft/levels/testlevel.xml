@@ -10,12 +10,12 @@
         <GameDataOverride
             spellDropTimeMin="3"
             spellDropTimeMax="3">
-            <BaseLocations>
+            <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="60" y="185"/>
                     <BaseLocation x="642" y="175"/>
                 </GameSize>
-            </BaseLocations>
+            </GameSizes>
         </GameDataOverride>
 
         <InitialResources>

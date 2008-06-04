@@ -7,15 +7,18 @@
         playerName="Jack"
         playerBaseHealth="120">
 
-        <GameDataOverride>
-            <BaseLocations>
-                <GameSize numPlayers="4">
+        <GameDataOverride
+            spellDropScatterMin="15"
+            spellDropScatterMax="30">
+            <GameSizes>
+                <GameSize numPlayers="4" customSpellDropLocation="true">
                     <BaseLocation x="70" y="185"/>
                     <BaseLocation x="642" y="185"/>
                     <BaseLocation x="590" y="90"/>
                     <BaseLocation x="590" y="325"/>
+                    <CustomSpellDropLocation x="250" y="150"/>
                 </GameSize>
-            </BaseLocations>
+            </GameSizes>
         </GameDataOverride>
 
         <InitialResources>
@@ -49,7 +52,7 @@
                     spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
-					<Wave absoluteDelay="5" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="5" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="8" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="20" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
                     <Wave absoluteDelay="30"><Unit type="heavy" count="2"/></Wave>
@@ -85,12 +88,12 @@
                     spellDropCourierGroupSizeMax="0">
 
                     <Wave absoluteDelay="2"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
-					<Wave absoluteDelay="21" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
-					<Wave absoluteDelay="25"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="35" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-					<Wave absoluteDelay="57" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="75" spellCastChance="0.5"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="21" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="25"><Unit type="heavy" count="1"/></Wave>
+                    <Wave absoluteDelay="35" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="57" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="75" spellCastChance="0.5"><Unit type="grunt" count="2"/></Wave>
 
                 </Day>
             </InitialDays>
@@ -123,12 +126,12 @@
                     spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="3"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
-					<Wave absoluteDelay="22" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
-					<Wave absoluteDelay="28"><Unit type="heavy" count="1"/></Wave>
-					<Wave absoluteDelay="37" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="55" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-					<Wave absoluteDelay="77" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="22" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="28"><Unit type="heavy" count="1"/></Wave>
+                    <Wave absoluteDelay="37" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="55" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="77" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
 
                 </Day>
             </InitialDays>

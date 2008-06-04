@@ -10,12 +10,12 @@
         playerBaseHealth="50">
 
         <GameDataOverride>
-            <BaseLocations>
+            <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="50" y="85"/>
                     <BaseLocation x="652" y="315"/>
                 </GameSize>
-            </BaseLocations>
+            </GameSizes>
         </GameDataOverride>
 
         <InitialResources>

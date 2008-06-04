@@ -209,23 +209,25 @@
                 />
         </Spells>
 
-        <BaseLocations>
+        <GameSizes>
             <GameSize numPlayers="2">
                 <BaseLocation x="50" y="315"/>
                 <BaseLocation x="652" y="85"/>
             </GameSize>
-            <GameSize numPlayers="3">
+            <GameSize numPlayers="3" customSpellDropLocation="true">
                 <BaseLocation x="50" y="85"/>
                 <BaseLocation x="50" y="315"/>
                 <BaseLocation x="652" y="175"/>
+                <CustomSpellDropLocation x="350" y="250"/>
             </GameSize>
-            <GameSize numPlayers="4">
+            <GameSize numPlayers="4" customSpellDropLocation="true">
                 <BaseLocation x="50" y="85"/>
                 <BaseLocation x="50" y="315"/>
                 <BaseLocation x="652" y="85"/>
                 <BaseLocation x="652" y="315"/>
+                <CustomSpellDropLocation x="350" y="250"/>
             </GameSize>
-        </BaseLocations>
+        </GameSizes>
 
         <PlayerColors>
             <PlayerColor player="1" color="0xFF0000"/>

@@ -32,6 +32,7 @@ public class GameData
     public var units :Array = [];
     public var spells :Array = [];
     public var baseLocs :Array = [];
+    public var customSpellDropLocs :Array = [];
     public var playerColors :Array = [];
 
     public function getBaseLocsForGameSize (numPlayers :uint) :Array
@@ -81,6 +82,10 @@ public class GameData
                 gameSizeClone.push(baseLoc.clone());
             }
             theClone.baseLocs.push(gameSizeClone);
+        }
+
+        for each (var spellDropLoc :Vector2 in customSpellDropLocs) {
+            theClone.customSpellDropLocs.push(null != spellDropLoc ? spellDropLoc.clone() : null);
         }
 
         theClone.playerColors = playerColors.slice();
@@ -165,8 +170,8 @@ public class GameData
             gameData.spells[type] = spellClass.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
         }
 
-        // read base locations
-        for each (var gameSizeNode :XML in xml.BaseLocations.GameSize) {
+        // read base locations and spell drop locations
+        for each (var gameSizeNode :XML in xml.GameSizes.GameSize) {
             var numPlayers :int = XmlReader.getAttributeAsUint(gameSizeNode, "numPlayers");
 
             var baseLocArray :Array = [];
@@ -182,6 +187,21 @@ public class GameData
             }
 
             gameData.baseLocs[numPlayers - 1] = baseLocArray;
+
+            var hasCustomSpellDropLoc :Boolean = XmlReader.getAttributeAsBoolean(gameSizeNode, "customSpellDropLocation", false);
+            var customSpellDropLoc :Vector2;
+            if (hasCustomSpellDropLoc) {
+                var spellDropLocNode :XML = XmlReader.getSingleChild(gameSizeNode, "CustomSpellDropLocation");
+                customSpellDropLoc = new Vector2();
+                customSpellDropLoc.x = XmlReader.getAttributeAsNumber(spellDropLocNode, "x");
+                customSpellDropLoc.y = XmlReader.getAttributeAsNumber(spellDropLocNode, "y");
+            }
+
+            for (i = gameData.customSpellDropLocs.length; i < numPlayers; ++i) {
+                gameData.customSpellDropLocs.push(null);
+            }
+
+            gameData.customSpellDropLocs[numPlayers - 1] = customSpellDropLoc;
         }
 
         // read player colors

@@ -31,65 +31,70 @@ public class SpellDropTimer extends SimObject
 
     protected function createNextSpellDrop () :void
     {
-        var spellLoc :Vector2;
+        // do we have a custom spell drop location?
+        var spellLoc :Vector2 = GameContext.gameData.customSpellDropLocs[GameContext.numPlayers - 1];
 
-        if (GameContext.numPlayers == 2) {
-            // in a two-player game, pick a location somewhere along the line
-            // that runs perpendicular to the line that connects the two bases
-            var player1 :PlayerInfo = GameContext.playerInfos[0];
-            var player2 :PlayerInfo = GameContext.playerInfos[1];
-            var base1 :PlayerBaseUnit = player1.base;
-            var base2 :PlayerBaseUnit = player2.base;
-            if (null != base1 && null != base2) {
-                var baseLoc1 :Vector2 = base1.unitLoc;
-                var baseLoc2 :Vector2 = base2.unitLoc;
-                var baseDiff :Vector2 = baseLoc2.subtract(baseLoc1);
-                var baseDistance :Number = baseDiff.length;
-                var baseAngle :Number = baseDiff.angle;
+        if (null == spellLoc) {
+            // no - generate one
 
-                // Let's give the losing player a bit of a helping hand. Shift the
-                // "baseCenter" towards the losing player's base by up to 1/2 the distance
-                // between the base and the center.
-                // @TODO - clarify this needlessly complex-looking calculation
-                var shiftAmount :Number;
-                var baseHealth1 :Number = Math.max(base1.health / base1.maxHealth, 0.001);  // prevent divide-by-0
-                var baseHealth2 :Number = Math.max(base2.health / base2.maxHealth, 0.001);
+            if (GameContext.numPlayers == 2) {
+                // in a two-player game, pick a location somewhere along the line
+                // that runs perpendicular to the line that connects the two bases
+                var player1 :PlayerInfo = GameContext.playerInfos[0];
+                var player2 :PlayerInfo = GameContext.playerInfos[1];
+                var base1 :PlayerBaseUnit = player1.base;
+                var base2 :PlayerBaseUnit = player2.base;
+                if (null != base1 && null != base2) {
+                    var baseLoc1 :Vector2 = base1.unitLoc;
+                    var baseLoc2 :Vector2 = base2.unitLoc;
+                    var baseDiff :Vector2 = baseLoc2.subtract(baseLoc1);
+                    var baseDistance :Number = baseDiff.length;
+                    var baseAngle :Number = baseDiff.angle;
 
-                var maxSpellDropShift :Number = 1.0 - GameContext.gameData.maxLosingPlayerSpellDropShift;
+                    // Let's give the losing player a bit of a helping hand. Shift the
+                    // "baseCenter" towards the losing player's base by up to 1/2 the distance
+                    // between the base and the center.
+                    // @TODO - clarify this needlessly complex-looking calculation
+                    var shiftAmount :Number;
+                    var baseHealth1 :Number = Math.max(base1.health / base1.maxHealth, 0.001);  // prevent divide-by-0
+                    var baseHealth2 :Number = Math.max(base2.health / base2.maxHealth, 0.001);
 
-                if (baseHealth1 < baseHealth2) {
-                    shiftAmount = Math.max((baseHealth1 / baseHealth2), maxSpellDropShift) * (baseDistance * 0.5);
-                    spellLoc = baseLoc1.add(Vector2.fromAngle(baseAngle, shiftAmount));
-                } else {
-                    shiftAmount = Math.max((baseHealth2 / baseHealth1), maxSpellDropShift) * (baseDistance * 0.5);
-                    spellLoc = baseLoc2.subtract(Vector2.fromAngle(baseAngle, shiftAmount));
+                    var maxSpellDropShift :Number = 1.0 - GameContext.gameData.maxLosingPlayerSpellDropShift;
+
+                    if (baseHealth1 < baseHealth2) {
+                        shiftAmount = Math.max((baseHealth1 / baseHealth2), maxSpellDropShift) * (baseDistance * 0.5);
+                        spellLoc = baseLoc1.add(Vector2.fromAngle(baseAngle, shiftAmount));
+                    } else {
+                        shiftAmount = Math.max((baseHealth2 / baseHealth1), maxSpellDropShift) * (baseDistance * 0.5);
+                        spellLoc = baseLoc2.subtract(Vector2.fromAngle(baseAngle, shiftAmount));
+                    }
+
+                    // pick a random location along the line running perpendicular to the line that
+                    // connects our two bases, and passes through the centerLoc we just calculated
+                    var direction :Number = baseLoc1.subtract(baseLoc2).angle;
+                    direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
+                    var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
+                    spellLoc = spellLoc.addLocal(Vector2.fromAngle(direction, centerDistance));
                 }
 
-                // pick a random location along the line running perpendicular to the line that
-                // connects our two bases, and passes through the centerLoc we just calculated
-                var direction :Number = baseLoc1.subtract(baseLoc2).angle;
-                direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
-                var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
-                spellLoc = spellLoc.addLocal(Vector2.fromAngle(direction, centerDistance));
-            }
-
-        } else {
-            // otherwise, in a larger game, find a location near the center of the board
-            // (average all player base locations together)
-            var numBases :int;
-            var centerLoc :Vector2 = new Vector2();
-            for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-                var playerBase :PlayerBaseUnit = playerInfo.base;
-                if (null != playerBase) {
-                    centerLoc.addLocal(playerBase.unitLoc);
-                    ++numBases;
+            } else {
+                // otherwise, in a larger game, find a location near the center of the board
+                // (average all player base locations together)
+                var numBases :int;
+                var centerLoc :Vector2 = new Vector2();
+                for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+                    var playerBase :PlayerBaseUnit = playerInfo.base;
+                    if (null != playerBase) {
+                        centerLoc.addLocal(playerBase.unitLoc);
+                        ++numBases;
+                    }
                 }
-            }
 
-            if (numBases > 0) {
-                centerLoc.x /= numBases;
-                centerLoc.y /= numBases;
-                spellLoc = centerLoc;
+                if (numBases > 0) {
+                    centerLoc.x /= numBases;
+                    centerLoc.y /= numBases;
+                    spellLoc = centerLoc;
+                }
             }
         }
 
