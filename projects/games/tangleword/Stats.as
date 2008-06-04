@@ -16,6 +16,8 @@ import flash.net.navigateToURL; // function import
 import com.threerings.util.MultiLoader;
 import com.threerings.util.StringUtil;
 
+import com.whirled.game.*;
+
 import com.whirled.contrib.Scoreboard;
  
 /** Stats screen */
@@ -36,9 +38,10 @@ public class Stats extends Sprite
             word + "</a></u>";
     }
     
-    public function Stats ()
+    public function Stats (ctrl :GameControl)
     {
         this.visible = false;
+        ctrl.addEventListener(Event.UNLOAD, handleUnload);
 
         MultiLoader.getLoaders([ Resources.stats_bg, Resources.stats_fg ], doneLoadingClips);
 
@@ -68,8 +71,6 @@ public class Stats extends Sprite
             _bg.gotoAndPlay(1);
             _fg.gotoAndPlay(1);
             _fg.addEventListener(Event.ENTER_FRAME, showFrameHandler);
-
-            addEventListener(Event.UNLOAD, unloadFrameHandler);
 
             this.visible = true;
         }
@@ -115,10 +116,14 @@ public class Stats extends Sprite
         }
     }
 
-    protected function unloadFrameHandler (event :Event) :void
+    protected function handleUnload (event :Event) :void
     {
-        _fg.removeEventListener(Event.ENTER_FRAME, showFrameHandler);
-        _bg.removeEventListener(Event.ENTER_FRAME, hideFrameHandler);
+        if (_fg != null) {
+            _fg.removeEventListener(Event.ENTER_FRAME, showFrameHandler);
+        }
+        if (_bg != null) {
+            _bg.removeEventListener(Event.ENTER_FRAME, hideFrameHandler);
+        }
     }
     
     protected function prepareScoreDisplay (model :Model, scoreboard :Scoreboard) :void

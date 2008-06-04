@@ -320,7 +320,7 @@ public class Display extends Sprite
         _splash = new Splash();
         addChild(_splash);
 
-        _stats = new Stats();
+        _stats = new Stats(_gameCtrl);
         addChild(_stats);
     }
 
