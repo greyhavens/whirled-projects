@@ -71,6 +71,8 @@ public class Display extends Sprite
     /** Called when the round starts - enables display. */
     public function roundStarted (duration :int) :void
     {
+        _logger.clear();
+
         logRoundStarted();
         setEnableState(true);
     }
@@ -82,7 +84,8 @@ public class Display extends Sprite
 
         logSummary(model, model.getWords().sortOn("word", Array.DESCENDING));
 
-        _stats.show(model, board);
+        // Disabled for now -- Bruno
+        //_stats.show(model, board);
     }
 
     /** Called from the model, this accessor modifies the display /text/
