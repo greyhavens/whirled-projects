@@ -39,6 +39,11 @@ public class GameContext
     public static function get numPlayers () :int { return playerInfos.length; }
     public static function get localUserIsPlaying () :Boolean { return localPlayerId >= 0; }
 
+    public static function get baseLocs () :Array
+    {
+        return gameData.getBaseLocsForGameSize(numPlayers);
+    }
+
     public static function findEnemyForPlayer (playerId :uint) :PlayerInfo
     {
         var thisPlayer :PlayerInfo = playerInfos[playerId];

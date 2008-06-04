@@ -374,6 +374,17 @@ public class GameMode extends AppMode
             }
             break;
 
+        case KeyboardCodes.K:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                // destroy the targeted enemy's base
+                var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
+                var enemyBase :PlayerBaseUnit = enemyPlayerInfo.base;
+                if (null != enemyBase) {
+                    enemyBase.health = 0;
+                }
+            }
+            break;
+
         case KeyboardCodes.SLASH:
             if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
                 // restart the level
