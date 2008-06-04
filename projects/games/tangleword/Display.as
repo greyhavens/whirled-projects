@@ -57,7 +57,7 @@ public class Display extends Sprite
         addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
         addEventListener(KeyboardEvent.KEY_UP, typingHandler);
 
-        _logger.Log(version);
+        _logger.log(version);
     }
 
     /** Shutdown handler */
@@ -135,51 +135,51 @@ public class Display extends Sprite
     {
         var msg :String = word + ": " + score + " pts";
         if (bonus > 0) {
-            _logger.Log(msg + " (" + "+"+bonus+" bonus)", Logger.FOUND_WORD_FIRST);
+            _logger.log(msg + " (" + "+"+bonus+" bonus)", Logger.FOUND_WORD_FIRST);
         } else {
-            _logger.Log(msg, Logger.FOUND_WORD);
+            _logger.log(msg, Logger.FOUND_WORD);
         }
     }
 
     /** Updates the log with a failure message */
     public function logAlreadyClaimed (player :String, word :String) :void
     {
-        _logger.Log("You already found that word.", Logger.INVALID_WORD);
+        _logger.log("You already found that word.", Logger.INVALID_WORD);
     }
 
     /** Updates the log with an invalid word message */
     public function logInvalidWord (player :String, word :String) :void
     {
-        _logger.Log(word + " is not valid.", Logger.INVALID_WORD);
+        _logger.log(word + " is not valid.", Logger.INVALID_WORD);
     }
 
     /** Adds a "please wait" message */
     public function logPleaseWait () :void
     {
-        _logger.Log("Please wait for");
-        _logger.Log("   the next round.");
+        _logger.log("Please wait for");
+        _logger.log("   the next round.");
     }
 
     /** Adds a "round started" message */
     public function logRoundStarted () :void
     {
-        _logger.Log("New round started!");
+        _logger.log("New round started!");
     }
 
     /** Adds a round summary message */
     public function logRoundEnded (points :Number, flow :Number) :void
     {
-        _logger.Log("Round ended: " + points + " points");
-        _logger.Log("You received " + flow + " flow!");
+        _logger.log("Round ended: " + points + " points");
+        _logger.log("You received " + flow + " flow!");
     }
 
     public function logSummary (model :Model, words :Object) :void
     {
-        _logger.Log("");
+        _logger.log("");
         for each (var w :Object in words) {
-            _logger.Log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
+            _logger.log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
         }
-        _logger.Log("");
+        _logger.log("");
     }
 
     /** Sets scores based on the scoreboard. */
@@ -228,7 +228,7 @@ public class Display extends Sprite
         if (_controller.tryScoreWord(_wordfield.text)) {
             updateLetterSelection([ ]);
         } else {
-            _logger.Log("Words must be at least " + _controller.minWordLength + " letters.", Logger.INVALID_WORD);
+            _logger.log("Words must be at least " + _controller.minWordLength + " letters.", Logger.INVALID_WORD);
         }
     }
 
@@ -297,25 +297,12 @@ public class Display extends Sprite
         doLayout(_wordfield, Properties.WORDFIELD);
         addChild(_wordfield);
 
-        /*var pane :ScrollPane = new ScrollPane();
-        pane.verticalScrollPolicy = ScrollPolicy.ON;
-        _logger = new Logger ();
-        doLayout(_logger, Properties.LOGFIELD);
-        doLayout(pane, Properties.LOGFIELD);
-        _logger.x = 0;
-        _logger.y = 0;
-        pane.source = _logger;
-        addChild(pane);*/
         var tf :TextField = new TextField();
         doLayout(tf, Properties.LOGFIELD);
         tf.x = tf.y = 0;
         _logger = new Logger(tf);
         doLayout(_logger, Properties.LOGFIELD);
         addChild(_logger);
-
-//        _logger.scrollRect = new Rectangle(0, 0, 50, 50);
-//        var box :ScrollContainer = new ScrollContainer(_logger, 100, 200);
-//        this.addChild(box);
 
         /*
         _timer = new CountdownTimer();

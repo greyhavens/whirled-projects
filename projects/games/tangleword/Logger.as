@@ -35,47 +35,46 @@ public class Logger extends ScrollPane
         verticalScrollPolicy = ScrollPolicy.ON;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        with (_text) {
-            selectable = false;
-            borderColor = Resources.defaultBorderColor;
-            multiline = true;
+        _text.selectable = false;
+        _text.borderColor = Resources.defaultBorderColor;
+        _text.multiline = true;
 
-            autoSize = TextFieldAutoSize.LEFT;
-            wordWrap = true;
+        _text.autoSize = TextFieldAutoSize.LEFT;
+        _text.wordWrap = true;
 
-            styleSheet = new StyleSheet();
+        _text.styleSheet = new StyleSheet();
 
-            styleSheet.setStyle("body", {
+        _text.styleSheet.setStyle("body", {
                 fontSize: 10,
                 fontFamily: "Verdana"
             });
-            styleSheet.setStyle('.'+FOUND_WORD_FIRST, {
+        _text.styleSheet.setStyle('.'+FOUND_WORD_FIRST, {
                 color: "#0000ff",
                 fontWeight: "bold"
             });
-            styleSheet.setStyle('.'+FOUND_WORD, {
+        _text.styleSheet.setStyle('.'+FOUND_WORD, {
                 color: "#0000ff"
             });
-            styleSheet.setStyle('.'+INVALID_WORD, {
+        _text.styleSheet.setStyle('.'+INVALID_WORD, {
                 color: "#ff0000"
             });
-        }
     }
 
     /** Adds a line of text to the bottom of the logger */
-    public function Log (message :String, styleClass :String = "") :void
+    public function log (message :String, styleClass :String = "") :void
     {
         _text.htmlText += "<p class='" + styleClass + "'>" + message + "</p>";
         update();
 
         // If we can scroll to the bottom, do it
-        if (verticalScrollPosition) {
+        if (verticalScrollBar.enabled) {
+            // This throws an error if verticalScrollBar isn't enabled
             verticalScrollPosition = _text.height;
         }
     }
 
     /** Clears the log */
-    public function Clear () :void
+    public function clear () :void
     {
         _text.htmlText = "";
         update();

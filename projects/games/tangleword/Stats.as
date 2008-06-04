@@ -69,6 +69,8 @@ public class Stats extends Sprite
             _fg.gotoAndPlay(1);
             _fg.addEventListener(Event.ENTER_FRAME, showFrameHandler);
 
+            addEventListener(Event.UNLOAD, unloadFrameHandler);
+
             this.visible = true;
         }
     }
@@ -111,6 +113,12 @@ public class Stats extends Sprite
             removeChild(_text);
             removeChild(_bg);
         }
+    }
+
+    protected function unloadFrameHandler (event :Event) :void
+    {
+        _fg.removeEventListener(Event.ENTER_FRAME, showFrameHandler);
+        _bg.removeEventListener(Event.ENTER_FRAME, hideFrameHandler);
     }
     
     protected function prepareScoreDisplay (model :Model, scoreboard :Scoreboard) :void
