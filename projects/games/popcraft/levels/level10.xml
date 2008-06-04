@@ -3,6 +3,7 @@
         parDays="1"
         backgroundName="Level1"
         introText="Your enemies have you surrounded! Use the Bloodlust spell to enrage your creatures, and send them to smash your foes!"
+        newSpellType="bloodlust"
         disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="120">
@@ -58,7 +59,7 @@
                 </Day>
             </InitialDays>
             <RepeatingDays>
-				<!-- Colossus Day -->
+                <!-- Colossus Day -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="6"
@@ -69,8 +70,8 @@
                     <Wave absoluteDelay="6" spellCastChance="0.5"><Unit type="colossus" count="1"/></Wave>
                     <Wave absoluteDelay="75" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
                 </Day>
-				<!-- Grunt Day -->
-				<Day repeatWaves="false"
+                <!-- Grunt Day -->
+                <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="6"
                     spellDropCourierGroupSizeMin="1"
@@ -105,7 +106,7 @@
                 </Day>
             </InitialDays>
             <RepeatingDays>
-				<!-- Colossus Day -->
+                <!-- Colossus Day -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
                     noticeSpellDropAfterMax="7"
@@ -117,8 +118,8 @@
                     <Wave absoluteDelay="90"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
                 </Day>
-				<!-- Grunt Day -->
-				<Day repeatWaves="false"
+                <!-- Grunt Day -->
+                <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
                     noticeSpellDropAfterMax="7"
                     spellDropCourierGroupSizeMin="1"
@@ -155,7 +156,7 @@
                 </Day>
             </InitialDays>
             <RepeatingDays>
-				<!-- Colossus Day -->
+                <!-- Colossus Day -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="8"
@@ -167,12 +168,12 @@
                     <Wave absoluteDelay="95"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="110"><Unit type="sapper" count="1"/></Wave>
                 </Day>
-				<!-- Grunt Day -->
-	            <Day repeatWaves="false"
-					noticeSpellDropAfterMin="3"
-                	noticeSpellDropAfterMax="8"
-	                spellDropCourierGroupSizeMin="1"
-	                spellDropCourierGroupSizeMax="1">
+                <!-- Grunt Day -->
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="8"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="3"><Unit type="heavy" count="1"/></Wave>
                     <Wave absoluteDelay="7" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>

@@ -2,6 +2,7 @@ package popcraft.sp {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
@@ -12,14 +13,13 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
-import popcraft.battle.view.UnitAnimationFactory;
-import popcraft.data.UnitData;
+import popcraft.data.SpellData;
 
-public class CreatureIntroMode extends AppMode
+public class SpellIntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        var creatureData :UnitData = GameContext.gameData.units[GameContext.spLevel.newCreatureType];
+        var spellData :SpellData = GameContext.gameData.spells[GameContext.spLevel.newSpellType];
 
         // draw dim background
         var dimness :Shape = new Shape();
@@ -38,7 +38,7 @@ public class CreatureIntroMode extends AppMode
 
         this.modeSprite.addChild(bgSprite);
 
-        // creature name
+        // spell name
         var tfName :TextField = new TextField();
         tfName.selectable = false;
         tfName.autoSize = TextFieldAutoSize.CENTER;
@@ -47,28 +47,19 @@ public class CreatureIntroMode extends AppMode
         tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
         tfName.y = 20;
 
-        tfName.text = "The " + creatureData.displayName;
+        tfName.text = "Infusion: " + spellData.displayName;
 
         bgSprite.addChild(tfName);
 
-        // creature animation
-        var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-            creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
-        if (null == creatureAnim) {
-            creatureAnim = UnitAnimationFactory.instantiateUnitAnimation(
-                creatureData, GameContext.localPlayerInfo.playerColor, "stand_SW");
-        }
+        // spell icon
+        var icon :MovieClip = SwfResource.instantiateMovieClip("infusions", spellData.iconName);
+        icon.scaleX = 3;
+        icon.scaleY = 3;
+        icon.x = 200;
+        icon.y = 150;
+        bgSprite.addChild(icon);
 
-        if (null != creatureAnim) {
-            creatureAnim.scaleX = 1.5;
-            creatureAnim.scaleY = 1.5;
-            creatureAnim.x = 200;
-            creatureAnim.y = 150;
-
-            bgSprite.addChild(creatureAnim);
-        }
-
-        // creature intro text
+        // spell intro text
         var tfDesc :TextField = new TextField();
         tfDesc.selectable = false;
         tfDesc.multiline = true;
@@ -78,7 +69,7 @@ public class CreatureIntroMode extends AppMode
         tfDesc.x = 12;
         tfDesc.y = tfName.y + tfName.height + 3;
 
-        tfDesc.text = creatureData.introText;
+        tfDesc.text = spellData.introText;
 
         bgSprite.addChild(tfDesc);
 

@@ -12,6 +12,7 @@ public class LevelData
     public var backgroundName :String;
     public var introText :String;
     public var newCreatureType :int;
+    public var newSpellType :int;
 
     public var playerName :String;
     public var playerBaseHealth :int;
@@ -50,6 +51,7 @@ public class LevelData
         level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.CREATURE_UNIT_NAMES, -1);
+        level.newSpellType = XmlReader.getAttributeAsEnum(xml, "newSpellType", Constants.SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");

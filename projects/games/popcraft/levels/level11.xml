@@ -3,6 +3,7 @@
         parDays="1"
         backgroundName="Level1"
         introText="You enlisted the aid of Pigsley, your most loyal sycophant, to topple your enemies."
+        newSpellType="shuffle"
         disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="120">
@@ -34,14 +35,15 @@
         <AvailableSpells>
             <Spell type="rigormortis"/>
             <Spell type="bloodlust"/>
+            <Spell type="shuffle"/>
         </AvailableSpells>
 
-		<Computer
-			playerName="Pigsley"
-			baseHealth="120"
-			team="0">
-			<StartingSpells/>
-		</Computer>
+        <Computer
+            playerName="Pigsley"
+            baseHealth="120"
+            team="0">
+            <StartingSpells/>
+        </Computer>
 
         <Computer
             playerName="Ralph"
@@ -55,7 +57,7 @@
                 </Day>
             </InitialDays>
             <RepeatingDays>
-				<Day repeatWaves="false"
+                <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="6"
                     spellDropCourierGroupSizeMin="1"
@@ -76,7 +78,7 @@
                 </Day>
             </InitialDays>
             <RepeatingDays>
-				<Day repeatWaves="false"
+                <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"
                     noticeSpellDropAfterMax="7"
                     spellDropCourierGroupSizeMin="1"

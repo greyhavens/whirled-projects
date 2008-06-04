@@ -191,6 +191,7 @@
                 type="bloodlust"
                 displayName="Bloodlust"
                 description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
+                introText="(placeholder) Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
                 expireTime="35"
                 speedScaleOffset="0.5"
                 damageScaleOffset="0.3"/>
@@ -199,6 +200,7 @@
                 type="rigormortis"
                 displayName="Rigor Mortis"
                 description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
+                introText="(placeholder) Toughens the skin of your creatures. They will be able to absorb much more damage."
                 expireTime="40"
                 damageScaleOffset="-0.4"/>
 
@@ -206,6 +208,7 @@
                 type="shuffle"
                 displayName="Clean House"
                 description="CLEAN HOUSE: Refills your resource console with a new set of resources."
+                introText="(placeholder) Refills your resource console with a new set of resources."
                 />
         </Spells>
 
