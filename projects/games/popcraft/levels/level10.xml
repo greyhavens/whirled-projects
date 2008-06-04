@@ -22,8 +22,8 @@
         </GameDataOverride>
 
         <InitialResources>
-            <Resource type="blue" amount="40"/>
-            <Resource type="yellow" amount="40"/>
+            <Resource type="blue" amount="50"/>
+            <Resource type="yellow" amount="50"/>
         </InitialResources>
 
         <AvailableUnits>
@@ -55,7 +55,6 @@
                     <Wave absoluteDelay="5" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="8" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="20" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="30"><Unit type="heavy" count="2"/></Wave>
                     <Wave absoluteDelay="95" spellCastChance="0.5"><Unit type="grunt" count="5"/></Wave>
 
                 </Day>
@@ -92,8 +91,8 @@
                     <Wave absoluteDelay="21" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="25"><Unit type="heavy" count="1"/></Wave>
                     <Wave absoluteDelay="35" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="57" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="75" spellCastChance="0.5"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="64" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="82" spellCastChance="0.5"><Unit type="grunt" count="2"/></Wave>
 
                 </Day>
             </InitialDays>
@@ -130,8 +129,8 @@
                     <Wave absoluteDelay="22" spellCastChance="0.5"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="28"><Unit type="heavy" count="1"/></Wave>
                     <Wave absoluteDelay="37" spellCastChance="0.5"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="55" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="77" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="62" spellCastChance="0.5"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="84" spellCastChance="0.5"><Unit type="sapper" count="1"/></Wave>
 
                 </Day>
             </InitialDays>
