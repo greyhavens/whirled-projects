@@ -1,0 +1,17 @@
+<!-- build configuration -->
+<project name="preloader" default="compile" basedir=".">
+
+  <property name="app.name" value="SomeGame"/>
+  <property name="app.type" value="game"/>
+  <property name="party" value="true"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <!-- compiles and then jams the SWF into the document tree with the right filename -->
+  <property name="media_hash" value="d2e7c13b85176dbde9afc34c2690631592807ada"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
+
+</project>
