@@ -66,7 +66,7 @@ public class CreatureUnitView extends SceneObject
 
         _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked, false, 0, true);
 
-        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
@@ -80,7 +80,7 @@ public class CreatureUnitView extends SceneObject
 
         _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
         spellSet.removeEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
     }
@@ -98,7 +98,7 @@ public class CreatureUnitView extends SceneObject
             _unitSpellIconParent = null;
         }
 
-        var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;

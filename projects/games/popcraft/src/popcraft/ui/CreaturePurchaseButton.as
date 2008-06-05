@@ -5,11 +5,12 @@ import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.filters.BitmapFilterQuality;
 import flash.filters.GlowFilter;
@@ -35,10 +36,17 @@ public class CreaturePurchaseButton extends SimObject
         _button = parent["button_" + slotNum];
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
 
-        _switch.cacheAsBitmap = true;
-        _hilite.cacheAsBitmap = true;
-
         _multiplicity.text = "";
+        _switch.cacheAsBitmap = true;
+
+        // instaniate some alternate highlight movies, for spells
+        _defaultHilite = _hilite;
+        _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust");
+        _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
+
+        // we want to know when the player casts a spell
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerId];
+        spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
         _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
@@ -98,10 +106,40 @@ public class CreaturePurchaseButton extends SimObject
         cost2Text.textColor = _resource2Data.color;
         cost2Text.text = String(_resource2Cost);
 
-        // create the purchase meters
+
+
         this.createPurchaseMeters();
 
         this.updateDisplayState();
+    }
+
+    protected function onSpellSetModified (e :Event) :void
+    {
+        var spellSet :CreatureSpellSet = CreatureSpellSet(e.target);
+
+        var newHilite :MovieClip;
+        if (spellSet.isSpellActive(Constants.SPELL_TYPE_BLOODLUST)) {
+            newHilite = _bloodHilite;
+        } else if (spellSet.isSpellActive(Constants.SPELL_TYPE_RIGORMORTIS)) {
+            newHilite = _rigorHilite;
+        } else {
+            newHilite = _defaultHilite;
+        }
+
+        if (newHilite != _hilite) {
+            newHilite.x = _hilite.x;
+            newHilite.y = _hilite.y;
+            newHilite.visible = _hilite.visible;
+
+            var parent :DisplayObjectContainer = _hilite.parent;
+            var index :int = parent.getChildIndex(_hilite);
+            parent.removeChildAt(index);
+            parent.addChildAt(newHilite, index);
+
+            newHilite.gotoAndStop(_available ? "on" : "off");
+
+            _hilite = newHilite;
+        }
     }
 
     protected function onClicked (...ignored) :void
@@ -273,6 +311,9 @@ public class CreaturePurchaseButton extends SimObject
     protected var _switch :MovieClip;
     protected var _costs :MovieClip;
     protected var _hilite :MovieClip;
+    protected var _defaultHilite :MovieClip;
+    protected var _bloodHilite :MovieClip;
+    protected var _rigorHilite :MovieClip;
     protected var _unitDisplay :MovieClip;
     protected var _progress :MovieClip;
     protected var _button :SimpleButton;

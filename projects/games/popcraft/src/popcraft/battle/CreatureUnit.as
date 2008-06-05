@@ -29,7 +29,7 @@ public class CreatureUnit extends Unit
 
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
-        _unitSpells = GameContext.playerUnitSpellSets[owningPlayerId];
+        _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerId];
     }
 
     override protected function addedToDB () :void

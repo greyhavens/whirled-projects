@@ -46,7 +46,7 @@ public class CreatureSpellSet extends SimObject
         GameContext.playGameSound("sfx_spellexpire");
     }
 
-    protected function isSpellActive (spellType :uint) :Boolean
+    public function isSpellActive (spellType :uint) :Boolean
     {
         return (ArrayUtil.indexIf(_spells,
             function (activeSpell :CreatureSpellData) :Boolean { return activeSpell.type == spellType; }) >= 0);

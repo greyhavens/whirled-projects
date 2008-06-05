@@ -418,11 +418,11 @@ public class GameMode extends AppMode
                 }
 
                 // create players' unit spell sets (these are synchronized objects)
-                GameContext.playerUnitSpellSets = [];
+                GameContext.playerCreatureSpellSets = [];
                 for (var playerId :uint = 0; playerId < GameContext.numPlayers; ++playerId) {
                     var spellSet :CreatureSpellSet = new CreatureSpellSet();
                     GameContext.netObjects.addObject(spellSet);
-                    GameContext.playerUnitSpellSets.push(spellSet);
+                    GameContext.playerCreatureSpellSets.push(spellSet);
                 }
 
                 this.setupBattle();
@@ -650,7 +650,7 @@ public class GameMode extends AppMode
             var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
             var playerId :uint = castSpellMsg.playerId;
             if (PlayerInfo(GameContext.playerInfos[playerId]).isAlive) {
-                var spellSet :CreatureSpellSet = GameContext.playerUnitSpellSets[playerId];
+                var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[playerId];
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
                 GameContext.playGameSound("sfx_" + spell.name);

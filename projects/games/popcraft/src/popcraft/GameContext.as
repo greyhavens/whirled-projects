@@ -33,7 +33,7 @@ public class GameContext
     public static var sfxControls :AudioControls;
 
     public static var playerInfos :Array;
-    public static var playerUnitSpellSets :Array;
+    public static var playerCreatureSpellSets :Array;
     public static var localPlayerId :int;
     public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerId]; }
     public static function get isFirstPlayer () :Boolean { return (localPlayerId == 0); }
