@@ -112,7 +112,7 @@ public class Controller
 
     /** Signals that the currently selected word is a candidate for scoring.
      *  It will be matched against the dictionary, and added to the model.
-     *  @throws TanglewordError if choice is completely bogus.
+     *  @throws TangleWordError if choice is completely bogus.
      */
     public function tryScoreWord (word :String) :void
     {
@@ -121,12 +121,12 @@ public class Controller
 
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < _minWordLength) {
-            throw new TanglewordError("Words must be at least " + _minWordLength + " letters.");
+            throw new TangleWordError("Words must be at least " + _minWordLength + " letters.");
         }
 
         // Check if this word exists on the board
         if ( ! _model.wordExistsOnBoard(word)) {
-            throw new TanglewordError(word + " is not on the board!");
+            throw new TangleWordError(word + " is not on the board!");
         }
 
         // This is the callback that gets called after the word is successfully

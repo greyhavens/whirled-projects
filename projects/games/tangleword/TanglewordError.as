@@ -6,9 +6,9 @@ package
  * exist on the board, or is too short, or some other reason
  * that prevented Tangleword from sending out the word for validation.
  */
-public class TanglewordError extends Error
+public class TangleWordError extends Error
 {
-    public function TanglewordError(msg :String)
+    public function TangleWordError(msg :String)
     {
         super(msg);
     }
