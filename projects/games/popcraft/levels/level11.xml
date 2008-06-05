@@ -2,25 +2,25 @@
     <Level
         parDays="1"
         backgroundName="Level1"
-        introText="You enlisted the aid of Pigsley, your most loyal sycophant, to topple your enemies."
+        introText="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         disableDiurnalCycle="false"
         playerName="Jack"
-        playerBaseHealth="120">
+        playerBaseHealth="150">
 
-        <XGameDataOverride
+        <GameDataOverride
             spellDropScatterMin="15"
             spellDropScatterMax="30">
             <GameSizes>
                 <GameSize numPlayers="4" customSpellDropLocation="true">
-                    <BaseLocation x="70" y="185"/>
-                    <BaseLocation x="642" y="185"/>
-                    <BaseLocation x="590" y="90"/>
-                    <BaseLocation x="590" y="325"/>
-                    <CustomSpellDropLocation x="250" y="150"/>
+                    <BaseLocation x="70" y="145"/>
+                    <BaseLocation x="70" y="245"/>
+                    <BaseLocation x="652" y="85"/>
+	                <BaseLocation x="652" y="315"/>
+                    <CustomSpellDropLocation x="350" y="150"/>
                 </GameSize>
             </GameSizes>
-        </XGameDataOverride>
+        </GameDataOverride>
 
         <InitialResources/>
 
@@ -40,50 +40,107 @@
 
         <Computer
             playerName="Pigsley"
-            baseHealth="120"
+            baseHealth="100"
             team="0">
             <StartingSpells/>
+
+            <RepeatingDays>
+                <Day
+                    repeatWaves="true"
+                    spellDropCourierGroupSizeMin="0"
+                    spellDropCourierGroupSizeMax="0">
+
+                    <Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Sam"><Unit type="grunt" count="1"/></Wave>
+					<Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Sam"><Unit type="grunt" count="1"/></Wave>
+					<Wave delayBefore="20"/>
+                </Day>
+
+            </RepeatingDays>
         </Computer>
 
         <Computer
             playerName="Ralph"
-            baseHealth="120"
+            baseHealth="150"
             team="1">
             <StartingSpells/>
-            <InitialDays>
-                <Day repeatWaves="false"
-                    spellDropCourierGroupSizeMin="0"
-                    spellDropCourierGroupSizeMax="0">
-                </Day>
-            </InitialDays>
             <RepeatingDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="6"
                     spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+				
+					<Wave absoluteDelay="3" targetPlayerName="Jack"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="12" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="35" spellCastChance="1" targetPlayerName="Jack"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="60" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="62" targetPlayerName="Pigsley"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="74" targetPlayerName="Jack"><Unit type="heavy" count="2"/></Wave>
+					<Wave absoluteDelay="75" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="85" spellCastChance="1" targetPlayerName="Jack"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="100" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="102" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
+				</Day>
+		        <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="4"
+                    noticeSpellDropAfterMax="7"
+                    spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
+
+					<Wave absoluteDelay="2" targetPlayerName="Jack"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="5" targetPlayerName="Pigsley"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="12" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="18" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="3"/></Wave>
+					<Wave absoluteDelay="19" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="34" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="35" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="100" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="102" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>
 
         <Computer
             playerName="Sam"
-            baseHealth="80"
+            baseHealth="150"
             team="1">
             <StartingSpells/>
-            <InitialDays>
-                <Day repeatWaves="false"
-                    spellDropCourierGroupSizeMin="0"
-                    spellDropCourierGroupSizeMax="0">
-                </Day>
-            </InitialDays>
             <RepeatingDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="5"
+                    noticeSpellDropAfterMin="4"
                     noticeSpellDropAfterMax="7"
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
+
+					<Wave absoluteDelay="2" targetPlayerName="Jack"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="5" targetPlayerName="Jack"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="12" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="18" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="3"/></Wave>
+					<Wave absoluteDelay="19" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="34" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="35" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="100" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="102" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
                 </Day>
+		        <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="6"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+					<Wave absoluteDelay="3" targetPlayerName="Jack"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="12" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="35" spellCastChance="1" targetPlayerName="Jack"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="60" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="62" targetPlayerName="Pigsley"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="74" targetPlayerName="Jack"><Unit type="heavy" count="2"/></Wave>
+					<Wave absoluteDelay="75" spellCastChance="1" targetPlayerName="Pigsley"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="85" spellCastChance="1" targetPlayerName="Jack"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="100" spellCastChance="1" targetPlayerName="Jack"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="102" spellCastChance="1" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
+				</Day>
             </RepeatingDays>
         </Computer>
 
