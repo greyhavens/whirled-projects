@@ -2,14 +2,14 @@ package popcraft.sp {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.battle.view.UnitAnimationFactory;
@@ -19,7 +19,7 @@ public class CreatureIntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        var creatureData :UnitData = GameContext.gameData.units[GameContext.spLevel.newCreatureType];
+        _creatureData = GameContext.gameData.units[GameContext.spLevel.newCreatureType];
 
         // draw dim background
         var dimness :Shape = new Shape();
@@ -30,59 +30,26 @@ public class CreatureIntroMode extends AppMode
 
         this.modeSprite.addChild(dimness);
 
-        var bgSprite :Sprite = new Sprite();
-        g = bgSprite.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, 450, 1);
-        g.endFill();
+        _movie = SwfResource.instantiateMovieClip("manual", "manual");
+        _movie.x = Constants.SCREEN_DIMS.x * 0.5;
+        _movie.y = Constants.SCREEN_DIMS.y * 0.5;
+        this.modeSprite.addChild(_movie);
 
-        this.modeSprite.addChild(bgSprite);
-
-        // creature name
-        var tfName :TextField = new TextField();
-        tfName.selectable = false;
-        tfName.autoSize = TextFieldAutoSize.CENTER;
-        tfName.scaleX = 2;
-        tfName.scaleY = 2;
-        tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
-        tfName.y = 20;
-
-        tfName.text = "The " + creatureData.displayName;
-
-        bgSprite.addChild(tfName);
+        var leftPage :MovieClip = _movie["pageL"];
+        var rightPage :MovieClip = _movie["pageR"];
 
         // creature animation
         var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
-            creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
+            _creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
         if (null == creatureAnim) {
             creatureAnim = UnitAnimationFactory.instantiateUnitAnimation(
-                creatureData, GameContext.localPlayerInfo.playerColor, "stand_SW");
+                _creatureData, GameContext.localPlayerInfo.playerColor, "stand_SW");
         }
 
-        if (null != creatureAnim) {
-            creatureAnim.scaleX = 1.5;
-            creatureAnim.scaleY = 1.5;
-            creatureAnim.x = 400;
-            creatureAnim.y = 150;
-
-            bgSprite.addChild(creatureAnim);
-        }
+        MovieClip(rightPage["image"]).addChild(creatureAnim);
 
         // creature intro text
-        var tfDesc :TextField = new TextField();
-        tfDesc.selectable = false;
-        tfDesc.multiline = true;
-        tfDesc.wordWrap = true;
-        tfDesc.autoSize = TextFieldAutoSize.LEFT;
-        tfDesc.width = 300;
-        tfDesc.scaleX = 1.2;
-        tfDesc.scaleY = 1.2;
-        tfDesc.x = 12;
-        tfDesc.y = tfName.y + tfName.height + 3;
-
-        tfDesc.text = creatureData.introText;
-
-        bgSprite.addChild(tfDesc);
+        TextField(leftPage["text"]).text = _creatureData.introText;
 
         // Play button
         var button :SimpleTextButton = new SimpleTextButton("OK");
@@ -91,19 +58,10 @@ public class CreatureIntroMode extends AppMode
                 AppContext.mainLoop.popMode();
             });
 
-        button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = tfDesc.y + tfDesc.height + 8;
+        button.x = (Constants.SCREEN_DIMS.x * 0.5) - (button.width * 0.5);
+        button.y = 400;
 
-        bgSprite.addChild(button);
-
-        // draw the background
-        g = bgSprite.graphics;
-        g.beginFill(0xCCCCCC);
-        g.drawRect(0, 0, 450, bgSprite.height + 20);
-        g.endFill();
-
-        bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
-        bgSprite.y = (Constants.SCREEN_DIMS.y * 0.5) - (bgSprite.height * 0.5);
+        this.modeSprite.addChild(button);
 
         this.modeSprite.visible = false;
     }
@@ -111,12 +69,17 @@ public class CreatureIntroMode extends AppMode
     override protected function enter () :void
     {
         this.modeSprite.visible = true;
+
+        AudioManager.instance.playSoundNamed("sfx_create_" + _creatureData.name);
     }
 
     override protected function exit () :void
     {
         this.modeSprite.visible = false;
     }
+
+    protected var _movie :MovieClip;
+    protected var _creatureData :UnitData;
 }
 
 }
