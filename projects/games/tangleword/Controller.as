@@ -112,35 +112,34 @@ public class Controller
 
     /** Signals that the currently selected word is a candidate for scoring.
      *  It will be matched against the dictionary, and added to the model.
-     *  @return True if this word passed initial validation and was sent to the server,
-     *          otherwise false.
+     *  @throws TanglewordError if choice is completely bogus.
      */
-    public function tryScoreWord (word :String) :Boolean
+    public function tryScoreWord (word :String) :void
     {
+        // Normalize the word
+        word = word.toLowerCase();
+
+        // First, check to make sure it's of the correct length (in characters)
+        if (word.length < _minWordLength) {
+            throw new TanglewordError("Words must be at least " + _minWordLength + " letters.");
+        }
+
+        // Check if this word exists on the board
+        if ( ! _model.wordExistsOnBoard(word)) {
+            throw new TanglewordError(word + " is not on the board!");
+        }
+
         // This is the callback that gets called after the word is successfully
         // checked against the dictionary
         var success :Function = function (word :String, isvalid :Boolean) :void {
-            // Check if this word exists on the board
-            isvalid = isvalid && _model.wordExistsOnBoard(word.toLowerCase());
-
             // Finally, process the new word. Notice that we don't check if it's already
             // been claimed - the model will take care of that, because there's a network
             // round-trip involved, and therefore potential of contention.
             _model.addScore(word, getWordScore(word), isvalid);
         }
         
-        // First, check to make sure it's of the correct length (in characters)
-        if (word.length < _minWordLength) {
-            return false;
-        }
-
-        // Normalize the word
-        word = word.toLowerCase();
-
         // Now check if it's an actual word.
         _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
-
-        return true;
     }
             
     /**

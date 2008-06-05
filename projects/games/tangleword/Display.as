@@ -224,10 +224,11 @@ public class Display extends Sprite
 
     protected function submitWord () :void
     {
-        if (_controller.tryScoreWord(_wordfield.text)) {
-            updateLetterSelection([ ]);
-        } else {
-            _logger.log("Words must be at least " + _controller.minWordLength + " letters.", Logger.INVALID_WORD);
+        try {
+            _controller.tryScoreWord(_wordfield.text);
+        }
+        catch (e :TanglewordError) {
+            _logger.log(e.message, Logger.INVALID_WORD);
         }
     }
 
