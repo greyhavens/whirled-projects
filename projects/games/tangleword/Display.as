@@ -88,7 +88,7 @@ public class Display extends Sprite
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
 
         _logger.log();
-        _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "));
+        _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_HEADER);
         logSummary(model, model.getWords());
         _logger.log("Next round will begin shortly...");
 
@@ -171,13 +171,6 @@ public class Display extends Sprite
     public function logRoundStarted () :void
     {
         _logger.log("New round started!");
-    }
-
-    /** Adds a round summary message */
-    public function logRoundEnded (points :Number, flow :Number) :void
-    {
-        _logger.log("Round ended: " + points + " points");
-        _logger.log("You received " + flow + " flow!");
     }
 
     public function logSummary (model :Model, words :Object) :void

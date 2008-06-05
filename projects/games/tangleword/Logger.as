@@ -23,7 +23,8 @@ public class Logger extends ScrollPane
 
     public static const FOUND_WORD_FIRST :String = "foundFirst",
                         FOUND_WORD :String = "found",
-                        INVALID_WORD :String = "invalid";
+                        INVALID_WORD :String = "invalid",
+                        SUMMARY_HEADER :String = "summaryHeader";
     
     // Set up the default skin for scroll pane
     DefaultScrollPaneSkins;
@@ -46,30 +47,39 @@ public class Logger extends ScrollPane
 
         _text.styleSheet = new StyleSheet();
 
-        var style :Object, common :Object = {
-                fontSize: 10,
-                fontFamily: "Verdana"
-            };
+        // Init the default style
+        addStyle({}, "");
 
-        _text.styleSheet.setStyle(".", common);
-
-        // A bit of a hack to get around the fact that <span>s don't
-        // inherit style properties like true CSS, so do a hard copy
-        Util.init(style = {
+        addStyle({
                 color: "#0000ff",
                 fontWeight: "bold"
-            }, common);
-        _text.styleSheet.setStyle('.'+FOUND_WORD_FIRST, style);
+            }, FOUND_WORD_FIRST);
 
-        Util.init(style = {
+        addStyle({
                 color: "#0000ff"
-            }, common);
-        _text.styleSheet.setStyle('.'+FOUND_WORD, style);
+            }, FOUND_WORD);
 
-        Util.init(style = {
+        addStyle({
                 color: "#ff0000"
-            }, common);
-        _text.styleSheet.setStyle('.'+INVALID_WORD, style);
+            }, INVALID_WORD);
+
+        addStyle({
+                fontSize: 14,
+                fontWeight: "bold"
+            }, SUMMARY_HEADER);
+    }
+
+    /** Convenience method to set up a style for the textfield. */
+    public function addStyle(css :Object, styleClass :String) :void
+    {
+        var style :Object = {};
+
+        Util.init(style, css, {
+                fontSize: 10,
+                fontFamily: "Verdana"
+            });
+
+        _text.styleSheet.setStyle("."+styleClass, style);
     }
 
     /** Adds a line of text to the bottom of the logger */

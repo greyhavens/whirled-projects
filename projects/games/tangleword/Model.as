@@ -32,7 +32,6 @@ public class Model
         _display = display;
 
         // Register for updates
-        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         
         // Initialize game data storage
@@ -43,7 +42,6 @@ public class Model
 
     public function handleUnload (event :Event) :void
     {
-        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, flowAwarded);
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
     }        
     
@@ -259,15 +257,6 @@ public class Model
         var letters :Array = _gameCtrl.net.get(LETTER_SET) as Array;
         if (letters != null) {
             setGameBoard(letters);
-        }
-    }
-
-    /** Called when flow is awarded at the end of the round. */
-    protected function flowAwarded (event :CoinsAwardedEvent) :void
-    {
-        var roundScore :int = _scoreboard.getScore(_gameCtrl.game.getMyId());
-        if (roundScore > 0) {
-            _display.logRoundEnded(roundScore, event.amount);
         }
     }
 
