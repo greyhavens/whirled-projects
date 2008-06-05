@@ -65,7 +65,7 @@ public class SpellIntroMode extends AppMode
         tfDesc.multiline = true;
         tfDesc.wordWrap = true;
         tfDesc.autoSize = TextFieldAutoSize.LEFT;
-        tfDesc.width = 100;
+        tfDesc.width = 150;
         tfDesc.x = 12;
         tfDesc.y = tfName.y + tfName.height + 3;
 

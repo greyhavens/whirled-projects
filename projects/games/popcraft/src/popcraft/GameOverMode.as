@@ -9,9 +9,9 @@ import flash.text.TextFieldAutoSize;
 
 public class GameOverMode extends AppMode
 {
-    public function GameOverMode (winningPlayer :PlayerInfo)
+    public function GameOverMode (winningTeam :uint)
     {
-        _winningPlayer = winningPlayer;
+        _winningTeam = winningTeam;
     }
 
     override protected function setup () :void
@@ -23,11 +23,26 @@ public class GameOverMode extends AppMode
 
         this.modeSprite.addChild(rect);
 
-        var gameOverText :String;
-        if (null == _winningPlayer) {
+        var winningPlayerNames :Array = [];
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (!playerInfo.leftGame && playerInfo.teamId == _winningTeam) {
+                winningPlayerNames.push(playerInfo.playerName);
+            }
+        }
+
+        var gameOverText :String = ""
+        if (winningPlayerNames.length == 0) {
             gameOverText = "No winner!";
+        } else if (winningPlayerNames.length == 1) {
+            gameOverText = String(winningPlayerNames[0]) + " wins the game!";
         } else {
-            gameOverText = _winningPlayer.playerName + " is the winner!";
+            for (var i :int = 0; i < winningPlayerNames.length; ++i) {
+                gameOverText += String(winningPlayerNames[i]);
+                if (i < winningPlayerNames.length - 1) {
+                    gameOverText += ", ";
+                }
+            }
+            gameOverText += " win the game!";
         }
 
         var text :TextField = new TextField();
@@ -49,13 +64,13 @@ public class GameOverMode extends AppMode
     override protected function enter () :void
     {
         if (!_playedSound) {
-            var localPlayerWon :Boolean = _winningPlayer.playerId == GameContext.localPlayerId;
+            var localPlayerWon :Boolean = (GameContext.localPlayerInfo.teamId == _winningTeam);
             AudioManager.instance.playSoundNamed(localPlayerWon ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
         }
     }
 
-    protected var _winningPlayer :PlayerInfo;
+    protected var _winningTeam :uint;
     protected var _playedSound :Boolean;
 
 }

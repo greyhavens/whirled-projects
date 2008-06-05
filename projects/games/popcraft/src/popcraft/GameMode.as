@@ -3,7 +3,6 @@ package popcraft {
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
-import com.threerings.util.HashSet;
 import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.threerings.util.RingBuffer;
@@ -475,28 +474,29 @@ public class GameMode extends AppMode
         }
 
         // The game is over if there's only one team standing
-        var liveTeams :HashSet = new HashSet();
-        var livePlayer :PlayerInfo;
-        var livePlayerCount :int;
-
+        var liveTeamId :int = -1;
+        var gameOver :Boolean = true;
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (!playerInfo.leftGame && playerInfo.isAlive) {
-                livePlayer = playerInfo;
-                livePlayerCount++;
-
-                liveTeams.add(playerInfo.teamId);
-                if (liveTeams.size() > 1) {
-                    break;
+                var playerTeam :int = playerInfo.teamId;
+                if (playerTeam != liveTeamId) {
+                    if (liveTeamId == -1) {
+                        liveTeamId = playerTeam;
+                    } else {
+                        // there's more than one live team
+                        gameOver = false;
+                        break;
+                    }
                 }
             }
         }
 
-        if (liveTeams.size() <= 1) {
+        if (gameOver) {
             // show the appropriate game over screen
             if (GameContext.isMultiplayer) {
-                MainLoop.instance.changeMode(new GameOverMode(livePlayer));
+                MainLoop.instance.changeMode(new GameOverMode(liveTeamId));
             } else {
-                var success :Boolean = (null != livePlayer && livePlayer.playerId == GameContext.localPlayerId);
+                var success :Boolean = (liveTeamId == GameContext.localPlayerInfo.teamId);
 
                 // save our progress if we were successful
                 if (success) {
