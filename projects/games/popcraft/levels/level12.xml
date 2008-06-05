@@ -2,18 +2,18 @@
     <Level
         parDays="1"
         backgroundName="Level1"
-        introText=""
+        introText="A group of Ralph's henchmen has broken into your resource reserves and made off with large amounts of flesh and blood. You'll have an easier time harvesting energy and scrap, but you'll be hard-pressed to create a Flesh Behemoth."
         disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="150">
 
         <GameDataOverride>
-	        <Resources>
-	            <Resource type="white" rarity="0.5"/>
-	            <Resource type="red" rarity="0.5"/>
-	            <Resource type="blue" rarity="1"/>
-	            <Resource type="yellow" rarity="1"/>
-	        </Resources>
+            <Resources>
+                <Resource type="white" rarity="0.5"/>
+                <Resource type="red" rarity="0.5"/>
+                <Resource type="blue" rarity="1"/>
+                <Resource type="yellow" rarity="1"/>
+            </Resources>
         </GameDataOverride>
 
         <InitialResources/>
@@ -42,7 +42,31 @@
                     noticeSpellDropAfterMin="3"
                     noticeSpellDropAfterMax="6"
                     spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    spellDropCourierGroupSizeMax="3">
+
+					<Wave absoluteDelay="2" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="5"><Unit type="heavy" count="2"/></Wave>
+					<Wave absoluteDelay="6" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="8" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+					
+					<Wave absoluteDelay="35" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="38"><Unit type="heavy" count="1"/></Wave>
+					<Wave absoluteDelay="39" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="40"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="41" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+					
+					<Wave absoluteDelay="50"><Unit type="sapper" count="1"/></Wave>
+					
+					<Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="60" spellCastChance="1"><Unit type="grunt" count="5"/></Wave>
+					<Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
+					
+					<Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
+					
+					<Wave absoluteDelay="79"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="80" spellCastChance="1"><Unit type="grunt" count="7"/></Wave>
+					<Wave absoluteDelay="81"><Unit type="sapper" count="1"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>
