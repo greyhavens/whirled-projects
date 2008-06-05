@@ -8,7 +8,7 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 
-import popcraft.GameContext;
+import popcraft.*;
 import popcraft.data.SpellData;
 
 public class SpellButton extends SceneObject
@@ -37,6 +37,14 @@ public class SpellButton extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _movie;
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        if (_spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
+            // if this is a creature spell, don't allow it to be clicked during the day
+            _movie.mouseEnabled = GameContext.diurnalCycle.isNight;
+        }
     }
 
     public function get clickableObject () :InteractiveObject

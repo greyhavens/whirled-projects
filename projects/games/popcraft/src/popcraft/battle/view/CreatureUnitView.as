@@ -109,24 +109,15 @@ public class CreatureUnitView extends SceneObject
         _sprite.addChild(_unitSpellIconParent);
 
         // create new spell icons, arranged above the health meter
-        var icons :Array = [];
-        var totalWidth :Number = 0;
+        var yOffset :Number = -_sprite.height - _healthMeter.height;
         for each (var spell :SpellData in spellSet.spells) {
-            var icon :MovieClip = SwfResource.instantiateMovieClip("infusions", "infusion_" + spell.name);
+            var icon :MovieClip = SwfResource.instantiateMovieClip("infusions", "unit_" + spell.name);
+            icon.x = 0;
+            icon.y = yOffset;
             icon.cacheAsBitmap = true;
-            if (null != icon) {
-                totalWidth += icon.width;
-                icons.push(icon);
-            }
-        }
-
-        var yLoc :Number = -_sprite.height - _healthMeter.height;
-        var xLoc :Number = -(totalWidth * 0.5);
-        for each (icon in icons) {
-            icon.x = xLoc;
-            icon.y = yLoc;
-            xLoc += icon.width;
             _unitSpellIconParent.addChild(icon);
+
+            yOffset -= 10;
         }
     }
 
