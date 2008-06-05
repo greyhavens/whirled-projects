@@ -13,14 +13,12 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: Resources.DEFAULT_GAME_DATA });
 
         // gfx
+        rm.pendResourceLoad("swf", "manual",  { embeddedClass: Resources.SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 
         rm.pendResourceLoad("image", "base",      { embeddedClass: Resources.IMAGE_BASE });
         rm.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: Resources.IMAGE_TARGETBASEBADGE });
         rm.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: Resources.IMAGE_FRIENDLYBASEBADGE });
-        rm.pendResourceLoad("image", "bloodlust_icon", { embeddedClass: Resources.IMAGE_BLOODLUSTICON });
-        rm.pendResourceLoad("image", "rigormortis_icon", { embeddedClass: Resources.IMAGE_RIGORMORTISICON });
-        rm.pendResourceLoad("image", "shuffle_icon", { embeddedClass: Resources.IMAGE_PUZZLERESETICON });
 
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });

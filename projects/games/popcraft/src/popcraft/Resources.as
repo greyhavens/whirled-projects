@@ -7,6 +7,9 @@ public class Resources
     public static const DEFAULT_GAME_DATA :Class;
 
     // gfx
+    [Embed(source="../../rsrc/manual.swf", mimeType="application/octet-stream")]
+    public static const SWF_MANUAL :Class;
+
     [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
@@ -18,15 +21,6 @@ public class Resources
 
     [Embed(source="../../rsrc/smiley.png", mimeType="application/octet-stream")]
     public static const IMAGE_FRIENDLYBASEBADGE :Class;
-
-    [Embed(source="../../rsrc/bloodlust_icon.png", mimeType="application/octet-stream")]
-    public static const IMAGE_BLOODLUSTICON :Class;
-
-    [Embed(source="../../rsrc/rigormortis_icon.png", mimeType="application/octet-stream")]
-    public static const IMAGE_RIGORMORTISICON :Class;
-
-    [Embed(source="../../rsrc/puzzlereset_icon.png", mimeType="application/octet-stream")]
-    public static const IMAGE_PUZZLERESETICON :Class;
 
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     public static const SWF_GRUNT :Class;
