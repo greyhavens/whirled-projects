@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.events.Event;
 
+import popcraft.GameContext;
 import popcraft.data.*;
 
 public class CreatureSpellSet extends SimObject
@@ -39,7 +40,10 @@ public class CreatureSpellSet extends SimObject
         Assert.isTrue(i >= 0);
         _spells.splice(i, 1);
 
-        this.updateSpellAggregate()
+        this.updateSpellAggregate();
+
+        // @TODO - move this to a view class
+        GameContext.playGameSound("sfx_spellexpire");
     }
 
     protected function isSpellActive (spellType :uint) :Boolean

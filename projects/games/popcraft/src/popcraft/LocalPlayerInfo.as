@@ -4,6 +4,7 @@ import com.threerings.util.Assert;
 
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.ui.GotSpellEvent;
 
 /**
  * Extends PlayerInfo to include data that's private to the local player.
@@ -86,7 +87,10 @@ public class LocalPlayerInfo extends PlayerInfo
 
     override public function addSpell (spellType :uint) :void
     {
-        _spells[spellType] = this.getSpellCount(spellType) + 1;
+        if (this.totalSpellCount < GameContext.gameData.maxSpells) {
+            _spells[spellType] = this.getSpellCount(spellType) + 1;
+            this.dispatchEvent(new GotSpellEvent(spellType));
+        }
     }
 
     override public function spellCast (spellType :uint) :void
@@ -105,6 +109,16 @@ public class LocalPlayerInfo extends PlayerInfo
     public function getSpellCount (spellType :uint) :uint
     {
         return _spells[spellType];
+    }
+
+    public function get totalSpellCount () :int
+    {
+        var totalCount :int;
+        for each (var spellCount :uint in _spells) {
+            totalCount += spellCount;
+        }
+
+        return totalCount;
     }
 
     public function get totalResourcesEarned () :int

@@ -15,7 +15,8 @@
         maxLosingPlayerSpellDropShift="0.4"
         resourceMultiplierChance="0.033"
         minResourceAmount="0"
-        maxResourceAmount="1000">
+        maxResourceAmount="1000"
+        maxSpells="8">
 
         <PuzzleClearValueTable>
             <Index value="-20"/>
@@ -77,7 +78,7 @@ The reanimation process for Street-Walkers calls for several pounds of Flesh and
                 type="heavy"
                 displayName="Handy Man"
                 description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
-                introText="The Handy Man is the modern homeowner's solution to any electricity-, plumbing-, or home security-related problem. Malfunctioning water closets and phonographs are no match for the Handy Man’s ability to deftly wield and operate a multitude of tools simultaneously. Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands, transforming them into projectiles that can be heaved great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion. 
+                introText="The Handy Man is the modern homeowner's solution to any electricity-, plumbing-, or home security-related problem. Malfunctioning water closets and phonographs are no match for the Handy Man’s ability to deftly wield and operate a multitude of tools simultaneously. Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands, transforming them into projectiles that can be heaved great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion.
 
 The Handy Man's regenerative extremities and multitude of limbs require an extensive and complex circulatory system. Students interested in the reanimation of Handy Men are advised to keep a healthy supply of Blood and Artifice close at hand."
                 baseMoveSpeed="50"

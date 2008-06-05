@@ -15,6 +15,7 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
+import popcraft.data.SpellData;
 import popcraft.sp.PauseMode;
 
 public class DashboardView extends SceneObject
@@ -85,12 +86,62 @@ public class DashboardView extends SceneObject
             pauseButton.visible = false;
         }
 
+        // _spellSlots keeps track of whether the individual spell slots are occupied
+        // or empty
+        for (i = 0; i < GameContext.gameData.maxSpells; ++i) {
+            _spellSlots.push(false);
+        }
+
+        // we need to know when the player gets a spell
+        GameContext.localPlayerInfo.addEventListener(GotSpellEvent.GOT_SPELL, onGotSpell);
+
         this.updateResourceMeters();
     }
 
     override protected function addedToDB () :void
     {
         this.db.addObject(_infoPanel);
+    }
+
+    protected function onGotSpell (e :GotSpellEvent) :void
+    {
+        // find the first free spell slot to put this spell in
+        var slot :int = -1;
+        for (var i :int = 0; i < _spellSlots.length; ++i) {
+            if (!Boolean(_spellSlots[i])) {
+                slot = i;
+                break;
+            }
+        }
+
+        if (slot < 0) {
+            // this should never happen
+            return;
+        }
+
+        _spellSlots[slot] = true; // occupy the slot
+
+        // create a new icon
+        var spellButton :SpellButton = new SpellButton(e.spellType, slot);
+        spellButton.clickableObject.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void { onSpellButtonClicked(spellButton); });
+
+        this.db.addObject(spellButton, _movie);
+    }
+
+    protected function onSpellButtonClicked (spellButton :SpellButton) :void
+    {
+        if (!spellButton.isLiveObject) {
+            // prevent unlikely but possible multiple clicks on a button
+            return;
+        }
+
+        GameContext.gameMode.castSpell(GameContext.localPlayerId, spellButton.spellType);
+
+        // un-occupy the slot
+        _spellSlots[spellButton.slot] = false;
+
+        spellButton.destroySelf();
     }
 
     public function showInfoText (text :String) :void
@@ -180,6 +231,7 @@ public class DashboardView extends SceneObject
     protected var _oldResourceAmounts :Array = [];
     protected var _showingDeathPanel :Boolean;
     protected var _infoPanel :InfoPanel;
+    protected var _spellSlots :Array = []; // of Booleans
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
@@ -198,12 +250,15 @@ public class DashboardView extends SceneObject
 }
 
 }
+
 import flash.display.MovieClip;
 import flash.display.DisplayObject;
 import flash.text.TextField;
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.*;
+import flash.display.InteractiveObject;
 
 class InfoPanel extends SceneObject
 {

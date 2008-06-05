@@ -53,6 +53,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("sound", "sfx_rigormortis", { embeddedClass: Resources.SOUND_RIGORMORTIS, priority: 5 });
         rm.pendResourceLoad("sound", "sfx_bloodlust", { embeddedClass: Resources.SOUND_BLOODLUST, priority: 5 });
         rm.pendResourceLoad("sound", "sfx_puzzlereset", { embeddedClass: Resources.SOUND_PUZZLERESET, priority: 5 });
+        rm.pendResourceLoad("sound", "sfx_spellexpire", { embeddedClass: Resources.SOUND_SPELLEXPIRE, priority: 4 });
 
         rm.pendResourceLoad("sound", "sfx_losegame", { embeddedClass: Resources.SOUND_LOSEGAME });
         rm.pendResourceLoad("sound", "sfx_wingame", { embeddedClass: Resources.SOUND_WINGAME });

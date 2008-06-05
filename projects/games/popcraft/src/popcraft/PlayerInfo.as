@@ -3,12 +3,14 @@ package popcraft {
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObjectRef;
 
+import flash.events.EventDispatcher;
+
 import popcraft.battle.PlayerBaseUnit;
 
 /**
  * Encapsulates public information about a player in the game.
  */
-public class PlayerInfo
+public class PlayerInfo extends EventDispatcher
 {
     public function PlayerInfo (playerId :uint, teamId :uint, playerName :String = null)
     {

@@ -23,7 +23,7 @@ public class Constants
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_DISABLE_DIURNAL_CYCLE :Boolean = false;
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
+    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
 
     /* Screen layout */
     public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);

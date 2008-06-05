@@ -261,8 +261,6 @@ public class GameMode extends AppMode
         this.addObject(puzzleBoard);
 
         GameContext.puzzleBoard = puzzleBoard;
-
-        this.addObject(new SpellCastButtonManager());
     }
 
     protected function setupBattle () :void

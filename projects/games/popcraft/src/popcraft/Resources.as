@@ -83,6 +83,9 @@ public class Resources
     [Embed(source="../../rsrc/audio/spell_puzzle_mix.mp3")]
     public static const SOUND_PUZZLERESET :Class;
 
+    [Embed(source="../../rsrc/audio/spell_expire.mp3")]
+    public static const SOUND_SPELLEXPIRE :Class;
+
     [Embed(source="../../rsrc/audio/MONSTER_HISSING_01_IN.mp3")]
     public static const SOUND_GRUNT :Class;
 
