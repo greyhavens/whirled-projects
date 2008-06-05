@@ -199,9 +199,9 @@ public class Display extends Sprite
         _timerbox.text = mm + ":" + ss;
 
         // check if we need to start hiding the inter-round display
-        if (! getEnableState() && int(remainingsecs) == Stats.HIDE_DELAY) {
-            _stats.hide();
-        }
+        //if (! getEnableState() && int(remainingsecs) == Stats.HIDE_DELAY) {
+        //    _stats.hide();
+        //}
     }
     
     // PRIVATE EVENT HANDLERS
@@ -286,6 +286,7 @@ public class Display extends Sprite
         _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.type = TextFieldType.INPUT;
         _wordfield.text = INPUT_HINT;
+        _wordfield.restrict = "A-Za-z";
 
         var callback :Function = function (... ignore): void {
             _wordfield.text = "";
@@ -320,8 +321,8 @@ public class Display extends Sprite
         _splash = new Splash();
         addChild(_splash);
 
-        _stats = new Stats(_gameCtrl);
-        addChild(_stats);
+        //_stats = new Stats(_gameCtrl);
+        //addChild(_stats);
     }
 
     /** Helper function that copies x, y, width and height properties
@@ -463,7 +464,7 @@ public class Display extends Sprite
     private var _splash :Splash;
 
     /** Stats screen */
-    private var _stats :Stats;
+    //private var _stats :Stats;
 
     protected static const INPUT_HINT :String = "< type here >";
 }
