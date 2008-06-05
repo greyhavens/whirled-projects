@@ -1,0 +1,52 @@
+<root>
+    <Level
+        parDays="1"
+        backgroundName="Level1"
+        introText=""
+        disableDiurnalCycle="false"
+        playerName="Jack"
+        playerBaseHealth="150">
+
+        <GameDataOverride>
+	        <Resources>
+	            <Resource type="white" rarity="0.5"/>
+	            <Resource type="red" rarity="0.5"/>
+	            <Resource type="blue" rarity="1"/>
+	            <Resource type="yellow" rarity="1"/>
+	        </Resources>
+        </GameDataOverride>
+
+        <InitialResources/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+            <Unit type="colossus"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+            <Spell type="bloodlust"/>
+            <Spell type="shuffle"/>
+        </AvailableSpells>
+
+        <Computer
+            playerName="Ralph"
+            baseHealth="150"
+            team="1">
+            <StartingSpells/>
+            <RepeatingDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="3"
+                    noticeSpellDropAfterMax="6"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>

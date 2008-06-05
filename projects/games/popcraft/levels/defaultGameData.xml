@@ -242,7 +242,7 @@
     </GameData>
 
     <LevelProgression>
-        <Level name="1. Welcome to PopCraft"/>
+        <Level name="1. Reanimation 101"/>
         <Level name="2. The Handy Man"/>
         <Level name="3. The Sun Rises"/>
         <Level name="4. A Boy's Best Friend"/>
@@ -253,6 +253,7 @@
         <Level name="9. Fire Hazard"/>
         <Level name="10. Center of Attention"/>
         <Level name="11. Sidekick"/>
+        <Level name="12. Limited Resources"/>
     </LevelProgression>
 
 </root>
