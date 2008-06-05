@@ -16,6 +16,7 @@ public class Server
     /** Creates a new tic-tac-toe game server. */
     public function Server ()
     {
+        trace("Constructing new tic tac toe server");
         _ctrl = new GameControl (new DisplayObject());
         _ctrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, gameStarted);
@@ -25,46 +26,61 @@ public class Server
 
     protected function gameStarted (event :StateChangedEvent) :void
     {
+        trace("Game started");
+
         var empty :Array = [0,0,0, 0,0,0, 0,0,0];
+
+        trace("Setting empty board");
         _ctrl.net.set(BOARD, empty);
+
+        trace("Starting next turn");
         _ctrl.game.startNextTurn();
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
+        trace("Received message " + event);
+
         if (event.name == MOVE) {
+
             var obj :* = event.value;
+
             if (obj.index < 0 || obj.index >= 9 ||
                 obj.symbol < 1 || obj.symbol > 2 ||
                 _ctrl.net.get(BOARD)[obj.index] != 0) {
+
+                trace("Illegal move " + event);
                 _ctrl.game.systemMessage("Illegal move sent");
                 return;
             }
 
-            _ctrl.net.setAt(BOARD, obj.index, obj.symbol);
+            trace("Setting position " + obj.index + " to " + obj.symbol);
+            _ctrl.net.setAt(BOARD, obj.index, obj.symbol, true);
 
             var losers :Array;
             var winners :Array;
             var players :Array = _ctrl.game.seating.getPlayerIds();
 
-            if (isBoardFull()) {
+            var winningSymbol :int = checkForWins();
+            if (winningSymbol != 0) {
+                trace("Winner is " + winningSymbol);
+                winners = new Array();
+                losers =new  Array();
+                winners.push(players[winningSymbol - 1]);
+                losers.push(players[winningSymbol % 2]);
+
+            } else if (isBoardFull()) {
+                trace("Tie game");
                 winners = players;
                 losers = new Array();
-            }
-            else {
-                var winningSymbol :int = checkForWins();
-                if (winningSymbol == 0) {
-                    _ctrl.game.startNextTurn();
-                }
-                else {
-                    winners = new Array();
-                    losers =new  Array();
-                    winners.push(players[winningSymbol - 1]);
-                    losers.push(players[winningSymbol % 2]);
-                }
+
+            } else {
+                trace("No winner yet, starting next turn");
+                _ctrl.game.startNextTurn();
             }
             
             if (winners != null) {
+                trace("Ending game");
                 _ctrl.game.endGameWithWinners(
                     winners, losers, GameSubControl.WINNERS_TAKE_ALL);
             }
@@ -87,6 +103,7 @@ public class Server
         for (var idx :int = 0; idx < _WINS.length; ++idx) {
             var symbol :int = getThreeInARow(_WINS[idx] as Array);
             if (symbol != 0) {
+                trace("Sending three in a row, indices: " + _WINS[idx]);
                 _ctrl.net.sendMessage(THREE_IN_A_ROW, _WINS[idx]);
                 return symbol;
             }
