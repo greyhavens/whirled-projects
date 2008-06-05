@@ -226,8 +226,7 @@ public class Display extends Sprite
     {
         try {
             _controller.tryScoreWord(_wordfield.text);
-        }
-        catch (e :TangleWordError) {
+        } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }
     }

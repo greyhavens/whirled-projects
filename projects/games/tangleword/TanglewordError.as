@@ -8,7 +8,7 @@ package
  */
 public class TangleWordError extends Error
 {
-    public function TangleWordError(msg :String)
+    public function TangleWordError (msg :String)
     {
         super(msg);
     }
