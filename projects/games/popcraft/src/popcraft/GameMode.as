@@ -347,21 +347,18 @@ public class GameMode extends AppMode
         case KeyboardCodes.B:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_BLOODLUST);
-                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_BLOODLUST);
             }
             break;
 
         case KeyboardCodes.R:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_RIGORMORTIS);
-                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_RIGORMORTIS);
             }
             break;
 
         case KeyboardCodes.P:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_PUZZLERESET);
-                this.castSpell(GameContext.localPlayerId, Constants.SPELL_TYPE_PUZZLERESET);
             }
             break;
 
@@ -786,8 +783,7 @@ public class GameMode extends AppMode
             _messageMgr.sendMessage(new CastCreatureSpellMessage(playerId, spellType));
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
-            GameContext.playGameSound("sfx_puzzlereset");
-            GameContext.puzzleBoard.puzzleReset();
+            GameContext.dashboard.puzzleShuffle();
         }
     }
 

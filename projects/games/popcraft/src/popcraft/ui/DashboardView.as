@@ -2,6 +2,7 @@ package popcraft.ui {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
@@ -15,7 +16,6 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
-import popcraft.data.SpellData;
 import popcraft.sp.PauseMode;
 
 public class DashboardView extends SceneObject
@@ -23,6 +23,8 @@ public class DashboardView extends SceneObject
     public function DashboardView ()
     {
         _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
+        _shuffleMovie = _movie["shuffle"];
+
         var puzzleFrame :MovieClip = this.puzzleFrame;
 
         _movie.cacheAsBitmap = true;
@@ -101,6 +103,22 @@ public class DashboardView extends SceneObject
     override protected function addedToDB () :void
     {
         this.db.addObject(_infoPanel);
+    }
+
+    public function puzzleShuffle () :void
+    {
+        // when the "shuffle" spell is cast, we show an animation in the
+        // Dashboard, and then reset the puzzle
+        _shuffleMovie.gotoAndPlay("go");
+
+        this.addNamedTask(
+            PUZZLE_SHUFFLE_TASK,
+            new SerialTask(
+                new WaitForFrameTask("swap", _shuffleMovie),
+                new FunctionTask(function () :void { GameContext.puzzleBoard.puzzleReset(false); })),
+            true);
+
+        GameContext.playGameSound("sfx_puzzlereset");
     }
 
     protected function onGotSpell (e :GotSpellEvent) :void
@@ -226,12 +244,15 @@ public class DashboardView extends SceneObject
     }
 
     protected var _movie :MovieClip;
+    protected var _shuffleMovie :MovieClip;
     protected var _resourceText :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
     protected var _showingDeathPanel :Boolean;
     protected var _infoPanel :InfoPanel;
     protected var _spellSlots :Array = []; // of Booleans
+
+    protected static const PUZZLE_SHUFFLE_TASK :String = "PuzzleShuffle";
 
     protected static const RESOURCE_TEXT_NAMES :Array =
         [ "resource_2", "resource_1", "resource_4", "resource_3" ];
