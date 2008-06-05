@@ -33,7 +33,7 @@ public class CreatureIntroMode extends AppMode
         var bgSprite :Sprite = new Sprite();
         g = bgSprite.graphics;
         g.beginFill(0);
-        g.drawRect(0, 0, 250, 1);
+        g.drawRect(0, 0, 450, 1);
         g.endFill();
 
         this.modeSprite.addChild(bgSprite);
@@ -62,7 +62,7 @@ public class CreatureIntroMode extends AppMode
         if (null != creatureAnim) {
             creatureAnim.scaleX = 1.5;
             creatureAnim.scaleY = 1.5;
-            creatureAnim.x = 200;
+            creatureAnim.x = 400;
             creatureAnim.y = 150;
 
             bgSprite.addChild(creatureAnim);
@@ -74,7 +74,9 @@ public class CreatureIntroMode extends AppMode
         tfDesc.multiline = true;
         tfDesc.wordWrap = true;
         tfDesc.autoSize = TextFieldAutoSize.LEFT;
-        tfDesc.width = 100;
+        tfDesc.width = 300;
+        tfDesc.scaleX = 1.2;
+        tfDesc.scaleY = 1.2;
         tfDesc.x = 12;
         tfDesc.y = tfName.y + tfName.height + 3;
 
@@ -97,7 +99,7 @@ public class CreatureIntroMode extends AppMode
         // draw the background
         g = bgSprite.graphics;
         g.beginFill(0xCCCCCC);
-        g.drawRect(0, 0, 250, bgSprite.height + 20);
+        g.drawRect(0, 0, 450, bgSprite.height + 20);
         g.endFill();
 
         bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
