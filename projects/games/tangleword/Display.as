@@ -85,7 +85,12 @@ public class Display extends Sprite
         _wordfield.text = "";
         setEnableState(false);
 
-        logSummary(model, model.getWords().sortOn("word", Array.DESCENDING));
+        var topPlayers :Array = board.getWinnerIds().map(model.getName);
+
+        _logger.log();
+        _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "));
+        logSummary(model, model.getWords());
+        _logger.log("Next round will begin shortly...");
 
         // Disabled for now -- Bruno
         //_stats.show(model, board);
@@ -177,8 +182,15 @@ public class Display extends Sprite
 
     public function logSummary (model :Model, words :Object) :void
     {
+        var featured :Array = words.sortOn("score", Array.DESCENDING | Array.NUMERIC).slice(0, 5);
+        var all :Array = words.sortOn("word", Array.DESCENDING);
+
         _logger.log();
-        for each (var w :Object in words) {
+        for each (var w :Object in featured) {
+            _logger.log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
+        }
+        _logger.log();
+        for each (var w :Object in all) {
             _logger.logListItem(w.word);
         }
         _logger.log();

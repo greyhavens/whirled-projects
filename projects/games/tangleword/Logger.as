@@ -51,8 +51,7 @@ public class Logger extends ScrollPane
                 fontFamily: "Verdana"
             };
 
-        _text.styleSheet.setStyle("body", common);
-        _text.styleSheet.setStyle("span", common);
+        _text.styleSheet.setStyle(".", common);
 
         // A bit of a hack to get around the fact that <span>s don't
         // inherit style properties like true CSS, so do a hard copy
