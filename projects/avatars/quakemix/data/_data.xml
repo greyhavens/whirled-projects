@@ -1,5 +1,7 @@
 <datapack>
     <file name="texture" type="Image" value="alita.png" />
     <file name="md2" type="Blob" value="alita.md2" />
+    <file name="weapon_md2" type="Blob" value="weapon.md2" />
+    <file name="weapon_texture" type="Image" value="weapon.png" />
     <file name="_CONTENT" type="Blob" value="QuakeMix.swf" />
 </datapack>

@@ -27,7 +27,7 @@ import org.papervision3d.core.animation.channel.AbstractChannel3D;
 
 // TODO: Crouch mode
 // TODO: Adjust anchor point
-// TODO: Perspective
+// TODO: Weapon
 
 [SWF(width="600", height="300")]
 public class QuakeMix extends Sprite
@@ -55,28 +55,33 @@ public class QuakeMix extends Sprite
     {
         if (pack is DataPack) {
             _pack = pack as DataPack;
-            _pack.getDisplayObjects("texture", initScene);
+            _pack.getDisplayObjects({
+                player: "texture", weapon: "weapon_texture"}, initScene);
         } else {
             trace("Ruh oh!");
             //initScene(pack);
         }
     }
 
-    protected function initScene (texture :Object) :void
+    protected function initScene (textures :Object) :void
     {
-        var material :MaterialObject3D = new BitmapMaterial(
-                Bitmap(texture as DisplayObject).bitmapData);
+        var player_material :MaterialObject3D = new BitmapMaterial(
+                Bitmap(textures["player"] as DisplayObject).bitmapData);
+        var weapon_material :MaterialObject3D = new BitmapMaterial(
+                Bitmap(textures["weapon"] as DisplayObject).bitmapData);
+
+        _weapon = new MD2();
+        _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
 
         _model = new MD2();
-        _model.load(_pack.getFile("md2"), material);
+        _model.load(_pack.getFile("md2"), player_material);
 
-        //model = new Collada(_pack.getFileAsXML("mesh"));
-        //model.material = material;
-        //model = new Cone(material);
+        _weapon.moveDown(100);
         _model.moveDown(100);
+        _weapon.scale = 20;
         _model.scale = 20;
-        _model.pitch(-30);
 
+        scene.addChild(_weapon);
         scene.addChild(_model);
 
         var clips :Array = [];
@@ -119,6 +124,7 @@ public class QuakeMix extends Sprite
 
         _model.completedCallback = onDone || stopAction;
         _model.play(_action);
+        _weapon.play(_action);
     }
 
     protected function stopAction() :void
@@ -136,6 +142,7 @@ public class QuakeMix extends Sprite
                     function() :void { } :
                     function() :void { _model.stop() };
             _model.play(_state);
+            _weapon.play(_state);
         }
     }
 
@@ -160,7 +167,7 @@ public class QuakeMix extends Sprite
     {
         if (_control.isSleeping()) {
             if (_action != "death") {
-                playAction("death", function () { _model.stop() });
+                playAction("death", function () { _model.stop(); _weapon.stop() });
             }
         } else {
             if (_control.isMoving()) {
@@ -174,11 +181,11 @@ public class QuakeMix extends Sprite
             }
         }
 
-        var logical :Array = _control.getLogicalLocation();
-        var pixel :Array = _control.getPixelLocation();
-
         _model.rotationX = 90;
+        _weapon.rotationX = 90;
+
         _model.rotationY = -_control.getOrientation() + 90;
+        _weapon.rotationY = _model.rotationY;
     }
 
     protected function handleFrame (event :Event) :void
@@ -190,6 +197,7 @@ public class QuakeMix extends Sprite
     protected var _pack :DataPack;
 
     protected var _model :MD2;
+    protected var _weapon :MD2;
 
     protected var _state :String, _action :String;
 
