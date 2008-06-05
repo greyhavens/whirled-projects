@@ -7,6 +7,8 @@ import flash.display.SimpleButton;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 
+import fl.controls.ScrollBar;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
@@ -80,6 +82,7 @@ public class Display extends Sprite
     /** Called when the round ends - disables display. */
     public function roundEnded (model :Model, board :Scoreboard) :void
     {
+        _wordfield.text = "";
         setEnableState(false);
 
         logSummary(model, model.getWords().sortOn("word", Array.DESCENDING));
@@ -174,11 +177,11 @@ public class Display extends Sprite
 
     public function logSummary (model :Model, words :Object) :void
     {
-        _logger.log("");
+        _logger.log();
         for each (var w :Object in words) {
-            _logger.log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
+            _logger.logListItem(w.word);
         }
-        _logger.log("");
+        _logger.log();
     }
 
     /** Sets scores based on the scoreboard. */
@@ -300,6 +303,7 @@ public class Display extends Sprite
         var tf :TextField = new TextField();
         doLayout(tf, Properties.LOGFIELD);
         tf.x = tf.y = 0;
+        tf.width -= ScrollBar.WIDTH; // Shrink a bit to avoid spilling under the scrollbar
         _logger = new Logger(tf);
         doLayout(_logger, Properties.LOGFIELD);
         addChild(_logger);
@@ -354,6 +358,7 @@ public class Display extends Sprite
 
         // Set other UI elements
         _okbutton.visible = value;
+        _wordfield.visible = value;
     }
 
     /** Are we in the middle of a round? */

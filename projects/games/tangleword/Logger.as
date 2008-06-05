@@ -52,6 +52,7 @@ public class Logger extends ScrollPane
             };
 
         _text.styleSheet.setStyle("body", common);
+        _text.styleSheet.setStyle("span", common);
 
         // A bit of a hack to get around the fact that <span>s don't
         // inherit style properties like true CSS, so do a hard copy
@@ -73,7 +74,7 @@ public class Logger extends ScrollPane
     }
 
     /** Adds a line of text to the bottom of the logger */
-    public function log (message :String, styleClass :String = "") :void
+    public function log (message :String = "", styleClass :String = "") :void
     {
         // Cancel out of listing mode
         if (_totalListed > 0) {
