@@ -12,7 +12,7 @@
         <GameDataOverride>
             <GameSizes>
                 <GameSize numPlayers="2">
-                    <BaseLocation x="50" y="85"/>
+                    <BaseLocation x="75" y="105"/>
                     <BaseLocation x="652" y="315"/>
                 </GameSize>
             </GameSizes>
