@@ -85,7 +85,7 @@ public class CreatureIntroMode extends AppMode
         var animateTask :SerialTask = new SerialTask();
         animateTask.addTask(new GoToFrameTask("close"));
         animateTask.addTask(new WaitForFrameTask("closed"));
-        animateTask.addTask(LocationTask.CreateEaseOut(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 1.5, 0.7));
+        animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 1.5, 0.7));
         animateTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
 
         _movieObj.addTask(animateTask);
