@@ -16,9 +16,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "manual",  { embeddedClass: Resources.SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 
-        rm.pendResourceLoad("image", "base",      { embeddedClass: Resources.IMAGE_BASE });
         rm.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: Resources.IMAGE_TARGETBASEBADGE });
-        rm.pendResourceLoad("image", "friendlyBaseBadge", { embeddedClass: Resources.IMAGE_FRIENDLYBASEBADGE });
 
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
@@ -31,6 +29,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });
         rm.pendResourceLoad("swf", "infusions", { embeddedClass: Resources.SWF_INFUSIONS });
+        rm.pendResourceLoad("swf", "workshop", { embeddedClass: Resources.SWF_WORKSHOP });
 
         // sfx
         rm.pendResourceLoad("sound", "mus_night", { embeddedClass: Resources.MUSIC_NIGHT, type: "music", volume: 0.7, priority: 10 });

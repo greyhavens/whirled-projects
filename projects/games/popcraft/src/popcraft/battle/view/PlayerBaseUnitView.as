@@ -1,5 +1,6 @@
 package popcraft.battle.view {
 
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
@@ -8,6 +9,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
@@ -24,20 +26,22 @@ public class PlayerBaseUnitView extends SceneObject
         return MainLoop.instance.topMode.getObjectsInGroup(GROUP_NAME);
     }
 
+    public static function getForPlayer (playerId :int) :PlayerBaseUnitView
+    {
+        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerId) as PlayerBaseUnitView;
+    }
+
     public function PlayerBaseUnitView (unit :PlayerBaseUnit)
     {
         _unit = unit;
 
         var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
 
-        // add the image, aligned by its foot position
-        var image :Bitmap = ImageResource.instantiateBitmap(_unit.unitData.name);
-        image.x = -(image.width * 0.5);
-        image.y = -image.height;
-        _sprite.addChild(image);
+        _movie = SwfResource.instantiateMovieClip("workshop", "workshop");
+        var recolor :MovieClip = _movie["recolor"];
+        recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
-        // add a glow around the image
-        _sprite.addChild(ImageUtil.createGlowBitmap(image, playerColor));
+        _sprite.addChild(_movie);
 
         // health meter
         _healthMeter = new RectMeter();
@@ -59,13 +63,6 @@ public class PlayerBaseUnitView extends SceneObject
         _targetEnemyBadge.y = -(_targetEnemyBadge.height);
         _sprite.addChild(_targetEnemyBadge);
 
-        // friendly badge
-        _friendlyBadge = ImageResource.instantiateBitmap("friendlyBaseBadge");
-        _friendlyBadge.visible = false;
-        _friendlyBadge.x = -(_friendlyBadge.width * 0.5);
-        _friendlyBadge.y = -(_friendlyBadge.height);
-        _sprite.addChild(_friendlyBadge);
-
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
         var isEnemyBase :Boolean = (owningPlayer.teamId != GameContext.localPlayerInfo.teamId);
@@ -77,13 +74,23 @@ public class PlayerBaseUnitView extends SceneObject
         nameText.textColor = (isEnemyBase ? 0xFFFFFF : 0x000000);
         nameText.text = owningPlayer.playerName;
         nameText.x =  -(nameText.width * 0.5);
-        nameText.y = -(image.height * 0.5) - (nameText.height * 0.5);
+        nameText.y = -(_movie.height * 0.5) - (nameText.height * 0.5);
         _sprite.addChild(nameText);
+    }
+
+    override public function get objectName () :String
+    {
+        return "BaseView_" + _unit.owningPlayerId;
+    }
+
+    public function unitCreated () :void
+    {
+        _movie.gotoAndPlay("flash");
     }
 
     public function scaleHealthMeter () :void
     {
-        // proportionally resize the base's health meter based on the
+        // proportionally resize the base's health meter
         var maxMaxHealth :Number = -1;
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (playerInfo.maxHealth > maxMaxHealth) {
@@ -114,8 +121,17 @@ public class PlayerBaseUnitView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        this.x = _unit.x;
-        this.y = _unit.y;
+        if (_needsLocationUpdate) {
+            this.x = _unit.x;
+            this.y = _unit.y;
+
+            // flip the movie if we're on the left side of the board
+            if (_unit.x < Constants.BATTLE_WIDTH * 0.5) {
+                _movie.scaleX = -1;
+            }
+
+            _needsLocationUpdate = false;
+        }
 
         var health :Number = _unit.health;
 
@@ -139,11 +155,6 @@ public class PlayerBaseUnitView extends SceneObject
         _targetEnemyBadge.visible = val;
     }
 
-    public function set friendlyBadgeVisible (val :Boolean) :void
-    {
-        _friendlyBadge.visible = val;
-    }
-
     override public function getObjectGroup (groupNum :int) :String
     {
         switch (groupNum) {
@@ -157,11 +168,12 @@ public class PlayerBaseUnitView extends SceneObject
         return _unit;
     }
 
-    protected var _sprite: Sprite = new Sprite();
+    protected var _sprite :Sprite = new Sprite();
+    protected var _movie :MovieClip;
     protected var _targetEnemyBadge :Bitmap;
-    protected var _friendlyBadge :Bitmap;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeter :RectMeter;
+    protected var _needsLocationUpdate :Boolean = true;
 
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";

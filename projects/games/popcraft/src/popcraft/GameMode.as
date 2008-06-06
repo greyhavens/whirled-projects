@@ -642,6 +642,10 @@ public class GameMode extends AppMode
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
             UnitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerId);
+            var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(createUnitMsg.playerId);
+            if (null != baseView) {
+                baseView.unitCreated();
+            }
             break;
 
         case SelectTargetEnemyMessage.messageName:
@@ -696,7 +700,6 @@ public class GameMode extends AppMode
             var owningPlayerId :uint = baseView.baseUnit.owningPlayerId;
             var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerId];
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
-            baseView.friendlyBadgeVisible = (owningPlayerId == GameContext.localPlayerId);
 
             if (localPlayerInfo.teamId != owningPlayerInfo.teamId) {
                 InteractiveObject(baseView.displayObject).addEventListener(

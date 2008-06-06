@@ -16,14 +16,8 @@ public class Resources
     [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
-    [Embed(source="../../rsrc/base.png", mimeType="application/octet-stream")]
-    public static const IMAGE_BASE :Class;
-
     [Embed(source="../../rsrc/skull_and_crossbones.png", mimeType="application/octet-stream")]
     public static const IMAGE_TARGETBASEBADGE :Class;
-
-    [Embed(source="../../rsrc/smiley.png", mimeType="application/octet-stream")]
-    public static const IMAGE_FRIENDLYBASEBADGE :Class;
 
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     public static const SWF_GRUNT :Class;
@@ -54,6 +48,9 @@ public class Resources
 
     [Embed(source="../../rsrc/infusions.swf", mimeType="application/octet-stream")]
     public static const SWF_INFUSIONS :Class;
+
+    [Embed(source="../../rsrc/workshop.swf", mimeType="application/octet-stream")]
+    public static const SWF_WORKSHOP :Class;
 
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
