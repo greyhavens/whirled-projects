@@ -3,10 +3,10 @@ package popcraft.battle.view {
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -20,7 +20,11 @@ public class SpellDropView extends SceneObject
 
         var spellData :SpellData = spellDrop.spellData;
         _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName);
-        _movie.cacheAsBitmap = true;
+
+        // pulse animation, to draw players' attention
+        this.addTask(new RepeatingTask(
+            ScaleTask.CreateEaseIn(1.3, 1.3, 0.3),
+            ScaleTask.CreateEaseOut(1, 1, 0.3)));
     }
 
     override public function get displayObject () :DisplayObject
