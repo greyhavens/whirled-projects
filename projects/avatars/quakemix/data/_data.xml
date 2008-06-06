@@ -2,6 +2,9 @@
 <!-- TODO: Add descriptions -->
     <file name="player_md2" type="Blob" value="alita.md2" />
     <file name="player_skin" type="Image" value="alita.png" />
+
+    <data name="show_weapon" type="Boolean" value="true" />
+
     <file name="weapon_md2" type="Blob" value="weapon.md2" />
     <file name="weapon_skin" type="Image" value="weapon.png" />
 

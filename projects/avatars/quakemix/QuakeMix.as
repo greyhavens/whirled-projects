@@ -65,24 +65,30 @@ public class QuakeMix extends Sprite
 
     protected function initScene (textures :Object) :void
     {
-        var player_material :MaterialObject3D = new BitmapMaterial(
-                Bitmap(textures.player as DisplayObject).bitmapData);
-        var weapon_material :MaterialObject3D = new BitmapMaterial(
-                Bitmap(textures.weapon as DisplayObject).bitmapData);
+        // Set up weapon model
+        if (_pack.getBoolean("show_weapon")) {
+            var weapon_material :MaterialObject3D = new BitmapMaterial(
+                    Bitmap(textures.weapon as DisplayObject).bitmapData);
 
-        _weapon = new MD2();
-        _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
+            _weapon = new MD2();
+            _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
+            _weapon.rotationX = 90;
+            //_weapon.moveUp(20);
+            scene.addChild(_weapon);
+        }
 
-        _model = new MD2();
-        _model.load(_pack.getFile("player_md2"), player_material);
+        // Set up player model
+        {
+            var player_material :MaterialObject3D = new BitmapMaterial(
+                    Bitmap(textures.player as DisplayObject).bitmapData);
 
-        scene.addChild(_weapon);
-        scene.addChild(_model);
+            _model = new MD2();
+            _model.load(_pack.getFile("player_md2"), player_material);
+            _model.rotationX = 90;
+            //_model.moveUp(20);
+            scene.addChild(_model);
+        }
 
-        _model.rotationX = 90;
-        _weapon.rotationX = 90;
-        _model.moveUp(20);
-        _weapon.moveUp(20);
         camera.x = 0;
         camera.y = 30;
         camera.z = -100;
@@ -130,7 +136,7 @@ public class QuakeMix extends Sprite
 
     protected function playWeapon (name :String) :void
     {
-        if (_weapon) {
+        if (_weapon != null) {
             // Hide the weapon when playing a death animation
             if (name.indexOf("death") >= 0) {
                 _weapon.visible = false;
@@ -197,13 +203,22 @@ public class QuakeMix extends Sprite
         return _state == "crstand" || _state == "crstnd";
     }
 
+    protected function pause() :void
+    {
+        _model.stop();
+        if (_weapon != null) {
+            _weapon.stop();
+        }
+    }
+
     protected function handleAppearanceChanged (event :Event = null) :void
     {
         if (_control.isSleeping()) {
             var sleep :String = _pack.getString("sleep_action");
 
             if (_action != sleep) {
-                playAction(sleep, false, function () :void { _model.stop(); _weapon.stop() });
+                // Go to sleep, and pause when the animation finishes
+                playAction(sleep, false, pause);
             }
         } else {
             var run :String = isCrouching() ? "crwalk" : "run";
@@ -220,7 +235,9 @@ public class QuakeMix extends Sprite
         }
 
         _model.rotationY = -_control.getOrientation() + 90;
-        _weapon.rotationY = _model.rotationY;
+        if (_weapon != null) {
+            _weapon.rotationY = _model.rotationY;
+        }
     }
 
     protected function handleFrame (event :Event) :void
