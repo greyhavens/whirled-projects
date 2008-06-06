@@ -23,11 +23,11 @@ import org.papervision3d.materials.BitmapMaterial;
 import org.papervision3d.materials.utils.MaterialsList;
 import org.papervision3d.core.proto.MaterialObject3D;
 
+import org.papervision3d.core.math.Number3D;
+
 import org.papervision3d.core.animation.channel.AbstractChannel3D;
 
-// TODO: Crouch mode
 // TODO: Adjust anchor point
-// TODO: Weapon
 
 [SWF(width="600", height="300")]
 public class QuakeMix extends Sprite
@@ -36,10 +36,9 @@ public class QuakeMix extends Sprite
     {
         _control = new AvatarControl(this);
 
+        initPapervision(600, 300);
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
         DataPack.load(_control.getDefaultDataPack(), packLoaded);
-
-        initPapervision(600, 300);
     }
 
     protected function handleUnload (event :Event) :void
@@ -56,7 +55,7 @@ public class QuakeMix extends Sprite
         if (pack is DataPack) {
             _pack = pack as DataPack;
             _pack.getDisplayObjects({
-                player: "texture", weapon: "weapon_texture"}, initScene);
+                player: "player_skin", weapon: "weapon_skin"}, initScene);
         } else {
             trace("Ruh oh!");
             //initScene(pack);
@@ -66,23 +65,30 @@ public class QuakeMix extends Sprite
     protected function initScene (textures :Object) :void
     {
         var player_material :MaterialObject3D = new BitmapMaterial(
-                Bitmap(textures["player"] as DisplayObject).bitmapData);
+                Bitmap(textures.player as DisplayObject).bitmapData);
         var weapon_material :MaterialObject3D = new BitmapMaterial(
-                Bitmap(textures["weapon"] as DisplayObject).bitmapData);
+                Bitmap(textures.weapon as DisplayObject).bitmapData);
 
         _weapon = new MD2();
         _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
 
         _model = new MD2();
-        _model.load(_pack.getFile("md2"), player_material);
-
-        _weapon.moveDown(100);
-        _model.moveDown(100);
-        _weapon.scale = 20;
-        _model.scale = 20;
+        _model.load(_pack.getFile("player_md2"), player_material);
 
         scene.addChild(_weapon);
         scene.addChild(_model);
+
+        _model.rotationX = 90;
+        _weapon.rotationX = 90;
+        camera.x = 0;
+        camera.y = 50;
+        camera.z = -100;
+        camera.zoom = 10;
+        camera.lookAt(_model);
+
+        _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
+        _control.addEventListener(ControlEvent.STATE_CHANGED, handleState);
+        _control.addEventListener(ControlEvent.AVATAR_SPOKE, handleSpoke);
 
         var clips :Array = [];
 
@@ -95,10 +101,6 @@ public class QuakeMix extends Sprite
         trace("Initial state: " + _control.getState());
         _control.registerStates(clips);
         _control.registerActions(clips);
-
-        _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
-        _control.addEventListener(ControlEvent.STATE_CHANGED, handleState);
-        _control.addEventListener(ControlEvent.AVATAR_SPOKE, handleSpoke);
 
         // We're ready to render now
         addEventListener(Event.ENTER_FRAME, handleFrame);
@@ -118,22 +120,36 @@ public class QuakeMix extends Sprite
         camera = new Camera3D();
     }
 
-    protected function playAction(name :String, onDone :Function = null) :void
+    protected function playWeapon (name :String) :void
+    {
+        if (_weapon) {
+            // Hide the weapon when playing a death animation
+            if (name.indexOf("death") >= 0) {
+                _weapon.visible = false;
+            } else {
+                _weapon.visible = true;
+                _weapon.play(name);
+            }
+        }
+    }
+
+    protected function playAction (name :String, onDone :Function = null) :void
     {
         _action = name;
 
+        playWeapon(_action);
+
         _model.completedCallback = onDone || stopAction;
         _model.play(_action);
-        _weapon.play(_action);
     }
 
-    protected function stopAction() :void
+    protected function stopAction () :void
     {
         _action = null;
         playState(_state);
     }
 
-    protected function playState(name :String, looping :Boolean = true) :void
+    protected function playState (name :String, looping :Boolean = true) :void
     {
         _state = name;
 
@@ -142,13 +158,14 @@ public class QuakeMix extends Sprite
                     function() :void { } :
                     function() :void { _model.stop() };
             _model.play(_state);
-            _weapon.play(_state);
+
+            playWeapon(_state);
         }
     }
 
     protected function handleSpoke (event :Event) :void
     {
-        playAction("jump");
+        playAction(_pack.getString("talk_action"));
     }
 
     protected function handleAction (event :ControlEvent) :void
@@ -163,26 +180,32 @@ public class QuakeMix extends Sprite
         playState(event.name);
     }
 
+    protected function isCrouching () :Boolean
+    {
+        return _state == "crstand";
+    }
+
     protected function handleAppearanceChanged (event :Event = null) :void
     {
         if (_control.isSleeping()) {
-            if (_action != "death") {
-                playAction("death", function () { _model.stop(); _weapon.stop() });
+            var sleep :String = _pack.getString("sleep_action");
+
+            if (_action != sleep) {
+                playAction(sleep, function () :void { _model.stop(); _weapon.stop() });
             }
         } else {
+            var run :String = isCrouching() ? "crwalk" : "run";
+
             if (_control.isMoving()) {
-                if (_action != "run") {
-                    playAction("run", function () { });
+                if (_action != run) {
+                    playAction(run, function () { });
                 }
             } else {
-                if (_action == "run") {
+                if (_action == run) {
                     stopAction();
                 }
             }
         }
-
-        _model.rotationX = 90;
-        _weapon.rotationX = 90;
 
         _model.rotationY = -_control.getOrientation() + 90;
         _weapon.rotationY = _model.rotationY;
