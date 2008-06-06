@@ -28,6 +28,7 @@ import org.papervision3d.core.math.Number3D;
 import org.papervision3d.core.animation.channel.AbstractChannel3D;
 
 // TODO: Adjust anchor point
+// TODO: Reduced walk speed in crouch 
 
 [SWF(width="600", height="300")]
 public class QuakeMix extends Sprite
@@ -98,9 +99,9 @@ public class QuakeMix extends Sprite
         for (var n :String in _model.getChannelsByName()) {
             clips.push(n);
         }
-        clips.sort();
+        //clips.sort();
+        // TODO: Make sure "stand" is first
 
-        trace("Initial state: " + _control.getState());
         _control.registerStates(clips);
         _control.registerActions(clips);
 
