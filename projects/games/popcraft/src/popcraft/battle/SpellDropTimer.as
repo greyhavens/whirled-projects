@@ -108,7 +108,7 @@ public class SpellDropTimer extends SimObject
             spellLoc.x = Math.max(spellLoc.x, 75);
             spellLoc.x = Math.min(spellLoc.x, Constants.SCREEN_DIMS.x - 75);
             spellLoc.y = Math.max(spellLoc.y, 75);
-            spellLoc.y = Math.min(spellLoc.y, Constants.SCREEN_DIMS.y - 75);
+            spellLoc.y = Math.min(spellLoc.y, Constants.BATTLE_HEIGHT - 75);
 
             // pick a spell at random
             var spellType :uint;

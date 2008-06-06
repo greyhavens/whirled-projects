@@ -1,13 +1,15 @@
 package popcraft.sp {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
@@ -30,13 +32,13 @@ public class CreatureIntroMode extends AppMode
 
         this.modeSprite.addChild(dimness);
 
-        _movie = SwfResource.instantiateMovieClip("manual", "manual");
-        _movie.x = Constants.SCREEN_DIMS.x * 0.5;
-        _movie.y = Constants.SCREEN_DIMS.y * 0.5;
-        this.modeSprite.addChild(_movie);
+        var movie :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
+        movie.x = Constants.SCREEN_DIMS.x * 0.5;
+        movie.y = Constants.SCREEN_DIMS.y * 1.5;
+        this.modeSprite.addChild(movie);
 
-        var leftPage :MovieClip = _movie["pageL"];
-        var rightPage :MovieClip = _movie["pageR"];
+        var leftPage :MovieClip = movie["pageL"];
+        var rightPage :MovieClip = movie["pageR"];
 
         // creature animation
         var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
@@ -48,29 +50,45 @@ public class CreatureIntroMode extends AppMode
 
         MovieClip(rightPage["image"]).addChild(creatureAnim);
 
+        // create name
+        TextField(rightPage["title"]).text = "The " + _creatureData.displayName;
+
         // creature intro text
         TextField(leftPage["text"]).text = _creatureData.introText;
 
-        // Play button
-        var button :SimpleTextButton = new SimpleTextButton("OK");
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void {
-                AppContext.mainLoop.popMode();
-            });
+        // ok button
+        SimpleButton(rightPage["ok"]).addEventListener(MouseEvent.CLICK, okClicked);
 
-        button.x = (Constants.SCREEN_DIMS.x * 0.5) - (button.width * 0.5);
-        button.y = 400;
+        // animate the book in
+        _movieObj = new SimpleSceneObject(movie);
+        this.addObject(_movieObj);
 
-        this.modeSprite.addChild(button);
+        var animateTask :SerialTask = new SerialTask();
+        animateTask.addTask(new GoToFrameTask("open"));
+        animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 0.5, 0.7));
+        animateTask.addTask(new PlaySoundTask("sfx_create_" + _creatureData.name));
+
+        _movieObj.addTask(animateTask);
 
         this.modeSprite.visible = false;
+    }
+
+    protected function okClicked (...ignored) :void
+    {
+        _movieObj.removeAllTasks();
+
+        // animate the book out
+        var animateTask :SerialTask = new SerialTask();
+        animateTask.addTask(new GoToFrameTask("close"));
+        animateTask.addTask(LocationTask.CreateEaseOut(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 1.5, 0.7));
+        animateTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
+
+        _movieObj.addTask(animateTask);
     }
 
     override protected function enter () :void
     {
         this.modeSprite.visible = true;
-
-        AudioManager.instance.playSoundNamed("sfx_create_" + _creatureData.name);
     }
 
     override protected function exit () :void
@@ -78,7 +96,7 @@ public class CreatureIntroMode extends AppMode
         this.modeSprite.visible = false;
     }
 
-    protected var _movie :MovieClip;
+    protected var _movieObj :SimpleSceneObject;
     protected var _creatureData :UnitData;
 }
 

@@ -34,7 +34,10 @@ public class GameMode extends AppMode
         if (GameContext.isSinglePlayer && null != GameContext.spLevel.gameDataOverride) {
             GameContext.gameData = GameContext.spLevel.gameDataOverride;
         } else {
-            GameContext.gameData = AppContext.defaultGameData;
+            // @TODO - remove this testing code
+            var variants :Array = AppContext.gameVariants;
+            var variant :GameVariantData = variants[0];
+            GameContext.gameData = variant.gameDataOverride;
         }
 
         GameContext.gameMode = this;
