@@ -1,7 +1,6 @@
 package popcraft.sp {
 
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -57,15 +56,17 @@ public class CreatureIntroMode extends AppMode
         TextField(leftPage["text"]).text = _creatureData.introText;
 
         // ok button
-        SimpleButton(rightPage["ok"]).addEventListener(MouseEvent.CLICK, okClicked);
+        _okButton = rightPage["ok"];
+        _okButton.addEventListener(MouseEvent.CLICK, okClicked);
 
         // animate the book in
         _movieObj = new SimpleSceneObject(movie);
         this.addObject(_movieObj);
 
         var animateTask :SerialTask = new SerialTask();
-        animateTask.addTask(new GoToFrameTask("open"));
         animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 0.5, 0.7));
+        animateTask.addTask(new GoToFrameTask("open"));
+        animateTask.addTask(new WaitForFrameTask("opened"));
         animateTask.addTask(new PlaySoundTask("sfx_create_" + _creatureData.name));
 
         _movieObj.addTask(animateTask);
@@ -75,11 +76,15 @@ public class CreatureIntroMode extends AppMode
 
     protected function okClicked (...ignored) :void
     {
+        // prevent multiple clicks
+        _okButton.removeEventListener(MouseEvent.CLICK, okClicked);
+
         _movieObj.removeAllTasks();
 
         // animate the book out
         var animateTask :SerialTask = new SerialTask();
         animateTask.addTask(new GoToFrameTask("close"));
+        animateTask.addTask(new WaitForFrameTask("closed"));
         animateTask.addTask(LocationTask.CreateEaseOut(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 1.5, 0.7));
         animateTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
 
@@ -97,6 +102,7 @@ public class CreatureIntroMode extends AppMode
     }
 
     protected var _movieObj :SimpleSceneObject;
+    protected var _okButton :SimpleButton;
     protected var _creatureData :UnitData;
 }
 
