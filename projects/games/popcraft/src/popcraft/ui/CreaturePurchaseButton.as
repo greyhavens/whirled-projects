@@ -56,9 +56,9 @@ public class CreaturePurchaseButton extends SimObject
         var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerId];
 
         // try instantiating some animations
-        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
+        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
         if (null == _enabledAnim) {
-            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
+            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         }
 
         _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
@@ -66,8 +66,10 @@ public class CreaturePurchaseButton extends SimObject
             _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         }
 
-        _unitDisplay.addChild(_enabledAnim);
-        _unitDisplay.addChild(_disabledAnim);
+        if (Constants.UNIT_TYPE_COURIER != unitType && Constants.UNIT_TYPE_SAPPER != unitType) {
+            _enabledAnim.y = 30;
+            _disabledAnim.y = 30;
+        }
 
         // set up the Unit Cost indicators
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
@@ -105,8 +107,6 @@ public class CreaturePurchaseButton extends SimObject
 
         cost2Text.textColor = _resource2Data.color;
         cost2Text.text = String(_resource2Cost);
-
-
 
         this.createPurchaseMeters();
 
@@ -182,8 +182,18 @@ public class CreaturePurchaseButton extends SimObject
 
     protected function updateDisplayState () :void
     {
-        _enabledAnim.visible = _enabled;
-        _disabledAnim.visible = !_enabled;
+        if (_enabled) {
+            if (null != _disabledAnim.parent) {
+                _unitDisplay.removeChild(_disabledAnim);
+            }
+            _unitDisplay.addChild(_enabledAnim);
+        } else {
+            if (null != _enabledAnim.parent) {
+                _unitDisplay.removeChild(_enabledAnim);
+            }
+            _unitDisplay.addChild(_disabledAnim);
+        }
+
         _button.enabled = _enabled;
 
         // if we're playing the deploy animation, these animations
