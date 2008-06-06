@@ -27,19 +27,18 @@ import org.papervision3d.core.math.Number3D;
 
 import org.papervision3d.core.animation.channel.AbstractChannel3D;
 
-// TODO: Adjust anchor point
-// TODO: Reduced walk speed in crouch 
-
-[SWF(width="600", height="300")]
+[SWF(width="600", height="450")]
 public class QuakeMix extends Sprite
 {
     public function QuakeMix ()
     {
         _control = new AvatarControl(this);
 
-        initPapervision(600, 300);
+        initPapervision(600, 450);
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
         DataPack.load(_control.getDefaultDataPack(), packLoaded);
+
+        _control.setHotSpot(600/2, 450 - 30, 300);
     }
 
     protected function handleUnload (event :Event) :void
@@ -59,24 +58,11 @@ public class QuakeMix extends Sprite
                 player: "player_skin", weapon: "weapon_skin"}, initScene);
         } else {
             trace("Ruh oh!");
-            //initScene(pack);
         }
     }
 
     protected function initScene (textures :Object) :void
     {
-        // Set up weapon model
-        if (_pack.getBoolean("show_weapon")) {
-            var weapon_material :MaterialObject3D = new BitmapMaterial(
-                    Bitmap(textures.weapon as DisplayObject).bitmapData);
-
-            _weapon = new MD2();
-            _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
-            _weapon.rotationX = 90;
-            //_weapon.moveUp(20);
-            scene.addChild(_weapon);
-        }
-
         // Set up player model
         {
             var player_material :MaterialObject3D = new BitmapMaterial(
@@ -85,14 +71,26 @@ public class QuakeMix extends Sprite
             _model = new MD2();
             _model.load(_pack.getFile("player_md2"), player_material);
             _model.rotationX = 90;
-            //_model.moveUp(20);
+            _model.y = -20;
             scene.addChild(_model);
+        }
+
+        // Set up weapon model
+        if (_pack.getBoolean("show_weapon")) {
+            var weapon_material :MaterialObject3D = new BitmapMaterial(
+                    Bitmap(textures.weapon as DisplayObject).bitmapData);
+
+            _weapon = new MD2();
+            _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
+            _weapon.rotationX = 90;
+            _weapon.y = _model.y;
+            scene.addChild(_weapon);
         }
 
         camera.x = 0;
         camera.y = 30;
         camera.z = -100;
-        camera.zoom = 8;
+        camera.zoom = 10;
         camera.lookAt(_model);
 
         _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
