@@ -99,8 +99,12 @@ public class QuakeMix extends Sprite
         for (var n :String in _model.getChannelsByName()) {
             clips.push(n);
         }
-        //clips.sort();
-        // TODO: Make sure "stand" is first
+        // Remove "stand" and "all" from the list
+        clips = clips.filter(function (n :*, ... rest) :Boolean {
+                    return n != "stand" && n != "all";
+                }).sort();
+        // Make sure "stand" is first
+        clips.unshift("stand");
 
         _control.registerStates(clips);
         _control.registerActions(clips);
@@ -111,6 +115,7 @@ public class QuakeMix extends Sprite
 
         // Initialize
         handleAppearanceChanged();
+        playState(_control.getState());
     }
 
     protected function initPapervision (width :Number, height :Number) :void
@@ -159,6 +164,9 @@ public class QuakeMix extends Sprite
     {
         _state = name;
 
+        var runSpeed :Number = _pack.getNumber("run_speed");
+        _control.setMoveSpeed(isCrouching() ? runSpeed/3 : runSpeed);
+
         if (_action == null) {
             _model.completedCallback = looping ?
                     function() :void { } :
@@ -186,7 +194,7 @@ public class QuakeMix extends Sprite
 
     protected function isCrouching () :Boolean
     {
-        return _state == "crstand";
+        return _state == "crstand" || _state == "crstnd";
     }
 
     protected function handleAppearanceChanged (event :Event = null) :void
@@ -202,7 +210,7 @@ public class QuakeMix extends Sprite
 
             if (_control.isMoving()) {
                 if (_action != run) {
-                    playAction(run, false, function () { });
+                    playAction(run, false, function () :void { });
                 }
             } else {
                 if ( _action != null && ! _importantAction) {

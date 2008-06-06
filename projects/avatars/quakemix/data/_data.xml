@@ -7,6 +7,7 @@
 
     <data name="talk_action" type="String" value="jump" />
     <data name="sleep_action" type="String" value="crdeath" />
+    <data name="run_speed" type="Number" value="500" />
 
     <file name="_CONTENT" type="Blob" value="QuakeMix.swf" />
 </datapack>
