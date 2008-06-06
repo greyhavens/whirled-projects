@@ -1,33 +1,31 @@
 <root>
-	<Variant
-		name="PopCraft Classic"
-		description="Always in style.">
-		<GameDataOverride/>
-	</Variant>
-		
-	<Variant
-		name="Delivery Boy Bonanza"
-		description="Energy and Scrap are bountiful, but Flesh and Blood are in short supply.">
-		<GameDataOverride>
-			<GameDataOverride>
-	            <Resources>
-	                <Resource type="white" rarity="0.5"/>
-	                <Resource type="red" rarity="0.5"/>
-	                <Resource type="blue" rarity="1"/>
-	                <Resource type="yellow" rarity="1"/>
-	            </Resources>
-	        </GameDataOverride>
-		</GameDataOverride>
-	</Variant>
-	
-	<Variant
-		name="Ironman"
-		description="For those what have lots of stamina. Workshops are twice as sturdy, and the night never ends.">
-		<GameDataOverride disableDiurnalCycle="true">
-			<Units>
-				<Unit type="base" maxHealth="300"/>
-			</Units>
-		</GameDataOverride>
-	</Variant>
-		
+    <Variant
+        name="PopCraft Classic"
+        description="Always in style.">
+        <GameDataOverride/>
+    </Variant>
+
+    <Variant
+        name="Delivery Boy Bonanza"
+        description="Energy and Scrap are bountiful, but Flesh and Blood are in short supply.">
+        <GameDataOverride>
+            <Resources>
+                <Resource type="white" rarity="0.5"/>
+                <Resource type="red" rarity="0.5"/>
+                <Resource type="blue" rarity="1"/>
+                <Resource type="yellow" rarity="1"/>
+            </Resources>
+        </GameDataOverride>
+    </Variant>
+
+    <Variant
+        name="Ironman"
+        description="For those what have lots of stamina. Workshops are twice as sturdy, and the night never ends.">
+        <GameDataOverride disableDiurnalCycle="true">
+            <Units>
+                <Unit type="base" maxHealth="300"/>
+            </Units>
+        </GameDataOverride>
+    </Variant>
+
 </root>
