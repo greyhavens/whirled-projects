@@ -57,7 +57,7 @@ public class PopCraft extends Sprite
 
             // show the team-selection screen if > 2 players are playing
             if (AppContext.gameCtrl.game.seating.getPlayerIds().length > 2) {
-                AppContext.mainLoop.pushMode(new TeamSelectMode());
+                AppContext.mainLoop.pushMode(new GameLobbyMode());
             } else {
                 AppContext.mainLoop.pushMode(new GameMode());
             }

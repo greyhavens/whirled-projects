@@ -13,7 +13,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-public class TeamSelectMode extends AppMode
+public class GameLobbyMode extends AppMode
 {
     override protected function setup () :void
     {
