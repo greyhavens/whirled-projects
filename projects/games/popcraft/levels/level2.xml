@@ -5,11 +5,10 @@
         backgroundName="Level2"
         newCreatureType="heavy"
         introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
-        disableDiurnalCycle="true"
         playerName="Jack"
         playerBaseHealth="50">
 
-        <GameDataOverride>
+        <GameDataOverride disableDiurnalCycle="true">
             <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="75" y="105"/>

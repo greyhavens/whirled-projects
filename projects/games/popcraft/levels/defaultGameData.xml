@@ -6,6 +6,7 @@
         nightLength="120"
         dawnWarning="12"
         initialDayPhase="day"
+        disableDiurnalCycle="false"
         spellDropTimeMin="30"
         spellDropTimeMax="70"
         spellDropScatterMin="0"

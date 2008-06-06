@@ -75,8 +75,14 @@ public class LoadingMode extends AppMode
 
         rm.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: Resources.SOUND_SPELLDROP, priority: 4 });
 
-        // load!
-        rm.load(handleResourcesLoaded, handleResourceLoadErr);
+        // the gameVariants must be loaded after the default game data has finished
+        // loading, so do that in a callback function here
+        rm.load(
+            function () :void {
+                rm.pendResourceLoad("gameVariants", "gameVariants", { embeddedClass: Resources.GAME_VARIANTS_DATA });
+                rm.load(handleResourcesLoaded, handleResourceLoadErr);
+            },
+            handleResourceLoadErr);
     }
 
     protected function handleResourcesLoaded () :void

@@ -8,7 +8,6 @@
 "When a spell appears on the battlefield, dispatch Ladyfingers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time. The more Ladyfingers you have on the battlefield, the faster each will move. Send a large group to prevent your opponent from getting a spell before you do!
 
 The Rigor Mortis spell hardens your units' flesh, making them more resistant to attacks."
-        disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="100">
 

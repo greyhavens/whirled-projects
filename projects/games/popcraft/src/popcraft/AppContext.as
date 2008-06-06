@@ -26,6 +26,12 @@ public class AppContext
         var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
         return dataRsrc.levelProgression;
     }
+
+    public static function get gameVariants () :Array
+    {
+        var variantResource :GameVariantsResource = ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;
+        return variantResource.variants;
+    }
 }
 
 }

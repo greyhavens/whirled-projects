@@ -4,7 +4,6 @@
         backgroundName="Level1"
         introText="Your enemies have you surrounded! Use the Bloodlust spell to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
-        disableDiurnalCycle="false"
         playerName="Jack"
         playerBaseHealth="120">
 

@@ -9,8 +9,7 @@ public class DiurnalCycle extends SimObject
 {
     public static function get isDisabled () :Boolean
     {
-        return Constants.DEBUG_DISABLE_DIURNAL_CYCLE ||
-            (GameContext.isSinglePlayer && GameContext.spLevel.disableDiurnalCycle);
+        return (Constants.DEBUG_DISABLE_DIURNAL_CYCLE || GameContext.gameData.disableDiurnalCycle);
     }
 
     public function DiurnalCycle ()

@@ -41,6 +41,7 @@ public class PopCraft extends Sprite
         // custom resource factories
         ResourceManager.instance.registerResourceType("level", LevelResource);
         ResourceManager.instance.registerResourceType("gameData", GameDataResource);
+        ResourceManager.instance.registerResourceType("gameVariants", GameVariantsResource);
 
         // sound volume
         AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);

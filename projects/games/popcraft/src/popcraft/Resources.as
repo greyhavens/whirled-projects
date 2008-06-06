@@ -6,6 +6,9 @@ public class Resources
     [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]
     public static const DEFAULT_GAME_DATA :Class;
 
+    [Embed(source="../../levels/gameVariants.xml", mimeType="application/octet-stream")]
+    public static const GAME_VARIANTS_DATA :Class;
+
     // gfx
     [Embed(source="../../rsrc/manual.swf", mimeType="application/octet-stream")]
     public static const SWF_MANUAL :Class;

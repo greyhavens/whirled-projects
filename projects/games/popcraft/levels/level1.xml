@@ -5,11 +5,10 @@
         backgroundName="Level2"
         newCreatureType="grunt"
         introText="Fashion FLESH and ENERGY into Street-Walkers to destroy your opponent's workshop."
-        disableDiurnalCycle="true"
         playerName="Jack"
         playerBaseHealth="100">
 
-        <GameDataOverride>
+        <GameDataOverride disableDiurnalCycle="true">
             <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="60" y="185"/>

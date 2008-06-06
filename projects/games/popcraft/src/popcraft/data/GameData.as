@@ -17,6 +17,7 @@ public class GameData
     public var nightLength :Number;
     public var dawnWarning :Number;
     public var initialDayPhase :uint;
+    public var disableDiurnalCycle :Boolean;
 
     public var spellDropTime :NumRange;
     public var spellDropScatter :NumRange;
@@ -53,6 +54,7 @@ public class GameData
         theClone.nightLength = nightLength;
         theClone.dawnWarning = dawnWarning;
         theClone.initialDayPhase = initialDayPhase;
+        theClone.disableDiurnalCycle = disableDiurnalCycle;
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
@@ -112,6 +114,7 @@ public class GameData
         gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
         gameData.dawnWarning = XmlReader.getAttributeAsNumber(xml, "dawnWarning", (useDefaults ? gameData.dawnWarning : undefined));
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
+        gameData.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", (useDefaults ? gameData.disableDiurnalCycle : undefined));
 
         var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));
         var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax", (useDefaults ? gameData.spellDropTime.max : undefined));
