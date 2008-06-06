@@ -80,10 +80,12 @@ public class QuakeMix extends Sprite
 
         _model.rotationX = 90;
         _weapon.rotationX = 90;
+        _model.moveUp(20);
+        _weapon.moveUp(20);
         camera.x = 0;
-        camera.y = 50;
+        camera.y = 30;
         camera.z = -100;
-        camera.zoom = 10;
+        camera.zoom = 8;
         camera.lookAt(_model);
 
         _control.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
@@ -133,9 +135,12 @@ public class QuakeMix extends Sprite
         }
     }
 
-    protected function playAction (name :String, onDone :Function = null) :void
+    protected function playAction (name :String, important :Boolean = true, onDone :Function = null) :void
     {
         _action = name;
+
+        // Whether or not this action should be interrupted by minor changes
+        _importantAction = important;
 
         playWeapon(_action);
 
@@ -170,13 +175,11 @@ public class QuakeMix extends Sprite
 
     protected function handleAction (event :ControlEvent) :void
     {
-        trace("Handling action");
         playAction(event.name);
     }
 
     protected function handleState (event :ControlEvent) :void
     {
-        trace("Handling state");
         playState(event.name);
     }
 
@@ -191,17 +194,17 @@ public class QuakeMix extends Sprite
             var sleep :String = _pack.getString("sleep_action");
 
             if (_action != sleep) {
-                playAction(sleep, function () :void { _model.stop(); _weapon.stop() });
+                playAction(sleep, false, function () :void { _model.stop(); _weapon.stop() });
             }
         } else {
             var run :String = isCrouching() ? "crwalk" : "run";
 
             if (_control.isMoving()) {
                 if (_action != run) {
-                    playAction(run, function () { });
+                    playAction(run, false, function () { });
                 }
             } else {
-                if (_action == run) {
+                if ( _action != null && ! _importantAction) {
                     stopAction();
                 }
             }
@@ -223,6 +226,7 @@ public class QuakeMix extends Sprite
     protected var _weapon :MD2;
 
     protected var _state :String, _action :String;
+    protected var _importantAction :Boolean;
 
     protected var viewport :Viewport3D;
     protected var renderer :BasicRenderEngine;
