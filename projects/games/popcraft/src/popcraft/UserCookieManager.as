@@ -87,6 +87,14 @@ public class UserCookieManager
             log.info("successfully loaded user cookie");
         } else {
             log.warning("failed to load user cookie: " + errString);
+            var resave :Boolean;
+            for each (dataSource in _dataSources) {
+                resave = (resave || dataSource.readFailed());
+            }
+
+            if (resave) {
+                this.writeCookie();
+            }
         }
     }
 

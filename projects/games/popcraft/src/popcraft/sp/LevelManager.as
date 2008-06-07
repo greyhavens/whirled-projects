@@ -46,6 +46,12 @@ public class LevelManager implements UserCookieDataSource
         }
     }
 
+    public function readFailed () :Boolean
+    {
+        this.resetLevelData();
+        return true;
+    }
+
     public function get totalScore () :int
     {
         var score :int;
