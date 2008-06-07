@@ -49,8 +49,13 @@ public class PopCraft extends Sprite
         // create a new random stream for the puzzle
         AppContext.randStreamPuzzle = Rand.addStream();
 
-        // init LevelManager
+        // init other managers
         AppContext.levelMgr = new LevelManager();
+
+        // init the cookie manager and read cookie data
+        AppContext.cookieMgr = new UserCookieManager();
+        AppContext.cookieMgr.addDataSource(AppContext.levelMgr);
+        AppContext.cookieMgr.readCookie();
 
         if (multiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;

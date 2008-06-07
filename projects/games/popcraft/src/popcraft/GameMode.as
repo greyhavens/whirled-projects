@@ -527,7 +527,7 @@ public class GameMode extends AppMode
                     }
 
                     if (dataChanged) {
-                        AppContext.levelMgr.saveData();
+                        AppContext.cookieMgr.setNeedsUpdate();
                     }
                 }
 

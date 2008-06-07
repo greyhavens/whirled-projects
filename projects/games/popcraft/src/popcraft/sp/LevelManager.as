@@ -9,14 +9,40 @@ import popcraft.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
-public class LevelManager
+public class LevelManager implements UserCookieDataSource
 {
     public function LevelManager ()
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
-        } else {
-            this.completeLoadData(null);
+        this.resetLevelData();
+    }
+
+    protected function resetLevelData () :void
+    {
+        _levelRecords = [];
+        for (var i :int = 0; i < NUM_LEVELS; ++i) {
+            _levelRecords.push(new LevelRecord());
+        }
+
+        // make sure the first level is always unlocked
+        LevelRecord(_levelRecords[0]).unlocked = true;
+    }
+
+    public function readCookieData (cookie :ByteArray) :void
+    {
+        try {
+            for (var i :int = 0; i < NUM_LEVELS; ++i) {
+                _levelRecords.push(LevelRecord.fromByteArray(cookie));
+            }
+        } catch (e :Error) {
+            this.resetLevelData();
+            throw e;
+        }
+    }
+
+    public function writeCookieData (cookie :ByteArray) :void
+    {
+        for each (var lr :LevelRecord in _levelRecords) {
+            lr.toByteArray(cookie);
         }
     }
 
@@ -43,56 +69,6 @@ public class LevelManager
     public function get levelRecordsLoaded () :Boolean
     {
         return _levelRecords.length > 0;
-    }
-
-    protected function completeLoadData (cookie :Object) :void
-    {
-        var success :Boolean;
-        var ba :ByteArray = cookie as ByteArray;
-        if (null != ba) {
-            success = true;
-            try {
-                ba.uncompress();
-                for (var i :int = 0; i < NUM_LEVELS; ++i) {
-                    _levelRecords.push(LevelRecord.fromByteArray(ba));
-                }
-            } catch (e :Error) {
-                success = false;
-            }
-        }
-
-        if (success) {
-            log.info("successfully loaded saved data");
-        } else {
-            log.info("failed to load saved data - re-initializing");
-
-            // re-init levels if the data was broken or non-existent
-            _levelRecords = [];
-            for (i = 0; i < NUM_LEVELS; ++i) {
-                _levelRecords.push(new LevelRecord());
-            }
-        }
-
-        // make sure the first level is always unlocked
-        LevelRecord(_levelRecords[0]).unlocked = true;
-    }
-
-    public function saveData () :void
-    {
-        var success :Boolean;
-
-        if (AppContext.gameCtrl.isConnected()) {
-            var ba :ByteArray = new ByteArray();
-            for each (var lr :LevelRecord in _levelRecords) {
-                lr.toByteArray(ba);
-            }
-
-            ba.compress();
-
-            success = AppContext.gameCtrl.player.setUserCookie(ba)
-        }
-
-        log.info(success ? "data saved successfuly" : "data save FAILED");
     }
 
     public function playLevel (forceReload :Boolean = false) :void

@@ -12,6 +12,7 @@ public class AppContext
 {
     public static var mainLoop :MainLoop;
     public static var gameCtrl :GameControl;
+    public static var cookieMgr :UserCookieManager;
     public static var levelMgr :LevelManager;
     public static var randStreamPuzzle :uint;
 
