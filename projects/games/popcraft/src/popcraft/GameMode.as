@@ -177,6 +177,12 @@ public class GameMode extends AppMode
             localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
         }
 
+        // ...and some starting spells
+        var initialSpells :Array = GameContext.spLevel.initialSpells;
+        for (var spellType :uint = 0; spellType < initialSpells.length; ++spellType) {
+            localPlayerInfo.addSpell(spellType, uint(initialSpells[spellType]));
+        }
+
         GameContext.playerInfos.push(localPlayerInfo);
 
         // create computer players

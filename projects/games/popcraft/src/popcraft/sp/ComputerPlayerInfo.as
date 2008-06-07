@@ -16,11 +16,11 @@ public class ComputerPlayerInfo extends PlayerInfo
         }
     }
 
-    override public function addSpell (spellType :uint) :void
+    override public function addSpell (spellType :uint, count :uint = 1) :void
     {
         // computer players only care about creature spells. they never use the puzzle reset spell.
         if (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
-            _creatureSpells[spellType] = this.getSpellCount(spellType) + 1;
+            _creatureSpells[spellType] = this.getSpellCount(spellType) + count;
         }
     }
 

@@ -139,7 +139,7 @@ public class PlayerInfo extends EventDispatcher
         return true;
     }
 
-    public function addSpell (spellType :uint) :void
+    public function addSpell (spellType :uint, count :uint = 1) :void
     {
         // no-op
     }

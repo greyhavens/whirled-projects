@@ -13,7 +13,7 @@ import popcraft.data.SpellData;
 
 public class SpellButton extends SceneObject
 {
-    public function SpellButton (spellType :uint, slot :int)
+    public function SpellButton (spellType :uint, slot :int, animateIn :Boolean)
     {
         _spellType = spellType;
         _slot = slot;
@@ -23,15 +23,21 @@ public class SpellButton extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
         _movie.cacheAsBitmap = true;
 
-        // animate into place
         var xLoc :Number = X_LOCS[slot];
 
-        _movie.x = xLoc;
-        _movie.y = Y_START;
+        if (animateIn) {
+            // animate into place
 
-        this.addTask(new SerialTask(
-            LocationTask.CreateEaseOut(xLoc, Y_BOUNCE, 0.3),
-            LocationTask.CreateEaseIn(xLoc, Y_END, 0.1)));
+            _movie.x = xLoc;
+            _movie.y = Y_START;
+
+            this.addTask(new SerialTask(
+                LocationTask.CreateEaseOut(xLoc, Y_BOUNCE, 0.3),
+                LocationTask.CreateEaseIn(xLoc, Y_END, 0.1)));
+        } else {
+            _movie.x = xLoc;
+            _movie.y = Y_END;
+        }
     }
 
     override public function get displayObject () :DisplayObject

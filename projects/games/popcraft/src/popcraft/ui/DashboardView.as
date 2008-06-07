@@ -2,8 +2,8 @@ package popcraft.ui {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -103,6 +103,14 @@ public class DashboardView extends SceneObject
     override protected function addedToDB () :void
     {
         this.db.addObject(_infoPanel);
+
+        // add any spells the player already has to the dashboard
+        for (var spellType :uint = 0; spellType < Constants.SPELL_TYPE__LIMIT; ++spellType) {
+            var count :uint = GameContext.localPlayerInfo.getSpellCount(spellType);
+            for (var i :uint = 0; i < count; ++i) {
+                this.createSpellButton(spellType, false);
+            }
+        }
     }
 
     public function puzzleShuffle () :void
@@ -123,6 +131,11 @@ public class DashboardView extends SceneObject
 
     protected function onGotSpell (e :GotSpellEvent) :void
     {
+        this.createSpellButton(e.spellType, true);
+    }
+
+    protected function createSpellButton (spellType :uint, animateIn :Boolean) :void
+    {
         // find the first free spell slot to put this spell in
         var slot :int = -1;
         for (var i :int = 0; i < _spellSlots.length; ++i) {
@@ -140,7 +153,7 @@ public class DashboardView extends SceneObject
         _spellSlots[slot] = true; // occupy the slot
 
         // create a new icon
-        var spellButton :SpellButton = new SpellButton(e.spellType, slot);
+        var spellButton :SpellButton = new SpellButton(spellType, slot, animateIn);
         spellButton.clickableObject.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void { onSpellButtonClicked(spellButton); });
 

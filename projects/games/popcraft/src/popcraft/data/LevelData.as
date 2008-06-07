@@ -22,6 +22,7 @@ public class LevelData
     public var availableSpells :Array = [];
     public var computers :Array = [];
     public var initialResources :Array = [];
+    public var initialSpells :Array = [];
 
     public var gameDataOverride :GameData;
 
@@ -72,11 +73,19 @@ public class LevelData
         }
 
         // parse the initial resources
-        level.initialResources = new Array(Constants.RESOURCE_NAMES.length);
+        level.initialResources = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         for each (var resourceNode :XML in xml.InitialResources.Resource) {
             var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
             var amount :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
             level.initialResources[type] = amount;
+        }
+
+        // parse the initial spells
+        level.initialSpells = ArrayUtil.create(Constants.SPELL_TYPE__LIMIT, 0);
+        for each (var spellNode :XML in xml.InitialSpells.Spell) {
+            type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
+            amount = XmlReader.getAttributeAsUint(spellNode, "amount");
+            level.initialSpells[type] = amount;
         }
 
         return level;
