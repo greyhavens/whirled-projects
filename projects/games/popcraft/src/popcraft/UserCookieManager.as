@@ -71,7 +71,7 @@ public class UserCookieManager
                 ba.uncompress();
                 var version :int = ba.readShort();
                 if (version != VERSION) {
-                    errString = "bad cookie version: " + version;
+                    errString = "bad cookie version (expected '" + VERSION + "', saw '" + version + "')";
                 } else {
                     for each (var dataSource :UserCookieDataSource in _dataSources) {
                         dataSource.readCookieData(ba);
