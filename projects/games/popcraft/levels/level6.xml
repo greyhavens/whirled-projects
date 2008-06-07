@@ -24,6 +24,10 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
 
         <InitialResources/>
 
+        <InitialSpells>
+            <Spell type="rigormortis" amount="1"/>
+        </InitialSpells>
+
         <AvailableUnits>
             <Unit type="grunt"/>
             <Unit type="heavy"/>
@@ -68,13 +72,13 @@ The Rigor Mortis spell hardens your units' flesh, making them more resistant to 
                     spellDropCourierGroupSizeMax="2">
 
                     <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="20" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="45" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="20" spellCastChance="0.4"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="45" spellCastChance="0.4"><Unit type="grunt" count="3"/></Wave>
                     <Wave absoluteDelay="46"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="70" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="70" spellCastChance="0.4"><Unit type="grunt" count="3"/></Wave>
                     <Wave absoluteDelay="75"><Unit type="sapper" count="2"/></Wave>
                     <Wave absoluteDelay="76"><Unit type="heavy" count="3"/></Wave>
-                    <Wave absoluteDelay="95" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="95" spellCastChance="0.4"><Unit type="grunt" count="4"/></Wave>
                     <Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="106"><Unit type="grunt" count="2"/></Wave>
                 </Day>

@@ -17,6 +17,10 @@
 
         <InitialResources/>
 
+        <InitialSpells>
+            <Spell type="shuffle" amount="2"/>
+        </InitialSpells>
+
         <AvailableUnits>
             <Unit type="grunt"/>
             <Unit type="heavy"/>
