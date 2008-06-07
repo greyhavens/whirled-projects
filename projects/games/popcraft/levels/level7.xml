@@ -50,7 +50,7 @@ He's sending several your way, but he'll be vulnerable for a short while after t
                 </Day>
             </InitialDays>
             <RepeatingDays>
-                <!-- Two Behemoths -->
+                <!-- Two Behemoths, less spell casting -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="7"
                     noticeSpellDropAfterMax="7"
@@ -59,14 +59,14 @@ He's sending several your way, but he'll be vulnerable for a short while after t
 
                     <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
                     <Wave absoluteDelay="20"><Unit type="colossus" count="1"/></Wave>
-                    <Wave absoluteDelay="30" spellCastChance="0.4"><Unit type="heavy" count="2"/></Wave>
+                    <Wave absoluteDelay="30"><Unit type="heavy" count="2"/></Wave>
                     <Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="71" spellCastChance="0.4"><Unit type="grunt" count="5"/></Wave>
                     <Wave absoluteDelay="80"><Unit type="heavy" count="3"/></Wave>
                     <Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="103" spellCastChance="0.4"><Unit type="grunt" count="4"/></Wave>
                 </Day>
-                <!-- One Behemoth -->
+                <!-- One Behemoth, more spell casting -->
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="7"
                     noticeSpellDropAfterMax="7"
