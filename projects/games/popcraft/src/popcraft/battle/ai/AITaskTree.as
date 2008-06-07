@@ -1,6 +1,5 @@
 package popcraft.battle.ai {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 
@@ -14,11 +13,8 @@ public class AITaskTree extends AITask
     {
         _stopProcessingSubtasks = false;
 
-        var n :int = _subtasks.length;
-        for (var i :int = 0; i < n; ++i) {
-
-            var task :AITask = _subtasks[i];
-
+        var i :int = 0;
+        for each (var task :AITask in _subtasks) {
             // we can have holes in the array
             if (null != task) {
                 var status :uint = task.update(dt, unit);
@@ -37,6 +33,8 @@ public class AITaskTree extends AITask
                     break;
                 }
             }
+
+            ++i;
         }
 
         return AITaskStatus.ACTIVE;
@@ -59,11 +57,8 @@ public class AITaskTree extends AITask
 
     public function removeSubtaskNamed (name :String, removeAll :Boolean = true) :void
     {
-        var n :int = _subtasks.length;
-        for (var i :int = 0; i < n; ++i) {
-
-            var task :AITask = _subtasks[i];
-
+        var i :int = 0;
+        for each (var task :AITask in _subtasks) {
             if (null != task && task.name == name) {
                 _subtasks[i] = null;
                 _freeIndices.push(i);
@@ -74,16 +69,14 @@ public class AITaskTree extends AITask
                     break;
                 }
             }
+
+            ++i;
         }
     }
 
     public function hasSubtaskNamed (name :String) :Boolean
     {
-        var n :int = _subtasks.length;
-        for (var i :int = 0; i < n; ++i) {
-
-            var task :AITask = _subtasks[i];
-
+        for each (var task :AITask in _subtasks) {
             if (null != task && task.name == name) {
                 return true;
             }
