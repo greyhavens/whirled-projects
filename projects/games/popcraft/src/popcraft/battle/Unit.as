@@ -46,7 +46,7 @@ public class Unit extends SimObject
 
     override protected function update (dt :Number) :void
     {
-        if (!this.isAttacking) {
+        if (!this.inAttackCooldown) {
             _needsAttackWarmup = true;
         }
     }
@@ -64,18 +64,14 @@ public class Unit extends SimObject
             unit.unitData.collisionRadius);
     }
 
-    public function get isAttacking () :Boolean
+    public function get inAttackCooldown () :Boolean
     {
         return this.hasTasksNamed(PREVENT_ATTACK_TASK_NAME);
     }
 
     public function get attackTarget () :Unit
     {
-        if (!this.isAttacking || null == _currentAttackTarget) {
-            return null;
-        } else {
-            return _currentAttackTarget.object as Unit;
-        }
+        return (null != _currentAttackTarget ? _currentAttackTarget.object as Unit : null);
     }
 
     public function canAttackWithWeapon (targetUnit :Unit, weapon :UnitWeaponData) :Boolean
@@ -109,10 +105,11 @@ public class Unit extends SimObject
 
     public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeaponData) :Boolean
     {
-        // @TODO - fix this mess of a function
+        var targetUnit :Unit = targetUnitOrLocation as Unit;
+        _currentAttackTarget = (null != targetUnit ? targetUnit.ref : SimObjectRef.Null());
 
         // don't attack if we're already attacking
-        if (this.isAttacking) {
+        if (this.inAttackCooldown) {
             return false;
         }
 
@@ -122,8 +119,6 @@ public class Unit extends SimObject
             _needsAttackWarmup = false;
             return false;
         }
-
-        var targetUnit :Unit = targetUnitOrLocation as Unit;
 
         // don't attack if we're out of range
         if (null != targetUnit && !this.canAttackWithWeapon(targetUnit, weapon)) {
@@ -149,8 +144,6 @@ public class Unit extends SimObject
             targetUnit.receiveAttack(attack);
         }
 
-        _currentAttackTarget = (null != targetUnit ? targetUnit.ref : SimObjectRef.Null());
-
         // install a cooldown timer
         if (weapon.cooldown > 0) {
             this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
@@ -161,7 +154,7 @@ public class Unit extends SimObject
 
     protected function sendAOEAttack (targetLoc :Vector2, attack :UnitAttack) :void
     {
-        Assert.isFalse(this.isAttacking);
+        Assert.isFalse(this.inAttackCooldown);
 
         var weapon :UnitWeaponData = attack.weapon;
 

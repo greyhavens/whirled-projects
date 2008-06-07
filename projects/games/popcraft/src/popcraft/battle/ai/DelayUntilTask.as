@@ -8,7 +8,7 @@ public class DelayUntilTask extends AITask
 {
     public static function notAttackingPredicate (dt :Number, creature :CreatureUnit) :Boolean
     {
-        return !creature.isAttacking;
+        return !creature.inAttackCooldown;
     }
 
     public static function createUnitDiedPredicate (unitRef :SimObjectRef) :Function

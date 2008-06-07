@@ -216,18 +216,30 @@ public class CreatureUnitView extends SceneObject
         var newViewState :CreatureUnitViewState = new CreatureUnitViewState();
 
         newViewState.moving = _unit.isMoving;
-        newViewState.attacking = _unit.isAttacking;
 
+        // are we attacking?
+        var attackTarget :Unit;
+        var attacking :Boolean;
+        if (_unit.inAttackCooldown) {
+            attackTarget = _unit.attackTarget;
+            if (null != attackTarget) {
+                attacking = true;
+            }
+        }
+
+        newViewState.attacking = attacking;
+
+        // determine facing direction
         var newFacing :int = -1;
-
-        if (newViewState.moving) {
-            newFacing = getFacingDirectionFromAngle(_unit.movementDirection.angle);
-        } else if (newViewState.attacking) {
+        if (newViewState.attacking) {
             // if we're attacking, we should be facing our attack target
-            var attackTarget :Unit = _unit.attackTarget;
+            attackTarget = _unit.attackTarget;
             if (null != attackTarget) {
                 newFacing = getFacingDirectionFromAngle(attackTarget.unitLoc.subtract(_unit.unitLoc).angle);
             }
+        } else if (newViewState.moving) {
+            // if we're moving, we should be facing our movement direction
+            newFacing = getFacingDirectionFromAngle(_unit.movementDirection.angle);
         }
 
         if (newFacing == -1) {
