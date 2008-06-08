@@ -12,6 +12,7 @@ public class UnitData
     public var displayName :String;
     public var description :String;
     public var introText :String;
+    public var introText2 :String;
     public var resourceCosts :Array = [];
 
     public var baseMoveSpeed :Number = 0;
@@ -38,6 +39,7 @@ public class UnitData
         theClone.displayName = displayName;
         theClone.description = description;
         theClone.introText = introText;
+        theClone.introText2 = introText2;
         theClone.resourceCosts = resourceCosts.slice();
 
         theClone.baseMoveSpeed = baseMoveSpeed;
@@ -64,6 +66,7 @@ public class UnitData
         unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
         unitData.description = XmlReader.getAttributeAsString(xml, "description", (useDefaults ? inheritFrom.description : undefined));
         unitData.introText = XmlReader.getAttributeAsString(xml, "introText", (useDefaults ? inheritFrom.introText : undefined));
+        unitData.introText2 = XmlReader.getAttributeAsString(xml, "introText2", (useDefaults ? inheritFrom.introText2 : undefined));
 
         var resourceCostsNode :XML = xml.ResourceCosts[0];
         if (null != resourceCostsNode) {

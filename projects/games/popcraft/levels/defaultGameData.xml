@@ -50,11 +50,14 @@
                 type="grunt"
                 displayName="Street-Walker"
                 description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Delivery Boy."
-                introText="A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular among busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. Even in undeath, the Street-Walker possesses a mother's instincts, and is equally skilled at soothing a wailing babe and eviscerating a threatening intruder.
+                introText=
+"A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular with busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. The relentless rocking of these liberated libertines makes them excellent nursemaids, able to soothe the cries of the most desp
 
-Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness with a Street-Walker has left many an aspiring reanimator disemboweled.
-
-The reanimation process for Street-Walkers calls for several pounds of Flesh and a dash of Energy."
+Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness may drastically limit the student's participation in the next reanimation."
+                introText2=
+"-Reliable melee creature.
+-Able to slowly topple an opponent's workshop.
+-Requires a few pounds of FLESH and a dash of ENERGY to create."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -79,9 +82,14 @@ The reanimation process for Street-Walkers calls for several pounds of Flesh and
                 type="heavy"
                 displayName="Handy Man"
                 description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
-                introText="The Handy Man is the modern homeowner's solution to any electricity-, plumbing-, or home security-related problem. Malfunctioning water closets and phonographs are no match for the Handy Man’s ability to deftly wield and operate a multitude of tools simultaneously. Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands, transforming them into projectiles that can be heaved great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion.
+                introText=
+"The Handy Man is the modern homeowner's solution to any plumbing-, or home security-related problem. Malfunctioning water closets are no match for the Handy Man’s ability to slowly operate a multitude of tools simultaneously. 
 
-The Handy Man's regenerative extremities and multitude of limbs require an extensive and complex circulatory system. Students interested in the reanimation of Handy Men are advised to keep a healthy supply of Blood and Artifice close at hand."
+Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways: they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
+                introText2=
+"- Construct multiple Handy Men for a solid defense.
+- Able to detonate explosive Delivery Boys before they get close enough to cause damage.
+- Street-Walkers will quickly kill unprotected Handy-Men."
                 baseMoveSpeed="50"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -106,11 +114,14 @@ The Handy Man's regenerative extremities and multitude of limbs require an exten
                 type="sapper"
                 displayName="Delivery Boy"
                 description="DELIVERY BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
-                introText="Unclean drinking water has dramatically driven up child mortality rates in recent years. Reanimators are encouraged to take advantage of this windfall by building Delivery Boys, which are increasingly popular with businesses requiring swift delivery of letters and parcels.
+                introText=
+"Unclean drinking water has dramatically driven up child mortality rates in recent years. Reanimators are encouraged to take advantage of this windfall by building Delivery Boys, which are increasingly popular with businesses requiring swift delivery of letters and parcels.
 
-A combination of volatile gases inside the Delivery Boy’s belly gives this poor fellow explosive indigestion. Take care not to excite your Delivery Boy, or to allow him to approach other reanimated creatures; his innards may combust without warning, resulting in spectacular explosions that will render the Delivery Boy, and anything in his immediate vicinity, quite unable to perform any function at all.
-
-Delivery Boys require Energy and Artifice to reanimate."
+A combination of volatile gases inside the Delivery Boy’s belly gives this poor fellow explosive indigestion. Take care not to shake your Delivery Boy, or allow him to approach other reanimated creatures; his innards may combust without warning, resulting in spectacular explosions that will render the Delivery Boy, and anything in his immediate vicinity, quite unable to perform any function at all."
+                introText2=
+"- Able to explode, causing massive damage to nearby enemies.
+- Will pursue nearby groups of enemies, but leaves solitary creatures alone.
+- Send several Street-Walkers ahead of the Delivery Boy, to prevent him from being prematurely destroyed by an opponent's Handy Men."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="70"
@@ -135,13 +146,14 @@ Delivery Boys require Energy and Artifice to reanimate."
                 type="colossus"
                 displayName="Flesh Behemoth"
                 description="FLESH BEHEMOTH: A massive pile of discarded flesh. The Behemoth's powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
-                introText="The result of a delinquent student’s slap-dash attempt to complete a simple Reanimation 101 homework assignment, the Flesh Behemoth is an unfortunate example of the craft gone horribly awry. This sad, pathetic creature knows only pain and rage, and will lash out at anything in its immediate vicinity, with devastating results.
+                introText=
+"The result of a delinquent student’s slap-dash attempt to complete a simple Reanimation 101 homework assignment, the Flesh Behemoth is an unfortunate example of the craft gone horribly awry. This sad, pathetic creature knows only pain and rage, and will lash out at anything in its immediate vicinity, with devastating results.
 
-Students are advised that instructors at the School for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the SRR’s Reanimation Ethics Committee, followed by possible expulsion from the school.
-
-If one finds oneself unlucky enough to be threatened by an errant Flesh Behemoth, it is recommended that one remain calm, avoid approaching the beast, and unleash as many lesser creatures upon it as one is able. Repeated blows to its fleshy hide will slow the Behemoth’s movement and render it unable to attack as quickly as if it were otherwise unhindered.
-
-The Flesh Behemoth requires a massive amount of both Flesh and Blood to construct."
+Students are advised that instructors at the School for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the SRR’s Ethics Committee, followed by possible expulsion from the school."
+                introText2=
+"- Massively strong and durable.
+- Does not pursue other creatures, but will attack aggressors in its vicinity.
+- Moves and attacks more slowly when when attacked by multiple creatures simultaneously."
                 baseMoveSpeed="25"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -166,13 +178,16 @@ The Flesh Behemoth requires a massive amount of both Flesh and Blood to construc
                 type="courier"
                 displayName="Ladyfingers"
                 description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
-                introText="Adept at retrieving small objects, the diminutive Ladyfingers is rapidly replacing Fido as the pet of choice for today’s sophisticated family. And when it comes to easing the day’s tensions, distinguished gentlemen are discovering that nothing is more effective than a full-body massage administered by an eager, dextrous Ladyfingers.
+                introText=
+"Adept at retrieving small objects, the diminutive Ladyfingers is rapidly replacing Fido as the pet of choice for today’s sophisticated family. And when it comes to easing the day’s tensions, distinguished gentlemen are discovering that nothing is more effective than a full-body massage administered by an eager, dextrous Ladyfingers.
 
 Ladyfingers are social creatures, and thrive in groups. When near other friendly specimens, they will perform tasks with increased vigor and speed.
 
-The Ladyfingers’ delicate frame and small size render it quite fragile. Students are warned to take care not to step on it, or allow careless classmates to play with it.
-
-Small amounts of both Flesh and Artifice are sufficient to reanimate the dainty Ladyfingers."
+The Ladyfingers’ delicate frame and small size render it quite fragile. Students are warned to take care not to step on it, or allow careless classmates to play with it."
+                introText2=
+"- Retrieves Infusions from the battlefield and returns them to your workshop.
+- Moves more quickly when other friendly Ladyfingers are nearby.
+- Very fragile, and unable to attack aggressors."
                 baseMoveSpeed="65"
                 hasRepulseForce="false"
                 maxHealth="40"

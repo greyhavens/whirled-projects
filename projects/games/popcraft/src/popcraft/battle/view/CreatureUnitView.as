@@ -286,16 +286,16 @@ public class CreatureUnitView extends SceneObject
 
     protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
     {
-        var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
-        if (anim != oldAnim) {
-            anim.gotoAndPlay(initialFrame); // only reset the animation if it's actually changed
-        }
-
         // flip if we need to
         anim.scaleX = ((newViewState.facing == Constants.FACING_NE || newViewState.facing == Constants.FACING_SE) ? -1 : 1);
 
-        _sprite.removeChildAt(0);
-        _sprite.addChildAt(anim, 0);
+        var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+        if (anim != oldAnim) {
+            // only reset the animation if it's actually changed
+            _sprite.removeChildAt(0);
+            _sprite.addChildAt(anim, 0);
+            anim.gotoAndPlay(initialFrame);
+        }
 
         _lastViewState = newViewState;
     }

@@ -11,6 +11,7 @@ import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import popcraft.*;
 import popcraft.battle.view.UnitAnimationFactory;
@@ -49,11 +50,19 @@ public class CreatureIntroMode extends AppMode
 
         MovieClip(rightPage["image"]).addChild(creatureAnim);
 
-        // create name
+        // creature name
         TextField(rightPage["title"]).text = "The " + _creatureData.displayName;
 
         // creature intro text
-        TextField(leftPage["text"]).text = _creatureData.introText;
+        var text1 :TextField = leftPage["text"];
+        var text2 :TextField = rightPage["text"];
+
+        var italicFormat :TextFormat = new TextFormat();
+        italicFormat.italic = true;
+        text1.text = _creatureData.introText;
+        text1.setTextFormat(italicFormat);
+
+        text2.text = _creatureData.introText2;
 
         // ok button
         _okButton = rightPage["ok"];
