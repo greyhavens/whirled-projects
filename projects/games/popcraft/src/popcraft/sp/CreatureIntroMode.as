@@ -12,6 +12,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 import popcraft.*;
 import popcraft.battle.view.UnitAnimationFactory;
@@ -57,10 +58,11 @@ public class CreatureIntroMode extends AppMode
         var text1 :TextField = leftPage["text"];
         var text2 :TextField = rightPage["text"];
 
-        var italicFormat :TextFormat = new TextFormat();
-        italicFormat.italic = true;
+        var format :TextFormat = new TextFormat();
+        format.italic = true;
+        format.align = TextFormatAlign.JUSTIFY;
         text1.text = _creatureData.introText;
-        text1.setTextFormat(italicFormat);
+        text1.setTextFormat(format);
 
         text2.text = _creatureData.introText2;
 
