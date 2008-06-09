@@ -41,7 +41,7 @@ public class TangleWord extends Sprite
             // Initialize the background bitmap
             var background :DisplayObject = new Resources.logo();
             Assert.isNotNull(background, "Background bitmap failed to initialize!");
-            addChild (background);
+            addChild(background);
             // Error message
             var label :TextField = new TextField();
             label.x = 100;
@@ -64,11 +64,11 @@ public class TangleWord extends Sprite
         _display = new Display(_gameCtrl, _controller, "Tangleword v. 1.4.1");
         _model = new Model(_gameCtrl, _display);
         _controller.setModel(_model); // ... as in, right here :)
-        addChild (_display);
+        addChild(_display);
 
         // If I'm in control, initialize the scoreboard
         if (_gameCtrl.game.amInControl()) {
-            initializeScoreboard ();
+            initializeScoreboard();
         }
 
         // If the game's already going, do what you have to do to catch up

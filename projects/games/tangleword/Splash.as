@@ -54,8 +54,6 @@ public class Splash extends Sprite
         addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
                 event.stopPropagation();
             });
-
-        
     }
 
     /** Helper function that updates display object position. */

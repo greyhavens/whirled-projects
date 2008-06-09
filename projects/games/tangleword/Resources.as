@@ -141,12 +141,12 @@ public class Resources
     [Embed(source="rsrc/background.swf")]
     public static const background :Class;
     [Embed(source="rsrc/splash.swf")]
-        public static const splash :Class;
-    
-    [Embed(source="rsrc/stats_fg.swf", mimeType="application/octet-stream")]
-    public static const stats_fg :Class;
-    [Embed(source="rsrc/stats_bg.swf", mimeType="application/octet-stream")]
-    public static const stats_bg :Class;
+    public static const splash :Class;
+
+//    [Embed(source="rsrc/stats_fg.swf", mimeType="application/octet-stream")]
+//    public static const stats_fg :Class;
+//    [Embed(source="rsrc/stats_bg.swf", mimeType="application/octet-stream")]
+//    public static const stats_bg :Class;
 
     [Embed(source="rsrc/logo.png")]
     public static const logo :Class;
