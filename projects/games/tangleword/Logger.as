@@ -24,7 +24,8 @@ public class Logger extends ScrollPane
     public static const FOUND_WORD_FIRST :String = "foundFirst",
                         FOUND_WORD :String = "found",
                         INVALID_WORD :String = "invalid",
-                        SUMMARY_HEADER :String = "summaryHeader";
+                        SUMMARY_H1 :String = "summaryH1",
+                        SUMMARY_H2 :String = "summaryH2";
     
     // Set up the default skin for scroll pane
     DefaultScrollPaneSkins;
@@ -66,7 +67,11 @@ public class Logger extends ScrollPane
         addStyle({
                 fontSize: 14,
                 fontWeight: "bold"
-            }, SUMMARY_HEADER);
+            }, SUMMARY_H1);
+
+        addStyle({
+                fontWeight: "bold"
+            }, SUMMARY_H2);
     }
 
     /** Convenience method to set up a style for the textfield. */

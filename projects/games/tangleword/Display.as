@@ -88,7 +88,7 @@ public class Display extends Sprite
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
 
         _logger.log();
-        _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_HEADER);
+        _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_H1);
         logSummary(model, model.getWords());
         _logger.log("Next round will begin shortly...");
 
@@ -179,10 +179,12 @@ public class Display extends Sprite
         var all :Array = words.sortOn("word", Array.DESCENDING);
 
         _logger.log();
+        _logger.log("Top words this round:", Logger.SUMMARY_H2);
         for each (var w :Object in featured) {
             _logger.log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
         }
         _logger.log();
+        _logger.log("All words found:", Logger.SUMMARY_H2);
         for each (var w :Object in all) {
             _logger.logListItem(w.word);
         }
