@@ -141,6 +141,8 @@ public class Controller
         
         // Now check if it's an actual word.
         _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
+
+        _model.removeAllSelectedLetters();
     }
 
     /**

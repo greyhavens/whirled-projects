@@ -84,7 +84,6 @@ public class Display extends Sprite
     /** Called when the round ends - disables display. */
     public function roundEnded (model :Model, board :Scoreboard) :void
     {
-        updateLetterSelection( [] );
         setEnableState(false);
 
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
@@ -153,7 +152,7 @@ public class Display extends Sprite
     /** Updates the log with a failure message */
     public function logAlreadyClaimed (player :String, word :String) :void
     {
-        _logger.logListItem(word, Logger.INVALID_WORD);
+        _logger.logListItem(word, Logger.DUPLICATE_WORD);
     }
 
     /** Updates the log with an invalid word message */
@@ -238,7 +237,6 @@ public class Display extends Sprite
     {
         try {
             _controller.tryScoreWord(_wordfield.text);
-            updateLetterSelection( [] );
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }
@@ -257,7 +255,7 @@ public class Display extends Sprite
 
         // Instaclear the line when you hit escape
         case KeyboardCodes.ESCAPE:
-            updateLetterSelection( [] );
+            _wordfield.text = "";
             break;
 
         default:
@@ -307,7 +305,7 @@ public class Display extends Sprite
         _wordfield.restrict = "A-Za-z";
 
         var callback :Function = function (... ignore): void {
-            updateLetterSelection( [] );
+            _wordfield.text = "";
             _wordfield.removeEventListener(FocusEvent.FOCUS_IN, callback);
         };
         _wordfield.addEventListener(FocusEvent.FOCUS_IN, callback);

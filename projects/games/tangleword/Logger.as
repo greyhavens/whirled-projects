@@ -24,6 +24,7 @@ public class Logger extends ScrollPane
     public static const FOUND_WORD_FIRST :String = "foundFirst",
                         FOUND_WORD :String = "found",
                         INVALID_WORD :String = "invalid",
+                        DUPLICATE_WORD :String = "duplicate",
                         SUMMARY_H1 :String = "summaryH1",
                         SUMMARY_H2 :String = "summaryH2";
     
@@ -63,6 +64,10 @@ public class Logger extends ScrollPane
         addStyle({
                 color: "#ff0000"
             }, INVALID_WORD);
+
+        addStyle({
+                color: "#a0a0a0"
+            }, DUPLICATE_WORD);
 
         addStyle({
                 fontSize: 14,
