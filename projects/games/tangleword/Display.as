@@ -69,7 +69,7 @@ public class Display extends Sprite
     {
         removeEventListener(MouseEvent.CLICK, clickHandler);
         removeEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
-        removeEventListener(KeyboardEvent.KEY_UP, typingHandler);
+        removeEventListener(KeyboardEvent.KEY_DOWN, typingHandler);
     }
 
     /** Called when the round starts - enables display. */
