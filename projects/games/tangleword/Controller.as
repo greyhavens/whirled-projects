@@ -110,9 +110,10 @@ public class Controller
         }
     }
 
-    /** Signals that the currently selected word is a candidate for scoring.
-     *  It will be matched against the dictionary, and added to the model.
-     *  @throws TangleWordError if choice is completely bogus.
+    /** 
+     * Signals that the currently selected word is a candidate for scoring.
+     * It will be matched against the dictionary, and added to the model.
+     * @throws TangleWordError if choice is completely bogus.
      */
     public function tryScoreWord (word :String) :void
     {
@@ -141,10 +142,10 @@ public class Controller
         // Now check if it's an actual word.
         _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
     }
-            
+
     /**
-       Called when the user types a letter inside the word field.
-    */
+     * Called when the user types a letter inside the word field.
+     */
     public function processKeystroke (event :KeyboardEvent) :void
     {
         // The user typed in some character. Typing is incompatible
