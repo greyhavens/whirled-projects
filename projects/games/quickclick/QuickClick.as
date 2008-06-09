@@ -98,7 +98,10 @@ public class QuickClick extends Sprite
 
     protected function handleCoinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _ctrl.local.feedback("You earned " + event.amount + " coins!");
+        // we ignore the event, but if we wanted to, we could override the standard message
+        // with our own.
+        //_ctrl.local.feedback("You earned " + event.amount + " coins!");
+        //event.preventDefault(); // stop the standard message from happening
     }
 
     /**
