@@ -84,7 +84,7 @@ public class Display extends Sprite
     /** Called when the round ends - disables display. */
     public function roundEnded (model :Model, board :Scoreboard) :void
     {
-        _wordfield.text = "";
+        updateLetterSelection( [] );
         setEnableState(false);
 
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
@@ -257,7 +257,7 @@ public class Display extends Sprite
 
         // Instaclear the line when you hit escape
         case KeyboardCodes.ESCAPE:
-            _wordfield.text = "";
+            updateLetterSelection( [] );
             break;
 
         default:
@@ -307,7 +307,7 @@ public class Display extends Sprite
         _wordfield.restrict = "A-Za-z";
 
         var callback :Function = function (... ignore): void {
-            _wordfield.text = "";
+            updateLetterSelection( [] );
             _wordfield.removeEventListener(FocusEvent.FOCUS_IN, callback);
         };
         _wordfield.addEventListener(FocusEvent.FOCUS_IN, callback);
