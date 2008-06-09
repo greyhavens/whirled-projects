@@ -59,7 +59,7 @@ public class Display extends Sprite
         // Register for events
         addEventListener(MouseEvent.CLICK, clickHandler);
         addEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
-        addEventListener(KeyboardEvent.KEY_UP, typingHandler);
+        addEventListener(KeyboardEvent.KEY_DOWN, typingHandler);
 
         _logger.log(version);
     }
