@@ -18,7 +18,7 @@ public class Trophies {
     public static const totalRoundsBoundaries :Array = [ 25, 100, 500 ];
     public static const totalRoundsTrophyPrefix :String = "total_";
 
-    public static const pointsBoundaries :Array = [ 100, 150, 200 ];
+    public static const pointsBoundaries :Array = [ 50, 75, 100 ];
     public static const pointsTrophySuffix :String = "_points";
 
     public static const multiplayerWinsBoundaries :Array = [ 5, 10, 25 ];
