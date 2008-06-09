@@ -27,6 +27,8 @@ import com.threerings.util.StringUtil;
 import com.whirled.game.GameControl;
 import com.whirled.contrib.Scoreboard;
 
+import com.threerings.util.KeyboardCodes;
+
 /**
  * The Display class represents the game visualization, including UI
  * and game state display.
@@ -175,12 +177,12 @@ public class Display extends Sprite
 
     public function logSummary (model :Model, words :Object) :void
     {
-        var featured :Array = words.sortOn("score", Array.DESCENDING | Array.NUMERIC).slice(0, 5);
-        var all :Array = words.sortOn("word", Array.DESCENDING);
+        //var featured :Array = words.sortOn("score", Array.DESCENDING | Array.NUMERIC).slice(0, 5);
+        var all :Array = words.sortOn(["score", "word"], [Array.DESCENDING | Array.NUMERIC, null]);
 
         _logger.log();
         _logger.log("Top words this round:", Logger.SUMMARY_H2);
-        for each (var w :Object in featured) {
+        for each (var w :Object in all.slice(0, 5)) {
             _logger.log(w.word + " (" + w.score + "): " + w.playerIds.map(model.getName).join(", "));
         }
         _logger.log();
@@ -245,11 +247,16 @@ public class Display extends Sprite
     public function typingHandler (event :KeyboardEvent) :void
     {
         switch (event.keyCode) {
-        case 13:
+        case KeyboardCodes.ENTER:
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "") {
                 submitWord();
             }
+            break;
+
+        // Instaclear the line when you hit escape
+        case KeyboardCodes.ESCAPE:
+            _wordfield.text = "";
             break;
 
         default:
