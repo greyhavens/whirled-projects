@@ -187,8 +187,8 @@ public class Display extends Sprite
         }
         _logger.log();
         _logger.log("All words found:", Logger.SUMMARY_H2);
-        for each (var w :Object in all) {
-            _logger.logListItem(w.word);
+        for each (var m :Object in all) {
+            _logger.logListItem(m.word);
         }
         _logger.log();
     }
@@ -238,6 +238,7 @@ public class Display extends Sprite
     {
         try {
             _controller.tryScoreWord(_wordfield.text);
+            updateLetterSelection( [] );
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }

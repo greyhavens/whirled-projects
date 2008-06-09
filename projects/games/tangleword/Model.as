@@ -214,9 +214,6 @@ public class Model
         }
 
         addWordToScoreboard(obj.playerId, obj.word, obj.score, obj.isvalid);
-
-        // reset selection
-        removeAllSelectedLetters();
     }
 
     /** Sends out a message to everyone, informing them about a new letter set.
