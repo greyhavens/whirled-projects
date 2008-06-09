@@ -51,13 +51,13 @@
                 displayName="Street-Walker"
                 description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Delivery Boy."
                 introText=
-"A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular with busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. The relentless rocking of these liberated libertines makes them excellent nursemaids, able to soothe the cries of the most desp
+"A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular with busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. The relentless rocking of these liberated libertines makes them excellent nursemaids, able to soothe the cries of the most vivacious child.
 
 Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness may drastically limit the student's participation in the next reanimation."
                 introText2=
 "-Reliable melee creature.
--Able to slowly topple an opponent's workshop.
--Requires a few pounds of FLESH and a dash of ENERGY to create."
+- Reasonably strong and durable.
+-Able to slowly topple an opponent's workshop."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -83,9 +83,11 @@ Students are advised to exercise caution around a Street-Walker's long, razor-sh
                 displayName="Handy Man"
                 description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
                 introText=
-"The Handy Man is the modern homeowner's solution to any plumbing-, or home security-related problem. Malfunctioning water closets are no match for the Handy Man’s ability to slowly operate a multitude of tools simultaneously. 
+"The Handy Man is the modern homeowner's solution to any plumbing-, or home security-related problem!
 
-Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways: they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
+Malfunctioning water closets and phonographs are no match for the Handy Man’s ability to slowly operate a multitude of tools simultaneously.
+
+Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
                 introText2=
 "- Construct multiple Handy Men for a solid defense.
 - Able to detonate explosive Delivery Boys before they get close enough to cause damage.
@@ -119,9 +121,9 @@ Moreover, Handy Men stationed outside a home are ideal for warding off the shift
 
 A combination of volatile gases inside the Delivery Boy’s belly gives this poor fellow explosive indigestion. Take care not to shake your Delivery Boy, or allow him to approach other reanimated creatures; his innards may combust without warning, resulting in spectacular explosions that will render the Delivery Boy, and anything in his immediate vicinity, quite unable to perform any function at all."
                 introText2=
-"- Able to explode, causing massive damage to nearby enemies.
+"- Able to explode at will, causing massive damage to nearby enemies.
 - Will pursue nearby groups of enemies, but leaves solitary creatures alone.
-- Send several Street-Walkers ahead of the Delivery Boy, to prevent him from being prematurely destroyed by an opponent's Handy Men."
+- Send several Street-Walkers ahead of the Delivery Boy to prevent him from being prematurely destroyed by an opponent's Handy Men."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="70"
@@ -153,7 +155,7 @@ Students are advised that instructors at the School for Responsible Reanimation 
                 introText2=
 "- Massively strong and durable.
 - Does not pursue other creatures, but will attack aggressors in its vicinity.
-- Moves and attacks more slowly when when attacked by multiple creatures simultaneously."
+- Moves and attacks more slowly when when assaulted by multiple creatures simultaneously."
                 baseMoveSpeed="25"
                 hasRepulseForce="true"
                 maxHealth="100"
@@ -179,15 +181,15 @@ Students are advised that instructors at the School for Responsible Reanimation 
                 displayName="Ladyfingers"
                 description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
                 introText=
-"Adept at retrieving small objects, the diminutive Ladyfingers is rapidly replacing Fido as the pet of choice for today’s sophisticated family. And when it comes to easing the day’s tensions, distinguished gentlemen are discovering that nothing is more effective than a full-body massage administered by an eager, dextrous Ladyfingers.
+"The diminutive Ladyfingers possesses a Magpie's instinct for collecting and hoarding shiny treasures. They are particularly adept at retrieving coins lost in the nether regions of the living room sofa.
 
 Ladyfingers are social creatures, and thrive in groups. When near other friendly specimens, they will perform tasks with increased vigor and speed.
 
-The Ladyfingers’ delicate frame and small size render it quite fragile. Students are warned to take care not to step on it, or allow careless classmates to play with it."
+Be warned: the Ladyfingers’ delicate frame and small size render it quite fragile. Take care not to step on your Ladyfingers, or allow careless classmates to play with it."
                 introText2=
-"- Retrieves Infusions from the battlefield and returns them to your workshop.
+"- Retrieves INFUSIONS from the battlefield and returns them to your workshop.
 - Moves more quickly when other friendly Ladyfingers are nearby.
-- Very fragile, and unable to attack aggressors."
+- Weak defense; does not attack."
                 baseMoveSpeed="65"
                 hasRepulseForce="false"
                 maxHealth="40"
