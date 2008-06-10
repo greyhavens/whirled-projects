@@ -46,9 +46,9 @@
             playerName="Ralph"
             baseHealth="100"
             team="1">
-            <StartingSpells>
-                <Spell type="rigormortis" count="1"/>
-            </StartingSpells>
+            <InitialSpells>
+                <Spell type="rigormortis" amount="1"/>
+            </InitialSpells>
             <InitialDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="7"

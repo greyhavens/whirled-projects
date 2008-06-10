@@ -44,7 +44,7 @@
             playerName="Ralph"
             baseHealth="150"
             team="1">
-            <StartingSpells/>
+            <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="3"

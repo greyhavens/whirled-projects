@@ -1,0 +1,68 @@
+<root>
+    <Level
+        parDays="1"
+        backgroundName="Level1"
+        introText="Grab the Infusions!"
+        playerName="Jack"
+        playerBaseHealth="150">
+
+        <Hints>
+        </Hints>
+
+        <GameDataOverride
+            spellDropTimeMin="15"
+            spellDropTimeMax="30">
+        </GameDataOverride>
+
+        <InitialResources/>
+
+        <InitialSpells/>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+            <Unit type="heavy"/>
+            <Unit type="sapper"/>
+            <Unit type="courier"/>
+            <Unit type="colossus"/>
+        </AvailableUnits>
+
+        <AvailableSpells>
+            <Spell type="rigormortis"/>
+            <Spell type="bloodlust"/>
+            <Spell type="shuffle"/>
+        </AvailableSpells>
+
+        <Computer
+            playerName="Ralph"
+            baseHealth="150"
+            team="1">
+
+            <InitialSpells>
+                <Spell type="rigormortis" amount="1"/>
+            </InitialSpells>
+
+            <InitialDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="1"
+                    noticeSpellDropAfterMax="3"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="2">
+
+                    <Wave absoluteDelay="3"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="4"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="5" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+
+                    <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="21"><Unit type="sapper" count="6"/></Wave>
+
+                    <Wave absoluteDelay="25"><Unit type="heavy" count="4"/></Wave>
+
+                    <Wave absoluteDelay="35"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="36"><Unit type="sapper" count="6"/></Wave>
+                </Day>
+            </InitialDays>
+        </Computer>
+
+    </Level>
+
+</root>

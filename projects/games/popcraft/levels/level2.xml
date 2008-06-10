@@ -6,7 +6,7 @@
         newCreatureType="heavy"
         introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy Man can keep them at bay!"
         playerName="Jack"
-        playerBaseHealth="50">
+        playerBaseHealth="70">
 
         <GameDataOverride disableDiurnalCycle="true">
             <GameSizes>
@@ -33,7 +33,7 @@
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" baseHealth="50" team="1">
+        <Computer playerName="Ralph" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>

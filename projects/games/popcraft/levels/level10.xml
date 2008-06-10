@@ -9,7 +9,7 @@
 
         <Hints>
             <Hint>Bloodlusted creatures are more susceptible to attacks. Combine Bloodlust with Rigor Mortis to counter the weakening effects!</Hint>
-			<Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
+            <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
         <GameDataOverride
@@ -48,7 +48,7 @@
             playerName="Ralph"
             baseHealth="120"
             team="1">
-            <StartingSpells/>
+            <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
                     spellDropCourierGroupSizeMin="0"
@@ -94,7 +94,7 @@
             playerName="Sam"
             baseHealth="80"
             team="1">
-            <StartingSpells/>
+            <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
                     spellDropCourierGroupSizeMin="0"
@@ -144,7 +144,7 @@
             playerName="Eric"
             baseHealth="80"
             team="1">
-            <StartingSpells/>
+            <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
                     spellDropCourierGroupSizeMin="0"

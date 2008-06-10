@@ -38,7 +38,7 @@
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="150" team="1">
-            <StartingSpells/>
+            <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="5"

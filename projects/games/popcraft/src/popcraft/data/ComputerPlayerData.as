@@ -36,10 +36,10 @@ public class ComputerPlayerData
         }
 
         // read spells
-        for each (var spellData :XML in xmlData.StartingSpells.Spell) {
+        for each (var spellData :XML in xmlData.InitialSpells.Spell) {
             spellType = XmlReader.getAttributeAsEnum(spellData, "type", Constants.CREATURE_SPELL_NAMES);
-            var count :int = XmlReader.getAttributeAsUint(spellData, "count");
-            computerPlayer.startingCreatureSpells[spellType] = count;
+            var amount :int = XmlReader.getAttributeAsUint(spellData, "amount");
+            computerPlayer.startingCreatureSpells[spellType] = amount;
         }
 
         return computerPlayer;

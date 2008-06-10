@@ -213,6 +213,8 @@ public class LevelManager implements UserCookieDataSource
     protected static const LEVEL_11 :Class;
     [Embed(source="../../../levels/level12.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_12 :Class;
+    [Embed(source="../../../levels/level13.xml", mimeType="application/octet-stream")]
+    protected static const LEVEL_13 :Class;
 
     [Embed(source="../../../levels/testlevel.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_TEST :Class;
@@ -230,6 +232,7 @@ public class LevelManager implements UserCookieDataSource
         LEVEL_10,
         LEVEL_11,
         LEVEL_12,
+        LEVEL_13,
     ];
 
     protected static const NUM_LEVELS :int = 15;
