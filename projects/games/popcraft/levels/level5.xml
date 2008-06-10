@@ -9,6 +9,10 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         playerName="Jack"
         playerBaseHealth="100">
 
+        <Hints>
+            <Hint>Focus on eliminating one of your opponents first. With one enemy out of the way, the other will fall more quickly.</Hint>
+        </Hints>
+
         <GameDataOverride>
             <GameSizes>
                 <GameSize numPlayers="3">

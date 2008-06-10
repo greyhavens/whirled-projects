@@ -4,7 +4,7 @@
         levelCompletionBonus="1000"
         backgroundName="Level2"
         newCreatureType="heavy"
-        introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy-Man can keep them at bay!"
+        introText="Explosive Delivery Boys are being dispatched to detonate your workshop. The Handy Man can keep them at bay!"
         playerName="Jack"
         playerBaseHealth="50">
 
@@ -16,6 +16,10 @@
                 </GameSize>
             </GameSizes>
         </GameDataOverride>
+
+        <Hints>
+            <Hint>Delivery Boys and Street-Walkers don't mix. Wait until your Handy Men have detonated any Delivery Boys in the area, then send Street-Walkers to tear your opponent down!</Hint>
+        </Hints>
 
         <InitialResources>
             <Resource type="red" amount="100"/>

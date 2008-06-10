@@ -18,6 +18,7 @@ public class LevelData
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
 
+    public var levelHints :Array = [];
     public var availableUnits :Array = [];
     public var availableSpells :Array = [];
     public var computers :Array = [];
@@ -56,6 +57,11 @@ public class LevelData
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
+
+        // level hints
+        for each (var hintData :XML in xml.Hints.Hint) {
+            level.levelHints.push(String(hintData));
+        }
 
         // parse the available units
         for each (var unitData :XML in xml.AvailableUnits.Unit) {

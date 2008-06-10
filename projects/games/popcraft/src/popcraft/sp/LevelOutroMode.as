@@ -3,6 +3,7 @@ package popcraft.sp {
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -30,7 +31,7 @@ public class LevelOutroMode extends AppMode
         var bgSprite :Sprite = new Sprite();
         g = bgSprite.graphics;
         g.beginFill(_success ? 0x76FF86 : 0xFD5CFF);
-        g.drawRect(0, 0, 250, 200);
+        g.drawRect(0, 0, 250, 300);
         g.endFill();
 
         bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
@@ -49,6 +50,28 @@ public class LevelOutroMode extends AppMode
         tfName.y = 30;
 
         bgSprite.addChild(tfName);
+
+        var message :String = "";
+
+        // if the player lost, show a hint
+        var hints :Array = GameContext.spLevel.levelHints;
+        if (!_success && hints.length > 0) {
+            message = hints[Rand.nextIntRange(0, hints.length, Rand.STREAM_COSMETIC)] + "\n\n";
+        }
+
+        message += "Your progress has been saved. Continue playing?";
+
+        var tfMessage :TextField = new TextField();
+        tfMessage.selectable = false;
+        tfMessage.wordWrap = true;
+        tfMessage.multiline = true;
+        tfMessage.width = 250 - 24;
+        tfMessage.autoSize = TextFieldAutoSize.LEFT;
+        tfMessage.text = message;
+        tfMessage.x = 12;
+        tfMessage.y = tfName.y + tfName.height + 3;
+
+        bgSprite.addChild(tfMessage);
 
         // buttons
         var button :SimpleTextButton;
@@ -69,7 +92,7 @@ public class LevelOutroMode extends AppMode
         }
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 100;
+        button.y = 200;
         bgSprite.addChild(button);
 
         button = new SimpleTextButton("Main Menu");
@@ -78,7 +101,7 @@ public class LevelOutroMode extends AppMode
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
             });
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 150;
+        button.y = 250;
         bgSprite.addChild(button);
     }
 

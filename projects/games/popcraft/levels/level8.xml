@@ -7,6 +7,10 @@
         playerName="Jack"
         playerBaseHealth="150">
 
+        <Hints>
+            <Hint>An unprotected Flesh Behemoth will quickly fall to a well-prepared opponent. Send Street-Walkers ahead of your Behemoths to distract your enemy's Handy Men!</Hint>
+        </Hints>
+
         <GameDataOverride>
             <GameSizes>
                 <GameSize numPlayers="2">

@@ -7,6 +7,10 @@
         playerName="Jack"
         playerBaseHealth="100">
 
+        <Hints>
+            <Hint>Delivery Boys will ignore solitary creatures, but will chase down groups of two or more enemies.</Hint>
+        </Hints>
+
         <InitialResources>
             <Resource type="blue" amount="60"/>
             <Resource type="yellow" amount="40"/>

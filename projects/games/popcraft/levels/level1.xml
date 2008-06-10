@@ -6,7 +6,7 @@
         newCreatureType="grunt"
         introText="Fashion FLESH and ENERGY into Street-Walkers to destroy your opponent's workshop."
         playerName="Jack"
-        playerBaseHealth="100">
+        playerBaseHealth="50">
 
         <GameDataOverride disableDiurnalCycle="true">
             <GameSizes>
@@ -16,6 +16,10 @@
                 </GameSize>
             </GameSizes>
         </GameDataOverride>
+
+        <Hints>
+            <Hint>When you have enough Flesh and Energy, remember to create a Street-Walker by clicking the switch next to the puzzle. Create multiple Street-Walkers to destroy your opponent's workshop!</Hint>
+        </Hints>
 
         <InitialResources>
             <Resource type="white" amount="60"/>
@@ -28,7 +32,7 @@
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" baseStartHealth="15" baseHealth="100" team="1">
+        <Computer playerName="Ralph" baseStartHealth="15" baseHealth="50" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>

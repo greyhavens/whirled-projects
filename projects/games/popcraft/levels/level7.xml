@@ -8,6 +8,11 @@ He's sending several your way, but he'll be vulnerable for a short while after t
         playerName="Jack"
         playerBaseHealth="100">
 
+        <Hints>
+            <Hint>A solitary creature will be quickly flattened by an enemy Flesh Behemoth. Behemoths move and attack more slowly when they're swarmed by large groups of creatures.</Hint>
+			<Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
+        </Hints>
+
         <GameDataOverride>
             <GameSizes>
                 <GameSize numPlayers="2">

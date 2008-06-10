@@ -5,11 +5,14 @@
         newCreatureType="courier"
         newSpellType="rigormortis"
         introText=
-"When a spell appears on the battlefield, dispatch Ladyfingers to grab it! Once retrieved, a spell can be cast to power-up your units for a limited amount of time. The more Ladyfingers you have on the battlefield, the faster each will move. Send a large group to prevent your opponent from getting a spell before you do!
-
-The Rigor Mortis spell hardens your units' flesh, making them more resistant to attacks."
+"When an Infusion appears on the battlefield, dispatch Ladyfingers to grab it! Once retrieved, an Infusion can be used to power-up your units for a limited amount of time. The more Ladyfingers you have on the battlefield, the faster each will move. Send a large group to prevent your opponent from getting a spell before you do!"
         playerName="Jack"
         playerBaseHealth="100">
+
+        <Hints>
+            <Hint>Grab those Infusions! When you create more Ladyfingers, they'll all move faster. Ensure that your opponent doesn't get any Infusions by creating more Ladyfingers than he does.</Hint>
+            <Hint>Infusions last for a limited time. Maximize the effectiveness of your Infusions by using them when you have a large number of creatures on the battlefield.</Hint>
+        </Hints>
 
         <GameDataOverride
             spellDropTimeMin="30"
