@@ -1,0 +1,6 @@
+Server.as
+spades/Controller.as
+spades/Model.as
+spades/card/SpadesScores.as
+spades/card/SpadesBids.as
+spades/Debug.as
