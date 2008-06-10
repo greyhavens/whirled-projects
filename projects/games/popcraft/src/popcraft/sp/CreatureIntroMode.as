@@ -36,12 +36,6 @@ public class CreatureIntroMode extends AppMode
         movie.y = Constants.SCREEN_DIMS.y * 1.5;
         this.modeSprite.addChild(movie);
 
-        var rightPage :MovieClip = movie["pageR"];
-
-        // ok button
-        _okButton = rightPage["ok"];
-        _okButton.addEventListener(MouseEvent.CLICK, okClicked);
-
         // animate the book in
         _movieObj = new SimpleSceneObject(movie);
         this.addObject(_movieObj);
@@ -135,36 +129,43 @@ public class CreatureIntroMode extends AppMode
             return;
         }
 
+        leftPage.gotoAndPlay(pageType);
+        rightPage.gotoAndPlay(pageType);
+
         if (null != anim) {
             MovieClip(rightPage["image"]).addChild(anim);
         }
+
+        // ok button
+        _okButton = rightPage["ok"];
+        _okButton.addEventListener(MouseEvent.CLICK, okClicked);
 
         // page number
         _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
         TextField(leftPage["pagenum"]).text = String(_pageNum);
 
         // object name
-        TextField(rightPage["title"]).text = objectName;
+        TextField(rightPage[pageType == "page" ? "title" : "note_title"]).text = objectName;
 
         // intro texts
-        TextField(leftPage["text"]).text = leftText;
-        TextField(rightPage["text"]).text = rightText;
+        TextField(leftPage[pageType == "page" ? "text" : "note_text"]).text = leftText;
+        TextField(rightPage[pageType == "page" ? "text" : "note_text"]).text = rightText;
     }
 
     protected function okClicked (...ignored) :void
     {
+        // prevent multiple clicks
+        _okButton.removeEventListener(MouseEvent.CLICK, okClicked);
+
         var movieTask :SerialTask = new SerialTask();
 
         // @TODO - fix this when Jon fixes manual.swf
-        if (false && this.getNextPhase(_phase) < PHASE__LIMIT) {
+        if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
             movieTask.addTask(new GoToFrameTask("turn"));
             movieTask.addTask(new WaitForFrameTask("swap"));
             movieTask.addTask(new FunctionTask(doNextPhase));
         } else {
-            // prevent multiple clicks
-            _okButton.removeEventListener(MouseEvent.CLICK, okClicked);
-
             // animate the book closing and pop the mode
             movieTask.addTask(new GoToFrameTask("close"));
             movieTask.addTask(new WaitForFrameTask("closed"));
