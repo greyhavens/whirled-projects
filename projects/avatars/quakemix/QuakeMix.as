@@ -55,7 +55,7 @@ public class QuakeMix extends Sprite
         if (pack is DataPack) {
             _pack = pack as DataPack;
             _pack.getDisplayObjects({
-                player: "player_skin", weapon: "weapon_skin"}, initScene);
+                player: "body_skin", weapon: "weapon_skin"}, initScene);
         } else {
             trace("Ruh oh!");
         }
@@ -69,7 +69,7 @@ public class QuakeMix extends Sprite
                     Bitmap(textures.player as DisplayObject).bitmapData);
 
             _model = new MD2();
-            _model.load(_pack.getFile("player_md2"), player_material);
+            _model.load(_pack.getFile("body_md2"), player_material);
             _model.rotationX = 90;
             _model.y = -20;
             scene.addChild(_model);
@@ -82,7 +82,7 @@ public class QuakeMix extends Sprite
 
             _weapon = new MD2();
             _weapon.load(_pack.getFile("weapon_md2"), weapon_material);
-            _weapon.rotationX = 90;
+            _weapon.rotationX = _model.rotationX;
             _weapon.y = _model.y;
             scene.addChild(_weapon);
         }
@@ -98,20 +98,38 @@ public class QuakeMix extends Sprite
         _control.addEventListener(ControlEvent.AVATAR_SPOKE, handleSpoke);
 
         var clips :Array = [];
-
-        // TODO: There's gotta be a better way to do this
         for (var n :String in _model.getChannelsByName()) {
             clips.push(n);
         }
-        // Remove "stand" and "all" from the list
-        clips = clips.filter(function (n :*, ... rest) :Boolean {
-                    return n != "stand" && n != "all";
-                }).sort();
-        // Make sure "stand" is first
-        clips.unshift("stand");
+        clips.sort();
 
-        _control.registerStates(clips);
-        _control.registerActions(clips);
+        var states :Array, actions :Array;
+        if (TRIM_CLIPS) {
+            states = clips.filter(function (n :*, ... etc) :Boolean {
+                        return INVALID_STATES.indexOf(n) == -1 &&
+                               INVALID_BOTH.indexOf(n) == -1;
+                    });
+            actions = clips.filter(function (n :*, ... etc) :Boolean {
+                        return INVALID_ACTIONS.indexOf(n) == -1 &&
+                               INVALID_BOTH.indexOf(n) == -1;
+                    });
+
+            // Specially make sure this is first
+            states.unshift("stand");
+        } else {
+            states = clips;
+            actions = clips;
+        }
+
+        // Remove "stand" and "all" from the list
+        /*clips = clips.filter(function (n :*, ... rest) :Boolean {
+                    return n != "stand" && n != "all";
+                }).sort();*/
+        // Make sure "stand" is first
+        //clips.unshift("stand");
+
+        _control.registerStates(states);
+        _control.registerActions(actions);
 
         // We're ready to render now
         addEventListener(Event.ENTER_FRAME, handleFrame);
@@ -135,8 +153,9 @@ public class QuakeMix extends Sprite
     protected function playWeapon (name :String) :void
     {
         if (_weapon != null) {
+            if (_weapon.getAnimationChannelByName(name) == null) {
             // Hide the weapon when playing a death animation
-            if (name.indexOf("death") >= 0) {
+            //if (name.indexOf("death") >= 0) {
                 _weapon.visible = false;
             } else {
                 _weapon.visible = true;
@@ -256,6 +275,28 @@ public class QuakeMix extends Sprite
     protected var renderer :BasicRenderEngine;
     protected var scene :Scene3D;
     protected var camera :Camera3D;
+
+    /** Whether or not we care about trimming the action/state list. */
+    protected const TRIM_CLIPS :Boolean = true;
+
+    /** Keep these out of the action list. */
+    protected const INVALID_ACTIONS :Object = [
+            "stand", "crstand", "crstnd"
+        ];
+
+    /** Keep these out of the state list. */
+    protected const INVALID_STATES :Object = [
+            "attack", "crattck", "crattack", "crdeath", "crdeth", "crpain",
+            "death", "flip", "flipoff", "jump", "pain", "point", "salute",
+            "taunt", "wave"
+        ];
+    
+    /** Keep these out of both lists. */
+    protected const INVALID_BOTH :Object = [
+            "all", // This is added by MD2.as, we don't really care
+            "stand", // Remove this and re-add it after processing to the first slot
+            "crwalk", "run" // Avatar movement uses these, not actions/states
+        ];
 }
 
 }

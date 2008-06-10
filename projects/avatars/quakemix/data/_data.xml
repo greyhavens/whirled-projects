@@ -1,16 +1,15 @@
 <datapack>
-<!-- TODO: Add descriptions -->
-    <file name="player_md2" type="Blob" value="alita.md2" />
-    <file name="player_skin" type="Image" value="alita.png" />
+    <file name="body_md2" type="Blob" value="tris.md2" info="My body's model data (In .md2 format)" />
+    <file name="body_skin" type="Image" value="blade.png" info="My body's skin texture" />
 
-    <data name="show_weapon" type="Boolean" value="true" />
+    <data name="show_weapon" type="Boolean" value="true" info="Whether or not I will hold my weapon" />
 
-    <file name="weapon_md2" type="Blob" value="weapon.md2" />
-    <file name="weapon_skin" type="Image" value="weapon.png" />
+    <file name="weapon_md2" type="Blob" value="weapon.md2" info="My weapon's model data (In .md2 format)" />
+    <file name="weapon_skin" type="Image" value="weapon.png" info="My weapon's skin texture" />
 
-    <data name="talk_action" type="String" value="jump" />
-    <data name="sleep_action" type="String" value="crdeath" />
-    <data name="run_speed" type="Number" value="500" />
+    <data name="talk_action" type="String" value="flip" info="I will do this action when I talk" />
+    <data name="sleep_action" type="String" value="crdeath" info="I will do this action when I go to sleep"  />
+    <data name="run_speed" type="Number" value="500" min="50" max="1500" info="How fast I can putter around" />
 
     <file name="_CONTENT" type="Blob" value="QuakeMix.swf" />
 </datapack>
