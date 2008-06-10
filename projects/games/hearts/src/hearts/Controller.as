@@ -11,7 +11,6 @@ import com.whirled.contrib.card.CardArray;
 import com.whirled.contrib.card.trick.Trick;
 import com.whirled.contrib.card.trick.TrickEvent;
 import com.whirled.contrib.card.trick.Bids;
-import spades.card.SpadesBids;
 import com.whirled.contrib.card.trick.BidEvent;
 import com.whirled.contrib.card.Table;
 import com.whirled.contrib.card.Hand;
@@ -19,7 +18,6 @@ import com.whirled.contrib.card.HandEvent;
 import com.whirled.contrib.card.Sorter;
 import com.whirled.contrib.card.trick.Scores;
 import com.whirled.contrib.card.trick.ScoresEvent;
-import spades.card.SpadesScores;
 import com.whirled.contrib.card.trick.ScoreBreakdown;
 import com.whirled.contrib.card.Team;
 import com.whirled.contrib.card.trick.WinnersAndLosers;
@@ -37,7 +35,6 @@ public class Controller
     public function Controller (gameCtrl :GameControl, createViews :Function)
     {
         _templateDeck = CardArray.FULL_DECK;
-        _server = createViews == null;
 
         var config :Object = gameCtrl.game.getConfig();
         if ("minigame" in config && config.minigame) {
@@ -71,9 +68,7 @@ public class Controller
         function bootstrap (fn :Function, evt :StateChangedEvent) :void {
             if (_model == null) {
                 attachToModel(createModel(gameCtrl));
-                if (!_server) {
-                    createViews(_model);
-                }
+                createViews(_model);
                 fn(evt);
             }
         }
@@ -100,12 +95,6 @@ public class Controller
         return _model;
     }
 
-    / ** For debugging, log a string prefixed with player name and seating position. */
-    public function log (str :String) :void
-    {
-        Debug.debug(str);
-    }
-
     protected function get gameCtrl () :GameControl
     {
         return _model.gameCtrl;
@@ -124,11 +113,6 @@ public class Controller
     protected function get trick () :Trick
     {
         return _model.trick;
-    }
-
-    protected function get bids () :SpadesBids
-    {
-        return _model.bids as SpadesBids;
     }
 
     protected function get scores () :SpadesScores
@@ -157,14 +141,12 @@ public class Controller
             gameCtrl.game.seating.getPlayerNames(),
             gameCtrl.game.seating.getPlayerIds(), 
             gameCtrl.game.seating.getMyPosition(),
-            [new Team(0, [0, 2]), new Team(1, [1, 3])]);
+            [new Team(0, [0]), new Team(1, [1]),
+             new Team(2, [2]), new Team(3, [3])]);
         var hand :Hand = table.isWatcher() ? null : new Hand(gameCtrl, sorter);
         var trick :Trick = new Trick(gameCtrl, trumps);
-        var bids :SpadesBids = new SpadesBids(gameCtrl, 
-            CardArray.FULL_DECK.length / table.numPlayers);
-        var scores :Scores = new SpadesScores(gameCtrl, table, bids, targetScore);
-        var timer :TrickTurnTimer = new TrickTurnTimer(
-            gameCtrl, table, bids, trick);
+        var scores :Scores = new Scores(gameCtrl, table, null, targetScore);
+        var timer :HeartsTurnTimer = new HeartsTurnTimer(gameCtrl, table);
         timer.debug = Debug.debug;
 
         if ("timer" in config && !config.timer) {
@@ -175,15 +157,15 @@ public class Controller
             timer.playTime = parseInt(config.playTime);
         }
 
-        if ("bidTime" in config) {
-            timer.bidTime = parseInt(config.bidTime);
-        }
-
         if ("leadTime" in config) {
             timer.leadTime = parseInt(config.leadTime);
         }
 
-        return new Model(gameCtrl, table, hand, trick, bids, scores, timer);
+        if ("passTime" in config) {
+            timer.playTime = parseInt(config.passTime);
+        }
+
+        return new Model(gameCtrl, table, hand, trick, scores, timer);
     }
 
     protected function attachToModel (model :Model) :void
@@ -892,9 +874,6 @@ public class Controller
 
     /** Set if the game is started */
     protected var _gameStarted :Boolean;
-
-    /** Set if we are the server. */
-    protected var _server :Boolean;
 
     /** Name of property indicating the last player to lead the hand. */
     protected static const COMS_LAST_LEADER :String = "lastleader";
