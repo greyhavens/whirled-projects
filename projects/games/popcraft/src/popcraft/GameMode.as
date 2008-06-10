@@ -67,17 +67,7 @@ public class GameMode extends AppMode
 
         if (GameContext.isSinglePlayer) {
             // introduce the level
-            AppContext.mainLoop.pushMode(new LevelIntroMode());
-
-            // introduce the spell that's new to this level, if one exists
-            if (GameContext.spLevel.newSpellType >= 0) {
-                AppContext.mainLoop.pushMode(new SpellIntroMode());
-            }
-
-            // introduce the creature that's new to this level, if one exists
-            if (GameContext.spLevel.newCreatureType >= 0) {
-                AppContext.mainLoop.pushMode(new CreatureIntroMode());
-            }
+            AppContext.mainLoop.pushMode(new CreatureIntroMode());
         }
     }
 

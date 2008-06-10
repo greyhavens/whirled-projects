@@ -9,6 +9,7 @@
 
         <Hints>
             <Hint>Delivery Boys will ignore solitary creatures, but will chase down groups of two or more enemies.</Hint>
+			<Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
         </Hints>
 
         <InitialResources>

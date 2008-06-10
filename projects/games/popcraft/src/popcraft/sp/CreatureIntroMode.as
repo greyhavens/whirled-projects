@@ -129,8 +129,8 @@ public class CreatureIntroMode extends AppMode
             return;
         }
 
-        leftPage.gotoAndPlay(pageType);
-        rightPage.gotoAndPlay(pageType);
+        leftPage.gotoAndStop(pageType);
+        rightPage.gotoAndStop(pageType);
 
         if (null != anim) {
             MovieClip(rightPage["image"]).addChild(anim);
@@ -148,8 +148,15 @@ public class CreatureIntroMode extends AppMode
         TextField(rightPage[pageType == "page" ? "title" : "note_title"]).text = objectName;
 
         // intro texts
-        TextField(leftPage[pageType == "page" ? "text" : "note_text"]).text = leftText;
-        TextField(rightPage[pageType == "page" ? "text" : "note_text"]).text = rightText;
+        var leftPageText :TextField = leftPage[pageType == "page" ? "text" : "note_text"];
+        if (null != leftPageText) {
+            leftPageText.text = leftText;
+        }
+
+        var rightPageText :TextField = rightPage[pageType == "page" ? "text" : "note_text"];
+        if (null != rightPageText) {
+            rightPageText.text = rightText;
+        }
     }
 
     protected function okClicked (...ignored) :void
@@ -162,7 +169,11 @@ public class CreatureIntroMode extends AppMode
         // @TODO - fix this when Jon fixes manual.swf
         if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
-            movieTask.addTask(new GoToFrameTask("turn"));
+            //movieTask.addTask(new GoToFrameTask("turn"));
+            var movie :MovieClip = _movieObj.displayObject as MovieClip;
+            movie.gotoAndPlay("turn");
+            --_phase;
+            this.doNextPhase();
             movieTask.addTask(new WaitForFrameTask("swap"));
             movieTask.addTask(new FunctionTask(doNextPhase));
         } else {
