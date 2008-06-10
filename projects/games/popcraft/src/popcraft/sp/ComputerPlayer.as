@@ -105,10 +105,6 @@ public class ComputerPlayer extends SimObject
             return;
         }
 
-        if (null == _curDay) {
-            return;
-        }
-
         // stop sending out waves during the day, and resume at night
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (_wavesPaused && dayPhase == Constants.PHASE_NIGHT) {
@@ -124,6 +120,10 @@ public class ComputerPlayer extends SimObject
             _nextWave = null;
             this.removeNamedTasks(SEND_WAVE_TASK);
             this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK); // stop looking for spells during the day
+        }
+
+        if (null == _curDay) {
+            return;
         }
 
         // look for spell drops
