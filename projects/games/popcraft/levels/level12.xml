@@ -6,6 +6,11 @@
         playerName="Jack"
         playerBaseHealth="150">
 
+        <Hints>
+            <Hint>Stay on the defensive until you've conserved enough Flesh and Blood to send a solid offense against your opponent!</Hint>
+            <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
+        </Hints>
+
         <GameDataOverride>
             <Resources>
                 <Resource type="white" rarity="0.5"/>

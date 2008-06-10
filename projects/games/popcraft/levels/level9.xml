@@ -8,7 +8,7 @@
         playerBaseStartHealth="50">
 
         <Hints>
-            <Hint>Infusions will appear closer to your base when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
+            <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
         </Hints>
 
         <GameDataOverride>

@@ -2,10 +2,15 @@
     <Level
         parDays="1"
         backgroundName="Level1"
-        introText="Your enemies have you surrounded! Use the Bloodlust spell to enrage your creatures, and send them to smash your foes!"
+        introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"
         playerBaseHealth="120">
+
+        <Hints>
+            <Hint>Bloodlusted creatures are more susceptible to attacks. Combine Bloodlust with Rigor Mortis to counter the weakening effects!</Hint>
+			<Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
+        </Hints>
 
         <GameDataOverride
             spellDropScatterMin="15"
