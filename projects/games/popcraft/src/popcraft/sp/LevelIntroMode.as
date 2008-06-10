@@ -125,12 +125,8 @@ public class LevelIntroMode extends AppMode
         var leftPage :MovieClip = movie["pageL"];
         var rightPage :MovieClip = movie["pageR"];
 
-        if (null == leftPage || null == rightPage) {
-            return;
-        }
-
-        leftPage.gotoAndStop(pageType);
-        rightPage.gotoAndStop(pageType);
+        leftPage.gotoAndStop("page");
+        rightPage.gotoAndStop("page");
 
         var animParent :MovieClip = rightPage["image"];
         if (null != animParent) {
@@ -166,6 +162,11 @@ public class LevelIntroMode extends AppMode
         var rightPageText :TextField = rightPage[pageType == "page" ? "text" : "note_text"];
         if (null != rightPageText) {
             rightPageText.text = rightText;
+        }
+
+        if (pageType == "note") {
+            leftPage.gotoAndStop("note");
+            rightPage.gotoAndStop("note");
         }
     }
 

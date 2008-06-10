@@ -56,18 +56,14 @@ public class CreatureUnit extends Unit
     protected function createForceParticle () :void
     {
         if (_unitData.hasRepulseForce && null == _forceParticle) {
-            _forceParticle = new ForceParticle();
-            _forceParticle.loc.x = this.x;
-            _forceParticle.loc.y = this.y;
-
-            this.db.addObject(_forceParticle);
+            _forceParticle = new ForceParticle(GameContext.forceParticleContainer, this.x, this.y);
         }
     }
 
     protected function destroyForceParticle () :void
     {
         if (null != _forceParticle) {
-            _forceParticle.destroySelf();
+            _forceParticle.destroy();
             _forceParticle = null;
         }
     }
@@ -164,8 +160,7 @@ public class CreatureUnit extends Unit
                 this.y = nextLoc.y;
 
                 if (null != _forceParticle) {
-                    _forceParticle.loc.x = nextLoc.x;
-                    _forceParticle.loc.y = nextLoc.y;
+                    _forceParticle.setLoc(nextLoc.x, nextLoc.y);
                 }
 
                 _movedThisFrame = true;

@@ -19,6 +19,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import popcraft.battle.*;
+import popcraft.battle.geom.ForceParticleContainer;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.net.*;
@@ -264,6 +265,8 @@ public class GameMode extends AppMode
 
     protected function setupBattle () :void
     {
+        GameContext.forceParticleContainer = new ForceParticleContainer(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
         battleBoardView.displayObject.x = Constants.BATTLE_BOARD_LOC.x;

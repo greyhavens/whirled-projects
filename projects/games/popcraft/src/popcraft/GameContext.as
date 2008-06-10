@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 
 import popcraft.battle.*;
+import popcraft.battle.geom.ForceParticleContainer;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.puzzle.*;
@@ -28,6 +29,7 @@ public class GameContext
     public static var diurnalCycle :DiurnalCycle;
     public static var dashboard :DashboardView;
     public static var puzzleBoard :PuzzleBoard;
+    public static var forceParticleContainer :ForceParticleContainer;
 
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;

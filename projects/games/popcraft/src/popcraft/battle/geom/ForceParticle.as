@@ -2,14 +2,27 @@ package popcraft.battle.geom {
 
 import com.threerings.flash.Vector2;
 
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-
 import popcraft.*;
 
-public class ForceParticle extends SimObject
+public class ForceParticle
 {
-    public var loc :Vector2 = new Vector2();
+    public function ForceParticle (container :ForceParticleContainer, x :Number, y :Number) :void
+    {
+        _container = container;
+        this.setLoc(x, y);
+    }
+
+    public function destroy () :void
+    {
+        _container.removeParticle(this);
+    }
+
+    public function setLoc (x :Number, y :Number) :void
+    {
+        _loc.x = x;
+        _loc.y = y;
+        _container.addParticle(this, x, y);
+    }
 
     /** Discover all the forces that apply to this particle. */
     public function getCurrentForce (forceQueryRadius :Number) :Vector2
@@ -18,49 +31,65 @@ public class ForceParticle extends SimObject
 
         var force :Vector2 = new Vector2();
 
-        var refs :Array = GameContext.netObjects.getObjectRefsInGroup(GROUP_NAME);
-        for each (var ref :SimObjectRef in refs) {
-            var p :ForceParticle = ref.object as ForceParticle;
-            if (null == p || this == p) {
-                continue;
-            }
-
-            var vec :Vector2 = loc.subtract(p.loc);
-
-            // if this particle is directly on top of the other particle,
-            // we'll get a zero vector, which we can't normalize.
-            if (vec.x == 0 && vec.y == 0) {
-                // make a small non-zero vector
-                vec.x = 0.001;
-            }
-
-            var distance :Number = vec.normalizeLocalAndGetLength();
-            if (distance < forceQueryRadius) {
-
-                // normalize the strength of each vector
-                var strength :Number = (forceQueryRadius - distance) * forceQueryRadiusInv;
-                vec.scaleLocal(strength);
-
-                // rotate the vector a bit
-                vec.rotateLocal(strength * MAX_ROTATION);
-
-                force.addLocal(vec);
-            }
-        }
+        this.getForceFromBucket(_container.getBucket(_col - 1, _row - 1), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col,     _row - 1), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col + 1, _row - 1), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col - 1, _row    ), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col,     _row    ), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col + 1, _row    ), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col - 1, _row + 1), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col,     _row + 1), force, forceQueryRadius);
+        this.getForceFromBucket(_container.getBucket(_col + 1, _row + 1), force, forceQueryRadius);
 
         return force;
     }
 
-    override public function getObjectGroup (groupNum :int) :String
+    protected function getForceFromBucket (head :ForceParticle, force :Vector2, forceQueryRadius :Number) :void
     {
-        switch (groupNum) {
-        case 0: return GROUP_NAME;
-        default: return super.getObjectGroup(groupNum - 1);
+        var forceQueryRadiusInv :Number = 1 / forceQueryRadius;
+
+        var p :ForceParticle = head;
+        while (null != p) {
+            if (this != p) {
+                var vec :Vector2 = _loc.subtract(p._loc);
+
+                // if this particle is directly on top of the other particle,
+                // we'll get a zero vector, which we can't normalize.
+                if (vec.x == 0 && vec.y == 0) {
+                    // make a small non-zero vector
+                    vec.x = 0.001;
+                }
+
+                var distance :Number = vec.normalizeLocalAndGetLength();
+                if (distance < forceQueryRadius) {
+
+                    // normalize the strength of each vector
+                    var strength :Number = (forceQueryRadius - distance) * forceQueryRadiusInv;
+                    vec.scaleLocal(strength);
+
+                    // rotate the vector a bit
+                    vec.rotateLocal(strength * MAX_ROTATION);
+
+                    force.addLocal(vec);
+                }
+            }
+
+            p = p._next;
         }
     }
 
+    protected var _container :ForceParticleContainer;
+    protected var _loc :Vector2 = new Vector2();
+
+
+    // managed by ForceParticleContainer
+    internal var _next :ForceParticle;
+    internal var _prev :ForceParticle;
+    internal var _bucketIdx :int = -1;
+    internal var _col :int = -1;
+    internal var _row :int = -1;
+
     protected static const MAX_ROTATION :Number = Math.PI / 4;
-    protected static const GROUP_NAME :String = "ForceParticle";
 }
 
 }

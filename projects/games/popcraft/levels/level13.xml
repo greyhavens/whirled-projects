@@ -10,13 +10,15 @@
         </Hints>
 
         <GameDataOverride
-            spellDropTimeMin="15"
-            spellDropTimeMax="30">
+            spellDropTimeMin="10"
+            spellDropTimeMax="20">
         </GameDataOverride>
 
         <InitialResources/>
 
-        <InitialSpells/>
+        <InitialSpells>
+			<Spell type="shuffle" amount="1"/>
+		</InitialSpells>
 
         <AvailableUnits>
             <Unit type="grunt"/>
@@ -37,16 +39,12 @@
             baseHealth="150"
             team="1">
 
-            <InitialSpells>
-                <Spell type="rigormortis" amount="1"/>
-            </InitialSpells>
-
             <InitialDays>
                 <Day repeatWaves="false"
-                    noticeSpellDropAfterMin="1"
+                    noticeSpellDropAfterMin="2"
                     noticeSpellDropAfterMax="3"
                     spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="2">
+                    spellDropCourierGroupSizeMax="1">
 
                     <Wave absoluteDelay="3"><Unit type="grunt" count="3"/></Wave>
                     <Wave absoluteDelay="4"><Unit type="sapper" count="1"/></Wave>
@@ -57,8 +55,13 @@
 
                     <Wave absoluteDelay="25"><Unit type="heavy" count="4"/></Wave>
 
-                    <Wave absoluteDelay="35"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="36"><Unit type="sapper" count="6"/></Wave>
+                    <Wave absoluteDelay="45"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="46"><Unit type="sapper" count="6"/></Wave>
+
+					<Wave absoluteDelay="71"><Unit type="grunt" count="4"/></Wave>
+					<Wave absoluteDelay="72"><Unit type="sapper" count="4"/></Wave>
+					
+					<Wave absoluteDelay="85"><Unit type="colossus" count="3"/></Wave>
                 </Day>
             </InitialDays>
         </Computer>

@@ -231,8 +231,8 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="bloodlust"
                 displayName="Bloodlust"
-                description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
-                introText="(placeholder) Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack."
+                description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. Lasts for 35 seconds."
+                introText="(placeholder) Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. Lasts for 35 seconds."
                 expireTime="35"
                 speedScaleOffset="0.5"
                 damageScaleOffset="0.3"/>
@@ -240,8 +240,8 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="rigormortis"
                 displayName="Rigor Mortis"
-                description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage."
-                introText="(placeholder) Toughens the skin of your creatures. They will be able to absorb much more damage."
+                description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage. Lasts for 40 seconds."
+                introText="(placeholder) Toughens the skin of your creatures. They will be able to absorb much more damage. Lasts for 40 seconds."
                 expireTime="40"
                 damageScaleOffset="-0.4"/>
 
