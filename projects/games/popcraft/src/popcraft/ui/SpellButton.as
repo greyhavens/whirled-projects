@@ -9,6 +9,7 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 
 import popcraft.*;
+import popcraft.battle.CreatureSpellSet;
 import popcraft.data.SpellData;
 
 public class SpellButton extends SceneObject
@@ -45,12 +46,36 @@ public class SpellButton extends SceneObject
         return _movie;
     }
 
-    override protected function update (dt :Number) :void
+    public function get isCastable () :Boolean
     {
         if (_spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
-            // if this is a creature spell, don't allow it to be clicked during the day
-            _movie.mouseEnabled = GameContext.diurnalCycle.isNight;
+            // don't cast creature spells during the day
+            if (GameContext.diurnalCycle.isDay) {
+                return false;
+            }
+
+            // don't allow redundant creature spells
+            var playerSpellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerId];
+            if (playerSpellSet.isSpellActive(_spellType)) {
+                return false;
+            }
         }
+
+        return true;
+    }
+
+    public function showUncastableJiggle () :void
+    {
+        var x :Number = _movie.x;
+        var y :Number = _movie.y;
+
+        var jiggleTask :SerialTask = new SerialTask();
+        for (var i :int = 0; i < NUM_JIGGLES; ++i) {
+            jiggleTask.addTask(LocationTask.CreateSmooth(x + (i % 2 ? 2 : -2), y, 0.07));
+        }
+        jiggleTask.addTask(LocationTask.CreateSmooth(x, y, 0.1));
+
+        this.addNamedTask(JIGGLE_TASK_NAME, jiggleTask, true);
     }
 
     public function get clickableObject () :InteractiveObject
@@ -76,6 +101,10 @@ public class SpellButton extends SceneObject
     protected static const Y_START :Number = -47;
     protected static const Y_BOUNCE :Number = -90;
     protected static const Y_END :Number = -87;
+
+    protected static const NUM_JIGGLES :int = 5;
+    protected static const JIGGLE_TASK_NAME :String = "Jiggle";
+
 }
 
 }

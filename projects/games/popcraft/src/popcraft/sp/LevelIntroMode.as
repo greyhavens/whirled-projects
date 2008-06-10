@@ -132,8 +132,15 @@ public class LevelIntroMode extends AppMode
         leftPage.gotoAndStop(pageType);
         rightPage.gotoAndStop(pageType);
 
-        if (null != anim) {
-            MovieClip(rightPage["image"]).addChild(anim);
+        var animParent :MovieClip = rightPage["image"];
+        if (null != animParent) {
+            if (animParent.numChildren > 0) {
+                animParent.removeChildAt(0);
+            }
+
+            if (null != anim) {
+                animParent.addChild(anim);
+            }
         }
 
         // ok button
@@ -145,7 +152,10 @@ public class LevelIntroMode extends AppMode
         TextField(leftPage["pagenum"]).text = String(_pageNum);
 
         // object name
-        TextField(rightPage[pageType == "page" ? "title" : "note_title"]).text = objectName;
+        var titleText :TextField = rightPage[pageType == "page" ? "title" : "note_title"];
+        if (null != titleText) {
+            titleText.text = objectName;
+        }
 
         // intro texts
         var leftPageText :TextField = leftPage[pageType == "page" ? "text" : "note_text"];
@@ -169,11 +179,7 @@ public class LevelIntroMode extends AppMode
         // @TODO - fix this when Jon fixes manual.swf
         if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
-            //movieTask.addTask(new GoToFrameTask("turn"));
-            var movie :MovieClip = _movieObj.displayObject as MovieClip;
-            movie.gotoAndPlay("turn");
-            --_phase;
-            this.doNextPhase();
+            movieTask.addTask(new GoToFrameTask("turn"));
             movieTask.addTask(new WaitForFrameTask("swap"));
             movieTask.addTask(new FunctionTask(doNextPhase));
         } else {

@@ -167,12 +167,14 @@ public class DashboardView extends SceneObject
             return;
         }
 
-        GameContext.gameMode.castSpell(GameContext.localPlayerId, spellButton.spellType);
-
-        // un-occupy the slot
-        _spellSlots[spellButton.slot] = false;
-
-        spellButton.destroySelf();
+        if (!spellButton.isCastable) {
+            spellButton.showUncastableJiggle();
+        } else {
+            GameContext.gameMode.castSpell(GameContext.localPlayerId, spellButton.spellType);
+            // un-occupy the slot
+            _spellSlots[spellButton.slot] = false;
+            spellButton.destroySelf();
+        }
     }
 
     public function showInfoText (text :String) :void
