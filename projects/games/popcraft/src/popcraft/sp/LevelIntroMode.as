@@ -18,7 +18,7 @@ import popcraft.battle.view.UnitAnimationFactory;
 import popcraft.data.SpellData;
 import popcraft.data.UnitData;
 
-public class CreatureIntroMode extends AppMode
+public class LevelIntroMode extends AppMode
 {
     override protected function setup () :void
     {

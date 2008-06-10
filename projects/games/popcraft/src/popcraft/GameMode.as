@@ -65,9 +65,9 @@ public class GameMode extends AppMode
             _debugDataView.visible = false;
         }
 
+        // introduce the level
         if (GameContext.isSinglePlayer) {
-            // introduce the level
-            AppContext.mainLoop.pushMode(new CreatureIntroMode());
+            AppContext.mainLoop.pushMode(new LevelIntroMode());
         }
     }
 
