@@ -111,7 +111,7 @@ public class LevelIntroMode extends AppMode
                 TYPE_NOTE,
                 AppContext.levelMgr.curLevelName,
                 GameContext.spLevel.introText,
-                GameContext.spLevel.introText,
+                GameContext.spLevel.introText2,
                 null);
             break;
         }

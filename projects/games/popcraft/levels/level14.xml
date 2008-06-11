@@ -2,22 +2,34 @@
     <Level
         parDays="1"
         backgroundName="Level1"
-        introText="Wherein all is revealed..."
+        introText="Ralph and a... mysterious ally are squaring off for a final encounter. A dark cloud obscures the sky. The sun will not rise today."
+		introText2=
+"- Destroy Ralph's Workshop!
+- Professor Weardd's Workshop cannot be damaged.
+- The sun will not rise."
         playerName="Jack"
         playerBaseHealth="150">
 
         <Hints>
         </Hints>
 
-        <GameDataOverride
-            disableDiurnalCycle="true">
+        <GameDataOverride disableDiurnalCycle="true">
+			<GameSizes>
+				<GameSize numPlayers="3">
+	                <BaseLocation x="80" y="175"/>
+	                <BaseLocation x="632" y="155"/>
+	                <BaseLocation x="632" y="285"/>
+	            </GameSize>
+			</GameSizes>
+
+	        <PlayerColors>
+	            <PlayerColor player="3" color="0xCB71FF"/>
+	        </PlayerColors>
         </GameDataOverride>
 
         <InitialResources/>
 
-        <InitialSpells>
-			<Spell type="shuffle" amount="1"/>
-		</InitialSpells>
+        <InitialSpells/>
 
         <AvailableUnits>
             <Unit type="grunt"/>
@@ -52,7 +64,7 @@
 
 		<Computer
 			playerName="Prof. Weardd"
-			baseHealth="150"
+			baseHealth="1"
 			invincible="true"
 			team="1">
 			

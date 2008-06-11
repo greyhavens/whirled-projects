@@ -484,7 +484,10 @@ public class GameMode extends AppMode
         var liveTeamId :int = -1;
         var gameOver :Boolean = true;
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (!playerInfo.leftGame && playerInfo.isAlive) {
+            // for the purposes of game-over detection, discount invincible players from the
+            // live player count. this is kind of ugly - the last level is the only level
+            // in which there's an invincible player (Professor Weardd).
+            if (!playerInfo.leftGame && playerInfo.isAlive && !playerInfo.isInvincible) {
                 var playerTeam :int = playerInfo.teamId;
                 if (playerTeam != liveTeamId) {
                     if (liveTeamId == -1) {
