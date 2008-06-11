@@ -16,7 +16,9 @@ public class UnitAnimationFactory
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
 
-        var anim :MovieClip = SwfResource.instantiateMovieClip(unitData.name, animName);
+        // @TEMP
+        var unitName :String = (unitData.name == "boss" ? "colossus" : unitData.name);
+        var anim :MovieClip = SwfResource.instantiateMovieClip(unitName, animName);
         if (null != anim) {
             // colorize the animation's recolor1, recolor2, etc children
             var i :int = 1;

@@ -179,8 +179,9 @@ Students are advised that instructors at the School for Responsible Reanimation 
             <Unit
                 type="boss"
                 displayName="" description="" introText="" introText2=""
-                baseMoveSpeed="22"
+                baseMoveSpeed="30"
                 hasRepulseForce="true"
+                minHealth="1"
                 maxHealth="130"
                 collisionRadius="30"
                 detectRadius="50"
@@ -232,7 +233,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
 
             <Unit
                 type="base"
-                displayName="" description="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
+                displayName="" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
                 maxHealth="150"
                 collisionRadius="20">
                 <ResourceCosts/>
@@ -316,6 +317,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
         <Level name="11. Sidekick"/>
         <Level name="12. Limited Resources"/>
         <Level name="13. Infusion Infusion"/>
+        <Level name="14. Wherein All is Revealed..."/>
     </LevelProgression>
 
 </root>

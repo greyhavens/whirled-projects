@@ -289,16 +289,21 @@ public class GameMode extends AppMode
             // in single-player levels, bases have custom health
             var maxHealthOverride :int = 0;
             var startingHealthOverride :int = 0;
+            var invincible :Boolean;
             if (GameContext.isSinglePlayer) {
-                maxHealthOverride = (playerId == 0 ?
-                    GameContext.spLevel.playerBaseHealth :
-                    ComputerPlayerData(GameContext.spLevel.computers[playerId - 1]).baseHealth);
-                startingHealthOverride = (playerId == 0 ?
-                    GameContext.spLevel.playerBaseStartHealth :
-                    ComputerPlayerData(GameContext.spLevel.computers[playerId - 1]).baseStartHealth);
+                if (playerId == 0) {
+                    maxHealthOverride = GameContext.spLevel.playerBaseHealth;
+                    startingHealthOverride = GameContext.spLevel.playerBaseStartHealth;
+                } else {
+                    var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
+                    maxHealthOverride = cpData.baseHealth;
+                    startingHealthOverride = cpData.baseStartHealth;
+                    invincible = cpData.invincible;
+                }
             }
 
             var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, maxHealthOverride, startingHealthOverride);
+            base.isInvincible = invincible;
 
             var baseLoc :Vector2 = baseLocs[playerId];
             base.unitSpawnLoc = baseLoc;

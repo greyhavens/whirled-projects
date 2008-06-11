@@ -8,6 +8,7 @@ public class ComputerPlayerData
     public var playerName :String;
     public var baseHealth :int;
     public var baseStartHealth :int;
+    public var invincible :Boolean;
     public var team :uint;
     public var initialDays :Array = [];
     public var repeatingDays :Array = [];
@@ -20,6 +21,7 @@ public class ComputerPlayerData
         computerPlayer.playerName = XmlReader.getAttributeAsString(xmlData, "playerName");
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
         computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xmlData, "baseStartHealth", computerPlayer.baseHealth);
+        computerPlayer.invincible = XmlReader.getAttributeAsBoolean(xmlData, "invincible", false);
         computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");
 
         for each (var initialDayData :XML in xmlData.InitialDays.Day) {

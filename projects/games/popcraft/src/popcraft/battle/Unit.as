@@ -32,6 +32,7 @@ public class Unit extends SimObject
         _owningPlayerInfo = GameContext.playerInfos[owningPlayerId];
 
         _unitData = GameContext.gameData.units[unitType];
+        _minHealth = _unitData.minHealth;
         _maxHealth = _unitData.maxHealth;
         _health = _maxHealth;
     }
@@ -202,7 +203,7 @@ public class Unit extends SimObject
 
     public function getAttackDamage (attack :UnitAttack) :Number
     {
-        return _unitData.armor.getWeaponDamage(attack.weapon);
+        return (_invincible ? 0 : _unitData.armor.getWeaponDamage(attack.weapon));
     }
 
     public function get health () :Number
@@ -212,7 +213,8 @@ public class Unit extends SimObject
 
     public function set health (val :Number) :void
     {
-        _health = Math.max(val, 0);
+        _health = Math.min(val, _maxHealth);
+        _health = Math.max(val, _minHealth);
         if (_health <= 0) {
             this.die();
         }
@@ -294,15 +296,27 @@ public class Unit extends SimObject
         _speedScale = val;
     }
 
+    public function get isInvincible () :Boolean
+    {
+        return _invincible;
+    }
+
+    public function set isInvincible (val :Boolean) :void
+    {
+        _invincible = val;
+    }
+
     protected var _owningPlayerInfo :PlayerInfo;
     protected var _unitType :uint;
     protected var _unitData :UnitData;
+    protected var _minHealth :Number;
     protected var _maxHealth :Number;
     protected var _health :Number;
     protected var _isDead :Boolean;
     protected var _currentAttackTarget :SimObjectRef;
     protected var _speedScale :Number = 1;
     protected var _needsAttackWarmup :Boolean = true;
+    protected var _invincible :Boolean;
 
     protected var _loc :Vector2 = new Vector2();
 

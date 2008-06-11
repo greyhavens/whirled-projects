@@ -15,7 +15,15 @@ public class ColossusAI extends AITaskTree
     public function ColossusAI (unit :ColossusCreatureUnit)
     {
         _unit = unit;
+    }
 
+    public function init () :void
+    {
+        this.restartAI();
+    }
+
+    protected function restartAI () :void
+    {
         this.beginAttackEnemyBase();
 
         // scan for units in our immediate vicinity
@@ -47,10 +55,12 @@ public class ColossusAI extends AITaskTree
             // find a new base to attack
             this.beginAttackEnemyBase();
         } else if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
-            // we detected an enemy - attack it
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
-            var enemyUnit :Unit = msg.data as Unit;
-            _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
+            if (msg.messageName == DetectColossusTargetAction.DETECTED_TARGET_MSG) {
+                // we detected an enemy - attack it
+                var enemyUnit :Unit = msg.data as Unit;
+                _unit.sendAttack(enemyUnit, _unit.unitData.weapon);
+            }
         }
     }
 
