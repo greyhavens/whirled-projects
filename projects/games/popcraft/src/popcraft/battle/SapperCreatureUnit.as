@@ -14,7 +14,7 @@ public class SapperCreatureUnit extends CreatureUnit
 {
     public function SapperCreatureUnit (owningPlayerId :uint)
     {
-        super(Constants.UNIT_TYPE_SAPPER, owningPlayerId);
+        super(owningPlayerId, Constants.UNIT_TYPE_SAPPER);
 
         _sapperAI = new SapperAI(this);
     }

@@ -177,6 +177,26 @@ Students are advised that instructors at the School for Responsible Reanimation 
             </Unit>
 
             <Unit
+                type="boss"
+                displayName="" description="" introText="" introText2=""
+                baseMoveSpeed="22"
+                hasRepulseForce="true"
+                maxHealth="130"
+                collisionRadius="30"
+                detectRadius="50"
+                loseInterestRadius="50">
+                <ResourceCosts/>
+                <Weapon damageType="colossus" damageMin="90" damageMax="105" cooldown="1" maxAttackDistance="50"/>
+                <Armor>
+                    <Damage type="crushing"     scale="0.1"/>
+                    <Damage type="piercing"     scale="0.07"/>
+                    <Damage type="explosion"    scale="0.1"/>
+                    <Damage type="colossus"     scale="0.1"/>
+                    <Damage type="base"         scale="1"/>
+                </Armor>
+            </Unit>
+
+            <Unit
                 type="courier"
                 displayName="Ladyfingers"
                 description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."

@@ -10,7 +10,7 @@ public class PlayerBaseUnit extends Unit
 
     public function PlayerBaseUnit (owningPlayerId :uint, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
     {
-        super(Constants.UNIT_TYPE_BASE, owningPlayerId);
+        super(owningPlayerId, Constants.UNIT_TYPE_BASE);
 
         if (maxHealthOverride > 0) {
             _maxHealth = maxHealthOverride;

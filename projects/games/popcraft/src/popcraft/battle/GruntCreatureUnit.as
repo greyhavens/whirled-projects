@@ -15,7 +15,7 @@ public class GruntCreatureUnit extends CreatureUnit
 {
     public function GruntCreatureUnit (owningPlayerId :uint)
     {
-        super(Constants.UNIT_TYPE_GRUNT, owningPlayerId);
+        super(owningPlayerId, Constants.UNIT_TYPE_GRUNT);
 
         _gruntAI = new GruntAI(this);
     }

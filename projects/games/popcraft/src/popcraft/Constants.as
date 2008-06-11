@@ -89,12 +89,13 @@ public class Constants
     public static const UNIT_TYPE_SAPPER :uint = 2;
     public static const UNIT_TYPE_COURIER :uint = 3;
     public static const UNIT_TYPE_COLOSSUS :uint = 4;
-
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = 5;
-
+    public static const UNIT_TYPE__PLAYER_CREATURE_LIMIT :uint = 5; // creatures that can be created by players
+    public static const UNIT_TYPE_BOSS :uint = UNIT_TYPE__PLAYER_CREATURE_LIMIT;
+    public static const UNIT_TYPE__CREATURE_LIMIT :uint = UNIT_TYPE_BOSS + 1;   // creatures including those that are only created by the computer
     public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "base" ];
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "boss", "base" ];
+    public static const PLAYER_CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__PLAYER_CREATURE_LIMIT);
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
 
     /* Facing directions */

@@ -51,7 +51,7 @@ public class LevelData
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus", 0);
         level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
-        level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.CREATURE_UNIT_NAMES, -1);
+        level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
         level.newSpellType = XmlReader.getAttributeAsEnum(xml, "newSpellType", Constants.SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
@@ -65,7 +65,7 @@ public class LevelData
 
         // parse the available units
         for each (var unitData :XML in xml.AvailableUnits.Unit) {
-            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.CREATURE_UNIT_NAMES));
+            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.PLAYER_CREATURE_UNIT_NAMES));
         }
 
         // parse available spells

@@ -23,7 +23,7 @@ public class CourierCreatureUnit extends CreatureUnit
 
     public function CourierCreatureUnit (owningPlayerId :uint)
     {
-        super(Constants.UNIT_TYPE_COURIER, owningPlayerId);
+        super(owningPlayerId, Constants.UNIT_TYPE_COURIER);
 
         _spawnLoc = _owningPlayerInfo.base.unitSpawnLoc;
 

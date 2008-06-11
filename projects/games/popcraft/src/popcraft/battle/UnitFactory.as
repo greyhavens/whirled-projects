@@ -1,7 +1,6 @@
 package popcraft.battle {
 
 import com.threerings.util.Assert;
-
 import com.whirled.contrib.simplegame.audio.*;
 
 import popcraft.*;
@@ -37,6 +36,10 @@ public class UnitFactory
 
         case Constants.UNIT_TYPE_COURIER:
             creature = new CourierCreatureUnit(owningPlayerId);
+            break;
+
+        case Constants.UNIT_TYPE_BOSS:
+            creature = new BossCreatureUnit(owningPlayerId);
             break;
 
         default:

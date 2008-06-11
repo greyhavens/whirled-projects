@@ -26,7 +26,7 @@ public class Unit extends SimObject
 {
     public static const GROUP_NAME :String = "Unit";
 
-    public function Unit (unitType :uint, owningPlayerId :uint)
+    public function Unit (owningPlayerId :uint, unitType :uint)
     {
         _unitType = unitType;
         _owningPlayerInfo = GameContext.playerInfos[owningPlayerId];

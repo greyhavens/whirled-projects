@@ -45,7 +45,7 @@ public class DashboardView extends SceneObject
         unitParent.cacheAsBitmap = true;
 
         var buttonNumber :int = 1;
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT; ++unitType) {
             if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
                 // don't create buttons for unavailable units
                 continue;
@@ -55,7 +55,7 @@ public class DashboardView extends SceneObject
         }
 
         // hide the components of all the buttons that aren't being used
-        for ( ; buttonNumber < Constants.UNIT_TYPE__CREATURE_LIMIT + 1; ++buttonNumber) {
+        for ( ; buttonNumber < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT + 1; ++buttonNumber) {
             DisplayObject(unitParent["switch_" + buttonNumber]).visible = false;
             DisplayObject(unitParent["cost_" + buttonNumber]).visible = false;
             DisplayObject(unitParent["highlight_" + buttonNumber]).visible = false;

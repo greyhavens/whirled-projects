@@ -16,9 +16,9 @@ public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
 
-    public function CreatureUnit (unitType :uint, owningPlayerId :uint)
+    public function CreatureUnit (owningPlayerId :uint, unitType :uint)
     {
-        super(unitType, owningPlayerId);
+        super(owningPlayerId, unitType);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = _owningPlayerInfo.base.unitSpawnLoc;

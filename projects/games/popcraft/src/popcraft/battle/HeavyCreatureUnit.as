@@ -12,7 +12,7 @@ public class HeavyCreatureUnit extends CreatureUnit
 {
     public function HeavyCreatureUnit (owningPlayerId :uint)
     {
-        super(Constants.UNIT_TYPE_HEAVY, owningPlayerId);
+        super(owningPlayerId, Constants.UNIT_TYPE_HEAVY);
     }
 
     override protected function addedToDB () :void
