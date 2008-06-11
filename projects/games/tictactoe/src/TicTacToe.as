@@ -25,6 +25,9 @@ public class TicTacToe extends Sprite
         _ctrl.game.addEventListener(
             StateChangedEvent.TURN_CHANGED, turnChanged);
 
+        _ctrl.game.addEventListener(
+            StateChangedEvent.GAME_STARTED, gameStarted);
+
         _ctrl.net.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
@@ -40,7 +43,7 @@ public class TicTacToe extends Sprite
             var index :int = y * 3 + x;
             if (_ctrl.net.get(Server.BOARD)[index] == 0) {
                 var value :Object  = {index: index, symbol: mySymbol};
-                _ctrl.net.sendMessage(Server.MOVE, value, -1);
+                _ctrl.net.sendMessageToAgent(Server.MOVE, value);
                 return true;
             }
         }
@@ -77,12 +80,25 @@ public class TicTacToe extends Sprite
         }
     }
 
+    protected function gameStarted (event :StateChangedEvent) :void
+    {
+        trace("Game started");
+        trace("Players are " + _ctrl.game.seating.getPlayerIds());
+    }
+
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         trace("Received message " + event);
+        trace("From is " + event.senderId);
         if (event.name == Server.THREE_IN_A_ROW) {
-            var indices :Array = event.value as Array;
-            _board.drawWin(indices);
+            if (event.isFromServerAgent()) {
+                var indices :Array = event.value as Array;
+                _board.drawWin(indices);
+
+            } else {
+                _ctrl.game.systemMessage(
+                    "Win message sent from an occupant: " + event);
+            }
         }
     }
 

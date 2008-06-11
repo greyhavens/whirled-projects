@@ -18,6 +18,7 @@ public class Server
     {
         trace("Constructing new tic tac toe server");
         _ctrl = new GameControl (new DisplayObject());
+
         _ctrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, gameStarted);
         _ctrl.net.addEventListener(
@@ -27,6 +28,7 @@ public class Server
     protected function gameStarted (event :StateChangedEvent) :void
     {
         trace("Game started");
+        trace("Players are " + _ctrl.game.seating.getPlayerIds());
 
         var empty :Array = [0,0,0, 0,0,0, 0,0,0];
 
@@ -40,6 +42,7 @@ public class Server
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         trace("Received message " + event);
+        trace("From is " + event.senderId);
 
         if (event.name == MOVE) {
 
@@ -50,6 +53,19 @@ public class Server
                 _ctrl.net.get(BOARD)[obj.index] != 0) {
 
                 trace("Illegal move " + event);
+                _ctrl.game.systemMessage("Illegal move sent");
+                return;
+            }
+
+            var senderIdx :int = _ctrl.game.seating.getPlayerPosition(event.senderId);
+            if (senderIdx != obj.symbol - 1) {
+                trace("Incorrect symbol from player: " + event);
+                _ctrl.game.systemMessage("Illegal move sent");
+                return;
+            }
+
+            if (_ctrl.game.getTurnHolderId() != event.senderId) {
+                trace("Move from non-turn holder: " + event);
                 _ctrl.game.systemMessage("Illegal move sent");
                 return;
             }
