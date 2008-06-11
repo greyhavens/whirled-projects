@@ -67,9 +67,6 @@ public class PlayerBaseUnitView extends SceneObject
             remainingMeterValue -= thisMeterValue;
         }
 
-        // when we update the meters, we want to access them in reverse
-        _healthMeters.reverse();
-
         // target enemy badge
         _targetEnemyBadge = ImageResource.instantiateBitmap("targetBaseBadge");
         _targetEnemyBadge.visible = false;
