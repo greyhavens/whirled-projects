@@ -314,13 +314,6 @@ public class GameMode extends AppMode
             playerInfo.base = base;
         }
 
-        // inelegantly scale the health meters on all the player base unit views. This relies on
-        // all views being added to the db.
-        var bases :Array = PlayerBaseUnitView.getAll();
-        for each (var baseView :PlayerBaseUnitView in bases) {
-            baseView.scaleHealthMeter();
-        }
-
         if (GameContext.localUserIsPlaying) {
             this.setupPlayerBaseViewMouseHandlers();
         }

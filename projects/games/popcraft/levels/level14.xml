@@ -47,7 +47,7 @@
 
         <Computer
             playerName="Ralph"
-            baseHealth="150"
+            baseHealth="300"
             team="1">
 
             <RepeatingDays>

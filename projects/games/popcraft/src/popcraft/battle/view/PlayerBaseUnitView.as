@@ -43,18 +43,32 @@ public class PlayerBaseUnitView extends SceneObject
 
         _sprite.addChild(_movie);
 
-        // health meter
-        _healthMeter = new RectMeter();
-        _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unit.maxHealth;
-        _healthMeter.value = _unit.health;
-        _healthMeter.foregroundColor = playerColor;
-        _healthMeter.backgroundColor = 0x888888;
-        _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = HEALTH_METER_SIZE.x;
-        _healthMeter.height = HEALTH_METER_SIZE.y;
-        _healthMeter.x = -(_healthMeter.width * 0.5);
-        _healthMeter.y = -_sprite.height - _healthMeter.height;
+        // create health meters
+        var yOffset :Number = -_sprite.height - HEALTH_METER_SIZE.y;
+        var remainingMeterValue :Number = _unit.maxHealth;
+        while (remainingMeterValue > 0) {
+            var thisMeterValue :Number = Math.min(remainingMeterValue, HEALTH_METER_MAX_MAX_VALUE);
+
+            var healthMeter :RectMeter = new RectMeter();
+            healthMeter.minValue = 0;
+            healthMeter.maxValue = thisMeterValue;
+            healthMeter.value = thisMeterValue;
+            healthMeter.foregroundColor = playerColor;
+            healthMeter.backgroundColor = 0x888888;
+            healthMeter.outlineColor = 0x000000;
+            healthMeter.width = HEALTH_METER_SIZE.x * (thisMeterValue / HEALTH_METER_MAX_MAX_VALUE);
+            healthMeter.height = HEALTH_METER_SIZE.y;
+            healthMeter.x = -(healthMeter.width * 0.5);
+            healthMeter.y = yOffset;
+
+            _healthMeters.push(healthMeter);
+
+            yOffset -= (HEALTH_METER_SIZE.y + 1);
+            remainingMeterValue -= thisMeterValue;
+        }
+
+        // when we update the meters, we want to access them in reverse
+        _healthMeters.reverse();
 
         // target enemy badge
         _targetEnemyBadge = ImageResource.instantiateBitmap("targetBaseBadge");
@@ -88,29 +102,21 @@ public class PlayerBaseUnitView extends SceneObject
         _movie.gotoAndPlay("flash");
     }
 
-    public function scaleHealthMeter () :void
-    {
-        // proportionally resize the base's health meter
-        var maxMaxHealth :Number = -1;
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (playerInfo.maxHealth > maxMaxHealth) {
-                maxMaxHealth = playerInfo.maxHealth;
-            }
-        }
-
-        _healthMeter.width = HEALTH_METER_SIZE.x * (_unit.maxHealth / maxMaxHealth);
-        _healthMeter.x = -(_healthMeter.width * 0.5);
-    }
-
     override protected function addedToDB () :void
     {
-        this.db.addObject(_healthMeter, _sprite);
+        for each (var healthMeter :RectMeter in _healthMeters) {
+            this.db.addObject(healthMeter, _sprite);
+        }
+
         _unit.addEventListener(UnitEvent.ATTACKED, handleAttacked, false, 0, true);
     }
 
     override protected function removedFromDB () :void
     {
-        _healthMeter.destroySelf();
+        for each (var healthMeter :RectMeter in _healthMeters) {
+            healthMeter.destroySelf();
+        }
+
         _unit.removeEventListener(UnitEvent.ATTACKED, handleAttacked);
     }
 
@@ -134,8 +140,17 @@ public class PlayerBaseUnitView extends SceneObject
         }
 
         var health :Number = _unit.health;
+        if (health != _lastHealth) {
+            // update all health meters
+            var remainingValue :Number = health;
+            for each (var healthMeter :RectMeter in _healthMeters) {
+                var meterValue :Number = Math.min(remainingValue, healthMeter.maxValue);
+                healthMeter.value = meterValue;
+                remainingValue -= meterValue;
+            }
 
-        _healthMeter.value = health;
+            _lastHealth = health;
+        }
 
         if (health <= 0) {
             GameContext.playGameSound("sfx_death_base");
@@ -172,9 +187,11 @@ public class PlayerBaseUnitView extends SceneObject
     protected var _movie :MovieClip;
     protected var _targetEnemyBadge :Bitmap;
     protected var _unit :PlayerBaseUnit;
-    protected var _healthMeter :RectMeter;
+    protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;
+    protected var _lastHealth :Number;
 
+    protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
