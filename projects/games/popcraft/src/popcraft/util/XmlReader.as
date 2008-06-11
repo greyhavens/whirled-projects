@@ -28,7 +28,7 @@ public class XmlReader
         return (null != xml.attribute(name)[0]);
     }
 
-    public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :int = undefined) :int
+    public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :* = undefined) :int
     {
         return getAttributeAs(xml, name, defaultValue,
             function (attrString :String) :int {
@@ -36,27 +36,27 @@ public class XmlReader
             });
     }
 
-    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :uint = undefined) :uint
+    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :* = undefined) :uint
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseUnsignedInteger);
     }
 
-    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :int = undefined) :int
+    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :* = undefined) :int
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseInteger);
     }
 
-    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :Number = undefined) :Number
+    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :* = undefined) :Number
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseNumber);
     }
 
-    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :Boolean = undefined) :Boolean
+    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :* = undefined) :Boolean
     {
         return getAttributeAs(xml, name, defaultValue, StringUtil.parseBoolean);
     }
 
-    public static function getAttributeAsString (xml :XML, name :String, defaultValue :String = undefined) :String
+    public static function getAttributeAsString (xml :XML, name :String, defaultValue :* = undefined) :String
     {
         return getAttributeAs(xml, name, defaultValue);
     }
