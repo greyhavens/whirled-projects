@@ -36,8 +36,10 @@ public class Controller
     /** Create a new controller. Constructs Model and connects all listeners. */
     public function Controller (gameCtrl :GameControl, createViews :Function)
     {
-        _templateDeck = CardArray.FULL_DECK;
-        _server = createViews == null;
+        _templateDeck = CardArray.makeDeck();
+        _server = gameCtrl.game.amServerAgent();
+
+        Debug.debug("amServerAgent: " + _server);
 
         var config :Object = gameCtrl.game.getConfig();
         if ("minigame" in config && config.minigame) {
@@ -48,8 +50,8 @@ public class Controller
             _templateDeck = _templateDeck.shortFilter(isHighCard);
         }
 
-        var amWatcher :Boolean = gameCtrl.game.seating.getMyPosition() == -1;
-        if (amWatcher) {
+        if (!_server && 
+            gameCtrl.game.seating.getMyPosition() == -1) {
             attachToModel(createModel(gameCtrl));
             createViews(_model);
         }
@@ -71,11 +73,11 @@ public class Controller
         function bootstrap (fn :Function, evt :StateChangedEvent) :void {
             if (_model == null) {
                 attachToModel(createModel(gameCtrl));
-                if (!_server) {
+                if (createViews != null) {
                     createViews(_model);
                 }
-                fn(evt);
             }
+            fn(evt);
         }
 
         function startGame (event :StateChangedEvent) :void {
@@ -160,11 +162,10 @@ public class Controller
             [new Team(0, [0, 2]), new Team(1, [1, 3])]);
         var hand :Hand = table.isWatcher() ? null : new Hand(gameCtrl, sorter);
         var trick :Trick = new Trick(gameCtrl, trumps);
-        var bids :SpadesBids = new SpadesBids(gameCtrl, 
-            CardArray.FULL_DECK.length / table.numPlayers);
+        var bids :SpadesBids = new SpadesBids(gameCtrl, 52 / table.numPlayers);
         var scores :Scores = new SpadesScores(gameCtrl, table, bids, targetScore);
         var timer :TrickTurnTimer = new TrickTurnTimer(
-            gameCtrl, table, bids, trick);
+            gameCtrl, table, bids, trick, true);
         timer.debug = Debug.debug;
 
         if ("timer" in config && !config.timer) {
@@ -245,7 +246,7 @@ public class Controller
                 "Welcome to Spades, first player to score " + scores.target + 
                 " wins" + deckStr  + "\n");
 
-            if (gameCtrl.game.amInControl()) {
+            if (_server) {
                 scores.resetScores();
             }
         }
@@ -262,8 +263,8 @@ public class Controller
 
         gameCtrl.local.feedback("Round " + gameCtrl.game.getRound() + " started\n");
 
-        // let the controlling client kick off the round
-        if (gameCtrl.game.amInControl()) {
+        // let the server kick off the round
+        if (_server) {
 
             log("Dealing and setting up bids");
 
@@ -362,7 +363,7 @@ public class Controller
                 gameCtrl.local.feedback(d);
             });
 
-            if (gameCtrl.game.amInControl()) {
+            if (_server) {
                 scores.addScore(team, breakdown.total);
                 scores.setSandbags(team, newBags);
             }
@@ -388,9 +389,7 @@ public class Controller
     protected function handleOccupantChanged (event :OccupantChangedEvent) :void
     {
         if (event.type == OccupantChangedEvent.OCCUPANT_LEFT) {
-            if (event.player && _gameStarted) {
-                // don't bother checking amInControl here since we don't want to accidentally
-                // miss this (in case controller is leaving or two people leave at the same time)
+            if (event.player && _gameStarted && _server) {
                 var team :Team = table.getTeamFromId(event.occupantId);
                 var otherTeam :Team = table.getTeam((team.index + 1) % 2);
                 gameCtrl.local.feedback(
@@ -422,7 +421,7 @@ public class Controller
                 gameCtrl.local.feedback(name + " bid " + event.value);
             }
             
-            if (gameCtrl.game.amInControl() && !bids.complete) {
+            if (_server && !bids.complete) {
                 gameCtrl.game.startNextTurn();
             }
         }
@@ -430,7 +429,7 @@ public class Controller
 
             // player has confirmed or denied the blind nil, deal cards to him and if he accepted,
             // also deal to teammate since he will not be eligible for blind nil
-            if (gameCtrl.game.amInControl()) {
+            if (_server) {
                 hand.dealTo(event.player, cardsPerPlayer);
                 _model.timer.restart();
 
@@ -457,7 +456,7 @@ public class Controller
                     table.getNameFromAbsolute(blindBidder) + " and " +
                     table.getNameFromAbsolute(teammate);
                 gameCtrl.local.feedback("All bids are in, " + names + " must exchange cards");
-                if (gameCtrl.game.amInControl()) {
+                if (_server) {
                     // by convention, the blind bidder first gives 2 cards to teammate
                     hand.requestPass(
                         table.getIdFromAbsolute(blindBidder), 
@@ -469,7 +468,7 @@ public class Controller
             }
             else {
                 gameCtrl.local.feedback("All bids are in, starting play");
-                if (gameCtrl.game.amInControl()) {
+                if (_server) {
                     gameCtrl.game.startNextTurn();
                 }
             }
@@ -551,7 +550,7 @@ public class Controller
                 bids.request(getLocalPlayerMaximumBid()); 
             }
         }
-        else if (!table.isWatcher()) {
+        else if (!_server && !table.isWatcher()) {
             if (bids.complete) {
                 if (trick.hasPlayed(table.getLocalId())) {
                     hand.disallowSelection();
@@ -568,7 +567,7 @@ public class Controller
                 var leader :String = table.getNameFromAbsolute(seat);
                 gameCtrl.local.feedback("Leader this round is " + leader);
 
-                if (gameCtrl.game.amInControl()) {
+                if (_server) {
                     gameCtrl.net.set(COMS_LAST_LEADER, turnHolder);
                 }
             }
@@ -590,13 +589,17 @@ public class Controller
         gameCtrl.local.feedback(
             table.getNameFromId(winner) + " won the trick");
 
-        if (gameCtrl.game.amInControl()) {
+        if (_server) {
             scores.addTrick(winnerSeat);
 
             trick.reset();
 
-            if (hand.length > 0) {
+            if (scores.totalTricks + 1 < cardsPerPlayer) {
+                Debug.debug("Tricks taken: " + scores.totalTricks + ", advancing turn");
                 gameCtrl.game.startNextTurn(winner);
+            } else {
+                Debug.debug("Tricks taken: " + scores.totalTricks + ", clearing turn holder");
+                //gameCtrl.game.startNextTurn(-1);
             }
         }
     }
@@ -637,7 +640,7 @@ public class Controller
         }
         
         // control
-        if (gameCtrl.game.amInControl()) {
+        if (_server) {
             if (winners.length == 1 && highScore >= scores.target) {
                 gameCtrl.game.endGameWithWinners(
                     wal.winningPlayers, wal.losingPlayers, 
@@ -660,7 +663,7 @@ public class Controller
                 _spadePlayed = true;
             }
 
-            if (!trick.complete && gameCtrl.game.amInControl()) {
+            if (!trick.complete && _server) {
                 gameCtrl.game.startNextTurn();
             }
         }
@@ -775,7 +778,7 @@ public class Controller
             // by convention, the blind bidder passes first, so we can tell if the exchange is 
             // complete by checking if the passing player bid blind
             if (bids.isBlind(table.getAbsoluteFromId(event.player))) {
-                if (gameCtrl.game.amInControl()) {
+                if (_server) {
                     var teammate :int = table.getTeammateId(event.player);
                     hand.requestPass(teammate, event.player, BLIND_NIL_EXCHANGE);
                     gameCtrl.game.startNextTurn(teammate);
@@ -783,7 +786,7 @@ public class Controller
             }
             else {
                 gameCtrl.local.feedback("Exchange complete, starting play");
-                if (gameCtrl.game.amInControl()) {
+                if (_server) {
                     var lastId :int = gameCtrl.net.get(COMS_LAST_LEADER) as int;
                     gameCtrl.game.startNextTurn(lastId);
                 }
