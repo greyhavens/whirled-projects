@@ -9,9 +9,10 @@ public class DetectCreatureAction extends AITask
 {
     public static const MSG_CREATUREDETECTED :String = "CreatureDetected";
 
-    public static function isEnemyPredicate (thisUnit :Unit, thatUnit :Unit) :Boolean
+    public static function isAttackableEnemyPredicate (thisUnit :Unit, thatUnit :Unit) :Boolean
     {
         return (
+            !thisUnit.isInvincible &&
             thisUnit.isEnemyUnit(thatUnit) &&
             thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
@@ -23,18 +24,18 @@ public class DetectCreatureAction extends AITask
             thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
 
-    public static function createIsEnemyOfTypePredicate (unitType :uint) :Function
+    public static function createIsAttackableEnemyOfTypePredicate (unitType :uint) :Function
     {
         return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
-            return (thatUnit.unitType == unitType && isEnemyPredicate(thisUnit, thatUnit));
+            return (thatUnit.unitType == unitType && isAttackableEnemyPredicate(thisUnit, thatUnit));
         }
     }
 
-    public static function createIsEnemyOfTypesPredicate (unitTypes :Array) :Function
+    public static function createIsAttackableEnemyOfTypesPredicate (unitTypes :Array) :Function
     {
         // is the creature an enemy, and is it one of the specified unitTypes?
         return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
-            if (isEnemyPredicate(thisUnit, thatUnit)) {
+            if (isAttackableEnemyPredicate(thisUnit, thatUnit)) {
                 for each (var unitType :uint in unitTypes) {
                     if (thatUnit.unitType == unitType) {
                         return true;
@@ -50,7 +51,7 @@ public class DetectCreatureAction extends AITask
     {
         // is the creature an enemy, and is it not one of the specified unitTypes?
         return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
-            if (!isEnemyPredicate(thisUnit, thatUnit)) {
+            if (!isAttackableEnemyPredicate(thisUnit, thatUnit)) {
                 return false;
             }
 

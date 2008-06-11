@@ -83,7 +83,7 @@ class SapperAI extends AITaskTree
         this.clearSubtasks();
 
         if (_targetBaseRef.isNull) {
-            _targetBaseRef = _unit.getEnemyBaseRef();
+            _targetBaseRef = _unit.getEnemyBaseToAttack();
         }
 
         if (!_targetBaseRef.isNull) {

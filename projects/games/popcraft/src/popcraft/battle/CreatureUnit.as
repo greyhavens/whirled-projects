@@ -177,10 +177,10 @@ public class CreatureUnit extends Unit
     }
 
     // returns an enemy base
-    public function getEnemyBaseRef () :SimObjectRef
+    public function getEnemyBaseToAttack () :SimObjectRef
     {
         var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[_owningPlayerInfo.targetedEnemyId];
-        if (enemyPlayerInfo.isAlive) {
+        if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
             return enemyPlayerInfo.baseRef;
         } else {
             var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerId);

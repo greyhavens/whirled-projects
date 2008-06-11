@@ -96,6 +96,11 @@ public class PlayerInfo extends EventDispatcher
         return (null == _baseRef || null != this.base);
     }
 
+    public function get isInvincible () :Boolean
+    {
+        return (null != _baseRef && this.base.isInvincible);
+    }
+
     public function get health () :Number
     {
         var base :PlayerBaseUnit = this.base;

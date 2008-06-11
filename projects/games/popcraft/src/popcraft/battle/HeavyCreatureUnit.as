@@ -195,7 +195,7 @@ class HeavyAI extends AITaskTree
         var ourBaseLoc :Vector2 = GameContext.baseLocs[_unit.owningPlayerId];
 
         // it's unlikely but possible that we have no enemy base
-        var enemyBase :PlayerBaseUnit = _unit.getEnemyBaseRef().object as PlayerBaseUnit;
+        var enemyBase :PlayerBaseUnit = _unit.getEnemyBaseToAttack().object as PlayerBaseUnit;
         var enemyBaseLoc :Vector2 = (null != enemyBase ?
             enemyBase.unitLoc :
             new Vector2(Constants.BATTLE_WIDTH * 0.5, Constants.BATTLE_HEIGHT * 0.5));

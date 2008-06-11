@@ -349,7 +349,7 @@ class ScanForSpellPickupsTask extends AITaskTree
         // When Couriers aren't picking up spells, they wander around
         // outside an opponent's base.
         if (_wanderBaseRef.isNull) {
-            _wanderBaseRef = _unit.getEnemyBaseRef();
+            _wanderBaseRef = _unit.getEnemyBaseToAttack();
             if (_wanderBaseRef.isNull) {
                 return;
             }

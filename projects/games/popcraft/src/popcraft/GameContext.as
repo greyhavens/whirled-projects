@@ -62,7 +62,7 @@ public class GameContext
         for (var i :int = 0; i < playerInfos.length - 1; ++i) {
             var otherPlayerId :uint = (playerId + i + 1) % playerInfos.length;
             var otherPlayer :PlayerInfo = playerInfos[otherPlayerId];
-            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive) {
+            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive && !otherPlayer.isInvincible) {
                 return otherPlayer;
             }
         }

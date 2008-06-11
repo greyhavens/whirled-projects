@@ -35,7 +35,7 @@ public class ColossusAI extends AITaskTree
 
     protected function beginAttackEnemyBase () :void
     {
-        _targetBaseRef = _unit.getEnemyBaseRef();
+        _targetBaseRef = _unit.getEnemyBaseToAttack();
         if (_targetBaseRef.isNull) {
             return;
         }
@@ -98,7 +98,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
             var baseRefs :Array = GameContext.netObjects.getObjectRefsInGroup(PlayerBaseUnit.GROUP_NAME);
             for each (var baseRef :SimObjectRef in baseRefs) {
                 var base :PlayerBaseUnit = baseRef.object as PlayerBaseUnit;
-                if (null != base && DetectCreatureAction.isEnemyPredicate(thisCreature, base)) {
+                if (null != base && DetectCreatureAction.isAttackableEnemyPredicate(thisCreature, base)) {
                     detectedUnit = base;
                     break;
                 }

@@ -30,8 +30,9 @@ public class AttackUnitTask extends MoveToLocationTask
     override public function update (dt :Number, unit :CreatureUnit) :uint
     {
         // is the enemy dead?
+        // (or has it turned invincible, in which case attacking it is futile?)
         var enemy :Unit = _unitRef.object as Unit;
-        if (null == enemy) {
+        if (null == enemy || enemy.isInvincible) {
             return AITaskStatus.COMPLETE;
         }
 
