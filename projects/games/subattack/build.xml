@@ -7,6 +7,8 @@
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
+  <property name="app.lib-extras" value="../../../lib/tweener.swc"/>
+
   <!-- compiles and then jams the SWF into the document tree with the right filename -->
   <property name="media_hash" value="74a74d69b1997cd39da8d70dc45eb5d56007cc6a"/>
   <target name="dist" depends="compile">

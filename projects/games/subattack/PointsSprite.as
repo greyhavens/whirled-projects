@@ -5,11 +5,11 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFormat;
 
-import com.threerings.flash.path.Path;
+import caurina.transitions.Tweener;
 
 public class PointsSprite extends Sprite
 {
-    public function PointsSprite (points :int, xx :int, yy :int)
+    public function PointsSprite (points :int, xx :int, yy :int, seaDisplay :SeaDisplay)
     {
         var tf :TextField = new TextField();
         tf.text = ((points > 0) ? "+" : "") + points;
@@ -23,14 +23,15 @@ public class PointsSprite extends Sprite
         this.x = xx * SeaDisplay.TILE_SIZE;
         this.y = yy * SeaDisplay.TILE_SIZE;
 
-        var path :Path = Path.moveTo(this, this.x, this.y - 12, 1000);
-        path.setOnComplete(remove);
-        path.start();
-    }
+        seaDisplay.addChild(this);
 
-    protected function remove (path :Path) :void
-    {
-        this.parent.removeChild(this);
+        Tweener.addTween(this, {
+            y: this.y - 15,
+            time: 1,
+            transition: "linear",
+            onComplete: seaDisplay.removeChild,
+            onCompleteParams: [ this ]
+        });
     }
 
     protected static const POSITIVE :TextFormat = new TextFormat("_sans", 12, 0xFFE21E, true);

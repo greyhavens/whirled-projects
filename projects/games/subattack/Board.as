@@ -216,7 +216,7 @@ public class Board
 
     public function showPoints (x :int, y :int, points :int) :void
     {
-        _seaDisplay.addChild(new PointsSprite(points, x, y));
+        new PointsSprite(points, x, y, _seaDisplay);
     }
 
     /**
