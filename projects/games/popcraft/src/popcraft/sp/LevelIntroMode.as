@@ -121,12 +121,16 @@ public class LevelIntroMode extends AppMode
 
     protected function showPage (pageType :String, objectName :String, leftText :String, rightText :String, anim :MovieClip) :void
     {
+        var isNote :Boolean = pageType == "note";
+
         var movie :MovieClip = _movieObj.displayObject as MovieClip;
         var leftPage :MovieClip = movie["pageL"];
         var rightPage :MovieClip = movie["pageR"];
+        var leftNote :MovieClip = leftPage["note"];
+        var rightNote :MovieClip = rightPage["note"];
 
-        leftPage.gotoAndStop("page");
-        rightPage.gotoAndStop("page");
+        leftNote.visible = isNote;
+        rightNote.visible = isNote;
 
         var animParent :MovieClip = rightPage["image"];
         if (null != animParent) {
@@ -148,25 +152,20 @@ public class LevelIntroMode extends AppMode
         TextField(leftPage["pagenum"]).text = String(_pageNum);
 
         // object name
-        var titleText :TextField = rightPage[pageType == "page" ? "title" : "note_title"];
+        var titleText :TextField = (isNote ? rightNote["note_title"] : rightPage["title"]);
         if (null != titleText) {
             titleText.text = objectName;
         }
 
         // intro texts
-        var leftPageText :TextField = leftPage[pageType == "page" ? "text" : "note_text"];
+        var leftPageText :TextField = (isNote ? leftNote["note_text"] : leftPage["text"]);
         if (null != leftPageText) {
             leftPageText.text = leftText;
         }
 
-        var rightPageText :TextField = rightPage[pageType == "page" ? "text" : "note_text"];
+        var rightPageText :TextField = (isNote ? rightNote["note_text"] : rightPage["text"]);
         if (null != rightPageText) {
             rightPageText.text = rightText;
-        }
-
-        if (pageType == "note") {
-            leftPage.gotoAndStop("note");
-            rightPage.gotoAndStop("note");
         }
     }
 
@@ -176,8 +175,6 @@ public class LevelIntroMode extends AppMode
         _okButton.removeEventListener(MouseEvent.CLICK, okClicked);
 
         var movieTask :SerialTask = new SerialTask();
-
-        // @TODO - fix this when Jon fixes manual.swf
         if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
             movieTask.addTask(new GoToFrameTask("turn"));
