@@ -12,7 +12,7 @@ public class DetectCreatureAction extends AITask
     public static function isAttackableEnemyPredicate (thisUnit :Unit, thatUnit :Unit) :Boolean
     {
         return (
-            !thisUnit.isInvincible &&
+            !thatUnit.isInvincible &&
             thisUnit.isEnemyUnit(thatUnit) &&
             thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
