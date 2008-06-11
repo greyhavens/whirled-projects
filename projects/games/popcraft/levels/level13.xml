@@ -39,31 +39,35 @@
             baseHealth="150"
             team="1">
 
-            <InitialDays>
+            <RepeatingDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="2"
                     noticeSpellDropAfterMax="3"
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
 
-                    <Wave absoluteDelay="3"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="4"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="5" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="2"><Unit type="colossus" count="1"/></Wave>
 
-                    <Wave absoluteDelay="20"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="21"><Unit type="sapper" count="6"/></Wave>
-
-                    <Wave absoluteDelay="25"><Unit type="heavy" count="4"/></Wave>
-
-                    <Wave absoluteDelay="45"><Unit type="grunt" count="3"/></Wave>
-                    <Wave absoluteDelay="46"><Unit type="sapper" count="6"/></Wave>
-
-					<Wave absoluteDelay="71"><Unit type="grunt" count="4"/></Wave>
-					<Wave absoluteDelay="72"><Unit type="sapper" count="4"/></Wave>
+					<Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="11"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="13"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="17"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="19"><Unit type="sapper" count="1"/></Wave>
+					<Wave absoluteDelay="21"><Unit type="sapper" count="1"/></Wave>
+					
+					<Wave absoluteDelay="50"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="52"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="54"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="56"><Unit type="sapper" count="2"/></Wave>
+					<Wave absoluteDelay="58"><Unit type="sapper" count="2"/></Wave>
+					
+					<Wave absoluteDelay="62"><Unit type="colossus" count="1"/></Wave>
 					
 					<Wave absoluteDelay="85"><Unit type="colossus" count="3"/></Wave>
                 </Day>
-            </InitialDays>
+            </RepeatingDays>
         </Computer>
 
     </Level>
