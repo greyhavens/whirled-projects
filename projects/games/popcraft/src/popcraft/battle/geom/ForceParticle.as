@@ -28,8 +28,6 @@ public class ForceParticle
     /** Discover all the forces that apply to this particle. */
     public function getCurrentForce (forceQueryRadius :Number) :Vector2
     {
-        var timer :String = PerfUtil.startTimer("getCurrentForce");
-
         var forceQueryRadiusInv :Number = 1 / forceQueryRadius;
 
         var force :Vector2 = new Vector2();
@@ -43,8 +41,6 @@ public class ForceParticle
         this.getForceFromBucket(_container.getBucket(_col - 1, _row + 1), force, forceQueryRadius);
         this.getForceFromBucket(_container.getBucket(_col,     _row + 1), force, forceQueryRadius);
         this.getForceFromBucket(_container.getBucket(_col + 1, _row + 1), force, forceQueryRadius);
-
-        PerfUtil.stopTimer(timer);
 
         return force;
     }
