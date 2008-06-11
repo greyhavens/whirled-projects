@@ -26,11 +26,14 @@ import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.*;
 import popcraft.ui.*;
+import popcraft.util.*;
 
 public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        PerfUtil.reset();
+
         // make sure we have a valid GameData object in the GameContext
         if (GameContext.isSinglePlayer && null != GameContext.spLevel.gameDataOverride) {
             GameContext.gameData = GameContext.spLevel.gameDataOverride;
@@ -77,6 +80,8 @@ public class GameMode extends AppMode
         this.shutdownNetwork();
         this.shutdownPlayers();
         this.shutdownAudio();
+
+        PerfUtil.displayStats();
     }
 
     override protected function enter () :void
