@@ -15,6 +15,20 @@ public class BossCreatureUnit extends ColossusCreatureUnit
     {
         super(owningPlayerId, Constants.UNIT_TYPE_BOSS, new BossAI(this));
     }
+
+    public function set goingHome (val :Boolean) :void
+    {
+        _goingHome = val;
+    }
+
+    override public function get speedScale () :Number
+    {
+        return (_goingHome ? GO_HOME_SPEEDSCALE : super.speedScale);
+    }
+
+    protected var _goingHome :Boolean;
+
+    protected static const GO_HOME_SPEEDSCALE :Number = 4;
 }
 
 }
@@ -42,8 +56,8 @@ class BossAI extends ColossusAI
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
         if (_unit.health == 1 || GameContext.diurnalCycle.isDay) {
-            _unit.speedScale = GO_HOME_SPEEDSCALE;
-            _unit.health = Math.max(_unit.health, 2);
+            BossCreatureUnit(_unit).goingHome = true;
+            _unit.health = 2;
             _unit.isInvincible = true;
 
             // return to home base and recharge there
@@ -72,7 +86,7 @@ class BossAI extends ColossusAI
             if (subtask.name == RegenerateTask.NAME) {
                 // we finished regenerating. go back out and fight!
                 _unit.isInvincible = false;
-                _unit.speedScale = 1;
+                BossCreatureUnit(_unit).goingHome = false;
                 this.restartAI();
                 return;
             }
@@ -81,8 +95,7 @@ class BossAI extends ColossusAI
         super.receiveSubtaskMessage(task, messageName, data);
     }
 
-    protected static const REGENERATE_TIME :Number = 35;
-    protected static const GO_HOME_SPEEDSCALE :Number = 5;
+    protected static const REGENERATE_TIME :Number = 25;
 }
 
 class RegenerateTask extends AITask

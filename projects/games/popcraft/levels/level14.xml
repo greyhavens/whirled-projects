@@ -31,10 +31,10 @@
         </GameDataOverride>
 
         <InitialResources>
-            <Resource type="white" amount="100"/>
-            <Resource type="red" amount="100"/>
-	        <Resource type="blue" amount="60"/>
-            <Resource type="yellow" amount="60"/>
+            <Resource type="white" amount="60"/>
+            <Resource type="red" amount="60"/>
+	        <Resource type="blue" amount="50"/>
+            <Resource type="yellow" amount="50"/>
         </InitialResources>
 
         <InitialSpells/>
@@ -65,7 +65,7 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
 
-					<Wave absoluteDelay="2"><Unit type="heavy" count="2" max="4"/></Wave>
+					<Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
 					
 					<Wave absoluteDelay="4" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
 					<Wave absoluteDelay="10" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
@@ -76,6 +76,8 @@
 					<Wave absoluteDelay="27" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
 					<Wave absoluteDelay="50" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 					
+					<Wave absoluteDelay="52"><Unit type="heavy" count="3" max="3"/></Wave>
+					
 					<Wave absoluteDelay="109" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
 					<Wave absoluteDelay="115" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
 					<Wave absoluteDelay="116" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
@@ -83,7 +85,10 @@
 					<Wave absoluteDelay="124" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
 					<Wave absoluteDelay="131" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
 					<Wave absoluteDelay="132" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="155" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+					<Wave absoluteDelay="140" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+					<Wave absoluteDelay="141" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+					
+					<Wave absoluteDelay="160" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
 					
                 </Day>
             </RepeatingDays>

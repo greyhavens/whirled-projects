@@ -92,8 +92,8 @@ public class LevelSelectMode extends AppMode
         // unlock all levels button
         button = new SimpleTextButton("Unlock levels");
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
-        button.x = 250;
-        button.y = 450;
+        button.x = 10;
+        button.y = 10;
 
         this.modeSprite.addChild(button);
     }
