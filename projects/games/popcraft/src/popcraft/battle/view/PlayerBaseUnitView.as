@@ -35,10 +35,10 @@ public class PlayerBaseUnitView extends SceneObject
     {
         _unit = unit;
 
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
+        _movie = SwfResource.instantiateMovieClip("workshop", "base");
 
-        _movie = SwfResource.instantiateMovieClip("workshop", "workshop");
-        var recolor :MovieClip = _movie["recolor"];
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
+        var recolor :MovieClip = _movie["workshop"]["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
         _sprite.addChild(_movie);
@@ -116,7 +116,7 @@ public class PlayerBaseUnitView extends SceneObject
 
             // flip the movie if we're on the left side of the board
             if (_unit.x < Constants.BATTLE_WIDTH * 0.5) {
-                _movie.scaleX = -1;
+                DisplayObject(_movie["workshop"]).scaleX = -1;
             }
 
             _needsLocationUpdate = false;

@@ -25,12 +25,17 @@ public class ColossusAI extends AITaskTree
     protected function restartAI () :void
     {
         this.beginAttackEnemyBase();
+        this.addSubtask(this.createScanForUnitTask());
+    }
 
+    protected function createScanForUnitTask () :AITask
+    {
         // scan for units in our immediate vicinity
         var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new DelayUntilTask("DelayUntilNotAttacking", DelayUntilTask.notAttackingPredicate));
+        scanSequence.addSequencedTask(new AIDelayUntilTask("DelayUntilNotAttacking", AIDelayUntilTask.notAttackingPredicate));
         scanSequence.addSequencedTask(new DetectColossusTargetAction());
-        this.addSubtask(scanSequence);
+
+        return scanSequence;
     }
 
     protected function beginAttackEnemyBase () :void
@@ -41,7 +46,7 @@ public class ColossusAI extends AITaskTree
         }
 
         this.addSubtask(new MoveToAttackLocationTask(_targetBaseRef, true, -1));
-        this.addSubtask(new DelayUntilTask(TARGET_BASE_DIED, DelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
+        this.addSubtask(new AIDelayUntilTask(TARGET_BASE_DIED, AIDelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
     }
 
     override public function get name () :String

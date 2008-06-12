@@ -4,7 +4,7 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 
 import popcraft.battle.CreatureUnit;
 
-public class DelayUntilTask extends AITask
+public class AIDelayUntilTask extends AITask
 {
     public static function notAttackingPredicate (dt :Number, creature :CreatureUnit) :Boolean
     {
@@ -16,7 +16,7 @@ public class DelayUntilTask extends AITask
         return function (dt :Number, creature :CreatureUnit) :Boolean { return unitRef.isNull; }
     }
 
-    public function DelayUntilTask (name :String, pred :Function)
+    public function AIDelayUntilTask (name :String, pred :Function)
     {
         _name = name;
         _pred = pred;
@@ -34,7 +34,7 @@ public class DelayUntilTask extends AITask
 
     override public function clone () :AITask
     {
-        return new DelayUntilTask(_name, _pred);
+        return new AIDelayUntilTask(_name, _pred);
     }
 
     protected var _name :String;
