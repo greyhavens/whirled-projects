@@ -18,6 +18,7 @@ public class UnitData
     public var baseMoveSpeed :Number = 0;
     public var hasRepulseForce :Boolean;
 
+    public var survivesDaytime :Boolean;
     public var minHealth :int;
     public var maxHealth :int;
     public var armor :UnitArmorData = new UnitArmorData();
@@ -46,6 +47,7 @@ public class UnitData
         theClone.baseMoveSpeed = baseMoveSpeed;
         theClone.hasRepulseForce = hasRepulseForce;
 
+        theClone.survivesDaytime = survivesDaytime;
         theClone.minHealth = minHealth;
         theClone.maxHealth = maxHealth;
         theClone.armor = armor.clone();
@@ -83,6 +85,7 @@ public class UnitData
 
         unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed", (useDefaults ? inheritFrom.baseMoveSpeed : undefined));
         unitData.hasRepulseForce = XmlReader.getAttributeAsBoolean(xml, "hasRepulseForce", (useDefaults ? inheritFrom.hasRepulseForce : undefined));
+        unitData.survivesDaytime = XmlReader.getAttributeAsBoolean(xml, "survivesDaytime", (useDefaults ? inheritFrom.survivesDaytime : false));
         unitData.minHealth = XmlReader.getAttributeAsUint(xml, "minHealth", (useDefaults ? inheritFrom.minHealth : 0));
         unitData.maxHealth = XmlReader.getAttributeAsUint(xml, "maxHealth", (useDefaults ? inheritFrom.maxHealth : undefined));
 

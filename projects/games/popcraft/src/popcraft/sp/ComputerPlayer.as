@@ -85,8 +85,21 @@ public class ComputerPlayer extends SimObject
                 }
             }
 
-            for each (var unitType :uint in _nextWave.units) {
-                this.buildUnit(unitType);
+            // create the units
+            var units :Array = _nextWave.units;
+            for (var i :int = 0; i < units.length; i += 3) {
+                var unitType :uint = units[i];
+                var count :int = units[i + 1];
+                var max :int = units[i + 2];
+
+                // is there a cap on how many creatures we should create in this wave?
+                if (max >= 0) {
+                    count = Math.min(count, max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerId, unitType));
+                }
+
+                for (var j :int = 0; j < count; ++j) {
+                    this.buildUnit(unitType);
+                }
             }
 
             this.queueNextWave();

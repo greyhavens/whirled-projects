@@ -16,6 +16,21 @@ public class CreatureUnit extends Unit
 {
     public static const GROUP_NAME :String = "CreatureUnit";
 
+    /** Count the number of a particular creature type owned by a player. */
+    public static function getNumPlayerCreatures (owningPlayerId :uint, unitType :uint) :int
+    {
+        var count :int = 0;
+        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(GROUP_NAME);
+        for each (var ref :SimObjectRef in creatureRefs) {
+            var creature :CreatureUnit = ref.object as CreatureUnit;
+            if (null != creature && creature.owningPlayerId == owningPlayerId && creature.unitType == unitType) {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
     public function CreatureUnit (owningPlayerId :uint, unitType :uint)
     {
         super(owningPlayerId, unitType);
@@ -205,8 +220,8 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
-        // when it's day time, creatures die
-        if (GameContext.diurnalCycle.isDay) {
+        // when it's day time, (most) creatures die
+        if (GameContext.diurnalCycle.isDay && !_unitData.survivesDaytime) {
             this.die();
             return;
         }

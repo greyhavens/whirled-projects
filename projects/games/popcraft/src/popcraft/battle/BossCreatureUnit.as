@@ -41,21 +41,28 @@ class BossAI extends ColossusAI
 
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
-        if (_unit.health == 1) {
-            _unit.health = 2;
+        if (_unit.health == 1 || GameContext.diurnalCycle.isDay) {
+            _unit.speedScale = GO_HOME_SPEEDSCALE;
+            _unit.health = Math.max(_unit.health, 2);
             _unit.isInvincible = true;
 
             // return to home base and recharge there
             var ourBaseLoc :Vector2 = GameContext.baseLocs[_unit.owningPlayerId];
             var rechargeSequence :AITaskSequence = new AITaskSequence(false);
             rechargeSequence.addSequencedTask(new MoveToLocationTask("ReturnToBase", ourBaseLoc.clone()));
-            rechargeSequence.addSequencedTask(new RegenerateTask(REGENERATE_RATE));
+            rechargeSequence.addSequencedTask(new RegenerateTask(_unit.maxHealth / REGENERATE_TIME));
+            rechargeSequence.addSequencedTask(new DelayUntilTask("WaitForNight", isNight));
 
             this.clearSubtasks();
             this.addSubtask(rechargeSequence);
         }
 
         return super.update(dt, creature);
+    }
+
+    protected static function isNight (...ignored) :Boolean
+    {
+        return GameContext.diurnalCycle.isNight;
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -65,6 +72,7 @@ class BossAI extends ColossusAI
             if (subtask.name == RegenerateTask.NAME) {
                 // we finished regenerating. go back out and fight!
                 _unit.isInvincible = false;
+                _unit.speedScale = 1;
                 this.restartAI();
                 return;
             }
@@ -73,7 +81,8 @@ class BossAI extends ColossusAI
         super.receiveSubtaskMessage(task, messageName, data);
     }
 
-    protected static const REGENERATE_RATE :Number = 10;
+    protected static const REGENERATE_TIME :Number = 35;
+    protected static const GO_HOME_SPEEDSCALE :Number = 5;
 }
 
 class RegenerateTask extends AITask

@@ -26,10 +26,11 @@ public class UnitWaveData
         for each (var unitNode :XML in xmlData.Unit) {
             var unitType :uint = XmlReader.getAttributeAsEnum(unitNode, "type", Constants.CREATURE_UNIT_NAMES);
             var count :int = XmlReader.getAttributeAsUint(unitNode, "count");
+            var max :int = XmlReader.getAttributeAsInt(unitNode, "max", -1);
 
-            for (var i :int = 0; i < count; ++i) {
-                unitWave.units.push(unitType);
-            }
+            unitWave.units.push(unitType);
+            unitWave.units.push(count);
+            unitWave.units.push(max);
         }
 
         unitWave.targetPlayerName = XmlReader.getAttributeAsString(xmlData, "targetPlayerName", null);
