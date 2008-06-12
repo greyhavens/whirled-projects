@@ -1,7 +1,7 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
+        backgroundName="Level3"
         introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
         playerName="Jack"
         playerBaseHealth="150"

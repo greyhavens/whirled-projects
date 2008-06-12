@@ -274,9 +274,6 @@ public class GameMode extends AppMode
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
-        battleBoardView.displayObject.x = Constants.BATTLE_BOARD_LOC.x;
-        battleBoardView.displayObject.y = Constants.BATTLE_BOARD_LOC.y;
-
         this.addObject(battleBoardView, _battleParent);
 
         GameContext.battleBoardView = battleBoardView;

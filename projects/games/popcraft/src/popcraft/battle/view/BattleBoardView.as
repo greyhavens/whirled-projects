@@ -20,18 +20,21 @@ public class BattleBoardView extends SceneObject
         _width = width;
         _height = height;
 
-        _view = new Sprite();
-
         // @TODO - randomize multiplayer backgrounds
         var bgName :String = (GameContext.isSinglePlayer ? GameContext.spLevel.backgroundName : "Level1");
         _bg = SwfResource.instantiateMovieClip("bg", bgName);
-        _bg.x = _bg.width * 0.5;
-        _bg.y = _bg.height * 0.5;
+        _bg.x = Constants.SCREEN_DIMS.x * 0.5;
+        _bg.y = Constants.SCREEN_DIMS.y * 0.5;
 
-        _view.addChild(_bg);
-        _view.addChild(_spellDropViewParent);
-        _view.addChild(_diurnalMeterParent);
-        _view.addChild(_unitViewParent);
+        var attach :MovieClip = _bg["attachment"];
+
+        _diurnalMeterParent.x = -_bg.x;
+        _diurnalMeterParent.y = -_bg.y;
+        _unitViewParent.x = -_bg.x;
+        _unitViewParent.y = -_bg.y;
+
+        attach.addChild(_diurnalMeterParent);
+        attach.addChild(_unitViewParent);
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
 
@@ -55,12 +58,7 @@ public class BattleBoardView extends SceneObject
 
     override public function get displayObject () :DisplayObject
     {
-        return _view;
-    }
-
-    public function get spellDropViewParent () :DisplayObjectContainer
-    {
-        return _spellDropViewParent;
+        return _bg;
     }
 
     public function get unitViewParent () :DisplayObjectContainer
@@ -94,8 +92,6 @@ public class BattleBoardView extends SceneObject
 
     protected var _width :int;
     protected var _height :int;
-    protected var _view :Sprite;
-    protected var _spellDropViewParent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
     protected var _diurnalMeterParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;

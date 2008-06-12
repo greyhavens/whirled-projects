@@ -1,7 +1,7 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
+        backgroundName="Level3"
         newCreatureType="courier"
         newSpellType="rigormortis"
         introText=

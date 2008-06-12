@@ -3,7 +3,7 @@
         parDays="1"
         backgroundName="Level1"
         introText="Ralph and a mysterious ally are squaring off for a final encounter. A dark cloud obscures the sky. The sun will struggle to rise today."
-		introText2=
+        introText2=
 "- Destroy Ralph's Workshop!
 - Professor Weardd's Workshop cannot be damaged."
         playerName="Jack"
@@ -13,27 +13,27 @@
         </Hints>
 
         <GameDataOverride
-	        dayLength="5"
-	        nightLength="240"
-			initialDayPhase="night">
-			<GameSizes>
-				<GameSize numPlayers="3" customSpellDropLocation="true">
-	                <BaseLocation x="80" y="175"/>
-	                <BaseLocation x="632" y="155"/>
-	                <BaseLocation x="632" y="285"/>
+            dayLength="5"
+            nightLength="240"
+            initialDayPhase="night">
+            <GameSizes>
+                <GameSize numPlayers="3" customSpellDropLocation="true">
+                    <BaseLocation x="80" y="175"/>
+                    <BaseLocation x="632" y="155"/>
+                    <BaseLocation x="632" y="285"/>
                     <CustomSpellDropLocation x="320" y="300"/>
-	            </GameSize>
-			</GameSizes>
+                </GameSize>
+            </GameSizes>
 
-	        <PlayerColors>
-	            <PlayerColor player="3" color="0xCB71FF"/>
-	        </PlayerColors>
+            <PlayerColors>
+                <PlayerColor player="3" color="0xCB71FF"/>
+            </PlayerColors>
         </GameDataOverride>
 
         <InitialResources>
             <Resource type="white" amount="60"/>
             <Resource type="red" amount="60"/>
-	        <Resource type="blue" amount="50"/>
+            <Resource type="blue" amount="50"/>
             <Resource type="yellow" amount="50"/>
         </InitialResources>
 
@@ -65,47 +65,47 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
 
-					<Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
-					
-					<Wave absoluteDelay="4" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
-					<Wave absoluteDelay="10" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
-					<Wave absoluteDelay="11" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="18" spellCastChance="0"><Unit type="grunt" count="3"/></Wave>
-					<Wave absoluteDelay="19" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="26" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
-					<Wave absoluteDelay="27" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="50" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
-					
-					<Wave absoluteDelay="52"><Unit type="heavy" count="3" max="3"/></Wave>
-					
-					<Wave absoluteDelay="109" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
-					<Wave absoluteDelay="115" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
-					<Wave absoluteDelay="116" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="123" spellCastChance="0"><Unit type="grunt" count="3"/></Wave>
-					<Wave absoluteDelay="124" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="131" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
-					<Wave absoluteDelay="132" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="140" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
-					<Wave absoluteDelay="141" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
-					
-					<Wave absoluteDelay="160" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
-					
+                    <Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
+
+                    <Wave absoluteDelay="4" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
+                    <Wave absoluteDelay="10" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="11" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="18" spellCastChance="0"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="19" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="26" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="27" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="50" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+
+                    <Wave absoluteDelay="52"><Unit type="heavy" count="3" max="3"/></Wave>
+
+                    <Wave absoluteDelay="109" spellCastChance="0"><Unit type="sapper" count="4"/></Wave>
+                    <Wave absoluteDelay="115" spellCastChance="0"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="116" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="123" spellCastChance="0"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="124" spellCastChance="0"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="131" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="132" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="140" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="141" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+
+                    <Wave absoluteDelay="160" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+
                 </Day>
             </RepeatingDays>
         </Computer>
 
-		<Computer
-			playerName="Prof. Weardd"
-			baseHealth="1"
-			invincible="true"
-			team="1">
-			
-			<InitialDays>
-				<Day repeatWaves="false">
-					<Wave absoluteDelay="80"><Unit type="boss" count="1"/></Wave>
-				</Day>
-			</InitialDays>
-		</Computer>
+        <Computer
+            playerName="Prof. Weardd"
+            baseHealth="1"
+            invincible="true"
+            team="1">
+
+            <InitialDays>
+                <Day repeatWaves="false">
+                    <Wave absoluteDelay="80"><Unit type="boss" count="1"/></Wave>
+                </Day>
+            </InitialDays>
+        </Computer>
 
     </Level>
 

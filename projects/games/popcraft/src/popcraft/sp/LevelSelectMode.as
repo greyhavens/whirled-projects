@@ -58,7 +58,7 @@ public class LevelSelectMode extends AppMode
                 break;
             }
 
-            if (null != levelRecord) {
+            if (null != levelRecord && levelRecord.score > 0) {
                 levelName += " (" + levelRecord.score + ")";
             }
 

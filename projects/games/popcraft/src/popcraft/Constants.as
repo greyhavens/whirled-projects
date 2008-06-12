@@ -26,7 +26,6 @@ public class Constants
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
 
     /* Screen layout */
-    public static const BATTLE_BOARD_LOC :Point = new Point(0, 0);
     public static const DASHBOARD_LOC :Point = new Point(350, 430);
 
     public static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);

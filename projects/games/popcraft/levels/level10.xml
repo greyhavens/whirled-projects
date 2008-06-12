@@ -1,7 +1,7 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
+        backgroundName="Level3"
         introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"
