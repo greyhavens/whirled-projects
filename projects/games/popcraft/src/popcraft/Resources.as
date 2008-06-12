@@ -16,9 +16,6 @@ public class Resources
     [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
-    [Embed(source="../../rsrc/skull_and_crossbones.png", mimeType="application/octet-stream")]
-    public static const IMAGE_TARGETBASEBADGE :Class;
-
     [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
     public static const SWF_GRUNT :Class;
 

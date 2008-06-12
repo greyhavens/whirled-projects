@@ -16,8 +16,6 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "manual",  { embeddedClass: Resources.SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 
-        rm.pendResourceLoad("image", "targetBaseBadge", { embeddedClass: Resources.IMAGE_TARGETBASEBADGE });
-
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: Resources.SWF_GRUNT });
         rm.pendResourceLoad("swf", "sapper", { embeddedClass: Resources.SWF_SAPPER });
         rm.pendResourceLoad("swf", "heavy", { embeddedClass: Resources.SWF_HEAVY });

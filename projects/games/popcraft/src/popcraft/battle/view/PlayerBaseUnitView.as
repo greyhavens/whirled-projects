@@ -67,26 +67,12 @@ public class PlayerBaseUnitView extends SceneObject
             remainingMeterValue -= thisMeterValue;
         }
 
-        // target enemy badge
-        _targetEnemyBadge = ImageResource.instantiateBitmap("targetBaseBadge");
-        _targetEnemyBadge.visible = false;
-        _targetEnemyBadge.x = -(_targetEnemyBadge.width * 0.5);
-        _targetEnemyBadge.y = -(_targetEnemyBadge.height);
-        _sprite.addChild(_targetEnemyBadge);
-
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
-        var isEnemyBase :Boolean = (owningPlayer.teamId != GameContext.localPlayerInfo.teamId);
-        var nameText :TextField = new TextField();
-        nameText.selectable = false;
-        nameText.autoSize = TextFieldAutoSize.LEFT;
-        nameText.background = true;
-        nameText.backgroundColor = (isEnemyBase ? 0xFF0000 : 0xFFFFFF);
-        nameText.textColor = (isEnemyBase ? 0xFFFFFF : 0x000000);
+        var nameText :TextField = _movie["player_name"];
         nameText.text = owningPlayer.playerName;
-        nameText.x =  -(nameText.width * 0.5);
-        nameText.y = -(_movie.height * 0.5) - (nameText.height * 0.5);
-        _sprite.addChild(nameText);
+
+        this.targetEnemyBadgeVisible = false;
     }
 
     override public function get objectName () :String
@@ -164,7 +150,7 @@ public class PlayerBaseUnitView extends SceneObject
 
     public function set targetEnemyBadgeVisible (val :Boolean) :void
     {
-        _targetEnemyBadge.visible = val;
+        DisplayObject(_movie["target"]).visible = val;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -182,7 +168,6 @@ public class PlayerBaseUnitView extends SceneObject
 
     protected var _sprite :Sprite = new Sprite();
     protected var _movie :MovieClip;
-    protected var _targetEnemyBadge :Bitmap;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;

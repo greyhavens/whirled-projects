@@ -11,8 +11,8 @@
         <GameDataOverride disableDiurnalCycle="true">
             <GameSizes>
                 <GameSize numPlayers="2">
-                    <BaseLocation x="60" y="185"/>
-                    <BaseLocation x="642" y="175"/>
+                    <BaseLocation x="200" y="195"/>
+                    <BaseLocation x="500" y="165"/>
                 </GameSize>
             </GameSizes>
         </GameDataOverride>
