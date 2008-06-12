@@ -30,7 +30,11 @@ public class DashboardView extends SceneObject
         _movie.cacheAsBitmap = true;
         puzzleFrame.cacheAsBitmap = true;
 
-        _infoPanel = new InfoPanel(_movie);
+        // the info panel is no longer used
+        var infoPanel :MovieClip = _movie["info"];
+        if (null != infoPanel) {
+            _movie.removeChild(infoPanel);
+        }
 
         // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
@@ -102,8 +106,6 @@ public class DashboardView extends SceneObject
 
     override protected function addedToDB () :void
     {
-        this.db.addObject(_infoPanel);
-
         // add any spells the player already has to the dashboard
         for (var spellType :uint = 0; spellType < Constants.SPELL_TYPE__LIMIT; ++spellType) {
             var count :uint = GameContext.localPlayerInfo.getSpellCount(spellType);
@@ -175,16 +177,6 @@ public class DashboardView extends SceneObject
             _spellSlots[spellButton.slot] = false;
             spellButton.destroySelf();
         }
-    }
-
-    public function showInfoText (text :String) :void
-    {
-        _infoPanel.show(text);
-    }
-
-    public function hideInfoText () :void
-    {
-        _infoPanel.hide();
     }
 
     public function get puzzleFrame () :MovieClip
@@ -264,7 +256,6 @@ public class DashboardView extends SceneObject
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
     protected var _showingDeathPanel :Boolean;
-    protected var _infoPanel :InfoPanel;
     protected var _spellSlots :Array = []; // of Booleans
 
     protected static const PUZZLE_SHUFFLE_TASK :String = "PuzzleShuffle";
@@ -296,6 +287,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.*;
 import flash.display.InteractiveObject;
 
+/** Currently unused */
 class InfoPanel extends SceneObject
 {
     public function InfoPanel (parent :MovieClip)

@@ -49,8 +49,6 @@ public class CreaturePurchaseButton extends SimObject
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
-        _button.addEventListener(MouseEvent.ROLL_OVER, onMouseOver);
-        _button.addEventListener(MouseEvent.ROLL_OUT, onMouseOut);
 
         _unitData = GameContext.gameData.units[unitType];
         var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerId];
@@ -168,16 +166,6 @@ public class CreaturePurchaseButton extends SimObject
 
         _hilite.gotoAndStop(_available ? "on" : "off");
         _multiplicity.visible = _available;
-    }
-
-    protected function onMouseOver (...ignored) :void
-    {
-        GameContext.dashboard.showInfoText(_unitData.description);
-    }
-
-    protected function onMouseOut (...ignored) :void
-    {
-        GameContext.dashboard.hideInfoText();
     }
 
     protected function updateDisplayState () :void
