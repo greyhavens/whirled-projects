@@ -48,6 +48,8 @@ public class Constants
 
     public static const PHASE_DAY :uint = 0;
     public static const PHASE_NIGHT :uint = 1;
+    public static const PHASE_ECLIPSE_DAY :uint = 2;
+    public static const PHASE_ECLIPSE_NIGHT :uint = 3;
 
     public static const DAY_PHASE_NAMES :Array = [ "day", "night" ];
 

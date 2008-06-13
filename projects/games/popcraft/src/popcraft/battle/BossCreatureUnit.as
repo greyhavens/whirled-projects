@@ -59,7 +59,7 @@ class BossAI extends ColossusAI
     {
         if (_boss.health == 1 || GameContext.diurnalCycle.isDay) {
             _boss.escaping = true;
-            _boss.health = 2;
+            _boss.health = Math.max(2, _boss.health);
             _boss.isInvincible = true;
 
             // return to home base and recharge there
@@ -72,23 +72,6 @@ class BossAI extends ColossusAI
             this.clearSubtasks();
             this.addSubtask(rechargeSequence);
 
-        } else if (!_escaped && _boss.health <= (_boss.maxHealth * 0.5)) {
-            _boss.escaping = true;
-            _boss.isInvincible = true;
-
-            // choose a new location to move to midway between the player base and his target
-            // base
-            var playerBaseLoc :Vector2 = GameContext.baseLocs[GameContext.localPlayerId];
-            var playerTargetBaseLoc :Vector2 = GameContext.baseLocs[GameContext.localPlayerInfo.targetedEnemyId];
-            var direction :Vector2 = playerTargetBaseLoc.subtract(playerBaseLoc);
-            var distance :Number = direction.normalizeLocalAndGetLength();
-            direction.scaleLocal(distance * 0.7);
-            var newLoc :Vector2 = direction.addLocal(playerBaseLoc);
-
-            this.clearSubtasks();
-            this.addSubtask(new MoveToLocationTask(ESCAPE_TASK_NAME, newLoc));
-
-            _escaped = true;
         }
 
         return super.update(dt, creature);
@@ -107,24 +90,17 @@ class BossAI extends ColossusAI
                 // we finished regenerating. go back out and fight!
                 _boss.isInvincible = false;
                 _boss.escaping = false;
-                _escaped = false;
                 this.restartAI();
                 return;
             }
-        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == ESCAPE_TASK_NAME) {
-            _boss.isInvincible = false;
-            _boss.escaping = false;
-            this.addSubtask(this.createScanForUnitTask());
         }
 
         super.receiveSubtaskMessage(task, messageName, data);
     }
 
     protected var _boss :BossCreatureUnit;
-    protected var _escaped :Boolean;
 
     protected static const REGENERATE_TIME :Number = 25;
-    protected static const ESCAPE_TASK_NAME :String = "Escape";
 }
 
 class RegenerateTask extends AITask

@@ -18,13 +18,15 @@ public class GameData
     public var dawnWarning :Number;
     public var initialDayPhase :uint;
     public var disableDiurnalCycle :Boolean;
+    public var enableEclipse :Boolean;
+    public var eclipseDayLength :Number;
+    public var eclipseNightLength :Number;
 
     public var spellDropTime :NumRange;
     public var spellDropScatter :NumRange;
     public var spellDropCenterOffset :NumRange;
     public var maxLosingPlayerSpellDropShift :Number;
 
-    public var resourceMultiplierChance :Number;
     public var minResourceAmount :int;
     public var maxResourceAmount :int;
     public var maxSpells :int;
@@ -55,11 +57,13 @@ public class GameData
         theClone.dawnWarning = dawnWarning;
         theClone.initialDayPhase = initialDayPhase;
         theClone.disableDiurnalCycle = disableDiurnalCycle;
+        theClone.enableEclipse = enableEclipse;
+        theClone.eclipseDayLength = eclipseDayLength;
+        theClone.eclipseNightLength = eclipseNightLength;
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
         theClone.maxLosingPlayerSpellDropShift = maxLosingPlayerSpellDropShift;
-        theClone.resourceMultiplierChance = resourceMultiplierChance;
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
         theClone.maxSpells = maxSpells;
@@ -115,6 +119,9 @@ public class GameData
         gameData.dawnWarning = XmlReader.getAttributeAsNumber(xml, "dawnWarning", (useDefaults ? gameData.dawnWarning : undefined));
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
         gameData.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", (useDefaults ? gameData.disableDiurnalCycle : undefined));
+        gameData.enableEclipse = XmlReader.getAttributeAsBoolean(xml, "enableEclipse", (useDefaults ? gameData.enableEclipse : undefined));
+        gameData.eclipseDayLength = XmlReader.getAttributeAsNumber(xml, "eclipseDayLength", (useDefaults ? gameData.eclipseDayLength : undefined));
+        gameData.eclipseNightLength = XmlReader.getAttributeAsNumber(xml, "eclipseNightLength", (useDefaults ? gameData.eclipseNightLength : undefined));
 
         var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));
         var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax", (useDefaults ? gameData.spellDropTime.max : undefined));
@@ -130,7 +137,6 @@ public class GameData
 
         gameData.maxLosingPlayerSpellDropShift = XmlReader.getAttributeAsNumber(xml, "maxLosingPlayerSpellDropShift", (useDefaults ? gameData.maxLosingPlayerSpellDropShift : undefined));
 
-        gameData.resourceMultiplierChance = XmlReader.getAttributeAsNumber(xml, "resourceMultiplierChance", (useDefaults ? gameData.resourceMultiplierChance : undefined));
         gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
         gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));
         gameData.maxSpells = XmlReader.getAttributeAsInt(xml, "maxSpells", (useDefaults ? gameData.maxSpells : undefined));

@@ -13,9 +13,8 @@
         </Hints>
 
         <GameDataOverride
-            dayLength="5"
-            nightLength="240"
-            initialDayPhase="night">
+            initialDayPhase="night"
+            enableEclipse="true">
             <GameSizes>
                 <GameSize numPlayers="3" customSpellDropLocation="true">
                     <BaseLocation x="75" y="145"/>
