@@ -117,32 +117,34 @@ public class Controller
      */
     public function tryScoreWord (word :String) :void
     {
-        // Normalize the word
-        word = word.toLowerCase();
+        try {
+            // Normalize the word
+            word = word.toLowerCase();
 
-        // First, check to make sure it's of the correct length (in characters)
-        if (word.length < _minWordLength) {
-            throw new TangleWordError("Words must be at least " + _minWordLength + " letters.");
+            // First, check to make sure it's of the correct length (in characters)
+            if (word.length < _minWordLength) {
+                throw new TangleWordError("Words must be at least " + _minWordLength + " letters.");
+            }
+
+            // Check if this word exists on the board
+            if ( ! _model.wordExistsOnBoard(word)) {
+                throw new TangleWordError(word + " is not on the board!");
+            }
+
+            // This is the callback that gets called after the word is successfully
+            // checked against the dictionary
+            var success :Function = function (word :String, isvalid :Boolean) :void {
+                // Finally, process the new word. Notice that we don't check if it's already
+                // been claimed - the model will take care of that, because there's a network
+                // round-trip involved, and therefore potential of contention.
+                _model.addScore(word, getWordScore(word), isvalid);
+            }
+            
+            // Now check if it's an actual word.
+            _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
+        } finally {
+            _model.removeAllSelectedLetters();
         }
-
-        // Check if this word exists on the board
-        if ( ! _model.wordExistsOnBoard(word)) {
-            throw new TangleWordError(word + " is not on the board!");
-        }
-
-        // This is the callback that gets called after the word is successfully
-        // checked against the dictionary
-        var success :Function = function (word :String, isvalid :Boolean) :void {
-            // Finally, process the new word. Notice that we don't check if it's already
-            // been claimed - the model will take care of that, because there's a network
-            // round-trip involved, and therefore potential of contention.
-            _model.addScore(word, getWordScore(word), isvalid);
-        }
-        
-        // Now check if it's an actual word.
-        _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
-
-        _model.removeAllSelectedLetters();
     }
 
     /**

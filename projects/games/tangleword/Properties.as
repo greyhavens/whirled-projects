@@ -18,7 +18,7 @@ public class Properties
     //public static const ROUND_LENGTH :int = 10;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH :int = 60;
+    public static const PAUSE_LENGTH :int = 30;
 
     /**
      * Game display is composed of the letter board, and various
