@@ -94,7 +94,8 @@ public class DashboardView extends SceneObject
 
         // _spellSlots keeps track of whether the individual spell slots are occupied
         // or empty
-        for (i = 0; i < GameContext.gameData.maxSpells; ++i) {
+        var numSlots :int = GameContext.gameData.maxSpellsPerType * Constants.SPELL_TYPE__LIMIT;
+        for (i = 0; i < numSlots; ++i) {
             _spellSlots.push(false);
         }
 
@@ -139,8 +140,12 @@ public class DashboardView extends SceneObject
     protected function createSpellButton (spellType :uint, animateIn :Boolean) :void
     {
         // find the first free spell slot to put this spell in
+        var numSlotsForType :int = GameContext.gameData.maxSpellsPerType;
+
         var slot :int = -1;
-        for (var i :int = 0; i < _spellSlots.length; ++i) {
+        var firstSlot :int = spellType * numSlotsForType;
+        var lastSlot :int = (spellType + 1) * numSlotsForType;
+        for (var i :int = firstSlot; i <= lastSlot; ++i) {
             if (!Boolean(_spellSlots[i])) {
                 slot = i;
                 break;

@@ -18,7 +18,7 @@
         maxLosingPlayerSpellDropShift="0.4"
         minResourceAmount="0"
         maxResourceAmount="1000"
-        maxSpells="8">
+        maxSpellsPerType="3">
 
         <PuzzleClearValueTable>
             <Index value="-20"/>

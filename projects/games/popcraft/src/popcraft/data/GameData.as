@@ -28,7 +28,7 @@ public class GameData
 
     public var minResourceAmount :int;
     public var maxResourceAmount :int;
-    public var maxSpells :int;
+    public var maxSpellsPerType :int;
 
     public var resources :Array = [];
     public var resourceMultipliers :Array = [];
@@ -64,7 +64,7 @@ public class GameData
         theClone.maxLosingPlayerSpellDropShift = maxLosingPlayerSpellDropShift;
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
-        theClone.maxSpells = maxSpells;
+        theClone.maxSpellsPerType = maxSpellsPerType;
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
@@ -136,7 +136,7 @@ public class GameData
 
         gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
         gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));
-        gameData.maxSpells = XmlReader.getAttributeAsInt(xml, "maxSpells", (useDefaults ? gameData.maxSpells : undefined));
+        gameData.maxSpellsPerType = XmlReader.getAttributeAsInt(xml, "maxSpellsPerType", (useDefaults ? gameData.maxSpellsPerType : undefined));
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {

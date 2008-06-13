@@ -71,8 +71,8 @@ public class Constants
     public static const RESOURCE_NAMES :Array = [ "white", "red", "blue", "yellow" ];
 
     /* Spells */
-    public static const SPELL_TYPE_BLOODLUST :uint = 0;
-    public static const SPELL_TYPE_RIGORMORTIS :uint = 1;
+    public static const SPELL_TYPE_RIGORMORTIS :uint = 0;
+    public static const SPELL_TYPE_BLOODLUST :uint = 1;
 
     public static const CREATURE_SPELL_TYPE__LIMIT :uint = 2;
 
@@ -80,7 +80,7 @@ public class Constants
 
     public static const SPELL_TYPE__LIMIT :uint = 3;
 
-    public static const SPELL_NAMES :Array = [ "bloodlust", "rigormortis", "shuffle" ];
+    public static const SPELL_NAMES :Array = [ "rigormortis", "bloodlust", "shuffle" ];
     public static const CREATURE_SPELL_NAMES :Array = SPELL_NAMES.slice(0, CREATURE_SPELL_TYPE__LIMIT);
 
     /* Units */

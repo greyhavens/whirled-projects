@@ -87,9 +87,10 @@ public class LocalPlayerInfo extends PlayerInfo
 
     override public function addSpell (spellType :uint, count :uint = 1) :void
     {
-        count = Math.min(count, GameContext.gameData.maxSpells - this.totalSpellCount);
+        var curSpellCount :int = this.getSpellCount(spellType);
+        count = Math.min(count, GameContext.gameData.maxSpellsPerType - curSpellCount);
         if (count > 0) {
-            _spells[spellType] = this.getSpellCount(spellType) + count;
+            _spells[spellType] = curSpellCount + count;
             this.dispatchEvent(new GotSpellEvent(spellType));
         }
     }

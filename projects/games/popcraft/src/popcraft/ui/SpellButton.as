@@ -22,6 +22,8 @@ public class SpellButton extends SceneObject
         var spellData :SpellData = GameContext.gameData.spells[spellType];
 
         _movie = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
+        _movie.scaleX = BUTTON_SCALE;
+        _movie.scaleY = BUTTON_SCALE;
         _movie.cacheAsBitmap = true;
 
         var xLoc :Number = X_LOCS[slot];
@@ -97,7 +99,8 @@ public class SpellButton extends SceneObject
     protected var _spellType :uint;
     protected var _slot :int;
 
-    protected static const X_LOCS :Array = [ -113, -81, -48, -16, 16, 49, 81, 114 ];
+    protected static const BUTTON_SCALE :Number = 0.88;
+    protected static const X_LOCS :Array = [ -113, -85, -56, -28, 0, 28, 56, 85, 113 ];
     protected static const Y_START :Number = -47;
     protected static const Y_BOUNCE :Number = -90;
     protected static const Y_END :Number = -87;
