@@ -19,14 +19,10 @@ public class PlayerBaseUnit extends Unit
         _health = (startingHealthOverride > 0 ? startingHealthOverride : _maxHealth);
     }
 
-    public function set unitSpawnLoc (loc :Vector2) :void
-    {
-        _unitSpawnLoc = loc;
-    }
-
     public function get unitSpawnLoc () :Vector2
     {
-        return _unitSpawnLoc.clone();
+        var offset :Vector2 = (_loc.x <= Constants.SCREEN_DIMS.x * 0.5 ? LEFT_SPAWN_OFFSET : RIGHT_SPAWN_OFFSET);
+        return new Vector2(_loc.x + offset.x, _loc.y + offset.y);
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -37,7 +33,8 @@ public class PlayerBaseUnit extends Unit
         }
     }
 
-    protected var _unitSpawnLoc :Vector2 = new Vector2();
+    protected static const LEFT_SPAWN_OFFSET :Vector2 = new Vector2(30, 0);
+    protected static const RIGHT_SPAWN_OFFSET :Vector2 = new Vector2(-30, 0);
 }
 
 }

@@ -302,7 +302,6 @@ public class GameMode extends AppMode
             base.isInvincible = invincible;
 
             var baseLoc :Vector2 = baseLocs[playerId];
-            base.unitSpawnLoc = baseLoc;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 

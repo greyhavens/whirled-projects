@@ -37,8 +37,6 @@ public class CreatureUnit extends Unit
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = _owningPlayerInfo.base.unitSpawnLoc;
-
-        // @TODO - move this out of here
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
 

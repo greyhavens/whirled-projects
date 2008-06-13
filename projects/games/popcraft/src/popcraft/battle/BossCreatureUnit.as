@@ -32,7 +32,6 @@ class BossAI extends ColossusAI
     public function BossAI (unit :BossCreatureUnit)
     {
         super(unit);
-
         _boss = unit;
     }
 
@@ -43,7 +42,8 @@ class BossAI extends ColossusAI
 
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
-        if (_boss.health == 1 || GameContext.diurnalCycle.isDay) {
+        // return home to recharge when health runs out
+        if (_boss.health == 1) {
             _boss.health = Math.max(2, _boss.health);
             _boss.isInvincible = true;
 
@@ -52,7 +52,6 @@ class BossAI extends ColossusAI
             var rechargeSequence :AITaskSequence = new AITaskSequence();
             rechargeSequence.addSequencedTask(new MoveToLocationTask("ReturnToBase", ourBaseLoc.clone()));
             rechargeSequence.addSequencedTask(new RegenerateTask(_boss.maxHealth / REGENERATE_TIME));
-            rechargeSequence.addSequencedTask(new AIDelayUntilTask("WaitForNight", isNight));
 
             this.clearSubtasks();
             this.addSubtask(rechargeSequence);
@@ -60,11 +59,6 @@ class BossAI extends ColossusAI
         }
 
         return super.update(dt, creature);
-    }
-
-    protected static function isNight (...ignored) :Boolean
-    {
-        return GameContext.diurnalCycle.isNight;
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void

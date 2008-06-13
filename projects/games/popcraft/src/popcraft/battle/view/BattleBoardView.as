@@ -55,7 +55,16 @@ public class BattleBoardView extends SceneObject
 
     protected function animateDayPhaseChange (phase :uint) :void
     {
-        _bg.gotoAndPlay(DiurnalCycle.isNight(phase) ? "daytonight" : "nighttoday");
+        var animName :String;
+        if (DiurnalCycle.isDay(phase)) {
+            animName = "nighttoday";
+        } else if (DiurnalCycle.isNight(phase) && !DiurnalCycle.isEclipse(_lastDayPhase)) {
+            animName = "daytonight";
+        }
+
+        if (null != animName) {
+            _bg.gotoAndPlay(animName);
+        }
     }
 
     override public function get displayObject () :DisplayObject
