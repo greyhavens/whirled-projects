@@ -4,7 +4,6 @@ import flash.events.Event;
 
 public class UnitEvent extends Event
 {
-    public static const ATTACKING :String = "Attacking";
     public static const ATTACKED :String = "Attacked";
 
     public var data :*;

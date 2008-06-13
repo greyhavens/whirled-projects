@@ -9,12 +9,14 @@ import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
+import flash.display.Graphics;
+import flash.display.Shape;
+
 import popcraft.*;
 import popcraft.battle.geom.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
-[Event(name="Attacking", type="popcraft.battle.UnitEvent")]
 [Event(name="Attacked", type="popcraft.battle.UnitEvent")]
 
 /**
@@ -128,8 +130,6 @@ public class Unit extends SimObject
 
         var attack :UnitAttack = new UnitAttack(this.ref, weapon);
 
-        this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKING, weapon));
-
         if (weapon.isRanged && null != targetUnit) {
             MissileFactory.createMissile(targetUnit, attack);
         } else if (weapon.isAOE) {
@@ -159,7 +159,7 @@ public class Unit extends SimObject
 
         var weapon :UnitWeaponData = attack.weapon;
 
-        // @TODO - add support for ranged AOE attacks, if necessary
+        // ranged AOE attacks not supported
         Assert.isFalse(weapon.isRanged);
 
         var radiusSquared :Number = weapon.aoeRadiusSquared;
@@ -189,6 +189,25 @@ public class Unit extends SimObject
             if (totalDamageRemaining <= 0) {
                 break;
             }
+        }
+
+        if (Constants.DEBUG_DRAW_AOE_ATTACK_RADIUS) {
+            // visualize the blast radius
+
+            var aoeCircle :Shape = new Shape();
+            var g :Graphics = aoeCircle.graphics;
+            g.beginFill(0xFF0000, 0.5);
+            g.drawCircle(0, 0, weapon.aoeRadius);
+            g.endFill();
+
+            var aoeObj :SceneObject = new SimpleSceneObject(aoeCircle);
+            aoeObj.x = targetLoc.x;
+            aoeObj.y = targetLoc.y;
+
+            // fade out and die
+            aoeObj.addTask(After(1, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
+
+            GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }
     }
 

@@ -64,7 +64,7 @@ public class CreatureUnitView extends SceneObject
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
 
-        _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked, false, 0, true);
+        _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
         var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
@@ -82,7 +82,6 @@ public class CreatureUnitView extends SceneObject
 
         var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
         spellSet.removeEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
-
     }
 
     protected function handleSpellSetModified (...ignored) :void
@@ -145,29 +144,6 @@ public class CreatureUnitView extends SceneObject
         var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
         GameContext.playGameSound(soundName);
     }
-
-    /*protected function createAOEAttackAnimation (weapon :UnitWeaponData, loc :Vector2, duration :Number) :void
-    {
-        if (Constants.DEBUG_DRAW_AOE_ATTACK_RADIUS) {
-
-            // visualize the blast radius
-
-            var aoeCircle :Shape = new Shape();
-            var g :Graphics = aoeCircle.graphics;
-            g.beginFill(0xFF0000, 0.5);
-            g.drawCircle(0, 0, weapon.aoeRadius);
-            g.endFill();
-
-            var aoeObj :SceneObject = new SimpleSceneObject(aoeCircle);
-            aoeObj.x = loc.x;
-            aoeObj.y = loc.y;
-
-            // fade out and die
-            aoeObj.addTask(After(1, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
-
-            GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
-        }
-    }*/
 
     protected function setupAnimations (playerColor :uint) :void
     {
