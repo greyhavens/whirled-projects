@@ -134,7 +134,7 @@ public class PlayerInfo extends EventDispatcher
         return true;
     }
 
-    public function creaturePurchased (unitType :uint) :void
+    public function deductCreatureCost (unitType :uint) :void
     {
         // no-op
     }

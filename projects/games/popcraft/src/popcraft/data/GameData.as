@@ -19,8 +19,7 @@ public class GameData
     public var initialDayPhase :uint;
     public var disableDiurnalCycle :Boolean;
     public var enableEclipse :Boolean;
-    public var eclipseDayLength :Number;
-    public var eclipseNightLength :Number;
+    public var eclipseLength :Number;
 
     public var spellDropTime :NumRange;
     public var spellDropScatter :NumRange;
@@ -58,8 +57,7 @@ public class GameData
         theClone.initialDayPhase = initialDayPhase;
         theClone.disableDiurnalCycle = disableDiurnalCycle;
         theClone.enableEclipse = enableEclipse;
-        theClone.eclipseDayLength = eclipseDayLength;
-        theClone.eclipseNightLength = eclipseNightLength;
+        theClone.eclipseLength = eclipseLength;
         theClone.spellDropTime = spellDropTime.clone();
         theClone.spellDropScatter = spellDropScatter.clone();
         theClone.spellDropCenterOffset = spellDropCenterOffset.clone();
@@ -120,8 +118,7 @@ public class GameData
         gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
         gameData.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", (useDefaults ? gameData.disableDiurnalCycle : undefined));
         gameData.enableEclipse = XmlReader.getAttributeAsBoolean(xml, "enableEclipse", (useDefaults ? gameData.enableEclipse : undefined));
-        gameData.eclipseDayLength = XmlReader.getAttributeAsNumber(xml, "eclipseDayLength", (useDefaults ? gameData.eclipseDayLength : undefined));
-        gameData.eclipseNightLength = XmlReader.getAttributeAsNumber(xml, "eclipseNightLength", (useDefaults ? gameData.eclipseNightLength : undefined));
+        gameData.eclipseLength = XmlReader.getAttributeAsNumber(xml, "eclipseLength", (useDefaults ? gameData.eclipseLength : undefined));
 
         var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));
         var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax", (useDefaults ? gameData.spellDropTime.max : undefined));

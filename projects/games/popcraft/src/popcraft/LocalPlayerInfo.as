@@ -75,7 +75,7 @@ public class LocalPlayerInfo extends PlayerInfo
         return true;
     }
 
-    override public function creaturePurchased (unitType :uint) :void
+    override public function deductCreatureCost (unitType :uint) :void
     {
         // remove purchase cost from holdings
         var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;

@@ -45,6 +45,7 @@ public class CreatureUnit extends Unit
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
         _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerId];
+        _lastDayPhase = GameContext.diurnalCycle.phaseOfDay;
     }
 
     override protected function addedToDB () :void
@@ -218,12 +219,33 @@ public class CreatureUnit extends Unit
         return baseDamage * (1 + _unitSpells.damageScaleOffset);
     }
 
+    protected function shouldDieOnDayPhase (newDayPhase :uint) :Boolean
+    {
+        // break this logic out into its own little predicate function because it
+        // was getting too confusing to read
+
+        if (_unitData.survivesDaytime) {
+            return false;
+        } else if (DiurnalCycle.isDay(newDayPhase)) {
+            return true;
+        } else if (DiurnalCycle.isEclipse(newDayPhase) && !DiurnalCycle.isEclipse(_lastDayPhase)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     override protected function update (dt :Number) :void
     {
-        // when it's day time, (most) creatures die
-        if (GameContext.diurnalCycle.isDay && !_unitData.survivesDaytime) {
-            this.die();
-            return;
+        var newDayPhase :uint = GameContext.diurnalCycle.phaseOfDay;
+        if (newDayPhase != _lastDayPhase) {
+            // when it's day time, (most) creatures die
+            if (this.shouldDieOnDayPhase(newDayPhase)) {
+                this.die();
+                return;
+            }
+
+            _lastDayPhase = newDayPhase;
         }
 
         _lastUpdateTimestamp += dt;
@@ -258,6 +280,7 @@ public class CreatureUnit extends Unit
     protected var _movementDirection :Vector2 = new Vector2();
 
     protected var _lastUpdateTimestamp :Number = 0;
+    protected var _lastDayPhase :uint;
 
     protected var _unitSpells :CreatureSpellSet;
 

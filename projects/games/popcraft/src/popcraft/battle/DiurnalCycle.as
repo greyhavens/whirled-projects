@@ -26,37 +26,13 @@ public class DiurnalCycle extends SimObject
             _phaseOfDay = { value: Constants.PHASE_NIGHT };
 
         } else {
+            var dayPhase :uint = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+            var phase1 :uint = newPhase;
+            var phase2 :uint = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
+
             var phaseTask :RepeatingTask = new RepeatingTask();
-
-            var phase1 :uint;
-            var phase2 :uint;
-            var phase3: uint;
-
-            if (GameContext.gameData.enableEclipse) {
-                if (newPhase == Constants.PHASE_DAY) {
-                    phase1 = Constants.PHASE_ECLIPSE_DAY;
-                    phase2 = Constants.PHASE_ECLIPSE_NIGHT;
-                    phase3 = Constants.PHASE_NIGHT;
-                } else {
-                    phase1 = Constants.PHASE_NIGHT;
-                    phase2 = Constants.PHASE_ECLIPSE_DAY;
-                    phase3 = Constants.PHASE_ECLIPSE_NIGHT;
-                }
-
-                // cycle between the two eclipse phases and NIGHT
-                this.createPhaseTasks(phaseTask, phase1);
-                this.createPhaseTasks(phaseTask, phase2);
-                this.createPhaseTasks(phaseTask, phase3);
-
-            } else {
-                phase1 = newPhase;
-                phase2 = (phase1 == Constants.PHASE_DAY ? Constants.PHASE_NIGHT : Constants.PHASE_DAY);
-
-               // cycle between DAY and NIGHT
-                this.createPhaseTasks(phaseTask, phase1);
-                this.createPhaseTasks(phaseTask, phase2);
-            }
-
+            this.createPhaseTasks(phaseTask, phase1);
+            this.createPhaseTasks(phaseTask, phase2);
             phaseTask.addTask(new FunctionTask(incrementDayCount));
             this.addTask(phaseTask);
 
@@ -75,15 +51,14 @@ public class DiurnalCycle extends SimObject
         phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, 0, phaseLength));
     }
 
-    protected static function getPhaseLength (phase :uint) :Number
+    public static function getPhaseLength (phase :uint) :Number
     {
         var gameData :GameData = GameContext.gameData;
 
         switch (phase) {
         case Constants.PHASE_DAY: return gameData.dayLength;
         case Constants.PHASE_NIGHT: return gameData.nightLength;
-        case Constants.PHASE_ECLIPSE_DAY: return gameData.eclipseDayLength;
-        case Constants.PHASE_ECLIPSE_NIGHT: return gameData.eclipseNightLength;
+        case Constants.PHASE_ECLIPSE: return gameData.eclipseLength;
         }
 
         return -1;
@@ -104,14 +79,34 @@ public class DiurnalCycle extends SimObject
         _lastUpdateTimestamp += dt;
     }
 
+    public static function isDay (phaseOfDay :uint) :Boolean
+    {
+        return (phaseOfDay == Constants.PHASE_DAY);
+    }
+
+    public static function isNight (phaseOfDay :uint) :Boolean
+    {
+        return (phaseOfDay == Constants.PHASE_NIGHT || phaseOfDay == Constants.PHASE_ECLIPSE);
+    }
+
+    public static function isEclipse (phaseOfDay :uint) :Boolean
+    {
+        return (phaseOfDay == Constants.PHASE_ECLIPSE);
+    }
+
     public function get isDay () :Boolean
     {
-        return this.phaseOfDay == Constants.PHASE_DAY;
+        return DiurnalCycle.isDay(this.phaseOfDay);
     }
 
     public function get isNight () :Boolean
     {
-        return this.phaseOfDay == Constants.PHASE_NIGHT;
+        return DiurnalCycle.isNight(this.phaseOfDay);
+    }
+
+    public function get isEclipse () :Boolean
+    {
+        return DiurnalCycle.isEclipse(this.phaseOfDay);
     }
 
     public function get curPhaseTotalTime () :Number

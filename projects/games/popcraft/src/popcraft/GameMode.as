@@ -14,7 +14,6 @@ import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
 import flash.display.DisplayObjectContainer;
-import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
@@ -372,7 +371,8 @@ public class GameMode extends AppMode
 
         case KeyboardCodes.D:
             if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
+                GameContext.diurnalCycle.resetPhase(
+                    GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
             }
             break;
 
@@ -544,7 +544,7 @@ public class GameMode extends AppMode
                 _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
             }
 
-            _musicChannel = GameContext.playGameMusic(dayPhase == Constants.PHASE_DAY ? "mus_day" : "mus_night");
+            _musicChannel = GameContext.playGameMusic(DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
 
             _lastDayPhase = dayPhase;
         }
@@ -764,15 +764,18 @@ public class GameMode extends AppMode
         }
     }
 
-    public function buildUnit (playerId :uint, unitType :uint) :void
+    public function buildUnit (playerId :uint, unitType :uint, noCost :Boolean = false) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
 
-        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || !playerInfo.canPurchaseCreature(unitType)) {
+        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || (!noCost && !playerInfo.canPurchaseCreature(unitType))) {
             return;
         }
 
-        playerInfo.creaturePurchased(unitType);
+        if (!noCost) {
+            playerInfo.deductCreatureCost(unitType);
+        }
+
         _messageMgr.sendMessage(new CreateUnitMessage(playerId, unitType));
     }
 

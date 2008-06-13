@@ -51,9 +51,10 @@ public class DiurnalMeterView extends SceneObject
             _updateTimeDelta = 0;
         }
 
-        var activeBody :MovieClip = (diurnalCycle.isDay ? _sun : _moon);
-        var percentComplete :Number =
-            1.0 - ((diurnalCycle.timeTillNextPhase - _updateTimeDelta) / diurnalCycle.curPhaseTotalTime);
+        var activeBody :MovieClip = (DiurnalCycle.isDay(newPhase) ? _sun : _moon);
+        var timeTillNextPhase :Number = diurnalCycle.timeTillNextPhase;
+        var phaseTotalTime :Number = DiurnalCycle.getPhaseLength(newPhase);
+        var percentComplete :Number = 1.0 - ((timeTillNextPhase - _updateTimeDelta) / phaseTotalTime);
         activeBody.x = BODY_START_X + (percentComplete * BODY_TOTAL_DIST);
     }
 
@@ -61,7 +62,7 @@ public class DiurnalMeterView extends SceneObject
     {
         var soundName :String;
 
-        if (newPhase == Constants.PHASE_DAY) {
+        if (DiurnalCycle.isDay(newPhase)) {
             _sun.visible = true;
             _moon.visible = false;
             soundName = "sfx_day";

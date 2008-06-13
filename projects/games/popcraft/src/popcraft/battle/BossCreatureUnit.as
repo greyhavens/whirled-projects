@@ -15,20 +15,6 @@ public class BossCreatureUnit extends ColossusCreatureUnit
     {
         super(owningPlayerId, Constants.UNIT_TYPE_BOSS, new BossAI(this));
     }
-
-    public function set escaping (val :Boolean) :void
-    {
-        _escaping = val;
-    }
-
-    override public function get speedScale () :Number
-    {
-        return (_escaping ? ESCAPE_SPEEDSCALE : super.speedScale);
-    }
-
-    protected var _escaping :Boolean;
-
-    protected static const ESCAPE_SPEEDSCALE :Number = 4;
 }
 
 }
@@ -58,7 +44,6 @@ class BossAI extends ColossusAI
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
         if (_boss.health == 1 || GameContext.diurnalCycle.isDay) {
-            _boss.escaping = true;
             _boss.health = Math.max(2, _boss.health);
             _boss.isInvincible = true;
 
@@ -89,7 +74,6 @@ class BossAI extends ColossusAI
             if (subtask.name == RegenerateTask.NAME) {
                 // we finished regenerating. go back out and fight!
                 _boss.isInvincible = false;
-                _boss.escaping = false;
                 this.restartAI();
                 return;
             }
@@ -100,7 +84,7 @@ class BossAI extends ColossusAI
 
     protected var _boss :BossCreatureUnit;
 
-    protected static const REGENERATE_TIME :Number = 25;
+    protected static const REGENERATE_TIME :Number = 20;
 }
 
 class RegenerateTask extends AITask
