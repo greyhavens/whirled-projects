@@ -26,6 +26,8 @@ public class BattleBoardView extends SceneObject
         _bg.x = Constants.SCREEN_DIMS.x * 0.5;
         _bg.y = Constants.SCREEN_DIMS.y * 0.5;
 
+        _parent.addChild(_bg);
+
         var attach :MovieClip = _bg["attachment"];
 
         _diurnalMeterParent.x = -_bg.x;
@@ -58,7 +60,12 @@ public class BattleBoardView extends SceneObject
 
     override public function get displayObject () :DisplayObject
     {
-        return _bg;
+        return _parent;
+    }
+
+    public function get clickableObjectParent () :DisplayObjectContainer
+    {
+        return _parent;
     }
 
     public function get unitViewParent () :DisplayObjectContainer
@@ -92,6 +99,7 @@ public class BattleBoardView extends SceneObject
 
     protected var _width :int;
     protected var _height :int;
+    protected var _parent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
     protected var _diurnalMeterParent :Sprite = new Sprite();
     protected var _lastDayPhase :uint;

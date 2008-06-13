@@ -66,7 +66,7 @@ public class GameMode extends AppMode
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, _overlayParent);
-            _debugDataView.visible = false;
+            _debugDataView.visible = true;
         }
 
         // introduce the level
@@ -704,7 +704,7 @@ public class GameMode extends AppMode
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
 
             if (localPlayerInfo.teamId != owningPlayerInfo.teamId) {
-                InteractiveObject(baseView.displayObject).addEventListener(
+                baseView.clickableObject.addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }
         }

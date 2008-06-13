@@ -7,13 +7,13 @@ import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -72,6 +72,17 @@ public class PlayerBaseUnitView extends SceneObject
         var nameText :TextField = _movie["player_name"];
         nameText.text = owningPlayer.playerName;
 
+        // clickable sprite
+        _clickableSprite.graphics.beginFill(0, 0);
+        _clickableSprite.graphics.drawRect(
+            CLICKABLE_SPRITE_SIZE.x,
+            CLICKABLE_SPRITE_SIZE.y,
+            CLICKABLE_SPRITE_SIZE.width,
+            CLICKABLE_SPRITE_SIZE.height);
+        _clickableSprite.graphics.endFill();
+
+        GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
+
         this.targetEnemyBadgeVisible = false;
     }
 
@@ -101,6 +112,7 @@ public class PlayerBaseUnitView extends SceneObject
         }
 
         _unit.removeEventListener(UnitEvent.ATTACKED, handleAttacked);
+        _clickableSprite.parent.removeChild(_clickableSprite);
     }
 
     override public function get displayObject () :DisplayObject
@@ -108,11 +120,19 @@ public class PlayerBaseUnitView extends SceneObject
         return _sprite;
     }
 
+    public function get clickableObject () :InteractiveObject
+    {
+        return _clickableSprite;
+    }
+
     override protected function update (dt :Number) :void
     {
         if (_needsLocationUpdate) {
             this.x = _unit.x;
             this.y = _unit.y;
+
+            _clickableSprite.x = _unit.x;
+            _clickableSprite.y = _unit.y;
 
             // flip the movie if we're on the left side of the board
             if (_unit.x < Constants.BATTLE_WIDTH * 0.5) {
@@ -167,6 +187,7 @@ public class PlayerBaseUnitView extends SceneObject
     }
 
     protected var _sprite :Sprite = new Sprite();
+    protected var _clickableSprite :Sprite = new Sprite();
     protected var _movie :MovieClip;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeters :Array = [];
@@ -177,6 +198,8 @@ public class PlayerBaseUnitView extends SceneObject
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
+
+    protected static const CLICKABLE_SPRITE_SIZE :Rectangle = new Rectangle(-27, -74, 55, 74);
 
 }
 
