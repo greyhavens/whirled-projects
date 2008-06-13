@@ -3,6 +3,7 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="WeatherBox"/>
+  <property name="app.type" value="furni"/>
   <property name="app.source-suffix" value="mxml"/>
   <property name="flex.use-network" value="true"/>
 

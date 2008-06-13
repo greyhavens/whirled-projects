@@ -3,6 +3,7 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="SoundSpectrum"/>
+  <property name="app.type" value="furni"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
