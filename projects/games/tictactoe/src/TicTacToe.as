@@ -91,7 +91,7 @@ public class TicTacToe extends Sprite
         trace("Received message " + event);
         trace("From is " + event.senderId);
         if (event.name == Server.THREE_IN_A_ROW) {
-            if (event.isFromServerAgent()) {
+            if (event.isFromServer()) {
                 var indices :Array = event.value as Array;
                 _board.drawWin(indices);
 
