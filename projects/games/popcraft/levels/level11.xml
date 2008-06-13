@@ -17,10 +17,10 @@
             spellDropScatterMax="30">
             <GameSizes>
                 <GameSize numPlayers="4" customSpellDropLocation="true">
-                    <BaseLocation x="70" y="145"/>
-                    <BaseLocation x="70" y="245"/>
-                    <BaseLocation x="652" y="85"/>
-                    <BaseLocation x="652" y="315"/>
+                    <BaseLocation x="85" y="145"/>
+                    <BaseLocation x="85" y="245"/>
+                    <BaseLocation x="642" y="115"/>
+                    <BaseLocation x="642" y="325"/>
                     <CustomSpellDropLocation x="350" y="150"/>
                 </GameSize>
             </GameSizes>

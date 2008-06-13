@@ -16,9 +16,9 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         <GameDataOverride>
             <GameSizes>
                 <GameSize numPlayers="3">
-                    <BaseLocation x="50" y="175"/>
-                    <BaseLocation x="652" y="85"/>
-                    <BaseLocation x="652" y="315"/>
+                    <BaseLocation x="75" y="175"/>
+                    <BaseLocation x="612" y="115"/>
+                    <BaseLocation x="612" y="315"/>
                 </GameSize>
             </GameSizes>
         </GameDataOverride>

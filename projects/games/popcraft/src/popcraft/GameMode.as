@@ -703,7 +703,7 @@ public class GameMode extends AppMode
             var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerId];
             baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
 
-            if (localPlayerInfo.teamId != owningPlayerInfo.teamId) {
+            if (localPlayerInfo.teamId != owningPlayerInfo.teamId && !owningPlayerInfo.isInvincible) {
                 baseView.clickableObject.addEventListener(
                     MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
             }

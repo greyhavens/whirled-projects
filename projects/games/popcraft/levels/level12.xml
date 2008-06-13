@@ -12,6 +12,13 @@
         </Hints>
 
         <GameDataOverride>
+			<GameSizes>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="75" y="145"/>
+                    <BaseLocation x="622" y="265"/>
+                </GameSize>
+            </GameSizes>
+
             <Resources>
                 <Resource type="white" rarity="0.5"/>
                 <Resource type="red" rarity="0.5"/>

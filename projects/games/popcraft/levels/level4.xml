@@ -12,6 +12,15 @@
 			<Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
         </Hints>
 
+		<GameDataOverride>
+			<GameSizes>
+                <GameSize numPlayers="2">
+                    <BaseLocation x="75" y="125"/>
+                    <BaseLocation x="622" y="305"/>
+                </GameSize>
+            </GameSizes>
+		</GameDataOverride>
+
         <InitialResources>
             <Resource type="blue" amount="60"/>
             <Resource type="yellow" amount="40"/>

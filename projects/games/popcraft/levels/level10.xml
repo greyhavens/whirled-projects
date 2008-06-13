@@ -19,9 +19,9 @@
                 <GameSize numPlayers="4" customSpellDropLocation="true">
                     <BaseLocation x="70" y="185"/>
                     <BaseLocation x="642" y="185"/>
-                    <BaseLocation x="590" y="90"/>
-                    <BaseLocation x="590" y="325"/>
-                    <CustomSpellDropLocation x="250" y="150"/>
+                    <BaseLocation x="590" y="115"/>
+                    <BaseLocation x="590" y="335"/>
+                    <CustomSpellDropLocation x="250" y="160"/>
                 </GameSize>
             </GameSizes>
         </GameDataOverride>
