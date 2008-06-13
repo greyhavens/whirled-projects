@@ -22,14 +22,12 @@ public class ComputerPlayer extends SimObject
         _playerInfo.targetedEnemyId = GameContext.localPlayerId;
 
         _wavesPaused = true;
-
-        _curDay = this.getDayData(0);
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData
     {
         if (dayIndex < _data.initialDays.length) {
-            return _data.initialDays[_dayIndex];
+            return _data.initialDays[dayIndex];
         } else if (_data.repeatingDays.length > 0) {
             var index :int = (dayIndex - _data.initialDays.length) % _data.repeatingDays.length;
             return _data.repeatingDays[index];
@@ -43,8 +41,6 @@ public class ComputerPlayer extends SimObject
         if (null == _curDay) {
             return;
         }
-
-        _queuedFirstWave = true;
 
         if (_waveIndex < _curDay.unitWaves.length || _curDay.repeatWaves) {
             _nextWave = _curDay.unitWaves[_waveIndex % _curDay.unitWaves.length];
@@ -118,29 +114,33 @@ public class ComputerPlayer extends SimObject
             return;
         }
 
-        // stop sending out waves during the day, and resume at night
-        var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (_wavesPaused && dayPhase == Constants.PHASE_NIGHT) {
-            _wavesPaused = false;
+        // which day is it?
+        var diurnalCycle :DiurnalCycle = GameContext.diurnalCycle;
+        var dayIndex :int = (diurnalCycle.dayCount - 1);
+        if (dayIndex != _lastDayIndex) {
+            _curDay = this.getDayData(dayIndex);
             _waveIndex = 0;
-            if (_queuedFirstWave) {
-                // don't increase the day index if nothing has been sent yet
-                _curDay = this.getDayData(++_dayIndex);
-            }
-            this.queueNextWave();
-        } else if (!_wavesPaused && dayPhase == Constants.PHASE_DAY) {
-            _wavesPaused = true;
-            _nextWave = null;
-            this.removeNamedTasks(SEND_WAVE_TASK);
-            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK); // stop looking for spells during the day
+            _lastDayIndex = dayIndex;
         }
 
         if (null == _curDay) {
             return;
         }
 
+        // stop sending out waves during the day, and resume at night
+        var isNight :Boolean = GameContext.diurnalCycle.isNight;
+        if (_wavesPaused && isNight) {
+            _wavesPaused = false;
+            this.queueNextWave();
+        } else if (!_wavesPaused && !isNight) {
+            _wavesPaused = true;
+            _nextWave = null;
+            this.removeNamedTasks(SEND_WAVE_TASK);
+            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK); // stop looking for spells during the day
+        }
+
         // look for spell drops
-        if (_curDay.lookForSpellDrops && dayPhase == Constants.PHASE_NIGHT && !this.spellDropSpotted && this.spellDropOnBoard) {
+        if (_curDay.lookForSpellDrops && isNight && !this.spellDropSpotted && this.spellDropOnBoard) {
             this.addNamedTask(
                 SPELL_DROP_SPOTTED_TASK,
                 After(_curDay.noticeSpellDropAfter.next(),
@@ -178,9 +178,8 @@ public class ComputerPlayer extends SimObject
     protected var _curDay :DaySequenceData;
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
-    protected var _dayIndex :int;
+    protected var _lastDayIndex :int = -1;
 
-    protected var _queuedFirstWave :Boolean;
     protected var _wavesPaused :Boolean;
 
     protected static const SEND_WAVE_TASK :String = "SendWave";

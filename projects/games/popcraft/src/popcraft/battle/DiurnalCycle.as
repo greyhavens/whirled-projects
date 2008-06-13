@@ -26,19 +26,24 @@ public class DiurnalCycle extends SimObject
             _phaseOfDay = { value: Constants.PHASE_NIGHT };
 
         } else {
-            var dayPhase :uint = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
-            var phase1 :uint = newPhase;
-            var phase2 :uint = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
-
             var phaseTask :RepeatingTask = new RepeatingTask();
-            this.createPhaseTasks(phaseTask, phase1);
-            this.createPhaseTasks(phaseTask, phase2);
+            if (GameContext.gameData.enableEclipse) {
+                this.createPhaseTasks(phaseTask, Constants.PHASE_ECLIPSE);
+            } else {
+                var dayPhase :uint = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+                var phase1 :uint = newPhase;
+                var phase2 :uint = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
+
+                this.createPhaseTasks(phaseTask, phase1);
+                this.createPhaseTasks(phaseTask, phase2);
+            }
+
             phaseTask.addTask(new FunctionTask(incrementDayCount));
             this.addTask(phaseTask);
 
             // set initial values
-            _phaseOfDay["value"] = phase1;
-            _timeTillNextPhase["value"] = getPhaseLength(phase1);
+            _phaseOfDay["value"] = newPhase;
+            _timeTillNextPhase["value"] = getPhaseLength(newPhase);
         }
     }
 

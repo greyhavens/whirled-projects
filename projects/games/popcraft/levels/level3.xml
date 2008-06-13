@@ -36,8 +36,8 @@
                     <Wave absoluteDelay="40"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="60"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="80"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="106"><Unit type="sapper" count="10"/></Wave>
-                    <Wave absoluteDelay="107"><Unit type="grunt" count="12"/></Wave>
+                    <Wave absoluteDelay="108"><Unit type="sapper" count="10"/></Wave>
+                    <Wave absoluteDelay="109"><Unit type="grunt" count="12"/></Wave>
                 </Day>
             </InitialDays>
             <RepeatingDays>

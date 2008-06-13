@@ -14,11 +14,11 @@
 
         <GameDataOverride 
 			enableEclipse="true"
-			initialDayPhase="night">
+			initialDayPhase="eclipse">
             <GameSizes>
                 <GameSize numPlayers="3" customSpellDropLocation="true">
                     <BaseLocation x="75" y="145"/>
-                    <BaseLocation x="632" y="155"/>
+                    <BaseLocation x="632" y="185"/>
                     <BaseLocation x="632" y="285"/>
                     <CustomSpellDropLocation x="320" y="300"/>
                 </GameSize>

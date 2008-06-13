@@ -43,7 +43,8 @@ public class CreatureUnit extends Unit
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
         _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerId];
-        _lastDayPhase = GameContext.diurnalCycle.phaseOfDay;
+        _lastDayCount = GameContext.diurnalCycle.dayCount;
+        _eclipseEnabled = GameContext.gameData.enableEclipse;
     }
 
     override protected function addedToDB () :void
@@ -217,33 +218,25 @@ public class CreatureUnit extends Unit
         return baseDamage * (1 + _unitSpells.damageScaleOffset);
     }
 
-    protected function shouldDieOnDayPhase (newDayPhase :uint) :Boolean
+    protected function shouldDie () :Boolean
     {
         // break this logic out into its own little predicate function because it
         // was getting too confusing to read
 
         if (_unitData.survivesDaytime) {
             return false;
-        } else if (DiurnalCycle.isDay(newDayPhase)) {
-            return true;
-        } else if (DiurnalCycle.isEclipse(newDayPhase) && !DiurnalCycle.isEclipse(_lastDayPhase)) {
-            return true;
+        } else if (_eclipseEnabled) {
+            return GameContext.diurnalCycle.dayCount > _lastDayCount;
         } else {
-            return false;
+            return GameContext.diurnalCycle.isDay;
         }
     }
 
     override protected function update (dt :Number) :void
     {
-        var newDayPhase :uint = GameContext.diurnalCycle.phaseOfDay;
-        if (newDayPhase != _lastDayPhase) {
-            // when it's day time, (most) creatures die
-            if (this.shouldDieOnDayPhase(newDayPhase)) {
-                this.die();
-                return;
-            }
-
-            _lastDayPhase = newDayPhase;
+        if (this.shouldDie()) {
+            this.die();
+            return;
         }
 
         _lastUpdateTimestamp += dt;
@@ -278,7 +271,8 @@ public class CreatureUnit extends Unit
     protected var _movementDirection :Vector2 = new Vector2();
 
     protected var _lastUpdateTimestamp :Number = 0;
-    protected var _lastDayPhase :uint;
+    protected var _lastDayCount :int;
+    protected var _eclipseEnabled :Boolean;
 
     protected var _unitSpells :CreatureSpellSet;
 
