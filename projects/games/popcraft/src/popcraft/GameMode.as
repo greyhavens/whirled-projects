@@ -537,9 +537,10 @@ public class GameMode extends AppMode
             }
         }
 
-        // update the game music
+        // update the game music, unless we're in "eclipse mode", where we loop
+        // the night music forever
         var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (dayPhase != _lastDayPhase) {
+        if (!_startedMusic || (dayPhase != _lastDayPhase && !GameContext.gameData.enableEclipse)) {
             if (null != _musicChannel) {
                 _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
             }
@@ -547,6 +548,7 @@ public class GameMode extends AppMode
             _musicChannel = GameContext.playGameMusic(DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
 
             _lastDayPhase = dayPhase;
+            _startedMusic = true;
         }
 
         // update all non-net objects
@@ -812,6 +814,7 @@ public class GameMode extends AppMode
     protected var _overlayParent :Sprite;
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;
+    protected var _startedMusic :Boolean;
 
     protected var _gameTickCount :uint;
     protected var _updateCount :uint;
