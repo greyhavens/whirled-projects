@@ -40,7 +40,7 @@ public class BattleBoardView extends SceneObject
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
 
-        _bg.gotoAndStop(_lastDayPhase == Constants.PHASE_NIGHT ? "night" : "day");
+        _bg.gotoAndStop(DiurnalCycle.isNight(_lastDayPhase) ? "night" : "day");
         _bg.cacheAsBitmap = true;
     }
 

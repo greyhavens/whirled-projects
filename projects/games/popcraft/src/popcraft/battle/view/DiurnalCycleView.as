@@ -11,9 +11,9 @@ import flash.display.Sprite;
 import popcraft.*;
 import popcraft.battle.*;
 
-public class DiurnalMeterView extends SceneObject
+public class DiurnalCycleView extends SceneObject
 {
-    public function DiurnalMeterView ()
+    public function DiurnalCycleView ()
     {
         _sprite = new Sprite();
 
@@ -51,26 +51,42 @@ public class DiurnalMeterView extends SceneObject
             _updateTimeDelta = 0;
         }
 
-        var activeBody :MovieClip = (DiurnalCycle.isDay(newPhase) ? _sun : _moon);
         var timeTillNextPhase :Number = diurnalCycle.timeTillNextPhase;
         var phaseTotalTime :Number = DiurnalCycle.getPhaseLength(newPhase);
         var percentComplete :Number = 1.0 - ((timeTillNextPhase - _updateTimeDelta) / phaseTotalTime);
-        activeBody.x = BODY_START_X + (percentComplete * BODY_TOTAL_DIST);
+        var xLoc :Number = BODY_START_X + (percentComplete * BODY_TOTAL_DIST);
+
+        if (_sun.visible) {
+            _sun.x = xLoc;
+        }
+
+        if (_moon.visible) {
+            _moon.x = xLoc;
+        }
     }
 
     protected function dayPhaseChanged (newPhase :uint, playSound :Boolean) :void
     {
         var soundName :String;
 
-        if (DiurnalCycle.isDay(newPhase)) {
+        switch (newPhase) {
+        case Constants.PHASE_DAY:
             _sun.visible = true;
             _moon.visible = false;
             soundName = "sfx_day";
-        } else {
+            break;
+
+        case Constants.PHASE_NIGHT:
             _sun.visible = false;
             _moon.visible = true;
-            _playedDawnSound = false;
             soundName = "sfx_night";
+            break;
+
+        case Constants.PHASE_ECLIPSE:
+            _sun.visible = true;
+            _moon.visible = true;
+            soundName = "sfx_night";
+            break;
         }
 
         if (playSound) {

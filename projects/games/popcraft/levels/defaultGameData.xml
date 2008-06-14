@@ -184,12 +184,12 @@ Students are advised that instructors at the School for Responsible Reanimation 
                 hasRepulseForce="true"
                 survivesDaytime="true"
                 minHealth="1"
-                maxHealth="100"
+                maxHealth="150"
                 collisionRadius="30"
                 detectRadius="50"
                 loseInterestRadius="50">
                 <ResourceCosts/>
-                <Weapon damageType="colossus" damageMin="90" damageMax="105" cooldown="1" maxAttackDistance="50"/>
+                <Weapon damageType="colossus" damageMin="100" damageMax="120" cooldown="1" maxAttackDistance="50"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.1"/>
                     <Damage type="piercing"     scale="0.07"/>

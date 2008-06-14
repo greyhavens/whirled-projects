@@ -318,7 +318,7 @@ public class GameMode extends AppMode
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
         if (!DiurnalCycle.isDisabled) {
-            var diurnalMeter :DiurnalMeterView = new DiurnalMeterView();
+            var diurnalMeter :DiurnalCycleView = new DiurnalCycleView();
             diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
             diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
             this.addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);

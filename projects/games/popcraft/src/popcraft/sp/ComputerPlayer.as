@@ -20,8 +20,6 @@ public class ComputerPlayer extends SimObject
 
         // Computer players always target the local player
         _playerInfo.targetedEnemyId = GameContext.localPlayerId;
-
-        _wavesPaused = true;
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData
@@ -120,6 +118,10 @@ public class ComputerPlayer extends SimObject
         if (dayIndex != _lastDayIndex) {
             _curDay = this.getDayData(dayIndex);
             _waveIndex = 0;
+            _nextWave = null;
+            this.removeNamedTasks(SEND_WAVE_TASK);
+            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK);
+
             _lastDayIndex = dayIndex;
         }
 
@@ -127,24 +129,19 @@ public class ComputerPlayer extends SimObject
             return;
         }
 
-        // stop sending out waves during the day, and resume at night
-        var isNight :Boolean = GameContext.diurnalCycle.isNight;
-        if (_wavesPaused && isNight) {
-            _wavesPaused = false;
-            this.queueNextWave();
-        } else if (!_wavesPaused && !isNight) {
-            _wavesPaused = true;
-            _nextWave = null;
-            this.removeNamedTasks(SEND_WAVE_TASK);
-            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK); // stop looking for spells during the day
-        }
+        if (GameContext.diurnalCycle.isNight) {
+            // send out creatures and look for spell drops at night
 
-        // look for spell drops
-        if (_curDay.lookForSpellDrops && isNight && !this.spellDropSpotted && this.spellDropOnBoard) {
-            this.addNamedTask(
-                SPELL_DROP_SPOTTED_TASK,
-                After(_curDay.noticeSpellDropAfter.next(),
-                    new FunctionTask(sendCouriersForSpellDrop)));
+            if (_nextWave == null) {
+                this.queueNextWave();
+            }
+
+            if (_curDay.lookForSpellDrops && !this.spellDropSpotted && this.spellDropOnBoard) {
+                this.addNamedTask(
+                    SPELL_DROP_SPOTTED_TASK,
+                    After(_curDay.noticeSpellDropAfter.next(),
+                        new FunctionTask(sendCouriersForSpellDrop)));
+            }
         }
     }
 
@@ -179,8 +176,6 @@ public class ComputerPlayer extends SimObject
     protected var _nextWave :UnitWaveData;
     protected var _waveIndex :int;
     protected var _lastDayIndex :int = -1;
-
-    protected var _wavesPaused :Boolean;
 
     protected static const SEND_WAVE_TASK :String = "SendWave";
     protected static const SPELL_DROP_SPOTTED_TASK :String = "SpellDropSpotted";

@@ -40,6 +40,12 @@ class BossAI extends ColossusAI
         return NAME;
     }
 
+    override public function init () :void
+    {
+        _homeLoc = _boss.owningPlayerInfo.base.unitSpawnLoc;
+        super.init();
+    }
+
     override public function update (dt :Number, creature :CreatureUnit) :uint
     {
         // return home to recharge when health runs out
@@ -48,9 +54,8 @@ class BossAI extends ColossusAI
             _boss.isInvincible = true;
 
             // return to home base and recharge there
-            var ourBaseLoc :Vector2 = GameContext.baseLocs[_boss.owningPlayerId];
             var rechargeSequence :AITaskSequence = new AITaskSequence();
-            rechargeSequence.addSequencedTask(new MoveToLocationTask("ReturnToBase", ourBaseLoc.clone()));
+            rechargeSequence.addSequencedTask(new MoveToLocationTask("ReturnToBase", _homeLoc.clone()));
             rechargeSequence.addSequencedTask(new RegenerateTask(_boss.maxHealth / REGENERATE_TIME));
 
             this.clearSubtasks();
@@ -77,8 +82,9 @@ class BossAI extends ColossusAI
     }
 
     protected var _boss :BossCreatureUnit;
+    protected var _homeLoc :Vector2;
 
-    protected static const REGENERATE_TIME :Number = 20;
+    protected static const REGENERATE_TIME :Number = 10;
 }
 
 class RegenerateTask extends AITask
