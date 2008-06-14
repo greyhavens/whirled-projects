@@ -5,13 +5,7 @@
   <property name="app.name" value="Spades"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.type" value="game"/>
-
-  <!-- define our contrib files -->
-  <property name="app.server-contrib-files-00" value="../../../contrib/etc/card-asc-files-00.txt"/>
-  <property name="app.server-contrib-files-01" value="../../../contrib/etc/card-asc-files-01.txt"/>
-
-  <!-- define our round server files -->
-  <property name="app.server-files-00" value="server-files-00.txt"/>
+  <property name="app.enable-server-agent" value="true"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
