@@ -1,0 +1,15 @@
+<!-- build configuration -->
+<project name="linktest" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Link"/>
+  <property name="app.type" value="furni"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/f946b8065af41f130bd3a1e3ba0319de83793b5f.swf"/>
+  </target>
+
+</project>
