@@ -6,6 +6,11 @@ public class CreatureUnitViewState
     public var moving :Boolean;
     public var attacking :Boolean;
 
+    public function get idle () :Boolean
+    {
+        return (!moving && !attacking);
+    }
+
     public function equals (rhs :CreatureUnitViewState) :Boolean
     {
         return (

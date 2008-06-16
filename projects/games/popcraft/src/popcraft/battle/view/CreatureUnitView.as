@@ -270,7 +270,14 @@ public class CreatureUnitView extends SceneObject
             // only reset the animation if it's actually changed
             _sprite.removeChildAt(0);
             _sprite.addChildAt(anim, 0);
-            anim.gotoAndPlay(initialFrame);
+
+            // we're not playing Handy-Man's idle animation for performance reasons
+            // @TODO - move this logic somewhere more appropriate!
+            if (_unit.unitType == Constants.UNIT_TYPE_HEAVY && newViewState.idle) {
+                anim.gotoAndStop(initialFrame);
+            } else {
+                anim.gotoAndPlay(initialFrame);
+            }
         }
 
         _lastViewState = newViewState;
