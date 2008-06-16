@@ -10,6 +10,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
+import flash.display.StageQuality;
 import flash.events.Event;
 
 import popcraft.*;
@@ -23,6 +24,8 @@ public class PopCraft extends Sprite
 {
     public function PopCraft ()
     {
+        AppContext.mainSprite = this;
+
         // setup GameControl
         AppContext.gameCtrl = new GameControl(this, false);
         var isConnected :Boolean = AppContext.gameCtrl.isConnected();

@@ -5,11 +5,14 @@ import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
+import flash.display.Sprite;
+
 import popcraft.data.*;
 import popcraft.sp.LevelManager;
 
 public class AppContext
 {
+    public static var mainSprite :Sprite;
     public static var mainLoop :MainLoop;
     public static var gameCtrl :GameControl;
     public static var cookieMgr :UserCookieManager;

@@ -10,6 +10,7 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
@@ -50,6 +51,13 @@ public class LevelIntroMode extends AppMode
         this.doNextPhase();
 
         this.modeSprite.visible = false;
+
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    override protected function destroy () :void
+    {
+        StageQualityManager.popStageQuality();
     }
 
     protected function hasPhase (phaseNum :int) :Boolean
