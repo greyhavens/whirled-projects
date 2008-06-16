@@ -3,29 +3,29 @@
         parDays="1"
         backgroundName="Level2"
         newCreatureType="sapper"
-		introText=
-"'&quot;Listen, you lot,” commands Jack. &quot;Here's the plan:
+        introText=
+"'&quot;Listen, you lot,&quot; commands Jack. &quot;Here's the plan:
 &quot;We travel to London as quick as we can.
 &quot;As you're all aware,
 &quot;My father lives there;
-&quot;He'll help prove Ralph’s guilt - he’s a powerful man.&quot;"
+&quot;He'll help prove Ralph's guilt - he's a powerful man.&quot;"
         introText2="Use the Delivery Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Delivery Boys can take out large groups of enemies."
         playerName="Jack"
         playerBaseHealth="100">
 
         <Hints>
             <Hint>Delivery Boys will ignore solitary creatures, but will chase down groups of two or more enemies.</Hint>
-			<Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
+            <Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
         </Hints>
 
-		<GameDataOverride>
-			<GameSizes>
+        <GameDataOverride>
+            <GameSizes>
                 <GameSize numPlayers="2">
                     <BaseLocation x="75" y="125"/>
                     <BaseLocation x="622" y="305"/>
                 </GameSize>
             </GameSizes>
-		</GameDataOverride>
+        </GameDataOverride>
 
         <InitialResources>
             <Resource type="blue" amount="60"/>
