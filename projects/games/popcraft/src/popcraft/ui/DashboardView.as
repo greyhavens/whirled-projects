@@ -2,6 +2,7 @@ package popcraft.ui {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -39,7 +40,10 @@ public class DashboardView extends SceneObject
         // setup resources
         for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
-            _resourceText.push(puzzleFrame[resourceTextName]);
+            var resourceText :TextField = puzzleFrame[resourceTextName];
+            var resourceTextObj :SimpleSceneObject = new SimpleSceneObject(resourceText);
+            GameContext.gameMode.addObject(resourceTextObj);
+            _resourceTextObjs.push(resourceTextObj);
             _resourceBars.push(null);
             _oldResourceAmounts.push(-1);
         }
@@ -219,13 +223,15 @@ public class DashboardView extends SceneObject
         var resAmount :int = GameContext.localPlayerInfo.getResourceAmount(resType);
 
         // only update if the resource amount has changed
-        if (resAmount == _oldResourceAmounts[resType]) {
+        var oldResAmount :int = _oldResourceAmounts[resType];
+        if (resAmount == oldResAmount) {
             return;
         }
 
         _oldResourceAmounts[resType] = resAmount;
 
-        var textField :TextField = _resourceText[resType];
+        var textObj :SimpleSceneObject = _resourceTextObjs[resType];
+        var textField :TextField = TextField(textObj.displayObject);
         textField.text = String(resAmount);
 
         var puzzleFrame :MovieClip = this.puzzleFrame;
@@ -253,11 +259,23 @@ public class DashboardView extends SceneObject
                 RESOURCE_METER_HEIGHT);
             g.endFill();
         }
+
+        if (resAmount != 0 && oldResAmount == 0) {
+            textObj.visible = true;
+            textObj.removeAllTasks();
+        } else if(resAmount == 0 && oldResAmount != 0) {
+            var blinkTask :RepeatingTask = new RepeatingTask();
+            blinkTask.addTask(new VisibleTask(false));
+            blinkTask.addTask(new TimedTask(0.25));
+            blinkTask.addTask(new VisibleTask(true));
+            blinkTask.addTask(new TimedTask(0.25));
+            textObj.addTask(blinkTask);
+        }
     }
 
     protected var _movie :MovieClip;
     protected var _shuffleMovie :MovieClip;
-    protected var _resourceText :Array = [];
+    protected var _resourceTextObjs :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
     protected var _showingDeathPanel :Boolean;
