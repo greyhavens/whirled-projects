@@ -36,9 +36,10 @@ public class PlayerBaseUnitView extends SceneObject
         _unit = unit;
 
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
+        _workshop = _movie["workshop"];
 
         var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
-        var recolor :MovieClip = _movie["workshop"]["recolor"];
+        var recolor :MovieClip = _workshop["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
         _sprite.addChild(_movie);
@@ -93,7 +94,7 @@ public class PlayerBaseUnitView extends SceneObject
 
     public function unitCreated () :void
     {
-        _movie.gotoAndPlay("flash");
+        _workshop.gotoAndPlay("flash");
     }
 
     override protected function addedToDB () :void
@@ -189,6 +190,7 @@ public class PlayerBaseUnitView extends SceneObject
     protected var _sprite :Sprite = new Sprite();
     protected var _clickableSprite :Sprite = new Sprite();
     protected var _movie :MovieClip;
+    protected var _workshop :MovieClip;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;
