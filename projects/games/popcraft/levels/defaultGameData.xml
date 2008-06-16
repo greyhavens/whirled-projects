@@ -40,12 +40,6 @@
             <Resource type="yellow" displayName="Scrap" color="0xFFD858" hiliteColor="0x6D4D01" rarity="0.5"/>
         </Resources>
 
-        <ResourceMultipliers>
-            <ResourceMultiplier value="1.5" rarity="1"/>
-            <ResourceMultiplier value="2" rarity="0.6"/>
-            <ResourceMultiplier value="2.5" rarity="0.3"/>
-        </ResourceMultipliers>
-
         <Units>
             <Unit
                 type="grunt"

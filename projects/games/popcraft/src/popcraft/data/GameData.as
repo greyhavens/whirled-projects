@@ -31,7 +31,6 @@ public class GameData
     public var maxSpellsPerType :int;
 
     public var resources :Array = [];
-    public var resourceMultipliers :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
     public var baseLocs :Array = [];
@@ -68,10 +67,6 @@ public class GameData
 
         for each (var resData :ResourceData in resources) {
             theClone.resources.push(resData.clone());
-        }
-
-        for each (var resMultData :ResourceMultiplierData in resourceMultipliers) {
-            theClone.resourceMultipliers.push(resMultData.clone());
         }
 
         for each (var unitData :UnitData in units) {
@@ -146,16 +141,6 @@ public class GameData
         for each (var resourceNode :XML in xml.Resources.Resource) {
             var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
             gameData.resources[type] = ResourceData.fromXml(resourceNode, (useDefaults ? inheritFrom.resources[type] : null));
-        }
-
-        // init resource multiplier data
-        var resourceMultipliersNode :XML = xml.ResourceMultipliers[0];
-        if (null == resourceMultipliersNode) {
-            gameData.resourceMultipliers.length = 0;
-        } else {
-            for each (var resourceMultiplierNode :XML in resourceMultipliersNode.ResourceMultiplier) {
-                gameData.resourceMultipliers.push(ResourceMultiplierData.fromXml(resourceMultiplierNode));
-            }
         }
 
         // init the unit data

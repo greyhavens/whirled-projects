@@ -140,6 +140,7 @@ public class PuzzleBoard extends SceneObject
         // update the player's resource count
         var resourceType :int = Piece(clearPieces[0]).resourceType;
         var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
+        resourceValue *= GameContext.localPlayerInfo.handicap;
         GameContext.localPlayerInfo.earnedResources(resourceType, resourceValue);
 
         _resolvingClears = true;
