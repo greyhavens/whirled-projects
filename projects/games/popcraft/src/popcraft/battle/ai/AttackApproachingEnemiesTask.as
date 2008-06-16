@@ -18,7 +18,7 @@ public class AttackApproachingEnemiesTask extends AITaskTree
         // let's look for an enemy every so often
 
         var detectSequence :AITaskSequence = new AITaskSequence(true);
-        detectSequence.addSequencedTask(new DetectCreatureAction(DetectCreatureAction.isAttackableEnemyPredicate));
+        detectSequence.addSequencedTask(new DetectCreatureAction(AIPredicates.isAttackableEnemyPredicate));
         detectSequence.addSequencedTask(new AITimerTask(_detectDelay));
 
         this.addSubtask(detectSequence);

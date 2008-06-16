@@ -3,7 +3,13 @@
         parDays="1"
         backgroundName="Level2"
         newCreatureType="sapper"
-        introText="Use the Delivery Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Delivery Boys can take out large groups of enemies."
+		introText=
+"'&quot;Listen, you lot,” commands Jack. &quot;Here's the plan:
+&quot;We travel to London as quick as we can.
+&quot;As you're all aware,
+&quot;My father lives there;
+&quot;He'll help prove Ralph’s guilt - he’s a powerful man.&quot;"
+        introText2="Use the Delivery Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Delivery Boys can take out large groups of enemies."
         playerName="Jack"
         playerBaseHealth="100">
 

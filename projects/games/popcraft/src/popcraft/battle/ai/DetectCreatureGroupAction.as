@@ -10,21 +10,6 @@ public class DetectCreatureGroupAction extends AITask
 {
     public static const MSG_GROUPDETECTED :String = "CreatureGroupDetected";
 
-    public static function isDetectableEnemyCreaturePred (ourCreature :CreatureUnit, otherCreature :CreatureUnit) :Boolean
-    {
-        return (
-            ourCreature.isEnemyUnit(otherCreature) &&
-            ourCreature.isUnitInRange(otherCreature, ourCreature.unitData.detectRadius));
-    }
-
-    public static function createIsGroupedEnemyPred (maxUnitDistance :Number) :Function
-    {
-        return function (ourCreature :CreatureUnit, otherCreature1 :CreatureUnit, otherCreature2 :CreatureUnit) :Boolean {
-            return (ourCreature.isEnemyUnit(otherCreature2) &&
-                otherCreature1.isUnitInRange(otherCreature2, maxUnitDistance));
-        }
-    }
-
     public function DetectCreatureGroupAction (name :String, groupSize :int, creaturePredicate :Function, groupPredicate :Function)
     {
         _name = name;

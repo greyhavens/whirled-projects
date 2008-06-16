@@ -66,7 +66,7 @@ class GruntAI extends AITaskTree
         }
 
         // scan for non-sappers once/second
-        var detectPredicate :Function = DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_SAPPER]);
+        var detectPredicate :Function = AIPredicates.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_SAPPER]);
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
         scanSequence.addSequencedTask(new AITimerTask(1));

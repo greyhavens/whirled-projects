@@ -96,11 +96,17 @@ class SapperAI extends AITaskTree
         scanSequence.addSequencedTask(new DetectCreatureGroupAction(
             SCAN_FOR_ENEMIES_TASK_NAME,
             SCAN_FOR_ENEMY_GROUP_SIZE,
-            DetectCreatureGroupAction.isDetectableEnemyCreaturePred,
-            DetectCreatureGroupAction.createIsGroupedEnemyPred(sapperBlastRadius - 15))); // this number is sort of fudged
+            isSapperEnemyCreaturePred,
+            AIPredicates.createIsGroupedEnemyPred(sapperBlastRadius - 15))); // this number is sort of fudged
         scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
 
         this.addSubtask(scanSequence);
+    }
+
+    protected static function isSapperEnemyCreaturePred (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
+    {
+        return (thatCreature.unitType != Constants.UNIT_TYPE_COURIER &&
+            AIPredicates.isAttackableEnemyPredicate(thisCreature, thatCreature));
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void

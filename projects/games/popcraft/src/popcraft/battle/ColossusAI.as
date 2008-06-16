@@ -92,7 +92,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
 
     public function DetectColossusTargetAction ()
     {
-        super(DetectCreatureAction.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS, Constants.UNIT_TYPE_BOSS]));
+        super(AIPredicates.createNotEnemyOfTypesPredicate([Constants.UNIT_TYPE_COLOSSUS, Constants.UNIT_TYPE_BOSS]));
     }
 
     override protected function handleDetectedCreature (thisCreature :CreatureUnit, detectedCreature :CreatureUnit) :void
@@ -103,7 +103,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
             var baseRefs :Array = GameContext.netObjects.getObjectRefsInGroup(PlayerBaseUnit.GROUP_NAME);
             for each (var baseRef :SimObjectRef in baseRefs) {
                 var base :PlayerBaseUnit = baseRef.object as PlayerBaseUnit;
-                if (null != base && DetectCreatureAction.isAttackableEnemyPredicate(thisCreature, base)) {
+                if (null != base && AIPredicates.isAttackableEnemyPredicate(thisCreature, base)) {
                     detectedUnit = base;
                     break;
                 }

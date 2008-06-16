@@ -38,10 +38,10 @@ public class LevelSelectMode extends AppMode
         tf.selectable = false;
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.text = "PopCraft level select. (Score: " + AppContext.levelMgr.totalScore + ")";
-        tf.scaleX = 2;
-        tf.scaleY = 2;
+        tf.scaleX = 1;
+        tf.scaleY = 1;
         tf.x = (this.modeSprite.width * 0.5) - (tf.width * 0.5);
-        tf.y = 20;
+        tf.y = 10;
 
         this.modeSprite.addChild(tf);
 
@@ -49,7 +49,7 @@ public class LevelSelectMode extends AppMode
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
 
         var button :SimpleButton;
-        var yLoc :Number = 70;;
+        var yLoc :Number = tf.height + 15;
         // create a button for each level
         for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
             var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
