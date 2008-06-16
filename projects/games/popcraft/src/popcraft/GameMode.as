@@ -128,6 +128,9 @@ public class GameMode extends AppMode
 
     protected function setupPlayersMP () :void
     {
+        var teams :Array = MultiplayerConfig.teams;
+        var handicaps :Array = MultiplayerConfig.handicaps;
+
         // get some information about the players in the game
         var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
         GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
@@ -140,14 +143,14 @@ public class GameMode extends AppMode
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
 
             var playerInfo :PlayerInfo;
-
-            var teamId :int = playerId; // @TODO - add support for team-based MP games?
+            var teamId :int = teams[playerId];
+            var handicap :Number = handicaps[playerId];
 
             if (GameContext.localPlayerId == playerId) {
-                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId);
+                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, handicap);
                 playerInfo = localPlayerInfo;
             } else {
-                playerInfo = new PlayerInfo(playerId, teamId);
+                playerInfo = new PlayerInfo(playerId, teamId, handicap);
             }
 
             GameContext.playerInfos.push(playerInfo);
@@ -164,7 +167,7 @@ public class GameMode extends AppMode
         GameContext.playerInfos = [];
 
         // Create the local player (always on team 0)
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0, GameContext.spLevel.playerName);
+        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0, 1, GameContext.spLevel.playerName);
 
         // grant the player some starting resources
         var initialResources :Array = GameContext.spLevel.initialResources;

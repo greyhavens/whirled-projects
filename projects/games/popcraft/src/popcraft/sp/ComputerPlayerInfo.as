@@ -8,7 +8,7 @@ public class ComputerPlayerInfo extends PlayerInfo
 {
     public function ComputerPlayerInfo (playerId :int, teamId :int, playerName :String)
     {
-        super(playerId, teamId, playerName);
+        super(playerId, teamId, 1, playerName);
 
         _creatureSpells = new Array(Constants.CREATURE_SPELL_TYPE__LIMIT);
         for (var i :int = 0; i < _creatureSpells.length; ++i) {

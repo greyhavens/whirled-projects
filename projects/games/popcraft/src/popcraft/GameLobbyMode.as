@@ -42,9 +42,10 @@ public class GameLobbyMode extends AppMode
 
         if (this.isFirstPlayer) {
             // initialize the team selection array. nobody's on a team yet.
-            AppContext.gameCtrl.net.set(PROP_TEAMS, ArrayUtil.create(this.numPlayers, -1));
+            MultiplayerConfig.teams = ArrayUtil.create(MultiplayerConfig.numPlayers, -1);
+            MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, 1);
         } else {
-            _playerTeams = AppContext.gameCtrl.net.get(PROP_TEAMS) as Array;
+            _playerTeams = MultiplayerConfig.teams;
             this.updateDisplay();
         }
     }
@@ -76,7 +77,7 @@ public class GameLobbyMode extends AppMode
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == PROP_TEAMS) {
+        if (e.name == MultiplayerConfig.PROP_TEAMS) {
             _playerTeams = e.newValue as Array;
             this.updateDisplay();
         }
@@ -84,7 +85,7 @@ public class GameLobbyMode extends AppMode
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (e.name == PROP_TEAMS) {
+        if (e.name == MultiplayerConfig.PROP_TEAMS) {
             this.updateDisplay();
             this.stopOrResetTimer();
         }
@@ -133,8 +134,16 @@ public class GameLobbyMode extends AppMode
 
     protected function teamSelected (teamId :int) :void
     {
+        // don't allow team selection changes with < 2 seconds on the timer
+        if (!_gameStartTimer.isNull) {
+            var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
+            if (timer.timeLeft < 2) {
+                return;
+            }
+        }
+
         if (null != _playerTeams && _playerTeams[this.localPlayerId] != teamId) {
-            AppContext.gameCtrl.net.setAt(PROP_TEAMS, this.localPlayerId, teamId, true);
+            MultiplayerConfig.setPlayerTeam(this.localPlayerId, teamId);
             this.updateDisplay();
 
             this.stopOrResetTimer();
@@ -261,8 +270,6 @@ public class GameLobbyMode extends AppMode
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(500, 50);
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
-
-    protected static const PROP_TEAMS :String = "Teams";
 
     protected static const GAME_START_COUNTDOWN :Number = 5;
 }

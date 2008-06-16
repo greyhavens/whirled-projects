@@ -12,10 +12,11 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerId :int, teamId :int, playerName :String = null)
+    public function PlayerInfo (playerId :int, teamId :int, handicap :Number = 1, playerName :String = null)
     {
         _playerId = playerId;
         _teamId = teamId;
+        _handicap = handicap;
 
         var whirledIds :Array;
         var playerNames :Array;
@@ -36,6 +37,11 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerName = "Unknown player " + playerId;
         }
+    }
+
+    public function get handicap () :Number
+    {
+        return _handicap;
     }
 
     public function get playerColor () :uint
@@ -161,6 +167,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _leftGame :Boolean;
     protected var _targetedEnemyId :int;
     protected var _baseRef :SimObjectRef;
+    protected var _handicap :Number;
 
     protected static var log :Log = Log.getLog(PlayerInfo);
 

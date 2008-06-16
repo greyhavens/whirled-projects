@@ -3,9 +3,46 @@ package popcraft {
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
+import flash.display.Graphics;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
 public class LoadingMode extends AppMode
 {
     override protected function setup () :void
+    {
+        var g :Graphics = this.modeSprite.graphics;
+        g.beginFill(0, 1);
+        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.endFill();
+
+        _text = new TextField();
+        _text.selectable = false;
+        _text.autoSize = TextFieldAutoSize.CENTER;
+        _text.textColor = 0xFFFFFF;
+        _text.scaleX = 2;
+        _text.scaleY = 2;
+
+        _text.x = this.modeSprite.width * 0.5;
+        _text.y = this.modeSprite.height * 0.5;
+
+        _text.text = "Loading...";
+
+        this.load();
+    }
+
+    override public function update (dt :Number) :void
+    {
+        if (!_loading) {
+            if (LoadingMode.playersReady) {
+                AppContext.mainLoop.popMode();
+            } else {
+                _text.text = "Waiting for players...";
+            }
+        }
+    }
+
+    protected function load () :void
     {
         var rm :ResourceManager = ResourceManager.instance;
 
@@ -80,19 +117,36 @@ public class LoadingMode extends AppMode
                 rm.load(handleResourcesLoaded, handleResourceLoadErr);
             },
             handleResourceLoadErr);
+
+        _loading = true;
     }
 
     protected function handleResourcesLoaded () :void
     {
-        //trace(AppContext.defaultGameData.generateUnitReport());
-
-        MainLoop.instance.popMode();
+        _loading = false;
     }
 
     protected function handleResourceLoadErr (err :String) :void
     {
         AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
     }
+
+    protected static function get playersReady () :Boolean
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            var playerIds :Array = AppContext.gameCtrl.game.seating.getPlayerIds();
+            for each (var playerId :int in playerIds) {
+                if (playerId == 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected var _text :TextField;
+    protected var _loading :Boolean;
 }
 
 }

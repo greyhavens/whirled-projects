@@ -11,9 +11,9 @@ import popcraft.ui.GotSpellEvent;
  */
 public class LocalPlayerInfo extends PlayerInfo
 {
-    public function LocalPlayerInfo (playerId :int, teamId :int, playerName :String = null)
+    public function LocalPlayerInfo (playerId :int, teamId :int, handicap :Number = 1, playerName :String = null)
     {
-        super(playerId, teamId, playerName);
+        super(playerId, teamId, handicap, playerName);
 
         _resources = new Array(Constants.RESOURCE_NAMES.length);
         for (var i :int = 0; i < _resources.length; ++i) {

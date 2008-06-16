@@ -49,11 +49,12 @@ public class GameOverMode extends AppMode
         text.textColor = 0;
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
+        text.multiline = true;
         text.defaultTextFormat.size = 24;
+        text.scaleX = 3;
+        text.scaleY = 3;
+        text.width = Constants.SCREEN_DIMS.x - 30;
         text.text = gameOverText;
-
-        text.scaleX = 5;
-        text.scaleY = 5;
 
         text.x = (Constants.SCREEN_DIMS.x / 2) - (text.width / 2);
         text.y = (Constants.SCREEN_DIMS.y / 2) - (text.height / 2);

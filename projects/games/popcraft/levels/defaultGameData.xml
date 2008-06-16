@@ -278,14 +278,14 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
 
         <GameSizes>
             <GameSize numPlayers="2">
-                <BaseLocation x="50" y="315"/>
-                <BaseLocation x="652" y="85"/>
+                <BaseLocation x="75" y="145"/>
+                <BaseLocation x="632" y="265"/>
             </GameSize>
             <GameSize numPlayers="3" customSpellDropLocation="true">
-                <BaseLocation x="50" y="85"/>
-                <BaseLocation x="50" y="315"/>
-                <BaseLocation x="652" y="175"/>
-                <CustomSpellDropLocation x="350" y="250"/>
+                <BaseLocation x="145" y="125"/>
+                <BaseLocation x="350" y="335"/>
+                <BaseLocation x="555" y="125"/>
+                <CustomSpellDropLocation x="350" y="230"/>
             </GameSize>
             <GameSize numPlayers="4" customSpellDropLocation="true">
                 <BaseLocation x="60" y="85"/>
