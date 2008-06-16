@@ -10,7 +10,7 @@ import popcraft.data.*;
 
 public class ComputerPlayer extends SimObject
 {
-    public function ComputerPlayer (data :ComputerPlayerData, playerId :uint)
+    public function ComputerPlayer (data :ComputerPlayerData, playerId :int)
     {
         _data = data;
         _playerInfo = GameContext.playerInfos[playerId] as ComputerPlayerInfo;
@@ -59,7 +59,7 @@ public class ComputerPlayer extends SimObject
             // player will cast a spell (if it has one available)
             if (Rand.nextNumberRange(0, 1, Rand.STREAM_GAME) < _nextWave.spellCastChance) {
                 var availableSpells :Array = [];
-                for (var spellType :uint = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
+                for (var spellType :int = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
                     if (_playerInfo.canCastSpell(spellType)) {
                         availableSpells.push(spellType);
                     }
@@ -82,7 +82,7 @@ public class ComputerPlayer extends SimObject
             // create the units
             var units :Array = _nextWave.units;
             for (var i :int = 0; i < units.length; i += 3) {
-                var unitType :uint = units[i];
+                var unitType :int = units[i];
                 var count :int = units[i + 1];
                 var max :int = units[i + 2];
 
@@ -100,7 +100,7 @@ public class ComputerPlayer extends SimObject
         }
     }
 
-    protected function buildUnit (unitType :uint) :void
+    protected function buildUnit (unitType :int) :void
     {
         GameContext.gameMode.buildUnit(_playerInfo.playerId, unitType);
     }

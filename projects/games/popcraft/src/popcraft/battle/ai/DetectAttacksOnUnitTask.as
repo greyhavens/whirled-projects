@@ -21,7 +21,7 @@ public class DetectAttacksOnUnitTask extends AITask
         _attack = e.data as UnitAttack;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         return (null == _attack ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
     }

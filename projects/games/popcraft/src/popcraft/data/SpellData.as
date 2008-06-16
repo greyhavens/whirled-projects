@@ -5,7 +5,7 @@ import popcraft.util.*;
 
 public class SpellData
 {
-    public var type :uint;
+    public var type :int;
     public var displayName :String;
     public var description :String;
     public var introText :String;

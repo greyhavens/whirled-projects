@@ -9,7 +9,7 @@ public class AITaskTree extends AITask
 {
     public static const MSG_SUBTASKCOMPLETED :String = "SubtaskCompleted";
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         _stopProcessingSubtasks = false;
 
@@ -17,7 +17,7 @@ public class AITaskTree extends AITask
         for each (var task :AITask in _subtasks) {
             // we can have holes in the array
             if (null != task) {
-                var status :uint = task.update(dt, unit);
+                var status :int = task.update(dt, unit);
 
                 if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
@@ -102,7 +102,7 @@ public class AITaskTree extends AITask
         return (_subtasks.length - _freeIndices.length) > 0;
     }
 
-    public function getStateString (depth :uint = 0) :String
+    public function getStateString (depth :int = 0) :String
     {
         var stateString :String = "";
         for (var i :int = 0; i < depth; ++i) {
@@ -117,7 +117,7 @@ public class AITaskTree extends AITask
             if (subtask is AITaskTree) {
                 stateString += (subtask as AITaskTree).getStateString(depth + 1);
             } else {
-                for (var j :uint = 0; j < depth + 1; ++j) {
+                for (var j :int = 0; j < depth + 1; ++j) {
                     stateString += "-";
                 }
 

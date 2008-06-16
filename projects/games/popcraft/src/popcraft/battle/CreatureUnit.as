@@ -17,7 +17,7 @@ public class CreatureUnit extends Unit
     public static const GROUP_NAME :String = "CreatureUnit";
 
     /** Count the number of a particular creature type owned by a player. */
-    public static function getNumPlayerCreatures (owningPlayerId :uint, unitType :uint) :int
+    public static function getNumPlayerCreatures (owningPlayerId :int, unitType :int) :int
     {
         var count :int = 0;
         var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(GROUP_NAME);
@@ -31,7 +31,7 @@ public class CreatureUnit extends Unit
         return count;
     }
 
-    public function CreatureUnit (owningPlayerId :uint, unitType :uint)
+    public function CreatureUnit (owningPlayerId :int, unitType :int)
     {
         super(owningPlayerId, unitType);
 

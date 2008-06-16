@@ -65,7 +65,7 @@ public class DiurnalCycleView extends SceneObject
         }
     }
 
-    protected function dayPhaseChanged (newPhase :uint, playSound :Boolean) :void
+    protected function dayPhaseChanged (newPhase :int, playSound :Boolean) :void
     {
         var soundName :String;
 

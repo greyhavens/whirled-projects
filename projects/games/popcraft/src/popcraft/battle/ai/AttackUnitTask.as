@@ -27,7 +27,7 @@ public class AttackUnitTask extends MoveToLocationTask
         _loseInterestRange = loseInterestRange;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         // is the enemy dead?
         // (or has it turned invincible, in which case attacking it is futile?)

@@ -9,7 +9,7 @@ public class ComputerPlayerData
     public var baseHealth :int;
     public var baseStartHealth :int;
     public var invincible :Boolean;
-    public var team :uint;
+    public var team :int;
     public var initialDays :Array = [];
     public var repeatingDays :Array = [];
     public var startingCreatureSpells :Array = [];
@@ -33,7 +33,7 @@ public class ComputerPlayerData
         }
 
         // init spells
-        for (var spellType :uint = 0; spellType < Constants.CREATURE_SPELL_TYPE__LIMIT; ++spellType) {
+        for (var spellType :int = 0; spellType < Constants.CREATURE_SPELL_TYPE__LIMIT; ++spellType) {
             computerPlayer.startingCreatureSpells.push(0);
         }
 

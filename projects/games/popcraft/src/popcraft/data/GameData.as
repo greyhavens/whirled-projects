@@ -16,7 +16,7 @@ public class GameData
     public var dayLength :Number;
     public var nightLength :Number;
     public var dawnWarning :Number;
-    public var initialDayPhase :uint;
+    public var initialDayPhase :int;
     public var disableDiurnalCycle :Boolean;
     public var enableEclipse :Boolean;
     public var eclipseLength :Number;
@@ -38,7 +38,7 @@ public class GameData
     public var customSpellDropLocs :Array = [];
     public var playerColors :Array = [];
 
-    public function getBaseLocsForGameSize (numPlayers :uint) :Array
+    public function getBaseLocsForGameSize (numPlayers :int) :Array
     {
         return (numPlayers - 1 < baseLocs.length ? baseLocs[numPlayers - 1] : []);
     }
@@ -144,7 +144,7 @@ public class GameData
         }
 
         for each (var resourceNode :XML in xml.Resources.Resource) {
-            var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
             gameData.resources[type] = ResourceData.fromXml(resourceNode, (useDefaults ? inheritFrom.resources[type] : null));
         }
 
@@ -240,7 +240,7 @@ public class GameData
 
             var rangeMin :Number = weapon.damageRange.min;
             var rangeMax :Number = weapon.damageRange.max;
-            var damageType :uint = weapon.damageType;
+            var damageType :int = weapon.damageType;
 
             report += "\nWeapon damage range: (" + rangeMin + ", " + rangeMax + ")";
 

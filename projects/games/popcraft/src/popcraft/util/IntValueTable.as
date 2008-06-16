@@ -20,7 +20,7 @@ public class IntValueTable
         _lastValue = (values.length > 0 ? values[values.length - 1] : 0);
     }
 
-    public function getValueAt (index :uint) :int
+    public function getValueAt (index :int) :int
     {
         if (index < _values.length) {
             return _values[index];

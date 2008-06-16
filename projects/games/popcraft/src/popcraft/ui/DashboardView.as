@@ -38,7 +38,7 @@ public class DashboardView extends SceneObject
         }
 
         // setup resources
-        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+        for (var resType :int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
             var resourceText :TextField = puzzleFrame[resourceTextName];
             var resourceTextObj :SimpleSceneObject = new SimpleSceneObject(resourceText);
@@ -53,7 +53,7 @@ public class DashboardView extends SceneObject
         unitParent.cacheAsBitmap = true;
 
         var buttonNumber :int = 1;
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT; ++unitType) {
+        for (var unitType :int = 0; unitType < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT; ++unitType) {
             if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
                 // don't create buttons for unavailable units
                 continue;
@@ -112,9 +112,9 @@ public class DashboardView extends SceneObject
     override protected function addedToDB () :void
     {
         // add any spells the player already has to the dashboard
-        for (var spellType :uint = 0; spellType < Constants.SPELL_TYPE__LIMIT; ++spellType) {
-            var count :uint = GameContext.localPlayerInfo.getSpellCount(spellType);
-            for (var i :uint = 0; i < count; ++i) {
+        for (var spellType :int = 0; spellType < Constants.SPELL_TYPE__LIMIT; ++spellType) {
+            var count :int = GameContext.localPlayerInfo.getSpellCount(spellType);
+            for (var i :int = 0; i < count; ++i) {
                 this.createSpellButton(spellType, false);
             }
         }
@@ -141,7 +141,7 @@ public class DashboardView extends SceneObject
         this.createSpellButton(e.spellType, true);
     }
 
-    protected function createSpellButton (spellType :uint, animateIn :Boolean) :void
+    protected function createSpellButton (spellType :int, animateIn :Boolean) :void
     {
         // find the first free spell slot to put this spell in
         var numSlotsForType :int = GameContext.gameData.maxSpellsPerType;
@@ -213,12 +213,12 @@ public class DashboardView extends SceneObject
 
     protected function updateResourceMeters () :void
     {
-        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+        for (var resType :int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             this.updateResourceMeter(resType);
         }
     }
 
-    protected function updateResourceMeter (resType :uint) :void
+    protected function updateResourceMeter (resType :int) :void
     {
         var resAmount :int = GameContext.localPlayerInfo.getResourceAmount(resType);
 

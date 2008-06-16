@@ -11,7 +11,7 @@ import popcraft.battle.ai.*;
  */
 public class BossCreatureUnit extends ColossusCreatureUnit
 {
-    public function BossCreatureUnit (owningPlayerId :uint)
+    public function BossCreatureUnit (owningPlayerId :int)
     {
         super(owningPlayerId, Constants.UNIT_TYPE_BOSS, new BossAI(this));
     }
@@ -46,7 +46,7 @@ class BossAI extends ColossusAI
         super.init();
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         // return home to recharge when health runs out
         if (_boss.health == 1) {
@@ -96,7 +96,7 @@ class RegenerateTask extends AITask
         _regenRate = regenRate;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         creature.health += (dt * _regenRate);
         return (creature.health < creature.maxHealth ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);

@@ -10,7 +10,7 @@ import popcraft.battle.ai.*;
  */
 public class HeavyCreatureUnit extends CreatureUnit
 {
-    public function HeavyCreatureUnit (owningPlayerId :uint)
+    public function HeavyCreatureUnit (owningPlayerId :int)
     {
         super(owningPlayerId, Constants.UNIT_TYPE_HEAVY);
     }
@@ -59,17 +59,17 @@ class HeavyFormationManager extends SimObject
     public static const ROW_STAGGER :Number = 20;
     public static const FIRST_ROW_DISTANCE_FROM_BASE :Number = 40;
 
-    public static function reserveNextSpace (owningPlayerId :uint) :HeavyFormationSpace
+    public static function reserveNextSpace (owningPlayerId :int) :HeavyFormationSpace
     {
         return getManager(owningPlayerId).reserveNextSpace();
     }
 
-    public static function surrenderSpace (owningPlayerId :uint, space :HeavyFormationSpace) :void
+    public static function surrenderSpace (owningPlayerId :int, space :HeavyFormationSpace) :void
     {
         return getManager(owningPlayerId).surrenderSpace(space);
     }
 
-    protected static function getManager (owningPlayerId :uint) :HeavyFormationManager
+    protected static function getManager (owningPlayerId :int) :HeavyFormationManager
     {
         var mgr :SimObject = GameContext.netObjects.getObjectNamed(getObjectName(owningPlayerId));
         if (null == mgr) {
@@ -80,7 +80,7 @@ class HeavyFormationManager extends SimObject
         return mgr as HeavyFormationManager;
     }
 
-    public function HeavyFormationManager (owningPlayerId :uint)
+    public function HeavyFormationManager (owningPlayerId :int)
     {
         _name = getObjectName(owningPlayerId);
     }
@@ -114,7 +114,7 @@ class HeavyFormationManager extends SimObject
         return _name;
     }
 
-    protected static function getObjectName (owningPlayerId :uint) :String
+    protected static function getObjectName (owningPlayerId :int) :String
     {
         return "HeavyFormationManager_" + owningPlayerId;
     }

@@ -16,13 +16,13 @@ public class FollowUnitTask
     {
         Assert.isTrue(minFollowDistance >= 0);
         Assert.isTrue(maxFollowDistance >= minFollowDistance);
-        
+
         _unitRef = unitRef;
         _minFollowDistance = minFollowDistance;
         _maxFollowDistance = maxFollowDistance;
     }
 
-    public function update (dt :Number, unit :CreatureUnit) :uint
+    public function update (dt :Number, unit :CreatureUnit) :int
     {
         var followUnit :Unit = _unitRef.object as Unit;
 
@@ -30,16 +30,16 @@ public class FollowUnitTask
         if (null == followUnit) {
             return AITaskStatus.COMPLETE;
         }
-        
+
         // should we move closer to the unit?
         var v :Vector2 = followUnit.unitLoc.subtract(unit.unitLoc);
         if (v.lengthSquared > (_maxFollowDistance * _maxFollowDistance)) {
             v.length = _minFollowDistance;
             v.addLocal(unit.unitLoc);
-            
+
             unit.setMovementDestination(v);
         }
-        
+
         return AITaskStatus.ACTIVE;
     }
 

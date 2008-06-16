@@ -30,7 +30,7 @@ public class UnitAnimTestMode extends AppMode
         // unit buttons
         var xLoc :Number = 10;
         var yLoc :Number = 300;
-        for (var unitType :uint = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+        for (var unitType :int = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
             var button :SimpleButton = this.createUnitButton(unitType);
             button.x = xLoc;
             button.y = yLoc;
@@ -62,7 +62,7 @@ public class UnitAnimTestMode extends AppMode
         this.updateView();
     }
 
-    protected function createUnitButton (unitType :uint) :SimpleButton
+    protected function createUnitButton (unitType :int) :SimpleButton
     {
         var thisObject :UnitAnimTestMode = this;
 
@@ -90,13 +90,13 @@ public class UnitAnimTestMode extends AppMode
         return unitButton;
     }
 
-    protected function set unitType (val :uint) :void
+    protected function set unitType (val :int) :void
     {
         _unitType = val;
         this.updateView();
     }
 
-    protected function set recolor (val :uint) :void
+    protected function set recolor (val :int) :void
     {
         _recolor = val;
         this.updateView();
@@ -142,7 +142,7 @@ public class UnitAnimTestMode extends AppMode
 
     protected var _animSprite :Sprite;
     protected var _recolor :uint;
-    protected var _unitType :uint = 0;
+    protected var _unitType :int = 0;
 
     protected static const ANIM_PREFIX_STRINGS :Array = [ "stand_", "walk_", "attack_", "die_" ];
     protected static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", ];

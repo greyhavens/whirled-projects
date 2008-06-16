@@ -31,7 +31,7 @@ public class AITaskSequence extends AITaskTree
         this.addSubtask(_pendingTasks[0]);
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         super.update(dt, unit);
 

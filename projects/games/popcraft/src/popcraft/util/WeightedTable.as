@@ -19,8 +19,8 @@ public class WeightedTable
 
         // populate the table
         _maxVal = 0;
-        var n :uint = dataTable.length / 2;
-        for (var i :uint = 0; i < n; ++i) {
+        var n :int = dataTable.length * 0.5;
+        for (var i :int = 0; i < n; ++i) {
             var data :* = dataTable[i * 2];
             var weight :Number = dataTable[int((i * 2) + 1)];
 
@@ -54,14 +54,14 @@ public class WeightedTable
         Assert.isTrue(_table.length > 0);
         Assert.isTrue(val >= 0 && val < _maxVal);
 
-        var lo :uint = 0;
-        var hi :uint = (_table.length > 0 ? _table.length - 1 : 0);
+        var lo :int = 0;
+        var hi :int = (_table.length > 0 ? _table.length - 1 : 0);
 
         var entry :TableEntry;
 
         // binary-search the table for the appropriate entry
         for (;;) {
-            var index :uint = lo + ((hi - lo) / 2);
+            var index :int = lo + ((hi - lo) * 0.5);
             entry = _table[index];
 
             if (val >= entry.min && val < entry.max) {

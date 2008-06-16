@@ -14,7 +14,7 @@ public class AIFunctionTask extends AITask
         return new AIFunctionTask(_f);
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         _f(dt, creature);
         return AITaskStatus.COMPLETE;

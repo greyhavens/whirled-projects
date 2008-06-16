@@ -54,13 +54,13 @@ public class GameContext
             function (info :PlayerInfo) :Boolean { return info.playerName == playerName; });
     }
 
-    public static function findEnemyForPlayer (playerId :uint) :PlayerInfo
+    public static function findEnemyForPlayer (playerId :int) :PlayerInfo
     {
         var thisPlayer :PlayerInfo = playerInfos[playerId];
 
         // find the first player after this one that is on an opposing team
         for (var i :int = 0; i < playerInfos.length - 1; ++i) {
-            var otherPlayerId :uint = (playerId + i + 1) % playerInfos.length;
+            var otherPlayerId :int = (playerId + i + 1) % playerInfos.length;
             var otherPlayer :PlayerInfo = playerInfos[otherPlayerId];
             if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive && !otherPlayer.isInvincible) {
                 return otherPlayer;

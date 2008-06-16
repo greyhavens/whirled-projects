@@ -5,10 +5,10 @@ import com.whirled.contrib.simplegame.net.*;
 public class SelectTargetEnemyMessage
     implements Message
 {
-    public var playerId :uint;
-    public var targetPlayerId :uint;
+    public var playerId :int;
+    public var targetPlayerId :int;
 
-    public function SelectTargetEnemyMessage (playerId :uint, targetPlayerId :uint)
+    public function SelectTargetEnemyMessage (playerId :int, targetPlayerId :int)
     {
         this.playerId = playerId;
         this.targetPlayerId = targetPlayerId;

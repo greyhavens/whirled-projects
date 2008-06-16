@@ -13,7 +13,7 @@ import popcraft.battle.ai.*;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit (owningPlayerId :uint)
+    public function GruntCreatureUnit (owningPlayerId :int)
     {
         super(owningPlayerId, Constants.UNIT_TYPE_GRUNT);
 
@@ -103,7 +103,6 @@ class GruntAI extends AITaskTree
     }
 
     protected var _unit :GruntCreatureUnit;
-    protected var _state :uint;
     protected var _targetBaseRef :SimObjectRef = SimObjectRef.Null();
 
     protected static const log :Log = Log.getLog(GruntAI);

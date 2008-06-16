@@ -5,10 +5,10 @@ import com.whirled.contrib.simplegame.net.*;
 public class CastCreatureSpellMessage
     implements Message
 {
-    public var playerId :uint;
-    public var spellType :uint;
+    public var playerId :int;
+    public var spellType :int;
 
-    public function CastCreatureSpellMessage (playerId :uint, spellType :uint)
+    public function CastCreatureSpellMessage (playerId :int, spellType :int)
     {
         this.playerId = playerId;
         this.spellType = spellType;
@@ -66,8 +66,8 @@ class CastCreatureSpellMessageFactory
             log.warning("received non-ByteArray message");
         } else {
             try {
-                var playerId :uint = ba.readByte();
-                var spellType :uint = ba.readByte();
+                var playerId :int = ba.readByte();
+                var spellType :int = ba.readByte();
 
                 msg = new CastCreatureSpellMessage(playerId, spellType);
 

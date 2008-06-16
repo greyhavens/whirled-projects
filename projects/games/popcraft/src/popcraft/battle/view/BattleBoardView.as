@@ -46,14 +46,14 @@ public class BattleBoardView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var newDayPhase :uint = GameContext.diurnalCycle.phaseOfDay;
+        var newDayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (newDayPhase != _lastDayPhase) {
             this.animateDayPhaseChange(newDayPhase);
             _lastDayPhase = newDayPhase;
         }
     }
 
-    protected function animateDayPhaseChange (phase :uint) :void
+    protected function animateDayPhaseChange (phase :int) :void
     {
         var animName :String;
         if (DiurnalCycle.isDay(phase)) {
@@ -111,7 +111,7 @@ public class BattleBoardView extends SceneObject
     protected var _parent :Sprite = new Sprite();
     protected var _unitViewParent :Sprite = new Sprite();
     protected var _diurnalMeterParent :Sprite = new Sprite();
-    protected var _lastDayPhase :uint;
+    protected var _lastDayPhase :int;
     protected var _bg :MovieClip;
 }
 

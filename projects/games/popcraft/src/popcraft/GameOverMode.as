@@ -9,7 +9,7 @@ import flash.text.TextFieldAutoSize;
 
 public class GameOverMode extends AppMode
 {
-    public function GameOverMode (winningTeam :uint)
+    public function GameOverMode (winningTeam :int)
     {
         _winningTeam = winningTeam;
     }
@@ -70,7 +70,7 @@ public class GameOverMode extends AppMode
         }
     }
 
-    protected var _winningTeam :uint;
+    protected var _winningTeam :int;
     protected var _playedSound :Boolean;
 
 }

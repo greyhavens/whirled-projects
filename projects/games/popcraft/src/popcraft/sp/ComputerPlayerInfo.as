@@ -6,17 +6,17 @@ import popcraft.*;
 
 public class ComputerPlayerInfo extends PlayerInfo
 {
-    public function ComputerPlayerInfo (playerId :uint, teamId :uint, playerName :String)
+    public function ComputerPlayerInfo (playerId :int, teamId :int, playerName :String)
     {
         super(playerId, teamId, playerName);
 
         _creatureSpells = new Array(Constants.CREATURE_SPELL_TYPE__LIMIT);
-        for (var i :uint = 0; i < _creatureSpells.length; ++i) {
-            _creatureSpells[i] = uint(0);
+        for (var i :int = 0; i < _creatureSpells.length; ++i) {
+            _creatureSpells[i] = 0;
         }
     }
 
-    override public function addSpell (spellType :uint, count :uint = 1) :void
+    override public function addSpell (spellType :int, count :int = 1) :void
     {
         // computer players only care about creature spells. they never use the puzzle reset spell.
         if (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
@@ -24,20 +24,20 @@ public class ComputerPlayerInfo extends PlayerInfo
         }
     }
 
-    override public function spellCast (spellType :uint) :void
+    override public function spellCast (spellType :int) :void
     {
         // remove spell from holdings
-        var spellCount :uint = this.getSpellCount(spellType);
+        var spellCount :int = this.getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
         _creatureSpells[spellType] = spellCount - 1;
     }
 
-    override public function canCastSpell (spellType :uint) :Boolean
+    override public function canCastSpell (spellType :int) :Boolean
     {
         return (this.getSpellCount(spellType) > 0);
     }
 
-    public function getSpellCount (spellType :uint) :uint
+    public function getSpellCount (spellType :int) :int
     {
         return (spellType < _creatureSpells.length ? _creatureSpells[spellType] : 0);
     }

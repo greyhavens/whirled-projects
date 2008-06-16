@@ -16,7 +16,7 @@ public class UnitArmorData
         return this.getDamage(weapon.damageType, weapon.damageRange.next());
     }
 
-    public function getDamage (damageType :uint, baseDamage :Number) :Number
+    public function getDamage (damageType :int, baseDamage :Number) :Number
     {
         var armorValue :Number = (damageType < armor.length ? armor[damageType] : 1);
         return (baseDamage * armorValue);
@@ -39,7 +39,7 @@ public class UnitArmorData
             }
 
             for each (var damageNode :XML in xml.Damage) {
-                var type :uint = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
+                var type :int = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
                 var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
                 armorData.armor[type] = scale;
             }

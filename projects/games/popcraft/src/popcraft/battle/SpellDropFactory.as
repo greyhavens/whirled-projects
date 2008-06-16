@@ -9,7 +9,7 @@ import popcraft.battle.view.SpellDropView;
 
 public class SpellDropFactory
 {
-    public static function createSpellDrop (spellType :uint, loc :Vector2, playSound :Boolean) :SpellDropObject
+    public static function createSpellDrop (spellType :int, loc :Vector2, playSound :Boolean) :SpellDropObject
     {
         var spellDrop :SpellDropObject = new SpellDropObject(spellType);
         spellDrop.x = loc.x;

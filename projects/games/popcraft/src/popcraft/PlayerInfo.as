@@ -12,7 +12,7 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerId :uint, teamId :uint, playerName :String = null)
+    public function PlayerInfo (playerId :int, teamId :int, playerName :String = null)
     {
         _playerId = playerId;
         _teamId = teamId;
@@ -43,12 +43,12 @@ public class PlayerInfo extends EventDispatcher
         return GameContext.gameData.playerColors[_playerId];
     }
 
-    public function get playerId () :uint
+    public function get playerId () :int
     {
         return _playerId;
     }
 
-    public function get teamId () :uint
+    public function get teamId () :int
     {
         return _teamId;
     }
@@ -119,47 +119,47 @@ public class PlayerInfo extends EventDispatcher
         return (null != base ? base.health / base.maxHealth : 0);
     }
 
-    public function get targetedEnemyId () :uint
+    public function get targetedEnemyId () :int
     {
         return _targetedEnemyId;
     }
 
-    public function set targetedEnemyId (val :uint) :void
+    public function set targetedEnemyId (val :int) :void
     {
         _targetedEnemyId = val;
     }
 
-    public function canPurchaseCreature (unitType :uint) :Boolean
+    public function canPurchaseCreature (unitType :int) :Boolean
     {
         return true;
     }
 
-    public function deductCreatureCost (unitType :uint) :void
+    public function deductCreatureCost (unitType :int) :void
     {
         // no-op
     }
 
-    public function canCastSpell (spellType :uint) :Boolean
+    public function canCastSpell (spellType :int) :Boolean
     {
         return true;
     }
 
-    public function addSpell (spellType :uint, count :uint = 1) :void
+    public function addSpell (spellType :int, count :int = 1) :void
     {
         // no-op
     }
 
-    public function spellCast (spellType :uint) :void
+    public function spellCast (spellType :int) :void
     {
         // no-op
     }
 
-    protected var _playerId :uint;  // an unsigned integer corresponding to the player's seating position
-    protected var _teamId :uint;
+    protected var _playerId :int;  // an unsigned integer corresponding to the player's seating position
+    protected var _teamId :int;
     protected var _whirledId :int;  // the oid assigned to this player on Whirled
     protected var _playerName :String;
     protected var _leftGame :Boolean;
-    protected var _targetedEnemyId :uint;
+    protected var _targetedEnemyId :int;
     protected var _baseRef :SimObjectRef;
 
     protected static var log :Log = Log.getLog(PlayerInfo);

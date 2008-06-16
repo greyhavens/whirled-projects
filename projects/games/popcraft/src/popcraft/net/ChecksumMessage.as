@@ -5,12 +5,12 @@ import com.whirled.contrib.simplegame.net.*;
 public class ChecksumMessage
     implements Message
 {
-    public var playerId :uint;
+    public var playerId :int;
     public var tick :uint;
     public var checksum :uint;
     public var details :String;
 
-    public function ChecksumMessage (playerId :uint, tick :uint, checksum :uint, details :String)
+    public function ChecksumMessage (playerId :int, tick :uint, checksum :uint, details :String)
     {
         this.playerId = playerId;
         this.tick = tick;
@@ -60,7 +60,7 @@ class ChecksumMessageFactory
 
     public function deserializeFromNetwork (obj :Object) :Message
     {
-        return new ChecksumMessage(uint(obj.playerId), uint(obj.tick), uint(obj.checksum), String(obj.details));
+        return new ChecksumMessage(int(obj.playerId), uint(obj.tick), uint(obj.checksum), String(obj.details));
     }
 }
 

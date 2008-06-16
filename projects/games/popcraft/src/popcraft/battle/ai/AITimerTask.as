@@ -13,7 +13,7 @@ public class AITimerTask extends AITask
         _name = taskName;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         _elapsedTime += dt;
 

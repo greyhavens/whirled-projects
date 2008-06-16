@@ -27,7 +27,7 @@ public class MoveToAttackLocationTask extends MoveToLocationTask
         _loseInterestRange = loseInterestRange;
     }
 
-    override public function update (dt :Number, unit :CreatureUnit) :uint
+    override public function update (dt :Number, unit :CreatureUnit) :int
     {
         // is the enemy dead?
         var enemy :Unit = _targetRef.object as Unit;

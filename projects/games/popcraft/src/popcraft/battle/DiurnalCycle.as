@@ -18,7 +18,7 @@ public class DiurnalCycle extends SimObject
         this.resetPhase(GameContext.gameData.initialDayPhase);
     }
 
-    public function resetPhase (newPhase :uint) :void
+    public function resetPhase (newPhase :int) :void
     {
         this.removeAllTasks();
 
@@ -30,9 +30,9 @@ public class DiurnalCycle extends SimObject
             if (GameContext.gameData.enableEclipse) {
                 this.createPhaseTasks(phaseTask, Constants.PHASE_ECLIPSE);
             } else {
-                var dayPhase :uint = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
-                var phase1 :uint = newPhase;
-                var phase2 :uint = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
+                var dayPhase :int = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+                var phase1 :int = newPhase;
+                var phase2 :int = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
 
                 this.createPhaseTasks(phaseTask, phase1);
                 this.createPhaseTasks(phaseTask, phase2);
@@ -47,7 +47,7 @@ public class DiurnalCycle extends SimObject
         }
     }
 
-    protected function createPhaseTasks (phaseTask :RepeatingTask, phase :uint) :void
+    protected function createPhaseTasks (phaseTask :RepeatingTask, phase :int) :void
     {
         var phaseLength :Number = getPhaseLength(phase);
 
@@ -56,7 +56,7 @@ public class DiurnalCycle extends SimObject
         phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, 0, phaseLength));
     }
 
-    public static function getPhaseLength (phase :uint) :Number
+    public static function getPhaseLength (phase :int) :Number
     {
         var gameData :GameData = GameContext.gameData;
 
@@ -84,17 +84,17 @@ public class DiurnalCycle extends SimObject
         _lastUpdateTimestamp += dt;
     }
 
-    public static function isDay (phaseOfDay :uint) :Boolean
+    public static function isDay (phaseOfDay :int) :Boolean
     {
         return (phaseOfDay == Constants.PHASE_DAY);
     }
 
-    public static function isNight (phaseOfDay :uint) :Boolean
+    public static function isNight (phaseOfDay :int) :Boolean
     {
         return (phaseOfDay == Constants.PHASE_NIGHT || phaseOfDay == Constants.PHASE_ECLIPSE);
     }
 
-    public static function isEclipse (phaseOfDay :uint) :Boolean
+    public static function isEclipse (phaseOfDay :int) :Boolean
     {
         return (phaseOfDay == Constants.PHASE_ECLIPSE);
     }
@@ -124,7 +124,7 @@ public class DiurnalCycle extends SimObject
         return _timeTillNextPhase["value"];
     }
 
-    public function get phaseOfDay () :uint
+    public function get phaseOfDay () :int
     {
         return _phaseOfDay["value"];
     }

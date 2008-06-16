@@ -12,7 +12,7 @@ import popcraft.*;
 
 public class PlayerStatusView extends SceneObject
 {
-    public function PlayerStatusView (playerId :uint)
+    public function PlayerStatusView (playerId :int)
     {
         _playerInfo = GameContext.playerInfos[playerId];
 

@@ -8,7 +8,7 @@ import popcraft.battle.view.*;
 
 public class UnitFactory
 {
-    public static function createCreature (unitType :uint, owningPlayerId :uint) :void
+    public static function createCreature (unitType :int, owningPlayerId :int) :void
     {
         // sanity check. dead players create no monsters.
         if (!PlayerInfo(GameContext.playerInfos[owningPlayerId]).isAlive) {

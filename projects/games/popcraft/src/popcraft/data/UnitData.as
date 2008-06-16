@@ -28,7 +28,7 @@ public class UnitData
     public var detectRadius :Number = 0;
     public var loseInterestRadius :Number = 0;
 
-    public function getResourceCost (resourceType :uint) :int
+    public function getResourceCost (resourceType :int) :int
     {
         return this.resourceCosts[resourceType];
     }
@@ -77,7 +77,7 @@ public class UnitData
             // don't inherit resource costs
             unitData.resourceCosts = [ 0, 0, 0, 0 ];
             for each (var resourceNode :XML in resourceCostsNode.Resource) {
-                var resourceType :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+                var resourceType :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
                 var cost :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
                 unitData.resourceCosts[resourceType] = cost;
             }

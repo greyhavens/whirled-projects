@@ -21,7 +21,7 @@ public class AITask
      * Returns the status of the AITask (see AITaskStatus).
      * Subclasses should override this to do something interesting.
      */
-    public function update (dt :Number, creature :CreatureUnit) :uint
+    public function update (dt :Number, creature :CreatureUnit) :int
     {
         return AITaskStatus.ACTIVE;
     }

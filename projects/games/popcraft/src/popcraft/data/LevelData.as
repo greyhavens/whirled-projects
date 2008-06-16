@@ -28,12 +28,12 @@ public class LevelData
 
     public var gameDataOverride :GameData;
 
-    public function isAvailableUnit (unitType :uint) :Boolean
+    public function isAvailableUnit (unitType :int) :Boolean
     {
         return ArrayUtil.contains(availableUnits, unitType);
     }
 
-    public function isAvailableSpell (spellType :uint) :Boolean
+    public function isAvailableSpell (spellType :int) :Boolean
     {
         return ArrayUtil.contains(availableSpells, spellType);
     }
@@ -83,7 +83,7 @@ public class LevelData
         // parse the initial resources
         level.initialResources = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         for each (var resourceNode :XML in xml.InitialResources.Resource) {
-            var type :uint = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
             var amount :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
             level.initialResources[type] = amount;
         }

@@ -5,10 +5,10 @@ import com.whirled.contrib.simplegame.net.*;
 public class CreateUnitMessage
     implements Message
 {
-    public var playerId :uint;
-    public var unitType :uint;
+    public var playerId :int;
+    public var unitType :int;
 
-    public function CreateUnitMessage (playerId :uint, unitType :uint)
+    public function CreateUnitMessage (playerId :int, unitType :int)
     {
         this.unitType = unitType;
         this.playerId = playerId;

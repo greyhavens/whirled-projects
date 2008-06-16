@@ -35,7 +35,7 @@ public class MoveToLocationTask extends AITask
         _destReset = true;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         // init
         if (0 == _elapsedTime) {

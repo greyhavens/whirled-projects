@@ -16,12 +16,12 @@ import popcraft.data.SpellData;
  */
 public class CourierCreatureUnit extends CreatureUnit
 {
-    public static function getNumPlayerCouriersOnBoard (playerId :uint) :int
+    public static function getNumPlayerCouriersOnBoard (playerId :int) :int
     {
         return GameContext.netObjects.getObjectRefsInGroup(getGroupName(playerId)).length;
     }
 
-    public function CourierCreatureUnit (owningPlayerId :uint)
+    public function CourierCreatureUnit (owningPlayerId :int)
     {
         super(owningPlayerId, Constants.UNIT_TYPE_COURIER);
 
@@ -117,7 +117,7 @@ public class CourierCreatureUnit extends CreatureUnit
         return _preventDeathAnimation;
     }
 
-    protected static function getGroupName (playerId :uint) :String
+    protected static function getGroupName (playerId :int) :String
     {
         return "CourierCreature_Player" + playerId;
     }
@@ -259,7 +259,7 @@ class CourierMoveTask extends AITaskTree
         }
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         if (_complete) {
             return AITaskStatus.COMPLETE;
@@ -307,7 +307,7 @@ class PickupSpellTask extends AITaskTree
         }
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         // does the spell object still exist?
         if (_spellRef.isNull) {

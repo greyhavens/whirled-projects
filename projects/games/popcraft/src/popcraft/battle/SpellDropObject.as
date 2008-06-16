@@ -12,12 +12,12 @@ public class SpellDropObject extends SimObject
     public static const GROUP_NAME :String = "SpellPickupObject";
     public static const RADIUS :Number = 20;
 
-    public function SpellDropObject (spellType :uint)
+    public function SpellDropObject (spellType :int)
     {
         _spellType = spellType;
     }
 
-    public function get spellType () :uint
+    public function get spellType () :int
     {
         return _spellType;
     }
@@ -55,7 +55,7 @@ public class SpellDropObject extends SimObject
         }
     }
 
-    protected var _spellType :uint;
+    protected var _spellType :int;
     protected var _xLoc :Number = 0;
     protected var _yLoc :Number = 0;
 

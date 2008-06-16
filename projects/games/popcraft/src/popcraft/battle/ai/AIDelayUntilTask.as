@@ -22,7 +22,7 @@ public class AIDelayUntilTask extends AITask
         _pred = pred;
     }
 
-    override public function update (dt :Number, creature :CreatureUnit) :uint
+    override public function update (dt :Number, creature :CreatureUnit) :int
     {
         return (_pred(dt, creature) ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
     }

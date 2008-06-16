@@ -24,7 +24,7 @@ import popcraft.data.*;
 
 public class CreaturePurchaseButton extends SimObject
 {
-    public function CreaturePurchaseButton (unitType :uint, slotNum :int, parent :MovieClip)
+    public function CreaturePurchaseButton (unitType :int, slotNum :int, parent :MovieClip)
     {
         _unitType = unitType;
 
@@ -70,7 +70,7 @@ public class CreaturePurchaseButton extends SimObject
         }
 
         // set up the Unit Cost indicators
-        for (var resType :uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+        for (var resType :int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resCost :int = _unitData.getResourceCost(resType);
             if (resCost > 0) {
                 if (_resource1Cost == 0) {
@@ -309,7 +309,7 @@ public class CreaturePurchaseButton extends SimObject
         return this.hasTasksNamed(DEPLOY_ANIM_TASK_NAME);
     }
 
-    protected var _unitType :uint;
+    protected var _unitType :int;
     protected var _unitData :UnitData;
 
     protected var _switch :MovieClip;
@@ -326,8 +326,8 @@ public class CreaturePurchaseButton extends SimObject
     protected var _enabledAnim :MovieClip;
     protected var _disabledAnim :MovieClip;
 
-    protected var _resource1Type :uint;
-    protected var _resource2Type :uint;
+    protected var _resource1Type :int;
+    protected var _resource2Type :int;
     protected var _resource1Cost :int;
     protected var _resource2Cost :int;
     protected var _resource1Data :ResourceData;

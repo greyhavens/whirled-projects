@@ -8,7 +8,7 @@ public class PlayerBaseUnit extends Unit
 {
     public static const GROUP_NAME :String = "PlayerBaseUnit";
 
-    public function PlayerBaseUnit (owningPlayerId :uint, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
+    public function PlayerBaseUnit (owningPlayerId :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
     {
         super(owningPlayerId, Constants.UNIT_TYPE_BASE);
 

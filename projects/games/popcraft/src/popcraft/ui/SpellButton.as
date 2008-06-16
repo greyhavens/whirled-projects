@@ -14,7 +14,7 @@ import popcraft.data.SpellData;
 
 public class SpellButton extends SceneObject
 {
-    public function SpellButton (spellType :uint, slot :int, animateIn :Boolean)
+    public function SpellButton (spellType :int, slot :int, animateIn :Boolean)
     {
         _spellType = spellType;
         _slot = slot;
@@ -85,7 +85,7 @@ public class SpellButton extends SceneObject
         return _movie;
     }
 
-    public function get spellType () :uint
+    public function get spellType () :int
     {
         return _spellType;
     }
@@ -96,7 +96,7 @@ public class SpellButton extends SceneObject
     }
 
     protected var _movie :MovieClip;
-    protected var _spellType :uint;
+    protected var _spellType :int;
     protected var _slot :int;
 
     protected static const BUTTON_SCALE :Number = 0.88;

@@ -32,7 +32,7 @@ public class CreatureSpellSet extends SimObject
                 new FunctionTask(function () :void { spellExpired(spell.type); })));
     }
 
-    protected function spellExpired (spellType :uint) :void
+    protected function spellExpired (spellType :int) :void
     {
         var i :int = ArrayUtil.findIf(_spells,
             function (activeSpell :CreatureSpellData) :Boolean { return activeSpell.type == spellType; });
@@ -46,7 +46,7 @@ public class CreatureSpellSet extends SimObject
         GameContext.playGameSound("sfx_spellexpire");
     }
 
-    public function isSpellActive (spellType :uint) :Boolean
+    public function isSpellActive (spellType :int) :Boolean
     {
         return (ArrayUtil.indexIf(_spells,
             function (activeSpell :CreatureSpellData) :Boolean { return activeSpell.type == spellType; }) >= 0);
@@ -81,7 +81,7 @@ public class CreatureSpellSet extends SimObject
         return _spells;
     }
 
-    protected static function getExpireTaskName (spellType :uint) :String
+    protected static function getExpireTaskName (spellType :int) :String
     {
         return "ExpireTask_" + spellType;
     }

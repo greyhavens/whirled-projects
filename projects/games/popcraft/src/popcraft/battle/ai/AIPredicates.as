@@ -19,7 +19,7 @@ public class AIPredicates
             thisUnit.isUnitInRange(thatUnit, thisUnit.unitData.detectRadius));
     }
 
-    public static function createIsAttackableEnemyOfTypePredicate (unitType :uint) :Function
+    public static function createIsAttackableEnemyOfTypePredicate (unitType :int) :Function
     {
         return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
             return (thatUnit.unitType == unitType && isAttackableEnemyPredicate(thisUnit, thatUnit));
@@ -31,7 +31,7 @@ public class AIPredicates
         // is the creature an enemy, and is it one of the specified unitTypes?
         return function (thisUnit :Unit, thatUnit :Unit) :Boolean {
             if (isAttackableEnemyPredicate(thisUnit, thatUnit)) {
-                for each (var unitType :uint in unitTypes) {
+                for each (var unitType :int in unitTypes) {
                     if (thatUnit.unitType == unitType) {
                         return true;
                     }
@@ -50,7 +50,7 @@ public class AIPredicates
                 return false;
             }
 
-            for each (var unitType :uint in unitTypes) {
+            for each (var unitType :int in unitTypes) {
                 if (thatUnit.unitType == unitType) {
                     return false;
                 }

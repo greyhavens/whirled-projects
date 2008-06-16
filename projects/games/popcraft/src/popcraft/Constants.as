@@ -46,53 +46,53 @@ public class Constants
     public static const BATTLE_WIDTH :int = 700;
     public static const BATTLE_HEIGHT :int = 372;
 
-    public static const PHASE_DAY :uint = 0;
-    public static const PHASE_NIGHT :uint = 1;
-    public static const PHASE_ECLIPSE :uint = 2;
+    public static const PHASE_DAY :int = 0;
+    public static const PHASE_NIGHT :int = 1;
+    public static const PHASE_ECLIPSE :int = 2;
 
     public static const DAY_PHASE_NAMES :Array = [ "day", "night", "eclipse" ];
 
     /* Damage types */
-    public static const DAMAGE_TYPE_CRUSHING :uint = 0;
-    public static const DAMAGE_TYPE_PIERCING :uint = 1;
-    public static const DAMAGE_TYPE_EXPLOSION :uint = 2;
-    public static const DAMAGE_TYPE_COLOSSUS :uint = 3;
-    public static const DAMAGE_TYPE_BASE :uint = 4; // bases damage units that attack them
+    public static const DAMAGE_TYPE_CRUSHING :int = 0;
+    public static const DAMAGE_TYPE_PIERCING :int = 1;
+    public static const DAMAGE_TYPE_EXPLOSION :int = 2;
+    public static const DAMAGE_TYPE_COLOSSUS :int = 3;
+    public static const DAMAGE_TYPE_BASE :int = 4; // bases damage units that attack them
 
     public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "colossus", "base" ];
 
     /* Resource types */
-    public static const RESOURCE_WHITE :uint = 0;
-    public static const RESOURCE_RED :uint = 1;
-    public static const RESOURCE_BLUE :uint = 2;
-    public static const RESOURCE_YELLOW :uint = 3;
-    public static const RESOURCE__LIMIT :uint = 4;
+    public static const RESOURCE_WHITE :int = 0;
+    public static const RESOURCE_RED :int = 1;
+    public static const RESOURCE_BLUE :int = 2;
+    public static const RESOURCE_YELLOW :int = 3;
+    public static const RESOURCE__LIMIT :int = 4;
 
     public static const RESOURCE_NAMES :Array = [ "white", "red", "blue", "yellow" ];
 
     /* Spells */
-    public static const SPELL_TYPE_RIGORMORTIS :uint = 0;
-    public static const SPELL_TYPE_BLOODLUST :uint = 1;
+    public static const SPELL_TYPE_RIGORMORTIS :int = 0;
+    public static const SPELL_TYPE_BLOODLUST :int = 1;
 
-    public static const CREATURE_SPELL_TYPE__LIMIT :uint = 2;
+    public static const CREATURE_SPELL_TYPE__LIMIT :int = 2;
 
-    public static const SPELL_TYPE_PUZZLERESET :uint = 2;
+    public static const SPELL_TYPE_PUZZLERESET :int = 2;
 
-    public static const SPELL_TYPE__LIMIT :uint = 3;
+    public static const SPELL_TYPE__LIMIT :int = 3;
 
     public static const SPELL_NAMES :Array = [ "rigormortis", "bloodlust", "shuffle" ];
     public static const CREATURE_SPELL_NAMES :Array = SPELL_NAMES.slice(0, CREATURE_SPELL_TYPE__LIMIT);
 
     /* Units */
-    public static const UNIT_TYPE_GRUNT :uint = 0;
-    public static const UNIT_TYPE_HEAVY :uint = 1;
-    public static const UNIT_TYPE_SAPPER :uint = 2;
-    public static const UNIT_TYPE_COURIER :uint = 3;
-    public static const UNIT_TYPE_COLOSSUS :uint = 4;
-    public static const UNIT_TYPE__PLAYER_CREATURE_LIMIT :uint = 5; // creatures that can be created by players
-    public static const UNIT_TYPE_BOSS :uint = UNIT_TYPE__PLAYER_CREATURE_LIMIT;
-    public static const UNIT_TYPE__CREATURE_LIMIT :uint = UNIT_TYPE_BOSS + 1;   // creatures including those that are only created by the computer
-    public static const UNIT_TYPE_BASE :uint = UNIT_TYPE__CREATURE_LIMIT;
+    public static const UNIT_TYPE_GRUNT :int = 0;
+    public static const UNIT_TYPE_HEAVY :int = 1;
+    public static const UNIT_TYPE_SAPPER :int = 2;
+    public static const UNIT_TYPE_COURIER :int = 3;
+    public static const UNIT_TYPE_COLOSSUS :int = 4;
+    public static const UNIT_TYPE__PLAYER_CREATURE_LIMIT :int = 5; // creatures that can be created by players
+    public static const UNIT_TYPE_BOSS :int = UNIT_TYPE__PLAYER_CREATURE_LIMIT;
+    public static const UNIT_TYPE__CREATURE_LIMIT :int = UNIT_TYPE_BOSS + 1;   // creatures including those that are only created by the computer
+    public static const UNIT_TYPE_BASE :int = UNIT_TYPE__CREATURE_LIMIT;
 
     public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "boss", "base" ];
     public static const PLAYER_CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__PLAYER_CREATURE_LIMIT);

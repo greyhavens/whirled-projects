@@ -33,7 +33,7 @@ public class PuzzleBoard extends SceneObject
 
         // create the resource generator
         var table :Array = new Array();
-        for (var resType: uint = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
+        for (var resType: int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceData :ResourceData = GameContext.gameData.resources[resType];
             table.push(resType);
             table.push(resourceData.rarity);
@@ -83,7 +83,7 @@ public class PuzzleBoard extends SceneObject
         Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
         Assert.isNull(_board[boardIndex]);
 
-        var resourceType :uint = _resourceGenerator.nextEntry();
+        var resourceType :int = _resourceGenerator.nextEntry();
         var piece :Piece = new Piece(resourceType, boardIndex);
 
         piece.x = getPieceXLoc(idxToX(boardIndex));
@@ -138,7 +138,7 @@ public class PuzzleBoard extends SceneObject
         Assert.isTrue(clearPieces.length > 0);
 
         // update the player's resource count
-        var resourceType :uint = Piece(clearPieces[0]).resourceType;
+        var resourceType :int = Piece(clearPieces[0]).resourceType;
         var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
         GameContext.localPlayerInfo.earnedResources(resourceType, resourceValue);
 
@@ -175,7 +175,7 @@ public class PuzzleBoard extends SceneObject
             "sfx_rsrc_lost");
     }
 
-    protected function showResourceValueAnimation (loc :Point, resType :uint, amount :int) :void
+    protected function showResourceValueAnimation (loc :Point, resType :int, amount :int) :void
     {
         var movieName :String = (amount >= 0 ?
             POS_CLEAR_FEEDBACK_ANIM_NAMES[resType] :
@@ -375,7 +375,7 @@ public class PuzzleBoard extends SceneObject
         piece2.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateSmooth(px1, py1, 0.25));
     }
 
-    protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :uint, pieces :ObjectSet) :void
+    protected function findConnectedSimilarPiecesInternal (x :int, y :int, resourceType :int, pieces :ObjectSet) :void
     {
         var thisPiece :Piece = getPieceAt(x, y);
 

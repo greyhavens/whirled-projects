@@ -111,7 +111,7 @@ public class SpellDropTimer extends SimObject
             spellLoc.y = Math.min(spellLoc.y, Constants.BATTLE_HEIGHT - 75);
 
             // pick a spell at random
-            var spellType :uint;
+            var spellType :int;
             if (GameContext.isSinglePlayer) {
                 var availableSpells :Array = GameContext.spLevel.availableSpells;
                 spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];

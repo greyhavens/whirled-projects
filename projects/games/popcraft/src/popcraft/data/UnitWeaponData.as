@@ -8,7 +8,7 @@ import popcraft.util.*;
 public class UnitWeaponData
 {
     // General weapon options
-    public var damageType :uint;
+    public var damageType :int;
     public var initialWarmup :Number = 0;
     public var cooldown :Number = 0;
     public var maxAttackDistance :Number = 0;

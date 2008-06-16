@@ -15,7 +15,7 @@ import popcraft.util.*;
 
 public class Piece extends SceneObject
 {
-    public function Piece (resourceType :uint, boardIndex :int)
+    public function Piece (resourceType :int, boardIndex :int)
     {
         this.resourceType = resourceType;
 
@@ -38,12 +38,12 @@ public class Piece extends SceneObject
         _boardIndex = newIndex;
     }
 
-    public function get resourceType () :uint
+    public function get resourceType () :int
     {
         return _resourceType;
     }
 
-    public function set resourceType (newType :uint) :void
+    public function set resourceType (newType :int) :void
     {
         // load the piece classes if they aren't already loaded
         if (null == SWF_CLASSES) {
@@ -73,7 +73,7 @@ public class Piece extends SceneObject
 
     protected var _boardIndex :int;
 
-    protected var _resourceType :uint;
+    protected var _resourceType :int;
     protected var _sprite :Sprite;
 
     protected static var SWF_CLASSES :Array;
