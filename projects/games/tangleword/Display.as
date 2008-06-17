@@ -82,13 +82,17 @@ public class Display extends Sprite
     }
 
     /** Called when the round ends - disables display. */
-    public function roundEnded (model :Model, board :Scoreboard) :void
+    public function roundEnded (model :Model, board :Scoreboard, bonus :int) :void
     {
         setEnableState(false);
 
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
 
         _logger.log();
+        if (bonus > 0) {
+            _logger.log("Domination Bonus: " + bonus + " pts", Logger.SUMMARY_H2);
+            _logger.log();
+        }
         _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_H1);
         logSummary(model, model.getWords());
         _logger.log("Next round will begin shortly...");
@@ -144,7 +148,7 @@ public class Display extends Sprite
 
     public function logSuccess (player :String, word :String, score :Number, bonus :Number) :void
     {
-        var msg :String = word + " (" + (score+bonus) + ")";
+        var msg :String = word + " (" + score + ")";
 
         _logger.logListItem(msg, (bonus > 0 ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD));
     }

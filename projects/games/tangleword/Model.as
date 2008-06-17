@@ -55,11 +55,13 @@ public class Model
     {
         if (_gameCtrl.game.amInControl()) {
             _scoreboard.clearAll();
+            _firstFinds = [];
         }
     }
 
     public function endRound () :void
     {
+        // WARNING: Trophy scores don't include bonuses
         _trophies.handleRoundEnded(_scoreboard);
 
         if (!_gameCtrl.game.amInControl()) {
@@ -69,9 +71,15 @@ public class Model
         var playerIds :Array = [];
         var scores :Array = [];
         for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
+            if (playerId in _firstFinds) {
+                _myBonus = _firstFinds[playerId];
+                _scoreboard.addToScore(playerId, _myBonus);
+            }
+
             var score :int = _scoreboard.getScore(playerId);
             if (score > 0) {
                 playerIds.push(playerId);
+
                 scores.push(score);
             }
         }
@@ -90,7 +98,7 @@ public class Model
 
         removeAllSelectedLetters();
 
-        _display.roundEnded(this, _scoreboard);
+        _display.roundEnded(this, _scoreboard, _myBonus);
     }
 
     //
@@ -315,11 +323,14 @@ public class Model
 
         // if the word is valid and not claimed, score!
         if (! isWordClaimed (playerId, word)) {
-            var bonus :Number = _gameCtrl.net.get(WORD_NAMESPACE+word) == null ?
-                        Controller.FIRST_FINDER_BONUS : 0;
-
-            _display.logSuccess(playerName, word, score, bonus);
-            addWord(playerId, word, score + bonus);
+            if (_gameCtrl.net.get(WORD_NAMESPACE+word) == null) {
+                _display.logSuccess(playerName, word, score, 1);
+                _firstFinds[playerId] = (_firstFinds[playerId] || 0) + 1;
+                trace(_firstFinds[playerId]);
+            } else {
+                _display.logSuccess(playerName, word, score, 0);
+            }
+            addWord(playerId, word, score); // Finder's bonus is disabled
             return;
         }
 
@@ -427,6 +438,15 @@ public class Model
     //
     //
     // PRIVATE VARIABLES
+
+    /**
+     * Number of first-found words for each player (Indexed by playerId)
+     * for the round-end bonus.
+     */
+    protected var _firstFinds :Array;
+
+    // Purely for display purposes
+    protected var _myBonus :int;
 
     /** Main game control structure */
     private var _gameCtrl :GameControl;
