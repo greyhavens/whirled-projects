@@ -32,7 +32,7 @@ public class SpellDropTimer extends SimObject
     protected function createNextSpellDrop () :void
     {
         // do we have a custom spell drop location?
-        var spellLoc :Vector2 = GameContext.customSpellDropLoc;
+        var spellLoc :Vector2 = GameContext.mapSettings.spellDropLoc;
 
         if (null == spellLoc) {
             // no - generate one

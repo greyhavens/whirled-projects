@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
         introText="Ralph and a mysterious ally are squaring off for a final encounter. A dark cloud obscures the sky. The sun will struggle to rise today."
         introText2=
 "- Destroy Ralph's Workshop!
@@ -11,19 +10,21 @@
         playerName="Jack"
         playerBaseHealth="150">
 
-        <Hints/>
+        <Hints>
+        </Hints>
 
-        <PlayerBaseLocation x="75" y="145"/>
-
-        <SpellDropLocation x="300" y="300"/>
-
-        <GameDataOverride
-            enableEclipse="true"
-            initialDayPhase="eclipse">
+        <GameDataOverride enableEclipse="true" initialDayPhase="eclipse">
             <PlayerColors>
                 <PlayerColor player="3" color="0xCB71FF"/>
             </PlayerColors>
         </GameDataOverride>
+
+        <MapSettings backgroundName="Level1">
+            <BaseLocation x="75" y="145"/>
+            <BaseLocation x="632" y="185"/>
+            <BaseLocation x="632" y="285"/>
+            <SpellDropLocation x="300" y="300"/>
+        </MapSettings>
 
         <InitialResources>
             <Resource type="white" amount="0"/>
@@ -52,8 +53,6 @@
             playerName="Ralph"
             baseHealth="450"
             team="1">
-
-            <BaseLocation x="632" y="185"/>
 
             <InitialDays>
                 <Day repeatWaves="false"
@@ -123,8 +122,6 @@
             baseHealth="1"
             invincible="true"
             team="1">
-
-            <BaseLocation x="632" y="285"/>
 
             <InitialDays>
                 <Day repeatWaves="false"/>

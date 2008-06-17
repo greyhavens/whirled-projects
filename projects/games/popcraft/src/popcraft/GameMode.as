@@ -282,7 +282,7 @@ public class GameMode extends AppMode
 
         // create player bases
         var numPlayers :int = GameContext.numPlayers;
-        var baseLocs :Array = GameContext.baseLocs;
+        var baseLocs :Array = GameContext.mapSettings.baseLocs;
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
 
             // in single-player levels, bases have custom health

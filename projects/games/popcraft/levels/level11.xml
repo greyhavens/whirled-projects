@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
         introText="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         playerName="Jack"
@@ -12,11 +11,17 @@
             <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="85" y="145"/>
+        <GameDataOverride
+            spellDropScatterMin="15"
+            spellDropScatterMax="30"/>
 
-        <SpellDropLocation x="350" y="150"/>
-
-        <GameDataOverride spellDropScatterMin="15" spellDropScatterMax="30"/>
+        <MapSettings backgroundName="Level1">
+            <BaseLocation x="85" y="145"/>
+            <BaseLocation x="85" y="245"/>
+            <BaseLocation x="642" y="115"/>
+            <BaseLocation x="642" y="325"/>
+            <SpellDropLocation x="350" y="150"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -38,7 +43,6 @@
             playerName="Pigsley"
             baseHealth="100"
             team="0">
-            <BaseLocation x="85" y="245"/>
             <InitialSpells/>
 
             <RepeatingDays>
@@ -61,7 +65,6 @@
             playerName="Ralph"
             baseHealth="150"
             team="1">
-            <BaseLocation x="642" y="115"/>
             <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"
@@ -104,7 +107,6 @@
             playerName="Sam"
             baseHealth="150"
             team="1">
-            <BaseLocation x="642" y="325"/>
             <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"

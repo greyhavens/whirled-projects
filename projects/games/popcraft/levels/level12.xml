@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
         introText="A group of Ralph's henchmen has broken into your resource reserves and made off with large amounts of flesh and blood. You'll have an easier time harvesting energy and scrap, but you'll be hard-pressed to create a Flesh Behemoth."
         playerName="Jack"
         playerBaseHealth="150">
@@ -11,8 +10,6 @@
             <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="75" y="145"/>
-
         <GameDataOverride>
             <Resources>
                 <Resource type="white" rarity="0.5"/>
@@ -21,6 +18,11 @@
                 <Resource type="yellow" rarity="1"/>
             </Resources>
         </GameDataOverride>
+
+        <MapSettings backgroundName="Level1">
+            <BaseLocation x="75" y="145"/>
+            <BaseLocation x="622" y="265"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -46,7 +48,6 @@
             playerName="Ralph"
             baseHealth="150"
             team="1">
-            <BaseLocation x="622" y="265"/>
             <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"

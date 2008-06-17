@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level2"
         introText=
 "Your nemesis and his right-hand man have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Delivery Boys will soften the advancing horde.
 
@@ -13,7 +12,11 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             <Hint>Focus on eliminating one of your opponents first. With one enemy out of the way, the other will fall more quickly.</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="75" y="175"/>
+        <MapSettings backgroundName="Level2">
+            <BaseLocation x="75" y="175"/>
+            <BaseLocation x="612" y="115"/>
+            <BaseLocation x="612" y="315"/>
+        </MapSettings>
 
         <InitialResources>
             <Resource type="blue" amount="50"/>
@@ -29,7 +32,6 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         <AvailableSpells/>
 
         <Computer playerName="Ralph" baseHealth="70" team="1">
-            <BaseLocation x="612" y="115"/>
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
@@ -44,7 +46,6 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         </Computer>
 
         <Computer playerName="Sam" baseHealth="70" team="1">
-            <BaseLocation x="612" y="315"/>
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

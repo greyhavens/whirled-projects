@@ -44,25 +44,9 @@ public class GameContext
     public static function get numPlayers () :int { return playerInfos.length; }
     public static function get localUserIsPlaying () :Boolean { return localPlayerId >= 0; }
 
-    public static function get customSpellDropLoc () :Vector2
+    public static function get mapSettings () :MapSettingsData
     {
-        return (isSinglePlayer ? spLevel.spellDropLoc : mpSettings.spellDropLoc);
-    }
-
-    public static function get baseLocs () :Array
-    {
-        var locs :Array = [];
-
-        if (isSinglePlayer) {
-            locs.push(spLevel.playerBaseLoc);
-            for each (var computer :ComputerPlayerData in spLevel.computers) {
-                locs.push(computer.baseLoc);
-            }
-        } else {
-            locs = mpSettings.baseLocs;
-        }
-
-        return locs;
+        return (isSinglePlayer ? spLevel.mapSettings : mpSettings.mapSettings);
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo

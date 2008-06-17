@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level3"
         newCreatureType="colossus"
         introText="You've stolen the plans for the Flesh Behemoth and can now create your own. The Behemoth can decimate a base, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Behemoth and help it break through the enemy's defenses."
         playerName="Jack"
@@ -11,7 +10,10 @@
             <Hint>An unprotected Flesh Behemoth will quickly fall to a well-prepared opponent. Send Street-Walkers ahead of your Behemoths to distract your enemy's Handy Men!</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="60" y="205"/>
+        <MapSettings backgroundName="Level3">
+            <BaseLocation x="60" y="205"/>
+            <BaseLocation x="642" y="175"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -28,7 +30,6 @@
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="150" team="1">
-            <BaseLocation x="642" y="175"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

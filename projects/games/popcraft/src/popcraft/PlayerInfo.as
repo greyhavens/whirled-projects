@@ -39,7 +39,7 @@ public class PlayerInfo extends EventDispatcher
             _playerName = "Unknown player " + playerId;
         }
 
-        _baseLoc = GameContext.baseLocs[playerId];
+        _baseLoc = GameContext.mapSettings.baseLocs[playerId];
     }
 
     public function get handicap () :Number

@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level3"
         newCreatureType="courier"
         newSpellType="rigormortis"
         introText=
@@ -14,9 +13,14 @@
             <Hint>Infusions last for a limited time. Maximize the effectiveness of your Infusions by using them when you have a large number of creatures on the battlefield.</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="60" y="205"/>
+        <GameDataOverride
+            spellDropTimeMin="30"
+            spellDropTimeMax="30"/>
 
-        <GameDataOverride spellDropTimeMin="30" spellDropTimeMax="30"/>
+        <MapSettings backgroundName="Level3">
+            <BaseLocation x="60" y="205"/>
+            <BaseLocation x="642" y="175"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -39,7 +43,6 @@
             playerName="Ralph"
             baseHealth="100"
             team="1">
-            <BaseLocation x="642" y="175"/>
             <InitialSpells>
                 <Spell type="rigormortis" amount="1"/>
             </InitialSpells>

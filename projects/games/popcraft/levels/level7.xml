@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level3"
         introText="Your opponent has perfected the Flesh Behemoth, an enormous collection of random body parts capable of crushing lesser units instantly.
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Behemoths with creatures to slow their progress and take them down, then make your move!"
@@ -13,7 +12,10 @@ He's sending several your way, but he'll be vulnerable for a short while after t
             <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="60" y="205"/>
+        <MapSettings backgroundName="Level3">
+            <BaseLocation x="60" y="205"/>
+            <BaseLocation x="642" y="175"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -29,7 +31,6 @@ He's sending several your way, but he'll be vulnerable for a short while after t
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="100" team="1">
-            <BaseLocation x="642" y="175"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

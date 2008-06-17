@@ -1,7 +1,6 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level3"
         introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"
@@ -12,11 +11,17 @@
             <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
-        <PlayerBaseLocation x="70" y="185"/>
+        <GameDataOverride
+            spellDropScatterMin="15"
+            spellDropScatterMax="30"/>
 
-        <SpellDropLocation x="250" y="160"/>
-
-        <GameDataOverride spellDropScatterMin="15" spellDropScatterMax="30"/>
+        <MapSettings backgroundName="Level3">
+            <BaseLocation x="70" y="185"/>
+            <BaseLocation x="642" y="185"/>
+            <BaseLocation x="590" y="115"/>
+            <BaseLocation x="590" y="335"/>
+            <SpellDropLocation x="250" y="160"/>
+        </MapSettings>
 
         <InitialResources>
             <Resource type="blue" amount="50"/>
@@ -40,7 +45,6 @@
             playerName="Ralph"
             baseHealth="120"
             team="1">
-            <BaseLocation x="642" y="185"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
@@ -87,7 +91,6 @@
             playerName="Sam"
             baseHealth="80"
             team="1">
-            <BaseLocation x="590" y="115"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"
@@ -138,7 +141,6 @@
             playerName="Eric"
             baseHealth="80"
             team="1">
-            <BaseLocation x="590" y="335"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

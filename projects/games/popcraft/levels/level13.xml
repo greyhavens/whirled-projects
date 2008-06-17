@@ -1,16 +1,21 @@
 <root>
     <Level
         parDays="1"
-        backgroundName="Level1"
         introText="Grab the Infusions!"
         playerName="Jack"
         playerBaseHealth="150">
 
-        <Hints/>
+        <Hints>
+        </Hints>
 
-        <PlayerBaseLocation x="75" y="145"/>
+        <GameDataOverride
+            spellDropTimeMin="10"
+            spellDropTimeMax="20"/>
 
-        <GameDataOverride spellDropTimeMin="10" spellDropTimeMax="20"/>
+        <MapSettings backgroundName="Level1">
+            <BaseLocation x="75" y="145"/>
+            <BaseLocation x="622" y="265"/>
+        </MapSettings>
 
         <InitialResources/>
 
@@ -36,8 +41,6 @@
             playerName="Ralph"
             baseHealth="150"
             team="1">
-
-            <BaseLocation x="622" y="265"/>
 
             <RepeatingDays>
                 <Day repeatWaves="false"

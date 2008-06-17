@@ -10,7 +10,6 @@ public class LevelData
 {
     public var parDays :int;
     public var levelCompletionBonus :int;
-    public var backgroundName :String;
     public var introText :String;
     public var introText2 :String;
     public var newCreatureType :int;
@@ -19,8 +18,6 @@ public class LevelData
     public var playerName :String;
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
-    public var playerBaseLoc :Vector2;
-    public var spellDropLoc :Vector2;
 
     public var levelHints :Array = [];
     public var availableUnits :Array = [];
@@ -28,6 +25,8 @@ public class LevelData
     public var computers :Array = [];
     public var initialResources :Array = [];
     public var initialSpells :Array = [];
+
+    public var mapSettings :MapSettingsData;
 
     public var gameDataOverride :GameData;
 
@@ -53,7 +52,6 @@ public class LevelData
 
         level.parDays = XmlReader.getAttributeAsInt(xml, "parDays");
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus", 0);
-        level.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.introText2 = XmlReader.getAttributeAsString(xml, "introText2", level.introText);
         level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
@@ -62,18 +60,6 @@ public class LevelData
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
-
-        var playerBaseLocXml :XML = XmlReader.getSingleChild(xml, "PlayerBaseLocation");
-        var baseX :Number = XmlReader.getAttributeAsNumber(playerBaseLocXml, "x");
-        var baseY :Number = XmlReader.getAttributeAsNumber(playerBaseLocXml, "y");
-        level.playerBaseLoc = new Vector2(baseX, baseY);
-
-        var spellDropXml :XML = XmlReader.getSingleChild(xml, "SpellDropLocation", null);
-        if (null != spellDropXml) {
-            var spellX :Number = XmlReader.getAttributeAsNumber(spellDropXml, "x");
-            var spellY :Number = XmlReader.getAttributeAsNumber(spellDropXml, "y");
-            level.spellDropLoc = new Vector2(spellX, spellY);
-        }
 
         // level hints
         for each (var hintData :XML in xml.Hints.Hint) {
@@ -110,6 +96,9 @@ public class LevelData
             amount = XmlReader.getAttributeAsUint(spellNode, "amount");
             level.initialSpells[type] = amount;
         }
+
+        // map settings
+        level.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
 
         return level;
     }
