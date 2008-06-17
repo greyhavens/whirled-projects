@@ -244,10 +244,6 @@ public class Display extends Sprite
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }
-
-        _gameCtrl.services.getDictionaryWords("en-us", null, 5, function(w :Array):void {
-                        _logger.log("getWords: " +w);
-                });
     }
 
     /** Called when the user clicks the Ready button. */

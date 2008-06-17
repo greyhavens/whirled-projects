@@ -13,6 +13,7 @@ import com.whirled.game.MessageReceivedEvent;
 import com.whirled.contrib.Scoreboard;
 
 import flash.geom.Point;
+import flash.utils.Dictionary;
 
 /**
    GameModel is a game-specific interface to the networked data set.
@@ -54,13 +55,21 @@ public class Model
     public function roundStarted () :void
     {
         if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.net.set(FIRST_FINDS, null);
             _scoreboard.clearAll();
-            _firstFinds = [];
         }
     }
 
     public function endRound () :void
     {
+        var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
+
+        _playerBonuses = [];
+        for (var o :Object in firsts) {
+            var pid :int = o as int;
+            _playerBonuses[pid] = 1000*firsts[pid]; // TODO
+        }
+
         // WARNING: Trophy scores don't include bonuses
         _trophies.handleRoundEnded(_scoreboard);
 
@@ -71,15 +80,15 @@ public class Model
         var playerIds :Array = [];
         var scores :Array = [];
         for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
-            if (playerId in _firstFinds) {
-                _myBonus = _firstFinds[playerId];
-                _scoreboard.addToScore(playerId, _myBonus);
+            var score :int = _scoreboard.getScore(playerId);
+
+            if (playerId in _playerBonuses) {
+                score += _playerBonuses[playerId];
+                _scoreboard.setScore(playerId, score);
             }
 
-            var score :int = _scoreboard.getScore(playerId);
             if (score > 0) {
                 playerIds.push(playerId);
-
                 scores.push(score);
             }
         }
@@ -98,7 +107,7 @@ public class Model
 
         removeAllSelectedLetters();
 
-        _display.roundEnded(this, _scoreboard, _myBonus);
+        _display.roundEnded(this, _scoreboard, _playerBonuses[_gameCtrl.game.getMyId()]);
     }
 
     //
@@ -325,8 +334,14 @@ public class Model
         if (! isWordClaimed (playerId, word)) {
             if (_gameCtrl.net.get(WORD_NAMESPACE+word) == null) {
                 _display.logSuccess(playerName, word, score, 1);
-                _firstFinds[playerId] = (_firstFinds[playerId] || 0) + 1;
-                trace(_firstFinds[playerId]);
+
+                var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
+
+                if (firsts != null && playerId in firsts) {
+                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, firsts[playerId]+1);
+                } else {
+                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, 1);
+                }
             } else {
                 _display.logSuccess(playerName, word, score, 0);
             }
@@ -384,27 +399,6 @@ public class Model
 
         return words;
     }
-    /**
-     * Retrieves top n words from the scored word list, and returns them as an array
-     * of objects with the following fields: { word :String, score :int, playerId :int }.
-     */
-    //public function getTopWords (count :int) :Array /** of Object */
-    /*{
-        var words :Array = new Array();
-        var props :Array = _gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || [ ];
-
-        for each (var i :String in props) {
-            var word :String = i.substring(WORD_NAMESPACE.length);
-            words.push({
-                word: word,
-                score: Controller.getWordScore(word),
-                playerIds: _gameCtrl.net.get(i)
-            });
-        }
-            
-        words.sortOn("score", Array.DESCENDING | Array.NUMERIC);
-        return words.slice(0, count);
-    };*/
 
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
@@ -440,13 +434,13 @@ public class Model
     // PRIVATE VARIABLES
 
     /**
-     * Number of first-found words for each player (Indexed by playerId)
-     * for the round-end bonus.
+     * Property for number of first-found words for each player
+     * (Dictionary by playerId) for the round-end bonus.
      */
-    protected var _firstFinds :Array;
+    protected static const FIRST_FINDS :String = "firstFinds";
 
-    // Purely for display purposes
-    protected var _myBonus :int;
+    // Local copy of the final playerBonuses calculated at the end of a round
+    protected var _playerBonuses :Array;
 
     /** Main game control structure */
     private var _gameCtrl :GameControl;
