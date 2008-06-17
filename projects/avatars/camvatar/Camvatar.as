@@ -27,6 +27,9 @@ import com.whirled.contrib.PreferredCamera;
 [SWF(width="104", height="78")]
 public class Camvatar extends Sprite
 {
+    public static const WID :int = 104;
+    public static const HEI :int = 78;
+
     public function Camvatar ()
     {
         // listen for an unload event
@@ -34,7 +37,7 @@ public class Camvatar extends Sprite
 
         _ctrl = new AvatarControl(this);
 
-        _data = new BitmapData(104, 78, false);
+        _data = new BitmapData(WID, HEI, false);
         _image = new Bitmap(_data);
         addChild(_image);
 
@@ -44,7 +47,7 @@ public class Camvatar extends Sprite
             return;
         }
 
-        //_camera.setMode(104, 78, 30);
+        //_camera.setMode(WID, HEI, 30);
         _video = new Video();
         _video.width = _camera.width;
         _video.height = _camera.height;
@@ -63,26 +66,45 @@ public class Camvatar extends Sprite
     protected function updateFrame (event :Event) :void
     {
         // fucking unbelievable flash bugs. Unbelievable. I cannot believe they ship these bugs.
-        _data.draw(_video, new Matrix(104 / 160, 0, 0, 78/ 120));
+        _data.draw(_video, new Matrix(WID / 160, 0, 0, HEI / 120));
+
+        var brightness :uint;
 
         // now go through the data and massage every pixel to black or white
-        for (var yy :int = 0; yy < 78; yy++) {
-            for (var xx :int = 0; xx < 104; xx++) {
+        var total :Number = 0;
+        for (var yy :int = 0; yy < HEI; yy++) {
+            for (var xx :int = 0; xx < WID; xx++) {
                 var pixel :uint = _data.getPixel(xx, yy);
-                var max :uint = Math.max(Math.max(pixel & 0xFF, (pixel >> 8) & 0xFF), (pixel >> 16) & 0xFF);
-                var pix :uint;
-                if (max > 192) {
-                    pix = 0xFFFFFF;
-                } else if (max > 128) {
-                    pix = 0xBBBBBB;
-                } else if (max > 64) {
-                    pix = 0x666666;
-                } else {
-                    pix = 0x000000;
-                }
-                _data.setPixel(xx, yy, pix); //max > 127 ? 0xFFFFFF : 0x000000);
+                // the brightness is the maximum of the 3 color channels
+                brightness = Math.max(Math.max(pixel & 0xFF, (pixel >> 8) & 0xFF),
+                    (pixel >> 16) & 0xFF);
+                _data.setPixel(xx, yy, brightness);
+                total += brightness;
             }
         }
+
+        var mean :Number = total / (WID * HEI);
+        trace("total: " + total + ", mean: " + mean);
+
+        for (var yy :int = 0; yy < HEI; yy++) {
+            for (var xx :int = 0; xx < WID; xx++) {
+                brightness = _data.getPixel(xx, yy);
+                _data.setPixel(xx, yy, brightness > mean ? 0xFFFFFF : 0x000000);
+            }
+        }
+//                var pix :uint;
+//                if (max > 192) {
+//                    pix = 0xFFFFFF;
+//                } else if (max > 128) {
+//                    pix = 0xBBBBBB;
+//                } else if (max > 64) {
+//                    pix = 0x666666;
+//                } else {
+//                    pix = 0x000000;
+//                }
+//                _data.setPixel(xx, yy, pix); //max > 127 ? 0xFFFFFF : 0x000000);
+//            }
+//        }
     }
 
     /**
