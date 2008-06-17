@@ -1,7 +1,6 @@
 package popcraft.battle.view {
 
 import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -12,7 +11,7 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 
-public class SpellDropView extends SceneObject
+public class SpellDropView extends BattlefieldSprite
 {
     public function SpellDropView (spellDrop :SpellDropObject)
     {

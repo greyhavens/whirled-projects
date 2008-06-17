@@ -106,9 +106,9 @@ public class SpellDropTimer extends SimObject
 
             // clamp location
             spellLoc.x = Math.max(spellLoc.x, 75);
-            spellLoc.x = Math.min(spellLoc.x, Constants.SCREEN_DIMS.x - 75);
+            spellLoc.x = Math.min(spellLoc.x, GameContext.battlefieldWidth - 75);
             spellLoc.y = Math.max(spellLoc.y, 75);
-            spellLoc.y = Math.min(spellLoc.y, Constants.BATTLE_HEIGHT - 75);
+            spellLoc.y = Math.min(spellLoc.y, GameContext.battlefieldHeight - 75);
 
             // pick a spell at random
             var spellType :int;

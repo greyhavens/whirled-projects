@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
@@ -17,6 +16,11 @@ public class GameContext
 {
     public static const GAME_TYPE_MULTIPLAYER :int = 0;
     public static const GAME_TYPE_SINGLEPLAYER :int = 1;
+
+    /* Frequently-used values that are cached here for performance reasons */
+    public static var mapScaleXInv :Number;
+    public static var mapScaleYInv :Number;
+    public static var scaleSprites :Boolean;
 
     public static var gameType :int;
     public static var gameData :GameData;
@@ -39,6 +43,7 @@ public class GameContext
     public static var playerInfos :Array;
     public static var playerCreatureSpellSets :Array;
     public static var localPlayerId :int;
+
     public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerId]; }
     public static function get isFirstPlayer () :Boolean { return (localPlayerId == 0); }
     public static function get numPlayers () :int { return playerInfos.length; }
@@ -47,6 +52,16 @@ public class GameContext
     public static function get mapSettings () :MapSettingsData
     {
         return (isSinglePlayer ? spLevel.mapSettings : mpSettings.mapSettings);
+    }
+
+    public static function get battlefieldWidth () :Number
+    {
+        return (Constants.BATTLE_HEIGHT * mapSettings.mapScaleX);
+    }
+
+    public static function get battlefieldHeight () :Number
+    {
+        return (Constants.BATTLE_WIDTH * mapSettings.mapScaleY);
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo

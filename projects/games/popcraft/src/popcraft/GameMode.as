@@ -33,15 +33,10 @@ public class GameMode extends AppMode
     {
         PerfUtil.reset();
 
-        // make sure we have a valid GameData object in the GameContext
-        if (GameContext.isSinglePlayer && null != GameContext.spLevel.gameDataOverride) {
-            GameContext.gameData = GameContext.spLevel.gameDataOverride;
-        } else {
-            // @TODO - remove this testing code
-            var variants :Array = AppContext.gameVariants;
-            var variant :GameVariantData = variants[0];
-            GameContext.gameData = variant.gameDataOverride;
-        }
+        // cache some frequently-used values in GameContext
+        GameContext.mapScaleXInv = 1 / GameContext.mapSettings.mapScaleX;
+        GameContext.mapScaleYInv = 1 / GameContext.mapSettings.mapScaleY;
+        GameContext.scaleSprites = GameContext.mapSettings.scaleSprites;
 
         GameContext.gameMode = this;
 
@@ -144,7 +139,8 @@ public class GameMode extends AppMode
 
             var playerInfo :PlayerInfo;
             var teamId :int = teams[playerId];
-            var handicap :Number = handicaps[playerId];
+            var isHandicapped :Boolean = handicaps[playerId];
+            var handicap :Number = (isHandicapped ? 0.5 : 1); // temp
 
             if (GameContext.localPlayerId == playerId) {
                 var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, handicap);
@@ -272,7 +268,9 @@ public class GameMode extends AppMode
 
     protected function setupBattle () :void
     {
-        GameContext.forceParticleContainer = new ForceParticleContainer(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+        GameContext.forceParticleContainer = new ForceParticleContainer(
+            GameContext.battlefieldWidth,
+            GameContext.battlefieldHeight);
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);

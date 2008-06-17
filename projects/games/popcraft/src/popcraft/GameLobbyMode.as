@@ -13,6 +13,8 @@ import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import popcraft.data.GameVariantData;
+
 public class GameLobbyMode extends AppMode
 {
     override protected function setup () :void
@@ -202,6 +204,16 @@ public class GameLobbyMode extends AppMode
 
     protected function timerExpired () :void
     {
+        GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
+
+        // @TODO - remove this testing code
+        var variants :Array = AppContext.gameVariants;
+        var variant :GameVariantData = variants[0];
+        GameContext.gameData = variant.gameDataOverride;
+
+        var mpSettings :Array = AppContext.multiplayerSettings;
+        GameContext.mpSettings = mpSettings[0];
+
         MainLoop.instance.changeMode(new GameMode());
     }
 
@@ -291,7 +303,7 @@ public class GameLobbyMode extends AppMode
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
     protected static const HANDICAP_BOX_LOC :Point = new Point(500, 425);
 
-    protected static const GAME_START_COUNTDOWN :Number = 5;
+    protected static const GAME_START_COUNTDOWN :Number = 1;
 }
 
 }

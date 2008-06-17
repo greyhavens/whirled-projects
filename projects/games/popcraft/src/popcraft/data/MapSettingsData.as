@@ -8,8 +8,8 @@ import popcraft.util.XmlReader;
 public class MapSettingsData
 {
     public var backgroundName :String;
-    public var mapSizeX :int;
-    public var mapSizeY :int;
+    public var mapScaleX :Number;
+    public var mapScaleY :Number;
     public var scaleSprites :Boolean;
     public var spellDropLoc :Vector2;
     public var baseLocs :Array = [];
@@ -19,8 +19,8 @@ public class MapSettingsData
         var data :MapSettingsData = new MapSettingsData();
 
         data.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
-        data.mapSizeX = XmlReader.getAttributeAsUint(xml, "mapSizeX", Constants.BATTLE_WIDTH);
-        data.mapSizeY = XmlReader.getAttributeAsUint(xml, "mapSizeY", Constants.BATTLE_HEIGHT);
+        data.mapScaleX = XmlReader.getAttributeAsNumber(xml, "mapScaleX", 1);
+        data.mapScaleY = XmlReader.getAttributeAsNumber(xml, "mapScaleY", 1);
         data.scaleSprites = XmlReader.getAttributeAsBoolean(xml, "scaleSprites", false);
 
         var spellDropXml :XML = XmlReader.getSingleChild(xml, "SpellDropLocation", null);

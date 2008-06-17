@@ -19,7 +19,7 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.util.*;
 
-public class PlayerBaseUnitView extends SceneObject
+public class PlayerBaseUnitView extends BattlefieldSprite
 {
     public static function getAll () :Array
     {
@@ -37,7 +37,6 @@ public class PlayerBaseUnitView extends SceneObject
 
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
         _workshop = _movie["workshop"];
-
 
         var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
         var recolor :MovieClip = _workshop["recolor"];
@@ -111,6 +110,15 @@ public class PlayerBaseUnitView extends SceneObject
         }
 
         _unit.addEventListener(UnitEvent.ATTACKED, handleAttacked, false, 0, true);
+
+        super.addedToDB();
+    }
+
+    override protected function scaleSprites () :void
+    {
+        super.scaleSprites();
+        _clickableSprite.scaleX = _spriteScale;
+        _clickableSprite.scaleY = _spriteScale;
     }
 
     override protected function removedFromDB () :void
@@ -136,11 +144,10 @@ public class PlayerBaseUnitView extends SceneObject
     override protected function update (dt :Number) :void
     {
         if (_needsLocationUpdate) {
-            this.x = _unit.x;
-            this.y = _unit.y;
+            this.updateLoc(_unit.x, _unit.y);
 
-            _clickableSprite.x = _unit.x;
-            _clickableSprite.y = _unit.y;
+            _clickableSprite.x = this.x;
+            _clickableSprite.y = this.y;
 
             // flip the movie if we're on the left side of the board
             if (_unit.x < Constants.BATTLE_WIDTH * 0.5) {

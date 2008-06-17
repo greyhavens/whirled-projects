@@ -1,6 +1,5 @@
 package popcraft.battle.view {
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
@@ -9,17 +8,16 @@ import flash.display.MovieClip;
 import popcraft.*;
 import popcraft.battle.CreatureUnit;
 
-public class DeadCreatureUnitView extends SceneObject
+public class DeadCreatureUnitView extends BattlefieldSprite
 {
     public function DeadCreatureUnitView (creature :CreatureUnit, facing :int)
     {
-        var flipX :Boolean;
         if (Constants.FACING_NE == facing) {
             facing = Constants.FACING_NW;
-            flipX = true;
+            _flipX = true;
         } else if (Constants.FACING_SE == facing) {
             facing = Constants.FACING_SW;
-            flipX = true;
+            _flipX = true;
         }
 
         var playerColor :uint = GameContext.gameData.playerColors[creature.owningPlayerId];
@@ -30,17 +28,23 @@ public class DeadCreatureUnitView extends SceneObject
             _movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
         }
 
-        if (flipX) {
-            _movie.scaleX = -1;
-        }
-
-        _movie.x = creature.x;
-        _movie.y = creature.y;
+        this.updateLoc(creature.x, creature.y);
 
         // when the movie gets to the end, self-destruct
         this.addTask(new SerialTask(new WaitForFrameTask("end"), new SelfDestructTask()));
 
         GameContext.playGameSound("sfx_death_" + creature.unitData.name);
+    }
+
+    override protected function addedToDB () :void
+    {
+        // BattlefieldSprite will scale us if necessary
+        super.addedToDB();
+
+        // flip if necessary
+        if (_flipX) {
+            _movie.scaleX *= -1;
+        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -49,6 +53,7 @@ public class DeadCreatureUnitView extends SceneObject
     }
 
     protected var _movie :MovieClip;
+    protected var _flipX :Boolean;
 }
 
 }

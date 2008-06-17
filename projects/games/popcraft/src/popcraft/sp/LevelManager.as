@@ -177,6 +177,8 @@ public class LevelManager implements UserCookieDataSource
     {
         GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
+        var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
+        GameContext.gameData = (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
 
         AppContext.mainLoop.unwindToMode(new GameMode());
     }

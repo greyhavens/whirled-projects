@@ -62,19 +62,12 @@ public class PopCraft extends Sprite
 
         if (multiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
-
-            // show the team-selection screen if > 2 players are playing
-            if (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1) {
-                AppContext.mainLoop.pushMode(new GameLobbyMode());
-            } else {
-                AppContext.mainLoop.pushMode(new GameMode());
-            }
-
+            AppContext.mainLoop.pushMode(new GameLobbyMode());
         } else {
+            GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
 
-        // kick off the MainLoop
         // LoadingMode will pop itself from the stack when loading is complete
         AppContext.mainLoop.run();
         AppContext.mainLoop.pushMode(new LoadingMode());

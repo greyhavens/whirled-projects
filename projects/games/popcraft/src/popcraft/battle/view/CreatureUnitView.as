@@ -19,7 +19,7 @@ import popcraft.battle.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
-public class CreatureUnitView extends SceneObject
+public class CreatureUnitView extends BattlefieldSprite
 {
     public function CreatureUnitView (unit :CreatureUnit)
     {
@@ -70,6 +70,8 @@ public class CreatureUnitView extends SceneObject
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
+
+        super.addedToDB();
     }
 
     override protected function removedFromDB () :void
@@ -311,9 +313,12 @@ public class CreatureUnitView extends SceneObject
 
             this.updateAnimations();
 
+            var x :Number;
+            var y :Number;
+
             if (!_unit.isMoving || Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
-                this.x = _unit.x;
-                this.y = _unit.y;
+                x = _unit.x;
+                y = _unit.y;
             } else {
 
                 // estimate a new location for the CreatureUnit,
@@ -322,9 +327,11 @@ public class CreatureUnitView extends SceneObject
                 var distanceDelta :Number = Math.min(_unit.movementSpeed * _unitUpdateTimeDelta, _unit.distanceToDestination);
                 var movementDelta :Vector2 = _unit.movementDirection.scale(distanceDelta);
 
-                this.x = _unit.x + movementDelta.x;
-                this.y = _unit.y + movementDelta.y;
+                x = _unit.x + movementDelta.x;
+                y = _unit.y + movementDelta.y;
             }
+
+            this.updateLoc(x, y);
 
             if (null != _healthMeter) {
                 _healthMeter.value = _unit.health;
