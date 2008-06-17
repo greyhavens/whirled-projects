@@ -52,6 +52,16 @@ public class Constants
 
     public static const DAY_PHASE_NAMES :Array = [ "day", "night", "eclipse" ];
 
+    public static const ARRANGE_1V1 :int = 0;
+    public static const ARRANGE_1V2 :int = 1;
+    public static const ARRANGE_3FFA :int = 2;
+    public static const ARRANGE_2V2 :int = 3;
+    public static const ARRANGE_3V1 :int = 4;
+    public static const ARRANGE_4FFA :int = 5;
+
+    public static const MULTIPLAYER_ARRANGEMENT_NAMES :Array = [ "1v1", "1v2", "3ffa", "2v2", "3v1", "4ffa" ];
+    public static const MULTIPLAYER_ARRANGEMENT_PLAYER_COUNTS :Array = [ 2, 3, 3, 4, 4, 4 ];
+
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :int = 0;
     public static const DAMAGE_TYPE_PIERCING :int = 1;

@@ -37,13 +37,19 @@ public class GameLobbyMode extends AppMode
 
         this.modeSprite.addChild(_statusText);
 
+        _handicapCheckbox = new HandicapCheckbox();
+        _handicapCheckbox.x = HANDICAP_BOX_LOC.x;
+        _handicapCheckbox.y = HANDICAP_BOX_LOC.y;
+        this.modeSprite.addChild(_handicapCheckbox);
+        _handicapCheckbox.addEventListener(HandicapCheckbox.STATE_CHANGED, handicapChanged);
+
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
 
         if (this.isFirstPlayer) {
             // initialize the team selection array. nobody's on a team yet.
             MultiplayerConfig.teams = ArrayUtil.create(MultiplayerConfig.numPlayers, -1);
-            MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, 1);
+            MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, false);
         } else {
             _playerTeams = MultiplayerConfig.teams;
             this.updateDisplay();
@@ -130,6 +136,17 @@ public class GameLobbyMode extends AppMode
 
         teamBox.addEventListener(MouseEvent.CLICK, function (...ignored) : void { teamSelected(teamId); } );
         this.modeSprite.addChild(teamBox);
+    }
+
+    protected function handicapChanged (...ignored) :void
+    {
+        if (null != _playerHandicaps) {
+            var handicap :Boolean = _handicapCheckbox.checked;
+            if (handicap != _playerHandicaps[this.localPlayerId]) {
+                MultiplayerConfig.setPlayerHandicap(this.localPlayerId, handicap);
+                this.updateDisplay();
+            }
+        }
     }
 
     protected function teamSelected (teamId :int) :void
@@ -258,8 +275,10 @@ public class GameLobbyMode extends AppMode
     }
 
     protected var _playerTeams :Array;
+    protected var _playerHandicaps :Array;
     protected var _teamTexts :Array = [];
     protected var _statusText :TextField;
+    protected var _handicapCheckbox :HandicapCheckbox;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
     protected static const TEAM_BOX_SIZE :Point = new Point(175, 150);
@@ -270,8 +289,74 @@ public class GameLobbyMode extends AppMode
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(500, 50);
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
+    protected static const HANDICAP_BOX_LOC :Point = new Point(500, 425);
 
     protected static const GAME_START_COUNTDOWN :Number = 5;
 }
 
+}
+
+import flash.display.Sprite;
+import flash.display.Graphics;
+import flash.display.Shape;
+import flash.display.SimpleButton;
+import flash.events.MouseEvent;
+import flash.events.Event;
+
+class HandicapCheckbox extends SimpleButton
+{
+    public static const STATE_CHANGED :String = "StateChanged";
+
+    public function HandicapCheckbox ()
+    {
+        _checkedShape = new Shape();
+        var g :Graphics = _checkedShape.graphics;
+        g.lineStyle(2, 0);
+        g.beginFill(0xFF0000);
+        g.drawRect(0, 0, SIZE, SIZE);
+        g.endFill();
+
+        _uncheckedShape = new Shape();
+        g = _uncheckedShape.graphics;
+        g.lineStyle(2, 0);
+        g.beginFill(0xFFFFFF);
+        g.drawRect(0, 0, SIZE, SIZE);
+        g.endFill();
+
+        _checked = true;
+        this.checked = false;
+
+        this.addEventListener(MouseEvent.CLICK, handleClicked);
+    }
+
+    protected function handleClicked (...ignored) :void
+    {
+        this.checked = !this.checked;
+    }
+
+    public function set checked (val :Boolean) :void
+    {
+        if (_checked != val) {
+            var theShape :Shape = (val ? _checkedShape : _uncheckedShape);
+            this.upState = theShape;
+            this.downState = theShape;
+            this.overState = theShape;
+            this.hitTestState = theShape;
+
+            _checked = val;
+
+            this.dispatchEvent(new Event(STATE_CHANGED));
+        }
+    }
+
+    public function get checked () :Boolean
+    {
+        return _checked;
+    }
+
+    protected var _checked :Boolean;
+    protected var _checkedShape :Shape;
+    protected var _uncheckedShape :Shape;
+
+    protected static const SIZE :int = 50;
 }

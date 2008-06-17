@@ -33,7 +33,7 @@ public class MultiplayerConfig
         }
     }
 
-    public static function setPlayerHandicap (playerId :int, handicap :Number) :void
+    public static function setPlayerHandicap (playerId :int, handicap :Boolean) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.net.setAt(PROP_HANDICAPS, playerId, handicap, true);
