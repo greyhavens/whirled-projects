@@ -240,6 +240,17 @@ public class Display extends Sprite
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }
+
+        _gameCtrl.services.getDictionaryWords("en-us", null, 5, function(w :Array):void {
+                        _logger.log("getWords: " +w);
+                });
+    }
+
+    /** Called when the user clicks the Ready button. */
+    protected function handleReady () :void
+    {
+        _gameCtrl.net.sendMessage("ready", _gameCtrl.game.getMyId());
+        _readyButton.visible = false;
     }
 
     /** Called when the user types a letter inside the word field. */
@@ -296,6 +307,12 @@ public class Display extends Sprite
                                submitWord);
         doPosition(_okbutton, Properties.OKBUTTON);
         addChild(_okbutton);
+
+        _readyButton = new Button(new Resources.buttonOkOver(),
+                                  new Resources.buttonOkOut(),
+                                  handleReady);
+        doPosition(_readyButton, Properties.OKBUTTON);
+        addChild(_readyButton);
 
         _wordfield = new TextField();
         _wordfield.defaultTextFormat = Resources.makeFormatForUI();
@@ -372,6 +389,8 @@ public class Display extends Sprite
         // Set other UI elements
         _okbutton.visible = value;
         _wordfield.visible = value;
+
+        _readyButton.visible = ! value;
     }
 
     /** Are we in the middle of a round? */
@@ -447,6 +466,7 @@ public class Display extends Sprite
                 p.y >= 0 && p.y < Properties.LETTERS);
     }
 
+    protected var _readyButton :Button;
 
     // PRIVATE VARIABLES
 

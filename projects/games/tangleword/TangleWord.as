@@ -13,8 +13,6 @@ import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
-import com.whirled.contrib.Scoreboard;
-
 /**
  * Main game takes care of initializing network connections,
  * maintaining distributed data representation, and responding to events.
@@ -66,11 +64,6 @@ public class TangleWord extends Sprite
         _controller.setModel(_model); // ... as in, right here :)
         addChild(_display);
 
-        // If I'm in control, initialize the scoreboard
-        if (_gameCtrl.game.amInControl()) {
-            initializeScoreboard();
-        }
-
         // If the game's already going, do what you have to do to catch up
         if (_gameCtrl.game.isInPlay()) {
             gameDidStart(null);
@@ -100,6 +93,12 @@ public class TangleWord extends Sprite
         _display.roundStarted(Properties.ROUND_LENGTH);
     }
 
+    protected function nextRound () :void
+    {
+        _gameCtrl.game.restartGameIn(1);
+        _gameCtrl.services.stopTicker("restart");
+    }
+
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "countdown") {
@@ -115,8 +114,18 @@ public class TangleWord extends Sprite
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
             if (elapsed >= Properties.PAUSE_LENGTH) {
                 if (_gameCtrl.game.amInControl()) {
-                    _gameCtrl.game.restartGameIn(1);
-                    _gameCtrl.services.stopTicker("restart");
+                    nextRound();
+                }
+            }
+        } else if (event.name == "ready" && _gameCtrl.game.amInControl()) {
+            var player :int = int(event.value);
+            var i :int = _unreadyPlayers.indexOf(player);
+
+            if (i != -1) {
+                _unreadyPlayers.splice(i, 1);
+
+                if (_unreadyPlayers.length == 0) {
+                    nextRound();
                 }
             }
         }
@@ -130,6 +139,8 @@ public class TangleWord extends Sprite
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.services.stopTicker("countdown");
             _gameCtrl.services.startTicker("restart", 1000);
+
+            _unreadyPlayers = _model.scoreboard.getPlayerIds();
         }
     }
 
@@ -141,21 +152,7 @@ public class TangleWord extends Sprite
     {
     }
 
-    /** Creates a new distributed scoreboard */
-    private function initializeScoreboard () :void
-    {
-        // Create a new instance, and fill in the names
-        // TODO: There are 2 scoreboards created?
-        var board :Scoreboard = new Scoreboard(_gameCtrl);
-        /*var occupants :Array = _gameCtrl.game.getOccupantIds();
-        for each (var id :int in occupants)
-        {
-            board.addPlayerId(id);
-        }
-
-        // Finally, share it!
-        _gameCtrl.net.set(SHARED_SCOREBOARD, board.internalScoreObject);*/
-    }
+    protected var _unreadyPlayers :Array;
 
     /** Game control object */
     private var _gameCtrl :GameControl;
