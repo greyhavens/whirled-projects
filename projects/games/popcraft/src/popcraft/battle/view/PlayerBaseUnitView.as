@@ -38,9 +38,16 @@ public class PlayerBaseUnitView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
         _workshop = _movie["workshop"];
 
+
         var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
         var recolor :MovieClip = _workshop["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
+
+        // remove the "target" badge - we'll re-add it when necessary
+        _targetBadge = _movie["target"];
+        _targetBadgeIndex = _movie.getChildIndex(_targetBadge);
+        _targetBadgeVisible = false;
+        _movie.removeChild(_targetBadge);
 
         _sprite.addChild(_movie);
 
@@ -171,7 +178,13 @@ public class PlayerBaseUnitView extends SceneObject
 
     public function set targetEnemyBadgeVisible (val :Boolean) :void
     {
-        DisplayObject(_movie["target"]).visible = val;
+        if (val && !_targetBadgeVisible) {
+            _movie.addChildAt(_targetBadge, _targetBadgeIndex);
+        } else if (!val && _targetBadgeVisible) {
+            _movie.removeChild(_targetBadge);
+        }
+
+        _targetBadgeVisible = val;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -191,6 +204,9 @@ public class PlayerBaseUnitView extends SceneObject
     protected var _clickableSprite :Sprite = new Sprite();
     protected var _movie :MovieClip;
     protected var _workshop :MovieClip;
+    protected var _targetBadge :MovieClip;
+    protected var _targetBadgeIndex :int;
+    protected var _targetBadgeVisible :Boolean;
     protected var _unit :PlayerBaseUnit;
     protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;

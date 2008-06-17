@@ -275,6 +275,7 @@ public class CreatureUnitView extends SceneObject
             // @TODO - move this logic somewhere more appropriate!
             if (_unit.unitType == Constants.UNIT_TYPE_HEAVY && newViewState.idle) {
                 anim.gotoAndStop(initialFrame);
+                anim.cacheAsBitmap = true;
             } else {
                 anim.gotoAndPlay(initialFrame);
             }
