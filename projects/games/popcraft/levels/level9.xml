@@ -11,14 +11,7 @@
             <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
         </Hints>
 
-        <GameDataOverride>
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="60" y="205"/>
-                    <BaseLocation x="642" y="175"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="60" y="205"/>
 
         <InitialResources>
             <Resource type="blue" amount="40"/>
@@ -38,6 +31,7 @@
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="150" team="1">
+            <BaseLocation x="642" y="175"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

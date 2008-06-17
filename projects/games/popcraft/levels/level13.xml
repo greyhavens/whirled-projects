@@ -6,27 +6,17 @@
         playerName="Jack"
         playerBaseHealth="150">
 
-        <Hints>
-        </Hints>
+        <Hints/>
 
-        <GameDataOverride
-            spellDropTimeMin="10"
-            spellDropTimeMax="20">
-		
-			<GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="75" y="145"/>
-                    <BaseLocation x="622" y="265"/>
-                </GameSize>
-            </GameSizes>
+        <PlayerBaseLocation x="75" y="145"/>
 
-        </GameDataOverride>
+        <GameDataOverride spellDropTimeMin="10" spellDropTimeMax="20"/>
 
         <InitialResources/>
 
         <InitialSpells>
-			<Spell type="shuffle" amount="1"/>
-		</InitialSpells>
+            <Spell type="shuffle" amount="1"/>
+        </InitialSpells>
 
         <AvailableUnits>
             <Unit type="grunt"/>
@@ -47,6 +37,8 @@
             baseHealth="150"
             team="1">
 
+            <BaseLocation x="622" y="265"/>
+
             <RepeatingDays>
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="2"
@@ -54,26 +46,26 @@
                     spellDropCourierGroupSizeMin="1"
                     spellDropCourierGroupSizeMax="1">
 
-					<Wave absoluteDelay="2"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="2"><Unit type="colossus" count="1"/></Wave>
 
-					<Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="11"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="13"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="17"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="19"><Unit type="sapper" count="1"/></Wave>
-					<Wave absoluteDelay="21"><Unit type="sapper" count="1"/></Wave>
-					
-					<Wave absoluteDelay="50"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="52"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="54"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="56"><Unit type="sapper" count="2"/></Wave>
-					<Wave absoluteDelay="58"><Unit type="sapper" count="2"/></Wave>
-					
-					<Wave absoluteDelay="62"><Unit type="colossus" count="1"/></Wave>
-					
-					<Wave absoluteDelay="85"><Unit type="colossus" count="3"/></Wave>
+                    <Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="11"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="13"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="17"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="19"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="21"><Unit type="sapper" count="1"/></Wave>
+
+                    <Wave absoluteDelay="50"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="52"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="54"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="56"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="58"><Unit type="sapper" count="2"/></Wave>
+
+                    <Wave absoluteDelay="62"><Unit type="colossus" count="1"/></Wave>
+
+                    <Wave absoluteDelay="85"><Unit type="colossus" count="3"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>

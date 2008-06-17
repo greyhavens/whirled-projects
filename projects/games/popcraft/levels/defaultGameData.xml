@@ -80,13 +80,13 @@ Students are advised to exercise caution around a Street-Walker's long, razor-sh
                 introText=
 "The Handy Man is the modern homeowner's solution to any plumbing-, or home security-related problem!
 
-Malfunctioning water closets and phonographs are no match for the Handy Man’s ability to slowly operate a multitude of tools simultaneously.
+Malfunctioning water closets and phonographs are no match for the Handy Man's ability to slowly operate a multitude of tools simultaneously.
 
 Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
                 introText2=
 "- Construct multiple Handy Men for a solid defense.
 - Able to detonate explosive Delivery Boys before they get close enough to cause damage.
-- Street-Walkers will quickly kill unprotected Handy-Men."
+- Street-Walkers will quickly kill unprotected Handy Men."
                 baseMoveSpeed="50"
                 hasRepulseForce="true"
                 maxHealth="100"

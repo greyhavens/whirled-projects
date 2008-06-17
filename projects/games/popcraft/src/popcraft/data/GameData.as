@@ -33,14 +33,7 @@ public class GameData
     public var resources :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
-    public var baseLocs :Array = [];
-    public var customSpellDropLocs :Array = [];
     public var playerColors :Array = [];
-
-    public function getBaseLocsForGameSize (numPlayers :int) :Array
-    {
-        return (numPlayers - 1 < baseLocs.length ? baseLocs[numPlayers - 1] : []);
-    }
 
     public function clone () :GameData
     {
@@ -75,18 +68,6 @@ public class GameData
 
         for each (var spellData :SpellData in spells) {
             theClone.spells.push(spellData.clone());
-        }
-
-        for each (var gameSize :Array in baseLocs) {
-            var gameSizeClone :Array = [];
-            for each (var baseLoc :Vector2 in gameSize) {
-                gameSizeClone.push(baseLoc.clone());
-            }
-            theClone.baseLocs.push(gameSizeClone);
-        }
-
-        for each (var spellDropLoc :Vector2 in customSpellDropLocs) {
-            theClone.customSpellDropLocs.push(null != spellDropLoc ? spellDropLoc.clone() : null);
         }
 
         theClone.playerColors = playerColors.slice();
@@ -162,40 +143,6 @@ public class GameData
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
             var spellClass :Class = (type < Constants.CREATURE_SPELL_TYPE__LIMIT ? CreatureSpellData : SpellData);
             gameData.spells[type] = spellClass.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
-        }
-
-        // read base locations and spell drop locations
-        for each (var gameSizeNode :XML in xml.GameSizes.GameSize) {
-            var numPlayers :int = XmlReader.getAttributeAsUint(gameSizeNode, "numPlayers");
-
-            var baseLocArray :Array = [];
-
-            for each (var baseLocNode :XML in gameSizeNode.BaseLocation) {
-                var x :Number = XmlReader.getAttributeAsNumber(baseLocNode, "x");
-                var y :Number = XmlReader.getAttributeAsNumber(baseLocNode, "y");
-                baseLocArray.push(new Vector2(x, y));
-            }
-
-            for (i = gameData.baseLocs.length; i < numPlayers; ++i) {
-                gameData.baseLocs.push(null);
-            }
-
-            gameData.baseLocs[numPlayers - 1] = baseLocArray;
-
-            var hasCustomSpellDropLoc :Boolean = XmlReader.getAttributeAsBoolean(gameSizeNode, "customSpellDropLocation", false);
-            var customSpellDropLoc :Vector2;
-            if (hasCustomSpellDropLoc) {
-                var spellDropLocNode :XML = XmlReader.getSingleChild(gameSizeNode, "CustomSpellDropLocation");
-                customSpellDropLoc = new Vector2();
-                customSpellDropLoc.x = XmlReader.getAttributeAsNumber(spellDropLocNode, "x");
-                customSpellDropLoc.y = XmlReader.getAttributeAsNumber(spellDropLocNode, "y");
-            }
-
-            for (i = gameData.customSpellDropLocs.length; i < numPlayers; ++i) {
-                gameData.customSpellDropLocs.push(null);
-            }
-
-            gameData.customSpellDropLocs[numPlayers - 1] = customSpellDropLoc;
         }
 
         // read player colors

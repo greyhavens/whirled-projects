@@ -1,5 +1,6 @@
 package popcraft.data {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 
 import popcraft.*;
@@ -18,6 +19,8 @@ public class LevelData
     public var playerName :String;
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
+    public var playerBaseLoc :Vector2;
+    public var spellDropLoc :Vector2;
 
     public var levelHints :Array = [];
     public var availableUnits :Array = [];
@@ -59,6 +62,18 @@ public class LevelData
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
+
+        var playerBaseLocXml :XML = XmlReader.getSingleChild(xml, "PlayerBaseLocation");
+        var baseX :Number = XmlReader.getAttributeAsNumber(playerBaseLocXml, "x");
+        var baseY :Number = XmlReader.getAttributeAsNumber(playerBaseLocXml, "y");
+        level.playerBaseLoc = new Vector2(baseX, baseY);
+
+        var spellDropXml :XML = XmlReader.getSingleChild(xml, "SpellDropLocation", null);
+        if (null != spellDropXml) {
+            var spellX :Number = XmlReader.getAttributeAsNumber(spellDropXml, "x");
+            var spellY :Number = XmlReader.getAttributeAsNumber(spellDropXml, "y");
+            level.spellDropLoc = new Vector2(spellX, spellY);
+        }
 
         // level hints
         for each (var hintData :XML in xml.Hints.Hint) {

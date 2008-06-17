@@ -6,18 +6,13 @@
         playerName="Jack"
         playerBaseHealth="100">
 
-        <GameDataOverride initialDayPhase="night">
-			<GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="75" y="125"/>
-                    <BaseLocation x="622" y="305"/>
-                </GameSize>
-            </GameSizes>
-		</GameDataOverride>
+        <PlayerBaseLocation x="75" y="125"/>
+
+        <GameDataOverride initialDayPhase="night"/>
 
         <Hints>
             <Hint>Delivery Boys and Street-Walkers don't mix. Wait until your Handy Men have detonated any Delivery Boys in the area, then send Street-Walkers to tear your opponent down!</Hint>
-			<Hint>The clock tower bells sound when dawn approaches. Take care not to send creatures out too close to sunrise, or they'll be destroyed before they have a chance to attack your opponent.</Hint>
+            <Hint>The clock tower bells sound when dawn approaches. Take care not to send creatures out too close to sunrise, or they'll be destroyed before they have a chance to attack your opponent.</Hint>
         </Hints>
 
         <InitialResources/>
@@ -30,6 +25,7 @@
         <AvailableSpells/>
 
         <Computer playerName="Ralph" baseHealth="100" team="1">
+            <BaseLocation x="622" y="305"/>
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>

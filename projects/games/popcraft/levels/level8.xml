@@ -11,14 +11,7 @@
             <Hint>An unprotected Flesh Behemoth will quickly fall to a well-prepared opponent. Send Street-Walkers ahead of your Behemoths to distract your enemy's Handy Men!</Hint>
         </Hints>
 
-        <GameDataOverride>
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="60" y="205"/>
-                    <BaseLocation x="642" y="175"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="60" y="205"/>
 
         <InitialResources/>
 
@@ -35,6 +28,7 @@
         </AvailableSpells>
 
         <Computer playerName="Ralph" baseHealth="150" team="1">
+            <BaseLocation x="642" y="175"/>
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

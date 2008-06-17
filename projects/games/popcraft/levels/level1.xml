@@ -14,14 +14,9 @@ The headmaster, Prof. Weardd, is nowhere to be found."
         playerName="Jack"
         playerBaseHealth="50">
 
-        <GameDataOverride disableDiurnalCycle="true">
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="200" y="195"/>
-                    <BaseLocation x="500" y="165"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="200" y="195"/>
+
+        <GameDataOverride disableDiurnalCycle="true"/>
 
         <Hints>
             <Hint>When you have enough Flesh and Energy, remember to create a Street-Walker by clicking the switch next to the puzzle. Create multiple Street-Walkers to destroy your opponent's workshop!</Hint>
@@ -39,6 +34,7 @@ The headmaster, Prof. Weardd, is nowhere to be found."
         <AvailableSpells/>
 
         <Computer playerName="Ralph" baseStartHealth="15" baseHealth="50" team="1">
+            <BaseLocation x="500" y="165"/>
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>

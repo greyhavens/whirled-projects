@@ -6,17 +6,12 @@
         playerName="Jack"
         playerBaseHealth="100">
 
+        <PlayerBaseLocation x="60" y="185"/>
+
         <GameDataOverride
             disableDiurnalCycle="true"
             spellDropTimeMin="3"
-            spellDropTimeMax="3">
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="60" y="185"/>
-                    <BaseLocation x="642" y="175"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+            spellDropTimeMax="3"/>
 
         <InitialResources>
             <Resource type="blue" amount="1000"/>
@@ -37,7 +32,9 @@
             <Spell type="shuffle"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" baseHealth="500" team="1"/>
+        <Computer playerName="Ralph" baseHealth="500" team="1">
+            <BaseLocation x="642" y="175"/>
+        </Computer>
 
     </Level>
 

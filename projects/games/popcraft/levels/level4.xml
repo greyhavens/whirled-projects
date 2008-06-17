@@ -18,14 +18,7 @@
             <Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
         </Hints>
 
-        <GameDataOverride>
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="75" y="125"/>
-                    <BaseLocation x="622" y="305"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="75" y="125"/>
 
         <InitialResources>
             <Resource type="blue" amount="60"/>
@@ -41,6 +34,7 @@
         <AvailableSpells/>
 
         <Computer playerName="Ralph" baseHealth="100" team="1">
+            <BaseLocation x="622" y="305"/>
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>

@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
@@ -43,9 +44,25 @@ public class GameContext
     public static function get numPlayers () :int { return playerInfos.length; }
     public static function get localUserIsPlaying () :Boolean { return localPlayerId >= 0; }
 
+    public static function get customSpellDropLoc () :Vector2
+    {
+        return (isSinglePlayer ? spLevel.spellDropLoc : mpSettings.spellDropLoc);
+    }
+
     public static function get baseLocs () :Array
     {
-        return gameData.getBaseLocsForGameSize(numPlayers);
+        var locs :Array = [];
+
+        if (isSinglePlayer) {
+            locs.push(spLevel.playerBaseLoc);
+            for each (var computer :ComputerPlayerData in spLevel.computers) {
+                locs.push(computer.baseLoc);
+            }
+        } else {
+            locs = mpSettings.baseLocs;
+        }
+
+        return locs;
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo

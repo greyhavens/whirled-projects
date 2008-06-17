@@ -13,15 +13,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             <Hint>Focus on eliminating one of your opponents first. With one enemy out of the way, the other will fall more quickly.</Hint>
         </Hints>
 
-        <GameDataOverride>
-            <GameSizes>
-                <GameSize numPlayers="3">
-                    <BaseLocation x="75" y="175"/>
-                    <BaseLocation x="612" y="115"/>
-                    <BaseLocation x="612" y="315"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="75" y="175"/>
 
         <InitialResources>
             <Resource type="blue" amount="50"/>
@@ -37,6 +29,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         <AvailableSpells/>
 
         <Computer playerName="Ralph" baseHealth="70" team="1">
+            <BaseLocation x="612" y="115"/>
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
@@ -51,6 +44,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
         </Computer>
 
         <Computer playerName="Sam" baseHealth="70" team="1">
+            <BaseLocation x="612" y="315"/>
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

@@ -9,11 +9,11 @@ public class XmlReader
         return xml.child(name).length() > 0;
     }
 
-    public static function getSingleChild (xml :XML, name :String, defaultValue :XML = null) :XML
+    public static function getSingleChild (xml :XML, name :String, defaultValue :* = undefined) :XML
     {
         var child :XML = xml.child(name)[0];
         if (null == child) {
-            if (null != defaultValue) {
+            if (undefined !== defaultValue) {
                 return defaultValue;
             } else {
                 throw new XmlReadError("In node '" + String(xml.localName()) + "': error accessing child '" + name + "': child does not exist");

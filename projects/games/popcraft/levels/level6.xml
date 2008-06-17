@@ -14,16 +14,9 @@
             <Hint>Infusions last for a limited time. Maximize the effectiveness of your Infusions by using them when you have a large number of creatures on the battlefield.</Hint>
         </Hints>
 
-        <GameDataOverride
-            spellDropTimeMin="30"
-            spellDropTimeMax="30">
-            <GameSizes>
-                <GameSize numPlayers="2">
-                    <BaseLocation x="60" y="205"/>
-                    <BaseLocation x="642" y="175"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="60" y="205"/>
+
+        <GameDataOverride spellDropTimeMin="30" spellDropTimeMax="30"/>
 
         <InitialResources/>
 
@@ -46,6 +39,7 @@
             playerName="Ralph"
             baseHealth="100"
             team="1">
+            <BaseLocation x="642" y="175"/>
             <InitialSpells>
                 <Spell type="rigormortis" amount="1"/>
             </InitialSpells>

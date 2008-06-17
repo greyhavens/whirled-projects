@@ -12,19 +12,11 @@
             <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
-        <GameDataOverride
-            spellDropScatterMin="15"
-            spellDropScatterMax="30">
-            <GameSizes>
-                <GameSize numPlayers="4" customSpellDropLocation="true">
-                    <BaseLocation x="85" y="145"/>
-                    <BaseLocation x="85" y="245"/>
-                    <BaseLocation x="642" y="115"/>
-                    <BaseLocation x="642" y="325"/>
-                    <CustomSpellDropLocation x="350" y="150"/>
-                </GameSize>
-            </GameSizes>
-        </GameDataOverride>
+        <PlayerBaseLocation x="85" y="145"/>
+
+        <SpellDropLocation x="350" y="150"/>
+
+        <GameDataOverride spellDropScatterMin="15" spellDropScatterMax="30"/>
 
         <InitialResources/>
 
@@ -46,6 +38,7 @@
             playerName="Pigsley"
             baseHealth="100"
             team="0">
+            <BaseLocation x="85" y="245"/>
             <InitialSpells/>
 
             <RepeatingDays>
@@ -68,6 +61,7 @@
             playerName="Ralph"
             baseHealth="150"
             team="1">
+            <BaseLocation x="642" y="115"/>
             <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"
@@ -110,6 +104,7 @@
             playerName="Sam"
             baseHealth="150"
             team="1">
+            <BaseLocation x="642" y="325"/>
             <InitialSpells/>
             <RepeatingDays>
                 <Day repeatWaves="false"

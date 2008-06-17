@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObjectRef;
 
@@ -37,6 +38,8 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerName = "Unknown player " + playerId;
         }
+
+        _baseLoc = GameContext.baseLocs[playerId];
     }
 
     public function get handicap () :Number
@@ -77,6 +80,11 @@ public class PlayerInfo extends EventDispatcher
     public function set leftGame (val :Boolean) :void
     {
         _leftGame = val;
+    }
+
+    public function get baseLoc () :Vector2
+    {
+        return _baseLoc;
     }
 
     public function get baseRef () :SimObjectRef
@@ -168,6 +176,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _targetedEnemyId :int;
     protected var _baseRef :SimObjectRef;
     protected var _handicap :Number;
+    protected var _baseLoc :Vector2;
 
     protected static var log :Log = Log.getLog(PlayerInfo);
 

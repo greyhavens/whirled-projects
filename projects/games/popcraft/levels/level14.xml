@@ -11,21 +11,15 @@
         playerName="Jack"
         playerBaseHealth="150">
 
-        <Hints>
-        </Hints>
+        <Hints/>
+
+        <PlayerBaseLocation x="75" y="145"/>
+
+        <SpellDropLocation x="300" y="300"/>
 
         <GameDataOverride
             enableEclipse="true"
             initialDayPhase="eclipse">
-            <GameSizes>
-                <GameSize numPlayers="3" customSpellDropLocation="true">
-                    <BaseLocation x="75" y="145"/>
-                    <BaseLocation x="632" y="185"/>
-                    <BaseLocation x="632" y="285"/>
-                    <CustomSpellDropLocation x="300" y="300"/>
-                </GameSize>
-            </GameSizes>
-
             <PlayerColors>
                 <PlayerColor player="3" color="0xCB71FF"/>
             </PlayerColors>
@@ -58,6 +52,8 @@
             playerName="Ralph"
             baseHealth="450"
             team="1">
+
+            <BaseLocation x="632" y="185"/>
 
             <InitialDays>
                 <Day repeatWaves="false"
@@ -127,6 +123,8 @@
             baseHealth="1"
             invincible="true"
             team="1">
+
+            <BaseLocation x="632" y="285"/>
 
             <InitialDays>
                 <Day repeatWaves="false"/>
