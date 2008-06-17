@@ -19,11 +19,9 @@ public class DiurnalCycleView extends SceneObject
 
         _sun = SwfResource.instantiateMovieClip("dashboard", "sun");
         _moon = SwfResource.instantiateMovieClip("dashboard", "moon");
+        _eclipse = SwfResource.instantiateMovieClip("dashboard", "eclipse");
 
         _moon.cacheAsBitmap = true;
-
-        _sprite.addChild(_sun);
-        _sprite.addChild(_moon);
 
         this.dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
     }
@@ -56,35 +54,29 @@ public class DiurnalCycleView extends SceneObject
         var percentComplete :Number = 1.0 - ((timeTillNextPhase - _updateTimeDelta) / phaseTotalTime);
         var xLoc :Number = BODY_START_X + (percentComplete * BODY_TOTAL_DIST);
 
-        if (_sun.visible) {
-            _sun.x = xLoc;
-        }
-
-        if (_moon.visible) {
-            _moon.x = xLoc;
+        if (null != _curVisibleBody) {
+            _curVisibleBody.x = xLoc;
         }
     }
 
     protected function dayPhaseChanged (newPhase :int, playSound :Boolean) :void
     {
         var soundName :String;
+        var newVisibleBody :MovieClip;
 
         switch (newPhase) {
         case Constants.PHASE_DAY:
-            _sun.visible = true;
-            _moon.visible = false;
+            newVisibleBody = _sun;
             soundName = "sfx_day";
             break;
 
         case Constants.PHASE_NIGHT:
-            _sun.visible = false;
-            _moon.visible = true;
+            newVisibleBody = _moon;
             soundName = "sfx_night";
             break;
 
         case Constants.PHASE_ECLIPSE:
-            _sun.visible = true;
-            _moon.visible = true;
+            newVisibleBody = _eclipse;
             soundName = "sfx_night";
             break;
         }
@@ -93,6 +85,15 @@ public class DiurnalCycleView extends SceneObject
             GameContext.playGameSound(soundName);
         }
 
+        if (null != _curVisibleBody) {
+            _sprite.removeChild(_curVisibleBody);
+        }
+
+        if (null != newVisibleBody) {
+            _sprite.addChild(newVisibleBody);
+        }
+
+        _curVisibleBody = newVisibleBody;
         _lastPhase = newPhase;
     }
 
@@ -104,7 +105,9 @@ public class DiurnalCycleView extends SceneObject
     protected var _sprite :Sprite;
     protected var _sun :MovieClip;
     protected var _moon :MovieClip;
+    protected var _eclipse :MovieClip;
     protected var _lastPhase :int;
+    protected var _curVisibleBody :MovieClip;
     protected var _playedDawnSound :Boolean;
 
     protected var _lastUpdateTimestamp :Number = 0;
