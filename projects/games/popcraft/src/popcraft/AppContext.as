@@ -31,6 +31,12 @@ public class AppContext
         return dataRsrc.levelProgression;
     }
 
+    public static function get multiplayerSettings () :Array
+    {
+        var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
+        return dataRsrc.multiplayerSettings;
+    }
+
     public static function get gameVariants () :Array
     {
         var variantResource :GameVariantsResource = ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;

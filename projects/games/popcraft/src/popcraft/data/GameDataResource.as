@@ -11,12 +11,17 @@ public class GameDataResource extends XmlResource
 
     public function get gameData () :GameData
     {
-        return LoadedData(super.generatedObject).gameData;
+        return LoadedData(this.generatedObject).gameData;
     }
 
     public function get levelProgression () :LevelProgressionData
     {
-        return LoadedData(super.generatedObject).levelProgression;
+        return LoadedData(this.generatedObject).levelProgression;
+    }
+
+    public function get multiplayerSettings () :Array
+    {
+        return LoadedData(this.generatedObject).multiplayerSettings;
     }
 
     protected static function objectGenerator (xml :XML) :LoadedData
@@ -24,6 +29,10 @@ public class GameDataResource extends XmlResource
         var loadedData :LoadedData = new LoadedData();
         loadedData.gameData = GameData.fromXml(xml.GameData[0]);
         loadedData.levelProgression = LevelProgressionData.fromXml(xml.LevelProgression[0]);
+
+        for each (var msXml :XML in xml.Multiplayer.MultiplayerSettings) {
+            loadedData.multiplayerSettings.push(MultiplayerSettingsData.fromXml(msXml));
+        }
 
         return loadedData;
     }
@@ -37,4 +46,5 @@ class LoadedData
 {
     public var gameData :GameData;
     public var levelProgression :LevelProgressionData;
+    public var multiplayerSettings :Array = [];
 }

@@ -297,6 +297,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <PlayerColor player="4" color="0xFFE75F"/>
         </PlayerColors>
 
+
     </GameData>
 
     <LevelProgression>
@@ -315,5 +316,31 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
         <Level name="13. Infusion Infusion"/>
         <Level name="14. Wherein All is Revealed..."/>
     </LevelProgression>
+
+    <Multiplayer>
+        <MultiplayerSettings
+            arrangeType="1v1"
+            smallerTeamHandicap="1"
+            bgName="Level1"
+            mapSizeX="700"
+            mapSizeY="372"
+            scaleSprites="false">
+
+            <BaseLocation x="75" y="145"/>
+            <BaseLocation x="632" y="265"/>
+        </MultiplayerSettings>
+
+        <MultiplayerSettings
+            arrangeType="1v1"
+            smallerTeamHandicap="1"
+            bgName="Level2"
+            mapSizeX="700"
+            mapSizeY="372"
+            scaleSprites="false">
+
+            <BaseLocation x="75" y="265"/>
+            <BaseLocation x="632" y="145"/>
+        </MultiplayerSettings>
+    </Multiplayer>
 
 </root>

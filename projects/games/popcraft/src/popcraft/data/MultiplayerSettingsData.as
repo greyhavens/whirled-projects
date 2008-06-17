@@ -10,8 +10,8 @@ public class MultiplayerSettingsData
     public var arrangeType :int;
     public var smallerTeamHandicap :Number;
     public var bgName :String;
-    public var mapScaleX :Number;
-    public var mapScaleY :Number;
+    public var mapSizeX :Number;
+    public var mapSizeY :Number;
     public var scaleSprites :Boolean;
     public var baseLocs :Array = [];
 
@@ -22,13 +22,15 @@ public class MultiplayerSettingsData
         theClone.arrangeType = arrangeType;
         theClone.smallerTeamHandicap = smallerTeamHandicap;
         theClone.bgName = bgName;
-        theClone.mapScaleX = mapScaleX;
-        theClone.mapScaleY = mapScaleY;
+        theClone.mapSizeX = mapSizeX;
+        theClone.mapSizeY = mapSizeY;
         theClone.scaleSprites = scaleSprites;
 
         for each (var baseLoc :Vector2 in baseLocs) {
             theClone.baseLocs.push(baseLoc.clone());
         }
+
+        return theClone;
     }
 
     public static function fromXml (xml :XML, inheritFrom :MultiplayerSettingsData = null) :MultiplayerSettingsData
@@ -40,10 +42,13 @@ public class MultiplayerSettingsData
         data.arrangeType = XmlReader.getAttributeAsEnum(xml, "arrangeType", Constants.MULTIPLAYER_ARRANGEMENT_NAMES, (useDefaults ? inheritFrom.arrangeType : undefined));
         data.smallerTeamHandicap = XmlReader.getAttributeAsNumber(xml, "smallerTeamHandicap", (useDefaults ? inheritFrom.smallerTeamHandicap : undefined));
         data.bgName = XmlReader.getAttributeAsString(xml, "bgName", (useDefaults ? inheritFrom.bgName : undefined));
-        data.mapScaleX = XmlReader.getAttributeAsNumber(xml, "mapScaleX", (useDefaults ? inheritFrom.mapScaleX : undefined));
-        data.mapScaleY = XmlReader.getAttributeAsNumber(xml, "mapScaleY", (useDefaults ? inheritFrom.mapScaleY : undefined));
+        data.mapSizeX = XmlReader.getAttributeAsNumber(xml, "mapSizeX", (useDefaults ? inheritFrom.mapSizeX : undefined));
+        data.mapSizeY = XmlReader.getAttributeAsNumber(xml, "mapSizeY", (useDefaults ? inheritFrom.mapSizeY : undefined));
         data.scaleSprites = XmlReader.getAttributeAsBoolean(xml, "scaleSprites", (useDefaults ? inheritFrom.scaleSprites : undefined));
 
+        if (xml.BaseLocation.length > 0) {
+            data.baseLocs.length = 0;
+        }
 
         for each (var baseLocXml :XML in xml.BaseLocation) {
             var x :Number = XmlReader.getAttributeAsNumber(baseLocXml, "x");
