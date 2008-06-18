@@ -3,6 +3,7 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name"  value="Pug"/>
+  <property name="app.type"  value="pet"/>
   <property name="app.source-dir" value="src"/>
 
   <!-- include the standard build script -->
