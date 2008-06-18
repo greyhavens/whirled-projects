@@ -60,8 +60,8 @@ public class Constants
     public static const ARRANGE_2V1V1 :int = 5;
     public static const ARRANGE_4FFA :int = 6;
 
-    public static const MULTIPLAYER_ARRANGEMENT_NAMES :Array = [ "1v1", "2v1", "1v1v1", "2v2", "3v1", "2v1v1", "1v1v1v1" ];
-    public static const MULTIPLAYER_ARRANGEMENT_PLAYER_COUNTS :Array = [ 2, 3, 3, 4, 4, 4 ];
+    public static const TEAM_ARRANGEMENT_NAMES :Array = [ "1v1", "2v1", "1v1v1", "2v2", "3v1", "2v1v1", "1v1v1v1" ];
+    public static const TEAM_ARRANGEMENT_PLAYER_COUNTS :Array = [ 2, 3, 3, 4, 4, 4 ];
 
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :int = 0;

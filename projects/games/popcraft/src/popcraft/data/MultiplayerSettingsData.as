@@ -13,7 +13,7 @@ public class MultiplayerSettingsData
     {
         var data :MultiplayerSettingsData = new MultiplayerSettingsData();
 
-        data.arrangeType = XmlReader.getAttributeAsEnum(xml, "arrangeType", Constants.MULTIPLAYER_ARRANGEMENT_NAMES);
+        data.arrangeType = XmlReader.getAttributeAsEnum(xml, "arrangeType", Constants.TEAM_ARRANGEMENT_NAMES);
         data.smallerTeamHandicap = XmlReader.getAttributeAsNumber(xml, "smallerTeamHandicap");
         data.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
 

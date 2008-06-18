@@ -49,9 +49,10 @@ public class GameLobbyMode extends AppMode
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
 
         if (this.isFirstPlayer) {
-            // initialize the team selection array. nobody's on a team yet.
+            // initialize everything if we're the first player
             MultiplayerConfig.teams = ArrayUtil.create(MultiplayerConfig.numPlayers, -1);
             MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, false);
+            MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
         } else {
             _playerTeams = MultiplayerConfig.teams;
             this.updateDisplay();
@@ -210,9 +211,6 @@ public class GameLobbyMode extends AppMode
         var variants :Array = AppContext.gameVariants;
         var variant :GameVariantData = variants[0];
         GameContext.gameData = variant.gameDataOverride;
-
-        var mpSettings :Array = AppContext.multiplayerSettings;
-        GameContext.mpSettings = mpSettings[0];
 
         MainLoop.instance.changeMode(new GameMode());
     }

@@ -33,33 +33,40 @@ public class GameMode extends AppMode
     {
         PerfUtil.reset();
 
+        GameContext.gameMode = this;
+
+        // init RNGs
+        var randSeed :uint = (GameContext.isMultiplayer ? MultiplayerConfig.randSeed : uint(Math.random() * uint.MAX_VALUE));
+        Rand.seedStream(AppContext.randStreamPuzzle, randSeed);
+        Rand.seedStream(Rand.STREAM_GAME, randSeed);
+        log.info("Starting game with seed: " + randSeed);
+
+        if (GameContext.isMultiplayer) {
+            this.initMultiplayerSettings();
+        }
+
         // cache some frequently-used values in GameContext
         GameContext.mapScaleXInv = 1 / GameContext.mapSettings.mapScaleX;
         GameContext.mapScaleYInv = 1 / GameContext.mapSettings.mapScaleY;
         GameContext.scaleSprites = GameContext.mapSettings.scaleSprites;
 
-        GameContext.gameMode = this;
-
         // create some layers
-        _battleParent = new Sprite();
-        this.modeSprite.addChild(_battleParent);
-
-        _hudParent = new Sprite();
-        this.modeSprite.addChild(_hudParent);
-
-        _overlayParent = new Sprite();
-        this.modeSprite.addChild(_overlayParent);
+        GameContext.battleLayer = new Sprite();
+        GameContext.dashboardLayer = new Sprite();
+        GameContext.overlayLayer = new Sprite();
+        this.modeSprite.addChild(GameContext.battleLayer);
+        this.modeSprite.addChild(GameContext.dashboardLayer);
+        this.modeSprite.addChild(GameContext.overlayLayer);
 
         this.setupAudio();
-
-        // create a special ObjectDB for all objects that are synchronized over the network.
-        GameContext.netObjects = new NetObjectDB();
-
         this.setupNetwork();
+        this.setupPlayers();
+        this.setupBattle();
+        this.setupDashboard();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
-            this.addObject(_debugDataView, _overlayParent);
+            this.addObject(_debugDataView, GameContext.overlayLayer);
             _debugDataView.visible = true;
         }
 
@@ -121,6 +128,38 @@ public class GameMode extends AppMode
         GameContext.musicControls = null;
     }
 
+    protected function initMultiplayerSettings () :void
+    {
+        // Determine what the game's team arrangement is, and randomly choose an appropriate
+        // MultiplayerSettingsData that fits that arrangement.
+
+        var multiplayerArrangement :int = MultiplayerConfig.computeTeamArrangement();
+        var potentialSettings :Array = AppContext.multiplayerSettings;
+        potentialSettings = potentialSettings.filter(
+            function (mpSettings :MultiplayerSettingsData, index :int, array :Array) :Boolean {
+                return (mpSettings.arrangeType == multiplayerArrangement);
+            });
+
+        GameContext.mpSettings = potentialSettings[Rand.nextIntRange(0, potentialSettings.length, Rand.STREAM_GAME)];
+    }
+
+    protected function setupPlayers () :void
+    {
+        if (GameContext.isMultiplayer) {
+            this.setupPlayersMP();
+        } else {
+            this.setupPlayersSP();
+        }
+
+        // create players' unit spell sets (these are synchronized objects)
+        GameContext.playerCreatureSpellSets = [];
+        for (var playerId :int = 0; playerId < GameContext.numPlayers; ++playerId) {
+            var spellSet :CreatureSpellSet = new CreatureSpellSet();
+            GameContext.netObjects.addObject(spellSet);
+            GameContext.playerCreatureSpellSets.push(spellSet);
+        }
+    }
+
     protected function setupPlayersMP () :void
     {
         var teams :Array = MultiplayerConfig.teams;
@@ -140,7 +179,7 @@ public class GameMode extends AppMode
             var playerInfo :PlayerInfo;
             var teamId :int = teams[playerId];
             var isHandicapped :Boolean = handicaps[playerId];
-            var handicap :Number = (isHandicapped ? 0.5 : 1); // temp
+            var handicap :Number = 1; // @TODO - wire this up
 
             if (GameContext.localPlayerId == playerId) {
                 var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, handicap);
@@ -220,6 +259,9 @@ public class GameMode extends AppMode
 
     protected function setupNetwork () :void
     {
+        // create a special ObjectDB for all objects that are synchronized over the network.
+        GameContext.netObjects = new NetObjectDB();
+
         // set up the message manager
         if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
             _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, GameContext.isFirstPlayer, TICK_INTERVAL_MS);
@@ -243,12 +285,12 @@ public class GameMode extends AppMode
         _messageMgr.shutdown();
     }
 
-    protected function setupPuzzleAndUI () :void
+    protected function setupDashboard () :void
     {
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = Constants.DASHBOARD_LOC.x;
         dashboard.y = Constants.DASHBOARD_LOC.y;
-        this.addObject(dashboard, _hudParent);
+        this.addObject(dashboard, GameContext.dashboardLayer);
 
         GameContext.dashboard = dashboard;
 
@@ -274,7 +316,7 @@ public class GameMode extends AppMode
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
-        this.addObject(battleBoardView, _battleParent);
+        this.addObject(battleBoardView, GameContext.battleLayer);
 
         GameContext.battleBoardView = battleBoardView;
 
@@ -409,27 +451,6 @@ public class GameMode extends AppMode
         if (!_gameIsRunning) {
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
-                log.info("Starting game. randomSeed: " + _messageMgr.randomSeed);
-                Rand.seedStream(AppContext.randStreamPuzzle, _messageMgr.randomSeed);
-                Rand.seedStream(Rand.STREAM_GAME, _messageMgr.randomSeed);
-
-                if (GameContext.isMultiplayer) {
-                    this.setupPlayersMP();
-                } else {
-                    this.setupPlayersSP();
-                }
-
-                // create players' unit spell sets (these are synchronized objects)
-                GameContext.playerCreatureSpellSets = [];
-                for (var playerId :int = 0; playerId < GameContext.numPlayers; ++playerId) {
-                    var spellSet :CreatureSpellSet = new CreatureSpellSet();
-                    GameContext.netObjects.addObject(spellSet);
-                    GameContext.playerCreatureSpellSets.push(spellSet);
-                }
-
-                this.setupBattle();
-                this.setupPuzzleAndUI();
-
                 _gameIsRunning = true;
             } else {
                 return;
@@ -800,18 +821,10 @@ public class GameMode extends AppMode
         }
     }
 
-    public function get overlayParent () :DisplayObjectContainer
-    {
-        return _overlayParent;
-    }
-
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
     protected var _debugDataView :DebugDataView;
-    protected var _battleParent :Sprite;
-    protected var _hudParent :Sprite;
-    protected var _overlayParent :Sprite;
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;
     protected var _startedMusic :Boolean;

@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 
+import flash.display.Sprite;
+
 import popcraft.battle.*;
 import popcraft.battle.geom.ForceParticleContainer;
 import popcraft.battle.view.*;
@@ -36,6 +38,10 @@ public class GameContext
     public static var dashboard :DashboardView;
     public static var puzzleBoard :PuzzleBoard;
     public static var forceParticleContainer :ForceParticleContainer;
+
+    public static var overlayLayer :Sprite;
+    public static var dashboardLayer :Sprite;
+    public static var battleLayer :Sprite;
 
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;

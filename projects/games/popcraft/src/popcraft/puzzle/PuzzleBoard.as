@@ -167,7 +167,7 @@ public class PuzzleBoard extends SceneObject
 
         // show the "resources earned" animation
         var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
-        animLoc = GameContext.gameMode.overlayParent.globalToLocal(animLoc);
+        animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
         this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
 
         // play a sound
@@ -201,7 +201,7 @@ public class PuzzleBoard extends SceneObject
 
         anim.addTask(animTask);
 
-        GameContext.gameMode.addObject(anim, GameContext.gameMode.overlayParent);
+        GameContext.gameMode.addObject(anim, GameContext.overlayLayer);
     }
 
     protected function animatePieceDrops () :void
