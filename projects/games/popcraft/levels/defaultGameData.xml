@@ -355,7 +355,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
                 <BaseLocation x="85" y="295"/>
                 <BaseLocation x="622" y="205"/>
             </MapSettings>
-        </XMultiplayerSettings>
+        </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
             <MapSettings backgroundName="Level3">
@@ -363,7 +363,18 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
                 <BaseLocation x="85" y="125"/>
                 <BaseLocation x="85" y="305"/>
             </MapSettings>
-        </XMultiplayerSettings>
+        </MultiplayerSettings>
+
+        <!-- 3v1 settings -->
+        <MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="3">
+            <MapSettings backgroundName="Level3">
+                <BaseLocation x="642" y="185"/>
+                <BaseLocation x="590" y="115"/>
+                <BaseLocation x="590" y="335"/>
+                <BaseLocation x="70" y="185"/>
+                <SpellDropLocation x="250" y="160"/>
+            </MapSettings>
+        </MultiplayerSettings>
 
     </Multiplayer>
 

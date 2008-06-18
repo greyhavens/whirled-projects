@@ -165,6 +165,30 @@ public class GameMode extends AppMode
         var teams :Array = MultiplayerConfig.teams;
         var handicaps :Array = MultiplayerConfig.handicaps;
 
+        // In multiplayer games, base locations are arranged in order of team,
+        // with larger teams coming before smaller ones. Populate a set of TeamInfo
+        // structures with base locations so that we can put everyone in the correct place.
+        var baseLocs :Array = GameContext.mapSettings.baseLocs;
+        var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
+        var teamInfos :Array = [];
+        var teamInfo :TeamInfo;
+        for (var teamId :int = 0; teamId < teamSizes.length; ++teamId) {
+            teamInfo = new TeamInfo();
+            teamInfo.teamId = teamId;
+            teamInfo.teamSize = teamSizes[teamId];
+            teamInfos.push(teamInfo);
+        }
+
+        teamInfos.sort(TeamInfo.teamSizeCompare);
+        var baseLocIndex :int = 0;
+        for each (teamInfo in teamInfos) {
+            for (var i :int = 0; i < teamInfo.teamSize; ++i) {
+                teamInfo.baseLocs.push(baseLocs[baseLocIndex++]);
+            }
+        }
+
+        teamInfos.sort(TeamInfo.teamIdCompare);
+
         // get some information about the players in the game
         var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
         GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
@@ -177,15 +201,17 @@ public class GameMode extends AppMode
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
 
             var playerInfo :PlayerInfo;
-            var teamId :int = teams[playerId];
+            teamId = teams[playerId];
+            teamInfo = teamInfos[teamId];
+            var baseLoc :Vector2 = teamInfo.baseLocs.shift();
             var isHandicapped :Boolean = handicaps[playerId];
             var handicap :Number = 1; // @TODO - wire this up
 
             if (GameContext.localPlayerId == playerId) {
-                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, handicap);
+                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, baseLoc, handicap);
                 playerInfo = localPlayerInfo;
             } else {
-                playerInfo = new PlayerInfo(playerId, teamId, handicap);
+                playerInfo = new PlayerInfo(playerId, teamId, baseLoc, handicap);
             }
 
             GameContext.playerInfos.push(playerInfo);
@@ -201,8 +227,11 @@ public class GameMode extends AppMode
     {
         GameContext.playerInfos = [];
 
-        // Create the local player (always on team 0)
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, 0, 1, GameContext.spLevel.playerName);
+        // in single player levels, base location are arranged in order of player id
+        var baseLocs :Array = GameContext.mapSettings.baseLocs;
+
+        // Create the local player (always playerId=0, team=0)
+        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(0, 0, baseLocs[0], 1, GameContext.spLevel.playerName);
 
         // grant the player some starting resources
         var initialResources :Array = GameContext.spLevel.initialResources;
@@ -222,7 +251,7 @@ public class GameMode extends AppMode
         var numComputers :int = GameContext.spLevel.computers.length;
         for (var playerId :int = 1; playerId < numComputers + 1; ++playerId) {
             var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team, cpData.playerName);
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team, baseLocs[playerId], cpData.playerName);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
@@ -322,7 +351,6 @@ public class GameMode extends AppMode
 
         // create player bases
         var numPlayers :int = GameContext.numPlayers;
-        var baseLocs :Array = GameContext.mapSettings.baseLocs;
         for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
 
             // in single-player levels, bases have custom health
@@ -341,14 +369,14 @@ public class GameMode extends AppMode
                 }
             }
 
+            var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+            var baseLoc :Vector2 = playerInfo.baseLoc;
+
             var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, maxHealthOverride, startingHealthOverride);
             base.isInvincible = invincible;
-
-            var baseLoc :Vector2 = baseLocs[playerId];
             base.x = baseLoc.x;
             base.y = baseLoc.y;
 
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
             playerInfo.base = base;
         }
 
@@ -843,4 +871,36 @@ public class GameMode extends AppMode
     protected static const log :Log = Log.getLog(GameMode);
 }
 
+}
+
+/** Used by GameMode.setupPlayersMP() */
+class TeamInfo
+{
+    public var teamId :int;
+    public var teamSize :int;
+    public var baseLocs :Array = [];
+
+    // Used to sort TeamInfos from largest to smallest team size
+    public static function teamSizeCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamSize > b.teamSize) {
+            return -1;
+        } else if (a.teamSize < b.teamSize) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    // Used to sort TeamInfos from smallest to largest teamId
+    public static function teamIdCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamId < b.teamId) {
+            return -1;
+        } else if (a.teamId > b.teamId) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

@@ -28,11 +28,8 @@ public class MultiplayerConfig
         return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_TEAMS) as Array : []);
     }
 
-    public static function computeTeamArrangement () :int
+    public static function computeTeamSizes () :Array
     {
-        // A ridiculous function to determine what type of game we're playing from the teams
-        // that have been created. I am not proud of this code.
-
         var theTeams :Array = MultiplayerConfig.teams;
         var teamSizes :Array = ArrayUtil.create(theTeams.length, 0);
 
@@ -41,6 +38,15 @@ public class MultiplayerConfig
             teamSizes[teamId] += 1;
         }
 
+        return teamSizes;
+    }
+
+    public static function computeTeamArrangement () :int
+    {
+        // A ridiculous function to determine what type of game we're playing from the teams
+        // that have been created. I am not proud of this code.
+
+        var teamSizes :Array = computeTeamSizes();
         teamSizes.sort(Array.NUMERIC | Array.DESCENDING);
 
         var arrangeString :String = "";

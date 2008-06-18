@@ -13,10 +13,11 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerId :int, teamId :int, handicap :Number = 1, playerName :String = null)
+    public function PlayerInfo (playerId :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null)
     {
         _playerId = playerId;
         _teamId = teamId;
+        _baseLoc = baseLoc;
         _handicap = handicap;
 
         var whirledIds :Array;
@@ -38,8 +39,6 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerName = "Unknown player " + playerId;
         }
-
-        _baseLoc = GameContext.mapSettings.baseLocs[playerId];
     }
 
     public function get handicap () :Number
