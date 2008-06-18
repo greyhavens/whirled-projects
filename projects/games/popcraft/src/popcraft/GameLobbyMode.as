@@ -68,7 +68,18 @@ public class GameLobbyMode extends AppMode
 
     override public function update (dt :Number) :void
     {
-        super.update(dt);
+        // has everybody left?
+        var playerIds :Array = AppContext.gameCtrl.game.seating.getPlayerIds();
+        var numPlayers :int;
+        for each (var playerId :int in playerIds) {
+            if (playerId != 0) {
+                numPlayers++;
+            }
+        }
+
+        if (numPlayers <= 1) {
+            AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        }
 
         var statusText :String = "";
 
