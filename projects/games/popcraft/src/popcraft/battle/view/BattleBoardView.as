@@ -20,7 +20,6 @@ public class BattleBoardView extends SceneObject
         _width = width;
         _height = height;
 
-        // @TODO - randomize multiplayer backgrounds
         _bg = SwfResource.instantiateMovieClip("bg", GameContext.mapSettings.backgroundName);
         _bg.x = Constants.SCREEN_DIMS.x * 0.5;
         _bg.y = Constants.SCREEN_DIMS.y * 0.5;
