@@ -29,8 +29,8 @@ public class GameLobbyMode extends AppMode
 
         _statusText = new TextField();
         _statusText.selectable = false;
-        _statusText.scaleX = 2;
-        _statusText.scaleY = 2;
+        _statusText.scaleX = 1.5;
+        _statusText.scaleY = 1.5;
         _statusText.background = true;
         _statusText.backgroundColor = 0;
         _statusText.textColor = 0xFFFFFF;
@@ -69,22 +69,14 @@ public class GameLobbyMode extends AppMode
     override public function update (dt :Number) :void
     {
         // has everybody left?
-        var playerIds :Array = AppContext.gameCtrl.game.seating.getPlayerIds();
-        var numPlayers :int;
-        for each (var playerId :int in playerIds) {
-            if (playerId != 0) {
-                numPlayers++;
-            }
-        }
-
-        if (numPlayers <= 1) {
+        if (SeatingManager.numPlayers <= 1) {
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
 
         var statusText :String = "";
 
         if (!this.allPlayersDecided) {
-            statusText = "Divide into teams!";
+            statusText = "Divide into teams! Players on smaller teams will earn more resources.";
         } else if (!this.teamsDividedProperly) {
             statusText = "Two teams are required to start the game."
         } else if (!_gameStartTimer.isNull) {

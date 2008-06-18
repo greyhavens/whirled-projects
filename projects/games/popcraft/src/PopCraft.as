@@ -31,6 +31,8 @@ public class PopCraft extends Sprite
         var isConnected :Boolean = AppContext.gameCtrl.isConnected();
         var multiplayer :Boolean = isConnected && (AppContext.gameCtrl.game.seating.getPlayerIds().length > 1);
 
+        SeatingManager.init();
+
         this.graphics.beginFill(0);
         this.graphics.drawRect(0, 0, 700, 500);
         this.graphics.endFill();

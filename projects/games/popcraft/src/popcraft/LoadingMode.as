@@ -34,7 +34,7 @@ public class LoadingMode extends AppMode
     override public function update (dt :Number) :void
     {
         if (!_loading) {
-            if (LoadingMode.playersReady) {
+            if (SeatingManager.allPlayersPresent) {
                 AppContext.mainLoop.popMode();
             } else {
                 _text.text = "Waiting for players...";
@@ -131,20 +131,6 @@ public class LoadingMode extends AppMode
     protected function handleResourceLoadErr (err :String) :void
     {
         AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
-    }
-
-    protected static function get playersReady () :Boolean
-    {
-        if (AppContext.gameCtrl.isConnected()) {
-            var playerIds :Array = AppContext.gameCtrl.game.seating.getPlayerIds();
-            for each (var playerId :int in playerIds) {
-                if (playerId == 0) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     protected var _text :TextField;
