@@ -2,7 +2,9 @@ package popcraft.sp {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
@@ -29,18 +31,16 @@ public class LevelSelectMode extends AppMode
 
         _hasSetup = true;
 
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0xB7B6B4);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
-        g.endFill();
+        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         var tf :TextField = new TextField();
         tf.selectable = false;
         tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.textColor = 0xFFFFFF;
         tf.text = "PopCraft level select. (Score: " + AppContext.levelMgr.totalScore + ")";
         tf.scaleX = 1;
         tf.scaleY = 1;
-        tf.x = (this.modeSprite.width * 0.5) - (tf.width * 0.5);
+        tf.x = (Constants.SCREEN_DIMS.x * 0.5) - (tf.width * 0.5);
         tf.y = 10;
 
         this.modeSprite.addChild(tf);
@@ -63,7 +63,7 @@ public class LevelSelectMode extends AppMode
             }
 
             button = this.createLevelSelectButton(i, levelName);
-            button.x = (this.modeSprite.width * 0.5) - (button.width * 0.5);
+            button.x = (Constants.SCREEN_DIMS.x * 0.5) - (button.width * 0.5);
             button.y = yLoc;
             this.modeSprite.addChild(button);
 

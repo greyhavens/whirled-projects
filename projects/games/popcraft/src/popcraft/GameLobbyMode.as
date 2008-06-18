@@ -3,6 +3,7 @@ package popcraft {
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
 
@@ -19,10 +20,7 @@ public class GameLobbyMode extends AppMode
 {
     override protected function setup () :void
     {
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0xB7B6B4);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
-        g.endFill();
+        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         this.createTeamBox(-1);
         for (var teamId :int = 0; teamId < this.maxTeams; ++teamId) {
@@ -33,6 +31,9 @@ public class GameLobbyMode extends AppMode
         _statusText.selectable = false;
         _statusText.scaleX = 2;
         _statusText.scaleY = 2;
+        _statusText.background = true;
+        _statusText.backgroundColor = 0;
+        _statusText.textColor = 0xFFFFFF;
         _statusText.autoSize = TextFieldAutoSize.LEFT;
         _statusText.x = STATUS_TEXT_LOC.x;
         _statusText.y = STATUS_TEXT_LOC.y;
@@ -81,7 +82,7 @@ public class GameLobbyMode extends AppMode
         }
 
         _statusText.text = statusText;
-        _statusText.x = (_statusText.parent.width * 0.5) - (_statusText.width * 0.5);
+        _statusText.x = (Constants.SCREEN_DIMS.x * 0.5) - (_statusText.width * 0.5);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

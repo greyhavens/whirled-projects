@@ -10,6 +10,9 @@ public class Resources
     public static const GAME_VARIANTS_DATA :Class;
 
     // gfx
+    [Embed(source="../../rsrc/splash_BG.swf", mimeType="application/octet-stream")]
+    public static const SWF_SPLASH :Class;
+
     [Embed(source="../../rsrc/manual.swf", mimeType="application/octet-stream")]
     public static const SWF_MANUAL :Class;
 
