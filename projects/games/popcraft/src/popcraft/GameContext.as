@@ -62,12 +62,12 @@ public class GameContext
 
     public static function get battlefieldWidth () :Number
     {
-        return (Constants.BATTLE_HEIGHT * mapSettings.mapScaleX);
+        return (Constants.BATTLE_WIDTH * mapSettings.mapScaleX);
     }
 
     public static function get battlefieldHeight () :Number
     {
-        return (Constants.BATTLE_WIDTH * mapSettings.mapScaleY);
+        return (Constants.BATTLE_HEIGHT * mapSettings.mapScaleY);
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo
