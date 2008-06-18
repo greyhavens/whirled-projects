@@ -90,7 +90,7 @@ public class Display extends Sprite
 
         _logger.log();
         if (bonus > 0) {
-            _logger.log("Domination Bonus: " + bonus + " pts", Logger.SUMMARY_H2);
+            _logger.log("Domination Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
             _logger.log();
         }
         _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_H1);

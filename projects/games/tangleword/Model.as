@@ -63,11 +63,11 @@ public class Model
     public function endRound () :void
     {
         var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
+        var totalWords :Number = (_gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || []).length;
 
         _playerBonuses = [];
-        for (var o :Object in firsts) {
-            var pid :int = o as int;
-            _playerBonuses[pid] = 1000*firsts[pid]; // TODO
+        for (var pid :Object in firsts) {
+            _playerBonuses[pid] = Math.min(firsts[pid], BONUS_CAP_RATIO*totalWords);
         }
 
         // WARNING: Trophy scores don't include bonuses
@@ -414,6 +414,11 @@ public class Model
         return _gameCtrl.game.getOccupantName(playerId);
     }
 
+    /**
+     * The maximum number first-found words that can count towards your bonus,
+     * in relation to the total number of found words.
+     */
+    protected static const BONUS_CAP_RATIO :Number = 0.5;
 
     // TODO: Reorder all this, remove useless comments
 
