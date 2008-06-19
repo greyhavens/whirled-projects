@@ -19,7 +19,7 @@ public class ComputerPlayer extends SimObject
         _playerInfo.setSpellCounts(data.startingCreatureSpells);
 
         // Computer players always target the local player
-        _playerInfo.targetedEnemyId = GameContext.localPlayerId;
+        _playerInfo.targetedEnemyId = GameContext.localPlayerIndex;
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData

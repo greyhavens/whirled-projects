@@ -48,12 +48,10 @@ public class GameContext
 
     public static var playerInfos :Array;
     public static var playerCreatureSpellSets :Array;
-    public static var localPlayerId :int;
+    public static var localPlayerIndex :int;
 
-    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerId]; }
-    public static function get isFirstPlayer () :Boolean { return (localPlayerId == 0); }
+    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerIndex]; }
     public static function get numPlayers () :int { return playerInfos.length; }
-    public static function get localUserIsPlaying () :Boolean { return localPlayerId >= 0; }
 
     public static function get mapSettings () :MapSettingsData
     {

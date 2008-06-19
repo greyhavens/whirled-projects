@@ -181,7 +181,7 @@ public class DashboardView extends SceneObject
         if (!spellButton.isCastable) {
             spellButton.showUncastableJiggle();
         } else {
-            GameContext.gameMode.castSpell(GameContext.localPlayerId, spellButton.spellType);
+            GameContext.gameMode.castSpell(GameContext.localPlayerIndex, spellButton.spellType);
             // un-occupy the slot
             _spellSlots[spellButton.slot] = false;
             spellButton.destroySelf();

@@ -45,13 +45,13 @@ public class CreaturePurchaseButton extends SimObject
         _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
 
         // we want to know when the player casts a spell
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
         _button.addEventListener(MouseEvent.CLICK, onClicked);
 
         _unitData = GameContext.gameData.units[unitType];
-        var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerIndex];
 
         // try instantiating some animations
         _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
@@ -147,11 +147,11 @@ public class CreaturePurchaseButton extends SimObject
             _hilite.gotoAndPlay("deploy");
             _multiplicity.visible = false;
 
-            GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType);
+            GameContext.gameMode.buildUnit(GameContext.localPlayerIndex, _unitType);
 
             // when the sun is eclipsed, it's buy-one-get-one-free time!
             if (GameContext.diurnalCycle.isEclipse) {
-                GameContext.gameMode.buildUnit(GameContext.localPlayerId, _unitType, true);
+                GameContext.gameMode.buildUnit(GameContext.localPlayerIndex, _unitType, true);
             }
 
             this.addNamedTask(

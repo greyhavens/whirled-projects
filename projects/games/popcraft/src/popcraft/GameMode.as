@@ -191,7 +191,7 @@ public class GameMode extends AppMode
 
         // get some information about the players in the game
         var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
-        GameContext.localPlayerId = AppContext.gameCtrl.game.seating.getMyPosition();
+        GameContext.localPlayerIndex = AppContext.gameCtrl.game.seating.getMyPosition();
 
         // we want to know when a player leaves
         AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
@@ -207,7 +207,7 @@ public class GameMode extends AppMode
             var isHandicapped :Boolean = handicaps[playerId];
             var handicap :Number = 1; // @TODO - wire this up
 
-            if (GameContext.localPlayerId == playerId) {
+            if (GameContext.localPlayerIndex == playerId) {
                 var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, baseLoc, handicap);
                 playerInfo = localPlayerInfo;
             } else {
@@ -293,7 +293,7 @@ public class GameMode extends AppMode
 
         // set up the message manager
         if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
-            _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, GameContext.isFirstPlayer, TICK_INTERVAL_MS);
+            _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
         } else {
             _messageMgr = new OfflineTickedMessageManager(TICK_INTERVAL_MS);
         }
@@ -380,9 +380,7 @@ public class GameMode extends AppMode
             playerInfo.base = base;
         }
 
-        if (GameContext.localUserIsPlaying) {
-            this.setupPlayerBaseViewMouseHandlers();
-        }
+        this.setupPlayerBaseViewMouseHandlers();
 
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
@@ -626,14 +624,14 @@ public class GameMode extends AppMode
         }
 
         if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + GameContext.localPlayerId + " TICK: " + _gameTickCount + " MESSAGES: " + messageStatus);
+            log.debug("PLAYER: " + GameContext.localPlayerIndex + " TICK: " + _gameTickCount + " MESSAGES: " + messageStatus);
         }
 
         // calculate a checksum for this frame
         var csumMessage :ChecksumMessage = calculateChecksum();
 
         // player 1 saves his checksums, player 0 sends his checksums
-        if (GameContext.localPlayerId == 1) {
+        if (GameContext.localPlayerIndex == 1) {
             _myChecksums.unshift(csumMessage);
             _lastCachedChecksumTick = _gameTickCount;
         } else if ((_gameTickCount % 2) == 0) {
@@ -666,7 +664,7 @@ public class GameMode extends AppMode
             add(unit.health, "unit.health - " + i);
         }*/
 
-        msg.playerId = GameContext.localPlayerId;
+        msg.playerId = GameContext.localPlayerIndex;
         msg.tick = _gameTickCount;
         msg.checksum = csum.value;
 
@@ -729,7 +727,7 @@ public class GameMode extends AppMode
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
         playerInfo.targetedEnemyId = targetEnemyId;
 
-        if (playerId == GameContext.localPlayerId) {
+        if (playerId == GameContext.localPlayerIndex) {
             this.updateTargetEnemyBadgeLocation(targetEnemyId);
         }
     }
@@ -772,7 +770,7 @@ public class GameMode extends AppMode
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var newTargetEnemyId :int = enemyBaseView.baseUnit.owningPlayerId;
 
-        Assert.isTrue(newTargetEnemyId != GameContext.localPlayerId);
+        Assert.isTrue(newTargetEnemyId != GameContext.localPlayerIndex);
 
         if (newTargetEnemyId != localPlayerInfo.targetedEnemyId) {
             // update the "target enemy badge" location immediately, even though
@@ -780,7 +778,7 @@ public class GameMode extends AppMode
             this.updateTargetEnemyBadgeLocation(newTargetEnemyId);
 
             // send a message to everyone
-            this.selectTargetEnemy(GameContext.localPlayerId, newTargetEnemyId);
+            this.selectTargetEnemy(GameContext.localPlayerIndex, newTargetEnemyId);
         }
 
     }
@@ -792,7 +790,7 @@ public class GameMode extends AppMode
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != GameContext.localPlayerId) {
+        if (msg.playerId != GameContext.localPlayerIndex) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 log.debug("discarding checksum message (too old or too new)");

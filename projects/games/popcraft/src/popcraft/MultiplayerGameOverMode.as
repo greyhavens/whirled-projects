@@ -4,6 +4,7 @@ import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.game.GameSubControl;
 
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
@@ -14,7 +15,7 @@ public class MultiplayerGameOverMode extends AppMode
 {
     public function MultiplayerGameOverMode (winningTeam :int)
     {
-        _winningTeam = winningTeam;
+        _winningTeamId = winningTeam;
     }
 
     override protected function setup () :void
@@ -23,7 +24,7 @@ public class MultiplayerGameOverMode extends AppMode
 
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (!playerInfo.leftGame && playerInfo.teamId == _winningTeam) {
+            if (!playerInfo.leftGame && playerInfo.teamId == _winningTeamId) {
                 winningPlayerNames.push(playerInfo.playerName);
             }
         }
@@ -67,12 +68,27 @@ public class MultiplayerGameOverMode extends AppMode
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
 
         this.modeSprite.addChild(_button);
+
+        // report scores
+        if (SeatingManager.isLocalPlayerInControl) {
+            var winners :Array = [];
+            var losers :Array = [];
+            for each (playerInfo in GameContext.playerInfos) {
+                if (playerInfo.teamId == _winningTeamId) {
+                    winners.push(playerInfo.whirledId);
+                } else {
+                    losers.push(playerInfo.whirledId);
+                }
+            }
+
+            AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
+        }
     }
 
     override protected function enter () :void
     {
         if (!_playedSound) {
-            var localPlayerWon :Boolean = (GameContext.localPlayerInfo.teamId == _winningTeam);
+            var localPlayerWon :Boolean = (GameContext.localPlayerInfo.teamId == _winningTeamId);
             AudioManager.instance.playSoundNamed(localPlayerWon ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
         }
@@ -84,7 +100,7 @@ public class MultiplayerGameOverMode extends AppMode
         AppContext.mainLoop.unwindToMode(new GameLobbyMode());
     }
 
-    protected var _winningTeam :int;
+    protected var _winningTeamId :int;
     protected var _playedSound :Boolean;
     protected var _button :SimpleButton;
 
