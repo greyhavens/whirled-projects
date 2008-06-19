@@ -20,7 +20,7 @@ public class StageQualityManager
     public static function set stageQuality (quality :String) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.local.setFrameRate(30, quality);
+            AppContext.gameCtrl.local.setStageQuality(quality);
         } else {
             AppContext.mainSprite.stage.quality = quality;
         }
