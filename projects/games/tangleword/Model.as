@@ -159,22 +159,23 @@ public class Model
 
     /** Checks if the word exists on the board, by doing an exhaustive
         search of all possible combinations. */
-    public function wordExistsOnBoard (word :String) :Boolean
+    public function wordExistsOnBoard (word :String) :Array
     {
         // TODO
         // return true;
 
-        if (word.length == 0) return false;
+        if (word.length == 0) return null;
 
         for (var x :int = 0; x < Properties.LETTERS; x++) {
             for (var y :int = 0; y < Properties.LETTERS; y++) {
-                if (wordExists (word, 0, x, y, new Array())) {
-                    return true;
+                var points :Array = [];
+                if (wordExists (word, 0, x, y, points)) {
+                    return points;
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     protected function wordExists (
@@ -217,20 +218,14 @@ public class Model
 
     /** Sends out a message to everyone, informing them about adding
      *  the new word to their lists. */
-    public function addScore (word :String, score :Number, isvalid :Boolean) :void
+    public function addScore (word :String, score :Number, points: Array, isvalid :Boolean) :void
     {
-        var obj :Object = new Object();
-        obj.playerId = _gameCtrl.game.getMyId(); 
-        obj.word = word;
-        obj.score = score;
-        obj.isvalid = isvalid;
-
         // before updating the scoreboard, see if we need to award a trophy
         if (isvalid) {
             _trophies.handleAddWord(word, score, _scoreboard);
         }
 
-        addWordToScoreboard(obj.playerId, obj.word, obj.score, obj.isvalid);
+        addWordToScoreboard(_gameCtrl.game.getMyId(), word, score, points, isvalid);
     }
 
     /** Sends out a message to everyone, informing them about a new letter set.
@@ -315,7 +310,7 @@ public class Model
        If the word is not valid, prints out a message.
      */
     private function addWordToScoreboard (
-        playerId :int, word :String, score :Number, isvalid :Boolean) :void
+        playerId :int, word :String, score :Number, points: Array, isvalid :Boolean) :void
     {
         // if this message came in after the end of the round, just ignore it
         if (!_gameCtrl.game.isInPlay()) {
@@ -333,7 +328,7 @@ public class Model
         // if the word is valid and not claimed, score!
         if (! isWordClaimed (playerId, word)) {
             if (_gameCtrl.net.get(WORD_NAMESPACE+word) == null) {
-                _display.logSuccess(playerName, word, score, 1);
+                _display.logSuccess(playerName, word, score, 1, points);
 
                 var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
 
@@ -343,7 +338,7 @@ public class Model
                     _gameCtrl.net.setIn(FIRST_FINDS, playerId, 1);
                 }
             } else {
-                _display.logSuccess(playerName, word, score, 0);
+                _display.logSuccess(playerName, word, score, 0, points);
             }
             addWord(playerId, word, score); // Finder's bonus is disabled
             return;

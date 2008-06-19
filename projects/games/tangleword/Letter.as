@@ -134,7 +134,7 @@ public class Letter extends Sprite
     // PRIVATE MEMBERS
     
     /** Text label in front */
-    private var _label :TextField;
+    public var _label :TextField;
 
     /** Pointer to the board piece resource */
     private var _background :DisplayObject;

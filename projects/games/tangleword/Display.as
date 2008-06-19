@@ -29,6 +29,8 @@ import com.whirled.contrib.Scoreboard;
 
 import com.threerings.util.KeyboardCodes;
 
+import caurina.transitions.Tweener;
+
 /**
  * The Display class represents the game visualization, including UI
  * and game state display.
@@ -146,11 +148,18 @@ public class Display extends Sprite
         _wordfield.text = word;
     }
 
-    public function logSuccess (player :String, word :String, score :Number, bonus :Number) :void
+    public function logSuccess (player :String, word :String, score :Number, bonus :Number, points :Array) :void
     {
         var msg :String = word + " (" + score + ")";
 
         _logger.logListItem(msg, (bonus > 0 ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD));
+
+        for each (var p :Point in points) {
+            var label = _letters[p.x][p.y]._label;
+
+            label.scaleX = 2;
+            Tweener.addTween(label, {scaleX: 1, time: 1});
+        }
     }
 
     /** Updates the log with a failure message */

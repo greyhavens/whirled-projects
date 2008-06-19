@@ -123,7 +123,8 @@ public class Controller
             }
 
             // Check if this word exists on the board
-            if ( ! _model.wordExistsOnBoard(word)) {
+            const points :Array = _model.wordExistsOnBoard(word);
+            if (points == null) {
                 throw new TangleWordError(word + " is not on the board!");
             }
 
@@ -133,11 +134,12 @@ public class Controller
                 // Finally, process the new word. Notice that we don't check if it's already
                 // been claimed - the model will take care of that, because there's a network
                 // round-trip involved, and therefore potential of contention.
-                _model.addScore(word, getWordScore(word), isvalid);
+                _model.addScore(word, getWordScore(word), points, isvalid);
             }
             
             // Now check if it's an actual word.
             _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
+
         } finally {
             _model.removeAllSelectedLetters();
         }
