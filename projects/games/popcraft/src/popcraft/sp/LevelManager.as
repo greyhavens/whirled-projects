@@ -30,6 +30,7 @@ public class LevelManager implements UserCookieDataSource
     public function readCookieData (cookie :ByteArray) :void
     {
         try {
+            _levelRecords = [];
             for (var i :int = 0; i < NUM_LEVELS; ++i) {
                 _levelRecords.push(LevelRecord.fromByteArray(cookie));
             }
@@ -150,7 +151,7 @@ public class LevelManager implements UserCookieDataSource
         }
     }
 
-    public function incrementLevelNum () :void
+    public function incrementCurLevelIndex () :void
     {
         if (_curLevelIndex >= 0) {
             this.curLevelIndex = _curLevelIndex + 1;

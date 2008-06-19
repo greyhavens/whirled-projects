@@ -17,7 +17,7 @@ public class LevelSelectMode extends AppMode
 {
     override public function update (dt :Number) :void
     {
-        if (!_hasSetup && AppContext.levelMgr.levelRecordsLoaded) {
+        if (!_hasSetup && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
             this.setup();
         }
     }
@@ -51,14 +51,15 @@ public class LevelSelectMode extends AppMode
         var button :SimpleButton;
         var yLoc :Number = tf.height + 15;
         // create a button for each level
-        for (var i :int = 0; i < AppContext.levelMgr.numLevels; ++i) {
+        for (var i :int = 0; i < levelRecords.length; ++i) {
             var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
-            var levelRecord :LevelRecord = (i < levelRecords.length ? levelRecords[i] : null);
-            if (null != levelRecord && !levelRecord.unlocked) {
+            var levelRecord :LevelRecord = levelRecords[i];
+
+            if (!levelRecord.unlocked) {
                 break;
             }
 
-            if (null != levelRecord && levelRecord.score > 0) {
+            if (levelRecord.score > 0) {
                 levelName += " (" + levelRecord.score + ")";
             }
 

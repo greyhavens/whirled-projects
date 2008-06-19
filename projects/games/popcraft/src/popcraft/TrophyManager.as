@@ -31,8 +31,10 @@ public class TrophyManager
 
     /* multiplayer trophies */
 
-    // Complete a multiplayer game
+    // Complete a 1v1 game
     public static const TROPHY_PLAYSWELLWITHOTHERS :String = "PlaysWellWithOthers";
+    // Complete a 1v1v1 game
+    public static const TROPHY_HUGGERMUGGER :String = "HuggerMugger";
     // Complete 25 multiplayer games
     public static const TROPHY_SOCIALBUTTERFLY :String = "SocialButterfly";
     // win a multiplayer game

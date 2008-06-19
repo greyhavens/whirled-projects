@@ -6,27 +6,35 @@ import flash.utils.ByteArray;
 
 public class UserCookieManager
 {
-    public function addDataSource (dataSource :UserCookieDataSource) :void
+    public static function addDataSource (dataSource :UserCookieDataSource) :void
     {
         _dataSources.push(dataSource);
     }
 
-    public function setNeedsUpdate () :void
+    public static function setNeedsUpdate () :void
     {
         // update immediately. is this wise?
-        this.writeCookie();
+        writeCookie();
     }
 
-    public function readCookie () :void
+    public static function get isLoadingCookie () :Boolean
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
-        } else {
-            this.completeLoadData(null);
+        return _loadingCookie;
+    }
+
+    public static function readCookie () :void
+    {
+        if (!_loadingCookie) {
+            if (AppContext.gameCtrl.isConnected()) {
+                AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
+                _loadingCookie = true;
+            } else {
+                completeLoadData(null);
+            }
         }
     }
 
-    protected function writeCookie () :void
+    protected static function writeCookie () :void
     {
         if (AppContext.gameCtrl.isConnected()) {
             var ba :ByteArray = new ByteArray();
@@ -59,8 +67,10 @@ public class UserCookieManager
         }
     }
 
-    protected function completeLoadData (cookie :Object) :void
+    protected static function completeLoadData (cookie :Object) :void
     {
+        _loadingCookie = false;
+
         var success :Boolean;
         var errString :String;
         var ba :ByteArray = cookie as ByteArray;
@@ -93,12 +103,13 @@ public class UserCookieManager
             }
 
             if (resave) {
-                this.writeCookie();
+                writeCookie();
             }
         }
     }
 
-    protected var _dataSources :Array = [];
+    protected static var _dataSources :Array = [];
+    protected static var _loadingCookie :Boolean;
 
     protected static const VERSION :int = 0;
     protected static const log :Log = Log.getLog(UserCookieManager);

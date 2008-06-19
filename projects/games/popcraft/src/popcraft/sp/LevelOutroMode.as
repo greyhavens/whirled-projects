@@ -18,7 +18,10 @@ public class LevelOutroMode extends AppMode
     public function LevelOutroMode (success :Boolean)
     {
         _success = success;
+    }
 
+    protected function saveProgress () :void
+    {
         // save our progress and award trophies if we were successful
         if (_success) {
             // calculate the score for this level
@@ -44,14 +47,14 @@ public class LevelOutroMode extends AppMode
                 dataChanged = true;
             }
 
-            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelIndex + 1);
+            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex + 1);
             if (null != nextLevel && !nextLevel.unlocked) {
                 nextLevel.unlocked = true;
                 dataChanged = true;
             }
 
             if (dataChanged) {
-                AppContext.cookieMgr.setNeedsUpdate();
+                UserCookieManager.setNeedsUpdate();
             }
 
             // trophies
@@ -72,6 +75,8 @@ public class LevelOutroMode extends AppMode
 
     override protected function setup () :void
     {
+        this.saveProgress();
+
         // draw dim background
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0, 0.6);
@@ -130,7 +135,7 @@ public class LevelOutroMode extends AppMode
             button = new SimpleTextButton("Next Level");
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
-                    AppContext.levelMgr.incrementLevelNum();
+                    AppContext.levelMgr.incrementCurLevelIndex();
                     AppContext.levelMgr.playLevel();
                 });
         } else {

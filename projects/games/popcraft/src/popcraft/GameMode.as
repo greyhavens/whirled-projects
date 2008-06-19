@@ -531,6 +531,34 @@ public class GameMode extends AppMode
             ++_gameTickCount;
         }
 
+        this.checkForGameOver();
+
+        // update all non-net objects
+        super.update(dt);
+
+        if (sortDisplayChildren) {
+            GameContext.battleBoardView.sortUnitDisplayChildren();
+        }
+
+        // update the game music, unless we're in "eclipse mode", where we loop
+        // the night music forever
+        var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
+        if (!_startedMusic || (dayPhase != _lastDayPhase && !GameContext.gameData.enableEclipse)) {
+            if (null != _musicChannel) {
+                _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
+            }
+
+            _musicChannel = GameContext.playGameMusic(DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
+
+            _lastDayPhase = dayPhase;
+            _startedMusic = true;
+        }
+
+        ++_updateCount;
+    }
+
+    protected function checkForGameOver () :void
+    {
         // The game is over if there's only one team standing
         var liveTeamId :int = -1;
         var gameOver :Boolean = true;
@@ -561,29 +589,6 @@ public class GameMode extends AppMode
                 MainLoop.instance.pushMode(new LevelOutroMode(success));
             }
         }
-
-        // update the game music, unless we're in "eclipse mode", where we loop
-        // the night music forever
-        var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (!_startedMusic || (dayPhase != _lastDayPhase && !GameContext.gameData.enableEclipse)) {
-            if (null != _musicChannel) {
-                _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
-            }
-
-            _musicChannel = GameContext.playGameMusic(DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
-
-            _lastDayPhase = dayPhase;
-            _startedMusic = true;
-        }
-
-        // update all non-net objects
-        super.update(dt);
-
-        if (sortDisplayChildren) {
-            GameContext.battleBoardView.sortUnitDisplayChildren();
-        }
-
-        ++_updateCount;
     }
 
     protected function debugNetwork (messageArray :Array) :void

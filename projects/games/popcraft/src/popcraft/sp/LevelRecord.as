@@ -22,6 +22,11 @@ public class LevelRecord
 
         return lr;
     }
+
+    public function toString () :String
+    {
+        return "unlocked: " + unlocked + " score: " + score;
+    }
 }
 
 }
