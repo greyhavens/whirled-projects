@@ -9,23 +9,23 @@ public class TrophyManager
         }
     }
 
-    public static function hasTrophy (trophyName :String) :void
+    public static function hasTrophy (trophyName :String) :Boolean
     {
         return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.player.holdsTrophy(trophyName) : true);
     }
 
     /* single-player trophies */
 
-    // complete levels 1-3 with an expert score
+    // complete levels 1-3
     public static const TROPHY_FRESHMAN :String = "Freshman";
-    // complete levels 1-6 with an expert score
+    // complete levels 1-6
     public static const TROPHY_SOPHOMORE: String = "Sophomore";
-    // complete levels 1-9 with an expert score
+    // complete levels 1-9
     public static const TROPHY_JUNIOR :String = "Junior";
-    // complete levels 1-12 with an expert score
+    // complete levels 1-12
     public static const TROPHY_SENIOR :String = "Senior";
     // complete the single player game
-    public static const TROPHY_CUMLAUDE :String = "CumLaude";
+    public static const TROPHY_GRADUATE :String = "Graduate";
     // complete all levels with an expert score
     public static const TROPHY_MAGNACUMLAUDE :String = "MagnaCumLaude";
 

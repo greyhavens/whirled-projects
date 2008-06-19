@@ -558,42 +558,6 @@ public class GameMode extends AppMode
                 MainLoop.instance.changeMode(new MultiplayerGameOverMode(liveTeamId));
             } else {
                 var success :Boolean = (liveTeamId == GameContext.localPlayerInfo.teamId);
-
-                // save our progress if we were successful
-                if (success) {
-                    // calculate the score for this level
-                    var fastCompletionScore :int =
-                        Math.max(GameContext.spLevel.parDays - GameContext.diurnalCycle.dayCount, 0) *
-                        GameContext.gameData.pointsPerDayUnderPar;
-
-                    var resourcesScore :int =
-                        Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
-                        GameContext.gameData.pointsPerResource;
-
-                    var levelScore :int =
-                        fastCompletionScore +
-                        resourcesScore +
-                        GameContext.spLevel.levelCompletionBonus;
-
-                    var dataChanged :Boolean;
-
-                    var thisLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum);
-                    if (null != thisLevel && thisLevel.score < levelScore) {
-                        thisLevel.score = levelScore;
-                        dataChanged = true;
-                    }
-
-                    var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelNum + 1);
-                    if (null != nextLevel && !nextLevel.unlocked) {
-                        nextLevel.unlocked = true;
-                        dataChanged = true;
-                    }
-
-                    if (dataChanged) {
-                        AppContext.cookieMgr.setNeedsUpdate();
-                    }
-                }
-
                 MainLoop.instance.pushMode(new LevelOutroMode(success));
             }
         }

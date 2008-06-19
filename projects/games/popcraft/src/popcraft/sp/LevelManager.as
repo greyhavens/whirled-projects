@@ -94,14 +94,14 @@ public class LevelManager implements UserCookieDataSource
             if (null == _loadedLevel) {
                 // @TEMP - if _curLevelNum < 0, we load the test level
                 var loadParams :Object;
-                if (_curLevelNum < 0) {
+                if (_curLevelIndex < 0) {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
                         { url: "levels/testlevel.xml" } :
                         { embeddedClass: LEVEL_TEST });
                 } else {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                        { url: "levels/level" + String(_curLevelNum + 1) + ".xml" } :
-                        { embeddedClass: LEVELS[_curLevelNum] });
+                        { url: "levels/level" + String(_curLevelIndex + 1) + ".xml" } :
+                        { embeddedClass: LEVELS[_curLevelIndex] });
                 }
 
                 if (forceReload) {
@@ -128,32 +128,32 @@ public class LevelManager implements UserCookieDataSource
     public function get curLevelName () :String
     {
         var levelNames :Array = AppContext.levelProgression.levelNames;
-        if (_curLevelNum >= 0 && _curLevelNum < levelNames.length) {
-            return levelNames[_curLevelNum];
+        if (_curLevelIndex >= 0 && _curLevelIndex < levelNames.length) {
+            return levelNames[_curLevelIndex];
         }
 
-        return "(Level " + String(_curLevelNum + 1) + ")";
+        return "(Level " + String(_curLevelIndex + 1) + ")";
     }
 
-    public function get curLevelNum () :int
+    public function get curLevelIndex () :int
     {
-        return _curLevelNum;
+        return _curLevelIndex;
     }
 
-    public function set curLevelNum (val :int) :void
+    public function set curLevelIndex (val :int) :void
     {
         val = (val < 0 ? -1 : val % LEVELS.length);
 
-        if (_curLevelNum != val) {
-            _curLevelNum = val;
+        if (_curLevelIndex != val) {
+            _curLevelIndex = val;
             _loadedLevel = null;
         }
     }
 
     public function incrementLevelNum () :void
     {
-        if (_curLevelNum >= 0) {
-            this.curLevelNum = _curLevelNum + 1;
+        if (_curLevelIndex >= 0) {
+            this.curLevelIndex = _curLevelIndex + 1;
         }
     }
 
@@ -183,7 +183,7 @@ public class LevelManager implements UserCookieDataSource
         AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
-    protected var _curLevelNum :int = 0;
+    protected var _curLevelIndex :int = 0;
     protected var _loadedLevel :LevelData;
     protected var _levelRecords :Array = [];
     protected var _recordsLoaded :Boolean;

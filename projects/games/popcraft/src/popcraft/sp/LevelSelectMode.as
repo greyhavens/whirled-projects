@@ -122,7 +122,7 @@ public class LevelSelectMode extends AppMode
 
     protected function levelSelected (levelNum :int) :void
     {
-        AppContext.levelMgr.curLevelNum = levelNum;
+        AppContext.levelMgr.curLevelIndex = levelNum;
         AppContext.levelMgr.playLevel();
     }
 

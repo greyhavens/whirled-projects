@@ -18,6 +18,56 @@ public class LevelOutroMode extends AppMode
     public function LevelOutroMode (success :Boolean)
     {
         _success = success;
+
+        // save our progress and award trophies if we were successful
+        if (_success) {
+            // calculate the score for this level
+            var fastCompletionScore :int =
+                Math.max(GameContext.spLevel.parDays - GameContext.diurnalCycle.dayCount, 0) *
+                GameContext.gameData.pointsPerDayUnderPar;
+
+            var resourcesScore :int =
+                Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
+                GameContext.gameData.pointsPerResource;
+
+            var levelScore :int =
+                fastCompletionScore +
+                resourcesScore +
+                GameContext.spLevel.levelCompletionBonus;
+
+            var dataChanged :Boolean;
+
+            var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
+            var thisLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
+            if (null != thisLevel && thisLevel.score < levelScore) {
+                thisLevel.score = levelScore;
+                dataChanged = true;
+            }
+
+            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(AppContext.levelMgr.curLevelIndex + 1);
+            if (null != nextLevel && !nextLevel.unlocked) {
+                nextLevel.unlocked = true;
+                dataChanged = true;
+            }
+
+            if (dataChanged) {
+                AppContext.cookieMgr.setNeedsUpdate();
+            }
+
+            // trophies
+            var levelTrophy :String;
+            switch (thisLevelIndex) {
+            case 2: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
+            case 5: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
+            case 8: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
+            case 11: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
+            case 13: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
+            }
+
+            if (null != levelTrophy) {
+                TrophyManager.awardTrophy(levelTrophy);
+            }
+        }
     }
 
     override protected function setup () :void
