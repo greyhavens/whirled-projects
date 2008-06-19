@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.game.OccupantChangedEvent;
 
 public class SeatingManager
@@ -8,6 +9,7 @@ public class SeatingManager
     {
         if (AppContext.gameCtrl.isConnected()) {
             _numExpectedPlayers = AppContext.gameCtrl.game.seating.getPlayerIds().length;
+            _playersPresent = ArrayUtil.create(_numExpectedPlayers, false);
             _localPlayerSeatIndex = AppContext.gameCtrl.game.seating.getMyPosition();
             updatePlayers();
 
@@ -41,7 +43,18 @@ public class SeatingManager
         return _localPlayerSeatIndex;
     }
 
-    public static function get isPlayerInControl () :Boolean
+    public static function isPlayerPresent (playerId :int) :Boolean
+    {
+        return _playersPresent[playerId];
+    }
+
+    public static function getPlayerName (playerId :int) :String
+    {
+        var playerName :String = AppContext.gameCtrl.game.seating.getPlayerNames()[playerId];
+        return (null != playerName ? playerName : "[PlayerNotHere: " + playerId + "]");
+    }
+
+    public static function get isLocalPlayerInControl () :Boolean
     {
         return _localPlayerSeatIndex == _lowestOccupiedSeatIndex;
     }
@@ -53,15 +66,20 @@ public class SeatingManager
         _lowestOccupiedSeatIndex = -1;
         for (var seatIndex :int = 0; seatIndex < playerIds.length; ++seatIndex) {
             var playerId :int = playerIds[seatIndex];
-            if (playerId != 0) {
+            var playerPresent :Boolean = (playerId != 0);
+
+            if (playerPresent) {
                 ++_numPlayers;
                 if (_lowestOccupiedSeatIndex < 0) {
                     _lowestOccupiedSeatIndex = seatIndex;
                 }
             }
+
+            _playersPresent[seatIndex] = playerPresent;
         }
     }
 
+    protected static var _playersPresent :Array;
     protected static var _numExpectedPlayers :int;  // the number of players who initially joined the game
     protected static var _numPlayers :int;          // the number of players in the game right now
     protected static var _lowestOccupiedSeatIndex :int;

@@ -543,7 +543,7 @@ public class GameMode extends AppMode
         if (gameOver) {
             // show the appropriate game over screen
             if (GameContext.isMultiplayer) {
-                MainLoop.instance.changeMode(new GameOverMode(liveTeamId));
+                MainLoop.instance.changeMode(new MultiplayerGameOverMode(liveTeamId));
             } else {
                 var success :Boolean = (liveTeamId == GameContext.localPlayerInfo.teamId);
 

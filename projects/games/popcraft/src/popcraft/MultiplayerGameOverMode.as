@@ -1,27 +1,25 @@
 package popcraft {
 
+import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
-import flash.display.Shape;
+import flash.display.SimpleButton;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-public class GameOverMode extends AppMode
+public class MultiplayerGameOverMode extends AppMode
 {
-    public function GameOverMode (winningTeam :int)
+    public function MultiplayerGameOverMode (winningTeam :int)
     {
         _winningTeam = winningTeam;
     }
 
     override protected function setup () :void
     {
-        var rect :Shape = new Shape();
-        rect.graphics.beginFill(0xFFFFFF);
-        rect.graphics.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
-        rect.graphics.endFill();
-
-        this.modeSprite.addChild(rect);
+        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -46,7 +44,9 @@ public class GameOverMode extends AppMode
         }
 
         var text :TextField = new TextField();
-        text.textColor = 0;
+        text.background = true;
+        text.backgroundColor = 0;
+        text.textColor = 0xFFFFFF;
         text.autoSize = TextFieldAutoSize.LEFT;
         text.selectable = false;
         text.multiline = true;
@@ -60,6 +60,13 @@ public class GameOverMode extends AppMode
         text.y = (Constants.SCREEN_DIMS.y / 2) - (text.height / 2);
 
         this.modeSprite.addChild(text);
+
+        _button = new SimpleTextButton("Play Again?");
+        _button.x = (Constants.SCREEN_DIMS.x * 0.5) - (_button.width * 0.5);
+        _button.y = 350;
+        _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
+
+        this.modeSprite.addChild(_button);
     }
 
     override protected function enter () :void
@@ -71,8 +78,15 @@ public class GameOverMode extends AppMode
         }
     }
 
+    protected function handleButtonClicked (...ignored) :void
+    {
+        _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
+        AppContext.mainLoop.unwindToMode(new GameLobbyMode());
+    }
+
     protected var _winningTeam :int;
     protected var _playedSound :Boolean;
+    protected var _button :SimpleButton;
 
 }
 

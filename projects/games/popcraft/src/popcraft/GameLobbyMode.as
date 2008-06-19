@@ -49,13 +49,13 @@ public class GameLobbyMode extends AppMode
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
 
-        if (this.isFirstPlayer) {
+        if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
             MultiplayerConfig.teams = ArrayUtil.create(MultiplayerConfig.numPlayers, -1);
             MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, false);
             MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
+            MultiplayerConfig.inited = true;
         } else {
-            _playerTeams = MultiplayerConfig.teams;
             this.updateDisplay();
         }
     }
@@ -68,6 +68,8 @@ public class GameLobbyMode extends AppMode
 
     override public function update (dt :Number) :void
     {
+        super.update(dt);
+
         // has everybody left?
         if (SeatingManager.numPlayers <= 1) {
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
@@ -90,18 +92,13 @@ public class GameLobbyMode extends AppMode
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == MultiplayerConfig.PROP_TEAMS) {
-            _playerTeams = e.newValue as Array;
-            this.updateDisplay();
-        }
+        this.updateDisplay();
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (e.name == MultiplayerConfig.PROP_TEAMS) {
-            this.updateDisplay();
-            this.stopOrResetTimer();
-        }
+        this.updateDisplay();
+        this.stopOrResetTimer();
     }
 
     protected function createTeamBox (teamId :int) :void
@@ -147,10 +144,11 @@ public class GameLobbyMode extends AppMode
 
     protected function handicapChanged (...ignored) :void
     {
-        if (null != _playerHandicaps) {
+        var playerHandicaps :Array = MultiplayerConfig.handicaps;
+        if (null != playerHandicaps) {
             var handicap :Boolean = _handicapCheckbox.checked;
-            if (handicap != _playerHandicaps[this.localPlayerId]) {
-                MultiplayerConfig.setPlayerHandicap(this.localPlayerId, handicap);
+            if (handicap != playerHandicaps[SeatingManager.localPlayerId]) {
+                MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerId, handicap);
                 this.updateDisplay();
             }
         }
@@ -158,6 +156,10 @@ public class GameLobbyMode extends AppMode
 
     protected function teamSelected (teamId :int) :void
     {
+        if (!MultiplayerConfig.inited) {
+            return;
+        }
+
         // don't allow team selection changes with < 2 seconds on the timer
         if (!_gameStartTimer.isNull) {
             var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
@@ -166,8 +168,9 @@ public class GameLobbyMode extends AppMode
             }
         }
 
-        if (null != _playerTeams && _playerTeams[this.localPlayerId] != teamId) {
-            MultiplayerConfig.setPlayerTeam(this.localPlayerId, teamId);
+        var teams :Array = MultiplayerConfig.teams;
+        if (null != teams && teams[SeatingManager.localPlayerId] != teamId) {
+            MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerId, teamId);
             this.updateDisplay();
 
             this.stopOrResetTimer();
@@ -176,13 +179,21 @@ public class GameLobbyMode extends AppMode
 
     protected function updateDisplay () :void
     {
-        for (var teamId :int = -1; teamId < this.numPlayers; ++teamId) {
+        // "inited" will be set to true when the multiplayer configuration has
+        // been reset by the player in control.
+        if (!MultiplayerConfig.inited) {
+            return;
+        }
+
+        var teams :Array = MultiplayerConfig.teams;
+
+        for (var teamId :int = -1; teamId < SeatingManager.numPlayers; ++teamId) {
             var text :String = "";
 
-            if (null != _playerTeams) {
-                for (var playerId :int = 0; playerId < this.numPlayers; ++playerId) {
-                    if (_playerTeams[playerId] == teamId) {
-                        text += this.getPlayerName(playerId) + "\n";
+            if (null != teams) {
+                for (var playerId :int = 0; playerId < SeatingManager.numPlayers; ++playerId) {
+                    if (teams[playerId] == teamId) {
+                        text += SeatingManager.getPlayerName(playerId) + "\n";
                     }
                 }
             }
@@ -216,41 +227,29 @@ public class GameLobbyMode extends AppMode
         var variant :GameVariantData = variants[0];
         GameContext.gameData = variant.gameDataOverride;
 
-        MainLoop.instance.changeMode(new GameMode());
-    }
+        // turn the inited flag off before the game starts
+        // so that future
+        if (SeatingManager.isLocalPlayerInControl) {
+            MultiplayerConfig.inited = false;
+        }
 
-    protected function get numPlayers () :int
-    {
-        return AppContext.gameCtrl.game.seating.getPlayerIds().length;
+        AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
     protected function get maxTeams () :int
     {
-        return this.numPlayers;
-    }
-
-    protected function getPlayerName (id :int) :String
-    {
-        return AppContext.gameCtrl.game.seating.getPlayerNames()[id];
-    }
-
-    protected function get localPlayerId () :int
-    {
-        return AppContext.gameCtrl.game.seating.getMyPosition();
-    }
-
-    protected function get isFirstPlayer () :Boolean
-    {
-        return this.localPlayerId == 0;
+        return SeatingManager.numPlayers;
     }
 
     protected function get allPlayersDecided () :Boolean
     {
-        if (null == _playerTeams) {
+        var teams :Array = MultiplayerConfig.teams;
+
+        if (null == teams) {
             return false;
         }
 
-        for each (var teamId :int in _playerTeams) {
+        for each (var teamId :int in teams) {
             if (teamId < 0) {
                 return false;
             }
@@ -261,13 +260,11 @@ public class GameLobbyMode extends AppMode
 
     protected function get teamsDividedProperly () :Boolean
     {
-        if (null == _playerTeams) {
-            return false;
-        }
+        var teams :Array = MultiplayerConfig.teams;
 
         // how large is each team?
         var teamSizes :Array = ArrayUtil.create(this.maxTeams, 0);
-        for each (var teamId :int in _playerTeams) {
+        for each (var teamId :int in teams) {
             if (teamId >= 0) {
                 teamSizes[teamId] += 1;
             }
@@ -275,7 +272,7 @@ public class GameLobbyMode extends AppMode
 
         // does one team have all the players?
         for each (var teamSize :int in teamSizes) {
-            if (teamSize == this.numPlayers) {
+            if (teamSize == SeatingManager.numPlayers) {
                 return false;
             }
         }
@@ -288,8 +285,6 @@ public class GameLobbyMode extends AppMode
         return this.allPlayersDecided && this.teamsDividedProperly;
     }
 
-    protected var _playerTeams :Array;
-    protected var _playerHandicaps :Array;
     protected var _teamTexts :Array = [];
     protected var _statusText :TextField;
     protected var _handicapCheckbox :HandicapCheckbox;
@@ -305,7 +300,7 @@ public class GameLobbyMode extends AppMode
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
     protected static const HANDICAP_BOX_LOC :Point = new Point(500, 425);
 
-    protected static const GAME_START_COUNTDOWN :Number = 1;
+    protected static const GAME_START_COUNTDOWN :Number = 3;
 }
 
 }

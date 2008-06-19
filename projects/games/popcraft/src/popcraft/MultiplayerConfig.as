@@ -4,10 +4,10 @@ import com.threerings.util.ArrayUtil;
 
 public class MultiplayerConfig
 {
+    public static const PROP_INITED :String = "Inited";
     public static const PROP_TEAMS :String = "Teams";
     public static const PROP_HANDICAPS :String = "Handicaps";
     public static const PROP_RANDSEED :String = "RandSeed";
-    public static const PROP_READY :String = "Ready";
 
     public static function set teams (val :Array) :void
     {
@@ -98,16 +98,16 @@ public class MultiplayerConfig
         return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_RANDSEED) as uint : 0);
     }
 
-    public static function set ready (val :Boolean) :void
+    public static function set inited (val :Boolean) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_READY, val);
+            AppContext.gameCtrl.net.set(PROP_INITED, val);
         }
     }
 
-    public static function get ready () :Boolean
+    public static function get inited () :Boolean
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_READY) as Boolean : 0);
+        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
     }
 
     public static function get numPlayers () :int
