@@ -191,9 +191,9 @@ public class GameLobbyMode extends AppMode
             var text :String = "";
 
             if (null != teams) {
-                for (var playerId :int = 0; playerId < SeatingManager.numPlayers; ++playerId) {
-                    if (teams[playerId] == teamId) {
-                        text += SeatingManager.getPlayerName(playerId) + "\n";
+                for (var playerIndex :int = 0; playerIndex < SeatingManager.numPlayers; ++playerIndex) {
+                    if (teams[playerIndex] == teamId) {
+                        text += SeatingManager.getPlayerName(playerIndex) + "\n";
                     }
                 }
             }

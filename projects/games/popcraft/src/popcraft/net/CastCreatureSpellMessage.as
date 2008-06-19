@@ -5,12 +5,12 @@ import com.whirled.contrib.simplegame.net.*;
 public class CastCreatureSpellMessage
     implements Message
 {
-    public var playerId :int;
+    public var playerIndex :int;
     public var spellType :int;
 
-    public function CastCreatureSpellMessage (playerId :int, spellType :int)
+    public function CastCreatureSpellMessage (playerIndex :int, spellType :int)
     {
-        this.playerId = playerId;
+        this.playerIndex = playerIndex;
         this.spellType = spellType;
     }
 
@@ -21,7 +21,7 @@ public class CastCreatureSpellMessage
 
     public function toString () :String
     {
-        return "[CastCreatureSpell. playerId: " + playerId + ". spellType: " + spellType + "]";
+        return "[CastCreatureSpell. playerIndex: " + playerIndex + ". spellType: " + spellType + "]";
     }
 
     public static function createFactory () :MessageFactory
@@ -51,7 +51,7 @@ class CastCreatureSpellMessageFactory
         var msg :CastCreatureSpellMessage = (message as CastCreatureSpellMessage);
 
         var ba :ByteArray = new ByteArray();
-        ba.writeByte(msg.playerId);
+        ba.writeByte(msg.playerIndex);
         ba.writeByte(msg.spellType);
 
         return ba;
@@ -66,10 +66,10 @@ class CastCreatureSpellMessageFactory
             log.warning("received non-ByteArray message");
         } else {
             try {
-                var playerId :int = ba.readByte();
+                var playerIndex :int = ba.readByte();
                 var spellType :int = ba.readByte();
 
-                msg = new CastCreatureSpellMessage(playerId, spellType);
+                msg = new CastCreatureSpellMessage(playerIndex, spellType);
 
             } catch (err :EOFError) {
                 log.warning("received bad data");

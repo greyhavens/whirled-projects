@@ -5,14 +5,14 @@ import com.whirled.contrib.simplegame.net.*;
 public class ChecksumMessage
     implements Message
 {
-    public var playerId :int;
+    public var playerIndex :int;
     public var tick :uint;
     public var checksum :uint;
     public var details :String;
 
-    public function ChecksumMessage (playerId :int, tick :uint, checksum :uint, details :String)
+    public function ChecksumMessage (playerIndex :int, tick :uint, checksum :uint, details :String)
     {
-        this.playerId = playerId;
+        this.playerIndex = playerIndex;
         this.tick = tick;
         this.checksum = checksum;
         this.details = details;
@@ -26,7 +26,7 @@ public class ChecksumMessage
     public function toString () :String
     {
         return new String(
-           "[CHECKSUM. playerId: " + playerId +
+           "[CHECKSUM. playerIndex: " + playerIndex +
            ". tick: " + tick +
            ". checksum: " + checksum +
            ". details: " + details +
@@ -55,12 +55,12 @@ class ChecksumMessageFactory
     public function serializeForNetwork (message :Message) :Object
     {
         var msg :ChecksumMessage = (message as ChecksumMessage);
-        return { playerId: msg.playerId, tick: msg.tick, checksum: msg.checksum, details: msg.details };
+        return { playerIndex: msg.playerIndex, tick: msg.tick, checksum: msg.checksum, details: msg.details };
     }
 
     public function deserializeFromNetwork (obj :Object) :Message
     {
-        return new ChecksumMessage(int(obj.playerId), uint(obj.tick), uint(obj.checksum), String(obj.details));
+        return new ChecksumMessage(int(obj.playerIndex), uint(obj.tick), uint(obj.checksum), String(obj.details));
     }
 }
 

@@ -26,9 +26,9 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         return MainLoop.instance.topMode.getObjectsInGroup(GROUP_NAME);
     }
 
-    public static function getForPlayer (playerId :int) :PlayerBaseUnitView
+    public static function getForPlayer (playerIndex :int) :PlayerBaseUnitView
     {
-        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerId) as PlayerBaseUnitView;
+        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerIndex) as PlayerBaseUnitView;
     }
 
     public function PlayerBaseUnitView (unit :PlayerBaseUnit)
@@ -38,7 +38,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
         _workshop = _movie["workshop"];
 
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
         var recolor :MovieClip = _workshop["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
@@ -95,7 +95,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
     override public function get objectName () :String
     {
-        return "BaseView_" + _unit.owningPlayerId;
+        return "BaseView_" + _unit.owningPlayerIndex;
     }
 
     public function unitCreated () :void

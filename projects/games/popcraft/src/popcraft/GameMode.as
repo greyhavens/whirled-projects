@@ -153,7 +153,7 @@ public class GameMode extends AppMode
 
         // create players' unit spell sets (these are synchronized objects)
         GameContext.playerCreatureSpellSets = [];
-        for (var playerId :int = 0; playerId < GameContext.numPlayers; ++playerId) {
+        for (var playerIndex :int = 0; playerIndex < GameContext.numPlayers; ++playerIndex) {
             var spellSet :CreatureSpellSet = new CreatureSpellSet();
             GameContext.netObjects.addObject(spellSet);
             GameContext.playerCreatureSpellSets.push(spellSet);
@@ -198,20 +198,20 @@ public class GameMode extends AppMode
 
         // create PlayerInfo structures
         GameContext.playerInfos = [];
-        for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
+        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
             var playerInfo :PlayerInfo;
-            teamId = teams[playerId];
+            teamId = teams[playerIndex];
             teamInfo = teamInfos[teamId];
             var baseLoc :Vector2 = teamInfo.baseLocs.shift();
-            var isHandicapped :Boolean = handicaps[playerId];
+            var isHandicapped :Boolean = handicaps[playerIndex];
             var handicap :Number = 1; // @TODO - wire this up
 
-            if (GameContext.localPlayerIndex == playerId) {
-                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerId, teamId, baseLoc, handicap);
+            if (GameContext.localPlayerIndex == playerIndex) {
+                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);
                 playerInfo = localPlayerInfo;
             } else {
-                playerInfo = new PlayerInfo(playerId, teamId, baseLoc, handicap);
+                playerInfo = new PlayerInfo(playerIndex, teamId, baseLoc, handicap);
             }
 
             GameContext.playerInfos.push(playerInfo);
@@ -219,7 +219,7 @@ public class GameMode extends AppMode
 
         // setup target enemies
         for each (playerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
+            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
         }
     }
 
@@ -230,7 +230,7 @@ public class GameMode extends AppMode
         // in single player levels, base location are arranged in order of player id
         var baseLocs :Array = GameContext.mapSettings.baseLocs;
 
-        // Create the local player (always playerId=0, team=0)
+        // Create the local player (always playerIndex=0, team=0)
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(0, 0, baseLocs[0], 1, GameContext.spLevel.playerName);
 
         // grant the player some starting resources
@@ -249,18 +249,18 @@ public class GameMode extends AppMode
 
         // create computer players
         var numComputers :int = GameContext.spLevel.computers.length;
-        for (var playerId :int = 1; playerId < numComputers + 1; ++playerId) {
-            var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerId, cpData.team, baseLocs[playerId], cpData.playerName);
+        for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
+            var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerIndex - 1];
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
-            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerId));
+            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
         }
 
         // setup target enemies
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerId).playerId;
+            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
         }
     }
 
@@ -351,28 +351,28 @@ public class GameMode extends AppMode
 
         // create player bases
         var numPlayers :int = GameContext.numPlayers;
-        for (var playerId :int = 0; playerId < numPlayers; ++playerId) {
+        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
             // in single-player levels, bases have custom health
             var maxHealthOverride :int = 0;
             var startingHealthOverride :int = 0;
             var invincible :Boolean;
             if (GameContext.isSinglePlayer) {
-                if (playerId == 0) {
+                if (playerIndex == 0) {
                     maxHealthOverride = GameContext.spLevel.playerBaseHealth;
                     startingHealthOverride = GameContext.spLevel.playerBaseStartHealth;
                 } else {
-                    var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerId - 1];
+                    var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerIndex - 1];
                     maxHealthOverride = cpData.baseHealth;
                     startingHealthOverride = cpData.baseStartHealth;
                     invincible = cpData.invincible;
                 }
             }
 
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
             var baseLoc :Vector2 = playerInfo.baseLoc;
 
-            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerId, maxHealthOverride, startingHealthOverride);
+            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
             base.isInvincible = invincible;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
@@ -657,14 +657,14 @@ public class GameMode extends AppMode
         add(unitIds.length, "units.length");
         for (i = 0; i < unitIds.length; ++i) {
             var unit :Unit = _netObjects.get(units[i] as Unit);
-            add(unit.owningPlayerId, "unit.owningPlayerId - " + i);
+            add(unit.owningPlayerIndex, "unit.owningPlayerIndex - " + i);
             add(unit.unitType, "unit.unitType - " + i);
             add(unit.displayObject.x, "unit.displayObject.x - " + i);
             add(unit.displayObject.y, "unit.displayObject.y - " + i);
             add(unit.health, "unit.health - " + i);
         }*/
 
-        msg.playerId = GameContext.localPlayerIndex;
+        msg.playerIndex = GameContext.localPlayerIndex;
         msg.tick = _gameTickCount;
         msg.checksum = csum.value;
 
@@ -692,8 +692,8 @@ public class GameMode extends AppMode
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            UnitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerId);
-            var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(createUnitMsg.playerId);
+            UnitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerIndex);
+            var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(createUnitMsg.playerIndex);
             if (null != baseView) {
                 baseView.unitCreated();
             }
@@ -701,14 +701,14 @@ public class GameMode extends AppMode
 
         case SelectTargetEnemyMessage.messageName:
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
-            this.setTargetEnemy(selectTargetEnemyMsg.playerId, selectTargetEnemyMsg.targetPlayerId);
+            this.setTargetEnemy(selectTargetEnemyMsg.playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             break;
 
         case CastCreatureSpellMessage.messageName:
             var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
-            var playerId :int = castSpellMsg.playerId;
-            if (PlayerInfo(GameContext.playerInfos[playerId]).isAlive) {
-                var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[playerId];
+            var playerIndex :int = castSpellMsg.playerIndex;
+            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
+                var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[playerIndex];
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
                 GameContext.playGameSound("sfx_" + spell.name);
@@ -722,12 +722,12 @@ public class GameMode extends AppMode
 
     }
 
-    protected function setTargetEnemy (playerId :int, targetEnemyId :int) :void
+    protected function setTargetEnemy (playerIndex :int, targetEnemyId :int) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
         playerInfo.targetedEnemyId = targetEnemyId;
 
-        if (playerId == GameContext.localPlayerIndex) {
+        if (playerIndex == GameContext.localPlayerIndex) {
             this.updateTargetEnemyBadgeLocation(targetEnemyId);
         }
     }
@@ -737,7 +737,7 @@ public class GameMode extends AppMode
         // move the "target enemy" badge to the correct base
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
-            baseView.targetEnemyBadgeVisible = (baseView.baseUnit.owningPlayerId == targetEnemyId);
+            baseView.targetEnemyBadgeVisible = (baseView.baseUnit.owningPlayerIndex == targetEnemyId);
         }
     }
 
@@ -748,9 +748,9 @@ public class GameMode extends AppMode
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var baseViews :Array = PlayerBaseUnitView.getAll();
         for each (var baseView :PlayerBaseUnitView in baseViews) {
-            var owningPlayerId :int = baseView.baseUnit.owningPlayerId;
-            var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerId];
-            baseView.targetEnemyBadgeVisible = (owningPlayerId == localPlayerInfo.targetedEnemyId);
+            var owningPlayerIndex :int = baseView.baseUnit.owningPlayerIndex;
+            var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerIndex];
+            baseView.targetEnemyBadgeVisible = (owningPlayerIndex == localPlayerInfo.targetedEnemyId);
 
             if (localPlayerInfo.teamId != owningPlayerInfo.teamId && !owningPlayerInfo.isInvincible) {
                 baseView.clickableObject.addEventListener(
@@ -768,7 +768,7 @@ public class GameMode extends AppMode
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var newTargetEnemyId :int = enemyBaseView.baseUnit.owningPlayerId;
+        var newTargetEnemyId :int = enemyBaseView.baseUnit.owningPlayerIndex;
 
         Assert.isTrue(newTargetEnemyId != GameContext.localPlayerIndex);
 
@@ -783,14 +783,14 @@ public class GameMode extends AppMode
 
     }
 
-    public function selectTargetEnemy (playerId :int, enemyId :int) :void
+    public function selectTargetEnemy (playerIndex :int, enemyId :int) :void
     {
-        _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerId, enemyId));
+        _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId));
     }
 
     protected function handleChecksumMessage (msg :ChecksumMessage) :void
     {
-        if (msg.playerId != GameContext.localPlayerIndex) {
+        if (msg.playerIndex != GameContext.localPlayerIndex) {
             // check this checksum against our checksum buffer
             if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
                 log.debug("discarding checksum message (too old or too new)");
@@ -802,9 +802,9 @@ public class GameMode extends AppMode
 
                     // only dump the details once
                     if (!_syncError) {
-                        log.debug("-- PLAYER " + myChecksum.playerId + " --");
+                        log.debug("-- PLAYER " + myChecksum.playerIndex + " --");
                         log.debug(myChecksum.details);
-                        log.debug("-- PLAYER " + msg.playerId + " --");
+                        log.debug("-- PLAYER " + msg.playerIndex + " --");
                         log.debug(msg.details);
                         _syncError = true;
                     }
@@ -813,9 +813,9 @@ public class GameMode extends AppMode
         }
     }
 
-    public function buildUnit (playerId :int, unitType :int, noCost :Boolean = false) :void
+    public function buildUnit (playerIndex :int, unitType :int, noCost :Boolean = false) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
 
         if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || (!noCost && !playerInfo.canPurchaseCreature(unitType))) {
             return;
@@ -825,12 +825,12 @@ public class GameMode extends AppMode
             playerInfo.deductCreatureCost(unitType);
         }
 
-        _messageMgr.sendMessage(new CreateUnitMessage(playerId, unitType));
+        _messageMgr.sendMessage(new CreateUnitMessage(playerIndex, unitType));
     }
 
-    public function castSpell (playerId :int, spellType :int) :void
+    public function castSpell (playerIndex :int, spellType :int) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerId];
+        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
         var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
 
         if (!playerInfo.isAlive || (isCreatureSpell && GameContext.diurnalCycle.isDay) || !playerInfo.canCastSpell(spellType)) {
@@ -840,7 +840,7 @@ public class GameMode extends AppMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            _messageMgr.sendMessage(new CastCreatureSpellMessage(playerId, spellType));
+            _messageMgr.sendMessage(new CastCreatureSpellMessage(playerIndex, spellType));
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
             GameContext.dashboard.puzzleShuffle();

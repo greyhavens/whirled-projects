@@ -11,9 +11,9 @@ import popcraft.battle.ai.*;
  */
 public class BossCreatureUnit extends ColossusCreatureUnit
 {
-    public function BossCreatureUnit (owningPlayerId :int)
+    public function BossCreatureUnit (owningPlayerIndex :int)
     {
-        super(owningPlayerId, Constants.UNIT_TYPE_BOSS, new BossAI(this));
+        super(owningPlayerIndex, Constants.UNIT_TYPE_BOSS, new BossAI(this));
     }
 }
 

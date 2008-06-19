@@ -31,7 +31,7 @@ public class CreatureUnitView extends BattlefieldSprite
         _sprite.mouseEnabled = false;
         _sprite.mouseChildren = false;
 
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerId];
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
 
         this.setupAnimations(playerColor);
 
@@ -66,7 +66,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
         spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
@@ -82,7 +82,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
         spellSet.removeEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
     }
 
@@ -99,7 +99,7 @@ public class CreatureUnitView extends BattlefieldSprite
             _unitSpellIconParent = null;
         }
 
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerId];
+        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;

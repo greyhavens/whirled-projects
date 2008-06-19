@@ -13,9 +13,9 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerId :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null)
+    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null)
     {
-        _playerId = playerId;
+        _playerIndex = playerIndex;
         _teamId = teamId;
         _baseLoc = baseLoc;
         _handicap = handicap;
@@ -30,14 +30,14 @@ public class PlayerInfo extends EventDispatcher
             whirledIds = playerNames = [];
         }
 
-        _whirledId = (playerId < whirledIds.length ? whirledIds[_playerId] : 0);
+        _whirledId = (playerIndex < whirledIds.length ? whirledIds[_playerIndex] : 0);
 
         if (null != playerName) {
             _playerName = playerName;
-        } else if (_playerId < playerNames.length && null != playerNames[_playerId])  {
-            _playerName = playerNames[_playerId];
+        } else if (_playerIndex < playerNames.length && null != playerNames[_playerIndex])  {
+            _playerName = playerNames[_playerIndex];
         } else {
-            _playerName = "Unknown player " + playerId;
+            _playerName = "Unknown player " + playerIndex;
         }
     }
 
@@ -48,12 +48,12 @@ public class PlayerInfo extends EventDispatcher
 
     public function get playerColor () :uint
     {
-        return GameContext.gameData.playerColors[_playerId];
+        return GameContext.gameData.playerColors[_playerIndex];
     }
 
-    public function get playerId () :int
+    public function get playerIndex () :int
     {
-        return _playerId;
+        return _playerIndex;
     }
 
     public function get teamId () :int
@@ -167,7 +167,7 @@ public class PlayerInfo extends EventDispatcher
         // no-op
     }
 
-    protected var _playerId :int;  // an unsigned integer corresponding to the player's seating position
+    protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
     protected var _teamId :int;
     protected var _whirledId :int;  // the oid assigned to this player on Whirled
     protected var _playerName :String;

@@ -12,9 +12,9 @@ import popcraft.battle.ai.*;
  */
 public class ColossusCreatureUnit extends CreatureUnit
 {
-    public function ColossusCreatureUnit (owningPlayerId :int, unitType :int = Constants.UNIT_TYPE_COLOSSUS, ai :ColossusAI = null)
+    public function ColossusCreatureUnit (owningPlayerIndex :int, unitType :int = Constants.UNIT_TYPE_COLOSSUS, ai :ColossusAI = null)
     {
-        super(owningPlayerId, unitType);
+        super(owningPlayerIndex, unitType);
         _ai = (null != ai ? ai : new ColossusAI(this));
         _ai.init();
     }

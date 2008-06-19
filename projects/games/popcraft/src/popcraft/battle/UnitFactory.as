@@ -8,10 +8,10 @@ import popcraft.battle.view.*;
 
 public class UnitFactory
 {
-    public static function createCreature (unitType :int, owningPlayerId :int) :void
+    public static function createCreature (unitType :int, owningPlayerIndex :int) :void
     {
         // sanity check. dead players create no monsters.
-        if (!PlayerInfo(GameContext.playerInfos[owningPlayerId]).isAlive) {
+        if (!PlayerInfo(GameContext.playerInfos[owningPlayerIndex]).isAlive) {
             return;
         }
 
@@ -19,27 +19,27 @@ public class UnitFactory
 
         switch (unitType) {
         case Constants.UNIT_TYPE_GRUNT:
-            creature = new GruntCreatureUnit(owningPlayerId);
+            creature = new GruntCreatureUnit(owningPlayerIndex);
             break;
 
         case Constants.UNIT_TYPE_HEAVY:
-            creature = new HeavyCreatureUnit(owningPlayerId);
+            creature = new HeavyCreatureUnit(owningPlayerIndex);
             break;
 
         case Constants.UNIT_TYPE_SAPPER:
-            creature = new SapperCreatureUnit(owningPlayerId);
+            creature = new SapperCreatureUnit(owningPlayerIndex);
             break;
 
         case Constants.UNIT_TYPE_COLOSSUS:
-            creature = new ColossusCreatureUnit(owningPlayerId);
+            creature = new ColossusCreatureUnit(owningPlayerIndex);
             break;
 
         case Constants.UNIT_TYPE_COURIER:
-            creature = new CourierCreatureUnit(owningPlayerId);
+            creature = new CourierCreatureUnit(owningPlayerIndex);
             break;
 
         case Constants.UNIT_TYPE_BOSS:
-            creature = new BossCreatureUnit(owningPlayerId);
+            creature = new BossCreatureUnit(owningPlayerIndex);
             break;
 
         default:
@@ -68,9 +68,9 @@ public class UnitFactory
         GameContext.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
     }
 
-    public static function createBaseUnit (owningPlayerId :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
+    public static function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
     {
-        var base :PlayerBaseUnit = new PlayerBaseUnit(owningPlayerId, maxHealthOverride, startingHealthOverride);
+        var base :PlayerBaseUnit = new PlayerBaseUnit(owningPlayerIndex, maxHealthOverride, startingHealthOverride);
 
         GameContext.netObjects.addObject(base);
 

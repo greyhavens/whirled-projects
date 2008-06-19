@@ -12,9 +12,9 @@ import popcraft.*;
 
 public class PlayerStatusView extends SceneObject
 {
-    public function PlayerStatusView (playerId :int)
+    public function PlayerStatusView (playerIndex :int)
     {
-        _playerInfo = GameContext.playerInfos[playerId];
+        _playerInfo = GameContext.playerInfos[playerIndex];
 
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
         _movie.cacheAsBitmap = true;

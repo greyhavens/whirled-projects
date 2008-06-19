@@ -12,9 +12,9 @@ import popcraft.data.*;
  */
 public class SapperCreatureUnit extends CreatureUnit
 {
-    public function SapperCreatureUnit (owningPlayerId :int)
+    public function SapperCreatureUnit (owningPlayerIndex :int)
     {
-        super(owningPlayerId, Constants.UNIT_TYPE_SAPPER);
+        super(owningPlayerIndex, Constants.UNIT_TYPE_SAPPER);
 
         _sapperAI = new SapperAI(this);
     }

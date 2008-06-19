@@ -5,13 +5,13 @@ import com.whirled.contrib.simplegame.net.*;
 public class CreateUnitMessage
     implements Message
 {
-    public var playerId :int;
+    public var playerIndex :int;
     public var unitType :int;
 
-    public function CreateUnitMessage (playerId :int, unitType :int)
+    public function CreateUnitMessage (playerIndex :int, unitType :int)
     {
         this.unitType = unitType;
-        this.playerId = playerId;
+        this.playerIndex = playerIndex;
     }
 
     public function get name () :String
@@ -21,7 +21,7 @@ public class CreateUnitMessage
 
     public function toString () :String
     {
-        return "[CreateUnit. playerId: " + playerId + ". unitType: " + unitType + "]";
+        return "[CreateUnit. playerIndex: " + playerIndex + ". unitType: " + unitType + "]";
     }
 
     public static function createFactory () :MessageFactory
@@ -52,7 +52,7 @@ class CreateUnitMessageFactory
 
         var ba :ByteArray = new ByteArray();
         ba.writeByte(msg.unitType);
-        ba.writeByte(msg.playerId);
+        ba.writeByte(msg.playerIndex);
 
         return ba;
     }

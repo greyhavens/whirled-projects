@@ -28,10 +28,10 @@ public class Unit extends SimObject
 {
     public static const GROUP_NAME :String = "Unit";
 
-    public function Unit (owningPlayerId :int, unitType :int)
+    public function Unit (owningPlayerIndex :int, unitType :int)
     {
         _unitType = unitType;
-        _owningPlayerInfo = GameContext.playerInfos[owningPlayerId];
+        _owningPlayerInfo = GameContext.playerInfos[owningPlayerIndex];
 
         _unitData = GameContext.gameData.units[unitType];
         _minHealth = _unitData.minHealth;
@@ -260,9 +260,9 @@ public class Unit extends SimObject
         return _owningPlayerInfo;
     }
 
-    public function get owningPlayerId () :int
+    public function get owningPlayerIndex () :int
     {
-        return _owningPlayerInfo.playerId;
+        return _owningPlayerInfo.playerIndex;
     }
 
     public function get unitType () :int

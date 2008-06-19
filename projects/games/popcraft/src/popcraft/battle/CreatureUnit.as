@@ -17,13 +17,13 @@ public class CreatureUnit extends Unit
     public static const GROUP_NAME :String = "CreatureUnit";
 
     /** Count the number of a particular creature type owned by a player. */
-    public static function getNumPlayerCreatures (owningPlayerId :int, unitType :int) :int
+    public static function getNumPlayerCreatures (owningPlayerIndex :int, unitType :int) :int
     {
         var count :int = 0;
         var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(GROUP_NAME);
         for each (var ref :SimObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
-            if (null != creature && creature.owningPlayerId == owningPlayerId && creature.unitType == unitType) {
+            if (null != creature && creature.owningPlayerIndex == owningPlayerIndex && creature.unitType == unitType) {
                 ++count;
             }
         }
@@ -31,9 +31,9 @@ public class CreatureUnit extends Unit
         return count;
     }
 
-    public function CreatureUnit (owningPlayerId :int, unitType :int)
+    public function CreatureUnit (owningPlayerIndex :int, unitType :int)
     {
-        super(owningPlayerId, unitType);
+        super(owningPlayerIndex, unitType);
 
         // start at our owning player's base's spawn loc
         var spawnLoc :Vector2 = _owningPlayerInfo.base.unitSpawnLoc;
@@ -42,7 +42,7 @@ public class CreatureUnit extends Unit
 
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
-        _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerId];
+        _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerIndex];
         _lastDayCount = GameContext.diurnalCycle.dayCount;
         _eclipseEnabled = GameContext.gameData.enableEclipse;
     }
@@ -198,7 +198,7 @@ public class CreatureUnit extends Unit
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
             return enemyPlayerInfo.baseRef;
         } else {
-            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerId);
+            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerIndex);
             if (null != newEnemy) {
                 return newEnemy.baseRef;
             }

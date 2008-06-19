@@ -13,9 +13,9 @@ import popcraft.battle.ai.*;
  */
 public class GruntCreatureUnit extends CreatureUnit
 {
-    public function GruntCreatureUnit (owningPlayerId :int)
+    public function GruntCreatureUnit (owningPlayerIndex :int)
     {
-        super(owningPlayerId, Constants.UNIT_TYPE_GRUNT);
+        super(owningPlayerIndex, Constants.UNIT_TYPE_GRUNT);
 
         _gruntAI = new GruntAI(this);
     }

@@ -10,20 +10,20 @@ import popcraft.battle.ai.*;
  */
 public class HeavyCreatureUnit extends CreatureUnit
 {
-    public function HeavyCreatureUnit (owningPlayerId :int)
+    public function HeavyCreatureUnit (owningPlayerIndex :int)
     {
-        super(owningPlayerId, Constants.UNIT_TYPE_HEAVY);
+        super(owningPlayerIndex, Constants.UNIT_TYPE_HEAVY);
     }
 
     override protected function addedToDB () :void
     {
-        _formationSpace = HeavyFormationManager.reserveNextSpace(this.owningPlayerId);
+        _formationSpace = HeavyFormationManager.reserveNextSpace(this.owningPlayerIndex);
         _ai = new HeavyAI(this);
     }
 
     override protected function removedFromDB () :void
     {
-        HeavyFormationManager.surrenderSpace(this.owningPlayerId, _formationSpace);
+        HeavyFormationManager.surrenderSpace(this.owningPlayerIndex, _formationSpace);
     }
 
     override protected function get aiRoot () :AITask
@@ -59,30 +59,30 @@ class HeavyFormationManager extends SimObject
     public static const ROW_STAGGER :Number = 20;
     public static const FIRST_ROW_DISTANCE_FROM_BASE :Number = 40;
 
-    public static function reserveNextSpace (owningPlayerId :int) :HeavyFormationSpace
+    public static function reserveNextSpace (owningPlayerIndex :int) :HeavyFormationSpace
     {
-        return getManager(owningPlayerId).reserveNextSpace();
+        return getManager(owningPlayerIndex).reserveNextSpace();
     }
 
-    public static function surrenderSpace (owningPlayerId :int, space :HeavyFormationSpace) :void
+    public static function surrenderSpace (owningPlayerIndex :int, space :HeavyFormationSpace) :void
     {
-        return getManager(owningPlayerId).surrenderSpace(space);
+        return getManager(owningPlayerIndex).surrenderSpace(space);
     }
 
-    protected static function getManager (owningPlayerId :int) :HeavyFormationManager
+    protected static function getManager (owningPlayerIndex :int) :HeavyFormationManager
     {
-        var mgr :SimObject = GameContext.netObjects.getObjectNamed(getObjectName(owningPlayerId));
+        var mgr :SimObject = GameContext.netObjects.getObjectNamed(getObjectName(owningPlayerIndex));
         if (null == mgr) {
-            mgr = new HeavyFormationManager(owningPlayerId);
+            mgr = new HeavyFormationManager(owningPlayerIndex);
             GameContext.netObjects.addObject(mgr);
         }
 
         return mgr as HeavyFormationManager;
     }
 
-    public function HeavyFormationManager (owningPlayerId :int)
+    public function HeavyFormationManager (owningPlayerIndex :int)
     {
-        _name = getObjectName(owningPlayerId);
+        _name = getObjectName(owningPlayerIndex);
     }
 
     protected function reserveNextSpace () :HeavyFormationSpace
@@ -114,9 +114,9 @@ class HeavyFormationManager extends SimObject
         return _name;
     }
 
-    protected static function getObjectName (owningPlayerId :int) :String
+    protected static function getObjectName (owningPlayerIndex :int) :String
     {
-        return "HeavyFormationManager_" + owningPlayerId;
+        return "HeavyFormationManager_" + owningPlayerIndex;
     }
 
     protected var _name :String;

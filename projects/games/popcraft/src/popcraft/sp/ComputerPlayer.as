@@ -10,10 +10,10 @@ import popcraft.data.*;
 
 public class ComputerPlayer extends SimObject
 {
-    public function ComputerPlayer (data :ComputerPlayerData, playerId :int)
+    public function ComputerPlayer (data :ComputerPlayerData, playerIndex :int)
     {
         _data = data;
-        _playerInfo = GameContext.playerInfos[playerId] as ComputerPlayerInfo;
+        _playerInfo = GameContext.playerInfos[playerIndex] as ComputerPlayerInfo;
 
         // add starting spells to our playerInfo
         _playerInfo.setSpellCounts(data.startingCreatureSpells);
@@ -67,7 +67,7 @@ public class ComputerPlayer extends SimObject
 
                 if (availableSpells.length > 0) {
                     spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
-                    GameContext.gameMode.castSpell(_playerInfo.playerId, spellType);
+                    GameContext.gameMode.castSpell(_playerInfo.playerIndex, spellType);
                 }
             }
 
@@ -75,7 +75,7 @@ public class ComputerPlayer extends SimObject
             if (null != _nextWave.targetPlayerName) {
                 var targetPlayer :PlayerInfo = GameContext.getPlayerByName(_nextWave.targetPlayerName);
                 if (null != targetPlayer) {
-                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerId, targetPlayer.playerId);
+                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerIndex, targetPlayer.playerIndex);
                 }
             }
 
@@ -88,7 +88,7 @@ public class ComputerPlayer extends SimObject
 
                 // is there a cap on how many creatures we should create in this wave?
                 if (max >= 0) {
-                    count = Math.min(count, max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerId, unitType));
+                    count = Math.min(count, max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerIndex, unitType));
                 }
 
                 for (var j :int = 0; j < count; ++j) {
@@ -102,7 +102,7 @@ public class ComputerPlayer extends SimObject
 
     protected function buildUnit (unitType :int) :void
     {
-        GameContext.gameMode.buildUnit(_playerInfo.playerId, unitType);
+        GameContext.gameMode.buildUnit(_playerInfo.playerIndex, unitType);
     }
 
     override protected function update (dt :Number) :void
@@ -167,7 +167,7 @@ public class ComputerPlayer extends SimObject
 
     protected function get numCouriersOnBoard () :int
     {
-        return CourierCreatureUnit.getNumPlayerCouriersOnBoard(_playerInfo.playerId);
+        return CourierCreatureUnit.getNumPlayerCouriersOnBoard(_playerInfo.playerIndex);
     }
 
     protected var _data :ComputerPlayerData;

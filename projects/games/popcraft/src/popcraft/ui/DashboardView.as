@@ -80,7 +80,7 @@ public class DashboardView extends SceneObject
             var playerInfo :PlayerInfo = GameContext.playerInfos[i];
             var loc :Point = statusViewLocs[i];
 
-            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerId);
+            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerIndex);
             psv.x = loc.x;
             psv.y = loc.y;
             GameContext.gameMode.addObject(psv, playerFrame);

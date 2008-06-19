@@ -16,19 +16,19 @@ import popcraft.data.SpellData;
  */
 public class CourierCreatureUnit extends CreatureUnit
 {
-    public static function getNumPlayerCouriersOnBoard (playerId :int) :int
+    public static function getNumPlayerCouriersOnBoard (playerIndex :int) :int
     {
-        return GameContext.netObjects.getObjectRefsInGroup(getGroupName(playerId)).length;
+        return GameContext.netObjects.getObjectRefsInGroup(getGroupName(playerIndex)).length;
     }
 
-    public function CourierCreatureUnit (owningPlayerId :int)
+    public function CourierCreatureUnit (owningPlayerIndex :int)
     {
-        super(owningPlayerId, Constants.UNIT_TYPE_COURIER);
+        super(owningPlayerIndex, Constants.UNIT_TYPE_COURIER);
 
         _spawnLoc = _owningPlayerInfo.base.unitSpawnLoc;
 
         _courierAI = new CourierAI(this);
-        _groupName = getGroupName(owningPlayerId);
+        _groupName = getGroupName(owningPlayerIndex);
     }
 
     public function pickupSpell (spellObject :SpellDropObject) :void
@@ -117,9 +117,9 @@ public class CourierCreatureUnit extends CreatureUnit
         return _preventDeathAnimation;
     }
 
-    protected static function getGroupName (playerId :int) :String
+    protected static function getGroupName (playerIndex :int) :String
     {
-        return "CourierCreature_Player" + playerId;
+        return "CourierCreature_Player" + playerIndex;
     }
 
     protected var _courierAI :CourierAI;
