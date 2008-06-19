@@ -478,6 +478,11 @@ public class GameMode extends AppMode
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
                 _gameIsRunning = true;
+            } else if (!SeatingManager.allPlayersPresent) {
+                // If a player leaves before the game starts, the messageMgr will never
+                // be ready.
+                AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+                return;
             } else {
                 return;
             }
