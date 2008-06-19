@@ -187,6 +187,8 @@ public class GameMode extends AppMode
             }
         }
 
+        var largestTeamSize :int = TeamInfo(teamInfos[0]).teamSize;
+
         teamInfos.sort(TeamInfo.teamIdCompare);
 
         // get some information about the players in the game
@@ -204,8 +206,15 @@ public class GameMode extends AppMode
             teamId = teams[playerIndex];
             teamInfo = teamInfos[teamId];
             var baseLoc :Vector2 = teamInfo.baseLocs.shift();
-            var isHandicapped :Boolean = handicaps[playerIndex];
-            var handicap :Number = 1; // @TODO - wire this up
+
+            // calculate the player's handicap
+            var handicap :Number = 1;
+            if (teamInfo.teamSize < largestTeamSize) {
+                handicap = GameContext.mpSettings.smallerTeamHandicap;
+            }
+            if (handicaps[playerIndex]) {
+                handicap *= Constants.HANDICAPPED_MULTIPLIER;
+            }
 
             if (GameContext.localPlayerIndex == playerIndex) {
                 var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);

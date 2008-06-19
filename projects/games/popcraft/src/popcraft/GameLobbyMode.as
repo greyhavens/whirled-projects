@@ -39,7 +39,6 @@ public class GameLobbyMode extends AppMode
         _statusText.autoSize = TextFieldAutoSize.LEFT;
         _statusText.x = STATUS_TEXT_LOC.x;
         _statusText.y = STATUS_TEXT_LOC.y;
-
         this.modeSprite.addChild(_statusText);
 
         _handicapCheckbox = new HandicapCheckbox();
@@ -47,6 +46,17 @@ public class GameLobbyMode extends AppMode
         _handicapCheckbox.y = HANDICAP_BOX_LOC.y;
         this.modeSprite.addChild(_handicapCheckbox);
         _handicapCheckbox.addEventListener(HandicapCheckbox.STATE_CHANGED, handicapChanged);
+
+        _handicapText = new TextField();
+        _handicapText.selectable = false;
+        _handicapText.background = true;
+        _handicapText.backgroundColor = 0;
+        _handicapText.textColor = 0xFFFFFF;
+        _handicapText.autoSize = TextFieldAutoSize.LEFT;
+        _handicapText.x = HANDICAP_TEXT_LOC.x;
+        _handicapText.y = HANDICAP_TEXT_LOC.y;
+        _handicapText.text = "Handicap OFF";
+        this.modeSprite.addChild(_handicapText);
 
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
@@ -161,6 +171,7 @@ public class GameLobbyMode extends AppMode
             var handicap :Boolean = _handicapCheckbox.checked;
             if (handicap != playerHandicaps[SeatingManager.localPlayerSeat]) {
                 MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerSeat, handicap);
+                _handicapText.text = (handicap ? "Handicap ON" : "Handicap OFF");
                 this.updateDisplay();
             }
         }
@@ -198,6 +209,7 @@ public class GameLobbyMode extends AppMode
         }
 
         var teams :Array = MultiplayerConfig.teams;
+        var handicaps :Array = MultiplayerConfig.handicaps;
 
         for (var teamId :int = -1; teamId < SeatingManager.numExpectedPlayers; ++teamId) {
             var text :String = "";
@@ -205,7 +217,11 @@ public class GameLobbyMode extends AppMode
             if (null != teams) {
                 for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
                     if (teams[playerSeat] == teamId) {
-                        text += SeatingManager.getPlayerName(playerSeat) + "\n";
+                        text += SeatingManager.getPlayerName(playerSeat);
+                        if (handicaps[playerSeat]) {
+                            text += " (handicap)";
+                        }
+                        text += "\n";
                     }
                 }
             }
@@ -302,6 +318,7 @@ public class GameLobbyMode extends AppMode
     protected var _teamTexts :Array = [];
     protected var _statusText :TextField;
     protected var _handicapCheckbox :HandicapCheckbox;
+    protected var _handicapText :TextField;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
     protected static const TEAM_BOX_SIZE :Point = new Point(175, 150);
@@ -311,8 +328,9 @@ public class GameLobbyMode extends AppMode
     protected static const UNASSIGNED_BOX_SIZE :Point = new Point(150, 350);
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(500, 50);
 
-    protected static const STATUS_TEXT_LOC :Point = new Point(350, 450);
-    protected static const HANDICAP_BOX_LOC :Point = new Point(500, 425);
+    protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
+    protected static const HANDICAP_BOX_LOC :Point = new Point(500, 415);
+    protected static const HANDICAP_TEXT_LOC :Point = new Point(545, 420);
 
     protected static const GAME_START_COUNTDOWN :Number = 3;
 }
@@ -381,5 +399,5 @@ class HandicapCheckbox extends SimpleButton
     protected var _checkedShape :Shape;
     protected var _uncheckedShape :Shape;
 
-    protected static const SIZE :int = 50;
+    protected static const SIZE :int = 30;
 }

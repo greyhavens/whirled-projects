@@ -15,6 +15,10 @@ public class Constants
     public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 0.7;
 
+    /* The handicap applied to a player who selected the Handicap option
+    at the beginning of a multiplayer match. */
+    public static const HANDICAPPED_MULTIPLIER :Number = 0.5;
+
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
