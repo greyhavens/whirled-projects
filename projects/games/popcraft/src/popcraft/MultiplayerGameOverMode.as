@@ -97,7 +97,15 @@ public class MultiplayerGameOverMode extends AppMode
     protected function handleButtonClicked (...ignored) :void
     {
         _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
-        AppContext.mainLoop.unwindToMode(new GameLobbyMode());
+
+        // we can only restart the game lobby if nobody has left the game
+        // @TODO - change this if Whirled allows seated games that are missing players to
+        // be restarted
+        if (SeatingManager.allPlayersPresent) {
+            AppContext.mainLoop.unwindToMode(new GameLobbyMode());
+        } else {
+            AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        }
     }
 
     protected var _winningTeamId :int;

@@ -13,8 +13,11 @@ public class SeatingManager
             _localPlayerSeat = AppContext.gameCtrl.game.seating.getMyPosition();
             updatePlayers();
 
-            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, updatePlayers);
-            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, updatePlayers);
+            // Use a high priority for these event handlers. We want to process them before
+            // anyone else does.
+            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, updatePlayers, false, int.MAX_VALUE);
+            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, updatePlayers, false, int.MAX_VALUE);
+
         } else {
             _numExpectedPlayers = 1;
             _numPlayers = 1;

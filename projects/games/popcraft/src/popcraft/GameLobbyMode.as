@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
 
 import flash.display.Graphics;
@@ -23,7 +24,8 @@ public class GameLobbyMode extends AppMode
         this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         this.createTeamBox(-1);
-        for (var teamId :int = 0; teamId < this.maxTeams; ++teamId) {
+        _numTeams = SeatingManager.numExpectedPlayers;
+        for (var teamId :int = 0; teamId < _numTeams; ++teamId) {
             this.createTeamBox(teamId);
         }
 
@@ -48,6 +50,7 @@ public class GameLobbyMode extends AppMode
 
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
+        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, onOccupantLeft);
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
@@ -70,8 +73,11 @@ public class GameLobbyMode extends AppMode
     {
         super.update(dt);
 
-        // has everybody left?
-        if (SeatingManager.numPlayers <= 1) {
+        // has anybody left?
+        // (currently, seated Whirled games will never start if any of the players fail
+        // to check in, so we can't, e.g., try to seat a 2-player game if the third player leaves)
+        // @TODO - change this if Whirled changes
+        if (!SeatingManager.allPlayersPresent) {
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
 
@@ -97,8 +103,14 @@ public class GameLobbyMode extends AppMode
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        this.updateDisplay();
         this.stopOrResetTimer();
+        this.updateDisplay();
+    }
+
+    protected function onOccupantLeft (...ignored) :void
+    {
+        this.stopOrResetTimer();
+        this.updateDisplay();
     }
 
     protected function createTeamBox (teamId :int) :void
@@ -187,13 +199,13 @@ public class GameLobbyMode extends AppMode
 
         var teams :Array = MultiplayerConfig.teams;
 
-        for (var teamId :int = -1; teamId < SeatingManager.numPlayers; ++teamId) {
+        for (var teamId :int = -1; teamId < SeatingManager.numExpectedPlayers; ++teamId) {
             var text :String = "";
 
             if (null != teams) {
-                for (var playerIndex :int = 0; playerIndex < SeatingManager.numPlayers; ++playerIndex) {
-                    if (teams[playerIndex] == teamId) {
-                        text += SeatingManager.getPlayerName(playerIndex) + "\n";
+                for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+                    if (teams[playerSeat] == teamId) {
+                        text += SeatingManager.getPlayerName(playerSeat) + "\n";
                     }
                 }
             }
@@ -236,11 +248,6 @@ public class GameLobbyMode extends AppMode
         AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
-    protected function get maxTeams () :int
-    {
-        return SeatingManager.numPlayers;
-    }
-
     protected function get allPlayersDecided () :Boolean
     {
         var teams :Array = MultiplayerConfig.teams;
@@ -249,9 +256,12 @@ public class GameLobbyMode extends AppMode
             return false;
         }
 
-        for each (var teamId :int in teams) {
-            if (teamId < 0) {
-                return false;
+        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
+            if (SeatingManager.isPlayerPresent(playerSeat)) {
+                var teamId :int = teams[playerSeat];
+                if (teamId < 0) {
+                    return false;
+                }
             }
         }
 
@@ -263,10 +273,13 @@ public class GameLobbyMode extends AppMode
         var teams :Array = MultiplayerConfig.teams;
 
         // how large is each team?
-        var teamSizes :Array = ArrayUtil.create(this.maxTeams, 0);
-        for each (var teamId :int in teams) {
-            if (teamId >= 0) {
-                teamSizes[teamId] += 1;
+        var teamSizes :Array = ArrayUtil.create(_numTeams, 0);
+        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
+            if (SeatingManager.isPlayerPresent(playerSeat)) {
+                var teamId :int = teams[playerSeat];
+                if (teamId >= 0) {
+                    teamSizes[teamId] += 1;
+                }
             }
         }
 
@@ -285,6 +298,7 @@ public class GameLobbyMode extends AppMode
         return this.allPlayersDecided && this.teamsDividedProperly;
     }
 
+    protected var _numTeams :int;
     protected var _teamTexts :Array = [];
     protected var _statusText :TextField;
     protected var _handicapCheckbox :HandicapCheckbox;
