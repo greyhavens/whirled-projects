@@ -416,6 +416,39 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             </MapSettings>
         </MultiplayerSettings>
 
+        <!-- 2v2 settings -->
+        <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
+            <MapSettings backgroundName="Level3">
+                <BaseLocation x="85" y="115"/>
+                <BaseLocation x="85" y="325"/>
+                <BaseLocation x="627" y="115"/>
+                <BaseLocation x="627" y="325"/>
+                <SpellDropLocation x="356" y="220"/>
+            </MapSettings>
+        </MultiplayerSettings>
+
+
+        <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
+            <MapSettings backgroundName="Level2">
+                <BaseLocation x="627" y="155"/>
+                <BaseLocation x="627" y="265"/>
+                <BaseLocation x="85" y="155"/>
+                <BaseLocation x="85" y="265"/>
+                <SpellDropLocation x="356" y="210"/>
+            </MapSettings>
+        </MultiplayerSettings>
+
+        <!-- 1v1v1v1 settings -->
+        <MultiplayerSettings arrangeType="1v1v1v1" smallerTeamHandicap="1">
+            <MapSettings backgroundName="Level1" mapScaleY="1.88" scaleSprites="false">
+                <BaseLocation x="155" y="205"/>
+                <BaseLocation x="155" y="595"/>
+                <BaseLocation x="545" y="205"/>
+                <BaseLocation x="545" y="595"/>
+                <SpellDropLocation x="350" y="400"/>
+            </MapSettings>
+        </MultiplayerSettings>
+
     </Multiplayer>
 
 </root>
