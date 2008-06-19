@@ -147,8 +147,8 @@ public class GameLobbyMode extends AppMode
         var playerHandicaps :Array = MultiplayerConfig.handicaps;
         if (null != playerHandicaps) {
             var handicap :Boolean = _handicapCheckbox.checked;
-            if (handicap != playerHandicaps[SeatingManager.localPlayerId]) {
-                MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerId, handicap);
+            if (handicap != playerHandicaps[SeatingManager.localPlayerSeat]) {
+                MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerSeat, handicap);
                 this.updateDisplay();
             }
         }
@@ -169,8 +169,8 @@ public class GameLobbyMode extends AppMode
         }
 
         var teams :Array = MultiplayerConfig.teams;
-        if (null != teams && teams[SeatingManager.localPlayerId] != teamId) {
-            MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerId, teamId);
+        if (null != teams && teams[SeatingManager.localPlayerSeat] != teamId) {
+            MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerSeat, teamId);
             this.updateDisplay();
 
             this.stopOrResetTimer();

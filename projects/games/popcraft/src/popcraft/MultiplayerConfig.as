@@ -16,10 +16,10 @@ public class MultiplayerConfig
         }
     }
 
-    public static function setPlayerTeam (playerId :int, teamId :int) :void
+    public static function setPlayerTeam (playerSeat :int, teamId :int) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_TEAMS, playerId, teamId, true);
+            AppContext.gameCtrl.net.setAt(PROP_TEAMS, playerSeat, teamId, true);
         }
     }
 
@@ -33,8 +33,8 @@ public class MultiplayerConfig
         var theTeams :Array = MultiplayerConfig.teams;
         var teamSizes :Array = ArrayUtil.create(theTeams.length, 0);
 
-        for (var playerId :int = 0; playerId < theTeams.length; ++playerId) {
-            var teamId :int = theTeams[playerId];
+        for (var playerSeat :int = 0; playerSeat < theTeams.length; ++playerSeat) {
+            var teamId :int = theTeams[playerSeat];
             teamSizes[teamId] += 1;
         }
 
@@ -74,10 +74,10 @@ public class MultiplayerConfig
         }
     }
 
-    public static function setPlayerHandicap (playerId :int, handicap :Boolean) :void
+    public static function setPlayerHandicap (playerSeat :int, handicap :Boolean) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_HANDICAPS, playerId, handicap, true);
+            AppContext.gameCtrl.net.setAt(PROP_HANDICAPS, playerSeat, handicap, true);
         }
     }
 

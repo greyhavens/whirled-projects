@@ -10,7 +10,7 @@ public class SeatingManager
         if (AppContext.gameCtrl.isConnected()) {
             _numExpectedPlayers = AppContext.gameCtrl.game.seating.getPlayerIds().length;
             _playersPresent = ArrayUtil.create(_numExpectedPlayers, false);
-            _localPlayerSeatIndex = AppContext.gameCtrl.game.seating.getMyPosition();
+            _localPlayerSeat = AppContext.gameCtrl.game.seating.getMyPosition();
             updatePlayers();
 
             AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, updatePlayers);
@@ -18,7 +18,7 @@ public class SeatingManager
         } else {
             _numExpectedPlayers = 1;
             _numPlayers = 1;
-            _localPlayerSeatIndex = 0;
+            _localPlayerSeat = 0;
             _lowestOccupiedSeatIndex = 0;
         }
     }
@@ -38,25 +38,25 @@ public class SeatingManager
         return _numExpectedPlayers == _numPlayers;
     }
 
-    public static function get localPlayerId () :int
+    public static function get localPlayerSeat () :int
     {
-        return _localPlayerSeatIndex;
+        return _localPlayerSeat;
     }
 
-    public static function isPlayerPresent (playerId :int) :Boolean
+    public static function isPlayerPresent (playerSeat :int) :Boolean
     {
-        return _playersPresent[playerId];
+        return _playersPresent[playerSeat];
     }
 
-    public static function getPlayerName (playerId :int) :String
+    public static function getPlayerName (playerSeat :int) :String
     {
-        var playerName :String = AppContext.gameCtrl.game.seating.getPlayerNames()[playerId];
-        return (null != playerName ? playerName : "[PlayerNotHere: " + playerId + "]");
+        var playerName :String = AppContext.gameCtrl.game.seating.getPlayerNames()[playerSeat];
+        return (null != playerName ? playerName : "[PlayerNotHere: " + playerSeat + "]");
     }
 
     public static function get isLocalPlayerInControl () :Boolean
     {
-        return _localPlayerSeatIndex == _lowestOccupiedSeatIndex;
+        return _localPlayerSeat == _lowestOccupiedSeatIndex;
     }
 
     protected static function updatePlayers (...ignored) :void
@@ -83,7 +83,7 @@ public class SeatingManager
     protected static var _numExpectedPlayers :int;  // the number of players who initially joined the game
     protected static var _numPlayers :int;          // the number of players in the game right now
     protected static var _lowestOccupiedSeatIndex :int;
-    protected static var _localPlayerSeatIndex :int;
+    protected static var _localPlayerSeat :int;
 }
 
 }
