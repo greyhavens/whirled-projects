@@ -359,9 +359,9 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
 
         <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="622" y="215"/>
                 <BaseLocation x="85" y="125"/>
                 <BaseLocation x="85" y="305"/>
+                <BaseLocation x="622" y="215"/>
             </MapSettings>
         </MultiplayerSettings>
 
