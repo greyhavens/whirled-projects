@@ -77,6 +77,10 @@ public class Display extends Sprite
     /** Called when the round starts - enables display. */
     public function roundStarted (duration :int) :void
     {
+        if (_wordfield.text == "") {
+            _wordfield.stage.focus = _wordfield;
+        }
+
         _logger.clear();
 
         logRoundStarted();
