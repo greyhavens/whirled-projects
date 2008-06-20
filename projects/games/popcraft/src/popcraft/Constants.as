@@ -22,7 +22,7 @@ public class Constants
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
@@ -58,14 +58,14 @@ public class Constants
 
     public static const ARRANGE_1V1 :int = 0;
     public static const ARRANGE_2V1 :int = 1;
-    public static const ARRANGE_3FFA :int = 2;
+    public static const ARRANGE_1V1V1 :int = 2;
     public static const ARRANGE_2V2 :int = 3;
     public static const ARRANGE_3V1 :int = 4;
     public static const ARRANGE_2V1V1 :int = 5;
-    public static const ARRANGE_4FFA :int = 6;
+    public static const ARRANGE_1V1V1V1 :int = 6;
 
     public static const TEAM_ARRANGEMENT_NAMES :Array = [ "1v1", "2v1", "1v1v1", "2v2", "3v1", "2v1v1", "1v1v1v1" ];
-    public static const TEAM_ARRANGEMENT_PLAYER_COUNTS :Array = [ 2, 3, 3, 4, 4, 4 ];
+    public static const TEAM_ARRANGEMENT_PLAYER_COUNTS :Array = [ 2, 3, 3, 4, 4, 4, 4 ];
 
     /* Damage types */
     public static const DAMAGE_TYPE_CRUSHING :int = 0;

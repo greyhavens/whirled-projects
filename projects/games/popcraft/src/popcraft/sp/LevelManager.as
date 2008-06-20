@@ -9,7 +9,8 @@ import popcraft.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
-public class LevelManager implements UserCookieDataSource
+public class LevelManager
+    implements UserCookieDataSource
 {
     public function LevelManager ()
     {

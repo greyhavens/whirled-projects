@@ -10,7 +10,6 @@ import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
-import flash.display.StageQuality;
 import flash.events.Event;
 
 import popcraft.*;
@@ -56,9 +55,11 @@ public class PopCraft extends Sprite
 
         // init other managers
         AppContext.levelMgr = new LevelManager();
+        AppContext.playerStats = new PlayerStats();
 
         // init the cookie manager and read cookie data
         UserCookieManager.addDataSource(AppContext.levelMgr);
+        UserCookieManager.addDataSource(AppContext.playerStats);
         UserCookieManager.readCookie();
 
         if (multiplayer) {
