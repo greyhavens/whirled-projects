@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="1"
         introText="This is not a real level!"
         playerName="Jack"
         playerBaseHealth="100">

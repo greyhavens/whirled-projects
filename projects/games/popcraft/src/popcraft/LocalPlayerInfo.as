@@ -56,7 +56,7 @@ public class LocalPlayerInfo extends PlayerInfo
 
         // only resources earned while under "par" are counted toward the totalResourcesEarned count
         // for the purposes of player score
-        if (GameContext.isSinglePlayer && GameContext.diurnalCycle.dayCount <= GameContext.spLevel.parDays) {
+        if (GameContext.isSinglePlayer && GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays) {
             var newResources :int = this.getResourceAmount(resourceType);
             _totalResourcesEarned += (newResources - initialResources);
         }

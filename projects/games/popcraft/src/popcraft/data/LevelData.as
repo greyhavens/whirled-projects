@@ -8,7 +8,7 @@ import popcraft.util.*;
 
 public class LevelData
 {
-    public var parDays :int;
+    public var expertCompletionDays :int;
     public var levelCompletionBonus :int;
     public var introText :String;
     public var introText2 :String;
@@ -50,7 +50,7 @@ public class LevelData
             level.gameDataOverride = GameData.fromXml(gameDataOverrideNode, AppContext.defaultGameData.clone());
         }
 
-        level.parDays = XmlReader.getAttributeAsInt(xml, "parDays");
+        level.expertCompletionDays = XmlReader.getAttributeAsInt(xml, "expertCompletionDays");
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus", 0);
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.introText2 = XmlReader.getAttributeAsString(xml, "introText2", level.introText);

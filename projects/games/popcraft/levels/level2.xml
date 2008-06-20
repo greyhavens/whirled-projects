@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="1"
         levelCompletionBonus="1000"
         newCreatureType="heavy"
         introText=

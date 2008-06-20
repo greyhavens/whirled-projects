@@ -26,7 +26,7 @@ public class LevelOutroMode extends AppMode
         if (_success) {
             // calculate the score for this level
             var fastCompletionScore :int =
-                Math.max(GameContext.spLevel.parDays - GameContext.diurnalCycle.dayCount, 0) *
+                Math.max(GameContext.spLevel.expertCompletionDays - GameContext.diurnalCycle.dayCount, 0) *
                 GameContext.gameData.pointsPerDayUnderPar;
 
             var resourcesScore :int =

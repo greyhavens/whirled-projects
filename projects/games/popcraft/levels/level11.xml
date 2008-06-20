@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="2"
         introText="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         playerName="Jack"
@@ -24,6 +24,10 @@
         </MapSettings>
 
         <InitialResources/>
+
+        <InitialSpells>
+            <Spell type="shuffle" amount="1"/>
+        </InitialSpells>
 
         <AvailableUnits>
             <Unit type="grunt"/>

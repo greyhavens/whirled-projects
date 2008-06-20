@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="1"
         newCreatureType="sapper"
         introText=
 "&quot;Listen, you lot,&quot; commands Jack. &quot;Here's the plan:

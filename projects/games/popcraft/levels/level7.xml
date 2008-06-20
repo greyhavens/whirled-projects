@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="1"
         introText="Your opponent has perfected the Flesh Behemoth, an enormous collection of random body parts capable of crushing lesser units instantly.
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Behemoths with creatures to slow their progress and take them down, then make your move!"

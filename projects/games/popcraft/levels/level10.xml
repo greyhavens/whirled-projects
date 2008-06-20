@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="2"
         introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"

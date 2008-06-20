@@ -1,6 +1,6 @@
 <root>
     <Level
-        parDays="1"
+        expertCompletionDays="1"
         introText="Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
         playerName="Jack"
         playerBaseHealth="100">
