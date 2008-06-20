@@ -32,15 +32,19 @@ public class TrophyManager
     /* multiplayer trophies */
 
     // Complete a multiplayer game
-    public static const TROPHY_PLAYSWELLWITHOTHERS :String = "PlaysWellWithOthers";
+    public static const TROPHY_PIGSLEY :String = "Pigsley";
     // Complete 25 multiplayer games
-    public static const TROPHY_SOCIALBUTTERFLY :String = "SocialButterfly";
+    public static const TROPHY_JACK :String = "Jack";
+    // Complete 100 multiplayer games
+    public static const TROPHY_WEARDD :String = "Weardd";
     // win a multiplayer game
     public static const TROPHY_BULLY :String = "Bully";
     // win a multiplayer game without taking any damage
     public static const TROPHY_FLAWLESS :String = "Flawless";
     // play a game against another player with the Morbid Infection trophy
     public static const TROPHY_MORBIDINFECTION :String = "MorbidInfection";
+    // win a game against a player whose Whirled name is "Professor Weardd"
+    public static const TROPHY_MALEFACTOR :String = "Malefactor";
 
     /* general trophies */
 

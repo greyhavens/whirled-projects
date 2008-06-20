@@ -17,7 +17,7 @@ public class Constants
 
     /* The handicap applied to a player who selected the Handicap option
     at the beginning of a multiplayer match. */
-    public static const HANDICAPPED_MULTIPLIER :Number = 0.5;
+    public static const HANDICAPPED_MULTIPLIER :Number = 0.7;
 
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;

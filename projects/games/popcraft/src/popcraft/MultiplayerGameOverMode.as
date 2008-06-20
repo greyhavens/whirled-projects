@@ -39,7 +39,22 @@ public class MultiplayerGameOverMode extends AppMode
     protected function awardTrophies () :void
     {
         // awarded for completing a multiplayer game
-        TrophyManager.awardTrophy(TrophyManager.TROPHY_PLAYSWELLWITHOTHERS);
+        TrophyManager.awardTrophy(TrophyManager.TROPHY_PIGSLEY);
+
+        if (AppContext.globalPlayerStats.totalGamesPlayed >= 25) {
+            // awarded for completing 25 multiplayer games
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_JACK);
+        }
+
+        if (AppContext.globalPlayerStats.totalGamesPlayed >= 100) {
+            // awarded for completing 100 multiplayer games
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_WEARDD);
+        }
+
+        if (AppContext.globalPlayerStats.hasMorbidInfection) {
+            // awarded for playing a game with another player who has the Morbid Infection trophy
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_MORBIDINFECTION);
+        }
 
         if (this.playerWon) {
             // awarded for winning a multiplayer game
@@ -49,11 +64,14 @@ public class MultiplayerGameOverMode extends AppMode
                 // awarded for winning a multiplayer game without taking any damage
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
             }
-        }
 
-        if (AppContext.globalPlayerStats.hasMorbidInfection) {
-            // play a game against another player with the Morbid Infection trophy
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_MORBIDINFECTION);
+            for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+                if (playerSeat != SeatingManager.localPlayerSeat && SeatingManager.getPlayerName(playerSeat) == "Professor Weardd") {
+                    // awarded for winning a multiplayer game against another player whose Whirled name is "Professor Weardd"
+                    TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEFACTOR);
+                    break;
+                }
+            }
         }
     }
 
