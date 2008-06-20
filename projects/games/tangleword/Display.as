@@ -21,6 +21,9 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+import com.threerings.flash.ColorUtil;
+import caurina.transitions.Tweener;
+
 import com.threerings.util.Assert;
 import com.threerings.util.StringUtil;
 
@@ -28,8 +31,6 @@ import com.whirled.game.GameControl;
 import com.whirled.contrib.Scoreboard;
 
 import com.threerings.util.KeyboardCodes;
-
-import caurina.transitions.Tweener;
 
 /**
  * The Display class represents the game visualization, including UI
@@ -158,11 +159,25 @@ public class Display extends Sprite
 
         _logger.logListItem(msg, (bonus > 0 ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD));
 
-        for each (var p :Point in points) {
-            var label = _letters[p.x][p.y]._label;
+        // Because Tweener doesn't seem to like doing uint color tweens on arbitrary properties:
+        // We have to fudge it by having this update listener do the actual color change
+        var colorTween :Function = function (label :TextField, from :uint, to :uint) :void {
+            label.textColor = ColorUtil.blend(to, from, this.prog);
+        };
 
-            label.scaleX = 2;
-            Tweener.addTween(label, {scaleX: 1, time: 1});
+        for each (var p :Point in points) {
+            var label :TextField = _letters[p.x][p.y]._label;
+
+            // Fade to pulse color
+            Tweener.addTween({prog: 0}, { prog: 1, time: Resources.PULSE_DURATION, onUpdate: colorTween,
+                    transition: "easeOutExpo",
+                    onUpdateParams: [label, Resources.TEXT_COLOR_NORMAL, Resources.TEXT_COLOR_PULSE]});
+
+            // Fade back to normal
+            Tweener.addTween({prog: 0}, { prog: 1, delay: Resources.PULSE_DURATION,
+                    time: Resources.PULSE_DURATION, onUpdate: colorTween,
+                    transition: "easeInExpo",
+                    onUpdateParams: [label, Resources.TEXT_COLOR_PULSE, Resources.TEXT_COLOR_NORMAL]});
         }
     }
 

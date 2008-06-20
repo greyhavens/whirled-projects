@@ -14,6 +14,9 @@ import mx.core.BitmapAsset;
  */
 public class Resources
 {
+    public static const TEXT_COLOR_NORMAL :uint = 0x77aabb;
+    public static const TEXT_COLOR_PULSE :uint = 0x34e2e2;
+    public static const PULSE_DURATION :Number = 0.2;
     // FORMATS
 
     /** Makes a default format instance. */
@@ -22,7 +25,7 @@ public class Resources
         // no css without flex? so sad.
         var format :TextFormat = new TextFormat();
         format.font = "Verdana";
-        format.color = uint(0x77aabb);
+        format.color = TEXT_COLOR_NORMAL;
         format.bold = true;
         return format;
     }        
@@ -58,7 +61,7 @@ public class Resources
     public static function makeFormatForScore () :TextFormat
     {
         var format :TextFormat = makeDefaultFormat();
-        format.color = uint(0x77aabb);
+        format.color = TEXT_COLOR_NORMAL;
         format.size = 12;
         return format;
     }
