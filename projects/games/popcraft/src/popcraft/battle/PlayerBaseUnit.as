@@ -21,7 +21,7 @@ public class PlayerBaseUnit extends Unit
 
     public function get unitSpawnLoc () :Vector2
     {
-        var offset :Vector2 = (_loc.x <= Constants.SCREEN_DIMS.x * 0.5 ? LEFT_SPAWN_OFFSET : RIGHT_SPAWN_OFFSET);
+        var offset :Vector2 = (_loc.x <= Constants.SCREEN_SIZE.x * 0.5 ? LEFT_SPAWN_OFFSET : RIGHT_SPAWN_OFFSET);
         return new Vector2(_loc.x + offset.x, _loc.y + offset.y);
     }
 

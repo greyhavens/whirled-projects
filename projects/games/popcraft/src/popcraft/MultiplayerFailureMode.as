@@ -29,8 +29,8 @@ public class MultiplayerFailureMode extends AppMode
         tf.textColor = 0xFFFFFF;
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.text = "Your enemies have fled!\nTry the single-player game instead?";
-        tf.x = (Constants.SCREEN_DIMS.x * 0.5) - (tf.width * 0.5);
-        tf.y = (Constants.SCREEN_DIMS.y * 0.5) - (tf.height * 0.5);
+        tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
+        tf.y = (Constants.SCREEN_SIZE.y * 0.5) - (tf.height * 0.5);
 
         // center the text
         var format :TextFormat = new TextFormat();
@@ -41,7 +41,7 @@ public class MultiplayerFailureMode extends AppMode
 
         _button = new SimpleTextButton("OK");
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
-        _button.x = (Constants.SCREEN_DIMS.x * 0.5) - (_button.width * 0.5);
+        _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
         _button.y = 350;
         this.modeSprite.addChild(_button);
     }

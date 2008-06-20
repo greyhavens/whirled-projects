@@ -27,14 +27,14 @@ public class LevelIntroMode extends AppMode
         var dimness :Shape = new Shape();
         var g :Graphics = dimness.graphics;
         g.beginFill(0, 0.6);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
         this.modeSprite.addChild(dimness);
 
         var movie :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
-        movie.x = Constants.SCREEN_DIMS.x * 0.5;
-        movie.y = Constants.SCREEN_DIMS.y * 1.5;
+        movie.x = Constants.SCREEN_SIZE.x * 0.5;
+        movie.y = Constants.SCREEN_SIZE.y * 1.5;
         this.modeSprite.addChild(movie);
 
         // animate the book in
@@ -42,7 +42,7 @@ public class LevelIntroMode extends AppMode
         this.addObject(_movieObj);
 
         var animateTask :SerialTask = new SerialTask();
-        animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 0.5, 0.7));
+        animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
         animateTask.addTask(new GoToFrameTask("open"));
         animateTask.addTask(new WaitForFrameTask("opened"));
 
@@ -192,7 +192,7 @@ public class LevelIntroMode extends AppMode
             // animate the book closing and pop the mode
             movieTask.addTask(new GoToFrameTask("close"));
             movieTask.addTask(new WaitForFrameTask("closed"));
-            movieTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_DIMS.x * 0.5, Constants.SCREEN_DIMS.y * 1.5, 0.7));
+            movieTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
             movieTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
         }
 

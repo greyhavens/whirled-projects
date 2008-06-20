@@ -13,7 +13,7 @@ public class LoadingMode extends AppMode
     {
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0, 1);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
         _text = new TextField();
@@ -160,7 +160,7 @@ class ResourceLoadErrorMode extends AppMode
     {
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0xFF7272);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
         var tf :TextField = new TextField();

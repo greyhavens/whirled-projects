@@ -21,8 +21,8 @@ public class BattleBoardView extends SceneObject
         _height = height;
 
         _bg = SwfResource.instantiateMovieClip("bg", GameContext.mapSettings.backgroundName);
-        _bg.x = Constants.SCREEN_DIMS.x * 0.5;
-        _bg.y = Constants.SCREEN_DIMS.y * 0.5;
+        _bg.x = Constants.SCREEN_SIZE.x * 0.5;
+        _bg.y = Constants.SCREEN_SIZE.y * 0.5;
 
         _parent.addChild(_bg);
 

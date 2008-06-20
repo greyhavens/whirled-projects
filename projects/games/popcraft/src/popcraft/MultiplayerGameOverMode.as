@@ -124,16 +124,16 @@ public class MultiplayerGameOverMode extends AppMode
         text.defaultTextFormat.size = 24;
         text.scaleX = 3;
         text.scaleY = 3;
-        text.width = Constants.SCREEN_DIMS.x - 30;
+        text.width = Constants.SCREEN_SIZE.x - 30;
         text.text = gameOverText;
 
-        text.x = (Constants.SCREEN_DIMS.x / 2) - (text.width / 2);
-        text.y = (Constants.SCREEN_DIMS.y / 2) - (text.height / 2);
+        text.x = (Constants.SCREEN_SIZE.x / 2) - (text.width / 2);
+        text.y = (Constants.SCREEN_SIZE.y / 2) - (text.height / 2);
 
         this.modeSprite.addChild(text);
 
         _button = new SimpleTextButton("Play Again?");
-        _button.x = (Constants.SCREEN_DIMS.x * 0.5) - (_button.width * 0.5);
+        _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
         _button.y = 350;
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
 

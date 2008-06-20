@@ -40,7 +40,7 @@ public class LevelSelectMode extends AppMode
         tf.text = "PopCraft level select. (Score: " + AppContext.levelMgr.totalScore + ")";
         tf.scaleX = 1;
         tf.scaleY = 1;
-        tf.x = (Constants.SCREEN_DIMS.x * 0.5) - (tf.width * 0.5);
+        tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
         tf.y = 10;
 
         this.modeSprite.addChild(tf);
@@ -64,7 +64,7 @@ public class LevelSelectMode extends AppMode
             }
 
             button = this.createLevelSelectButton(i, levelName);
-            button.x = (Constants.SCREEN_DIMS.x * 0.5) - (button.width * 0.5);
+            button.x = (Constants.SCREEN_SIZE.x * 0.5) - (button.width * 0.5);
             button.y = yLoc;
             this.modeSprite.addChild(button);
 

@@ -113,7 +113,7 @@ public class GameLobbyMode extends AppMode
         }
 
         _statusText.text = statusText;
-        _statusText.x = (Constants.SCREEN_DIMS.x * 0.5) - (_statusText.width * 0.5);
+        _statusText.x = (Constants.SCREEN_SIZE.x * 0.5) - (_statusText.width * 0.5);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void

@@ -80,7 +80,7 @@ public class LevelOutroMode extends AppMode
         // draw dim background
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0, 0.6);
-        g.drawRect(0, 0, Constants.SCREEN_DIMS.x, Constants.SCREEN_DIMS.y);
+        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
         var bgSprite :Sprite = new Sprite();
@@ -89,8 +89,8 @@ public class LevelOutroMode extends AppMode
         g.drawRect(0, 0, 250, 300);
         g.endFill();
 
-        bgSprite.x = (Constants.SCREEN_DIMS.x * 0.5) - (bgSprite.width * 0.5);
-        bgSprite.y = (Constants.SCREEN_DIMS.y * 0.5) - (bgSprite.height * 0.5);
+        bgSprite.x = (Constants.SCREEN_SIZE.x * 0.5) - (bgSprite.width * 0.5);
+        bgSprite.y = (Constants.SCREEN_SIZE.y * 0.5) - (bgSprite.height * 0.5);
 
         this.modeSprite.addChild(bgSprite);
 

@@ -12,7 +12,7 @@ import popcraft.util.*;
 
 public class Constants
 {
-    public static const SCREEN_DIMS :Vector2 = new Vector2(700, 500);
+    public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 0.7;
 
     /* The handicap applied to a player who selected the Handicap option
