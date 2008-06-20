@@ -18,8 +18,26 @@ public class MultiplayerGameOverMode extends AppMode
         _winningTeamId = winningTeam;
     }
 
+    protected function awardTrophies () :void
+    {
+        // awarded for completing a multiplayer game
+        TrophyManager.awardTrophy(TrophyManager.TROPHY_PLAYSWELLWITHOTHERS);
+
+        if (GameContext.localPlayerInfo.teamId == _winningTeamId) {
+            // awarded for winning a multiplayer game
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_BULLY);
+
+            if (GameContext.localPlayerInfo.healthPercent == 1) {
+                // awarded for winning a multiplayer game without taking any damage
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
+            }
+        }
+    }
+
     override protected function setup () :void
     {
+        this.awardTrophies();
+
         this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         var winningPlayerNames :Array = [];
