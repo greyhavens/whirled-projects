@@ -219,6 +219,12 @@ public class CreatureUnit extends Unit
 
         if (!wasDead && _isDead && attack.attackingUnitOwningPlayerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesKilled[_unitType] += 1;
+
+            if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_WHATAMESS) &&
+                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= TrophyManager.WHATAMESS_NUMCREATURES) {
+                // awarded for killing 2500 creatures total
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_WHATAMESS);
+            }
         }
 
         return damageTaken;

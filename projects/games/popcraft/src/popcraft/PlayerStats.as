@@ -123,7 +123,7 @@ public class PlayerStats
         creaturesLostToDaytime = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
 
         totalGameTime = 0;
-        hasMorbidInfection = true;
+        hasMorbidInfection = false;
     }
 
     protected static function sumInts (arr :Array) :int

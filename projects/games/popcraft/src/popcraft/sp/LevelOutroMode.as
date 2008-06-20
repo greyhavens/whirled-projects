@@ -60,11 +60,11 @@ public class LevelOutroMode extends AppMode
             // trophies
             var levelTrophy :String;
             switch (thisLevelIndex) {
-            case 2: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
-            case 5: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
-            case 8: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
-            case 11: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
-            case 13: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
+            case TrophyManager.FRESHMAN_LEVEL: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
+            case TrophyManager.SOPHOMORE_LEVEL: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
+            case TrophyManager.JUNIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
+            case TrophyManager.SENIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
+            case TrophyManager.GRADUATE_LEVEL: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
             }
 
             if (null != levelTrophy) {

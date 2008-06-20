@@ -38,15 +38,12 @@ public class MultiplayerGameOverMode extends AppMode
 
     protected function awardTrophies () :void
     {
-        // awarded for completing a multiplayer game
-        TrophyManager.awardTrophy(TrophyManager.TROPHY_PIGSLEY);
-
-        if (AppContext.globalPlayerStats.totalGamesPlayed >= 25) {
+        if (AppContext.globalPlayerStats.totalGamesPlayed >= TrophyManager.JACK_NUMGAMES) {
             // awarded for completing 25 multiplayer games
             TrophyManager.awardTrophy(TrophyManager.TROPHY_JACK);
         }
 
-        if (AppContext.globalPlayerStats.totalGamesPlayed >= 100) {
+        if (AppContext.globalPlayerStats.totalGamesPlayed >= TrophyManager.WEARDD_NUMGAMES) {
             // awarded for completing 100 multiplayer games
             TrophyManager.awardTrophy(TrophyManager.TROPHY_WEARDD);
         }
@@ -54,6 +51,14 @@ public class MultiplayerGameOverMode extends AppMode
         if (AppContext.globalPlayerStats.hasMorbidInfection) {
             // awarded for playing a game with another player who has the Morbid Infection trophy
             TrophyManager.awardTrophy(TrophyManager.TROPHY_MORBIDINFECTION);
+        }
+
+        if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_LIBERALARTS)) {
+            if (ArrayUtil.indexIf(AppContext.globalPlayerStats.mpGamesPlayed,
+                  function (gamesPlayed :int) :Boolean { return gamesPlayed < 1; }) < 0) {
+                // awarded for playing one of each multiplayer game arrangement
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_LIBERALARTS);
+            }
         }
 
         if (this.playerWon) {
