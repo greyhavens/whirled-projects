@@ -22,11 +22,11 @@ public class LoadingMode extends AppMode
         _text.textColor = 0xFFFFFF;
         _text.scaleX = 2;
         _text.scaleY = 2;
-
-        _text.x = this.modeSprite.width * 0.5;
-        _text.y = this.modeSprite.height * 0.5;
-
+        _text.x = (this.modeSprite.width * 0.5) - (_text.width * 0.5);
+        _text.y = (this.modeSprite.height * 0.5) - (_text.height * 0.5);
         _text.text = "Loading...";
+
+        this.modeSprite.addChild(_text);
 
         this.load();
     }
@@ -38,6 +38,7 @@ public class LoadingMode extends AppMode
                 AppContext.mainLoop.popMode();
             } else {
                 _text.text = "Waiting for players...";
+                _text.x = (this.modeSprite.width * 0.5) - (_text.width * 0.5);
             }
         }
     }

@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
@@ -28,6 +29,19 @@ public class PlayerStatusView extends SceneObject
 
         var namePlate :MovieClip = _movie["name_plate"];
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ];
+
+        // display the player headshot
+        var headshotParent :MovieClip = _movie["player_headshot"];
+        var headshot :DisplayObject = _playerInfo.playerHeadshot;
+        // scale and align appropriately
+        var scale :Number = Math.min(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height, 1);
+        var width :Number = headshot.width * scale;
+        var height :Number = headshot.height * scale;
+        headshot.scaleX = scale;
+        headshot.scaleY = scale;
+        headshot.x = -(width * 0.5);
+        headshot.y = -(height * 0.5);
+        headshotParent.addChild(_playerInfo.playerHeadshot);
     }
 
     override public function get displayObject () :DisplayObject
@@ -60,6 +74,8 @@ public class PlayerStatusView extends SceneObject
     protected var _meterArrow :MovieClip;
     protected var _dead :Boolean;
     protected var _oldHealth :Number = -1;
+
+    protected static const HEADSHOT_SIZE :Point = new Point(45, 45);
 
 }
 

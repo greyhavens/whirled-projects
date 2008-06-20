@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObjectRef;
 
+import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
 import popcraft.battle.PlayerBaseUnit;
@@ -13,31 +14,23 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null)
+    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
         _teamId = teamId;
         _baseLoc = baseLoc;
         _handicap = handicap;
 
-        var whirledIds :Array;
-        var playerNames :Array;
-
-        if (AppContext.gameCtrl.isConnected()) {
-            whirledIds = AppContext.gameCtrl.game.seating.getPlayerIds();
-            playerNames = AppContext.gameCtrl.game.seating.getPlayerNames();
-        } else {
-            whirledIds = playerNames = [];
-        }
-
-        _whirledId = (playerIndex < whirledIds.length ? whirledIds[_playerIndex] : 0);
-
         if (null != playerName) {
             _playerName = playerName;
-        } else if (_playerIndex < playerNames.length && null != playerNames[_playerIndex])  {
-            _playerName = playerNames[_playerIndex];
         } else {
-            _playerName = "Unknown player " + playerIndex;
+            _playerName = SeatingManager.getPlayerName(_playerIndex);
+        }
+
+        if (null != playerHeadshot) {
+            _playerHeadshot = playerHeadshot;
+        } else {
+            _playerHeadshot = SeatingManager.getPlayerHeadshot(_playerIndex);
         }
     }
 
@@ -63,12 +56,17 @@ public class PlayerInfo extends EventDispatcher
 
     public function get whirledId () :int
     {
-        return _whirledId;
+        return SeatingManager.getPlayerOccupantId(_playerIndex);
     }
 
     public function get playerName () :String
     {
         return _playerName;
+    }
+
+    public function get playerHeadshot () :DisplayObject
+    {
+        return _playerHeadshot;
     }
 
     public function get leftGame () :Boolean
@@ -169,8 +167,8 @@ public class PlayerInfo extends EventDispatcher
 
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
     protected var _teamId :int;
-    protected var _whirledId :int;  // the oid assigned to this player on Whirled
     protected var _playerName :String;
+    protected var _playerHeadshot :DisplayObject;
     protected var _leftGame :Boolean;
     protected var _targetedEnemyId :int;
     protected var _baseRef :SimObjectRef;
