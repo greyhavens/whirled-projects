@@ -7,13 +7,14 @@ import flash.utils.ByteArray;
 public class PlayerStats
     implements UserCookieDataSource
 {
-    public var mpGamesPlayed :Array;  // Array of ints, one for each multiplayer game type
-    public var mpGamesWon :Array;     // ditto
-    public var resourcesGathered :Array; // Array of ints, one for each resource type
-    public var spellsCast :Array; // Array of ints, one for each spell type
+    public var mpGamesPlayed :Array;        // Array of ints, one for each multiplayer game type
+    public var mpGamesWon :Array;           // ditto
+    public var resourcesGathered :Array;    // Array of ints, one for each resource type
+    public var spellsCast :Array;           // Array of ints, one for each spell type
+    public var creaturesCreated :Array;     // Array of ints, one for each creature type
+    public var creaturesKilled :Array;      // ditto
+    public var creaturesLostToDaytime :Array; // ditto
     public var totalGameTime :Number;
-    public var creaturesCreated :int;
-    public var creaturesKilled :int;
     public var hasMorbidInfection :Boolean; // the viral trophy!
 
     public function PlayerStats ()
@@ -46,27 +47,32 @@ public class PlayerStats
         return sumInts(spellsCast);
     }
 
+    public function get totalCreaturesCreated () :int
+    {
+        return sumInts(creaturesCreated);
+    }
+
+    public function get totalCreaturesKilled () :int
+    {
+        return sumInts(creaturesKilled);
+    }
+
+    public function get totalCreaturesLostToDaytime () :int
+    {
+        return sumInts(creaturesLostToDaytime);
+    }
+
     public function writeCookieData (cookie :ByteArray) :void
     {
-        for each (var gamesPlayedOfType :int in mpGamesPlayed) {
-            cookie.writeInt(gamesPlayedOfType);
-        }
-
-        for each (var gamesWonOfType :int in mpGamesWon) {
-            cookie.writeInt(gamesWonOfType);
-        }
-
-        for each (var resAmount :int in resourcesGathered) {
-            cookie.writeInt(resAmount);
-        }
-
-        for each (var spellAmount :int in spellsCast) {
-            cookie.writeInt(spellAmount);
-        }
+        writeIntsToCookie(mpGamesPlayed, cookie);
+        writeIntsToCookie(mpGamesWon, cookie);
+        writeIntsToCookie(resourcesGathered, cookie);
+        writeIntsToCookie(spellsCast, cookie);
+        writeIntsToCookie(creaturesCreated, cookie);
+        writeIntsToCookie(creaturesKilled, cookie);
+        writeIntsToCookie(creaturesLostToDaytime, cookie);
 
         cookie.writeDouble(totalGameTime);
-        cookie.writeInt(creaturesCreated);
-        cookie.writeInt(creaturesKilled);
         cookie.writeBoolean(hasMorbidInfection);
     }
 
@@ -74,25 +80,15 @@ public class PlayerStats
     {
         this.initStats();
 
-        for (var i :int = 0; i < mpGamesPlayed.length; ++i) {
-            mpGamesPlayed[i] = cookie.readInt();
-        }
-
-        for (i = 0; i < mpGamesWon.length; ++i) {
-            mpGamesWon[i] = cookie.readInt();
-        }
-
-        for (i = 0; i < resourcesGathered.length; ++i) {
-            resourcesGathered[i] = cookie.readInt();
-        }
-
-        for (i = 0; i < spellsCast.length; ++i) {
-            spellsCast[i] = cookie.readInt();
-        }
+        readIntsFromCookie(mpGamesPlayed, cookie);
+        readIntsFromCookie(mpGamesWon, cookie);
+        readIntsFromCookie(resourcesGathered, cookie);
+        readIntsFromCookie(spellsCast, cookie);
+        readIntsFromCookie(creaturesCreated, cookie);
+        readIntsFromCookie(creaturesKilled, cookie);
+        readIntsFromCookie(creaturesLostToDaytime, cookie);
 
         totalGameTime = cookie.readDouble();
-        creaturesCreated = cookie.readInt();
-        creaturesKilled = cookie.readInt();
         hasMorbidInfection = cookie.readBoolean();
     }
 
@@ -108,10 +104,11 @@ public class PlayerStats
         combineNumericArrays(mpGamesWon, other.mpGamesWon);
         combineNumericArrays(resourcesGathered, other.resourcesGathered);
         combineNumericArrays(spellsCast, other.spellsCast);
+        combineNumericArrays(creaturesCreated, other.creaturesCreated);
+        combineNumericArrays(creaturesKilled, other.creaturesKilled);
+        combineNumericArrays(creaturesLostToDaytime, other.creaturesLostToDaytime);
 
         totalGameTime += other.totalGameTime;
-        creaturesCreated += other.creaturesCreated;
-        creaturesKilled += other.creaturesKilled;
         hasMorbidInfection ||= other.hasMorbidInfection;
     }
 
@@ -121,21 +118,36 @@ public class PlayerStats
         mpGamesWon = ArrayUtil.create(Constants.TEAM_ARRANGEMENT_NAMES.length, 0);
         resourcesGathered = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         spellsCast = ArrayUtil.create(Constants.SPELL_TYPE__LIMIT, 0);
+        creaturesCreated = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
+        creaturesKilled = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
+        creaturesLostToDaytime = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
 
         totalGameTime = 0;
-        creaturesCreated = 0;
-        creaturesKilled = 0;
         hasMorbidInfection = true;
     }
 
     protected static function sumInts (arr :Array) :int
     {
         var total :int;
-        for each (var thisAmount :int in arr) {
-            total += thisAmount;
+        for each (var val :int in arr) {
+            total += val;
         }
 
         return total;
+    }
+
+    protected static function readIntsFromCookie (arr :Array, cookie :ByteArray) :void
+    {
+        for (var i :int = 0; i < arr.length; ++i) {
+            arr[i] = cookie.readInt();
+        }
+    }
+
+    protected static function writeIntsToCookie (arr :Array, cookie :ByteArray) :void
+    {
+        for each (var val :int in arr) {
+            cookie.writeInt(val);
+        }
     }
 
     protected static function combineNumericArrays (into :Array, from :Array) :void

@@ -147,11 +147,11 @@ public class CreaturePurchaseButton extends SimObject
             _hilite.gotoAndPlay("deploy");
             _multiplicity.visible = false;
 
-            GameContext.gameMode.buildUnit(GameContext.localPlayerIndex, _unitType);
+            GameContext.gameMode.buildCreature(GameContext.localPlayerIndex, _unitType);
 
             // when the sun is eclipsed, it's buy-one-get-one-free time!
             if (GameContext.diurnalCycle.isEclipse) {
-                GameContext.gameMode.buildUnit(GameContext.localPlayerIndex, _unitType, true);
+                GameContext.gameMode.buildCreature(GameContext.localPlayerIndex, _unitType, true);
             }
 
             this.addNamedTask(

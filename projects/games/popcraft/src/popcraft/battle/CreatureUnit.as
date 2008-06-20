@@ -212,13 +212,25 @@ public class CreatureUnit extends Unit
         return null;
     }
 
+    override public function receiveAttack (attack :UnitAttack, maxDamage :Number= Number.MAX_VALUE) :Number
+    {
+        var wasDead :Boolean = _isDead;
+        var damageTaken :Number = super.receiveAttack(attack, maxDamage);
+
+        if (!wasDead && _isDead && attack.attackingUnitOwningPlayerIndex == GameContext.localPlayerIndex) {
+            GameContext.playerStats.creaturesKilled[_unitType] += 1;
+        }
+
+        return damageTaken;
+    }
+
     override public function getAttackDamage (attack :UnitAttack) :Number
     {
         var baseDamage :Number = super.getAttackDamage(attack);
         return baseDamage * (1 + _unitSpells.damageScaleOffset);
     }
 
-    protected function shouldDie () :Boolean
+    protected function shouldDieFromDiurnalCycle () :Boolean
     {
         // break this logic out into its own little predicate function because it
         // was getting too confusing to read
@@ -234,8 +246,12 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
-        if (this.shouldDie()) {
+        if (this.shouldDieFromDiurnalCycle()) {
             this.die();
+            if (this.owningPlayerIndex == GameContext.localPlayerIndex) {
+                GameContext.playerStats.creaturesLostToDaytime[_unitType] += 1;
+            }
+
             return;
         }
 

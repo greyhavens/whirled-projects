@@ -128,7 +128,7 @@ public class Unit extends SimObject
             return false;
         }
 
-        var attack :UnitAttack = new UnitAttack(this.ref, weapon);
+        var attack :UnitAttack = new UnitAttack(this, weapon);
 
         if (weapon.isRanged && null != targetUnit) {
             MissileFactory.createMissile(targetUnit, attack);

@@ -6,10 +6,12 @@ import popcraft.data.*;
 
 public class UnitAttack
 {
-    public function UnitAttack (sourceUnitRef :SimObjectRef, weapon :UnitWeaponData)
+    public function UnitAttack (sourceUnit :Unit, weapon :UnitWeaponData)
     {
-        _sourceUnitRef = sourceUnitRef;
+        _sourceUnitRef = sourceUnit.ref;
         _weapon = weapon;
+
+        _attackingUnitOwningPlayerIndex = sourceUnit.owningPlayerIndex;
     }
 
     public function get sourceUnitRef () :SimObjectRef
@@ -27,8 +29,14 @@ public class UnitAttack
         return _weapon;
     }
 
+    public function get attackingUnitOwningPlayerIndex () :int
+    {
+        return _attackingUnitOwningPlayerIndex;
+    }
+
     protected var _sourceUnitRef :SimObjectRef;
     protected var _weapon :UnitWeaponData;
+    protected var _attackingUnitOwningPlayerIndex :int;
 
 }
 }

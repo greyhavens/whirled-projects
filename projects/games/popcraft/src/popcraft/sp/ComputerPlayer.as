@@ -102,7 +102,7 @@ public class ComputerPlayer extends SimObject
 
     protected function buildUnit (unitType :int) :void
     {
-        GameContext.gameMode.buildUnit(_playerInfo.playerIndex, unitType);
+        GameContext.gameMode.buildCreature(_playerInfo.playerIndex, unitType);
     }
 
     override protected function update (dt :Number) :void

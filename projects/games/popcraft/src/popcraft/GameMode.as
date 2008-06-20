@@ -800,7 +800,7 @@ public class GameMode extends AppMode
         }
     }
 
-    public function buildUnit (playerIndex :int, unitType :int, noCost :Boolean = false) :void
+    public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean = false) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
 
@@ -813,6 +813,8 @@ public class GameMode extends AppMode
         }
 
         _messageMgr.sendMessage(new CreateUnitMessage(playerIndex, unitType));
+
+        GameContext.playerStats.creaturesCreated[unitType] += 1;
     }
 
     public function castSpell (playerIndex :int, spellType :int) :void
@@ -832,6 +834,8 @@ public class GameMode extends AppMode
             // there's only one non-creature spell
             GameContext.dashboard.puzzleShuffle();
         }
+
+        GameContext.playerStats.spellsCast[spellType] += 1;
     }
 
     protected var _gameIsRunning :Boolean;
