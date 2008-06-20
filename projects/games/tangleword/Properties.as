@@ -18,7 +18,7 @@ public class Properties
     //public static const ROUND_LENGTH :int = 10;
 
     /** Default pause length */
-    public static const PAUSE_LENGTH :int = 30;
+    public static const PAUSE_LENGTH :int = 60;
 
     /**
      * Game display is composed of the letter board, and various
@@ -39,6 +39,8 @@ public class Properties
 
     /** Position of the OK button (automatically sized) */
     public static const OKBUTTON :Point = new Point(240, 362);
+
+    public static const READYBUTTON :Point = new Point(250, 370);
 
     /** Position of the log text field */
     public static const LOGFIELD :Rectangle = new Rectangle(360, 110, 178, 240);

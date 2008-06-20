@@ -21,6 +21,7 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
+import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.ColorUtil;
 import caurina.transitions.Tweener;
 
@@ -275,7 +276,7 @@ public class Display extends Sprite
     }
 
     /** Called when the user clicks the Ready button. */
-    protected function handleReady () :void
+    protected function handleReady (... etc) :void
     {
         _gameCtrl.net.sendMessage("ready", _gameCtrl.game.getMyId());
         _readyButton.visible = false;
@@ -336,10 +337,9 @@ public class Display extends Sprite
         doPosition(_okbutton, Properties.OKBUTTON);
         addChild(_okbutton);
 
-        _readyButton = new Button(new Resources.buttonOkOver(),
-                                  new Resources.buttonOkOut(),
-                                  handleReady);
-        doPosition(_readyButton, Properties.OKBUTTON);
+        _readyButton = new SimpleTextButton("Ready!");
+        _readyButton.addEventListener(MouseEvent.CLICK, handleReady);
+        doPosition(_readyButton, Properties.READYBUTTON);
         addChild(_readyButton);
 
         _wordfield = new TextField();
@@ -494,7 +494,7 @@ public class Display extends Sprite
                 p.y >= 0 && p.y < Properties.LETTERS);
     }
 
-    protected var _readyButton :Button;
+    protected var _readyButton :SimpleTextButton;
 
     // PRIVATE VARIABLES
 
