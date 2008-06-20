@@ -17,7 +17,7 @@ public class AppContext
     public static var gameCtrl :GameControl;
     public static var levelMgr :LevelManager;
     public static var randStreamPuzzle :uint;
-    public static var playerStats :PlayerStats;
+    public static var globalPlayerStats :PlayerStats;
 
     public static function get defaultGameData () :GameData
     {

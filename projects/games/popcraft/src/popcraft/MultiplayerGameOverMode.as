@@ -1,6 +1,7 @@
 package popcraft {
 
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -18,12 +19,29 @@ public class MultiplayerGameOverMode extends AppMode
         _winningTeamId = winningTeam;
     }
 
+    protected function updateStats () :void
+    {
+        var gameArrangement :int = MultiplayerConfig.computeTeamArrangement();
+        GameContext.playerStats.mpGamesPlayed[gameArrangement] = 1;
+        if (this.playerWon) {
+            GameContext.playerStats.mpGamesWon[gameArrangement] = 1;
+        }
+
+        // viral trophy
+        var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(MultiplayerConfig.morbidInfections, true);
+        GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
+
+        // combine local stats into global, and save
+        AppContext.globalPlayerStats.combineWith(GameContext.playerStats);
+        UserCookieManager.setNeedsUpdate();
+    }
+
     protected function awardTrophies () :void
     {
         // awarded for completing a multiplayer game
         TrophyManager.awardTrophy(TrophyManager.TROPHY_PLAYSWELLWITHOTHERS);
 
-        if (GameContext.localPlayerInfo.teamId == _winningTeamId) {
+        if (this.playerWon) {
             // awarded for winning a multiplayer game
             TrophyManager.awardTrophy(TrophyManager.TROPHY_BULLY);
 
@@ -32,10 +50,21 @@ public class MultiplayerGameOverMode extends AppMode
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
             }
         }
+
+        if (AppContext.globalPlayerStats.hasMorbidInfection) {
+            // play a game against another player with the Morbid Infection trophy
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_MORBIDINFECTION);
+        }
+    }
+
+    protected function get playerWon () :Boolean
+    {
+        return (GameContext.localPlayerInfo.teamId == _winningTeamId);
     }
 
     override protected function setup () :void
     {
+        this.updateStats();
         this.awardTrophies();
 
         this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));

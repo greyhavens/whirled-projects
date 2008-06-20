@@ -64,9 +64,10 @@ public class GameLobbyMode extends AppMode
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
-            MultiplayerConfig.teams = ArrayUtil.create(MultiplayerConfig.numPlayers, -1);
-            MultiplayerConfig.handicaps = ArrayUtil.create(MultiplayerConfig.numPlayers, false);
+            MultiplayerConfig.teams = ArrayUtil.create(SeatingManager.numExpectedPlayers, -1);
+            MultiplayerConfig.handicaps = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
             MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
+            MultiplayerConfig.morbidInfections = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
             MultiplayerConfig.inited = true;
         } else {
             this.updateDisplay();
@@ -89,6 +90,15 @@ public class GameLobbyMode extends AppMode
         // @TODO - change this if Whirled changes
         if (!SeatingManager.allPlayersPresent) {
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        }
+
+        // other players need to know if we have the Morbid Infection trophy
+        if (!_hasSetMorbidInfection && MultiplayerConfig.inited) {
+            if (AppContext.globalPlayerStats.hasMorbidInfection) {
+                MultiplayerConfig.setPlayerHasMorbidInfection(SeatingManager.localPlayerSeat);
+            }
+
+            _hasSetMorbidInfection = true;
         }
 
         var statusText :String = "";
@@ -319,6 +329,7 @@ public class GameLobbyMode extends AppMode
     protected var _statusText :TextField;
     protected var _handicapCheckbox :HandicapCheckbox;
     protected var _handicapText :TextField;
+    protected var _hasSetMorbidInfection :Boolean;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
     protected static const TEAM_BOX_SIZE :Point = new Point(175, 150);

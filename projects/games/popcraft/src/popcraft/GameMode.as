@@ -34,6 +34,7 @@ public class GameMode extends AppMode
         PerfUtil.reset();
 
         GameContext.gameMode = this;
+        GameContext.playerStats = new PlayerStats();
 
         // init RNGs
         var randSeed :uint = (GameContext.isMultiplayer ? MultiplayerConfig.randSeed : uint(Math.random() * uint.MAX_VALUE));
@@ -529,6 +530,7 @@ public class GameMode extends AppMode
             }
 
             ++_gameTickCount;
+            _gameTime += TICK_INTERVAL_S;
         }
 
         this.checkForGameOver();
@@ -581,6 +583,8 @@ public class GameMode extends AppMode
         }
 
         if (gameOver) {
+            GameContext.playerStats.totalGameTime = _gameTime;
+
             // show the appropriate game over screen
             if (GameContext.isMultiplayer) {
                 MainLoop.instance.changeMode(new MultiplayerGameOverMode(liveTeamId));
@@ -839,6 +843,7 @@ public class GameMode extends AppMode
     protected var _startedMusic :Boolean;
 
     protected var _gameTickCount :int;
+    protected var _gameTime :Number;
     protected var _updateCount :int;
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
     protected var _lastCachedChecksumTick :int;

@@ -8,6 +8,7 @@ public class MultiplayerConfig
     public static const PROP_TEAMS :String = "Teams";
     public static const PROP_HANDICAPS :String = "Handicaps";
     public static const PROP_RANDSEED :String = "RandSeed";
+    public static const PROP_HASMORBIDINFECTION :String = "HMI";
 
     public static function set teams (val :Array) :void
     {
@@ -110,9 +111,23 @@ public class MultiplayerConfig
         return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
     }
 
-    public static function get numPlayers () :int
+    public static function set morbidInfections (val :Array) :void
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.game.seating.getPlayerIds().length : 1);
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.set(PROP_HASMORBIDINFECTION, val);
+        }
+    }
+
+    public static function setPlayerHasMorbidInfection (playerSeat :int) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.setAt(PROP_HASMORBIDINFECTION, playerSeat, true, true);
+        }
+    }
+
+    public static function get morbidInfections () :Array
+    {
+        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
     }
 }
 

@@ -28,6 +28,7 @@ public class GameContext
     public static var gameData :GameData;
     public static var spLevel :LevelData;
     public static var mpSettings :MultiplayerSettingsData;
+    public static var playerStats :PlayerStats;
     public static function get isSinglePlayer () :Boolean { return gameType == GAME_TYPE_SINGLEPLAYER; }
     public static function get isMultiplayer () :Boolean { return gameType == GAME_TYPE_MULTIPLAYER; }
 

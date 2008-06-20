@@ -55,11 +55,11 @@ public class PopCraft extends Sprite
 
         // init other managers
         AppContext.levelMgr = new LevelManager();
-        AppContext.playerStats = new PlayerStats();
+        AppContext.globalPlayerStats = new PlayerStats();
 
         // init the cookie manager and read cookie data
         UserCookieManager.addDataSource(AppContext.levelMgr);
-        UserCookieManager.addDataSource(AppContext.playerStats);
+        UserCookieManager.addDataSource(AppContext.globalPlayerStats);
         UserCookieManager.readCookie();
 
         if (multiplayer) {
