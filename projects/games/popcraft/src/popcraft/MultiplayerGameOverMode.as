@@ -12,6 +12,8 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import popcraft.util.MoonCalculation;
+
 public class MultiplayerGameOverMode extends AppMode
 {
     public function MultiplayerGameOverMode (winningTeam :int)
@@ -59,6 +61,11 @@ public class MultiplayerGameOverMode extends AppMode
                 // awarded for playing one of each multiplayer game arrangement
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_LIBERALARTS);
             }
+        }
+
+        if (MoonCalculation.isFullMoonToday) {
+            // awarded for playing a multiplayer game on a full moon
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_BADMOONONTHERISE);
         }
 
         if (this.playerWon) {
