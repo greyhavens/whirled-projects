@@ -6,7 +6,7 @@
 "- Destroy Ralph's Workshop!
 - Professor Weardd's Workshop cannot be damaged.
 - You will create two creatures for every one you purchase.
-- Solar eclipses destroy your existing creatures, but allow you to create more immediately."
+- Solar eclipses destroy your existing creatures, but you can create more immediately."
         playerName="Jack"
         playerBaseHealth="150">
 
