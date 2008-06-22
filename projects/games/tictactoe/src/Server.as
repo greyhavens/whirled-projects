@@ -28,7 +28,6 @@ public class Server
     protected function gameStarted (event :StateChangedEvent) :void
     {
         trace("Game started");
-        trace("Players are " + _ctrl.game.seating.getPlayerIds());
 
         var empty :Array = [0,0,0, 0,0,0, 0,0,0];
 
@@ -37,6 +36,35 @@ public class Server
 
         trace("Starting next turn");
         _ctrl.game.startNextTurn();
+
+        var players :Array = _ctrl.game.seating.getPlayerIds();
+        trace("Players are " + players);
+        for (var ii :int = 0; ii < 2; ++ii) {
+            _ctrl.player.getCookie(gotCookie, players[ii]);
+        }
+    }
+
+    protected function gotCookie (cookie :Object, playerId :int) :void
+    {
+        var idx :int = _ctrl.game.seating.getPlayerPosition(playerId);
+        if (idx < 0) {
+            trace("Got cookie for player not in game: " + playerId);
+            return;
+        }
+
+        trace("Cookie for player " + playerId + ", index " + idx + ": " + cookie);
+        if (cookie != null) {
+            for (var key :* in cookie) {
+                trace("   " + key + " = " + cookie[key]);
+            }
+
+            _cookies[idx].won = cookie.won;
+            _cookies[idx].lost = cookie.lost;
+
+        } else {
+            _cookies[idx].won = 0;
+            _cookies[idx].lost = 0;
+        }
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
@@ -80,10 +108,19 @@ public class Server
             var winningSymbol :int = checkForWins();
             if (winningSymbol != 0) {
                 trace("Winner is " + winningSymbol);
-                winners = new Array();
-                losers =new  Array();
-                winners.push(players[winningSymbol - 1]);
-                losers.push(players[winningSymbol % 2]);
+
+                var winnerIdx :int = winningSymbol - 1;
+                var loserIdx :int = winningSymbol % 2;
+
+                winners = [players[winnerIdx]];
+                losers = [players[loserIdx]];
+
+                _cookies[winnerIdx].won += 1;
+                _cookies[loserIdx].lost += 1;
+
+                for (var ii :int = 0; ii < 2; ++ii) {
+                    _ctrl.player.setCookie(_cookies[ii], players[ii]);
+                }
 
             } else if (isBoardFull()) {
                 trace("Tie game");
@@ -139,11 +176,19 @@ public class Server
 
     protected var _ctrl :GameControl;
 
+    protected var _cookies :Array = [newCookie(), newCookie()];
+
     protected static const _WINS :Array = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal
         [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
         [0, 4, 8], [2, 4, 6] //diagonal
     ];
+
+    protected static function newCookie () :Object
+    {
+        return {won :0, lost :0};
+    }
 }
 
 }
+

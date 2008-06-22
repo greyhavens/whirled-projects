@@ -28,12 +28,20 @@ public class TicTacToe extends Sprite
         _ctrl.game.addEventListener(
             StateChangedEvent.GAME_STARTED, gameStarted);
 
+        _ctrl.game.addEventListener(
+            StateChangedEvent.GAME_ENDED, gameEnded);
+
         _ctrl.net.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         _board = new Board(this);
         addChild(_board);
 
+        _record = new Record();
+        addChild(_record);
+        _record.y = 20 + Board.BOXSIZE * 3;
+
+        updateRecord();
         updateAll();
     }
 
@@ -53,6 +61,25 @@ public class TicTacToe extends Sprite
     protected function updateAll () :void
     {
         _board.updateAll(_ctrl.net.get(Server.BOARD) as Array);
+    }
+
+    protected function updateRecord () :void
+    {
+        trace("Updating record");
+        if (_ctrl.game.seating.getMyPosition() >= 0) {
+            trace("Requesting cookie");
+            _ctrl.player.getCookie(
+                function (cookie :Object, ...unused) :void {
+                    trace("Got cookie: ");
+                    for (var k:* in cookie) {
+                        trace("   " + k + " = " + cookie[k]);
+                    }
+                    _record.update(cookie);
+                });
+        }
+        else {
+            trace("Not seated");
+        }
     }
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
@@ -75,7 +102,7 @@ public class TicTacToe extends Sprite
     {
         trace("Turn changed " + event);
         if (_ctrl.game.isMyTurn()) {
-            trace("My turn, enabling 12345");
+            trace("My turn, enabling");
             _board.enabled = true;
         }
     }
@@ -84,6 +111,14 @@ public class TicTacToe extends Sprite
     {
         trace("Game started");
         trace("Players are " + _ctrl.game.seating.getPlayerIds());
+        updateRecord();
+    }
+
+    protected function gameEnded (event :StateChangedEvent) :void
+    {
+        trace("Game ended");
+        trace("Players are " + _ctrl.game.seating.getPlayerIds());
+        updateRecord();
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
@@ -109,6 +144,7 @@ public class TicTacToe extends Sprite
 
     protected var _ctrl :GameControl;
     protected var _board :Board;
+    protected var _record :Record;
 }
 
 }
