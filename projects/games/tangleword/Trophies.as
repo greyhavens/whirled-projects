@@ -30,7 +30,7 @@ public class Trophies {
         _gameCtrl = gameCtrl;
         _player = gameCtrl.player;
 
-        _player.getUserCookie(_gameCtrl.game.getMyId(), function (cookie :Object) :void {
+        _player.getCookie(function (cookie :Object, ...unused) :void {
                 _cookie = cookie;
                 if (_cookie == null) {
                     _cookie = { totalRounds: 0 };
@@ -93,7 +93,7 @@ public class Trophies {
             // now check the total number of rounds played
             if (_cookie != null) {
                 _cookie.totalRounds++;
-                _player.setUserCookie(_cookie);
+                _player.setCookie(_cookie);
                 for each (round in totalRoundsBoundaries) {
                     trophy = totalRoundsTrophyPrefix + String(round);
                     if (_cookie.totalRounds == round && ! _player.holdsTrophy(trophy)) {
