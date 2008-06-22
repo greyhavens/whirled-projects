@@ -380,7 +380,7 @@ public class CaptionGame extends EventDispatcher
         _myName = _ctrl.game.getOccupantName(_myId);
 
         // retrieve our stats from the server
-        _ctrl.player.getUserCookie(_myId, gotCookie);
+        _ctrl.player.getCookie(gotCookie);
 
         // get us rolling
         checkControl();
@@ -765,7 +765,7 @@ public class CaptionGame extends EventDispatcher
     /**
      * Called when the user cookie has been retrieved.
      */
-    protected function gotCookie (cookie :Object) :void
+    protected function gotCookie (cookie :Object, ...unused) :void
     {
         _hasCookie = true;
         var fromServer :Array = cookie as Array;
@@ -793,7 +793,7 @@ public class CaptionGame extends EventDispatcher
 
         if (changed && _hasCookie) {
 //            trace("Updating stat cookie for " + _myName + ": " + _statCookie[0]);
-            _ctrl.player.setUserCookie(_statCookie);
+            _ctrl.player.setCookie(_statCookie);
         }
     }
 
