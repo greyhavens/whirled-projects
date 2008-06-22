@@ -3,6 +3,7 @@ package popcraft {
 import com.threerings.util.Log;
 
 import flash.utils.ByteArray;
+import com.whirled.game.PlayerSubControl;
 
 public class UserCookieManager
 {
@@ -26,7 +27,7 @@ public class UserCookieManager
     {
         if (!_loadingCookie) {
             if (AppContext.gameCtrl.isConnected()) {
-                AppContext.gameCtrl.player.getUserCookie(AppContext.gameCtrl.game.getMyId(), completeLoadData);
+                AppContext.gameCtrl.player.getCookie(completeLoadData);
                 _loadingCookie = true;
             } else {
                 completeLoadData(null);
@@ -49,9 +50,9 @@ public class UserCookieManager
                 }
                 ba.compress();
 
-                success = AppContext.gameCtrl.player.setUserCookie(ba);
+                success = AppContext.gameCtrl.player.setCookie(ba);
                 if (!success) {
-                    errString = "PlayerSubControl.setUserCookie() failed (" + ba.length + "-byte cookie too large?)";
+                    errString = "PlayerSubControl.setCookie() failed (" + ba.length + "-byte cookie too large?)";
                 }
 
             } catch (e :Error) {
@@ -67,7 +68,7 @@ public class UserCookieManager
         }
     }
 
-    protected static function completeLoadData (cookie :Object) :void
+    protected static function completeLoadData (cookie :Object, ...unused) :void
     {
         _loadingCookie = false;
 
