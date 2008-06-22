@@ -134,7 +134,7 @@ public class GameView extends Sprite
         if (!seenHelp) {
             showHelp();
             cookie["seen_help"] = true;
-            _ctx.control.player.setUserCookie(cookie)
+            _ctx.control.player.setCookie(cookie)
         }
     }
 

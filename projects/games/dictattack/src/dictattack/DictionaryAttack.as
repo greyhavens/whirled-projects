@@ -71,7 +71,7 @@ public class DictionaryAttack extends Sprite
         if (_ctx.control.isConnected()) {
             _ctx.control.game.playerReady();
             // also load up our user cookie
-            _ctx.control.player.getUserCookie(_ctx.control.game.getMyId(), gotUserCookie);
+            _ctx.control.player.getCookie(gotUserCookie);
         } else {
             _ctx.view.attractMode();
         }
@@ -160,7 +160,7 @@ public class DictionaryAttack extends Sprite
 
             // update our highscore display and save our high score
             _ctx.view.gotUserCookie(_cookie);
-            if (!_ctx.control.player.setUserCookie(_cookie)) {
+            if (!_ctx.control.player.setCookie(_cookie)) {
                 Log.getLog(this).warning("Failed to save cookie " + _cookie + ".");
             }
         }
@@ -238,7 +238,7 @@ public class DictionaryAttack extends Sprite
         // TODO: clean up things that need cleaning up
     }
 
-    protected function gotUserCookie (cookie :Object) :void
+    protected function gotUserCookie (cookie :Object, ...unused) :void
     {
         _cookie = (cookie == null) ? new Object() : cookie;
         _ctx.view.gotUserCookie(_cookie);
