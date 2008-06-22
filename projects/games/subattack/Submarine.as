@@ -152,7 +152,7 @@ public class Submarine extends BaseSprite
         return _dead;
     }
 
-    public function gotPlayerCookie (cookie :Object) :void
+    public function gotPlayerCookie (cookie :Object, ...unused) :void
     {
         var array :Array = (cookie as Array);
         if (array != null) {

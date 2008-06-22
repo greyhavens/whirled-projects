@@ -103,7 +103,7 @@ public class Board
 
             sub = new Submarine(
                 playerId, ii, _gameCtrl.game.getOccupantName(playerId), p.x, p.y, this, _gameCtrl);
-            _gameCtrl.player.getUserCookie(playerId, sub.gotPlayerCookie);
+            _gameCtrl.player.getCookie(sub.gotPlayerCookie, playerId);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -407,7 +407,7 @@ public class Board
     {
         var mydex :int = _gameCtrl.game.seating.getMyPosition();
         if (mydex >= 0) {
-            _gameCtrl.player.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
+            _gameCtrl.player.setCookie(Submarine(_subs[mydex]).getNewCookie());
         }
 
         _seaDisplay.displayGameOver();
