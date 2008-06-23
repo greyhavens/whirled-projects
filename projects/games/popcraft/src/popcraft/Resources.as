@@ -62,6 +62,15 @@ public class Resources
     [Embed(source="../../rsrc/audio/popcraft_music_day.mp3")]
     public static const MUSIC_DAY :Class;
 
+    [Embed(source="../../rsrc/audio/introscreen.mp3")]
+    public static const SOUND_INTROSCREEN :Class;
+
+    [Embed(source="../../rsrc/audio/book_pageturn1.mp3")]
+    public static const SOUND_PAGETURN :Class;
+
+    [Embed(source="../../rsrc/audio/book_pageturn2.mp3")]
+    public static const SOUND_BOOKCLOSE :Class;
+
     [Embed(source="../../rsrc/audio/base_destroy.mp3")]
     public static const SOUND_BASEDESTROY :Class;
 
@@ -98,6 +107,9 @@ public class Resources
     [Embed(source="../../rsrc/audio/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     public static const SOUND_SAPPER :Class;
 
+    [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
+    public static const SOUND_SAPPERDEATH :Class;
+
     [Embed(source="../../rsrc/audio/fleshbehemoth_create.mp3")]
     public static const SOUND_COLOSSUS :Class;
 
@@ -109,6 +121,9 @@ public class Resources
 
     [Embed(source="../../rsrc/audio/ladyfinger_death.mp3")]
     public static const SOUND_COURIERDEATH :Class;
+
+    [Embed(source="../../rsrc/audio/boss_professor_spawn.mp3")]
+    public static const SOUND_BOSS :Class;
 
     [Embed(source="../../rsrc/audio/submit_flesh.mp3")]
     public static const SOUND_FLESH :Class;
@@ -124,9 +139,6 @@ public class Resources
 
     [Embed(source="../../rsrc/audio/FAST_POWER_FAILURE_01_TF.mp3")]
     public static const SOUND_LOSTRESOURCES :Class;
-
-    [Embed(source="../../rsrc/audio/EXPLOSION_CTE01_56_1.mp3")]
-    public static const SOUND_EXPLOSION :Class;
 
     [Embed(source="../../rsrc/audio/B-BIRD-ROOSTER.mp3")]
     public static const SOUND_ROOSTER :Class;

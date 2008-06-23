@@ -2,10 +2,7 @@ package popcraft.sp {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
-import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextField;
@@ -13,25 +10,27 @@ import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 
-public class LevelSelectMode extends AppMode
+public class LevelSelectMode extends SplashScreenModeBase
 {
     override public function update (dt :Number) :void
     {
-        if (!_hasSetup && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
-            this.setup();
+        if (!_createdLayout && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
+            this.createLayout();
         }
     }
 
     override protected function setup () :void
     {
-        // don't setup until our level records are loaded
-        if (!AppContext.levelMgr.levelRecordsLoaded) {
-            return;
+        super.setup();
+
+        if (AppContext.levelMgr.levelRecordsLoaded) {
+            this.createLayout();
         }
+    }
 
-        _hasSetup = true;
-
-        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
+    protected function createLayout () :void
+    {
+        _createdLayout = true;
 
         var tf :TextField = new TextField();
         tf.selectable = false;
@@ -127,7 +126,7 @@ public class LevelSelectMode extends AppMode
         AppContext.levelMgr.playLevel();
     }
 
-    protected var _hasSetup :Boolean;
+    protected var _createdLayout :Boolean;
 
 }
 

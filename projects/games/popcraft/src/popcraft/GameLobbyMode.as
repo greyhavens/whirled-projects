@@ -3,7 +3,6 @@ package popcraft {
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
@@ -17,11 +16,11 @@ import flash.text.TextFieldAutoSize;
 
 import popcraft.data.GameVariantData;
 
-public class GameLobbyMode extends AppMode
+public class GameLobbyMode extends SplashScreenModeBase
 {
     override protected function setup () :void
     {
-        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
+        super.setup();
 
         this.createTeamBox(-1);
         _numTeams = SeatingManager.numExpectedPlayers;
@@ -76,6 +75,8 @@ public class GameLobbyMode extends AppMode
 
     override protected function destroy () :void
     {
+        super.destroy();
+
         AppContext.gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
     }

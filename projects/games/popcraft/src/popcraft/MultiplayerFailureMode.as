@@ -2,7 +2,6 @@ package popcraft {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
@@ -13,11 +12,11 @@ import flash.text.TextFormatAlign;
 
 import popcraft.sp.LevelSelectMode;
 
-public class MultiplayerFailureMode extends AppMode
+public class MultiplayerFailureMode extends SplashScreenModeBase
 {
     override protected function setup () :void
     {
-        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
+        super.setup();
 
         var tf :TextField = new TextField();
         tf.selectable = false;

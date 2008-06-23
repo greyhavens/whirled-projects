@@ -73,14 +73,19 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("sound", "mus_night", { embeddedClass: Resources.MUSIC_NIGHT, type: "music", volume: 0.7, priority: 10 });
         rm.pendResourceLoad("sound", "mus_day", { embeddedClass: Resources.MUSIC_DAY, type: "music", volume: 0.7, priority: 10 });
 
+        rm.pendResourceLoad("sound", "sfx_introscreen", { embeddedClass: Resources.SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
+        rm.pendResourceLoad("sound", "sfx_pageturn", { embeddedClass: Resources.SOUND_PAGETURN, priority: 9 });
+        rm.pendResourceLoad("sound", "sfx_bookclose", { embeddedClass: Resources.SOUND_BOOKCLOSE, priority: 9 });
+
         rm.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: Resources.SOUND_GRUNT, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: Resources.SOUND_HEAVY, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: Resources.SOUND_SAPPER, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: Resources.SOUND_COLOSSUS, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: Resources.SOUND_COURIER, priority: 2 });
+        rm.pendResourceLoad("sound", "sfx_create_boss", { embeddedClass: Resources.SOUND_BOSS, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_death_grunt", { embeddedClass: Resources.SOUND_GRUNTDEATH });
         rm.pendResourceLoad("sound", "sfx_death_heavy", { embeddedClass: Resources.SOUND_HEAVYDEATH });
-        rm.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: Resources.SOUND_EXPLOSION });
+        rm.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: Resources.SOUND_SAPPERDEATH });
         rm.pendResourceLoad("sound", "sfx_death_courier", { embeddedClass: Resources.SOUND_COURIERDEATH, volume: 0.7 });
         rm.pendResourceLoad("sound", "sfx_death_colossus", { embeddedClass: Resources.SOUND_COLOSSUSDEATH });
         rm.pendResourceLoad("sound", "sfx_death_base", { embeddedClass: Resources.SOUND_BASEDESTROY, priority: 7 });

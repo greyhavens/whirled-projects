@@ -57,6 +57,8 @@ public class LevelIntroMode extends AppMode
 
     override protected function destroy () :void
     {
+        super.destroy();
+
         StageQualityManager.popStageQuality();
     }
 
@@ -185,11 +187,13 @@ public class LevelIntroMode extends AppMode
         var movieTask :SerialTask = new SerialTask();
         if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
+            movieTask.addTask(new PlaySoundTask("sfx_pageturn"));
             movieTask.addTask(new GoToFrameTask("turn"));
             movieTask.addTask(new WaitForFrameTask("swap"));
             movieTask.addTask(new FunctionTask(doNextPhase));
         } else {
             // animate the book closing and pop the mode
+            movieTask.addTask(new PlaySoundTask("sfx_bookclose"));
             movieTask.addTask(new GoToFrameTask("close"));
             movieTask.addTask(new WaitForFrameTask("closed"));
             movieTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));

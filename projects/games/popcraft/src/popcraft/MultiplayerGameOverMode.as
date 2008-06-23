@@ -2,7 +2,6 @@ package popcraft {
 
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.ArrayUtil;
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.GameSubControl;
@@ -14,7 +13,7 @@ import flash.text.TextFieldAutoSize;
 
 import popcraft.util.MoonCalculation;
 
-public class MultiplayerGameOverMode extends AppMode
+public class MultiplayerGameOverMode extends SplashScreenModeBase
 {
     public function MultiplayerGameOverMode (winningTeam :int)
     {
@@ -94,10 +93,10 @@ public class MultiplayerGameOverMode extends AppMode
 
     override protected function setup () :void
     {
+        super.setup();
+
         this.updateStats();
         this.awardTrophies();
-
-        this.modeSprite.addChild(SwfResource.getSwfDisplayRoot("splash"));
 
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
