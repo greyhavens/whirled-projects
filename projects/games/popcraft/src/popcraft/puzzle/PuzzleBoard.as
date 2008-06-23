@@ -162,7 +162,7 @@ public class PuzzleBoard extends SceneObject
 
     protected function createResourceChunk (x :int, y :int) :void
     {
-        var chunkSize :int = Rand.nextIntRange(1, RES_RUN_SIZE_MAX + 1, AppContext.randStreamPuzzle);
+        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1, AppContext.randStreamPuzzle);
         var resType :int = _resourceGenerator.nextEntry();
 
         for (var i :int = 0; i < chunkSize; ++i) {
@@ -195,8 +195,6 @@ public class PuzzleBoard extends SceneObject
             y = nextSpace.y;
         }
     }
-
-    protected static const RES_RUN_SIZE_MAX :int = 6;
 
     public function clearPieceGroup (x :int, y :int) :void
     {
@@ -526,6 +524,8 @@ public class PuzzleBoard extends SceneObject
 
     protected static const PIECE_DROP_TIME :Number = 0.3;
     protected static const PIECE_SCALE_DOWN_TIME :Number = 0.2;
+
+    protected static const RESOURCE_CHUNK_SIZE_MAX :int = 4;
 
     protected static const POS_CLEAR_FEEDBACK_ANIM_NAMES :Array = [
         "feedback_A", "feedback_B", "feedback_C", "feedback_D" ];
