@@ -10,7 +10,7 @@
 
         <GameDataOverride
             spellDropTimeMin="10"
-            spellDropTimeMax="20"/>
+            spellDropTimeMax="10"/>
 
         <MapSettings backgroundName="Level1">
             <BaseLocation x="75" y="145"/>
@@ -46,29 +46,30 @@
                 <Day repeatWaves="false"
                     noticeSpellDropAfterMin="2"
                     noticeSpellDropAfterMax="3"
-                    spellDropCourierGroupSizeMin="1"
-                    spellDropCourierGroupSizeMax="1">
+                    spellDropCourierGroupSizeMin="2"
+                    spellDropCourierGroupSizeMax="2">
 
-                    <Wave absoluteDelay="2"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="0" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="7" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="9" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="11" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="13" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="15" spellCastChance="1"><Unit type="sapper" count="1"/></Wave>
 
-                    <Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="11"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="13"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="17"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="19"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="21"><Unit type="sapper" count="1"/></Wave>
+                    <Wave absoluteDelay="20"><Unit type="heavy" count="4"/></Wave>
 
-                    <Wave absoluteDelay="50"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="52"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="54"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="56"><Unit type="sapper" count="2"/></Wave>
-                    <Wave absoluteDelay="58"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="45" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="48" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="52" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="55" spellCastChance="1"><Unit type="grunt" count="3"/></Wave>
+                    <Wave absoluteDelay="58" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 
-                    <Wave absoluteDelay="62"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="75" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+                    <Wave absoluteDelay="80" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 
-                    <Wave absoluteDelay="85"><Unit type="colossus" count="3"/></Wave>
+                    <Wave absoluteDelay="90" spellCastChance="1"><Unit type="grunt" count="4"/></Wave>
+                    <Wave absoluteDelay="92" spellCastChance="1"><Unit type="sapper" count="2"/></Wave>
+                    <Wave absoluteDelay="94" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
                 </Day>
             </RepeatingDays>
         </Computer>

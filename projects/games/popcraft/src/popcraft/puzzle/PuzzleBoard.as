@@ -1,5 +1,6 @@
 package popcraft.puzzle {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
@@ -78,12 +79,15 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    protected function createNewPieceOnBoard (boardIndex :int) :Piece
+    protected function createNewPieceOnBoard (boardIndex :int, resourceType :int = -1) :Piece
     {
         Assert.isTrue(boardIndex >= 0 && boardIndex < _board.length);
         Assert.isNull(_board[boardIndex]);
 
-        var resourceType :int = _resourceGenerator.nextEntry();
+        if (resourceType < 0) {
+            resourceType = _resourceGenerator.nextEntry();
+        }
+
         var piece :Piece = new Piece(resourceType, boardIndex);
 
         piece.x = getPieceXLoc(idxToX(boardIndex));
@@ -97,7 +101,7 @@ public class PuzzleBoard extends SceneObject
         return piece;
     }
 
-    public function puzzleReset (animate :Boolean) :void
+    protected function puzzleReset (animate :Boolean) :void
     {
         // cancel any existing animations
         this.removeAllTasks();
@@ -113,9 +117,9 @@ public class PuzzleBoard extends SceneObject
         }
 
         // create a new board, and populate it with a random distribution of resources
-        _board = new Array(_cols * _rows);
-
-        for (var i :int = 0; i < _cols * _rows; ++i) {
+        var boardSize :int = _cols * _rows;
+        _board = ArrayUtil.create(boardSize, null);
+        for (var i :int = 0; i < boardSize; ++i) {
             piece = createNewPieceOnBoard(i);
 
             if (animate) {
@@ -128,6 +132,71 @@ public class PuzzleBoard extends SceneObject
             }
         }
     }
+
+    public function puzzleShuffle () :void
+    {
+        // cancel any existing animations
+        this.removeAllTasks();
+        _resolvingClears = false;
+
+        // clear the existing board
+        if (null != _board) {
+            for each (var piece :Piece in _board) {
+                if (null != piece) {
+                    piece.destroySelf();
+                }
+            }
+        }
+
+        // create a new board, and populate it with contiguous chunks of resources
+        _board = ArrayUtil.create(_cols * _rows, null);
+        for (var y :int = 0; y < _rows; ++y) {
+            for (var x :int = 0; x < _cols; ++x) {
+                var index :int = (y * _cols) + x;
+                if (_board[index] == null) {
+                    this.createResourceChunk(x, y);
+                }
+            }
+        }
+    }
+
+    protected function createResourceChunk (x :int, y :int) :void
+    {
+        var chunkSize :int = Rand.nextIntRange(1, RES_RUN_SIZE_MAX + 1, AppContext.randStreamPuzzle);
+        var resType :int = _resourceGenerator.nextEntry();
+
+        for (var i :int = 0; i < chunkSize; ++i) {
+            var index :int = (y * _cols) + x;
+            var piece :Piece = createNewPieceOnBoard(index, resType);
+
+            // check spaces around us
+            var freeAdjacentSpaces :Array = [];
+            for (var space :int = 0; space < 4; ++space) {
+                var xx :int = x;
+                var yy: int = y;
+                switch (space) {
+                case 0: xx += 1; break;
+                case 1: xx -= 1; break;
+                case 2: yy += 1; break;
+                case 3: yy -= 1; break;
+                }
+
+                if (xx >= 0 && xx < _cols && yy >= 0 && yy < _rows && (null == _board[(yy * _cols) + xx])) {
+                    freeAdjacentSpaces.push(new Point(xx, yy));
+                }
+            }
+
+            if (freeAdjacentSpaces.length == 0) {
+                break;
+            }
+
+            var nextSpace :Point = freeAdjacentSpaces[Rand.nextIntRange(0, freeAdjacentSpaces.length, AppContext.randStreamPuzzle)];
+            x = nextSpace.x;
+            y = nextSpace.y;
+        }
+    }
+
+    protected static const RES_RUN_SIZE_MAX :int = 6;
 
     public function clearPieceGroup (x :int, y :int) :void
     {

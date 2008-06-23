@@ -130,10 +130,10 @@ public class DashboardView extends SceneObject
             PUZZLE_SHUFFLE_TASK,
             new SerialTask(
                 new WaitForFrameTask("swap", _shuffleMovie),
-                new FunctionTask(function () :void { GameContext.puzzleBoard.puzzleReset(false); })),
+                new FunctionTask(function () :void { GameContext.puzzleBoard.puzzleShuffle(); })),
             true);
 
-        GameContext.playGameSound("sfx_puzzlereset");
+        GameContext.playGameSound("sfx_puzzleshuffle");
     }
 
     protected function onGotSpell (e :GotSpellEvent) :void
