@@ -23,7 +23,7 @@ public class DiurnalCycle extends SimObject
         this.removeAllTasks();
 
         if (DiurnalCycle.isDisabled) {
-            _phaseOfDay = { value: Constants.PHASE_NIGHT };
+            _phaseOfDay = Constants.PHASE_NIGHT;
 
         } else {
             var phaseTask :RepeatingTask = new RepeatingTask();
@@ -38,11 +38,10 @@ public class DiurnalCycle extends SimObject
                 this.createPhaseTasks(phaseTask, phase2);
             }
 
-            phaseTask.addTask(new FunctionTask(incrementDayCount));
             this.addTask(phaseTask);
 
             // set initial values
-            _phaseOfDay["value"] = newPhase;
+            _phaseOfDay = newPhase;
             _timeTillNextPhase["value"] = getPhaseLength(newPhase);
         }
     }
@@ -51,9 +50,36 @@ public class DiurnalCycle extends SimObject
     {
         var phaseLength :Number = getPhaseLength(phase);
 
-        phaseTask.addTask(new AnimateValueTask(_phaseOfDay, phase));
         phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, phaseLength));
         phaseTask.addTask(new AnimateValueTask(_timeTillNextPhase, 0, phaseLength));
+        phaseTask.addTask(new FunctionTask(setNextPhase));
+    }
+
+    protected function setNextPhase () :void
+    {
+        var nextPhase :int;
+        var incrementDayCount :Boolean;
+        switch (_phaseOfDay) {
+        case Constants.PHASE_DAY:
+            nextPhase = Constants.PHASE_NIGHT;
+            break;
+
+        case Constants.PHASE_NIGHT:
+            incrementDayCount = true;
+            nextPhase = Constants.PHASE_DAY;
+            break;
+
+        case Constants.PHASE_ECLIPSE:
+            incrementDayCount = true;
+            nextPhase = Constants.PHASE_ECLIPSE;
+            break;
+        }
+
+        _phaseOfDay = nextPhase;
+
+        if (incrementDayCount) {
+            this.incrementDayCount();
+        }
     }
 
     public static function getPhaseLength (phase :int) :Number
@@ -69,7 +95,7 @@ public class DiurnalCycle extends SimObject
         return -1;
     }
 
-    protected function incrementDayCount () :void
+    public function incrementDayCount () :void
     {
         _dayCount += 1;
     }
@@ -126,7 +152,7 @@ public class DiurnalCycle extends SimObject
 
     public function get phaseOfDay () :int
     {
-        return _phaseOfDay["value"];
+        return _phaseOfDay;
     }
 
     public function get lastUpdateTimestamp () :Number
@@ -134,7 +160,7 @@ public class DiurnalCycle extends SimObject
         return _lastUpdateTimestamp;
     }
 
-    protected var _phaseOfDay :Object = { value: 0 };
+    protected var _phaseOfDay :int;
     protected var _timeTillNextPhase :Object = { value: 0 };
     protected var _lastUpdateTimestamp :Number = 0;
     protected var _dayCount :int = 1;

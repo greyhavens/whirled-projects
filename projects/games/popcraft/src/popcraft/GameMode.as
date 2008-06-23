@@ -449,6 +449,7 @@ public class GameMode extends AppMode
 
         case KeyboardCodes.D:
             if (Constants.DEBUG_ALLOW_CHEATS) {
+                GameContext.diurnalCycle.incrementDayCount();
                 GameContext.diurnalCycle.resetPhase(
                     GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
             }

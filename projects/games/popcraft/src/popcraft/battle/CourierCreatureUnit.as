@@ -377,7 +377,9 @@ class ScanForSpellPickupsTask extends AITaskTree
     {
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
-            var spell :SpellDropObject = msg.data as SpellDropObject;
+            var spells :Array = msg.data as Array;
+            // choose a spell at random
+            var spell :SpellDropObject = Rand.nextElement(spells, Rand.STREAM_GAME);
             this.sendParentMessage(MSG_DETECTEDSPELL, spell);
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
             // wander again

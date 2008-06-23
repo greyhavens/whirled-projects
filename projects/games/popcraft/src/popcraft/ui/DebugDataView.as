@@ -71,6 +71,7 @@ public class DebugDataView extends SceneObject
         _text.textColor = (avgFps > SLOW_FPS ? DEFAULT_COLOR : SLOW_COLOR);
 
         _text.text =
+            "Day: " + GameContext.diurnalCycle.dayCount + "\n" +
             "Player ID: " + GameContext.localPlayerIndex + "\n" +
             "FPS avg: " + Math.round(avgFps) + " cur: " + Math.round(thisFps) + "\n" +
             "GameObjects: " + GameContext.gameMode.objectCount + "\n" +
