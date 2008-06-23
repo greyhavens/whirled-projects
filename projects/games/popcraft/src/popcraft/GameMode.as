@@ -141,7 +141,7 @@ public class GameMode extends AppMode
                 return (mpSettings.arrangeType == multiplayerArrangement);
             });
 
-        GameContext.mpSettings = potentialSettings[Rand.nextIntRange(0, potentialSettings.length, Rand.STREAM_GAME)];
+        GameContext.mpSettings = Rand.nextElement(potentialSettings, Rand.STREAM_GAME);
     }
 
     protected function setupPlayers () :void

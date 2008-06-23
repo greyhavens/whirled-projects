@@ -179,7 +179,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
     protected function handleAttacked (...ignored) :void
     {
         // play a sound
-        var soundName :String = HIT_SOUND_NAMES[Rand.nextIntRange(0, HIT_SOUND_NAMES.length, Rand.STREAM_COSMETIC)];
+        var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
         GameContext.playGameSound(soundName);
     }
 

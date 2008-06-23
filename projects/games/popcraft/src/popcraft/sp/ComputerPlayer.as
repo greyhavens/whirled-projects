@@ -66,7 +66,7 @@ public class ComputerPlayer extends SimObject
                 }
 
                 if (availableSpells.length > 0) {
-                    spellType = availableSpells[Rand.nextIntRange(0, availableSpells.length, Rand.STREAM_GAME)];
+                    spellType = Rand.nextElement(availableSpells, Rand.STREAM_GAME);
                     GameContext.gameMode.castSpell(_playerInfo.playerIndex, spellType);
                 }
             }

@@ -111,7 +111,7 @@ public class LevelOutroMode extends AppMode
         // if the player lost, show a hint
         var hints :Array = GameContext.spLevel.levelHints;
         if (!_success && hints.length > 0) {
-            message = hints[Rand.nextIntRange(0, hints.length, Rand.STREAM_COSMETIC)] + "\n\n";
+            message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
         }
 
         message += "Your progress has been saved. Continue playing?";

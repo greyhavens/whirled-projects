@@ -190,7 +190,7 @@ public class PuzzleBoard extends SceneObject
                 break;
             }
 
-            var nextSpace :Point = freeAdjacentSpaces[Rand.nextIntRange(0, freeAdjacentSpaces.length, AppContext.randStreamPuzzle)];
+            var nextSpace :Point = Rand.nextElement(freeAdjacentSpaces, AppContext.randStreamPuzzle);
             x = nextSpace.x;
             y = nextSpace.y;
         }
