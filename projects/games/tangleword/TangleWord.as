@@ -106,8 +106,8 @@ public class TangleWord extends Sprite
             // end the round when the ticks have met or exceeded our round length
             _display.setTimer(Properties.ROUND_LENGTH - elapsed);
             if (elapsed >= Properties.ROUND_LENGTH) {
-                _model.endRound();
-            }                 
+                _gameCtrl.doBatch(function () :void { _model.endRound() });
+            }
         } else if (event.name == "restart") {
             // we're in a paused state between games
             elapsed = int(event.value);

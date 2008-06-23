@@ -48,12 +48,15 @@ public class Trophies {
                 _player.awardTrophy(trophy);
             }
         }
+    }
 
+    public function handleScoreUpdate (oldscore :Number, newscore :Number) :void
+    {
         // how about a score-based trophy?
-        var oldscore :int = scoreboard.getScore(_gameCtrl.game.getMyId());
-        var newscore :int = oldscore + wordscore;
+        //var oldscore :int = scoreboard.getScore(_gameCtrl.game.getMyId());
+        //var newscore :int = oldscore + wordscore;
         for each (var boundary :int in pointsBoundaries) {
-            trophy = String(boundary) + pointsTrophySuffix;
+            var trophy :String = String(boundary) + pointsTrophySuffix;
             if (oldscore < boundary && newscore >= boundary && // check if score is high enough
                 ! _player.holdsTrophy(trophy))               // ...and if it's a new award
             {

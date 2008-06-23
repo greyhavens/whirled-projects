@@ -8,6 +8,7 @@ import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
 import com.whirled.contrib.Scoreboard;
@@ -62,19 +63,19 @@ public class Model
 
     public function endRound () :void
     {
+        // WARNING: Trophy scores don't include bonuses
+        _trophies.handleRoundEnded(_scoreboard);
+
+        if (!_gameCtrl.game.amInControl()) {
+            return;
+        }
+
         var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
         var totalWords :Number = (_gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || []).length;
 
         _playerBonuses = [];
         for (var pid :Object in firsts) {
             _playerBonuses[pid] = Math.min(firsts[pid], BONUS_CAP_RATIO*totalWords);
-        }
-
-        // WARNING: Trophy scores don't include bonuses
-        _trophies.handleRoundEnded(_scoreboard);
-
-        if (!_gameCtrl.game.amInControl()) {
-            return;
         }
 
         var playerIds :Array = [];
@@ -292,6 +293,14 @@ public class Model
 
         // Third, make a new scoreboard
         _scoreboard = new Scoreboard(_gameCtrl);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleScoreUpdate);
+    }
+
+    protected function handleScoreUpdate (e :ElementChangedEvent) :void
+    {
+        if (e.name == "Scores" && e.key == _gameCtrl.game.getMyId()) {
+            _trophies.handleScoreUpdate(Number(e.oldValue), Number(e.newValue));
+        }
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
