@@ -82,12 +82,16 @@ public class TangleWord extends Sprite
 
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        // start up our game ticker if we're the one in control, and call every second
-        if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.startTicker("countdown", 1000);
-        }
-        _model.roundStarted();
-        _controller.roundStarted();
+        _gameCtrl.doBatch(function () :void {
+            // start up our game ticker if we're the one in control, and call every second
+            if (_gameCtrl.game.amInControl()) {
+                _gameCtrl.services.startTicker("countdown", 1000);
+            }
+
+            _model.roundStarted();
+            _controller.roundStarted();
+        });
+
         // TODO: if the game is already in progress, deduct the start time from the round length;
         // also we need the board to be in the game object
         _display.roundStarted(Properties.ROUND_LENGTH);
@@ -106,7 +110,7 @@ public class TangleWord extends Sprite
             // end the round when the ticks have met or exceeded our round length
             _display.setTimer(Properties.ROUND_LENGTH - elapsed);
             if (elapsed >= Properties.ROUND_LENGTH) {
-                _gameCtrl.doBatch(function () :void { _model.endRound() });
+                _gameCtrl.doBatch(_model.endRound);
             }
         } else if (event.name == "restart") {
             // we're in a paused state between games

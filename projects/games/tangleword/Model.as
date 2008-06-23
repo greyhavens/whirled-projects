@@ -298,7 +298,7 @@ public class Model
 
     protected function handleScoreUpdate (e :ElementChangedEvent) :void
     {
-        if (e.name == "Scores" && e.key == _gameCtrl.game.getMyId()) {
+        if (e.name == _scoreboard.propName && e.key == _gameCtrl.game.getMyId()) {
             _trophies.handleScoreUpdate(Number(e.oldValue), Number(e.newValue));
         }
     }
