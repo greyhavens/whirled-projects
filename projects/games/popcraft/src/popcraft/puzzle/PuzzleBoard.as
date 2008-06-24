@@ -241,6 +241,11 @@ public class PuzzleBoard extends SceneObject
         GameContext.playGameSound(resourceValue >= 0 ?
             "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
             "sfx_rsrc_lost");
+
+        // award trophy
+        if (clearPieces.length >= TrophyManager.TROPHY_RESOURCE_CLEAR_TILE_COUNT) {
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_RESOURCE_CLEAR[resourceType]);
+        }
     }
 
     protected function showResourceValueAnimation (loc :Point, resType :int, amount :int) :void

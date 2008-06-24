@@ -51,7 +51,7 @@ public class TrophyManager
     // play a game against another player with the Morbid Infection trophy
     public static const TROPHY_MORBIDINFECTION :String = "MorbidInfection";
     // win a game against a player whose Whirled name is "Professor Weardd"
-    public static const TROPHY_MALEFACTOR :String = "Malefactor";
+    public static const TROPHY_MALEDICTORIAN :String = "Maledictorian";
     // play a multiplayer game on a full moon
     public static const TROPHY_BADMOONONTHERISE :String = "BadMoonOnTheRise";
 
@@ -59,14 +59,14 @@ public class TrophyManager
 
     // Get 3 bloodlusted, rigor-mortised Behemoths on the battlefield at once
     public static const TROPHY_DOOMSDAY :String = "Doomsday";
-    // get 50+ flesh resources in a single clear
-    public static const TROPHY_PRESSTHEFLESH :String = "PressTheFlesh";
-    // get 50+ blood resources in a single clear
-    public static const TROPHY_BLOODBATH :String = "Bloodbath";
-    // get 50+ energy resources in a single clear
-    public static const TROPHY_POWERSURGE :String = "PowerSurge";
-    // get 50+ scrap resources in a single clear
-    public static const TROPHY_SCRAPPER :String = "Scrapper";
+
+    public static const TROPHY_RESOURCE_CLEAR_TILE_COUNT :int = 14;
+    public static const TROPHY_RESOURCE_CLEAR :Array = [
+        "PressTheFlesh",    // clear 14+ flesh tiles simultaneously
+        "Bloodbath",        // ...etc
+        "PowerSurge",
+        "Scrapper",
+    ];
 
     // kill 2500 creatures total
     public static const TROPHY_WHATAMESS :String = "WhatAMess";

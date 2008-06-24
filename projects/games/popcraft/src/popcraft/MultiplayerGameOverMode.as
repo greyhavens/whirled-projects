@@ -79,7 +79,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
                 if (playerSeat != SeatingManager.localPlayerSeat && SeatingManager.getPlayerName(playerSeat) == "Professor Weardd") {
                     // awarded for winning a multiplayer game against another player whose Whirled name is "Professor Weardd"
-                    TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEFACTOR);
+                    TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);
                     break;
                 }
             }

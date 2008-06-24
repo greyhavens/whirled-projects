@@ -51,6 +51,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: Resources.DEFAULT_GAME_DATA });
 
         // gfx
+        rm.pendResourceLoad("swf", "ui",  { embeddedClass: Resources.SWF_UI });
         rm.pendResourceLoad("swf", "splash",  { embeddedClass: Resources.SWF_SPLASH });
         rm.pendResourceLoad("swf", "manual",  { embeddedClass: Resources.SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
