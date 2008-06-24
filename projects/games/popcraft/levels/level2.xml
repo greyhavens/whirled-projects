@@ -37,7 +37,7 @@ Till the perp’s apprehended, leave no stone unturned."
 
         <AvailableSpells/>
 
-        <Computer playerName="Sam" baseHealth="70" team="1">
+        <Computer playerName="Iris" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>

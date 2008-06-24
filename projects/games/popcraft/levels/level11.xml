@@ -56,9 +56,9 @@
                     spellDropCourierGroupSizeMax="0">
 
                     <Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
-                    <Wave delayBefore="2" targetPlayerName="Sam"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Iris"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
-                    <Wave delayBefore="2" targetPlayerName="Sam"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Iris"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="20"/>
                 </Day>
 
@@ -108,7 +108,7 @@
         </Computer>
 
         <Computer
-            playerName="Sam"
+            playerName="Iris"
             baseHealth="150"
             team="1">
             <InitialSpells/>

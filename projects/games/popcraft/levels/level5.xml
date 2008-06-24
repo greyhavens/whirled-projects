@@ -45,7 +45,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             </RepeatingDays>
         </Computer>
 
-        <Computer playerName="Sam" baseHealth="70" team="1">
+        <Computer playerName="Iris" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

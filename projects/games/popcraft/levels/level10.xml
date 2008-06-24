@@ -88,7 +88,7 @@
         </Computer>
 
         <Computer
-            playerName="Sam"
+            playerName="Iris"
             baseHealth="80"
             team="1">
             <InitialSpells/>
@@ -138,7 +138,7 @@
         </Computer>
 
         <Computer
-            playerName="Eric"
+            playerName="Ivy"
             baseHealth="80"
             team="1">
             <InitialSpells/>
