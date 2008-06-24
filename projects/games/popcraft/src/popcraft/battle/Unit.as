@@ -106,28 +106,29 @@ public class Unit extends SimObject
         }
     }
 
-    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeaponData) :Boolean
+    public function sendAttack (targetUnitOrLocation :*, weapon :UnitWeaponData) :Number
     {
         var targetUnit :Unit = targetUnitOrLocation as Unit;
         _currentAttackTarget = (null != targetUnit ? targetUnit.ref : SimObjectRef.Null());
 
         // don't attack if we're already attacking
         if (this.inAttackCooldown) {
-            return false;
+            return 0;
         }
 
         // some weapons require an initial warmup period before they can be used
         if (_needsAttackWarmup && weapon.initialWarmup > 0) {
             this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new TimedTask(weapon.initialWarmup));
             _needsAttackWarmup = false;
-            return false;
+            return 0;
         }
 
         // don't attack if we're out of range
         if (null != targetUnit && !this.canAttackWithWeapon(targetUnit, weapon)) {
-            return false;
+            return 0;
         }
 
+        var damage :Number = 0;
         var attack :UnitAttack = new UnitAttack(this, weapon);
 
         if (weapon.isRanged && null != targetUnit) {
@@ -139,10 +140,10 @@ public class Unit extends SimObject
             }
 
             if (null != targetLoc) {
-                this.sendAOEAttack(targetLoc, attack);
+                damage = this.sendAOEAttack(targetLoc, attack);
             }
         } else if (null != targetUnit) {
-            targetUnit.receiveAttack(attack);
+            damage = targetUnit.receiveAttack(attack);
         }
 
         // install a cooldown timer
@@ -150,10 +151,10 @@ public class Unit extends SimObject
             this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
         }
 
-        return true;
+        return damage;
     }
 
-    protected function sendAOEAttack (targetLoc :Vector2, attack :UnitAttack) :void
+    protected function sendAOEAttack (targetLoc :Vector2, attack :UnitAttack) :Number
     {
         Assert.isFalse(this.inAttackCooldown);
 
@@ -166,6 +167,7 @@ public class Unit extends SimObject
 
         // find all affected units
         var totalDamageRemaining :Number = weapon.aoeMaxDamage;
+        var totalDamage :Number = 0;
         var refs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
         for each (var ref :SimObjectRef in refs) {
             var unit :Unit = ref.object as Unit;
@@ -185,7 +187,9 @@ public class Unit extends SimObject
             }
 
             // send the attack
-            totalDamageRemaining -= unit.receiveAttack(attack, totalDamageRemaining);
+            var attackDamage :Number = unit.receiveAttack(attack, totalDamageRemaining);
+            totalDamage += attackDamage;
+            totalDamageRemaining -= attackDamage;
             if (totalDamageRemaining <= 0) {
                 break;
             }
@@ -209,6 +213,8 @@ public class Unit extends SimObject
 
             GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
         }
+
+        return totalDamage;
     }
 
     public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number

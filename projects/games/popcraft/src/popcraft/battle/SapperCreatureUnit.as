@@ -24,17 +24,26 @@ public class SapperCreatureUnit extends CreatureUnit
         return _sapperAI;
     }
 
-    override public function sendAttack (targetUnitOrLoc :*, weapon :UnitWeaponData) :Boolean
+    override public function sendAttack (targetUnitOrLoc :*, weapon :UnitWeaponData) :Number
     {
+        var damage :Number = 0;
+
         if (!_hasAttacked) {
             // when the sapper attacks, he self-destructs
-            _hasAttacked = super.sendAttack(targetUnitOrLoc, weapon);
+            damage = super.sendAttack(targetUnitOrLoc, weapon);
+            _hasAttacked = true;
             if (_hasAttacked) {
                 this.die();
             }
+
+            if (damage > 0 && GameContext.diurnalCycle.isDay) {
+                // awarded for Delivery Boy damaging a base at sunrise
+                // (if it's daytime, the only damage we can have done is to a base)
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_RUSHDELIVERY);
+            }
         }
 
-        return _hasAttacked;
+        return damage;
     }
 
     override protected function die () :void

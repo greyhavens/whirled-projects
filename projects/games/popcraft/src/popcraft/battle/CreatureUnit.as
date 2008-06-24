@@ -214,16 +214,22 @@ public class CreatureUnit extends Unit
 
     override public function receiveAttack (attack :UnitAttack, maxDamage :Number= Number.MAX_VALUE) :Number
     {
-        var wasDead :Boolean = _isDead;
-        var damageTaken :Number = super.receiveAttack(attack, maxDamage);
+        var damageTaken :Number = 0;
 
-        if (!wasDead && _isDead && attack.attackingUnitOwningPlayerIndex == GameContext.localPlayerIndex) {
-            GameContext.playerStats.creaturesKilled[_unitType] += 1;
+        // if it just turned from day to night, don't count the attack as damage-dealing; we're
+        // dead this frame anyway
+        if (GameContext.diurnalCycle.isNight) {
+            var wasDead :Boolean = _isDead;
+            damageTaken = super.receiveAttack(attack, maxDamage);
 
-            if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_WHATAMESS) &&
-                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= TrophyManager.WHATAMESS_NUMCREATURES) {
-                // awarded for killing 2500 creatures total
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_WHATAMESS);
+            if (!wasDead && _isDead && attack.attackingUnitOwningPlayerIndex == GameContext.localPlayerIndex) {
+                GameContext.playerStats.creaturesKilled[_unitType] += 1;
+
+                if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_WHATAMESS) &&
+                    (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= TrophyManager.WHATAMESS_NUMCREATURES) {
+                    // awarded for killing 2500 creatures total
+                    TrophyManager.awardTrophy(TrophyManager.TROPHY_WHATAMESS);
+                }
             }
         }
 

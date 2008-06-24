@@ -88,6 +88,9 @@ public class TrophyManager
     public static const TROPHY_WHATAMESS :String = "WhatAMess";
     public static const WHATAMESS_NUMCREATURES :int = 2500;
 
+    // Delivery Boy damages a base at sunrise
+    public static const TROPHY_RUSHDELIVERY :String = "RushDelivery";
+
     protected static var log :Log = Log.getLog(TrophyManager);
 }
 
