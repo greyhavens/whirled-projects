@@ -49,20 +49,36 @@ public class LocalPlayerInfo extends PlayerInfo
         this.setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
     }
 
-    public function earnedResources (resourceType :int, offset :int) :void
+    public function earnedResources (resourceType :int, offset :int, numClearPieces :int) :void
     {
         var initialResources :int = this.getResourceAmount(resourceType);
         this.setResourceAmount(resourceType, initialResources + offset);
+        var newResources :int = this.getResourceAmount(resourceType);
+        var resourcesEarned :int = newResources - initialResources;
 
         // only resources earned while under "par" are counted toward the totalResourcesEarned count
         // for the purposes of player score
         if (GameContext.isSinglePlayer && GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays) {
-            var newResources :int = this.getResourceAmount(resourceType);
-            _totalResourcesEarned += (newResources - initialResources);
+            _totalResourcesEarned += resourcesEarned;
         }
 
         // For player stats, keep track of all resources earned
-        GameContext.playerStats.resourcesGathered[resourceType] += offset;
+        GameContext.playerStats.resourcesGathered[resourceType] += resourcesEarned;
+
+        // keep track of clear runs and award trophies
+        if (numClearPieces < 4) {
+            _fourPlusPieceClearRunLength = 0;
+        } else {
+            _fourPlusPieceClearRunLength += 1;
+
+            for (var i :int = 0; i < TrophyManager.TROPHY_PIECECLEARRUNS.length; i += 2) {
+                var runLength :int = TrophyManager.TROPHY_PIECECLEARRUNS[i+1];
+                if (_fourPlusPieceClearRunLength == runLength) {
+                    var trophyName :String = TrophyManager.TROPHY_PIECECLEARRUNS[i];
+                    TrophyManager.awardTrophy(trophyName);
+                }
+            }
+        }
     }
 
     override public function canPurchaseCreature (unitType :int) :Boolean
@@ -136,6 +152,7 @@ public class LocalPlayerInfo extends PlayerInfo
     protected var _resources :Array;
     protected var _spells :Array;
     protected var _totalResourcesEarned :int;
+    protected var _fourPlusPieceClearRunLength :int;
 }
 
 }

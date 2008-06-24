@@ -1,4 +1,6 @@
 package popcraft {
+    import com.threerings.util.Log;
+
 
 public class TrophyManager
 {
@@ -6,6 +8,8 @@ public class TrophyManager
     {
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.player.awardTrophy(trophyName);
+        } else {
+            log.info("Trophy awarded: " + trophyName);
         }
     }
 
@@ -69,12 +73,19 @@ public class TrophyManager
         "Scrapper",
     ];
 
-
+    // clear 4+ pieces, X times in a row
+    public static const TROPHY_PIECECLEARRUNS :Array = [
+        "ElbowGrease",          10,
+        "NoseToTheGrindstone",  20,
+        "WellOiledMachine",     30,
+        "PerpetualMotion",      40,
+    ];
 
     // kill 2500 creatures total
     public static const TROPHY_WHATAMESS :String = "WhatAMess";
     public static const WHATAMESS_NUMCREATURES :int = 2500;
 
+    protected static var log :Log = Log.getLog(TrophyManager);
 }
 
 }
