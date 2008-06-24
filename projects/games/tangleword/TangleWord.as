@@ -107,21 +107,11 @@ public class TangleWord extends Sprite
     {
         if (event.name == Server.COUNTDOWN) {
             var elapsed :int = int(event.value);
-            // end the round when the ticks have met or exceeded our round length
             _display.setTimer(Properties.ROUND_LENGTH - elapsed);
-            if (elapsed >= Properties.ROUND_LENGTH) {
-                _gameCtrl.doBatch(_model.endRound);
-            }
         } else if (event.name == Server.RESTART) {
             // we're in a paused state between games
             elapsed = int(event.value);
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
-            if (elapsed >= Properties.PAUSE_LENGTH) {
-                if (_gameCtrl.game.amInControl()) {
-                    nextRound();
-                }
-            }
-        } else if (event.name == Server.READY && _gameCtrl.game.amInControl()) {
         }
         /*else if (event.name == Server.SUBMIT_RESULT && event.isFromServer()) {
             _model.addScore(
@@ -136,13 +126,6 @@ public class TangleWord extends Sprite
     {
         _controller.roundEnded();
         _model.roundEnded();
-
-        /*if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.stopTicker(Server.COUNTDOWN);
-            _gameCtrl.services.startTicker(Server.RESTART, 1000);
-
-            _unreadyPlayers = _model.scoreboard.getPlayerIds();
-        }*/
     }
 
     /**

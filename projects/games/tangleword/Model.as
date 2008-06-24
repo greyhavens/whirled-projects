@@ -61,42 +61,6 @@ public class Model
         }
     }
 
-    public function endRound () :void
-    {
-        // WARNING: Trophy scores don't include bonuses
-        _trophies.handleRoundEnded(_scoreboard);
-
-        if (!_gameCtrl.game.amInControl()) {
-            return;
-        }
-
-        var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
-        var totalWords :Number = (_gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || []).length;
-
-        _playerBonuses = [];
-        for (var pid :Object in firsts) {
-            _playerBonuses[pid] = Math.min(firsts[pid], BONUS_CAP_RATIO*totalWords);
-        }
-
-        var playerIds :Array = [];
-        var scores :Array = [];
-        for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
-            var score :int = _scoreboard.getScore(playerId);
-
-            if (playerId in _playerBonuses) {
-                score += _playerBonuses[playerId];
-                _scoreboard.setScore(playerId, score);
-            }
-
-            if (score > 0) {
-                playerIds.push(playerId);
-                scores.push(score);
-            }
-        }
-
-        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.PROPORTIONAL);
-    }
-
     /** Called when the round ends - cleans up data, and awards flow! */
     public function roundEnded () :void
     {
@@ -108,7 +72,8 @@ public class Model
 
         removeAllSelectedLetters();
 
-        _display.roundEnded(this, _scoreboard, _playerBonuses[_gameCtrl.game.getMyId()]);
+        _trophies.handleRoundEnded(_scoreboard);
+        _display.roundEnded(this, _scoreboard, 666);//_playerBonuses[_gameCtrl.game.getMyId()]);
     }
 
     //
