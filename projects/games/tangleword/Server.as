@@ -32,7 +32,7 @@ public class Server
 
         _scoreboard = new Scoreboard(_gameCtrl);
 
-        //_gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
@@ -40,6 +40,13 @@ public class Server
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         _gameCtrl.services.startTicker(COUNTDOWN, 1000);
+
+        for each (var i :String in _gameCtrl.net.getPropertyNames(WORD_NAMESPACE)) {
+            _gameCtrl.net.set(i, null);
+        }
+
+        _gameCtrl.net.set(FIRST_FINDS, null);
+        _scoreboard.clearAll();
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void

@@ -83,11 +83,6 @@ public class TangleWord extends Sprite
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         _gameCtrl.doBatch(function () :void {
-            // start up our game ticker if we're the one in control, and call every second
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.services.startTicker(Server.COUNTDOWN, 1000);
-            }
-
             _model.roundStarted();
             _controller.roundStarted();
         });

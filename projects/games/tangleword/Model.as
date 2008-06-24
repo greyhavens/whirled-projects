@@ -55,21 +55,12 @@ public class Model
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
-        if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.net.set(FIRST_FINDS, null);
-            _scoreboard.clearAll();
-        }
+        // Unused
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
     public function roundEnded () :void
     {
-        if (_gameCtrl.game.amInControl()) {
-            for each (var i :String in _gameCtrl.net.getPropertyNames(Model.WORD_NAMESPACE)) {
-                _gameCtrl.net.set(i, null);
-            }
-        }
-
         removeAllSelectedLetters();
 
         _trophies.handleRoundEnded(_scoreboard);
