@@ -29,8 +29,7 @@
             <Index value="40"/>
             <Index value="45"/>
             <Index value="48"/>
-            <Index value="50"/>
-            <OutOfBoundsScale value="1"/>
+            <OutOfBoundsScale value="2"/>
         </PuzzleClearValueTable>
 
         <Resources>
