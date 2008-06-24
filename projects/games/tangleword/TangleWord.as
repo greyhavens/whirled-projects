@@ -85,7 +85,7 @@ public class TangleWord extends Sprite
         _gameCtrl.doBatch(function () :void {
             // start up our game ticker if we're the one in control, and call every second
             if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.services.startTicker("countdown", 1000);
+                _gameCtrl.services.startTicker(Server.COUNTDOWN, 1000);
             }
 
             _model.roundStarted();
@@ -100,19 +100,19 @@ public class TangleWord extends Sprite
     protected function nextRound () :void
     {
         _gameCtrl.game.restartGameIn(1);
-        _gameCtrl.services.stopTicker("restart");
+        _gameCtrl.services.stopTicker(Server.RESTART);
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "countdown") {
+        if (event.name == Server.COUNTDOWN) {
             var elapsed :int = int(event.value);
             // end the round when the ticks have met or exceeded our round length
             _display.setTimer(Properties.ROUND_LENGTH - elapsed);
             if (elapsed >= Properties.ROUND_LENGTH) {
                 _gameCtrl.doBatch(_model.endRound);
             }
-        } else if (event.name == "restart") {
+        } else if (event.name == Server.RESTART) {
             // we're in a paused state between games
             elapsed = int(event.value);
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
@@ -121,18 +121,15 @@ public class TangleWord extends Sprite
                     nextRound();
                 }
             }
-        } else if (event.name == "ready" && _gameCtrl.game.amInControl()) {
-            var player :int = int(event.value);
-            var i :int = _unreadyPlayers.indexOf(player);
-
-            if (i != -1) {
-                _unreadyPlayers.splice(i, 1);
-
-                if (_unreadyPlayers.length == 0) {
-                    nextRound();
-                }
-            }
+        } else if (event.name == Server.READY && _gameCtrl.game.amInControl()) {
         }
+        /*else if (event.name == Server.SUBMIT_RESULT && event.isFromServer()) {
+            _model.addScore(
+                    event.value.word as String,
+                    event.value.score as Number,
+                    event.value.points as Array,
+                    event.value.valid as Boolean);
+        }*/
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
@@ -140,12 +137,12 @@ public class TangleWord extends Sprite
         _controller.roundEnded();
         _model.roundEnded();
 
-        if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.stopTicker("countdown");
-            _gameCtrl.services.startTicker("restart", 1000);
+        /*if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.services.stopTicker(Server.COUNTDOWN);
+            _gameCtrl.services.startTicker(Server.RESTART, 1000);
 
             _unreadyPlayers = _model.scoreboard.getPlayerIds();
-        }
+        }*/
     }
 
     /**
@@ -155,8 +152,6 @@ public class TangleWord extends Sprite
     private function startGame () :void
     {
     }
-
-    protected var _unreadyPlayers :Array;
 
     /** Game control object */
     private var _gameCtrl :GameControl;

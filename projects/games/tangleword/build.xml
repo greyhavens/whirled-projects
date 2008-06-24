@@ -4,6 +4,8 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="TangleWord"/>
   <property name="app.type" value="game"/>
+  <property name="app.enable-server-agent" value="true" />
+
   <property name="party" value="true" />
 
   <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
