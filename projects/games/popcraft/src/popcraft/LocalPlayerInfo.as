@@ -79,6 +79,21 @@ public class LocalPlayerInfo extends PlayerInfo
                 }
             }
         }
+
+        if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_MAXEDOUT)) {
+            var isMaxedOut :Boolean = true;
+            var resMax :int = GameContext.gameData.maxResourceAmount;
+            for each (var resAmount :int in _resources) {
+                if (resAmount < resMax) {
+                    isMaxedOut = false;
+                    break;
+                }
+            }
+
+            if (isMaxedOut) {
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAXEDOUT);
+            }
+        }
     }
 
     override public function canPurchaseCreature (unitType :int) :Boolean

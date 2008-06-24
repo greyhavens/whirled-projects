@@ -81,6 +81,9 @@ public class TrophyManager
         "PerpetualMotion",      40,
     ];
 
+    // max out all your resources
+    public static const TROPHY_MAXEDOUT :String = "MaxedOut";
+
     // kill 2500 creatures total
     public static const TROPHY_WHATAMESS :String = "WhatAMess";
     public static const WHATAMESS_NUMCREATURES :int = 2500;

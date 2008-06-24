@@ -26,32 +26,33 @@ public class SapperCreatureUnit extends CreatureUnit
 
     override public function sendAttack (targetUnitOrLoc :*, weapon :UnitWeaponData) :Boolean
     {
-        // when the sapper attacks, he self-destructs
-        var success :Boolean = super.sendAttack(targetUnitOrLoc, weapon);
-
-        if (success) {
-            this.die();
+        if (!_hasAttacked) {
+            // when the sapper attacks, he self-destructs
+            _hasAttacked = super.sendAttack(targetUnitOrLoc, weapon);
+            if (_hasAttacked) {
+                this.die();
+            }
         }
 
-        return success;
+        return _hasAttacked;
     }
 
-    override public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
+    override protected function die () :void
     {
-        // if the sapper is killed by an attack, he explodes
+        if (!_isDead) {
+            _isDead = true;
 
-        var wasDead :Boolean = _isDead;
-        var damageTaken :Number = super.receiveAttack(attack, maxDamage);
+            // when the sapper is killed, he explodes
+            if (!_hasAttacked) {
+                this.sendAttack(this.unitLoc, _unitData.weapon);
+            }
 
-        // prevent infinite recursion - don't explode if we're already dead
-        if (!wasDead && _isDead) {
-            this.sendAttack(this.unitLoc, _unitData.weapon);
+            super.die();
         }
-
-        return damageTaken;
     }
 
     protected var _sapperAI :SapperAI;
+    protected var _hasAttacked :Boolean;
 }
 
 }
