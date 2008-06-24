@@ -130,15 +130,17 @@ public class Controller
 
             // This is the callback that gets called after the word is successfully
             // checked against the dictionary
-            var success :Function = function (word :String, isvalid :Boolean) :void {
+            /*var success :Function = function (word :String, isvalid :Boolean) :void {
                 // Finally, process the new word. Notice that we don't check if it's already
                 // been claimed - the model will take care of that, because there's a network
                 // round-trip involved, and therefore potential of contention.
                 _model.addScore(word, getWordScore(word), points, isvalid);
-            }
+            }*/
+
+            _gameCtrl.net.sendMessageToAgent(Server.SUBMIT, word);
             
             // Now check if it's an actual word.
-            _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
+            //_gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, word, success);
 
         } finally {
             _model.removeAllSelectedLetters();

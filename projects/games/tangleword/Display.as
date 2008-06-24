@@ -154,7 +154,7 @@ public class Display extends Sprite
         _wordfield.text = word;
     }
 
-    public function logSuccess (player :String, word :String, score :Number, bonus :Number, points :Array) :void
+    public function logSuccess (word :String, score :Number, bonus :Number, points :Array) :void
     {
         var msg :String = word + " (" + score + ")";
 
@@ -183,13 +183,13 @@ public class Display extends Sprite
     }
 
     /** Updates the log with a failure message */
-    public function logAlreadyClaimed (player :String, word :String) :void
+    public function logAlreadyClaimed (word :String) :void
     {
         _logger.logListItem(word, Logger.DUPLICATE_WORD);
     }
 
     /** Updates the log with an invalid word message */
-    public function logInvalidWord (player :String, word :String) :void
+    public function logInvalidWord (word :String) :void
     {
         _logger.logListItem(word, Logger.INVALID_WORD);
     }

@@ -11,7 +11,10 @@ import mx.core.BitmapAsset;
 import com.threerings.util.Assert;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
+
+import com.whirled.contrib.Scoreboard;
 
 /**
  * Main game takes care of initializing network connections,
@@ -56,13 +59,18 @@ public class TangleWord extends Sprite
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
 
         // Create MVC elements
         _controller = new Controller(_gameCtrl, null); // we'll set the model later...
         _display = new Display(_gameCtrl, _controller, "Tangleword v. 1.4.1");
         _model = new Model(_gameCtrl, _display);
+        _trophies = new Trophies(_gameCtrl);
+
         _controller.setModel(_model); // ... as in, right here :)
         addChild(_display);
+
+        _scoreboard = new Scoreboard(_gameCtrl);
 
         // If the game's already going, do what you have to do to catch up
         if (_gameCtrl.game.isInPlay()) {
@@ -98,12 +106,34 @@ public class TangleWord extends Sprite
         _gameCtrl.services.stopTicker(Server.RESTART);
     }
 
+    protected function handleElementChanged (event :ElementChangedEvent) :void
+    {
+        if (event.name == Server.SCOREBOARD && event.key == _gameCtrl.game.getMyId()) {
+            // Notify the trophy manager to award points-based trophies
+            _trophies.handleScoreUpdate(Number(event.oldValue), Number(event.newValue));
+        }
+    }
+
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == Server.COUNTDOWN) {
+        if (Server.RESULT_SUCCESS == event.name) {
+            var word :String = event.value.word as String;
+            var score :Number = event.value.score as Number;
+
+            _display.logSuccess(word, score, event.value.first as Boolean ? 1 : 0, []);
+            _trophies.handleAddWord(word, score);
+
+        } else if (Server.RESULT_UNRECOGNIZED == event.name) {
+            _display.logInvalidWord(event.value as String);
+
+        } else if (Server.RESULT_DUPLICATE == event.name) {
+            _display.logAlreadyClaimed(event.value as String);
+
+        } else if (Server.COUNTDOWN == event.name) {
             var elapsed :int = int(event.value);
             _display.setTimer(Properties.ROUND_LENGTH - elapsed);
-        } else if (event.name == Server.RESTART) {
+
+        } else if (Server.RESTART == event.name) {
             // we're in a paused state between games
             elapsed = int(event.value);
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
@@ -120,7 +150,9 @@ public class TangleWord extends Sprite
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         _controller.roundEnded();
-        _model.roundEnded();
+        _model.roundEnded(_scoreboard);
+
+        _trophies.handleRoundEnded(_scoreboard);
     }
 
     /**
@@ -130,6 +162,8 @@ public class TangleWord extends Sprite
     private function startGame () :void
     {
     }
+
+    protected var _scoreboard :Scoreboard;
 
     /** Game control object */
     private var _gameCtrl :GameControl;
@@ -143,6 +177,8 @@ public class TangleWord extends Sprite
     /** Data validation */
     private var _controller :Controller;
 
+    /** Trophy manager. */
+    private var _trophies :Trophies;
 
     // PRIVATE CONSTANTS
 
@@ -151,8 +187,6 @@ public class TangleWord extends Sprite
 
     /** Key name: shared scoreboard */
     private static const SHARED_SCOREBOARD :String = "Shared Scoreboard";
-
-
 }
 
 

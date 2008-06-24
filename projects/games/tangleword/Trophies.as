@@ -38,7 +38,7 @@ public class Trophies {
             });
     }
 
-    public function handleAddWord (word :String, wordscore :int, scoreboard :Scoreboard) :void
+    public function handleAddWord (word :String, wordscore :Number) :void
     {
         // see if we need to award a word length trophy
         if (word.length >= pointTrophyMin) {

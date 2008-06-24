@@ -8,7 +8,6 @@ import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
 import com.whirled.contrib.Scoreboard;
@@ -38,8 +37,6 @@ public class Model
         
         // Initialize game data storage
         initializeStorage();
-
-        _trophies = new Trophies(_gameCtrl);
     }
 
     public function handleUnload (event :Event) :void
@@ -47,11 +44,6 @@ public class Model
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
     }        
     
-    public function get scoreboard () :Scoreboard
-    {
-        return _scoreboard;
-    }
-
     /** Called at the beginning of a round - push my scoreboard on everyone. */
     public function roundStarted () :void
     {
@@ -59,12 +51,11 @@ public class Model
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
-    public function roundEnded () :void
+    public function roundEnded (scoreboard :Scoreboard) :void
     {
         removeAllSelectedLetters();
 
-        _trophies.handleRoundEnded(_scoreboard);
-        _display.roundEnded(this, _scoreboard, 666);//_playerBonuses[_gameCtrl.game.getMyId()]);
+        _display.roundEnded(this, scoreboard, 666);//_playerBonuses[_gameCtrl.game.getMyId()]);
     }
 
     //
@@ -169,22 +160,6 @@ public class Model
         return false;
     }
 
-    //
-    //
-    // SHARED DATA ACCESSORS
-
-    /** Sends out a message to everyone, informing them about adding
-     *  the new word to their lists. */
-    public function addScore (word :String, score :Number, points: Array, isvalid :Boolean) :void
-    {
-        // before updating the scoreboard, see if we need to award a trophy
-        if (isvalid) {
-            _trophies.handleAddWord(word, score, _scoreboard);
-        }
-
-        addWordToScoreboard(_gameCtrl.game.getMyId(), word, score, points, isvalid);
-    }
-
     /** Sends out a message to everyone, informing them about a new letter set.
      *  The array contains strings corresponding to the individual letters. */
     public function sendNewLetterSet (a :Array) :void
@@ -246,17 +221,6 @@ public class Model
 
         // Second, the currently assembled word
         resetWord();
-
-        // Third, make a new scoreboard
-        _scoreboard = new Scoreboard(_gameCtrl);
-        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleScoreUpdate);
-    }
-
-    protected function handleScoreUpdate (e :ElementChangedEvent) :void
-    {
-        if (e.name == _scoreboard.propName && e.key == _gameCtrl.game.getMyId()) {
-            _trophies.handleScoreUpdate(Number(e.oldValue), Number(e.newValue));
-        }
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
@@ -268,78 +232,6 @@ public class Model
                 updateBoardLetter(new Point(x, y), s [x * Properties.LETTERS + y]);
             }
         }
-    }
-
-    /**
-       Checks if the word is not in the scoreboard already, and if it isn't, adds it.
-       If the word is not valid, prints out a message.
-     */
-    private function addWordToScoreboard (
-        playerId :int, word :String, score :Number, points: Array, isvalid :Boolean) :void
-    {
-        // if this message came in after the end of the round, just ignore it
-        if (!_gameCtrl.game.isInPlay()) {
-            return;
-        }
-
-        var playerName :String = _gameCtrl.game.getOccupantName(playerId);
-        
-        // if the word is invalid, display who tried to claim it
-        if (! isvalid) {
-            _display.logInvalidWord(playerName, word);
-            return;
-        }
-
-        // if the word is valid and not claimed, score!
-        if (! isWordClaimed (playerId, word)) {
-            if (_gameCtrl.net.get(WORD_NAMESPACE+word) == null) {
-                _display.logSuccess(playerName, word, score, 1, points);
-
-                var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
-
-                if (firsts != null && playerId in firsts) {
-                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, firsts[playerId]+1);
-                } else {
-                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, 1);
-                }
-            } else {
-                _display.logSuccess(playerName, word, score, 0, points);
-            }
-            addWord(playerId, word, score); // Finder's bonus is disabled
-            return;
-        }
-
-        // by this point, the word is valid and already claimed.
-        // if this was my word, let me know.
-        if (_gameCtrl.game.getMyId() == playerId) {
-            _display.logAlreadyClaimed(playerName, word);
-            return;
-        }
-
-        // the word was valid and already claimed, when another player tried to claim it.
-        // just ignore.
-    }
-
-    /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
-    public function addWord (playerId :int, word :String, score :Number) :void
-    {
-        //claimed[word] = playerId;
-        var claims :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
-
-        if (claims.indexOf(playerId) == -1) {
-            claims.push(playerId);
-        }
-        _gameCtrl.net.set(WORD_NAMESPACE+word, claims);
-
-        _scoreboard.addToScore(playerId, score);
-    }
-
-    /** If this word was already claimed by the given player, returns true; otherwise false. */
-    public function isWordClaimed (playerId :int, word :String) :Boolean
-    {
-        var claim :Array = _gameCtrl.net.get(WORD_NAMESPACE+word) as Array || [ ];
-
-        return claim.indexOf(playerId) != -1;
     }
 
     /** Pick all the words that have currently been found. */
@@ -421,11 +313,5 @@ public class Model
 
     /** Game board view */
     private var _display :Display;
-
-    /** List of players and their scores */
-    private var _scoreboard :Scoreboard;
-
-    /** Trophy manager. */
-    private var _trophies :Trophies;
 }
 }
