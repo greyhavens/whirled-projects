@@ -9,6 +9,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
+import popcraft.ui.UIBits;
 
 public class LevelSelectMode extends SplashScreenModeBase
 {
@@ -71,7 +72,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         }
 
         // animation test button
-        button = new SimpleTextButton("Unit Anim Test");
+        button = UIBits.createButton("Unit Anim Test");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.pushMode(new UnitAnimTestMode());
@@ -82,7 +83,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         this.modeSprite.addChild(button);
 
         // test level button
-        button = new SimpleTextButton("Jon's stress test");
+        button = UIBits.createButton("Jon's stress test");
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { levelSelected(-1); });
         button.x = 100;
         button.y = 450;
@@ -90,7 +91,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         this.modeSprite.addChild(button);
 
         // unlock all levels button
-        button = new SimpleTextButton("Unlock levels");
+        button = UIBits.createButton("Unlock levels");
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
         button.x = 10;
         button.y = 10;
@@ -111,7 +112,7 @@ public class LevelSelectMode extends SplashScreenModeBase
 
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
     {
-        var button :SimpleTextButton = new SimpleTextButton(levelName);
+        var button :SimpleButton = UIBits.createButton(levelName);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 levelSelected(levelNum);

@@ -10,6 +10,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
+import popcraft.ui.UIBits;
 
 public class LevelLoadErrorMode extends AppMode
 {
@@ -38,7 +39,7 @@ public class LevelLoadErrorMode extends AppMode
 
         this.modeSprite.addChild(tf);
 
-        var button :SimpleButton = new SimpleTextButton("Back");
+        var button :SimpleButton = UIBits.createButton("Back");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.changeMode(new LevelSelectMode());
@@ -47,7 +48,7 @@ public class LevelLoadErrorMode extends AppMode
         button.y = 450;
         this.modeSprite.addChild(button);
 
-        button = new SimpleTextButton("Retry");
+        button = UIBits.createButton("Retry");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.levelMgr.playLevel(true);

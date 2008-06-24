@@ -4,10 +4,12 @@ import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import popcraft.*;
+import popcraft.ui.UIBits;
 
 public class PauseMode extends AppMode
 {
@@ -31,7 +33,7 @@ public class PauseMode extends AppMode
         this.modeSprite.addChild(bgSprite);
 
         // Main Menu button
-        var button :SimpleTextButton = new SimpleTextButton("Main Menu");
+        var button :SimpleButton = UIBits.createButton("Main Menu");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
@@ -43,7 +45,7 @@ public class PauseMode extends AppMode
         bgSprite.addChild(button);
 
         // Resume button
-        button = new SimpleTextButton("Resume");
+        button = UIBits.createButton("Resume");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();

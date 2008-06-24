@@ -1,9 +1,7 @@
 package popcraft {
 
-import com.threerings.flash.SimpleTextButton;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioManager;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.GameSubControl;
 
 import flash.display.SimpleButton;
@@ -11,6 +9,7 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
+import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 
 public class MultiplayerGameOverMode extends SplashScreenModeBase
@@ -39,13 +38,15 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
 
     protected function awardTrophies () :void
     {
-        if (AppContext.globalPlayerStats.totalGamesPlayed >= TrophyManager.JACK_NUMGAMES) {
-            // awarded for completing 25 multiplayer games
+        // award trophies for playing lots of multiplayer games
+        var totalGamesPlayed :int = AppContext.globalPlayerStats.totalGamesPlayed;
+        if (totalGamesPlayed >= TrophyManager.PIGSLEY_NUMGAMES) {
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_PIGSLEY);
+        }
+        if (totalGamesPlayed >= TrophyManager.JACK_NUMGAMES) {
             TrophyManager.awardTrophy(TrophyManager.TROPHY_JACK);
         }
-
-        if (AppContext.globalPlayerStats.totalGamesPlayed >= TrophyManager.WEARDD_NUMGAMES) {
-            // awarded for completing 100 multiplayer games
+        if (totalGamesPlayed >= TrophyManager.WEARDD_NUMGAMES) {
             TrophyManager.awardTrophy(TrophyManager.TROPHY_WEARDD);
         }
 
@@ -74,6 +75,9 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             if (GameContext.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
+            } else if (GameContext.localPlayerInfo.healthPercent == TrophyManager.CHEATDEATH_HEALTH_PERCENT) {
+                // awarded for winning a multiplayer game with very low health
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_CHEATDEATH);
             }
 
             for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
@@ -138,7 +142,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
 
         this.modeSprite.addChild(text);
 
-        _button = new SimpleTextButton("Play Again?");
+        _button = UIBits.createButton("Play Again?");
         _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
         _button.y = 350;
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);

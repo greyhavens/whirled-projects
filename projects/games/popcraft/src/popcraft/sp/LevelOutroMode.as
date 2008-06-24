@@ -1,17 +1,18 @@
 package popcraft.sp {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
+import popcraft.ui.UIBits;
 
 public class LevelOutroMode extends AppMode
 {
@@ -129,17 +130,17 @@ public class LevelOutroMode extends AppMode
         bgSprite.addChild(tfMessage);
 
         // buttons
-        var button :SimpleTextButton;
+        var button :SimpleButton;
 
         if (_success) {
-            button = new SimpleTextButton("Next Level");
+            button = UIBits.createButton("Next Level");
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.incrementCurLevelIndex();
                     AppContext.levelMgr.playLevel();
                 });
         } else {
-            button = new SimpleTextButton("Retry");
+            button = UIBits.createButton("Retry");
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.playLevel();
@@ -150,7 +151,7 @@ public class LevelOutroMode extends AppMode
         button.y = 200;
         bgSprite.addChild(button);
 
-        button = new SimpleTextButton("Main Menu");
+        button = UIBits.createButton("Main Menu");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());

@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
 
 import flash.display.SimpleButton;
@@ -11,6 +10,7 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import popcraft.sp.LevelSelectMode;
+import popcraft.ui.UIBits;
 
 public class MultiplayerFailureMode extends SplashScreenModeBase
 {
@@ -38,7 +38,7 @@ public class MultiplayerFailureMode extends SplashScreenModeBase
 
         this.modeSprite.addChild(tf);
 
-        _button = new SimpleTextButton("OK");
+        _button = UIBits.createButton("OK");
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
         _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
         _button.y = 350;

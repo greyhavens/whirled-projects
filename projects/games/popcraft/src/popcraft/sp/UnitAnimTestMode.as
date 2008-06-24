@@ -12,6 +12,7 @@ import flash.events.MouseEvent;
 import popcraft.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
+import popcraft.ui.UIBits;
 
 public class UnitAnimTestMode extends AppMode
 {
@@ -50,7 +51,7 @@ public class UnitAnimTestMode extends AppMode
         }
 
         // back button
-        button = new SimpleTextButton("Back");
+        button = UIBits.createButton("Back");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
@@ -67,7 +68,7 @@ public class UnitAnimTestMode extends AppMode
         var thisObject :UnitAnimTestMode = this;
 
         var unitData :UnitData = AppContext.defaultGameData.units[unitType];
-        var unitButton :SimpleTextButton = new SimpleTextButton(unitData.displayName);
+        var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
         unitButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.unitType = unitType;
@@ -81,7 +82,7 @@ public class UnitAnimTestMode extends AppMode
         var thisObject :UnitAnimTestMode = this;
 
         var color :uint = AppContext.defaultGameData.playerColors[playerNum];
-        var unitButton :SimpleTextButton = new SimpleTextButton("Player " + String(playerNum + 1));
+        var unitButton :SimpleButton = UIBits.createButton("Player " + String(playerNum + 1));
         unitButton.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.recolor = color;
