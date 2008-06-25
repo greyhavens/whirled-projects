@@ -34,6 +34,7 @@ public class Server
 
         _gameCtrl = new GameControl(new DisplayObject());
 
+        _model = new Model(_gameCtrl);
         _scoreboard = new Scoreboard(_gameCtrl, SCOREBOARD);
 
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
@@ -118,7 +119,6 @@ public class Server
                 }
             }
 
-            // Broadcast success
             result = RESULT_SUCCESS;
             param = {
                 word: word,
@@ -161,7 +161,7 @@ public class Server
     {
         trace("Server got message: " + event);
         if (event.name == SUBMIT) {
-            // TODO: Validate this word is on the board, correct length...
+            _model.validate(event.value as String);
             var success :Function = function (word :String, isvalid :Boolean) :void {
                 handleWordSubmit(event.senderId, word, [], isvalid);
             }
@@ -191,6 +191,7 @@ public class Server
     }
 
     protected var _scoreboard :Scoreboard;
+    protected var _model :Model;
 
     protected var _unreadyPlayers :Array;
     protected var _gameCtrl :GameControl;

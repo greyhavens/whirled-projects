@@ -121,6 +121,8 @@ public class TangleWord extends Sprite
             var score :Number = event.value.score as Number;
 
             _display.logSuccess(word, score, event.value.first as Boolean ? 1 : 0, []);
+
+            // TODO: Move trophy handling to agent
             _trophies.handleAddWord(word, score);
 
         } else if (Server.RESULT_UNRECOGNIZED == event.name) {
@@ -150,8 +152,7 @@ public class TangleWord extends Sprite
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         _controller.roundEnded();
-        _model.roundEnded(_scoreboard);
-
+        _display.roundEnded(_model, _scoreboard, 666);
         _trophies.handleRoundEnded(_scoreboard);
     }
 

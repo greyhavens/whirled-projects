@@ -38,6 +38,7 @@ import com.threerings.util.KeyboardCodes;
  * and game state display.
  */
 public class Display extends Sprite
+    implements Observer
 {
     // PUBLIC FUNCTIONS
 
@@ -66,6 +67,8 @@ public class Display extends Sprite
         addEventListener(KeyboardEvent.KEY_DOWN, typingHandler);
 
         _logger.log(version);
+
+        _word = new Array();
     }
 
     /** Shutdown handler */
@@ -92,6 +95,8 @@ public class Display extends Sprite
     /** Called when the round ends - disables display. */
     public function roundEnded (model :Model, board :Scoreboard, bonus :int) :void
     {
+        removeAllSelectedLetters();
+
         setEnableState(false);
 
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
@@ -109,9 +114,53 @@ public class Display extends Sprite
         //_stats.show(model, board);
     }
 
+    /** If this board letter is already selected as part of the word, returns true.  */
+    public function isLetterSelectedAtPosition (position :Point) :Boolean
+    {
+        var pointMatches :Function = function (item :Point, index :int, array :Array) :Boolean {
+                return (item.equals(position));
+            };
+
+        return _word.some(pointMatches);
+    }
+
+    /** Returns coordinates of the most recently added word, or null. */
+    public function getLastLetterPosition () :Point
+    {
+        if (_word.length > 0) {
+            return _word[_word.length - 1] as Point;
+        }
+
+        return null;
+    }
+
+    /** Adds a new letter to the word (by adding a pair of coordinates) */
+    public function selectLetterAtPosition (position :Point) :void
+    {
+        _word.push(position);
+        updateLetterSelection(_word);
+    }
+
+    /** Removes last selected letter from the word (if applicable) */
+    public function removeLastSelectedLetter () :void
+    {
+        if (_word.length > 0) {
+            _word.pop();
+            updateLetterSelection(_word);
+        }
+    }
+
+    /** Removes all selected letters, resetting the word. */
+    public function removeAllSelectedLetters () :void
+    {
+        _word = new Array();
+        updateLetterSelection(_word);
+    }
+
+
     /** Called from the model, this accessor modifies the display /text/
         for one letter at specified board /position/. */
-    public function setLetter (position :Point, text :String) :void
+    public function letterDidChange (position :Point, text :String) :void
     {
         Assert.isTrue(isValidBoardPosition(position),
                      "Bad position received in Display:setText");
@@ -255,7 +304,7 @@ public class Display extends Sprite
         var p :Point = new Point(event.stageX, event.stageY);
         var i :Point = screenToBoard(p);
         if (i != null) {
-            _controller.tryAddLetter(i);
+            tryAddLetter(i);
         }
     }
 
@@ -266,6 +315,16 @@ public class Display extends Sprite
         setCursor(i);
     }
 
+    /**
+     * Called when the user types a letter inside the word field.
+     */
+    public function processKeystroke (event :KeyboardEvent) :void
+    {
+        // The user typed in some character. Typing is incompatible
+        // with mouse selection, so if there's already anything selected
+        // by clicking, clear it all, and start afresh.
+    }
+
     protected function submitWord () :void
     {
         try {
@@ -273,6 +332,8 @@ public class Display extends Sprite
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
         }
+
+        removeAllSelectedLetters();
     }
 
     /** Called when the user clicks the Ready button. */
@@ -300,7 +361,10 @@ public class Display extends Sprite
 
         default:
             // It's just a regular keystroke. Let the controller know.
-            _controller.processKeystroke(event);
+            processKeystroke(event);
+            if (getLastLetterPosition() != null) {
+                removeAllSelectedLetters();
+            }
             break;
         }
     }
@@ -403,9 +467,55 @@ public class Display extends Sprite
         o.x = p.x;
         o.y = p.y;
     }
+
+    /** Takes a new letter from the UI, and checks it against game logic. */
+    public function tryAddLetter (position :Point) :void
+    {
+        if (_controller.enabled) {
+            // Position of the letter on top of the stack 
+            var lastLetterPosition :Point = getLastLetterPosition();
+            
+            // Did the player click on the first letter? If so, clear out
+            // the current word field, and add it.
+            var noPreviousLetterFound :Boolean = (lastLetterPosition == null);
+            if (noPreviousLetterFound) {
+                removeAllSelectedLetters();
+                selectLetterAtPosition(position);
+                return;
+            }
+            
+            // Did the player click on the last letter they added? If so, remove it.
+            if (position.equals(lastLetterPosition)) {
+                removeLastSelectedLetter();
+                return;
+            }
+            
+            // Did the player click on an empty letter next to the last selected one?
+            // If so, add it.
+            var isValidNeighbor :Boolean = (areNeighbors(position, lastLetterPosition) &&
+                                             ! isLetterSelectedAtPosition(position));
+            if (isValidNeighbor) {
+                selectLetterAtPosition(position);
+                return;
+            }
+            
+            // Player clicked on an invalid position - don't do anything
+        }
+    }
+
+    /** Determines whether the given /position/ is a neighbor of specified /original/
+        position (defined as being one square away from each other). */
+    protected function areNeighbors (position :Point, origin :Point) :Boolean
+    {
+        return (! position.equals(origin) &&
+                Math.abs(position.x - origin.x) <= 1 &&
+                Math.abs(position.y - origin.y) <= 1);
+    }
     
+
+
     /** Enables or disables a number of UI elements. */
-    private function setEnableState (value :Boolean) :void
+    protected function setEnableState (value :Boolean) :void
     {
         // Set each letter
         for (var x :int = 0; x < _letters.length; x++) {
@@ -528,6 +638,9 @@ public class Display extends Sprite
 
     /** Splash screen */
     private var _splash :Splash;
+
+    /** Current word data (as array of board coordinates) */
+    private var _word :Array;
 
     /** Stats screen */
     //private var _stats :Stats;

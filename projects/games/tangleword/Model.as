@@ -26,11 +26,11 @@ public class Model
     //
     // PUBLIC METHODS
 
-    public function Model (gameCtrl :GameControl, display :Display) :void
+    public function Model (gameCtrl :GameControl, observer :Observer = null) :void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
-        _display = display;
+        _observer = observer;
 
         // Register for updates
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
@@ -51,67 +51,38 @@ public class Model
     }
 
     /** Called when the round ends - cleans up data, and awards flow! */
-    public function roundEnded (scoreboard :Scoreboard) :void
+    /*public function roundEnded (scoreboard :Scoreboard) :void
     {
         removeAllSelectedLetters();
 
         _display.roundEnded(this, scoreboard, 666);//_playerBonuses[_gameCtrl.game.getMyId()]);
-    }
+    }*/
 
-    //
-    //
-    // LETTER ACCESSORS
-
-    /** If this board letter is already selected as part of the word, returns true.  */
-    public function isLetterSelectedAtPosition (position :Point) :Boolean
+    /**
+     * Ensures that the word is a valid selection and exists on the board.
+     * @return Coord array of the letter locations.
+     * @throws TangleWordError if the validation failed.
+     */
+    public function validate (word :String) :Array
     {
-        var pointMatches :Function = function (item :Point, index :int, array :Array) :Boolean {
-                return (item.equals(position));
-            };
-
-        return _word.some(pointMatches);
-    }
-
-    /** Returns coordinates of the most recently added word, or null. */
-    public function getLastLetterPosition () :Point
-    {
-        if (_word.length > 0) {
-            return _word[_word.length - 1] as Point;
+        // First, check to make sure it's of the correct length (in characters)
+        if (word.length < Properties.MIN_WORD_LENGTH) {
+            throw new TangleWordError("Words must be at least " + Properties.MIN_WORD_LENGTH + " letters.");
         }
 
-        return null;
-    }
-
-    /** Adds a new letter to the word (by adding a pair of coordinates) */
-    public function selectLetterAtPosition (position :Point) :void
-    {
-        _word.push(position);
-        _display.updateLetterSelection(_word);
-    }
-
-    /** Removes last selected letter from the word (if applicable) */
-    public function removeLastSelectedLetter () :void
-    {
-        if (_word.length > 0) {
-            _word.pop();
-            _display.updateLetterSelection(_word);
+        // Check if this word exists on the board
+        var points :Array = wordExistsOnBoard(word);
+        if (points == null) {
+            throw new TangleWordError(word + " is not on the board!");
         }
-    }
 
-    /** Removes all selected letters, resetting the word. */
-    public function removeAllSelectedLetters () :void
-    {
-        _word = new Array();
-        _display.updateLetterSelection(_word);
+        return points;
     }
 
     /** Checks if the word exists on the board, by doing an exhaustive
         search of all possible combinations. */
-    public function wordExistsOnBoard (word :String) :Array
+    protected function wordExistsOnBoard (word :String) :Array
     {
-        // TODO
-        // return true;
-
         if (word.length == 0) return null;
 
         for (var x :int = 0; x < Properties.LETTERS; x++) {
@@ -201,12 +172,6 @@ public class Model
         }
     }
 
-    /** Resets the currently guessed word */
-    private function resetWord () :void
-    {
-        _word = new Array();
-    }
-
     /** Initializes letter and word storage */
     private function initializeStorage () :void
     {
@@ -218,9 +183,6 @@ public class Model
                 _board[x][y] = "!";
             }
         }
-
-        // Second, the currently assembled word
-        resetWord();
     }
 
     /** Sets up a new game board, based on a flat array of letters. */
@@ -244,7 +206,7 @@ public class Model
             var word :String = i.substring(WORD_NAMESPACE.length);
             words.push({
                 word: word,
-                score: Controller.getWordScore(word),
+                score: getWordScore(word),
                 playerIds: _gameCtrl.net.get(i)
             });
         }
@@ -252,12 +214,21 @@ public class Model
         return words;
     }
 
+    public function getWordScore (word :String) :Number
+    {
+        // return 1 point for 4 letter words, and 1 additional point for each additional letter
+        return (word.length - 3);
+    }
+
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     private function updateBoardLetter (position :Point, text :String) :void
     {
         Assert.isNotNull(_board, "Board needs to be initialized first.");
         _board[position.x][position.y] = text;
-        _display.setLetter(position, text);
+
+        if (_observer != null) {
+            _observer.letterDidChange(position, text);
+        }
     }
 
     /** Converts player id to name. */
@@ -308,10 +279,7 @@ public class Model
     /** Game board data */
     private var _board :Array;
 
-    /** Current word data (as array of board coordinates) */
-    private var _word :Array;
-
-    /** Game board view */
-    private var _display :Display;
+    /** Observer to notify updates to. */
+    private var _observer :Observer;
 }
 }

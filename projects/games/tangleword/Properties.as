@@ -20,6 +20,8 @@ public class Properties
     /** Default pause length */
     public static const PAUSE_LENGTH :int = 60;
 
+    public static const MIN_WORD_LENGTH :int = 4;
+
     /**
      * Game display is composed of the letter board, and various
      * status windows TBD. This display size is the bounding box
