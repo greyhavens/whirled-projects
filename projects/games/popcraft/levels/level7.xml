@@ -2,7 +2,17 @@
     <Level
         expertCompletionDays="1"
         levelCompletionBonus="1000"
-        introText="Your opponent has perfected the Flesh Behemoth, an enormous collection of random body parts capable of crushing lesser units instantly.
+        expertCompletionBonus="1500"
+        introText=
+"Ralph calls after Jack,
+  &quot;This has gone past bizarre.
+&quot;You've always been foul,
+  but this time it's too far.
+&quot;It's on YOUR cruel head
+&quot;That our teacher is dead!
+&quot;We all know the truth.
+ &quot;Now stop right where you are.&quot;"
+        introText2="Ralph has created the Flesh Behemoth, an enormous collection of random body parts capable of crushing lesser units instantly.
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Behemoths with creatures to slow their progress and take them down, then make your move!"
         playerName="Jack"

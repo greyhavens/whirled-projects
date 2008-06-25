@@ -3,12 +3,20 @@
         expertCompletionDays="4"
         levelCompletionBonus="2500"
         expertCompletionBonus="3000"
-        introText="Ralph and a mysterious ally are squaring off for a final encounter. A dark cloud obscures the sky. The sun will struggle to rise today."
+        introText=
+"Ralph throws down the gauntlet:
+ &quot;That's enough of this fight!&quot;
+&quot;You've made it London,
+ &quot;but this thing ends tonight.
+&quot;It's a duel you won't win -
+&quot;Please just turn yourself in.
+&quot;Let's do this with comity.
+ &quot;Don't succumb to your spite.&quot;"
         introText2=
 "- Destroy Ralph's Workshop!
 - Professor Weardd's Workshop cannot be damaged.
 - You will create two creatures for every one you purchase.
-- Solar eclipses destroy your existing creatures, but you can create more immediately."
+- A solar eclipse will destroy your existing creatures, but you can create more immediately."
         playerName="Jack"
         playerBaseHealth="150">
 
