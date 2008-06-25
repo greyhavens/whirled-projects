@@ -119,8 +119,9 @@ public class TangleWord extends Sprite
         if (Server.RESULT_SUCCESS == event.name) {
             var word :String = event.value.word as String;
             var score :Number = event.value.score as Number;
+            var points :Array = event.value.points as Array;
 
-            _display.logSuccess(word, score, event.value.first as Boolean ? 1 : 0, []);
+            _display.logSuccess(word, score, event.value.first as Boolean ? 1 : 0, points);
 
             // TODO: Move trophy handling to agent
             _trophies.handleAddWord(word, score);

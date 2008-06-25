@@ -108,6 +108,7 @@ public class Server
 
         } else if ( ! isWordClaimed(playerId, word)) {
             var first :Boolean = (_gameCtrl.net.get(WORD_NAMESPACE+word) == null);
+            var score :Number = _model.getWordScore(word);
 
             if (first) {
                 var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
@@ -123,17 +124,17 @@ public class Server
             param = {
                 word: word,
                 first: first,
-                score: 123
+                points: points,
+                score: score
             };
 
-            addWord(playerId, word, 123);
+            addWord(playerId, word, score);
 
         } else {
             result = RESULT_DUPLICATE;
         }
 
         _gameCtrl.net.sendMessage(result, param, playerId);
-        //trace("Player " + playerId + " submitted " + word);
     }
 
     /** If this word was already claimed by the given player, returns true; otherwise false. */
@@ -161,9 +162,9 @@ public class Server
     {
         trace("Server got message: " + event);
         if (event.name == SUBMIT) {
-            _model.validate(event.value as String);
+            var points :Array = _model.validate(event.value as String);
             var success :Function = function (word :String, isvalid :Boolean) :void {
-                handleWordSubmit(event.senderId, word, [], isvalid);
+                handleWordSubmit(event.senderId, word, points, isvalid);
             }
             _gameCtrl.services.checkDictionaryWord(Properties.LOCALE, null, event.value as String, success);
         } else if (event.name == COUNTDOWN) {
