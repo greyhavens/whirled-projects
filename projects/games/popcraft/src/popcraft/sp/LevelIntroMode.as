@@ -117,11 +117,19 @@ public class LevelIntroMode extends AppMode
             break;
 
         case PHASE_LEVELINTRO:
+            var expertCompletionDays :int = GameContext.spLevel.expertCompletionDays;
+            var levelDescription :String =
+                GameContext.spLevel.introText2 +
+                "\n\n(Complete the level in " +
+                String(expertCompletionDays) +
+                (expertCompletionDays == 1 ? " day" : " days") +
+                " for an expert score.)";
+
             this.showPage(
                 TYPE_NOTE,
                 AppContext.levelMgr.curLevelName,
                 GameContext.spLevel.introText,
-                GameContext.spLevel.introText2,
+                levelDescription,
                 null);
             break;
         }
