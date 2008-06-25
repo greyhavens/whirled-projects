@@ -18,10 +18,10 @@
             spellDropScatterMax="30"/>
 
         <MapSettings backgroundName="Level1">
-            <BaseLocation x="85" y="145"/>
-            <BaseLocation x="85" y="245"/>
-            <BaseLocation x="642" y="115"/>
-            <BaseLocation x="642" y="325"/>
+            <BaseLocation x="88" y="145"/>
+            <BaseLocation x="88" y="245"/>
+            <BaseLocation x="635" y="115"/>
+            <BaseLocation x="635" y="325"/>
             <SpellDropLocation x="350" y="150"/>
         </MapSettings>
 
@@ -57,10 +57,10 @@
                     spellDropCourierGroupSizeMin="0"
                     spellDropCourierGroupSizeMax="0">
 
-                    <Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="2" targetPlayerName="Iris"><Unit type="grunt" count="1"/></Wave>
-                    <Wave delayBefore="2" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Ivy"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="2" targetPlayerName="Iris"><Unit type="grunt" count="1"/></Wave>
+                    <Wave delayBefore="2" targetPlayerName="Ivy"><Unit type="grunt" count="1"/></Wave>
                     <Wave delayBefore="20"/>
                 </Day>
 
@@ -68,7 +68,7 @@
         </Computer>
 
         <Computer
-            playerName="Ralph"
+            playerName="Iris"
             baseHealth="150"
             team="1">
             <InitialSpells/>
@@ -110,7 +110,7 @@
         </Computer>
 
         <Computer
-            playerName="Iris"
+            playerName="Ivy"
             baseHealth="150"
             team="1">
             <InitialSpells/>

@@ -4,7 +4,16 @@
         levelCompletionBonus="1000"
         expertCompletionBonus="1500"
         newCreatureType="colossus"
-        introText="You've stolen the plans for the Flesh Behemoth and can now create your own. The Behemoth can decimate a base, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Behemoth and help it break through the enemy's defenses."
+        introText=
+"The ranks of Jack's crew
+ bit-by-bit start to dwindle.
+He knows that, somehow,
+ their faith must be rekindled.
+&quot;It's a foolish smokescreen -
+&quot;You chaps know I'm clean.
+&quot;Let's show this jerk Ralph
+ &quot;we're not easily swindled.&quot;"
+        introText2="You've stolen the plans for the Flesh Behemoth and can now create your own. The Behemoth can decimate a base, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Behemoth and help it break through the enemy's defenses."
         playerName="Jack"
         playerBaseHealth="150">
 
