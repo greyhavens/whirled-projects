@@ -63,11 +63,6 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             }
         }
 
-        if (MoonCalculation.isFullMoonToday) {
-            // awarded for playing a multiplayer game on a full moon
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_BADMOONONTHERISE);
-        }
-
         if (this.playerWon) {
             // awarded for winning a multiplayer game
             TrophyManager.awardTrophy(TrophyManager.TROPHY_BULLY);
@@ -86,6 +81,11 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
                     TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);
                     break;
                 }
+            }
+
+            if (MoonCalculation.isFullMoonToday) {
+                // awarded for winning a multiplayer game on a full moon
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_BADMOON);
             }
         }
     }
