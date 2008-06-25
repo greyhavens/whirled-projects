@@ -37,6 +37,10 @@ public class LevelOutroMode extends AppMode
             resourcesScore +
             GameContext.spLevel.levelCompletionBonus;
 
+        if (GameContext.spLevel.maxScore >= 0) {
+            levelScore = Math.min(levelScore, GameContext.spLevel.maxScore);
+        }
+
         var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
 
         if (AppContext.gameCtrl.isConnected()) {

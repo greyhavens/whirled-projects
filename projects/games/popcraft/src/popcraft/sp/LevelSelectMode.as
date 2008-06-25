@@ -60,7 +60,11 @@ public class LevelSelectMode extends SplashScreenModeBase
             }
 
             if (levelRecord.score > 0) {
-                levelName += " (" + levelRecord.score + ")";
+                levelName += " (" + levelRecord.score;
+                if (levelRecord.expert) {
+                    levelName += " *";
+                }
+                levelName += ")";
             }
 
             button = this.createLevelSelectButton(i, levelName);

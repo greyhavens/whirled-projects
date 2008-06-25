@@ -1,6 +1,5 @@
 package popcraft.data {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 
 import popcraft.*;
@@ -11,6 +10,7 @@ public class LevelData
     public var levelCompletionBonus :int;
     public var expertCompletionBonus :int;
     public var expertCompletionDays :int;
+    public var maxScore :int;
     public var introText :String;
     public var introText2 :String;
     public var newCreatureType :int;
@@ -54,6 +54,7 @@ public class LevelData
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus");
         level.expertCompletionBonus = XmlReader.getAttributeAsInt(xml, "expertCompletionBonus");
         level.expertCompletionDays = XmlReader.getAttributeAsInt(xml, "expertCompletionDays");
+        level.maxScore = XmlReader.getAttributeAsInt(xml, "maxScore", -1);  // only used on levels 1 and 2 to prevent infinite resource farming
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.introText2 = XmlReader.getAttributeAsString(xml, "introText2", level.introText);
         level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
