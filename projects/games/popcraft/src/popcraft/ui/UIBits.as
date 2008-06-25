@@ -12,18 +12,68 @@ import flash.text.TextFieldAutoSize;
 
 public class UIBits
 {
-    public static function createButton (text :String) :SimpleButton
+    public static function createFrame (width :Number, height :Number) :Sprite
+    {
+        var frame :MovieClip = SwfResource.instantiateMovieClip("ui", "frame_UI");
+        frame.scaleX = width / frame.width;
+        frame.scaleY = height / frame.height;
+
+        var sprite :Sprite = new Sprite();
+        sprite.addChild(frame);
+
+        return sprite;
+    }
+
+    public static function createTextPanel (text :String, textScale :Number = 1, maxWidth :int = 0) :Sprite
+    {
+        var multiline :Boolean = (maxWidth > 0);
+
+        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
+        var tf :TextField = panel["panel_text"];
+
+        // put the panel and text into a parent sprite to help alignment
+        var sprite :Sprite = new Sprite();
+        sprite.addChild(panel);
+        sprite.addChild(tf);
+
+        tf.multiline = multiline;
+        tf.wordWrap = multiline;
+        tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.scaleX = textScale;
+        tf.scaleY = textScale;
+        tf.text = text;
+
+        if (multiline && tf.width > maxWidth) {
+            tf.width = maxWidth;
+        }
+
+        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width; //((tf.textWidth + (PANEL_TEXT_H_BORDER)) * textScale) / panel.width;
+        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height; //((tf.textHeight + (PANEL_TEXT_V_BORDER)) * textScale) / panel.height;
+
+        panel.x = 2;
+        panel.y = 0;
+        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
+        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+
+        return sprite;
+    }
+
+    protected static const PANEL_TEXT_H_BORDER :Number = 10;
+    protected static const PANEL_TEXT_V_BORDER :Number = 3;
+
+    public static function createButton (text :String, textScale :Number = 1) :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
-        button.upState = makeButtonFace(FACE_UP, text);
-        button.overState = makeButtonFace(FACE_OVER, text);
-        button.downState = makeButtonFace(FACE_DOWN, text);
+        button.upState = makeButtonFace(FACE_UP, text, textScale);
+        button.overState = makeButtonFace(FACE_OVER, text, textScale);
+        button.downState = makeButtonFace(FACE_DOWN, text, textScale);
         button.hitTestState = button.upState;
+        button.tabEnabled = false;
 
         return button;
     }
 
-    protected static function makeButtonFace (face :int, text :String) :DisplayObject
+    protected static function makeButtonFace (face :int, text :String, textScale :Number) :DisplayObject
     {
         var buttonUi :MovieClip = SwfResource.instantiateMovieClip("ui", "button_UI");
 
@@ -31,6 +81,8 @@ public class UIBits
         tf.multiline = false;
         tf.wordWrap = false;
         tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.scaleX = textScale;
+        tf.scaleY = textScale;
         tf.text = text;
 
         // scale the frame to fit the text

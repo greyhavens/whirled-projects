@@ -1,6 +1,5 @@
 package popcraft.sp {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
@@ -21,37 +20,37 @@ public class PauseMode extends AppMode
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
-        var bgSprite :Sprite = new Sprite();
-        g = bgSprite.graphics;
-        g.beginFill(0xB50000);
-        g.drawRect(0, 0, 250, 200);
-        g.endFill();
+        var bgSprite :Sprite = UIBits.createFrame(250, 200);
 
         bgSprite.x = (Constants.SCREEN_SIZE.x * 0.5) - (bgSprite.width * 0.5);
         bgSprite.y = (Constants.SCREEN_SIZE.y * 0.5) - (bgSprite.height * 0.5);
 
         this.modeSprite.addChild(bgSprite);
 
-        // Main Menu button
-        var button :SimpleButton = UIBits.createButton("Main Menu");
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
-            });
-
-        button.tabEnabled = false;
-        button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 100;
-        bgSprite.addChild(button);
+        // "Paused" text
+        var textPanel :Sprite = UIBits.createTextPanel("Paused", 2);
+        textPanel.x = (bgSprite.width * 0.5) - (textPanel.width * 0.5);
+        textPanel.y = 25;
+        bgSprite.addChild(textPanel);
 
         // Resume button
-        button = UIBits.createButton("Resume");
+        button = UIBits.createButton("Resume", 1.5);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
             });
 
-        button.tabEnabled = false;
+        button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
+        button.y = 100;
+        bgSprite.addChild(button);
+
+        // Level Select button
+        var button :SimpleButton = UIBits.createButton("Level Select", 1.5);
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+            });
+
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
         button.y = 150;
         bgSprite.addChild(button);
