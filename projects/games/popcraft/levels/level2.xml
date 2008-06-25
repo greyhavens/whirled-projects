@@ -1,7 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
-        levelCompletionBonus="1000"
+        levelCompletionBonus="500"
+        expertCompletionBonus="0"
         newCreatureType="heavy"
         introText=
 "How tragic! Weardd’s body: found lifeless and burned.

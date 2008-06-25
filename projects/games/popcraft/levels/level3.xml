@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
+        levelCompletionBonus="500"
+        expertCompletionBonus="500"
         introText="Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
         playerName="Jack"
         playerBaseHealth="100">

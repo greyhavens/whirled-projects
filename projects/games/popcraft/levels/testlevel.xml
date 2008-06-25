@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
+        levelCompletionBonus="2000"
+        expertCompletionBonus="2500"
         introText="This is not a real level!"
         playerName="Jack"
         playerBaseHealth="100">

@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="4"
+        levelCompletionBonus="2500"
+        expertCompletionBonus="3000"
         introText="Ralph and a mysterious ally are squaring off for a final encounter. A dark cloud obscures the sky. The sun will struggle to rise today."
         introText2=
 "- Destroy Ralph's Workshop!

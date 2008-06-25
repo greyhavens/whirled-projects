@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="2"
+        levelCompletionBonus="1500"
+        expertCompletionBonus="2000"
         introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"

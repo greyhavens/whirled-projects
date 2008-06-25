@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
+        levelCompletionBonus="750"
+        expertCompletionBonus="750"
         newCreatureType="sapper"
         introText=
 "&quot;Listen, you lot,&quot; commands Jack. &quot;Here's the plan:

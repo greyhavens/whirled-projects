@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
+        levelCompletionBonus="1500"
+        expertCompletionBonus="2000"
         introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
         playerName="Jack"
         playerBaseHealth="150"

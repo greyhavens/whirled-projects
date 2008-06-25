@@ -2,6 +2,7 @@
     <Level
         expertCompletionDays="1"
         levelCompletionBonus="500"
+        expertCompletionBonus="0"
         newCreatureType="grunt"
         introText=
 "The SRR - known and loved the world 'round

@@ -1,7 +1,6 @@
 <root>
     <GameData
         pointsPerResource="1"
-        pointsPerDayUnderPar="2000"
         dayLength="30"
         nightLength="120"
         dawnWarning="12"

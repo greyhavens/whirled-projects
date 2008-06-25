@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="1"
+        levelCompletionBonus="1000"
+        expertCompletionBonus="1000"
         newCreatureType="courier"
         newSpellType="rigormortis"
         introText=

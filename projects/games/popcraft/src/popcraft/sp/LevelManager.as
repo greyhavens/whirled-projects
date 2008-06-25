@@ -64,6 +64,17 @@ public class LevelManager
         return score;
     }
 
+    public function get expertScoreForAllLevels () :Boolean
+    {
+        for each (var lr :LevelRecord in _levelRecords) {
+            if (!lr.expert) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function get levelRecords () :Array
     {
         return _levelRecords;

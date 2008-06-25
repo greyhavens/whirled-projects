@@ -35,6 +35,8 @@ public class TrophyManager
     // complete the single player game
     public static const TROPHY_GRADUATE :String = "Graduate";
     public static const GRADUATE_LEVEL :int = 13;
+    // expert-complete all single player levels
+    public static const TROPHY_MAGNACUMLAUDE :String = "MagnaCumLaude";
 
     /* multiplayer trophies */
 

@@ -1,5 +1,6 @@
 package popcraft.sp {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -23,28 +24,40 @@ public class LevelOutroMode extends AppMode
 
     protected function saveProgress () :void
     {
+        // calculate the score for this level (we give the player a few points if they died)
+        var expertCompletion :Boolean = (GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays);
+        var expertCompletionScore :int = (expertCompletion ? GameContext.spLevel.expertCompletionBonus : 0);
+
+        var resourcesScore :int =
+            Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
+            GameContext.gameData.pointsPerResource;
+
+        var levelScore :int =
+            expertCompletionScore +
+            resourcesScore +
+            GameContext.spLevel.levelCompletionBonus;
+
+        var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
+
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.endGameWithScore(awardedScore);
+        } else {
+            log.info("Level score: " + awardedScore);
+        }
+
         // save our progress and award trophies if we were successful
         if (_success) {
-            // calculate the score for this level
-            var fastCompletionScore :int =
-                Math.max(GameContext.spLevel.expertCompletionDays - GameContext.diurnalCycle.dayCount, 0) *
-                GameContext.gameData.pointsPerDayUnderPar;
-
-            var resourcesScore :int =
-                Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
-                GameContext.gameData.pointsPerResource;
-
-            var levelScore :int =
-                fastCompletionScore +
-                resourcesScore +
-                GameContext.spLevel.levelCompletionBonus;
-
             var dataChanged :Boolean;
 
+            var newLevelRecord :LevelRecord = new LevelRecord();
+            newLevelRecord.unlocked = true;
+            newLevelRecord.expert = expertCompletion;
+            newLevelRecord.score = levelScore;
+
             var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
-            var thisLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
-            if (null != thisLevel && thisLevel.score < levelScore) {
-                thisLevel.score = levelScore;
+            var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
+            if (null != curLevelRecord && newLevelRecord.isBetterThan(curLevelRecord)) {
+                curLevelRecord.assign(newLevelRecord);
                 dataChanged = true;
             }
 
@@ -70,6 +83,10 @@ public class LevelOutroMode extends AppMode
 
             if (null != levelTrophy) {
                 TrophyManager.awardTrophy(levelTrophy);
+            }
+
+            if (AppContext.levelMgr.expertScoreForAllLevels) {
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
             }
         }
     }
@@ -171,6 +188,8 @@ public class LevelOutroMode extends AppMode
 
     protected var _success :Boolean;
     protected var _playedSound :Boolean;
+
+    protected static var log :Log = Log.getLog(LevelOutroMode);
 
 }
 

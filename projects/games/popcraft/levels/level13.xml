@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="3"
+        levelCompletionBonus="2000"
+        expertCompletionBonus="2500"
         introText="Grab the Infusions!"
         introText2=
 "- Infusions are appearing on the battlefield in large numbers.

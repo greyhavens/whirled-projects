@@ -1,6 +1,8 @@
 <root>
     <Level
         expertCompletionDays="2"
+        levelCompletionBonus="1500"
+        expertCompletionBonus="2000"
         introText="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         playerName="Jack"

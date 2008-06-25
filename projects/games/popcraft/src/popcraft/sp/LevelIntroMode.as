@@ -107,7 +107,7 @@ public class LevelIntroMode extends AppMode
         case PHASE_SPELLINTRO:
             var newSpellType :int = GameContext.spLevel.newSpellType;
             var spellData :SpellData = GameContext.gameData.spells[newSpellType];
-            var spellAnim :MovieClip = SwfResource.instantiateMovieClip("infusions", spellData.iconName);
+            var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
             this.showPage(
                 TYPE_PAGE,
                 "Infusion: " + spellData.displayName,
