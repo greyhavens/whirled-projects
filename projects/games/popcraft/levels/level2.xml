@@ -6,13 +6,16 @@
         maxScore="1000"
         newCreatureType="heavy"
         introText=
-"How tragic! Weardd’s body: found lifeless and burned.
-After tireless service, a grim end most unearned.
-This is cause for alarm!
-Who’ll next come to harm?
-Till the perp’s apprehended, leave no stone unturned."
+"How tragic! Weardd's body:
+ found lifeless and burned.
+After tireless service,
+  a grim end most unearned.
+It is cause for alarm!
+Who'll next come to harm?
+Till the perp's apprehended,
+  leave no stone unturned."
         introText2=
-"Ralph's best friend, Sam, is dispatching explosive Delivery Boys capable of reducing your workshop to rubble. The Handy Man can keep them at bay!"
+"Ralph's best friend, Iris, is dispatching explosive Delivery Boys capable of reducing your workshop to rubble. The Handy Man can keep them at bay!"
         playerName="Jack"
         playerBaseHealth="70">
 

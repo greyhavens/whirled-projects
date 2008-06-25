@@ -5,11 +5,14 @@
         expertCompletionBonus="750"
         newCreatureType="sapper"
         introText=
-"&quot;Listen, you lot,&quot; commands Jack. &quot;Here's the plan:
-&quot;We travel to London as quick as we can.
-&quot;As you're all aware,
-&quot;My father lives there;
-&quot;He'll help prove Ralph's guilt - he's a powerful man.&quot;"
+"Jack, to companions:
+  &quot;I'm sure Ralph's to blame
+&quot;For the murder of Weardd;
+  for our school set aflame.
+&quot;'But why,' you inquire,
+&quot;'Did he start that cruel fire?'
+&quot;'Cause he lusts after power.
+  The boy's clearly insane.&quot;"
         introText2="Use the Delivery Boy's explosive attack to destroy the Street-Walkers your opponent is sending your way. A few Delivery Boys can take out large groups of enemies."
         playerName="Jack"
         playerBaseHealth="100">

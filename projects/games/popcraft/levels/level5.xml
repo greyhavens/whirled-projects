@@ -4,9 +4,18 @@
         levelCompletionBonus="750"
         expertCompletionBonus="750"
         introText=
-"Your nemesis and his right-hand man have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Delivery Boys will soften the advancing horde.
+"&quot;Listen, you lot,&quot; commands Jack,
+  &quot;Here's the plan:
+&quot;We'll travel to London
+  as quick as we can.
+&quot;As you're all aware,
+&quot;My father lives there;
+&quot;He'll determine Ralph's guilt-
+  he's a powerful man.&quot;"
+        introText2=
+"Iris and Ivy have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Delivery Boys will soften the advancing horde.
 
-Both opponents must fall! Click an opponent's base to direct your creatures to it."
+Both girls must fall! Click an opponent's base to direct your creatures to it."
         playerName="Jack"
         playerBaseHealth="100">
 
@@ -33,7 +42,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" baseHealth="70" team="1">
+        <Computer playerName="Iris" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
@@ -47,7 +56,7 @@ Both opponents must fall! Click an opponent's base to direct your creatures to i
             </RepeatingDays>
         </Computer>
 
-        <Computer playerName="Iris" baseHealth="70" team="1">
+        <Computer playerName="Ivy" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

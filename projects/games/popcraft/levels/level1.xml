@@ -6,11 +6,14 @@
         maxScore="1000"
         newCreatureType="grunt"
         introText=
-"The SRR - known and loved the world 'round
-Caught fire last night and burned straight to the ground.
+"The famed Weardd Academy
+  known the world 'round
+Caught fire last night
+  and burned to the ground.
 Foul play is suspected.
 A youth's rage misdirected?
-The headmaster, Prof. Weardd, is nowhere to be found."
+Now Headmaster Weardd
+  is nowhere to be found."
         introText2="Fashion Flesh and Energy into Street-Walkers to tear down Ralph's workshop!"
         playerName="Jack"
         playerBaseHealth="50">

@@ -3,7 +3,17 @@
         expertCompletionDays="1"
         levelCompletionBonus="500"
         expertCompletionBonus="500"
-        introText="Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
+        introText=
+"Without supervision,
+  decorum will crack.
+The children start fighting
+  and behavior turns black.
+The student body divides
+Into two opposed sides:
+One half follows Ralph;
+  the other backs Jack."
+        introText2=
+"Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
         playerName="Jack"
         playerBaseHealth="100">
 
