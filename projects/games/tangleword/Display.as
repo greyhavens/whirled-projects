@@ -93,7 +93,7 @@ public class Display extends Sprite
     }
 
     /** Called when the round ends - disables display. */
-    public function roundEnded (model :Model, board :Scoreboard, bonus :int) :void
+    public function roundEnded (model :Model, board :Scoreboard) :void
     {
         removeAllSelectedLetters();
 
@@ -102,10 +102,6 @@ public class Display extends Sprite
         var topPlayers :Array = board.getWinnerIds().map(model.getName);
 
         _logger.log();
-        if (bonus > 0) {
-            _logger.log("Domination Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
-            _logger.log();
-        }
         _logger.log("Winners (" + board.getTopScore() + " pts): " + topPlayers.join(", "), Logger.SUMMARY_H1);
         logSummary(model, model.getWords());
         _logger.log("Next round will begin shortly...");
@@ -201,6 +197,12 @@ public class Display extends Sprite
 
         // Finally, update the word
         _wordfield.text = word;
+    }
+
+    public function logBonus (bonus :Number) :void
+    {
+        _logger.log();
+        _logger.log("Domination Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
     }
 
     public function logSuccess (word :String, score :Number, bonus :Number, points :Array) :void

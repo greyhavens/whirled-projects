@@ -21,10 +21,10 @@ public class Server
     public static const RESULT_SUCCESS :String = "ResultSuccess";
     public static const RESULT_UNRECOGNIZED :String = "ResultUnrecognized";
     public static const RESULT_DUPLICATE :String = "ResultDuplicate";
+    public static const BONUS :String = "Bonus";
 
     public static const SCOREBOARD :String = "Scores";
 
-    protected static const FIRST_FINDS :String = "firstFinds";
     protected static const WORD_NAMESPACE :String = "word:";
     protected static const BONUS_CAP_RATIO :Number = 0.5;
 
@@ -50,7 +50,7 @@ public class Server
             _gameCtrl.net.set(i, null);
         }
 
-        _gameCtrl.net.set(FIRST_FINDS, null);
+        _firsts = [];
         _scoreboard.clearAll();
     }
 
@@ -65,12 +65,12 @@ public class Server
 
     protected function endGame () :void
     {
-        var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
         var totalWords :Number = (_gameCtrl.net.getPropertyNames(WORD_NAMESPACE) || []).length;
 
-        var _playerBonuses :Array = [];
-        for (var pid :Object in firsts) {
-            _playerBonuses[pid] = Math.min(firsts[pid], BONUS_CAP_RATIO*totalWords);
+        var playerBonuses :Array = [];
+        for (var pid :Object in _firsts) {
+            playerBonuses[pid] = Math.min(_firsts[pid], BONUS_CAP_RATIO*totalWords);
+            _gameCtrl.net.sendMessage(BONUS, playerBonuses[pid], pid as int);
         }
 
         var playerIds :Array = [];
@@ -78,8 +78,8 @@ public class Server
         for each (var playerId :int in _gameCtrl.game.getOccupantIds()) {
             var score :int = _scoreboard.getScore(playerId);
 
-            if (playerId in _playerBonuses) {
-                score += _playerBonuses[playerId];
+            if (playerId in playerBonuses) {
+                score += playerBonuses[playerId];
                 _scoreboard.setScore(playerId, score);
             }
 
@@ -111,13 +111,7 @@ public class Server
             var score :Number = _model.getWordScore(word);
 
             if (first) {
-                var firsts :Dictionary = _gameCtrl.net.get(FIRST_FINDS) as Dictionary;
-
-                if (firsts != null && playerId in firsts) {
-                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, firsts[playerId]+1);
-                } else {
-                    _gameCtrl.net.setIn(FIRST_FINDS, playerId, 1);
-                }
+                _firsts[playerId] = (_firsts[playerId] != null ? _firsts[playerId] : 0) + 1;
             }
 
             result = RESULT_SUCCESS;
@@ -129,6 +123,8 @@ public class Server
             };
 
             addWord(playerId, word, score);
+
+            trace(word + ": "+_gameCtrl.net.get(WORD_NAMESPACE+word));
 
         } else {
             result = RESULT_DUPLICATE;
@@ -195,6 +191,8 @@ public class Server
     protected var _model :Model;
 
     protected var _unreadyPlayers :Array;
+    protected var _firsts :Array;
+
     protected var _gameCtrl :GameControl;
 }
 

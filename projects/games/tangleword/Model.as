@@ -50,14 +50,6 @@ public class Model
         // Unused
     }
 
-    /** Called when the round ends - cleans up data, and awards flow! */
-    /*public function roundEnded (scoreboard :Scoreboard) :void
-    {
-        removeAllSelectedLetters();
-
-        _display.roundEnded(this, scoreboard, 666);//_playerBonuses[_gameCtrl.game.getMyId()]);
-    }*/
-
     /**
      * Ensures that the word is a valid selection and exists on the board.
      * @return Coord array of the letter locations.
@@ -267,14 +259,8 @@ public class Model
      */
     protected static const FIRST_FINDS :String = "firstFinds";
 
-    // Local copy of the final playerBonuses calculated at the end of a round
-    protected var _playerBonuses :Array;
-
     /** Main game control structure */
     private var _gameCtrl :GameControl;
-
-    /** Cache the player's name */
-    private var _playerName :String;
 
     /** Game board data */
     private var _board :Array;

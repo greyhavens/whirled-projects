@@ -120,11 +120,14 @@ public class TangleWord extends Sprite
             var word :String = event.value.word as String;
             var score :Number = event.value.score as Number;
             var points :Array = event.value.points as Array;
+            var first :Boolean = event.value.first as Boolean;
 
-            _display.logSuccess(word, score, event.value.first as Boolean ? 1 : 0, points);
+            _display.logSuccess(word, score, first ? 1 : 0, points);
 
             // TODO: Move trophy handling to agent
             _trophies.handleAddWord(word, score);
+        } else if (Server.BONUS == event.name) {
+            _display.logBonus(event.value as Number);
 
         } else if (Server.RESULT_UNRECOGNIZED == event.name) {
             _display.logInvalidWord(event.value as String);
@@ -141,19 +144,12 @@ public class TangleWord extends Sprite
             elapsed = int(event.value);
             _display.setTimer(Properties.PAUSE_LENGTH - elapsed);
         }
-        /*else if (event.name == Server.SUBMIT_RESULT && event.isFromServer()) {
-            _model.addScore(
-                    event.value.word as String,
-                    event.value.score as Number,
-                    event.value.points as Array,
-                    event.value.valid as Boolean);
-        }*/
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
         _controller.roundEnded();
-        _display.roundEnded(_model, _scoreboard, 666);
+        _display.roundEnded(_model, _scoreboard);
         _trophies.handleRoundEnded(_scoreboard);
     }
 
