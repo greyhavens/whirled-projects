@@ -9,6 +9,8 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.text.TextFormatAlign;
 
 public class UIBits
 {
@@ -24,7 +26,9 @@ public class UIBits
         return sprite;
     }
 
-    public static function createTextPanel (text :String, textScale :Number = 1, maxWidth :int = 0, border :Boolean = true) :Sprite
+    public static function createTextPanel (text :String, textScale :Number = 1,
+        maxWidth :int = 0, border :Boolean = true,
+        align :String = TextFormatAlign.CENTER) :Sprite
     {
         var multiline :Boolean = (maxWidth > 0);
 
@@ -38,23 +42,29 @@ public class UIBits
 
         tf.multiline = multiline;
         tf.wordWrap = multiline;
-        if (multiline) {
-            tf.width = maxWidth;
-        }
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.scaleX = textScale;
         tf.scaleY = textScale;
+        if (multiline) {
+            tf.width = maxWidth / textScale;
+        }
         tf.text = text;
+
+        var format :TextFormat = tf.defaultTextFormat;
+        format.align = align;
+        tf.setTextFormat(format);
 
         panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
         panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
 
-        panel.x = 2;
-        panel.y = 0;
-        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
-        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
-
-        if (!border) {
+        if (border) {
+            panel.x = 2;
+            panel.y = 0;
+            tf.x = (panel.width * 0.5) - (tf.width * 0.5);
+            tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+        } else {
+            tf.x = 0;
+            tf.y = 0;
             sprite.removeChild(panel);
         }
 

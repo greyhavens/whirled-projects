@@ -32,27 +32,45 @@ public class LevelIntroMode extends AppMode
 
         this.modeSprite.addChild(dimness);
 
-        var movie :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
-        movie.x = Constants.SCREEN_SIZE.x * 0.5;
-        movie.y = Constants.SCREEN_SIZE.y * 1.5;
-        this.modeSprite.addChild(movie);
+        // create "manual_front"
+        var manualFront :MovieClip = SwfResource.instantiateMovieClip("manual", "manual_front");
+        var manualFrontObj :SimpleSceneObject = new SimpleSceneObject(manualFront);
+        manualFrontObj.x = Constants.SCREEN_SIZE.x * 0.5;
+        manualFrontObj.y = Constants.SCREEN_SIZE.y * 1.5;
 
-        // animate the book in
-        _movieObj = new SimpleSceneObject(movie);
-        this.addObject(_movieObj);
+        // animate manual_front in from the bottom of the screen, play its open animation,
+        // then swap it out for the real manual object
+        var manualFrontTask :SerialTask = new SerialTask();
+        manualFrontTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
+        manualFrontTask.addTask(new GoToFrameTask("turn"));
+        manualFrontTask.addTask(new WaitForFrameTask("edge"));
+        manualFrontTask.addTask(new FunctionTask(swapInManual));
+        manualFrontTask.addTask(new SelfDestructTask());
 
-        var animateTask :SerialTask = new SerialTask();
-        animateTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
-        animateTask.addTask(new GoToFrameTask("open"));
-        animateTask.addTask(new WaitForFrameTask("opened"));
+        manualFrontObj.addTask(manualFrontTask);
 
-        _movieObj.addTask(animateTask);
-
-        this.doNextPhase();
+        this.addObject(manualFrontObj, this.modeSprite);
 
         this.modeSprite.visible = false;
 
         StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    protected function swapInManual () :void
+    {
+        // animate the book open
+        _manualObj = new SimpleSceneObject(SwfResource.instantiateMovieClip("manual", "manual"));
+        _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
+        _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
+        this.addObject(_manualObj, this.modeSprite);
+
+        var animateTask :SerialTask = new SerialTask();
+        animateTask.addTask(new GoToFrameTask("open"));
+        animateTask.addTask(new WaitForFrameTask("opened"));
+
+        _manualObj.addTask(animateTask);
+
+        this.doNextPhase();
     }
 
     override protected function destroy () :void
@@ -141,7 +159,7 @@ public class LevelIntroMode extends AppMode
     {
         var isNote :Boolean = pageType == "note";
 
-        var movie :MovieClip = _movieObj.displayObject as MovieClip;
+        var movie :MovieClip = _manualObj.displayObject as MovieClip;
         var leftPage :MovieClip = movie["pageL"];
         var rightPage :MovieClip = movie["pageR"];
         var leftNote :MovieClip = leftPage["note"];
@@ -208,8 +226,8 @@ public class LevelIntroMode extends AppMode
             movieTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
         }
 
-        _movieObj.removeAllTasks();
-        _movieObj.addTask(movieTask);
+        _manualObj.removeAllTasks();
+        _manualObj.addTask(movieTask);
     }
 
     override protected function enter () :void
@@ -222,7 +240,7 @@ public class LevelIntroMode extends AppMode
         this.modeSprite.visible = false;
     }
 
-    protected var _movieObj :SimpleSceneObject;
+    protected var _manualObj :SimpleSceneObject;
     protected var _okButton :SimpleButton;
     protected var _phase :int = -1;
     protected var _pageNum :int;

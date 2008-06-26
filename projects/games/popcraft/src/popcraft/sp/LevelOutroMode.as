@@ -9,6 +9,7 @@ import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.text.TextFormatAlign;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
@@ -113,7 +114,7 @@ public class LevelOutroMode extends AppMode
         // win/lose text
         var tfName :Sprite = UIBits.createTextPanel(_success ? "Victory!" : "Defeated", 2);
         tfName.x = (WIDTH * 0.5) - (tfName.width * 0.5);
-        tfName.y = 30;
+        tfName.y = 20;
 
         bgSprite.addChild(tfName);
 
@@ -127,9 +128,9 @@ public class LevelOutroMode extends AppMode
 
         message += "Your progress has been saved.\nContinue playing?";
 
-        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 24, false);
+        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 24, false, TextFormatAlign.LEFT);
         tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
-        tfMessage.y = tfName.y + tfName.height + 3;
+        tfMessage.y = tfName.y + tfName.height + 10;
 
         bgSprite.addChild(tfMessage);
 
@@ -152,7 +153,7 @@ public class LevelOutroMode extends AppMode
         }
 
         button.x = (WIDTH * 0.5) - (button.width * 0.5);
-        button.y = 200;
+        button.y = 210;
         bgSprite.addChild(button);
 
         button = UIBits.createButton("Level Select", 1.5);
@@ -161,7 +162,7 @@ public class LevelOutroMode extends AppMode
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
             });
         button.x = (WIDTH * 0.5) - (button.width * 0.5);
-        button.y = 250;
+        button.y = 260;
         bgSprite.addChild(button);
     }
 
@@ -178,8 +179,8 @@ public class LevelOutroMode extends AppMode
 
     protected static var log :Log = Log.getLog(LevelOutroMode);
 
-    protected static const WIDTH :Number = 250;
-    protected static const HEIGHT :Number = 300;
+    protected static const WIDTH :Number = 280;
+    protected static const HEIGHT :Number = 325;
 
 }
 
