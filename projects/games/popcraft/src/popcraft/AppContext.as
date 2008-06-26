@@ -37,6 +37,12 @@ public class AppContext
         return dataRsrc.multiplayerSettings;
     }
 
+    public static function get introOutroData () :IntroOutroData
+    {
+        var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
+        return dataRsrc.introOutroData;
+    }
+
     public static function get gameVariants () :Array
     {
         var variantResource :GameVariantsResource = ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;

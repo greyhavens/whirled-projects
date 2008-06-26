@@ -24,6 +24,11 @@ public class GameDataResource extends XmlResource
         return LoadedData(this.generatedObject).multiplayerSettings;
     }
 
+    public function get introOutroData () :IntroOutroData
+    {
+        return LoadedData(this.generatedObject).introOutroData;
+    }
+
     protected static function objectGenerator (xml :XML) :LoadedData
     {
         var loadedData :LoadedData = new LoadedData();
@@ -33,6 +38,8 @@ public class GameDataResource extends XmlResource
         for each (var msXml :XML in xml.Multiplayer.MultiplayerSettings) {
             loadedData.multiplayerSettings.push(MultiplayerSettingsData.fromXml(msXml));
         }
+
+        loadedData.introOutroData = IntroOutroData.fromXml(xml.IntroOutro[0]);
 
         return loadedData;
     }
@@ -47,4 +54,5 @@ class LoadedData
     public var gameData :GameData;
     public var levelProgression :LevelProgressionData;
     public var multiplayerSettings :Array = [];
+    public var introOutroData :IntroOutroData;
 }

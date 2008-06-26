@@ -315,6 +315,61 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
         <Level name="Wherein All is Revealed..."/>
     </LevelProgression>
 
+    <IntroOutro>
+        <IntroVerses>
+            <Verse>Eygor Weardd, PhD,
+ attracts much admiration
+For his pains to teach children
+ that noblest vocation.
+Young minds are advised
+How to raise the demised
+At his school for
+ Responsible Reanimation.</Verse>
+            <Verse>Jack Gallsworth commands
+ the respect of his peers.
+He descends from a line
+ of necro-pioneers.
+But don't cross him, it's said,
+If you value your head -
+The last boy who did
+ has been missing for years.</Verse>
+            <Verse>Ralph Dinsley, the well-liked
+ new student at school,
+Is gentle, soft-spoken,
+  and nobody's fool.
+He's considered, they say,
+To be Weardd's protégé...
+But Jack thinks the boy's
+  a contemptible tool.</Verse>
+        </IntroVerses>
+        <OutroVerses>
+            <Verse>For one final time,
+ Jack confronts his aggressor:
+"It's clear that it's ME
+ who's to be Weardd's successor!"
+But! A tap from behind!
+And Jack whirls 'round to find...
+The outraged, undead corpse
+ of his former professor.</Verse>
+            <Verse>Weardd looms over Jack;
+  seams bursting with wrath.
+"It's YOU who's my killer,
+  you sociopath!"
+With a flick of his cane,
+He impales the boy's brain,
+And brings to an end
+  the undying bloodbath.</Verse>
+            <Verse>The Academy grounds
+  were rebuilt the next fall,
+And to this very day
+  it still stands, proud and tall.
+Jack was reanimated
+By the boy he so hated;
+The school now employs him
+  to sweep up its halls.</Verse>
+        </OutroVerses>
+    </IntroOutro>
+
     <Multiplayer>
         <!-- 1v1 settings -->
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">

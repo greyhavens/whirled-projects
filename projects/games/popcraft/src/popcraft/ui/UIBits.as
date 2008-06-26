@@ -28,7 +28,8 @@ public class UIBits
 
     public static function createTextPanel (text :String, textScale :Number = 1,
         maxWidth :int = 0, border :Boolean = true,
-        align :String = TextFormatAlign.CENTER) :Sprite
+        align :String = TextFormatAlign.CENTER,
+        textColor :uint = 0) :Sprite
     {
         var multiline :Boolean = (maxWidth > 0);
 
@@ -52,6 +53,7 @@ public class UIBits
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
+        format.color = textColor;
         tf.setTextFormat(format);
 
         panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;

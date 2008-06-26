@@ -58,6 +58,9 @@ public class Resources
     [Embed(source="../../rsrc/workshop.swf", mimeType="application/octet-stream")]
     public static const SWF_WORKSHOP :Class;
 
+    [Embed(source="../../rsrc/photo.swf", mimeType="application/octet-stream")]
+    public static const SWF_CLASSPHOTO :Class;
+
     [Embed(source="../../rsrc/iris.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITIRIS :Class;
 
