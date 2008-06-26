@@ -116,6 +116,7 @@ public class LevelIntroMode extends AppMode
             }
             this.showPage(
                 TYPE_PAGE,
+                "",
                 "The " + creatureData.displayName,
                 creatureData.introText,
                 creatureData.introText2,
@@ -128,6 +129,7 @@ public class LevelIntroMode extends AppMode
             var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
             this.showPage(
                 TYPE_PAGE,
+                "",
                 "Infusion: " + spellData.displayName,
                 spellData.introText,
                 spellData.introText,
@@ -145,6 +147,7 @@ public class LevelIntroMode extends AppMode
 
             this.showPage(
                 TYPE_NOTE,
+                "Chapter " + String(AppContext.levelMgr.curLevelIndex + 1),
                 AppContext.levelMgr.curLevelName,
                 GameContext.spLevel.introText,
                 levelDescription,
@@ -155,7 +158,7 @@ public class LevelIntroMode extends AppMode
         return true;
     }
 
-    protected function showPage (pageType :String, objectName :String, leftText :String, rightText :String, anim :MovieClip) :void
+    protected function showPage (pageType :String, leftTitle :String, rightTitle :String, leftText :String, rightText :String, anim :MovieClip) :void
     {
         var isNote :Boolean = pageType == "note";
 
@@ -187,10 +190,16 @@ public class LevelIntroMode extends AppMode
         _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
         TextField(leftPage["pagenum"]).text = String(_pageNum);
 
-        // object name
-        var titleText :TextField = (isNote ? rightNote["note_title"] : rightPage["title"]);
-        if (null != titleText) {
-            titleText.text = objectName;
+        // left title
+        var leftTitleText :TextField = (isNote ? leftNote["note_title"] : null);
+        if (null != leftTitleText) {
+            leftTitleText.text = leftTitle;
+        }
+
+        // right title
+        var rightTitleText :TextField = (isNote ? rightNote["note_title"] : rightPage["title"]);
+        if (null != rightTitleText) {
+            rightTitleText.text = rightTitle;
         }
 
         // intro texts

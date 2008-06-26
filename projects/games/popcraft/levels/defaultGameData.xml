@@ -299,20 +299,20 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
     </GameData>
 
     <LevelProgression>
-        <Level name="1. Reanimation 101"/>
-        <Level name="2. The Handy Man"/>
-        <Level name="3. The Sun Rises"/>
-        <Level name="4. A Boy's Best Friend"/>
-        <Level name="5. Street-Walker Swarm"/>
-        <Level name="6. Special Delivery"/>
-        <Level name="7. Abomination"/>
-        <Level name="8. Flesh and Blood"/>
-        <Level name="9. Fire Hazard"/>
-        <Level name="10. Center of Attention"/>
-        <Level name="11. Sidekick"/>
-        <Level name="12. Limited Resources"/>
-        <Level name="13. Infusion Infusion"/>
-        <Level name="14. Wherein All is Revealed..."/>
+        <Level name="Reanimation 101"/>
+        <Level name="The Handy Man"/>
+        <Level name="The Sun Rises"/>
+        <Level name="A Boy's Best Friend"/>
+        <Level name="Street-Walker Swarm"/>
+        <Level name="Special Delivery"/>
+        <Level name="Abomination"/>
+        <Level name="Flesh and Blood"/>
+        <Level name="Fire Hazard"/>
+        <Level name="Center of Attention"/>
+        <Level name="Sidekick"/>
+        <Level name="Limited Resources"/>
+        <Level name="Infusion Infusion"/>
+        <Level name="Wherein All is Revealed..."/>
     </LevelProgression>
 
     <Multiplayer>
