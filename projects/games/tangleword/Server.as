@@ -5,8 +5,9 @@ import flash.utils.Dictionary;
 
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
-import com.whirled.game.StateChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.OccupantChangedEvent;
+import com.whirled.game.StateChangedEvent;
 
 import com.whirled.contrib.Scoreboard;
 
@@ -39,6 +40,7 @@ public class Server
 
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameDidEnd);
+        _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
@@ -133,6 +135,20 @@ public class Server
         _gameCtrl.net.sendMessage(result, param, playerId);
     }
 
+    protected function handleReady (playerId :int) :void
+    {
+        trace("Handling ready for " +playerId);
+        var i :int = _unreadyPlayers.indexOf(playerId);
+
+        if (i != -1) {
+            _unreadyPlayers.splice(i, 1);
+
+            if (_unreadyPlayers.length == 0) {
+                nextRound();
+            }
+        }
+    }
+
     /** If this word was already claimed by the given player, returns true; otherwise false. */
     public function isWordClaimed (playerId :int, word :String) :Boolean
     {
@@ -154,9 +170,14 @@ public class Server
         _scoreboard.addToScore(playerId, score);
     }
 
+    protected function occupantLeft (event :OccupantChangedEvent) :void
+    {
+        // If the player leaves, mark them as ready for the next round
+        handleReady(event.occupantId);
+    }
+
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        trace("Server got message: " + event);
         if (event.name == SUBMIT) {
             var points :Array = _model.validate(event.value as String);
             var success :Function = function (word :String, isvalid :Boolean) :void {
@@ -174,16 +195,7 @@ public class Server
                 nextRound();
             }
         } else if (event.name == READY) {
-            var player :int = int(event.value);
-            var i :int = _unreadyPlayers.indexOf(player);
-
-            if (i != -1) {
-                _unreadyPlayers.splice(i, 1);
-
-                if (_unreadyPlayers.length == 0) {
-                    nextRound();
-                }
-            }
+            handleReady(int(event.value));
         }
     }
 

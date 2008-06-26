@@ -16,6 +16,7 @@ import com.whirled.game.MessageReceivedEvent;
 
 import com.whirled.contrib.Scoreboard;
 
+import com.whirled.game.OccupantChangedEvent;
 /**
  * Main game takes care of initializing network connections,
  * maintaining distributed data representation, and responding to events.
