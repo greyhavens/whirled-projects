@@ -27,13 +27,7 @@ public class PrologueMode extends AppMode
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
-        // fade everything out
         _prologueObj = new SimpleSceneObject(darknessShape);
-        _prologueObj.alpha = 0;
-        _prologueObj.addTask(new SerialTask(
-            new AlphaTask(1, SCREEN_FADE_TIME),
-            new FunctionTask(startPrologue)));
-
         this.addObject(_prologueObj, this.modeSprite);
 
         // if the player clicks on the screen, they can advance things faster, but only
@@ -42,17 +36,19 @@ public class PrologueMode extends AppMode
         this.modeSprite.addEventListener(MouseEvent.CLICK, onScreenClicked);
 
         // skip button, to skip the entire prologue sequence
-        var skipButton :SimpleButton = UIBits.createButton("Skip", 1.2);
-        skipButton.x = Constants.SCREEN_SIZE.x - skipButton.width - 15;
-        skipButton.y = Constants.SCREEN_SIZE.y - skipButton.height - 15;
-        skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
+        _skipButton = UIBits.createButton("Skip", 1.2);
+        _skipButton.x = Constants.SCREEN_SIZE.x - _skipButton.width - 15;
+        _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
+        _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
-        this.modeSprite.addChild(skipButton);
+        this.modeSprite.addChild(_skipButton);
+
+        this.startPrologue();
     }
 
     protected function onSkipClicked (...ignored) :void
     {
-        AppContext.mainLoop.popMode();
+        this.endPrologue();
     }
 
     protected function onScreenClicked (...ignored) :void
@@ -83,6 +79,8 @@ public class PrologueMode extends AppMode
     {
         _prologueEnding = true;
 
+        _skipButton.parent.removeChild(_skipButton);
+
         if (null != _charObj) {
             _charObj.destroySelf();
         }
@@ -91,7 +89,7 @@ public class PrologueMode extends AppMode
         _prologueObj.removeAllTasks();
         _prologueObj.addTask(new SerialTask(
             new AlphaTask(0, SCREEN_FADE_TIME),
-            new FunctionTask(AppContext.mainLoop.popMode)));
+            new FunctionTask(function () :void { AppContext.mainLoop.unwindToMode(new LevelSelectMode()); })));
     }
 
     protected function showNextChar () :void
@@ -117,7 +115,6 @@ public class PrologueMode extends AppMode
             portrait.x = -portrait.width * 0.5;
             sprite.addChild(portrait);
         }
-
         verseSprite.x = -verseSprite.width * 0.5;
         verseSprite.y = sprite.height + 5;
         sprite.addChild(verseSprite);
@@ -145,6 +142,7 @@ public class PrologueMode extends AppMode
     protected var _charObj :SceneObject;
     protected var _charIndex :int;
     protected var _prologueEnding :Boolean;
+    protected var _skipButton :SimpleButton;
 
     protected static const SCREEN_FADE_TIME :Number = 1.5;
     protected static const CHAR_FADE_TIME :Number = 1;

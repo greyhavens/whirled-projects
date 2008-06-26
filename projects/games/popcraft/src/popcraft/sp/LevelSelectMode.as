@@ -55,7 +55,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = (Constants.SCREEN_SIZE.x * 0.5) - (button.width * 0.5);
         button.y = yLoc;
         button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { AppContext.mainLoop.pushMode(new PrologueMode()); });
+            function (...ignored) :void { AppContext.mainLoop.changeMode(new PrologueMode()); });
         this.modeSprite.addChild(button);
         yLoc += button.height + 3;
 
