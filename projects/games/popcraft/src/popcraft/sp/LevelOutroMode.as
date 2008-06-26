@@ -9,8 +9,6 @@ import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
@@ -105,25 +103,16 @@ public class LevelOutroMode extends AppMode
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
-        var bgSprite :Sprite = new Sprite();
-        g = bgSprite.graphics;
-        g.beginFill(_success ? 0x76FF86 : 0xFD5CFF);
-        g.drawRect(0, 0, 250, 300);
-        g.endFill();
+        var bgSprite :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
 
-        bgSprite.x = (Constants.SCREEN_SIZE.x * 0.5) - (bgSprite.width * 0.5);
-        bgSprite.y = (Constants.SCREEN_SIZE.y * 0.5) - (bgSprite.height * 0.5);
+        bgSprite.x = (Constants.SCREEN_SIZE.x * 0.5) - (WIDTH * 0.5);
+        bgSprite.y = (Constants.SCREEN_SIZE.y * 0.5) - (HEIGHT * 0.5);
 
         this.modeSprite.addChild(bgSprite);
 
         // win/lose text
-        var tfName :TextField = new TextField();
-        tfName.selectable = false;
-        tfName.autoSize = TextFieldAutoSize.CENTER;
-        tfName.scaleX = 2;
-        tfName.scaleY = 2;
-        tfName.text = (_success ? "Victory!" : "Defeated");
-        tfName.x = (bgSprite.width * 0.5) - (tfName.width * 0.5);
+        var tfName :Sprite = UIBits.createTextPanel(_success ? "Victory!" : "Defeated", 2);
+        tfName.x = (WIDTH * 0.5) - (tfName.width * 0.5);
         tfName.y = 30;
 
         bgSprite.addChild(tfName);
@@ -136,16 +125,10 @@ public class LevelOutroMode extends AppMode
             message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
         }
 
-        message += "Your progress has been saved. Continue playing?";
+        message += "Your progress has been saved.\nContinue playing?";
 
-        var tfMessage :TextField = new TextField();
-        tfMessage.selectable = false;
-        tfMessage.wordWrap = true;
-        tfMessage.multiline = true;
-        tfMessage.width = 250 - 24;
-        tfMessage.autoSize = TextFieldAutoSize.LEFT;
-        tfMessage.text = message;
-        tfMessage.x = 12;
+        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 24, false);
+        tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
         tfMessage.y = tfName.y + tfName.height + 3;
 
         bgSprite.addChild(tfMessage);
@@ -154,30 +137,30 @@ public class LevelOutroMode extends AppMode
         var button :SimpleButton;
 
         if (_success) {
-            button = UIBits.createButton("Next Level");
+            button = UIBits.createButton("Next Level", 1.5);
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.incrementCurLevelIndex();
                     AppContext.levelMgr.playLevel();
                 });
         } else {
-            button = UIBits.createButton("Retry");
+            button = UIBits.createButton("Retry", 1.5);
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.playLevel();
                 });
         }
 
-        button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
+        button.x = (WIDTH * 0.5) - (button.width * 0.5);
         button.y = 200;
         bgSprite.addChild(button);
 
-        button = UIBits.createButton("Main Menu");
+        button = UIBits.createButton("Level Select", 1.5);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
             });
-        button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
+        button.x = (WIDTH * 0.5) - (button.width * 0.5);
         button.y = 250;
         bgSprite.addChild(button);
     }
@@ -194,6 +177,9 @@ public class LevelOutroMode extends AppMode
     protected var _playedSound :Boolean;
 
     protected static var log :Log = Log.getLog(LevelOutroMode);
+
+    protected static const WIDTH :Number = 250;
+    protected static const HEIGHT :Number = 300;
 
 }
 

@@ -24,7 +24,7 @@ public class UIBits
         return sprite;
     }
 
-    public static function createTextPanel (text :String, textScale :Number = 1, maxWidth :int = 0) :Sprite
+    public static function createTextPanel (text :String, textScale :Number = 1, maxWidth :int = 0, border :Boolean = true) :Sprite
     {
         var multiline :Boolean = (maxWidth > 0);
 
@@ -38,22 +38,25 @@ public class UIBits
 
         tf.multiline = multiline;
         tf.wordWrap = multiline;
+        if (multiline) {
+            tf.width = maxWidth;
+        }
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.scaleX = textScale;
         tf.scaleY = textScale;
         tf.text = text;
 
-        if (multiline && tf.width > maxWidth) {
-            tf.width = maxWidth;
-        }
-
-        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width; //((tf.textWidth + (PANEL_TEXT_H_BORDER)) * textScale) / panel.width;
-        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height; //((tf.textHeight + (PANEL_TEXT_V_BORDER)) * textScale) / panel.height;
+        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
+        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
 
         panel.x = 2;
         panel.y = 0;
         tf.x = (panel.width * 0.5) - (tf.width * 0.5);
         tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+
+        if (!border) {
+            sprite.removeChild(panel);
+        }
 
         return sprite;
     }
