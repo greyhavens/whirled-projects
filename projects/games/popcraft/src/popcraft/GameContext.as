@@ -39,6 +39,7 @@ public class GameContext
     public static var dashboard :DashboardView;
     public static var puzzleBoard :PuzzleBoard;
     public static var forceParticleContainer :ForceParticleContainer;
+    public static var unitFactory :UnitFactory;
 
     public static var overlayLayer :Sprite;
     public static var dashboardLayer :Sprite;

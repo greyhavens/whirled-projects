@@ -349,6 +349,8 @@ public class GameMode extends AppMode
 
     protected function setupBattle () :void
     {
+        GameContext.unitFactory = new UnitFactory();
+
         GameContext.forceParticleContainer = new ForceParticleContainer(
             GameContext.battlefieldWidth,
             GameContext.battlefieldHeight);
@@ -382,7 +384,7 @@ public class GameMode extends AppMode
             var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
             var baseLoc :Vector2 = playerInfo.baseLoc;
 
-            var base :PlayerBaseUnit = UnitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
+            var base :PlayerBaseUnit = GameContext.unitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
             base.isInvincible = invincible;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
@@ -404,6 +406,8 @@ public class GameMode extends AppMode
         }
 
         GameContext.netObjects.addObject(new SpellDropTimer());
+
+        _trophyWatcher = new TrophyWatcher();
     }
 
     override public function onKeyDown (keyCode :uint) :void
@@ -680,7 +684,7 @@ public class GameMode extends AppMode
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            UnitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerIndex);
+            GameContext.unitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerIndex);
             var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(createUnitMsg.playerIndex);
             if (null != baseView) {
                 baseView.unitCreated();
@@ -853,6 +857,8 @@ public class GameMode extends AppMode
     protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
     protected var _lastCachedChecksumTick :int;
     protected var _syncError :Boolean;
+
+    protected var _trophyWatcher :TrophyWatcher;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

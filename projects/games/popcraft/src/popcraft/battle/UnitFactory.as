@@ -3,12 +3,14 @@ package popcraft.battle {
 import com.threerings.util.Assert;
 import com.whirled.contrib.simplegame.audio.*;
 
+import flash.events.EventDispatcher;
+
 import popcraft.*;
 import popcraft.battle.view.*;
 
-public class UnitFactory
+public class UnitFactory extends EventDispatcher
 {
-    public static function createCreature (unitType :int, owningPlayerIndex :int) :void
+    public function createCreature (unitType :int, owningPlayerIndex :int) :void
     {
         // sanity check. dead players create no monsters.
         if (!PlayerInfo(GameContext.playerInfos[owningPlayerIndex]).isAlive) {
@@ -66,9 +68,11 @@ public class UnitFactory
 
         // play a sound
         GameContext.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
+
+        this.dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
     }
 
-    public static function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
+    public function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :PlayerBaseUnit
     {
         var base :PlayerBaseUnit = new PlayerBaseUnit(owningPlayerIndex, maxHealthOverride, startingHealthOverride);
 
@@ -76,6 +80,8 @@ public class UnitFactory
 
         var baseView :PlayerBaseUnitView = new PlayerBaseUnitView(base);
         GameContext.gameMode.addObject(baseView, GameContext.battleBoardView.unitViewParent);
+
+        this.dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_BASE, owningPlayerIndex));
 
         return base;
     }

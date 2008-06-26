@@ -93,6 +93,14 @@ public class TrophyManager
     // Delivery Boy damages a base at sunrise
     public static const TROPHY_RUSHDELIVERY :String = "RushDelivery";
 
+    // Get 3 bloodlusted, rigor-mortised Behemoths on the battlefield simultaneously
+    public static const TROPHY_DOOMSDAY :String = "Doomsday";
+    public static const DOOMSDAY_BEHEMOTHS :int = 3;
+
+    // Get 10 Delivery Boys on the battlefield simultaneously
+    public static const TROPHY_CRYHAVOC :String = "CryHavoc";
+    public static const CRYHAVOC_SAPPERS :int = 10;
+
     protected static var log :Log = Log.getLog(TrophyManager);
 }
 
