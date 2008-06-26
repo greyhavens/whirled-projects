@@ -9,7 +9,7 @@ import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.resource.SoundResource;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
 
@@ -237,20 +237,23 @@ public class GameMode extends AppMode
     {
         GameContext.playerInfos = [];
 
+        var level :LevelData = GameContext.spLevel;
+
         // in single player levels, base location are arranged in order of player id
         var baseLocs :Array = GameContext.mapSettings.baseLocs;
 
         // Create the local player (always playerIndex=0, team=0)
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(0, 0, baseLocs[0], 1, GameContext.spLevel.playerName);
+        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
+            0, 0, baseLocs[0], 1, level.playerName, level.playerHeadshot);
 
         // grant the player some starting resources
-        var initialResources :Array = GameContext.spLevel.initialResources;
+        var initialResources :Array = level.initialResources;
         for (var resType :int = 0; resType < initialResources.length; ++resType) {
             localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
         }
 
         // ...and some starting spells
-        var initialSpells :Array = GameContext.spLevel.initialSpells;
+        var initialSpells :Array = level.initialSpells;
         for (var spellType :int = 0; spellType < initialSpells.length; ++spellType) {
             localPlayerInfo.addSpell(spellType, int(initialSpells[spellType]));
         }
@@ -258,10 +261,11 @@ public class GameMode extends AppMode
         GameContext.playerInfos.push(localPlayerInfo);
 
         // create computer players
-        var numComputers :int = GameContext.spLevel.computers.length;
+        var numComputers :int = level.computers.length;
         for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
-            var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerIndex - 1];
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName);
+            var cpData :ComputerPlayerData = level.computers[playerIndex - 1];
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
+                playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName, cpData.playerHeadshot);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object

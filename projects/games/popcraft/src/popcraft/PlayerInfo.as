@@ -14,7 +14,8 @@ import popcraft.battle.PlayerBaseUnit;
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
+    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2,
+        handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
         _teamId = teamId;

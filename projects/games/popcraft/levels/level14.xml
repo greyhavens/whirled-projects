@@ -18,6 +18,7 @@
 - You will create two creatures for every one you purchase.
 - A solar eclipse will destroy your existing creatures, but you can create more immediately."
         playerName="Jack"
+        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -61,6 +62,7 @@
 
         <Computer
             playerName="Ralph"
+            playerHeadshotName="portrait_ralph"
             baseHealth="450"
             team="1">
 
@@ -129,6 +131,7 @@
 
         <Computer
             playerName="Prof. Weardd"
+            playerHeadshotName="portrait_weardd"
             baseHealth="1"
             invincible="true"
             team="1">

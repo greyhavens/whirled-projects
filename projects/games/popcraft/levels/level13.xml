@@ -8,6 +8,7 @@
 "- Infusions are appearing on the battlefield in large numbers.
 - Create Ladyfingers to snatch them before Ralph does!"
         playerName="Jack"
+        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -46,7 +47,8 @@
         </AvailableSpells>
 
         <Computer
-            playerName="Ralph"
+            playerName="Ivy"
+            playerHeadshotName="portrait_ivy"
             baseHealth="150"
             team="1">
 

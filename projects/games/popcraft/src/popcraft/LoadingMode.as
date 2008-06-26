@@ -70,6 +70,12 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "infusions", { embeddedClass: Resources.SWF_INFUSIONS });
         rm.pendResourceLoad("swf", "workshop", { embeddedClass: Resources.SWF_WORKSHOP });
 
+        rm.pendResourceLoad("image", "portrait_iris", { embeddedClass: Resources.IMG_PORTRAITIRIS });
+        rm.pendResourceLoad("image", "portrait_ivy", { embeddedClass: Resources.IMG_PORTRAITIVY });
+        rm.pendResourceLoad("image", "portrait_jack", { embeddedClass: Resources.IMG_PORTRAITJACK });
+        rm.pendResourceLoad("image", "portrait_pigsley", { embeddedClass: Resources.IMG_PORTRAITPIGSLEY });
+        rm.pendResourceLoad("image", "portrait_ralph", { embeddedClass: Resources.IMG_PORTRAITRALPH });
+
         // sfx
         rm.pendResourceLoad("sound", "mus_night", { embeddedClass: Resources.MUSIC_NIGHT, type: "music", volume: 0.7, priority: 10 });
         rm.pendResourceLoad("sound", "mus_day", { embeddedClass: Resources.MUSIC_DAY, type: "music", volume: 0.7, priority: 10 });

@@ -5,6 +5,7 @@
         expertCompletionBonus="2500"
         introText="This is not a real level!"
         playerName="Jack"
+        playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <GameDataOverride
@@ -36,7 +37,7 @@
             <Spell type="shuffle"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" baseHealth="500" team="1"/>
+        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="500" team="1"/>
 
     </Level>
 

@@ -1,6 +1,9 @@
 package popcraft.data {
 
 import com.threerings.util.ArrayUtil;
+import com.whirled.contrib.simplegame.resource.ImageResource;
+
+import flash.display.DisplayObject;
 
 import popcraft.*;
 import popcraft.util.*;
@@ -17,6 +20,7 @@ public class LevelData
     public var newSpellType :int;
 
     public var playerName :String;
+    public var playerHeadshotName :String;
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
 
@@ -30,6 +34,11 @@ public class LevelData
     public var mapSettings :MapSettingsData;
 
     public var gameDataOverride :GameData;
+
+    public function get playerHeadshot () :DisplayObject
+    {
+        return ImageResource.instantiateBitmap(playerHeadshotName);
+    }
 
     public function isAvailableUnit (unitType :int) :Boolean
     {
@@ -61,6 +70,7 @@ public class LevelData
         level.newSpellType = XmlReader.getAttributeAsEnum(xml, "newSpellType", Constants.SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
+        level.playerHeadshotName = XmlReader.getAttributeAsString(xml, "playerHeadshotName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
 

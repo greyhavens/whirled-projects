@@ -3,6 +3,8 @@ package popcraft {
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 
+import flash.display.DisplayObject;
+
 import popcraft.battle.*;
 import popcraft.data.*;
 import popcraft.ui.GotSpellEvent;
@@ -12,9 +14,10 @@ import popcraft.ui.GotSpellEvent;
  */
 public class LocalPlayerInfo extends PlayerInfo
 {
-    public function LocalPlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, handicap :Number = 1, playerName :String = null)
+    public function LocalPlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2,
+        handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
     {
-        super(playerIndex, teamId, baseLoc, handicap, playerName);
+        super(playerIndex, teamId, baseLoc, handicap, playerName, playerHeadshot);
 
         _resources = new Array(Constants.RESOURCE_NAMES.length);
         for (var i :int = 0; i < _resources.length; ++i) {

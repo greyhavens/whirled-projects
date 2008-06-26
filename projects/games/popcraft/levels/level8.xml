@@ -15,6 +15,7 @@ He knows that, somehow,
  &quot;we're not easily swindled.&quot;"
         introText2="You've stolen the plans for the Flesh Behemoth and can now create your own. The Behemoth can decimate a workshop, but it will be taken down quickly by a swarm of enemies. Use Street-Walkers to run interference for the Behemoth and help it break through the enemy's defenses."
         playerName="Jack"
+        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -40,7 +41,7 @@ He knows that, somehow,
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" baseHealth="150" team="1">
+        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="150" team="1">
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

@@ -5,6 +5,7 @@
         expertCompletionBonus="2000"
         introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
         playerName="Jack"
+        playerHeadshotName="portrait_jack"
         playerBaseHealth="150"
         playerBaseStartHealth="50">
 
@@ -34,7 +35,7 @@
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" baseHealth="150" team="1">
+        <Computer playerName="Ivy" playerHeadshotName="portrait_ivy" baseHealth="150" team="1">
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

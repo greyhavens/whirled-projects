@@ -3,13 +3,16 @@ package popcraft.sp {
 import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 
+import flash.display.DisplayObject;
+
 import popcraft.*;
 
 public class ComputerPlayerInfo extends PlayerInfo
 {
-    public function ComputerPlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2, playerName :String)
+    public function ComputerPlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2,
+        playerName :String, playerHeadshot :DisplayObject = null)
     {
-        super(playerIndex, teamId, baseLoc, 1, playerName);
+        super(playerIndex, teamId, baseLoc, 1, playerName, playerHeadshot);
 
         _creatureSpells = new Array(Constants.CREATURE_SPELL_TYPE__LIMIT);
         for (var i :int = 0; i < _creatureSpells.length; ++i) {

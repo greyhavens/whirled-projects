@@ -58,6 +58,21 @@ public class Resources
     [Embed(source="../../rsrc/workshop.swf", mimeType="application/octet-stream")]
     public static const SWF_WORKSHOP :Class;
 
+    [Embed(source="../../rsrc/iris.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITIRIS :Class;
+
+    [Embed(source="../../rsrc/ivy.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITIVY :Class;
+
+    [Embed(source="../../rsrc/jack.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITJACK :Class;
+
+    [Embed(source="../../rsrc/pigsley.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITPIGSLEY :Class;
+
+    [Embed(source="../../rsrc/ralph.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITRALPH :Class;
+
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
     public static const MUSIC_NIGHT :Class;
