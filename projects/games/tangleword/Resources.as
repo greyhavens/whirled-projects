@@ -17,6 +17,8 @@ public class Resources
     public static const TEXT_COLOR_NORMAL :uint = 0x77aabb;
     public static const TEXT_COLOR_PULSE :uint = 0x34e2e2;
     public static const PULSE_DURATION :Number = 0.2;
+
+    public static const COUNTDOWN_COLOR :uint = 0xaa6666;
     // FORMATS
 
     /** Makes a default format instance. */
@@ -71,7 +73,7 @@ public class Resources
     {
         var format :TextFormat = makeDefaultFormat();
         format.align = TextFormatAlign.CENTER;
-        format.color = uint(0xaa6666);
+        format.color = COUNTDOWN_COLOR;
         format.size = 18;
         return format;
     }

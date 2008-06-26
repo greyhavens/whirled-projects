@@ -14,8 +14,7 @@ public class Properties
     public static const LOCALE :String = "en-us";
 
     /** Default round length, in seconds */
-    //public static const ROUND_LENGTH :int = 120;
-    public static const ROUND_LENGTH :int = 20;
+    public static const ROUND_LENGTH :int = 120;
 
     /** Default pause length */
     public static const PAUSE_LENGTH :int = 60;

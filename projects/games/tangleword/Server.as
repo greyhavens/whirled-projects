@@ -31,8 +31,6 @@ public class Server
 
     public function Server ()
     {
-        trace("Server starting");
-
         _gameCtrl = new GameControl(new DisplayObject());
 
         _model = new Model(_gameCtrl);
@@ -62,7 +60,6 @@ public class Server
         _gameCtrl.services.startTicker(RESTART, 1000);
 
         _unreadyPlayers = _scoreboard.getPlayerIds();
-        trace("Game over: Waiting on " + _unreadyPlayers);
     }
 
     protected function endGame () :void
@@ -126,8 +123,6 @@ public class Server
 
             addWord(playerId, word, score);
 
-            trace(word + ": "+_gameCtrl.net.get(WORD_NAMESPACE+word));
-
         } else {
             result = RESULT_DUPLICATE;
         }
@@ -137,7 +132,6 @@ public class Server
 
     protected function handleReady (playerId :int) :void
     {
-        trace("Handling ready for " +playerId);
         var i :int = _unreadyPlayers.indexOf(playerId);
 
         if (i != -1) {

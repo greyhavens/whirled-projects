@@ -205,31 +205,34 @@ public class Display extends Sprite
         _logger.log("Domination Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
     }
 
+    protected static function pulsate (tf :TextField, from :uint, to :uint, duration :Number) :void
+    {
+        // Because Tweener doesn't seem to like doing uint color tweens on arbitrary properties:
+        // We have to fudge it by having this update listener do the actual color change
+        var colorTween :Function = function () :void {
+            tf.textColor = ColorUtil.blend(to, from, this.prog);
+        };
+
+        // Fade to pulse color
+        Tweener.addTween({prog: 0}, { prog: 1, time: duration, onUpdate: colorTween,
+                transition: "easeOutExpo" });
+
+        // Fade back to normal
+        Tweener.addTween({prog: 1}, { prog: 0, delay: duration,
+                time: duration, onUpdate: colorTween,
+                transition: "easeInExpo" });
+    }
+
     public function logSuccess (word :String, score :Number, bonus :Number, points :Array) :void
     {
         var msg :String = word + " (" + score + ")";
 
         _logger.logListItem(msg, (bonus > 0 ? Logger.FOUND_WORD_FIRST : Logger.FOUND_WORD));
 
-        // Because Tweener doesn't seem to like doing uint color tweens on arbitrary properties:
-        // We have to fudge it by having this update listener do the actual color change
-        var colorTween :Function = function (label :TextField, from :uint, to :uint) :void {
-            label.textColor = ColorUtil.blend(to, from, this.prog);
-        };
-
+        // Visibly pulse the word on the board
         for each (var p :Point in points) {
-            var label :TextField = _letters[p.x][p.y]._label;
-
-            // Fade to pulse color
-            Tweener.addTween({prog: 0}, { prog: 1, time: Resources.PULSE_DURATION, onUpdate: colorTween,
-                    transition: "easeOutExpo",
-                    onUpdateParams: [label, Resources.TEXT_COLOR_NORMAL, Resources.TEXT_COLOR_PULSE]});
-
-            // Fade back to normal
-            Tweener.addTween({prog: 0}, { prog: 1, delay: Resources.PULSE_DURATION,
-                    time: Resources.PULSE_DURATION, onUpdate: colorTween,
-                    transition: "easeInExpo",
-                    onUpdateParams: [label, Resources.TEXT_COLOR_PULSE, Resources.TEXT_COLOR_NORMAL]});
+            pulsate(_letters[p.x][p.y]._label,
+                    Resources.TEXT_COLOR_NORMAL, Resources.TEXT_COLOR_PULSE, Resources.PULSE_DURATION);
         }
     }
 
@@ -293,6 +296,10 @@ public class Display extends Sprite
         var ss :String = StringUtil.prepad(seconds.toString(), 2, "0");
         _timerbox.text = mm + ":" + ss;
 
+        // Pulse every 30 seconds, and every second at 10 seconds left
+        if (seconds == 30 || (minutes == 0 && seconds <= 10)) {
+            pulsate(_timerbox, Resources.COUNTDOWN_COLOR, 0xffa500, 0.2);
+        }
         // check if we need to start hiding the inter-round display
         //if (! getEnableState() && int(remainingsecs) == Stats.HIDE_DELAY) {
         //    _stats.hide();
