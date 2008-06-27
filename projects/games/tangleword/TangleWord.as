@@ -128,7 +128,7 @@ public class TangleWord extends Sprite
             // TODO: Move trophy handling to agent
             _trophies.handleAddWord(word, score);
         } else if (Server.BONUS == event.name) {
-            _display.logBonus(event.value as Number);
+            _display.logBonus(event.value as int);
 
         } else if (Server.RESULT_UNRECOGNIZED == event.name) {
             _display.logInvalidWord(event.value as String);

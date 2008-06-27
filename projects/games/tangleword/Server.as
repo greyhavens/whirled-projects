@@ -88,7 +88,7 @@ public class Server
             }
         }
 
-        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.PROPORTIONAL);
+        _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
     }
 
     protected function nextRound () :void
