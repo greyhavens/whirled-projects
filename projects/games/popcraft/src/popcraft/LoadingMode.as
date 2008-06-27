@@ -84,7 +84,7 @@ public class LoadingMode extends AppMode
 
         rm.pendResourceLoad("sound", "sfx_introscreen", { embeddedClass: Resources.SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
         rm.pendResourceLoad("sound", "sfx_pageturn", { embeddedClass: Resources.SOUND_PAGETURN, priority: 9 });
-        rm.pendResourceLoad("sound", "sfx_bookclose", { embeddedClass: Resources.SOUND_BOOKCLOSE, priority: 9 });
+        rm.pendResourceLoad("sound", "sfx_bookopenclose", { embeddedClass: Resources.SOUND_BOOKOPENCLOSE, priority: 9 });
 
         rm.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: Resources.SOUND_GRUNT, priority: 2 });
         rm.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: Resources.SOUND_HEAVY, priority: 2 });

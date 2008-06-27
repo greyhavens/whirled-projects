@@ -90,7 +90,7 @@ public class Resources
     public static const SOUND_PAGETURN :Class;
 
     [Embed(source="../../rsrc/audio/book_pageturn2.mp3")]
-    public static const SOUND_BOOKCLOSE :Class;
+    public static const SOUND_BOOKOPENCLOSE :Class;
 
     [Embed(source="../../rsrc/audio/base_destroy.mp3")]
     public static const SOUND_BASEDESTROY :Class;

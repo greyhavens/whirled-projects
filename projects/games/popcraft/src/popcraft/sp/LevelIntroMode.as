@@ -44,6 +44,7 @@ public class LevelIntroMode extends AppMode
         manualFrontTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
         manualFrontTask.addTask(new GoToFrameTask("turn"));
         manualFrontTask.addTask(new WaitForFrameTask("edge"));
+        manualFrontTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
         manualFrontTask.addTask(new FunctionTask(swapInManual));
         manualFrontTask.addTask(new SelfDestructTask());
 
@@ -228,7 +229,7 @@ public class LevelIntroMode extends AppMode
             movieTask.addTask(new FunctionTask(doNextPhase));
         } else {
             // animate the book closing and pop the mode
-            movieTask.addTask(new PlaySoundTask("sfx_bookclose"));
+            movieTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
             movieTask.addTask(new GoToFrameTask("close"));
             movieTask.addTask(new WaitForFrameTask("closed"));
             movieTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
