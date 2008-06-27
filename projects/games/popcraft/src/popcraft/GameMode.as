@@ -416,7 +416,11 @@ public class GameMode extends TransitionMode
 
     override public function onKeyDown (keyCode :uint) :void
     {
-       switch (keyCode) {
+        if (_gameOver) {
+            return;
+        }
+
+        switch (keyCode) {
         case KeyboardCodes.NUMBER_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
@@ -613,17 +617,19 @@ public class GameMode extends TransitionMode
             GameContext.playerStats.totalGameTime = _gameTime;
             GameContext.winningTeamId = liveTeamId;
 
-            // show the appropriate game over screen
+            // show the appropriate outro screen
+            var nextMode :AppMode;
             if (GameContext.isMultiplayer) {
-                MainLoop.instance.changeMode(new MultiplayerGameOverMode());
+                nextMode = new MultiplayerGameOverMode();
+            } else if (AppContext.levelMgr.isLastLevel && liveTeamId == GameContext.localPlayerInfo.teamId) {
+                nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO);
             } else {
-                // if this is the last level, show the epilogue
-                if (AppContext.levelMgr.isLastLevel) {
-                    this.fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO), FADE_OUT_TIME);
-                } else {
-                    MainLoop.instance.pushMode(new LevelOutroMode());
-                }
+                nextMode = new LevelOutroMode();
             }
+
+            this.fadeOutToMode(nextMode, FADE_OUT_TIME);
+            GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
+            GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
         }
     }
 
