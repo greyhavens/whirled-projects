@@ -48,9 +48,10 @@ public class UIBits
         tf.scaleX = textScale;
         tf.scaleY = textScale;
         if (wordWrap) {
-            tf.width = maxWidth / textScale;
+            tf.width = maxWidth;
         }
         tf.text = text;
+        tf.width = tf.textWidth * textScale;
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
