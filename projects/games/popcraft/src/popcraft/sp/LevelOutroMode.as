@@ -22,7 +22,7 @@ public class LevelOutroMode extends AppMode
 
     protected function saveProgress () :void
     {
-        var levelScore :int = LevelScoreInfo.levelScore;
+        var levelScore :int = LevelScoreInfo.totalScore;
         var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
 
         if (AppContext.gameCtrl.isConnected()) {
@@ -108,7 +108,7 @@ public class LevelOutroMode extends AppMode
             if (LevelScoreInfo.expertCompletionScore > 0) {
                 message += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
             }
-            message += "TOTAL SCORE: " + LevelScoreInfo.levelScore + "\n\n";
+            message += "TOTAL SCORE: " + LevelScoreInfo.totalScore + "\n\n";
 
         } else {
         // if the player lost, show a hint
@@ -193,8 +193,12 @@ class LevelScoreInfo
 
     public static function get resourcesScore () :int
     {
-        return Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
-                GameContext.gameData.pointsPerResource;
+        var score :int = Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) * GameContext.gameData.pointsPerResource;
+        if (GameContext.spLevel.maxResourcesScore >= 0) {
+            score = Math.min(score, GameContext.spLevel.maxResourcesScore);
+        }
+
+        return score;
     }
 
     public static function get completionDays () :int
@@ -207,13 +211,8 @@ class LevelScoreInfo
         return GameContext.spLevel.levelCompletionBonus;
     }
 
-    public static function get levelScore () :int
+    public static function get totalScore () :int
     {
-        var score :int = expertCompletionScore + resourcesScore + completionBonus;
-        if (GameContext.spLevel.maxScore >= 0) {
-            score = Math.min(score, GameContext.spLevel.maxScore);
-        }
-
-        return score;
+        return expertCompletionScore + resourcesScore + completionBonus;
     }
 }

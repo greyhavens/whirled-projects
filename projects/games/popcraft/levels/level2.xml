@@ -3,7 +3,7 @@
         expertCompletionDays="1"
         levelCompletionBonus="500"
         expertCompletionBonus="0"
-        maxScore="1000"
+        maxResourcesScore="500"
         newCreatureType="heavy"
         introText=
 "How tragic! Weardd's body:

@@ -45,7 +45,7 @@ public class PauseMode extends AppMode
         bgSprite.addChild(button);
 
         // Level Select button
-        var button :SimpleButton = UIBits.createButton("Level Select", 1.5);
+        var button :SimpleButton = UIBits.createButton("End Game", 1.5);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
