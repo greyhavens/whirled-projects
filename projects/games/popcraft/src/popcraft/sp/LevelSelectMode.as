@@ -14,6 +14,8 @@ public class LevelSelectMode extends SplashScreenModeBase
 {
     override public function update (dt :Number) :void
     {
+        super.update(dt);
+
         if (!_createdLayout && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
             this.createLayout();
         }
@@ -22,6 +24,8 @@ public class LevelSelectMode extends SplashScreenModeBase
     override protected function setup () :void
     {
         super.setup();
+
+        this.fadeIn();
 
         if (AppContext.levelMgr.levelRecordsLoaded) {
             this.createLayout();
@@ -42,7 +46,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
         tf.y = 10;
 
-        this.modeSprite.addChild(tf);
+        _modeLayer.addChild(tf);
 
         var levelNames :Array = AppContext.levelProgression.levelNames;
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
@@ -70,7 +74,7 @@ public class LevelSelectMode extends SplashScreenModeBase
             button = this.createLevelSelectButton(i, levelName);
             button.x = (Constants.SCREEN_SIZE.x * 0.5) - (button.width * 0.5);
             button.y = yLoc;
-            this.modeSprite.addChild(button);
+            _modeLayer.addChild(button);
 
             yLoc += button.height + 3;
         }
@@ -84,7 +88,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = 10;
         button.y = 450;
 
-        this.modeSprite.addChild(button);
+        _modeLayer.addChild(button);
 
         // test level button
         button = UIBits.createButton("Jon's stress test");
@@ -92,7 +96,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = 100;
         button.y = 450;
 
-        this.modeSprite.addChild(button);
+        _modeLayer.addChild(button);
 
         // unlock all levels button
         button = UIBits.createButton("Unlock levels");
@@ -105,17 +109,17 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = 10;
         button.y = 50;
         button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { AppContext.mainLoop.changeMode(new PrologueMode()); });
-        this.modeSprite.addChild(button);
+            function (...ignored) :void { fadeOutToMode(new PrologueMode()); });
+        _modeLayer.addChild(button);
 
         button = UIBits.createButton("Epilogue");
         button.x = 10
         button.y = 90;
         button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { AppContext.mainLoop.changeMode(new EpilogueMode()); });
-        this.modeSprite.addChild(button);
+            function (...ignored) :void { fadeOutToMode(new EpilogueMode()); });
+        _modeLayer.addChild(button);
 
-        this.modeSprite.addChild(button);
+        _modeLayer.addChild(button);
     }
 
     protected function unlockLevels () :void

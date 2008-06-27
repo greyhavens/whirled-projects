@@ -1,6 +1,5 @@
 package popcraft.sp {
 
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -9,6 +8,7 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -17,33 +17,38 @@ import flash.text.TextFormatAlign;
 import popcraft.*;
 import popcraft.ui.UIBits;
 
-public class PrologueMode extends AppMode
+public class PrologueMode extends TransitionMode
 {
     override protected function setup () :void
     {
-        var darknessShape :Sprite = new Sprite();
-        var g :Graphics = darknessShape.graphics;
+        var bg :Shape = new Shape();
+        var g :Graphics = bg.graphics;
         g.beginFill(0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
-
-        _prologueObj = new SimpleSceneObject(darknessShape);
-        this.addObject(_prologueObj, this.modeSprite);
+        _modeLayer.addChild(bg);
 
         // if the player clicks on the screen, they can advance things faster, but only
         // after a little bit of time has elapsed
         this.addObject(new SimpleTimer(IGNORE_CLICK_TIME, null, false, IGNORE_CLICK_TIMER_NAME));
         this.modeSprite.addEventListener(MouseEvent.CLICK, onScreenClicked);
 
-        // skip button, to skip the entire prologue sequence
-        _skipButton = UIBits.createButton("Skip", 1.2);
+        // ok button, to end the sequence
+        _skipButton = UIBits.createButton("OK", 1.2);
         _skipButton.x = Constants.SCREEN_SIZE.x - _skipButton.width - 15;
         _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
         _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
-        this.modeSprite.addChild(_skipButton);
+        _modeLayer.addChild(_skipButton);
 
-        this.startPrologue();
+        // show the class photo
+        var photo :MovieClip = SwfResource.instantiateMovieClip("classphoto", "photo");
+        photo.cacheAsBitmap = true;
+        photo.x = 15;
+        photo.y = (Constants.SCREEN_SIZE.y * 0.5) - (photo.height * 0.5);
+        _modeLayer.addChild(photo);
+
+        this.fadeIn(startPrologue);
     }
 
     protected function onSkipClicked (...ignored) :void
@@ -65,13 +70,6 @@ public class PrologueMode extends AppMode
 
     protected function startPrologue () :void
     {
-        // show the class photo
-        var photo :MovieClip = SwfResource.instantiateMovieClip("classphoto", "photo");
-        photo.cacheAsBitmap = true;
-        photo.x = 15;
-        photo.y = (Constants.SCREEN_SIZE.y * 0.5) - (photo.height * 0.5);
-        DisplayObjectContainer(_prologueObj.displayObject).addChild(photo);
-
         this.showNextChar();
     }
 
@@ -86,10 +84,7 @@ public class PrologueMode extends AppMode
         }
 
         // fade out and pop mode
-        _prologueObj.removeAllTasks();
-        _prologueObj.addTask(new SerialTask(
-            new AlphaTask(0, SCREEN_FADE_TIME),
-            new FunctionTask(function () :void { AppContext.mainLoop.unwindToMode(new LevelSelectMode()); })));
+        this.fadeOutToMode(new LevelSelectMode());
     }
 
     protected function showNextChar () :void
@@ -123,7 +118,7 @@ public class PrologueMode extends AppMode
         _charObj.x = 650;
         _charObj.y = 100;
         _charObj.alpha = 0;
-        this.addObject(_charObj, _prologueObj.displayObject as DisplayObjectContainer);
+        this.addObject(_charObj, _modeLayer);
 
         // fade in the new character portrait
         var charTask :SerialTask = new SerialTask();
@@ -138,7 +133,6 @@ public class PrologueMode extends AppMode
         _charObj.addTask(charTask);
     }
 
-    protected var _prologueObj :SceneObject;
     protected var _charObj :SceneObject;
     protected var _charIndex :int;
     protected var _prologueEnding :Boolean;

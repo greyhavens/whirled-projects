@@ -1,12 +1,11 @@
 package popcraft.sp {
 
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -16,18 +15,16 @@ import flash.text.TextFormatAlign;
 import popcraft.*;
 import popcraft.ui.UIBits;
 
-public class EpilogueMode extends AppMode
+public class EpilogueMode extends TransitionMode
 {
     override protected function setup () :void
     {
-        var darknessShape :Sprite = new Sprite();
-        var g :Graphics = darknessShape.graphics;
+        var bg :Shape = new Shape();
+        var g :Graphics = bg.graphics;
         g.beginFill(0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
-
-        _epilogueObj = new SimpleSceneObject(darknessShape);
-        this.addObject(_epilogueObj, this.modeSprite);
+        _modeLayer.addChild(bg);
 
         // if the player clicks on the screen, they can advance things faster, but only
         // after a little bit of time has elapsed
@@ -40,7 +37,7 @@ public class EpilogueMode extends AppMode
         _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
         _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
-        this.modeSprite.addChild(_skipButton);
+        _modeLayer.addChild(_skipButton);
 
         this.startEpilogue();
     }
@@ -68,14 +65,13 @@ public class EpilogueMode extends AppMode
     protected function endEpilogue () :void
     {
         _epilogueEnding = true;
-
         _skipButton.parent.removeChild(_skipButton);
 
-        // fade out and pop mode
-        _epilogueObj.removeAllTasks();
-        _epilogueObj.addTask(new SerialTask(
-            new AlphaTask(0, SCREEN_FADE_TIME),
-            new FunctionTask(function () :void { AppContext.mainLoop.unwindToMode(new LevelSelectMode()); })));
+        if (null != _verseObj) {
+            _verseObj.removeAllTasks();
+        }
+
+        this.fadeOutToMode(new LevelSelectMode());
     }
 
     protected function showNextVerse () :void
@@ -100,7 +96,7 @@ public class EpilogueMode extends AppMode
         _verseObj.x = loc.x;
         _verseObj.y = loc.y;
         _verseObj.alpha = 0;
-        this.addObject(_verseObj, _epilogueObj.displayObject as DisplayObjectContainer);
+        this.addObject(_verseObj, _modeLayer);
 
         // fade in the new character portrait
         var verseTask :SerialTask = new SerialTask();
@@ -113,17 +109,15 @@ public class EpilogueMode extends AppMode
         _verseObj.addTask(verseTask);
     }
 
-    protected var _epilogueObj :SceneObject;
     protected var _verseObj :SceneObject;
     protected var _verseIndex :int;
     protected var _epilogueEnding :Boolean;
     protected var _skipButton :SimpleButton;
 
-    protected static const SCREEN_FADE_TIME :Number = 1.5;
     protected static const CHAR_FADE_TIME :Number = 1;
     protected static const CHAR_TIME :Number = 7;
 
-    protected static const IGNORE_CLICK_TIME :Number = SCREEN_FADE_TIME + 0.25;
+    protected static const IGNORE_CLICK_TIME :Number = 1.5;
     protected static const IGNORE_CLICK_TIMER_NAME :String = "IgnoreClick";
 
     protected static const VERSE_LOCS :Array = [
