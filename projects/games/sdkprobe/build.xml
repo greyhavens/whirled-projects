@@ -1,0 +1,13 @@
+<!-- build configuration -->
+<project name="sdkprobe" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="SDKProbe"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.type" value="game"/>
+  <!--property name="app.enable-server-agent" value="true"/-->
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
