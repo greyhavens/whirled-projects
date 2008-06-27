@@ -15,13 +15,14 @@
         introText2=
 "Iris and Ivy have both set up workshops nearby, and are manufacturing waves of Street-Walkers to tear you to pieces. Well-placed Delivery Boys will soften the advancing horde.
 
-Both girls must fall! Click an opponent's base to direct your creatures to it."
+Both girls must fall! Click an opponent's workshop to direct your creatures to it."
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <Hints>
             <Hint>Focus on eliminating one of your opponents first. With one enemy out of the way, the other will fall more quickly.</Hint>
+            <Hint>When you create a creature, it will attack your selected enemy. Click an opponent's workshop to direct creatures to it.</Hint>
         </Hints>
 
         <MapSettings backgroundName="Level2">

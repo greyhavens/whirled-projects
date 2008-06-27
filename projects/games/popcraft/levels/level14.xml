@@ -13,15 +13,14 @@
 &quot;Let's do this with comity.
  &quot;Don't succumb to your spite.&quot;"
         introText2=
-"- Destroy Ralph's Workshop!
-- Professor Weardd's Workshop cannot be damaged.
-- You will create two creatures for every one you purchase.
-- A solar eclipse will destroy your existing creatures, but you can create more immediately."
+"With Pigsley's assistance, you've greatly optimized your creature creation process. You will create two creatures for every one you purchase. This is your chance to put Ralph down permanently!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
+            <Hint>A solar eclipse will destroy your existing creatures, but does not prevent you from creating more immediately.</Hint>
+            <Hint>Don't bother attacking Ralph will small groups of creatures. Spend time gathering resources, and hit him with everything all at once!</Hint>
         </Hints>
 
         <GameDataOverride enableEclipse="true" initialDayPhase="eclipse">

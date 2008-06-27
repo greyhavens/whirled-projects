@@ -4,14 +4,13 @@
         levelCompletionBonus="2000"
         expertCompletionBonus="2500"
         introText="Grab the Infusions!"
-        introText2=
-"- Infusions are appearing on the battlefield in large numbers.
-- Create Ladyfingers to snatch them before Ralph does!"
+        introText2="Infusions are appearing on the battlefield in large numbers. Create Ladyfingers to snatch them before Ivy does!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
+            <Hint>Remember to keep spare Flesh and Scrap, so that you're able to quickly create Ladyfingers when an Infusion appears.</Hint>
         </Hints>
 
         <GameDataOverride

@@ -46,7 +46,7 @@
                 introText=
 "A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular with busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. The relentless rocking of these liberated libertines makes them excellent nursemaids, able to soothe the cries of the most vivacious child.
 
-Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness may drastically limit the one's participation in the next reanimation."
+Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness may drastically limit one's participation in the next reanimation."
                 introText2=
 "-Reliable melee creature.
 - Reasonably strong and durable.
@@ -76,9 +76,9 @@ Students are advised to exercise caution around a Street-Walker's long, razor-sh
                 displayName="Handy Man"
                 description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
                 introText=
-"The Handy Man is the modern homeowner's solution to any plumbing-, or home security-related problem!
+"The Handy Man is the modern homeowner's solution to any mechanical, electric, or home security problem!
 
-Malfunctioning water closets and phonographs are no match for the Handy Man's ability to slowly operate a multitude of tools simultaneously.
+Malfunctioning water closets and phonographs are no match for the Handy Man's ability to slowly but tirelessly operate a multitude of tools simultaneously.
 
 Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
                 introText2=
@@ -114,9 +114,9 @@ Moreover, Handy Men stationed outside a home are ideal for warding off the shift
 
 A combination of noxious gases inside the Delivery Boy’s belly gives this poor fellow explosive indigestion. Take care not to shake your Delivery Boy, or allow him to approach other reanimated creatures; his innards may combust without warning, resulting in spectacular explosions that will render the Delivery Boy, and anything in his immediate vicinity, quite unable to perform any function at all."
                 introText2=
-"- Able to explode at will, causing massive damage to nearby enemies.
+"- Able to explode at will, damaging nearby enemies.
 - Will pursue nearby groups of enemies, but leaves solitary creatures alone.
-- Send several Street-Walkers ahead of the Delivery Boy to prevent him from being prematurely destroyed by an opponent's Handy Men."
+- Send Street-Walkers ahead of the Delivery Boy to protect him."
                 baseMoveSpeed="35"
                 hasRepulseForce="true"
                 maxHealth="70"
@@ -144,7 +144,7 @@ A combination of noxious gases inside the Delivery Boy’s belly gives this poor
                 introText=
 "The result of a delinquent student’s slap-dash attempt to complete a simple Reanimation 101 homework assignment, the Flesh Behemoth is an unfortunate example of the craft gone horribly awry. This sad, pathetic creature knows only pain and rage, and will lash out at anything in its immediate vicinity, with devastating results.
 
-Students are advised that instructors at the Weardd Academy for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the Academy Ethics Committee, followed by possible expulsion from the school."
+Students are advised that the Weardd Academy for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the Academy Ethics Committee, followed by possible expulsion from the school."
                 introText2=
 "- Massively strong and durable.
 - Does not pursue other creatures, but will attack aggressors in its vicinity.
@@ -196,13 +196,13 @@ Students are advised that instructors at the Weardd Academy for Responsible Rean
                 displayName="Ladyfingers"
                 description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
                 introText=
-"The diminutive Ladyfingers possesses a Magpie's instinct for collecting and hoarding shiny treasures. They are particularly adept at retrieving coins lost in the nether regions of the living room sofa.
+"The diminutive Ladyfingers possesses a Magpie's instinct for collecting and hoarding shiny treasures. She is particularly adept at retrieving coins lost in the nether regions of the living room sofa.
 
 Ladyfingers are social creatures, and thrive in groups. When near other friendly specimens, they will perform tasks with increased vigor and speed.
 
 Be warned: the Ladyfingers’ delicate frame and small size render it quite fragile. Take care not to step on your Ladyfingers, or allow careless classmates to play with it."
                 introText2=
-"- Retrieves INFUSIONS from the battlefield and returns them to your workshop.
+"- Retrieves Infusions from the battlefield and returns them to your workshop.
 - Moves more quickly when other friendly Ladyfingers are nearby.
 - Weak defense; does not attack."
                 baseMoveSpeed="65"
@@ -246,8 +246,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="bloodlust"
                 displayName="Bloodlust"
-                description="BLOODLUST: Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. Lasts for 25 seconds."
-                introText="(placeholder) Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. Lasts for 25 seconds."
+                introText="Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. (Lasts for 25 seconds.)"
                 expireTime="25"
                 speedScaleOffset="0.5"
                 damageScaleOffset="0.3"/>
@@ -255,16 +254,14 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="rigormortis"
                 displayName="Rigor Mortis"
-                description="RIGOR MORTIS: Toughens the skin of your creatures. They will be able to absorb much more damage. Lasts for 30 seconds."
-                introText="(placeholder) Toughens the skin of your creatures. They will be able to absorb much more damage. Lasts for 30 seconds."
+                introText="Toughens the skin of your creatures. They will be able to absorb much more damage. (Lasts for 30 seconds.)"
                 expireTime="30"
                 damageScaleOffset="-0.4"/>
 
             <Spell
                 type="shuffle"
-                displayName="Clean House"
-                description="CLEAN HOUSE: Refills your resource console with a new set of resources."
-                introText="(placeholder) Refills your resource console with a new set of resources."
+                displayName="Shuffle"
+                introText="Flushes your resource console, and refills it with large groups of Flesh, Blood, Energy, and Scrap."
                 />
         </Spells>
 

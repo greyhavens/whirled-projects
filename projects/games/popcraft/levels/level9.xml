@@ -3,7 +3,7 @@
         expertCompletionDays="1"
         levelCompletionBonus="1500"
         expertCompletionBonus="2000"
-        introText="A fire has broken out in the laboratory! You're in danger of being overwhelmed by your adversary. Construct a solid defense, quickly!"
+        introText="A fire has broken out in your workshop! You're in danger of being overwhelmed by Ivy, who's attempting to exploit your weakness. Construct a solid defense, quickly!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150"

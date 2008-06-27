@@ -13,7 +13,7 @@ Into two opposed sides:
 One half follows Ralph;
   the other backs Jack."
         introText2=
-"Your creatures wither in the horrible sunlight. Use the daytime hours to stockpile materials and plan your next attack."
+"Your creatures wither in the horrible sunlight! Use the daytime hours to stockpile materials and plan your next attack."
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
