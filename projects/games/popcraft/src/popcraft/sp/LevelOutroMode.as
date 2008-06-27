@@ -5,7 +5,6 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -23,23 +22,7 @@ public class LevelOutroMode extends AppMode
 
     protected function saveProgress () :void
     {
-        // calculate the score for this level (we give the player a few points if they died)
-        var expertCompletion :Boolean = (GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays);
-        var expertCompletionScore :int = (expertCompletion ? GameContext.spLevel.expertCompletionBonus : 0);
-
-        var resourcesScore :int =
-            Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
-            GameContext.gameData.pointsPerResource;
-
-        var levelScore :int =
-            expertCompletionScore +
-            resourcesScore +
-            GameContext.spLevel.levelCompletionBonus;
-
-        if (GameContext.spLevel.maxScore >= 0) {
-            levelScore = Math.min(levelScore, GameContext.spLevel.maxScore);
-        }
-
+        var levelScore :int = LevelScoreInfo.levelScore;
         var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
 
         if (AppContext.gameCtrl.isConnected()) {
@@ -54,7 +37,7 @@ public class LevelOutroMode extends AppMode
 
             var newLevelRecord :LevelRecord = new LevelRecord();
             newLevelRecord.unlocked = true;
-            newLevelRecord.expert = expertCompletion;
+            newLevelRecord.expert = LevelScoreInfo.expertCompletion;
             newLevelRecord.score = levelScore;
 
             var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
@@ -88,7 +71,7 @@ public class LevelOutroMode extends AppMode
                 TrophyManager.awardTrophy(levelTrophy);
             }
 
-            if (AppContext.levelMgr.hasPlayerBeatenGameWithExpertScore) {
+            if (AppContext.levelMgr.playerBeatGameWithExpertScore) {
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
             }
         }
@@ -97,12 +80,6 @@ public class LevelOutroMode extends AppMode
     override protected function setup () :void
     {
         this.saveProgress();
-
-        // draw dim background
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0, 0.6);
-        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-        g.endFill();
 
         var bgSprite :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
 
@@ -120,9 +97,21 @@ public class LevelOutroMode extends AppMode
 
         var message :String = "";
 
-        // if the player lost, show a hint
         var hints :Array = GameContext.spLevel.levelHints;
-        if (!_success && hints.length > 0) {
+
+        // if the player won, show their score calculation
+        if (_success) {
+            message += "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
+            if (LevelScoreInfo.completionBonus > 0) {
+                message += "Level bonus: " + LevelScoreInfo.completionBonus + "\n";
+            }
+            if (LevelScoreInfo.expertCompletionScore > 0) {
+                message += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
+            }
+            message += "TOTAL SCORE: " + LevelScoreInfo.levelScore + "\n\n";
+
+        } else {
+        // if the player lost, show a hint
             message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
         }
 
@@ -186,4 +175,45 @@ public class LevelOutroMode extends AppMode
 
 }
 
+}
+
+import popcraft.*;
+
+class LevelScoreInfo
+{
+    public static function get expertCompletion () :Boolean
+    {
+        return (GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays);
+    }
+
+    public static function get expertCompletionScore () :int
+    {
+        return (expertCompletion ? GameContext.spLevel.expertCompletionBonus : 0);
+    }
+
+    public static function get resourcesScore () :int
+    {
+        return Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) *
+                GameContext.gameData.pointsPerResource;
+    }
+
+    public static function get completionDays () :int
+    {
+        return GameContext.diurnalCycle.dayCount;
+    }
+
+    public static function get completionBonus () :int
+    {
+        return GameContext.spLevel.levelCompletionBonus;
+    }
+
+    public static function get levelScore () :int
+    {
+        var score :int = expertCompletionScore + resourcesScore + completionBonus;
+        if (GameContext.spLevel.maxScore >= 0) {
+            score = Math.min(score, GameContext.spLevel.maxScore);
+        }
+
+        return score;
+    }
 }

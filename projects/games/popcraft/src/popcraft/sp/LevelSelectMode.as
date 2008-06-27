@@ -111,7 +111,7 @@ public class LevelSelectMode extends SplashScreenModeBase
             function (...ignored) :void { fadeOutToMode(new PrologueMode()); });
         _modeLayer.addChild(button);
 
-        if (AppContext.levelMgr.hasPlayerBeatenGame) {
+        if (AppContext.levelMgr.playerBeatGame) {
             button = UIBits.createButton("Epilogue");
             button.x = 10
             button.y = 90;

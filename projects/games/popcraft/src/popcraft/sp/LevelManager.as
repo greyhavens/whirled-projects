@@ -64,7 +64,7 @@ public class LevelManager
         return score;
     }
 
-    public function get hasPlayerBeatenGameWithExpertScore () :Boolean
+    public function get playerBeatGameWithExpertScore () :Boolean
     {
         for each (var lr :LevelRecord in _levelRecords) {
             if (!lr.expert) {
@@ -75,7 +75,7 @@ public class LevelManager
         return true;
     }
     
-    public function get hasPlayerBeatenGame () :Boolean
+    public function get playerBeatGame () :Boolean
     {
         for each (var lr :LevelRecord in _levelRecords) {
             if (lr.score == 0) {
