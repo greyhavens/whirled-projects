@@ -147,7 +147,7 @@ A combination of noxious gases inside the Delivery Boy’s belly gives this poor
 Students are advised that the Weardd Academy for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the Academy Ethics Committee, followed by possible expulsion from the school."
                 introText2=
 "- Massively strong and durable.
-- Does not pursue other creatures, but will attack aggressors in its vicinity.
+- Does not pursue other creatures, but will attack any that get too close.
 - Moves and attacks more slowly when when assaulted by multiple creatures simultaneously."
                 baseMoveSpeed="25"
                 hasRepulseForce="true"
@@ -200,7 +200,7 @@ Students are advised that the Weardd Academy for Responsible Reanimation will no
 
 Ladyfingers are social creatures, and thrive in groups. When near other friendly specimens, they will perform tasks with increased vigor and speed.
 
-Be warned: the Ladyfingers’ delicate frame and small size render it quite fragile. Take care not to step on your Ladyfingers, or allow careless classmates to play with it."
+Be warned: the Ladyfingers’ delicate frame and small size render her quite fragile. Take care not to step on your Ladyfingers, or allow careless classmates to play with her."
                 introText2=
 "- Retrieves Infusions from the battlefield and returns them to your workshop.
 - Moves more quickly when other friendly Ladyfingers are nearby.
@@ -246,7 +246,10 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="bloodlust"
                 displayName="Bloodlust"
-                introText="Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack. (Lasts for 25 seconds.)"
+                introText=
+"Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack.
+
+Lasts for 25 seconds."
                 expireTime="25"
                 speedScaleOffset="0.5"
                 damageScaleOffset="0.3"/>
@@ -254,7 +257,10 @@ Be warned: the Ladyfingers’ delicate frame and small size render it quite frag
             <Spell
                 type="rigormortis"
                 displayName="Rigor Mortis"
-                introText="Toughens the skin of your creatures. They will be able to absorb much more damage. (Lasts for 30 seconds.)"
+                introText=
+"Toughens the skin of your creatures. They will be able to absorb much more damage.
+
+Lasts for 30 seconds."
                 expireTime="30"
                 damageScaleOffset="-0.4"/>
 
