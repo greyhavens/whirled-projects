@@ -31,7 +31,7 @@ public class UIBits
         align :String = TextFormatAlign.CENTER,
         textColor :uint = 0) :Sprite
     {
-        var multiline :Boolean = (maxWidth > 0);
+        var wordWrap :Boolean = (maxWidth > 0);
 
         var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
         var tf :TextField = panel["panel_text"];
@@ -41,12 +41,13 @@ public class UIBits
         sprite.addChild(panel);
         sprite.addChild(tf);
 
-        tf.multiline = multiline;
-        tf.wordWrap = multiline;
+        tf.selectable = false;
+        tf.multiline = true;
+        tf.wordWrap = wordWrap;
         tf.autoSize = TextFieldAutoSize.LEFT;
         tf.scaleX = textScale;
         tf.scaleY = textScale;
-        if (multiline) {
+        if (wordWrap) {
             tf.width = maxWidth / textScale;
         }
         tf.text = text;

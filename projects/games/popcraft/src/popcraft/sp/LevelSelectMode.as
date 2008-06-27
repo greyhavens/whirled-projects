@@ -50,15 +50,6 @@ public class LevelSelectMode extends SplashScreenModeBase
         var button :SimpleButton;
         var yLoc :Number = tf.height + 15;
 
-        // @TEMP - prologue button
-        button = UIBits.createButton("Prologue");
-        button.x = (Constants.SCREEN_SIZE.x * 0.5) - (button.width * 0.5);
-        button.y = yLoc;
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { AppContext.mainLoop.changeMode(new PrologueMode()); });
-        this.modeSprite.addChild(button);
-        yLoc += button.height + 3;
-
         // create a button for each level
         for (var i :int = 0; i < levelRecords.length; ++i) {
             var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
@@ -108,6 +99,21 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
         button.x = 10;
         button.y = 10;
+
+        // @TEMP - prologue, epilogue button
+        button = UIBits.createButton("Prologue");
+        button.x = 10;
+        button.y = 50;
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void { AppContext.mainLoop.changeMode(new PrologueMode()); });
+        this.modeSprite.addChild(button);
+
+        button = UIBits.createButton("Epilogue");
+        button.x = 10
+        button.y = 90;
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void { AppContext.mainLoop.changeMode(new EpilogueMode()); });
+        this.modeSprite.addChild(button);
 
         this.modeSprite.addChild(button);
     }
