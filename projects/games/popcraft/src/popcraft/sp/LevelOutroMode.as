@@ -16,9 +16,9 @@ import popcraft.ui.UIBits;
 
 public class LevelOutroMode extends AppMode
 {
-    public function LevelOutroMode (success :Boolean)
+    public function LevelOutroMode ()
     {
-        _success = success;
+        _success = (GameContext.winningTeamId == GameContext.localPlayerInfo.teamId);
     }
 
     protected function saveProgress () :void
@@ -137,14 +137,14 @@ public class LevelOutroMode extends AppMode
         // buttons
         var button :SimpleButton;
 
-        if (_success) {
+        if (_success && !AppContext.levelMgr.isLastLevel) {
             button = UIBits.createButton("Next Level", 1.5);
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.incrementCurLevelIndex();
                     AppContext.levelMgr.playLevel();
                 });
-        } else {
+        } else if (!_success) {
             button = UIBits.createButton("Retry", 1.5);
             button.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void {
@@ -152,9 +152,11 @@ public class LevelOutroMode extends AppMode
                 });
         }
 
-        button.x = (WIDTH * 0.5) - (button.width * 0.5);
-        button.y = 210;
-        bgSprite.addChild(button);
+        if (null != button) {
+            button.x = (WIDTH * 0.5) - (button.width * 0.5);
+            button.y = 210;
+            bgSprite.addChild(button);
+        }
 
         button = UIBits.createButton("Level Select", 1.5);
         button.addEventListener(MouseEvent.CLICK,

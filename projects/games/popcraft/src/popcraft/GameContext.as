@@ -52,6 +52,8 @@ public class GameContext
     public static var playerCreatureSpellSets :Array;
     public static var localPlayerIndex :int;
 
+    public static var winningTeamId :int;
+
     public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerIndex]; }
     public static function get numPlayers () :int { return playerInfos.length; }
 

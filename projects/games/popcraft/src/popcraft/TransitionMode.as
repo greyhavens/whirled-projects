@@ -34,18 +34,26 @@ public class TransitionMode extends AppMode
         darkness.addTask(fadeTask);
     }
 
-    protected function fadeOutToMode (nextMode :AppMode, time :Number = DEFAULT_FADE_TIME) :void
+    protected function fadeOut (callback :Function = null, time :Number = DEFAULT_FADE_TIME) :void
     {
         var darkness :SceneObject = this.darkness;
 
         darkness.removeAllTasks();
         darkness.alpha = 0;
         darkness.visible = true;
-        darkness.addTask(new SerialTask(
-            new AlphaTask(1, time),
-            new FunctionTask(function () :void {
-                AppContext.mainLoop.changeMode(nextMode);
-            })));
+
+         var fadeTask :SerialTask = new SerialTask();
+        fadeTask.addTask(new AlphaTask(1, time));
+        if (null != callback) {
+            fadeTask.addTask(new FunctionTask(callback));
+        }
+
+        darkness.addTask(fadeTask);
+    }
+
+    protected function fadeOutToMode (nextMode :AppMode, time :Number = DEFAULT_FADE_TIME) :void
+    {
+        this.fadeOut(function () :void { AppContext.mainLoop.changeMode(nextMode); }, time);
     }
 
     protected function get darkness () :SceneObject

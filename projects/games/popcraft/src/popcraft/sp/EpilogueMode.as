@@ -1,5 +1,6 @@
 package popcraft.sp {
 
+import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -17,6 +18,14 @@ import popcraft.ui.UIBits;
 
 public class EpilogueMode extends TransitionMode
 {
+    public static const TRANSITION_LEVELSELECT :int = 0;
+    public static const TRANSITION_LEVELOUTRO :int = 1;
+
+    public function EpilogueMode (nextTransition :int)
+    {
+        _nextTransition = nextTransition;
+    }
+
     override protected function setup () :void
     {
         var bg :Shape = new Shape();
@@ -71,7 +80,13 @@ public class EpilogueMode extends TransitionMode
             _verseObj.removeAllTasks();
         }
 
-        this.fadeOutToMode(new LevelSelectMode());
+        var nextMode :AppMode;
+        switch (_nextTransition) {
+        case TRANSITION_LEVELSELECT: nextMode = new LevelSelectMode(); break;
+        case TRANSITION_LEVELOUTRO: nextMode = new LevelOutroMode(); break;
+        }
+
+        this.fadeOutToMode(nextMode);
     }
 
     protected function showNextVerse () :void
@@ -113,6 +128,7 @@ public class EpilogueMode extends TransitionMode
     protected var _verseIndex :int;
     protected var _epilogueEnding :Boolean;
     protected var _skipButton :SimpleButton;
+    protected var _nextTransition :int;
 
     protected static const CHAR_FADE_TIME :Number = 1;
     protected static const CHAR_TIME :Number = 7;

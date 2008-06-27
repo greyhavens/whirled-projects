@@ -95,7 +95,6 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { levelSelected(-1); });
         button.x = 100;
         button.y = 450;
-
         _modeLayer.addChild(button);
 
         // unlock all levels button
@@ -103,6 +102,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
         button.x = 10;
         button.y = 10;
+        _modeLayer.addChild(button);
 
         // @TEMP - prologue, epilogue button
         button = UIBits.createButton("Prologue");
@@ -116,9 +116,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = 10
         button.y = 90;
         button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { fadeOutToMode(new EpilogueMode()); });
-        _modeLayer.addChild(button);
-
+            function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
         _modeLayer.addChild(button);
     }
 

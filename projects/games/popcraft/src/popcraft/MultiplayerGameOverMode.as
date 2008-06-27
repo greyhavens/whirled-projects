@@ -14,11 +14,6 @@ import popcraft.util.MoonCalculation;
 
 public class MultiplayerGameOverMode extends SplashScreenModeBase
 {
-    public function MultiplayerGameOverMode (winningTeam :int)
-    {
-        _winningTeamId = winningTeam;
-    }
-
     protected function updateStats () :void
     {
         var gameArrangement :int = MultiplayerConfig.computeTeamArrangement();
@@ -92,7 +87,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
 
     protected function get playerWon () :Boolean
     {
-        return (GameContext.localPlayerInfo.teamId == _winningTeamId);
+        return (GameContext.localPlayerInfo.teamId == GameContext.winningTeamId);
     }
 
     override protected function setup () :void
@@ -104,7 +99,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
 
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (!playerInfo.leftGame && playerInfo.teamId == _winningTeamId) {
+            if (!playerInfo.leftGame && playerInfo.teamId == GameContext.winningTeamId) {
                 winningPlayerNames.push(playerInfo.playerName);
             }
         }
@@ -154,7 +149,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             var winners :Array = [];
             var losers :Array = [];
             for each (playerInfo in GameContext.playerInfos) {
-                if (playerInfo.teamId == _winningTeamId) {
+                if (playerInfo.teamId == GameContext.winningTeamId) {
                     winners.push(playerInfo.whirledId);
                 } else {
                     losers.push(playerInfo.whirledId);
@@ -168,8 +163,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
     override protected function enter () :void
     {
         if (!_playedSound) {
-            var localPlayerWon :Boolean = (GameContext.localPlayerInfo.teamId == _winningTeamId);
-            AudioManager.instance.playSoundNamed(localPlayerWon ? "sfx_wingame" : "sfx_losegame");
+            AudioManager.instance.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
         }
     }
@@ -188,7 +182,6 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
         }
     }
 
-    protected var _winningTeamId :int;
     protected var _playedSound :Boolean;
     protected var _button :SimpleButton;
 

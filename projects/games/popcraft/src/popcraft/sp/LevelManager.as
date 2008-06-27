@@ -153,6 +153,11 @@ public class LevelManager
         return _curLevelIndex;
     }
 
+    public function get isLastLevel () :Boolean
+    {
+        return (_curLevelIndex == this.numLevels - 1);
+    }
+
     public function set curLevelIndex (val :int) :void
     {
         val = (val < 0 ? -1 : val % LEVELS.length);

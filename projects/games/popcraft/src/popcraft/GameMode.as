@@ -27,7 +27,7 @@ import popcraft.sp.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 
-public class GameMode extends AppMode
+public class GameMode extends TransitionMode
 {
     override protected function setup () :void
     {
@@ -55,9 +55,9 @@ public class GameMode extends AppMode
         GameContext.battleLayer = new Sprite();
         GameContext.dashboardLayer = new Sprite();
         GameContext.overlayLayer = new Sprite();
-        this.modeSprite.addChild(GameContext.battleLayer);
-        this.modeSprite.addChild(GameContext.dashboardLayer);
-        this.modeSprite.addChild(GameContext.overlayLayer);
+        _modeLayer.addChild(GameContext.battleLayer);
+        _modeLayer.addChild(GameContext.dashboardLayer);
+        _modeLayer.addChild(GameContext.overlayLayer);
 
         this.setupAudio();
         this.setupNetwork();
@@ -474,6 +474,20 @@ public class GameMode extends AppMode
             }
             break;
 
+        case KeyboardCodes.W:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                // destroy all enemy bases
+                for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+                    if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
+                        enemyBase = playerInfo.base;
+                        if (null != enemyBase) {
+                            enemyBase.health = 0;
+                        }
+                    }
+                }
+            }
+            break;
+
         case KeyboardCodes.SLASH:
             if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
                 // restart the level
@@ -505,6 +519,10 @@ public class GameMode extends AppMode
             } else {
                 return;
             }
+        } else if (_gameOver) {
+            // stop processing game logic when the game is over
+            super.update(dt);
+            return;
         }
 
         // start the game audio when _updateCount hits 1, allowing a full update to pass without
@@ -572,7 +590,7 @@ public class GameMode extends AppMode
     {
         // The game is over if there's only one team standing
         var liveTeamId :int = -1;
-        var gameOver :Boolean = true;
+        _gameOver = true;
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             // for the purposes of game-over detection, discount invincible players from the
             // live player count. this is kind of ugly - the last level is the only level
@@ -584,22 +602,27 @@ public class GameMode extends AppMode
                         liveTeamId = playerTeam;
                     } else {
                         // there's more than one live team
-                        gameOver = false;
+                        _gameOver = false;
                         break;
                     }
                 }
             }
         }
 
-        if (gameOver) {
+        if (_gameOver) {
             GameContext.playerStats.totalGameTime = _gameTime;
+            GameContext.winningTeamId = liveTeamId;
 
             // show the appropriate game over screen
             if (GameContext.isMultiplayer) {
-                MainLoop.instance.changeMode(new MultiplayerGameOverMode(liveTeamId));
+                MainLoop.instance.changeMode(new MultiplayerGameOverMode());
             } else {
-                var success :Boolean = (liveTeamId == GameContext.localPlayerInfo.teamId);
-                MainLoop.instance.pushMode(new LevelOutroMode(success));
+                // if this is the last level, show the epilogue
+                if (AppContext.levelMgr.isLastLevel) {
+                    this.fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO), FADE_OUT_TIME);
+                } else {
+                    MainLoop.instance.pushMode(new LevelOutroMode());
+                }
             }
         }
     }
@@ -854,6 +877,7 @@ public class GameMode extends AppMode
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;
     protected var _startedMusic :Boolean;
+    protected var _gameOver :Boolean;
 
     protected var _gameTickCount :int;
     protected var _gameTime :Number;
@@ -868,6 +892,8 @@ public class GameMode extends AppMode
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
 
     protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
+
+    protected static const FADE_OUT_TIME :Number = 3;
 
     protected static const log :Log = Log.getLog(GameMode);
 }
