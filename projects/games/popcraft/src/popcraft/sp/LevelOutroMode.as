@@ -88,7 +88,7 @@ public class LevelOutroMode extends AppMode
                 TrophyManager.awardTrophy(levelTrophy);
             }
 
-            if (AppContext.levelMgr.expertScoreForAllLevels) {
+            if (AppContext.levelMgr.hasPlayerBeatenGameWithExpertScore) {
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
             }
         }

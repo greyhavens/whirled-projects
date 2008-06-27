@@ -56,13 +56,12 @@ public class LevelSelectMode extends SplashScreenModeBase
 
         // create a button for each level
         for (var i :int = 0; i < levelRecords.length; ++i) {
-            var levelName :String = (i < levelNames.length ? levelNames[i] : "(Level " + String(i + 1) + ")");
             var levelRecord :LevelRecord = levelRecords[i];
-
             if (!levelRecord.unlocked) {
                 break;
             }
 
+            var levelName :String = String(i + 1) + ". " + levelNames[i];
             if (levelRecord.score > 0) {
                 levelName += " (" + levelRecord.score;
                 if (levelRecord.expert) {
@@ -112,12 +111,14 @@ public class LevelSelectMode extends SplashScreenModeBase
             function (...ignored) :void { fadeOutToMode(new PrologueMode()); });
         _modeLayer.addChild(button);
 
-        button = UIBits.createButton("Epilogue");
-        button.x = 10
-        button.y = 90;
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
-        _modeLayer.addChild(button);
+        if (AppContext.levelMgr.hasPlayerBeatenGame) {
+            button = UIBits.createButton("Epilogue");
+            button.x = 10
+            button.y = 90;
+            button.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
+            _modeLayer.addChild(button);
+        }
     }
 
     protected function unlockLevels () :void
@@ -125,6 +126,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
         for each (var lr :LevelRecord in levelRecords) {
             lr.unlocked = true;
+            lr.score = 1;
         }
 
         // reload the mode

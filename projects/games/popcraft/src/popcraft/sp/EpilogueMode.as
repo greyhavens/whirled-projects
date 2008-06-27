@@ -137,7 +137,7 @@ public class EpilogueMode extends TransitionMode
     protected static const IGNORE_CLICK_TIMER_NAME :String = "IgnoreClick";
 
     protected static const VERSE_LOCS :Array = [
-        new Point(130, 230), new Point(340, 230), new Point(550, 230) ];
+        new Point(140, 230), new Point(350, 230), new Point(560, 230) ];
 
 }
 
