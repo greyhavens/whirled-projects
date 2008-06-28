@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
 
 import popcraft.*;
@@ -44,6 +45,14 @@ public class PrologueMode extends TransitionMode
         _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
         _modeLayer.addChild(_skipButton);
+
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    override protected function destroy () :void
+    {
+        super.destroy();
+        StageQualityManager.popStageQuality();
     }
 
     protected function onSkipClicked (...ignored) :void
