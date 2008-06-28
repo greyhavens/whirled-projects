@@ -1,6 +1,5 @@
 package popcraft.sp {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
@@ -51,7 +50,7 @@ public class LevelLoadErrorMode extends AppMode
         button = UIBits.createButton("Retry");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.levelMgr.playLevel(true);
+                AppContext.levelMgr.playLevel(null, true);
             });
         button.x = 50;
         button.y = 450;

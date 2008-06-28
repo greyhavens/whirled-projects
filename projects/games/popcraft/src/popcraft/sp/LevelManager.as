@@ -74,7 +74,7 @@ public class LevelManager
 
         return true;
     }
-    
+
     public function get playerBeatGame () :Boolean
     {
         for each (var lr :LevelRecord in _levelRecords) {
@@ -82,7 +82,7 @@ public class LevelManager
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -101,8 +101,10 @@ public class LevelManager
         return _levelRecords.length > 0;
     }
 
-    public function playLevel (forceReload :Boolean = false) :void
+    public function playLevel (levelReadyCallback :Function = null, forceReload :Boolean = false) :void
     {
+        _levelReadyCallback = levelReadyCallback;
+
         // forceReload only makes sense when we're loading levels from disk (and
         // they can therefore be edited at runtime)
         forceReload &&= Constants.DEBUG_LOAD_LEVELS_FROM_DISK;
@@ -199,7 +201,7 @@ public class LevelManager
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.unwindToMode(new LevelLoadErrorMode(err));
+        AppContext.mainLoop.pushMode(new LevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -209,13 +211,18 @@ public class LevelManager
         var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
         GameContext.gameData = (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
 
-        AppContext.mainLoop.unwindToMode(new GameMode());
+        if (null != _levelReadyCallback) {
+            _levelReadyCallback();
+        } else {
+            AppContext.mainLoop.unwindToMode(new GameMode());
+        }
     }
 
     protected var _curLevelIndex :int = 0;
     protected var _loadedLevel :LevelData;
     protected var _levelRecords :Array = [];
     protected var _recordsLoaded :Boolean;
+    protected var _levelReadyCallback :Function;
 
     protected static var log :Log = Log.getLog(LevelManager);
 

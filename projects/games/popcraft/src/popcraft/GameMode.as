@@ -496,7 +496,7 @@ public class GameMode extends TransitionMode
             if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
                 // restart the level
                 // playLevel(true) forces the current level to reload
-                AppContext.levelMgr.playLevel(true);
+                AppContext.levelMgr.playLevel(null, true);
             }
             break;
 

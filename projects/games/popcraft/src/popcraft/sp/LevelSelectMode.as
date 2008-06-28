@@ -108,7 +108,7 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.x = 10;
         button.y = 50;
         button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { fadeOutToMode(new PrologueMode()); });
+            function (...ignored) :void { fadeOutToMode(new PrologueMode(PrologueMode.TRANSITION_LEVELSELECT)); });
         _modeLayer.addChild(button);
 
         if (AppContext.levelMgr.playerBeatGame) {
@@ -147,7 +147,22 @@ public class LevelSelectMode extends SplashScreenModeBase
     protected function levelSelected (levelNum :int) :void
     {
         AppContext.levelMgr.curLevelIndex = levelNum;
-        AppContext.levelMgr.playLevel();
+        AppContext.levelMgr.playLevel(startGame);
+    }
+
+    protected function startGame () :void
+    {
+        // called when the level is loaded
+
+        var nextMode :AppMode;
+        if (AppContext.levelMgr.curLevelIndex == 0) {
+            // show the prologue before the first level
+           nextMode = new PrologueMode(PrologueMode.TRANSITION_GAME);
+        } else {
+            nextMode = new GameMode();
+        }
+
+        this.fadeOutToMode(nextMode);
     }
 
     protected var _createdLayout :Boolean;
