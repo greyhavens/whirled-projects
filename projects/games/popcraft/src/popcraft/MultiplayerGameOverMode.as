@@ -162,6 +162,8 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
 
     override protected function enter () :void
     {
+        super.enter();
+
         if (!_playedSound) {
             AudioManager.instance.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
