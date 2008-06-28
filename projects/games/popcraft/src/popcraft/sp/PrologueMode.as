@@ -45,13 +45,17 @@ public class PrologueMode extends TransitionMode
         _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
         _modeLayer.addChild(_skipButton);
+    }
 
+    override protected function enter () :void
+    {
+        super.enter();
         StageQualityManager.pushStageQuality(StageQuality.HIGH);
     }
 
-    override protected function destroy () :void
+    override protected function exit () :void
     {
-        super.destroy();
+        super.exit();
         StageQualityManager.popStageQuality();
     }
 

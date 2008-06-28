@@ -53,8 +53,20 @@ public class LevelIntroMode extends AppMode
         this.addObject(manualFrontObj, this.modeSprite);
 
         this.modeSprite.visible = false;
+    }
 
+    override protected function enter () :void
+    {
+        super.enter();
         StageQualityManager.pushStageQuality(StageQuality.HIGH);
+        this.modeSprite.visible = true;
+    }
+
+    override protected function exit () :void
+    {
+        super.exit();
+        StageQualityManager.popStageQuality();
+        this.modeSprite.visible = false;
     }
 
     protected function swapInManual () :void
@@ -72,13 +84,6 @@ public class LevelIntroMode extends AppMode
         _manualObj.addTask(animateTask);
 
         this.doNextPhase();
-    }
-
-    override protected function destroy () :void
-    {
-        super.destroy();
-
-        StageQualityManager.popStageQuality();
     }
 
     protected function hasPhase (phaseNum :int) :Boolean
@@ -238,16 +243,6 @@ public class LevelIntroMode extends AppMode
 
         _manualObj.removeAllTasks();
         _manualObj.addTask(movieTask);
-    }
-
-    override protected function enter () :void
-    {
-        this.modeSprite.visible = true;
-    }
-
-    override protected function exit () :void
-    {
-        this.modeSprite.visible = false;
     }
 
     protected var _manualObj :SimpleSceneObject;
