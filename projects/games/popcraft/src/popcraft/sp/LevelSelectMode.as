@@ -147,23 +147,12 @@ public class LevelSelectMode extends SplashScreenModeBase
     {
         // called when the level is loaded
 
-        /* @TODO - use this logic when the splash screen runs faster
         if (AppContext.levelMgr.curLevelIndex == 0) {
             // show the prologue before the first level
-           AppContext.mainLoop.pushMode(new PrologueMode(PrologueMode.TRANSITION_GAME));
+           AppContext.mainLoop.changeMode(new PrologueMode(PrologueMode.TRANSITION_GAME));
         } else {
             this.fadeOutToMode(new GameMode());
         }
-        */
-
-        var nextMode :AppMode;
-        if (AppContext.levelMgr.curLevelIndex == 0) {
-            nextMode = new PrologueMode(PrologueMode.TRANSITION_GAME);
-        } else {
-            nextMode = new GameMode();
-        }
-
-        this.fadeOutToMode(nextMode);
     }
 
     protected var _createdLayout :Boolean;

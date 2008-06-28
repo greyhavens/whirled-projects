@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.StageQuality;
@@ -29,10 +30,15 @@ public class PrologueMode extends TransitionMode
         // play some music
         _musicChannel = AudioManager.instance.playSoundNamed("mus_night", null, -1);
 
+        var splashMovie :DisplayObject = SwfResource.getSwfDisplayRoot("splash");
+        _modeLayer.addChild(splashMovie);
+
         var movie :MovieClip = SwfResource.getSwfDisplayRoot("prologue") as MovieClip;
         movie.gotoAndPlay(0);
         var movieObj :SimpleSceneObject = new SimpleSceneObject(movie);
         var movieTask :SerialTask = new SerialTask();
+        movieTask.addTask(new WaitForFrameTask("faded"));
+        movieTask.addTask(new FunctionTask(function () :void { _modeLayer.removeChild(splashMovie); }));
         movieTask.addTask(new WaitForFrameTask("end"));
         movieTask.addTask(new FunctionTask(endPrologue));
         movieObj.addTask(movieTask);
