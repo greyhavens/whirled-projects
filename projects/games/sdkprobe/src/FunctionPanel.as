@@ -8,8 +8,6 @@ import com.threerings.util.StringUtil;
 
 public class FunctionPanel extends Sprite
 {
-    public static const VOID :Object = new Void();
-
     public function FunctionPanel (ctrl :GameControl, functions :Array)
     {
         _ctrl = ctrl;
@@ -52,12 +50,17 @@ public class FunctionPanel extends Sprite
             [150, 150], heights);
 
         for (ii = 0; ii < functions.length; ++ii) {
-            var name :String = functions[ii].name;
-            _functions[name] = functions[ii];
+            var spec :FunctionSpec = functions[ii] as FunctionSpec;
+            var params :ParameterPanel = new ParameterPanel(spec.parameters, spec.name);
+            params.x = 300;
+            params.visible = false;
+            addChild(params);
+            _functions[spec.name] = new FunctionEntry(spec, params);
 
-            var fnButt :Button = new Button(name, name);
+            var fnButt :Button = new Button(spec.name, spec.name);
             grid.addCell(0, ii, fnButt);
             fnButt.addEventListener(ButtonEvent.CLICK, handleFunctionClick);
+            params.callButton.addEventListener(ButtonEvent.CLICK, handleCallClick);
         }
 
         return grid;
@@ -65,15 +68,32 @@ public class FunctionPanel extends Sprite
 
     protected function handleFunctionClick (evt :ButtonEvent) :void
     {
-        var spec :FunctionSpec = _functions[evt.action];
-        if (spec == null) {
+        var entry :FunctionEntry = _functions[evt.action];
+        if (entry == null) {
             output("Function " + evt.action + " not found");
             return;
         }
 
+        if (entry != _selected) {
+            if (_selected != null) {
+                _selected.params.visible = false;
+            }
+            _selected = entry;
+            _selected.params.visible = true;
+        }
+    }
+
+    protected function handleCallClick (evt :ButtonEvent) :void
+    {
+        if (_selected == null) {
+            return;
+        }
+
         try {
-            output("Calling " + spec.name);
-            var value :Object = spec.func.apply(null, []);
+            var params :Array = _selected.params.parse();
+            output("Calling " + _selected.spec.name + " with arguments " + 
+                   StringUtil.toString(params));
+            var value :Object = _selected.spec.func.apply(null, params);
             if (value != undefined) {
                 output("Result: " + StringUtil.toString(value));
             }
@@ -97,7 +117,19 @@ public class FunctionPanel extends Sprite
     protected var _ctrl :GameControl;
     protected var _functions :Object = {};
     protected var _output :TextField;
+    protected var _selected :FunctionEntry;
 }
 
 }
 
+class FunctionEntry
+{
+    public var spec :FunctionSpec;
+    public var params :ParameterPanel;
+
+    public function FunctionEntry (spec :FunctionSpec, params :ParameterPanel)
+    {
+        this.spec = spec;
+        this.params = params;
+    }
+}
