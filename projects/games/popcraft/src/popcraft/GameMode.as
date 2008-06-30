@@ -309,7 +309,7 @@ public class GameMode extends TransitionMode
         if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
             _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
         } else {
-            _messageMgr = new OfflineTickedMessageManager(TICK_INTERVAL_MS);
+            _messageMgr = new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
         }
 
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
