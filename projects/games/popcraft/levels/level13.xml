@@ -3,8 +3,16 @@
         expertCompletionDays="3"
         levelCompletionBonus="2000"
         expertCompletionBonus="2500"
-        introText="Grab the Infusions!"
-        introText2="Infusions are appearing on the battlefield in large numbers. Create Ladyfingers to snatch them before Ivy does!"
+        introText=
+"Jack, crimson with fury,
+ his voice raised to a shriek:
+&quot;I can't wait to end you,
+ &quot;you plebeian freak!
+&quot;You've been a pain in the ass
+&quot;Since you first joined our class -
+&quot;Always Weardd's precious pet,
+ &quot;that daft old antique.&quot;"
+        introText2="Infusions are appearing on the battlefield in large numbers. Create Ladyfingers to snatch them before Ralph does!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
@@ -46,8 +54,8 @@
         </AvailableSpells>
 
         <Computer
-            playerName="Ivy"
-            playerHeadshotName="portrait_ivy"
+            playerName="Ralph"
+            playerHeadshotName="portrait_ralph"
             baseHealth="150"
             team="1">
 

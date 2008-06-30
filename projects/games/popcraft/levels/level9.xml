@@ -3,7 +3,16 @@
         expertCompletionDays="1"
         levelCompletionBonus="1500"
         expertCompletionBonus="2000"
-        introText="A fire has broken out in your workshop! You're in danger of being overwhelmed by Ivy, who's attempting to exploit your weakness. Construct a solid defense, quickly!"
+        introText=
+"Upon Iris and Ivy,
+ the precocious twins,
+Jack unloads this invective,
+ his mouth a cruel grin:
+&quot;You girls are dead ringers
+&quot;For these Ladyfingers!
+&quot;No wonder Ralph likes you.
+ &quot;You're both ugly as sin.&quot;"
+        introText2="A fire has broken out in your workshop! You're in danger of being overwhelmed by Ivy, who's attempting to exploit your weakness. Construct a solid defense, quickly!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150"

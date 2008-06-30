@@ -3,7 +3,16 @@
         expertCompletionDays="2"
         levelCompletionBonus="1500"
         expertCompletionBonus="2000"
-        introText="Your enemies have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
+        introText=
+"Ralph says to Jack,
+ &quot;your self-loathing's apparent.
+&quot;What made you so mean?
+ &quot;Should we fault your parents?
+&quot;Do we blame society
+&quot;For your impropriety?
+&quot;Or perhaps your malice
+ &quot;is simply inherent.&quot;"
+        introText2="Ralph, Iris, and Ivy have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"
         playerHeadshotName="portrait_jack"

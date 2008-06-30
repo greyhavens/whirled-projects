@@ -6,6 +6,15 @@
         newCreatureType="courier"
         newSpellType="rigormortis"
         introText=
+"Jack's crew stops in Brighton,
+ with Ralph in pursuit.
+&quot;We'll make a small detour
+ &quot;in our prescribed route&quot;
+&quot;To settle our nerves -
+&quot;And restock our reserves
+&quot;With the scum that convenes
+ &quot;at homes of ill-repute.&quot;"
+        introText2=
 "When an Infusion appears on the battlefield, dispatch the Ladyfingers to grab it! Once retrieved, an Infusion can be used to strengthen your units for a limited amount of time. The more Ladyfingers you have on the battlefield, the faster each will move. Send a large group to prevent your opponent from getting a spell before you do!"
         playerName="Jack"
         playerHeadshotName="portrait_jack"

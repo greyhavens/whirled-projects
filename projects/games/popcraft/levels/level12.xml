@@ -3,14 +3,23 @@
         expertCompletionDays="2"
         levelCompletionBonus="2000"
         expertCompletionBonus="2500"
-        introText="A group of Ralph's cronies has broken into your resource reserves and made off with large amounts of Flesh and Blood. You'll have an easier time harvesting Energy and Scrap, but you'll be hard-pressed to create a Flesh Behemoth."
+        introText=
+"&quot;So Jack, why'd you do it?
+ &quot;What's the source of your hate?&quot;
+Ralph goads his foe,
+ hoping he'll take the bait.
+&quot;Does it fill you with rage
+&quot;That I have you upstaged?
+&quot;You torched the school out of envy?
+ &quot;Is that why you're irate?&quot;"
+        introText2="A group of Ralph's cronies has broken into your resource reserves and made off with large amounts of Flesh and Blood. You'll have an easier time harvesting Energy and Scrap, but you'll be hard-pressed to create a Flesh Behemoth."
         playerName="Jack"
         playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
-            <Hint>Stay on the defensive until you've conserved enough Flesh and Blood to send a solid offense against your opponent!</Hint>
-            <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
+            <Hint>Stay on the defensive until you've conserved enough Flesh and Blood to send a solid offense against Ivy!</Hint>
+            <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit Ivy with everything you've got when the time is right!</Hint>
         </Hints>
 
         <GameDataOverride>
@@ -48,8 +57,8 @@
         </AvailableSpells>
 
         <Computer
-            playerName="Ralph"
-            playerHeadshotName="portrait_ralph"
+            playerName="Ivy"
+            playerHeadshotName="portrait_ivy"
             baseHealth="150"
             team="1">
             <InitialSpells/>

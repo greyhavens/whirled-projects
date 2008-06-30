@@ -41,7 +41,8 @@ public class LevelIntroMode extends AppMode
         // animate manual_front in from the bottom of the screen, play its open animation,
         // then swap it out for the real manual object
         var manualFrontTask :SerialTask = new SerialTask();
-        manualFrontTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
+        manualFrontTask.addTask(LocationTask.CreateEaseOut(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
+        manualFrontTask.addTask(new TimedTask(AppContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
         manualFrontTask.addTask(new GoToFrameTask("turn"));
         manualFrontTask.addTask(new WaitForFrameTask("edge"));
         manualFrontTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
@@ -257,6 +258,9 @@ public class LevelIntroMode extends AppMode
     protected static const PHASE_SPELLINTRO :int = 1;
     protected static const PHASE_LEVELINTRO :int = 2;
     protected static const PHASE__LIMIT :int = 3;
+
+    protected static const LEVEL_1_TURN_PAUSE :Number = 1.5;
+    protected static const DEFAULT_TURN_PAUSE :Number = 0.25;
 }
 
 }

@@ -3,7 +3,16 @@
         expertCompletionDays="2"
         levelCompletionBonus="1500"
         expertCompletionBonus="2000"
-        introText="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
+        introText=
+"&quot;And so we've arrived, lads -
+ &quot;here's London at last!
+&quot;Let's locate dear dad
+ &quot;and finish this fast.
+&quot;I'm sure that mon père
+&quot;Can end this affair -
+&quot;His spite for the Ralphs
+ &quot;of the world's unsurpassed.&quot;"
+        introText2="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         playerName="Jack"
         playerHeadshotName="portrait_jack"
