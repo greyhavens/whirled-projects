@@ -8,7 +8,7 @@ import com.threerings.util.StringUtil;
 
 public class FunctionPanel extends Sprite
 {
-    public function FunctionPanel (ctrl :GameControl, functions :Array)
+    public function FunctionPanel (ctrl :Object, functions :Array)
     {
         _ctrl = ctrl;
 
@@ -93,7 +93,7 @@ public class FunctionPanel extends Sprite
             var params :Array = _selected.params.parse();
             output("Calling " + _selected.spec.name + " with arguments " + 
                    StringUtil.toString(params));
-            var value :Object = _selected.spec.func.apply(null, params);
+            var value :Object = _selected.spec.func.apply(_ctrl, params);
             if (value != undefined) {
                 output("Result: " + StringUtil.toString(value));
             }
@@ -114,7 +114,7 @@ public class FunctionPanel extends Sprite
         _output.scrollV = _output.maxScrollV;
     }
 
-    protected var _ctrl :GameControl;
+    protected var _ctrl :Object;
     protected var _functions :Object = {};
     protected var _output :TextField;
     protected var _selected :FunctionEntry;
