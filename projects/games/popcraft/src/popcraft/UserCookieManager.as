@@ -3,7 +3,6 @@ package popcraft {
 import com.threerings.util.Log;
 
 import flash.utils.ByteArray;
-import com.whirled.game.PlayerSubControl;
 
 public class UserCookieManager
 {
@@ -87,7 +86,14 @@ public class UserCookieManager
                     for each (var dataSource :UserCookieDataSource in _dataSources) {
                         dataSource.readCookieData(ba);
                     }
-                    success = true;
+
+                    if (ba.bytesAvailable != 0) {
+                        var totalSize :uint = ba.length;
+                        var expectedSize :uint = ba.position;
+                        errString = "cookie was too large (expected " + expectedSize + "b, got " + totalSize + "b)";
+                    } else {
+                        success = true;
+                    }
                 }
             } catch (e :Error) {
                 errString = e.message;

@@ -235,6 +235,7 @@ public class GameMode extends TransitionMode
 
     protected function setupPlayersSP () :void
     {
+        GameContext.localPlayerIndex = 0;
         GameContext.playerInfos = [];
 
         var level :LevelData = GameContext.spLevel;

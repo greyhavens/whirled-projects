@@ -17,9 +17,9 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
     protected function updateStats () :void
     {
         var gameArrangement :int = MultiplayerConfig.computeTeamArrangement();
-        GameContext.playerStats.mpGamesPlayed[gameArrangement] = 1;
+        GameContext.playerStats.mpGamesPlayed[gameArrangement] += 1;
         if (this.playerWon) {
-            GameContext.playerStats.mpGamesWon[gameArrangement] = 1;
+            GameContext.playerStats.mpGamesWon[gameArrangement] += 1;
         }
 
         // viral trophy
