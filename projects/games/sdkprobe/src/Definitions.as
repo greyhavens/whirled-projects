@@ -44,6 +44,37 @@ public class Definitions
     public function Definitions (ctrl :GameControl)
     {
         _ctrl = ctrl;
+
+        _funcs.game = createGameFuncs();
+        _funcs.net = createNetFuncs();
+        _funcs.seating = createSeatingFuncs();
+    }
+
+    public function getGameFuncs () :Array
+    {
+        return _funcs.game.slice();
+    }
+
+    public function getNetFuncs () :Array
+    {
+        return _funcs.net.slice();
+    }
+
+    public function getSeatingFuncs () :Array
+    {
+        return _funcs.seating.slice();
+    }
+
+    public function findByName (name :String) :FunctionSpec
+    {
+        for each (var fnArray :Array in _funcs) {
+            for each (var spec :FunctionSpec in fnArray) {
+                if (spec.name == name) {
+                    return spec;
+                }
+            }
+        }
+        return null;
     }
 
     public function addListenerToAll (listener :Function) :void
@@ -59,7 +90,7 @@ public class Definitions
         add(_ctrl.game.seating, SEATING_EVENTS);
     }
 
-    public function getGameFuncs () :Array 
+    protected function createGameFuncs () :Array 
     {
         var game :GameSubControl = _ctrl.game;
 
@@ -100,7 +131,7 @@ public class Definitions
         ];
     }
 
-    public function getNetFuncs () :Array
+    protected function createNetFuncs () :Array
     {
         var net :NetSubControl = _ctrl.net;
 
@@ -137,7 +168,7 @@ public class Definitions
         ];
     }
 
-    public function getSeatingFuncs () :Array
+    protected function createSeatingFuncs () :Array
     {
         var seating :SeatingSubControl = _ctrl.game.seating;
      
@@ -151,5 +182,6 @@ public class Definitions
     }
 
     protected var _ctrl :GameControl;
+    protected var _funcs :Object = {};
 }
 }

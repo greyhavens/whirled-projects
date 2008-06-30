@@ -4,6 +4,8 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.Event;
 import com.whirled.game.GameControl;
+import com.whirled.game.MessageReceivedEvent;
+import com.threerings.util.StringUtil;
 
 public class SDKProbe extends Sprite
 {
@@ -22,13 +24,25 @@ public class SDKProbe extends Sprite
 
         _tabPanel.addTab("test", new Button("Test"), new TestPanel());
         _tabPanel.addTab("game", new Button("Game"), 
-            new FunctionPanel(_ctrl.game, defs.getGameFuncs()));
+            new FunctionPanel(_ctrl, defs.getGameFuncs()));
         _tabPanel.addTab("seating", new Button("Seating"), 
-            new FunctionPanel(_ctrl.game.seating, defs.getSeatingFuncs()));
+            new FunctionPanel(_ctrl, defs.getSeatingFuncs()));
         _tabPanel.addTab("net", new Button("Net"), 
-            new FunctionPanel(_ctrl.net, defs.getNetFuncs()));
+            new FunctionPanel(_ctrl, defs.getNetFuncs()));
 
         defs.addListenerToAll(logEvent);
+
+        _ctrl.net.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, 
+            handleMessage);
+    }
+
+    protected function handleMessage (evt :MessageReceivedEvent) :void
+    {
+        if (evt.name == Server.BACKEND_CALL_RESULT) {
+            _ctrl.local.feedback(
+                "Result received: " + StringUtil.toString(evt.value));
+        }
     }
 
     protected function logEvent (event :Event) :void

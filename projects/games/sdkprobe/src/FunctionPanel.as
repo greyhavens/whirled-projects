@@ -8,7 +8,7 @@ import com.threerings.util.StringUtil;
 
 public class FunctionPanel extends Sprite
 {
-    public function FunctionPanel (ctrl :Object, functions :Array)
+    public function FunctionPanel (ctrl :GameControl, functions :Array)
     {
         _ctrl = ctrl;
 
@@ -61,6 +61,7 @@ public class FunctionPanel extends Sprite
             grid.addCell(0, ii, fnButt);
             fnButt.addEventListener(ButtonEvent.CLICK, handleFunctionClick);
             params.callButton.addEventListener(ButtonEvent.CLICK, handleCallClick);
+            params.serverCallButton.addEventListener(ButtonEvent.CLICK, handleServerCallClick);
         }
 
         return grid;
@@ -93,10 +94,33 @@ public class FunctionPanel extends Sprite
             var params :Array = _selected.params.parse();
             output("Calling " + _selected.spec.name + " with arguments " + 
                    StringUtil.toString(params));
-            var value :Object = _selected.spec.func.apply(_ctrl, params);
+            var value :Object = _selected.spec.func.apply(null, params);
             if (value != undefined) {
                 output("Result: " + StringUtil.toString(value));
             }
+
+        } catch (e :Error) {
+            var msg :String = e.getStackTrace();
+            if (msg == null) {
+                msg = e.toString();
+            }
+            output(msg);
+        }
+    }
+
+    protected function handleServerCallClick (evt :ButtonEvent) :void
+    {
+        if (_selected == null) {
+            return;
+        }
+
+        try {
+            var message :Object = {};
+            message.name = _selected.spec.name;
+            message.params = _selected.params.parse();
+            message.sequenceId = _sequenceId++;
+            output("Sending message " + StringUtil.toString(message));
+            _ctrl.net.sendMessageToAgent(Server.REQUEST_BACKEND_CALL, message);
 
         } catch (e :Error) {
             var msg :String = e.getStackTrace();
@@ -114,10 +138,11 @@ public class FunctionPanel extends Sprite
         _output.scrollV = _output.maxScrollV;
     }
 
-    protected var _ctrl :Object;
+    protected var _ctrl :GameControl;
     protected var _functions :Object = {};
     protected var _output :TextField;
     protected var _selected :FunctionEntry;
+    protected static var _sequenceId :int;
 }
 
 }

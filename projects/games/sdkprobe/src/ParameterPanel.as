@@ -40,8 +40,16 @@ public class ParameterPanel extends Sprite
             entry.input.height = _grid.getCellSize(1, row).y;
         }
 
-        _call = new Button("Call", "call");
-        _grid.addCell(1, 0, _call);
+        
+        var buttonGrid :GridPanel = new GridPanel([100, 100], [20]);
+
+        _call = new Button("Local Call", "call");
+        buttonGrid.addCell(0, 0, _call);
+
+        _serverCall = new Button("Server Call", "callonserver");
+        buttonGrid.addCell(1, 0, _serverCall);
+
+        _grid.addCell(1, 0, buttonGrid);
 
         if (title != null) {
             var titleText :TextField = new TextField();
@@ -56,6 +64,11 @@ public class ParameterPanel extends Sprite
     public function get callButton () :Button
     {
         return _call;
+    }
+
+    public function get serverCallButton () :Button
+    {
+        return _serverCall;
     }
 
     public function parse () :Array
@@ -99,6 +112,7 @@ public class ParameterPanel extends Sprite
     }
 
     protected var _call :Button;
+    protected var _serverCall :Button;
     protected var _grid :GridPanel;
     protected var _entries :Array;
 }
