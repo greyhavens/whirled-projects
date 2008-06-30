@@ -1,5 +1,7 @@
 package {
 
+import com.threerings.util.StringUtil;
+
 public class Parameter
 {
     public function Parameter (
@@ -40,7 +42,7 @@ public class Parameter
             return input;
 
         } else if (_type == int) {
-            return parseInt(input);
+            return StringUtil.parseInteger(input);
         }
 
         throw new Error("Parsing for parameter type " + type + 
