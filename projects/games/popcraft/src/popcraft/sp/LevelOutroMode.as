@@ -26,6 +26,9 @@ public class LevelOutroMode extends AppMode
         var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
 
         if (AppContext.gameCtrl.isConnected()) {
+            // don't show the rematch button in single-player games
+            AppContext.gameCtrl.local.setShowButtons(false, true);
+
             AppContext.gameCtrl.game.endGameWithScore(awardedScore);
         } else {
             log.info("Level score: " + awardedScore);

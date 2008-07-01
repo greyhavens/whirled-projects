@@ -156,6 +156,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
                 }
             }
 
+            AppContext.gameCtrl.local.setShowButtons(false, true);
             AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
         }
     }
