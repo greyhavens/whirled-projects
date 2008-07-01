@@ -4,9 +4,9 @@ import com.threerings.util.StringUtil;
 
 public class ObjectParameter extends Parameter
 {
-    public function ObjectParameter (name :String, required :Boolean=true)
+    public function ObjectParameter (name :String, flags :uint=0)
     {
-        super(name, Object, required);
+        super(name, Object, flags);
     }
 
     override public function get typeDisplay () :String

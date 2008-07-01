@@ -4,14 +4,17 @@ import com.threerings.util.StringUtil;
 
 public class Parameter
 {
+    public static const OPTIONAL :int = 1;
+    public static const NULLABLE :int = 2;
+
     public function Parameter (
         name :String, 
         type :Class, 
-        required :Boolean=true)
+        flags :uint=0)
     {
         _name = name;
         _type = type;
-        _optional = !required;
+        _flags = flags;
     }
 
     public function get name () :String
@@ -51,12 +54,17 @@ public class Parameter
 
     public function get optional () :Boolean
     {
-        return _optional;
+        return (_flags & OPTIONAL) != 0;
+    }
+
+    public function get nullable () :Boolean
+    {
+        return (_flags & NULLABLE) != 0;
     }
 
     protected var _name :String;
     protected var _type :Class;
-    protected var _optional :Boolean;
+    protected var _flags :uint;
 }
 
 }

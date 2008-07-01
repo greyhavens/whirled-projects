@@ -12,6 +12,8 @@ public class ParameterPanel extends Sprite
 
     public function ParameterPanel (parameters :Array, title :String=null)
     {
+        var defaultNulls :Boolean = true;
+
         var row :int;
         var heights :Array = [];
         _entries = [];
@@ -23,11 +25,12 @@ public class ParameterPanel extends Sprite
             label.addEventListener(ButtonEvent.CLICK, handleLabelClick);
             var input :TextField = new TextField();
             //input.autoSize = TextFieldAutoSize.LEFT;
+            input.border = true;
             if (param is CallbackParameter) {
                 input.textColor = 0x808080;
+                input.borderColor = 0x808080;
                 input.text = "callback";
             } else {
-                input.border = true;
                 input.type = TextFieldType.INPUT;
             }
             if (param.optional) {
@@ -37,14 +40,20 @@ public class ParameterPanel extends Sprite
         }
 
         heights.push(CELL_HEIGHT);
-        _grid = new GridPanel([150, 200], heights);
+        _grid = new GridPanel([100, 50, 200], heights);
 
         for (row = 0; row < _entries.length; ++row) {
             var entry :ParameterEntry = _entries[row];
             _grid.addCell(0, row + 1, entry.label);
-            _grid.addCell(1, row + 1, entry.input);
-            entry.input.width = _grid.getCellSize(1, row).x;
-            entry.input.height = _grid.getCellSize(1, row).y;
+            _grid.addCell(2, row + 1, entry.input);
+            entry.input.width = _grid.getCellSize(2, row).x;
+            entry.input.height = _grid.getCellSize(2, row).y - 3;
+            if (entry.param.nullable) {
+                var nullButton :Button = new Button("", entry.param.name);
+                _grid.addCell(1, row + 1, nullButton);
+                nullButton.addEventListener(ButtonEvent.CLICK, handleNullClick);
+                setNull(entry, nullButton, defaultNulls);
+            }
         }
 
         
@@ -56,7 +65,7 @@ public class ParameterPanel extends Sprite
         _serverCall = new Button("Server Call", "callonserver");
         buttonGrid.addCell(1, 0, _serverCall);
 
-        _grid.addCell(1, 0, buttonGrid);
+        _grid.addCell(2, 0, buttonGrid);
 
         if (title != null) {
             var titleText :TextField = new TextField();
@@ -85,7 +94,7 @@ public class ParameterPanel extends Sprite
             if (!entry.input.visible) {
                 break;
             }
-            args.push(entry.input.text);
+            args.push(entry.isNull ? null : entry.input.text);
         }
         return args;
     }
@@ -118,6 +127,54 @@ public class ParameterPanel extends Sprite
         }
     }
 
+    protected function handleNullClick (evt :ButtonEvent) :void
+    {
+        var paramName :String = evt.action;
+        var clicked :int;
+        for (clicked = 0; clicked < _entries.length; ++clicked) {
+            if (_entries[clicked].param.name == paramName) {
+                break;
+            }
+        }
+
+        if (clicked == _entries.length) {
+            trace("Parameter not found: " + evt);
+            return;
+        }
+
+        var entry :ParameterEntry = _entries[clicked];
+        var button :Button = evt.target as Button;
+        setNull(entry, button, !entry.isNull);
+    }
+
+    protected function setNull (
+        entry :ParameterEntry, 
+        button :Button, 
+        isNull :Boolean) :void
+    {
+        if (!entry.param.nullable) {
+            trace("Parameter can't be null: " + entry.param);
+            return;
+        }
+
+        entry.isNull = isNull;
+        if (isNull || entry.param is CallbackParameter) {
+            entry.input.type = TextFieldType.DYNAMIC;
+            entry.input.textColor = 0x808080;
+        } else {
+            entry.input.type = TextFieldType.INPUT;
+            entry.input.textColor = 0x000000;
+        }
+
+        if (isNull) {
+            button.text = "(null)";
+            entry.input.border = false;
+        } else {
+            button.text = "(!null)";
+            entry.input.border = true;
+        }
+    }
+
     protected var _call :Button;
     protected var _serverCall :Button;
     protected var _grid :GridPanel;
@@ -133,6 +190,7 @@ class ParameterEntry
     public var param :Parameter;
     public var label :Button;
     public var input :TextField;
+    public var isNull :Boolean;
 
     public function ParameterEntry (
         param :Parameter,
@@ -142,5 +200,6 @@ class ParameterEntry
         this.param = param;
         this.label = label;
         this.input = input;
+        this.isNull = false;
     }
 }

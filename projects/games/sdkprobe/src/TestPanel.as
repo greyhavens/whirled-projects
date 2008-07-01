@@ -27,8 +27,8 @@ public class TestPanel extends TabPanel
         addTab("params", new Button("Params"), new ParameterPanel([
             new Parameter("p1", int),
             new Parameter("p2", String),
-            new Parameter("p3", int, false),
-            new Parameter("p4", String, false),
+            new Parameter("p3", int, Parameter.OPTIONAL),
+            new Parameter("p4", String, Parameter.OPTIONAL|Parameter.NULLABLE),
             ]));
     }
 }

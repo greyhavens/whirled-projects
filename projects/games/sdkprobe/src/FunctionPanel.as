@@ -27,7 +27,6 @@ public class FunctionPanel extends Sprite
             }
             addChild(groups);
         }
-       
 
         _output = new TextField();
         _output.width = 699;
@@ -47,12 +46,12 @@ public class FunctionPanel extends Sprite
         }
 
         var grid :GridPanel = new GridPanel(
-            [150, 150], heights);
+            [150], heights);
 
         for (ii = 0; ii < functions.length; ++ii) {
             var spec :FunctionSpec = functions[ii] as FunctionSpec;
             var params :ParameterPanel = new ParameterPanel(spec.parameters, spec.name);
-            params.x = 300;
+            params.x = 150;
             params.visible = false;
             addChild(params);
             _functions[spec.name] = new FunctionEntry(spec, params);
@@ -92,9 +91,6 @@ public class FunctionPanel extends Sprite
             if (params[ii] is CallbackParameter) {
                 if (local) {
                     inputs[ii] = makeGenericCallback(entry.spec);
-
-                } else {
-                    inputs[ii] = null;
                 }
             } else {
                 inputs[ii] = params[ii].parse(inputs[ii]);

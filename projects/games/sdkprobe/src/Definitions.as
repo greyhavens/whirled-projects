@@ -6,6 +6,8 @@ import com.whirled.game.GameSubControl;
 import com.whirled.game.NetSubControl;
 import com.whirled.game.SeatingSubControl;
 import com.whirled.game.PlayerSubControl;
+import com.whirled.game.ServicesSubControl;
+import com.whirled.game.BagsSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.UserChatEvent;
@@ -40,11 +42,15 @@ public class Definitions
         CoinsAwardedEvent.COINS_AWARDED
     ];
 
+    public static const SERVICES_EVENTS :Array = [];
+
     public static const ALL_EVENTS :Array = [];
     {
         ALL_EVENTS.push.apply(ALL_EVENTS, GAME_EVENTS);
         ALL_EVENTS.push.apply(ALL_EVENTS, NET_EVENTS);
         ALL_EVENTS.push.apply(ALL_EVENTS, SEATING_EVENTS);
+        ALL_EVENTS.push.apply(ALL_EVENTS, PLAYER_EVENTS);
+        ALL_EVENTS.push.apply(ALL_EVENTS, SERVICES_EVENTS);
     }
 
     public function Definitions (ctrl :GameControl)
@@ -55,6 +61,8 @@ public class Definitions
         _funcs.net = createNetFuncs();
         _funcs.seating = createSeatingFuncs();
         _funcs.player = createPlayerFuncs();
+        _funcs.services = createServicesFuncs();
+        _funcs.bags = createBagsFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -75,6 +83,16 @@ public class Definitions
     public function getPlayerFuncs () :Array
     {
         return _funcs.player.slice();
+    }
+
+    public function getServicesFuncs () :Array
+    {
+        return _funcs.services.slice();
+    }
+
+    public function getBagsFuncs () :Array
+    {
+        return _funcs.bags.slice();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -120,7 +138,7 @@ public class Definitions
                  new ArrayParameter("loserIds", int), 
                  new Parameter("payoutType", int)]),
             new FunctionSpec("endRound", game.endRound,
-                [new Parameter("nextRoundDelay", int, false)]),
+                [new Parameter("nextRoundDelay", int, Parameter.OPTIONAL)]),
             new FunctionSpec("getConfig", game.getConfig),
             new FunctionSpec("getControllerId", game.getControllerId),
             new FunctionSpec("getItemPacks", game.getItemPacks),
@@ -135,9 +153,9 @@ public class Definitions
             new FunctionSpec("isMyTurn", game.isMyTurn),
             new FunctionSpec("playerReady", game.playerReady),
             new FunctionSpec("restartGameIn", game.restartGameIn,
-                [new Parameter("seconds", int, false)]),
+                [new Parameter("seconds", int, Parameter.OPTIONAL)]),
             new FunctionSpec("startNextTurn", game.startNextTurn,
-                [new Parameter("nextPlayerId", int, false)]),
+                [new Parameter("nextPlayerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("systemMessage", game.systemMessage,
                 [new Parameter("msg", String)])
         ];
@@ -151,28 +169,28 @@ public class Definitions
             new FunctionSpec("get", net.get,
                 [new Parameter("propName", String)]),
             new FunctionSpec("getPropertyNames", net.getPropertyNames,
-                [new Parameter("prefix", String, false)]),
+                [new Parameter("prefix", String, Parameter.OPTIONAL)]),
             new FunctionSpec("sendMessage", net.sendMessage,
                 [new Parameter("messageName", String),
                  new ObjectParameter("value"),
-                 new Parameter("playerId", int, false)]),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("sendMessageToAgent", net.sendMessageToAgent,
                 [new Parameter("messageName", String),
                 new ObjectParameter("value")]),
             new FunctionSpec("set", net.set,
                 [new Parameter("propName", String),
                 new ObjectParameter("value"),
-                new Parameter("immediate", Boolean, false)]),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("setAt", net.setAt,
                 [new Parameter("propName", String),
                  new Parameter("index", int),
                  new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, false)]),
+                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("setIn", net.setIn,
                 [new Parameter("propName", String),
                  new Parameter("key", int),
                  new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, false)]),
+                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("testAndSet", net.testAndSet,
                 [new Parameter("propName", String),
                  new ObjectParameter("newValue"),
@@ -200,21 +218,76 @@ public class Definitions
         return [
             new FunctionSpec("getCookie", player.getCookie,
                 [new CallbackParameter("callback"), 
-                new Parameter("occupantId", int, false)]),
+                new Parameter("occupantId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("setCookie", player.setCookie,
                 [new ObjectParameter("cookie"), 
-                new Parameter("occupantId", int, false)]),
+                new Parameter("occupantId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("getPlayerItemPacks", player.getPlayerItemPacks,
-                [new Parameter("playerId", int, false)]),
+                [new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("holdsTrophy", player.holdsTrophy,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, false)]),
+                new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("awardTrophy", player.awardTrophy,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, false)]),
+                new Parameter("playerId", int, Parameter.OPTIONAL)]),
             new FunctionSpec("awardPrize", player.awardPrize,
                 [new Parameter("ident", String), 
-                new Parameter("playerId", int, false)]),
+                new Parameter("playerId", int, Parameter.OPTIONAL)]),
+        ];
+    }
+
+    protected function createServicesFuncs () :Array
+    {
+        var services :ServicesSubControl = _ctrl.services;
+        
+        return [
+            new FunctionSpec("checkDictionaryWord", services.checkDictionaryWord,
+                [new Parameter("locale", String),
+                 new Parameter("dictionary", String, Parameter.NULLABLE),
+                 new Parameter("word", String),
+                 new CallbackParameter("callback")]),
+            new FunctionSpec("getDictionaryLetterSet", services.getDictionaryLetterSet,
+                [new Parameter("locale", String),
+                 new Parameter("dictionary", String, Parameter.NULLABLE),
+                 new Parameter("count", int),
+                 new CallbackParameter("callback")]),
+            new FunctionSpec("getDictionaryWords", services.getDictionaryWords,
+                [new Parameter("locale", String),
+                 new Parameter("dictionary", String, Parameter.NULLABLE),
+                 new Parameter("count", int),
+                 new CallbackParameter("callback")]),
+            new FunctionSpec("startTicker", services.startTicker,
+                [new Parameter("tickerName", String),
+                 new Parameter("msOfDelay", int)]),
+            new FunctionSpec("stopTicker", services.stopTicker,
+                [new Parameter("tickerName", String)])
+        ];
+    }
+
+    protected function createBagsFuncs () :Array
+    {
+        var bags :BagsSubControl = _ctrl.services.bags;
+        return [
+            new FunctionSpec("create", bags.create,
+                [new Parameter("bagName", String),
+                 new ArrayParameter("values", int)]),
+            new FunctionSpec("addTo", bags.addTo,
+                [new Parameter("bagName", String),
+                 new ArrayParameter("values", int)]),
+            new FunctionSpec("merge", bags.merge,
+                [new Parameter("srcBag", String),
+                 new Parameter("intoBag", String)]),
+            new FunctionSpec("pick", bags.pick,
+                [new Parameter("bagName", String),
+                 new Parameter("count", int),
+                 new Parameter("msgOrPropName", String),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
+            new FunctionSpec("deal", bags.deal,
+                [new Parameter("bagName", String),
+                 new Parameter("count", int),
+                 new Parameter("msgOrPropName", String),
+                 new CallbackParameter("callback", Parameter.OPTIONAL|Parameter.NULLABLE),
+                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
         ];
     }
 

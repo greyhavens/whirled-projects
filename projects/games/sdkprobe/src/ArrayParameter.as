@@ -5,9 +5,9 @@ public class ArrayParameter extends Parameter
     public function ArrayParameter (
         name :String, 
         type :Class, 
-        required :Boolean=true)
+        flags :uint=0)
     {
-        super(name, Array, required);
+        super(name, Array, flags);
         _underlying = type;
     }
 

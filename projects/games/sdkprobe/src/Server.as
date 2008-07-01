@@ -36,7 +36,7 @@ public class Server extends ServerObject
                 var args :Array = evt.value.params;
                 var params :Array = fnSpec.parameters;
                 for (var ii :int = 0; ii < args.length; ++ii) {
-                    if (params[ii] is CallbackParameter) {
+                    if (params[ii] is CallbackParameter && args[ii] != null) {
                         args[ii] = makeGenericCallback(evt.value, evt.senderId);
                     }
                 }
