@@ -41,8 +41,8 @@ public class LocalPlayerInfo extends PlayerInfo
         Assert.isTrue(resourceType < _resources.length);
 
         // clamp
-        newAmount = Math.max(newAmount, GameContext.gameData.minResourceAmount);
-        newAmount = Math.min(newAmount, GameContext.gameData.maxResourceAmount);
+        newAmount = Math.max(newAmount, _minResourceAmount);
+        newAmount = Math.min(newAmount, _maxResourceAmount);
 
         _resources[resourceType] = newAmount;
     }
@@ -85,9 +85,8 @@ public class LocalPlayerInfo extends PlayerInfo
 
         if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_MAXEDOUT)) {
             var isMaxedOut :Boolean = true;
-            var resMax :int = GameContext.gameData.maxResourceAmount;
             for each (var resAmount :int in _resources) {
-                if (resAmount < resMax) {
+                if (resAmount < _maxResourceAmount) {
                     isMaxedOut = false;
                     break;
                 }

@@ -22,6 +22,12 @@ public class PlayerInfo extends EventDispatcher
         _baseLoc = baseLoc;
         _handicap = handicap;
 
+        _minResourceAmount = GameContext.gameData.minResourceAmount;
+        _maxResourceAmount = GameContext.gameData.maxResourceAmount;
+        if (_handicap > 1) {
+            _maxResourceAmount *= _handicap;
+        }
+
         if (null != playerName) {
             _playerName = playerName;
         } else {
@@ -33,6 +39,16 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerHeadshot = SeatingManager.getPlayerHeadshot(_playerIndex);
         }
+    }
+
+    public function get minResourceAmount () :int
+    {
+        return _minResourceAmount;
+    }
+
+    public function get maxResourceAmount () :int
+    {
+        return _maxResourceAmount;
     }
 
     public function get handicap () :Number
@@ -174,6 +190,8 @@ public class PlayerInfo extends EventDispatcher
     protected var _targetedEnemyId :int;
     protected var _baseRef :SimObjectRef;
     protected var _handicap :Number;
+    protected var _minResourceAmount :int;
+    protected var _maxResourceAmount :int;
     protected var _baseLoc :Vector2;
 
     protected static var log :Log = Log.getLog(PlayerInfo);

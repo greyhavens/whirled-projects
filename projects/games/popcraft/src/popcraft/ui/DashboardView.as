@@ -255,7 +255,7 @@ public class DashboardView extends SceneObject
             g.drawRect(
                 meterLoc.x,
                 meterLoc.y,
-                1 + (RESOURCE_METER_WIDTH * (resAmount / GameContext.gameData.maxResourceAmount)),
+                1 + (RESOURCE_METER_WIDTH * (resAmount / GameContext.localPlayerInfo.maxResourceAmount)),
                 RESOURCE_METER_HEIGHT);
             g.endFill();
         }
