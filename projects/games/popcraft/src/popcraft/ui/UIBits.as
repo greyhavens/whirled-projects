@@ -11,6 +11,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+import flash.text.TextLineMetrics;
 
 public class UIBits
 {
@@ -44,15 +45,22 @@ public class UIBits
         tf.selectable = false;
         tf.multiline = true;
         tf.wordWrap = wordWrap;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        if (wordWrap) {
-            tf.width = maxWidth / textScale;
-        }
         tf.scaleX = textScale;
         tf.scaleY = textScale;
+
+        if (wordWrap) {
+            tf.width = maxWidth / textScale;
+        } else {
+            tf.autoSize = TextFieldAutoSize.LEFT;
+        }
+
         tf.text = text;
-        // if the text isn't as wide as maxWidth, shrink the TextField
-        tf.width = Math.min(tf.width * textScale, tf.textWidth);
+
+        if (wordWrap) {
+            // if the text isn't as wide as maxWidth, shrink the TextField
+            tf.width = Math.min(tf.width * textScale, tf.textWidth + TEXT_WIDTH_PAD);
+            tf.height = tf.textHeight + TEXT_HEIGHT_PAD;
+        }
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
@@ -98,6 +106,7 @@ public class UIBits
         tf.multiline = false;
         tf.wordWrap = false;
         tf.autoSize = TextFieldAutoSize.LEFT;
+        tf.selectable = false;
         tf.scaleX = textScale;
         tf.scaleY = textScale;
         tf.text = text;
@@ -141,6 +150,9 @@ public class UIBits
 
     protected static const BUTTON_H_MARGIN :int = 23;
     protected static const BUTTON_Y_MARGIN :int = 15;
+
+    protected static const TEXT_WIDTH_PAD :int = 5;
+    protected static const TEXT_HEIGHT_PAD :int = 4;
 }
 
 }
