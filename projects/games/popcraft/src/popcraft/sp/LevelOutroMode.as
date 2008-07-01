@@ -60,7 +60,7 @@ public class LevelOutroMode extends AppMode
 
         message += "Your progress has been saved.\nContinue playing?";
 
-        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 24, false, TextFormatAlign.LEFT);
+        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 30, false, TextFormatAlign.LEFT);
         tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
         tfMessage.y = tfName.y + tfName.height + 10;
 

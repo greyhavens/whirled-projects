@@ -20,7 +20,7 @@
 
         <Hints>
             <Hint>A solar eclipse will destroy your existing creatures, but does not prevent you from creating more immediately.</Hint>
-            <Hint>Don't bother attacking Ralph will small groups of creatures. Spend time gathering resources, and hit him with everything all at once!</Hint>
+            <Hint>Don't bother attacking Ralph with small groups of creatures. Spend time gathering resources, and hit him with everything all at once!</Hint>
         </Hints>
 
         <GameDataOverride enableEclipse="true" initialDayPhase="eclipse">
