@@ -36,6 +36,8 @@ public class CreaturePurchaseButton extends SimObject
         _button = parent["button_" + slotNum];
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
 
+        _hilite.alpha = 0.5;
+
         _multiplicity.text = "";
         _switch.cacheAsBitmap = true;
 
@@ -200,8 +202,8 @@ public class CreaturePurchaseButton extends SimObject
     override protected function update (dt :Number) :void
     {
         var playerInfo :LocalPlayerInfo = GameContext.localPlayerInfo;
-        var res1Amount :int = Math.min(playerInfo.getResourceAmount(_resource1Type), _resource1Cost);
-        var res2Amount :int = Math.min(playerInfo.getResourceAmount(_resource2Type), _resource2Cost);
+        var res1Amount :int = playerInfo.getResourceAmount(_resource1Type);
+        var res2Amount :int = playerInfo.getResourceAmount(_resource2Type);
 
         var available :Boolean = (playerInfo.isAlive && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
         var enabled :Boolean = (_available && GameContext.diurnalCycle.isNight);
@@ -216,11 +218,11 @@ public class CreaturePurchaseButton extends SimObject
             return;
         }
 
-        if (_available) {
-            var numAvailableUnits :int = Math.min(
-                Math.floor(playerInfo.getResourceAmount(_resource1Type) / _resource1Cost),
-                Math.floor(playerInfo.getResourceAmount(_resource2Type) / _resource2Cost));
+        var numAvailableUnits :int = Math.min(
+            Math.floor(res1Amount / _resource1Cost),
+            Math.floor(res2Amount / _resource2Cost));
 
+        if (_available) {
             _multiplicity.text = String(numAvailableUnits);
         }
 
@@ -229,15 +231,15 @@ public class CreaturePurchaseButton extends SimObject
             var availableResources :int;
             var meterArray :Array;
             if (i == 0) {
-                availableResources = res1Amount;
+                availableResources = res1Amount - (numAvailableUnits * _resource1Cost);
                 meterArray = _resource1Meters;
             } else {
-                availableResources = res2Amount;
+                availableResources = res2Amount - (numAvailableUnits * _resource2Cost);
                 meterArray = _resource2Meters;
             }
 
             for each (var meter :ResourceMeter in meterArray) {
-                var thisMeterVal :int = Math.min(availableResources, ResourceMeter.MAX_MAX_VALUE);
+                var thisMeterVal :int = Math.min(availableResources, meter.maxValue);
                 meter.update(thisMeterVal);
                 availableResources = Math.max(availableResources - thisMeterVal, 0);
             }
@@ -378,7 +380,7 @@ class ResourceMeter extends Shape
             return;
         }
 
-        _value = newValue;
+        _value = newValue
 
         var percentFill :Number = _value / _maxValue;
         var fgHeight :Number = _totalHeight * percentFill;
@@ -409,6 +411,11 @@ class ResourceMeter extends Shape
     public function get meterWidth () :int
     {
         return _width;
+    }
+
+    public function get maxValue () :int
+    {
+        return _maxValue;
     }
 
     protected var _fgBitmap :BitmapData;
