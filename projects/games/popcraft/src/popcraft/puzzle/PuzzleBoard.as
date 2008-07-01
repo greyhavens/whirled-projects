@@ -196,58 +196,6 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    public function clearPieceGroup (x :int, y :int) :void
-    {
-        Assert.isFalse(_resolvingClears);
-
-        var clearPieces :Array = findConnectedSimilarPieces(x, y);
-
-        Assert.isTrue(clearPieces.length > 0);
-
-        // update the player's resource count
-        var resourceType :int = Piece(clearPieces[0]).resourceType;
-        var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
-        resourceValue *= GameContext.localPlayerInfo.handicap;
-        GameContext.localPlayerInfo.earnedResources(resourceType, resourceValue, clearPieces.length);
-
-        _resolvingClears = true;
-
-        // animate the pieces exploding
-        for each (var piece :Piece in clearPieces) {
-            var pieceAnim :SerialTask = new SerialTask();
-
-            // scale down and die
-            pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, PIECE_SCALE_DOWN_TIME));
-            pieceAnim.addTask(new SelfDestructTask());
-
-            piece.addTask(pieceAnim);
-
-            // remove the pieces from the board array
-            _board[piece.boardIndex] = null;
-        }
-
-        // when the pieces are done clearing,
-        // drop the pieces above them.
-        this.addTask(new SerialTask(
-            new TimedTask(PIECE_SCALE_DOWN_TIME),
-            new FunctionTask(animatePieceDrops)));
-
-        // show the "resources earned" animation
-        var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
-        animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
-        this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
-
-        // play a sound
-        GameContext.playGameSound(resourceValue >= 0 ?
-            "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
-            "sfx_rsrc_lost");
-
-        // award trophy
-        if (clearPieces.length >= TrophyManager.TROPHY_RESOURCE_CLEAR_TILE_COUNT) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_RESOURCE_CLEAR[resourceType]);
-        }
-    }
-
     protected function showResourceValueAnimation (loc :Point, resType :int, amount :int) :void
     {
         var movieName :String = (amount >= 0 ?
@@ -276,7 +224,65 @@ public class PuzzleBoard extends SceneObject
         GameContext.gameMode.addObject(anim, GameContext.overlayLayer);
     }
 
-    protected function animatePieceDrops () :void
+    public function clearPieceGroup (x :int, y :int) :void
+    {
+        Assert.isFalse(_resolvingClears);
+
+        var clearPieces :Array = findConnectedSimilarPieces(x, y);
+
+        Assert.isTrue(clearPieces.length > 0);
+
+        // update the player's resource count
+        var resourceType :int = Piece(clearPieces[0]).resourceType;
+        var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
+        resourceValue *= GameContext.localPlayerInfo.handicap;
+        GameContext.localPlayerInfo.earnedResources(resourceType, resourceValue, clearPieces.length);
+
+        _resolvingClears = true;
+
+        // let's only animate if the game isn't running slowly
+        var animate :Boolean = !PerfMonitor.isLowFramerate;
+
+        // remove the cleared pieces from the board
+        for each (var piece :Piece in clearPieces) {
+            if (animate) {
+                // animate the pieces exploding
+                var pieceAnim :SerialTask = new SerialTask();
+                pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, PIECE_SCALE_DOWN_TIME));
+                pieceAnim.addTask(new SelfDestructTask());
+                piece.addTask(pieceAnim);
+
+            } else {
+                piece.destroySelf();
+            }
+
+            // remove the pieces from the board array
+            _board[piece.boardIndex] = null;
+        }
+
+        // when the pieces are done clearing,
+        // drop the pieces above them.
+        this.addTask(new SerialTask(
+            new TimedTask(PIECE_SCALE_DOWN_TIME),
+            new FunctionTask(function () :void { dropPieces(animate); } )));
+
+        // show the "resources earned" animation
+        var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
+        animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
+        this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
+
+        // play a sound
+        GameContext.playGameSound(resourceValue >= 0 ?
+            "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
+            "sfx_rsrc_lost");
+
+        // award trophy
+        if (clearPieces.length >= TrophyManager.TROPHY_RESOURCE_CLEAR_TILE_COUNT) {
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_RESOURCE_CLEAR[resourceType]);
+        }
+    }
+
+    protected function dropPieces (animate :Boolean) :void
     {
         Assert.isTrue(_resolvingClears);
 
@@ -310,15 +316,17 @@ public class PuzzleBoard extends SceneObject
                     // drop the pieces, starting from this piece
                     // and continuing all the way to the top of the column
                     while (srcRow >= 0) {
-
                         if (null != this.getPieceAt(col, srcRow)) {
-                            var timeUntilThisDropCompletes :Number = drop1Piece(col, srcRow, dstRow, dropDelay);
+                            var timeUntilThisDropCompletes :Number = drop1Piece(
+                                col,
+                                srcRow,
+                                dstRow,
+                                dropDelay,
+                                animate);
+
                             timeUntilDone = Math.max(timeUntilDone, timeUntilThisDropCompletes);
-
                             dropDelay += Rand.nextNumberRange(0.04, 0.07, Rand.STREAM_COSMETIC);
-
                             --dstRow;
-
                             piecesDropped = true;
                         }
 
@@ -333,10 +341,10 @@ public class PuzzleBoard extends SceneObject
 
         addTask(new SerialTask(
             new TimedTask(timeUntilDone),
-            new FunctionTask(animateAddNewPieces)));
+            new FunctionTask(function () :void { addNewPieces(animate); } )));
     }
 
-    protected function drop1Piece (col :int, fromRow :int, toRow :int, initialDelay :Number) :Number
+    protected function drop1Piece (col :int, fromRow :int, toRow :int, initialDelay :Number, animate :Boolean) :Number
     {
         Assert.isTrue(_resolvingClears);
 
@@ -358,21 +366,29 @@ public class PuzzleBoard extends SceneObject
         piece.x = getPieceXLoc(col);
         piece.y = getPieceYLoc(fromRow);
 
-        // animate the piece to its new location
+        // move the piece to its new location
         piece.removeNamedTasks(MOVE_TASK_NAME);
 
-        piece.addNamedTask(MOVE_TASK_NAME,
-            new SerialTask(
-                new TimedTask(initialDelay),
-                LocationTask.CreateEaseIn(
-                    getPieceXLoc(col),
-                    getPieceYLoc(toRow),
-                    PIECE_DROP_TIME)));
+        var toX :Number = piece.x;
+        var toY :Number = getPieceYLoc(toRow);
+        var animateTime :Number = initialDelay;
 
-        return initialDelay + PIECE_DROP_TIME;
+        if (animate) {
+            animateTime += PIECE_DROP_TIME;
+            piece.addNamedTask(MOVE_TASK_NAME,
+                new SerialTask(
+                    new TimedTask(initialDelay),
+                    LocationTask.CreateEaseIn(toX, toY, PIECE_DROP_TIME)));
+
+        } else {
+            piece.x = toX;
+            piece.y = toY;
+        }
+
+        return animateTime;
     }
 
-    protected function animateAddNewPieces () :void
+    protected function addNewPieces (animate :Boolean) :void
     {
         Assert.isTrue(_resolvingClears);
 
@@ -382,10 +398,11 @@ public class PuzzleBoard extends SceneObject
                 var piece :Piece = createNewPieceOnBoard(i);
 
                 // show a clever scale effect
-                piece.scaleX = 0;
-                piece.scaleY = 0;
-
-                piece.addTask(ScaleTask.CreateSmooth(1, 1, 0.25));
+                if (animate) {
+                    piece.scaleX = 0;
+                    piece.scaleY = 0;
+                    piece.addTask(ScaleTask.CreateSmooth(1, 1, 0.25));
+                }
             }
         }
 

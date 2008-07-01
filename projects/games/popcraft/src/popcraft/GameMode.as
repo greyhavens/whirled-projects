@@ -31,7 +31,7 @@ public class GameMode extends TransitionMode
 {
     override protected function setup () :void
     {
-        PerfUtil.reset();
+        Profiler.reset();
 
         GameContext.gameMode = this;
         GameContext.playerStats = new PlayerStats();
@@ -83,7 +83,7 @@ public class GameMode extends TransitionMode
         this.shutdownPlayers();
         this.shutdownAudio();
 
-        PerfUtil.displayStats();
+        Profiler.displayStats();
     }
 
     override protected function enter () :void

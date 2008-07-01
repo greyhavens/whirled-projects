@@ -3,7 +3,7 @@ package popcraft.battle.geom {
 import com.threerings.flash.Vector2;
 
 import popcraft.*;
-import popcraft.util.PerfUtil;
+import popcraft.util.Profiler;
 
 public class ForceParticle
 {

@@ -6,7 +6,7 @@ import com.threerings.util.Log;
 import flash.system.Capabilities;
 import flash.utils.getTimer;
 
-public class PerfUtil
+public class Profiler
 {
     public static function reset () :void
     {
