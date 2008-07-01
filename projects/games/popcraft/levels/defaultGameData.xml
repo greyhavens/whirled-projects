@@ -378,9 +378,10 @@ The school now employs him
         <!-- 2v1 settings -->
         <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
             <MapSettings backgroundName="Level1">
-                <BaseLocation x="85" y="115"/>
-                <BaseLocation x="85" y="295"/>
-                <BaseLocation x="622" y="205"/>
+                <BaseLocation x="622" y="115"/>
+                <BaseLocation x="622" y="295"/>
+                <BaseLocation x="85" y="205"/>
+                <SpellDropLocation x="320" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
 
@@ -389,6 +390,7 @@ The school now employs him
                 <BaseLocation x="85" y="115"/>
                 <BaseLocation x="85" y="295"/>
                 <BaseLocation x="622" y="205"/>
+                <SpellDropLocation x="386" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
 
@@ -397,6 +399,7 @@ The school now employs him
                 <BaseLocation x="85" y="125"/>
                 <BaseLocation x="85" y="305"/>
                 <BaseLocation x="622" y="215"/>
+                <SpellDropLocation x="386" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
 
