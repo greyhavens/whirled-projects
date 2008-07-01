@@ -5,15 +5,90 @@ import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.game.GameSubControl;
 
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
+import flash.text.TextFormatAlign;
 
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 
 public class MultiplayerGameOverMode extends SplashScreenModeBase
 {
+    override protected function setup () :void
+    {
+        super.setup();
+
+        this.updateStats();
+        this.awardTrophies();
+
+        var winningPlayerNames :Array = [];
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (!playerInfo.leftGame && playerInfo.teamId == GameContext.winningTeamId) {
+                winningPlayerNames.push(playerInfo.playerName);
+            }
+        }
+
+        var gameOverText :String = ""
+        if (winningPlayerNames.length == 0) {
+            gameOverText = "No winner!";
+        } else if (winningPlayerNames.length == 1) {
+            gameOverText = String(winningPlayerNames[0]) + " wins the game!";
+        } else {
+            for (var i :int = 0; i < winningPlayerNames.length; ++i) {
+                gameOverText += String(winningPlayerNames[i]);
+                if (i < winningPlayerNames.length - 1) {
+                    gameOverText += ", ";
+                }
+            }
+            gameOverText += " win the game!";
+        }
+
+        var text :Sprite = UIBits.createTextPanel(
+            gameOverText,
+            3,
+            650,
+            false,
+            TextFormatAlign.CENTER,
+            0xFFFFFF);
+
+        text.x = (Constants.SCREEN_SIZE.x * 0.5) - (text.width * 0.5);
+        text.y = (Constants.SCREEN_SIZE.y * 0.5) - (text.height * 0.5);
+
+        this.modeSprite.addChild(text);
+
+        _button = UIBits.createButton("Play Again?");
+        _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
+        _button.y = 350;
+        _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
+
+        this.modeSprite.addChild(_button);
+
+        // report scores
+        if (SeatingManager.isLocalPlayerInControl) {
+            var winners :Array = [];
+            var losers :Array = [];
+            for each (playerInfo in GameContext.playerInfos) {
+                if (playerInfo.teamId == GameContext.winningTeamId) {
+                    winners.push(playerInfo.whirledId);
+                } else {
+                    losers.push(playerInfo.whirledId);
+                }
+            }
+
+            AppContext.gameCtrl.local.setShowButtons(false, true);
+            AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
+        }
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+
+        if (!_playedSound) {
+            AudioManager.instance.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
+            _playedSound = true;
+        }
+    }
     protected function updateStats () :void
     {
         var gameArrangement :int = MultiplayerConfig.computeTeamArrangement();
@@ -88,87 +163,6 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
     protected function get playerWon () :Boolean
     {
         return (GameContext.localPlayerInfo.teamId == GameContext.winningTeamId);
-    }
-
-    override protected function setup () :void
-    {
-        super.setup();
-
-        this.updateStats();
-        this.awardTrophies();
-
-        var winningPlayerNames :Array = [];
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (!playerInfo.leftGame && playerInfo.teamId == GameContext.winningTeamId) {
-                winningPlayerNames.push(playerInfo.playerName);
-            }
-        }
-
-        var gameOverText :String = ""
-        if (winningPlayerNames.length == 0) {
-            gameOverText = "No winner!";
-        } else if (winningPlayerNames.length == 1) {
-            gameOverText = String(winningPlayerNames[0]) + " wins the game!";
-        } else {
-            for (var i :int = 0; i < winningPlayerNames.length; ++i) {
-                gameOverText += String(winningPlayerNames[i]);
-                if (i < winningPlayerNames.length - 1) {
-                    gameOverText += ", ";
-                }
-            }
-            gameOverText += " win the game!";
-        }
-
-        var text :TextField = new TextField();
-        text.background = true;
-        text.backgroundColor = 0;
-        text.textColor = 0xFFFFFF;
-        text.autoSize = TextFieldAutoSize.LEFT;
-        text.selectable = false;
-        text.multiline = true;
-        text.defaultTextFormat.size = 24;
-        text.scaleX = 3;
-        text.scaleY = 3;
-        text.width = Constants.SCREEN_SIZE.x - 30;
-        text.text = gameOverText;
-
-        text.x = (Constants.SCREEN_SIZE.x / 2) - (text.width / 2);
-        text.y = (Constants.SCREEN_SIZE.y / 2) - (text.height / 2);
-
-        this.modeSprite.addChild(text);
-
-        _button = UIBits.createButton("Play Again?");
-        _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
-        _button.y = 350;
-        _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
-
-        this.modeSprite.addChild(_button);
-
-        // report scores
-        if (SeatingManager.isLocalPlayerInControl) {
-            var winners :Array = [];
-            var losers :Array = [];
-            for each (playerInfo in GameContext.playerInfos) {
-                if (playerInfo.teamId == GameContext.winningTeamId) {
-                    winners.push(playerInfo.whirledId);
-                } else {
-                    losers.push(playerInfo.whirledId);
-                }
-            }
-
-            AppContext.gameCtrl.local.setShowButtons(false, true);
-            AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
-        }
-    }
-
-    override protected function enter () :void
-    {
-        super.enter();
-
-        if (!_playedSound) {
-            AudioManager.instance.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
-            _playedSound = true;
-        }
     }
 
     protected function handleButtonClicked (...ignored) :void

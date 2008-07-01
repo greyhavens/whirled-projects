@@ -52,7 +52,7 @@ public class UIBits
         tf.scaleY = textScale;
         tf.text = text;
         // if the text isn't as wide as maxWidth, shrink the TextField
-        tf.width = Math.min(tf.width, tf.textWidth / textScale);
+        tf.width = Math.min(tf.width * textScale, tf.textWidth);
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;

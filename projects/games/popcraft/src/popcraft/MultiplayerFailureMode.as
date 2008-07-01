@@ -3,6 +3,7 @@ package popcraft {
 import com.whirled.contrib.simplegame.*;
 
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -18,23 +19,12 @@ public class MultiplayerFailureMode extends SplashScreenModeBase
     {
         super.setup();
 
-        var tf :TextField = new TextField();
-        tf.selectable = false;
-        tf.multiline = true;
-        tf.scaleX = 2;
-        tf.scaleY = 2;
-        tf.background = true;
-        tf.backgroundColor = 0;
-        tf.textColor = 0xFFFFFF;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.text = "Your enemies have fled!\nTry the single-player game instead?";
+        var tf :Sprite = UIBits.createTextPanel(
+            "Your enemies have fled!\nTry the single-player game instead?",
+            3, 0, false, TextFormatAlign.CENTER, 0xFFFFFF);
+
         tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
         tf.y = (Constants.SCREEN_SIZE.y * 0.5) - (tf.height * 0.5);
-
-        // center the text
-        var format :TextFormat = new TextFormat();
-        format.align = TextFormatAlign.CENTER;
-        tf.setTextFormat(format);
 
         this.modeSprite.addChild(tf);
 
