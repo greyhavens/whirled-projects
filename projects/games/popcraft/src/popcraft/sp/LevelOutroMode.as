@@ -20,66 +20,6 @@ public class LevelOutroMode extends AppMode
         _success = (GameContext.winningTeamId == GameContext.localPlayerInfo.teamId);
     }
 
-    protected function saveProgress () :void
-    {
-        var levelScore :int = LevelScoreInfo.totalScore;
-        var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
-
-        if (AppContext.gameCtrl.isConnected()) {
-            // don't show the rematch button in single-player games
-            AppContext.gameCtrl.local.setShowButtons(false, true);
-
-            AppContext.gameCtrl.game.endGameWithScore(awardedScore);
-        } else {
-            log.info("Level score: " + awardedScore);
-        }
-
-        // save our progress and award trophies if we were successful
-        if (_success) {
-            var dataChanged :Boolean;
-
-            var newLevelRecord :LevelRecord = new LevelRecord();
-            newLevelRecord.unlocked = true;
-            newLevelRecord.expert = LevelScoreInfo.expertCompletion;
-            newLevelRecord.score = levelScore;
-
-            var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
-            var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
-            if (null != curLevelRecord && newLevelRecord.isBetterThan(curLevelRecord)) {
-                curLevelRecord.assign(newLevelRecord);
-                dataChanged = true;
-            }
-
-            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex + 1);
-            if (null != nextLevel && !nextLevel.unlocked) {
-                nextLevel.unlocked = true;
-                dataChanged = true;
-            }
-
-            if (dataChanged) {
-                UserCookieManager.setNeedsUpdate();
-            }
-
-            // trophies
-            var levelTrophy :String;
-            switch (thisLevelIndex) {
-            case TrophyManager.FRESHMAN_LEVEL: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
-            case TrophyManager.SOPHOMORE_LEVEL: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
-            case TrophyManager.JUNIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
-            case TrophyManager.SENIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
-            case TrophyManager.GRADUATE_LEVEL: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
-            }
-
-            if (null != levelTrophy) {
-                TrophyManager.awardTrophy(levelTrophy);
-            }
-
-            if (AppContext.levelMgr.playerBeatGameWithExpertScore) {
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
-            }
-        }
-    }
-
     override protected function setup () :void
     {
         this.saveProgress();
@@ -162,9 +102,71 @@ public class LevelOutroMode extends AppMode
 
     override protected function enter () :void
     {
+        super.enter();
+
         if (!_playedSound) {
             AudioManager.instance.playSoundNamed(_success ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
+        }
+    }
+
+    protected function saveProgress () :void
+    {
+        var levelScore :int = LevelScoreInfo.totalScore;
+        var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
+
+        if (AppContext.gameCtrl.isConnected()) {
+            // don't show the rematch button in single-player games
+            AppContext.gameCtrl.local.setShowButtons(false, true);
+
+            AppContext.gameCtrl.game.endGameWithScore(awardedScore);
+        } else {
+            log.info("Level score: " + awardedScore);
+        }
+
+        // save our progress and award trophies if we were successful
+        if (_success) {
+            var dataChanged :Boolean;
+
+            var newLevelRecord :LevelRecord = new LevelRecord();
+            newLevelRecord.unlocked = true;
+            newLevelRecord.expert = LevelScoreInfo.expertCompletion;
+            newLevelRecord.score = levelScore;
+
+            var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
+            var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
+            if (null != curLevelRecord && newLevelRecord.isBetterThan(curLevelRecord)) {
+                curLevelRecord.assign(newLevelRecord);
+                dataChanged = true;
+            }
+
+            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex + 1);
+            if (null != nextLevel && !nextLevel.unlocked) {
+                nextLevel.unlocked = true;
+                dataChanged = true;
+            }
+
+            if (dataChanged) {
+                UserCookieManager.setNeedsUpdate();
+            }
+
+            // trophies
+            var levelTrophy :String;
+            switch (thisLevelIndex) {
+            case TrophyManager.FRESHMAN_LEVEL: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
+            case TrophyManager.SOPHOMORE_LEVEL: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
+            case TrophyManager.JUNIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
+            case TrophyManager.SENIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
+            case TrophyManager.GRADUATE_LEVEL: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
+            }
+
+            if (null != levelTrophy) {
+                TrophyManager.awardTrophy(levelTrophy);
+            }
+
+            if (AppContext.levelMgr.playerBeatGameWithExpertScore) {
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
+            }
         }
     }
 

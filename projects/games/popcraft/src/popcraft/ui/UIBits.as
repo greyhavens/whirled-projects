@@ -45,23 +45,23 @@ public class UIBits
         tf.multiline = true;
         tf.wordWrap = wordWrap;
         tf.autoSize = TextFieldAutoSize.LEFT;
+        if (wordWrap) {
+            tf.width = maxWidth / textScale;
+        }
         tf.scaleX = textScale;
         tf.scaleY = textScale;
-        if (wordWrap) {
-            tf.width = maxWidth;
-        }
         tf.text = text;
-        tf.width = tf.textWidth * textScale;
+        // if the text isn't as wide as maxWidth, shrink the TextField
+        tf.width = Math.min(tf.width, tf.textWidth / textScale);
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
         format.color = textColor;
         tf.setTextFormat(format);
 
-        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
-        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
-
         if (border) {
+            panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
+            panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
             panel.x = 2;
             panel.y = 0;
             tf.x = (panel.width * 0.5) - (tf.width * 0.5);
