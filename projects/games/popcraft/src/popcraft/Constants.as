@@ -19,9 +19,6 @@ public class Constants
     at the beginning of a multiplayer match. */
     public static const HANDICAPPED_MULTIPLIER :Number = 0.65;
 
-    /* The percentage of a player's points they get for losing a level */
-    public static const LEVEL_LOSE_SCORE_MULTIPLIER :Number = 0.4;
-
     /* Debug options */
     public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_CHECKSUM_STATE :int = 0;

@@ -112,14 +112,14 @@ public class LevelOutroMode extends AppMode
 
     protected function saveProgress () :void
     {
-        var levelScore :int = LevelScoreInfo.totalScore;
-        var awardedScore :Number = (_success ? levelScore : levelScore * Constants.LEVEL_LOSE_SCORE_MULTIPLIER);
+        // if the player lost the level, give them points for the resources they gathered
+        var awardedScore :int = (_success ? LevelScoreInfo.totalScore : LevelScoreInfo.resourcesScore);
 
         if (AppContext.gameCtrl.isConnected()) {
             // don't show the rematch button in single-player games
             AppContext.gameCtrl.local.setShowButtons(false, true);
-
             AppContext.gameCtrl.game.endGameWithScore(awardedScore);
+
         } else {
             log.info("Level score: " + awardedScore);
         }
@@ -131,7 +131,7 @@ public class LevelOutroMode extends AppMode
             var newLevelRecord :LevelRecord = new LevelRecord();
             newLevelRecord.unlocked = true;
             newLevelRecord.expert = LevelScoreInfo.expertCompletion;
-            newLevelRecord.score = levelScore;
+            newLevelRecord.score = LevelScoreInfo.totalScore;
 
             var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
             var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
