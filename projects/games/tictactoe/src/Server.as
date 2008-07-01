@@ -122,22 +122,7 @@ public class Server
                     _ctrl.player.setCookie(_cookies[ii], players[ii]);
                 }
 
-                var won :int = _cookies[winnerIdx].won;
-                var winnerId :int = winners[0];
-                function award (count :int, ident :String, prize :String=null) :void {
-                    if (won >= count && !_ctrl.player.holdsTrophy(ident, winnerId)) {
-                        trace("Awarding trophy " + ident + " to player " + winnerId);
-                        _ctrl.player.awardTrophy(ident, winnerId);
-                        if (prize != null) {
-                            trace("Awarding prize " + prize + " to player " + winnerId);
-                            _ctrl.player.awardPrize(prize, winnerId);
-                        }
-                    }
-                }
-
-                award(5, "t1");
-                award(10, "t2");
-                award(15, "t3", "p1");
+                doAwards(players[winnerIdx], _cookies[winnerIdx].won);
 
             } else if (isBoardFull()) {
                 trace("Tie game");
@@ -155,6 +140,24 @@ public class Server
                     winners, losers, GameSubControl.WINNERS_TAKE_ALL);
             }
         }
+    }
+
+    protected function doAwards (winnerId :int, won :int) :void
+    {
+        function award (count :int, ident :String, prize :String=null) :void {
+            if (won >= count && !_ctrl.player.holdsTrophy(ident, winnerId)) {
+                trace("Awarding trophy " + ident + " to player " + winnerId);
+                _ctrl.player.awardTrophy(ident, winnerId);
+                if (prize != null) {
+                    trace("Awarding prize " + prize + " to player " + winnerId);
+                    _ctrl.player.awardPrize(prize, winnerId);
+                }
+            }
+        }
+
+        award(5, "t1");
+        award(10, "t2");
+        award(15, "t3", "p1");
     }
 
     protected function isBoardFull () :Boolean
