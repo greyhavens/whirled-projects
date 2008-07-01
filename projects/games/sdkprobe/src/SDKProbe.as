@@ -29,6 +29,8 @@ public class SDKProbe extends Sprite
             new FunctionPanel(_ctrl, defs.getSeatingFuncs()));
         _tabPanel.addTab("net", new Button("Net"), 
             new FunctionPanel(_ctrl, defs.getNetFuncs()));
+        _tabPanel.addTab("player", new Button("Player"), 
+            new FunctionPanel(_ctrl, defs.getPlayerFuncs()));
 
         defs.addListenerToAll(logEvent);
 
@@ -41,7 +43,11 @@ public class SDKProbe extends Sprite
     {
         if (evt.name == Server.BACKEND_CALL_RESULT) {
             _ctrl.local.feedback(
-                "Result received: " + StringUtil.toString(evt.value));
+                "Result received from server agent: " + StringUtil.toString(evt.value));
+
+        } else if (evt.name == Server.CALLBACK_INVOKED) {
+            _ctrl.local.feedback(
+                "Callback invoked on server agent: " + StringUtil.toString(evt.value));
         }
     }
 

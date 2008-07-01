@@ -8,28 +8,35 @@ import com.threerings.util.StringUtil;
 
 public class ParameterPanel extends Sprite
 {
+    public static const CELL_HEIGHT :int = 25;
+
     public function ParameterPanel (parameters :Array, title :String=null)
     {
         var row :int;
         var heights :Array = [];
         _entries = [];
         for (row = 0; row < parameters.length; ++row) {
-            heights.push(20);
+            heights.push(CELL_HEIGHT);
             var param :Parameter = parameters[row] as Parameter;
             var label :Button = new Button(
                 param.name + " :" + param.typeDisplay, param.name);
             label.addEventListener(ButtonEvent.CLICK, handleLabelClick);
             var input :TextField = new TextField();
             //input.autoSize = TextFieldAutoSize.LEFT;
-            input.type = TextFieldType.INPUT;
-            input.border = true;
+            if (param is CallbackParameter) {
+                input.textColor = 0x808080;
+                input.text = "callback";
+            } else {
+                input.border = true;
+                input.type = TextFieldType.INPUT;
+            }
             if (param.optional) {
                 input.visible = false;
             }
             _entries.push(new ParameterEntry(param, label, input));
         }
 
-        heights.push(20);
+        heights.push(CELL_HEIGHT);
         _grid = new GridPanel([150, 200], heights);
 
         for (row = 0; row < _entries.length; ++row) {
@@ -41,7 +48,7 @@ public class ParameterPanel extends Sprite
         }
 
         
-        var buttonGrid :GridPanel = new GridPanel([100, 100], [20]);
+        var buttonGrid :GridPanel = new GridPanel([100, 100], [CELL_HEIGHT]);
 
         _call = new Button("Local Call", "call");
         buttonGrid.addCell(0, 0, _call);
@@ -71,14 +78,14 @@ public class ParameterPanel extends Sprite
         return _serverCall;
     }
 
-    public function parse () :Array
+    public function getInputs () :Array
     {
         var args :Array = [];
         for each (var entry :ParameterEntry in _entries) {
             if (!entry.input.visible) {
                 break;
             }
-            args.push(entry.param.parse(entry.input.text));
+            args.push(entry.input.text);
         }
         return args;
     }

@@ -5,12 +5,14 @@ import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.NetSubControl;
 import com.whirled.game.SeatingSubControl;
+import com.whirled.game.PlayerSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.UserChatEvent;
 import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.CoinsAwardedEvent;
 
 public class Definitions
 {
@@ -34,6 +36,10 @@ public class Definitions
 
     public static const SEATING_EVENTS :Array = [];
 
+    public static const PLAYER_EVENTS :Array = [
+        CoinsAwardedEvent.COINS_AWARDED
+    ];
+
     public static const ALL_EVENTS :Array = [];
     {
         ALL_EVENTS.push.apply(ALL_EVENTS, GAME_EVENTS);
@@ -48,6 +54,7 @@ public class Definitions
         _funcs.game = createGameFuncs();
         _funcs.net = createNetFuncs();
         _funcs.seating = createSeatingFuncs();
+        _funcs.player = createPlayerFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -63,6 +70,11 @@ public class Definitions
     public function getSeatingFuncs () :Array
     {
         return _funcs.seating.slice();
+    }
+
+    public function getPlayerFuncs () :Array
+    {
+        return _funcs.player.slice();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -178,6 +190,31 @@ public class Definitions
             new FunctionSpec("getPlayerNames", seating.getPlayerNames),
             new FunctionSpec("getPlayerPosition", seating.getPlayerPosition,
                 [new Parameter("playerId", int)])
+        ];
+    }
+
+    protected function createPlayerFuncs () :Array
+    {
+        var player :PlayerSubControl = _ctrl.player;
+
+        return [
+            new FunctionSpec("getCookie", player.getCookie,
+                [new CallbackParameter("callback"), 
+                new Parameter("occupantId", int, false)]),
+            new FunctionSpec("setCookie", player.setCookie,
+                [new ObjectParameter("cookie"), 
+                new Parameter("occupantId", int, false)]),
+            new FunctionSpec("getPlayerItemPacks", player.getPlayerItemPacks,
+                [new Parameter("playerId", int, false)]),
+            new FunctionSpec("holdsTrophy", player.holdsTrophy,
+                [new Parameter("ident", String), 
+                new Parameter("playerId", int, false)]),
+            new FunctionSpec("awardTrophy", player.awardTrophy,
+                [new Parameter("ident", String), 
+                new Parameter("playerId", int, false)]),
+            new FunctionSpec("awardPrize", player.awardPrize,
+                [new Parameter("ident", String), 
+                new Parameter("playerId", int, false)]),
         ];
     }
 

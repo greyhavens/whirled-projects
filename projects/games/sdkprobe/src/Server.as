@@ -7,8 +7,9 @@ import com.threerings.util.StringUtil;
 
 public class Server extends ServerObject
 {
-    public static const REQUEST_BACKEND_CALL :String = "rbc";
-    public static const BACKEND_CALL_RESULT :String = "bcr";
+    public static const REQUEST_BACKEND_CALL :String = "request.backend.call";
+    public static const BACKEND_CALL_RESULT :String = "backend.call.result";
+    public static const CALLBACK_INVOKED :String = "callback.invoked";
 
     public function Server ()
     {
@@ -32,11 +33,18 @@ public class Server extends ServerObject
                 result.reason = "Function " + evt.name + " not found";
 
             } else {
+                var args :Array = evt.value.params;
+                var params :Array = fnSpec.parameters;
+                for (var ii :int = 0; ii < args.length; ++ii) {
+                    if (params[ii] is CallbackParameter) {
+                        args[ii] = makeGenericCallback(evt.value, evt.senderId);
+                    }
+                }
+
+                trace("Calling " + fnSpec.name + " with arguments " + 
+                      StringUtil.toString(args));
                 try {
-                    trace("Calling " + fnSpec.name + " with arguments " + 
-                          StringUtil.toString(evt.value.params));
-                    var value :Object = fnSpec.func.apply(
-                        null, evt.value.params);
+                    var value :Object = fnSpec.func.apply(null, args);
                     trace("Result: " + StringUtil.toString(value));
                     result.status = "succeeded";
                     result.result = value;
@@ -55,6 +63,24 @@ public class Server extends ServerObject
             _ctrl.net.sendMessage(BACKEND_CALL_RESULT, result, evt.senderId);
         }
     }
+
+    protected function makeGenericCallback (
+        origMessage :Object,
+        senderId :int) :Function
+    {
+        function callback (...args) :void {
+            trace("Callback from " + origMessage.name + " invoked with " + 
+                  "arguments " + StringUtil.toString(args));
+            var msg :Object = {};
+            msg.name = origMessage.name;
+            msg.sequenceId = origMessage.sequenceId;
+            msg.args = args;
+            _ctrl.net.sendMessage(CALLBACK_INVOKED, msg, senderId);
+        }
+
+        return callback;
+    }
+
 
     protected var _ctrl :GameControl;
     protected var _defs :Definitions;

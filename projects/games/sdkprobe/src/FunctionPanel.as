@@ -84,6 +84,35 @@ public class FunctionPanel extends Sprite
         }
     }
 
+    protected function parseParameters (entry :FunctionEntry, local :Boolean) :Array
+    {
+        var inputs :Array = entry.params.getInputs();
+        var params :Array = entry.spec.parameters;
+        for (var ii :int = 0; ii < inputs.length; ++ii) {
+            if (params[ii] is CallbackParameter) {
+                if (local) {
+                    inputs[ii] = makeGenericCallback(entry.spec);
+
+                } else {
+                    inputs[ii] = null;
+                }
+            } else {
+                inputs[ii] = params[ii].parse(inputs[ii]);
+            }
+        }
+        return inputs;
+    }
+
+    protected function makeGenericCallback (fn :FunctionSpec) :Function
+    {
+        function callback (...args) :void {
+            _ctrl.local.feedback("Callback from " + fn.name + " invoked with " + 
+                                 "arguments " + StringUtil.toString(args));
+        }
+
+        return callback;
+    }
+
     protected function handleCallClick (evt :ButtonEvent) :void
     {
         if (_selected == null) {
@@ -91,13 +120,11 @@ public class FunctionPanel extends Sprite
         }
 
         try {
-            var params :Array = _selected.params.parse();
+            var params :Array = parseParameters(_selected, true);
             output("Calling " + _selected.spec.name + " with arguments " + 
                    StringUtil.toString(params));
             var value :Object = _selected.spec.func.apply(null, params);
-            if (value != undefined) {
-                output("Result: " + StringUtil.toString(value));
-            }
+            output("Result: " + StringUtil.toString(value));
 
         } catch (e :Error) {
             var msg :String = e.getStackTrace();
@@ -117,7 +144,7 @@ public class FunctionPanel extends Sprite
         try {
             var message :Object = {};
             message.name = _selected.spec.name;
-            message.params = _selected.params.parse();
+            message.params = parseParameters(_selected, false);
             message.sequenceId = _sequenceId++;
             output("Sending message " + StringUtil.toString(message));
             _ctrl.net.sendMessageToAgent(Server.REQUEST_BACKEND_CALL, message);
