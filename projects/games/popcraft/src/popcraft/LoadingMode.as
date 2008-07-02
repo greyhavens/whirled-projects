@@ -72,6 +72,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "workshop", { embeddedClass: Resources.SWF_WORKSHOP });
 
         rm.pendResourceLoad("swf", "prologue", { embeddedClass: Resources.SWF_PROLOGUE });
+        rm.pendResourceLoad("swf", "epilogue", { embeddedClass: Resources.SWF_EPILOGUE });
 
         rm.pendResourceLoad("image", "portrait_iris", { embeddedClass: Resources.IMG_PORTRAITIRIS });
         rm.pendResourceLoad("image", "portrait_ivy", { embeddedClass: Resources.IMG_PORTRAITIVY });

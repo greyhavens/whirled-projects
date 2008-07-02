@@ -64,6 +64,9 @@ public class Resources
     [Embed(source="../../rsrc/prologue.swf", mimeType="application/octet-stream")]
     public static const SWF_PROLOGUE :Class;
 
+    [Embed(source="../../rsrc/epilogue.swf", mimeType="application/octet-stream")]
+    public static const SWF_EPILOGUE :Class;
+
     [Embed(source="../../rsrc/iris.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITIRIS :Class;
 

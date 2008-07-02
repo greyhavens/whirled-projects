@@ -29,22 +29,41 @@ public class UIBits
     public static function createText (text :String, textScale :Number = 1, maxWidth :int = 0,
         textColor :uint = 0, align :String = TextFormatAlign.CENTER) :TextField
     {
-        var panel :Sprite = createTextPanel(text, textScale, maxWidth, textColor, align);
-        return panel.getChildAt(1) as TextField;
+        var textClip :MovieClip = SwfResource.instantiateMovieClip("ui", "text_UI");
+        var tf :TextField = textClip["text"];
+        textClip.removeChild(tf);
+
+        initTextField(tf, text, textScale, maxWidth, textColor, align);
+
+        return tf;
     }
 
     public static function createTextPanel (text :String, textScale :Number = 1,
         maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER) :Sprite
     {
-        var wordWrap :Boolean = (maxWidth > 0);
-
-        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
-        var tf :TextField = panel["panel_text"];
+        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "title_UI");
+        var tf :TextField = panel["title_text"];
+        initTextField(tf, text, textScale, maxWidth, textColor, align);
 
         // put the panel and text into a parent sprite to help alignment
         var sprite :Sprite = new Sprite();
         sprite.addChild(panel);
         sprite.addChild(tf);
+
+        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
+        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
+        panel.x = 2;
+        panel.y = 0;
+        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
+        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+
+        return sprite;
+    }
+
+    protected static function initTextField (tf :TextField, text :String, textScale :Number,
+        maxWidth :int, textColor :uint, align :String) :void
+    {
+        var wordWrap :Boolean = (maxWidth > 0);
 
         tf.selectable = false;
         tf.multiline = true;
@@ -70,15 +89,6 @@ public class UIBits
         format.align = align;
         format.color = textColor;
         tf.setTextFormat(format);
-
-        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
-        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
-        panel.x = 2;
-        panel.y = 0;
-        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
-        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
-
-        return sprite;
     }
 
     protected static const PANEL_TEXT_H_BORDER :Number = 10;

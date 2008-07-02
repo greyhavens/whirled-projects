@@ -1,18 +1,16 @@
 package popcraft.sp {
 
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.Graphics;
-import flash.display.Shape;
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
-import flash.display.Sprite;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.text.TextField;
-import flash.text.TextFormatAlign;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
@@ -29,27 +27,37 @@ public class EpilogueMode extends TransitionMode
 
     override protected function setup () :void
     {
-        var bg :Shape = new Shape();
-        var g :Graphics = bg.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-        g.endFill();
-        _modeLayer.addChild(bg);
+        // play some music
+        _musicChannel = AudioManager.instance.playSoundNamed("mus_night", null, -1);
 
-        // if the player clicks on the screen, they can advance things faster, but only
-        // after a little bit of time has elapsed
-        this.addObject(new SimpleTimer(IGNORE_CLICK_TIME, null, false, IGNORE_CLICK_TIMER_NAME));
-        this.modeSprite.addEventListener(MouseEvent.CLICK, onScreenClicked);
+        var movie :MovieClip = SwfResource.getSwfDisplayRoot("epilogue") as MovieClip;
+        movie.gotoAndPlay(0);
+        var movieObj :SimpleSceneObject = new SimpleSceneObject(movie);
+        var movieTask :SerialTask = new SerialTask();
+        movieTask.addTask(new WaitForFrameTask("end"));
+        movieTask.addTask(new FunctionTask(endEpilogue));
+        movieObj.addTask(movieTask);
+        this.addObject(movieObj, _modeLayer);
 
-        // skip button, to skip the entire epilogue sequence
-        _skipButton = UIBits.createButton("OK", 1.2);
+        // skip button, to end the sequence
+        _skipButton = UIBits.createButton("Skip", 1.2);
         _skipButton.x = Constants.SCREEN_SIZE.x - _skipButton.width - 15;
         _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
         _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
 
         _modeLayer.addChild(_skipButton);
+    }
 
-        this.startEpilogue();
+    override protected function enter () :void
+    {
+        super.enter();
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    override protected function exit () :void
+    {
+        super.exit();
+        StageQualityManager.popStageQuality();
     }
 
     protected function onSkipClicked (...ignored) :void
@@ -57,30 +65,12 @@ public class EpilogueMode extends TransitionMode
         this.endEpilogue();
     }
 
-    protected function onScreenClicked (...ignored) :void
-    {
-        // when the screen is clicked, advance to the next character
-        if (null == this.getObjectNamed(IGNORE_CLICK_TIMER_NAME)) {
-            if (_verseIndex < VERSE_LOCS.length) {
-                this.showNextVerse();
-            }
-        }
-    }
-
-    protected function startEpilogue () :void
-    {
-        this.showNextVerse();
-    }
-
     protected function endEpilogue () :void
     {
-        _epilogueEnding = true;
+        _musicChannel.audioControls.fadeOut(DEFAULT_FADE_TIME).stopAfter(DEFAULT_FADE_TIME);
         _skipButton.parent.removeChild(_skipButton);
 
-        if (null != _verseObj) {
-            _verseObj.removeAllTasks();
-        }
-
+        // fade out and pop mode
         var nextMode :AppMode;
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT: nextMode = new LevelSelectMode(); break;
@@ -90,55 +80,11 @@ public class EpilogueMode extends TransitionMode
         this.fadeOutToMode(nextMode);
     }
 
-    protected function showNextVerse () :void
-    {
-        if (null != _verseObj) {
-            _verseObj.removeAllTasks();
-            _verseObj.alpha = 1;
-        }
-
-        // create the new verse
-        var thisVerseIndex :int = _verseIndex++;
-        var verse :String = AppContext.introOutroData.outroVerses[thisVerseIndex];
-        var tfVerse :TextField = UIBits.createText(verse, 1.3, 0, 0xFFFFFF, TextFormatAlign.LEFT);
-
-        var sprite :Sprite = new Sprite();
-        tfVerse.x = -tfVerse.width * 0.5;
-        sprite.addChild(tfVerse);
-
-        var loc :Point = VERSE_LOCS[thisVerseIndex];
-        _verseObj = new SimpleSceneObject(sprite);
-        _verseObj.x = loc.x;
-        _verseObj.y = loc.y;
-        _verseObj.alpha = 0;
-        this.addObject(_verseObj, _modeLayer);
-
-        // fade in the new character portrait
-        var verseTask :SerialTask = new SerialTask();
-        verseTask.addTask(new AlphaTask(1, CHAR_FADE_TIME));
-        verseTask.addTask(new TimedTask(CHAR_TIME));
-        if (_verseIndex < VERSE_LOCS.length) {
-            verseTask.addTask(new FunctionTask(showNextVerse));
-        }
-
-        _verseObj.addTask(verseTask);
-    }
-
-    protected var _verseObj :SceneObject;
-    protected var _verseIndex :int;
-    protected var _epilogueEnding :Boolean;
     protected var _skipButton :SimpleButton;
+    protected var _musicChannel :AudioChannel;
     protected var _nextTransition :int;
 
-    protected static const CHAR_FADE_TIME :Number = 1;
-    protected static const CHAR_TIME :Number = 7;
-
-    protected static const IGNORE_CLICK_TIME :Number = 1.5;
-    protected static const IGNORE_CLICK_TIMER_NAME :String = "IgnoreClick";
-
-    protected static const VERSE_LOCS :Array = [
-        new Point(140, 230), new Point(350, 230), new Point(560, 230) ];
-
+    protected static const SCREEN_FADE_TIME :Number = 1.5;
 }
 
 }

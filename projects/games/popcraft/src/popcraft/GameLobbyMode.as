@@ -336,9 +336,9 @@ public class GameLobbyMode extends AppMode
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
     protected static const TEAM_BOX_LOCS :Array = [
-        new Point(241, 79),
-        new Point(468, 79),
-        new Point(241, 291),
+        new Point(240, 78),
+        new Point(468, 78),
+        new Point(240, 291),
         new Point(468, 291) ];
 
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 78);
