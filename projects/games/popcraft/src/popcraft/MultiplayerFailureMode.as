@@ -3,12 +3,8 @@ package popcraft {
 import com.whirled.contrib.simplegame.*;
 
 import flash.display.SimpleButton;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
-import flash.text.TextFormatAlign;
 
 import popcraft.sp.LevelSelectMode;
 import popcraft.ui.UIBits;
@@ -19,9 +15,9 @@ public class MultiplayerFailureMode extends SplashScreenModeBase
     {
         super.setup();
 
-        var tf :Sprite = UIBits.createTextPanel(
+        var tf :TextField = UIBits.createText(
             "Your enemies have fled!\nTry the single-player game instead?",
-            3, 0, false, TextFormatAlign.CENTER, 0xFFFFFF);
+            3, 0, 0xFFFFFF);
 
         tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
         tf.y = (Constants.SCREEN_SIZE.y * 0.5) - (tf.height * 0.5);

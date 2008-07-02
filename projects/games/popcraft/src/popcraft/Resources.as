@@ -13,6 +13,9 @@ public class Resources
     [Embed(source="../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
     public static const SWF_UI :Class;
 
+    [Embed(source="../../rsrc/multiplayer.swf", mimeType="application/octet-stream")]
+    public static const SWF_MULTIPLAYER :Class;
+
     [Embed(source="../../rsrc/splash_BG.swf", mimeType="application/octet-stream")]
     public static const SWF_SPLASH :Class;
 

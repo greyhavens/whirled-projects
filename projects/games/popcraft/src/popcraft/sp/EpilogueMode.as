@@ -11,6 +11,7 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
@@ -99,12 +100,11 @@ public class EpilogueMode extends TransitionMode
         // create the new verse
         var thisVerseIndex :int = _verseIndex++;
         var verse :String = AppContext.introOutroData.outroVerses[thisVerseIndex];
-        var verseSprite :Sprite = UIBits.createTextPanel(
-            verse, 1.3, 0, false, TextFormatAlign.LEFT, 0xFFFFFF);
+        var tfVerse :TextField = UIBits.createText(verse, 1.3, 0, 0xFFFFFF, TextFormatAlign.LEFT);
 
         var sprite :Sprite = new Sprite();
-        verseSprite.x = -verseSprite.width * 0.5;
-        sprite.addChild(verseSprite);
+        tfVerse.x = -tfVerse.width * 0.5;
+        sprite.addChild(tfVerse);
 
         var loc :Point = VERSE_LOCS[thisVerseIndex];
         _verseObj = new SimpleSceneObject(sprite);

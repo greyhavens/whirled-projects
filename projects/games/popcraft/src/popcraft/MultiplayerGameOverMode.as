@@ -5,9 +5,8 @@ import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.game.GameSubControl;
 
 import flash.display.SimpleButton;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.text.TextFormatAlign;
+import flash.text.TextField;
 
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
@@ -43,13 +42,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             gameOverText += " win the game!";
         }
 
-        var text :Sprite = UIBits.createTextPanel(
-            gameOverText,
-            3,
-            650,
-            false,
-            TextFormatAlign.CENTER,
-            0xFFFFFF);
+        var text :TextField = UIBits.createText(gameOverText, 3,  650, 0xFFFFFF);
 
         text.x = (Constants.SCREEN_SIZE.x * 0.5) - (text.width * 0.5);
         text.y = (Constants.SCREEN_SIZE.y * 0.5) - (text.height * 0.5);

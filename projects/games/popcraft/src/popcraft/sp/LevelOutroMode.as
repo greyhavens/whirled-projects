@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
@@ -60,7 +61,7 @@ public class LevelOutroMode extends AppMode
 
         message += "Your progress has been saved.\nContinue playing?";
 
-        var tfMessage :Sprite = UIBits.createTextPanel(message, 1.2, WIDTH - 30, false, TextFormatAlign.LEFT);
+        var tfMessage :TextField = UIBits.createText(message, 1.2, WIDTH - 30, 0, TextFormatAlign.LEFT);
         tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
         tfMessage.y = tfName.y + tfName.height + 10;
 

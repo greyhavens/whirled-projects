@@ -1,31 +1,44 @@
 package popcraft {
 
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.PropertyChangedEvent;
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import popcraft.data.GameVariantData;
+import popcraft.ui.UIBits;
 
-public class GameLobbyMode extends SplashScreenModeBase
+public class GameLobbyMode extends AppMode
 {
     override protected function setup () :void
     {
         super.setup();
 
-        this.createTeamBox(-1);
-        _numTeams = SeatingManager.numExpectedPlayers;
-        for (var teamId :int = 0; teamId < _numTeams; ++teamId) {
-            this.createTeamBox(teamId);
+        var bg :MovieClip = SwfResource.getSwfDisplayRoot("multiplayer") as MovieClip;
+        this.modeSprite.addChild(bg);
+
+        // create headshots
+        for (var seat :int = 0; seat < SeatingManager.numExpectedPlayers; ++seat) {
+            _headshots.push(new PlayerHeadshot(seat));
+        }
+
+        // handle clicks on the team boxes
+        for (var teamId :int = -1; teamId < NUM_TEAMS; ++teamId) {
+            this.createTeamBoxMouseListener(bg, teamId);
         }
 
         _statusText = new TextField();
@@ -40,22 +53,9 @@ public class GameLobbyMode extends SplashScreenModeBase
         _statusText.y = STATUS_TEXT_LOC.y;
         this.modeSprite.addChild(_statusText);
 
-        _handicapCheckbox = new HandicapCheckbox();
-        _handicapCheckbox.x = HANDICAP_BOX_LOC.x;
-        _handicapCheckbox.y = HANDICAP_BOX_LOC.y;
-        this.modeSprite.addChild(_handicapCheckbox);
-        _handicapCheckbox.addEventListener(HandicapCheckbox.STATE_CHANGED, handicapChanged);
-
-        _handicapText = new TextField();
-        _handicapText.selectable = false;
-        _handicapText.background = true;
-        _handicapText.backgroundColor = 0;
-        _handicapText.textColor = 0xFFFFFF;
-        _handicapText.autoSize = TextFieldAutoSize.LEFT;
-        _handicapText.x = HANDICAP_TEXT_LOC.x;
-        _handicapText.y = HANDICAP_TEXT_LOC.y;
-        _handicapText.text = "Handicap OFF";
-        this.modeSprite.addChild(_handicapText);
+        _handicapCheckbox = bg["handicap"];
+        _handicapCheckbox.addEventListener(MouseEvent.CLICK, onHandicapBoxClicked);
+        _handicapOn = false;
 
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
@@ -63,14 +63,15 @@ public class GameLobbyMode extends SplashScreenModeBase
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
-            MultiplayerConfig.teams = ArrayUtil.create(SeatingManager.numExpectedPlayers, -1);
+            MultiplayerConfig.teams = ArrayUtil.create(NUM_TEAMS, -1);
             MultiplayerConfig.handicaps = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
             MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
             MultiplayerConfig.morbidInfections = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
             MultiplayerConfig.inited = true;
-        } else {
-            this.updateDisplay();
         }
+
+        this.updateTeamsDisplay();
+        this.updateHandicapsDisplay();
     }
 
     override protected function destroy () :void
@@ -79,6 +80,28 @@ public class GameLobbyMode extends SplashScreenModeBase
 
         AppContext.gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    override protected function exit () :void
+    {
+        super.exit();
+        StageQualityManager.popStageQuality();
+    }
+
+    protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
+    {
+        var boxName :String = (teamId >= 0 ? TEAM_BOX_NAMES[teamId] : UNASSIGNED_BOX_NAME);
+        var teamBox :MovieClip = bg[boxName];
+        teamBox.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                onTeamSelected(teamId);
+            });
     }
 
     override public function update (dt :Number) :void
@@ -119,76 +142,51 @@ public class GameLobbyMode extends SplashScreenModeBase
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        this.updateDisplay();
+        if (e.name == MultiplayerConfig.PROP_INITED) {
+            this.updateTeamsDisplay();
+            this.updateHandicapsDisplay();
+        }
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        this.stopOrResetTimer();
-        this.updateDisplay();
+        if (e.name == MultiplayerConfig.PROP_TEAMS) {
+            this.updateTeamsDisplay();
+        } else if (e.name == MultiplayerConfig.PROP_HANDICAPS) {
+            this.updateHandicapsDisplay();
+        }
     }
 
     protected function onOccupantLeft (...ignored) :void
     {
         this.stopOrResetTimer();
-        this.updateDisplay();
+        this.updateTeamsDisplay();
     }
 
-    protected function createTeamBox (teamId :int) :void
-    {
-        var loc :Point = (teamId >= 0 ? TEAM_BOX_LOCS[teamId] : UNASSIGNED_BOX_LOC);
-        var size :Point = (teamId >= 0 ? TEAM_BOX_SIZE : UNASSIGNED_BOX_SIZE);
-
-        var teamBox :Sprite = new Sprite();
-        var g :Graphics = teamBox.graphics;
-        g.beginFill(0x6868FF);
-        g.drawRect(0, 0, size.x, size.y);
-        g.endFill();
-        teamBox.x = loc.x;
-        teamBox.y = loc.y;
-
-        // title text
-        var tf :TextField = new TextField();
-        tf.selectable = false;
-        tf.scaleX = 2;
-        tf.scaleY = 2;
-        tf.text = (teamId >= 0 ? "Team " + String(teamId + 1) : "Undecided");
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.x = (teamBox.width * 0.5) - (tf.width * 0.5);
-        tf.y = 12;
-
-        teamBox.addChild(tf);
-
-        // members text
-        tf = new TextField();
-        tf.selectable = false;
-        tf.scaleX = 1.5;
-        tf.scaleY = 1.5;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.y = 50;
-
-        _teamTexts[teamId] = tf;
-
-        teamBox.addChild(tf);
-
-        teamBox.addEventListener(MouseEvent.CLICK, function (...ignored) : void { teamSelected(teamId); } );
-        this.modeSprite.addChild(teamBox);
-    }
-
-    protected function handicapChanged (...ignored) :void
+    protected function onHandicapBoxClicked (...ignored) :void
     {
         var playerHandicaps :Array = MultiplayerConfig.handicaps;
         if (null != playerHandicaps) {
-            var handicap :Boolean = _handicapCheckbox.checked;
-            if (handicap != playerHandicaps[SeatingManager.localPlayerSeat]) {
-                MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerSeat, handicap);
-                _handicapText.text = (handicap ? "Handicap ON" : "Handicap OFF");
-                this.updateDisplay();
+            this.handicapOn = !this.handicapOn;
+            if (this.handicapOn != playerHandicaps[SeatingManager.localPlayerSeat]) {
+                MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerSeat, this.handicapOn);
+                this.updateHandicapsDisplay();
             }
         }
     }
 
-    protected function teamSelected (teamId :int) :void
+    protected function set handicapOn (val :Boolean) :void
+    {
+        _handicapOn = val;
+        _handicapCheckbox.gotoAndStop(_handicapOn ? 0 : 1);
+    }
+
+    protected function get handicapOn () :Boolean
+    {
+        return _handicapOn;
+    }
+
+    protected function onTeamSelected (teamId :int) :void
     {
         if (!MultiplayerConfig.inited) {
             return;
@@ -205,46 +203,51 @@ public class GameLobbyMode extends SplashScreenModeBase
         var teams :Array = MultiplayerConfig.teams;
         if (null != teams && teams[SeatingManager.localPlayerSeat] != teamId) {
             MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerSeat, teamId);
-            this.updateDisplay();
+            this.updateTeamsDisplay();
 
             this.stopOrResetTimer();
         }
     }
 
-    protected function updateDisplay () :void
+    protected function updateHandicapsDisplay () :void
+    {
+        var handicaps :Array = MultiplayerConfig.handicaps;
+        if (null != handicaps) {
+            for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+                var headshot :PlayerHeadshot = _headshots[playerSeat];
+                headshot.handicap = handicaps[playerSeat];
+            }
+        }
+    }
+
+    protected function updateTeamsDisplay () :void
     {
         // "inited" will be set to true when the multiplayer configuration has
         // been reset by the player in control.
-        if (!MultiplayerConfig.inited) {
+        if (!MultiplayerConfig.inited || null == MultiplayerConfig.teams) {
             return;
         }
 
         var teams :Array = MultiplayerConfig.teams;
         var handicaps :Array = MultiplayerConfig.handicaps;
 
-        for (var teamId :int = -1; teamId < SeatingManager.numExpectedPlayers; ++teamId) {
-            var text :String = "";
+        for (var teamId :int = -1; teamId < NUM_TEAMS; ++teamId) {
+            var boxLoc :Point = (teamId == -1 ? UNASSIGNED_BOX_LOC : TEAM_BOX_LOCS[teamId]);
+            var yLoc :Number = boxLoc.y;
 
-            if (null != teams) {
-                for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
-                    if (teams[playerSeat] == teamId) {
-                        text += SeatingManager.getPlayerName(playerSeat);
-                        if (handicaps[playerSeat]) {
-                            text += " (handicap)";
-                        }
-                        text += "\n";
+            for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+                if (teams[playerSeat] == teamId) {
+                    var headshot :PlayerHeadshot = _headshots[playerSeat];
+                    headshot.x = boxLoc.x;
+                    headshot.y = yLoc;
+
+                    if (null == headshot.parent) {
+                        this.modeSprite.addChild(headshot);
                     }
+
+                    yLoc += HEADSHOT_OFFSET;
                 }
             }
-
-            if (text == "" && teamId >= 0) {
-                text = "(no members)";
-            }
-
-            var teamText :TextField = _teamTexts[teamId];
-
-            teamText.text = text;
-            teamText.x = (teamText.parent.width * 0.5) - (teamText.width * 0.5);
         }
     }
 
@@ -300,7 +303,7 @@ public class GameLobbyMode extends SplashScreenModeBase
         var teams :Array = MultiplayerConfig.teams;
 
         // how large is each team?
-        var teamSizes :Array = ArrayUtil.create(_numTeams, 0);
+        var teamSizes :Array = ArrayUtil.create(NUM_TEAMS, 0);
         for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
             if (SeatingManager.isPlayerPresent(playerSeat)) {
                 var teamId :int = teams[playerSeat];
@@ -325,26 +328,29 @@ public class GameLobbyMode extends SplashScreenModeBase
         return this.allPlayersDecided && this.teamsDividedProperly;
     }
 
-    protected var _numTeams :int;
-    protected var _teamTexts :Array = [];
+    protected var _headshots :Array = [];
     protected var _statusText :TextField;
-    protected var _handicapCheckbox :HandicapCheckbox;
-    protected var _handicapText :TextField;
+    protected var _handicapCheckbox :MovieClip;
+    protected var _handicapOn :Boolean;
     protected var _hasSetMorbidInfection :Boolean;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
-    protected static const TEAM_BOX_SIZE :Point = new Point(175, 150);
     protected static const TEAM_BOX_LOCS :Array = [
-        new Point(50, 50), new Point(275, 50), new Point(50, 250), new Point(275, 250) ];
+        new Point(241, 79),
+        new Point(468, 79),
+        new Point(241, 291),
+        new Point(468, 291) ];
 
-    protected static const UNASSIGNED_BOX_SIZE :Point = new Point(150, 350);
-    protected static const UNASSIGNED_BOX_LOC :Point = new Point(500, 50);
+    protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 78);
+
+    protected static const TEAM_BOX_NAMES :Array = [ "red_box", "blue_box", "green_box", "yellow_box" ];
+    protected static const UNASSIGNED_BOX_NAME :String = "unassigned_box";
+
+    protected static const HEADSHOT_OFFSET :Number = 62;
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
-    protected static const HANDICAP_BOX_LOC :Point = new Point(500, 415);
-    protected static const HANDICAP_TEXT_LOC :Point = new Point(545, 420);
-
     protected static const GAME_START_COUNTDOWN :Number = 3;
+    protected static const NUM_TEAMS :int = 4;
 }
 
 }
@@ -355,61 +361,58 @@ import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.events.Event;
+import flash.display.DisplayObject;
+import flash.text.TextField;
 
-class HandicapCheckbox extends SimpleButton
+import com.threerings.flash.TextFieldUtil;
+
+import popcraft.*;
+import popcraft.ui.UIBits;
+
+class PlayerHeadshot extends Sprite
 {
-    public static const STATE_CHANGED :String = "StateChanged";
-
-    public function HandicapCheckbox ()
+    public function PlayerHeadshot (playerSeat :int)
     {
-        _checkedShape = new Shape();
-        var g :Graphics = _checkedShape.graphics;
-        g.lineStyle(2, 0);
+        var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerSeat);
+        var scale :Number = Math.min(HEADSHOT_WIDTH / headshot.width, HEADSHOT_HEIGHT / headshot.height);
+        headshot.scaleX = scale;
+        headshot.scaleY = scale;
+        this.addChild(headshot);
+
+        var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.5);
+        TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
+        tfName.x = NAME_OFFSET;
+        tfName.y = (HEADSHOT_HEIGHT * 0.5) - (tfName.height * 0.5);
+        this.addChild(tfName);
+
+        _handicapObj = new Shape();
+        var g :Graphics = _handicapObj.graphics;
         g.beginFill(0xFF0000);
-        g.drawRect(0, 0, SIZE, SIZE);
+        g.drawRect(0, 0, 15, 15);
         g.endFill();
-
-        _uncheckedShape = new Shape();
-        g = _uncheckedShape.graphics;
-        g.lineStyle(2, 0);
-        g.beginFill(0xFFFFFF);
-        g.drawRect(0, 0, SIZE, SIZE);
-        g.endFill();
-
-        _checked = true;
-        this.checked = false;
-
-        this.addEventListener(MouseEvent.CLICK, handleClicked);
     }
 
-    protected function handleClicked (...ignored) :void
+    public function set handicap (val :Boolean) :void
     {
-        this.checked = !this.checked;
-    }
+        if (val == _handicapOn) {
+            return;
+        }
 
-    public function set checked (val :Boolean) :void
-    {
-        if (_checked != val) {
-            var theShape :Shape = (val ? _checkedShape : _uncheckedShape);
-            this.upState = theShape;
-            this.downState = theShape;
-            this.overState = theShape;
-            this.hitTestState = theShape;
+        _handicapOn = val;
 
-            _checked = val;
-
-            this.dispatchEvent(new Event(STATE_CHANGED));
+        if (_handicapOn) {
+            this.addChild(_handicapObj);
+        } else {
+            this.removeChild(_handicapObj);
         }
     }
 
-    public function get checked () :Boolean
-    {
-        return _checked;
-    }
+    protected var _handicapOn :Boolean;
+    protected var _handicapObj :Shape;
 
-    protected var _checked :Boolean;
-    protected var _checkedShape :Shape;
-    protected var _uncheckedShape :Shape;
+    protected static const HEADSHOT_WIDTH :Number = 60;
+    protected static const HEADSHOT_HEIGHT :Number = 60;
 
-    protected static const SIZE :int = 30;
+    protected static const NAME_OFFSET :Number = HEADSHOT_WIDTH + 3;
+    protected static const NAME_MAX_WIDTH :Number = 120;
 }

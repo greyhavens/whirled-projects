@@ -11,7 +11,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import flash.text.TextLineMetrics;
 
 public class UIBits
 {
@@ -27,10 +26,15 @@ public class UIBits
         return sprite;
     }
 
+    public static function createText (text :String, textScale :Number = 1, maxWidth :int = 0,
+        textColor :uint = 0, align :String = TextFormatAlign.CENTER) :TextField
+    {
+        var panel :Sprite = createTextPanel(text, textScale, maxWidth, textColor, align);
+        return panel.getChildAt(1) as TextField;
+    }
+
     public static function createTextPanel (text :String, textScale :Number = 1,
-        maxWidth :int = 0, border :Boolean = true,
-        align :String = TextFormatAlign.CENTER,
-        textColor :uint = 0) :Sprite
+        maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER) :Sprite
     {
         var wordWrap :Boolean = (maxWidth > 0);
 
@@ -58,7 +62,7 @@ public class UIBits
 
         if (wordWrap) {
             // if the text isn't as wide as maxWidth, shrink the TextField
-            tf.width = Math.min(tf.width * textScale, tf.textWidth + TEXT_WIDTH_PAD);
+            tf.width = tf.textWidth + TEXT_WIDTH_PAD;
             tf.height = tf.textHeight + TEXT_HEIGHT_PAD;
         }
 
@@ -67,18 +71,12 @@ public class UIBits
         format.color = textColor;
         tf.setTextFormat(format);
 
-        if (border) {
-            panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
-            panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
-            panel.x = 2;
-            panel.y = 0;
-            tf.x = (panel.width * 0.5) - (tf.width * 0.5);
-            tf.y = (panel.height * 0.5) - (tf.height * 0.5);
-        } else {
-            tf.x = 0;
-            tf.y = 0;
-            sprite.removeChild(panel);
-        }
+        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
+        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
+        panel.x = 2;
+        panel.y = 0;
+        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
+        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
 
         return sprite;
     }
