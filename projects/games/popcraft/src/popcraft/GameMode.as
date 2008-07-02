@@ -288,6 +288,12 @@ public class GameMode extends TransitionMode
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
     {
+        // Unfortunately, the Whirled game server ends the game when one of the players
+        // leaves in the middle. Handle this gracefully.
+        // @TODO - remove this when Whirled stops ending the game prematurely
+        AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        return;
+
         if (e.player) {
             // did a player leave?
             var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfos,
