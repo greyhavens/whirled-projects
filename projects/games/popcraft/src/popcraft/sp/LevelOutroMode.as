@@ -61,7 +61,7 @@ public class LevelOutroMode extends AppMode
             message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
         }
 
-        var tfMessage :DisplayObject = UIBits.createTextPanel(message, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
+        var tfMessage :DisplayObject = UIBits.createText(message, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
         tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
         tfMessage.y = tfName.y + tfName.height + 10;
 
