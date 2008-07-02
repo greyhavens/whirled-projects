@@ -38,11 +38,21 @@ public class UIBits
         return tf;
     }
 
+    public static function createTitleText (text :String, textScale :Number = 1,
+        maxWidth :int = 0, align :String = TextFormatAlign.CENTER) :TextField
+    {
+        var textClip :MovieClip = SwfResource.instantiateMovieClip("ui", "title_UI");
+        var tf :TextField = textClip["title_text"];
+        initTextField(tf, text, textScale, maxWidth, -1, align);
+
+        return tf;
+    }
+
     public static function createTextPanel (text :String, textScale :Number = 1,
         maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER) :Sprite
     {
-        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "title_UI");
-        var tf :TextField = panel["title_text"];
+        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
+        var tf :TextField = panel["panel_text"];
         initTextField(tf, text, textScale, maxWidth, textColor, align);
 
         // put the panel and text into a parent sprite to help alignment
@@ -50,9 +60,9 @@ public class UIBits
         sprite.addChild(panel);
         sprite.addChild(tf);
 
-        panel.scaleX = (tf.width + (PANEL_TEXT_H_BORDER * 2)) / panel.width;
-        panel.scaleY = (tf.height + (PANEL_TEXT_V_BORDER * 2)) / panel.height;
-        panel.x = 2;
+        panel.width = (tf.width + (PANEL_TEXT_H_BORDER * 2));
+        panel.height = (tf.height + (PANEL_TEXT_V_BORDER * 2));
+        panel.x = 0;
         panel.y = 0;
         tf.x = (panel.width * 0.5) - (tf.width * 0.5);
         tf.y = (panel.height * 0.5) - (tf.height * 0.5);
@@ -61,7 +71,7 @@ public class UIBits
     }
 
     protected static function initTextField (tf :TextField, text :String, textScale :Number,
-        maxWidth :int, textColor :uint, align :String) :void
+        maxWidth :int, textColor :Number, align :String) :void
     {
         var wordWrap :Boolean = (maxWidth > 0);
 
@@ -87,7 +97,11 @@ public class UIBits
 
         var format :TextFormat = tf.defaultTextFormat;
         format.align = align;
-        format.color = textColor;
+
+        if (textColor > 0) {
+            format.color = textColor;
+        }
+
         tf.setTextFormat(format);
     }
 

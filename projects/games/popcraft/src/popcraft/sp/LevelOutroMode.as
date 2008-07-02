@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -33,7 +34,7 @@ public class LevelOutroMode extends AppMode
         this.modeSprite.addChild(bgSprite);
 
         // win/lose text
-        var tfName :Sprite = UIBits.createTextPanel(_success ? "Victory!" : "Defeated", 2);
+        var tfName :TextField = UIBits.createTitleText(_success ? "Victory!" : "Defeated");
         tfName.x = (WIDTH * 0.5) - (tfName.width * 0.5);
         tfName.y = 20;
 
@@ -52,16 +53,15 @@ public class LevelOutroMode extends AppMode
             if (LevelScoreInfo.expertCompletionScore > 0) {
                 message += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
             }
-            message += "TOTAL SCORE: " + LevelScoreInfo.totalScore + "\n\n";
+            message += "TOTAL SCORE: " + LevelScoreInfo.totalScore + "\n\n" +
+                       "Your progress has been saved.\nContinue playing?";
 
         } else {
-        // if the player lost, show a hint
+            // if the player lost, show a hint
             message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
         }
 
-        message += "Your progress has been saved.\nContinue playing?";
-
-        var tfMessage :TextField = UIBits.createText(message, 1.2, WIDTH - 30, 0, TextFormatAlign.LEFT);
+        var tfMessage :DisplayObject = UIBits.createTextPanel(message, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
         tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
         tfMessage.y = tfName.y + tfName.height + 10;
 

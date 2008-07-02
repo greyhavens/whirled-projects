@@ -6,6 +6,7 @@ import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
@@ -28,13 +29,13 @@ public class PauseMode extends AppMode
         this.modeSprite.addChild(bgSprite);
 
         // "Paused" text
-        var textPanel :Sprite = UIBits.createTextPanel("Paused", 2);
-        textPanel.x = (bgSprite.width * 0.5) - (textPanel.width * 0.5);
-        textPanel.y = 25;
-        bgSprite.addChild(textPanel);
+        var tfPaused :TextField = UIBits.createTitleText("Paused");
+        tfPaused.x = (bgSprite.width * 0.5) - (tfPaused.width * 0.5);
+        tfPaused.y = 25;
+        bgSprite.addChild(tfPaused);
 
         // Resume button
-        button = UIBits.createButton("Resume", 1.5);
+        button = UIBits.createButton("Resume");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
@@ -45,7 +46,7 @@ public class PauseMode extends AppMode
         bgSprite.addChild(button);
 
         // Level Select button
-        var button :SimpleButton = UIBits.createButton("End Game", 1.5);
+        var button :SimpleButton = UIBits.createButton("End Game");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
