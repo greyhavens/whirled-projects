@@ -98,6 +98,14 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.y = 10;
         _modeLayer.addChild(button);
 
+        // tutorial movie button
+        button = UIBits.createButton("Reanimation 101");
+        button.x = TUTORIAL_LOC.x - (button.width * 0.5);
+        button.y = TUTORIAL_LOC.y;
+        button.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void { fadeOutToMode(new TutorialMode()); });
+        _modeLayer.addChild(button);
+
         // epilogue button
         if (AppContext.levelMgr.playerBeatGame) {
             button = UIBits.createButton("Epilogue");
@@ -154,6 +162,7 @@ public class LevelSelectMode extends SplashScreenModeBase
 
     protected static const NUM_COLUMNS :int = 2;
     protected static const COLUMN_LOCS :Array = [ new Point(200, 210), new Point(500, 210) ];
+    protected static const TUTORIAL_LOC :Point = new Point(350, 180);
     protected static const EPILOGUE_LOC :Point = new Point(350, 450);
 }
 
