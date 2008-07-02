@@ -24,10 +24,10 @@ public class GameDataResource extends XmlResource
         return LoadedData(this.generatedObject).multiplayerSettings;
     }
 
-    public function get introOutroData () :IntroOutroData
+    /*public function get introOutroData () :IntroOutroData
     {
         return LoadedData(this.generatedObject).introOutroData;
-    }
+    }*/
 
     protected static function objectGenerator (xml :XML) :LoadedData
     {
@@ -39,7 +39,7 @@ public class GameDataResource extends XmlResource
             loadedData.multiplayerSettings.push(MultiplayerSettingsData.fromXml(msXml));
         }
 
-        loadedData.introOutroData = IntroOutroData.fromXml(xml.IntroOutro[0]);
+        //loadedData.introOutroData = IntroOutroData.fromXml(xml.IntroOutro[0]);
 
         return loadedData;
     }
