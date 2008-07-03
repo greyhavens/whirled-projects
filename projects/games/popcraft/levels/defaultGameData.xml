@@ -127,7 +127,7 @@ A combination of noxious gases inside the Delivery Boy’s belly gives this poor
                     <Resource type="blue" amount="25"/>
                     <Resource type="yellow" amount="25"/>
                 </ResourceCosts>
-                <Weapon isAOE="true" aoeRadius="75" aoeDamageFriendlies="false" aoeMaxDamage="210" damageType="explosion" damageMin="70" damageMax="70"/>
+                <Weapon isAOE="true" maxAttackDistance="15" aoeRadius="75" aoeDamageFriendlies="false" aoeMaxDamage="210" damageType="explosion" damageMin="70" damageMax="70"/>
                 <Armor>
                     <Damage type="crushing"     scale="1"/>
                     <Damage type="piercing"     scale="1"/>
