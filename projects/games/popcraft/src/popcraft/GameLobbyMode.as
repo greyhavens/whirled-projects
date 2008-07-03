@@ -2,6 +2,7 @@ package popcraft {
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -63,6 +64,7 @@ public class GameLobbyMode extends AppMode
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
+            MultiplayerConfig.gameStarting = false;
             MultiplayerConfig.teams = ArrayUtil.create(NUM_TEAMS, -1);
             MultiplayerConfig.handicaps = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
             MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
@@ -142,9 +144,11 @@ public class GameLobbyMode extends AppMode
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == MultiplayerConfig.PROP_INITED) {
+        if (e.name == MultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
             this.updateTeamsDisplay();
             this.updateHandicapsDisplay();
+        } else if (e.name == MultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
+            this.startGame();
         }
     }
 
@@ -152,9 +156,29 @@ public class GameLobbyMode extends AppMode
     {
         if (e.name == MultiplayerConfig.PROP_TEAMS) {
             this.updateTeamsDisplay();
+            this.stopOrResetTimer();
         } else if (e.name == MultiplayerConfig.PROP_HANDICAPS) {
             this.updateHandicapsDisplay();
+            this.stopOrResetTimer();
         }
+    }
+
+    protected function startGame () :void
+    {
+        GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
+
+        // @TODO - change this when we have real game variants
+        var variants :Array = AppContext.gameVariants;
+        var variant :GameVariantData = variants[0];
+        GameContext.gameData = variant.gameDataOverride;
+
+        // turn the inited flag off before the game starts
+        // so that future game lobbies don't start immediately
+        if (SeatingManager.isLocalPlayerInControl) {
+            MultiplayerConfig.inited = false;
+        }
+
+        AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
     protected function onOccupantLeft (...ignored) :void
@@ -204,7 +228,6 @@ public class GameLobbyMode extends AppMode
         if (null != teams && teams[SeatingManager.localPlayerSeat] != teamId) {
             MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerSeat, teamId);
             this.updateTeamsDisplay();
-
             this.stopOrResetTimer();
         }
     }
@@ -256,26 +279,18 @@ public class GameLobbyMode extends AppMode
         this.destroyObject(_gameStartTimer);
 
         if (this.canStartCountdown) {
-            _gameStartTimer = this.addObject(new SimpleTimer(GAME_START_COUNTDOWN, timerExpired));
+            _gameStartTimer = this.addObject(
+                new SimpleTimer(
+                    GAME_START_COUNTDOWN,
+                    function () :void {
+                        log.info("Seat " + SeatingManager.localPlayerSeat + " timer expired");
+                        if (SeatingManager.isLocalPlayerInControl) {
+                            log.info("Seat " + SeatingManager.localPlayerSeat + " starting game");
+                            // let everyone know to start the game
+                            MultiplayerConfig.gameStarting = true;
+                        }
+                    }));
         }
-    }
-
-    protected function timerExpired () :void
-    {
-        GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
-
-        // @TODO - remove this testing code
-        var variants :Array = AppContext.gameVariants;
-        var variant :GameVariantData = variants[0];
-        GameContext.gameData = variant.gameDataOverride;
-
-        // turn the inited flag off before the game starts
-        // so that future
-        if (SeatingManager.isLocalPlayerInControl) {
-            MultiplayerConfig.inited = false;
-        }
-
-        AppContext.mainLoop.unwindToMode(new GameMode());
     }
 
     protected function get allPlayersDecided () :Boolean
@@ -335,6 +350,8 @@ public class GameLobbyMode extends AppMode
     protected var _hasSetMorbidInfection :Boolean;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
 
+    protected static var log :Log = Log.getLog(GameLobbyMode);
+
     protected static const TEAM_BOX_LOCS :Array = [
         new Point(240, 78),
         new Point(468, 78),
@@ -377,9 +394,11 @@ class PlayerHeadshot extends Sprite
         var scale :Number = Math.min(HEADSHOT_WIDTH / headshot.width, HEADSHOT_HEIGHT / headshot.height);
         headshot.scaleX = scale;
         headshot.scaleY = scale;
+        headshot.x = 0;
+        headshot.y = 0;
         this.addChild(headshot);
 
-        var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.5);
+        var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.2);
         TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
         tfName.x = NAME_OFFSET;
         tfName.y = (HEADSHOT_HEIGHT * 0.5) - (tfName.height * 0.5);

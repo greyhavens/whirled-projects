@@ -6,6 +6,7 @@ public class MultiplayerConfig
 {
     public static const PROP_INITED :String = "Inited";
     public static const PROP_TEAMS :String = "Teams";
+    public static const PROP_GAMESTARTING :String = "Starting";
     public static const PROP_HANDICAPS :String = "Handicaps";
     public static const PROP_RANDSEED :String = "RandSeed";
     public static const PROP_HASMORBIDINFECTION :String = "HMI";
@@ -103,6 +104,18 @@ public class MultiplayerConfig
     {
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.net.set(PROP_INITED, val);
+        }
+    }
+
+    public static function get gameStarting () :Boolean
+    {
+        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
+    }
+
+    public static function set gameStarting (val :Boolean) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.set(PROP_GAMESTARTING, val);
         }
     }
 
