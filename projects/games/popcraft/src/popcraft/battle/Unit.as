@@ -60,11 +60,7 @@ public class Unit extends SimObject
             return false;
         }
 
-        return Collision.circlesIntersect(
-            new Vector2(this.x, this.y),
-            range,
-            new Vector2(unit.x, unit.y),
-            unit.unitData.collisionRadius);
+        return Collision.circlesIntersect(_loc, range, unit._loc, unit._unitData.collisionRadius);
     }
 
     public function get inAttackCooldown () :Boolean

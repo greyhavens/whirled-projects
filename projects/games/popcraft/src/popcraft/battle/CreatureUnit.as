@@ -142,16 +142,12 @@ public class CreatureUnit extends Unit
         _movedThisFrame = false;
 
         if (this.isMoving) {
-
-            var curLoc :Vector2 = this.unitLoc;
-
             if (this.isAtLocation(_destination)) {
                 this.stopMoving();
 
             } else {
-
                 // the unit is attracted to its destination
-                var attractForce :Vector2 = _destination.subtract(curLoc);
+                var attractForce :Vector2 = _destination.subtract(_loc);
                 var remainingDistance :Number = attractForce.normalizeLocalAndGetLength();
 
                 if (null != _forceParticle) {
@@ -169,13 +165,10 @@ public class CreatureUnit extends Unit
                 var distance :Number = Math.min(this.movementSpeed * dt, remainingDistance);
 
                 // calculate our next location
-                var nextLoc :Vector2 = _movementDirection.scale(distance).addLocal(curLoc);
-
-                this.x = nextLoc.x;
-                this.y = nextLoc.y;
+                _loc = _movementDirection.scale(distance).addLocal(_loc);
 
                 if (null != _forceParticle) {
-                    _forceParticle.setLoc(nextLoc.x, nextLoc.y);
+                    _forceParticle.setLoc(_loc.x, _loc.y);
                 }
 
                 _movedThisFrame = true;
