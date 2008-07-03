@@ -51,21 +51,25 @@ public class UIBits
     public static function createTextPanel (text :String, textScale :Number = 1,
         maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER) :Sprite
     {
-        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
-        var tf :TextField = panel["panel_text"];
-        initTextField(tf, text, textScale, maxWidth, textColor, align);
+        if (maxWidth > 0) {
+            // account for the panel border
+            maxWidth = Math.max(1, maxWidth - (PANEL_TEXT_H_MARGIN * 2));
+        }
 
-        // put the panel and text into a parent sprite to help alignment
+        var tf :TextField = createText(text, textScale, maxWidth, textColor, align);
+
+        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
+
+        panel.width = (tf.width + (PANEL_TEXT_H_MARGIN * 2));
+        panel.height = (tf.height + (PANEL_TEXT_V_MARGIN * 2));
+        panel.x = (panel.width * 0.5);
+        panel.y = (panel.height * 0.5);
+        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
+        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+
         var sprite :Sprite = new Sprite();
         sprite.addChild(panel);
         sprite.addChild(tf);
-
-        panel.width = (tf.width + (PANEL_TEXT_H_BORDER * 2));
-        panel.height = (tf.height + (PANEL_TEXT_V_BORDER * 2));
-        panel.x = 0;
-        panel.y = 0;
-        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
-        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
 
         return sprite;
     }
@@ -104,9 +108,6 @@ public class UIBits
 
         tf.setTextFormat(format);
     }
-
-    protected static const PANEL_TEXT_H_BORDER :Number = 10;
-    protected static const PANEL_TEXT_V_BORDER :Number = 3;
 
     public static function createButton (text :String, textScale :Number = 1) :SimpleButton
     {
@@ -175,6 +176,9 @@ public class UIBits
 
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
+
+    protected static const PANEL_TEXT_H_MARGIN :Number = 12;
+    protected static const PANEL_TEXT_V_MARGIN :Number = 6;
 }
 
 }

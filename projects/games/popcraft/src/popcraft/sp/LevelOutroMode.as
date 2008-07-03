@@ -40,32 +40,37 @@ public class LevelOutroMode extends AppMode
 
         bgSprite.addChild(tfName);
 
-        var message :String = "";
-
-        var hints :Array = GameContext.spLevel.levelHints;
-
-        // if the player won, show their score calculation
         if (_success) {
-            message += "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
+            // if the player won, show their score
+            var scoreMessage :String = "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
             if (LevelScoreInfo.completionBonus > 0) {
-                message += "Level bonus: " + LevelScoreInfo.completionBonus + "\n";
+                scoreMessage += "Level bonus: " + LevelScoreInfo.completionBonus + "\n";
             }
             if (LevelScoreInfo.expertCompletionScore > 0) {
-                message += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
+                scoreMessage += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
             }
-            message += "TOTAL SCORE: " + LevelScoreInfo.totalScore + "\n\n" +
-                       "Your progress has been saved.\nContinue playing?";
+            scoreMessage += "TOTAL SCORE: " + LevelScoreInfo.totalScore;
+
+            var tfScore :DisplayObject = UIBits.createTextPanel(scoreMessage, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
+            tfScore.x = (WIDTH * 0.5) - (tfScore.width * 0.5);
+            tfScore.y = tfName.y + tfName.height + 10;
+            bgSprite.addChild(tfScore);
+
+            var tfMessage :DisplayObject = UIBits.createText(
+                "Your progress has been saved.\nContinue playing?", 1, WIDTH - 30);
+            tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
+            tfMessage.y = tfScore.y + tfScore.height + 5;
+            bgSprite.addChild(tfMessage);
 
         } else {
             // if the player lost, show a hint
-            message = Rand.nextElement(hints, Rand.STREAM_COSMETIC) + "\n\n";
+            var hints :Array = GameContext.spLevel.levelHints;
+            var tfHint :DisplayObject = UIBits.createText(
+                Rand.nextElement(hints, Rand.STREAM_COSMETIC), 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
+            tfHint.x = (WIDTH * 0.5) - (tfHint.width * 0.5);
+            tfHint.y = tfName.y + tfName.height + 10;
+            bgSprite.addChild(tfHint);
         }
-
-        var tfMessage :DisplayObject = UIBits.createText(message, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
-        tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
-        tfMessage.y = tfName.y + tfName.height + 10;
-
-        bgSprite.addChild(tfMessage);
 
         // buttons
         var button :SimpleButton;

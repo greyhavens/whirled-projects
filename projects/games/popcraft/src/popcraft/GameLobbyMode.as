@@ -42,21 +42,11 @@ public class GameLobbyMode extends AppMode
             this.createTeamBoxMouseListener(bg, teamId);
         }
 
-        _statusText = new TextField();
-        _statusText.selectable = false;
-        _statusText.scaleX = 1.5;
-        _statusText.scaleY = 1.5;
-        _statusText.background = true;
-        _statusText.backgroundColor = 0;
-        _statusText.textColor = 0xFFFFFF;
-        _statusText.autoSize = TextFieldAutoSize.LEFT;
-        _statusText.x = STATUS_TEXT_LOC.x;
-        _statusText.y = STATUS_TEXT_LOC.y;
-        this.modeSprite.addChild(_statusText);
+        _statusText = bg["instructions"];
 
         _handicapCheckbox = bg["handicap"];
         _handicapCheckbox.addEventListener(MouseEvent.CLICK, onHandicapBoxClicked);
-        _handicapOn = false;
+        this.handicapOn = false;
 
         AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
@@ -202,7 +192,7 @@ public class GameLobbyMode extends AppMode
     protected function set handicapOn (val :Boolean) :void
     {
         _handicapOn = val;
-        _handicapCheckbox.gotoAndStop(_handicapOn ? 0 : 1);
+        _handicapCheckbox.gotoAndStop(_handicapOn ? "checked" : "unchecked");
     }
 
     protected function get handicapOn () :Boolean

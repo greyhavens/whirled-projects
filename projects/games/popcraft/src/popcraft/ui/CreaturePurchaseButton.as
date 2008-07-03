@@ -44,9 +44,9 @@ public class CreaturePurchaseButton extends SimObject
         _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust");
         _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
 
-        _hilite.alpha = 0.5;
-        _bloodHilite.alpha = 0.5;
-        _rigorHilite.alpha = 0.5;
+        //_hilite.alpha = 0.5;
+        //_bloodHilite.alpha = 0.5;
+        //_rigorHilite.alpha = 0.5;
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
