@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
+import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -288,12 +289,6 @@ public class GameMode extends TransitionMode
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
     {
-        // Unfortunately, the Whirled game server ends the game when one of the players
-        // leaves in the middle. Handle this gracefully.
-        // @TODO - remove this when Whirled stops ending the game prematurely
-        AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
-        return;
-
         if (e.player) {
             // did a player leave?
             var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfos,
@@ -305,6 +300,14 @@ public class GameMode extends TransitionMode
                 playerInfo.leftGame = true;
             }
         }
+    }
+
+    protected function handleGameOver () :void
+    {
+        // Unfortunately, the Whirled game server ends the game when one of the players
+        // leaves in the middle. Handle this gracefully.
+        // @TODO - remove this when Whirled stops ending the game prematurely
+        AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
     }
 
     protected function setupNetwork () :void
@@ -327,12 +330,20 @@ public class GameMode extends TransitionMode
             _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
         }
 
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameOver);
+        }
+
         _messageMgr.setup();
     }
 
     protected function shutdownNetwork () :void
     {
         _messageMgr.shutdown();
+
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED, handleGameOver);
+        }
     }
 
     protected function setupDashboard () :void

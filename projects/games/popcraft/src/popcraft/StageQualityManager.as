@@ -21,6 +21,7 @@ public class StageQualityManager
     {
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.local.setStageQuality(quality);
+            _stageQuality = quality;
         } else {
             AppContext.mainSprite.stage.quality = quality;
         }
