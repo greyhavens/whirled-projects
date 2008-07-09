@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="facehugger" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="FaceHugger"/>
+  <property name="app.type" value="pet"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
