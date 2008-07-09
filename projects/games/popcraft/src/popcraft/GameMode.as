@@ -302,7 +302,7 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function handleGameOver () :void
+    protected function handleGameOver (...ignored) :void
     {
         // Unfortunately, the Whirled game server ends the game when one of the players
         // leaves in the middle. Handle this gracefully.

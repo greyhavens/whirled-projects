@@ -307,9 +307,9 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="Level2">
-                <BaseLocation x="75" y="125"/>
-                <BaseLocation x="622" y="305"/>
+            <MapSettings backgroundName="Level4">
+                <BaseLocation x="75" y="305"/>
+                <BaseLocation x="622" y="265"/>
             </MapSettings>
         </MultiplayerSettings>
 
@@ -327,15 +327,6 @@ Lasts for 30 seconds."
                 <BaseLocation x="622" y="295"/>
                 <BaseLocation x="85" y="205"/>
                 <SpellDropLocation x="320" y="205"/>
-            </MapSettings>
-        </MultiplayerSettings>
-
-        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
-            <MapSettings backgroundName="Level2">
-                <BaseLocation x="85" y="115"/>
-                <BaseLocation x="85" y="295"/>
-                <BaseLocation x="622" y="205"/>
-                <SpellDropLocation x="386" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
 
@@ -379,11 +370,11 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.5">
-            <MapSettings backgroundName="Level2">
+            <MapSettings backgroundName="Level3">
                 <BaseLocation x="90" y="155"/>
                 <BaseLocation x="90" y="255"/>
                 <BaseLocation x="627" y="110"/>
-                <BaseLocation x="627" y="325"/>
+                <BaseLocation x="627" y="305"/>
                 <SpellDropLocation x="378" y="217"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -412,7 +403,7 @@ Lasts for 30 seconds."
 
 
         <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
-            <MapSettings backgroundName="Level2">
+            <MapSettings backgroundName="Level1">
                 <BaseLocation x="627" y="155"/>
                 <BaseLocation x="627" y="265"/>
                 <BaseLocation x="85" y="155"/>
