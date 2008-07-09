@@ -20,23 +20,18 @@ public class FaceHugger extends Sprite
         addChild(_image = Bitmap(new FACEHUGGER()));
 
         _ctrl = new PetControl(this);
-        _ctrl.addEventListener(TimerEvent.TIMER, tick);
+        /*_ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
-        _ctrl.setTickInterval(3000);
+        _ctrl.setTickInterval(3000);*/
 
         _ctrl.registerPropertyProvider(propertyProvider);
+        _ctrl.setHotSpot(74, 74);
+        _ctrl.setMoveSpeed(2500);
 
         // Temp junk
-        _ctrl.addEventListener(ControlEvent.ENTITY_MOVED,
-            function (event :ControlEvent) :void {
-                _ctrl.sendChatMessage("ENTITY_MOVED: " + event.name + ", " + event.value);
-                _ctrl.sendChatMessage("Type: " + _ctrl.getEntityType(event.name));
-                _ctrl.sendChatMessage("Logical xyz: " +_ctrl.getEntityProperty("std:location_logical", event.name));
-                _ctrl.sendChatMessage("Pixel xyz: " +_ctrl.getEntityProperty("std:location_pixel", event.name));
-                _ctrl.sendChatMessage("Dimensions: " +_ctrl.getEntityProperty("std:dimensions", event.name));
-                _ctrl.sendChatMessage("Hotspot: " + _ctrl.getEntityProperty("std:hotspot", event.name));
-        });
-        _ctrl.addEventListener(ControlEvent.ENTITY_ENTERED,
+        _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleMovement);
+
+        /*_ctrl.addEventListener(ControlEvent.ENTITY_ENTERED,
             function (event :ControlEvent) :void {
                 _ctrl.sendChatMessage("ENTITY_ENTERED: " + event.name + ", " + event.value);
                 _ctrl.sendChatMessage("Type: " + _ctrl.getEntityType(event.name));
@@ -45,7 +40,31 @@ public class FaceHugger extends Sprite
             function (event :ControlEvent) :void {
                 _ctrl.sendChatMessage("ENTITY_LEFT: " + event.name + ", " + event.value);
                 _ctrl.sendChatMessage("Type: " + _ctrl.getEntityType(event.name));
-        });
+        });*/
+    }
+
+    protected function handleMovement (event :ControlEvent) :void
+    {
+        var entityId :String = event.name;
+
+        if (_victimId == null) {
+            _victimId = entityId
+        }
+
+        if (entityId == _victimId) {
+            var target :Array = _ctrl.getEntityProperty(EntityControl.LOCATION_PIXEL, entityId) as Array;
+
+            target[1] += (_ctrl.getEntityProperty(EntityControl.DIMENSIONS, entityId) as Array)[1] / 2;
+            target[2] -= 1;
+
+            var speech :Array = [
+                "Squeeee!!", "Hssss!!", "Skreeeee!!", "OMG WTF?!", "*squelch squelch*"
+            ];
+
+            // Pick a random line and say it
+            _ctrl.sendChatMessage(speech[Math.floor(Math.random()*(speech.length))]);
+            _ctrl.setPixelLocation(target[0], target[1], target[2], target[0] < _ctrl.getPixelLocation()[0] ? 270 : 90);
+        }
     }
 
     protected function propertyProvider (key :String) :Object
@@ -65,7 +84,7 @@ public class FaceHugger extends Sprite
 
         var oxpos :Number = _ctrl.getLogicalLocation()[0];
         var nxpos :Number = Math.random();
-        _ctrl.setLogicalLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
+        //_ctrl.setLogicalLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
     }
 
     protected function appearanceChanged (event :ControlEvent) :void
@@ -83,6 +102,8 @@ public class FaceHugger extends Sprite
 
     protected var _ctrl :PetControl;
     protected var _image :Bitmap;
+
+    protected var _victimId :String = null;
 
     [Embed(source="facehugger.png")]
     protected static const FACEHUGGER :Class;
