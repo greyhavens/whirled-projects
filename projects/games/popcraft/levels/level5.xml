@@ -25,7 +25,7 @@ Both girls must fall! Click an opponent's workshop to direct your creatures to i
             <Hint>When you create a creature, it will attack your selected enemy. Click an opponent's workshop to direct creatures to it.</Hint>
         </Hints>
 
-        <MapSettings backgroundName="Level4">
+        <MapSettings backgroundName="Level2">
             <BaseLocation x="60" y="285"/>
             <BaseLocation x="585" y="225"/>
             <BaseLocation x="585" y="350"/>

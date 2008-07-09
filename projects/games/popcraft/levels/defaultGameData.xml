@@ -307,7 +307,7 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="Level4">
+            <MapSettings backgroundName="Level2">
                 <BaseLocation x="75" y="305"/>
                 <BaseLocation x="622" y="265"/>
             </MapSettings>
