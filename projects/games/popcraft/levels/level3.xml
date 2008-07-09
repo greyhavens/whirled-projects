@@ -20,9 +20,9 @@ One half follows Ralph;
 
         <GameDataOverride initialDayPhase="night"/>
 
-        <MapSettings backgroundName="Level2">
-            <BaseLocation x="75" y="125"/>
-            <BaseLocation x="622" y="305"/>
+        <MapSettings backgroundName="Level4">
+            <BaseLocation x="75" y="255"/>
+            <BaseLocation x="622" y="335"/>
         </MapSettings>
 
         <Hints>
@@ -46,8 +46,8 @@ One half follows Ralph;
                     <Wave absoluteDelay="40"><Unit type="sapper" count="1"/></Wave>
                     <Wave absoluteDelay="60"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="80"><Unit type="sapper" count="1"/></Wave>
-                    <Wave absoluteDelay="108"><Unit type="sapper" count="10"/></Wave>
-                    <Wave absoluteDelay="109"><Unit type="grunt" count="12"/></Wave>
+                    <Wave absoluteDelay="109"><Unit type="sapper" count="10"/></Wave>
+                    <Wave absoluteDelay="110"><Unit type="grunt" count="12"/></Wave>
                 </Day>
             </InitialDays>
             <RepeatingDays>

@@ -22,9 +22,9 @@ Till the perp's apprehended,
 
         <GameDataOverride disableDiurnalCycle="true"/>
 
-        <MapSettings backgroundName="Level2">
-            <BaseLocation x="75" y="125"/>
-            <BaseLocation x="622" y="305"/>
+        <MapSettings backgroundName="Level4">
+            <BaseLocation x="75" y="255"/>
+            <BaseLocation x="622" y="335"/>
         </MapSettings>
 
         <Hints>
