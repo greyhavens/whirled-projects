@@ -15,9 +15,14 @@
   <!--<property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>-->
 
   <!-- if you need to compile with extra .SWC files, uncomment and edit this line -->
-  <!--<property name="app.lib-extras" value="../../../lib/fl-components.swc,../../../lib/tweener.swc"/>-->
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <property name="media_hash" value="8ad9a56bdd40b89b0410e26eaeea1830130dcb26"/>
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${media_hash}.swf"/>
+  </target>
 
 </project>
