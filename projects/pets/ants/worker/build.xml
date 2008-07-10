@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="Worker" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Worker"/>
+  <property name="app.type" value="pet"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../../etc/project-include.xml"/>
+
+</project>
