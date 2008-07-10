@@ -1,7 +1,9 @@
 package popcraft.sp {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.*;
 
+import flash.display.Bitmap;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -9,13 +11,13 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.ui.UIBits;
 
-public class LevelSelectMode extends SplashScreenModeBase
+public class LevelSelectMode extends DemoGameMode
 {
     override public function update (dt :Number) :void
     {
         super.update(dt);
 
-        if (!_createdLayout && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
+        if (_hasSetupGame && !_createdLayout && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
             this.createLayout();
         }
     }
@@ -23,17 +25,15 @@ public class LevelSelectMode extends SplashScreenModeBase
     override protected function setup () :void
     {
         super.setup();
-
         this.fadeIn();
-
-        if (AppContext.levelMgr.levelRecordsLoaded) {
-            this.createLayout();
-        }
     }
 
     protected function createLayout () :void
     {
         _createdLayout = true;
+
+        // overlay
+        _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
         var levelNames :Array = AppContext.levelProgression.levelNames;
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
@@ -98,14 +98,6 @@ public class LevelSelectMode extends SplashScreenModeBase
         button.y = 10;
         _modeLayer.addChild(button);
 
-        // tutorial movie button
-        button = UIBits.createButton("Reanimation 101");
-        button.x = TUTORIAL_LOC.x - (button.width * 0.5);
-        button.y = TUTORIAL_LOC.y;
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { fadeOutToMode(new TutorialMode()); });
-        _modeLayer.addChild(button);
-
         // epilogue button
         if (AppContext.levelMgr.playerBeatGame) {
             button = UIBits.createButton("Epilogue");
@@ -161,9 +153,9 @@ public class LevelSelectMode extends SplashScreenModeBase
     protected var _createdLayout :Boolean;
 
     protected static const NUM_COLUMNS :int = 2;
-    protected static const COLUMN_LOCS :Array = [ new Point(200, 210), new Point(500, 210) ];
+    protected static const COLUMN_LOCS :Array = [ new Point(200, 20), new Point(500, 20) ];
     protected static const TUTORIAL_LOC :Point = new Point(350, 180);
-    protected static const EPILOGUE_LOC :Point = new Point(350, 450);
+    protected static const EPILOGUE_LOC :Point = new Point(350, 260);
 }
 
 }

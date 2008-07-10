@@ -88,7 +88,7 @@ public class DashboardView extends SceneObject
 
         // pause button only visible in single-player games
         var pauseButton :SimpleButton = _movie["pause"];
-        if (GameContext.isSinglePlayer) {
+        if (GameContext.gameMode.canPause) {
             pauseButton.visible = true;
             pauseButton.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void { MainLoop.instance.pushMode(new PauseMode()); });

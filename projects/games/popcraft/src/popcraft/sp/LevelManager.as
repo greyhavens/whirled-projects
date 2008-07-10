@@ -12,6 +12,9 @@ import popcraft.util.*;
 public class LevelManager
     implements UserCookieDataSource
 {
+    public static const TEST_LEVEL :int = -1;
+    public static const DEMO_LEVEL :int = -2;
+
     public function LevelManager ()
     {
         this.resetLevelData();
@@ -118,12 +121,17 @@ public class LevelManager
         } else {
             // load the level
             if (null == _loadedLevel) {
-                // @TEMP - if _curLevelNum < 0, we load the test level
                 var loadParams :Object;
-                if (_curLevelIndex < 0) {
+                if (_curLevelIndex == TEST_LEVEL) {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
                         { url: "levels/testlevel.xml" } :
                         { embeddedClass: LEVEL_TEST });
+
+                } else if (_curLevelIndex == DEMO_LEVEL) {
+                    loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
+                        { url: "levels/demolevel.xml" } :
+                        { embeddedClass: LEVEL_DEMO });
+
                 } else {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
                         { url: "levels/level" + String(_curLevelIndex + 1) + ".xml" } :
@@ -173,7 +181,7 @@ public class LevelManager
 
     public function set curLevelIndex (val :int) :void
     {
-        val = (val < 0 ? -1 : val % LEVELS.length);
+        val = (val < 0 ? val : val % LEVELS.length);
 
         if (_curLevelIndex != val) {
             _curLevelIndex = val;
@@ -258,6 +266,8 @@ public class LevelManager
 
     [Embed(source="../../../levels/testlevel.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_TEST :Class;
+    [Embed(source="../../../levels/demolevel.xml", mimeType="application/octet-stream")]
+    protected static const LEVEL_DEMO :Class;
 
     protected static const LEVELS :Array = [
         LEVEL_1,

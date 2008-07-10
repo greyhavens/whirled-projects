@@ -45,6 +45,7 @@ public class GameContext
     public static var dashboardLayer :Sprite;
     public static var battleLayer :Sprite;
 
+    public static var playAudio :Boolean;
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;
 
@@ -97,12 +98,12 @@ public class GameContext
 
     public static function playGameSound (soundName :String) :AudioChannel
     {
-        return AudioManager.instance.playSoundNamed(soundName, sfxControls);
+        return (playAudio ? AudioManager.instance.playSoundNamed(soundName, sfxControls) : new AudioChannel());
     }
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
-        return AudioManager.instance.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER);
+        return (playAudio ? AudioManager.instance.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER) : new AudioChannel());
     }
 }
 

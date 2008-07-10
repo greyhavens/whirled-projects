@@ -1,0 +1,78 @@
+<root>
+    <Level
+        expertCompletionDays="1"
+        levelCompletionBonus="2000"
+        expertCompletionBonus="2500"
+        introText="This is not a real level!"
+        playerName="nobody"
+        playerHeadshotName="portrait_jack"
+        playerBaseHealth="100">
+
+        <!-- Bases can't be damaged -->
+        <GameDataOverride disableDiurnalCycle="true">
+            <Units>
+                <Unit
+                    type="base"
+                    displayName="" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
+                    maxHealth="150"
+                    collisionRadius="20">
+                    <ResourceCosts/>
+                    <Weapon damageType="base" damageMin="20" damageMax="20" cooldown="0" maxAttackDistance="1000"/>
+                    <Armor>
+                        <Damage type="crushing"     scale="0"/>
+                        <Damage type="piercing"     scale="0"/>
+                        <Damage type="explosion"    scale="0"/>
+                        <Damage type="colossus"     scale="0"/>
+                        <Damage type="base"         scale="0"/>
+                    </Armor>
+                </Unit>
+            </Units>
+            <PlayerColors>
+                <PlayerColor player="1" color="0xFFE75F"/>
+                <PlayerColor player="2" color="0xFF0000"/>
+                <PlayerColor player="3" color="0x9FBCFF"/>
+            </PlayerColors>
+        </GameDataOverride>
+
+        <MapSettings backgroundName="Level2">
+            <BaseLocation x="-1000" y="-1000"/> <!-- First player is hidden -->
+            <BaseLocation x="60" y="275"/>
+            <BaseLocation x="642" y="275"/>
+        </MapSettings>
+
+        <AvailableUnits>
+            <Unit type="grunt"/>
+        </AvailableUnits>
+
+        <Computer
+            playerName="Ralph"
+            playerHeadshotName="portrait_ralph"
+            team="2"
+            baseHealth="1">
+            <RepeatingDays>
+                <Day repeatWaves="true">
+                    <Wave absoluteDelay="3" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="5" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="15" targetPlayerName="Jack"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="25"/>
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+        <Computer
+            playerName="Jack"
+            playerHeadshotName="portrait_jack"
+            team="1"
+            baseHealth="1">
+            <RepeatingDays>
+                <Day repeatWaves="true">
+                    <Wave absoluteDelay="4" targetPlayerName="Ralph"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="12" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
+                    <Wave absoluteDelay="24"/>
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+    </Level>
+
+</root>
