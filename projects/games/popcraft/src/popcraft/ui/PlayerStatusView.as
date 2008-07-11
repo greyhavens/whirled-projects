@@ -40,7 +40,7 @@ public class PlayerStatusView extends SceneObject
         headshot.scaleX = scale;
         headshot.scaleY = scale;
         headshot.x = -(width * 0.5);
-        headshot.y = -(height * 0.5);
+        headshot.y = -(height * 0.5) - 2;
         headshotParent.addChild(_playerInfo.playerHeadshot);
     }
 
