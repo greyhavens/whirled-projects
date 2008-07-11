@@ -85,6 +85,9 @@ public class Resources
     [Embed(source="../../rsrc/ralph.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITRALPH :Class;
 
+    [Embed(source="../../rsrc/weardd.png", mimeType="application/octet-stream")]
+    public static const IMG_PORTRAITWEARDD :Class;
+
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
     public static const MUSIC_NIGHT :Class;
