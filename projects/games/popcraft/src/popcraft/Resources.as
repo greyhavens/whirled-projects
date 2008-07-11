@@ -50,7 +50,7 @@ public class Resources
     public static const SWF_MISSILE :Class;
 
     [Embed(source="../../rsrc/splatter.swf", mimeType="application/octet-stream")]
-    public static const SWF_BLOOD :Class;
+    public static const SWF_SPLATTER :Class;
 
     [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PIECES :Class;

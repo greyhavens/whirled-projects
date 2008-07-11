@@ -65,7 +65,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "courier", { embeddedClass: Resources.SWF_COURIER });
         rm.pendResourceLoad("swf", "boss", { embeddedClass: Resources.SWF_BOSS });
         rm.pendResourceLoad("swf", "missile", { embeddedClass: Resources.SWF_MISSILE });
-        rm.pendResourceLoad("swf", "blood", { embeddedClass: Resources.SWF_BLOOD });
+        rm.pendResourceLoad("swf", "splatter", { embeddedClass: Resources.SWF_SPLATTER });
 
         rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: Resources.SWF_PIECES });
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: Resources.SWF_DASHBOARD });

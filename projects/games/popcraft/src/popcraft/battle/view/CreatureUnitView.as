@@ -126,7 +126,7 @@ public class CreatureUnitView extends BattlefieldSprite
     {
         // show a blood splatter
         if (null == g_bloodClass) {
-            var swf :SwfResource = ResourceManager.instance.getResource("blood") as SwfResource;
+            var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
             g_bloodClass = swf.getClass("blood");
         }
 

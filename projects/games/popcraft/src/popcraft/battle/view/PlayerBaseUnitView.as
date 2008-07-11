@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
@@ -178,6 +179,23 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
     protected function handleAttacked (...ignored) :void
     {
+        // show a "debris" effect
+        if (null == g_debrisClass) {
+            var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
+            g_debrisClass = swf.getClass("debris");
+        }
+
+        var debrisObj :SimpleSceneObject = new SimpleSceneObject(new g_debrisClass());
+        debrisObj.addTask(After(0.3, new SelfDestructTask()));
+
+        // pick a random location for the blood
+        var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right, Rand.STREAM_COSMETIC);
+        var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom, Rand.STREAM_COSMETIC);
+        debrisObj.x = x;
+        debrisObj.y = y;
+
+        this.db.addObject(debrisObj, _sprite);
+
         // play a sound
         var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
         GameContext.playGameSound(soundName);
@@ -219,12 +237,15 @@ public class PlayerBaseUnitView extends BattlefieldSprite
     protected var _needsLocationUpdate :Boolean = true;
     protected var _lastHealth :Number;
 
+    protected static var g_debrisClass :Class;
+
     protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
 
     protected static const CLICKABLE_SPRITE_SIZE :Rectangle = new Rectangle(-27, -74, 55, 74);
+    protected static const DEBRIS_RECT :Rectangle = new Rectangle(-27, -74, 55, 74);
 
 }
 
