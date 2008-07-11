@@ -1,45 +1,69 @@
 package popcraft.sp {
 
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Bitmap;
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.battle.view.PlayerBaseUnitView;
+import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 
 public class LevelSelectMode extends DemoGameMode
 {
-    override public function update (dt :Number) :void
-    {
-        super.update(dt);
-
-        if (_hasSetupGame && !_createdLayout && !UserCookieManager.isLoadingCookie && AppContext.levelMgr.levelRecordsLoaded) {
-            this.createLayout();
-        }
-    }
-
     override protected function setup () :void
     {
         super.setup();
         this.fadeIn();
     }
 
-    protected function createLayout () :void
+    override protected function setupGameScreen () :void
     {
-        _createdLayout = true;
+        super.setupGameScreen();
+
+        // hide the player's workshop to make it look like streetwalkers are
+        // appearing in front of the school
+        PlayerBaseUnitView.getForPlayer(0).visible = false;
+
+        // hide the player status views
+        var statusViews :Array = PlayerStatusView.getAll();
+        for each (var view :PlayerStatusView in statusViews) {
+            view.visible = false;
+        }
 
         // overlay
         _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
+
+        // "click to play story" button
+        _clickToStartButton = new Sprite();
+        _clickToStartButton.addChild(UIBits.createTitleText("Click Here To Begin The Story..."));
+        _clickToStartButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
+            createLevelSelectLayout();
+        });
+        DisplayUtil.positionBounds(_clickToStartButton,
+            (Constants.SCREEN_SIZE.x * 0.5) - (_clickToStartButton.width * 0.5),
+            40);
+
+        _modeLayer.addChild(_clickToStartButton);
+    }
+
+    protected function createLevelSelectLayout () :void
+    {
+        _clickToStartButton.parent.removeChild(_clickToStartButton);
 
         var levelNames :Array = AppContext.levelProgression.levelNames;
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
         var numLevels :int = levelRecords.length;
 
         // create a button for each level
+        var buttonSprite :Sprite = new Sprite();
         var levelsPerColumn :int = numLevels / NUM_COLUMNS;
         var column :int = -1;
         var columnLoc :Point;
@@ -68,28 +92,32 @@ public class LevelSelectMode extends DemoGameMode
             button = this.createLevelSelectButton(i, levelName);
             button.x = columnLoc.x - (button.width * 0.5);
             button.y = yLoc;
-            _modeLayer.addChild(button);
+            buttonSprite.addChild(button);
 
             yLoc += button.height + 3;
         }
 
-        // animation test button
-        /*button = UIBits.createButton("Unit Anim Test");
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void {
-                AppContext.mainLoop.pushMode(new UnitAnimTestMode());
-            });
-        button.x = 10;
-        button.y = 450;
+        // create the epilogue button if the player has finished the game
+        if (AppContext.levelMgr.playerBeatGame) {
+            button = UIBits.createButton("Epilogue");
+            button.x = EPILOGUE_LOC.x - (button.width * 0.5);
+            button.y = EPILOGUE_LOC.y;
+            button.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
+            buttonSprite.addChild(button);
+        }
 
-        _modeLayer.addChild(button);
-
-        // test level button
-        button = UIBits.createButton("Jon's stress test");
-        button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { levelSelected(-1); });
-        button.x = 100;
-        button.y = 450;
-        _modeLayer.addChild(button);*/
+        // frame the buttons
+        var buttonFrame :Sprite = UIBits.createFrame(
+            buttonSprite.width + (BUTTON_FRAME_BORDER_SIZE.x * 2),
+            buttonSprite.height + (BUTTON_FRAME_BORDER_SIZE.y * 2));
+        var buttonBounds :Rectangle = buttonSprite.getBounds(buttonSprite);
+        buttonSprite.x = -buttonBounds.left + BUTTON_FRAME_BORDER_SIZE.x;
+        buttonSprite.y = -buttonBounds.top + BUTTON_FRAME_BORDER_SIZE.y;
+        buttonFrame.addChild(buttonSprite);
+        buttonFrame.x = (Constants.SCREEN_SIZE.x * 0.5) - (buttonFrame.width * 0.5);
+        buttonFrame.y = BUTTON_FRAME_Y;
+        _modeLayer.addChild(buttonFrame);
 
         // unlock all levels button
         button = UIBits.createButton("Unlock levels");
@@ -97,16 +125,6 @@ public class LevelSelectMode extends DemoGameMode
         button.x = 10;
         button.y = 10;
         _modeLayer.addChild(button);
-
-        // epilogue button
-        if (AppContext.levelMgr.playerBeatGame) {
-            button = UIBits.createButton("Epilogue");
-            button.x = EPILOGUE_LOC.x - (button.width * 0.5);
-            button.y = EPILOGUE_LOC.y;
-            button.addEventListener(MouseEvent.CLICK,
-                function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
-            _modeLayer.addChild(button);
-        }
     }
 
     protected function unlockLevels () :void
@@ -150,12 +168,13 @@ public class LevelSelectMode extends DemoGameMode
         }
     }
 
-    protected var _createdLayout :Boolean;
+    protected var _clickToStartButton :Sprite;
 
     protected static const NUM_COLUMNS :int = 2;
-    protected static const COLUMN_LOCS :Array = [ new Point(200, 20), new Point(500, 20) ];
-    protected static const TUTORIAL_LOC :Point = new Point(350, 180);
-    protected static const EPILOGUE_LOC :Point = new Point(350, 260);
+    protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];
+    protected static const EPILOGUE_LOC :Point = new Point(100, 230);
+    protected static const BUTTON_FRAME_BORDER_SIZE :Point = new Point(15, 15);
+    protected static const BUTTON_FRAME_Y :Number = 5;
 }
 
 }

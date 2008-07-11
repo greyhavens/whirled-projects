@@ -3,10 +3,10 @@
         expertCompletionDays="1"
         levelCompletionBonus="2000"
         expertCompletionBonus="2500"
-        introText="This is not a real level!"
+        introText=""
         playerName="nobody"
         playerHeadshotName="portrait_jack"
-        playerBaseHealth="100">
+        playerBaseHealth="1">
 
         <!-- Bases can't be damaged -->
         <GameDataOverride disableDiurnalCycle="true">
@@ -35,9 +35,9 @@
         </GameDataOverride>
 
         <MapSettings backgroundName="Level2">
-            <BaseLocation x="-1000" y="-1000"/> <!-- First player is hidden -->
-            <BaseLocation x="60" y="275"/>
-            <BaseLocation x="642" y="275"/>
+            <BaseLocation x="377" y="198"/> <!-- First player is hidden -->
+            <BaseLocation x="60" y="280"/>
+            <BaseLocation x="642" y="280"/>
         </MapSettings>
 
         <AvailableUnits>

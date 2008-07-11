@@ -13,6 +13,13 @@ import popcraft.*;
 
 public class PlayerStatusView extends SceneObject
 {
+    public static const GROUP_NAME :String = "PlayerStatusView";
+
+    public static function getAll () :Array
+    {
+        return GameContext.gameMode.getObjectsInGroup(GROUP_NAME);
+    }
+
     public function PlayerStatusView (playerIndex :int)
     {
         _playerInfo = GameContext.playerInfos[playerIndex];
@@ -42,6 +49,14 @@ public class PlayerStatusView extends SceneObject
         headshot.x = -(width * 0.5);
         headshot.y = -(height * 0.5) - 2;
         headshotParent.addChild(_playerInfo.playerHeadshot);
+    }
+
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch(groupNum) {
+        case 0: return GROUP_NAME;
+        default: return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     override public function get displayObject () :DisplayObject

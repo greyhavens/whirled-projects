@@ -28,12 +28,16 @@ public class LoadingMode extends AppMode
 
         this.modeSprite.addChild(_text);
 
+        // load resources
         this.load();
+
+        // load the user cookie
+        UserCookieManager.readCookie();
     }
 
     override public function update (dt :Number) :void
     {
-        if (!_loading) {
+        if (!_loading && !UserCookieManager.isLoadingCookie) {
             if (SeatingManager.allPlayersPresent) {
                 AppContext.mainLoop.popMode();
             } else {

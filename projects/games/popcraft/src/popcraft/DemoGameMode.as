@@ -52,7 +52,8 @@ public class DemoGameMode extends GameMode
         super.setup();
 
         // capture all mouse events that would otherwise go to the game, and discard them
-        var mouseEater :Sprite = new Sprite();
+        // (We're allowing the demo to be interactive for now)
+        /*var mouseEater :Sprite = new Sprite();
         var g :Graphics = mouseEater.graphics;
         g.beginFill(1, 0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
@@ -62,17 +63,12 @@ public class DemoGameMode extends GameMode
         eatEvent(mouseEater, MouseEvent.MOUSE_DOWN);
         eatEvent(mouseEater, MouseEvent.MOUSE_UP);
 
-        _modeLayer.addChild(mouseEater);
+        _modeLayer.addChild(mouseEater);*/
     }
 
     protected static function eatEvent (sprite :Sprite, eventName :String) :void
     {
-        sprite.addEventListener(eventName, handleEatenEvent);
-    }
-
-    protected static function handleEatenEvent (...ignored) :void
-    {
-        // no-op
+        sprite.addEventListener(eventName, function (...ignored) :void {});
     }
 
     override public function get playAudio () :Boolean
