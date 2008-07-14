@@ -9,6 +9,7 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Loader;
 import flash.display.Sprite;
+import flash.display.StageScaleMode;
 
 import flash.events.Event;
 import flash.events.StatusEvent;
@@ -19,34 +20,36 @@ import flash.geom.Matrix;
 import flash.media.Camera;
 import flash.media.Video;
 
+import flash.system.Security;
+import flash.system.SecurityPanel;
+
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
 import com.adobe.images.JPGEncoder;
-import com.adobe.images.PNGEncoder;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
+import com.whirled.DataPack;
 
-import com.whirled.contrib.PreferredCamera;
-
-[SWF(width="104", height="78")]
+[SWF(width="600", height="450")]
 public class Camvatar extends Sprite
 {
-    public static const WID :int = 104;
-    public static const HEI :int = 78;
-
     public function Camvatar ()
     {
-        trace("init");
+        //trace("init");
+        _loader = new Loader();
+        _nextLoader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoaderComplete);
+        _nextLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleLoaderComplete);
+        addChild(_loader);
 
         _ctrl = new AvatarControl(this);
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
-        _loader = new Loader();
-        addChild(_loader);
+        DataPack.load(_ctrl.getDefaultDataPack(), gotPack);
 
         if (_ctrl.hasControl()) {
             initSending();
@@ -56,29 +59,45 @@ public class Camvatar extends Sprite
         }
     }
 
+    protected function gotPack (pack :DataPack) :void
+    {
+        //trace("got pack");
+        _config = pack.getBoolean("showCameraConfig");
+        _width = pack.getNumber("width");
+        _height = pack.getNumber("height");
+        _oWidth = pack.getNumber("camWidth");
+        _oHeight = pack.getNumber("camHeight");
+        _quality = pack.getNumber("quality");
+
+        _ctrl.setHotSpot(_width / 2, _height, _height + 10);
+
+        initSending();
+    }
+
     protected function initSending (... ignored) :void
     {
-        trace("init sending...");
+        if (!_ctrl.hasControl() || _width == 0) {
+            //trace("init:abort:" + _width);
+            return;
+        }
+
+        if (_config) {
+            Security.showSettings(SecurityPanel.CAMERA);
+        }
+
+        //trace("init sending...");
         _inControl = true;
-        _camera = PreferredCamera.getPreferredCamera(_ctrl);
+        _camera = _ctrl.getCamera();
         if (_camera == null) {
             trace("Got no camera");
             return;
         }
+        //trace("Camera w/h: " + _camera.width + ", " + _camera.height);
+        //trace("Camera setting to: " + _width + ", " + _height);
 
-        _camera.addEventListener(StatusEvent.STATUS, checkSendBytes);
+        _camera.addEventListener(StatusEvent.STATUS, gotStatus);
 
-        _snapshot = new BitmapData(WID, HEI, false);
-
-        //_camera.setMode(WID, HEI, 30);
-        _video = new Video();
-        _video.width = _camera.width;
-        _video.height = _camera.height;
-        _video.attachCamera(_camera);
-
-        trace("Camera w/h: " + _camera.width + ", " + _camera.height);
-
-        _encoder = new JPGEncoder();
+        _encoder = new JPGEncoder(_quality);
 
 //        addChild(_video);
 
@@ -87,27 +106,39 @@ public class Camvatar extends Sprite
         // don't start the timer yet
 
         // kick things off
-        sendBytes();
+        gotStatus(); // try it
     }
 
-    protected function takeSnap (event :Event = null) :void
+
+    protected function gotStatus (... ignored) :void
     {
-        if (_camera.muted) {
-            return;
+        _camera.setMode(_width, _height, _camera.fps);
+
+        if (_video != null) {
+            _video.clear();
+            if (_video.x != 0) {
+                removeChild(_video);
+            }
         }
 
-        // what is this webcam bug all about?
-        _snapshot.draw(_video, new Matrix(WID / 160, 0, 0, HEI / 120));
+        _video = new Video();
+        _video.width = _width; // _camera.width;
+        _video.height = _height; // _camera.height;
+        _video.attachCamera(_camera);
 
-        // turn the image into a jpg
-        _pageOfSend = 0;
-        _outData = _encoder.encode(_snapshot);
-        //_outData = PNGEncoder.encode(_snapshot);
-        _outData.position = 0;
+        _snapshot = new BitmapData(_video.width, _video.height, false);
+//        var bmp :Bitmap = new Bitmap(_snapshot);
+//        bmp.x = 400;
+//        addChild(bmp);
+
+        checkSendBytes();
     }
 
     protected function checkSendBytes (event :Event = null) :void
     {
+        if (!_inControl) {
+            return;
+        }
         const now :int = getTimer();
         const wait :int = _nextSend - now;
         if (wait <= 0) {
@@ -118,6 +149,28 @@ public class Camvatar extends Sprite
         }
     }
      
+    protected function takeSnap (event :Event = null) :void
+    {
+        if (_camera.muted) {
+            trace("Camera muted");
+            return;
+        }
+
+        // what is this webcam bug all about?
+        _snapshot.draw(_video, new Matrix(_width / _oWidth, 0, 0, _height / _oHeight));
+
+//        if (_video.x == 0) {
+//            _video.x = 220;
+//            _video.y = 20;
+//            addChild(_video);
+//        }
+
+        // turn the image into a jpg
+        _pageOfSend = 0;
+        _outData = _encoder.encode(_snapshot);
+        //_outData = PNGEncoder.encode(_snapshot);
+        _outData.position = 0;
+    }
 
     protected function sendBytes (event :Event = null) :void
     {
@@ -126,12 +179,13 @@ public class Camvatar extends Sprite
             if (_outData == null) {
                 return;
             }
+//            trace("Data: " + _outData.length);
         }
-        trace("length: " + _outData.length + ", pos: " + _outData.position);
+        //trace("length: " + _outData.length + ", pos: " + _outData.position);
 
         // swipe off the next 1000 bytes with a 
         const toSend :int = Math.min(BYTES_PER_SEND, _outData.length - _outData.position);
-        trace("toSend: " + toSend);
+        //trace("toSend: " + toSend);
         const newPosition :int = _outData.position + toSend;
 
         var tokens :int = NO_TOKENS;
@@ -143,10 +197,10 @@ public class Camvatar extends Sprite
         }
 
         var outBytes :ByteArray = new ByteArray();
-        trace("tokens: " + tokens);
+        //trace("tokens: " + tokens);
         outBytes.writeByte(tokens);
         outBytes.writeBytes(_outData, _outData.position, toSend);
-        trace("Out position: " + outBytes.position);
+        //trace("Out position: " + outBytes.position);
         _outData.position = newPosition;
 
         _ctrl.sendMessage(BYTES_KEY, outBytes);
@@ -169,9 +223,8 @@ public class Camvatar extends Sprite
 
     protected function handleBytes (inBytes :ByteArray) :void
     {
-        trace("Got inBytes: " + inBytes.position + " of " + inBytes.length);
+        //trace("Got inBytes: " + inBytes.position + " of " + inBytes.length);
         const tokens :int = inBytes.readByte();
-        trace("Got inBytes: " + inBytes.position + " of " + inBytes.length);
         if ((tokens & START_TOKEN) != NO_TOKENS) {
             _inData = new ByteArray();
         }
@@ -180,18 +233,25 @@ public class Camvatar extends Sprite
         }
         inBytes.readBytes(_inData, _inData.position);
         _inData.position += inBytes.length - 1;
-        trace("read some bytes, now positions are inBytes: " + inBytes.position +
-            ", inData: " + _inData.position);
+        //trace("read some bytes, now positions are inBytes: " + inBytes.position +
+        //    ", inData: " + _inData.position);
         if ((tokens & END_TOKEN) != NO_TOKENS) {
-            _loader.unload();
             _inData.position = 0;
-            _loader.loadBytes(_inData);
+            _nextLoader.loadBytes(_inData);
             _inData = null; // await the next picture
         }
 
-        if (_inControl) {
-            checkSendBytes();
-        }
+        checkSendBytes();
+    }
+
+    protected function handleLoaderComplete (event :Event) :void
+    {
+        addChild(_nextLoader);
+        _loader.unload();
+        removeChild(_loader);
+        var tmp :Loader = _loader;
+        _loader = _nextLoader;
+        _nextLoader = tmp;
     }
 
     /**
@@ -215,9 +275,18 @@ public class Camvatar extends Sprite
     protected static const START_TOKEN :int = 1 << 0;
     protected static const END_TOKEN :int = 1 << 1;
 
+    protected var _config :Boolean;
+    protected var _width :int;
+    protected var _height :int;
+    protected var _oWidth :int;
+    protected var _oHeight :int;
+    protected var _quality :Number;
+
     protected var _inControl :Boolean;
 
     protected var _loader :Loader;
+
+    protected var _nextLoader :Loader;
 
     protected var _ctrl :AvatarControl;
 

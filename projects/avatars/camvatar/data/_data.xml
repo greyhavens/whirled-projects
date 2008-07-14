@@ -1,0 +1,9 @@
+<datapack>
+  <data name="showCameraConfig" info="Click to show the camera config popup. Once you choose your default camera, you may unclick this." type="Boolean" value="false"/>
+  <data name="width" info="The width of the camera." type="Number" value="320"/>
+  <data name="height" info="The height of the camera." type="Number" value="240"/>
+  <data name="camWidth" info="The native width of the camera. For some reason there's a bug that requires the 'normal' width and height of the camera. You can try fiddling with these values if the scale seems wrong." type="Number" value="320"/>
+  <data name="camHeight" info="The native height of the camera." type="Number" value="240"/>
+  <data name="quality" info="Jpeg quality." type="Number" value="50" min="0" max="100"/>
+  <file name="_CONTENT" value="Camvatar.swf"/>
+</datapack>
