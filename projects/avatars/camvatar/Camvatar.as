@@ -261,7 +261,9 @@ public class Camvatar extends Sprite
     {
         // stop any sounds, clean up any resources that need it.  This specifically includes 
         // unregistering listeners to any events - especially Event.ENTER_FRAME
-        _timer.stop();
+        if (_timer != null) {
+            _timer.stop();
+        }
         _inControl = false;
     }
 
