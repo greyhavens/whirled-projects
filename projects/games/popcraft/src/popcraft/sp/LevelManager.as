@@ -196,6 +196,18 @@ public class LevelManager
         }
     }
 
+    public function get highestUnlockedLevelIndex () :int
+    {
+        for (var i :int = _levelRecords.length - 1; i >= 0; --i) {
+            var lr :LevelRecord = _levelRecords[i];
+            if (lr.unlocked) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
     public function get numLevels () :int
     {
         return LEVELS.length;

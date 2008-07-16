@@ -22,6 +22,9 @@ public class Resources
     [Embed(source="../../rsrc/splash.png", mimeType="application/octet-stream")]
     public static const IMG_LEVELSELECTOVERLAY :Class;
 
+    [Embed(source="../../rsrc/splash_UI.swf", mimeType="application/octet-stream")]
+    public static const SWF_LEVELSELECTUI :Class;
+
     [Embed(source="../../rsrc/manual.swf", mimeType="application/octet-stream")]
     public static const SWF_MANUAL :Class;
 

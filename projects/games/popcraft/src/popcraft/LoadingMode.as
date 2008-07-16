@@ -59,6 +59,7 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("swf", "multiplayer",  { embeddedClass: Resources.SWF_MULTIPLAYER });
         rm.pendResourceLoad("swf", "splash",  { embeddedClass: Resources.SWF_SPLASH });
         rm.pendResourceLoad("image", "levelSelectOverlay",  { embeddedClass: Resources.IMG_LEVELSELECTOVERLAY });
+        rm.pendResourceLoad("swf", "levelSelectUi",  { embeddedClass: Resources.SWF_LEVELSELECTUI });
         rm.pendResourceLoad("swf", "manual",  { embeddedClass: Resources.SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: Resources.SWF_BG });
 

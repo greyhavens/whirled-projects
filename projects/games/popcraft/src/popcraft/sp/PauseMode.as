@@ -35,25 +35,25 @@ public class PauseMode extends AppMode
         bgSprite.addChild(tfPaused);
 
         // Resume button
-        button = UIBits.createButton("Resume", 1.5);
+        button = UIBits.createButton("Resume", 1.5, 150);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
             });
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 100;
+        button.y = 90;
         bgSprite.addChild(button);
 
         // Level Select button
-        var button :SimpleButton = UIBits.createButton("End Game", 1.5);
+        var button :SimpleButton = UIBits.createButton("End Game", 1.5, 150);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.unwindToMode(new LevelSelectMode());
             });
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);
-        button.y = 150;
+        button.y = 140;
         bgSprite.addChild(button);
     }
 

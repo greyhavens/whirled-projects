@@ -109,19 +109,19 @@ public class UIBits
         tf.setTextFormat(format);
     }
 
-    public static function createButton (text :String, textScale :Number = 1) :SimpleButton
+    public static function createButton (text :String, textScale :Number = 1, width :Number = -1) :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
-        button.upState = makeButtonFace(FACE_UP, text, textScale);
-        button.overState = makeButtonFace(FACE_OVER, text, textScale);
-        button.downState = makeButtonFace(FACE_DOWN, text, textScale);
+        button.upState = makeButtonFace(FACE_UP, text, textScale, width);
+        button.overState = makeButtonFace(FACE_OVER, text, textScale, width);
+        button.downState = makeButtonFace(FACE_DOWN, text, textScale, width);
         button.hitTestState = button.upState;
         button.tabEnabled = false;
 
         return button;
     }
 
-    protected static function makeButtonFace (face :int, text :String, textScale :Number) :DisplayObject
+    protected static function makeButtonFace (face :int, text :String, textScale :Number, width :Number) :DisplayObject
     {
         var buttonUi :MovieClip = SwfResource.instantiateMovieClip("ui", "button_UI");
 
@@ -134,11 +134,18 @@ public class UIBits
         tf.scaleY = textScale;
         tf.text = text;
 
-        // scale the frame to fit the text
         var frame :MovieClip = buttonUi["button_box"];
-        var scaleX :Number = ((tf.width + BUTTON_H_MARGIN) / frame.width);
+        if (width < 0) {
+            // scale the frame to fit the text
+            var scaleX :Number = ((tf.width + BUTTON_H_MARGIN) / frame.width);
+            frame.scaleX = scaleX;
+        } else {
+            // use an absolute width
+            frame.width = width;
+        }
+
+        // scale the frame to fit the text height
         var scaleY :Number = ((tf.height + BUTTON_Y_MARGIN) / frame.height);
-        frame.scaleX = scaleX;
         frame.scaleY = scaleY;
 
         // Add the frame and text to a new sprite. Trying to align them

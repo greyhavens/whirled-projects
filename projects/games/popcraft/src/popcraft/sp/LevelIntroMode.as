@@ -37,6 +37,11 @@ public class LevelIntroMode extends AppMode
         var manualFrontObj :SimpleSceneObject = new SimpleSceneObject(manualFront);
         manualFrontObj.x = Constants.SCREEN_SIZE.x * 0.5;
         manualFrontObj.y = Constants.SCREEN_SIZE.y * 1.5;
+        
+        // hide some stuff we don't need
+        var cover :MovieClip = manualFront["cover"];
+        var graduate :MovieClip = cover["graduate"];
+        graduate.visible = false;
 
         // animate manual_front in from the bottom of the screen, play its open animation,
         // then swap it out for the real manual object
@@ -138,9 +143,10 @@ public class LevelIntroMode extends AppMode
                 TYPE_PAGE,
                 "",
                 "Infusion: " + spellData.displayName,
+                "",
                 spellData.introText,
-                spellData.introText,
-                spellAnim);
+                spellAnim,
+                true);
             break;
 
         case PHASE_LEVELINTRO:
@@ -165,7 +171,7 @@ public class LevelIntroMode extends AppMode
         return true;
     }
 
-    protected function showPage (pageType :String, leftTitle :String, rightTitle :String, leftText :String, rightText :String, anim :MovieClip) :void
+    protected function showPage (pageType :String, leftTitle :String, rightTitle :String, leftText :String, rightText :String, anim :MovieClip, showLadyfingers :Boolean = false) :void
     {
         var isNote :Boolean = pageType == "note";
 
@@ -177,6 +183,11 @@ public class LevelIntroMode extends AppMode
 
         leftNote.visible = isNote;
         rightNote.visible = isNote;
+
+        if (!isNote) {
+            var ladyfingers :MovieClip = leftPage["ladyfingers_image"];
+            ladyfingers.visible = showLadyfingers;
+        }
 
         var animParent :MovieClip = rightPage["image"];
         if (null != animParent) {
