@@ -9,11 +9,9 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Loader;
 import flash.display.Sprite;
-import flash.display.StageScaleMode;
 
 import flash.events.Event;
 import flash.events.StatusEvent;
-import flash.events.TimerEvent;
 
 import flash.geom.Matrix;
 
@@ -24,14 +22,16 @@ import flash.system.Security;
 import flash.system.SecurityPanel;
 
 import flash.utils.ByteArray;
-import flash.utils.Timer;
-import flash.utils.getTimer;
 
 import com.adobe.images.JPGEncoder;
+
+import com.threerings.util.ValueEvent;
 
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.DataPack;
+
+import com.whirled.contrib.Chunker;
 
 [SWF(width="600", height="450")]
 public class Camvatar extends Sprite
@@ -47,7 +47,9 @@ public class Camvatar extends Sprite
 
         _ctrl = new AvatarControl(this);
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
-        _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
+
+        _chunker = new Chunker(_ctrl, "");
+        _chunker.addEventListener(Event.COMPLETE, handleGotChunk);
 
         DataPack.load(_ctrl.getDefaultDataPack(), gotPack);
 
@@ -101,10 +103,6 @@ public class Camvatar extends Sprite
 
 //        addChild(_video);
 
-        _timer = new Timer(1, 1); // we will configure the delay before each use
-        _timer.addEventListener(TimerEvent.TIMER, sendBytes);
-        // don't start the timer yet
-
         // kick things off
         gotStatus(); // try it
     }
@@ -131,26 +129,14 @@ public class Camvatar extends Sprite
 //        bmp.x = 400;
 //        addChild(bmp);
 
-        checkSendBytes();
+        checkSend();
     }
 
-    protected function checkSendBytes (event :Event = null) :void
+    protected function checkSend () :void
     {
         if (!_inControl) {
             return;
         }
-        const now :int = getTimer();
-        const wait :int = _nextSend - now;
-        if (wait <= 0) {
-            sendBytes();
-        } else {
-            _timer.delay = wait;
-            _timer.start();
-        }
-    }
-     
-    protected function takeSnap (event :Event = null) :void
-    {
         if (_camera.muted) {
             trace("Camera muted");
             return;
@@ -166,82 +152,13 @@ public class Camvatar extends Sprite
 //        }
 
         // turn the image into a jpg
-        _pageOfSend = 0;
-        _outData = _encoder.encode(_snapshot);
-        //_outData = PNGEncoder.encode(_snapshot);
-        _outData.position = 0;
+        _chunker.send(_encoder.encode(_snapshot));
     }
 
-    protected function sendBytes (event :Event = null) :void
+    protected function handleGotChunk (event :ValueEvent) :void
     {
-        if (_outData == null) {
-            takeSnap();
-            if (_outData == null) {
-                return;
-            }
-//            trace("Data: " + _outData.length);
-        }
-        //trace("length: " + _outData.length + ", pos: " + _outData.position);
-
-        // swipe off the next 1000 bytes with a 
-        const toSend :int = Math.min(BYTES_PER_SEND, _outData.length - _outData.position);
-        //trace("toSend: " + toSend);
-        const newPosition :int = _outData.position + toSend;
-
-        var tokens :int = NO_TOKENS;
-        if (_pageOfSend == 0) {
-            tokens |= START_TOKEN;
-        }
-        if (newPosition == _outData.length) {
-            tokens |= END_TOKEN;
-        }
-
-        var outBytes :ByteArray = new ByteArray();
-        //trace("tokens: " + tokens);
-        outBytes.writeByte(tokens);
-        outBytes.writeBytes(_outData, _outData.position, toSend);
-        //trace("Out position: " + outBytes.position);
-        _outData.position = newPosition;
-
-        _ctrl.sendMessage(BYTES_KEY, outBytes);
-        _nextSend = getTimer() + MIN_SEND_WAIT;
-        _pageOfSend++;
-
-        if (newPosition == _outData.length) {
-            _outData = null;
-        }
-
-        // Then, just wait for the message to come back to us before sending another...
-    }
-
-    protected function handleMessage (event :ControlEvent) :void
-    {
-        if (event.name == BYTES_KEY) {
-            handleBytes(event.value as ByteArray);
-        }
-    }
-
-    protected function handleBytes (inBytes :ByteArray) :void
-    {
-        //trace("Got inBytes: " + inBytes.position + " of " + inBytes.length);
-        const tokens :int = inBytes.readByte();
-        if ((tokens & START_TOKEN) != NO_TOKENS) {
-            _inData = new ByteArray();
-        }
-        if (_inData == null) {
-            return; // we need to wait for a start
-        }
-        inBytes.readBytes(_inData, _inData.position);
-        _inData.position += inBytes.length - 1;
-        //trace("read some bytes, now positions are inBytes: " + inBytes.position +
-        //    ", inData: " + _inData.position);
-        if ((tokens & END_TOKEN) != NO_TOKENS) {
-            _inData.position = 0;
-            _nextLoader.loadBytes(_inData);
-            _inData = null; // await the next picture
-        }
-
-        checkSendBytes();
+        _nextLoader.loadBytes(event.value as ByteArray);
+        checkSend();
     }
 
     protected function handleLoaderComplete (event :Event) :void
@@ -261,21 +178,8 @@ public class Camvatar extends Sprite
     {
         // stop any sounds, clean up any resources that need it.  This specifically includes 
         // unregistering listeners to any events - especially Event.ENTER_FRAME
-        if (_timer != null) {
-            _timer.stop();
-        }
         _inControl = false;
     }
-
-    protected static const BYTES_KEY :String = "";
-
-    protected static const BYTES_PER_SEND :int = 1000;
-
-    protected static const MIN_SEND_WAIT :int = 250;
-
-    protected static const NO_TOKENS :int = 0;
-    protected static const START_TOKEN :int = 1 << 0;
-    protected static const END_TOKEN :int = 1 << 1;
 
     protected var _config :Boolean;
     protected var _width :int;
@@ -294,19 +198,12 @@ public class Camvatar extends Sprite
 
     protected var _encoder :JPGEncoder;
 
-    protected var _timer :Timer;
-
     protected var _video :Video;
 
     protected var _camera :Camera;
 
-    protected var _inData :ByteArray;
-
-    protected var _outData :ByteArray;
-
     protected var _snapshot :BitmapData; 
 
-    protected var _nextSend :int;
-    protected var _pageOfSend :int;
+    protected var _chunker :Chunker;
 }
 }
