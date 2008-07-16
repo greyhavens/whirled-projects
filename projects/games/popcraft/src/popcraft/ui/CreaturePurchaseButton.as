@@ -37,16 +37,11 @@ public class CreaturePurchaseButton extends SimObject
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
 
         _multiplicity.text = "";
-        _switch.cacheAsBitmap = true;
 
         // instaniate some alternate highlight movies, for spells
         _defaultHilite = _hilite;
         _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust");
         _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
-
-        //_hilite.alpha = 0.5;
-        //_bloodHilite.alpha = 0.5;
-        //_rigorHilite.alpha = 0.5;
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
@@ -347,7 +342,7 @@ public class CreaturePurchaseButton extends SimObject
     protected var _available :Boolean;
     protected var _enabled :Boolean;
 
-    protected static const FIRST_METER_LOC :Point = new Point(-18, -65);
+    protected static const FIRST_METER_LOC :Point = new Point(-18, -46);
     protected static const DEPLOY_ANIM_LENGTH :Number = 0.7;
     protected static const DEPLOY_ANIM_TASK_NAME :String = "DeployAnimation";
     protected static const RESOURCE_COST_TILES :Array = [ "Ablank", "Bblank", "Cblank", "Dblank" ];
@@ -363,6 +358,7 @@ import flash.display.Graphics;
 class ResourceMeter extends Shape
 {
     public static const MAX_MAX_VALUE :int = 50;
+    public static const MAX_HEIGHT :int = 46;
 
     public function ResourceMeter (fgBitmap :BitmapData, bgColor :uint, isLarge :Boolean, value :int, maxValue :int)
     {
@@ -427,7 +423,6 @@ class ResourceMeter extends Shape
     protected var _width :int;
     protected var _totalHeight :Number;
 
-    protected static const MAX_HEIGHT :int = 65;
     protected static const LG_WIDTH :int = 18;
     protected static const SM_WIDTH :int = 3;
 }

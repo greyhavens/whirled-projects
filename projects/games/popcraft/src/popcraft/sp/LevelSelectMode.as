@@ -75,26 +75,34 @@ public class LevelSelectMode extends DemoGameMode
         // create the tutorial objects
         var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "puzzle_intro");
         puzzleIntroMovie.mouseEnabled = false;
-        var puzzleIntro :SceneObject = new SimpleSceneObject(puzzleIntroMovie);
-        puzzleIntro.x = 470;
-        puzzleIntro.y = 395;
-        createHelpTextAnimTask(puzzleIntro, 470, 480);
-        this.addObject(puzzleIntro, _modeLayer);
+        _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
+        _puzzleIntro.x = 470;
+        _puzzleIntro.y = 395;
+        createHelpTextAnimTask(_puzzleIntro, 470, 475);
+        this.addObject(_puzzleIntro, _modeLayer);
 
         var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "unit_intro");
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
         _unitIntro.x = 9;
         _unitIntro.y = 385;
-        createHelpTextAnimTask(_unitIntro, 9, -1);
+        createHelpTextAnimTask(_unitIntro, 9, 4);
         this.addObject(_unitIntro, _modeLayer);
+
+        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "resource_intro");
+        resourceIntroMovie.mouseEnabled = false;
+        _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
+        _resourceIntro.x = 9;
+        _resourceIntro.y = 385;
+        createHelpTextAnimTask(_resourceIntro, 9, 4);
+        this.addObject(_resourceIntro, _modeLayer);
     }
 
     protected static function createHelpTextAnimTask (obj :SceneObject, startX :Number, endX :Number) :void
     {
         var task :RepeatingTask = new RepeatingTask();
-        task.addTask(LocationTask.CreateSmooth(endX, obj.y, 0.6));
-        task.addTask(LocationTask.CreateSmooth(startX, obj.y, 0.6));
+        task.addTask(LocationTask.CreateSmooth(endX, obj.y, 1));
+        task.addTask(LocationTask.CreateSmooth(startX, obj.y, 1));
         obj.addTask(task);
     }
 
@@ -104,6 +112,8 @@ public class LevelSelectMode extends DemoGameMode
 
         if (null != _unitIntro) {
             _unitIntro.visible = GameContext.localPlayerInfo.canPurchaseCreature(Constants.UNIT_TYPE_GRUNT);
+            _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
+            _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
         }
     }
 
@@ -156,7 +166,7 @@ public class LevelSelectMode extends DemoGameMode
             // if the player has completed the level with an expert score,
             // indicate this in the button title.
             if (levelRecord.expert) {
-                levelName += " (*)";
+                levelName += " *";
             }
 
             button = this.createLevelSelectButton(i, levelName);
@@ -168,7 +178,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // epilogue button
-        button = UIBits.createButton("Epilogue", 1, LEVEL_SELECT_BUTTON_WIDTH);
+        button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
         button.x = EPILOGUE_LOC.x - (button.width * 0.5);
         button.y = EPILOGUE_LOC.y;
         button.addEventListener(MouseEvent.CLICK,
@@ -195,7 +205,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
     {
-        var button :SimpleButton = UIBits.createButton(levelName, 1, LEVEL_SELECT_BUTTON_WIDTH);
+        var button :SimpleButton = UIBits.createButton(levelName, 1.1, LEVEL_SELECT_BUTTON_WIDTH);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
                 levelSelected(levelNum);
@@ -223,14 +233,16 @@ public class LevelSelectMode extends DemoGameMode
     }
 
     protected var _playButton :SimpleButton;
+    protected var _puzzleIntro :SceneObject;
     protected var _unitIntro :SceneObject;
+    protected var _resourceIntro :SceneObject;
 
     protected static const NUM_COLUMNS :int = 2;
-    protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(180, 0) ];
-    protected static const EPILOGUE_LOC :Point = new Point(90, 230);
+    protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];
+    protected static const EPILOGUE_LOC :Point = new Point(100, 240);
     protected static const BUTTON_CONTAINER_Y :Number = 180;
 
-    protected static const LEVEL_SELECT_BUTTON_WIDTH :Number = 177;
+    protected static const LEVEL_SELECT_BUTTON_WIDTH :Number = 190;
 }
 
 }

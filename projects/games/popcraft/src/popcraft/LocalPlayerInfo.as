@@ -36,6 +36,21 @@ public class LocalPlayerInfo extends PlayerInfo
         return _resources[resourceType];
     }
 
+    public function get totalResourceAmount () :int
+    {
+        var totalAmount :int;
+        for each (var resAmount :int in _resources) {
+            totalAmount += resAmount;
+        }
+
+        return totalAmount;
+    }
+
+    public function get totalResourcesEarned () :int
+    {
+        return _totalResourcesEarned;
+    }
+
     public function setResourceAmount (resourceType :int, newAmount :int) :void
     {
         Assert.isTrue(resourceType < _resources.length);
@@ -159,11 +174,6 @@ public class LocalPlayerInfo extends PlayerInfo
         }
 
         return totalCount;
-    }
-
-    public function get totalResourcesEarned () :int
-    {
-        return _totalResourcesEarned;
     }
 
     protected var _resources :Array;
