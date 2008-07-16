@@ -13,6 +13,7 @@ import flash.display.SimpleButton;
 import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import popcraft.*;
 import popcraft.battle.view.UnitAnimationFactory;
@@ -37,7 +38,7 @@ public class LevelIntroMode extends AppMode
         var manualFrontObj :SimpleSceneObject = new SimpleSceneObject(manualFront);
         manualFrontObj.x = Constants.SCREEN_SIZE.x * 0.5;
         manualFrontObj.y = Constants.SCREEN_SIZE.y * 1.5;
-        
+
         // hide some stuff we don't need
         var cover :MovieClip = manualFront["cover"];
         var graduate :MovieClip = cover["graduate"];
@@ -223,6 +224,13 @@ public class LevelIntroMode extends AppMode
         // intro texts
         var leftPageText :TextField = (isNote ? leftNote["note_text"] : leftPage["text"]);
         if (null != leftPageText) {
+            if (isNote) {
+                // Fix a stupid Flash bug. Apparently letter spacing settings in TextFields created
+                // in the FAT don't stick around when that text is dynamically edited.
+                var tf :TextFormat = leftPageText.defaultTextFormat;
+                tf.letterSpacing = -2;
+                leftPageText.defaultTextFormat = tf;
+            }
             leftPageText.text = leftText;
         }
 
