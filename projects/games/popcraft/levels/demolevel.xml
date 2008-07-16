@@ -28,7 +28,7 @@
                 </Unit>
             </Units>
             <PlayerColors>
-                <PlayerColor player="1" color="0x000000"/>
+                <PlayerColor player="1" color="0xFFFFFF"/>
                 <PlayerColor player="2" color="0xFF0000"/>
                 <PlayerColor player="3" color="0x9FBCFF"/>
             </PlayerColors>
