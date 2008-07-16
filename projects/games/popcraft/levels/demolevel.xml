@@ -28,7 +28,7 @@
                 </Unit>
             </Units>
             <PlayerColors>
-                <PlayerColor player="1" color="0xFFE75F"/>
+                <PlayerColor player="1" color="0x000000"/>
                 <PlayerColor player="2" color="0xFF0000"/>
                 <PlayerColor player="3" color="0x9FBCFF"/>
             </PlayerColors>
@@ -58,8 +58,7 @@
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave absoluteDelay="3" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
-                    <Wave absoluteDelay="9" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
-                    <Wave absoluteDelay="25" targetPlayerName="Jack"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="20" targetPlayerName="Jack"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="35"/>
                 </Day>
             </RepeatingDays>
@@ -73,8 +72,7 @@
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave absoluteDelay="4" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
-                    <Wave absoluteDelay="8" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
-                    <Wave absoluteDelay="25" targetPlayerName="Ralph"><Unit type="grunt" count="2"/></Wave>
+                    <Wave absoluteDelay="19" targetPlayerName="Ralph"><Unit type="grunt" count="1"/></Wave>
                     <Wave absoluteDelay="35"/>
                 </Day>
             </RepeatingDays>
