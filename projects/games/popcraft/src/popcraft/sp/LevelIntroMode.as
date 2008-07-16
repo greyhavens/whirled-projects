@@ -1,5 +1,6 @@
 package popcraft.sp {
 
+import com.threerings.flash.TextFieldUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -227,9 +228,7 @@ public class LevelIntroMode extends AppMode
             if (isNote) {
                 // Fix a stupid Flash bug. Apparently letter spacing settings in TextFields created
                 // in the FAT don't stick around when that text is dynamically edited.
-                var tf :TextFormat = leftPageText.defaultTextFormat;
-                tf.letterSpacing = -2;
-                leftPageText.defaultTextFormat = tf;
+                TextFieldUtil.updateFormat(leftPageText, { letterSpacing: -2 });
             }
             leftPageText.text = leftText;
         }
