@@ -145,6 +145,20 @@ public class Camvatar extends Sprite
         // what is this webcam bug all about?
         _snapshot.draw(_video, new Matrix(_width / _oWidth, 0, 0, _height / _oHeight));
 
+// Doesn't work?!
+//        var allWhite :Boolean = true;
+//        for (var yy :int = 0; yy < _snapshot.height; yy++) {
+//            for (var xx :int = 0; xx < _snapshot.width; xx++) {
+//                if (_snapshot.getPixel(xx, yy) != 0xFFFFFF) {
+//                    allWhite = false;
+//                    break;
+//                }
+//            }
+//        }
+//        if (allWhite) {
+//            return;
+//        }
+
 //        if (_video.x == 0) {
 //            _video.x = 220;
 //            _video.y = 20;
