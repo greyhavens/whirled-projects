@@ -38,10 +38,12 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
         _workshop = _movie["workshop"];
-
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
-        var recolor :MovieClip = _workshop["recolor"];
-        recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
+        // is the workshop already burning?
+        if (_unit.health / _unit.maxHealth <= BURNING_HEALTH_PERCENT) {
+            this.setBurning();
+        } else {
+            this.recolorWorkshop(_workshop);
+        }
 
         // remove the "target" badge - we'll re-add it when necessary
         _targetBadge = _movie["target"];
@@ -52,19 +54,22 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         _sprite.addChild(_movie);
 
         // create health meters
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
         var yOffset :Number = -_sprite.height - HEALTH_METER_SIZE.y;
-        var remainingMeterValue :Number = _unit.maxHealth;
-        while (remainingMeterValue > 0) {
-            var thisMeterValue :Number = Math.min(remainingMeterValue, HEALTH_METER_MAX_MAX_VALUE);
+        var remainingMaxMeterValue :Number = _unit.maxHealth;
+        var remainingMeterValue :Number = _unit.health;
+        while (remainingMaxMeterValue > 0) {
+            var thisMeterMaxValue :Number = Math.min(remainingMaxMeterValue, HEALTH_METER_MAX_MAX_VALUE);
+            var thisMeterValue :Number = Math.min(remainingMeterValue, thisMeterMaxValue);
 
             var healthMeter :RectMeter = new RectMeter();
             healthMeter.minValue = 0;
-            healthMeter.maxValue = thisMeterValue;
+            healthMeter.maxValue = thisMeterMaxValue;
             healthMeter.value = thisMeterValue;
             healthMeter.foregroundColor = playerColor;
             healthMeter.backgroundColor = 0x888888;
             healthMeter.outlineColor = 0x000000;
-            healthMeter.width = HEALTH_METER_SIZE.x * (thisMeterValue / HEALTH_METER_MAX_MAX_VALUE);
+            healthMeter.width = HEALTH_METER_SIZE.x * (thisMeterMaxValue / HEALTH_METER_MAX_MAX_VALUE);
             healthMeter.height = HEALTH_METER_SIZE.y;
             healthMeter.x = -(healthMeter.width * 0.5);
             healthMeter.y = yOffset;
@@ -72,6 +77,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
             _healthMeters.push(healthMeter);
 
             yOffset -= (HEALTH_METER_SIZE.y + 1);
+            remainingMaxMeterValue -= thisMeterMaxValue;
             remainingMeterValue -= thisMeterValue;
         }
 
@@ -92,6 +98,27 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
 
         this.targetEnemyBadgeVisible = false;
+    }
+
+    protected function setBurning () :void
+    {
+        this.setWorkshopMovie(SwfResource.instantiateMovieClip("workshop", "workshop_fire"));
+    }
+
+    protected function setWorkshopMovie (workshop :MovieClip) :void
+    {
+        this.recolorWorkshop(workshop);
+        var index :int = _movie.getChildIndex(_workshop);
+        _movie.removeChildAt(index);
+        _movie.addChildAt(workshop, index);
+        _workshop = workshop;
+    }
+
+    protected function recolorWorkshop (workshop :MovieClip) :void
+    {
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var recolor :MovieClip = workshop["recolor"];
+        recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
     }
 
     override public function get objectName () :String
@@ -160,20 +187,32 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
         var health :Number = _unit.health;
         if (health != _lastHealth) {
-            // update all health meters
-            var remainingValue :Number = health;
-            for each (var healthMeter :RectMeter in _healthMeters) {
-                var meterValue :Number = Math.min(remainingValue, healthMeter.maxValue);
-                healthMeter.value = meterValue;
-                remainingValue -= meterValue;
+            if (health <= 0) {
+                GameContext.playGameSound("sfx_death_base");
+                this.destroySelf();
+
+                // create the rubble sprite
+                GameContext.gameMode.addObject(
+                    new DeadPlayerBaseUnitView(_unit),
+                    GameContext.battleBoardView.unitViewParent);
+
+            } else {
+                // update all health meters
+                var remainingValue :Number = health;
+                for each (var healthMeter :RectMeter in _healthMeters) {
+                    var meterValue :Number = Math.min(remainingValue, healthMeter.maxValue);
+                    healthMeter.value = meterValue;
+                    remainingValue -= meterValue;
+                }
+
+                // swap in the burning workshop
+                if ((health / _unit.maxHealth) <= BURNING_HEALTH_PERCENT &&
+                    (_lastHealth / _unit.maxHealth) > BURNING_HEALTH_PERCENT) {
+                    this.setBurning();
+                }
             }
 
             _lastHealth = health;
-        }
-
-        if (health <= 0) {
-            GameContext.playGameSound("sfx_death_base");
-            this.destroySelf();
         }
     }
 
@@ -246,6 +285,8 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
     protected static const CLICKABLE_SPRITE_SIZE :Rectangle = new Rectangle(-27, -74, 55, 74);
     protected static const DEBRIS_RECT :Rectangle = new Rectangle(-27, -74, 55, 74);
+
+    protected static const BURNING_HEALTH_PERCENT :Number = 0.5;
 
 }
 
