@@ -18,7 +18,6 @@ import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.data.GameVariantData;
 import popcraft.ui.UIBits;
@@ -110,6 +109,10 @@ public class GameLobbyMode extends AppMode
 
         // other players need to know if we have the Morbid Infection trophy
         if (!_hasSetMorbidInfection && MultiplayerConfig.inited) {
+            if (Constants.DEBUG_GIVE_MORBID_INFECTION) {
+                AppContext.globalPlayerStats.hasMorbidInfection = true;
+            }
+
             if (AppContext.globalPlayerStats.hasMorbidInfection) {
                 MultiplayerConfig.setPlayerHasMorbidInfection(SeatingManager.localPlayerSeat);
             }
@@ -375,6 +378,7 @@ import com.threerings.flash.TextFieldUtil;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
+import com.threerings.flash.DisplayUtil;
 
 class PlayerHeadshot extends Sprite
 {
@@ -384,8 +388,7 @@ class PlayerHeadshot extends Sprite
         var scale :Number = Math.min(HEADSHOT_WIDTH / headshot.width, HEADSHOT_HEIGHT / headshot.height);
         headshot.scaleX = scale;
         headshot.scaleY = scale;
-        headshot.x = 0;
-        headshot.y = 0;
+        DisplayUtil.positionBounds(headshot, 0, 0);
         this.addChild(headshot);
 
         var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.2);

@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -14,6 +15,9 @@ import flash.text.TextFormatAlign;
 
 public class UIBits
 {
+    public static const PANEL_TEXT_H_MARGIN :Number = 12;
+    public static const PANEL_TEXT_V_MARGIN :Number = 6;
+
     public static function createFrame (width :Number, height :Number) :Sprite
     {
         var frame :MovieClip = SwfResource.instantiateMovieClip("ui", "frame_UI");
@@ -49,23 +53,26 @@ public class UIBits
     }
 
     public static function createTextPanel (text :String, textScale :Number = 1,
-        maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER) :Sprite
+        maxWidth :int = 0, textColor :uint = 0, align :String = TextFormatAlign.CENTER,
+        hMargin :Number = PANEL_TEXT_H_MARGIN, vMargin :Number = PANEL_TEXT_V_MARGIN) :Sprite
     {
         if (maxWidth > 0) {
             // account for the panel border
-            maxWidth = Math.max(1, maxWidth - (PANEL_TEXT_H_MARGIN * 2));
+            maxWidth = Math.max(1, maxWidth - (hMargin * 2));
         }
 
         var tf :TextField = createText(text, textScale, maxWidth, textColor, align);
 
         var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
 
-        panel.width = (tf.width + (PANEL_TEXT_H_MARGIN * 2));
-        panel.height = (tf.height + (PANEL_TEXT_V_MARGIN * 2));
+        panel.width = (tf.width + (hMargin * 2));
+        panel.height = (tf.height + (vMargin * 2));
         panel.x = (panel.width * 0.5);
         panel.y = (panel.height * 0.5);
-        tf.x = (panel.width * 0.5) - (tf.width * 0.5);
-        tf.y = (panel.height * 0.5) - (tf.height * 0.5);
+
+        DisplayUtil.positionBounds(tf,
+            (panel.width * 0.5) - (tf.width * 0.5),
+            (panel.height * 0.5) - (tf.height * 0.5));
 
         var sprite :Sprite = new Sprite();
         sprite.addChild(panel);
@@ -183,9 +190,6 @@ public class UIBits
 
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
-
-    protected static const PANEL_TEXT_H_MARGIN :Number = 12;
-    protected static const PANEL_TEXT_V_MARGIN :Number = 6;
 }
 
 }

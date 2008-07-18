@@ -53,6 +53,11 @@ public class SeatingManager
         return _localPlayerSeat;
     }
 
+    public static function get localPlayerOccupantId () :int
+    {
+        return getPlayerOccupantId(_localPlayerSeat);
+    }
+
     public static function isPlayerPresent (playerSeat :int) :Boolean
     {
         return _playersPresent[playerSeat];
@@ -71,7 +76,7 @@ public class SeatingManager
     public static function getPlayerOccupantId (playerSeat :int) :int
     {
         if (AppContext.gameCtrl.isConnected() && playerSeat < _numExpectedPlayers) {
-            return AppContext.gameCtrl.game.getOccupantIds()[playerSeat];
+            return AppContext.gameCtrl.game.seating.getPlayerIds()[playerSeat];
         } else {
             return 0;
         }

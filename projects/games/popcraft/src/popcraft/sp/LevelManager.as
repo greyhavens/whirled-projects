@@ -89,6 +89,11 @@ public class LevelManager
         return true;
     }
 
+    public function get playerStartedGame () :Boolean
+    {
+        return LevelRecord(_levelRecords[1]).unlocked;
+    }
+
     public function get levelRecords () :Array
     {
         return _levelRecords;

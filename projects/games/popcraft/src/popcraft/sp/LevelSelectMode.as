@@ -56,12 +56,18 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createTutorialLayout () :void
     {
-        _playButton = SwfResource.instantiateButton("levelSelectUi", "play_button");
+        var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
+
+        _playButton = SwfResource.instantiateButton("levelSelectUi",
+            (playerStartedGame ? "continue_button" : "play_button"));
         _playButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
             playNextLevel();
         });
         _playButton.x = 350;
         _playButton.y = 350;
+        // if the player hasn't played before, the play button will become visible once
+        // they've completed the brief tutorial
+        _playButton.visible = playerStartedGame;
 
         _modeLayer.addChild(_playButton);
 
@@ -114,6 +120,16 @@ public class LevelSelectMode extends DemoGameMode
             _unitIntro.visible = GameContext.localPlayerInfo.canPurchaseCreature(Constants.UNIT_TYPE_GRUNT);
             _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
             _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
+        }
+    }
+
+    override public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean = false) :void
+    {
+        super.buildCreature(playerIndex, unitType, noCost);
+
+        if (!_playButton.visible && playerIndex == GameContext.localPlayerIndex) {
+            // the play button becomes visible when the player has purchased a creature
+            _playButton.visible = true;
         }
     }
 

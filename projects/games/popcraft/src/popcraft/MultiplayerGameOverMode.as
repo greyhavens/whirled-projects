@@ -4,9 +4,10 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.game.GameSubControl;
 
+import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
-import flash.text.TextField;
+import flash.text.TextFormatAlign;
 
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
@@ -36,20 +37,27 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             for (var i :int = 0; i < winningPlayerNames.length; ++i) {
                 gameOverText += String(winningPlayerNames[i]);
                 if (i < winningPlayerNames.length - 1) {
-                    gameOverText += ", ";
+                    if (winningPlayerNames.length > 2) {
+                        gameOverText += ",";
+                    }
+                    gameOverText += " ";
+                    if (i == winningPlayerNames.length - 2) {
+                        gameOverText += "and ";
+                    }
                 }
             }
             gameOverText += " win the game!";
         }
 
-        var text :TextField = UIBits.createText(gameOverText, 3,  650, 0xFFFFFF);
+        var text :DisplayObject = UIBits.createTextPanel(
+            gameOverText, 3,  650, 0, TextFormatAlign.CENTER, 20, 15);
 
         text.x = (Constants.SCREEN_SIZE.x * 0.5) - (text.width * 0.5);
         text.y = (Constants.SCREEN_SIZE.y * 0.5) - (text.height * 0.5);
 
         this.modeSprite.addChild(text);
 
-        _button = UIBits.createButton("Play Again?");
+        _button = UIBits.createButton("Play Again?", 2);
         _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
         _button.y = 350;
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);

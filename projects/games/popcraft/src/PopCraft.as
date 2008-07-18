@@ -8,9 +8,11 @@ import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameControl;
+import com.whirled.game.SizeChangedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.geom.Point;
 
 import popcraft.*;
 import popcraft.data.*;
@@ -69,13 +71,31 @@ public class PopCraft extends Sprite
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
 
+        // if we're connected to Whirled, keep the game centered and draw a pretty
+        // tiled background behind it
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
+            this.handleSizeChanged();
+        }
+
         // LoadingMode will pop itself from the stack when loading is complete
         AppContext.mainLoop.run();
         AppContext.mainLoop.pushMode(new LoadingMode());
     }
 
+    protected function handleSizeChanged (...ignored) :void
+    {
+        var size :Point = AppContext.gameCtrl.local.getSize();
+        AppContext.mainSprite.x = (size.x * 0.5) - (Constants.SCREEN_SIZE.x * 0.5);
+        AppContext.mainSprite.y = (size.y * 0.5) - (Constants.SCREEN_SIZE.y * 0.5);
+    }
+
     protected function handleUnload (...ignored) :void
     {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.local.removeEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
+        }
+
         AppContext.mainLoop.shutdown();
     }
 }
