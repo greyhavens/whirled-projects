@@ -76,13 +76,13 @@ public class GameLobbyMode extends AppMode
     override protected function enter () :void
     {
         super.enter();
-        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+        //StageQualityManager.pushStageQuality(StageQuality.HIGH);
     }
 
     override protected function exit () :void
     {
         super.exit();
-        StageQualityManager.popStageQuality();
+        //StageQualityManager.popStageQuality();
     }
 
     protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
@@ -132,7 +132,6 @@ public class GameLobbyMode extends AppMode
         }
 
         _statusText.text = statusText;
-        _statusText.x = (Constants.SCREEN_SIZE.x * 0.5) - (_statusText.width * 0.5);
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
@@ -379,15 +378,18 @@ import com.threerings.flash.TextFieldUtil;
 import popcraft.*;
 import popcraft.ui.UIBits;
 import com.threerings.flash.DisplayUtil;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
 class PlayerHeadshot extends Sprite
 {
     public function PlayerHeadshot (playerSeat :int)
     {
         var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerSeat);
+        headshot.scaleX = 1;
+        headshot.scaleY = 1;
         var scale :Number = Math.min(HEADSHOT_WIDTH / headshot.width, HEADSHOT_HEIGHT / headshot.height);
-        headshot.scaleX = scale;
-        headshot.scaleY = scale;
+        headshot.width *= scale;
+        headshot.height *= scale;
         DisplayUtil.positionBounds(headshot, 0, 0);
         this.addChild(headshot);
 
@@ -397,11 +399,9 @@ class PlayerHeadshot extends Sprite
         tfName.y = (HEADSHOT_HEIGHT * 0.5) - (tfName.height * 0.5);
         this.addChild(tfName);
 
-        _handicapObj = new Shape();
-        var g :Graphics = _handicapObj.graphics;
-        g.beginFill(0xFF0000);
-        g.drawRect(0, 0, 15, 15);
-        g.endFill();
+        _handicapObj = ImageResource.instantiateBitmap("handicap");
+        _handicapObj.visible = false;
+        this.addChild(_handicapObj);
     }
 
     public function set handicap (val :Boolean) :void
@@ -411,16 +411,11 @@ class PlayerHeadshot extends Sprite
         }
 
         _handicapOn = val;
-
-        if (_handicapOn) {
-            this.addChild(_handicapObj);
-        } else {
-            this.removeChild(_handicapObj);
-        }
+        _handicapObj.visible = _handicapOn;
     }
 
     protected var _handicapOn :Boolean;
-    protected var _handicapObj :Shape;
+    protected var _handicapObj :DisplayObject;
 
     protected static const HEADSHOT_WIDTH :Number = 60;
     protected static const HEADSHOT_HEIGHT :Number = 60;

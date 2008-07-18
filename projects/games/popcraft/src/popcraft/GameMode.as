@@ -528,12 +528,6 @@ public class GameMode extends TransitionMode
     // from AppMode
     override public function update (dt :Number) :void
     {
-        // if this is a single-player game, don't dip below
-        // a particular frame rate
-        if (GameContext.isSinglePlayer) {
-            dt = Math.min(dt, this.maxSPUpdateTime);
-        }
-
         if (!_gameIsRunning) {
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
@@ -914,11 +908,6 @@ public class GameMode extends TransitionMode
         return GameContext.isSinglePlayer;
     }
 
-    public function get maxSPUpdateTime () :Number
-    {
-        return MAX_SP_UPDATE_TIME;
-    }
-
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
@@ -936,8 +925,6 @@ public class GameMode extends TransitionMode
     protected var _syncError :Boolean;
 
     protected var _trophyWatcher :TrophyWatcher;
-
-    protected static const MAX_SP_UPDATE_TIME :Number = 1 / 15;
 
     protected static const TICK_INTERVAL_MS :int = 100; // 1/10 of a second
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));

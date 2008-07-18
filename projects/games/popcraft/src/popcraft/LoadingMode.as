@@ -87,6 +87,8 @@ public class LoadingMode extends AppMode
         rm.pendResourceLoad("image", "portrait_ralph", { embeddedClass: Resources.IMG_PORTRAITRALPH });
         rm.pendResourceLoad("image", "portrait_weardd", { embeddedClass: Resources.IMG_PORTRAITWEARDD });
 
+        rm.pendResourceLoad("image", "handicap", { embeddedClass: Resources.IMG_HANDICAP });
+
         // sfx
         rm.pendResourceLoad("sound", "mus_night", { embeddedClass: Resources.MUSIC_NIGHT, type: "music", volume: 0.7, priority: 10 });
         rm.pendResourceLoad("sound", "mus_day", { embeddedClass: Resources.MUSIC_DAY, type: "music", volume: 0.7, priority: 10 });

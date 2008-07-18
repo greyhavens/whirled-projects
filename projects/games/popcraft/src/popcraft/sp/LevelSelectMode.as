@@ -127,7 +127,7 @@ public class LevelSelectMode extends DemoGameMode
     {
         super.buildCreature(playerIndex, unitType, noCost);
 
-        if (!_playButton.visible && playerIndex == GameContext.localPlayerIndex) {
+        if (null != _playButton && !_playButton.visible && playerIndex == GameContext.localPlayerIndex) {
             // the play button becomes visible when the player has purchased a creature
             _playButton.visible = true;
         }

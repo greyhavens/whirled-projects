@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -41,14 +42,13 @@ public class PlayerStatusView extends SceneObject
         var headshotParent :MovieClip = _movie["player_headshot"];
         var headshot :DisplayObject = _playerInfo.playerHeadshot;
         // scale and align appropriately
+        headshot.scaleX = 1;
+        headshot.scaleY = 1;
         var scale :Number = Math.min(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height, 1);
-        var width :Number = headshot.width * scale;
-        var height :Number = headshot.height * scale;
-        headshot.scaleX = scale;
-        headshot.scaleY = scale;
-        headshot.x = -(width * 0.5);
-        headshot.y = -(height * 0.5) - 2;
-        headshotParent.addChild(_playerInfo.playerHeadshot);
+        headshot.width *= scale;
+        headshot.height *= scale;
+        DisplayUtil.positionBounds(headshot, -headshot.width * 0.5, (-headshot.height * 0.5) - 2);
+        headshotParent.addChild(headshot);
     }
 
     override public function getObjectGroup (groupNum :int) :String
