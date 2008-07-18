@@ -25,8 +25,6 @@ import flash.utils.ByteArray;
 
 import com.adobe.images.JPGEncoder;
 
-import com.threerings.util.ValueEvent;
-
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.DataPack;
@@ -48,8 +46,8 @@ public class Camvatar extends Sprite
         _ctrl = new AvatarControl(this);
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
 
-        _chunker = new Chunker(_ctrl, "");
-        _chunker.addEventListener(Event.COMPLETE, handleGotChunk);
+        // initialize the chunker that takes care of sending our data between instances
+        _chunker = new Chunker(_ctrl, "", chunkReceived);
 
         DataPack.load(_ctrl.getDefaultDataPack(), gotPack);
 
@@ -166,12 +164,12 @@ public class Camvatar extends Sprite
 //        }
 
         // turn the image into a jpg
-        _chunker.send(_encoder.encode(_snapshot));
+        _chunker.send(_encoder.encode(_snapshot), false);
     }
 
-    protected function handleGotChunk (event :ValueEvent) :void
+    protected function chunkReceived (data :Object) :void
     {
-        _nextLoader.loadBytes(event.value as ByteArray);
+        _nextLoader.loadBytes(data as ByteArray);
         checkSend();
     }
 
