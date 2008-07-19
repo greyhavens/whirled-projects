@@ -76,13 +76,13 @@ public class GameLobbyMode extends AppMode
     override protected function enter () :void
     {
         super.enter();
-        //StageQualityManager.pushStageQuality(StageQuality.HIGH);
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
     }
 
     override protected function exit () :void
     {
         super.exit();
-        //StageQualityManager.popStageQuality();
+        StageQualityManager.popStageQuality();
     }
 
     protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
