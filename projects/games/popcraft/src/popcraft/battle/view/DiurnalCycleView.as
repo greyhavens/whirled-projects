@@ -37,6 +37,8 @@ public class DiurnalCycleView extends SceneObject
         if (!_playedDawnSound && diurnalCycle.isNight && diurnalCycle.timeTillNextPhase <= GameContext.gameData.dawnWarning) {
             GameContext.playGameSound("sfx_dawn");
             _playedDawnSound = true;
+        } else if (_playedDawnSound && diurnalCycle.isDay) {
+            _playedDawnSound = false;
         }
 
         // estimate the amount of time that's elapsed since the DiurnalCycle's last
