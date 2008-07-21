@@ -112,6 +112,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         _movie.removeChildAt(index);
         _movie.addChildAt(workshop, index);
         _workshop = workshop;
+        _needsLocationUpdate = true;
     }
 
     protected function recolorWorkshop (workshop :MovieClip) :void
@@ -178,9 +179,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
             _clickableSprite.y = this.y;
 
             // flip the movie if we're on the left side of the board
-            if (_unit.x < Constants.BATTLE_WIDTH * 0.5) {
-                DisplayObject(_movie["workshop"]).scaleX = -1;
-            }
+            _workshop.scaleX = (_unit.x < Constants.BATTLE_WIDTH * 0.5 ? -1 : 1);
 
             _needsLocationUpdate = false;
         }

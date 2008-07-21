@@ -76,7 +76,6 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
                 }
             }
 
-            AppContext.gameCtrl.local.setShowButtons(false, true);
             AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
         }
     }
@@ -111,8 +110,8 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
     {
         // award trophies for playing lots of multiplayer games
         var totalGamesPlayed :int = AppContext.globalPlayerStats.totalGamesPlayed;
-        if (totalGamesPlayed >= TrophyManager.PIGSLEY_NUMGAMES) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_PIGSLEY);
+        if (totalGamesPlayed >= TrophyManager.RALPH_NUMGAMES) {
+            TrophyManager.awardTrophy(TrophyManager.TROPHY_RALPH);
         }
         if (totalGamesPlayed >= TrophyManager.JACK_NUMGAMES) {
             TrophyManager.awardTrophy(TrophyManager.TROPHY_JACK);

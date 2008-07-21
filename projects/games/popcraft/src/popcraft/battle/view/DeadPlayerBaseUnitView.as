@@ -30,7 +30,10 @@ public class DeadPlayerBaseUnitView extends BattlefieldSprite
         var rubble :MovieClip = SwfResource.instantiateMovieClip("workshop", "workshop_rubble");
         var index :int = _movie.getChildIndex(workshop);
         _movie.removeChildAt(index);
-        _movie.addChildAt(SwfResource.instantiateMovieClip("workshop", "workshop_rubble"), index);
+        _movie.addChildAt(rubble, index);
+
+        // mirror horizontally if we're on the left side of the battlefield
+        rubble.scaleX = (unit.x < Constants.BATTLE_WIDTH * 0.5 ? -1 : 1);
 
         // recolor
         var playerColor :uint = GameContext.gameData.playerColors[unit.owningPlayerIndex];

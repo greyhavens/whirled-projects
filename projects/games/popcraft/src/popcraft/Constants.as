@@ -20,14 +20,14 @@ public class Constants
     public static const HANDICAPPED_MULTIPLIER :Number = 0.65;
 
     /* Debug options */
-    public static const DEBUG_DRAW_STATS :Boolean = true;
+    public static const DEBUG_DRAW_STATS :Boolean = false;
     public static const DEBUG_CHECKSUM_STATE :int = 0;
-    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = false;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
-    public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = true;
+    public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
 
     /* Screen layout */
     public static const DASHBOARD_LOC :Point = new Point(350, 430);

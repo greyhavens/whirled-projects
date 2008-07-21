@@ -41,8 +41,8 @@ public class TrophyManager
     /* multiplayer trophies */
 
     // Complete 10 multiplayer games
-    public static const TROPHY_PIGSLEY :String = "Pigsley";
-    public static const PIGSLEY_NUMGAMES :int = 10;
+    public static const TROPHY_RALPH :String = "Ralph";
+    public static const RALPH_NUMGAMES :int = 10;
     // Complete 100 multiplayer games
     public static const TROPHY_JACK :String = "Jack";
     public static const JACK_NUMGAMES :int = 100;

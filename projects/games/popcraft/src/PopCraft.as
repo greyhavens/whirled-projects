@@ -71,11 +71,14 @@ public class PopCraft extends Sprite
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
 
-        // if we're connected to Whirled, keep the game centered and draw a pretty
-        // tiled background behind it
         if (AppContext.gameCtrl.isConnected()) {
+            // if we're connected to Whirled, keep the game centered and draw a pretty
+            // tiled background behind it
             AppContext.gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, handleSizeChanged);
             this.handleSizeChanged();
+
+            // and don't show the "rematch" button - we have a UI for it in-game
+            AppContext.gameCtrl.local.setShowButtons(false, true);
         }
 
         // LoadingMode will pop itself from the stack when loading is complete
