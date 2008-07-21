@@ -1,13 +1,13 @@
 package popcraft {
 
 import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
 public class SplashScreenModeBase extends TransitionMode
 {
     override protected function setup () :void
     {
-        _modeLayer.addChild(SwfResource.getSwfDisplayRoot("splash"));
+        _modeLayer.addChild(ImageResource.instantiateBitmap("zombieBg"));
         _soundChannel = AudioManager.instance.playSoundNamed("sfx_introscreen", null, -1);
     }
 

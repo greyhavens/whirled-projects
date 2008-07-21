@@ -5,7 +5,9 @@ import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.text.TextField;
@@ -15,7 +17,7 @@ import flash.text.TextFormatAlign;
 
 public class UIBits
 {
-    public static const PANEL_TEXT_H_MARGIN :Number = 12;
+    public static const PANEL_TEXT_H_MARGIN :Number = 14;
     public static const PANEL_TEXT_V_MARGIN :Number = 6;
 
     public static function createFrame (width :Number, height :Number) :Sprite
@@ -25,6 +27,22 @@ public class UIBits
         frame.scaleY = height / frame.height;
 
         var sprite :Sprite = new Sprite();
+
+        // the scale9 slices for frame_UI are off by 0.028 pixels/pixel-width of the
+        // display object. correct for that here.
+        var correctionWidth :Number = Math.floor(width * 0.01429);
+        if (correctionWidth > 0) {
+            var correctionShape :Shape = new Shape();
+            var g :Graphics = correctionShape.graphics;
+            g.beginFill(1, 0);
+            g.drawRect(0, 0, correctionWidth, height);
+            g.endFill();
+
+            sprite.addChild(correctionShape);
+
+            frame.x = correctionWidth;
+        }
+
         sprite.addChild(frame);
 
         return sprite;

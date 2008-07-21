@@ -16,8 +16,8 @@ public class Resources
     [Embed(source="../../rsrc/multiplayer.swf", mimeType="application/octet-stream")]
     public static const SWF_MULTIPLAYER :Class;
 
-    [Embed(source="../../rsrc/splash_BG.swf", mimeType="application/octet-stream")]
-    public static const SWF_SPLASH :Class;
+    [Embed(source="../../rsrc/zombie_BG.jpg", mimeType="application/octet-stream")]
+    public static const IMG_ZOMBIEBG :Class;
 
     [Embed(source="../../rsrc/splash.png", mimeType="application/octet-stream")]
     public static const IMG_LEVELSELECTOVERLAY :Class;

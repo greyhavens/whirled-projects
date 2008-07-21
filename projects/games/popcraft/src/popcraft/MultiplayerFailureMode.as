@@ -20,15 +20,15 @@ public class MultiplayerFailureMode extends SplashScreenModeBase
             "Your enemies have fled!\nPlay the story instead?",
             3, 0, 0, TextFormatAlign.CENTER, 20, 15);
 
-        tf.x = (Constants.SCREEN_SIZE.x * 0.5) - (tf.width * 0.5);
-        tf.y = (Constants.SCREEN_SIZE.y * 0.5) - (tf.height * 0.5);
+        tf.x = (Constants.SCREEN_SIZE.x - tf.width) * 0.5;
+        tf.y = 30;
 
         this.modeSprite.addChild(tf);
 
         _button = UIBits.createButton("OK", 2);
         _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
-        _button.x = (Constants.SCREEN_SIZE.x * 0.5) - (_button.width * 0.5);
-        _button.y = 350;
+        _button.x = (Constants.SCREEN_SIZE.x - _button.width) * 0.5;
+        _button.y = tf.y + tf.height + 30;
         this.modeSprite.addChild(_button);
     }
 

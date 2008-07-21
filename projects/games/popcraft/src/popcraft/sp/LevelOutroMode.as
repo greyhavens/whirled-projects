@@ -59,14 +59,14 @@ public class LevelOutroMode extends AppMode
             var tfMessage :DisplayObject = UIBits.createText(
                 "Your progress has been saved.\nContinue playing?", 1, WIDTH - 30);
             tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
-            tfMessage.y = tfScore.y + tfScore.height + 5;
+            tfMessage.y = tfScore.y + tfScore.height + 11;
             bgSprite.addChild(tfMessage);
 
         } else {
             // if the player lost, show a hint
             var hints :Array = GameContext.spLevel.levelHints;
-            var tfHint :DisplayObject = UIBits.createText(
-                Rand.nextElement(hints, Rand.STREAM_COSMETIC), 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
+            var tfHint :DisplayObject = UIBits.createTextPanel(
+                Rand.nextElement(hints, Rand.STREAM_COSMETIC), 1, WIDTH - 50, 0, TextFormatAlign.LEFT);
             tfHint.x = (WIDTH * 0.5) - (tfHint.width * 0.5);
             tfHint.y = tfName.y + tfName.height + 10;
             bgSprite.addChild(tfHint);
