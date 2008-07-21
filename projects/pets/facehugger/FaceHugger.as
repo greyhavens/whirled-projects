@@ -9,9 +9,8 @@ import com.whirled.ControlEvent;
 import com.whirled.PetControl;
 import com.whirled.EntityControl;
 
-import com.whirled.RemoteEntity;
-
 import com.threerings.util.RandomUtil;
+import com.whirled.contrib.RemoteEntity;
 
 /**
  * A face full of alien wing-wong.
@@ -34,7 +33,8 @@ public class FaceHugger extends Sprite
 
         _ctrl.addEventListener(ControlEvent.ENTITY_LEFT,
             function (event :ControlEvent) :void {
-                if (event.name == _victimId) {
+                // If the victim leaves, start looking for a new target
+                if (_victimId == event.name) {
                     _victimId = null;
                 }
         });
@@ -43,19 +43,18 @@ public class FaceHugger extends Sprite
     protected function handleMovement (event :ControlEvent) :void
     {
         var entityId :String = event.name;
-        var type :String = _ctrl.getEntityType(entityId);
+        var remote :RemoteEntity = new RemoteEntity(_ctrl, entityId);
 
-        // Don't facehug any furniture!
-        if (type != EntityControl.AVATAR && type != EntityControl.PET) {
+        // Don't facehug ourselves!
+        if (entityId == _ctrl.getMyEntityId()) {
             return;
         }
 
         if (_victimId == null) {
-            _victimId = entityId
+            _victimId = entityId;
         }
 
         if (entityId == _victimId) {
-            var remote :RemoteEntity = new RemoteEntity(_ctrl, _victimId);
             var target :Array = remote.getPixelLocation();
 
             target[1] += remote.getDimensions()[1] / 2;
@@ -88,7 +87,7 @@ public class FaceHugger extends Sprite
     protected var _ctrl :PetControl;
     protected var _image :Bitmap;
 
-    // TODO: Put this in state/memory or something
+    /** The entityId of the victim. */
     protected var _victimId :String = null;
 
     [Embed(source="facehugger.png")]
