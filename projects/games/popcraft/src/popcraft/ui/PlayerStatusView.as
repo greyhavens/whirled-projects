@@ -1,12 +1,14 @@
 package popcraft.ui {
 
-import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
+import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
@@ -39,16 +41,33 @@ public class PlayerStatusView extends SceneObject
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ];
 
         // display the player headshot
-        var headshotParent :MovieClip = _movie["player_headshot"];
+        var headshotParent :Sprite = new Sprite();
+
+        // add the headshot image
         var headshot :DisplayObject = _playerInfo.playerHeadshot;
-        // scale and align appropriately
         headshot.scaleX = 1;
         headshot.scaleY = 1;
-        var scale :Number = Math.min(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height, 1);
+        var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height);
         headshot.width *= scale;
         headshot.height *= scale;
-        DisplayUtil.positionBounds(headshot, -headshot.width * 0.5, (-headshot.height * 0.5) - 2);
+        headshot.x = (HEADSHOT_SIZE.x * 0.5) - (headshot.width * 0.5);
+        headshot.y = (HEADSHOT_SIZE.y * 0.5) - (headshot.height * 0.5);
         headshotParent.addChild(headshot);
+
+        // mask the headshot
+        var headshotMask :Shape = new Shape();
+        var g :Graphics = headshotMask.graphics;
+        g.beginFill(1);
+        g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
+        g.endFill();
+        headshotParent.addChild(headshotMask);
+        headshotParent.mask = headshotMask;
+
+        // add to the PlayerStatusView
+        var frame :MovieClip = _movie["player_headshot"];
+        headshotParent.x = -headshotParent.width * 0.5;
+        headshotParent.y = (-headshotParent.height * 0.5) - 2;
+        frame.addChild(headshotParent);
     }
 
     override public function getObjectGroup (groupNum :int) :String

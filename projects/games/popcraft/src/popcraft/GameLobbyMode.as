@@ -384,15 +384,27 @@ class PlayerHeadshot extends Sprite
 {
     public function PlayerHeadshot (playerSeat :int)
     {
+        var headshotParent :Sprite = new Sprite();
+        this.addChild(headshotParent);
+
+        // add the headshot image
         var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerSeat);
         headshot.scaleX = 1;
         headshot.scaleY = 1;
-        var scale :Number = Math.min(HEADSHOT_WIDTH / headshot.width, HEADSHOT_HEIGHT / headshot.height);
-        headshot.width *= scale;
-        headshot.height *= scale;
-        DisplayUtil.positionBounds(headshot, 0, 0);
-        this.addChild(headshot);
+        headshot.x = (HEADSHOT_WIDTH * 0.5) - (headshot.width * 0.5);
+        headshot.y = (HEADSHOT_HEIGHT * 0.5) - (headshot.height * 0.5);
+        headshotParent.addChild(headshot);
 
+        // mask the headshot
+        var headshotMask :Shape = new Shape();
+        var g :Graphics = headshotMask.graphics;
+        g.beginFill(0);
+        g.drawRect(0, 0, HEADSHOT_WIDTH, HEADSHOT_HEIGHT);
+        g.endFill();
+        headshotParent.addChild(headshotMask);
+        headshotParent.mask = headshotMask;
+
+        // player name
         var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.2);
         TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
         tfName.x = NAME_OFFSET;
