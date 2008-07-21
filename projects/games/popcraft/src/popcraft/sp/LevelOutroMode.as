@@ -56,11 +56,14 @@ public class LevelOutroMode extends AppMode
             tfScore.y = tfName.y + tfName.height + 10;
             bgSprite.addChild(tfScore);
 
-            var tfMessage :DisplayObject = UIBits.createText(
-                "Your progress has been saved.\nContinue playing?", 1, WIDTH - 30);
-            tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
-            tfMessage.y = tfScore.y + tfScore.height + 11;
-            bgSprite.addChild(tfMessage);
+            // if it's not the last level, display a "Continue playing?" text
+            if (!AppContext.levelMgr.isLastLevel) {
+                var tfMessage :DisplayObject = UIBits.createText(
+                    "Your progress has been saved.\nContinue playing?", 1, WIDTH - 30);
+                tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
+                tfMessage.y = tfScore.y + tfScore.height + 11;
+                bgSprite.addChild(tfMessage);
+            }
 
         } else {
             // if the player lost, show a hint
