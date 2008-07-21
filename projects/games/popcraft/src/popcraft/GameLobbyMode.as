@@ -14,7 +14,6 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
@@ -76,13 +75,13 @@ public class GameLobbyMode extends AppMode
     override protected function enter () :void
     {
         super.enter();
-        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+        //StageQualityManager.pushStageQuality(StageQuality.HIGH);
     }
 
     override protected function exit () :void
     {
         super.exit();
-        StageQualityManager.popStageQuality();
+        //StageQualityManager.popStageQuality();
     }
 
     protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
@@ -216,6 +215,12 @@ public class GameLobbyMode extends AppMode
             }
         }
 
+        // don't allow team selection on teams that are full
+        var teamSizes :Array = this.computeTeamSizes();
+        if (teamSizes[teamId] >= MAX_TEAM_SIZE) {
+            return;
+        }
+
         var teams :Array = MultiplayerConfig.teams;
         if (null != teams && teams[SeatingManager.localPlayerSeat] != teamId) {
             MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerSeat, teamId);
@@ -307,20 +312,8 @@ public class GameLobbyMode extends AppMode
 
     protected function get teamsDividedProperly () :Boolean
     {
-        var teams :Array = MultiplayerConfig.teams;
-
-        // how large is each team?
-        var teamSizes :Array = ArrayUtil.create(NUM_TEAMS, 0);
-        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
-            if (SeatingManager.isPlayerPresent(playerSeat)) {
-                var teamId :int = teams[playerSeat];
-                if (teamId >= 0) {
-                    teamSizes[teamId] += 1;
-                }
-            }
-        }
-
         // does one team have all the players?
+        var teamSizes :Array = this.computeTeamSizes();
         for each (var teamSize :int in teamSizes) {
             if (teamSize == SeatingManager.numPlayers) {
                 return false;
@@ -333,6 +326,22 @@ public class GameLobbyMode extends AppMode
     protected function get canStartCountdown () :Boolean
     {
         return this.allPlayersDecided && this.teamsDividedProperly;
+    }
+
+    protected function computeTeamSizes () :Array
+    {
+        var teams :Array = MultiplayerConfig.teams;
+        var teamSizes :Array = ArrayUtil.create(NUM_TEAMS, 0);
+        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
+            if (SeatingManager.isPlayerPresent(playerSeat)) {
+                var teamId :int = teams[playerSeat];
+                if (teamId >= 0) {
+                    teamSizes[teamId] += 1;
+                }
+            }
+        }
+
+        return teamSizes;
     }
 
     protected var _headshots :Array = [];
@@ -358,8 +367,9 @@ public class GameLobbyMode extends AppMode
     protected static const HEADSHOT_OFFSET :Number = 62;
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
-    protected static const GAME_START_COUNTDOWN :Number = 3;
+    protected static const GAME_START_COUNTDOWN :Number = 5;
     protected static const NUM_TEAMS :int = 4;
+    protected static const MAX_TEAM_SIZE :int = 3;
 }
 
 }
@@ -372,14 +382,15 @@ import flash.events.MouseEvent;
 import flash.events.Event;
 import flash.display.DisplayObject;
 import flash.text.TextField;
+import flash.geom.Point;
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.flash.DisplayUtil;
+
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
-import com.threerings.flash.DisplayUtil;
-import com.whirled.contrib.simplegame.resource.ImageResource;
-import flash.geom.Point;
 
 class PlayerHeadshot extends Sprite
 {
@@ -412,7 +423,11 @@ class PlayerHeadshot extends Sprite
         tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
         this.addChild(tfName);
 
-        _handicapObj = ImageResource.instantiateBitmap("handicap");
+        _handicapObj = SwfResource.instantiateMovieClip("multiplayer", "handicapped");
+        _handicapObj.scaleX = 1.5;
+        _handicapObj.scaleY = 1.5;
+        _handicapObj.x = (_handicapObj.width * 0.5) + 1;
+        _handicapObj.y = (_handicapObj.height * 0.5) + 1;
         _handicapObj.visible = false;
         this.addChild(_handicapObj);
     }

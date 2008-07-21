@@ -68,15 +68,16 @@ public class LevelSelectMode extends DemoGameMode
         // if the player hasn't played before, the play button will become visible once
         // they've completed the brief tutorial
         _playButton.visible = playerStartedGame;
-
         _modeLayer.addChild(_playButton);
 
         // unlock all levels button
-        var button :SimpleButton = UIBits.createButton("Unlock levels");
-        button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
-        button.x = 10;
-        button.y = 10;
-        _modeLayer.addChild(button);
+        if (Constants.DEBUG_ALLOW_CHEATS) {
+            var button :SimpleButton = UIBits.createButton("Unlock levels");
+            button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
+            button.x = 10;
+            button.y = 10;
+            _modeLayer.addChild(button);
+        }
 
         // create the tutorial objects
         var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "puzzle_intro");
