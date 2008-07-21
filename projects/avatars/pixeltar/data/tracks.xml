@@ -1,0 +1,8 @@
+<tracks>
+	<action name="Glow" frames="0,1,2,1,0" delay="100" />
+
+        <!-- TODO: State transitions -->
+	<state name="Default" frames="3,4,5,4" delay="200,100,200,100" />
+	<state name="Running" frames="18, 19, 20, 19" delay="100" />
+	<state name="Stunned" frames="12,13,14,13" delay="400" />
+</tracks>
