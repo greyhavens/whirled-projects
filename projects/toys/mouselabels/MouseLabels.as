@@ -26,7 +26,7 @@ import com.whirled.ControlEvent;
 // TODO:
 // - mouse pointer graphic
 // - something's a little off with the scale correction... hmm
-// - clear out players who have left
+// - fix clearing out players who have left
 public class MouseLabels extends Sprite
 {
     public static const SEND_INTERVAL :int = 400;
