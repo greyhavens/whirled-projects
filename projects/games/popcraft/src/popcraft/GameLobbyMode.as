@@ -14,6 +14,7 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
@@ -75,13 +76,13 @@ public class GameLobbyMode extends AppMode
     override protected function enter () :void
     {
         super.enter();
-        //StageQualityManager.pushStageQuality(StageQuality.HIGH);
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
     }
 
     override protected function exit () :void
     {
         super.exit();
-        //StageQualityManager.popStageQuality();
+        StageQualityManager.popStageQuality();
     }
 
     protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
