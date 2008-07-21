@@ -5,8 +5,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.LocationTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -68,7 +67,12 @@ public class LevelSelectMode extends DemoGameMode
         // if the player hasn't played before, the play button will become visible once
         // they've completed the brief tutorial
         _playButton.visible = playerStartedGame;
-        _modeLayer.addChild(_playButton);
+
+        var playButtonObj :SceneObject = new SimpleSceneObject(_playButton);
+        playButtonObj.addTask(new RepeatingTask(
+            ScaleTask.CreateEaseIn(1.1, 1.1, 0.5),
+            ScaleTask.CreateEaseOut(1, 1, 0.5)));
+        this.addObject(playButtonObj, _modeLayer);
 
         // unlock all levels button
         if (Constants.DEBUG_ALLOW_CHEATS) {
