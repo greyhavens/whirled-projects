@@ -379,6 +379,7 @@ import popcraft.*;
 import popcraft.ui.UIBits;
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.resource.ImageResource;
+import flash.geom.Point;
 
 class PlayerHeadshot extends Sprite
 {
@@ -391,15 +392,15 @@ class PlayerHeadshot extends Sprite
         var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerSeat);
         headshot.scaleX = 1;
         headshot.scaleY = 1;
-        headshot.x = (HEADSHOT_WIDTH * 0.5) - (headshot.width * 0.5);
-        headshot.y = (HEADSHOT_HEIGHT * 0.5) - (headshot.height * 0.5);
+        headshot.x = (HEADSHOT_SIZE.x - headshot.width) * 0.5;
+        headshot.y = (HEADSHOT_SIZE.y - headshot.height) * 0.5;
         headshotParent.addChild(headshot);
 
         // mask the headshot
         var headshotMask :Shape = new Shape();
         var g :Graphics = headshotMask.graphics;
         g.beginFill(0);
-        g.drawRect(0, 0, HEADSHOT_WIDTH, HEADSHOT_HEIGHT);
+        g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
         g.endFill();
         headshotParent.addChild(headshotMask);
         headshotParent.mask = headshotMask;
@@ -408,7 +409,7 @@ class PlayerHeadshot extends Sprite
         var tfName :TextField = UIBits.createText(SeatingManager.getPlayerName(playerSeat), 1.2);
         TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
         tfName.x = NAME_OFFSET;
-        tfName.y = (HEADSHOT_HEIGHT * 0.5) - (tfName.height * 0.5);
+        tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
         this.addChild(tfName);
 
         _handicapObj = ImageResource.instantiateBitmap("handicap");
@@ -429,9 +430,7 @@ class PlayerHeadshot extends Sprite
     protected var _handicapOn :Boolean;
     protected var _handicapObj :DisplayObject;
 
-    protected static const HEADSHOT_WIDTH :Number = 60;
-    protected static const HEADSHOT_HEIGHT :Number = 60;
-
-    protected static const NAME_OFFSET :Number = HEADSHOT_WIDTH + 3;
+    protected static const HEADSHOT_SIZE :Point = new Point(60, 60);
+    protected static const NAME_OFFSET :Number = HEADSHOT_SIZE.x + 3;
     protected static const NAME_MAX_WIDTH :Number = 120;
 }
