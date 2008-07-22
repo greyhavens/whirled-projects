@@ -34,6 +34,7 @@ public class Animation extends EventDispatcher
             if (_looping) {
                 _current = 0;
             } else {
+                dispatchEvent(new AnimationEvent(AnimationEvent.COMPLETE, _current));
                 stop();
                 return;
             }
@@ -46,7 +47,7 @@ public class Animation extends EventDispatcher
     public function stop () :void
     {
         _timer.stop();
-        dispatchEvent(new AnimationEvent(AnimationEvent.COMPLETE, _current));
+        //dispatchEvent(new AnimationEvent(AnimationEvent.COMPLETE, _current));
     }
 
     protected var _timer :Timer;

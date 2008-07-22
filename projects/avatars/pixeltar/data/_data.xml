@@ -1,11 +1,13 @@
 <datapack>
 	<data name="Hotspot" type="Point" value="32,32" optional="true" />
-	<data name="Height" type="Number" value="8" />
+	<data name="Height" type="Number" value="7" />
 	<data name="Width" type="Number" value="3" />
 
-	<data name="Speak" type="String" value="Glow" optional="true" />
-	<data name="Move" type="String" value="Running" optional="true" />
-	<data name="Idle" type="String" value="Running" optional="true" />
+	<data name="Speak" type="String" value="Bounce" optional="true" />
+	<data name="Move" type="String" value="Run" optional="true" />
+	<data name="Idle" type="String" value="Hide" optional="true" />
+
+	<data name="RightFacing" type="Boolean" value="true" />
 
 	<data name="Speed" type="Number" value="500" min="50" max="1500" />
 

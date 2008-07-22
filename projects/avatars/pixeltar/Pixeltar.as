@@ -46,6 +46,9 @@ public class Pixeltar extends Sprite
             var name :String = String(track.@name);
             var anim :Animation = new Animation(track.@frames.split(","), track.@delay.split(","), looping);
             anim.addEventListener(AnimationEvent.UPDATE, handleFrameUpdate);
+            anim.addEventListener(AnimationEvent.COMPLETE, function (... etc) {
+                pushAnimation(_states[_ctrl.getState()]);
+            });
 
             map[name] = anim;
             buffer.push(name);
@@ -94,6 +97,10 @@ public class Pixeltar extends Sprite
             _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleMovement);
             handleMovement();
         }
+        if (_pack.getString("Idle") in _states) {
+            _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleIdle);
+            handleIdle();
+        }
 
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleOrientation);
         handleOrientation();
@@ -128,9 +135,21 @@ public class Pixeltar extends Sprite
         }
     }
 
+    /** Only registered if we should handle isIdle() */
+    protected function handleIdle (... etc) :void
+    {
+        if (_ctrl.isSleeping()) {
+            pushAnimation(_states[_pack.getString("Idle")]);
+        } else {
+            if ( ! _ctrl.isMoving()) {
+                pushAnimation(_states[_ctrl.getState()]);
+            }
+        }
+    }
+
     protected function handleOrientation (... etc) :void
     {
-        if (_ctrl.getOrientation() < 180) {
+        if ((_ctrl.getOrientation() > 180) == _pack.getBoolean("RightFacing")) {
             _current.x = _current.width;
             _current.scaleX = -1;
         } else {
