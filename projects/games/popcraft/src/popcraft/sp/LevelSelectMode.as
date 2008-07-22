@@ -57,22 +57,16 @@ public class LevelSelectMode extends DemoGameMode
     {
         var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
 
-        _playButton = SwfResource.instantiateButton("levelSelectUi",
+        var playButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi",
             (playerStartedGame ? "continue_button" : "play_button"));
-        _playButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
+        playButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
             playNextLevel();
         });
-        _playButton.x = 350;
-        _playButton.y = 350;
-        // if the player hasn't played before, the play button will become visible once
-        // they've completed the brief tutorial
-        _playButton.visible = playerStartedGame;
 
-        var playButtonObj :SceneObject = new SimpleSceneObject(_playButton);
-        playButtonObj.addTask(new RepeatingTask(
-            ScaleTask.CreateEaseIn(1.1, 1.1, 0.5),
-            ScaleTask.CreateEaseOut(1, 1, 0.5)));
-        this.addObject(playButtonObj, _modeLayer);
+        _playButtonObj = new SimpleSceneObject(playButton);
+        _playButtonObj.x = 350;
+        _playButtonObj.y = 350;
+        this.addObject(_playButtonObj, _modeLayer);
 
         // unlock all levels button
         if (Constants.DEBUG_ALLOW_CHEATS) {
@@ -132,16 +126,22 @@ public class LevelSelectMode extends DemoGameMode
     {
         super.buildCreature(playerIndex, unitType, noCost);
 
-        if (null != _playButton && !_playButton.visible && playerIndex == GameContext.localPlayerIndex) {
-            // the play button becomes visible when the player has purchased a creature
-            _playButton.visible = true;
+        if (null != _playButtonObj && playerIndex == GameContext.localPlayerIndex && !_playButtonObj.hasTasks()) {
+            // the play button starts pulsing when the player creates a creature
+            _playButtonObj.addTask(new RepeatingTask(
+                ScaleTask.CreateEaseIn(1.1, 1.1, 0.5),
+                ScaleTask.CreateEaseOut(1, 1, 0.5)));
         }
     }
 
     protected function playNextLevel () :void
     {
-        _playButton.parent.removeChild(_playButton);
-        this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
+        if (null != _playButtonObj) {
+            _playButtonObj.displayObject.parent.removeChild(_playButtonObj.displayObject);
+            _playButtonObj = null;
+
+            this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
+        }
     }
 
     protected function createLevelSelectLayout () :void
@@ -253,7 +253,7 @@ public class LevelSelectMode extends DemoGameMode
         }
     }
 
-    protected var _playButton :SimpleButton;
+    protected var _playButtonObj :SceneObject;
     protected var _puzzleIntro :SceneObject;
     protected var _unitIntro :SceneObject;
     protected var _resourceIntro :SceneObject;

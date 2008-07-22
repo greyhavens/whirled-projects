@@ -67,9 +67,9 @@ public class TrophyManager
 
     /* general trophies */
 
-    public static const TROPHY_RESOURCE_CLEAR_TILE_COUNT :int = 14;
+    public static const TROPHY_RESOURCE_CLEAR_TILE_COUNT :int = 20;
     public static const TROPHY_RESOURCE_CLEAR :Array = [
-        "PressTheFlesh",    // clear 14+ flesh tiles simultaneously
+        "PressTheFlesh",    // clear 20+ flesh tiles simultaneously
         "Bloodbath",        // ...etc
         "PowerSurge",
         "Scrapper",
