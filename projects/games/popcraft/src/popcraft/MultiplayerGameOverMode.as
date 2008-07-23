@@ -140,7 +140,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
             if (GameContext.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
-            } else if (GameContext.localPlayerInfo.healthPercent == TrophyManager.CHEATDEATH_HEALTH_PERCENT) {
+            } else if (GameContext.localPlayerInfo.healthPercent <= TrophyManager.CHEATDEATH_HEALTH_PERCENT) {
                 // awarded for winning a multiplayer game with very low health
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_CHEATDEATH);
             }
