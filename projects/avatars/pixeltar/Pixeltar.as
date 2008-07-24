@@ -76,6 +76,13 @@ public class Pixeltar extends Sprite
         // Pull the walk speed from the remix
         _ctrl.setMoveSpeed(_pack.getNumber("Speed"));
 
+        // Pull the (optional) hotspot from the remix
+        var hotspot :Point = _pack.getPoint("Hotspot");
+        if (hotspot == null) {
+            hotspot = new Point(w/2, h);
+        }
+        _ctrl.setHotSpot(hotspot.x, hotspot.y);
+
         var tracks :XML = _pack.getFileAsXML("Tracks");
 
         _ctrl.registerActions(populate(_actions, tracks.action, false));

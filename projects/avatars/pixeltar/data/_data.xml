@@ -1,5 +1,5 @@
 <datapack>
-	<data name="Hotspot" type="Point" value="32,32" optional="true" />
+	<data name="Hotspot" type="Point" value="16,32" optional="true" />
 	<data name="Height" type="Number" value="6" />
 	<data name="Width" type="Number" value="3" />
 
