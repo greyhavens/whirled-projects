@@ -44,13 +44,7 @@ public class Pixeltar extends Sprite
 
         for each (var track :XML in xml) {
             var name :String = String(track.@name);
-            var anim :Animation = new Animation(track.@frames.split(","), track.@delay.split(","), looping);
-            anim.addEventListener(AnimationEvent.UPDATE, handleFrameUpdate);
-            anim.addEventListener(AnimationEvent.COMPLETE, function (... etc) {
-                pushAnimation(_states[_ctrl.getState()]);
-            });
-
-            map[name] = anim;
+            map[name] = new Track(track.@frames.split(","), track.@delay.split(","), looping);
             buffer.push(name);
         }
 
@@ -87,17 +81,20 @@ public class Pixeltar extends Sprite
         _ctrl.registerActions(populate(_actions, tracks.action, false));
         _ctrl.registerStates(populate(_states, tracks.state, true));
 
-        _current = new Bitmap(_frames[0] as BitmapData);
-        addChild(_current);
+        _surface = new Bitmap(_frames[0] as BitmapData);
+        addChild(_surface);
 
-        if (_pack.getString("Speak") in _actions) {
+        _onSpeak = _actions[_pack.getString("Speak")] as Track;
+        if (_onSpeak != null) {
             _ctrl.addEventListener(ControlEvent.AVATAR_SPOKE, handleSpeak);
         }
-        if (_pack.getString("Move") in _states) {
+        _onMove = _states[_pack.getString("Move")] as Track;
+        if (_onMove != null) {
             _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleMovement);
             handleMovement();
         }
-        if (_pack.getString("Idle") in _states) {
+        _onIdle = _states[_pack.getString("Idle")] as Track;
+        if (_onIdle != null) {
             _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleIdle);
             handleIdle();
         }
@@ -105,82 +102,129 @@ public class Pixeltar extends Sprite
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, handleOrientation);
         handleOrientation();
 
-        pushAnimation(_states[_ctrl.getState()]);
+        playLow(_states[_ctrl.getState()]);
     }
 
     protected function handleFrameUpdate (event :AnimationEvent) :void
     {
-        _current.bitmapData = _frames[event.frame];
+        /*var frame :int = event.frame;
+        var flipped :Boolean;
+
+        if (event.frame < 0) {
+            flipped = true;
+            frame = -frame;
+        }*/
+
+        _surface.bitmapData = _frames[event.frame-1];
     }
 
-    // TODO: Real animation management
-    var tmp :Animation;
-    protected function pushAnimation (anim :Animation)
+    protected function playHigh (track :Track) :void
     {
-        if (tmp != null) {
-            tmp.stop();
+        if (_high != null) {
+            _high.stop();
+        }
+        if (_low != null) {
+            _low.stop();
         }
 
-        tmp = anim;
-        anim.play();
+        _high = new Animation(track);
+        _high.addEventListener(AnimationEvent.UPDATE, handleFrameUpdate);
+        _high.addEventListener(AnimationEvent.COMPLETE, stopHigh);
+        _high.start();
+    }
+
+    protected function stopHigh (... etc) :void
+    {
+        if (_high != null) {
+            _high.stop();
+        }
+
+        _high = null;
+        if (_low != null) {
+            _low.start();
+        }
+    }
+
+    protected function dontPlayHigh (track :Track) :void
+    {
+        if (_high != null && _high.track == track) {
+            stopHigh();
+        }
+    }
+
+    protected function playLow (track :Track) :void
+    {
+        if (_low != null) {
+            _low.stop();
+        }
+
+        _low = new Animation(track);
+        _low.addEventListener(AnimationEvent.UPDATE, handleFrameUpdate);
+
+        if (_high == null) {
+            _low.start();
+        }
     }
 
     /** Only registered if we should handle isMoving() */
     protected function handleMovement (... etc) :void
     {
-        if (_ctrl.isMoving()) {
-            pushAnimation(_states[_pack.getString("Move")]);
-        } else {
-            pushAnimation(_states[_ctrl.getState()]);
-        }
+        (_ctrl.isMoving() ? playHigh : dontPlayHigh) (_onMove);
     }
 
     /** Only registered if we should handle isIdle() */
     protected function handleIdle (... etc) :void
     {
-        if (_ctrl.isSleeping()) {
-            pushAnimation(_states[_pack.getString("Idle")]);
-        } else {
-            if ( ! _ctrl.isMoving()) {
-                pushAnimation(_states[_ctrl.getState()]);
-            }
-        }
+        (_ctrl.isSleeping() ? playHigh : dontPlayHigh) (_onIdle);
     }
 
     protected function handleOrientation (... etc) :void
     {
         if ((_ctrl.getOrientation() > 180) == _pack.getBoolean("RightFacing")) {
-            _current.x = _current.width;
-            _current.scaleX = -1;
+            _surface.x = _surface.width;
+            _surface.scaleX = -1;
         } else {
-            _current.x = 0;
-            _current.scaleX = 1;
+            _surface.x = 0;
+            _surface.scaleX = 1;
         }
-        // Draw your avatar here using the appropriate orientation and accounting for whether it is
-        // walking
     }
 
     /** Only registered if we should handle speaking. */
     protected function handleSpeak (event :Object = null) :void
     {
-        pushAnimation(_actions[_pack.getString("Speak")]);
+        playHigh(_onSpeak);
     }
 
     protected function handleAction (event :ControlEvent) :void
     {
-        pushAnimation(_actions[event.name]);
+        playHigh(_actions[event.name]);
     }
 
     protected function handleState (event :ControlEvent) :void
     {
-        pushAnimation(_states[event.name]);
+        playLow(_states[event.name]);
     }
 
+    // Maps strings to Tracks
     protected var _states :Object = {};
     protected var _actions :Object = {};
 
-    protected var _current :Bitmap;
+    // Special high Tracks for certain events
+    protected var _onMove :Track;
+    protected var _onIdle :Track;
+    protected var _onSpeak :Track;
+
+    /** A low priority channel for state animations. */
+    protected var _low :Animation;
+
+    /** A high priority channel for action/walking/idle animations. */
+    protected var _high :Animation;
+
+    protected var _surface :Bitmap;
+
+    /** Holds BitmapData for each frame. */
     protected var _frames :Array;
+
     protected var _pack :DataPack;
 
     protected var _ctrl :AvatarControl;

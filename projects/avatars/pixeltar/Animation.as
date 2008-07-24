@@ -9,14 +9,14 @@ import flash.events.EventDispatcher;
 
 public class Animation extends EventDispatcher
 {
-    public function Animation (sequence :Array, durations :Array, looping :Boolean = true)
+    public var track :Track;
+
+    public function Animation (track :Track)
     {
-        _sequence = sequence;
-        _durations = durations;
-        _looping = looping;
+        this.track = track;
     }
 
-    public function play () :void
+    public function start () :void
     {
         _timer = new Timer(0);
         _timer.addEventListener(TimerEvent.TIMER, tick);
@@ -27,11 +27,18 @@ public class Animation extends EventDispatcher
         _timer.start();
     }
 
+    public function stop () :void
+    {
+        if (_timer != null) {
+            _timer.stop();
+        }
+    }
+
     protected function tick (event :TimerEvent) :void
     {
         _current += 1;
-        if (_current == _sequence.length) {
-            if (_looping) {
+        if (_current == track.sequence.length) {
+            if (track.looping) {
                 _current = 0;
             } else {
                 dispatchEvent(new AnimationEvent(AnimationEvent.COMPLETE, _current));
@@ -40,22 +47,11 @@ public class Animation extends EventDispatcher
             }
         }
 
-        dispatchEvent(new AnimationEvent(AnimationEvent.UPDATE, _sequence[_current]));
-        _timer.delay = _durations[_current < _durations.length ? _current : 0];
-    }
-
-    public function stop () :void
-    {
-        _timer.stop();
-        //dispatchEvent(new AnimationEvent(AnimationEvent.COMPLETE, _current));
+        dispatchEvent(new AnimationEvent(AnimationEvent.UPDATE, track.sequence[_current]));
+        _timer.delay = track.getDuration(_current);
     }
 
     protected var _timer :Timer;
-
-    // Track data
-    protected var _sequence :Array;
-    protected var _durations :Array;
-    protected var _looping :Boolean;
 
     /** Current frame index. */
     protected var _current :int;
