@@ -51,6 +51,10 @@ public class Camvatar extends Sprite
 
         DataPack.load(_ctrl.getDefaultDataPack(), gotPack);
 
+        _suspended = (this.stage == null);
+        addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
+
         if (_ctrl.hasControl()) {
             initSending();
         } else {
@@ -132,7 +136,7 @@ public class Camvatar extends Sprite
 
     protected function checkSend () :void
     {
-        if (!_inControl) {
+        if (!_inControl || _suspended) {
             return;
         }
         if (_camera.muted) {
@@ -183,6 +187,13 @@ public class Camvatar extends Sprite
         _nextLoader = tmp;
     }
 
+    protected function handleAddRemove (event :Event) :void
+    {
+        _suspended = (event.type == Event.REMOVED_FROM_STAGE);
+        //trace("Now suspended: " + _suspended);
+        checkSend();
+    }
+
     /**
      * This is called when your avatar is unloaded.
      */
@@ -201,6 +212,7 @@ public class Camvatar extends Sprite
     protected var _quality :Number;
 
     protected var _inControl :Boolean;
+    protected var _suspended :Boolean;
 
     protected var _loader :Loader;
 
