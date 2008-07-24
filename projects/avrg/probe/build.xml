@@ -1,0 +1,12 @@
+<!-- build configuration -->
+<project name="avrgprobe" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Probe"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.enable-server-agent" value="true"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
