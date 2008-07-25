@@ -68,6 +68,7 @@ public class Pixeltar extends Sprite
             for (var x :Number = 0; x < width; ++x) {
                 var bmp :BitmapData = new BitmapData(w, h);
                 bmp.copyPixels(sheet, new Rectangle(x*w, y*h, w, h), new Point(0, 0));
+                //bmp.draw(sheet, null, null, null, new Rectangle(x*w, y*h, w, h));
 
                 _frames.push(bmp);
             }
@@ -83,12 +84,16 @@ public class Pixeltar extends Sprite
         }
         _ctrl.setHotSpot(hotspot.x, hotspot.y);
 
+        _rightFacing = _pack.getBoolean("RightFacing");
+
         var tracks :XML = _pack.getFileAsXML("Tracks");
 
         _ctrl.registerActions(populate(_actions, tracks.action, false));
         _ctrl.registerStates(populate(_states, tracks.state, true));
 
         _surface = new Bitmap(_frames[0] as BitmapData);
+        _surface.transform.matrix.scale(-1,1);
+        _surface.transform.matrix.translate(w,0);
         addChild(_surface);
 
         _onSpeak = _actions[_pack.getString("Speak")] as Track;
@@ -114,15 +119,10 @@ public class Pixeltar extends Sprite
 
     protected function handleFrameUpdate (event :AnimationEvent) :void
     {
-        /*var frame :int = event.frame;
-        var flipped :Boolean;
+        _flip = (event.frame < 0);
+        _surface.bitmapData = _frames[Math.abs(event.frame)-1];
 
-        if (event.frame < 0) {
-            flipped = true;
-            frame = -frame;
-        }*/
-
-        _surface.bitmapData = _frames[event.frame-1];
+        handleOrientation();
     }
 
     protected function playHigh (track :Track) :void
@@ -187,7 +187,10 @@ public class Pixeltar extends Sprite
 
     protected function handleOrientation (... etc) :void
     {
-        if ((_ctrl.getOrientation() > 180) == _pack.getBoolean("RightFacing")) {
+        var flop :Boolean = (_ctrl.getOrientation() > 180) == _rightFacing;
+
+        // if (flip XOR flop)
+        if ((_flip || flop) && !(_flip && flop)) {
             _surface.x = _surface.width;
             _surface.scaleX = -1;
         } else {
@@ -228,6 +231,11 @@ public class Pixeltar extends Sprite
     protected var _high :Animation;
 
     protected var _surface :Bitmap;
+
+    /** True if the current frame is inverted. */
+    protected var _flip :Boolean;
+
+    protected var _rightFacing :Boolean;
 
     /** Holds BitmapData for each frame. */
     protected var _frames :Array;

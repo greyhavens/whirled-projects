@@ -3,6 +3,7 @@
 
         <!-- TODO: State transitions -->
 	<state name="Default" frames="1,2,3,2" delay="4000,200,4000,200" />
+	<state name="Copter" frames="1,2,3,-1,-2,-3" delay="100" />
 	<state name="Run" frames="4,5,6,5" delay="100" />
 	<state name="Hide" frames="7,8,9,8" delay="400" />
         <state name="Cry" frames="16,17,16,17,18,17" delay="200,400,600,100,200,100" />
