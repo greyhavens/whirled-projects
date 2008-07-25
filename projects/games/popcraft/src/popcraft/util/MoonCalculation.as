@@ -12,7 +12,22 @@ public class MoonCalculation
 
     public static function isFullMoon (date :Date) :Boolean
     {
-        var moonToday :Number = dateToMoonPhase(date);
+        date.hoursUTC = 0;
+        var moonMin :Number = dateToMoonPhase(date);
+        date.hoursUTC = 23;
+        var moonMax :Number = dateToMoonPhase(date);
+
+        date.hoursUTC = 23;
+        date.date -= 1;
+        var moonYesterday :Number = dateToMoonPhase(date);
+
+        date.hoursUTC = 0;
+        date.date += 2;
+        var moonTomorrow :Number = dateToMoonPhase(date);
+
+        return (moonMin > moonYesterday && moonMax > moonTomorrow);
+
+        /*var moonToday :Number = dateToMoonPhase(date);
 
         date.date -= 1;
         var moonYesterday :Number = dateToMoonPhase(date);
@@ -20,7 +35,7 @@ public class MoonCalculation
         date.date += 2;
         var moonTomorrow :Number = dateToMoonPhase(date);
 
-        return (moonToday > moonYesterday && moonToday > moonTomorrow);
+        return (moonToday > moonYesterday && moonToday > moonTomorrow);*/
     }
 
     public static function dateToMoonPhase (date :Date) :Number
@@ -112,9 +127,9 @@ public class MoonCalculation
 
     protected static function dateToJulian (date :Date) :Number
     {
-        var day :Number = date.date + (date.hours / 24);
-        var month :int = date.month;
-        var year :int = date.fullYear;
+        var day :Number = date.dateUTC + ((date.hoursUTC + 1) / 24);
+        var month :int = date.monthUTC + 1;
+        var year :int = date.fullYearUTC;
 
         var a :int, b :int, c :int, e :int;
 
