@@ -168,7 +168,7 @@ public class Camvatar extends Sprite
 //        }
 
         // turn the image into a jpg
-        _chunker.send(_encoder.encode(_snapshot), false);
+        _chunker.send(_encoder.encode(_snapshot));
     }
 
     protected function chunkReceived (data :Object) :void
