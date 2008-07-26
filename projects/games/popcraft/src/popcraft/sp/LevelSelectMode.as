@@ -43,42 +43,53 @@ public class LevelSelectMode extends DemoGameMode
         // overlay
         _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
-        // if the player has beaten the game, they get to select which level to play.
-        // otherwise, they get the "play" button, which allows them to play the next level, and
-        // a little interactive tutorial.
-        if (AppContext.levelMgr.playerBeatGame) {
-            this.createLevelSelectLayout();
-        } else {
-            this.createTutorialLayout();
-        }
+        this.createTutorialLayout();
     }
 
     protected function createTutorialLayout () :void
     {
         var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
+        var playerCompletedGame :Boolean = AppContext.levelMgr.playerBeatGame;
 
-        var playButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi",
-            (playerStartedGame ? "continue_button" : "play_button"));
-        playButton.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            playNextLevel();
-        });
+        var playButtonName :String = (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
+        var playButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi", playButtonName);
+
+        // if the player has beaten the game, the Play button will just take them to the level select
+        // menu
+        playButton.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void {
+                if (playerCompletedGame) {
+                    createLevelSelectLayout();
+                } else {
+                    playNextLevel();
+                }
+            });
 
         _playButtonObj = new SimpleSceneObject(playButton);
         _playButtonObj.x = 350;
         _playButtonObj.y = 350;
         this.addObject(_playButtonObj, _modeLayer);
 
+        _levelSelectButton = UIBits.createButton("Select Level", 1.2);
+        _levelSelectButton.addEventListener(MouseEvent.CLICK,
+            function (...ignored) :void { createLevelSelectLayout(); });
+        _levelSelectButton.x = 10;
+        _levelSelectButton.y = 10;
+        _modeLayer.addChild(_levelSelectButton);
+
         // unlock all levels button
         if (Constants.DEBUG_ALLOW_CHEATS) {
-            var button :SimpleButton = UIBits.createButton("Unlock levels");
-            button.addEventListener(MouseEvent.CLICK, function (...ignored) :void { unlockLevels(); });
-            button.x = 10;
-            button.y = 10;
-            _modeLayer.addChild(button);
+            var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels");
+            unlockLevelsButton.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { unlockLevels(); });
+            unlockLevelsButton.x = 10;
+            unlockLevelsButton.y = 40;
+            _modeLayer.addChild(unlockLevelsButton);
         }
 
         // create the tutorial objects
-        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "puzzle_intro");
+        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "puzzle_intro");
         puzzleIntroMovie.mouseEnabled = false;
         _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
         _puzzleIntro.x = 470;
@@ -86,7 +97,8 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
         this.addObject(_puzzleIntro, _modeLayer);
 
-        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "unit_intro");
+        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "unit_intro");
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
         _unitIntro.x = 9;
@@ -94,13 +106,16 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_unitIntro, 9, 4);
         this.addObject(_unitIntro, _modeLayer);
 
-        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi", "resource_intro");
+        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "resource_intro");
         resourceIntroMovie.mouseEnabled = false;
         _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
         _resourceIntro.x = 9;
         _resourceIntro.y = 385;
         createHelpTextAnimTask(_resourceIntro, 9, 4);
         this.addObject(_resourceIntro, _modeLayer);
+
+        _showingTutorial = true;
     }
 
     protected static function createHelpTextAnimTask (obj :SceneObject, startX :Number, endX :Number) :void
@@ -115,7 +130,7 @@ public class LevelSelectMode extends DemoGameMode
     {
         super.update(dt);
 
-        if (null != _unitIntro) {
+        if (_showingTutorial) {
             _unitIntro.visible = GameContext.localPlayerInfo.canPurchaseCreature(Constants.UNIT_TYPE_GRUNT);
             _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
             _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
@@ -146,6 +161,15 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createLevelSelectLayout () :void
     {
+        // clean up from the tutorial, if it was being displayed before
+        if (_showingTutorial) {
+            _levelSelectButton.parent.removeChild(_levelSelectButton);
+            _unitIntro.destroySelf();
+            _resourceIntro.destroySelf();
+            _puzzleIntro.destroySelf();
+            _showingTutorial = false;
+        }
+
         // put the "manual" up on the screen
         var manualFront :MovieClip = SwfResource.instantiateMovieClip("manual", "manual_front");
         manualFront.scaleX = 1.3;
@@ -199,12 +223,14 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // epilogue button
-        button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
-        button.x = EPILOGUE_LOC.x - (button.width * 0.5);
-        button.y = EPILOGUE_LOC.y;
-        button.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
-        buttonSprite.addChild(button);
+        if (AppContext.levelMgr.playerBeatGame) {
+            button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
+            button.x = EPILOGUE_LOC.x - (button.width * 0.5);
+            button.y = EPILOGUE_LOC.y;
+            button.addEventListener(MouseEvent.CLICK,
+                function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
+            buttonSprite.addChild(button);
+        }
 
         DisplayUtil.positionBounds(buttonSprite,
             (Constants.SCREEN_SIZE.x * 0.5) - (buttonSprite.width * 0.5) + 20, BUTTON_CONTAINER_Y);
@@ -257,6 +283,8 @@ public class LevelSelectMode extends DemoGameMode
     protected var _puzzleIntro :SceneObject;
     protected var _unitIntro :SceneObject;
     protected var _resourceIntro :SceneObject;
+    protected var _levelSelectButton :SimpleButton;
+    protected var _showingTutorial :Boolean;
 
     protected static const NUM_COLUMNS :int = 2;
     protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];
