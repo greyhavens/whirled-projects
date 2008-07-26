@@ -731,24 +731,32 @@ public class GameMode extends TransitionMode
 
     protected function handleMessage (msg :Message) :void
     {
+        var playerIndex :int;
+
         switch (msg.name) {
         case CreateUnitMessage.messageName:
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
-            GameContext.unitFactory.createCreature(createUnitMsg.unitType, createUnitMsg.playerIndex);
-            var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(createUnitMsg.playerIndex);
-            if (null != baseView) {
-                baseView.unitCreated();
+            playerIndex = createUnitMsg.playerIndex;
+            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
+                GameContext.unitFactory.createCreature(createUnitMsg.unitType, playerIndex);
+                var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(playerIndex);
+                if (null != baseView) {
+                    baseView.unitCreated();
+                }
             }
             break;
 
         case SelectTargetEnemyMessage.messageName:
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
-            this.setTargetEnemy(selectTargetEnemyMsg.playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
+            playerIndex = selectTargetEnemyMsg.playerIndex;
+            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
+                this.setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
+            }
             break;
 
         case CastCreatureSpellMessage.messageName:
             var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
-            var playerIndex :int = castSpellMsg.playerIndex;
+            playerIndex = castSpellMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[playerIndex];
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
