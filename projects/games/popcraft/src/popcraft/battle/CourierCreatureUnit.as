@@ -38,6 +38,15 @@ public class CourierCreatureUnit extends CreatureUnit
         spellObject.destroySelf();
     }
 
+    public function dropCarriedSpell () :void
+    {
+        if (null != _carriedSpell) {
+            // don't play the "new spell" sound when the Courier drops a spell
+            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc, false);
+            _carriedSpell = null;
+        }
+    }
+
     public function deliverSpellToBase () :void
     {
         Assert.isNotNull(_carriedSpell);
@@ -65,11 +74,7 @@ public class CourierCreatureUnit extends CreatureUnit
     override protected function die () :void
     {
         // drop the currently carried spell on the ground when we die.
-        // don't play the "new spell" sound when this happens.
-        if (null != _carriedSpell) {// && GameContext.diurnalCycle.isNight) {
-            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc, false);
-        }
-
+        this.dropCarriedSpell();
         super.die();
     }
 
@@ -197,12 +202,27 @@ class CourierAI extends AITaskTree
         }
     }
 
+    override public function update (dt :Number, creature :CreatureUnit) :int
+    {
+        super.update(dt, creature);
+
+        // when the owning player dies, just wander forever - never pickup an infusion
+        if (!_ownerIsDead && !_unit.owningPlayerInfo.isAlive) {
+            this.clearSubtasks();
+            this.addSubtask(new WanderTask(_unit));
+            _ownerIsDead = true;
+        }
+
+        return AITaskStatus.ACTIVE;
+    }
+
     override public function get name () :String
     {
         return NAME;
     }
 
     protected var _unit :CourierCreatureUnit;
+    protected var _ownerIsDead :Boolean;
 
     protected static const log :Log = Log.getLog(CourierAI);
 }
@@ -326,21 +346,11 @@ class PickupSpellTask extends AITaskTree
     protected var _spellRef :SimObjectRef;
 }
 
-class ScanForSpellPickupsTask extends AITaskTree
+class WanderTask extends AITaskTree
 {
-    public static const NAME :String = "ScanForSpellPickupsTask";
-    public static const MSG_DETECTEDSPELL :String = "DetectedSpell";
-
-    public function ScanForSpellPickupsTask (unit :CourierCreatureUnit)
+    public function WanderTask (unit :CourierCreatureUnit)
     {
         _unit = unit;
-
-        // scan for spell pickups twice/second
-        var scanSequence :AITaskSequence = new AITaskSequence(true);
-        scanSequence.addSequencedTask(new DetectSpellDropAction());
-        scanSequence.addSequencedTask(new AITimerTask(0.5));
-        this.addSubtask(scanSequence);
-
         this.wander();
     }
 
@@ -373,6 +383,28 @@ class ScanForSpellPickupsTask extends AITaskTree
         this.addSubtask(new CourierMoveTask(_unit, wanderLoc));
     }
 
+    protected var _unit :CourierCreatureUnit;
+    protected var _wanderBaseRef :SimObjectRef = SimObjectRef.Null();
+}
+
+class ScanForSpellPickupsTask extends WanderTask
+{
+    public static const NAME :String = "ScanForSpellPickupsTask";
+    public static const MSG_DETECTEDSPELL :String = "DetectedSpell";
+
+    public function ScanForSpellPickupsTask (unit :CourierCreatureUnit)
+    {
+        super(unit);
+
+        // scan for spell pickups twice/second
+        var scanSequence :AITaskSequence = new AITaskSequence(true);
+        scanSequence.addSequencedTask(new DetectSpellDropAction());
+        scanSequence.addSequencedTask(new AITimerTask(0.5));
+        this.addSubtask(scanSequence);
+
+        this.wander();
+    }
+
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
@@ -391,7 +423,4 @@ class ScanForSpellPickupsTask extends AITaskTree
     {
         return NAME;
     }
-
-    protected var _unit :CourierCreatureUnit;
-    protected var _wanderBaseRef :SimObjectRef = SimObjectRef.Null();
 }

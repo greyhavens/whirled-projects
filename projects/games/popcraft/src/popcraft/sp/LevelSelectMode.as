@@ -77,14 +77,20 @@ public class LevelSelectMode extends DemoGameMode
         _levelSelectButton.y = 10;
         _modeLayer.addChild(_levelSelectButton);
 
-        // unlock all levels button
         if (Constants.DEBUG_ALLOW_CHEATS) {
-            var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels");
+            var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
             unlockLevelsButton.addEventListener(MouseEvent.CLICK,
                 function (...ignored) :void { unlockLevels(); });
             unlockLevelsButton.x = 10;
-            unlockLevelsButton.y = 40;
+            unlockLevelsButton.y = 45;
             _modeLayer.addChild(unlockLevelsButton);
+
+            var testLevelButton :SimpleButton = UIBits.createButton("Test level", 1.2);
+            testLevelButton.addEventListener(MouseEvent.CLICK,
+                function (...ignored) : void { levelSelected(LevelManager.TEST_LEVEL); });
+            testLevelButton.x = 10;
+            testLevelButton.y = 80;
+            _modeLayer.addChild(testLevelButton);
         }
 
         // create the tutorial objects

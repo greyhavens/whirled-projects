@@ -11,11 +11,12 @@
         <GameDataOverride
             disableDiurnalCycle="true"
             spellDropTimeMin="3"
-            spellDropTimeMax="3"/>
+            spellDropTimeMax="8"/>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="Level1">
             <BaseLocation x="60" y="185"/>
-            <BaseLocation x="642" y="175"/>
+            <BaseLocation x="622" y="115"/>
+            <BaseLocation x="622" y="295"/>
         </MapSettings>
 
         <InitialResources>
@@ -35,9 +36,22 @@
 
         <AvailableSpells>
             <Spell type="shuffle"/>
+            <Spell type="bloodlust"/>
+            <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="500" team="1"/>
+        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="500" team="1">
+            <RepeatingDays>
+                <Day repeatWaves="false"
+                    noticeSpellDropAfterMin="1"
+                    noticeSpellDropAfterMax="1"
+                    spellDropCourierGroupSizeMin="1"
+                    spellDropCourierGroupSizeMax="1">
+                </Day>
+            </RepeatingDays>
+        </Computer>
+
+        <Computer playerName="Ivy" playerHeadshotName="portrait_ivy" baseHealth="500" team="1"/>
 
     </Level>
 
