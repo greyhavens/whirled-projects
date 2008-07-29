@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="Food" default="compile" basedir=".">
+
+  <!-- defines our project name and type -->
+  <property name="app.name" value="Food"/>
+  <property name="app.type" value="furni"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../../etc/project-include.xml"/>
+
+</project>
