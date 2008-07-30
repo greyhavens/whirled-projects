@@ -11,7 +11,7 @@ public class TestPanel extends TabPanel
         addTab("g", new Button("Green"), new Color(0x00ff00));
         addTab("b", new Button("Blue"), new Color(0x0000ff));
 
-        var grid :GridPanel = new GridPanel([150, 150, 200, 200], [50, 50, 100, 100, 50, 150]);
+        var grid :GridPanel = new GridPanel([75, 75, 100, 100], [25, 25, 50, 50, 25, 75]);
         for (var x :int = 0; x < grid.numColumns; ++x) {
             for (var y :int = 0; y < grid.numRows; ++y) {
                 var r :uint = int(255 * (y + 1) / grid.numRows);
@@ -40,8 +40,8 @@ class Color extends Sprite
 {
     public function Color (
         color :uint, 
-        width :int = 700, 
-        height :int = 500)
+        width :int = 350, 
+        height :int = 250)
     {
         graphics.beginFill(color);
         graphics.drawRect(0, 0, width, height);
