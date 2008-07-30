@@ -1,0 +1,13 @@
+Tic tac toe is a very simple example of a game that employs a server agent. 
+
+The class Server in src/Server.as is compiled into TicTacToe.abc. This class is then loaded and 
+instantiated on the server.
+
+The Server class demonstrated the following features that may be used in your server agent:
+* Loading and saving cookies for specific players
+* Handling MOVE messages to check for illegal moves (e.g. by hacked clients)
+* Awarding trophies and prizes to specific players
+
+The tic tac toe clients in src/TicTacToe.as do not set any properties directly but request all 
+moves by sending a Server.MOVE message containing the details of the move.
+

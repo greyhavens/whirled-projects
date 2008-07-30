@@ -3,8 +3,14 @@ package {
 import flash.display.Sprite;
 import flash.text.TextField;
 
+/**
+ * Sprite to show a player's win/loss record.
+ */
 public class Record extends Sprite
 {
+    /**
+     * Creates a new Record sprite.
+     */
     public function Record ()
     {
         _str = new TextField();
@@ -14,6 +20,9 @@ public class Record extends Sprite
         update(null);
     }
 
+    /**
+     * Updates the text based on the given cookie.
+     */
     public function update (cookie :Object) :void
     {
         if (cookie == null) {
@@ -24,6 +33,7 @@ public class Record extends Sprite
         }
     }
 
+    /** The text showing the win/loss record. */
     protected var _str :TextField;
 }
 
