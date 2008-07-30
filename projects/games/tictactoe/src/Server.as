@@ -33,13 +33,10 @@ public class Server
     /** Creates a new tic-tac-toe game server. */
     public function Server ()
     {
-        _ctrl = new GameControl (new ServerObject());
+        _gameCtrl = new GameControl (new ServerObject());
 
-        _ctrl.game.addEventListener(
-            StateChangedEvent.GAME_STARTED, gameStarted);
-
-        _ctrl.net.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     /** Notifies that the game has started. */
@@ -47,15 +44,15 @@ public class Server
     {
         // Set the board to all empty
         var empty :Array = [0,0,0, 0,0,0, 0,0,0];
-        _ctrl.net.set(BOARD, empty);
+        _gameCtrl.net.set(BOARD, empty);
 
         // start with a random player
-        _ctrl.game.startNextTurn();
+        _gameCtrl.game.startNextTurn();
 
         // retrieve the cookies for each player
-        var players :Array = _ctrl.game.seating.getPlayerIds();
+        var players :Array = _gameCtrl.game.seating.getPlayerIds();
         for (var ii :int = 0; ii < 2; ++ii) {
-            _ctrl.player.getCookie(gotCookie, players[ii]);
+            _gameCtrl.player.getCookie(gotCookie, players[ii]);
         }
     }
 
@@ -63,7 +60,7 @@ public class Server
     protected function gotCookie (cookie :Object, playerId :int) :void
     {
         // check player seating
-        var idx :int = _ctrl.game.seating.getPlayerPosition(playerId);
+        var idx :int = _gameCtrl.game.seating.getPlayerPosition(playerId);
         if (idx < 0) {
             trace("Got cookie for player not in game: " + playerId);
             return;
@@ -90,32 +87,32 @@ public class Server
             // Report an error if the move is off the board or isn't an X or O
             if (obj.index < 0 || obj.index >= 9 ||
                 obj.symbol < 1 || obj.symbol > 2 ||
-                _ctrl.net.get(BOARD)[obj.index] != 0) {
+                _gameCtrl.net.get(BOARD)[obj.index] != 0) {
 
-                _ctrl.game.systemMessage("Illegal move sent");
+                _gameCtrl.game.systemMessage("Illegal move sent");
                 return;
             }
 
             // A player's seating position determines his marker - report an error if a 
             // player attempts to place someone else's marker
-            var senderIdx :int = _ctrl.game.seating.getPlayerPosition(event.senderId);
+            var senderIdx :int = _gameCtrl.game.seating.getPlayerPosition(event.senderId);
             if (senderIdx != obj.symbol - 1) {
-                _ctrl.game.systemMessage("Illegal move sent");
+                _gameCtrl.game.systemMessage("Illegal move sent");
                 return;
             }
 
             // Report an error if it is not the player's turn.
-            if (_ctrl.game.getTurnHolderId() != event.senderId) {
-                _ctrl.game.systemMessage("Illegal move sent");
+            if (_gameCtrl.game.getTurnHolderId() != event.senderId) {
+                _gameCtrl.game.systemMessage("Illegal move sent");
                 return;
             }
 
             // Set the marker, this will automatically dispatch to clients
-            _ctrl.net.setAt(BOARD, obj.index, obj.symbol, true);
+            _gameCtrl.net.setAt(BOARD, obj.index, obj.symbol, true);
 
             var losers :Array;
             var winners :Array;
-            var players :Array = _ctrl.game.seating.getPlayerIds();
+            var players :Array = _gameCtrl.game.seating.getPlayerIds();
 
             var winningSymbol :int = checkForWins();
             if (winningSymbol != 0) {
@@ -131,7 +128,7 @@ public class Server
                 _cookies[loserIdx].lost += 1;
 
                 for (var ii :int = 0; ii < 2; ++ii) {
-                    _ctrl.player.setCookie(_cookies[ii], players[ii]);
+                    _gameCtrl.player.setCookie(_cookies[ii], players[ii]);
                 }
 
                 // award trophies and prizes
@@ -144,12 +141,12 @@ public class Server
 
             } else {
                 // no winner and more empty places, carry on
-                _ctrl.game.startNextTurn();
+                _gameCtrl.game.startNextTurn();
             }
             
             if (winners != null) {
                 // end the game
-                _ctrl.game.endGameWithWinners(
+                _gameCtrl.game.endGameWithWinners(
                     winners, losers, GameSubControl.WINNERS_TAKE_ALL);
             }
         }
@@ -161,10 +158,10 @@ public class Server
     protected function doAwards (winnerId :int, won :int) :void
     {
         function award (count :int, ident :String, prize :String=null) :void {
-            if (won >= count && !_ctrl.player.holdsTrophy(ident, winnerId)) {
-                _ctrl.player.awardTrophy(ident, winnerId);
+            if (won >= count && !_gameCtrl.player.holdsTrophy(ident, winnerId)) {
+                _gameCtrl.player.awardTrophy(ident, winnerId);
                 if (prize != null) {
-                    _ctrl.player.awardPrize(prize, winnerId);
+                    _gameCtrl.player.awardPrize(prize, winnerId);
                 }
             }
         }
@@ -184,7 +181,7 @@ public class Server
      */
     protected function isBoardFull () :Boolean
     {
-        var board :Array = _ctrl.net.get(BOARD) as Array;
+        var board :Array = _gameCtrl.net.get(BOARD) as Array;
         for (var ii :int = 0; ii < 9; ++ii) {
             if (board[ii] == 0) {
                 return false;
@@ -202,7 +199,7 @@ public class Server
         for (var idx :int = 0; idx < _WINS.length; ++idx) {
             var symbol :int = getThreeInARow(_WINS[idx] as Array);
             if (symbol != 0) {
-                _ctrl.net.sendMessage(THREE_IN_A_ROW, _WINS[idx]);
+                _gameCtrl.net.sendMessage(THREE_IN_A_ROW, _WINS[idx]);
                 return symbol;
             }
         }
@@ -214,7 +211,7 @@ public class Server
      */
     protected function getThreeInARow (indices :Array) :int
     {
-        var board :Array = _ctrl.net.get(BOARD) as Array;
+        var board :Array = _gameCtrl.net.get(BOARD) as Array;
         var symbol :int = board[indices[0]];
         if (board[indices[1]] == symbol && board[indices[2]] == symbol) {
             return symbol;
@@ -223,7 +220,7 @@ public class Server
     }
 
     /** The connection to the whirled game server. */
-    protected var _ctrl :GameControl;
+    protected var _gameCtrl :GameControl;
 
     /** Player cookies. */
     protected var _cookies :Array = [newCookie(), newCookie()];

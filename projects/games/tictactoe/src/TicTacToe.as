@@ -17,25 +17,14 @@ public class TicTacToe extends Sprite
      */
     public function TicTacToe ()
     {
-        _ctrl = new GameControl(this);
+        _gameCtrl = new GameControl(this);
 
-        _ctrl.net.addEventListener(
-            PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-
-        _ctrl.net.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-
-        _ctrl.game.addEventListener(
-            StateChangedEvent.TURN_CHANGED, turnChanged);
-
-        _ctrl.game.addEventListener(
-            StateChangedEvent.GAME_STARTED, gameStarted);
-
-        _ctrl.game.addEventListener(
-            StateChangedEvent.GAME_ENDED, gameEnded);
-
-        _ctrl.net.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        _gameCtrl.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         _board = new Board(this);
         addChild(_board);
@@ -44,8 +33,13 @@ public class TicTacToe extends Sprite
         addChild(_record);
         _record.y = 20 + Board.BOXSIZE * 3;
 
-        updateRecord();
-        updateAll();
+        if (_gameCtrl.isConnected()) {
+            updateRecord();
+            updateAll();
+
+        } else {
+            _board.updateAll(null);
+        }
     }
 
     /** 
@@ -56,9 +50,9 @@ public class TicTacToe extends Sprite
     {
         if (x >= 0 && x <= 2 && y >= 0 && y <= 2) {
             var index :int = y * 3 + x;
-            if (_ctrl.net.get(Server.BOARD)[index] == 0) {
+            if (_gameCtrl.net.get(Server.BOARD)[index] == 0) {
                 var value :Object  = {index: index, symbol: mySymbol};
-                _ctrl.net.sendMessageToAgent(Server.MOVE, value);
+                _gameCtrl.net.sendMessageToAgent(Server.MOVE, value);
                 return true;
             }
         }
@@ -70,7 +64,7 @@ public class TicTacToe extends Sprite
      */
     protected function updateAll () :void
     {
-        _board.updateAll(_ctrl.net.get(Server.BOARD) as Array);
+        _board.updateAll(_gameCtrl.net.get(Server.BOARD) as Array);
     }
 
     /**
@@ -78,8 +72,8 @@ public class TicTacToe extends Sprite
      */
     protected function updateRecord () :void
     {
-        if (_ctrl.game.seating.getMyPosition() >= 0) {
-            _ctrl.player.getCookie(
+        if (_gameCtrl.game.seating.getMyPosition() >= 0) {
+            _gameCtrl.player.getCookie(
                 function (cookie :Object, ...unused) :void {
                     _record.update(cookie);
             });
@@ -114,7 +108,7 @@ public class TicTacToe extends Sprite
     protected function turnChanged (event :StateChangedEvent) :void
     {
         // Enable clicking on the board if it is our turn
-        if (_ctrl.game.isMyTurn()) {
+        if (_gameCtrl.game.isMyTurn()) {
             _board.enabled = true;
         }
     }
@@ -156,11 +150,11 @@ public class TicTacToe extends Sprite
      */
     protected function get mySymbol () :int
     {
-        return _ctrl.game.seating.getMyPosition() + 1;
+        return _gameCtrl.game.seating.getMyPosition() + 1;
     }
 
     /** The connection to the whirled game server. */
-    protected var _ctrl :GameControl;
+    protected var _gameCtrl :GameControl;
 
     /** The board sprite. */
     protected var _board :Board;
