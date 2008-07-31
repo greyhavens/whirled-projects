@@ -3,7 +3,7 @@ package {
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.Event;
-import com.whirled.AVRGameControl;
+import com.whirled.avrg.AVRGameControl;
 import com.threerings.util.StringUtil;
 
 public class Probe extends Sprite

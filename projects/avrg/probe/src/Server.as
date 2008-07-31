@@ -1,7 +1,7 @@
 package {
 
+import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.ServerObject;
-import com.whirled.AVRServerGameControl;
 
 public class Server extends ServerObject
 {
