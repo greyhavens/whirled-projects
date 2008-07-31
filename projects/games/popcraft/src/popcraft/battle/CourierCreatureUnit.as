@@ -354,6 +354,14 @@ class WanderTask extends AITaskTree
         this.wander();
     }
 
+    override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
+    {
+        if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
+            // wander again
+            this.wander();
+        }
+    }
+
     protected function wander () :void
     {
         // When Couriers aren't picking up spells, they wander around
@@ -401,8 +409,6 @@ class ScanForSpellPickupsTask extends WanderTask
         scanSequence.addSequencedTask(new DetectSpellDropAction());
         scanSequence.addSequencedTask(new AITimerTask(0.5));
         this.addSubtask(scanSequence);
-
-        this.wander();
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -413,9 +419,8 @@ class ScanForSpellPickupsTask extends WanderTask
             // choose a spell at random
             var spell :SpellDropObject = Rand.nextElement(spells, Rand.STREAM_GAME);
             this.sendParentMessage(MSG_DETECTEDSPELL, spell);
-        } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
-            // wander again
-            this.wander();
+        } else {
+            super.receiveSubtaskMessage(task, messageName, data);
         }
     }
 
