@@ -1,18 +1,18 @@
 <datapack>
-	<data name="Hotspot" type="Point" value="16,32" optional="true" />
-	<data name="Height" type="Number" value="6" />
-	<data name="Width" type="Number" value="3" />
+	<data name="Hotspot" type="Point" value="16,32" optional="true" info="Where on the sprite is my hotspot? Optional, uncheck for auto-calculate." />
+	<data name="Height" type="Number" value="6" info="How many sprites tall is my sheet?" />
+	<data name="Width" type="Number" value="3" info="How many sprites wide is my sheet?" />
 
-	<data name="Speak" type="String" value="Bounce" optional="true" />
-	<data name="Move" type="String" value="Run" optional="true" />
-	<data name="Idle" type="String" value="Hide" optional="true" />
+	<data name="Speak" type="String" value="Remix me!" optional="true" info="What ACTION should I use to speak?" />
+	<data name="Move" type="String" value="Run" optional="true" info="What STATE should I use to move?" />
+	<data name="Idle" type="String" value="Hide" optional="true" info="What STATE should I use to go idle?" />
 
-	<data name="RightFacing" type="Boolean" value="true" />
+	<data name="RightFacing" type="Boolean" value="true" info="Do the sprites in my sheet face to the right?" />
 
-	<data name="Speed" type="Number" value="500" min="50" max="1500" />
+	<data name="Speed" type="Number" value="500" min="50" max="1500" info="How fast should I walk?" />
 
-	<file name="Sheet" type="Image" value="sheet.png" />
-	<file name="Tracks" type="XML" value="tracks.xml" />
+	<file name="Sheet" type="Image" value="sheet.png" info="My sprite sheet. The top left sprite starts is frame '1', next to the right is '2'..." />
+	<file name="Tracks" type="XML" value="tracks.xml" info="My animation data file. Tracks refer to frames on the sheet to set up animations." />
 
 	<file name="_CONTENT" value="Pixeltar.swf" />
 </datapack>

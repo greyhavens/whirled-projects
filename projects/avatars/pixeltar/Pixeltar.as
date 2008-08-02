@@ -19,9 +19,11 @@ import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.DataPack;
 
-[SWF(width="50", height="50")]
+[SWF(width="128", height="128")]
 public class Pixeltar extends Sprite
 {
+    public static const SCALE :int = 2;
+
     public function Pixeltar ()
     {
         _ctrl = new AvatarControl(this);
@@ -82,7 +84,7 @@ public class Pixeltar extends Sprite
         if (hotspot == null) {
             hotspot = new Point(w/2, h);
         }
-        _ctrl.setHotSpot(hotspot.x, hotspot.y);
+        _ctrl.setHotSpot(hotspot.x * SCALE, hotspot.y * SCALE);
 
         _rightFacing = _pack.getBoolean("RightFacing");
 
@@ -92,8 +94,8 @@ public class Pixeltar extends Sprite
         _ctrl.registerStates(populate(_states, tracks.state, true));
 
         _surface = new Bitmap(_frames[0] as BitmapData);
-        _surface.transform.matrix.scale(-1,1);
-        _surface.transform.matrix.translate(w,0);
+        _surface.scaleX = SCALE;
+        _surface.scaleY = SCALE;
         addChild(_surface);
 
         _onSpeak = _actions[_pack.getString("Speak")] as Track;
@@ -192,10 +194,10 @@ public class Pixeltar extends Sprite
         // if (flip XOR flop)
         if ((_flip || flop) && !(_flip && flop)) {
             _surface.x = _surface.width;
-            _surface.scaleX = -1;
+            _surface.scaleX = -SCALE;
         } else {
             _surface.x = 0;
-            _surface.scaleX = 1;
+            _surface.scaleX = SCALE;
         }
     }
 

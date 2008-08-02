@@ -1,10 +1,23 @@
-<tracks>
-	<action name="Bounce" frames="10,11,12,13,12,13,12,13,12,13" delay="150" />
+<!-- This file is used to configure custom actions and states for your avatar. -->
 
-        <!-- TODO: State transitions -->
-	<state name="Default" frames="1,2,3,2" delay="4000,200,4000,200" />
-	<state name="Copter" frames="1,2,3,-1,-2,-3" delay="100" />
-	<state name="Run" frames="4,5,6,5" delay="100" />
-	<state name="Hide" frames="7,8,9,8" delay="400" />
-        <state name="Cry" frames="16,17,16,17,18,17" delay="200,400,600,100,200,100" />
+<tracks>
+
+<!-- Play frames 1, 2, 3, 2 at different delays for the "Default" state. -->
+<state name="Default" frames="1, 2, 3, 2" delay="4000, 200, 4000, 200" />
+
+<!-- Just use a delay 100 ms for each frame. -->
+<state name="Run" frames="4, 5, 6, 5" delay="100" />
+
+<state name="Hide" frames="7, 8, 9, 8" delay="400, 400, 2000, 400" />
+<state name="Cry" frames="16, 17, 16, 17, 18, 17" delay="200, 400, 600, 100, 200, 100" />
+
+<!-- You can use negative frame numbers to show flipped frames. -->
+<!-- Uncomment the following state to enable it. -->
+<!--
+    <state name="Dance" frames="11, 10, 11, 14, -14, 14, -14, 15, -15, 15, -15" delay="300" />
+-->
+
+<!-- Use the <action> tag to define actions in the same way. -->
+<action name="Remix me!" frames="10, 11, 12, 13, 12, 13, 12, 13, 12, 13" delay="150" />
+
 </tracks>
