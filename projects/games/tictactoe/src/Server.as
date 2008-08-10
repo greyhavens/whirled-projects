@@ -33,7 +33,7 @@ public class Server
     /** Creates a new tic-tac-toe game server. */
     public function Server ()
     {
-        _gameCtrl = new GameControl (new ServerObject());
+        _gameCtrl = new GameControl(new ServerObject());
 
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
