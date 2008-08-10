@@ -8,12 +8,12 @@ import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.MessageReceivedEvent;
 
-/** The main tic-tac-toe sprite. */    
+/** The main tic-tac-toe sprite. */
 [SWF(width="450", height="450")]
 public class TicTacToe extends Sprite
 {
-    /** 
-     * Creates a new tic tac toe sprite and connects to the whirled GameControl. 
+    /**
+     * Creates a new tic tac toe sprite and connects to the whirled GameControl.
      */
     public function TicTacToe ()
     {
@@ -42,8 +42,8 @@ public class TicTacToe extends Sprite
         }
     }
 
-    /** 
-     * Requests that the server place our marker in the given x, y space. Returns true if the 
+    /**
+     * Requests that the server place our marker in the given x, y space. Returns true if the
      * move is legal and sent to the server.
      */
     public function makeMove (x :int, y :int) :Boolean
@@ -162,5 +162,4 @@ public class TicTacToe extends Sprite
     /** The win/loss record sprite. */
     protected var _record :Record;
 }
-
 }

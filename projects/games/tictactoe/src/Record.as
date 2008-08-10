@@ -36,5 +36,4 @@ public class Record extends Sprite
     /** The text showing the win/loss record. */
     protected var _str :TextField;
 }
-
 }

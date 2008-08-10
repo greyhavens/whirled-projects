@@ -11,8 +11,8 @@ import com.whirled.game.MessageReceivedEvent;
 /** A tic-tac-toe game server. */
 public class Server
 {
-    /** 
-     * Name of the array property containing the board. The indices of the array correspond to 
+    /**
+     * Name of the array property containing the board. The indices of the array correspond to
      * board positions like this:<pre>
      *   012
      *   345
@@ -81,7 +81,6 @@ public class Server
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == MOVE) {
-
             var obj :* = event.value;
 
             // Report an error if the move is off the board or isn't an X or O
@@ -93,7 +92,7 @@ public class Server
                 return;
             }
 
-            // A player's seating position determines his marker - report an error if a 
+            // A player's seating position determines his marker - report an error if a
             // player attempts to place someone else's marker
             var senderIdx :int = _gameCtrl.game.seating.getPlayerPosition(event.senderId);
             if (senderIdx != obj.symbol - 1) {
@@ -143,16 +142,15 @@ public class Server
                 // no winner and more empty places, carry on
                 _gameCtrl.game.startNextTurn();
             }
-            
+
             if (winners != null) {
                 // end the game
-                _gameCtrl.game.endGameWithWinners(
-                    winners, losers, GameSubControl.WINNERS_TAKE_ALL);
+                _gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.WINNERS_TAKE_ALL);
             }
         }
     }
 
-    /** 
+    /**
      * Checks eligibility and awards trophies and prizes.
      */
     protected function doAwards (winnerId :int, won :int) :void
@@ -229,7 +227,7 @@ public class Server
     protected static const _WINS :Array = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal
         [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
-        [0, 4, 8], [2, 4, 6] //diagonal
+        [0, 4, 8], [2, 4, 6] // diagonal
     ];
 
     /** Creates a new cookie. */
@@ -240,4 +238,3 @@ public class Server
     }
 }
 }
-

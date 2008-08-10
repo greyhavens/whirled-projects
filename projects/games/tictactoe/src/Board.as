@@ -75,7 +75,7 @@ public class Board extends Sprite
         }
     }
 
-    /** 
+    /**
      * Puts a symbol on the graphics in the box corresponding to a BOARD array index.
      */
     public function update (idx :int, symbol :int) :void
@@ -88,7 +88,7 @@ public class Board extends Sprite
         graphics.lineStyle(NaN);
         graphics.beginFill(0xFFFFFF);
         graphics.drawRect(
-            x + BOXMARGIN, y + BOXMARGIN, 
+            x + BOXMARGIN, y + BOXMARGIN,
             BOXSIZE - BOXMARGIN * 2, BOXSIZE - BOXMARGIN * 2);
         graphics.endFill();
 
@@ -100,7 +100,7 @@ public class Board extends Sprite
             graphics.moveTo(x + BOXSIZE - BOXMARGIN * 2, y + BOXMARGIN);
             graphics.lineTo(x + BOXMARGIN, y + BOXSIZE - BOXMARGIN * 2);
             graphics.moveTo(0, 0);
-        
+
         } else if (symbol == 2) {
             // O
             graphics.lineStyle(THICKNESS);
@@ -140,12 +140,12 @@ public class Board extends Sprite
         // request the move
         if (_parent.makeMove(x, y)) {
 
-            // draw a little dot to confirm the click. the symbol will appear later when 
+            // draw a little dot to confirm the click. the symbol will appear later when
             // update is called
             graphics.lineStyle(NaN);
             graphics.beginFill(0xff0000);
             graphics.drawCircle(
-                x * BOXSIZE + BOXSIZE / 2, 
+                x * BOXSIZE + BOXSIZE / 2,
                 y * BOXSIZE + BOXSIZE / 2, BOXSIZE / 10);
             graphics.endFill();
 
