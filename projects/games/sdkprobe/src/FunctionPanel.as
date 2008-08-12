@@ -143,7 +143,7 @@ public class FunctionPanel extends Sprite
             message.params = parseParameters(_selected, false);
             message.sequenceId = _sequenceId++;
             output("Sending message " + StringUtil.toString(message));
-            _ctrl.net.agent.sendMessaget(Server.REQUEST_BACKEND_CALL, message);
+            _ctrl.net.agent.sendMessage(Server.REQUEST_BACKEND_CALL, message);
 
         } catch (e :Error) {
             var msg :String = e.getStackTrace();
