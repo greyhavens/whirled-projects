@@ -1,0 +1,3 @@
+<datapack>
+    <data name="all_clear" type="Boolean" value="false" info="If checked, everybody has permission to clear the board.  If not checked, only room managers can do it." />
+</datapack>

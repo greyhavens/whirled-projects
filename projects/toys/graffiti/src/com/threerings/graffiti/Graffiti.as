@@ -9,9 +9,12 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Log;
 
 import com.whirled.ControlEvent;
+import com.whirled.DataPack;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.model.Model;
@@ -34,6 +37,12 @@ public class Graffiti extends Sprite
         if (!_control.isConnected()) {
             displayPreviewImage();
             return;
+        }
+
+        var data :ByteArray = _control.getDefaultDataPack();
+        if (data != null) {
+            _allCanEdit = (new DataPack(data)).getBoolean("all_clear");
+            log.debug("Setting _allCanEdit [" + _allCanEdit + "]");
         }
 
         _throttle = new Throttle(_control);
@@ -113,7 +122,7 @@ public class Graffiti extends Sprite
 
     protected function resetCanvas (event :MouseEvent) :void
     {
-        if (_control.isConnected() && _control.canEditRoom()) {
+        if (canEdit()) {
             _control.showPopup(
                 "Clear Canvas?",
                 new ClearCanvasDialog(
@@ -134,7 +143,7 @@ public class Graffiti extends Sprite
     protected function toggleLock (event :MouseEvent) :void
     {
         _lockBtn.selected = !_lockBtn.selected;
-        if (_control.isConnected() && _control.canEditRoom()) {
+        if (canEdit()) {
             _control.updateMemory(CANVAS_LOCK, _lockBtn.selected);
         }
     }
@@ -148,7 +157,7 @@ public class Graffiti extends Sprite
                 animateDown(_editBtn);
             }
 
-            if (_control.canEditRoom()) {
+            if (canEdit()) {
                 animateDown(_managerBtn);
             }
         } else {
@@ -199,6 +208,11 @@ public class Graffiti extends Sprite
         removeEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
+    protected function canEdit () :Boolean
+    {
+       return _control.isConnected() && (_allCanEdit || _control.canEditRoom());
+    }
+
     private static const log :Log = Log.getLog(Graffiti);
 
     [Embed(source="../../../../rsrc/edit_manager_buttons.swf#editbutton")]
@@ -211,6 +225,7 @@ public class Graffiti extends Sprite
     protected static const CANVAS_LOCK :String = "canvasLock";
 
     protected var _control :FurniControl;
+    protected var _allCanEdit :Boolean = false;
     protected var _manager :Manager;
     protected var _model :Model;
     protected var _throttle :Throttle;

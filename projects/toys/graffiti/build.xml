@@ -7,6 +7,7 @@
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="com/threerings/graffiti"/>
   <property name="app.lib-extras" value="../../../lib/fl-components.swc"/>
+  <property name="app.data-dir" value="data"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
