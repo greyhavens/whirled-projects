@@ -22,7 +22,8 @@ import com.whirled.DataPack;
 [SWF(width="128", height="128")]
 public class Pixeltar extends Sprite
 {
-    public static const SCALE :int = 2;
+    // Square dimensions of swf
+    public static const SIZE :int = 128;
 
     public function Pixeltar ()
     {
@@ -64,6 +65,8 @@ public class Pixeltar extends Sprite
         var w :int = sheet.width / width;
         var h :int = sheet.height / height;
 
+        _scale = SIZE / Math.max(w, h);
+
         // Get the frame data
         _frames = [];
         for (var y :Number = 0; y < height; ++y) {
@@ -82,9 +85,8 @@ public class Pixeltar extends Sprite
         // Pull the (optional) hotspot from the remix
         var hotspot :Point = _pack.getPoint("Hotspot");
         if (hotspot == null) {
-            hotspot = new Point(w/2, h);
+            _ctrl.setHotSpot(hotspot.x * _scale, hotspot.y * _scale);
         }
-        _ctrl.setHotSpot(hotspot.x * SCALE, hotspot.y * SCALE);
 
         _rightFacing = _pack.getBoolean("RightFacing");
 
@@ -94,8 +96,8 @@ public class Pixeltar extends Sprite
         _ctrl.registerStates(populate(_states, tracks.state, true));
 
         _surface = new Bitmap(_frames[0] as BitmapData);
-        _surface.scaleX = SCALE;
-        _surface.scaleY = SCALE;
+        _surface.scaleX = _scale;
+        _surface.scaleY = _scale;
         addChild(_surface);
 
         _onSpeak = _actions[_pack.getString("Speak")] as Track;
@@ -194,10 +196,10 @@ public class Pixeltar extends Sprite
         // if (flip XOR flop)
         if ((_flip || flop) && !(_flip && flop)) {
             _surface.x = _surface.width;
-            _surface.scaleX = -SCALE;
+            _surface.scaleX = -_scale;
         } else {
             _surface.x = 0;
-            _surface.scaleX = SCALE;
+            _surface.scaleX = _scale;
         }
     }
 
@@ -238,6 +240,7 @@ public class Pixeltar extends Sprite
     protected var _flip :Boolean;
 
     protected var _rightFacing :Boolean;
+    protected var _scale :Number;
 
     /** Holds BitmapData for each frame. */
     protected var _frames :Array;
