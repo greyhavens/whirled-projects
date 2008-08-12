@@ -4,7 +4,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.Event;
 import com.whirled.game.GameControl;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.threerings.util.StringUtil;
 
 public class SDKProbe extends Sprite

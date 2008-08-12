@@ -11,9 +11,9 @@ import com.whirled.game.BagsSubControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.UserChatEvent;
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.ElementChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.game.CoinsAwardedEvent;
 
 public class Definitions
@@ -174,9 +174,6 @@ public class Definitions
                 [new Parameter("messageName", String),
                  new ObjectParameter("value"),
                  new Parameter("playerId", int, Parameter.OPTIONAL)]),
-            new FunctionSpec("sendMessageToAgent", net.sendMessageToAgent,
-                [new Parameter("messageName", String),
-                new ObjectParameter("value")]),
             new FunctionSpec("set", net.set,
                 [new Parameter("propName", String),
                 new ObjectParameter("value"),

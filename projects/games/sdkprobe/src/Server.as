@@ -2,7 +2,7 @@ package {
 
 import com.whirled.ServerObject;
 import com.whirled.game.GameControl;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.threerings.util.StringUtil;
 
 public class Server extends ServerObject
