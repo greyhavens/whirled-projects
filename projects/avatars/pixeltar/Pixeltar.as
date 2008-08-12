@@ -84,7 +84,7 @@ public class Pixeltar extends Sprite
 
         // Pull the (optional) hotspot from the remix
         var hotspot :Point = _pack.getPoint("Hotspot");
-        if (hotspot == null) {
+        if (hotspot != null) {
             _ctrl.setHotSpot(hotspot.x * _scale, hotspot.y * _scale);
         }
 
