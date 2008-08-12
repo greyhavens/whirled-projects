@@ -48,7 +48,7 @@ public class Animation extends EventDispatcher
         }
 
         dispatchEvent(new AnimationEvent(AnimationEvent.UPDATE, track.sequence[_current]));
-        _timer.delay = track.getDuration(_current);
+        _timer.delay = Math.max(0, track.getDuration(_current));
     }
 
     protected var _timer :Timer;
