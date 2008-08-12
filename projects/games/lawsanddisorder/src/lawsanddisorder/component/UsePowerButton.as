@@ -5,7 +5,7 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 import flash.events.Event;
 
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.game.StateChangedEvent;
 
 import lawsanddisorder.*;

@@ -7,8 +7,8 @@ import flash.geom.Point;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 import com.threerings.util.HashMap;
 
 import lawsanddisorder.component.*;

@@ -5,7 +5,7 @@ import flash.utils.Dictionary;
 
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.StateChangedEvent;
 

@@ -24,6 +24,7 @@ import fl.events.ComponentEvent;
 import com.threerings.util.StringUtil;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 /**
  * Allows users to view/add/remove the tags used for LOLcaptions.

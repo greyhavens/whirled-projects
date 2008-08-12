@@ -6,7 +6,7 @@ import com.whirled.ServerObject;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 /** A tic-tac-toe game server. */
 public class Server

@@ -13,7 +13,7 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 /**
  * Displays the letters on the board.

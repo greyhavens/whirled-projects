@@ -6,7 +6,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.utils.Dictionary;
 
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import lawsanddisorder.*;
 

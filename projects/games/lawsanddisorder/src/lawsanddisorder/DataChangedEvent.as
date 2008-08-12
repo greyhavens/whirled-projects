@@ -6,9 +6,9 @@ import flash.events.MouseEvent;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.ElementChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.threerings.util.HashMap;
 import com.whirled.game.GameSubControl;
 

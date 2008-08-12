@@ -31,6 +31,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 /**
  * Back-end logic for running a caption game!

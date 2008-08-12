@@ -3,10 +3,10 @@ package {
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import com.whirled.game.GameControl;
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 /** The main tic-tac-toe sprite. */
 [SWF(width="450", height="450")]
@@ -52,7 +52,7 @@ public class TicTacToe extends Sprite
             var index :int = y * 3 + x;
             if (_gameCtrl.net.get(Server.BOARD)[index] == 0) {
                 var value :Object  = {index: index, symbol: mySymbol};
-                _gameCtrl.net.sendMessageToAgent(Server.MOVE, value);
+                _gameCtrl.net.agent.sendMessage(Server.MOVE, value);
                 return true;
             }
         }

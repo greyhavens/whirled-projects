@@ -1,7 +1,7 @@
 package spades.card {
 
 import com.whirled.game.GameControl;
-import com.whirled.game.ElementChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.contrib.card.trick.Scores;
 import com.whirled.contrib.card.trick.ScoresEvent;
 import com.whirled.contrib.card.trick.Bids;

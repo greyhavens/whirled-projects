@@ -7,7 +7,7 @@ import flash.events.Event;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.game.StateChangedEvent;
 
 import lawsanddisorder.*;

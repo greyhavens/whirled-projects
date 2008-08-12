@@ -16,10 +16,10 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import com.whirled.game.ElementChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.game.GameControl;
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 /**
  * Manages the whole game view and user input.

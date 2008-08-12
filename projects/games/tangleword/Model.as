@@ -7,8 +7,8 @@ import com.threerings.util.Assert;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import com.whirled.contrib.Scoreboard;
 

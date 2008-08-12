@@ -6,9 +6,9 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.game.ElementChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;

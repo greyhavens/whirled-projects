@@ -7,8 +7,8 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import com.whirled.game.GameControl;
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
 

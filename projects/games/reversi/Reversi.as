@@ -4,6 +4,7 @@ import flash.display.Sprite;
 import flash.display.MovieClip;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite

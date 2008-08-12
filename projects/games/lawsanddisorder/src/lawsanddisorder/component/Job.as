@@ -7,7 +7,7 @@ import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 import flash.events.MouseEvent;
 
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import lawsanddisorder.Context;
 import lawsanddisorder.Content;

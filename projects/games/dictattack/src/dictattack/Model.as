@@ -9,8 +9,8 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import com.whirled.game.GameSubControl;
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 /**
  * Models and manages the (distributed) state of the board. We model the state of the board as a

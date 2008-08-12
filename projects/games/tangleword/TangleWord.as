@@ -11,8 +11,8 @@ import mx.core.BitmapAsset;
 import com.threerings.util.Assert;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.game.ElementChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import com.whirled.contrib.Scoreboard;
 

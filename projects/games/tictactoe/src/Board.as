@@ -4,10 +4,10 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import com.whirled.game.GameControl;
-import com.whirled.game.PropertyChangedEvent;
-import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.game.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 /**
  * Sprite class that is just the 3x3 tic tac toe board.

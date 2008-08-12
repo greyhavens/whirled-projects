@@ -16,8 +16,8 @@ import com.threerings.util.Log;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.GameControl;
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.game.SizeChangedEvent;
 import com.whirled.game.StateChangedEvent;
 
