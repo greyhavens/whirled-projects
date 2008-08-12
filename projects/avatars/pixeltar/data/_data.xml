@@ -9,7 +9,7 @@
 
 	<data name="RightFacing" type="Boolean" value="true" info="Do the sprites in my sheet face to the right?" />
 
-	<data name="Speed" type="Number" value="500" min="50" max="1500" info="How fast should I walk?" />
+	<data name="Speed" type="Number" value="800" min="50" max="2000" info="How fast should I walk?" />
 
 	<file name="Sheet" type="Image" value="sheet.png" info="My sprite sheet. The top left sprite starts is frame '1', next to the right is '2'..." />
 	<file name="Tracks" type="XML" value="tracks.xml" info="My animation data file. Tracks refer to frames on the sheet to set up animations." />
