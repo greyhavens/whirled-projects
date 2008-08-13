@@ -438,6 +438,26 @@ public class GameMode extends TransitionMode
         }
 
         switch (keyCode) {
+        case KeyboardCodes.Z:
+            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
+            break;
+
+        case KeyboardCodes.X:
+            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COURIER);
+            break;
+
+        case KeyboardCodes.C:
+            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_SAPPER);
+            break;
+
+        case KeyboardCodes.V:
+            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_HEAVY);
+            break;
+
+        case KeyboardCodes.B:
+            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
+            break;
+
         case KeyboardCodes.NUMBER_4:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
@@ -863,6 +883,20 @@ public class GameMode extends TransitionMode
         }
     }
 
+    public function localPlayerPurchasedCreature (unitType :int) :void
+    {
+        if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
+            return;
+        }
+
+        this.buildCreature(GameContext.localPlayerIndex, unitType);
+
+        // when the sun is eclipsed, it's buy-one-get-one-free time!
+        if (GameContext.diurnalCycle.isEclipse) {
+            this.buildCreature(GameContext.localPlayerIndex, unitType, true);
+        }
+    }
+
     public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean = false) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
@@ -877,7 +911,9 @@ public class GameMode extends TransitionMode
 
         _messageMgr.sendMessage(new CreateUnitMessage(playerIndex, unitType));
 
-        GameContext.playerStats.creaturesCreated[unitType] += 1;
+        if (playerIndex == GameContext.localPlayerIndex) {
+            GameContext.playerStats.creaturesCreated[unitType] += 1;
+        }
     }
 
     public function castSpell (playerIndex :int, spellType :int) :void
