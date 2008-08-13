@@ -321,7 +321,7 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <!-- 2v1 settings -->
-        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
+        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
             <MapSettings backgroundName="Level1">
                 <BaseLocation x="622" y="115"/>
                 <BaseLocation x="622" y="295"/>
@@ -330,7 +330,7 @@ Lasts for 30 seconds."
             </MapSettings>
         </MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="2">
+        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
             <MapSettings backgroundName="Level3">
                 <BaseLocation x="85" y="125"/>
                 <BaseLocation x="85" y="305"/>
@@ -359,7 +359,7 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <!-- 2v1v1 settings -->
-        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.5">
+        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
             <MapSettings backgroundName="Level1">
                 <BaseLocation x="632" y="155"/>
                 <BaseLocation x="632" y="255"/>
@@ -369,7 +369,7 @@ Lasts for 30 seconds."
             </MapSettings>
         </MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.5">
+        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
             <MapSettings backgroundName="Level3">
                 <BaseLocation x="90" y="155"/>
                 <BaseLocation x="90" y="255"/>
@@ -380,7 +380,7 @@ Lasts for 30 seconds."
         </MultiplayerSettings>
 
         <!-- 3v1 settings -->
-        <MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="3">
+        <MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="2.8">
             <MapSettings backgroundName="Level3">
                 <BaseLocation x="642" y="185"/>
                 <BaseLocation x="590" y="115"/>
