@@ -42,7 +42,8 @@ public class LevelOutroMode extends AppMode
 
         if (_success) {
             // if the player won, show their score
-            var scoreMessage :String = "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
+            var scoreMessage :String = "Completion days: " + LevelScoreInfo.completionDays + "\n";
+            scoreMessage += "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
             if (LevelScoreInfo.completionBonus > 0) {
                 scoreMessage += "Level bonus: " + LevelScoreInfo.completionBonus + "\n";
             }
@@ -125,8 +126,6 @@ public class LevelOutroMode extends AppMode
         var awardedScore :int = (_success ? LevelScoreInfo.totalScore : LevelScoreInfo.resourcesScore);
 
         if (AppContext.gameCtrl.isConnected()) {
-            // don't show the rematch button in single-player games
-            AppContext.gameCtrl.local.setShowButtons(false, true);
             AppContext.gameCtrl.game.endGameWithScore(awardedScore);
 
         } else {

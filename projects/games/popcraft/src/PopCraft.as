@@ -78,7 +78,7 @@ public class PopCraft extends Sprite
             this.handleSizeChanged();
 
             // and don't show the "rematch" button - we have a UI for it in-game
-            AppContext.gameCtrl.local.setShowButtons(false, true);
+            AppContext.gameCtrl.local.setShowReplay(false);
         }
 
         // LoadingMode will pop itself from the stack when loading is complete
