@@ -112,10 +112,10 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         _movie.removeChildAt(index);
         _movie.addChildAt(workshop, index);
         _workshop = workshop;
-        _needsLocationUpdate = true;
 
-        // flip the movie if we're on the left side of the board
-        _workshop.scaleX = (_unit.x < Constants.BATTLE_WIDTH * 0.5 ? -1 : 1);
+        this.updateViewFlip();
+
+        _needsLocationUpdate = true;
     }
 
     protected function recolorWorkshop (workshop :MovieClip) :void
@@ -173,16 +173,20 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         return _clickableSprite;
     }
 
+    protected function updateViewFlip () :void
+    {
+        // flip the movie if we're on the left side of the board
+        _workshop.scaleX = (_unit.x < GameContext.battlefieldWidth * 0.5 ? -1 : 1);
+    }
+
     override protected function update (dt :Number) :void
     {
         if (_needsLocationUpdate) {
             this.updateLoc(_unit.x, _unit.y);
+            this.updateViewFlip();
 
             _clickableSprite.x = this.x;
             _clickableSprite.y = this.y;
-
-            // flip the movie if we're on the left side of the board
-            _workshop.scaleX = (_unit.x < Constants.BATTLE_WIDTH * 0.5 ? -1 : 1);
 
             _needsLocationUpdate = false;
         }
