@@ -14,7 +14,6 @@ import flash.utils.ByteArray;
 import com.threerings.util.Log;
 
 import com.whirled.ControlEvent;
-import com.whirled.DataPack;
 import com.whirled.FurniControl;
 
 import com.threerings.graffiti.model.Model;
@@ -37,12 +36,6 @@ public class Graffiti extends Sprite
         if (!_control.isConnected()) {
             displayPreviewImage();
             return;
-        }
-
-        var data :ByteArray = _control.getDefaultDataPack();
-        if (data != null) {
-            _allCanEdit = (new DataPack(data)).getBoolean("all_clear");
-            log.debug("Setting _allCanEdit [" + _allCanEdit + "]");
         }
 
         _throttle = new Throttle(_control);
@@ -225,7 +218,10 @@ public class Graffiti extends Sprite
     protected static const CANVAS_LOCK :String = "canvasLock";
 
     protected var _control :FurniControl;
-    protected var _allCanEdit :Boolean = false;
+    /** Hardcoded to true for now for a special request from the Artists.  This needs to be 
+     * configured in the room editor thingy, but I don't have time to work that up at the
+     * moment. */
+    protected var _allCanEdit :Boolean = true;
     protected var _manager :Manager;
     protected var _model :Model;
     protected var _throttle :Throttle;
