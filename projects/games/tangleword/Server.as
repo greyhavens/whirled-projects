@@ -132,6 +132,10 @@ public class Server
 
     protected function handleReady (playerId :int) :void
     {
+        if (_unreadyPlayers == null) {
+            return;
+        }
+
         var i :int = _unreadyPlayers.indexOf(playerId);
 
         if (i != -1) {
@@ -173,7 +177,11 @@ public class Server
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == SUBMIT) {
-            var points :Array = _model.validate(event.value as String);
+            try {
+                var points :Array = _model.validate(event.value as String);
+            } catch (error :TangleWordError) {
+                return;
+            }
             var success :Function = function (word :String, isvalid :Boolean) :void {
                 handleWordSubmit(event.senderId, word, points, isvalid);
             }
