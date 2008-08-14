@@ -1,0 +1,24 @@
+<!-- build configuration -->
+<project name="EasyImagePet" default="compile" basedir=".">
+
+  <!-- defines our project name and type -->
+  <property name="app.name" value="EasyImagePet"/>
+  <property name="app.type" value="pet"/>
+  <property name="app.data-dir" value="data"/>
+
+  <!-- if you wish to put your source in a subdirectory, uncomment this line -->
+  <!--<property name="app.source-dir" value="src"/>-->
+
+  <!-- if you wish to put your source in a package, uncomment this line -->
+  <!--<property name="app.package-dir" value="com.foo.bar"/>-->
+
+  <!-- if you need to include extra source files, uncomment and edit this line -->
+  <!--<property name="app.source-extras" value="../../../libraries/whirled/contrib/src/as"/>-->
+
+  <!-- if you need to compile with extra .SWC files, uncomment and edit this line -->
+  <!--<property name="app.lib-extras" value="../../../lib/fl-components.swc,../../../lib/tweener.swc"/>-->
+
+  <!-- include the standard build script -->
+  <import file="../etc/project-include.xml"/>
+
+</project>

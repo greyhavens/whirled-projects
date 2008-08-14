@@ -1,0 +1,11 @@
+<datapack>
+  <data name="bounciness" type="Number" value=".2" min="0" max="1"
+        info="Determines how high the image should bounce during walking."/>
+  <data name="bounceFrequency" type="Number" value="400" min="200" max="1000"
+        info="The frequency of the bouncing, in milliseconds."/>
+  <data name="imageFacesRight" type="Boolean" value="false"
+        info="Indicates that the image defaultly faces right."/>
+  <file name="image" type="DisplayObject" value="octopet.png" maxWidth="600" maxHeight="450"
+        info="The image that makes up this pet."/>
+  <file name="_CONTENT" type="Blob" value="EasyImagePet.swf"/>
+</datapack>
