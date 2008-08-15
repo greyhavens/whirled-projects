@@ -55,7 +55,7 @@ public class Graffiti extends Sprite
         (_managerBtn as Object).lockbutton.addEventListener(MouseEvent.CLICK, toggleLock);
         _lockBtn = new ToggleButton((_managerBtn as Object).lockbutton, null);
         _lockBtn.selected = _control.isConnected() && 
-            _control.lookupMemory(CANVAS_LOCK, false) as Boolean;
+            _control.getMemory(CANVAS_LOCK, false) as Boolean;
 
         addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
@@ -72,7 +72,7 @@ public class Graffiti extends Sprite
 
     protected function displayEditPopup (event :MouseEvent) :void
     {
-        if (_control.isConnected() && _control.lookupMemory(CANVAS_LOCK, false) as Boolean) {
+        if (_control.isConnected() && _control.getMemory(CANVAS_LOCK, false) as Boolean) {
             return;
         }
 
@@ -120,7 +120,7 @@ public class Graffiti extends Sprite
                 "Clear Canvas?",
                 new ClearCanvasDialog(
                     function () :void {
-                        _control.updateMemory(Manager.MEMORY_MODEL, null);
+                        _control.setMemory(Manager.MEMORY_MODEL, null);
                         _control.clearPopup();
                     },
                     function () :void {
@@ -137,14 +137,14 @@ public class Graffiti extends Sprite
     {
         _lockBtn.selected = !_lockBtn.selected;
         if (canEdit()) {
-            _control.updateMemory(CANVAS_LOCK, _lockBtn.selected);
+            _control.setMemory(CANVAS_LOCK, _lockBtn.selected);
         }
     }
 
     protected function enterFrame (event :Event) :void
     {
         if (_mouseOver) {
-            if (_control.isConnected() && (_control.lookupMemory(CANVAS_LOCK, false) as Boolean)) {
+            if (_control.isConnected() && (_control.getMemory(CANVAS_LOCK, false) as Boolean)) {
                 animateUp(_editBtn);
             } else {
                 animateDown(_editBtn);

@@ -38,7 +38,7 @@ public class OnlineModel extends Model
         _throttle.control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
 
         var bytes :ByteArray = 
-            _throttle.control.lookupMemory(Manager.MEMORY_MODEL, null) as ByteArray;
+            _throttle.control.getMemory(Manager.MEMORY_MODEL, null) as ByteArray;
         if (bytes != null && bytes.length != 0) {
             deserialize(bytes);
         }

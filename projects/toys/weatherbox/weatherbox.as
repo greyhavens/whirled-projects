@@ -84,6 +84,10 @@ public class WeatherBox extends Sprite
         _windLabel = addTextField(60, 45);
         _statusLabel = addTextField(0, 75);
 
+        trace("StatusLabel.width: " + _statusLabel.width);
+        _statusLabel.scaleX = .5;
+        trace("StatusLabel.width: " + _statusLabel.width);
+
         // if we're in-whirled, only show the config button to room editors
         var showConfigButton :Boolean = !_control.isConnected() || _control.canEditRoom();
         if (showConfigButton) {
@@ -196,7 +200,7 @@ public class WeatherBox extends Sprite
     protected function getFromConfigs (key :String, defval :String) :String
     {
         if (_control.isConnected()) {
-            var value :String = _control.lookupMemory(key) as String;
+            var value :String = _control.getMemory(key) as String;
             return (value != null) ? value : defval;
 
         } else {
@@ -210,7 +214,7 @@ public class WeatherBox extends Sprite
     protected function setConfigs (key :String, value :String) :void
     {
         if (_control.isConnected()) {
-            _control.updateMemory(key, value);
+            _control.setMemory(key, value);
 
         } else {
             _config.setValue(key, value);
@@ -327,8 +331,8 @@ public class WeatherBox extends Sprite
             var newURL :String = event.value as String;
             if (_stationURL != newURL) {
                 _stationURL = newURL;
-                _state = _control.lookupMemory(STATE_KEY, null) as String;
-                _stationId = _control.lookupMemory(STATION_ID_KEY, null) as String;
+                _state = _control.getMemory(STATE_KEY, null) as String;
+                _stationId = _control.getMemory(STATION_ID_KEY, null) as String;
                 loadWeather(_stationURL);
             }
         }

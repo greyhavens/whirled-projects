@@ -167,7 +167,7 @@ public class Fifteen extends Sprite
 
         // finally, let's set our tile provider
         if (_ctrl.isConnected()) {
-            _skinData = _ctrl.lookupMemory("skin") as Array;
+            _skinData = _ctrl.getMemory("skin") as Array;
         }
         updateTileProvider();
     }
@@ -339,7 +339,7 @@ public class Fifteen extends Sprite
         setLabel(""); // clear any old error?
         updateTileProvider();
         if (_ctrl.isConnected() && _ctrl.canEditRoom()) {
-            _ctrl.updateMemory("skin", _skinData);
+            _ctrl.setMemory("skin", _skinData);
         }
     }
 

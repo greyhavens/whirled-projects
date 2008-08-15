@@ -40,7 +40,7 @@ public class Manager
 
         // the manager maintains an offline model that is what gets serialized into the item memory
         _model = new OfflineModel();
-        var bytes :ByteArray = _throttle.control.lookupMemory(MEMORY_MODEL, null) as ByteArray;
+        var bytes :ByteArray = _throttle.control.getMemory(MEMORY_MODEL, null) as ByteArray;
         if (bytes != null) {
             _model.deserialize(bytes);
         }
@@ -127,7 +127,7 @@ public class Manager
             return;
         }
 
-        _throttle.control.updateMemory(MEMORY_MODEL, _model.serialize());
+        _throttle.control.setMemory(MEMORY_MODEL, _model.serialize());
         _memoryDirty = false;
     }
 
