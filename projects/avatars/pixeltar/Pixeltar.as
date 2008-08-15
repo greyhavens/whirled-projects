@@ -10,6 +10,8 @@ import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 
+import flash.events.Event;
+
 import flash.geom.Rectangle;
 import flash.geom.Point;
 
@@ -31,6 +33,8 @@ public class Pixeltar extends Sprite
 
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
         _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleState);
+
+        root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         var ba :ByteArray = _ctrl.getDefaultDataPack();
         if (ba != null) {
@@ -217,6 +221,16 @@ public class Pixeltar extends Sprite
     protected function handleState (event :ControlEvent) :void
     {
         playLow(_states[event.name]);
+    }
+
+    protected function handleUnload (event :Event) :void
+    {
+        if (_low != null) {
+            _low.stop();
+        }
+        if (_high != null) {
+            _high.stop();
+        }
     }
 
     // Maps strings to Tracks
