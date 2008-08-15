@@ -16,21 +16,21 @@ import popcraft.ui.DashboardView;
 
 public class GameContext
 {
-    public static const GAME_TYPE_MULTIPLAYER :int = 0;
-    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
+    public static const MATCH_TYPE_MULTIPLAYER :int = 0;
+    public static const MATCH_TYPE_SINGLEPLAYER :int = 1;
 
     /* Frequently-used values that are cached here for performance reasons */
     public static var mapScaleXInv :Number;
     public static var mapScaleYInv :Number;
     public static var scaleSprites :Boolean;
 
-    public static var gameType :int;
+    public static var matchType :int;
     public static var gameData :GameData;
     public static var spLevel :LevelData;
     public static var mpSettings :MultiplayerSettingsData;
     public static var playerStats :PlayerStats;
-    public static function get isSinglePlayer () :Boolean { return gameType == GAME_TYPE_SINGLEPLAYER; }
-    public static function get isMultiplayer () :Boolean { return gameType == GAME_TYPE_MULTIPLAYER; }
+    public static function get isSinglePlayer () :Boolean { return matchType == MATCH_TYPE_SINGLEPLAYER; }
+    public static function get isMultiplayer () :Boolean { return matchType == MATCH_TYPE_MULTIPLAYER; }
 
     public static var gameMode :GameMode;
     public static var netObjects :NetObjectDB;

@@ -67,7 +67,6 @@ Students are advised to exercise caution around a Street-Walker's long, razor-sh
                     <Damage type="piercing"     scale="0.3"/>
                     <Damage type="explosion"    scale="1"/>
                     <Damage type="colossus"     scale="0.7"/>
-                    <Damage type="base"         scale="0.8"/>
                 </Armor>
             </Unit>
 
@@ -101,7 +100,6 @@ Moreover, Handy Men stationed outside a home are ideal for warding off the shift
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
                     <Damage type="colossus"     scale="1"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
 
@@ -133,7 +131,6 @@ A combination of noxious gases inside the Delivery Boy’s belly gives this poor
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
                     <Damage type="colossus"     scale="1"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
 
@@ -165,7 +162,6 @@ Students are advised that the Weardd Academy for Responsible Reanimation will no
                     <Damage type="piercing"     scale="0.07"/>
                     <Damage type="explosion"    scale="0.1"/>
                     <Damage type="colossus"     scale="0.1"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
 
@@ -187,7 +183,6 @@ Students are advised that the Weardd Academy for Responsible Reanimation will no
                     <Damage type="piercing"     scale="0.07"/>
                     <Damage type="explosion"    scale="0.1"/>
                     <Damage type="colossus"     scale="0.1"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
 
@@ -221,23 +216,21 @@ Be warned: the Ladyfingers’ delicate frame and small size render her quite fra
                     <Damage type="piercing"     scale="1"/>
                     <Damage type="explosion"    scale="1"/>
                     <Damage type="colossus"     scale="1"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
 
             <Unit
-                type="base"
+                type="workshop"
                 displayName="" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
                 maxHealth="150"
                 collisionRadius="20">
                 <ResourceCosts/>
-                <Weapon damageType="base" damageMin="20" damageMax="20" cooldown="0" maxAttackDistance="1000"/>
+                <Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
                 <Armor>
                     <Damage type="crushing"     scale="0.05"/>
                     <Damage type="piercing"     scale="0.1"/>
                     <Damage type="explosion"    scale="0.1"/>
                     <Damage type="colossus"     scale="0.025"/>
-                    <Damage type="base"         scale="1"/>
                 </Armor>
             </Unit>
         </Units>

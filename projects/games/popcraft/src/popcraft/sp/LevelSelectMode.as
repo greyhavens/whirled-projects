@@ -14,7 +14,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.*;
-import popcraft.battle.view.PlayerBaseUnitView;
+import popcraft.battle.view.WorkshopView;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 
@@ -32,7 +32,7 @@ public class LevelSelectMode extends DemoGameMode
 
         // hide the player's workshop to make it look like streetwalkers are
         // appearing in front of the school
-        PlayerBaseUnitView.getForPlayer(0).visible = false;
+        WorkshopView.getForPlayer(0).visible = false;
 
         // hide the player status views
         var statusViews :Array = PlayerStatusView.getAll();

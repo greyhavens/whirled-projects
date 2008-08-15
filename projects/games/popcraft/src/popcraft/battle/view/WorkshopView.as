@@ -20,19 +20,19 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.util.*;
 
-public class PlayerBaseUnitView extends BattlefieldSprite
+public class WorkshopView extends BattlefieldSprite
 {
     public static function getAll () :Array
     {
         return MainLoop.instance.topMode.getObjectsInGroup(GROUP_NAME);
     }
 
-    public static function getForPlayer (playerIndex :int) :PlayerBaseUnitView
+    public static function getForPlayer (playerIndex :int) :WorkshopView
     {
-        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerIndex) as PlayerBaseUnitView;
+        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerIndex) as WorkshopView;
     }
 
-    public function PlayerBaseUnitView (unit :PlayerBaseUnit)
+    public function WorkshopView (unit :WorkshopUnit)
     {
         _unit = unit;
 
@@ -199,7 +199,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
 
                 // create the rubble sprite
                 GameContext.gameMode.addObject(
-                    new DeadPlayerBaseUnitView(_unit),
+                    new DeadWorkshopView(_unit),
                     GameContext.battleBoardView.unitViewParent);
 
             } else {
@@ -265,7 +265,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
         }
     }
 
-    public function get baseUnit () :PlayerBaseUnit
+    public function get baseUnit () :WorkshopUnit
     {
         return _unit;
     }
@@ -277,7 +277,7 @@ public class PlayerBaseUnitView extends BattlefieldSprite
     protected var _targetBadge :MovieClip;
     protected var _targetBadgeIndex :int;
     protected var _targetBadgeVisible :Boolean;
-    protected var _unit :PlayerBaseUnit;
+    protected var _unit :WorkshopUnit;
     protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;
     protected var _lastHealth :Number;

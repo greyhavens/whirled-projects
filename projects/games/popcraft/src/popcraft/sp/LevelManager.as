@@ -231,7 +231,7 @@ public class LevelManager
 
     protected function startGame () :void
     {
-        GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
+        GameContext.matchType = GameContext.MATCH_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
         var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
         GameContext.gameData = (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);

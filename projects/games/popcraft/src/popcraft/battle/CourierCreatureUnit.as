@@ -192,7 +192,7 @@ class CourierAI extends AITaskTree
             //log.info("retrieved spell");
             _unit.pickupSpell(data as SpellDropObject);
             // let's try to go home and deliver it
-            var base :PlayerBaseUnit = _unit.owningPlayerInfo.base;
+            var base :WorkshopUnit = _unit.owningPlayerInfo.base;
             if (null != base) {
                 this.addSubtask(new CourierMoveTask(_unit, base.unitLoc));
             }
@@ -373,7 +373,7 @@ class WanderTask extends AITaskTree
             }
         }
 
-        var wanderBase :PlayerBaseUnit = _wanderBaseRef.object as PlayerBaseUnit;
+        var wanderBase :WorkshopUnit = _wanderBaseRef.object as WorkshopUnit;
 
         // pick a location to wander to outside the enemy player's base
         var wanderLoc :Vector2 = _unit.spawnLoc.subtract(wanderBase.unitLoc);

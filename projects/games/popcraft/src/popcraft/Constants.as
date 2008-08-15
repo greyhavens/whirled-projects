@@ -72,9 +72,8 @@ public class Constants
     public static const DAMAGE_TYPE_PIERCING :int = 1;
     public static const DAMAGE_TYPE_EXPLOSION :int = 2;
     public static const DAMAGE_TYPE_COLOSSUS :int = 3;
-    public static const DAMAGE_TYPE_BASE :int = 4; // bases damage units that attack them
 
-    public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "colossus", "base" ];
+    public static const DAMAGE_TYPE_NAMES :Array = [ "crushing", "piercing", "explosion", "colossus" ];
 
     /* Resource types */
     public static const RESOURCE_WHITE :int = 0;
@@ -107,9 +106,9 @@ public class Constants
     public static const UNIT_TYPE__PLAYER_CREATURE_LIMIT :int = 5; // creatures that can be created by players
     public static const UNIT_TYPE_BOSS :int = UNIT_TYPE__PLAYER_CREATURE_LIMIT;
     public static const UNIT_TYPE__CREATURE_LIMIT :int = UNIT_TYPE_BOSS + 1;   // creatures including those that are only created by the computer
-    public static const UNIT_TYPE_BASE :int = UNIT_TYPE__CREATURE_LIMIT;
+    public static const UNIT_TYPE_WORKSHOP :int = UNIT_TYPE__CREATURE_LIMIT;
 
-    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "boss", "base" ];
+    public static const UNIT_NAMES :Array = [ "grunt", "heavy", "sapper", "courier", "colossus", "boss", "workshop" ];
     public static const PLAYER_CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__PLAYER_CREATURE_LIMIT);
     public static const CREATURE_UNIT_NAMES :Array = UNIT_NAMES.slice(0, UNIT_TYPE__CREATURE_LIMIT);
 

@@ -64,10 +64,10 @@ public class PopCraft extends Sprite
         UserCookieManager.addDataSource(AppContext.globalPlayerStats);
 
         if (multiplayer) {
-            GameContext.gameType = GameContext.GAME_TYPE_MULTIPLAYER;
+            GameContext.matchType = GameContext.MATCH_TYPE_MULTIPLAYER;
             AppContext.mainLoop.pushMode(new GameLobbyMode());
         } else {
-            GameContext.gameType = GameContext.GAME_TYPE_SINGLEPLAYER;
+            GameContext.matchType = GameContext.MATCH_TYPE_SINGLEPLAYER;
             AppContext.mainLoop.pushMode(new LevelSelectMode());
         }
 

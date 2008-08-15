@@ -281,7 +281,7 @@ public class GameMode extends TransitionMode
 
     protected function shutdownPlayers () :void
     {
-        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
+        if (GameContext.matchType == GameContext.MATCH_TYPE_MULTIPLAYER) {
             AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
         }
     }
@@ -315,7 +315,7 @@ public class GameMode extends TransitionMode
         GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
-        if (GameContext.gameType == GameContext.GAME_TYPE_MULTIPLAYER) {
+        if (GameContext.matchType == GameContext.MATCH_TYPE_MULTIPLAYER) {
             _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
         } else {
             _messageMgr = new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
@@ -405,7 +405,7 @@ public class GameMode extends TransitionMode
             var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
             var baseLoc :Vector2 = playerInfo.baseLoc;
 
-            var base :PlayerBaseUnit = GameContext.unitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
+            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
             base.isInvincible = invincible;
             base.x = baseLoc.x;
             base.y = baseLoc.y;
@@ -508,7 +508,7 @@ public class GameMode extends TransitionMode
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 // destroy the targeted enemy's base
                 var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
-                var enemyBase :PlayerBaseUnit = enemyPlayerInfo.base;
+                var enemyBase :WorkshopUnit = enemyPlayerInfo.base;
                 if (null != enemyBase) {
                     enemyBase.health = 0;
                 }
@@ -759,7 +759,7 @@ public class GameMode extends TransitionMode
             playerIndex = createUnitMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 GameContext.unitFactory.createCreature(createUnitMsg.unitType, playerIndex);
-                var baseView :PlayerBaseUnitView = PlayerBaseUnitView.getForPlayer(playerIndex);
+                var baseView :WorkshopView = WorkshopView.getForPlayer(playerIndex);
                 if (null != baseView) {
                     baseView.unitCreated();
                 }
@@ -805,8 +805,8 @@ public class GameMode extends TransitionMode
     protected function updateTargetEnemyBadgeLocation (targetEnemyId :int) :void
     {
         // move the "target enemy" badge to the correct base
-        var baseViews :Array = PlayerBaseUnitView.getAll();
-        for each (var baseView :PlayerBaseUnitView in baseViews) {
+        var baseViews :Array = WorkshopView.getAll();
+        for each (var baseView :WorkshopView in baseViews) {
             baseView.targetEnemyBadgeVisible = (baseView.baseUnit.owningPlayerIndex == targetEnemyId);
         }
     }
@@ -816,8 +816,8 @@ public class GameMode extends TransitionMode
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var baseViews :Array = PlayerBaseUnitView.getAll();
-        for each (var baseView :PlayerBaseUnitView in baseViews) {
+        var baseViews :Array = WorkshopView.getAll();
+        for each (var baseView :WorkshopView in baseViews) {
             var owningPlayerIndex :int = baseView.baseUnit.owningPlayerIndex;
             var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerIndex];
             baseView.targetEnemyBadgeVisible = (owningPlayerIndex == localPlayerInfo.targetedEnemyId);
@@ -829,12 +829,12 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function createBaseViewClickListener (baseView :PlayerBaseUnitView) :Function
+    protected function createBaseViewClickListener (baseView :WorkshopView) :Function
     {
         return function (...ignored) :void { enemyBaseViewClicked(baseView); }
     }
 
-    protected function enemyBaseViewClicked (enemyBaseView :PlayerBaseUnitView) :void
+    protected function enemyBaseViewClicked (enemyBaseView :WorkshopView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;

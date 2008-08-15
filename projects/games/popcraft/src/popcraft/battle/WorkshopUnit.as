@@ -4,13 +4,13 @@ import com.threerings.flash.Vector2;
 
 import popcraft.*;
 
-public class PlayerBaseUnit extends Unit
+public class WorkshopUnit extends Unit
 {
     public static const GROUP_NAME :String = "PlayerBaseUnit";
 
-    public function PlayerBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
+    public function WorkshopUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
     {
-        super(owningPlayerIndex, Constants.UNIT_TYPE_BASE);
+        super(owningPlayerIndex, Constants.UNIT_TYPE_WORKSHOP);
 
         if (maxHealthOverride > 0) {
             _maxHealth = maxHealthOverride;

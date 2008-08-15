@@ -8,11 +8,11 @@ import flash.display.MovieClip;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.battle.PlayerBaseUnit;
+import popcraft.battle.WorkshopUnit;
 
-public class DeadPlayerBaseUnitView extends BattlefieldSprite
+public class DeadWorkshopView extends BattlefieldSprite
 {
-    public function DeadPlayerBaseUnitView (unit :PlayerBaseUnit)
+    public function DeadWorkshopView (unit :WorkshopUnit)
     {
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
 

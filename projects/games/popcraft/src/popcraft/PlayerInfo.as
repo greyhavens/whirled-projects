@@ -7,7 +7,7 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
-import popcraft.battle.PlayerBaseUnit;
+import popcraft.battle.WorkshopUnit;
 
 /**
  * Encapsulates public information about a player in the game.
@@ -106,12 +106,12 @@ public class PlayerInfo extends EventDispatcher
         return _baseRef;
     }
 
-    public function get base () :PlayerBaseUnit
+    public function get base () :WorkshopUnit
     {
-        return _baseRef.object as PlayerBaseUnit;
+        return _baseRef.object as WorkshopUnit;
     }
 
-    public function set base (val :PlayerBaseUnit) :void
+    public function set base (val :WorkshopUnit) :void
     {
         _baseRef = val.ref;
     }
@@ -131,19 +131,19 @@ public class PlayerInfo extends EventDispatcher
 
     public function get health () :Number
     {
-        var base :PlayerBaseUnit = this.base;
+        var base :WorkshopUnit = this.base;
         return (null != base ? base.health : 0);
     }
 
     public function get maxHealth () :Number
     {
-        var base :PlayerBaseUnit = this.base;
+        var base :WorkshopUnit = this.base;
         return (null != base ? base.maxHealth : 0);
     }
 
     public function get healthPercent () :Number
     {
-        var base :PlayerBaseUnit = this.base;
+        var base :WorkshopUnit = this.base;
         return (null != base ? base.health / base.maxHealth : 0);
     }
 

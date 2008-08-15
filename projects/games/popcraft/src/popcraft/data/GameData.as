@@ -159,7 +159,7 @@ public class GameData
 
         for each (var srcUnit :UnitData in units) {
 
-            if (srcUnit.name == "base") {
+            if (srcUnit.name == "workshop") {
                 continue;
             }
 
