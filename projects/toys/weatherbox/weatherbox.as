@@ -84,10 +84,6 @@ public class WeatherBox extends Sprite
         _windLabel = addTextField(60, 45);
         _statusLabel = addTextField(0, 75);
 
-        trace("StatusLabel.width: " + _statusLabel.width);
-        _statusLabel.scaleX = .5;
-        trace("StatusLabel.width: " + _statusLabel.width);
-
         // if we're in-whirled, only show the config button to room editors
         var showConfigButton :Boolean = !_control.isConnected() || _control.canEditRoom();
         if (showConfigButton) {
