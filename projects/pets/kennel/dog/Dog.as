@@ -42,7 +42,7 @@ public class Dog extends Sprite
                     _ctrl.sendChatMessage("*munch munch*");
 
                     // Add the food to our energy
-                    _ctrl.updateMemory("energy", (_ctrl.lookupMemory("energy") as Number) + food);
+                    _ctrl.setMemory("energy", (_ctrl.getMemory("energy") as Number) + food);
 
                     // Walk over to it
                     var pos :Array = _ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, id) as Array;
@@ -82,7 +82,7 @@ public class Dog extends Sprite
         var targetId :String = event.name;
 
         if (targetId == _ctrl.getMyEntityId()) {
-            _ctrl.updateMemory("energy", (_ctrl.lookupMemory("energy") as Number) - 10);
+            _ctrl.setMemory("energy", (_ctrl.getMemory("energy") as Number) - 10);
         } else {
             _ctrl.sendChatMessage("You're my best friend, " + _ctrl.getEntityProperty(EntityControl.PROP_NAME, targetId));
             

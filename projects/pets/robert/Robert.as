@@ -34,7 +34,7 @@ public class Robert extends Sprite
         _ctrl.setTickInterval(1000);
 
         // start out in the appropriate state
-        updateState(_ctrl.lookupMemory("state", SMALL));
+        updateState(_ctrl.getMemory("state", SMALL));
     }
 
     protected function updateState (value :Object) :void
@@ -65,7 +65,7 @@ public class Robert extends Sprite
     protected function handleTick (event :Object = null) :void
     {
         _state = (_state + 1) % 3;
-        _ctrl.updateMemory("state", _state);
+        _ctrl.setMemory("state", _state);
     }
 
     protected function actionTriggered (event :ControlEvent) :void

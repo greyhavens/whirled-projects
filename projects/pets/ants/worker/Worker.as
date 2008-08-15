@@ -79,7 +79,7 @@ public class Worker extends Sprite
                 _ctrl.setPixelLocation(foodPos[0], foodPos[1], foodPos[2], 0);
 
                 // Take some food from the food source and put it in memory
-                _ctrl.updateMemory("foodHeld", _ctrl.getEntityProperty("ants:takeFood", foodId));
+                _ctrl.setMemory("foodHeld", _ctrl.getEntityProperty("ants:takeFood", foodId));
             } else {
                 _ctrl.sendChatMessage("No food found");
             }
@@ -97,13 +97,13 @@ public class Worker extends Sprite
                 _ctrl.setPixelLocation(queenPos[0], queenPos[1], queenPos[2], 0);
 
                 // Form the key based on the amount of food currently being carried
-                var key :String = "ants:giveFood_" + _ctrl.lookupMemory("foodHeld");
+                var key :String = "ants:giveFood_" + _ctrl.getMemory("foodHeld");
 
                 // Send this information to the queen
                 _ctrl.getEntityProperty(key, queenId);
 
                 // Drop the food
-                _ctrl.updateMemory("foodHeld", 0);
+                _ctrl.setMemory("foodHeld", 0);
             } else {
                 _ctrl.sendChatMessage("I have food, but no queen!");
             }
