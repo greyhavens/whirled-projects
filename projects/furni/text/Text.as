@@ -262,7 +262,7 @@ public class Text extends Sprite
 
     protected function getMem (mem :Array) :Object
     {
-        var result :Object = _ctrl.lookupMemory(mem[0], mem[1]);
+        var result :Object = _ctrl.getMemory(mem[0], mem[1]);
         if (Boolean(mem[2]) && (result is ByteArray)) {
             var ba :ByteArray = result as ByteArray;
             ba.uncompress();
@@ -291,7 +291,7 @@ public class Text extends Sprite
                 newValue = ba;
             }
         }
-        _ctrl.updateMemory(mem[0], newValue);
+        _ctrl.setMemory(mem[0], newValue);
     }
 
     protected var _ctrl :FurniControl;

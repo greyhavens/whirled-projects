@@ -49,7 +49,7 @@ public class Embedder extends Sprite
 //            graphics.endFill();
 //        }
 
-        var mem :String = _ctrl.lookupMemory(MEM_KEY) as String;
+        var mem :String = _ctrl.getMemory(MEM_KEY) as String;
         if (mem != null) {
             load(mem);
         } else {
@@ -57,7 +57,7 @@ public class Embedder extends Sprite
             //addChild(createConfigPanel());
 
             // TEMP: convert old key
-            mem = _ctrl.lookupMemory("xml") as String;
+            mem = _ctrl.getMemory("xml") as String;
             var fixed :String = null;
             try {
                 fixed = parseValue(mem);
@@ -65,8 +65,8 @@ public class Embedder extends Sprite
                 addChild(createConfigPanel());
             }
             if (fixed != null) {
-                _ctrl.updateMemory("xml", null);
-                _ctrl.updateMemory(MEM_KEY, fixed);
+                _ctrl.setMemory("xml", null);
+                _ctrl.setMemory(MEM_KEY, fixed);
             }
         }
     }
@@ -190,7 +190,7 @@ public class Embedder extends Sprite
     {
         var panel :Sprite = new Sprite();
 
-        var input :TextField = TextFieldUtil.createField(_ctrl.lookupMemory(MEM_KEY, "") as String,
+        var input :TextField = TextFieldUtil.createField(_ctrl.getMemory(MEM_KEY, "") as String,
             {
                 background: true,
                 backgroundColor: 0xFFFFFF,
@@ -224,7 +224,7 @@ public class Embedder extends Sprite
             if (StringUtil.isBlank(txt)) {
                 txt = null;
             }
-            if (txt == _ctrl.lookupMemory(MEM_KEY)) {
+            if (txt == _ctrl.getMemory(MEM_KEY)) {
                 return; // no change
             }
 
@@ -242,7 +242,7 @@ public class Embedder extends Sprite
             }
 
             // yay! It works!
-            _ctrl.updateMemory(MEM_KEY, url);
+            _ctrl.setMemory(MEM_KEY, url);
             if (embedder.contains(panel)) {
                 embedder.removeChild(panel);
             } else {

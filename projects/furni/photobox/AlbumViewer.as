@@ -124,8 +124,8 @@ public class AlbumViewer extends Sprite
 
     protected function getSourceFromMemory () :void
     {
-        configureSource(_furni.lookupMemory("userId", null) as String,
-            _furni.lookupMemory("setId", null) as String);
+        configureSource(_furni.getMemory("userId", null) as String,
+            _furni.getMemory("setId", null) as String);
     }
 
     protected function configureSource (userId :String, setId :String = null) :void
@@ -135,11 +135,11 @@ public class AlbumViewer extends Sprite
         _nextPage = 1;
 
         if (_furni.isConnected() && _furni.canEditRoom()) {
-            if (userId != _furni.lookupMemory("userId", null)) {
-                _furni.updateMemory("userId", userId);
+            if (userId != _furni.getMemory("userId", null)) {
+                _furni.setMemory("userId", userId);
             }
-            if (setId != _furni.lookupMemory("setId", null)) {
-                _furni.updateMemory("setId", setId);
+            if (setId != _furni.getMemory("setId", null)) {
+                _furni.setMemory("setId", setId);
             }
         }
 

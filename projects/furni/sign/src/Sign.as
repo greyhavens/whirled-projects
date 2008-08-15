@@ -74,8 +74,8 @@ public class Sign extends Sprite
             _sign = null;
 
         } else {
-            var title: String = String(_ctrl.lookupMemory("title", DEF_TITLE));
-            var text: String = String(_ctrl.lookupMemory("text", DEF_TEXT));
+            var title: String = String(_ctrl.getMemory("title", DEF_TITLE));
+            var text: String = String(_ctrl.getMemory("text", DEF_TEXT));
             _sign = createSign(title, text);
             _sign.addEventListener(MouseEvent.CLICK, handleClick);
             trace("Showing popup");
@@ -115,7 +115,7 @@ public class Sign extends Sprite
         var editor :Sprite = new Sprite();
         _editTitle = new TextField();
         _editTitle.type = TextFieldType.INPUT;
-        _editTitle.text = String(_ctrl.lookupMemory("title", "Title"));
+        _editTitle.text = String(_ctrl.getMemory("title", "Title"));
         _editTitle.width = EDITOR_WIDTH;
         _editTitle.height = 20;
         _editTitle.border = true;
@@ -126,7 +126,7 @@ public class Sign extends Sprite
         _editText.type = TextFieldType.INPUT;
         _editText.wordWrap = true;
         _editText.multiline = true;
-        _editText.text = String(_ctrl.lookupMemory("text", "Text"));
+        _editText.text = String(_ctrl.getMemory("text", "Text"));
         _editText.width = EDITOR_WIDTH;
         _editText.height = EDITOR_TEXT_HEIGHT;
         _editText.border = true;
@@ -139,8 +139,8 @@ public class Sign extends Sprite
             "Save", true, uint(0x000000), uint(0xFFFFFF), uint(0x000000), 0);
         editor.addChild(save);
         save.addEventListener(MouseEvent.CLICK, function (event: MouseEvent) :void {
-            _ctrl.updateMemory("title", _editTitle.text);
-            _ctrl.updateMemory("text", _editText.text);
+            _ctrl.setMemory("title", _editTitle.text);
+            _ctrl.setMemory("text", _editText.text);
             _editTitle = null;
             _editText = null;
             _ctrl.clearPopup();
