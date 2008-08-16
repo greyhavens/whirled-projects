@@ -14,6 +14,7 @@ import com.whirled.game.UserChatEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.MessageSubControl;
 import com.whirled.game.CoinsAwardedEvent;
 
 public class Definitions
@@ -63,6 +64,7 @@ public class Definitions
         _funcs.player = createPlayerFuncs();
         _funcs.services = createServicesFuncs();
         _funcs.bags = createBagsFuncs();
+        _funcs.messages = createMessageFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -93,6 +95,11 @@ public class Definitions
     public function getBagsFuncs () :Array
     {
         return _funcs.bags.slice();
+    }
+
+    public function getMessageFuncs () :Array
+    {
+        return _funcs.messages.slice();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -193,6 +200,28 @@ public class Definitions
                  new ObjectParameter("newValue"),
                  new ObjectParameter("testValue")])
         ];
+    }
+
+    protected function createMessageFuncs () :Array
+    {
+        function sendPlayerMessage (playerId :int, name :String, value :Object) :void {
+            _ctrl.net.getPlayer(playerId).sendMessage(name, value);
+        }
+
+        var sendPlayerMessageParams :Array = createMessageParams();
+        sendPlayerMessageParams.unshift(new Parameter("playerId", int));
+
+        return [
+            new FunctionSpec("players", _ctrl.net.players.sendMessage, createMessageParams()),
+            new FunctionSpec("agent", _ctrl.net.agent.sendMessage, createMessageParams()),
+            new FunctionSpec("player", sendPlayerMessage, sendPlayerMessageParams),
+        ];
+    }
+
+    protected function createMessageParams () :Array
+    {
+        return [new Parameter("name", String),
+                new ObjectParameter("value")];
     }
 
     protected function createSeatingFuncs () :Array

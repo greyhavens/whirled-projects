@@ -207,6 +207,12 @@ function parseObject (input :String, pos :int) :Object
                 stack.pop();
                 pos++;
 
+            } else if (isDigit(next)) {
+                var key :String = readInt(input, pos);
+                stack.poke(parseInt(key));
+                stack.push(DICT_SEP);
+                pos += key.length;
+
             } else {
                 var name :String = readId(input, pos);
                 stack.poke(name);
@@ -273,7 +279,7 @@ function parseObject (input :String, pos :int) :Object
             switch (stack.peekState(1)) {
             case DICT_OPEN:
                 var value :Object = stack.peekValue(0);
-                var name2 :String = stack.peekValue(1) as String;
+                var name2 :Object = stack.peekValue(1) as Object;
                 var dict :Object = stack.peekValue(2);
                 dict[name2] = value;
                 stack.pop();
