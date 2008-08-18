@@ -57,13 +57,10 @@ public class ParameterPanel extends Sprite
         }
 
         
-        var buttonGrid :GridPanel = new GridPanel([100, 100], [CELL_HEIGHT]);
+        var buttonGrid :GridPanel = new GridPanel([200], [CELL_HEIGHT]);
 
-        _call = new Button("Local Call", "call");
+        _call = new Button("Call", "call");
         buttonGrid.addCell(0, 0, _call);
-
-        _serverCall = new Button("Server Call", "callonserver");
-        buttonGrid.addCell(1, 0, _serverCall);
 
         _grid.addCell(2, 0, buttonGrid);
 
@@ -80,11 +77,6 @@ public class ParameterPanel extends Sprite
     public function get callButton () :Button
     {
         return _call;
-    }
-
-    public function get serverCallButton () :Button
-    {
-        return _serverCall;
     }
 
     public function getInputs () :Array

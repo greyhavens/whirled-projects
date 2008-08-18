@@ -31,12 +31,25 @@ public class Probe extends Sprite
         var defs :Definitions = new Definitions(_ctrl);
 
         _tabPanel.addTab("test", new Button("Test"), new TestPanel());
-        _tabPanel.addTab("game", new Button("Game"), 
-            new FunctionPanel(_ctrl, defs.getGameFuncs()));
-        _tabPanel.addTab("room", new Button("Room"), 
-            new FunctionPanel(_ctrl, defs.getRoomFuncs()));
-        _tabPanel.addTab("player", new Button("Player"), 
-            new FunctionPanel(_ctrl, defs.getPlayerFuncs()));
+
+        var client :TabPanel = new TabPanel();
+        _tabPanel.addTab("client", new Button("Client"), client);
+
+        client.addTab("game", new Button("Game"), 
+            new FunctionPanel(_ctrl, defs.getGameFuncs(), false));
+        client.addTab("room", new Button("Room"), 
+            new FunctionPanel(_ctrl, defs.getRoomFuncs(), false));
+        client.addTab("player", new Button("Player"), 
+            new FunctionPanel(_ctrl, defs.getPlayerFuncs(), false));
+
+        var server :TabPanel = new TabPanel();
+        _tabPanel.addTab("server", new Button("Server"), server);
+
+        server.addTab("misc", new Button("Misc"),
+            new FunctionPanel(_ctrl, defs.getServerMiscFuncs(), true));
+
+        //server.addTab("room", new Button("Room"),
+        //    new RPCPanel("Room")
 
         defs.addListenerToAll(logEvent);
 

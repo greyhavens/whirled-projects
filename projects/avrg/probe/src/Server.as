@@ -16,6 +16,8 @@ public class Server extends ServerObject
     {
         _ctrl = new AVRServerGameControl(this);
 
+        _defs = new ServerDefinitions(_ctrl);
+
         _ctrl.game.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED,
             handleGameMessage);
@@ -43,7 +45,7 @@ public class Server extends ServerObject
                     }
                 }
 
-                trace("Calling " + fnSpec.name + " with arguments " + 
+                trace("Calling " + fnSpec.name + " (" + evt.value.name + ") with arguments " + 
                       StringUtil.toString(args));
                 try {
                     var value :Object = fnSpec.func.apply(null, args);
@@ -62,6 +64,7 @@ public class Server extends ServerObject
                 }
             }
 
+            trace("Sending message " + BACKEND_CALL_RESULT + " to " + evt.senderId + ", value " + StringUtil.toString(result));
             _ctrl.getPlayer(evt.senderId).sendMessage(BACKEND_CALL_RESULT, result);
         }
     }
@@ -84,7 +87,7 @@ public class Server extends ServerObject
     }
 
     protected var _ctrl :AVRServerGameControl;
-    protected var _defs :Definitions;
+    protected var _defs :ServerDefinitions;
 }
 
 }

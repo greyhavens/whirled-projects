@@ -7,9 +7,10 @@ import com.whirled.avrg.AVRGameControl;
 
 public class FunctionPanel extends Sprite
 {
-    public function FunctionPanel (ctrl :AVRGameControl, functions :Array)
+    public function FunctionPanel (ctrl :AVRGameControl, functions :Array, sequenced :Boolean)
     {
         _ctrl = ctrl;
+        _sequenced = sequenced;
 
         var maxPerPage :int = 14;
         if (functions.length <= maxPerPage) {
@@ -28,9 +29,9 @@ public class FunctionPanel extends Sprite
         }
 
         _output = new TextField();
-        _output.width = 699;
-        _output.height = 199;
-        _output.y = 300;
+        _output.width = 349;
+        _output.height = 99;
+        _output.y = 150;
         _output.border = true;
         _output.wordWrap = true;
         addChild(_output);
@@ -59,7 +60,6 @@ public class FunctionPanel extends Sprite
             grid.addCell(0, ii, fnButt);
             fnButt.addEventListener(ButtonEvent.CLICK, handleFunctionClick);
             params.callButton.addEventListener(ButtonEvent.CLICK, handleCallClick);
-            params.serverCallButton.addEventListener(ButtonEvent.CLICK, handleServerCallClick);
         }
 
         return grid;
@@ -116,33 +116,18 @@ public class FunctionPanel extends Sprite
 
         try {
             var params :Array = parseParameters(_selected, true);
-            output("Calling " + _selected.spec.name + " with arguments " + 
-                   StringUtil.toString(params));
+            if (_sequenced) {
+                var sequenceId :int = ++_sequenceId;
+                output("Calling " + _selected.spec.name + " with arguments " + 
+                    StringUtil.toString(params) + " and sequence id " + sequenceId);
+                params.unshift(sequenceId);
+
+            } else {
+                output("Calling " + _selected.spec.name + " with arguments " + 
+                    StringUtil.toString(params));
+            }
             var value :Object = _selected.spec.func.apply(null, params);
             output("Result: " + StringUtil.toString(value));
-
-        } catch (e :Error) {
-            var msg :String = e.getStackTrace();
-            if (msg == null) {
-                msg = e.toString();
-            }
-            output(msg);
-        }
-    }
-
-    protected function handleServerCallClick (evt :ButtonEvent) :void
-    {
-        if (_selected == null) {
-            return;
-        }
-
-        try {
-            var message :Object = {};
-            message.name = _selected.spec.name;
-            message.params = parseParameters(_selected, false);
-            message.sequenceId = _sequenceId++;
-            output("Sending message " + StringUtil.toString(message));
-            _ctrl.agent.sendMessage(Server.REQUEST_BACKEND_CALL, message);
 
         } catch (e :Error) {
             var msg :String = e.getStackTrace();
@@ -164,7 +149,8 @@ public class FunctionPanel extends Sprite
     protected var _functions :Object = {};
     protected var _output :TextField;
     protected var _selected :FunctionEntry;
-    protected static var _sequenceId :int;
+    protected var _sequenced :Boolean;
+    protected static var _sequenceId :int = 0;
 }
 
 }

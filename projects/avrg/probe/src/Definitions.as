@@ -54,8 +54,9 @@ public class Definitions
         _ctrl = ctrl;
 
         _funcs.game = createGameFuncs();
-//        _funcs.room = createRoomFuncs();
+        _funcs.room = [];//createRoomFuncs();
         _funcs.player = createPlayerFuncs();
+        _funcs.serverMisc = createServerMiscFuncs();
     }
 
     public function getGameFuncs () :Array
@@ -71,6 +72,11 @@ public class Definitions
     public function getPlayerFuncs () :Array
     {
         return _funcs.player.slice();
+    }
+
+    public function getServerMiscFuncs () :Array
+    {
+        return _funcs.serverMisc.slice();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -186,6 +192,27 @@ public class Definitions
                  new ObjectParameter("testValue")])
 */
         ];
+    }
+
+    protected function createServerMiscFuncs () :Array
+    {
+        return [
+            new FunctionSpec("dump", proxy("misc", "dump"), [])
+        ];
+    }
+
+    protected function proxy (prefix :String, name :String) :Function
+    {
+        function sendMsg (sequenceId :int, ...args) :void {
+            trace("Sending message: " + args);
+            var message :Object = {};
+            message.name = prefix + "." + name;
+            message.params = args;
+            message.sequenceId = sequenceId;
+            _ctrl.agent.sendMessage(Server.REQUEST_BACKEND_CALL, message);
+        }
+
+        return sendMsg;
     }
 
     protected var _ctrl :AVRGameControl;
