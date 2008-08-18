@@ -48,15 +48,8 @@ public class EndGameSingle extends Dialog
                     _ctx.view.clearOverView();
                     _ctx.control.game.playerReady();
                 });
-            addButton(restart, LEFT);
+            addButton(restart, CENTER);
         }
-
-        var leave :SimpleButton = _ctx.content.makeButton("To Whirled");
-        leave.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-            _ctx.view.clearOverView();
-            _ctx.control.local.backToWhirled();
-        });
-        addButton(leave, RIGHT);
     }
 }
 }
