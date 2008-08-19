@@ -21,8 +21,15 @@ public class Probe extends Sprite
         close.addEventListener(ButtonEvent.CLICK, handleClose);
         addChild(close);
 
-        var shift :Button = new Button("<>");
+        var shift :Button;
+        shift = new Button("<", "l");
         shift.x = 310;
+        shift.y = 2;
+        shift.addEventListener(ButtonEvent.CLICK, handleShift);
+        addChild(shift);
+
+        shift = new Button(">", "r");
+        shift.x = 317;
         shift.y = 2;
         shift.addEventListener(ButtonEvent.CLICK, handleShift);
         addChild(shift);
@@ -31,7 +38,7 @@ public class Probe extends Sprite
         graphics.drawRect(0, 0, 350, 250);
         graphics.endFill();
 
-        x = _ctrl.local.getStageSize().width - width - 10;
+        x = (_ctrl.local.getStageSize().width - width) / 2;
         y = 10;
 
         var defs :Definitions = new Definitions(_ctrl);
@@ -87,11 +94,24 @@ public class Probe extends Sprite
     protected function handleShift (event :ButtonEvent) :void
     {
         var stageWidth :Number = _ctrl.local.getStageSize().width;
-        if (x < stageWidth / 2) {
-            x = stageWidth - width - 10;
-        } else {
-            x = 10;
+        var positions :Array = [0, 0.25, 0.5, 0.75, 1.0];
+
+        function xpos (pos :Number) :Number {
+            return 10 + pos * (stageWidth - width - 20);
         }
+
+        var idx :int = -1;
+        var fit :Number;
+        for (var ii :int = 0; ii < positions.length; ++ii) {
+            if (idx == -1 || Math.abs(x - xpos(positions[ii])) < fit) {
+                fit = Math.abs(x - xpos(positions[ii]));
+                idx = ii;
+            }
+        }
+
+        var dir :int = event.action == "l" ? -1 : 1;
+        idx = (idx + dir + positions.length) % positions.length;
+        x = xpos(positions[idx]);
     }
 
     protected var _ctrl :AVRGameControl;
