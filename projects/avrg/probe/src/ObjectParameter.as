@@ -1,7 +1,5 @@
 package {
 
-import com.threerings.util.StringUtil;
-
 public class ObjectParameter extends Parameter
 {
     public function ObjectParameter (name :String, flags :uint=0)
@@ -24,18 +22,6 @@ public class ObjectParameter extends Parameter
 
 }
 
-import com.threerings.util.StringUtil;
-
-function isDigit (char :String) :Boolean
-{
-    return "0123456789".indexOf(char) >= 0;
-}
-
-function isAlpha (char :String) :Boolean
-{
-    return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_".indexOf(char) >= 0;
-}
-
 class ParseError extends Error
 {
     public function ParseError (input :String, pos :int, thing :String = null)
@@ -51,7 +37,7 @@ function readInt (input :String, pos :int) :String
 {
     var next :int = pos;
     while (next < input.length) {
-        if (!isDigit(input.charAt(next))) {
+        if (!Parameter.isDigit(input.charAt(next))) {
             break;
         }
         ++next;
@@ -62,13 +48,13 @@ function readInt (input :String, pos :int) :String
 function readId (input :String, pos :int) :String
 {
     var next :int = pos;
-    if (!isAlpha(input.charAt(next++))) {
+    if (!Parameter.isAlpha(input.charAt(next++))) {
         throw new ParseError(input, pos, "identifier character");
     }
 
     while (next < input.length) {
         var test :String = input.charAt(next);
-        if (!isAlpha(test) && !isDigit(test)) {
+        if (!Parameter.isAlpha(test) && !Parameter.isDigit(test)) {
             break;
         }
         ++next;
@@ -163,7 +149,7 @@ function parseObject (input :String, pos :int) :Object
     
     while (pos < input.length) {
         var next :String = input.charAt(pos);
-        if (StringUtil.isWhitespace(next)) {
+        if (Parameter.isWhitespace(next)) {
             ++pos;
             continue;
         }
@@ -188,7 +174,7 @@ function parseObject (input :String, pos :int) :Object
                 stack.poke(str.slice(1, str.length - 1));
                 pos += str.length;
 
-            } else if (isDigit(next)) {
+            } else if (Parameter.isDigit(next)) {
                 var i :String = readInt(input, pos);
                 stack.poke(parseInt(i));
                 pos += i.length;

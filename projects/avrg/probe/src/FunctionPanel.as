@@ -9,10 +9,19 @@ public class FunctionPanel extends Sprite
 {
     public function FunctionPanel (ctrl :AVRGameControl, functions :Array, sequenced :Boolean)
     {
+        var depth :int = 40;
         _ctrl = ctrl;
         _sequenced = sequenced;
 
-        var maxPerPage :int = 14;
+        _output = new TextField();
+        _output.width = 349;
+        _output.height = 99;
+        _output.y = 150 - depth;
+        _output.border = true;
+        _output.wordWrap = true;
+        addChild(_output);
+
+        var maxPerPage :int = _output.y / 20 - 1;
         if (functions.length <= maxPerPage) {
             addChild(setupGrid(functions));
 
@@ -28,13 +37,6 @@ public class FunctionPanel extends Sprite
             addChild(groups);
         }
 
-        _output = new TextField();
-        _output.width = 349;
-        _output.height = 99;
-        _output.y = 150;
-        _output.border = true;
-        _output.wordWrap = true;
-        addChild(_output);
     }
 
     protected function setupGrid (functions :Array) :GridPanel

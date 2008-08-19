@@ -40,7 +40,7 @@ public class ParameterPanel extends Sprite
         }
 
         heights.push(CELL_HEIGHT);
-        _grid = new GridPanel([100, 50, 200], heights);
+        _grid = new GridPanel([70, 30, 95], heights);
 
         for (row = 0; row < _entries.length; ++row) {
             var entry :ParameterEntry = _entries[row];

@@ -1,15 +1,22 @@
 package {
 
 import flash.events.EventDispatcher;
+import flash.geom.Point;
 
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.GameSubControl;
+import com.whirled.avrg.RoomSubControl;
 import com.whirled.avrg.PlayerSubControl;
+import com.whirled.avrg.LocalSubControl;
+import com.whirled.avrg.AgentSubControl;
 
 import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.PropertyGetSubControl;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
+
+import com.threerings.util.StringUtil;
 
 public class Definitions
 {
@@ -54,41 +61,38 @@ public class Definitions
         _ctrl = ctrl;
 
         _funcs.game = createGameFuncs();
-        _funcs.room = [];//createRoomFuncs();
+        _funcs.gameProps = createGamePropsFuncs();
+        _funcs.room = createRoomFuncs();
+        _funcs.roomProps = createRoomPropsFuncs();
         _funcs.player = createPlayerFuncs();
+        _funcs.playerProps = createPlayerPropsFuncs();
+        _funcs.local = createLocalFuncs();
         _funcs.serverMisc = createServerMiscFuncs();
+        _funcs.serverRoom = createServerRoomFuncs();
+        _funcs.serverRoomProps = createServerRoomPropsFuncs();
     }
 
-    public function getGameFuncs () :Array
+    public function getFuncKeys (server :Boolean) :Array
     {
-        return _funcs.game.slice();
-    }
-
-    public function getRoomFuncs () :Array
-    {
-        return _funcs.room.slice();
-    }
-
-    public function getPlayerFuncs () :Array
-    {
-        return _funcs.player.slice();
-    }
-
-    public function getServerMiscFuncs () :Array
-    {
-        return _funcs.serverMisc.slice();
-    }
-
-    public function findByName (name :String) :FunctionSpec
-    {
-        for each (var fnArray :Array in _funcs) {
-            for each (var spec :FunctionSpec in fnArray) {
-                if (spec.name == name) {
-                    return spec;
-                }
+        var keys :Array = [];
+        for (var key :String in _funcs) {
+            var isServer :Boolean = (key.substr(0, 6) == "server");
+            if (server == isServer) {
+                keys.push(key);
             }
         }
-        return null;
+        keys.sort();
+        trace("Got keys " + StringUtil.toString(keys));
+        return keys;
+    }
+
+    public function getFuncs (key :String) :Array
+    {
+        var funcs :Array = _funcs[key];
+        if (funcs == null) {
+            throw new Error("Key " + key + " not found");
+        }
+        return funcs.slice();
     }
 
     public function addListenerToAll (listener :Function) :void
@@ -108,45 +112,36 @@ public class Definitions
         add(_ctrl.player, PLAYER_EVENTS);
     }
 
+    protected function createRoomFuncs () :Array
+    {
+        var room :RoomSubControl = _ctrl.room;
+        return [
+            new FunctionSpec("getRoomId", room.getRoomId, []),
+            new FunctionSpec("getPlayerIds", room.getPlayerIds, []),
+            new FunctionSpec("isPlayerHere", room.isPlayerHere, [
+                new Parameter("id", int)]),
+            new FunctionSpec("getAvatarInfo", room.getAvatarInfo, [
+                new Parameter("playerId", int)]),
+        ];
+    }
+
+    protected function createRoomPropsFuncs () :Array
+    {
+        return createPropsFuncs(_ctrl.room.props);
+    }
+
     protected function createGameFuncs () :Array 
     {
         var game :GameSubControl = _ctrl.game;
 
         return [
             new FunctionSpec("getPlayerIds", game.getPlayerIds),
-
-/*
-            new FunctionSpec("sendMessage", game.sendMessage,
-                [new Parameter("messageName", String),
-                 new ObjectParameter("value"),
-                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
-*/
-
-            new FunctionSpec("get", game.props.get,
-                [new Parameter("propName", String)]),
-            new FunctionSpec("getPropertyNames", game.props.getPropertyNames,
-                [new Parameter("prefix", String, Parameter.OPTIONAL)]),
-/*
-            new FunctionSpec("set", game.props.set,
-                [new Parameter("propName", String),
-                new ObjectParameter("value"),
-                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("setAt", game.props.setAt,
-                [new Parameter("propName", String),
-                 new Parameter("index", int),
-                 new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("setIn", game.props.setIn,
-                [new Parameter("propName", String),
-                 new Parameter("key", int),
-                 new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("testAndSet", game.props.testAndSet,
-                [new Parameter("propName", String),
-                 new ObjectParameter("newValue"),
-                 new ObjectParameter("testValue")])
-*/
         ];
+    }
+
+    protected function createGamePropsFuncs () :Array 
+    {
+        return createPropsFuncs(_ctrl.game.props);
     }
 
     protected function createPlayerFuncs () :Array
@@ -155,49 +150,128 @@ public class Definitions
 
         return [
             new FunctionSpec("getPlayerId", player.getPlayerId),
-            new FunctionSpec("completeTask", player.completeTask,
-                [new Parameter("cookie", String),
-                 new Parameter("payout", Number)]),
-            new FunctionSpec("completeTask", player.completeTask),
-
-/*
-            new FunctionSpec("sendMessage", player.sendMessage,
-                [new Parameter("messageName", String),
-                 new ObjectParameter("value"),
-                 new Parameter("playerId", int, Parameter.OPTIONAL)]),
-*/
-
-            new FunctionSpec("get", player.props.get,
-                [new Parameter("propName", String)]),
-            new FunctionSpec("getPropertyNames", player.props.getPropertyNames,
-                [new Parameter("prefix", String, Parameter.OPTIONAL)]),
-/*
-            new FunctionSpec("set", player.props.set,
-                [new Parameter("propName", String),
-                new ObjectParameter("value"),
-                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("setAt", player.props.setAt,
-                [new Parameter("propName", String),
-                 new Parameter("index", int),
-                 new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("setIn", player.props.setIn,
-                [new Parameter("propName", String),
-                 new Parameter("key", int),
-                 new ObjectParameter("value"),
-                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("testAndSet", player.props.testAndSet,
-                [new Parameter("propName", String),
-                 new ObjectParameter("newValue"),
-                 new ObjectParameter("testValue")])
-*/
+            new FunctionSpec("deactivateGame", player.deactivateGame),
+            new FunctionSpec("completeTask", player.completeTask, [
+                new Parameter("taskId", String),
+                new Parameter("payout", Number)]),
+            new FunctionSpec("playAvatarAction", player.playAvatarAction, [
+                new Parameter("action", String)]),
+            new FunctionSpec("setAvatarState", player.setAvatarState, [
+                new Parameter("state", String)]),
+            new FunctionSpec("setAvatarMoveSpeed", player.setAvatarMoveSpeed, [
+                new Parameter("pixelsPerSecond", Number)]),
+            new FunctionSpec("setAvatarLocation", player.setAvatarLocation, [
+                new Parameter("x", Number),
+                new Parameter("y", Number),
+                new Parameter("z", Number),
+                new Parameter("orient", Number)]),
+            new FunctionSpec("setAvatarOrientation", player.setAvatarOrientation, [
+                new Parameter("orient", Number)]),
         ];
     }
 
+    protected function createPlayerPropsFuncs () :Array
+    {
+        return createPropsFuncs(_ctrl.player.props);
+    }
+
+    protected function createLocalFuncs () :Array
+    {
+        var local :LocalSubControl = _ctrl.local;
+
+        function getHitPointTester () :Function {
+            return local.hitPointTester;
+        }
+        
+        function getMobSpriteExporter () :Function {
+            return local.mobSpriteExporter;
+        }
+        
+        return [
+            new FunctionSpec("feedback", local.feedback, [
+                new Parameter("msg", String)]),
+            new FunctionSpec("getStageSize", local.getStageSize, [
+                new Parameter("full", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("getRoomBounds", local.getRoomBounds),
+            new FunctionSpec("stageToRoom", local.stageToRoom, [
+                new PointParameter("p")]),
+            new FunctionSpec("roomToStage", local.roomToStage, [
+                new PointParameter("p")]),
+            new FunctionSpec("locationToRoom", local.locationToRoom, [
+                new Parameter("x", Number),
+                new Parameter("y", Number),
+                new Parameter("z", Number)]),
+            new FunctionSpec("locationToStage", local.locationToStage, [
+                new Parameter("x", Number),
+                new Parameter("y", Number),
+                new Parameter("z", Number)]),
+            new FunctionSpec("setHitPointTester", local.setHitPointTester, [
+                new CallbackParameter("tester")]),
+            new FunctionSpec("getHitPointTester", getHitPointTester),
+            new FunctionSpec("setMobSpriteExporter", local.setMobSpriteExporter, [
+                new CallbackParameter("exporter")]),
+            new FunctionSpec("getMobSpriteExporter", getMobSpriteExporter),
+        ];
+    }
+
+    protected function createAgentFuncs () :Array
+    {
+        var agent :AgentSubControl = _ctrl.agent;
+        return [
+        ];
+    }
+
+    protected function createPropsFuncs (props :PropertyGetSubControl) :Array
+    {
+        return [
+            new FunctionSpec("get", props.get, [
+                new Parameter("name", String)]),
+            new FunctionSpec("getPropertyNames", props.getPropertyNames, [
+                new Parameter("prefix", String, Parameter.OPTIONAL)]),
+        ];
+    }
+
+
+    // AUTO GENERATED from ServerDefinitions
     protected function createServerMiscFuncs () :Array
     {
         return [
             new FunctionSpec("dump", proxy("misc", "dump"), [])
+        ];
+    }
+
+    // AUTO GENERATED from ServerDefinitions
+    protected function createServerRoomFuncs () :Array
+    {
+        return [
+            new FunctionSpec("getRoomId", proxy("room", "getRoomId"), [
+                new Parameter("roomId", int)]),
+            new FunctionSpec("getPlayerIds", proxy("room", "getPlayerIds"), [
+                new Parameter("roomId", int)]),
+            new FunctionSpec("isPlayerHere", proxy("room", "isPlayerHere"), [
+                new Parameter("roomId", int),
+                new Parameter("id", int)]),
+            new FunctionSpec("getAvatarInfo", proxy("room", "getAvatarInfo"), [
+                new Parameter("roomId", int),
+                new Parameter("playerId", int)]),
+        ]
+    }
+
+    // AUTO GENERATED from ServerDefinitions
+    protected function createServerRoomPropsFuncs () :Array
+    {
+        return [
+            new FunctionSpec("get", proxy("roomProps", "get"), [
+                new Parameter("roomId", int),
+                new Parameter("propName", String)]),
+            new FunctionSpec("getPropertyNames", proxy("roomProps", "getPropertyNames"), [
+                new Parameter("roomId", int),
+                new Parameter("prefix", String, Parameter.OPTIONAL)]),
+            new FunctionSpec("set", proxy("roomProps", "set"), [
+                new Parameter("roomId", int),
+                new Parameter("propName", String),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
         ];
     }
 

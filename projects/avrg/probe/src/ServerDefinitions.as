@@ -1,5 +1,6 @@
 package {
 
+import com.threerings.util.ClassUtil;
 import com.whirled.AbstractSubControl;
 import com.whirled.avrg.server.AVRServerGameControl;
 import com.whirled.avrg.server.RoomServerSubControl;
@@ -27,12 +28,18 @@ public class ServerDefinitions
         _ctrl = ctrl;
 
         _funcs.room = createRoomFuncs();
+        _funcs.roomProps = createRoomPropsFuncs();
         _funcs.misc = createMiscFuncs();
     }
 
     public function getRoomFuncs () :Array
     {
         return _funcs.room.slice();
+    }
+
+    public function getRoomPropsFuncs () :Array
+    {
+        return _funcs.roomProps.slice();
     }
 
     public function getMiscFuncs () :Array
@@ -63,18 +70,56 @@ public class ServerDefinitions
      */
     public function dump () :void
     {
-        // TODO:
-        //        return [
-        //            new FunctionSpec("dump", proxy("misc", "dump"), [])
-        //        ];
-
-        for each (var fnArray :Array in _funcs) {
-            for each (var fnSpec :FunctionSpec in fnArray) {
-                trace(fnSpec.name);
-                for each (var param :Parameter in fnSpec.parameters) {
-                    trace(param.name);
+        for (var scope :String in _funcs) {
+            trace("    // AUTO GENERATED from ServerDefinitions");
+            trace("    protected function createServer" + scope.substr(0, 1).toUpperCase() + 
+                  scope.substr(1) + "Funcs () :Array");
+            trace("    {");
+            trace("        return [");
+            for each (var fnSpec :FunctionSpec in _funcs[scope]) {
+                var proxy :String = "proxy(\"" + scope + "\", \"" + fnSpec.name + "\")";
+                var specStart :String = "            new FunctionSpec(\"" + fnSpec.name + "\"";
+                specStart += ", " + proxy;
+                if (fnSpec.parameters.length == 0) {
+                    trace(specStart + "),");
+                } else {
+                    specStart += ", ["
+                    trace(specStart);
+                
+                    for (var ii :int = 0; ii < fnSpec.parameters.length; ++ii) {
+                        var param :Parameter = fnSpec.parameters[ii];
+                        var paramStr :String = ClassUtil.getClassName(param);
+                        paramStr += "(\"" + param.name + "\"";
+                        if (ClassUtil.getClass(param) != ObjectParameter) {
+                            paramStr += ", " + ClassUtil.getClassName(param.type);
+                        }
+                        if (param.optional || param.nullable) {
+                            var flags :Array = [];
+                            if (param.optional) {
+                                flags.push("Parameter.OPTIONAL");
+                            }
+                            if (param.nullable) {
+                                flags.push("Parameter.NULLABLE");
+                            }
+                            var flagStr :String = flags[0];
+                            for (var jj :int = 1; jj < flags.length; ++jj) {
+                                flagStr += "|" + flags[jj];
+                            }
+                            paramStr += ", " + flagStr;
+                        }
+                        paramStr += ")";
+                        if (ii == fnSpec.parameters.length - 1) {
+                            paramStr += "]),";
+                        } else {
+                            paramStr += ",";
+                        }
+                        trace("                new " + paramStr);
+                    }
                 }
             }
+            trace("        ];");
+            trace("    }");
+            trace("");
         }
     }
 

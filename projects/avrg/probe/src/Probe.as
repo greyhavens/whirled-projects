@@ -17,15 +17,21 @@ public class Probe extends Sprite
 
         var close :Button = new Button("X");
         close.x = 330;
-        close.y = 5;
+        close.y = 2;
         close.addEventListener(ButtonEvent.CLICK, handleClose);
         addChild(close);
+
+        var shift :Button = new Button("<>");
+        shift.x = 310;
+        shift.y = 2;
+        shift.addEventListener(ButtonEvent.CLICK, handleShift);
+        addChild(shift);
 
         graphics.beginFill(0xffffff);
         graphics.drawRect(0, 0, 350, 250);
         graphics.endFill();
 
-        x = 10;
+        x = _ctrl.local.getStageSize().width - width - 10;
         y = 10;
 
         var defs :Definitions = new Definitions(_ctrl);
@@ -35,21 +41,19 @@ public class Probe extends Sprite
         var client :TabPanel = new TabPanel();
         _tabPanel.addTab("client", new Button("Client"), client);
 
-        client.addTab("game", new Button("Game"), 
-            new FunctionPanel(_ctrl, defs.getGameFuncs(), false));
-        client.addTab("room", new Button("Room"), 
-            new FunctionPanel(_ctrl, defs.getRoomFuncs(), false));
-        client.addTab("player", new Button("Player"), 
-            new FunctionPanel(_ctrl, defs.getPlayerFuncs(), false));
+        var key :String;
+        for each (key in defs.getFuncKeys(false)) {
+            client.addTab(key, new Button(key.substr(0, 1).toUpperCase() + key.substr(1)), 
+                new FunctionPanel(_ctrl, defs.getFuncs(key), false));
+        }
 
         var server :TabPanel = new TabPanel();
         _tabPanel.addTab("server", new Button("Server"), server);
 
-        server.addTab("misc", new Button("Misc"),
-            new FunctionPanel(_ctrl, defs.getServerMiscFuncs(), true));
-
-        //server.addTab("room", new Button("Room"),
-        //    new RPCPanel("Room")
+        for each (key in defs.getFuncKeys(true)) {
+            server.addTab(key, new Button(key.substr(6)), 
+                new FunctionPanel(_ctrl, defs.getFuncs(key), true));
+        }
 
         defs.addListenerToAll(logEvent);
 
@@ -78,6 +82,16 @@ public class Probe extends Sprite
     protected function handleClose (event :ButtonEvent) :void
     {
         _ctrl.player.deactivateGame();
+    }
+
+    protected function handleShift (event :ButtonEvent) :void
+    {
+        var stageWidth :Number = _ctrl.local.getStageSize().width;
+        if (x < stageWidth / 2) {
+            x = stageWidth - width - 10;
+        } else {
+            x = 10;
+        }
     }
 
     protected var _ctrl :AVRGameControl;

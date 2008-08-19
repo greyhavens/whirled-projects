@@ -7,6 +7,26 @@ public class Parameter
     public static const OPTIONAL :int = 1;
     public static const NULLABLE :int = 2;
 
+    public static function isDigit (char :String) :Boolean
+    {
+        return "0123456789".indexOf(char) >= 0;
+    }
+
+    public static function isAlpha (char :String) :Boolean
+    {
+        return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_".indexOf(char) >= 0;
+    }
+
+    public static function isWhitespace (char :String) :Boolean
+    {
+        return StringUtil.isWhitespace(char);
+    }
+
+    public static function trim (str :String) :String
+    {
+        return StringUtil.trim(str);
+    }
+
     public function Parameter (
         name :String, 
         type :Class, 
@@ -46,6 +66,15 @@ public class Parameter
 
         } else if (_type == int) {
             return StringUtil.parseInteger(input);
+        } else if (_type == Boolean) {
+            input = input.toLowerCase();
+            if (input == "t" || input == "true") {
+                return true;
+            } else if (input == "f" || input == "false") {
+                return false;
+            } else {
+                throw new Error(input + " is not a Boolean");
+            }
         }
 
         throw new Error("Parsing for parameter type " + type + 
