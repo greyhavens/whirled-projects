@@ -4,6 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="Reversi"/>
   <property name="app.type" value="game"/>
+  <property name="players" value="2"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
