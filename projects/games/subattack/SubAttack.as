@@ -31,6 +31,7 @@ import com.threerings.flash.KeyRepeatLimiter;
 import com.threerings.flash.FPSDisplay;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 /**
  * Beware all ye who enter here. This code is pretty much a mess. The game's been changed

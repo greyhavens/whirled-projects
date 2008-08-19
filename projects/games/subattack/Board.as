@@ -13,6 +13,7 @@ import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
 import com.whirled.game.*;
+import com.whirled.net.*;
 
 public class Board
 {
