@@ -18,6 +18,7 @@ import popcraft.*;
 import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.sp.*;
+import popcraft.sp.story.*;
 import popcraft.util.*;
 
 [SWF(width="700", height="500", frameRate="30")]

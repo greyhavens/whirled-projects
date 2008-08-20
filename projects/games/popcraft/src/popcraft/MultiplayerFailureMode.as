@@ -7,7 +7,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextFormatAlign;
 
-import popcraft.sp.LevelSelectMode;
+import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class MultiplayerFailureMode extends SplashScreenModeBase

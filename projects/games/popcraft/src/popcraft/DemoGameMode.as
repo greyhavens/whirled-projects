@@ -6,7 +6,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
-import popcraft.sp.LevelManager;
+import popcraft.sp.story.LevelManager;
 
 public class DemoGameMode extends GameMode
 {

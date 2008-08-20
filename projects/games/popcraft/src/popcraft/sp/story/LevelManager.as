@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.resource.*;
@@ -252,38 +252,38 @@ public class LevelManager
     protected static var log :Log = Log.getLog(LevelManager);
 
     // Embedded level data
-    [Embed(source="../../../levels/level1.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level1.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_1 :Class;
-    [Embed(source="../../../levels/level2.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level2.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_2 :Class;
-    [Embed(source="../../../levels/level3.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level3.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_3 :Class;
-    [Embed(source="../../../levels/level4.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level4.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_4 :Class;
-    [Embed(source="../../../levels/level5.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level5.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_5 :Class;
-    [Embed(source="../../../levels/level6.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level6.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_6 :Class;
-    [Embed(source="../../../levels/level7.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level7.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_7 :Class;
-    [Embed(source="../../../levels/level8.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level8.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_8 :Class;
-    [Embed(source="../../../levels/level9.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level9.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_9 :Class;
-    [Embed(source="../../../levels/level10.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level10.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_10 :Class;
-    [Embed(source="../../../levels/level11.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level11.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_11 :Class;
-    [Embed(source="../../../levels/level12.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level12.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_12 :Class;
-    [Embed(source="../../../levels/level13.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level13.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_13 :Class;
-    [Embed(source="../../../levels/level14.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/level14.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_14 :Class;
 
-    [Embed(source="../../../levels/testlevel.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/testlevel.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_TEST :Class;
-    [Embed(source="../../../levels/demolevel.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/demolevel.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_DEMO :Class;
 
     protected static const LEVELS :Array = [

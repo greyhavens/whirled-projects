@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.*;
@@ -15,12 +15,12 @@ import flash.events.MouseEvent;
 import popcraft.*;
 import popcraft.ui.UIBits;
 
-public class PrologueMode extends TransitionMode
+public class EpilogueMode extends TransitionMode
 {
     public static const TRANSITION_LEVELSELECT :int = 0;
-    public static const TRANSITION_GAME :int = 1;
+    public static const TRANSITION_LEVELOUTRO :int = 1;
 
-    public function PrologueMode (nextTransition :int)
+    public function EpilogueMode (nextTransition :int)
     {
         _nextTransition = nextTransition;
     }
@@ -30,12 +30,12 @@ public class PrologueMode extends TransitionMode
         // play some music
         _musicChannel = AudioManager.instance.playSoundNamed("mus_night", null, -1);
 
-        var movie :MovieClip = SwfResource.getSwfDisplayRoot("prologue") as MovieClip;
+        var movie :MovieClip = SwfResource.getSwfDisplayRoot("epilogue") as MovieClip;
         movie.gotoAndPlay(0);
         var movieObj :SimpleSceneObject = new SimpleSceneObject(movie);
         var movieTask :SerialTask = new SerialTask();
         movieTask.addTask(new WaitForFrameTask("end"));
-        movieTask.addTask(new FunctionTask(endPrologue));
+        movieTask.addTask(new FunctionTask(endEpilogue));
         movieObj.addTask(movieTask);
         this.addObject(movieObj, _modeLayer);
 
@@ -62,10 +62,10 @@ public class PrologueMode extends TransitionMode
 
     protected function onSkipClicked (...ignored) :void
     {
-        this.endPrologue();
+        this.endEpilogue();
     }
 
-    protected function endPrologue () :void
+    protected function endEpilogue () :void
     {
         _musicChannel.audioControls.fadeOut(DEFAULT_FADE_TIME).stopAfter(DEFAULT_FADE_TIME);
         _skipButton.parent.removeChild(_skipButton);
@@ -74,7 +74,7 @@ public class PrologueMode extends TransitionMode
         var nextMode :AppMode;
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT: nextMode = new LevelSelectMode(); break;
-        case TRANSITION_GAME: nextMode = new GameMode(); break;
+        case TRANSITION_LEVELOUTRO: nextMode = new LevelOutroMode(); break;
         }
 
         this.fadeOutToMode(nextMode);

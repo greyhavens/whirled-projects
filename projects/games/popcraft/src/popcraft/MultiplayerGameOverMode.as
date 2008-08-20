@@ -145,11 +145,11 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_CHEATDEATH);
             }
 
-            for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
-                if (playerSeat != SeatingManager.localPlayerSeat && SeatingManager.getPlayerName(playerSeat) == "Professor Weardd") {
+            for each (var playerInfo :PlayerInfo : GameContext.playerInfos) {
+                if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
+                    playerInfo.playerName == TrophyManager.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose Whirled name is "Professor Weardd"
                     TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);
-                    break;
                 }
             }
 

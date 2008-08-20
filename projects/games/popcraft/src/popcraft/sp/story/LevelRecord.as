@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import flash.utils.ByteArray;
 

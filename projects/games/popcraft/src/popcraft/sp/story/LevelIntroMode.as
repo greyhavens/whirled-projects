@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import com.threerings.flash.TextFieldUtil;
 import com.whirled.contrib.simplegame.AppMode;

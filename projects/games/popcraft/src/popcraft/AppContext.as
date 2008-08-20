@@ -8,7 +8,7 @@ import com.whirled.game.GameControl;
 import flash.display.Sprite;
 
 import popcraft.data.*;
-import popcraft.sp.LevelManager;
+import popcraft.sp.story.LevelManager;
 
 public class AppContext
 {

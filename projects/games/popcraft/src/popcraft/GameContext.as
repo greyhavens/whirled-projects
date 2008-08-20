@@ -80,6 +80,11 @@ public class GameContext
             function (info :PlayerInfo) :Boolean { return info.playerName == playerName; });
     }
 
+    public static function isEnemy (playerIndex :int, otherPlayerIndex :int) :Boolean
+    {
+        return PlayerInfo(playerInfos[playerIndex]).teamId != PlayerInfo(playerInfos[otherPlayerIndex]).teamId;
+    }
+
     public static function findEnemyForPlayer (playerIndex :int) :PlayerInfo
     {
         var thisPlayer :PlayerInfo = playerInfos[playerIndex];

@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.sp.ComputerPlayerInfo;
 
 public class ComputerPlayer extends SimObject
 {

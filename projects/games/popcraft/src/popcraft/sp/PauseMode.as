@@ -9,6 +9,7 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class PauseMode extends AppMode

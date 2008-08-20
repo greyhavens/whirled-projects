@@ -1,4 +1,4 @@
-package popcraft.sp {
+package popcraft.sp.story {
 
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.*;

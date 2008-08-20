@@ -25,6 +25,7 @@ import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.*;
+import popcraft.sp.story.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -438,23 +439,23 @@ public class GameMode extends TransitionMode
         }
 
         switch (keyCode) {
-        case KeyboardCodes.Z:
+        case KeyboardCodes.A:
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
             break;
 
-        case KeyboardCodes.X:
+        case KeyboardCodes.S:
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COURIER);
             break;
 
-        case KeyboardCodes.C:
+        case KeyboardCodes.D:
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_SAPPER);
             break;
 
-        case KeyboardCodes.V:
+        case KeyboardCodes.F:
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_HEAVY);
             break;
 
-        case KeyboardCodes.B:
+        case KeyboardCodes.G:
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
             break;
 
@@ -496,7 +497,7 @@ public class GameMode extends TransitionMode
             }
             break;
 
-        case KeyboardCodes.D:
+        case KeyboardCodes.Y:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.diurnalCycle.incrementDayCount();
                 GameContext.diurnalCycle.resetPhase(
