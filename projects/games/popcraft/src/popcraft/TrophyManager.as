@@ -62,7 +62,7 @@ public class TrophyManager
     public static const TROPHY_MORBIDINFECTION :String = "MorbidInfection";
     // win a game against a player whose Whirled name is "Professor Weardd"
     public static const TROPHY_MALEDICTORIAN :String = "Maledictorian";
-    public static const MALEDICTORIAN_NAME :String + "Professor Weardd";
+    public static const MALEDICTORIAN_NAME :String = "Professor Weardd";
     // win a multiplayer game on a full moon
     public static const TROPHY_BADMOON :String = "BadMoon";
 

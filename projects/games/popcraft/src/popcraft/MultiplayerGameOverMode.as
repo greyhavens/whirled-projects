@@ -145,7 +145,7 @@ public class MultiplayerGameOverMode extends SplashScreenModeBase
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_CHEATDEATH);
             }
 
-            for each (var playerInfo :PlayerInfo : GameContext.playerInfos) {
+            for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                 if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
                     playerInfo.playerName == TrophyManager.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose Whirled name is "Professor Weardd"
