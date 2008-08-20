@@ -61,12 +61,10 @@ public class Definitions
         _ctrl = ctrl;
 
         _funcs.game = createGameFuncs();
-        _funcs.gameProps = createGamePropsFuncs();
         _funcs.room = createRoomFuncs();
-        _funcs.roomProps = createRoomPropsFuncs();
         _funcs.player = createPlayerFuncs();
-        _funcs.playerProps = createPlayerPropsFuncs();
         _funcs.local = createLocalFuncs();
+        _funcs.agent = createAgentFuncs();
         _funcs.serverMisc = createServerMiscFuncs();
         _funcs.serverRoom = createServerRoomFuncs();
         _funcs.serverRoomProps = createServerRoomPropsFuncs();
@@ -115,7 +113,7 @@ public class Definitions
     protected function createRoomFuncs () :Array
     {
         var room :RoomSubControl = _ctrl.room;
-        return [
+        var funcs :Array = [
             new FunctionSpec("getRoomId", room.getRoomId, []),
             new FunctionSpec("getPlayerIds", room.getPlayerIds, []),
             new FunctionSpec("isPlayerHere", room.isPlayerHere, [
@@ -123,32 +121,27 @@ public class Definitions
             new FunctionSpec("getAvatarInfo", room.getAvatarInfo, [
                 new Parameter("playerId", int)]),
         ];
-    }
 
-    protected function createRoomPropsFuncs () :Array
-    {
-        return createPropsFuncs(_ctrl.room.props);
+        pushPropsFuncs(funcs, room.props);
+        return funcs;
     }
 
     protected function createGameFuncs () :Array 
     {
         var game :GameSubControl = _ctrl.game;
 
-        return [
+        var funcs :Array = [
             new FunctionSpec("getPlayerIds", game.getPlayerIds),
         ];
-    }
-
-    protected function createGamePropsFuncs () :Array 
-    {
-        return createPropsFuncs(_ctrl.game.props);
+        pushPropsFuncs(funcs, game.props);
+        return funcs;
     }
 
     protected function createPlayerFuncs () :Array
     {
         var player :PlayerSubControl = _ctrl.player;
 
-        return [
+        var funcs :Array = [
             new FunctionSpec("getPlayerId", player.getPlayerId),
             new FunctionSpec("deactivateGame", player.deactivateGame),
             new FunctionSpec("completeTask", player.completeTask, [
@@ -168,11 +161,8 @@ public class Definitions
             new FunctionSpec("setAvatarOrientation", player.setAvatarOrientation, [
                 new Parameter("orient", Number)]),
         ];
-    }
-
-    protected function createPlayerPropsFuncs () :Array
-    {
-        return createPropsFuncs(_ctrl.player.props);
+        pushPropsFuncs(funcs, player.props);
+        return funcs;
     }
 
     protected function createLocalFuncs () :Array
@@ -218,17 +208,20 @@ public class Definitions
     {
         var agent :AgentSubControl = _ctrl.agent;
         return [
+            new FunctionSpec("sendMessage", agent.sendMessage, [
+                new Parameter("name", String),
+                new ObjectParameter("value")]),
         ];
     }
 
-    protected function createPropsFuncs (props :PropertyGetSubControl) :Array
+    protected function pushPropsFuncs (funcs :Array, props :PropertyGetSubControl) :void
     {
-        return [
-            new FunctionSpec("get", props.get, [
+        funcs.splice(funcs.length, 0,
+            new FunctionSpec("props.get", props.get, [
                 new Parameter("name", String)]),
-            new FunctionSpec("getPropertyNames", props.getPropertyNames, [
-                new Parameter("prefix", String, Parameter.OPTIONAL)]),
-        ];
+            new FunctionSpec("props.getPropertyNames", props.getPropertyNames, [
+                new Parameter("prefix", String, Parameter.OPTIONAL)])
+        );
     }
 
 

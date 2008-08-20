@@ -37,6 +37,16 @@ public class Button extends Sprite
         return _action;
     }
 
+    public function set border (value :Boolean) :void
+    {
+        _text.border = value;
+    }
+
+    public function get border () :Boolean
+    {
+        return _text.border;
+    }
+
     protected function handleMouseClick (event :MouseEvent) :void
     {
         if (event.target == this || event.target == _text) {

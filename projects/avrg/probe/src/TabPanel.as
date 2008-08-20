@@ -40,8 +40,10 @@ public class TabPanel extends Sprite
                 if (_selected != t) {
                     if (_selected != null) {
                         _selected.contents.visible = false;
+                        _selected.button.border = false;
                     }
                     t.contents.visible = true;
+                    t.button.border = true;
                     _selected = t;
                     return;
                 }
