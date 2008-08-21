@@ -1,39 +1,30 @@
 package {
 
+import com.threerings.util.HashMap;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.GameControl;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.OccupantChangedEvent;
+import com.whirled.game.SizeChangedEvent;
+import com.whirled.game.StateChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+
 import flash.display.Bitmap;
-import flash.display.Sprite;
-import flash.display.Shape;
 import flash.display.MovieClip;
-
-import flash.media.Sound;
-import flash.media.SoundTransform;
-
-import flash.utils.ByteArray;
-
-import flash.external.ExternalInterface;
-
+import flash.display.Shape;
+import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-
+import flash.media.Sound;
+import flash.media.SoundTransform;
 import flash.text.Font;
 import flash.text.TextField;
-
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
-
-import com.threerings.util.HashMap;
-
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.SizeChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.OccupantChangedEvent;
-
-import com.whirled.FlowAwardedEvent;
-import com.whirled.GameSubControl;
-import com.whirled.WhirledGameControl;
 
 /**
  * The main game class for the client.
@@ -56,7 +47,7 @@ public class StarFight extends Sprite
      */
     public function StarFight ()
     {
-        _gameCtrl = new WhirledGameControl(this);
+        _gameCtrl = new GameControl(this);
 
         _center = new Sprite();
         var mask :Shape = new Shape();
@@ -84,7 +75,7 @@ public class StarFight extends Sprite
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
             this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-            _gameCtrl.local.addEventListener(SizeChangedEvent.TYPE, updateDisplay);
+            _gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, updateDisplay);
             addEventListener(MouseEvent.CLICK, firstStart);
         }
         Resources.init(assetLoaded);
@@ -96,8 +87,8 @@ public class StarFight extends Sprite
         if (_assets < Codes.SHIP_TYPES.length) {
             return;
         }
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.TYPE, messageReceived);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _center.removeChildAt(1);
         removeEventListener(MouseEvent.CLICK, firstStart);
@@ -169,7 +160,7 @@ public class StarFight extends Sprite
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
             _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
-            _gameCtrl.player.addEventListener(FlowAwardedEvent.FLOW_AWARDED, handleFlowAwarded);
+            _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
         }
         _boardCtrl = new BoardController(_gameCtrl, this);
         _boardCtrl.init(boardLoaded);
@@ -227,7 +218,7 @@ public class StarFight extends Sprite
 
         // Add ourselves to the ship array.
         if (_gameCtrl.isConnected()) {
-            _gameCtrl.net.setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
+            setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
 
             _population++;
             maybeStartRound();
@@ -388,7 +379,7 @@ public class StarFight extends Sprite
 
                 // The first player is in charge of adding powerups.
                 _gameCtrl.services.startTicker("stateTicker", 1000);
-                _gameCtrl.net.setImmediate("stateTime", _stateTime);
+                setImmediate("stateTime", _stateTime);
                 if (_ownShip != null) {
                     _ownShip.restart();
                     _boardCtrl.shipKilled(myId);
@@ -496,7 +487,7 @@ public class StarFight extends Sprite
             if (_stateTime > 0) {
                 _stateTime -= 1;
                 if (_stateTime % 10 == 0 && _gameCtrl.game.amInControl()) {
-                    _gameCtrl.net.setImmediate("stateTime", _stateTime);
+                    setImmediate("stateTime", _stateTime);
                 }
             }
 
@@ -645,7 +636,7 @@ public class StarFight extends Sprite
     {
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.services.stopTicker("nextRoundTicker");
-            _gameCtrl.net.setImmediate("gameState", Codes.PRE_ROUND);
+            setImmediate("gameState", Codes.PRE_ROUND);
         }
         _ships = new HashMap();
         _ownShip = null;
@@ -660,8 +651,8 @@ public class StarFight extends Sprite
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
         _gameCtrl.doBatch(function () :void {
-            _gameCtrl.net.setImmediate(shipKey(myId), null);
-            _gameCtrl.net.setImmediate("score:myId", 0);
+            setImmediate(shipKey(myId), null);
+            setImmediate("score:myId", 0);
             if (_gameCtrl.game.amInControl()) {
                 _gameCtrl.game.restartGameIn(30);
                 _gameCtrl.services.startTicker("nextRoundTicker", 1000);
@@ -694,7 +685,7 @@ public class StarFight extends Sprite
         _boardCtrl.shipKilled(event.occupantId);
 
         if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.net.setImmediate(shipKey(event.occupantId), null);
+            setImmediate(shipKey(event.occupantId), null);
         }
     }
 
@@ -758,7 +749,7 @@ public class StarFight extends Sprite
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
                 gameState = Codes.POST_ROUND;
                 _gameCtrl.services.stopTicker("stateTicker");
-                _gameCtrl.net.setImmediate("gameState", gameState);
+                setImmediate("gameState", gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();
             }
@@ -832,9 +823,9 @@ public class StarFight extends Sprite
         if (_ownShip != null && _updateCount > Codes.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
             _updateCount = 0;
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.net.setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
+                setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
                 if (gameState == Codes.IN_ROUND) {
-                    _gameCtrl.net.setImmediate("score:" + myId, _ownShip.score);
+                    setImmediate("score:" + myId, _ownShip.score);
                     for (var id :String in _otherScores) {
                         _gameCtrl.net.sendMessage("addScore-" + id, int(_otherScores[id]));
                     }
@@ -859,7 +850,7 @@ public class StarFight extends Sprite
         }
     }
 
-    protected function handleFlowAwarded (event :FlowAwardedEvent) :void
+    protected function handleFlowAwarded (event :CoinsAwardedEvent) :void
     {
         var amount :int = event.amount;
         if (amount > 0) {
@@ -888,6 +879,11 @@ public class StarFight extends Sprite
         _right.x = displayWidth - _right.width;
     }
 
+    protected function setImmediate (propName :String, value :Object) :void
+    {
+        _gameCtrl.net.set(propName, value, true);
+    }
+
     [Embed(source="rsrc/intro_movie.swf")]
     protected var introAsset :Class;
 
@@ -898,7 +894,7 @@ public class StarFight extends Sprite
     protected static const BACKGROUND :Class;
 
     /** Our game control object. */
-    protected var _gameCtrl :WhirledGameControl;
+    protected var _gameCtrl :GameControl;
 
     /** Our local ship. */
     protected var _ownShip :ShipSprite;

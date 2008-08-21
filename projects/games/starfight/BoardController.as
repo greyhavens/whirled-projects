@@ -1,16 +1,16 @@
 package {
 
+import com.threerings.util.HashMap;
+import com.whirled.game.GameControl;
+import com.whirled.game.StateChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
+
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.media.Sound;
 import flash.utils.ByteArray;
-
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.util.HashMap;
-
-import com.whirled.WhirledGameControl;
 
 /**
  * Manages the board data and display sprite.
@@ -26,10 +26,11 @@ public class BoardController
     /**
      * Constructs a brand new board.
      */
-    public function BoardController (gameCtrl :WhirledGameControl, sf :StarFight)
+    public function BoardController (gameCtrl :GameControl, sf :StarFight)
     {
         _gameCtrl = gameCtrl;
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.TYPE, propertyChanged);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _sf = sf;
     }
 
@@ -59,10 +60,10 @@ public class BoardController
         _board = null;
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.net.setImmediate("obstacles", null);
-                _gameCtrl.net.setImmediate("powerup", null);
-                _gameCtrl.net.setImmediate("mines", null);
-                _gameCtrl.net.setImmediate("board", null);
+                setImmediate("obstacles", null);
+                setImmediate("powerup", null);
+                setImmediate("mines", null);
+                setImmediate("board", null);
             });
         }
     }
@@ -117,14 +118,14 @@ public class BoardController
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
-                _gameCtrl.net.setImmediate("obstacles", new Array(_obstacles.length));
+                setImmediate("obstacles", new Array(_obstacles.length));
                 for (var ii :int; ii < _obstacles.length; ii++) {
-                    _gameCtrl.net.setImmediate("obstacles",
+                    setAtImmediate("obstacles",
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
-                _gameCtrl.net.setImmediate("powerup", new Array(_powerups.length));
-                _gameCtrl.net.setImmediate("mines", new Array(1));
-                _gameCtrl.net.setImmediate("board", writeTo(new ByteArray()));
+                setImmediate("powerup", new Array(_powerups.length));
+                setImmediate("mines", new Array(1));
+                setImmediate("board", writeTo(new ByteArray()));
             });
         }
         _callback();
@@ -143,16 +144,9 @@ public class BoardController
         _explosions = new Array();
     }
 
-    // from PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
+    public function elementChanged (event :ElementChangedEvent) :void
     {
-        if (event.name == "board" && (_board == null)) {
-            var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
-            if (bytes != null) {
-                readBoard(bytes);
-            }
-
-        } else if ((event.name == "powerup") && (event.index >= 0)) {
+        if ((event.name == "powerup") && (event.index >= 0)) {
             if (_powerups == null) {
                 return;
             }
@@ -199,6 +193,17 @@ public class BoardController
                 if (_mines[event.index] != null) {
                     removeMine(event.index);
                 }
+            }
+        }
+    }
+
+    // from PropertyChangedListener
+    public function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.name == "board" && (_board == null)) {
+            var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
+            if (bytes != null) {
+                readBoard(bytes);
             }
         }
     }
@@ -257,7 +262,7 @@ public class BoardController
 
                 _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
 
-                _gameCtrl.net.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                setAtImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
                 powerupLayer.addChild(_powerups[ii]);
                 _status.addPowerup(ii);
                 return;
@@ -271,7 +276,7 @@ public class BoardController
             if (_powerups[ii] == null) {
                 _powerups[ii] = new Powerup(Powerup.HEALTH, x, y);
 
-                _gameCtrl.net.setImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
+                setAtImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
                 powerupLayer.addChild(_powerups[ii]);
                 _status.addPowerup(ii);
                 return;
@@ -284,7 +289,7 @@ public class BoardController
      */
     public function removePowerup (idx :int) :void
     {
-        _gameCtrl.net.setImmediate("powerup", null, idx);
+        setAtImmediate("powerup", null, idx);
         powerupLayer.removeChild(_powerups[idx]);
         _powerups[idx] = null;
         _status.removePowerup(idx);
@@ -304,7 +309,7 @@ public class BoardController
         _mines[index] = mine;
         powerupLayer.addChild(mine);
         if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.net.setImmediate("mines", mine.writeTo(new ByteArray()), index);
+            setAtImmediate("mines", mine.writeTo(new ByteArray()), index);
         }
     }
 
@@ -313,7 +318,7 @@ public class BoardController
      */
     public function removeMine (idx :int) :void
     {
-        _gameCtrl.net.setImmediate("mines", null, idx);
+        setAtImmediate("mines", null, idx);
         var mine :Mine = _mines[idx];
         _mines[idx] = null;
         mine.explode(_sf, function () :void {
@@ -499,7 +504,7 @@ public class BoardController
         if (indices.length > 0 && _gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
                 for each (var idx :int in indices) {
-                    _gameCtrl.net.setImmediate("mines", null, idx);
+                    setAtImmediate("mines", null, idx);
                 }
             });
         }
@@ -541,7 +546,7 @@ public class BoardController
         explode(x, y, 0, true, 0);
         if (owner) {
             if (_sf.gameState == Codes.IN_ROUND && obj.damage(damage)) {
-                _gameCtrl.net.setImmediate(obj.arrayName(), null, obj.index);
+                setAtImmediate(obj.arrayName(), null, obj.index);
             }
         }
 
@@ -695,7 +700,17 @@ public class BoardController
         }
     }
 
-    protected var _gameCtrl :WhirledGameControl;
+    protected function setImmediate (propName :String, value :Object) :void
+    {
+        _gameCtrl.net.set(propName, value, true);
+    }
+
+    protected function setAtImmediate (propName :String, value :Object, index :int) :void
+    {
+        _gameCtrl.net.setAt(propName, index, value, true);
+    }
+
+    protected var _gameCtrl :GameControl;
 
     protected var _callback :Function;
 
