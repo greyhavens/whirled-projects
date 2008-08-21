@@ -54,6 +54,9 @@ public class Parameter
 
         } else if (_type == int) {
             return "int";
+
+        } else if (_type == Boolean) {
+            return "Bool";
         }
 
         return "" + _type;

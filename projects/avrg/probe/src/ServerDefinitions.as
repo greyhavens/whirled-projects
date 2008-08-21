@@ -3,6 +3,7 @@ package {
 import com.threerings.util.ClassUtil;
 import com.whirled.AbstractSubControl;
 import com.whirled.avrg.server.AVRServerGameControl;
+import com.whirled.avrg.server.PlayerServerSubControl;
 import com.whirled.avrg.server.RoomServerSubControl;
 import com.whirled.net.PropertyGetSubControl;
 import com.whirled.net.PropertySubControl;
@@ -28,23 +29,9 @@ public class ServerDefinitions
         _ctrl = ctrl;
 
         _funcs.room = createRoomFuncs();
-        _funcs.roomProps = createRoomPropsFuncs();
         _funcs.misc = createMiscFuncs();
-    }
-
-    public function getRoomFuncs () :Array
-    {
-        return _funcs.room.slice();
-    }
-
-    public function getRoomPropsFuncs () :Array
-    {
-        return _funcs.roomProps.slice();
-    }
-
-    public function getMiscFuncs () :Array
-    {
-        return _funcs.misc.slice();
+        _funcs.game = createGameFuncs();
+        _funcs.player = createPlayerFuncs();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -123,6 +110,39 @@ public class ServerDefinitions
         }
     }
 
+    protected function createGameFuncs () :Array
+    {
+        var funcs :Array = [
+            new FunctionSpec("getPlayerIds", _ctrl.game.getPlayerIds),
+            new FunctionSpec("sendMessage", _ctrl.game.sendMessage, [
+                new Parameter("name", String),
+                new ObjectParameter("value")])];
+        var props :Array = [];
+
+        pushPropsFuncs(props, "game", function (id :int) :PropertySubControl {
+            return _ctrl.game.props;
+        });
+
+        // stub out those id parameters
+        function prependZero (func :Function) :Function {
+            function stubby (...args) :* {
+                args.unshift(0);
+                return func.apply(null, args);
+            }
+            return stubby;
+        }
+
+        for (var ii :int = 0; ii < props.length; ++ii) {
+            var fs :FunctionSpec = props[ii];
+            var params :Array = fs.parameters;
+            params.shift();
+            props[ii] = new FunctionSpec(fs.name, prependZero(fs.func), params);
+        }
+
+        funcs.push.apply(funcs, props);
+        return funcs;
+    }
+
     protected function createRoomFuncs () :Array
     {
         function getInstance (id :int) :RoomServerSubControl {
@@ -145,23 +165,112 @@ public class ServerDefinitions
             return room.getAvatarInfo;
         }
 
+        function spawnMob (room :RoomServerSubControl) :Function {
+            return room.spawnMob;
+        }
+
+        function despawnMob (room :RoomServerSubControl) :Function {
+            return room.despawnMob;
+        }
+
+        function sendMessage (room :RoomServerSubControl) :Function {
+            return room.sendMessage;
+        }
+
         var idParam :Parameter = new Parameter("roomId", int);
 
-        return [
-            new FunctionSpec("getRoomId", proxy(getInstance, getRoomId),
-                [idParam]),
-
-            new FunctionSpec("getPlayerIds", proxy(getInstance, getPlayerIds),
-                [idParam]),
-
-            new FunctionSpec("isPlayerHere", proxy(getInstance, isPlayerHere),
-                [idParam,
-                 new Parameter("id", int)]),
-
-            new FunctionSpec("getAvatarInfo", proxy(getInstance, getAvatarInfo),
-                [idParam,
-                 new Parameter("playerId", int)]),
+        var funcs :Array = [
+            new FunctionSpec("getRoomId", proxy(getInstance, getRoomId), [idParam]),
+            new FunctionSpec("getPlayerIds", proxy(getInstance, getPlayerIds), [idParam]),
+            new FunctionSpec("isPlayerHere", proxy(getInstance, isPlayerHere), [
+                idParam, new Parameter("id", int)]),
+            new FunctionSpec("getAvatarInfo", proxy(getInstance, getAvatarInfo), [
+                idParam, new Parameter("playerId", int)]),
+            new FunctionSpec("spawnMob", proxy(getInstance, spawnMob), [
+                idParam, new Parameter("id", String), new Parameter("name", String)]),
+            new FunctionSpec("despawnMob", proxy(getInstance, despawnMob), [
+                idParam, new Parameter("id", String)]),
+            new FunctionSpec("sendMessage", proxy(getInstance, sendMessage), [
+                idParam, new Parameter("name", String), new ObjectParameter("value")]),
         ];
+
+        pushPropsFuncs(funcs, "room", function (id :int) :PropertySubControl {
+            return _ctrl.getRoom(id).props;
+        });
+
+        return funcs;
+    }
+
+    protected function createPlayerFuncs () :Array
+    {
+        var idParam :Parameter = new Parameter("playerId", int);
+
+        function getPlayerId (props :PlayerServerSubControl) :Function {
+            return props.getPlayerId;
+        }
+
+        function getRoomId (props :PlayerServerSubControl) :Function {
+            return props.getRoomId;
+        }
+
+        function deactivateGame (props :PlayerServerSubControl) :Function {
+            return props.deactivateGame;
+        }
+
+        function completeTask (props :PlayerServerSubControl) :Function {
+            return props.completeTask;
+        }
+
+        function playAvatarAction (props :PlayerServerSubControl) :Function {
+            return props.playAvatarAction;
+        }
+
+        function setAvatarState (props :PlayerServerSubControl) :Function {
+            return props.setAvatarState;
+        }
+
+        function setAvatarMoveSpeed (props :PlayerServerSubControl) :Function {
+            return props.setAvatarMoveSpeed;
+        }
+
+        function setAvatarLocation (props :PlayerServerSubControl) :Function {
+            return props.setAvatarLocation;
+        }
+
+        function setAvatarOrientation (props :PlayerServerSubControl) :Function {
+            return props.setAvatarOrientation;
+        }
+
+        function sendMessage (props :PlayerServerSubControl) :Function {
+            return props.sendMessage;
+        }
+
+        var funcs :Array = [
+            new FunctionSpec("getPlayerId", getPlayerId, [idParam]),
+            new FunctionSpec("getRoomId", getRoomId, [idParam]),
+            new FunctionSpec("deactivateGame", deactivateGame, [idParam]),
+            new FunctionSpec("completeTask", completeTask, [idParam,
+                new Parameter("taskId", String), new Parameter("payout", Number)]),
+            new FunctionSpec("playAvatarAction", playAvatarAction, [idParam,
+                new Parameter("action", String)]),
+            new FunctionSpec("setAvatarState", setAvatarState, [idParam,
+                new Parameter("state", String)]),
+            new FunctionSpec("setAvatarMoveSpeed", setAvatarMoveSpeed, [idParam,
+                new Parameter("pixelsPerSecond", Number)]),
+            new FunctionSpec("setAvatarLocation", setAvatarLocation, [idParam,
+                new Parameter("x", Number), new Parameter("y", Number), new Parameter("z", Number),
+                new Parameter("orient", Number)]),
+            new FunctionSpec("setAvatarOrientation", setAvatarOrientation, [idParam,
+                new Parameter("orient", Number)]),
+            new FunctionSpec("sendMessage", sendMessage, [idParam,
+                new Parameter("name", String), new ObjectParameter("value")]),
+        ];
+
+        pushPropsFuncs(funcs, "player", function (id :int) :PropertySubControl {
+            return _ctrl.getPlayer(id).props;
+        });
+
+        return funcs;
     }
 
     protected function createMiscFuncs () :Array
@@ -171,38 +280,9 @@ public class ServerDefinitions
         ];
     }
 
-    protected function createRoomPropsFuncs () :Array
+    protected function pushPropsFuncs (
+        funcs :Array, targetName :String, instanceGetter :Function) :void
     {
-        return createPropertyFuncs("room", 
-            function (id :int) :PropertySubControl {
-                return _ctrl.getRoom(id).props;
-            }
-        );
-    }
-
-    protected function createPropertyFuncs (targetName :String, instanceGetter :Function) :Array
-    {
-        var idParam :Parameter = new Parameter(targetName + "Id", int);
-        var funcs :Array = createPropertyGetFuncs(targetName, instanceGetter);
-
-        function set (props: PropertySubControl) :Function {
-            return props.set;
-        }
-
-        funcs.push(
-            new FunctionSpec("set", proxy(instanceGetter, set),
-                [idParam,
-                 new Parameter("propName", String),
-                 new ObjectParameter("value", Parameter.NULLABLE),
-                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]));
-
-        return funcs;
-    }
-
-    protected function createPropertyGetFuncs (targetName :String, instanceGetter :Function) :Array
-    {
-        var idParam :Parameter = new Parameter(targetName + "Id", int);
-
         function get (props :PropertyGetSubControl) :Function {
             return props.get;
         }
@@ -211,15 +291,44 @@ public class ServerDefinitions
             return props.getPropertyNames;
         }
 
-        return [
-            new FunctionSpec("get", proxy(instanceGetter, get),
-                [idParam,
-                 new Parameter("propName", String)]),
+        function set (props: PropertySubControl) :Function {
+            return props.set;
+        }
 
-            new FunctionSpec("getPropertyNames", proxy(instanceGetter, getPropertyNames),
-                [idParam,
-                 new Parameter("prefix", String, Parameter.OPTIONAL)]),
-        ];
+        function setAt (props: PropertySubControl) :Function {
+            return props.setAt;
+        }
+
+        function setIn (props: PropertySubControl) :Function {
+            return props.setIn;
+        }
+
+        var idParam :Parameter = new Parameter(targetName + "Id", int);
+
+        funcs.push(
+            new FunctionSpec("props.get", proxy(instanceGetter, get), [
+                idParam,
+                new Parameter("propName", String)]),
+            new FunctionSpec("props.getPropertyNames", proxy(instanceGetter, getPropertyNames), [
+                idParam,
+                new Parameter("prefix", String, Parameter.OPTIONAL)]),
+            new FunctionSpec("props.set", proxy(instanceGetter, set), [
+                idParam,
+                new Parameter("propName", String),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("props.setAt", proxy(instanceGetter, setAt), [
+                idParam,
+                new Parameter("propName", String),
+                new Parameter("index", int),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("props.setIn", proxy(instanceGetter, setIn), [
+                idParam,
+                new Parameter("propName", String),
+                new Parameter("key", int),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]));
     }
 
     protected function proxy (instanceGetter :Function, functionGetter :Function) :Function
