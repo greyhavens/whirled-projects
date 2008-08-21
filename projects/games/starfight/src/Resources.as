@@ -88,7 +88,7 @@ public class Resources
         _ready = true;
     }
 
-    [Embed(source="rsrc/resources.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/resources.swf", mimeType="application/octet-stream")]
     protected static const RESOURCE_BUNDLE :Class;
 
     protected static var _loader :EmbeddedSwfLoader;

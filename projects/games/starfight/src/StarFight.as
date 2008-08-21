@@ -884,13 +884,13 @@ public class StarFight extends Sprite
         _gameCtrl.net.set(propName, value, true);
     }
 
-    [Embed(source="rsrc/intro_movie.swf")]
+    [Embed(source="../rsrc/intro_movie.swf")]
     protected var introAsset :Class;
 
-    [Embed(source="rsrc/VENUSRIS.TTF", fontName="Venus Rising", mimeType="application/x-font")]
+    [Embed(source="../rsrc/VENUSRIS.TTF", fontName="Venus Rising", mimeType="application/x-font")]
     protected var _venusRising :Class;
 
-    [Embed(source="rsrc/gutters.png")]
+    [Embed(source="../rsrc/gutters.png")]
     protected static const BACKGROUND :Class;
 
     /** Our game control object. */

@@ -123,7 +123,7 @@ public class RhinoShipType extends ShipType
         superShotExplode = _loader.getClass("missile_explosion");
     }
 
-    [Embed(source="rsrc/ships/rhino.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/ships/rhino.swf", mimeType="application/octet-stream")]
     protected static const SHIP :Class;
 
     protected static const JUMP :int = 15;

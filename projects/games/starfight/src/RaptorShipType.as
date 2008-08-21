@@ -87,7 +87,7 @@ public class RaptorShipType extends ShipType
         secondarySound = Sound(new (_loader.getClass("shield.wav"))());
     }
 
-    [Embed(source="rsrc/ships/raptor.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/ships/raptor.swf", mimeType="application/octet-stream")]
     protected static const SHIP :Class;
 }
 }

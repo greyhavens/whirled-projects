@@ -131,7 +131,7 @@ public class SaucerShipType extends ShipType
     protected static var RANGE :Number = 7;
     protected static var TARGET :Number = 12;
 
-    [Embed(source="rsrc/ships/xyru.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/ships/xyru.swf", mimeType="application/octet-stream")]
     protected static var SHIP :Class;
 }
 }

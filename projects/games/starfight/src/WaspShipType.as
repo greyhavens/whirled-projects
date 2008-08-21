@@ -105,7 +105,7 @@ public class WaspShipType extends ShipType
         secondaryExplodeSound = Sound(new (_loader.getClass("torpedo_explode.wav"))());
     }
 
-    [Embed(source="rsrc/ships/wasp.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/ships/wasp.swf", mimeType="application/octet-stream")]
     protected static const SHIP :Class;
 
     protected static var SPREAD :Number = 0.1;
