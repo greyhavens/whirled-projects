@@ -281,7 +281,7 @@ public class Room
         for (var ii :int = 0; ii < playerArr.length; ii ++) {
             var factor :Number = 0.5 * (pointsArr[ii]  / totPoints);
             if (factor > 0) {
-                playerArr[ii].ctrl.sendMessage(Codes.MSG_PAYOUT_FACTOR, factor);
+                playerArr[ii].ctrl.completeTask("ghost_defeated", factor);
             }
         }
     }
