@@ -6,6 +6,9 @@
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="ghostbusters"/>
 
+  <property name="app.server-agent" value="server/Server"/>
+  <property name="app.enable-server-agent" value="true"/>
+
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
