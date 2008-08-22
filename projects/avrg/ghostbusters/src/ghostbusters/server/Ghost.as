@@ -3,86 +3,101 @@
 
 package ghostbusters.server {
 
-import com.threerings.util.Random;
+import flash.geom.Point;
+import flash.utils.Dictionary;
 
 import ghostbusters.Codes;
-import ghostbusters.Content;
-import ghostbusters.Game;
 
 public class Ghost
 {
-    public static function spawnNewGhost (roomId :int) :Ghost
+    public static function resetGhost (id :String, name :String, level :int) :Dictionary
     {
-        var roomRandom :Random = new Random(roomId);
+        var data :Dictionary = new Dictionary();
 
-        // the ghost id/model is currently completely random; this will change
-        var ghosts :Array = [ "pinchy", "duchess", "widow", "demon" ];
-        var names :Array = [ "Mr. Pinchy", "The Duchess", "The Widow", "Soul Crusher" ];
-        var ix :int = Game.random.nextInt(ghosts.length);
+        data[Codes.PROP_GHOST_ID] = id;
+        data[Codes.PROP_GHOST_NAME] = name;
+        data[Codes.PROP_GHOST_LEVEL] = level;
 
-        // the ghost's level base is completely determined by the room
-        var rnd :Number = roomRandom.nextNumber();
+        // TODO: in time, zest should depend on level
+        data[Codes.PROP_GHOST_CUR_ZEST] = data[Codes.PROP_GHOST_MAX_ZEST] =
+            150 + 100 * Server.random.nextNumber();
 
-        // the base is in [1, 10] and low level ghosts to more common than high level ones
-        var levelBase :int = int(1 + 10*rnd*rnd);
+        // TODO: in time, max health should depend on level
+        data[Codes.PROP_GHOST_CUR_HEALTH] = data[Codes.PROP_GHOST_MAX_HEALTH] = 100;
 
-        // the actual level is the base plus a genuinely random tweak of 0, 1 or 2
-        var level :int = levelBase + Game.random.nextInt(3);
-
-        var ghost :Ghost = new Ghost(ghosts[ix], level);
-
-        var zest :int = ghost.calculateMaxZest();
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_ZEST, zest);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_ZEST, zest);
-
-        var health :int = ghost.calculateMaxHealth();
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, health);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_HEALTH, health);
-
-        // reset the 'last attack' timer
-        Game.control.state.setRoomProperty(Codes.PROP_LAST_GHOST_ATTACK, null);
-
-        // now actually spawn the ghost
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, [ ghosts[ix], names[ix], level ]);
-
-        Game.log.debug("Spawned new ghost: " + ghosts[ix] + "/" + names[ix] + "/" + level);
-
-        return ghost;
+        return data;
     }
 
-    public static function loadIfPresent () :Ghost
+    public function Ghost (room :Room, data :Dictionary)
     {
-        var data :Object = Game.model.ghostId;
-        if (data != null) {
-            Game.log.debug("Loaded existing ghost: " + data.id + "/" + data.level);
-            return new Ghost(data.id as String, data.level as int);
-        }
-        return null;
+        _room = room;
+        _brain = new BasicBrain(room);
+
+        // TODO: if we're really going to configure through dictionary, we need sanity checks
+        _id = data[Codes.PROP_GHOST_ID];
+        _name = data[Codes.PROP_GHOST_NAME];
+        _level = data[Codes.PROP_GHOST_LEVEL];
+
+        _zest = data[Codes.PROP_GHOST_CUR_ZEST];
+        _maxZest = data[Codes.PROP_GHOST_MAX_ZEST];
+
+        _health = data[Codes.PROP_GHOST_CUR_HEALTH];
+        _maxHealth = data[Codes.PROP_GHOST_MAX_HEALTH];
+
     }
 
-    public function Ghost (id :String, level :int)
+    public function get zest () :int
     {
-        _id = id;
-        _level = level;
+        return _zest;
     }
 
-    public function selfTerminate () :void
+    public function get health () :int
     {
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_ID, null);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_ZEST, null);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_ZEST, null);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_CUR_HEALTH, null);
-        Game.control.state.setRoomProperty(Codes.PROP_GHOST_MAX_HEALTH, null);
-    }
-
-    public function tick (tick :int) :void
-    {
-        return BasicBrain.tick(this, tick);
+        return _health;
     }
 
     public function isDead () :Boolean
     {
-        return Game.control.state.getRoomProperty(Codes.PROP_GHOST_CUR_HEALTH) === 0;
+        return _health == 0;
+    }
+
+    public function setZest (zest :int) :void
+    {
+        _zest = zest;
+
+        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_CUR_ZEST, zest);
+    }
+
+    public function setHealth (health :int) :void
+    {
+        _health = health;
+
+        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_CUR_HEALTH, health);
+    }
+
+    public function setPosition (x :int, y :int) :void
+    {
+        _position = new Point(x, y);
+
+        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_POS, [ x, y ]);
+    }
+
+    public function zap () :void
+    {
+        setZest(_zest*0.9 - 15);
+    }
+
+    public function heal () :void
+    {
+        setHealth(_maxHealth);
+        setZest(_maxZest);
+    }
+
+    public function tick (timer :int) :void
+    {
+        if (_brain != null) {
+            _brain.tick(timer);
+        }
     }
 
     public function calculateSingleAttack () :int
@@ -90,31 +105,34 @@ public class Ghost
         // e.g. a level 3 ghost does 40-48 points of dmg to one target
         return rndStretch(10 * (_level + 1), 1.2);
     }
-    
+
     public function calculateSplashAttack () :int
     {
         // e.g. a level 3 ghost does 16-24 points of dmg to the whole party
         return rndStretch(4 * (_level + 1), 1.5);
     }
 
-    public function calculateMaxZest () :int
-    {
-        return 150 + 100 * Game.random.nextNumber();
-    }
-
-    public function calculateMaxHealth () :int
-    {
-        return 100;
-    }
-
     protected function rndStretch (n :int, f :Number) :int
     {
         // randomly stretch a value by a factor [1, f]
-        return int(n * (1 + (f-1)*Game.random.nextNumber()));
+        return int(n * (1 + (f-1)*Server.random.nextNumber()));
     }
 
+    protected var _room :Room;
+
     protected var _id :String;
+    protected var _name :String;
     protected var _level :int;
+
+    protected var _zest :int;
+    protected var _maxZest :int;
+
+    protected var _health :int;
+    protected var _maxHealth :int;
+
+    protected var _position :Point;
+
+    protected var _brain :BasicBrain;
 }
 
 }
