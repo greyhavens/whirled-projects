@@ -64,7 +64,7 @@ public class FaceHugger extends Sprite
                 "Squeeee!!", "Hssss!!", "Skreeeee!!", "OMG WTF?!",
                 "*squelch squelch*", "I luvs you, " + remote.getName() + "!"
             ];
-            _ctrl.sendChatMessage(RandomUtil.pickRandom(speech) as String);
+            _ctrl.sendChat(RandomUtil.pickRandom(speech) as String);
 
             _ctrl.setPixelLocation(target[0], target[1], target[2],
                     target[0] < _ctrl.getPixelLocation()[0] ? 270 : 90);

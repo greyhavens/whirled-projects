@@ -81,7 +81,7 @@ public class Worker extends Sprite
                 // Take some food from the food source and put it in memory
                 _ctrl.setMemory("foodHeld", _ctrl.getEntityProperty("ants:takeFood", foodId));
             } else {
-                _ctrl.sendChatMessage("No food found");
+                _ctrl.sendChat("No food found");
             }
 
             // Change our appearance
@@ -105,7 +105,7 @@ public class Worker extends Sprite
                 // Drop the food
                 _ctrl.setMemory("foodHeld", 0);
             } else {
-                _ctrl.sendChatMessage("I have food, but no queen!");
+                _ctrl.sendChat("I have food, but no queen!");
             }
 
             // Change our appearance

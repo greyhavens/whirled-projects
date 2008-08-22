@@ -43,13 +43,13 @@ public class Hal extends Sprite
 
         var i :int = int(Math.floor(Math.random() * quotes.length));
         var quote :String = quotes[i];
-        _ctrl.sendChatMessage(quote);
+        _ctrl.sendChat(quote);
     }
 
     protected function gotChat (msg :ControlEvent) :void
     {
         if (msg.value.toLocaleLowerCase().search("\\bhal\\b") != -1) {
-            _ctrl.sendChatMessage("What are you doing, " + msg.name + "?");
+            _ctrl.sendChat("What are you doing, " + msg.name + "?");
         }
     }
         

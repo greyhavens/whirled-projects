@@ -41,7 +41,7 @@ public class Freud extends Sprite
     protected function speak (text :String) :void
     {
         _lastUtterance = text;
-        _ctrl.sendChatMessage(text);
+        _ctrl.sendChat(text);
     }
     
     protected var _ctrl :PetControl;

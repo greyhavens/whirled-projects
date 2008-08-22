@@ -39,7 +39,7 @@ public class Dog extends Sprite
 
                 // If food was returned
                 if (food > 0) {
-                    _ctrl.sendChatMessage("*munch munch*");
+                    _ctrl.sendChat("*munch munch*");
 
                     // Add the food to our energy
                     _ctrl.setMemory("energy", (_ctrl.getMemory("energy") as Number) + food);
@@ -52,7 +52,7 @@ public class Dog extends Sprite
                 }
             }
 
-            _ctrl.sendChatMessage("I can't find anything to eat... *whimper*");
+            _ctrl.sendChat("I can't find anything to eat... *whimper*");
 
         } else {
             // Move to a random spot in the room
@@ -65,7 +65,7 @@ public class Dog extends Sprite
     public function memoryUpdated (event :ControlEvent) :void
     {
         if (event.name == "energy") {
-            _ctrl.sendChatMessage("Energy: " + event.value);
+            _ctrl.sendChat("Energy: " + event.value);
 
             // Become hungry if energy reaches zero, otherwise go default
             _ctrl.setState(event.value <= 0 ? "hungry" : "default");
@@ -84,7 +84,7 @@ public class Dog extends Sprite
         if (targetId == _ctrl.getMyEntityId()) {
             _ctrl.setMemory("energy", (_ctrl.getMemory("energy") as Number) - 10);
         } else {
-            _ctrl.sendChatMessage("You're my best friend, " + _ctrl.getEntityProperty(EntityControl.PROP_NAME, targetId));
+            _ctrl.sendChat("You're my best friend, " + _ctrl.getEntityProperty(EntityControl.PROP_NAME, targetId));
             
             // Follow it
             var pos :Array = _ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, targetId) as Array;

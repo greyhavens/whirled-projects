@@ -122,7 +122,7 @@ public class Brain
     protected function debugMessage (message :String) :void
     {
         if (debug && _ctrl.isConnected()) {
-            _ctrl.sendChatMessage(message);
+            _ctrl.sendChat(message);
         } else {
             log.info(message);
         }
