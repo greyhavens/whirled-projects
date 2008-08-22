@@ -101,6 +101,8 @@ public class Player
                     _room.minigameCompletion(this, Boolean(bits[0]), int(bits[1]), int(bits[2]));
                 }
             }
+        } else if (msg == Codes.MSG_PLAYER_REVIVE) {
+            setHealth(Math.min(_maxHealth, _health + amount));
         }
     }
 
@@ -124,7 +126,9 @@ public class Player
 
     public function heal (amount :int) :void
     {
-        setHealth(Math.min(_maxHealth, _health + amount));
+        if (!isDead()) {
+            setHealth(Math.min(_maxHealth, _health + amount));
+        }
     }
 
     protected function setHealth (health :int) :void
