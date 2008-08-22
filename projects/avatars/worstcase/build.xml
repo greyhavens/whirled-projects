@@ -2,8 +2,12 @@
 <project name="worstcase" default="compile" basedir=".">
 
   <!-- defines our project name -->
+  <!--
+  <property name="app.name" value="Scenario"/>
+  -->
   <property name="app.name" value="Scenario"/>
   <property name="app.type" value="avatar"/>
+<!--  <property name="flex.use-network" value="true"/> -->
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
