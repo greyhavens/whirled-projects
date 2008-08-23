@@ -106,7 +106,6 @@ public class DictionaryAttack extends Sprite
     protected function coinsAwarded (event :CoinsAwardedEvent) :void
     {
         _coinsAward = event.amount;
-        _ctx.control.local.feedback("You earned " + _coinsAward + " coins!");
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
