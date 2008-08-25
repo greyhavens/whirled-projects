@@ -1,0 +1,7 @@
+<datapack>
+    <data name="Title" type="String" value="Hello Whirled" info="The title for the popup" />
+    <file name="Button" type="DisplayObject" value="dopefish.png" info="Clicky clicky" />
+    <file name="Panel" type="DisplayObject" value="smallpong.swf" info="The popup's contents" />
+
+    <file name="_CONTENT" value="Popper.swf" />
+</datapack>
