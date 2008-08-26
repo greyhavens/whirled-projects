@@ -15,6 +15,7 @@ import com.whirled.avrg.AgentSubControl;
 
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
+import com.whirled.net.PropertySubControl;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
@@ -23,7 +24,9 @@ import com.threerings.util.StringUtil;
 public class Definitions
 {
     public static const GAME_EVENTS :Array = [
-        // AVRGameControlEvent.COINS_AWARDED,
+        //AVRGameControlEvent.COINS_AWARDED,
+        AVRGameControlEvent.PLAYER_JOINED_GAME,
+        AVRGameControlEvent.PLAYER_QUIT_GAME,
     ];
 
     public static const ROOM_EVENTS :Array = [
@@ -31,18 +34,19 @@ public class Definitions
         AVRGameRoomEvent.PLAYER_LEFT,
         AVRGameRoomEvent.PLAYER_MOVED,
         AVRGameRoomEvent.AVATAR_CHANGED,
+        MessageReceivedEvent.MESSAGE_RECEIVED
     ];
 
     public static const NET_EVENTS :Array = [
         PropertyChangedEvent.PROPERTY_CHANGED,
         ElementChangedEvent.ELEMENT_CHANGED,
-        MessageReceivedEvent.MESSAGE_RECEIVED
     ];
 
     public static const PLAYER_EVENTS :Array = [
         AVRGamePlayerEvent.COINS_AWARDED,
         AVRGamePlayerEvent.ENTERED_ROOM,
         AVRGamePlayerEvent.LEFT_ROOM,
+        MessageReceivedEvent.MESSAGE_RECEIVED
     ];
 
     public static const CLIENT_EVENTS :Array = [
@@ -70,6 +74,7 @@ public class Definitions
         _funcs.serverMisc = createServerMiscFuncs();
         _funcs.serverRoom = createServerRoomFuncs();
         _funcs.serverGame = createServerGameFuncs();
+        _funcs.serverPlayer = createServerPlayerFuncs();
     }
 
     public function getFuncKeys (server :Boolean) :Array
@@ -110,6 +115,7 @@ public class Definitions
         add(_ctrl.room.props, NET_EVENTS);
 
         add(_ctrl.player, PLAYER_EVENTS);
+        add(_ctrl.player.props, NET_EVENTS);
     }
 
     protected function createRoomFuncs () :Array
@@ -122,6 +128,7 @@ public class Definitions
                 new Parameter("id", int)]),
             new FunctionSpec("getAvatarInfo", room.getAvatarInfo, [
                 new Parameter("playerId", int)]),
+            new FunctionSpec("getRoomBounds", room.getRoomBounds),
         ];
 
         pushPropsFuncs(funcs, room.props);
@@ -164,6 +171,7 @@ public class Definitions
                 new Parameter("orient", Number)]),
         ];
         pushPropsFuncs(funcs, player.props);
+        pushPropsSetFuncs(funcs, player.props);
         return funcs;
     }
 
@@ -184,7 +192,6 @@ public class Definitions
                 new Parameter("msg", String)]),
             new FunctionSpec("getStageSize", local.getStageSize, [
                 new Parameter("full", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("getRoomBounds", local.getRoomBounds),
             new FunctionSpec("stageToRoom", local.stageToRoom, [
                 new PointParameter("p")]),
             new FunctionSpec("roomToStage", local.roomToStage, [
@@ -226,6 +233,24 @@ public class Definitions
         );
     }
 
+    protected function pushPropsSetFuncs (funcs :Array, props :PropertySubControl) :void
+    {
+        funcs.splice(funcs.length, 0,
+            new FunctionSpec("props.set", props.set, [
+                new Parameter("name", String),
+                new ObjectParameter("value", Parameter.NULLABLE)]),
+            new FunctionSpec("props.setAt", props.setAt, [
+                new Parameter("name", String),
+                new Parameter("index", int),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
+            new FunctionSpec("props.setAt", props.setIn, [
+                new Parameter("name", String),
+                new Parameter("key", int),
+                new ObjectParameter("value", Parameter.NULLABLE),
+                new Parameter("immediate", Boolean, Parameter.OPTIONAL)])
+        );
+    }
 
     // AUTO GENERATED from ServerDefinitions
     protected function createServerMiscFuncs () :Array
@@ -340,6 +365,8 @@ public class Definitions
             new FunctionSpec("getAvatarInfo", proxy("room", "getAvatarInfo"), [
                 new Parameter("roomId", int),
                 new Parameter("playerId", int)]),
+            new FunctionSpec("getRoomBounds", proxy("room", "getRoomBounds"), [
+                new Parameter("roomId", int)]),
             new FunctionSpec("spawnMob", proxy("room", "spawnMob"), [
                 new Parameter("roomId", int),
                 new Parameter("id", String),
