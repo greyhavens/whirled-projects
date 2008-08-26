@@ -56,20 +56,13 @@ public class ParameterPanel extends Sprite
             }
         }
 
-        
-        var buttonGrid :GridPanel = new GridPanel([200], [CELL_HEIGHT]);
 
-        _call = new Button("Call", "call");
-        buttonGrid.addCell(0, 0, _call);
-
-        _grid.addCell(2, 0, buttonGrid);
-
-        if (title != null) {
-            var titleText :TextField = new TextField();
-            titleText.autoSize = TextFieldAutoSize.LEFT;
-            titleText.text = title;
-            _grid.addCell(0, 0, titleText);
+        if (title == null) {
+            title = "[Call]";
         }
+        
+        _call = new Button(title, "call");
+        _grid.addCell(0, 0, _call);
 
         addChild(_grid);
     }
