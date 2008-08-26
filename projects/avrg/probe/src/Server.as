@@ -35,8 +35,9 @@ public class Server extends ServerObject
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, handlePlayerJoin);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, handlePlayerQuit);
 
-        ServerDefinitions.GAME_EVENTS.forEach(
-            ServerDefinitions.addListenerLambda(_ctrl.game, logEvent));
+        var addToGame :Function = ServerDefinitions.addListenerLambda(_ctrl.game, logEvent);
+        ServerDefinitions.GAME_EVENTS.forEach(addToGame);
+        ServerDefinitions.NET_EVENTS.forEach(addToGame);
 
         trace("Hello world!");
     }
@@ -89,68 +90,65 @@ public class Server extends ServerObject
 
     protected function handlePlayerJoin (event :AVRGameControlEvent) :void
     {
-        trace("Player joined game: " + event);
         var playerId :int = event.value as int;
         _ctrl.getPlayer(playerId).addEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
         _ctrl.getPlayer(playerId).addEventListener(
             AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
 
-        ServerDefinitions.PLAYER_EVENTS.forEach(
-            ServerDefinitions.addListenerLambda(_ctrl.getPlayer(playerId), logEvent));
+        var addToPlayer :Function = ServerDefinitions.addListenerLambda(
+            _ctrl.getPlayer(playerId), logEvent);
+        ServerDefinitions.PLAYER_EVENTS.forEach(addToPlayer);
+        ServerDefinitions.NET_EVENTS.forEach(addToPlayer);
     }
 
     protected function handlePlayerQuit (event :AVRGameControlEvent) :void
     {
-        trace("Player quit game: " + event);
         var playerId :int = event.value as int;
         _ctrl.getPlayer(playerId).removeEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
         _ctrl.getPlayer(playerId).removeEventListener(
             AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
 
-        ServerDefinitions.PLAYER_EVENTS.forEach(
-            ServerDefinitions.removeListenerLambda(_ctrl.getPlayer(playerId), logEvent));
+        var removeFromPlayer :Function = ServerDefinitions.removeListenerLambda(
+            _ctrl.getPlayer(playerId), logEvent)
+        ServerDefinitions.PLAYER_EVENTS.forEach(removeFromPlayer);
+        ServerDefinitions.NET_EVENTS.forEach(removeFromPlayer);
     }
 
     protected function handleRoomEntry (event :AVRGamePlayerEvent) :void
     {
-        trace("Player entered room: " + event);
         var playerId :int = event.playerId;
         var roomId :int = event.value as int;
-        _roomOccupantCounts[playerId] = int(_roomOccupantCounts[playerId]) + 1;
-        if (_roomOccupantCounts[playerId] == 1) {
-            ServerDefinitions.ROOM_EVENTS.forEach(
-                ServerDefinitions.addListenerLambda(_ctrl.getRoom(roomId), logEvent));
+        _playerRooms[playerId] = roomId;
+        _roomOccupantCounts[roomId] = int(_roomOccupantCounts[roomId]) + 1;
+        trace("Player entered room, occupant count is now " + _roomOccupantCounts[roomId]);
+        if (_roomOccupantCounts[roomId] == 1) {
+            var addToRoom :Function = ServerDefinitions.addListenerLambda(
+                _ctrl.getRoom(roomId), logEvent);
+            ServerDefinitions.ROOM_EVENTS.forEach(addToRoom);
+            ServerDefinitions.NET_EVENTS.forEach(addToRoom);
         }
     }
 
     protected function handleRoomExit (event :AVRGamePlayerEvent) :void
     {
-        trace("Player exited room: " + event);
         var playerId :int = event.playerId;
-        var roomId :int = event.value as int;
-        _roomOccupantCounts[playerId] = int(_roomOccupantCounts[playerId]) - 1;
-        if (_roomOccupantCounts[playerId] == 0) {
-            ServerDefinitions.ROOM_EVENTS.forEach(
-                ServerDefinitions.removeListenerLambda(_ctrl.getRoom(roomId), logEvent));
+        var roomId :int = _playerRooms[playerId] as int;
+        _playerRooms[playerId] = 0;
+        _roomOccupantCounts[roomId] = int(_roomOccupantCounts[roomId]) - 1;
+        trace("Player left room, occupant count is now " + _roomOccupantCounts[roomId]);
+        if (_roomOccupantCounts[roomId] == 0) {
+            var removeFromRoom :Function = ServerDefinitions.removeListenerLambda(
+                _ctrl.getRoom(roomId), logEvent);
+            ServerDefinitions.ROOM_EVENTS.forEach(removeFromRoom);
+            ServerDefinitions.NET_EVENTS.forEach(removeFromRoom);
         }
     }
 
     protected function logEvent (event :Event) :void
     {
         trace("Event received: " + event);
-    }
-
-    protected function updateListeners (
-        old :IEventDispatcher, disp :IEventDispatcher, types :Array) :void
-    {
-        for each (var type :String in types) {
-            if (old != null) {
-                old.removeEventListener(type, logEvent);
-            }
-            disp.addEventListener(type, logEvent);
-        }
     }
 
     protected function makeGenericCallback (
@@ -172,6 +170,7 @@ public class Server extends ServerObject
 
     protected var _ctrl :AVRServerGameControl;
     protected var _defs :ServerDefinitions;
+    protected var _playerRooms :Dictionary = new Dictionary();
     protected var _roomOccupantCounts :Dictionary = new Dictionary();
 }
 
