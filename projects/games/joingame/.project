@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>JoinGame</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>/Applications/Adobe Flex Builder 3/sdks/3.1.0/frameworks/projects/flex/src</location>
+		</link>
+		<link>
+			<name>[source path] libraries-whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/whirled/src/as</location>
+		</link>
+		<link>
+			<name>[source path] whirled-contrib-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/dist/sdk/whirled/contrib/src/as</location>
+		</link>
+		<link>
+			<name>[source path] sdk-whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/dist/sdk/whirled/src/as</location>
+		</link>
+	</linkedResources>
+</projectDescription>
