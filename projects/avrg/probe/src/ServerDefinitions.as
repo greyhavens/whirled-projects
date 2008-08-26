@@ -1,6 +1,7 @@
 package {
 
 import com.threerings.util.ClassUtil;
+import com.whirled.AbstractControl;
 import com.whirled.AbstractSubControl;
 import com.whirled.avrg.server.AVRServerGameControl;
 import com.whirled.avrg.server.PlayerServerSubControl;
@@ -22,6 +23,21 @@ public class ServerDefinitions
         ALL_EVENTS.push.apply(ALL_EVENTS, ROOM_EVENTS);
         ALL_EVENTS.push.apply(ALL_EVENTS, NET_EVENTS);
         ALL_EVENTS.push.apply(ALL_EVENTS, PLAYER_EVENTS);
+    }
+
+    public static function addListenerLambda (ctrl :AbstractControl, listener :Function) :Function
+    {
+        return function (name :String, ...unused) :void {
+            ctrl.addEventListener(name, listener);
+        }
+    }
+
+    public static function removeListenerLambda (
+        ctrl :AbstractControl, listener :Function) :Function
+    {
+        return function (name :String, ...unused) :void {
+            ctrl.removeEventListener(name, listener);
+        }
     }
 
     public function ServerDefinitions (ctrl :AVRServerGameControl)
