@@ -1,10 +1,20 @@
 package {
 
+import flash.utils.Dictionary;
+
+import flash.events.Event;
+import flash.events.IEventDispatcher;
+
 import com.threerings.util.StringUtil;
 
 import com.whirled.ServerObject;
 import com.whirled.net.MessageReceivedEvent;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.server.AVRServerGameControl;
+import com.whirled.avrg.server.RoomServerSubControl;
+import com.whirled.avrg.server.PlayerServerSubControl;
 
 public class Server extends ServerObject
 {
@@ -21,6 +31,9 @@ public class Server extends ServerObject
         _ctrl.game.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED,
             handleGameMessage);
+
+        _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, handlePlayerJoin);
+        _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, handlePlayerQuit);
 
         trace("Hello world!");
     }
@@ -66,6 +79,54 @@ public class Server extends ServerObject
 
             trace("Sending message " + BACKEND_CALL_RESULT + " to " + evt.senderId + ", value " + StringUtil.toString(result));
             _ctrl.getPlayer(evt.senderId).sendMessage(BACKEND_CALL_RESULT, result);
+        } else {
+            trace("Got event " + evt);
+        }
+    }
+
+    protected function handlePlayerJoin (event :AVRGameControlEvent) :void
+    {
+        trace("Player joined game: " + event);
+        var playerId :int = event.value as int;
+        _ctrl.getPlayer(playerId).addEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
+        _ctrl.getPlayer(playerId).addEventListener(
+            AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
+    }
+
+    protected function handlePlayerQuit (event :AVRGameControlEvent) :void
+    {
+        trace("Player quit game: " + event);
+        var playerId :int = event.value as int;
+        _ctrl.getPlayer(playerId).removeEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
+        _ctrl.getPlayer(playerId).removeEventListener(
+            AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
+    }
+
+    protected function handleRoomEntry (event :AVRGamePlayerEvent) :void
+    {
+        trace("Player entered room: " + event);
+    }
+
+    protected function handleRoomExit (event :AVRGamePlayerEvent) :void
+    {
+        trace("Player exited room: " + event);
+    }
+
+    protected function logEvent (event :Event) :void
+    {
+        trace("Event received: " + event);
+    }
+
+    protected function updateListeners (
+        old :IEventDispatcher, disp :IEventDispatcher, types :Array) :void
+    {
+        for each (var type :String in types) {
+            if (old != null) {
+                old.removeEventListener(type, logEvent);
+            }
+            disp.addEventListener(type, logEvent);
         }
     }
 
@@ -91,3 +152,4 @@ public class Server extends ServerObject
 }
 
 }
+

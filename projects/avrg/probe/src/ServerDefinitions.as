@@ -146,7 +146,8 @@ public class ServerDefinitions
     protected function createRoomFuncs () :Array
     {
         function getInstance (id :int) :RoomServerSubControl {
-            return _ctrl.getRoom(id);
+            var room :RoomServerSubControl = _ctrl.getRoom(id);
+            return room;
         }
 
         function getRoomId (room :RoomServerSubControl) :Function {
@@ -163,6 +164,10 @@ public class ServerDefinitions
 
         function getAvatarInfo (room :RoomServerSubControl) :Function {
             return room.getAvatarInfo;
+        }
+
+        function getRoomBounds (room :RoomServerSubControl) :Function {
+            return room.getRoomBounds;
         }
 
         function spawnMob (room :RoomServerSubControl) :Function {
@@ -186,6 +191,7 @@ public class ServerDefinitions
                 idParam, new Parameter("id", int)]),
             new FunctionSpec("getAvatarInfo", proxy(getInstance, getAvatarInfo), [
                 idParam, new Parameter("playerId", int)]),
+            new FunctionSpec("getRoomBounds", proxy(getInstance, getRoomBounds), [idParam]),
             new FunctionSpec("spawnMob", proxy(getInstance, spawnMob), [
                 idParam, new Parameter("id", String), new Parameter("name", String)]),
             new FunctionSpec("despawnMob", proxy(getInstance, despawnMob), [
@@ -195,7 +201,7 @@ public class ServerDefinitions
         ];
 
         pushPropsFuncs(funcs, "room", function (id :int) :PropertySubControl {
-            return _ctrl.getRoom(id).props;
+            return getInstance(id).props;
         });
 
         return funcs;
@@ -204,6 +210,11 @@ public class ServerDefinitions
     protected function createPlayerFuncs () :Array
     {
         var idParam :Parameter = new Parameter("playerId", int);
+
+        function getInstance (id :int) :PlayerServerSubControl {
+            var player :PlayerServerSubControl = _ctrl.getPlayer(id);
+            return player;
+        }
 
         function getPlayerId (props :PlayerServerSubControl) :Function {
             return props.getPlayerId;
@@ -246,28 +257,28 @@ public class ServerDefinitions
         }
 
         var funcs :Array = [
-            new FunctionSpec("getPlayerId", getPlayerId, [idParam]),
-            new FunctionSpec("getRoomId", getRoomId, [idParam]),
-            new FunctionSpec("deactivateGame", deactivateGame, [idParam]),
-            new FunctionSpec("completeTask", completeTask, [idParam,
+            new FunctionSpec("getPlayerId", proxy(getInstance, getPlayerId), [idParam]),
+            new FunctionSpec("getRoomId", proxy(getInstance, getRoomId), [idParam]),
+            new FunctionSpec("deactivateGame", proxy(getInstance, deactivateGame), [idParam]),
+            new FunctionSpec("completeTask", proxy(getInstance, completeTask), [idParam,
                 new Parameter("taskId", String), new Parameter("payout", Number)]),
-            new FunctionSpec("playAvatarAction", playAvatarAction, [idParam,
+            new FunctionSpec("playAvatarAction", proxy(getInstance, playAvatarAction), [idParam,
                 new Parameter("action", String)]),
-            new FunctionSpec("setAvatarState", setAvatarState, [idParam,
+            new FunctionSpec("setAvatarState", proxy(getInstance, setAvatarState), [idParam,
                 new Parameter("state", String)]),
-            new FunctionSpec("setAvatarMoveSpeed", setAvatarMoveSpeed, [idParam,
-                new Parameter("pixelsPerSecond", Number)]),
-            new FunctionSpec("setAvatarLocation", setAvatarLocation, [idParam,
+            new FunctionSpec("setAvatarMoveSpeed", proxy(getInstance, setAvatarMoveSpeed), [
+                idParam, new Parameter("pixelsPerSecond", Number)]),
+            new FunctionSpec("setAvatarLocation", proxy(getInstance, setAvatarLocation), [idParam,
                 new Parameter("x", Number), new Parameter("y", Number), new Parameter("z", Number),
                 new Parameter("orient", Number)]),
-            new FunctionSpec("setAvatarOrientation", setAvatarOrientation, [idParam,
-                new Parameter("orient", Number)]),
-            new FunctionSpec("sendMessage", sendMessage, [idParam,
+            new FunctionSpec("setAvatarOrientation", proxy(getInstance, setAvatarOrientation), [
+                idParam, new Parameter("orient", Number)]),
+            new FunctionSpec("sendMessage", proxy(getInstance, sendMessage), [idParam,
                 new Parameter("name", String), new ObjectParameter("value")]),
         ];
 
         pushPropsFuncs(funcs, "player", function (id :int) :PropertySubControl {
-            return _ctrl.getPlayer(id).props;
+            return getInstance(id).props;
         });
 
         return funcs;
