@@ -64,7 +64,7 @@ public class Probe extends Sprite
 
         defs.addListenerToAll(logEvent);
 
-        _ctrl.game.addEventListener(
+        _ctrl.player.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, 
             handleGameMessage);
     }
