@@ -64,7 +64,8 @@ public class Preloader extends Sprite
     {
         removeEventListener(Event.ENTER_FRAME, handleFrame);
 
-        var gameClass :Class = getDefinitionByName(GAME_CLASS) as Class;
+        //var gameClass :Class = getDefinitionByName(GAME_CLASS) as Class;
+        var gameClass :Class = this.root.loaderInfo.applicationDomain.getDefinition(GAME_CLASS) as Class;
         if (gameClass == null) {
             trace("Oh no! Could not find " + GAME_CLASS)
             return;
