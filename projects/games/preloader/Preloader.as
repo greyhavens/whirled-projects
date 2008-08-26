@@ -77,7 +77,7 @@ public class Preloader extends Sprite
 
         var app :Object = new gameClass();
         app.init(_game);
-        rootCon.addChild(DisplayObject(_game));
+        rootCon.addChild(DisplayObject(app));
         // and that's all we need to do..
     }
 
