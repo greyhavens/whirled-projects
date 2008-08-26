@@ -81,10 +81,10 @@ public class RaptorShipType extends ShipType
         return SHIP;
     }
 
-    override protected function successHandler (event :Event) :void
+    override protected function successHandler () :void
     {
-        super.successHandler(event);
-        secondarySound = Sound(new (_loader.getClass("shield.wav"))());
+        super.successHandler();
+        secondarySound = Sound(new (getLoadedClass("shield.wav"))());
     }
 
     [Embed(source="../rsrc/ships/raptor.swf", mimeType="application/octet-stream")]

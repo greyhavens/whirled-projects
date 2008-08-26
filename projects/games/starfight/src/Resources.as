@@ -1,36 +1,33 @@
 package {
 
+import com.threerings.util.HashMap;
+import com.threerings.util.MultiLoader;
+
 import flash.display.Bitmap;
 import flash.display.BitmapData;
-import flash.events.Event;
-import flash.events.IOErrorEvent;
 import flash.media.Sound;
-import flash.utils.ByteArray;
-
-import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.util.HashMap;
+import flash.system.ApplicationDomain;
 
 public class Resources
 {
     public static function init (callback :Function) :void
     {
         _callback = callback;
-        _loader = new EmbeddedSwfLoader(true);
-        _loader.addEventListener(Event.COMPLETE, successHandler);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, failureHandler);
-        _loader.load(new RESOURCE_BUNDLE());
+        _resourceDomain = new ApplicationDomain();
+
+        MultiLoader.getLoaders(RESOURCE_BUNDLE, loadComplete, false, _resourceDomain);
     }
 
     public static function getClass (name :String) :Class
     {
-        if (_loader == null || !_ready) {
+        if (!_ready) {
             return null;
         }
         var asset :Class = Class(_map.get(name));
         if (asset != null) {
             return asset;
         }
-        asset = _loader.getClass(name);
+        asset = getLoadedClass(name);
         if (asset != null) {
             _map.put(name, asset);
         }
@@ -39,14 +36,14 @@ public class Resources
 
     public static function getBitmapData (name :String) :BitmapData
     {
-        if (_loader == null || !_ready) {
+        if (!_ready) {
             return null;
         }
         var data :BitmapData = BitmapData(_map.get(name));
         if (data != null) {
             return data;
         }
-        data = BitmapData(new (_loader.getClass(name))(0, 0));
+        data = BitmapData(new (getLoadedClass(name))(0, 0));
         _map.put(name, data);
         return data;
     }
@@ -62,36 +59,37 @@ public class Resources
 
     public static function getSound (name :String) :Sound
     {
-        if (_loader == null || !_ready) {
+        if (!_ready) {
             return null;
         }
         var sound :Sound = Sound(_map.get(name));
         if (sound != null) {
             return sound;
         }
-        sound = Sound(new (_loader.getClass(name))());
+        sound = Sound(new (getLoadedClass(name))());
         _map.put(name, sound);
         return sound;
     }
 
-    protected static function failureHandler (event :IOErrorEvent) :void
+    protected static function loadComplete (result :Object) :void
     {
-        _callback(false);
-        _loader = null;
+        if (result is Error) {
+            _callback(false);
+        } else {
+            _ready = true;
+            _callback(true);
+        }
     }
 
-    protected static function successHandler (event :Event) :void
+    protected static function getLoadedClass (name :String) :Class
     {
-        _callback(true);
-        _loader.removeEventListener(Event.COMPLETE, successHandler);
-        _loader.removeEventListener(IOErrorEvent.IO_ERROR, failureHandler);
-        _ready = true;
+        return (_resourceDomain != null ? _resourceDomain.getDefinition(name) as Class : null);
     }
 
     [Embed(source="../rsrc/resources.swf", mimeType="application/octet-stream")]
     protected static const RESOURCE_BUNDLE :Class;
 
-    protected static var _loader :EmbeddedSwfLoader;
+    protected static var _resourceDomain :ApplicationDomain;
     protected static var _callback :Function;
     protected static var _ready :Boolean = false;
     protected static var _map :HashMap = new HashMap();

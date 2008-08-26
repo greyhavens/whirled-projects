@@ -115,12 +115,12 @@ public class RhinoShipType extends ShipType
         return SHIP;
     }
 
-    override protected function successHandler (event :Event) :void
+    override protected function successHandler () :void
     {
-        super.successHandler(event);
-        warpSound = Sound(new (_loader.getClass("warp.wav"))());
-        superShotAnim = _loader.getClass("missile");
-        superShotExplode = _loader.getClass("missile_explosion");
+        super.successHandler();
+        warpSound = Sound(new (getLoadedClass("warp.wav"))());
+        superShotAnim = getLoadedClass("missile");
+        superShotExplode = getLoadedClass("missile_explosion");
     }
 
     [Embed(source="../rsrc/ships/rhino.swf", mimeType="application/octet-stream")]

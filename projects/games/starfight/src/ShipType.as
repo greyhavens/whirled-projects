@@ -1,12 +1,11 @@
 package {
 
-import flash.display.MovieClip;
+import com.threerings.util.MultiLoader;
+
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.media.Sound;
-import flash.utils.ByteArray;
-
-import com.threerings.util.EmbeddedSwfLoader;
+import flash.system.ApplicationDomain;
 
 public class ShipType
 {
@@ -110,11 +109,8 @@ public class ShipType
     public function loadAssets (callback :Function) :void
     {
         _callback = callback;
-        _loader = new EmbeddedSwfLoader(true);
-        _loader.addEventListener(Event.COMPLETE, successHandler);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, failureHandler);
-        Logger.log("loading assets for " + name + " and class " + swfAsset());
-        _loader.load(new (swfAsset())());
+        _resourcesDomain = new ApplicationDomain();
+        MultiLoader.getLoaders(swfAsset(), loadComplete, false, _resourcesDomain);
     }
 
     protected function swfAsset () :Class
@@ -122,34 +118,34 @@ public class ShipType
         return null;
     }
 
-    protected function failureHandler (event :IOErrorEvent) :void
+    protected function loadComplete (result :Object) :void
     {
-        _callback(false);
-        finish();
-        _loader = null;
+        if (result is Error) {
+            _callback(false);
+        } else {
+            _callback(true);
+            successHandler();
+        }
     }
 
-    protected function successHandler (event :Event) :void
+    protected function successHandler () :void
     {
-        _callback(true);
-        finish();
-        shipAnim = _loader.getClass("ship");
-        shieldAnim = _loader.getClass("ship_shield");
-        explodeAnim = _loader.getClass("ship_explosion_big");
-        shotAnim = _loader.getClass("beam");
-        shotSound = Sound(new (_loader.getClass("beam.wav"))());
-        supShotSound = Sound(new (_loader.getClass("beam_powerup.wav"))());
-        spawnSound = Sound(new (_loader.getClass("spawn.wav"))());
-        engineSound = Sound(new (_loader.getClass("engine_sound.wav"))());
+        shipAnim = getLoadedClass("ship");
+        shieldAnim = getLoadedClass("ship_shield");
+        explodeAnim = getLoadedClass("ship_explosion_big");
+        shotAnim = getLoadedClass("beam");
+        shotSound = Sound(new (getLoadedClass("beam.wav"))());
+        supShotSound = Sound(new (getLoadedClass("beam_powerup.wav"))());
+        spawnSound = Sound(new (getLoadedClass("spawn.wav"))());
+        engineSound = Sound(new (getLoadedClass("engine_sound.wav"))());
     }
 
-    protected function finish () :void
+    protected function getLoadedClass (name :String) :Class
     {
-        _loader.removeEventListener(Event.COMPLETE, successHandler);
-        _loader.removeEventListener(IOErrorEvent.IO_ERROR, failureHandler);
+        return _resourcesDomain.getDefinition(name) as Class;
     }
 
-    protected var _loader :EmbeddedSwfLoader;
+    protected var _resourcesDomain :ApplicationDomain;
     protected var _callback :Function;
 
 }

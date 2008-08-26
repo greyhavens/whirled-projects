@@ -118,14 +118,14 @@ public class SaucerShipType extends ShipType
         return SHIP;
     }
 
-    override protected function successHandler (event :Event) :void
+    override protected function successHandler () :void
     {
-        super.successHandler(event);
-        mineFriendly = _loader.getClass("mine_friendly");
-        mineEnemy = _loader.getClass("mine_enemy");
-        mineExplode = _loader.getClass("mine_explode");
-        mineSound = Sound(new (_loader.getClass("mine_lay.wav"))());
-        mineExplodeSound = Sound(new (_loader.getClass("mine_explode.wav"))());
+        super.successHandler();
+        mineFriendly = getLoadedClass("mine_friendly");
+        mineEnemy = getLoadedClass("mine_enemy");
+        mineExplode = getLoadedClass("mine_explode");
+        mineSound = Sound(new (getLoadedClass("mine_lay.wav"))());
+        mineExplodeSound = Sound(new (getLoadedClass("mine_explode.wav"))());
     }
 
     protected static var RANGE :Number = 7;

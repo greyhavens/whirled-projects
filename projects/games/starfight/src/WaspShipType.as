@@ -96,13 +96,13 @@ public class WaspShipType extends ShipType
         return SHIP;
     }
 
-    override protected function successHandler (event :Event) :void
+    override protected function successHandler () :void
     {
-        super.successHandler(event);
-        secondaryAnim = _loader.getClass("torpedo");
-        secondaryExplode = _loader.getClass("torpedo_explosion");
-        secondarySound = Sound(new (_loader.getClass("torpedo_shot.wav"))());
-        secondaryExplodeSound = Sound(new (_loader.getClass("torpedo_explode.wav"))());
+        super.successHandler();
+        secondaryAnim = getLoadedClass("torpedo");
+        secondaryExplode = getLoadedClass("torpedo_explosion");
+        secondarySound = Sound(new (getLoadedClass("torpedo_shot.wav"))());
+        secondaryExplodeSound = Sound(new (getLoadedClass("torpedo_explode.wav"))());
     }
 
     [Embed(source="../rsrc/ships/wasp.swf", mimeType="application/octet-stream")]
