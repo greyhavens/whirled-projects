@@ -13,6 +13,7 @@ import flash.media.Sound;
 import flash.utils.ByteArray;
 
 import view.BgSprite;
+import view.MineView;
 import view.StatusOverlay;
 
 /**
@@ -309,7 +310,7 @@ public class BoardController
             }
         }
         _mines[index] = mine;
-        powerupLayer.addChild(mine);
+        powerupLayer.addChild(new MineView(mine));
         if (_gameCtrl.game.amInControl()) {
             setAtImmediate("mines", mine.writeTo(new ByteArray()), index);
         }
@@ -323,9 +324,7 @@ public class BoardController
         setAtImmediate("mines", null, idx);
         var mine :Mine = _mines[idx];
         _mines[idx] = null;
-        mine.explode(function () :void {
-            powerupLayer.removeChild(mine);
-        });
+        mine.explode();
     }
 
     /**
@@ -496,11 +495,7 @@ public class BoardController
                 var mine :Mine = _mines[ii];
                 _mines[ii] = null;
                 indices.push(ii);
-                if (mine.parent != null) {
-                    mine.explode(function () :void {
-                        powerupLayer.removeChild(mine);
-                    });
-                }
+                mine.explode();
             }
         }
         if (indices.length > 0 && _gameCtrl.game.amInControl()) {
@@ -576,7 +571,8 @@ public class BoardController
         }
         for (ii = 0; ii < _mines.length; ii++) {
             if (_mines[ii] != null) {
-                powerupLayer.addChild(_mines[ii]);
+                //powerupLayer.addChild(_mines[ii]);
+                powerupLayer.addChild(new MineView(_mines[ii])); // TEMP
             }
         }
     }

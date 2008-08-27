@@ -1,12 +1,13 @@
 package {
 
-import flash.display.MovieClip;
 import flash.events.Event;
 import flash.media.Sound;
 import flash.utils.ByteArray;
 
 public class Mine extends BoardObject
 {
+    public static const EXPLODED :String = "Exploded";
+
     public var health :Number;
     public var active :Boolean;
     public var dmg :Number;
@@ -25,10 +26,6 @@ public class Mine extends BoardObject
         health = 1.0;
         this.active = active;
         dmg = damage;
-
-        if (anim) {
-            setupGraphics();
-        }
     }
 
     override public function damage (damage :Number) :Boolean
@@ -55,20 +52,9 @@ public class Mine extends BoardObject
         return 2.5;
     }
 
-    public function explode (callback :Function) :void
+    public function explode () :void
     {
-        removeChildAt(0);
-
-        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
-
-        var expMovie :MovieClip = MovieClip(new (saucer.mineExplode)());
-        expMovie.addEventListener(Event.COMPLETE, function (event :Event) :void
-            {
-                expMovie.removeEventListener(Event.COMPLETE, arguments.callee);
-                callback();
-            });
-        addChild(expMovie);
-        AppContext.game.playSoundAt(saucer.mineExplodeSound, bX, bY);
+        dispatchEvent(new Event(EXPLODED));
     }
 
     override public function readFrom (bytes :ByteArray) :void
@@ -82,19 +68,6 @@ public class Mine extends BoardObject
         bytes = super.writeTo(bytes);
         bytes.writeFloat(dmg);
         return bytes;
-    }
-
-    override protected function setPosition () :void
-    {
-        super.setPosition();
-        x += Codes.PIXELS_PER_TILE/2;
-        y += Codes.PIXELS_PER_TILE/2;
-    }
-
-    override protected function setupGraphics () :void
-    {
-        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
-        addChild(MovieClip(new (active ? saucer.mineEnemy : saucer.mineFriendly)()));
     }
 }
 }
