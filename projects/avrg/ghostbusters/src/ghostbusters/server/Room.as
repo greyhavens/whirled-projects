@@ -13,6 +13,7 @@ import com.threerings.util.Random;
 import com.whirled.avrg.server.RoomServerSubControl;
 
 import ghostbusters.Codes;
+import ghostbusters.util.PlayerModel;
 
 public class Room
 {
@@ -151,6 +152,17 @@ public class Room
         if (healingDone > 0) {
             doHealPlayers(healingDone);
         }
+    }
+
+    internal function updateLanternPos (playerId :int, pos :Array) :void
+    {
+        _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos);
+    }
+
+    internal function updatePlayerHealth (playerId :int, health :int) :void
+    {
+        _ctrl.props.setIn(PlayerModel.propertyName(Codes.DICT_PFX_PLAYER, playerId),
+                          Codes.PROP_PLAYER_CUR_HEALTH, health);
     }
 
     protected function seekTick (timer :int) :void

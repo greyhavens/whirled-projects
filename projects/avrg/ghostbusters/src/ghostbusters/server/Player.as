@@ -21,12 +21,13 @@ public class Player
     public function Player (ctrl :PlayerServerSubControl)
     {
         _ctrl = ctrl;
+        _playerId = ctrl.getPlayerId();
 
         _ctrl.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-        var playerData :Dictionary = Dictionary(_ctrl.props.get(Codes.PROP_PLAYER));
+        var playerData :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_PFX_PLAYER));
         if (playerData != null) {
             _health = playerData[Codes.PROP_PLAYER_CUR_HEALTH];
             _maxHealth = playerData[Codes.PROP_PLAYER_MAX_HEALTH];
@@ -43,7 +44,7 @@ public class Player
 
     public function get playerId () :int
     {
-        return _ctrl.getPlayerId();
+        return _playerId;
     }
 
     public function get health () :int
@@ -89,6 +90,16 @@ public class Player
     {
         var msg :String = event.name;
 
+        // handle messages that make (at least some) sense even if we're between rooms
+        if (msg == Codes.MSG_PLAYER_REVIVE) {
+            setHealth(_maxHealth);
+        }
+
+        // if we're nowhere, drop out
+        if (_room == null) {
+            return;
+        }
+
         if (msg == Codes.MSG_GHOST_ZAP) {
             if (_room.checkState(Codes.STATE_SEEKING)) {
                 _room.ghostZap();
@@ -101,8 +112,9 @@ public class Player
                     _room.minigameCompletion(this, Boolean(bits[0]), int(bits[1]), int(bits[2]));
                 }
             }
-        } else if (msg == Codes.MSG_PLAYER_REVIVE) {
-            setHealth(Math.min(_maxHealth, _health + amount));
+
+        } else if (msg == Codes.MSG_LANTERN_POS) {
+            _room.updateLanternPos(_playerId, event.value as Array);
         }
     }
 
@@ -111,11 +123,11 @@ public class Player
         log.debug("Doing " + damage + " damage to a player with health " + _health);
 
         // let the clients in the room know of the attack
-        _room.ctrl.sendMessage(Codes.MSG_PLAYER_ATTACKED, playerId);
+        _room.ctrl.sendMessage(Codes.MSG_PLAYER_ATTACKED, _playerId);
 
         if (damage >= health) {
             // the blow killed the player: let all the clients in the room know that too
-            _room.ctrl.sendMessage(Codes.MSG_PLAYER_DEATH, playerId);
+            _room.ctrl.sendMessage(Codes.MSG_PLAYER_DEATH, _playerId);
             setHealth(0);
             return true;
         }
@@ -135,12 +147,14 @@ public class Player
     {
         _health = Math.max(0, Math.min(health, _maxHealth));
 
-        _ctrl.props.setIn(Codes.PROP_PLAYER, Codes.PROP_PLAYER_CUR_HEALTH, _health);
+        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER, Codes.PROP_PLAYER_CUR_HEALTH, _health);
+        _room.updatePlayerHealth(_playerId, _health);
     }
 
     protected var _ctrl :PlayerServerSubControl;
     protected var _room :Room;
 
+    protected var _playerId :int;
     protected var _health :int;
     protected var _maxHealth :int;
 }
