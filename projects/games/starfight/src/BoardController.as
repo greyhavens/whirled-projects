@@ -232,8 +232,8 @@ public class BoardController
      */
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        _board.x = Constants.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        _board.y = Constants.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
+        _board.x = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
+        _board.y = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
         _status.updateRadar(_ships, _powerups, boardX, boardY);
     }
@@ -518,8 +518,8 @@ public class BoardController
         var rX :Number = x * Codes.PIXELS_PER_TILE;
         var rY :Number = y * Codes.PIXELS_PER_TILE;
         // don't add small explosions that are off the screen
-        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + Constants.WIDTH + EXP_OFF ||
-                        rY < -_board.y - EXP_OFF || rY > -_board.y + Constants.HEIGHT + EXP_OFF)) {
+        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + Codes.GAME_WIDTH + EXP_OFF ||
+                        rY < -_board.y - EXP_OFF || rY > -_board.y + Codes.GAME_HEIGHT + EXP_OFF)) {
             return;
         }
         var exp :Explosion = Explosion.createExplosion(rX, rY, rot, isSmall, shipType);

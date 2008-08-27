@@ -18,15 +18,15 @@ public class ShipChooser extends Sprite
         var fadeOut :Shape = new Shape();
         fadeOut.alpha = 0.5;
         fadeOut.graphics.beginFill(Codes.BLACK);
-        fadeOut.graphics.drawRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
+        fadeOut.graphics.drawRect(0, 0, Codes.GAME_WIDTH, Codes.GAME_HEIGHT);
         fadeOut.graphics.endFill();
         addChild(fadeOut);
         _newGame = newGame;
 
         var bg :Bitmap = Resources.getBitmap("ship_select.png");
         addChild(bg);
-        bg.x = (Constants.WIDTH - bg.width) / 2;
-        bg.y = (Constants.HEIGHT - bg.height) / 2;
+        bg.x = (Codes.GAME_WIDTH - bg.width) / 2;
+        bg.y = (Codes.GAME_HEIGHT - bg.height) / 2;
 
         var format:TextFormat = new TextFormat();
         format.font = GameView.gameFont.fontName;
@@ -38,8 +38,8 @@ public class ShipChooser extends Sprite
         var selectText :TextField = new TextField();
         selectText.autoSize = TextFieldAutoSize.CENTER;
         selectText.selectable = false;
-        selectText.x = Constants.WIDTH/2;
-        selectText.y = Constants.HEIGHT/2 - TEXT_SPACING;
+        selectText.x = Codes.GAME_WIDTH/2;
+        selectText.y = Codes.GAME_HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
         selectText.embedFonts = true;
         selectText.antiAliasType = AntiAliasType.ADVANCED;
@@ -66,8 +66,8 @@ public class ShipChooser extends Sprite
         selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
         selection.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
-        selection.x = Constants.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
-        selection.y = Constants.HEIGHT/2 + 15;
+        selection.x = Codes.GAME_WIDTH/2 + SPACING * (idx - (total-1)/2.0);
+        selection.y = Codes.GAME_HEIGHT/2 + 15;
         _buttons.push(selection);
 
         addChild(selection);

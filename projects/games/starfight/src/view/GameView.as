@@ -30,14 +30,14 @@ public class GameView extends Sprite
         _center.addChild(mask);
         mask.graphics.clear();
         mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
+        mask.graphics.drawRect(0, 0, Codes.GAME_WIDTH, Codes.GAME_HEIGHT);
         mask.graphics.endFill();
         _center.mask = mask;
         addChild(_left = new BACKGROUND() as Bitmap);
         addChild(_right = new BACKGROUND() as Bitmap);
         addChild(_center);
         _center.graphics.beginFill(Codes.BLACK);
-        _center.graphics.drawRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
+        _center.graphics.drawRect(0, 0, Codes.GAME_WIDTH, Codes.GAME_HEIGHT);
 
         gameFont = Font(new _venusRising());
 
@@ -104,8 +104,8 @@ public class GameView extends Sprite
     protected function updateDisplayPosition (...ignored) :void
     {
         var displayWidth :Number = (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.local.getSize().x : Constants.WIDTH);
-        _center.x = Math.max(0, (displayWidth - Constants.WIDTH) / 2);
+            AppContext.gameCtrl.local.getSize().x : Codes.GAME_WIDTH);
+        _center.x = Math.max(0, (displayWidth - Codes.GAME_WIDTH) / 2);
         _right.width = _left.width = _center.x;
         _right.x = displayWidth - _right.width;
     }

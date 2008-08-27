@@ -580,8 +580,8 @@ public class ShipSprite extends Sprite
      */
     public function setPosRelTo (otherX :Number, otherY: Number) :void
     {
-        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Constants.WIDTH/2;
-        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Constants.HEIGHT/2;
+        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Codes.GAME_WIDTH/2;
+        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Codes.GAME_HEIGHT/2;
     }
 
     /**

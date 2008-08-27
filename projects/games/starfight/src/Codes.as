@@ -1,6 +1,10 @@
 package {
 
-public class Codes {
+public class Codes
+{
+    public static const GAME_WIDTH :int = 700;
+    public static const GAME_HEIGHT :int = 500;
+
     public static const PIXELS_PER_TILE :int = 20;
     public static const BG_PIXELS_PER_TILE :int = 5;
 
@@ -33,6 +37,5 @@ public class Codes {
         new SaucerShipType(),
         new RaptorShipType()
     ];
-
 }
 }
