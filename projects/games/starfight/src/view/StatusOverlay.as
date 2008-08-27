@@ -1,4 +1,4 @@
-package {
+package view {
 
 import flash.display.Sprite;
 import flash.display.Shape;
@@ -27,10 +27,10 @@ public class StatusOverlay extends Sprite
         _radar.y = 61;
         var vitals :Bitmap = Resources.getBitmap("status_vitals.png");
         addChild(vitals);
-        vitals.x = StarFight.WIDTH - 109;
+        vitals.x = Constants.WIDTH - 109;
 
         addChild(_health = new Sprite());
-        _health.x = StarFight.WIDTH - 103;
+        _health.x = Constants.WIDTH - 103;
         _health.y = 8;
         _health.addChild(Resources.getBitmap("bar_health.png"));
         var mask :Shape = new Shape();
@@ -39,7 +39,7 @@ public class StatusOverlay extends Sprite
         _health.addChild(mask);
         _health.mask = mask;
         addChild(_primary = new Sprite());
-        _primary.x = StarFight.WIDTH - 91;
+        _primary.x = Constants.WIDTH - 91;
         _primary.y = 39;
         _primary.addChild(Resources.getBitmap("bar_shot.png"));
         mask = new Shape();
@@ -48,7 +48,7 @@ public class StatusOverlay extends Sprite
         _primary.addChild(mask);
         _primary.mask = mask;
         addChild(_secondary = new Sprite());
-        _secondary.x = StarFight.WIDTH - 91;
+        _secondary.x = Constants.WIDTH - 91;
         _secondary.y = 56;
         _secondary.addChild(Resources.getBitmap("bar_secondary.png"));
         mask = new Shape();
@@ -58,7 +58,7 @@ public class StatusOverlay extends Sprite
         _secondary.mask = mask;
 
         addChild(_spread = new Sprite());
-        _spread.x = StarFight.WIDTH - 103;
+        _spread.x = Constants.WIDTH - 103;
         _spread.y = 84;
         _spread.addChild(Resources.getBitmap("spread.png"));
         mask = new Shape();
@@ -68,7 +68,7 @@ public class StatusOverlay extends Sprite
         _spread.mask = mask;
         addChild(_speed = new Sprite());
         _speed.addChild(Resources.getBitmap("speed.png"));
-        _speed.x = StarFight.WIDTH - 71;
+        _speed.x = Constants.WIDTH - 71;
         _speed.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -77,7 +77,7 @@ public class StatusOverlay extends Sprite
         _speed.mask = mask;
         addChild(_shields = new Sprite());
         _shields.addChild(Resources.getBitmap("shields.png"));
-        _shields.x = StarFight.WIDTH - 39;
+        _shields.x = Constants.WIDTH - 39;
         _shields.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -86,7 +86,7 @@ public class StatusOverlay extends Sprite
         _shields.mask = mask;
 
         var format:TextFormat = new TextFormat();
-        format.font = StarFight.gameFont.fontName;
+        format.font = GameView.gameFont.fontName;
         format.color = Codes.CYAN;
         format.size = 16;
         format.bold = true;
@@ -191,8 +191,8 @@ public class StatusOverlay extends Sprite
     public function updateRadar (
             ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
     {
-        boardX = StarFight.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        boardY = StarFight.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
+        boardX = Constants.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
+        boardY = Constants.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
@@ -217,7 +217,7 @@ public class StatusOverlay extends Sprite
      public function updateRoundText (text :String) :void
      {
         _roundText.text = text;
-        _roundText.x = (StarFight.WIDTH - _roundText.width) / 2;
+        _roundText.x = (Constants.WIDTH - _roundText.width) / 2;
      }
 
     /**
@@ -225,8 +225,8 @@ public class StatusOverlay extends Sprite
      */
     protected function positionDot (dot :Shape, x :Number, y :Number) :void
     {
-        x = (x - StarFight.WIDTH/2) / RADAR_ZOOM;
-        y = (y - StarFight.HEIGHT/2) / RADAR_ZOOM;
+        x = (x - Constants.WIDTH/2) / RADAR_ZOOM;
+        y = (y - Constants.HEIGHT/2) / RADAR_ZOOM;
 
         if (x*x + y*y < RADAR_RAD*RADAR_RAD) {
             dot.x = x;

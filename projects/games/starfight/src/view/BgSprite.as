@@ -1,4 +1,4 @@
-package {
+package view {
 
 import flash.display.Sprite;
 import flash.display.Shape;
@@ -25,9 +25,9 @@ public class BgSprite extends Sprite
         var tmpBmp :Bitmap = Resources.getBitmap("space_bg.png");
 
         var xRep :Number = Math.ceil((width*Codes.BG_PIXELS_PER_TILE +
-                                         StarFight.WIDTH)/tmpBmp.width);
+                                         Constants.WIDTH)/tmpBmp.width);
         var yRep :Number = Math.ceil((height*Codes.BG_PIXELS_PER_TILE +
-                                         StarFight.HEIGHT)/tmpBmp.height);
+                                         Constants.HEIGHT)/tmpBmp.height);
 
         for (var x :int = 0; x < xRep; x++) {
             for (var y :int = 0; y < yRep; y++) {

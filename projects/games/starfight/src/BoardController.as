@@ -12,6 +12,9 @@ import flash.geom.Point;
 import flash.media.Sound;
 import flash.utils.ByteArray;
 
+import view.BgSprite;
+import view.StatusOverlay;
+
 /**
  * Manages the board data and display sprite.
  */
@@ -26,12 +29,11 @@ public class BoardController
     /**
      * Constructs a brand new board.
      */
-    public function BoardController (gameCtrl :GameControl, sf :StarFight)
+    public function BoardController (gameCtrl :GameControl)
     {
         _gameCtrl = gameCtrl;
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-        _sf = sf;
     }
 
     public function init (callback :Function) :void
@@ -230,8 +232,8 @@ public class BoardController
      */
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        _board.x = StarFight.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        _board.y = StarFight.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
+        _board.x = Constants.WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
+        _board.y = Constants.HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
         _status.updateRadar(_ships, _powerups, boardX, boardY);
     }
@@ -321,7 +323,7 @@ public class BoardController
         setAtImmediate("mines", null, idx);
         var mine :Mine = _mines[idx];
         _mines[idx] = null;
-        mine.explode(_sf, function () :void {
+        mine.explode(function () :void {
             powerupLayer.removeChild(mine);
         });
     }
@@ -495,7 +497,7 @@ public class BoardController
                 _mines[ii] = null;
                 indices.push(ii);
                 if (mine.parent != null) {
-                    mine.explode(_sf, function () :void {
+                    mine.explode(function () :void {
                         powerupLayer.removeChild(mine);
                     });
                 }
@@ -516,8 +518,8 @@ public class BoardController
         var rX :Number = x * Codes.PIXELS_PER_TILE;
         var rY :Number = y * Codes.PIXELS_PER_TILE;
         // don't add small explosions that are off the screen
-        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + StarFight.WIDTH + EXP_OFF ||
-                        rY < -_board.y - EXP_OFF || rY > -_board.y + StarFight.HEIGHT + EXP_OFF)) {
+        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + Constants.WIDTH + EXP_OFF ||
+                        rY < -_board.y - EXP_OFF || rY > -_board.y + Constants.HEIGHT + EXP_OFF)) {
             return;
         }
         var exp :Explosion = Explosion.createExplosion(rX, rY, rot, isSmall, shipType);
@@ -545,7 +547,7 @@ public class BoardController
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (_sf.gameState == Codes.IN_ROUND && obj.damage(damage)) {
+            if (AppContext.starfight.gameState == Codes.IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName(), null, obj.index);
             }
         }
@@ -601,7 +603,7 @@ public class BoardController
             if (mine.type == ownShip.shipId) {
                 break;
             }
-            _sf.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
+            AppContext.starfight.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
             removeMine(mineIdx);
         } while (mineIdx != -1);
     }
@@ -734,8 +736,6 @@ public class BoardController
 
     /** All the explosions on the board. */
     protected var _explosions :Array;
-
-    protected var _sf :StarFight;
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

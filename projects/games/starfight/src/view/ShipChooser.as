@@ -1,4 +1,4 @@
-package {
+package view {
 
 import flash.display.Bitmap;
 import flash.display.Shape;
@@ -12,26 +12,24 @@ import flash.text.TextFieldAutoSize;
 
 public class ShipChooser extends Sprite
 {
-    public function ShipChooser(game :StarFight, newGame :Boolean)
+    public function ShipChooser (newGame :Boolean)
     {
-
         // Partially obscure background.
         var fadeOut :Shape = new Shape();
         fadeOut.alpha = 0.5;
         fadeOut.graphics.beginFill(Codes.BLACK);
-        fadeOut.graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+        fadeOut.graphics.drawRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
         fadeOut.graphics.endFill();
         addChild(fadeOut);
-        _game = game;
         _newGame = newGame;
 
         var bg :Bitmap = Resources.getBitmap("ship_select.png");
         addChild(bg);
-        bg.x = (StarFight.WIDTH - bg.width) / 2;
-        bg.y = (StarFight.HEIGHT - bg.height) / 2;
+        bg.x = (Constants.WIDTH - bg.width) / 2;
+        bg.y = (Constants.HEIGHT - bg.height) / 2;
 
         var format:TextFormat = new TextFormat();
-        format.font = StarFight.gameFont.fontName;
+        format.font = GameView.gameFont.fontName;
         format.color = Codes.YELLOW;
         format.size = 16;
         format.bold = true;
@@ -40,8 +38,8 @@ public class ShipChooser extends Sprite
         var selectText :TextField = new TextField();
         selectText.autoSize = TextFieldAutoSize.CENTER;
         selectText.selectable = false;
-        selectText.x = StarFight.WIDTH/2;
-        selectText.y = StarFight.HEIGHT/2 - TEXT_SPACING;
+        selectText.x = Constants.WIDTH/2;
+        selectText.y = Constants.HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
         selectText.embedFonts = true;
         selectText.antiAliasType = AntiAliasType.ADVANCED;
@@ -68,8 +66,8 @@ public class ShipChooser extends Sprite
         selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
         selection.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
-        selection.x = StarFight.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
-        selection.y = StarFight.HEIGHT/2 + 15;
+        selection.x = Constants.WIDTH/2 + SPACING * (idx - (total-1)/2.0);
+        selection.y = Constants.HEIGHT/2 + 15;
         _buttons.push(selection);
 
         addChild(selection);
@@ -111,9 +109,9 @@ public class ShipChooser extends Sprite
             selection.removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
         }
         if (_newGame) {
-            _game.chooseShip(typeIdx);
+            AppContext.starfight.chooseShip(typeIdx);
         } else {
-            _game.changeShip(typeIdx);
+            AppContext.starfight.changeShip(typeIdx);
         }
         parent.removeChild(this);
     }
@@ -122,7 +120,6 @@ public class ShipChooser extends Sprite
     protected static const TEXT_SPACING :int = 66;
     protected static const HIGHLIGHT_SCALE :Number = 1.2;
 
-    protected var _game :StarFight;
     protected var _newGame :Boolean;
     protected var _buttons :Array = [];
 }

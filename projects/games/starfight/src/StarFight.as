@@ -10,9 +10,7 @@ import com.whirled.game.StateChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.display.Bitmap;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -20,11 +18,12 @@ import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
-import flash.text.Font;
 import flash.text.TextField;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
+
+import view.GameView;
 
 /**
  * The main game class for the client.
@@ -32,11 +31,6 @@ import flash.utils.getTimer;
 [SWF(width="700", height="500")]
 public class StarFight extends Sprite
 {
-    public static const WIDTH :int = 700;
-    public static const HEIGHT :int = 500;
-
-    public static var gameFont :Font;
-
     /** Our seated index. */
     public var myId :int = -1;
 
@@ -48,36 +42,18 @@ public class StarFight extends Sprite
     public function StarFight ()
     {
         _gameCtrl = new GameControl(this);
+        AppContext.gameCtrl = _gameCtrl;
+        AppContext.starfight = this;
 
-        _center = new Sprite();
-        var mask :Shape = new Shape();
-        _center.addChild(mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        mask.graphics.endFill();
-        _center.mask = mask;
-        addChild(_left = new BACKGROUND() as Bitmap);
-        addChild(_right = new BACKGROUND() as Bitmap);
-        addChild(_center);
-        _center.graphics.beginFill(Codes.BLACK);
-        _center.graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
-
-        updateDisplay(null);
-
-        //Font.registerFont(_venusRising);
-        gameFont = Font(new _venusRising());
-
-        var introMovie :MovieClip = MovieClip(new introAsset());
-        _center.addChild(introMovie);
+        _gameView = new GameView();
+        addChild(_gameView);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
             this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
-            _gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED, updateDisplay);
-            addEventListener(MouseEvent.CLICK, firstStart);
         }
+        addEventListener(MouseEvent.CLICK, firstStart);
         Resources.init(assetLoaded);
     }
 
@@ -87,10 +63,13 @@ public class StarFight extends Sprite
         if (_assets < Codes.SHIP_TYPES.length) {
             return;
         }
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
-        _center.removeChildAt(1);
+
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+            _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        }
+
         removeEventListener(MouseEvent.CLICK, firstStart);
         setupBoard();
 
@@ -99,25 +78,7 @@ public class StarFight extends Sprite
 
     public function setupBoard () :void
     {
-        while (_center.numChildren > 1) {
-            _center.removeChildAt(_center.numChildren - 1);
-        }
-        if (_endMovie != null) {
-            _endMovie = null;
-        }
-        _boardLayer = new Sprite();
-        _subShotLayer = new Sprite();
-        _shipLayer = new Sprite();
-        _shotLayer = new Sprite();
-        _statusLayer = new Sprite();
-        _center.addChild(_boardLayer);
-        _center.addChild(_subShotLayer);
-        _center.addChild(_shipLayer);
-        _center.addChild(_shotLayer);
-        _center.addChild(_statusLayer);
-
-        _statusLayer.addChild(_status = new StatusOverlay());
-        log("Created Game Controller");
+        _gameView.setup();
 
         _lastTickTime = getTimer();
     }
@@ -162,14 +123,14 @@ public class StarFight extends Sprite
             _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
             _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
         }
-        _boardCtrl = new BoardController(_gameCtrl, this);
+        _boardCtrl = new BoardController(_gameCtrl);
         _boardCtrl.init(boardLoaded);
     }
 
     public function boardLoaded () :void
     {
         _shots = [];
-        _boardCtrl.createSprite(_boardLayer, _ships, _status);
+        _boardCtrl.createSprite(_gameView.boardLayer, _ships, _gameView.status);
 
         // Set up ships for all ships already in the world.
         if (_gameCtrl.isConnected()) {
@@ -193,7 +154,7 @@ public class StarFight extends Sprite
 
         startScreen();
 
-        _center.addChild(new ShipChooser(this, true));
+        _gameView.boardLoaded();
     }
 
     /**
@@ -214,7 +175,7 @@ public class StarFight extends Sprite
 
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        _shipLayer.addChild(_ownShip);
+        _gameView.shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
         if (_gameCtrl.isConnected()) {
@@ -293,8 +254,8 @@ public class StarFight extends Sprite
                     var remShip :ShipSprite = _ships.remove(id);
                     if (remShip != null) {
                         _gameCtrl.local.feedback(remShip.playerName + " left the game.");
-                        _shipLayer.removeChild(remShip);
-                        _status.removeShip(id);
+                        _gameView.shipLayer.removeChild(remShip);
+                        _gameView.status.removeShip(id);
                     }
                 } else {
                     var ship :ShipSprite = getShip(id);
@@ -335,8 +296,8 @@ public class StarFight extends Sprite
     public function addShip (id :int, ship :ShipSprite) :void
     {
         _ships.put(id, ship);
-        _shipLayer.addChild(ship);
-        _status.addShip(id);
+        _gameView.shipLayer.addChild(ship);
+        _gameView.status.addShip(id);
         _population++;
         maybeStartRound();
         var testShip :ShipSprite = getShip(id);
@@ -421,18 +382,12 @@ public class StarFight extends Sprite
             _gameCtrl.game.endGameWithScores(
                     scoreIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
         }
+
         var shipArr :Array = _ships.values();
         shipArr.sort(function (shipA :ShipSprite, shipB :ShipSprite) :int {
             return shipB.score - shipA.score;
         });
-        _endMovie = MovieClip(new (Resources.getClass("round_results"))());
-        for (var ii :int = 0; ii < shipArr.length; ii++) {
-            _endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
-                    "" + (ii + 1) + ". " + ShipSprite(shipArr[ii]).playerName;
-        }
-        _nextRoundTimer = _endMovie.fields_mc.timer;
-        _nextRoundTimer.text = String(30);
-        _center.addChild(_endMovie);
+        _gameView.endRound(shipArr);
     }
 
     /**
@@ -490,11 +445,6 @@ public class StarFight extends Sprite
                     setImmediate("stateTime", _stateTime);
                 }
             }
-
-        } else if (event.name == "nextRoundTicker") {
-            if (_nextRoundTimer != null) {
-                _nextRoundTimer.text = String(Math.max(0, int(_nextRoundTimer.text) - 1));
-            }
         }
     }
 
@@ -510,9 +460,9 @@ public class StarFight extends Sprite
             shot.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
         }
         if (shot is LaserShotSprite) {
-            _subShotLayer.addChild(shot);
+            _gameView.subShotLayer.addChild(shot);
         } else {
-            _shotLayer.addChild(shot);
+            _gameView.shotLayer.addChild(shot);
         }
     }
 
@@ -522,7 +472,7 @@ public class StarFight extends Sprite
     public function addScore (shipId :int, score :int) :void
     {
         if (shipId == myId) {
-        //_status.addScore(score);
+        //_gameView.status.addScore(score);
             _ownShip.addScore(score);
             var scores :Object = {};
             scores[_ownShip.shipId] = _ownShip.score;
@@ -555,7 +505,7 @@ public class StarFight extends Sprite
 
         if (ship == _ownShip) {
             ship.hit(shooterId, damage);
-            _status.setPower(ship.power);
+            _gameView.status.setPower(ship.power);
             addScore(shooterId, Math.round(damage * 10));
         }
     }
@@ -574,8 +524,8 @@ public class StarFight extends Sprite
     public function forceStatusUpdate () :void
     {
         if (_ownShip != null) {
-            _status.setPower(_ownShip.power);
-            _status.setPowerups(_ownShip);
+            _gameView.status.setPower(_ownShip.power);
+            _gameView.status.setPowerups(_ownShip);
         }
     }
 
@@ -618,14 +568,14 @@ public class StarFight extends Sprite
      public function updateRoundStatus () :void
      {
         if (gameState == Codes.PRE_ROUND) {
-            _status.updateRoundText("Waiting for players...");
+            _gameView.status.updateRoundText("Waiting for players...");
         } else if (gameState == Codes.POST_ROUND) {
-            _status.updateRoundText("Round over...");
+            _gameView.status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
             var seconds :int = time % 60;
             var minutes :int = time / 60;
-            _status.updateRoundText("" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
+            _gameView.status.updateRoundText("" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
         }
      }
 
@@ -679,8 +629,8 @@ public class StarFight extends Sprite
         var remShip :ShipSprite = _ships.remove(event.occupantId);
         if (remShip != null) {
             _gameCtrl.local.feedback(remShip.playerName + " left the game.");
-            _shipLayer.removeChild(remShip);
-            _status.removeShip(event.occupantId);
+            _gameView.shipLayer.removeChild(remShip);
+            _gameView.status.removeShip(event.occupantId);
         }
         _boardCtrl.shipKilled(event.occupantId);
 
@@ -809,9 +759,9 @@ public class StarFight extends Sprite
         for each (shot in completed) {
             _shots.splice(_shots.indexOf(shot), 1);
             if (shot is LaserShotSprite) {
-                _subShotLayer.removeChild(shot);
+                _gameView.subShotLayer.removeChild(shot);
             } else {
-                _shotLayer.removeChild(shot);
+                _gameView.shotLayer.removeChild(shot);
             }
         }
 
@@ -871,27 +821,10 @@ public class StarFight extends Sprite
         }
     }
 
-    protected function updateDisplay (event :SizeChangedEvent) :void
-    {
-        var displayWidth :Number = (_gameCtrl.isConnected() ? _gameCtrl.local.getSize().x : WIDTH);
-        _center.x = Math.max(0, (displayWidth - WIDTH) / 2);
-        _right.width = _left.width = _center.x;
-        _right.x = displayWidth - _right.width;
-    }
-
     protected function setImmediate (propName :String, value :Object) :void
     {
         _gameCtrl.net.set(propName, value, true);
     }
-
-    [Embed(source="../rsrc/intro_movie.swf")]
-    protected var introAsset :Class;
-
-    [Embed(source="../rsrc/VENUSRIS.TTF", fontName="Venus Rising", mimeType="application/x-font")]
-    protected var _venusRising :Class;
-
-    [Embed(source="../rsrc/gutters.png")]
-    protected static const BACKGROUND :Class;
 
     /** Our game control object. */
     protected var _gameCtrl :GameControl;
@@ -908,9 +841,6 @@ public class StarFight extends Sprite
     /** The board with all its obstacles. */
     protected var _boardCtrl :BoardController;
 
-    /** Status info. */
-    protected var _status :StatusOverlay;
-
     /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;
 
@@ -924,23 +854,11 @@ public class StarFight extends Sprite
     protected var _stateTime :int;
     protected var _population :int = 0;
 
-    protected var _boardLayer :Sprite;
-    protected var _shipLayer :Sprite;
-    protected var _shotLayer :Sprite;
-    protected var _subShotLayer :Sprite;
-    protected var _statusLayer :Sprite;
-
-    protected var _endMovie :MovieClip;
+    protected var _gameView :GameView;
 
     protected var _assets :int = 0;
 
     protected var _otherScores :Object = new Object();
-
-    protected var _nextRoundTimer :TextField;
-
-    protected var _center :Sprite;
-    protected var _left :Bitmap;
-    protected var _right :Bitmap;
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

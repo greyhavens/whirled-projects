@@ -55,7 +55,7 @@ public class Mine extends BoardObject
         return 2.5;
     }
 
-    public function explode (sf :StarFight, callback :Function) :void
+    public function explode (callback :Function) :void
     {
         removeChildAt(0);
         var expMovie :MovieClip = MovieClip(new Codes.SHIP_TYPES[2].mineExplode());
@@ -65,7 +65,7 @@ public class Mine extends BoardObject
                 callback();
             });
         addChild(expMovie);
-        sf.playSoundAt(Codes.SHIP_TYPES[2].mineExplodeSound, bX, bY);
+        AppContext.starfight.playSoundAt(Codes.SHIP_TYPES[2].mineExplodeSound, bX, bY);
     }
 
     override public function readFrom (bytes :ByteArray) :void

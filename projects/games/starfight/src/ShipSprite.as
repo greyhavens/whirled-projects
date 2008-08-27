@@ -3,27 +3,22 @@ package {
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
-
-import flash.events.KeyboardEvent;
 import flash.events.Event;
-
+import flash.events.KeyboardEvent;
+import flash.events.TimerEvent;
 import flash.geom.Point;
-
-import flash.utils.ByteArray;
-
 import flash.media.Sound;
-import flash.media.SoundChannel;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
-import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
-
-import flash.events.TimerEvent;
-
+import flash.text.TextFormat;
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import mx.effects.easing.Linear;
+
+import view.GameView;
+import view.ShipChooser;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
@@ -195,7 +190,7 @@ public class ShipSprite extends Sprite
         nameText.y = TEXT_OFFSET;
 
         var format:TextFormat = new TextFormat();
-        format.font = StarFight.gameFont.fontName;
+        format.font = GameView.gameFont.fontName;
         format.color = (isOwnShip || shipId < 0) ? Codes.CYAN : Codes.RED;
         format.size = 10;
         format.rightMargin = 3;
@@ -414,7 +409,7 @@ public class ShipSprite extends Sprite
     {
         event.target.removeEventListener(TimerEvent.TIMER, newShip);
         if (_game.gameState != Codes.POST_ROUND) {
-            _game.addChild(new ShipChooser(_game, false));
+            _game.addChild(new ShipChooser(false));
         }
     }
 
@@ -585,8 +580,8 @@ public class ShipSprite extends Sprite
      */
     public function setPosRelTo (otherX :Number, otherY: Number) :void
     {
-        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + StarFight.WIDTH/2;
-        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + StarFight.HEIGHT/2;
+        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Constants.WIDTH/2;
+        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Constants.HEIGHT/2;
     }
 
     /**

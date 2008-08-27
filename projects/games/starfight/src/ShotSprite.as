@@ -48,8 +48,8 @@ public class ShotSprite extends Sprite {
      */
     public function setPosRelTo (otherX :Number, otherY: Number) :void
     {
-        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + StarFight.WIDTH/2;
-        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + StarFight.HEIGHT/2;
+        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Constants.WIDTH/2;
+        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Constants.HEIGHT/2;
     }
 
     protected var _game :StarFight;
