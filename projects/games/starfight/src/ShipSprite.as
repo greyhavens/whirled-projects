@@ -552,12 +552,12 @@ public class ShipSprite extends Sprite
             var dtime :Number = Math.min(etime / 1000, 0.01);
             var turnSign :Number = (turnRate > 0 ? 1 : -1) * dtime;
             if (turnAccelRate == 0 &&
-                    Math.abs(turnRate) < Codes.SHIP_TYPES[shipType].turnThreshold) {
+                    Math.abs(turnRate) < Codes.getShipType(shipType).turnThreshold) {
                 turnRate = 0;
                 break;
             }
             turnRate += dtime * turnAccelRate -
-                    turnSign * Codes.SHIP_TYPES[shipType].turnFriction * (turnRate * turnRate);
+                    turnSign * Codes.getShipType(shipType).turnFriction * (turnRate * turnRate);
             turn += turnRate * dtime;
         }
         ship.rotation = (ship.rotation + turn * 5) % 360;
@@ -633,7 +633,7 @@ public class ShipSprite extends Sprite
     {
         if (type != shipType || _shipMovie == null) {
             shipType = type;
-            _shipType = Codes.SHIP_TYPES[shipType];
+            _shipType = Codes.getShipType(shipType);
 
             // Remove any old movies of other types of ship.
             if (_shipMovie != null) {

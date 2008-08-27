@@ -46,7 +46,7 @@ public class GameManager
 
     public function firstStart () :Boolean
     {
-        if (_assets < Codes.SHIP_TYPES.length) {
+        if (_assets < Codes.SHIP_TYPE_CLASSES.length) {
             return false;
         }
 
@@ -86,8 +86,8 @@ public class GameManager
     public function assetLoaded (success :Boolean) :void {
         if (success) {
             _assets++;
-            if (_assets <= Codes.SHIP_TYPES.length) {
-                Codes.SHIP_TYPES[_assets - 1].loadAssets(assetLoaded);
+            if (_assets <= Codes.SHIP_TYPE_CLASSES.length) {
+                Codes.getShipType(_assets - 1).loadAssets(assetLoaded);
                 return;
             }
         }
@@ -239,7 +239,7 @@ public class GameManager
 
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (myId == -1 || _assets < Codes.SHIP_TYPES.length) {
+        if (myId == -1 || _assets < Codes.SHIP_TYPE_CLASSES.length) {
             return;
         }
         var name :String = event.name;
@@ -405,11 +405,11 @@ public class GameManager
     {
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
-            Codes.SHIP_TYPES[val[1]].primaryShot(this, val);
+             Codes.getShipType(val[1]).primaryShot(val);
 
         } else if (event.name == "secondary") {
             val = (event.value as Array);
-            Codes.SHIP_TYPES[val[1]].secondaryShot(this, val);
+            Codes.getShipType(val[1]).secondaryShot(val);
 
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);

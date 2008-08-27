@@ -586,7 +586,7 @@ public class BoardController
     {
         do {
             var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Codes.SHIP_TYPES[ownShip.shipType].size, _powerups);
+                    Codes.getShipType(ownShip.shipType).size, _powerups);
             if (powIdx == -1) {
                 break;
             }
@@ -595,7 +595,7 @@ public class BoardController
         } while (powIdx != -1);
         do {
             var mineIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Codes.SHIP_TYPES[ownShip.shipType].size, _mines);
+                    Codes.getShipType(ownShip.shipType).size, _mines);
             if (mineIdx == -1) {
                 break;
             }

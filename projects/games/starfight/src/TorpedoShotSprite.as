@@ -16,7 +16,7 @@ public class TorpedoShotSprite extends ShotSprite {
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
 
-        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].secondaryAnim());
+        _shotMovie = MovieClip(new (Codes.getShipType(shipType).secondaryAnim)());
 
         rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
         addChild(_shotMovie);
@@ -44,12 +44,14 @@ public class TorpedoShotSprite extends ShotSprite {
             return;
         }
 
+        var wasp :WaspShipType = Codes.SHIP_TYPE_WASP;
+
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotRange, shipId, 2);
+                boardY + yVel*time, wasp.secondaryShotRange, shipId, 2);
 
         if (coll == null) {
             coll = board.getCollision(boardX, boardY, boardX + xVel*time,
-                    boardY + yVel*time, Codes.SHIP_TYPES[shipType].secondaryShotSize, shipId, 0);
+                    boardY + yVel*time, wasp.secondaryShotSize, shipId, 0);
         }
 
         if (coll == null) {
@@ -67,8 +69,8 @@ public class TorpedoShotSprite extends ShotSprite {
                 AppContext.game.hitObs(obs, hitX, hitY, shipId, damage);
             }
             AppContext.game.explodeCustom(
-                    hitX, hitY, MovieClip(new Codes.SHIP_TYPES[shipType].secondaryExplode()));
-            AppContext.game.playSoundAt(Codes.SHIP_TYPES[shipType].secondaryExplodeSound, hitX, hitY);
+                    hitX, hitY, MovieClip(new (wasp.secondaryExplode)()));
+            AppContext.game.playSoundAt(wasp.secondaryExplodeSound, hitX, hitY);
             complete = true;
         }
     }

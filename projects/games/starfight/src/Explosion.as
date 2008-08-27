@@ -16,11 +16,11 @@ public class Explosion extends Sprite
                 x, y, MovieClip(new (Resources.getClass("small_explosion"))()));
         } else {
             var explodeMovie :MovieClip =
-                MovieClip(new Codes.SHIP_TYPES[shipType].explodeAnim());
+                MovieClip(new (Codes.getShipType(shipType).explodeAnim)());
             explodeMovie.x = explodeMovie.width/2;
             explodeMovie.y = -explodeMovie.height/2;
-            explodeMovie.scaleX = Codes.SHIP_TYPES[shipType].size + 0.1;
-            explodeMovie.scaleY = Codes.SHIP_TYPES[shipType].size + 0.1;
+            explodeMovie.scaleX = Codes.getShipType(shipType).size + 0.1;
+            explodeMovie.scaleY = Codes.getShipType(shipType).size + 0.1;
             explosion = new Explosion(x, y, explodeMovie);
         }
 

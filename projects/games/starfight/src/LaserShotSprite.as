@@ -15,7 +15,7 @@ public class LaserShotSprite extends ShotSprite {
         super(x, y, shipId, damage, ttl, shipType);
         this.tShipId = tShipId;
 
-        _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
+        _shotMovie = MovieClip(new (Codes.getShipType(shipType).shotAnim)());
 
         _shotMovie.gotoAndStop(1);
         _shotMovie.scaleY = Codes.PIXELS_PER_TILE * length / _shotMovie.height;

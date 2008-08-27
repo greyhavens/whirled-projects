@@ -20,7 +20,7 @@ public class MissileShotSprite extends ShotSprite {
         if (shotClip != null) {
             _shotMovie = MovieClip(new shotClip());
         } else {
-            _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
+            _shotMovie = MovieClip(new (Codes.getShipType(shipType).shotAnim)());
         }
         if (explodeClip != null) {
             _explodeMovie = MovieClip(new explodeClip());
@@ -55,7 +55,7 @@ public class MissileShotSprite extends ShotSprite {
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.SHIP_TYPES[shipType].primaryShotSize, shipId, 0);
+                boardY + yVel*time, Codes.getShipType(shipType).primaryShotSize, shipId, 0);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;

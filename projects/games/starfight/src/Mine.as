@@ -58,14 +58,17 @@ public class Mine extends BoardObject
     public function explode (callback :Function) :void
     {
         removeChildAt(0);
-        var expMovie :MovieClip = MovieClip(new Codes.SHIP_TYPES[2].mineExplode());
+
+        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
+
+        var expMovie :MovieClip = MovieClip(new (saucer.mineExplode)());
         expMovie.addEventListener(Event.COMPLETE, function (event :Event) :void
             {
                 expMovie.removeEventListener(Event.COMPLETE, arguments.callee);
                 callback();
             });
         addChild(expMovie);
-        AppContext.game.playSoundAt(Codes.SHIP_TYPES[2].mineExplodeSound, bX, bY);
+        AppContext.game.playSoundAt(saucer.mineExplodeSound, bX, bY);
     }
 
     override public function readFrom (bytes :ByteArray) :void
@@ -90,8 +93,8 @@ public class Mine extends BoardObject
 
     override protected function setupGraphics () :void
     {
-        addChild(MovieClip(new (active ? Codes.SHIP_TYPES[2].mineEnemy :
-                Codes.SHIP_TYPES[2].mineFriendly)()));
+        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
+        addChild(MovieClip(new (active ? saucer.mineEnemy : saucer.mineFriendly)()));
     }
 }
 }

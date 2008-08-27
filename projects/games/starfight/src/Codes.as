@@ -30,12 +30,22 @@ public class Codes
     public static const IN_ROUND :int = 2;
     public static const POST_ROUND :int = 3;
 
+    public static const SHIP_TYPE_WASP :WaspShipType = new WaspShipType();
+    public static const SHIP_TYPE_RHINO :RhinoShipType = new RhinoShipType();
+    public static const SHIP_TYPE_SAUCER :SaucerShipType = new SaucerShipType();
+    public static const SHIP_TYPE_RAPTOR :RaptorShipType = new RaptorShipType();
+
     /** The different available types of ships. */
-    public static const SHIP_TYPES :Array = [
-        new WaspShipType(),
-        new RhinoShipType(),
-        new SaucerShipType(),
-        new RaptorShipType()
+    public static const SHIP_TYPE_CLASSES :Array = [
+        SHIP_TYPE_WASP,
+        SHIP_TYPE_RHINO,
+        SHIP_TYPE_SAUCER,
+        SHIP_TYPE_RAPTOR,
     ];
+
+    public static function getShipType (index :int) :ShipType
+    {
+        return (index >= 0 && index < SHIP_TYPE_CLASSES.length ? SHIP_TYPE_CLASSES[index] : null);
+    }
 }
 }

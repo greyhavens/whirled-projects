@@ -4,11 +4,10 @@ import flash.display.Bitmap;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-
 import flash.text.AntiAliasType;
 import flash.text.TextField;
-import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 public class ShipChooser extends Sprite
 {
@@ -46,9 +45,10 @@ public class ShipChooser extends Sprite
         selectText.text = "Select Your Ship";
         addChild(selectText);
 
-        for (var ii :int = 0; ii < Codes.SHIP_TYPES.length; ii++) {
-            var type :ShipType = Codes.SHIP_TYPES[ii];
-            addButton(type, ii, Codes.SHIP_TYPES.length);
+        var numShipTypes :int = Codes.SHIP_TYPE_CLASSES.length;
+        for (var ii :int = 0; ii < numShipTypes; ii++) {
+            var type :ShipType = Codes.getShipType(ii);
+            addButton(type, ii, numShipTypes);
         }
     }
 
