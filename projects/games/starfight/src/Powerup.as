@@ -1,13 +1,13 @@
 package {
 
-import flash.display.MovieClip;
-import flash.display.Sprite;
-import flash.media.Sound;
-
+import flash.events.Event;
 import flash.utils.ByteArray;
 
 public class Powerup extends BoardObject
 {
+    public static const CONSUMED :String = "Consumed";
+    public static const DESTROYED :String = "Destroyed";
+
     public static const SHIELDS :int = 0;
     public static const SPEED :int = 1;
     public static const SPREAD :int = 2;
@@ -26,25 +26,14 @@ public class Powerup extends BoardObject
         super(type, boardX, boardY, graphics);
     }
 
-    public function sound () :Sound
+    public function consume () :void
     {
-        return Resources.getSound(MOVIES[type] + ".wav");
+        dispatchEvent(new Event(CONSUMED));
     }
 
-    override protected function setupGraphics () :void
+    public function destroyed () :void
     {
-        if (numChildren > 0) {
-            removeChildAt(0);
-        }
-        var powMovie :MovieClip = MovieClip(new (Resources.getClass(MOVIES[type]))());
-        addChild(powMovie);
-    }
-
-    override protected function setPosition () :void
-    {
-        super.setPosition();
-        x += Codes.PIXELS_PER_TILE/2;
-        y += Codes.PIXELS_PER_TILE/2;
+        dispatchEvent(new Event(DESTROYED));
     }
 
     protected static const MOVIES :Array = [

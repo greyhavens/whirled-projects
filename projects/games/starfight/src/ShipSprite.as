@@ -740,7 +740,7 @@ public class ShipSprite extends Sprite
     {
         _powerupsThisLife = true;
         AppContext.game.addScore(shipId, POWERUP_PTS);
-        AppContext.game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
+        powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
             power = Math.min(1.0, power + 0.5);
             return;

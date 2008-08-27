@@ -1,18 +1,18 @@
-package {
+package view {
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
 
-public class Explosion extends Sprite
+public class ExplosionView extends Sprite
 {
     public static function createExplosion (
-        x :int, y :int, rot :int, isSmall :Boolean, shipType :int) :Explosion
+        x :int, y :int, rot :int, isSmall :Boolean, shipType :int) :ExplosionView
     {
-        var explosion :Explosion;
+        var explosion :ExplosionView;
         if (isSmall) {
-            explosion = new Explosion(
+            explosion = new ExplosionView(
                 x, y, MovieClip(new (Resources.getClass("small_explosion"))()));
         } else {
             var explodeMovie :MovieClip =
@@ -21,7 +21,7 @@ public class Explosion extends Sprite
             explodeMovie.y = -explodeMovie.height/2;
             explodeMovie.scaleX = Codes.getShipType(shipType).size + 0.1;
             explodeMovie.scaleY = Codes.getShipType(shipType).size + 0.1;
-            explosion = new Explosion(x, y, explodeMovie);
+            explosion = new ExplosionView(x, y, explodeMovie);
         }
 
         // Just like we have a ship to contain our ship movie...
@@ -29,7 +29,7 @@ public class Explosion extends Sprite
         return explosion;
     }
 
-    public function Explosion (x :int, y:int, movie :MovieClip)
+    public function ExplosionView (x :int, y:int, movie :MovieClip)
     {
         _explodeMovie = movie;
         _explodeMovie.rotation = 90;

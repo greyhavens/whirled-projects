@@ -13,7 +13,9 @@ import flash.media.Sound;
 import flash.utils.ByteArray;
 
 import view.BgSprite;
+import view.ExplosionView;
 import view.MineView;
+import view.PowerupView;
 import view.StatusOverlay;
 
 /**
@@ -154,23 +156,19 @@ public class BoardController
                 return;
             }
             if (event.newValue == null) {
-                if (_powerups[event.index] != null) {
-                    powerupLayer.removeChild(_powerups[event.index]);
-                    _powerups[event.index] = null;
-                    _status.removePowerup(event.index);
-                }
+                powerupRemoved(event.index);
                 return;
             }
 
             var pow :Powerup = _powerups[event.index];
-            if (pow == null) {
-                _powerups[event.index] = pow = new Powerup(0, 0, 0, false);
-                powerupLayer.addChild(pow);
-                _status.addPowerup(event.index);
+            if (pow != null) {
+                powerupRemoved(event.index);
             }
             var pBytes :ByteArray = ByteArray(event.newValue);
             pBytes.position = 0;
-            pow.reload(pBytes);
+            pow = Powerup.readPowerup(pBytes);
+            _powerups[event.index] = pow;
+            powerupAdded(pow, event.index);
 
         } else if ((event.name == "obstacles") && (event.index >= 0)) {
             if (_obstacles == null) {
@@ -197,6 +195,9 @@ public class BoardController
                     removeMine(event.index);
                 }
             }
+
+            // don't listen to "new mine" events (event.newValue != null) - mines will
+            // be added to the board when the Saucer's secondary fire is used
         }
     }
 
@@ -263,11 +264,7 @@ public class BoardController
                     }
                 }
 
-                _powerups[ii] = new Powerup(Math.random()*Powerup.COUNT, x, y);
-
-                setAtImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
-                powerupLayer.addChild(_powerups[ii]);
-                _status.addPowerup(ii);
+                addPowerup(new Powerup(Math.random() * Powerup.COUNT, x, y), ii);
                 return;
             }
         }
@@ -277,14 +274,23 @@ public class BoardController
     {
         for (var ii :int = 0; ii < _powerups.length; ii++) {
             if (_powerups[ii] == null) {
-                _powerups[ii] = new Powerup(Powerup.HEALTH, x, y);
-
-                setAtImmediate("powerup", _powerups[ii].writeTo(new ByteArray()), ii);
-                powerupLayer.addChild(_powerups[ii]);
-                _status.addPowerup(ii);
+                addPowerup(new Powerup(Powerup.HEALTH, x, y), ii);
                 return;
             }
         }
+    }
+
+    protected function addPowerup (powerup :Powerup, index :int) :void
+    {
+        _powerups[index] = powerup;
+        setAtImmediate("powerup", powerup.writeTo(new ByteArray()), index);
+        powerupAdded(powerup, index);
+    }
+
+    protected function powerupAdded (powerup :Powerup, index :int) :void
+    {
+        powerupLayer.addChild(new PowerupView(powerup)); // TEMP
+        _status.addPowerup(index);
     }
 
     /**
@@ -293,9 +299,17 @@ public class BoardController
     public function removePowerup (idx :int) :void
     {
         setAtImmediate("powerup", null, idx);
-        powerupLayer.removeChild(_powerups[idx]);
-        _powerups[idx] = null;
-        _status.removePowerup(idx);
+        powerupRemoved(idx);
+    }
+
+    protected function powerupRemoved (index :int) :void
+    {
+        var powerup :Powerup = _powerups[index];
+        if (powerup != null) {
+            _powerups[index] = null;
+            _status.removePowerup(index);
+            powerup.destroyed();
+        }
     }
 
     /**
@@ -517,11 +531,11 @@ public class BoardController
                         rY < -_board.y - EXP_OFF || rY > -_board.y + Codes.GAME_HEIGHT + EXP_OFF)) {
             return;
         }
-        var exp :Explosion = Explosion.createExplosion(rX, rY, rot, isSmall, shipType);
+        var exp :ExplosionView = ExplosionView.createExplosion(rX, rY, rot, isSmall, shipType);
         _board.addChild(exp);
         if (isSmall) {
             if (_explosions.length == MAX_EXPLOSIONS) {
-                Explosion(_explosions.shift()).endExplode(null);
+                ExplosionView(_explosions.shift()).endExplode(null);
             }
             _explosions.push(exp);
         }
@@ -532,7 +546,7 @@ public class BoardController
 
     public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
     {
-        var exp :Explosion = new Explosion(
+        var exp :ExplosionView = new ExplosionView(
             x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, movie);
         _board.addChild(exp);
     }
@@ -565,13 +579,11 @@ public class BoardController
         _board.addChild(powerupLayer = new Sprite());
         for (var ii :int; ii < _powerups.length; ii++) {
             if (_powerups[ii] != null) {
-                powerupLayer.addChild(_powerups[ii]);
-                _status.addPowerup(ii);
+                powerupAdded(_powerups[ii], ii);
             }
         }
         for (ii = 0; ii < _mines.length; ii++) {
             if (_mines[ii] != null) {
-                //powerupLayer.addChild(_mines[ii]);
                 powerupLayer.addChild(new MineView(_mines[ii])); // TEMP
             }
         }
