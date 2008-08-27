@@ -58,7 +58,7 @@ public class ShipChooser extends Sprite
     protected function addButton (type :ShipType, idx :int, total :int) :void
     {
         var selection :Sprite = new Sprite();
-        var ship :ShipSprite = new ShipSprite(null, null, true, -1, type.name, false);
+        var ship :ShipSprite = new ShipSprite(null, true, -1, type.name, false);
         ship.pointUp();
         ship.setShipType(idx);
         selection.addChild(ship);
@@ -109,9 +109,9 @@ public class ShipChooser extends Sprite
             selection.removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
         }
         if (_newGame) {
-            AppContext.starfight.chooseShip(typeIdx);
+            AppContext.game.chooseShip(typeIdx);
         } else {
-            AppContext.starfight.changeShip(typeIdx);
+            AppContext.game.changeShip(typeIdx);
         }
         parent.removeChild(this);
     }

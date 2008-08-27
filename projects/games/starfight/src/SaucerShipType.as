@@ -50,21 +50,21 @@ public class SaucerShipType extends ShipType
         return (ship.powerups & ShipSprite.SPREAD_MASK ? superShotCost : primaryShotCost);
     }
 
-    override public function primaryShot (sf :StarFight, val :Array) :void
+    override public function primaryShot (val :Array) :void
     {
-        var ship :ShipSprite = sf.getShip(val[0]);
+        var ship :ShipSprite = AppContext.game.getShip(val[0]);
         if (ship == null) {
             return;
         }
-        var ships :Array = sf.findShips(ship.boardX, ship.boardY, RANGE);
+        var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
         var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
-        sf.playSoundAt(sound, ship.boardX, ship.boardY);
+        AppContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
 
         // no one in range so shoot straight
         if (ships.length <= 1) {
-            sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
-                ship.ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1, sf));
+            AppContext.game.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
+                ship.ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1));
             return;
         }
 
@@ -77,12 +77,12 @@ public class SaucerShipType extends ShipType
             dist = Math.min(RANGE, dist);
             var angle :Number = Codes.RADS_TO_DEGS *
                     Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
-            sf.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
-                angle, dist, val[0], hitPower, primaryShotLife, val[1], tShip.shipId, sf));
+            AppContext.game.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
+                angle, dist, val[0], hitPower, primaryShotLife, val[1], tShip.shipId));
         }
     }
 
-    override public function primaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    override public function primaryShotMessage (ship :ShipSprite) :void
     {
         var type :int = (ship.powerups & ShipSprite.SPREAD_MASK) ?
             ShotSprite.SUPER : ShotSprite.NORMAL;
@@ -91,10 +91,10 @@ public class SaucerShipType extends ShipType
         args[0] = ship.shipId;
         args[1] = ship.shipType;
         args[2] = type;
-        sf.fireShot(args);
+        AppContext.game.fireShot(args);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -103,14 +103,14 @@ public class SaucerShipType extends ShipType
         args[3] = Math.round(ship.boardY);
         args[4] = secondaryHitPower;
 
-        sf.sendMessage("secondary", args);
+        AppContext.game.sendMessage("secondary", args);
         return true;
     }
 
-    override public function secondaryShot (sf :StarFight, val :Array) :void
+    override public function secondaryShot (val :Array) :void
     {
-        sf.addMine(val[0], val[2], val[3], val[1], val[4]);
-        sf.playSoundAt(mineSound, val[2], val[3]);
+        AppContext.game.addMine(val[0], val[2], val[3], val[1], val[4]);
+        AppContext.game.playSoundAt(mineSound, val[2], val[3]);
     }
 
     override protected function swfAsset () :Class

@@ -47,18 +47,18 @@ public class ShipType
     /**
      * Called to have the ship perform their primary shot action.
      */
-    public function primaryShot (sf :StarFight, val :Array) :void
+    public function primaryShot (val :Array) :void
     {
         // Shooting sound.
         var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
 
-        sf.playSoundAt(sound, val[3], val[4]);
+        AppContext.game.playSoundAt(sound, val[3], val[4]);
     }
 
     /**
      * Called to have the ship perform their secondary shot action.
      */
-    public function secondaryShot (sf :StarFight, val :Array) :void
+    public function secondaryShot (val :Array) :void
     {
     }
 
@@ -70,7 +70,7 @@ public class ShipType
     /**
      * Sends a standard forward fire message.
      */
-    public function primaryShotMessage (ship :ShipSprite, sf :StarFight) :void
+    public function primaryShotMessage (ship :ShipSprite) :void
     {
         var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -95,13 +95,13 @@ public class ShipType
         args[5] = shotVel;
         args[6] = rads;
 
-        sf.fireShot(args);
+        AppContext.game.fireShot(args);
     }
 
     /**
      * Secondary shot message generator.
      */
-    public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
         return false;
     }

@@ -44,22 +44,22 @@ public class WaspShipType extends ShipType
         size = 0.9;
     }
 
-    override public function primaryShot (sf :StarFight, val :Array) :void
+    override public function primaryShot (val :Array) :void
     {
-        sf.addShot(new MissileShotSprite(
-            val[3], val[4], val[5], val[6], val[0], hitPower, primaryShotLife, val[1], sf));
+        AppContext.game.addShot(new MissileShotSprite(
+            val[3], val[4], val[5], val[6], val[0], hitPower, primaryShotLife, val[1]));
 
         if (val[2] == ShotSprite.SUPER) {
-            sf.addShot(new MissileShotSprite(val[3], val[4], val[5],
-                        val[6] + SPREAD, val[0], hitPower, primaryShotLife, val[1], sf));
-            sf.addShot(new MissileShotSprite(val[3], val[4], val[5],
-                        val[6] - SPREAD, val[0], hitPower, primaryShotLife, val[1], sf));
+            AppContext.game.addShot(new MissileShotSprite(val[3], val[4], val[5],
+                        val[6] + SPREAD, val[0], hitPower, primaryShotLife, val[1]));
+            AppContext.game.addShot(new MissileShotSprite(val[3], val[4], val[5],
+                        val[6] - SPREAD, val[0], hitPower, primaryShotLife, val[1]));
         }
 
-        super.primaryShot(sf, val);
+        super.primaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
         var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -80,15 +80,15 @@ public class WaspShipType extends ShipType
         args[4] = shotVel;
         args[5] = rads;
 
-        sf.sendMessage("secondary", args);
+        AppContext.game.sendMessage("secondary", args);
         return true;
     }
 
-    override public function secondaryShot (sf :StarFight, val :Array) :void
+    override public function secondaryShot (val :Array) :void
     {
-        sf.addShot(new TorpedoShotSprite(val[2], val[3], val[4], val[5], val[0],
-                secondaryHitPower, secondaryShotLife, val[1], sf));
-        sf.playSoundAt(secondarySound, val[2], val[3]);
+        AppContext.game.addShot(new TorpedoShotSprite(val[2], val[3], val[4], val[5], val[0],
+                secondaryHitPower, secondaryShotLife, val[1]));
+        AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
     }
 
     override protected function swfAsset () :Class

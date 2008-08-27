@@ -2,13 +2,21 @@ package {
 
 import com.whirled.game.GameControl;
 
+import flash.display.Sprite;
+
+import view.GameView;
+
 /**
  * Storage for globally-accessible data and managers.
  */
 public class AppContext
 {
-    public static var starfight :StarFight;
+    public static var game :GameManager;
     public static var gameCtrl :GameControl;
+
+    // TEMP - to be removed post-refactor
+    public static var mainSprite :Sprite;
+    public static var gameView :GameView;
 }
 
 }

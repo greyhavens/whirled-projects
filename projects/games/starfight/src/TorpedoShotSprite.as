@@ -9,9 +9,9 @@ public class TorpedoShotSprite extends ShotSprite {
     public var yVel :Number;
 
     public function TorpedoShotSprite (x :Number, y :Number, vel :Number, angle :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int, game :StarFight) :void
+            shipId :int, damage :Number, ttl :Number, shipType :int) :void
     {
-        super(x, y, shipId, damage, ttl, shipType, game);
+        super(x, y, shipId, damage, ttl, shipType);
 
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
@@ -39,7 +39,7 @@ public class TorpedoShotSprite extends ShotSprite {
         //  been shot just inside the edge of one - if so, explode immediately.
         var inObs :Obstacle = board.getObstacleAt(int(boardX), int(boardY));
         if (inObs != null) {
-            _game.hitObs(inObs, boardX, boardY, shipId, damage);
+            AppContext.game.hitObs(inObs, boardX, boardY, shipId, damage);
             complete = true;
             return;
         }
@@ -60,15 +60,15 @@ public class TorpedoShotSprite extends ShotSprite {
             var hitY :Number = boardY + yVel * coll.time * time;
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, hitX, hitY, shipId, damage);
+                AppContext.game.hitShip(ship, hitX, hitY, shipId, damage);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
-                _game.hitObs(obs, hitX, hitY, shipId, damage);
+                AppContext.game.hitObs(obs, hitX, hitY, shipId, damage);
             }
-            _game.explodeCustom(
+            AppContext.game.explodeCustom(
                     hitX, hitY, MovieClip(new Codes.SHIP_TYPES[shipType].secondaryExplode()));
-            _game.playSoundAt(Codes.SHIP_TYPES[shipType].secondaryExplodeSound, hitX, hitY);
+            AppContext.game.playSoundAt(Codes.SHIP_TYPES[shipType].secondaryExplodeSound, hitX, hitY);
             complete = true;
         }
     }

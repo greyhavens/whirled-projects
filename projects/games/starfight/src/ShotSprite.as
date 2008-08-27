@@ -23,7 +23,7 @@ public class ShotSprite extends Sprite {
     public var damage :Number;
 
     public function ShotSprite (x :Number, y :Number, shipId :int, damage :Number, ttl :Number,
-            shipType :int, game :StarFight) :void
+            shipType :int) :void
     {
         boardX = x;
         boardY = y;
@@ -32,7 +32,6 @@ public class ShotSprite extends Sprite {
         this.ttl = ttl;
         this.shipType = shipType;
         complete = false;
-        _game = game;
     }
 
     /**
@@ -51,8 +50,6 @@ public class ShotSprite extends Sprite {
         x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Codes.GAME_WIDTH/2;
         y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Codes.GAME_HEIGHT/2;
     }
-
-    protected var _game :StarFight;
 
     /** Our shot animation. */
     protected var _shotMovie :MovieClip;

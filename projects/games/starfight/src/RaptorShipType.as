@@ -40,20 +40,20 @@ public class RaptorShipType extends ShipType
         size = 1.1;
     }
 
-    override public function primaryShot (sf :StarFight, val :Array) :void
+    override public function primaryShot (val :Array) :void
     {
         var ttl :Number = primaryShotLife;
         if (val[2] == ShotSprite.SUPER) {
             ttl *= 2;
         }
         for (var ii :Number = -0.3; ii <= 0.3; ii += 0.3) {
-            sf.addShot(new MissileShotSprite(
-                    val[3], val[4], val[5], val[6] + ii, val[0], hitPower, ttl, val[1], sf));
+            AppContext.game.addShot(new MissileShotSprite(
+                    val[3], val[4], val[5], val[6] + ii, val[0], hitPower, ttl, val[1]));
         }
-        super.primaryShot(sf, val);
+        super.primaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
         if (ship.shieldPower > 0.0) {
             return false;
@@ -68,11 +68,11 @@ public class RaptorShipType extends ShipType
                 ship.shieldPower = 0.0;
             });
         shieldTimer.start();
-        sf.playSoundAt(secondarySound, ship.boardX, ship.boardY);
+        AppContext.game.playSoundAt(secondarySound, ship.boardX, ship.boardY);
         return true;
     }
 
-    override public function secondaryShot (sf :StarFight, val :Array) :void
+    override public function secondaryShot (val :Array) :void
     {
     }
 

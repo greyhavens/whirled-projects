@@ -65,7 +65,7 @@ public class Mine extends BoardObject
                 callback();
             });
         addChild(expMovie);
-        AppContext.starfight.playSoundAt(Codes.SHIP_TYPES[2].mineExplodeSound, bX, bY);
+        AppContext.game.playSoundAt(Codes.SHIP_TYPES[2].mineExplodeSound, bX, bY);
     }
 
     override public function readFrom (bytes :ByteArray) :void

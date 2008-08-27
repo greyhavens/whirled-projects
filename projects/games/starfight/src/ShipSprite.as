@@ -117,7 +117,7 @@ public class ShipSprite extends Sprite
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function ShipSprite (board :BoardController, game :StarFight,
+    public function ShipSprite (board :BoardController,
         skipStartingPos :Boolean, shipId :int, name :String,
         isOwnShip :Boolean)
     {
@@ -153,7 +153,6 @@ public class ShipSprite extends Sprite
         }
 
         _board = board;
-        _game = game;
 
         /** Used to rotate our ship itself without touching associated info. */
         ship = new Sprite();
@@ -261,7 +260,7 @@ public class ShipSprite extends Sprite
                 powerups &= ~SPEED_MASK;
                 accel = Math.min(accel, _shipType.forwardAccel);
                 accel = Math.max(accel, _shipType.backwardAccel);
-                _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
+                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
     }
@@ -276,7 +275,7 @@ public class ShipSprite extends Sprite
      */
     public function isAlive () :Boolean
     {
-        return power > DEAD && _game.gameState != Codes.POST_ROUND;
+        return power > DEAD && AppContext.game.gameState != Codes.POST_ROUND;
     }
 
     /**
@@ -296,7 +295,7 @@ public class ShipSprite extends Sprite
             var dy :Number = endY - startY;
 
             if (!_moveSound) {
-                _game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
+                AppContext.game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
                     startY + dy * coll.time);
                 _moveSound = true;
             }
@@ -356,7 +355,7 @@ public class ShipSprite extends Sprite
                 powerups ^= SHIELDS_MASK;
                 if (_isOwnShip) {
                     _shieldSound.stop();
-                    _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
+                    AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
                 }
             }
             return;
@@ -364,7 +363,7 @@ public class ShipSprite extends Sprite
 
         power -= hitPower;
         if (!isAlive()) {
-            _game.explode(boardX, boardY, ship.rotation, shooterId, shipId);
+            AppContext.game.explode(boardX, boardY, ship.rotation, shooterId, shipId);
             checkAwards();
 
             // Stop moving and firing.
@@ -386,7 +385,7 @@ public class ShipSprite extends Sprite
     {
         _kills++;
         _killsThisLife++;
-        if (_game.numShips() >= 3) {
+        if (AppContext.game.numShips() >= 3) {
             _killsThisLife3++;
         }
         _enemiesKilled[shipId] = true;
@@ -408,8 +407,8 @@ public class ShipSprite extends Sprite
     public function newShip (event :TimerEvent) :void
     {
         event.target.removeEventListener(TimerEvent.TIMER, newShip);
-        if (_game.gameState != Codes.POST_ROUND) {
-            _game.addChild(new ShipChooser(false));
+        if (AppContext.game.gameState != Codes.POST_ROUND) {
+            AppContext.mainSprite.addChild(new ShipChooser(false));
         }
     }
 
@@ -441,7 +440,7 @@ public class ShipSprite extends Sprite
 
         _engineSound.loop();
 
-        _game.forceStatusUpdate();
+        AppContext.game.forceStatusUpdate();
         setVisible(true);
     }
 
@@ -459,7 +458,7 @@ public class ShipSprite extends Sprite
 
             if (visible) {
                 var sound :Sound = _shipType.spawnSound;
-                _game.playSoundAt(sound, boardX, boardY);
+                AppContext.game.playSoundAt(sound, boardX, boardY);
                 var spawnClip :MovieClip = MovieClip(new (Resources.getClass("ship_spawn"))());
                 addChild(spawnClip);
                 spawnClip.addEventListener(Event.COMPLETE, function complete (event :Event) :void {
@@ -678,12 +677,12 @@ public class ShipSprite extends Sprite
 
     public function fire () :void
     {
-        _shipType.primaryShotMessage(this, _game);
+        _shipType.primaryShotMessage(this);
         if (powerups & SPREAD_MASK) {
             weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
                 powerups ^= SPREAD_MASK;
-                _game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
+                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
 
@@ -693,7 +692,7 @@ public class ShipSprite extends Sprite
 
     public function secondaryFire () :void
     {
-        if (_shipType.secondaryShotMessage(this, _game)) {
+        if (_shipType.secondaryShotMessage(this)) {
             _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
             secondaryPower -= _shipType.secondaryShotCost;
         }
@@ -740,8 +739,8 @@ public class ShipSprite extends Sprite
     public function awardPowerup (powerup :Powerup) :void
     {
         _powerupsThisLife = true;
-        _game.addScore(shipId, POWERUP_PTS);
-        _game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
+        AppContext.game.addScore(shipId, POWERUP_PTS);
+        AppContext.game.playSoundAt(powerup.sound(), powerup.bX, powerup.bY);
         if (powerup.type == Powerup.HEALTH) {
             power = Math.min(1.0, power + 0.5);
             return;
@@ -887,47 +886,44 @@ public class ShipSprite extends Sprite
         }
 
         if (_killsThisLife >= 10 && !_powerupsThisLife) {
-            _game.awardTrophy("fly_by_wire");
+            AppContext.game.awardTrophy("fly_by_wire");
         }
         if (_killsThisLife3 >= 10) {
-            _game.awardTrophy(_shipType.name + "_pilot");
+            AppContext.game.awardTrophy(_shipType.name + "_pilot");
         }
 
         // see if we've killed 7 other poeple currently playing
         var bogey :int = 0;
         for (var id :String in _enemiesKilled) {
-            if (_game.getShip(int(_enemiesKilled[id])) != null) {
+            if (AppContext.game.getShip(int(_enemiesKilled[id])) != null) {
                 bogey++;
             }
         }
         if (bogey >= 7) {
-            _game.awardTrophy("bogey_hunter");
+            AppContext.game.awardTrophy("bogey_hunter");
         }
 
-        if (gameOver && _game.numShips() >= 8 && _kills / _deaths >= 4) {
-            _game.awardTrophy("space_ace");
+        if (gameOver && AppContext.game.numShips() >= 8 && _kills / _deaths >= 4) {
+            AppContext.game.awardTrophy("space_ace");
         }
 
-        if (_game.numShips() < 3) {
+        if (AppContext.game.numShips() < 3) {
             return;
         }
 
         if (score >= 500) {
-            _game.awardTrophy("score1");
+            AppContext.game.awardTrophy("score1");
         }
         if (score >= 1000) {
-            _game.awardTrophy("score2");
+            AppContext.game.awardTrophy("score2");
         }
         if (score >= 1500) {
-            _game.awardTrophy("score3");
+            AppContext.game.awardTrophy("score3");
         }
     }
 
     /** The board we inhabit. */
     protected var _board :BoardController;
-
-    /** The main game object. */
-    protected var _game :StarFight;
 
     protected var _firing :Boolean;
     protected var _ticksToFire :int = 0;

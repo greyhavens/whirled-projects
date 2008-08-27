@@ -547,7 +547,7 @@ public class BoardController
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (AppContext.starfight.gameState == Codes.IN_ROUND && obj.damage(damage)) {
+            if (AppContext.game.gameState == Codes.IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName(), null, obj.index);
             }
         }
@@ -603,7 +603,7 @@ public class BoardController
             if (mine.type == ownShip.shipId) {
                 break;
             }
-            AppContext.starfight.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
+            AppContext.game.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
             removeMine(mineIdx);
         } while (mineIdx != -1);
     }

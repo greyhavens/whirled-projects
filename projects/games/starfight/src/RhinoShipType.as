@@ -35,7 +35,7 @@ public class RhinoShipType extends ShipType
         size = 1.2;
     }
 
-    override public function primaryShot (sf :StarFight, val :Array) :void
+    override public function primaryShot (val :Array) :void
     {
         var left :Number = val[6] + Math.PI/2;
         var right :Number = val[6] - Math.PI/2;
@@ -53,15 +53,15 @@ public class RhinoShipType extends ShipType
             explodeClip = superShotExplode;
         }
 
-        sf.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY, val[5],
-                val[6], val[0], damage, primaryShotLife, val[1], sf, shotClip, explodeClip));
-        sf.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY, val[5],
-                val[6], val[0], damage, primaryShotLife, val[1], sf, shotClip, explodeClip));
+        AppContext.game.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip));
+        AppContext.game.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip));
 
-        super.primaryShot(sf, val);
+        super.primaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite, sf :StarFight) :Boolean
+    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -70,20 +70,20 @@ public class RhinoShipType extends ShipType
         args[3] = ship.boardY;
         args[4] = ship.ship.rotation;
 
-        warpNow(ship, sf, args);
+        warpNow(ship, args);
         return true;
     }
 
-    override public function secondaryShot (sf :StarFight, val :Array) :void
+    override public function secondaryShot (val :Array) :void
     {
-        var ship :ShipSprite = sf.getShip(val[0]);
+        var ship :ShipSprite = AppContext.game.getShip(val[0]);
         if (ship == null || ship.isOwnShip) {
             return;
         }
-        warpNow(ship, sf, val);
+        warpNow(ship, val);
     }
 
-    protected function warpNow (ship :ShipSprite, sf :StarFight, val :Array) :void
+    protected function warpNow (ship :ShipSprite, val :Array) :void
     {
         var endWarp :Function = function (event:Event) :void
         {
@@ -94,7 +94,7 @@ public class RhinoShipType extends ShipType
         {
             clip.removeEventListener(Event.COMPLETE, warp);
             if (ship.isOwnShip) {
-                sf.sendMessage("secondary", val);
+                AppContext.game.sendMessage("secondary", val);
             }
             var startX :Number = val[2];
             var startY :Number = val[3];
@@ -104,7 +104,7 @@ public class RhinoShipType extends ShipType
 
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.setAnimMode(ShipSprite.WARP_END, true).addEventListener(Event.COMPLETE, endWarp);
-            sf.playSoundAt(warpSound, endX, endY);
+            AppContext.game.playSoundAt(warpSound, endX, endY);
         };
         var clip :MovieClip = ship.setAnimMode(ShipSprite.WARP_BEGIN, true);
         clip.addEventListener(Event.COMPLETE, warp);

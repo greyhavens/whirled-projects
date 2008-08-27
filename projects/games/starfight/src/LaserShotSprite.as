@@ -10,10 +10,9 @@ public class LaserShotSprite extends ShotSprite {
     public var tShipId :int;
 
     public function LaserShotSprite (x :Number, y :Number, angle :Number, length :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int,
-            game :StarFight) :void
+            shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :void
     {
-        super(x, y, shipId, damage, ttl, shipType, game);
+        super(x, y, shipId, damage, ttl, shipType);
         this.tShipId = tShipId;
 
         _shotMovie = MovieClip(new Codes.SHIP_TYPES[shipType].shotAnim());
@@ -29,9 +28,9 @@ public class LaserShotSprite extends ShotSprite {
     {
         time /= 1000;
         if (!_hit && tShipId != -1) {
-            var ship :ShipSprite = _game.getShip(tShipId);
+            var ship :ShipSprite = AppContext.game.getShip(tShipId);
             if (ship != null) {
-                _game.hitShip(ship, ship.boardX, ship.boardY, shipId, damage);
+                AppContext.game.hitShip(ship, ship.boardX, ship.boardY, shipId, damage);
                 _hit = true;
             }
         }

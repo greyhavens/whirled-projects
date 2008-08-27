@@ -9,10 +9,10 @@ public class MissileShotSprite extends ShotSprite {
     public var yVel :Number;
 
     public function MissileShotSprite (x :Number, y :Number, vel :Number, angle :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int, game :StarFight,
+            shipId :int, damage :Number, ttl :Number, shipType :int,
             shotClip :Class = null, explodeClip :Class = null) :void
     {
-        super(x, y, shipId, damage, ttl, shipType, game);
+        super(x, y, shipId, damage, ttl, shipType);
 
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
@@ -49,7 +49,7 @@ public class MissileShotSprite extends ShotSprite {
         //  been shot just inside the edge of one - if so, explode immediately.
         var inObs :Obstacle = board.getObstacleAt(int(boardX), int(boardY));
         if (inObs != null) {
-            _game.hitObs(inObs, boardX, boardY, shipId, damage);
+            AppContext.game.hitObs(inObs, boardX, boardY, shipId, damage);
             complete = true;
             return;
         }
@@ -64,14 +64,14 @@ public class MissileShotSprite extends ShotSprite {
             var hitY :Number = boardY + yVel * coll.time * time;
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hitShip(ship, hitX, hitY, shipId, damage);
+                AppContext.game.hitShip(ship, hitX, hitY, shipId, damage);
 
             } else {
                 var obj :BoardObject = BoardObject(coll.hit);
-                _game.hitObs(obj, hitX, hitY, shipId, damage)
+                AppContext.game.hitObs(obj, hitX, hitY, shipId, damage)
             }
             if (_explodeMovie != null) {
-                _game.explodeCustom(hitX, hitY, _explodeMovie);
+                AppContext.game.explodeCustom(hitX, hitY, _explodeMovie);
             }
             complete = true;
         }
