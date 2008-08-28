@@ -7,8 +7,15 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.net.MessageReceivedEvent;
 import com.threerings.util.StringUtil;
 
+import flash.utils.setTimeout;
+
 public class Probe extends Sprite
 {
+    public static function toString (obj :Object) :String
+    {
+        return StringUtil.toString(obj);
+    }
+
     public function Probe ()
     {
         _ctrl = new AVRGameControl(this);
@@ -73,17 +80,18 @@ public class Probe extends Sprite
     {
         if (evt.name == Server.BACKEND_CALL_RESULT) {
             _ctrl.local.feedback(
-                "Result received from server agent: " + StringUtil.toString(evt.value));
+                "Result received from server agent: " + Probe.toString(evt.value));
 
         } else if (evt.name == Server.CALLBACK_INVOKED) {
             _ctrl.local.feedback(
-                "Callback invoked on server agent: " + StringUtil.toString(evt.value));
+                "Callback invoked on server agent: " + Probe.toString(evt.value));
         }
     }
 
     protected function logEvent (event :Event) :void
     {
         _ctrl.local.feedback(String(event));
+        trace("Got event [" + _ctrl.player.getPlayerId() + "]: " + event);
     }
 
     protected function handleClose (event :ButtonEvent) :void

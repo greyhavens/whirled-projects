@@ -12,9 +12,9 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.avrg.server.AVRServerGameControl;
-import com.whirled.avrg.server.RoomServerSubControl;
-import com.whirled.avrg.server.PlayerServerSubControl;
+import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.RoomServerSubControl;
+import com.whirled.avrg.PlayerServerSubControl;
 
 public class Server extends ServerObject
 {
@@ -35,9 +35,8 @@ public class Server extends ServerObject
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, handlePlayerJoin);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, handlePlayerQuit);
 
-        var addToGame :Function = ServerDefinitions.addListenerLambda(_ctrl.game, logEvent);
-        ServerDefinitions.GAME_EVENTS.forEach(addToGame);
-        ServerDefinitions.NET_EVENTS.forEach(addToGame);
+        addLogger(_ctrl.game, ServerDefinitions.GAME_EVENTS);
+        addLogger(_ctrl.game.props, ServerDefinitions.NET_EVENTS);
 
         trace("Hello world!");
     }
@@ -83,8 +82,6 @@ public class Server extends ServerObject
 
             trace("Sending message " + BACKEND_CALL_RESULT + " to " + evt.senderId + ", value " + StringUtil.toString(result));
             _ctrl.getPlayer(evt.senderId).sendMessage(BACKEND_CALL_RESULT, result);
-        } else {
-            trace("Got event " + evt);
         }
     }
 
@@ -96,10 +93,8 @@ public class Server extends ServerObject
         _ctrl.getPlayer(playerId).addEventListener(
             AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
 
-        var addToPlayer :Function = ServerDefinitions.addListenerLambda(
-            _ctrl.getPlayer(playerId), logEvent);
-        ServerDefinitions.PLAYER_EVENTS.forEach(addToPlayer);
-        ServerDefinitions.NET_EVENTS.forEach(addToPlayer);
+        addLogger(_ctrl.getPlayer(playerId), ServerDefinitions.PLAYER_EVENTS);
+        addLogger(_ctrl.getPlayer(playerId).props, ServerDefinitions.NET_EVENTS);
     }
 
     protected function handlePlayerQuit (event :AVRGameControlEvent) :void
@@ -110,10 +105,8 @@ public class Server extends ServerObject
         _ctrl.getPlayer(playerId).removeEventListener(
             AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
 
-        var removeFromPlayer :Function = ServerDefinitions.removeListenerLambda(
-            _ctrl.getPlayer(playerId), logEvent)
-        ServerDefinitions.PLAYER_EVENTS.forEach(removeFromPlayer);
-        ServerDefinitions.NET_EVENTS.forEach(removeFromPlayer);
+        removeLogger(_ctrl.getPlayer(playerId), ServerDefinitions.PLAYER_EVENTS);
+        removeLogger(_ctrl.getPlayer(playerId).props, ServerDefinitions.NET_EVENTS);
     }
 
     protected function handleRoomEntry (event :AVRGamePlayerEvent) :void
@@ -124,10 +117,8 @@ public class Server extends ServerObject
         _roomOccupantCounts[roomId] = int(_roomOccupantCounts[roomId]) + 1;
         trace("Player entered room, occupant count is now " + _roomOccupantCounts[roomId]);
         if (_roomOccupantCounts[roomId] == 1) {
-            var addToRoom :Function = ServerDefinitions.addListenerLambda(
-                _ctrl.getRoom(roomId), logEvent);
-            ServerDefinitions.ROOM_EVENTS.forEach(addToRoom);
-            ServerDefinitions.NET_EVENTS.forEach(addToRoom);
+            addLogger(_ctrl.getRoom(roomId), ServerDefinitions.ROOM_EVENTS);
+            addLogger(_ctrl.getRoom(roomId).props, ServerDefinitions.NET_EVENTS);
         }
     }
 
@@ -139,10 +130,8 @@ public class Server extends ServerObject
         _roomOccupantCounts[roomId] = int(_roomOccupantCounts[roomId]) - 1;
         trace("Player left room, occupant count is now " + _roomOccupantCounts[roomId]);
         if (_roomOccupantCounts[roomId] == 0) {
-            var removeFromRoom :Function = ServerDefinitions.removeListenerLambda(
-                _ctrl.getRoom(roomId), logEvent);
-            ServerDefinitions.ROOM_EVENTS.forEach(removeFromRoom);
-            ServerDefinitions.NET_EVENTS.forEach(removeFromRoom);
+            removeLogger(_ctrl.getRoom(roomId), ServerDefinitions.ROOM_EVENTS);
+            removeLogger(_ctrl.getRoom(roomId).props, ServerDefinitions.NET_EVENTS);
         }
     }
 
@@ -166,6 +155,20 @@ public class Server extends ServerObject
         }
 
         return callback;
+    }
+
+    protected function addLogger (ctrl :IEventDispatcher, events :Array) :void
+    {
+        for each (var type :String in events) {
+            ctrl.addEventListener(type, logEvent);
+        }
+    }
+
+    protected function removeLogger (ctrl :IEventDispatcher, events :Array) :void
+    {
+        for each (var type :String in events) {
+            ctrl.removeEventListener(type, logEvent);
+        }
     }
 
     protected var _ctrl :AVRServerGameControl;

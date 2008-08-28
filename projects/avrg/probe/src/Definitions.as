@@ -24,9 +24,9 @@ import com.threerings.util.StringUtil;
 public class Definitions
 {
     public static const GAME_EVENTS :Array = [
-        //AVRGameControlEvent.COINS_AWARDED,
         AVRGameControlEvent.PLAYER_JOINED_GAME,
         AVRGameControlEvent.PLAYER_QUIT_GAME,
+        MessageReceivedEvent.MESSAGE_RECEIVED
     ];
 
     public static const ROOM_EVENTS :Array = [
@@ -52,15 +52,6 @@ public class Definitions
     public static const CLIENT_EVENTS :Array = [
         AVRGameControlEvent.SIZE_CHANGED
     ];
-
-    public static const ALL_EVENTS :Array = [];
-    {
-        ALL_EVENTS.push.apply(ALL_EVENTS, GAME_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, ROOM_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, NET_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, PLAYER_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, CLIENT_EVENTS);
-    }
 
     public function Definitions (ctrl :AVRGameControl)
     {
@@ -116,6 +107,8 @@ public class Definitions
 
         add(_ctrl.player, PLAYER_EVENTS);
         add(_ctrl.player.props, NET_EVENTS);
+
+        add(_ctrl.local, CLIENT_EVENTS);
     }
 
     protected function createRoomFuncs () :Array
@@ -244,7 +237,7 @@ public class Definitions
                 new Parameter("index", int),
                 new ObjectParameter("value", Parameter.NULLABLE),
                 new Parameter("immediate", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("props.setAt", props.setIn, [
+            new FunctionSpec("props.setIn", props.setIn, [
                 new Parameter("name", String),
                 new Parameter("key", int),
                 new ObjectParameter("value", Parameter.NULLABLE),

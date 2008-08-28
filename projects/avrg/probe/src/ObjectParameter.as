@@ -22,6 +22,8 @@ public class ObjectParameter extends Parameter
 
 }
 
+import flash.utils.Dictionary;
+
 class ParseError extends Error
 {
     public function ParseError (input :String, pos :int, thing :String = null)
@@ -160,7 +162,7 @@ function parseObject (input :String, pos :int) :Object
                 throw new ParseError(input, pos);
             }
             if (next == "{") {
-                stack.poke({});
+                stack.poke(new Dictionary());
                 stack.push(DICT_OPEN);
                 pos++;
  
@@ -192,6 +194,12 @@ function parseObject (input :String, pos :int) :Object
             if (next == "}") {
                 stack.pop();
                 pos++;
+
+            } else if (Parameter.isDigit(next)) {
+                var key :String = readInt(input, pos);
+                stack.poke(parseInt(key));
+                stack.push(DICT_SEP);
+                pos += key.length;
 
             } else {
                 var name :String = readId(input, pos);
@@ -259,7 +267,7 @@ function parseObject (input :String, pos :int) :Object
             switch (stack.peekState(1)) {
             case DICT_OPEN:
                 var value :Object = stack.peekValue(0);
-                var name2 :String = stack.peekValue(1) as String;
+                var name2 :Object = stack.peekValue(1) as Object;
                 var dict :Object = stack.peekValue(2);
                 dict[name2] = value;
                 stack.pop();

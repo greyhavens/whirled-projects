@@ -3,9 +3,9 @@ package {
 import com.threerings.util.ClassUtil;
 import com.whirled.AbstractControl;
 import com.whirled.AbstractSubControl;
-import com.whirled.avrg.server.AVRServerGameControl;
-import com.whirled.avrg.server.PlayerServerSubControl;
-import com.whirled.avrg.server.RoomServerSubControl;
+import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.PlayerServerSubControl;
+import com.whirled.avrg.RoomServerSubControl;
 import com.whirled.net.PropertyGetSubControl;
 import com.whirled.net.PropertySubControl;
 
@@ -16,29 +16,6 @@ public class ServerDefinitions
     public static const ROOM_EVENTS :Array = Definitions.ROOM_EVENTS;
     public static const NET_EVENTS :Array = Definitions.NET_EVENTS;
     public static const PLAYER_EVENTS :Array = Definitions.PLAYER_EVENTS;
-
-    public static const ALL_EVENTS :Array = [];
-    {
-        ALL_EVENTS.push.apply(ALL_EVENTS, GAME_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, ROOM_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, NET_EVENTS);
-        ALL_EVENTS.push.apply(ALL_EVENTS, PLAYER_EVENTS);
-    }
-
-    public static function addListenerLambda (ctrl :AbstractControl, listener :Function) :Function
-    {
-        return function (name :String, ...unused) :void {
-            ctrl.addEventListener(name, listener);
-        }
-    }
-
-    public static function removeListenerLambda (
-        ctrl :AbstractControl, listener :Function) :Function
-    {
-        return function (name :String, ...unused) :void {
-            ctrl.removeEventListener(name, listener);
-        }
-    }
 
     public function ServerDefinitions (ctrl :AVRServerGameControl)
     {

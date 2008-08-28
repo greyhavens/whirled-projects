@@ -121,15 +121,15 @@ public class FunctionPanel extends Sprite
             if (_sequenced) {
                 var sequenceId :int = ++_sequenceId;
                 output("Calling " + _selected.spec.name + " with arguments " + 
-                    StringUtil.toString(params) + " and sequence id " + sequenceId);
+                    Probe.toString(params) + " and sequence id " + sequenceId);
                 params.unshift(sequenceId);
 
             } else {
                 output("Calling " + _selected.spec.name + " with arguments " + 
-                    StringUtil.toString(params));
+                    Probe.toString(params));
             }
             var value :Object = _selected.spec.func.apply(null, params);
-            output("Result: " + StringUtil.toString(value));
+            output("Result: " + Probe.toString(value));
 
         } catch (e :Error) {
             var msg :String = e.getStackTrace();
