@@ -1,15 +1,14 @@
 package view {
 
-import flash.display.Sprite;
-import flash.display.Shape;
-import flash.display.Bitmap;
+import com.threerings.util.HashMap;
 
+import flash.display.Bitmap;
+import flash.display.Shape;
+import flash.display.Sprite;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
-import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
-
-import com.threerings.util.HashMap;
+import flash.text.TextFormat;
 
 public class StatusOverlay extends Sprite
 {
@@ -189,7 +188,7 @@ public class StatusOverlay extends Sprite
      * Updates the radar display.
      */
     public function updateRadar (
-            ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
+        ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
     {
         boardX = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
         boardY = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
@@ -205,7 +204,10 @@ public class StatusOverlay extends Sprite
             if (powerups[ii] != null) {
                 var dot :Shape = _powerups.get(ii);
                 if (dot != null) {
-                    positionDot(dot, powerups[ii].x + boardX, powerups[ii].y + boardY);
+                    var powerup :Powerup = powerups[ii];
+                    var x :Number = (powerup.bX + 0.5) * Codes.PIXELS_PER_TILE;
+                    var y :Number = (powerup.bY + 0.5) * Codes.PIXELS_PER_TILE;
+                    positionDot(dot, x + boardX, y + boardY);
                 }
             }
         }

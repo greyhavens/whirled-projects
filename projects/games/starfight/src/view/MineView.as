@@ -14,7 +14,6 @@ public class MineView extends Sprite
         var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
         addChild(MovieClip(new (mine.active ? saucer.mineEnemy : saucer.mineFriendly)()));
 
-        // set position
         x = (_mine.bX + 0.5) * Codes.PIXELS_PER_TILE;
         y = (_mine.bY + 0.5) * Codes.PIXELS_PER_TILE;
     }

@@ -16,14 +16,14 @@ public class Powerup extends BoardObject
 
     public static function readPowerup (bytes :ByteArray) :Powerup
     {
-        var powerup :Powerup = new Powerup(0, 0, 0, false);
+        var powerup :Powerup = new Powerup(0, 0, 0);
         powerup.reload(bytes);
         return powerup;
     }
 
-    public function Powerup (type :int, boardX :int, boardY :int, graphics :Boolean = true) :void
+    public function Powerup (type :int, boardX :int, boardY :int) :void
     {
-        super(type, boardX, boardY, graphics);
+        super(type, boardX, boardY);
     }
 
     public function consume () :void
@@ -35,9 +35,5 @@ public class Powerup extends BoardObject
     {
         dispatchEvent(new Event(DESTROYED));
     }
-
-    protected static const MOVIES :Array = [
-        "powerup_shield", "powerup_engine", "powerup_gun", "powerup_health"
-    ];
 }
 }

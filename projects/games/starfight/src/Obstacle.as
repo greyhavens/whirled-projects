@@ -28,21 +28,17 @@ public class Obstacle extends BoardObject
 
     public static function readObstacle (bytes :ByteArray) :Obstacle
     {
-        var obs :Obstacle = new Obstacle(0, 0, 0, false);
+        var obs :Obstacle = new Obstacle(0, 0, 0);
         obs.reload(bytes);
         return obs;
     }
 
-    public function Obstacle (
-        type :int, x :int, y :int, anim :Boolean = true, w :int = 0, h :int = 0) :void
+    public function Obstacle (type :int, x :int, y :int, w :int = 0, h :int = 0) :void
     {
-        super(type, x, y, false);
+        super(type, x, y);
         health = 1.0;
         this.w = w;
         this.h = h;
-        if (anim) {
-            setupGraphics();
-        }
     }
 
     /**

@@ -14,15 +14,14 @@ public class Mine extends BoardObject
 
     public static function readMine (bytes :ByteArray) :Mine
     {
-        var mine :Mine = new Mine(0, 0, 0, true, 0.0, false);
+        var mine :Mine = new Mine(0, 0, 0, true, 0.0);
         mine.reload(bytes);
         return mine;
     }
 
-    public function Mine (
-            type :int, x :int, y :int, active :Boolean, damage :Number, anim :Boolean = true) :void
+    public function Mine (type :int, x :int, y :int, active :Boolean, damage :Number) :void
     {
-        super(type, x, y, false);
+        super(type, x, y);
         health = 1.0;
         this.active = active;
         dmg = damage;

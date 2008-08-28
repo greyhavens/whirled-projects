@@ -696,13 +696,13 @@ public class BoardController
 
         for (ii = 0; ii < height; ii++) {
             if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, true, 1, height));
+                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, 1, height));
             } else {
                 _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
             }
             _obstacles[_obstacles.length - 1].index = index++;
             if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, true, 1, height));
+                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, 1, height));
             } else {
                 _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
             }
@@ -711,13 +711,13 @@ public class BoardController
 
         for (ii = 0; ii < width; ii++) {
             if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, true, width, 1));
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, width, 1));
             } else {
                 _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
             }
             _obstacles[_obstacles.length - 1].index = index++;
             if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, true, width, 1));
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, width, 1));
             } else {
                 _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
             }
