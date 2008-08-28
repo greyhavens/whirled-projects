@@ -1,6 +1,7 @@
 package {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.net.ElementChangedEvent;
@@ -119,7 +120,7 @@ public class BoardController
         loadObstacles();
         var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
         _powerups = new Array(maxPowerups);
-        _mines = new Array(1);
+        _mines = new Array(MAX_MINES);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
@@ -129,7 +130,7 @@ public class BoardController
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
                 setImmediate("powerup", new Array(_powerups.length));
-                setImmediate("mines", new Array(1));
+                setImmediate("mines", new Array(MAX_MINES));
                 setImmediate("board", writeTo(new ByteArray()));
             });
         }
@@ -317,16 +318,25 @@ public class BoardController
      */
     public function addMine (mine :Mine) :void
     {
-        var index :int = 0;
-        for (; index < _mines.length; index++) {
+        var freeIndex :int = -1;
+        for (var index :int = 0; index < _mines.length; index++) {
             if (_mines[index] == null) {
+                freeIndex = index;
                 break;
             }
         }
-        _mines[index] = mine;
+
+        // there's no place to put this mine.
+        // TODO: something more intelligent here (explode the oldest mine?)
+        if (freeIndex < 0) {
+            log.warning("No room for this mine! Discarding.");
+            return;
+        }
+
+        _mines[freeIndex] = mine;
         powerupLayer.addChild(new MineView(mine));
         if (_gameCtrl.game.amInControl()) {
-            setAtImmediate("mines", mine.writeTo(new ByteArray()), index);
+            setAtImmediate("mines", mine.writeTo(new ByteArray()), freeIndex);
         }
     }
 
@@ -745,8 +755,12 @@ public class BoardController
     /** All the explosions on the board. */
     protected var _explosions :Array;
 
+    protected static const log :Log = Log.getLog(BoardController);
+
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;
+
+    protected static const MAX_MINES :int = 128;
 
     /** The maximum number of explosions on the screen at once. */
     protected static const MAX_EXPLOSIONS :int = 10;
