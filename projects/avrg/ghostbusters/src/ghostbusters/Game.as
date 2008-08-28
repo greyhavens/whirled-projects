@@ -4,7 +4,6 @@
 // TODO: A dead player should not change state back to default/fight automatically.
 // TODO: Do something better when the players win and when they lose
 
-
 package ghostbusters {
 
 import flash.display.DisplayObject;
@@ -14,19 +13,16 @@ import flash.events.Event;
 
 import flash.geom.Rectangle;
 
-import flash.utils.getTimer;
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
 
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
-import com.whirled.MobControl;
-
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-import com.threerings.util.StringUtil;
 
-import ghostbusters.server.Server;
+import ghostbusters.util.GhostModel;
+import ghostbusters.util.PlayerModel;
 
 [SWF(width="700", height="500")]
 public class Game extends Sprite
@@ -38,9 +34,6 @@ public class Game extends Sprite
 
     public static var control :AVRGameControl;
 
-    public static var server :Server;
-
-    public static var model :GameModel;
     public static var panel :GamePanel;
 
     public static var stageSize :Rectangle;
@@ -60,68 +53,40 @@ public class Game extends Sprite
         if (!control.isConnected()) {
             return;
         }
-        ourPlayerId = control.getPlayerId();
-
-        server = new Server(control);
-        model = new GameModel();
+        ourPlayerId = control.player.getPlayerId();
 
         var gameController :GameController = new GameController();
 
         addChild(panel = gameController.panel);
 
-        control.setHitPointTester(panel.hitTestPoint);
+        control.local.setHitPointTester(panel.hitTestPoint);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        control.addEventListener(
-            AVRGameControlEvent.ENTERED_ROOM,
-            function (... ignored) :void { newRoom(); });
+        control.room.addEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, function (event :Event) :void {
+                newRoom();
+            });
 
-        control.addEventListener(
-            AVRGameControlEvent.SIZE_CHANGED,
-            function (... ignored) :void { newSize(); reloadView(); });
-
-        if (control.hasControl() && !control.state.getProperty(Codes.PROP_TICKER_RUNNING)) {
-            control.state.setProperty(Codes.PROP_TICKER_RUNNING, true, false);
-            control.startTicker(Codes.MSG_TICK, 1000);
-        }
+        control.local.addEventListener(
+            AVRGameControlEvent.SIZE_CHANGED, function (event :Event) :void {
+                newSize();
+                reloadView();
+            });
     }
 
-    public static function profile (f :Function) :void
+    // TODO: move this
+    public static function relative (cur :int, max :int) :Number
     {
-        var t :Number = getTimer();
-        f();
-        log.debug("Profiling(" + f + ") = " + (getTimer() - t));
+        return (max > 0) ? (cur / max) : 1;
     }
 
-    public static function setAvatarState (state :String) :void
+    // TODO: move this
+    public static function get state () :String
     {
-        var info :AVRGameAvatar = control.getAvatarInfo(Game.ourPlayerId);
-        if (info != null && info.state != state) {
-            control.setAvatarState(state);
-        }
-    }
-
-    public static function getTeam (excludeDead :Boolean = false) :Array
-    {
-        var players :Array = Game.control.getPlayerIds();
-        if (players == null) {
-            // disconnected
-            return [ ];
-        }
-        var team :Array = new Array(players.length);
-        var jj :int = 0;
-        for (var ii :int = 0; ii < players.length; ii ++) {
-            if (!Game.control.isPlayerHere(players[ii])) {
-                continue;
-            }
-            if (excludeDead && model.isPlayerDead(players[ii])) {
-                continue;
-            }
-            team[jj ++] = players[ii];
-        }
-        return team.slice(0, jj);
+        var state :Object = control.room.props.get(Codes.PROP_STATE);
+        return (state is String) ? state as String : Codes.STATE_SEEKING;
     }
 
     protected function handleUnload (event :Event) :void
@@ -142,7 +107,7 @@ public class Game extends Sprite
     {
         var resized :Boolean = false;
 
-        var newSize :Rectangle = control.getStageSize();
+        var newSize :Rectangle = control.local.getStageSize();
         if (newSize != null) {
             stageSize = newSize;
             log.debug("Setting stage size: " + stageSize);
@@ -156,7 +121,7 @@ public class Game extends Sprite
             stageSize = new Rectangle(0, 0, 700, 500);
         }
 
-        newSize = control.getStageSize(false);
+        newSize = control.local.getStageSize(false);
         if (newSize != null) {
             scrollSize = newSize;
             log.debug("Setting scroll size: " + scrollSize);
@@ -173,9 +138,9 @@ public class Game extends Sprite
 
     protected function newRoom () :void
     {
-        ourRoomId = control.getRoomId();
+        ourRoomId = control.room.getRoomId();
 
-        var newBounds :Rectangle = control.getRoomBounds();
+        var newBounds :Rectangle = control.room.getRoomBounds();
         if (newBounds != null) {
             roomBounds = newBounds;
             log.debug("Setting room bounds: " + roomBounds);
@@ -188,7 +153,6 @@ public class Game extends Sprite
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
 
-        server.newRoom();
         panel.newGhost();
     }
 

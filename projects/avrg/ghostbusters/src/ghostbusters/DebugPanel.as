@@ -9,8 +9,9 @@ import flash.display.Sprite;
 import flash.text.TextField;
 
 import com.threerings.flash.DisplayUtil;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControlEvent;
 
+// TODO (maybe): not yet updated for new API
 public class DebugPanel extends Sprite
 {
     public function DebugPanel ()

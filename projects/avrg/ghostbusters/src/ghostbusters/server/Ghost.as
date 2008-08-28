@@ -65,21 +65,21 @@ public class Ghost
     {
         _zest = zest;
 
-        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_CUR_ZEST, zest);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_CUR_ZEST, zest);
     }
 
     public function setHealth (health :int) :void
     {
         _health = health;
 
-        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_CUR_HEALTH, health);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_CUR_HEALTH, health);
     }
 
     public function setPosition (x :int, y :int) :void
     {
         _position = new Point(x, y);
 
-        _room.ctrl.props.setIn(Codes.PROP_GHOST, Codes.PROP_GHOST_POS, [ x, y ]);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_POS, [ x, y ]);
     }
 
     public function zap () :void

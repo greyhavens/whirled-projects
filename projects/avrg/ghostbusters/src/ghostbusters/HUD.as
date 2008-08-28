@@ -22,9 +22,13 @@ import com.threerings.util.CommandEvent;
 
 import ghostbusters.ClipHandler;
 import ghostbusters.GameController;
+import ghostbusters.util.GhostModel;
+import ghostbusters.util.PlayerModel;
 
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 
 public class HUD extends Sprite
 {
@@ -37,15 +41,10 @@ public class HUD extends Sprite
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 
-        Game.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED,
-                                      function (... ignored) :void { teamUpdated(); });
-        Game.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT,
-                                      function (... ignored) :void { teamUpdated(); });
-
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
-
-        _ppp = new PerPlayerProperties(playerPropertyChanged);
+        Game.control.room.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        Game.control.room.props.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
 
     public function shutdown () :void
@@ -63,7 +62,6 @@ public class HUD extends Sprite
         if (_hud.parent != null) {
             placeHud();
             teamUpdated();
-            newGhost();
         }
     }
 
@@ -95,25 +93,18 @@ public class HUD extends Sprite
         return _lootIx;
     }
 
-    public function newGhost () :void
-    {
-        if (_ghostInfo != null) {
-            _ghostInfo.updateGhost();
-        }
-    }
-
     public function teamUpdated () :void
     {
         if (this.stage == null || _hud.parent == null || _visualHud == null) {
             // not ready yet
             return;
         }
-        if (Game.control.getAvatarInfo(Game.ourPlayerId) == null) {
+        if (Game.control.room.getAvatarInfo(Game.ourPlayerId) == null) {
             setTimeout(teamUpdated, 100);
             return;
         }
 
-        var players :Array = Game.getTeam();
+        var players :Array = PlayerModel.getTeam();
         var teamIx :int = 0;
         var hudIx :int = 0;
         while (hudIx < 6) {
@@ -129,19 +120,43 @@ public class HUD extends Sprite
 //                teamIx ++;
 //                continue;
 //            }
-            var info :AVRGameAvatar = Game.control.getAvatarInfo(players[teamIx]);
+            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(players[teamIx]);
             if (info == null) {
                 // most likely explanation: they are not in our room
                 teamIx ++;
                 continue;
             }
-            setPlayerHealth(teamIx, Game.model.getPlayerRelativeHealth(players[teamIx]),
-                            players[teamIx] == Game.ourPlayerId);
+
+            setPlayerHealth(
+                teamIx, Game.relative(PlayerModel.getHealth(players[teamIx]),
+                                      PlayerModel.getMaxHealth(players[teamIx])),
+                players[teamIx] == Game.ourPlayerId);
             panel.namePlate.visible = true;
             panel.namePlate.text = info.name;
             panel.id = players[teamIx];
             teamIx ++;
             hudIx ++;
+        }
+    }
+
+    protected function propertyChanged (evt :PropertyChangedEvent) :void
+    {
+        teamUpdated();
+    }
+
+    protected function elementChanged (evt :ElementChangedEvent) :void
+    {
+        if (evt.name == Codes.DICT_GHOST) {
+            if (evt.key == Codes.PROP_GHOST_CUR_ZEST || evt.key == Codes.PROP_GHOST_MAX_ZEST ||
+                evt.key == Codes.PROP_GHOST_CUR_HEALTH || evt.key == Codes.PROP_GHOST_MAX_HEALTH) {
+                updateGhostHealth();
+            }
+            return;
+        }
+
+        var playerId :int = PlayerModel.parseProperty(Codes.DICT_PFX_PLAYER, evt.name);
+        if (playerId > 0) {
+            playerHealthUpdated(playerId);
         }
     }
 
@@ -241,33 +256,9 @@ public class HUD extends Sprite
     protected function playerHealthUpdated (id :int) :void
     {
         setPlayerHealth(findPlayerIx(id),
-                        Game.model.getPlayerRelativeHealth(id),
+                        Game.relative(PlayerModel.getHealth(id),
+                                      PlayerModel.getMaxHealth(id)),
                         id == Game.ourPlayerId);
-    }
-
-    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
-    {
-        switch(evt.name) {
-          case Codes.PROP_GHOST_CUR_HEALTH:
-          case Codes.PROP_GHOST_MAX_HEALTH:
-          case Codes.PROP_GHOST_CUR_ZEST:
-          case Codes.PROP_GHOST_MAX_ZEST:
-          case Codes.PROP_STATE:
-          case Codes.PROP_GHOST_ID:
-            updateGhostHealth();
-            if (_ghostInfo != null) {
-                _ghostInfo.updateGhost();
-            }
-        }
-    }
-
-    protected function playerPropertyChanged (memberId :int, name :String, value :Object) :void
-    {
-        switch(name) {
-          case Codes.PROP_PLAYER_CUR_HEALTH:
-          case Codes.PROP_PLAYER_MAX_HEALTH:
-            playerHealthUpdated(memberId);
-        }
     }
 
     protected function lanternClick (evt :Event) :void
@@ -283,11 +274,11 @@ public class HUD extends Sprite
     protected function helpClick (evt :Event) :void
     {
 //        CommandEvent.dispatch(this, GameController.HELP);
-        var panel :Sprite = new DebugPanel();
+//        var panel :Sprite = new DebugPanel();
 
-        this.addChild(panel);
-        panel.x = 200;
-        panel.y = 600;
+//        this.addChild(panel);
+//        panel.x = 200;
+//        panel.y = 600;
     }
 
     protected function updateGhostHealth () :void
@@ -300,14 +291,13 @@ public class HUD extends Sprite
         var other :MovieClip;
         var health :Number;
 
-        if (Game.model.state == GameModel.STATE_SEEKING ||
-            Game.model.state == GameModel.STATE_APPEARING) {
-            health = Game.model.ghostRelativeZest;
+        if (Game.state == Codes.STATE_SEEKING || Game.state == Codes.STATE_APPEARING) {
+            health = Game.relative(GhostModel.getZest(), GhostModel.getMaxZest());
             bar = _ghostCaptureBar;
             other = _ghostHealthBar;
 
         } else {
-            health = Game.model.ghostRelativeHealth;
+            health = Game.relative(GhostModel.getHealth(), GhostModel.getMaxHealth());
             bar = _ghostHealthBar;
             other = _ghostCaptureBar;
         }
@@ -364,9 +354,6 @@ public class HUD extends Sprite
             }
         });
     }
-
-
-    protected var _ppp :PerPlayerProperties;
 
     protected var _hud :ClipHandler;
     protected var _visualHud :MovieClip;

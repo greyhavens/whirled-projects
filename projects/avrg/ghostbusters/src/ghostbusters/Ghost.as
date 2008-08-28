@@ -55,17 +55,17 @@ public class Ghost extends Sprite
 
     public function appear (callback :Function) :int
     {
-        return handler.gotoScene(Codes.ST_GHOST_APPEAR, function () :String {
+        return handler.gotoScene(GamePanel.ST_GHOST_APPEAR, function () :String {
             callback();
             // stay in FIGHT state for the brief period until the entire SeekPanel disappears
-            return Codes.ST_GHOST_FIGHT;
+            return GamePanel.ST_GHOST_FIGHT;
         });
     }
 
     public function hidden () :void
     {
-        handler.gotoScene(Codes.ST_GHOST_HIDDEN, function () :String {
-            return Codes.ST_GHOST_HIDDEN;
+        handler.gotoScene(GamePanel.ST_GHOST_HIDDEN, function () :String {
+            return GamePanel.ST_GHOST_HIDDEN;
         });
     }
 
@@ -84,14 +84,14 @@ public class Ghost extends Sprite
     {
         Game.log.debug("Ghost damaged [_next=" + _next + "]");
         _next = ST_FIGHT;
-        handler.gotoScene(Codes.ST_GHOST_REEL, play);
+        handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
     }
 
     public function attack () :void
     {
         Game.log.debug("Ghost attacking [_next=" + _next + "]");
         _next = ST_FIGHT;
-        handler.gotoScene(Codes.ST_GHOST_RETALIATE, play);
+        handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
     }
 
     public function die (callback :Function) :void
@@ -104,12 +104,12 @@ public class Ghost extends Sprite
     public function triumph (callback :Function) :void
     {
         Game.log.debug("Ghost triumphant [_next=" + _next + "]");
-        handler.gotoScene(Codes.ST_GHOST_TRIUMPH, callback);
+        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
     }
 
     protected function setupUI (ghost :MovieClip) :void
     {
-        ghost.gotoAndStop(1, Codes.ST_GHOST_HIDDEN);
+        ghost.gotoAndStop(1, GamePanel.ST_GHOST_HIDDEN);
         _bounds = ghost.getBounds(this);
 
         // register the sprite
@@ -129,22 +129,22 @@ public class Ghost extends Sprite
     protected function play () :void
     {
         if (_next == ST_FIGHT) {
-            handler.gotoScene(Codes.ST_GHOST_FIGHT, play);
+            handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
 
         } else if (_next == ST_REEL) {
             _next = ST_FIGHT;
-            handler.gotoScene(Codes.ST_GHOST_REEL, play);
+            handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
 
         } else if (_next == ST_ATTACK) {
             _next = ST_FIGHT;
-            handler.gotoScene(Codes.ST_GHOST_RETALIATE, play);
+            handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
 
         } else if (_next == ST_DIE) {
-            handler.gotoScene(Codes.ST_GHOST_DEFEAT, _callback);
+            handler.gotoScene(GamePanel.ST_GHOST_DEFEAT, _callback);
 
         } else {
             Game.log.debug("unknown state: " + _next);
-            handler.gotoScene(Codes.ST_GHOST_FIGHT, play);
+            handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
         }
     }
 

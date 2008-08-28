@@ -15,10 +15,11 @@ import flash.events.MouseEvent;
 
 import flash.utils.ByteArray;
 
-import mx.controls.Button;
-
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import com.threerings.flash.AnimationManager;
 import com.threerings.flash.DisplayUtil;
@@ -27,10 +28,26 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
 import ghostbusters.fight.FightPanel;
+import ghostbusters.util.GhostModel;
+import ghostbusters.util.PlayerModel;
 import ghostbusters.seek.SeekPanel;
 
 public class GamePanel extends Sprite
 {
+    // ghost states
+    public static const ST_GHOST_HIDDEN :String = "hidden";
+    public static const ST_GHOST_APPEAR :String = "appear_to_fighting";
+    public static const ST_GHOST_FIGHT :String = "fighting";
+    public static const ST_GHOST_REEL :String = "reel";
+    public static const ST_GHOST_RETALIATE :String = "retaliate";
+    public static const ST_GHOST_DEFEAT :String = "defeat_disappear";
+    public static const ST_GHOST_TRIUMPH :String = "triumph_chase";
+
+    // avatar states
+    public static const ST_PLAYER_DEFAULT :String = "Default";
+    public static const ST_PLAYER_FIGHT :String = "Fight";
+    public static const ST_PLAYER_DEFEAT :String = "Defeat";
+
     public var hud :HUD;
 
     public function GamePanel ()
@@ -42,12 +59,10 @@ public class GamePanel extends Sprite
             _frame = frame;
         });
 
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-        Game.control.addEventListener(AVRGameControlEvent.COINS_AWARDED, coinsAwarded);
-
-        _ppp = new PerPlayerProperties(handlePlayerPropertyUpdate);
+        Game.control.player.addEventListener(AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
 
         var panel :GamePanel = this;
         new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function (clip :MovieClip) :void {
@@ -147,21 +162,19 @@ public class GamePanel extends Sprite
 
     public function getClipClass () :Class
     {
-        var data: Object = Game.model.ghostId;
-        if (data != null) {
-            var clip :Class = GHOST_CLIPS[data.id];
+        var id :String = GhostModel.getId();
+        if (id != null) {
+            var clip :Class = GHOST_CLIPS[id]
             if (clip != null) {
                 return clip;
             }
-            Game.log.debug("Erk, cannot find clip for ghostId=" + data);
+            Game.log.debug("Erk, cannot find clip for id=" + id);
         }
         return null;
     }
 
     public function newGhost () :void
     {
-        hud.newGhost();
-
         _ghost = null;
         var clip :Class = getClipClass();
         if (clip != null) {
@@ -187,33 +200,23 @@ public class GamePanel extends Sprite
         AnimationManager.start(flourish);
     }
 
-    protected function handlePlayerPropertyUpdate (playerId :int, name :String, value :Object) :void
-    {
-        if (name == Codes.PROP_PLAYER_CUR_HEALTH) {
-            if (playerId == Game.ourPlayerId) {
-                checkPlayerHealth();
-                updateAvatarState();
-            }
-        }
-    }
-
     public function updateAvatarState () :void
     {
         var avatarState :String;
 
-        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
-            avatarState = Codes.ST_PLAYER_DEFEAT;
+        if (PlayerModel.isDead(Game.ourPlayerId)) {
+            avatarState = ST_PLAYER_DEFEAT;
 
-        } else if (Game.model.state == GameModel.STATE_SEEKING ||
-                   Game.model.state == GameModel.STATE_APPEARING) {
-                avatarState = Codes.ST_PLAYER_DEFAULT;
+        } else if (Game.state == Codes.STATE_SEEKING ||
+                   Game.state == Codes.STATE_APPEARING) {
+                avatarState = ST_PLAYER_DEFAULT;
 
         } else {
-            avatarState = Codes.ST_PLAYER_FIGHT;
+            avatarState = ST_PLAYER_FIGHT;
 
         }
 
-        Game.setAvatarState(avatarState);
+        GameController.setAvatarState(avatarState);
     }
 
     protected function checkPlayerHealth () :void
@@ -223,7 +226,7 @@ public class GamePanel extends Sprite
             return;
         }
 
-        if (!Game.model.isPlayerDead(Game.ourPlayerId)) {
+        if (!PlayerModel.isDead(Game.ourPlayerId)) {
             // possibly we were just revived, let's see
             if (_revivePopup.parent == this) {
                 this.removeChild(_revivePopup);
@@ -253,31 +256,41 @@ public class GamePanel extends Sprite
         this.addChild(clip);
     }
 
-    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
+    protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
             _seeking = false;
             updateState();
 
-            if (evt.value == GameModel.STATE_GHOST_TRIUMPH) {
+            if (evt.newValue == Codes.STATE_GHOST_TRIUMPH) {
                 popup(_ghostDefeated);
             }
 
-        } else if (evt.name == Codes.PROP_GHOST_ID) {
+        } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
+        }
+    }
+
+    protected function roomElementChanged (evt :ElementChangedEvent) :void
+    {
+        var playerId :int = PlayerModel.parseProperty(Codes.DICT_PFX_PLAYER, evt.name);
+
+        if (playerId == Game.ourPlayerId && evt.key == Codes.PROP_PLAYER_CUR_HEALTH) {
+            checkPlayerHealth();
+            updateAvatarState();
         }
     }
 
     protected function updateState () :void
     {
         var seekPanel :Boolean =
-            ((Game.model.state == GameModel.STATE_SEEKING && _seeking) ||
-             Game.model.state == GameModel.STATE_APPEARING);
+            ((Game.state == Codes.STATE_SEEKING && _seeking) ||
+              Game.state == Codes.STATE_APPEARING);
 
         var fightPanel :Boolean =
-            (Game.model.state == GameModel.STATE_FIGHTING ||
-             Game.model.state == GameModel.STATE_GHOST_TRIUMPH ||
-             Game.model.state == GameModel.STATE_GHOST_DEFEAT);
+            (Game.state == Codes.STATE_FIGHTING ||
+             Game.state == Codes.STATE_GHOST_TRIUMPH ||
+             Game.state == Codes.STATE_GHOST_DEFEAT);
 
         setPanel(seekPanel ? SeekPanel : (fightPanel ? FightPanel : null));
 
@@ -298,8 +311,6 @@ public class GamePanel extends Sprite
             this.addChildAt(_panel, 0);
         }
     }
-
-    protected var _ppp :PerPlayerProperties;
 
     protected var _seeking :Boolean = false;
 

@@ -31,9 +31,11 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControlEvent;
-import com.whirled.MobControl;
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.MobControl;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import ghostbusters.ClipHandler;
 import ghostbusters.Codes;
@@ -41,9 +43,9 @@ import ghostbusters.Content;
 import ghostbusters.Dimness;
 import ghostbusters.Game;
 import ghostbusters.GameController;
-import ghostbusters.GameModel;
 import ghostbusters.Ghost;
 import ghostbusters.HUD;
+import ghostbusters.util.PlayerModel;
 
 public class FightPanel extends FrameSprite
 {
@@ -58,11 +60,12 @@ public class FightPanel extends FrameSprite
         _ghost.x = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.y = 100;
 
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
+        // TODO: is listening on room sufficient?
+        Game.control.room.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
         _ghost.fighting();
 
@@ -172,13 +175,13 @@ public class FightPanel extends FrameSprite
 
     protected function updateSpotlights () :void
     {
-        var team :Array = Game.getTeam(false);
+        var team :Array = PlayerModel.getTeam(false);
 
         // TODO: maintain our own list, calling this 30 times a second is rather silly
         for (var ii :int = 0; ii < team.length; ii ++) {
             var playerId :int = team[ii] as int;
 
-            var info :AVRGameAvatar = Game.control.getAvatarInfo(playerId);
+            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
             if (info == null) {
                 Game.log.warning("Can't get avatar info [player=" + playerId + "]");
                 continue;
@@ -202,8 +205,9 @@ public class FightPanel extends FrameSprite
         // TODO: remove spotlights when people leave
     }
 
-    protected function messageReceived (event: AVRGameControlEvent) :void
+    protected function messageReceived (event: MessageReceivedEvent) :void
     {
+        // TODO: sort out precisely where MSG_MINIGAME_RESULT comes from and where it goes
         if (event.name == Codes.MSG_MINIGAME_RESULT) {
             var bits :Array = (event.value as Array);
             if (bits != null && bits[2] > 0) {
@@ -227,10 +231,10 @@ public class FightPanel extends FrameSprite
 
     protected function checkForSpecialStates () :void
     {
-        if (Game.model.state == GameModel.STATE_GHOST_TRIUMPH) {
+        if (Game.state == Codes.STATE_GHOST_TRIUMPH) {
             handleGhostTrimph();
 
-        } else if (Game.model.state == GameModel.STATE_GHOST_DEFEAT) {
+        } else if (Game.state == Codes.STATE_GHOST_DEFEAT) {
             showGhostDeath();
         }
     }
@@ -240,16 +244,18 @@ public class FightPanel extends FrameSprite
         // cancel minigame
         endFight();
 
-        _ghost.die(function () :void {
-            Game.server.ghostFullyGone();
-        });
+        // TODO: REPLACE WITH GHOST-SPECIFIC TIMING
+//        _ghost.die(function () :void {
+//            Game.server.ghostFullyGone();
+//        });
     }
 
     protected function handleGhostTrimph () :void
     {
-        _ghost.triumph(function () :void {
-            Game.server.ghostFullyGone();
-        });
+        // TODO: REPLACE WITH GHOST-SPECIFIC TIMING
+//        _ghost.triumph(function () :void {
+//            Game.server.ghostFullyGone();
+//        });
     }
 
     protected function showGhostDamage () :void
@@ -261,7 +267,7 @@ public class FightPanel extends FrameSprite
     {
         _ghost.attack();
         if (playerId == Game.ourPlayerId) {
-            Game.control.playAvatarAction("Reel");
+            Game.control.player.playAvatarAction("Reel");
         }
     }
 

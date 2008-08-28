@@ -5,49 +5,46 @@ package ghostbusters {
 
 public class Codes
 {
-    // globals
-    public static const MSG_TICK :String = "tick";
+    // different room/ghost states
+    public static const STATE_SEEKING :String = "seeking";
+    public static const STATE_APPEARING :String = "appearing";
+    public static const STATE_FIGHTING :String = "fighting";
+    public static const STATE_GHOST_TRIUMPH :String = "triumph";
+    public static const STATE_GHOST_DEFEAT :String = "defeat";
 
+    // player
+    public static const MSG_PLAYER_REVIVE :String = "revive";
+
+    public static const DICT_PFX_PLAYER :String = "p";
+    public static const PROP_PLAYER_CUR_HEALTH :int = 0; /* IX */
+    public static const PROP_PLAYER_MAX_HEALTH :int = 1; /* IX */
+
+    // per-room globals
     public static const PROP_STATE :String = "st";
-    public static const PROP_TICKER_RUNNING :String = "ticker";
+    public static const DICT_GHOST :String = "g";
 
-    // seek phase
+    // seek phase only
     public static const MSG_GHOST_ZAP :String = "gz";
+    public static const MSG_LANTERN_POS :String = "lp";
+
+    public static const DICT_LANTERNS :String = "l";
 
     public static const PROP_GHOST_POS :String = "gp";
-    public static const PROP_GHOST_CUR_ZEST :String = "gcz";
-    public static const PROP_GHOST_MAX_ZEST :String = "gmz";
-    public static const PROP_LANTERN_POS :String = "lp";
+    public static const PROP_GHOST_CUR_ZEST :int = 0; /* = "cz"; */   /* IX */
+    public static const PROP_GHOST_MAX_ZEST :int = 1; /* = "mz"; */   /* IX */
 
-    // fight phase
-    public static const PROP_STATS :String = "s";
+    // fight phase only
     public static const MSG_MINIGAME_RESULT :String = "mgr";
     public static const MSG_PLAYER_ATTACKED :String = "pa";
     public static const MSG_PLAYER_DEATH :String = "pd";
-    public static const MSG_PAYOUT_FACTOR :String = "pof";
 
-    // player data
-    public static const PROP_PLAYER_CUR_HEALTH :String = "pch";
-    public static const PROP_PLAYER_MAX_HEALTH :String = "pmh";
+    public static const DICT_STATS :String = "s";
 
     // ghost data
-    public static const PROP_GHOST_ID :String = "gi";
-    public static const PROP_GHOST_CUR_HEALTH :String = "gch";
-    public static const PROP_GHOST_MAX_HEALTH :String = "gmh";
-    public static const PROP_LAST_GHOST_ATTACK :String = "lga";
-
-    // ghost states
-    public static const ST_GHOST_HIDDEN :String = "hidden";
-    public static const ST_GHOST_APPEAR :String = "appear_to_fighting";
-    public static const ST_GHOST_FIGHT :String = "fighting";
-    public static const ST_GHOST_REEL :String = "reel";
-    public static const ST_GHOST_RETALIATE :String = "retaliate";
-    public static const ST_GHOST_DEFEAT :String = "defeat_disappear";
-    public static const ST_GHOST_TRIUMPH :String = "triumph_chase";
-
-    // avatar states
-    public static const ST_PLAYER_DEFAULT :String = "Default";
-    public static const ST_PLAYER_FIGHT :String = "Fight";
-    public static const ST_PLAYER_DEFEAT :String = "Defeat";
+    public static const PROP_GHOST_ID :int = 0; /* = "i"; */  /* IX */
+    public static const PROP_GHOST_NAME:int = 1; /* = "n"; */ /* IX */
+    public static const PROP_GHOST_LEVEL:int = 2; /* = "l"; */ /* IX */
+    public static const PROP_GHOST_CUR_HEALTH :int = 3; /* = "ch"; */ /* IX */
+    public static const PROP_GHOST_MAX_HEALTH :int = 4; /* = "mh"; */ /* IX */
 }
 }

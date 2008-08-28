@@ -3,15 +3,17 @@
 
 package ghostbusters {
 
-import com.threerings.util.Controller;
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControlEvent;
-import com.whirled.MobControl;
-
 import flash.display.DisplayObject;
+
+import com.threerings.util.Controller;
+
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.MobControl;
 
 import ghostbusters.fight.FightPanel;
 import ghostbusters.fight.MicrogameResult;
+import ghostbusters.util.PlayerModel;
 
 public class GameController extends Controller
 {
@@ -25,15 +27,20 @@ public class GameController extends Controller
     public static const ZAP_GHOST :String = "ZapGhost";
     public static const REVIVE :String = "Revive";
 
+    public static function setAvatarState (state :String) :void
+    {
+        var info :AVRGameAvatar = Game.control.room.getAvatarInfo(Game.ourPlayerId);
+        if (info != null && info.state != state) {
+            Game.control.player.setAvatarState(state);
+        }
+    }
+
     public var panel :GamePanel;
 
     public function GameController ()
     {
         panel = new GamePanel()
         setControlledPanel(panel);
-
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, handleMessage);
     }
 
     public function shutdown () :void
@@ -43,8 +50,8 @@ public class GameController extends Controller
 
     public function handleEndGame () :void
     {
-        Game.setAvatarState(Codes.ST_PLAYER_DEFAULT);
-        Game.control.deactivateGame();
+        setAvatarState(GamePanel.ST_PLAYER_DEFAULT);
+        Game.control.player.deactivateGame();
     }
 
     public function handleHelp () :void
@@ -64,26 +71,26 @@ public class GameController extends Controller
 
     public function handleToggleLantern () :void
     {
-        if (Game.model.isPlayerDead(Game.ourPlayerId)) {
+        if (PlayerModel.isDead(Game.ourPlayerId)) {
             // the button is always disabled if you're dead -- revive first!
             return;
         }
 
-        var state :String = Game.model.state;
-        if (state == GameModel.STATE_SEEKING) {
+        var state :String = Game.state;
+        if (state == Codes.STATE_SEEKING) {
             panel.seeking = !panel.seeking;
 
-        } else if (state == GameModel.STATE_APPEARING) {
+        } else if (state == Codes.STATE_APPEARING) {
             // no effect: you have to watch this bit
 
-        } else if (state == GameModel.STATE_FIGHTING) {
+        } else if (state == Codes.STATE_FIGHTING) {
             var subPanel :FightPanel = Game.panel.subPanel as FightPanel;
             if (subPanel != null) {
                 subPanel.toggleGame();
             }
 
-        } else if (state == GameModel.STATE_GHOST_TRIUMPH ||
-                   state == GameModel.STATE_GHOST_DEFEAT) {
+        } else if (state == Codes.STATE_GHOST_TRIUMPH ||
+                   state == Codes.STATE_GHOST_DEFEAT) {
             // no effect: you have to watch this bit
 
        } else {
@@ -93,39 +100,28 @@ public class GameController extends Controller
 
     public function handleGhostAttacked (result :MicrogameResult) :void
     {
-        Game.control.state.sendMessage(
+        Game.control.agent.sendMessage(
             Codes.MSG_MINIGAME_RESULT, [
-                Game.ourPlayerId,
                 result.success == MicrogameResult.SUCCESS,
                 result.damageOutput,
                 result.healthOutput
             ]);
 
         if (result.success == MicrogameResult.SUCCESS) {
-            Game.control.playAvatarAction("Retaliate");
+            Game.control.player.playAvatarAction("Retaliate");
         }
     }
 
     public function handleZapGhost () :void
     {
-        Game.control.state.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
+        Game.control.agent.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
     }
 
     public function handleRevive () :void
     {
-        if (Game.model.isPlayerDead(Game.ourPlayerId) &&
-            Game.model.state != GameModel.STATE_FIGHTING) {
-            Game.model.setOurHealth(Game.model.getPlayerMaxHealth(Game.ourPlayerId));
+        if (PlayerModel.isDead(Game.ourPlayerId) && Game.state != Codes.STATE_FIGHTING) {
+            Game.control.agent.sendMessage(Codes.MSG_PLAYER_REVIVE);
         }
     }
-
-    protected function handleMessage (event :AVRGameControlEvent) :void
-    {
-        if (event.name == Codes.MSG_PAYOUT_FACTOR) {
-            Game.control.quests.completeQuest("ghost_defeated", null, event.value as Number);
-        }
-    }
-
-    protected var _ppp :PerPlayerProperties;
 }
 }

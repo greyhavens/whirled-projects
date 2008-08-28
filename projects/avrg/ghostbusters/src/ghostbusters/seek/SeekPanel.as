@@ -21,8 +21,11 @@ import flash.geom.Rectangle;
 import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import com.threerings.flash.FrameSprite;
 import com.threerings.util.ClassUtil;
@@ -52,14 +55,14 @@ public class SeekPanel extends FrameSprite
 
         _lanterns = new Dictionary();
 
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        Game.control.state.addEventListener(
-            AVRGameControlEvent.ROOM_PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.room.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.props.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
 
-        _ppp = new PerPlayerProperties(playerPropertyUpdate);
-
-        if (Game.model.state == GameModel.STATE_APPEARING) {
+        if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
         }
     }
@@ -82,7 +85,7 @@ public class SeekPanel extends FrameSprite
         _lanternLoop.stop();
     }
 
-    protected function messageReceived (event: AVRGameControlEvent) :void
+    protected function messageReceived (event: MessageReceivedEvent) :void
     {
         if (event.name == Codes.MSG_GHOST_ZAP) {
             _zapping = ZAP_FRAMES;
@@ -90,34 +93,38 @@ public class SeekPanel extends FrameSprite
         }
     }
 
-    protected function playerPropertyUpdate (playerId :int, prop :String, value :Object) :void
+    protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
         // if the ghost is appearing, ignore network events
         if (_lanterns == null) {
             return;
         }
 
-        if (prop == Codes.PROP_LANTERN_POS) {
+        if (evt.name == Codes.DICT_LANTERNS) {
+            var playerId :int = evt.key;
+
             // ignore our own updates unless we're debugging
             if (playerId == Game.ourPlayerId && !Game.DEBUG) {
                 return;
             }
 
-            if (value == null) {
+            if (evt.newValue == null) {
                 // someone turned theirs off
                 playerLanternOff(playerId);
 
             } else {
-                var bits :Array = (value as Array);
+                var bits :Array = (evt.newValue as Array);
                 if (bits != null) {
                     // someone turned theirs on or moved it
-                    updateLantern(playerId, Game.control.roomToStage(new Point(bits[0], bits[1])));
+                    updateLantern(
+                        playerId, Game.control.local.roomToStage(new Point(bits[0], bits[1])));
                 }
             }
         }
+
     }
 
-    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
+    protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         // if there's no ghost or it's busy appearing, nothing here to do
         if (_ghost == null || _lanterns == null) {
@@ -125,14 +132,14 @@ public class SeekPanel extends FrameSprite
         }
 
         if (evt.name == Codes.PROP_STATE) {
-            if (evt.value == GameModel.STATE_APPEARING) {
+            if (evt.newValue == Codes.STATE_APPEARING) {
                 appearGhost();
             }
 
         } else if (evt.name == Codes.PROP_GHOST_POS) {
-            var bits :Array = (evt.value as Array);
+            var bits :Array = (evt.newValue as Array);
             if (bits != null) {
-                var pos :Point = Game.control.roomToStage(new Point(bits[0], bits[1]));
+                var pos :Point = Game.control.local.roomToStage(new Point(bits[0], bits[1]));
                 if (pos != null) {
                     _ghost.newTarget(this.globalToLocal(pos));
                 }
@@ -172,7 +179,7 @@ public class SeekPanel extends FrameSprite
 
         // else animate the lanterns we know about
         for each (var lantern :Lantern in _lanterns) {
-            if (Game.control.isPlayerHere(lantern.playerId)) {
+            if (Game.control.room.isPlayerHere(lantern.playerId)) {
                 lantern.nextFrame();
 
             } else {
@@ -204,7 +211,8 @@ public class SeekPanel extends FrameSprite
         }
         _lanterns = null;
         _ghost.appear(function () :void {
-            Game.server.ghostFullyAppeared();
+            // TODO: send a message (ugh)? keep a per-ghost timeout on the server?
+            // Game.server.ghostFullyAppeared();
         });
         var x :int = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.newTarget(new Point(x, 100));
@@ -251,13 +259,11 @@ public class SeekPanel extends FrameSprite
 
     protected function transmitLanternPosition (pos :Point) :void
     {
-        pos = Game.control.stageToRoom(pos);
+        pos = Game.control.local.stageToRoom(pos);
         if (pos != null) {
-            _ppp.setRoomProperty(Game.ourPlayerId, Codes.PROP_LANTERN_POS, [ pos.x, pos.y ]);
+            Game.control.agent.sendMessage(Codes.MSG_LANTERN_POS, [ pos.x, pos.y ]);
         }
     }
-
-    protected var _ppp :PerPlayerProperties;
 
     protected var _lanterns :Dictionary;
 

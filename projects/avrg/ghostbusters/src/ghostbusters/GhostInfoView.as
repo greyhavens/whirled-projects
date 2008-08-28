@@ -4,6 +4,7 @@
 package ghostbusters {
 
 import ghostbusters.Game;
+import ghostbusters.util.GhostModel;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -11,6 +12,8 @@ import flash.display.MovieClip;
 import flash.text.TextField;
 
 import com.threerings.flash.DisplayUtil;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 public class GhostInfoView
 {
@@ -27,19 +30,29 @@ public class GhostInfoView
           demon: findSafely(hud, "DemonPortrait")
         };
 
+        Game.control.room.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        Game.control.room.props.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, propertyChanged);
+
         updateGhost();
+    }
+
+    protected function propertyChanged (evt :PropertyChangedEvent) :void
+    {
+        if (evt.name == Codes.DICT_GHOST) {
+            updateGhost();
+        }
     }
 
     public function updateGhost () :void
     {
-        var chosen :String = null;
+        var chosen :String = GhostModel.getId();
 
-        var data :Object = Game.model.ghostId;
-        if (data != null && Game.model.state != GameModel.STATE_SEEKING) {
-            chosen = data.id;
-            _name.htmlText = data.name;
-            _name.text = data.name;
-            _level.text = "Level: " + data.level;
+        if (chosen != null && Game.state != Codes.STATE_SEEKING) {
+            _name.htmlText = GhostModel.getName();
+            _name.text = GhostModel.getName();
+            _level.text = "Level: " + GhostModel.getLevel();
             _box.visible = true;
 
         } else {
@@ -60,7 +73,6 @@ public class GhostInfoView
         }
         return o;
     }
-
 
     protected var _box :DisplayObjectContainer;
     protected var _name :TextField;

@@ -161,7 +161,7 @@ public class Room
 
     internal function updatePlayerHealth (playerId :int, health :int) :void
     {
-        _ctrl.props.setIn(PlayerModel.propertyName(Codes.DICT_PFX_PLAYER, playerId),
+        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + playerId,
                           Codes.PROP_PLAYER_CUR_HEALTH, health);
     }
 
@@ -307,7 +307,7 @@ public class Room
 
     protected function loadOrSpawnGhost () :void
     {
-        var data :Dictionary = Dictionary(_ctrl.props.get(Codes.PROP_GHOST));
+        var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
         if (data == null) {
             var roomRandom :Random = new Random(this.roomId);
 
@@ -326,7 +326,7 @@ public class Room
             var level :int = levelBase + Server.random.nextInt(3);
 
             data = Ghost.resetGhost(ghosts[ix], names[ix], level);
-            _ctrl.props.set(Codes.PROP_GHOST, data);
+            _ctrl.props.set(Codes.DICT_GHOST, data);
         }
 
         _ghost = new Ghost(this, data);
@@ -334,7 +334,7 @@ public class Room
 
     protected function terminateGhost () :void
     {
-        _ctrl.props.set(Codes.PROP_GHOST, null);
+        _ctrl.props.set(Codes.DICT_GHOST, null);
         _ghost = null;
     }
 
