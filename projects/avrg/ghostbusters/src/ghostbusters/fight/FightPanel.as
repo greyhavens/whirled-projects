@@ -222,7 +222,7 @@ public class FightPanel extends FrameSprite
         }
     }
 
-    protected function roomPropertyChanged (evt :AVRGameControlEvent) :void
+    protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
             checkForSpecialStates();
