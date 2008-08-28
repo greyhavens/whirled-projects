@@ -1,27 +1,16 @@
 package {
 
-import flash.display.DisplayObject;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.MovieClip;
-import flash.display.PixelSnapping;
-import flash.display.Sprite;
-
-import flash.geom.Matrix;
-
-import flash.media.Sound;
-
 import flash.events.Event;
-
+import flash.media.Sound;
 import flash.utils.ByteArray;
-
 
 /**
  * Represents something in the world that ships may interact with.
  */
 public class Obstacle extends BoardObject
 {
+    public static const EXPLODED :String = "Exploded";
+
     /** Constants for types of obstacles. */
     public static const ASTEROID_1 :int = 0;
     public static const ASTEROID_2 :int = 1;
@@ -63,13 +52,6 @@ public class Obstacle extends BoardObject
     {
         // TODO: Something different for different obstacles.
         return 0.75;
-    }
-
-    public function tick (time :int) :void
-    {
-        if (type != WALL) {
-            rotation = (rotation + (360 * time / 10000)) % 360;
-        }
     }
 
     override public function damage (damage :Number) :Boolean
@@ -134,60 +116,9 @@ public class Obstacle extends BoardObject
         return bytes;
     }
 
-    public function explode (callback :Function) :void
+    public function explode () :void
     {
-        if (OBS_EXPLODE[type] == null) {
-            callback();
-        } else {
-            removeChildAt(0);
-            var obsMovie :MovieClip = MovieClip(new (Resources.getClass(OBS_EXPLODE[type]))());
-            obsMovie.addEventListener(Event.COMPLETE, function (event :Event) :void
-                {
-                    obsMovie.removeEventListener(Event.COMPLETE, arguments.callee);
-                    callback();
-                });
-            addChild(obsMovie);
-        }
-    }
-
-    public function showObs () :Boolean
-    {
-        return numChildren > 0;
-    }
-
-
-    override protected function setPosition () :void
-    {
-        super.setPosition();
-        if (type != WALL) {
-            x += Codes.PIXELS_PER_TILE/2;
-            y += Codes.PIXELS_PER_TILE/2;
-        }
-    }
-
-    override protected function setupGraphics () :void
-    {
-        if (type == WALL) {
-            if (w == 0 || h == 0) {
-                return;
-            }
-            var data :BitmapData = new BitmapData(
-                    w * Codes.PIXELS_PER_TILE, h * Codes.PIXELS_PER_TILE);
-            var drawData :BitmapData = Resources.getBitmapData("box_bitmap.gif");
-            var matrix :Matrix;
-            for (var yy :int = 0; yy < h; yy++) {
-                for (var xx :int = 0; xx < w; xx++) {
-                    matrix = new Matrix();
-                    matrix.translate(xx * Codes.PIXELS_PER_TILE, yy * Codes.PIXELS_PER_TILE);
-                    data.draw(drawData, matrix);
-                }
-            }
-            addChild(new Bitmap(data));
-        } else {
-            var obsMovie :MovieClip = MovieClip(new (Resources.getClass(OBS_MOVIES[type]))());
-            addChild(obsMovie);
-            rotation = Math.random()*360;
-        }
+        dispatchEvent(new Event(EXPLODED));
     }
 
     protected static const OBS_MOVIES :Array = [

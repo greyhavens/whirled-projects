@@ -16,6 +16,7 @@ import flash.utils.ByteArray;
 import view.BgSprite;
 import view.ExplosionView;
 import view.MineView;
+import view.ObstacleView;
 import view.PowerupView;
 import view.StatusOverlay;
 
@@ -152,49 +153,32 @@ public class BoardController
 
     public function elementChanged (event :ElementChangedEvent) :void
     {
-        if ((event.name == "powerup") && (event.index >= 0)) {
-            if (_powerups == null) {
-                return;
-            }
+        if ((event.name == "powerup") && (event.index >= 0) && _powerups != null) {
             if (event.newValue == null) {
                 powerupRemoved(event.index);
-                return;
-            }
 
-            var pow :Powerup = _powerups[event.index];
-            if (pow != null) {
-                powerupRemoved(event.index);
+            } else {
+                var pow :Powerup = _powerups[event.index];
+                if (pow != null) {
+                    powerupRemoved(event.index);
+                }
+                var pBytes :ByteArray = ByteArray(event.newValue);
+                pBytes.position = 0;
+                pow = Powerup.readPowerup(pBytes);
+                _powerups[event.index] = pow;
+                powerupAdded(pow, event.index);
             }
-            var pBytes :ByteArray = ByteArray(event.newValue);
-            pBytes.position = 0;
-            pow = Powerup.readPowerup(pBytes);
-            _powerups[event.index] = pow;
-            powerupAdded(pow, event.index);
 
         } else if ((event.name == "obstacles") && (event.index >= 0)) {
-            if (_obstacles == null) {
-                return;
-            }
             if (event.newValue == null) {
-                if (_obstacles[event.index] != null) {
-                    var obs :Obstacle = _obstacles[event.index];
-                    _obstacles[event.index] = null;
-                    obs.explode(function () :void {
-                        if (_board != null) {
-                            _board.removeChild(obs);
-                        }
-                    });
-                }
+                obstacleRemoved(event.index);
             }
 
+            // obstacles are never created during game play
+
         } else if ((event.name == "mines") && (event.index >= 0)) {
-            if (_mines == null) {
-                return;
-            }
             if (event.newValue == null) {
-                if (_mines[event.index] != null) {
-                    removeMine(event.index);
-                }
+                removeMine(event.index);
             }
 
             // don't listen to "new mine" events (event.newValue != null) - mines will
@@ -313,6 +297,26 @@ public class BoardController
         }
     }
 
+    protected function obstacleAdded (obstacle :Obstacle, index :int) :void
+    {
+        var view :ObstacleView = new ObstacleView(obstacle);
+        _obstacleViews[index] = view;
+        _board.addChild(view);
+    }
+
+    protected function obstacleRemoved (index :int) :void
+    {
+        if (_obstacles != null) {
+            var obs :Obstacle = _obstacles[index];
+            if (obs != null) {
+                _obstacles[index] = null;
+                obs.explode();
+            }
+
+            _obstacleViews[index] = null;
+        }
+    }
+
     /**
      * Adds a mine to the board.
      */
@@ -334,10 +338,14 @@ public class BoardController
         }
 
         _mines[freeIndex] = mine;
-        powerupLayer.addChild(new MineView(mine));
         if (_gameCtrl.game.amInControl()) {
             setAtImmediate("mines", mine.writeTo(new ByteArray()), freeIndex);
         }
+    }
+
+    protected function mineAdded (mine :Mine) :void
+    {
+        powerupLayer.addChild(new MineView(mine));
     }
 
     /**
@@ -345,10 +353,14 @@ public class BoardController
      */
     public function removeMine (idx :int) :void
     {
-        setAtImmediate("mines", null, idx);
-        var mine :Mine = _mines[idx];
-        _mines[idx] = null;
-        mine.explode();
+        if (_mines != null) {
+            setAtImmediate("mines", null, idx);
+            var mine :Mine = _mines[idx];
+            if (mine != null) {
+                _mines[idx] = null;
+                mine.explode();
+            }
+        }
     }
 
     /**
@@ -580,21 +592,23 @@ public class BoardController
      */
     public function setupGraphics () :void
     {
-        for each (var obs :Obstacle in _obstacles) {
-            if (obs != null && obs.showObs()) {
-                _board.addChild(obs);
+        _obstacleViews = new Array(_obstacles.length);
+        for (var ii :int = 0; ii < _obstacles.length; ii++) {
+            var obs :Obstacle = _obstacles[ii];
+            if (obs != null) {
+                obstacleAdded(obs, ii);
             }
         }
 
         _board.addChild(powerupLayer = new Sprite());
-        for (var ii :int; ii < _powerups.length; ii++) {
+        for (ii = 0; ii < _powerups.length; ii++) {
             if (_powerups[ii] != null) {
                 powerupAdded(_powerups[ii], ii);
             }
         }
         for (ii = 0; ii < _mines.length; ii++) {
             if (_mines[ii] != null) {
-                powerupLayer.addChild(new MineView(_mines[ii])); // TEMP
+                mineAdded(_mines[ii]);
             }
         }
     }
@@ -628,9 +642,9 @@ public class BoardController
 
     public function tick (time :int) :void
     {
-        for each (var obs :Obstacle in _obstacles) {
-            if (obs != null) {
-                obs.tick(time);
+        for each (var obstacleView :ObstacleView in _obstacleViews) {
+            if (obstacleView != null) {
+                obstacleView.tick(time);
             }
         }
     }
@@ -745,6 +759,7 @@ public class BoardController
 
     /** All the obstacles on the board. */
     protected var _obstacles :Array;
+    protected var _obstacleViews :Array;
 
     /** All the mines on the board. */
     protected var _mines :Array;

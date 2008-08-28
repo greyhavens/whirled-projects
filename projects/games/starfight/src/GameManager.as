@@ -756,11 +756,7 @@ public class GameManager
         // Remove any that were done.
         for each (shot in completed) {
             _shots.splice(_shots.indexOf(shot), 1);
-            if (shot is LaserShotSprite) {
-                AppContext.gameView.subShotLayer.removeChild(shot);
-            } else {
-                AppContext.gameView.shotLayer.removeChild(shot);
-            }
+            shot.parent.removeChild(shot);
         }
 
         // update our round display
