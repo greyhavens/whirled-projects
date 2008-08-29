@@ -15,11 +15,6 @@ public class TorpedoShotSprite extends ShotSprite {
 
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
-
-        _shotMovie = MovieClip(new (Codes.getShipType(shipType).secondaryAnim)());
-
-        rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
-        addChild(_shotMovie);
     }
 
     /**
@@ -68,9 +63,8 @@ public class TorpedoShotSprite extends ShotSprite {
                 var obs :Obstacle = Obstacle(coll.hit);
                 AppContext.game.hitObs(obs, hitX, hitY, shipId, damage);
             }
-            AppContext.game.explodeCustom(
-                    hitX, hitY, MovieClip(new (wasp.secondaryExplode)()));
-            AppContext.game.playSoundAt(wasp.secondaryExplodeSound, hitX, hitY);
+
+            hit(hitX, hitY);
             complete = true;
         }
     }

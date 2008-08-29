@@ -20,7 +20,11 @@ import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import view.LaserShotView;
+import view.MissileShotView;
 import view.ShipView;
+import view.ShotView;
+import view.TorpedoShotView;
 
 public class GameManager
 {
@@ -125,6 +129,7 @@ public class GameManager
     public function boardLoaded () :void
     {
         _shots = [];
+        _shotViews = [];
         _boardCtrl.createSprite(AppContext.gameView.boardLayer, _ships, AppContext.gameView.status);
 
         // Set up ships for all ships already in the world.
@@ -455,21 +460,60 @@ public class GameManager
         }
     }
 
-    /**
-     * Adds a shot to the game and gets its sprite going.
-     */
-    public function addShot (shot :ShotSprite) :void
+    public function createLaserShot (x :Number, y :Number, angle :Number, length :Number,
+            shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :LaserShotSprite
+    {
+        var shot :LaserShotSprite =
+            new LaserShotSprite(x, y, angle, length, shipId, damage, ttl, shipType, tShipId);
+        var view :LaserShotView = new LaserShotView(shot);
+        addShot(shot);
+        addShotView(view);
+
+        return shot;
+    }
+
+    public function createMissileShot (x :Number, y :Number, vel :Number, angle :Number,
+        shipId :int, damage :Number, ttl :Number, shipType :int,
+        shotClip :Class = null, explodeClip :Class = null) :MissileShotSprite
+    {
+        var shot :MissileShotSprite =
+            new MissileShotSprite(x, y, vel, angle, shipId, damage, ttl, shipType, shotClip, explodeClip);
+        var view :MissileShotView = new MissileShotView(shot);
+        addShot(shot);
+        addShotView(view);
+
+        return shot;
+    }
+
+    public function createTorpedoShot (x :Number, y :Number, vel :Number, angle :Number,
+        shipId :int, damage :Number, ttl :Number, shipType :int) :TorpedoShotSprite
+    {
+        var shot :TorpedoShotSprite =
+            new TorpedoShotSprite(x, y, vel, angle, shipId, damage, ttl, shipType);
+        var view :TorpedoShotView = new TorpedoShotView(shot);
+        addShot(shot);
+        addShotView(view);
+
+        return shot;
+    }
+
+    protected function addShot (shot :ShotSprite) :void
     {
         _shots.push(shot);
+    }
+
+    protected function addShotView (shotView :ShotView) :void
+    {
+        _shotViews.push(shotView);
         if (_ownShip != null) {
-            shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+            shotView.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         } else {
-            shot.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
+            shotView.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
         }
-        if (shot is LaserShotSprite) {
-            AppContext.gameView.subShotLayer.addChild(shot);
+        if (shotView is LaserShotView) {
+            AppContext.gameView.subShotLayer.addChild(shotView);
         } else {
-            AppContext.gameView.shotLayer.addChild(shot);
+            AppContext.gameView.shotLayer.addChild(shotView);
         }
     }
 
@@ -754,14 +798,23 @@ public class GameManager
                 if (shot.complete) {
                     completed.push(shot);
                 }
-                shot.setPosRelTo(ownX, ownY);
+            }
+        }
+
+        for each (var shotView :ShotView in _shotViews) {
+            if (shotView != null) {
+                shotView.setPosRelTo(ownX, ownY);
             }
         }
 
         // Remove any that were done.
         for each (shot in completed) {
-            _shots.splice(_shots.indexOf(shot), 1);
-            shot.parent.removeChild(shot);
+            var index :int = _shots.indexOf(shot);
+            _shots.splice(index, 1);
+
+            shotView = _shotViews[index];
+            _shotViews.splice(index, 1);
+            shotView.parent.removeChild(shotView);
         }
 
         // update our round display
@@ -824,7 +877,8 @@ public class GameManager
     protected var _shipViews :HashMap = new HashMap();
 
     /** Live shots. */
-    protected var _shots :Array = new Array(); // Array<ShotSprite>
+    protected var _shots :Array = []; // Array<ShotSprite>
+    protected var _shotViews :Array = [];
 
     /** The board with all its obstacles. */
     protected var _boardCtrl :BoardController;

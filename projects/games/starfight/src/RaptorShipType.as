@@ -47,8 +47,8 @@ public class RaptorShipType extends ShipType
             ttl *= 2;
         }
         for (var ii :Number = -0.3; ii <= 0.3; ii += 0.3) {
-            AppContext.game.addShot(new MissileShotSprite(
-                    val[3], val[4], val[5], val[6] + ii, val[0], hitPower, ttl, val[1]));
+            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + ii, val[0],
+                hitPower, ttl, val[1]);
         }
         super.primaryShot(val);
     }

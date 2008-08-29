@@ -63,8 +63,8 @@ public class SaucerShipType extends ShipType
 
         // no one in range so shoot straight
         if (ships.length <= 1) {
-            AppContext.game.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
-                ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1));
+            AppContext.game.createLaserShot(ship.boardX, ship.boardY, ship.rotation, RANGE,
+                val[0], hitPower, primaryShotLife, val[1], -1);
             return;
         }
 
@@ -77,8 +77,8 @@ public class SaucerShipType extends ShipType
             dist = Math.min(RANGE, dist);
             var angle :Number = Codes.RADS_TO_DEGS *
                     Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
-            AppContext.game.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
-                angle, dist, val[0], hitPower, primaryShotLife, val[1], tShip.shipId));
+            AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, val[0],
+                hitPower, primaryShotLife, val[1], tShip.shipId);
         }
     }
 

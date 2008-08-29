@@ -2,8 +2,8 @@ package {
 
 import flash.display.MovieClip;
 
-public class LaserShotSprite extends ShotSprite {
-
+public class LaserShotSprite extends ShotSprite
+{
     /** Position. */
     public var angle :Number;
     public var length :Number;
@@ -13,15 +13,10 @@ public class LaserShotSprite extends ShotSprite {
             shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :void
     {
         super(x, y, shipId, damage, ttl, shipType);
+        this.angle = angle;
+        this.length = length;
         this.tShipId = tShipId;
-
-        _shotMovie = MovieClip(new (Codes.getShipType(shipType).shotAnim)());
-
-        _shotMovie.gotoAndStop(1);
-        _shotMovie.scaleY = Codes.PIXELS_PER_TILE * length / _shotMovie.height;
-        rotation = angle - 90;
         _hit = false;
-        addChild(_shotMovie);
     }
 
     override public function tick (board :BoardController, time :Number) :void

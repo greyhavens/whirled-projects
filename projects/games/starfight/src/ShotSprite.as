@@ -1,12 +1,13 @@
 package {
 
-import flash.display.MovieClip;
-import flash.display.Sprite;
+import flash.events.EventDispatcher;
 
-public class ShotSprite extends Sprite {
-
+public class ShotSprite extends EventDispatcher
+{
     public static const NORMAL :int = 0;
     public static const SUPER :int = 1;
+
+    public static const HIT :String = "Hit";
 
     /** Position. */
     public var boardX :Number;
@@ -22,11 +23,11 @@ public class ShotSprite extends Sprite {
 
     public var damage :Number;
 
-    public function ShotSprite (x :Number, y :Number, shipId :int, damage :Number, ttl :Number,
-            shipType :int) :void
+    public function ShotSprite (boardX :Number, boardY :Number, shipId :int, damage :Number,
+        ttl :Number, shipType :int) :void
     {
-        boardX = x;
-        boardY = y;
+        this.boardX = boardX;
+        this.boardY = boardY;
         this.shipId = shipId;
         this.damage = damage;
         this.ttl = ttl;
@@ -41,17 +42,9 @@ public class ShotSprite extends Sprite {
     {
     }
 
-    /**
-     * Sets the sprite position for this ship based on its board pos and
-     *  another pos which will be the center of the screen.
-     */
-    public function setPosRelTo (otherX :Number, otherY: Number) :void
+    protected function hit (hitBoardX :int, hitBoardY :int) :void
     {
-        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Codes.GAME_WIDTH/2;
-        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Codes.GAME_HEIGHT/2;
+        dispatchEvent(new ShotHitEvent(hitBoardX, hitBoardY));
     }
-
-    /** Our shot animation. */
-    protected var _shotMovie :MovieClip;
 }
 }

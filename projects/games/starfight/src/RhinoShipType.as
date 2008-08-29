@@ -53,10 +53,10 @@ public class RhinoShipType extends ShipType
             explodeClip = superShotExplode;
         }
 
-        AppContext.game.addShot(new MissileShotSprite(val[3] + leftOffsetX, val[4] + leftOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip));
-        AppContext.game.addShot(new MissileShotSprite(val[3] + rightOffsetX, val[4] + rightOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip));
+        AppContext.game.createMissileShot(val[3] + leftOffsetX, val[4] + leftOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip);
+        AppContext.game.createMissileShot(val[3] + rightOffsetX, val[4] + rightOffsetY,
+                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip);
 
         super.primaryShot(val);
     }

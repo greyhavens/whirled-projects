@@ -46,14 +46,14 @@ public class WaspShipType extends ShipType
 
     override public function primaryShot (val :Array) :void
     {
-        AppContext.game.addShot(new MissileShotSprite(
-            val[3], val[4], val[5], val[6], val[0], hitPower, primaryShotLife, val[1]));
+        AppContext.game.createMissileShot(val[3], val[4], val[5], val[6], val[0], hitPower,
+            primaryShotLife, val[1]);
 
         if (val[2] == ShotSprite.SUPER) {
-            AppContext.game.addShot(new MissileShotSprite(val[3], val[4], val[5],
-                        val[6] + SPREAD, val[0], hitPower, primaryShotLife, val[1]));
-            AppContext.game.addShot(new MissileShotSprite(val[3], val[4], val[5],
-                        val[6] - SPREAD, val[0], hitPower, primaryShotLife, val[1]));
+            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + SPREAD, val[0],
+                hitPower, primaryShotLife, val[1]);
+            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] - SPREAD, val[0],
+                hitPower, primaryShotLife, val[1]);
         }
 
         super.primaryShot(val);
@@ -86,8 +86,8 @@ public class WaspShipType extends ShipType
 
     override public function secondaryShot (val :Array) :void
     {
-        AppContext.game.addShot(new TorpedoShotSprite(val[2], val[3], val[4], val[5], val[0],
-                secondaryHitPower, secondaryShotLife, val[1]));
+        AppContext.game.createTorpedoShot(val[2], val[3], val[4], val[5], val[0],
+            secondaryHitPower, secondaryShotLife, val[1]);
         AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
     }
 
