@@ -12,6 +12,7 @@ public class ObstacleView extends Sprite
     public function ObstacleView (obstacle :Obstacle)
     {
         _obstacle = obstacle;
+        _obstacle.addEventListener(Obstacle.EXPLODED, onExploded);
 
         setupGraphics();
 
