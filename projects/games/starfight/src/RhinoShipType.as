@@ -65,7 +65,7 @@ public class RhinoShipType extends ShipType
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
-        args[1] = ship.shipType;
+        args[1] = ship.shipTypeId;
         args[2] = ship.boardX;
         args[3] = ship.boardY;
         args[4] = ship.rotation;

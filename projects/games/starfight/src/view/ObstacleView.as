@@ -75,7 +75,7 @@ public class ObstacleView extends Sprite
             obsMovie.addEventListener(Event.COMPLETE, function (event :Event) :void {
                 obsMovie.removeEventListener(Event.COMPLETE, arguments.callee);
                 if (null != thisObstacleView.parent) {
-                    thisObstacleView.parent.removeChild(this);
+                     thisObstacleView.parent.removeChild(thisObstacleView);
                 }
             });
         }

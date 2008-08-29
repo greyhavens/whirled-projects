@@ -74,7 +74,7 @@ public class WaspShipType extends ShipType
 
         var args :Array = new Array(6);
         args[0] = ship.shipId;
-        args[1] = ship.shipType;
+        args[1] = ship.shipTypeId;
         args[2] = ship.boardX + cos * size + 0.1 * ship.xVel;
         args[3] = ship.boardY + sin * size + 0.1 * ship.yVel;
         args[4] = shotVel;

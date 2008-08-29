@@ -88,7 +88,7 @@ public class SaucerShipType extends ShipType
 
         var args :Array = new Array(3);
         args[0] = ship.shipId;
-        args[1] = ship.shipType;
+        args[1] = ship.shipTypeId;
         args[2] = type;
         AppContext.game.fireShot(args);
     }
@@ -97,7 +97,7 @@ public class SaucerShipType extends ShipType
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
-        args[1] = ship.shipType;
+        args[1] = ship.shipTypeId;
         args[2] = Math.round(ship.boardX);
         args[3] = Math.round(ship.boardY);
         args[4] = secondaryHitPower;

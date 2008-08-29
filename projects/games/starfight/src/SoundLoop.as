@@ -1,14 +1,23 @@
 package {
 
+import flash.events.Event;
 import flash.media.Sound;
 import flash.media.SoundChannel;
-import flash.events.Event;
 
 public class SoundLoop
 {
     public function SoundLoop (sound :Sound)
     {
         _sound = sound;
+    }
+
+    public function play (val :Boolean) :void
+    {
+        if (val) {
+            loop();
+        } else {
+            stop();
+        }
     }
 
     public function loop () :void

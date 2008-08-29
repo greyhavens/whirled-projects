@@ -1,7 +1,5 @@
 package {
 
-import flash.display.Sprite;
-import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.utils.ByteArray;
@@ -16,40 +14,10 @@ import view.ShipChooser;
  */
 public class Ship
 {
-    /** Some useful key codes. */
-    public static const KV_LEFT :uint = 37;
-    public static const KV_UP :uint = 38;
-    public static const KV_RIGHT :uint = 39;
-    public static const KV_DOWN :uint = 40;
-    public static const KV_SPACE :uint = 32;
-    public static const KV_ENTER :uint = 13;
-    public static const KV_A :uint = 65;
-    public static const KV_B :uint = 66;
-    public static const KV_D :uint = 68;
-    public static const KV_S :uint = 83;
-    public static const KV_W :uint = 87;
-    public static const KV_X :uint = 88;
-    public static const KV_SHIFT :uint = 16;
-
     /** The size of the ship. */
     public static const WIDTH :int = 40;
     public static const HEIGHT :int = 40;
     public static const COLLISION_RAD :Number = 0.9;
-
-    /** Powerup flags. */
-    /*public static const SPEED_MASK :int = 1 << Powerup.SPEED;
-    public static const SPREAD_MASK :int = 1 << Powerup.SPREAD;
-    public static const SHIELDS_MASK :int = 1 << Powerup.SHIELDS;*/
-
-    /** "frames" within the actionscript for movement animations. */
-    public static const IDLE :int = 0;
-    public static const FORWARD :int = 2;
-    public static const REVERSE :int = 1;
-    public static const FORWARD_FAST :int = 3;
-    public static const REVERSE_FAST :int = 4;
-    public static const SELECT :int = 5;
-    public static const WARP_BEGIN :int = 6;
-    public static const WARP_END :int = 7;
 
     /** Ship states. */
     public static const STATE_DEFAULT :int = 0;
@@ -87,7 +55,7 @@ public class Ship
     public var shipId :int;
 
     /** Type of ship we're using. */
-    public var shipType :int;
+    public var shipTypeId :int;
 
     /** The player name for the ship. */
     public var playerName :String;
@@ -133,13 +101,7 @@ public class Ship
         this.shipId = shipId;
         playerName = name;
         _isOwnShip = isOwnShip;
-        shipType = 0;
-
-        if (isOwnShip) {
-            _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
-            _thrusterForward = new SoundLoop(Resources.getSound("thruster.wav"));
-            _thrusterReverse = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
-        }
+        shipTypeId = 0;
 
         if (!skipStartingPos) {
             var pt :Point = AppContext.board.getStartingPos();
@@ -147,7 +109,52 @@ public class Ship
             boardY = pt.y;
         }
 
-        setShipType(shipType);
+        setShipType(shipTypeId);
+    }
+
+    public function get shipType () :ShipType
+    {
+        return _shipType;
+    }
+
+    public function set firing (val :Boolean) :void
+    {
+        _firing = val;
+    }
+
+    public function set secondaryFiring (val :Boolean) :void
+    {
+        _secondaryFiring = val;
+    }
+
+    public function turnLeft () :void
+    {
+        _turning = -1;
+    }
+
+    public function turnRight () :void
+    {
+        _turning = 1;
+    }
+
+    public function stopTurning () :void
+    {
+        _turning = 0;
+    }
+
+    public function moveForward () :void
+    {
+        _moving = 1;
+    }
+
+    public function moveBackward () :void
+    {
+        _moving = -1;
+    }
+
+    public function stopMoving () :void
+    {
+        _moving = 0;
     }
 
     public function hasPowerup (type :int) :Boolean
@@ -163,71 +170,6 @@ public class Ship
     public function removePowerup (type :int) :void
     {
         powerups &= ~(1 << type);
-    }
-
-    /**
-     * Move one tick's worth of distance on its current heading.
-     */
-    public function move (time :Number) :void
-    {
-
-        var newBoardX :Number = boardX;
-        var newBoardY :Number = boardY;
-        var drag :Number = _shipType.friction;
-        var threshold :Number = _shipType.velThreshold;
-
-        for (var etime :Number = time; etime > 0; etime -= 100) {
-            var oldVel2 :Number = xVel*xVel + yVel*yVel;
-
-            // if we're not accelerating and our speed is under the minimum threshold, just stop
-            if (accel == 0 && oldVel2 < threshold*threshold) {
-                xVel = 0;
-                yVel = 0;
-                break;
-            }
-
-            var xComp :Number = Math.cos(rotation * Codes.DEGS_TO_RADS);
-            var yComp :Number = Math.sin(rotation * Codes.DEGS_TO_RADS);
-            var dtime :Number = Math.min(etime / 1000, 0.1);
-            var velDir :Number = Math.atan2(yVel, xVel);
-            var fricFact :Number = drag*oldVel2;
-
-            /*
-            if (dtime < 0.1) {
-                dShape.scaleX = fricFact*10;
-                dShape.rotation = velDir * Codes.RADS_TO_DEGS + 180;
-                aShape.scaleX = accel*10;
-                aShape.rotation = ship.rotation;
-            }*/
-            xVel = xVel + dtime * ((accel * xComp) - (fricFact * Math.cos(velDir)));
-            yVel = yVel + dtime * ((accel * yComp) - (fricFact * Math.sin(velDir)));
-            /*
-            if (dtime < 0.1) {
-                vShape.scaleX = Math.sqrt(xVel*xVel + yVel*yVel)*10;
-                vShape.rotation = Math.atan2(yVel, xVel)*Codes.RADS_TO_DEGS;
-            }*/
-            newBoardX += xVel * dtime;
-            newBoardY += yVel * dtime;
-        }
-
-        resolveMove(boardX, boardY, newBoardX, newBoardY);
-
-        if (_reportShip != null) {
-            boardX = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardX,
-                _reportShip.boardX - boardX, INTERPOLATION_TIME);
-            boardY = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardY,
-                _reportShip.boardY - boardY, INTERPOLATION_TIME);
-        }
-
-        if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
-            enginePower -= time / 30000;
-            if (enginePower <= 0) {
-                removePowerup(Powerup.SPEED);
-                accel = Math.min(accel, _shipType.forwardAccel);
-                accel = Math.max(accel, _shipType.backwardAccel);
-                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
-            }
-        }
     }
 
     public function get isOwnShip () :Boolean
@@ -319,7 +261,6 @@ public class Ship
             if (shieldPower <= DEAD) {
                 removePowerup(Powerup.SHIELDS);
                 if (_isOwnShip) {
-                    _shieldSound.stop();
                     AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
                 }
             }
@@ -338,7 +279,9 @@ public class Ship
             turnAccelRate = 0;
             accel = 0;
             _firing = false;
-            _secondary = false;
+            _secondaryFiring = false;
+            stopTurning();
+            stopMoving();
             _deaths++;
         }
     }
@@ -358,7 +301,6 @@ public class Ship
 
     public function kill () :void
     {
-        stopSounds();
         state = STATE_DEAD;
 
         if (_isOwnShip) {
@@ -403,18 +345,13 @@ public class Ship
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
 
-        if (_engineSound != null) {
-            _engineSound.loop();
-        }
-
         AppContext.game.forceStatusUpdate();
         spawn();
     }
 
     public function roundEnded () :void
     {
-        stopSounds();
-        setAnimMode(IDLE, true);
+        state = STATE_DEFAULT;
         checkAwards(true);
     }
 
@@ -454,16 +391,30 @@ public class Ship
         secondaryPower = Math.min(1.0,
             secondaryPower + time / (1000 * _shipType.secondaryPowerRecharge));
 
-        if (_animMode != WARP_BEGIN && _animMode != WARP_END) {
-            turn(time);
-            move(time);
-            if (accel > 0.0) {
-                setAnimMode(hasPowerup(Powerup.SPEED) ? FORWARD_FAST : FORWARD, false);
-            } else if (accel < 0.0) {
-                setAnimMode(hasPowerup(Powerup.SPEED) ? REVERSE_FAST : REVERSE, false);
+        if (state != STATE_WARP_BEGIN && state != STATE_WARP_END) {
+            // apply move and turn acceleration
+            if (_turning < 0) {
+                turnAccelRate = -_shipType.turnAccel;
+            } else if (_turning > 0) {
+                turnAccelRate = _shipType.turnAccel;
             } else {
-                setAnimMode(IDLE, false);
+                turnAccelRate = 0;
             }
+
+            if (_moving < 0) {
+                accel = _shipType.backwardAccel;
+            } else if (_moving > 0) {
+                accel = _shipType.forwardAccel;
+            } else {
+                accel = 0;
+            }
+
+            if (hasPowerup(Powerup.SPEED)) {
+                accel *= SPEED_BOOST_FACTOR;
+            }
+
+            handleTurn(time);
+            handleMove(time);
         }
 
         if (_ticksToFire > 0) {
@@ -471,41 +422,57 @@ public class Ship
         }
         if (_firing && (_ticksToFire <= 0) &&
                 (primaryPower >= _shipType.getPrimaryShotCost(this))) {
-            fire();
+            handleFire();
         }
 
         if (_ticksToSecondary > 0) {
             _ticksToSecondary -= time;
         }
-        if (_secondary && (_ticksToSecondary <= 0) &&
+        if (_secondaryFiring && (_ticksToSecondary <= 0) &&
                 (secondaryPower >= _shipType.secondaryShotCost)) {
-            secondaryFire();
+            handleSecondaryFire();
         }
     }
 
-    public function setAnimMode (mode :int, force :Boolean) :void
+    protected function handleFire () :void
     {
-        if (force || _animMode != mode) {
-            _animMode = mode;
+        _shipType.primaryShotMessage(this);
+        if (hasPowerup(Powerup.SPREAD)) {
+            weaponPower -= 0.03;
+            if (weaponPower <= 0.0) {
+                removePowerup(Powerup.SPREAD);
+                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
+            }
+        }
+
+        _ticksToFire = _shipType.primaryShotRecharge * 1000;
+        primaryPower -= _shipType.getPrimaryShotCost(this);
+    }
+
+    protected function handleSecondaryFire () :void
+    {
+        if (_shipType.secondaryShotMessage(this)) {
+            _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
+            secondaryPower -= _shipType.secondaryShotCost;
         }
     }
 
     /**
      * Turns the ship based on the current turn acceleration over time.
      */
-    public function turn (time :Number) :void
+    protected function handleTurn (time :Number) :void
     {
         var turn :Number = 0;
         for (var etime :Number = time; etime > 0; etime -= 10) {
             var dtime :Number = Math.min(etime / 1000, 0.01);
             var turnSign :Number = (turnRate > 0 ? 1 : -1) * dtime;
             if (turnAccelRate == 0 &&
-                    Math.abs(turnRate) < Codes.getShipType(shipType).turnThreshold) {
+                    Math.abs(turnRate) < Codes.getShipType(shipTypeId).turnThreshold) {
                 turnRate = 0;
                 break;
             }
             turnRate += dtime * turnAccelRate -
-                    turnSign * Codes.getShipType(shipType).turnFriction * (turnRate * turnRate);
+                    turnSign * Codes.getShipType(shipTypeId).turnFriction * (turnRate * turnRate);
             turn += turnRate * dtime;
         }
         rotation = (rotation + turn * 5) % 360;
@@ -522,110 +489,73 @@ public class Ship
     }
 
     /**
-     * Register that a key was pressed.  We only care about arrows.
+     * Move one tick's worth of distance on its current heading.
      */
-    public function keyPressed (event :KeyboardEvent) :void
+    protected function handleMove (time :Number) :void
     {
-        // Can't do squat while dead.
-        if (!isAlive()) {
-            return;
+        var newBoardX :Number = boardX;
+        var newBoardY :Number = boardY;
+        var drag :Number = _shipType.friction;
+        var threshold :Number = _shipType.velThreshold;
+
+        for (var etime :Number = time; etime > 0; etime -= 100) {
+            var oldVel2 :Number = xVel*xVel + yVel*yVel;
+
+            // if we're not accelerating and our speed is under the minimum threshold, just stop
+            if (accel == 0 && oldVel2 < threshold*threshold) {
+                xVel = 0;
+                yVel = 0;
+                break;
+            }
+
+            var xComp :Number = Math.cos(rotation * Codes.DEGS_TO_RADS);
+            var yComp :Number = Math.sin(rotation * Codes.DEGS_TO_RADS);
+            var dtime :Number = Math.min(etime / 1000, 0.1);
+            var velDir :Number = Math.atan2(yVel, xVel);
+            var fricFact :Number = drag*oldVel2;
+
+            /*
+            if (dtime < 0.1) {
+                dShape.scaleX = fricFact*10;
+                dShape.rotation = velDir * Codes.RADS_TO_DEGS + 180;
+                aShape.scaleX = accel*10;
+                aShape.rotation = ship.rotation;
+            }*/
+            xVel = xVel + dtime * ((accel * xComp) - (fricFact * Math.cos(velDir)));
+            yVel = yVel + dtime * ((accel * yComp) - (fricFact * Math.sin(velDir)));
+            /*
+            if (dtime < 0.1) {
+                vShape.scaleX = Math.sqrt(xVel*xVel + yVel*yVel)*10;
+                vShape.rotation = Math.atan2(yVel, xVel)*Codes.RADS_TO_DEGS;
+            }*/
+            newBoardX += xVel * dtime;
+            newBoardY += yVel * dtime;
         }
 
-        if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
-            turnAccelRate = -_shipType.turnAccel;
-        } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
-            turnAccelRate = _shipType.turnAccel;
-        } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
-            accel = (hasPowerup(Powerup.SPEED) ?
-                    _shipType.forwardAccel*SPEED_BOOST_FACTOR : _shipType.forwardAccel);
+        resolveMove(boardX, boardY, newBoardX, newBoardY);
 
-            if (_isOwnShip) {
-                _thrusterReverse.stop();
-                if (accel != 0) {
-                    _thrusterForward.loop();
-                }
+        if (_reportShip != null) {
+            boardX = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardX,
+                _reportShip.boardX - boardX, INTERPOLATION_TIME);
+            boardY = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardY,
+                _reportShip.boardY - boardY, INTERPOLATION_TIME);
+        }
+
+        if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
+            enginePower -= time / 30000;
+            if (enginePower <= 0) {
+                removePowerup(Powerup.SPEED);
+                accel = Math.min(accel, _shipType.forwardAccel);
+                accel = Math.max(accel, _shipType.backwardAccel);
+                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
-
-        } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
-            accel = (hasPowerup(Powerup.SPEED) ?
-                _shipType.backwardAccel*SPEED_BOOST_FACTOR : _shipType.backwardAccel);
-
-            if (_isOwnShip) {
-                _thrusterForward.stop();
-                if (accel != 0) {
-                    _thrusterReverse.loop();
-                }
-            }
-
-        } else if (event.keyCode == KV_SPACE) {
-            _firing = true;
-        } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
-            _secondary = true;
         }
     }
 
     public function setShipType (type :int) :void
     {
-        shipType = type;
-        _shipType = Codes.getShipType(shipType);
-    }
-
-    public function fire () :void
-    {
-        _shipType.primaryShotMessage(this);
-        if (hasPowerup(Powerup.SPREAD)) {
-            weaponPower -= 0.03;
-            if (weaponPower <= 0.0) {
-                removePowerup(Powerup.SPREAD);
-                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
-            }
-        }
-
-        _ticksToFire = _shipType.primaryShotRecharge * 1000;
-        primaryPower -= _shipType.getPrimaryShotCost(this);
-    }
-
-    public function secondaryFire () :void
-    {
-        if (_shipType.secondaryShotMessage(this)) {
-            _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
-            secondaryPower -= _shipType.secondaryShotCost;
-        }
-    }
-
-    /**
-     * Register that a key was released - we only care about the arrows.
-     */
-    public function keyReleased (event :KeyboardEvent) :void
-    {
-        // Can't do squat while dead.
-        if (!isAlive()) {
-            return;
-        }
-
-        if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
-            turnAccelRate = Math.max(turnAccelRate, 0);
-        } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
-            turnAccelRate = Math.min(turnAccelRate, 0);
-        } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
-            accel = Math.min(accel, 0);
-
-            if (_isOwnShip) {
-                _thrusterForward.stop();
-            }
-        } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
-            accel = Math.max(accel, 0);
-
-            if (_isOwnShip) {
-                _thrusterReverse.stop();
-            }
-        } else if (event.keyCode == KV_SPACE) {
-            _firing = false;
-        } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
-            _secondary = false;
-        } else if (event.keyCode == KV_X) {
-            hit(shipId, 5.0);
-        }
+        shipTypeId = type;
+        _shipType = Codes.getShipType(shipTypeId);
     }
 
     /**
@@ -644,9 +574,6 @@ public class Ship
         switch (powerup.type) {
         case Powerup.SHIELDS:
             shieldPower = 1.0;
-            if (_isOwnShip) {
-                _shieldSound.loop();
-            }
             break;
         case Powerup.SPEED:
             enginePower = 1.0;
@@ -663,6 +590,39 @@ public class Ship
     public function addScore (score :int) :void
     {
         this.score += score;
+    }
+
+    public function canHit () :Boolean
+    {
+        return isAlive() && state != STATE_WARP_BEGIN && state != STATE_WARP_END;
+    }
+
+    /**
+     * Update our ship to the reported position, BUT if possible try to
+     *  set ourselves up to make up for any discrepancy smoothly.
+     */
+    public function updateForReport (report :Ship) :void
+    {
+        _reportShip = report;
+        _reportTime = INTERPOLATION_TIME;
+        if (state == STATE_WARP_BEGIN || state == STATE_WARP_END) {
+            return;
+        }
+
+        accel = report.accel;
+        xVel = report.xVel;
+        yVel = report.yVel;
+        turnRate = report.turnRate;
+        // These we always update exactly as reported.
+        power = report.power;
+        powerups = report.powerups;
+        score = report.score;
+        if (shipTypeId != report.shipTypeId) { // || visible != report.visible) {
+            boardX = report.boardX;
+            boardY = report.boardY;
+            rotation = report.rotation;
+        }
+        setShipType(report.shipTypeId);
     }
 
     /**
@@ -685,39 +645,6 @@ public class Ship
         state = bytes.readInt();
     }
 
-    public function canHit () :Boolean
-    {
-        return isAlive() && _animMode != WARP_BEGIN && _animMode != WARP_END;
-    }
-
-    /**
-     * Update our ship to the reported position, BUT if possible try to
-     *  set ourselves up to make up for any discrepancy smoothly.
-     */
-    public function updateForReport (report :Ship) :void
-    {
-        _reportShip = report;
-        _reportTime = INTERPOLATION_TIME;
-        if (_animMode == WARP_BEGIN || _animMode == WARP_END) {
-            return;
-        }
-
-        accel = report.accel;
-        xVel = report.xVel;
-        yVel = report.yVel;
-        turnRate = report.turnRate;
-        // These we always update exactly as reported.
-        power = report.power;
-        powerups = report.powerups;
-        score = report.score;
-        if (shipType != report.shipType) { // || visible != report.visible) {
-            boardX = report.boardX;
-            boardY = report.boardY;
-            rotation = report.rotation;
-        }
-        setShipType(report.shipType);
-    }
-
     /**
      * Serialize our data to a byte array.
      */
@@ -733,36 +660,11 @@ public class Ship
         bytes.writeShort(rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
-        bytes.writeInt(shipType);
+        bytes.writeInt(shipTypeId);
         bytes.writeInt(score);
         bytes.writeInt(state);
 
         return bytes;
-    }
-
-    protected function handleUnload (... ignored) :void
-    {
-        stopSounds();
-    }
-
-    protected function stopSounds () :void
-    {
-        // Turn off sound loops.
-        if (_thrusterForward != null) {
-            _thrusterForward.stop();
-        }
-        if (_thrusterReverse != null) {
-            _thrusterReverse.stop();
-        }
-
-        if (_shieldSound != null) {
-            _shieldSound.stop();
-        }
-
-        if (_engineSound != null) {
-            _engineSound.stop();
-        }
-
     }
 
     protected function checkAwards (gameOver :Boolean = false) :void
@@ -810,36 +712,16 @@ public class Ship
 
     protected var _firing :Boolean;
     protected var _ticksToFire :int = 0;
-    protected var _secondary :Boolean;
+    protected var _secondaryFiring :Boolean;
     protected var _ticksToSecondary :int = 0;
-
-    /** Ship performance characteristics. */
-    protected static const SHOT_SPD :Number = 1;
-    protected static const TIME_PER_SHOT :int = 330;
-    protected static const SPEED_BOOST_FACTOR :Number = 1.5;
-    protected static const RESPAWN_DELAY :int = 3000;
-    protected static const DEAD :Number = 0.001;
-
-    /** Sounds currently being played - only play sounds for ownship. Note
-     * that due to stupid looping behavior these need to be MovieClips to keep
-     * from getting gaps between loops. */
-    protected var _engineSound :SoundLoop;
-    protected var _thrusterForward :SoundLoop;
-    protected var _thrusterReverse :SoundLoop;
-    protected var _shieldSound :SoundLoop;
-
-    /** State of thurster sounds. */
-    protected var _thrusterRev :Boolean;
+    protected var _turning :int; // < 0 = left, > 0 = right, 0 = not turning
+    protected var _moving :int;  // < 0 = backwards, > 0 = forwards, 0 = not moving
 
     /** Whether this is ourselves. */
     protected var _isOwnShip :Boolean;
 
     /** A reference to the ship type class. */
     protected var _shipType :ShipType;
-    protected var _animMode :int;
-
-    // TEMP
-    public function get animMode () :int { return _animMode; }
 
     protected var _reportShip :Ship;
     protected var _reportTime :int;
@@ -853,6 +735,13 @@ public class Ship
     protected var _powerupsThisLife :Boolean = false;
     protected var _kills :int;
     protected var _deaths :int;
+
+    /** Ship performance characteristics. */
+    protected static const SHOT_SPD :Number = 1;
+    protected static const TIME_PER_SHOT :int = 330;
+    protected static const SPEED_BOOST_FACTOR :Number = 1.5;
+    protected static const RESPAWN_DELAY :int = 3000;
+    protected static const DEAD :Number = 0.001;
 
     protected static const FUDGE_FACT :Number = 0.98;
 

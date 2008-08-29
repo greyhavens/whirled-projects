@@ -87,7 +87,7 @@ public class ShipType
 
         var args :Array = new Array(7);
         args[0] = ship.shipId;
-        args[1] = ship.shipType;
+        args[1] = ship.shipTypeId;
         args[2] = type;
         args[3] = ship.boardX + cos * size + 0.1 * ship.xVel;
         args[4] = ship.boardY + sin * size + 0.1 * ship.yVel;

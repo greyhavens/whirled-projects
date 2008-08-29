@@ -3,7 +3,7 @@ package view {
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.media.Sound;
+import flash.events.KeyboardEvent;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -15,14 +15,21 @@ public class ShipView extends Sprite
     {
         _ship = ship;
         setupGraphics();
+
+        if (_ship.isOwnShip) {
+            _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
+            _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
+            _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
+            _engineSound = new SoundLoop(_ship.shipType.engineSound);
+        }
     }
 
-    public function setupGraphics () :void
+    protected function setupGraphics () :void
     {
-        _shipContainer = new Sprite();
-        addChild(_shipContainer);
+        _shipParent = new Sprite();
+        addChild(_shipParent);
 
-        var shipType :ShipType = Codes.getShipType(_ship.shipType);
+        var shipType :ShipType = _ship.shipType;
 
         // Set up our animation.
         _shipMovie = MovieClip(new shipType.shipAnim());
@@ -32,25 +39,14 @@ public class ShipView extends Sprite
         _shipMovie.x = _shipMovie.width/2;
         _shipMovie.y = -_shipMovie.height/2;
         _shipMovie.rotation = 90;
-        _shipContainer.addChild(_shipMovie);
+        _shipParent.addChild(_shipMovie);
 
         _shieldMovie.gotoAndStop(1);
         _shieldMovie.rotation = 90;
-        _shipContainer.addChild(_shieldMovie);
+        _shipParent.addChild(_shieldMovie);
 
-        if (_ship.isOwnShip) {
-            // Start the engine sound...
-            if (_engineSound != null) {
-                _engineSound.stop();
-            }
-
-            // Play the engine sound forever til we stop.
-            _engineSound = new SoundLoop(shipType.engineSound);
-            _engineSound.loop();
-        }
-
-        _shipContainer.scaleX = shipType.size + 0.1;
-        _shipContainer.scaleY = shipType.size + 0.1;
+        _shipParent.scaleX = shipType.size + 0.1;
+        _shipParent.scaleY = shipType.size + 0.1;
 
         // Add our name as a textfield
         if (_ship.playerName != null) {
@@ -73,19 +69,73 @@ public class ShipView extends Sprite
         }
     }
 
+    public function keyPressed (event :KeyboardEvent) :void
+    {
+        // Can't do squat while dead.
+        if (!_ship.isAlive()) {
+            return;
+        }
+
+        if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
+            //_ship.turnAccelRate = -_ship.shipType.turnAccel;
+            _ship.turnLeft();
+        } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
+            _ship.turnRight();
+        } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
+            _ship.moveForward();
+
+        } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
+            _ship.moveBackward();
+
+        } else if (event.keyCode == KV_SPACE) {
+            _ship.firing = true;
+        } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
+            _ship.secondaryFiring = true;
+        }
+    }
+
+    public function keyReleased (event :KeyboardEvent) :void
+    {
+        // Can't do squat while dead.
+        if (!_ship.isAlive()) {
+            return;
+        }
+
+        if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
+            _ship.stopTurning();
+        } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
+            _ship.stopTurning();
+        } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
+            _ship.stopMoving();
+        } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
+            _ship.stopMoving();
+        } else if (event.keyCode == KV_SPACE) {
+            _ship.firing = false;
+        } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
+            _ship.secondaryFiring = false;
+        } /*else if (event.keyCode == KV_X) {
+            hit(shipId, 5.0);
+        }*/
+    }
+
     public function updateDisplayState (boardCenterX :Number, boardCenterY: Number) :void
     {
-        if (visible) {
+        var shipState :int = _ship.state;
+        visible = (shipState != Ship.STATE_DEAD);
+
+        if (shipState == Ship.STATE_DEAD) {
+            stopSounds();
+
+        } else {
             // position on the screen
             x = ((_ship.boardX - boardCenterX) * Codes.PIXELS_PER_TILE) + (Codes.GAME_WIDTH * 0.5);
             y = ((_ship.boardY - boardCenterY) * Codes.PIXELS_PER_TILE) + (Codes.GAME_HEIGHT * 0.5);
 
-            _shipContainer.rotation = _ship.rotation;
+            _shipParent.rotation = _ship.rotation;
 
             _shieldMovie.visible = _ship.hasPowerup(Powerup.SHIELDS);
 
             // determine animation state
-            var shipState :int = _ship.state;
             var newAnimMode :int;
             switch (shipState) {
             case Ship.STATE_SPAWN:
@@ -117,8 +167,16 @@ public class ShipView extends Sprite
             }
 
             setAnimMode(newAnimMode, false);
-            _lastShipState = shipState;
+
+            if (_ship.isOwnShip) {
+                _engineSound.play(true);
+                _shieldSound.play(_ship.hasPowerup(Powerup.SHIELDS));
+                _thrusterForwardSound.play(_ship.accel > 0);
+                _thrusterReverseSound.play(_ship.accel < 0);
+            }
         }
+
+        _lastShipState = shipState;
     }
 
     protected function setAnimMode (mode :int, force :Boolean) :void
@@ -144,11 +202,11 @@ public class ShipView extends Sprite
     protected function stopSounds () :void
     {
         // Turn off sound loops.
-        if (_thrusterForward != null) {
-            _thrusterForward.stop();
+        if (_thrusterForwardSound != null) {
+            _thrusterForwardSound.stop();
         }
-        if (_thrusterReverse != null) {
-            _thrusterReverse.stop();
+        if (_thrusterReverseSound != null) {
+            _thrusterReverseSound.stop();
         }
 
         if (_shieldSound != null) {
@@ -164,7 +222,7 @@ public class ShipView extends Sprite
     protected var _ship :Ship;
 
     /** The sprite with our ship graphics in it. */
-    protected var _shipContainer :Sprite;
+    protected var _shipParent :Sprite;
 
     /** Animations. */
     protected var _shipMovie :MovieClip;
@@ -178,8 +236,8 @@ public class ShipView extends Sprite
      * that due to stupid looping behavior these need to be MovieClips to keep
      * from getting gaps between loops. */
     protected var _engineSound :SoundLoop;
-    protected var _thrusterForward :SoundLoop;
-    protected var _thrusterReverse :SoundLoop;
+    protected var _thrusterForwardSound :SoundLoop;
+    protected var _thrusterReverseSound :SoundLoop;
     protected var _shieldSound :SoundLoop;
 
     /** "frames" within the actionscript for movement animations. */
@@ -191,6 +249,21 @@ public class ShipView extends Sprite
     protected static const SELECT :int = 5;
     protected static const WARP_BEGIN :int = 6;
     protected static const WARP_END :int = 7;
+
+    /** Some useful key codes. */
+    protected static const KV_LEFT :uint = 37;
+    protected static const KV_UP :uint = 38;
+    protected static const KV_RIGHT :uint = 39;
+    protected static const KV_DOWN :uint = 40;
+    protected static const KV_SPACE :uint = 32;
+    protected static const KV_ENTER :uint = 13;
+    protected static const KV_A :uint = 65;
+    protected static const KV_B :uint = 66;
+    protected static const KV_D :uint = 68;
+    protected static const KV_S :uint = 83;
+    protected static const KV_W :uint = 87;
+    protected static const KV_X :uint = 88;
+    protected static const KV_SHIFT :uint = 16;
 
     protected static const TEXT_OFFSET :int = 25;
 

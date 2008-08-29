@@ -294,6 +294,10 @@ public class GameManager
         var shipView :ShipView = new ShipView(ship);
         _shipViews.put(id, shipView);
         AppContext.gameView.shipLayer.addChild(shipView);
+
+        if (ship == _ownShip) {
+            _ownShipView = shipView;
+        }
     }
 
     public function removeShip (id :int) :void
@@ -428,7 +432,7 @@ public class GameManager
 
             var ship :Ship = getShip(arr[4]);
             if (ship != null) {
-                _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipType);
+                _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipTypeId);
                 playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
                 ship.kill();
                 var sship :Ship = getShip(arr[3]);
@@ -600,6 +604,7 @@ public class GameManager
         }
         _ships = new HashMap();
         _ownShip = null;
+        _ownShipView = null;
         setupBoard();
         _boardCtrl.init(boardLoaded);
         log("Game started");
@@ -789,15 +794,15 @@ public class GameManager
 
     protected function keyPressed (event :KeyboardEvent) :void
     {
-        if (_ownShip != null) {
-            _ownShip.keyPressed(event);
+        if (_ownShipView != null) {
+            _ownShipView.keyPressed(event);
         }
     }
 
     protected function keyReleased (event :KeyboardEvent) :void
     {
-        if (_ownShip != null) {
-            _ownShip.keyReleased(event);
+        if (_ownShipView != null) {
+            _ownShipView.keyReleased(event);
         }
     }
 
@@ -819,6 +824,7 @@ public class GameManager
 
     /** Our local ship. */
     protected var _ownShip :Ship;
+    protected var _ownShipView :ShipView;
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
