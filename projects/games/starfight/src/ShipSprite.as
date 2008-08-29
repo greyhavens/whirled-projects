@@ -1,29 +1,20 @@
 package {
 
-import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
-import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 import flash.geom.Point;
-import flash.media.Sound;
-import flash.text.AntiAliasType;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import mx.effects.easing.Linear;
 
-import view.GameView;
 import view.ShipChooser;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
-public class ShipSprite extends Sprite
+public class ShipSprite
 {
     /** Some useful key codes. */
     public static const KV_LEFT :uint = 37;
@@ -46,9 +37,9 @@ public class ShipSprite extends Sprite
     public static const COLLISION_RAD :Number = 0.9;
 
     /** Powerup flags. */
-    public static const SPEED_MASK :int = 1 << Powerup.SPEED;
+    /*public static const SPEED_MASK :int = 1 << Powerup.SPEED;
     public static const SPREAD_MASK :int = 1 << Powerup.SPREAD;
-    public static const SHIELDS_MASK :int = 1 << Powerup.SHIELDS;
+    public static const SHIELDS_MASK :int = 1 << Powerup.SHIELDS;*/
 
     /** "frames" within the actionscript for movement animations. */
     public static const IDLE :int = 0;
@@ -59,6 +50,15 @@ public class ShipSprite extends Sprite
     public static const SELECT :int = 5;
     public static const WARP_BEGIN :int = 6;
     public static const WARP_END :int = 7;
+
+    /** Ship states. */
+    public static const STATE_DEFAULT :int = 0;
+    public static const STATE_SPAWN :int = 1;
+    public static const STATE_WARP_BEGIN :int = 2;
+    public static const STATE_WARP_END :int = 3;
+    public static const STATE_DEAD :int = 4;
+
+    public var state :int;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -75,20 +75,19 @@ public class ShipSprite extends Sprite
     public var turnRate :Number;
     public var turnAccelRate :Number;
 
+    public var rotation :Number;
+
     /** Our current health */
     public var power :Number;
 
     /** All the powerups we've got. */
-    public var powerups :int;
+    protected var powerups :int;
 
     /** our id. */
     public var shipId :int;
 
     /** Type of ship we're using. */
     public var shipType :int;
-
-    /** The sprite with our ship graphics in it. */
-    public var ship :Sprite;
 
     /** The player name for the ship. */
     public var playerName :String;
@@ -111,17 +110,13 @@ public class ShipSprite extends Sprite
     /** Secondary shot power. */
     public var secondaryPower :Number;
 
-    public var aShape :Shape, dShape :Shape, vShape :Shape;
-
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function ShipSprite (board :BoardController,
-        skipStartingPos :Boolean, shipId :int, name :String,
+    public function ShipSprite (skipStartingPos :Boolean, shipId :int, name :String,
         isOwnShip :Boolean)
     {
-        visible = skipStartingPos;
         accel = 0.0;
         turnRate = 0.0;
         turnAccelRate = 0;
@@ -147,57 +142,27 @@ public class ShipSprite extends Sprite
         }
 
         if (!skipStartingPos) {
-            var pt :Point = board.getStartingPos();
+            var pt :Point = AppContext.board.getStartingPos();
             boardX = pt.x;
             boardY = pt.y;
         }
 
-        _board = board;
-
-        /** Used to rotate our ship itself without touching associated info. */
-        ship = new Sprite();
-        addChild(ship);
-
-        /* Show acceleration, drag and velocity vectors for debugging
-        aShape = new Shape();
-        aShape.graphics.clear();
-        aShape.graphics.beginFill(0XFF0000);
-        aShape.graphics.drawRect(0, 0, 1, 1);
-        aShape.graphics.endFill();
-        //addChild(aShape);
-        dShape = new Shape();
-        dShape.graphics.clear();
-        dShape.graphics.beginFill(0X00FF00);
-        dShape.graphics.drawRect(0, 0, 1, 1);
-        dShape.graphics.endFill();
-        //addChild(dShape);
-        vShape = new Shape();
-        vShape.graphics.clear();
-        vShape.graphics.beginFill(0X4444FF);
-        vShape.graphics.drawRect(0, 0, 1, 1);
-        vShape.graphics.endFill();
-        //addChild(vShape);
-        */
-
         setShipType(shipType);
+    }
 
-        // Add our name as a textfield
-        var nameText :TextField = new TextField();
-        nameText.autoSize = TextFieldAutoSize.CENTER;
-        nameText.selectable = false;
-        nameText.x = 0;
-        nameText.y = TEXT_OFFSET;
+    public function hasPowerup (type :int) :Boolean
+    {
+        return Boolean(powerups & (1 << type));
+    }
 
-        var format:TextFormat = new TextFormat();
-        format.font = GameView.gameFont.fontName;
-        format.color = (isOwnShip || shipId < 0) ? Codes.CYAN : Codes.RED;
-        format.size = 10;
-        format.rightMargin = 3;
-        nameText.defaultTextFormat = format;
-        nameText.embedFonts = true;
-        nameText.antiAliasType = AntiAliasType.ADVANCED;
-        nameText.text = playerName;
-        addChild(nameText);
+    public function addPowerup (type :int) :void
+    {
+        powerups |= (1 << type);
+    }
+
+    public function removePowerup (type :int) :void
+    {
+        powerups &= ~(1 << type);
     }
 
     /**
@@ -221,8 +186,8 @@ public class ShipSprite extends Sprite
                 break;
             }
 
-            var xComp :Number = Math.cos(ship.rotation * Codes.DEGS_TO_RADS);
-            var yComp :Number = Math.sin(ship.rotation * Codes.DEGS_TO_RADS);
+            var xComp :Number = Math.cos(rotation * Codes.DEGS_TO_RADS);
+            var yComp :Number = Math.sin(rotation * Codes.DEGS_TO_RADS);
             var dtime :Number = Math.min(etime / 1000, 0.1);
             var velDir :Number = Math.atan2(yVel, xVel);
             var fricFact :Number = drag*oldVel2;
@@ -254,10 +219,10 @@ public class ShipSprite extends Sprite
                 _reportShip.boardY - boardY, INTERPOLATION_TIME);
         }
 
-        if (_isOwnShip && accel != 0 && powerups & SPEED_MASK) {
+        if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
             enginePower -= time / 30000;
             if (enginePower <= 0) {
-                powerups &= ~SPEED_MASK;
+                removePowerup(Powerup.SPEED);
                 accel = Math.min(accel, _shipType.forwardAccel);
                 accel = Math.max(accel, _shipType.backwardAccel);
                 AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
@@ -286,7 +251,7 @@ public class ShipSprite extends Sprite
     public function resolveMove (startX :Number, startY :Number,
         endX :Number, endY :Number, colType :int = 0) :void
     {
-        var coll :Collision = _board.getCollision(
+        var coll :Collision = AppContext.board.getCollision(
                 startX, startY, endX, endY, _shipType.size, -1, colType);
         if (coll != null && coll.hit is Obstacle) {
             var obstacle :Obstacle = Obstacle(coll.hit);
@@ -347,12 +312,12 @@ public class ShipSprite extends Sprite
 
         var hitPower :Number = damage / _shipType.armor;
 
-        if (powerups & SHIELDS_MASK) {
+        if (hasPowerup(Powerup.SHIELDS)) {
             // shields always have an armor of 0.5
             hitPower = damage * 2;
             shieldPower -= hitPower;
             if (shieldPower <= DEAD) {
-                powerups ^= SHIELDS_MASK;
+                removePowerup(Powerup.SHIELDS);
                 if (_isOwnShip) {
                     _shieldSound.stop();
                     AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
@@ -363,7 +328,7 @@ public class ShipSprite extends Sprite
 
         power -= hitPower;
         if (!isAlive()) {
-            AppContext.game.explode(boardX, boardY, ship.rotation, shooterId, shipId);
+            AppContext.game.explode(boardX, boardY, rotation, shooterId, shipId);
             checkAwards();
 
             // Stop moving and firing.
@@ -394,7 +359,7 @@ public class ShipSprite extends Sprite
     public function kill () :void
     {
         stopSounds();
-        setVisible(false);
+        state = STATE_DEAD;
 
         if (_isOwnShip) {
             // After a 5 second interval, reposition & reset.
@@ -420,7 +385,7 @@ public class ShipSprite extends Sprite
     {
         power = 1.0; //full
         powerups = 0;
-        var pt :Point = _board.getStartingPos();
+        var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
         xVel = 0;
@@ -428,7 +393,7 @@ public class ShipSprite extends Sprite
         turnRate = 0;
         turnAccelRate = 0;
         accel = 0;
-        ship.rotation = 0;
+        rotation = 0;
         shieldPower = 0.0;
         weaponPower = 0.0;
         enginePower = 0.0;
@@ -438,10 +403,12 @@ public class ShipSprite extends Sprite
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
 
-        _engineSound.loop();
+        if (_engineSound != null) {
+            _engineSound.loop();
+        }
 
         AppContext.game.forceStatusUpdate();
-        setVisible(true);
+        spawn();
     }
 
     public function roundEnded () :void
@@ -451,22 +418,15 @@ public class ShipSprite extends Sprite
         checkAwards(true);
     }
 
-    protected function setVisible (visible :Boolean) :void
+    protected function spawn () :void
     {
-        if (this.visible != visible) {
-            this.visible = visible;
-
-            if (visible) {
-                var sound :Sound = _shipType.spawnSound;
-                AppContext.game.playSoundAt(sound, boardX, boardY);
-                var spawnClip :MovieClip = MovieClip(new (Resources.getClass("ship_spawn"))());
-                addChild(spawnClip);
-                spawnClip.addEventListener(Event.COMPLETE, function complete (event :Event) :void {
-                    spawnClip.removeEventListener(Event.COMPLETE, arguments.callee);
-                    removeChild(event.target as MovieClip);
-                });
-            }
-        }
+        state = STATE_SPAWN;
+        var thisShip :ShipSprite = this;
+        var timer :Timer = new Timer(SPAWN_TIME, 1);
+        timer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
+            thisShip.state = STATE_DEFAULT;
+        });
+        timer.start();
     }
 
     /**
@@ -498,18 +458,12 @@ public class ShipSprite extends Sprite
             turn(time);
             move(time);
             if (accel > 0.0) {
-                setAnimMode((powerups & SPEED_MASK) ? FORWARD_FAST : FORWARD, false);
+                setAnimMode(hasPowerup(Powerup.SPEED) ? FORWARD_FAST : FORWARD, false);
             } else if (accel < 0.0) {
-                setAnimMode((powerups & SPEED_MASK) ? REVERSE_FAST : REVERSE, false);
+                setAnimMode(hasPowerup(Powerup.SPEED) ? REVERSE_FAST : REVERSE, false);
             } else {
                 setAnimMode(IDLE, false);
             }
-        }
-
-        if (powerups & SHIELDS_MASK) {
-            _shieldMovie.alpha = 1.0;
-        } else {
-            _shieldMovie.alpha = 0.0;
         }
 
         if (_ticksToFire > 0) {
@@ -529,17 +483,11 @@ public class ShipSprite extends Sprite
         }
     }
 
-    /**
-     * Sets our animation to show forward/idle/reverse
-     */
-    public function setAnimMode (mode :int, force :Boolean) :MovieClip
+    public function setAnimMode (mode :int, force :Boolean) :void
     {
         if (force || _animMode != mode) {
-            _shipMovie.gotoAndPlay(ANIM_MODES[mode]);
             _animMode = mode;
-            return _shipMovie;
         }
-        return null;
     }
 
     /**
@@ -560,27 +508,17 @@ public class ShipSprite extends Sprite
                     turnSign * Codes.getShipType(shipType).turnFriction * (turnRate * turnRate);
             turn += turnRate * dtime;
         }
-        ship.rotation = (ship.rotation + turn * 5) % 360;
+        rotation = (rotation + turn * 5) % 360;
         if (_reportShip != null) {
-            var delta :Number = _reportShip.ship.rotation - ship.rotation;
+            var delta :Number = _reportShip.rotation - rotation;
             if (delta > 180) {
                 delta -= 360;
             } else if (delta < -180) {
                 delta += 360;
             }
-            ship.rotation = Linear.easeNone(INTERPOLATION_TIME - _reportTime, ship.rotation,
+            rotation = Linear.easeNone(INTERPOLATION_TIME - _reportTime, rotation,
                 delta, INTERPOLATION_TIME);
         }
-    }
-
-    /**
-     * Sets the sprite position for this ship based on its board pos and
-     *  another pos which will be the center of the screen.
-     */
-    public function setPosRelTo (otherX :Number, otherY: Number) :void
-    {
-        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + Codes.GAME_WIDTH/2;
-        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + Codes.GAME_HEIGHT/2;
     }
 
     /**
@@ -598,7 +536,7 @@ public class ShipSprite extends Sprite
         } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
             turnAccelRate = _shipType.turnAccel;
         } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
-            accel = ((powerups & SPEED_MASK) ?
+            accel = (hasPowerup(Powerup.SPEED) ?
                     _shipType.forwardAccel*SPEED_BOOST_FACTOR : _shipType.forwardAccel);
 
             if (_isOwnShip) {
@@ -609,7 +547,7 @@ public class ShipSprite extends Sprite
             }
 
         } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
-            accel = ((powerups & SPEED_MASK) ?
+            accel = (hasPowerup(Powerup.SPEED) ?
                 _shipType.backwardAccel*SPEED_BOOST_FACTOR : _shipType.backwardAccel);
 
             if (_isOwnShip) {
@@ -626,62 +564,19 @@ public class ShipSprite extends Sprite
         }
     }
 
-    /**
-     * Sets up our sprites and such for our given shiptype.
-     */
     public function setShipType (type :int) :void
     {
-        if (type != shipType || _shipMovie == null) {
-            shipType = type;
-            _shipType = Codes.getShipType(shipType);
-
-            // Remove any old movies of other types of ship.
-            if (_shipMovie != null) {
-                ship.removeChild(_shipMovie);
-                ship.removeChild(_shieldMovie);
-            }
-
-            // Set up our animation.
-            _shipMovie = MovieClip(new _shipType.shipAnim());
-            _shieldMovie = MovieClip(new _shipType.shieldAnim());
-
-            setAnimMode(IDLE, true);
-            _shipMovie.x = _shipMovie.width/2;
-            _shipMovie.y = -_shipMovie.height/2;
-            _shipMovie.rotation = 90;
-            ship.addChild(_shipMovie);
-
-            _shieldMovie.gotoAndStop(1);
-            _shieldMovie.rotation = 90;
-            if (powerups & SHIELDS_MASK) {
-                _shieldMovie.alpha = 1.0;
-            } else {
-                _shieldMovie.alpha = 0.0;
-            }
-            ship.addChild(_shieldMovie);
-
-            if (_isOwnShip) {
-                // Start the engine sound...
-                if (_engineSound != null) {
-                    _engineSound.stop();
-                }
-
-                // Play the engine sound forever til we stop.
-                _engineSound = new SoundLoop(_shipType.engineSound);
-                _engineSound.loop();
-            }
-            ship.scaleX = _shipType.size + 0.1;
-            ship.scaleY = _shipType.size + 0.1;
-        }
+        shipType = type;
+        _shipType = Codes.getShipType(shipType);
     }
 
     public function fire () :void
     {
         _shipType.primaryShotMessage(this);
-        if (powerups & SPREAD_MASK) {
+        if (hasPowerup(Powerup.SPREAD)) {
             weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
-                powerups ^= SPREAD_MASK;
+                removePowerup(Powerup.SPREAD);
                 AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
@@ -782,20 +677,12 @@ public class ShipSprite extends Sprite
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
-        ship.rotation = bytes.readShort();
+        rotation = bytes.readShort();
         power = bytes.readFloat();
         powerups = bytes.readInt();
         setShipType(bytes.readInt());
         score = bytes.readInt();
-        setVisible(bytes.readBoolean());
-    }
-
-    /**
-     * Forces the ship to point upwards (for display purposes).
-     */
-    public function pointUp () :void
-    {
-        ship.rotation = -90;
+        state = bytes.readInt();
     }
 
     public function canHit () :Boolean
@@ -823,13 +710,12 @@ public class ShipSprite extends Sprite
         power = report.power;
         powerups = report.powerups;
         score = report.score;
-        if (shipType != report.shipType || visible != report.visible) {
+        if (shipType != report.shipType) { // || visible != report.visible) {
             boardX = report.boardX;
             boardY = report.boardY;
-            ship.rotation = report.ship.rotation;
+            rotation = report.rotation;
         }
         setShipType(report.shipType);
-        setVisible(report.visible);
     }
 
     /**
@@ -844,12 +730,12 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
-        bytes.writeShort(ship.rotation);
+        bytes.writeShort(rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
         bytes.writeInt(shipType);
         bytes.writeInt(score);
-        bytes.writeBoolean(visible);
+        bytes.writeInt(state);
 
         return bytes;
     }
@@ -922,9 +808,6 @@ public class ShipSprite extends Sprite
         }
     }
 
-    /** The board we inhabit. */
-    protected var _board :BoardController;
-
     protected var _firing :Boolean;
     protected var _ticksToFire :int = 0;
     protected var _secondary :Boolean;
@@ -945,10 +828,6 @@ public class ShipSprite extends Sprite
     protected var _thrusterReverse :SoundLoop;
     protected var _shieldSound :SoundLoop;
 
-    /** Animations. */
-    protected var _shipMovie :MovieClip;
-    protected var _shieldMovie :MovieClip;
-
     /** State of thurster sounds. */
     protected var _thrusterRev :Boolean;
 
@@ -958,6 +837,9 @@ public class ShipSprite extends Sprite
     /** A reference to the ship type class. */
     protected var _shipType :ShipType;
     protected var _animMode :int;
+
+    // TEMP
+    public function get animMode () :int { return _animMode; }
 
     protected var _reportShip :ShipSprite;
     protected var _reportTime :int;
@@ -979,6 +861,8 @@ public class ShipSprite extends Sprite
     protected static const TEXT_OFFSET :int = 25;
 
     protected static const POWERUP_PTS :int = 2;
+
+    protected static const SPAWN_TIME :Number = 0.5;
 
     protected static const ANIM_MODES :Array = [
         "ship", "retro", "thrust", "super_thrust", "super_retro", "select", "warp_begin", "warp_end"

@@ -72,7 +72,7 @@ public class ShipType
      */
     public function primaryShotMessage (ship :ShipSprite) :void
     {
-        var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
+        var rads :Number = ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 
@@ -83,8 +83,7 @@ public class ShipType
         var shotVel :Number = primaryShotSpeed;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
-        var type :int = (ship.powerups & ShipSprite.SPREAD_MASK) ?
-                ShotSprite.SUPER : ShotSprite.NORMAL;
+        var type :int = ship.hasPowerup(Powerup.SPREAD) ? ShotSprite.SUPER : ShotSprite.NORMAL;
 
         var args :Array = new Array(7);
         args[0] = ship.shipId;

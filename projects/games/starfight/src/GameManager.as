@@ -12,13 +12,14 @@ import com.whirled.net.PropertyChangedEvent;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
+
+import view.ShipView;
 
 public class GameManager
 {
@@ -123,7 +124,8 @@ public class GameManager
             _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
             _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
         }
-        _boardCtrl = new BoardController(_gameCtrl);
+
+        AppContext.board = _boardCtrl = new BoardController(_gameCtrl);
         _boardCtrl.init(boardLoaded);
     }
 
@@ -143,7 +145,7 @@ public class GameManager
 
                 var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
                 if (bytes != null) {
-                    var ship :ShipSprite = new ShipSprite(_boardCtrl, true, occupants[ii],
+                    var ship :ShipSprite = new ShipSprite(true, occupants[ii],
                         _gameCtrl.game.getOccupantName(occupants[ii]), false);
                     bytes.position = 0;
                     ship.readFrom(bytes);
@@ -169,22 +171,17 @@ public class GameManager
         }
 
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_boardCtrl, false, myId, myName, true);
+        _ownShip = new ShipSprite(false, myId, myName, true);
         _ownShip.setShipType(typeIdx);
 
-        _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+        addShip(myId, _ownShip);
+
         _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        AppContext.gameView.shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
         if (_gameCtrl.isConnected()) {
             setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
-
-            _population++;
-            maybeStartRound();
         }
-
-        _ships.put(myId, _ownShip);
 
         _ownShip.restart();
     }
@@ -250,23 +247,18 @@ public class GameManager
                 var occName :String = _gameCtrl.game.getOccupantName(id);
                 var bytes :ByteArray = ByteArray(event.newValue);
                 if (bytes == null) {
-                    var remShip :ShipSprite = _ships.remove(id);
-                    if (remShip != null) {
-                        _gameCtrl.local.feedback(remShip.playerName + " left the game.");
-                        AppContext.gameView.shipLayer.removeChild(remShip);
-                        AppContext.gameView.status.removeShip(id);
-                    }
+                    removeShip(id);
+
                 } else {
                     var ship :ShipSprite = getShip(id);
                     bytes.position = 0;
                     if (ship == null) {
-                        ship = new ShipSprite(_boardCtrl, true, id, occName, false);
+                        ship = new ShipSprite(true, id, occName, false);
                         _gameCtrl.local.feedback(ship.playerName + " entered the game.");
                         ship.readFrom(bytes);
                         addShip(id, ship);
                     } else {
-                        var sentShip :ShipSprite = new ShipSprite(_boardCtrl, true, id, occName,
-                            false);
+                        var sentShip :ShipSprite = new ShipSprite(true, id, occName, false);
                         sentShip.readFrom(bytes);
                         ship.updateForReport(sentShip);
                     }
@@ -294,11 +286,31 @@ public class GameManager
     public function addShip (id :int, ship :ShipSprite) :void
     {
         _ships.put(id, ship);
-        AppContext.gameView.shipLayer.addChild(ship);
         AppContext.gameView.status.addShip(id);
         _population++;
         maybeStartRound();
         var testShip :ShipSprite = getShip(id);
+
+        var shipView :ShipView = new ShipView(ship);
+        _shipViews.put(id, shipView);
+        AppContext.gameView.shipLayer.addChild(shipView);
+    }
+
+    public function removeShip (id :int) :void
+    {
+        var remShip :ShipSprite = _ships.remove(id);
+        if (remShip != null) {
+            _gameCtrl.local.feedback(remShip.playerName + " left the game.");
+            AppContext.gameView.status.removeShip(id);
+            _population--;
+        }
+
+        var view :ShipView = _shipViews.remove(id);
+        if (view != null) {
+            AppContext.gameView.shipLayer.removeChild(view);
+        }
+
+        _boardCtrl.shipKilled(id);
     }
 
     public function getShip (id :int) :ShipSprite
@@ -497,8 +509,8 @@ public class GameManager
     {
         _boardCtrl.explode(x, y, 0, true, 0);
 
-        var sound :Sound = (ship.powerups & ShipSprite.SHIELDS_MASK) ?
-            Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav");
+        var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
+            Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
         playSoundAt(sound, x, y);
 
         if (ship == _ownShip) {
@@ -624,13 +636,7 @@ public class GameManager
 
     public function occupantLeft (event :OccupantChangedEvent) :void
     {
-        var remShip :ShipSprite = _ships.remove(event.occupantId);
-        if (remShip != null) {
-            _gameCtrl.local.feedback(remShip.playerName + " left the game.");
-            AppContext.gameView.shipLayer.removeChild(remShip);
-            AppContext.gameView.status.removeShip(event.occupantId);
-        }
-        _boardCtrl.shipKilled(event.occupantId);
+        removeShip(event.occupantId);
 
         if (_gameCtrl.game.amInControl()) {
             setImmediate(shipKey(event.occupantId), null);
@@ -725,13 +731,14 @@ public class GameManager
             ownY = _ownShip.boardY;
         }
 
-        // And then shift em based on ownship's new pos.
-        for each (ship in _ships.values()) {
-            if (ship != null) {
-                ship.setPosRelTo(ownX, ownY);
+        // update ship drawstates
+        for each (var shipView :ShipView in _shipViews.values()) {
+            if (shipView != null) {
+                shipView.updateDisplayState(ownX, ownY);
             }
         }
 
+        // collide ownShip with crap on the board
         if (_ownShip != null) {
             _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
@@ -815,6 +822,7 @@ public class GameManager
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, ShipSprite>
+    protected var _shipViews :HashMap = new HashMap();
 
     /** Live shots. */
     protected var _shots :Array = new Array(); // Array<ShotSprite>

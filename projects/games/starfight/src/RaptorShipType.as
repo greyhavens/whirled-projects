@@ -58,13 +58,13 @@ public class RaptorShipType extends ShipType
         if (ship.shieldPower > 0.0) {
             return false;
         }
-        ship.powerups |= (1 << Powerup.SHIELDS);
+        ship.addPowerup(Powerup.SHIELDS);
         ship.shieldPower = 100.0;
         var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
         shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void
             {
                 shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
-                ship.powerups &= ~ShipSprite.SHIELDS_MASK;
+                ship.removePowerup(Powerup.SHIELDS);
                 ship.shieldPower = 0.0;
             });
         shieldTimer.start();

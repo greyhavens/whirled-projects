@@ -195,9 +195,14 @@ public class StatusOverlay extends Sprite
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
-                var sprite :ShipSprite = ShipSprite(value);
-                dot.visible = sprite.isAlive();
-                positionDot(dot, sprite.x, sprite.y);
+                var ship :ShipSprite = ShipSprite(value);
+                dot.visible = ship.isAlive();
+                // TODO - move this somewhere else
+                if (dot.visible) {
+                    var dotX :Number = ship.boardX * Codes.PIXELS_PER_TILE;
+                    var dotY :Number = ship.boardY * Codes.PIXELS_PER_TILE;
+                    positionDot(dot, dotX + boardX, dotY + boardY);
+                }
             }
         });
         for (var ii :int = 0; ii < powerups.length; ii++) {
@@ -205,9 +210,10 @@ public class StatusOverlay extends Sprite
                 var dot :Shape = _powerups.get(ii);
                 if (dot != null) {
                     var powerup :Powerup = powerups[ii];
-                    var x :Number = (powerup.bX + 0.5) * Codes.PIXELS_PER_TILE;
-                    var y :Number = (powerup.bY + 0.5) * Codes.PIXELS_PER_TILE;
-                    positionDot(dot, x + boardX, y + boardY);
+                    // TODO - move this somewhere else
+                    var dotX :Number = (powerup.bX + 0.5) * Codes.PIXELS_PER_TILE;
+                    var dotY :Number = (powerup.bY + 0.5) * Codes.PIXELS_PER_TILE;
+                    positionDot(dot, dotX + boardX, dotY + boardY);
                 }
             }
         }

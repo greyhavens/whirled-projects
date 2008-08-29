@@ -47,7 +47,7 @@ public class SaucerShipType extends ShipType
 
     override public function getPrimaryShotCost (ship :ShipSprite) :Number
     {
-        return (ship.powerups & ShipSprite.SPREAD_MASK ? superShotCost : primaryShotCost);
+        return (ship.hasPowerup(Powerup.SPREAD) ? superShotCost : primaryShotCost);
     }
 
     override public function primaryShot (val :Array) :void
@@ -64,7 +64,7 @@ public class SaucerShipType extends ShipType
         // no one in range so shoot straight
         if (ships.length <= 1) {
             AppContext.game.addShot(new LaserShotSprite(ship.boardX, ship.boardY,
-                ship.ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1));
+                ship.rotation, RANGE, val[0], hitPower, primaryShotLife, val[1], -1));
             return;
         }
 
@@ -84,8 +84,7 @@ public class SaucerShipType extends ShipType
 
     override public function primaryShotMessage (ship :ShipSprite) :void
     {
-        var type :int = (ship.powerups & ShipSprite.SPREAD_MASK) ?
-            ShotSprite.SUPER : ShotSprite.NORMAL;
+        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? ShotSprite.SUPER : ShotSprite.NORMAL);
 
         var args :Array = new Array(3);
         args[0] = ship.shipId;

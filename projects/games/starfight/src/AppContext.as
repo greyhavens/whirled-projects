@@ -13,6 +13,7 @@ public class AppContext
 {
     public static var game :GameManager;
     public static var gameCtrl :GameControl;
+    public static var board :BoardController;
 
     // TEMP - to be removed post-refactor
     public static var mainSprite :Sprite;

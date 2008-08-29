@@ -47,21 +47,17 @@ public class ShipChooser extends Sprite
 
         var numShipTypes :int = Codes.SHIP_TYPE_CLASSES.length;
         for (var ii :int = 0; ii < numShipTypes; ii++) {
-            var type :ShipType = Codes.getShipType(ii);
-            addButton(type, ii, numShipTypes);
+            addShipButton(ii, numShipTypes);
         }
     }
 
     /**
      * Adds a ship button.
      */
-    protected function addButton (type :ShipType, idx :int, total :int) :void
+    protected function addShipButton (idx :int, total :int) :void
     {
         var selection :Sprite = new Sprite();
-        var ship :ShipSprite = new ShipSprite(null, true, -1, type.name, false);
-        ship.pointUp();
-        ship.setShipType(idx);
-        selection.addChild(ship);
+        selection.addChild(new SelectionShipView(idx));
         selection.addEventListener(MouseEvent.CLICK, chooseHandler);
         selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
         selection.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
@@ -75,7 +71,8 @@ public class ShipChooser extends Sprite
 
     public function chooseHandler (event :MouseEvent) :void
     {
-        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
+        var ship :SelectionShipView =
+            SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
         choose(ship.shipType);
 
         // prevent NPE on further click event handlers
@@ -84,16 +81,18 @@ public class ShipChooser extends Sprite
 
     public function mouseOverHandler (event :MouseEvent) :void
     {
-        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
-        ship.setAnimMode(ShipSprite.SELECT, false);
+        var ship :SelectionShipView =
+            SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
+        ship.hilite = true;
         ship.scaleX = HIGHLIGHT_SCALE;
         ship.scaleY = HIGHLIGHT_SCALE;
     }
 
     public function mouseOutHandler (event :MouseEvent) :void
     {
-        var ship :ShipSprite = ShipSprite((event.currentTarget as Sprite).getChildAt(0));
-        ship.setAnimMode(ShipSprite.IDLE, false);
+        var ship :SelectionShipView =
+            SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
+        ship.hilite = false;
         ship.scaleX = 1.0;
         ship.scaleY = 1.0;
     }

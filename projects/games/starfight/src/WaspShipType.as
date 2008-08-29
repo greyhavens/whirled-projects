@@ -61,7 +61,7 @@ public class WaspShipType extends ShipType
 
     override public function secondaryShotMessage (ship :ShipSprite) :Boolean
     {
-        var rads :Number = ship.ship.rotation*Codes.DEGS_TO_RADS;
+        var rads :Number = ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 

@@ -1,9 +1,9 @@
 package {
 
-import flash.media.Sound;
-import flash.media.SoundTransform;
 import flash.events.Event;
-import flash.display.MovieClip;
+import flash.events.TimerEvent;
+import flash.media.Sound;
+import flash.utils.Timer;
 
 public class RhinoShipType extends ShipType
 {
@@ -68,7 +68,7 @@ public class RhinoShipType extends ShipType
         args[1] = ship.shipType;
         args[2] = ship.boardX;
         args[3] = ship.boardY;
-        args[4] = ship.ship.rotation;
+        args[4] = ship.rotation;
 
         warpNow(ship, args);
         return true;
@@ -85,14 +85,13 @@ public class RhinoShipType extends ShipType
 
     protected function warpNow (ship :ShipSprite, val :Array) :void
     {
-        var endWarp :Function = function (event:Event) :void
-        {
-            ship.removeEventListener(Event.COMPLETE, endWarp);
-            ship.setAnimMode(ShipSprite.IDLE, true);
+        // TODO - change this horribly unsafe function.
+
+        var endWarp :Function = function (event:Event) :void {
+            ship.state = ShipSprite.STATE_DEFAULT;
         };
-        var warp :Function = function (event :Event) :void
-        {
-            clip.removeEventListener(Event.COMPLETE, warp);
+
+        var warp :Function = function (event :Event) :void {
             if (ship.isOwnShip) {
                 AppContext.game.sendMessage("secondary", val);
             }
@@ -103,11 +102,18 @@ public class RhinoShipType extends ShipType
             var endY :Number = startY + Math.sin(rads) * JUMP;
 
             ship.resolveMove(startX, startY, endX, endY, 1);
-            ship.setAnimMode(ShipSprite.WARP_END, true).addEventListener(Event.COMPLETE, endWarp);
+            ship.state = ShipSprite.STATE_WARP_END;
             AppContext.game.playSoundAt(warpSound, endX, endY);
+
+            var timer :Timer = new Timer(WARP_IN_TIME, 1);
+            timer.addEventListener(TimerEvent.TIMER, endWarp);
+            timer.start();
         };
-        var clip :MovieClip = ship.setAnimMode(ShipSprite.WARP_BEGIN, true);
-        clip.addEventListener(Event.COMPLETE, warp);
+
+        ship.state = ShipSprite.STATE_WARP_BEGIN;
+        var timer :Timer = new Timer(WARP_OUT_TIME, 1);
+        timer.addEventListener(TimerEvent.TIMER, warp);
+        timer.start();
     }
 
     override protected function swfAsset () :Class
@@ -127,5 +133,8 @@ public class RhinoShipType extends ShipType
     protected static const SHIP :Class;
 
     protected static const JUMP :int = 15;
+
+    protected static const WARP_OUT_TIME :Number = 0.5;
+    protected static const WARP_IN_TIME :Number = 0.5;
 }
 }
