@@ -1,6 +1,7 @@
 package {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.Log;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
@@ -94,18 +95,10 @@ public class GameManager
         }
     }
 
-    /**
-     * For debug logging.
-     */
-    public function log (msg :String) :void
-    {
-        Logger.log(msg);
-    }
-
     // from Game
     public function setGameObject () :void
     {
-        log("Got game object");
+        log.info("Got game object");
 
         if (!_gameCtrl.isConnected()) {
             myId = 1;
@@ -607,7 +600,7 @@ public class GameManager
         _ownShipView = null;
         setupBoard();
         _boardCtrl.init(boardLoaded);
-        log("Game started");
+        log.info("Game started");
     }
 
     /**
@@ -852,6 +845,8 @@ public class GameManager
     protected var _assets :int = 0;
 
     protected var _otherScores :Object = new Object();
+
+    protected static const log :Log = Log.getLog(GameManager);
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;
