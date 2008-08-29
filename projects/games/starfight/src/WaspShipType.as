@@ -49,7 +49,7 @@ public class WaspShipType extends ShipType
         AppContext.game.createMissileShot(val[3], val[4], val[5], val[6], val[0], hitPower,
             primaryShotLife, val[1]);
 
-        if (val[2] == ShotSprite.SUPER) {
+        if (val[2] == Shot.SUPER) {
             AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + SPREAD, val[0],
                 hitPower, primaryShotLife, val[1]);
             AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] - SPREAD, val[0],

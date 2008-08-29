@@ -50,7 +50,7 @@ public class ShipType
     public function primaryShot (val :Array) :void
     {
         // Shooting sound.
-        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
+        var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
 
         AppContext.game.playSoundAt(sound, val[3], val[4]);
     }
@@ -83,7 +83,7 @@ public class ShipType
         var shotVel :Number = primaryShotSpeed;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
-        var type :int = ship.hasPowerup(Powerup.SPREAD) ? ShotSprite.SUPER : ShotSprite.NORMAL;
+        var type :int = ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL;
 
         var args :Array = new Array(7);
         args[0] = ship.shipId;

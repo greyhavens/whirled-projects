@@ -4,10 +4,10 @@ import flash.display.Sprite;
 
 public class ShotView extends Sprite
 {
-    public function ShotView (shot :ShotSprite)
+    public function ShotView (shot :Shot)
     {
         _shot = shot;
-        _shot.addEventListener(ShotSprite.HIT, handleHit);
+        _shot.addEventListener(Shot.HIT, handleHit);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ShotView extends Sprite
     {
     }
 
-    protected var _shot :ShotSprite;
+    protected var _shot :Shot;
 }
 
 }

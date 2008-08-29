@@ -2,14 +2,14 @@ package {
 
 import flash.display.MovieClip;
 
-public class LaserShotSprite extends ShotSprite
+public class LaserShot extends Shot
 {
     /** Position. */
     public var angle :Number;
     public var length :Number;
     public var tShipId :int;
 
-    public function LaserShotSprite (x :Number, y :Number, angle :Number, length :Number,
+    public function LaserShot (x :Number, y :Number, angle :Number, length :Number,
             shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :void
     {
         super(x, y, shipId, damage, ttl, shipType);

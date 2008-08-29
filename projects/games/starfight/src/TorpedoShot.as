@@ -2,13 +2,13 @@ package {
 
 import flash.display.MovieClip;
 
-public class TorpedoShotSprite extends ShotSprite {
+public class TorpedoShot extends Shot {
 
     /** Velocity. */
     public var xVel :Number;
     public var yVel :Number;
 
-    public function TorpedoShotSprite (x :Number, y :Number, vel :Number, angle :Number,
+    public function TorpedoShot (x :Number, y :Number, vel :Number, angle :Number,
             shipId :int, damage :Number, ttl :Number, shipType :int) :void
     {
         super(x, y, shipId, damage, ttl, shipType);

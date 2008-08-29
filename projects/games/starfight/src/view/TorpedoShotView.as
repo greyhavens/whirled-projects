@@ -4,7 +4,7 @@ import flash.display.MovieClip;
 
 public class TorpedoShotView extends ShotView
 {
-    public function TorpedoShotView (torpedo :TorpedoShotSprite)
+    public function TorpedoShotView (torpedo :TorpedoShot)
     {
         super(torpedo);
 

@@ -2,7 +2,7 @@ package {
 
 import flash.events.EventDispatcher;
 
-public class ShotSprite extends EventDispatcher
+public class Shot extends EventDispatcher
 {
     public static const NORMAL :int = 0;
     public static const SUPER :int = 1;
@@ -23,7 +23,7 @@ public class ShotSprite extends EventDispatcher
 
     public var damage :Number;
 
-    public function ShotSprite (boardX :Number, boardY :Number, shipId :int, damage :Number,
+    public function Shot (boardX :Number, boardY :Number, shipId :int, damage :Number,
         ttl :Number, shipType :int) :void
     {
         this.boardX = boardX;

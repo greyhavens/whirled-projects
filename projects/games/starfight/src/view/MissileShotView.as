@@ -4,7 +4,7 @@ import flash.display.MovieClip;
 
 public class MissileShotView extends ShotView
 {
-    public function MissileShotView (missile :MissileShotSprite)
+    public function MissileShotView (missile :MissileShot)
     {
         super(missile);
 

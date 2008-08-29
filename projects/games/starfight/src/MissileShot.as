@@ -2,7 +2,7 @@ package {
 
 import flash.display.MovieClip;
 
-public class MissileShotSprite extends ShotSprite
+public class MissileShot extends Shot
 {
     /** Velocity. */
     public var xVel :Number;
@@ -12,7 +12,7 @@ public class MissileShotSprite extends ShotSprite
     public var shotClip :Class;
     public var explodeClip :Class;
 
-    public function MissileShotSprite (x :Number, y :Number, vel :Number, angle :Number,
+    public function MissileShot (x :Number, y :Number, vel :Number, angle :Number,
             shipId :int, damage :Number, ttl :Number, shipType :int,
             shotClip :Class = null, explodeClip :Class = null) :void
     {

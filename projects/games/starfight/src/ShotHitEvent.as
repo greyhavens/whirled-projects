@@ -9,7 +9,7 @@ public class ShotHitEvent extends Event
 
     public function ShotHitEvent (x :Number, y :Number)
     {
-        super(ShotSprite.HIT, false, false);
+        super(Shot.HIT, false, false);
         this.x = x;
         this.y = y;
     }

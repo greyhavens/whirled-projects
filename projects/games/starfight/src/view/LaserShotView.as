@@ -4,7 +4,7 @@ import flash.display.MovieClip;
 
 public class LaserShotView extends ShotView
 {
-    public function LaserShotView (laserShot :LaserShotSprite)
+    public function LaserShotView (laserShot :LaserShot)
     {
         super(laserShot);
 

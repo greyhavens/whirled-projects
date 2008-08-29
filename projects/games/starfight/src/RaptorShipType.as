@@ -43,7 +43,7 @@ public class RaptorShipType extends ShipType
     override public function primaryShot (val :Array) :void
     {
         var ttl :Number = primaryShotLife;
-        if (val[2] == ShotSprite.SUPER) {
+        if (val[2] == Shot.SUPER) {
             ttl *= 2;
         }
         for (var ii :Number = -0.3; ii <= 0.3; ii += 0.3) {

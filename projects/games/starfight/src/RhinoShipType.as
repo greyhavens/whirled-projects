@@ -47,7 +47,7 @@ public class RhinoShipType extends ShipType
         var shotClip :Class = null;
         var explodeClip :Class = null;
 
-        if (val[2] == ShotSprite.SUPER) {
+        if (val[2] == Shot.SUPER) {
             damage *= 1.5;
             shotClip = superShotAnim;
             explodeClip = superShotExplode;

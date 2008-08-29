@@ -461,10 +461,10 @@ public class GameManager
     }
 
     public function createLaserShot (x :Number, y :Number, angle :Number, length :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :LaserShotSprite
+            shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :LaserShot
     {
-        var shot :LaserShotSprite =
-            new LaserShotSprite(x, y, angle, length, shipId, damage, ttl, shipType, tShipId);
+        var shot :LaserShot =
+            new LaserShot(x, y, angle, length, shipId, damage, ttl, shipType, tShipId);
         var view :LaserShotView = new LaserShotView(shot);
         addShot(shot);
         addShotView(view);
@@ -474,10 +474,10 @@ public class GameManager
 
     public function createMissileShot (x :Number, y :Number, vel :Number, angle :Number,
         shipId :int, damage :Number, ttl :Number, shipType :int,
-        shotClip :Class = null, explodeClip :Class = null) :MissileShotSprite
+        shotClip :Class = null, explodeClip :Class = null) :MissileShot
     {
-        var shot :MissileShotSprite =
-            new MissileShotSprite(x, y, vel, angle, shipId, damage, ttl, shipType, shotClip, explodeClip);
+        var shot :MissileShot =
+            new MissileShot(x, y, vel, angle, shipId, damage, ttl, shipType, shotClip, explodeClip);
         var view :MissileShotView = new MissileShotView(shot);
         addShot(shot);
         addShotView(view);
@@ -486,10 +486,10 @@ public class GameManager
     }
 
     public function createTorpedoShot (x :Number, y :Number, vel :Number, angle :Number,
-        shipId :int, damage :Number, ttl :Number, shipType :int) :TorpedoShotSprite
+        shipId :int, damage :Number, ttl :Number, shipType :int) :TorpedoShot
     {
-        var shot :TorpedoShotSprite =
-            new TorpedoShotSprite(x, y, vel, angle, shipId, damage, ttl, shipType);
+        var shot :TorpedoShot =
+            new TorpedoShot(x, y, vel, angle, shipId, damage, ttl, shipType);
         var view :TorpedoShotView = new TorpedoShotView(shot);
         addShot(shot);
         addShotView(view);
@@ -497,7 +497,7 @@ public class GameManager
         return shot;
     }
 
-    protected function addShot (shot :ShotSprite) :void
+    protected function addShot (shot :Shot) :void
     {
         _shots.push(shot);
     }
@@ -791,8 +791,8 @@ public class GameManager
         forceStatusUpdate();
 
         // Update all live shots.
-        var completed :Array = []; // Array<ShotSprite>
-        for each (var shot :ShotSprite in _shots) {
+        var completed :Array = []; // Array<Shot>
+        for each (var shot :Shot in _shots) {
             if (shot != null) {
                 shot.tick(_boardCtrl, time);
                 if (shot.complete) {
@@ -877,7 +877,7 @@ public class GameManager
     protected var _shipViews :HashMap = new HashMap();
 
     /** Live shots. */
-    protected var _shots :Array = []; // Array<ShotSprite>
+    protected var _shots :Array = []; // Array<Shot>
     protected var _shotViews :Array = [];
 
     /** The board with all its obstacles. */

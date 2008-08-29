@@ -58,7 +58,7 @@ public class SaucerShipType extends ShipType
         }
         var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
-        var sound :Sound = (val[2] == ShotSprite.SUPER) ? supShotSound : shotSound;
+        var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
         AppContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
 
         // no one in range so shoot straight
@@ -84,7 +84,7 @@ public class SaucerShipType extends ShipType
 
     override public function primaryShotMessage (ship :Ship) :void
     {
-        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? ShotSprite.SUPER : ShotSprite.NORMAL);
+        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL);
 
         var args :Array = new Array(3);
         args[0] = ship.shipId;
