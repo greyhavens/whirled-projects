@@ -1,4 +1,4 @@
-package {
+package client {
 
 import flash.events.Event;
 import flash.media.Sound;

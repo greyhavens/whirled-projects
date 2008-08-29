@@ -1,4 +1,4 @@
-package view {
+package client {
 
 import flash.display.Bitmap;
 import flash.display.Shape;

@@ -7,7 +7,8 @@ import flash.utils.Timer;
 
 import mx.effects.easing.Linear;
 
-import view.ShipChooser;
+import client.ShipChooser;
+import client.Resources;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.

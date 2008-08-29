@@ -1,4 +1,4 @@
-package {
+package client {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.MultiLoader;
@@ -86,7 +86,7 @@ public class Resources
         return (_resourceDomain != null ? _resourceDomain.getDefinition(name) as Class : null);
     }
 
-    [Embed(source="../rsrc/resources.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/resources.swf", mimeType="application/octet-stream")]
     protected static const RESOURCE_BUNDLE :Class;
 
     protected static var _resourceDomain :ApplicationDomain;

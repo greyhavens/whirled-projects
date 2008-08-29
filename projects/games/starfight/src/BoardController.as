@@ -1,5 +1,7 @@
 package {
 
+import client.*;
+
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.GameControl;
@@ -12,13 +14,6 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.media.Sound;
 import flash.utils.ByteArray;
-
-import view.BgSprite;
-import view.ExplosionView;
-import view.MineView;
-import view.ObstacleView;
-import view.PowerupView;
-import view.StatusOverlay;
 
 /**
  * Manages the board data and display sprite.

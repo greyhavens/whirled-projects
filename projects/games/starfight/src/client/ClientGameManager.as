@@ -1,10 +1,11 @@
-package {
+package client {
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import view.GameView;
+import client.GameView;
 
 public class ClientGameManager extends GameManager
 {
@@ -28,12 +29,31 @@ public class ClientGameManager extends GameManager
 
         // start the game when the player clicks the mouse
         mainSprite.addEventListener(MouseEvent.CLICK, onMouseDown);
+
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+        }
     }
 
     protected function onMouseDown (...ignored) :void
     {
         if (firstStart()) {
             _mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
+        }
+    }
+
+    protected function keyPressed (event :KeyboardEvent) :void
+    {
+        if (_ownShipView != null) {
+            _ownShipView.keyPressed(event);
+        }
+    }
+
+    protected function keyReleased (event :KeyboardEvent) :void
+    {
+        if (_ownShipView != null) {
+            _ownShipView.keyReleased(event);
         }
     }
 

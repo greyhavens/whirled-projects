@@ -4,6 +4,8 @@ import flash.events.Event;
 import flash.media.Sound;
 import flash.utils.ByteArray;
 
+import client.Resources;
+
 public class Mine extends BoardObject
 {
     public static const EXPLODED :String = "Exploded";

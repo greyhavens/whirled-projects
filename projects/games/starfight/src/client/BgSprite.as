@@ -1,4 +1,4 @@
-package view {
+package client {
 
 import flash.display.Sprite;
 import flash.display.Shape;

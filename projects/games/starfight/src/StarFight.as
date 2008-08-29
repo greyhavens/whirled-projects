@@ -2,6 +2,8 @@ package {
 
 import flash.display.Sprite;
 
+import client.ClientGameManager;
+
 /**
  * Game client entry point.
  */

@@ -4,7 +4,7 @@ import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
 
-import view.GameView;
+import client.GameView;
 
 /**
  * Storage for globally-accessible data and managers.

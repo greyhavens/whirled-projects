@@ -1,5 +1,7 @@
 package {
 
+import client.*;
+
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.CoinsAwardedEvent;
@@ -12,19 +14,12 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
-
-import view.LaserShotView;
-import view.MissileShotView;
-import view.ShipView;
-import view.ShotView;
-import view.TorpedoShotView;
 
 public class GameManager
 {
@@ -42,13 +37,8 @@ public class GameManager
         AppContext.gameCtrl = _gameCtrl;
         AppContext.game = this;
 
-        if (_gameCtrl.isConnected()) {
-            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        }
         Resources.init(assetLoaded);
     }
-
 
     public function firstStart () :Boolean
     {
@@ -836,20 +826,6 @@ public class GameManager
             _otherScores = [];
         }
         _lastTickTime = now;
-    }
-
-    protected function keyPressed (event :KeyboardEvent) :void
-    {
-        if (_ownShipView != null) {
-            _ownShipView.keyPressed(event);
-        }
-    }
-
-    protected function keyReleased (event :KeyboardEvent) :void
-    {
-        if (_ownShipView != null) {
-            _ownShipView.keyReleased(event);
-        }
     }
 
     protected function handleFlowAwarded (event :CoinsAwardedEvent) :void

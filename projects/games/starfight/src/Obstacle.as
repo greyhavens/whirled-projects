@@ -4,6 +4,8 @@ import flash.events.Event;
 import flash.media.Sound;
 import flash.utils.ByteArray;
 
+import client.Resources;
+
 /**
  * Represents something in the world that ships may interact with.
  */

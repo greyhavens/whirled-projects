@@ -1,4 +1,4 @@
-package view {
+package client {
 
 import com.whirled.game.SizeChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
