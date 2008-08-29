@@ -14,7 +14,7 @@ import view.ShipChooser;
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
-public class ShipSprite
+public class Ship
 {
     /** Some useful key codes. */
     public static const KV_LEFT :uint = 37;
@@ -114,7 +114,7 @@ public class ShipSprite
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function ShipSprite (skipStartingPos :Boolean, shipId :int, name :String,
+    public function Ship (skipStartingPos :Boolean, shipId :int, name :String,
         isOwnShip :Boolean)
     {
         accel = 0.0;
@@ -421,7 +421,7 @@ public class ShipSprite
     protected function spawn () :void
     {
         state = STATE_SPAWN;
-        var thisShip :ShipSprite = this;
+        var thisShip :Ship = this;
         var timer :Timer = new Timer(SPAWN_TIME, 1);
         timer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
             thisShip.state = STATE_DEFAULT;
@@ -694,7 +694,7 @@ public class ShipSprite
      * Update our ship to the reported position, BUT if possible try to
      *  set ourselves up to make up for any discrepancy smoothly.
      */
-    public function updateForReport (report :ShipSprite) :void
+    public function updateForReport (report :Ship) :void
     {
         _reportShip = report;
         _reportTime = INTERPOLATION_TIME;
@@ -841,7 +841,7 @@ public class ShipSprite
     // TEMP
     public function get animMode () :int { return _animMode; }
 
-    protected var _reportShip :ShipSprite;
+    protected var _reportShip :Ship;
     protected var _reportTime :int;
 
     protected var _moveSound :Boolean;

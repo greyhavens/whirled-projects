@@ -205,7 +205,7 @@ public class BoardController
         var pt :Point;
         while (true) {
             pt = new Point(Math.random() * (width - 4) + 2, Math.random() * (height - 4) + 2);
-            if (getCollision(pt.x, pt.y, pt.x, pt.y, ShipSprite.COLLISION_RAD, -1, 0) == null) {
+            if (getCollision(pt.x, pt.y, pt.x, pt.y, Ship.COLLISION_RAD, -1, 0) == null) {
                 return pt;
             }
         }
@@ -382,7 +382,7 @@ public class BoardController
 
         if (ignoreShip >= 0) {
             // Check each ship and figure out which one we hit first.
-            for each (var ship :ShipSprite in _ships.values()) {
+            for each (var ship :Ship in _ships.values()) {
                 if (ship == null) {
                     continue;
                 }
@@ -393,7 +393,7 @@ public class BoardController
 
                 var bX :Number = ship.boardX;
                 var bY :Number = ship.boardY;
-                var r :Number = ShipSprite.COLLISION_RAD + rad;
+                var r :Number = Ship.COLLISION_RAD + rad;
                 // We approximate a ship as a circle for this...
                 var a :Number = dx*dx + dy*dy;
                 var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
@@ -613,8 +613,7 @@ public class BoardController
         }
     }
 
-    public function shipInteraction (
-            ownShip :ShipSprite, oldX :Number, oldY :Number) :void
+    public function shipInteraction (ownShip :Ship, oldX :Number, oldY :Number) :void
     {
         do {
             var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,

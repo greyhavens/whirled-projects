@@ -53,7 +53,7 @@ public class RaptorShipType extends ShipType
         super.primaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
+    override public function secondaryShotMessage (ship :Ship) :Boolean
     {
         if (ship.shieldPower > 0.0) {
             return false;

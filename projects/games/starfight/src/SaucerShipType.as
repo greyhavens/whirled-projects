@@ -45,14 +45,14 @@ public class SaucerShipType extends ShipType
         size = 0.9;
     }
 
-    override public function getPrimaryShotCost (ship :ShipSprite) :Number
+    override public function getPrimaryShotCost (ship :Ship) :Number
     {
         return (ship.hasPowerup(Powerup.SPREAD) ? superShotCost : primaryShotCost);
     }
 
     override public function primaryShot (val :Array) :void
     {
-        var ship :ShipSprite = AppContext.game.getShip(val[0]);
+        var ship :Ship = AppContext.game.getShip(val[0]);
         if (ship == null) {
             return;
         }
@@ -68,7 +68,7 @@ public class SaucerShipType extends ShipType
             return;
         }
 
-        for each (var tShip :ShipSprite in ships) {
+        for each (var tShip :Ship in ships) {
             if (tShip.shipId == ship.shipId) {
                 continue;
             }
@@ -82,7 +82,7 @@ public class SaucerShipType extends ShipType
         }
     }
 
-    override public function primaryShotMessage (ship :ShipSprite) :void
+    override public function primaryShotMessage (ship :Ship) :void
     {
         var type :int = (ship.hasPowerup(Powerup.SPREAD) ? ShotSprite.SUPER : ShotSprite.NORMAL);
 
@@ -93,7 +93,7 @@ public class SaucerShipType extends ShipType
         AppContext.game.fireShot(args);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
+    override public function secondaryShotMessage (ship :Ship) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;

@@ -62,8 +62,8 @@ public class MissileShotSprite extends ShotSprite {
         } else {
             var hitX :Number = boardX + xVel * coll.time * time;
             var hitY :Number = boardY + yVel * coll.time * time;
-            if (coll.hit is ShipSprite) {
-                var ship :ShipSprite = ShipSprite(coll.hit);
+            if (coll.hit is Ship) {
+                var ship :Ship = Ship(coll.hit);
                 AppContext.game.hitShip(ship, hitX, hitY, shipId, damage);
 
             } else {

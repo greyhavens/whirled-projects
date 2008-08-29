@@ -11,7 +11,7 @@ import flash.text.TextFormat;
 
 public class ShipView extends Sprite
 {
-    public function ShipView (ship :ShipSprite)
+    public function ShipView (ship :Ship)
     {
         _ship = ship;
         setupGraphics();
@@ -88,18 +88,18 @@ public class ShipView extends Sprite
             var shipState :int = _ship.state;
             var newAnimMode :int;
             switch (shipState) {
-            case ShipSprite.STATE_SPAWN:
+            case Ship.STATE_SPAWN:
                 if (shipState != _lastShipState) {
                     playSpawnMovie();
                 }
                 newAnimMode = IDLE;
                 break;
 
-            case ShipSprite.STATE_WARP_BEGIN:
+            case Ship.STATE_WARP_BEGIN:
                 newAnimMode = WARP_BEGIN;
                 break;
 
-            case ShipSprite.STATE_WARP_END:
+            case Ship.STATE_WARP_END:
                 newAnimMode = WARP_END;
                 break;
 
@@ -161,7 +161,7 @@ public class ShipView extends Sprite
 
     }
 
-    protected var _ship :ShipSprite;
+    protected var _ship :Ship;
 
     /** The sprite with our ship graphics in it. */
     protected var _shipContainer :Sprite;

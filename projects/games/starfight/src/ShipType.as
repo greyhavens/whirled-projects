@@ -62,7 +62,7 @@ public class ShipType
     {
     }
 
-    public function getPrimaryShotCost (ship :ShipSprite) :Number
+    public function getPrimaryShotCost (ship :Ship) :Number
     {
         return primaryShotCost;
     }
@@ -70,7 +70,7 @@ public class ShipType
     /**
      * Sends a standard forward fire message.
      */
-    public function primaryShotMessage (ship :ShipSprite) :void
+    public function primaryShotMessage (ship :Ship) :void
     {
         var rads :Number = ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -100,7 +100,7 @@ public class ShipType
     /**
      * Secondary shot message generator.
      */
-    public function secondaryShotMessage (ship :ShipSprite) :Boolean
+    public function secondaryShotMessage (ship :Ship) :Boolean
     {
         return false;
     }

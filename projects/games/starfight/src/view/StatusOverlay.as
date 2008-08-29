@@ -102,7 +102,7 @@ public class StatusOverlay extends Sprite
     /**
      * Shows the powerups held by the ship.
      */
-    public function setPowerups (ship :ShipSprite) :void
+    public function setPowerups (ship :Ship) :void
     {
         var mask :Shape = Shape(_speed.mask);
         mask.graphics.clear();
@@ -195,7 +195,7 @@ public class StatusOverlay extends Sprite
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
-                var ship :ShipSprite = ShipSprite(value);
+                var ship :Ship = Ship(value);
                 dot.visible = ship.isAlive();
                 // TODO - move this somewhere else
                 if (dot.visible) {

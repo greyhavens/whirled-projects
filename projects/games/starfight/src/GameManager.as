@@ -72,7 +72,7 @@ public class GameManager
         if (_powerupTimer != null) {
             _powerupTimer.reset();
         }
-        for each (var ship :ShipSprite in _ships.values()) {
+        for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
     }
@@ -145,7 +145,7 @@ public class GameManager
 
                 var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
                 if (bytes != null) {
-                    var ship :ShipSprite = new ShipSprite(true, occupants[ii],
+                    var ship :Ship = new Ship(true, occupants[ii],
                         _gameCtrl.game.getOccupantName(occupants[ii]), false);
                     bytes.position = 0;
                     ship.readFrom(bytes);
@@ -171,7 +171,7 @@ public class GameManager
         }
 
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(false, myId, myName, true);
+        _ownShip = new Ship(false, myId, myName, true);
         _ownShip.setShipType(typeIdx);
 
         addShip(myId, _ownShip);
@@ -250,15 +250,15 @@ public class GameManager
                     removeShip(id);
 
                 } else {
-                    var ship :ShipSprite = getShip(id);
+                    var ship :Ship = getShip(id);
                     bytes.position = 0;
                     if (ship == null) {
-                        ship = new ShipSprite(true, id, occName, false);
+                        ship = new Ship(true, id, occName, false);
                         _gameCtrl.local.feedback(ship.playerName + " entered the game.");
                         ship.readFrom(bytes);
                         addShip(id, ship);
                     } else {
-                        var sentShip :ShipSprite = new ShipSprite(true, id, occName, false);
+                        var sentShip :Ship = new Ship(true, id, occName, false);
                         sentShip.readFrom(bytes);
                         ship.updateForReport(sentShip);
                     }
@@ -283,13 +283,13 @@ public class GameManager
         }
     }
 
-    public function addShip (id :int, ship :ShipSprite) :void
+    public function addShip (id :int, ship :Ship) :void
     {
         _ships.put(id, ship);
         AppContext.gameView.status.addShip(id);
         _population++;
         maybeStartRound();
-        var testShip :ShipSprite = getShip(id);
+        var testShip :Ship = getShip(id);
 
         var shipView :ShipView = new ShipView(ship);
         _shipViews.put(id, shipView);
@@ -298,7 +298,7 @@ public class GameManager
 
     public function removeShip (id :int) :void
     {
-        var remShip :ShipSprite = _ships.remove(id);
+        var remShip :Ship = _ships.remove(id);
         if (remShip != null) {
             _gameCtrl.local.feedback(remShip.playerName + " left the game.");
             AppContext.gameView.status.removeShip(id);
@@ -313,7 +313,7 @@ public class GameManager
         _boardCtrl.shipKilled(id);
     }
 
-    public function getShip (id :int) :ShipSprite
+    public function getShip (id :int) :Ship
     {
         return _ships.get(id);
     }
@@ -376,7 +376,7 @@ public class GameManager
     public function endRound () :void
     {
         _screenTimer.reset();
-        for each (var ship :ShipSprite in _ships.values()) {
+        for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
         _boardCtrl.endRound();
@@ -394,7 +394,7 @@ public class GameManager
         }
 
         var shipArr :Array = _ships.values();
-        shipArr.sort(function (shipA :ShipSprite, shipB :ShipSprite) :int {
+        shipArr.sort(function (shipA :Ship, shipB :Ship) :int {
             return shipB.score - shipA.score;
         });
         AppContext.gameView.endRound(shipArr);
@@ -426,12 +426,12 @@ public class GameManager
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
 
-            var ship :ShipSprite = getShip(arr[4]);
+            var ship :Ship = getShip(arr[4]);
             if (ship != null) {
                 _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipType);
                 playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
                 ship.kill();
-                var sship :ShipSprite = getShip(arr[3]);
+                var sship :Ship = getShip(arr[3]);
                 if (sship != null) {
                     _gameCtrl.local.feedback(sship.playerName + " killed " + ship.playerName + "!");
                 }
@@ -504,7 +504,7 @@ public class GameManager
     /**
      * Register that a ship was hit at the location.
      */
-    public function hitShip (ship :ShipSprite, x :Number, y :Number,
+    public function hitShip (ship :Ship, x :Number, y :Number,
         shooterId :int, damage :Number) :void
     {
         _boardCtrl.explode(x, y, 0, true, 0);
@@ -666,7 +666,7 @@ public class GameManager
     {
         var dist2 :Number = dist * dist;
         var nearShips :Array = new Array();
-        for each (var ship :ShipSprite in _ships.values()) {
+        for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
                 if ((ship.boardX-x)*(ship.boardX-x) + (ship.boardY-y)*(ship.boardY-y) < dist2) {
                     nearShips[nearShips.length] = ship;
@@ -720,7 +720,7 @@ public class GameManager
         }
 
         // Update all ships.
-        for each (var ship :ShipSprite in _ships.values()) {
+        for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
                 ship.tick(time);
             }
@@ -818,10 +818,10 @@ public class GameManager
     protected var _gameCtrl :GameControl;
 
     /** Our local ship. */
-    protected var _ownShip :ShipSprite;
+    protected var _ownShip :Ship;
 
     /** All the ships. */
-    protected var _ships :HashMap = new HashMap(); // HashMap<int, ShipSprite>
+    protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
     protected var _shipViews :HashMap = new HashMap();
 
     /** Live shots. */

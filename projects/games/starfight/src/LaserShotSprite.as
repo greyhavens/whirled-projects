@@ -28,7 +28,7 @@ public class LaserShotSprite extends ShotSprite {
     {
         time /= 1000;
         if (!_hit && tShipId != -1) {
-            var ship :ShipSprite = AppContext.game.getShip(tShipId);
+            var ship :Ship = AppContext.game.getShip(tShipId);
             if (ship != null) {
                 AppContext.game.hitShip(ship, ship.boardX, ship.boardY, shipId, damage);
                 _hit = true;

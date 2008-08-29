@@ -94,7 +94,7 @@ public class GameView extends Sprite
         _endMovie = MovieClip(new (Resources.getClass("round_results"))());
         for (var ii :int = 0; ii < winningShips.length; ii++) {
             _endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
-                    "" + (ii + 1) + ". " + ShipSprite(winningShips[ii]).playerName;
+                    "" + (ii + 1) + ". " + Ship(winningShips[ii]).playerName;
         }
         _nextRoundTimer = _endMovie.fields_mc.timer;
         _nextRoundTimer.text = String(30);

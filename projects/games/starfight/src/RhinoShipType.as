@@ -61,7 +61,7 @@ public class RhinoShipType extends ShipType
         super.primaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :ShipSprite) :Boolean
+    override public function secondaryShotMessage (ship :Ship) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -76,19 +76,19 @@ public class RhinoShipType extends ShipType
 
     override public function secondaryShot (val :Array) :void
     {
-        var ship :ShipSprite = AppContext.game.getShip(val[0]);
+        var ship :Ship = AppContext.game.getShip(val[0]);
         if (ship == null || ship.isOwnShip) {
             return;
         }
         warpNow(ship, val);
     }
 
-    protected function warpNow (ship :ShipSprite, val :Array) :void
+    protected function warpNow (ship :Ship, val :Array) :void
     {
         // TODO - change this horribly unsafe function.
 
         var endWarp :Function = function (event:Event) :void {
-            ship.state = ShipSprite.STATE_DEFAULT;
+            ship.state = Ship.STATE_DEFAULT;
         };
 
         var warp :Function = function (event :Event) :void {
@@ -102,7 +102,7 @@ public class RhinoShipType extends ShipType
             var endY :Number = startY + Math.sin(rads) * JUMP;
 
             ship.resolveMove(startX, startY, endX, endY, 1);
-            ship.state = ShipSprite.STATE_WARP_END;
+            ship.state = Ship.STATE_WARP_END;
             AppContext.game.playSoundAt(warpSound, endX, endY);
 
             var timer :Timer = new Timer(WARP_IN_TIME, 1);
@@ -110,7 +110,7 @@ public class RhinoShipType extends ShipType
             timer.start();
         };
 
-        ship.state = ShipSprite.STATE_WARP_BEGIN;
+        ship.state = Ship.STATE_WARP_BEGIN;
         var timer :Timer = new Timer(WARP_OUT_TIME, 1);
         timer.addEventListener(TimerEvent.TIMER, warp);
         timer.start();
