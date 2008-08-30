@@ -7,19 +7,7 @@ import flash.display.BitmapData;
 
 public class BgSprite extends Sprite
 {
-    /**
-     * Sets the center of the screen.  We need to adjust ourselves to match.
-     */
-    public function setAsCenter (boardX :Number, boardY :Number) :void
-    {
-        x = -(boardX*Codes.BG_PIXELS_PER_TILE);
-        y = -(boardY*Codes.BG_PIXELS_PER_TILE);
-    }
-
-    /**
-     * Draw the board.
-     */
-    public function setupGraphics (width :int, height :int) :void
+    public function BgSprite (width :int, height :int)
     {
         // Our background, tiled if necessary.
         var tmpBmp :Bitmap = Resources.getBitmap("space_bg.png");
@@ -37,6 +25,15 @@ public class BgSprite extends Sprite
                 addChild(bmp);
             }
         }
+    }
+
+    /**
+     * Sets the center of the screen.  We need to adjust ourselves to match.
+     */
+    public function setAsCenter (boardX :Number, boardY :Number) :void
+    {
+        x = -(boardX*Codes.BG_PIXELS_PER_TILE);
+        y = -(boardY*Codes.BG_PIXELS_PER_TILE);
     }
 }
 }

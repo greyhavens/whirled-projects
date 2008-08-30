@@ -112,15 +112,20 @@ public class GameManager
             _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
         }
 
-        AppContext.board = _boardCtrl = new BoardController(_gameCtrl);
+        AppContext.board = _boardCtrl = createBoardController();
         _boardCtrl.init(boardLoaded);
+    }
+
+    protected function createBoardController () :BoardController
+    {
+        return new BoardController(_gameCtrl);
     }
 
     public function boardLoaded () :void
     {
         _shots = [];
         _shotViews = [];
-        _boardCtrl.createSprite(AppContext.gameView.boardLayer, _ships, AppContext.gameView.status);
+        _boardCtrl.setupBoard(_ships);
 
         // Set up ships for all ships already in the world.
         if (_gameCtrl.isConnected()) {
@@ -576,8 +581,7 @@ public class GameManager
     public function hitObs (
             obj :BoardObject, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        playSoundAt(_boardCtrl.hitObs(
-            obj, x, y, _ownShip != null && shooterId == _ownShip.shipId, damage), x, y);
+        _boardCtrl.hitObs(obj, x, y, _ownShip != null && shooterId == _ownShip.shipId, damage);
     }
 
     /**

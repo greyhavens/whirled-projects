@@ -10,9 +10,7 @@ import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.MovieClip;
-import flash.display.Sprite;
 import flash.geom.Point;
-import flash.media.Sound;
 import flash.utils.ByteArray;
 
 /**
@@ -23,8 +21,6 @@ public class BoardController
     /** Board size in tiles. */
     public var width :int;
     public var height :int;
-
-    public var powerupLayer :Sprite;
 
     /**
      * Constructs a brand new board.
@@ -59,7 +55,6 @@ public class BoardController
         _obstacles = null;
         _powerups = null;
         _mines = null;
-        _board = null;
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
                 setImmediate("obstacles", null);
@@ -133,17 +128,28 @@ public class BoardController
         _callback();
     }
 
-    public function createSprite (boardLayer :Sprite, ships :HashMap, status :StatusOverlay) :void
+    public function setupBoard (ships :HashMap) :void
     {
         _ships = ships;
-        _status = status;
-        _bg = new BgSprite();
-        _bg.setupGraphics(width, height);
-        boardLayer.addChild(_bg);
-        _board = new Sprite();
-        setupGraphics();
-        boardLayer.addChild(_board);
-        _explosions = new Array();
+
+        for (var ii :int = 0; ii < _obstacles.length; ii++) {
+            var obs :Obstacle = _obstacles[ii];
+            if (obs != null) {
+                obstacleAdded(obs, ii);
+            }
+        }
+
+        for (ii = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] != null) {
+                powerupAdded(_powerups[ii], ii);
+            }
+        }
+
+        for (ii = 0; ii < _mines.length; ii++) {
+            if (_mines[ii] != null) {
+                mineAdded(_mines[ii]);
+            }
+        }
     }
 
     public function elementChanged (event :ElementChangedEvent) :void
@@ -184,7 +190,7 @@ public class BoardController
     // from PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == "board" && (_board == null)) {
+        if (event.name == "board") {
             var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
             if (bytes != null) {
                 readBoard(bytes);
@@ -209,15 +215,9 @@ public class BoardController
         return null;
     }
 
-    /**
-     * Sets the center of the screen.  We need to adjust ourselves to match.
-     */
+    // @TSC - remove this from here
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        _board.x = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        _board.y = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
-        _bg.setAsCenter(boardX, boardY);
-        _status.updateRadar(_ships, _powerups, boardX, boardY);
     }
 
     /**
@@ -250,7 +250,7 @@ public class BoardController
         }
     }
 
-    public function addHealth (x :int, y :int) :void
+    public function addHealthPowerup (x :int, y :int) :void
     {
         for (var ii :int = 0; ii < _powerups.length; ii++) {
             if (_powerups[ii] == null) {
@@ -269,8 +269,6 @@ public class BoardController
 
     protected function powerupAdded (powerup :Powerup, index :int) :void
     {
-        powerupLayer.addChild(new PowerupView(powerup)); // TEMP
-        _status.addPowerup(index);
     }
 
     /**
@@ -287,16 +285,12 @@ public class BoardController
         var powerup :Powerup = _powerups[index];
         if (powerup != null) {
             _powerups[index] = null;
-            _status.removePowerup(index);
             powerup.destroyed();
         }
     }
 
     protected function obstacleAdded (obstacle :Obstacle, index :int) :void
     {
-        var view :ObstacleView = new ObstacleView(obstacle);
-        _obstacleViews[index] = view;
-        _board.addChild(view);
     }
 
     protected function obstacleRemoved (index :int) :void
@@ -307,8 +301,6 @@ public class BoardController
                 _obstacles[index] = null;
                 obs.explode();
             }
-
-            _obstacleViews[index] = null;
         }
     }
 
@@ -336,11 +328,12 @@ public class BoardController
         if (_gameCtrl.game.amInControl()) {
             setAtImmediate("mines", mine.writeTo(new ByteArray()), freeIndex);
         }
+
+        mineAdded(mine);
     }
 
     protected function mineAdded (mine :Mine) :void
     {
-        powerupLayer.addChild(new MineView(mine));
     }
 
     /**
@@ -481,7 +474,6 @@ public class BoardController
     public function getObjectIdx (oldX :Number, oldY :Number,
         newX :Number, newY :Number, rad :Number, array :Array) :int
     {
-
         /** The first one we've seen so far. */
         var bestTime :Number = 1.0;
         var bestHit :int = -1;
@@ -538,72 +530,24 @@ public class BoardController
         }
     }
 
-    public function explode (x :Number, y :Number, rot :int,
-        isSmall :Boolean, shipType :int) :void
+    public function explode (x :Number, y :Number, rot :int, isSmall :Boolean, shipType :int) :void
     {
-        var rX :Number = x * Codes.PIXELS_PER_TILE;
-        var rY :Number = y * Codes.PIXELS_PER_TILE;
-        // don't add small explosions that are off the screen
-        if (isSmall && (rX < -_board.x - EXP_OFF || rX > -_board.x + Codes.GAME_WIDTH + EXP_OFF ||
-                        rY < -_board.y - EXP_OFF || rY > -_board.y + Codes.GAME_HEIGHT + EXP_OFF)) {
-            return;
-        }
-        var exp :ExplosionView = ExplosionView.createExplosion(rX, rY, rot, isSmall, shipType);
-        _board.addChild(exp);
-        if (isSmall) {
-            if (_explosions.length == MAX_EXPLOSIONS) {
-                ExplosionView(_explosions.shift()).endExplode(null);
-            }
-            _explosions.push(exp);
-        }
         if (!isSmall && _gameCtrl.game.amInControl()) {
-            addHealth(x, y);
+            addHealthPowerup(x, y);
         }
     }
 
     public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
     {
-        var exp :ExplosionView = new ExplosionView(
-            x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, movie);
-        _board.addChild(exp);
     }
 
     public function hitObs (
-            obj :BoardObject, x :Number, y :Number, owner :Boolean, damage :Number) :Sound
+        obj :BoardObject, x :Number, y :Number, owner :Boolean, damage :Number) :void
     {
         explode(x, y, 0, true, 0);
         if (owner) {
             if (AppContext.game.gameState == Codes.IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName(), null, obj.index);
-            }
-        }
-
-        return obj.hitSound();
-    }
-
-
-    /**
-     * Draw the board.
-     */
-    public function setupGraphics () :void
-    {
-        _obstacleViews = new Array(_obstacles.length);
-        for (var ii :int = 0; ii < _obstacles.length; ii++) {
-            var obs :Obstacle = _obstacles[ii];
-            if (obs != null) {
-                obstacleAdded(obs, ii);
-            }
-        }
-
-        _board.addChild(powerupLayer = new Sprite());
-        for (ii = 0; ii < _powerups.length; ii++) {
-            if (_powerups[ii] != null) {
-                powerupAdded(_powerups[ii], ii);
-            }
-        }
-        for (ii = 0; ii < _mines.length; ii++) {
-            if (_mines[ii] != null) {
-                mineAdded(_mines[ii]);
             }
         }
     }
@@ -636,11 +580,6 @@ public class BoardController
 
     public function tick (time :int) :void
     {
-        for each (var obstacleView :ObstacleView in _obstacleViews) {
-            if (obstacleView != null) {
-                obstacleView.tick(time);
-            }
-        }
     }
 
     /**
@@ -742,9 +681,6 @@ public class BoardController
 
     protected var _callback :Function;
 
-    protected var _board :Sprite;
-    protected var _bg :BgSprite;
-
     /** Reference to the array of ships we know about. */
     protected var _ships :HashMap;
 
@@ -753,16 +689,9 @@ public class BoardController
 
     /** All the obstacles on the board. */
     protected var _obstacles :Array;
-    protected var _obstacleViews :Array;
 
     /** All the mines on the board. */
     protected var _mines :Array;
-
-    /** Reference to the status overlay. */
-    protected var _status :StatusOverlay;
-
-    /** All the explosions on the board. */
-    protected var _explosions :Array;
 
     protected static const log :Log = Log.getLog(BoardController);
 
@@ -770,10 +699,5 @@ public class BoardController
     protected static const MIN_TILES_PER_POWERUP :int = 250;
 
     protected static const MAX_MINES :int = 128;
-
-    /** The maximum number of explosions on the screen at once. */
-    protected static const MAX_EXPLOSIONS :int = 10;
-
-    protected static const EXP_OFF :int = 2 * Codes.PIXELS_PER_TILE;
 }
 }

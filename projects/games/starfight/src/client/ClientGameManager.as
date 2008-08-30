@@ -5,8 +5,6 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import client.GameView;
-
 public class ClientGameManager extends GameManager
 {
     public function ClientGameManager (mainSprite :Sprite)
@@ -34,6 +32,11 @@ public class ClientGameManager extends GameManager
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
         }
+    }
+
+    override protected function createBoardController () :BoardController
+    {
+        return new ClientBoardController(_gameCtrl);
     }
 
     protected function onMouseDown (...ignored) :void
