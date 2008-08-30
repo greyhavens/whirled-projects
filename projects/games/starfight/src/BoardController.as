@@ -37,7 +37,7 @@ public class BoardController
         _callback = callback;
 
         if (!_gameCtrl.isConnected()) {
-            create();
+            createBoard();
             return;
         }
 
@@ -46,7 +46,7 @@ public class BoardController
             boardBytes.position = 0;
             readBoard(boardBytes);
         } else if (_gameCtrl.game.amInControl()) {
-            create();
+            createBoard();
         }
     }
 
@@ -55,6 +55,7 @@ public class BoardController
         _obstacles = null;
         _powerups = null;
         _mines = null;
+        _boardCreated = false;
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
                 setImmediate("obstacles", null);
@@ -67,6 +68,10 @@ public class BoardController
 
     protected function readBoard (boardBytes :ByteArray) :void
     {
+        if (_boardCreated) {
+            return;
+        }
+
         readFrom(boardBytes);
         var obs :Array = (_gameCtrl.net.get("obstacles") as Array);
         _obstacles = new Array(obs.length);
@@ -79,6 +84,7 @@ public class BoardController
             _obstacles[ii] = Obstacle.readObstacle(ByteArray(obs[ii]));
             _obstacles[ii].index = ii;
         }
+
         var pups :Array = (_gameCtrl.net.get("powerup") as Array);
         _powerups = new Array(pups.length);
         for (ii = 0; ii < pups.length; ii++) {
@@ -89,6 +95,7 @@ public class BoardController
             pups[ii].position = 0;
             _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
         }
+
         var mines :Array = (_gameCtrl.net.get("mines") as Array);
         _mines = new Array(mines.length);
         for (ii = 0; ii < mines.length; ii++) {
@@ -100,11 +107,17 @@ public class BoardController
             _mines[ii] = Mine.readMine(ByteArray(mines[ii]));
             _mines[ii].index = ii;
         }
+
+        _boardCreated = true;
         _callback();
     }
 
-    public function create () :void
+    public function createBoard () :void
     {
+        if (_boardCreated) {
+            return;
+        }
+
         this.width = 100;
         this.height = 100;
 
@@ -125,6 +138,8 @@ public class BoardController
                 setImmediate("board", writeTo(new ByteArray()));
             });
         }
+
+        _boardCreated = true;
         _callback();
     }
 
@@ -190,7 +205,7 @@ public class BoardController
     // from PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == "board") {
+        if (event.name == "board" && !_boardCreated) {
             var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
             if (bytes != null) {
                 readBoard(bytes);
@@ -662,7 +677,7 @@ public class BoardController
     {
         if (_gameCtrl.game.amInControl() && gameState != Codes.POST_ROUND) {
             if (_gameCtrl.net.get("board") == null) {
-                create();
+                createBoard();
             }
         }
     }
@@ -680,6 +695,8 @@ public class BoardController
     protected var _gameCtrl :GameControl;
 
     protected var _callback :Function;
+
+    protected var _boardCreated :Boolean;
 
     /** Reference to the array of ships we know about. */
     protected var _ships :HashMap;
