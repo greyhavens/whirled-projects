@@ -196,7 +196,7 @@ public class StatusOverlay extends Sprite
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
                 var ship :Ship = Ship(value);
-                dot.visible = ship.isAlive();
+                dot.visible = ship.isAlive() && !ship.isOwnShip;
                 // TODO - move this somewhere else
                 if (dot.visible) {
                     var dotX :Number = ship.boardX * Codes.PIXELS_PER_TILE;
