@@ -8,7 +8,7 @@ import com.threerings.util.Log;
 import flash.geom.Point;
 import flash.utils.Dictionary;
 
-import ghostbusters.Codes;
+import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
 
 public class Ghost

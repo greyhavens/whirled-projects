@@ -10,7 +10,7 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.server.PlayerServerSubControl;
 
-import ghostbusters.Codes;
+import ghostbusters.data.Codes;
 
 import flash.utils.Dictionary;
 

@@ -10,7 +10,7 @@ import com.whirled.avrg.server.RoomServerSubControl;
 
 import flash.utils.Dictionary;
 
-import ghostbusters.Codes;
+import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
 
 public class Room

@@ -3,7 +3,7 @@
 
 package ghostbusters.server {
 
-import ghostbusters.Codes;
+import ghostbusters.data.Codes;
 import ghostbusters.server.Server;
 
 public class BasicBrain
