@@ -3,22 +3,21 @@
 
 package ghostbusters.server {
 
-import flash.utils.Dictionary;
-import flash.utils.setInterval;
-
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-
 import com.whirled.avrg.server.AVRServerGameControl;
 import com.whirled.avrg.server.PlayerServerSubControl;
 
-import ghostbusters.Codes;
+import flash.utils.Dictionary;
+import flash.utils.getTimer;
+import flash.utils.setInterval;
 
 public class Server
 {
+    public static const FRAMES_PER_SECOND :int = 30;
+
     public static var log :Log = Log.getLog(Server);
     public static var random :Random = new Random();
 
@@ -34,7 +33,9 @@ public class Server
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
 
-        setInterval(tick, 1000);
+        _startTime = getTimer();
+
+        setInterval(tick, 100);
     }
 
     public static function getRoom (roomId :int) :Room
@@ -54,10 +55,10 @@ public class Server
 
     protected function tick () :void
     {
-        _timer ++;
+        var frame :int = (getTimer() - _startTime) * (FRAMES_PER_SECOND) / 1000;
         for each (var room :Room in _rooms) {
             // TODO: we may want to only do this to rooms with players in them
-            room.tick(_timer);
+            room.tick(frame);
         }
     }
 
@@ -87,7 +88,7 @@ public class Server
         }
     }
 
-    protected var _timer :int = 0;
+    protected var _startTime :int = 0;
 
     protected static var _ctrl :AVRServerGameControl;
     protected static var _rooms :Dictionary = new Dictionary();

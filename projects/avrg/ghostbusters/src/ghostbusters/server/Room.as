@@ -3,17 +3,15 @@
 
 package ghostbusters.server {
 
-import flash.geom.Rectangle;
-import flash.utils.Dictionary;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-
 import com.whirled.avrg.server.RoomServerSubControl;
 
+import flash.utils.Dictionary;
+
 import ghostbusters.Codes;
-import ghostbusters.util.PlayerModel;
+import ghostbusters.data.GhostDefinition;
 
 public class Room
 {
@@ -23,6 +21,10 @@ public class Room
     {
         _ctrl = ctrl;
 
+        // no matter how the room shut down, we cold-start it in seek mode
+        _state = Codes.STATE_SEEKING;
+
+        // see if there's an undefeated (persistent) ghost here, else make a new one
         loadOrSpawnGhost();
     }
 
@@ -65,42 +67,6 @@ public class Room
         delete _players[player];
     }
 
-
-    // TODO: wire up to a message from the client
-    public function ghostFullyAppeared (roomId :int) :void
-    {
-        if (checkState(Codes.STATE_APPEARING)) {
-            setState(Codes.STATE_FIGHTING);
-        }            
-    }
-
-    // TODO: wire up to a message from the client
-    public function ghostFullyGone (roomId :int) :void
-    {
-        if (_ghost == null) {
-            log.warning("Null _ghost in ghostFullyGone()");
-            return;
-        }
-        if (checkState(Codes.STATE_GHOST_TRIUMPH, Codes.STATE_GHOST_DEFEAT)) {
-            if (_state == Codes.STATE_GHOST_TRIUMPH) {
-                // heal ghost
-                _ghost.heal();
-
-            } else {
-                // delete ghost
-                payout();
-                healTeam();
-                terminateGhost();
-            }
-
-            // whether the ghost died or the players wiped, clear accumulated fight stats
-            _stats = new Dictionary();
-
-            // and go back to seek state
-            setState(Codes.STATE_SEEKING);
-        }
-    }
-
     public function checkState (... expected) :Boolean
     {
         if (ArrayUtil.contains(expected, _state)) {
@@ -117,24 +83,37 @@ public class Room
         }
     }
 
-    public function tick (timer :int) :void
+    public function tick (frame :int) :void
     {
         switch(_state) {
         case Codes.STATE_SEEKING:
-            seekTick(timer);
+            seekTick(frame);
             break;
 
         case Codes.STATE_APPEARING:
-            // do nothing
+            if (frame >= _transitionFrame) {
+                if (_transitionFrame == 0) {
+                    log.warning(
+                        "In APPEAR without transitionFrame [id=" + roomId + "]");
+                }
+                ghostFullyAppeared();
+                _transitionFrame = 0;
+            }
             break;
 
         case Codes.STATE_FIGHTING:
-            fightTick(timer);
+            fightTick(frame);
             break;
 
         case Codes.STATE_GHOST_TRIUMPH:
         case Codes.STATE_GHOST_DEFEAT:
-            // do nothing
+            if (frame >= _transitionFrame) {
+                if (_transitionFrame == 0) {
+                    log.warning("In TRIUMPH/DEFEAT without transitionFrame [id=" + roomId + "]");
+                }
+                ghostFullyGone();
+                _transitionFrame = 0;
+            }
             break;
         }
     }
@@ -165,7 +144,7 @@ public class Room
                           Codes.PROP_PLAYER_CUR_HEALTH, health);
     }
 
-    protected function seekTick (timer :int) :void
+    protected function seekTick (frame :int) :void
     {
         if (_ghost == null) {
             // maybe a delay here?
@@ -176,24 +155,18 @@ public class Room
         // if the ghost has been entirely unveiled, switch to appear phase
         if (_ghost.zest == 0) {
             setState(Codes.STATE_APPEARING);
+            _transitionFrame = frame + _ghost.definition.appearFrames;
             return;
         }
 
-        // TODO: we don't have access to the actual media dimensions --- what to use here?
-        var ghostBounds :Rectangle = new Rectangle(0, 0, 0, 0);
-
-        // TODO: we don't have access to the room's fucking bounds either! fuck!
-        var roomBounds :Rectangle = new Rectangle(0, 0, 500, 500);
-
-        var x :int = Server.random.nextNumber() *
-            (roomBounds.width - ghostBounds.width) - ghostBounds.left;
-        var y :int = Server.random.nextNumber() *
-            (roomBounds.height - ghostBounds.height) - ghostBounds.top;
+        // tell the ghost to go to a completely random logical position in ([0, 1], [0, 1])
+        var x :int = Server.random.nextNumber();
+        var y :int = Server.random.nextNumber();
 
         _ghost.setPosition(x, y);
     }
 
-    protected function fightTick (timer :int) :void
+    protected function fightTick (frame :int) :void
     {
         if (_ghost == null) {
             log.debug("fightTick() with null _ghost");
@@ -202,23 +175,56 @@ public class Room
         }
 
         // if the ghost died, leave fight state and show the ghost's death throes
-        // TODO: if the animation-based state transition back to SEEK fails, we should
-        // TODO: have a backup timeout using the ticker
         if (_ghost.isDead()) {
             setState(Codes.STATE_GHOST_DEFEAT);
+            // schedule a transition
+            _transitionFrame = frame + _ghost.definition.defeatFrames;
             return;
         }
 
         // if the players all died, leave fight state and play the ghost's triumph scene
-        // TODO: if the animation-based state transition back to SEEK fails, we should
-        // TODO: have a backup timeout using the ticker
         if (isEverybodyDead()) {
             setState(Codes.STATE_GHOST_TRIUMPH);
+            // schedule a transition
+            _transitionFrame = frame + _ghost.definition.triumphFrames;
             return;
         }
 
         // if ghost is alive and at least one player is still up, just do an normal AI tick
-        _ghost.tick(timer);
+        _ghost.tick(frame);
+    }
+
+    protected function ghostFullyAppeared () :void
+    {
+        if (checkState(Codes.STATE_APPEARING)) {
+            setState(Codes.STATE_FIGHTING);
+        }
+    }
+
+    protected function ghostFullyGone () :void
+    {
+        if (_ghost == null) {
+            log.warning("Null _ghost in ghostFullyGone()");
+            return;
+        }
+        if (checkState(Codes.STATE_GHOST_TRIUMPH, Codes.STATE_GHOST_DEFEAT)) {
+            if (_state == Codes.STATE_GHOST_TRIUMPH) {
+                // heal ghost
+                _ghost.heal();
+
+            } else {
+                // delete ghost
+                payout();
+                healTeam();
+                terminateGhost();
+            }
+
+            // whether the ghost died or the players wiped, clear accumulated fight stats
+            _stats = new Dictionary();
+
+            // and go back to seek state
+            setState(Codes.STATE_SEEKING);
+        }
     }
 
     protected function doHealPlayers (totHeal :int) :void
@@ -242,7 +248,7 @@ public class Room
             player.heal(heal);
         }
     }
-    
+
     // The current payout factor for a player is linearly proportional to how many minigame
     // points that player scored relative to the points scored by the whole team. A solo kill
     // against a ghost the player's own level yields a factor of 0.5. Killing a higher level
@@ -312,8 +318,7 @@ public class Room
             var roomRandom :Random = new Random(this.roomId);
 
             // the ghost id/model is currently completely random; this will change
-            var ghosts :Array = [ "pinchy", "duchess", "widow", "demon" ];
-            var names :Array = [ "Mr. Pinchy", "The Duchess", "The Widow", "Soul Crusher" ];
+            var ghosts :Array = GhostDefinition.getGhostIds();
             var ix :int = Server.random.nextInt(ghosts.length);
 
             // the ghost's level base is (currently) completely determined by the room
@@ -325,7 +330,7 @@ public class Room
             // the actual level is the base plus a genuinely random tweak of 0, 1 or 2
             var level :int = levelBase + Server.random.nextInt(3);
 
-            data = Ghost.resetGhost(ghosts[ix], names[ix], level);
+            data = Ghost.resetGhost(ghosts[ix], level);
             _ctrl.props.set(Codes.DICT_GHOST, data);
         }
 
@@ -381,9 +386,11 @@ public class Room
     protected var _ctrl :RoomServerSubControl;
 
     protected var _state :String;
-    protected var _players :Dictionary;
+    protected var _players :Dictionary = new Dictionary();
 
     protected var _ghost :Ghost;
+
+    protected var _transitionFrame :int = 0;
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
     protected var _stats :Dictionary = new Dictionary();

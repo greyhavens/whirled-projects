@@ -3,19 +3,23 @@
 
 package ghostbusters.server {
 
+import com.threerings.util.Log;
+
 import flash.geom.Point;
 import flash.utils.Dictionary;
 
 import ghostbusters.Codes;
+import ghostbusters.data.GhostDefinition;
 
 public class Ghost
 {
-    public static function resetGhost (id :String, name :String, level :int) :Dictionary
+    public static var log :Log = Log.getLog(Room);
+
+    public static function resetGhost (id :String, level :int) :Dictionary
     {
         var data :Dictionary = new Dictionary();
-
         data[Codes.PROP_GHOST_ID] = id;
-        data[Codes.PROP_GHOST_NAME] = name;
+        data[Codes.PROP_GHOST_NAME] = buildName(id);
         data[Codes.PROP_GHOST_LEVEL] = level;
 
         // TODO: in time, zest should depend on level
@@ -35,6 +39,9 @@ public class Ghost
 
         // TODO: if we're really going to configure through dictionary, we need sanity checks
         _id = data[Codes.PROP_GHOST_ID];
+
+        _def = GhostDefinition.getDefinition(_id);
+
         _name = data[Codes.PROP_GHOST_NAME];
         _level = data[Codes.PROP_GHOST_LEVEL];
 
@@ -43,7 +50,16 @@ public class Ghost
 
         _health = data[Codes.PROP_GHOST_CUR_HEALTH];
         _maxHealth = data[Codes.PROP_GHOST_MAX_HEALTH];
+    }
 
+    public function get id () :String
+    {
+        return _id;
+    }
+
+    public function get definition () :GhostDefinition
+    {
+        return _def;
     }
 
     public function get zest () :int
@@ -118,9 +134,29 @@ public class Ghost
         return int(n * (1 + (f-1)*Server.random.nextNumber()));
     }
 
+    // TODO: build more interesting names
+    protected static function buildName (ghostId :String) :String
+    {
+        switch(ghostId) {
+            case GhostDefinition.GHOST_DEMON:
+                return "Soul Crusher";
+            case GhostDefinition.GHOST_DUCHESS:
+                return "The Duchess";
+            case GhostDefinition.GHOST_PINCHER:
+                return "Mr. Pinchy";
+            case GhostDefinition.GHOST_WIDOW:
+                return "The Widow";
+        }
+        log.warning("Name of unknown ghost requested [id=" + ghostId + "]");
+        return "Unknown Ghost";
+    }
+
     protected var _room :Room;
 
     protected var _id :String;
+
+    protected var _def :GhostDefinition;
+
     protected var _name :String;
     protected var _level :int;
 
