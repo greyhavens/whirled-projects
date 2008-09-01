@@ -1,6 +1,0 @@
-Ghost           Appear          Defeat      Triumph
----------------------------------------------------
-Demon           108             220         55
-Duchess         391             114         37
-Pinchy          72              145         80
-Widow           391             114         37
