@@ -2,7 +2,6 @@ package {
 
 import flash.events.Event;
 import flash.events.TimerEvent;
-import flash.media.Sound;
 import flash.utils.Timer;
 
 public class RhinoShipType extends ShipType

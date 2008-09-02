@@ -545,14 +545,6 @@ public class GameManager
     }
 
     /**
-     * Custom explosion.
-     */
-    public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
-    {
-        _boardCtrl.explodeCustom(x, y, movie);
-    }
-
-    /**
      * Tell our overlay about our state.
      */
     public function forceStatusUpdate () :void

@@ -1,10 +1,5 @@
 package {
 
-import flash.display.MovieClip;
-import flash.media.Sound;
-import flash.media.SoundTransform;
-import flash.events.Event;
-
 public class SaucerShipType extends ShipType
 {
     public static const SECONDARY_HIT_POWER :Number = 0.3;

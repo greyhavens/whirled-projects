@@ -9,7 +9,7 @@ public class LaserShotView extends ShotView
         super(laserShot);
 
         var rsrc :ShipTypeResources = ClientConstants.getShipResources(laserShot.shipType);
-        var shotMovie :MovieClip = MovieClip(new (rsrc.shotAnim)());
+        var shotMovie :MovieClip = MovieClip(new rsrc.shotAnim());
         shotMovie.gotoAndStop(1);
         shotMovie.scaleY = Codes.PIXELS_PER_TILE * laserShot.length / shotMovie.height;
         addChild(shotMovie);

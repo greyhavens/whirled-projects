@@ -1,11 +1,5 @@
 package {
 
-import flash.display.MovieClip;
-import flash.media.Sound;
-import flash.media.SoundTransform;
-
-import flash.events.Event;
-
 public class WaspShipType extends ShipType
 {
     public static const SECONDARY_HIT_POWER :Number = 0.4;

@@ -552,10 +552,6 @@ public class BoardController
         }
     }
 
-    public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
-    {
-    }
-
     public function hitObs (
         obj :BoardObject, x :Number, y :Number, owner :Boolean, damage :Number) :void
     {

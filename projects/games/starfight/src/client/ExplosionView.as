@@ -2,7 +2,6 @@ package client {
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
 
 public class ExplosionView extends Sprite
@@ -15,8 +14,8 @@ public class ExplosionView extends Sprite
             explosion = new ExplosionView(
                 x, y, MovieClip(new (Resources.getClass("small_explosion"))()));
         } else {
-            var explodeMovie :MovieClip
-                MovieClip(new (ClientConstants.getShipResources(shipType).explodeAnim)());
+            var rsrc :ShipTypeResources = ClientConstants.getShipResources(shipType);
+            var explodeMovie :MovieClip = MovieClip(new rsrc.explodeAnim());
             explodeMovie.x = explodeMovie.width/2;
             explodeMovie.y = -explodeMovie.height/2;
             explodeMovie.scaleX = Codes.getShipType(shipType).size + 0.1;

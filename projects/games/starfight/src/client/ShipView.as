@@ -14,7 +14,6 @@ public class ShipView extends Sprite
     public function ShipView (ship :Ship)
     {
         _ship = ship;
-        _shipResources = ClientConstants.getShipResources(_ship.shipTypeId);
 
         _shipParent = new Sprite();
         addChild(_shipParent);
@@ -22,8 +21,9 @@ public class ShipView extends Sprite
         var shipType :ShipType = _ship.shipType;
 
         // Set up our animation.
-        _shipMovie = MovieClip(new _shipResources.shipAnim());
-        _shieldMovie = MovieClip(new _shipResources.shieldAnim());
+        var shipResources :ShipTypeResources = ClientConstants.getShipResources(_ship.shipTypeId);
+        _shipMovie = MovieClip(new shipResources.shipAnim());
+        _shieldMovie = MovieClip(new shipResources.shieldAnim());
 
         setAnimMode(IDLE, true);
         _shipMovie.x = _shipMovie.width/2;
@@ -62,7 +62,7 @@ public class ShipView extends Sprite
             _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
             _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
             _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
-            _engineSound = new SoundLoop(_shipResources.engineSound);
+            _engineSound = new SoundLoop(shipResources.engineSound);
         }
     }
 
@@ -217,8 +217,6 @@ public class ShipView extends Sprite
     }
 
     protected var _ship :Ship;
-
-    protected var _shipResources :ShipTypeResources;
 
     /** The sprite with our ship graphics in it. */
     protected var _shipParent :Sprite;

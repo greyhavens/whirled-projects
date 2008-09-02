@@ -115,10 +115,8 @@ public class ClientBoardController extends BoardController
         }
     }
 
-    override public function explodeCustom (x :Number, y :Number, movie :MovieClip) :void
+    public function playCustomExplosion (x :Number, y :Number, movie :MovieClip) :void
     {
-        super.explodeCustom(x, y, movie);
-
         var exp :ExplosionView = new ExplosionView(
             x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, movie);
         _explosionLayer.addChild(exp);

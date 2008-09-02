@@ -12,6 +12,7 @@ public class ClientGameManager extends GameManager
         super(mainSprite);
         _mainSprite = mainSprite;
         AppContext.mainSprite = mainSprite;
+        ClientContext.game = this;
 
         _gameView = new GameView();
         AppContext.gameView = _gameView;
@@ -44,6 +45,12 @@ public class ClientGameManager extends GameManager
                 return;
             }
         }
+    }
+
+    override public function setGameObject () :void
+    {
+        super.setGameObject();
+        ClientContext.board = ClientBoardController(AppContext.board);
     }
 
     override protected function createBoardController () :BoardController

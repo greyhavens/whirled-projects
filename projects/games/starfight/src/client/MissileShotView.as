@@ -13,7 +13,7 @@ public class MissileShotView extends ShotView
             shotMovie = MovieClip(new missile.shotClip());
         } else {
             var rsrc :ShipTypeResources = ClientConstants.getShipResources(missile.shipType);
-            shotMovie = MovieClip(new (rsrc.shotAnim)());
+            shotMovie = MovieClip(new rsrc.shotAnim());
         }
 
         shotMovie.gotoAndStop(1);
@@ -29,7 +29,7 @@ public class MissileShotView extends ShotView
     override protected function handleHit (e :ShotHitEvent) :void
     {
         if (_explodeMovie != null) {
-            AppContext.game.explodeCustom(e.x, e.y, _explodeMovie);
+            ClientContext.board.playCustomExplosion(e.x, e.y, _explodeMovie);
         }
     }
 
