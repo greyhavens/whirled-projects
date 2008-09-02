@@ -52,10 +52,9 @@ public class Ghost extends Sprite
         _pather.newTarget(p, d / 200, true);
     }
 
-    public function appear (callback :Function) :int
+    public function appear () :int
     {
         return handler.gotoScene(GamePanel.ST_GHOST_APPEAR, function () :String {
-            callback();
             // stay in FIGHT state for the brief period until the entire SeekPanel disappears
             return GamePanel.ST_GHOST_FIGHT;
         });

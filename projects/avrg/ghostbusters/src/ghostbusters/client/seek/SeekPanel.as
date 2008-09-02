@@ -213,10 +213,8 @@ public class SeekPanel extends FrameSprite
             lanternOff(lantern);
         }
         _lanterns = null;
-        _ghost.appear(function () :void {
-            // TODO: send a message (ugh)? keep a per-ghost timeout on the server?
-            // Game.server.ghostFullyAppeared();
-        });
+        _ghost.appear();
+
         var x :int = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.newTarget(new Point(x, 100));
 

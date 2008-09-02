@@ -131,6 +131,7 @@ public class Room
 
         if (damageDone > 0) {
             damageGhost(damageDone);
+            _ctrl.sendMessage(Codes.SMSG_GHOST_ATTACKED, player.playerId);
         }
         if (healingDone > 0) {
             doHealPlayers(healingDone);

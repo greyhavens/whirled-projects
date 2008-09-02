@@ -60,11 +60,11 @@ public class FightPanel extends FrameSprite
         _ghost.x = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
         _ghost.y = 100;
 
-        // TODO: is listening on room sufficient?
+        // listen for notification messages from the server on the room control
         Game.control.room.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
-        Game.control.room.addEventListener(
+        Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
         _ghost.fighting();
