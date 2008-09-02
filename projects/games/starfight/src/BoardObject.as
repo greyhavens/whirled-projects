@@ -26,17 +26,17 @@ public class BoardObject extends EventDispatcher
         return false;
     }
 
-    public function arrayName () :String
+    public function get arrayName () :String
     {
         return "object";
     }
 
-    public function hitSound () :Sound
+    public function get hitSound () :Sound
     {
         return null;
     }
 
-    public function getRad () :Number
+    public function get radius () :Number
     {
         return 0.8;
     }

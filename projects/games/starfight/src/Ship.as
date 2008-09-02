@@ -1,14 +1,16 @@
 package {
 
+import client.Resources;
+import client.ShipChooser;
+import client.ObstacleView;
+
 import flash.events.TimerEvent;
 import flash.geom.Point;
+import flash.media.Sound;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 import mx.effects.easing.Linear;
-
-import client.ShipChooser;
-import client.Resources;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
@@ -203,7 +205,8 @@ public class Ship
             var dy :Number = endY - startY;
 
             if (!_moveSound) {
-                AppContext.game.playSoundAt(obstacle.collisionSound(), startX + dx * coll.time,
+                var sound :Sound = ObstacleView.getCollisionSound(obstacle.type);
+                AppContext.game.playSoundAt(sound, startX + dx * coll.time,
                     startY + dy * coll.time);
                 _moveSound = true;
             }

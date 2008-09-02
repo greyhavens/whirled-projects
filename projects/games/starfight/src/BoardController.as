@@ -504,7 +504,7 @@ public class BoardController
             }
             var bX :Number = bo.bX + 0.5;
             var bY :Number = bo.bY + 0.5;
-            var r :Number = rad + bo.getRad(); // Our radius...
+            var r :Number = rad + bo.radius; // Our radius...
             // We approximate a board object as a circle for this...
             var a :Number = dx*dx + dy*dy;
             var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
@@ -562,7 +562,7 @@ public class BoardController
         explode(x, y, 0, true, 0);
         if (owner) {
             if (AppContext.game.gameState == Codes.IN_ROUND && obj.damage(damage)) {
-                setAtImmediate(obj.arrayName(), null, obj.index);
+                setAtImmediate(obj.arrayName, null, obj.index);
             }
         }
     }

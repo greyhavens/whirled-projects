@@ -13,13 +13,14 @@ public class SelectionShipView extends Sprite
     {
         _shipType = shipType;
         var theShipType :ShipType = Codes.getShipType(shipType);
+        var shipResources :ShipTypeResources = ClientConstants.getShipResources(shipType);
 
         var shipMovieParent :Sprite = new Sprite();
         shipMovieParent.scaleX = theShipType.size + 0.1;
         shipMovieParent.scaleY = theShipType.size + 0.1;
         addChild(shipMovieParent);
 
-        _shipMovie = MovieClip(new theShipType.shipAnim());
+        _shipMovie = MovieClip(new shipResources.shipAnim());
         _shipMovie.x = -_shipMovie.width * 0.5;
         _shipMovie.y = -_shipMovie.height * 0.5;
         shipMovieParent.addChild(_shipMovie);

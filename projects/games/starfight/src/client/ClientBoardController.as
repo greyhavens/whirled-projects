@@ -128,7 +128,9 @@ public class ClientBoardController extends BoardController
         damage :Number) :void
     {
         super.hitObs(obj, x, y, owner, damage);
-        AppContext.game.playSoundAt(obj.hitSound(), x, y);
+        if (obj.hitSound != null) {
+            AppContext.game.playSoundAt(obj.hitSound, x, y);
+        }
     }
 
     protected var _boardSprite :Sprite;

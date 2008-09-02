@@ -1,16 +1,11 @@
 package {
 
-import flash.media.Sound;
-import flash.media.SoundTransform;
-
 import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
 public class RaptorShipType extends ShipType
 {
-    public var secondarySound :Sound;
-
     public function RaptorShipType () :void
     {
         name = "Raptor";
@@ -61,33 +56,19 @@ public class RaptorShipType extends ShipType
         ship.addPowerup(Powerup.SHIELDS);
         ship.shieldPower = 100.0;
         var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
-        shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void
-            {
+        shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
                 shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
                 ship.removePowerup(Powerup.SHIELDS);
                 ship.shieldPower = 0.0;
-            });
+        });
         shieldTimer.start();
-        AppContext.game.playSoundAt(secondarySound, ship.boardX, ship.boardY);
+        // TODO
+        //AppContext.game.playSoundAt(secondarySound, ship.boardX, ship.boardY);
         return true;
     }
 
     override public function secondaryShot (val :Array) :void
     {
     }
-
-    override protected function swfAsset () :Class
-    {
-        return SHIP;
-    }
-
-    override protected function successHandler () :void
-    {
-        super.successHandler();
-        secondarySound = Sound(new (getLoadedClass("shield.wav"))());
-    }
-
-    [Embed(source="../rsrc/ships/raptor.swf", mimeType="application/octet-stream")]
-    protected static const SHIP :Class;
 }
 }

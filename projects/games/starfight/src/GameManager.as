@@ -36,8 +36,6 @@ public class GameManager
         _gameCtrl = new GameControl(mainObject);
         AppContext.gameCtrl = _gameCtrl;
         AppContext.game = this;
-
-        Resources.init(assetLoaded);
     }
 
     public function firstStart () :Boolean
@@ -77,16 +75,6 @@ public class GameManager
         AppContext.gameView.setup();
 
         _lastTickTime = getTimer();
-    }
-
-    public function assetLoaded (success :Boolean) :void {
-        if (success) {
-            _assets++;
-            if (_assets <= Codes.SHIP_TYPE_CLASSES.length) {
-                Codes.getShipType(_assets - 1).loadAssets(assetLoaded);
-                return;
-            }
-        }
     }
 
     // from Game

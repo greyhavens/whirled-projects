@@ -1,10 +1,7 @@
 package {
 
 import flash.events.Event;
-import flash.media.Sound;
 import flash.utils.ByteArray;
-
-import client.Resources;
 
 /**
  * Represents something in the world that ships may interact with.
@@ -61,42 +58,9 @@ public class Obstacle extends BoardObject
         return health < 0;
     }
 
-    override public function arrayName () :String
+    override public function get arrayName () :String
     {
         return "obstacles";
-    }
-
-    override public function hitSound () :Sound
-    {
-        var sound :Sound;
-        switch (type) {
-        case ASTEROID_1:
-        case ASTEROID_2:
-            sound = Resources.getSound("asteroid_hit.wav");
-            break;
-        case JUNK:
-            sound = Resources.getSound("junk_hit.wav");
-            break;
-        case WALL:
-        default:
-            sound = Resources.getSound("metal_hit.wav");
-            break;
-        }
-        return sound;
-    }
-
-    public function collisionSound () :Sound
-    {
-        switch (type) {
-        case ASTEROID_1:
-        case ASTEROID_2:
-            return Resources.getSound("collision_asteroid2.wav");
-        case JUNK:
-            return Resources.getSound("collision_junk.wav");
-        case WALL:
-        default:
-            return Resources.getSound("collision_metal3.wav");
-        }
     }
 
     override public function readFrom (bytes :ByteArray) :void
@@ -118,12 +82,5 @@ public class Obstacle extends BoardObject
     {
         dispatchEvent(new Event(EXPLODED));
     }
-
-    protected static const OBS_MOVIES :Array = [
-        "meteor1", "meteor2", "junk_metal"
-    ];
-    protected static const OBS_EXPLODE :Array = [
-        "asteroid_explosion", "asteroid_explosion", null, null
-    ];
 }
 }

@@ -14,26 +14,16 @@ public class ShipView extends Sprite
     public function ShipView (ship :Ship)
     {
         _ship = ship;
-        setupGraphics();
+        _shipResources = ClientConstants.getShipResources(_ship.shipTypeId);
 
-        if (_ship.isOwnShip) {
-            _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
-            _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
-            _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
-            _engineSound = new SoundLoop(_ship.shipType.engineSound);
-        }
-    }
-
-    protected function setupGraphics () :void
-    {
         _shipParent = new Sprite();
         addChild(_shipParent);
 
         var shipType :ShipType = _ship.shipType;
 
         // Set up our animation.
-        _shipMovie = MovieClip(new shipType.shipAnim());
-        _shieldMovie = MovieClip(new shipType.shieldAnim());
+        _shipMovie = MovieClip(new _shipResources.shipAnim());
+        _shieldMovie = MovieClip(new _shipResources.shieldAnim());
 
         setAnimMode(IDLE, true);
         _shipMovie.x = _shipMovie.width/2;
@@ -66,6 +56,13 @@ public class ShipView extends Sprite
             nameText.antiAliasType = AntiAliasType.ADVANCED;
             nameText.text = _ship.playerName;
             addChild(nameText);
+        }
+
+        if (_ship.isOwnShip) {
+            _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
+            _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
+            _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
+            _engineSound = new SoundLoop(_shipResources.engineSound);
         }
     }
 
@@ -220,6 +217,8 @@ public class ShipView extends Sprite
     }
 
     protected var _ship :Ship;
+
+    protected var _shipResources :ShipTypeResources;
 
     /** The sprite with our ship graphics in it. */
     protected var _shipParent :Sprite;

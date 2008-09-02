@@ -12,8 +12,8 @@ public class MissileShotView extends ShotView
         if (missile.shotClip != null) {
             shotMovie = MovieClip(new missile.shotClip());
         } else {
-            var shipType :ShipType = Codes.getShipType(missile.shipType);
-            shotMovie = MovieClip(new (shipType.shotAnim)());
+            var rsrc :ShipTypeResources = ClientConstants.getShipResources(missile.shipType);
+            shotMovie = MovieClip(new (rsrc.shotAnim)());
         }
 
         shotMovie.gotoAndStop(1);

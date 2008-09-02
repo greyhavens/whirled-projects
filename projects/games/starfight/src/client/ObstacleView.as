@@ -6,9 +6,38 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Matrix;
+import flash.media.Sound;
 
 public class ObstacleView extends Sprite
 {
+    public static function getHitSound (type :int) :Sound
+    {
+        switch (type) {
+        case Obstacle.ASTEROID_1:
+        case Obstacle.ASTEROID_2:
+            return Resources.getSound("asteroid_hit.wav");
+        case Obstacle.JUNK:
+            return Resources.getSound("junk_hit.wav");
+        case Obstacle.WALL:
+        default:
+            return Resources.getSound("metal_hit.wav");
+        }
+    }
+
+    public static function getCollisionSound (type :int) :Sound
+    {
+        switch (type) {
+        case Obstacle.ASTEROID_1:
+        case Obstacle.ASTEROID_2:
+            return Resources.getSound("collision_asteroid2.wav");
+        case Obstacle.JUNK:
+            return Resources.getSound("collision_junk.wav");
+        case Obstacle.WALL:
+        default:
+            return Resources.getSound("collision_metal3.wav");
+        }
+    }
+
     public function ObstacleView (obstacle :Obstacle)
     {
         _obstacle = obstacle;

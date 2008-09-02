@@ -38,17 +38,17 @@ public class Mine extends BoardObject
         return health < 0;
     }
 
-    override public function arrayName () :String
+    override public function get arrayName () :String
     {
         return "mines";
     }
 
-    override public function hitSound () :Sound
+    override public function get hitSound () :Sound
     {
         return Resources.getSound("junk_hit.wav");
     }
 
-    override public function getRad () :Number
+    override public function get radius () :Number
     {
         return 2.5;
     }

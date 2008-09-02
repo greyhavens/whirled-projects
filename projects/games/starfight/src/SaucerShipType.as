@@ -10,9 +10,6 @@ public class SaucerShipType extends ShipType
     public static const SECONDARY_HIT_POWER :Number = 0.3;
     public static const SUPER_SHOT_COST :Number = 0.1;
 
-    public var mineFriendly :Class, mineEnemy :Class, mineExplode :Class;
-    public var mineSound :Sound, mineExplodeSound :Sound;
-
     public function SaucerShipType () :void
     {
         name = "Saucer";
@@ -58,8 +55,9 @@ public class SaucerShipType extends ShipType
         }
         var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
-        var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
-        AppContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
+        // TODO
+        //var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
+        //AppContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
 
         // no one in range so shoot straight
         if (ships.length <= 1) {
@@ -109,28 +107,11 @@ public class SaucerShipType extends ShipType
     override public function secondaryShot (val :Array) :void
     {
         AppContext.game.addMine(val[0], val[2], val[3], val[1], val[4]);
-        AppContext.game.playSoundAt(mineSound, val[2], val[3]);
-    }
-
-    override protected function swfAsset () :Class
-    {
-        return SHIP;
-    }
-
-    override protected function successHandler () :void
-    {
-        super.successHandler();
-        mineFriendly = getLoadedClass("mine_friendly");
-        mineEnemy = getLoadedClass("mine_enemy");
-        mineExplode = getLoadedClass("mine_explode");
-        mineSound = Sound(new (getLoadedClass("mine_lay.wav"))());
-        mineExplodeSound = Sound(new (getLoadedClass("mine_explode.wav"))());
+        // TODO
+        //AppContext.game.playSoundAt(mineSound, val[2], val[3]);
     }
 
     protected static var RANGE :Number = 7;
     protected static var TARGET :Number = 12;
-
-    [Embed(source="../rsrc/ships/xyru.swf", mimeType="application/octet-stream")]
-    protected static var SHIP :Class;
 }
 }

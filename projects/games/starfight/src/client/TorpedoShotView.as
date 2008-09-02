@@ -8,8 +8,8 @@ public class TorpedoShotView extends ShotView
     {
         super(torpedo);
 
-        var shipType :ShipType = Codes.getShipType(torpedo.shipType);
-        var shotMovie :MovieClip = MovieClip(new (shipType.secondaryAnim)());
+        var rsrc :ShipTypeResources = ClientConstants.getShipResources(torpedo.shipType);
+        var shotMovie :MovieClip = MovieClip(new (rsrc.secondaryAnim)());
         addChild(shotMovie);
 
         rotation = Codes.RADS_TO_DEGS*Math.atan2(torpedo.xVel, -torpedo.yVel);
@@ -17,7 +17,7 @@ public class TorpedoShotView extends ShotView
 
     override protected function handleHit (e :ShotHitEvent) :void
     {
-        var wasp :WaspShipType = Codes.SHIP_TYPE_WASP;
+        var wasp :WaspShipTypeResources = ClientConstants.SHIP_RSRC_WASP;
         AppContext.game.explodeCustom(e.x, e.y, MovieClip(new (wasp.secondaryExplode)()));
         AppContext.game.playSoundAt(wasp.secondaryExplodeSound, x, y);
     }

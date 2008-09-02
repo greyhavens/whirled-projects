@@ -11,7 +11,7 @@ public class MineView extends Sprite
         _mine = mine;
         _mine.addEventListener(Mine.EXPLODED, onExploded);
 
-        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
+        var saucer :SaucerShipTypeResources = ClientConstants.SHIP_RSRC_SAUCER
         addChild(MovieClip(new (mine.active ? saucer.mineEnemy : saucer.mineFriendly)()));
 
         x = (_mine.bX + 0.5) * Codes.PIXELS_PER_TILE;
@@ -22,7 +22,7 @@ public class MineView extends Sprite
     {
         removeChildAt(0);
 
-        var saucer :SaucerShipType = Codes.SHIP_TYPE_SAUCER;
+        var saucer :SaucerShipTypeResources = ClientConstants.SHIP_RSRC_SAUCER
 
         var thisMineView :MineView = this;
         var expMovie :MovieClip = MovieClip(new (saucer.mineExplode)());

@@ -25,12 +25,24 @@ public class ClientGameManager extends GameManager
             );
         }
 
+        Resources.init(assetLoaded);
+
         // start the game when the player clicks the mouse
         mainSprite.addEventListener(MouseEvent.CLICK, onMouseDown);
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+        }
+    }
+
+    protected function assetLoaded (success :Boolean) :void {
+        if (success) {
+            _assets++;
+            if (_assets <= Codes.SHIP_TYPE_CLASSES.length) {
+                ClientConstants.getShipResources(_assets - 1).loadAssets(assetLoaded);
+                return;
+            }
         }
     }
 

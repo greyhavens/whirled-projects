@@ -7,9 +7,6 @@ import flash.utils.Timer;
 
 public class RhinoShipType extends ShipType
 {
-    public var warpSound :Sound;
-    public var superShotAnim :Class, superShotExplode :Class;
-
     public function RhinoShipType () :void
     {
         name = "Rhino";
@@ -49,8 +46,9 @@ public class RhinoShipType extends ShipType
 
         if (val[2] == Shot.SUPER) {
             damage *= 1.5;
-            shotClip = superShotAnim;
-            explodeClip = superShotExplode;
+            // TODO
+            shotClip = null;//superShotAnim;
+            explodeClip = null;//superShotExplode;
         }
 
         AppContext.game.createMissileShot(val[3] + leftOffsetX, val[4] + leftOffsetY,
@@ -103,7 +101,8 @@ public class RhinoShipType extends ShipType
 
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
-            AppContext.game.playSoundAt(warpSound, endX, endY);
+            // TODO
+            //AppContext.game.playSoundAt(warpSound, endX, endY);
 
             var timer :Timer = new Timer(WARP_IN_TIME, 1);
             timer.addEventListener(TimerEvent.TIMER, endWarp);
@@ -115,22 +114,6 @@ public class RhinoShipType extends ShipType
         timer.addEventListener(TimerEvent.TIMER, warp);
         timer.start();
     }
-
-    override protected function swfAsset () :Class
-    {
-        return SHIP;
-    }
-
-    override protected function successHandler () :void
-    {
-        super.successHandler();
-        warpSound = Sound(new (getLoadedClass("warp.wav"))());
-        superShotAnim = getLoadedClass("missile");
-        superShotExplode = getLoadedClass("missile_explosion");
-    }
-
-    [Embed(source="../rsrc/ships/rhino.swf", mimeType="application/octet-stream")]
-    protected static const SHIP :Class;
 
     protected static const JUMP :int = 15;
 

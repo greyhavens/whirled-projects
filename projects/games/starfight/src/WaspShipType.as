@@ -11,10 +11,6 @@ public class WaspShipType extends ShipType
     public static const SECONDARY_HIT_POWER :Number = 0.4;
     public static const SECONDARY_SHOT_RANGE :Number = 3.0;
 
-    public var secondaryExplode :Class;
-    public var secondarySound :Sound;
-    public var secondaryExplodeSound :Sound;
-
     public function WaspShipType () :void
     {
         name = "Wasp";
@@ -89,25 +85,9 @@ public class WaspShipType extends ShipType
     {
         AppContext.game.createTorpedoShot(val[2], val[3], val[4], val[5], val[0],
             SECONDARY_HIT_POWER, secondaryShotLife, val[1]);
-        AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
+        // TODO
+        //AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
     }
-
-    override protected function swfAsset () :Class
-    {
-        return SHIP;
-    }
-
-    override protected function successHandler () :void
-    {
-        super.successHandler();
-        secondaryAnim = getLoadedClass("torpedo");
-        secondaryExplode = getLoadedClass("torpedo_explosion");
-        secondarySound = Sound(new (getLoadedClass("torpedo_shot.wav"))());
-        secondaryExplodeSound = Sound(new (getLoadedClass("torpedo_explode.wav"))());
-    }
-
-    [Embed(source="../rsrc/ships/wasp.swf", mimeType="application/octet-stream")]
-    protected static const SHIP :Class;
 
     protected static const SPREAD :Number = 0.1;
 }
