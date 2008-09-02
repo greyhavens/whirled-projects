@@ -31,9 +31,7 @@
 <sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/whirledlib.swc" sourcepath="/export/whirled/src/as" useDefaultLinkType="false"/>
 </sourceAttachmentPath>
 </compiler>
-<applications>
-<application path="Ghosthunters.as"/>
-</applications>
+<applications/>
 <modules/>
 <buildCSSFiles/>
 </actionScriptProperties>
