@@ -4,13 +4,13 @@ import flash.display.MovieClip;
 
 public class MissileShotView extends ShotView
 {
-    public function MissileShotView (missile :MissileShot)
+    public function MissileShotView (missile :MissileShot, shotClip :Class, explodeClip :Class)
     {
         super(missile);
 
         var shotMovie :MovieClip;
-        if (missile.shotClip != null) {
-            shotMovie = MovieClip(new missile.shotClip());
+        if (shotClip != null) {
+            shotMovie = MovieClip(new shotClip());
         } else {
             var rsrc :ShipTypeResources = ClientConstants.getShipResources(missile.shipType);
             shotMovie = MovieClip(new rsrc.shotAnim());
@@ -21,8 +21,8 @@ public class MissileShotView extends ShotView
 
         rotation = Codes.RADS_TO_DEGS * Math.atan2(missile.xVel, -missile.yVel);
 
-        if (missile.explodeClip != null) {
-            _explodeMovie = MovieClip(new missile.explodeClip());
+        if (explodeClip != null) {
+            _explodeMovie = MovieClip(new explodeClip());
         }
     }
 

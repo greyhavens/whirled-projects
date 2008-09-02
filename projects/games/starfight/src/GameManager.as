@@ -13,7 +13,6 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
-import flash.display.MovieClip;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
@@ -93,7 +92,6 @@ public class GameManager
                 gameState = int(_gameCtrl.net.get("gameState"));
                 _stateTime = int(_gameCtrl.net.get("stateTime"));
             }
-            updateRoundStatus();
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
             _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
@@ -112,7 +110,6 @@ public class GameManager
     public function boardLoaded () :void
     {
         _shots = [];
-        _shotViews = [];
         _boardCtrl.setupBoard(_ships);
 
         // Set up ships for all ships already in the world.
@@ -157,7 +154,7 @@ public class GameManager
 
         addShip(myId, _ownShip);
 
-        _boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        //_boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
 
         // Add ourselves to the ship array.
         if (_gameCtrl.isConnected()) {
@@ -215,7 +212,7 @@ public class GameManager
                 shipId, x, y, _ownShip == null || shipId != _ownShip.shipId, damage));
     }
 
-    public function propertyChanged (event :PropertyChangedEvent) :void
+    protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (myId == -1 || _assets < Codes.SHIP_TYPE_CLASSES.length) {
             return;
@@ -257,7 +254,6 @@ public class GameManager
             } else if (gameState == Codes.POST_ROUND) {
                 endRound();
             }
-            updateRoundStatus();
 
         } else if (name == "stateTime") {
             _stateTime = int(_gameCtrl.net.get("stateTime"));
@@ -270,32 +266,19 @@ public class GameManager
         AppContext.gameView.status.addShip(id);
         _population++;
         maybeStartRound();
-        var testShip :Ship = getShip(id);
-
-        var shipView :ShipView = new ShipView(ship);
-        _shipViews.put(id, shipView);
-        AppContext.gameView.shipLayer.addChild(shipView);
-
-        if (ship == _ownShip) {
-            _ownShipView = shipView;
-        }
     }
 
-    public function removeShip (id :int) :void
+    public function removeShip (id :int) :Ship
     {
         var remShip :Ship = _ships.remove(id);
         if (remShip != null) {
             _gameCtrl.local.feedback(remShip.playerName + " left the game.");
-            AppContext.gameView.status.removeShip(id);
             _population--;
         }
 
-        var view :ShipView = _shipViews.remove(id);
-        if (view != null) {
-            AppContext.gameView.shipLayer.removeChild(view);
-        }
-
         _boardCtrl.shipKilled(id);
+
+        return remShip;
     }
 
     public function getShip (id :int) :Ship
@@ -446,11 +429,9 @@ public class GameManager
     public function createLaserShot (x :Number, y :Number, angle :Number, length :Number,
             shipId :int, damage :Number, ttl :Number, shipType :int, tShipId :int) :LaserShot
     {
-        var shot :LaserShot =
-            new LaserShot(x, y, angle, length, shipId, damage, ttl, shipType, tShipId);
-        var view :LaserShotView = new LaserShotView(shot);
+        var shot :LaserShot = new LaserShot(x, y, angle, length, shipId, damage, ttl, shipType,
+            tShipId);
         addShot(shot);
-        addShotView(view);
 
         return shot;
     }
@@ -459,11 +440,8 @@ public class GameManager
         shipId :int, damage :Number, ttl :Number, shipType :int,
         shotClip :Class = null, explodeClip :Class = null) :MissileShot
     {
-        var shot :MissileShot =
-            new MissileShot(x, y, vel, angle, shipId, damage, ttl, shipType, shotClip, explodeClip);
-        var view :MissileShotView = new MissileShotView(shot);
+        var shot :MissileShot = new MissileShot(x, y, vel, angle, shipId, damage, ttl, shipType);
         addShot(shot);
-        addShotView(view);
 
         return shot;
     }
@@ -473,9 +451,8 @@ public class GameManager
     {
         var shot :TorpedoShot =
             new TorpedoShot(x, y, vel, angle, shipId, damage, ttl, shipType);
-        var view :TorpedoShotView = new TorpedoShotView(shot);
+
         addShot(shot);
-        addShotView(view);
 
         return shot;
     }
@@ -485,19 +462,9 @@ public class GameManager
         _shots.push(shot);
     }
 
-    protected function addShotView (shotView :ShotView) :void
+    protected function removeShot (index :int) :void
     {
-        _shotViews.push(shotView);
-        if (_ownShip != null) {
-            shotView.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-        } else {
-            shotView.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
-        }
-        if (shotView is LaserShotView) {
-            AppContext.gameView.subShotLayer.addChild(shotView);
-        } else {
-            AppContext.gameView.shotLayer.addChild(shotView);
-        }
+        _shots.splice(index, 1);
     }
 
     /**
@@ -588,23 +555,6 @@ public class GameManager
     }
 
     /**
-     * Updates the round status display.
-     */
-     public function updateRoundStatus () :void
-     {
-        if (gameState == Codes.PRE_ROUND) {
-            AppContext.gameView.status.updateRoundText("Waiting for players...");
-        } else if (gameState == Codes.POST_ROUND) {
-            AppContext.gameView.status.updateRoundText("Round over...");
-        } else {
-            var time :int = Math.max(0, _stateTime);
-            var seconds :int = time % 60;
-            var minutes :int = time / 60;
-            AppContext.gameView.status.updateRoundText("" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
-        }
-     }
-
-    /**
      * The game has started - do our initial startup.
      */
     protected function handleGameStarted (event :StateChangedEvent) :void
@@ -615,7 +565,6 @@ public class GameManager
         }
         _ships = new HashMap();
         _ownShip = null;
-        _ownShipView = null;
         setupBoard();
         _boardCtrl.init(boardLoaded);
         log.info("Game started");
@@ -747,20 +696,11 @@ public class GameManager
             ownY = _ownShip.boardY;
         }
 
-        // update ship drawstates
-        for each (var shipView :ShipView in _shipViews.values()) {
-            if (shipView != null) {
-                shipView.updateDisplayState(ownX, ownY);
-            }
-        }
-
         // collide ownShip with crap on the board
         if (_ownShip != null) {
             _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 
-        // Recenter the board on our ship.
-        _boardCtrl.setAsCenter(ownX, ownY);
         _boardCtrl.tick(time);
         forceStatusUpdate();
 
@@ -775,24 +715,10 @@ public class GameManager
             }
         }
 
-        for each (var shotView :ShotView in _shotViews) {
-            if (shotView != null) {
-                shotView.setPosRelTo(ownX, ownY);
-            }
-        }
-
         // Remove any that were done.
         for each (shot in completed) {
-            var index :int = _shots.indexOf(shot);
-            _shots.splice(index, 1);
-
-            shotView = _shotViews[index];
-            _shotViews.splice(index, 1);
-            shotView.parent.removeChild(shotView);
+            removeShot(_shots.indexOf(shot));
         }
-
-        // update our round display
-        updateRoundStatus();
 
         // Every few frames, broadcast our status to everyone else.
         _updateCount += time;
@@ -809,6 +735,7 @@ public class GameManager
             });
             _otherScores = [];
         }
+
         _lastTickTime = now;
     }
 
@@ -830,15 +757,12 @@ public class GameManager
 
     /** Our local ship. */
     protected var _ownShip :Ship;
-    protected var _ownShipView :ShipView;
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
-    protected var _shipViews :HashMap = new HashMap();
 
     /** Live shots. */
     protected var _shots :Array = []; // Array<Shot>
-    protected var _shotViews :Array = [];
 
     /** The board with all its obstacles. */
     protected var _boardCtrl :BoardController;

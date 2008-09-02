@@ -8,20 +8,13 @@ public class MissileShot extends Shot
     public var xVel :Number;
     public var yVel :Number;
 
-    // @TSC: remove post-refactor
-    public var shotClip :Class;
-    public var explodeClip :Class;
-
     public function MissileShot (x :Number, y :Number, vel :Number, angle :Number,
-            shipId :int, damage :Number, ttl :Number, shipType :int,
-            shotClip :Class = null, explodeClip :Class = null) :void
+            shipId :int, damage :Number, ttl :Number, shipType :int) :void
     {
         super(x, y, shipId, damage, ttl, shipType);
 
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
-        this.shotClip = shotClip;
-        this.explodeClip = explodeClip;
     }
 
     /**

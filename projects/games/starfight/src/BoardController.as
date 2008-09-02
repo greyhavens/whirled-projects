@@ -230,11 +230,6 @@ public class BoardController
         return null;
     }
 
-    // @TSC - remove this from here
-    public function setAsCenter (boardX :Number, boardY :Number) :void
-    {
-    }
-
     /**
      * Adds a new random powerup to the board.
      */

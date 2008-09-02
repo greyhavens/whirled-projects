@@ -48,10 +48,8 @@ public class ClientBoardController extends BoardController
         }
     }
 
-    override public function setAsCenter (boardX :Number, boardY :Number) :void
+    public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        super.setAsCenter(boardX, boardY);
-
         _boardSprite.x = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
         _boardSprite.y = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
