@@ -7,8 +7,8 @@ import flash.events.Event;
 
 public class SaucerShipType extends ShipType
 {
-    public var secondaryHitPower :Number = 0.3;
-    public var superShotCost :Number = 0.1;
+    public static const SECONDARY_HIT_POWER :Number = 0.3;
+    public static const SUPER_SHOT_COST :Number = 0.1;
 
     public var mineFriendly :Class, mineEnemy :Class, mineExplode :Class;
     public var mineSound :Sound, mineExplodeSound :Sound;
@@ -47,7 +47,7 @@ public class SaucerShipType extends ShipType
 
     override public function getPrimaryShotCost (ship :Ship) :Number
     {
-        return (ship.hasPowerup(Powerup.SPREAD) ? superShotCost : primaryShotCost);
+        return (ship.hasPowerup(Powerup.SPREAD) ? SUPER_SHOT_COST : primaryShotCost);
     }
 
     override public function primaryShot (val :Array) :void
@@ -100,7 +100,7 @@ public class SaucerShipType extends ShipType
         args[1] = ship.shipTypeId;
         args[2] = Math.round(ship.boardX);
         args[3] = Math.round(ship.boardY);
-        args[4] = secondaryHitPower;
+        args[4] = SECONDARY_HIT_POWER;
 
         AppContext.game.sendMessage("secondary", args);
         return true;

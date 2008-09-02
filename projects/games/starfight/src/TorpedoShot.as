@@ -42,7 +42,7 @@ public class TorpedoShot extends Shot {
         var wasp :WaspShipType = Codes.SHIP_TYPE_WASP;
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, wasp.secondaryShotRange, shipId, 2);
+                boardY + yVel*time, WaspShipType.SECONDARY_SHOT_RANGE, shipId, 2);
 
         if (coll == null) {
             coll = board.getCollision(boardX, boardY, boardX + xVel*time,

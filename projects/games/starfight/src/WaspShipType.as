@@ -8,8 +8,9 @@ import flash.events.Event;
 
 public class WaspShipType extends ShipType
 {
-    public var secondaryHitPower :Number = 0.4;
-    public var secondaryShotRange :Number = 3.0;
+    public static const SECONDARY_HIT_POWER :Number = 0.4;
+    public static const SECONDARY_SHOT_RANGE :Number = 3.0;
+
     public var secondaryExplode :Class;
     public var secondarySound :Sound;
     public var secondaryExplodeSound :Sound;
@@ -87,7 +88,7 @@ public class WaspShipType extends ShipType
     override public function secondaryShot (val :Array) :void
     {
         AppContext.game.createTorpedoShot(val[2], val[3], val[4], val[5], val[0],
-            secondaryHitPower, secondaryShotLife, val[1]);
+            SECONDARY_HIT_POWER, secondaryShotLife, val[1]);
         AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
     }
 
@@ -108,6 +109,6 @@ public class WaspShipType extends ShipType
     [Embed(source="../rsrc/ships/wasp.swf", mimeType="application/octet-stream")]
     protected static const SHIP :Class;
 
-    protected static var SPREAD :Number = 0.1;
+    protected static const SPREAD :Number = 0.1;
 }
 }
