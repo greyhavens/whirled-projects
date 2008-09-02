@@ -243,18 +243,12 @@ public class FightPanel extends FrameSprite
         // cancel minigame
         endFight();
 
-        // TODO: REPLACE WITH GHOST-SPECIFIC TIMING
-//        _ghost.die(function () :void {
-//            Game.server.ghostFullyGone();
-//        });
+        _ghost.die();
     }
 
     protected function handleGhostTrimph () :void
     {
-        // TODO: REPLACE WITH GHOST-SPECIFIC TIMING
-//        _ghost.triumph(function () :void {
-//            Game.server.ghostFullyGone();
-//        });
+        _ghost.triumph();
     }
 
     protected function showGhostDamage () :void

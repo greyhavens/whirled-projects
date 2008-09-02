@@ -93,14 +93,14 @@ public class Ghost extends Sprite
         handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
     }
 
-    public function die (callback :Function) :void
+    public function die (callback :Function = null) :void
     {
         Game.log.debug("Ghost dying [_next=" + _next + "]");
         _callback = callback;
         _next = ST_DIE;
     }
 
-    public function triumph (callback :Function) :void
+    public function triumph (callback :Function = null) :void
     {
         Game.log.debug("Ghost triumphant [_next=" + _next + "]");
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
