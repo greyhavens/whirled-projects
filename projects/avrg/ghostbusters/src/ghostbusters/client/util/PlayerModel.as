@@ -45,17 +45,17 @@ public class PlayerModel
     public static function isDead (playerId :int) :Boolean
     {
         var data :Dictionary = playerData(playerId);
-        return data != null && data[Codes.PROP_PLAYER_CUR_HEALTH] == 0;
+        return data != null && data[Codes.IX_PLAYER_CUR_HEALTH] == 0;
     }
 
     public static function getHealth (playerId :int) :int
     {
-        return Math.max(0, int(playerData(playerId)[Codes.PROP_PLAYER_CUR_HEALTH]));
+        return Math.max(0, int(playerData(playerId)[Codes.IX_PLAYER_CUR_HEALTH]));
     }
 
     public static function getMaxHealth (playerId :int) :int
     {
-        return int(playerData(playerId)[Codes.PROP_PLAYER_MAX_HEALTH]);
+        return int(playerData(playerId)[Codes.IX_PLAYER_MAX_HEALTH]);
     }
 
     protected static function playerData (playerId :int) :Dictionary

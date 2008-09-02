@@ -207,17 +207,16 @@ public class FightPanel extends FrameSprite
 
     protected function messageReceived (event: MessageReceivedEvent) :void
     {
-        // TODO: sort out precisely where MSG_MINIGAME_RESULT comes from and where it goes
-        if (event.name == Codes.MSG_MINIGAME_RESULT) {
+        if (event.name == Codes.SMSG_GHOST_ATTACKED) {
             var bits :Array = (event.value as Array);
             if (bits != null && bits[2] > 0) {
                 showGhostDamage();
             }
 
-        } else if (event.name == Codes.MSG_PLAYER_ATTACKED) {
+        } else if (event.name == Codes.SMSG_PLAYER_ATTACKED) {
             showGhostAttack(event.value as int);
 
-        } else if (event.name == Codes.MSG_PLAYER_DEATH) {
+        } else if (event.name == Codes.SMSG_PLAYER_DEATH) {
             showPlayerDeath(event.value as int);
         }
     }

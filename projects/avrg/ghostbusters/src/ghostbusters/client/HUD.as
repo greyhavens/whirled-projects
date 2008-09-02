@@ -148,8 +148,8 @@ public class HUD extends Sprite
     protected function elementChanged (evt :ElementChangedEvent) :void
     {
         if (evt.name == Codes.DICT_GHOST) {
-            if (evt.key == Codes.PROP_GHOST_CUR_ZEST || evt.key == Codes.PROP_GHOST_MAX_ZEST ||
-                evt.key == Codes.PROP_GHOST_CUR_HEALTH || evt.key == Codes.PROP_GHOST_MAX_HEALTH) {
+            if (evt.key == Codes.IX_GHOST_CUR_ZEST || evt.key == Codes.IX_GHOST_MAX_ZEST ||
+                evt.key == Codes.IX_GHOST_CUR_HEALTH || evt.key == Codes.IX_GHOST_MAX_HEALTH) {
                 updateGhostHealth();
             }
             return;

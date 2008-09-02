@@ -88,7 +88,7 @@ public class SeekPanel extends FrameSprite
 
     protected function messageReceived (event: MessageReceivedEvent) :void
     {
-        if (event.name == Codes.MSG_GHOST_ZAP) {
+        if (event.name == Codes.SMSG_GHOST_ZAPPED) {
             _zapping = ZAP_FRAMES;
             Sound(new Content.LANTERN_GHOST_SCREECH()).play();
         }
@@ -100,6 +100,8 @@ public class SeekPanel extends FrameSprite
         if (_lanterns == null) {
             return;
         }
+
+        var bits :Array;
 
         if (evt.name == Codes.DICT_LANTERNS) {
             var playerId :int = evt.key;
@@ -114,11 +116,20 @@ public class SeekPanel extends FrameSprite
                 playerLanternOff(playerId);
 
             } else {
-                var bits :Array = (evt.newValue as Array);
+                bits = (evt.newValue as Array);
                 if (bits != null) {
                     // someone turned theirs on or moved it
                     updateLantern(
                         playerId, Game.control.local.roomToStage(new Point(bits[0], bits[1])));
+                }
+            }
+
+        } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
+            bits = (evt.newValue as Array);
+            if (bits != null) {
+                var pos :Point = Game.control.local.roomToStage(new Point(bits[0], bits[1]));
+                if (pos != null) {
+                    _ghost.newTarget(this.globalToLocal(pos));
                 }
             }
         }
@@ -135,15 +146,6 @@ public class SeekPanel extends FrameSprite
         if (evt.name == Codes.PROP_STATE) {
             if (evt.newValue == Codes.STATE_APPEARING) {
                 appearGhost();
-            }
-
-        } else if (evt.name == Codes.PROP_GHOST_POS) {
-            var bits :Array = (evt.newValue as Array);
-            if (bits != null) {
-                var pos :Point = Game.control.local.roomToStage(new Point(bits[0], bits[1]));
-                if (pos != null) {
-                    _ghost.newTarget(this.globalToLocal(pos));
-                }
             }
         }
     }
@@ -262,7 +264,7 @@ public class SeekPanel extends FrameSprite
     {
         pos = Game.control.local.stageToRoom(pos);
         if (pos != null) {
-            Game.control.agent.sendMessage(Codes.MSG_LANTERN_POS, [ pos.x, pos.y ]);
+            Game.control.agent.sendMessage(Codes.CMSG_LANTERN_POS, [ pos.x, pos.y ]);
         }
     }
 

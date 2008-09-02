@@ -276,7 +276,7 @@ public class GamePanel extends Sprite
     {
         var playerId :int = PlayerModel.parseProperty(Codes.DICT_PFX_PLAYER, evt.name);
 
-        if (playerId == Game.ourPlayerId && evt.key == Codes.PROP_PLAYER_CUR_HEALTH) {
+        if (playerId == Game.ourPlayerId && evt.key == Codes.IX_PLAYER_CUR_HEALTH) {
             checkPlayerHealth();
             updateAvatarState();
         }

@@ -18,16 +18,16 @@ public class Ghost
     public static function resetGhost (id :String, level :int) :Dictionary
     {
         var data :Dictionary = new Dictionary();
-        data[Codes.PROP_GHOST_ID] = id;
-        data[Codes.PROP_GHOST_NAME] = buildName(id);
-        data[Codes.PROP_GHOST_LEVEL] = level;
+        data[Codes.IX_GHOST_ID] = id;
+        data[Codes.IX_GHOST_NAME] = buildName(id);
+        data[Codes.IX_GHOST_LEVEL] = level;
 
         // TODO: in time, zest should depend on level
-        data[Codes.PROP_GHOST_CUR_ZEST] = data[Codes.PROP_GHOST_MAX_ZEST] =
+        data[Codes.IX_GHOST_CUR_ZEST] = data[Codes.IX_GHOST_MAX_ZEST] =
             150 + 100 * Server.random.nextNumber();
 
         // TODO: in time, max health should depend on level
-        data[Codes.PROP_GHOST_CUR_HEALTH] = data[Codes.PROP_GHOST_MAX_HEALTH] = 100;
+        data[Codes.IX_GHOST_CUR_HEALTH] = data[Codes.IX_GHOST_MAX_HEALTH] = 100;
 
         return data;
     }
@@ -38,18 +38,18 @@ public class Ghost
         _brain = new BasicBrain(room);
 
         // TODO: if we're really going to configure through dictionary, we need sanity checks
-        _id = data[Codes.PROP_GHOST_ID];
+        _id = data[Codes.IX_GHOST_ID];
 
         _def = GhostDefinition.getDefinition(_id);
 
-        _name = data[Codes.PROP_GHOST_NAME];
-        _level = data[Codes.PROP_GHOST_LEVEL];
+        _name = data[Codes.IX_GHOST_NAME];
+        _level = data[Codes.IX_GHOST_LEVEL];
 
-        _zest = data[Codes.PROP_GHOST_CUR_ZEST];
-        _maxZest = data[Codes.PROP_GHOST_MAX_ZEST];
+        _zest = data[Codes.IX_GHOST_CUR_ZEST];
+        _maxZest = data[Codes.IX_GHOST_MAX_ZEST];
 
-        _health = data[Codes.PROP_GHOST_CUR_HEALTH];
-        _maxHealth = data[Codes.PROP_GHOST_MAX_HEALTH];
+        _health = data[Codes.IX_GHOST_CUR_HEALTH];
+        _maxHealth = data[Codes.IX_GHOST_MAX_HEALTH];
     }
 
     public function get id () :String
@@ -81,21 +81,21 @@ public class Ghost
     {
         _zest = zest;
 
-        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_CUR_ZEST, zest);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, zest);
     }
 
     public function setHealth (health :int) :void
     {
         _health = health;
 
-        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_CUR_HEALTH, health);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_HEALTH, health);
     }
 
     public function setPosition (x :int, y :int) :void
     {
         _position = new Point(x, y);
 
-        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.PROP_GHOST_POS, [ x, y ]);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_POS, [ x, y ]);
     }
 
     public function zap () :void

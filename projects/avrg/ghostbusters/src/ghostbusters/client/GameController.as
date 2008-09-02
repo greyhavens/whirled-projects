@@ -102,7 +102,7 @@ public class GameController extends Controller
     public function handleGhostAttacked (result :MicrogameResult) :void
     {
         Game.control.agent.sendMessage(
-            Codes.MSG_MINIGAME_RESULT, [
+            Codes.CMSG_MINIGAME_RESULT, [
                 result.success == MicrogameResult.SUCCESS,
                 result.damageOutput,
                 result.healthOutput
@@ -115,13 +115,13 @@ public class GameController extends Controller
 
     public function handleZapGhost () :void
     {
-        Game.control.agent.sendMessage(Codes.MSG_GHOST_ZAP, Game.ourPlayerId);
+        Game.control.agent.sendMessage(Codes.CMSG_GHOST_ZAP, Game.ourPlayerId);
     }
 
     public function handleRevive () :void
     {
         if (PlayerModel.isDead(Game.ourPlayerId) && Game.state != Codes.STATE_FIGHTING) {
-            Game.control.agent.sendMessage(Codes.MSG_PLAYER_REVIVE);
+            Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
         }
     }
 }

@@ -1,7 +1,6 @@
 //
 // $Id$
 //
-// TODO: A dead player should not change state back to default/fight automatically.
 // TODO: Do something better when the players win and when they lose
 
 package ghostbusters.client {
@@ -25,7 +24,6 @@ import ghostbusters.client.util.GhostModel;
 import ghostbusters.client.util.PlayerModel;
 import ghostbusters.data.Codes;
 
-[SWF(width="700", height="500")]
 public class Game extends Sprite
 {
     public static const DEBUG :Boolean = false;
@@ -46,14 +44,14 @@ public class Game extends Sprite
 
     public static var random :Random;
 
-    public function Game ()
+    public function Game (control :AVRGameControl)
     {
-        random = new Random();
-
-        control = new AVRGameControl(this);
         if (!control.isConnected()) {
             return;
         }
+
+        random = new Random();
+
         ourPlayerId = control.player.getPlayerId();
 
         var gameController :GameController = new GameController();

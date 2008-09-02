@@ -29,8 +29,8 @@ public class Player
 
         var playerData :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_PFX_PLAYER));
         if (playerData != null) {
-            _health = playerData[Codes.PROP_PLAYER_CUR_HEALTH];
-            _maxHealth = playerData[Codes.PROP_PLAYER_MAX_HEALTH];
+            _health = playerData[Codes.IX_PLAYER_CUR_HEALTH];
+            _maxHealth = playerData[Codes.IX_PLAYER_MAX_HEALTH];
         } else {
             // a new player! TODO: make this depend on level
             _health = _maxHealth = 100;
@@ -91,7 +91,7 @@ public class Player
         var msg :String = event.name;
 
         // handle messages that make (at least some) sense even if we're between rooms
-        if (msg == Codes.MSG_PLAYER_REVIVE) {
+        if (msg == Codes.CMSG_PLAYER_REVIVE) {
             setHealth(_maxHealth);
         }
 
@@ -100,12 +100,12 @@ public class Player
             return;
         }
 
-        if (msg == Codes.MSG_GHOST_ZAP) {
+        if (msg == Codes.CMSG_GHOST_ZAP) {
             if (_room.checkState(Codes.STATE_SEEKING)) {
-                _room.ghostZap();
+                _room.ghostZap(this);
             }
 
-        } else if (msg == Codes.MSG_MINIGAME_RESULT) {
+        } else if (msg == Codes.CMSG_MINIGAME_RESULT) {
             if (_room.checkState(Codes.STATE_FIGHTING)) {
                 var bits :Array = event.value as Array;
                 if (bits != null) {
@@ -113,7 +113,7 @@ public class Player
                 }
             }
 
-        } else if (msg == Codes.MSG_LANTERN_POS) {
+        } else if (msg == Codes.CMSG_LANTERN_POS) {
             _room.updateLanternPos(_playerId, event.value as Array);
         }
     }
@@ -123,11 +123,11 @@ public class Player
         log.debug("Doing " + damage + " damage to a player with health " + _health);
 
         // let the clients in the room know of the attack
-        _room.ctrl.sendMessage(Codes.MSG_PLAYER_ATTACKED, _playerId);
+        _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
 
         if (damage >= health) {
             // the blow killed the player: let all the clients in the room know that too
-            _room.ctrl.sendMessage(Codes.MSG_PLAYER_DEATH, _playerId);
+            _room.ctrl.sendMessage(Codes.SMSG_PLAYER_DEATH, _playerId);
             setHealth(0);
             return true;
         }
@@ -147,7 +147,7 @@ public class Player
     {
         _health = Math.max(0, Math.min(health, _maxHealth));
 
-        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER, Codes.PROP_PLAYER_CUR_HEALTH, _health);
+        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER, Codes.IX_PLAYER_CUR_HEALTH, _health);
         _room.updatePlayerHealth(_playerId, _health);
     }
 

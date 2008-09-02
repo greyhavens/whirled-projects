@@ -76,9 +76,13 @@ public class Room
         return false;
     }
 
-    public function ghostZap () :void
+    public function ghostZap (who :Player) :void
     {
+        // TODO: perhaps check that the same player doesn't zap too repeatedly
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
+            // let the other people in the room know there was a successful zapping
+            _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
+            // then actually zap the ghost (reduce its zest)
             _ghost.zap();
         }
     }
@@ -141,7 +145,7 @@ public class Room
     internal function updatePlayerHealth (playerId :int, health :int) :void
     {
         _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + playerId,
-                          Codes.PROP_PLAYER_CUR_HEALTH, health);
+                          Codes.IX_PLAYER_CUR_HEALTH, health);
     }
 
     protected function seekTick (frame :int) :void
@@ -198,6 +202,9 @@ public class Room
     {
         if (checkState(Codes.STATE_APPEARING)) {
             setState(Codes.STATE_FIGHTING);
+
+            // when we start fighting, delete the lantern data
+            _ctrl.props.set(Codes.DICT_LANTERNS, null);
         }
     }
 
