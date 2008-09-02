@@ -14,8 +14,6 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
 import flash.events.TimerEvent;
-import flash.media.Sound;
-import flash.media.SoundTransform;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
@@ -140,7 +138,7 @@ public class GameManager
     /**
      * Choose the type of ship for ownship.
      */
-    public function chooseShip (typeIdx :int) :void
+    public function playerChoseShip (typeIdx :int) :void
     {
         var myName :String = "Guest";
 
@@ -153,8 +151,6 @@ public class GameManager
         _ownShip.setShipType(typeIdx);
 
         addShip(myId, _ownShip);
-
-        //_boardCtrl.setAsCenter(_ownShip.boardX, _ownShip.boardY);
 
         // Add ourselves to the ship array.
         if (_gameCtrl.isConnected()) {
@@ -381,7 +377,7 @@ public class GameManager
         _powerupTimer.start();
     }
 
-    public function messageReceived (event :MessageReceivedEvent) :void
+    protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
@@ -397,7 +393,7 @@ public class GameManager
             var ship :Ship = getShip(arr[4]);
             if (ship != null) {
                 _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipTypeId);
-                playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
+                //playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
                 ship.kill();
                 var sship :Ship = getShip(arr[3]);
                 if (sship != null) {
@@ -500,10 +496,6 @@ public class GameManager
     {
         _boardCtrl.explode(x, y, 0, true, 0);
 
-        var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
-            Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
-        playSoundAt(sound, x, y);
-
         if (ship == _ownShip) {
             ship.hit(shooterId, damage);
             AppContext.gameView.status.setPower(ship.power);
@@ -529,29 +521,6 @@ public class GameManager
             obj :BoardObject, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
         _boardCtrl.hitObs(obj, x, y, _ownShip != null && shooterId == _ownShip.shipId, damage);
-    }
-
-    /**
-     * Play a sound appropriately for the position it's at (which might be not
-     *  at all...)
-     */
-    public function playSoundAt (sound :Sound, x :Number, y :Number) :void
-    {
-        var vol :Number = 1.0;
-
-        // If we don't yet have an ownship, must be in the process of creating
-        //  it and thus ARE ownship.
-        if (_ownShip != null) {
-            var dx :Number = _ownShip.boardX - x;
-            var dy :Number = _ownShip.boardY - y;
-            var dist :Number = Math.sqrt(dx*dx + dy*dy);
-
-            vol = 1.0 - (dist/25.0);
-        }
-
-        if (vol > 0.0) {
-            sound.play(0, 0, new SoundTransform(vol));
-        }
     }
 
     /**

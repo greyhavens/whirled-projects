@@ -9,6 +9,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+import flash.media.Sound;
+import flash.media.SoundTransform;
 
 public class ClientGameManager extends GameManager
 {
@@ -42,6 +44,37 @@ public class ClientGameManager extends GameManager
         }
     }
 
+    override public function playerChoseShip (typeIdx :int) :void
+    {
+        super.playerChoseShip(typeIdx);
+        if (_ownShip != null) {
+            ClientContext.board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        }
+    }
+
+    /**
+     * Play a sound appropriately for the position it's at (which might be not
+     *  at all...)
+     */
+    public function playSoundAt (sound :Sound, x :Number, y :Number) :void
+    {
+        var vol :Number = 1.0;
+
+        // If we don't yet have an ownship, must be in the process of creating
+        //  it and thus ARE ownship.
+        if (_ownShip != null) {
+            var dx :Number = _ownShip.boardX - x;
+            var dy :Number = _ownShip.boardY - y;
+            var dist :Number = Math.sqrt(dx*dx + dy*dy);
+
+            vol = 1.0 - (dist/25.0);
+        }
+
+        if (vol > 0.0) {
+            sound.play(0, 0, new SoundTransform(vol));
+        }
+    }
+
     override protected function handleGameStarted (event :StateChangedEvent) :void
     {
         _ownShipView = null;
@@ -56,6 +89,16 @@ public class ClientGameManager extends GameManager
         if (event.name == "gameState") {
             updateStatusDisplay();
         }
+    }
+
+    override public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int,
+        damage :Number) :void
+    {
+        super.hitShip(ship, x, y, shooterId, damage);
+
+        var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
+            Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
+        playSoundAt(sound, x, y);
     }
 
     override public function tick (event :TimerEvent) :void

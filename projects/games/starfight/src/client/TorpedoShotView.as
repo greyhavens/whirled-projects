@@ -19,7 +19,7 @@ public class TorpedoShotView extends ShotView
     {
         var wasp :WaspShipTypeResources = ClientConstants.SHIP_RSRC_WASP;
         ClientContext.board.playCustomExplosion(e.x, e.y, MovieClip(new (wasp.secondaryExplode)()));
-        AppContext.game.playSoundAt(wasp.secondaryExplodeSound, x, y);
+        ClientContext.game.playSoundAt(wasp.secondaryExplodeSound, x, y);
     }
 }
 

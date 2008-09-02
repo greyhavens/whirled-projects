@@ -125,7 +125,7 @@ public class ClientBoardController extends BoardController
     {
         super.hitObs(obj, x, y, owner, damage);
         if (obj.hitSound != null) {
-            AppContext.game.playSoundAt(obj.hitSound, x, y);
+            ClientContext.game.playSoundAt(obj.hitSound, x, y);
         }
     }
 

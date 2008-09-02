@@ -108,7 +108,7 @@ public class ShipChooser extends Sprite
             selection.removeEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
         }
         if (_newGame) {
-            AppContext.game.chooseShip(typeIdx);
+            AppContext.game.playerChoseShip(typeIdx);
         } else {
             AppContext.game.changeShip(typeIdx);
         }
