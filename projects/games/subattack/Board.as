@@ -38,9 +38,10 @@ public class Board
         _explode = Sound(new EXPLODE_SOUND());
 
         var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
-        var playerCount :int = playerIds.length;
-        _width = int(DIMENSIONS[playerCount][0]);
-        _height = int(DIMENSIONS[playerCount][1]);
+        const playerCount :int = playerIds.length;
+        const dimIndex :int = Math.min(DIMENSIONS.length - 1, playerCount);
+        _width = int(DIMENSIONS[dimIndex][0]);
+        _height = int(DIMENSIONS[dimIndex][1]);
 
         var x :int;
         var y :int;
@@ -98,9 +99,9 @@ public class Board
 
         // create a submarine for each player
         var sub :Submarine;
-        for (ii = 0; ii < playerIds.length; ii++) {
+        for (ii = 0; ii < playerCount; ii++) {
             var playerId :int = (playerIds[ii] as int);
-            var p :Point = getStartingPosition(ii);
+            var p :Point = getStartingPosition(ii, playerCount);
 
             sub = new Submarine(
                 playerId, ii, _gameCtrl.game.getOccupantName(playerId), p.x, p.y, this, _gameCtrl);
@@ -630,35 +631,31 @@ public class Board
     /**
      * Return the starting x coordinate for the specified player.
      */
-    protected function getStartingPosition (playerIndex :int) :Point
+    protected function getStartingPosition (playerIndex :int, playerCount :int) :Point
     {
-        switch (playerIndex) {
-        default:
-            trace("Cannot yet handle " + (playerIndex + 1) + " player games!");
-            // fall through to 0
-        case 0:
-            return new Point(0, 0);
+        var perc :Number = playerIndex / playerCount; // floating point math, as always in AS
+        const maxW :int = _width - 1;
+        const maxH :int = _height - 1;
 
-        case 1:
-            return new Point(_width - 1, _height - 1);
+        if (perc < .25) {
+            // along the top wall
+            perc = perc * 4;
+            return new Point(Math.round(perc * maxW), 0);
 
-        case 2:
-            return new Point(0, _height - 1);
+        } else if (perc < .50) {
+            // along the right wall
+            perc = (perc - .25) * 4;
+            return new Point(maxW, Math.round(perc * maxH));
 
-        case 3:
-            return new Point(_width - 1, 0);
+        } else if (perc < .75) {
+            // along the bottom wall
+            perc = 1 - ((perc - .50) * 4);
+            return new Point(Math.round(perc * maxW), maxH);
 
-        case 4:
-            return new Point(0, _height / 2);
-
-        case 5:
-            return new Point(_width - 1, _height / 2);
-
-        case 6:
-            return new Point(_width / 2, 0);
-
-        case 7:
-            return new Point(_width / 2, _height - 1);
+        } else {
+            // along the left wall
+            perc = 1 - ((perc - .75) * 4);
+            return new Point(0, Math.round(perc * maxH));
         }
     }
 
@@ -705,7 +702,20 @@ public class Board
         [ 75, 40 ], // 5 player game
         [ 75, 50 ], // 6 player game
         [ 80, 54 ], // 7 player game
-        [ 80, 60 ]  // 8 players!
+        [ 80, 60 ], // 8 players!
+        [ 80, 65 ], // 9 players!
+        [ 80, 65 ], // 10 players!
+        [ 80, 70 ], // 10 players!
+        [ 80, 70 ], // 11 players!
+        [ 80, 75 ], // 12 players!
+        [ 80, 75 ], // 13 players!
+        [ 80, 80 ], // 14 players!
+        [ 80, 80 ], // 15 players!
+        [ 80, 80 ], // 16 players!
+        [ 80, 80 ], // 17 players!
+        [ 85, 80 ], // 18 players!
+        [ 85, 80 ], // 19 players!
+        [ 85, 85 ]  // 20 players and up!
     ];
 
     protected static const MAX_QUEUED_TICKS :int = 5;

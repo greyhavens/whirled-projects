@@ -20,7 +20,12 @@ import com.whirled.game.GameControl;
 public class Submarine extends BaseSprite
 {
     /** The amount we shift hue for each truck. */
-    public static const SHIFTS :Array = [ -136, 21, -106, 77, -38, 143, 0, 180 ];
+    public static const SHIFTS :Array = [
+        -136, 21, -106, 77, -38, 143, 0, 180,
+        // TODO: for now, the first 8 are unique, then things start repeating
+        -136, 21, -106, 77, -38, 143, 0, 180,
+        -136, 21, -106, 77, -38, 143, 0, 180,
+        -136, 21, -106, 77, -38, 143, 0, 180 ];
 
     public static const POINTS_PER_KILL :int = 200;
     public static const POINTS_PER_DEATH :int = -100;
