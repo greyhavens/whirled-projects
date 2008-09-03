@@ -1,7 +1,5 @@
 package {
 
-import client.*;
-
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.GameControl;
@@ -9,7 +7,6 @@ import com.whirled.game.StateChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.utils.ByteArray;
 

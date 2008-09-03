@@ -1,7 +1,6 @@
 package {
 
 import flash.events.EventDispatcher;
-import flash.media.Sound;
 import flash.utils.ByteArray;
 
 /**
@@ -31,7 +30,7 @@ public class BoardObject extends EventDispatcher
         return "object";
     }
 
-    public function get hitSound () :Sound
+    public function get hitSoundName () :String
     {
         return null;
     }

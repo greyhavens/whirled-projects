@@ -1,10 +1,7 @@
 package {
 
 import flash.events.Event;
-import flash.media.Sound;
 import flash.utils.ByteArray;
-
-import client.Resources;
 
 public class Mine extends BoardObject
 {
@@ -43,9 +40,9 @@ public class Mine extends BoardObject
         return "mines";
     }
 
-    override public function get hitSound () :Sound
+    override public function get hitSoundName () :String
     {
-        return Resources.getSound("junk_hit.wav");
+        return "junk_hit.wav";
     }
 
     override public function get radius () :Number

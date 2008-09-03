@@ -1,13 +1,11 @@
 package {
 
-import client.ObstacleView;
 import client.ShipChooser;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 import flash.geom.Point;
-import flash.media.Sound;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 

@@ -124,8 +124,11 @@ public class ClientBoardController extends BoardController
         damage :Number) :void
     {
         super.hitObs(obj, x, y, owner, damage);
-        if (obj.hitSound != null) {
-            ClientContext.game.playSoundAt(obj.hitSound, x, y);
+        if (obj.hitSoundName != null) {
+            var hitSound :Sound = Resources.getSound(obj.hitSoundName);
+            if (hitSound != null) {
+                ClientContext.game.playSoundAt(hitSound, x, y);
+            }
         }
     }
 

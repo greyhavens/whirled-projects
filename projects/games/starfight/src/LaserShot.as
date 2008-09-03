@@ -1,7 +1,5 @@
 package {
 
-import flash.display.MovieClip;
-
 public class LaserShot extends Shot
 {
     /** Position. */
