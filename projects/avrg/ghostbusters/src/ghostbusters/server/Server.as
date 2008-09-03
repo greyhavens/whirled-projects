@@ -30,6 +30,7 @@ public class Server extends ServerObject
 
     public function Server ()
     {
+        log.info("Ghosthunters Server initializing...");
         _ctrl = new AVRServerGameControl(this);
 
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);

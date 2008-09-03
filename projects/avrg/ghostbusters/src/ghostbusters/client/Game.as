@@ -44,13 +44,15 @@ public class Game extends Sprite
 
     public static var random :Random;
 
-    public function Game (control :AVRGameControl)
+    public function Game (ctrl :AVRGameControl)
     {
-        if (!control.isConnected()) {
-            return;
-        }
+        Game.control = ctrl;
 
         random = new Random();
+
+        if (!ctrl.isConnected()) {
+            return;
+        }
 
         ourPlayerId = control.player.getPlayerId();
 

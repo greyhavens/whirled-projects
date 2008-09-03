@@ -11,9 +11,9 @@ import com.whirled.avrg.AVRGameControl;
 import ghostbusters.client.Game;
 
 [SWF(width="700", height="500")]
-public class Client extends Sprite
+public class GH extends Sprite
 {
-    public function Client ()
+    public function GH ()
     {
         _game = new Game(new AVRGameControl(this));
         this.addChild(_game);
