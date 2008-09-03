@@ -1,7 +1,5 @@
 package {
 
-import client.*;
-
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.CoinsAwardedEvent;
@@ -69,8 +67,6 @@ public class GameManager
 
     public function setupBoard () :void
     {
-        AppContext.gameView.setup();
-
         _lastTickTime = getTimer();
     }
 
@@ -131,8 +127,6 @@ public class GameManager
         }
 
         startScreen();
-
-        AppContext.gameView.boardLoaded();
     }
 
     /**
@@ -259,7 +253,6 @@ public class GameManager
     public function addShip (id :int, ship :Ship) :void
     {
         _ships.put(id, ship);
-        AppContext.gameView.status.addShip(id);
         _population++;
         maybeStartRound();
     }
@@ -353,15 +346,8 @@ public class GameManager
                 scoreIds.push(parseInt(id));
                 scores.push(int(_gameCtrl.net.get("score:" + id)));
             }
-            _gameCtrl.game.endGameWithScores(
-                    scoreIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+            _gameCtrl.game.endGameWithScores(scoreIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
         }
-
-        var shipArr :Array = _ships.values();
-        shipArr.sort(function (shipA :Ship, shipB :Ship) :int {
-            return shipB.score - shipA.score;
-        });
-        AppContext.gameView.endRound(shipArr);
     }
 
     /**
@@ -481,19 +467,7 @@ public class GameManager
 
         if (ship == _ownShip) {
             ship.hit(shooterId, damage);
-            AppContext.gameView.status.setPower(ship.power);
             addScore(shooterId, Math.round(damage * 10));
-        }
-    }
-
-    /**
-     * Tell our overlay about our state.
-     */
-    public function forceStatusUpdate () :void
-    {
-        if (_ownShip != null) {
-            AppContext.gameView.status.setPower(_ownShip.power);
-            AppContext.gameView.status.setPowerups(_ownShip);
         }
     }
 
@@ -678,7 +652,6 @@ public class GameManager
         }
 
         _boardCtrl.tick(time);
-        forceStatusUpdate();
 
         // Update all live shots.
         var completed :Array = []; // Array<Shot>

@@ -89,7 +89,7 @@ public class GameView extends Sprite
         _center.addChild(new ShipChooser(true));
     }
 
-    public function endRound (winningShips :Array) :void
+    public function showRoundResults (winningShips :Array) :void
     {
         _endMovie = MovieClip(new (Resources.getClass("round_results"))());
         for (var ii :int = 0; ii < winningShips.length; ii++) {

@@ -1,5 +1,6 @@
 package {
 
+import client.ClientContext;
 import client.ShipChooser;
 
 import flash.events.Event;
@@ -313,7 +314,7 @@ public class Ship extends EventDispatcher
     {
         event.target.removeEventListener(TimerEvent.TIMER, newShip);
         if (AppContext.game.gameState != Codes.POST_ROUND) {
-            AppContext.mainSprite.addChild(new ShipChooser(false));
+            ClientContext.mainSprite.addChild(new ShipChooser(false));
         }
     }
 
@@ -343,7 +344,6 @@ public class Ship extends EventDispatcher
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
 
-        AppContext.game.forceStatusUpdate();
         spawn();
     }
 

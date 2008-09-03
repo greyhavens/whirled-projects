@@ -19,10 +19,10 @@ public class ClientBoardController extends BoardController
         // setup our sprites before calling super.setupBoard (which will call
         // powerupAdded, obstacleAdded, etc)
         _bg = new BgSprite(width, height);
-        AppContext.gameView.boardLayer.addChild(_bg);
+        ClientContext.gameView.boardLayer.addChild(_bg);
 
         _boardSprite = new Sprite();
-        AppContext.gameView.boardLayer.addChild(_boardSprite);
+        ClientContext.gameView.boardLayer.addChild(_boardSprite);
 
         _obstacleLayer = new Sprite();
         _powerupLayer = new Sprite();
@@ -53,20 +53,20 @@ public class ClientBoardController extends BoardController
         _boardSprite.x = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
         _boardSprite.y = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
-        AppContext.gameView.status.updateRadar(_ships, _powerups, boardX, boardY);
+        ClientContext.gameView.status.updateRadar(_ships, _powerups, boardX, boardY);
     }
 
     override protected function powerupAdded (powerup :Powerup, index :int) :void
     {
         super.powerupAdded(powerup, index);
         _powerupLayer.addChild(new PowerupView(powerup));
-        AppContext.gameView.status.addPowerup(index);
+        ClientContext.gameView.status.addPowerup(index);
     }
 
     override protected function powerupRemoved (index :int) :void
     {
         super.powerupRemoved(index);
-        AppContext.gameView.status.removePowerup(index);
+        ClientContext.gameView.status.removePowerup(index);
     }
 
     override protected function mineAdded (mine :Mine) :void

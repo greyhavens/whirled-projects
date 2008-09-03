@@ -17,13 +17,11 @@ public class ClientGameManager extends GameManager
     public function ClientGameManager (mainSprite :Sprite)
     {
         super(mainSprite);
-        _mainSprite = mainSprite;
-        AppContext.mainSprite = mainSprite;
+        ClientContext.mainSprite = mainSprite;
         ClientContext.game = this;
 
-        _gameView = new GameView();
-        AppContext.gameView = _gameView;
-        _mainSprite.addChild(_gameView);
+        ClientContext.gameView = new GameView();
+        mainSprite.addChild(ClientContext.gameView);
 
         if (_gameCtrl.isConnected()) {
             mainSprite.root.loaderInfo.addEventListener(Event.UNLOAD,
@@ -99,6 +97,10 @@ public class ClientGameManager extends GameManager
         var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
             Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
         playSoundAt(sound, x, y);
+
+        if (ship == _ownShip) {
+            ClientContext.gameView.status.setPower(ship.power);
+        }
     }
 
     override public function tick (event :TimerEvent) :void
@@ -139,14 +141,20 @@ public class ClientGameManager extends GameManager
      public function updateStatusDisplay () :void
      {
         if (gameState == Codes.PRE_ROUND) {
-            AppContext.gameView.status.updateRoundText("Waiting for players...");
+            ClientContext.gameView.status.updateRoundText("Waiting for players...");
         } else if (gameState == Codes.POST_ROUND) {
-            AppContext.gameView.status.updateRoundText("Round over...");
+            ClientContext.gameView.status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
             var seconds :int = time % 60;
             var minutes :int = time / 60;
-            AppContext.gameView.status.updateRoundText("" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
+            ClientContext.gameView.status.updateRoundText(
+                "" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
+
+            if (_ownShip != null) {
+                ClientContext.gameView.status.setPower(_ownShip.power);
+                ClientContext.gameView.status.setPowerups(_ownShip);
+            }
         }
      }
 
@@ -193,9 +201,9 @@ public class ClientGameManager extends GameManager
             shotView.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
         }
         if (shotView is LaserShotView) {
-            AppContext.gameView.subShotLayer.addChild(shotView);
+            ClientContext.gameView.subShotLayer.addChild(shotView);
         } else {
-            AppContext.gameView.shotLayer.addChild(shotView);
+            ClientContext.gameView.shotLayer.addChild(shotView);
         }
     }
 
@@ -219,11 +227,13 @@ public class ClientGameManager extends GameManager
     {
         var shipView :ShipView = new ShipView(ship);
         _shipViews.put(id, shipView);
-        AppContext.gameView.shipLayer.addChild(shipView);
+        ClientContext.gameView.shipLayer.addChild(shipView);
 
         if (ship == _ownShip) {
             _ownShipView = shipView;
         }
+
+        ClientContext.gameView.status.addShip(id);
 
         super.addShip(id, ship);
     }
@@ -232,11 +242,11 @@ public class ClientGameManager extends GameManager
     {
         var ship :Ship = super.removeShip(id);
         if (ship != null) {
-            AppContext.gameView.status.removeShip(id);
+            ClientContext.gameView.status.removeShip(id);
 
             var view :ShipView = _shipViews.remove(id);
             if (view != null) {
-                AppContext.gameView.shipLayer.removeChild(view);
+                ClientContext.gameView.shipLayer.removeChild(view);
             }
         }
 
@@ -251,6 +261,12 @@ public class ClientGameManager extends GameManager
                 return;
             }
         }
+    }
+
+    override public function setupBoard () :void
+    {
+        ClientContext.gameView.setup();
+        super.setupBoard();
     }
 
     override public function setGameObject () :void
@@ -270,12 +286,25 @@ public class ClientGameManager extends GameManager
     {
         _shotViews = [];
         super.boardLoaded();
+
+        ClientContext.gameView.boardLoaded();
+    }
+
+    override public function endRound () :void
+    {
+        super.endRound();
+
+        var shipArr :Array = _ships.values();
+        shipArr.sort(function (shipA :Ship, shipB :Ship) :int {
+            return shipB.score - shipA.score;
+        });
+        ClientContext.gameView.showRoundResults(shipArr);
     }
 
     protected function onMouseDown (...ignored) :void
     {
         if (firstStart()) {
-            _mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
+            ClientContext.mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
         }
     }
 
@@ -293,8 +322,6 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    protected var _mainSprite :Sprite;
-    protected var _gameView :GameView;
     protected var _shotViews :Array = [];
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
