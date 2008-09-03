@@ -1,5 +1,7 @@
 package client {
 
+import com.threerings.util.Log;
+
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -213,6 +215,7 @@ public class ShipView extends Sprite
     protected function setAnimMode (mode :int, force :Boolean) :void
     {
         if (force || _animMode != mode) {
+            //log.info("setAnimMode [ship=" + _ship.shipId + " animMode=" + ANIM_MODES[mode] + "]");
             _shipMovie.gotoAndPlay(ANIM_MODES[mode]);
             _animMode = mode;
         }
@@ -273,6 +276,8 @@ public class ShipView extends Sprite
     protected var _thrusterForwardSound :SoundLoop;
     protected var _thrusterReverseSound :SoundLoop;
     protected var _shieldSound :SoundLoop;
+
+    protected static const log :Log = Log.getLog(ShipView);
 
     /** "frames" within the actionscript for movement animations. */
     protected static const IDLE :int = 0;

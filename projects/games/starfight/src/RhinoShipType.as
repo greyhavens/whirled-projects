@@ -1,5 +1,7 @@
 package {
 
+import com.threerings.util.Log;
+
 import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
@@ -87,6 +89,7 @@ public class RhinoShipType extends ShipType
         // TODO - change this horribly unsafe function.
 
         var endWarp :Function = function (event:Event) :void {
+            //log.info("endWarp [ship=" + ship.shipId + "]");
             ship.state = Ship.STATE_DEFAULT;
         };
 
@@ -107,9 +110,9 @@ public class RhinoShipType extends ShipType
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
 
-            var timer :Timer = new Timer(WARP_IN_TIME, 1);
-            timer.addEventListener(TimerEvent.TIMER, endWarp);
-            timer.start();
+            var endTimer :Timer = new Timer(WARP_IN_TIME, 1);
+            endTimer.addEventListener(TimerEvent.TIMER, endWarp);
+            endTimer.start();
         };
 
         ship.state = Ship.STATE_WARP_BEGIN;
@@ -118,9 +121,11 @@ public class RhinoShipType extends ShipType
         timer.start();
     }
 
+    protected static const log :Log = Log.getLog(RhinoShipType);
+
     protected static const JUMP :int = 15;
 
-    protected static const WARP_OUT_TIME :Number = 0.5;
-    protected static const WARP_IN_TIME :Number = 0.5;
+    protected static const WARP_OUT_TIME :Number = 0.5 * 1000;
+    protected static const WARP_IN_TIME :Number = 0.5 * 1000;
 }
 }
