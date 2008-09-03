@@ -7,6 +7,23 @@ public class RhinoShipTypeResources extends ShipTypeResources
     public var warpSound :Sound;
     public var superShotAnim :Class, superShotExplode :Class;
 
+    override protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    {
+        playWarpSound(ship);
+    }
+
+    override protected function secondaryShotMessageSent (ship :Ship) :void
+    {
+        playWarpSound(ship);
+    }
+
+    protected function playWarpSound (ship :Ship) :void
+    {
+        if (ship != null) {
+            ClientContext.game.playSoundAt(warpSound, ship.boardX, ship.boardY);
+        }
+    }
+
     override protected function get swfAsset () :Class
     {
         return SHIP;

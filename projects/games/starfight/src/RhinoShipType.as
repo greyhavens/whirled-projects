@@ -31,10 +31,10 @@ public class RhinoShipType extends ShipType
         size = 1.2;
     }
 
-    override public function primaryShot (val :Array) :void
+    override public function doPrimaryShot (args :Array) :void
     {
-        var left :Number = val[6] + Math.PI/2;
-        var right :Number = val[6] - Math.PI/2;
+        var left :Number = args[6] + Math.PI/2;
+        var right :Number = args[6] - Math.PI/2;
         var leftOffsetX :Number = Math.cos(left) * 0.5;
         var leftOffsetY :Number = Math.sin(left) * 0.5;
         var rightOffsetX :Number = Math.cos(right) * 0.5;
@@ -43,22 +43,22 @@ public class RhinoShipType extends ShipType
         var shotClip :Class = null;
         var explodeClip :Class = null;
 
-        if (val[2] == Shot.SUPER) {
+        if (args[2] == Shot.SUPER) {
             damage *= 1.5;
             // TODO
             shotClip = null;//superShotAnim;
             explodeClip = null;//superShotExplode;
         }
 
-        AppContext.game.createMissileShot(val[3] + leftOffsetX, val[4] + leftOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip);
-        AppContext.game.createMissileShot(val[3] + rightOffsetX, val[4] + rightOffsetY,
-                val[5], val[6], val[0], damage, primaryShotLife, val[1], shotClip, explodeClip);
+        AppContext.game.createMissileShot(args[3] + leftOffsetX, args[4] + leftOffsetY,
+                args[5], args[6], args[0], damage, primaryShotLife, args[1], shotClip, explodeClip);
+        AppContext.game.createMissileShot(args[3] + rightOffsetX, args[4] + rightOffsetY,
+                args[5], args[6], args[0], damage, primaryShotLife, args[1], shotClip, explodeClip);
 
-        super.primaryShot(val);
+        super.doPrimaryShot(args);
     }
 
-    override public function secondaryShotMessage (ship :Ship) :Boolean
+    override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -68,19 +68,21 @@ public class RhinoShipType extends ShipType
         args[4] = ship.rotation;
 
         warpNow(ship, args);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
+
         return true;
     }
 
-    override public function secondaryShot (val :Array) :void
+    override public function doSecondaryShot (args :Array) :void
     {
-        var ship :Ship = AppContext.game.getShip(val[0]);
-        if (ship == null || ship.isOwnShip) {
-            return;
+        var ship :Ship = AppContext.game.getShip(args[0]);
+        if (ship != null && !ship.isOwnShip) {
+            warpNow(ship, args);
         }
-        warpNow(ship, val);
     }
 
-    protected function warpNow (ship :Ship, val :Array) :void
+    protected function warpNow (ship :Ship, args :Array) :void
     {
         // TODO - change this horribly unsafe function.
 
@@ -90,18 +92,20 @@ public class RhinoShipType extends ShipType
 
         var warp :Function = function (event :Event) :void {
             if (ship.isOwnShip) {
-                AppContext.game.sendMessage(Codes.MSG_SECONDARY, val);
+                AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+                dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
+            } else {
+                dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
             }
-            var startX :Number = val[2];
-            var startY :Number = val[3];
-            var rads :Number = val[4] * Codes.DEGS_TO_RADS;
+
+            var startX :Number = args[2];
+            var startY :Number = args[3];
+            var rads :Number = args[4] * Codes.DEGS_TO_RADS;
             var endX :Number = startX + Math.cos(rads) * JUMP;
             var endY :Number = startY + Math.sin(rads) * JUMP;
 
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
-            // TODO
-            //AppContext.game.playSoundAt(warpSound, endX, endY);
 
             var timer :Timer = new Timer(WARP_IN_TIME, 1);
             timer.addEventListener(TimerEvent.TIMER, endWarp);

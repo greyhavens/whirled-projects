@@ -35,7 +35,7 @@ public class WaspShipType extends ShipType
         size = 0.9;
     }
 
-    override public function primaryShot (val :Array) :void
+    override public function doPrimaryShot (val :Array) :void
     {
         AppContext.game.createMissileShot(val[3], val[4], val[5], val[6], val[0], hitPower,
             primaryShotLife, val[1]);
@@ -47,10 +47,10 @@ public class WaspShipType extends ShipType
                 hitPower, primaryShotLife, val[1]);
         }
 
-        super.primaryShot(val);
+        super.doPrimaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :Ship) :Boolean
+    override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         var rads :Number = ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -59,7 +59,6 @@ public class WaspShipType extends ShipType
         var shotX :Number = cos * secondaryShotSpeed + ship.xVel;
         var shotY :Number = sin * secondaryShotSpeed + ship.yVel;
 
-        //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
         var shotVel :Number = secondaryShotSpeed;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
@@ -72,15 +71,18 @@ public class WaspShipType extends ShipType
         args[5] = rads;
 
         AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
+
         return true;
     }
 
-    override public function secondaryShot (val :Array) :void
+    override public function doSecondaryShot (args :Array) :void
     {
-        AppContext.game.createTorpedoShot(val[2], val[3], val[4], val[5], val[0],
-            SECONDARY_HIT_POWER, secondaryShotLife, val[1]);
-        // TODO
-        //AppContext.game.playSoundAt(secondarySound, val[2], val[3]);
+        AppContext.game.createTorpedoShot(args[2], args[3], args[4], args[5], args[0],
+            SECONDARY_HIT_POWER, secondaryShotLife, args[1]);
+
+        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
     }
 
     protected static const SPREAD :Number = 0.1;

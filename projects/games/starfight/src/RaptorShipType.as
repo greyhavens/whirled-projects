@@ -1,6 +1,5 @@
 package {
 
-import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
@@ -35,7 +34,7 @@ public class RaptorShipType extends ShipType
         size = 1.1;
     }
 
-    override public function primaryShot (val :Array) :void
+    override public function doPrimaryShot (val :Array) :void
     {
         var ttl :Number = primaryShotLife;
         if (val[2] == Shot.SUPER) {
@@ -45,10 +44,10 @@ public class RaptorShipType extends ShipType
             AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + ii, val[0],
                 hitPower, ttl, val[1]);
         }
-        super.primaryShot(val);
+        super.doPrimaryShot(val);
     }
 
-    override public function secondaryShotMessage (ship :Ship) :Boolean
+    override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         if (ship.shieldPower > 0.0) {
             return false;
@@ -62,12 +61,13 @@ public class RaptorShipType extends ShipType
                 ship.shieldPower = 0.0;
         });
         shieldTimer.start();
-        // TODO
-        //AppContext.game.playSoundAt(secondarySound, ship.boardX, ship.boardY);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
+
         return true;
     }
 
-    override public function secondaryShot (val :Array) :void
+    override public function doSecondaryShot (val :Array) :void
     {
     }
 }

@@ -1,10 +1,14 @@
 package {
 
-import flash.events.Event;
-import flash.events.IOErrorEvent;
+import flash.events.EventDispatcher;
 
-public class ShipType
+public class ShipType extends EventDispatcher
 {
+    public static const PRIMARY_SHOT_CREATED :String = "PrimaryShotCreated";
+    public static const SECONDARY_SHOT_CREATED :String = "SecondaryShotCreated";
+    public static const PRIMARY_SHOT_SENT :String = "PrimaryShotSent";
+    public static const SECONDARY_SHOT_SENT :String = "SecondaryShotSent";
+
     /** The name of the ship type. */
     public var name :String;
 
@@ -40,20 +44,17 @@ public class ShipType
     /**
      * Called to have the ship perform their primary shot action.
      */
-    public function primaryShot (val :Array) :void
+    public function doPrimaryShot (args :Array) :void
     {
-        // Shooting sound.
-        // TODO - move this somewhere else
-        //var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
-
-        //AppContext.game.playSoundAt(sound, val[3], val[4]);
+        dispatchEvent(new ShotCreatedEvent(PRIMARY_SHOT_CREATED, args));
     }
 
     /**
      * Called to have the ship perform their secondary shot action.
      */
-    public function secondaryShot (val :Array) :void
+    public function doSecondaryShot (args :Array) :void
     {
+        dispatchEvent(new ShotCreatedEvent(SECONDARY_SHOT_CREATED, args));
     }
 
     public function getPrimaryShotCost (ship :Ship) :Number
@@ -64,7 +65,7 @@ public class ShipType
     /**
      * Sends a standard forward fire message.
      */
-    public function primaryShotMessage (ship :Ship) :void
+    public function sendPrimaryShotMessage (ship :Ship) :void
     {
         var rads :Number = ship.rotation * Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
@@ -73,7 +74,6 @@ public class ShipType
         var shotX :Number = cos * primaryShotSpeed + ship.xVel;
         var shotY :Number = sin * primaryShotSpeed + ship.yVel;
 
-        //var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
         var shotVel :Number = primaryShotSpeed;
         var shotAngle :Number = Math.atan2(shotY, shotX);
 
@@ -88,15 +88,19 @@ public class ShipType
         args[5] = shotVel;
         args[6] = rads;
 
-        AppContext.game.fireShot(args);
+        AppContext.game.sendShotMessage(args);
+
+        dispatchEvent(new ShotMessageSentEvent(PRIMARY_SHOT_SENT, ship));
     }
 
     /**
      * Secondary shot message generator.
      */
-    public function secondaryShotMessage (ship :Ship) :Boolean
+    public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         return false;
+
+        // subclasses overriding this must remember to send the SECONDARY_SHOT_SENT event
     }
 }
 }

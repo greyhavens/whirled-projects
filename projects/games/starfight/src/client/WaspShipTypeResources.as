@@ -8,6 +8,11 @@ public class WaspShipTypeResources extends ShipTypeResources
     public var secondarySound :Sound;
     public var secondaryExplodeSound :Sound;
 
+    override protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    {
+        ClientContext.game.playSoundAt(secondarySound, args[2], args[3]);
+    }
+
     override protected function get swfAsset () :Class
     {
         return SHIP;

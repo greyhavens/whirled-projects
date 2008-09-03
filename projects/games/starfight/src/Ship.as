@@ -196,11 +196,12 @@ public class Ship extends EventDispatcher
      *  collisions along the way.  This function calls itself recursively
      *  to resolve collisions created in the rebound from earlier collisions.
      */
-    public function resolveMove (startX :Number, startY :Number,
-        endX :Number, endY :Number, colType :int = 0) :void
+    public function resolveMove (startX :Number, startY :Number, endX :Number, endY :Number,
+        colType :int = 0) :void
     {
-        var coll :Collision = AppContext.board.getCollision(
-                startX, startY, endX, endY, _shipType.size, -1, colType);
+        var coll :Collision = AppContext.board.getCollision(startX, startY, endX, endY,
+            _shipType.size, -1, colType);
+
         if (coll != null && coll.hit is Obstacle) {
             var obstacle :Obstacle = Obstacle(coll.hit);
             obstacle.shipCollided();
@@ -417,7 +418,7 @@ public class Ship extends EventDispatcher
 
     protected function handleFire () :void
     {
-        _shipType.primaryShotMessage(this);
+        _shipType.sendPrimaryShotMessage(this);
         if (hasPowerup(Powerup.SPREAD)) {
             weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
@@ -431,7 +432,7 @@ public class Ship extends EventDispatcher
 
     protected function handleSecondaryFire () :void
     {
-        if (_shipType.secondaryShotMessage(this)) {
+        if (_shipType.sendSecondaryShotMessage(this)) {
             _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
             secondaryPower -= _shipType.secondaryShotCost;
         }

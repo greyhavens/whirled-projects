@@ -367,11 +367,11 @@ public class GameManager
     {
         if (event.name == Codes.MSG_SHOT) {
             var val :Array = (event.value as Array);
-             Codes.getShipType(val[1]).primaryShot(val);
+             Codes.getShipType(val[1]).doPrimaryShot(val);
 
         } else if (event.name == Codes.MSG_SECONDARY) {
             val = (event.value as Array);
-            Codes.getShipType(val[1]).secondaryShot(val);
+            Codes.getShipType(val[1]).doSecondaryShot(val);
 
         } else if (event.name == Codes.MSG_EXPLODE) {
             shipExploded(event.value as Array);
@@ -537,7 +537,7 @@ public class GameManager
     /**
      * Send a message to the server about our shot.
      */
-    public function fireShot (args :Array) :void
+    public function sendShotMessage (args :Array) :void
     {
         _gameCtrl.net.sendMessage(Codes.MSG_SHOT, args);
     }

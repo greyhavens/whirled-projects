@@ -34,6 +34,13 @@ public class ClientGameManager extends GameManager
 
         Resources.init(assetLoaded);
 
+        // let the ShipTypeResources know who their ship types are
+        for (var shipTypeId :int = 0; shipTypeId < Codes.SHIP_TYPE_CLASSES.length; shipTypeId++) {
+            var shipType :ShipType = Codes.getShipType(shipTypeId);
+            var shipTypeResources :ShipTypeResources = ClientConstants.getShipResources(shipTypeId);
+            shipTypeResources.setShipType(shipType);
+        }
+
         // start the game when the player clicks the mouse
         mainSprite.addEventListener(MouseEvent.CLICK, onMouseDown);
 

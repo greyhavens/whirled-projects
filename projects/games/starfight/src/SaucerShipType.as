@@ -42,40 +42,39 @@ public class SaucerShipType extends ShipType
         return (ship.hasPowerup(Powerup.SPREAD) ? SUPER_SHOT_COST : primaryShotCost);
     }
 
-    override public function primaryShot (val :Array) :void
+    override public function doPrimaryShot (args :Array) :void
     {
-        var ship :Ship = AppContext.game.getShip(val[0]);
+        var ship :Ship = AppContext.game.getShip(args[0]);
         if (ship == null) {
             return;
         }
-        var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
-        // TODO
-        //var sound :Sound = (val[2] == Shot.SUPER) ? supShotSound : shotSound;
-        //AppContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
+        var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
         // no one in range so shoot straight
         if (ships.length <= 1) {
             AppContext.game.createLaserShot(ship.boardX, ship.boardY, ship.rotation, RANGE,
-                val[0], hitPower, primaryShotLife, val[1], -1);
-            return;
+                args[0], hitPower, primaryShotLife, args[1], -1);
+        } else {
+
+            for each (var tShip :Ship in ships) {
+                if (tShip.shipId == ship.shipId) {
+                    continue;
+                }
+                var dist :Number = Math.sqrt((tShip.boardX - ship.boardX)*(tShip.boardX-ship.boardX) +
+                        (tShip.boardY-ship.boardY)*(tShip.boardY-ship.boardY));
+                dist = Math.min(RANGE, dist);
+                var angle :Number = Codes.RADS_TO_DEGS *
+                        Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
+                AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, args[0],
+                    hitPower, primaryShotLife, args[1], tShip.shipId);
+            }
         }
 
-        for each (var tShip :Ship in ships) {
-            if (tShip.shipId == ship.shipId) {
-                continue;
-            }
-            var dist :Number = Math.sqrt((tShip.boardX - ship.boardX)*(tShip.boardX-ship.boardX) +
-                    (tShip.boardY-ship.boardY)*(tShip.boardY-ship.boardY));
-            dist = Math.min(RANGE, dist);
-            var angle :Number = Codes.RADS_TO_DEGS *
-                    Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
-            AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, val[0],
-                hitPower, primaryShotLife, val[1], tShip.shipId);
-        }
+        dispatchEvent(new ShotCreatedEvent(ShipType.PRIMARY_SHOT_CREATED, args));
     }
 
-    override public function primaryShotMessage (ship :Ship) :void
+    override public function sendPrimaryShotMessage (ship :Ship) :void
     {
         var type :int = (ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL);
 
@@ -83,10 +82,12 @@ public class SaucerShipType extends ShipType
         args[0] = ship.shipId;
         args[1] = ship.shipTypeId;
         args[2] = type;
-        AppContext.game.fireShot(args);
+        AppContext.game.sendShotMessage(args);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.PRIMARY_SHOT_SENT, ship));
     }
 
-    override public function secondaryShotMessage (ship :Ship) :Boolean
+    override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         var args :Array = new Array(5);
         args[0] = ship.shipId;
@@ -96,14 +97,17 @@ public class SaucerShipType extends ShipType
         args[4] = SECONDARY_HIT_POWER;
 
         AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
+
         return true;
     }
 
-    override public function secondaryShot (val :Array) :void
+    override public function doSecondaryShot (args :Array) :void
     {
-        AppContext.game.addMine(val[0], val[2], val[3], val[1], val[4]);
-        // TODO
-        //AppContext.game.playSoundAt(mineSound, val[2], val[3]);
+        AppContext.game.addMine(args[0], args[2], args[3], args[1], args[4]);
+
+        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
     }
 
     protected static var RANGE :Number = 7;
