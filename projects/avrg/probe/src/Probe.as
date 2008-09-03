@@ -6,13 +6,15 @@ import flash.events.Event;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.net.MessageReceivedEvent;
 import com.threerings.util.StringUtil;
-
-import flash.utils.setTimeout;
+import com.threerings.util.ClassUtil;
 
 public class Probe extends Sprite
 {
     public static function toString (obj :Object) :String
     {
+        if (ClassUtil.tinyClassName(obj) == 'AVRGameAvatar') {
+            return StringUtil.simpleToString(obj);
+        }
         return StringUtil.toString(obj);
     }
 
