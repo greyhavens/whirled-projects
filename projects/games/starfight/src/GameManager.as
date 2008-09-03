@@ -313,7 +313,7 @@ public class GameManager
             if (_gameCtrl.game.amInControl()) {
 
                 // The first player is in charge of adding powerups.
-                _gameCtrl.services.startTicker("stateTicker", 1000);
+                _gameCtrl.services.startTicker(Codes.MSG_STATETICKER, 1000);
                 setImmediate("stateTime", _stateTime);
                 if (_ownShip != null) {
                     _ownShip.restart();
@@ -379,15 +379,15 @@ public class GameManager
 
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "shot") {
+        if (event.name == Codes.MSG_SHOT) {
             var val :Array = (event.value as Array);
              Codes.getShipType(val[1]).primaryShot(val);
 
-        } else if (event.name == "secondary") {
+        } else if (event.name == Codes.MSG_SECONDARY) {
             val = (event.value as Array);
             Codes.getShipType(val[1]).secondaryShot(val);
 
-        } else if (event.name == "explode") {
+        } else if (event.name == Codes.MSG_EXPLODE) {
             var arr :Array = (event.value as Array);
 
             var ship :Ship = getShip(arr[4]);
@@ -412,7 +412,7 @@ public class GameManager
                 addScore(myId, int(event.value));
             }
 
-        } else if (event.name == "stateTicker") {
+        } else if (event.name == Codes.MSG_STATETICKER) {
             if (_stateTime > 0) {
                 _stateTime -= 1;
                 if (_stateTime % 10 == 0 && _gameCtrl.game.amInControl()) {
@@ -582,7 +582,7 @@ public class GameManager
      */
     public function fireShot (args :Array) :void
     {
-        _gameCtrl.net.sendMessage("shot", args);
+        _gameCtrl.net.sendMessage(Codes.MSG_SHOT, args);
     }
 
     /**
@@ -622,7 +622,7 @@ public class GameManager
         args[2] = rot;
         args[3] = shooterId;
         args[4] = shipId;
-        _gameCtrl.net.sendMessage("explode", args);
+        _gameCtrl.net.sendMessage(Codes.MSG_EXPLODE, args);
     }
 
     /**
@@ -636,7 +636,7 @@ public class GameManager
         if (gameState == Codes.IN_ROUND) {
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
                 gameState = Codes.POST_ROUND;
-                _gameCtrl.services.stopTicker("stateTicker");
+                _gameCtrl.services.stopTicker(Codes.MSG_STATETICKER);
                 setImmediate("gameState", gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();

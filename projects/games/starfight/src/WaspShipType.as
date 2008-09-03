@@ -71,7 +71,7 @@ public class WaspShipType extends ShipType
         args[4] = shotVel;
         args[5] = rads;
 
-        AppContext.game.sendMessage("secondary", args);
+        AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
         return true;
     }
 

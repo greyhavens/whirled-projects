@@ -95,7 +95,7 @@ public class SaucerShipType extends ShipType
         args[3] = Math.round(ship.boardY);
         args[4] = SECONDARY_HIT_POWER;
 
-        AppContext.game.sendMessage("secondary", args);
+        AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
         return true;
     }
 

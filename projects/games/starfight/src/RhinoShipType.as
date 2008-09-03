@@ -90,7 +90,7 @@ public class RhinoShipType extends ShipType
 
         var warp :Function = function (event :Event) :void {
             if (ship.isOwnShip) {
-                AppContext.game.sendMessage("secondary", val);
+                AppContext.game.sendMessage(Codes.MSG_SECONDARY, val);
             }
             var startX :Number = val[2];
             var startY :Number = val[3];

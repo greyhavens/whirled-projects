@@ -47,5 +47,11 @@ public class Codes
     {
         return (index >= 0 && index < SHIP_TYPE_CLASSES.length ? SHIP_TYPE_CLASSES[index] : null);
     }
+
+    /** Message types */
+    public static const MSG_SHOT :String = "shot";
+    public static const MSG_SECONDARY :String = "secondary";
+    public static const MSG_EXPLODE :String = "explode";
+    public static const MSG_STATETICKER :String = "stateTicker";
 }
 }
