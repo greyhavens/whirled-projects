@@ -8,9 +8,9 @@ import com.threerings.util.Random;
 import com.whirled.ServerObject;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.server.AVRServerGameControl;
-import com.whirled.avrg.server.PlayerServerSubControl;
-import com.whirled.avrg.server.RoomServerSubControl;
+import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.PlayerServerSubControl;
+import com.whirled.avrg.RoomServerSubControl;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
@@ -84,9 +84,11 @@ public class Server extends ServerObject
         _players[playerId] = new Player(pctrl);
     }
 
-    protected function playerQuitGame (evt :AVRGamePlayerEvent) :void
+    // when they leave, clean up
+    protected function playerQuitGame (evt :AVRGameControlEvent) :void
     {
         var playerId :int = int(evt.value);
+
         var player :Player = _players[playerId];
         if (player != null) {
             player.shutdown();
