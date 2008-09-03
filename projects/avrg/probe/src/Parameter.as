@@ -57,6 +57,9 @@ public class Parameter
 
         } else if (_type == Boolean) {
             return "Bool";
+
+        } else if (_type == Number) {
+            return "Number";
         }
 
         return "" + _type;
@@ -69,6 +72,7 @@ public class Parameter
 
         } else if (_type == int) {
             return StringUtil.parseInteger(input);
+
         } else if (_type == Boolean) {
             input = input.toLowerCase();
             if (input == "t" || input == "true") {
@@ -78,6 +82,9 @@ public class Parameter
             } else {
                 throw new Error(input + " is not a Boolean");
             }
+
+        } else if (_type == Number) {
+            return StringUtil.parseNumber(input);
         }
 
         throw new Error("Parsing for parameter type " + type + 
