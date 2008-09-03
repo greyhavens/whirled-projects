@@ -269,7 +269,7 @@ public class Ship extends EventDispatcher
 
         power -= hitPower;
         if (!isAlive()) {
-            AppContext.game.explode(boardX, boardY, rotation, shooterId, shipId);
+            AppContext.game.explodeShip(boardX, boardY, rotation, shooterId, shipId);
             checkAwards();
 
             // Stop moving and firing.

@@ -171,7 +171,9 @@ public class BoardController
     {
         if ((event.name == "powerup") && (event.index >= 0) && _powerups != null) {
             if (event.newValue == null) {
-                powerupRemoved(event.index);
+                if (_powerups[event.index] != null) {
+                    powerupRemoved(event.index);
+                }
 
             } else {
                 var pow :Powerup = _powerups[event.index];

@@ -208,6 +208,13 @@ public class ClientGameManager extends GameManager
         shotView.parent.removeChild(shotView);
     }
 
+    override protected function shipExploded (args :Array) :void
+    {
+        super.shipExploded(args);
+
+        playSoundAt(Resources.getSound("ship_explodes.wav"), args[0], args[1]);
+    }
+
     override public function addShip (id :int, ship :Ship) :void
     {
         var shipView :ShipView = new ShipView(ship);

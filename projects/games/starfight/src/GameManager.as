@@ -388,24 +388,7 @@ public class GameManager
             Codes.getShipType(val[1]).secondaryShot(val);
 
         } else if (event.name == Codes.MSG_EXPLODE) {
-            var arr :Array = (event.value as Array);
-
-            var ship :Ship = getShip(arr[4]);
-            if (ship != null) {
-                _boardCtrl.explode(arr[0], arr[1], arr[2], false, ship.shipTypeId);
-                //playSoundAt(Resources.getSound("ship_explodes.wav"), arr[0], arr[1]);
-                ship.kill();
-                var sship :Ship = getShip(arr[3]);
-                if (sship != null) {
-                    _gameCtrl.local.feedback(sship.playerName + " killed " + ship.playerName + "!");
-                }
-            }
-            _boardCtrl.shipKilled(arr[4]);
-
-            if (_ownShip != null && arr[3] == _ownShip.shipId) {
-                addScore(arr[3], KILL_PTS);
-                _ownShip.registerKill(arr[4]);
-            }
+            shipExploded(event.value as Array);
 
         } else if (event.name.substring(0, 9) == "addScore-") {
             if (String(myId) == event.name.substring(9)) {
@@ -613,8 +596,7 @@ public class GameManager
     /**
      * Register a big ole' explosion at the location.
      */
-    public function explode (x :Number, y :Number, rot :int,
-        shooterId :int, shipId :int) :void
+    public function explodeShip (x :Number, y :Number, rot :int, shooterId :int, shipId :int) :void
     {
         var args :Array = new Array(5);
         args[0] = x;
@@ -623,6 +605,31 @@ public class GameManager
         args[3] = shooterId;
         args[4] = shipId;
         _gameCtrl.net.sendMessage(Codes.MSG_EXPLODE, args);
+    }
+
+    protected function shipExploded (args :Array) :void
+    {
+        var x :Number = args[0];
+        var y :Number = args[1];
+        var rot :int = args[2];
+        var shooterId :int = args[3];
+        var shipId :int = args[4];
+
+        var ship :Ship = getShip(shipId);
+        if (ship != null) {
+            _boardCtrl.explode(x, y, rot, false, ship.shipTypeId);
+            ship.kill();
+            var shooter :Ship = getShip(shooterId);
+            if (shooter != null) {
+                _gameCtrl.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
+            }
+        }
+        _boardCtrl.shipKilled(shipId);
+
+        if (_ownShip != null && shooterId == _ownShip.shipId) {
+            addScore(shooterId, KILL_PTS);
+            _ownShip.registerKill(shipId);
+        }
     }
 
     /**
