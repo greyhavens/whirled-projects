@@ -208,13 +208,11 @@ public class GamePanel extends Sprite
         if (PlayerModel.isDead(Game.ourPlayerId)) {
             avatarState = ST_PLAYER_DEFEAT;
 
-        } else if (Game.state == Codes.STATE_SEEKING ||
-                   Game.state == Codes.STATE_APPEARING) {
-                avatarState = ST_PLAYER_DEFAULT;
+        } else if (Game.state == Codes.STATE_SEEKING || Game.state == Codes.STATE_APPEARING) {
+            avatarState = ST_PLAYER_DEFAULT;
 
         } else {
             avatarState = ST_PLAYER_FIGHT;
-
         }
 
         GameController.setAvatarState(avatarState);
@@ -250,11 +248,11 @@ public class GamePanel extends Sprite
 
     protected function popdown (clip :MovieClip) :void
     {
-        if (clip.parent != null) {
-            Game.log.warning("Popup candidate already has a parent [popup=" + clip + "]");
+        if (clip.parent != this) {
+            Game.log.warning("We're not displaying popdown candidate [clip=" + clip + "]");
             return;
         }
-        this.addChild(clip);
+        this.removeChild(clip);
     }
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
@@ -263,7 +261,7 @@ public class GamePanel extends Sprite
             _seeking = false;
             updateState();
 
-            if (evt.newValue == Codes.STATE_GHOST_TRIUMPH) {
+            if (evt.newValue == Codes.STATE_GHOST_DEFEAT) {
                 popup(_ghostDefeated);
             }
 
