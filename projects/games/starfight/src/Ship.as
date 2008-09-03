@@ -188,7 +188,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return power > DEAD && AppContext.game.gameState != Codes.POST_ROUND;
+        return power > DEAD && AppContext.game.gameState != Constants.POST_ROUND;
     }
 
     /**
@@ -450,12 +450,12 @@ public class Ship extends EventDispatcher
             var dtime :Number = Math.min(etime / 1000, 0.01);
             var turnSign :Number = (turnRate > 0 ? 1 : -1) * dtime;
             if (turnAccelRate == 0 &&
-                    Math.abs(turnRate) < Codes.getShipType(shipTypeId).turnThreshold) {
+                    Math.abs(turnRate) < Constants.getShipType(shipTypeId).turnThreshold) {
                 turnRate = 0;
                 break;
             }
             turnRate += dtime * turnAccelRate -
-                    turnSign * Codes.getShipType(shipTypeId).turnFriction * (turnRate * turnRate);
+                    turnSign * Constants.getShipType(shipTypeId).turnFriction * (turnRate * turnRate);
             turn += turnRate * dtime;
         }
         rotation = (rotation + turn * 5) % 360;
@@ -491,8 +491,8 @@ public class Ship extends EventDispatcher
                 break;
             }
 
-            var xComp :Number = Math.cos(rotation * Codes.DEGS_TO_RADS);
-            var yComp :Number = Math.sin(rotation * Codes.DEGS_TO_RADS);
+            var xComp :Number = Math.cos(rotation * Constants.DEGS_TO_RADS);
+            var yComp :Number = Math.sin(rotation * Constants.DEGS_TO_RADS);
             var dtime :Number = Math.min(etime / 1000, 0.1);
             var velDir :Number = Math.atan2(yVel, xVel);
             var fricFact :Number = drag*oldVel2;
@@ -537,7 +537,7 @@ public class Ship extends EventDispatcher
     public function setShipType (type :int) :void
     {
         shipTypeId = type;
-        _shipType = Codes.getShipType(shipTypeId);
+        _shipType = Constants.getShipType(shipTypeId);
     }
 
     /**
@@ -591,16 +591,20 @@ public class Ship extends EventDispatcher
             return;
         }
 
+        // Copy certain state from the report ship to the local ship. Other state
+        // (position, rotation) will be interpolated into local ship over time.
         accel = report.accel;
         xVel = report.xVel;
         yVel = report.yVel;
         turnRate = report.turnRate;
-        // These we always update exactly as reported.
+        turnAccelRate = report.turnAccelRate;
         power = report.power;
         powerups = report.powerups;
         score = report.score;
         state = report.state;
-        if (shipTypeId != report.shipTypeId) { // || visible != report.visible) {
+
+        // if our ship type has changed, copy all state over
+        if (shipTypeId != report.shipTypeId) {
             boardX = report.boardX;
             boardY = report.boardY;
             rotation = report.rotation;

@@ -12,10 +12,10 @@ public class BgSprite extends Sprite
         // Our background, tiled if necessary.
         var tmpBmp :Bitmap = Resources.getBitmap("space_bg.png");
 
-        var xRep :Number = Math.ceil((width*Codes.BG_PIXELS_PER_TILE +
-                                         Codes.GAME_WIDTH)/tmpBmp.width);
-        var yRep :Number = Math.ceil((height*Codes.BG_PIXELS_PER_TILE +
-                                         Codes.GAME_HEIGHT)/tmpBmp.height);
+        var xRep :Number = Math.ceil((width*Constants.BG_PIXELS_PER_TILE +
+                                         Constants.GAME_WIDTH)/tmpBmp.width);
+        var yRep :Number = Math.ceil((height*Constants.BG_PIXELS_PER_TILE +
+                                         Constants.GAME_HEIGHT)/tmpBmp.height);
 
         for (var x :int = 0; x < xRep; x++) {
             for (var y :int = 0; y < yRep; y++) {
@@ -32,8 +32,8 @@ public class BgSprite extends Sprite
      */
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        x = -(boardX*Codes.BG_PIXELS_PER_TILE);
-        y = -(boardY*Codes.BG_PIXELS_PER_TILE);
+        x = -(boardX*Constants.BG_PIXELS_PER_TILE);
+        y = -(boardY*Constants.BG_PIXELS_PER_TILE);
     }
 }
 }

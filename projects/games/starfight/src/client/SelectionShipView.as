@@ -12,7 +12,7 @@ public class SelectionShipView extends Sprite
     public function SelectionShipView (shipType :int)
     {
         _shipType = shipType;
-        var theShipType :ShipType = Codes.getShipType(shipType);
+        var theShipType :ShipType = Constants.getShipType(shipType);
         var shipResources :ShipTypeResources = ClientConstants.getShipResources(shipType);
 
         var shipMovieParent :Sprite = new Sprite();
@@ -33,7 +33,7 @@ public class SelectionShipView extends Sprite
 
         var format:TextFormat = new TextFormat();
         format.font = GameView.gameFont.fontName;
-        format.color = Codes.CYAN;
+        format.color = Constants.CYAN;
         format.size = 10;
         format.rightMargin = 3;
         nameText.defaultTextFormat = format;

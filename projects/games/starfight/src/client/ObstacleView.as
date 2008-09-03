@@ -33,11 +33,11 @@ public class ObstacleView extends Sprite
 
         setupGraphics();
 
-        x = _obstacle.bX * Codes.PIXELS_PER_TILE;
-        y = _obstacle.bY * Codes.PIXELS_PER_TILE;
+        x = _obstacle.bX * Constants.PIXELS_PER_TILE;
+        y = _obstacle.bY * Constants.PIXELS_PER_TILE;
         if (_obstacle.type != Obstacle.WALL) {
-            x += Codes.PIXELS_PER_TILE * 0.5;
-            y += Codes.PIXELS_PER_TILE * 0.5;
+            x += Constants.PIXELS_PER_TILE * 0.5;
+            y += Constants.PIXELS_PER_TILE * 0.5;
         }
     }
 
@@ -55,13 +55,13 @@ public class ObstacleView extends Sprite
                 return;
             }
             var data :BitmapData = new BitmapData(
-                    _obstacle.w * Codes.PIXELS_PER_TILE, _obstacle.h * Codes.PIXELS_PER_TILE);
+                    _obstacle.w * Constants.PIXELS_PER_TILE, _obstacle.h * Constants.PIXELS_PER_TILE);
             var drawData :BitmapData = Resources.getBitmapData("box_bitmap.gif");
             var matrix :Matrix;
             for (var yy :int = 0; yy < _obstacle.h; yy++) {
                 for (var xx :int = 0; xx < _obstacle.w; xx++) {
                     matrix = new Matrix();
-                    matrix.translate(xx * Codes.PIXELS_PER_TILE, yy * Codes.PIXELS_PER_TILE);
+                    matrix.translate(xx * Constants.PIXELS_PER_TILE, yy * Constants.PIXELS_PER_TILE);
                     data.draw(drawData, matrix);
                 }
             }

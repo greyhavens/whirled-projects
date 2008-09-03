@@ -26,10 +26,10 @@ public class StatusOverlay extends Sprite
         _radar.y = 61;
         var vitals :Bitmap = Resources.getBitmap("status_vitals.png");
         addChild(vitals);
-        vitals.x = Codes.GAME_WIDTH - 109;
+        vitals.x = Constants.GAME_WIDTH - 109;
 
         addChild(_health = new Sprite());
-        _health.x = Codes.GAME_WIDTH - 103;
+        _health.x = Constants.GAME_WIDTH - 103;
         _health.y = 8;
         _health.addChild(Resources.getBitmap("bar_health.png"));
         var mask :Shape = new Shape();
@@ -38,7 +38,7 @@ public class StatusOverlay extends Sprite
         _health.addChild(mask);
         _health.mask = mask;
         addChild(_primary = new Sprite());
-        _primary.x = Codes.GAME_WIDTH - 91;
+        _primary.x = Constants.GAME_WIDTH - 91;
         _primary.y = 39;
         _primary.addChild(Resources.getBitmap("bar_shot.png"));
         mask = new Shape();
@@ -47,7 +47,7 @@ public class StatusOverlay extends Sprite
         _primary.addChild(mask);
         _primary.mask = mask;
         addChild(_secondary = new Sprite());
-        _secondary.x = Codes.GAME_WIDTH - 91;
+        _secondary.x = Constants.GAME_WIDTH - 91;
         _secondary.y = 56;
         _secondary.addChild(Resources.getBitmap("bar_secondary.png"));
         mask = new Shape();
@@ -57,7 +57,7 @@ public class StatusOverlay extends Sprite
         _secondary.mask = mask;
 
         addChild(_spread = new Sprite());
-        _spread.x = Codes.GAME_WIDTH - 103;
+        _spread.x = Constants.GAME_WIDTH - 103;
         _spread.y = 84;
         _spread.addChild(Resources.getBitmap("spread.png"));
         mask = new Shape();
@@ -67,7 +67,7 @@ public class StatusOverlay extends Sprite
         _spread.mask = mask;
         addChild(_speed = new Sprite());
         _speed.addChild(Resources.getBitmap("speed.png"));
-        _speed.x = Codes.GAME_WIDTH - 71;
+        _speed.x = Constants.GAME_WIDTH - 71;
         _speed.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -76,7 +76,7 @@ public class StatusOverlay extends Sprite
         _speed.mask = mask;
         addChild(_shields = new Sprite());
         _shields.addChild(Resources.getBitmap("shields.png"));
-        _shields.x = Codes.GAME_WIDTH - 39;
+        _shields.x = Constants.GAME_WIDTH - 39;
         _shields.y = 84;
         mask = new Shape();
         mask.graphics.beginFill(0xFFFFFF);
@@ -86,7 +86,7 @@ public class StatusOverlay extends Sprite
 
         var format:TextFormat = new TextFormat();
         format.font = GameView.gameFont.fontName;
-        format.color = Codes.CYAN;
+        format.color = Constants.CYAN;
         format.size = 16;
         format.bold = true;
 
@@ -190,8 +190,8 @@ public class StatusOverlay extends Sprite
     public function updateRadar (
         ships :HashMap, powerups :Array, boardX :Number, boardY :Number) :void
     {
-        boardX = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        boardY = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
+        boardX = Constants.GAME_WIDTH/2 - boardX*Constants.PIXELS_PER_TILE;
+        boardY = Constants.GAME_HEIGHT/2 - boardY*Constants.PIXELS_PER_TILE;
         ships.forEach(function (key :Object, value :Object) :void {
             var dot :Shape = _ships.get(int(key));
             if (dot != null) {
@@ -199,8 +199,8 @@ public class StatusOverlay extends Sprite
                 dot.visible = ship.isAlive && !ship.isOwnShip;
                 // TODO - move this somewhere else
                 if (dot.visible) {
-                    var dotX :Number = ship.boardX * Codes.PIXELS_PER_TILE;
-                    var dotY :Number = ship.boardY * Codes.PIXELS_PER_TILE;
+                    var dotX :Number = ship.boardX * Constants.PIXELS_PER_TILE;
+                    var dotY :Number = ship.boardY * Constants.PIXELS_PER_TILE;
                     positionDot(dot, dotX + boardX, dotY + boardY);
                 }
             }
@@ -211,8 +211,8 @@ public class StatusOverlay extends Sprite
                 if (dot != null) {
                     var powerup :Powerup = powerups[ii];
                     // TODO - move this somewhere else
-                    var dotX :Number = (powerup.bX + 0.5) * Codes.PIXELS_PER_TILE;
-                    var dotY :Number = (powerup.bY + 0.5) * Codes.PIXELS_PER_TILE;
+                    var dotX :Number = (powerup.bX + 0.5) * Constants.PIXELS_PER_TILE;
+                    var dotY :Number = (powerup.bY + 0.5) * Constants.PIXELS_PER_TILE;
                     positionDot(dot, dotX + boardX, dotY + boardY);
                 }
             }
@@ -225,7 +225,7 @@ public class StatusOverlay extends Sprite
      public function updateRoundText (text :String) :void
      {
         _roundText.text = text;
-        _roundText.x = (Codes.GAME_WIDTH - _roundText.width) / 2;
+        _roundText.x = (Constants.GAME_WIDTH - _roundText.width) / 2;
      }
 
     /**
@@ -233,8 +233,8 @@ public class StatusOverlay extends Sprite
      */
     protected function positionDot (dot :Shape, x :Number, y :Number) :void
     {
-        x = (x - Codes.GAME_WIDTH/2) / RADAR_ZOOM;
-        y = (y - Codes.GAME_HEIGHT/2) / RADAR_ZOOM;
+        x = (x - Constants.GAME_WIDTH/2) / RADAR_ZOOM;
+        y = (y - Constants.GAME_HEIGHT/2) / RADAR_ZOOM;
 
         if (x*x + y*y < RADAR_RAD*RADAR_RAD) {
             dot.x = x;
@@ -253,9 +253,9 @@ public class StatusOverlay extends Sprite
     {
         var color :uint;
         if (type == SHIP) {
-            color = Codes.RED;
+            color = Constants.RED;
         } else {
-            color = Codes.GREEN;
+            color = Constants.GREEN;
         }
         var circle :Shape = new Shape();
         circle.graphics.beginFill(color);

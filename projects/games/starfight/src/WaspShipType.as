@@ -52,7 +52,7 @@ public class WaspShipType extends ShipType
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        var rads :Number = ship.rotation*Codes.DEGS_TO_RADS;
+        var rads :Number = ship.rotation*Constants.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 
@@ -70,7 +70,7 @@ public class WaspShipType extends ShipType
         args[4] = shotVel;
         args[5] = rads;
 
-        AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+        AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
 
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 

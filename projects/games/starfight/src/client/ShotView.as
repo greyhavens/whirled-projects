@@ -16,8 +16,8 @@ public class ShotView extends Sprite
      */
     public function setPosRelTo (otherX :Number, otherY: Number) :void
     {
-        x = ((_shot.boardX - otherX) * Codes.PIXELS_PER_TILE) + (Codes.GAME_WIDTH * 0.5);
-        y = ((_shot.boardY - otherY) * Codes.PIXELS_PER_TILE) + (Codes.GAME_HEIGHT * 0.5);
+        x = ((_shot.boardX - otherX) * Constants.PIXELS_PER_TILE) + (Constants.GAME_WIDTH * 0.5);
+        y = ((_shot.boardY - otherY) * Constants.PIXELS_PER_TILE) + (Constants.GAME_HEIGHT * 0.5);
     }
 
     protected function handleHit (e :ShotHitEvent) :void

@@ -35,7 +35,7 @@ public class GameManager
 
     public function firstStart () :Boolean
     {
-        if (_assets < Codes.SHIP_TYPE_CLASSES.length) {
+        if (_assets < Constants.SHIP_TYPE_CLASSES.length) {
             return false;
         }
 
@@ -77,11 +77,11 @@ public class GameManager
 
         if (!_gameCtrl.isConnected()) {
             myId = 1;
-            gameState = Codes.PRE_ROUND;
+            gameState = Constants.PRE_ROUND;
         } else {
             myId = _gameCtrl.game.getMyId();
             if (_gameCtrl.net.get("gameState") == null) {
-                gameState = Codes.PRE_ROUND;
+                gameState = Constants.PRE_ROUND;
             } else {
                 gameState = int(_gameCtrl.net.get("gameState"));
                 _stateTime = int(_gameCtrl.net.get("stateTime"));
@@ -204,7 +204,7 @@ public class GameManager
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (myId == -1 || _assets < Codes.SHIP_TYPE_CLASSES.length) {
+        if (myId == -1 || _assets < Constants.SHIP_TYPE_CLASSES.length) {
             return;
         }
         var name :String = event.name;
@@ -239,9 +239,9 @@ public class GameManager
         } else if (name == "gameState") {
             gameState = int(_gameCtrl.net.get("gameState"));
 
-            if (gameState == Codes.IN_ROUND) {
+            if (gameState == Constants.IN_ROUND) {
                 startRound();
-            } else if (gameState == Codes.POST_ROUND) {
+            } else if (gameState == Constants.POST_ROUND) {
                 endRound();
             }
 
@@ -282,8 +282,8 @@ public class GameManager
 
     public function maybeStartRound () :void
     {
-        if (_population >= 2 && gameState == Codes.PRE_ROUND && _gameCtrl.game.amInControl()) {
-            _gameCtrl.net.set("gameState", Codes.IN_ROUND);
+        if (_population >= 2 && gameState == Constants.PRE_ROUND && _gameCtrl.game.amInControl()) {
+            _gameCtrl.net.set("gameState", Constants.IN_ROUND);
         }
     }
 
@@ -306,7 +306,7 @@ public class GameManager
             if (_gameCtrl.game.amInControl()) {
 
                 // The first player is in charge of adding powerups.
-                _gameCtrl.services.startTicker(Codes.MSG_STATETICKER, 1000);
+                _gameCtrl.services.startTicker(Constants.MSG_STATETICKER, 1000);
                 setImmediate("stateTime", _stateTime);
                 if (_ownShip != null) {
                     _ownShip.restart();
@@ -365,15 +365,15 @@ public class GameManager
 
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == Codes.MSG_SHOT) {
+        if (event.name == Constants.MSG_SHOT) {
             var val :Array = (event.value as Array);
-             Codes.getShipType(val[1]).doPrimaryShot(val);
+             Constants.getShipType(val[1]).doPrimaryShot(val);
 
-        } else if (event.name == Codes.MSG_SECONDARY) {
+        } else if (event.name == Constants.MSG_SECONDARY) {
             val = (event.value as Array);
-            Codes.getShipType(val[1]).doSecondaryShot(val);
+            Constants.getShipType(val[1]).doSecondaryShot(val);
 
-        } else if (event.name == Codes.MSG_EXPLODE) {
+        } else if (event.name == Constants.MSG_EXPLODE) {
             shipExploded(event.value as Array);
 
         } else if (event.name.substring(0, 9) == "addScore-") {
@@ -381,7 +381,7 @@ public class GameManager
                 addScore(myId, int(event.value));
             }
 
-        } else if (event.name == Codes.MSG_STATETICKER) {
+        } else if (event.name == Constants.MSG_STATETICKER) {
             if (_stateTime > 0) {
                 _stateTime -= 1;
                 if (_stateTime % 10 == 0 && _gameCtrl.game.amInControl()) {
@@ -487,7 +487,7 @@ public class GameManager
     {
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.services.stopTicker("nextRoundTicker");
-            setImmediate("gameState", Codes.PRE_ROUND);
+            setImmediate("gameState", Constants.PRE_ROUND);
         }
         _ships = new HashMap();
         _ownShip = null;
@@ -518,7 +518,7 @@ public class GameManager
     {
         // Try initializing the game state if there isn't a board yet.
         if (_gameCtrl.game.amInControl()) {
-            if (gameState == Codes.IN_ROUND) {
+            if (gameState == Constants.IN_ROUND) {
                 startPowerupTimer();
             }
             _boardCtrl.hostChanged(event, gameState);
@@ -539,7 +539,7 @@ public class GameManager
      */
     public function sendShotMessage (args :Array) :void
     {
-        _gameCtrl.net.sendMessage(Codes.MSG_SHOT, args);
+        _gameCtrl.net.sendMessage(Constants.MSG_SHOT, args);
     }
 
     /**
@@ -578,7 +578,7 @@ public class GameManager
         args[2] = rot;
         args[3] = shooterId;
         args[4] = shipId;
-        _gameCtrl.net.sendMessage(Codes.MSG_EXPLODE, args);
+        _gameCtrl.net.sendMessage(Constants.MSG_EXPLODE, args);
     }
 
     protected function shipExploded (args :Array) :void
@@ -614,10 +614,10 @@ public class GameManager
         var now :int = getTimer();
         var time :int = now - _lastTickTime;
 
-        if (gameState == Codes.IN_ROUND) {
+        if (gameState == Constants.IN_ROUND) {
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
-                gameState = Codes.POST_ROUND;
-                _gameCtrl.services.stopTicker(Codes.MSG_STATETICKER);
+                gameState = Constants.POST_ROUND;
+                _gameCtrl.services.stopTicker(Constants.MSG_STATETICKER);
                 setImmediate("gameState", gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();
@@ -671,11 +671,11 @@ public class GameManager
 
         // Every few frames, broadcast our status to everyone else.
         _updateCount += time;
-        if (_ownShip != null && _updateCount > Codes.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
+        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
             _updateCount = 0;
             _gameCtrl.doBatch(function () :void {
                 setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
-                if (gameState == Codes.IN_ROUND) {
+                if (gameState == Constants.IN_ROUND) {
                     setImmediate("score:" + myId, _ownShip.score);
                     for (var id :String in _otherScores) {
                         _gameCtrl.net.sendMessage("addScore-" + id, int(_otherScores[id]));

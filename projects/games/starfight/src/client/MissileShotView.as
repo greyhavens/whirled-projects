@@ -19,7 +19,7 @@ public class MissileShotView extends ShotView
         shotMovie.gotoAndStop(1);
         addChild(shotMovie);
 
-        rotation = Codes.RADS_TO_DEGS * Math.atan2(missile.xVel, -missile.yVel);
+        rotation = Constants.RADS_TO_DEGS * Math.atan2(missile.xVel, -missile.yVel);
 
         if (explodeClip != null) {
             _explodeMovie = MovieClip(new explodeClip());

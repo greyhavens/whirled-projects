@@ -551,7 +551,7 @@ public class BoardController
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (AppContext.game.gameState == Codes.IN_ROUND && obj.damage(damage)) {
+            if (AppContext.game.gameState == Constants.IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName, null, obj.index);
             }
         }
@@ -561,7 +561,7 @@ public class BoardController
     {
         do {
             var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Codes.getShipType(ownShip.shipTypeId).size, _powerups);
+                    Constants.getShipType(ownShip.shipTypeId).size, _powerups);
             if (powIdx == -1) {
                 break;
             }
@@ -570,7 +570,7 @@ public class BoardController
         } while (powIdx != -1);
         do {
             var mineIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Codes.getShipType(ownShip.shipTypeId).size, _mines);
+                    Constants.getShipType(ownShip.shipTypeId).size, _mines);
             if (mineIdx == -1) {
                 break;
             }
@@ -665,7 +665,7 @@ public class BoardController
 
     public function hostChanged (event :StateChangedEvent, gameState :int) :void
     {
-        if (_gameCtrl.game.amInControl() && gameState != Codes.POST_ROUND) {
+        if (_gameCtrl.game.amInControl() && gameState != Constants.POST_ROUND) {
             if (_gameCtrl.net.get("board") == null) {
                 createBoard();
             }

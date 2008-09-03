@@ -18,8 +18,8 @@ public class ExplosionView extends Sprite
             var explodeMovie :MovieClip = MovieClip(new rsrc.explodeAnim());
             explodeMovie.x = explodeMovie.width/2;
             explodeMovie.y = -explodeMovie.height/2;
-            explodeMovie.scaleX = Codes.getShipType(shipType).size + 0.1;
-            explodeMovie.scaleY = Codes.getShipType(shipType).size + 0.1;
+            explodeMovie.scaleX = Constants.getShipType(shipType).size + 0.1;
+            explodeMovie.scaleY = Constants.getShipType(shipType).size + 0.1;
             explosion = new ExplosionView(x, y, explodeMovie);
         }
 

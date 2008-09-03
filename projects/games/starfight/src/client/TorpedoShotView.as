@@ -12,7 +12,7 @@ public class TorpedoShotView extends ShotView
         var shotMovie :MovieClip = MovieClip(new rsrc.secondaryAnim());
         addChild(shotMovie);
 
-        rotation = Codes.RADS_TO_DEGS*Math.atan2(torpedo.xVel, -torpedo.yVel);
+        rotation = Constants.RADS_TO_DEGS*Math.atan2(torpedo.xVel, -torpedo.yVel);
     }
 
     override protected function handleHit (e :ShotHitEvent) :void

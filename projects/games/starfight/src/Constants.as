@@ -1,6 +1,6 @@
 package {
 
-public class Codes
+public class Constants
 {
     public static const GAME_WIDTH :int = 700;
     public static const GAME_HEIGHT :int = 500;

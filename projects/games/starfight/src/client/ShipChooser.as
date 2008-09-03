@@ -46,20 +46,20 @@ class ShipChooserWindow extends Sprite
         // Partially obscure background.
         var fadeOut :Shape = new Shape();
         fadeOut.alpha = 0.5;
-        fadeOut.graphics.beginFill(Codes.BLACK);
-        fadeOut.graphics.drawRect(0, 0, Codes.GAME_WIDTH, Codes.GAME_HEIGHT);
+        fadeOut.graphics.beginFill(Constants.BLACK);
+        fadeOut.graphics.drawRect(0, 0, Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         fadeOut.graphics.endFill();
         addChild(fadeOut);
         _newGame = newGame;
 
         var bg :Bitmap = Resources.getBitmap("ship_select.png");
         addChild(bg);
-        bg.x = (Codes.GAME_WIDTH - bg.width) / 2;
-        bg.y = (Codes.GAME_HEIGHT - bg.height) / 2;
+        bg.x = (Constants.GAME_WIDTH - bg.width) / 2;
+        bg.y = (Constants.GAME_HEIGHT - bg.height) / 2;
 
         var format:TextFormat = new TextFormat();
         format.font = GameView.gameFont.fontName;
-        format.color = Codes.YELLOW;
+        format.color = Constants.YELLOW;
         format.size = 16;
         format.bold = true;
         format.rightMargin = 8;
@@ -67,15 +67,15 @@ class ShipChooserWindow extends Sprite
         var selectText :TextField = new TextField();
         selectText.autoSize = TextFieldAutoSize.CENTER;
         selectText.selectable = false;
-        selectText.x = Codes.GAME_WIDTH/2;
-        selectText.y = Codes.GAME_HEIGHT/2 - TEXT_SPACING;
+        selectText.x = Constants.GAME_WIDTH/2;
+        selectText.y = Constants.GAME_HEIGHT/2 - TEXT_SPACING;
         selectText.defaultTextFormat = format;
         selectText.embedFonts = true;
         selectText.antiAliasType = AntiAliasType.ADVANCED;
         selectText.text = "Select Your Ship";
         addChild(selectText);
 
-        var numShipTypes :int = Codes.SHIP_TYPE_CLASSES.length;
+        var numShipTypes :int = Constants.SHIP_TYPE_CLASSES.length;
         for (var ii :int = 0; ii < numShipTypes; ii++) {
             addShipButton(ii, numShipTypes);
         }
@@ -93,8 +93,8 @@ class ShipChooserWindow extends Sprite
         selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
         selection.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
 
-        selection.x = Codes.GAME_WIDTH/2 + SPACING * (idx - (total-1)/2.0);
-        selection.y = Codes.GAME_HEIGHT/2 + 15;
+        selection.x = Constants.GAME_WIDTH/2 + SPACING * (idx - (total-1)/2.0);
+        selection.y = Constants.GAME_HEIGHT/2 + 15;
         _buttons.push(selection);
 
         addChild(selection);

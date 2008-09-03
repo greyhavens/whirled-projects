@@ -32,7 +32,7 @@ public class ShipView extends Sprite
 
             var format:TextFormat = new TextFormat();
             format.font = GameView.gameFont.fontName;
-            format.color = (_ship.isOwnShip || _ship.shipId < 0) ? Codes.CYAN : Codes.RED;
+            format.color = (_ship.isOwnShip || _ship.shipId < 0) ? Constants.CYAN : Constants.RED;
             format.size = 10;
             format.rightMargin = 3;
             nameText.defaultTextFormat = format;
@@ -106,7 +106,6 @@ public class ShipView extends Sprite
         }
 
         if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
-            //_ship.turnAccelRate = -_ship.shipType.turnAccel;
             _ship.turnLeft();
         } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
             _ship.turnRight();
@@ -161,8 +160,8 @@ public class ShipView extends Sprite
             }
 
             // position on the screen
-            x = ((_ship.boardX - boardCenterX) * Codes.PIXELS_PER_TILE) + (Codes.GAME_WIDTH * 0.5);
-            y = ((_ship.boardY - boardCenterY) * Codes.PIXELS_PER_TILE) + (Codes.GAME_HEIGHT * 0.5);
+            x = ((_ship.boardX - boardCenterX) * Constants.PIXELS_PER_TILE) + (Constants.GAME_WIDTH * 0.5);
+            y = ((_ship.boardY - boardCenterY) * Constants.PIXELS_PER_TILE) + (Constants.GAME_HEIGHT * 0.5);
 
             _shipParent.rotation = _ship.rotation;
 

@@ -94,7 +94,7 @@ public class RhinoShipType extends ShipType
 
         var warp :Function = function (event :Event) :void {
             if (ship.isOwnShip) {
-                AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+                AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
                 dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
             } else {
                 dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
@@ -102,7 +102,7 @@ public class RhinoShipType extends ShipType
 
             var startX :Number = args[2];
             var startY :Number = args[3];
-            var rads :Number = args[4] * Codes.DEGS_TO_RADS;
+            var rads :Number = args[4] * Constants.DEGS_TO_RADS;
             var endX :Number = startX + Math.cos(rads) * JUMP;
             var endY :Number = startY + Math.sin(rads) * JUMP;
 

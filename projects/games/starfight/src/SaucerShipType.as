@@ -64,7 +64,7 @@ public class SaucerShipType extends ShipType
                 var dist :Number = Math.sqrt((tShip.boardX - ship.boardX)*(tShip.boardX-ship.boardX) +
                         (tShip.boardY-ship.boardY)*(tShip.boardY-ship.boardY));
                 dist = Math.min(RANGE, dist);
-                var angle :Number = Codes.RADS_TO_DEGS *
+                var angle :Number = Constants.RADS_TO_DEGS *
                         Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
                 AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, args[0],
                     hitPower, primaryShotLife, args[1], tShip.shipId);
@@ -96,7 +96,7 @@ public class SaucerShipType extends ShipType
         args[3] = Math.round(ship.boardY);
         args[4] = SECONDARY_HIT_POWER;
 
-        AppContext.game.sendMessage(Codes.MSG_SECONDARY, args);
+        AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
 
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 

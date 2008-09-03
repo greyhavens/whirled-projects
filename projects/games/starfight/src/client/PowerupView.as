@@ -15,8 +15,8 @@ public class PowerupView extends Sprite
         var powMovie :MovieClip = MovieClip(new (Resources.getClass(MOVIES[powerup.type]))());
         addChild(powMovie);
 
-        x = (_powerup.bX + 0.5) * Codes.PIXELS_PER_TILE;
-        y = (_powerup.bY + 0.5) * Codes.PIXELS_PER_TILE;
+        x = (_powerup.bX + 0.5) * Constants.PIXELS_PER_TILE;
+        y = (_powerup.bY + 0.5) * Constants.PIXELS_PER_TILE;
     }
 
     protected function sound () :Sound

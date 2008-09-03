@@ -35,8 +35,8 @@ public class ClientGameManager extends GameManager
         Resources.init(assetLoaded);
 
         // let the ShipTypeResources know who their ship types are
-        for (var shipTypeId :int = 0; shipTypeId < Codes.SHIP_TYPE_CLASSES.length; shipTypeId++) {
-            var shipType :ShipType = Codes.getShipType(shipTypeId);
+        for (var shipTypeId :int = 0; shipTypeId < Constants.SHIP_TYPE_CLASSES.length; shipTypeId++) {
+            var shipType :ShipType = Constants.getShipType(shipTypeId);
             var shipTypeResources :ShipTypeResources = ClientConstants.getShipResources(shipTypeId);
             shipTypeResources.setShipType(shipType);
         }
@@ -157,9 +157,9 @@ public class ClientGameManager extends GameManager
 
      public function updateStatusDisplay () :void
      {
-        if (gameState == Codes.PRE_ROUND) {
+        if (gameState == Constants.PRE_ROUND) {
             ClientContext.gameView.status.updateRoundText("Waiting for players...");
-        } else if (gameState == Codes.POST_ROUND) {
+        } else if (gameState == Constants.POST_ROUND) {
             ClientContext.gameView.status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
@@ -273,7 +273,7 @@ public class ClientGameManager extends GameManager
     protected function assetLoaded (success :Boolean) :void {
         if (success) {
             _assets++;
-            if (_assets <= Codes.SHIP_TYPE_CLASSES.length) {
+            if (_assets <= Constants.SHIP_TYPE_CLASSES.length) {
                 ClientConstants.getShipResources(_assets - 1).loadAssets(assetLoaded);
                 return;
             }

@@ -50,8 +50,8 @@ public class ClientBoardController extends BoardController
 
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        _boardSprite.x = Codes.GAME_WIDTH/2 - boardX*Codes.PIXELS_PER_TILE;
-        _boardSprite.y = Codes.GAME_HEIGHT/2 - boardY*Codes.PIXELS_PER_TILE;
+        _boardSprite.x = Constants.GAME_WIDTH/2 - boardX*Constants.PIXELS_PER_TILE;
+        _boardSprite.y = Constants.GAME_HEIGHT/2 - boardY*Constants.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
         ClientContext.gameView.status.updateRadar(_ships, _powerups, boardX, boardY);
     }
@@ -96,11 +96,11 @@ public class ClientBoardController extends BoardController
     {
         super.explode(x, y, rot, isSmall, shipType);
 
-        var rX :Number = x * Codes.PIXELS_PER_TILE;
-        var rY :Number = y * Codes.PIXELS_PER_TILE;
+        var rX :Number = x * Constants.PIXELS_PER_TILE;
+        var rY :Number = y * Constants.PIXELS_PER_TILE;
         // don't add small explosions that are off the screen
-        if (isSmall && (rX < -_boardSprite.x - EXP_OFF || rX > -_boardSprite.x + Codes.GAME_WIDTH + EXP_OFF ||
-                        rY < -_boardSprite.y - EXP_OFF || rY > -_boardSprite.y + Codes.GAME_HEIGHT + EXP_OFF)) {
+        if (isSmall && (rX < -_boardSprite.x - EXP_OFF || rX > -_boardSprite.x + Constants.GAME_WIDTH + EXP_OFF ||
+                        rY < -_boardSprite.y - EXP_OFF || rY > -_boardSprite.y + Constants.GAME_HEIGHT + EXP_OFF)) {
             return;
         }
         var exp :ExplosionView = ExplosionView.createExplosion(rX, rY, rot, isSmall, shipType);
@@ -116,7 +116,7 @@ public class ClientBoardController extends BoardController
     public function playCustomExplosion (x :Number, y :Number, movie :MovieClip) :void
     {
         var exp :ExplosionView = new ExplosionView(
-            x * Codes.PIXELS_PER_TILE, y * Codes.PIXELS_PER_TILE, movie);
+            x * Constants.PIXELS_PER_TILE, y * Constants.PIXELS_PER_TILE, movie);
         _explosionLayer.addChild(exp);
     }
 
@@ -147,7 +147,7 @@ public class ClientBoardController extends BoardController
     /** The maximum number of explosions on the screen at once. */
     protected static const MAX_EXPLOSIONS :int = 10;
 
-    protected static const EXP_OFF :int = 2 * Codes.PIXELS_PER_TILE;
+    protected static const EXP_OFF :int = 2 * Constants.PIXELS_PER_TILE;
 }
 
 }

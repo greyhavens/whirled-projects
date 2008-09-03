@@ -14,8 +14,8 @@ public class MineView extends Sprite
         var saucer :SaucerShipTypeResources = ClientConstants.SHIP_RSRC_SAUCER
         addChild(MovieClip(new (mine.active ? saucer.mineEnemy : saucer.mineFriendly)()));
 
-        x = (_mine.bX + 0.5) * Codes.PIXELS_PER_TILE;
-        y = (_mine.bY + 0.5) * Codes.PIXELS_PER_TILE;
+        x = (_mine.bX + 0.5) * Constants.PIXELS_PER_TILE;
+        y = (_mine.bY + 0.5) * Constants.PIXELS_PER_TILE;
     }
 
     protected function onExploded (...ignored) :void

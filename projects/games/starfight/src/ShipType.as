@@ -67,7 +67,7 @@ public class ShipType extends EventDispatcher
      */
     public function sendPrimaryShotMessage (ship :Ship) :void
     {
-        var rads :Number = ship.rotation * Codes.DEGS_TO_RADS;
+        var rads :Number = ship.rotation * Constants.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 
