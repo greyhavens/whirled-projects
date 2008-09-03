@@ -7,6 +7,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Matrix;
 import flash.media.Sound;
+import flash.utils.getTimer;
 
 public class ObstacleView extends Sprite
 {
@@ -24,24 +25,11 @@ public class ObstacleView extends Sprite
         }
     }
 
-    public static function getCollisionSound (type :int) :Sound
-    {
-        switch (type) {
-        case Obstacle.ASTEROID_1:
-        case Obstacle.ASTEROID_2:
-            return Resources.getSound("collision_asteroid2.wav");
-        case Obstacle.JUNK:
-            return Resources.getSound("collision_junk.wav");
-        case Obstacle.WALL:
-        default:
-            return Resources.getSound("collision_metal3.wav");
-        }
-    }
-
     public function ObstacleView (obstacle :Obstacle)
     {
         _obstacle = obstacle;
         _obstacle.addEventListener(Obstacle.EXPLODED, onExploded);
+        _obstacle.addEventListener(Obstacle.COLLIDED, onCollided);
 
         setupGraphics();
 
@@ -110,7 +98,37 @@ public class ObstacleView extends Sprite
         }
     }
 
+    protected function onCollided (...ignored) :void
+    {
+        var time :int = flash.utils.getTimer();
+        if (time - _lastCollisionSoundTime >= MIN_COLLISION_SOUND_MS) {
+            var sound :Sound = getCollisionSound(_obstacle.type);
+            if (sound != null) {
+                ClientContext.game.playSoundAt(sound, _obstacle.bX, _obstacle.bY);
+                _lastCollisionSoundTime = time;
+            }
+        }
+    }
+
+    protected static function getCollisionSound (type :int) :Sound
+    {
+        switch (type) {
+        case Obstacle.ASTEROID_1:
+        case Obstacle.ASTEROID_2:
+            return Resources.getSound("collision_asteroid2.wav");
+        case Obstacle.JUNK:
+            return Resources.getSound("collision_junk.wav");
+        case Obstacle.WALL:
+        default:
+            return Resources.getSound("collision_metal3.wav");
+        }
+    }
+
     protected var _obstacle :Obstacle;
+
+    protected static var _lastCollisionSoundTime :int;
+
+    protected static const MIN_COLLISION_SOUND_MS :int = 200;
 
     protected static const OBS_MOVIES :Array = [
         "meteor1", "meteor2", "junk_metal"

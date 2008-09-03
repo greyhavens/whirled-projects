@@ -36,7 +36,7 @@ public class MineView extends Sprite
             }
         });
 
-        AppContext.game.playSoundAt(saucer.mineExplodeSound, _mine.bX, _mine.bY);
+        ClientContext.game.playSoundAt(saucer.mineExplodeSound, _mine.bX, _mine.bY);
     }
 
     protected var _mine :Mine;

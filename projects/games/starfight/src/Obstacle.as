@@ -9,6 +9,7 @@ import flash.utils.ByteArray;
 public class Obstacle extends BoardObject
 {
     public static const EXPLODED :String = "Exploded";
+    public static const COLLIDED :String = "Collided";
 
     /** Constants for types of obstacles. */
     public static const ASTEROID_1 :int = 0;
@@ -38,6 +39,11 @@ public class Obstacle extends BoardObject
         health = 1.0;
         this.w = w;
         this.h = h;
+    }
+
+    public function shipCollided () :void
+    {
+        dispatchEvent(new Event(COLLIDED));
     }
 
     /**

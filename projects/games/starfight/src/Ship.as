@@ -1,9 +1,10 @@
 package {
 
-import client.Resources;
-import client.ShipChooser;
 import client.ObstacleView;
+import client.ShipChooser;
 
+import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.media.Sound;
@@ -15,8 +16,11 @@ import mx.effects.easing.Linear;
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
-public class Ship
+public class Ship extends EventDispatcher
 {
+    public static const POWERUP_REMOVED :String = "PowerupRemoved";
+    public static const COLLIDED :String = "Collided";
+
     /** The size of the ship. */
     public static const WIDTH :int = 40;
     public static const HEIGHT :int = 40;
@@ -173,6 +177,7 @@ public class Ship
     public function removePowerup (type :int) :void
     {
         powerups &= ~(1 << type);
+        dispatchEvent(new Event(POWERUP_REMOVED));
     }
 
     public function get isOwnShip () :Boolean
@@ -200,16 +205,11 @@ public class Ship
                 startX, startY, endX, endY, _shipType.size, -1, colType);
         if (coll != null && coll.hit is Obstacle) {
             var obstacle :Obstacle = Obstacle(coll.hit);
+            obstacle.shipCollided();
             var bounce :Number = obstacle.getElasticity();
             var dx :Number = endX - startX;
             var dy :Number = endY - startY;
 
-            if (!_moveSound) {
-                var sound :Sound = ObstacleView.getCollisionSound(obstacle.type);
-                AppContext.game.playSoundAt(sound, startX + dx * coll.time,
-                    startY + dy * coll.time);
-                _moveSound = true;
-            }
             if (colType == 1) {
                 // we're going to fudge these a bit so we don't end up in a wall
                 boardX = startX + dx * coll.time * FUDGE_FACT;
@@ -243,7 +243,6 @@ public class Ship
             boardX = endX;
             boardY = endY;
         }
-        _moveSound = false;
     }
 
     /**
@@ -264,9 +263,6 @@ public class Ship
             shieldPower -= hitPower;
             if (shieldPower <= DEAD) {
                 removePowerup(Powerup.SHIELDS);
-                if (_isOwnShip) {
-                    AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
-                }
             }
             return;
         }
@@ -445,7 +441,6 @@ public class Ship
             weaponPower -= 0.03;
             if (weaponPower <= 0.0) {
                 removePowerup(Powerup.SPREAD);
-                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
 
@@ -551,7 +546,6 @@ public class Ship
                 removePowerup(Powerup.SPEED);
                 accel = Math.min(accel, _shipType.forwardAccel);
                 accel = Math.max(accel, _shipType.backwardAccel);
-                AppContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"), boardX, boardY);
             }
         }
     }
@@ -729,8 +723,6 @@ public class Ship
 
     protected var _reportShip :Ship;
     protected var _reportTime :int;
-
-    protected var _moveSound :Boolean;
 
     /** Trophy stats. */
     protected var _killsThisLife :int;

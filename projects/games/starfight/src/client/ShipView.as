@@ -4,6 +4,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
+import flash.media.Sound;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -14,6 +15,8 @@ public class ShipView extends Sprite
     public function ShipView (ship :Ship)
     {
         _ship = ship;
+
+        _ship.addEventListener(Ship.POWERUP_REMOVED, onPowerupRemoved);
 
         _shipParent = new Sprite();
         addChild(_shipParent);
@@ -63,6 +66,14 @@ public class ShipView extends Sprite
             _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
             _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
             _engineSound = new SoundLoop(shipResources.engineSound);
+        }
+    }
+
+    protected function onPowerupRemoved (...ignored) :void
+    {
+        if (_ship.isOwnShip) {
+            var sound :Sound = Resources.getSound("powerup_empty.wav");
+            ClientContext.game.playSoundAt(sound, _ship.boardX, _ship.boardY);
         }
     }
 

@@ -26,7 +26,7 @@ public class PowerupView extends Sprite
 
     protected function onConsumed (...ignored) :void
     {
-        AppContext.game.playSoundAt(sound(), _powerup.bX, _powerup.bY);
+        ClientContext.game.playSoundAt(sound(), _powerup.bX, _powerup.bY);
     }
 
     protected function onDestroyed (...ignored) :void
