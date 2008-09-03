@@ -3,13 +3,9 @@
 
 package ghostbusters.client.util {
 
-import flash.utils.Dictionary;
-
 import com.threerings.util.StringUtil;
 
-import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.PropertyChangedEvent;
-import com.whirled.net.PropertyGetSubControl;
+import flash.utils.Dictionary;
 
 import ghostbusters.client.Game;
 import ghostbusters.data.Codes;
@@ -44,23 +40,24 @@ public class PlayerModel
 
     public static function isDead (playerId :int) :Boolean
     {
-        var data :Dictionary = playerData(playerId);
-        return data != null && data[Codes.IX_PLAYER_CUR_HEALTH] == 0;
+        return playerData(playerId, Codes.IX_PLAYER_CUR_HEALTH) === 0;
     }
 
     public static function getHealth (playerId :int) :int
     {
-        return Math.max(0, int(playerData(playerId)[Codes.IX_PLAYER_CUR_HEALTH]));
+        return Math.max(0, int(playerData(playerId, Codes.IX_PLAYER_CUR_HEALTH)));
     }
 
     public static function getMaxHealth (playerId :int) :int
     {
-        return int(playerData(playerId)[Codes.IX_PLAYER_MAX_HEALTH]);
+        return int(playerData(playerId, Codes.IX_PLAYER_MAX_HEALTH));
     }
 
-    protected static function playerData (playerId :int) :Dictionary
+    protected static function playerData (playerId :int, ix :int) :*
     {
-        return Dictionary(Game.control.room.props.get(Codes.DICT_PFX_PLAYER + playerId));
+        var dict :Dictionary =
+            Game.control.room.props.get(Codes.DICT_PFX_PLAYER + playerId) as Dictionary;
+        return (dict != null) ? dict[ix] : undefined;
     }
 }
 }
