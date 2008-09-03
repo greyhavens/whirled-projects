@@ -19,6 +19,9 @@ public class GhostDefinition
 
     public static function getGhostIds () :Array
     {
+        if (_definitions == null) {
+            defineGhosts();
+        }
         return _definitions.keys();
     }
 
@@ -69,6 +72,8 @@ public class GhostDefinition
 
     protected static function defineGhosts () :void
     {
+        _definitions = new HashMap();
+
         addGhost(new GhostDefinition(GHOST_PINCHER, 72, 145, 80));
         addGhost(new GhostDefinition(GHOST_DUCHESS, 391, 114, 37));
         addGhost(new GhostDefinition(GHOST_WIDOW, 391, 114, 37));
