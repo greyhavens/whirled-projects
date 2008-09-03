@@ -186,7 +186,7 @@ public class Ship extends EventDispatcher
     /**
      * Returns true if the ship is alive.
      */
-    public function isAlive () :Boolean
+    public function get isAlive () :Boolean
     {
         return power > DEAD && AppContext.game.gameState != Codes.POST_ROUND;
     }
@@ -249,7 +249,7 @@ public class Ship extends EventDispatcher
     public function hit (shooterId :int, damage :Number) :void
     {
         // Already dead, don't bother.
-        if (!isAlive()) {
+        if (!isAlive) {
             return;
         }
 
@@ -266,7 +266,7 @@ public class Ship extends EventDispatcher
         }
 
         power -= hitPower;
-        if (!isAlive()) {
+        if (power <= DEAD) {
             AppContext.game.explodeShip(boardX, boardY, rotation, shooterId, shipId);
             checkAwards();
 
@@ -573,7 +573,7 @@ public class Ship extends EventDispatcher
 
     public function canHit () :Boolean
     {
-        return isAlive() && state != STATE_WARP_BEGIN && state != STATE_WARP_END;
+        return isAlive && state != STATE_WARP_BEGIN && state != STATE_WARP_END;
     }
 
     /**
@@ -596,12 +596,13 @@ public class Ship extends EventDispatcher
         power = report.power;
         powerups = report.powerups;
         score = report.score;
+        state = report.state;
         if (shipTypeId != report.shipTypeId) { // || visible != report.visible) {
             boardX = report.boardX;
             boardY = report.boardY;
             rotation = report.rotation;
+            setShipType(report.shipTypeId);
         }
-        setShipType(report.shipTypeId);
     }
 
     /**
@@ -621,7 +622,7 @@ public class Ship extends EventDispatcher
         powerups = bytes.readInt();
         setShipType(bytes.readInt());
         score = bytes.readInt();
-        state = bytes.readInt();
+        state = bytes.readByte();
     }
 
     /**
@@ -641,7 +642,7 @@ public class Ship extends EventDispatcher
         bytes.writeInt(powerups);
         bytes.writeInt(shipTypeId);
         bytes.writeInt(score);
-        bytes.writeInt(state);
+        bytes.writeByte(state);
 
         return bytes;
     }

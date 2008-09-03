@@ -57,20 +57,22 @@ public class ClientGameManager extends GameManager
      */
     public function playSoundAt (sound :Sound, x :Number, y :Number) :void
     {
-        var vol :Number = 1.0;
+        if (sound != null) {
+            var vol :Number = 1.0;
 
-        // If we don't yet have an ownship, must be in the process of creating
-        //  it and thus ARE ownship.
-        if (_ownShip != null) {
-            var dx :Number = _ownShip.boardX - x;
-            var dy :Number = _ownShip.boardY - y;
-            var dist :Number = Math.sqrt(dx*dx + dy*dy);
+            // If we don't yet have an ownship, must be in the process of creating
+            //  it and thus ARE ownship.
+            if (_ownShip != null) {
+                var dx :Number = _ownShip.boardX - x;
+                var dy :Number = _ownShip.boardY - y;
+                var dist :Number = Math.sqrt(dx*dx + dy*dy);
 
-            vol = 1.0 - (dist/25.0);
-        }
+                vol = 1.0 - (dist/25.0);
+            }
 
-        if (vol > 0.0) {
-            sound.play(0, 0, new SoundTransform(vol));
+            if (vol > 0.0) {
+                sound.play(0, 0, new SoundTransform(vol));
+            }
         }
     }
 
@@ -136,12 +138,14 @@ public class ClientGameManager extends GameManager
         }
 
         // if our ship is dead, show the ship chooser after a delay
-        if (_ownShip != null && !_ownShip.isAlive() && !ShipChooser.isShowing) {
-            var timer :Timer = new Timer(Ship.RESPAWN_DELAY, 1);
-            timer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
+        if (_ownShip != null && !_ownShip.isAlive && _newShipTimer == null &&
+            !ShipChooser.isShowing) {
+            _newShipTimer = new Timer(Ship.RESPAWN_DELAY, 1);
+            _newShipTimer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
                 ShipChooser.show(false);
+                _newShipTimer = null;
             });
-            timer.start();
+            _newShipTimer.start();
         }
 
         // update our round display
@@ -335,6 +339,7 @@ public class ClientGameManager extends GameManager
     protected var _shotViews :Array = [];
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
+    protected var _newShipTimer :Timer;
 }
 
 }

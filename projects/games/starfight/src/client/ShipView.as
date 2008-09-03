@@ -18,6 +18,35 @@ public class ShipView extends Sprite
 
         _ship.addEventListener(Ship.POWERUP_REMOVED, onPowerupRemoved);
 
+        updateShipType();
+
+        // Add our name as a textfield
+        if (_ship.playerName != null) {
+            var nameText :TextField = new TextField();
+            nameText.autoSize = TextFieldAutoSize.CENTER;
+            nameText.selectable = false;
+            nameText.x = 0;
+            nameText.y = TEXT_OFFSET;
+
+            var format:TextFormat = new TextFormat();
+            format.font = GameView.gameFont.fontName;
+            format.color = (_ship.isOwnShip || _ship.shipId < 0) ? Codes.CYAN : Codes.RED;
+            format.size = 10;
+            format.rightMargin = 3;
+            nameText.defaultTextFormat = format;
+            nameText.embedFonts = true;
+            nameText.antiAliasType = AntiAliasType.ADVANCED;
+            nameText.text = _ship.playerName;
+            addChild(nameText);
+        }
+    }
+
+    protected function updateShipType () :void
+    {
+        if (_shipParent != null) {
+            removeChild(_shipParent);
+        }
+
         _shipParent = new Sprite();
         addChild(_shipParent);
 
@@ -41,32 +70,22 @@ public class ShipView extends Sprite
         _shipParent.scaleX = shipType.size + 0.1;
         _shipParent.scaleY = shipType.size + 0.1;
 
-        // Add our name as a textfield
-        if (_ship.playerName != null) {
-            var nameText :TextField = new TextField();
-            nameText.autoSize = TextFieldAutoSize.CENTER;
-            nameText.selectable = false;
-            nameText.x = 0;
-            nameText.y = TEXT_OFFSET;
-
-            var format:TextFormat = new TextFormat();
-            format.font = GameView.gameFont.fontName;
-            format.color = (_ship.isOwnShip || _ship.shipId < 0) ? Codes.CYAN : Codes.RED;
-            format.size = 10;
-            format.rightMargin = 3;
-            nameText.defaultTextFormat = format;
-            nameText.embedFonts = true;
-            nameText.antiAliasType = AntiAliasType.ADVANCED;
-            nameText.text = _ship.playerName;
-            addChild(nameText);
-        }
+        stopSounds();
 
         if (_ship.isOwnShip) {
             _shieldSound = new SoundLoop(Resources.getSound("shields.wav"));
             _thrusterForwardSound = new SoundLoop(Resources.getSound("thruster.wav"));
             _thrusterReverseSound = new SoundLoop(Resources.getSound("thruster_retro2.wav"));
             _engineSound = new SoundLoop(shipResources.engineSound);
+
+        } else {
+            _shieldSound = null;
+            _thrusterForwardSound = null;
+            _thrusterReverseSound = null;
+            _engineSound = null;
         }
+
+        _curShipTypeId = _ship.shipTypeId;
     }
 
     protected function onPowerupRemoved (...ignored) :void
@@ -80,7 +99,7 @@ public class ShipView extends Sprite
     public function keyPressed (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (!_ship.isAlive()) {
+        if (!_ship.isAlive) {
             return;
         }
 
@@ -105,7 +124,7 @@ public class ShipView extends Sprite
     public function keyReleased (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (!_ship.isAlive()) {
+        if (!_ship.isAlive) {
             return;
         }
 
@@ -135,6 +154,10 @@ public class ShipView extends Sprite
             stopSounds();
 
         } else {
+            if (_ship.shipTypeId != _curShipTypeId) {
+                updateShipType();
+            }
+
             // position on the screen
             x = ((_ship.boardX - boardCenterX) * Codes.PIXELS_PER_TILE) + (Codes.GAME_WIDTH * 0.5);
             y = ((_ship.boardY - boardCenterY) * Codes.PIXELS_PER_TILE) + (Codes.GAME_HEIGHT * 0.5);
@@ -197,8 +220,10 @@ public class ShipView extends Sprite
 
     protected function playSpawnMovie () :void
     {
-        //var sound :Sound = _ship.shipType.spawnSound;
-        //AppContext.game.playSoundAt(sound, _ship.boardX, _ship.boardY);
+        ClientContext.game.playSoundAt(
+            ClientConstants.getShipResources(_ship.shipTypeId).spawnSound,
+            _ship.boardX, _ship.boardY);
+
         var spawnClip :MovieClip = MovieClip(new (Resources.getClass("ship_spawn"))());
         addChild(spawnClip);
         spawnClip.addEventListener(Event.COMPLETE, function complete (event :Event) :void {
@@ -209,10 +234,10 @@ public class ShipView extends Sprite
 
     protected function stopSounds () :void
     {
-        // Turn off sound loops.
         if (_thrusterForwardSound != null) {
             _thrusterForwardSound.stop();
         }
+
         if (_thrusterReverseSound != null) {
             _thrusterReverseSound.stop();
         }
@@ -228,6 +253,7 @@ public class ShipView extends Sprite
     }
 
     protected var _ship :Ship;
+    protected var _curShipTypeId :int = -1;
 
     /** The sprite with our ship graphics in it. */
     protected var _shipParent :Sprite;

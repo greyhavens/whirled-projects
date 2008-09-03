@@ -15,9 +15,10 @@ public class ClientConstants
         SHIP_RSRC_RAPTOR,
     ];
 
-    public static function getShipResources (index :int) :ShipTypeResources
+    public static function getShipResources (shipTypeId :int) :ShipTypeResources
     {
-        return (index >= 0 && index < SHIP_RSRC_CLASSES.length ? SHIP_RSRC_CLASSES[index] : null);
+        return (shipTypeId >= 0 && shipTypeId < SHIP_RSRC_CLASSES.length ?
+            SHIP_RSRC_CLASSES[shipTypeId] : null);
     }
 }
 
