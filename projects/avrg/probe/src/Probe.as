@@ -1,5 +1,6 @@
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.Event;
@@ -76,6 +77,8 @@ public class Probe extends Sprite
         _ctrl.player.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, 
             handleGameMessage);
+
+        _ctrl.local.setMobSpriteExporter(createMob);
     }
 
     protected function handleGameMessage (evt :MessageReceivedEvent) :void
@@ -122,6 +125,11 @@ public class Probe extends Sprite
         var dir :int = event.action == "l" ? -1 : 1;
         idx = (idx + dir + positions.length) % positions.length;
         x = xpos(positions[idx]);
+    }
+
+    protected function createMob (id :String) :DisplayObject
+    {
+        return new MobSprite(id);
     }
 
     protected var _ctrl :AVRGameControl;

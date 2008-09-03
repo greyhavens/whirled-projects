@@ -34,6 +34,7 @@ public class Definitions
         AVRGameRoomEvent.PLAYER_LEFT,
         AVRGameRoomEvent.PLAYER_MOVED,
         AVRGameRoomEvent.AVATAR_CHANGED,
+        AVRGameRoomEvent.MOB_CONTROL_AVAILABLE,
         MessageReceivedEvent.MESSAGE_RECEIVED
     ];
 
