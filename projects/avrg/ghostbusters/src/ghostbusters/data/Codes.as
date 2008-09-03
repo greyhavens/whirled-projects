@@ -2,6 +2,8 @@
 // $Id$
 
 package ghostbusters.data {
+    import com.whirled.net.NetConstants;
+
 
 public class Codes
 {
@@ -49,7 +51,7 @@ public class Codes
     public static const STATE_GHOST_DEFEAT :String = "defeat";
 
     /**
-     * Notification of the coordinates where a player's lantern is currently shining. 
+     * Notification of the coordinates where a player's lantern is currently shining.
      *
      * Dispatched by the client in the SEEK phase and ignored otherwise.
      */
@@ -114,23 +116,11 @@ public class Codes
      * The prefix for the PLAYER dictionary container which summarizes the current state
      * of a player in a room (currently health and max health). The full room property name
      * is constructed by appending the player's numerical id.
-     *
-     * @see #DICT_PLAYER
      */
     public static const DICT_PFX_PLAYER :String = "p";
 
     /**
-     * The property name for the PLAYER dictionary container which summarizes the current state
-     * of a player in their own property space. This data is copied into room properties when
-     * the player walks into a new room.
-     *
-     * @see #DICT_PFX_PLAYER
-     */
-    public static const DICT_PLAYER :String = "p";
-
-    /**
-     * The current health of a player.
-     * This is an index within the PLAYER dictionary.
+     * The current health of a player in a room. This is an index within the PLAYER dictionary.
      *
      * @see #DICT_PLAYER
      * @see #DICT_PFX_PLAYER
@@ -138,13 +128,23 @@ public class Codes
     public static const IX_PLAYER_CUR_HEALTH :int = 0;
 
     /**
-     * The maximum health of a player.
-     * This is an index within the PLAYER dictionary.
+     * The maximum health of a player in a room. This is an index within the PLAYER dictionary.
      *
      * @see #DICT_PLAYER
      * @see #DICT_PFX_PLAYER
      */
     public static const IX_PLAYER_MAX_HEALTH :int = 1;
+
+    /**
+     * The health of a player, persistently stored in that player's property space. This value
+     * is copied into a room's property space when a player enters that room.
+     */
+    public static const PROP_MY_HEALTH :String = NetConstants.makePersistent("health");
+
+    /**
+     * The level of a player, persistently stored in that player's property space.
+     */
+    public static const PROP_MY_LEVEL :String = NetConstants.makePersistent("level");
 
     /**
      * The room property name for the GHOST dictionary container which summarizes the current

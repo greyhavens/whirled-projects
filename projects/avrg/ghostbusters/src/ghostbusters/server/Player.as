@@ -4,15 +4,11 @@
 package ghostbusters.server {
 
 import com.threerings.util.Log;
-
-import com.whirled.net.MessageReceivedEvent;
-
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.server.PlayerServerSubControl;
+import com.whirled.net.MessageReceivedEvent;
 
 import ghostbusters.data.Codes;
-
-import flash.utils.Dictionary;
 
 public class Player
 {
@@ -27,13 +23,16 @@ public class Player
         _ctrl.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-        var playerData :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_PFX_PLAYER));
-        if (playerData != null) {
-            _health = playerData[Codes.IX_PLAYER_CUR_HEALTH];
-            _maxHealth = playerData[Codes.IX_PLAYER_MAX_HEALTH];
+        _level = int(_ctrl.props.get(Codes.PROP_MY_LEVEL));
+        if (_level == 0) {
+            // this person has never played Ghosthunters before
+            _level = 1;
+            _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
+            _health = _maxHealth = calculateMaxHealth();
+
         } else {
-            // a new player! TODO: make this depend on level
-            _health = _maxHealth = 100;
+            _health = int(_ctrl.props.get(Codes.PROP_MY_HEALTH));
+            _maxHealth = calculateMaxHealth();
         }
     }
 
@@ -45,6 +44,11 @@ public class Player
     public function get playerId () :int
     {
         return _playerId;
+    }
+
+    public function get level () :int
+    {
+        return _level;
     }
 
     public function get health () :int
@@ -145,16 +149,29 @@ public class Player
 
     protected function setHealth (health :int) :void
     {
+        // update our runtime state
         _health = Math.max(0, Math.min(health, _maxHealth));
 
-        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER, Codes.IX_PLAYER_CUR_HEALTH, _health);
-        _room.updatePlayerHealth(_playerId, _health);
+        // persist it, too
+        _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
+
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.updatePlayerHealth(_playerId, _health);
+        }
+    }
+
+    protected function calculateMaxHealth () :int
+    {
+        // level 1 has 1 health, after that a 25% gain per level
+        return 100 * (Math.pow(1.25, _level));
     }
 
     protected var _ctrl :PlayerServerSubControl;
     protected var _room :Room;
 
     protected var _playerId :int;
+    protected var _level :int;
     protected var _health :int;
     protected var _maxHealth :int;
 }

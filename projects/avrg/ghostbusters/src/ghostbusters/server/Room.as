@@ -59,11 +59,21 @@ public class Room
 
     public function playerEntered (player :Player) :void
     {
+        // broadcast the arriving player's data using room properties
+        var dict :Dictionary = new Dictionary();
+        dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
+        dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
+
+        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
+
         _players[player] = true;
     }
 
     public function playerLeft (player :Player) :void
     {
+        // erase the departing player's data from the room properties
+        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
+
         delete _players[player];
     }
 
@@ -205,7 +215,7 @@ public class Room
             setState(Codes.STATE_FIGHTING);
 
             // when we start fighting, delete the lantern data
-            _ctrl.props.set(Codes.DICT_LANTERNS, null);
+            _ctrl.props.set(Codes.DICT_LANTERNS, null, true);
         }
     }
 
@@ -336,7 +346,7 @@ public class Room
             var level :int = levelBase + Server.random.nextInt(3);
 
             data = Ghost.resetGhost(ghosts[ix], level);
-            _ctrl.props.set(Codes.DICT_GHOST, data);
+            _ctrl.props.set(Codes.DICT_GHOST, data, true);
         }
 
         _ghost = new Ghost(this, data);
@@ -344,7 +354,7 @@ public class Room
 
     protected function terminateGhost () :void
     {
-        _ctrl.props.set(Codes.DICT_GHOST, null);
+        _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
     }
 
@@ -352,7 +362,7 @@ public class Room
     {
         _state = state;
 
-        _ctrl.props.set(Codes.PROP_STATE, state);
+        _ctrl.props.set(Codes.PROP_STATE, state, true);
     }
 
     // server-specific parts of the model moved here
