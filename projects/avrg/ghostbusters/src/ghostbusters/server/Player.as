@@ -68,6 +68,31 @@ public class Player
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
     }
 
+    public function damage (damage :int) :Boolean
+    {
+        log.debug("Doing " + damage + " damage to a player with health " + _health);
+
+        // let the clients in the room know of the attack
+        _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
+
+        if (damage >= health) {
+            // the blow killed the player: let all the clients in the room know that too
+            _room.ctrl.sendMessage(Codes.SMSG_PLAYER_DEATH, _playerId);
+            setHealth(0);
+            return true;
+        }
+
+        setHealth(_health - damage);
+        return false;
+    }
+
+    public function heal (amount :int) :void
+    {
+        if (!isDead()) {
+            setHealth(Math.min(_maxHealth, _health + amount));
+        }
+    }
+
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         _room = Server.getRoom(int(evt.value));
@@ -115,31 +140,6 @@ public class Player
 
         } else if (msg == Codes.CMSG_LANTERN_POS) {
             _room.updateLanternPos(_playerId, event.value as Array);
-        }
-    }
-
-    public function damage (damage :int) :Boolean
-    {
-        log.debug("Doing " + damage + " damage to a player with health " + _health);
-
-        // let the clients in the room know of the attack
-        _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
-
-        if (damage >= health) {
-            // the blow killed the player: let all the clients in the room know that too
-            _room.ctrl.sendMessage(Codes.SMSG_PLAYER_DEATH, _playerId);
-            setHealth(0);
-            return true;
-        }
-
-        setHealth(_health - damage);
-        return false;
-    }
-
-    public function heal (amount :int) :void
-    {
-        if (!isDead()) {
-            setHealth(Math.min(_maxHealth, _health + amount));
         }
     }
 
