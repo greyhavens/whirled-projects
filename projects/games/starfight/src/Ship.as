@@ -374,25 +374,27 @@ public class Ship extends EventDispatcher
             secondaryPower + time / (1000 * _shipType.secondaryPowerRecharge));
 
         if (state != STATE_WARP_BEGIN && state != STATE_WARP_END) {
-            // apply move and turn acceleration
-            if (_turning < 0) {
-                turnAccelRate = -_shipType.turnAccel;
-            } else if (_turning > 0) {
-                turnAccelRate = _shipType.turnAccel;
-            } else {
-                turnAccelRate = 0;
-            }
+            if (_isOwnShip) {
+                // update move and turn acceleration if this ship is under our control
+                if (_turning < 0) {
+                    turnAccelRate = -_shipType.turnAccel;
+                } else if (_turning > 0) {
+                    turnAccelRate = _shipType.turnAccel;
+                } else {
+                    turnAccelRate = 0;
+                }
 
-            if (_moving < 0) {
-                accel = _shipType.backwardAccel;
-            } else if (_moving > 0) {
-                accel = _shipType.forwardAccel;
-            } else {
-                accel = 0;
-            }
+                if (_moving < 0) {
+                    accel = _shipType.backwardAccel;
+                } else if (_moving > 0) {
+                    accel = _shipType.forwardAccel;
+                } else {
+                    accel = 0;
+                }
 
-            if (hasPowerup(Powerup.SPEED)) {
-                accel *= SPEED_BOOST_FACTOR;
+                if (hasPowerup(Powerup.SPEED)) {
+                    accel *= SPEED_BOOST_FACTOR;
+                }
             }
 
             handleTurn(time);

@@ -89,7 +89,6 @@ public class RhinoShipType extends ShipType
         // TODO - change this horribly unsafe function.
 
         var endWarp :Function = function (event:Event) :void {
-            //log.info("endWarp [ship=" + ship.shipId + "]");
             ship.state = Ship.STATE_DEFAULT;
         };
 

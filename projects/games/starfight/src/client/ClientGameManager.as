@@ -129,9 +129,7 @@ public class ClientGameManager extends GameManager
 
         // update ship drawstates
         for each (var shipView :ShipView in _shipViews.values()) {
-            if (shipView != null) {
-                shipView.updateDisplayState(ownX, ownY);
-            }
+            shipView.updateDisplayState(ownX, ownY);
         }
 
         // Recenter the board on our ship.
@@ -139,9 +137,7 @@ public class ClientGameManager extends GameManager
 
         // update shot views
         for each (var shotView :ShotView in _shotViews) {
-            if (shotView != null) {
-                shotView.setPosRelTo(ownX, ownY);
-            }
+            shotView.setPosRelTo(ownX, ownY);
         }
 
         // if our ship is dead, show the ship chooser after a delay
