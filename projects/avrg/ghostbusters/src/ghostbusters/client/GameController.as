@@ -85,7 +85,7 @@ public class GameController extends Controller
             // no effect: you have to watch this bit
 
         } else if (state == Codes.STATE_FIGHTING) {
-            var subPanel :FightPanel = Game.panel.subPanel as FightPanel;
+            var subPanel :FightPanel = FightPanel(Game.panel.subPanel);
             if (subPanel != null) {
                 subPanel.toggleGame();
             }

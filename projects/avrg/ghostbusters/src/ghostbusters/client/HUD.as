@@ -109,7 +109,7 @@ public class HUD extends Sprite
         var teamIx :int = 0;
         var hudIx :int = 0;
         while (hudIx < 6) {
-            var panel :PlayerPanel = _playerPanels[hudIx] as PlayerPanel;
+            var panel :PlayerPanel = PlayerPanel(_playerPanels[hudIx]);
 
             if (teamIx >= players.length) {
                 panel.healthBar.visible = panel.namePlate.visible = false;
@@ -155,7 +155,7 @@ public class HUD extends Sprite
             return;
         }
 
-        var playerId :int = PlayerModel.parseProperty(Codes.DICT_PFX_PLAYER, evt.name);
+        var playerId :int = PlayerModel.parsePlayerProperty(evt.name);
         if (playerId > 0) {
             playerHealthUpdated(playerId);
         }

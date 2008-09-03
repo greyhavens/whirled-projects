@@ -272,7 +272,7 @@ public class GamePanel extends Sprite
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
-        var playerId :int = PlayerModel.parseProperty(Codes.DICT_PFX_PLAYER, evt.name);
+        var playerId :int = PlayerModel.parsePlayerProperty(evt.name);
 
         if (playerId == Game.ourPlayerId && evt.key == Codes.IX_PLAYER_CUR_HEALTH) {
             checkPlayerHealth();

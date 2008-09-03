@@ -49,7 +49,7 @@ public class GhostModel
 
     protected static function ghostData () :Dictionary
     {
-        return Game.control.room.get(Codes.DICT_GHOST) as Dictionary;
+        return Dictionary(Game.control.room.get(Codes.DICT_GHOST));
     }
 }
 }

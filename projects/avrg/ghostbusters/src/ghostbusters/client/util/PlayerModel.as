@@ -16,10 +16,10 @@ import ghostbusters.data.Codes;
 
 public class PlayerModel
 {
-    public static function parseProperty (prefix :String, prop :String) :int
+    public static function parsePlayerProperty (prop :String) :int
     {
-        if (StringUtil.startsWith(prop, prefix)) {
-            var num :Number = parseInt(prop.slice(prefix.length));
+        if (StringUtil.startsWith(prop, Codes.DICT_PFX_PLAYER)) {
+            var num :Number = parseInt(prop.slice(Codes.DICT_PFX_PLAYER.length));
             if (!isNaN(num)) {
                 return num;
             }
@@ -33,8 +33,8 @@ public class PlayerModel
         var team :Array = new Array();
 
         for (var ii :int = 0; ii < properties.length; ii ++) {
-            var player :Number = parseInt(properties[ii].slice(Codes.DICT_PFX_PLAYER.length));
-            if (excludeDead && isDead(player)) {
+            var player :Number = parsePlayerProperty(properties[ii]);
+            if (player < 0 || (excludeDead && isDead(player))) {
                 continue;
             }
             team.unshift(player);
@@ -60,7 +60,7 @@ public class PlayerModel
 
     protected static function playerData (playerId :int) :Dictionary
     {
-        return Game.control.room.props.get(Codes.DICT_PFX_PLAYER + playerId) as Dictionary;
+        return Dictionary(Game.control.room.props.get(Codes.DICT_PFX_PLAYER + playerId));
     }
 }
 }

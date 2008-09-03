@@ -250,10 +250,7 @@ public class Room
         log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
-            var player :Player = team[ii] as Player;
-            var heal :int = (totHeal * playerDmg[ii]) / totDmg;
-            log.debug("HEAL :: Awarding " + heal + " pts to player #" + player.playerId);
-            player.heal(heal);
+            Player(team[ii]).heal((totHeal * playerDmg[ii]) / totDmg);
         }
     }
 

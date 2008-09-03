@@ -21,8 +21,8 @@ public class GhostInfoView
     public function GhostInfoView (hud :MovieClip)
     {
         _box = MovieClip(findSafely(hud, GHOST_INFO));
-        _name = findSafely(_box, GHOST_NAME) as TextField;
-        _level = findSafely(_box, GHOST_LEVEL) as TextField;
+        _name = TextField(findSafely(_box, GHOST_NAME));
+        _level = TextField(findSafely(_box, GHOST_LEVEL));
 
         _portraits = {
           pinchy: findSafely(hud, "PincherPortrait"),
@@ -62,7 +62,7 @@ public class GhostInfoView
         }
 
         for (var ghost :String in _portraits) {
-            (_portraits[ghost] as DisplayObject).visible = (ghost == chosen);
+            DisplayObject(_portraits[ghost]).visible = (ghost == chosen);
         }
     }
 
