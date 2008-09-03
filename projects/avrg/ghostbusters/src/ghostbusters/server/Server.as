@@ -5,16 +5,18 @@ package ghostbusters.server {
 
 import com.threerings.util.Log;
 import com.threerings.util.Random;
+import com.whirled.ServerObject;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.server.AVRServerGameControl;
 import com.whirled.avrg.server.PlayerServerSubControl;
+import com.whirled.avrg.server.RoomServerSubControl;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
 
-public class Server
+public class Server extends ServerObject
 {
     public static const FRAMES_PER_SECOND :int = 30;
 
@@ -26,9 +28,9 @@ public class Server
         return _ctrl;
     }
 
-    public function Server (control :AVRServerGameControl)
+    public function Server ()
     {
-        _ctrl = control;
+        _ctrl = new AVRServerGameControl(this);
 
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
@@ -42,8 +44,11 @@ public class Server
     {
         var room :Room = _rooms[roomId];
         if (room == null) {
-            // TODO: do we have to make sure _ctrl.getRoom(roomId) returns something sane?
-            room = _rooms[roomId] = new Room(ctrl.getRoom(roomId));
+            var ctrl :RoomServerSubControl = ctrl.getRoom(roomId);
+            if (ctrl == null) {
+                throw new Error("Failed to get RoomServerSubControl [roomId=" + roomId + "]");
+            }
+            room = _rooms[roomId] = new Room(ctrl);
         }
         return room;
     }
