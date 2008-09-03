@@ -87,6 +87,7 @@ class ShipChooserWindow extends Sprite
     protected function addShipButton (idx :int, total :int) :void
     {
         var selection :Sprite = new Sprite();
+        selection.mouseChildren = false;
         selection.addChild(new SelectionShipView(idx));
         selection.addEventListener(MouseEvent.CLICK, chooseHandler);
         selection.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
