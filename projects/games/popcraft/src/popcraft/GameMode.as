@@ -886,7 +886,8 @@ public class GameMode extends TransitionMode
 
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
-        if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
+        if ((GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) ||
+            !GameContext.localPlayerInfo.canPurchaseCreature(unitType)) {
             return;
         }
 
