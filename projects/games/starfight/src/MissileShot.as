@@ -39,7 +39,7 @@ public class MissileShot extends Shot
         }
 
         var coll :Collision = board.getCollision(boardX, boardY, boardX + xVel*time,
-                boardY + yVel*time, Codes.getShipType(shipType).primaryShotSize, shipId, 0);
+                boardY + yVel*time, Constants.getShipType(shipType).primaryShotSize, shipId, 0);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;

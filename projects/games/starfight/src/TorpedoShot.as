@@ -1,7 +1,5 @@
 package {
 
-import flash.display.MovieClip;
-
 public class TorpedoShot extends Shot {
 
     /** Velocity. */
