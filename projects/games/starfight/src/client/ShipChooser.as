@@ -1,5 +1,33 @@
 package client {
 
+public class ShipChooser
+{
+    public static function show (newGame :Boolean) :void
+    {
+        if (_instance == null) {
+            _instance = new ShipChooserWindow(newGame);
+            ClientContext.gameView.popupLayer.addChild(_instance);
+        }
+    }
+
+    public static function hide () :void
+    {
+        if (_instance != null) {
+            _instance.parent.removeChild(_instance);
+            _instance = null;
+        }
+    }
+
+    public static function get isShowing () :Boolean
+    {
+        return (_instance != null);
+    }
+
+    protected static var _instance :ShipChooserWindow;
+}
+
+}
+
 import flash.display.Bitmap;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -9,9 +37,11 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-public class ShipChooser extends Sprite
+import client.*;
+
+class ShipChooserWindow extends Sprite
 {
-    public function ShipChooser (newGame :Boolean)
+    public function ShipChooserWindow (newGame :Boolean)
     {
         // Partially obscure background.
         var fadeOut :Shape = new Shape();
@@ -69,7 +99,7 @@ public class ShipChooser extends Sprite
         addChild(selection);
     }
 
-    public function chooseHandler (event :MouseEvent) :void
+    protected function chooseHandler (event :MouseEvent) :void
     {
         var ship :SelectionShipView =
             SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
@@ -79,7 +109,7 @@ public class ShipChooser extends Sprite
         event.stopImmediatePropagation();
     }
 
-    public function mouseOverHandler (event :MouseEvent) :void
+    protected function mouseOverHandler (event :MouseEvent) :void
     {
         var ship :SelectionShipView =
             SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
@@ -88,7 +118,7 @@ public class ShipChooser extends Sprite
         ship.scaleY = HIGHLIGHT_SCALE;
     }
 
-    public function mouseOutHandler (event :MouseEvent) :void
+    protected function mouseOutHandler (event :MouseEvent) :void
     {
         var ship :SelectionShipView =
             SelectionShipView((event.currentTarget as Sprite).getChildAt(0));
@@ -100,7 +130,7 @@ public class ShipChooser extends Sprite
     /**
      * Register a user choice of a specific ship.
      */
-    public function choose (typeIdx :int) :void
+    protected function choose (typeIdx :int) :void
     {
         for each (var selection :Sprite in _buttons) {
             selection.removeEventListener(MouseEvent.CLICK, chooseHandler);
@@ -112,7 +142,8 @@ public class ShipChooser extends Sprite
         } else {
             AppContext.game.changeShip(typeIdx);
         }
-        parent.removeChild(this);
+
+        ShipChooser.hide();
     }
 
     protected static const SPACING :int = 80;
@@ -121,5 +152,5 @@ public class ShipChooser extends Sprite
 
     protected var _newGame :Boolean;
     protected var _buttons :Array = [];
-}
+
 }

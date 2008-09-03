@@ -19,6 +19,7 @@ public class GameView extends Sprite
     public var shotLayer :Sprite;
     public var subShotLayer :Sprite;
     public var statusLayer :Sprite;
+    public var popupLayer :Sprite;
 
     /** Status info. */
     public var status :StatusOverlay;
@@ -75,18 +76,20 @@ public class GameView extends Sprite
         shipLayer = new Sprite();
         shotLayer = new Sprite();
         statusLayer = new Sprite();
+        popupLayer = new Sprite();
         _center.addChild(boardLayer);
         _center.addChild(subShotLayer);
         _center.addChild(shipLayer);
         _center.addChild(shotLayer);
         _center.addChild(statusLayer);
+        _center.addChild(popupLayer);
 
         statusLayer.addChild(status = new StatusOverlay());
     }
 
     public function boardLoaded () :void
     {
-        _center.addChild(new ShipChooser(true));
+        ShipChooser.show(true);
     }
 
     public function showRoundResults (winningShips :Array) :void

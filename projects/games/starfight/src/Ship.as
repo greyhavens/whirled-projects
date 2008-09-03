@@ -1,8 +1,5 @@
 package {
 
-import client.ClientContext;
-import client.ShipChooser;
-
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
@@ -19,6 +16,8 @@ public class Ship extends EventDispatcher
 {
     public static const POWERUP_REMOVED :String = "PowerupRemoved";
     public static const COLLIDED :String = "Collided";
+
+    public static const RESPAWN_DELAY :int = 3000;
 
     /** The size of the ship. */
     public static const WIDTH :int = 40;
@@ -301,26 +300,10 @@ public class Ship extends EventDispatcher
     public function kill () :void
     {
         state = STATE_DEAD;
-
-        if (_isOwnShip) {
-            // After a 5 second interval, reposition & reset.
-            var timer :Timer = new Timer(RESPAWN_DELAY, 1);
-            timer.addEventListener(TimerEvent.TIMER, newShip);
-            timer.start();
-        }
-    }
-
-    public function newShip (event :TimerEvent) :void
-    {
-        event.target.removeEventListener(TimerEvent.TIMER, newShip);
-        if (AppContext.game.gameState != Codes.POST_ROUND) {
-            ClientContext.mainSprite.addChild(new ShipChooser(false));
-        }
     }
 
     /**
-     * Positions the ship at a brand new spot after exploding and resets its
-     *  dynamics.
+     * Positions the ship at a brand new spot after exploding and resets its dynamics.
      */
     public function restart () :void
     {
@@ -734,7 +717,6 @@ public class Ship extends EventDispatcher
     protected static const SHOT_SPD :Number = 1;
     protected static const TIME_PER_SHOT :int = 330;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
-    protected static const RESPAWN_DELAY :int = 3000;
     protected static const DEAD :Number = 0.001;
 
     protected static const FUDGE_FACT :Number = 0.98;

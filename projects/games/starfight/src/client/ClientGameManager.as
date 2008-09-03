@@ -11,6 +11,7 @@ import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
+import flash.utils.Timer;
 
 public class ClientGameManager extends GameManager
 {
@@ -132,6 +133,15 @@ public class ClientGameManager extends GameManager
             if (shotView != null) {
                 shotView.setPosRelTo(ownX, ownY);
             }
+        }
+
+        // if our ship is dead, show the ship chooser after a delay
+        if (_ownShip != null && !_ownShip.isAlive() && !ShipChooser.isShowing) {
+            var timer :Timer = new Timer(Ship.RESPAWN_DELAY, 1);
+            timer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
+                ShipChooser.show(false);
+            });
+            timer.start();
         }
 
         // update our round display
