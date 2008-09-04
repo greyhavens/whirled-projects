@@ -79,8 +79,7 @@ public class Ship extends EventDispatcher
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function Ship (skipStartingPos :Boolean, shipId :int, name :String,
-        isOwnShip :Boolean)
+    public function Ship (skipStartingPos :Boolean, shipId :int, name :String, isOwnShip :Boolean)
     {
         accel = 0.0;
         turnRate = 0.0;

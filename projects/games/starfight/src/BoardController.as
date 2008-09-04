@@ -519,7 +519,7 @@ public class BoardController
     {
         var indices :Array = new Array();
         for (var ii :int = 0; ii < _mines.length; ii++) {
-            if (_mines[ii] != null && Mine(_mines[ii]).type == shipId) {
+            if (_mines[ii] != null && Mine(_mines[ii]).ownerId == shipId) {
                 var mine :Mine = _mines[ii];
                 _mines[ii] = null;
                 indices.push(ii);

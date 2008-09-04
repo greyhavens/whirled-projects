@@ -7,6 +7,7 @@ public class Mine extends BoardObject
 {
     public static const EXPLODED :String = "Exploded";
 
+    public var ownerId :int;
     public var health :Number;
     public var dmg :Number;
 
@@ -17,17 +18,12 @@ public class Mine extends BoardObject
         return mine;
     }
 
-    public function Mine (type :int, x :int, y :int, damage :Number) :void
+    public function Mine (ownerId :int, x :int, y :int, damage :Number) :void
     {
-        super(type, x, y);
+        super(x, y);
+        this.ownerId = ownerId;
         health = 1.0;
         dmg = damage;
-    }
-
-    // TODO - remove this post-refactor
-    public function get ownerId () :int
-    {
-        return type;
     }
 
     override public function damage (damage :Number) :Boolean
@@ -62,12 +58,14 @@ public class Mine extends BoardObject
     override public function readFrom (bytes :ByteArray) :void
     {
         super.readFrom(bytes);
+        ownerId = bytes.readInt();
         dmg = bytes.readFloat();
     }
 
     override public function writeTo (bytes :ByteArray) :ByteArray
     {
         bytes = super.writeTo(bytes);
+        bytes.writeInt(ownerId);
         bytes.writeFloat(dmg);
         return bytes;
     }

@@ -10,12 +10,10 @@ public class BoardObject extends EventDispatcher
 {
     public var bX :int;
     public var bY :int;
-    public var type :int;
     public var index :int;
 
-    public function BoardObject (type :int, bX :int, bY :int) :void
+    public function BoardObject (bX :int, bY :int) :void
     {
-        this.type = type;
         this.bX = bX;
         this.bY = bY;
     }
@@ -45,7 +43,6 @@ public class BoardObject extends EventDispatcher
      */
     public function readFrom (bytes :ByteArray) :void
     {
-        type = bytes.readInt();
         bX = bytes.readInt();
         bY = bytes.readInt();
     }
@@ -60,7 +57,6 @@ public class BoardObject extends EventDispatcher
      */
     public function writeTo (bytes :ByteArray) :ByteArray
     {
-        bytes.writeInt(type);
         bytes.writeInt(bX);
         bytes.writeInt(bY);
 

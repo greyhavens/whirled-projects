@@ -21,6 +21,7 @@ public class Obstacle extends BoardObject
     public static const UP :int = 2;
     public static const DOWN :int = 3;
 
+    public var type :int;
     public var health :Number;
     public var w :int;
     public var h :int;
@@ -34,7 +35,8 @@ public class Obstacle extends BoardObject
 
     public function Obstacle (type :int, x :int, y :int, w :int = 0, h :int = 0) :void
     {
-        super(type, x, y);
+        super(x, y);
+        this.type = type;
         health = 1.0;
         this.w = w;
         this.h = h;
@@ -71,6 +73,7 @@ public class Obstacle extends BoardObject
     override public function readFrom (bytes :ByteArray) :void
     {
         super.readFrom(bytes);
+        type = bytes.readInt();
         w = bytes.readInt();
         h = bytes.readInt();
     }
@@ -78,6 +81,7 @@ public class Obstacle extends BoardObject
     override public function writeTo (bytes :ByteArray) :ByteArray
     {
         bytes = super.writeTo(bytes);
+        bytes.writeInt(type);
         bytes.writeInt(w);
         bytes.writeInt(h);
         return bytes;
