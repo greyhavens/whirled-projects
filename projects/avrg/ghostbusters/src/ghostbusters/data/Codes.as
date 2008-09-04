@@ -105,14 +105,6 @@ public class Codes
     public static const SMSG_PLAYER_ATTACKED :String = "pa";
 
     /**
-     * A player was killed.
-     *
-     * Dispatched by the server to all the AVRG players in a room, and used by the client
-     * to visualize the player's death. TODO: may be obsoleted by health = 0.
-     */
-    public static const SMSG_PLAYER_DEATH :String = "pd";
-
-    /**
      * The prefix for the PLAYER dictionary container which summarizes the current state
      * of a player in a room (currently health and max health). The full room property name
      * is constructed by appending the player's numerical id.

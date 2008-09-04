@@ -33,7 +33,7 @@ import com.threerings.util.CommandEvent;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.MobControl;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -66,6 +66,8 @@ public class FightPanel extends FrameSprite
 
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.props.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
 
         _ghost.fighting();
 
@@ -95,16 +97,7 @@ public class FightPanel extends FrameSprite
             startGame();
 
         } else {
-            endFight();
-        }
-    }
-
-    public function showPlayerDeath (playerId :int) :void
-    {
-        // TODO: we handle death in two separate ways now, pointless
-        if (playerId == Game.ourPlayerId) {
-            // cancel minigame
-            endFight();
+            endMinigame();
         }
     }
 
@@ -214,10 +207,8 @@ public class FightPanel extends FrameSprite
             }
 
         } else if (event.name == Codes.SMSG_PLAYER_ATTACKED) {
-            showGhostAttack(event.value as int);
+            _ghost.attack();
 
-        } else if (event.name == Codes.SMSG_PLAYER_DEATH) {
-            showPlayerDeath(event.value as int);
         }
     }
 
@@ -225,6 +216,15 @@ public class FightPanel extends FrameSprite
     {
         if (evt.name == Codes.PROP_STATE) {
             checkForSpecialStates();
+        }
+    }
+
+    protected function elementChanged (evt :ElementChangedEvent) :void
+    {
+        var playerId :int = PlayerModel.parsePlayerProperty(evt.name);
+        if (playerId == Game.ourPlayerId && PlayerModel.isDead(playerId)) {
+            // if we just died, cancel minigame
+            endMinigame();
         }
     }
 
@@ -241,7 +241,7 @@ public class FightPanel extends FrameSprite
     protected function showGhostDeath () :void
     {
         // cancel minigame
-        endFight();
+        endMinigame();
 
         _ghost.die();
     }
@@ -256,15 +256,7 @@ public class FightPanel extends FrameSprite
         _ghost.damaged();
     }
 
-    protected function showGhostAttack (playerId :int) :void
-    {
-        _ghost.attack();
-        if (playerId == Game.ourPlayerId) {
-            Game.control.player.playAvatarAction("Reel");
-        }
-    }
-
-    protected function endFight () :void
+    protected function endMinigame () :void
     {
         if (_minigame != null) {
             Game.panel.unframeContent();

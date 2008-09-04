@@ -127,7 +127,9 @@ public class SeekPanel extends FrameSprite
         } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
             bits = (evt.newValue as Array);
             if (bits != null) {
-                var pos :Point = Game.control.local.roomToStage(new Point(bits[0], bits[1]));
+                var x :Number = Game.roomBounds.width * bits[0];
+                var y :Number = Game.roomBounds.height * bits[1];
+                var pos :Point = Game.control.local.roomToStage(new Point(x, y));
                 if (pos != null) {
                     _ghost.newTarget(this.globalToLocal(pos));
                 }

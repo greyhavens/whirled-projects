@@ -4,14 +4,21 @@
 package ghostbusters.server {
 
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.server.PlayerServerSubControl;
+
 import com.whirled.net.MessageReceivedEvent;
+
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.PlayerServerSubControl;
 
 import ghostbusters.data.Codes;
 
 public class Player
 {
+    // avatar states
+    public static const ST_PLAYER_DEFAULT :String = "Default";
+    public static const ST_PLAYER_FIGHT :String = "Fight";
+    public static const ST_PLAYER_DEFEAT :String = "Defeat";
+
     public static var log :Log = Log.getLog(Player);
 
     public function Player (ctrl :PlayerServerSubControl)
@@ -72,35 +79,35 @@ public class Player
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
     }
 
-    public function damage (damage :int) :Boolean
+    public function damage (damage :int) :void
     {
         log.debug("Doing " + damage + " damage to a player with health " + _health);
 
         // let the clients in the room know of the attack
         _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
+        // play the reel animation for ourselves!
+        _ctrl.playAvatarAction("Reel");
 
-        if (damage >= health) {
-            // the blow killed the player: let all the clients in the room know that too
-            _room.ctrl.sendMessage(Codes.SMSG_PLAYER_DEATH, _playerId);
-            setHealth(0);
-            return true;
-        }
-
-        setHealth(_health - damage);
-        return false;
+        setHealth(health - damage); // note: setHealth clamps this to [0, maxHealth]
     }
 
     public function heal (amount :int) :void
     {
         if (!isDead()) {
-            setHealth(Math.min(_maxHealth, _health + amount));
+            setHealth(_health + amount); // note: setHealth clamps this to [0, maxHealth]
         }
+    }
+
+    public function roomStateChanged () :void
+    {
+        updateAvatarState();
     }
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         _room = Server.getRoom(int(evt.value));
         _room.playerEntered(this);
+        updateAvatarState();
     }
 
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
@@ -147,6 +154,19 @@ public class Player
         }
     }
 
+    protected function updateAvatarState () :void
+    {
+        if (isDead()) {
+            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
+
+        } else if (_room.state == Codes.STATE_SEEKING || _room.state == Codes.STATE_APPEARING) {
+            _ctrl.setAvatarState(ST_PLAYER_DEFAULT);
+
+        } else {
+            _ctrl.setAvatarState(ST_PLAYER_FIGHT);
+        }
+    }
+
     protected function setHealth (health :int) :void
     {
         // update our runtime state
@@ -155,9 +175,14 @@ public class Player
         // persist it, too
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
 
+        // if we just died, update our state
+        if (_health == 0) {
+            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
+        }
+
         // and if we're in a room, update the room properties
         if (_room != null) {
-            _room.updatePlayerHealth(_playerId, _health);
+            _room.playerHealthUpdated(this);
         }
     }
 

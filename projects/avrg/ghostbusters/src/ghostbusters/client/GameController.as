@@ -9,7 +9,6 @@ import com.threerings.util.Controller;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.MobControl;
 
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.client.fight.MicrogameResult;
@@ -28,14 +27,6 @@ public class GameController extends Controller
     public static const ZAP_GHOST :String = "ZapGhost";
     public static const REVIVE :String = "Revive";
 
-    public static function setAvatarState (state :String) :void
-    {
-        var info :AVRGameAvatar = Game.control.room.getAvatarInfo(Game.ourPlayerId);
-        if (info != null && info.state != state) {
-            Game.control.player.setAvatarState(state);
-        }
-    }
-
     public var panel :GamePanel;
 
     public function GameController ()
@@ -51,7 +42,8 @@ public class GameController extends Controller
 
     public function handleEndGame () :void
     {
-        setAvatarState(GamePanel.ST_PLAYER_DEFAULT);
+// TODO: what is the best way to reset the state of a departing AVRG player?
+//        setAvatarState(GamePanel.ST_PLAYER_DEFAULT);
         Game.control.player.deactivateGame();
     }
 

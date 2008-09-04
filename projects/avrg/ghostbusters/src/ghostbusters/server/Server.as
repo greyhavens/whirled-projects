@@ -38,7 +38,8 @@ public class Server extends ServerObject
 
         _startTime = getTimer();
 
-        setInterval(tick, 100);
+        // TODO: 1000 temporarily, switch back to 100 when room code fixed
+        setInterval(tick, 1000);
     }
 
     public static function getRoom (roomId :int) :Room

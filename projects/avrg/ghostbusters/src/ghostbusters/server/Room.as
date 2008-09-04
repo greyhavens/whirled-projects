@@ -3,12 +3,12 @@
 
 package ghostbusters.server {
 
+import flash.utils.Dictionary;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-import com.whirled.avrg.server.RoomServerSubControl;
-
-import flash.utils.Dictionary;
+import com.whirled.avrg.RoomServerSubControl;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
@@ -43,6 +43,11 @@ public class Room
         return _ghost;
     }
 
+    public function get state () :String
+    {
+        return _state;
+    }
+
     public function getTeam (excludeDead :Boolean = false) :Array
     {
         var team :Array = new Array();
@@ -64,6 +69,9 @@ public class Room
         dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
         dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
 
+        log.debug("Copying player dictionary into room [playerId=" + player.playerId +
+                  ", roomId=" + roomId + ", health=" + player.health + ", maxHealth=" + 
+                  player.maxHealth + "]");
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
 
         _players[player] = true;
@@ -72,6 +80,8 @@ public class Room
     public function playerLeft (player :Player) :void
     {
         // erase the departing player's data from the room properties
+        log.debug("Erasing player dictionary from room [playerId=" +
+                  ", roomId=" + roomId + "]");
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
 
         delete _players[player];
@@ -88,6 +98,8 @@ public class Room
 
     public function ghostZap (who :Player) :void
     {
+        log.debug("Got zap request [playerId=" + who.playerId + "]");
+
         // TODO: perhaps check that the same player doesn't zap too repeatedly
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
             // let the other people in the room know there was a successful zapping
@@ -136,6 +148,9 @@ public class Room
     public function minigameCompletion (
         player :Player, win :Boolean, damageDone :int, healingDone :int) :void
     {
+        log.debug("Minigame completion [playerId=" + player.playerId + ", damage=" +
+                  damageDone + ", healing=" + healingDone + "]");
+
         // award 3 points for a win, 1 for a lose
         _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
 
@@ -153,11 +168,11 @@ public class Room
         _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos);
     }
 
-    internal function updatePlayerHealth (playerId :int, health :int) :void
+    internal function playerHealthUpdated (player :Player) :void
     {
-        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + playerId,
-                          Codes.IX_PLAYER_CUR_HEALTH, health);
+        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + player.playerId, player.health);
     }
+
 
     protected function seekTick (frame :int) :void
     {
@@ -174,9 +189,11 @@ public class Room
             return;
         }
 
+        // TODO: only do this about once a second
+
         // tell the ghost to go to a completely random logical position in ([0, 1], [0, 1])
-        var x :int = Server.random.nextNumber();
-        var y :int = Server.random.nextNumber();
+        var x :Number = Server.random.nextNumber();
+        var y :Number = Server.random.nextNumber();
 
         _ghost.setPosition(x, y);
     }
@@ -204,6 +221,8 @@ public class Room
             _transitionFrame = frame + _ghost.definition.triumphFrames;
             return;
         }
+
+        // TODO: only do this about once a second
 
         // if ghost is alive and at least one player is still up, just do an normal AI tick
         _ghost.tick(frame);
@@ -363,6 +382,10 @@ public class Room
         _state = state;
 
         _ctrl.props.set(Codes.PROP_STATE, state, true);
+
+        for (var p :* in _players) {
+            Player(p).roomStateChanged();
+        }
     }
 
     // server-specific parts of the model moved here

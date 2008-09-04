@@ -44,11 +44,6 @@ public class GamePanel extends Sprite
     public static const ST_GHOST_DEFEAT :String = "defeat_disappear";
     public static const ST_GHOST_TRIUMPH :String = "triumph_chase";
 
-    // avatar states
-    public static const ST_PLAYER_DEFAULT :String = "Default";
-    public static const ST_PLAYER_FIGHT :String = "Fight";
-    public static const ST_PLAYER_DEFEAT :String = "Defeat";
-
     public var hud :HUD;
 
     public function GamePanel ()
@@ -71,13 +66,16 @@ public class GamePanel extends Sprite
             _revivePopup.x = 100;
             _revivePopup.y = 200;
 
+            trace("player_died: " + DisplayUtil.dumpHierarchy(clip));
+
             var button :SimpleButton =
                 SimpleButton(DisplayUtil.findInHierarchy(clip, "revivebutton"));
             if (button == null) {
                 Game.log.debug("Urk, cannot find revivebutton...");
-                return;
+//                return;
             }
-            button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
+            /* TODO: button. */
+            clip.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
                 CommandEvent.dispatch(panel, GameController.REVIVE);
             });
 
@@ -89,13 +87,16 @@ public class GamePanel extends Sprite
             _ghostDefeated.x = 300;
             _ghostDefeated.y = 200;
 
+            trace("ghost_defeated: " + DisplayUtil.dumpHierarchy(clip));
+
             var button :SimpleButton =
                 SimpleButton(DisplayUtil.findInHierarchy(clip, "continuebutton"));
             if (button == null) {
                 Game.log.debug("Urk, cannot find continuebutton...");
-                return;
+//                return;
             }
-            button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
+            /* TODO: button. */
+            clip.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
                 popdown(_ghostDefeated);
             });
 
@@ -201,23 +202,6 @@ public class GamePanel extends Sprite
         AnimationManager.start(flourish);
     }
 
-    public function updateAvatarState () :void
-    {
-        var avatarState :String;
-
-        if (PlayerModel.isDead(Game.ourPlayerId)) {
-            avatarState = ST_PLAYER_DEFEAT;
-
-        } else if (Game.state == Codes.STATE_SEEKING || Game.state == Codes.STATE_APPEARING) {
-            avatarState = ST_PLAYER_DEFAULT;
-
-        } else {
-            avatarState = ST_PLAYER_FIGHT;
-        }
-
-        GameController.setAvatarState(avatarState);
-    }
-
     protected function checkPlayerHealth () :void
     {
         if (_revivePopup == null) {
@@ -276,7 +260,6 @@ public class GamePanel extends Sprite
 
         if (playerId == Game.ourPlayerId && evt.key == Codes.IX_PLAYER_CUR_HEALTH) {
             checkPlayerHealth();
-            updateAvatarState();
         }
     }
 
@@ -292,8 +275,6 @@ public class GamePanel extends Sprite
              Game.state == Codes.STATE_GHOST_DEFEAT);
 
         setPanel(seekPanel ? SeekPanel : (fightPanel ? FightPanel : null));
-
-        updateAvatarState();
     }
 
     protected function setPanel (pClass :Class) :void

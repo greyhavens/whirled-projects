@@ -46,7 +46,7 @@ public class GhostInfoView
         }
     }
 
-    public function updateGhost () :void
+    protected function updateGhost () :void
     {
         var chosen :String = GhostModel.getId();
 
