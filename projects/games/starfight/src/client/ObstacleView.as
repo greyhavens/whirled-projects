@@ -28,7 +28,6 @@ public class ObstacleView extends Sprite
     public function ObstacleView (obstacle :Obstacle)
     {
         _obstacle = obstacle;
-        _obstacle.addEventListener(Obstacle.EXPLODED, onExploded);
         _obstacle.addEventListener(Obstacle.COLLIDED, onCollided);
 
         setupGraphics();
@@ -74,7 +73,7 @@ public class ObstacleView extends Sprite
         }
     }
 
-    protected function onExploded (...ignored) :void
+    public function explode (...ignored) :void
     {
         if (OBS_EXPLODE[_obstacle.type] == null) {
             if (null != this.parent) {

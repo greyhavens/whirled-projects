@@ -308,7 +308,6 @@ public class BoardController
             var obs :Obstacle = _obstacles[index];
             if (obs != null) {
                 _obstacles[index] = null;
-                obs.explode();
             }
         }
     }

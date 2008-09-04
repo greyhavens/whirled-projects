@@ -86,7 +86,9 @@ public class ClientBoardController extends BoardController
     override protected function obstacleRemoved (index :int) :void
     {
         super.obstacleRemoved(index);
-        if (_obstacleViews != null) {
+        if (_obstacleViews != null && _obstacleViews[index] != null) {
+            var obstacleView :ObstacleView = _obstacleViews[index];
+            obstacleView.explode();
             _obstacleViews[index] = null;
         }
     }
