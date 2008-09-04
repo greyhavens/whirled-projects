@@ -7,8 +7,6 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
-import mx.effects.easing.Linear;
-
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
