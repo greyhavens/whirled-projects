@@ -307,7 +307,7 @@ public class GameManager
         if (_powerupTimer != null) {
             _powerupTimer.removeEventListener(TimerEvent.TIMER, addPowerup);
         }
-        _powerupTimer = new Timer(20000, 0);
+        _powerupTimer = new Timer(Constants.RANDOM_POWERUP_TIME, 0);
         _powerupTimer.addEventListener(TimerEvent.TIMER, addPowerup);
         _powerupTimer.start();
     }

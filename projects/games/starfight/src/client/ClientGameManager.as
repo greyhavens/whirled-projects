@@ -187,7 +187,7 @@ public class ClientGameManager extends GameManager
         }
 
         // collide ownShip with crap on the board
-        if (_ownShip != null) {
+        if (_ownShip != null && _ownShip.isAlive) {
             _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 

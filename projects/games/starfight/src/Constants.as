@@ -60,5 +60,8 @@ public class Constants
     public static const PROP_BOARD :String = "board";
     public static const PROP_GAMESTATE :String = "gameState";
     public static const PROP_STATETIME :String = "stateTime";
+
+    /** Gameplay constants */
+    public static const RANDOM_POWERUP_TIME :int = 20000;
 }
 }

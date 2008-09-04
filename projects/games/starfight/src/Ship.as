@@ -48,12 +48,6 @@ public class Ship extends EventDispatcher
 
     public var rotation :Number;
 
-    /** Our current health */
-    public var power :Number;
-
-    /** All the powerups we've got. */
-    protected var powerups :int;
-
     /** our id. */
     public var shipId :int;
 
@@ -93,8 +87,8 @@ public class Ship extends EventDispatcher
         turnAccelRate = 0;
         xVel = 0.0;
         yVel = 0.0;
-        power = 1.0; // full
-        powerups = 0;
+        _power = 1.0; // full
+        _powerups = 0;
         score = 0;
         shieldPower = 0.0;
         enginePower = 0.0;
@@ -113,6 +107,11 @@ public class Ship extends EventDispatcher
         }
 
         setShipType(shipTypeId);
+    }
+
+    public function get power () :Number
+    {
+        return _power;
     }
 
     public function get shipType () :ShipType
@@ -162,17 +161,17 @@ public class Ship extends EventDispatcher
 
     public function hasPowerup (type :int) :Boolean
     {
-        return Boolean(powerups & (1 << type));
+        return Boolean(_powerups & (1 << type));
     }
 
     public function addPowerup (type :int) :void
     {
-        powerups |= (1 << type);
+        _powerups |= (1 << type);
     }
 
     public function removePowerup (type :int) :void
     {
-        powerups &= ~(1 << type);
+        _powerups &= ~(1 << type);
         dispatchEvent(new Event(POWERUP_REMOVED));
     }
 
@@ -186,7 +185,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return power > DEAD && AppContext.game.gameState != Constants.STATE_POST_ROUND;
+        return _power > DEAD && AppContext.game.gameState != Constants.STATE_POST_ROUND;
     }
 
     /**
@@ -264,8 +263,8 @@ public class Ship extends EventDispatcher
             return;
         }
 
-        power -= hitPower;
-        if (power <= DEAD) {
+        _power -= hitPower;
+        if (_power <= DEAD) {
             AppContext.game.explodeShip(boardX, boardY, rotation, shooterId, shipId);
             checkAwards();
 
@@ -306,8 +305,8 @@ public class Ship extends EventDispatcher
      */
     public function restart () :void
     {
-        power = 1.0; //full
-        powerups = 0;
+        _power = 1.0; //full
+        _powerups = 0;
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
@@ -547,10 +546,10 @@ public class Ship extends EventDispatcher
         AppContext.local.incrementScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
-            power = Math.min(1.0, power + 0.5);
+            _power = Math.min(1.0, _power + 0.5);
             return;
         }
-        powerups |= (1 << powerup.type);
+        _powerups |= (1 << powerup.type);
         switch (powerup.type) {
         case Powerup.SHIELDS:
             shieldPower = 1.0;
@@ -596,8 +595,8 @@ public class Ship extends EventDispatcher
         yVel = report.yVel;
         turnRate = report.turnRate;
         turnAccelRate = report.turnAccelRate;
-        power = report.power;
-        powerups = report.powerups;
+        _power = report._power;
+        _powerups = report._powerups;
         score = report.score;
         state = report.state;
 
@@ -623,8 +622,8 @@ public class Ship extends EventDispatcher
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
         rotation = bytes.readShort();
-        power = bytes.readFloat();
-        powerups = bytes.readInt();
+        _power = bytes.readFloat();
+        _powerups = bytes.readInt();
         setShipType(bytes.readInt());
         score = bytes.readInt();
         state = bytes.readByte();
@@ -643,8 +642,8 @@ public class Ship extends EventDispatcher
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
         bytes.writeShort(rotation);
-        bytes.writeFloat(power);
-        bytes.writeInt(powerups);
+        bytes.writeFloat(_power);
+        bytes.writeInt(_powerups);
         bytes.writeInt(shipTypeId);
         bytes.writeInt(score);
         bytes.writeByte(state);
@@ -710,6 +709,12 @@ public class Ship extends EventDispatcher
 
     protected var _reportShip :Ship;
     protected var _reportTime :int;
+
+    /** All the powerups we've got. */
+    protected var _powerups :int;
+
+    /** Our current health */
+    protected var _power :Number;
 
     /** Trophy stats. */
     protected var _killsThisLife :int;

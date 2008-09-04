@@ -173,15 +173,12 @@ public class BoardController
                 }
 
             } else {
-                var pow :Powerup = _powerups[event.index];
-                if (pow != null) {
+                if (_powerups[event.index] != null) {
                     powerupRemoved(event.index);
                 }
                 var pBytes :ByteArray = ByteArray(event.newValue);
                 pBytes.position = 0;
-                pow = Powerup.readPowerup(pBytes);
-                _powerups[event.index] = pow;
-                powerupAdded(pow, event.index);
+                powerupAdded(Powerup.readPowerup(pBytes), event.index);
             }
 
         } else if ((event.name == Constants.PROP_OBSTACLES) && (event.index >= 0)) {
@@ -271,13 +268,13 @@ public class BoardController
 
     protected function addPowerup (powerup :Powerup, index :int) :void
     {
-        _powerups[index] = powerup;
         setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
         powerupAdded(powerup, index);
     }
 
     protected function powerupAdded (powerup :Powerup, index :int) :void
     {
+        _powerups[index] = powerup;
     }
 
     /**
