@@ -8,22 +8,26 @@ public class Mine extends BoardObject
     public static const EXPLODED :String = "Exploded";
 
     public var health :Number;
-    public var active :Boolean;
     public var dmg :Number;
 
     public static function readMine (bytes :ByteArray) :Mine
     {
-        var mine :Mine = new Mine(0, 0, 0, true, 0.0);
+        var mine :Mine = new Mine(0, 0, 0, 0);
         mine.reload(bytes);
         return mine;
     }
 
-    public function Mine (type :int, x :int, y :int, active :Boolean, damage :Number) :void
+    public function Mine (type :int, x :int, y :int, damage :Number) :void
     {
         super(type, x, y);
         health = 1.0;
-        this.active = active;
         dmg = damage;
+    }
+
+    // TODO - remove this post-refactor
+    public function get ownerId () :int
+    {
+        return type;
     }
 
     override public function damage (damage :Number) :Boolean

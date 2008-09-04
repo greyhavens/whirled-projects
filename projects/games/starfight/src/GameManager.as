@@ -18,9 +18,6 @@ import flash.utils.getTimer;
 
 public class GameManager
 {
-    /** Our seated index. */
-    public var myId :int = -1;
-
     public var gameState :int;
 
     /**
@@ -70,12 +67,10 @@ public class GameManager
         log.info("Got game object");
 
         if (!_gameCtrl.isConnected()) {
-            myId = 1;
-            gameState = Constants.PRE_ROUND;
+            gameState = Constants.STATE_PRE_ROUND;
         } else {
-            myId = _gameCtrl.game.getMyId();
             if (_gameCtrl.net.get("gameState") == null) {
-                gameState = Constants.PRE_ROUND;
+                gameState = Constants.STATE_PRE_ROUND;
             } else {
                 gameState = int(_gameCtrl.net.get("gameState"));
                 _stateTime = int(_gameCtrl.net.get("stateTime"));
@@ -104,58 +99,23 @@ public class GameManager
         if (_gameCtrl.isConnected()) {
             var occupants :Array = _gameCtrl.game.getOccupantIds();
             for (var ii :int = 0; ii < occupants.length; ii++) {
-                // Skip ownship.
-                if (occupants[ii] == myId) {
-                    continue;
-                }
-
-                var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
-                if (bytes != null) {
-                    var ship :Ship = new Ship(true, occupants[ii],
-                        _gameCtrl.game.getOccupantName(occupants[ii]), false);
-                    bytes.position = 0;
-                    ship.readFrom(bytes);
-                    addShip(occupants[ii], ship);
+                // this is a bit of a hack. the ship might already exist if this is a client,
+                // because clients add their own ships to the world before the board is loaded,
+                // i think. TODO - change this.
+                if (getShip(occupants[ii]) == null) {
+                    var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
+                    if (bytes != null) {
+                        var ship :Ship = new Ship(true, occupants[ii],
+                            _gameCtrl.game.getOccupantName(occupants[ii]), false);
+                        bytes.position = 0;
+                        ship.readFrom(bytes);
+                        addShip(occupants[ii], ship);
+                    }
                 }
             }
         }
 
         startScreen();
-    }
-
-    /**
-     * Choose the type of ship for ownship.
-     */
-    public function playerChoseShip (typeIdx :int) :void
-    {
-        var myName :String = "Guest";
-
-        if (_gameCtrl.isConnected()) {
-            myName = _gameCtrl.game.getOccupantName(myId);
-        }
-
-        // Create our local ship and center the board on it.
-        _ownShip = new Ship(false, myId, myName, true);
-        _ownShip.setShipType(typeIdx);
-
-        addShip(myId, _ownShip);
-
-        // Add ourselves to the ship array.
-        if (_gameCtrl.isConnected()) {
-            setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
-        }
-
-        _ownShip.restart();
-    }
-
-    /**
-     * Changes the ship type.
-     */
-    public function changeShip (typeIdx :int) :void
-    {
-        _ownShip.setShipType(typeIdx);
-        _ownShip.restart();
-        _lastTickTime = getTimer();
     }
 
     /**
@@ -190,53 +150,23 @@ public class GameManager
         _boardCtrl.addRandomPowerup();
     }
 
-    public function addMine (shipId :int, x :int, y :int, shipType :int, damage :Number) :void
+    public function addMine (shipId :int, x :int, y :int, damage :Number) :void
     {
-        _boardCtrl.addMine(new Mine(
-                shipId, x, y, _ownShip == null || shipId != _ownShip.shipId, damage));
+        _boardCtrl.addMine(new Mine(shipId, x, y, damage));
     }
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (myId == -1) {
-            return;
-        }
-
         var name :String = event.name;
         if (isShipKey(name)) {
-            var id :int = shipId(name);
-            if (id != myId) {
-                // Someone else's ship - update our sprite for em.
-                var occName :String = _gameCtrl.game.getOccupantName(id);
-                var bytes :ByteArray = ByteArray(event.newValue);
-                if (bytes == null) {
-                    removeShip(id);
-
-                } else {
-                    var ship :Ship = getShip(id);
-                    bytes.position = 0;
-                    if (ship == null) {
-                        ship = new Ship(true, id, occName, false);
-                        _gameCtrl.local.feedback(ship.playerName + " entered the game.");
-                        ship.readFrom(bytes);
-                        addShip(id, ship);
-                    } else {
-                        var sentShip :Ship = new Ship(true, id, occName, false);
-                        sentShip.readFrom(bytes);
-                        ship.updateForReport(sentShip);
-                    }
-                    var scores :Object = {};
-                    scores[id] = ship.score;
-                    _gameCtrl.local.setMappedScores(scores);
-                }
-            }
+            shipChanged(shipId(name), ByteArray(event.newValue));
 
         } else if (name == "gameState") {
             gameState = int(_gameCtrl.net.get("gameState"));
 
-            if (gameState == Constants.IN_ROUND) {
+            if (gameState == Constants.STATE_IN_ROUND) {
                 startRound();
-            } else if (gameState == Constants.POST_ROUND) {
+            } else if (gameState == Constants.STATE_POST_ROUND) {
                 endRound();
             }
 
@@ -245,9 +175,36 @@ public class GameManager
         }
     }
 
+    protected function shipChanged (shipId :int, bytes :ByteArray) :void
+    {
+        var occName :String = _gameCtrl.game.getOccupantName(shipId);
+        if (bytes == null) {
+            removeShip(shipId);
+
+        } else {
+            var ship :Ship = getShip(shipId);
+            bytes.position = 0;
+            if (ship == null) {
+                ship = new Ship(true, shipId, occName, false);
+                ship.readFrom(bytes);
+                addShip(shipId, ship);
+
+            } else {
+                var sentShip :Ship = new Ship(true, shipId, occName, false);
+                sentShip.readFrom(bytes);
+                ship.updateForReport(sentShip);
+            }
+
+            AppContext.local.setScore(shipId, ship.score);
+        }
+    }
+
     public function addShip (id :int, ship :Ship) :void
     {
-        _ships.put(id, ship);
+        var oldValue :* = _ships.put(id, ship);
+        if (oldValue !== undefined) {
+            throw new Error("Tried to add a ship that already existed [id=" + id + "]");
+        }
         _population++;
         maybeStartRound();
     }
@@ -256,7 +213,7 @@ public class GameManager
     {
         var remShip :Ship = _ships.remove(id);
         if (remShip != null) {
-            _gameCtrl.local.feedback(remShip.playerName + " left the game.");
+            AppContext.local.feedback(remShip.playerName + " left the game.");
             _population--;
         }
 
@@ -277,8 +234,8 @@ public class GameManager
 
     public function maybeStartRound () :void
     {
-        if (_population >= 2 && gameState == Constants.PRE_ROUND && _gameCtrl.game.amInControl()) {
-            _gameCtrl.net.set("gameState", Constants.IN_ROUND);
+        if (_population >= 2 && gameState == Constants.STATE_PRE_ROUND && _gameCtrl.game.amInControl()) {
+            _gameCtrl.net.set("gameState", Constants.STATE_IN_ROUND);
         }
     }
 
@@ -287,26 +244,23 @@ public class GameManager
      */
     public function startRound () :void
     {
-        _gameCtrl.local.feedback("Round starting...");
+        AppContext.local.feedback("Round starting...");
         _stateTime = 10 * 60;
 
         //_stateTime = 30;
         if (_gameCtrl.isConnected()) {
-            var occupants :Array = _gameCtrl.game.getOccupantIds();
-            var scores :Array = [];
-            for (var ii :int = 0; ii < occupants.length; ii++) {
-                scores[occupants[ii]] = 0;
-            }
-            _gameCtrl.local.setMappedScores(scores);
+            AppContext.local.resetScores();
+
             if (_gameCtrl.game.amInControl()) {
 
                 // The first player is in charge of adding powerups.
                 _gameCtrl.services.startTicker(Constants.MSG_STATETICKER, 1000);
                 setImmediate("stateTime", _stateTime);
-                if (_ownShip != null) {
+                // TODO - figure out if this is necessary
+                /*if (_ownShip != null) {
                     _ownShip.restart();
                     _boardCtrl.shipKilled(myId);
-                }
+                }*/
                 addPowerup(null);
                 startPowerupTimer();
             }
@@ -361,20 +315,15 @@ public class GameManager
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Constants.MSG_SHOT) {
-            var val :Array = (event.value as Array);
-             Constants.getShipType(val[1]).doPrimaryShot(val);
+            var args :Array = (event.value as Array);
+             Constants.getShipType(args[1]).doPrimaryShot(args);
 
         } else if (event.name == Constants.MSG_SECONDARY) {
-            val = (event.value as Array);
-            Constants.getShipType(val[1]).doSecondaryShot(val);
+            args = (event.value as Array);
+            Constants.getShipType(args[1]).doSecondaryShot(args);
 
         } else if (event.name == Constants.MSG_EXPLODE) {
             shipExploded(event.value as Array);
-
-        } else if (event.name.substring(0, 9) == "addScore-") {
-            if (String(myId) == event.name.substring(9)) {
-                addScore(myId, int(event.value));
-            }
 
         } else if (event.name == Constants.MSG_STATETICKER) {
             if (_stateTime > 0) {
@@ -427,26 +376,6 @@ public class GameManager
         _shots.splice(index, 1);
     }
 
-    /**
-     * Adds to our score.
-     */
-    public function addScore (shipId :int, score :int) :void
-    {
-        if (shipId == myId) {
-        //AppContext.gameView.status.addScore(score);
-            _ownShip.addScore(score);
-            var scores :Object = {};
-            scores[_ownShip.shipId] = _ownShip.score;
-            _gameCtrl.local.setMappedScores(scores);
-        } else {
-            if (_otherScores[shipId] === undefined) {
-                _otherScores[shipId] = score;
-            } else {
-                _otherScores[shipId] = int(_otherScores[shipId]) + score;
-            }
-        }
-    }
-
     public function awardTrophy (name :String) :void
     {
         _gameCtrl.player.awardTrophy(name);
@@ -455,24 +384,17 @@ public class GameManager
     /**
      * Register that a ship was hit at the location.
      */
-    public function hitShip (ship :Ship, x :Number, y :Number,
-        shooterId :int, damage :Number) :void
+    public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
         _boardCtrl.explode(x, y, 0, true, 0);
-
-        if (ship == _ownShip) {
-            ship.hit(shooterId, damage);
-            addScore(shooterId, Math.round(damage * 10));
-        }
     }
 
     /**
      * Register that an obstacle was hit.
      */
-    public function hitObs (
-            obj :BoardObject, x :Number, y :Number, shooterId :int, damage :Number) :void
+    public function hitObs (obj :BoardObject, x :Number, y :Number, shooterId :int,
+        damage :Number) :void
     {
-        _boardCtrl.hitObs(obj, x, y, _ownShip != null && shooterId == _ownShip.shipId, damage);
     }
 
     /**
@@ -482,10 +404,9 @@ public class GameManager
     {
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.services.stopTicker("nextRoundTicker");
-            setImmediate("gameState", Constants.PRE_ROUND);
+            setImmediate("gameState", Constants.STATE_PRE_ROUND);
         }
         _ships = new HashMap();
-        _ownShip = null;
         setupBoard();
         _boardCtrl.init(boardLoaded);
         log.info("Game started");
@@ -496,14 +417,6 @@ public class GameManager
      */
     protected function handleGameEnded (event :StateChangedEvent) :void
     {
-        _gameCtrl.doBatch(function () :void {
-            setImmediate(shipKey(myId), null);
-            setImmediate("score:myId", 0);
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.game.restartGameIn(30);
-                _gameCtrl.services.startTicker("nextRoundTicker", 1000);
-            }
-        });
     }
 
     /**
@@ -513,7 +426,7 @@ public class GameManager
     {
         // Try initializing the game state if there isn't a board yet.
         if (_gameCtrl.game.amInControl()) {
-            if (gameState == Constants.IN_ROUND) {
+            if (gameState == Constants.STATE_IN_ROUND) {
                 startPowerupTimer();
             }
             _boardCtrl.hostChanged(event, gameState);
@@ -567,6 +480,7 @@ public class GameManager
      */
     public function explodeShip (x :Number, y :Number, rot :int, shooterId :int, shipId :int) :void
     {
+        // TODO - change args to something more typesafe
         var args :Array = new Array(5);
         args[0] = x;
         args[1] = y;
@@ -578,6 +492,7 @@ public class GameManager
 
     protected function shipExploded (args :Array) :void
     {
+        // TODO - change args to something more typesafe
         var x :Number = args[0];
         var y :Number = args[1];
         var rot :int = args[2];
@@ -590,15 +505,10 @@ public class GameManager
             ship.kill();
             var shooter :Ship = getShip(shooterId);
             if (shooter != null) {
-                _gameCtrl.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
+                AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
             }
         }
         _boardCtrl.shipKilled(shipId);
-
-        if (_ownShip != null && shooterId == _ownShip.shipId) {
-            addScore(shooterId, KILL_PTS);
-            _ownShip.registerKill(shipId);
-        }
     }
 
     /**
@@ -607,11 +517,15 @@ public class GameManager
     public function tick (event :TimerEvent) :void
     {
         var now :int = getTimer();
-        var time :int = now - _lastTickTime;
+        update(now - _lastTickTime);
+        _lastTickTime = now;
+    }
 
-        if (gameState == Constants.IN_ROUND) {
+    protected function update (time :int) :void
+    {
+        if (gameState == Constants.STATE_IN_ROUND) {
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
-                gameState = Constants.POST_ROUND;
+                gameState = Constants.STATE_POST_ROUND;
                 _gameCtrl.services.stopTicker(Constants.MSG_STATETICKER);
                 setImmediate("gameState", gameState);
                 _screenTimer.reset();
@@ -619,31 +533,11 @@ public class GameManager
             }
         }
 
-        var ownOldX :Number = _boardCtrl.width/2;
-        var ownOldY :Number = _boardCtrl.height/2;
-        var ownX :Number = ownOldX;
-        var ownY :Number = ownOldY;
-
-        if (_ownShip != null) {
-            ownOldX = _ownShip.boardX;
-            ownOldY = _ownShip.boardY;
-        }
-
         // Update all ships.
         for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
                 ship.tick(time);
             }
-        }
-
-        if (_ownShip != null) {
-            ownX = _ownShip.boardX;
-            ownY = _ownShip.boardY;
-        }
-
-        // collide ownShip with crap on the board
-        if (_ownShip != null) {
-            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 
         _boardCtrl.tick(time);
@@ -663,31 +557,13 @@ public class GameManager
         for each (shot in completed) {
             removeShot(_shots.indexOf(shot));
         }
-
-        // Every few frames, broadcast our status to everyone else.
-        _updateCount += time;
-        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
-            _updateCount = 0;
-            _gameCtrl.doBatch(function () :void {
-                setImmediate(shipKey(myId), _ownShip.writeTo(new ByteArray()));
-                if (gameState == Constants.IN_ROUND) {
-                    setImmediate("score:" + myId, _ownShip.score);
-                    for (var id :String in _otherScores) {
-                        _gameCtrl.net.sendMessage("addScore-" + id, int(_otherScores[id]));
-                    }
-                }
-            });
-            _otherScores = [];
-        }
-
-        _lastTickTime = now;
     }
 
     protected function handleFlowAwarded (event :CoinsAwardedEvent) :void
     {
         var amount :int = event.amount;
         if (amount > 0) {
-            _gameCtrl.local.feedback("You earned " + amount + " flow this round.");
+            AppContext.local.feedback("You earned " + amount + " flow this round.");
         }
     }
 
@@ -698,9 +574,6 @@ public class GameManager
 
     /** Our game control object. */
     protected var _gameCtrl :GameControl;
-
-    /** Our local ship. */
-    protected var _ownShip :Ship;
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>

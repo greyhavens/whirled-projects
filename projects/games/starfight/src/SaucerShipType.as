@@ -105,7 +105,7 @@ public class SaucerShipType extends ShipType
 
     override public function doSecondaryShot (args :Array) :void
     {
-        AppContext.game.addMine(args[0], args[2], args[3], args[1], args[4]);
+        AppContext.game.addMine(args[0], args[2], args[3], args[4]);
 
         dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
     }

@@ -186,7 +186,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return power > DEAD && AppContext.game.gameState != Constants.POST_ROUND;
+        return power > DEAD && AppContext.game.gameState != Constants.STATE_POST_ROUND;
     }
 
     /**
@@ -544,7 +544,7 @@ public class Ship extends EventDispatcher
     public function awardPowerup (powerup :Powerup) :void
     {
         _powerupsThisLife = true;
-        AppContext.game.addScore(shipId, POWERUP_PTS);
+        AppContext.local.incrementScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
             power = Math.min(1.0, power + 0.5);

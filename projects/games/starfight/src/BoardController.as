@@ -546,12 +546,12 @@ public class BoardController
         }
     }
 
-    public function hitObs (
-        obj :BoardObject, x :Number, y :Number, owner :Boolean, damage :Number) :void
+    public function hitObs (obj :BoardObject, x :Number, y :Number, owner :Boolean,
+        damage :Number) :void
     {
         explode(x, y, 0, true, 0);
         if (owner) {
-            if (AppContext.game.gameState == Constants.IN_ROUND && obj.damage(damage)) {
+            if (AppContext.game.gameState == Constants.STATE_IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName, null, obj.index);
             }
         }
@@ -665,7 +665,7 @@ public class BoardController
 
     public function hostChanged (event :StateChangedEvent, gameState :int) :void
     {
-        if (_gameCtrl.game.amInControl() && gameState != Constants.POST_ROUND) {
+        if (_gameCtrl.game.amInControl() && gameState != Constants.STATE_POST_ROUND) {
             if (_gameCtrl.net.get("board") == null) {
                 createBoard();
             }

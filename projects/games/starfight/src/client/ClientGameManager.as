@@ -2,6 +2,7 @@ package client {
 
 import com.threerings.util.HashMap;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
@@ -11,6 +12,7 @@ import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
+import flash.utils.ByteArray;
 import flash.utils.Timer;
 
 public class ClientGameManager extends GameManager
@@ -20,6 +22,7 @@ public class ClientGameManager extends GameManager
         super(mainSprite);
         ClientContext.mainSprite = mainSprite;
         ClientContext.game = this;
+        ClientContext.myId = _gameCtrl.game.getMyId();
 
         ClientContext.gameView = new GameView();
         mainSprite.addChild(ClientContext.gameView);
@@ -50,12 +53,53 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    override public function playerChoseShip (typeIdx :int) :void
+    override protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        super.playerChoseShip(typeIdx);
-        if (_ownShip != null) {
-            ClientContext.board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        if (event.name.substring(0, 9) == "addScore-") {
+            if (String(ClientContext.myId) == event.name.substring(9)) {
+                AppContext.local.incrementScore(ClientContext.myId, int(event.value));
+            }
+
+        } else {
+            super.messageReceived(event);
         }
+    }
+
+    /**
+     * Choose the type of ship for ownship.
+     */
+    public function playerChoseShip (typeIdx :int) :void
+    {
+        var myName :String = "Guest";
+
+        if (_gameCtrl.isConnected()) {
+            myName = _gameCtrl.game.getOccupantName(ClientContext.myId);
+        }
+
+        // Create our local ship and center the board on it.
+        _ownShip = new Ship(false, ClientContext.myId, myName, true);
+        _ownShip.setShipType(typeIdx);
+
+        addShip(ClientContext.myId, _ownShip);
+
+        // Add ourselves to the ship array.
+        if (_gameCtrl.isConnected()) {
+            setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
+        }
+
+        _ownShip.restart();
+
+        ClientContext.board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+    }
+
+    /**
+     * Changes the ship type.
+     */
+    public function changeShip (typeIdx :int) :void
+    {
+        _ownShip.setShipType(typeIdx);
+        _ownShip.restart();
+        _lastTickTime = flash.utils.getTimer();
     }
 
     /**
@@ -85,6 +129,7 @@ public class ClientGameManager extends GameManager
 
     override protected function handleGameStarted (event :StateChangedEvent) :void
     {
+        _ownShip = null;
         _ownShipView = null;
         _shipViews = new HashMap();
         super.handleGameStarted(event);
@@ -104,6 +149,12 @@ public class ClientGameManager extends GameManager
     {
         super.hitShip(ship, x, y, shooterId, damage);
 
+        // TODO - make the server authoritative about ship hits
+        if (ship == _ownShip) {
+            ship.hit(shooterId, damage);
+            AppContext.local.incrementScore(shooterId, Math.round(damage * 10));
+        }
+
         var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
             Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
         playSoundAt(sound, x, y);
@@ -113,18 +164,31 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    override public function tick (event :TimerEvent) :void
+    override public function hitObs (obj :BoardObject, x :Number, y :Number, shooterId :int,
+        damage :Number) :void
+    {
+        // TODO - make the server authoritative about obstacle hits
+        super.hitObs(obj, x, y, shooterId, damage);
+        _boardCtrl.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId), damage);
+    }
+
+    override protected function update (time :int) :void
     {
         var ownOldX :Number = _boardCtrl.width/2;
         var ownOldY :Number = _boardCtrl.height/2;
         var ownX :Number = ownOldX;
         var ownY :Number = ownOldY;
 
-        super.tick(event);
+        super.update(time);
 
         if (_ownShip != null) {
             ownX = _ownShip.boardX;
             ownY = _ownShip.boardY;
+        }
+
+        // collide ownShip with crap on the board
+        if (_ownShip != null) {
+            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 
         // update ship drawstates
@@ -151,15 +215,32 @@ public class ClientGameManager extends GameManager
             _newShipTimer.start();
         }
 
+        // Every few frames, broadcast our status to everyone else.
+        _updateCount += time;
+        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
+            _updateCount = 0;
+            _gameCtrl.doBatch(function () :void {
+                setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
+                if (gameState == Constants.STATE_IN_ROUND) {
+                    setImmediate("score:" + ClientContext.myId, _ownShip.score);
+                    for (var id :String in _otherScores) {
+                        _gameCtrl.net.sendMessage("addScore-" + ClientContext.myId,
+                            int(_otherScores[id]));
+                    }
+                }
+            });
+            _otherScores = [];
+        }
+
         // update our round display
         updateStatusDisplay();
     }
 
      public function updateStatusDisplay () :void
      {
-        if (gameState == Constants.PRE_ROUND) {
+        if (gameState == Constants.STATE_PRE_ROUND) {
             ClientContext.gameView.status.updateRoundText("Waiting for players...");
-        } else if (gameState == Constants.POST_ROUND) {
+        } else if (gameState == Constants.STATE_POST_ROUND) {
             ClientContext.gameView.status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
@@ -237,7 +318,22 @@ public class ClientGameManager extends GameManager
     {
         super.shipExploded(args);
 
+        var shooterId :int = args[3];
+        var shipId :int = args[4];
+
+        if (_ownShip != null && shooterId == _ownShip.shipId) {
+            AppContext.local.incrementScore(shooterId, KILL_PTS);
+            _ownShip.registerKill(shipId);
+        }
+
         playSoundAt(Resources.getSound("ship_explodes.wav"), args[0], args[1]);
+    }
+
+    override protected function shipChanged (shipId :int, bytes :ByteArray) :void
+    {
+        if (shipId != ClientContext.myId) {
+            super.shipChanged(shipId, bytes);
+        }
     }
 
     override public function addShip (id :int, ship :Ship) :void
@@ -251,6 +347,10 @@ public class ClientGameManager extends GameManager
         }
 
         ClientContext.gameView.status.addShip(id);
+
+        if (gameState == Constants.STATE_IN_ROUND) {
+            AppContext.local.feedback(ship.playerName + " entered the game.");
+        }
 
         super.addShip(id, ship);
     }
@@ -318,6 +418,20 @@ public class ClientGameManager extends GameManager
         ClientContext.gameView.showRoundResults(shipArr);
     }
 
+    override protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        super.handleGameEnded(event);
+
+        _gameCtrl.doBatch(function () :void {
+            setImmediate(shipKey(ClientContext.myId), null);
+            setImmediate("score:myId", 0);
+            if (_gameCtrl.game.amInControl()) {
+                _gameCtrl.game.restartGameIn(30);
+                _gameCtrl.services.startTicker("nextRoundTicker", 1000);
+            }
+        });
+    }
+
     protected function onMouseDown (...ignored) :void
     {
         if (resourcesLoaded) {
@@ -346,6 +460,7 @@ public class ClientGameManager extends GameManager
     }
 
     protected var _shotViews :Array = [];
+    protected var _ownShip :Ship;
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
     protected var _newShipTimer :Timer;

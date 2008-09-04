@@ -26,9 +26,9 @@ public class Constants
     public static const TIME_PER_UPDATE :int = 125;
 
     /** Game states. */
-    public static const PRE_ROUND :int = 1;
-    public static const IN_ROUND :int = 2;
-    public static const POST_ROUND :int = 3;
+    public static const STATE_PRE_ROUND :int = 1;
+    public static const STATE_IN_ROUND :int = 2;
+    public static const STATE_POST_ROUND :int = 3;
 
     public static const SHIP_TYPE_WASP :WaspShipType = new WaspShipType();
     public static const SHIP_TYPE_RHINO :RhinoShipType = new RhinoShipType();
