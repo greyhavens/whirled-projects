@@ -69,11 +69,11 @@ public class GameManager
         if (!_gameCtrl.isConnected()) {
             gameState = Constants.STATE_PRE_ROUND;
         } else {
-            if (_gameCtrl.net.get("gameState") == null) {
+            if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
                 gameState = Constants.STATE_PRE_ROUND;
             } else {
-                gameState = int(_gameCtrl.net.get("gameState"));
-                _stateTime = int(_gameCtrl.net.get("stateTime"));
+                gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
+                _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
             }
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
             _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
@@ -161,8 +161,8 @@ public class GameManager
         if (isShipKey(name)) {
             shipChanged(shipId(name), ByteArray(event.newValue));
 
-        } else if (name == "gameState") {
-            gameState = int(_gameCtrl.net.get("gameState"));
+        } else if (name == Constants.PROP_GAMESTATE) {
+            gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
 
             if (gameState == Constants.STATE_IN_ROUND) {
                 startRound();
@@ -170,8 +170,8 @@ public class GameManager
                 endRound();
             }
 
-        } else if (name == "stateTime") {
-            _stateTime = int(_gameCtrl.net.get("stateTime"));
+        } else if (name == Constants.PROP_STATETIME) {
+            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
     }
 
@@ -235,7 +235,7 @@ public class GameManager
     public function maybeStartRound () :void
     {
         if (_population >= 2 && gameState == Constants.STATE_PRE_ROUND && _gameCtrl.game.amInControl()) {
-            _gameCtrl.net.set("gameState", Constants.STATE_IN_ROUND);
+            _gameCtrl.net.set(Constants.PROP_GAMESTATE, Constants.STATE_IN_ROUND);
         }
     }
 
@@ -255,7 +255,7 @@ public class GameManager
 
                 // The first player is in charge of adding powerups.
                 _gameCtrl.services.startTicker(Constants.MSG_STATETICKER, 1000);
-                setImmediate("stateTime", _stateTime);
+                setImmediate(Constants.PROP_STATETIME, _stateTime);
                 // TODO - figure out if this is necessary
                 /*if (_ownShip != null) {
                     _ownShip.restart();
@@ -329,7 +329,7 @@ public class GameManager
             if (_stateTime > 0) {
                 _stateTime -= 1;
                 if (_stateTime % 10 == 0 && _gameCtrl.game.amInControl()) {
-                    setImmediate("stateTime", _stateTime);
+                    setImmediate(Constants.PROP_STATETIME, _stateTime);
                 }
             }
         }
@@ -404,7 +404,7 @@ public class GameManager
     {
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.services.stopTicker("nextRoundTicker");
-            setImmediate("gameState", Constants.STATE_PRE_ROUND);
+            setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
         }
         _ships = new HashMap();
         setupBoard();
@@ -527,7 +527,7 @@ public class GameManager
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
                 gameState = Constants.STATE_POST_ROUND;
                 _gameCtrl.services.stopTicker(Constants.MSG_STATETICKER);
-                setImmediate("gameState", gameState);
+                setImmediate(Constants.PROP_GAMESTATE, gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();
             }

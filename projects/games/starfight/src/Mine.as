@@ -41,7 +41,7 @@ public class Mine extends BoardObject
 
     override public function get arrayName () :String
     {
-        return "mines";
+        return Constants.PROP_MINES;
     }
 
     override public function get hitSoundName () :String

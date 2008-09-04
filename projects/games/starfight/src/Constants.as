@@ -53,5 +53,12 @@ public class Constants
     public static const MSG_SECONDARY :String = "secondary";
     public static const MSG_EXPLODE :String = "explode";
     public static const MSG_STATETICKER :String = "stateTicker";
+
+    public static const PROP_POWERUPS :String = "powerups";
+    public static const PROP_OBSTACLES :String = "obsacles";
+    public static const PROP_MINES :String = "mines";
+    public static const PROP_BOARD :String = "board";
+    public static const PROP_GAMESTATE :String = "gameState";
+    public static const PROP_STATETIME :String = "stateTime";
 }
 }

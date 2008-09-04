@@ -66,7 +66,7 @@ public class Obstacle extends BoardObject
 
     override public function get arrayName () :String
     {
-        return "obstacles";
+        return Constants.PROP_OBSTACLES;
     }
 
     override public function readFrom (bytes :ByteArray) :void

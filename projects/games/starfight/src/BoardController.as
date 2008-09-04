@@ -38,7 +38,7 @@ public class BoardController
             return;
         }
 
-        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
+        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
         if (boardBytes != null) {
             boardBytes.position = 0;
             readBoard(boardBytes);
@@ -55,10 +55,10 @@ public class BoardController
         _boardCreated = false;
         if (_gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
-                setImmediate("obstacles", null);
-                setImmediate("powerup", null);
-                setImmediate("mines", null);
-                setImmediate("board", null);
+                setImmediate(Constants.PROP_OBSTACLES, null);
+                setImmediate(Constants.PROP_POWERUPS, null);
+                setImmediate(Constants.PROP_MINES, null);
+                setImmediate(Constants.PROP_BOARD, null);
             });
         }
     }
@@ -70,7 +70,7 @@ public class BoardController
         }
 
         readFrom(boardBytes);
-        var obs :Array = (_gameCtrl.net.get("obstacles") as Array);
+        var obs :Array = (_gameCtrl.net.get(Constants.PROP_OBSTACLES) as Array);
         _obstacles = new Array(obs.length);
         for (var ii :int; ii < _obstacles.length; ii++) {
             if (obs[ii] == null) {
@@ -82,7 +82,7 @@ public class BoardController
             _obstacles[ii].index = ii;
         }
 
-        var pups :Array = (_gameCtrl.net.get("powerup") as Array);
+        var pups :Array = (_gameCtrl.net.get(Constants.PROP_POWERUPS) as Array);
         _powerups = new Array(pups.length);
         for (ii = 0; ii < pups.length; ii++) {
             if (pups[ii] == null) {
@@ -93,7 +93,7 @@ public class BoardController
             _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
         }
 
-        var mines :Array = (_gameCtrl.net.get("mines") as Array);
+        var mines :Array = (_gameCtrl.net.get(Constants.PROP_MINES) as Array);
         _mines = new Array(mines.length);
         for (ii = 0; ii < mines.length; ii++) {
             if (mines[ii] == null) {
@@ -125,14 +125,14 @@ public class BoardController
 
         if (_gameCtrl.isConnected()) {
             _gameCtrl.doBatch(function () :void {
-                setImmediate("obstacles", new Array(_obstacles.length));
+                setImmediate(Constants.PROP_OBSTACLES, new Array(_obstacles.length));
                 for (var ii :int; ii < _obstacles.length; ii++) {
-                    setAtImmediate("obstacles",
+                    setAtImmediate(Constants.PROP_OBSTACLES,
                             _obstacles[ii].writeTo(new ByteArray()), ii);
                 }
-                setImmediate("powerup", new Array(_powerups.length));
-                setImmediate("mines", new Array(MAX_MINES));
-                setImmediate("board", writeTo(new ByteArray()));
+                setImmediate(Constants.PROP_POWERUPS, new Array(_powerups.length));
+                setImmediate(Constants.PROP_MINES, new Array(MAX_MINES));
+                setImmediate(Constants.PROP_BOARD, writeTo(new ByteArray()));
             });
         }
 
@@ -166,7 +166,7 @@ public class BoardController
 
     public function elementChanged (event :ElementChangedEvent) :void
     {
-        if ((event.name == "powerup") && (event.index >= 0) && _powerups != null) {
+        if ((event.name == Constants.PROP_POWERUPS) && (event.index >= 0) && _powerups != null) {
             if (event.newValue == null) {
                 if (_powerups[event.index] != null) {
                     powerupRemoved(event.index);
@@ -184,14 +184,14 @@ public class BoardController
                 powerupAdded(pow, event.index);
             }
 
-        } else if ((event.name == "obstacles") && (event.index >= 0)) {
+        } else if ((event.name == Constants.PROP_OBSTACLES) && (event.index >= 0)) {
             if (event.newValue == null) {
                 obstacleRemoved(event.index);
             }
 
             // obstacles are never created during game play
 
-        } else if ((event.name == "mines") && (event.index >= 0)) {
+        } else if ((event.name == Constants.PROP_MINES) && (event.index >= 0)) {
             if (event.newValue == null) {
                 removeMine(event.index);
             }
@@ -204,8 +204,8 @@ public class BoardController
     // from PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == "board" && !_boardCreated) {
-            var bytes :ByteArray = ByteArray(_gameCtrl.net.get("board"));
+        if (event.name == Constants.PROP_BOARD && !_boardCreated) {
+            var bytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
             if (bytes != null) {
                 readBoard(bytes);
             }
@@ -272,7 +272,7 @@ public class BoardController
     protected function addPowerup (powerup :Powerup, index :int) :void
     {
         _powerups[index] = powerup;
-        setAtImmediate("powerup", powerup.writeTo(new ByteArray()), index);
+        setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
         powerupAdded(powerup, index);
     }
 
@@ -285,7 +285,7 @@ public class BoardController
      */
     public function removePowerup (idx :int) :void
     {
-        setAtImmediate("powerup", null, idx);
+        setAtImmediate(Constants.PROP_POWERUPS, null, idx);
         powerupRemoved(idx);
     }
 
@@ -335,7 +335,7 @@ public class BoardController
 
         _mines[freeIndex] = mine;
         if (_gameCtrl.game.amInControl()) {
-            setAtImmediate("mines", mine.writeTo(new ByteArray()), freeIndex);
+            setAtImmediate(Constants.PROP_MINES, mine.writeTo(new ByteArray()), freeIndex);
         }
 
         mineAdded(mine);
@@ -351,7 +351,7 @@ public class BoardController
     public function removeMine (idx :int) :void
     {
         if (_mines != null) {
-            setAtImmediate("mines", null, idx);
+            setAtImmediate(Constants.PROP_MINES, null, idx);
             var mine :Mine = _mines[idx];
             if (mine != null) {
                 _mines[idx] = null;
@@ -533,7 +533,7 @@ public class BoardController
         if (indices.length > 0 && _gameCtrl.game.amInControl()) {
             _gameCtrl.doBatch(function () :void {
                 for each (var idx :int in indices) {
-                    setAtImmediate("mines", null, idx);
+                    setAtImmediate(Constants.PROP_MINES, null, idx);
                 }
             });
         }
@@ -557,28 +557,29 @@ public class BoardController
         }
     }
 
-    public function shipInteraction (ownShip :Ship, oldX :Number, oldY :Number) :void
+    public function shipInteraction (ship :Ship, oldX :Number, oldY :Number) :void
     {
         do {
-            var powIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Constants.getShipType(ownShip.shipTypeId).size, _powerups);
+            var powIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+                    Constants.getShipType(ship.shipTypeId).size, _powerups);
             if (powIdx == -1) {
                 break;
             }
-            ownShip.awardPowerup(_powerups[powIdx]);
+            ship.awardPowerup(_powerups[powIdx]);
             removePowerup(powIdx);
         } while (powIdx != -1);
+
         do {
-            var mineIdx :int = getObjectIdx(oldX, oldY, ownShip.boardX, ownShip.boardY,
-                    Constants.getShipType(ownShip.shipTypeId).size, _mines);
+            var mineIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+                    Constants.getShipType(ship.shipTypeId).size, _mines);
             if (mineIdx == -1) {
                 break;
             }
             var mine :Mine = Mine(_mines[mineIdx]);
-            if (mine.type == ownShip.shipId) {
+            if (mine.type == ship.shipId) {
                 break;
             }
-            AppContext.game.hitShip(ownShip, mine.bX, mine.bY, mine.type, mine.dmg);
+            AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.type, mine.dmg);
             removeMine(mineIdx);
         } while (mineIdx != -1);
     }
@@ -666,7 +667,7 @@ public class BoardController
     public function hostChanged (event :StateChangedEvent, gameState :int) :void
     {
         if (_gameCtrl.game.amInControl() && gameState != Constants.STATE_POST_ROUND) {
-            if (_gameCtrl.net.get("board") == null) {
+            if (_gameCtrl.net.get(Constants.PROP_BOARD) == null) {
                 createBoard();
             }
         }

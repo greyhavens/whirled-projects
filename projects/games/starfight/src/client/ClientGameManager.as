@@ -139,7 +139,7 @@ public class ClientGameManager extends GameManager
     {
         super.propertyChanged(event);
 
-        if (event.name == "gameState") {
+        if (event.name == Constants.PROP_GAMESTATE) {
             updateStatusDisplay();
         }
     }
