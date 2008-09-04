@@ -11,6 +11,7 @@ import com.whirled.avrg.GameSubControl;
 import com.whirled.avrg.RoomSubControl;
 import com.whirled.avrg.PlayerSubControl;
 import com.whirled.avrg.LocalSubControl;
+import com.whirled.avrg.MobSubControl;
 import com.whirled.avrg.AgentSubControl;
 
 import com.whirled.net.PropertyChangedEvent;
@@ -54,19 +55,22 @@ public class Definitions
         AVRGameControlEvent.SIZE_CHANGED
     ];
 
-    public function Definitions (ctrl :AVRGameControl)
+    public function Definitions (ctrl :AVRGameControl, makeDecoration :Function)
     {
         _ctrl = ctrl;
+        _makeDecoration = makeDecoration;
 
         _funcs.game = createGameFuncs();
         _funcs.room = createRoomFuncs();
         _funcs.player = createPlayerFuncs();
         _funcs.local = createLocalFuncs();
         _funcs.agent = createAgentFuncs();
+        _funcs.mob = createMobFuncs();
         _funcs.serverMisc = createServerMiscFuncs();
         _funcs.serverRoom = createServerRoomFuncs();
         _funcs.serverGame = createServerGameFuncs();
         _funcs.serverPlayer = createServerPlayerFuncs();
+        _funcs.serverMob = createServerMobFuncs();
     }
 
     public function getFuncKeys (server :Boolean) :Array
@@ -217,6 +221,35 @@ public class Definitions
         ];
     }
 
+    protected function createMobFuncs () :Array
+    {
+        var idParam :Parameter = new Parameter("id", String);
+        
+        function mob (id :String) :MobSubControl {
+            return _ctrl.room.getMobSubControl(id);
+        }
+
+        function setHotSpot (id :String, ...args) :* {
+            return mob(id).setHotSpot.apply(null, args);
+        }
+
+        function setDecoration (id :String, ...args) :* {
+            args.unshift(_makeDecoration());
+            return mob(id).setDecoration.apply(null, args);
+        }
+
+        function removeDecoration (id :String, ...args) :* {
+            return mob(id).removeDecoration.apply(null, args);
+        }
+
+        return [
+            new FunctionSpec("setHotSpot", setHotSpot, [idParam, new Parameter("x", Number), 
+                new Parameter("y", Number), new Parameter("height", Number, Parameter.OPTIONAL)]), 
+            new FunctionSpec("setDecoration", setDecoration, [idParam]),
+            new FunctionSpec("removeDecoration", removeDecoration, [idParam]),
+            ];
+    }
+
     protected function pushPropsFuncs (funcs :Array, props :PropertyGetSubControl) :void
     {
         funcs.splice(funcs.length, 0,
@@ -364,10 +397,15 @@ public class Definitions
             new FunctionSpec("spawnMob", proxy("room", "spawnMob"), [
                 new Parameter("roomId", int),
                 new Parameter("id", String),
-                new Parameter("name", String)]),
+                new Parameter("name", String),
+                new Parameter("x", Number),
+                new Parameter("y", Number),
+                new Parameter("z", Number)]),
             new FunctionSpec("despawnMob", proxy("room", "despawnMob"), [
                 new Parameter("roomId", int),
                 new Parameter("id", String)]),
+            new FunctionSpec("getSpawnedMobs", proxy("room", "getSpawnedMobs"), [
+                new Parameter("roomId", int)]),
             new FunctionSpec("sendMessage", proxy("room", "sendMessage"), [
                 new Parameter("roomId", int),
                 new Parameter("name", String),
@@ -398,6 +436,19 @@ public class Definitions
         ];
     }
 
+    // AUTO GENERATED from ServerDefinitions
+    protected function createServerMobFuncs () :Array
+    {
+        return [
+            new FunctionSpec("moveTo", proxy("mob", "moveTo"), [
+                new Parameter("roomId", int),
+                new Parameter("mobId", String),
+                new Parameter("x", Number),
+                new Parameter("y", Number),
+                new Parameter("z", Number)]),
+        ];
+    }
+
     protected function proxy (prefix :String, name :String) :Function
     {
         function sendMsg (sequenceId :int, ...args) :void {
@@ -413,6 +464,7 @@ public class Definitions
     }
 
     protected var _ctrl :AVRGameControl;
+    protected var _makeDecoration :Function;
     protected var _funcs :Object = {};
 }
 }

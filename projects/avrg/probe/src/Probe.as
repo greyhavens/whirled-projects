@@ -51,7 +51,9 @@ public class Probe extends Sprite
         x = (_ctrl.local.getStageSize().width - width) / 2;
         y = 10;
 
-        var defs :Definitions = new Definitions(_ctrl);
+        var defs :Definitions = new Definitions(_ctrl, function () :Sprite {
+            return new DecorationSprite();
+        });
 
         _tabPanel.addTab("test", new Button("Test"), new TestPanel());
 

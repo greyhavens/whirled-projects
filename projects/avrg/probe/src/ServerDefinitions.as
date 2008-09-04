@@ -4,6 +4,7 @@ import com.threerings.util.ClassUtil;
 import com.whirled.AbstractControl;
 import com.whirled.AbstractSubControl;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.avrg.MobServerSubControl;
 import com.whirled.avrg.PlayerServerSubControl;
 import com.whirled.avrg.RoomServerSubControl;
 import com.whirled.net.PropertyGetSubControl;
@@ -25,6 +26,7 @@ public class ServerDefinitions
         _funcs.misc = createMiscFuncs();
         _funcs.game = createGameFuncs();
         _funcs.player = createPlayerFuncs();
+        _funcs.mob = createMobFuncs();
     }
 
     public function findByName (name :String) :FunctionSpec
@@ -171,6 +173,10 @@ public class ServerDefinitions
             return room.despawnMob;
         }
 
+        function getSpawnedMobs (room :RoomServerSubControl) :Function {
+            return room.getSpawnedMobs;
+        }
+
         function sendMessage (room :RoomServerSubControl) :Function {
             return room.sendMessage;
         }
@@ -186,9 +192,12 @@ public class ServerDefinitions
                 idParam, new Parameter("playerId", int)]),
             new FunctionSpec("getRoomBounds", proxy(getInstance, getRoomBounds), [idParam]),
             new FunctionSpec("spawnMob", proxy(getInstance, spawnMob), [
-                idParam, new Parameter("id", String), new Parameter("name", String)]),
+                idParam, new Parameter("id", String), new Parameter("name", String),
+                new Parameter("x", Number), new Parameter("y", Number), 
+                new Parameter("z", Number)]),
             new FunctionSpec("despawnMob", proxy(getInstance, despawnMob), [
                 idParam, new Parameter("id", String)]),
+            new FunctionSpec("getSpawnedMobs", proxy(getInstance, getSpawnedMobs), [idParam]),
             new FunctionSpec("sendMessage", proxy(getInstance, sendMessage), [
                 idParam, new Parameter("name", String), new ObjectParameter("value")]),
         ];
@@ -273,6 +282,28 @@ public class ServerDefinitions
         pushPropsFuncs(funcs, "player", function (id :int) :PropertySubControl {
             return getInstance(id).props;
         });
+
+        return funcs;
+    }
+
+    protected function createMobFuncs () :Array
+    {
+        var roomIdParam :Parameter = new Parameter("roomId", int);
+        var mobIdParam :Parameter = new Parameter("mobId", String);
+
+        function getInstance (roomId :int, mobId :String) :MobServerSubControl {
+            var mob :MobServerSubControl = _ctrl.getRoom(roomId).getMobSubControl(mobId);
+            return mob;
+        }
+
+        function moveTo (roomId :int, mobId :String, ...args) :* {
+            return _ctrl.getRoom(roomId).getMobSubControl(mobId).moveTo.apply(null, args);
+        }
+
+        var funcs :Array = [
+            new FunctionSpec("moveTo", moveTo, [roomIdParam, mobIdParam, new Parameter("x", Number),
+                new Parameter("y", Number), new Parameter("z", Number)]),
+        ];
 
         return funcs;
     }
