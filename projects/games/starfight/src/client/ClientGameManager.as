@@ -320,7 +320,8 @@ public class ClientGameManager extends GameManager
 
     protected function onMouseDown (...ignored) :void
     {
-        if (firstStart()) {
+        if (resourcesLoaded) {
+            firstStart();
             ClientContext.mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
         }
     }
@@ -339,10 +340,16 @@ public class ClientGameManager extends GameManager
         }
     }
 
+    protected function get resourcesLoaded () :Boolean
+    {
+        return _assets >= Constants.SHIP_TYPE_CLASSES.length;
+    }
+
     protected var _shotViews :Array = [];
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
     protected var _newShipTimer :Timer;
+    protected var _assets :int;
 }
 
 }

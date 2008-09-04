@@ -33,12 +33,8 @@ public class GameManager
         AppContext.game = this;
     }
 
-    public function firstStart () :Boolean
+    public function firstStart () :void
     {
-        if (_assets < Constants.SHIP_TYPE_CLASSES.length) {
-            return false;
-        }
-
         if (_gameCtrl.isConnected()) {
             _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
             _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -48,8 +44,6 @@ public class GameManager
         setupBoard();
 
         setGameObject();
-
-        return true;
     }
 
     protected function shutdown () :void
@@ -204,9 +198,10 @@ public class GameManager
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (myId == -1 || _assets < Constants.SHIP_TYPE_CLASSES.length) {
+        if (myId == -1) {
             return;
         }
+
         var name :String = event.name;
         if (isShipKey(name)) {
             var id :int = shipId(name);
@@ -728,8 +723,6 @@ public class GameManager
     /** The current game state. */
     protected var _stateTime :int;
     protected var _population :int = 0;
-
-    protected var _assets :int = 0;
 
     protected var _otherScores :Object = new Object();
 
