@@ -45,6 +45,12 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override getPlayerOids()");
     }
 
+    // TODO: temporary
+    public function hasControl () :Boolean
+    {
+        throw new Error("subclasses must override hasControl()");
+    }
+
     /* shared state mutators (must be overridden) */
     public function sendRainbowClickedMessage (clickedIndex :int) :void
     {

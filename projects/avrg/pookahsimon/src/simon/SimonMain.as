@@ -4,9 +4,10 @@
 package simon {
 
 import com.threerings.util.Log;
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -34,8 +35,8 @@ public class SimonMain extends Sprite
     public static function quit () :void
     {
         if (control.isConnected()) {
-            control.deactivateGame();
-            control.setAvatarState("Default");
+            control.player.setAvatarState("Default");
+            control.player.deactivateGame();
         }
     }
 
@@ -55,8 +56,10 @@ public class SimonMain extends Sprite
 
         // hook up controller
         control = new AVRGameControl(this);
-        control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-        control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+        control.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
+        control.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
+        control.room.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
+        control.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
     }
 
     protected function handleResourcesLoaded () :void
@@ -72,7 +75,7 @@ public class SimonMain extends Sprite
 
     protected function maybeBeginGame () :void
     {
-        if (_addedToStage && _resourcesLoaded) {
+        if (_addedToStage && _resourcesLoaded && _enteredRoom) {
             model.setup();
 
             MainLoop.instance.pushMode(new GameMode());
@@ -83,7 +86,7 @@ public class SimonMain extends Sprite
     public static function getPlayerName (playerId :int) :String
     {
         if (control.isConnected()) {
-            var avatar :AVRGameAvatar = control.getAvatarInfo(playerId);
+            var avatar :AVRGameAvatar = control.room.getAvatarInfo(playerId);
             if (null != avatar) {
                 return avatar.name;
             }
@@ -100,7 +103,8 @@ public class SimonMain extends Sprite
 
         model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
 
-        localPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
+        // TODO: formalize initialization?
+        localPlayerId = (control.isConnected() ? control.player.getPlayerId() : 666);
 
         _addedToStage = true;
 
@@ -116,21 +120,35 @@ public class SimonMain extends Sprite
         MainLoop.instance.shutdown();
     }
 
-    protected function leftRoom (e :Event) :void
+    protected function enteredRoom (e :AVRGamePlayerEvent) :void
+    {
+        _enteredRoom = true;
+        maybeBeginGame();
+    }
+
+    protected function leftRoom (e :AVRGamePlayerEvent) :void
     {
         if (control.isConnected()) {
-            control.setAvatarState("Default");
-            control.deactivateGame();
+            control.player.setAvatarState("Default");
+            control.player.deactivateGame();
         }
     }
 
-    protected function gotControl (evt :AVRGameControlEvent) :void
+    protected function playerEntered (evt :AVRGameRoomEvent) :void
     {
-        log.debug("gotControl(): " + evt);
+        log.debug("playerEntered()", evt);
+        log.debug("playerIds()", model.getPlayerOids());
+    }
+
+    protected function playerLeft (evt :AVRGameRoomEvent) :void
+    {
+        log.debug("playerLeft()", evt);
+        log.debug("playerIds()", model.getPlayerOids());
     }
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
+    protected var _enteredRoom :Boolean;
 
     protected static var log :Log = Log.getLog(SimonMain);
 }

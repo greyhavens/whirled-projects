@@ -1,6 +1,6 @@
 package simon {
 
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -23,7 +23,7 @@ public class HelpViewController extends SceneObject
         var closeButton :InteractiveObject = _movieClip["close"];
         closeButton.addEventListener(MouseEvent.CLICK, closeClicked, false, 0, true);
 
-        SimonMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        SimonMain.control.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
         this.handleSizeChanged();
     }
@@ -33,7 +33,7 @@ public class HelpViewController extends SceneObject
         var closeButton :InteractiveObject = _movieClip["close"];
         closeButton.removeEventListener(MouseEvent.CLICK, closeClicked);
 
-        SimonMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        SimonMain.control.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
     override public function get displayObject () :DisplayObject
@@ -59,7 +59,7 @@ public class HelpViewController extends SceneObject
         var loc :Point;
 
         if (SimonMain.control.isConnected()) {
-            var stageSize :Rectangle = SimonMain.control.getStageSize(true);
+            var stageSize :Rectangle = SimonMain.control.local.getStageSize(true);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + SCREEN_EDGE_OFFSET.x, stageSize.top + SCREEN_EDGE_OFFSET.y)

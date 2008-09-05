@@ -21,7 +21,7 @@ public class AvatarController extends SimObject
     public function playAvatarAction (action :String) :void
     {
         if (SimonMain.control.isConnected()) {
-            SimonMain.control.playAvatarAction(action);
+            SimonMain.control.player.playAvatarAction(action);
         }
     }
 
@@ -56,7 +56,7 @@ public class AvatarController extends SimObject
 
         log.info(infoString);
 
-        SimonMain.control.setAvatarState(newState);
+        SimonMain.control.player.setAvatarState(newState);
     }
 
     protected function stopTimer () :void
@@ -67,7 +67,7 @@ public class AvatarController extends SimObject
     protected function revertToSavedState (...ignored) :void
     {
         if (null != _savedState) {
-            SimonMain.control.setAvatarState(_savedState);
+            SimonMain.control.player.setAvatarState(_savedState);
             _savedState = null;
         }
     }

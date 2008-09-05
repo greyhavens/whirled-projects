@@ -1,6 +1,6 @@
 package simon {
 
-import com.whirled.AVRGameAvatar;
+import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -49,9 +49,9 @@ public class WinnerCloudController extends SceneObject
     {
         var p :Point;
 
-        var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
+        var avatarInfo :AVRGameAvatar = (SimonMain.control.local.isConnected() ? SimonMain.control.room.getAvatarInfo(_playerId) : null);
         if (null != avatarInfo) {
-            p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
+            p = SimonMain.control.local.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
         }
 

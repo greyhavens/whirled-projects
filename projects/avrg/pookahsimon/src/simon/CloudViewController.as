@@ -1,7 +1,7 @@
 package simon {
 
 import com.threerings.util.ArrayUtil;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -59,7 +59,7 @@ public class CloudViewController extends SceneObject
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
 
-        SimonMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        SimonMain.control.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
         // setup initial state
         _collapsed = true;
@@ -75,7 +75,7 @@ public class CloudViewController extends SceneObject
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores);
 
-        SimonMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        SimonMain.control.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
     protected function toggleCollapse (...ignored) :void
@@ -235,7 +235,7 @@ public class CloudViewController extends SceneObject
         var loc :Point;
 
         if (SimonMain.control.isConnected()) {
-            var stageSize :Rectangle = SimonMain.control.getStageSize(true);
+            var stageSize :Rectangle = SimonMain.control.local.getStageSize(true);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + offset.x, stageSize.top + offset.y)

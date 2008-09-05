@@ -1,8 +1,10 @@
 package simon {
 
 import com.threerings.util.Log;
-import com.whirled.AVRGameControlEvent;
-import com.whirled.StateControl;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControl;
 
 import flash.utils.ByteArray;
 
@@ -14,13 +16,13 @@ public class OnlineModel extends Model
 
     override public function setup () :void
     {
-        _stateControl = SimonMain.control.state;
+        _control = SimonMain.control;
 
-        _stateControl.addEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _stateControl.addEventListener(AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propChanged);
+        _control.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _control.room.props.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
 
         // read the current state
-        var stateBytes :ByteArray = (_stateControl.getRoomProperty(Constants.PROP_STATE) as ByteArray);
+        var stateBytes :ByteArray = (_control.room.props.get(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
             log.info("OnlineModel.setup() - reading PROP_STATE from bytes");
             var curState :SharedState = SharedState.fromBytes(stateBytes);
@@ -30,7 +32,7 @@ public class OnlineModel extends Model
         }
 
         // read current scores
-        var scoreBytes :ByteArray = (_stateControl.getRoomProperty(Constants.PROP_SCORES) as ByteArray);
+        var scoreBytes :ByteArray = (_control.room.props.get(Constants.PROP_SCORES) as ByteArray);
         if (null != scoreBytes) {
             _curScores = ScoreTable.fromBytes(scoreBytes, Constants.SCORETABLE_MAX_ENTRIES);
         }
@@ -38,31 +40,41 @@ public class OnlineModel extends Model
 
     override public function destroy () :void
     {
-        _stateControl.removeEventListener(AVRGameControlEvent.MESSAGE_RECEIVED, messageReceived);
-        _stateControl.removeEventListener(AVRGameControlEvent.ROOM_PROPERTY_CHANGED, propChanged);
+        _control.game.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _control.room.props.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
     }
 
     override public function getPlayerOids () :Array
     {
-        return SimonMain.control.getPlayerIds();
+        if (_control == null || !_control.isConnected()) {
+            return [];
+        }
+        return _control.game.getPlayerIds();
+    }
+
+    // TODO: temporary
+    override public function hasControl () :Boolean
+    {
+        return (_control.player.getPlayerId() == getPlayerOids()[0]);
     }
 
     override public function sendRainbowClickedMessage (clickedIndex :int) :void
     {
         // TODO - should there be more data sent with this message, so that it can be validated better?
         // (playerId, round number, etc)?
-        _stateControl.sendMessage(Constants.MSG_NEXTNOTE, clickedIndex);
+        _control.agent.sendMessage(Constants.MSG_NEXTNOTE, clickedIndex);
     }
 
     override public function sendPlayerTimeoutMessage () :void
     {
-        _stateControl.sendMessage(Constants.MSG_PLAYERTIMEOUT, null);
+        _control.agent.sendMessage(Constants.MSG_PLAYERTIMEOUT, null);
     }
 
+    // TODO: this should be done in the server agent
     override public function trySetNewState (newState :SharedState) :void
     {
         // ignore state changes from non-authoritative clients
-        if (!SimonMain.control.hasControl()) {
+        if (!hasControl()) {
             //SimonMain.log.info("ignoring state change request from non-authoritative client: " + newState);
             return;
         }
@@ -83,15 +95,16 @@ public class OnlineModel extends Model
 
         log.info("accepting state change request: " + newState);
 
-        _stateControl.setRoomProperty(Constants.PROP_STATE, newState.toBytes());
+        _control.agent.sendMessage(Constants.PROP_STATE, newState.toBytes());
 
         _lastStateRequest = newState.clone();
     }
 
+    // TODO: this should be done in the server agent
     override public function trySetNewScores (newScores :ScoreTable) :void
     {
         // ignore state changes from non-authoritative clients
-        if (!SimonMain.control.hasControl()) {
+        if (!hasControl()) {
             //SimonMain.log.info("ignoring scores change request from non-authoritative client");
             return;
         }
@@ -112,12 +125,12 @@ public class OnlineModel extends Model
 
         //SimonMain.log.info("accepting score change request");
 
-        _stateControl.setRoomProperty(Constants.PROP_SCORES, newScores.toBytes());
+        _control.agent.sendMessage(Constants.PROP_SCORES, newScores.toBytes());
 
         _lastScoresRequest = newScores.clone();
     }
 
-    protected function messageReceived (e :AVRGameControlEvent) :void
+    protected function messageReceived (e :MessageReceivedEvent) :void
     {
         switch (e.name) {
         case Constants.MSG_NEXTNOTE:
@@ -145,7 +158,7 @@ public class OnlineModel extends Model
     {
         // only the client in control can process
         // requests
-        if (!SimonMain.control.hasControl()) {
+        if (!hasControl()) {
             return;
         }
 
@@ -161,18 +174,20 @@ public class OnlineModel extends Model
         }
     }
 
-    protected function propChanged (e :AVRGameControlEvent) :void
+    protected function propChanged (e :PropertyChangedEvent) :void
     {
+        var value :Object = e.newValue;
         switch (e.name) {
         case Constants.PROP_STATE:
-            if (e.value is ByteArray) {
-                var newState :SharedState = SharedState.fromBytes(e.value as ByteArray);
+            if (value is ByteArray) {
+                var newState :SharedState = SharedState.fromBytes(value as ByteArray);
                 this.setState(newState);
             }
             break;
 
         case Constants.PROP_SCORES:
-            var newScores :ScoreTable = ScoreTable.fromBytes(e.value as ByteArray, Constants.SCORETABLE_MAX_ENTRIES);
+            var newScores :ScoreTable = ScoreTable.fromBytes(
+                value as ByteArray, Constants.SCORETABLE_MAX_ENTRIES);
             this.setScores(newScores);
             break;
 
@@ -183,7 +198,7 @@ public class OnlineModel extends Model
         }
     }
 
-    protected var _stateControl :StateControl;
+    protected var _control :AVRGameControl;
     protected var _lastStateRequest :SharedState;
     protected var _lastScoresRequest :ScoreTable;
 

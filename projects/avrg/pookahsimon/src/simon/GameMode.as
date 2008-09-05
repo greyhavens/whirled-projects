@@ -2,7 +2,7 @@ package simon {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
@@ -30,13 +30,13 @@ public class GameMode extends AppMode
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
         SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
-        SimonMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
+        SimonMain.control.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeft);
 
         // each client maintains the concept of an expected state,
         // so that it is prepared to take over as the
         // authoritative client at any time.
 
-        if (SimonMain.control.isConnected() && SimonMain.control.hasControl() && SimonMain.model.curState.gameState != SharedState.STATE_INITIAL) {
+        if (SimonMain.control.isConnected() && SimonMain.model.hasControl() && SimonMain.model.curState.gameState != SharedState.STATE_INITIAL) {
             // try to reset the state when we first enter a game, in case
             // there's a current game in progress that isn't controlled by anybody
             _expectedState = new SharedState();
@@ -59,7 +59,7 @@ public class GameMode extends AppMode
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
         SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
 
-        SimonMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, handlePlayerLeft);
+        SimonMain.control.room.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeft);
     }
 
     override public function update (dt :Number) :void
@@ -170,7 +170,7 @@ public class GameMode extends AppMode
         }
     }
 
-    protected function handlePlayerLeft (e :AVRGameControlEvent) :void
+    protected function handlePlayerLeft (e :AVRGameRoomEvent) :void
     {
         // handle players who leave while playing the game
 
@@ -217,7 +217,7 @@ public class GameMode extends AppMode
 
             // award us coins if we are the winner
             if (roundWinnerId == SimonMain.localPlayerId && SimonMain.control.isConnected()) {
-                SimonMain.control.quests.completeQuest("dummyString", null, 1);
+                SimonMain.control.player.completeTask("winner", 1);
                 AvatarController.instance.setAvatarState("Dance", Constants.AVATAR_DANCE_TIME, "Default");
             }
         }

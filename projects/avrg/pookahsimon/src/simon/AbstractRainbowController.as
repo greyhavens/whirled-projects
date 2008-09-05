@@ -1,7 +1,7 @@
 package simon {
 
 import com.threerings.util.Log;
-import com.whirled.AVRGameAvatar;
+import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.objects.*;
@@ -243,11 +243,11 @@ public class AbstractRainbowController extends SceneObject
     {
         var p :Point;
 
-        var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.getAvatarInfo(_playerId) : null);
-        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.getStageSize(false) : null);
+        var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.room.getAvatarInfo(_playerId) : null);
+        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.local.getStageSize(false) : null);
 
         if (null != avatarInfo && null != stageBounds) {
-            p = SimonMain.control.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
+            p = SimonMain.control.local.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
 
             // clamp rainbow coordinates
