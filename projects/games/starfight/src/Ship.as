@@ -356,14 +356,14 @@ public class Ship extends EventDispatcher
     /**
      * Process the movement of the ship for this timestep.
      */
-    public function tick (time :int) :void
+    public function update (time :int) :void
     {
         if (_reportShip != null) {
             if (_reportTime == 0) {
                 _reportShip = null;
             } else {
                 _reportTime = Math.max(0, _reportTime - time);
-                _reportShip.tick(time);
+                _reportShip.update(time);
             }
         }
         primaryPower = Math.min(1.0, primaryPower + time / (1000 * _shipType.primaryPowerRecharge));

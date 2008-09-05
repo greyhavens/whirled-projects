@@ -26,24 +26,54 @@ public class GameManager
      */
     public function GameManager (mainObject :DisplayObject)
     {
-        _gameCtrl = new GameControl(mainObject);
-        AppContext.gameCtrl = _gameCtrl;
+        AppContext.gameCtrl = _gameCtrl = new GameControl(mainObject);
         AppContext.game = this;
         AppContext.scores = new Scoreboard(_gameCtrl);
         AppContext.local = new LocalUtility();
     }
 
-    public function firstStart () :void
+    public function setup () :void
     {
-        if (_gameCtrl.isConnected()) {
-            _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-            _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
+        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
+        _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
+        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
+
+        if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
+            gameState = Constants.STATE_PRE_ROUND;
+        } else {
+            gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
+            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
 
-        setupBoard();
+        AppContext.board = _boardCtrl = createBoardController();
+        _lastTickTime = getTimer();
+        _boardCtrl.loadBoard(boardLoaded);
+    }
 
-        setGameObject();
+    /**
+     * The game has started - do our initial startup.
+     */
+    protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        if (_gameCtrl.game.amInControl()) {
+            _gameCtrl.services.stopTicker("nextRoundTicker");
+            setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
+        }
+        _ships = new HashMap();
+        _lastTickTime = getTimer();
+        _boardCtrl.loadBoard(boardLoaded);
+        log.info("Game started");
+    }
+
+    /**
+     * The game has ended - do our initial startup.
+     */
+    protected function handleGameEnded (event :StateChangedEvent) :void
+    {
     }
 
     protected function shutdown () :void
@@ -59,38 +89,9 @@ public class GameManager
         }
     }
 
-    public function setupBoard () :void
-    {
-        _lastTickTime = getTimer();
-    }
-
-    // from Game
-    public function setGameObject () :void
-    {
-        log.info("Got game object");
-
-        if (!_gameCtrl.isConnected()) {
-            gameState = Constants.STATE_PRE_ROUND;
-        } else {
-            if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
-                gameState = Constants.STATE_PRE_ROUND;
-            } else {
-                gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
-                _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
-            }
-            _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-            _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-            _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
-            _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
-        }
-
-        AppContext.board = _boardCtrl = createBoardController();
-        _boardCtrl.init(boardLoaded);
-    }
-
     protected function createBoardController () :BoardController
     {
-        return new BoardController(_gameCtrl);
+        throw new Error("GameManager subclasses must implement this function");
     }
 
     public function boardLoaded () :void
@@ -394,28 +395,6 @@ public class GameManager
     }
 
     /**
-     * The game has started - do our initial startup.
-     */
-    protected function handleGameStarted (event :StateChangedEvent) :void
-    {
-        if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.stopTicker("nextRoundTicker");
-            setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
-        }
-        _ships = new HashMap();
-        setupBoard();
-        _boardCtrl.init(boardLoaded);
-        log.info("Game started");
-    }
-
-    /**
-     * The game has ended - do our initial startup.
-     */
-    protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-    }
-
-    /**
      * Once the host was found, start the game!
      */
     protected function handleHostChanged (event : StateChangedEvent) : void
@@ -532,17 +511,17 @@ public class GameManager
         // Update all ships.
         for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
-                ship.tick(time);
+                ship.update(time);
             }
         }
 
-        _boardCtrl.tick(time);
+        _boardCtrl.update(time);
 
         // Update all live shots.
         var completed :Array = []; // Array<Shot>
         for each (var shot :Shot in _shots) {
             if (shot != null) {
-                shot.tick(_boardCtrl, time);
+                shot.update(_boardCtrl, time);
                 if (shot.complete) {
                     completed.push(shot);
                 }

@@ -38,7 +38,7 @@ public class Shot extends EventDispatcher
     /**
      * Allow our shot to update itself.
      */
-    public function tick (board :BoardController, time :Number) :void
+    public function update (board :BoardController, time :Number) :void
     {
     }
 

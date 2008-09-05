@@ -18,7 +18,7 @@ public class TorpedoShot extends Shot {
     /**
      * Allow our shot to update itself.
      */
-    override public function tick (board :BoardController, time :Number) :void
+    override public function update (board :BoardController, time :Number) :void
     {
         time /= 1000;
         // Update our time to live and destroy if appropriate.

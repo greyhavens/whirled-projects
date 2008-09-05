@@ -17,7 +17,7 @@ public class LaserShot extends Shot
         _hit = false;
     }
 
-    override public function tick (board :BoardController, time :Number) :void
+    override public function update (board :BoardController, time :Number) :void
     {
         time /= 1000;
         if (!_hit && tShipId != -1) {

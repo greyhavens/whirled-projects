@@ -37,9 +37,9 @@ public class ClientBoardController extends BoardController
         super.setupBoard(ships);
     }
 
-    override public function tick (time :int) :void
+    override public function update (time :int) :void
     {
-        super.tick(time);
+        super.update(time);
 
         for each (var obstacleView :ObstacleView in _obstacleViews) {
             if (obstacleView != null) {

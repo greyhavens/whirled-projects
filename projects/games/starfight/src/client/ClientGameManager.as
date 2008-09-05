@@ -347,7 +347,8 @@ public class ClientGameManager extends GameManager
         return ship;
     }
 
-    protected function assetLoaded (success :Boolean) :void {
+    protected function assetLoaded (success :Boolean) :void
+    {
         if (success) {
             _assets++;
             if (_assets <= Constants.SHIP_TYPE_CLASSES.length) {
@@ -357,17 +358,13 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    override public function setupBoard () :void
+    override public function setup () :void
     {
         ClientContext.gameView.setup();
-        super.setupBoard();
-    }
 
-    override public function setGameObject () :void
-    {
-        super.setGameObject();
+        super.setup();
+
         ClientContext.board = ClientBoardController(AppContext.board);
-
         updateStatusDisplay();
     }
 
@@ -411,7 +408,7 @@ public class ClientGameManager extends GameManager
     protected function onMouseDown (...ignored) :void
     {
         if (resourcesLoaded) {
-            firstStart();
+            setup();
             ClientContext.mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
         }
     }

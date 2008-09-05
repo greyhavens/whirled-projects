@@ -2,17 +2,15 @@ package server {
 
 import com.whirled.ServerObject;
 
-import server.*;
-
-public class Server
+public class Server extends ServerObject
 {
     public function Server ()
     {
-        _gameMgr = new GameManager(new ServerObject());
-        _gameMgr.firstStart();
+        _gameMgr = new ServerGameManager(this);
+        _gameMgr.setup();
     }
 
-    protected var _gameMgr :GameManager;
+    protected var _gameMgr :ServerGameManager;
 }
 
 }

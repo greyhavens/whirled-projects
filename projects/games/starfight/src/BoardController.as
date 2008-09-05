@@ -29,20 +29,15 @@ public class BoardController
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
 
-    public function init (callback :Function) :void
+    public function loadBoard (boardLoadedCallback :Function) :void
     {
-        _callback = callback;
-
-        if (!_gameCtrl.isConnected()) {
-            createBoard();
-            return;
-        }
+        _boardLoadedCallback = boardLoadedCallback;
 
         var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
         if (boardBytes != null) {
             boardBytes.position = 0;
             readBoard(boardBytes);
-        } else if (_gameCtrl.game.amInControl()) {
+        } else if (_gameCtrl.game.amServerAgent()) {
             createBoard();
         }
     }
@@ -53,7 +48,7 @@ public class BoardController
         _powerups = null;
         _mines = null;
         _boardCreated = false;
-        if (_gameCtrl.game.amInControl()) {
+        if (_gameCtrl.game.amServerAgent()) {
             _gameCtrl.doBatch(function () :void {
                 setImmediate(Constants.PROP_OBSTACLES, null);
                 setImmediate(Constants.PROP_POWERUPS, null);
@@ -106,10 +101,10 @@ public class BoardController
         }
 
         _boardCreated = true;
-        _callback();
+        _boardLoadedCallback();
     }
 
-    public function createBoard () :void
+    protected function createBoard () :void
     {
         if (_boardCreated) {
             return;
@@ -137,7 +132,7 @@ public class BoardController
         }
 
         _boardCreated = true;
-        _callback();
+        _boardLoadedCallback();
     }
 
     public function setupBoard (ships :HashMap) :void
@@ -580,7 +575,7 @@ public class BoardController
         } while (mineIdx != -1);
     }
 
-    public function tick (time :int) :void
+    public function update (time :int) :void
     {
     }
 
@@ -681,7 +676,7 @@ public class BoardController
 
     protected var _gameCtrl :GameControl;
 
-    protected var _callback :Function;
+    protected var _boardLoadedCallback :Function;
 
     protected var _boardCreated :Boolean;
 
