@@ -1,7 +1,6 @@
 package {
 
 import client.ClientGameManager;
-import client.ClientLocalUtility;
 
 import flash.display.Sprite;
 
@@ -13,8 +12,6 @@ public class StarFight extends Sprite
 {
     public function StarFight ()
     {
-        AppContext.local = new ClientLocalUtility();
-
         _gameMgr = new ClientGameManager(this);
     }
 

@@ -2,6 +2,7 @@ package {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.whirled.contrib.Scoreboard;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
@@ -28,6 +29,8 @@ public class GameManager
         _gameCtrl = new GameControl(mainObject);
         AppContext.gameCtrl = _gameCtrl;
         AppContext.game = this;
+        AppContext.scores = new Scoreboard(_gameCtrl);
+        AppContext.local = new LocalUtility();
     }
 
     public function firstStart () :void
@@ -194,8 +197,6 @@ public class GameManager
                 sentShip.readFrom(bytes);
                 ship.updateForReport(sentShip);
             }
-
-            AppContext.local.setScore(shipId, ship.score);
         }
     }
 
@@ -249,7 +250,7 @@ public class GameManager
 
         //_stateTime = 30;
         if (_gameCtrl.isConnected()) {
-            AppContext.local.resetScores();
+            AppContext.scores.clearAll();
 
             if (_gameCtrl.game.amInControl()) {
 
@@ -287,15 +288,10 @@ public class GameManager
         }
         _boardCtrl.endRound();
         if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl()) {
-            var scoreIds :Array = [];
+            var playerIds :Array = [];
             var scores :Array = [];
-            var props :Array = _gameCtrl.net.getPropertyNames("score:");
-            for each (var prop :String in props) {
-                var id :String = prop.substring(6);
-                scoreIds.push(parseInt(id));
-                scores.push(int(_gameCtrl.net.get("score:" + id)));
-            }
-            _gameCtrl.game.endGameWithScores(scoreIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+            AppContext.scores.getPlayerIdsAndScores(playerIds, scores);
+            _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
         }
     }
 
@@ -596,8 +592,6 @@ public class GameManager
     /** The current game state. */
     protected var _stateTime :int;
     protected var _population :int = 0;
-
-    protected var _otherScores :Object = new Object();
 
     protected static const log :Log = Log.getLog(GameManager);
 

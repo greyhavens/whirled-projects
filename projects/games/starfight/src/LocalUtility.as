@@ -1,11 +1,19 @@
 package {
 
-public interface LocalUtility
+import com.threerings.util.Log;
+
+public class LocalUtility
 {
-    function resetScores () :void;
-    function setScore (playerId :int, score :int) :void;
-    function incrementScore (playerId :int, delta :int) :void;
-    function feedback (msg :String) :void;
+    public function feedback (msg :String) :void
+    {
+        if (AppContext.gameCtrl.game.amServerAgent()) {
+            log.info(msg);
+        } else {
+            AppContext.gameCtrl.local.feedback(msg);
+        }
+    }
+
+    protected static const log :Log = Log.getLog("Feedback");
 }
 
 }

@@ -2,7 +2,6 @@ package client {
 
 import com.threerings.util.HashMap;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
@@ -50,18 +49,6 @@ public class ClientGameManager extends GameManager
         if (_gameCtrl.isConnected()) {
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
             _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        }
-    }
-
-    override protected function messageReceived (event :MessageReceivedEvent) :void
-    {
-        if (event.name.substring(0, 9) == "addScore-") {
-            if (String(ClientContext.myId) == event.name.substring(9)) {
-                AppContext.local.incrementScore(ClientContext.myId, int(event.value));
-            }
-
-        } else {
-            super.messageReceived(event);
         }
     }
 
@@ -152,7 +139,7 @@ public class ClientGameManager extends GameManager
         // TODO - make the server authoritative about ship hits
         if (ship == _ownShip) {
             ship.hit(shooterId, damage);
-            AppContext.local.incrementScore(shooterId, Math.round(damage * 10));
+            AppContext.scores.addToScore(shooterId, Math.round(damage * 10));
         }
 
         var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
@@ -219,17 +206,7 @@ public class ClientGameManager extends GameManager
         _updateCount += time;
         if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
             _updateCount = 0;
-            _gameCtrl.doBatch(function () :void {
-                setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
-                if (gameState == Constants.STATE_IN_ROUND) {
-                    setImmediate("score:" + ClientContext.myId, _ownShip.score);
-                    for (var id :String in _otherScores) {
-                        _gameCtrl.net.sendMessage("addScore-" + ClientContext.myId,
-                            int(_otherScores[id]));
-                    }
-                }
-            });
-            _otherScores = [];
+            setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
         }
 
         // update our round display
@@ -322,7 +299,7 @@ public class ClientGameManager extends GameManager
         var shipId :int = args[4];
 
         if (_ownShip != null && shooterId == _ownShip.shipId) {
-            AppContext.local.incrementScore(shooterId, KILL_PTS);
+            AppContext.scores.addToScore(shooterId, KILL_PTS);
             _ownShip.registerKill(shipId);
         }
 
@@ -424,7 +401,6 @@ public class ClientGameManager extends GameManager
 
         _gameCtrl.doBatch(function () :void {
             setImmediate(shipKey(ClientContext.myId), null);
-            setImmediate("score:myId", 0);
             if (_gameCtrl.game.amInControl()) {
                 _gameCtrl.game.restartGameIn(30);
                 _gameCtrl.services.startTicker("nextRoundTicker", 1000);

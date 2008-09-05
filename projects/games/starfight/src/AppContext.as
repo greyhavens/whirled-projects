@@ -1,5 +1,6 @@
 package {
 
+import com.whirled.contrib.Scoreboard;
 import com.whirled.game.GameControl;
 
 /**
@@ -11,6 +12,7 @@ public class AppContext
     public static var gameCtrl :GameControl;
     public static var board :BoardController;
     public static var local :LocalUtility;
+    public static var scores :Scoreboard;
 }
 
 }

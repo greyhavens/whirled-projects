@@ -269,7 +269,7 @@ public class BoardController
     protected function addPowerup (powerup :Powerup, index :int) :void
     {
         setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
-        powerupAdded(powerup, index);
+        //powerupAdded(powerup, index);
     }
 
     protected function powerupAdded (powerup :Powerup, index :int) :void

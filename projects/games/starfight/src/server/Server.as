@@ -8,8 +8,6 @@ public class Server
 {
     public function Server ()
     {
-        AppContext.local = new ServerLocalUtility();
-
         _gameMgr = new GameManager(new ServerObject());
         _gameMgr.firstStart();
     }

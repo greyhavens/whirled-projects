@@ -57,9 +57,6 @@ public class Ship extends EventDispatcher
     /** The player name for the ship. */
     public var playerName :String;
 
-    /** The ship's current score. */
-    public var score :int;
-
     /** Shield health. */
     public var shieldPower :Number;
 
@@ -88,7 +85,6 @@ public class Ship extends EventDispatcher
         yVel = 0.0;
         _power = 1.0; // full
         _powerups = 0;
-        score = 0;
         shieldPower = 0.0;
         enginePower = 0.0;
         weaponPower = 0.0;
@@ -106,6 +102,11 @@ public class Ship extends EventDispatcher
         }
 
         setShipType(shipTypeId);
+    }
+
+    public function get score () :int
+    {
+        return AppContext.scores.getScore(shipId);
     }
 
     public function get power () :Number
@@ -542,7 +543,7 @@ public class Ship extends EventDispatcher
     public function awardPowerup (powerup :Powerup) :void
     {
         _powerupsThisLife = true;
-        AppContext.local.incrementScore(shipId, POWERUP_PTS);
+        AppContext.scores.addToScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
             _power = Math.min(1.0, _power + 0.5);
@@ -560,14 +561,6 @@ public class Ship extends EventDispatcher
             weaponPower = 1.0;
             break;
         }
-    }
-
-    /**
-     * Increase the ship's score.
-     */
-    public function addScore (score :int) :void
-    {
-        this.score += score;
     }
 
     public function canHit () :Boolean
@@ -596,7 +589,6 @@ public class Ship extends EventDispatcher
         turnAccelRate = report.turnAccelRate;
         _power = report._power;
         _powerups = report._powerups;
-        score = report.score;
         state = report.state;
 
         // if our ship type has changed, copy all state over
@@ -624,7 +616,6 @@ public class Ship extends EventDispatcher
         _power = bytes.readFloat();
         _powerups = bytes.readInt();
         setShipType(bytes.readInt());
-        score = bytes.readInt();
         state = bytes.readByte();
     }
 
@@ -644,7 +635,6 @@ public class Ship extends EventDispatcher
         bytes.writeFloat(_power);
         bytes.writeInt(_powerups);
         bytes.writeInt(shipTypeId);
-        bytes.writeInt(score);
         bytes.writeByte(state);
 
         return bytes;
@@ -682,13 +672,14 @@ public class Ship extends EventDispatcher
             return;
         }
 
-        if (score >= 500) {
+        var myScore :int = this.score;
+        if (myScore >= 500) {
             AppContext.game.awardTrophy("score1");
         }
-        if (score >= 1000) {
+        if (myScore >= 1000) {
             AppContext.game.awardTrophy("score2");
         }
-        if (score >= 1500) {
+        if (myScore >= 1500) {
             AppContext.game.awardTrophy("score3");
         }
     }
