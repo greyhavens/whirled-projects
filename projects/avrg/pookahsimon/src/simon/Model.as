@@ -5,10 +5,10 @@ import com.threerings.util.Log;
 import flash.events.EventDispatcher;
 
 [Event(name="gameState", type="simon.SimonEvent")]
-[Event(name="nextPlayer", type="bingo.SimonEvent")]
-[Event(name="newScores", type="bingo.SimonEvent")]
-[Event(name="nextRainbowSelection", type="bingo.SimonEvent")]
-[Event(name="playerTimeout", type="bingo.SimonEvent")]
+[Event(name="nextPlayer", type="simon.SimonEvent")]
+[Event(name="newScores", type="simon.SimonEvent")]
+[Event(name="nextRainbowSelection", type="simon.SimonEvent")]
+[Event(name="playerTimeout", type="simon.SimonEvent")]
 
 public class Model extends EventDispatcher
 {
