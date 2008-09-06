@@ -19,17 +19,17 @@ import flash.utils.getTimer;
 
 public class GameManager
 {
-    public var gameState :int;
-
-    /**
-     * Constructs our main view area for the game.
-     */
     public function GameManager (mainObject :DisplayObject)
     {
         AppContext.gameCtrl = _gameCtrl = new GameControl(mainObject);
         AppContext.game = this;
         AppContext.scores = new Scoreboard(_gameCtrl);
         AppContext.local = new LocalUtility();
+    }
+
+    public function get gameState () :int
+    {
+        return _gameState;
     }
 
     public function setup () :void
@@ -39,15 +39,7 @@ public class GameManager
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
         _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _gameCtrl.game.addEventListener(StateChangedEvent.CONTROL_CHANGED, handleHostChanged);
         _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
-
-        if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
-            gameState = Constants.STATE_PRE_ROUND;
-        } else {
-            gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
-            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
-        }
 
         AppContext.board = _boardCtrl = createBoardController();
         _lastTickTime = getTimer();
@@ -60,8 +52,7 @@ public class GameManager
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
         if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.stopTicker("nextRoundTicker");
-            setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
+            _gameCtrl.services.stopTicker(Constants.TICKER_NEXTROUND);
         }
         _ships = new HashMap();
         _lastTickTime = getTimer();
@@ -166,12 +157,12 @@ public class GameManager
             shipChanged(shipId(name), ByteArray(event.newValue));
 
         } else if (name == Constants.PROP_GAMESTATE) {
-            gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
+            _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
 
-            if (gameState == Constants.STATE_IN_ROUND) {
+            if (_gameState == Constants.STATE_IN_ROUND) {
                 startRound();
-            } else if (gameState == Constants.STATE_POST_ROUND) {
-                endRound();
+            } else if (_gameState == Constants.STATE_POST_ROUND) {
+                roundEnded();
             }
 
         } else if (name == Constants.PROP_STATETIME) {
@@ -208,7 +199,6 @@ public class GameManager
             throw new Error("Tried to add a ship that already existed [id=" + id + "]");
         }
         _population++;
-        maybeStartRound();
     }
 
     public function removeShip (id :int) :Ship
@@ -232,13 +222,6 @@ public class GameManager
     public function numShips () :int
     {
         return _ships.size();
-    }
-
-    public function maybeStartRound () :void
-    {
-        if (_population >= 2 && gameState == Constants.STATE_PRE_ROUND && _gameCtrl.game.amInControl()) {
-            _gameCtrl.net.set(Constants.PROP_GAMESTATE, Constants.STATE_IN_ROUND);
-        }
     }
 
     /**
@@ -281,13 +264,13 @@ public class GameManager
         _lastTickTime = getTimer();
     }
 
-    public function endRound () :void
+    public function roundEnded () :void
     {
         _screenTimer.reset();
         for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
-        _boardCtrl.endRound();
+        _boardCtrl.roundEnded();
         if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl()) {
             var playerIds :Array = [];
             var scores :Array = [];
@@ -394,20 +377,6 @@ public class GameManager
     {
     }
 
-    /**
-     * Once the host was found, start the game!
-     */
-    protected function handleHostChanged (event : StateChangedEvent) : void
-    {
-        // Try initializing the game state if there isn't a board yet.
-        if (_gameCtrl.game.amInControl()) {
-            if (gameState == Constants.STATE_IN_ROUND) {
-                startPowerupTimer();
-            }
-            _boardCtrl.hostChanged(event, gameState);
-        }
-    }
-
     public function occupantLeft (event :OccupantChangedEvent) :void
     {
         removeShip(event.occupantId);
@@ -498,11 +467,11 @@ public class GameManager
 
     protected function update (time :int) :void
     {
-        if (gameState == Constants.STATE_IN_ROUND) {
+        if (_gameState == Constants.STATE_IN_ROUND) {
             if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
-                gameState = Constants.STATE_POST_ROUND;
+                _gameState = Constants.STATE_POST_ROUND;
                 _gameCtrl.services.stopTicker(Constants.MSG_STATETICKER);
-                setImmediate(Constants.PROP_GAMESTATE, gameState);
+                setImmediate(Constants.PROP_GAMESTATE, _gameState);
                 _screenTimer.reset();
                 _powerupTimer.stop();
             }
@@ -549,6 +518,8 @@ public class GameManager
 
     /** Our game control object. */
     protected var _gameCtrl :GameControl;
+
+    protected var _gameState :int;
 
     /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>

@@ -23,7 +23,7 @@ public class Constants
 
     /** How often we send updates to the server. */
     public static const FRAMES_PER_UPDATE :int = 3;
-    public static const TIME_PER_UPDATE :int = 125;
+    public static const TIME_PER_UPDATE :int = 1250;
 
     /** Game states. */
     public static const STATE_PRE_ROUND :int = 1;
@@ -60,6 +60,8 @@ public class Constants
     public static const PROP_BOARD :String = "board";
     public static const PROP_GAMESTATE :String = "gameState";
     public static const PROP_STATETIME :String = "stateTime";
+
+    public static const TICKER_NEXTROUND :String = "nextRoundTicker";
 
     /** Gameplay constants */
     public static const RANDOM_POWERUP_TIME :int = 20000;

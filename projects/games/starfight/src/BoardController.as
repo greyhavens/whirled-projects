@@ -5,7 +5,6 @@ import com.threerings.util.Log;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.PropertyChangedEvent;
 
 import flash.geom.Point;
 import flash.utils.ByteArray;
@@ -25,114 +24,19 @@ public class BoardController
     public function BoardController (gameCtrl :GameControl)
     {
         _gameCtrl = gameCtrl;
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
 
     public function loadBoard (boardLoadedCallback :Function) :void
     {
-        _boardLoadedCallback = boardLoadedCallback;
-
-        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
-        if (boardBytes != null) {
-            boardBytes.position = 0;
-            readBoard(boardBytes);
-        } else if (_gameCtrl.game.amServerAgent()) {
-            createBoard();
-        }
+        throw new Error("subclasses must implement loadBoard()");
     }
 
-    public function endRound () :void
+    public function roundEnded () :void
     {
         _obstacles = null;
         _powerups = null;
         _mines = null;
-        _boardCreated = false;
-        if (_gameCtrl.game.amServerAgent()) {
-            _gameCtrl.doBatch(function () :void {
-                setImmediate(Constants.PROP_OBSTACLES, null);
-                setImmediate(Constants.PROP_POWERUPS, null);
-                setImmediate(Constants.PROP_MINES, null);
-                setImmediate(Constants.PROP_BOARD, null);
-            });
-        }
-    }
-
-    protected function readBoard (boardBytes :ByteArray) :void
-    {
-        if (_boardCreated) {
-            return;
-        }
-
-        readFrom(boardBytes);
-        var obs :Array = (_gameCtrl.net.get(Constants.PROP_OBSTACLES) as Array);
-        _obstacles = new Array(obs.length);
-        for (var ii :int; ii < _obstacles.length; ii++) {
-            if (obs[ii] == null) {
-                _obstacles[ii] = null;
-                continue;
-            }
-            obs[ii].position = 0;
-            _obstacles[ii] = Obstacle.readObstacle(ByteArray(obs[ii]));
-            _obstacles[ii].index = ii;
-        }
-
-        var pups :Array = (_gameCtrl.net.get(Constants.PROP_POWERUPS) as Array);
-        _powerups = new Array(pups.length);
-        for (ii = 0; ii < pups.length; ii++) {
-            if (pups[ii] == null) {
-                _powerups[ii] = null;
-                continue;
-            }
-            pups[ii].position = 0;
-            _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
-        }
-
-        var mines :Array = (_gameCtrl.net.get(Constants.PROP_MINES) as Array);
-        _mines = new Array(mines.length);
-        for (ii = 0; ii < mines.length; ii++) {
-            if (mines[ii] == null) {
-                _mines[ii] = null;
-                continue;
-            }
-            mines[ii].position = 0;
-            _mines[ii] = Mine.readMine(ByteArray(mines[ii]));
-            _mines[ii].index = ii;
-        }
-
-        _boardCreated = true;
-        _boardLoadedCallback();
-    }
-
-    protected function createBoard () :void
-    {
-        if (_boardCreated) {
-            return;
-        }
-
-        this.width = 100;
-        this.height = 100;
-
-        loadObstacles();
-        var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
-        _powerups = new Array(maxPowerups);
-        _mines = new Array(MAX_MINES);
-
-        if (_gameCtrl.isConnected()) {
-            _gameCtrl.doBatch(function () :void {
-                setImmediate(Constants.PROP_OBSTACLES, new Array(_obstacles.length));
-                for (var ii :int; ii < _obstacles.length; ii++) {
-                    setAtImmediate(Constants.PROP_OBSTACLES,
-                            _obstacles[ii].writeTo(new ByteArray()), ii);
-                }
-                setImmediate(Constants.PROP_POWERUPS, new Array(_powerups.length));
-                setImmediate(Constants.PROP_MINES, new Array(MAX_MINES));
-                setImmediate(Constants.PROP_BOARD, writeTo(new ByteArray()));
-            });
-        }
-
-        _boardCreated = true;
-        _boardLoadedCallback();
     }
 
     public function setupBoard (ships :HashMap) :void
@@ -190,17 +94,6 @@ public class BoardController
 
             // don't listen to "new mine" events (event.newValue != null) - mines will
             // be added to the board when the Saucer's secondary fire is used
-        }
-    }
-
-    // from PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
-    {
-        if (event.name == Constants.PROP_BOARD && !_boardCreated) {
-            var bytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
-            if (bytes != null) {
-                readBoard(bytes);
-            }
         }
     }
 
@@ -655,15 +548,6 @@ public class BoardController
         }
     }
 
-    public function hostChanged (event :StateChangedEvent, gameState :int) :void
-    {
-        if (_gameCtrl.game.amInControl() && gameState != Constants.STATE_POST_ROUND) {
-            if (_gameCtrl.net.get(Constants.PROP_BOARD) == null) {
-                createBoard();
-            }
-        }
-    }
-
     protected function setImmediate (propName :String, value :Object) :void
     {
         _gameCtrl.net.set(propName, value, true);
@@ -675,10 +559,6 @@ public class BoardController
     }
 
     protected var _gameCtrl :GameControl;
-
-    protected var _boardLoadedCallback :Function;
-
-    protected var _boardCreated :Boolean;
 
     /** Reference to the array of ships we know about. */
     protected var _ships :HashMap;

@@ -115,7 +115,7 @@ public class GameView extends Sprite
 
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "nextRoundTicker") {
+        if (event.name == Constants.TICKER_NEXTROUND) {
             if (_nextRoundTimer != null) {
                 _nextRoundTimer.text = String(Math.max(0, int(_nextRoundTimer.text) - 1));
             }

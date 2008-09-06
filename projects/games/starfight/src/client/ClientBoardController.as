@@ -2,16 +2,92 @@ package client {
 
 import com.threerings.util.HashMap;
 import com.whirled.game.GameControl;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.media.Sound;
+import flash.utils.ByteArray;
 
 public class ClientBoardController extends BoardController
 {
     public function ClientBoardController (gameCtrl :GameControl)
     {
         super(gameCtrl);
+        gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+    }
+
+    protected function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        if (event.name == Constants.PROP_BOARD && !_boardLoaded) {
+            var bytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
+            if (bytes != null) {
+                readBoard(bytes);
+            }
+        }
+    }
+
+    override public function loadBoard (boardLoadedCallback :Function) :void
+    {
+        _boardLoadedCallback = boardLoadedCallback;
+
+        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
+        if (boardBytes != null) {
+            boardBytes.position = 0;
+            readBoard(boardBytes);
+        }
+    }
+
+    override public function roundEnded () :void
+    {
+        super.roundEnded();
+        _boardLoaded = false;
+    }
+
+    protected function readBoard (boardBytes :ByteArray) :void
+    {
+        if (_boardLoaded) {
+            return;
+        }
+
+        readFrom(boardBytes);
+        var obs :Array = (_gameCtrl.net.get(Constants.PROP_OBSTACLES) as Array);
+        _obstacles = new Array(obs.length);
+        for (var ii :int; ii < _obstacles.length; ii++) {
+            if (obs[ii] == null) {
+                _obstacles[ii] = null;
+                continue;
+            }
+            obs[ii].position = 0;
+            _obstacles[ii] = Obstacle.readObstacle(ByteArray(obs[ii]));
+            _obstacles[ii].index = ii;
+        }
+
+        var pups :Array = (_gameCtrl.net.get(Constants.PROP_POWERUPS) as Array);
+        _powerups = new Array(pups.length);
+        for (ii = 0; ii < pups.length; ii++) {
+            if (pups[ii] == null) {
+                _powerups[ii] = null;
+                continue;
+            }
+            pups[ii].position = 0;
+            _powerups[ii] = Powerup.readPowerup(ByteArray(pups[ii]));
+        }
+
+        var mines :Array = (_gameCtrl.net.get(Constants.PROP_MINES) as Array);
+        _mines = new Array(mines.length);
+        for (ii = 0; ii < mines.length; ii++) {
+            if (mines[ii] == null) {
+                _mines[ii] = null;
+                continue;
+            }
+            mines[ii].position = 0;
+            _mines[ii] = Mine.readMine(ByteArray(mines[ii]));
+            _mines[ii].index = ii;
+        }
+
+        _boardLoaded = true;
+        _boardLoadedCallback();
     }
 
     override public function setupBoard (ships :HashMap) :void
@@ -133,6 +209,9 @@ public class ClientBoardController extends BoardController
             }
         }
     }
+
+    protected var _boardLoadedCallback :Function;
+    protected var _boardLoaded :Boolean;
 
     protected var _boardSprite :Sprite;
     protected var _obstacleLayer :Sprite;

@@ -13,7 +13,7 @@ public class LocalUtility
         }
     }
 
-    protected static const log :Log = Log.getLog("Feedback");
+    protected static const log :Log = Log.getLog("FEEDBACK:");
 }
 
 }

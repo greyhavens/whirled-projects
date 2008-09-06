@@ -52,6 +52,23 @@ public class ClientGameManager extends GameManager
         }
     }
 
+    override public function setup () :void
+    {
+        ClientContext.gameView.setup();
+
+        super.setup();
+
+        if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
+            _gameState = Constants.STATE_PRE_ROUND;
+        } else {
+            _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
+            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
+        }
+
+        ClientContext.board = ClientBoardController(AppContext.board);
+        updateStatusDisplay();
+    }
+
     /**
      * Choose the type of ship for ownship.
      */
@@ -125,6 +142,10 @@ public class ClientGameManager extends GameManager
     override protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         super.propertyChanged(event);
+
+        if (!isShipKey(event.name)) {
+            log.info("propertyChanged: " + event.name);
+        }
 
         if (event.name == Constants.PROP_GAMESTATE) {
             updateStatusDisplay();
@@ -215,9 +236,9 @@ public class ClientGameManager extends GameManager
 
      public function updateStatusDisplay () :void
      {
-        if (gameState == Constants.STATE_PRE_ROUND) {
+        if (_gameState == Constants.STATE_PRE_ROUND) {
             ClientContext.gameView.status.updateRoundText("Waiting for players...");
-        } else if (gameState == Constants.STATE_POST_ROUND) {
+        } else if (_gameState == Constants.STATE_POST_ROUND) {
             ClientContext.gameView.status.updateRoundText("Round over...");
         } else {
             var time :int = Math.max(0, _stateTime);
@@ -325,7 +346,7 @@ public class ClientGameManager extends GameManager
 
         ClientContext.gameView.status.addShip(id);
 
-        if (gameState == Constants.STATE_IN_ROUND) {
+        if (_gameState == Constants.STATE_IN_ROUND) {
             AppContext.local.feedback(ship.playerName + " entered the game.");
         }
 
@@ -358,16 +379,6 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    override public function setup () :void
-    {
-        ClientContext.gameView.setup();
-
-        super.setup();
-
-        ClientContext.board = ClientBoardController(AppContext.board);
-        updateStatusDisplay();
-    }
-
     override protected function createBoardController () :BoardController
     {
         return new ClientBoardController(_gameCtrl);
@@ -381,9 +392,9 @@ public class ClientGameManager extends GameManager
         ClientContext.gameView.boardLoaded();
     }
 
-    override public function endRound () :void
+    override public function roundEnded () :void
     {
-        super.endRound();
+        super.roundEnded();
 
         var shipArr :Array = _ships.values();
         shipArr.sort(function (shipA :Ship, shipB :Ship) :int {
@@ -400,7 +411,7 @@ public class ClientGameManager extends GameManager
             setImmediate(shipKey(ClientContext.myId), null);
             if (_gameCtrl.game.amInControl()) {
                 _gameCtrl.game.restartGameIn(30);
-                _gameCtrl.services.startTicker("nextRoundTicker", 1000);
+                _gameCtrl.services.startTicker(Constants.TICKER_NEXTROUND, 1000);
             }
         });
     }
@@ -429,7 +440,7 @@ public class ClientGameManager extends GameManager
 
     protected function get resourcesLoaded () :Boolean
     {
-        return _assets >= Constants.SHIP_TYPE_CLASSES.length;
+        return _assets > Constants.SHIP_TYPE_CLASSES.length;
     }
 
     protected var _shotViews :Array = [];
