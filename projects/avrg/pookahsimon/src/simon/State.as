@@ -6,9 +6,9 @@ import flash.errors.EOFError;
 import flash.utils.ByteArray;
 
 /**
- * Encapsulates data that is shared across all game clients.
+ * Encapsulates data that is shared across all game clients and the server agent.
  */
-public class SharedState
+public class State
 {
     public static const STATE_INITIAL :int              = -1;
     public static const STATE_WAITINGFORPLAYERS :int    = 0;
@@ -28,9 +28,9 @@ public class SharedState
         return (curPlayerIdx >= 0 && curPlayerIdx < players.length ? players[curPlayerIdx] : 0);
     }
 
-    public function clone () :SharedState
+    public function clone () :State
     {
-        var clone :SharedState = new SharedState();
+        var clone :State = new State();
 
         clone.gameState = gameState;
         clone.roundId = roundId;
@@ -42,7 +42,7 @@ public class SharedState
         return clone;
     }
 
-    public function isEqual (rhs :SharedState) :Boolean
+    public function isEqual (rhs :State) :Boolean
     {
         return (
             gameState == rhs.gameState &&
@@ -98,7 +98,7 @@ public class SharedState
         return "[gameState: " + gameState + ", curPlayerIdx: " + curPlayerIdx + "]";
     }
 
-    public static function fromBytes (ba :ByteArray) :SharedState
+    public static function fromBytes (ba :ByteArray) :State
     {
         if (null == ba) {
             return null;
@@ -107,7 +107,7 @@ public class SharedState
         try {
             ba.position = 0;
 
-            var state :SharedState = new SharedState();
+            var state :State = new State();
 
             state.gameState = ba.readByte();
 
@@ -130,14 +130,14 @@ public class SharedState
             return state;
 
         } catch (err :EOFError) {
-            log.warning("error deserializing SharedState: " + err);
+            log.warning("error deserializing State: " + err);
             return null;
         }
 
         return null;
     }
 
-    protected static var log :Log = Log.getLog(SharedState);
+    protected static var log :Log = Log.getLog(State);
 }
 
 }

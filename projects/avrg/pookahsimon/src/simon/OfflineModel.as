@@ -17,7 +17,7 @@ public class OfflineModel extends Model
         this.playerTimeout();
     }
 
-    override public function trySetNewState (newState :SharedState) :void
+    override public function trySetNewState (newState :State) :void
     {
         // in offline mode, we can convert state change requests
         // directly into state changes

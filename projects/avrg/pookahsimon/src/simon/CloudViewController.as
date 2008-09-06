@@ -115,12 +115,12 @@ public class CloudViewController extends SceneObject
 
         switch (SimonMain.model.curState.gameState) {
 
-        case SharedState.STATE_WAITINGFORPLAYERS:
+        case State.STATE_WAITINGFORPLAYERS:
             var numPlayersNeeded :int = Constants.MIN_MP_PLAYERS_TO_START - SimonMain.model.getPlayerOids().length;
             this.statusTextField.text = "Get " + (numPlayersNeeded == 1 ? "a friend" : String(numPlayersNeeded) + " friends") + " to play!";
             break;
 
-        case SharedState.STATE_WEHAVEAWINNER:
+        case State.STATE_WEHAVEAWINNER:
             var winnerId :int = SimonMain.model.curState.roundWinnerId;
             var patternEmpty :Boolean = SimonMain.model.curState.pattern.length == 0;
 

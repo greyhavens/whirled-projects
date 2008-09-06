@@ -25,7 +25,7 @@ public class OnlineModel extends Model
         var stateBytes :ByteArray = (_control.room.props.get(Constants.PROP_STATE) as ByteArray);
         if (null != stateBytes) {
             log.info("OnlineModel.setup() - reading PROP_STATE from bytes");
-            var curState :SharedState = SharedState.fromBytes(stateBytes);
+            var curState :State = State.fromBytes(stateBytes);
             if (null != curState) {
                 _curState = curState;
             }
@@ -71,7 +71,7 @@ public class OnlineModel extends Model
     }
 
     // TODO: this should be done in the server agent
-    override public function trySetNewState (newState :SharedState) :void
+    override public function trySetNewState (newState :State) :void
     {
         // ignore state changes from non-authoritative clients
         if (!hasControl()) {
@@ -180,7 +180,7 @@ public class OnlineModel extends Model
         switch (e.name) {
         case Constants.PROP_STATE:
             if (value is ByteArray) {
-                var newState :SharedState = SharedState.fromBytes(value as ByteArray);
+                var newState :State = State.fromBytes(value as ByteArray);
                 this.setState(newState);
             }
             break;
@@ -199,7 +199,7 @@ public class OnlineModel extends Model
     }
 
     protected var _control :AVRGameControl;
-    protected var _lastStateRequest :SharedState;
+    protected var _lastStateRequest :State;
     protected var _lastScoresRequest :ScoreTable;
 
     protected var _messageQueue :Array = [];

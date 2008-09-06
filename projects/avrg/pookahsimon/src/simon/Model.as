@@ -25,7 +25,7 @@ public class Model extends EventDispatcher
     }
 
     /* state accessors */
-    public function get curState () :SharedState
+    public function get curState () :State
     {
         return _curState;
     }
@@ -62,7 +62,7 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override sendPlayerTimeoutMessage()");
     }
 
-    public function trySetNewState (newState :SharedState) :void
+    public function trySetNewState (newState :State) :void
     {
         throw new Error("subclasses must override trySetNewState()");
     }
@@ -73,9 +73,9 @@ public class Model extends EventDispatcher
     }
 
     /* private state mutators */
-    protected function setState (newState :SharedState) :void
+    protected function setState (newState :State) :void
     {
-        var lastState :SharedState = _curState;
+        var lastState :State = _curState;
         _curState = newState.clone();
 
         if (_curState.gameState != lastState.gameState) {
@@ -102,7 +102,7 @@ public class Model extends EventDispatcher
     }
 
     // shared state
-    protected var _curState :SharedState = new SharedState();
+    protected var _curState :State = new State();
     protected var _curScores :ScoreTable = new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES);
 
     // local state
