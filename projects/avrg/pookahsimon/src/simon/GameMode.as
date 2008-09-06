@@ -26,9 +26,9 @@ public class GameMode extends AppMode
         this.helpScreenVisible = false;
 
         // state change events
-        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        SimonMain.model.addEventListener(SimonEvent.NEXT_PLAYER, handleCurPlayerChanged);
+        SimonMain.model.addEventListener(SimonEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeft);
 
@@ -55,9 +55,9 @@ public class GameMode extends AppMode
         this.destroyObjectNamed(CloudViewController.NAME);
         this.destroyObjectNamed(AvatarController.NAME);
 
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChange);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, handleCurPlayerChanged);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, handleNewScores);
+        SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, handleGameStateChange);
+        SimonMain.model.removeEventListener(SimonEvent.NEXT_PLAYER, handleCurPlayerChanged);
+        SimonMain.model.removeEventListener(SimonEvent.NEW_SCORES, handleNewScores);
 
         SimonMain.control.room.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT, handlePlayerLeft);
     }

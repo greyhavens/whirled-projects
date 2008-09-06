@@ -55,9 +55,9 @@ public class CloudViewController extends SceneObject
         quitButton.addEventListener(MouseEvent.CLICK, quit, false, 0, true);
 
         // other events
-        SimonMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateStatusText, false, 0, true);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
+        SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText, false, 0, true);
+        SimonMain.model.addEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
+        SimonMain.model.addEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
 
         SimonMain.control.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
@@ -71,9 +71,9 @@ public class CloudViewController extends SceneObject
 
     override protected function removedFromDB () :void
     {
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, updateStatusText);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateNamesAndScores);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_PLAYER, updateNamesAndScores);
+        SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText);
+        SimonMain.model.removeEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores);
+        SimonMain.model.removeEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores);
 
         SimonMain.control.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }

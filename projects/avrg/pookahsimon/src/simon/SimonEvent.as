@@ -2,7 +2,7 @@ package simon {
 
 import flash.events.Event;
 
-public class SharedStateChangedEvent extends Event
+public class SimonEvent extends Event
 {
     public static const GAME_STATE_CHANGED :String = "gameState";
     public static const NEXT_PLAYER :String = "nextPlayer";
@@ -12,7 +12,7 @@ public class SharedStateChangedEvent extends Event
 
     public var data :Object;
 
-    public function SharedStateChangedEvent (type :String, data :Object = null)
+    public function SimonEvent (type :String, data :Object = null)
     {
         super(type, false, false);
         this.data = data;

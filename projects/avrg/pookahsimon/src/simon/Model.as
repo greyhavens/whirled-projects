@@ -4,11 +4,11 @@ import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
 
-[Event(name="gameState", type="simon.SharedStateChangedEvent")]
-[Event(name="nextPlayer", type="bingo.SharedStateChangedEvent")]
-[Event(name="newScores", type="bingo.SharedStateChangedEvent")]
-[Event(name="nextRainbowSelection", type="bingo.SharedStateChangedEvent")]
-[Event(name="playerTimeout", type="bingo.SharedStateChangedEvent")]
+[Event(name="gameState", type="simon.SimonEvent")]
+[Event(name="nextPlayer", type="bingo.SimonEvent")]
+[Event(name="newScores", type="bingo.SimonEvent")]
+[Event(name="nextRainbowSelection", type="bingo.SimonEvent")]
+[Event(name="playerTimeout", type="bingo.SimonEvent")]
 
 public class Model extends EventDispatcher
 {
@@ -79,26 +79,26 @@ public class Model extends EventDispatcher
         _curState = newState.clone();
 
         if (_curState.gameState != lastState.gameState) {
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.GAME_STATE_CHANGED));
+            this.dispatchEvent(new SimonEvent(SimonEvent.GAME_STATE_CHANGED));
         } else if (_curState.curPlayerOid != lastState.curPlayerOid || _curState.pattern.length != lastState.pattern.length) {
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_PLAYER));
+            this.dispatchEvent(new SimonEvent(SimonEvent.NEXT_PLAYER));
         }
     }
 
     protected function setScores (newScores :ScoreTable) :void
     {
         _curScores = newScores;
-        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
+        this.dispatchEvent(new SimonEvent(SimonEvent.NEW_SCORES));
     }
 
     protected function rainbowClicked (clickedIndex :int) :void
     {
-        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
+        this.dispatchEvent(new SimonEvent(SimonEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
     }
 
     protected function playerTimeout () :void
     {
-        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.PLAYER_TIMEOUT));
+        this.dispatchEvent(new SimonEvent(SimonEvent.PLAYER_TIMEOUT));
     }
 
     // shared state

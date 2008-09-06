@@ -13,19 +13,19 @@ public class RemoteRainbowController extends AbstractRainbowController
     {
         super.addedToDB();
 
-        SimonMain.model.addEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
-        SimonMain.model.addEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
+        SimonMain.model.addEventListener(SimonEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
+        SimonMain.model.addEventListener(SimonEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
     }
 
     override protected function removedFromDB () :void
     {
         super.removedFromDB();
 
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
-        SimonMain.model.removeEventListener(SharedStateChangedEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
+        SimonMain.model.removeEventListener(SimonEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
+        SimonMain.model.removeEventListener(SimonEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
     }
 
-    protected function handleNextRainbowSelection (e :SharedStateChangedEvent) :void
+    protected function handleNextRainbowSelection (e :SimonEvent) :void
     {
         var noteIndex :int = e.data as int;
         var clickLoc :Point = DEFAULT_SPARKLE_LOCS[noteIndex];
