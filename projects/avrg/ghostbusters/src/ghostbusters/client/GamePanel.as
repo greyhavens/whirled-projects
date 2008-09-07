@@ -14,11 +14,11 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.utils.ByteArray;
+import flash.utils.setTimeout;
 
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import com.threerings.flash.AnimationManager;
@@ -30,7 +30,6 @@ import com.threerings.util.CommandEvent;
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.data.Codes;
 import ghostbusters.client.util.GhostModel;
-import ghostbusters.client.util.PlayerModel;
 import ghostbusters.client.seek.SeekPanel;
 
 public class GamePanel extends Sprite
@@ -55,10 +54,12 @@ public class GamePanel extends Sprite
             _frame = frame;
         });
 
+        Game.control.player.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
+        Game.control.player.addEventListener(AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
+
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
-
-        Game.control.player.addEventListener(AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
 
         var panel :GamePanel = this;
         new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function (clip :MovieClip) :void {
@@ -66,20 +67,23 @@ public class GamePanel extends Sprite
             _revivePopup.x = 100;
             _revivePopup.y = 200;
 
-            trace("player_died: " + DisplayUtil.dumpHierarchy(clip));
+            var bit :MovieClip = MovieClip(DisplayUtil.findInHierarchy(clip, "FailureMessage"));
 
-            var button :SimpleButton =
-                SimpleButton(DisplayUtil.findInHierarchy(clip, "revivebutton"));
-            if (button == null) {
-                Game.log.debug("Urk, cannot find revivebutton...");
-//                return;
-            }
-            /* TODO: button. */
-            clip.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
-                CommandEvent.dispatch(panel, GameController.REVIVE);
-            });
+            bit.gotoAndPlay(8);
+            setTimeout(function () :void {
+                trace(DisplayUtil.dumpHierarchy(bit));
+                var button :SimpleButton =
+                    SimpleButton(DisplayUtil.findInHierarchy(bit, "revivebutton"));
+                if (button == null) {
+                    Game.log.debug("Urk, cannot find revivebutton...");
+                    return;
+                }
+                button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
+                        CommandEvent.dispatch(panel, GameController.REVIVE);
+                });
 
-            checkPlayerHealth();
+                checkForDeath();
+            }, 1);
         });
 
         new ClipHandler(ByteArray(new Content.GHOST_DEFEATED()), function (clip :MovieClip) :void {
@@ -159,7 +163,8 @@ public class GamePanel extends Sprite
     public function reloadView () :void
     {
         hud.reloadView();
-        checkPlayerHealth();
+        // TODO: is this really needed?
+        checkForDeath();
     }
 
     public function getClipClass () :Class
@@ -202,23 +207,26 @@ public class GamePanel extends Sprite
         AnimationManager.start(flourish);
     }
 
-    protected function checkPlayerHealth () :void
+    protected function checkForDeath () :void
     {
         if (_revivePopup == null) {
-            // still loading; there will be another callback when it's done
+            Game.log.debug("Revival popup still loading; there will be another callback");
             return;
         }
 
-        if (!PlayerModel.isDead(Game.ourPlayerId)) {
+        var health :* = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
+        if (health > 0) {
             // possibly we were just revived, let's see
             if (_revivePopup.parent == this) {
                 this.removeChild(_revivePopup);
             }
             // we're not dead
-            return;
+        } else if (health === 0) {
+            Game.log.debug("We seem to be quite dead.");
+            popup(_revivePopup);
+        } else {
+            Game.log.debug("We're neither dead nor alive. Scary.");
         }
-        Game.log.debug("We seem to be quite dead.");
-        popup(_revivePopup);
     }
 
     protected function popup (clip :MovieClip) :void
@@ -239,6 +247,13 @@ public class GamePanel extends Sprite
         this.removeChild(clip);
     }
 
+    protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
+    {
+        if (evt.name == Codes.PROP_MY_HEALTH) {
+            checkForDeath();
+        }
+    }
+
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
@@ -251,15 +266,6 @@ public class GamePanel extends Sprite
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
-        }
-    }
-
-    protected function roomElementChanged (evt :ElementChangedEvent) :void
-    {
-        var playerId :int = PlayerModel.parsePlayerProperty(evt.name);
-
-        if (playerId == Game.ourPlayerId && evt.key == Codes.IX_PLAYER_CUR_HEALTH) {
-            checkPlayerHealth();
         }
     }
 

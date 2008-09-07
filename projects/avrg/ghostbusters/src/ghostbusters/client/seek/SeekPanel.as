@@ -96,13 +96,7 @@ public class SeekPanel extends FrameSprite
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
-        // if the ghost is appearing, ignore network events
-        if (_lanterns == null) {
-            return;
-        }
-
         var bits :Array;
-
         if (evt.name == Codes.DICT_LANTERNS) {
             var playerId :int = evt.key;
 
