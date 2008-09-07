@@ -18,7 +18,7 @@ import flash.utils.setTimeout;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.MathUtil;
-import com.threerings.util.CommandEvent;
+import com.threerings.util.Command;
 
 import ghostbusters.client.ClipHandler;
 import ghostbusters.client.GameController;
@@ -165,8 +165,8 @@ public class HUD extends Sprite
     {
         _ghostInfo = new GhostInfoView(hudClip);
 
-        safelyAdd(HELP, helpClick);
-        safelyAdd(CLOSE, closeClick);
+        Command.bind(findSafely(HELP), MouseEvent.CLICK, GameController.HELP);
+        Command.bind(findSafely(CLOSE), MouseEvent.CLICK, GameController.END_GAME);
 
         _playerPanels = new Array();
 
@@ -195,16 +195,16 @@ public class HUD extends Sprite
         _ghostCaptureBar = MovieClip(findSafely(GHOST_CAPTURE_BAR));
 
         _lanternLoot = SimpleButton(findSafely(EQP_LANTERN));
-        _lanternLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+        Command.bind(_lanternLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
 
         _blasterLoot = SimpleButton(findSafely(EQP_BLASTER));
-        _blasterLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+        Command.bind(_blasterLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
 
         _ouijaLoot = SimpleButton(findSafely(EQP_OUIJA));
-        _ouijaLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+        Command.bind(_ouijaLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
 
         _potionsLoot = SimpleButton(findSafely(EQP_POTIONS));
-        _potionsLoot.addEventListener(MouseEvent.CLICK, lanternClick);
+        Command.bind(_potionsLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
 
         _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _potionsLoot ];
         _lootIx = 0;
@@ -249,37 +249,12 @@ public class HUD extends Sprite
         return o;
     }
 
-    protected function safelyAdd (name :String, callback :Function) :void
-    {
-        findSafely(name).addEventListener(MouseEvent.CLICK, callback);
-    }
-
     protected function playerHealthUpdated (id :int) :void
     {
         setPlayerHealth(findPlayerIx(id),
                         Game.relative(PlayerModel.getHealth(id),
                                       PlayerModel.getMaxHealth(id)),
                         id == Game.ourPlayerId);
-    }
-
-    protected function lanternClick (evt :Event) :void
-    {
-        CommandEvent.dispatch(this, GameController.TOGGLE_LANTERN);
-    }
-
-    protected function closeClick (evt :Event) :void
-    {
-        CommandEvent.dispatch(this, GameController.END_GAME);
-    }
-
-    protected function helpClick (evt :Event) :void
-    {
-//        CommandEvent.dispatch(this, GameController.HELP);
-//        var panel :Sprite = new DebugPanel();
-
-//        this.addChild(panel);
-//        panel.x = 200;
-//        panel.y = 600;
     }
 
     protected function updateGhostHealth () :void

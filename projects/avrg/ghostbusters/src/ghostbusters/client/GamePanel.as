@@ -25,7 +25,7 @@ import com.threerings.flash.AnimationManager;
 import com.threerings.flash.DisplayUtil;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.CommandEvent;
+import com.threerings.util.Command;
 
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.data.Codes;
@@ -78,10 +78,7 @@ public class GamePanel extends Sprite
                     Game.log.debug("Urk, cannot find revivebutton...");
                     return;
                 }
-                button.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
-                        CommandEvent.dispatch(panel, GameController.REVIVE);
-                });
-
+                Command.bind(button, MouseEvent.CLICK, GameController.REVIVE);
                 checkForDeath();
             }, 1);
         });
