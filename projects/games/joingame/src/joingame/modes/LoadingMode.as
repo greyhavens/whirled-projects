@@ -1,14 +1,14 @@
 package joingame.modes
 {
 
-	import com.whirled.contrib.simplegame.*;
-	import com.whirled.contrib.simplegame.resource.*;
-	
-	import flash.display.Graphics;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	
-	import joingame.*;
+    import com.whirled.contrib.simplegame.*;
+    import com.whirled.contrib.simplegame.resource.*;
+    
+    import flash.display.Graphics;
+    import flash.text.TextField;
+    import flash.text.TextFieldAutoSize;
+    
+    import joingame.*;
 
 public class LoadingMode extends AppMode
 {
@@ -42,8 +42,8 @@ public class LoadingMode extends AppMode
     {
         if (!_loading )
         {
-//        	AppContext.mainLoop.unwindToMode(new WaitingForReadyPlayersMode());
-        	AppContext.mainLoop.popMode();
+//            AppContext.mainLoop.unwindToMode(new WaitingForReadyPlayersMode());
+            AppContext.mainLoop.popMode();
         }
     }
 

@@ -11,16 +11,16 @@ import joingame.modes.*;
 
 public class GameContext
 {
-	
-
-	
-	public static var puzzleBoardMiddle :JoinGameBoardGameArea;
     
-	public static var puzzleBoardLeft :JoinGameBoardGameArea;
-	public static var puzzleBoardRight :JoinGameBoardGameArea;
-		
-	public static var gameState: JoinGameModel;
-		
+
+    
+    public static var puzzleBoardMiddle :JoinGameBoardGameArea;
+    
+    public static var puzzleBoardLeft :JoinGameBoardGameArea;
+    public static var puzzleBoardRight :JoinGameBoardGameArea;
+        
+    public static var gameState: JoinGameModel;
+        
 //    public static const GAME_TYPE_MULTIPLAYER :int = 0;
 //    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
 
@@ -115,18 +115,18 @@ public class GameContext
     
     
     public static function LOG(s: String): void
-	{
-		if(AppContext.gameCtrl != null && AppContext.gameCtrl.local != null && AppContext.gameCtrl.net.isConnected())
-		{
-//			AppContext.gameCtrl.local.feedback(s);
-			AppContext.gameCtrl.game.systemMessage(s);
-		}
-		else
-		{
-			trace(s);
-		
-		}
-	}
+    {
+        if(AppContext.gameCtrl != null && AppContext.gameCtrl.local != null && AppContext.gameCtrl.net.isConnected())
+        {
+//            AppContext.gameCtrl.local.feedback(s);
+            AppContext.gameCtrl.game.systemMessage(s);
+        }
+        else
+        {
+            trace(s);
+        
+        }
+    }
 }
 
 }

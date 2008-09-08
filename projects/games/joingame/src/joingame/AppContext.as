@@ -44,17 +44,17 @@ public class AppContext
 //        return variantResource.variants;
 //    }
 
-	public static function LOG(s: String): void
-	{
-		if(false && gameCtrl != null && gameCtrl.local != null && gameCtrl.net.isConnected())
-		{
-			gameCtrl.local.feedback(s);
-		}
-		else
-		{
-			trace(s);
-		}
-	}
+    public static function LOG(s: String): void
+    {
+        if(false && gameCtrl != null && gameCtrl.local != null && gameCtrl.net.isConnected())
+        {
+            gameCtrl.local.feedback(s);
+        }
+        else
+        {
+            trace(s);
+        }
+    }
 }
 
 }
