@@ -69,9 +69,6 @@ public class GameManager
         if (_screenTimer != null) {
             _screenTimer.reset();
         }
-        if (_powerupTimer != null) {
-            _powerupTimer.reset();
-        }
         for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
@@ -132,19 +129,6 @@ public class GameManager
     protected function shipId (key :String) :int
     {
         return int(key.substr(5));
-    }
-
-    /**
-     * Tells everyone about a new powerup.
-     */
-    public function addPowerup (event :TimerEvent) :void
-    {
-        _boardCtrl.addRandomPowerup();
-    }
-
-    public function addMine (shipId :int, x :int, y :int, damage :Number) :void
-    {
-        _boardCtrl.addMine(new Mine(shipId, x, y, damage));
     }
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
@@ -232,20 +216,6 @@ public class GameManager
         //_stateTime = 30;
         if (_gameCtrl.isConnected()) {
             AppContext.scores.clearAll();
-
-            if (_gameCtrl.game.amInControl()) {
-
-                // The first player is in charge of adding powerups.
-                _gameCtrl.services.startTicker(Constants.MSG_STATETICKER, 1000);
-                setImmediate(Constants.PROP_STATETIME, _stateTime);
-                // TODO - figure out if this is necessary
-                /*if (_ownShip != null) {
-                    _ownShip.restart();
-                    _boardCtrl.shipKilled(myId);
-                }*/
-                addPowerup(null);
-                startPowerupTimer();
-            }
         }
     }
 
@@ -274,19 +244,6 @@ public class GameManager
             AppContext.scores.getPlayerIdsAndScores(playerIds, scores);
             _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
         }
-    }
-
-    /**
-     * Starts the timer that adds powerups to the board.
-     */
-    public function startPowerupTimer () :void
-    {
-        if (_powerupTimer != null) {
-            _powerupTimer.removeEventListener(TimerEvent.TIMER, addPowerup);
-        }
-        _powerupTimer = new Timer(Constants.RANDOM_POWERUP_TIME, 0);
-        _powerupTimer.addEventListener(TimerEvent.TIMER, addPowerup);
-        _powerupTimer.start();
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
@@ -464,16 +421,6 @@ public class GameManager
 
     protected function update (time :int) :void
     {
-        if (_gameState == Constants.STATE_IN_ROUND) {
-            if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl() && _stateTime <= 0) {
-                _gameState = Constants.STATE_POST_ROUND;
-                _gameCtrl.services.stopTicker(Constants.MSG_STATETICKER);
-                setImmediate(Constants.PROP_GAMESTATE, _gameState);
-                _screenTimer.reset();
-                _powerupTimer.stop();
-            }
-        }
-
         // Update all ships.
         for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
@@ -533,7 +480,6 @@ public class GameManager
     protected var _lastTickTime :int;
 
     /** Our game timers. */
-    protected var _powerupTimer :Timer;
     protected var _screenTimer :Timer;
 
     /** The current game state. */

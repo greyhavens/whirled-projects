@@ -42,6 +42,19 @@ public class SaucerShipType extends ShipType
         return (ship.hasPowerup(Powerup.SPREAD) ? SUPER_SHOT_COST : primaryShotCost);
     }
 
+    override public function sendPrimaryShotMessage (ship :Ship) :void
+    {
+        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL);
+
+        var args :Array = new Array(3);
+        args[0] = ship.shipId;
+        args[1] = ship.shipTypeId;
+        args[2] = type;
+        AppContext.game.sendShotMessage(args);
+
+        dispatchEvent(new ShotMessageSentEvent(ShipType.PRIMARY_SHOT_SENT, ship));
+    }
+
     override public function doPrimaryShot (args :Array) :void
     {
         var ship :Ship = AppContext.game.getShip(args[0]);
@@ -74,19 +87,6 @@ public class SaucerShipType extends ShipType
         dispatchEvent(new ShotCreatedEvent(ShipType.PRIMARY_SHOT_CREATED, args));
     }
 
-    override public function sendPrimaryShotMessage (ship :Ship) :void
-    {
-        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL);
-
-        var args :Array = new Array(3);
-        args[0] = ship.shipId;
-        args[1] = ship.shipTypeId;
-        args[2] = type;
-        AppContext.game.sendShotMessage(args);
-
-        dispatchEvent(new ShotMessageSentEvent(ShipType.PRIMARY_SHOT_SENT, ship));
-    }
-
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
         var args :Array = new Array(5);
@@ -105,7 +105,7 @@ public class SaucerShipType extends ShipType
 
     override public function doSecondaryShot (args :Array) :void
     {
-        AppContext.game.addMine(args[0], args[2], args[3], args[4]);
+        AppContext.board.addMine(new Mine(args[0], args[2], args[3], args[4]));
 
         dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
     }

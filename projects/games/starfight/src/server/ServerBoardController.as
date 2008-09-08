@@ -50,6 +50,49 @@ public class ServerBoardController extends BoardController
             setImmediate(Constants.PROP_BOARD, null);
         });
     }
+
+    public function addRandomPowerup (...ignored) :void
+    {
+        for (var ii :int = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] == null) {
+                var x :int = Math.random() * width;
+                var y :int = Math.random() * height;
+
+                var repCt :int = 0;
+
+                while (getObstacleAt(x, y) ||
+                        (getObjectIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1, _powerups) != -1)) {
+                    x = Math.random() * width;
+                    y = Math.random() * height;
+
+                    // Safety valve - if we can't find anything after 100
+                    //  tries, bail.
+                    if (repCt++ > 100) {
+                        return;
+                    }
+                }
+
+                addPowerup(new Powerup(Math.random() * Powerup.COUNT, x, y), ii);
+                return;
+            }
+        }
+    }
+
+    public function addHealthPowerup (x :int, y :int) :void
+    {
+        for (var ii :int = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] == null) {
+                addPowerup(new Powerup(Powerup.HEALTH, x, y), ii);
+                return;
+            }
+        }
+    }
+
+    protected function addPowerup (powerup :Powerup, index :int) :void
+    {
+        setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
+        //powerupAdded(powerup, index);
+    }
 }
 
 }

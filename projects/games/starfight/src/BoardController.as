@@ -114,52 +114,6 @@ public class BoardController
         return null;
     }
 
-    /**
-     * Adds a new random powerup to the board.
-     */
-    public function addRandomPowerup () :void
-    {
-        for (var ii :int = 0; ii < _powerups.length; ii++) {
-            if (_powerups[ii] == null) {
-                var x :int = Math.random() * width;
-                var y :int = Math.random() * height;
-
-                var repCt :int = 0;
-
-                while (getObstacleAt(x, y) ||
-                        (getObjectIdx(x+0.5, y+0.5, x+0.5, y+0.5, 0.1, _powerups) != -1)) {
-                    x = Math.random() * width;
-                    y = Math.random() * height;
-
-                    // Safety valve - if we can't find anything after 100
-                    //  tries, bail.
-                    if (repCt++ > 100) {
-                        return;
-                    }
-                }
-
-                addPowerup(new Powerup(Math.random() * Powerup.COUNT, x, y), ii);
-                return;
-            }
-        }
-    }
-
-    public function addHealthPowerup (x :int, y :int) :void
-    {
-        for (var ii :int = 0; ii < _powerups.length; ii++) {
-            if (_powerups[ii] == null) {
-                addPowerup(new Powerup(Powerup.HEALTH, x, y), ii);
-                return;
-            }
-        }
-    }
-
-    protected function addPowerup (powerup :Powerup, index :int) :void
-    {
-        setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
-        //powerupAdded(powerup, index);
-    }
-
     protected function powerupAdded (powerup :Powerup, index :int) :void
     {
         _powerups[index] = powerup;
@@ -425,9 +379,6 @@ public class BoardController
 
     public function explode (x :Number, y :Number, rot :int, isSmall :Boolean, shipType :int) :void
     {
-        if (!isSmall && _gameCtrl.game.amInControl()) {
-            addHealthPowerup(x, y);
-        }
     }
 
     public function hitObs (obj :BoardObject, x :Number, y :Number, owner :Boolean,
