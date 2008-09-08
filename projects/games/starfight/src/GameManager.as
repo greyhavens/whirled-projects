@@ -51,9 +51,6 @@ public class GameManager
      */
     protected function handleGameStarted (event :StateChangedEvent) :void
     {
-        if (_gameCtrl.game.amInControl()) {
-            _gameCtrl.services.stopTicker(Constants.TICKER_NEXTROUND);
-        }
         _ships = new HashMap();
         _lastTickTime = getTimer();
         _boardCtrl.loadBoard(boardLoaded);

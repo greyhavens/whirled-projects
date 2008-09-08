@@ -1,9 +1,8 @@
 package server {
 
 import com.whirled.ServerObject;
+import com.whirled.game.StateChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
-
-import flash.utils.ByteArray;
 
 public class ServerGameManager extends GameManager
 {
@@ -38,6 +37,23 @@ public class ServerGameManager extends GameManager
             log.info("Starting round...");
             setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_IN_ROUND);
         }
+    }
+
+    override protected function handleGameStarted (event :StateChangedEvent) :void
+    {
+        super.handleGameStarted(event);
+
+        _gameCtrl.services.stopTicker(Constants.TICKER_NEXTROUND);
+    }
+
+    override protected function handleGameEnded (event :StateChangedEvent) :void
+    {
+        super.handleGameEnded(event);
+
+        _gameCtrl.doBatch(function () :void {
+            _gameCtrl.game.restartGameIn(30);
+            _gameCtrl.services.startTicker(Constants.TICKER_NEXTROUND, 1000);
+        });
     }
 }
 

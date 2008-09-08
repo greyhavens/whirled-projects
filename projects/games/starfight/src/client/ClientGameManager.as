@@ -406,14 +406,7 @@ public class ClientGameManager extends GameManager
     override protected function handleGameEnded (event :StateChangedEvent) :void
     {
         super.handleGameEnded(event);
-
-        _gameCtrl.doBatch(function () :void {
-            setImmediate(shipKey(ClientContext.myId), null);
-            if (_gameCtrl.game.amInControl()) {
-                _gameCtrl.game.restartGameIn(30);
-                _gameCtrl.services.startTicker(Constants.TICKER_NEXTROUND, 1000);
-            }
-        });
+        setImmediate(shipKey(ClientContext.myId), null);
     }
 
     protected function onMouseDown (...ignored) :void
