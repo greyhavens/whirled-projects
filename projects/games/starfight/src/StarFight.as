@@ -2,9 +2,10 @@ package {
 
 import client.ClientGameManager;
 
-import server.*;
-
 import flash.display.Sprite;
+import flash.utils.Timer;
+
+import server.*;
 
 /**
  * Game client entry point.
@@ -27,4 +28,5 @@ public class StarFight extends Sprite
 
     protected var _gameMgr :ClientGameManager;
 }
+
 }

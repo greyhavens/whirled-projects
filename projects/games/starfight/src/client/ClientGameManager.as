@@ -52,7 +52,7 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    override public function setup () :void
+    override protected function setup () :void
     {
         ClientContext.gameView.setup();
 

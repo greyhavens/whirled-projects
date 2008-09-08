@@ -22,8 +22,7 @@ public class Constants
     public static const REFRESH_RATE :int = 50;
 
     /** How often we send updates to the server. */
-    public static const FRAMES_PER_UPDATE :int = 3;
-    public static const TIME_PER_UPDATE :int = 1250;
+    public static const TIME_PER_UPDATE :int = 125;
 
     /** Game states. */
     public static const STATE_PRE_ROUND :int = 1;

@@ -29,10 +29,10 @@ public class ServerBoardController extends BoardController
 
         _gameCtrl.doBatch(function () :void {
             setImmediate(Constants.PROP_OBSTACLES, new Array(_obstacles.length));
-            /*for (var ii :int; ii < _obstacles.length; ii++) {
+            for (var ii :int; ii < _obstacles.length; ii++) {
                 setAtImmediate(Constants.PROP_OBSTACLES,
                         _obstacles[ii].writeTo(new ByteArray()), ii);
-            }*/
+            }
             setImmediate(Constants.PROP_POWERUPS, new Array(_powerups.length));
             setImmediate(Constants.PROP_MINES, new Array(MAX_MINES));
             setImmediate(Constants.PROP_BOARD, writeTo(new ByteArray()));

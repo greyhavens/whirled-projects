@@ -32,7 +32,7 @@ public class GameManager
         return _gameState;
     }
 
-    public function setup () :void
+    protected function setup () :void
     {
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -258,7 +258,7 @@ public class GameManager
             _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
         }
         // Set up our ticker that will control movement.
-        _screenTimer = new Timer(1, 0); // As fast as possible.
+        _screenTimer = new Timer(1000/30, 0); // As fast as possible.
         _screenTimer.addEventListener(TimerEvent.TIMER, tick);
         _screenTimer.start();
         _lastTickTime = getTimer();
