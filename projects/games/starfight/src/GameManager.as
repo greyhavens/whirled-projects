@@ -145,9 +145,6 @@ public class GameManager
             } else if (_gameState == Constants.STATE_POST_ROUND) {
                 roundEnded();
             }
-
-        } else if (name == Constants.PROP_STATETIME) {
-            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
     }
 
@@ -208,18 +205,26 @@ public class GameManager
     /**
      * Performs the round starting events.
      */
-    public function startRound () :void
+    protected function startRound () :void
     {
         AppContext.local.feedback("Round starting...");
-        _stateTime = 10 * 60;
+        _stateTimeMs = Constants.ROUND_TIME_MS;
 
-        //_stateTime = 30;
         if (_gameCtrl.isConnected()) {
             AppContext.scores.clearAll();
         }
     }
 
-    public function startScreen () :void
+    protected function roundEnded () :void
+    {
+        _screenTimer.reset();
+        for each (var ship :Ship in _ships.values()) {
+            ship.roundEnded();
+        }
+        _boardCtrl.roundEnded();
+    }
+
+    protected function startScreen () :void
     {
         if (_screenTimer != null) {
             _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
@@ -229,21 +234,6 @@ public class GameManager
         _screenTimer.addEventListener(TimerEvent.TIMER, tick);
         _screenTimer.start();
         _lastTickTime = getTimer();
-    }
-
-    public function roundEnded () :void
-    {
-        _screenTimer.reset();
-        for each (var ship :Ship in _ships.values()) {
-            ship.roundEnded();
-        }
-        _boardCtrl.roundEnded();
-        if (_gameCtrl.isConnected() && _gameCtrl.game.amInControl()) {
-            var playerIds :Array = [];
-            var scores :Array = [];
-            AppContext.scores.getPlayerIdsAndScores(playerIds, scores);
-            _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
-        }
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
@@ -258,14 +248,6 @@ public class GameManager
 
         } else if (event.name == Constants.MSG_EXPLODE) {
             shipExploded(event.value as Array);
-
-        } else if (event.name == Constants.MSG_STATETICKER) {
-            if (_stateTime > 0) {
-                _stateTime -= 1;
-                if (_stateTime % 10 == 0 && _gameCtrl.game.amInControl()) {
-                    setImmediate(Constants.PROP_STATETIME, _stateTime);
-                }
-            }
         }
     }
 
@@ -331,13 +313,9 @@ public class GameManager
     {
     }
 
-    public function occupantLeft (event :OccupantChangedEvent) :void
+    protected function occupantLeft (event :OccupantChangedEvent) :void
     {
         removeShip(event.occupantId);
-
-        if (_gameCtrl.game.amInControl()) {
-            setImmediate(shipKey(event.occupantId), null);
-        }
     }
 
     /**
@@ -421,6 +399,8 @@ public class GameManager
 
     protected function update (time :int) :void
     {
+        _stateTimeMs -= time;
+
         // Update all ships.
         for each (var ship :Ship in _ships.values()) {
             if (ship != null) {
@@ -483,7 +463,7 @@ public class GameManager
     protected var _screenTimer :Timer;
 
     /** The current game state. */
-    protected var _stateTime :int;
+    protected var _stateTimeMs :int;
     protected var _population :int = 0;
 
     protected static const log :Log = Log.getLog(GameManager);

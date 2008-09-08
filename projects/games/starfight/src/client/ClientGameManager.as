@@ -62,7 +62,7 @@ public class ClientGameManager extends GameManager
             _gameState = Constants.STATE_PRE_ROUND;
         } else {
             _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
-            _stateTime = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
+            _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
 
         ClientContext.board = ClientBoardController(AppContext.board);
@@ -143,12 +143,10 @@ public class ClientGameManager extends GameManager
     {
         super.propertyChanged(event);
 
-        if (!isShipKey(event.name)) {
-            log.info("propertyChanged: " + event.name);
-        }
-
         if (event.name == Constants.PROP_GAMESTATE) {
             updateStatusDisplay();
+        } else if (event.name == Constants.PROP_STATETIME) {
+            _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
     }
 
@@ -241,7 +239,7 @@ public class ClientGameManager extends GameManager
         } else if (_gameState == Constants.STATE_POST_ROUND) {
             ClientContext.gameView.status.updateRoundText("Round over...");
         } else {
-            var time :int = Math.max(0, _stateTime);
+            var time :int = Math.max(0, _stateTimeMs) / 1000;
             var seconds :int = time % 60;
             var minutes :int = time / 60;
             ClientContext.gameView.status.updateRoundText(
@@ -392,7 +390,7 @@ public class ClientGameManager extends GameManager
         ClientContext.gameView.boardLoaded();
     }
 
-    override public function roundEnded () :void
+    override protected function roundEnded () :void
     {
         super.roundEnded();
 

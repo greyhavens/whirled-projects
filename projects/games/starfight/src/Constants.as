@@ -51,7 +51,6 @@ public class Constants
     public static const MSG_SHOT :String = "shot";
     public static const MSG_SECONDARY :String = "secondary";
     public static const MSG_EXPLODE :String = "explode";
-    public static const MSG_STATETICKER :String = "stateTicker";
 
     public static const PROP_POWERUPS :String = "powerups";
     public static const PROP_OBSTACLES :String = "obsacles";
@@ -63,6 +62,7 @@ public class Constants
     public static const TICKER_NEXTROUND :String = "nextRoundTicker";
 
     /** Gameplay constants */
-    public static const RANDOM_POWERUP_TIME :int = 20000;
+    public static const RANDOM_POWERUP_TIME_MS :int = 20000;
+    public static const ROUND_TIME_MS :int = 10 * 60 * 1000; // 10 minutes
 }
 }
