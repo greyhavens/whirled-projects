@@ -25,6 +25,7 @@ public class Constants
     public static const TIME_PER_UPDATE :int = 125;
 
     /** Game states. */
+    public static const STATE_INIT :int = 0;
     public static const STATE_PRE_ROUND :int = 1;
     public static const STATE_IN_ROUND :int = 2;
     public static const STATE_POST_ROUND :int = 3;

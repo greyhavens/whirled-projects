@@ -2,7 +2,6 @@ package {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -22,7 +21,6 @@ public class GameController
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
-        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
     }
 
     public function shutdown () :void
@@ -30,11 +28,10 @@ public class GameController
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
-        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
 
         if (_screenTimer != null) {
             _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
-            _screenTimer.stop();
+            _screenTimer.reset();
             _screenTimer = null;
         }
     }
@@ -46,10 +43,8 @@ public class GameController
 
     public function run () :void
     {
-        _boardCtrl = AppContext.board;
-
         _lastTickTime = getTimer();
-        _boardCtrl.loadBoard(beginGame);
+        AppContext.board.loadBoard(beginGame);
 
         log.info("Game started");
     }
@@ -57,7 +52,7 @@ public class GameController
     protected function beginGame () :void
     {
         _shots = [];
-        _boardCtrl.setupBoard(_ships);
+        AppContext.board.setupBoard(_ships);
 
         // Set up ships for all ships already in the world.
         var occupants :Array = _gameCtrl.game.getOccupantIds();
@@ -115,15 +110,18 @@ public class GameController
             var name :String = event.name;
             if (isShipKey(name)) {
                 shipChanged(shipId(name), ByteArray(event.newValue));
+            }
+        }
+    }
 
-            } else if (name == Constants.PROP_GAMESTATE) {
-                _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
-
-                if (_gameState == Constants.STATE_IN_ROUND) {
-                    startRound();
-                } else if (_gameState == Constants.STATE_POST_ROUND) {
-                    roundEnded();
-                }
+    protected function gameStateChanged (newGameState :int) :void
+    {
+        if (newGameState != _gameState) {
+            _gameState = newGameState;
+            if (_gameState == Constants.STATE_IN_ROUND) {
+                roundStarted();
+            } else if (_gameState == Constants.STATE_POST_ROUND) {
+                roundEnded();
             }
         }
     }
@@ -167,7 +165,7 @@ public class GameController
             _population--;
         }
 
-        _boardCtrl.shipKilled(id);
+        AppContext.board.shipKilled(id);
 
         return remShip;
     }
@@ -185,7 +183,7 @@ public class GameController
     /**
      * Performs the round starting events.
      */
-    protected function startRound () :void
+    protected function roundStarted () :void
     {
         AppContext.local.feedback("Round starting...");
         _stateTimeMs = Constants.ROUND_TIME_MS;
@@ -198,7 +196,7 @@ public class GameController
         for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
-        _boardCtrl.roundEnded();
+        AppContext.board.roundEnded();
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void
@@ -269,7 +267,7 @@ public class GameController
      */
     public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        _boardCtrl.explode(x, y, 0, true, 0);
+        AppContext.board.explode(x, y, 0, true, 0);
     }
 
     /**
@@ -344,14 +342,14 @@ public class GameController
 
         var ship :Ship = getShip(shipId);
         if (ship != null) {
-            _boardCtrl.explode(x, y, rot, false, ship.shipTypeId);
+            AppContext.board.explode(x, y, rot, false, ship.shipTypeId);
             ship.kill();
             var shooter :Ship = getShip(shooterId);
             if (shooter != null) {
                 AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
             }
         }
-        _boardCtrl.shipKilled(shipId);
+        AppContext.board.shipKilled(shipId);
     }
 
     /**
@@ -375,13 +373,13 @@ public class GameController
             }
         }
 
-        _boardCtrl.update(time);
+        AppContext.board.update(time);
 
         // Update all live shots.
         var completed :Array = []; // Array<Shot>
         for each (var shot :Shot in _shots) {
             if (shot != null) {
-                shot.update(_boardCtrl, time);
+                shot.update(AppContext.board, time);
                 if (shot.complete) {
                     completed.push(shot);
                 }
@@ -391,14 +389,6 @@ public class GameController
         // Remove any that were done.
         for each (shot in completed) {
             removeShot(_shots.indexOf(shot));
-        }
-    }
-
-    protected function handleFlowAwarded (event :CoinsAwardedEvent) :void
-    {
-        var amount :int = event.amount;
-        if (amount > 0) {
-            AppContext.local.feedback("You earned " + amount + " flow this round.");
         }
     }
 
@@ -416,9 +406,6 @@ public class GameController
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
 
     protected var _shots :Array = []; // Array<Shot>
-
-    /** The board with all its obstacles. */
-    protected var _boardCtrl :BoardController;
 
     /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;

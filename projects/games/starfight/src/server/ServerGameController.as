@@ -3,7 +3,6 @@ package server {
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
-import com.whirled.game.StateChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.TimerEvent;
@@ -15,9 +14,6 @@ public class ServerGameController extends GameController
     {
         super(gameCtrl);
         ServerContext.game = this;
-
-        // init gamestate
-        setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
     }
 
     override public function shutdown () :void
@@ -25,13 +21,16 @@ public class ServerGameController extends GameController
         super.shutdown();
 
         if (_powerupTimer != null) {
-            _powerupTimer.stop();
+            _powerupTimer.reset();
             _powerupTimer = null;
         }
     }
 
     override public function run () :void
     {
+        // re-init game state
+        setNewGameState(Constants.STATE_INIT);
+
         // clear any existing ships out
         var occupants :Array = _gameCtrl.game.getOccupantIds();
         for each (var occupantId :int in occupants) {
@@ -40,11 +39,13 @@ public class ServerGameController extends GameController
 
         super.run();
         ServerContext.board = AppContext.board as ServerBoardController;
+
+        setNewGameState(Constants.STATE_PRE_ROUND);
     }
 
-    override protected function startRound () :void
+    override protected function roundStarted () :void
     {
-        super.startRound();
+        super.roundStarted();
         _lastStateTimeUpdate = _stateTimeMs;
 
         setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
@@ -69,25 +70,21 @@ public class ServerGameController extends GameController
         // is it time to end the round?
         if (_gameState == Constants.STATE_IN_ROUND) {
             if (_stateTimeMs <= 0) {
-                _gameState = Constants.STATE_POST_ROUND;
-                setImmediate(Constants.PROP_GAMESTATE, _gameState);
                 _screenTimer.reset();
-                _powerupTimer.stop();
+                _powerupTimer.reset();
+                setNewGameState(Constants.STATE_POST_ROUND);
             }
         }
 
-        super.update(time);
+        if (_gameState != Constants.STATE_POST_ROUND) {
+            super.update(time);
 
-        // synchronize the stateTime property every few seconds
-        if (_lastStateTimeUpdate - _stateTimeMs >= 10 * 1000) {
-            setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
-            _lastStateTimeUpdate = _stateTimeMs;
+            // synchronize the stateTime property every few seconds
+            if (_lastStateTimeUpdate - _stateTimeMs >= 10 * 1000) {
+                setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
+                _lastStateTimeUpdate = _stateTimeMs;
+            }
         }
-    }
-
-    override protected function propertyChanged (event:PropertyChangedEvent) :void
-    {
-        super.propertyChanged(event);
     }
 
     override public function addShip (id :int, ship :Ship) :void
@@ -97,8 +94,7 @@ public class ServerGameController extends GameController
         // the server is in charge of starting the round when enough players join
         if (_population >= Constants.MIN_PLAYERS_TO_START &&
             _gameState == Constants.STATE_PRE_ROUND) {
-            log.info("Starting round...");
-            setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_IN_ROUND);
+            setNewGameState(Constants.STATE_IN_ROUND);
         }
     }
 
@@ -127,6 +123,14 @@ public class ServerGameController extends GameController
     {
         super.occupantLeft(event);
         setImmediate(shipKey(event.occupantId), null);
+    }
+
+    protected function setNewGameState (newGameState :int) :void
+    {
+        if (newGameState != _gameState) {
+            setImmediate(Constants.PROP_GAMESTATE, newGameState);
+            gameStateChanged(newGameState);
+        }
     }
 
     protected var _powerupTimer :Timer;

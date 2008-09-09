@@ -26,7 +26,9 @@ public class AppController
         AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
 
         // TODO - handle starting a game in between rounds
-        handleGameStarted();
+        if (AppContext.gameCtrl.game.isInPlay()) {
+            handleGameStarted();
+        }
     }
 
     protected function handleGameStarted (...ignored) :void

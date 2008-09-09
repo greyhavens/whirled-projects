@@ -1,13 +1,11 @@
 package client {
 
 import com.threerings.util.HashMap;
+import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
-import com.whirled.game.StateChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.events.Event;
 import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
@@ -24,6 +22,7 @@ public class ClientGameController extends GameController
 
         _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
+        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
     }
 
     override public function shutdown () :void
@@ -32,6 +31,7 @@ public class ClientGameController extends GameController
 
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
 
         if (_newShipTimer != null) {
             _newShipTimer.stop();
@@ -66,13 +66,12 @@ public class ClientGameController extends GameController
         // Create our local ship and center the board on it.
         _ownShip = new Ship(false, ClientContext.myId, myName, true);
         _ownShip.setShipType(typeIdx);
+        _ownShip.restart();
 
         addShip(ClientContext.myId, _ownShip);
 
         // Add ourselves to the ship array.
         setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
-
-        _ownShip.restart();
 
         ClientContext.board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
     }
@@ -117,6 +116,7 @@ public class ClientGameController extends GameController
         super.propertyChanged(event);
 
         if (event.name == Constants.PROP_GAMESTATE) {
+            gameStateChanged(int(_gameCtrl.net.get(Constants.PROP_GAMESTATE)));
             updateStatusDisplay();
         } else if (event.name == Constants.PROP_STATETIME) {
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
@@ -148,13 +148,13 @@ public class ClientGameController extends GameController
     {
         // TODO - make the server authoritative about obstacle hits
         super.hitObs(obj, x, y, shooterId, damage);
-        _boardCtrl.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId), damage);
+        AppContext.board.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId), damage);
     }
 
     override protected function update (time :int) :void
     {
-        var ownOldX :Number = _boardCtrl.width/2;
-        var ownOldY :Number = _boardCtrl.height/2;
+        var ownOldX :Number = AppContext.board.width/2;
+        var ownOldY :Number = AppContext.board.height/2;
         var ownX :Number = ownOldX;
         var ownY :Number = ownOldY;
 
@@ -167,7 +167,7 @@ public class ClientGameController extends GameController
 
         // collide ownShip with crap on the board
         if (_ownShip != null && _ownShip.isAlive) {
-            _boardCtrl.shipInteraction(_ownShip, ownOldX, ownOldY);
+            AppContext.board.shipInteraction(_ownShip, ownOldX, ownOldY);
         }
 
         // update ship drawstates
@@ -184,8 +184,8 @@ public class ClientGameController extends GameController
         }
 
         // if our ship is dead, show the ship chooser after a delay
-        if (_ownShip != null && !_ownShip.isAlive && _newShipTimer == null &&
-            !ShipChooser.isShowing) {
+        if (_gameState == Constants.STATE_IN_ROUND && _ownShip != null && !_ownShip.isAlive &&
+            _newShipTimer == null && !ShipChooser.isShowing) {
             _newShipTimer = new Timer(Ship.RESPAWN_DELAY, 1);
             _newShipTimer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
                 ShipChooser.show(false);
@@ -265,7 +265,7 @@ public class ClientGameController extends GameController
         if (_ownShip != null) {
             shotView.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         } else {
-            shotView.setPosRelTo(_boardCtrl.width/2, _boardCtrl.height/2);
+            shotView.setPosRelTo(AppContext.board.width/2, AppContext.board.height/2);
         }
         if (shotView is LaserShotView) {
             ClientContext.gameView.subShotLayer.addChild(shotView);
@@ -369,6 +369,14 @@ public class ClientGameController extends GameController
     {
         if (_ownShipView != null) {
             _ownShipView.keyReleased(event);
+        }
+    }
+
+    protected function handleCoinsAwarded (event :CoinsAwardedEvent) :void
+    {
+        var amount :int = event.amount;
+        if (amount > 0) {
+            AppContext.local.feedback("You earned " + amount + " flow this round.");
         }
     }
 
