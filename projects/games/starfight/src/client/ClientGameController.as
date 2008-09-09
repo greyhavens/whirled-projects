@@ -52,8 +52,6 @@ public class ClientGameController extends GameController
             _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
-
-        updateStatusDisplay();
     }
 
     /**
@@ -117,7 +115,6 @@ public class ClientGameController extends GameController
 
         if (event.name == Constants.PROP_GAMESTATE) {
             gameStateChanged(int(_gameCtrl.net.get(Constants.PROP_GAMESTATE)));
-            updateStatusDisplay();
         } else if (event.name == Constants.PROP_STATETIME) {
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
@@ -137,10 +134,6 @@ public class ClientGameController extends GameController
         var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
             Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
         playSoundAt(sound, x, y);
-
-        if (ship == _ownShip) {
-            ClientContext.gameView.status.setPower(ship.power);
-        }
     }
 
     override public function hitObs (obj :BoardObject, x :Number, y :Number, shooterId :int,
@@ -219,8 +212,7 @@ public class ClientGameController extends GameController
                 "" + minutes + (seconds < 10 ? ":0" : ":") + seconds);
 
             if (_ownShip != null) {
-                ClientContext.gameView.status.setPower(_ownShip.power);
-                ClientContext.gameView.status.setPowerups(_ownShip);
+                ClientContext.gameView.status.updateShipDisplay(_ownShip);
             }
         }
      }

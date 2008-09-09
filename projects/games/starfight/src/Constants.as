@@ -18,9 +18,6 @@ public class Constants
     public static const RED :uint = uint(0xFF0000);
     public static const GREEN :uint = uint(0x00FF00);
 
-    /** millis between screen refreshes. */
-    public static const REFRESH_RATE :int = 50;
-
     /** How often we send updates to the server. */
     public static const TIME_PER_UPDATE :int = 125;
 
@@ -64,8 +61,8 @@ public class Constants
 
     /** Gameplay constants */
     public static const RANDOM_POWERUP_TIME_MS :int = 20000;
-    public static const ROUND_TIME_MS :int = 10 * 1000;//10 * 60 * 1000; // 10 minutes
+    public static const ROUND_TIME_MS :int = 10 * 60 * 1000; // 10 minutes
     public static const END_ROUND_TIME_S :int = 10;
-    public static const MIN_PLAYERS_TO_START :int = 1;
+    public static const MIN_PLAYERS_TO_START :int = 2;
 }
 }

@@ -102,50 +102,69 @@ public class StatusOverlay extends Sprite
     /**
      * Shows the powerups held by the ship.
      */
-    public function setPowerups (ship :Ship) :void
+    public function updateShipDisplay (ship :Ship) :void
     {
-        var mask :Shape = Shape(_speed.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.enginePower), POW_SIZE, POW_SIZE);
-        mask.graphics.endFill();
+        var mask :Shape;
 
-        mask = Shape(_spread.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.weaponPower), POW_SIZE, POW_SIZE);
-        mask.graphics.endFill();
+        if (_oldEnginePower != ship.enginePower) {
+            mask = Shape(_speed.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.enginePower), POW_SIZE, POW_SIZE);
+            mask.graphics.endFill();
 
-        mask = Shape(_shields.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(
-            0, POW_SIZE * (1.0 - Math.min(1.0, ship.shieldPower)), POW_SIZE, POW_SIZE);
-        mask.graphics.endFill();
+            _oldEnginePower = ship.enginePower;
+        }
 
-        mask = Shape(_primary.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, POW_WIDTH * ship.primaryPower, POW_HEIGHT);
-        mask.graphics.endFill();
+        if (_oldWeaponPower != ship.weaponPower) {
+            mask = Shape(_spread.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.weaponPower), POW_SIZE, POW_SIZE);
+            mask.graphics.endFill();
 
-        mask = Shape(_secondary.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, POW_WIDTH * ship.secondaryPower, POW_HEIGHT);
-        mask.graphics.endFill();
-    }
+            _oldWeaponPower = ship.weaponPower;
+        }
 
-    /**
-     * Sets our power level.
-     */
-    public function setPower (power :Number) :void
-    {
-        var mask :Shape = Shape(_health.mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, HEALTH_WIDTH*power, HEALTH_HEIGHT);
-        mask.graphics.endFill();
+        if (_oldShieldPower != ship.shieldPower) {
+            mask = Shape(_shields.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(
+                0, POW_SIZE * (1.0 - Math.min(1.0, ship.shieldPower)), POW_SIZE, POW_SIZE);
+            mask.graphics.endFill();
+
+            _oldShieldPower = ship.shieldPower;
+        }
+
+        if (_oldPrimaryPower != ship.primaryPower) {
+            mask = Shape(_primary.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.primaryPower, POW_HEIGHT);
+            mask.graphics.endFill();
+
+            _oldPrimaryPower = ship.primaryPower;
+        }
+
+        if (_oldSecondaryPower != ship.secondaryPower) {
+            mask = Shape(_secondary.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.secondaryPower, POW_HEIGHT);
+            mask.graphics.endFill();
+
+            _oldSecondaryPower = ship.secondaryPower;
+        }
+
+        if (_oldPower != ship.power) {
+            mask = Shape(_health.mask);
+            mask.graphics.clear();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, HEALTH_WIDTH * ship.power, HEALTH_HEIGHT);
+            mask.graphics.endFill();
+            _oldPower = ship.power;
+        }
     }
 
     /**
@@ -264,6 +283,13 @@ public class StatusOverlay extends Sprite
         circle.graphics.endFill();
         return circle;
     }
+
+    protected var _oldEnginePower :Number;
+    protected var _oldPrimaryPower :Number;
+    protected var _oldSecondaryPower :Number;
+    protected var _oldShieldPower :Number;
+    protected var _oldWeaponPower :Number;
+    protected var _oldPower :Number;
 
     /** Powerup bitmaps. */
     protected var _speed :Sprite;
