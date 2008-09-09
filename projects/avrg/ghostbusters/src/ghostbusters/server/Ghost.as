@@ -91,7 +91,7 @@ public class Ghost
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_HEALTH, health);
     }
 
-    public function setPosition (x :int, y :int) :void
+    public function setPosition (x :Number, y :Number) :void
     {
         _position = new Point(x, y);
 
