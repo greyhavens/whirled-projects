@@ -28,6 +28,7 @@ import ghostbusters.client.util.PlayerModel;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 
@@ -46,6 +47,9 @@ public class HUD extends Sprite
             PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         Game.control.room.props.addEventListener(
             ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+
+        Game.control.player.addEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
     }
 
     public function shutdown () :void
@@ -138,6 +142,11 @@ public class HUD extends Sprite
             teamIx ++;
             hudIx ++;
         }
+    }
+
+    protected function enteredRoom (evt :AVRGamePlayerEvent) :void
+    {
+        teamUpdated();
     }
 
     protected function propertyChanged (evt :PropertyChangedEvent) :void
