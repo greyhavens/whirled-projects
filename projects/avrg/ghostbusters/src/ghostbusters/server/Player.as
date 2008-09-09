@@ -33,13 +33,25 @@ public class Player
         _level = int(_ctrl.props.get(Codes.PROP_MY_LEVEL));
         if (_level == 0) {
             // this person has never played Ghosthunters before
+            log.info("Initializing new player [playerId=" + playerId + "]");
             _level = 1;
             _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
-            _health = _maxHealth = calculateMaxHealth();
+            _maxHealth = calculateMaxHealth();
+            setHealth(_maxHealth);
 
         } else {
-            _health = int(_ctrl.props.get(Codes.PROP_MY_HEALTH));
             _maxHealth = calculateMaxHealth();
+
+            var healthValue :Object = _ctrl.props.get(Codes.PROP_MY_HEALTH);
+            if (healthValue != null) {
+                log.info("Logging in existing player [playerId=" + playerId + "]");
+                _health = int(healthValue);
+
+            } else {
+                // health should always be set if level is set, but let's play it safe
+                log.debug("Repairing broken player [playerId=" + playerId + "]");
+                setHealth(_maxHealth);
+            }
         }
     }
 
