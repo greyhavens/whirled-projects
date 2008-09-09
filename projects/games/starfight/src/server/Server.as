@@ -6,10 +6,10 @@ public class Server extends ServerObject
 {
     public function Server ()
     {
-        _gameMgr = new ServerGameManager(this);
+        _appCtrl = new ServerAppController(this);
     }
 
-    protected var _gameMgr :ServerGameManager;
+    protected var _appCtrl :ServerAppController;
 }
 
 }

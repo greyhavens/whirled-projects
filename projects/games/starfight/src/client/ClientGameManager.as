@@ -1,10 +1,10 @@
 package client {
 
 import com.threerings.util.HashMap;
+import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
@@ -16,47 +16,29 @@ import flash.utils.Timer;
 
 public class ClientGameManager extends GameManager
 {
-    public function ClientGameManager (mainSprite :Sprite)
+    public function ClientGameManager (gameCtrl :GameControl)
     {
-        super(mainSprite);
-        ClientContext.mainSprite = mainSprite;
+        super(gameCtrl);
+
         ClientContext.game = this;
-        ClientContext.myId = _gameCtrl.game.getMyId();
 
-        ClientContext.gameView = new GameView();
-        mainSprite.addChild(ClientContext.gameView);
-
-        if (_gameCtrl.isConnected()) {
-            mainSprite.root.loaderInfo.addEventListener(Event.UNLOAD,
-                function (...ignored) :void {
-                    shutdown();
-                }
-            );
-        }
-
-        Resources.init(assetLoaded);
-
-        // let the ShipTypeResources know who their ship types are
-        for (var shipTypeId :int = 0; shipTypeId < Constants.SHIP_TYPE_CLASSES.length; shipTypeId++) {
-            var shipType :ShipType = Constants.getShipType(shipTypeId);
-            var shipTypeResources :ShipTypeResources = ClientConstants.getShipResources(shipTypeId);
-            shipTypeResources.setShipType(shipType);
-        }
-
-        // start the game when the player clicks the mouse
-        mainSprite.addEventListener(MouseEvent.CLICK, onMouseDown);
-
-        if (_gameCtrl.isConnected()) {
-            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-            _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        }
+        _gameCtrl.local.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _gameCtrl.local.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
     }
 
-    override protected function setup () :void
+    override public function shutdown () :void
     {
-        ClientContext.gameView.setup();
+        super.shutdown();
 
-        super.setup();
+        _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+        _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+    }
+
+    override public function beginGame () :void
+    {
+        ClientContext.gameView.beginGame();
+
+        super.beginGame();
 
         if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
             _gameState = Constants.STATE_PRE_ROUND;
@@ -74,11 +56,7 @@ public class ClientGameManager extends GameManager
      */
     public function playerChoseShip (typeIdx :int) :void
     {
-        var myName :String = "Guest";
-
-        if (_gameCtrl.isConnected()) {
-            myName = _gameCtrl.game.getOccupantName(ClientContext.myId);
-        }
+        var myName :String = _gameCtrl.game.getOccupantName(ClientContext.myId);
 
         // Create our local ship and center the board on it.
         _ownShip = new Ship(false, ClientContext.myId, myName, true);
@@ -87,9 +65,7 @@ public class ClientGameManager extends GameManager
         addShip(ClientContext.myId, _ownShip);
 
         // Add ourselves to the ship array.
-        if (_gameCtrl.isConnected()) {
-            setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
-        }
+        setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
 
         _ownShip.restart();
 
@@ -129,14 +105,6 @@ public class ClientGameManager extends GameManager
                 sound.play(0, 0, new SoundTransform(vol));
             }
         }
-    }
-
-    override protected function handleGameStarted (event :StateChangedEvent) :void
-    {
-        _ownShip = null;
-        _ownShipView = null;
-        _shipViews = new HashMap();
-        super.handleGameStarted(event);
     }
 
     override protected function propertyChanged (event :PropertyChangedEvent) :void
@@ -223,7 +191,7 @@ public class ClientGameManager extends GameManager
 
         // Every few frames, broadcast our status to everyone else.
         _updateCount += time;
-        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE && _gameCtrl.isConnected()) {
+        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE) {
             _updateCount = 0;
             setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
         }
@@ -366,22 +334,6 @@ public class ClientGameManager extends GameManager
         return ship;
     }
 
-    protected function assetLoaded (success :Boolean) :void
-    {
-        if (success) {
-            _assets++;
-            if (_assets <= Constants.SHIP_TYPE_CLASSES.length) {
-                ClientConstants.getShipResources(_assets - 1).loadAssets(assetLoaded);
-                return;
-            }
-        }
-    }
-
-    override protected function createBoardController () :BoardController
-    {
-        return new ClientBoardController(_gameCtrl);
-    }
-
     override public function boardLoaded () :void
     {
         _shotViews = [];
@@ -401,20 +353,6 @@ public class ClientGameManager extends GameManager
         ClientContext.gameView.showRoundResults(shipArr);
     }
 
-    override protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-        super.handleGameEnded(event);
-        setImmediate(shipKey(ClientContext.myId), null);
-    }
-
-    protected function onMouseDown (...ignored) :void
-    {
-        if (resourcesLoaded) {
-            setup();
-            ClientContext.mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
-        }
-    }
-
     protected function keyPressed (event :KeyboardEvent) :void
     {
         if (_ownShipView != null) {
@@ -429,17 +367,11 @@ public class ClientGameManager extends GameManager
         }
     }
 
-    protected function get resourcesLoaded () :Boolean
-    {
-        return _assets > Constants.SHIP_TYPE_CLASSES.length;
-    }
-
     protected var _shotViews :Array = [];
     protected var _ownShip :Ship;
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
     protected var _newShipTimer :Timer;
-    protected var _assets :int;
 }
 
 }

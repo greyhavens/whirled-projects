@@ -19,6 +19,7 @@ public class GameView extends Sprite
     public var shotLayer :Sprite;
     public var subShotLayer :Sprite;
     public var statusLayer :Sprite;
+    public var resultsLayer :Sprite;
     public var popupLayer :Sprite;
 
     /** Status info. */
@@ -45,19 +46,16 @@ public class GameView extends Sprite
         _introMovie = MovieClip(new introAsset());
         _center.addChild(_introMovie);
 
-        if (AppContext.gameCtrl.isConnected()) {
-            // properly respond to size changes
-            AppContext.gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED,
-                updateDisplayPosition);
+        AppContext.gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED,
+            updateDisplayPosition);
 
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
-                messageReceived);
-        }
+        AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+            messageReceived);
 
         updateDisplayPosition();
     }
 
-    public function setup () :void
+    public function beginGame () :void
     {
         // stop the intro movie if it's playing
         if (_introMovie != null) {
@@ -68,20 +66,20 @@ public class GameView extends Sprite
         while (_center.numChildren > 1) {
             _center.removeChildAt(_center.numChildren - 1);
         }
-        if (_endMovie != null) {
-            _endMovie = null;
-        }
+
         boardLayer = new Sprite();
         subShotLayer = new Sprite();
         shipLayer = new Sprite();
         shotLayer = new Sprite();
         statusLayer = new Sprite();
+        resultsLayer = new Sprite();
         popupLayer = new Sprite();
         _center.addChild(boardLayer);
         _center.addChild(subShotLayer);
         _center.addChild(shipLayer);
         _center.addChild(shotLayer);
         _center.addChild(statusLayer);
+        _center.addChild(resultsLayer);
         _center.addChild(popupLayer);
 
         statusLayer.addChild(status = new StatusOverlay());
@@ -89,6 +87,11 @@ public class GameView extends Sprite
 
     public function boardLoaded () :void
     {
+        if (_endMovie != null) {
+            _endMovie.parent.removeChild(_endMovie);
+            _endMovie = null;
+        }
+
         ShipChooser.show(true);
     }
 
@@ -99,15 +102,14 @@ public class GameView extends Sprite
             _endMovie.fields_mc.getChildByName("place_" + (ii + 1)).text =
                     "" + (ii + 1) + ". " + Ship(winningShips[ii]).playerName;
         }
-        _nextRoundTimer = _endMovie.fields_mc.timer;
-        _nextRoundTimer.text = String(30);
-        _center.addChild(_endMovie);
+        _nextRoundTimerText = _endMovie.fields_mc.timer;
+        _nextRoundTimerText.text = String(Constants.END_ROUND_TIME_S);
+        resultsLayer.addChild(_endMovie);
     }
 
     protected function updateDisplayPosition (...ignored) :void
     {
-        var displayWidth :Number = (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.local.getSize().x : Constants.GAME_WIDTH);
+        var displayWidth :Number = AppContext.gameCtrl.local.getSize().x;
         _center.x = Math.max(0, (displayWidth - Constants.GAME_WIDTH) / 2);
         _right.width = _left.width = _center.x;
         _right.x = displayWidth - _right.width;
@@ -116,8 +118,8 @@ public class GameView extends Sprite
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == Constants.TICKER_NEXTROUND) {
-            if (_nextRoundTimer != null) {
-                _nextRoundTimer.text = String(Math.max(0, int(_nextRoundTimer.text) - 1));
+            if (_nextRoundTimerText != null) {
+                _nextRoundTimerText.text = String(Math.max(0, int(_nextRoundTimerText.text) - 1));
             }
         }
     }
@@ -129,7 +131,7 @@ public class GameView extends Sprite
     protected var _right :Bitmap;
     protected var _center :Sprite;
 
-    protected var _nextRoundTimer :TextField;
+    protected var _nextRoundTimerText :TextField;
 
     [Embed(source="../../rsrc/intro_movie.swf")]
     protected var introAsset :Class;

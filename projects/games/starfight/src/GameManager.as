@@ -2,16 +2,13 @@ package {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
-import com.whirled.contrib.Scoreboard;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
-import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import flash.display.DisplayObject;
 import flash.events.TimerEvent;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
@@ -19,64 +16,37 @@ import flash.utils.getTimer;
 
 public class GameManager
 {
-    public function GameManager (mainObject :DisplayObject)
+    public function GameManager (gameCtrl :GameControl)
     {
-        AppContext.gameCtrl = _gameCtrl = new GameControl(mainObject);
-        AppContext.game = this;
-        AppContext.scores = new Scoreboard(_gameCtrl);
-        AppContext.local = new LocalUtility();
+        _gameCtrl = gameCtrl;
+
+        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
+    }
+
+    public function shutdown () :void
+    {
+        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
+    }
+
+    public function beginGame () :void
+    {
+        _boardCtrl = AppContext.board;
+
+        _lastTickTime = getTimer();
+        _boardCtrl.loadBoard(boardLoaded);
+
+        log.info("Game started");
     }
 
     public function get gameState () :int
     {
         return _gameState;
-    }
-
-    protected function setup () :void
-    {
-        _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
-        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED, handleGameStarted);
-        _gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
-        _gameCtrl.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
-
-        AppContext.board = _boardCtrl = createBoardController();
-        _lastTickTime = getTimer();
-        _boardCtrl.loadBoard(boardLoaded);
-    }
-
-    /**
-     * The game has started - do our initial startup.
-     */
-    protected function handleGameStarted (event :StateChangedEvent) :void
-    {
-        _ships = new HashMap();
-        _lastTickTime = getTimer();
-        _boardCtrl.loadBoard(boardLoaded);
-        log.info("Game started");
-    }
-
-    /**
-     * The game has ended - do our initial startup.
-     */
-    protected function handleGameEnded (event :StateChangedEvent) :void
-    {
-    }
-
-    protected function shutdown () :void
-    {
-        if (_screenTimer != null) {
-            _screenTimer.reset();
-        }
-        for each (var ship :Ship in _ships.values()) {
-            ship.roundEnded();
-        }
-    }
-
-    protected function createBoardController () :BoardController
-    {
-        throw new Error("GameManager subclasses must implement this function");
     }
 
     public function boardLoaded () :void
@@ -85,21 +55,19 @@ public class GameManager
         _boardCtrl.setupBoard(_ships);
 
         // Set up ships for all ships already in the world.
-        if (_gameCtrl.isConnected()) {
-            var occupants :Array = _gameCtrl.game.getOccupantIds();
-            for (var ii :int = 0; ii < occupants.length; ii++) {
-                // this is a bit of a hack. the ship might already exist if this is a client,
-                // because clients add their own ships to the world before the board is loaded,
-                // i think. TODO - change this.
-                if (getShip(occupants[ii]) == null) {
-                    var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
-                    if (bytes != null) {
-                        var ship :Ship = new Ship(true, occupants[ii],
-                            _gameCtrl.game.getOccupantName(occupants[ii]), false);
-                        bytes.position = 0;
-                        ship.readFrom(bytes);
-                        addShip(occupants[ii], ship);
-                    }
+        var occupants :Array = _gameCtrl.game.getOccupantIds();
+        for (var ii :int = 0; ii < occupants.length; ii++) {
+            // this is a bit of a hack. the ship might already exist if this is a client,
+            // because clients add their own ships to the world before the board is loaded,
+            // i think. TODO - change this.
+            if (getShip(occupants[ii]) == null) {
+                var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
+                if (bytes != null) {
+                    var ship :Ship = new Ship(true, occupants[ii],
+                        _gameCtrl.game.getOccupantName(occupants[ii]), false);
+                    bytes.position = 0;
+                    ship.readFrom(bytes);
+                    addShip(occupants[ii], ship);
                 }
             }
         }
@@ -209,10 +177,7 @@ public class GameManager
     {
         AppContext.local.feedback("Round starting...");
         _stateTimeMs = Constants.ROUND_TIME_MS;
-
-        if (_gameCtrl.isConnected()) {
-            AppContext.scores.clearAll();
-        }
+        AppContext.scores.clearAll();
     }
 
     protected function roundEnded () :void

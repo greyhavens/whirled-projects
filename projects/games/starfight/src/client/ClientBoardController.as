@@ -17,6 +17,12 @@ public class ClientBoardController extends BoardController
         gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
     }
 
+    override public function shutdown () :void
+    {
+        super.shutdown();
+        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+    }
+
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
         if (event.name == Constants.PROP_BOARD && !_boardLoaded) {

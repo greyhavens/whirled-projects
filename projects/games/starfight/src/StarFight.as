@@ -1,9 +1,8 @@
 package {
 
-import client.ClientGameManager;
+import client.ClientAppController;
 
 import flash.display.Sprite;
-import flash.utils.Timer;
 
 import server.*;
 
@@ -15,7 +14,7 @@ public class StarFight extends Sprite
 {
     public function StarFight ()
     {
-        _gameMgr = new ClientGameManager(this);
+        _appCtrl = new ClientAppController(this);
 
         // references to server-only classes, so that Flex Builder will alert me
         // to compile errors
@@ -26,7 +25,7 @@ public class StarFight extends Sprite
         c = ServerGameManager;
     }
 
-    protected var _gameMgr :ClientGameManager;
+    protected var _appCtrl :ClientAppController;
 }
 
 }

@@ -1,0 +1,68 @@
+package client {
+
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+
+public class ClientAppController extends AppController
+{
+    public function ClientAppController (mainSprite :Sprite)
+    {
+        super(mainSprite);
+
+        ClientContext.mainSprite = mainSprite;
+        ClientContext.gameView = new GameView();
+        ClientContext.myId = AppContext.gameCtrl.game.getMyId();
+
+        mainSprite.addChild(ClientContext.gameView);
+
+        // start the game when the player clicks the mouse
+        mainSprite.addEventListener(MouseEvent.CLICK, onMouseDown);
+
+        Resources.init(assetLoaded);
+
+        // let the ShipTypeResources know who their ship types are
+        for (var shipTypeId :int = 0; shipTypeId < Constants.SHIP_TYPE_CLASSES.length; shipTypeId++) {
+            var shipType :ShipType = Constants.getShipType(shipTypeId);
+            var shipTypeResources :ShipTypeResources = ClientConstants.getShipResources(shipTypeId);
+            shipTypeResources.setShipType(shipType);
+        }
+    }
+
+    override protected function createGameManager () :GameManager
+    {
+        return new ClientGameManager(AppContext.gameCtrl);
+    }
+
+    override protected function createBoardController () :BoardController
+    {
+        return new ClientBoardController(AppContext.gameCtrl);
+    }
+
+    protected function assetLoaded (success :Boolean) :void
+    {
+        if (success) {
+            _numLoadedAssets++;
+            if (_numLoadedAssets <= Constants.SHIP_TYPE_CLASSES.length) {
+                ClientConstants.getShipResources(_numLoadedAssets - 1).loadAssets(assetLoaded);
+                return;
+            }
+        }
+    }
+
+    protected function onMouseDown (...ignored) :void
+    {
+        if (resourcesLoaded) {
+            ClientContext.mainSprite.removeEventListener(MouseEvent.CLICK, onMouseDown);
+            run();
+        }
+    }
+
+    protected function get resourcesLoaded () :Boolean
+    {
+        return _numLoadedAssets > Constants.SHIP_TYPE_CLASSES.length;
+    }
+
+    protected var _numLoadedAssets :int;
+}
+
+}

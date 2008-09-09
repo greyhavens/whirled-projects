@@ -27,6 +27,11 @@ public class BoardController
         _gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
     }
 
+    public function shutdown () :void
+    {
+        _gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+    }
+
     public function loadBoard (boardLoadedCallback :Function) :void
     {
         throw new Error("subclasses must implement loadBoard()");
