@@ -10,9 +10,9 @@ public class ServerAppController extends AppController
         run();
     }
 
-    override protected function createGameManager () :GameManager
+    override protected function createGameManager () :GameController
     {
-        return new ServerGameManager(AppContext.gameCtrl);
+        return new ServerGameController(AppContext.gameCtrl);
     }
 
     override protected function createBoardController () :BoardController

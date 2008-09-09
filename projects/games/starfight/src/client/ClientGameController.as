@@ -14,9 +14,9 @@ import flash.media.SoundTransform;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
-public class ClientGameManager extends GameManager
+public class ClientGameController extends GameController
 {
-    public function ClientGameManager (gameCtrl :GameControl)
+    public function ClientGameController (gameCtrl :GameControl)
     {
         super(gameCtrl);
 
@@ -32,13 +32,19 @@ public class ClientGameManager extends GameManager
 
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+
+        if (_newShipTimer != null) {
+            _newShipTimer.stop();
+            _newShipTimer = null;
+        }
     }
 
-    override public function beginGame () :void
+    override public function run () :void
     {
-        ClientContext.gameView.beginGame();
+        ClientContext.board = ClientBoardController(AppContext.board);
+        ClientContext.gameView.init();
 
-        super.beginGame();
+        super.run();
 
         if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
             _gameState = Constants.STATE_PRE_ROUND;
@@ -47,7 +53,6 @@ public class ClientGameManager extends GameManager
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
 
-        ClientContext.board = ClientBoardController(AppContext.board);
         updateStatusDisplay();
     }
 
@@ -334,12 +339,12 @@ public class ClientGameManager extends GameManager
         return ship;
     }
 
-    override public function boardLoaded () :void
+    override protected function beginGame () :void
     {
         _shotViews = [];
-        super.boardLoaded();
+        super.beginGame();
 
-        ClientContext.gameView.boardLoaded();
+        ClientContext.gameView.beginGame();
     }
 
     override protected function roundEnded () :void

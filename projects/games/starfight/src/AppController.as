@@ -34,7 +34,7 @@ public class AppController
         AppContext.game = createGameManager();
         AppContext.board = createBoardController();
 
-        AppContext.game.beginGame();
+        AppContext.game.run();
     }
 
     protected function handleGameEnded (...ignored) :void
@@ -46,7 +46,7 @@ public class AppController
         AppContext.board = null;
     }
 
-    protected function createGameManager () :GameManager
+    protected function createGameManager () :GameController
     {
         throw new Error("subclasses must implement createGameManager");
     }

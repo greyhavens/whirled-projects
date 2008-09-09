@@ -55,15 +55,19 @@ public class GameView extends Sprite
         updateDisplayPosition();
     }
 
-    public function beginGame () :void
+    public function init () :void
     {
-        // stop the intro movie if it's playing
         if (_introMovie != null) {
-            _center.removeChild(_introMovie);
+            _introMovie.parent.removeChild(_introMovie);
             _introMovie = null;
         }
 
-        while (_center.numChildren > 1) {
+        if (_endMovie != null) {
+            _endMovie.parent.removeChild(_endMovie);
+            _endMovie = null;
+        }
+
+        while (_center.numChildren > 0) {
             _center.removeChildAt(_center.numChildren - 1);
         }
 
@@ -85,13 +89,8 @@ public class GameView extends Sprite
         statusLayer.addChild(status = new StatusOverlay());
     }
 
-    public function boardLoaded () :void
+    public function beginGame () :void
     {
-        if (_endMovie != null) {
-            _endMovie.parent.removeChild(_endMovie);
-            _endMovie = null;
-        }
-
         ShipChooser.show(true);
     }
 

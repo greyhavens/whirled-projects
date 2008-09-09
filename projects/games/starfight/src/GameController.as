@@ -5,7 +5,6 @@ import com.threerings.util.Log;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.OccupantChangedEvent;
-import com.whirled.game.StateChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -14,9 +13,9 @@ import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-public class GameManager
+public class GameController
 {
-    public function GameManager (gameCtrl :GameControl)
+    public function GameController (gameCtrl :GameControl)
     {
         _gameCtrl = gameCtrl;
 
@@ -32,16 +31,12 @@ public class GameManager
         _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
         _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleFlowAwarded);
-    }
 
-    public function beginGame () :void
-    {
-        _boardCtrl = AppContext.board;
-
-        _lastTickTime = getTimer();
-        _boardCtrl.loadBoard(boardLoaded);
-
-        log.info("Game started");
+        if (_screenTimer != null) {
+            _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
+            _screenTimer.stop();
+            _screenTimer = null;
+        }
     }
 
     public function get gameState () :int
@@ -49,7 +44,17 @@ public class GameManager
         return _gameState;
     }
 
-    public function boardLoaded () :void
+    public function run () :void
+    {
+        _boardCtrl = AppContext.board;
+
+        _lastTickTime = getTimer();
+        _boardCtrl.loadBoard(beginGame);
+
+        log.info("Game started");
+    }
+
+    protected function beginGame () :void
     {
         _shots = [];
         _boardCtrl.setupBoard(_ships);
@@ -72,7 +77,12 @@ public class GameManager
             }
         }
 
-        startScreen();
+        // Set up our ticker that will control movement.
+        _screenTimer = new Timer(1000/30, 0); // As fast as possible.
+        _screenTimer.addEventListener(TimerEvent.TIMER, tick);
+        _screenTimer.start();
+        _lastTickTime = getTimer();
+        _running = true;
     }
 
     /**
@@ -101,17 +111,19 @@ public class GameManager
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        var name :String = event.name;
-        if (isShipKey(name)) {
-            shipChanged(shipId(name), ByteArray(event.newValue));
+        if (_running) {
+            var name :String = event.name;
+            if (isShipKey(name)) {
+                shipChanged(shipId(name), ByteArray(event.newValue));
 
-        } else if (name == Constants.PROP_GAMESTATE) {
-            _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
+            } else if (name == Constants.PROP_GAMESTATE) {
+                _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
 
-            if (_gameState == Constants.STATE_IN_ROUND) {
-                startRound();
-            } else if (_gameState == Constants.STATE_POST_ROUND) {
-                roundEnded();
+                if (_gameState == Constants.STATE_IN_ROUND) {
+                    startRound();
+                } else if (_gameState == Constants.STATE_POST_ROUND) {
+                    roundEnded();
+                }
             }
         }
     }
@@ -189,30 +201,20 @@ public class GameManager
         _boardCtrl.roundEnded();
     }
 
-    protected function startScreen () :void
-    {
-        if (_screenTimer != null) {
-            _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
-        }
-        // Set up our ticker that will control movement.
-        _screenTimer = new Timer(1000/30, 0); // As fast as possible.
-        _screenTimer.addEventListener(TimerEvent.TIMER, tick);
-        _screenTimer.start();
-        _lastTickTime = getTimer();
-    }
-
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == Constants.MSG_SHOT) {
-            var args :Array = (event.value as Array);
-             Constants.getShipType(args[1]).doPrimaryShot(args);
+        if (_running) {
+            if (event.name == Constants.MSG_SHOT) {
+                var args :Array = (event.value as Array);
+                 Constants.getShipType(args[1]).doPrimaryShot(args);
 
-        } else if (event.name == Constants.MSG_SECONDARY) {
-            args = (event.value as Array);
-            Constants.getShipType(args[1]).doSecondaryShot(args);
+            } else if (event.name == Constants.MSG_SECONDARY) {
+                args = (event.value as Array);
+                Constants.getShipType(args[1]).doSecondaryShot(args);
 
-        } else if (event.name == Constants.MSG_EXPLODE) {
-            shipExploded(event.value as Array);
+            } else if (event.name == Constants.MSG_EXPLODE) {
+                shipExploded(event.value as Array);
+            }
         }
     }
 
@@ -405,15 +407,14 @@ public class GameManager
         _gameCtrl.net.set(propName, value, true);
     }
 
-    /** Our game control object. */
     protected var _gameCtrl :GameControl;
+
+    protected var _running :Boolean;
 
     protected var _gameState :int;
 
-    /** All the ships. */
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
 
-    /** Live shots. */
     protected var _shots :Array = []; // Array<Shot>
 
     /** The board with all its obstacles. */
@@ -424,14 +425,13 @@ public class GameManager
 
     protected var _lastTickTime :int;
 
-    /** Our game timers. */
     protected var _screenTimer :Timer;
 
     /** The current game state. */
     protected var _stateTimeMs :int;
     protected var _population :int = 0;
 
-    protected static const log :Log = Log.getLog(GameManager);
+    protected static const log :Log = Log.getLog(GameController);
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;

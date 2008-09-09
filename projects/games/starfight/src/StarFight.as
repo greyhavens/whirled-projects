@@ -22,7 +22,7 @@ public class StarFight extends Sprite
         var c :Class;
         c = Server;
         c = ServerBoardController;
-        c = ServerGameManager;
+        c = ServerGameController;
     }
 
     protected var _appCtrl :ClientAppController;

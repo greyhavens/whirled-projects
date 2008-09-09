@@ -28,9 +28,9 @@ public class ClientAppController extends AppController
         }
     }
 
-    override protected function createGameManager () :GameManager
+    override protected function createGameManager () :GameController
     {
-        return new ClientGameManager(AppContext.gameCtrl);
+        return new ClientGameController(AppContext.gameCtrl);
     }
 
     override protected function createBoardController () :BoardController

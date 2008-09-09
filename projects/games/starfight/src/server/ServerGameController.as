@@ -9,18 +9,36 @@ import com.whirled.net.PropertyChangedEvent;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-public class ServerGameManager extends GameManager
+public class ServerGameController extends GameController
 {
-    public function ServerGameManager (gameCtrl :GameControl)
+    public function ServerGameController (gameCtrl :GameControl)
     {
         super(gameCtrl);
         ServerContext.game = this;
+
+        // init gamestate
+        setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
     }
 
-    override public function beginGame () :void
+    override public function shutdown () :void
     {
-        super.beginGame();
-        setImmediate(Constants.PROP_GAMESTATE, Constants.STATE_PRE_ROUND);
+        super.shutdown();
+
+        if (_powerupTimer != null) {
+            _powerupTimer.stop();
+            _powerupTimer = null;
+        }
+    }
+
+    override public function run () :void
+    {
+        // clear any existing ships out
+        var occupants :Array = _gameCtrl.game.getOccupantIds();
+        for each (var occupantId :int in occupants) {
+            setImmediate(shipKey(occupantId), null);
+        }
+
+        super.run();
         ServerContext.board = AppContext.board as ServerBoardController;
     }
 
@@ -30,12 +48,6 @@ public class ServerGameManager extends GameManager
         _lastStateTimeUpdate = _stateTimeMs;
 
         setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
-
-        // TODO - figure out if this is necessary
-        /*if (_ownShip != null) {
-            _ownShip.restart();
-            _boardCtrl.shipKilled(myId);
-        }*/
 
         // The server is in charge of adding powerups.
         ServerContext.board.addRandomPowerup();
@@ -93,7 +105,9 @@ public class ServerGameManager extends GameManager
     protected function startPowerupTimer () :void
     {
         if (_powerupTimer != null) {
-            _powerupTimer.removeEventListener(TimerEvent.TIMER, ServerContext.board.addRandomPowerup);
+            _powerupTimer.removeEventListener(TimerEvent.TIMER,
+                ServerContext.board.addRandomPowerup);
+            _powerupTimer.stop();
         }
         _powerupTimer = new Timer(Constants.RANDOM_POWERUP_TIME_MS, 0);
         _powerupTimer.addEventListener(TimerEvent.TIMER, ServerContext.board.addRandomPowerup);
