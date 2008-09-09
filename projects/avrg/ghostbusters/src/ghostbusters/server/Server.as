@@ -6,6 +6,7 @@ package ghostbusters.server {
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.whirled.ServerObject;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRServerGameControl;
@@ -33,6 +34,7 @@ public class Server extends ServerObject
         log.info("Ghosthunters Server initializing...");
         _ctrl = new AVRServerGameControl(this);
 
+        _ctrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
 
@@ -64,9 +66,19 @@ public class Server extends ServerObject
     {
         var frame :int = (getTimer() - _startTime) * (FRAMES_PER_SECOND) / 1000;
         for each (var room :Room in _rooms) {
-            // TODO: we may want to only do this to rooms with players in them
             room.tick(frame);
         }
+    }
+
+    // a message comes in from a player, figure out which Player instance will handle it
+    protected function handleMessage (evt :MessageReceivedEvent) :void
+    {
+        var player :Player = getPlayer(evt.senderId);
+        if (player == null) {
+            log.warning("Received message for non-existent player [evt=" + evt + "]");
+            return;
+        }
+        player.handleMessage(evt.name, evt.value);
     }
 
     // when players enter the game, we create a local record for them

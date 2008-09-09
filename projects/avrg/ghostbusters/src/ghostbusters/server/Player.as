@@ -26,7 +26,6 @@ public class Player
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
 
-        _ctrl.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
@@ -115,6 +114,34 @@ public class Player
         updateAvatarState();
     }
 
+    // called from Server
+    public function handleMessage (name :String, value :Object) :void
+    {
+        // handle messages that make (at least some) sense even if we're between rooms
+        if (name == Codes.CMSG_PLAYER_REVIVE) {
+            setHealth(_maxHealth);
+        }
+
+        // if we're nowhere, drop out
+        if (_room == null) {
+            return;
+        }
+
+        if (name == Codes.CMSG_GHOST_ZAP) {
+            if (_room.checkState(Codes.STATE_SEEKING)) {
+                _room.ghostZap(this);
+            }
+
+        } else if (name == Codes.CMSG_MINIGAME_RESULT) {
+            if (_room.checkState(Codes.STATE_FIGHTING)) {
+                _room.minigameCompletion(this, Boolean(value[0]), int(value[1]), int(value[2]));
+            }
+
+        } else if (name == Codes.CMSG_LANTERN_POS) {
+            _room.updateLanternPos(_playerId, value as Array);
+        }
+    }
+
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         _room = Server.getRoom(int(evt.value));
@@ -132,38 +159,6 @@ public class Player
 
         _room.playerLeft(this);
         _room = null;
-    }
-
-    protected function handleMessage (event: MessageReceivedEvent) :void
-    {
-        var msg :String = event.name;
-
-        // handle messages that make (at least some) sense even if we're between rooms
-        if (msg == Codes.CMSG_PLAYER_REVIVE) {
-            setHealth(_maxHealth);
-        }
-
-        // if we're nowhere, drop out
-        if (_room == null) {
-            return;
-        }
-
-        if (msg == Codes.CMSG_GHOST_ZAP) {
-            if (_room.checkState(Codes.STATE_SEEKING)) {
-                _room.ghostZap(this);
-            }
-
-        } else if (msg == Codes.CMSG_MINIGAME_RESULT) {
-            if (_room.checkState(Codes.STATE_FIGHTING)) {
-                var bits :Array = event.value as Array;
-                if (bits != null) {
-                    _room.minigameCompletion(this, Boolean(bits[0]), int(bits[1]), int(bits[2]));
-                }
-            }
-
-        } else if (msg == Codes.CMSG_LANTERN_POS) {
-            _room.updateLanternPos(_playerId, event.value as Array);
-        }
     }
 
     protected function updateAvatarState () :void
