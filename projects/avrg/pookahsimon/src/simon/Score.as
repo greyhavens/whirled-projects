@@ -32,11 +32,8 @@ public class Score
             return 1;
         }
 
-        // compare names. A comes before Z
-        var aName :String = SimonMain.getPlayerName(a.playerId);
-        var bName :String = SimonMain.getPlayerName(b.playerId);
-
-        return aName.localeCompare(bName);
+        // This is pretty freakin' unlikely, just use player id
+        return b.playerId - a.playerId;
     }
 
     public static function compareAges (a :Score, b :Score) :int
@@ -58,11 +55,8 @@ public class Score
             return 1;
         }
 
-        // compare names. A comes before Z
-        var aName :String = SimonMain.getPlayerName(a.playerId);
-        var bName :String = SimonMain.getPlayerName(b.playerId);
-
-        return aName.localeCompare(bName);
+        // This is pretty freakin' unlikely, just use player id
+        return b.playerId - a.playerId;
     }
 
     public function isEqual (rhs :Score) :Boolean

@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 13;
+    public static const VERSION :Number = 14;
 
     public static const ALLOW_CHEATS :Boolean = false;
     public static const FORCE_SINGLEPLAYER :Boolean = false;
@@ -23,13 +23,16 @@ public class Constants
     public static const AVATAR_DANCE_TIME :Number = 4;
     public static const PLAYER_TIMEOUT_S :int = 7;
     public static const MAX_PLAYER_TIMEOUTS :int = 2;
+    public static const NUM_NOTES :int = 7;
+    public static const MIN_NOTES_FOR_PAYOUT :int = 4;
 
     // network bits
     public static const PROP_STATE :String = "p_state";
     public static const PROP_SCORES :String = "p_scores";
+    public static const MSG_PLAYERREADY :String = "m_playerReadyToStaer";
     public static const MSG_NEXTNOTE :String = "m_nextNote";
+    public static const MSG_RAINBOWCLICKED :String = "m_rainbowClicked";
     public static const MSG_PLAYERTIMEOUT :String = "m_playerTimeout";
-
 }
 
 }

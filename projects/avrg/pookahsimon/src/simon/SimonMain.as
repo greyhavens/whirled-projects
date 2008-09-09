@@ -17,6 +17,8 @@ import flash.events.Event;
 [SWF(width="700", height="500")]
 public class SimonMain extends Sprite
 {
+    public static var log :Log = Log.getLog("simon");
+
     public static var control :AVRGameControl;
     public static var model :Model;
 
@@ -25,11 +27,6 @@ public class SimonMain extends Sprite
     public static function get localPlayerName () :String
     {
         return SimonMain.getPlayerName(localPlayerId);
-    }
-
-    public static function get minPlayersToStart () :int
-    {
-        return (Constants.FORCE_SINGLEPLAYER || !control.isConnected() ? 1 : Constants.MIN_MP_PLAYERS_TO_START);
     }
 
     public static function quit () :void
@@ -56,14 +53,12 @@ public class SimonMain extends Sprite
 
         // hook up controller
         control = new AVRGameControl(this);
-        control.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
         control.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
-        control.room.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
-        control.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
     }
 
     protected function handleResourcesLoaded () :void
     {
+        log.info("Resources loaded");
         _resourcesLoaded = true;
         this.maybeBeginGame();
     }
@@ -77,6 +72,8 @@ public class SimonMain extends Sprite
     {
         if (_addedToStage && _resourcesLoaded && _enteredRoom) {
             model.setup();
+
+            control.agent.sendMessage(Constants.MSG_PLAYERREADY);
 
             MainLoop.instance.pushMode(new GameMode());
             MainLoop.instance.run();
@@ -122,35 +119,14 @@ public class SimonMain extends Sprite
 
     protected function enteredRoom (e :AVRGamePlayerEvent) :void
     {
+        log.info("Entered room");
         _enteredRoom = true;
         maybeBeginGame();
-    }
-
-    protected function leftRoom (e :AVRGamePlayerEvent) :void
-    {
-        if (control.isConnected()) {
-            control.player.setAvatarState("Default");
-            control.player.deactivateGame();
-        }
-    }
-
-    protected function playerEntered (evt :AVRGameRoomEvent) :void
-    {
-        log.debug("playerEntered()", evt);
-        log.debug("playerIds()", model.getPlayerOids());
-    }
-
-    protected function playerLeft (evt :AVRGameRoomEvent) :void
-    {
-        log.debug("playerLeft()", evt);
-        log.debug("playerIds()", model.getPlayerOids());
     }
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
     protected var _enteredRoom :Boolean;
-
-    protected static var log :Log = Log.getLog(SimonMain);
 }
 
 }

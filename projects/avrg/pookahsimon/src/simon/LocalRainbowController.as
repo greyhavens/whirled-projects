@@ -123,8 +123,8 @@ public class LocalRainbowController extends AbstractRainbowController
 
     protected function handleLocalPlayerTimeout () :void
     {
-        SimonMain.model.sendPlayerTimeoutMessage();
-        this.gameMode.incrementPlayerTimeoutCount();
+        //SimonMain.model.sendPlayerTimeoutMessage();
+        //this.gameMode.incrementPlayerTimeoutCount();
         this.gameMode.currentPlayerTurnFailure();
     }
 

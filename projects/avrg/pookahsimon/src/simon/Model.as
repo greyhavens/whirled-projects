@@ -45,36 +45,17 @@ public class Model extends EventDispatcher
         throw new Error("subclasses must override getPlayerOids()");
     }
 
-    // TODO: temporary
-    public function hasControl () :Boolean
-    {
-        throw new Error("subclasses must override hasControl()");
-    }
-
     /* shared state mutators (must be overridden) */
     public function sendRainbowClickedMessage (clickedIndex :int) :void
     {
         throw new Error("subclasses must override sendRainbowClickedMessage()");
     }
 
-    public function sendPlayerTimeoutMessage () :void
-    {
-        throw new Error("subclasses must override sendPlayerTimeoutMessage()");
-    }
-
-    public function trySetNewState (newState :State) :void
-    {
-        throw new Error("subclasses must override trySetNewState()");
-    }
-
-    public function trySetNewScores (newScores :ScoreTable) :void
-    {
-        throw new Error("subclasses must override trySetNewScores()");
-    }
-
     /* private state mutators */
     protected function setState (newState :State) :void
     {
+        g_log.debug("Changing state [new=" + newState + "]");
+
         var lastState :State = _curState;
         _curState = newState.clone();
 
@@ -88,17 +69,17 @@ public class Model extends EventDispatcher
     protected function setScores (newScores :ScoreTable) :void
     {
         _curScores = newScores;
-        this.dispatchEvent(new SimonEvent(SimonEvent.NEW_SCORES));
+        dispatchEvent(new SimonEvent(SimonEvent.NEW_SCORES));
     }
 
     protected function rainbowClicked (clickedIndex :int) :void
     {
-        this.dispatchEvent(new SimonEvent(SimonEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
+        dispatchEvent(new SimonEvent(SimonEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
     }
 
     protected function playerTimeout () :void
     {
-        this.dispatchEvent(new SimonEvent(SimonEvent.PLAYER_TIMEOUT));
+        dispatchEvent(new SimonEvent(SimonEvent.PLAYER_TIMEOUT));
     }
 
     // shared state
