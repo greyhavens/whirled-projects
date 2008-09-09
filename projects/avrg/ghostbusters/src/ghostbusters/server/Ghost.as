@@ -79,14 +79,14 @@ public class Ghost
 
     public function setZest (zest :int) :void
     {
-        _zest = zest;
+        _zest = Math.max(0, Math.min(_maxZest, zest));
 
-        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, zest);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, _zest);
     }
 
     public function setHealth (health :int) :void
     {
-        _health = health;
+        _health = Math.max(0, Math.min(_maxHealth, health));
 
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_HEALTH, health);
     }
