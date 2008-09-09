@@ -111,6 +111,11 @@ public class Room
 
     public function tick (frame :int) :void
     {
+        // if there are no players in this room, we cannot assume it's loaded, so do nothing
+        if (_ctrl.getPlayerIds().length == 0) {
+            return;
+        }
+
         switch(_state) {
         case Codes.STATE_SEEKING:
             seekTick(frame);
@@ -165,12 +170,12 @@ public class Room
 
     internal function updateLanternPos (playerId :int, pos :Array) :void
     {
-        _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos);
+        _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos, true);
     }
 
     internal function playerHealthUpdated (player :Player) :void
     {
-        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + player.playerId, player.health);
+        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + player.playerId, player.health, true);
     }
 
 
