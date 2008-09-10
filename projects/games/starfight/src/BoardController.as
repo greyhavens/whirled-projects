@@ -3,7 +3,6 @@ package {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.GameControl;
-import com.whirled.game.StateChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 
 import flash.geom.Point;
@@ -399,18 +398,20 @@ public class BoardController
 
     public function shipInteraction (ship :Ship, oldX :Number, oldY :Number) :void
     {
-        do {
-            var powIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+        var powIdx :int = 0;
+        while (powIdx != -1) {
+            powIdx = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
                     Constants.getShipType(ship.shipTypeId).size, _powerups);
             if (powIdx == -1) {
                 break;
             }
             ship.awardPowerup(_powerups[powIdx]);
             removePowerup(powIdx);
-        } while (powIdx != -1);
+        }
 
-        do {
-            var mineIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+        var mineIdx :int = 0;
+        while (mineIdx != -1) {
+            mineIdx = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
                     Constants.getShipType(ship.shipTypeId).size, _mines);
             if (mineIdx == -1) {
                 break;
@@ -421,7 +422,7 @@ public class BoardController
             }
             AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
             removeMine(mineIdx);
-        } while (mineIdx != -1);
+        }
     }
 
     public function update (time :int) :void
