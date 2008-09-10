@@ -28,8 +28,8 @@ import flash.utils.setTimeout;
 import com.threerings.flash.FrameSprite;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.StringUtil;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -78,9 +78,10 @@ public class FightPanel extends FrameSprite
             Game.log.debug("Urk, failed to find a ghost clip class");
             return;
         }
-        new ClipHandler(ByteArray(new clipClass()), function (clip :MovieClip) :void {
+        var handler :ClipHandler;
+        handler = new ClipHandler(ByteArray(new clipClass()), function () :void {
             _gameContext = new MicrogameContext();
-            _gameContext.ghostMovie = clip;
+            _gameContext.ghostMovie = handler.clip;
         });
     }
 

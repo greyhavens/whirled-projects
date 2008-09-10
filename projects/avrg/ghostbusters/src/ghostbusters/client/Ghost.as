@@ -105,8 +105,10 @@ public class Ghost extends Sprite
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
     }
 
-    protected function setupUI (ghost :MovieClip) :void
+    protected function setupUI () :void
     {
+        var ghost :MovieClip = handler.clip;
+
         ghost.gotoAndStop(1, GamePanel.ST_GHOST_HIDDEN);
         _bounds = ghost.getBounds(this);
 

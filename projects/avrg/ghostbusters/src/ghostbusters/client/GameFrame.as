@@ -25,12 +25,10 @@ public class GameFrame extends Sprite
 {
     public function GameFrame (readyCallback :Function)
     {
-        new ClipHandler(new Content.FRAME()), function (clip :MovieClip) :void {
-            _frame = clip;
+        _frame = new ClipHandler(new Content.FRAME()), function () :void {
             maybeReady(readyCallback);
         }
-        new ClipHandler(new Content.INVENTORY()), function (clip :MovieClip) :void {
-            _inventory = clip;
+        _inventory = new ClipHandler(new Content.INVENTORY()), function () :void {
             maybeReady(readyCallback);
         }
     }
@@ -38,11 +36,11 @@ public class GameFrame extends Sprite
     public function frameContent (content :DisplayObject) :void
     {
         if (_content != null) {
-            _frame.removeChild(_content);
+            _frame.clip.removeChild(_content);
         }
         _content = content;
         if (_content != null) {
-            _frame.addChild(_content);
+            _frame.clip.addChild(_content);
             _content.x = INSIDE.left;
             _content.y = INSIDE.top;
         }
@@ -55,7 +53,7 @@ public class GameFrame extends Sprite
 
     protected function maybeReady (callback :Function) :void
     {
-        if (_frame != null && _inventory != null) {
+        if (_frame.clip != null && _inventory.clip != null) {
             this.addChild(_frame);
             this.addChild(_inventory);
 
@@ -115,8 +113,8 @@ public class GameFrame extends Sprite
         }
     }
 
-    protected var _frame :MovieClip;
-    protected var _inventory :MovieClip;
+    protected var _frame :ClipHandler;
+    protected var _inventory :ClipHandler;
 
     protected var _content :DisplayObject;
 

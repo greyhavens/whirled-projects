@@ -31,6 +31,11 @@ public class ClipHandler extends FrameSprite
         MultiLoader.getContents(data, clipLoaded);
     }
 
+    public function get clip () :MovieClip
+    {
+        return _clip;
+    }
+
     protected function clipLoaded (disp :DisplayObject) :void
     {
         _clip = MovieClip(disp);
@@ -46,7 +51,7 @@ public class ClipHandler extends FrameSprite
         }
 
         if (_loaded != null) {
-            _loaded(_clip);
+            _loaded();
         }
     }
 

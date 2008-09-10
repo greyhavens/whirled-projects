@@ -56,13 +56,6 @@ public class SeekPanel extends FrameSprite
 
         _lanterns = new Dictionary();
 
-        Game.control.room.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        Game.control.room.props.addEventListener(
-            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
-        Game.control.room.props.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
-
         if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
         }
@@ -78,16 +71,31 @@ public class SeekPanel extends FrameSprite
     {
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
+
+        Game.control.room.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.room.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.props.addEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
         _lanternLoop.stop();
+
+        Game.control.room.removeEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        Game.control.room.props.removeEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
+        Game.control.room.props.removeEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
     }
 
     protected function messageReceived (event: MessageReceivedEvent) :void
     {
+//        Game.log.debug("messageReceived: " + event);
         if (event.name == Codes.SMSG_GHOST_ZAPPED) {
             _zapping = ZAP_FRAMES;
             Sound(new Content.LANTERN_GHOST_SCREECH()).play();
@@ -96,12 +104,18 @@ public class SeekPanel extends FrameSprite
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
+//        Game.log.debug("roomElementChanged: " + evt);
         var bits :Array;
         if (evt.name == Codes.DICT_LANTERNS) {
             var playerId :int = evt.key;
 
             // ignore our own updates unless we're debugging
             if (playerId == Game.ourPlayerId && !Game.DEBUG) {
+                return;
+            }
+
+            // if lanterns are off, also ignore
+            if (_lanterns == null) {
                 return;
             }
 
@@ -120,20 +134,22 @@ public class SeekPanel extends FrameSprite
 
         } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
             bits = (evt.newValue as Array);
-            if (bits != null) {
+            if (_ghost != null && bits != null) {
+                // TODO: adjust for the height (and maybe width) of the ghost here
                 var x :Number = Game.roomBounds.width * bits[0];
                 var y :Number = Game.roomBounds.height * bits[1];
+
                 var pos :Point = Game.control.local.roomToStage(new Point(x, y));
                 if (pos != null) {
                     _ghost.newTarget(this.globalToLocal(pos));
                 }
             }
         }
-
     }
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
+//        Game.log.debug("roomPropertyChanged: " + evt);
         // if there's no ghost or it's busy appearing, nothing here to do
         if (_ghost == null || _lanterns == null) {
             return;
@@ -147,7 +163,6 @@ public class SeekPanel extends FrameSprite
     }
 
     // FRAME HANDLER
-
     override protected function handleFrame (... ignored) :void
     {
         var p :Point = new Point(Math.max(0, Math.min(Game.stageSize.width, this.mouseX)),

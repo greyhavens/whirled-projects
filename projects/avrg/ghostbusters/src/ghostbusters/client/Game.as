@@ -153,8 +153,6 @@ public class Game extends Sprite
             log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
-
-        panel.newGhost();
     }
 
     protected function reloadView () :void

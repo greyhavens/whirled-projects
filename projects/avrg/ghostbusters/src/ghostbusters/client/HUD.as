@@ -170,9 +170,9 @@ public class HUD extends Sprite
         }
     }
 
-    protected function handleHUDLoaded (hudClip :MovieClip) :void
+    protected function handleHUDLoaded () :void
     {
-        _ghostInfo = new GhostInfoView(hudClip);
+        _ghostInfo = new GhostInfoView(_hud.clip);
 
         Command.bind(findSafely(HELP), MouseEvent.CLICK, GameController.HELP);
         Command.bind(findSafely(CLOSE), MouseEvent.CLICK, GameController.END_GAME);

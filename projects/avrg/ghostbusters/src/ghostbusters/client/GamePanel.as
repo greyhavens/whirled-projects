@@ -56,49 +56,45 @@ public class GamePanel extends Sprite
 
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
-        Game.control.player.addEventListener(AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
+        Game.control.player.addEventListener(
+            AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
+        Game.control.player.addEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
 
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
         var panel :GamePanel = this;
-        new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function (clip :MovieClip) :void {
-            _revivePopup = clip;
-            _revivePopup.x = 100;
-            _revivePopup.y = 200;
+        _revive = new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function () :void {
+            _revive.x = 100;
+            _revive.y = 200;
 
-            var bit :MovieClip = MovieClip(DisplayUtil.findInHierarchy(clip, "FailureMessage"));
-
-            bit.gotoAndPlay(8);
             setTimeout(function () :void {
-                trace(DisplayUtil.dumpHierarchy(bit));
                 var button :SimpleButton =
-                    SimpleButton(DisplayUtil.findInHierarchy(bit, "revivebutton"));
+                    SimpleButton(DisplayUtil.findInHierarchy(_revive, "revivebutton"));
                 if (button == null) {
                     Game.log.debug("Urk, cannot find revivebutton...");
-                    return;
+//                    return;
                 }
-                Command.bind(button, MouseEvent.CLICK, GameController.REVIVE);
+                // TODO: when Bill fixes the art, change 'clip' to 'button'
+                Command.bind(_revive, MouseEvent.CLICK, GameController.REVIVE);
                 checkForDeath();
             }, 1);
         });
 
-        new ClipHandler(ByteArray(new Content.GHOST_DEFEATED()), function (clip :MovieClip) :void {
-            _ghostDefeated = clip;
-            _ghostDefeated.x = 300;
-            _ghostDefeated.y = 200;
-
-            trace("ghost_defeated: " + DisplayUtil.dumpHierarchy(clip));
+        _triumph = new ClipHandler(ByteArray(new Content.GHOST_DEFEATED()), function () :void {
+            _triumph.x = 300;
+            _triumph.y = 200;
 
             var button :SimpleButton =
-                SimpleButton(DisplayUtil.findInHierarchy(clip, "continuebutton"));
+                SimpleButton(DisplayUtil.findInHierarchy(_triumph, "continuebutton"));
             if (button == null) {
                 Game.log.debug("Urk, cannot find continuebutton...");
 //                return;
             }
-            /* TODO: button. */
-            clip.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
-                popdown(_ghostDefeated);
+            // TODO: when Bill fixes the art, change 'clip' to 'button'
+            _triumph.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
+                popdown(_triumph);
             });
 
         });
@@ -143,12 +139,18 @@ public class GamePanel extends Sprite
 
     public function unframeContent () :void
     {
-        _frame.frameContent(null);
-        this.removeChild(_frame);
+        if (_frame != null) {
+            _frame.frameContent(null);
+            this.removeChild(_frame);
+        }
     }
 
     public function frameContent (content :DisplayObject) :void
     {
+        if (_frame == null) {
+            Game.log.warning("Can't frame content; frame clip not yet loaded.");
+            return;
+        }
         _frame.frameContent(content);
 
         this.addChild(_frame);
@@ -160,6 +162,7 @@ public class GamePanel extends Sprite
     public function reloadView () :void
     {
         hud.reloadView();
+
         // TODO: is this really needed?
         checkForDeath();
     }
@@ -177,7 +180,7 @@ public class GamePanel extends Sprite
         return null;
     }
 
-    public function newGhost () :void
+    protected function newGhost () :void
     {
         _ghost = null;
         var clip :Class = getClipClass();
@@ -206,36 +209,38 @@ public class GamePanel extends Sprite
 
     protected function checkForDeath () :void
     {
-        if (_revivePopup == null) {
+        if (_revive.clip == null) {
             Game.log.debug("Revival popup still loading; there will be another callback");
             return;
         }
 
-        var health :* = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
+        var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
         if (health > 0) {
+            Game.log.debug("We're alive [health=" + health + "]");
             // possibly we were just revived, let's see
-            if (_revivePopup.parent == this) {
-                this.removeChild(_revivePopup);
+            if (_revive.parent == this) {
+                this.removeChild(_revive);
             }
             // we're not dead
         } else if (health === 0) {
-            Game.log.debug("We seem to be quite dead.");
-            popup(_revivePopup);
+           Game.log.debug("We're dead!!"); 
+            popup(_revive);
         } else {
             Game.log.debug("We're neither dead nor alive. Scary.");
         }
     }
 
-    protected function popup (clip :MovieClip) :void
+    protected function popup (clip :DisplayObject) :void
     {
         if (clip.parent != null) {
-            Game.log.warning("Popup candidate already has a parent [popup=" + clip + "]");
+            Game.log.warning("Popup candidate already has a parent [popup=" + clip +
+                             ", parent=" + clip.parent + "]");
             return;
         }
         this.addChild(clip);
     }
 
-    protected function popdown (clip :MovieClip) :void
+    protected function popdown (clip :DisplayObject) :void
     {
         if (clip.parent != this) {
             Game.log.warning("We're not displaying popdown candidate [clip=" + clip + "]");
@@ -258,12 +263,19 @@ public class GamePanel extends Sprite
             updateState();
 
             if (evt.newValue == Codes.STATE_GHOST_DEFEAT) {
-                popup(_ghostDefeated);
+                popup(_triumph);
             }
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
         }
+    }
+
+    protected function enteredRoom (evt :AVRGamePlayerEvent) :void
+    {
+        _seeking = false;
+        newGhost();
+        updateState();
     }
 
     protected function updateState () :void
@@ -303,9 +315,9 @@ public class GamePanel extends Sprite
 
     protected var _frame :GameFrame;
 
-    protected var _revivePopup :MovieClip;
+    protected var _revive :ClipHandler;
 
-    protected var _ghostDefeated :MovieClip;
+    protected var _triumph :ClipHandler
 
     // maps ghost id to model
     protected static const GHOST_CLIPS :Object = {

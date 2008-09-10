@@ -66,6 +66,7 @@ public class GameController extends Controller
     {
         if (PlayerModel.isDead(Game.ourPlayerId)) {
             // the button is always disabled if you're dead -- revive first!
+            Game.log.debug("You can't toggle the lantern, you're dead!");
             return;
         }
 
