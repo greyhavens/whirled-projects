@@ -202,6 +202,9 @@ public class Room
         var y :Number = Server.random.nextNumber();
 
         _ghost.setPosition(x, y);
+
+        // do a ghost tick
+        _ghost.tick(frame);
     }
 
     protected function fightTick (frame :int) :void
@@ -230,7 +233,7 @@ public class Room
 
         // TODO: only do this about once a second
 
-        // if ghost is alive and at least one player is still up, just do an normal AI tick
+        // if ghost is alive and at least one player is still up, do a ghost tick
         _ghost.tick(frame);
     }
 

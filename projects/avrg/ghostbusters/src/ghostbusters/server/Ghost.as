@@ -79,15 +79,23 @@ public class Ghost
 
     public function setZest (zest :int) :void
     {
-        _zest = Math.max(0, Math.min(_maxZest, zest));
+        zest = Math.max(0, Math.min(_maxZest, zest));
+        if (zest == _zest) {
+            return;
+        }
 
+        _zest = zest;
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, _zest);
     }
 
     public function setHealth (health :int) :void
     {
-        _health = Math.max(0, Math.min(_maxHealth, health));
+        health = Math.max(0, Math.min(_maxHealth, health));
+        if (health == _health) {
+            return;
+        }
 
+        _health = health;
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_HEALTH, health);
     }
 
@@ -111,9 +119,12 @@ public class Ghost
 
     public function tick (timer :int) :void
     {
-        if (_brain != null) {
+        if (_room.state == Codes.STATE_FIGHTING && _brain != null) {
             _brain.tick(timer);
         }
+        // TODO: have heal rate depend on level
+        setHealth(health + 1);
+        setZest(zest + 1);
     }
 
     public function calculateSingleAttack () :int

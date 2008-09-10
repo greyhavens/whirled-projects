@@ -178,7 +178,12 @@ public class Player
     protected function setHealth (health :int) :void
     {
         // update our runtime state
-        _health = Math.max(0, Math.min(health, _maxHealth));
+        health = Math.max(0, Math.min(health, _maxHealth));
+        if (health == _health) {
+            return;
+        }
+
+        _health = health;
 
         // persist it, too
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
