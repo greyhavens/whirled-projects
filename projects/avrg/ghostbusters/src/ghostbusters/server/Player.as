@@ -120,6 +120,7 @@ public class Player
         // handle messages that make (at least some) sense even if we're between rooms
         if (name == Codes.CMSG_PLAYER_REVIVE) {
             setHealth(_maxHealth);
+            return;
         }
 
         // if we're nowhere, drop out

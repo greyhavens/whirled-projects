@@ -22,7 +22,7 @@ public class Room
         _ctrl = ctrl;
 
         // no matter how the room shut down, we cold-start it in seek mode
-        _state = Codes.STATE_SEEKING;
+        setState(Codes.STATE_SEEKING);
 
         // see if there's an undefeated (persistent) ghost here, else make a new one
         loadOrSpawnGhost();
@@ -175,9 +175,10 @@ public class Room
 
     internal function playerHealthUpdated (player :Player) :void
     {
-        _ctrl.props.setIn(Codes.DICT_PFX_PLAYER + player.playerId, player.health, true);
+        _ctrl.props.setIn(
+            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_CUR_HEALTH,
+            player.health, true);
     }
-
 
     protected function seekTick (frame :int) :void
     {
@@ -391,6 +392,7 @@ public class Room
         for (var p :* in _players) {
             Player(p).roomStateChanged();
         }
+        log.debug("Room state set [roomId=" + roomId + ", state=" + state + "]");
     }
 
     // server-specific parts of the model moved here
