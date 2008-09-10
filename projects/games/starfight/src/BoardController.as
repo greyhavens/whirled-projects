@@ -381,14 +381,9 @@ public class BoardController
         }
     }
 
-    public function explode (x :Number, y :Number, rot :int, isSmall :Boolean, shipType :int) :void
-    {
-    }
-
     public function hitObs (obj :BoardObject, x :Number, y :Number, owner :Boolean,
         damage :Number) :void
     {
-        explode(x, y, 0, true, 0);
         if (owner) {
             if (AppContext.game.gameState == Constants.STATE_IN_ROUND && obj.damage(damage)) {
                 setAtImmediate(obj.arrayName, null, obj.index);

@@ -175,11 +175,8 @@ public class ClientBoardController extends BoardController
         }
     }
 
-    override public function explode (x :Number, y :Number, rot :int, isSmall :Boolean,
-        shipType :int) :void
+    public function playExplosion (x :Number, y :Number, rot :int, isSmall :Boolean, shipType :int) :void
     {
-        super.explode(x, y, rot, isSmall, shipType);
-
         var rX :Number = x * Constants.PIXELS_PER_TILE;
         var rY :Number = y * Constants.PIXELS_PER_TILE;
         // don't add small explosions that are off the screen
@@ -208,6 +205,9 @@ public class ClientBoardController extends BoardController
         damage :Number) :void
     {
         super.hitObs(obj, x, y, owner, damage);
+
+        playExplosion(x, y, 0, true, 0);
+
         if (obj.hitSoundName != null) {
             var hitSound :Sound = Resources.getSound(obj.hitSoundName);
             if (hitSound != null) {
