@@ -267,7 +267,6 @@ public class GameController
      */
     public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int, damage :Number) :void
     {
-        AppContext.board.explode(x, y, 0, true, 0);
     }
 
     /**
@@ -312,7 +311,6 @@ public class GameController
     {
         var ship :Ship = getShip(msg.shipId);
         if (ship != null) {
-            AppContext.board.explode(msg.x, msg.y, msg.rotation, false, ship.shipTypeId);
             ship.kill();
             var shooter :Ship = getShip(msg.shooterId);
             if (shooter != null) {

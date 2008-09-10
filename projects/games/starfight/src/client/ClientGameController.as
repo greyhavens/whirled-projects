@@ -127,6 +127,8 @@ public class ClientGameController extends GameController
     {
         super.hitShip(ship, x, y, shooterId, damage);
 
+        ClientContext.board.playExplosion(x, y, 0, true, 0);
+
         // TODO - make the server authoritative about ship hits
         if (ship == _ownShip) {
             ship.hit(shooterId, damage);
@@ -143,7 +145,8 @@ public class ClientGameController extends GameController
     {
         // TODO - make the server authoritative about obstacle hits
         super.hitObs(obj, x, y, shooterId, damage);
-        AppContext.board.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId), damage);
+        AppContext.board.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId),
+            damage);
     }
 
     override protected function update (time :int) :void
@@ -281,12 +284,16 @@ public class ClientGameController extends GameController
     {
         super.shipExploded(msg);
 
+        var ship :Ship = getShip(msg.shipId);
+        if (ship != null) {
+            ClientContext.board.playExplosion(msg.x, msg.y, msg.rotation, false, ship.shipTypeId);
+            playSoundAt(Resources.getSound("ship_explodes.wav"), msg.x, msg.y);
+        }
+
         if (_ownShip != null && msg.shooterId == _ownShip.shipId) {
             AppContext.scores.addToScore(msg.shooterId, KILL_PTS);
             _ownShip.registerKill(msg.shipId);
         }
-
-        playSoundAt(Resources.getSound("ship_explodes.wav"), msg.x, msg.y);
     }
 
     override protected function shipChanged (shipId :int, bytes :ByteArray) :void
