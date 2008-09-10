@@ -5,6 +5,9 @@ import com.threerings.util.MultiLoader;
 import flash.media.Sound;
 import flash.system.ApplicationDomain;
 
+import net.DefaultShotMessage;
+import net.ShipMessage;
+
 public class ShipTypeResources
 {
     public var shipAnim :Class, shieldAnim :Class, explodeAnim :Class, shotAnim :Class,
@@ -15,12 +18,12 @@ public class ShipTypeResources
     {
         shipType.addEventListener(ShipType.PRIMARY_SHOT_CREATED,
             function (event :ShotCreatedEvent) :void {
-                primaryShotCreated(AppContext.game.getShip(event.args[0]), event.args);
+                primaryShotCreated(AppContext.game.getShip(event.msg.shipId), event.msg);
             });
 
         shipType.addEventListener(ShipType.SECONDARY_SHOT_CREATED,
             function (event :ShotCreatedEvent) :void {
-                secondaryShotCreated(AppContext.game.getShip(event.args[0]), event.args);
+                secondaryShotCreated(AppContext.game.getShip(event.msg.shipId), event.msg);
             });
 
         shipType.addEventListener(ShipType.PRIMARY_SHOT_SENT,
@@ -41,14 +44,15 @@ public class ShipTypeResources
         MultiLoader.getLoaders(swfAsset, loadComplete, false, _resourcesDomain);
     }
 
-    protected function primaryShotCreated (ship :Ship, args :Array) :void
+    protected function primaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
         // play a shooting sound
-        var sound :Sound = (args[2] == Shot.SUPER) ? supShotSound : shotSound;
-        ClientContext.game.playSoundAt(sound, args[3], args[4]);
+        var msg :DefaultShotMessage = DefaultShotMessage(message);
+        var sound :Sound = (msg.isSuper) ? supShotSound : shotSound;
+        ClientContext.game.playSoundAt(sound, msg.x, msg.y);
     }
 
-    protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
     }
 

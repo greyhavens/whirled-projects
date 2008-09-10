@@ -12,6 +12,8 @@ import flash.media.SoundTransform;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
+import net.ShipExplodedMessage;
+
 public class ClientGameController extends GameController
 {
     public function ClientGameController (gameCtrl :GameControl)
@@ -188,9 +190,9 @@ public class ClientGameController extends GameController
         }
 
         // Every few frames, broadcast our status to everyone else.
-        _updateCount += time;
-        if (_ownShip != null && _updateCount > Constants.TIME_PER_UPDATE) {
-            _updateCount = 0;
+        _shipUpdateTime += time;
+        if (_ownShip != null && _shipUpdateTime >= Constants.SHIP_UPDATE_INTERVAL_MS) {
+            _shipUpdateTime = 0;
             setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
         }
 
@@ -275,19 +277,16 @@ public class ClientGameController extends GameController
         shotView.parent.removeChild(shotView);
     }
 
-    override protected function shipExploded (args :Array) :void
+    override protected function shipExploded (msg :ShipExplodedMessage) :void
     {
-        super.shipExploded(args);
+        super.shipExploded(msg);
 
-        var shooterId :int = args[3];
-        var shipId :int = args[4];
-
-        if (_ownShip != null && shooterId == _ownShip.shipId) {
-            AppContext.scores.addToScore(shooterId, KILL_PTS);
-            _ownShip.registerKill(shipId);
+        if (_ownShip != null && msg.shooterId == _ownShip.shipId) {
+            AppContext.scores.addToScore(msg.shooterId, KILL_PTS);
+            _ownShip.registerKill(msg.shipId);
         }
 
-        playSoundAt(Resources.getSound("ship_explodes.wav"), args[0], args[1]);
+        playSoundAt(Resources.getSound("ship_explodes.wav"), msg.x, msg.y);
     }
 
     override protected function shipChanged (shipId :int, bytes :ByteArray) :void

@@ -7,6 +7,8 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
+import net.ShipExplodedMessage;
+
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
@@ -265,7 +267,8 @@ public class Ship extends EventDispatcher
 
         _power -= hitPower;
         if (_power <= DEAD) {
-            AppContext.game.explodeShip(boardX, boardY, rotation, shooterId, shipId);
+            AppContext.msgs.sendMessage(ShipExplodedMessage.create(shipId, shooterId, boardX,
+                boardY, rotation));
             checkAwards();
 
             // Stop moving and firing.

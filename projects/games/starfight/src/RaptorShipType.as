@@ -3,6 +3,9 @@ package {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import net.DefaultShotMessage;
+import net.ShipMessage;
+
 public class RaptorShipType extends ShipType
 {
     public function RaptorShipType () :void
@@ -34,17 +37,27 @@ public class RaptorShipType extends ShipType
         size = 1.1;
     }
 
-    override public function doPrimaryShot (val :Array) :void
+    override public function doShot (message :ShipMessage) :void
     {
+        if (message is DefaultShotMessage) {
+            doPrimaryShot(message);
+        }
+    }
+
+    override protected function doPrimaryShot (message :ShipMessage) :void
+    {
+        var msg :DefaultShotMessage = DefaultShotMessage(message);
+
         var ttl :Number = primaryShotLife;
-        if (val[2] == Shot.SUPER) {
+        if (msg.isSuper) {
             ttl *= 2;
         }
+
         for (var ii :Number = -0.3; ii <= 0.3; ii += 0.3) {
-            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + ii, val[0],
-                hitPower, ttl, val[1]);
+            AppContext.game.createMissileShot(msg.x, msg.y, msg.velocity, msg.rotationRads + ii,
+                msg.shipId, hitPower, ttl, msg.shipTypeId);
         }
-        super.doPrimaryShot(val);
+        super.doPrimaryShot(msg);
     }
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
@@ -65,10 +78,6 @@ public class RaptorShipType extends ShipType
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
         return true;
-    }
-
-    override public function doSecondaryShot (val :Array) :void
-    {
     }
 }
 }

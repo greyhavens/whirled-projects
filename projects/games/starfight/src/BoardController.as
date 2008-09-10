@@ -416,10 +416,10 @@ public class BoardController
                 break;
             }
             var mine :Mine = Mine(_mines[mineIdx]);
-            if (mine.type == ship.shipId) {
+            if (mine.ownerId == ship.shipId) {
                 break;
             }
-            AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.type, mine.dmg);
+            AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
             removeMine(mineIdx);
         } while (mineIdx != -1);
     }

@@ -2,12 +2,14 @@ package client {
 
 import flash.media.Sound;
 
+import net.ShipMessage;
+
 public class RhinoShipTypeResources extends ShipTypeResources
 {
     public var warpSound :Sound;
     public var superShotAnim :Class, superShotExplode :Class;
 
-    override protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    override protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
         playWarpSound(ship);
     }

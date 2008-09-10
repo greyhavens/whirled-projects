@@ -2,20 +2,26 @@ package client {
 
 import flash.media.Sound;
 
+import net.CreateMineMessage;
+import net.LaserShotMessage;
+import net.ShipMessage;
+
 public class SaucerShipTypeResources extends ShipTypeResources
 {
     public var mineFriendly :Class, mineEnemy :Class, mineExplode :Class;
     public var mineSound :Sound, mineExplodeSound :Sound;
 
-    override protected function primaryShotCreated (ship :Ship, args :Array) :void
+    override protected function primaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
-        var sound :Sound = (args[2] == Shot.SUPER) ? supShotSound : shotSound;
+        var msg :LaserShotMessage = LaserShotMessage(message);
+        var sound :Sound = (msg.isSuper) ? supShotSound : shotSound;
         ClientContext.game.playSoundAt(sound, ship.boardX, ship.boardY);
     }
 
-    override protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    override protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
-        ClientContext.game.playSoundAt(mineSound, args[2], args[3]);
+        var msg :CreateMineMessage = CreateMineMessage(message);
+        ClientContext.game.playSoundAt(mineSound, msg.boardX, msg.boardY);
     }
 
     override protected function get swfAsset () :Class

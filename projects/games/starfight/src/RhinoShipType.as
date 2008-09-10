@@ -6,6 +6,10 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import net.DefaultShotMessage;
+import net.ShipMessage;
+import net.WarpMessage;
+
 public class RhinoShipType extends ShipType
 {
     public function RhinoShipType () :void
@@ -33,10 +37,21 @@ public class RhinoShipType extends ShipType
         size = 1.2;
     }
 
-    override public function doPrimaryShot (args :Array) :void
+    override public function doShot (message :ShipMessage) :void
     {
-        var left :Number = args[6] + Math.PI/2;
-        var right :Number = args[6] - Math.PI/2;
+        if (message is DefaultShotMessage) {
+            doPrimaryShot(message);
+        } else if (message is WarpMessage) {
+            doSecondaryShot(message);
+        }
+    }
+
+    override protected function doPrimaryShot (message :ShipMessage) :void
+    {
+        var msg :DefaultShotMessage = DefaultShotMessage(message);
+
+        var left :Number = msg.rotationRads + Math.PI/2;
+        var right :Number = msg.rotationRads - Math.PI/2;
         var leftOffsetX :Number = Math.cos(left) * 0.5;
         var leftOffsetY :Number = Math.sin(left) * 0.5;
         var rightOffsetX :Number = Math.cos(right) * 0.5;
@@ -45,46 +60,40 @@ public class RhinoShipType extends ShipType
         var shotClip :Class = null;
         var explodeClip :Class = null;
 
-        if (args[2] == Shot.SUPER) {
+        if (msg.isSuper) {
             damage *= 1.5;
             // TODO
             shotClip = null;//superShotAnim;
             explodeClip = null;//superShotExplode;
         }
 
-        AppContext.game.createMissileShot(args[3] + leftOffsetX, args[4] + leftOffsetY,
-                args[5], args[6], args[0], damage, primaryShotLife, args[1], shotClip, explodeClip);
-        AppContext.game.createMissileShot(args[3] + rightOffsetX, args[4] + rightOffsetY,
-                args[5], args[6], args[0], damage, primaryShotLife, args[1], shotClip, explodeClip);
+        AppContext.game.createMissileShot(msg.x + leftOffsetX, msg.y + leftOffsetY, msg.velocity,
+            msg.rotationRads, msg.shipId, damage, primaryShotLife, msg.shipTypeId, shotClip,
+            explodeClip);
 
-        super.doPrimaryShot(args);
+        AppContext.game.createMissileShot(msg.x + rightOffsetX, msg.y + rightOffsetY, msg.velocity,
+            msg.rotationRads, msg.shipId, damage, primaryShotLife, msg.shipTypeId, shotClip,
+            explodeClip);
+
+        super.doPrimaryShot(msg);
     }
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        var args :Array = new Array(5);
-        args[0] = ship.shipId;
-        args[1] = ship.shipTypeId;
-        args[2] = ship.boardX;
-        args[3] = ship.boardY;
-        args[4] = ship.rotation;
-
-        warpNow(ship, args);
-
+        warpNow(ship, WarpMessage.create(ship));
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
-
         return true;
     }
 
-    override public function doSecondaryShot (args :Array) :void
+    override protected function doSecondaryShot (msg :ShipMessage) :void
     {
-        var ship :Ship = AppContext.game.getShip(args[0]);
+        var ship :Ship = AppContext.game.getShip(msg.shipId);
         if (ship != null && !ship.isOwnShip) {
-            warpNow(ship, args);
+            warpNow(ship, WarpMessage(msg));
         }
     }
 
-    protected function warpNow (ship :Ship, args :Array) :void
+    protected function warpNow (ship :Ship, msg :WarpMessage) :void
     {
         // TODO - change this horribly unsafe function.
 
@@ -94,15 +103,15 @@ public class RhinoShipType extends ShipType
 
         var warp :Function = function (event :Event) :void {
             if (ship.isOwnShip) {
-                AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
+                AppContext.msgs.sendMessage(msg);
                 dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
             } else {
-                dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
+                dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, msg));
             }
 
-            var startX :Number = args[2];
-            var startY :Number = args[3];
-            var rads :Number = args[4] * Constants.DEGS_TO_RADS;
+            var startX :Number = msg.boardX;
+            var startY :Number = msg.boardY;
+            var rads :Number = msg.rotation * Constants.DEGS_TO_RADS;
             var endX :Number = startX + Math.cos(rads) * JUMP;
             var endY :Number = startY + Math.sin(rads) * JUMP;
 

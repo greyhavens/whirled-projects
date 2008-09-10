@@ -2,14 +2,16 @@ package {
 
 import flash.events.Event;
 
+import net.ShipMessage;
+
 public class ShotCreatedEvent extends Event
 {
-    public var args :Array;
+    public var msg :ShipMessage;
 
-    public function ShotCreatedEvent (type :String, args :Array)
+    public function ShotCreatedEvent (type :String, msg :ShipMessage)
     {
         super(type, false, false);
-        this.args = args;
+        this.msg = msg;
     }
 }
 

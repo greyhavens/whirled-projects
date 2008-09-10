@@ -1,4 +1,8 @@
 package {
+    import net.CreateMineMessage;
+    import net.LaserShotMessage;
+    import net.ShipMessage;
+
 
 public class SaucerShipType extends ShipType
 {
@@ -44,30 +48,35 @@ public class SaucerShipType extends ShipType
 
     override public function sendPrimaryShotMessage (ship :Ship) :void
     {
-        var type :int = (ship.hasPowerup(Powerup.SPREAD) ? Shot.SUPER : Shot.NORMAL);
-
-        var args :Array = new Array(3);
-        args[0] = ship.shipId;
-        args[1] = ship.shipTypeId;
-        args[2] = type;
-        AppContext.game.sendShotMessage(args);
-
+        var msg :LaserShotMessage = LaserShotMessage.create(ship);
+        AppContext.gameCtrl.net.sendMessage(LaserShotMessage.NAME, msg.toBytes());
         dispatchEvent(new ShotMessageSentEvent(ShipType.PRIMARY_SHOT_SENT, ship));
     }
 
-    override public function doPrimaryShot (args :Array) :void
+    override public function doShot (message :ShipMessage) :void
     {
-        var ship :Ship = AppContext.game.getShip(args[0]);
+        if (message is LaserShotMessage) {
+            doPrimaryShot(message);
+        } else if (message is CreateMineMessage) {
+            doSecondaryShot(message);
+        }
+    }
+
+    override protected function doPrimaryShot (message :ShipMessage) :void
+    {
+        var ship :Ship = AppContext.game.getShip(message.shipId);
         if (ship == null) {
             return;
         }
+
+        var msg :LaserShotMessage = LaserShotMessage(message);
 
         var ships :Array = AppContext.game.findShips(ship.boardX, ship.boardY, RANGE);
 
         // no one in range so shoot straight
         if (ships.length <= 1) {
             AppContext.game.createLaserShot(ship.boardX, ship.boardY, ship.rotation, RANGE,
-                args[0], hitPower, primaryShotLife, args[1], -1);
+                msg.shipId, hitPower, primaryShotLife, msg.shipTypeId, -1);
         } else {
 
             for each (var tShip :Ship in ships) {
@@ -79,35 +88,28 @@ public class SaucerShipType extends ShipType
                 dist = Math.min(RANGE, dist);
                 var angle :Number = Constants.RADS_TO_DEGS *
                         Math.atan2(tShip.boardY - ship.boardY, tShip.boardX - ship.boardX);
-                AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, args[0],
-                    hitPower, primaryShotLife, args[1], tShip.shipId);
+                AppContext.game.createLaserShot(ship.boardX, ship.boardY, angle, dist, msg.shipId,
+                    hitPower, primaryShotLife, msg.shipTypeId, tShip.shipId);
             }
         }
 
-        dispatchEvent(new ShotCreatedEvent(ShipType.PRIMARY_SHOT_CREATED, args));
+        dispatchEvent(new ShotCreatedEvent(ShipType.PRIMARY_SHOT_CREATED, msg));
     }
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        var args :Array = new Array(5);
-        args[0] = ship.shipId;
-        args[1] = ship.shipTypeId;
-        args[2] = Math.round(ship.boardX);
-        args[3] = Math.round(ship.boardY);
-        args[4] = SECONDARY_HIT_POWER;
-
-        AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
-
+        AppContext.msgs.sendMessage(CreateMineMessage.create(ship, SECONDARY_HIT_POWER));
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
         return true;
     }
 
-    override public function doSecondaryShot (args :Array) :void
+    override protected function doSecondaryShot (message :ShipMessage) :void
     {
-        AppContext.board.addMine(new Mine(args[0], args[2], args[3], args[4]));
+        var msg :CreateMineMessage = CreateMineMessage(message);
+        AppContext.board.addMine(new Mine(msg.shipId, msg.boardX, msg.boardY, msg.power));
 
-        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
+        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, message));
     }
 
     protected static var RANGE :Number = 7;

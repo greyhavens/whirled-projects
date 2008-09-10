@@ -19,7 +19,7 @@ public class Constants
     public static const GREEN :uint = uint(0x00FF00);
 
     /** How often we send updates to the server. */
-    public static const TIME_PER_UPDATE :int = 125;
+    public static const SHIP_UPDATE_INTERVAL_MS :int = 125;
 
     /** Game states. */
     public static const STATE_INIT :int = 0;
@@ -45,11 +45,7 @@ public class Constants
         return (index >= 0 && index < SHIP_TYPE_CLASSES.length ? SHIP_TYPE_CLASSES[index] : null);
     }
 
-    /** Message types */
-    public static const MSG_SHOT :String = "shot";
-    public static const MSG_SECONDARY :String = "secondary";
-    public static const MSG_EXPLODE :String = "explode";
-
+    /** Property names */
     public static const PROP_POWERUPS :String = "powerups";
     public static const PROP_OBSTACLES :String = "obsacles";
     public static const PROP_MINES :String = "mines";

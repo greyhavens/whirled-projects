@@ -1,10 +1,12 @@
 package {
 
+import flash.display.DisplayObject;
+
 import com.whirled.contrib.Scoreboard;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
 
-import flash.display.DisplayObject;
+import net.*;
 
 public class AppController
 {
@@ -13,6 +15,14 @@ public class AppController
         AppContext.gameCtrl = new GameControl(mainObject);
         AppContext.scores = new Scoreboard(AppContext.gameCtrl);
         AppContext.local = new LocalUtility(AppContext.gameCtrl);
+        AppContext.msgs = new MessageManager(AppContext.gameCtrl);
+
+        AppContext.msgs.addMessageType(CreateMineMessage);
+        AppContext.msgs.addMessageType(DefaultShotMessage);
+        AppContext.msgs.addMessageType(LaserShotMessage);
+        AppContext.msgs.addMessageType(ShipExplodedMessage);
+        AppContext.msgs.addMessageType(TorpedoShotMessage);
+        AppContext.msgs.addMessageType(WarpMessage);
     }
 
     /**

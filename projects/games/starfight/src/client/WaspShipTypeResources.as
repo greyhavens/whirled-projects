@@ -2,15 +2,19 @@ package client {
 
 import flash.media.Sound;
 
+import net.ShipMessage;
+import net.TorpedoShotMessage;
+
 public class WaspShipTypeResources extends ShipTypeResources
 {
     public var secondaryExplode :Class;
     public var secondarySound :Sound;
     public var secondaryExplodeSound :Sound;
 
-    override protected function secondaryShotCreated (ship :Ship, args :Array) :void
+    override protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
     {
-        ClientContext.game.playSoundAt(secondarySound, args[2], args[3]);
+        var msg :TorpedoShotMessage = TorpedoShotMessage(message);
+        ClientContext.game.playSoundAt(secondarySound, msg.x, msg.y);
     }
 
     override protected function get swfAsset () :Class

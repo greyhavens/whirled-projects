@@ -12,6 +12,9 @@ import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import net.ShipExplodedMessage;
+import net.ShipMessage;
+
 public class GameController
 {
     public function GameController (gameCtrl :GameControl)
@@ -21,6 +24,8 @@ public class GameController
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+
+        AppContext.msgs.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
     }
 
     public function shutdown () :void
@@ -28,6 +33,8 @@ public class GameController
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
+
+        AppContext.msgs.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
         if (_screenTimer != null) {
             _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
@@ -202,16 +209,11 @@ public class GameController
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (_running) {
-            if (event.name == Constants.MSG_SHOT) {
-                var args :Array = (event.value as Array);
-                 Constants.getShipType(args[1]).doPrimaryShot(args);
-
-            } else if (event.name == Constants.MSG_SECONDARY) {
-                args = (event.value as Array);
-                Constants.getShipType(args[1]).doSecondaryShot(args);
-
-            } else if (event.name == Constants.MSG_EXPLODE) {
-                shipExploded(event.value as Array);
+            if (event.value is ShipMessage) {
+                var msg :ShipMessage = ShipMessage(event.value);
+                Constants.getShipType(msg.shipTypeId).doShot(msg);
+            } else if (event.value is ShipExplodedMessage) {
+                shipExploded(ShipExplodedMessage(event.value));
             }
         }
     }
@@ -286,14 +288,6 @@ public class GameController
     /**
      * Send a message to the server about our shot.
      */
-    public function sendShotMessage (args :Array) :void
-    {
-        _gameCtrl.net.sendMessage(Constants.MSG_SHOT, args);
-    }
-
-    /**
-     * Send a message to the server about our shot.
-     */
     public function sendMessage (name :String, args :Array) :void
     {
         _gameCtrl.net.sendMessage(name, args);
@@ -316,40 +310,18 @@ public class GameController
         return nearShips;
     }
 
-    /**
-     * Register a big ole' explosion at the location.
-     */
-    public function explodeShip (x :Number, y :Number, rot :int, shooterId :int, shipId :int) :void
+    protected function shipExploded (msg :ShipExplodedMessage) :void
     {
-        // TODO - change args to something more typesafe
-        var args :Array = new Array(5);
-        args[0] = x;
-        args[1] = y;
-        args[2] = rot;
-        args[3] = shooterId;
-        args[4] = shipId;
-        _gameCtrl.net.sendMessage(Constants.MSG_EXPLODE, args);
-    }
-
-    protected function shipExploded (args :Array) :void
-    {
-        // TODO - change args to something more typesafe
-        var x :Number = args[0];
-        var y :Number = args[1];
-        var rot :int = args[2];
-        var shooterId :int = args[3];
-        var shipId :int = args[4];
-
-        var ship :Ship = getShip(shipId);
+        var ship :Ship = getShip(msg.shipId);
         if (ship != null) {
-            AppContext.board.explode(x, y, rot, false, ship.shipTypeId);
+            AppContext.board.explode(msg.x, msg.y, msg.rotation, false, ship.shipTypeId);
             ship.kill();
-            var shooter :Ship = getShip(shooterId);
+            var shooter :Ship = getShip(msg.shooterId);
             if (shooter != null) {
                 AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
             }
         }
-        AppContext.board.shipKilled(shipId);
+        AppContext.board.shipKilled(msg.shipId);
     }
 
     /**
@@ -408,7 +380,7 @@ public class GameController
     protected var _shots :Array = []; // Array<Shot>
 
     /** How many frames its been since we broadcasted. */
-    protected var _updateCount :int = 0;
+    protected var _shipUpdateTime :int = 0;
 
     protected var _lastTickTime :int;
 

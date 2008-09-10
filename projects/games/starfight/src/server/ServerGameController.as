@@ -3,10 +3,11 @@ package server {
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
-import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
+
+import net.ShipExplodedMessage;
 
 public class ServerGameController extends GameController
 {
@@ -110,13 +111,10 @@ public class ServerGameController extends GameController
         _powerupTimer.start();
     }
 
-    override protected function shipExploded (args :Array) :void
+    override protected function shipExploded (msg :ShipExplodedMessage) :void
     {
-        super.shipExploded(args);
-
-        var x :Number = args[0];
-        var y :Number = args[1];
-        ServerContext.board.addHealthPowerup(x, y);
+        super.shipExploded(msg);
+        ServerContext.board.addHealthPowerup(msg.x, msg.y);
     }
 
     override protected function occupantLeft (event :OccupantChangedEvent) :void

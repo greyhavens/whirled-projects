@@ -1,4 +1,8 @@
 package {
+    import net.DefaultShotMessage;
+    import net.ShipMessage;
+    import net.TorpedoShotMessage;
+
 
 public class WaspShipType extends ShipType
 {
@@ -35,54 +39,48 @@ public class WaspShipType extends ShipType
         size = 0.9;
     }
 
-    override public function doPrimaryShot (val :Array) :void
+    override public function doShot (message :ShipMessage) :void
     {
-        AppContext.game.createMissileShot(val[3], val[4], val[5], val[6], val[0], hitPower,
-            primaryShotLife, val[1]);
+        if (message is TorpedoShotMessage) {
+            doSecondaryShot(message);
+        } else if (message is DefaultShotMessage) {
+            doPrimaryShot(message);
+        }
+    }
 
-        if (val[2] == Shot.SUPER) {
-            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] + SPREAD, val[0],
-                hitPower, primaryShotLife, val[1]);
-            AppContext.game.createMissileShot(val[3], val[4], val[5], val[6] - SPREAD, val[0],
-                hitPower, primaryShotLife, val[1]);
+    override protected function doPrimaryShot (message :ShipMessage) :void
+    {
+        var msg :DefaultShotMessage = DefaultShotMessage(message);
+
+        AppContext.game.createMissileShot(msg.x, msg.y, msg.velocity, msg.rotationRads, msg.shipId,
+            hitPower, primaryShotLife, msg.shipTypeId);
+
+        if (msg.isSuper) {
+            AppContext.game.createMissileShot(msg.x, msg.y, msg.velocity, msg.rotationRads + SPREAD,
+                msg.shipId, hitPower, primaryShotLife, msg.shipTypeId);
+            AppContext.game.createMissileShot(msg.x, msg.y, msg.velocity, msg.rotationRads - SPREAD,
+                msg.shipId, hitPower, primaryShotLife, msg.shipTypeId);
         }
 
-        super.doPrimaryShot(val);
+        super.doPrimaryShot(msg);
     }
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        var rads :Number = ship.rotation*Constants.DEGS_TO_RADS;
-        var cos :Number = Math.cos(rads);
-        var sin :Number = Math.sin(rads);
-
-        var shotX :Number = cos * secondaryShotSpeed + ship.xVel;
-        var shotY :Number = sin * secondaryShotSpeed + ship.yVel;
-
-        var shotVel :Number = secondaryShotSpeed;
-        var shotAngle :Number = Math.atan2(shotY, shotX);
-
-        var args :Array = new Array(6);
-        args[0] = ship.shipId;
-        args[1] = ship.shipTypeId;
-        args[2] = ship.boardX + cos * size + 0.1 * ship.xVel;
-        args[3] = ship.boardY + sin * size + 0.1 * ship.yVel;
-        args[4] = shotVel;
-        args[5] = rads;
-
-        AppContext.game.sendMessage(Constants.MSG_SECONDARY, args);
-
+        AppContext.msgs.sendMessage(TorpedoShotMessage.create(ship, secondaryShotSpeed, size));
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
         return true;
     }
 
-    override public function doSecondaryShot (args :Array) :void
+    override protected function doSecondaryShot (message :ShipMessage) :void
     {
-        AppContext.game.createTorpedoShot(args[2], args[3], args[4], args[5], args[0],
-            SECONDARY_HIT_POWER, secondaryShotLife, args[1]);
+        var msg :TorpedoShotMessage = TorpedoShotMessage(message);
 
-        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, args));
+        AppContext.game.createTorpedoShot(msg.x, msg.y, msg.velocity, msg.rotationRads, msg.shipId,
+            SECONDARY_HIT_POWER, secondaryShotLife, msg.shipTypeId);
+
+        dispatchEvent(new ShotCreatedEvent(ShipType.SECONDARY_SHOT_CREATED, message));
     }
 
     protected static const SPREAD :Number = 0.1;
