@@ -46,14 +46,14 @@ public class ClientGameController extends GameController
         ClientContext.board = ClientBoardController(AppContext.board);
         ClientContext.gameView.init();
 
-        super.run();
-
         if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
-            _gameState = Constants.STATE_PRE_ROUND;
+            _gameState = Constants.STATE_INIT;
         } else {
             _gameState = int(_gameCtrl.net.get(Constants.PROP_GAMESTATE));
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
+
+        super.run();
     }
 
     /**

@@ -25,11 +25,8 @@ public class ClientBoardController extends BoardController
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == Constants.PROP_BOARD && !_boardLoaded) {
-            var bytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
-            if (bytes != null) {
-                readBoard(bytes);
-            }
+        if (!_boardLoaded && event.name == Constants.PROP_GAMESTATE) {
+            tryLoadBoard();
         }
     }
 
@@ -37,10 +34,18 @@ public class ClientBoardController extends BoardController
     {
         _boardLoadedCallback = boardLoadedCallback;
 
-        var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
-        if (boardBytes != null) {
-            boardBytes.position = 0;
-            readBoard(boardBytes);
+        tryLoadBoard();
+    }
+
+    protected function tryLoadBoard () :void
+    {
+        // don't load the board until the server has finished init'ing it
+        if (AppContext.game.gameState != Constants.STATE_INIT) {
+            var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
+            if (boardBytes != null) {
+                boardBytes.position = 0;
+                readBoard(boardBytes);
+            }
         }
     }
 
