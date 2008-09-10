@@ -93,7 +93,7 @@ public class BoardController
 
         } else if ((event.name == Constants.PROP_MINES) && (event.index >= 0)) {
             if (event.newValue == null) {
-                removeMine(event.index);
+                mineRemoved(event.index);
             }
 
             // don't listen to "new mine" events (event.newValue != null) - mines will
@@ -194,11 +194,16 @@ public class BoardController
     {
         if (_mines != null) {
             setAtImmediate(Constants.PROP_MINES, null, idx);
-            var mine :Mine = _mines[idx];
-            if (mine != null) {
-                _mines[idx] = null;
-                mine.explode();
-            }
+            mineRemoved(idx);
+        }
+    }
+
+    protected function mineRemoved (idx :int) :void
+    {
+        var mine :Mine = _mines[idx];
+        if (mine != null) {
+            _mines[idx] = null;
+            mine.explode();
         }
     }
 
@@ -393,30 +398,21 @@ public class BoardController
 
     public function shipInteraction (ship :Ship, oldX :Number, oldY :Number) :void
     {
-        var powIdx :int = 0;
-        while (powIdx != -1) {
-            powIdx = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
-                    Constants.getShipType(ship.shipTypeId).size, _powerups);
-            if (powIdx == -1) {
-                break;
-            }
+        var powIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+            Constants.getShipType(ship.shipTypeId).size, _powerups);
+        if (powIdx != -1) {
             ship.awardPowerup(_powerups[powIdx]);
             removePowerup(powIdx);
         }
 
-        var mineIdx :int = 0;
-        while (mineIdx != -1) {
-            mineIdx = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
-                    Constants.getShipType(ship.shipTypeId).size, _mines);
-            if (mineIdx == -1) {
-                break;
-            }
+        var mineIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+            Constants.getShipType(ship.shipTypeId).size, _mines);
+        if (mineIdx != -1) {
             var mine :Mine = Mine(_mines[mineIdx]);
-            if (mine.ownerId == ship.shipId) {
-                break;
+            if (mine.ownerId != ship.shipId) {
+                AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
+                removeMine(mineIdx);
             }
-            AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
-            removeMine(mineIdx);
         }
     }
 

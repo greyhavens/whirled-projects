@@ -187,7 +187,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return _power > DEAD && AppContext.game.gameState != Constants.STATE_POST_ROUND;
+        return state != STATE_DEAD;
     }
 
     /**
