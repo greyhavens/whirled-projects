@@ -64,7 +64,6 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-        var panel :GamePanel = this;
         _revive = new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function () :void {
             _revive.x = 100;
             _revive.y = 200;
@@ -275,7 +274,6 @@ public class GamePanel extends Sprite
     {
         _seeking = false;
         newGhost();
-        updateState();
     }
 
     protected function updateState () :void
