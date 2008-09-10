@@ -155,6 +155,8 @@ public class FightPanel extends FrameSprite
     {
         super.handleRemoved();
         _battleLoop.stop();
+
+        _player.shutdown();
     }
 
     override protected function handleFrame (... ignored) :void
