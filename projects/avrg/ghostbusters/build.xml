@@ -2,7 +2,7 @@
 <project name="ghostbusters" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="Client"/>
+  <property name="app.name" value="GH"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="ghostbusters"/>
 
