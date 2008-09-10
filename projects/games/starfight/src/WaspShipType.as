@@ -67,7 +67,7 @@ public class WaspShipType extends ShipType
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        AppContext.msgs.sendMessage(TorpedoShotMessage.create(ship, secondaryShotSpeed, size));
+        AppContext.msgs.sendMessage(TorpedoShotMessage.create(ship, secondaryShotSpeed));
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
         return true;

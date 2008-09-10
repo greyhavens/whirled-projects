@@ -54,7 +54,7 @@ public class ShipType extends EventDispatcher
      */
     public function sendPrimaryShotMessage (ship :Ship) :void
     {
-        AppContext.msgs.sendMessage(DefaultShotMessage.create(ship, primaryShotSpeed, size));
+        AppContext.msgs.sendMessage(DefaultShotMessage.create(ship, primaryShotSpeed));
         dispatchEvent(new ShotMessageSentEvent(PRIMARY_SHOT_SENT, ship));
     }
 

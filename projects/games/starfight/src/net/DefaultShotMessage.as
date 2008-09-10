@@ -12,14 +12,16 @@ public class DefaultShotMessage extends ShipMessage
     public var velocity :Number;
     public var rotationRads :Number;
 
-    public static function create (ship :Ship, velocity :Number, shipSize :Number,
-        msg :DefaultShotMessage = null) :DefaultShotMessage
+    public static function create (ship :Ship, velocity :Number, msg :DefaultShotMessage = null)
+        :DefaultShotMessage
     {
         var msg :DefaultShotMessage = (msg != null ? msg : new DefaultShotMessage());
 
         var rads :Number = ship.rotation * Constants.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
+
+        var shipSize :Number = ship.shipType.size;
 
         msg.shipId = ship.shipId;
         msg.shipTypeId = ship.shipTypeId;
