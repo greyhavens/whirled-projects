@@ -1,0 +1,14 @@
+<!-- build configuration -->
+<project default="build" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Babel"/>
+  <property name="app.type" value="pet"/>
+  <property name="app.enable-server-agent" value="false"/>
+
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
