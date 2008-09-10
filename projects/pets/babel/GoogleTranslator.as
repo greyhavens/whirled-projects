@@ -17,7 +17,7 @@ public class GoogleTranslator extends Translator
         var query :URLVariables = new URLVariables();
         query.v = "1.0";
         query.q = text;
-        query.langpair = "|en";
+        query.langpair = "|" + toLang;
 
         request.url = "http://ajax.googleapis.com/ajax/services/language/translate";
         request.data = query;
@@ -26,9 +26,17 @@ public class GoogleTranslator extends Translator
             var json :Object = JSON.decode(loader.data);
 
             trace(loader.data);
-            dispatchEvent(new TranslationEvent(TRANSLATE, text,
-                json.responseData.translatedText,
-                json.responseData.detectedSourceLanguage));
+            if (json.responseStatus != 200) {
+                return;
+            }
+
+            var translatedText :String = json.responseData.translatedText;
+            var sourceLang :String = json.responseData.detectedSourceLanguage;
+
+            if (sourceLang != toLang && text.toLowerCase() != translatedText.toLowerCase()) {
+                dispatchEvent(new TranslationEvent(TRANSLATE, text,
+                    translatedText, sourceLang, toLang));
+            }
         });
 
         loader.load(request);

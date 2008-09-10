@@ -26,15 +26,25 @@ public class Babel extends Sprite
 
     protected function onTranslate (event :TranslationEvent) :void
     {
-        if (event.sourceLang != "en" &&
-            event.originalText.toLowerCase() != event.translatedText.toLowerCase()) {
-            _ctrl.sendChat(event.translatedText + " (" + LANGUAGES[event.sourceLang] + ")");
-        }
+        _ctrl.sendChat(event.translatedText + " (" + LANGUAGES[event.sourceLang] + ")");
     }
 
     protected function onChat (event :ControlEvent) :void
     {
-        if (_ctrl.getEntityProperty(EntityControl.PROP_TYPE, event.name) != EntityControl.TYPE_PET) {
+        // Say: "<petname>, lang de" to change languages
+        var m :Array = event.value.match(
+            new RegExp(_ctrl.getEntityProperty(EntityControl.PROP_NAME) + ", lang (.*)", "i"));
+
+        if (m != null && m.length > 1) {
+            if (m[1] in LANGUAGES) {
+                _svc.toLang = m[1];
+                _ctrl.sendChat("Ok, I'll translate into " + LANGUAGES[_svc.toLang]);
+            } else {
+                _ctrl.sendChat("I don't know the language code: " + m[1]);
+            }
+
+        } else if (_ctrl.getEntityProperty(EntityControl.PROP_TYPE, event.name) !=
+            EntityControl.TYPE_PET) {
             trace("Translating: " + event.value);
             _svc.translate(String(event.value));
         }
