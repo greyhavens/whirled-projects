@@ -13,6 +13,7 @@ import flash.display.MovieClip;
 import flash.text.TextField;
 
 import com.threerings.flash.DisplayUtil;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -33,10 +34,16 @@ public class GhostInfoView
 
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-        Game.control.room.props.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED, propertyChanged);
+
+        Game.control.player.addEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
 
         updateGhost();
+    }
+
+    public function get ghostBox () :MovieClip
+    {
+        return _box;
     }
 
     protected function propertyChanged (evt :PropertyChangedEvent) :void
@@ -46,11 +53,16 @@ public class GhostInfoView
         }
     }
 
+    protected function enteredRoom (evt :AVRGamePlayerEvent) :void
+    {
+        updateGhost();
+    }
+
     protected function updateGhost () :void
     {
         var chosen :String = GhostModel.getId();
 
-        if (chosen != null && Game.state != Codes.STATE_SEEKING) {
+        if (chosen != null) {
             _name.htmlText = GhostModel.getName();
             _name.text = GhostModel.getName();
             _level.text = "Level: " + GhostModel.getLevel();
@@ -75,7 +87,7 @@ public class GhostInfoView
         return o;
     }
 
-    protected var _box :DisplayObjectContainer;
+    protected var _box :MovieClip;
     protected var _name :TextField;
     protected var _level :TextField;
 
