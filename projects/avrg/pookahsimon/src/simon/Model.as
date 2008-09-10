@@ -63,6 +63,8 @@ public class Model extends EventDispatcher
             this.dispatchEvent(new SimonEvent(SimonEvent.GAME_STATE_CHANGED));
         } else if (_curState.curPlayerOid != lastState.curPlayerOid || _curState.pattern.length != lastState.pattern.length) {
             this.dispatchEvent(new SimonEvent(SimonEvent.NEXT_PLAYER));
+        } else if (!State.arraysEqual(_curState.players, lastState.players) || !State.arraysEqual(_curState.playerStates, lastState.playerStates)) {
+            this.dispatchEvent(new SimonEvent(SimonEvent.PLAYERS_CHANGED));
         }
     }
 

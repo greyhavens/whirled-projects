@@ -56,8 +56,10 @@ public class CloudViewController extends SceneObject
 
         // other events
         SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText, false, 0, true);
+        SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
+        SimonMain.model.addEventListener(SimonEvent.PLAYERS_CHANGED, updateNamesAndScores, false, 0, true);
 
         SimonMain.control.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
@@ -72,8 +74,10 @@ public class CloudViewController extends SceneObject
     override protected function removedFromDB () :void
     {
         SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText);
+        SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, updateNamesAndScores);
         SimonMain.model.removeEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores);
         SimonMain.model.removeEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores);
+        SimonMain.model.removeEventListener(SimonEvent.PLAYERS_CHANGED, updateNamesAndScores);
 
         SimonMain.control.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
@@ -144,19 +148,16 @@ public class CloudViewController extends SceneObject
 
     protected function updateNamesAndScores (...ignored) :void
     {
-        var currentPlayers :Array = SimonMain.model.curState.players;   // players currently playing
-        var allPlayers :Array = SimonMain.model.getPlayerOids();        // all the players, playing or not
+        var state :State = SimonMain.model.curState;
 
-        // remove current players from all players
-        for each (var playerId :int in currentPlayers) {
-            ArrayUtil.removeAll(allPlayers, playerId);
-        }
+        // start with players who are currently playing
+        var playerList :Array = state.playersInState(State.PLAYER_READY);
 
-        // splice the two lists together
-        var playerList :Array = currentPlayers.slice();
-        //playerList.splice(-1, 0, allPlayers); // why doesn't this work?
-        for each (playerId in allPlayers) {
-            playerList.push(playerId);
+        // add in all other players
+        for each (var playerId :int in state.players) {
+            if (playerList.indexOf(playerId) < 0) {
+                playerList.push(playerId);
+            }
         }
 
         // handle scroll buttons
@@ -180,8 +181,8 @@ public class CloudViewController extends SceneObject
             var playerScoreObj :Score = SimonMain.model.curScores.getScore(playerId);
             var playerScore :int = (null == playerScoreObj ? 0 : playerScoreObj.score);
 
-            var playerIsIn :Boolean = (i < currentPlayers.length);
-            var playerIsActive :Boolean = (playerIsIn && SimonMain.model.curState.curPlayerOid == playerId);
+            var playerIsIn :Boolean = state.getPlayerState(playerId) == State.PLAYER_READY;
+            var playerIsActive :Boolean = (playerIsIn && state.curPlayerOid == playerId);
 
             var colorString :String;
             var boldText :Boolean;

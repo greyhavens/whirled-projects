@@ -63,7 +63,7 @@ public class State
             arraysEqual(pattern, rhs.pattern));
     }
 
-    protected static function arraysEqual (a :Array, b :Array) :Boolean
+    public static function arraysEqual (a :Array, b :Array) :Boolean
     {
         if (a.length != b.length) {
             return false;

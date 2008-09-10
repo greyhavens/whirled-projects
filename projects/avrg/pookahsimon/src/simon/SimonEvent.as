@@ -9,6 +9,7 @@ public class SimonEvent extends Event
     public static const NEW_SCORES :String = "newScores";
     public static const NEXT_RAINBOW_SELECTION :String = "nextRainbowSelection";
     public static const PLAYER_TIMEOUT :String = "playerTimeout";
+    public static const PLAYERS_CHANGED :String = "playersChanged";
 
     public var data :Object;
 

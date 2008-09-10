@@ -21,7 +21,7 @@ public class Constants
     public static const NUM_SCOREBOARD_NAMES :int = 5;
     public static const MIN_MP_PLAYERS_TO_START :int = 2;
     public static const AVATAR_DANCE_TIME :Number = 4;
-    public static const PLAYER_TIMEOUT_S :int = 7;
+    public static const PLAYER_TIMEOUT_S :int = 15;
     public static const MAX_PLAYER_TIMEOUTS :int = 2;
     public static const NUM_NOTES :int = 7;
     public static const MIN_NOTES_FOR_PAYOUT :int = 4;
