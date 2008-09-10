@@ -80,58 +80,69 @@ public class FightPanel extends FrameSprite
         }
         var handler :ClipHandler;
         handler = new ClipHandler(ByteArray(new clipClass()), function () :void {
-            _gameContext = new MicrogameContext();
-            _gameContext.ghostMovie = handler.clip;
+            var gameContext :MicrogameContext = new MicrogameContext();
+            gameContext.ghostMovie = handler.clip;
+            _player = new MicrogamePlayer(gameContext);
         });
     }
 
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return (_minigame && _minigame.hitTestPoint(x, y, shapeFlag)) ||
+        return (_player && _player.hitTestPoint(x, y, shapeFlag)) ||
             _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
     public function toggleGame () :void
     {
-        if (_minigame == null) {
-            startGame();
+        if (_player == null) {
+            // this is either a miracle of timing, or an irrecoverable error condition
+            Game.log.warning("No minigame container in toggleGame()");
+            return;
+        }
+
+        if (_player.root == null) {
+            startMinigame();
 
         } else {
             endMinigame();
         }
     }
 
-    protected function startGame () :void
+    protected function startMinigame () :void
     {
-        if (_gameContext == null) {
-            // should not happen
-            Game.log.warning("Trying to start a minigame, but _gameContext is null");
-            return;
-        }
-        _minigame = new MicrogamePlayer(_gameContext);
-        Game.panel.frameContent(_minigame);
+        Game.panel.frameContent(_player);
 
         var selectedWeapon :int = Game.panel.hud.getWeaponType();
 
         if (selectedWeapon == HUD.LOOT_LANTERN) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
+            _player.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
 
         } else if (selectedWeapon == HUD.LOOT_BLASTER) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
+            _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
 
         } else if (selectedWeapon == HUD.LOOT_OUIJA) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
+            _player.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
 
         } else if (selectedWeapon == HUD.LOOT_POTIONS) {
-            _minigame.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
+            _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
 
         } else {
             Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
             return;
         }
 
-        _minigame.beginNextGame();
+        _player.beginNextGame();
+    }
+
+    protected function endMinigame () :void
+    {
+        if (_player.root != null) {
+            if (_player.currentGame != null) {
+                _player.cancelCurrentGame();
+            }
+            Game.panel.unframeContent();
+        }
     }
 
     override protected function handleAdded (... ignored) :void
@@ -153,15 +164,18 @@ public class FightPanel extends FrameSprite
 
         updateSpotlights();
 
-        if (_minigame != null) {
-            if (_minigame.currentGame == null) {
-                _minigame.beginNextGame();
+        // if we've got the minigame player up, do some extra checks
+        if (_player != null && _player.root != null) {
+            if (_player.currentGame == null) {
+                // if we've no current game, start a new one
+                _player.beginNextGame();
 
-            } else if (_minigame.currentGame.isDone) {
+            } else if (_player.currentGame.isDone) {
+                // else if we finished a game, announce it to the world & start the next one
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
-                                      _minigame.currentGame.gameResult);
-                if (_minigame != null) {
-                    _minigame.beginNextGame();
+                                      _player.currentGame.gameResult);
+                if (_player != null) {
+                    _player.beginNextGame();
                 }
             }
         }
@@ -257,14 +271,6 @@ public class FightPanel extends FrameSprite
         _ghost.damaged();
     }
 
-    protected function endMinigame () :void
-    {
-        if (_minigame != null) {
-            Game.panel.unframeContent();
-            _minigame = null;
-        }
-    }
-
     protected var _ghost :Ghost;
 
     protected var _dimness :Dimness;
@@ -273,7 +279,7 @@ public class FightPanel extends FrameSprite
 
     protected var _spotlights :Dictionary = new Dictionary();
 
-    protected var _minigame: MicrogamePlayer;
+    protected var _player: MicrogamePlayer;
 
     protected var _gameContext :MicrogameContext;
 }
