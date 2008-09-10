@@ -22,7 +22,6 @@ public class GameController
         _gameCtrl = gameCtrl;
 
         _gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-        _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
 
         AppContext.msgs.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -31,7 +30,6 @@ public class GameController
     public function shutdown () :void
     {
         _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-        _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
 
         AppContext.msgs.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);

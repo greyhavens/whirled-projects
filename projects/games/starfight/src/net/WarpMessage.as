@@ -4,7 +4,7 @@ import flash.utils.ByteArray;
 
 public class WarpMessage extends ShipMessage
 {
-    public static const NAME :String = "Warp";
+    public static const NAME :String = "warp";
 
     public var boardX :Number;
     public var boardY :Number;

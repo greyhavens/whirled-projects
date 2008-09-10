@@ -4,7 +4,7 @@ import flash.utils.ByteArray;
 
 public class DefaultShotMessage extends ShipMessage
 {
-    public static const NAME :String = "DefaultPrimary";
+    public static const NAME :String = "defaultShot";
 
     public var isSuper :Boolean;
     public var x :Number;
