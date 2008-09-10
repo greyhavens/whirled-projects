@@ -25,12 +25,12 @@ public class GameFrame extends Sprite
 {
     public function GameFrame (readyCallback :Function)
     {
-        _frame = new ClipHandler(new Content.FRAME()), function () :void {
+        _frame = new ClipHandler(new Content.FRAME(), function () :void {
             maybeReady(readyCallback);
-        }
-        _inventory = new ClipHandler(new Content.INVENTORY()), function () :void {
+        });
+        _inventory = new ClipHandler(new Content.INVENTORY(), function () :void {
             maybeReady(readyCallback);
-        }
+        });
     }
 
     public function frameContent (content :DisplayObject) :void
