@@ -1,6 +1,7 @@
 package ghostbusters.client.fight {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.*;
 
@@ -19,17 +20,24 @@ public class MicrogamePlayer extends Sprite
     {
         _context = context;
 
-        if (null != MainLoop.instance) {
-            MainLoop.instance.shutdown();
-        }
-
         // clip games to the bounds of the player
         this.scrollRect = new Rectangle(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
 
-        new MainLoop(this);
+        if (null != MainLoop.instance) {
+            MainLoop.instance.reset(this);
+        } else {
+            new MainLoop(this);
+        }
+
         MainLoop.instance.run();
 
         Resources.instance.loadAll(resourcesLoaded);
+    }
+
+    public function shutdown () :void
+    {
+        MainLoop.instance.stop();
+        AudioManager.instance.stopAllSounds();
     }
 
     public function get weaponType () :WeaponType

@@ -25,6 +25,7 @@ public class Resources
     public function loadAll (completeCallback :Function, errorCallback :Function = null) :void
     {
         if (_loaded) {
+            completeCallback();
             return;
         }
 
