@@ -40,7 +40,8 @@ public class ClientBoardController extends BoardController
     protected function tryLoadBoard () :void
     {
         // don't load the board until the server has finished init'ing it
-        if (AppContext.game.gameState != Constants.STATE_INIT) {
+        var gameStateObj :Object = _gameCtrl.net.get(Constants.PROP_GAMESTATE);
+        if (gameStateObj != null && int(gameStateObj) != Constants.STATE_INIT) {
             var boardBytes :ByteArray = ByteArray(_gameCtrl.net.get(Constants.PROP_BOARD));
             if (boardBytes != null) {
                 boardBytes.position = 0;
