@@ -15,7 +15,7 @@ public class DefaultShotMessage extends ShipMessage
     public static function create (ship :Ship, velocity :Number, msg :DefaultShotMessage = null)
         :DefaultShotMessage
     {
-        var msg :DefaultShotMessage = (msg != null ? msg : new DefaultShotMessage());
+        msg = (msg != null ? msg : new DefaultShotMessage());
 
         var rads :Number = ship.rotation * Constants.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
