@@ -92,69 +92,9 @@ public class Ship extends EventDispatcher
         return _shipType;
     }
 
-    public function set firing (val :Boolean) :void
-    {
-        _firing = val;
-    }
-
     public function get powerups () :int
     {
-        return _serverData.powerups;
-    }
-
-    public function set secondaryFiring (val :Boolean) :void
-    {
-        _secondaryFiring = val;
-    }
-
-    public function turnLeft () :void
-    {
-        _turning = -1;
-    }
-
-    public function turnRight () :void
-    {
-        _turning = 1;
-    }
-
-    public function stopTurning () :void
-    {
-        _turning = 0;
-    }
-
-    public function moveForward () :void
-    {
-        _moving = 1;
-    }
-
-    public function moveBackward () :void
-    {
-        _moving = -1;
-    }
-
-    public function stopMoving () :void
-    {
-        _moving = 0;
-    }
-
-    public static function hasPowerup (powerups :int, powerupType :int) :Boolean
-    {
-        return Boolean(powerups & (1 << powerupType));
-    }
-
-    public function hasPowerup (type :int) :Boolean
-    {
-        return Ship.hasPowerup(_serverData.powerups, type);
-    }
-
-    public function addPowerup (type :int) :void
-    {
-        _serverData.powerups |= (1 << type);
-    }
-
-    public function removePowerup (type :int) :void
-    {
-        _serverData.powerups &= ~(1 << type);
+        return _powerups;
     }
 
     public function get isOwnShip () :Boolean
@@ -246,8 +186,6 @@ public class Ship extends EventDispatcher
      */
     public function restart () :void
     {
-        _serverData.health = 1.0; //full
-        _serverData.powerups = 0;
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
@@ -257,7 +195,6 @@ public class Ship extends EventDispatcher
         turnAccelRate = 0;
         accel = 0;
         rotation = 0;
-        _serverData.shieldHealth = 0.0;
         weaponBonusPower = 0.0;
         engineBonusPower = 0.0;
         primaryShotPower = 1.0;
@@ -265,6 +202,8 @@ public class Ship extends EventDispatcher
         _killsThisLife = 0;
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
+
+        _serverData = new ShipData();
 
         spawn();
     }
@@ -315,69 +254,8 @@ public class Ship extends EventDispatcher
             secondaryShotPower + time / (1000 * _shipType.secondaryPowerRecharge));
 
         if (state != STATE_WARP_BEGIN && state != STATE_WARP_END) {
-            if (_isOwnShip) {
-                // update move and turn acceleration if this ship is under our control
-                if (_turning < 0) {
-                    turnAccelRate = -_shipType.turnAccel;
-                } else if (_turning > 0) {
-                    turnAccelRate = _shipType.turnAccel;
-                } else {
-                    turnAccelRate = 0;
-                }
-
-                if (_moving < 0) {
-                    accel = _shipType.backwardAccel;
-                } else if (_moving > 0) {
-                    accel = _shipType.forwardAccel;
-                } else {
-                    accel = 0;
-                }
-
-                if (hasPowerup(Powerup.SPEED)) {
-                    accel *= SPEED_BOOST_FACTOR;
-                }
-            }
-
             handleTurn(time);
             handleMove(time);
-        }
-
-        if (_ticksToFire > 0) {
-            _ticksToFire -= time;
-        }
-        if (_firing && (_ticksToFire <= 0) &&
-                (primaryShotPower >= _shipType.getPrimaryShotCost(this))) {
-            handleFire();
-        }
-
-        if (_ticksToSecondary > 0) {
-            _ticksToSecondary -= time;
-        }
-        if (_secondaryFiring && (_ticksToSecondary <= 0) &&
-                (secondaryShotPower >= _shipType.secondaryShotCost)) {
-            handleSecondaryFire();
-        }
-    }
-
-    protected function handleFire () :void
-    {
-        _shipType.sendPrimaryShotMessage(this);
-        if (hasPowerup(Powerup.SPREAD)) {
-            weaponBonusPower -= 0.03;
-            if (weaponBonusPower <= 0.0) {
-                removePowerup(Powerup.SPREAD);
-            }
-        }
-
-        _ticksToFire = _shipType.primaryShotRecharge * 1000;
-        primaryShotPower -= _shipType.getPrimaryShotCost(this);
-    }
-
-    protected function handleSecondaryFire () :void
-    {
-        if (_shipType.sendSecondaryShotMessage(this)) {
-            _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
-            secondaryShotPower -= _shipType.secondaryShotCost;
         }
     }
 
@@ -464,15 +342,6 @@ public class Ship extends EventDispatcher
             boardY = Linear.easeNone(INTERPOLATION_TIME - _reportTime, boardY,
                 _reportShip.boardY - boardY, INTERPOLATION_TIME);
         }
-
-        if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
-            engineBonusPower -= time / 30000;
-            if (engineBonusPower <= 0) {
-                removePowerup(Powerup.SPEED);
-                accel = Math.min(accel, _shipType.forwardAccel);
-                accel = Math.max(accel, _shipType.backwardAccel);
-            }
-        }
     }
 
     public function setShipType (type :int) :void
@@ -481,30 +350,14 @@ public class Ship extends EventDispatcher
         _shipType = Constants.getShipType(shipTypeId);
     }
 
-    /**
-     * Give a powerup to the ship.
-     */
-    public function awardPowerup (powerup :Powerup) :void
+    public static function hasPowerup (powerups :int, powerupType :int) :Boolean
     {
-        _powerupsThisLife = true;
-        AppContext.scores.addToScore(shipId, POWERUP_PTS);
-        powerup.consume();
-        if (powerup.type == Powerup.HEALTH) {
-            _serverData.health = Math.min(1.0, _serverData.health + 0.5);
-            return;
-        }
-        _serverData.powerups |= (1 << powerup.type);
-        switch (powerup.type) {
-        case Powerup.SHIELDS:
-            _serverData.shieldHealth = 1.0;
-            break;
-        case Powerup.SPEED:
-            engineBonusPower = 1.0;
-            break;
-        case Powerup.SPREAD:
-            weaponBonusPower = 1.0;
-            break;
-        }
+        return Boolean(powerups & (1 << powerupType));
+    }
+
+    public function hasPowerup (type :int) :Boolean
+    {
+        return Ship.hasPowerup(_powerups, type);
     }
 
     public function canHit () :Boolean
@@ -563,6 +416,7 @@ public class Ship extends EventDispatcher
         rotation = bytes.readShort();
         setShipType(bytes.readInt());
         state = bytes.readByte();
+        _powerups = bytes.readByte();
     }
 
     /**
@@ -582,6 +436,7 @@ public class Ship extends EventDispatcher
         bytes.writeShort(rotation);
         bytes.writeInt(shipTypeId);
         bytes.writeByte(state);
+        bytes.writeByte(_powerups);
 
         return bytes;
     }
@@ -591,18 +446,13 @@ public class Ship extends EventDispatcher
         return _serverData;
     }
 
-    protected var _firing :Boolean;
-    protected var _ticksToFire :int = 0;
-    protected var _secondaryFiring :Boolean;
-    protected var _ticksToSecondary :int = 0;
-    protected var _turning :int; // < 0 = left, > 0 = right, 0 = not turning
-    protected var _moving :int;  // < 0 = backwards, > 0 = forwards, 0 = not moving
-
     protected var _isOwnShip :Boolean;
     protected var _shipType :ShipType;
 
     protected var _reportShip :Ship;
     protected var _reportTime :int;
+
+    protected var _powerups :int;
 
     protected var _serverData :ShipData = new ShipData();
 

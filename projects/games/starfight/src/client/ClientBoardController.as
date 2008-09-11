@@ -222,6 +222,17 @@ public class ClientBoardController extends BoardController
         }
     }
 
+    public function handlePowerupCollisions (ship :Ship, oldX :Number, oldY :Number) :void
+    {
+        // Check for collisions with powerups
+        var powIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+            Constants.getShipType(ship.shipTypeId).size, _powerups);
+        if (powIdx != -1) {
+            ClientShip(ship).awardPowerup(_powerups[powIdx]);
+            removePowerup(powIdx);
+        }
+    }
+
     protected var _boardLoadedCallback :Function;
     protected var _boardLoaded :Boolean;
 

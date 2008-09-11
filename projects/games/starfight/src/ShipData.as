@@ -40,25 +40,11 @@ public class ShipData
         }
     }
 
-    public function get powerups () :int
-    {
-        return _powerups;
-    }
-
-    public function set powerups (val :int) :void
-    {
-        if (val != _powerups) {
-            _powerups = val;
-            _dirty = true;
-        }
-    }
-
     public function toBytes (bytes :ByteArray = null) :ByteArray
     {
         bytes = (bytes != null ? bytes : new ByteArray());
         bytes.writeFloat(_health);
         bytes.writeFloat(_shieldHealth);
-        bytes.writeByte(_powerups);
         return bytes;
     }
 
@@ -66,7 +52,6 @@ public class ShipData
     {
         _health = bytes.readFloat();
         _shieldHealth = bytes.readFloat();
-        _powerups = bytes.readByte();
     }
 
     public static function fromBytes (bytes :ByteArray) :ShipData
@@ -79,7 +64,6 @@ public class ShipData
     protected var _dirty :Boolean;
     protected var _health :Number = 1;
     protected var _shieldHealth :Number = 0;
-    protected var _powerups :int;
 }
 
 }

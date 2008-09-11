@@ -6,7 +6,6 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
-import flash.media.Sound;
 import flash.text.AntiAliasType;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -14,7 +13,7 @@ import flash.text.TextFormat;
 
 public class ShipView extends Sprite
 {
-    public function ShipView (ship :Ship)
+    public function ShipView (ship :ClientShip)
     {
         _ship = ship;
 
@@ -90,21 +89,18 @@ public class ShipView extends Sprite
 
     public function keyPressed (event :KeyboardEvent) :void
     {
-        // Can't do squat while dead.
         if (!_ship.isAlive) {
             return;
         }
 
         if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
-            _ship.turnLeft();
+            _ship.turning = ClientShip.LEFT_TURN;
         } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
-            _ship.turnRight();
+            _ship.turning = ClientShip.RIGHT_TURN;
         } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
-            _ship.moveForward();
-
+            _ship.moving = ClientShip.FORWARD;
         } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
-            _ship.moveBackward();
-
+           _ship.moving = ClientShip.REVERSE;
         } else if (event.keyCode == KV_SPACE) {
             _ship.firing = true;
         } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
@@ -114,26 +110,23 @@ public class ShipView extends Sprite
 
     public function keyReleased (event :KeyboardEvent) :void
     {
-        // Can't do squat while dead.
         if (!_ship.isAlive) {
             return;
         }
 
         if (event.keyCode == KV_LEFT || event.keyCode == KV_A) {
-            _ship.stopTurning();
+            _ship.turning = ClientShip.NO_TURN;
         } else if (event.keyCode == KV_RIGHT || event.keyCode == KV_D) {
-            _ship.stopTurning();
+            _ship.turning = ClientShip.NO_TURN;
         } else if (event.keyCode == KV_UP || event.keyCode == KV_W) {
-            _ship.stopMoving();
+            _ship.moving = ClientShip.NO_MOVE;
         } else if (event.keyCode == KV_DOWN || event.keyCode == KV_S) {
-            _ship.stopMoving();
+            _ship.moving = ClientShip.NO_MOVE;
         } else if (event.keyCode == KV_SPACE) {
             _ship.firing = false;
         } else if (event.keyCode == KV_B || event.keyCode == KV_SHIFT) {
             _ship.secondaryFiring = false;
-        } /*else if (event.keyCode == KV_X) {
-            hit(shipId, 5.0);
-        }*/
+        }
     }
 
     public function updateDisplayState (boardCenterX :Number, boardCenterY: Number) :void
@@ -262,7 +255,7 @@ public class ShipView extends Sprite
 
     }
 
-    protected var _ship :Ship;
+    protected var _ship :ClientShip;
     protected var _curShipTypeId :int = -1;
 
     /** The sprite with our ship graphics in it. */

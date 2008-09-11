@@ -396,26 +396,6 @@ public class BoardController
         }
     }
 
-    public function shipInteraction (ship :Ship, oldX :Number, oldY :Number) :void
-    {
-        var powIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
-            Constants.getShipType(ship.shipTypeId).size, _powerups);
-        if (powIdx != -1) {
-            ship.awardPowerup(_powerups[powIdx]);
-            removePowerup(powIdx);
-        }
-
-        var mineIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
-            Constants.getShipType(ship.shipTypeId).size, _mines);
-        if (mineIdx != -1) {
-            var mine :Mine = Mine(_mines[mineIdx]);
-            if (mine.ownerId != ship.shipId) {
-                AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
-                removeMine(mineIdx);
-            }
-        }
-    }
-
     public function update (time :int) :void
     {
     }

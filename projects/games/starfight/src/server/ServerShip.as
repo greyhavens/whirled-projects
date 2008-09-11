@@ -20,9 +20,6 @@ public class ServerShip extends Ship
             // shields always have an armor of 0.5
             hitPower = damage * 2;
             _serverData.shieldHealth -= hitPower;
-            if (_serverData.shieldHealth <= DEAD) {
-                removePowerup(Powerup.SHIELDS);
-            }
             return;
         }
 
@@ -34,7 +31,7 @@ public class ServerShip extends Ship
             //checkAwards();
 
             // Stop moving and firing.
-            xVel = 0;
+            /*xVel = 0;
             yVel = 0;
             turnRate = 0;
             turnAccelRate = 0;
@@ -43,7 +40,7 @@ public class ServerShip extends Ship
             _secondaryFiring = false;
             stopTurning();
             stopMoving();
-            _deaths++;
+            _deaths++;*/
         }
     }
 }

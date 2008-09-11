@@ -93,6 +93,19 @@ public class ServerBoardController extends BoardController
         setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
         //powerupAdded(powerup, index);
     }
+
+    public function handleMineCollisions (ship :Ship, oldX :Number, oldY :Number) :void
+    {
+        var mineIdx :int = getObjectIdx(oldX, oldY, ship.boardX, ship.boardY,
+            Constants.getShipType(ship.shipTypeId).size, _mines);
+        if (mineIdx != -1) {
+            var mine :Mine = Mine(_mines[mineIdx]);
+            if (mine.ownerId != ship.shipId) {
+                AppContext.game.hitShip(ship, mine.bX, mine.bY, mine.ownerId, mine.dmg);
+                removeMine(mineIdx);
+            }
+        }
+    }
 }
 
 }

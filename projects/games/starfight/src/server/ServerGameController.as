@@ -93,21 +93,41 @@ public class ServerGameController extends GameController
         }
 
         if (_gameState != Constants.STATE_POST_ROUND) {
+            // save the ships' current locations
+            var ships :Array = _ships.values();
+            var oldShipLocs :Array = new Array(ships.length * 2);
+            var ii :int;
+            for each (var ship :Ship in ships) {
+                oldShipLocs[ii++] = ship.boardX;
+                oldShipLocs[ii++] = ship.boardY;
+            }
+
             super.update(time);
+
+            // collide the ships with stuff on the board
+            ii = 0;
+            for each (ship in ships) {
+                var oldX :Number = oldShipLocs[ii++];
+                var oldY :Number = oldShipLocs[ii++];
+                if (ship.isAlive) {
+                    ServerContext.board.handleMineCollisions(ship, oldX, oldY);
+                }
+            }
+
+            // broadcast ship server data to everyone else
+            // TODO - throttle these updates
+            for each (ship in ships) {
+                var shipData :ShipData = ship.serverData;
+                if (shipData.isDirty) {
+                    setImmediate(shipDataKey(ship.shipId), shipData.toBytes());
+                    shipData.clean();
+                }
+            }
 
             // synchronize the stateTime property every few seconds
             if (_lastStateTimeUpdate - _stateTimeMs >= 10 * 1000) {
                 setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
                 _lastStateTimeUpdate = _stateTimeMs;
-            }
-        }
-
-        // broadcast ship server data to everyone else
-        for each (var ship :Ship in _ships.values()) {
-            var shipData :ShipData = ship.serverData;
-            if (shipData.isDirty) {
-                setImmediate(shipDataKey(ship.shipId), shipData.toBytes());
-                shipData.clean();
             }
         }
     }

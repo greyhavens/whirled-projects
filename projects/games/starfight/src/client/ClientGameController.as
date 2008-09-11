@@ -170,11 +170,10 @@ public class ClientGameController extends GameController
         if (_ownShip != null) {
             ownX = _ownShip.boardX;
             ownY = _ownShip.boardY;
-        }
 
-        // collide ownShip with crap on the board
-        if (_ownShip != null && _ownShip.isAlive) {
-            AppContext.board.shipInteraction(_ownShip, ownOldX, ownOldY);
+            if (_ownShip.isAlive) {
+                ClientContext.board.handlePowerupCollisions(_ownShip, ownOldX, ownOldY);
+            }
         }
 
         // update ship drawstates
@@ -314,7 +313,7 @@ public class ClientGameController extends GameController
 
     override public function addShip (id :int, ship :Ship) :void
     {
-        var shipView :ShipView = new ShipView(ship);
+        var shipView :ShipView = new ShipView(ClientShip(ship));
         _shipViews.put(id, shipView);
         ClientContext.gameView.shipLayer.addChild(shipView);
 
