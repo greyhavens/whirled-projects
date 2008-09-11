@@ -17,6 +17,12 @@ public class ClientShip extends Ship
     public var turning :int;
     public var moving :int;
 
+    public function ClientShip (shipId :int, playerName :String, isOwnShip :Boolean = false)
+    {
+        super(shipId, playerName);
+        _isOwnShip = isOwnShip;
+    }
+
     /**
      * Positions the ship at a brand new spot after exploding and resets its dynamics.
      */
@@ -25,6 +31,7 @@ public class ClientShip extends Ship
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
+
         xVel = 0;
         yVel = 0;
         turnRate = 0;
@@ -226,9 +233,15 @@ public class ClientShip extends Ship
         _enemiesKilled[shipId] = true;
     }
 
+    override public function get isOwnShip () :Boolean
+    {
+        return _isOwnShip;
+    }
+
     protected var _shipView :ShipView;
     protected var _ticksToFire :int = 0;
     protected var _ticksToSecondary :int = 0;
+    protected var _isOwnShip :Boolean;
 
     /** Trophy stats. */
     protected var _killsThisLife :int;
@@ -237,6 +250,7 @@ public class ClientShip extends Ship
     protected var _powerupsThisLife :Boolean = false;
     protected var _kills :int;
     protected var _deaths :int;
+
 }
 
 }

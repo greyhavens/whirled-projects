@@ -45,9 +45,9 @@ public class ServerGameController extends GameController
         setNewGameState(Constants.STATE_PRE_ROUND);
     }
 
-    override public function createShip () :Ship
+    override public function createShip (shipId :int, playerName :String) :Ship
     {
-        return new ServerShip();
+        return new ServerShip(shipId, playerName);
     }
 
     override public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int,

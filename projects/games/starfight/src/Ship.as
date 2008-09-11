@@ -4,7 +4,6 @@ import com.threerings.util.ClassUtil;
 
 import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
-import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
@@ -48,28 +47,15 @@ public class Ship extends EventDispatcher
     public var primaryShotPower :Number = 1;
     public var secondaryShotPower :Number = 0;
 
-    public function Ship ()
+    public function Ship (shipId :int, playerName :String)
     {
         if (ClassUtil.getClass(this) == Ship) {
             throw new Error("Ship is abstract");
         }
-    }
 
-    // TODO - merge this back into the constructor
-    public function init (skipStartingPos :Boolean, shipId :int, name :String, isOwnShip :Boolean)
-        :void
-    {
         this.shipId = shipId;
-        playerName = name;
-        _isOwnShip = isOwnShip;
-
-        if (!skipStartingPos) {
-            var pt :Point = AppContext.board.getStartingPos();
-            boardX = pt.x;
-            boardY = pt.y;
-        }
-
-        setShipType(shipTypeId);
+        this.playerName = playerName;
+        setShipType(0);
     }
 
     public function get score () :int
@@ -95,11 +81,6 @@ public class Ship extends EventDispatcher
     public function get powerups () :int
     {
         return _powerups;
-    }
-
-    public function get isOwnShip () :Boolean
-    {
-        return _isOwnShip;
     }
 
     /**
@@ -406,7 +387,11 @@ public class Ship extends EventDispatcher
         return _serverData;
     }
 
-    protected var _isOwnShip :Boolean;
+    public function get isOwnShip () :Boolean
+    {
+        return false; // overridden by ClientShip
+    }
+
     protected var _shipType :ShipType;
 
     protected var _reportShip :Ship;

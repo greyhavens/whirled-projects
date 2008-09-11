@@ -4,6 +4,11 @@ import net.ShipExplodedMessage;
 
 public class ServerShip extends Ship
 {
+    public function ServerShip (shipId :int, playerName :String)
+    {
+        super(shipId, playerName);
+    }
+
     /**
      * Registers that the ship was hit.
      */

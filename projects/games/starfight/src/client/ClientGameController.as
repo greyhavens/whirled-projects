@@ -56,9 +56,9 @@ public class ClientGameController extends GameController
         super.run();
     }
 
-    override public function createShip () :Ship
+    override public function createShip (shipId :int, playerName :String) :Ship
     {
-        return new ClientShip();
+        return new ClientShip(shipId, playerName);
     }
 
     /**
@@ -69,8 +69,7 @@ public class ClientGameController extends GameController
         var myName :String = _gameCtrl.game.getOccupantName(ClientContext.myId);
 
         // Create our local ship and center the board on it.
-        _ownShip = ClientShip(createShip());
-        _ownShip.init(false, ClientContext.myId, myName, true);
+        _ownShip = new ClientShip(ClientContext.myId, myName, true);
         _ownShip.setShipType(typeIdx);
         _ownShip.restart();
 

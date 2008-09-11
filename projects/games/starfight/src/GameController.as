@@ -55,7 +55,7 @@ public class GameController
         log.info("Game started");
     }
 
-    public function createShip () :Ship
+    public function createShip (shipId :int, playerName :String) :Ship
     {
         throw new Error("abstract");
     }
@@ -74,9 +74,8 @@ public class GameController
             if (getShip(occupants[ii]) == null) {
                 var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
                 if (bytes != null) {
-                    var ship :Ship = createShip();
-                    ship.init(true, occupants[ii], _gameCtrl.game.getOccupantName(occupants[ii]),
-                        false);
+                    var ship :Ship = createShip(occupants[ii],
+                        _gameCtrl.game.getOccupantName(occupants[ii]));
                     bytes.position = 0;
                     ship.fromBytes(bytes);
                     addShip(occupants[ii], ship);
@@ -163,14 +162,12 @@ public class GameController
             var ship :Ship = getShip(shipId);
             bytes.position = 0;
             if (ship == null) {
-                ship = createShip();
-                ship.init(true, shipId, occName, false);
+                ship = createShip(shipId, occName);
                 ship.fromBytes(bytes);
                 addShip(shipId, ship);
 
             } else {
-                var sentShip :Ship = createShip();
-                sentShip.init(true, shipId, occName, false);
+                var sentShip :Ship = createShip(shipId, occName);
                 sentShip.fromBytes(bytes);
                 ship.updateForReport(sentShip);
             }
