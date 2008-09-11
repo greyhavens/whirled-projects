@@ -187,7 +187,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return state != STATE_DEAD;
+        return _power > DEAD && state != STATE_DEAD;
     }
 
     /**
@@ -361,6 +361,10 @@ public class Ship extends EventDispatcher
      */
     public function update (time :int) :void
     {
+        if (!isAlive) {
+            return;
+        }
+
         if (_reportShip != null) {
             if (_reportTime == 0) {
                 _reportShip = null;
@@ -590,9 +594,13 @@ public class Ship extends EventDispatcher
         yVel = report.yVel;
         turnRate = report.turnRate;
         turnAccelRate = report.turnAccelRate;
-        _power = report._power;
+        //_power = report._power;
         _powerups = report._powerups;
-        state = report.state;
+
+        if (state != report.state) {
+            state = report.state;
+            _power = report._power;
+        }
 
         // if our ship type has changed, copy all state over
         if (shipTypeId != report.shipTypeId) {

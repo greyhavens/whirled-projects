@@ -8,6 +8,7 @@ public class Powerup extends BoardObject
     public static const CONSUMED :String = "Consumed";
     public static const DESTROYED :String = "Destroyed";
 
+    // NB - don't increase the number of powerups beyond 8 without changing ShipData
     public static const SHIELDS :int = 0;
     public static const SPEED :int = 1;
     public static const SPREAD :int = 2;
@@ -42,14 +43,15 @@ public class Powerup extends BoardObject
     override public function writeTo (bytes :ByteArray) :ByteArray
     {
         super.writeTo(bytes);
-        bytes.writeInt(type);
+        bytes.writeByte(type);
         return bytes;
     }
 
     override public function readFrom (bytes :ByteArray) :void
     {
         super.readFrom(bytes);
-        type = bytes.readInt();
+        type = bytes.readByte();
     }
 }
+
 }

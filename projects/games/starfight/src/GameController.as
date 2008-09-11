@@ -2,6 +2,7 @@ package {
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 import com.whirled.game.GameControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -78,7 +79,7 @@ public class GameController
         }
 
         // Set up our ticker that will control movement.
-        _screenTimer = new Timer(1000/30, 0); // As fast as possible.
+        _screenTimer = new Timer(1000/30, 0);
         _screenTimer.addEventListener(TimerEvent.TIMER, tick);
         _screenTimer.start();
         _lastTickTime = getTimer();
@@ -90,7 +91,7 @@ public class GameController
      */
     protected function shipKey (id :int) :String
     {
-        return "ship:" + id;
+        return Constants.PROP_SHIP_PREFIX + id;
     }
 
     /**
@@ -98,15 +99,30 @@ public class GameController
      */
     protected function isShipKey (key :String) :Boolean
     {
-        return (key.substr(0, 5) == "ship:");
+        return StringUtil.startsWith(key, Constants.PROP_SHIP_PREFIX);
     }
 
     /**
      * Extracts and returns the ID from a ship's key.
      */
-    protected function shipId (key :String) :int
+    protected function shipKeyId (key :String) :int
     {
-        return int(key.substr(5));
+        return int(key.substr(Constants.PROP_SHIP_PREFIX.length));
+    }
+
+    protected function shipDataKey (id :int) :String
+    {
+        return Constants.PROP_SHIPDATA_PREFIX + id;
+    }
+
+    protected function isShipDataKey (key :String) :Boolean
+    {
+        return StringUtil.startsWith(key, Constants.PROP_SHIPDATA_PREFIX);
+    }
+
+    protected function shipDataKeyId (key :String) :int
+    {
+        return int(key.substr(Constants.PROP_SHIPDATA_PREFIX.length));
     }
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
@@ -114,7 +130,7 @@ public class GameController
         if (_running) {
             var name :String = event.name;
             if (isShipKey(name)) {
-                shipChanged(shipId(name), ByteArray(event.newValue));
+                shipChanged(shipKeyId(name), ByteArray(event.newValue));
             }
         }
     }
