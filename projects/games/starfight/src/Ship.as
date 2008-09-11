@@ -14,7 +14,6 @@ import net.ShipExplodedMessage;
  */
 public class Ship extends EventDispatcher
 {
-    public static const POWERUP_REMOVED :String = "PowerupRemoved";
     public static const COLLIDED :String = "Collided";
 
     public static const RESPAWN_DELAY :int = 3000;
@@ -126,6 +125,11 @@ public class Ship extends EventDispatcher
         _firing = val;
     }
 
+    public function get powerups () :int
+    {
+        return _powerups;
+    }
+
     public function set secondaryFiring (val :Boolean) :void
     {
         _secondaryFiring = val;
@@ -161,9 +165,14 @@ public class Ship extends EventDispatcher
         _moving = 0;
     }
 
+    public static function hasPowerup (powerups :int, powerupType :int) :Boolean
+    {
+        return Boolean(powerups & (1 << powerupType));
+    }
+
     public function hasPowerup (type :int) :Boolean
     {
-        return Boolean(_powerups & (1 << type));
+        return Ship.hasPowerup(_powerups, type);
     }
 
     public function addPowerup (type :int) :void
@@ -174,7 +183,6 @@ public class Ship extends EventDispatcher
     public function removePowerup (type :int) :void
     {
         _powerups &= ~(1 << type);
-        dispatchEvent(new Event(POWERUP_REMOVED));
     }
 
     public function get isOwnShip () :Boolean

@@ -18,8 +18,6 @@ public class ShipView extends Sprite
     {
         _ship = ship;
 
-        _ship.addEventListener(Ship.POWERUP_REMOVED, onPowerupRemoved);
-
         updateShipType();
 
         // Add our name as a textfield
@@ -88,14 +86,6 @@ public class ShipView extends Sprite
         }
 
         _curShipTypeId = _ship.shipTypeId;
-    }
-
-    protected function onPowerupRemoved (...ignored) :void
-    {
-        if (_ship.isOwnShip) {
-            var sound :Sound = Resources.getSound("powerup_empty.wav");
-            ClientContext.game.playSoundAt(sound, _ship.boardX, _ship.boardY);
-        }
     }
 
     public function keyPressed (event :KeyboardEvent) :void
@@ -205,10 +195,28 @@ public class ShipView extends Sprite
                 _shieldSound.play(_ship.hasPowerup(Powerup.SHIELDS));
                 _thrusterForwardSound.play(_ship.accel > 0);
                 _thrusterReverseSound.play(_ship.accel < 0);
+
+                if (lostPowerup(_ship.powerups, _oldPowerups)) {
+                    ClientContext.game.playSoundAt(Resources.getSound("powerup_empty.wav"),
+                        _ship.boardX, _ship.boardY);
+                }
+
+                _oldPowerups = _ship.powerups;
             }
         }
 
         _lastShipState = shipState;
+    }
+
+    protected static function lostPowerup (newPowerups :int, oldPowerups :int) :Boolean
+    {
+        for (var ii :int = 0; ii < Powerup.COUNT; ii++) {
+            if (Ship.hasPowerup(oldPowerups, ii) && !Ship.hasPowerup(newPowerups, ii)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function setAnimMode (mode :int, force :Boolean) :void
@@ -267,6 +275,8 @@ public class ShipView extends Sprite
     protected var _animMode :int;
 
     protected var _lastShipState :int = -1;
+
+    protected var _oldPowerups :int;
 
     /** Sounds currently being played - only play sounds for ownship. Note
      * that due to stupid looping behavior these need to be MovieClips to keep
