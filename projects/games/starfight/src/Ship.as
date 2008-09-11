@@ -1,13 +1,12 @@
 package {
 
-import flash.events.Event;
+import com.threerings.util.ClassUtil;
+
 import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.utils.ByteArray;
 import flash.utils.Timer;
-
-import net.ShipExplodedMessage;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
@@ -32,47 +31,37 @@ public class Ship extends EventDispatcher
 
     public var state :int;
 
-    public var accel :Number;
-    public var xVel :Number;
-    public var yVel :Number;
-    public var boardX :Number;
-    public var boardY :Number;
-    public var turnRate :Number;
-    public var turnAccelRate :Number;
-    public var rotation :Number;
+    public var accel :Number = 0;
+    public var xVel :Number = 0;
+    public var yVel :Number = 0;
+    public var boardX :Number = 0;
+    public var boardY :Number = 0;
+    public var turnRate :Number = 0;
+    public var turnAccelRate :Number = 0;
+    public var rotation :Number = 0;
 
     public var shipId :int;
     public var shipTypeId :int;
     public var playerName :String;
-    public var shieldHealth :Number;
-    public var engineBonusPower :Number;
-    public var weaponBonusPower :Number;
-    public var primaryShotPower :Number;
-    public var secondaryShotPower :Number;
+    public var engineBonusPower :Number = 0;
+    public var weaponBonusPower :Number = 0;
+    public var primaryShotPower :Number = 1;
+    public var secondaryShotPower :Number = 0;
 
     public function Ship ()
     {
+        if (ClassUtil.getClass(this) == Ship) {
+            throw new Error("Ship is abstract");
+        }
     }
 
+    // TODO - merge this back into the constructor
     public function init (skipStartingPos :Boolean, shipId :int, name :String, isOwnShip :Boolean)
         :void
     {
-        accel = 0.0;
-        turnRate = 0.0;
-        turnAccelRate = 0;
-        xVel = 0.0;
-        yVel = 0.0;
-        _health = 1.0; // full
-        _powerups = 0;
-        shieldHealth = 0.0;
-        engineBonusPower = 0.0;
-        weaponBonusPower = 0.0;
-        primaryShotPower = 1.0;
-        secondaryShotPower = 0.0;
         this.shipId = shipId;
         playerName = name;
         _isOwnShip = isOwnShip;
-        shipTypeId = 0;
 
         if (!skipStartingPos) {
             var pt :Point = AppContext.board.getStartingPos();
@@ -90,7 +79,12 @@ public class Ship extends EventDispatcher
 
     public function get health () :Number
     {
-        return _health;
+        return _serverData.health;
+    }
+
+    public function get shieldHealth () :Number
+    {
+        return _serverData.shieldHealth;
     }
 
     public function get shipType () :ShipType
@@ -105,7 +99,7 @@ public class Ship extends EventDispatcher
 
     public function get powerups () :int
     {
-        return _powerups;
+        return _serverData.powerups;
     }
 
     public function set secondaryFiring (val :Boolean) :void
@@ -150,17 +144,17 @@ public class Ship extends EventDispatcher
 
     public function hasPowerup (type :int) :Boolean
     {
-        return Ship.hasPowerup(_powerups, type);
+        return Ship.hasPowerup(_serverData.powerups, type);
     }
 
     public function addPowerup (type :int) :void
     {
-        _powerups |= (1 << type);
+        _serverData.powerups |= (1 << type);
     }
 
     public function removePowerup (type :int) :void
     {
-        _powerups &= ~(1 << type);
+        _serverData.powerups &= ~(1 << type);
     }
 
     public function get isOwnShip () :Boolean
@@ -173,7 +167,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return _health > DEAD && state != STATE_DEAD;
+        return _serverData.health > DEAD && state != STATE_DEAD;
     }
 
     /**
@@ -230,48 +224,6 @@ public class Ship extends EventDispatcher
     }
 
     /**
-     * Registers that the ship was hit.
-     */
-    public function hit (shooterId :int, damage :Number) :void
-    {
-        // Already dead, don't bother.
-        if (!isAlive) {
-            return;
-        }
-
-        var hitPower :Number = damage / _shipType.armor;
-
-        if (hasPowerup(Powerup.SHIELDS)) {
-            // shields always have an armor of 0.5
-            hitPower = damage * 2;
-            shieldHealth -= hitPower;
-            if (shieldHealth <= DEAD) {
-                removePowerup(Powerup.SHIELDS);
-            }
-            return;
-        }
-
-        _health -= hitPower;
-        if (_health <= DEAD) {
-            AppContext.msgs.sendMessage(ShipExplodedMessage.create(shipId, shooterId, boardX,
-                boardY, rotation));
-            checkAwards();
-
-            // Stop moving and firing.
-            xVel = 0;
-            yVel = 0;
-            turnRate = 0;
-            turnAccelRate = 0;
-            accel = 0;
-            _firing = false;
-            _secondaryFiring = false;
-            stopTurning();
-            stopMoving();
-            _deaths++;
-        }
-    }
-
-    /**
      * Called when we kill someone.
      */
     public function registerKill (shipId :int) :void
@@ -294,8 +246,8 @@ public class Ship extends EventDispatcher
      */
     public function restart () :void
     {
-        _health = 1.0; //full
-        _powerups = 0;
+        _serverData.health = 1.0; //full
+        _serverData.powerups = 0;
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
@@ -305,7 +257,7 @@ public class Ship extends EventDispatcher
         turnAccelRate = 0;
         accel = 0;
         rotation = 0;
-        shieldHealth = 0.0;
+        _serverData.shieldHealth = 0.0;
         weaponBonusPower = 0.0;
         engineBonusPower = 0.0;
         primaryShotPower = 1.0;
@@ -320,7 +272,6 @@ public class Ship extends EventDispatcher
     public function roundEnded () :void
     {
         state = STATE_DEFAULT;
-        checkAwards(true);
     }
 
     protected function spawn () :void
@@ -539,13 +490,13 @@ public class Ship extends EventDispatcher
         AppContext.scores.addToScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
-            _health = Math.min(1.0, _health + 0.5);
+            _serverData.health = Math.min(1.0, _serverData.health + 0.5);
             return;
         }
-        _powerups |= (1 << powerup.type);
+        _serverData.powerups |= (1 << powerup.type);
         switch (powerup.type) {
         case Powerup.SHIELDS:
-            shieldHealth = 1.0;
+            _serverData.shieldHealth = 1.0;
             break;
         case Powerup.SPEED:
             engineBonusPower = 1.0;
@@ -580,27 +531,27 @@ public class Ship extends EventDispatcher
         yVel = report.yVel;
         turnRate = report.turnRate;
         turnAccelRate = report.turnAccelRate;
-        //_power = report._power;
-        _powerups = report._powerups;
 
-        if (state != report.state) {
-            state = report.state;
-            _health = report._health;
-        }
-
-        // if our ship type has changed, copy all state over
-        if (shipTypeId != report.shipTypeId) {
+        // if the ship has been re-spawned, copy all state over
+        if (state == STATE_DEAD && report.state != STATE_DEAD) {
             boardX = report.boardX;
             boardY = report.boardY;
             rotation = report.rotation;
             setShipType(report.shipTypeId);
+
+            // And re-init our server data.
+            // NB - this might be a bit fragile if ShipData ever needs to be initialized
+            // with different default values...
+            _serverData = new ShipData();
         }
+
+        state = report.state;
     }
 
     /**
      * Unserialize our data from a byte array.
      */
-    public function readFrom (bytes :ByteArray) :void
+    public function fromBytes (bytes :ByteArray) :void
     {
         accel = bytes.readFloat();
         xVel = bytes.readFloat();
@@ -610,8 +561,6 @@ public class Ship extends EventDispatcher
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
         rotation = bytes.readShort();
-        _health = bytes.readFloat();
-        _powerups = bytes.readInt();
         setShipType(bytes.readInt());
         state = bytes.readByte();
     }
@@ -619,8 +568,10 @@ public class Ship extends EventDispatcher
     /**
      * Serialize our data to a byte array.
      */
-    public function writeTo (bytes :ByteArray) :ByteArray
+    public function toBytes (bytes :ByteArray = null) :ByteArray
     {
+        bytes = (bytes != null ? bytes : new ByteArray());
+
         bytes.writeFloat(accel);
         bytes.writeFloat(xVel);
         bytes.writeFloat(yVel);
@@ -629,56 +580,15 @@ public class Ship extends EventDispatcher
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
         bytes.writeShort(rotation);
-        bytes.writeFloat(_health);
-        bytes.writeInt(_powerups);
         bytes.writeInt(shipTypeId);
         bytes.writeByte(state);
 
         return bytes;
     }
 
-    protected function checkAwards (gameOver :Boolean = false) :void
+    public function get serverData () :ShipData
     {
-        if (!isOwnShip) {
-            return;
-        }
-
-        if (_killsThisLife >= 10 && !_powerupsThisLife) {
-            AppContext.game.awardTrophy("fly_by_wire");
-        }
-        if (_killsThisLife3 >= 10) {
-            AppContext.game.awardTrophy(_shipType.name + "_pilot");
-        }
-
-        // see if we've killed 7 other poeple currently playing
-        var bogey :int = 0;
-        for (var id :String in _enemiesKilled) {
-            if (AppContext.game.getShip(int(_enemiesKilled[id])) != null) {
-                bogey++;
-            }
-        }
-        if (bogey >= 7) {
-            AppContext.game.awardTrophy("bogey_hunter");
-        }
-
-        if (gameOver && AppContext.game.numShips() >= 8 && _kills / _deaths >= 4) {
-            AppContext.game.awardTrophy("space_ace");
-        }
-
-        if (AppContext.game.numShips() < 3) {
-            return;
-        }
-
-        var myScore :int = this.score;
-        if (myScore >= 500) {
-            AppContext.game.awardTrophy("score1");
-        }
-        if (myScore >= 1000) {
-            AppContext.game.awardTrophy("score2");
-        }
-        if (myScore >= 1500) {
-            AppContext.game.awardTrophy("score3");
-        }
+        return _serverData;
     }
 
     protected var _firing :Boolean;
@@ -688,22 +598,16 @@ public class Ship extends EventDispatcher
     protected var _turning :int; // < 0 = left, > 0 = right, 0 = not turning
     protected var _moving :int;  // < 0 = backwards, > 0 = forwards, 0 = not moving
 
-    /** Whether this is ourselves. */
     protected var _isOwnShip :Boolean;
-
-    /** A reference to the ship type class. */
     protected var _shipType :ShipType;
 
     protected var _reportShip :Ship;
     protected var _reportTime :int;
 
-    /** All the powerups we've got. */
-    protected var _powerups :int;
-
-    /** Our current health */
-    protected var _health :Number;
+    protected var _serverData :ShipData = new ShipData();
 
     /** Trophy stats. */
+    // TODO - move this to ClientShip
     protected var _killsThisLife :int;
     protected var _killsThisLife3 :int;
     protected var _enemiesKilled :Object = new Object();

@@ -78,7 +78,7 @@ public class GameController
                     ship.init(true, occupants[ii], _gameCtrl.game.getOccupantName(occupants[ii]),
                         false);
                     bytes.position = 0;
-                    ship.readFrom(bytes);
+                    ship.fromBytes(bytes);
                     addShip(occupants[ii], ship);
                 }
             }
@@ -165,13 +165,13 @@ public class GameController
             if (ship == null) {
                 ship = createShip();
                 ship.init(true, shipId, occName, false);
-                ship.readFrom(bytes);
+                ship.fromBytes(bytes);
                 addShip(shipId, ship);
 
             } else {
                 var sentShip :Ship = createShip();
                 sentShip.init(true, shipId, occName, false);
-                sentShip.readFrom(bytes);
+                sentShip.fromBytes(bytes);
                 ship.updateForReport(sentShip);
             }
         }

@@ -36,6 +36,7 @@ public class ServerGameController extends GameController
         var occupants :Array = _gameCtrl.game.getOccupantIds();
         for each (var occupantId :int in occupants) {
             setImmediate(shipKey(occupantId), null);
+            setImmediate(shipDataKey(occupantId), null);
         }
 
         super.run();
@@ -47,6 +48,15 @@ public class ServerGameController extends GameController
     override public function createShip () :Ship
     {
         return new ServerShip();
+    }
+
+    override public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int,
+        damage :Number) :void
+    {
+        super.hitShip(ship, x, y, shooterId, damage);
+
+        ServerShip(ship).hit(shooterId, damage);
+        AppContext.scores.addToScore(shooterId, Math.round(damage * 10));
     }
 
     override protected function roundStarted () :void
@@ -89,6 +99,15 @@ public class ServerGameController extends GameController
             if (_lastStateTimeUpdate - _stateTimeMs >= 10 * 1000) {
                 setImmediate(Constants.PROP_STATETIME, _stateTimeMs);
                 _lastStateTimeUpdate = _stateTimeMs;
+            }
+        }
+
+        // broadcast ship server data to everyone else
+        for each (var ship :Ship in _ships.values()) {
+            var shipData :ShipData = ship.serverData;
+            if (shipData.isDirty) {
+                setImmediate(shipDataKey(ship.shipId), shipData.toBytes());
+                shipData.clean();
             }
         }
     }

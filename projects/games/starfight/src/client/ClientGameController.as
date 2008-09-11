@@ -77,7 +77,10 @@ public class ClientGameController extends GameController
         addShip(ClientContext.myId, _ownShip);
 
         // Add ourselves to the ship array.
-        setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
+        setImmediate(shipKey(ClientContext.myId), _ownShip.toBytes());
+
+        // Also init our server data
+        setImmediate(shipDataKey(ClientContext.myId), _ownShip.serverData.toBytes());
 
         ClientContext.board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
     }
@@ -125,6 +128,12 @@ public class ClientGameController extends GameController
             gameStateChanged(int(_gameCtrl.net.get(Constants.PROP_GAMESTATE)));
         } else if (event.name == Constants.PROP_STATETIME) {
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
+        } else if (isShipDataKey(event.name)) {
+            var shipId :int = shipDataKeyId(event.name);
+            var ship :ClientShip = ClientShip(getShip(shipId));
+            if (ship != null) {
+                ship.serverData = ShipData.fromBytes(ByteArray(event.newValue));
+            }
         }
     }
 
@@ -134,12 +143,6 @@ public class ClientGameController extends GameController
         super.hitShip(ship, x, y, shooterId, damage);
 
         ClientContext.board.playExplosion(x, y, 0, true, 0);
-
-        // TODO - make the server authoritative about ship hits
-        if (ship == _ownShip) {
-            ship.hit(shooterId, damage);
-            AppContext.scores.addToScore(shooterId, Math.round(damage * 10));
-        }
 
         var sound :Sound = (ship.hasPowerup(Powerup.SHIELDS) ?
             Resources.getSound("shields_hit.wav") : Resources.getSound("ship_hit.wav"));
@@ -202,7 +205,7 @@ public class ClientGameController extends GameController
         _shipUpdateTime += time;
         if (_ownShip != null && _shipUpdateTime >= Constants.SHIP_UPDATE_INTERVAL_MS) {
             _shipUpdateTime = 0;
-            setImmediate(shipKey(ClientContext.myId), _ownShip.writeTo(new ByteArray()));
+            setImmediate(shipKey(ClientContext.myId), _ownShip.toBytes());
         }
 
         // update our round display

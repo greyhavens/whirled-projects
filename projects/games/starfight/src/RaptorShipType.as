@@ -65,7 +65,9 @@ public class RaptorShipType extends ShipType
         if (ship.shieldHealth > 0.0) {
             return false;
         }
-        ship.addPowerup(Powerup.SHIELDS);
+
+        // TODO - fix this
+        /*ship.addPowerup(Powerup.SHIELDS);
         ship.shieldHealth = 100.0;
         var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
         shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
@@ -73,7 +75,7 @@ public class RaptorShipType extends ShipType
                 ship.removePowerup(Powerup.SHIELDS);
                 ship.shieldHealth = 0.0;
         });
-        shieldTimer.start();
+        shieldTimer.start();*/
 
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
