@@ -163,49 +163,9 @@ public class Ship extends EventDispatcher
         }
     }
 
-    /**
-     * Called when we kill someone.
-     */
-    public function registerKill (shipId :int) :void
-    {
-        _kills++;
-        _killsThisLife++;
-        if (AppContext.game.numShips() >= 3) {
-            _killsThisLife3++;
-        }
-        _enemiesKilled[shipId] = true;
-    }
-
     public function kill () :void
     {
         state = STATE_DEAD;
-    }
-
-    /**
-     * Positions the ship at a brand new spot after exploding and resets its dynamics.
-     */
-    public function restart () :void
-    {
-        var pt :Point = AppContext.board.getStartingPos();
-        boardX = pt.x;
-        boardY = pt.y;
-        xVel = 0;
-        yVel = 0;
-        turnRate = 0;
-        turnAccelRate = 0;
-        accel = 0;
-        rotation = 0;
-        weaponBonusPower = 0.0;
-        engineBonusPower = 0.0;
-        primaryShotPower = 1.0;
-        secondaryShotPower = 0.0;
-        _killsThisLife = 0;
-        _killsThisLife3 = 0;
-        _powerupsThisLife = false;
-
-        _serverData = new ShipData();
-
-        spawn();
     }
 
     public function roundEnded () :void
@@ -455,15 +415,6 @@ public class Ship extends EventDispatcher
     protected var _powerups :int;
 
     protected var _serverData :ShipData = new ShipData();
-
-    /** Trophy stats. */
-    // TODO - move this to ClientShip
-    protected var _killsThisLife :int;
-    protected var _killsThisLife3 :int;
-    protected var _enemiesKilled :Object = new Object();
-    protected var _powerupsThisLife :Boolean = false;
-    protected var _kills :int;
-    protected var _deaths :int;
 
     /** Ship performance characteristics. */
     protected static const SHOT_SPD :Number = 1;

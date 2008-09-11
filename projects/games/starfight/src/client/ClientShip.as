@@ -1,5 +1,7 @@
 package client {
 
+import flash.geom.Point;
+
 public class ClientShip extends Ship
 {
     public static const LEFT_TURN :int = -1;
@@ -14,6 +16,33 @@ public class ClientShip extends Ship
     public var secondaryFiring :Boolean;
     public var turning :int;
     public var moving :int;
+
+    /**
+     * Positions the ship at a brand new spot after exploding and resets its dynamics.
+     */
+    public function restart () :void
+    {
+        var pt :Point = AppContext.board.getStartingPos();
+        boardX = pt.x;
+        boardY = pt.y;
+        xVel = 0;
+        yVel = 0;
+        turnRate = 0;
+        turnAccelRate = 0;
+        accel = 0;
+        rotation = 0;
+        weaponBonusPower = 0.0;
+        engineBonusPower = 0.0;
+        primaryShotPower = 1.0;
+        secondaryShotPower = 0.0;
+        _killsThisLife = 0;
+        _killsThisLife3 = 0;
+        _powerupsThisLife = false;
+
+        _serverData = new ShipData();
+
+        spawn();
+    }
 
     public function set serverData (shipData :ShipData) :void
     {
@@ -184,9 +213,30 @@ public class ClientShip extends Ship
         _powerups &= ~(1 << type);
     }
 
+    /**
+     * Called when we kill someone.
+     */
+    public function registerKill (shipId :int) :void
+    {
+        _kills++;
+        _killsThisLife++;
+        if (AppContext.game.numShips() >= 3) {
+            _killsThisLife3++;
+        }
+        _enemiesKilled[shipId] = true;
+    }
+
     protected var _shipView :ShipView;
     protected var _ticksToFire :int = 0;
     protected var _ticksToSecondary :int = 0;
+
+    /** Trophy stats. */
+    protected var _killsThisLife :int;
+    protected var _killsThisLife3 :int;
+    protected var _enemiesKilled :Object = new Object();
+    protected var _powerupsThisLife :Boolean = false;
+    protected var _kills :int;
+    protected var _deaths :int;
 }
 
 }

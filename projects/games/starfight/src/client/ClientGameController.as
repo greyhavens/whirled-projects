@@ -69,7 +69,7 @@ public class ClientGameController extends GameController
         var myName :String = _gameCtrl.game.getOccupantName(ClientContext.myId);
 
         // Create our local ship and center the board on it.
-        _ownShip = createShip();
+        _ownShip = ClientShip(createShip());
         _ownShip.init(false, ClientContext.myId, myName, true);
         _ownShip.setShipType(typeIdx);
         _ownShip.restart();
@@ -387,7 +387,7 @@ public class ClientGameController extends GameController
     }
 
     protected var _shotViews :Array = [];
-    protected var _ownShip :Ship;
+    protected var _ownShip :ClientShip;
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
     protected var _newShipTimer :Timer;
