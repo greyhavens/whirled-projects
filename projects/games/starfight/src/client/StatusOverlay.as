@@ -106,64 +106,64 @@ public class StatusOverlay extends Sprite
     {
         var mask :Shape;
 
-        if (_oldEnginePower != ship.enginePower) {
+        if (_oldEnginePower != ship.engineBonusPower) {
             mask = Shape(_speed.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.enginePower), POW_SIZE, POW_SIZE);
+            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.engineBonusPower), POW_SIZE, POW_SIZE);
             mask.graphics.endFill();
 
-            _oldEnginePower = ship.enginePower;
+            _oldEnginePower = ship.engineBonusPower;
         }
 
-        if (_oldWeaponPower != ship.weaponPower) {
+        if (_oldWeaponPower != ship.weaponBonusPower) {
             mask = Shape(_spread.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.weaponPower), POW_SIZE, POW_SIZE);
+            mask.graphics.drawRect(0, POW_SIZE * (1.0 - ship.weaponBonusPower), POW_SIZE, POW_SIZE);
             mask.graphics.endFill();
 
-            _oldWeaponPower = ship.weaponPower;
+            _oldWeaponPower = ship.weaponBonusPower;
         }
 
-        if (_oldShieldPower != ship.shieldPower) {
+        if (_oldShieldPower != ship.shieldHealth) {
             mask = Shape(_shields.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
             mask.graphics.drawRect(
-                0, POW_SIZE * (1.0 - Math.min(1.0, ship.shieldPower)), POW_SIZE, POW_SIZE);
+                0, POW_SIZE * (1.0 - Math.min(1.0, ship.shieldHealth)), POW_SIZE, POW_SIZE);
             mask.graphics.endFill();
 
-            _oldShieldPower = ship.shieldPower;
+            _oldShieldPower = ship.shieldHealth;
         }
 
-        if (_oldPrimaryPower != ship.primaryPower) {
+        if (_oldPrimaryPower != ship.primaryShotPower) {
             mask = Shape(_primary.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.primaryPower, POW_HEIGHT);
+            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.primaryShotPower, POW_HEIGHT);
             mask.graphics.endFill();
 
-            _oldPrimaryPower = ship.primaryPower;
+            _oldPrimaryPower = ship.primaryShotPower;
         }
 
-        if (_oldSecondaryPower != ship.secondaryPower) {
+        if (_oldSecondaryPower != ship.secondaryShotPower) {
             mask = Shape(_secondary.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.secondaryPower, POW_HEIGHT);
+            mask.graphics.drawRect(0, 0, POW_WIDTH * ship.secondaryShotPower, POW_HEIGHT);
             mask.graphics.endFill();
 
-            _oldSecondaryPower = ship.secondaryPower;
+            _oldSecondaryPower = ship.secondaryShotPower;
         }
 
-        if (_oldPower != ship.power) {
+        if (_oldPower != ship.health) {
             mask = Shape(_health.mask);
             mask.graphics.clear();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, HEALTH_WIDTH * ship.power, HEALTH_HEIGHT);
+            mask.graphics.drawRect(0, 0, HEALTH_WIDTH * ship.health, HEALTH_HEIGHT);
             mask.graphics.endFill();
-            _oldPower = ship.power;
+            _oldPower = ship.health;
         }
     }
 

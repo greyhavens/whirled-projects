@@ -62,16 +62,16 @@ public class RaptorShipType extends ShipType
 
     override public function sendSecondaryShotMessage (ship :Ship) :Boolean
     {
-        if (ship.shieldPower > 0.0) {
+        if (ship.shieldHealth > 0.0) {
             return false;
         }
         ship.addPowerup(Powerup.SHIELDS);
-        ship.shieldPower = 100.0;
+        ship.shieldHealth = 100.0;
         var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
         shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
                 shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
                 ship.removePowerup(Powerup.SHIELDS);
-                ship.shieldPower = 0.0;
+                ship.shieldHealth = 0.0;
         });
         shieldTimer.start();
 

@@ -44,6 +44,11 @@ public class ServerGameController extends GameController
         setNewGameState(Constants.STATE_PRE_ROUND);
     }
 
+    override public function createShip () :Ship
+    {
+        return new ServerShip();
+    }
+
     override protected function roundStarted () :void
     {
         super.roundStarted();

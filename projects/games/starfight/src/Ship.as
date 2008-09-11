@@ -32,65 +32,43 @@ public class Ship extends EventDispatcher
 
     public var state :int;
 
-    /** How fast the ship is accelerating. */
     public var accel :Number;
-
-    /** The ship's instantaneous velocity. */
     public var xVel :Number;
     public var yVel :Number;
-
-    /** The location of the ship on the board. */
     public var boardX :Number;
     public var boardY :Number;
-
-    /** How fast are we currently turning. */
     public var turnRate :Number;
     public var turnAccelRate :Number;
-
     public var rotation :Number;
 
-    /** our id. */
     public var shipId :int;
-
-    /** Type of ship we're using. */
     public var shipTypeId :int;
-
-    /** The player name for the ship. */
     public var playerName :String;
+    public var shieldHealth :Number;
+    public var engineBonusPower :Number;
+    public var weaponBonusPower :Number;
+    public var primaryShotPower :Number;
+    public var secondaryShotPower :Number;
 
-    /** Shield health. */
-    public var shieldPower :Number;
+    public function Ship ()
+    {
+    }
 
-    /** Engine bonus remaining. */
-    public var enginePower :Number;
-
-    /** Weapons bonus remaining. */
-    public var weaponPower :Number;
-
-    /** Primary shot power. */
-    public var primaryPower :Number;
-
-    /** Secondary shot power. */
-    public var secondaryPower :Number;
-
-    /**
-     * Constructs a new ship.  If skipStartingPos, don't bother finding an
-     *  empty space to start in.
-     */
-    public function Ship (skipStartingPos :Boolean, shipId :int, name :String, isOwnShip :Boolean)
+    public function init (skipStartingPos :Boolean, shipId :int, name :String, isOwnShip :Boolean)
+        :void
     {
         accel = 0.0;
         turnRate = 0.0;
         turnAccelRate = 0;
         xVel = 0.0;
         yVel = 0.0;
-        _power = 1.0; // full
+        _health = 1.0; // full
         _powerups = 0;
-        shieldPower = 0.0;
-        enginePower = 0.0;
-        weaponPower = 0.0;
-        primaryPower = 1.0;
-        secondaryPower = 0.0;
+        shieldHealth = 0.0;
+        engineBonusPower = 0.0;
+        weaponBonusPower = 0.0;
+        primaryShotPower = 1.0;
+        secondaryShotPower = 0.0;
         this.shipId = shipId;
         playerName = name;
         _isOwnShip = isOwnShip;
@@ -110,9 +88,9 @@ public class Ship extends EventDispatcher
         return AppContext.scores.getScore(shipId);
     }
 
-    public function get power () :Number
+    public function get health () :Number
     {
-        return _power;
+        return _health;
     }
 
     public function get shipType () :ShipType
@@ -195,7 +173,7 @@ public class Ship extends EventDispatcher
      */
     public function get isAlive () :Boolean
     {
-        return _power > DEAD && state != STATE_DEAD;
+        return _health > DEAD && state != STATE_DEAD;
     }
 
     /**
@@ -266,15 +244,15 @@ public class Ship extends EventDispatcher
         if (hasPowerup(Powerup.SHIELDS)) {
             // shields always have an armor of 0.5
             hitPower = damage * 2;
-            shieldPower -= hitPower;
-            if (shieldPower <= DEAD) {
+            shieldHealth -= hitPower;
+            if (shieldHealth <= DEAD) {
                 removePowerup(Powerup.SHIELDS);
             }
             return;
         }
 
-        _power -= hitPower;
-        if (_power <= DEAD) {
+        _health -= hitPower;
+        if (_health <= DEAD) {
             AppContext.msgs.sendMessage(ShipExplodedMessage.create(shipId, shooterId, boardX,
                 boardY, rotation));
             checkAwards();
@@ -316,7 +294,7 @@ public class Ship extends EventDispatcher
      */
     public function restart () :void
     {
-        _power = 1.0; //full
+        _health = 1.0; //full
         _powerups = 0;
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
@@ -327,11 +305,11 @@ public class Ship extends EventDispatcher
         turnAccelRate = 0;
         accel = 0;
         rotation = 0;
-        shieldPower = 0.0;
-        weaponPower = 0.0;
-        enginePower = 0.0;
-        primaryPower = 1.0;
-        secondaryPower = 0.0;
+        shieldHealth = 0.0;
+        weaponBonusPower = 0.0;
+        engineBonusPower = 0.0;
+        primaryShotPower = 1.0;
+        secondaryShotPower = 0.0;
         _killsThisLife = 0;
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
@@ -381,9 +359,9 @@ public class Ship extends EventDispatcher
                 _reportShip.update(time);
             }
         }
-        primaryPower = Math.min(1.0, primaryPower + time / (1000 * _shipType.primaryPowerRecharge));
-        secondaryPower = Math.min(1.0,
-            secondaryPower + time / (1000 * _shipType.secondaryPowerRecharge));
+        primaryShotPower = Math.min(1.0, primaryShotPower + time / (1000 * _shipType.primaryPowerRecharge));
+        secondaryShotPower = Math.min(1.0,
+            secondaryShotPower + time / (1000 * _shipType.secondaryPowerRecharge));
 
         if (state != STATE_WARP_BEGIN && state != STATE_WARP_END) {
             if (_isOwnShip) {
@@ -417,7 +395,7 @@ public class Ship extends EventDispatcher
             _ticksToFire -= time;
         }
         if (_firing && (_ticksToFire <= 0) &&
-                (primaryPower >= _shipType.getPrimaryShotCost(this))) {
+                (primaryShotPower >= _shipType.getPrimaryShotCost(this))) {
             handleFire();
         }
 
@@ -425,7 +403,7 @@ public class Ship extends EventDispatcher
             _ticksToSecondary -= time;
         }
         if (_secondaryFiring && (_ticksToSecondary <= 0) &&
-                (secondaryPower >= _shipType.secondaryShotCost)) {
+                (secondaryShotPower >= _shipType.secondaryShotCost)) {
             handleSecondaryFire();
         }
     }
@@ -434,21 +412,21 @@ public class Ship extends EventDispatcher
     {
         _shipType.sendPrimaryShotMessage(this);
         if (hasPowerup(Powerup.SPREAD)) {
-            weaponPower -= 0.03;
-            if (weaponPower <= 0.0) {
+            weaponBonusPower -= 0.03;
+            if (weaponBonusPower <= 0.0) {
                 removePowerup(Powerup.SPREAD);
             }
         }
 
         _ticksToFire = _shipType.primaryShotRecharge * 1000;
-        primaryPower -= _shipType.getPrimaryShotCost(this);
+        primaryShotPower -= _shipType.getPrimaryShotCost(this);
     }
 
     protected function handleSecondaryFire () :void
     {
         if (_shipType.sendSecondaryShotMessage(this)) {
             _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
-            secondaryPower -= _shipType.secondaryShotCost;
+            secondaryShotPower -= _shipType.secondaryShotCost;
         }
     }
 
@@ -537,8 +515,8 @@ public class Ship extends EventDispatcher
         }
 
         if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
-            enginePower -= time / 30000;
-            if (enginePower <= 0) {
+            engineBonusPower -= time / 30000;
+            if (engineBonusPower <= 0) {
                 removePowerup(Powerup.SPEED);
                 accel = Math.min(accel, _shipType.forwardAccel);
                 accel = Math.max(accel, _shipType.backwardAccel);
@@ -561,19 +539,19 @@ public class Ship extends EventDispatcher
         AppContext.scores.addToScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
-            _power = Math.min(1.0, _power + 0.5);
+            _health = Math.min(1.0, _health + 0.5);
             return;
         }
         _powerups |= (1 << powerup.type);
         switch (powerup.type) {
         case Powerup.SHIELDS:
-            shieldPower = 1.0;
+            shieldHealth = 1.0;
             break;
         case Powerup.SPEED:
-            enginePower = 1.0;
+            engineBonusPower = 1.0;
             break;
         case Powerup.SPREAD:
-            weaponPower = 1.0;
+            weaponBonusPower = 1.0;
             break;
         }
     }
@@ -607,7 +585,7 @@ public class Ship extends EventDispatcher
 
         if (state != report.state) {
             state = report.state;
-            _power = report._power;
+            _health = report._health;
         }
 
         // if our ship type has changed, copy all state over
@@ -632,7 +610,7 @@ public class Ship extends EventDispatcher
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
         rotation = bytes.readShort();
-        _power = bytes.readFloat();
+        _health = bytes.readFloat();
         _powerups = bytes.readInt();
         setShipType(bytes.readInt());
         state = bytes.readByte();
@@ -651,7 +629,7 @@ public class Ship extends EventDispatcher
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
         bytes.writeShort(rotation);
-        bytes.writeFloat(_power);
+        bytes.writeFloat(_health);
         bytes.writeInt(_powerups);
         bytes.writeInt(shipTypeId);
         bytes.writeByte(state);
@@ -723,7 +701,7 @@ public class Ship extends EventDispatcher
     protected var _powerups :int;
 
     /** Our current health */
-    protected var _power :Number;
+    protected var _health :Number;
 
     /** Trophy stats. */
     protected var _killsThisLife :int;
