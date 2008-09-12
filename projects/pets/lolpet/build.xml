@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project name="LOLpet" default="compile" basedir=".">
+
+  <!-- defines our project name and type -->
+  <property name="app.name" value="LOLpet"/>
+  <property name="app.type" value="pet"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
