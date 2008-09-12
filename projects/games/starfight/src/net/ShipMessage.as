@@ -17,14 +17,14 @@ public class ShipMessage
     {
         bytes = (bytes != null ? bytes : new ByteArray());
 
-        bytes.writeByte(shipId);
+        bytes.writeInt(shipId);
         bytes.writeByte(shipTypeId);
         return bytes;
     }
 
     public function fromBytes (bytes :ByteArray) :void
     {
-        shipId = bytes.readByte();
+        shipId = bytes.readInt();
         shipTypeId = bytes.readByte();
     }
 }

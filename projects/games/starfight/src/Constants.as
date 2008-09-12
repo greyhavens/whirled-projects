@@ -62,5 +62,6 @@ public class Constants
     public static const ROUND_TIME_MS :int = 10 * 60 * 1000; // 10 minutes
     public static const END_ROUND_TIME_S :int = 10;
     public static const MIN_PLAYERS_TO_START :int = 1;
+    public static const HEALTH_POWERUP_INCREMENT :Number = 0.5;
 }
 }

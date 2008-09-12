@@ -13,6 +13,8 @@ import flash.utils.ByteArray;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import net.AwardHealthMessage;
+import net.EnableShieldMessage;
 import net.ShipExplodedMessage;
 import net.ShipMessage;
 
@@ -332,7 +334,7 @@ public class GameController
     {
         var ship :Ship = getShip(msg.shipId);
         if (ship != null) {
-            ship.kill();
+            ship.killed();
             var shooter :Ship = getShip(msg.shooterId);
             if (shooter != null) {
                 AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");

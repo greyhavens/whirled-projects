@@ -151,7 +151,6 @@ public class ClientGameController extends GameController
     override public function hitObs (obj :BoardObject, x :Number, y :Number, shooterId :int,
         damage :Number) :void
     {
-        // TODO - make the server authoritative about obstacle hits
         super.hitObs(obj, x, y, shooterId, damage);
         AppContext.board.hitObs(obj, x, y, (_ownShip != null && shooterId == _ownShip.shipId),
             damage);

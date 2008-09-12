@@ -2,6 +2,9 @@ package client {
 
 import flash.geom.Point;
 
+import net.AwardHealthMessage;
+import net.EnableShieldMessage;
+
 public class ClientShip extends Ship
 {
     public static const LEFT_TURN :int = -1;
@@ -198,13 +201,15 @@ public class ClientShip extends Ship
         AppContext.scores.addToScore(shipId, POWERUP_PTS);
         powerup.consume();
         if (powerup.type == Powerup.HEALTH) {
-            _serverData.health = Math.min(1.0, _serverData.health + 0.5);
+            AppContext.msgs.sendMessage(
+                AwardHealthMessage.create(this, Constants.HEALTH_POWERUP_INCREMENT));
             return;
         }
+
         _powerups |= (1 << powerup.type);
         switch (powerup.type) {
         case Powerup.SHIELDS:
-            _serverData.shieldHealth = 1.0;
+            AppContext.msgs.sendMessage(EnableShieldMessage.create(this, 1));
             break;
         case Powerup.SPEED:
             engineBonusPower = 1.0;
@@ -236,6 +241,27 @@ public class ClientShip extends Ship
     override public function get isOwnShip () :Boolean
     {
         return _isOwnShip;
+    }
+
+    override public function killed () :void
+    {
+        super.killed();
+
+        if (_isOwnShip) {
+            checkAwards();
+
+            // Stop moving and firing.
+            xVel = 0;
+            yVel = 0;
+            turnRate = 0;
+            turnAccelRate = 0;
+            accel = 0;
+            firing = false;
+            secondaryFiring = false;
+            turning = NO_TURN;
+            moving = NO_MOVE;
+            _deaths++;
+        }
     }
 
     protected var _shipView :ShipView;

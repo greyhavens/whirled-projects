@@ -143,12 +143,14 @@ public class ShipView extends Sprite
             }
 
             // position on the screen
-            x = ((_ship.boardX - boardCenterX) * Constants.PIXELS_PER_TILE) + (Constants.GAME_WIDTH * 0.5);
-            y = ((_ship.boardY - boardCenterY) * Constants.PIXELS_PER_TILE) + (Constants.GAME_HEIGHT * 0.5);
+            x = ((_ship.boardX - boardCenterX) * Constants.PIXELS_PER_TILE) +
+                (Constants.GAME_WIDTH * 0.5);
+            y = ((_ship.boardY - boardCenterY) * Constants.PIXELS_PER_TILE) +
+                (Constants.GAME_HEIGHT * 0.5);
 
             _shipParent.rotation = _ship.rotation;
 
-            _shieldMovie.visible = _ship.hasPowerup(Powerup.SHIELDS);
+            _shieldMovie.visible = (_ship.shieldHealth > 0 || _ship.hasPowerup(Powerup.SHIELDS));
 
             // determine animation state
             var newAnimMode :int;
@@ -185,7 +187,7 @@ public class ShipView extends Sprite
 
             if (_ship.isOwnShip) {
                 _engineSound.play(true);
-                _shieldSound.play(_ship.hasPowerup(Powerup.SHIELDS));
+                _shieldSound.play(_shieldMovie.visible);
                 _thrusterForwardSound.play(_ship.accel > 0);
                 _thrusterReverseSound.play(_ship.accel < 0);
 

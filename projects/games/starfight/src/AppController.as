@@ -17,8 +17,10 @@ public class AppController
         AppContext.local = new LocalUtility(AppContext.gameCtrl);
         AppContext.msgs = new MessageManager(AppContext.gameCtrl);
 
+        AppContext.msgs.addMessageType(AwardHealthMessage);
         AppContext.msgs.addMessageType(CreateMineMessage);
         AppContext.msgs.addMessageType(DefaultShotMessage);
+        AppContext.msgs.addMessageType(EnableShieldMessage);
         AppContext.msgs.addMessageType(LaserShotMessage);
         AppContext.msgs.addMessageType(ShipExplodedMessage);
         AppContext.msgs.addMessageType(TorpedoShotMessage);

@@ -1,10 +1,8 @@
 package {
 
-import flash.events.TimerEvent;
-import flash.utils.Timer;
-
 import net.DefaultShotMessage;
 import net.ShipMessage;
+import net.EnableShieldMessage;
 
 public class RaptorShipType extends ShipType
 {
@@ -66,20 +64,12 @@ public class RaptorShipType extends ShipType
             return false;
         }
 
-        // TODO - fix this
-        /*ship.addPowerup(Powerup.SHIELDS);
-        ship.shieldHealth = 100.0;
-        var shieldTimer :Timer = new Timer(secondaryShotSpeed, 1);
-        shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
-                shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
-                ship.removePowerup(Powerup.SHIELDS);
-                ship.shieldHealth = 0.0;
-        });
-        shieldTimer.start();*/
+        AppContext.msgs.sendMessage(EnableShieldMessage.create(ship, 100, secondaryShotSpeed));
 
         dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
 
         return true;
     }
 }
+
 }

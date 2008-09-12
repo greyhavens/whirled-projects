@@ -144,7 +144,7 @@ public class Ship extends EventDispatcher
         }
     }
 
-    public function kill () :void
+    public function killed () :void
     {
         state = STATE_DEAD;
     }
@@ -355,7 +355,7 @@ public class Ship extends EventDispatcher
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
         rotation = bytes.readShort();
-        setShipType(bytes.readInt());
+        setShipType(bytes.readByte());
         state = bytes.readByte();
         _powerups = bytes.readByte();
     }
@@ -375,7 +375,7 @@ public class Ship extends EventDispatcher
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
         bytes.writeShort(rotation);
-        bytes.writeInt(shipTypeId);
+        bytes.writeByte(shipTypeId);
         bytes.writeByte(state);
         bytes.writeByte(_powerups);
 

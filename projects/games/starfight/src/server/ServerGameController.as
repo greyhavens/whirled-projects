@@ -3,10 +3,13 @@ package server {
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
+import net.AwardHealthMessage;
+import net.EnableShieldMessage;
 import net.ShipExplodedMessage;
 
 public class ServerGameController extends GameController
@@ -43,6 +46,26 @@ public class ServerGameController extends GameController
         ServerContext.board = AppContext.board as ServerBoardController;
 
         setNewGameState(Constants.STATE_PRE_ROUND);
+    }
+
+    override protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        super.messageReceived(event);
+
+        var ship :ServerShip;
+        if (event.value is EnableShieldMessage) {
+            var shieldMessage :EnableShieldMessage = EnableShieldMessage(event.value);
+            ship = ServerShip(getShip(shieldMessage.shipId));
+            if (ship != null) {
+                ship.enableShield(shieldMessage.shieldHealth, shieldMessage.timeoutMs);
+            }
+        } else if (event.value is AwardHealthMessage) {
+            var healthMessage :AwardHealthMessage = AwardHealthMessage(event.value);
+            ship = ServerShip(getShip(healthMessage.shipId));
+            if (ship != null) {
+                ship.awardHealth(healthMessage.healthIncrement);
+            }
+        }
     }
 
     override public function createShip (shipId :int, playerName :String) :Ship

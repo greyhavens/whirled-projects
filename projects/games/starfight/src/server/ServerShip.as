@@ -1,5 +1,8 @@
 package server {
 
+import flash.events.TimerEvent;
+import flash.utils.Timer;
+
 import net.ShipExplodedMessage;
 
 public class ServerShip extends Ship
@@ -30,23 +33,27 @@ public class ServerShip extends Ship
 
         _serverData.health -= hitPower;
         if (_serverData.health <= DEAD) {
-            AppContext.msgs.sendMessage(ShipExplodedMessage.create(shipId, shooterId, boardX,
-                boardY, rotation));
-            // TODO - move this to ClientShip
-            //checkAwards();
-
-            // Stop moving and firing.
-            /*xVel = 0;
-            yVel = 0;
-            turnRate = 0;
-            turnAccelRate = 0;
-            accel = 0;
-            _firing = false;
-            _secondaryFiring = false;
-            stopTurning();
-            stopMoving();
-            _deaths++;*/
+            AppContext.msgs.sendMessage(ShipExplodedMessage.create(this, shooterId));
         }
+    }
+
+    public function enableShield (shieldHealth :Number, timeoutMs :int) :void
+    {
+        _serverData.shieldHealth = shieldHealth;
+
+        if (timeoutMs > 0) {
+            var shieldTimer :Timer = new Timer(timeoutMs, 1);
+            shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
+                shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
+                _serverData.shieldHealth = 0;
+            });
+            shieldTimer.start();
+        }
+    }
+
+    public function awardHealth (healthIncrement :Number) :void
+    {
+        _serverData.health = Math.min(1, _serverData.health + healthIncrement);
     }
 }
 

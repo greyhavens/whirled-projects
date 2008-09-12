@@ -13,15 +13,14 @@ public class ShipExplodedMessage
     public var y :Number;
     public var rotation :Number;
 
-    public static function create (shipId :int, shooterId :int, x :Number, y :Number,
-        rotation :Number) :ShipExplodedMessage
+    public static function create (ship :Ship, shooterId :int) :ShipExplodedMessage
     {
         var msg :ShipExplodedMessage = new ShipExplodedMessage();
-        msg.shipId = shipId;
+        msg.shipId = ship.shipId;
         msg.shooterId = shooterId;
-        msg.x = x;
-        msg.y = y;
-        msg.rotation = rotation;
+        msg.x = ship.boardX;
+        msg.y = ship.boardY;
+        msg.rotation = ship.rotation;
         return msg;
     }
 
