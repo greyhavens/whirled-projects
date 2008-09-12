@@ -67,7 +67,7 @@ public class Ghost extends Sprite
         });
     }
 
-    public function getGhostBounds () :Rectangle
+    public function get bounds () :Rectangle
     {
         return _bounds;
     }

@@ -65,6 +65,7 @@ public class GamePanel extends Sprite
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
         _revive = new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function () :void {
+            Game.log.debug("revive bounds: " + _revive.getBounds(_revive));
             _revive.x = 100;
             _revive.y = 200;
 

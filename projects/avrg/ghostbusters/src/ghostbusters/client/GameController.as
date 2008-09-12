@@ -21,6 +21,7 @@ public class GameController extends Controller
     public static const PLAY :String = "Play";
     public static const TOGGLE_LANTERN :String = "ToggleLantern";
     public static const TOGGLE_LOOT :String = "ToggleLoot";
+    public static const CHOOSE_WEAPON :String = "ChooseWeapon";
     public static const END_GAME :String = "EndGame";
     public static const GHOST_ATTACKED :String = "GhostAttacked";
     public static const PLAYER_ATTACKED :String = "PlayerAttacked";
@@ -89,6 +90,18 @@ public class GameController extends Controller
 
        } else {
             Game.log.debug("Unexpected state in toggleLantern: " + state);
+        }
+    }
+
+    public function handleChooseWeapon (weapon :int) :void
+    {
+        // always update the HUD's lantern button
+        // TODO: this probably no longer makes much UI sense
+        panel.hud.chooseWeapon(weapon);
+
+        if (panel is FightPanel) {
+            // should always be true, but let's be robust
+            FightPanel(panel).weaponUpdated();
         }
     }
 

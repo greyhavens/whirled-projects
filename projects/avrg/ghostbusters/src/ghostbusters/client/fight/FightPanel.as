@@ -57,7 +57,7 @@ public class FightPanel extends FrameSprite
         this.addChild(_dimness);
 
         this.addChild(_ghost);
-        _ghost.x = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
+        _ghost.x = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
         _ghost.y = 100;
 
         // listen for notification messages from the server on the room control
@@ -93,6 +93,18 @@ public class FightPanel extends FrameSprite
             _ghost.hitTestPoint(x, y, shapeFlag);
     }
 
+    public function weaponUpdated () :void
+    {
+        if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
+            // it didn't really change
+            return;
+        }
+        if (_player.currentGame != null) {
+            _player.cancelCurrentGame();
+        }
+        startMinigame();
+    }
+
     public function toggleGame () :void
     {
         if (_player == null) {
@@ -113,22 +125,26 @@ public class FightPanel extends FrameSprite
     {
         Game.panel.frameContent(_player);
 
-        var selectedWeapon :int = Game.panel.hud.getWeaponType();
+        _selectedWeapon = Game.panel.hud.getWeaponType();
 
-        if (selectedWeapon == HUD.LOOT_LANTERN) {
+        switch(_selectedWeapon) {
+        case HUD.LOOT_LANTERN:
             _player.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
+            break;
 
-        } else if (selectedWeapon == HUD.LOOT_BLASTER) {
+        case HUD.LOOT_BLASTER:
             _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
+            break;
 
-        } else if (selectedWeapon == HUD.LOOT_OUIJA) {
+        case HUD.LOOT_OUIJA:
             _player.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
+            break;
 
-        } else if (selectedWeapon == HUD.LOOT_POTIONS) {
+        case HUD.LOOT_POTIONS:
             _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
-
-        } else {
-            Game.log.warning("Eek, unknown weapon: " + selectedWeapon);
+            break;
+        default:
+            Game.log.warning("Eek, unknown weapon: " + _selectedWeapon);
             return;
         }
 
@@ -282,6 +298,8 @@ public class FightPanel extends FrameSprite
     protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _player: MicrogamePlayer;
+
+    protected var _selectedWeapon :int;
 
     protected var _gameContext :MicrogameContext;
 }

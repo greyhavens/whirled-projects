@@ -15,16 +15,19 @@ import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.util.Command;
 import com.threerings.util.EmbeddedSwfLoader;
 
 import ghostbusters.client.ClipHandler;
 import ghostbusters.client.Content;
+import ghostbusters.client.GameController;
 import ghostbusters.client.Game;
 
 public class GameFrame extends Sprite
 {
     public function GameFrame (readyCallback :Function)
     {
+
         _frame = new ClipHandler(new Content.FRAME(), function () :void {
             maybeReady(readyCallback);
         });
@@ -53,25 +56,26 @@ public class GameFrame extends Sprite
 
     protected function maybeReady (callback :Function) :void
     {
-        if (_frame.clip != null && _inventory.clip != null) {
-            this.addChild(_frame);
-            this.addChild(_inventory);
-
-            _inventory.x = (_frame.width - _inventory.width) / 2;
-            _inventory.y = (_frame.height + 20);
-
-            safelyAdd(CHOOSE_LANTERN, pickLoot);
-            safelyAdd(CHOOSE_BLASTER, pickLoot);
-            safelyAdd(CHOOSE_OUIJA, pickLoot);
-            safelyAdd(CHOOSE_POTIONS, pickLoot);
-
-            callback(this);
+        if (_frame.clip == null || _inventory.clip == null) {
+            // we'll be called again
+            return;
         }
-    }
+        this.addChild(_frame);
+        this.addChild(_inventory);
 
-    protected function safelyAdd (name :String, callback :Function) :void
-    {
-        findSafely(name).addEventListener(MouseEvent.CLICK, callback);
+        _inventory.x = (_frame.width - _inventory.width) / 2;
+        _inventory.y = (_frame.height + 20);
+
+        Command.bind(findSafely(CHOOSE_LANTERN), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON, HUD.LOOT_LANTERN);
+        Command.bind(findSafely(CHOOSE_BLASTER), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON,  HUD.LOOT_BLASTER);
+        Command.bind(findSafely(CHOOSE_OUIJA), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON,  HUD.LOOT_OUIJA);
+        Command.bind(findSafely(CHOOSE_POTIONS), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON,  HUD.LOOT_POTIONS);
+
+        callback(this);
     }
 
     protected function findSafely (name :String) :DisplayObject
@@ -81,36 +85,6 @@ public class GameFrame extends Sprite
             throw new Error("Cannot find object: " + name);
         }
         return o;
-    }
-
-    protected function pickLoot (evt :MouseEvent) :void
-    {
-        var button :SimpleButton = evt.target as SimpleButton;
-        if (button == null) {
-            Game.log.debug("Clicky is not SimpleButton: " + evt.target);
-            return;
-        }
-
-        switch(button.name) {
-        case CHOOSE_LANTERN:
-            Game.panel.hud.chooseWeapon(HUD.LOOT_LANTERN);
-            break;
-
-        case CHOOSE_BLASTER:
-            Game.panel.hud.chooseWeapon(HUD.LOOT_BLASTER);
-            break;
-
-        case CHOOSE_OUIJA:
-            Game.panel.hud.chooseWeapon(HUD.LOOT_OUIJA);
-            break;
-
-        case CHOOSE_POTIONS:
-            Game.panel.hud.chooseWeapon(HUD.LOOT_POTIONS);
-            break;
-
-        default:
-            Game.log.debug("Eeek, unknown target: " + button.name);
-        }
     }
 
     protected var _frame :ClipHandler;
