@@ -25,6 +25,8 @@ public class TimerManager
     /**
      * Cancels all running timers, and disconnects the TimerManager from its parent, if it has one.
      * All child TimerManagers will be shutdown as well.
+     *
+     * It's an error to call any function on TimerManager after shutdown() has been called.
      */
     public function shutdown () :void
     {
@@ -40,6 +42,13 @@ public class TimerManager
         }
 
         cancelAllTimers();
+
+        // null out internal state so that future calls to this TimerManager will
+        // immediately NPE
+        _parent = null;
+        _children = null;
+        _timers = null;
+        _freeSlots = null;
     }
 
     /**
