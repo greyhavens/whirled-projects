@@ -3,6 +3,8 @@ package {
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
+import com.whirled.contrib.ManagedTimer;
+import com.whirled.contrib.TimerManager;
 import com.whirled.game.GameControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -15,9 +17,6 @@ import flash.utils.getTimer;
 import net.CreateMineMessage;
 import net.ShipExplodedMessage;
 import net.ShipShotMessage;
-
-import util.ManagedTimer;
-import util.TimerManager;
 
 public class GameController
 {

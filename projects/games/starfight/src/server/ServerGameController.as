@@ -1,5 +1,6 @@
 package server {
 
+import com.whirled.contrib.ManagedTimer;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
@@ -8,8 +9,6 @@ import com.whirled.net.MessageReceivedEvent;
 import net.AwardHealthMessage;
 import net.EnableShieldMessage;
 import net.ShipExplodedMessage;
-
-import util.ManagedTimer;
 
 public class ServerGameController extends GameController
 {

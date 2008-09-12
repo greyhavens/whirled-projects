@@ -1,10 +1,9 @@
 package {
 
 import com.threerings.util.ClassUtil;
+import com.whirled.contrib.TimerManager;
 
 import flash.utils.ByteArray;
-
-import util.TimerManager;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
