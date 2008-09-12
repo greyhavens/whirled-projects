@@ -12,7 +12,7 @@ public class Formulae
     // suckiness; the return value is normalized to be 1 at level 1
     public static function quadRamp (level :int) :Number
     {
-        return square((5 + level) / (5 + 1));
+        return square((QUAD_LEVEL_OFFSET + level) / (QUAD_LEVEL_OFFSET + 1));
     }
 
     // randomly stretch a value by a factor [1, f]
@@ -25,5 +25,7 @@ public class Formulae
     {
         return x * x;
     }
+
+    protected static const QUAD_LEVEL_OFFSET :int = 5;
 }
 }
