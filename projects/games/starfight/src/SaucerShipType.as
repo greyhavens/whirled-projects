@@ -1,7 +1,7 @@
 package {
     import net.CreateMineMessage;
     import net.LaserShotMessage;
-    import net.ShipMessage;
+    import net.ShipShotMessage;
 
 
 public class SaucerShipType extends ShipType
@@ -53,7 +53,7 @@ public class SaucerShipType extends ShipType
         dispatchEvent(new ShotMessageSentEvent(ShipType.PRIMARY_SHOT_SENT, ship));
     }
 
-    override public function doShot (message :ShipMessage) :void
+    override public function doShot (message :ShipShotMessage) :void
     {
         if (message is LaserShotMessage) {
             doPrimaryShot(message);
@@ -62,7 +62,7 @@ public class SaucerShipType extends ShipType
         }
     }
 
-    override protected function doPrimaryShot (message :ShipMessage) :void
+    override protected function doPrimaryShot (message :ShipShotMessage) :void
     {
         var ship :Ship = AppContext.game.getShip(message.shipId);
         if (ship == null) {
@@ -104,7 +104,7 @@ public class SaucerShipType extends ShipType
         return true;
     }
 
-    override protected function doSecondaryShot (message :ShipMessage) :void
+    override protected function doSecondaryShot (message :ShipShotMessage) :void
     {
         var msg :CreateMineMessage = CreateMineMessage(message);
         AppContext.board.addMine(new Mine(msg.shipId, msg.boardX, msg.boardY, msg.power));

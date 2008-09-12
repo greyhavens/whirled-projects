@@ -67,7 +67,7 @@ public class BoardController
         }
     }
 
-    public function elementChanged (event :ElementChangedEvent) :void
+    protected function elementChanged (event :ElementChangedEvent) :void
     {
         if ((event.name == Constants.PROP_POWERUPS) && (event.index >= 0) && _powerups != null) {
             if (event.newValue == null) {
@@ -158,7 +158,7 @@ public class BoardController
     /**
      * Adds a mine to the board.
      */
-    public function addMine (mine :Mine) :void
+    public function addMine (mine :Mine) :int
     {
         var freeIndex :int = -1;
         for (var index :int = 0; index < _mines.length; index++) {
@@ -172,15 +172,13 @@ public class BoardController
         // TODO: something more intelligent here (explode the oldest mine?)
         if (freeIndex < 0) {
             log.warning("No room for this mine! Discarding.");
-            return;
+            return -1;
         }
 
         _mines[freeIndex] = mine;
-        if (_gameCtrl.game.amInControl()) {
-            setAtImmediate(Constants.PROP_MINES, mine.writeTo(new ByteArray()), freeIndex);
-        }
-
         mineAdded(mine);
+
+        return freeIndex;
     }
 
     protected function mineAdded (mine :Mine) :void
@@ -193,7 +191,6 @@ public class BoardController
     public function removeMine (idx :int) :void
     {
         if (_mines != null) {
-            setAtImmediate(Constants.PROP_MINES, null, idx);
             mineRemoved(idx);
         }
     }
@@ -368,22 +365,21 @@ public class BoardController
 
     public function shipKilled (shipId :int) :void
     {
-        var indices :Array = new Array();
+        for each (var mineIndex :int in getShipMineIndices(shipId)) {
+            removeMine(mineIndex);
+        }
+    }
+
+    protected function getShipMineIndices (shipId :int) :Array
+    {
+        var indices :Array = [];
         for (var ii :int = 0; ii < _mines.length; ii++) {
             if (_mines[ii] != null && Mine(_mines[ii]).ownerId == shipId) {
-                var mine :Mine = _mines[ii];
-                _mines[ii] = null;
                 indices.push(ii);
-                mine.explode();
             }
         }
-        if (indices.length > 0 && _gameCtrl.game.amInControl()) {
-            _gameCtrl.doBatch(function () :void {
-                for each (var idx :int in indices) {
-                    setAtImmediate(Constants.PROP_MINES, null, idx);
-                }
-            });
-        }
+
+        return indices;
     }
 
     public function hitObs (obj :BoardObject, x :Number, y :Number, owner :Boolean,

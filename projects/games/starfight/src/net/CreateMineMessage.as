@@ -2,10 +2,12 @@ package net {
 
 import flash.utils.ByteArray;
 
-public class CreateMineMessage extends ShipMessage
+public class CreateMineMessage
+    implements GameMessage
 {
     public static const NAME :String = "createMine";
 
+    public var shipId :int;
     public var boardX :Number;
     public var boardY :Number;
     public var power :Number;
@@ -14,7 +16,6 @@ public class CreateMineMessage extends ShipMessage
     {
         var msg :CreateMineMessage = new CreateMineMessage();
         msg.shipId = ship.shipId;
-        msg.shipTypeId = ship.shipTypeId;
         msg.boardX = Math.round(ship.boardX);
         msg.boardY = Math.round(ship.boardY);
         msg.power = power;
@@ -22,23 +23,25 @@ public class CreateMineMessage extends ShipMessage
         return msg;
     }
 
-    override public function get name () :String
+    public function get name () :String
     {
         return NAME;
     }
 
-    override public function toBytes (bytes :ByteArray = null) :ByteArray
+    public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        bytes = super.toBytes(bytes);
+        bytes = (bytes != null ? bytes : new ByteArray());
+
+        bytes.writeInt(shipId);
         bytes.writeFloat(boardX);
         bytes.writeFloat(boardY);
         bytes.writeFloat(power);
         return bytes;
     }
 
-    override public function fromBytes (bytes :ByteArray) :void
+    public function fromBytes (bytes :ByteArray) :void
     {
-        super.fromBytes(bytes);
+        shipId = bytes.readInt();
         boardX = bytes.readFloat();
         boardY = bytes.readFloat();
         power = bytes.readFloat();

@@ -2,7 +2,7 @@ package net {
 
 import flash.utils.ByteArray;
 
-public class LaserShotMessage extends ShipMessage
+public class LaserShotMessage extends ShipShotMessage
 {
     public static const NAME :String = "laser";
 

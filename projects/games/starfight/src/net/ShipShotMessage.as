@@ -2,7 +2,7 @@ package net {
 
 import flash.utils.ByteArray;
 
-public class ShipMessage
+public class ShipShotMessage
     implements GameMessage
 {
     public var shipId :int;

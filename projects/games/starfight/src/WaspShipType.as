@@ -1,6 +1,6 @@
 package {
     import net.DefaultShotMessage;
-    import net.ShipMessage;
+    import net.ShipShotMessage;
     import net.TorpedoShotMessage;
 
 
@@ -39,7 +39,7 @@ public class WaspShipType extends ShipType
         size = 0.9;
     }
 
-    override public function doShot (message :ShipMessage) :void
+    override public function doShot (message :ShipShotMessage) :void
     {
         if (message is TorpedoShotMessage) {
             doSecondaryShot(message);
@@ -48,7 +48,7 @@ public class WaspShipType extends ShipType
         }
     }
 
-    override protected function doPrimaryShot (message :ShipMessage) :void
+    override protected function doPrimaryShot (message :ShipShotMessage) :void
     {
         var msg :DefaultShotMessage = DefaultShotMessage(message);
 
@@ -73,7 +73,7 @@ public class WaspShipType extends ShipType
         return true;
     }
 
-    override protected function doSecondaryShot (message :ShipMessage) :void
+    override protected function doSecondaryShot (message :ShipShotMessage) :void
     {
         var msg :TorpedoShotMessage = TorpedoShotMessage(message);
 

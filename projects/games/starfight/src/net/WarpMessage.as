@@ -2,7 +2,7 @@ package net {
 
 import flash.utils.ByteArray;
 
-public class WarpMessage extends ShipMessage
+public class WarpMessage extends ShipShotMessage
 {
     public static const NAME :String = "warp";
 

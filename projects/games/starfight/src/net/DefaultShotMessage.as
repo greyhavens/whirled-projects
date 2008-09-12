@@ -2,7 +2,7 @@ package net {
 
 import flash.utils.ByteArray;
 
-public class DefaultShotMessage extends ShipMessage
+public class DefaultShotMessage extends ShipShotMessage
 {
     public static const NAME :String = "defaultShot";
 

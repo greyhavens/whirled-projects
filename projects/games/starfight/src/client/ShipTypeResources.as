@@ -6,7 +6,7 @@ import flash.media.Sound;
 import flash.system.ApplicationDomain;
 
 import net.DefaultShotMessage;
-import net.ShipMessage;
+import net.ShipShotMessage;
 
 public class ShipTypeResources
 {
@@ -44,7 +44,7 @@ public class ShipTypeResources
         MultiLoader.getLoaders(swfAsset, loadComplete, false, _resourcesDomain);
     }
 
-    protected function primaryShotCreated (ship :Ship, message :ShipMessage) :void
+    protected function primaryShotCreated (ship :Ship, message :ShipShotMessage) :void
     {
         // play a shooting sound
         var msg :DefaultShotMessage = DefaultShotMessage(message);
@@ -52,7 +52,7 @@ public class ShipTypeResources
         ClientContext.game.playSoundAt(sound, msg.x, msg.y);
     }
 
-    protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
+    protected function secondaryShotCreated (ship :Ship, message :ShipShotMessage) :void
     {
     }
 

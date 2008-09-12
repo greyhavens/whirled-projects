@@ -3,7 +3,7 @@ package {
 import flash.events.EventDispatcher;
 
 import net.DefaultShotMessage;
-import net.ShipMessage;
+import net.ShipShotMessage;
 
 public class ShipType extends EventDispatcher
 {
@@ -58,14 +58,14 @@ public class ShipType extends EventDispatcher
         dispatchEvent(new ShotMessageSentEvent(PRIMARY_SHOT_SENT, ship));
     }
 
-    public function doShot (message :ShipMessage) :void
+    public function doShot (message :ShipShotMessage) :void
     {
     }
 
     /**
      * Called to have the ship perform their primary shot action.
      */
-    protected function doPrimaryShot (message :ShipMessage) :void
+    protected function doPrimaryShot (message :ShipShotMessage) :void
     {
         dispatchEvent(new ShotCreatedEvent(PRIMARY_SHOT_CREATED, message));
     }
@@ -83,7 +83,7 @@ public class ShipType extends EventDispatcher
     /**
      * Called to have the ship perform their secondary shot action.
      */
-    protected function doSecondaryShot (message :ShipMessage) :void
+    protected function doSecondaryShot (message :ShipShotMessage) :void
     {
         dispatchEvent(new ShotCreatedEvent(SECONDARY_SHOT_CREATED, message));
     }

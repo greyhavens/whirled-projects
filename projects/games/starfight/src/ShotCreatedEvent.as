@@ -2,13 +2,13 @@ package {
 
 import flash.events.Event;
 
-import net.ShipMessage;
+import net.ShipShotMessage;
 
 public class ShotCreatedEvent extends Event
 {
-    public var msg :ShipMessage;
+    public var msg :ShipShotMessage;
 
-    public function ShotCreatedEvent (type :String, msg :ShipMessage)
+    public function ShotCreatedEvent (type :String, msg :ShipShotMessage)
     {
         super(type, false, false);
         this.msg = msg;

@@ -106,6 +106,32 @@ public class ServerBoardController extends BoardController
             }
         }
     }
+
+    override public function addMine (mine :Mine) :int
+    {
+        var mineIndex :int = super.addMine(mine);
+        if (mineIndex >= 0) {
+            setAtImmediate(Constants.PROP_MINES, mine.writeTo(new ByteArray()), mineIndex);
+        }
+
+        return mineIndex;
+    }
+
+    override public function removeMine (idx:int) :void
+    {
+        setAtImmediate(Constants.PROP_MINES, null, idx);
+        super.removeMine(idx);
+    }
+
+    override public function shipKilled (shipId :int) :void
+    {
+        // batch all mine-removal messages together
+        _gameCtrl.doBatch(function () :void {
+            for each (var mineIndex :int in getShipMineIndices(shipId)) {
+                removeMine(mineIndex);
+            }
+        });
+    }
 }
 
 }

@@ -12,8 +12,9 @@ import flash.events.TimerEvent;
 import flash.utils.ByteArray;
 import flash.utils.getTimer;
 
+import net.CreateMineMessage;
 import net.ShipExplodedMessage;
-import net.ShipMessage;
+import net.ShipShotMessage;
 
 import util.ManagedTimer;
 import util.TimerManager;
@@ -244,11 +245,15 @@ public class GameController
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
         if (_running) {
-            if (event.value is ShipMessage) {
-                var msg :ShipMessage = ShipMessage(event.value);
-                Constants.getShipType(msg.shipTypeId).doShot(msg);
+            if (event.value is ShipShotMessage) {
+                var shipMsg :ShipShotMessage = ShipShotMessage(event.value);
+                Constants.getShipType(shipMsg.shipTypeId).doShot(shipMsg);
             } else if (event.value is ShipExplodedMessage) {
                 shipExploded(ShipExplodedMessage(event.value));
+            } else if (event.value is CreateMineMessage) {
+                var mineMsg :CreateMineMessage = CreateMineMessage(event.value);
+                AppContext.board.addMine(new Mine(mineMsg.shipId, mineMsg.boardX, mineMsg.boardY,
+                    mineMsg.power));
             }
         }
     }

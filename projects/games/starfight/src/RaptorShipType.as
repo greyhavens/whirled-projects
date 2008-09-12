@@ -1,7 +1,7 @@
 package {
 
 import net.DefaultShotMessage;
-import net.ShipMessage;
+import net.ShipShotMessage;
 import net.EnableShieldMessage;
 
 public class RaptorShipType extends ShipType
@@ -35,14 +35,14 @@ public class RaptorShipType extends ShipType
         size = 1.1;
     }
 
-    override public function doShot (message :ShipMessage) :void
+    override public function doShot (message :ShipShotMessage) :void
     {
         if (message is DefaultShotMessage) {
             doPrimaryShot(message);
         }
     }
 
-    override protected function doPrimaryShot (message :ShipMessage) :void
+    override protected function doPrimaryShot (message :ShipShotMessage) :void
     {
         var msg :DefaultShotMessage = DefaultShotMessage(message);
 

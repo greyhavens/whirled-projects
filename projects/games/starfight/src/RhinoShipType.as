@@ -7,7 +7,7 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 
 import net.DefaultShotMessage;
-import net.ShipMessage;
+import net.ShipShotMessage;
 import net.WarpMessage;
 
 public class RhinoShipType extends ShipType
@@ -37,7 +37,7 @@ public class RhinoShipType extends ShipType
         size = 1.2;
     }
 
-    override public function doShot (message :ShipMessage) :void
+    override public function doShot (message :ShipShotMessage) :void
     {
         if (message is DefaultShotMessage) {
             doPrimaryShot(message);
@@ -46,7 +46,7 @@ public class RhinoShipType extends ShipType
         }
     }
 
-    override protected function doPrimaryShot (message :ShipMessage) :void
+    override protected function doPrimaryShot (message :ShipShotMessage) :void
     {
         var msg :DefaultShotMessage = DefaultShotMessage(message);
 
@@ -85,7 +85,7 @@ public class RhinoShipType extends ShipType
         return true;
     }
 
-    override protected function doSecondaryShot (msg :ShipMessage) :void
+    override protected function doSecondaryShot (msg :ShipShotMessage) :void
     {
         var ship :Ship = AppContext.game.getShip(msg.shipId);
         if (ship != null && !ship.isOwnShip) {

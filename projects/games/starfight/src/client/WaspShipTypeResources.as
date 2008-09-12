@@ -2,7 +2,7 @@ package client {
 
 import flash.media.Sound;
 
-import net.ShipMessage;
+import net.ShipShotMessage;
 import net.TorpedoShotMessage;
 
 public class WaspShipTypeResources extends ShipTypeResources
@@ -11,7 +11,7 @@ public class WaspShipTypeResources extends ShipTypeResources
     public var secondarySound :Sound;
     public var secondaryExplodeSound :Sound;
 
-    override protected function secondaryShotCreated (ship :Ship, message :ShipMessage) :void
+    override protected function secondaryShotCreated (ship :Ship, message :ShipShotMessage) :void
     {
         var msg :TorpedoShotMessage = TorpedoShotMessage(message);
         ClientContext.game.playSoundAt(secondarySound, msg.x, msg.y);
