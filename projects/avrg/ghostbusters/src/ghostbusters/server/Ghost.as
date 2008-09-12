@@ -124,9 +124,12 @@ public class Ghost
         if (_room.state == Codes.STATE_FIGHTING && _brain != null) {
             _brain.tick(timer);
         }
+
         // TODO: have heal rate depend on level
         setHealth(health + 1);
-        setZest(zest + 1);
+        if (_room.state == Codes.STATE_SEEKING) {
+            setZest(zest + 1);
+        }
     }
 
     public function calculateSingleAttack () :int
