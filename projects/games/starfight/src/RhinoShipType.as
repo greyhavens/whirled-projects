@@ -95,13 +95,7 @@ public class RhinoShipType extends ShipType
 
     protected function warpNow (ship :Ship, msg :WarpMessage) :void
     {
-        // TODO - change this horribly unsafe function.
-
-        var endWarp :Function = function (event:Event) :void {
-            ship.state = Ship.STATE_DEFAULT;
-        };
-
-        var warp :Function = function (event :Event) :void {
+        var warp :Function = function (...ignored) :void {
             if (ship.isOwnShip) {
                 AppContext.msgs.sendMessage(msg);
                 dispatchEvent(new ShotMessageSentEvent(ShipType.SECONDARY_SHOT_SENT, ship));
@@ -118,11 +112,15 @@ public class RhinoShipType extends ShipType
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
 
-            AppContext.timers.createTimer(WARP_IN_TIME, 1, endWarp).start();
+            AppContext.timers.runOnce(WARP_IN_TIME, endWarp);
+        };
+
+        var endWarp :Function = function (...ignored) :void {
+            ship.state = Ship.STATE_DEFAULT;
         };
 
         ship.state = Ship.STATE_WARP_BEGIN;
-        AppContext.timers.createTimer(WARP_OUT_TIME, 1, warp).start();
+        AppContext.timers.runOnce(WARP_OUT_TIME, warp);
     }
 
     protected static const log :Log = Log.getLog(RhinoShipType);

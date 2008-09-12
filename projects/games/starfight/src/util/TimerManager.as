@@ -3,10 +3,22 @@ package util {
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-import util.ManagedTimer;
-
 public class TimerManager
 {
+    /**
+     * Creates and runs a timer that will run once, and clean up after itself.
+     */
+    public function runOnce (delay :Number, callback :Function) :void
+    {
+        var timer :ManagedTimer = createTimer(delay, 1,
+            function (e :TimerEvent) :void {
+                callback(e);
+                timer.cancel();
+            });
+
+        timer.start();
+    }
+
     public function createTimer (delay :Number, repeatCount :int, timerCallback :Function,
         completeCallback :Function = null) :ManagedTimer
     {

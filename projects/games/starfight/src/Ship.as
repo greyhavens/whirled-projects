@@ -157,9 +157,9 @@ public class Ship
         state = STATE_SPAWN;
 
         var thisShip :Ship = this;
-        AppContext.timers.createTimer(SPAWN_TIME, 1, function (...ignored) :void {
+        AppContext.timers.runOnce(SPAWN_TIME,function (...ignored) :void {
             thisShip.state = STATE_DEFAULT;
-        }).start();
+        });
     }
 
     /**
