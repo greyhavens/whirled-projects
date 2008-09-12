@@ -53,7 +53,6 @@ public class ClientBoardController extends BoardController
     override public function roundEnded () :void
     {
         super.roundEnded();
-        _boardLoaded = false;
     }
 
     protected function readBoard (boardBytes :ByteArray) :void

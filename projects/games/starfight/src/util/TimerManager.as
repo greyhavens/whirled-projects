@@ -1,4 +1,4 @@
-package {
+package util {
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
@@ -40,7 +40,10 @@ public class TimerManager
     public function cancelAllTimers () :void
     {
         for each (var timer :ManagedTimerImpl in _timers) {
-            cancelTimer(timer);
+            // we can have holes in the _timers array
+            if (timer != null) {
+                stopTimer(timer);
+            }
         }
 
         _timers = [];
@@ -51,15 +54,13 @@ public class TimerManager
     {
         var managedTimer :ManagedTimerImpl = ManagedTimerImpl(timer);
         var slot :int = managedTimer.slot;
-        removeTimer(managedTimer);
+        stopTimer(managedTimer);
         _timers[slot] = null;
         _freeSlots.push(slot);
     }
 
-    protected function removeTimer (managedTimer :ManagedTimerImpl) :void
+    protected function stopTimer (managedTimer :ManagedTimerImpl) :void
     {
-        var managedTimer :ManagedTimerImpl = ManagedTimerImpl(timer);
-
         if (managedTimer.mgr != this) {
             throw new Error("timer is not managed by this TimerManager");
         }
@@ -85,6 +86,7 @@ public class TimerManager
 }
 
 import flash.utils.Timer;
+import util.TimerManager;
 import util.ManagedTimer;
 
 class ManagedTimerImpl
@@ -136,10 +138,10 @@ class ManagedTimerImpl
         return timer.repeatCount;
     }
 
-    public function set repeatCount (val :int) :void
+    /*public function set repeatCount (val :int) :void
     {
         timer.repeatCount = val;
-    }
+    }*/
 
     public function get running () :Boolean
     {

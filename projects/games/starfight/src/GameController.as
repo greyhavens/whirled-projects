@@ -10,13 +10,13 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.TimerEvent;
 import flash.utils.ByteArray;
-import flash.utils.Timer;
 import flash.utils.getTimer;
 
-import net.AwardHealthMessage;
-import net.EnableShieldMessage;
 import net.ShipExplodedMessage;
 import net.ShipMessage;
+
+import util.ManagedTimer;
+import util.TimerManager;
 
 public class GameController
 {
@@ -28,6 +28,8 @@ public class GameController
         _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
 
         AppContext.msgs.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+
+        AppContext.timers = new TimerManager();
     }
 
     public function shutdown () :void
@@ -37,11 +39,8 @@ public class GameController
 
         AppContext.msgs.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
-        if (_screenTimer != null) {
-            _screenTimer.removeEventListener(TimerEvent.TIMER, tick);
-            _screenTimer.reset();
-            _screenTimer = null;
-        }
+        AppContext.timers.cancelAllTimers();
+        AppContext.timers = null;
     }
 
     public function get gameState () :int
@@ -86,11 +85,25 @@ public class GameController
         }
 
         // Set up our ticker that will control movement.
-        _screenTimer = new Timer(1000/30, 0);
-        _screenTimer.addEventListener(TimerEvent.TIMER, tick);
-        _screenTimer.start();
+        startScreenTimer();
         _lastTickTime = getTimer();
         _running = true;
+    }
+
+    protected function startScreenTimer () :void
+    {
+        if (_screenTimer == null) {
+            _screenTimer = AppContext.timers.createTimer(1000/30, 0, tick);
+            _screenTimer.start();
+        }
+    }
+
+    protected function stopScreenTimer () :void
+    {
+        if (_screenTimer != null) {
+            _screenTimer.cancel();
+            _screenTimer = null;
+        }
     }
 
     /**
@@ -220,7 +233,8 @@ public class GameController
 
     protected function roundEnded () :void
     {
-        _screenTimer.reset();
+        stopScreenTimer();
+
         for each (var ship :Ship in _ships.values()) {
             ship.roundEnded();
         }
@@ -389,25 +403,15 @@ public class GameController
     }
 
     protected var _gameCtrl :GameControl;
-
     protected var _running :Boolean;
-
     protected var _gameState :int;
-
     protected var _ships :HashMap = new HashMap(); // HashMap<int, Ship>
-
     protected var _shots :Array = []; // Array<Shot>
-
-    /** How many frames its been since we broadcasted. */
-    protected var _shipUpdateTime :int = 0;
-
+    protected var _shipUpdateTime :int;
     protected var _lastTickTime :int;
-
-    protected var _screenTimer :Timer;
-
-    /** The current game state. */
     protected var _stateTimeMs :int;
-    protected var _population :int = 0;
+    protected var _population :int;
+    protected var _screenTimer :ManagedTimer;
 
     protected static const log :Log = Log.getLog(GameController);
 

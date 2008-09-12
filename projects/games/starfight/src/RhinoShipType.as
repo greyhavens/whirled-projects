@@ -118,15 +118,11 @@ public class RhinoShipType extends ShipType
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
 
-            var endTimer :Timer = new Timer(WARP_IN_TIME, 1);
-            endTimer.addEventListener(TimerEvent.TIMER, endWarp);
-            endTimer.start();
+            AppContext.timers.createTimer(WARP_IN_TIME, 1, endWarp).start();
         };
 
         ship.state = Ship.STATE_WARP_BEGIN;
-        var timer :Timer = new Timer(WARP_OUT_TIME, 1);
-        timer.addEventListener(TimerEvent.TIMER, warp);
-        timer.start();
+        AppContext.timers.createTimer(WARP_OUT_TIME, 1, warp).start();
     }
 
     protected static const log :Log = Log.getLog(RhinoShipType);

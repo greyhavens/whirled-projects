@@ -5,12 +5,11 @@ import com.whirled.game.GameSubControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.events.TimerEvent;
-import flash.utils.Timer;
-
 import net.AwardHealthMessage;
 import net.EnableShieldMessage;
 import net.ShipExplodedMessage;
+
+import util.ManagedTimer;
 
 public class ServerGameController extends GameController
 {
@@ -18,16 +17,6 @@ public class ServerGameController extends GameController
     {
         super(gameCtrl);
         ServerContext.game = this;
-    }
-
-    override public function shutdown () :void
-    {
-        super.shutdown();
-
-        if (_powerupTimer != null) {
-            _powerupTimer.reset();
-            _powerupTimer = null;
-        }
     }
 
     override public function run () :void
@@ -109,8 +98,8 @@ public class ServerGameController extends GameController
         // is it time to end the round?
         if (_gameState == Constants.STATE_IN_ROUND) {
             if (_stateTimeMs <= 0) {
-                _screenTimer.reset();
-                _powerupTimer.reset();
+                stopScreenTimer();
+                stopPowerupTimer();
                 setNewGameState(Constants.STATE_POST_ROUND);
             }
         }
@@ -168,14 +157,19 @@ public class ServerGameController extends GameController
 
     protected function startPowerupTimer () :void
     {
-        if (_powerupTimer != null) {
-            _powerupTimer.removeEventListener(TimerEvent.TIMER,
-                ServerContext.board.addRandomPowerup);
-            _powerupTimer.stop();
+        if (_powerupTimer == null) {
+            _powerupTimer = AppContext.timers.createTimer(
+                Constants.RANDOM_POWERUP_TIME_MS, 0, ServerContext.board.addRandomPowerup);
+            _powerupTimer.start();
         }
-        _powerupTimer = new Timer(Constants.RANDOM_POWERUP_TIME_MS, 0);
-        _powerupTimer.addEventListener(TimerEvent.TIMER, ServerContext.board.addRandomPowerup);
-        _powerupTimer.start();
+    }
+
+    protected function stopPowerupTimer () :void
+    {
+        if (_powerupTimer != null) {
+            _powerupTimer.cancel();
+            _powerupTimer = null;
+        }
     }
 
     override protected function shipExploded (msg :ShipExplodedMessage) :void
@@ -198,7 +192,7 @@ public class ServerGameController extends GameController
         }
     }
 
-    protected var _powerupTimer :Timer;
+    protected var _powerupTimer :ManagedTimer;
     protected var _lastStateTimeUpdate :int;
 }
 

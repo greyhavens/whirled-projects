@@ -34,11 +34,6 @@ public class ClientGameController extends GameController
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
         _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
         _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
-
-        if (_newShipTimer != null) {
-            _newShipTimer.stop();
-            _newShipTimer = null;
-        }
     }
 
     override public function run () :void
@@ -189,13 +184,12 @@ public class ClientGameController extends GameController
 
         // if our ship is dead, show the ship chooser after a delay
         if (_gameState == Constants.STATE_IN_ROUND && _ownShip != null && !_ownShip.isAlive &&
-            _newShipTimer == null && !ShipChooser.isShowing) {
-            _newShipTimer = new Timer(Ship.RESPAWN_DELAY, 1);
-            _newShipTimer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
+            !_newShipTimerRunning && !ShipChooser.isShowing) {
+            _newShipTimerRunning = true;
+            AppContext.timers.createTimer(Ship.RESPAWN_DELAY, 1, function (...ignored) :void {
                 ShipChooser.show(false);
-                _newShipTimer = null;
-            });
-            _newShipTimer.start();
+                _newShipTimerRunning = false;
+            }).start();
         }
 
         // Every few frames, broadcast our status to everyone else.
@@ -355,6 +349,8 @@ public class ClientGameController extends GameController
     {
         super.roundEnded();
 
+        ShipChooser.hide();
+
         var shipArr :Array = _ships.values();
         shipArr.sort(function (shipA :Ship, shipB :Ship) :int {
             return shipB.score - shipA.score;
@@ -388,7 +384,7 @@ public class ClientGameController extends GameController
     protected var _ownShip :ClientShip;
     protected var _ownShipView :ShipView;
     protected var _shipViews :HashMap = new HashMap();
-    protected var _newShipTimer :Timer;
+    protected var _newShipTimerRunning :Boolean;
 }
 
 }

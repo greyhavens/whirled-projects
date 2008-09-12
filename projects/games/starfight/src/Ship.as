@@ -155,12 +155,11 @@ public class Ship
     protected function spawn () :void
     {
         state = STATE_SPAWN;
+
         var thisShip :Ship = this;
-        var timer :Timer = new Timer(SPAWN_TIME, 1);
-        timer.addEventListener(TimerEvent.TIMER, function (...ignored) :void {
+        AppContext.timers.createTimer(SPAWN_TIME, 1, function (...ignored) :void {
             thisShip.state = STATE_DEFAULT;
-        });
-        timer.start();
+        }).start();
     }
 
     /**

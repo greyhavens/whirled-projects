@@ -6,7 +6,7 @@ public interface ManagedTimer
     function get delay () :Number;
     function set delay (val :Number) :void;
     function get repeatCount () :int;
-    function set repeatCount (val :int) :void
+    //function set repeatCount (val :int) :void // Thane doesn't support this right now
     function get running () :Boolean;
 
     function reset () :void;

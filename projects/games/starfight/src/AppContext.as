@@ -4,6 +4,7 @@ import com.whirled.contrib.Scoreboard;
 import com.whirled.game.GameControl;
 
 import net.MessageManager;
+import util.TimerManager;
 
 /**
  * Storage for globally-accessible data and managers.
@@ -16,6 +17,7 @@ public class AppContext
     public static var local :LocalUtility;
     public static var scores :Scoreboard;
     public static var msgs :MessageManager;
+    public static var timers :TimerManager;
 }
 
 }

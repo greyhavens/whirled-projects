@@ -42,12 +42,9 @@ public class ServerShip extends Ship
         _serverData.shieldHealth = shieldHealth;
 
         if (timeoutMs > 0) {
-            var shieldTimer :Timer = new Timer(timeoutMs, 1);
-            shieldTimer.addEventListener(TimerEvent.TIMER, function (event :TimerEvent) :void {
-                shieldTimer.removeEventListener(TimerEvent.TIMER, arguments.callee);
+            AppContext.timers.createTimer(timeoutMs, 1, function (event :TimerEvent) :void {
                 _serverData.shieldHealth = 0;
-            });
-            shieldTimer.start();
+            }).start();
         }
     }
 
