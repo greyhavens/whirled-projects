@@ -57,7 +57,7 @@ public class GamePanel extends Sprite
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
         Game.control.player.addEventListener(
-            AVRGamePlayerEvent.COINS_AWARDED, coinsAwarded);
+            AVRGamePlayerEvent.TASK_COMPLETED, taskCompleted);
         Game.control.player.addEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
 
@@ -83,6 +83,7 @@ public class GamePanel extends Sprite
         });
 
         _triumph = new ClipHandler(ByteArray(new Content.GHOST_DEFEATED()), function () :void {
+            Game.log.debug("triumph bounds: " + _triumph.getBounds(_triumph));
             _triumph.x = 300;
             _triumph.y = 200;
 
@@ -192,19 +193,13 @@ public class GamePanel extends Sprite
         }
     }
 
-    protected function coinsAwarded (evt :AVRGameControlEvent) :void
+    protected function taskCompleted (evt :AVRGamePlayerEvent) :void
     {
-        var panel :GamePanel = this;
-        var flourish :CoinFlourish = new CoinFlourish(evt.value as int, function () :void {
-            AnimationManager.stop(flourish);
-            panel.removeChild(flourish);
-        });
+        // TODO: find the 'payout' TextField in the triumph clip and insert the
+        // TODO: actual amount of coins awarded into that text string -- this is
+        // TODO: pending Bill's art fix-up
 
-        flourish.x = (Game.stageSize.width - flourish.width) / 2;
-        flourish.y = 20;
-        this.addChild(flourish);
-
-        AnimationManager.start(flourish);
+        popup(_triumph);
     }
 
     protected function checkForDeath () :void
@@ -216,7 +211,6 @@ public class GamePanel extends Sprite
 
         var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
         if (health > 0) {
-            Game.log.debug("We're alive [health=" + health + "]");
             // possibly we were just revived, let's see
             if (_revive.parent == this) {
                 this.removeChild(_revive);
@@ -261,10 +255,6 @@ public class GamePanel extends Sprite
         if (evt.name == Codes.PROP_STATE) {
             _seeking = false;
             updateState();
-
-            if (evt.newValue == Codes.STATE_GHOST_DEFEAT) {
-                popup(_triumph);
-            }
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
