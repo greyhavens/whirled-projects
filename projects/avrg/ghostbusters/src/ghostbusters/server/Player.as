@@ -11,6 +11,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.PlayerServerSubControl;
 
 import ghostbusters.data.Codes;
+import ghostbusters.server.util.Formulae;
 
 public class Player
 {
@@ -201,8 +202,8 @@ public class Player
 
     protected function calculateMaxHealth () :int
     {
-        // level 1 has 1 health, after that a 25% gain per level
-        return 100 * (Math.pow(1.25, _level));
+        // a level 1 player has 100 health
+        return 100 * Formulae.quadRamp(_level);
     }
 
     protected var _ctrl :PlayerServerSubControl;

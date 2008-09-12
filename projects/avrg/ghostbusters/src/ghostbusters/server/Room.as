@@ -104,8 +104,9 @@ public class Room
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
             // let the other people in the room know there was a successful zapping
             _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
+
             // then actually zap the ghost (reduce its zest)
-            _ghost.zap();
+            _ghost.zap(who);
         }
     }
 

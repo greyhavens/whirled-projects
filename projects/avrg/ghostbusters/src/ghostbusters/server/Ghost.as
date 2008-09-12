@@ -10,6 +10,7 @@ import flash.utils.Dictionary;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
+import ghostbusters.server.util.Formulae;
 
 public class Ghost
 {
@@ -22,12 +23,13 @@ public class Ghost
         data[Codes.IX_GHOST_NAME] = buildName(id);
         data[Codes.IX_GHOST_LEVEL] = level;
 
-        // TODO: in time, zest should depend on level
+        // max zest at level 1 is 100
         data[Codes.IX_GHOST_CUR_ZEST] = data[Codes.IX_GHOST_MAX_ZEST] =
-            150 + 100 * Server.random.nextNumber();
+            100 * Formulae.quadRamp(level);
 
-        // TODO: in time, max health should depend on level
-        data[Codes.IX_GHOST_CUR_HEALTH] = data[Codes.IX_GHOST_MAX_HEALTH] = 100;
+        // max health at level 1 is 100
+        data[Codes.IX_GHOST_CUR_HEALTH] = data[Codes.IX_GHOST_MAX_HEALTH] =
+            100 * Formulae.quadRamp(level);
 
         return data;
     }
@@ -106,9 +108,9 @@ public class Ghost
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_POS, [ x, y ]);
     }
 
-    public function zap () :void
+    public function zap (who :Player) :void
     {
-        setZest(_zest*0.9 - 15);
+        setZest(_zest - 10*Formulae.quadRamp(who.level));
     }
 
     public function heal () :void
@@ -129,20 +131,14 @@ public class Ghost
 
     public function calculateSingleAttack () :int
     {
-        // e.g. a level 3 ghost does 40-48 points of dmg to one target
-        return rndStretch(10 * (_level + 1), 1.2);
+        // a level 1 ghost does 10-12 points of direct dmg to a target
+        return Formulae.rndStretch(10 * Formulae.quadRamp(_level), 1.2);
     }
 
     public function calculateSplashAttack () :int
     {
-        // e.g. a level 3 ghost does 16-24 points of dmg to the whole party
-        return rndStretch(4 * (_level + 1), 1.5);
-    }
-
-    protected function rndStretch (n :int, f :Number) :int
-    {
-        // randomly stretch a value by a factor [1, f]
-        return int(n * (1 + (f-1)*Server.random.nextNumber()));
+        // a level 1 ghost does 5-6 points of splash damage to everyone in a group
+        return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.2);
     }
 
     // TODO: build more interesting names
