@@ -33,7 +33,7 @@ public class BasicBrain
         switch(roll) {
         case 0: case 1:
             // 10% chance of attacking a single player
-            team[Server.random.nextInt(team.length)].damage(_room.ghost.calculateSingleAttack);
+            team[Server.random.nextInt(team.length)].damage(_room.ghost.calculateSingleAttack());
             break;
 
         case 2: case 3:
