@@ -58,6 +58,8 @@ public class SeekPanel extends FrameSprite
 
         if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
+        } else {
+            _ghost.hidden();
         }
     }
 
@@ -135,10 +137,24 @@ public class SeekPanel extends FrameSprite
         } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
             bits = (evt.newValue as Array);
             if (_ghost != null && bits != null) {
-                // TODO: adjust for the height (and maybe width) of the ghost here
-                var x :Number = Game.roomBounds.width * bits[0];
-                var y :Number = Game.roomBounds.height * bits[1];
+                // the server sends every client a new (x, y) for the ghost that's in the
+                // logical range [0, 1] and each client translates that according to the
+                // bounds of the current room. We do not however want the ghost to e.g. fly
+                // through the floor, nor disappear at the edges, so use the ghost's known
+                // bounds to offset. Admittedly this is a case of mixing apples and oranges
+                // (the ghost's bounds and the room's bounds use pixels that may be scaled
+                // differently, especially for tall backgrounds) but it's effective enough
+                // for the moment.
 
+                // figure effective movement ranges
+                var dX :Number = Math.max(0, Game.roomBounds.width - 2*_ghost.bounds.width);
+                var dY :Number = Nath.max(0, Game.roomBounds.height - _ghost.bounds.height);
+
+                // place the ghost therein
+                var x :Number = _ghost.bounds.width + dX * bits[0];
+                var y :Number = dY * bits[1];
+
+                // convert to actual local coordinates and go whee
                 var pos :Point = Game.control.local.roomToStage(new Point(x, y));
                 if (pos != null) {
                     _ghost.newTarget(this.globalToLocal(pos));
@@ -226,7 +242,7 @@ public class SeekPanel extends FrameSprite
         _lanterns = null;
         _ghost.appear();
 
-        var x :int = Game.panel.hud.getRightEdge() - _ghost.getGhostBounds().width/2;
+        var x :int = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
         _ghost.newTarget(new Point(x, 100));
 
         _ghost.mask = null;
@@ -234,7 +250,6 @@ public class SeekPanel extends FrameSprite
     }
 
     // LANTERN MANAGEMENT
-
     protected function playerLanternOff (playerId :int) :void
     {
         var lantern :Lantern = _lanterns[playerId];
