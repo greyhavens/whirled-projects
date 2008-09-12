@@ -10,10 +10,8 @@ import flash.utils.Timer;
 /**
  * Represents a single ships (ours or opponent's) in the world.
  */
-public class Ship extends EventDispatcher
+public class Ship
 {
-    public static const COLLIDED :String = "Collided";
-
     public static const RESPAWN_DELAY :int = 3000;
 
     /** The size of the ship. */
