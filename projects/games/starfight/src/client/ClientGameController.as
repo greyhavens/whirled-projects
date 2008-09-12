@@ -186,7 +186,7 @@ public class ClientGameController extends GameController
         if (_gameState == Constants.STATE_IN_ROUND && _ownShip != null && !_ownShip.isAlive &&
             !_newShipTimerRunning && !ShipChooser.isShowing) {
             _newShipTimerRunning = true;
-            AppContext.timers.runOnce(Ship.RESPAWN_DELAY, function (...ignored) :void {
+            _timers.runOnce(Ship.RESPAWN_DELAY, function (...ignored) :void {
                 ShipChooser.show(false);
                 _newShipTimerRunning = false;
             });

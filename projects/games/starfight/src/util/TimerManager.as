@@ -1,10 +1,47 @@
 package util {
 
+import com.threerings.util.ArrayUtil;
+
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
 public class TimerManager
 {
+    /**
+     * Constructs a new TimerManager.
+     *
+     * @param parent (optional) if not null, this TimerManager will become a child of
+     * the specified parent TimerManager. If the parent is shutdown, or its cancelAllTimers()
+     * function is called, this TimerManager will be similarly affected.
+     */
+    public function TimerManager (parent :TimerManager = null)
+    {
+        if (parent != null) {
+            _parent = parent;
+            parent._children.push(this);
+        }
+    }
+
+    /**
+     * Cancels all running timers, and disconnects the TimerManager from its parent, if it has one.
+     * All child TimerManagers will be shutdown as well.
+     */
+    public function shutdown () :void
+    {
+        // detach from our parent, if we have one
+        if (_parent != null) {
+            ArrayUtil.removeFirst(_parent._children, this);
+        }
+
+        // shutdown our children
+        for each (var child :TimerManager in _children) {
+            child._parent = null;
+            child.shutdown();
+        }
+
+        cancelAllTimers();
+    }
+
     /**
      * Creates and runs a timer that will run once, and clean up after itself.
      */
@@ -19,6 +56,9 @@ public class TimerManager
         timer.start();
     }
 
+    /**
+     * Creates, but doesn't run, a new ManagedTimer.
+     */
     public function createTimer (delay :Number, repeatCount :int, timerCallback :Function,
         completeCallback :Function = null) :ManagedTimer
     {
@@ -49,6 +89,10 @@ public class TimerManager
         return managedTimer;
     }
 
+    /**
+     * Stops all timers being managed by this TimerManager.
+     * All child TimerManagers will have their timers stopped as well.
+     */
     public function cancelAllTimers () :void
     {
         for each (var timer :ManagedTimerImpl in _timers) {
@@ -60,8 +104,16 @@ public class TimerManager
 
         _timers = [];
         _freeSlots = [];
+
+        for each (var child :TimerManager in _children) {
+            child.cancelAllTimers();
+        }
     }
 
+    /**
+     * Cancels a single running ManagedTimer. The timer must have been created by this
+     * TimerManager.
+     */
     public function cancelTimer (timer :ManagedTimer) :void
     {
         var managedTimer :ManagedTimerImpl = ManagedTimerImpl(timer);
@@ -93,6 +145,9 @@ public class TimerManager
 
     protected var _timers :Array = [];
     protected var _freeSlots :Array = [];
+
+    protected var _parent :TimerManager;
+    protected var _children :Array = [];
 }
 
 }

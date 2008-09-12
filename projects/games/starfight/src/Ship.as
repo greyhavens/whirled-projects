@@ -2,10 +2,9 @@ package {
 
 import com.threerings.util.ClassUtil;
 
-import flash.events.EventDispatcher;
-import flash.events.TimerEvent;
 import flash.utils.ByteArray;
-import flash.utils.Timer;
+
+import util.TimerManager;
 
 /**
  * Represents a single ships (ours or opponent's) in the world.
@@ -54,6 +53,8 @@ public class Ship
         this.shipId = shipId;
         this.playerName = playerName;
         setShipType(0);
+
+        initTimers();
     }
 
     public function get score () :int
@@ -157,7 +158,7 @@ public class Ship
         state = STATE_SPAWN;
 
         var thisShip :Ship = this;
-        AppContext.timers.runOnce(SPAWN_TIME,function (...ignored) :void {
+        runOnce(SPAWN_TIME,function (...ignored) :void {
             thisShip.state = STATE_DEFAULT;
         });
     }
@@ -334,6 +335,9 @@ public class Ship
             // NB - this might be a bit fragile if ShipData ever needs to be initialized
             // with different default values...
             _serverData = new ShipData();
+
+            // re-init our timers
+            initTimers();
         }
 
         state = report.state;
@@ -388,6 +392,27 @@ public class Ship
     {
         return false; // overridden by ClientShip
     }
+
+    public function runOnce (delay :Number, callback :Function) :void
+    {
+        _timers.runOnce(delay, callback);
+    }
+
+    protected function initTimers () :void
+    {
+        shutdownTimers();
+        _timers = new TimerManager(AppContext.game.timers);
+    }
+
+    protected function shutdownTimers () :void
+    {
+        if (_timers != null) {
+            _timers.shutdown();
+            _timers = null;
+        }
+    }
+
+    protected var _timers :TimerManager;
 
     protected var _shipType :ShipType;
 

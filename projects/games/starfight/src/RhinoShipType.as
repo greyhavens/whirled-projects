@@ -112,7 +112,7 @@ public class RhinoShipType extends ShipType
             ship.resolveMove(startX, startY, endX, endY, 1);
             ship.state = Ship.STATE_WARP_END;
 
-            AppContext.timers.runOnce(WARP_IN_TIME, endWarp);
+            ship.runOnce(WARP_IN_TIME, endWarp);
         };
 
         var endWarp :Function = function (...ignored) :void {
@@ -120,7 +120,7 @@ public class RhinoShipType extends ShipType
         };
 
         ship.state = Ship.STATE_WARP_BEGIN;
-        AppContext.timers.runOnce(WARP_OUT_TIME, warp);
+        ship.runOnce(WARP_OUT_TIME, warp);
     }
 
     protected static const log :Log = Log.getLog(RhinoShipType);

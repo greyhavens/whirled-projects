@@ -42,7 +42,7 @@ public class ServerShip extends Ship
         _serverData.shieldHealth = shieldHealth;
 
         if (timeoutMs > 0) {
-            AppContext.timers.runOnce(timeoutMs, function (...ignored) :void {
+            _timers.runOnce(timeoutMs, function (...ignored) :void {
                 _serverData.shieldHealth = 0;
             });
         }

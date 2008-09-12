@@ -158,7 +158,7 @@ public class ServerGameController extends GameController
     protected function startPowerupTimer () :void
     {
         if (_powerupTimer == null) {
-            _powerupTimer = AppContext.timers.createTimer(
+            _powerupTimer = _timers.createTimer(
                 Constants.RANDOM_POWERUP_TIME_MS, 0, ServerContext.board.addRandomPowerup);
             _powerupTimer.start();
         }

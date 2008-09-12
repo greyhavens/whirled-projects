@@ -30,7 +30,7 @@ public class GameController
 
         AppContext.msgs.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
-        AppContext.timers = new TimerManager();
+        _timers = new TimerManager();
     }
 
     public function shutdown () :void
@@ -40,8 +40,12 @@ public class GameController
 
         AppContext.msgs.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 
-        AppContext.timers.cancelAllTimers();
-        AppContext.timers = null;
+        _timers.shutdown();
+    }
+
+    public function get timers () :TimerManager
+    {
+        return _timers;
     }
 
     public function get gameState () :int
@@ -94,7 +98,7 @@ public class GameController
     protected function startScreenTimer () :void
     {
         if (_screenTimer == null) {
-            _screenTimer = AppContext.timers.createTimer(1000/30, 0, tick);
+            _screenTimer = _timers.createTimer(1000/30, 0, tick);
             _screenTimer.start();
         }
     }
@@ -407,6 +411,7 @@ public class GameController
         _gameCtrl.net.set(propName, value, true);
     }
 
+    protected var _timers :TimerManager;
     protected var _gameCtrl :GameControl;
     protected var _running :Boolean;
     protected var _gameState :int;

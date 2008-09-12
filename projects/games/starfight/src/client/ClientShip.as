@@ -51,6 +51,8 @@ public class ClientShip extends Ship
 
         _serverData = new ShipData();
 
+        initTimers();
+
         spawn();
     }
 
