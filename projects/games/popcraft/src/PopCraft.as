@@ -13,6 +13,7 @@ import com.whirled.game.SizeChangedEvent;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import popcraft.*;
 import popcraft.data.*;
@@ -40,6 +41,9 @@ public class PopCraft extends Sprite
         this.graphics.endFill();
 
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+
+        // set a clip rect
+        this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup main loop
         AppContext.mainLoop = new MainLoop(this, (isConnected ? AppContext.gameCtrl.local : this.stage));
