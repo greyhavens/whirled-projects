@@ -333,7 +333,7 @@ public class Ship
             // And re-init our server data.
             // NB - this might be a bit fragile if ShipData ever needs to be initialized
             // with different default values...
-            _serverData = new ShipData();
+            _serverData = new ShipServerData();
 
             // re-init our timers
             initTimers();
@@ -382,7 +382,7 @@ public class Ship
         return bytes;
     }
 
-    public function get serverData () :ShipData
+    public function get serverData () :ShipServerData
     {
         return _serverData;
     }
@@ -420,7 +420,7 @@ public class Ship
 
     protected var _powerups :int;
 
-    protected var _serverData :ShipData = new ShipData();
+    protected var _serverData :ShipServerData = new ShipServerData();
 
     /** Ship performance characteristics. */
     protected static const SHOT_SPD :Number = 1;

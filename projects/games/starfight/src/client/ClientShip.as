@@ -49,14 +49,14 @@ public class ClientShip extends Ship
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
 
-        _serverData = new ShipData();
+        _serverData = new ShipServerData();
 
         initTimers();
 
         spawn();
     }
 
-    public function set serverData (shipData :ShipData) :void
+    public function set serverData (shipData :ShipServerData) :void
     {
         _serverData = shipData;
 

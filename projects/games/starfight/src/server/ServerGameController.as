@@ -128,7 +128,7 @@ public class ServerGameController extends GameController
             // broadcast ship server data to everyone else
             // TODO - throttle these updates
             for each (ship in ships) {
-                var shipData :ShipData = ship.serverData;
+                var shipData :ShipServerData = ship.serverData;
                 if (shipData.isDirty) {
                     setImmediate(shipDataKey(ship.shipId), shipData.toBytes());
                     shipData.clean();

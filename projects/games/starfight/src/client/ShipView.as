@@ -85,6 +85,7 @@ public class ShipView extends Sprite
         }
 
         _curShipTypeId = _ship.shipTypeId;
+        _lastShipState = -1;
     }
 
     public function keyPressed (event :KeyboardEvent) :void
@@ -225,6 +226,8 @@ public class ShipView extends Sprite
 
     protected function playSpawnMovie () :void
     {
+        log.info("playSpawnMovie");
+
         ClientContext.game.playSoundAt(
             ClientConstants.getShipResources(_ship.shipTypeId).spawnSound,
             _ship.boardX, _ship.boardY);

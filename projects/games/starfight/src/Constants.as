@@ -47,7 +47,7 @@ public class Constants
 
     /** Property names */
     public static const PROP_POWERUPS :String = "powerups";
-    public static const PROP_OBSTACLES :String = "obsacles";
+    public static const PROP_OBSTACLES :String = "obstacles";
     public static const PROP_MINES :String = "mines";
     public static const PROP_BOARD :String = "board";
     public static const PROP_GAMESTATE :String = "gameState";
@@ -61,7 +61,7 @@ public class Constants
     public static const RANDOM_POWERUP_TIME_MS :int = 20000;
     public static const ROUND_TIME_MS :int = 10 * 60 * 1000; // 10 minutes
     public static const END_ROUND_TIME_S :int = 10;
-    public static const MIN_PLAYERS_TO_START :int = 1;
+    public static const MIN_PLAYERS_TO_START :int = 2;
     public static const HEALTH_POWERUP_INCREMENT :Number = 0.5;
 }
 }

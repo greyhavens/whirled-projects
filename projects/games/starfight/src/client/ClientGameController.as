@@ -126,7 +126,7 @@ public class ClientGameController extends GameController
             var shipId :int = shipDataKeyId(event.name);
             var ship :ClientShip = ClientShip(getShip(shipId));
             if (ship != null) {
-                ship.serverData = ShipData.fromBytes(ByteArray(event.newValue));
+                ship.serverData = ShipServerData.fromBytes(ByteArray(event.newValue));
             }
         }
     }

@@ -2,7 +2,7 @@ package {
 
 import flash.utils.ByteArray;
 
-public class ShipData
+public class ShipServerData
 {
     public function clean () :void
     {
@@ -54,9 +54,9 @@ public class ShipData
         _shieldHealth = bytes.readFloat();
     }
 
-    public static function fromBytes (bytes :ByteArray) :ShipData
+    public static function fromBytes (bytes :ByteArray) :ShipServerData
     {
-        var shipData :ShipData = new ShipData();
+        var shipData :ShipServerData = new ShipServerData();
         shipData.fromBytes(bytes);
         return shipData;
     }

@@ -1,10 +1,10 @@
 package {
 
-import flash.display.DisplayObject;
-
 import com.whirled.contrib.Scoreboard;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
+
+import flash.display.DisplayObject;
 
 import net.*;
 
@@ -33,6 +33,10 @@ public class AppController
      */
     protected function run () :void
     {
+        if (_running) {
+            return;
+        }
+
         AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED,
             handleGameStarted);
         AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
@@ -41,6 +45,8 @@ public class AppController
         if (AppContext.gameCtrl.game.isInPlay()) {
             handleGameStarted();
         }
+
+        _running = true;
     }
 
     protected function handleGameStarted (...ignored) :void
@@ -69,6 +75,8 @@ public class AppController
     {
         throw new Error("subclasses must implement createBoardController");
     }
+
+    protected var _running :Boolean;
 }
 
 }
