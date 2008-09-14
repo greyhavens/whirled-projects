@@ -4,6 +4,7 @@
 package ghostbusters.server {
 
 import flash.utils.Dictionary;
+import flash.utils.getTimer;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
@@ -171,8 +172,8 @@ public class Room
 
     internal function updateLanternPos (playerId :int, pos :Array) :void
     {
-        
-        _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos, true);
+        _lanterns[playerId] = pos;
+        _lanternsDirty = true;
     }
 
     internal function playerHealthUpdated (player :Player) :void
@@ -195,6 +196,12 @@ public class Room
             setState(Codes.STATE_APPEARING);
             _transitionFrame = frame + _ghost.definition.appearFrames;
             return;
+        }
+
+        if (_lanternsDirty && (getTimer() - _lanternUpdate) > 150) {
+            _ctrl.props.set(Codes.DICT_LANTERNS, _lanterns, true);
+            _lanternsDirty = false;
+            _lanternUpdate = getTimer();
         }
 
         if (!newSecond) {
@@ -249,7 +256,8 @@ public class Room
             setState(Codes.STATE_FIGHTING);
 
             // when we start fighting, delete the lantern data
-            _ctrl.props.set(Codes.DICT_LANTERNS, null, true);
+            _lanterns = new Dictionary();
+            _lanternsDirty = true;
         }
     }
 
@@ -441,6 +449,10 @@ public class Room
 
     protected var _state :String;
     protected var _players :Dictionary = new Dictionary();
+
+    protected var _lanterns :Dictionary = new Dictionary();
+    protected var _lanternsDirty :Boolean;
+    protected var _lanternUpdate :int;
 
     protected var _ghost :Ghost;
 
