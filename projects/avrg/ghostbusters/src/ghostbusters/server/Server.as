@@ -40,8 +40,7 @@ public class Server extends ServerObject
 
         _startTime = getTimer();
 
-        // TODO: 1000 temporarily, switch back to 100 when room code fixed
-        setInterval(tick, 1000);
+        setInterval(tick, 20);
     }
 
     public static function getRoom (roomId :int) :Room
@@ -64,10 +63,13 @@ public class Server extends ServerObject
 
     protected function tick () :void
     {
-        var frame :int = (getTimer() - _startTime) * (FRAMES_PER_SECOND) / 1000;
+        var dT :int = getTimer() - _startTime;
+        var frame :int = dT * (FRAMES_PER_SECOND / 1000);
+        var second :int = dT / 1000;
         for each (var room :Room in _rooms) {
-            room.tick(frame);
+            room.tick(frame, second > _lastSecond);
         }
+        _lastSecond = second;
     }
 
     // a message comes in from a player, figure out which Player instance will handle it
@@ -109,7 +111,8 @@ public class Server extends ServerObject
         }
     }
 
-    protected var _startTime :int = 0;
+    protected var _startTime :int;
+    protected var _lastSecond :int;
 
     protected static var _ctrl :AVRServerGameControl;
     protected static var _rooms :Dictionary = new Dictionary();

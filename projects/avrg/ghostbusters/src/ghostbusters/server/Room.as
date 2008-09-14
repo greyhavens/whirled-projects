@@ -110,7 +110,7 @@ public class Room
         }
     }
 
-    public function tick (frame :int) :void
+    public function tick (frame :int, newSecond :Boolean) :void
     {
         // if there are no players in this room, we cannot assume it's loaded, so do nothing
         if (_ctrl.getPlayerIds().length == 0) {
@@ -119,7 +119,7 @@ public class Room
 
         switch(_state) {
         case Codes.STATE_SEEKING:
-            seekTick(frame);
+            seekTick(frame, newSecond);
             break;
 
         case Codes.STATE_APPEARING:
@@ -134,7 +134,7 @@ public class Room
             break;
 
         case Codes.STATE_FIGHTING:
-            fightTick(frame);
+            fightTick(frame, newSecond);
             break;
 
         case Codes.STATE_GHOST_TRIUMPH:
@@ -171,6 +171,7 @@ public class Room
 
     internal function updateLanternPos (playerId :int, pos :Array) :void
     {
+        
         _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos, true);
     }
 
@@ -181,7 +182,7 @@ public class Room
             player.health, true);
     }
 
-    protected function seekTick (frame :int) :void
+    protected function seekTick (frame :int, newSecond :Boolean) :void
     {
         if (_ghost == null) {
             // maybe a delay here?
@@ -196,7 +197,9 @@ public class Room
             return;
         }
 
-        // TODO: only do this about once a second
+        if (!newSecond) {
+            return;
+        }
 
         // tell the ghost to go to a completely random logical position in ([0, 1], [0, 1])
         var x :Number = Server.random.nextNumber();
@@ -208,7 +211,7 @@ public class Room
         _ghost.tick(frame);
     }
 
-    protected function fightTick (frame :int) :void
+    protected function fightTick (frame :int, newSecond :Boolean) :void
     {
         if (_ghost == null) {
             log.debug("fightTick() with null _ghost");
@@ -232,7 +235,9 @@ public class Room
             return;
         }
 
-        // TODO: only do this about once a second
+        if (!newSecond) {
+            return;
+        }
 
         // if ghost is alive and at least one player is still up, do a ghost tick
         _ghost.tick(frame);
