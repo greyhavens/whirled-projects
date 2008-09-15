@@ -1,0 +1,16 @@
+<!-- build configuration -->
+<project default="build" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Mapper"/>
+  <property name="app.type" value="furni"/>
+  <!--<property name="flex.use-network" value="true"/>-->
+
+  <property name="app.lib-extras" value="YahooMap.swc"/>
+  <!--<property name="app.lib-extras" value="UMap_Flex.swc"/>-->
+  <!--<property name="app.lib-extras" value="map_flex_1_6.swc"/>-->
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
