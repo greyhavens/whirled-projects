@@ -108,7 +108,7 @@ public class ClientGameController extends GameController
             }
 
             if (vol > 0.0) {
-                sound.play(0, 0, new SoundTransform(vol));
+                ClientContext.sounds.playSound(sound, 0, 0, new SoundTransform(vol));
             }
         }
     }

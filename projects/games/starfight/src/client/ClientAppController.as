@@ -13,6 +13,7 @@ public class ClientAppController extends AppController
         mainSprite.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         ClientContext.mainSprite = mainSprite;
+        ClientContext.sounds = new SoundManager();
         ClientContext.gameView = new GameView();
         ClientContext.myId = AppContext.gameCtrl.game.getMyId();
 
@@ -44,6 +45,7 @@ public class ClientAppController extends AppController
     override public function shutdown () :void
     {
         ClientContext.gameView.shutdown();
+        ClientContext.sounds.stopAllSounds();
         super.shutdown();
     }
 

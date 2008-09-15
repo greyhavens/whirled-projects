@@ -9,6 +9,7 @@ public class ClientContext
     public static var mainSprite :Sprite;
     public static var gameView :GameView;
     public static var myId :int;
+    public static var sounds :SoundManager;
 }
 
 }
