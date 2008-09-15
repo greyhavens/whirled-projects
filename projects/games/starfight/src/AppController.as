@@ -41,12 +41,29 @@ public class AppController
             handleGameStarted);
         AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameEnded);
 
-        // TODO - handle starting a game in between rounds
-        if (AppContext.gameCtrl.game.isInPlay()) {
-            handleGameStarted();
+        _running = true;
+    }
+
+    public function shutdown () :void
+    {
+        if (AppContext.game != null) {
+            AppContext.game.shutdown();
+            AppContext.game = null;
         }
 
-        _running = true;
+        if (AppContext.board != null) {
+            AppContext.board.shutdown();
+            AppContext.board = null;
+        }
+
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_STARTED,
+                handleGameStarted);
+            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED,
+                handleGameEnded);
+        }
+
+        _running = false;
     }
 
     protected function handleGameStarted (...ignored) :void

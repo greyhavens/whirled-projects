@@ -7,6 +7,8 @@ import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.Font;
 import flash.text.TextField;
 
@@ -53,6 +55,19 @@ public class GameView extends Sprite
             messageReceived);
 
         updateDisplayPosition();
+
+        // clip games to the bounds of the player
+        this.scrollRect = new Rectangle(0, 0, Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
+    }
+
+    public function shutdown () :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.local.removeEventListener(SizeChangedEvent.SIZE_CHANGED,
+                updateDisplayPosition);
+            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+                messageReceived);
+        }
     }
 
     public function init () :void
@@ -108,10 +123,14 @@ public class GameView extends Sprite
 
     protected function updateDisplayPosition (...ignored) :void
     {
-        var displayWidth :Number = AppContext.gameCtrl.local.getSize().x;
+        var size :Point = AppContext.gameCtrl.local.getSize();
+        this.x = (size.x * 0.5) - (Constants.GAME_WIDTH * 0.5);
+        this.y = (size.y * 0.5) - (Constants.GAME_HEIGHT * 0.5);
+
+        /*var displayWidth :Number = AppContext.gameCtrl.local.getSize().x;
         _center.x = Math.max(0, (displayWidth - Constants.GAME_WIDTH) / 2);
         _right.width = _left.width = _center.x;
-        _right.x = displayWidth - _right.width;
+        _right.x = displayWidth - _right.width;*/
     }
 
     protected function messageReceived (event :MessageReceivedEvent) :void

@@ -1,6 +1,7 @@
 package client {
 
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 public class ClientAppController extends AppController
@@ -8,6 +9,8 @@ public class ClientAppController extends AppController
     public function ClientAppController (mainSprite :Sprite)
     {
         super(mainSprite);
+
+        mainSprite.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         ClientContext.mainSprite = mainSprite;
         ClientContext.gameView = new GameView();
@@ -26,6 +29,22 @@ public class ClientAppController extends AppController
             var shipTypeResources :ShipTypeResources = ClientConstants.getShipResources(shipTypeId);
             shipTypeResources.setShipType(shipType);
         }
+    }
+
+    override protected function run () :void
+    {
+        super.run();
+
+        // TODO - handle starting a game in between rounds
+        if (AppContext.gameCtrl.game.isInPlay()) {
+            handleGameStarted();
+        }
+    }
+
+    override public function shutdown () :void
+    {
+        ClientContext.gameView.shutdown();
+        super.shutdown();
     }
 
     override protected function createGameManager () :GameController
@@ -60,6 +79,11 @@ public class ClientAppController extends AppController
     protected function get resourcesLoaded () :Boolean
     {
         return _numLoadedAssets > Constants.SHIP_TYPE_CLASSES.length;
+    }
+
+    protected function handleUnload (...ignored) :void
+    {
+        shutdown();
     }
 
     protected var _numLoadedAssets :int;

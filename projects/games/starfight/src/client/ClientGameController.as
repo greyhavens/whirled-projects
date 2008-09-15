@@ -29,9 +29,11 @@ public class ClientGameController extends GameController
     {
         super.shutdown();
 
-        _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
-        _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
-        _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
+            _gameCtrl.local.removeEventListener(KeyboardEvent.KEY_UP, keyReleased);
+            _gameCtrl.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, handleCoinsAwarded);
+        }
     }
 
     override public function run () :void

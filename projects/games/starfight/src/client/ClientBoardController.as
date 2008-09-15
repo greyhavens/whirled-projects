@@ -20,7 +20,9 @@ public class ClientBoardController extends BoardController
     override public function shutdown () :void
     {
         super.shutdown();
-        _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        }
     }
 
     protected function propertyChanged (event :PropertyChangedEvent) :void

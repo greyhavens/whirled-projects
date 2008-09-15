@@ -28,7 +28,9 @@ public class BoardController
 
     public function shutdown () :void
     {
-        _gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        if (_gameCtrl.isConnected()) {
+            _gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        }
     }
 
     public function loadBoard (boardLoadedCallback :Function) :void
