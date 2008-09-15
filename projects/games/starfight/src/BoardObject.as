@@ -38,25 +38,26 @@ public class BoardObject extends EventDispatcher
         return 0.8;
     }
 
+    public function reload (bytes :ByteArray) :void
+    {
+        fromBytes(bytes);
+    }
+
     /**
      * Unserialize our data from a byte array.
      */
-    public function readFrom (bytes :ByteArray) :void
+    public function fromBytes (bytes :ByteArray) :void
     {
         bX = bytes.readInt();
         bY = bytes.readInt();
     }
 
-    public function reload (bytes :ByteArray) :void
-    {
-        readFrom(bytes);
-    }
-
     /**
      * Serialize our data to a byte array.
      */
-    public function writeTo (bytes :ByteArray) :ByteArray
+    public function toBytes (bytes :ByteArray = null) :ByteArray
     {
+        bytes = (bytes != null ? bytes : new ByteArray());
         bytes.writeInt(bX);
         bytes.writeInt(bY);
 

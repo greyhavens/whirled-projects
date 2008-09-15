@@ -1,6 +1,5 @@
 package {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.game.GameControl;
 import com.whirled.net.ElementChangedEvent;
@@ -31,11 +30,6 @@ public class BoardController
         if (_gameCtrl.isConnected()) {
             _gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         }
-    }
-
-    public function loadBoard (boardLoadedCallback :Function) :void
-    {
-        throw new Error("subclasses must implement loadBoard()");
     }
 
     public function roundEnded () :void
@@ -377,7 +371,7 @@ public class BoardController
     /**
      * Unserialize our data from a byte array.
      */
-    public function readFrom (bytes :ByteArray) :void
+    public function fromBytes (bytes :ByteArray) :void
     {
         width = bytes.readInt();
         height = bytes.readInt();
@@ -386,68 +380,14 @@ public class BoardController
     /**
      * Serialize our data to a byte array.
      */
-    public function writeTo (bytes :ByteArray) :ByteArray
+    public function toBytes (bytes :ByteArray = null) :ByteArray
     {
+        bytes = (bytes != null ? bytes : new ByteArray());
+
         bytes.writeInt(width);
         bytes.writeInt(height);
 
         return bytes;
-    }
-
-    /**
-     * Loads all the obstacles in the world.
-     */
-    protected function loadObstacles () :void
-    {
-        _obstacles = [];
-
-        var ii :int;
-        var index :int;
-
-        // TODO Load obstacles from a file instead of random.
-        var numAsteroids :int = width*height/100;
-        for (ii = 0; ii < numAsteroids; ii++) {
-            var type :int = 0;
-            switch (int(Math.floor(Math.random()*2.0))) {
-            case 0: type = Obstacle.ASTEROID_1; break;
-            case 1: type = Obstacle.ASTEROID_2; break;
-            }
-            _obstacles.push(new Obstacle(
-                type, 1 + Math.random()*(width-2), 1+Math.random()*(height-2)));
-            _obstacles[_obstacles.length - 1].index = index++;
-        }
-
-        // Place a wall around the outside of the board.
-
-        for (ii = 0; ii < height; ii++) {
-            if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, 1, height));
-            } else {
-                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
-            }
-            _obstacles[_obstacles.length - 1].index = index++;
-            if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, 1, height));
-            } else {
-                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
-            }
-            _obstacles[_obstacles.length - 1].index = index++;
-        }
-
-        for (ii = 0; ii < width; ii++) {
-            if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, width, 1));
-            } else {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
-            }
-            _obstacles[_obstacles.length - 1].index = index++;
-            if (ii == 0) {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, width, 1));
-            } else {
-                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
-            }
-            _obstacles[_obstacles.length - 1].index = index++;
-        }
     }
 
     protected function setImmediate (propName :String, value :Object) :void

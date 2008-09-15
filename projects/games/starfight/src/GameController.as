@@ -56,10 +56,7 @@ public class GameController
 
     public function run () :void
     {
-        _lastTickTime = getTimer();
-        AppContext.board.loadBoard(beginGame);
-
-        log.info("Game started");
+        throw new Error("abstract");
     }
 
     public function createShip (shipId :int, playerName :String) :Ship

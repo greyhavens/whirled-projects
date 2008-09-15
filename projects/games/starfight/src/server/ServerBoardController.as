@@ -11,32 +11,79 @@ public class ServerBoardController extends BoardController
         super(gameCtrl);
     }
 
-    override public function loadBoard (boardLoadedCallback :Function) :void
-    {
-        createBoard();
-        boardLoadedCallback();
-    }
-
-    protected function createBoard () :void
+    public function createBoard () :void
     {
         this.width = 100;
         this.height = 100;
 
-        loadObstacles();
+        createObstacles();
         var maxPowerups :int = Math.max(1, width * height / MIN_TILES_PER_POWERUP);
         _powerups = new Array(maxPowerups);
         _mines = new Array(MAX_MINES);
 
         _gameCtrl.doBatch(function () :void {
-            setImmediate(Constants.PROP_OBSTACLES, new Array(_obstacles.length));
-            for (var ii :int; ii < _obstacles.length; ii++) {
-                setAtImmediate(Constants.PROP_OBSTACLES,
-                        _obstacles[ii].writeTo(new ByteArray()), ii);
+            var obstacleBytes :Array = new Array(_obstacles.length);
+            for (var ii :int = 0; ii < _obstacles.length; ii++) {
+                obstacleBytes[ii] = Obstacle(_obstacles[ii]).toBytes();
             }
+            setImmediate(Constants.PROP_OBSTACLES, obstacleBytes);
             setImmediate(Constants.PROP_POWERUPS, new Array(_powerups.length));
             setImmediate(Constants.PROP_MINES, new Array(MAX_MINES));
-            setImmediate(Constants.PROP_BOARD, writeTo(new ByteArray()));
+            setImmediate(Constants.PROP_BOARD, toBytes());
         });
+    }
+
+    protected function createObstacles () :void
+    {
+        _obstacles = [];
+
+        var ii :int;
+        var index :int;
+
+        // TODO Load obstacles from a file instead of random.
+        var numAsteroids :int = width*height/100;
+        for (ii = 0; ii < numAsteroids; ii++) {
+            var type :int = 0;
+            switch (int(Math.floor(Math.random()*2.0))) {
+            case 0: type = Obstacle.ASTEROID_1; break;
+            case 1: type = Obstacle.ASTEROID_2; break;
+            }
+            _obstacles.push(new Obstacle(
+                type, 1 + Math.random()*(width-2), 1+Math.random()*(height-2)));
+            _obstacles[_obstacles.length - 1].index = index++;
+        }
+
+        // Place a wall around the outside of the board.
+
+        for (ii = 0; ii < height; ii++) {
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, 1, height));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
+            }
+            _obstacles[_obstacles.length - 1].index = index++;
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, 1, height));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            }
+            _obstacles[_obstacles.length - 1].index = index++;
+        }
+
+        for (ii = 0; ii < width; ii++) {
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, width, 1));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
+            }
+            _obstacles[_obstacles.length - 1].index = index++;
+            if (ii == 0) {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, width, 1));
+            } else {
+                _obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            }
+            _obstacles[_obstacles.length - 1].index = index++;
+        }
     }
 
     override public function roundEnded () :void
@@ -90,7 +137,7 @@ public class ServerBoardController extends BoardController
 
     protected function addPowerup (powerup :Powerup, index :int) :void
     {
-        setAtImmediate(Constants.PROP_POWERUPS, powerup.writeTo(new ByteArray()), index);
+        setAtImmediate(Constants.PROP_POWERUPS, powerup.toBytes(new ByteArray()), index);
         //powerupAdded(powerup, index);
     }
 
@@ -111,7 +158,7 @@ public class ServerBoardController extends BoardController
     {
         var mineIndex :int = super.addMine(mine);
         if (mineIndex >= 0) {
-            setAtImmediate(Constants.PROP_MINES, mine.writeTo(new ByteArray()), mineIndex);
+            setAtImmediate(Constants.PROP_MINES, mine.toBytes(new ByteArray()), mineIndex);
         }
 
         return mineIndex;

@@ -40,16 +40,16 @@ public class Powerup extends BoardObject
         dispatchEvent(new Event(DESTROYED));
     }
 
-    override public function writeTo (bytes :ByteArray) :ByteArray
+    override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        super.writeTo(bytes);
+        super.toBytes(bytes);
         bytes.writeByte(type);
         return bytes;
     }
 
-    override public function readFrom (bytes :ByteArray) :void
+    override public function fromBytes (bytes :ByteArray) :void
     {
-        super.readFrom(bytes);
+        super.fromBytes(bytes);
         type = bytes.readByte();
     }
 }

@@ -30,8 +30,9 @@ public class ServerGameController extends GameController
             setImmediate(shipDataKey(occupantId), null);
         }
 
-        super.run();
+        // init the board
         ServerContext.board = AppContext.board as ServerBoardController;
+        ServerContext.board.createBoard();
 
         setNewGameState(Constants.STATE_PRE_ROUND);
     }

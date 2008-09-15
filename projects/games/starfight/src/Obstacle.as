@@ -70,17 +70,17 @@ public class Obstacle extends BoardObject
         return Constants.PROP_OBSTACLES;
     }
 
-    override public function readFrom (bytes :ByteArray) :void
+    override public function fromBytes (bytes :ByteArray) :void
     {
-        super.readFrom(bytes);
+        super.fromBytes(bytes);
         type = bytes.readInt();
         w = bytes.readInt();
         h = bytes.readInt();
     }
 
-    override public function writeTo (bytes :ByteArray) :ByteArray
+    override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        bytes = super.writeTo(bytes);
+        bytes = super.toBytes(bytes);
         bytes.writeInt(type);
         bytes.writeInt(w);
         bytes.writeInt(h);

@@ -55,16 +55,16 @@ public class Mine extends BoardObject
         dispatchEvent(new Event(EXPLODED));
     }
 
-    override public function readFrom (bytes :ByteArray) :void
+    override public function fromBytes (bytes :ByteArray) :void
     {
-        super.readFrom(bytes);
+        super.fromBytes(bytes);
         ownerId = bytes.readInt();
         dmg = bytes.readFloat();
     }
 
-    override public function writeTo (bytes :ByteArray) :ByteArray
+    override public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        bytes = super.writeTo(bytes);
+        bytes = super.toBytes(bytes);
         bytes.writeInt(ownerId);
         bytes.writeFloat(dmg);
         return bytes;

@@ -32,7 +32,7 @@ public class ClientBoardController extends BoardController
         }
     }
 
-    override public function loadBoard (boardLoadedCallback :Function) :void
+    public function loadBoard (boardLoadedCallback :Function) :void
     {
         _boardLoadedCallback = boardLoadedCallback;
 
@@ -63,7 +63,7 @@ public class ClientBoardController extends BoardController
             return;
         }
 
-        readFrom(boardBytes);
+        fromBytes(boardBytes);
         var obs :Array = (_gameCtrl.net.get(Constants.PROP_OBSTACLES) as Array);
         _obstacles = new Array(obs.length);
         for (var ii :int; ii < _obstacles.length; ii++) {

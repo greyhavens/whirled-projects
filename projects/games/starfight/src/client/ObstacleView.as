@@ -1,5 +1,7 @@
 package client {
 
+import com.threerings.util.Log;
+
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.MovieClip;
@@ -126,6 +128,8 @@ public class ObstacleView extends Sprite
     protected var _obstacle :Obstacle;
 
     protected static var _lastCollisionSoundTime :int;
+
+    protected static const log :Log = Log.getLog(ObstacleView);
 
     protected static const MIN_COLLISION_SOUND_MS :int = 200;
 

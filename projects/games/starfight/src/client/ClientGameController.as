@@ -38,9 +38,6 @@ public class ClientGameController extends GameController
 
     override public function run () :void
     {
-        ClientContext.board = ClientBoardController(AppContext.board);
-        ClientContext.gameView.init();
-
         if (_gameCtrl.net.get(Constants.PROP_GAMESTATE) == null) {
             _gameState = Constants.STATE_INIT;
         } else {
@@ -48,7 +45,9 @@ public class ClientGameController extends GameController
             _stateTimeMs = int(_gameCtrl.net.get(Constants.PROP_STATETIME));
         }
 
-        super.run();
+        ClientContext.board = ClientBoardController(AppContext.board);
+        ClientContext.gameView.init();
+        ClientContext.board.loadBoard(beginGame);
     }
 
     override public function createShip (shipId :int, playerName :String) :Ship
