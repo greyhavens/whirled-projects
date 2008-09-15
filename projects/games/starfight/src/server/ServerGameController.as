@@ -35,6 +35,8 @@ public class ServerGameController extends GameController
         ServerContext.board.createBoard();
 
         setNewGameState(Constants.STATE_PRE_ROUND);
+
+        beginGame();
     }
 
     override protected function messageReceived (event :MessageReceivedEvent) :void

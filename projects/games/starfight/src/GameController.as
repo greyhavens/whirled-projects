@@ -131,11 +131,8 @@ public class GameController
 
     protected function propertyChanged (event :PropertyChangedEvent) :void
     {
-        if (_running) {
-            var name :String = event.name;
-            if (isShipKey(name)) {
-                shipChanged(shipKeyId(name), ByteArray(event.newValue));
-            }
+        if (_running && isShipKey(event.name)) {
+            shipChanged(shipKeyId(event.name), ByteArray(event.newValue));
         }
     }
 
