@@ -99,10 +99,12 @@ public class GameController extends Controller
         // TODO: this probably no longer makes much UI sense
         panel.hud.chooseWeapon(weapon);
 
-        if (panel is FightPanel) {
-            // should always be true, but let's be robust
-            FightPanel(panel).weaponUpdated();
+        if (!(panel is FightPanel)) {
+            // should not happen, but let's be robust
+            Game.log.debug("Eek, panel is not FightPanel");
+            return;
         }
+        FightPanel(panel).weaponUpdated();
     }
 
     public function handleGhostAttacked (result :MicrogameResult) :void

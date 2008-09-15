@@ -55,6 +55,7 @@ public class SeekPanel extends FrameSprite
         }
 
         _lanterns = new Dictionary();
+        newLanterns(Dictionary(Game.control.room.props.get(Codes.DICT_LANTERNS)));
 
         if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
@@ -109,29 +110,17 @@ public class SeekPanel extends FrameSprite
 //        Game.log.debug("roomElementChanged: " + evt);
         var bits :Array;
         if (evt.name == Codes.DICT_LANTERNS) {
-            var playerId :int = evt.key;
-
-            // ignore our own updates unless we're debugging
-            if (playerId == Game.ourPlayerId && !Game.DEBUG) {
-                return;
-            }
-
             // if lanterns are off, also ignore
             if (_lanterns == null) {
                 return;
             }
 
-            if (evt.newValue == null) {
+            if (pos == null) {
                 // someone turned theirs off
-                playerLanternOff(playerId);
+                playerLanternOff(evt.key);
 
             } else {
-                bits = (evt.newValue as Array);
-                if (bits != null) {
-                    // someone turned theirs on or moved it
-                    updateLantern(
-                        playerId, Game.control.local.roomToStage(new Point(bits[0], bits[1])));
-                }
+                lanternUpdateEvent(evt.key, evt.newValue as Array);
             }
 
         } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
@@ -148,7 +137,7 @@ public class SeekPanel extends FrameSprite
 
                 // figure effective movement ranges
                 var dX :Number = Math.max(0, Game.roomBounds.width - 2*_ghost.bounds.width);
-                var dY :Number = Nath.max(0, Game.roomBounds.height - _ghost.bounds.height);
+                var dY :Number = Math.max(0, Game.roomBounds.height - _ghost.bounds.height);
 
                 // place the ghost therein
                 var x :Number = _ghost.bounds.width + dX * bits[0];
@@ -171,11 +160,43 @@ public class SeekPanel extends FrameSprite
             return;
         }
 
-        if (evt.name == Codes.PROP_STATE) {
+        if (evt.name == Codes.DICT_LANTERNS) {
+            newLanterns(Dictionary(evt.newValue));
+
+        } else if (evt.name == Codes.PROP_STATE) {
             if (evt.newValue == Codes.STATE_APPEARING) {
                 appearGhost();
             }
         }
+    }
+
+    // we're initializing our lantern data structure from a dictionary
+    protected function newLanterns (lanterns :Dictionary) :void
+    {
+        var playerId :Object;
+
+        // make sure we have the lanterns we're supposed to have
+        for (playerId in lanterns) {
+            lanternUpdateEvent(int(playerId), lanterns[playerId]);
+        }
+
+        // make sure we don't have some we shouldn't have
+        for (playerId in _lanterns) {
+            if (lanterns[playerId] == null) {
+                playerLanternOff(int(playerId));
+            }
+        }
+    }
+
+    protected function lanternUpdateEvent (playerId :int, pos :Array) :void
+    {
+        // ignore our own updates unless we're debugging
+        if (playerId == Game.ourPlayerId && !Game.DEBUG) {
+            return;
+        }
+
+        // someone turned theirs on or moved it
+        updateLantern(playerId, Game.control.local.roomToStage(new Point(pos[0], pos[1])));
     }
 
     // FRAME HANDLER

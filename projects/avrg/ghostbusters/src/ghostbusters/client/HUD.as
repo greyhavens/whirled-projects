@@ -147,11 +147,14 @@ public class HUD extends Sprite
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         teamUpdated();
+        updateGhostHealth();
     }
 
     protected function propertyChanged (evt :PropertyChangedEvent) :void
     {
-        teamUpdated();
+        if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+            teamUpdated();
+        }
     }
 
     protected function elementChanged (evt :ElementChangedEvent) :void
@@ -292,7 +295,6 @@ public class HUD extends Sprite
         // TODO: make use of all 100 frames!
         var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
-        Game.log.debug("Moved " + bar.name + " to frame #" + frame);
 
         reallyStop(bar);
         reallyStop(other);
