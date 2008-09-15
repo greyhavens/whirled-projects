@@ -33,8 +33,8 @@ public class ShipExplodedMessage
     {
         bytes = (bytes != null ? bytes : new ByteArray());
 
-        bytes.writeByte(shipId);
-        bytes.writeByte(shooterId);
+        bytes.writeInt(shipId);
+        bytes.writeInt(shooterId);
         bytes.writeFloat(x);
         bytes.writeFloat(y);
         bytes.writeShort(rotation);
@@ -43,8 +43,8 @@ public class ShipExplodedMessage
 
     public function fromBytes (bytes :ByteArray) :void
     {
-        shipId = bytes.readByte();
-        shooterId = bytes.readByte();
+        shipId = bytes.readInt();
+        shooterId = bytes.readInt();
         x = bytes.readFloat();
         y = bytes.readFloat();
         rotation = bytes.readShort();
