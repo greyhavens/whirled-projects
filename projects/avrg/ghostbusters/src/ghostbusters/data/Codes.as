@@ -247,5 +247,10 @@ public class Codes
      * calculate how much of the reward should go to each player.
      */
     public static const DICT_STATS :String = "s";
+
+    /**
+     * A task identifier that signifies we defeated the current ghost!
+     */
+    public static const TASK_GHOST_DEFEATED :String = "ghost_defeated";
 }
 }

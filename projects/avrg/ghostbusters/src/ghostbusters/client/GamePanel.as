@@ -195,6 +195,10 @@ public class GamePanel extends Sprite
 
     protected function taskCompleted (evt :AVRGamePlayerEvent) :void
     {
+        if (evt.name != Codes.TASK_GHOST_DEFEATED) {
+            Game.log.warning("Unknown task completed: " + evt.name);
+            return;
+        }
         // TODO: find the 'payout' TextField in the triumph clip and insert the
         // TODO: actual amount of coins awarded into that text string -- this is
         // TODO: pending Bill's art fix-up

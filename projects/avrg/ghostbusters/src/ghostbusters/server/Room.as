@@ -211,7 +211,6 @@ public class Room
         // tell the ghost to go to a completely random logical position in ([0, 1], [0, 1])
         var x :Number = Server.random.nextNumber();
         var y :Number = Server.random.nextNumber();
-
         _ghost.setPosition(x, y);
 
         // do a ghost tick
@@ -322,7 +321,8 @@ public class Room
     //      (minigamePoints(player) / minigamePoints(team))
     //
     // The precise definition of levelAdjustment() is up in the air, but I figure something
-    // along the lines of 1+atan(x/2) (http://www.mathsisfun.com/graph/function-grapher.php)
+    // along the lines of http://tinyurl.com/69xvu5 which is close to linear and centered
+    // around 1 (for killing a ghost your own level).
     protected function payout () :void
     {
         if (_stats == null) {
@@ -354,9 +354,17 @@ public class Room
         }
 
         for (var ii :int = 0; ii < playerArr.length; ii ++) {
-            var factor :Number = 0.5 * (pointsArr[ii]  / totPoints);
+            player = playerArr[ii];
+
+            // clamp the level difference to [-3, -3]
+            var levelDiff :int = Math.max(-6, Math.min(6, _ghost.level - player.level));
+            // semi-linearly map this to a factor in [0.35, 1.65]
+            var levelFactor :Number = 1 + Math.atan(levelDiff / 4);
+            // center the factor around 0.5 and weigh by contribution
+            var factor :Number =  0.5 * levelFactor * (pointsArr[ii]  / totPoints);
+
             if (factor > 0) {
-                playerArr[ii].ctrl.completeTask("ghost_defeated", factor);
+                player.ctrl.completeTask(Codes.TASK_GHOST_DEFEATED, factor);
             }
         }
     }
