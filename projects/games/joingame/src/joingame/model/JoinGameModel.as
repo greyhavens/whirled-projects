@@ -4,11 +4,11 @@ package joingame.model
     import com.threerings.util.HashMap;
     import com.threerings.util.Random;
     import com.whirled.game.GameControl;
-    import com.whirled.game.NetSubControl;
     import com.whirled.net.MessageReceivedEvent;
     
     import flash.events.EventDispatcher;
     
+    import joingame.AppContext;
     import joingame.Constants;
     import joingame.net.JoinGameEvent;
     
@@ -43,7 +43,7 @@ package joingame.model
             for(var k:int = 0; k < board._rows*board._cols; k++)
             {
                 board._boardPieceColors[k] = 0;
-                board._boardPieceTypes[k] = Constants.PIECE_TYPE_DEAD;
+                board._boardPieceTypes[k] = Constants.PIECE_TYPE_INACTIVE;
             }
             
             _playerToBoardMap.put(-1, board);
@@ -86,14 +86,14 @@ package joingame.model
                 boards.push(  (_playerToBoardMap.get( keys[i] ) as JoinGameBoardRepresentation).getBoardAsCompactRepresentation()  );
             }
             
-//            trace("\n getModelMemento():\n " + boards);
+//            LOG("\n getModelMemento():\n " + boards);
             
             return boards;
         }
         
         public function setModelMemento(representation:Array): void
         {
-//            trace("setModelMemento()");
+//            LOG("setModelMemento()");
             var keys:Array = _playerToBoardMap.keys();
             var i: int;
             var board:JoinGameBoardRepresentation;
@@ -110,18 +110,18 @@ package joingame.model
             _initialSeatedPlayerIds = representation[1] as Array;
             _playerIdsInOrderOfLoss = representation[2] as Array;
             
-//            trace("_currentSeatedPlayerIds=" + _currentSeatedPlayerIds);
-//            trace("_initialSeatedPlayerIds=" + _initialSeatedPlayerIds);
-//            trace("_playerIdsInOrderOfLoss=" + _playerIdsInOrderOfLoss);
+//            LOG("_currentSeatedPlayerIds=" + _currentSeatedPlayerIds);
+//            LOG("_initialSeatedPlayerIds=" + _initialSeatedPlayerIds);
+//            LOG("_playerIdsInOrderOfLoss=" + _playerIdsInOrderOfLoss);
             
             for( i = 3; i < representation.length; i++)
             {
                 var currentBoardRep:Array = representation[i] as Array;
                 var playerID:int = currentBoardRep[0] as int;
-                board = new JoinGameBoardRepresentation(_gameCtrl);
+                board = new JoinGameBoardRepresentation();
                 board.setBoardFromCompactRepresentation( currentBoardRep );
                 _playerToBoardMap.put( playerID, board);
-//                trace("putting board for player=" + playerID);
+//                LOG("putting board for player=" + playerID);
             }
             
             dispatchEvent(new JoinGameEvent(-1, JoinGameEvent.RECEIVED_BOARDS_FROM_SERVER));
@@ -131,10 +131,10 @@ package joingame.model
 
         private static function getPlayerIDToLeft(myid:int, _playerIDsInOrderOfPlay:Array): int 
         {
-            if( _playerIDsInOrderOfPlay== null || _playerIDsInOrderOfPlay.length <= 1)
+            if( _playerIDsInOrderOfPlay == null || _playerIDsInOrderOfPlay.length <= 1)
                 return -1;
             
-            
+//            LOG("\ngetPlayerIDToLeft(), _playerIDsInOrderOfPlay=" + _playerIDsInOrderOfPlay + ", myid=" + myid);
             var myIDIndex: int = ArrayUtil.indexOf(_playerIDsInOrderOfPlay, myid );
             if( myIDIndex != -1)
             {
@@ -147,10 +147,10 @@ package joingame.model
                 if(myIDIndex == 0)
                 {
                     //Two player games are not circular
-                    if( _playerIDsInOrderOfPlay.length == 2)
-                    {
-                        return -1;
-                    }
+//                    if( _playerIDsInOrderOfPlay.length == 2)
+//                    {
+//                        return -1;
+//                    }
                     return _playerIDsInOrderOfPlay[_playerIDsInOrderOfPlay.length - 1];
                 }
                 else
@@ -177,10 +177,10 @@ package joingame.model
                 if(myIDIndex >= _playerIDsInOrderOfPlay.length - 1)
                 {
                     //Two player games are not circular
-                    if( _playerIDsInOrderOfPlay.length == 2)
-                    {
-                        return -1;
-                    }
+//                    if( _playerIDsInOrderOfPlay.length == 2)
+//                    {
+//                        return -1;
+//                    }
                     
                     return _playerIDsInOrderOfPlay[0];
                 }
@@ -201,16 +201,16 @@ package joingame.model
         public function getPlayerIDToLeftOfPlayer(playerid:int): int 
         {
             
-            var playerIDsInOrderOfPlay:Array = _currentSeatedPlayerIds; //_gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
+//            var playerIDsInOrderOfPlay:Array = _currentSeatedPlayerIds; //_gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
             
-            return getPlayerIDToLeft( playerid, playerIDsInOrderOfPlay);
+            return getPlayerIDToLeft( playerid, _currentSeatedPlayerIds);
             
         }
         
         public function getPlayerIDToRightOfPlayer(playerid:int): int 
         {
-            var playerIDsInOrderOfPlay:Array = _currentSeatedPlayerIds;//_gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
-            return getPlayerIDToRight( playerid, playerIDsInOrderOfPlay);
+//            var playerIDsInOrderOfPlay:Array = _currentSeatedPlayerIds;//_gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
+            return getPlayerIDToRight( playerid, _currentSeatedPlayerIds);
             
         }
 
@@ -221,7 +221,7 @@ package joingame.model
         public function doHorizontalJoinEffects(board :JoinGameBoardRepresentation, join :JoinGameJoin, 
              doJoinEffects :Boolean = true, doHealing :Boolean = false): void
         {
-//            trace("model doHorizontalJoinEffects() for player=" + board.playerID);
+//            LOG("model doHorizontalJoinEffects() for player=" + board.playerID);
             var i :int;
             var piecex :int;
             var piecey :int;
@@ -230,7 +230,7 @@ package joingame.model
 
                 if(join != null)
                 {
-//                    trace("model doing " + join.toString());
+//                    LOG("model doing " + join.toString());
                     
                     //If there are "dead" pieces adjacent to the cleared pieces, "heal" them
                     if(doHealing)
@@ -267,10 +267,10 @@ package joingame.model
                             var idLeft: int = getPlayerIDToLeftOfPlayer(board.playerID);
                             var idRight: int = getPlayerIDToRightOfPlayer(board.playerID);
                             
-//                            trace("in attack, idLeft=" + idLeft + ", idRight=" + idRight);
+//                            LOG("in attack, idLeft=" + idLeft + ", idRight=" + idRight);
                             
                             var idOfPlayerToAttack: int = join.attackSide == JoinGameJoin.LEFT ? idLeft : idRight;
-//                            trace("in attack, idOfPlayerToAttack=" + idOfPlayerToAttack);
+//                            LOG("in attack, idOfPlayerToAttack=" + idOfPlayerToAttack);
                             var sideAttackComesFromForAttacked: int = join.attackSide == JoinGameJoin.LEFT ? JoinGameJoin.RIGHT : JoinGameJoin.LEFT;  
                             
                             var damageFor7Join:int = 2;
@@ -298,15 +298,15 @@ package joingame.model
     //                            sendMessageAttackPlayerFromSideAndRowWithValue(idLeft, JoinGameJoin.RIGHT, join.attackRow, 1);
     //                            sendMessageAttackPlayerFromSideAndRowWithValue(idRight, JoinGameJoin.LEFT, join.attackRow, 1);
                                 
-                                doAttack(_playerToBoardMap.get(idLeft), Constants.ATTACK_RIGHT, join.attackRow, 1);
-                                doAttack(_playerToBoardMap.get(idRight), Constants.ATTACK_LEFT, join.attackRow, 1);
+                                doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, 1);
+                                doAttack(_playerToBoardMap.get(idRight), Constants.LEFT, join.attackRow, 1);
                                 
                                 atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
                                 atackevent.joins = [join];
                                 atackevent.boardAttacked = idLeft;
                                 atackevent.row = join.attackRow;
                                 atackevent.damage = 1;
-                                atackevent.side = Constants.ATTACK_RIGHT;
+                                atackevent.side = Constants.RIGHT;
                                 dispatchEvent( atackevent);
                                 
                                 atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
@@ -314,7 +314,7 @@ package joingame.model
                                 atackevent.boardAttacked = idRight;
                                 atackevent.row = join.attackRow;
                                 atackevent.damage = 1;
-                                atackevent.side = Constants.ATTACK_LEFT;
+                                atackevent.side = Constants.LEFT;
                                 dispatchEvent( atackevent);
                                 
                                 
@@ -341,28 +341,28 @@ package joingame.model
                                 {
                                     if(_random.nextBoolean())
                                     {
-                                        doAttack(_playerToBoardMap.get(idLeft), Constants.ATTACK_RIGHT, join.attackRow, damageFor7Join);
+                                        doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, damageFor7Join);
                                         
                                         atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
                                         atackevent.joins = [join];
                                         atackevent.boardAttacked = idLeft;
                                         atackevent.row = join.attackRow;
                                         atackevent.damage = damageFor7Join;
-                                        atackevent.side = Constants.ATTACK_RIGHT;
+                                        atackevent.side = Constants.RIGHT;
                                         dispatchEvent( atackevent);
     //                                    sendMessageAttackPlayerFromSideAndRowWithValue(idLeft, JoinGameJoin.RIGHT, join.attackRow, damageFor7Join);
                                     }
                                     else
                                     {
     //                                    sendMessageAttackPlayerFromSideAndRowWithValue(idRight, JoinGameJoin.LEFT, join.attackRow, damageFor7Join);
-                                        doAttack(_playerToBoardMap.get(idRight), Constants.ATTACK_RIGHT, join.attackRow, damageFor7Join);
+                                        doAttack(_playerToBoardMap.get(idRight), Constants.RIGHT, join.attackRow, damageFor7Join);
                                         
                                         atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
                                         atackevent.joins = [join];
                                         atackevent.boardAttacked = idRight;
                                         atackevent.row = join.attackRow;
                                         atackevent.damage = damageFor7Join;
-                                        atackevent.side = Constants.ATTACK_RIGHT;
+                                        atackevent.side = Constants.RIGHT;
                                         dispatchEvent( atackevent);
                                     }
                                     
@@ -371,15 +371,15 @@ package joingame.model
                                 {
     //                                sendMessageAttackPlayerFromSideAndRowWithValue(idLeft, JoinGameJoin.RIGHT, join.attackRow, damageFor7Join);
     //                                sendMessageAttackPlayerFromSideAndRowWithValue(idRight, JoinGameJoin.LEFT, join.attackRow, damageFor7Join);
-                                    doAttack(_playerToBoardMap.get(idLeft), Constants.ATTACK_RIGHT, join.attackRow, damageFor7Join);
-                                    doAttack(_playerToBoardMap.get(idRight), Constants.ATTACK_LEFT, join.attackRow, damageFor7Join);
+                                    doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, damageFor7Join);
+                                    doAttack(_playerToBoardMap.get(idRight), Constants.LEFT, join.attackRow, damageFor7Join);
                                     
                                     atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
                                     atackevent.joins = [join];
                                     atackevent.boardAttacked = idLeft;
                                     atackevent.row = join.attackRow;
                                     atackevent.damage = damageFor7Join;
-                                    atackevent.side = Constants.ATTACK_RIGHT;
+                                    atackevent.side = Constants.RIGHT;
                                     dispatchEvent( atackevent);
                                     
                                     atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
@@ -387,7 +387,7 @@ package joingame.model
                                     atackevent.boardAttacked = idRight;
                                     atackevent.row = join.attackRow;
                                     atackevent.damage = damageFor7Join;
-                                    atackevent.side = Constants.ATTACK_LEFT;
+                                    atackevent.side = Constants.LEFT;
                                     dispatchEvent( atackevent);
                                     
                                 }
@@ -402,21 +402,21 @@ package joingame.model
 //                board.markPotentiallyDead();
 //            }
             
-//            trace("end doHorizontalJoinEffects() for player=" + board.playerID + "\n" + board);
+//            LOG("end doHorizontalJoinEffects() for player=" + board.playerID + "\n" + board);
         }
   
   
         public function doVerticalJoinEffects(board :JoinGameBoardRepresentation, join :JoinGameJoin, 
              doJoinEffects :Boolean = true, doHealing :Boolean = false): void
         {
-//            trace("model doVerticalJoinEffects() for player=" + board.playerID + "\n" + board);
+//            LOG("model doVerticalJoinEffects() for player=" + board.playerID + "\n" + board);
             var i :int;
             var piecex :int;
             var piecey :int;
 
             if(join != null)
             {
-//                trace("model doing " + join.toString());
+//                LOG("model doing " + join.toString());
 //                
 //                //If there are "dead" pieces adjacent to the cleared pieces, "heal" them
 //                if(doHealing)
@@ -471,12 +471,12 @@ package joingame.model
 //            {
 //                board.markPotentiallyDead();
 //            }
-//            trace("end model doVerticalJoinEffects() for player=" + board.playerID + "\n" + board);
+//            LOG("end model doVerticalJoinEffects() for player=" + board.playerID + "\n" + board);
             
         }      
         public function addNewPieces( board :JoinGameBoardRepresentation ): void
         {
-//            trace("model addNewPieces()");
+//            LOG("model addNewPieces()");
             var addPiecesEvent :JoinGameEvent = new JoinGameEvent(board.playerID,  JoinGameEvent.ADD_NEW_PIECES);
             
             for( var i: int = 0; i < board._boardPieceTypes.length; i++)
@@ -509,7 +509,7 @@ package joingame.model
         
         public function doPiecesFall(board :JoinGameBoardRepresentation, sendEvent :Boolean = true): void
         {
-//            trace("model doPiecesFall");   
+//            LOG("\nmodel doPiecesFall begin: " + board);   
             //Start at the bottom row moving up
             //If there are any empty pieces, swap with the next highest fallable block
             
@@ -523,11 +523,19 @@ package joingame.model
                 {
                     var pieceIndex :int = board.coordsToIdx(i, j);
             
+                    
                     //Now drop the piece as far as there are empty spaces below it.
                     if( !(board._boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_NORMAL || board._boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_DEAD || board._boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_POTENTIALLY_DEAD))
                     {
                         continue;
-                    } 
+                    }
+                    
+//                    LOG("board._boardPieceTypes[" + pieceIndex + "]=" + board._boardPieceTypes[pieceIndex]);
+                    
+                    if( board._boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_INACTIVE || board._boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_EMPTY) {
+                        LOG("uh oh, inactive or empty pieces should not be dropped");
+                        
+                    }
                     
                     var yToFall: int = j;
                 
@@ -588,14 +596,14 @@ package joingame.model
         {
             if( board == null)
             {
-                trace("doAttack( board is null)");
+                LOG("doAttack( board is null)");
                 return;
             }
-//            trace("attacking!!!!");
+//            LOG("attacking!!!!");
             var targetRow: int = (board._rows-1) - rowsFromBottom;
             while(attackValue > 0)
             {
-                trace("attacking row=" + targetRow);
+                LOG("attacking row=" + targetRow);
                 board.turnPieceDeadAtRowAndSide( targetRow, side);
                 attackValue--;
             }
@@ -606,6 +614,20 @@ package joingame.model
 
         public function getBoardForPlayerID( playerID:int): JoinGameBoardRepresentation
         {
+            if(playerID == -1 && !_playerToBoardMap.containsKey(-1)) {
+                var board :JoinGameBoardRepresentation = new JoinGameBoardRepresentation();
+                board.playerID = -1;
+                board._rows = Constants.PUZZLE_STARTING_ROWS;
+                board._cols = Constants.PUZZLE_STARTING_COLS;
+                for(var k:int = 0; k < board._rows*board._cols; k++)
+                {
+                    board._boardPieceColors[k] = 0;
+                    board._boardPieceTypes[k] = Constants.PIECE_TYPE_INACTIVE;
+                }
+                
+                _playerToBoardMap.put(-1, board);
+            }
+            
             return _playerToBoardMap.get(playerID);
         }
 
@@ -638,7 +660,7 @@ package joingame.model
                 board.addEventListener(JoinGameEvent.REMOVE_ROW_NOTIFICATION, listenToRemoveBottomRowEvent);
             }
 //            else{
-//                trace("addPlayer(" + playerID + "), board should not be null");
+//                LOG("addPlayer(" + playerID + "), board should not be null");
 //            }
         }
         
@@ -648,10 +670,10 @@ package joingame.model
         */
         protected function listenToRemoveBottomRowEvent( e :JoinGameEvent ) :void
         {
-            trace("listenToRemoveBottomRowEvent for " + e.boardPlayerID);
+            LOG("listenToRemoveBottomRowEvent for " + e.boardPlayerID);
 //            doRemoveBottomRow( getBoardForPlayerID( e.boardPlayerID) );
             if( _isClientModel) {
-                trace("!!!!!Should only be called on the server");
+                LOG("!!!!!Should only be called on the server");
             }
             
             if(!_isClientModel) {
@@ -691,10 +713,10 @@ package joingame.model
                     
 /*             if( board == null)
             {
-                trace("doRemoveBottomRow( board is null)");
+                LOG("doRemoveBottomRow( board is null)");
                 return;
             }
-//            trace("doRemoveBottomRow() for " + board.playerID + " : \n" + board);
+//            LOG("doRemoveBottomRow() for " + board.playerID + " : \n" + board);
             
             for( var i :int = 0; i < board._cols; i++) {
                 board._boardPieceTypes[ board.coordsToIdx( i, board._rows - 1 ) ] = Constants.PIECE_TYPE_EMPTY;
@@ -716,17 +738,17 @@ package joingame.model
             
             if( !_isClientModel) {
                 if( board.isBottomRowDead()) {
-                    trace("doRemoveBottomRow() starting timer again ");
+                    LOG("doRemoveBottomRow() starting timer again ");
                     board.startBottomRowTimer();
                 }
                 else {
-                    trace("doRemoveBottomRow() stopping timer");
+                    LOG("doRemoveBottomRow() stopping timer");
                     board.stopBottomRowTimer();
                 }
                 
                 
             }
-            trace("end doRemoveBottomRow() for " + board.playerID + " : \n" + board); */
+            LOG("end doRemoveBottomRow() for " + board.playerID + " : \n" + board); */
         }
         
         
@@ -748,19 +770,16 @@ package joingame.model
             }
             else
             {
-                trace("removePlayer(" + playerID + ") but no such player exists");
+                LOG("removePlayer(" + playerID + ") but no such player exists");
             }
-            trace("player " + playerID + " removed from model");
-            trace("end of removePlayer, _currentSeatedPlayerIds="+_currentSeatedPlayerIds);
+            LOG("player " + playerID + " removed from model");
+            LOG("end of removePlayer, _currentSeatedPlayerIds="+_currentSeatedPlayerIds);
             
             var event :JoinGameEvent = new JoinGameEvent(playerID, JoinGameEvent.PLAYER_KNOCKED_OUT);
             dispatchEvent(event);
             
             if( _currentSeatedPlayerIds.length <= 1)
             {
-                
-                
-                
                 event = new JoinGameEvent(-1, JoinGameEvent.GAME_OVER);
                 dispatchEvent(event);
             }
@@ -879,12 +898,12 @@ package joingame.model
         */
         public function deltaConfirm(boardId :int, fromIndex :int, toIndex :int) :void
         {
-//            trace("model deltaConfirm()");
+//            LOG("model deltaConfirm()");
             var board: JoinGameBoardRepresentation = _playerToBoardMap.get(boardId) as JoinGameBoardRepresentation;;    
                 
             if( board == null)
             {
-                trace("delta confirm for a null board with id=" + boardId);
+                LOG("delta confirm for a null board with id=" + boardId);
                 return;
             }    
                
@@ -909,7 +928,7 @@ package joingame.model
             var numberOfTimesJoinsSearched :int = 1;
             while(joins.length > 0)
             {
-                trace("doing joins");
+//                LOG("doing joins");
                 /**
                  *  Send the join effect animation.  This is not send in the doJoinEffect method
                  *  because the multiple joins should be animated simultaneously.
@@ -929,7 +948,7 @@ package joingame.model
                     for(var piecei :int = 0; piecei < join._piecesX.length; piecei++)
                     {
                         board._boardPieceTypes[ board.coordsToIdx( join._piecesX[piecei], join._piecesY[piecei]) ]  = Constants.PIECE_TYPE_EMPTY;
-//                        trace("setting empty piece=" + join._piecesX[piecei] + ", " + join._piecesY[piecei] );
+//                        LOG("setting empty piece=" + join._piecesX[piecei] + ", " + join._piecesY[piecei] );
                     }
                     
                     if(join._widthInPieces > 1){
@@ -953,7 +972,7 @@ package joingame.model
                 
 //                while( board._rows > Constants.MAXIMUM_ROWS) {
 //                    
-////                    trace("sending JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES"); 
+////                    LOG("sending JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES"); 
 //                    var removeRowAndDropPiecesEvent :JoinGameEvent = new JoinGameEvent( board.playerID, JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES);
 //                    dispatchEvent( removeRowAndDropPiecesEvent );
 //                    
@@ -974,7 +993,7 @@ package joingame.model
 //                        }
 //                    }
 //                    board.removeRow(0);
-////                    trace("end doRemoveBottomRow() for " + board.playerID + " : \n" + board);
+////                    LOG("end doRemoveBottomRow() for " + board.playerID + " : \n" + board);
 //                }
                 checkForDeadRegions(board);
                 joins = board.checkForJoins();
@@ -983,7 +1002,7 @@ package joingame.model
                 
 //                if( numberOfTimesJoinsSearched > 20)
 //                {
-//                    trace("Very low likelihood that 20 consecutive joins found, it's a bug, so quitting");
+//                    LOG("Very low likelihood that 20 consecutive joins found, it's a bug, so quitting");
 //                    var players :Array = _currentSeatedPlayerIds.slice();
 //                    for( k = 0; k < players.length; k++)
 //                    {
@@ -1005,14 +1024,30 @@ package joingame.model
             }
             
             
-            
+            checkForDeadBoards();
     
-            if( !board.isAlive())
-            {
-                removePlayer(board.playerID);
-            }
+//            if( !board.isAlive())
+//            {
+////                if(!_isClientModel)
+//                removePlayer(board.playerID);
+//            }
         }
         
+        
+        /**
+        * Called on the server, results sent to clients.
+        */
+        protected function checkForDeadBoards() :void
+        {
+            if( !_isClientModel) {
+                for each (var playerid :int in _currentSeatedPlayerIds) {
+                    var board :JoinGameBoardRepresentation =  _playerToBoardMap.get(playerid) as JoinGameBoardRepresentation;
+                    if(board != null && !board.isAlive()) {
+                        dispatchEvent( new JoinGameEvent( playerid, JoinGameEvent.PLAYER_KNOCKED_OUT));
+                    }
+                }
+            }
+        }
         
         
         protected function checkForDeadRegions( board :JoinGameBoardRepresentation ) :void
@@ -1114,7 +1149,7 @@ package joingame.model
 //            }
             
             
-//            trace("convertDeadToDead for board " + board.playerID + ":\n" + board);
+//            LOG("convertDeadToDead for board " + board.playerID + ":\n" + board);
             
             for(k = 0; k < board._boardPieceTypes.length; k++)
             {
@@ -1123,10 +1158,10 @@ package joingame.model
                     board._boardPieceTypes[k] = Constants.PIECE_TYPE_NORMAL;
                 }
             }
-//            trace("convertDeadToDead for board after reset " + board.playerID + ":\n" + board);
+//            LOG("convertDeadToDead for board after reset " + board.playerID + ":\n" + board);
             var contiguousRegions:Array = board.getContiguousRegions();
             
-//            trace("contiguousRegions.length=" + contiguousRegions.length);
+//            LOG("contiguousRegions.length=" + contiguousRegions.length);
             
             for(k = 0; k < contiguousRegions.length; k++)
             {
@@ -1145,7 +1180,7 @@ package joingame.model
                 
                 if(convertToDead)
                 {
-//                    trace("converting to dead=" + arrayOfContiguousPieces);
+//                    LOG("converting to dead=" + arrayOfContiguousPieces);
                     for(i = 0; i < arrayOfContiguousPieces.length; i++)
                     {
                         isDeadPiecesFound = true;
@@ -1154,10 +1189,10 @@ package joingame.model
                 }
                 else
                 {
-//                    trace("Not converting to dead");
+//                    LOG("Not converting to dead");
                 }
             }
-//            trace("finished convertDeadToDead for board " + board.playerID + ":\n" + board);
+//            LOG("finished convertDeadToDead for board " + board.playerID + ":\n" + board);
 
             
 
@@ -1181,7 +1216,7 @@ package joingame.model
                 
 //                if(_playerID >= 0)
 //                {
-//                    trace("Player: " + AppContext.gameCtrl.game.getMyId() + ", " + Server.BOARD_DELTA_CONFIRM+ "[ " + event.value[0]+ " " + event.value[1]+ " " + event.value[2] + " ]");
+//                    LOG("Player: " + gameCtrl.game.getMyId() + ", " + Server.BOARD_DELTA_CONFIRM+ "[ " + event.value[0]+ " " + event.value[1]+ " " + event.value[2] + " ]");
 //                }
                 id = int(event.value[0]);
                 board = _playerToBoardMap.get(id) as JoinGameBoardRepresentation;
@@ -1189,7 +1224,7 @@ package joingame.model
                 var toIndex :int = int(event.value[2]);
                 
                 
-//                trace("Player: " + _gameCtrl.game.getMyId() + ", " + Server.BOARD_DELTA_CONFIRM+ "[ board=" + event.value[0]+ " " + event.value[1]+ " " + event.value[2] + " ]");
+//                LOG("Player: " + _gameCtrl.game.getMyId() + ", " + Server.BOARD_DELTA_CONFIRM+ "[ board=" + event.value[0]+ " " + event.value[1]+ " " + event.value[2] + " ]");
                 
                 
                 if(board != null)
@@ -1198,7 +1233,7 @@ package joingame.model
                 }
                 else
                 {
-                    trace("BOARD_DELTA_CONFIRM sent but no board with id="+id);
+                    LOG("BOARD_DELTA_CONFIRM sent but no board with id="+id);
                 }
             }
             else
@@ -1220,6 +1255,9 @@ package joingame.model
                 if(id >= 0)
                 {
                     removePlayer(id);
+                    if( _isClientModel ) {//Clients notify views.
+                        dispatchEvent( new JoinGameEvent( id, JoinGameEvent.PLAYER_KNOCKED_OUT));
+                    }
                 }
             }
             else if (event.name == Server.BOARD_REMOVE_ROW_CONFIRM)
@@ -1231,7 +1269,43 @@ package joingame.model
                     doRemoveBottomRow( getBoardForPlayerID( id) );
                 }
             }
+            else if (event.name == Server.RESET_VIEW_TO_MODEL)
+            {
+                id = int(event.value[0]);
+                if(id >= 0) {
+                    dispatchEvent( new JoinGameEvent( id, JoinGameEvent.RESET_VIEW_FROM_MODEL));
+                }
+            }
             
+        }
+        
+        
+        public function LOG(s: String): void
+        {
+            if(false && _gameCtrl != null && _gameCtrl.local != null && _gameCtrl.net.isConnected())
+            {
+                _gameCtrl.local.feedback(s);
+            }
+            else
+            {
+                if( Constants.PLAYER_ID_TO_LOG == _gameCtrl.game.getMyId() || _gameCtrl.game.amServerAgent()) {
+                    trace(s);
+                }
+            }
+        }
+        
+        
+        public function removeAllPlayers() :void
+        {
+            _playerIdsInOrderOfLoss = [];
+            _initialSeatedPlayerIds = [];
+            _currentSeatedPlayerIds = [];
+            
+            var keys :Array = _playerToBoardMap.keys();
+            for each (var k :int in keys) {
+                (_playerToBoardMap.get(k) as JoinGameBoardRepresentation).destroy();
+            }
+            _playerToBoardMap.clear();
         }
         
 //        public function act

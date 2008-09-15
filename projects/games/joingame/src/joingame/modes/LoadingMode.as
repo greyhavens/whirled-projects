@@ -21,13 +21,14 @@ public class LoadingMode extends AppMode
 
         _text = new TextField();
         _text.selectable = false;
-        _text.autoSize = TextFieldAutoSize.CENTER;
+//        _text.autoSize = TextFieldAutoSize.CENTER;
         _text.textColor = 0xFFFFFF;
+        _text.width = 300;
         _text.scaleX = 2;
         _text.scaleY = 2;
-        _text.x = (this.modeSprite.width * 0.5) - (_text.width * 0.5);
-        _text.y = (this.modeSprite.height * 0.5) - (_text.height * 0.5);
-        _text.text = "Loading...";
+        _text.x = 50;
+        _text.y = 50;
+        _text.text = "Loading images...";
 
         this.modeSprite.addChild(_text);
 
@@ -49,19 +50,24 @@ public class LoadingMode extends AppMode
 
     protected function load () :void
     {
+        trace("beginning to load");
         var rm :ResourceManager = ResourceManager.instance;
 
         // gfx
         rm.pendResourceLoad("swf", "puzzlePieces",  { embeddedClass: Resources.PIECES_DATA });
-
+        rm.pendResourceLoad("image", "BG_watcher",  { embeddedClass: Resources.IMG_BG_WATCHER });
+        rm.pendResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
+        rm.pendResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
+        
         rm.load(handleResourcesLoaded, handleResourceLoadErr);
         _loading = true;
     }
 
     protected function handleResourcesLoaded () :void
     {
+        trace("handleResourcesLoaded()");
         _loading = false;
-//        AppContext.mainLoop.popMode();
+        AppContext.mainLoop.popMode();
     }
 
     protected function handleResourceLoadErr (err :String) :void
@@ -93,6 +99,7 @@ class ResourceLoadErrorMode extends AppMode
 
     override protected function setup () :void
     {
+//        trace("Loading mode");
         var g :Graphics = this.modeSprite.graphics;
 //        g.beginFill(0xFF7272);
 //        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);

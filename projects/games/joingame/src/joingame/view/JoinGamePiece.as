@@ -247,7 +247,7 @@ package joingame.view
         else if(_type == Constants.PIECE_TYPE_INACTIVE)
         {
             _sprite.graphics.clear();
-            _sprite.graphics.beginFill( 1, 0.3 );   
+            _sprite.graphics.beginFill( 1, 0.0 );   
 //            _sprite.graphics.lineStyle(1, Constants.PIECE_COLOR_EMPTY, 0 );         
             _sprite.graphics.drawRect( 0 , 0 , _size, _size );
             _sprite.graphics.endFill();

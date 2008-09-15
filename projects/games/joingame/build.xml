@@ -1,7 +1,7 @@
 <!-- build configuration -->
 <project name="JoinGame" default="test" basedir=".">
 	
-	<property name="players" value="2"/>
+	<property name="players" value="4"/>
 	
 	<!-- Our code uses server-side code -->
 	<property name="app.enable-server-agent" value="true"/>    

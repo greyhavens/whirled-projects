@@ -21,9 +21,9 @@ package joingame.model
      */
     public class JoinGameBoardRepresentation extends EventDispatcher
     {
-        public function JoinGameBoardRepresentation( gamecontrol:GameControl = null)//rows:int, cols:int,
+        public function JoinGameBoardRepresentation( )//rows:int, cols:int,
         {
-            _control = gamecontrol;
+//            _control = gamecontrol;
             
             _playerID = -1;
             
@@ -102,7 +102,7 @@ package joingame.model
         
         public function destroy(): void
         {
-            
+            _bottomRowTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerEnd);
         }
         
         public function removeRow( row :int ) :void
@@ -651,7 +651,7 @@ package joingame.model
         {
             var i: int;
             var index: int;
-            if(side == Constants.ATTACK_LEFT)
+            if(side == Constants.LEFT)
             {
                 for(i = 0; i < _cols; i++)
                 {
@@ -663,7 +663,7 @@ package joingame.model
                     }
                 }
             }
-            else if(side == Constants.ATTACK_RIGHT)
+            else if(side == Constants.RIGHT)
             {
                 for(i = _cols-1; i >= 0; i--)
                 {
@@ -710,7 +710,7 @@ package joingame.model
                 
             }
             
-            _boardPieceTypes[ coordsToIdx(newPieceColumnIndex, rowIndexFree) ] = Constants.PIECE_TYPE_NORMAL;
+            _boardPieceTypes[ coordsToIdx(newPieceColumnIndex, rowIndexFree) ] = Constants.PIECE_TYPE_EMPTY;
 //            trace("end addNewPieceToColumn(" + newPieceColumnIndex + "), board=\n" + this.toString());
         }    
         
@@ -1118,7 +1118,7 @@ package joingame.model
         
         private var _bottomRowTimer:Timer;
         
-        public var _control :GameControl;
+//        public var _control :GameControl;
         
         //x1, y1, x2, y2
         private var _lastSwap: Array;

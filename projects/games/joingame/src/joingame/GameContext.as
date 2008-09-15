@@ -1,13 +1,18 @@
 package joingame {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 
-import joingame.view.*;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.text.TextField;
+
 import joingame.model.*;
 import joingame.modes.*;
+import joingame.view.*;
 
 public class GameContext
 {
@@ -86,6 +91,50 @@ public class GameContext
             playerInfos,
             function (info :PlayerInfo) :Boolean { return info.playerName == playerName; });
     }
+    
+    
+    /**
+    * The DisplayObject returned is always 80x60 pixels large (from API).
+    * 
+    */
+    public static function getHeadshot( playerid :int) :DisplayObject
+    {
+        if(_headshots.containsKey(playerid)) {
+            return _headshots.get(playerid) as DisplayObject;
+        }
+        else {
+            var headshot :DisplayObject = AppContext.gameCtrl.local.getHeadShot( playerid);
+            if(headshot != null && false) {
+                _headshots.put(playerid, headshot);
+                return headshot; 
+            }
+            else {
+                var dummyHeadShot :Sprite = new Sprite();
+                dummyHeadShot.graphics.beginFill(0xffffff);
+                dummyHeadShot.graphics.drawRect(0,0,80,60);
+                dummyHeadShot.graphics.endFill();
+                dummyHeadShot.graphics.lineStyle(2, 0x000000);
+                dummyHeadShot.graphics.drawRect(0,0,78,58);
+                
+                var txt:TextField = new TextField();
+                txt.width = 30;
+                txt.height = 20;
+                txt.scaleX = 3;
+                txt.scaleY = 3;
+                txt.text = "" + playerid;
+                txt.x = 40 - Math.round(txt.width/2);
+                txt.y = 30 - Math.round(txt.height/2);
+                
+                dummyHeadShot.addChild(txt);
+                
+                _headshots.put(playerid, dummyHeadShot);
+                return dummyHeadShot;
+            }
+        }
+    }
+    
+    private static var _headshots :HashMap = new HashMap();
+    
 
 //    public static function findEnemyForPlayer (playerIndex :int) :PlayerInfo
 //    {

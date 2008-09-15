@@ -8,6 +8,9 @@ package
     import com.whirled.game.OccupantChangedEvent;
     import com.whirled.net.MessageReceivedEvent;
     
+    import flash.events.TimerEvent;
+    import flash.utils.Timer;
+    
     import joingame.Constants;
     import joingame.SeatingManager;
     import joingame.model.*;
@@ -19,10 +22,18 @@ package
         //IF we give a non-null GameControl, we assume that the server side is not running properly 
         public function Server(gameControl: GameControl = null)
         {
-            
+            _firstGame = true;
 //            _playerIDsInOrderOfPlay = new Array();
+            _currentActivePlayers = new Array();
             _playersReady = new Array();
             _playersReceivedStartGameState = new Array();
+//            _currentActivePlayers = new Array();
+//            _currentActivePlayers = new Array();
+            _playersThatWantToPlayAgain = new Array();
+            
+            _gameRestartTimer = new Timer(1000, 0);
+            _gameRestartTimer.addEventListener(TimerEvent.TIMER, gameTimer);
+            _totalTimeElapsedSinceNewGameTimerStarted = 0;
             
             trace("Hello world! I'm your Joingame server!");
             
@@ -38,13 +49,36 @@ package
             _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
             _gameModel = new JoinGameModel(_gameCtrl, false);
             _gameModel.addEventListener(JoinGameEvent.GAME_OVER, gameOver);
+            _gameModel.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, listenForPlayerEliminated);
 //            _gameModel.addEventListener(JoinGameEvent.REMOVE_ROW_NOTIFICATION, gameOver);
             SeatingManager.init(_gameCtrl);
             
-                        
+                    
         }
 
-        protected function gameOver() :void
+        protected function gameTimer(  e :TimerEvent) :void
+        {
+            _totalTimeElapsedSinceNewGameTimerStarted++;
+            trace("seconds elapsed for new game start " + _totalTimeElapsedSinceNewGameTimerStarted 
+                + " / " + Constants.GAME_RESTART_TIME);
+            if(_totalTimeElapsedSinceNewGameTimerStarted >= Constants.GAME_RESTART_TIME) {
+                restartGameTimerComplete(e);
+            }
+        }
+
+        protected function restartGameTimerComplete( e :TimerEvent) :void
+        {
+            trace("restartGameTimerComplete(), _playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain);
+            _totalTimeElapsedSinceNewGameTimerStarted = 0;
+            _gameRestartTimer.reset();
+            
+            if(_playersThatWantToPlayAgain.length > 1) {
+                _currentActivePlayers = _playersThatWantToPlayAgain;
+                createNewModel();
+            }
+        }
+    
+        protected function gameOver( e: JoinGameEvent) :void
         {
             trace("Server side: game over, assigning scores");
             /* We assign scores according to an exponential scale, so the winner gets a big pot,
@@ -74,11 +108,13 @@ package
                 trace(playerIds[i] + "\t|\t" + scores[i] );
             }
             
-//            var msg :Object = new Object;
-//            msg[0] = playerIds;
-//            msg[1] = scores;
-//            _gameCtrl.net.sendMessage( GAME_OVER, msg);
-//            _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+            var msg :Object = new Object;
+            msg[0] = playerIds;
+            msg[1] = scores;
+            _gameCtrl.net.sendMessage( GAME_OVER, msg);
+            _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+
+            _gameRestartTimer.start();
             
         }
 
@@ -90,74 +126,59 @@ package
 //            trace("Server messageReceived="+event);
             var msg :Object;
             var k: int;
+            var id :int;
+            var clientid :int;
 
-            /* If all players have registered that they are ready, sent the game state to all.*/            
-            if (event.name == Server.PLAYER_READY)
+            /* If all players have registered that they are ready, send the game state to all.*/   
+            if (event.name == Server.REGISTER_PLAYER)
             {
-//                trace("Server PLAYER_READY for player " + event.senderId);
+                trace(REGISTER_PLAYER + " for player " + event.senderId);
+                if(!ArrayUtil.contains( _currentActivePlayers, event.senderId))
+                {
+                    _currentActivePlayers.push( event.senderId );
+                    
+                    if( _currentActivePlayers.length >= SeatingManager.numExpectedPlayers)
+                    {
+                        /* We send all the random number generator seeds to the players.
+                           This is to ease the sync requirements.  That way, new pieces are still 
+                           random, but identical on server and client. */
+                        var playerids:Array = _gameCtrl.game.seating.getPlayerIds();
+                        
+                        _currentActivePlayers = playerids;
+                        createNewModel();
+                        _gameCtrl.net.sendMessage( REPLAY_CONFIRM, {});
+                    }
+                }
+                
+            }
+            else if (event.name == Server.PLAYER_READY)
+            {
+                trace("Server PLAYER_READY for player " + event.senderId);
                 if(!ArrayUtil.contains( _playersReady, event.senderId))
                 {
                     _playersReady.push( event.senderId );
                     
-                    if( _playersReady.length >= SeatingManager.numExpectedPlayers)
+                    if( _playersReady.length >= _currentActivePlayers.length )
                     {
-                        
-                        /* We send all the random number generator seeds to the players.
-                           This is to ease the sync requirements.  That way, new pieces are still 
-                           random, but identical on server and client. */
-                           
-//                        var playerID2SeedMap:Object = new Object();
-//                        
-//                        var r:Random = new Random();
-//                        var playerIDs:Array = _gameCtrl.game.seating.getPlayerIds();
-//                        for(k = 0; k < playerIDs.length; k++)
-//                        {
-//                            playerID2SeedMap[ playerIDs[k] ] = r.nextInt();
-//                        }
-//                        _gameCtrl.net.set(RANDOM_NUMBER_SEEDS, playerID2SeedMap );
-                        
-                        var playerids:Array = _gameCtrl.game.seating.getPlayerIds();
-//                        trace("!!!Player ids=" + playerids);
-                        
-                        _gameCtrl.net.set(PLAYER_ORDER, playerids); 
-                        
-                        
-//                        trace("!!!Creating initial game state for players " + playerids);
-                        for(k = 0; k < playerids.length; k++)
-                        {
-                            _gameModel.addPlayer(playerids[k], createNewRandomBoard(playerids[k]));
-                        }
-                        _gameModel._initialSeatedPlayerIds = playerids.slice();
-                        _gameModel.currentSeatingOrder = playerids.slice();
-                        
                         msg = new Object;
                         msg[0] = _gameModel.getModelMemento();
-                        
-//                        trace("!!!Sending to all players " + msg[0]);
-                        
-                        _gameCtrl.net.sendMessage( ALL_PLAYERS_READY, msg);
-                                                
-//                        LOG_TO_GAME ? GameContext.LOG("\nSending ALL_PLAYERS_READY"): null;
-
-                        
-//                        _playerIDsInOrderOfPlay = _gameCtrl.game.seating.getPlayerIds();
-                        
+                        _gameCtrl.net.sendMessage(ALL_PLAYERS_READY, msg );
                     }
                 }
-//                LOG_TO_GAME ? GameContext.LOG("\n Player ready="+event.senderId +", _playersReady="+_playersReady): null;
+                trace("_playersReady=" + _playersReady);
             }
             if (event.name == Server.PLAYER_RECEIVED_START_GAME_STATE)
             {
-//                trace("Server PLAYER_RECEIVED_START_GAME_STATE for player " + event.senderId);
+                trace("Server PLAYER_RECEIVED_START_GAME_STATE for player " + event.senderId);
                 
                 
-                if(!ArrayUtil.contains( _playersReceivedStartGameState, event.senderId))
+                if(!ArrayUtil.contains( _playersReceivedStartGameState, event.senderId) && ArrayUtil.contains( _currentActivePlayers, event.senderId) )
                 {
                     _playersReceivedStartGameState.push( event.senderId );
                     
-                    if( _playersReceivedStartGameState.length >= SeatingManager.numExpectedPlayers)
+                    if( _playersReceivedStartGameState.length >= _currentActivePlayers.length)//SeatingManager.numExpectedPlayers
                     {
-//                        trace("Server sending GAME START to all players");
+                        trace("Server sending to all platers: " + START_PLAY);
                         _gameCtrl.net.sendMessage( START_PLAY, {});
                     }
                 }
@@ -175,12 +196,7 @@ package
             if (event.name == Server.BOARD_UPDATE_REQUEST)
             {
                 
-//                trace("!!!!!!!!!!!!!!!Server Received message BOARD_UPDATE_REQUEST" + event);
-//                trace("   From is " + event.senderId + "== " + int(event.value[0]) + ", board id="+int(event.value[1]));
-            
-            
-            
-                var clientid :int = int(event.value[0]);
+                clientid = int(event.value[0]);
                 var boardplayerid:int =  int(event.value[1]);
                 
                 if(boardplayerid >= 0 && isPlayerActive(boardplayerid))
@@ -206,14 +222,6 @@ package
                     _gameCtrl.net.sendMessage(Server.BOARD_UPDATE_CONFIRM, msg, clientid );
                     
                     
-//                    trace("Server. sending board update: " + board.getBoardAsCompactRepresentation());
-    //                if(alsoUpdatePlayerIDS)
-    //                {
-    //                    //Not sure if this is the best place for this.  When a player requests an update, also update the player seating order.
-    //                    //To avoid circular events, the client requests an update if the neighbour player ids have changed.
-    //                    _playerIDsInOrderOfPlay = _gameCtrl.game.seating.getPlayerIds();
-    ////                    _gameCtrl.net.set(PLAYER_ORDER, _playerIDsInOrderOfPlay); 
-    //                }
                 }
                 else//If the player ID doesn't exist, send a dead board.
                 {
@@ -234,18 +242,89 @@ package
                     _gameCtrl.net.sendMessage(Server.BOARD_UPDATE_CONFIRM, msg, clientid );
                 }
             }
+            else 
+            if (event.name == MODEL_REQUEST)
+            {
+                trace(Server.MODEL_REQUEST + " for player " + event.senderId);
+                trace("Seating ids=" + _gameCtrl.game.seating.getPlayerIds());
+                msg = new Object;
+                msg[0] = _gameModel.getModelMemento();
+                trace("sending " + MODEL_CONFIRM + " to player " + event.senderId);
+                _gameCtrl.net.sendMessage(MODEL_CONFIRM, msg);//, event.senderId );
+            }
             else if (event.name == Server.BOARD_REMOVE_ROW_CONFIRM)
             {
                 
-                var id :int = int(event.value[0]);
+                id = int(event.value[0]);
                 if(id >= 0)
                 {
                     _gameModel.doRemoveBottomRow( _gameModel.getBoardForPlayerID( id) );
                 }
             }
+            else if (event.name == Server.REPLAY_REQUEST)
+            {
+                trace(Server.REPLAY_REQUEST);
+                id = event.senderId;
+//                trace("id=" + id);
+                if(id >= 0 && !ArrayUtil.contains(_playersThatWantToPlayAgain, id) && ArrayUtil.contains(_currentActivePlayers, id))
+                {
+                    _playersThatWantToPlayAgain.push( id);
+                    trace("_playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain);
+                    if( _playersThatWantToPlayAgain.length == _currentActivePlayers.length && _currentActivePlayers.length > 1 ) {
+                        _gameRestartTimer.reset();
+//                        _playersThatWantToPlayAgain = new Array();//Use this to track the players checking in
+                        createNewModel();
+                        
+                    }
+                }
+            }
         }
 
 
+        protected function createNewModel() :void
+        {
+            trace("Server.createNewModel()");
+            var k :int;
+            
+            _playersThatWantToPlayAgain = new Array();
+            _playersReceivedStartGameState = new Array();
+            _currentActivePlayers = randomizeArray(_currentActivePlayers);
+            _playersReady = new Array();
+
+            _gameModel.removeAllPlayers();
+            
+            for(k = 0; k < _currentActivePlayers.length; k++)
+            {
+                _gameModel.addPlayer(_currentActivePlayers[k], createNewRandomBoard(_currentActivePlayers[k]));
+            }
+            _gameModel._initialSeatedPlayerIds = _currentActivePlayers.slice();
+            _gameModel.currentSeatingOrder = _currentActivePlayers.slice();
+            
+            
+            
+            
+            var msg :Object = new Object;
+            msg[0] = _currentActivePlayers;
+            _gameCtrl.net.sendMessage(REPLAY_CONFIRM, msg);
+            
+//            trace("Server sending " + ALL_PLAYERS_READY);
+//            _gameCtrl.net.sendMessage( ALL_PLAYERS_READY, msg);
+            
+
+        }
+
+
+        protected function randomizeArray( array :Array) :Array {
+            var l:Number = array.length-1;
+            for (var it :int = 0; it<l; it++) {
+                var r :int = Math.round(Math.random()*l)
+                var tmp = array[it];
+                array[it] = array[r];
+                array[r] = tmp;
+            }
+            return array;
+        }
+            
         private function createNewRandomBoard(playerid:int): JoinGameBoardRepresentation
         {
 //            trace("createNewRandomBoard");
@@ -286,7 +365,7 @@ package
             }
             return board;
         }
-        public static function generateRandomBoardRepresentation(rows:int, cols:int): Array
+        protected static function generateRandomBoardRepresentation(rows:int, cols:int): Array
         {
             var rep: Array = new Array();
             rep[0] = rows;
@@ -307,19 +386,26 @@ package
         }
 
         //If someone leaves the game, they are eliminated immediately
-        public function occupantLeft( event: OccupantChangedEvent): void
+        protected function occupantLeft( event: OccupantChangedEvent): void
         {
             trace(" occupantLeft="+event);
             if(event.player)//If a player and not a spectator.
             {
                 playerLeftOrKnockedOut( event.occupantId );
+                
+                /* Remove the possibility of this player replaying*/
+                if( ArrayUtil.contains( _currentActivePlayers, event.occupantId )) {
+                    _currentActivePlayers.splice( _currentActivePlayers.indexOf( event.occupantId ), 1 );
+                }
             }
+            
+            
             
         }    
         
 
         
-        public static function generateRandomPieceColor(): int
+        protected static function generateRandomPieceColor(): int
         {
 //            return  Constants.PIECE_COLORS_ARRAY[randomNumber(0, Constants.PIECE_COLORS_ARRAY.length - 1)];
             return randomNumber(1, Constants.PIECE_COLORS_ARRAY.length);
@@ -374,8 +460,8 @@ package
                 msg[0] = playerID;
                 msg[1] = _gameModel.getBoardForPlayerID(playerID).getBoardAsCompactRepresentation();
                 
-                _gameCtrl.net.sendMessage(BOARD_UPDATE_CONFIRM, msg);
-                trace("Illegal move, resending board state");
+                _gameCtrl.net.sendMessage(RESET_VIEW_TO_MODEL, msg, playerID);
+                trace("Illegal move, sending board reset to player " + playerID);
             }
         }
         
@@ -423,8 +509,8 @@ package
 
         protected function isPlayerActive(playerID:int): Boolean
         {
-            var playerIDsInOrderOfPlay:Array = _gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
-            if(playerIDsInOrderOfPlay != null && ArrayUtil.contains(playerIDsInOrderOfPlay, playerID))
+//            var playerIDsInOrderOfPlay:Array = _gameCtrl.net.get(Server.PLAYER_ORDER) as Array;
+            if(_currentActivePlayers != null && ArrayUtil.contains(_currentActivePlayers, playerID))
             {
                 return true;
             }
@@ -437,27 +523,44 @@ package
          * If someone leaves the game, they are eliminated immediately
          * 
          */
-        public function occupantChanged( event: OccupantChangedEvent): void
+        protected function occupantChanged( event: OccupantChangedEvent): void
         {
-//            trace(" occupantChanged="+event);
-            if(event.player)//If a player and not a spectator.
+            trace(" occupantChanged="+event);
+            if(event.player && ArrayUtil.contains( _gameModel.currentSeatingOrder, event.occupantId))//If a player and not a spectator.
             {
                 playerLeftOrKnockedOut( event.occupantId );
             }
+            /* Remove the possibility of this player replaying*/
+            if( ArrayUtil.contains( _currentActivePlayers, event.occupantId )) {
+                _currentActivePlayers.splice( _currentActivePlayers.indexOf( event.occupantId ), 1 );
+                trace("removing from _currentActivePlayers, =" + _currentActivePlayers);
+            }
         }
 
+        protected function listenForPlayerEliminated( event :JoinGameEvent ) :void 
+        {
+            if(ArrayUtil.contains( _gameModel.currentSeatingOrder, event.boardPlayerID))//If a player and not a spectator.
+            {
+                playerLeftOrKnockedOut( event.boardPlayerID );
+            }
+        }
 
         protected function playerLeftOrKnockedOut( playerid :int) :void
         {
             trace("playerLeftOrKnockedOut( " + playerid + " )");
             _gameModel.removePlayer(playerid);
             
+            
             var msg :Object = new Object;
             msg[0] = playerid;
             
             trace("Server sending message=" + PLAYER_KNOCKED_OUT + " " + playerid + " )");
             _gameCtrl.net.sendMessage(PLAYER_KNOCKED_OUT, msg);
+            
+            trace("Seating ids=" + _gameCtrl.game.seating.getPlayerIds());
         }
+
+
 
 
 
@@ -472,13 +575,24 @@ package
 //        public var _playerToBoardMap :HashMap;
         
         //When all players are here, we proceed to the game.
-        public var _playersReady: Array;
+        public var _currentActivePlayers: Array;
         
         //When all players have received the start game state
         public var _playersReceivedStartGameState: Array;
         
+        //Players that quit during the game are not eligible to play again
+//        public var _currentActivePlayers: Array;
+        public var _playersThatWantToPlayAgain: Array;
+        
+        public var _playersReady: Array;
+        
         private var _random: Random = new Random();
         
+        protected var _gameRestartTimer :Timer;
+        
+        protected var _firstGame :Boolean;
+        
+        protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
         
         //Server states
 //        private var _isGameStateSent: Boolean = false;
@@ -487,7 +601,16 @@ package
         public static const BOARD_DELTA_CONFIRM :String = "Server:Board Delta Confirm"; 
         public static const BOARD_UPDATE_REQUEST :String = "Server:Board Update Request";
         public static const BOARD_UPDATE_CONFIRM :String = "Server:Board Update Confirm";
-        public static const BOARD_REMOVE_ROW_CONFIRM :String = "Server:Board Remove Row Confirm";  
+        
+        public static const MODEL_REQUEST :String = "Server:Model Request";
+        public static const MODEL_CONFIRM :String = "Server:Model Confirm";
+        
+        /**
+        * If conflicts occur due to timing of events, tell a board to reset it's view.
+        */
+        public static const BOARD_REMOVE_ROW_CONFIRM :String = "Server:Board Remove Row Confirm";
+        
+        public static const RESET_VIEW_TO_MODEL :String = "Server:Reset View To Model";   
         
         public static const ALL_PLAYERS_READY :String = "Server:All Players Ready";
         public static const PLAYER_READY :String = "Server:Player Ready";
@@ -495,14 +618,18 @@ package
         public static const START_PLAY :String = "Server:Start Play";
         public static const GAME_OVER :String = "Server:Game Over";   
         
-        /** Name of the shared property that will hold everyone's scores. */
-        public static const PLAYER_ORDER :String = "Server:Player Order";
+        public static const REPLAY_REQUEST :String = "Server:Request Replay";
+        public static const REPLAY_CONFIRM :String = "Server:Confirm Replay"; 
+        public static const REGISTER_PLAYER :String = "Server:Register Player"; 
+//        public static const ALL_PLAYERS_REGISTERED :String = "Server:All Players Registered";  
         
         /** Name of the shared property that will hold everyone's scores. */
+//        public static const PLAYER_ORDER :String = "Server:Player Order";
+        
         public static const PLAYER_KNOCKED_OUT :String = "Server:Player Knocked Out";
         
         /** The seeds for the random number generators generatoing the random piece colors */
-        public static const RANDOM_NUMBER_SEEDS :String = "Server:Random Seeds";
+//        public static const RANDOM_NUMBER_SEEDS :String = "Server:Random Seeds";
         
         
         /** Request the entire game state */

@@ -1,45 +1,53 @@
 package joingame.modes
 {
-    import com.threerings.flash.SimpleTextButton;
-    import com.whirled.contrib.simplegame.AppMode;
-    import com.whirled.game.NetSubControl;
+    import com.threerings.util.*;
+    import com.whirled.contrib.simplegame.*;
+    import com.whirled.contrib.simplegame.audio.*;
+    import com.whirled.contrib.simplegame.net.*;
+    import com.whirled.contrib.simplegame.resource.*;
+    import com.whirled.contrib.simplegame.util.*;
+    import com.whirled.game.*;
     import com.whirled.net.MessageReceivedEvent;
     
-    import flash.events.MouseEvent;
-    import flash.events.TimerEvent;
-    import flash.utils.Timer;
+    import flash.text.TextField;
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.view.*;
     
     /**
      * The game does not start until all players click 'ready' or similar.  This screen 
      * can contain some simple instructions.  In addition, the game downloads the player states 
      * here, and does not go to the next mode until are is downloaded.
      */
-    public class WaitingForReadyPlayersMode extends AppMode
+    public class WaitingForPlayerDataModeAsPlayer extends AppMode
     {
         override protected function setup ():void
         {
-//            _playersReady = new Array();
-            _button = new SimpleTextButton("Waiting for player data!");
-            _modeSprite.addChild(_button);
-            _button.addEventListener(MouseEvent.CLICK, playerReady);
-            _button.x = 100;
-            _button.y = 100;
+            if( !AppContext.gameCtrl.isConnected() ) {
+                return;
+            }
             
+            
+            var _text :TextField = new TextField();
+            _text.selectable = false;
+//            _text.autoSize = TextFieldAutoSize.CENTER;
+            _text.textColor = 0xFFFFFF;
+            _text.scaleX = 2;
+            _text.scaleY = 2;
+            _text.width = 300;
+            _text.x = 50;
+            _text.y = 50;
+            _text.text = "Waiting for other players to check in...";
+    
+            this.modeSprite.addChild(_text);
             AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-//            _timer.addEventListener(TimerEvent.TIMER, timerListener);
-//            _timer.start();
             
-            playerReady(null);
+            /* Double check that we are a player, and not a player theat became an observer */
+            AppContext.gameCtrl.net.sendMessage(Server.PLAYER_READY, {}, NetSubControl.TO_SERVER_AGENT);
             
         }
         
-        private function playerReady(event:MouseEvent):void
-        {
-            AppContext.gameCtrl.net.sendMessage(Server.PLAYER_READY, {}, NetSubControl.TO_SERVER_AGENT);
-        }
         
         /** Respond to messages from other clients. */
         public function messageReceived (event :MessageReceivedEvent) :void
@@ -47,11 +55,12 @@ package joingame.modes
             
             if (event.name == Server.ALL_PLAYERS_READY)
             {
-//                trace("WaitingForReadyPlayersMode Server.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
+                trace("WaitingForReadyPlayersMode Server.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
                 GameContext.gameState = new JoinGameModel( AppContext.gameCtrl);
                 GameContext.gameState.setModelMemento( event.value[0] as Array );
                 
                 AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
+                
             }
             else if (event.name == Server.START_PLAY)
             {
@@ -60,24 +69,12 @@ package joingame.modes
             }
         }
         
+        
         override protected function destroy () :void
         {
-//            _timer.removeEventListener(TimerEvent.TIMER, timerListener);
-//            _timer.stop();
-            _button.removeEventListener(MouseEvent.CLICK, playerReady);
             AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             super.destroy();
-            
         }
         
-        private function timerListener(e:TimerEvent):void
-        {
-            playerReady(null);
-        }
-        
-//        private var _playersReady:Array;
-        private var _button: SimpleTextButton;
-        
-//        private var _timer: Timer = new Timer(3000);//Ping the server every few seconds
     }
 }

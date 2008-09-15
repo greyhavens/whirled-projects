@@ -1,5 +1,6 @@
 package joingame {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -52,9 +53,25 @@ public class AppContext
         }
         else
         {
-            trace(s);
+            if( Constants.PLAYER_ID_TO_LOG == gameCtrl.game.getMyId() || gameCtrl.game.amServerAgent()) {
+                trace(s);
+            }
         }
     }
+    
+    
+    /**
+    * Convenience function, saves typing.
+    */
+    public static function get myid() :int 
+    {
+        return gameCtrl.game.getMyId();
+    }
+    
+    public static var isObserver :Boolean;
+    
+    public static var gameHeight :int = 500;
+    public static var gameWidth :int = 700;
 }
 
 }

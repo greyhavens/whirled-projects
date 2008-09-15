@@ -14,62 +14,73 @@ package joingame.view
     import flash.text.TextFieldType;
     import flash.text.TextFormat;
     
+    import joingame.GameContext;
+    import joingame.model.JoinGameModel;
+    
     
     public class AllOpponentsView extends SceneObject
     {
-        public function AllOpponentsView(control:GameControl, playerids :Array)
+        public function AllOpponentsView(model :JoinGameModel)
         {
-            _control = control;
-            _playerIDsInOrderOfPlay = playerids;
+            
+            
+            
+            
+//            _control = control;
+//            _playerIDsInOrderOfPlay = playerids;
             _sprite = new Sprite();
-            _playerIdToHeadShotMap = new HashMap();
+            
+            
+            
+            
+//            _playerIdToHeadShotMap = new HashMap();
             _playerIdToNameMap = new HashMap();
-            _playerHeadshotPositionInPyramid = new Array();
-            _playerIDsEliminated = new Array();
+//            _playerHeadshotPositionInPyramid = new Array();
+//            _playerIDsEliminated = new Array();
             
             // send property change notifications to the propertyChanged() method
 //            _control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
-            _control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            _control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
-            var format :TextFormat = new TextFormat();
-            format.font = "Arial";
-            format.size = 12;
-            format.color = 0xff0033;
-            format.bold = true;
-            
-            
-            _textFieldActivePlayers = new TextField();
-            _textFieldActivePlayers.defaultTextFormat = format;
-            _textFieldActivePlayers.text = "Active players:     ";
-            _textFieldActivePlayers.x = 2;
-            _textFieldActivePlayers.y = 2;
-            _textFieldActivePlayers.width = 100;
-            _textFieldActivePlayers.height = _textFieldActivePlayers.textHeight + 2;
-            _textFieldActivePlayers.type = TextFieldType.DYNAMIC;
-            _textFieldActivePlayers.border = false;
-            _sprite.addChild(_textFieldActivePlayers);
-            
-            _textFieldEliminatedPlayers = new TextField();
-            _textFieldEliminatedPlayers.defaultTextFormat = format;
-            _textFieldEliminatedPlayers.text = "Eliminated players: ";
-            _textFieldEliminatedPlayers.x = 2;
-            _textFieldEliminatedPlayers.y = 60;
-            _textFieldEliminatedPlayers.width = 100;
-            _textFieldEliminatedPlayers.height = _textFieldEliminatedPlayers.textHeight + 2;
-            _textFieldEliminatedPlayers.type = TextFieldType.DYNAMIC;
-            _textFieldEliminatedPlayers.border = false;        
-            _sprite.addChild(_textFieldEliminatedPlayers);
-            
-            _textFieldMouseOverPlayer = new TextField();
-            _textFieldMouseOverPlayer.defaultTextFormat = format;
-            _textFieldMouseOverPlayer.text = "Eliminated players: ";
-            _textFieldMouseOverPlayer.x = 2;
-            _textFieldMouseOverPlayer.y = 60;
-            _textFieldMouseOverPlayer.width = 100;
-            _textFieldMouseOverPlayer.height = _textFieldMouseOverPlayer.textHeight + 2;
-            _textFieldMouseOverPlayer.type = TextFieldType.DYNAMIC;
-            _textFieldMouseOverPlayer.border = false;
-            _textFieldMouseOverPlayer.backgroundColor = 0;
+//            var format :TextFormat = new TextFormat();
+//            format.font = "Arial";
+//            format.size = 12;
+//            format.color = 0xff0033;
+//            format.bold = true;
+//            
+//            
+//            _textFieldActivePlayers = new TextField();
+//            _textFieldActivePlayers.defaultTextFormat = format;
+//            _textFieldActivePlayers.text = "Active players:     ";
+//            _textFieldActivePlayers.x = 2;
+//            _textFieldActivePlayers.y = 2;
+//            _textFieldActivePlayers.width = 100;
+//            _textFieldActivePlayers.height = _textFieldActivePlayers.textHeight + 2;
+//            _textFieldActivePlayers.type = TextFieldType.DYNAMIC;
+//            _textFieldActivePlayers.border = false;
+//            _sprite.addChild(_textFieldActivePlayers);
+//            
+//            _textFieldEliminatedPlayers = new TextField();
+//            _textFieldEliminatedPlayers.defaultTextFormat = format;
+//            _textFieldEliminatedPlayers.text = "Eliminated players: ";
+//            _textFieldEliminatedPlayers.x = 2;
+//            _textFieldEliminatedPlayers.y = 60;
+//            _textFieldEliminatedPlayers.width = 100;
+//            _textFieldEliminatedPlayers.height = _textFieldEliminatedPlayers.textHeight + 2;
+//            _textFieldEliminatedPlayers.type = TextFieldType.DYNAMIC;
+//            _textFieldEliminatedPlayers.border = false;        
+//            _sprite.addChild(_textFieldEliminatedPlayers);
+//            
+//            _textFieldMouseOverPlayer = new TextField();
+//            _textFieldMouseOverPlayer.defaultTextFormat = format;
+//            _textFieldMouseOverPlayer.text = "Eliminated players: ";
+//            _textFieldMouseOverPlayer.x = 2;
+//            _textFieldMouseOverPlayer.y = 60;
+//            _textFieldMouseOverPlayer.width = 100;
+//            _textFieldMouseOverPlayer.height = _textFieldMouseOverPlayer.textHeight + 2;
+//            _textFieldMouseOverPlayer.type = TextFieldType.DYNAMIC;
+//            _textFieldMouseOverPlayer.border = false;
+//            _textFieldMouseOverPlayer.backgroundColor = 0;
             
             
             
@@ -105,40 +116,41 @@ package joingame.view
         
         protected function getHeadShotsAndNames() :void
         {
-            var playerids :Array = _control.game.seating.getPlayerIds();
-            var playernames :Array = _control.game.seating.getPlayerNames();
-            for(var i: int = 0; i < playerids.length; i++) {
-                var id:int = playerids[i] as int;
-                if( !_playerIdToNameMap.containsKey(id)) {
-                    _playerIdToNameMap.put(id, playernames[i]);
-                }
-                
-                if( !_playerIdToHeadShotMap.containsKey(id)) {
-                    var headshot :DisplayObject = _control.local.getHeadShot( id);
-                    headshot.name = playernames[i];
-                    headshot.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-                    headshot.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-                    var sceneobject :SimpleSceneObject = new SimpleSceneObject( headshot );
-                    _playerIdToHeadShotMap.put(id, sceneobject);
-                    
-                    db.addObject(sceneobject, _sprite);
-                }
-                
-                    
-            }
+//            var playerids :Array = _control.game.seating.getPlayerIds();
+//            var playernames :Array = _control.game.seating.getPlayerNames();
+//            trace("playernames=" + playernames);
+//            for(var i: int = 0; i < playerids.length; i++) {
+//                var id:int = playerids[i] as int;
+//                if( !_playerIdToNameMap.containsKey(id)) {
+//                    _playerIdToNameMap.put(id, playernames[i]);
+//                }
+//                
+//                if( !_playerIdToHeadShotMap.containsKey(id)) {
+//                    var headshot :DisplayObject = GameContext.getHeadshot( id);
+//                    headshot.name = playernames[i];
+//                    headshot.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+//                    headshot.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+//                    var sceneobject :SimpleSceneObject = new SimpleSceneObject( headshot );
+//                    _playerIdToHeadShotMap.put(id, sceneobject);
+//                    
+//                    db.addObject(sceneobject, _sprite);
+//                }
+//                
+//                    
+//            }
         }
         
         protected function getIDForHeadShot( query :DisplayObject ) :int 
         {
-            var ids :Array = _playerIdToHeadShotMap.keys();
-            for( var i :int = 0; i < ids.length; i++) {
-                var headshot :SceneObject = _playerIdToHeadShotMap.get( ids[i] ) as SceneObject;
-                if( headshot != null) {
-                    if( query == headshot.displayObject ) {
-                        return ids[i] as int;
-                    }
-                }
-            } 
+//            var ids :Array = _playerIdToHeadShotMap.keys();
+//            for( var i :int = 0; i < ids.length; i++) {
+//                var headshot :SceneObject = _playerIdToHeadShotMap.get( ids[i] ) as SceneObject;
+//                if( headshot != null) {
+//                    if( query == headshot.displayObject ) {
+//                        return ids[i] as int;
+//                    }
+//                }
+//            } 
             return -1;
         }
         
@@ -192,86 +204,86 @@ package joingame.view
         
         protected function updateDisplay() :void
         {
-            var headshot: SceneObject;
-            var currentX :int = _textFieldActivePlayers.width + 2;
-            var headshotHeight:int = 80;
-            var toX :Number;
-            var toY :Number;
-            
-            var ids:Array = _playerIdToHeadShotMap.keys();
-            for( var i:int = 0; i < ids.length;i++)
-            {
-                var id:int = ids[i] as int;
-                if( ! ArrayUtil.contains( _playerIDsEliminated, id)) {
-                    headshot = _playerIdToHeadShotMap.get(id) as SceneObject; 
-                
-                    if( headshot != null)
-                    {
-                        toX = currentX;
-                        toY = _textFieldActivePlayers.y;
-        
-                        headshot.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateEaseIn(toX, toY, 2.0), true);  
-                        currentX += headshot.width + 2;
-                    
-                    
-                    }    
-                }
-                
-            }
-            
-            currentX = _textFieldEliminatedPlayers.width + 2;
-            for( i = 0; i < ids.length;i++)
-            {
-                id = ids[i] as int;
-                if( ArrayUtil.contains( _playerIDsEliminated, id)) {
-                    headshot = _playerIdToHeadShotMap.get(id) as SceneObject; 
-                
-                    if( headshot != null)
-                    {
-                        toX = currentX;
-                        toY = _textFieldEliminatedPlayers.y;
-        
-                        headshot.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateEaseIn(toX, toY, 2.0), true); 
-                        currentX += headshot.width + 2;
-                    }    
-                }
-                
-            }
+//            var headshot: SceneObject;
+//            var currentX :int = _textFieldActivePlayers.width + 2;
+//            var headshotHeight:int = 80;
+//            var toX :Number;
+//            var toY :Number;
+//            
+//            var ids:Array = _playerIdToHeadShotMap.keys();
+//            for( var i:int = 0; i < ids.length;i++)
+//            {
+//                var id:int = ids[i] as int;
+//                if( ! ArrayUtil.contains( _playerIDsEliminated, id)) {
+//                    headshot = _playerIdToHeadShotMap.get(id) as SceneObject; 
+//                
+//                    if( headshot != null)
+//                    {
+//                        toX = currentX;
+//                        toY = _textFieldActivePlayers.y;
+//        
+//                        headshot.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateEaseIn(toX, toY, 2.0), true);  
+//                        currentX += headshot.width + 2;
+//                    
+//                    
+//                    }    
+//                }
+//                
+//            }
+//            
+//            currentX = _textFieldEliminatedPlayers.width + 2;
+//            for( i = 0; i < ids.length;i++)
+//            {
+//                id = ids[i] as int;
+//                if( ArrayUtil.contains( _playerIDsEliminated, id)) {
+//                    headshot = _playerIdToHeadShotMap.get(id) as SceneObject; 
+//                
+//                    if( headshot != null)
+//                    {
+//                        toX = currentX;
+//                        toY = _textFieldEliminatedPlayers.y;
+//        
+//                        headshot.addNamedTask(MOVE_TASK_NAME, LocationTask.CreateEaseIn(toX, toY, 2.0), true); 
+//                        currentX += headshot.width + 2;
+//                    }    
+//                }
+//                
+//            }
             
         }
         
         protected function mouseMoved( e :MouseEvent ) :void
         {
-            var headshot :DisplayObject = e.target as DisplayObject;
-            if( headshot != null ) {
-                /* Add the mouseover text and position it */
-                _textFieldMouseOverPlayer.x = headshot.x + e.localX;
-                _textFieldMouseOverPlayer.y = headshot.y + e.localY;
-                
-                var id :int = getIDForHeadShot( headshot );
-                if( id > -1) {
-                    _textFieldMouseOverPlayer.text = headshot.name;
-                }
-                else {
-                    _textFieldMouseOverPlayer.text = "No name found";
-                }
-                
-                if( !_sprite.contains( _textFieldMouseOverPlayer )) {
-                    _sprite.addChild( _textFieldMouseOverPlayer);
-                }
-                
-                
-            }
-            else {
-                trace("headshot is null");
-            }
+//            var headshot :DisplayObject = e.target as DisplayObject;
+//            if( headshot != null ) {
+//                /* Add the mouseover text and position it */
+//                _textFieldMouseOverPlayer.x = headshot.x + e.localX;
+//                _textFieldMouseOverPlayer.y = headshot.y + e.localY;
+//                
+//                var id :int = getIDForHeadShot( headshot );
+//                if( id > -1) {
+//                    _textFieldMouseOverPlayer.text = headshot.name;
+//                }
+//                else {
+//                    _textFieldMouseOverPlayer.text = "No name found";
+//                }
+//                
+//                if( !_sprite.contains( _textFieldMouseOverPlayer )) {
+//                    _sprite.addChild( _textFieldMouseOverPlayer);
+//                }
+//                
+//                
+//            }
+//            else {
+//                trace("headshot is null");
+//            }
         }
         
         protected function mouseOut( e :MouseEvent ) :void
         {
-            if( _sprite.contains( _textFieldMouseOverPlayer )) {
-                    _sprite.removeChild( _textFieldMouseOverPlayer);
-            }
+//            if( _sprite.contains( _textFieldMouseOverPlayer )) {
+//                    _sprite.removeChild( _textFieldMouseOverPlayer);
+//            }
         }
         
         protected function XXXDELETEcreateOrUpdateOtherPlayerDisplay(): void
@@ -360,27 +372,27 @@ package joingame.view
             return _sprite;
         }
     
-        protected var _control :GameControl;
+//        protected var _control :GameControl;
         protected var _sprite :Sprite;
     
     
         //The game is played in a circle.  As players are eliminated.        
-        protected var _playerIDsInOrderOfPlay: Array;    
-        protected var _playerIDsEliminated: Array; 
+//        protected var _playerIDsInOrderOfPlay: Array;    
+//        protected var _playerIDsEliminated: Array; 
         
-        protected var _playerIdToHeadShotMap: HashMap;
+//        protected var _playerIdToHeadShotMap: HashMap;
         
         protected var _playerIdToNameMap: HashMap;
         
         
-        protected var _textFieldActivePlayers :TextField;
-        protected var _textFieldEliminatedPlayers :TextField;
-        protected var _textFieldMouseOverPlayer :TextField;
+//        protected var _textFieldActivePlayers :TextField;
+//        protected var _textFieldEliminatedPlayers :TextField;
+//        protected var _textFieldMouseOverPlayer :TextField;
         
         //Array of arrays of headshots.  The first array is length 1, each other array is bigger by 1.  This 
         //represents a pyramid, with losing players remaining where they are, and others ascending 
         //to a level one smaller than the previous.
-        protected var _playerHeadshotPositionInPyramid: Array;
+//        protected var _playerHeadshotPositionInPyramid: Array;
         
         protected static const MOVE_TASK_NAME :String = "move";
     }

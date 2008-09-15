@@ -85,5 +85,7 @@ package joingame.net
         public static const DELETE_ROW_FROM_VIEW :String = "JoinGame Event: Delete Top From View";
         
         public static const REMOVE_BOTTOM_ROW_AND_DROP_PIECES :String = "JoinGame Event: Remove Bottom Row And Drop Pieces";
+        
+        public static const RESET_VIEW_FROM_MODEL :String = "JoinGame Event: Reset View From Model";
     }
 }

@@ -26,7 +26,7 @@ package joingame
         
         public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
         
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 4;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * PUZZLE_STARTING_ROWS - 2;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -52,18 +52,33 @@ package joingame
         public static const PIECE_COLORS_ARRAY :Array = new Array(0x1add25, 0xf2ab11, 0x1161f2, 0xf211ab, 0x00dcff);
         
         
-        public static const ATTACK_LEFT :int = -1;
-        public static const ATTACK_RIGHT :int = 1;
+        public static const LEFT :int = -1;
+        public static const RIGHT :int = 1;
         public static const ATTACK_BOTH :int = 0;
         
         //GUI COnfig
         public static const GUI_DISTANCE_BOARD_FROM_LEFT: int = 30;
         public static const GUI_BETWEEN_BOARDS: int = 40;
-        public static const GUI_BOARD_FLOOR_GAP: int = 0;//60;
+        public static const GUI_BOARD_FLOOR_GAP: int = 20;
+        
+        public static const GUI_LEFT_BOARD_CENTER: int = 120;
+        public static const GUI_MIDDLE_BOARD_CENTER: int = 340;
+        public static const GUI_RIGHT_BOARD_CENTER: int = 560;
+        
+        
+        public static const GUI_OBSERVER_VIEW_GAP_BETWEEN_BOARDS: int = 10;
+        public static const GUI_OBSERVER_VIEW_GAP_BETWEEN_BORDER_AND_BOARDS: int = 40;
+        public static const GUI_OBSERVER_VIEW_MINIMUM_BOARD_SCALE: Number = 0.7;
+        public static const GUI_OBSERVER_VIEW_MAX_OUSTED_PLAYER_HEADSHOT_SCALE: Number = 0.3;
+        public static const GUI_OBSERVER_VIEW_GAP_BETWEEN_HEADSHOTS: int = 6;
+        public static var GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS: int;
+        
+        
+        
         
         
         /* Animations */
-        public static const JOIN_ANIMATION_TIME: Number = 0.5;//60;
+        public static const JOIN_ANIMATION_TIME: Number = 3.5;
         public static const PIECE_DROP_TIME :Number = 0.3;//Time to fall
         public static const DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL :int = 6;
         public static const PIECE_DROP_BOUNCE1_TIME :Number = 0.1;//THe 'shudder' as the piece falls
@@ -73,7 +88,13 @@ package joingame
         public static const PIECE_SCALE_DOWN_TIME :Number = 0.4;
         public static const PIECE_JOIN_BOUNCE_DISTANCE :int = 70;
         
+        public static const BOARD_ENTER_DELAY :Number = 2.0;
+        public static const HEADSHOT_MOVEMENT_TIME :Number = 2.0;
         
+        /* Game admin*/
+        public static const GAME_RESTART_TIME :int = 10;
+        
+        public static const PLAYER_ID_TO_LOG :int = 2;
         
     }
 }

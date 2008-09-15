@@ -1,24 +1,15 @@
 package
 {
     import com.threerings.util.*;
+    import com.whirled.contrib.simplegame.*;
+    import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.game.*;
     
-    import com.whirled.contrib.simplegame.*;
-    import com.whirled.contrib.simplegame.audio.AudioManager;
-    import com.whirled.contrib.simplegame.resource.*;
-    import com.whirled.contrib.simplegame.util.Rand;
-    import com.whirled.game.GameControl;
-
     import flash.display.Sprite;
     import flash.events.Event;
     
-    import joingame.view.AllOpponentsView;
-    import joingame.modes.*;
     import joingame.*;
-    
-    import flash.display.Sprite;
-    import flash.display.StageQuality;
-    import flash.events.Event;
+    import joingame.modes.*;
     
     
     [SWF(width="700", height="500", frameRate="30")]
@@ -58,13 +49,24 @@ package
                 // sound volume
 //                AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
         
+        
+        
+                    trace("JoinGame");
                 // create a new random stream for the puzzle
-                AppContext.randStreamPuzzle = Rand.addStream();
+                //AppContext.randStreamPuzzle = Rand.addStream();
         
 
-                AppContext.mainLoop.pushMode(new WaitingForReadyPlayersMode());
-                AppContext.mainLoop.pushMode(new LoadingMode());
-                AppContext.mainLoop.run();
+            if(!ArrayUtil.contains( AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId())) {
+                AppContext.isObserver = true;
+                AppContext.mainLoop.pushMode(new WaitingForPlayerDataModeAsObserver());
+            }
+            else {
+                AppContext.isObserver = false;
+                AppContext.mainLoop.pushMode(new RegisterPlayerMode());
+            }
+            
+            AppContext.mainLoop.pushMode(new LoadingMode());
+            AppContext.mainLoop.run();
         
             
             
@@ -90,7 +92,7 @@ package
             //create a main instance of the gameController class
 //            _control = new GameControl(this);
 //        
-//            trace("testing");
+
 //            if (!_control.isConnected())
 //            {
 //                // zoiks! no Whirled
