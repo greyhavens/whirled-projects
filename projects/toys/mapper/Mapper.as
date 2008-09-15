@@ -95,11 +95,13 @@ public class Mapper extends FrameSprite
             updateMarker(int(i), mem[i]);
         }
 
-        if (_ctrl.getInstanceId() != 0) {
+        var memberId :int = _ctrl.getInstanceId();
+        var memberName :String = getMemberName(memberId);
+
+        // Don't plot guests or agents
+        if (memberId != 0 && memberName.indexOf("Agent") == -1) {
             // Add/update our position on the map
             fetchLocation(function (lat :Number, lon :Number) :void {
-                var memberId :int = _ctrl.getInstanceId();
-                var memberName :String = getMemberName(memberId);
                 _ctrl.setMemory(String(memberId), [memberName, lat, lon]);
             });
         }
