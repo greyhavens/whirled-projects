@@ -68,25 +68,6 @@ public class GameController
     protected function beginGame () :void
     {
         _shots = [];
-        AppContext.board.setupBoard(_ships);
-
-        // Set up ships for all ships already in the world.
-        var occupants :Array = _gameCtrl.game.getOccupantIds();
-        for (var ii :int = 0; ii < occupants.length; ii++) {
-            // this is a bit of a hack. the ship might already exist if this is a client,
-            // because clients add their own ships to the world before the board is loaded,
-            // i think. TODO - change this.
-            if (getShip(occupants[ii]) == null) {
-                var bytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
-                if (bytes != null) {
-                    var ship :Ship = createShip(occupants[ii],
-                        _gameCtrl.game.getOccupantName(occupants[ii]));
-                    bytes.position = 0;
-                    ship.fromBytes(bytes);
-                    addShip(occupants[ii], ship);
-                }
-            }
-        }
 
         // Set up our ticker that will control movement.
         startScreenTimer();
@@ -408,6 +389,11 @@ public class GameController
     protected function setImmediate (propName :String, value :Object) :void
     {
         _gameCtrl.net.set(propName, value, true);
+    }
+
+    public function get ships () :HashMap
+    {
+        return _ships;
     }
 
     protected var _timers :TimerManager;

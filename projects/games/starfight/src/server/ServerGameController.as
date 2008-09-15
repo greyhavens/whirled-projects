@@ -47,6 +47,7 @@ public class ServerGameController extends GameController
             if (ship != null) {
                 ship.enableShield(shieldMessage.shieldHealth, shieldMessage.timeoutMs);
             }
+
         } else if (event.value is AwardHealthMessage) {
             var healthMessage :AwardHealthMessage = AwardHealthMessage(event.value);
             ship = ServerShip(getShip(healthMessage.shipId));

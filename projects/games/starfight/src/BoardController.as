@@ -43,30 +43,6 @@ public class BoardController
         _mines = null;
     }
 
-    public function setupBoard (ships :HashMap) :void
-    {
-        _ships = ships;
-
-        for (var ii :int = 0; ii < _obstacles.length; ii++) {
-            var obs :Obstacle = _obstacles[ii];
-            if (obs != null) {
-                obstacleAdded(obs, ii);
-            }
-        }
-
-        for (ii = 0; ii < _powerups.length; ii++) {
-            if (_powerups[ii] != null) {
-                powerupAdded(_powerups[ii], ii);
-            }
-        }
-
-        for (ii = 0; ii < _mines.length; ii++) {
-            if (_mines[ii] != null) {
-                mineAdded(_mines[ii]);
-            }
-        }
-    }
-
     protected function elementChanged (event :ElementChangedEvent) :void
     {
         if ((event.name == Constants.PROP_POWERUPS) && (event.index >= 0) && _powerups != null) {
@@ -223,7 +199,7 @@ public class BoardController
 
         if (ignoreShip >= 0) {
             // Check each ship and figure out which one we hit first.
-            for each (var ship :Ship in _ships.values()) {
+            for each (var ship :Ship in AppContext.game.ships.values()) {
                 if (ship == null) {
                     continue;
                 }
@@ -483,9 +459,6 @@ public class BoardController
     }
 
     protected var _gameCtrl :GameControl;
-
-    /** Reference to the array of ships we know about. */
-    protected var _ships :HashMap;
 
     /** Reference to the array of powerups we know about. */
     protected var _powerups :Array;

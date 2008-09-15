@@ -6,11 +6,9 @@ import com.whirled.game.GameControl;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.KeyboardEvent;
-import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundTransform;
 import flash.utils.ByteArray;
-import flash.utils.Timer;
 
 import net.ShipExplodedMessage;
 
@@ -340,6 +338,30 @@ public class ClientGameController extends GameController
     override protected function beginGame () :void
     {
         _shotViews = [];
+
+        ClientContext.board.setupBoard();
+
+        // Set up ships for all ships already in the world.
+        var occupants :Array = _gameCtrl.game.getOccupantIds();
+        for (var ii :int = 0; ii < occupants.length; ii++) {
+            if (getShip(occupants[ii]) == null) {
+                var shipBytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
+                if (shipBytes != null) {
+                    var ship :ClientShip = ClientShip(createShip(occupants[ii],
+                        _gameCtrl.game.getOccupantName(occupants[ii])));
+                    shipBytes.position = 0;
+                    ship.fromBytes(shipBytes);
+
+                    var shipServerBytes :ByteArray =
+                        ByteArray(_gameCtrl.net.get(shipDataKey(occupants[ii])));
+                    if (shipServerBytes != null) {
+                        ship.serverData = ShipServerData.fromBytes(shipServerBytes);
+                    }
+                    addShip(occupants[ii], ship);
+                }
+            }
+        }
+
         super.beginGame();
 
         ClientContext.gameView.beginGame();

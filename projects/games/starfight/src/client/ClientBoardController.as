@@ -101,10 +101,9 @@ public class ClientBoardController extends BoardController
         _boardLoadedCallback();
     }
 
-    override public function setupBoard (ships :HashMap) :void
+    public function setupBoard () :void
     {
-        // setup our sprites before calling super.setupBoard (which will call
-        // powerupAdded, obstacleAdded, etc)
+        // setup our sprites
         _bg = new BgSprite(width, height);
         ClientContext.gameView.boardLayer.addChild(_bg);
 
@@ -121,7 +120,25 @@ public class ClientBoardController extends BoardController
         _obstacleViews = new Array(_obstacles.length);
         _explosions = [];
 
-        super.setupBoard(ships);
+        // add existing obstacles, powerups, and mines to the board
+        for (var ii :int = 0; ii < _obstacles.length; ii++) {
+            var obs :Obstacle = _obstacles[ii];
+            if (obs != null) {
+                obstacleAdded(obs, ii);
+            }
+        }
+
+        for (ii = 0; ii < _powerups.length; ii++) {
+            if (_powerups[ii] != null) {
+                powerupAdded(_powerups[ii], ii);
+            }
+        }
+
+        for (ii = 0; ii < _mines.length; ii++) {
+            if (_mines[ii] != null) {
+                mineAdded(_mines[ii]);
+            }
+        }
     }
 
     override public function update (time :int) :void
@@ -140,7 +157,7 @@ public class ClientBoardController extends BoardController
         _boardSprite.x = Constants.GAME_WIDTH/2 - boardX*Constants.PIXELS_PER_TILE;
         _boardSprite.y = Constants.GAME_HEIGHT/2 - boardY*Constants.PIXELS_PER_TILE;
         _bg.setAsCenter(boardX, boardY);
-        ClientContext.gameView.status.updateRadar(_ships, _powerups, boardX, boardY);
+        ClientContext.gameView.status.updateRadar(AppContext.game.ships, _powerups, boardX, boardY);
     }
 
     override protected function powerupAdded (powerup :Powerup, index :int) :void

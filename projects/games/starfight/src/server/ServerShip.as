@@ -24,10 +24,10 @@ public class ServerShip extends Ship
 
         var hitPower :Number = damage / _shipType.armor;
 
-        if (hasPowerup(Powerup.SHIELDS)) {
+        if (_serverData.shieldHealth > 0) {
             // shields always have an armor of 0.5
             hitPower = damage * 2;
-            _serverData.shieldHealth -= hitPower;
+            _serverData.shieldHealth = Math.max(_serverData.shieldHealth - hitPower, 0);
             return;
         }
 

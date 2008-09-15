@@ -151,7 +151,7 @@ public class ShipView extends Sprite
 
             _shipParent.rotation = _ship.rotation;
 
-            _shieldMovie.visible = (_ship.shieldHealth > 0 || _ship.hasPowerup(Powerup.SHIELDS));
+            _shieldMovie.visible = (_ship.shieldHealth > 0);
 
             // determine animation state
             var newAnimMode :int;
@@ -218,7 +218,6 @@ public class ShipView extends Sprite
     protected function setAnimMode (mode :int, force :Boolean) :void
     {
         if (force || _animMode != mode) {
-            //log.info("setAnimMode [ship=" + _ship.shipId + " animMode=" + ANIM_MODES[mode] + "]");
             _shipMovie.gotoAndPlay(ANIM_MODES[mode]);
             _animMode = mode;
         }
@@ -226,8 +225,6 @@ public class ShipView extends Sprite
 
     protected function playSpawnMovie () :void
     {
-        log.info("playSpawnMovie");
-
         ClientContext.game.playSoundAt(
             ClientConstants.getShipResources(_ship.shipTypeId).spawnSound,
             _ship.boardX, _ship.boardY);

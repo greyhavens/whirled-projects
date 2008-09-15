@@ -202,23 +202,24 @@ public class ClientShip extends Ship
         _powerupsThisLife = true;
         AppContext.scores.addToScore(shipId, POWERUP_PTS);
         powerup.consume();
+
         if (powerup.type == Powerup.HEALTH) {
             AppContext.msgs.sendMessage(
                 AwardHealthMessage.create(this, Constants.HEALTH_POWERUP_INCREMENT));
-            return;
-        }
 
-        _powerups |= (1 << powerup.type);
-        switch (powerup.type) {
-        case Powerup.SHIELDS:
+        } else if (powerup.type == Powerup.SHIELDS) {
             AppContext.msgs.sendMessage(EnableShieldMessage.create(this, 1));
-            break;
-        case Powerup.SPEED:
-            engineBonusPower = 1.0;
-            break;
-        case Powerup.SPREAD:
-            weaponBonusPower = 1.0;
-            break;
+
+        } else {
+            _powerups |= (1 << powerup.type);
+            switch (powerup.type) {
+            case Powerup.SPEED:
+                engineBonusPower = 1.0;
+                break;
+            case Powerup.SPREAD:
+                weaponBonusPower = 1.0;
+                break;
+            }
         }
     }
 
