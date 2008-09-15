@@ -64,6 +64,11 @@ public class Ghost
         return _def;
     }
 
+    public function get level () :int
+    {
+        return _level;
+    }
+
     public function get zest () :int
     {
         return _zest;
