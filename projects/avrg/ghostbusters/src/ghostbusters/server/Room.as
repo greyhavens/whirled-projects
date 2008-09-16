@@ -103,10 +103,7 @@ public class Room
 
         // TODO: perhaps check that the same player doesn't zap too repeatedly
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
-            // let the other people in the room know there was a successful zapping
-            _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
-
-            // then actually zap the ghost (reduce its zest)
+            // zap the ghost (reduce its zest)
             _ghost.zap(who);
         }
     }
@@ -198,7 +195,7 @@ public class Room
             return;
         }
 
-        if (_lanternsDirty && (getTimer() - _lanternUpdate) > 150) {
+        if (_lanternsDirty && (getTimer() - _lanternUpdate) > 200) {
             _ctrl.props.set(Codes.DICT_LANTERNS, _lanterns, true);
             _lanternsDirty = false;
             _lanternUpdate = getTimer();

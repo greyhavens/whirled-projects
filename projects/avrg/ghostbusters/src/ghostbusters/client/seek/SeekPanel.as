@@ -25,7 +25,6 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
 
 import com.threerings.flash.FrameSprite;
 import com.threerings.util.ClassUtil;
@@ -75,8 +74,6 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
 
-        Game.control.room.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
         Game.control.room.props.addEventListener(
@@ -88,66 +85,31 @@ public class SeekPanel extends FrameSprite
         super.handleRemoved();
         _lanternLoop.stop();
 
-        Game.control.room.removeEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.removeEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
         Game.control.room.props.removeEventListener(
             ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
     }
 
-    protected function messageReceived (event: MessageReceivedEvent) :void
-    {
-//        Game.log.debug("messageReceived: " + event);
-        if (event.name == Codes.SMSG_GHOST_ZAPPED) {
-            _zapping = ZAP_FRAMES;
-            Sound(new Content.LANTERN_GHOST_SCREECH()).play();
-        }
-    }
-
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
-//        Game.log.debug("roomElementChanged: " + evt);
-        var bits :Array;
         if (evt.name == Codes.DICT_LANTERNS) {
-            // if lanterns are off, also ignore
-            if (_lanterns == null) {
-                return;
-            }
+            if (_lanterns != null) {
+                if (evt.newValue == null) {
+                    // someone turned theirs off
+                    playerLanternOff(evt.key);
 
-            if (pos == null) {
-                // someone turned theirs off
-                playerLanternOff(evt.key);
-
-            } else {
-                lanternUpdateEvent(evt.key, evt.newValue as Array);
-            }
-
-        } else if (evt.name == Codes.DICT_GHOST && evt.key == Codes.IX_GHOST_POS) {
-            bits = (evt.newValue as Array);
-            if (_ghost != null && bits != null) {
-                // the server sends every client a new (x, y) for the ghost that's in the
-                // logical range [0, 1] and each client translates that according to the
-                // bounds of the current room. We do not however want the ghost to e.g. fly
-                // through the floor, nor disappear at the edges, so use the ghost's known
-                // bounds to offset. Admittedly this is a case of mixing apples and oranges
-                // (the ghost's bounds and the room's bounds use pixels that may be scaled
-                // differently, especially for tall backgrounds) but it's effective enough
-                // for the moment.
-
-                // figure effective movement ranges
-                var dX :Number = Math.max(0, Game.roomBounds.width - 2*_ghost.bounds.width);
-                var dY :Number = Math.max(0, Game.roomBounds.height - _ghost.bounds.height);
-
-                // place the ghost therein
-                var x :Number = _ghost.bounds.width + dX * bits[0];
-                var y :Number = dY * bits[1];
-
-                // convert to actual local coordinates and go whee
-                var pos :Point = Game.control.local.roomToStage(new Point(x, y));
-                if (pos != null) {
-                    _ghost.newTarget(this.globalToLocal(pos));
+                } else {
+                    lanternUpdateEvent(evt.key, evt.newValue as Array);
                 }
+            }
+
+        } else if (evt.name == Codes.DICT_GHOST) {
+            if (evt.key == Codes.IX_GHOST_POS && _ghost != null) {
+                ghostPositionChanged(evt.newValue as Array);
+
+            } else if (evt.key == Codes.IX_GHOST_CUR_ZEST) {
+                ghostZapped();
             }
         }
     }
@@ -185,6 +147,38 @@ public class SeekPanel extends FrameSprite
             if (lanterns[playerId] == null) {
                 playerLanternOff(int(playerId));
             }
+        }
+    }
+
+    protected function ghostZapped () :void
+    {
+        _zapping = ZAP_FRAMES;
+        Sound(new Content.LANTERN_GHOST_SCREECH()).play();
+    }
+
+    protected function ghostPositionChanged (bits :Array) :void
+    {
+        // the server sends every client a new (x, y) for the ghost that's in the
+        // logical range [0, 1] and each client translates that according to the
+        // bounds of the current room. We do not however want the ghost to e.g. fly
+        // through the floor, nor disappear at the edges, so use the ghost's known
+        // bounds to offset. Admittedly this is a case of mixing apples and oranges
+        // (the ghost's bounds and the room's bounds use pixels that may be scaled
+        // differently, especially for tall backgrounds) but it's effective enough
+        // for the moment.
+
+        // figure effective movement ranges
+        var dX :Number = Math.max(0, Game.roomBounds.width - 2*_ghost.bounds.width);
+        var dY :Number = Math.max(0, Game.roomBounds.height - _ghost.bounds.height);
+
+        // place the ghost therein
+        var x :Number = _ghost.bounds.width + dX * bits[0];
+        var y :Number = dY * bits[1];
+
+        // convert to actual local coordinates and go whee
+        var pos :Point = Game.control.local.roomToStage(new Point(x, y));
+        if (pos != null) {
+            _ghost.newTarget(this.globalToLocal(pos));
         }
     }
 
