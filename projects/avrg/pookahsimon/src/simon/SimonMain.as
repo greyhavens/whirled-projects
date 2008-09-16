@@ -54,6 +54,9 @@ public class SimonMain extends Sprite
         // hook up controller
         control = new AVRGameControl(this);
         control.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
+
+        log = Log.getLog("simon [player " + control.player.getPlayerId() + "]");
+        Model.log = log;
     }
 
     protected function handleResourcesLoaded () :void

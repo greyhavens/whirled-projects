@@ -18,20 +18,8 @@ public class Server extends ServerObject
     public function Server ()
     {
         _gameCtrl = new AVRServerGameControl(this);
-        //_gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         _gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
-    }
-
-    protected function messageReceived (e :MessageReceivedEvent) :void
-    {
-        var name :String = e.name;
-        var value :Object = e.value;
-        _gameCtrl.game.sendMessage(name, value);
-        if (name == Constants.PROP_SCORES || name == Constants.PROP_STATE) {
-            var roomId :int = _gameCtrl.getPlayer(e.senderId).getRoomId();
-            _gameCtrl.getRoom(roomId).props.set(name, value);
-        }
     }
 
     protected function playerJoinedGame (evt :AVRGameControlEvent) :void

@@ -1,6 +1,7 @@
 package simon {
 
 import flash.utils.Dictionary;
+import flash.utils.setTimeout;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
@@ -24,7 +25,8 @@ public class Game
      */
     public function Game (gameCtrl :AVRServerGameControl, roomId :int)
     {
-        log.info("Starting up new game [roomId=" + roomId + "]");
+        log = new Log("simon [roomId=" + roomId + "]");
+        log.info("Starting up new game");
 
         _gameCtrl = gameCtrl;
         _roomCtrl = _gameCtrl.getRoom(roomId);
@@ -33,8 +35,7 @@ public class Game
         _roomCtrl.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
         _roomCtrl.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
         _gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _playerTimer.addEventListener(TimerEvent.TIMER, playerTimeout);
-        _roundTimer.addEventListener(TimerEvent.TIMER, newRoundTimeout);
+        _timer.addEventListener(TimerEvent.TIMER, handleTimer);
     }
 
     /**
@@ -46,18 +47,16 @@ public class Game
         _roomCtrl.removeEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
         _roomCtrl.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
         _gameCtrl.game.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _playerTimer.removeEventListener(TimerEvent.TIMER, playerTimeout);
-        _roundTimer.removeEventListener(TimerEvent.TIMER, newRoundTimeout);
+        _timer.removeEventListener(TimerEvent.TIMER, handleTimer);
 
-        // stop timers
-        _playerTimer.stop();
-        _roundTimer.stop();
+        // stop timer
+        stopTimer();
 
         // clear transient state
         _roomCtrl.props.set(Constants.PROP_STATE, null);
         _roomCtrl.props.set(Constants.PROP_SCORES, null);
 
-        log.info("Shut down game [roomId=" + _roomCtrl.getRoomId() + "]");
+        log.info("Shut down game");
     }
 
     /**
@@ -87,8 +86,7 @@ public class Game
         // remove the player as a test to make sure he is not already here
         if (_state.removePlayer(playerId)) {
             log.warning(
-                "Player already entered [roomId=" + _roomCtrl.getRoomId() + ", playerId=" + 
-                evt.value + "]");
+                "Player already entered [playerId=" + evt.value + "]");
         }
 
         // add in the pending state
@@ -124,8 +122,7 @@ public class Game
         // remove the player from the state
         if (!_state.removePlayer(playerId)) {
             log.warning(
-                "Player leaving is not in game [roomId=" + _roomCtrl.getRoomId() + ", playerId=" + 
-                evt.value + "]");
+                "Player leaving is not in game [playerId=" + evt.value + "]");
             return;
         }
 
@@ -133,8 +130,7 @@ public class Game
         if (_state.numReadyPlayers < Constants.MIN_MP_PLAYERS_TO_START) {
             // TODO: award remaining player?
             _state.gameState = State.STATE_WAITINGFORPLAYERS;
-            _roundTimer.stop();
-            _playerTimer.stop();
+            stopTimer();
         }
 
         // update everyone
@@ -162,8 +158,7 @@ public class Game
             // TODO: this is subject to abuse, should only allow a player to reset the round timer 
             // once per minute or something
             if (_state.numReadyPlayers >= Constants.MIN_MP_PLAYERS_TO_START) {
-                _roundTimer.stop();
-                _roundTimer.start();
+                startTimer(ROUND_BREAK, Constants.NEW_ROUND_DELAY_S);
             }
 
         } else {
@@ -186,7 +181,6 @@ public class Game
         if (note < 0 || note >= Constants.NUM_NOTES) {
             log.warning("Illegal note sent [state=" + _state + "]");
             return;
-
         }
 
         // relay the message so everyone can hear the note
@@ -203,56 +197,76 @@ public class Game
         // incorrect note
         } else if (note != _remainingPattern[0]) {
 
-            // failed turn: boot player, go to next and send updates
-            if (playerFailed()) {
+            // failed turn: boot player, go to next
+            var roundEnded :Boolean = playerFailed();
 
-                // send state and new scores is someone just won
-                sendState();
+            // update clients
+            sendState();
+            
+            // update scores if the round ended
+            if (roundEnded) {
                 sendScores();
-
-            } else {
-
-                // ...otherwise just send state
-                sendState();
             }
-
 
         // matching note
         } else {
 
-            // get ready for the next one and reset timer
+            // get ready for the next note
             _remainingPattern.shift();
-            _playerTimer.stop();
-            _playerTimer.start();
+            // restart timer
+            startTimer(PLAYER_CLICK, Constants.PLAYER_TIMEOUT_S);
         }
     }
 
     /**
-     * Called when it has been the current player's turn for longer than the allotted time.
+     * Called when the timer expires.
      */
-    protected function playerTimeout (evt :TimerEvent) :void
+    protected function handleTimer (evt :TimerEvent) :void
     {
         var playerId :int = _state.curPlayerId;
 
-        log.info("Player timed out [playerId=" + playerId + "]");
+        log.info("Handling timer [action=" + _timedAction + "]");
 
-        // move on to the next player and send updates
-        if (playerFailed()) {
+        if (_timedAction == NOTE_REPLAY) {
+            log.info("Note replay complete [playerId=" + playerId + "]");
+            startTimer(PLAYER_CLICK, Constants.PLAYER_TIMEOUT_S);
+            sendStartPlayerTimer();
+
+        } else if (_timedAction == PLAYER_CLICK) {
+            log.info("Player timed out [playerId=" + playerId + "]");
+
+            // move on to the next player and send updates
+            var roundEnded :Boolean = playerFailed();
             sendState();
-            sendScores();
+            if (roundEnded) {
+                sendScores();
+            }
 
-        } else {
+            // increment the timeout count
+            _timeoutCounts[playerId] = int(_timeoutCounts[playerId]) + 1;
+
+            // this is lame for other players, so boot the player completely if it happens a lot
+            if (_timeoutCounts[playerId] > Constants.MAX_PLAYER_TIMEOUTS) {
+                log.info("Player timeout limit exceeded [playerId=" + playerId + "]");
+                _gameCtrl.getPlayer(playerId).deactivateGame();
+            }
+
+        } else if (_timedAction == ROUND_BREAK) {
+            log.info("Round timeout");
+
+            // move the ousted folks back in
+            for each (playerId in _state.playersInState(State.PLAYER_OUT)) {
+                _state.setPlayerState(playerId, State.PLAYER_READY);
+            }
+
+            // start a new round if we've got enough people
+            _state.gameState = State.STATE_WAITINGFORPLAYERS;
+            maybeStartNewRound();
+
+            // send updates
             sendState();
         }
 
-        // increment the timeout count
-        _timeoutCounts[playerId] = int(_timeoutCounts[playerId]) + 1;
-
-        // this is lame for other players, so boot the player completely if it happens a lot
-        if (_timeoutCounts[playerId] > Constants.MAX_PLAYER_TIMEOUTS) {
-            log.info("Player timeout limit exceeded [playerId=" + playerId + "]");
-            _gameCtrl.getPlayer(playerId).deactivateGame();
-        }
     }
 
     /**
@@ -289,14 +303,19 @@ public class Game
         _state.roundWinnerId = winnerId;
         _scores.incrementScore(winnerId, new Date());
 
-        // stop the play timer
-        _playerTimer.stop();
-
         // award coins
-        _gameCtrl.getPlayer(winnerId).completeTask("winner", 1);
+        var payout :Number = (_state.pattern.length - Constants.MIN_NOTES_FOR_PAYOUT + 1) / 
+            (Constants.NOTES_FOR_MAX_PAYOUT - Constants.MIN_NOTES_FOR_PAYOUT + 1);
+        if (payout > 0 && payout <= 1.0) {
+            _gameCtrl.getPlayer(winnerId).completeTask("winner", payout);
+        }
+
+        // TODO: trophy for consecutive wins
+        
+        // TODO: trophy for total wins in time period
 
         // kick off a new round in a bit
-        _roundTimer.start();
+        startTimer(ROUND_BREAK, Constants.NEW_ROUND_DELAY_S);
     }
 
     /**
@@ -355,9 +374,9 @@ public class Game
         // reset the pattern
         _remainingPattern = _state.pattern.slice();
 
-        // restart the timer
-        _playerTimer.stop();
-        _playerTimer.start();
+        // allow the client some time to animate the change of tuen and note replay
+        startTimer(NOTE_REPLAY, Constants.PLAYER_GRACE_PERIOD_S + 
+            _state.pattern.length * Constants.PLAYER_TIME_PER_NOTE_S);
 
         log.info("New current player [playerId=" + _state.curPlayerId + "]");
     }
@@ -384,12 +403,33 @@ public class Game
         _remainingPattern = [];
 
         // stop the round timer, start the player timer
-        _roundTimer.stop();
-        _playerTimer.start();
+        startTimer(NOTE_REPLAY, Constants.PLAYER_GRACE_PERIOD_S);
 
         log.info(
             "Staring new round [players=" + StringUtil.toString(_state.players) + ", state=" + 
             _state + "]");
+    }
+
+    protected function startTimer (action :int, delay :Number) :void
+    {
+        _timer.stop();
+        _timer.delay = delay * 1000;
+        _timedAction = action;
+
+        // TODO: remove this when all avmthane binaries are rebuilt
+        setTimeout(function () :void {
+            _timer.start();
+        }, 0);
+
+        log.debug("Started timer [action=" + action + ", delay=" + delay + "]");
+    }
+
+    protected function stopTimer () :void
+    {
+        _timer.stop();
+        _timedAction = NONE;
+
+        log.debug("Stopped timer");
     }
 
     /**
@@ -410,6 +450,12 @@ public class Game
         _roomCtrl.props.set(Constants.PROP_SCORES, _scores.toBytes());
     }
 
+    protected function sendStartPlayerTimer () :void
+    {
+        log.debug("Sending start player timer message");
+        _roomCtrl.sendMessage(Constants.MSG_PLAYERTIMERSTARTED);
+    }
+
     /** The top-level control. */
     protected var _gameCtrl :AVRServerGameControl;
 
@@ -422,16 +468,19 @@ public class Game
     /** The scores (shared between the server and all clients). */
     protected var _scores :ScoreTable = new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES);
 
-    /** Timer for player's turn. */
-    protected var _playerTimer :Timer = new Timer(Constants.PLAYER_TIMEOUT_S * 1000, 0);
+    protected var _timer :Timer = new Timer(1, 0);
 
-    /** Timer for starting a new round. */
-    protected var _roundTimer :Timer = new Timer(Constants.NEW_ROUND_DELAY_S * 1000, 0);
+    protected var _timedAction :int = NONE;
 
     /** Mapping of player id to the number of timeout violations. */
     protected var _timeoutCounts :Dictionary = new Dictionary();
 
     /** The remaining notes that the current player has to play. */
     protected var _remainingPattern :Array = [];
+
+    protected static const NONE :int = 0;
+    protected static const ROUND_BREAK :int = 1;
+    protected static const NOTE_REPLAY :int = 2;
+    protected static const PLAYER_CLICK :int = 3;
 }
 }

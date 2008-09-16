@@ -56,7 +56,6 @@ public class CloudViewController extends SceneObject
 
         // other events
         SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText, false, 0, true);
-        SimonMain.model.addEventListener(SimonEvent.GAME_STATE_CHANGED, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores, false, 0, true);
         SimonMain.model.addEventListener(SimonEvent.PLAYERS_CHANGED, updateNamesAndScores, false, 0, true);
@@ -74,7 +73,6 @@ public class CloudViewController extends SceneObject
     override protected function removedFromDB () :void
     {
         SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, updateStatusText);
-        SimonMain.model.removeEventListener(SimonEvent.GAME_STATE_CHANGED, updateNamesAndScores);
         SimonMain.model.removeEventListener(SimonEvent.NEW_SCORES, updateNamesAndScores);
         SimonMain.model.removeEventListener(SimonEvent.NEXT_PLAYER, updateNamesAndScores);
         SimonMain.model.removeEventListener(SimonEvent.PLAYERS_CHANGED, updateNamesAndScores);

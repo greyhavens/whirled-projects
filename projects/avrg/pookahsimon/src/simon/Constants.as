@@ -21,10 +21,13 @@ public class Constants
     public static const NUM_SCOREBOARD_NAMES :int = 5;
     public static const MIN_MP_PLAYERS_TO_START :int = 2;
     public static const AVATAR_DANCE_TIME :Number = 4;
-    public static const PLAYER_TIMEOUT_S :int = 15;
+    public static const PLAYER_TIMEOUT_S :Number = 5;
+    public static const PLAYER_TIME_PER_NOTE_S :Number = 0.6;
+    public static const PLAYER_GRACE_PERIOD_S :Number = 2.0;
     public static const MAX_PLAYER_TIMEOUTS :int = 2;
     public static const NUM_NOTES :int = 7;
     public static const MIN_NOTES_FOR_PAYOUT :int = 4;
+    public static const NOTES_FOR_MAX_PAYOUT :int = 25;
 
     // network bits
     public static const PROP_STATE :String = "p_state";
@@ -32,7 +35,7 @@ public class Constants
     public static const MSG_PLAYERREADY :String = "m_playerReadyToStaer";
     public static const MSG_NEXTNOTE :String = "m_nextNote";
     public static const MSG_RAINBOWCLICKED :String = "m_rainbowClicked";
-    public static const MSG_PLAYERTIMEOUT :String = "m_playerTimeout";
+    public static const MSG_PLAYERTIMERSTARTED :String = "m_playerTimerStarted";
 }
 
 }

@@ -13,30 +13,6 @@ public class LocalRainbowController extends AbstractRainbowController
         super(playerId);
     }
 
-    override protected function update (dt :Number) :void
-    {
-        super.update(dt);
-        this.updateTimeoutDisplay();
-    }
-
-    protected function updateTimeoutDisplay () :void
-    {
-        var pieTimer :MovieClip = this.pieTimer;
-
-        if (null != pieTimer) {
-
-            var countdownValue :Number = _playerTimeoutCountdown["value"];
-
-            if (countdownValue <= 0) {
-                pieTimer.visible = false;
-            } else {
-                pieTimer.visible = true;
-                var frameNumber :Number = Math.ceil(pieTimer.totalFrames * ((Constants.PLAYER_TIMEOUT_S - countdownValue) / Constants.PLAYER_TIMEOUT_S));
-                pieTimer.gotoAndStop(frameNumber);
-            }
-        }
-    }
-
     override protected function playRainbowLoop () :void
     {
         super.playRainbowLoop();
@@ -63,8 +39,6 @@ public class LocalRainbowController extends AbstractRainbowController
 
     protected function setupRainbowForPlayerInput () :void
     {
-        this.resetPlayerTimeoutHandler();
-
         var i :int = 0;
         for each (var band :MovieClip in _rainbowBands) {
             this.createBandMouseHandlers(band, i++);
@@ -103,31 +77,6 @@ public class LocalRainbowController extends AbstractRainbowController
         }
     }
 
-    protected function resetPlayerTimeoutHandler () :void
-    {
-        _playerTimeoutCountdown["value"] = Constants.PLAYER_TIMEOUT_S;
-
-        this.stopPlayerTimeoutHandler();
-
-        this.addNamedTask(
-            PLAYER_TIMEOUT_TASK_NAME,
-            new SerialTask(
-                new AnimateValueTask(_playerTimeoutCountdown, 0, Constants.PLAYER_TIMEOUT_S),
-                new FunctionTask(handleLocalPlayerTimeout)));
-    }
-
-    protected function stopPlayerTimeoutHandler () :void
-    {
-        this.removeNamedTasks(PLAYER_TIMEOUT_TASK_NAME);
-    }
-
-    protected function handleLocalPlayerTimeout () :void
-    {
-        //SimonMain.model.sendPlayerTimeoutMessage();
-        //this.gameMode.incrementPlayerTimeoutCount();
-        this.gameMode.currentPlayerTurnFailure();
-    }
-
     override protected function nextNoteSelected (noteIndex :int, clickLoc :Point) :void
     {
         super.nextNoteSelected(noteIndex, clickLoc);
@@ -135,34 +84,13 @@ public class LocalRainbowController extends AbstractRainbowController
         // show an animation on the player avatar
         AvatarController.instance.playAvatarAction("Jump");
 
-        // reset the "note time expired" handler every time a new note is played
-        if (_finalNotePlayed) {
-            this.stopPlayerTimeoutHandler();
-        } else {
-            this.resetPlayerTimeoutHandler();
-        }
-
         // send a message to everyone else
         SimonMain.model.sendRainbowClickedMessage(noteIndex);
     }
 
-    protected function get pieTimer () :MovieClip
-    {
-        if (null != _curAnim) {
-            var noteTimer :MovieClip = _curAnim["note_timer"];
-            if (null != noteTimer) {
-                return noteTimer["inst_timer_pie"];
-            }
-        }
-
-        return null;
-    }
-
-    protected var _playerTimeoutCountdown :Object = { value: 0 };
     protected var _hilitedBand :MovieClip;
 
-    protected static const PLAYER_TIMEOUT_TASK_NAME :String = "PlayerTimeoutTask";
-    protected static const PLAYBACK_ANIMATION_NOTE_DELAY :Number = 0.6;
+    protected static const PLAYBACK_ANIMATION_NOTE_DELAY :Number = Constants.PLAYER_TIME_PER_NOTE_S;
 }
 
 }

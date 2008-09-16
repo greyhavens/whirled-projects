@@ -67,8 +67,8 @@ public class OnlineModel extends Model
         if (e.name == Constants.MSG_RAINBOWCLICKED) {
             rainbowClicked(e.value as int);
 
-        } else if (e.name == Constants.MSG_PLAYERTIMEOUT) {
-            playerTimeout();
+        } else if (e.name == Constants.MSG_PLAYERTIMERSTARTED) {
+            startTimer();
         }
     }
 

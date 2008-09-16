@@ -90,6 +90,10 @@ public class GameMode extends AppMode
 
     protected function handleCurPlayerChanged (...ignored) :void
     {
+        if (SimonMain.model.curState.gameState != State.STATE_PLAYING) {
+            return;
+        }
+
         log.info(
             "Handling current player change [state=" + SimonMain.model.curState + "]");
 

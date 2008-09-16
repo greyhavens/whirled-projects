@@ -12,6 +12,8 @@ import flash.events.EventDispatcher;
 
 public class Model extends EventDispatcher
 {
+    public static var log :Log = Log.getLog("simon");
+
     public function Model ()
     {
     }
@@ -54,16 +56,18 @@ public class Model extends EventDispatcher
     /* private state mutators */
     protected function setState (newState :State) :void
     {
-        g_log.debug("Changing state [new=" + newState + "]");
+        log.debug("Changing state [new=" + newState + "]");
 
         var lastState :State = _curState;
         _curState = newState.clone();
 
         if (_curState.gameState != lastState.gameState) {
             this.dispatchEvent(new SimonEvent(SimonEvent.GAME_STATE_CHANGED));
-        } else if (_curState.curPlayerOid != lastState.curPlayerOid || _curState.pattern.length != lastState.pattern.length) {
+        }
+        if (_curState.curPlayerOid != lastState.curPlayerOid || _curState.pattern.length != lastState.pattern.length) {
             this.dispatchEvent(new SimonEvent(SimonEvent.NEXT_PLAYER));
-        } else if (!State.arraysEqual(_curState.players, lastState.players) || !State.arraysEqual(_curState.playerStates, lastState.playerStates)) {
+        }
+        if (!State.arraysEqual(_curState.players, lastState.players) || !State.arraysEqual(_curState.playerStates, lastState.playerStates)) {
             this.dispatchEvent(new SimonEvent(SimonEvent.PLAYERS_CHANGED));
         }
     }
@@ -79,19 +83,14 @@ public class Model extends EventDispatcher
         dispatchEvent(new SimonEvent(SimonEvent.NEXT_RAINBOW_SELECTION, clickedIndex));
     }
 
-    protected function playerTimeout () :void
+    protected function startTimer () :void
     {
-        dispatchEvent(new SimonEvent(SimonEvent.PLAYER_TIMEOUT));
+        dispatchEvent(new SimonEvent(SimonEvent.START_TIMER));
     }
 
     // shared state
     protected var _curState :State = new State();
     protected var _curScores :ScoreTable = new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES);
-
-    // local state
-
-    protected static var g_log :Log = Log.getLog(Model);
-
 }
 
 }

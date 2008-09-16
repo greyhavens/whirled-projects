@@ -13,7 +13,6 @@ public class RemoteRainbowController extends AbstractRainbowController
     {
         super.addedToDB();
 
-        SimonMain.model.addEventListener(SimonEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
         SimonMain.model.addEventListener(SimonEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
     }
 
@@ -21,7 +20,6 @@ public class RemoteRainbowController extends AbstractRainbowController
     {
         super.removedFromDB();
 
-        SimonMain.model.removeEventListener(SimonEvent.PLAYER_TIMEOUT, handlePlayerTimedOut);
         SimonMain.model.removeEventListener(SimonEvent.NEXT_RAINBOW_SELECTION, handleNextRainbowSelection);
     }
 
@@ -31,13 +29,6 @@ public class RemoteRainbowController extends AbstractRainbowController
         var clickLoc :Point = DEFAULT_SPARKLE_LOCS[noteIndex];
         this.nextNoteSelected(noteIndex, clickLoc);
     }
-
-    protected function handlePlayerTimedOut (...ignored) :void
-    {
-        // called when the player has taken too long to click a note
-        this.gameMode.currentPlayerTurnFailure();
-    }
-
 }
 
 }
