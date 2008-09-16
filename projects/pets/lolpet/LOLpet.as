@@ -69,6 +69,8 @@ public class LOLpet extends Sprite
 
     protected function init () :void
     {
+        _myId = _ctrl.getMyEntityId();
+
         // read any unchanging memories
         var c :Object = _ctrl.getMemory("c", null);
         if (c != null) {
@@ -94,24 +96,34 @@ public class LOLpet extends Sprite
 
     protected function handleChatReceived (event :ControlEvent) :void
     {
-        if (null != LOL.exec(String(event.value))) {
-            switch (_ctrl.getEntityProperty(EntityControl.PROP_TYPE, event.name)) {
-            case EntityControl.TYPE_PET:
-                if (Math.random() > (_level / 100)) {
-                    break; // sorry, you lose!
-                }
-                // else, fall through to sendLOL
-
-            default: // sendLOL!
-                _ctrl.doBatch(sendLOL);
-                break;
-            }
+        var id :String = event.name;
+        var chat :String = String(event.value);
+        if (_myId == id) {
+            return; // never trigger off ourselves
         }
+
+        var result :Object = LOL.exec(chat);
+        var hasLOL :Boolean = (result != null);
+        var isLOL :Boolean = hasLOL && (result[0] == chat);
+        var isPet :Boolean =
+            (EntityControl.TYPE_PET == _ctrl.getEntityProperty(EntityControl.PROP_TYPE, id));
+
+        if ((isPet || !hasLOL) && (Math.random() > (_level / 100))) {
+            return; // don't react
+        }
+
+        var lolchat :String = "lol";
+        if (isLOL) {
+            lolchat += "!";
+        } else if (!hasLOL) {
+            lolchat += "@" + _ctrl.getEntityProperty(EntityControl.PROP_NAME, id);
+        }
+        _ctrl.doBatch(sendLOL, lolchat);
     }
 
-    protected function sendLOL () :void
+    protected function sendLOL (lolchat :String) :void
     {
-        _ctrl.sendChat("lol" + ((Math.random() < .95) ? "" : "!"));
+        _ctrl.sendChat(lolchat);
         var lol :Number = _lols + 1;
         _ctrl.setMemory("lol", lol);
         if (lol > (5 * Math.pow(2, _level))) {
@@ -167,5 +179,6 @@ public class LOLpet extends Sprite
     protected var _lolField :TextField;
 
     protected var _ctrl :PetControl;
+    protected var _myId :String;
 }
 }
