@@ -170,14 +170,11 @@ public class ServerBoardController extends BoardController
         super.removeMine(idx);
     }
 
-    override public function shipKilled (shipId :int) :void
+    public function removeMines (shipId :int) :void
     {
-        // batch all mine-removal messages together
-        _gameCtrl.doBatch(function () :void {
-            for each (var mineIndex :int in getShipMineIndices(shipId)) {
-                removeMine(mineIndex);
-            }
-        });
+        for each (var mineIndex :int in getShipMineIndices(shipId)) {
+            removeMine(mineIndex);
+        }
     }
 }
 

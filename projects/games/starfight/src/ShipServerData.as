@@ -4,6 +4,12 @@ import flash.utils.ByteArray;
 
 public class ShipServerData
 {
+    public function reset () :void
+    {
+        health = 1;
+        shieldHealth = 0;
+    }
+
     public function clean () :void
     {
         _dirty = false;

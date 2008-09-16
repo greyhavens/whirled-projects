@@ -3,6 +3,7 @@ package client {
 import com.threerings.util.HashMap;
 import com.whirled.game.CoinsAwardedEvent;
 import com.whirled.game.GameControl;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.KeyboardEvent;
@@ -48,6 +49,14 @@ public class ClientGameController extends GameController
         ClientContext.board = ClientBoardController(AppContext.board);
         ClientContext.gameView.init();
         ClientContext.board.loadBoard(beginGame);
+    }
+
+    override protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        super.messageReceived(event);
+        if (event.value is ShipExplodedMessage) {
+            shipExploded(ShipExplodedMessage(event.value));
+        }
     }
 
     override public function createShip (shipId :int, playerName :String) :Ship
@@ -279,18 +288,21 @@ public class ClientGameController extends GameController
         shotView.parent.removeChild(shotView);
     }
 
-    override protected function shipExploded (msg :ShipExplodedMessage) :void
+    protected function shipExploded (msg :ShipExplodedMessage) :void
     {
-        super.shipExploded(msg);
-
         var ship :Ship = getShip(msg.shipId);
         if (ship != null) {
+            ship.killed();
+            var shooter :Ship = getShip(msg.shooterId);
+            if (shooter != null) {
+                AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
+            }
+
             ClientContext.board.playExplosion(msg.x, msg.y, msg.rotation, false, ship.shipTypeId);
             playSoundAt(Resources.getSound("ship_explodes.wav"), msg.x, msg.y);
         }
 
         if (_ownShip != null && msg.shooterId == _ownShip.shipId) {
-            AppContext.scores.addToScore(msg.shooterId, KILL_PTS);
             _ownShip.registerKill(msg.shipId);
         }
     }

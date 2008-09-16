@@ -29,11 +29,18 @@ public class ServerShip extends Ship
         } else {
             _serverData.health -= hitPower;
             if (_serverData.health <= DEAD) {
-                AppContext.msgs.sendMessage(ShipExplodedMessage.create(this, shooterId));
+                killed();
+                ServerContext.game.shipExploded(this, shooterId);
             }
         }
 
         return true;
+    }
+
+    override public function killed () :void
+    {
+        super.killed();
+        _serverData.reset();
     }
 
     public function enableShield (shieldHealth :Number, timeoutMs :int) :void

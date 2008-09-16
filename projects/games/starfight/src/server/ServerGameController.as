@@ -176,10 +176,20 @@ public class ServerGameController extends GameController
         }
     }
 
-    override protected function shipExploded (msg :ShipExplodedMessage) :void
+    public function shipExploded (ship :Ship, shooterId :int) :void
     {
-        super.shipExploded(msg);
-        ServerContext.board.addHealthPowerup(msg.x, msg.y);
+        var shooter :Ship = getShip(shooterId);
+        if (shooter != null) {
+            AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
+        }
+
+        // batch all game state-change messages together
+        _gameCtrl.doBatch(function () :void {
+            AppContext.msgs.sendMessage(ShipExplodedMessage.create(ship, shooterId));
+            ServerContext.board.removeMines(ship.shipId);
+            ServerContext.board.addHealthPowerup(ship.boardX, ship.boardY);
+            AppContext.scores.addToScore(shooterId, KILL_PTS);
+        });
     }
 
     override protected function occupantLeft (event :OccupantChangedEvent) :void
@@ -196,8 +206,24 @@ public class ServerGameController extends GameController
         }
     }
 
+    override public function removeShip (id :int) :Ship
+    {
+        var ship :Ship = super.removeShip(id);
+        if (ship != null) {
+            _gameCtrl.doBatch(function () :void {
+                ServerContext.board.removeMines(ship.shipId);
+            });
+        }
+
+        return ship;
+    }
+
     protected var _powerupTimer :ManagedTimer;
     protected var _lastStateTimeUpdate :int;
+
+    /** Points for various things in the game. */
+    protected static const HIT_PTS :int = 1;
+    protected static const KILL_PTS :int = 25;
 }
 
 }

@@ -187,8 +187,6 @@ public class GameController
             _population--;
         }
 
-        AppContext.board.shipKilled(id);
-
         return remShip;
     }
 
@@ -228,8 +226,6 @@ public class GameController
             if (event.value is ShipShotMessage) {
                 var shipMsg :ShipShotMessage = ShipShotMessage(event.value);
                 Constants.getShipType(shipMsg.shipTypeId).doShot(shipMsg);
-            } else if (event.value is ShipExplodedMessage) {
-                shipExploded(ShipExplodedMessage(event.value));
             } else if (event.value is CreateMineMessage) {
                 var mineMsg :CreateMineMessage = CreateMineMessage(event.value);
                 AppContext.board.addMine(new Mine(mineMsg.shipId, mineMsg.boardX, mineMsg.boardY,
@@ -329,19 +325,6 @@ public class GameController
         return nearShips;
     }
 
-    protected function shipExploded (msg :ShipExplodedMessage) :void
-    {
-        var ship :Ship = getShip(msg.shipId);
-        if (ship != null) {
-            ship.killed();
-            var shooter :Ship = getShip(msg.shooterId);
-            if (shooter != null) {
-                AppContext.local.feedback(shooter.playerName + " killed " + ship.playerName + "!");
-            }
-        }
-        AppContext.board.shipKilled(msg.shipId);
-    }
-
     /**
      * When our screen updater timer ticks...
      */
@@ -408,10 +391,6 @@ public class GameController
 
     /** This could be more dynamic. */
     protected static const MIN_TILES_PER_POWERUP :int = 250;
-
-    /** Points for various things in the game. */
-    protected static const HIT_PTS :int = 1;
-    protected static const KILL_PTS :int = 25;
 
     /** Amount of time to wait between sending time updates. */
     protected static const TIME_WAIT :int = 10000;

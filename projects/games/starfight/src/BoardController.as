@@ -335,13 +335,6 @@ public class BoardController
         return bestHit;
     }
 
-    public function shipKilled (shipId :int) :void
-    {
-        for each (var mineIndex :int in getShipMineIndices(shipId)) {
-            removeMine(mineIndex);
-        }
-    }
-
     protected function getShipMineIndices (shipId :int) :Array
     {
         var indices :Array = [];
