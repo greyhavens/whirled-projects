@@ -81,7 +81,7 @@ public class Mapper extends FrameSprite
             }
         }
 
-        throw new Error("Couldn't find name for memberId=" + memberId);
+        return "Guest";
     }
 
     protected function onMapInit (event :YahooMapEvent) :void
@@ -99,7 +99,7 @@ public class Mapper extends FrameSprite
         var memberName :String = getMemberName(memberId);
 
         // Don't plot guests or agents
-        if (memberId != 0 && memberName.indexOf("Agent") == -1) {
+        if (memberId > 0 && memberName.indexOf("Agent") == -1) {
             // Add/update our position on the map
             fetchLocation(function (lat :Number, lon :Number) :void {
                 _ctrl.setMemory(String(memberId), [memberName, lat, lon]);
