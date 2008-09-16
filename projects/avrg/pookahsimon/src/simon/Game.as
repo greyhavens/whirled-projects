@@ -1,52 +1,31 @@
 package simon {
 
+import com.threerings.util.StringUtil;
+
 import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.threerings.util.Log;
-import com.threerings.util.StringUtil;
-
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.RoomServerSubControl;
-import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
 
 /**
- * Handles a single instance of simon on the server agent (currently per room).
+ * Handles a single game of simon (in a single room).
  */
-public class Game
+public class Game extends OneRoomGameRoom
 {
-    public static var log :Log = Server.log;
-
-    /**
-     * Creates a new game instance in the given room.
-     */
-    public function Game (gameCtrl :AVRServerGameControl, roomId :int)
+    /** @inheritDoc */
+    // from OneRoomGameRoom
+    override protected function finishInit () :void
     {
-        log = new Log("simon [roomId=" + roomId + "]");
-        log.info("Starting up new game");
-
-        _gameCtrl = gameCtrl;
-        _roomCtrl = _gameCtrl.getRoom(roomId);
-
-        // set up our listeners
-        _roomCtrl.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
-        _roomCtrl.addEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
-        _gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        super.finishInit();
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
     }
 
-    /**
-     * Terminates this game, saving any persistent data and resetting transient room state.
-     */
-    public function shutdown () :void
+    /** @inheritDoc */
+    // from OneRoomGameRoom
+    override public function shutdown () :void
     {
-        // remove our listeners
-        _roomCtrl.removeEventListener(AVRGameRoomEvent.PLAYER_ENTERED, playerEntered);
-        _roomCtrl.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT, playerLeft);
-        _gameCtrl.game.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _timer.removeEventListener(TimerEvent.TIMER, handleTimer);
 
         // stop timer
@@ -56,41 +35,36 @@ public class Game
         _roomCtrl.props.set(Constants.PROP_STATE, null);
         _roomCtrl.props.set(Constants.PROP_SCORES, null);
 
-        log.info("Shut down game");
+        super.shutdown();
     }
 
-    /**
-     * Relays agent messages to the appropriate callback if the sender is a part of this game.
-     */
-    protected function messageReceived (evt :MessageReceivedEvent) :void
+    /** @inheritDoc */
+    // from OneRoomGameRoom
+    override protected function messageReceived (senderId :int, name :String, value :Object) :void
     {
-        if (evt.name == Constants.MSG_PLAYERREADY) {
-            if (_state.getPlayerState(evt.senderId) == State.PLAYER_PENDING) {
-                playerReady(evt.senderId);
+        if (name == Constants.MSG_PLAYERREADY) {
+            if (_state.getPlayerState(senderId) == State.PLAYER_PENDING) {
+                playerReady(senderId);
             }
 
-        } else if (evt.name == Constants.MSG_RAINBOWCLICKED) {
-            if (_state.curPlayerId == evt.senderId) {
-                rainbowClicked(evt.value as int);
+        } else if (name == Constants.MSG_RAINBOWCLICKED) {
+            if (_state.curPlayerId == senderId) {
+                rainbowClicked(value as int);
             }
         }
     }
 
-    /**
-     * Called by whirled when a new player enters our room.
-     */
-    protected function playerEntered (evt :AVRGameRoomEvent) :void
+    /** @inheritDoc */
+    // from OneRoomGameRoom
+    override protected function playerEntered (playerId :int) :void
     {
-        var playerId :int = evt.value as int;
-
         // remove the player as a test to make sure he is not already here
         if (_state.removePlayer(playerId)) {
-            log.warning(
-                "Player already entered [playerId=" + evt.value + "]");
+            log.warning("Player already entered [playerId=" + playerId + "]");
         }
 
         // add in the pending state
-        log.info("Pending player [playerId=" + evt.value + "]");
+        log.info("Pending player [playerId=" + playerId + "]");
         _state.addPlayer(playerId);
 
         // reset the player's timeout count
@@ -105,14 +79,11 @@ public class Game
         sendState();
     }
 
-    /**
-     * Called by whirled when a player leaves our room (or game).
-     */
-    protected function playerLeft (evt :AVRGameRoomEvent) :void
+    /** @inheritDoc */
+    // from OneRoomGameRoom
+    override protected function playerLeft (playerId :int) :void
     {
-        var playerId :int = evt.value as int;
-
-        log.info("Removing player [playerId=" + evt.value + "]");
+        log.info("Removing player [playerId=" + playerId + "]");
 
         // first find the player to take over the turn
         if (_state.curPlayerId == playerId && _state.numReadyPlayers > 1) {
@@ -121,8 +92,7 @@ public class Game
 
         // remove the player from the state
         if (!_state.removePlayer(playerId)) {
-            log.warning(
-                "Player leaving is not in game [playerId=" + evt.value + "]");
+            log.warning("Player leaving is not in game [playerId=" + playerId + "]");
             return;
         }
 
@@ -213,6 +183,7 @@ public class Game
 
             // get ready for the next note
             _remainingPattern.shift();
+
             // restart timer
             startTimer(PLAYER_CLICK, Constants.PLAYER_TIMEOUT_S);
         }
@@ -266,28 +237,6 @@ public class Game
             // send updates
             sendState();
         }
-
-    }
-
-    /**
-     * Called when the round has been over and no new players have shown up for more than the 
-     * allotted amount of time.
-     */
-    protected function newRoundTimeout (evt :TimerEvent) :void
-    {
-        log.info("Round timeout");
-
-        // move the ousted folks back in
-        for each (var playerId :int in _state.playersInState(State.PLAYER_OUT)) {
-            _state.setPlayerState(playerId, State.PLAYER_READY);
-        }
-
-        // start a new round if we've got enough people
-        _state.gameState = State.STATE_WAITINGFORPLAYERS;
-        maybeStartNewRound();
-
-        // send updates
-        sendState();
     }
 
     /**
@@ -456,11 +405,6 @@ public class Game
         _roomCtrl.sendMessage(Constants.MSG_PLAYERTIMERSTARTED);
     }
 
-    /** The top-level control. */
-    protected var _gameCtrl :AVRServerGameControl;
-
-    /** The room control. */
-    protected var _roomCtrl :RoomServerSubControl;
 
     /** The state (shared between the server and all clients). */
     protected var _state :State = new State();
