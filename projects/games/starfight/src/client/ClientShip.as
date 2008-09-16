@@ -31,6 +31,13 @@ public class ClientShip extends Ship
      */
     public function restart () :void
     {
+        firing = false;
+        secondaryFiring = false;
+        turning = 0;
+        moving = 0;
+        _ticksToFire = 0;
+        _ticksToSecondary = 0;
+
         var pt :Point = AppContext.board.getStartingPos();
         boardX = pt.x;
         boardY = pt.y;
@@ -48,12 +55,19 @@ public class ClientShip extends Ship
         _killsThisLife = 0;
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
+        _powerups = 0;
 
         _serverData = new ShipServerData();
 
         initTimers();
 
-        spawn();
+        state = STATE_SPAWN;
+        _numLives += 1;
+
+        var thisShip :Ship = this;
+        runOnce(SPAWN_TIME, function (...ignored) :void {
+            thisShip.state = STATE_DEFAULT;
+        });
     }
 
     public function set serverData (shipData :ShipServerData) :void

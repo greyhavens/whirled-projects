@@ -70,8 +70,9 @@ public class ServerGameController extends GameController
     {
         super.hitShip(ship, x, y, shooterId, damage);
 
-        ServerShip(ship).hit(shooterId, damage);
-        AppContext.scores.addToScore(shooterId, Math.round(damage * 10));
+        if (ServerShip(ship).hit(shooterId, damage)) {
+            AppContext.scores.addToScore(shooterId, Math.round(damage * 10));
+        }
     }
 
     override protected function roundStarted () :void

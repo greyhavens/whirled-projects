@@ -152,16 +152,6 @@ public class Ship
         state = STATE_DEFAULT;
     }
 
-    protected function spawn () :void
-    {
-        state = STATE_SPAWN;
-
-        var thisShip :Ship = this;
-        runOnce(SPAWN_TIME,function (...ignored) :void {
-            thisShip.state = STATE_DEFAULT;
-        });
-    }
-
     /**
      * Returns the ship's friction factor.
      */
@@ -309,6 +299,14 @@ public class Ship
      */
     public function updateForReport (report :Ship) :void
     {
+        // if the ship is dead, and it receives an update that changes its state to alive
+        // without incrementing _numLives, it means the ship has been exploded by the server,
+        // but the client in charge of it has not yet gotten that message and is sending old data
+        // that should be ignored
+        if (state == STATE_DEAD && report.state != STATE_DEAD && _numLives >= report._numLives) {
+            return;
+        }
+
         _reportShip = report;
         _reportTime = INTERPOLATION_TIME;
         if (state == STATE_WARP_BEGIN || state == STATE_WARP_END) {
@@ -322,12 +320,14 @@ public class Ship
         yVel = report.yVel;
         turnRate = report.turnRate;
         turnAccelRate = report.turnAccelRate;
+        _powerups = report._powerups;
 
         // if the ship has been re-spawned, copy all state over
-        if (state == STATE_DEAD && report.state != STATE_DEAD) {
+        if (_numLives < report._numLives) {
             boardX = report.boardX;
             boardY = report.boardY;
             rotation = report.rotation;
+            _numLives = report._numLives;
             setShipType(report.shipTypeId);
 
             // And re-init our server data.
@@ -358,6 +358,7 @@ public class Ship
         setShipType(bytes.readByte());
         state = bytes.readByte();
         _powerups = bytes.readByte();
+        _numLives = bytes.readShort();
     }
 
     /**
@@ -378,6 +379,7 @@ public class Ship
         bytes.writeByte(shipTypeId);
         bytes.writeByte(state);
         bytes.writeByte(_powerups);
+        bytes.writeShort(_numLives);
 
         return bytes;
     }
@@ -419,6 +421,7 @@ public class Ship
     protected var _reportTime :int;
 
     protected var _powerups :int;
+    protected var _numLives :int; // the number of times this ship has spawned
 
     protected var _serverData :ShipServerData = new ShipServerData();
 
@@ -432,14 +435,8 @@ public class Ship
 
     protected static const INTERPOLATION_TIME :int = 500;
 
-    protected static const TEXT_OFFSET :int = 25;
-
     protected static const POWERUP_PTS :int = 2;
 
     protected static const SPAWN_TIME :Number = 0.5;
-
-    protected static const ANIM_MODES :Array = [
-        "ship", "retro", "thrust", "super_thrust", "super_retro", "select", "warp_begin", "warp_end"
-    ];
 }
 }

@@ -1,8 +1,5 @@
 package server {
 
-import flash.events.TimerEvent;
-import flash.utils.Timer;
-
 import net.ShipExplodedMessage;
 
 public class ServerShip extends Ship
@@ -15,11 +12,11 @@ public class ServerShip extends Ship
     /**
      * Registers that the ship was hit.
      */
-    public function hit (shooterId :int, damage :Number) :void
+    public function hit (shooterId :int, damage :Number) :Boolean
     {
         // Already dead, don't bother.
         if (!isAlive) {
-            return;
+            return false;
         }
 
         var hitPower :Number = damage / _shipType.armor;
@@ -28,13 +25,15 @@ public class ServerShip extends Ship
             // shields always have an armor of 0.5
             hitPower = damage * 2;
             _serverData.shieldHealth = Math.max(_serverData.shieldHealth - hitPower, 0);
-            return;
+
+        } else {
+            _serverData.health -= hitPower;
+            if (_serverData.health <= DEAD) {
+                AppContext.msgs.sendMessage(ShipExplodedMessage.create(this, shooterId));
+            }
         }
 
-        _serverData.health -= hitPower;
-        if (_serverData.health <= DEAD) {
-            AppContext.msgs.sendMessage(ShipExplodedMessage.create(this, shooterId));
-        }
+        return true;
     }
 
     public function enableShield (shieldHealth :Number, timeoutMs :int) :void
