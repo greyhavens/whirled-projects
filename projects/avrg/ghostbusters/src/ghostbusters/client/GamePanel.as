@@ -64,41 +64,7 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-        _revive = new ClipHandler(ByteArray(new Content.PLAYER_DIED()), function () :void {
-            Game.log.debug("revive bounds: " + _revive.getBounds(_revive));
-            _revive.x = 100;
-            _revive.y = 200;
-
-            setTimeout(function () :void {
-                var button :SimpleButton =
-                    SimpleButton(DisplayUtil.findInHierarchy(_revive, "revivebutton"));
-                if (button == null) {
-                    Game.log.debug("Urk, cannot find revivebutton...");
-//                    return;
-                }
-                // TODO: when Bill fixes the art, change 'clip' to 'button'
-                Command.bind(_revive, MouseEvent.CLICK, GameController.REVIVE);
-                checkForDeath();
-            }, 1);
-        });
-
-        _triumph = new ClipHandler(ByteArray(new Content.GHOST_DEFEATED()), function () :void {
-            Game.log.debug("triumph bounds: " + _triumph.getBounds(_triumph));
-            _triumph.x = 300;
-            _triumph.y = 200;
-
-            var button :SimpleButton =
-                SimpleButton(DisplayUtil.findInHierarchy(_triumph, "continuebutton"));
-            if (button == null) {
-                Game.log.debug("Urk, cannot find continuebutton...");
-//                return;
-            }
-            // TODO: when Bill fixes the art, change 'clip' to 'button'
-            _triumph.addEventListener(MouseEvent.CLICK, function (event :Event) :void {
-                popdown(_triumph);
-            });
-
-        });
+        checkForDeath();
     }
 
     public function shutdown () :void
@@ -199,32 +165,27 @@ public class GamePanel extends Sprite
             Game.log.warning("Unknown task completed: " + evt.name);
             return;
         }
-        // TODO: find the 'payout' TextField in the triumph clip and insert the
-        // TODO: actual amount of coins awarded into that text string -- this is
-        // TODO: pending Bill's art fix-up
 
-        popup(_triumph);
+        popup(new TriumphWidget(int(evt.value), function (widget :TriumphWidget) :void {
+            popdown(widget);
+        }));
     }
 
     protected function checkForDeath () :void
     {
-        if (_revive.clip == null) {
-            Game.log.debug("Revival popup still loading; there will be another callback");
+        var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
+        if (health > 0) {
+            if (_revive != null) {
+                Game.log.debug("Popping UP the revive widget!");
+                popdown(_revive);
+            }
             return;
         }
 
-        var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
-        if (health > 0) {
-            // possibly we were just revived, let's see
-            if (_revive.parent == this) {
-                this.removeChild(_revive);
-            }
-            // we're not dead
-        } else if (health === 0) {
-           Game.log.debug("We're dead!!"); 
+        if (_revive == null) {
+            Game.log.debug("Popping DOWN the revive widget!");
+            _revive = new ReviveWidget();
             popup(_revive);
-        } else {
-            Game.log.debug("We're neither dead nor alive. Scary.");
         }
     }
 
@@ -236,6 +197,10 @@ public class GamePanel extends Sprite
             return;
         }
         this.addChild(clip);
+
+        // TODO: center?
+        clip.x = 50;
+        clip.y = 50;
     }
 
     protected function popdown (clip :DisplayObject) :void
