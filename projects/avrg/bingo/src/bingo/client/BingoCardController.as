@@ -1,6 +1,6 @@
-package bingo {
+package bingo.client {
 
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -12,6 +12,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import bingo.*;
 
 public class BingoCardController extends SceneObject
 {
@@ -63,16 +65,16 @@ public class BingoCardController extends SceneObject
 
     override protected function addedToDB () :void
     {
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
 
         this.handleSizeChanged();
     }
 
     override protected function removedFromDB () :void
     {
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
     }
 
     protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
@@ -86,7 +88,7 @@ public class BingoCardController extends SceneObject
     {
         // if the round is over, or we've already reached our
         // max-clicks-per-ball limit, don't accept clicks
-        if (!BingoMain.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
+        if (!ClientContext.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
             return;
         }
 
@@ -94,7 +96,7 @@ public class BingoCardController extends SceneObject
 
             var item :BingoItem = _card.getItemAt(col, row);
 
-            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(BingoMain.model.curState.ballInPlay))) {
+            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(ClientContext.model.curState.ballInPlay))) {
                 _card.setFilledAt(col, row);
 
                 gridSquare.gotoAndStop(2);
@@ -114,7 +116,7 @@ public class BingoCardController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        var screenBounds :Rectangle = ClientContext.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,

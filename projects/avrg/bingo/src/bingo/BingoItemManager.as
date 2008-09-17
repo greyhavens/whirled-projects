@@ -7,19 +7,8 @@ import com.threerings.util.ArrayUtil;
 
 public class BingoItemManager
 {
-    public static function get instance () :BingoItemManager
-    {
-        return g_instance;
-    }
-
     public function BingoItemManager ()
     {
-        if (null != g_instance) {
-            throw new Error("Can't instantiate multiple instances of BingoItemManager");
-        }
-
-        g_instance = this;
-
         // discover all the item tags
 
         // @TODO - should these be stored in a
@@ -76,8 +65,6 @@ public class BingoItemManager
     {
         return Constants.ITEMS[_rand.nextInt(Constants.ITEMS.length)];
     }
-
-    protected static var g_instance :BingoItemManager;
 
     protected var _tags :Array;
     protected var _rand :Random = new Random();

@@ -1,4 +1,4 @@
-package bingo {
+package bingo.client {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -15,7 +15,7 @@ public class IntroMode extends AppMode
         _movie = SwfResource.instantiateMovieClip("intro", "Bingo_intro_symbol");
 
         // center on screen
-        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        var screenBounds :Rectangle = ClientContext.getScreenBounds();
         _movie.x = screenBounds.width * 0.5;
         _movie.y = screenBounds.height * 0.5;
 
@@ -52,7 +52,7 @@ public class IntroMode extends AppMode
 
     protected function handleQuitClicked (...ignored) :void
     {
-        BingoMain.quit();
+        ClientContext.quit();
     }
 
     protected function handleHelpClicked (...ignored) :void

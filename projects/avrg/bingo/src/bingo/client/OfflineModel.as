@@ -1,10 +1,12 @@
-package bingo {
+package bingo.client {
+
+import bingo.*;
 
 public class OfflineModel extends Model
 {
     override public function getPlayerOids () :Array
     {
-        return [ BingoMain.ourPlayerId ];
+        return [ ClientContext.ourPlayerId ];
     }
 
     override public function trySetNewState (newState :SharedState) :void
@@ -22,7 +24,7 @@ public class OfflineModel extends Model
 
     override public function tryCallBingo () :void
     {
-        this.bingoCalled(BingoMain.ourPlayerId);
+        this.bingoCalled(ClientContext.ourPlayerId);
     }
 }
 

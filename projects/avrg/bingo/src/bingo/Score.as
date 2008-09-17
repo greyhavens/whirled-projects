@@ -1,5 +1,7 @@
 package bingo {
 
+import bingo.client.ClientContext;
+
 public class Score
 {
     public var playerId :int;
@@ -33,8 +35,8 @@ public class Score
         }
 
         // compare names. A comes before Z
-        var aName :String = BingoMain.getPlayerName(a.playerId);
-        var bName :String = BingoMain.getPlayerName(b.playerId);
+        var aName :String = ClientContext.getPlayerName(a.playerId);
+        var bName :String = ClientContext.getPlayerName(b.playerId);
 
         return aName.localeCompare(bName);
     }
@@ -59,8 +61,8 @@ public class Score
         }
 
         // compare names. A comes before Z
-        var aName :String = BingoMain.getPlayerName(a.playerId);
-        var bName :String = BingoMain.getPlayerName(b.playerId);
+        var aName :String = ClientContext.getPlayerName(a.playerId);
+        var bName :String = ClientContext.getPlayerName(b.playerId);
 
         return aName.localeCompare(bName);
     }

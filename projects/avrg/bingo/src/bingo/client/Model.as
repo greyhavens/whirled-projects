@@ -1,8 +1,10 @@
-package bingo {
+package bingo.client {
 
 import com.threerings.util.Log;
 
 import flash.events.EventDispatcher;
+
+import bingo.*;
 
 [Event(name="gameStateChanged", type="bingo.SharedStateChangedEvent")]
 [Event(name="newBall", type="bingo.SharedStateChangedEvent")]
@@ -60,7 +62,7 @@ public class Model extends EventDispatcher
     {
         return this.getPlayerOids().map(
             function (id :int, ...ignored) :String {
-                return BingoMain.getPlayerName(id);
+                return ClientContext.getPlayerName(id);
             });
     }
 

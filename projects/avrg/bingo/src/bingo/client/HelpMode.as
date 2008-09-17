@@ -1,4 +1,4 @@
-package bingo {
+package bingo.client {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -15,7 +15,7 @@ public class HelpMode extends AppMode
         _screen = SwfResource.instantiateMovieClip("help", "help_screen");
 
         // center the help screen
-        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        var screenBounds :Rectangle = ClientContext.getScreenBounds();
         _screen.x = (screenBounds.width * 0.5);
         _screen.y = (screenBounds.height * 0.5);
 

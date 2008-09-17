@@ -1,7 +1,8 @@
-package bingo {
+package bingo.client {
 
 import com.threerings.util.ArrayUtil;
 
+import bingo.*;
 
 public class BingoCard
 {
@@ -24,7 +25,7 @@ public class BingoCard
         } else {
             items = new Array(numItems);
             for (var i :int = 0; i < numItems; ++i) {
-                items[i] = BingoItemManager.instance.getRandomItem();
+                items[i] = ClientContext.items.getRandomItem();
             }
         }
 
@@ -60,7 +61,7 @@ public class BingoCard
 
         if (!_isComplete) {
             _isComplete = this.checkComplete();
-            BingoMain.model.dispatchEvent(new LocalStateChangedEvent(LocalStateChangedEvent.CARD_COMPLETED));
+            ClientContext.model.dispatchEvent(new LocalStateChangedEvent(LocalStateChangedEvent.CARD_COMPLETED));
         }
     }
 

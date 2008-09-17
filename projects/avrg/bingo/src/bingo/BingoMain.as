@@ -3,24 +3,20 @@
 
 package bingo {
 
+import bingo.client.*;
+
 import com.threerings.util.Log;
-import com.whirled.AVRGameAvatar;
-import com.whirled.AVRGameControl;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.geom.Rectangle;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
-    public static var control :AVRGameControl;
-    public static var model :Model;
-    public static var ourPlayerId :int;
-
     public function BingoMain ()
     {
         log.info("Bingo version " + Constants.VERSION);
@@ -41,50 +37,24 @@ public class BingoMain extends Sprite
         ResourceManager.instance.load(handleResourcesLoaded, handleResourceLoadError);
     }
 
-    public static function quit () :void
-    {
-        if (control.isConnected()) {
-            control.deactivateGame();
-        }
-    }
-
-    public static function getScreenBounds () :Rectangle
-    {
-        if (control.isConnected()) {
-            return control.getStageSize(true);
-        } else {
-            return new Rectangle(0, 0, 700, 500);
-        }
-    }
-
-    public static function getPlayerName (playerId :int) :String
-    {
-        if (control.isConnected()) {
-            var avatar :AVRGameAvatar = control.getAvatarInfo(playerId);
-            if (null != avatar) {
-                return avatar.name;
-            }
-        }
-
-        return "player " + playerId.toString();
-    }
-
     protected function maybeShowIntro () :void
     {
         if (_addedToStage && _resourcesLoaded) {
+            ClientContext.gameCtrl = new AVRGameControl(this);
+            ClientContext.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-            control = new AVRGameControl(this);
-            control.addEventListener(AVRGameControlEvent.LEFT_ROOM, leftRoom);
-            control.addEventListener(AVRGameControlEvent.GOT_CONTROL, gotControl);
+            log.info(ClientContext.gameCtrl.isConnected() ?
+                "playing online game" : "playing offline game");
 
-            log.info(control.isConnected() ? "playing online game" : "playing offline game");
+            ClientContext.ourPlayerId = (ClientContext.gameCtrl.isConnected()
+                ? ClientContext.gameCtrl.player.getPlayerId() : 666);
 
-            ourPlayerId = (control.isConnected() ? control.getPlayerId() : 666);
+            ClientContext.items = new BingoItemManager();
 
-            new BingoItemManager(); // init singleton
-
-            model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
-            model.setup();
+            ClientContext.model =
+                (ClientContext.gameCtrl.isConnected() && !Constants.FORCE_SINGLEPLAYER ?
+                new OnlineModel() : new OfflineModel());
+            ClientContext.model.setup();
 
             MainLoop.instance.pushMode(new IntroMode());
             MainLoop.instance.run();
@@ -114,7 +84,7 @@ public class BingoMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
-        model.destroy();
+        ClientContext.model.destroy();
 
         MainLoop.instance.shutdown();
     }
@@ -122,15 +92,7 @@ public class BingoMain extends Sprite
     protected function leftRoom (e :Event) :void
     {
         log.debug("leftRoom");
-        if (control.isConnected()) {
-            log.debug("deactivating game");
-            control.deactivateGame();
-        }
-    }
-
-    protected function gotControl (evt :AVRGameControlEvent) :void
-    {
-        log.debug("gotControl(): " + evt);
+        ClientContext.quit();
     }
 
     protected var _addedToStage :Boolean;

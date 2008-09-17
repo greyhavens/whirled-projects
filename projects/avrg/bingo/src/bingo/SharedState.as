@@ -1,8 +1,8 @@
 package bingo {
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
-import flash.errors.EOFError;
 import flash.utils.ByteArray;
 
 /**
@@ -36,65 +36,34 @@ public class SharedState
         return (roundId == rhs.roundId && ballInPlay == rhs.ballInPlay && roundWinnerId == rhs.roundWinnerId && gameState == rhs.gameState);
     }
 
-    public function get isValid () :Boolean
+    public function toBytes (bytes :ByteArray = null) :ByteArray
     {
-        if (gameState < STATE_INITIAL || gameState > STATE_WEHAVEAWINNER) {
-            return false;
-        }
+        bytes = (bytes != null ? bytes : new ByteArray());
+        bytes.writeInt(roundId);
+        bytes.writeUTF(null !== ballInPlay ? ballInPlay : "");
+        bytes.writeInt(roundWinnerId);
+        bytes.writeByte(gameState);
 
-        if (roundId < 0) {
-            return false;
-        }
-
-        if (null == ballInPlay) {
-            return false;
-        }
-
-        switch (gameState) {
-        case STATE_INITIAL:
-        case STATE_PLAYING:
-            if (roundWinnerId != 0) {
-                return false;
-            }
-            break;
-        }
-
-        return true;
+        return bytes;
     }
 
-    public function toBytes () :ByteArray
+    public static function fromBytes (bytes :ByteArray) :SharedState
     {
-        var ba :ByteArray = new ByteArray();
-        ba.writeInt(roundId);
-        ba.writeUTF(null !== ballInPlay ? ballInPlay : "");
-        ba.writeInt(roundWinnerId);
-        ba.writeByte(gameState);
-
-        return ba;
-    }
-
-    public static function fromBytes (ba :ByteArray) :SharedState
-    {
-        ba.position = 0;
+        bytes.position = 0;
 
         var state :SharedState = new SharedState();
-
-        try {
-            state.roundId = ba.readInt();
-            state.ballInPlay = ba.readUTF();
-            state.roundWinnerId = ba.readInt();
-            state.gameState = ba.readByte();
-        } catch (err :EOFError) {
-            log.warning("Error deserializing SharedState: " + err);
-            return new SharedState();
-        }
+        state.roundId = bytes.readInt();
+        state.ballInPlay = bytes.readUTF();
+        state.roundWinnerId = bytes.readInt();
+        state.gameState = bytes.readByte();
 
         return state;
     }
 
     public function toString () :String
     {
-        return "roundId: " + roundId + " ballInPlay: " + ballInPlay + " roundWinnerId: " + roundWinnerId + " gameState: " + gameState;
+        return StringUtil.simpleToString(this,
+            [ "roundId", "ballInPlay", "roundWinnerId", "gameState" ]);
     }
 
     protected static var log :Log = Log.getLog(SharedState);

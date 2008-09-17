@@ -1,6 +1,8 @@
-package bingo {
+package bingo.client {
 
-import com.whirled.AVRGameControlEvent;
+import bingo.*;
+
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -93,14 +95,16 @@ public class WinnerAnimationController extends SceneObject
 
     override protected function addedToDB () :void
     {
-        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged, false, 0, true);
 
         this.handleSizeChanged();
     }
 
     override protected function removedFromDB () :void
     {
-        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -113,7 +117,7 @@ public class WinnerAnimationController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        var screenBounds :Rectangle = ClientContext.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,

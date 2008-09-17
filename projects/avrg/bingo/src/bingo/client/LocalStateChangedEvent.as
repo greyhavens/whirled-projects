@@ -1,4 +1,4 @@
-package bingo {
+package bingo.client {
 
 import flash.events.Event;
 

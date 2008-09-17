@@ -1,7 +1,9 @@
-package bingo {
+package bingo.client {
+
+import bingo.*;
 
 import com.threerings.util.Log;
-import com.whirled.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -57,16 +59,18 @@ public class HUDController extends SceneObject
         var helpButton :InteractiveObject = _hud["help_button"];
         helpButton.addEventListener(MouseEvent.CLICK, handleHelp, false, 0, true);
 
-        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
-        BingoMain.control.addEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
-
         // listen for state events
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
-        BingoMain.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChanged);
-        BingoMain.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
+        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_SCORES,
+            updateScores);
+        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL,
+            updateBall);
+        ClientContext.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
+            handleGameStateChanged);
+        ClientContext.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED,
+            updateBingoButton);
 
-        BingoMain.control.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
 
         // set initial state
         this.updateScores();
@@ -80,15 +84,17 @@ public class HUDController extends SceneObject
     {
         log.info("removedFromDB()");
 
-        BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_ENTERED, updateScores);
-        BingoMain.control.removeEventListener(AVRGameControlEvent.PLAYER_LEFT, updateScores);
+        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES,
+            updateScores);
+        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL,
+            updateBall);
+        ClientContext.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
+            handleGameStateChanged);
+        ClientContext.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED,
+            updateBingoButton);
 
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES, updateScores);
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, updateBall);
-        BingoMain.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED, handleGameStateChanged);
-        BingoMain.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED, updateBingoButton);
-
-        BingoMain.control.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
     }
 
     override protected function update (dt :Number) :void
@@ -120,7 +126,7 @@ public class HUDController extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = BingoMain.getScreenBounds();
+        var screenBounds :Rectangle = ClientContext.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.HUD_SCREEN_EDGE_OFFSET.x,
@@ -129,13 +135,13 @@ public class HUDController extends SceneObject
 
     protected function handleQuit (...ignored) :void
     {
-        BingoMain.quit();
+        ClientContext.quit();
     }
 
     protected function handleBingo (...ignored) :void
     {
-        if (!_calledBingoThisRound && BingoMain.model.card.isComplete) {
-            BingoMain.model.tryCallBingo();
+        if (!_calledBingoThisRound && ClientContext.model.card.isComplete) {
+            ClientContext.model.tryCallBingo();
             _calledBingoThisRound = true;
             this.updateBingoButton();
         }
@@ -148,12 +154,12 @@ public class HUDController extends SceneObject
 
     protected function updateScores (...ignored) :void
     {
-        var scores :ScoreTable = BingoMain.model.curScores;
+        var scores :ScoreTable = ClientContext.model.curScores;
         var scoreboardView :MovieClip = _hud["scoreboard"];
 
         var dateNow :Date = new Date();
 
-        var namesAndScores :Array = BingoMain.model.getPlayerOids().map(
+        var namesAndScores :Array = ClientContext.model.getPlayerOids().map(
             function (playerId :int, ...ignored) :Score {
                 var existingScore :Score = scores.getScore(playerId);
 
@@ -169,7 +175,7 @@ public class HUDController extends SceneObject
             var nameField :TextField = scoreboardView["player_" + String(i + 1)];
             var scoreField :TextField = scoreboardView["score_" + String(i + 1)];
 
-            nameField.text = (null != score ? BingoMain.getPlayerName(score.playerId) : "");
+            nameField.text = (null != score ? ClientContext.getPlayerName(score.playerId) : "");
             scoreField.text = (null != score && score.score > 0 ? String(score.score) : "");
         }
     }
@@ -183,7 +189,7 @@ public class HUDController extends SceneObject
     protected function showNewBallText (...ignored) :void
     {
         _bingoBall.removeEventListener(Event.COMPLETE, showNewBallText);
-        var newText :String = BingoMain.model.curState.ballInPlay;
+        var newText :String = ClientContext.model.curState.ballInPlay;
         setBallText(_ballText, newText);
     }
 
@@ -207,7 +213,7 @@ public class HUDController extends SceneObject
     protected function updateBingoButton (...ignored) :void
     {
         var bingoButton :InteractiveObject = _hud["bingo_button"];
-        var enabled :Boolean = (!_calledBingoThisRound && BingoMain.model.roundInPlay && null != BingoMain.model.card && BingoMain.model.card.isComplete);
+        var enabled :Boolean = (!_calledBingoThisRound && ClientContext.model.roundInPlay && null != ClientContext.model.card && ClientContext.model.card.isComplete);
 
         bingoButton.visible = enabled;
         bingoButton.mouseEnabled = enabled;
@@ -215,7 +221,7 @@ public class HUDController extends SceneObject
 
     protected function handleGameStateChanged (...ignored) :void
     {
-        switch (BingoMain.model.curState.gameState) {
+        switch (ClientContext.model.curState.gameState) {
 
         case SharedState.STATE_PLAYING:
             _calledBingoThisRound = false;

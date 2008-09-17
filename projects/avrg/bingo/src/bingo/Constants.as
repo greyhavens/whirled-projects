@@ -2,6 +2,8 @@ package bingo {
 
 import flash.geom.Point;
 
+import bingo.client.Resources;
+
 public class Constants
 {
     public static const VERSION :Number = 7;
