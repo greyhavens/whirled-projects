@@ -1,16 +1,19 @@
 package bingo.server {
 
-import bingo.*;
+import flash.utils.ByteArray;
 
+import com.threerings.util.Log;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
+
+import bingo.*;
 
 public class GameController extends OneRoomGameRoom
 {
     override protected function finishInit () :void
     {
         super.finishInit();
-        _bingoItems = new BingoItemManager();
+        _bingoItems = new BingoItemManager(ServerBingoItems.ITEMS);
         _sharedState = new SharedState();
         startNextRound();
     }
@@ -41,27 +44,28 @@ public class GameController extends OneRoomGameRoom
         super.messageReceived(senderId, name, value);
 
         if (name == Constants.MSG_REQUEST_BINGO) {
-            bingoCalled(senderId, CallBingoMessage.fromBytes(ByteArray(value));
+            log.info("bingo called [senderId=" + senderId + "]");
+            bingoCalled(senderId, int(value));
         }
     }
 
-    protected function bingoCalled (playerId :int, msg :CallBingoMessage) :void
+    protected function bingoCalled (playerId :int, roundId :int) :void
     {
         // validate
         if (_sharedState.gameState != SharedState.STATE_PLAYING ||
-             msg.roundId != _sharedState.roundId) {
-            if (msg.roundId > _sharedState.roundId) {
-                log.info("discarding CallBingoMessage from the future: " + msg.toString());
+             roundId != _sharedState.roundId) {
+            if (roundId > _sharedState.roundId) {
+                log.info("discarding CallBingoMessage from the future");
             }
             return;
-        } else if (_numBallsThisRound < 4) {
+        } /*else if (_numBallsThisRound < 4) {
             log.info("discarding CallBingoMessage (too few balls called): " + msg.toString());
             return;
-        }
+        }*/
 
         _sharedState.gameState = SharedState.STATE_WEHAVEAWINNER;
         _sharedState.roundWinnerId = playerId;
-        setNewGameState(newState);
+        setNewGameState(_sharedState);
 
         // award coins if there's more than one player in the game
         if (_roomCtrl.getPlayerIds().length > 1) {
@@ -75,7 +79,9 @@ public class GameController extends OneRoomGameRoom
 
     protected function startNextRound (...ignored) :void
     {
+        _numBallsThisRound = 0;
         _bingoItems.resetRemainingTags();
+
         initTimers();
 
         _sharedState.gameState = SharedState.STATE_PLAYING;
@@ -83,13 +89,14 @@ public class GameController extends OneRoomGameRoom
         _sharedState.roundWinnerId = 0;
 
         // call a new ball every few seconds
-        _timers.createTimer(Constants.NEW_BALL_DELAY_S * 1000, -1, callNextBall);
+        _timers.runForever(Constants.NEW_BALL_DELAY_S * 1000, callNextBall);
         // call the first ball immediately (will push the new gamestate out)
         callNextBall();
     }
 
     protected function callNextBall (...ignored) :void
     {
+        _numBallsThisRound++;
         _sharedState.ballInPlay = _bingoItems.getRandomTag();
         setNewGameState(_sharedState);
     }
@@ -106,7 +113,7 @@ public class GameController extends OneRoomGameRoom
     protected var _numBallsThisRound :int;
     protected var _sharedState :SharedState;
 
-    protected static const log :Log = Log.getLog(Server);
+    protected static const log :Log = Log.getLog(GameController);
 
 }
 

@@ -15,10 +15,6 @@ import bingo.*;
 
 public class Model extends EventDispatcher
 {
-    public function Model ()
-    {
-    }
-
     public function setup () :void
     {
     }
@@ -45,7 +41,7 @@ public class Model extends EventDispatcher
 
     public function get roundInPlay () :Boolean
     {
-        return (0 == _curState.roundWinnerId);
+        return (_curState.gameState == SharedState.STATE_PLAYING);
     }
 
     public function get numPlayers () :int
@@ -73,19 +69,9 @@ public class Model extends EventDispatcher
     }
 
     /* shared state mutators (must be overridden) */
-    public function trySetNewState (newState :SharedState) :void
+    public function callBingo () :void
     {
-        throw new Error("subclasses must override trySetNewState()");
-    }
-
-    public function trySetNewScores (newScores :ScoreTable) :void
-    {
-        throw new Error("subclasses must override trySetNewScores()");
-    }
-
-    public function tryCallBingo () :void
-    {
-        throw new Error("subclasses must override tryCallBingo()");
+        throw new Error("subclasses must override callBingo()");
     }
 
     /* private state mutators */
@@ -95,7 +81,9 @@ public class Model extends EventDispatcher
         _curState = newState.clone();
 
         if (_curState.gameState != lastState.gameState) {
-            this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.GAME_STATE_CHANGED));
+            this.dispatchEvent(new SharedStateChangedEvent(
+                SharedStateChangedEvent.GAME_STATE_CHANGED));
+
         } else if (_curState.ballInPlay != lastState.ballInPlay) {
             this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_BALL));
         }
@@ -105,11 +93,6 @@ public class Model extends EventDispatcher
     {
         _curScores = newScores;
         this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.NEW_SCORES));
-    }
-
-    protected function bingoCalled (playerId :int) :void
-    {
-        this.dispatchEvent(new SharedStateChangedEvent(SharedStateChangedEvent.BINGO_CALLED, playerId));
     }
 
     // shared state

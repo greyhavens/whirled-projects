@@ -4,6 +4,7 @@
 package bingo {
 
 import bingo.client.*;
+import bingo.server.*;
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -13,12 +14,18 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
 {
     public function BingoMain ()
     {
+        var c :Class;
+        c = GameController;
+        c = Server;
+        c = ServerBingoItems;
         log.info("Bingo version " + Constants.VERSION);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);

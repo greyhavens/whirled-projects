@@ -1,8 +1,5 @@
 package bingo.server {
 
-import bingo.*;
-import bingo.net.CallBingoMessage;
-
 import com.threerings.util.Log;
 import com.whirled.contrib.avrg.oneroom.OneRoomGameServer;
 import com.whirled.net.MessageReceivedEvent;

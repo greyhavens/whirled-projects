@@ -141,7 +141,7 @@ public class HUDController extends SceneObject
     protected function handleBingo (...ignored) :void
     {
         if (!_calledBingoThisRound && ClientContext.model.card.isComplete) {
-            ClientContext.model.tryCallBingo();
+            ClientContext.model.callBingo();
             _calledBingoThisRound = true;
             this.updateBingoButton();
         }
@@ -213,7 +213,11 @@ public class HUDController extends SceneObject
     protected function updateBingoButton (...ignored) :void
     {
         var bingoButton :InteractiveObject = _hud["bingo_button"];
-        var enabled :Boolean = (!_calledBingoThisRound && ClientContext.model.roundInPlay && null != ClientContext.model.card && ClientContext.model.card.isComplete);
+        var enabled :Boolean = (
+            !_calledBingoThisRound &&
+            ClientContext.model.roundInPlay &&
+            ClientContext.model.card != null &&
+            ClientContext.model.card.isComplete);
 
         bingoButton.visible = enabled;
         bingoButton.mouseEnabled = enabled;

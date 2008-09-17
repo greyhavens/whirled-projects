@@ -66,7 +66,8 @@ public class BingoCardController extends SceneObject
     override protected function addedToDB () :void
     {
         ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged, false, 0, true);
+        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged, false, 0, true);
 
         this.handleSizeChanged();
     }
@@ -74,7 +75,8 @@ public class BingoCardController extends SceneObject
     override protected function removedFromDB () :void
     {
         ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
+        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
     }
 
     protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
@@ -88,7 +90,8 @@ public class BingoCardController extends SceneObject
     {
         // if the round is over, or we've already reached our
         // max-clicks-per-ball limit, don't accept clicks
-        if (!ClientContext.model.roundInPlay || (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
+        if (!ClientContext.model.roundInPlay ||
+            (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
             return;
         }
 

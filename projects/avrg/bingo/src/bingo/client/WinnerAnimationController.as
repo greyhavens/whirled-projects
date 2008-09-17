@@ -3,6 +3,7 @@ package bingo.client {
 import bingo.*;
 
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -32,8 +33,11 @@ public class WinnerAnimationController extends SceneObject
 
         playerTextField.text = playerName;
 
-        // Listen for the "complete" event. We'll start a countdown timer afterwards.
+        // Listen for the "complete" event. We'll show the countdown timer afterwards.
         _winnerAnim.addEventListener(Event.COMPLETE, winnerAnimComplete, false, 0, true);
+
+        MainLoop.instance.topMode.addObject(new SimpleTimer(
+            Constants.NEW_ROUND_DELAY_S, destroySelf, false, NEXT_ROUND_TIMER_NAME));
     }
 
     protected function winnerAnimComplete (...ignored) :void
@@ -47,30 +51,27 @@ public class WinnerAnimationController extends SceneObject
         _animationParent.addChild(animView);
 
         _countdownText = animView["inst_time_left"];
-        _showingCountdown = true;
-        _countdownTime = Constants.NEW_ROUND_DELAY_S;
-
-        this.updateCountdownText();
+        this.updateCountdownText(SimpleTimer.getTimeLeft(NEXT_ROUND_TIMER_NAME));
     }
 
     override protected function update (dt :Number) :void
     {
         super.update(dt);
 
-        if (_showingCountdown) {
-            _countdownTime -= dt;
-            this.updateCountdownText();
-
-            if (_countdownTime <= 0) {
+        if (_countdownText != null) {
+            var timeLeft :Number = SimpleTimer.getTimeLeft(NEXT_ROUND_TIMER_NAME);
+            this.updateCountdownText(timeLeft);
+            if (timeLeft <= 0) {
+                MainLoop.instance.topMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
                 this.destroySelf();
             }
         }
     }
 
-    protected function updateCountdownText () :void
+    protected function updateCountdownText (timeLeft :Number) :void
     {
-        var minutes :Number = Math.floor(_countdownTime / 60);
-        var seconds :Number = Math.floor(_countdownTime % 60);
+        var minutes :Number = Math.floor(timeLeft / 60);
+        var seconds :Number = Math.floor(timeLeft % 60);
 
         var countdownString :String = (minutes > 0 ? minutes.toString() : "0") + ":";
 
@@ -125,12 +126,10 @@ public class WinnerAnimationController extends SceneObject
     }
 
     protected var _winnerAnim :MovieClip;
-
     protected var _animationParent :Sprite;
-
-    protected var _countdownTime :Number;
-    protected var _showingCountdown :Boolean;
     protected var _countdownText :TextField;
+
+    protected static const NEXT_ROUND_TIMER_NAME :String = "NextRoundTimer";
 
 }
 

@@ -7,7 +7,6 @@ public class SharedStateChangedEvent extends Event
     public static const GAME_STATE_CHANGED :String = "gameStateChanged";
     public static const NEW_BALL :String = "newBall";
     public static const NEW_SCORES :String = "newScores";
-    public static const BINGO_CALLED :String = "bingoCalled";
 
     public var data :Object;
 

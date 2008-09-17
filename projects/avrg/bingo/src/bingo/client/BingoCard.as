@@ -22,6 +22,7 @@ public class BingoCard
         if (Constants.CARD_ITEMS_ARE_UNIQUE && numItems <= ClientBingoItems.ITEMS.length) {
             items = ClientBingoItems.ITEMS.slice();
             ArrayUtil.shuffle(items);
+
         } else {
             items = new Array(numItems);
             for (var i :int = 0; i < numItems; ++i) {
@@ -61,7 +62,8 @@ public class BingoCard
 
         if (!_isComplete) {
             _isComplete = this.checkComplete();
-            ClientContext.model.dispatchEvent(new LocalStateChangedEvent(LocalStateChangedEvent.CARD_COMPLETED));
+            ClientContext.model.dispatchEvent(new LocalStateChangedEvent(
+                LocalStateChangedEvent.CARD_COMPLETED));
         }
     }
 

@@ -1,5 +1,7 @@
 package bingo.server {
 
+import bingo.BingoItem;
+
 public class ServerBingoItems
 {
     public static const ITEMS :Array = [

@@ -32,8 +32,6 @@ public class GameMode extends AppMode
             handleNewBall, false, 1);
         ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_SCORES,
             handleNewScores, false, 1);
-        ClientContext.model.addEventListener(SharedStateChangedEvent.BINGO_CALLED,
-            handleBingoCalled, false, 1);
 
         // get current game state
         var curState :SharedState = ClientContext.model.curState;
@@ -49,8 +47,6 @@ public class GameMode extends AppMode
             handleNewBall);
         ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES,
             handleNewScores);
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.BINGO_CALLED,
-            handleBingoCalled);
 
         // @TODO - SimObjects should have "destructor" methods that always get
         // called when modes shutdown
@@ -60,29 +56,9 @@ public class GameMode extends AppMode
         this.destroyObjectNamed(HUDController.NAME);
     }
 
-    override public function update (dt :Number) :void
-    {
-        super.update(dt);
-
-        switch (ClientContext.model.curState.gameState) {
-
-        // if we're in the winner animation state, and the
-        // animation has completed, move to the next state
-        case SharedState.STATE_WEHAVEAWINNER:
-            if (null == this.getObjectNamed(WinnerAnimationController.NAME)) {
-                this.setupNewRound();
-            }
-        }
-    }
-
     protected function handleGameStateChange (...ignored) :void
     {
         switch (ClientContext.model.curState.gameState) {
-
-        case SharedState.STATE_INITIAL:
-            this.setupNewRound();
-            break;
-
         case SharedState.STATE_PLAYING:
             this.handleNewRound();
             break;
@@ -91,11 +67,6 @@ public class GameMode extends AppMode
             this.showWinnerAnimation();
             break;
         }
-    }
-
-    protected function setupNewRound () :void
-    {
-
     }
 
     protected function handleNewRound () :void
@@ -135,11 +106,6 @@ public class GameMode extends AppMode
     {
     }
 
-    protected function handleBingoCalled (e :SharedStateChangedEvent) :void
-    {
-
-    }
-
     protected function startNewBallTimer () :void
     {
         this.stopNewBallTimer();
@@ -150,17 +116,6 @@ public class GameMode extends AppMode
     protected function stopNewBallTimer () :void
     {
         this.destroyObjectNamed(NEW_BALL_TIMER_NAME);
-    }
-
-    protected function getNextBall () :String
-    {
-        var nextBall :String;
-        do {
-            nextBall = ClientContext.items.getRandomTag();
-        }
-        while (nextBall == ClientContext.model.curState.ballInPlay);
-
-        return nextBall;
     }
 
     public function get percentTimeTillNextBall () :Number
