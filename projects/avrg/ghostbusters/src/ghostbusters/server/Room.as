@@ -180,6 +180,14 @@ public class Room
             player.health, true);
     }
 
+    internal function reset () :void
+    {
+        healTeam();
+        terminateGhost();
+        _stats = new Dictionary();
+        setState(Codes.STATE_SEEKING);
+    }
+
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
         if (_ghost == null) {

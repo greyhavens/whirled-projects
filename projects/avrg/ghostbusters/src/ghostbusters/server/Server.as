@@ -29,6 +29,19 @@ public class Server extends ServerObject
         return _ctrl;
     }
 
+    public static function isAdmin (playerId :int) :Boolean
+    {
+        // we might want to make this dynamic later
+        return playerId < 20
+            || playerId == 14088    // cirrus
+            || playerId == 14128    // nimbus
+            || playerId == 16444    // equinox
+            || playerId == 14001    // sirrocco
+            || playerId == 14137    // coriolis
+            || playerId == 14134    // sunshine
+            ;
+    }
+
     public function Server ()
     {
         log.info("Ghosthunters Server initializing...");

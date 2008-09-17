@@ -81,6 +81,12 @@ public class Codes
     public static const CMSG_PLAYER_REVIVE :String = "revive";
 
     /**
+     * Debug request from the client. These are only granted by the agent if we're
+     * properly worthy. See below for message values.
+     */
+    public static const CMSG_DEBUG_REQUEST :String = "dbg";
+
+    /**
      * The ghost was attacked by a player.
      *
      * Dispatched by the server to all the AVRG players in a room, and used by the client
@@ -95,6 +101,11 @@ public class Codes
      * to visualize the attack. TODO: add a 'attack type' argument.
      */
     public static const SMSG_PLAYER_ATTACKED :String = "pa";
+
+    /**
+     * Debug request response from the agent. The value is just the original request (see below).
+     */
+    public static const SMSG_DEBUG_RESPONSE :String = "dbg";
 
     /**
      * The prefix for the PLAYER dictionary container which summarizes the current state
@@ -244,5 +255,11 @@ public class Codes
      * A task identifier that signifies we defeated the current ghost!
      */
     public static const TASK_GHOST_DEFEATED :String = "ghost_defeated";
+
+    /** Debug requests -- see CMSG_DEBUG_REQUEST. */
+    public static const DBG_GIMME_PANEL :String = "gp";
+    public static const DBG_LEVEL_UP :String = "lu";
+    public static const DBG_LEVEL_DOWN :String = "ld";
+    public static const DBG_RESET_ROOM :String = "rr";
 }
 }

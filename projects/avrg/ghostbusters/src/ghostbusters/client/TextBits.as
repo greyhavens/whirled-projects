@@ -20,7 +20,7 @@ import com.threerings.flash.SimpleTextButton;
 
 public class TextBits extends Sprite
 {
-    public function TextBits (text :String)
+    public function TextBits ()
     {
         _styleSheet = new StyleSheet();
         _styleSheet.parseCSS(
@@ -67,13 +67,16 @@ public class TextBits extends Sprite
         _textField.autoSize = TextFieldAutoSize.CENTER;
         _textField.width = 400;
 
-        _textField.htmlText = em(text);
+        _buttons = new Sprite();
+        this.addChild(_buttons);
 
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
+    }
 
-        _buttons = new Sprite();
-        this.addChild(_buttons);
+    public function set text (txt :String) :void
+    {
+        _textField.htmlText = em(txt);
 
         _buttons.x = _textField.x;
         _buttons.y = _textField.y + _textField.height + GAP;
@@ -87,6 +90,7 @@ public class TextBits extends Sprite
                 onClick();
             });
         _buttons.addChild(button);
+
         if (right) {
             button.x = _rightButtonEdge - button.width;
             _rightButtonEdge -= button.width + GAP;

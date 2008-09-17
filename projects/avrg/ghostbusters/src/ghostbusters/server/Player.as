@@ -34,8 +34,7 @@ public class Player
         if (_level == 0) {
             // this person has never played Ghosthunters before
             log.info("Initializing new player [playerId=" + playerId + "]");
-            _level = 1;
-            _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
+            setLevel(1);
             _maxHealth = calculateMaxHealth();
             setHealth(_maxHealth);
 
@@ -119,8 +118,14 @@ public class Player
     public function handleMessage (name :String, value :Object) :void
     {
         // handle messages that make (at least some) sense even if we're between rooms
-        if (name == Codes.CMSG_PLAYER_REVIVE) {
+        switch(name) {
+        case Codes.CMSG_PLAYER_REVIVE:
             setHealth(_maxHealth);
+            return;
+        case Codes.CMSG_DEBUG_REQUEST:
+            if (Server.isAdmin(_playerId)) {
+                handleDebugRequest(String(value));
+            }
             return;
         }
 
@@ -163,6 +168,31 @@ public class Player
         _room = null;
     }
 
+    protected function handleDebugRequest (request :String) :void
+    {
+        switch(request) {
+        case Codes.DBG_GIMME_PANEL:
+            break;
+        case Codes.DBG_LEVEL_UP:
+            setLevel(_level + 1);
+            break;
+        case Codes.DBG_LEVEL_DOWN:
+            setLevel(_level - 1);
+            break;
+        case Codes.DBG_RESET_ROOM:
+            if (_room != null) {
+                _room.reset();
+            }
+            break;
+        default:
+            log.warning("Unknown debug requests: " + request);
+            return;
+        }
+
+        // just send back the original request to indicate it was handled successfully
+        ctrl.sendMessage(Codes.SMSG_DEBUG_RESPONSE, request);
+    }
+
     protected function updateAvatarState () :void
     {
         if (isDead()) {
@@ -174,6 +204,20 @@ public class Player
         } else {
             _ctrl.setAvatarState(ST_PLAYER_FIGHT);
         }
+    }
+
+    protected function setLevel (level :int) :void
+    {
+        // clamp level to [1, 9] for now
+        level = Math.max(1, Math.min(9, level));
+        if (level == _level) {
+            return;
+        }
+
+        _level = level;
+        _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
+
+        // we'll probably need to add this to the room properties at some point, but not yet
     }
 
     protected function setHealth (health :int) :void

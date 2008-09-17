@@ -19,6 +19,7 @@ import flash.utils.setTimeout;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import com.threerings.flash.AnimationManager;
@@ -54,6 +55,8 @@ public class GamePanel extends Sprite
             _frame = frame;
         });
 
+        Game.control.player.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
         Game.control.player.addEventListener(
@@ -210,6 +213,18 @@ public class GamePanel extends Sprite
             return;
         }
         this.removeChild(clip);
+    }
+
+    protected function messageReceived (evt: MessageReceivedEvent) :void
+    {
+        if (evt.name == Codes.SMSG_DEBUG_RESPONSE) {
+            Game.log.debug("Message: " + evt);
+            if (evt.value == Codes.DBG_GIMME_PANEL) {
+                var dbg :DebugPanel = new DebugPanel();
+                dbg.x = dbg.y = 20;
+                this.addChild(dbg);
+            }
+        }
     }
 
     protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
