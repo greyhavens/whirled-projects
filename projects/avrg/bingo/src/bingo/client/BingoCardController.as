@@ -1,5 +1,7 @@
 package bingo.client {
 
+import bingo.*;
+
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
@@ -12,8 +14,6 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-import bingo.*;
 
 public class BingoCardController extends SceneObject
 {
@@ -123,7 +123,7 @@ public class BingoCardController extends SceneObject
             screenBounds.top + Constants.CARD_SCREEN_EDGE_OFFSET.y);
     }
 
-    public function createItemView (item :BingoItem) :DisplayObject
+    public function createItemView (item :ClientBingoItem) :DisplayObject
     {
         var sprite :Sprite = new Sprite();
         sprite.mouseChildren = false;

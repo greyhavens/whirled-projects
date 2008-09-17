@@ -49,7 +49,7 @@ public class BingoMain extends Sprite
             ClientContext.ourPlayerId = (ClientContext.gameCtrl.isConnected()
                 ? ClientContext.gameCtrl.player.getPlayerId() : 666);
 
-            ClientContext.items = new BingoItemManager();
+            ClientContext.items = new BingoItemManager(ClientBingoItems.ITEMS);
 
             ClientContext.model =
                 (ClientContext.gameCtrl.isConnected() && !Constants.FORCE_SINGLEPLAYER ?

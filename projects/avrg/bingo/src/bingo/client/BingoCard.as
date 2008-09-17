@@ -1,8 +1,8 @@
 package bingo.client {
 
-import com.threerings.util.ArrayUtil;
-
 import bingo.*;
+
+import com.threerings.util.ArrayUtil;
 
 public class BingoCard
 {
@@ -19,8 +19,8 @@ public class BingoCard
         var items :Array;
 
         // generate unique items to fill the card?
-        if (Constants.CARD_ITEMS_ARE_UNIQUE && numItems <= Constants.ITEMS.length) {
-            items = Constants.ITEMS.slice();
+        if (Constants.CARD_ITEMS_ARE_UNIQUE && numItems <= ClientBingoItems.ITEMS.length) {
+            items = ClientBingoItems.ITEMS.slice();
             ArrayUtil.shuffle(items);
         } else {
             items = new Array(numItems);
@@ -34,7 +34,7 @@ public class BingoCard
         var itemIndex :int = 0;
         for (i = 0; i < size; ++i) {
 
-            var item :BingoItem = (i == freeSpaceIndex ? null : items[itemIndex++]);
+            var item :ClientBingoItem = (i == freeSpaceIndex ? null : items[itemIndex++]);
             var square :Square = new Square(item);
 
             if (i == freeSpaceIndex) {
@@ -45,7 +45,7 @@ public class BingoCard
         }
     }
 
-    public function getItemAt (x :int, y :int) :BingoItem
+    public function getItemAt (x :int, y :int) :ClientBingoItem
     {
         return (_squares[this.xyToIndex(x, y)] as Square).item;
     }
@@ -149,13 +149,14 @@ public class BingoCard
 }
 
 import bingo.*;
+import bingo.client.ClientBingoItem;
 
 class Square
 {
     public var isFilled :Boolean;
-    public var item :BingoItem;
+    public var item :ClientBingoItem;
 
-    public function Square (item :BingoItem)
+    public function Square (item :ClientBingoItem)
     {
         this.item = item;
     }
