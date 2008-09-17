@@ -27,6 +27,7 @@ public class GameController extends Controller
     public static const PLAYER_ATTACKED :String = "PlayerAttacked";
     public static const ZAP_GHOST :String = "ZapGhost";
     public static const REVIVE :String = "Revive";
+    public static const GIMME_DEBUG_PANEL :String = "GimmeDebugPanel";
 
     public var panel :GamePanel;
 
@@ -56,6 +57,12 @@ public class GameController extends Controller
     public function handleToggleLoot () :void
     {
 //        handleSpawnGhost();
+    }
+
+    public function handleGimmeDebugPanel () :void
+    {
+        // leave it entirely to the agent to decide if clicking here does anything
+        Game.control.agent.sendMessage(Codes.CMSG_DEBUG_REQUEST, Codes.DBG_GIMME_PANEL);
     }
 
     public function handlePlay () :void

@@ -44,10 +44,12 @@ public class HUD extends Sprite
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 
         Game.control.room.props.addEventListener(
-            PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+            PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
         Game.control.room.props.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+            ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
 
+        Game.control.player.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
         Game.control.player.addEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
     }
@@ -98,66 +100,27 @@ public class HUD extends Sprite
         return _lootIx;
     }
 
-    public function teamUpdated () :void
-    {
-        if (this.stage == null || _hud.parent == null || _visualHud == null) {
-            // not ready yet
-            return;
-        }
-        if (Game.control.room.getAvatarInfo(Game.ourPlayerId) == null) {
-            setTimeout(teamUpdated, 100);
-            return;
-        }
-
-        var players :Array = PlayerModel.getTeam();
-        var teamIx :int = 0;
-        var hudIx :int = 0;
-        while (hudIx < 6) {
-            var panel :PlayerPanel = PlayerPanel(_playerPanels[hudIx]);
-
-            if (teamIx >= players.length) {
-                panel.healthBar.visible = panel.namePlate.visible = false;
-                panel.id = 0;
-                hudIx ++;
-                continue;
-            }
-//            if (players[teamIx] == Game.ourPlayerId) {
-//                teamIx ++;
-//                continue;
-//            }
-            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(players[teamIx]);
-            if (info == null) {
-                // most likely explanation: they are not in our room
-                teamIx ++;
-                continue;
-            }
-
-            setPlayerHealth(
-                teamIx, Game.relative(PlayerModel.getHealth(players[teamIx]),
-                                      PlayerModel.getMaxHealth(players[teamIx])),
-                players[teamIx] == Game.ourPlayerId);
-            panel.namePlate.visible = true;
-            panel.namePlate.text = info.name;
-            panel.id = players[teamIx];
-            teamIx ++;
-            hudIx ++;
-        }
-    }
-
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         teamUpdated();
         updateGhostHealth();
     }
 
-    protected function propertyChanged (evt :PropertyChangedEvent) :void
+    protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
+    {
+        if (evt.name == Codes.PROP_MY_LEVEL) {
+            _myLevel.text = String(evt.newValue);
+        }
+    }
+
+    protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
             teamUpdated();
         }
     }
 
-    protected function elementChanged (evt :ElementChangedEvent) :void
+    protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
         if (evt.name == Codes.DICT_GHOST) {
             if (evt.key == Codes.IX_GHOST_CUR_ZEST || evt.key == Codes.IX_GHOST_MAX_ZEST ||
@@ -202,7 +165,9 @@ public class HUD extends Sprite
             _playerPanels.push(panel);
         }
 
-        _yourHealthBar = MovieClip(findSafely(YOUR_HEALTH_BAR));
+        _myLevel = findSafely(MY_LEVEL) as TextField;
+
+        _myHealthBar = MovieClip(findSafely(MY_HEALTH_BAR));
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
         _ghostCaptureBar = MovieClip(findSafely(GHOST_CAPTURE_BAR));
 
@@ -232,6 +197,9 @@ public class HUD extends Sprite
 
         updateGhostHealth();
         updateLootState();
+
+        _myLevel.text = String(Game.control.player.props.get(Codes.PROP_MY_LEVEL));
+        Command.bind(_myLevel, MouseEvent.CLICK, GameController.GIMME_DEBUG_PANEL);
     }
 
     protected function updateLootState () :void
@@ -300,6 +268,52 @@ public class HUD extends Sprite
         reallyStop(other);
     }
 
+    protected function teamUpdated () :void
+    {
+        if (this.stage == null || _hud.parent == null || _visualHud == null) {
+            // not ready yet
+            return;
+        }
+        if (Game.control.room.getAvatarInfo(Game.ourPlayerId) == null) {
+            setTimeout(teamUpdated, 100);
+            return;
+        }
+
+        var players :Array = PlayerModel.getTeam();
+        var teamIx :int = 0;
+        var hudIx :int = 0;
+        while (hudIx < 6) {
+            var panel :PlayerPanel = PlayerPanel(_playerPanels[hudIx]);
+
+            if (teamIx >= players.length) {
+                panel.healthBar.visible = panel.namePlate.visible = false;
+                panel.id = 0;
+                hudIx ++;
+                continue;
+            }
+//            if (players[teamIx] == Game.ourPlayerId) {
+//                teamIx ++;
+//                continue;
+//            }
+            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(players[teamIx]);
+            if (info == null) {
+                // most likely explanation: they are not in our room
+                teamIx ++;
+                continue;
+            }
+
+            setPlayerHealth(
+                teamIx, Game.relative(PlayerModel.getHealth(players[teamIx]),
+                                      PlayerModel.getMaxHealth(players[teamIx])),
+                players[teamIx] == Game.ourPlayerId);
+            panel.namePlate.visible = true;
+            panel.namePlate.text = info.name;
+            panel.id = players[teamIx];
+            teamIx ++;
+            hudIx ++;
+        }
+    }
+
     protected function findPlayerIx (id :int) :int
     {
         if (_playerPanels != null) {
@@ -321,7 +335,7 @@ public class HUD extends Sprite
         var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
 
         if (us) {
-            bar = _yourHealthBar;
+            bar = _myHealthBar;
             bar.gotoAndStop(frame);
             Game.log.debug("Moved " + bar.name + " to frame #" + frame);
             reallyStop(bar);
@@ -349,7 +363,8 @@ public class HUD extends Sprite
 
     protected var _ghostHealthBar :MovieClip;
     protected var _ghostCaptureBar :MovieClip;
-    protected var _yourHealthBar :MovieClip;
+    protected var _myHealthBar :MovieClip;
+    protected var _myLevel :TextField;
 
     protected var _lanternLoot :SimpleButton;
     protected var _blasterLoot :SimpleButton;
@@ -367,7 +382,9 @@ public class HUD extends Sprite
 
     protected static const PLAYER_NAME_PLATE :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
-    protected static const YOUR_HEALTH_BAR :String = "YourHealth";
+
+    protected static const MY_HEALTH_BAR :String = "YourHealth";
+    protected static const MY_LEVEL :String = "levelNumber";
 
     protected static const GHOST_HEALTH_BAR :String = "GhostHealthBar";
     protected static const GHOST_CAPTURE_BAR :String = "GhostCaptureBar";
