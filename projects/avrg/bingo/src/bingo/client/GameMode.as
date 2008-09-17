@@ -13,6 +13,8 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
+        ClientContext.gameMode = this;
+
         // setup visuals
         _gameUILayer = new Sprite();
         _helpLayer = new Sprite();

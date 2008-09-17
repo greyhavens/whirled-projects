@@ -9,6 +9,7 @@ import flash.geom.Rectangle;
 
 public class ClientContext
 {
+    public static var gameMode :GameMode;
     public static var gameCtrl :AVRGameControl;
     public static var items :BingoItemManager;
     public static var model :Model;

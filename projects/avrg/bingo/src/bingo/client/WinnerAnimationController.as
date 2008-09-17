@@ -36,8 +36,9 @@ public class WinnerAnimationController extends SceneObject
         // Listen for the "complete" event. We'll show the countdown timer afterwards.
         _winnerAnim.addEventListener(Event.COMPLETE, winnerAnimComplete, false, 0, true);
 
-        MainLoop.instance.topMode.addObject(new SimpleTimer(
-            Constants.NEW_ROUND_DELAY_S, destroySelf, false, NEXT_ROUND_TIMER_NAME));
+        ClientContext.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
+        ClientContext.gameMode.addObject(new SimpleTimer(
+            Constants.NEW_ROUND_DELAY_S, null, false, NEXT_ROUND_TIMER_NAME));
     }
 
     protected function winnerAnimComplete (...ignored) :void
@@ -62,7 +63,7 @@ public class WinnerAnimationController extends SceneObject
             var timeLeft :Number = SimpleTimer.getTimeLeft(NEXT_ROUND_TIMER_NAME);
             this.updateCountdownText(timeLeft);
             if (timeLeft <= 0) {
-                MainLoop.instance.topMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
+                ClientContext.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
                 this.destroySelf();
             }
         }

@@ -13,7 +13,9 @@ public class ScoreTable
 
     public function getScore (playerId :int) :Score
     {
-        var index :int = ArrayUtil.indexIf(_scores, function (score :Score) :Boolean { return score.playerId == playerId });
+        var index :int = ArrayUtil.indexIf(_scores, function (score :Score) :Boolean {
+            return score.playerId == playerId
+        });
         return (index >= 0 ? _scores[index] : null);
     }
 
@@ -24,19 +26,15 @@ public class ScoreTable
         scoreObj.date = date;
 
         this.trimEntries();
-
-        _isSorted = false;
     }
 
-    public function incrementScore (playerId :int, date :Date) :void
+    public function incrementScore (playerId :int, date :Date = null) :void
     {
         var scoreObj :Score = this.createOrGetScore(playerId);
         scoreObj.score += 1;
-        scoreObj.date = date;
+        scoreObj.date = (date != null ? date : new Date());
 
         this.trimEntries();
-
-        _isSorted = false;
     }
 
     protected function createOrGetScore (playerId :int) :Score
@@ -48,8 +46,6 @@ public class ScoreTable
             _scores.push(scoreObj);
         }
 
-        _isSorted = false;
-
         return scoreObj;
     }
 
@@ -59,7 +55,6 @@ public class ScoreTable
         if (_maxEntries >= 0 && _scores.length > _maxEntries) {
             _scores.sort(Score.compareAges);
             _scores.splice(_maxEntries);
-            _isSorted = false;
         }
     }
 
@@ -100,30 +95,6 @@ public class ScoreTable
         return table;
     }
 
-    public function isEqual (rhs :ScoreTable) :Boolean
-    {
-        var lhsScores :Array = _scores;
-        var rhsScores :Array = rhs.scores;
-
-        if (lhsScores.length != rhsScores.length) {
-            return false;
-        }
-
-        this.sortScores();
-        rhs.sortScores();
-
-        for (var i :int = 0; i < lhsScores.length; ++i) {
-            var lhsScore :Score = lhsScores[i];
-            var rhsScore :Score = rhsScores[i];
-
-            if (!lhsScore.isEqual(rhsScore)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function clone () :ScoreTable
     {
         var cloneScores :Array = [];
@@ -133,17 +104,8 @@ public class ScoreTable
 
         var theClone :ScoreTable = new ScoreTable(_maxEntries);
         theClone._scores = cloneScores;
-        theClone._isSorted = _isSorted;
 
         return theClone;
-    }
-
-    public function sortScores () :void
-    {
-        if (!_isSorted) {
-            _scores.sort(Score.compareScores);
-            _isSorted = true;
-        }
     }
 
     public function get scores () :Array
@@ -153,7 +115,6 @@ public class ScoreTable
 
     protected var _scores :Array = [];
     protected var _maxEntries :int;
-    protected var _isSorted :Boolean;
 }
 
 }

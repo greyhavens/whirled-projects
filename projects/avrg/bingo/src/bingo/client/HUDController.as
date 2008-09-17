@@ -4,6 +4,7 @@ import bingo.*;
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -72,6 +73,11 @@ public class HUDController extends SceneObject
         ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
+        ClientContext.gameCtrl.room.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED,
+            updateScores);
+        ClientContext.gameCtrl.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT,
+            updateScores);
+
         // set initial state
         this.updateScores();
         this.updateBall();
@@ -95,6 +101,11 @@ public class HUDController extends SceneObject
 
         ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
+
+        ClientContext.gameCtrl.room.removeEventListener(AVRGameRoomEvent.PLAYER_ENTERED,
+            updateScores);
+        ClientContext.gameCtrl.room.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT,
+            updateScores);
     }
 
     override protected function update (dt :Number) :void
@@ -162,11 +173,10 @@ public class HUDController extends SceneObject
         var namesAndScores :Array = ClientContext.model.getPlayerOids().map(
             function (playerId :int, ...ignored) :Score {
                 var existingScore :Score = scores.getScore(playerId);
-
                 return (null != existingScore ? existingScore : new Score(playerId, 0, dateNow));
             });
 
-        namesAndScores.sort(Score.compareScores);
+        namesAndScores.sort(compareScores);
 
         for (var i :int = 0; i < NUM_SCOREBOARD_ROWS; ++i) {
 
@@ -242,6 +252,32 @@ public class HUDController extends SceneObject
     protected function get gameMode () :GameMode
     {
         return this.db as GameMode;
+    }
+
+    protected static function compareScores (a :Score, b :Score) :int
+    {
+        // compare scores. higher scores come before lower
+        if (a.score > b.score) {
+            return -1;
+        } else if (a.score < b.score) {
+            return 1;
+        }
+
+        // compare dates. newer dates come before older
+        var aTime :Number = a.date.time;
+        var bTime :Number = b.date.time;
+
+        if (aTime > bTime) {
+            return -1;
+        } else if (aTime < bTime) {
+            return 1;
+        }
+
+        // compare names. A comes before Z
+        var aName :String = ClientContext.getPlayerName(a.playerId);
+        var bName :String = ClientContext.getPlayerName(b.playerId);
+
+        return aName.localeCompare(bName);
     }
 
     protected var _hud :MovieClip;

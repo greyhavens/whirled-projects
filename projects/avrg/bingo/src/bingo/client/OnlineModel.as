@@ -20,15 +20,13 @@ public class OnlineModel extends Model
 
         // read the current state
         var stateBytes :ByteArray = (_propsCtrl.get(Constants.PROP_STATE) as ByteArray);
-        if (null != stateBytes) {
-            _curState = SharedState.fromBytes(stateBytes);
-        }
+        _curState = (stateBytes != null ? SharedState.fromBytes(stateBytes) : new SharedState());
 
         // read current scores
         var scoreBytes :ByteArray = (_propsCtrl.get(Constants.PROP_SCORES) as ByteArray);
-        if (null != scoreBytes) {
-            _curScores = ScoreTable.fromBytes(scoreBytes, Constants.SCORETABLE_MAX_ENTRIES);
-        }
+        _curScores = (scoreBytes != null ?
+            ScoreTable.fromBytes(scoreBytes, Constants.SCORETABLE_MAX_ENTRIES) :
+            new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES));
     }
 
     override public function destroy () :void
@@ -46,7 +44,7 @@ public class OnlineModel extends Model
         // in a network game, calling bingo doesn't necessarily
         // mean we've won the round. someone might get in before
         // we do.
-        _agentCtrl.sendMessage(Constants.MSG_REQUEST_BINGO, _curState.roundId);
+        _agentCtrl.sendMessage(Constants.MSG_CALLBINGO, _curState.roundId);
     }
 
     protected function propChanged (e :PropertyChangedEvent) :void

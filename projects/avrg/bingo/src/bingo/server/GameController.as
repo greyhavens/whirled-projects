@@ -1,12 +1,10 @@
 package bingo.server {
 
-import flash.utils.ByteArray;
+import bingo.*;
 
 import com.threerings.util.Log;
 import com.whirled.contrib.TimerManager;
 import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
-
-import bingo.*;
 
 public class GameController extends OneRoomGameRoom
 {
@@ -15,6 +13,7 @@ public class GameController extends OneRoomGameRoom
         super.finishInit();
         _bingoItems = new BingoItemManager(ServerBingoItems.ITEMS);
         _sharedState = new SharedState();
+        _scores = new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES);
         startNextRound();
     }
 
@@ -22,6 +21,7 @@ public class GameController extends OneRoomGameRoom
     {
         shutdownTimers();
         setNewGameState(null);
+        setNewScores(null);
         super.shutdown();
     }
 
@@ -43,7 +43,7 @@ public class GameController extends OneRoomGameRoom
     {
         super.messageReceived(senderId, name, value);
 
-        if (name == Constants.MSG_REQUEST_BINGO) {
+        if (name == Constants.MSG_CALLBINGO) {
             log.info("bingo called [senderId=" + senderId + "]");
             bingoCalled(senderId, int(value));
         }
@@ -58,14 +58,17 @@ public class GameController extends OneRoomGameRoom
                 log.info("discarding CallBingoMessage from the future");
             }
             return;
-        } /*else if (_numBallsThisRound < 4) {
-            log.info("discarding CallBingoMessage (too few balls called): " + msg.toString());
+        } else if (!Constants.ALLOW_CHEATS && _numBallsThisRound < 4) {
+            log.info("discarding CallBingoMessage (too few balls called)");
             return;
-        }*/
+        }
 
         _sharedState.gameState = SharedState.STATE_WEHAVEAWINNER;
         _sharedState.roundWinnerId = playerId;
         setNewGameState(_sharedState);
+
+        _scores.incrementScore(playerId);
+        setNewScores(_scores);
 
         // award coins if there's more than one player in the game
         if (_roomCtrl.getPlayerIds().length > 1) {
@@ -107,11 +110,19 @@ public class GameController extends OneRoomGameRoom
         _roomCtrl.props.set(Constants.PROP_STATE, (newState != null ? newState.toBytes() : null));
     }
 
+    protected function setNewScores (newScores :ScoreTable) :void
+    {
+        _scores = newScores;
+        _roomCtrl.props.set(Constants.PROP_SCORES,
+            (newScores != null ? newScores.toBytes() : null));
+    }
+
     protected var _timers :TimerManager;
     protected var _bingoItems :BingoItemManager;
 
     protected var _numBallsThisRound :int;
     protected var _sharedState :SharedState;
+    protected var _scores :ScoreTable;
 
     protected static const log :Log = Log.getLog(GameController);
 
