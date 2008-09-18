@@ -60,10 +60,6 @@ public class GameController extends OneRoomGameRoom
                 log.warning("discarding CallBingoMessage from the distant past");
             }
             return;
-
-        } else if (!Constants.ALLOW_CHEATS && _numBallsThisRound < 4) {
-            log.warning("discarding CallBingoMessage (too few balls called)");
-            return;
         }
 
         _sharedState.gameState = SharedState.STATE_WEHAVEAWINNER;
