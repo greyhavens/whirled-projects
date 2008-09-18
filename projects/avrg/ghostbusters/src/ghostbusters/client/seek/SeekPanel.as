@@ -75,7 +75,7 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
 
-        Game.control.player.addEventListener(
+        Game.control.room.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
@@ -88,7 +88,7 @@ public class SeekPanel extends FrameSprite
         super.handleRemoved();
         _lanternLoop.stop();
 
-        Game.control.player.removeEventListener(
+        Game.control.room.removeEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.removeEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
@@ -96,9 +96,10 @@ public class SeekPanel extends FrameSprite
             ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
     }
 
-    protected function messageReceived (event: MessageReceivedEvent) :void
+    protected function messageReceived (evt: MessageReceivedEvent) :void
     {
-        if (event.name == Codes.SMSG_GHOST_ZAPPED) {
+        Game.log.debug("messageReceived: " + evt);
+        if (evt.name == Codes.SMSG_GHOST_ZAPPED) {
             _zapping = ZAP_FRAMES;
             Sound(new Content.LANTERN_GHOST_SCREECH()).play();
         }
@@ -106,6 +107,7 @@ public class SeekPanel extends FrameSprite
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
+        Game.log.debug("roomElementChanged: " + evt);
         if (evt.name == Codes.DICT_LANTERNS) {
             if (_lanterns != null) {
                 if (evt.newValue == null) {
@@ -126,7 +128,7 @@ public class SeekPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
-//        Game.log.debug("roomPropertyChanged: " + evt);
+        Game.log.debug("roomPropertyChanged: " + evt);
         // if there's no ghost or it's busy appearing, nothing here to do
         if (_ghost == null || _lanterns == null) {
             return;

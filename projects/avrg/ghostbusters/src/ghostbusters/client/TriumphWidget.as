@@ -5,6 +5,7 @@ package ghostbusters.client {
 
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
+import flash.text.TextField;
 
 import flash.events.MouseEvent;
 
@@ -32,18 +33,23 @@ public class TriumphWidget extends ClipHandler
             _button.addEventListener(MouseEvent.CLICK, buttonClicked);
         }
 
-        // TODO: tweak award text
+        var text :DisplayObject = DisplayUtil.findInHierarchy(this, "payout");
+        if (text != null && text != _text) {
+            _text = TextField(text);
+            _text.text = "You've gained " + _coins + " coins for your efforts.";
+        }
     }
 
     protected function buttonClicked (evt :MouseEvent) :void
     {
-        _buttonCallback();
+        _buttonCallback(this);
     }
-
-    protected var _button :SimpleButton;
 
     protected var _coins :int;
 
+    protected var _button :SimpleButton;
     protected var _buttonCallback :Function;
+
+    protected var _text :TextField;
 }
 }
