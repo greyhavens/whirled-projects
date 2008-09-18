@@ -2,11 +2,11 @@
 <project name="starfight" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="StarFight"/>
+  <property name="app.name" value="starfight/StarFight"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.type" value="game"/>
   <property name="app.enable-server-agent" value="true"/>
-  <property name="app.server-agent" value="server/Server"/>
+  <property name="app.server-agent" value="starfight/server/Server"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
