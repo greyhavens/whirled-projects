@@ -57,6 +57,7 @@ public class FightPanel extends FrameSprite
         this.addChild(_dimness);
 
         this.addChild(_ghost);
+        _ghost.mask = null;
         _ghost.x = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
         _ghost.y = 100;
 
@@ -96,12 +97,14 @@ public class FightPanel extends FrameSprite
     public function weaponUpdated () :void
     {
         if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            // it didn't really change
+            Game.log.debug("Weapon unchanged...");
             return;
         }
         if (_player.currentGame != null) {
+            Game.log.debug("Cancelling current game...");
             _player.cancelCurrentGame();
         }
+        Game.log.debug("Starting new minigame.");
         startMinigame();
     }
 

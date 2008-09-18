@@ -56,7 +56,6 @@ public class TextBits extends Sprite
 
         _textField = new TextField();
         this.addChild(_textField);
-
         _textField.defaultTextFormat = getDefaultFormat();
         _textField.styleSheet = _styleSheet;
         _textField.selectable = false;
@@ -70,6 +69,12 @@ public class TextBits extends Sprite
         _buttons = new Sprite();
         this.addChild(_buttons);
 
+        _buttons.x = GAP;
+        _buttons.y = GAP;
+
+        _textField.x = GAP;
+        _textField.y = GAP;
+
         _rightButtonEdge = _textField.width;
         _leftButtonEdge = 0;
     }
@@ -77,9 +82,6 @@ public class TextBits extends Sprite
     public function set text (txt :String) :void
     {
         _textField.htmlText = em(txt);
-
-        _buttons.x = _textField.x;
-        _buttons.y = _textField.y + _textField.height + GAP;
     }
 
     public function addButton (label :String, right :Boolean, onClick :Function) :SimpleButton
@@ -90,6 +92,8 @@ public class TextBits extends Sprite
                 onClick();
             });
         _buttons.addChild(button);
+
+        _textField.y = _buttons.y + _buttons.height + GAP;
 
         if (right) {
             button.x = _rightButtonEdge - button.width;

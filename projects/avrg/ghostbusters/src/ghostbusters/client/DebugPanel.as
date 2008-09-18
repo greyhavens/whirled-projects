@@ -26,18 +26,35 @@ public class DebugPanel extends Sprite
         this.opaqueBackground = 0x662211;
         this.alpha = 0.5;
 
+        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
+        addEventListener(Event.REMOVED_FROM_STAGE, handleRemoved);
+
+        _bits.addButton("Lev+", false, function () :void { dbg(Codes.DBG_LEVEL_UP); });
+        _bits.addButton("Lev-", false, function () :void { dbg(Codes.DBG_LEVEL_DOWN); });
+        _bits.addButton("Skip", true, function () :void { dbg(Codes.DBG_END_STATE); });
+        _bits.addButton("Reset", true, function () :void { dbg(Codes.DBG_RESET_ROOM); });
+
+        updateDisplay();
+    }
+
+    protected function handleAdded (evt :Event) :void
+    {
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, updateDisplay);
         Game.control.room.props.addEventListener(
             ElementChangedEvent.ELEMENT_CHANGED, updateDisplay);
         Game.control.player.addEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, updateDisplay);
+    }
 
-        _bits.addButton("Level Up", false, function () :void { dbg(Codes.DBG_LEVEL_UP); });
-        _bits.addButton("Level Down", false, function () :void { dbg(Codes.DBG_LEVEL_DOWN); });
-        _bits.addButton("Reset", true, function () :void { dbg(Codes.DBG_RESET_ROOM); });
-
-        updateDisplay();
+    protected function handleRemoved (evt :Event) :void
+    {
+        Game.control.room.props.removeEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, updateDisplay);
+        Game.control.room.props.removeEventListener(
+            ElementChangedEvent.ELEMENT_CHANGED, updateDisplay);
+        Game.control.player.removeEventListener(
+            AVRGamePlayerEvent.ENTERED_ROOM, updateDisplay);
     }
 
     protected function updateDisplay (... ignored) :void

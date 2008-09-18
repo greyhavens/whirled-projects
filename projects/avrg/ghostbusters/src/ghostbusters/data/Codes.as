@@ -261,5 +261,6 @@ public class Codes
     public static const DBG_LEVEL_UP :String = "lu";
     public static const DBG_LEVEL_DOWN :String = "ld";
     public static const DBG_RESET_ROOM :String = "rr";
+    public static const DBG_END_STATE :String = "es";
 }
 }

@@ -184,6 +184,21 @@ public class Player
                 _room.reset();
             }
             break;
+        case Codes.DBG_END_STATE:
+            if (_room != null) {
+                switch(_room.state) {
+                case Codes.STATE_SEEKING:
+                case Codes.STATE_APPEARING:
+                    _room.setState(Codes.STATE_FIGHTING);
+                    break;
+                case Codes.STATE_FIGHTING:
+                case Codes.STATE_GHOST_TRIUMPH:
+                case Codes.STATE_GHOST_DEFEAT:
+                    _room.setState(Codes.STATE_SEEKING);
+                    break;
+                }
+            }
+            break;
         default:
             log.warning("Unknown debug requests: " + request);
             return;

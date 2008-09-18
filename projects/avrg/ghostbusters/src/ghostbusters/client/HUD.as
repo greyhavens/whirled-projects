@@ -52,24 +52,18 @@ public class HUD extends Sprite
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
         Game.control.player.addEventListener(
             AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
-    }
 
-    public function shutdown () :void
-    {
+        Game.control.local.addEventListener(
+            AVRGameControlEvent.SIZE_CHANGED, function (event :Event) :void {
+                placeHud();
+                teamUpdated();
+            });
     }
 
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
         return _hud != null && _hud.hitTestPoint(x, y, shapeFlag);
-    }
-
-    public function reloadView () :void
-    {
-        if (_hud.parent != null) {
-            placeHud();
-            teamUpdated();
-        }
     }
 
     public function getRightEdge () :int

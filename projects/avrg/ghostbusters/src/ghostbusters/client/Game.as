@@ -73,7 +73,6 @@ public class Game extends Sprite
         control.local.addEventListener(
             AVRGameControlEvent.SIZE_CHANGED, function (event :Event) :void {
                 newSize();
-                reloadView();
             });
     }
 
@@ -100,7 +99,6 @@ public class Game extends Sprite
         log.info("Added to stage: Initializing...");
         newSize();
         newRoom();
-        reloadView();
 //        gameController.panel.showSplash();
     }
 
@@ -153,11 +151,6 @@ public class Game extends Sprite
             log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
-    }
-
-    protected function reloadView () :void
-    {
-        panel.reloadView();
     }
 }
 }

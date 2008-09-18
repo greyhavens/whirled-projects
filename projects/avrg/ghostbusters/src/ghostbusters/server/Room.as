@@ -188,6 +188,51 @@ public class Room
         setState(Codes.STATE_SEEKING);
     }
 
+    internal function setState (state :String) :void
+    {
+        _state = state;
+
+        _ctrl.props.set(Codes.PROP_STATE, state, true);
+
+        for (var p :* in _players) {
+            Player(p).roomStateChanged();
+        }
+        log.debug("Room state set [roomId=" + roomId + ", state=" + state + "]");
+    }
+
+    // server-specific parts of the model moved here
+    internal function damageGhost (damage :int) :Boolean
+    {
+        var health :int = _ghost.health;
+        log.debug("Doing " + damage + " damage to a ghost with health " + health);
+        if (damage >= health) {
+            _ghost.setHealth(0);
+            return true;
+        }
+        _ghost.setHealth(health - damage);
+        return false;
+    }
+
+    internal function isEverybodyDead () :Boolean
+    {
+        return checkTeam(true);
+    }
+
+    internal function isEverybodyAlive () :Boolean
+    {
+        return checkTeam(false);
+    }
+
+    internal function checkTeam (dead :Boolean) :Boolean
+    {
+        for (var p :* in _players) {
+            if (dead != Player(p).isDead()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
         if (_ghost == null) {
@@ -411,51 +456,6 @@ public class Room
     {
         _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
-    }
-
-    protected function setState (state :String) :void
-    {
-        _state = state;
-
-        _ctrl.props.set(Codes.PROP_STATE, state, true);
-
-        for (var p :* in _players) {
-            Player(p).roomStateChanged();
-        }
-        log.debug("Room state set [roomId=" + roomId + ", state=" + state + "]");
-    }
-
-    // server-specific parts of the model moved here
-    protected function damageGhost (damage :int) :Boolean
-    {
-        var health :int = _ghost.health;
-        log.debug("Doing " + damage + " damage to a ghost with health " + health);
-        if (damage >= health) {
-            _ghost.setHealth(0);
-            return true;
-        }
-        _ghost.setHealth(health - damage);
-        return false;
-    }
-
-    protected function isEverybodyDead () :Boolean
-    {
-        return checkTeam(true);
-    }
-
-    protected function isEverybodyAlive () :Boolean
-    {
-        return checkTeam(false);
-    }
-
-    protected function checkTeam (dead :Boolean) :Boolean
-    {
-        for (var p :* in _players) {
-            if (dead != Player(p).isDead()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     protected var _ctrl :RoomServerSubControl;

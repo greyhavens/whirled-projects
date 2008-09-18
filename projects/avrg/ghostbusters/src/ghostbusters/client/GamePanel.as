@@ -4,34 +4,16 @@
 package ghostbusters.client {
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.MovieClip;
-import flash.display.Shape;
-import flash.display.SimpleButton;
 import flash.display.Sprite;
 
-import flash.events.Event;
-import flash.events.MouseEvent;
-
-import flash.utils.ByteArray;
-import flash.utils.setTimeout;
-
-import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import com.threerings.flash.AnimationManager;
-import com.threerings.flash.DisplayUtil;
-
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Command;
-
 import ghostbusters.client.fight.FightPanel;
-import ghostbusters.data.Codes;
-import ghostbusters.client.util.GhostModel;
 import ghostbusters.client.seek.SeekPanel;
+import ghostbusters.client.util.GhostModel;
+import ghostbusters.data.Codes;
 
 public class GamePanel extends Sprite
 {
@@ -68,11 +50,6 @@ public class GamePanel extends Sprite
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
         checkForDeath();
-    }
-
-    public function shutdown () :void
-    {
-        hud.shutdown();
     }
 
     override public function hitTestPoint (
@@ -132,9 +109,6 @@ public class GamePanel extends Sprite
     public function reloadView () :void
     {
         hud.reloadView();
-
-        // TODO: is this really needed?
-        checkForDeath();
     }
 
     public function getClipClass () :Class
@@ -179,14 +153,15 @@ public class GamePanel extends Sprite
         var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
         if (health > 0) {
             if (_revive != null) {
-                Game.log.debug("Popping UP the revive widget!");
+                Game.log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
+                _revive = null;
             }
             return;
         }
 
         if (_revive == null) {
-            Game.log.debug("Popping DOWN the revive widget!");
+            Game.log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
         }
@@ -217,13 +192,15 @@ public class GamePanel extends Sprite
 
     protected function messageReceived (evt: MessageReceivedEvent) :void
     {
-        if (evt.name == Codes.SMSG_DEBUG_RESPONSE) {
-            Game.log.debug("Message: " + evt);
-            if (evt.value == Codes.DBG_GIMME_PANEL) {
-                var dbg :DebugPanel = new DebugPanel();
-                dbg.x = dbg.y = 20;
-                this.addChild(dbg);
+        if (evt.name == Codes.SMSG_DEBUG_RESPONSE && evt.value == Codes.DBG_GIMME_PANEL) {
+            if (_debugPanel != null) {
+                this.removeChild(_debugPanel);
+                _debugPanel = null;
+                return;
             }
+            _debugPanel = new DebugPanel();
+            _debugPanel. = _debugPanel.y = 20;
+            this.addChild(_debugPanel);
         }
     }
 
@@ -289,8 +266,9 @@ public class GamePanel extends Sprite
     protected var _frame :GameFrame;
 
     protected var _revive :ClipHandler;
+    protected var _triumph :ClipHandler;
 
-    protected var _triumph :ClipHandler
+    protected var _debugPanel :DebugPanel;
 
     // maps ghost id to model
     protected static const GHOST_CLIPS :Object = {

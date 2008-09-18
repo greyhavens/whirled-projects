@@ -37,11 +37,6 @@ public class GameController extends Controller
         setControlledPanel(panel);
     }
 
-    public function shutdown () :void
-    {
-        panel.shutdown();
-    }
-
     public function handleEndGame () :void
     {
 // TODO: what is the best way to reset the state of a departing AVRG player?
@@ -106,12 +101,12 @@ public class GameController extends Controller
         // TODO: this probably no longer makes much UI sense
         panel.hud.chooseWeapon(weapon);
 
-        if (!(panel is FightPanel)) {
+        if (!(panel.subPanel is FightPanel)) {
             // should not happen, but let's be robust
-            Game.log.debug("Eek, panel is not FightPanel");
+            Game.log.debug("Eek, subpanel is not FightPanel");
             return;
         }
-        FightPanel(panel).weaponUpdated();
+        FightPanel(panel.subPanel).weaponUpdated();
     }
 
     public function handleGhostAttacked (result :MicrogameResult) :void
