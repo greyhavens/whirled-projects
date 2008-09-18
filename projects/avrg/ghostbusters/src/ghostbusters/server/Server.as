@@ -79,9 +79,13 @@ public class Server extends ServerObject
         var dT :int = getTimer() - _startTime;
         var frame :int = dT * (FRAMES_PER_SECOND / 1000);
         var second :int = dT / 1000;
-        for each (var room :Room in _rooms) {
-            room.tick(frame, second > _lastSecond);
-        }
+
+        _ctrl.doBatch(function () :void {
+            for each (var room :Room in _rooms) {
+                room.tick(frame, second > _lastSecond);
+            }
+        });
+
         _lastSecond = second;
     }
 
@@ -93,7 +97,9 @@ public class Server extends ServerObject
             log.warning("Received message for non-existent player [evt=" + evt + "]");
             return;
         }
-        player.handleMessage(evt.name, evt.value);
+        _ctrl.doBatch(function () :void {
+            player.handleMessage(evt.name, evt.value);
+        });
     }
 
     // when players enter the game, we create a local record for them
@@ -109,7 +115,9 @@ public class Server extends ServerObject
         if (_players[playerId] != null) {
             log.warning("Eek, player joined twice [id=" + playerId + "]");
         }
-        _players[playerId] = new Player(pctrl);
+        _ctrl.doBatch(function () :void {
+            _players[playerId] = new Player(pctrl);
+        });
     }
 
     // when they leave, clean up
@@ -119,7 +127,9 @@ public class Server extends ServerObject
 
         var player :Player = _players[playerId];
         if (player != null) {
-            player.shutdown();
+            _ctrl.doBatch(function () :void {
+                player.shutdown();
+            });
             delete _players[playerId];
         }
     }

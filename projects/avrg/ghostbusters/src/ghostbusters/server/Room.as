@@ -254,7 +254,7 @@ public class Room
         }
 
         if (_lanternsDirty && (getTimer() - _lanternUpdate) > 200) {
-            Server.control.doBatch(sendLanterns);
+            sendLanterns();
         }
 
         if (!newSecond) {
@@ -268,17 +268,6 @@ public class Room
 
         // do a ghost tick
         _ghost.tick(frame);
-    }
-
-    protected function sendLanterns () :void
-    {
-        for (var p :* in _lanterns) {
-            var playerId :int = int(p);
-            _ctrl.props.setIn(Codes.DICT_LANTERNS, int(p), _lanterns[p]);
-        }
-        _lanterns = new Dictionary();
-        _lanternsDirty = false;
-        _lanternUpdate = getTimer();
     }
 
     protected function fightTick (frame :int, newSecond :Boolean) :void
@@ -438,6 +427,17 @@ public class Room
         for each (var player :Player in getTeam(true)) {
             player.heal(player.maxHealth);
         }
+    }
+
+    protected function sendLanterns () :void
+    {
+        for (var p :* in _lanterns) {
+            var playerId :int = int(p);
+            _ctrl.props.setIn(Codes.DICT_LANTERNS, int(p), _lanterns[p]);
+        }
+        _lanterns = new Dictionary();
+        _lanternsDirty = false;
+        _lanternUpdate = getTimer();
     }
 
     protected function loadOrSpawnGhost () :void

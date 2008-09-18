@@ -151,20 +151,20 @@ public class Player
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
+        var thisPlayer :Player = this;
         _room = Server.getRoom(int(evt.value));
-        _room.playerEntered(this);
-        updateAvatarState();
+        Server.control.doBatch(function () :void {
+            _room.playerEntered(thisPlayer);
+            updateAvatarState();
+        });
     }
 
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
     {
-        var evtRoom :Room = Server.getRoom(int(evt.value));
-        if (evtRoom.roomId != _room.roomId) {
-            log.warning("Unexpected leftRoom event [event.roomId=" +
-                evtRoom.roomId + ", _roomId=" + _room.roomId + "]");
-        }
-
-        _room.playerLeft(this);
+        var thisPlayer :Player = this;
+        Server.control.doBatch(function () :void {
+            _room.playerLeft(thisPlayer);
+        });
         _room = null;
     }
 
