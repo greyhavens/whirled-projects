@@ -109,17 +109,17 @@ public class RhinoShipType extends ShipType
             var endX :Number = startX + Math.cos(rads) * JUMP;
             var endY :Number = startY + Math.sin(rads) * JUMP;
 
-            ship.resolveMove(startX, startY, endX, endY, 1);
-            ship.state = Ship.STATE_WARP_END;
+            Ship.resolveMove(ship.clientData, startX, startY, endX, endY, 1);
+            ship.clientData.state = Ship.STATE_WARP_END;
 
             ship.runOnce(WARP_IN_TIME, endWarp);
         };
 
         var endWarp :Function = function (...ignored) :void {
-            ship.state = Ship.STATE_DEFAULT;
+            ship.clientData.state = Ship.STATE_DEFAULT;
         };
 
-        ship.state = Ship.STATE_WARP_BEGIN;
+        ship.clientData.state = Ship.STATE_WARP_BEGIN;
         ship.runOnce(WARP_OUT_TIME, warp);
     }
 

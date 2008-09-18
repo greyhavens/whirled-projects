@@ -15,7 +15,6 @@ import flash.utils.ByteArray;
 import flash.utils.getTimer;
 
 import starfight.net.CreateMineMessage;
-import starfight.net.ShipExplodedMessage;
 import starfight.net.ShipShotMessage;
 
 public class GameController
@@ -59,7 +58,8 @@ public class GameController
         throw new Error("abstract");
     }
 
-    public function createShip (shipId :int, playerName :String) :Ship
+    public function createShip (shipId :int, playerName :String, clientData :ClientShipData = null)
+        :Ship
     {
         throw new Error("abstract");
     }
@@ -158,14 +158,11 @@ public class GameController
             var ship :Ship = getShip(shipId);
             bytes.position = 0;
             if (ship == null) {
-                ship = createShip(shipId, occName);
-                ship.fromBytes(bytes);
+                ship = createShip(shipId, occName, ClientShipData.fromBytes(bytes));
                 addShip(shipId, ship);
 
             } else {
-                var sentShip :Ship = createShip(shipId, occName);
-                sentShip.fromBytes(bytes);
-                ship.updateForReport(sentShip);
+                ship.updateForReport(ClientShipData.fromBytes(bytes));
             }
         }
     }

@@ -61,9 +61,10 @@ public class ServerGameController extends GameController
         }
     }
 
-    override public function createShip (shipId :int, playerName :String) :Ship
+    override public function createShip (shipId :int, playerName :String,
+        clientData :ClientShipData = null) :Ship
     {
-        return new ServerShip(shipId, playerName);
+        return new ServerShip(shipId, playerName, clientData);
     }
 
     override public function hitShip (ship :Ship, x :Number, y :Number, shooterId :int,

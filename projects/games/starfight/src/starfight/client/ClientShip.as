@@ -21,9 +21,10 @@ public class ClientShip extends Ship
     public var turning :int;
     public var moving :int;
 
-    public function ClientShip (shipId :int, playerName :String, isOwnShip :Boolean = false)
+    public function ClientShip (shipId :int, playerName :String, clientData :ClientShipData = null,
+        isOwnShip :Boolean = false)
     {
-        super(shipId, playerName);
+        super(shipId, playerName, clientData);
         _isOwnShip = isOwnShip;
     }
 
@@ -39,35 +40,35 @@ public class ClientShip extends Ship
         _ticksToFire = 0;
         _ticksToSecondary = 0;
 
-        var pt :Point = AppContext.board.getStartingPos();
-        boardX = pt.x;
-        boardY = pt.y;
+        _clientData.powerups = 0;
+        _clientData.state = STATE_SPAWN;
+        _clientData.numLives += 1;
 
-        xVel = 0;
-        yVel = 0;
-        turnRate = 0;
-        turnAccelRate = 0;
-        accel = 0;
-        rotation = 0;
-        weaponBonusPower = 0.0;
-        engineBonusPower = 0.0;
-        primaryShotPower = 1.0;
-        secondaryShotPower = 0.0;
+        var pt :Point = AppContext.board.getStartingPos();
+        _clientData.boardX = pt.x;
+        _clientData.boardY = pt.y;
+        _clientData.xVel = 0;
+        _clientData.yVel = 0;
+        _clientData.turnRate = 0;
+        _clientData.turnAccelRate = 0;
+        _clientData.accel = 0;
+        _clientData.rotation = 0;
+
+        _weaponBonusPower = 0.0;
+        _engineBonusPower = 0.0;
+        _primaryShotPower = 1.0;
+        _secondaryShotPower = 0.0;
+
         _killsThisLife = 0;
         _killsThisLife3 = 0;
         _powerupsThisLife = false;
-        _powerups = 0;
 
         _serverData = new ServerShipData();
 
         initTimers();
 
-        state = STATE_SPAWN;
-        _numLives += 1;
-
-        var thisShip :Ship = this;
         runOnce(SPAWN_TIME, function (...ignored) :void {
-            thisShip.state = STATE_DEFAULT;
+            _clientData.state = STATE_DEFAULT;
         });
     }
 
@@ -93,38 +94,43 @@ public class ClientShip extends Ship
 
     override public function update (time :int) :void
     {
-        // update move and turn acceleration if this ship is under our control
+        // update move and turn acceleration and shot power if this ship is under our control
         if (isAlive && state != STATE_WARP_BEGIN && state != STATE_WARP_END && _isOwnShip) {
             if (turning < 0) {
-                turnAccelRate = -_shipType.turnAccel;
+                _clientData.turnAccelRate = -_shipType.turnAccel;
             } else if (turning > 0) {
-                turnAccelRate = _shipType.turnAccel;
+                _clientData.turnAccelRate = _shipType.turnAccel;
             } else {
-                turnAccelRate = 0;
+                _clientData.turnAccelRate = 0;
             }
 
             if (moving < 0) {
-                accel = _shipType.backwardAccel;
+                _clientData.accel = _shipType.backwardAccel;
             } else if (moving > 0) {
-                accel = _shipType.forwardAccel;
+                _clientData.accel = _shipType.forwardAccel;
             } else {
-                accel = 0;
+                _clientData.accel = 0;
             }
 
             if (hasPowerup(Powerup.SPEED)) {
-                accel *= SPEED_BOOST_FACTOR;
+                _clientData.accel *= SPEED_BOOST_FACTOR;
             }
+
+            _primaryShotPower = Math.min(1.0,
+                _primaryShotPower + time / (1000 * _shipType.primaryPowerRecharge));
+            _secondaryShotPower = Math.min(1.0,
+                _secondaryShotPower + time / (1000 * _shipType.secondaryPowerRecharge));
         }
 
         super.update(time);
 
         // handle SPEED powerup
-        if (_isOwnShip && accel != 0 && hasPowerup(Powerup.SPEED)) {
-            engineBonusPower -= time / 30000;
+        if (_isOwnShip && _clientData.accel != 0 && hasPowerup(Powerup.SPEED)) {
+            _engineBonusPower -= time / 30000;
             if (engineBonusPower <= 0) {
                 removePowerup(Powerup.SPEED);
-                accel = Math.min(accel, _shipType.forwardAccel);
-                accel = Math.max(accel, _shipType.backwardAccel);
+                _clientData.accel = Math.min(_clientData.accel, _shipType.forwardAccel);
+                _clientData.accel = Math.max(_clientData.accel, _shipType.backwardAccel);
             }
         }
 
@@ -150,21 +156,21 @@ public class ClientShip extends Ship
     {
         _shipType.sendPrimaryShotMessage(this);
         if (hasPowerup(Powerup.SPREAD)) {
-            weaponBonusPower -= 0.03;
-            if (weaponBonusPower <= 0.0) {
+            _weaponBonusPower -= 0.03;
+            if (_weaponBonusPower <= 0.0) {
                 removePowerup(Powerup.SPREAD);
             }
         }
 
         _ticksToFire = _shipType.primaryShotRecharge * 1000;
-        primaryShotPower -= _shipType.getPrimaryShotCost(this);
+        _primaryShotPower -= _shipType.getPrimaryShotCost(this);
     }
 
     protected function handleSecondaryFire () :void
     {
         if (_shipType.sendSecondaryShotMessage(this)) {
             _ticksToSecondary = _shipType.secondaryShotRecharge * 1000;
-            secondaryShotPower -= _shipType.secondaryShotCost;
+            _secondaryShotPower -= _shipType.secondaryShotCost;
         }
     }
 
@@ -181,7 +187,7 @@ public class ClientShip extends Ship
             AppContext.game.awardTrophy(_shipType.name + "_pilot");
         }
 
-        // see if we've killed 7 other poeple currently playing
+        // see if we've killed 7 other people currently playing
         var bogey :int = 0;
         for (var id :String in _enemiesKilled) {
             if (AppContext.game.getShip(int(_enemiesKilled[id])) != null) {
@@ -226,13 +232,13 @@ public class ClientShip extends Ship
             AppContext.msgs.sendMessage(EnableShieldMessage.create(this, 1));
 
         } else {
-            _powerups |= (1 << powerup.type);
+            _clientData.powerups |= (1 << powerup.type);
             switch (powerup.type) {
             case Powerup.SPEED:
-                engineBonusPower = 1.0;
+                _engineBonusPower = 1.0;
                 break;
             case Powerup.SPREAD:
-                weaponBonusPower = 1.0;
+                _weaponBonusPower = 1.0;
                 break;
             }
         }
@@ -240,7 +246,7 @@ public class ClientShip extends Ship
 
     public function removePowerup (type :int) :void
     {
-        _powerups &= ~(1 << type);
+        _clientData.powerups &= ~(1 << type);
     }
 
     /**
@@ -269,11 +275,11 @@ public class ClientShip extends Ship
             checkAwards();
 
             // Stop moving and firing.
-            xVel = 0;
-            yVel = 0;
-            turnRate = 0;
-            turnAccelRate = 0;
-            accel = 0;
+            _clientData.xVel = 0;
+            _clientData.yVel = 0;
+            _clientData.turnRate = 0;
+            _clientData.turnAccelRate = 0;
+            _clientData.accel = 0;
             firing = false;
             secondaryFiring = false;
             turning = NO_TURN;
@@ -281,6 +287,31 @@ public class ClientShip extends Ship
             _deaths++;
         }
     }
+
+    public function get engineBonusPower () :Number
+    {
+        return _engineBonusPower;
+    }
+
+    public function get weaponBonusPower () :Number
+    {
+        return _weaponBonusPower;
+    }
+
+    public function get primaryShotPower () :Number
+    {
+        return _primaryShotPower;
+    }
+
+    public function get secondaryShotPower () :Number
+    {
+        return _secondaryShotPower;
+    }
+
+    protected var _engineBonusPower :Number = 0;
+    protected var _weaponBonusPower :Number = 0;
+    protected var _primaryShotPower :Number = 1;
+    protected var _secondaryShotPower :Number = 0;
 
     protected var _shipView :ShipView;
     protected var _ticksToFire :int = 0;

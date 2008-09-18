@@ -60,9 +60,10 @@ public class ClientGameController extends GameController
         }
     }
 
-    override public function createShip (shipId :int, playerName :String) :Ship
+    override public function createShip (shipId :int, playerName :String,
+        clientData :ClientShipData = null) :Ship
     {
-        return new ClientShip(shipId, playerName);
+        return new ClientShip(shipId, playerName, clientData, false);
     }
 
     /**
@@ -73,14 +74,14 @@ public class ClientGameController extends GameController
         var myName :String = _gameCtrl.game.getOccupantName(ClientContext.myId);
 
         // Create our local ship and center the board on it.
-        _ownShip = new ClientShip(ClientContext.myId, myName, true);
+        _ownShip = new ClientShip(ClientContext.myId, myName, null, true);
         _ownShip.setShipType(typeIdx);
         _ownShip.restart();
 
         addShip(ClientContext.myId, _ownShip);
 
         // Add ourselves to the ship array.
-        setImmediate(shipKey(ClientContext.myId), _ownShip.toBytes());
+        setImmediate(shipKey(ClientContext.myId), _ownShip.clientData.toBytes());
 
         // Also init our server data
         setImmediate(shipDataKey(ClientContext.myId), _ownShip.serverData.toBytes());
@@ -205,7 +206,7 @@ public class ClientGameController extends GameController
         _shipUpdateTime += time;
         if (_ownShip != null && _shipUpdateTime >= Constants.SHIP_UPDATE_INTERVAL_MS) {
             _shipUpdateTime = 0;
-            setImmediate(shipKey(ClientContext.myId), _ownShip.toBytes());
+            setImmediate(shipKey(ClientContext.myId), _ownShip.clientData.toBytes());
         }
 
         // update our round display
@@ -361,16 +362,18 @@ public class ClientGameController extends GameController
             if (getShip(occupants[ii]) == null) {
                 var shipBytes :ByteArray = ByteArray(_gameCtrl.net.get(shipKey(occupants[ii])));
                 if (shipBytes != null) {
-                    var ship :ClientShip = ClientShip(createShip(occupants[ii],
-                        _gameCtrl.game.getOccupantName(occupants[ii])));
                     shipBytes.position = 0;
-                    ship.fromBytes(shipBytes);
+                    var ship :ClientShip = ClientShip(createShip(
+                        occupants[ii],
+                        _gameCtrl.game.getOccupantName(occupants[ii]),
+                        ClientShipData.fromBytes(shipBytes)));
 
                     var shipServerBytes :ByteArray =
                         ByteArray(_gameCtrl.net.get(shipDataKey(occupants[ii])));
                     if (shipServerBytes != null) {
                         ship.serverData = ServerShipData.fromBytes(shipServerBytes);
                     }
+
                     addShip(occupants[ii], ship);
                 }
             }

@@ -104,7 +104,7 @@ public class StatusOverlay extends Sprite
     /**
      * Shows the powerups held by the ship.
      */
-    public function updateShipDisplay (ship :Ship) :void
+    public function updateShipDisplay (ship :ClientShip) :void
     {
         var mask :Shape;
 

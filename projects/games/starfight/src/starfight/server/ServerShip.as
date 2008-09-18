@@ -1,13 +1,12 @@
 package starfight.server {
 
 import starfight.*;
-import starfight.net.ShipExplodedMessage;
 
 public class ServerShip extends Ship
 {
-    public function ServerShip (shipId :int, playerName :String)
+    public function ServerShip (shipId :int, playerName :String, clientData :ClientShipData = null)
     {
-        super(shipId, playerName);
+        super(shipId, playerName, clientData);
     }
 
     /**
