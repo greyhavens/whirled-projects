@@ -51,11 +51,6 @@ public class Ship
         _clientData.state = STATE_DEFAULT;
     }
 
-    public function getFriction () :Number
-    {
-        return _shipType.friction;
-    }
-
     /**
      * Process the movement of the ship for this timestep.
      */
@@ -264,8 +259,8 @@ public class Ship
      */
     public function updateForReport (report :ClientShipData) :void
     {
-        // if the ship is dead, and it receives an update that changes its _clientData.state to alive
-        // without incrementing _numLives, it means the ship has been exploded by the server,
+        // if the ship is dead, and it receives an update that changes its state to alive
+        // without incrementing numLives, it means the ship has been exploded by the server,
         // but the client in charge of it has not yet gotten that message and is sending old data
         // that should be ignored
         if (_clientData.state == STATE_DEAD && report.state != STATE_DEAD &&
@@ -279,7 +274,7 @@ public class Ship
             return;
         }
 
-        // Copy certain _clientData.state from the report ship to the local ship. Other _clientData.state
+        // Copy certain data from the report ship to the local ship. Other data
         // (position, _clientData.rotation) will be interpolated into local ship over time.
         _clientData.accel = report.accel;
         _clientData.xVel = report.xVel;
@@ -288,7 +283,7 @@ public class Ship
         _clientData.turnAccelRate = report.turnAccelRate;
         _clientData.powerups = report.powerups;
 
-        // if the ship has been re-spawned, copy all _clientData.state over
+        // if the ship has been re-spawned, copy all data over
         if (_clientData.numLives < report.numLives) {
             _clientData.boardX = report.boardX;
             _clientData.boardY = report.boardY;
