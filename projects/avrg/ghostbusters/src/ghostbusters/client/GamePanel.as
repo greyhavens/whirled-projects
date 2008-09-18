@@ -106,11 +106,6 @@ public class GamePanel extends Sprite
         _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
     }
 
-    public function reloadView () :void
-    {
-        hud.reloadView();
-    }
-
     public function getClipClass () :Class
     {
         var id :String = GhostModel.getId();
@@ -199,7 +194,7 @@ public class GamePanel extends Sprite
                 return;
             }
             _debugPanel = new DebugPanel();
-            _debugPanel. = _debugPanel.y = 20;
+            _debugPanel.x = _debugPanel.y = 20;
             this.addChild(_debugPanel);
         }
     }

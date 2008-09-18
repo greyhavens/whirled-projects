@@ -24,7 +24,7 @@ public class Server extends ServerObject
     public static var log :Log = Log.getLog(Server);
     public static var random :Random = new Random();
 
-    public static function get ctrl () :AVRServerGameControl
+    public static function get control () :AVRServerGameControl
     {
         return _ctrl;
     }
@@ -60,7 +60,7 @@ public class Server extends ServerObject
     {
         var room :Room = _rooms[roomId];
         if (room == null) {
-            var ctrl :RoomServerSubControl = ctrl.getRoom(roomId);
+            var ctrl :RoomServerSubControl = _ctrl.getRoom(roomId);
             if (ctrl == null) {
                 throw new Error("Failed to get RoomServerSubControl [roomId=" + roomId + "]");
             }

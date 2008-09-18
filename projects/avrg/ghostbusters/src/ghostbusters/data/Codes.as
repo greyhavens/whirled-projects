@@ -87,6 +87,14 @@ public class Codes
     public static const CMSG_DEBUG_REQUEST :String = "dbg";
 
     /**
+     * A player successfully hovered over the ghost with their lantern (server version).
+     *
+     * Dispatched by the server to the room to notify everybody there that somebody (not
+     * necessarily they) zapped the ghost, and they should illustrate this fact.
+     */
+    public static const SMSG_GHOST_ZAPPED :String = "sgz";
+
+    /**
      * The ghost was attacked by a player.
      *
      * Dispatched by the server to all the AVRG players in a room, and used by the client

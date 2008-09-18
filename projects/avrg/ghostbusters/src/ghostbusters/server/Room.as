@@ -103,8 +103,13 @@ public class Room
 
         // TODO: perhaps check that the same player doesn't zap too repeatedly
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
-            // zap the ghost (reduce its zest)
-            _ghost.zap(who);
+            Server.control.doBatch(function () :void {
+                // let the other people in the room know there was a successful zapping
+                _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
+
+                // then actually zap the ghost (reduce its zest)
+                _ghost.zap(who);
+            });
         }
     }
 

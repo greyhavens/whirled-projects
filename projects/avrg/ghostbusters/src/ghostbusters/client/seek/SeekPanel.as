@@ -24,6 +24,7 @@ import flash.utils.setTimeout;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import com.threerings.flash.FrameSprite;
@@ -74,6 +75,8 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
 
+        Game.control.player.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
         Game.control.room.props.addEventListener(
@@ -85,10 +88,20 @@ public class SeekPanel extends FrameSprite
         super.handleRemoved();
         _lanternLoop.stop();
 
+        Game.control.player.removeEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.removeEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
         Game.control.room.props.removeEventListener(
             ElementChangedEvent.ELEMENT_CHANGED, roomElementChanged);
+    }
+
+    protected function messageReceived (event: MessageReceivedEvent) :void
+    {
+        if (event.name == Codes.SMSG_GHOST_ZAPPED) {
+            _zapping = ZAP_FRAMES;
+            Sound(new Content.LANTERN_GHOST_SCREECH()).play();
+        }
     }
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
@@ -107,9 +120,6 @@ public class SeekPanel extends FrameSprite
         } else if (evt.name == Codes.DICT_GHOST) {
             if (evt.key == Codes.IX_GHOST_POS && _ghost != null) {
                 ghostPositionChanged(evt.newValue as Array);
-
-            } else if (evt.key == Codes.IX_GHOST_CUR_ZEST) {
-                ghostZapped();
             }
         }
     }

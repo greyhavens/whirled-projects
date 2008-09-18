@@ -5,6 +5,7 @@ package ghostbusters.client {
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+import flash.events.Event;
 
 import flash.text.TextField;
 
