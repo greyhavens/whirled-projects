@@ -55,11 +55,14 @@ public class GameController extends OneRoomGameRoom
         if (_sharedState.gameState != SharedState.STATE_PLAYING ||
              roundId != _sharedState.roundId) {
             if (roundId > _sharedState.roundId) {
-                log.info("discarding CallBingoMessage from the future");
+                log.warning("discarding CallBingoMessage from the future");
+            } else if (roundId < _sharedState.roundId - 1) {
+                log.warning("discarding CallBingoMessage from the distant past");
             }
             return;
+
         } else if (!Constants.ALLOW_CHEATS && _numBallsThisRound < 4) {
-            log.info("discarding CallBingoMessage (too few balls called)");
+            log.warning("discarding CallBingoMessage (too few balls called)");
             return;
         }
 
@@ -100,7 +103,7 @@ public class GameController extends OneRoomGameRoom
     protected function callNextBall (...ignored) :void
     {
         _numBallsThisRound++;
-        _sharedState.ballInPlay = _bingoItems.getRandomTag();
+        _sharedState.ballInPlay = _bingoItems.removeRandomTag();
         setNewGameState(_sharedState);
     }
 

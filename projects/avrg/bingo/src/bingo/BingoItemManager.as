@@ -44,6 +44,18 @@ public class BingoItemManager
         return _tags;
     }
 
+    public function removeRandomTag () :String
+    {
+        if (_remainingTags.length == 0) {
+            this.resetRemainingTags();
+        }
+
+        var index :int = _rand.nextInt(_remainingTags.length);
+        var tag :String = _remainingTags[index];
+        _remainingTags.splice(index, 1);
+        return tag;
+    }
+
     public function getRandomTag () :String
     {
         if (_remainingTags.length == 0) {

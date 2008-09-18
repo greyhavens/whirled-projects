@@ -9,9 +9,9 @@ import flash.display.MovieClip;
 import flash.geom.Rectangle;
 import flash.events.MouseEvent;
 
-public class InGameHelpController extends SceneObject
+public class InGameHelpView extends SceneObject
 {
-    public function InGameHelpController ()
+    public function InGameHelpView ()
     {
         _screen = SwfResource.instantiateMovieClip("help", "help_screen");
 

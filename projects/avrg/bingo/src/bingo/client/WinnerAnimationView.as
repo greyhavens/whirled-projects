@@ -15,11 +15,11 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
-public class WinnerAnimationController extends SceneObject
+public class WinnerAnimationView extends SceneObject
 {
     public static const NAME :String = "WinnerAnimationController";
 
-    public function WinnerAnimationController (playerName :String)
+    public function WinnerAnimationView (playerName :String)
     {
         _animationParent = new Sprite();
         _winnerAnim = SwfResource.instantiateMovieClip("board", "bingo_winner_animation");

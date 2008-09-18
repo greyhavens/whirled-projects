@@ -26,7 +26,6 @@ public class BingoMain extends Sprite
         c = GameController;
         c = Server;
         c = ServerBingoItems;
-        log.info("Bingo version " + Constants.VERSION);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);

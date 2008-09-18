@@ -22,8 +22,8 @@ public class GameMode extends AppMode
         this.modeSprite.addChild(_gameUILayer);
         this.modeSprite.addChild(_helpLayer);
 
-        this.addObject(new HUDController(), _gameUILayer);
-        this.addObject(new InGameHelpController(), _helpLayer);
+        this.addObject(new HUDView(), _gameUILayer);
+        this.addObject(new InGameHelpView(), _helpLayer);
 
         this.hideHelpScreen();
 
@@ -53,9 +53,9 @@ public class GameMode extends AppMode
         // @TODO - SimObjects should have "destructor" methods that always get
         // called when modes shutdown
 
-        this.destroyObjectNamed(BingoCardController.NAME);
-        this.destroyObjectNamed(WinnerAnimationController.NAME);
-        this.destroyObjectNamed(HUDController.NAME);
+        this.destroyObjectNamed(BingoCardView.NAME);
+        this.destroyObjectNamed(WinnerAnimationView.NAME);
+        this.destroyObjectNamed(HUDView.NAME);
     }
 
     protected function handleGameStateChange (...ignored) :void
@@ -74,11 +74,11 @@ public class GameMode extends AppMode
     protected function handleNewRound () :void
     {
         // destroy the winner animation if it exists
-        this.destroyObjectNamed(WinnerAnimationController.NAME);
+        this.destroyObjectNamed(WinnerAnimationView.NAME);
 
         // create a new card
         ClientContext.model.createNewCard();
-        this.addObject(new BingoCardController(ClientContext.model.card), _gameUILayer);
+        this.addObject(new BingoCardView(ClientContext.model.card), _gameUILayer);
 
         this.startNewBallTimer();
     }
@@ -93,7 +93,7 @@ public class GameMode extends AppMode
         this.stopNewBallTimer();
 
         // destroy the bingo card view if it exists
-        this.destroyObjectNamed(BingoCardController.NAME);
+        this.destroyObjectNamed(BingoCardView.NAME);
 
         var winnerId :int = ClientContext.model.curState.roundWinnerId;
         var winnerName :String = ClientContext.getPlayerName(winnerId);
@@ -101,7 +101,7 @@ public class GameMode extends AppMode
         // the WinnerAnimationController will destroy itself when the animation is complete.
         // We check for the presence of the controller in update(), and when it's gone, we
         // start the next round.
-        this.addObject(new WinnerAnimationController(winnerName), _gameUILayer);
+        this.addObject(new WinnerAnimationView(winnerName), _gameUILayer);
     }
 
     protected function handleNewScores (...ignored) :void

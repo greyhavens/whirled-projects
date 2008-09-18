@@ -20,11 +20,11 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-public class HUDController extends SceneObject
+public class HUDView extends SceneObject
 {
     public static const NAME :String = "HUDController";
 
-    public function HUDController ()
+    public function HUDView ()
     {
         _hud = SwfResource.instantiateMovieClip("ui", "HUD");
 
@@ -286,7 +286,7 @@ public class HUDController extends SceneObject
     protected var _bingoBall :MovieClip;
     protected var _ballText :TextField;
 
-    protected static var log :Log = Log.getLog(HUDController);
+    protected static var log :Log = Log.getLog(HUDView);
 
     protected static const NUM_SCOREBOARD_ROWS :int = 7;
     protected static const MAX_BALL_TEXT_WIDTH :Number = 62;

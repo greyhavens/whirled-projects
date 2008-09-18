@@ -15,11 +15,11 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-public class BingoCardController extends SceneObject
+public class BingoCardView extends SceneObject
 {
     public static const NAME :String = "BingoCardController";
 
-    public function BingoCardController (card :BingoCard)
+    public function BingoCardView (card :BingoCard)
     {
         _card = card;
 
