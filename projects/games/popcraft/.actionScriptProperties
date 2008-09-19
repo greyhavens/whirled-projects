@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<actionScriptProperties mainApplicationPath="PopCraft.as" version="3">
+<actionScriptProperties mainApplicationPath="popcraft/PopCraft.as" version="3">
 <compiler additionalCompilerArguments="" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.28" htmlPlayerVersionCheck="true" outputFolderPath="" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
 <compilerSourcePath>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/whirled/src/as"/>
@@ -29,7 +29,7 @@
 <sourceAttachmentPath/>
 </compiler>
 <applications>
-<application path="PopCraft.as"/>
+<application path="popcraft/PopCraft.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>

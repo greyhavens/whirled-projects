@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package popcraft {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
@@ -15,7 +15,6 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import popcraft.*;
 import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.sp.*;
