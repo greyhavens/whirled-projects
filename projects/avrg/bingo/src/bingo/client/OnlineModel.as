@@ -36,7 +36,7 @@ public class OnlineModel extends Model
 
     override public function getPlayerOids () :Array
     {
-        return ClientContext.gameCtrl.game.getPlayerIds();
+        return ClientContext.gameCtrl.room.getPlayerIds();
     }
 
     override public function callBingo () :void
