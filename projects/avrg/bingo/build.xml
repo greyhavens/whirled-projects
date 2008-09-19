@@ -4,9 +4,10 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="BingoMain"/>
   <property name="app.source-dir" value="src"/>
-  <property name="app.package-dir" value="bingo"/>
+  <property name="app.package-dir" value="bingo/client"/>
   <property name="app.enable-server-agent" value="true"/>
-  <property name="app.server-agent" value="server/Server"/>
+  <property name="app.server-agent" value="Server"/>
+  <property name="app.server-agent-package-dir" value="bingo/server"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>

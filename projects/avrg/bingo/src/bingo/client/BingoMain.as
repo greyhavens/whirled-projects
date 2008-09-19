@@ -1,10 +1,7 @@
 //
 // $Id$
 
-package bingo {
-
-import bingo.client.*;
-import bingo.server.*;
+package bingo.client {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -16,6 +13,9 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
+
+import bingo.*;
+import bingo.server.*;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite
