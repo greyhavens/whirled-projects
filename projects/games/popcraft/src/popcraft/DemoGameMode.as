@@ -22,7 +22,10 @@ public class DemoGameMode extends GameMode
 
     override protected function destroy () :void
     {
-        super.destroy();
+        if (_hasSetupGame) {
+            super.destroy();
+        }
+
         _soundChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
     }
 
