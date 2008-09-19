@@ -1,0 +1,49 @@
+Improved slice-map can be used to generate area explored.
+
+Bug 1: the user can't apply the oil to the base of the ladder they just placed.
+Bug
+
+2. Oil Story:
+
+	1. The player enacts the fruit machine story.
+	2. The player goes to another fruit machine.
+	3. The player receives an oil can.
+	4. The player can apply the oil can to a ladder.
+	5. The player can no longer climb the ladder.
+	6. If the player climbs sideways onto the oiled ladder, the player falls to the base of the
+		Ladder.
+
+	[X] Oil-Can Graphic
+	[X] Oil-Can Item Object
+	[X] Oiled Ladder State {ladder state? or different piece altogether}?
+	[X] Falling! 
+	[ ] Oiled Ladder animated cell.
+	[ ] Mutable board.
+
+1. Fruit Machine Story:
+
+	1. The user enters the game.
+	2. There's a fruit machine on the base level
+	3. The fruit machine opens
+	4. The fruit machine supplies a ladder.
+	5. The ladder goes into the inventory.
+	6. The player can deploy the ladder on the board.
+	7. The player can climb the ladder.
+
+	[X] window graphic
+    [X] ladder icon
+    [X] ladder graphics
+    [X] climbing logic
+    [X] Fruit Machine Logic
+    [X] Inventory Logic
+    [X] Object Deployment Logic
+
+Fruit machine story detail: [DONE]
+    
+	The window opens and closes periodically.
+	The player walks up to the window.
+	If the window is closed, then nothing happens.
+	If the window is open, then the fruit machine turns.
+	When the fruit machine finishes turning, the player is given an object.
+	The object appears in the player's inventory as an icon.
+    
