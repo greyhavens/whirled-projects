@@ -9,87 +9,89 @@ public class Resources
     [Embed(source="../../levels/gameVariants.xml", mimeType="application/octet-stream")]
     public static const GAME_VARIANTS_DATA :Class;
 
-    // gfx
-    [Embed(source="../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
+    // gfx - all
+    [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
     public static const SWF_UI :Class;
 
-    [Embed(source="../../rsrc/multiplayer.swf", mimeType="application/octet-stream")]
-    public static const SWF_MULTIPLAYER :Class;
-
-    [Embed(source="../../rsrc/zombie_BG.jpg", mimeType="application/octet-stream")]
-    public static const IMG_ZOMBIEBG :Class;
-
-    [Embed(source="../../rsrc/splash.png", mimeType="application/octet-stream")]
-    public static const IMG_LEVELSELECTOVERLAY :Class;
-
-    [Embed(source="../../rsrc/splash_UI.swf", mimeType="application/octet-stream")]
-    public static const SWF_LEVELSELECTUI :Class;
-
-    [Embed(source="../../rsrc/manual.swf", mimeType="application/octet-stream")]
-    public static const SWF_MANUAL :Class;
-
-    [Embed(source="../../rsrc/backgrounds.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/backgrounds.swf", mimeType="application/octet-stream")]
     public static const SWF_BG :Class;
 
-    [Embed(source="../../rsrc/streetwalker.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/streetwalker.swf", mimeType="application/octet-stream")]
     public static const SWF_GRUNT :Class;
 
-    [Embed(source="../../rsrc/runt.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/runt.swf", mimeType="application/octet-stream")]
     public static const SWF_SAPPER :Class;
 
-    [Embed(source="../../rsrc/handyman.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/handyman.swf", mimeType="application/octet-stream")]
     public static const SWF_HEAVY :Class;
 
-    [Embed(source="../../rsrc/flesh.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/flesh.swf", mimeType="application/octet-stream")]
     public static const SWF_COLOSSUS :Class;
 
-    [Embed(source="../../rsrc/ladyfingers.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/ladyfingers.swf", mimeType="application/octet-stream")]
     public static const SWF_COURIER :Class;
 
-    [Embed(source="../../rsrc/weardd.swf", mimeType="application/octet-stream")]
-    public static const SWF_BOSS :Class;
-
-    [Embed(source="../../rsrc/handy_attack.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/handy_attack.swf", mimeType="application/octet-stream")]
     public static const SWF_MISSILE :Class;
 
-    [Embed(source="../../rsrc/splatter.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/splatter.swf", mimeType="application/octet-stream")]
     public static const SWF_SPLATTER :Class;
 
-    [Embed(source="../../rsrc/pieces.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/pieces.swf", mimeType="application/octet-stream")]
     public static const SWF_PIECES :Class;
 
-    [Embed(source="../../rsrc/dashboard.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/dashboard.swf", mimeType="application/octet-stream")]
     public static const SWF_DASHBOARD :Class;
 
-    [Embed(source="../../rsrc/infusions.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/infusions.swf", mimeType="application/octet-stream")]
     public static const SWF_INFUSIONS :Class;
 
-    [Embed(source="../../rsrc/workshop.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/workshop.swf", mimeType="application/octet-stream")]
     public static const SWF_WORKSHOP :Class;
 
-    [Embed(source="../../rsrc/prologue.swf", mimeType="application/octet-stream")]
+    // gfx - singleplayer
+    [Embed(source="../../rsrc/sp/splash.png", mimeType="application/octet-stream")]
+    public static const IMG_LEVELSELECTOVERLAY :Class;
+
+    [Embed(source="../../rsrc/sp/splash_UI.swf", mimeType="application/octet-stream")]
+    public static const SWF_LEVELSELECTUI :Class;
+
+    [Embed(source="../../rsrc/sp/manual.swf", mimeType="application/octet-stream")]
+    public static const SWF_MANUAL :Class;
+
+    [Embed(source="../../rsrc/sp/weardd.swf", mimeType="application/octet-stream")]
+    public static const SWF_BOSS :Class;
+
+    [Embed(source="../../rsrc/sp/prologue.swf", mimeType="application/octet-stream")]
     public static const SWF_PROLOGUE :Class;
 
-    [Embed(source="../../rsrc/epilogue.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/epilogue.swf", mimeType="application/octet-stream")]
     public static const SWF_EPILOGUE :Class;
 
-    [Embed(source="../../rsrc/iris.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/iris.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITIRIS :Class;
 
-    [Embed(source="../../rsrc/ivy.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/ivy.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITIVY :Class;
 
-    [Embed(source="../../rsrc/jack.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/jack.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITJACK :Class;
 
-    [Embed(source="../../rsrc/pigsley.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/pigsley.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITPIGSLEY :Class;
 
-    [Embed(source="../../rsrc/ralph.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/ralph.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITRALPH :Class;
 
-    [Embed(source="../../rsrc/weardd.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/sp/weardd.png", mimeType="application/octet-stream")]
     public static const IMG_PORTRAITWEARDD :Class;
+
+    // gfx - multiplayer
+    [Embed(source="../../rsrc/mp/multiplayer.swf", mimeType="application/octet-stream")]
+    public static const SWF_MULTIPLAYER :Class;
+
+    [Embed(source="../../rsrc/mp/zombie_BG.jpg", mimeType="application/octet-stream")]
+    public static const IMG_ZOMBIEBG :Class;
 
     // audio
     [Embed(source="../../rsrc/audio/popcraft_music_night.mp3")]
