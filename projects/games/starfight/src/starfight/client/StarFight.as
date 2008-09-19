@@ -1,8 +1,7 @@
-package starfight {
+package starfight.client {
 
 import flash.display.Sprite;
 
-import starfight.client.ClientAppController;
 import starfight.server.*;
 
 /**
