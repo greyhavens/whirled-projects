@@ -348,7 +348,7 @@ public class Display extends Sprite
     /** Called when the user clicks the Ready button. */
     protected function handleReady (... etc) :void
     {
-        _gameCtrl.net.sendMessageToAgent(Server.READY, _gameCtrl.game.getMyId());
+        _gameCtrl.net.agent.sendMessage(Server.READY, _gameCtrl.game.getMyId());
         _readyButton.visible = false;
     }
 

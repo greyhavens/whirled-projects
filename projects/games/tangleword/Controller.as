@@ -63,7 +63,7 @@ public class Controller
 
         _model.validate(word);
 
-        _gameCtrl.net.sendMessageToAgent(Server.SUBMIT, word);
+        _gameCtrl.net.agent.sendMessage(Server.SUBMIT, word);
     }
 
     // PRIVATE METHODS
