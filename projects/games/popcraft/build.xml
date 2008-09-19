@@ -2,9 +2,9 @@
 <project name="popcraft" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name" value="popcraft/PopCraft"/>
+  <property name="app.name" value="PopCraft"/>
   <property name="app.source-dir" value="src"/>
-  <property name="app.package-dir" value=""/>
+  <property name="app.package-dir" value="popcraft"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
