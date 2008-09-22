@@ -9,4 +9,14 @@
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
+  <target name="copypacks">
+    <copy todir="${build.root}/dist/levelpacks/music" overwrite="true">
+      <fileset dir="rsrc/audio/music">
+        <include name="**/*.mp3"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="testpacks" depends="compile, copypacks, test"/>
+
 </project>

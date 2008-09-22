@@ -1,8 +1,8 @@
 <!-- a config file used when doing standalone testing -->
 <game>
-  <params>
-    <range ident="min_word_len" minimum="3" maximum="6" start="4"/>
-    <range ident="pp_round" minimum="10" maximum="30" start="5"/>
-    <range ident="round_wins" minimum="1" maximum="5" start="3"/>
-  </params>
+  <params/>
+  <packs>
+    <level ident="mus_night" name="mus_night" mediaURL="http://127.0.0.1:8080/levelpacks/music/popcraft_music_night.mp3"/>
+    <level ident="mus_day" name="mus_day" mediaURL="http://127.0.0.1:8080/levelpacks/music/popcraft_music_day.mp3"/>
+  </packs>
 </game>

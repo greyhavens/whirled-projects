@@ -28,7 +28,7 @@ public class EpilogueMode extends TransitionMode
     override protected function setup () :void
     {
         // play some music
-        _musicChannel = AudioManager.instance.playSoundNamed("mus_night", null, -1);
+        _musicChannel = AudioManager.instance.playSound(Resources.getMusic("mus_night"), null, -1);
 
         var movie :MovieClip = SwfResource.getSwfDisplayRoot("epilogue") as MovieClip;
         movie.gotoAndPlay(0);

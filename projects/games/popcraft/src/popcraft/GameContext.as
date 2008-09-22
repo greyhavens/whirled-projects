@@ -108,7 +108,7 @@ public class GameContext
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
-        return (playAudio ? AudioManager.instance.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER) : new AudioChannel());
+        return (playAudio ? AudioManager.instance.playSound(Resources.getMusic(musicName), musicControls, AudioManager.LOOP_FOREVER) : new AudioChannel());
     }
 }
 

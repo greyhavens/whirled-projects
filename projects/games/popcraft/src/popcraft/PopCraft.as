@@ -3,6 +3,7 @@
 
 package popcraft {
 
+import com.whirled.contrib.LevelPacks;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
@@ -83,6 +84,9 @@ public class PopCraft extends Sprite
 
             // and don't show the "rematch" button - we have a UI for it in-game
             AppContext.gameCtrl.local.setShowReplay(false);
+
+            // get level packs
+            LevelPacks.init(AppContext.gameCtrl.game.getLevelPacks());
         }
 
         // LoadingMode will pop itself from the stack when loading is complete

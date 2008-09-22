@@ -619,7 +619,8 @@ public class GameMode extends TransitionMode
                 _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
             }
 
-            _musicChannel = GameContext.playGameMusic(DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
+            _musicChannel = GameContext.playGameMusic(
+                DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
 
             _lastDayPhase = dayPhase;
             _startedMusic = true;
