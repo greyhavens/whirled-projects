@@ -261,8 +261,8 @@ public class Player
 
     protected function calculateMaxHealth () :int
     {
-        // a level 1 player has 100 health
-        return 100 * Formulae.quadRamp(_level);
+        // a level 1 player has 50 health
+        return 50 * Formulae.quadRamp(_level);
     }
 
     protected var _ctrl :PlayerServerSubControl;

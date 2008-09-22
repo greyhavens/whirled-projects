@@ -10,6 +10,8 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
+import com.threerings.util.Log;
+
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.client.seek.SeekPanel;
 import ghostbusters.client.util.GhostModel;
@@ -95,7 +97,7 @@ public class GamePanel extends Sprite
     public function frameContent (content :DisplayObject) :void
     {
         if (_frame == null) {
-            Game.log.warning("Can't frame content; frame clip not yet loaded.");
+            _log.warning("Can't frame content; frame clip not yet loaded.");
             return;
         }
         _frame.frameContent(content);
@@ -114,7 +116,7 @@ public class GamePanel extends Sprite
             if (clip != null) {
                 return clip;
             }
-            Game.log.debug("Erk, cannot find clip for id=" + id);
+            _log.debug("Erk, cannot find clip for id=" + id);
         }
         return null;
     }
@@ -134,7 +136,7 @@ public class GamePanel extends Sprite
     protected function taskCompleted (evt :AVRGamePlayerEvent) :void
     {
         if (evt.name != Codes.TASK_GHOST_DEFEATED) {
-            Game.log.warning("Unknown task completed: " + evt.name);
+            _log.warning("Unknown task completed: " + evt.name);
             return;
         }
 
@@ -148,7 +150,7 @@ public class GamePanel extends Sprite
         var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
         if (health > 0) {
             if (_revive != null) {
-                Game.log.debug("Popping DOWN the revive widget!");
+                _log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
             }
@@ -156,7 +158,7 @@ public class GamePanel extends Sprite
         }
 
         if (_revive == null) {
-            Game.log.debug("Popping UP the revive widget!");
+            _log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
         }
@@ -165,7 +167,7 @@ public class GamePanel extends Sprite
     protected function popup (clip :DisplayObject) :void
     {
         if (clip.parent != null) {
-            Game.log.warning("Popup candidate already has a parent [popup=" + clip +
+            _log.warning("Popup candidate already has a parent [popup=" + clip +
                              ", parent=" + clip.parent + "]");
             return;
         }
@@ -179,7 +181,7 @@ public class GamePanel extends Sprite
     protected function popdown (clip :DisplayObject) :void
     {
         if (clip.parent != this) {
-            Game.log.warning("We're not displaying popdown candidate [clip=" + clip + "]");
+            _log.warning("We're not displaying popdown candidate [clip=" + clip + "]");
             return;
         }
         this.removeChild(clip);
@@ -219,7 +221,7 @@ public class GamePanel extends Sprite
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
-        _seeking = false;
+        _seeking = true;
         newGhost();
     }
 
@@ -274,5 +276,7 @@ public class GamePanel extends Sprite
     };
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;
+
+    protected static const _log :Log = Log.getLog(GamePanel);
 }
 }

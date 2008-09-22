@@ -29,6 +29,7 @@ import com.threerings.flash.FrameSprite;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 
 import com.whirled.avrg.AVRGameAvatar;
@@ -76,7 +77,7 @@ public class FightPanel extends FrameSprite
 
         var clipClass :Class = Game.panel.getClipClass();
         if (clipClass == null) {
-            Game.log.debug("Urk, failed to find a ghost clip class");
+            _log.debug("Urk, failed to find a ghost clip class");
             return;
         }
         var handler :ClipHandler;
@@ -84,6 +85,7 @@ public class FightPanel extends FrameSprite
             var gameContext :MicrogameContext = new MicrogameContext();
             gameContext.ghostMovie = handler.clip;
             _player = new MicrogamePlayer(gameContext);
+            weaponUpdated();
         });
     }
 
@@ -97,14 +99,14 @@ public class FightPanel extends FrameSprite
     public function weaponUpdated () :void
     {
         if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            Game.log.debug("Weapon unchanged...");
+            _log.debug("Weapon unchanged...");
             return;
         }
         if (_player.currentGame != null) {
-            Game.log.debug("Cancelling current game...");
+            _log.debug("Cancelling current game...");
             _player.cancelCurrentGame();
         }
-        Game.log.debug("Starting new minigame.");
+        _log.debug("Starting new minigame.");
         startMinigame();
     }
 
@@ -112,7 +114,7 @@ public class FightPanel extends FrameSprite
     {
         if (_player == null) {
             // this is either a miracle of timing, or an irrecoverable error condition
-            Game.log.warning("No minigame container in toggleGame()");
+            _log.warning("No minigame container in toggleGame()");
             return;
         }
 
@@ -147,7 +149,7 @@ public class FightPanel extends FrameSprite
             _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
             break;
         default:
-            Game.log.warning("Eek, unknown weapon: " + _selectedWeapon);
+            _log.warning("Eek, unknown weapon: " + _selectedWeapon);
             return;
         }
 
@@ -212,7 +214,7 @@ public class FightPanel extends FrameSprite
 
             var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
             if (info == null) {
-                Game.log.warning("Can't get avatar info [player=" + playerId + "]");
+                _log.warning("Can't get avatar info [player=" + playerId + "]");
                 continue;
             }
             var topLeft :Point = this.globalToLocal(info.stageBounds.topLeft);
@@ -305,5 +307,7 @@ public class FightPanel extends FrameSprite
     protected var _selectedWeapon :int;
 
     protected var _gameContext :MicrogameContext;
+
+    protected static const _log :Log = Log.getLog(FightPanel);
 }
 }

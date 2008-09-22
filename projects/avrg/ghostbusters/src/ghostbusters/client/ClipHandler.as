@@ -14,6 +14,7 @@ import flash.utils.getTimer;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.FrameSprite;
+import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
 /**
@@ -45,7 +46,7 @@ public class ClipHandler extends FrameSprite
 
         for (var ii :int = 0; ii < _clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-            Game.log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
+            _log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
                            ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
         }
@@ -83,7 +84,7 @@ public class ClipHandler extends FrameSprite
             _callback = done;
             _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
             if (_scene.name) {  
-                Game.log.debug("Playing [scene=" + _scene.name + ", frames=" + _scene.numFrames +
+                _log.debug("Playing [scene=" + _scene.name + ", frames=" + _scene.numFrames +
                                ", labels=" + _scene.labels + "]");
                 _clip.gotoAndPlay(1, _scene.name);
             } else {
@@ -129,5 +130,7 @@ public class ClipHandler extends FrameSprite
     protected var _scene :Scene;
     protected var _callback :Function;
     protected var _lastFrame :int;
+
+    protected static const _log :Log = Log.getLog(ClipHandler);
 }
 }

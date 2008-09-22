@@ -30,6 +30,7 @@ import com.whirled.net.PropertyChangedEvent;
 import com.threerings.flash.FrameSprite;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import ghostbusters.client.*;
@@ -98,7 +99,6 @@ public class SeekPanel extends FrameSprite
 
     protected function messageReceived (evt: MessageReceivedEvent) :void
     {
-        Game.log.debug("messageReceived: " + evt);
         if (evt.name == Codes.SMSG_GHOST_ZAPPED) {
             _zapping = ZAP_FRAMES;
             Sound(new Content.LANTERN_GHOST_SCREECH()).play();
@@ -107,7 +107,6 @@ public class SeekPanel extends FrameSprite
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void
     {
-        Game.log.debug("roomElementChanged: " + evt);
         if (evt.name == Codes.DICT_LANTERNS) {
             if (_lanterns != null) {
                 if (evt.newValue == null) {
@@ -128,7 +127,6 @@ public class SeekPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
-        Game.log.debug("roomPropertyChanged: " + evt);
         // if there's no ghost or it's busy appearing, nothing here to do
         if (_ghost == null || _lanterns == null) {
             return;
@@ -162,12 +160,6 @@ public class SeekPanel extends FrameSprite
         }
     }
 
-    protected function ghostZapped () :void
-    {
-        _zapping = ZAP_FRAMES;
-        Sound(new Content.LANTERN_GHOST_SCREECH()).play();
-    }
-
     protected function ghostPositionChanged (bits :Array) :void
     {
         // the server sends every client a new (x, y) for the ghost that's in the
@@ -189,9 +181,13 @@ public class SeekPanel extends FrameSprite
 
         // convert to actual local coordinates and go whee
         var pos :Point = Game.control.local.roomToStage(new Point(x, y));
-        if (pos != null) {
-            _ghost.newTarget(this.globalToLocal(pos));
+        if (pos == null) {
+            _log.debug(
+                "Failed to convert ghost target to local coordinates [x=" + x + ", y=" + y + "]");
+            return;
         }
+
+        _ghost.newTarget(this.globalToLocal(pos));
     }
 
     protected function lanternUpdateEvent (playerId :int, pos :Array) :void
@@ -336,5 +332,7 @@ public class SeekPanel extends FrameSprite
 
     protected static const FRAMES_PER_UPDATE :int = 6;
     protected static const ZAP_FRAMES :int = 30;
+
+    protected static const _log :Log = Log.getLog(SeekPanel);
 }
 }

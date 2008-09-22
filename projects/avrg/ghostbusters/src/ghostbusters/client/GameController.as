@@ -6,6 +6,7 @@ package ghostbusters.client {
 import flash.display.DisplayObject;
 
 import com.threerings.util.Controller;
+import com.threerings.util.Log;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -69,7 +70,7 @@ public class GameController extends Controller
     {
         if (PlayerModel.isDead(Game.ourPlayerId)) {
             // the button is always disabled if you're dead -- revive first!
-            Game.log.debug("You can't toggle the lantern, you're dead!");
+            _log.debug("You can't toggle the lantern, you're dead!");
             return;
         }
 
@@ -91,7 +92,7 @@ public class GameController extends Controller
             // no effect: you have to watch this bit
 
        } else {
-            Game.log.debug("Unexpected state in toggleLantern: " + state);
+            _log.debug("Unexpected state in toggleLantern: " + state);
         }
     }
 
@@ -103,7 +104,7 @@ public class GameController extends Controller
 
         if (!(panel.subPanel is FightPanel)) {
             // should not happen, but let's be robust
-            Game.log.debug("Eek, subpanel is not FightPanel");
+            _log.debug("Eek, subpanel is not FightPanel");
             return;
         }
         FightPanel(panel.subPanel).weaponUpdated();
@@ -134,5 +135,7 @@ public class GameController extends Controller
             Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
         }
     }
+
+    protected static const _log :Log = Log.getLog(GameController);
 }
 }

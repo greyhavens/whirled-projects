@@ -12,7 +12,7 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.Log;
 
 import ghostbusters.client.ClipHandler;
 import ghostbusters.client.Content;
@@ -80,28 +80,28 @@ public class Ghost extends Sprite
 
     public function damaged () :void
     {
-        Game.log.debug("Ghost damaged [_next=" + _next + "]");
+        _log.debug("Ghost damaged [_next=" + _next + "]");
         _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
     }
 
     public function attack () :void
     {
-        Game.log.debug("Ghost attacking [_next=" + _next + "]");
+        _log.debug("Ghost attacking [_next=" + _next + "]");
         _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
     }
 
     public function die (callback :Function = null) :void
     {
-        Game.log.debug("Ghost dying [_next=" + _next + "]");
+        _log.debug("Ghost dying [_next=" + _next + "]");
         _callback = callback;
         _next = ST_DIE;
     }
 
     public function triumph (callback :Function = null) :void
     {
-        Game.log.debug("Ghost triumphant [_next=" + _next + "]");
+        _log.debug("Ghost triumphant [_next=" + _next + "]");
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
     }
 
@@ -119,7 +119,7 @@ public class Ghost extends Sprite
         // refigure the bounds
         _bounds = ghost.getBounds(this);
 
-        Game.log.debug("Ghost finished loading [bounds=" + _bounds + "]");
+        _log.debug("Ghost finished loading [bounds=" + _bounds + "]");
 
         if (_readyCallback != null) {
             _readyCallback(this);
@@ -143,7 +143,7 @@ public class Ghost extends Sprite
             handler.gotoScene(GamePanel.ST_GHOST_DEFEAT, _callback);
 
         } else {
-            Game.log.debug("unknown state: " + _next);
+            _log.debug("unknown state: " + _next);
             handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
         }
     }
@@ -158,5 +158,7 @@ public class Ghost extends Sprite
     protected static const ST_REEL :int = 1;
     protected static const ST_ATTACK :int = 2;
     protected static const ST_DIE :int = 3;
+
+    protected static const _log :Log = Log.getLog(Ghost);
 }
 }

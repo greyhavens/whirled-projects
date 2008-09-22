@@ -29,8 +29,6 @@ public class Game extends Sprite
     public static const DEBUG :Boolean = false;
     public static const FRAMES_PER_REPORT :int = 300;
 
-    public static var log :Log = Log.getLog(Game);
-
     public static var control :AVRGameControl;
 
     public static var panel :GamePanel;
@@ -53,6 +51,7 @@ public class Game extends Sprite
         if (!ctrl.isConnected()) {
             return;
         }
+
 
         ourPlayerId = control.player.getPlayerId();
 
@@ -91,12 +90,12 @@ public class Game extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
-        log.info("Removed from stage - Unloading...");
+        _log.info("Removed from stage - Unloading...");
     }
 
     protected function handleAdded (event :Event) :void
     {
-        log.info("Added to stage: Initializing...");
+        _log.info("Added to stage: Initializing...");
         newSize();
         newRoom();
 //        gameController.panel.showSplash();
@@ -109,28 +108,28 @@ public class Game extends Sprite
         var newSize :Rectangle = control.local.getStageSize();
         if (newSize != null) {
             stageSize = newSize;
-            log.debug("Setting stage size: " + stageSize);
+            _log.debug("Setting stage size: " + stageSize);
             resized = true;
 
         } else if (stageSize != null) {
-            log.warning("Eek - null stage size -- keeping old data.");
+            _log.warning("Eek - null stage size -- keeping old data.");
 
         } else {
-            log.warning("Eek - null stage size -- hard coding at 700x500");
+            _log.warning("Eek - null stage size -- hard coding at 700x500");
             stageSize = new Rectangle(0, 0, 700, 500);
         }
 
         newSize = control.local.getStageSize(false);
         if (newSize != null) {
             scrollSize = newSize;
-            log.debug("Setting scroll size: " + scrollSize);
+            _log.debug("Setting scroll size: " + scrollSize);
             resized = true;
 
         } else if (scrollSize != null) {
-            log.warning("Eek - null scroll size -- keeping old data.");
+            _log.warning("Eek - null scroll size -- keeping old data.");
 
         } else {
-            log.warning("Eek - null scroll size -- hard coding at 700x500");
+            _log.warning("Eek - null scroll size -- hard coding at 700x500");
             scrollSize = new Rectangle(0, 0, 700, 500);
         }
     }
@@ -142,15 +141,17 @@ public class Game extends Sprite
         var newBounds :Rectangle = control.room.getRoomBounds();
         if (newBounds != null) {
             roomBounds = newBounds;
-            log.debug("Setting room bounds: " + roomBounds);
+            _log.debug("Setting room bounds: " + roomBounds);
 
         } else if (roomBounds != null) {
-            log.warning("Eek - null room bounds -- keeping old data.");
+            _log.warning("Eek - null room bounds -- keeping old data.");
 
         } else {
-            log.warning("Eek - null room bounds -- hard coding at 700x500");
+            _log.warning("Eek - null room bounds -- hard coding at 700x500");
             roomBounds = new Rectangle(0, 0, 700, 500);
         }
     }
+
+    protected static const _log :Log = Log.getLog(Game);
 }
 }

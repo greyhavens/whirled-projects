@@ -23,13 +23,13 @@ public class Ghost
         data[Codes.IX_GHOST_NAME] = buildName(id);
         data[Codes.IX_GHOST_LEVEL] = level;
 
-        // max zest at level 1 is 100
+        // max zest at level 1 is 50
         data[Codes.IX_GHOST_CUR_ZEST] = data[Codes.IX_GHOST_MAX_ZEST] =
-            100 * Formulae.quadRamp(level);
+            50 * Formulae.quadRamp(level);
 
-        // max health at level 1 is 100
+        // max health at level 1 is 50
         data[Codes.IX_GHOST_CUR_HEALTH] = data[Codes.IX_GHOST_MAX_HEALTH] =
-            100 * Formulae.quadRamp(level);
+            50 * Formulae.quadRamp(level);
 
         return data;
     }
@@ -139,14 +139,14 @@ public class Ghost
 
     public function calculateSingleAttack () :int
     {
-        // a level 1 ghost does 10-12 points of direct dmg to a target
-        return Formulae.rndStretch(10 * Formulae.quadRamp(_level), 1.2);
+        // a level 1 ghost does 5-6 points of direct dmg to a target
+        return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.2);
     }
 
     public function calculateSplashAttack () :int
     {
-        // a level 1 ghost does 5-6 points of splash damage to everyone in a group
-        return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.2);
+        // a level 1 ghost does 2-3 points of splash damage to everyone in a group
+        return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.5);
     }
 
     // TODO: build more interesting names

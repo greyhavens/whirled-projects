@@ -19,6 +19,7 @@ import flash.utils.setTimeout;
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.MathUtil;
 import com.threerings.util.Command;
+import com.threerings.util.Log;
 
 import ghostbusters.client.ClipHandler;
 import ghostbusters.client.GameController;
@@ -69,11 +70,11 @@ public class HUD extends Sprite
     public function getRightEdge () :int
     {
         if (Game.scrollSize == null) {
-            Game.log.debug("getRightEdge: scrollSize == null");
+            _log.debug("getRightEdge: scrollSize == null");
         } else if (Game.stageSize == null) {
-            Game.log.debug("getRightEdge: stageSize == null");
+            _log.debug("getRightEdge: stageSize == null");
         } else if (_visualHud == null) {
-            Game.log.debug("getRightEdge: visualHud == null");
+            _log.debug("getRightEdge: visualHud == null");
         } else {
             // put the HUD to the right of the visible screen, or flush with the stage edge
             return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
@@ -144,14 +145,14 @@ public class HUD extends Sprite
 
             var bar :MovieClip = findSafely(PLAYER_HEALTH_BAR + ii) as MovieClip;
             if (bar == null) {
-                Game.log.warning("Failed to find player health bar #" + ii);
+                _log.warning("Failed to find player health bar #" + ii);
                 continue;
             }
             panel.healthBar = bar;
 
             var plate :TextField = findSafely(PLAYER_NAME_PLATE + ii) as TextField;
             if (plate == null) {
-                Game.log.warning("Failed to find player name plate #" + ii);
+                _log.warning("Failed to find player name plate #" + ii);
                 continue;
             }
             panel.namePlate = plate;
@@ -205,13 +206,13 @@ public class HUD extends Sprite
 
     protected function placeHud () :void
     {
-        Game.log.debug("Looks like HUD's width is: " + _hud.width);
-        Game.log.debug("Looks like Visual HUD's width is: " + _visualHud.width);
+        _log.debug("Looks like HUD's width is: " + _hud.width);
+        _log.debug("Looks like Visual HUD's width is: " + _visualHud.width);
 
         _hud.x = getRightEdge();
         _hud.y = 0;
 
-        Game.log.debug("Placing hud at (" + x + ", 0)...");
+        _log.debug("Placing hud at (" + x + ", 0)...");
     }
 
     protected function findSafely (name :String) :DisplayObject
@@ -331,13 +332,13 @@ public class HUD extends Sprite
         if (us) {
             bar = _myHealthBar;
             bar.gotoAndStop(frame);
-            Game.log.debug("Moved " + bar.name + " to frame #" + frame);
+            _log.debug("Moved " + bar.name + " to frame #" + frame);
             reallyStop(bar);
         }
         var bar :MovieClip = _playerPanels[ix].healthBar;
         bar.visible = true;
         bar.gotoAndStop(frame);
-        Game.log.debug("Moved " + bar.name + " to frame #" + frame);
+        _log.debug("Moved " + bar.name + " to frame #" + frame);
         reallyStop(bar);
     }
 
@@ -398,6 +399,7 @@ public class HUD extends Sprite
     protected static const MARGIN_LEFT :int = 22;
     protected static const BORDER_LEFT :int = 33;
 
+    protected static const _log :Log = Log.getLog(HUD);
 }
 }
 
