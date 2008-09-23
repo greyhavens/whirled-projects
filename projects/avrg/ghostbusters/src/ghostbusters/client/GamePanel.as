@@ -51,6 +51,8 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
+        _seeking = true;
+
         checkForDeath();
     }
 
@@ -211,7 +213,6 @@ public class GamePanel extends Sprite
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-            _seeking = false;
             updateState();
 
         } else if (evt.name == Codes.DICT_GHOST) {
@@ -254,7 +255,7 @@ public class GamePanel extends Sprite
         }
     }
 
-    protected var _seeking :Boolean = false;
+    protected var _seeking :Boolean;
 
     protected var _panel :DisplayObject;
 

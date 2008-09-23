@@ -60,7 +60,7 @@ public class SeekPanel extends FrameSprite
 
         if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
-        } else {
+        } else if (_ghost != null) {
             _ghost.hidden();
         }
     }

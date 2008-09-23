@@ -85,7 +85,7 @@ public class FightPanel extends FrameSprite
             var gameContext :MicrogameContext = new MicrogameContext();
             gameContext.ghostMovie = handler.clip;
             _player = new MicrogamePlayer(gameContext);
-            weaponUpdated();
+            startMinigame();
         });
     }
 
@@ -107,7 +107,6 @@ public class FightPanel extends FrameSprite
             _player.cancelCurrentGame();
         }
         _log.debug("Starting new minigame.");
-        startMinigame();
     }
 
     public function toggleGame () :void

@@ -9,6 +9,8 @@ import flash.utils.getTimer;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
+import com.threerings.util.StringUtil;
+
 import com.whirled.avrg.RoomServerSubControl;
 
 import ghostbusters.data.Codes;
@@ -443,7 +445,7 @@ public class Room
     protected function loadOrSpawnGhost () :void
     {
         var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
-        if (data == null) {
+        if (data == null || data[Codes.IX_GHOST_ID] == null) {
             var roomRandom :Random = new Random(this.roomId);
 
             // the ghost id/model is currently completely random; this will change

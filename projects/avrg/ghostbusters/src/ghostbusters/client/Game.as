@@ -105,7 +105,7 @@ public class Game extends Sprite
     {
         var resized :Boolean = false;
 
-        var newSize :Rectangle = control.local.getStageSize();
+        var newSize :Rectangle = control.local.getPaintableArea();
         if (newSize != null) {
             stageSize = newSize;
             _log.debug("Setting stage size: " + stageSize);
@@ -119,7 +119,7 @@ public class Game extends Sprite
             stageSize = new Rectangle(0, 0, 700, 500);
         }
 
-        newSize = control.local.getStageSize(false);
+        newSize = control.local.getPaintableArea(false);
         if (newSize != null) {
             scrollSize = newSize;
             _log.debug("Setting scroll size: " + scrollSize);
