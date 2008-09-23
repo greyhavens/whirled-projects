@@ -362,8 +362,8 @@ public class Room
     // points that player scored relative to the points scored by the whole team. A solo kill
     // against a ghost the player's own level yields a factor of 0.5. Killing a higher level
     // ghost yields a progressive bonus up to 100% and a lower level ghost shrinks the reward
-    // commensurately. Finally, the payout is reduced by the square root of the size of the
-    // team.
+    // commensurately. Finally the payout is boosted slightly depending on the size of the team,
+    // a tweak we do not motivate here but which is a common component in existing MMO's.
     //
     // The rationale behind the level tweak is not that strong players should get more coins,
     // but rather to compensate for the fact that a strong player can kill weak ghosts at a
@@ -406,6 +406,9 @@ public class Room
             return;
         }
 
+        // compute the parts of the payout factor that are not player dependent
+        var baseFactor :Number = 0.5 * Math.sqrt(playerArr.length / 2) / totPoints;
+
         for (var ii :int = 0; ii < playerArr.length; ii ++) {
             player = playerArr[ii];
 
@@ -413,12 +416,9 @@ public class Room
             var levelDiff :int = Math.max(-6, Math.min(6, _ghost.level - player.level));
             // semi-linearly map this to a factor in [0.35, 1.65]
             var levelFactor :Number = 1 + Math.atan(levelDiff / 4);
-            // center the factor around 0.5 and weigh by contribution
-            var factor :Number =  0.5 * levelFactor * (pointsArr[ii]  / totPoints);
 
-            if (factor > 0) {
-                player.ctrl.completeTask(Codes.TASK_GHOST_DEFEATED, factor);
-            }
+            player.ctrl.completeTask(
+                Codes.TASK_GHOST_DEFEATED, baseFactor * levelFactor * pointsArr[ii]);
         }
     }
 
