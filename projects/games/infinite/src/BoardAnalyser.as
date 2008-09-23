@@ -13,10 +13,7 @@ package
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
 		public function sidewaysPath (origin:Cell, destination:Cell) :Path
-		{
-			const start:BoardCoordinates = origin.position;
-			const finish:BoardCoordinates = destination.position;
-			
+		{			
 			// for now, there is no path between two positions that are not on the same level.
 			if (! origin.sameRowAs(destination)) {				
 				return null;
@@ -44,35 +41,6 @@ package
 			// each cell in the path could be entered and was grippable.
 			// so we return the whole path.
 			return new Path(origin, destination);
-//			
-//			var x:int;
-//			
-//			// is the proposed movement to the left?			
-//			if (start.x < finish.x) {
-//				trace("looking right");
-//				for (x = start.x + 1; x <= finish.x; x++)
-//				{
-//					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbRightTo ) {
-//						return null;
-//					}					
-//				}
-//				return new Path(origin, destination);
-//			}
-//			
-//			if (start.x > finish.x) {
-//				trace("looking left from: "+start.x+" to: "+finish.x);
-//				for (x = start.x - 1; x >= finish.x; x--) {
-//					trace ("checking "+x+", "+start.y);
-//					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo ) {
-//						trace ("cannot move left to: "+x+", "+start.y+" climbLefto="+_board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo);
-//						return null;
-//					}
-//				}
-//				return new Path(origin, destination);
-//			}
-//			
-//			// you can't move to a position that you already occupy			
-//			return null;	
 		}
 		
 		public function hasClimbingPath (origin:Cell, destination:Cell):Boolean
