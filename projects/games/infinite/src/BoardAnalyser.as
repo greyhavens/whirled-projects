@@ -12,14 +12,14 @@ package
 		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function hasSidewaysPath (origin:Cell, destination:Cell) :Boolean
+		public function hasSidewaysPath (origin:Cell, destination:Cell) :Path
 		{
 			const start:BoardCoordinates = origin.position;
 			const finish:BoardCoordinates = destination.position;
 			
 			// for now, there is no path between two positions that are not on the same level.
 			if (start.y != finish.y) {
-				return false;
+				return null;
 			}
 			
 			var x:int;
@@ -30,10 +30,10 @@ package
 				for (x = start.x + 1; x <= finish.x; x++)
 				{
 					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbRightTo ) {
-						return false;
+						return null;
 					}					
 				}
-				return true;
+				return new Path(origin, destination);
 			}
 			
 			if (start.x > finish.x) {
@@ -42,14 +42,14 @@ package
 					trace ("checking "+x+", "+start.y);
 					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo ) {
 						trace ("cannot move left to: "+x+", "+start.y+" climbLefto="+_board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo);
-						return false;
+						return null;
 					}
 				}
-				return true;
+				return new Path(origin, destination);
 			}
 			
 			// you can't move to a position that you already occupy			
-			return false;	
+			return null;	
 		}
 		
 		public function hasClimbingPath (origin:Cell, destination:Cell):Boolean
