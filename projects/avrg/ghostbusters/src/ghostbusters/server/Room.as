@@ -407,7 +407,7 @@ public class Room
         }
 
         // compute the parts of the payout factor that are not player dependent
-        var baseFactor :Number = 0.5 * Math.sqrt(playerArr.length / 2) / totPoints;
+        var baseFactor :Number = 0.5 * Math.sqrt((playerArr.length+1) / 2) / totPoints;
 
         for (var ii :int = 0; ii < playerArr.length; ii ++) {
             player = playerArr[ii];
