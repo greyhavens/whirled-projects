@@ -132,6 +132,25 @@ package
 			return _position.y < 0;
 		}
 		
+		public function sameRowAs (other:Cell) :Boolean
+		{
+			return other.position.y == this.position.y;
+		}
+		
+		public function canEnterBy (d:Vector) :Boolean
+		{
+			if (d.equals(Vector.LEFT)) {
+				return this.climbLeftTo;
+			} else if (d.equals(Vector.RIGHT)) {
+				return this.climbRightTo;
+			} else if (d.equals(Vector.UP)) {
+				return this.climbUpTo;
+			} else if (d.equals(Vector.DOWN)) {
+				return this.climbDownTo;
+			}
+			return false;			
+		}
+		
 		protected var _position:BoardCoordinates;
 		
 		protected var _objective:Objective;

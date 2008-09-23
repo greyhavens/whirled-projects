@@ -6,14 +6,15 @@ package arithmetic
 		{
 			_iterator = new BoardIterator(start, start.distanceTo(finish).normalize());
 			_finish = finish;
+			_done = false;
 		}
 		
 		public function next() :BoardCoordinates
 		{
-			if (_iterator != null) {
+			if (!_done) {
 				const current:BoardCoordinates = _iterator.next();
 				if (current.equals(_finish)) {
-					_iterator = null;
+					_done = true;
 				}
 				return current;
 			}
@@ -22,9 +23,15 @@ package arithmetic
 		
 		public function hasNext() :Boolean
 		{
-			return _iterator != null;
+			return ! _done;
 		}
 
+		public function get delta () :Vector
+		{
+			return _iterator.delta;
+		}
+
+		protected var _done:Boolean;
 		protected var _iterator:BoardIterator;		
 		protected var _finish:BoardCoordinates;
 	}

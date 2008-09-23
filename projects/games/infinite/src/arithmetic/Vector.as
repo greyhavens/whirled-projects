@@ -93,6 +93,11 @@ package arithmetic
 			object.y += dy;
 		}
 		
+		public function equals (other:Vector) :Boolean
+		{
+			return (dx == other.dx && dy == other.dy);
+		}
+		
 		public function toString () :String
 		{
 			return "[dx="+dx+", dy="+dy+"]";

@@ -43,5 +43,10 @@ package
 		 * Return true if the cell is above ground level.
 		 */
 		function isAboveGroundLevel () :Boolean		
+		
+		/**
+		 * Return true if this cell is on the same row as another.
+		 */
+		 function sameRowAs (other:Cell) :Boolean
 	}
 }

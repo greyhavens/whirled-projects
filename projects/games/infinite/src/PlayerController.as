@@ -37,8 +37,10 @@ package
 						
 			// if the board tells us there is a clear path between here and the destination
 			// we move sideways
-			if (_analyser.hasSidewaysPath(_player.cell, event.cell)) {
-				_player.moveSideways(event.cell);
+			var path:Path = _analyser.sidewaysPath(_player.cell, event.cell);
+			if (path!= null)
+			{
+				_player.moveSideways(path.finish);
 				return;
 			}
 			

@@ -12,44 +12,67 @@ package
 		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function hasSidewaysPath (origin:Cell, destination:Cell) :Path
+		public function sidewaysPath (origin:Cell, destination:Cell) :Path
 		{
 			const start:BoardCoordinates = origin.position;
 			const finish:BoardCoordinates = destination.position;
 			
 			// for now, there is no path between two positions that are not on the same level.
-			if (start.y != finish.y) {
+			if (! origin.sameRowAs(destination)) {				
 				return null;
 			}
-			
-			var x:int;
-			
-			// is the proposed movement to the left?			
-			if (start.x < finish.x) {
-				trace("looking right");
-				for (x = start.x + 1; x <= finish.x; x++)
-				{
-					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbRightTo ) {
-						return null;
-					}					
+
+			trace ("analysing sideways path from "+origin+" to "+destination);
+			var path:CellPath = new CellPath(_board, origin, destination);
+			path.next(); // discard the start position since that's where the user already is.
+			while (path.hasNext()) {
+				var found:Cell = path.next();
+				
+				// if the cell cannot be entered from the direction of the path, then we return
+				// no path.
+				if (!found.canEnterBy(path.delta())) {
+					return null;
 				}
-				return new Path(origin, destination);
-			}
-			
-			if (start.x > finish.x) {
-				trace("looking left from: "+start.x+" to: "+finish.x);
-				for (x = start.x - 1; x >= finish.x; x--) {
-					trace ("checking "+x+", "+start.y);
-					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo ) {
-						trace ("cannot move left to: "+x+", "+start.y+" climbLefto="+_board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo);
-						return null;
-					}
+
+				// if the user is asking to traverse a cell that's not grippable - make them
+				// land there so that they fall. 
+				if (!found.grip) {
+					return new Path(origin, found);
 				}
-				return new Path(origin, destination);
-			}
+			}			
 			
-			// you can't move to a position that you already occupy			
-			return null;	
+			// each cell in the path could be entered and was grippable.
+			// so we return the whole path.
+			return new Path(origin, destination);
+//			
+//			var x:int;
+//			
+//			// is the proposed movement to the left?			
+//			if (start.x < finish.x) {
+//				trace("looking right");
+//				for (x = start.x + 1; x <= finish.x; x++)
+//				{
+//					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbRightTo ) {
+//						return null;
+//					}					
+//				}
+//				return new Path(origin, destination);
+//			}
+//			
+//			if (start.x > finish.x) {
+//				trace("looking left from: "+start.x+" to: "+finish.x);
+//				for (x = start.x - 1; x >= finish.x; x--) {
+//					trace ("checking "+x+", "+start.y);
+//					if (! _board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo ) {
+//						trace ("cannot move left to: "+x+", "+start.y+" climbLefto="+_board.cellAt(new BoardCoordinates(x, start.y)).climbLeftTo);
+//						return null;
+//					}
+//				}
+//				return new Path(origin, destination);
+//			}
+//			
+//			// you can't move to a position that you already occupy			
+//			return null;	
 		}
 		
 		public function hasClimbingPath (origin:Cell, destination:Cell):Boolean
