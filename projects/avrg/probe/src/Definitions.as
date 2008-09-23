@@ -45,7 +45,7 @@ public class Definitions
     ];
 
     public static const PLAYER_EVENTS :Array = [
-        AVRGamePlayerEvent.COINS_AWARDED,
+        AVRGamePlayerEvent.TASK_COMPLETED,
         AVRGamePlayerEvent.ENTERED_ROOM,
         AVRGamePlayerEvent.LEFT_ROOM,
         MessageReceivedEvent.MESSAGE_RECEIVED
@@ -188,7 +188,7 @@ public class Definitions
         return [
             new FunctionSpec("feedback", local.feedback, [
                 new Parameter("msg", String)]),
-            new FunctionSpec("getStageSize", local.getStageSize, [
+            new FunctionSpec("getPaintableArea", local.getPaintableArea, [
                 new Parameter("full", Boolean, Parameter.OPTIONAL)]),
             new FunctionSpec("stageToRoom", local.stageToRoom, [
                 new PointParameter("p")]),

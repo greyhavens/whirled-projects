@@ -48,7 +48,7 @@ public class Probe extends Sprite
         graphics.drawRect(0, 0, 350, 250);
         graphics.endFill();
 
-        x = (_ctrl.local.getStageSize().width - width) / 2;
+        x = (_ctrl.local.getPaintableArea().width - width) / 2;
         y = 10;
 
         var defs :Definitions = new Definitions(_ctrl, function () :Sprite {
@@ -108,7 +108,7 @@ public class Probe extends Sprite
 
     protected function handleShift (event :ButtonEvent) :void
     {
-        var stageWidth :Number = _ctrl.local.getStageSize().width;
+        var stageWidth :Number = _ctrl.local.getPaintableArea().width;
         var positions :Array = [0, 0.25, 0.5, 0.75, 1.0];
 
         function xpos (pos :Number) :Number {
