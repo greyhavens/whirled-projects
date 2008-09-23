@@ -36,20 +36,7 @@ public class HUDView extends SceneObject
         _ballText.text = "";
 
         _ballText.autoSize = TextFieldAutoSize.LEFT;
-    }
 
-    override public function get displayObject () :DisplayObject
-    {
-        return _hud;
-    }
-
-    override public function get objectName () :String
-    {
-        return NAME;
-    }
-
-    override protected function addedToDB () :void
-    {
         // wire up buttons
         var quitButton :InteractiveObject = _hud["x_button"];
         quitButton.addEventListener(MouseEvent.CLICK, handleQuit, false, 0, true);
@@ -77,19 +64,10 @@ public class HUDView extends SceneObject
             updateScores);
         ClientContext.gameCtrl.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT,
             updateScores);
-
-        // set initial state
-        this.updateScores();
-        this.updateBall();
-        this.updateBingoButton();
-        this.handleSizeChanged();
-        this.updateBallTimer();
     }
 
-    override protected function removedFromDB () :void
+    override protected function destroyed () :void
     {
-        log.info("removedFromDB()");
-
         ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES,
             updateScores);
         ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL,
@@ -108,9 +86,29 @@ public class HUDView extends SceneObject
             updateScores);
     }
 
+    override public function get displayObject () :DisplayObject
+    {
+        return _hud;
+    }
+
+    override public function get objectName () :String
+    {
+        return NAME;
+    }
+
+    override protected function addedToDB () :void
+    {
+        // set initial state
+        updateScores();
+        updateBall();
+        updateBingoButton();
+        handleSizeChanged();
+        updateBallTimer();
+    }
+
     override protected function update (dt :Number) :void
     {
-        this.updateBallTimer();
+        updateBallTimer();
     }
 
     protected function updateBallTimer () :void

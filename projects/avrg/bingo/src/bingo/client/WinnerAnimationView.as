@@ -33,12 +33,27 @@ public class WinnerAnimationView extends SceneObject
 
         playerTextField.text = playerName;
 
-        // Listen for the "complete" event. We'll show the countdown timer afterwards.
-        _winnerAnim.addEventListener(Event.COMPLETE, winnerAnimComplete, false, 0, true);
-
         ClientContext.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
         ClientContext.gameMode.addObject(new SimpleTimer(
             Constants.NEW_ROUND_DELAY_S, null, false, NEXT_ROUND_TIMER_NAME));
+
+        // Listen for the "complete" event. We'll show the countdown timer afterwards.
+        _winnerAnim.addEventListener(Event.COMPLETE, winnerAnimComplete);
+
+        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
+    }
+
+    override protected function destroyed () :void
+    {
+        _winnerAnim.removeEventListener(Event.COMPLETE, winnerAnimComplete);
+        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+            handleSizeChanged);
+    }
+
+    override protected function addedToDB () :void
+    {
+        handleSizeChanged();
     }
 
     protected function winnerAnimComplete (...ignored) :void
@@ -93,20 +108,6 @@ public class WinnerAnimationView extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _animationParent;
-    }
-
-    override protected function addedToDB () :void
-    {
-        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
-            handleSizeChanged, false, 0, true);
-
-        this.handleSizeChanged();
-    }
-
-    override protected function removedFromDB () :void
-    {
-        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
-            handleSizeChanged);
     }
 
     protected function handleSizeChanged (...ignored) :void

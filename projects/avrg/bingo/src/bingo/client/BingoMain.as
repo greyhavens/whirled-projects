@@ -3,6 +3,9 @@
 
 package bingo.client {
 
+import bingo.*;
+import bingo.server.*;
+
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
@@ -11,11 +14,6 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.TimerEvent;
-import flash.utils.Timer;
-
-import bingo.*;
-import bingo.server.*;
 
 [SWF(width="700", height="500")]
 public class BingoMain extends Sprite

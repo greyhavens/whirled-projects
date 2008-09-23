@@ -3,7 +3,7 @@
 <compiler additionalCompilerArguments="" copyDependentFiles="true" enableModuleDebug="true" flexSDK="Flex 3 (Beta 3)" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.28" htmlPlayerVersionCheck="true" outputFolderPath="" sourceFolderPath="src" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
 <compilerSourcePath>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/whirled/src/as"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/whirled/contrib/src/as"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/contrib/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/narya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/nenya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/toybox/src/as"/>

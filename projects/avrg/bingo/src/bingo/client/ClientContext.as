@@ -25,7 +25,9 @@ public class ClientContext
     public static function getScreenBounds () :Rectangle
     {
         if (gameCtrl.isConnected()) {
-            return gameCtrl.local.getStageSize(true);
+            var bounds :Rectangle = gameCtrl.local.getPaintableArea(true);
+            // apparently getPaintableArea can return null...
+            return (bounds != null ? bounds : new Rectangle());
         } else {
             return new Rectangle(0, 0, 700, 500);
         }
