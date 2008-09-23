@@ -250,7 +250,7 @@ public class AbstractRainbowController extends SceneObject
         var p :Point;
 
         var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.room.getAvatarInfo(_playerId) : null);
-        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.local.getStageSize(false) : null);
+        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.local.getPaintableArea(false) : null);
 
         if (null != avatarInfo && null != stageBounds) {
             p = SimonMain.control.local.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);

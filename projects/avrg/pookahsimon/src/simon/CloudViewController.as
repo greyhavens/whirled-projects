@@ -234,7 +234,7 @@ public class CloudViewController extends SceneObject
         var loc :Point;
 
         if (SimonMain.control.isConnected()) {
-            var stageSize :Rectangle = SimonMain.control.local.getStageSize(true);
+            var stageSize :Rectangle = SimonMain.control.local.getPaintableArea(true);
 
             loc = (null != stageSize
                     ? new Point(stageSize.right + offset.x, stageSize.top + offset.y)

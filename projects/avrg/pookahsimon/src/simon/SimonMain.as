@@ -54,6 +54,7 @@ public class SimonMain extends Sprite
         // hook up controller
         control = new AVRGameControl(this);
         control.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
+        control.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
         log = Log.getLog("simon [player " + control.player.getPlayerId() + "]");
         Model.log = log;
@@ -101,7 +102,7 @@ public class SimonMain extends Sprite
 
         log.info(control.isConnected() ? "playing online game" : "playing offline game");
 
-        model = (control.isConnected() && !Constants.FORCE_SINGLEPLAYER ? new OnlineModel() : new OfflineModel());
+        model = new Model();
 
         // TODO: formalize initialization?
         localPlayerId = (control.isConnected() ? control.player.getPlayerId() : 666);
@@ -125,6 +126,17 @@ public class SimonMain extends Sprite
         log.info("Entered room");
         _enteredRoom = true;
         maybeBeginGame();
+    }
+
+    protected function leftRoom (e :AVRGamePlayerEvent) :void
+    {
+        log.info("left room");
+        if (control.isConnected()) {
+            // Just set the avatar state, the server will deactivate us
+            control.player.setAvatarState("Default");
+        }
+
+        // TODO: hide ui
     }
 
     protected var _addedToStage :Boolean;
