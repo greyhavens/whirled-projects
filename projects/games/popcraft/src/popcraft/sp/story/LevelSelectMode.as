@@ -233,8 +233,7 @@ public class LevelSelectMode extends DemoGameMode
             button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
             button.x = EPILOGUE_LOC.x - (button.width * 0.5);
             button.y = EPILOGUE_LOC.y;
-            button.addEventListener(MouseEvent.CLICK,
-                function (...ignored) :void { fadeOutToMode(new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT)); });
+            button.addEventListener(MouseEvent.CLICK, onEpilogueSelected);
             buttonSprite.addChild(button);
         }
 
@@ -242,6 +241,14 @@ public class LevelSelectMode extends DemoGameMode
             (Constants.SCREEN_SIZE.x * 0.5) - (buttonSprite.width * 0.5) + 20, BUTTON_CONTAINER_Y);
 
         _modeLayer.addChild(buttonSprite);
+    }
+
+    protected function onEpilogueSelected (e :MouseEvent) :void
+    {
+        fadeOut(function () :void {
+            Resources.loadLevelPackResourcesAndSwitchModes(Resources.EPILOGUE_RESOURCES,
+                new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT));
+        });
     }
 
     protected function unlockLevels () :void
@@ -279,7 +286,10 @@ public class LevelSelectMode extends DemoGameMode
 
         if (AppContext.levelMgr.curLevelIndex == 0) {
             // show the prologue before the first level
-           AppContext.mainLoop.changeMode(new PrologueMode(PrologueMode.TRANSITION_GAME));
+            Resources.loadLevelPackResourcesAndSwitchModes(
+                Resources.PROLOGUE_RESOURCES,
+                new PrologueMode(PrologueMode.TRANSITION_GAME));
+
         } else {
             this.fadeOutToMode(new GameMode());
         }

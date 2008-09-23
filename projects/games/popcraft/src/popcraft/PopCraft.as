@@ -126,8 +126,8 @@ class LoadingMode extends GenericLoadingMode
     protected function loadSingleOrMultiplayerResources () :void
     {
         if (Resources.pendLoadLevelPackResources(AppContext.isMultiplayer ?
-            multiplayerLevelPackResources :
-            singleplayerLevelPackResources)) {
+            Resources.MP_LEVEL_PACK_RESOURCES :
+            Resources.SP_LEVEL_PACK_RESOURCES)) {
             ResourceManager.instance.load(resourceLoadComplete, onLoadError);
         }
     }
@@ -139,7 +139,7 @@ class LoadingMode extends GenericLoadingMode
             if (SeatingManager.allPlayersPresent) {
                 startGame();
             } else {
-                this.loadingText = "Waiting for players...";
+                this.loadingText = "Waiting for players";
             }
         }
     }
@@ -166,24 +166,4 @@ class LoadingMode extends GenericLoadingMode
     }
 
     protected var _loadingResources :Boolean;
-
-    protected static const multiplayerLevelPackResources :Array = [
-        "multiplayer",
-        "zombieBg",
-    ];
-
-    protected static const singleplayerLevelPackResources :Array = [
-        "prologue",
-        "epilogue",
-        "manual",
-        "boss",
-        "levelSelectOverlay",
-        "levelSelectUi",
-        "portrait_iris",
-        "portrait_ivy",
-        "portrait_jack",
-        "portrait_pigsley",
-        "portrait_ralph",
-        "portrait_weardd",
-    ];
 }

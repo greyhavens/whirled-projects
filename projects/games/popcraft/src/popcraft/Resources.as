@@ -161,6 +161,27 @@ public class Resources
         return sound;
     }
 
+    public static const MP_LEVEL_PACK_RESOURCES :Array = [
+        "multiplayer_lobby",
+        "zombieBg",
+    ];
+
+    public static const SP_LEVEL_PACK_RESOURCES :Array = [
+        "manual",
+        "boss",
+        "levelSelectOverlay",
+        "levelSelectUi",
+        "portrait_iris",
+        "portrait_ivy",
+        "portrait_jack",
+        "portrait_pigsley",
+        "portrait_ralph",
+        "portrait_weardd",
+    ];
+
+    public static const PROLOGUE_RESOURCES :Array = [ "prologue" ];
+    public static const EPILOGUE_RESOURCES :Array = [ "epilogue" ];
+
     // game data
     [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]
     protected static const DEFAULT_GAME_DATA :Class;

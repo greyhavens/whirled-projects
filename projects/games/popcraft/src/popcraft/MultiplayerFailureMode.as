@@ -35,7 +35,10 @@ public class MultiplayerFailureMode extends MultiplayerDialog
     protected function handleButtonClicked (...ignored) :void
     {
         _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
-        AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+
+        Resources.loadLevelPackResourcesAndSwitchModes(
+            Resources.SP_LEVEL_PACK_RESOURCES,
+            new LevelSelectMode());
     }
 
     protected var _button :SimpleButton;

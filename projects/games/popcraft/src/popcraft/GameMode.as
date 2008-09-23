@@ -663,15 +663,20 @@ public class GameMode extends TransitionMode
 
             // show the appropriate outro screen
             var nextMode :AppMode;
+            var levelPackResources :Array = [];
             if (GameContext.isMultiplayer) {
                 nextMode = new MultiplayerGameOverMode();
             } else if (AppContext.levelMgr.isLastLevel && liveTeamId == GameContext.localPlayerInfo.teamId) {
                 nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO);
+                levelPackResources = Resources.EPILOGUE_RESOURCES;
             } else {
                 nextMode = new LevelOutroMode();
             }
 
-            this.fadeOutToMode(nextMode, FADE_OUT_TIME);
+            fadeOut(function () :void {
+                Resources.loadLevelPackResourcesAndSwitchModes(levelPackResources, nextMode);
+            }, FADE_OUT_TIME);
+
             GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
             GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
         }

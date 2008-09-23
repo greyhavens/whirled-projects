@@ -7,7 +7,7 @@
     <level ident="mus_day" name="mus_day" mediaURL="http://127.0.0.1:8080/levelpacks/music/popcraft_music_day.mp3"/>
 
     <!-- Multiplayer -->
-    <level ident="multiplayer" name="multiplayer" mediaURL="http://127.0.0.1:8080/levelpacks/mp/multiplayer.swf"/>
+    <level ident="multiplayer_lobby" name="multiplayer_lobby" mediaURL="http://127.0.0.1:8080/levelpacks/mp/multiplayer.swf"/>
     <level ident="zombieBg" name="zombieBg" mediaURL="http://127.0.0.1:8080/levelpacks/mp/zombie_BG.jpg"/>
 
     <!-- Single player -->

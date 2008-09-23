@@ -16,20 +16,53 @@ public class GenericLoadingMode extends AppMode
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
 
-        _text = new TextField();
-        this.modeSprite.addChild(_text);
+        _tf = new TextField();
+        this.modeSprite.addChild(_tf);
 
-        loadingText = "Loading...";
+        loadingText = "Loading";
     }
 
     protected function set loadingText (text :String) :void
     {
-        UIBits.initTextField(_text, text, 2, Constants.SCREEN_SIZE.x - 30, 0xFFFFFF);
-        _text.x = (Constants.SCREEN_SIZE.x - _text.width) * 0.5;
-        _text.y = (Constants.SCREEN_SIZE.y - _text.height) * 0.5;
+        _loadingText = text;
+        _numDots = MAX_DOTS;
+        _dotCountdown = DOT_TIME;
+        updateText();
     }
 
-    protected var _text :TextField;
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+
+        _dotCountdown -= dt;
+        if (_dotCountdown <= 0) {
+            if (++_numDots > MAX_DOTS) {
+                _numDots = 0;
+            }
+            updateText();
+            _dotCountdown = DOT_TIME;
+        }
+    }
+
+    protected function updateText () :void
+    {
+        var text :String = _loadingText;
+        for (var ii :int = 0; ii < _numDots; ii++) {
+            text += ".";
+        }
+
+        UIBits.initTextField(_tf, text, 2, Constants.SCREEN_SIZE.x - 30, 0xFFFFFF);
+        _tf.x = (Constants.SCREEN_SIZE.x - _tf.width) * 0.5;
+        _tf.y = (Constants.SCREEN_SIZE.y - _tf.height) * 0.5;
+    }
+
+    protected var _numDots :int;
+    protected var _dotCountdown :Number;
+    protected var _tf :TextField;
+    protected var _loadingText :String;
+
+    protected static const MAX_DOTS :int = 3;
+    protected static const DOT_TIME :Number = 0.75;
 }
 
 }
