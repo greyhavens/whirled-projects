@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
@@ -7,6 +7,9 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 
 import flash.display.Sprite;
+
+import simon.data.State;
+import simon.data.Constants;
 
 public class GameMode extends AppMode
 {

@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.objects.SceneObject;

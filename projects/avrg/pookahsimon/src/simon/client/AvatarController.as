@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;

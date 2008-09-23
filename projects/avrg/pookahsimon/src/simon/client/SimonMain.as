@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package simon {
+package simon.client {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
@@ -13,6 +13,8 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Sprite;
 import flash.events.Event;
+
+import simon.data.Constants;
 
 [SWF(width="700", height="500")]
 public class SimonMain extends Sprite

@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.avrg.AVRGameControlEvent;
@@ -12,6 +12,10 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
+
+import simon.data.State;
+import simon.data.Constants;
+import simon.data.Score;
 
 public class CloudViewController extends SceneObject
 {

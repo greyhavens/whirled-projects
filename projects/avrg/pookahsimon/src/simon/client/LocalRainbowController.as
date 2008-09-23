@@ -1,10 +1,12 @@
-package simon {
+package simon.client {
 
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+
+import simon.data.Constants;
 
 public class LocalRainbowController extends AbstractRainbowController
 {

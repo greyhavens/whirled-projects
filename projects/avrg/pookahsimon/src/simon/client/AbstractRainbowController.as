@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
@@ -20,6 +20,8 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.text.TextField;
+
+import simon.data.Constants;
 
 public class AbstractRainbowController extends SceneObject
 {

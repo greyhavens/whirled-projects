@@ -1,4 +1,4 @@
-package simon {
+package simon.data {
 
 public class Score
 {

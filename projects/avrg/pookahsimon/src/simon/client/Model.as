@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import com.threerings.util.Log;
 
@@ -10,6 +10,10 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
+
+import simon.data.State;
+import simon.data.ScoreTable;
+import simon.data.Constants;
 
 [Event(name="gameState", type="simon.SimonEvent")]
 [Event(name="nextPlayer", type="simon.SimonEvent")]

@@ -1,4 +1,4 @@
-package simon {
+package simon.server {
 
 import com.whirled.contrib.avrg.oneroom.OneRoomGameServer;
 

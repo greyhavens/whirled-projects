@@ -4,7 +4,8 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="SimonMain"/>
   <property name="app.source-dir" value="src"/>
-  <property name="app.package-dir" value="simon"/>
+  <property name="app.package-dir" value="simon/client"/>
+  <property name="app.server-agent-package-dir" value="simon/server"/>
   <property name="app.enable-server-agent" value="true"/>
   <property name="app.server-agent" value="Server"/>
 

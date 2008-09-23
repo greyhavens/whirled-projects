@@ -1,4 +1,4 @@
-package simon {
+package simon.client {
 
 import flash.events.Event;
 

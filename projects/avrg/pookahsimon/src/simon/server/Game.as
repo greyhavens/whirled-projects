@@ -1,4 +1,4 @@
-package simon {
+package simon.server {
 
 import com.threerings.util.StringUtil;
 
@@ -8,6 +8,10 @@ import flash.utils.Timer;
 import flash.events.TimerEvent;
 
 import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
+
+import simon.data.State;
+import simon.data.ScoreTable;
+import simon.data.Constants;
 
 /**
  * Handles a single game of simon (in a single room).
