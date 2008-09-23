@@ -2,8 +2,6 @@ package simon.client {
 
 import flash.display.Sprite;
 
-import com.threerings.util.Log;
-
 import com.whirled.contrib.simplegame.AppMode;
 
 import simon.data.State;
@@ -11,8 +9,6 @@ import simon.data.Constants;
 
 public class GameMode extends AppMode
 {
-    public var log :Log = SimonMain.log;
-
     override protected function setup () :void
     {
         _gameLayer = new Sprite();
@@ -61,7 +57,7 @@ public class GameMode extends AppMode
 
     protected function handleGameStateChange (...ignored) :void
     {
-        log.info(
+        SimonMain.log.info(
             "Handling game state change [state=" + SimonMain.model.curState + "]");
         
         this.destroyObjectNamed(AbstractRainbowController.NAME);
@@ -82,7 +78,7 @@ public class GameMode extends AppMode
             break;
 
         default:
-            log.info("unrecognized gameState: " + SimonMain.model.curState.gameState);
+            SimonMain.log.info("unrecognized gameState: " + SimonMain.model.curState.gameState);
             break;
         }
 
@@ -95,7 +91,7 @@ public class GameMode extends AppMode
             return;
         }
 
-        log.info(
+        SimonMain.log.info(
             "Handling current player change [state=" + SimonMain.model.curState + "]");
 
         this.destroyObjectNamed(AbstractRainbowController.NAME);
@@ -147,12 +143,12 @@ public class GameMode extends AppMode
             break;
 
         default:
-            log.info("unrecognized gameState: " + SimonMain.model.curState.gameState);
+            SimonMain.log.info("unrecognized gameState: " + SimonMain.model.curState.gameState);
             break;
         }
 
         if (newStatusText != _statusText) {
-            log.info("** STATUS: " + newStatusText);
+            SimonMain.log.info("** STATUS: " + newStatusText);
             _statusText = newStatusText;
         }
     }

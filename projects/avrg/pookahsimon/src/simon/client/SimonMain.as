@@ -58,7 +58,7 @@ public class SimonMain extends Sprite
         control.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         control.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-        log = Log.getLog("simon [player " + control.player.getPlayerId() + "]");
+        log = Log.getLog("simon.client (" + control.player.getPlayerId() + ")");
         Model.log = log;
     }
 

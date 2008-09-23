@@ -20,25 +20,19 @@ public class LocalRainbowController extends AbstractRainbowController
     override protected function playRainbowLoop () :void
     {
         super.playRainbowLoop();
-
-        // play an animation of the current pattern
-        var playPatternTask :SerialTask = new SerialTask();
-
-        for each (var noteIndex :int in SimonMain.model.curState.pattern) {
-            playPatternTask.addTask(new FunctionTask(this.createPlayNoteAnimationFunction(noteIndex)));
-            playPatternTask.addTask(new TimedTask(PLAYBACK_ANIMATION_NOTE_DELAY));
-        }
-
-        playPatternTask.addTask(new FunctionTask(setupRainbowForPlayerInput));
-
-        this.addTask(playPatternTask);
+        noteCompleted();
     }
 
-    protected function createPlayNoteAnimationFunction (noteIndex :int) :Function
+    protected function noteCompleted() :void
     {
-        return function () :void {
-            playNoteAnimation(noteIndex, DEFAULT_SPARKLE_LOCS[noteIndex], true);
+        if (++_replayNote == _remainingPattern.length) {
+            _replayNote = -1;
+            setupRainbowForPlayerInput();
+            return;
         }
+
+        var noteIdx :int = _remainingPattern[_replayNote];
+        playNoteAnimation(noteIdx, DEFAULT_SPARKLE_LOCS[noteIdx], true, noteCompleted);
     }
 
     protected function setupRainbowForPlayerInput () :void
@@ -94,6 +88,7 @@ public class LocalRainbowController extends AbstractRainbowController
     }
 
     protected var _hilitedBand :MovieClip;
+    protected var _replayNote :int = -1;
 
     protected static const PLAYBACK_ANIMATION_NOTE_DELAY :Number = Constants.PLAYER_TIME_PER_NOTE_S;
 }

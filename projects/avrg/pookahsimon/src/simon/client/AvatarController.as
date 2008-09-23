@@ -1,7 +1,5 @@
 package simon.client {
 
-import com.threerings.util.Log;
-
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.SimObject;
 
@@ -58,7 +56,7 @@ public class AvatarController extends SimObject
             infoString += " (will revert to '" + _savedState + "' after " + revertAfterSeconds + " seconds)";
         }
 
-        log.info(infoString);
+        SimonMain.log.info(infoString);
 
         SimonMain.control.player.setAvatarState(newState);
     }
@@ -77,8 +75,6 @@ public class AvatarController extends SimObject
     }
 
     protected var _savedState :String;
-
-    protected static var log :Log = Log.getLog(AvatarController);
 
     protected static const AVATAR_REVERT_TASK_NAME :String = "AvatarRevert";
 

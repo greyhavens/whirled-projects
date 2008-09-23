@@ -89,6 +89,7 @@ public class AbstractRainbowController extends SceneObject
     {
         super.removedFromDB();
         this.stopRainbowAnimation();
+        this.stopNoteAnimation();
         SimonMain.model.removeEventListener(SimonEvent.START_TIMER, startTimer);
     }
 
@@ -181,7 +182,13 @@ public class AbstractRainbowController extends SceneObject
 
     protected function noteAnimationTimerExpired () :void
     {
+        var callback :Function = _noteCompletionCallback;
+
         this.stopNoteAnimation();
+
+        if (callback != null) {
+            callback();
+        }
 
         // if the final note was just played, play the outro animation
         if (_finalNotePlayed) {
@@ -189,7 +196,9 @@ public class AbstractRainbowController extends SceneObject
         }
     }
 
-    protected function playNoteAnimation (noteIndex :int, clickLoc :Point, success :Boolean) :void
+    protected function playNoteAnimation (
+        noteIndex :int, clickLoc :Point, success :Boolean, 
+        completionCallback :Function = null) :void
     {
         this.stopNoteAnimation();
 
@@ -235,6 +244,8 @@ public class AbstractRainbowController extends SceneObject
                 NOTE_ANIMATION_TASK_NAME,
                 After(NOTE_ANIMATION_DURATION,
                     new FunctionTask(noteAnimationTimerExpired)));
+
+            _noteCompletionCallback = completionCallback;
         }
 
         // disable mouse events while the note animation is playing
@@ -255,6 +266,9 @@ public class AbstractRainbowController extends SceneObject
         if (null != _curAnim) {
             _curAnim.mouseChildren = true;
         }
+
+        
+        _noteCompletionCallback = null;
     }
 
     protected function getScreenLocForRainbowAnimation () :Point
@@ -358,10 +372,11 @@ public class AbstractRainbowController extends SceneObject
     protected var _noteAnimationIndex :int = -1;
 
     protected var _rainbowBands :Array = [];
+    protected var _noteCompletionCallback :Function;
 
     protected var _playerTimeoutCountdown :Object = { value: 0 };
 
-    protected var log :Log = Log.getLog(this);
+    protected var log :Log = SimonMain.log;
 
     protected static const RAINBOW_BAND_NAMES :Array = [
         "inst_r",
