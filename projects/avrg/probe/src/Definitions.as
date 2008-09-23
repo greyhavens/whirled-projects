@@ -329,6 +329,19 @@ public class Definitions
                 new Parameter("playerId", int)]),
             new FunctionSpec("getRoomId", proxy("player", "getRoomId"), [
                 new Parameter("playerId", int)]),
+            new FunctionSpec("holdsTrophy", proxy("player", "holdsTrophy"), [
+                new Parameter("playerId", int),
+                new Parameter("ident", String)]),
+            new FunctionSpec("awardTrophy", proxy("player", "awardTrophy"), [
+                new Parameter("playerId", int),
+                new Parameter("ident", String)]),
+            new FunctionSpec("awardPrize", proxy("player", "awardPrize"), [
+                new Parameter("playerId", int),
+                new Parameter("ident", String)]),
+            new FunctionSpec("getPlayerItemPacks", proxy("player", "getPlayerItemPacks"), [
+                new Parameter("playerId", int)]),
+            new FunctionSpec("getPlayerLevelPacks", proxy("player", "getPlayerLevelPacks"), [
+                new Parameter("playerId", int)]),
             new FunctionSpec("deactivateGame", proxy("player", "deactivateGame"), [
                 new Parameter("playerId", int)]),
             new FunctionSpec("completeTask", proxy("player", "completeTask"), [
