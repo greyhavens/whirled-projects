@@ -226,6 +226,26 @@ public class ServerDefinitions
             return props.getRoomId;
         }
 
+        function holdsTrophy (props :PlayerServerSubControl) :Function {
+            return props.holdsTrophy;
+        }
+
+        function awardTrophy (props :PlayerServerSubControl) :Function {
+            return props.awardTrophy;
+        }
+
+        function awardPrize (props :PlayerServerSubControl) :Function {
+            return props.awardPrize;
+        }
+
+        function getPlayerItemPacks (props :PlayerServerSubControl) :Function {
+            return props.getPlayerItemPacks;
+        }
+
+        function getPlayerLevelPacks (props :PlayerServerSubControl) :Function {
+            return props.getPlayerLevelPacks;
+        }
+
         function deactivateGame (props :PlayerServerSubControl) :Function {
             return props.deactivateGame;
         }
@@ -261,6 +281,16 @@ public class ServerDefinitions
         var funcs :Array = [
             new FunctionSpec("getPlayerId", proxy(getInstance, getPlayerId), [idParam]),
             new FunctionSpec("getRoomId", proxy(getInstance, getRoomId), [idParam]),
+            new FunctionSpec("holdsTrophy", proxy(getInstance, holdsTrophy),
+                             [idParam, new Parameter("ident", String)]),
+            new FunctionSpec("awardTrophy", proxy(getInstance, awardTrophy),
+                             [idParam, new Parameter("ident", String)]),
+            new FunctionSpec("awardPrize", proxy(getInstance, awardPrize),
+                             [idParam, new Parameter("ident", String)]),
+            new FunctionSpec("getPlayerItemPacks", proxy(getInstance, getPlayerItemPacks),
+                             [idParam]),
+            new FunctionSpec("getPlayerLevelPacks", proxy(getInstance, getPlayerLevelPacks),
+                             [idParam]),
             new FunctionSpec("deactivateGame", proxy(getInstance, deactivateGame), [idParam]),
             new FunctionSpec("completeTask", proxy(getInstance, completeTask), [idParam,
                 new Parameter("taskId", String), new Parameter("payout", Number)]),

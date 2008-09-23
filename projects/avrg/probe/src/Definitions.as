@@ -139,6 +139,8 @@ public class Definitions
 
         var funcs :Array = [
             new FunctionSpec("getPlayerIds", game.getPlayerIds),
+            new FunctionSpec("getItemPacks", game.getItemPacks),
+            new FunctionSpec("getLevelPacks", game.getLevelPacks),
         ];
         pushPropsFuncs(funcs, game.props);
         return funcs;
@@ -151,6 +153,9 @@ public class Definitions
         var funcs :Array = [
             new FunctionSpec("getPlayerId", player.getPlayerId),
             new FunctionSpec("deactivateGame", player.deactivateGame),
+            new FunctionSpec("holdsTrophy", player.holdsTrophy, [new Parameter("ident", String)]),
+            new FunctionSpec("getPlayerItemPacks", player.getPlayerItemPacks),
+            new FunctionSpec("getPlayerLevelPacks", player.getPlayerLevelPacks),
             new FunctionSpec("completeTask", player.completeTask, [
                 new Parameter("taskId", String),
                 new Parameter("payout", Number)]),
