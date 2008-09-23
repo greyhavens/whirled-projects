@@ -55,6 +55,10 @@ public class Game extends OneRoomGameRoom
             if (_state.curPlayerId == senderId) {
                 rainbowClicked(value as int);
             }
+        } else if (name == Constants.MSG_NOTEREPLAYFINISHED) {
+            if (_state.curPlayerId == senderId) {
+                playerFinishedReplay();
+            }
         }
     }
 
@@ -142,6 +146,18 @@ public class Game extends OneRoomGameRoom
 
         // update clients
         sendState();
+    }
+
+    /**
+     * Called by client when the note replay has actually finished.
+     */
+    protected function playerFinishedReplay () :void
+    {
+        if (_timedAction == NOTE_REPLAY) {
+            log.info("Note replay complete [playerId=" + _state.curPlayerId + "]");
+            startTimer(PLAYER_CLICK, Constants.PLAYER_TIMEOUT_S);
+            sendStartPlayerTimer();
+        }
     }
 
     /**
@@ -327,7 +343,7 @@ public class Game extends OneRoomGameRoom
         // reset the pattern
         _remainingPattern = _state.pattern.slice();
 
-        // allow the client some time to animate the change of tuen and note replay
+        // allow the client some time to animate the change of turn and note replay
         startTimer(NOTE_REPLAY, Constants.PLAYER_GRACE_PERIOD_S + 
             _state.pattern.length * Constants.PLAYER_TIME_PER_NOTE_S);
 

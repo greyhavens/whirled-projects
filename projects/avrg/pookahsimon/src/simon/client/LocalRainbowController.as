@@ -45,6 +45,7 @@ public class LocalRainbowController extends AbstractRainbowController
         for each (var band :MovieClip in _rainbowBands) {
             this.createBandMouseHandlers(band, i++);
         }
+        SimonMain.model.replayFinished();
     }
 
     protected function createBandMouseHandlers (band :MovieClip, noteIndex :int) :void

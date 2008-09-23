@@ -62,7 +62,6 @@ public class Model extends EventDispatcher
         _control.room.props.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
     }
 
-    /* state accessors */
     public function get curState () :State
     {
         return _curState;
@@ -83,13 +82,17 @@ public class Model extends EventDispatcher
         return _curState.players.slice();
     }
 
-    /* shared state mutators (must be overridden) */
     public function sendRainbowClickedMessage (clickedIndex :int) :void
     {
         _control.agent.sendMessage(Constants.MSG_RAINBOWCLICKED, clickedIndex);
     }
 
-    /* private state mutators */
+    /** Let the server know we've finished our playback and are ready to go. */
+    public function replayFinished () :void
+    {
+        _control.agent.sendMessage(Constants.MSG_NOTEREPLAYFINISHED);
+    }
+
     protected function setState (newState :State) :void
     {
         log.debug("Changing state [new=" + newState + "]");

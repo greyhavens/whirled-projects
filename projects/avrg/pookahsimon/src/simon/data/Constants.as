@@ -4,7 +4,7 @@ import flash.geom.Point;
 
 public class Constants
 {
-    public static const VERSION :Number = 14;
+    public static const VERSION :Number = 15;
 
     // gameplay bits
     public static const SCORETABLE_MAX_ENTRIES :int = 20;
@@ -13,7 +13,7 @@ public class Constants
     public static const AVATAR_DANCE_TIME :Number = 4;
     public static const PLAYER_TIMEOUT_S :Number = 5;
     public static const PLAYER_TIME_PER_NOTE_S :Number = 0.6;
-    public static const PLAYER_GRACE_PERIOD_S :Number = 2.0;
+    public static const PLAYER_GRACE_PERIOD_S :Number = 7.0;
     public static const MAX_PLAYER_TIMEOUTS :int = 2;
     public static const NUM_NOTES :int = 7;
     public static const MIN_NOTES_FOR_PAYOUT :int = 4;
@@ -25,6 +25,7 @@ public class Constants
     public static const MSG_PLAYERREADY :String = "m_playerReadyToStaer";
     public static const MSG_RAINBOWCLICKED :String = "m_rainbowClicked";
     public static const MSG_PLAYERTIMERSTARTED :String = "m_playerTimerStarted";
+    public static const MSG_NOTEREPLAYFINISHED :String = "m_noteReplayFinished";
 }
 
 }
