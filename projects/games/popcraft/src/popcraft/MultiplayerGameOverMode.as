@@ -12,7 +12,7 @@ import flash.text.TextFormatAlign;
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 
-public class MultiplayerGameOverMode extends SplashScreenModeBase
+public class MultiplayerGameOverMode extends MultiplayerDialog
 {
     override protected function setup () :void
     {

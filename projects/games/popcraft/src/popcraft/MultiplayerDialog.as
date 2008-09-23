@@ -3,7 +3,7 @@ package popcraft {
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.ImageResource;
 
-public class SplashScreenModeBase extends TransitionMode
+public class MultiplayerDialog extends TransitionMode
 {
     override protected function setup () :void
     {

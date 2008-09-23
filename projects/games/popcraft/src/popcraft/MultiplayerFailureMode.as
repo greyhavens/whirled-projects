@@ -10,7 +10,7 @@ import flash.text.TextFormatAlign;
 import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
-public class MultiplayerFailureMode extends SplashScreenModeBase
+public class MultiplayerFailureMode extends MultiplayerDialog
 {
     override protected function setup () :void
     {

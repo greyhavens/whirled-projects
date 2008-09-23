@@ -101,8 +101,13 @@ public class GameMode extends TransitionMode
 
     override protected function exit () :void
     {
-        GameContext.sfxControls.pause(true);
-        GameContext.musicControls.volumeTo(0.2, 0.3);
+        if (GameContext.sfxControls != null) {
+            GameContext.sfxControls.pause(true);
+        }
+
+        if (GameContext.musicControls != null) {
+            GameContext.musicControls.volumeTo(0.2, 0.3);
+        }
     }
 
     protected function setupAudio () :void

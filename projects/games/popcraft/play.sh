@@ -1,2 +1,2 @@
-ant -Dplayers=2 test
+ant -Dplayers=2 testpacks
 

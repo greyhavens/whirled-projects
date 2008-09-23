@@ -15,6 +15,20 @@
         <include name="**/*.mp3"/>
       </fileset>
     </copy>
+    <copy todir="${build.root}/dist/levelpacks/mp" overwrite="true">
+      <fileset dir="rsrc/mp">
+        <include name="**/*.swf"/>
+        <include name="**/*.jpg"/>
+        <include name="**/*.png"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.root}/dist/levelpacks/sp" overwrite="true">
+      <fileset dir="rsrc/sp">
+        <include name="**/*.swf"/>
+        <include name="**/*.jpg"/>
+        <include name="**/*.png"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="testpacks" depends="compile, copypacks, test"/>

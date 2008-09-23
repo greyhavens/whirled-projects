@@ -1,10 +1,63 @@
 package popcraft {
 
+import com.threerings.util.FileUtil;
 import com.whirled.contrib.LevelPacks;
+import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
+
+import popcraft.ui.GenericLoadingMode;
 
 public class Resources
 {
+    public static function loadLevelPackResourcesAndSwitchModes (resourceNames :Array,
+        nextMode :AppMode) :void
+    {
+        if (pendLoadLevelPackResources(resourceNames)) {
+            MainLoop.instance.pushMode(new LevelPackLoadingMode(nextMode));
+        } else {
+            MainLoop.instance.changeMode(nextMode);
+        }
+    }
+
+    public static function pendLoadLevelPackResources (resourceNames :Array) :Boolean
+    {
+        var needsLoad :Boolean;
+        var rm :ResourceManager = ResourceManager.instance;
+        for each (var name :String in resourceNames) {
+            if (rm.getResource(name) == null) {
+                var mediaUrl :String = LevelPacks.getMediaURL(name);
+                if (mediaUrl == null) {
+                    throw new Error("unrecognized resource: '" + name + "'");
+                }
+
+                // determine the resource type from the file suffix
+                var suffix :String = FileUtil.getDotSuffix(mediaUrl);
+                var resourceType :String;
+                switch (suffix) {
+                case "swf":
+                    resourceType = "swf";
+                    break;
+                case "png":
+                case "jpg":
+                case "gif":
+                    resourceType = "image";
+                    break;
+                case "mp3":
+                    resourceType = "sound";
+                    break;
+                default:
+                    throw new Error("unrecognized file suffix '" + suffix + "'");
+                    break;
+                }
+
+                rm.pendResourceLoad(resourceType, name, { url: mediaUrl });
+                needsLoad = true;
+            }
+        }
+
+        return needsLoad;
+    }
+
     public static function loadBaseResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
@@ -15,11 +68,6 @@ public class Resources
 
         // gfx
         rm.pendResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
-        rm.pendResourceLoad("swf", "multiplayer",  { embeddedClass: SWF_MULTIPLAYER });
-        rm.pendResourceLoad("image", "zombieBg",  { embeddedClass: IMG_ZOMBIEBG });
-        rm.pendResourceLoad("image", "levelSelectOverlay",  { embeddedClass: IMG_LEVELSELECTOVERLAY });
-        rm.pendResourceLoad("swf", "levelSelectUi",  { embeddedClass: SWF_LEVELSELECTUI });
-        rm.pendResourceLoad("swf", "manual",  { embeddedClass: SWF_MANUAL });
         rm.pendResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
         rm.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
@@ -27,7 +75,6 @@ public class Resources
         rm.pendResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
         rm.pendResourceLoad("swf", "colossus", { embeddedClass: SWF_COLOSSUS });
         rm.pendResourceLoad("swf", "courier", { embeddedClass: SWF_COURIER });
-        rm.pendResourceLoad("swf", "boss", { embeddedClass: SWF_BOSS });
         rm.pendResourceLoad("swf", "missile", { embeddedClass: SWF_MISSILE });
         rm.pendResourceLoad("swf", "splatter", { embeddedClass: SWF_SPLATTER });
 
@@ -35,16 +82,6 @@ public class Resources
         rm.pendResourceLoad("swf", "dashboard", { embeddedClass: SWF_DASHBOARD });
         rm.pendResourceLoad("swf", "infusions", { embeddedClass: SWF_INFUSIONS });
         rm.pendResourceLoad("swf", "workshop", { embeddedClass: SWF_WORKSHOP });
-
-        rm.pendResourceLoad("swf", "prologue", { embeddedClass: SWF_PROLOGUE });
-        rm.pendResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
-
-        rm.pendResourceLoad("image", "portrait_iris", { embeddedClass: IMG_PORTRAITIRIS });
-        rm.pendResourceLoad("image", "portrait_ivy", { embeddedClass: IMG_PORTRAITIVY });
-        rm.pendResourceLoad("image", "portrait_jack", { embeddedClass: IMG_PORTRAITJACK });
-        rm.pendResourceLoad("image", "portrait_pigsley", { embeddedClass: IMG_PORTRAITPIGSLEY });
-        rm.pendResourceLoad("image", "portrait_ralph", { embeddedClass: IMG_PORTRAITRALPH });
-        rm.pendResourceLoad("image", "portrait_weardd", { embeddedClass: IMG_PORTRAITWEARDD });
 
         // sfx
         rm.pendResourceLoad("sound", "sfx_introscreen", { embeddedClass: SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
@@ -171,50 +208,6 @@ public class Resources
     [Embed(source="../../rsrc/all/workshop.swf", mimeType="application/octet-stream")]
     protected static const SWF_WORKSHOP :Class;
 
-    // gfx - singleplayer
-    [Embed(source="../../rsrc/sp/splash.png", mimeType="application/octet-stream")]
-    protected static const IMG_LEVELSELECTOVERLAY :Class;
-
-    [Embed(source="../../rsrc/sp/splash_UI.swf", mimeType="application/octet-stream")]
-    protected static const SWF_LEVELSELECTUI :Class;
-
-    [Embed(source="../../rsrc/sp/manual.swf", mimeType="application/octet-stream")]
-    protected static const SWF_MANUAL :Class;
-
-    [Embed(source="../../rsrc/sp/weardd.swf", mimeType="application/octet-stream")]
-    protected static const SWF_BOSS :Class;
-
-    [Embed(source="../../rsrc/sp/prologue.swf", mimeType="application/octet-stream")]
-    protected static const SWF_PROLOGUE :Class;
-
-    [Embed(source="../../rsrc/sp/epilogue.swf", mimeType="application/octet-stream")]
-    protected static const SWF_EPILOGUE :Class;
-
-    [Embed(source="../../rsrc/sp/iris.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITIRIS :Class;
-
-    [Embed(source="../../rsrc/sp/ivy.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITIVY :Class;
-
-    [Embed(source="../../rsrc/sp/jack.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITJACK :Class;
-
-    [Embed(source="../../rsrc/sp/pigsley.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITPIGSLEY :Class;
-
-    [Embed(source="../../rsrc/sp/ralph.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITRALPH :Class;
-
-    [Embed(source="../../rsrc/sp/weardd.png", mimeType="application/octet-stream")]
-    protected static const IMG_PORTRAITWEARDD :Class;
-
-    // gfx - multiplayer
-    [Embed(source="../../rsrc/mp/multiplayer.swf", mimeType="application/octet-stream")]
-    protected static const SWF_MULTIPLAYER :Class;
-
-    [Embed(source="../../rsrc/mp/zombie_BG.jpg", mimeType="application/octet-stream")]
-    protected static const IMG_ZOMBIEBG :Class;
-
     // sfx
     [Embed(source="../../rsrc/audio/sfx/introscreen.mp3")]
     protected static const SOUND_INTROSCREEN :Class;
@@ -325,4 +318,30 @@ public class Resources
     protected static const SOUND_SPELLDROP :Class;
 }
 
+}
+
+import com.whirled.contrib.simplegame.AppMode;
+import flash.display.Graphics;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
+import popcraft.*;
+import popcraft.ui.GenericLoadingMode;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
+import popcraft.ui.GenericLoadErrorMode;
+
+class LevelPackLoadingMode extends GenericLoadingMode
+{
+    public function LevelPackLoadingMode (nextMode :AppMode)
+    {
+        ResourceManager.instance.load(
+            function () :void {
+                AppContext.mainLoop.popMode();
+                AppContext.mainLoop.changeMode(nextMode);
+            },
+            function (err :String) :void {
+                AppContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
+            }
+        );
+    }
 }

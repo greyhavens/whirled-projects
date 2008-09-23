@@ -19,6 +19,11 @@ public class AppContext
     public static var randStreamPuzzle :uint;
     public static var globalPlayerStats :PlayerStats;
 
+    public static function get isMultiplayer () :Boolean
+    {
+        return (gameCtrl.isConnected() && gameCtrl.game.seating.getPlayerIds().length > 1);
+    }
+
     public static function get defaultGameData () :GameData
     {
         var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
