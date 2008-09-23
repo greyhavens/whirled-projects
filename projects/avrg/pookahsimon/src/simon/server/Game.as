@@ -1,11 +1,11 @@
 package simon.server {
 
-import com.threerings.util.StringUtil;
-
 import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
+
+import com.threerings.util.StringUtil;
 
 import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;
 

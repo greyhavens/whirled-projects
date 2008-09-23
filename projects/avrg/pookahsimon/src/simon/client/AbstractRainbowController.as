@@ -1,18 +1,8 @@
 package simon.client {
 
-import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.contrib.ColorMatrix;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.resource.*;
-
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.events.Event;
-import flash.events.MouseEvent;
 import flash.filters.ColorMatrixFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -20,6 +10,26 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.text.TextField;
+
+import com.threerings.util.Log;
+
+import com.whirled.avrg.AVRGameAvatar;
+
+import com.whirled.contrib.ColorMatrix;
+
+import com.whirled.contrib.simplegame.SimObject;
+
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+
+import com.whirled.contrib.simplegame.resource.SwfResource;
+
+import com.whirled.contrib.simplegame.tasks.After;
+import com.whirled.contrib.simplegame.tasks.AnimateValueTask;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.WaitForFrameTask;
 
 import simon.data.Constants;
 

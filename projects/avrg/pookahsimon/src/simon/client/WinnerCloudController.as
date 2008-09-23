@@ -1,14 +1,19 @@
 package simon.client {
 
-import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.resource.*;
-
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.text.TextField;
+
+import com.whirled.avrg.AVRGameAvatar;
+
+import com.whirled.contrib.simplegame.objects.SceneObject;
+
+import com.whirled.contrib.simplegame.resource.SwfResource;
+
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.WaitForFrameTask;
 
 public class WinnerCloudController extends SceneObject
 {

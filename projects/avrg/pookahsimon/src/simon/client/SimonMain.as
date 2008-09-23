@@ -3,16 +3,16 @@
 
 package simon.client {
 
+import flash.display.Sprite;
+import flash.events.Event;
+
 import com.threerings.util.Log;
+
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.*;
 
-import flash.display.Sprite;
-import flash.events.Event;
+import com.whirled.contrib.simplegame.MainLoop;
 
 import simon.data.Constants;
 

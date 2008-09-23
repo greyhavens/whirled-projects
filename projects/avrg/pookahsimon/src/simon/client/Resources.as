@@ -1,6 +1,6 @@
 package simon.client {
 
-import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
 
 public class Resources
 {

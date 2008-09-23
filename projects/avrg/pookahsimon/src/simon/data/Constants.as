@@ -1,7 +1,5 @@
 package simon.data {
 
-import flash.geom.Point;
-
 public class Constants
 {
     public static const VERSION :Number = 15;

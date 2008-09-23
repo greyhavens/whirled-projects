@@ -1,12 +1,10 @@
 package simon.client {
 
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameRoomEvent;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.objects.*;
-
 import flash.display.Sprite;
+
+import com.threerings.util.Log;
+
+import com.whirled.contrib.simplegame.AppMode;
 
 import simon.data.State;
 import simon.data.Constants;

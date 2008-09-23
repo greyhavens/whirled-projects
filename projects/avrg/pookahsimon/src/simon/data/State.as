@@ -1,10 +1,10 @@
 package simon.data {
 
-import com.threerings.util.Log;
-import com.threerings.util.StringUtil;
-
 import flash.errors.EOFError;
 import flash.utils.ByteArray;
+
+import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 
 /**
  * Encapsulates data that is shared across all game clients and the server agent.

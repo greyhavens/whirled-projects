@@ -1,15 +1,17 @@
 package simon.client {
 
-import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.*;
-
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
+
+import com.whirled.avrg.AVRGameControlEvent;
+
+import com.whirled.contrib.simplegame.objects.SceneObject;
+
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 public class HelpViewController extends SceneObject
 {

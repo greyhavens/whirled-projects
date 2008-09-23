@@ -1,8 +1,12 @@
 package simon.client {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.tasks.*;
+
+import com.whirled.contrib.simplegame.MainLoop;
+import com.whirled.contrib.simplegame.SimObject;
+
+import com.whirled.contrib.simplegame.tasks.After;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
 
 public class AvatarController extends SimObject
 {

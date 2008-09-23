@@ -1,10 +1,12 @@
 package simon.client {
 
-import com.whirled.contrib.simplegame.tasks.*;
-
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.SerialTask;
+import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import simon.data.Constants;
 
