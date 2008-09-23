@@ -180,7 +180,7 @@ public class SeekPanel extends FrameSprite
         var y :Number = dY * bits[1];
 
         // convert to actual local coordinates and go whee
-        var pos :Point = Game.control.local.roomToStage(new Point(x, y));
+        var pos :Point = Game.control.local.roomToPaintable(new Point(x, y));
         if (pos == null) {
             _log.debug(
                 "Failed to convert ghost target to local coordinates [x=" + x + ", y=" + y + "]");
@@ -198,7 +198,7 @@ public class SeekPanel extends FrameSprite
         }
 
         // someone turned theirs on or moved it
-        updateLantern(playerId, Game.control.local.roomToStage(new Point(pos[0], pos[1])));
+        updateLantern(playerId, Game.control.local.roomToPaintable(new Point(pos[0], pos[1])));
     }
 
     // FRAME HANDLER
@@ -309,7 +309,7 @@ public class SeekPanel extends FrameSprite
 
     protected function transmitLanternPosition (pos :Point) :void
     {
-        pos = Game.control.local.stageToRoom(pos);
+        pos = Game.control.local.paintableToRoom(pos);
         if (pos != null) {
             Game.control.agent.sendMessage(Codes.CMSG_LANTERN_POS, [ pos.x, pos.y ]);
         }
