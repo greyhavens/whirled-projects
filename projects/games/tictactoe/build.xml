@@ -7,6 +7,9 @@
   <property name="app.type" value="game"/>
   <property name="app.enable-server-agent" value="true"/>
 
+  <!-- tictactoe is always 2 players -->
+  <property name="players" value="2"/>
+
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
