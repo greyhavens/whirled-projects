@@ -22,10 +22,10 @@ import popcraft.battle.*;
 import popcraft.battle.geom.ForceParticleContainer;
 import popcraft.battle.view.*;
 import popcraft.data.*;
+import popcraft.mp.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.*;
-import popcraft.mp.*;
 import popcraft.sp.story.*;
 import popcraft.ui.*;
 import popcraft.util.*;
@@ -40,14 +40,10 @@ public class GameMode extends TransitionMode
         GameContext.playerStats = new PlayerStats();
 
         // init RNGs
-        var randSeed :uint = (GameContext.isMultiplayer ? MultiplayerConfig.randSeed : uint(Math.random() * uint.MAX_VALUE));
+        var randSeed :uint = createRandSeed();
         Rand.seedStream(AppContext.randStreamPuzzle, randSeed);
         Rand.seedStream(Rand.STREAM_GAME, randSeed);
         log.info("Starting game with seed: " + randSeed);
-
-        if (GameContext.isMultiplayer) {
-            this.initMultiplayerSettings();
-        }
 
         // cache some frequently-used values in GameContext
         GameContext.mapScaleXInv = 1 / GameContext.mapSettings.mapScaleX;
@@ -72,11 +68,6 @@ public class GameMode extends TransitionMode
             _debugDataView = new DebugDataView();
             this.addObject(_debugDataView, GameContext.overlayLayer);
             _debugDataView.visible = true;
-        }
-
-        // introduce the level
-        if (this.showIntro) {
-            AppContext.mainLoop.pushMode(new LevelIntroMode());
         }
     }
 
@@ -136,28 +127,9 @@ public class GameMode extends TransitionMode
         GameContext.musicControls.release();
     }
 
-    protected function initMultiplayerSettings () :void
-    {
-        // Determine what the game's team arrangement is, and randomly choose an appropriate
-        // MultiplayerSettingsData that fits that arrangement.
-
-        var multiplayerArrangement :int = MultiplayerConfig.computeTeamArrangement();
-        var potentialSettings :Array = AppContext.multiplayerSettings;
-        potentialSettings = potentialSettings.filter(
-            function (mpSettings :MultiplayerSettingsData, index :int, array :Array) :Boolean {
-                return (mpSettings.arrangeType == multiplayerArrangement);
-            });
-
-        GameContext.mpSettings = Rand.nextElement(potentialSettings, Rand.STREAM_GAME);
-    }
-
     protected function setupPlayers () :void
     {
-        if (GameContext.isMultiplayer) {
-            this.setupPlayersMP();
-        } else {
-            this.setupPlayersSP();
-        }
+        createPlayers();
 
         // create players' unit spell sets (these are synchronized objects)
         GameContext.playerCreatureSpellSets = [];
@@ -166,131 +138,16 @@ public class GameMode extends TransitionMode
             GameContext.netObjects.addObject(spellSet);
             GameContext.playerCreatureSpellSets.push(spellSet);
         }
-    }
-
-    protected function setupPlayersMP () :void
-    {
-        var teams :Array = MultiplayerConfig.teams;
-        var handicaps :Array = MultiplayerConfig.handicaps;
-
-        // In multiplayer games, base locations are arranged in order of team,
-        // with larger teams coming before smaller ones. Populate a set of TeamInfo
-        // structures with base locations so that we can put everyone in the correct place.
-        var baseLocs :Array = GameContext.mapSettings.baseLocs;
-        var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
-        var teamInfos :Array = [];
-        var teamInfo :TeamInfo;
-        for (var teamId :int = 0; teamId < teamSizes.length; ++teamId) {
-            teamInfo = new TeamInfo();
-            teamInfo.teamId = teamId;
-            teamInfo.teamSize = teamSizes[teamId];
-            teamInfos.push(teamInfo);
-        }
-
-        teamInfos.sort(TeamInfo.teamSizeCompare);
-        var baseLocIndex :int = 0;
-        for each (teamInfo in teamInfos) {
-            for (var i :int = 0; i < teamInfo.teamSize; ++i) {
-                teamInfo.baseLocs.push(baseLocs[baseLocIndex++]);
-            }
-        }
-
-        var largestTeamSize :int = TeamInfo(teamInfos[0]).teamSize;
-
-        teamInfos.sort(TeamInfo.teamIdCompare);
-
-        // get some information about the players in the game
-        var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
-        GameContext.localPlayerIndex = AppContext.gameCtrl.game.seating.getMyPosition();
 
         // we want to know when a player leaves
-        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
-
-        // create PlayerInfo structures
-        GameContext.playerInfos = [];
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            var playerInfo :PlayerInfo;
-            teamId = teams[playerIndex];
-            teamInfo = teamInfos[teamId];
-            var baseLoc :Vector2 = teamInfo.baseLocs.shift();
-
-            // calculate the player's handicap
-            var handicap :Number = 1;
-            if (teamInfo.teamSize < largestTeamSize) {
-                handicap = GameContext.mpSettings.smallerTeamHandicap;
-            }
-            if (handicaps[playerIndex]) {
-                handicap *= Constants.HANDICAPPED_MULTIPLIER;
-            }
-
-            if (GameContext.localPlayerIndex == playerIndex) {
-                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);
-                playerInfo = localPlayerInfo;
-            } else {
-                playerInfo = new PlayerInfo(playerIndex, teamId, baseLoc, handicap);
-            }
-
-            GameContext.playerInfos.push(playerInfo);
-        }
-
-        // setup target enemies
-        for each (playerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
-        }
-    }
-
-    protected function setupPlayersSP () :void
-    {
-        GameContext.localPlayerIndex = 0;
-        GameContext.playerInfos = [];
-
-        var level :LevelData = GameContext.spLevel;
-
-        // in single player levels, base location are arranged in order of player id
-        var baseLocs :Array = GameContext.mapSettings.baseLocs;
-
-        // Create the local player (always playerIndex=0, team=0)
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
-            0, 0, baseLocs[0], 1, level.playerName, level.playerHeadshot);
-
-        // grant the player some starting resources
-        var initialResources :Array = level.initialResources;
-        for (var resType :int = 0; resType < initialResources.length; ++resType) {
-            localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
-        }
-
-        // ...and some starting spells
-        var initialSpells :Array = level.initialSpells;
-        for (var spellType :int = 0; spellType < initialSpells.length; ++spellType) {
-            localPlayerInfo.addSpell(spellType, int(initialSpells[spellType]));
-        }
-
-        GameContext.playerInfos.push(localPlayerInfo);
-
-        // create computer players
-        var numComputers :int = level.computers.length;
-        for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
-            var cpData :ComputerPlayerData = level.computers[playerIndex - 1];
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
-                playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName, cpData.playerHeadshot);
-            GameContext.playerInfos.push(computerPlayerInfo);
-
-            // create the computer player object
-            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
-        }
-
-        // setup target enemies
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
-        }
+        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
     }
 
     protected function shutdownPlayers () :void
     {
-        if (GameContext.matchType == GameContext.MATCH_TYPE_MULTIPLAYER) {
-            AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
-        }
+        AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
     }
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
@@ -322,19 +179,14 @@ public class GameMode extends TransitionMode
         GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
-        if (GameContext.matchType == GameContext.MATCH_TYPE_MULTIPLAYER) {
-            _messageMgr = new OnlineTickedMessageManager(AppContext.gameCtrl, SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
-        } else {
-            _messageMgr = new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
-        }
-
-        _messageMgr.addMessageFactory(CreateUnitMessage.messageName, CreateUnitMessage.createFactory());
-        _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName, SelectTargetEnemyMessage.createFactory());
-        _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName, CastCreatureSpellMessage.createFactory());
-
-        if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
-            _messageMgr.addMessageFactory(ChecksumMessage.messageName, ChecksumMessage.createFactory());
-        }
+        // TODO - change this to be more like zyraxxus messages
+        _messageMgr = createMessageManager();
+        _messageMgr.addMessageFactory(CreateUnitMessage.messageName,
+            CreateUnitMessage.createFactory());
+        _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName,
+            SelectTargetEnemyMessage.createFactory());
+        _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName,
+            CastCreatureSpellMessage.createFactory());
 
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameOver);
@@ -348,7 +200,8 @@ public class GameMode extends TransitionMode
         _messageMgr.shutdown();
 
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED, handleGameOver);
+            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED,
+                handleGameOver);
         }
     }
 
@@ -384,7 +237,8 @@ public class GameMode extends TransitionMode
             GameContext.battlefieldHeight);
 
         // Board
-        var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH, Constants.BATTLE_HEIGHT);
+        var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH,
+            Constants.BATTLE_HEIGHT);
         this.addObject(battleBoardView, GameContext.battleLayer);
 
         GameContext.battleBoardView = battleBoardView;
@@ -420,7 +274,7 @@ public class GameMode extends TransitionMode
             playerInfo.base = base;
         }
 
-        this.setupPlayerBaseViewMouseHandlers();
+        setupPlayerBaseViewMouseHandlers();
 
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
@@ -507,14 +361,16 @@ public class GameMode extends TransitionMode
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 GameContext.diurnalCycle.incrementDayCount();
                 GameContext.diurnalCycle.resetPhase(
-                    GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+                    GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE :
+                    Constants.PHASE_DAY);
             }
             break;
 
         case KeyboardCodes.K:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 // destroy the targeted enemy's base
-                var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
+                var enemyPlayerInfo :PlayerInfo =
+                    GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
                 var enemyBase :WorkshopUnit = enemyPlayerInfo.base;
                 if (null != enemyBase) {
                     enemyBase.health = 0;
@@ -600,15 +456,11 @@ public class GameMode extends TransitionMode
             // network timeslices are always the same distance apart)
             GameContext.netObjects.update(TICK_INTERVAL_S);
 
-            if (Constants.DEBUG_CHECKSUM_STATE >= 1) {
-                debugNetwork(messageArray);
-            }
-
             ++_gameTickCount;
             _gameTime += TICK_INTERVAL_S;
         }
 
-        this.checkForGameOver();
+        checkForGameOver();
 
         // update all non-net objects
         super.update(dt);
@@ -683,85 +535,6 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function debugNetwork (messageArray :Array) :void
-    {
-        // process all messages from this tick
-        var messageStatus :String = new String();
-        var needsBreak :Boolean = false;
-        for each (var msg :Message in messageArray) {
-            if (msg.name != ChecksumMessage.messageName) {
-                if (needsBreak) {
-                    messageStatus += " ** ";
-                }
-                messageStatus += msg.toString();
-                needsBreak = true;
-            }
-        }
-
-        if (messageStatus.length > 0) {
-            log.debug("PLAYER: " + GameContext.localPlayerIndex + " TICK: " + _gameTickCount + " MESSAGES: " + messageStatus);
-        }
-
-        // calculate a checksum for this frame
-        var csumMessage :ChecksumMessage = calculateChecksum();
-
-        // player 1 saves his checksums, player 0 sends his checksums
-        if (GameContext.localPlayerIndex == 1) {
-            _myChecksums.unshift(csumMessage);
-            _lastCachedChecksumTick = _gameTickCount;
-        } else if ((_gameTickCount % 2) == 0) {
-            _messageMgr.sendMessage(csumMessage);
-        }
-    }
-
-    protected function calculateChecksum () :ChecksumMessage
-    {
-        var msg :ChecksumMessage = new ChecksumMessage(0, 0, 0, "");
-
-        // iterate over all the shared state and calculate
-        // a simple checksum for it
-        var csum :Checksum = new Checksum();
-
-        var i :int = 0;
-
-        // random state
-        add(Rand.nextInt(Rand.STREAM_GAME), "Rand state");
-
-        // units
-        /*var unitIds :Array = _netObjects.getObjectIdsInGroup(Unit.GROUP_NAME);
-        add(unitIds.length, "units.length");
-        for (i = 0; i < unitIds.length; ++i) {
-            var unit :Unit = _netObjects.get(units[i] as Unit);
-            add(unit.owningPlayerIndex, "unit.owningPlayerIndex - " + i);
-            add(unit.unitType, "unit.unitType - " + i);
-            add(unit.displayObject.x, "unit.displayObject.x - " + i);
-            add(unit.displayObject.y, "unit.displayObject.y - " + i);
-            add(unit.health, "unit.health - " + i);
-        }*/
-
-        msg.playerIndex = GameContext.localPlayerIndex;
-        msg.tick = _gameTickCount;
-        msg.checksum = csum.value;
-
-        return msg;
-
-        var needsLinebreak :Boolean = false;
-
-        function add (val :*, desc :String) :void
-        {
-            csum.add(val);
-
-            if (Constants.DEBUG_CHECKSUM_STATE >= 2) {
-                if (needsLinebreak) {
-                    msg.details += "\n";
-                }
-
-                msg.details += String("csum : " + csum.value + "\t(desc: " + desc + ")\t(val: " + val + ")");
-                needsLinebreak = true;
-            }
-        }
-    }
-
     protected function handleMessage (msg :Message) :void
     {
         var playerIndex :int;
@@ -797,10 +570,6 @@ public class GameMode extends TransitionMode
                 GameContext.playGameSound("sfx_" + spell.name);
             }
             break;
-
-        case ChecksumMessage.messageName:
-            this.handleChecksumMessage(msg as ChecksumMessage);
-            break;
         }
 
     }
@@ -820,14 +589,16 @@ public class GameMode extends TransitionMode
         // move the "target enemy" badge to the correct base
         var baseViews :Array = WorkshopView.getAll();
         for each (var baseView :WorkshopView in baseViews) {
-            baseView.targetEnemyBadgeVisible = (baseView.baseUnit.owningPlayerIndex == targetEnemyId);
+            baseView.targetEnemyBadgeVisible =
+                (baseView.baseUnit.owningPlayerIndex == targetEnemyId);
         }
     }
 
     protected function setupPlayerBaseViewMouseHandlers () :void
     {
         // add click listeners to all the enemy bases.
-        // when an enemy base is clicked, that player becomes the new "target enemy" for the local player.
+        // when an enemy base is clicked, that player becomes the new "target enemy" for the
+        // local player.
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var baseViews :Array = WorkshopView.getAll();
         for each (var baseView :WorkshopView in baseViews) {
@@ -869,31 +640,6 @@ public class GameMode extends TransitionMode
     public function selectTargetEnemy (playerIndex :int, enemyId :int) :void
     {
         _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId));
-    }
-
-    protected function handleChecksumMessage (msg :ChecksumMessage) :void
-    {
-        if (msg.playerIndex != GameContext.localPlayerIndex) {
-            // check this checksum against our checksum buffer
-            if (msg.tick > _lastCachedChecksumTick || msg.tick <= (_lastCachedChecksumTick - _myChecksums.length)) {
-                log.debug("discarding checksum message (too old or too new)");
-            } else {
-                var index :int = (_lastCachedChecksumTick - msg.tick);
-                var myChecksum :ChecksumMessage = (_myChecksums.at(index) as ChecksumMessage);
-                if (myChecksum.checksum != msg.checksum) {
-                    log.warning("** WARNING ** Mismatched checksums at tick " + msg.tick + "!");
-
-                    // only dump the details once
-                    if (!_syncError) {
-                        log.debug("-- PLAYER " + myChecksum.playerIndex + " --");
-                        log.debug(myChecksum.details);
-                        log.debug("-- PLAYER " + msg.playerIndex + " --");
-                        log.debug(msg.details);
-                        _syncError = true;
-                    }
-                }
-            }
-        }
     }
 
     public function localPlayerPurchasedCreature (unitType :int) :void
@@ -958,12 +704,22 @@ public class GameMode extends TransitionMode
 
     public function get canPause () :Boolean
     {
-        return GameContext.isSinglePlayer;
+        return false;
     }
 
-    public function get showIntro () :Boolean
+    protected function createRandSeed () :uint
     {
-        return GameContext.isSinglePlayer;
+        throw new Error("abstract");
+    }
+
+    protected function createPlayers () :void
+    {
+        throw new Error("abstract");
+    }
+
+    protected function createMessageManager () :TickedMessageManager
+    {
+        throw new Error("abstract");
     }
 
     protected var _gameIsRunning :Boolean;

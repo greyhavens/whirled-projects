@@ -2,13 +2,10 @@ package popcraft {
 
 import com.whirled.contrib.simplegame.audio.*;
 
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-
 import popcraft.sp.story.LevelManager;
+import popcraft.sp.story.StoryGameMode;
 
-public class DemoGameMode extends GameMode
+public class DemoGameMode extends StoryGameMode
 {
     override protected function setup () :void
     {
@@ -65,9 +62,9 @@ public class DemoGameMode extends GameMode
         return false;
     }
 
-    override public function get showIntro () :Boolean
+    override protected function showIntro () :void
     {
-        return false;
+        // no-op (Demo mode has no intro)
     }
 
     protected var _hasLoaded :Boolean;
