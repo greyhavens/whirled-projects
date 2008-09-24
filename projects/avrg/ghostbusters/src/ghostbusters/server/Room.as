@@ -101,10 +101,15 @@ public class Room
 
     public function ghostZap (who :Player) :void
     {
-        log.debug("Got zap request [playerId=" + who.playerId + "]");
-
-        // TODO: perhaps check that the same player doesn't zap too repeatedly
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
+            var timer :int = getTimer();
+            if (timer < _nextZap) {
+                log.debug("Ignored too-early zap request [playerId=" + who.playerId + "]");
+                return;
+            }
+            // accept up to two zaps a second
+            _nextZap = timer + 500;
+            log.debug("Accepting zap request [playerId=" + who.playerId + "]");
             Server.control.doBatch(function () :void {
                 // let the other people in the room know there was a successful zapping
                 _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
@@ -485,6 +490,7 @@ public class Room
 
     protected var _ghost :Ghost;
 
+    protected var _nextZap :int = 0;
     protected var _transitionFrame :int = 0;
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId

@@ -130,10 +130,10 @@ public class Ghost
             _brain.tick(timer);
         }
 
-        // TODO: have heal rate depend on level
-        setHealth(health + 1);
+        // a level 1 ghost heals 0.25 hp/second, but let's not bother with fractional healing
+        setHealth(_health + Math.floor(0.25 * Formulae.quadRamp(_level)));
         if (_room.state == Codes.STATE_SEEKING) {
-            setZest(zest + 1);
+            setZest(_zest + 1);
         }
     }
 
