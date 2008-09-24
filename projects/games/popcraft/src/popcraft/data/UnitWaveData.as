@@ -24,7 +24,8 @@ public class UnitWaveData
         unitWave.spellCastChance = XmlReader.getAttributeAsNumber(xmlData, "spellCastChance", 0);
 
         for each (var unitNode :XML in xmlData.Unit) {
-            var unitType :int = XmlReader.getAttributeAsEnum(unitNode, "type", Constants.CREATURE_UNIT_NAMES);
+            var unitType :int = XmlReader.getAttributeAsEnum(unitNode, "type",
+                Constants.CREATURE_UNIT_NAMES);
             var count :int = XmlReader.getAttributeAsUint(unitNode, "count");
             var max :int = XmlReader.getAttributeAsInt(unitNode, "max", -1);
 
@@ -33,7 +34,8 @@ public class UnitWaveData
             unitWave.units.push(max);
         }
 
-        unitWave.targetPlayerName = XmlReader.getAttributeAsString(xmlData, "targetPlayerName", null);
+        unitWave.targetPlayerName = XmlReader.getAttributeAsString(xmlData, "targetPlayerName",
+            null);
 
         return unitWave;
     }

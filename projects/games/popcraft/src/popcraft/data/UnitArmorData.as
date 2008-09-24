@@ -4,8 +4,8 @@ import popcraft.*;
 import popcraft.util.*;
 
 /**
- * UnitArmor is a damage filter that modifies the effects of an attack before it's applied to a unit.
- * All units have a UnitArmor.
+ * UnitArmor is a damage filter that modifies the effects of an attack before it's applied to a
+ * unit. All units have a UnitArmor.
  */
 public class UnitArmorData
 {
@@ -39,7 +39,8 @@ public class UnitArmorData
             }
 
             for each (var damageNode :XML in xml.Damage) {
-                var type :int = XmlReader.getAttributeAsEnum(damageNode, "type", Constants.DAMAGE_TYPE_NAMES);
+                var type :int = XmlReader.getAttributeAsEnum(damageNode, "type",
+                    Constants.DAMAGE_TYPE_NAMES);
                 var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
                 armorData.armor[type] = scale;
             }

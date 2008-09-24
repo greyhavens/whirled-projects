@@ -31,15 +31,19 @@ public class DaySequenceData
             data.unitWaves.push(uwd);
         }
 
-        var noticeSpellDropAfterMin :Number = XmlReader.getAttributeAsNumber(xmlData, "noticeSpellDropAfterMin", -1);
-        var noticeSpellDropAfterMax :Number = XmlReader.getAttributeAsNumber(xmlData, "noticeSpellDropAfterMax", -1);
+        var noticeSpellDropAfterMin :Number = XmlReader.getAttributeAsNumber(xmlData,
+            "noticeSpellDropAfterMin", -1);
+        var noticeSpellDropAfterMax :Number = XmlReader.getAttributeAsNumber(xmlData,
+            "noticeSpellDropAfterMax", -1);
         data.noticeSpellDropAfter = new NumRange(
             noticeSpellDropAfterMin,
             noticeSpellDropAfterMax,
             Rand.STREAM_GAME);
 
-        var spellDropCourierGroupSizeMin :int = XmlReader.getAttributeAsInt(xmlData, "spellDropCourierGroupSizeMin", -1);
-        var spellDropCourierGroupSizeMax :int = XmlReader.getAttributeAsInt(xmlData, "spellDropCourierGroupSizeMax", -1);
+        var spellDropCourierGroupSizeMin :int = XmlReader.getAttributeAsInt(xmlData,
+            "spellDropCourierGroupSizeMin", -1);
+        var spellDropCourierGroupSizeMax :int = XmlReader.getAttributeAsInt(xmlData,
+            "spellDropCourierGroupSizeMax", -1);
         data.spellDropCourierGroupSize = new IntRange(
             spellDropCourierGroupSizeMin,
             spellDropCourierGroupSizeMax + 1, // IntRange returns values in [min, max); what we want here is [min, max]

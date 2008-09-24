@@ -29,9 +29,11 @@ public class ComputerPlayerData
         var computerPlayer :ComputerPlayerData = new ComputerPlayerData();
 
         computerPlayer.playerName = XmlReader.getAttributeAsString(xmlData, "playerName");
-        computerPlayer.playerHeadshotName = XmlReader.getAttributeAsString(xmlData, "playerHeadshotName");
+        computerPlayer.playerHeadshotName = XmlReader.getAttributeAsString(xmlData,
+            "playerHeadshotName");
         computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
-        computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xmlData, "baseStartHealth", computerPlayer.baseHealth);
+        computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xmlData, "baseStartHealth",
+            computerPlayer.baseHealth);
         computerPlayer.invincible = XmlReader.getAttributeAsBoolean(xmlData, "invincible", false);
         computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");
 
@@ -50,7 +52,8 @@ public class ComputerPlayerData
 
         // read spells
         for each (var spellData :XML in xmlData.InitialSpells.Spell) {
-            spellType = XmlReader.getAttributeAsEnum(spellData, "type", Constants.CREATURE_SPELL_NAMES);
+            spellType = XmlReader.getAttributeAsEnum(spellData, "type",
+                Constants.CREATURE_SPELL_NAMES);
             var amount :int = XmlReader.getAttributeAsUint(spellData, "amount");
             computerPlayer.startingCreatureSpells[spellType] = amount;
         }

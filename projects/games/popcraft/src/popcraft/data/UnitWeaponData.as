@@ -56,27 +56,39 @@ public class UnitWeaponData
 
         var weapon :UnitWeaponData = (useDefaults ? inheritFrom : new UnitWeaponData());
 
-        weapon.damageType = XmlReader.getAttributeAsEnum(xml, "damageType", Constants.DAMAGE_TYPE_NAMES, (useDefaults ? inheritFrom.damageType : undefined));
-        weapon.initialWarmup = XmlReader.getAttributeAsNumber(xml, "initialWarmup", (useDefaults ? inheritFrom.initialWarmup : 0));
-        weapon.cooldown = XmlReader.getAttributeAsNumber(xml, "cooldown", (useDefaults ? inheritFrom.cooldown : 0.1));
-        weapon.maxAttackDistance = XmlReader.getAttributeAsNumber(xml, "maxAttackDistance", (useDefaults ? inheritFrom.maxAttackDistance : 0));
+        weapon.damageType = XmlReader.getAttributeAsEnum(xml, "damageType",
+            Constants.DAMAGE_TYPE_NAMES, (useDefaults ? inheritFrom.damageType : undefined));
+        weapon.initialWarmup = XmlReader.getAttributeAsNumber(xml, "initialWarmup",
+            (useDefaults ? inheritFrom.initialWarmup : 0));
+        weapon.cooldown = XmlReader.getAttributeAsNumber(xml, "cooldown",
+            (useDefaults ? inheritFrom.cooldown : 0.1));
+        weapon.maxAttackDistance = XmlReader.getAttributeAsNumber(xml, "maxAttackDistance",
+            (useDefaults ? inheritFrom.maxAttackDistance : 0));
 
-        var damageMin :Number = XmlReader.getAttributeAsNumber(xml, "damageMin", (useDefaults ? inheritFrom.damageRange.min : undefined));
-        var damageMax :Number = XmlReader.getAttributeAsNumber(xml, "damageMax", (useDefaults ? inheritFrom.damageRange.max : undefined));
+        var damageMin :Number = XmlReader.getAttributeAsNumber(xml, "damageMin",
+            (useDefaults ? inheritFrom.damageRange.min : undefined));
+        var damageMax :Number = XmlReader.getAttributeAsNumber(xml, "damageMax",
+            (useDefaults ? inheritFrom.damageRange.max : undefined));
         weapon.damageRange = new NumRange(damageMin, damageMax, Rand.STREAM_GAME);
 
         // ranged weapons
-        weapon.isRanged = XmlReader.getAttributeAsBoolean(xml, "isRanged", (useDefaults ? inheritFrom.isRanged : false));
+        weapon.isRanged = XmlReader.getAttributeAsBoolean(xml, "isRanged",
+            (useDefaults ? inheritFrom.isRanged : false));
         if (weapon.isRanged) {
-            weapon.missileSpeed = XmlReader.getAttributeAsNumber(xml, "missileSpeed", (useDefaults ? inheritFrom.missileSpeed : undefined));
+            weapon.missileSpeed = XmlReader.getAttributeAsNumber(xml, "missileSpeed",
+                (useDefaults ? inheritFrom.missileSpeed : undefined));
         }
 
         // AOE weapons
-        weapon.isAOE = XmlReader.getAttributeAsBoolean(xml, "isAOE", (useDefaults ? inheritFrom.isAOE : false));
+        weapon.isAOE = XmlReader.getAttributeAsBoolean(xml, "isAOE",
+            (useDefaults ? inheritFrom.isAOE : false));
         if (weapon.isAOE) {
-            weapon.aoeRadius = XmlReader.getAttributeAsNumber(xml, "aoeRadius", (useDefaults ? inheritFrom.aoeRadius : undefined));
-            weapon.aoeDamageFriendlies = XmlReader.getAttributeAsBoolean(xml, "aoeDamageFriendlies", (useDefaults ? inheritFrom.aoeDamageFriendlies : undefined));
-            weapon.aoeMaxDamage = XmlReader.getAttributeAsNumber(xml, "aoeMaxDamage", (useDefaults ? inheritFrom.aoeMaxDamage : undefined));
+            weapon.aoeRadius = XmlReader.getAttributeAsNumber(xml, "aoeRadius",
+                (useDefaults ? inheritFrom.aoeRadius : undefined));
+            weapon.aoeDamageFriendlies = XmlReader.getAttributeAsBoolean(xml, "aoeDamageFriendlies",
+                (useDefaults ? inheritFrom.aoeDamageFriendlies : undefined));
+            weapon.aoeMaxDamage = XmlReader.getAttributeAsNumber(xml, "aoeMaxDamage",
+                (useDefaults ? inheritFrom.aoeMaxDamage : undefined));
         }
 
         return weapon;

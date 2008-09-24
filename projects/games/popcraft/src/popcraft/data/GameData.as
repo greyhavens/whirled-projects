@@ -80,36 +80,59 @@ public class GameData
         var gameData :GameData = (useDefaults ? inheritFrom : new GameData());
 
         if (!useDefaults || XmlReader.hasChild(xml, "PuzzleClearValueTable")) {
-            gameData.resourceClearValueTable = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "PuzzleClearValueTable"));
+            gameData.resourceClearValueTable = IntValueTable.fromXml(
+                XmlReader.getSingleChild(xml, "PuzzleClearValueTable"));
         }
 
-        gameData.pointsPerResource = XmlReader.getAttributeAsInt(xml, "pointsPerResource", (useDefaults ? gameData.pointsPerResource : undefined));
+        gameData.pointsPerResource = XmlReader.getAttributeAsInt(xml, "pointsPerResource",
+            (useDefaults ? gameData.pointsPerResource : undefined));
 
-        gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength", (useDefaults ? gameData.dayLength : undefined));
-        gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength", (useDefaults ? gameData.nightLength : undefined));
-        gameData.dawnWarning = XmlReader.getAttributeAsNumber(xml, "dawnWarning", (useDefaults ? gameData.dawnWarning : undefined));
-        gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase", Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
-        gameData.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle", (useDefaults ? gameData.disableDiurnalCycle : undefined));
-        gameData.enableEclipse = XmlReader.getAttributeAsBoolean(xml, "enableEclipse", (useDefaults ? gameData.enableEclipse : undefined));
-        gameData.eclipseLength = XmlReader.getAttributeAsNumber(xml, "eclipseLength", (useDefaults ? gameData.eclipseLength : undefined));
+        gameData.dayLength = XmlReader.getAttributeAsNumber(xml, "dayLength",
+            (useDefaults ? gameData.dayLength : undefined));
+        gameData.nightLength = XmlReader.getAttributeAsNumber(xml, "nightLength",
+            (useDefaults ? gameData.nightLength : undefined));
+        gameData.dawnWarning = XmlReader.getAttributeAsNumber(xml, "dawnWarning",
+            (useDefaults ? gameData.dawnWarning : undefined));
+        gameData.initialDayPhase = XmlReader.getAttributeAsEnum(xml, "initialDayPhase",
+            Constants.DAY_PHASE_NAMES, (useDefaults ? gameData.initialDayPhase : undefined));
+        gameData.disableDiurnalCycle = XmlReader.getAttributeAsBoolean(xml, "disableDiurnalCycle",
+            (useDefaults ? gameData.disableDiurnalCycle : undefined));
+        gameData.enableEclipse = XmlReader.getAttributeAsBoolean(xml, "enableEclipse",
+            (useDefaults ? gameData.enableEclipse : undefined));
+        gameData.eclipseLength = XmlReader.getAttributeAsNumber(xml, "eclipseLength",
+            (useDefaults ? gameData.eclipseLength : undefined));
 
-        var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin", (useDefaults ? gameData.spellDropTime.min : undefined));
-        var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax", (useDefaults ? gameData.spellDropTime.max : undefined));
+        var spellDropTimeMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMin",
+            (useDefaults ? gameData.spellDropTime.min : undefined));
+        var spellDropTimeMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropTimeMax",
+            (useDefaults ? gameData.spellDropTime.max : undefined));
         gameData.spellDropTime = new NumRange(spellDropTimeMin, spellDropTimeMax, Rand.STREAM_GAME);
 
-        var spellDropScatterMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMin", (useDefaults ? gameData.spellDropScatter.min : undefined));
-        var spellDropScatterMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMax", (useDefaults ? gameData.spellDropScatter.max : undefined));
-        gameData.spellDropScatter = new NumRange(spellDropScatterMin, spellDropScatterMax, Rand.STREAM_GAME);
+        var spellDropScatterMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMin",
+            (useDefaults ? gameData.spellDropScatter.min : undefined));
+        var spellDropScatterMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropScatterMax",
+            (useDefaults ? gameData.spellDropScatter.max : undefined));
+        gameData.spellDropScatter = new NumRange(spellDropScatterMin, spellDropScatterMax,
+            Rand.STREAM_GAME);
 
-        var spellDropCenterOffsetMin :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMin", (useDefaults ? gameData.spellDropCenterOffset.min : undefined));
-        var spellDropCenterOffsetMax :Number = XmlReader.getAttributeAsNumber(xml, "spellDropCenterOffsetMax", (useDefaults ? gameData.spellDropCenterOffset.max : undefined));
+        var spellDropCenterOffsetMin :Number = XmlReader.getAttributeAsNumber(xml,
+            "spellDropCenterOffsetMin",
+            (useDefaults ? gameData.spellDropCenterOffset.min : undefined));
+        var spellDropCenterOffsetMax :Number = XmlReader.getAttributeAsNumber(xml,
+            "spellDropCenterOffsetMax",
+            (useDefaults ? gameData.spellDropCenterOffset.max : undefined));
         gameData.spellDropCenterOffset = new NumRange(spellDropCenterOffsetMin, spellDropCenterOffsetMax, Rand.STREAM_GAME);
 
-        gameData.maxLosingPlayerSpellDropShift = XmlReader.getAttributeAsNumber(xml, "maxLosingPlayerSpellDropShift", (useDefaults ? gameData.maxLosingPlayerSpellDropShift : undefined));
+        gameData.maxLosingPlayerSpellDropShift = XmlReader.getAttributeAsNumber(xml,
+            "maxLosingPlayerSpellDropShift",
+            (useDefaults ? gameData.maxLosingPlayerSpellDropShift : undefined));
 
-        gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount", (useDefaults ? gameData.minResourceAmount : undefined));
-        gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount", (useDefaults ? gameData.maxResourceAmount : undefined));
-        gameData.maxSpellsPerType = XmlReader.getAttributeAsInt(xml, "maxSpellsPerType", (useDefaults ? gameData.maxSpellsPerType : undefined));
+        gameData.minResourceAmount = XmlReader.getAttributeAsInt(xml, "minResourceAmount",
+            (useDefaults ? gameData.minResourceAmount : undefined));
+        gameData.maxResourceAmount = XmlReader.getAttributeAsInt(xml, "maxResourceAmount",
+            (useDefaults ? gameData.maxResourceAmount : undefined));
+        gameData.maxSpellsPerType = XmlReader.getAttributeAsInt(xml, "maxSpellsPerType",
+            (useDefaults ? gameData.maxSpellsPerType : undefined));
 
         // init the resource data
         for (var i :int = gameData.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
@@ -117,8 +140,10 @@ public class GameData
         }
 
         for each (var resourceNode :XML in xml.Resources.Resource) {
-            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
-            gameData.resources[type] = ResourceData.fromXml(resourceNode, (useDefaults ? inheritFrom.resources[type] : null));
+            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type",
+                Constants.RESOURCE_NAMES);
+            gameData.resources[type] = ResourceData.fromXml(resourceNode,
+                (useDefaults ? inheritFrom.resources[type] : null));
         }
 
         // init the unit data
@@ -128,7 +153,8 @@ public class GameData
 
         for each (var unitNode :XML in xml.Units.Unit) {
             type = XmlReader.getAttributeAsEnum(unitNode, "type", Constants.UNIT_NAMES);
-            gameData.units[type] = UnitData.fromXml(unitNode, (useDefaults ? inheritFrom.units[type] : null));
+            gameData.units[type] = UnitData.fromXml(unitNode,
+                (useDefaults ? inheritFrom.units[type] : null));
         }
 
         // init the spell data
@@ -138,8 +164,10 @@ public class GameData
 
         for each (var spellNode :XML in xml.Spells.Spell) {
             type = XmlReader.getAttributeAsEnum(spellNode, "type", Constants.SPELL_NAMES);
-            var spellClass :Class = (type < Constants.CREATURE_SPELL_TYPE__LIMIT ? CreatureSpellData : SpellData);
-            gameData.spells[type] = spellClass.fromXml(spellNode, (useDefaults ? inheritFrom.spells[type] : null));
+            var spellClass :Class =
+                (type < Constants.CREATURE_SPELL_TYPE__LIMIT ? CreatureSpellData : SpellData);
+            gameData.spells[type] = spellClass.fromXml(spellNode,
+                (useDefaults ? inheritFrom.spells[type] : null));
         }
 
         // read player colors
@@ -174,8 +202,10 @@ public class GameData
             report += "\nWeapon damage range: (" + rangeMin + ", " + rangeMax + ")";
 
             for each (var dstUnit :UnitData in units) {
-                var dmgMin :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMin) : Number.NEGATIVE_INFINITY);
-                var dmgMax :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType, rangeMax) : Number.NEGATIVE_INFINITY);
+                var dmgMin :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType,
+                    rangeMin) : Number.NEGATIVE_INFINITY);
+                var dmgMax :Number = (null != dstUnit.armor ? dstUnit.armor.getDamage(damageType,
+                    rangeMax) : Number.NEGATIVE_INFINITY);
                 // dot == damage over time
                 var dotMin :Number = dmgMin / weapon.cooldown;
                 var dotMax :Number = dmgMax / weapon.cooldown;
@@ -184,7 +214,8 @@ public class GameData
                 var ttkMax :Number = dstUnit.maxHealth / dotMin;
                 var ttkAvg :Number = (ttkMin + ttkMax) / 2;
 
-                report += "\nvs " + dstUnit.name + ": (" + dmgMin.toFixed(2) + ", " + dmgMax.toFixed(2) + ")";
+                report += "\nvs " + dstUnit.name + ":"
+                report += " (" + dmgMin.toFixed(2) + ", " + dmgMax.toFixed(2) + ")";
                 report += " DOT: (" + dotMin.toFixed(2) + "/s, " + dotMax.toFixed(2) + "/s)";
                 report += " avg time-to-kill: " + ttkAvg.toFixed(2);
             }

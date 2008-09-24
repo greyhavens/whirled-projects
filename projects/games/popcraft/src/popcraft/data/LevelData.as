@@ -57,22 +57,27 @@ public class LevelData
         // does the level override game data?
         var gameDataOverrideNode :XML = xml.GameDataOverride[0];
         if (null != gameDataOverrideNode) {
-            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode, AppContext.defaultGameData.clone());
+            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
+                AppContext.defaultGameData.clone());
         }
 
         level.levelCompletionBonus = XmlReader.getAttributeAsInt(xml, "levelCompletionBonus");
         level.expertCompletionBonus = XmlReader.getAttributeAsInt(xml, "expertCompletionBonus");
         level.expertCompletionDays = XmlReader.getAttributeAsInt(xml, "expertCompletionDays");
-        level.maxResourcesScore = XmlReader.getAttributeAsInt(xml, "maxResourcesScore", -1);  // only used on levels 1 and 2 to prevent infinite resource farming
+        // only used on levels 1 and 2 to prevent infinite resource farming
+        level.maxResourcesScore = XmlReader.getAttributeAsInt(xml, "maxResourcesScore", -1);
         level.introText = XmlReader.getAttributeAsString(xml, "introText");
         level.introText2 = XmlReader.getAttributeAsString(xml, "introText2", level.introText);
-        level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType", Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
-        level.newSpellType = XmlReader.getAttributeAsEnum(xml, "newSpellType", Constants.SPELL_NAMES, -1);
+        level.newCreatureType = XmlReader.getAttributeAsEnum(xml, "newCreatureType",
+            Constants.PLAYER_CREATURE_UNIT_NAMES, -1);
+        level.newSpellType = XmlReader.getAttributeAsEnum(xml, "newSpellType",
+            Constants.SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getAttributeAsString(xml, "playerName");
         level.playerHeadshotName = XmlReader.getAttributeAsString(xml, "playerHeadshotName");
         level.playerBaseHealth = XmlReader.getAttributeAsInt(xml, "playerBaseHealth");
-        level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth", level.playerBaseHealth);
+        level.playerBaseStartHealth = XmlReader.getAttributeAsInt(xml, "playerBaseStartHealth",
+            level.playerBaseHealth);
 
         // level hints
         for each (var hintData :XML in xml.Hints.Hint) {
@@ -81,12 +86,14 @@ public class LevelData
 
         // parse the available units
         for each (var unitData :XML in xml.AvailableUnits.Unit) {
-            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type", Constants.PLAYER_CREATURE_UNIT_NAMES));
+            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type",
+                Constants.PLAYER_CREATURE_UNIT_NAMES));
         }
 
         // parse available spells
         for each (var spellData :XML in xml.AvailableSpells.Spell) {
-            level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type", Constants.SPELL_NAMES));
+            level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type",
+                Constants.SPELL_NAMES));
         }
 
         // parse the computer players
@@ -97,7 +104,8 @@ public class LevelData
         // parse the initial resources
         level.initialResources = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
         for each (var resourceNode :XML in xml.InitialResources.Resource) {
-            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type", Constants.RESOURCE_NAMES);
+            var type :int = XmlReader.getAttributeAsEnum(resourceNode, "type",
+                Constants.RESOURCE_NAMES);
             var amount :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
             level.initialResources[type] = amount;
         }

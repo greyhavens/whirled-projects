@@ -39,8 +39,10 @@ public class SpellData
         var spell :SpellData = (useDefaults ? inheritFrom : new SpellData());
 
         spell.type = XmlReader.getAttributeAsEnum(xml, "type", Constants.SPELL_NAMES);
-        spell.displayName = XmlReader.getAttributeAsString(xml, "displayName", (useDefaults ? inheritFrom.displayName : undefined));
-        spell.introText = XmlReader.getAttributeAsString(xml, "introText", (useDefaults ? inheritFrom.introText : undefined));
+        spell.displayName = XmlReader.getAttributeAsString(xml, "displayName",
+            (useDefaults ? inheritFrom.displayName : undefined));
+        spell.introText = XmlReader.getAttributeAsString(xml, "introText",
+            (useDefaults ? inheritFrom.introText : undefined));
 
         return spell;
     }
