@@ -4,7 +4,7 @@
 package bingo.client {
 
 import bingo.*;
-import bingo.server.*;
+//import bingo.server.*;
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -20,10 +20,10 @@ public class BingoMain extends Sprite
 {
     public function BingoMain ()
     {
-        var c :Class;
+        /*var c :Class;
         c = GameController;
         c = Server;
-        c = ServerBingoItems;
+        c = ServerBingoItems;*/
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);

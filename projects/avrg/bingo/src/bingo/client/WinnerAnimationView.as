@@ -46,7 +46,11 @@ public class WinnerAnimationView extends SceneObject
 
     override protected function destroyed () :void
     {
-        _winnerAnim.removeEventListener(Event.COMPLETE, winnerAnimComplete);
+        if (_winnerAnim != null) {
+            _winnerAnim.removeEventListener(Event.COMPLETE, winnerAnimComplete);
+            _winnerAnim = null;
+        }
+
         ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
     }
