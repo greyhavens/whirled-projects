@@ -32,7 +32,7 @@ public class Lantern extends SplinePather
 
     public function Lantern (playerId :int, p :Point)
     {
-        super();
+        super(p);
 
         this.playerId = playerId;
 
@@ -59,16 +59,10 @@ public class Lantern extends SplinePather
         }
 
         light = getLanternLight((r << 16) + (g << 8) + b);
-        light.x = p.x;
-        light.y = p.y;
-
         hole = getLanternHole();
-        hole.x = p.x;
-        hole.y = p.y;
-
         mask = getLanternMask();
-        mask.x = p.x;
-        mask.y = p.y;
+
+        nextFrame();
     }
 
     override public function nextFrame () :void

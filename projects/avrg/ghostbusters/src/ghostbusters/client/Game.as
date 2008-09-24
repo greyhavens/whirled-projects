@@ -81,11 +81,15 @@ public class Game extends Sprite
         return (max > 0) ? (cur / max) : 1;
     }
 
-    // TODO: move this
     public static function get state () :String
     {
         var state :Object = control.room.props.get(Codes.PROP_STATE);
         return (state is String) ? state as String : Codes.STATE_SEEKING;
+    }
+
+    public static function amDead () :Boolean
+    {
+        return int(control.player.props.get(Codes.PROP_MY_HEALTH)) == 0;
     }
 
     protected function handleUnload (event :Event) :void

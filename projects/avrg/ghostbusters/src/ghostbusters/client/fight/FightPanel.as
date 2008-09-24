@@ -68,8 +68,8 @@ public class FightPanel extends FrameSprite
 
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
-        Game.control.room.props.addEventListener(
-            ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        Game.control.player.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
 
         _ghost.fighting();
 
@@ -107,6 +107,7 @@ public class FightPanel extends FrameSprite
             _player.cancelCurrentGame();
         }
         _log.debug("Starting new minigame.");
+        startMinigame();
     }
 
     public function toggleGame () :void
@@ -127,7 +128,9 @@ public class FightPanel extends FrameSprite
 
     protected function startMinigame () :void
     {
-        Game.panel.frameContent(_player);
+        if (_player.root == null) {
+            Game.panel.frameContent(_player);
+        }
 
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
@@ -256,19 +259,20 @@ public class FightPanel extends FrameSprite
         }
     }
 
-    protected function elementChanged (evt :ElementChangedEvent) :void
+    protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
     {
-        var playerId :int = PlayerModel.parsePlayerProperty(evt.name);
-        if (playerId == Game.ourPlayerId && PlayerModel.isDead(playerId)) {
-            // if we just died, cancel minigame
-            endMinigame();
+        if (evt.name == Codes.PROP_MY_HEALTH) {
+            if (Game.amDead()) {
+                // if we just died, cancel minigame
+                endMinigame();
+            }
         }
     }
 
     protected function checkForSpecialStates () :void
     {
         if (Game.state == Codes.STATE_GHOST_TRIUMPH) {
-            handleGhostTrimph();
+            handleGhostTriumph();
 
         } else if (Game.state == Codes.STATE_GHOST_DEFEAT) {
             showGhostDeath();
@@ -283,7 +287,7 @@ public class FightPanel extends FrameSprite
         _ghost.die();
     }
 
-    protected function handleGhostTrimph () :void
+    protected function handleGhostTriumph () :void
     {
         _ghost.triumph();
     }

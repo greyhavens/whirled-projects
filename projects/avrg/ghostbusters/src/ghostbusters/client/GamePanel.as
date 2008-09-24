@@ -5,6 +5,7 @@ package ghostbusters.client {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -84,13 +85,15 @@ public class GamePanel extends Sprite
 
     public function set seeking (seeking :Boolean) :void
     {
-        _seeking = seeking;
-        updateState();
+        if (_seeking != seeking) {
+            _seeking = seeking;
+            updateState(true);
+        }
     }
 
     public function unframeContent () :void
     {
-        if (_frame != null) {
+        if (_frame != null && _frame.root != null) {
             _frame.frameContent(null);
             this.removeChild(_frame);
         }
@@ -128,9 +131,10 @@ public class GamePanel extends Sprite
         _ghost = null;
         var clip :Class = getClipClass();
         if (clip != null) {
-            new Ghost(clip, function (g :Ghost) :void {
+            // TODO: ghost positioning needs to be generalized
+            new Ghost(clip, new Point(0, 0), function (g :Ghost) :void {
                 _ghost = g;
-                updateState();
+                updateState(true);
             });
         }
     }
@@ -149,12 +153,12 @@ public class GamePanel extends Sprite
 
     protected function checkForDeath () :void
     {
-        var health :Object = Game.control.player.props.get(Codes.PROP_MY_HEALTH);
-        if (health > 0) {
+        if (!Game.amDead()) {
             if (_revive != null) {
                 _log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
+                updateState(false);
             }
             return;
         }
@@ -163,6 +167,7 @@ public class GamePanel extends Sprite
             _log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
+            updateState(false);
         }
     }
 
@@ -213,7 +218,7 @@ public class GamePanel extends Sprite
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-            updateState();
+            updateState(false);
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
@@ -222,30 +227,40 @@ public class GamePanel extends Sprite
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
-        _seeking = true;
         newGhost();
     }
 
-    protected function updateState () :void
+    protected function updateState (forced :Boolean) :void
     {
-        var seekPanel :Boolean =
-            ((Game.state == Codes.STATE_SEEKING && _seeking) ||
-              Game.state == Codes.STATE_APPEARING);
+        var pClass :Class = null;
 
-        var fightPanel :Boolean =
-            (Game.state == Codes.STATE_FIGHTING ||
-             Game.state == Codes.STATE_GHOST_TRIUMPH ||
-             Game.state == Codes.STATE_GHOST_DEFEAT);
+        if (!Game.amDead()) {
+            switch(Game.state) {
+            case Codes.STATE_SEEKING:
+                if (_seeking == false) {
+                    break;
+                }
+                // fall through
+            case Codes.STATE_APPEARING:
+                pClass = SeekPanel;
+                break;
+            case Codes.STATE_FIGHTING:
+            case Codes.STATE_GHOST_TRIUMPH:
+            case Codes.STATE_GHOST_DEFEAT:
+                pClass = FightPanel;
+                break;
+            default:
+                _log.warning("Aii, updateState() doesn't know what to do", "state", Game.state);
+                return;
+            }
+        }
 
-        setPanel(seekPanel ? SeekPanel : (fightPanel ? FightPanel : null));
-    }
-
-    protected function setPanel (pClass :Class) :void
-    {
-        if (pClass != null && _panel is pClass) {
+        if (!forced && pClass != null && _panel is pClass) {
             return;
         }
+
         if (_panel != null) {
+            unframeContent();
             this.removeChild(_panel);
             _panel = null;
         }

@@ -9,8 +9,13 @@ import ghostbusters.client.Game;
 
 public class SplinePather
 {
-    public function SplinePather ()
+    public function SplinePather (pos :Point)
     {
+        _xFun = new HermiteFunc(pos.x, pos.x, 0, 0);
+        _yFun = new HermiteFunc(pos.y, pos.y, 0, 0);
+
+        _frames = 1;
+        _frame = 0;
     }
 
     public function get idle () :Boolean
@@ -25,22 +30,22 @@ public class SplinePather
 
     public function get x () :Number
     {
-        return _xFun != null ? _xFun.getValue(t) : 0;
+        return _xFun.getValue(t);
     }
 
     public function get xDot () :Number
     {
-        return _xFun != null ? _xFun.getSlope(t) : 0;
+        return _xFun.getSlope(t);
     }
 
     public function get y () :Number
     {
-        return _yFun != null ? _yFun.getValue(t) : 0;
+        return _yFun.getValue(t);
     }
 
     public function get yDot () :Number
     {
-        return _yFun != null ? _yFun.getSlope(t) : 0;
+        return _yFun.getSlope(t);
     }
 
     public function nextFrame () :void
@@ -66,6 +71,7 @@ public class SplinePather
         } else if (_frames > 0) {
             wX = (p.x - this.x) / (_frames / 30);
             wY = (p.y - this.y) / (_frames / 30);
+
         } else {
             wX = wY = 0;
         }

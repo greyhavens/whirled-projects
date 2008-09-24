@@ -21,13 +21,13 @@ public class Ghost extends Sprite
 {
     public var handler :ClipHandler;
 
-    public function Ghost (clip :Class, readyCallback :Function)
+    public function Ghost (clip :Class, pos :Point, readyCallback :Function)
     {
         handler = new ClipHandler(new clip(), setupUI);
         this.addChild(handler);
 
         _readyCallback = readyCallback;
-        _pather = new SplinePather();
+        _pather = new SplinePather(pos);
     }
 
     public function isIdle () :Boolean

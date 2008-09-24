@@ -46,8 +46,8 @@ public class ClipHandler extends FrameSprite
 
         for (var ii :int = 0; ii < _clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-            _log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
-                           ", labels=" + scene.labels + "]");
+//            _log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
+//                           ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
         }
 

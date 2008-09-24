@@ -60,6 +60,7 @@ public class SeekPanel extends FrameSprite
 
         if (Game.state == Codes.STATE_APPEARING) {
             appearGhost();
+
         } else if (_ghost != null) {
             _ghost.hidden();
         }
@@ -222,6 +223,7 @@ public class SeekPanel extends FrameSprite
             if (_lanterns != null && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, GameController.ZAP_GHOST);
+                _zapping = ZAP_FRAMES;
             }
         }
 
@@ -292,6 +294,8 @@ public class SeekPanel extends FrameSprite
     protected function updateLantern (playerId :int, pos :Point) :void
     {
         var lantern :Lantern = _lanterns[playerId];
+        pos = this.globalToLocal(pos);
+//        _log.debug("New lantern update", "pos", pos);
         if (lantern == null) {
             // a new lantern just appears, no splines involved
             lantern = new Lantern(playerId, pos);
@@ -303,7 +307,7 @@ public class SeekPanel extends FrameSprite
 
         } else {
             // just set our aim for p
-            lantern.newTarget(this.globalToLocal(pos), 0.5, false);
+            lantern.newTarget(pos, 0.5, false);
         }
     }
 

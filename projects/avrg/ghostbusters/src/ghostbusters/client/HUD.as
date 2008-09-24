@@ -332,13 +332,13 @@ public class HUD extends Sprite
         if (us) {
             bar = _myHealthBar;
             bar.gotoAndStop(frame);
-            _log.debug("Moved " + bar.name + " to frame #" + frame);
+//            _log.debug("Moved " + bar.name + " to frame #" + frame);
             reallyStop(bar);
         }
         var bar :MovieClip = _playerPanels[ix].healthBar;
         bar.visible = true;
         bar.gotoAndStop(frame);
-        _log.debug("Moved " + bar.name + " to frame #" + frame);
+//        _log.debug("Moved " + bar.name + " to frame #" + frame);
         reallyStop(bar);
     }
 
