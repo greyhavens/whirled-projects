@@ -137,7 +137,7 @@ public class LevelSelectMode extends DemoGameMode
         super.update(dt);
 
         if (_showingTutorial) {
-            _unitIntro.visible = GameContext.localPlayerInfo.canPurchaseCreature(Constants.UNIT_TYPE_GRUNT);
+            _unitIntro.visible = GameContext.localPlayerInfo.canAffordCreature(Constants.UNIT_TYPE_GRUNT);
             _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
             _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
         }
@@ -291,7 +291,7 @@ public class LevelSelectMode extends DemoGameMode
                 new PrologueMode(PrologueMode.TRANSITION_GAME));
 
         } else {
-            this.fadeOutToMode(new GameMode());
+            this.fadeOutToMode(new StoryGameMode());
         }
     }
 

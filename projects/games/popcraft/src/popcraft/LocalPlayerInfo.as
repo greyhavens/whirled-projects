@@ -113,7 +113,7 @@ public class LocalPlayerInfo extends PlayerInfo
         }
     }
 
-    override public function canPurchaseCreature (unitType :int) :Boolean
+    override public function canAffordCreature (unitType :int) :Boolean
     {
         var unitData :UnitData = GameContext.gameData.units[unitType];
         var creatureCosts :Array = unitData.resourceCosts;

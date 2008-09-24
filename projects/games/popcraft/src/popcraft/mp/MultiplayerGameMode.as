@@ -1,8 +1,14 @@
 package popcraft.mp {
 
+import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
+import com.whirled.contrib.simplegame.util.Rand;
 
-import popcraft.GameMode;
+import popcraft.*;
+import popcraft.battle.*;
+import popcraft.data.*;
 
 public class MultiplayerGameMode extends GameMode
 {
@@ -10,14 +16,7 @@ public class MultiplayerGameMode extends GameMode
     {
     }
 
-    override protected function setup () :void
-    {
-        initMultiplayerSettings();
-
-        super.setup();
-    }
-
-    protected function initMultiplayerSettings () :void
+    override protected function rngSeeded () :void
     {
         // Determine what the game's team arrangement is, and randomly choose an appropriate
         // MultiplayerSettingsData that fits that arrangement.
@@ -86,18 +85,14 @@ public class MultiplayerGameMode extends GameMode
             }
 
             if (GameContext.localPlayerIndex == playerIndex) {
-                var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);
+                var localPlayerInfo :LocalPlayerInfo =
+                    new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);
                 playerInfo = localPlayerInfo;
             } else {
                 playerInfo = new PlayerInfo(playerIndex, teamId, baseLoc, handicap);
             }
 
             GameContext.playerInfos.push(playerInfo);
-        }
-
-        // setup target enemies
-        for each (playerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId = GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
         }
     }
 
@@ -112,6 +107,62 @@ public class MultiplayerGameMode extends GameMode
              SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
     }
 
+    override protected function createInitialWorkshops () :void
+    {
+        var numPlayers :int = GameContext.numPlayers;
+        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
+
+            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
+            var baseLoc :Vector2 = playerInfo.baseLoc;
+
+            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex);
+            base.x = baseLoc.x;
+            base.y = baseLoc.y;
+
+            playerInfo.base = base;
+        }
+    }
+
+    override protected function handleGameOver () :void
+    {
+        fadeOutToMode(new MultiplayerGameOverMode(), FADE_OUT_TIME);
+
+        GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
+    }
 }
 
 }
+
+/** Used by createPlayers() */
+class TeamInfo
+{
+    public var teamId :int;
+    public var teamSize :int;
+    public var baseLocs :Array = [];
+
+    // Used to sort TeamInfos from largest to smallest team size
+    public static function teamSizeCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamSize > b.teamSize) {
+            return -1;
+        } else if (a.teamSize < b.teamSize) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    // Used to sort TeamInfos from smallest to largest teamId
+    public static function teamIdCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamId < b.teamId) {
+            return -1;
+        } else if (a.teamId > b.teamId) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
+

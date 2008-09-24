@@ -6,8 +6,8 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
-import com.whirled.net.ElementChangedEvent;
 import com.whirled.game.OccupantChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
@@ -171,7 +171,7 @@ public class GameLobbyMode extends AppMode
             MultiplayerConfig.inited = false;
         }
 
-        AppContext.mainLoop.unwindToMode(new GameMode());
+        AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
     }
 
     protected function onOccupantLeft (...ignored) :void

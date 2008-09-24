@@ -109,7 +109,8 @@ public class LevelManager
         return _levelRecords.length > 0;
     }
 
-    public function playLevel (levelReadyCallback :Function = null, forceReload :Boolean = false) :void
+    public function playLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
+        :void
     {
         _levelReadyCallback = levelReadyCallback;
 
@@ -123,6 +124,7 @@ public class LevelManager
 
         if (null != _loadedLevel) {
             this.startGame();
+
         } else {
             // load the level
             if (null == _loadedLevel) {
@@ -147,8 +149,11 @@ public class LevelManager
                     // reload the default game data first, then load the level when it's complete
                     // (level requires that default game data already be loaded)
                     ResourceManager.instance.unload("defaultGameData");
-                    ResourceManager.instance.pendResourceLoad("gameData", "defaultGameData", { url: "levels/defaultGameData.xml" });
-                    ResourceManager.instance.load(function () :void { loadLevel(loadParams) }, onLoadError);
+                    ResourceManager.instance.pendResourceLoad("gameData", "defaultGameData",
+                        { url: "levels/defaultGameData.xml" });
+                    ResourceManager.instance.load(
+                        function () :void { loadLevel(loadParams) },
+                        onLoadError);
 
                 } else {
                     this.loadLevel(loadParams);
@@ -234,12 +239,13 @@ public class LevelManager
         GameContext.matchType = GameContext.MATCH_TYPE_SINGLEPLAYER;
         GameContext.spLevel = _loadedLevel;
         var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
-        GameContext.gameData = (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
+        GameContext.gameData =
+            (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
 
         if (null != _levelReadyCallback) {
             _levelReadyCallback();
         } else {
-            AppContext.mainLoop.unwindToMode(new GameMode());
+            AppContext.mainLoop.unwindToMode(new StoryGameMode());
         }
     }
 

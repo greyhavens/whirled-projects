@@ -1,11 +1,10 @@
 package popcraft {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
-import com.threerings.util.RingBuffer;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.net.*;
@@ -32,6 +31,13 @@ import popcraft.util.*;
 
 public class GameMode extends TransitionMode
 {
+    public function GameMode ()
+    {
+        if (ClassUtil.getClass(this) == GameMode) {
+            throw new Error("GameMode is abstract");
+        }
+    }
+
     override protected function setup () :void
     {
         Profiler.reset();
@@ -44,6 +50,9 @@ public class GameMode extends TransitionMode
         Rand.seedStream(AppContext.randStreamPuzzle, randSeed);
         Rand.seedStream(Rand.STREAM_GAME, randSeed);
         log.info("Starting game with seed: " + randSeed);
+
+        // allow subclasses to do some post-RNG-seeding early setup
+        rngSeeded();
 
         // cache some frequently-used values in GameContext
         GameContext.mapScaleXInv = 1 / GameContext.mapSettings.mapScaleX;
@@ -131,6 +140,12 @@ public class GameMode extends TransitionMode
     {
         createPlayers();
 
+        // setup players' target enemies
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            playerInfo.targetedEnemyId =
+                GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
+        }
+
         // create players' unit spell sets (these are synchronized objects)
         GameContext.playerCreatureSpellSets = [];
         for (var playerIndex :int = 0; playerIndex < GameContext.numPlayers; ++playerIndex) {
@@ -165,11 +180,9 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function handleGameOver (...ignored) :void
+    protected function handleGameEndedPrematurely (...ignored) :void
     {
-        // Unfortunately, the Whirled game server ends the game when one of the players
-        // leaves in the middle. Handle this gracefully.
-        // @TODO - remove this when Whirled stops ending the game prematurely
+        // If the game ends prematurely for some reason, handle it gracefully
         AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
     }
 
@@ -189,7 +202,8 @@ public class GameMode extends TransitionMode
             CastCreatureSpellMessage.createFactory());
 
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED, handleGameOver);
+            AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED,
+                handleGameEndedPrematurely);
         }
 
         _messageMgr.setup();
@@ -201,7 +215,7 @@ public class GameMode extends TransitionMode
 
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED,
-                handleGameOver);
+                handleGameEndedPrematurely);
         }
     }
 
@@ -244,37 +258,8 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // create player bases
-        var numPlayers :int = GameContext.numPlayers;
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            // in single-player levels, bases have custom health
-            var maxHealthOverride :int = 0;
-            var startingHealthOverride :int = 0;
-            var invincible :Boolean;
-            if (GameContext.isSinglePlayer) {
-                if (playerIndex == 0) {
-                    maxHealthOverride = GameContext.spLevel.playerBaseHealth;
-                    startingHealthOverride = GameContext.spLevel.playerBaseStartHealth;
-                } else {
-                    var cpData :ComputerPlayerData = GameContext.spLevel.computers[playerIndex - 1];
-                    maxHealthOverride = cpData.baseHealth;
-                    startingHealthOverride = cpData.baseStartHealth;
-                    invincible = cpData.invincible;
-                }
-            }
-
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :Vector2 = playerInfo.baseLoc;
-
-            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex, maxHealthOverride, startingHealthOverride);
-            base.isInvincible = invincible;
-            base.x = baseLoc.x;
-            base.y = baseLoc.y;
-
-            playerInfo.base = base;
-        }
-
-        setupPlayerBaseViewMouseHandlers();
+        createInitialWorkshops();
+        setupWorkshopMouseHandlers();
 
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
@@ -392,14 +377,6 @@ public class GameMode extends TransitionMode
             }
             break;
 
-        case KeyboardCodes.SLASH:
-            if (Constants.DEBUG_ALLOW_CHEATS && GameContext.isSinglePlayer) {
-                // restart the level
-                // playLevel(true) forces the current level to reload
-                AppContext.levelMgr.playLevel(null, true);
-            }
-            break;
-
         case KeyboardCodes.ESCAPE:
             if (this.canPause) {
                 AppContext.mainLoop.pushMode(new PauseMode());
@@ -514,25 +491,13 @@ public class GameMode extends TransitionMode
             GameContext.playerStats.totalGameTime = _gameTime;
             GameContext.winningTeamId = liveTeamId;
 
-            // show the appropriate outro screen
-            var nextMode :AppMode;
-            var levelPackResources :Array = [];
-            if (GameContext.isMultiplayer) {
-                nextMode = new MultiplayerGameOverMode();
-            } else if (AppContext.levelMgr.isLastLevel && liveTeamId == GameContext.localPlayerInfo.teamId) {
-                nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO);
-                levelPackResources = Resources.EPILOGUE_RESOURCES;
-            } else {
-                nextMode = new LevelOutroMode();
-            }
-
-            fadeOut(function () :void {
-                Resources.loadLevelPackResourcesAndSwitchModes(levelPackResources, nextMode);
-            }, FADE_OUT_TIME);
-
-            GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
-            GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
+            handleGameOver();
         }
+    }
+
+    protected function handleGameOver () :void
+    {
+        throw new Error("abstract");
     }
 
     protected function handleMessage (msg :Message) :void
@@ -594,7 +559,7 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function setupPlayerBaseViewMouseHandlers () :void
+    protected function setupWorkshopMouseHandlers () :void
     {
         // add click listeners to all the enemy bases.
         // when an enemy base is clicked, that player becomes the new "target enemy" for the
@@ -644,8 +609,7 @@ public class GameMode extends TransitionMode
 
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
-        if ((GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) ||
-            !GameContext.localPlayerInfo.canPurchaseCreature(unitType)) {
+        if (!GameContext.localPlayerInfo.canAffordCreature(unitType)) {
             return;
         }
 
@@ -661,7 +625,8 @@ public class GameMode extends TransitionMode
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
 
-        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay || (!noCost && !playerInfo.canPurchaseCreature(unitType))) {
+        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay ||
+            (!noCost && !playerInfo.canAffordCreature(unitType))) {
             return;
         }
 
@@ -681,7 +646,8 @@ public class GameMode extends TransitionMode
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
         var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
 
-        if (!playerInfo.isAlive || (isCreatureSpell && GameContext.diurnalCycle.isDay) || !playerInfo.canCastSpell(spellType)) {
+        if (!playerInfo.isAlive || (isCreatureSpell && GameContext.diurnalCycle.isDay) ||
+            !playerInfo.canCastSpell(spellType)) {
             return;
         }
 
@@ -712,12 +678,22 @@ public class GameMode extends TransitionMode
         throw new Error("abstract");
     }
 
+    protected function rngSeeded () :void
+    {
+        // no-op - subclasses can override
+    }
+
     protected function createPlayers () :void
     {
         throw new Error("abstract");
     }
 
     protected function createMessageManager () :TickedMessageManager
+    {
+        throw new Error("abstract");
+    }
+
+    protected function createInitialWorkshops () :void
     {
         throw new Error("abstract");
     }
@@ -734,9 +710,6 @@ public class GameMode extends TransitionMode
     protected var _gameTickCount :int;
     protected var _gameTime :Number;
     protected var _updateCount :int;
-    protected var _myChecksums :RingBuffer = new RingBuffer(CHECKSUM_BUFFER_LENGTH);
-    protected var _lastCachedChecksumTick :int;
-    protected var _syncError :Boolean;
 
     protected var _trophyWatcher :TrophyWatcher;
 
@@ -750,36 +723,4 @@ public class GameMode extends TransitionMode
     protected static const log :Log = Log.getLog(GameMode);
 }
 
-}
-
-/** Used by GameMode.setupPlayersMP() */
-class TeamInfo
-{
-    public var teamId :int;
-    public var teamSize :int;
-    public var baseLocs :Array = [];
-
-    // Used to sort TeamInfos from largest to smallest team size
-    public static function teamSizeCompare (a :TeamInfo, b :TeamInfo) :int
-    {
-        if (a.teamSize > b.teamSize) {
-            return -1;
-        } else if (a.teamSize < b.teamSize) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    // Used to sort TeamInfos from smallest to largest teamId
-    public static function teamIdCompare (a :TeamInfo, b :TeamInfo) :int
-    {
-        if (a.teamId < b.teamId) {
-            return -1;
-        } else if (a.teamId > b.teamId) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 }

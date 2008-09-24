@@ -62,7 +62,7 @@ public class GenericLoadingMode extends AppMode
     protected var _loadingText :String;
 
     protected static const MAX_DOTS :int = 3;
-    protected static const DOT_TIME :Number = 0.75;
+    protected static const DOT_TIME :Number = 0.5;
 }
 
 }

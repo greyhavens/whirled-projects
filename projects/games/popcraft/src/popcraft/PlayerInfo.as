@@ -157,7 +157,7 @@ public class PlayerInfo extends EventDispatcher
         _targetedEnemyId = val;
     }
 
-    public function canPurchaseCreature (unitType :int) :Boolean
+    public function canAffordCreature (unitType :int) :Boolean
     {
         return true;
     }

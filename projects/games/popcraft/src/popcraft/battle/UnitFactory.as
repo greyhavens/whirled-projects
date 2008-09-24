@@ -72,9 +72,11 @@ public class UnitFactory extends EventDispatcher
         this.dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
     }
 
-    public function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0) :WorkshopUnit
+    public function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0,
+        startingHealthOverride :int = 0) :WorkshopUnit
     {
-        var base :WorkshopUnit = new WorkshopUnit(owningPlayerIndex, maxHealthOverride, startingHealthOverride);
+        var base :WorkshopUnit = new WorkshopUnit(owningPlayerIndex, maxHealthOverride,
+            startingHealthOverride);
 
         GameContext.netObjects.addObject(base);
 

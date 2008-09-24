@@ -74,7 +74,7 @@ public class PrologueMode extends TransitionMode
         var nextMode :AppMode;
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT: nextMode = new LevelSelectMode(); break;
-        case TRANSITION_GAME: nextMode = new GameMode(); break;
+        case TRANSITION_GAME: nextMode = new StoryGameMode(); break;
         }
 
         this.fadeOutToMode(nextMode);

@@ -19,6 +19,16 @@ public class GameContext
     public static const MATCH_TYPE_MULTIPLAYER :int = 0;
     public static const MATCH_TYPE_SINGLEPLAYER :int = 1;
 
+    public static function get isMultiplayer () :Boolean
+    {
+        return matchType == MATCH_TYPE_MULTIPLAYER;
+    }
+
+    public static function get isSinglePlayer () :Boolean
+    {
+        return matchType == MATCH_TYPE_SINGLEPLAYER;
+    }
+
     /* Frequently-used values that are cached here for performance reasons */
     public static var mapScaleXInv :Number;
     public static var mapScaleYInv :Number;
@@ -29,8 +39,6 @@ public class GameContext
     public static var spLevel :LevelData;
     public static var mpSettings :MultiplayerSettingsData;
     public static var playerStats :PlayerStats;
-    public static function get isSinglePlayer () :Boolean { return matchType == MATCH_TYPE_SINGLEPLAYER; }
-    public static function get isMultiplayer () :Boolean { return matchType == MATCH_TYPE_MULTIPLAYER; }
 
     public static var gameMode :GameMode;
     public static var netObjects :NetObjectDB;
@@ -55,8 +63,15 @@ public class GameContext
 
     public static var winningTeamId :int;
 
-    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerIndex]; }
-    public static function get numPlayers () :int { return playerInfos.length; }
+    public static function get localPlayerInfo () :LocalPlayerInfo
+    {
+        return playerInfos[localPlayerIndex];
+    }
+
+    public static function get numPlayers () :int
+    {
+        return playerInfos.length;
+    }
 
     public static function get mapSettings () :MapSettingsData
     {
@@ -82,7 +97,8 @@ public class GameContext
 
     public static function isEnemy (playerIndex :int, otherPlayerIndex :int) :Boolean
     {
-        return PlayerInfo(playerInfos[playerIndex]).teamId != PlayerInfo(playerInfos[otherPlayerIndex]).teamId;
+        return PlayerInfo(playerInfos[playerIndex]).teamId !=
+            PlayerInfo(playerInfos[otherPlayerIndex]).teamId;
     }
 
     public static function findEnemyForPlayer (playerIndex :int) :PlayerInfo
@@ -93,7 +109,8 @@ public class GameContext
         for (var i :int = 0; i < playerInfos.length - 1; ++i) {
             var otherPlayerIndex :int = (playerIndex + i + 1) % playerInfos.length;
             var otherPlayer :PlayerInfo = playerInfos[otherPlayerIndex];
-            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive && !otherPlayer.isInvincible) {
+            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive &&
+                !otherPlayer.isInvincible) {
                 return otherPlayer;
             }
         }
@@ -103,12 +120,15 @@ public class GameContext
 
     public static function playGameSound (soundName :String) :AudioChannel
     {
-        return (playAudio ? AudioManager.instance.playSoundNamed(soundName, sfxControls) : new AudioChannel());
+        return (playAudio ? AudioManager.instance.playSoundNamed(soundName, sfxControls) :
+            new AudioChannel());
     }
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
-        return (playAudio ? AudioManager.instance.playSound(Resources.getMusic(musicName), musicControls, AudioManager.LOOP_FOREVER) : new AudioChannel());
+        return (playAudio ?
+            AudioManager.instance.playSound(Resources.getMusic(musicName), musicControls, AudioManager.LOOP_FOREVER) :
+            new AudioChannel());
     }
 }
 
