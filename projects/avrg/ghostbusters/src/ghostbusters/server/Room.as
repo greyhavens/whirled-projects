@@ -455,11 +455,11 @@ public class Room
             // the ghost's level base is (currently) completely determined by the room
             var rnd :Number = roomRandom.nextNumber();
 
-            // the base is in [1, 10] and low level ghosts are more common than high level ones
-            var levelBase :int = int(1 + 10*rnd*rnd);
+            // the base is in [1, 5] and low level ghosts are more common than high level ones
+            var levelBase :int = int(1 + 5*rnd*rnd);
 
-            // the actual level is the base plus a genuinely random tweak of 0, 1 or 2
-            var level :int = levelBase + Server.random.nextInt(3);
+            // the actual level is the base plus a random stretch of 0 or 1
+            var level :int = levelBase + Server.random.nextInt(2);
 
             data = Ghost.resetGhost(ghosts[ix], level);
             _ctrl.props.set(Codes.DICT_GHOST, data, true);
