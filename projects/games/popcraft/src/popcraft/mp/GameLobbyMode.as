@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.mp {
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.ArrayUtil;
@@ -19,6 +19,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import popcraft.*;
 import popcraft.data.GameVariantData;
 import popcraft.ui.UIBits;
 

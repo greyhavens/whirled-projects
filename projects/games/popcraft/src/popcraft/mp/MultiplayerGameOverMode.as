@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.mp {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.AudioManager;
@@ -9,6 +9,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextFormatAlign;
 
+import popcraft.*;
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 
@@ -76,7 +77,8 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
                 }
             }
 
-            AppContext.gameCtrl.game.endGameWithWinners(winners, losers, GameSubControl.CASCADING_PAYOUT);
+            AppContext.gameCtrl.game.endGameWithWinners(winners, losers,
+                GameSubControl.CASCADING_PAYOUT);
         }
     }
 
@@ -98,7 +100,8 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         }
 
         // viral trophy
-        var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(MultiplayerConfig.morbidInfections, true);
+        var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(
+            MultiplayerConfig.morbidInfections, true);
         GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
 
         // combine local stats into global, and save
@@ -148,7 +151,8 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                 if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
                     playerInfo.playerName == TrophyManager.MALEDICTORIAN_NAME) {
-                    // awarded for winning a multiplayer game against another player whose Whirled name is "Professor Weardd"
+                    // awarded for winning a multiplayer game against another player whose
+                    // Whirled name is "Professor Weardd"
                     TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);
                 }
             }

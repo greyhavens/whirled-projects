@@ -1,6 +1,8 @@
-package popcraft {
+package popcraft.mp {
 
 import com.threerings.util.ArrayUtil;
+
+import popcraft.*;
 
 public class MultiplayerConfig
 {

@@ -1,7 +1,9 @@
-package popcraft {
+package popcraft.mp {
 
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.ImageResource;
+
+import popcraft.TransitionMode;
 
 public class MultiplayerDialog extends TransitionMode
 {

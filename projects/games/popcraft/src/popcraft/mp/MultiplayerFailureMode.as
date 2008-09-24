@@ -1,4 +1,4 @@
-package popcraft {
+package popcraft.mp {
 
 import com.whirled.contrib.simplegame.*;
 
@@ -7,6 +7,7 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.text.TextFormatAlign;
 
+import popcraft.*;
 import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 

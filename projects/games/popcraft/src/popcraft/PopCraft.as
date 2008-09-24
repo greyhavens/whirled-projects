@@ -17,6 +17,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import popcraft.data.*;
+import popcraft.mp.*;
 import popcraft.net.*;
 import popcraft.sp.*;
 import popcraft.sp.story.*;
@@ -113,6 +114,7 @@ import popcraft.ui.GenericLoadingMode;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
 import popcraft.sp.story.LevelSelectMode;
+import popcraft.mp.GameLobbyMode;
 
 class LoadingMode extends GenericLoadingMode
 {

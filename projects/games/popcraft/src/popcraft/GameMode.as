@@ -25,6 +25,7 @@ import popcraft.data.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.sp.*;
+import popcraft.mp.*;
 import popcraft.sp.story.*;
 import popcraft.ui.*;
 import popcraft.util.*;
@@ -61,11 +62,11 @@ public class GameMode extends TransitionMode
         _modeLayer.addChild(GameContext.dashboardLayer);
         _modeLayer.addChild(GameContext.overlayLayer);
 
-        this.setupAudio();
-        this.setupNetwork();
-        this.setupPlayers();
-        this.setupBattle();
-        this.setupDashboard();
+        setupAudio();
+        setupNetwork();
+        setupPlayers();
+        setupBattle();
+        setupDashboard();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
@@ -81,9 +82,9 @@ public class GameMode extends TransitionMode
 
     override protected function destroy () :void
     {
-        this.shutdownNetwork();
-        this.shutdownPlayers();
-        this.shutdownAudio();
+        shutdownNetwork();
+        shutdownPlayers();
+        shutdownAudio();
 
         Profiler.displayStats();
     }
