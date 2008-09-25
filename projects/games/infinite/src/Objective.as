@@ -108,6 +108,16 @@ package
 			removeChild(c.view);
 		}
 		
+		public function showLabel (label:OwnerLabel) :void
+		{
+			// I do nothing yet.
+		}
+				
+		public function hideLabel (label:OwnerLabel) :void
+		{
+			// I do nothing yet.
+		}
+				
 		/**
 		 * Compute a rectangle in board coordinates that will mean the viewpoint square can be
 		 * scrolled to and the rest of the viewer will be fully tiled.

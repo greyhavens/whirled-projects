@@ -223,6 +223,7 @@ package
 		
 		public function replace (position:BoardCoordinates, newCell:Cell) :void
 		{
+			newCell.setOwner(this);
 			_objective.replace(position, newCell);
 		}
 		

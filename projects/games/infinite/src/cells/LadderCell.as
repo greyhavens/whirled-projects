@@ -10,11 +10,32 @@ package cells
 		{
 			super(position);
 			_part = type;
+			if (_part == LadderCell.BASE) {
+				_label = new OwnerLabel(this);
+			}
 		}
 		
 		public function oiled () :Cell
 		{
 			return new OiledLadderCell(_position, _part);
+		}
+		
+		override protected function showView (objective:Objective) :void		
+		{
+			super.showView(objective);
+			// we only label the base of a ladder
+			if (_label != null) {
+				objective.showLabel(_label);
+			}
+		}
+		
+		override protected function hideView (objective:Objective):void
+		{
+			super.hideView(objective);
+			// we only the base of a ladder
+			if (_label != null) {
+				objective.hideLabel(_label);
+			}
 		}
 		
 		override protected function get initialAsset() :Class
@@ -91,8 +112,14 @@ package cells
 			}
 		}
 
+		// Some cells have a label indicating who placed them on the board.
+		protected var _label:OwnerLabel;
+
+		// A ladder cell can represent various parts of a ladder.  This value determines which part
+		// this one represents.
 		protected var _part:int;
 
+		// Various different ladder parts.
 		public static const BASE:int = 0;
 		public static const MIDDLE:int = 1;
 		public static const TOP:int = 2;		

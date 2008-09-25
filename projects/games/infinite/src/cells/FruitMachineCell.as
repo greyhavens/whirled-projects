@@ -14,6 +14,10 @@ package cells
 			super(position);
 			_box = box;
 			_mode = mode;
+			
+			// we don't need to remove these listeners because the cell itself is the dispatcher.
+			addEventListener(CellEvent.ADDED_TO_OBJECTIVE, handleAdded);
+			addEventListener(CellEvent.REMOVED_FROM_OBJECTIVE, handleRemoved);
 		}
 		
 		override protected function get initialAsset() :Class
@@ -40,10 +44,9 @@ package cells
 		/**
 		 * When a fruit machine is added to the objective, it starts a timer to control its state.
 		 */
-		override public function addToObjective (objective:Objective) :void
+		protected function handleAdded (event:CellEvent) :void
 		{
-			super.addToObjective(objective);
-			rememberOffBoard();			
+			rememberOffBoard();
 			if (_mode == ACTIVE || _mode == INACTIVE) {
 				startActivationTimer();
 			}
@@ -52,9 +55,8 @@ package cells
 		/**
 		 * When a fruit machine is removed from the objective, its timer is stopped and removed.
 		 */
-		override public function removeFromObjective () :void
+		protected function handleRemoved (event:CellEvent) :void
 		{
-			super.removeFromObjective();
 			stopTimer();
 		}
 

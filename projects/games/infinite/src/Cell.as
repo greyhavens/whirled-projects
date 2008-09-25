@@ -9,7 +9,8 @@ package
 	/**
 	 * Interface providing the details of a cell within the game board.
 	 */
-	public interface Cell extends IEventDispatcher, Viewable, CellAffordances, PlayerInteractions
+	public interface Cell extends IEventDispatcher, Viewable, CellAffordances, PlayerInteractions,
+		Labellable
 	{		
 		/**
 		 * Return the position on the board of this cell
@@ -48,5 +49,11 @@ package
 		 * Return true if this cell is on the same row as another.
 		 */
 		 function sameRowAs (other:Cell) :Boolean
+		 
+		/**
+		 * Set the owner of this cell.  Thanks actionscript, you sniggering mutley dog, for not 
+		 * letting me define this as a property access.
+		 */
+		 function setOwner (character:Character) :void
 	}
 }

@@ -63,18 +63,42 @@ package
 			s.addChild(l);		
 		}
 
-		public function addToObjective(objective:Objective) :void
+		/**
+		 * Add this cell to the objective.
+		 */
+		public final function addToObjective(objective:Objective) :void
 		{
 			_objective = objective;
+			showView(objective);
+			dispatchEvent(new CellEvent(CellEvent.ADDED_TO_OBJECTIVE, this));			
+		}
+
+		/**
+		 * Show all of the display objects associated with this cell.
+		 */
+		protected function showView (objective:Objective) :void
+		{
 			_objective.showCell(this);
 		}
 
-		public function removeFromObjective() :void
+		/**
+		 * Remove this cell from the objective.
+		 */
+		public final function removeFromObjective() :void
 		{
 			if (_objective != null) {
-				_objective.hideCell(this);
+				hideView(_objective);
 				_objective = null;
 			}
+			dispatchEvent(new CellEvent(CellEvent.REMOVED_FROM_OBJECTIVE, this));
+		}
+		
+		/**
+		 * Hide all of the display objects associated with this cell.
+		 */
+		protected function hideView (objective:Objective) :void
+		{
+			_objective.hideCell(this);
 		}
 
 		public function iterator (board:BoardAccess, direction:Vector) :CellIterator
@@ -150,6 +174,18 @@ package
 			}
 			return false;			
 		}
+		
+		public function get owner () :Character
+		{
+			return _owner;
+		}
+		
+		public function setOwner (character:Character) :void
+		{
+			_owner = character;
+		}
+		
+		protected var _owner:Character;
 		
 		protected var _position:BoardCoordinates;
 		

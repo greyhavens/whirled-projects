@@ -24,7 +24,9 @@ package cells
 			}
 			return _sprite;
 		}
-			
+		
+		
+		
 		/**
 		 * Discard the sprite associated with this cell.  Useful if a cell is no longer being
 		 * displayed but is being stored off screen for its state.
