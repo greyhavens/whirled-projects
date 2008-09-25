@@ -43,8 +43,7 @@ public class BingoCardView extends SceneObject
 
                     gridSquare.mouseChildren = false;
 
-                    gridSquare.addEventListener(
-                        MouseEvent.MOUSE_DOWN,
+                    registerEventListener(gridSquare, MouseEvent.MOUSE_DOWN,
                         this.createGridSquareMouseHandler(gridSquare, col, row));
 
                     gridSquare.addChild(itemView);
@@ -65,18 +64,11 @@ public class BingoCardView extends SceneObject
 
     override protected function addedToDB () :void
     {
-        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
-            handleSizeChanged, false, 0, true);
-
-        this.handleSizeChanged();
-    }
-
-    override protected function removedFromDB () :void
-    {
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
+
+        handleSizeChanged();
     }
 
     protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function

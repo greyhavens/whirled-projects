@@ -23,26 +23,13 @@ public class IntroMode extends AppMode
 
         // wire up the buttons
         var playButton :InteractiveObject = _movie["inst_play_button"];
-        playButton.addEventListener(MouseEvent.CLICK, handlePlayClicked);
+        registerEventListener(playButton, MouseEvent.CLICK, handlePlayClicked);
 
         var quitButton :InteractiveObject = _movie["inst_quit_button"];
-        quitButton.addEventListener(MouseEvent.CLICK, handleQuitClicked);
+        registerEventListener(quitButton, MouseEvent.CLICK, handleQuitClicked);
 
         var helpButton :InteractiveObject = _movie["inst_help_button"];
-        helpButton.addEventListener(MouseEvent.CLICK, handleHelpClicked);
-    }
-
-    override protected function destroy () :void
-    {
-        // unwire the buttons
-        var playButton :InteractiveObject = _movie["inst_play_button"];
-        playButton.removeEventListener(MouseEvent.CLICK, handlePlayClicked);
-
-        var quitButton :InteractiveObject = _movie["inst_quit_button"];
-        quitButton.removeEventListener(MouseEvent.CLICK, handleQuitClicked);
-
-        var helpButton :InteractiveObject = _movie["inst_help_button"];
-        helpButton.removeEventListener(MouseEvent.CLICK, handleHelpClicked);
+        registerEventListener(helpButton, MouseEvent.CLICK, handleHelpClicked);
     }
 
     protected function handlePlayClicked (...ignored) :void

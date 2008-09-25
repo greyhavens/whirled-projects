@@ -39,50 +39,30 @@ public class HUDView extends SceneObject
 
         // wire up buttons
         var quitButton :InteractiveObject = _hud["x_button"];
-        quitButton.addEventListener(MouseEvent.CLICK, handleQuit, false, 0, true);
+        registerEventListener(quitButton, MouseEvent.CLICK, handleQuit);
 
         var bingoButton :InteractiveObject = _hud["bingo_button"];
-        bingoButton.addEventListener(MouseEvent.CLICK, handleBingo, false, 0, true);
+        registerEventListener(bingoButton, MouseEvent.CLICK, handleBingo);
 
         var helpButton :InteractiveObject = _hud["help_button"];
-        helpButton.addEventListener(MouseEvent.CLICK, handleHelp, false, 0, true);
+        registerEventListener(helpButton, MouseEvent.CLICK, handleHelp);
 
         // listen for state events
-        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_SCORES,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
             updateScores);
-        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
             updateBall);
-        ClientContext.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChanged);
-        ClientContext.model.addEventListener(LocalStateChangedEvent.CARD_COMPLETED,
+        registerEventListener(ClientContext.model, LocalStateChangedEvent.CARD_COMPLETED,
             updateBingoButton);
 
-        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
+        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
-        ClientContext.gameCtrl.room.addEventListener(AVRGameRoomEvent.PLAYER_ENTERED,
+        registerEventListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
             updateScores);
-        ClientContext.gameCtrl.room.addEventListener(AVRGameRoomEvent.PLAYER_LEFT,
-            updateScores);
-    }
-
-    override protected function destroyed () :void
-    {
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES,
-            updateScores);
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL,
-            updateBall);
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
-            handleGameStateChanged);
-        ClientContext.model.removeEventListener(LocalStateChangedEvent.CARD_COMPLETED,
-            updateBingoButton);
-
-        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
-            handleSizeChanged);
-
-        ClientContext.gameCtrl.room.removeEventListener(AVRGameRoomEvent.PLAYER_ENTERED,
-            updateScores);
-        ClientContext.gameCtrl.room.removeEventListener(AVRGameRoomEvent.PLAYER_LEFT,
+        registerEventListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             updateScores);
     }
 
@@ -190,13 +170,12 @@ public class HUDView extends SceneObject
 
     protected function updateBall (...ignored) :void
     {
-        _bingoBall.addEventListener(Event.COMPLETE, showNewBallText);
+        registerOneShotCallback(_bingoBall, Event.COMPLETE, showNewBallText);
         _bingoBall.gotoAndPlay(0);
     }
 
     protected function showNewBallText (...ignored) :void
     {
-        _bingoBall.removeEventListener(Event.COMPLETE, showNewBallText);
         var newText :String = ClientContext.model.curState.ballInPlay;
         setBallText(_ballText, newText);
     }

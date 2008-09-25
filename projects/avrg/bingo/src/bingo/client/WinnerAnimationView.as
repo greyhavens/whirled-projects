@@ -38,20 +38,9 @@ public class WinnerAnimationView extends SceneObject
             Constants.NEW_ROUND_DELAY_S, null, false, NEXT_ROUND_TIMER_NAME));
 
         // Listen for the "complete" event. We'll show the countdown timer afterwards.
-        _winnerAnim.addEventListener(Event.COMPLETE, winnerAnimComplete);
+        registerOneShotCallback(_winnerAnim, Event.COMPLETE, winnerAnimComplete);
 
-        ClientContext.gameCtrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED,
-            handleSizeChanged);
-    }
-
-    override protected function destroyed () :void
-    {
-        if (_winnerAnim != null) {
-            _winnerAnim.removeEventListener(Event.COMPLETE, winnerAnimComplete);
-            _winnerAnim = null;
-        }
-
-        ClientContext.gameCtrl.local.removeEventListener(AVRGameControlEvent.SIZE_CHANGED,
+        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
     }
 
@@ -63,7 +52,6 @@ public class WinnerAnimationView extends SceneObject
     protected function winnerAnimComplete (...ignored) :void
     {
         _animationParent.removeChild(_winnerAnim);
-        _winnerAnim.removeEventListener(Event.COMPLETE, winnerAnimComplete);
         _winnerAnim = null;
 
         // and show the countdown timer
@@ -71,7 +59,7 @@ public class WinnerAnimationView extends SceneObject
         _animationParent.addChild(animView);
 
         _countdownText = animView["inst_time_left"];
-        this.updateCountdownText(SimpleTimer.getTimeLeft(NEXT_ROUND_TIMER_NAME));
+        updateCountdownText(SimpleTimer.getTimeLeft(NEXT_ROUND_TIMER_NAME));
     }
 
     override protected function update (dt :Number) :void

@@ -28,34 +28,17 @@ public class GameMode extends AppMode
         this.hideHelpScreen();
 
         // wire up event handlers with priority 1 to get state updates before UI controllers
-        ClientContext.model.addEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChange, false, 1);
-        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_BALL,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
             handleNewBall, false, 1);
-        ClientContext.model.addEventListener(SharedStateChangedEvent.NEW_SCORES,
+        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
             handleNewScores, false, 1);
 
         // get current game state
         var curState :SharedState = ClientContext.model.curState;
 
-        this.handleGameStateChange();
-    }
-
-    override protected function destroy () :void
-    {
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.GAME_STATE_CHANGED,
-            handleGameStateChange);
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_BALL,
-            handleNewBall);
-        ClientContext.model.removeEventListener(SharedStateChangedEvent.NEW_SCORES,
-            handleNewScores);
-
-        // @TODO - SimObjects should have "destructor" methods that always get
-        // called when modes shutdown
-
-        this.destroyObjectNamed(BingoCardView.NAME);
-        this.destroyObjectNamed(WinnerAnimationView.NAME);
-        this.destroyObjectNamed(HUDView.NAME);
+        handleGameStateChange();
     }
 
     protected function handleGameStateChange (...ignored) :void
