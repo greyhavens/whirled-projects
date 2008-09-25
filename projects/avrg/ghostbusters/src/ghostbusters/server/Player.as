@@ -251,6 +251,7 @@ public class Player
         // if we just died, update our state
         if (_health == 0) {
             _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
+            Trophies.handlePlayerDied(this);
         }
 
         // and if we're in a room, update the room properties

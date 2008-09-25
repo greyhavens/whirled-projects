@@ -7,6 +7,9 @@ package ghostbusters.data {
 
 public class Codes
 {
+    /** The maximum number of players in a team. TODO: Move this elsewhere. */
+    public static const MAX_TEAM_SIZE :int = 6;
+
     /**
      * A per-room property that indicates the current state of ghost combat in the room.
      *
@@ -270,5 +273,11 @@ public class Codes
     public static const DBG_LEVEL_DOWN :String = "ld";
     public static const DBG_RESET_ROOM :String = "rr";
     public static const DBG_END_STATE :String = "es";
+
+    /** Trophy related per-player properties. */
+
+    public static const PROP_MEAN_KILLS :String = NetConstants.makePersistent("mean_kills");
+    public static const PROP_LEAGUE_KILLS :String = NetConstants.makePersistent("league_kills");
+    public static const PROP_KILLS :String = NetConstants.makePersistent("kills");
 }
 }

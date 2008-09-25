@@ -72,9 +72,8 @@ public class Room
         dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
         dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
 
-        log.debug("Copying player dictionary into room [playerId=" + player.playerId +
-                  ", roomId=" + roomId + ", health=" + player.health + ", maxHealth=" + 
-                  player.maxHealth + "]");
+        log.debug("Copying player dictionary into room", "payerId", player.playerId,
+                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
 
         _players[player] = true;
@@ -83,8 +82,8 @@ public class Room
     public function playerLeft (player :Player) :void
     {
         // erase the departing player's data from the room properties
-        log.debug("Erasing player dictionary from room [playerId=" +
-                  ", roomId=" + roomId + "]");
+        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
+                  "roomId", roomId);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
 
         delete _players[player];
@@ -287,6 +286,7 @@ public class Room
 
         // if the ghost died, leave fight state and show the ghost's death throes
         if (_ghost.isDead()) {
+            Trophies.handleGhostDefeat(this);
             setState(Codes.STATE_GHOST_DEFEAT);
             // schedule a transition
             _transitionFrame = frame + _ghost.definition.defeatFrames;

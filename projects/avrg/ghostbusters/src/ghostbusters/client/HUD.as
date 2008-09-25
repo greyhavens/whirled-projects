@@ -140,7 +140,7 @@ public class HUD extends Sprite
 
         _playerPanels = new Array();
 
-        for (var ii :int = 1; ii <= 6; ii ++) {
+        for (var ii :int = 1; ii <= Codes.MAX_TEAM_SIZE; ii ++) {
             var panel :PlayerPanel = new PlayerPanel();
 
             var bar :MovieClip = findSafely(PLAYER_HEALTH_BAR + ii) as MovieClip;
@@ -277,7 +277,7 @@ public class HUD extends Sprite
         var players :Array = PlayerModel.getTeam();
         var teamIx :int = 0;
         var hudIx :int = 0;
-        while (hudIx < 6) {
+        while (hudIx < Codes.MAX_TEAM_SIZE) {
             var panel :PlayerPanel = PlayerPanel(_playerPanels[hudIx]);
 
             if (teamIx >= players.length) {
@@ -312,7 +312,7 @@ public class HUD extends Sprite
     protected function findPlayerIx (id :int) :int
     {
         if (_playerPanels != null) {
-            for (var ii :int = 0; ii < 6; ii ++) {
+            for (var ii :int = 0; ii < Codes.MAX_TEAM_SIZE; ii ++) {
                 if (_playerPanels[ii].id == id) {
                     return ii;
                 }
