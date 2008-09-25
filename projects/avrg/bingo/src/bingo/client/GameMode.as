@@ -75,7 +75,7 @@ public class GameMode extends AppMode
 
     protected function handleRoundOver () :void
     {
-        if (_roundInPlay) {
+        if (_roundInPlay && ClientContext.model.numPlayers > 1) {
             // if _roundInPlay is true, we didn't enter the game during the "we have a winner"
             // state, so count the round towards our total
             var trophies :HashSet = new HashSet();
@@ -118,9 +118,9 @@ public class GameMode extends AppMode
                 ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
                     trophies.toArray());
             }
-
-            _roundInPlay = false;
         }
+
+        _roundInPlay = false;
 
         this.showWinnerAnimation();
     }
