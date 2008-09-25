@@ -46,11 +46,6 @@ public class LocalPlayerInfo extends PlayerInfo
         return totalAmount;
     }
 
-    public function get totalResourcesEarned () :int
-    {
-        return _totalResourcesEarned;
-    }
-
     public function setResourceAmount (resourceType :int, newAmount :int) :void
     {
         Assert.isTrue(resourceType < _resources.length);
@@ -67,18 +62,12 @@ public class LocalPlayerInfo extends PlayerInfo
         this.setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
     }
 
-    public function earnedResources (resourceType :int, offset :int, numClearPieces :int) :void
+    public function earnedResources (resourceType :int, offset :int, numClearPieces :int) :int
     {
         var initialResources :int = this.getResourceAmount(resourceType);
         this.setResourceAmount(resourceType, initialResources + offset);
         var newResources :int = this.getResourceAmount(resourceType);
         var resourcesEarned :int = newResources - initialResources;
-
-        // only resources earned while under "par" are counted toward the totalResourcesEarned count
-        // for the purposes of player score
-        if (GameContext.isSinglePlayer && GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays) {
-            _totalResourcesEarned += resourcesEarned;
-        }
 
         // For player stats, keep track of all resources earned
         GameContext.playerStats.resourcesGathered[resourceType] += resourcesEarned;
@@ -111,6 +100,8 @@ public class LocalPlayerInfo extends PlayerInfo
                 TrophyManager.awardTrophy(TrophyManager.TROPHY_MAXEDOUT);
             }
         }
+
+        return resourcesEarned;
     }
 
     override public function canAffordCreature (unitType :int) :Boolean
@@ -178,7 +169,6 @@ public class LocalPlayerInfo extends PlayerInfo
 
     protected var _resources :Array;
     protected var _spells :Array;
-    protected var _totalResourcesEarned :int;
     protected var _fourPlusPieceClearRunLength :int;
 }
 

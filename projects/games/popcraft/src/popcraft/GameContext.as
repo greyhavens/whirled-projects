@@ -16,17 +16,29 @@ import popcraft.ui.DashboardView;
 
 public class GameContext
 {
-    public static const MATCH_TYPE_MULTIPLAYER :int = 0;
-    public static const MATCH_TYPE_SINGLEPLAYER :int = 1;
+    public static const GAME_TYPE_BATTLE_MP :int = 0;
+    public static const GAME_TYPE_STORY :int = 1;
+    public static const GAME_TYPE_ENDLESS_SP :int = 2;
+    public static const GAME_TYPE_ENDLESS_MP :int = 3;
 
-    public static function get isMultiplayer () :Boolean
+    public static function get isStoryGame () :Boolean
     {
-        return matchType == MATCH_TYPE_MULTIPLAYER;
+        return gameType == GAME_TYPE_STORY;
     }
 
-    public static function get isSinglePlayer () :Boolean
+    public static function get isEndlessGame () :Boolean
     {
-        return matchType == MATCH_TYPE_SINGLEPLAYER;
+        return (gameType == GAME_TYPE_ENDLESS_SP || gameType == GAME_TYPE_ENDLESS_MP);
+    }
+
+    public static function get isMultiplayerGame () :Boolean
+    {
+        return (gameType == GAME_TYPE_BATTLE_MP || gameType == GAME_TYPE_ENDLESS_MP);
+    }
+
+    public static function get isSinglePlayerGame () :Boolean
+    {
+        return !isMultiplayerGame;
     }
 
     /* Frequently-used values that are cached here for performance reasons */
@@ -34,9 +46,9 @@ public class GameContext
     public static var mapScaleYInv :Number;
     public static var scaleSprites :Boolean;
 
-    public static var matchType :int;
+    public static var gameType :int;
     public static var gameData :GameData;
-    public static var spLevel :LevelData;
+    public static var endlessLevel :EndlessLevelData;
     public static var mpSettings :MultiplayerSettingsData;
     public static var playerStats :PlayerStats;
 
@@ -71,21 +83,6 @@ public class GameContext
     public static function get numPlayers () :int
     {
         return playerInfos.length;
-    }
-
-    public static function get mapSettings () :MapSettingsData
-    {
-        return (isSinglePlayer ? spLevel.mapSettings : mpSettings.mapSettings);
-    }
-
-    public static function get battlefieldWidth () :Number
-    {
-        return (Constants.BATTLE_WIDTH * mapSettings.mapScaleX);
-    }
-
-    public static function get battlefieldHeight () :Number
-    {
-        return (Constants.BATTLE_HEIGHT * mapSettings.mapScaleY);
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo

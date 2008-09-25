@@ -37,9 +37,7 @@ public class MultiplayerFailureMode extends MultiplayerDialog
     {
         _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
 
-        Resources.loadLevelPackResourcesAndSwitchModes(
-            Resources.SP_LEVEL_PACK_RESOURCES,
-            new LevelSelectMode());
+        Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES, LevelSelectMode.create);
     }
 
     protected var _button :SimpleButton;

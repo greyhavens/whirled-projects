@@ -1,5 +1,7 @@
 package popcraft.data {
 
+import popcraft.*;
+
 public class EndlessLevelData
 {
     public var gameDataOverride :GameData;
@@ -12,7 +14,8 @@ public class EndlessLevelData
         // does the level override game data?
         var gameDataOverrideNode :XML = xml.GameDataOverride[0];
         if (null != gameDataOverrideNode) {
-            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode, AppContext.defaultGameData.clone());
+            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
+                AppContext.defaultGameData.clone());
         }
 
         for each (var mapSequenceData :XML in xml.MapSequence.Map) {

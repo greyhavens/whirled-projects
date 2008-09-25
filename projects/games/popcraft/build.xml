@@ -9,7 +9,7 @@
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
-  <target name="copypacks">
+  <target name="copydata">
     <copy todir="${build.root}/dist/levelpacks/music" overwrite="true">
       <fileset dir="rsrc/audio/music">
         <include name="**/*.mp3"/>
@@ -29,8 +29,13 @@
         <include name="**/*.png"/>
       </fileset>
     </copy>
+	<copy todir="${build.root}/dist/levels" overwrite="true">
+      <fileset dir="levels">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
   </target>
 
-  <target name="testpacks" depends="compile, copypacks, test"/>
+  <target name="testpacks" depends="compile, copydata, test"/>
 
 </project>

@@ -17,14 +17,15 @@ public class SpellDropTimer extends SimObject
 
     protected function scheduleNextSpellDrop () :void
     {
-        if (GameContext.isSinglePlayer && GameContext.spLevel.availableSpells.length == 0) {
+        if (GameContext.gameMode.availableSpells.length == 0) {
             return;
         }
 
         if (GameContext.diurnalCycle.isNight) {
             var time :Number = GameContext.gameData.spellDropTime.next();
             if (time >= 0) {
-                _timerRef = GameContext.netObjects.addObject(new SimpleTimer(time, createNextSpellDrop));
+                _timerRef = GameContext.netObjects.addObject(
+                    new SimpleTimer(time, createNextSpellDrop));
             }
         }
     }
@@ -32,7 +33,7 @@ public class SpellDropTimer extends SimObject
     protected function createNextSpellDrop () :void
     {
         // do we have a custom spell drop location?
-        var spellLoc :Vector2 = GameContext.mapSettings.spellDropLoc;
+        var spellLoc :Vector2 = GameContext.gameMode.mapSettings.spellDropLoc;
 
         if (null == spellLoc) {
             // no - generate one
@@ -56,23 +57,28 @@ public class SpellDropTimer extends SimObject
                     // between the base and the center.
                     // @TODO - clarify this needlessly complex-looking calculation
                     var shiftAmount :Number;
-                    var baseHealth1 :Number = Math.max(base1.health / base1.maxHealth, 0.001);  // prevent divide-by-0
+                    // prevent divide-by-0
+                    var baseHealth1 :Number = Math.max(base1.health / base1.maxHealth, 0.001);
                     var baseHealth2 :Number = Math.max(base2.health / base2.maxHealth, 0.001);
 
-                    var maxSpellDropShift :Number = 1.0 - GameContext.gameData.maxLosingPlayerSpellDropShift;
+                    var maxSpellDropShift :Number = 1.0 -
+                        GameContext.gameData.maxLosingPlayerSpellDropShift;
 
                     if (baseHealth1 < baseHealth2) {
-                        shiftAmount = Math.max((baseHealth1 / baseHealth2), maxSpellDropShift) * (baseDistance * 0.5);
+                        shiftAmount = Math.max((baseHealth1 / baseHealth2), maxSpellDropShift) *
+                            (baseDistance * 0.5);
                         spellLoc = baseLoc1.add(Vector2.fromAngle(baseAngle, shiftAmount));
                     } else {
-                        shiftAmount = Math.max((baseHealth2 / baseHealth1), maxSpellDropShift) * (baseDistance * 0.5);
+                        shiftAmount = Math.max((baseHealth2 / baseHealth1), maxSpellDropShift) *
+                            (baseDistance * 0.5);
                         spellLoc = baseLoc2.subtract(Vector2.fromAngle(baseAngle, shiftAmount));
                     }
 
                     // pick a random location along the line running perpendicular to the line that
                     // connects our two bases, and passes through the centerLoc we just calculated
                     var direction :Number = baseLoc1.subtract(baseLoc2).angle;
-                    direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 : -Math.PI * 0.5);
+                    direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 :
+                        -Math.PI * 0.5);
                     var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
                     spellLoc = spellLoc.addLocal(Vector2.fromAngle(direction, centerDistance));
                 }
@@ -106,19 +112,13 @@ public class SpellDropTimer extends SimObject
 
             // clamp location
             spellLoc.x = Math.max(spellLoc.x, 75);
-            spellLoc.x = Math.min(spellLoc.x, GameContext.battlefieldWidth - 75);
+            spellLoc.x = Math.min(spellLoc.x, GameContext.gameMode.battlefieldWidth - 75);
             spellLoc.y = Math.max(spellLoc.y, 75);
-            spellLoc.y = Math.min(spellLoc.y, GameContext.battlefieldHeight - 75);
+            spellLoc.y = Math.min(spellLoc.y, GameContext.gameMode.battlefieldHeight - 75);
 
             // pick a spell at random
-            var spellType :int;
-            if (GameContext.isSinglePlayer) {
-                var availableSpells :Array = GameContext.spLevel.availableSpells;
-                spellType = Rand.nextElement(availableSpells, Rand.STREAM_GAME);
-            } else {
-                spellType = Rand.nextIntRange(0, Constants.SPELL_TYPE__LIMIT, Rand.STREAM_GAME);
-            }
-
+            var spellType :int = Rand.nextElement(GameContext.gameMode.availableSpells,
+                Rand.STREAM_GAME);
             SpellDropFactory.createSpellDrop(spellType, spellLoc, true);
 
             // schedule the next drop

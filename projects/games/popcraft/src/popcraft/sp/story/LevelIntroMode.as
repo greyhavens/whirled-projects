@@ -14,15 +14,20 @@ import flash.display.SimpleButton;
 import flash.display.StageQuality;
 import flash.events.MouseEvent;
 import flash.text.TextField;
-import flash.text.TextFormat;
 
 import popcraft.*;
 import popcraft.battle.view.UnitAnimationFactory;
+import popcraft.data.LevelData;
 import popcraft.data.SpellData;
 import popcraft.data.UnitData;
 
 public class LevelIntroMode extends AppMode
 {
+    public function LevelIntroMode (level :LevelData)
+    {
+        _level = level;
+    }
+
     override protected function setup () :void
     {
         // draw dim background
@@ -97,8 +102,8 @@ public class LevelIntroMode extends AppMode
     protected function hasPhase (phaseNum :int) :Boolean
     {
         switch (phaseNum) {
-        case PHASE_CREATUREINTRO: return GameContext.spLevel.newCreatureType >= 0;
-        case PHASE_SPELLINTRO: return GameContext.spLevel.newSpellType >= 0;
+        case PHASE_CREATUREINTRO: return _level.newCreatureType >= 0;
+        case PHASE_SPELLINTRO: return _level.newSpellType >= 0;
         case PHASE_LEVELINTRO: return true;
         }
 
@@ -120,7 +125,7 @@ public class LevelIntroMode extends AppMode
 
         switch (_phase) {
         case PHASE_CREATUREINTRO:
-            var newCreatureType :int = GameContext.spLevel.newCreatureType;
+            var newCreatureType :int = _level.newCreatureType;
             var creatureData :UnitData = GameContext.gameData.units[newCreatureType];
             var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
                 creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
@@ -138,7 +143,7 @@ public class LevelIntroMode extends AppMode
             break;
 
         case PHASE_SPELLINTRO:
-            var newSpellType :int = GameContext.spLevel.newSpellType;
+            var newSpellType :int = _level.newSpellType;
             var spellData :SpellData = GameContext.gameData.spells[newSpellType];
             var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
             this.showPage(
@@ -152,9 +157,9 @@ public class LevelIntroMode extends AppMode
             break;
 
         case PHASE_LEVELINTRO:
-            var expertCompletionDays :int = GameContext.spLevel.expertCompletionDays;
+            var expertCompletionDays :int = _level.expertCompletionDays;
             var levelDescription :String =
-                GameContext.spLevel.introText2 +
+                _level.introText2 +
                 "\n\n(Complete the level in " +
                 String(expertCompletionDays) +
                 (expertCompletionDays == 1 ? " day" : " days") +
@@ -164,7 +169,7 @@ public class LevelIntroMode extends AppMode
                 TYPE_NOTE,
                 "Chapter " + String(AppContext.levelMgr.curLevelIndex + 1),
                 AppContext.levelMgr.curLevelName,
-                GameContext.spLevel.introText,
+                _level.introText,
                 levelDescription,
                 null);
             break;
@@ -263,6 +268,8 @@ public class LevelIntroMode extends AppMode
         _manualObj.removeAllTasks();
         _manualObj.addTask(movieTask);
     }
+
+    protected var _level :LevelData;
 
     protected var _manualObj :SimpleSceneObject;
     protected var _okButton :SimpleButton;

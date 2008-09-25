@@ -54,7 +54,7 @@ public class DashboardView extends SceneObject
 
         var buttonNumber :int = 1;
         for (var unitType :int = 0; unitType < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT; ++unitType) {
-            if (GameContext.isSinglePlayer && !GameContext.spLevel.isAvailableUnit(unitType)) {
+            if (!GameContext.gameMode.isAvailableUnit(unitType)) {
                 // don't create buttons for unavailable units
                 continue;
             }

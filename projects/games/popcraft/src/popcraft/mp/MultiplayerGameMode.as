@@ -12,8 +12,9 @@ import popcraft.data.*;
 
 public class MultiplayerGameMode extends GameMode
 {
-    public function MultiplayerGameMode ()
+    override public function get mapSettings () :MapSettingsData
     {
+        return GameContext.mpSettings.mapSettings;
     }
 
     override protected function rngSeeded () :void
@@ -39,7 +40,7 @@ public class MultiplayerGameMode extends GameMode
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
         // structures with base locations so that we can put everyone in the correct place.
-        var baseLocs :Array = GameContext.mapSettings.baseLocs;
+        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
         var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
         var teamInfos :Array = [];
         var teamInfo :TeamInfo;

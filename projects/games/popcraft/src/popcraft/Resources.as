@@ -12,10 +12,18 @@ public class Resources
     public static function loadLevelPackResourcesAndSwitchModes (resourceNames :Array,
         nextMode :AppMode) :void
     {
+        loadLevelPackResources(
+            resourceNames,
+            function () :void { AppContext.mainLoop.changeMode(nextMode); }
+        );
+    }
+
+    public static function loadLevelPackResources (resourceNames :Array, callback :Function) :void
+    {
         if (pendLoadLevelPackResources(resourceNames)) {
-            MainLoop.instance.pushMode(new LevelPackLoadingMode(nextMode));
+            MainLoop.instance.pushMode(new LevelPackLoadingMode(callback));
         } else {
-            MainLoop.instance.changeMode(nextMode);
+            callback();
         }
     }
 
@@ -353,12 +361,12 @@ import popcraft.ui.GenericLoadErrorMode;
 
 class LevelPackLoadingMode extends GenericLoadingMode
 {
-    public function LevelPackLoadingMode (nextMode :AppMode)
+    public function LevelPackLoadingMode (callback :Function)
     {
         ResourceManager.instance.load(
             function () :void {
                 AppContext.mainLoop.popMode();
-                AppContext.mainLoop.changeMode(nextMode);
+                callback();
             },
             function (err :String) :void {
                 AppContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));

@@ -49,7 +49,8 @@ public class ComputerPlayer extends SimObject
 
         ++_waveIndex;
 
-        this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore, new FunctionTask(sendNextWave)));
+        this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore,
+            new FunctionTask(sendNextWave)));
     }
 
     protected function sendNextWave () :void
@@ -74,9 +75,12 @@ public class ComputerPlayer extends SimObject
 
             // should we switch our targeted enemy?
             if (null != _nextWave.targetPlayerName) {
-                var targetPlayer :PlayerInfo = GameContext.getPlayerByName(_nextWave.targetPlayerName);
+                var targetPlayer :PlayerInfo =
+                    GameContext.getPlayerByName(_nextWave.targetPlayerName);
+
                 if (null != targetPlayer) {
-                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerIndex, targetPlayer.playerIndex);
+                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerIndex,
+                        targetPlayer.playerIndex);
                 }
             }
 
@@ -89,7 +93,8 @@ public class ComputerPlayer extends SimObject
 
                 // is there a cap on how many creatures we should create in this wave?
                 if (max >= 0) {
-                    count = Math.min(count, max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerIndex, unitType));
+                    count = Math.min(count,
+                        max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerIndex, unitType));
                 }
 
                 for (var j :int = 0; j < count; ++j) {
@@ -149,7 +154,8 @@ public class ComputerPlayer extends SimObject
     protected function sendCouriersForSpellDrop () :void
     {
         if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
-            var numCouriers :int = _curDay.spellDropCourierGroupSize.next() - this.numCouriersOnBoard;
+            var numCouriers :int = _curDay.spellDropCourierGroupSize.next() -
+                this.numCouriersOnBoard;
             for (var i :int = 0; i < numCouriers; ++i) {
                 this.buildUnit(Constants.UNIT_TYPE_COURIER);
             }

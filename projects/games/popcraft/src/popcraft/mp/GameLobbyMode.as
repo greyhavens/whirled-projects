@@ -158,7 +158,7 @@ public class GameLobbyMode extends AppMode
 
     protected function startGame () :void
     {
-        GameContext.matchType = GameContext.MATCH_TYPE_MULTIPLAYER;
+        GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
 
         // @TODO - change this when we have real game variants
         var variants :Array = AppContext.gameVariants;

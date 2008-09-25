@@ -33,7 +33,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         _movie.addChildAt(rubble, index);
 
         // mirror horizontally if we're on the left side of the battlefield
-        rubble.scaleX = (unit.x < Constants.BATTLE_WIDTH * 0.5 ? -1 : 1);
+        rubble.scaleX = (unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
 
         // recolor
         var playerColor :uint = GameContext.gameData.playerColors[unit.owningPlayerIndex];

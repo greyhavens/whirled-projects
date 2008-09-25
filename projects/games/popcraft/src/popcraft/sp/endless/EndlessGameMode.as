@@ -1,80 +1,16 @@
-package popcraft.sp.story {
+package popcraft.sp.endless {
 
-import com.threerings.flash.Vector2;
-import com.threerings.util.KeyboardCodes;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.net.OfflineTickedMessageManager;
-import com.whirled.contrib.simplegame.net.TickedMessageManager;
+import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 
 import popcraft.*;
-import popcraft.battle.*;
-import popcraft.data.*;
-import popcraft.sp.*;
+import popcraft.data.EndlessMapData;
+import popcraft.mp.*;
 
-public class StoryGameMode extends GameMode
+public class EndlessGameMode extends GameMode
 {
-    public function StoryGameMode (level :LevelData)
-    {
-        _level = level;
-    }
-
-    override protected function setup () :void
-    {
-        super.setup();
-        showIntro();
-    }
-
-    protected function showIntro () :void
-    {
-        AppContext.mainLoop.pushMode(new LevelIntroMode(_level));
-    }
-
-    override public function onKeyDown (keyCode :uint) :void
-    {
-        if (Constants.DEBUG_ALLOW_CHEATS && keyCode == KeyboardCodes.SLASH) {
-            // restart the level
-            // playLevel(true) forces the current level to reload
-            AppContext.levelMgr.playLevel(null, true);
-
-        } else {
-            super.onKeyDown(keyCode);
-        }
-    }
-
-    override public function playerEarnedResources (resourceType :int, offset :int,
-        numClearPieces :int) :int
-    {
-        var actualResourcesEarned :int =
-            super.playerEarnedResources(resourceType, offset, numClearPieces);
-
-        // only resources earned while under "par" are counted toward the totalResourcesEarned count
-        // for the purposes of player score
-        if (GameContext.isStoryGame &&
-            GameContext.diurnalCycle.dayCount <= _level.expertCompletionDays) {
-            _totalResourcesEarned += actualResourcesEarned;
-        }
-
-        return actualResourcesEarned;
-    }
-
     override public function get canPause () :Boolean
     {
-        return true;
-    }
-
-    override public function isAvailableUnit (unitType :int) :Boolean
-    {
-        return _level.isAvailableUnit(unitType);
-    }
-
-    override public function get availableSpells () :Array
-    {
-        return _level.availableSpells;
-    }
-
-    override public function get mapSettings () :MapSettingsData
-    {
-        return _level.mapSettings;
+        return GameContext.isSinglePlayerGame;
     }
 
     override protected function createPlayers () :void
@@ -82,7 +18,7 @@ public class StoryGameMode extends GameMode
         GameContext.localPlayerIndex = 0;
         GameContext.playerInfos = [];
 
-        var level :LevelData = _level;
+        var level :LevelData = GameContext.storyLevel;
 
         // in single player levels, base location are arranged in order of player id
         var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
@@ -121,12 +57,21 @@ public class StoryGameMode extends GameMode
 
     override protected function createRandSeed () :uint
     {
-        return uint(Math.random() * uint.MAX_VALUE);
+        if (GameContext.isSinglePlayerGame) {
+            return uint(Math.random() * uint.MAX_VALUE);
+        } else {
+            return MultiplayerConfig.randSeed;
+        }
     }
 
     override protected function createMessageManager () :TickedMessageManager
     {
-        return new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
+        if (GameContext.isSinglePlayerGame) {
+            return new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
+        } else {
+            return new OnlineTickedMessageManager(AppContext.gameCtrl,
+                SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
+        }
     }
 
     override protected function createInitialWorkshops () :void
@@ -139,10 +84,10 @@ public class StoryGameMode extends GameMode
             var startingHealthOverride :int = 0;
             var invincible :Boolean;
             if (playerIndex == 0) {
-                maxHealthOverride = _level.playerBaseHealth;
-                startingHealthOverride = _level.playerBaseStartHealth;
+                maxHealthOverride = GameContext.storyLevel.playerBaseHealth;
+                startingHealthOverride = GameContext.storyLevel.playerBaseStartHealth;
             } else {
-                var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
+                var cpData :ComputerPlayerData = GameContext.storyLevel.computers[playerIndex - 1];
                 maxHealthOverride = cpData.baseHealth;
                 startingHealthOverride = cpData.baseStartHealth;
                 invincible = cpData.invincible;
@@ -163,7 +108,7 @@ public class StoryGameMode extends GameMode
 
     override public function localPlayerPurchasedCreature (unitType :int) :void
     {
-        if (_level.isAvailableUnit(unitType)) {
+        if (GameContext.storyLevel.isAvailableUnit(unitType)) {
             super.localPlayerPurchasedCreature(unitType);
         }
     }
@@ -176,11 +121,11 @@ public class StoryGameMode extends GameMode
         if (AppContext.levelMgr.isLastLevel &&
             GameContext.winningTeamId == GameContext.localPlayerInfo.teamId) {
 
-            nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO, _level);
+            nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO);
             levelPackResources = Resources.EPILOGUE_RESOURCES;
 
         } else {
-            nextMode = new LevelOutroMode(_level);
+            nextMode = new LevelOutroMode();
         }
 
         fadeOut(function () :void {
@@ -191,13 +136,12 @@ public class StoryGameMode extends GameMode
         GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
-    public function get totalResourcesEarned () :int
+    protected function get mapData () :EndlessMapData
     {
-        return _totalResourcesEarned;
+        return GameContext.endlessLevel.mapSequence[_mapDataIndex];
     }
 
-    protected var _level :LevelData;
-    protected var _totalResourcesEarned :int;
+    protected var _mapDataIndex :int;
 }
 
 }

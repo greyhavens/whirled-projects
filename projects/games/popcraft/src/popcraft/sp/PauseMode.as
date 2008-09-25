@@ -50,7 +50,7 @@ public class PauseMode extends AppMode
         var button :SimpleButton = UIBits.createButton("End Game", 1.5, 150);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+                LevelSelectMode.create();
             });
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);

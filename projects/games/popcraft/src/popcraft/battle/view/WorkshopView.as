@@ -176,7 +176,7 @@ public class WorkshopView extends BattlefieldSprite
     protected function updateViewFlip () :void
     {
         // flip the movie if we're on the left side of the board
-        _workshop.scaleX = (_unit.x < GameContext.battlefieldWidth * 0.5 ? -1 : 1);
+        _workshop.scaleX = (_unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
     }
 
     override protected function update (dt :Number) :void

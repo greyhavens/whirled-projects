@@ -15,20 +15,34 @@ import flash.geom.Point;
 
 import popcraft.*;
 import popcraft.battle.view.WorkshopView;
+import popcraft.data.LevelData;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 
 public class LevelSelectMode extends DemoGameMode
 {
+    public static function create () :void
+    {
+        AppContext.levelMgr.curLevelIndex = LevelManager.DEMO_LEVEL;
+        AppContext.levelMgr.playLevel(
+            function (level :LevelData) :void {
+                _demoLevel = level;
+                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+            });
+    }
+
+    public function LevelSelectMode ()
+    {
+        super(_demoLevel);
+
+        if (_demoLevel == null) {
+            throw new Error("LevelSelectMode must be instantiated via LevelSelectMode.create()");
+        }
+    }
+
     override protected function setup () :void
     {
         super.setup();
-        this.fadeIn();
-    }
-
-    override protected function setupGameScreen () :void
-    {
-        super.setupGameScreen();
 
         // hide the player's workshop to make it look like streetwalkers are
         // appearing in front of the school
@@ -44,6 +58,8 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
         this.createTutorialLayout();
+
+        this.fadeIn();
     }
 
     protected function createTutorialLayout () :void
@@ -246,7 +262,8 @@ public class LevelSelectMode extends DemoGameMode
     protected function onEpilogueSelected (e :MouseEvent) :void
     {
         fadeOut(function () :void {
-            Resources.loadLevelPackResourcesAndSwitchModes(Resources.EPILOGUE_RESOURCES,
+            Resources.loadLevelPackResourcesAndSwitchModes(
+                Resources.EPILOGUE_RESOURCES,
                 new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT));
         });
     }
@@ -260,7 +277,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // reload the mode
-        MainLoop.instance.changeMode(new LevelSelectMode());
+        LevelSelectMode.create();
     }
 
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
@@ -280,7 +297,7 @@ public class LevelSelectMode extends DemoGameMode
         AppContext.levelMgr.playLevel(startGame);
     }
 
-    protected function startGame () :void
+    protected function startGame (loadedLevel :LevelData) :void
     {
         // called when the level is loaded
 
@@ -288,10 +305,10 @@ public class LevelSelectMode extends DemoGameMode
             // show the prologue before the first level
             Resources.loadLevelPackResourcesAndSwitchModes(
                 Resources.PROLOGUE_RESOURCES,
-                new PrologueMode(PrologueMode.TRANSITION_GAME));
+                new PrologueMode(PrologueMode.TRANSITION_GAME, loadedLevel));
 
         } else {
-            this.fadeOutToMode(new StoryGameMode());
+            this.fadeOutToMode(new StoryGameMode(loadedLevel));
         }
     }
 
@@ -301,6 +318,8 @@ public class LevelSelectMode extends DemoGameMode
     protected var _resourceIntro :SceneObject;
     protected var _levelSelectButton :SimpleButton;
     protected var _showingTutorial :Boolean;
+
+    protected static var _demoLevel :LevelData;
 
     protected static const NUM_COLUMNS :int = 2;
     protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];

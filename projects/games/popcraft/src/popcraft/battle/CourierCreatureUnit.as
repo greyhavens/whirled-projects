@@ -159,10 +159,11 @@ class CourierSettings
     public static const SPEEDUP_PER_COURIER :Number = 1.5;
     public static const MAX_SPEEDUP :Number = 8;
     public static const MOVE_FUDGE_FACTOR :Number = 5;
-    public static const WANDER_BOUNDS :Rectangle = new Rectangle(
-        120, 120, Constants.BATTLE_WIDTH - 120, Constants.BATTLE_HEIGHT - 120);
-    public static const ENEMY_BASE_WANDER_RADIUS :NumRange = new NumRange(150, 300, Rand.STREAM_GAME);
-    public static const ENEMY_BASE_WANDER_ANGLE :NumRange = new NumRange(-Math.PI / 3, Math.PI / 3, Rand.STREAM_GAME);
+    public static const WANDER_BOUNDS_BORDER :int = 120;
+    public static const ENEMY_BASE_WANDER_RADIUS :NumRange =
+        new NumRange(150, 300, Rand.STREAM_GAME);
+    public static const ENEMY_BASE_WANDER_ANGLE :NumRange =
+        new NumRange(-Math.PI / 3, Math.PI / 3, Rand.STREAM_GAME);
 }
 
 class CourierAI extends AITaskTree
@@ -382,10 +383,13 @@ class WanderTask extends AITaskTree
         wanderLoc.addLocal(wanderBase.unitLoc);
 
         // clamp
-        wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS.left);
-        wanderLoc.x = Math.min(wanderLoc.x, CourierSettings.WANDER_BOUNDS.right);
-        wanderLoc.y = Math.max(wanderLoc.y, CourierSettings.WANDER_BOUNDS.top);
-        wanderLoc.y = Math.min(wanderLoc.y, CourierSettings.WANDER_BOUNDS.bottom);
+        wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS_BORDER);
+        wanderLoc.x = Math.min(wanderLoc.x,
+            GameContext.gameMode.battlefieldWidth - CourierSettings.WANDER_BOUNDS_BORDER);
+
+        wanderLoc.y = Math.max(wanderLoc.y, CourierSettings.WANDER_BOUNDS_BORDER);
+        wanderLoc.y = Math.min(wanderLoc.y,
+            GameContext.gameMode.battlefieldHeight - CourierSettings.WANDER_BOUNDS_BORDER);
 
         // commence wandering!
         this.addSubtask(new CourierMoveTask(_unit, wanderLoc));

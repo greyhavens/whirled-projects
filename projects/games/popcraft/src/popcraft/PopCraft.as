@@ -149,11 +149,11 @@ class LoadingMode extends GenericLoadingMode
     protected function startGame () :void
     {
         if (AppContext.isMultiplayer) {
-            GameContext.matchType = GameContext.MATCH_TYPE_MULTIPLAYER;
+            GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
             AppContext.mainLoop.unwindToMode(new GameLobbyMode());
         } else {
-            GameContext.matchType = GameContext.MATCH_TYPE_SINGLEPLAYER;
-            AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+            GameContext.gameType = GameContext.GAME_TYPE_STORY;
+            LevelSelectMode.create();
         }
     }
 

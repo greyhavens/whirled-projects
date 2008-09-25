@@ -6,13 +6,13 @@ import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.StageQuality;
 import flash.events.MouseEvent;
 
 import popcraft.*;
+import popcraft.data.LevelData;
 import popcraft.ui.UIBits;
 
 public class EpilogueMode extends TransitionMode
@@ -20,9 +20,10 @@ public class EpilogueMode extends TransitionMode
     public static const TRANSITION_LEVELSELECT :int = 0;
     public static const TRANSITION_LEVELOUTRO :int = 1;
 
-    public function EpilogueMode (nextTransition :int)
+    public function EpilogueMode (nextTransition :int, level :LevelData = null)
     {
         _nextTransition = nextTransition;
+        _level = level;
     }
 
     override protected function setup () :void
@@ -71,18 +72,21 @@ public class EpilogueMode extends TransitionMode
         _skipButton.parent.removeChild(_skipButton);
 
         // fade out and pop mode
-        var nextMode :AppMode;
         switch (_nextTransition) {
-        case TRANSITION_LEVELSELECT: nextMode = new LevelSelectMode(); break;
-        case TRANSITION_LEVELOUTRO: nextMode = new LevelOutroMode(); break;
-        }
+        case TRANSITION_LEVELSELECT:
+            this.fadeOut(LevelSelectMode.create);
+            break;
 
-        this.fadeOutToMode(nextMode);
+        case TRANSITION_LEVELOUTRO:
+            this.fadeOutToMode(new LevelOutroMode(_level));
+            break;
+        }
     }
 
     protected var _skipButton :SimpleButton;
     protected var _musicChannel :AudioChannel;
     protected var _nextTransition :int;
+    protected var _level :LevelData;
 
     protected static const SCREEN_FADE_TIME :Number = 1.5;
 }

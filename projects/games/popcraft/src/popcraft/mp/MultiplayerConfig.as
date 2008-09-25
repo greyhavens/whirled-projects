@@ -29,7 +29,8 @@ public class MultiplayerConfig
 
     public static function get teams () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_TEAMS) as Array : []);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_TEAMS) as Array : []);
     }
 
     public static function computeTeamSizes () :Array
@@ -87,7 +88,8 @@ public class MultiplayerConfig
 
     public static function get handicaps () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_HANDICAPS) as Array : []);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_HANDICAPS) as Array : []);
     }
 
     public static function set randSeed (val :uint) :void
@@ -99,7 +101,8 @@ public class MultiplayerConfig
 
     public static function get randSeed () :uint
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_RANDSEED) as uint : 0);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_RANDSEED) as uint : 0);
     }
 
     public static function set inited (val :Boolean) :void
@@ -111,7 +114,8 @@ public class MultiplayerConfig
 
     public static function get gameStarting () :Boolean
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
     }
 
     public static function set gameStarting (val :Boolean) :void
@@ -123,7 +127,8 @@ public class MultiplayerConfig
 
     public static function get inited () :Boolean
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
     }
 
     public static function set morbidInfections (val :Array) :void
@@ -142,7 +147,8 @@ public class MultiplayerConfig
 
     public static function get morbidInfections () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ? AppContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
     }
 }
 

@@ -13,12 +13,14 @@ import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
+import popcraft.data.LevelData;
 import popcraft.ui.UIBits;
 
 public class LevelOutroMode extends AppMode
 {
-    public function LevelOutroMode ()
+    public function LevelOutroMode (level :LevelData)
     {
+        _level = level;
         _success = (GameContext.winningTeamId == GameContext.localPlayerInfo.teamId);
     }
 
@@ -42,15 +44,15 @@ public class LevelOutroMode extends AppMode
 
         if (_success) {
             // if the player won, show their score
-            var scoreMessage :String = "Completion days: " + LevelScoreInfo.completionDays + "\n";
-            scoreMessage += "Resources score: " + LevelScoreInfo.resourcesScore + "\n";
-            if (LevelScoreInfo.completionBonus > 0) {
-                scoreMessage += "Level bonus: " + LevelScoreInfo.completionBonus + "\n";
+            var scoreMessage :String = "Completion days: " + this.completionDays + "\n";
+            scoreMessage += "Resources score: " + this.resourcesScore + "\n";
+            if (this.completionBonus > 0) {
+                scoreMessage += "Level bonus: " + this.completionBonus + "\n";
             }
-            if (LevelScoreInfo.expertCompletionScore > 0) {
-                scoreMessage += "Expert completion bonus: " + LevelScoreInfo.expertCompletionScore + "\n";
+            if (this.expertCompletionScore > 0) {
+                scoreMessage += "Expert completion bonus: " + this.expertCompletionScore + "\n";
             }
-            scoreMessage += "TOTAL SCORE: " + LevelScoreInfo.totalScore;
+            scoreMessage += "TOTAL SCORE: " + this.totalScore;
 
             var tfScore :DisplayObject = UIBits.createTextPanel(scoreMessage, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
             tfScore.x = (WIDTH * 0.5) - (tfScore.width * 0.5);
@@ -68,7 +70,7 @@ public class LevelOutroMode extends AppMode
 
         } else {
             // if the player lost, show a hint
-            var hints :Array = GameContext.spLevel.levelHints;
+            var hints :Array = _level.levelHints;
             var tfHint :DisplayObject = UIBits.createTextPanel(
                 Rand.nextElement(hints, Rand.STREAM_COSMETIC), 1, WIDTH - 50, 0, TextFormatAlign.LEFT);
             tfHint.x = (WIDTH * 0.5) - (tfHint.width * 0.5);
@@ -103,7 +105,7 @@ public class LevelOutroMode extends AppMode
         button = UIBits.createButton("Main Menu", 1.5, 150);
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+                LevelSelectMode.create();
             });
         button.x = (WIDTH * 0.5) - (button.width * 0.5);
         button.y = 260;
@@ -123,7 +125,7 @@ public class LevelOutroMode extends AppMode
     protected function saveProgress () :void
     {
         // if the player lost the level, give them points for the resources they gathered
-        var awardedScore :int = (_success ? LevelScoreInfo.totalScore : LevelScoreInfo.resourcesScore);
+        var awardedScore :int = (_success ? this.totalScore : this.resourcesScore);
 
         if (AppContext.gameCtrl.isConnected()) {
             AppContext.gameCtrl.game.endGameWithScore(awardedScore);
@@ -138,8 +140,8 @@ public class LevelOutroMode extends AppMode
 
             var newLevelRecord :LevelRecord = new LevelRecord();
             newLevelRecord.unlocked = true;
-            newLevelRecord.expert = LevelScoreInfo.expertCompletion;
-            newLevelRecord.score = LevelScoreInfo.totalScore;
+            newLevelRecord.expert = this.expertCompletion;
+            newLevelRecord.score = this.totalScore;
 
             var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
             var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
@@ -178,6 +180,43 @@ public class LevelOutroMode extends AppMode
         }
     }
 
+    protected function get expertCompletion () :Boolean
+    {
+        return (GameContext.diurnalCycle.dayCount <= _level.expertCompletionDays);
+    }
+
+    protected function get expertCompletionScore () :int
+    {
+        return (expertCompletion ? _level.expertCompletionBonus : 0);
+    }
+
+    protected function get resourcesScore () :int
+    {
+        var score :int = Math.max(StoryGameMode(GameContext.gameMode).totalResourcesEarned, 0) *
+            GameContext.gameData.pointsPerResource;
+        if (_level.maxResourcesScore >= 0) {
+            score = Math.min(score, _level.maxResourcesScore);
+        }
+
+        return score;
+    }
+
+    protected function get completionDays () :int
+    {
+        return GameContext.diurnalCycle.dayCount;
+    }
+
+    protected function get completionBonus () :int
+    {
+        return _level.levelCompletionBonus;
+    }
+
+    protected function get totalScore () :int
+    {
+        return expertCompletionScore + resourcesScore + completionBonus;
+    }
+
+    protected var _level :LevelData;
     protected var _success :Boolean;
     protected var _playedSound :Boolean;
 
@@ -188,44 +227,4 @@ public class LevelOutroMode extends AppMode
 
 }
 
-}
-
-import popcraft.*;
-
-class LevelScoreInfo
-{
-    public static function get expertCompletion () :Boolean
-    {
-        return (GameContext.diurnalCycle.dayCount <= GameContext.spLevel.expertCompletionDays);
-    }
-
-    public static function get expertCompletionScore () :int
-    {
-        return (expertCompletion ? GameContext.spLevel.expertCompletionBonus : 0);
-    }
-
-    public static function get resourcesScore () :int
-    {
-        var score :int = Math.max(GameContext.localPlayerInfo.totalResourcesEarned, 0) * GameContext.gameData.pointsPerResource;
-        if (GameContext.spLevel.maxResourcesScore >= 0) {
-            score = Math.min(score, GameContext.spLevel.maxResourcesScore);
-        }
-
-        return score;
-    }
-
-    public static function get completionDays () :int
-    {
-        return GameContext.diurnalCycle.dayCount;
-    }
-
-    public static function get completionBonus () :int
-    {
-        return GameContext.spLevel.levelCompletionBonus;
-    }
-
-    public static function get totalScore () :int
-    {
-        return expertCompletionScore + resourcesScore + completionBonus;
-    }
 }

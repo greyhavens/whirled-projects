@@ -1,5 +1,8 @@
 package popcraft.data {
 
+import popcraft.*;
+import popcraft.util.XmlReader;
+
 public class EndlessMapData
 {
     public var mapSettings :MapSettingsData;
@@ -25,15 +28,17 @@ public class EndlessMapData
 
         // parse the available units
         for each (var unitData :XML in xml.AvailableUnits.Unit) {
-            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type",
+            mapData.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type",
                 Constants.PLAYER_CREATURE_UNIT_NAMES));
         }
 
         // parse available spells
         for each (var spellData :XML in xml.AvailableSpells.Spell) {
-            level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type",
+            mapData.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type",
                 Constants.SPELL_NAMES));
         }
+
+        return mapData;
     }
 }
 

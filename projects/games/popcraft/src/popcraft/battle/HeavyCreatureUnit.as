@@ -198,7 +198,7 @@ class HeavyAI extends AITaskTree
         var enemyBase :WorkshopUnit = _unit.getEnemyBaseToAttack().object as WorkshopUnit;
         var enemyBaseLoc :Vector2 = (null != enemyBase ?
             enemyBase.unitLoc :
-            new Vector2(Constants.BATTLE_WIDTH * 0.5, Constants.BATTLE_HEIGHT * 0.5));
+            new Vector2(GameContext.gameMode.battlefieldWidth * 0.5, GameContext.gameMode.battlefieldHeight * 0.5));
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
 

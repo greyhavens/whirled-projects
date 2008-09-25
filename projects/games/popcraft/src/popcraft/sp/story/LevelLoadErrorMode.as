@@ -41,7 +41,7 @@ public class LevelLoadErrorMode extends AppMode
         var button :SimpleButton = UIBits.createButton("Back");
         button.addEventListener(MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.changeMode(new LevelSelectMode());
+                LevelSelectMode.create();
             });
         button.x = 100;
         button.y = 450;

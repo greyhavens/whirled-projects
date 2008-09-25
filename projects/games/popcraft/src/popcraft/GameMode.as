@@ -16,6 +16,7 @@ import com.whirled.game.StateChangedEvent;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 
 import popcraft.battle.*;
 import popcraft.battle.geom.ForceParticleContainer;
@@ -55,9 +56,9 @@ public class GameMode extends TransitionMode
         rngSeeded();
 
         // cache some frequently-used values in GameContext
-        GameContext.mapScaleXInv = 1 / GameContext.mapSettings.mapScaleX;
-        GameContext.mapScaleYInv = 1 / GameContext.mapSettings.mapScaleY;
-        GameContext.scaleSprites = GameContext.mapSettings.scaleSprites;
+        GameContext.mapScaleXInv = 1 / GameContext.gameMode.mapSettings.mapScaleX;
+        GameContext.mapScaleYInv = 1 / GameContext.gameMode.mapSettings.mapScaleY;
+        GameContext.scaleSprites = GameContext.gameMode.mapSettings.scaleSprites;
 
         // create some layers
         GameContext.battleLayer = new Sprite();
@@ -222,19 +223,16 @@ public class GameMode extends TransitionMode
     protected function setupDashboard () :void
     {
         var dashboard :DashboardView = new DashboardView();
-        dashboard.x = Constants.DASHBOARD_LOC.x;
-        dashboard.y = Constants.DASHBOARD_LOC.y;
+        dashboard.x = DASHBOARD_LOC.x;
+        dashboard.y = DASHBOARD_LOC.y;
         this.addObject(dashboard, GameContext.dashboardLayer);
 
         GameContext.dashboard = dashboard;
 
-        var puzzleBoard :PuzzleBoard = new PuzzleBoard(
-            Constants.PUZZLE_COLS,
-            Constants.PUZZLE_ROWS,
-            Constants.PUZZLE_TILE_SIZE);
+        var puzzleBoard :PuzzleBoard = new PuzzleBoard(PUZZLE_COLS, PUZZLE_ROWS, PUZZLE_TILE_SIZE);
 
-        puzzleBoard.displayObject.x = Constants.PUZZLE_BOARD_LOC.x;
-        puzzleBoard.displayObject.y = Constants.PUZZLE_BOARD_LOC.y;
+        puzzleBoard.displayObject.x = PUZZLE_BOARD_LOC.x;
+        puzzleBoard.displayObject.y = PUZZLE_BOARD_LOC.y;
 
         DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
         this.addObject(puzzleBoard);
@@ -247,12 +245,11 @@ public class GameMode extends TransitionMode
         GameContext.unitFactory = new UnitFactory();
 
         GameContext.forceParticleContainer = new ForceParticleContainer(
-            GameContext.battlefieldWidth,
-            GameContext.battlefieldHeight);
+            GameContext.gameMode.battlefieldWidth,
+            GameContext.gameMode.battlefieldHeight);
 
         // Board
-        var battleBoardView :BattleBoardView = new BattleBoardView(Constants.BATTLE_WIDTH,
-            Constants.BATTLE_HEIGHT);
+        var battleBoardView :BattleBoardView = new BattleBoardView(BATTLE_WIDTH, BATTLE_HEIGHT);
         this.addObject(battleBoardView, GameContext.battleLayer);
 
         GameContext.battleBoardView = battleBoardView;
@@ -267,8 +264,8 @@ public class GameMode extends TransitionMode
 
         if (!DiurnalCycle.isDisabled) {
             var diurnalMeter :DiurnalCycleView = new DiurnalCycleView();
-            diurnalMeter.x = Constants.DIURNAL_METER_LOC.x;
-            diurnalMeter.y = Constants.DIURNAL_METER_LOC.y;
+            diurnalMeter.x = DIURNAL_METER_LOC.x;
+            diurnalMeter.y = DIURNAL_METER_LOC.y;
             this.addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
         }
 
@@ -663,6 +660,11 @@ public class GameMode extends TransitionMode
         GameContext.playerStats.spellsCast[spellType] += 1;
     }
 
+    public function playerEarnedResources (resourceType :int, offset :int, numClearPieces :int) :int
+    {
+        return GameContext.localPlayerInfo.earnedResources(resourceType, offset, numClearPieces);
+    }
+
     public function get playAudio () :Boolean
     {
         return true;
@@ -671,6 +673,31 @@ public class GameMode extends TransitionMode
     public function get canPause () :Boolean
     {
         return false;
+    }
+
+    public function isAvailableUnit (unitType :int) :Boolean
+    {
+        return true;
+    }
+
+    public function get availableSpells () :Array
+    {
+        return Constants.SPELLS;
+    }
+
+    public function get battlefieldWidth () :Number
+    {
+        return (BATTLE_WIDTH * mapSettings.mapScaleX);
+    }
+
+    public function get battlefieldHeight () :Number
+    {
+        return (BATTLE_HEIGHT * mapSettings.mapScaleY);
+    }
+
+    public function get mapSettings () :MapSettingsData
+    {
+        throw new Error("abstract");
     }
 
     protected function createRandSeed () :uint
@@ -719,6 +746,18 @@ public class GameMode extends TransitionMode
     protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
 
     protected static const FADE_OUT_TIME :Number = 3;
+
+    protected static const DASHBOARD_LOC :Point = new Point(350, 430);
+    protected static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);
+    protected static const DIURNAL_METER_LOC :Point = new Point(0, 0);
+
+    protected static const BATTLE_WIDTH :int = 700;
+    protected static const BATTLE_HEIGHT :int = 372;
+
+    protected static const PUZZLE_HEIGHT :int = 110;
+    protected static const PUZZLE_COLS :int = 12;
+    protected static const PUZZLE_ROWS :int = 5;
+    protected static const PUZZLE_TILE_SIZE :int = int(PUZZLE_HEIGHT / PUZZLE_ROWS) + 1;
 
     protected static const log :Log = Log.getLog(GameMode);
 }

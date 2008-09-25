@@ -46,7 +46,10 @@ public class PuzzleBoard extends SceneObject
         _sprite = new Sprite();
         _sprite.graphics.clear();
         _sprite.graphics.beginFill(0);
-        _sprite.graphics.drawRect(0, 0, (_cols * tileSize) - (_cols - 1), (_rows * tileSize) - (_rows - 1));
+        _sprite.graphics.drawRect(
+            0, 0,
+            (_cols * tileSize) - (_cols - 1),
+            (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
 
@@ -71,10 +74,10 @@ public class PuzzleBoard extends SceneObject
         }
 
         // the mouseIndex is the piece directly under the mouse
-        var mouseIndexX :int = (e.localX / (Constants.PUZZLE_TILE_SIZE - 1));
-        var mouseIndexY :int = (e.localY / (Constants.PUZZLE_TILE_SIZE - 1));
+        var mouseIndexX :int = (e.localX / (_tileSize - 1));
+        var mouseIndexY :int = (e.localY / (_tileSize - 1));
 
-        if (mouseIndexX >= 0 && mouseIndexX < Constants.PUZZLE_COLS && mouseIndexY >= 0 && mouseIndexY < Constants.PUZZLE_ROWS) {
+        if (mouseIndexX >= 0 && mouseIndexX < _cols && mouseIndexY >= 0 && mouseIndexY < _rows) {
             this.clearPieceGroup(mouseIndexX, mouseIndexY);
         }
     }
@@ -234,9 +237,10 @@ public class PuzzleBoard extends SceneObject
 
         // update the player's resource count
         var resourceType :int = Piece(clearPieces[0]).resourceType;
-        var resourceValue :int = GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
+        var resourceValue :int =
+            GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
         resourceValue *= GameContext.localPlayerInfo.handicap;
-        GameContext.localPlayerInfo.earnedResources(resourceType, resourceValue, clearPieces.length);
+        GameContext.gameMode.playerEarnedResources(resourceType, resourceValue, clearPieces.length);
 
         _resolvingClears = true;
 
