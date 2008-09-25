@@ -81,54 +81,65 @@ public class BingoCard
         return _isComplete;
     }
 
-    protected function checkComplete () :Boolean
+    public function get winningConfigurations () :Array
     {
-        // check for completed rows
-        for (var y :int = 0; y < _height; ++y) {
-            for (var x :int = 0; x < _width; ++x) {
-                if (!this.isFilledAt(x, y)) {
+        // if the card is a winner, this returns an Array of Arrays of the items
+        // that form the winning configurations (there may be more than one)
+
+        var configs :Array = [];
+
+        var potentialConfig :Array;
+
+        function checkConfig (xFrom :int, xLim :int, xOffset :int, yFrom :int, yLim :int,
+            yOffset :int) :void {
+
+            potentialConfig = [];
+            var x :int = xFrom;
+            var y :int = yFrom;
+            while (x != xLim && y != yLim) {
+                if (!isFilledAt(x, y)) {
+                    potentialConfig = null;
                     break;
-                } else if (x == _width - 1) {
-                    return true;
                 }
+
+                if (x != Constants.FREE_SPACE.x || y != Constants.FREE_SPACE.y) {
+                    potentialConfig.push(getItemAt(x, y));
+                }
+
+                x += xOffset;
+                y += yOffset;
+            }
+
+            if (potentialConfig != null) {
+                configs.push(potentialConfig);
             }
         }
 
+        // check for completed rows
+        for (var y :int = 0; y < _height; ++y) {
+            checkConfig(0, _width, 1, y, y + 1, 0);
+        }
+
         // check for completed columns
-        for (x = 0; x < _width; ++x) {
-            for (y = 0; y < _height; ++y) {
-                if (!this.isFilledAt(x, y)) {
-                    break;
-                } else if (y == _height - 1) {
-                    return true;
-                }
-            }
+        for (var x :int = 0; x < _width; ++x) {
+            checkConfig(x, x + 1, 0, 0, _height, 1);
         }
 
         // check for completed diagonals
         if (_width == _height) {
-
             // top-left to bottom-right
-            for (x = 0, y = 0; x < _width; ++x, ++y) {
-                if (!this.isFilledAt(x, y)) {
-                    break;
-                } else if (x == _width - 1) {
-                    return true;
-                }
-            }
+            checkConfig(0, _width, 1, 0, _height, 1);
 
             // top-right to bottom-left
-            for (x = _width - 1, y = 0; x >= 0; --x, ++y) {
-                if (!this.isFilledAt(x, y)) {
-                    break;
-                } else if (x == 0) {
-                    return true;
-                }
-            }
-
+            checkConfig(_width - 1, -1, -1, 0, _height, 1);
         }
 
-        return false;
+        return configs;
+    }
+
+    protected function checkComplete () :Boolean
+    {
+        return this.winningConfigurations.length > 0;
     }
 
     public function get width () :int

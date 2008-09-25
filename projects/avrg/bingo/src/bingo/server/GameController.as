@@ -44,8 +44,33 @@ public class GameController extends OneRoomGameRoom
         super.messageReceived(senderId, name, value);
 
         if (name == Constants.MSG_CALLBINGO) {
-            log.info("bingo called [senderId=" + senderId + "]");
-            bingoCalled(senderId, int(value));
+            if (value is int) {
+                log.info("bingo called", "senderId", senderId);
+                bingoCalled(senderId, int(value));
+
+            } else {
+                badMessage();
+            }
+
+        } else if (name == Constants.MSG_WONTROPHIES) {
+            if (value is Array) {
+                log.info("awarding trophies", "senderId", senderId, "trophies", value);
+                for each (var trophy :String in value as Array) {
+                    if (trophy != null) {
+                        _gameCtrl.getPlayer(senderId).awardTrophy(trophy);
+                    } else {
+                        badMessage();
+                        break;
+                    }
+                }
+
+            } else {
+                badMessage();
+            }
+        }
+
+        function badMessage () :void {
+            log.warning("bad message", "senderId", senderId, "name", name, "value", value);
         }
     }
 
@@ -101,6 +126,8 @@ public class GameController extends OneRoomGameRoom
         _numBallsThisRound++;
         _sharedState.ballInPlay = _bingoItems.removeRandomTag();
         setNewGameState(_sharedState);
+
+        //log.info("Calling next ball: " + _sharedState.ballInPlay);
     }
 
     protected function setNewGameState (newState :SharedState) :void

@@ -30,6 +30,7 @@ public class Constants
     public static const PROP_STATE :String = "p_bingoState";
     public static const PROP_SCORES :String = "p_bingoScores";
     public static const MSG_CALLBINGO :String = "m_bingo";
+    public static const MSG_WONTROPHIES :String = "m_trophies";
 }
 
 }

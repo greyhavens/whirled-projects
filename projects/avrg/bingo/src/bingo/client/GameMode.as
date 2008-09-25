@@ -1,13 +1,13 @@
 package bingo.client {
 
+import bingo.*;
+
+import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
-
-import bingo.*;
 
 public class GameMode extends AppMode
 {
@@ -49,7 +49,7 @@ public class GameMode extends AppMode
             break;
 
         case SharedState.STATE_WEHAVEAWINNER:
-            this.showWinnerAnimation();
+            this.handleRoundOver();
             break;
         }
     }
@@ -64,11 +64,65 @@ public class GameMode extends AppMode
         this.addObject(new BingoCardView(ClientContext.model.card), _gameUILayer);
 
         this.startNewBallTimer();
+
+        _roundInPlay = true;
     }
 
     protected function handleNewBall (...ignored) :void
     {
         this.startNewBallTimer();
+    }
+
+    protected function handleRoundOver () :void
+    {
+        if (_roundInPlay) {
+            // if _roundInPlay is true, we didn't enter the game during the "we have a winner"
+            // state, so count the round towards our total
+            var trophies :HashSet = new HashSet();
+
+            _roundsPlayed++;
+            Trophies.getAccumulationTrophies(
+                Trophies.ROUNDS_PLAYED_VALUES,
+                Trophies.ROUNDS_PLAYED_PREFIX,
+                _roundsPlayed,
+                trophies);
+
+            var wonRound :Boolean =
+                (ClientContext.model.curState.roundWinnerId == ClientContext.ourPlayerId);
+
+            if (wonRound) {
+                _roundsWon++;
+                _roundsWonConsec++;
+
+                Trophies.getAccumulationTrophies(
+                    Trophies.ROUNDS_WON_VALUES,
+                    Trophies.ROUNDS_WON_PREFIX,
+                    _roundsWon,
+                    trophies);
+
+                Trophies.getAccumulationTrophies(
+                    Trophies.ROUNDS_WON_CONSEC_VALUES,
+                    Trophies.ROUNDS_WON_CONSEC_PREFIX,
+                    _roundsWonConsec,
+                    trophies);
+
+                for each (var config :Array in ClientContext.model.card.winningConfigurations) {
+                    Trophies.getBoardTrophies(config, trophies);
+                }
+
+            } else {
+                _roundsWonConsec = 0;
+            }
+
+            if (trophies.size() > 0) {
+                ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
+                    trophies.toArray());
+            }
+
+            _roundInPlay = false;
+        }
+
+        this.showWinnerAnimation();
     }
 
     protected function showWinnerAnimation () :void
@@ -133,6 +187,11 @@ public class GameMode extends AppMode
     protected var _helpLayer :Sprite;
 
     protected var _calledBingoThisRound :Boolean;
+
+    protected var _roundInPlay :Boolean;
+    protected var _roundsPlayed :int;
+    protected var _roundsWon :int;
+    protected var _roundsWonConsec :int;
 
     protected static var log :Log = Log.getLog(GameMode);
 
