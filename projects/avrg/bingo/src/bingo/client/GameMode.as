@@ -112,12 +112,21 @@ public class GameMode extends AppMode
 
             } else {
                 _roundsWonConsec = 0;
+
+                // if we didn't win the round, tell the server how many squares we filled in
+                // this round, so that we can get some consolation coins
+                var numFilledSquares :int = ClientContext.model.card.numFilledSquares;
+                if (numFilledSquares > 0) {
+                    ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_CONSOLATIONPRIZE,
+                        numFilledSquares);
+                }
             }
 
-            if (trophies.size() > 0) {
+            // TODO: enable this when trophy art is complete
+            /*if (trophies.size() > 0) {
                 ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
                     trophies.toArray());
-            }
+            }*/
         }
 
         _roundInPlay = false;

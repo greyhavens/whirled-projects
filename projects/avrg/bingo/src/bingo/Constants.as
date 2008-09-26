@@ -26,11 +26,16 @@ public class Constants
 
     public static const MAX_MATCHES_PER_BALL :int = 999;
 
+    public static const BINGO_PAYOUT :Number = 1;
+    public static const CONSOLATION_PAYOUT_MAX :Number = 0.2;
+    public static const CONSOLATION_PAYOUT_MAX_SQUARES :int = 16;
+
     // network bits
     public static const PROP_STATE :String = "p_bingoState";
     public static const PROP_SCORES :String = "p_bingoScores";
     public static const MSG_CALLBINGO :String = "m_bingo";
     public static const MSG_WONTROPHIES :String = "m_trophies";
+    public static const MSG_CONSOLATIONPRIZE :String = "m_consolation";
 }
 
 }

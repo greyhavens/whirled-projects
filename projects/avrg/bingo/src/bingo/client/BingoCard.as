@@ -34,15 +34,8 @@ public class BingoCard
         _squares = new Array(size);
         var itemIndex :int = 0;
         for (i = 0; i < size; ++i) {
-
-            var item :ClientBingoItem = (i == freeSpaceIndex ? null : items[itemIndex++]);
-            var square :Square = new Square(item);
-
-            if (i == freeSpaceIndex) {
-                square.isFilled = true;
-            }
-
-            _squares[i] = square;
+            _squares[i] =
+                (i == freeSpaceIndex ? Square.createFreeSpace() : new Square(items[itemIndex++]));
         }
     }
 
@@ -65,6 +58,18 @@ public class BingoCard
             ClientContext.model.dispatchEvent(new LocalStateChangedEvent(
                 LocalStateChangedEvent.CARD_COMPLETED));
         }
+    }
+
+    public function get numFilledSquares () :int
+    {
+        var count :int = 0;
+        for each (var square :Square in _squares) {
+            if (square.isFilled && !square.isFreeSpace) {
+                ++count;
+            }
+        }
+
+        return count;
     }
 
     protected function xyToIndex (x :int, y :int) :int
@@ -169,8 +174,20 @@ class Square
     public var isFilled :Boolean;
     public var item :ClientBingoItem;
 
+    public static function createFreeSpace () :Square
+    {
+        var square :Square = new Square(null);
+        square.isFilled = true;
+        return square;
+    }
+
     public function Square (item :ClientBingoItem)
     {
         this.item = item;
+    }
+
+    public function get isFreeSpace () :Boolean
+    {
+        return (item == null);
     }
 }

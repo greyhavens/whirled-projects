@@ -45,7 +45,7 @@ public class GameController extends OneRoomGameRoom
 
         if (name == Constants.MSG_CALLBINGO) {
             if (value is int) {
-                log.info("bingo called", "senderId", senderId);
+                //log.info("bingo called", "senderId", senderId);
                 bingoCalled(senderId, int(value));
 
             } else {
@@ -67,6 +67,13 @@ public class GameController extends OneRoomGameRoom
             } else {
                 badMessage();
             }
+
+        } else if (name == Constants.MSG_CONSOLATIONPRIZE) {
+            if (value is int) {
+                awardConsolationPrize(senderId, int(value));
+            } else {
+                badMessage();
+            }
         }
 
         function badMessage () :void {
@@ -80,9 +87,10 @@ public class GameController extends OneRoomGameRoom
         if (_sharedState.gameState != SharedState.STATE_PLAYING ||
              roundId != _sharedState.roundId) {
             if (roundId > _sharedState.roundId) {
-                log.warning("discarding CallBingoMessage from the future");
+                log.warning("discarding CallBingoMessage from the future", "playerId", playerId);
             } else if (roundId < _sharedState.roundId - 1) {
-                log.warning("discarding CallBingoMessage from the distant past");
+                log.warning("discarding CallBingoMessage from the distant past", "playerId",
+                    playerId);
             }
             return;
         }
@@ -96,12 +104,42 @@ public class GameController extends OneRoomGameRoom
 
         // award coins if there's more than one player in the game
         if (_roomCtrl.getPlayerIds().length > 1) {
-            _gameCtrl.getPlayer(playerId).completeTask("bingo", 1);
+            _gameCtrl.getPlayer(playerId).completeTask("bingo", Constants.BINGO_PAYOUT);
         }
 
         // start the next round in a few seconds
         initTimers();
         _timers.runOnce(Constants.NEW_ROUND_DELAY_S * 1000, startNextRound);
+    }
+
+    protected function awardConsolationPrize (playerId :int, numFilledSquares :int) :void
+    {
+        if (_sharedState.gameState != SharedState.STATE_WEHAVEAWINNER) {
+            log.warning("discarding ConsolationPrizeMessage received during round",
+                "playerId", playerId);
+            return;
+
+        } else if (_roomCtrl.getPlayerIds().length < 2) {
+            log.warning("discarding ConsolationPrizeMessage received with < 2 players", "playerId",
+                playerId);
+            return;
+
+        } else if (numFilledSquares <= 0) {
+            log.warning("discarding ConsolationPrizeMessage received with numFilledSquares <= 0",
+                "playerId", playerId);
+            return;
+        }
+
+        // award at most 20% of the bingo payout
+        var payout :Number =
+            Math.min(1, numFilledSquares / Constants.CONSOLATION_PAYOUT_MAX_SQUARES) *
+            Constants.CONSOLATION_PAYOUT_MAX;
+
+        _gameCtrl.getPlayer(playerId).completeTask("consolationPrize", payout);
+
+        //log.info("Consolation prize awarded", "playerId", playerId, "numFilledSquares",
+        //    numFilledSquares, "payout", payout);
+
     }
 
     protected function startNextRound (...ignored) :void
