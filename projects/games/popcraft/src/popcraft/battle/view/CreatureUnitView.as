@@ -64,10 +64,11 @@ public class CreatureUnitView extends BattlefieldSprite
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
 
-        _unit.addEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
+        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
-        spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
+        var spellSet :CreatureSpellSet =
+            GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
+        this.registerEventListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
 
@@ -79,11 +80,6 @@ public class CreatureUnitView extends BattlefieldSprite
         if (null != _healthMeter) {
             _healthMeter.destroySelf();
         }
-
-        _unit.removeEventListener(UnitEvent.ATTACKED, handleUnitAttacked);
-
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
-        spellSet.removeEventListener(CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
     }
 
     protected function handleSpellSetModified (...ignored) :void

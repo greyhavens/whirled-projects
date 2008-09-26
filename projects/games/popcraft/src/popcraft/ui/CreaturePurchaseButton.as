@@ -44,10 +44,11 @@ public class CreaturePurchaseButton extends SimObject
         _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
 
         // we want to know when the player casts a spell
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
-        spellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
+        var spellSet :CreatureSpellSet =
+            GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
+        this.registerEventListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
-        _button.addEventListener(MouseEvent.CLICK, onClicked);
+        this.registerEventListener(_button, MouseEvent.CLICK, onClicked);
 
         _unitData = GameContext.gameData.units[unitType];
         var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerIndex];

@@ -83,14 +83,15 @@ public class LevelOutroMode extends AppMode
 
         if (_success && !AppContext.levelMgr.isLastLevel) {
             button = UIBits.createButton("Next Level", 1.5, 150);
-            button.addEventListener(MouseEvent.CLICK,
+            this.registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.incrementCurLevelIndex();
                     AppContext.levelMgr.playLevel();
                 });
+
         } else if (!_success) {
             button = UIBits.createButton("Retry", 1.5, 150);
-            button.addEventListener(MouseEvent.CLICK,
+            this.registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.playLevel();
                 });
@@ -103,10 +104,11 @@ public class LevelOutroMode extends AppMode
         }
 
         button = UIBits.createButton("Main Menu", 1.5, 150);
-        button.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 LevelSelectMode.create();
             });
+
         button.x = (WIDTH * 0.5) - (button.width * 0.5);
         button.y = 260;
         bgSprite.addChild(button);

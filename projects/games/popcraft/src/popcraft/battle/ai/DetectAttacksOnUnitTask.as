@@ -34,4 +34,5 @@ public class DetectAttacksOnUnitTask extends AITask
     protected var _attack :UnitAttack;
 
 }
+
 }

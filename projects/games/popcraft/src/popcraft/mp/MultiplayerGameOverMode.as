@@ -61,9 +61,8 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         _button = UIBits.createButton("Play Again?", 2);
         _button.x = (Constants.SCREEN_SIZE.x - _button.width) * 0.5;
         _button.y = text.y + text.height + 30;
-        _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
-
         this.modeSprite.addChild(_button);
+        this.registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
 
         // report scores
         if (SeatingManager.isLocalPlayerInControl) {
@@ -171,8 +170,6 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
 
     protected function handleButtonClicked (...ignored) :void
     {
-        _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
-
         // we can only restart the game lobby if nobody has left the game
         // @TODO - change this if Whirled allows seated games that are missing players to
         // be restarted

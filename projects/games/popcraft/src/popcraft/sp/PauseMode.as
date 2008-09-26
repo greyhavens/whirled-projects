@@ -37,7 +37,7 @@ public class PauseMode extends AppMode
 
         // Resume button
         button = UIBits.createButton("Resume", 1.5, 150);
-        button.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
             });
@@ -48,7 +48,7 @@ public class PauseMode extends AppMode
 
         // Level Select button
         var button :SimpleButton = UIBits.createButton("End Game", 1.5, 150);
-        button.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 LevelSelectMode.create();
             });

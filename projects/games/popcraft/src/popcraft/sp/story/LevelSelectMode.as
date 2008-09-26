@@ -72,7 +72,7 @@ public class LevelSelectMode extends DemoGameMode
 
         // if the player has beaten the game, the Play button will just take them to the level select
         // menu
-        playButton.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(playButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 if (playerCompletedGame) {
                     createLevelSelectLayout();
@@ -87,23 +87,29 @@ public class LevelSelectMode extends DemoGameMode
         this.addObject(_playButtonObj, _modeLayer);
 
         _levelSelectButton = UIBits.createButton("Select Level", 1.2);
-        _levelSelectButton.addEventListener(MouseEvent.CLICK,
-            function (...ignored) :void { createLevelSelectLayout(); });
+        this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                createLevelSelectLayout();
+            });
         _levelSelectButton.x = 10;
         _levelSelectButton.y = 10;
         _modeLayer.addChild(_levelSelectButton);
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
             var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
-            unlockLevelsButton.addEventListener(MouseEvent.CLICK,
-                function (...ignored) :void { unlockLevels(); });
+            this.registerOneShotCallback(unlockLevelsButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    unlockLevels();
+                });
             unlockLevelsButton.x = 10;
             unlockLevelsButton.y = 45;
             _modeLayer.addChild(unlockLevelsButton);
 
             var testLevelButton :SimpleButton = UIBits.createButton("Test level", 1.2);
-            testLevelButton.addEventListener(MouseEvent.CLICK,
-                function (...ignored) : void { levelSelected(LevelManager.TEST_LEVEL); });
+            this.registerOneShotCallback(testLevelButton, MouseEvent.CLICK,
+                function (...ignored) : void {
+                    levelSelected(LevelManager.TEST_LEVEL);
+                });
             testLevelButton.x = 10;
             testLevelButton.y = 80;
             _modeLayer.addChild(testLevelButton);
@@ -249,7 +255,7 @@ public class LevelSelectMode extends DemoGameMode
             button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
             button.x = EPILOGUE_LOC.x - (button.width * 0.5);
             button.y = EPILOGUE_LOC.y;
-            button.addEventListener(MouseEvent.CLICK, onEpilogueSelected);
+            this.registerOneShotCallback(button, MouseEvent.CLICK, onEpilogueSelected);
             buttonSprite.addChild(button);
         }
 
@@ -283,7 +289,7 @@ public class LevelSelectMode extends DemoGameMode
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
     {
         var button :SimpleButton = UIBits.createButton(levelName, 1.1, LEVEL_SELECT_BUTTON_WIDTH);
-        button.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 levelSelected(levelNum);
             });

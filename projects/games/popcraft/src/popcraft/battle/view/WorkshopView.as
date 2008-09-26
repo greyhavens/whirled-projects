@@ -141,7 +141,7 @@ public class WorkshopView extends BattlefieldSprite
             this.db.addObject(healthMeter, _sprite);
         }
 
-        _unit.addEventListener(UnitEvent.ATTACKED, handleAttacked, false, 0, true);
+        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleAttacked);
 
         super.addedToDB();
     }
@@ -159,7 +159,6 @@ public class WorkshopView extends BattlefieldSprite
             healthMeter.destroySelf();
         }
 
-        _unit.removeEventListener(UnitEvent.ATTACKED, handleAttacked);
         _clickableSprite.parent.removeChild(_clickableSprite);
     }
 

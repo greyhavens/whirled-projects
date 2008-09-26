@@ -53,8 +53,10 @@ public class LevelIntroMode extends AppMode
         // animate manual_front in from the bottom of the screen, play its open animation,
         // then swap it out for the real manual object
         var manualFrontTask :SerialTask = new SerialTask();
-        manualFrontTask.addTask(LocationTask.CreateEaseOut(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
-        manualFrontTask.addTask(new TimedTask(AppContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
+        manualFrontTask.addTask(LocationTask.CreateEaseOut(
+            Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
+        manualFrontTask.addTask(new TimedTask(
+            AppContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
         manualFrontTask.addTask(new GoToFrameTask("turn"));
         manualFrontTask.addTask(new WaitForFrameTask("edge"));
         manualFrontTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
@@ -145,7 +147,8 @@ public class LevelIntroMode extends AppMode
         case PHASE_SPELLINTRO:
             var newSpellType :int = _level.newSpellType;
             var spellData :SpellData = GameContext.gameData.spells[newSpellType];
-            var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
+            var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard",
+                spellData.iconName);
             this.showPage(
                 TYPE_PAGE,
                 "",
@@ -178,7 +181,9 @@ public class LevelIntroMode extends AppMode
         return true;
     }
 
-    protected function showPage (pageType :String, leftTitle :String, rightTitle :String, leftText :String, rightText :String, anim :MovieClip, showLadyfingers :Boolean = false) :void
+    protected function showPage (pageType :String, leftTitle :String, rightTitle :String,
+        leftText :String, rightText :String, anim :MovieClip, showLadyfingers :Boolean = false)
+        :void
     {
         var isNote :Boolean = pageType == "note";
 
@@ -209,7 +214,7 @@ public class LevelIntroMode extends AppMode
 
         // ok button
         _okButton = rightPage["ok"];
-        _okButton.addEventListener(MouseEvent.CLICK, okClicked);
+        this.registerEventListener(_okButton, MouseEvent.CLICK, okClicked);
 
         // page number
         _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
@@ -246,9 +251,6 @@ public class LevelIntroMode extends AppMode
 
     protected function okClicked (...ignored) :void
     {
-        // prevent multiple clicks
-        _okButton.removeEventListener(MouseEvent.CLICK, okClicked);
-
         var movieTask :SerialTask = new SerialTask();
         if (this.getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
@@ -256,12 +258,14 @@ public class LevelIntroMode extends AppMode
             movieTask.addTask(new GoToFrameTask("turn"));
             movieTask.addTask(new WaitForFrameTask("swap"));
             movieTask.addTask(new FunctionTask(doNextPhase));
+
         } else {
             // animate the book closing and pop the mode
             movieTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
             movieTask.addTask(new GoToFrameTask("close"));
             movieTask.addTask(new WaitForFrameTask("closed"));
-            movieTask.addTask(LocationTask.CreateEaseIn(Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
+            movieTask.addTask(LocationTask.CreateEaseIn(
+                Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
             movieTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
         }
 

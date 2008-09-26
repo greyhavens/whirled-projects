@@ -52,7 +52,7 @@ public class UnitAnimTestMode extends AppMode
 
         // back button
         button = UIBits.createButton("Back");
-        button.addEventListener(MouseEvent.CLICK,
+        this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
             });
@@ -69,7 +69,7 @@ public class UnitAnimTestMode extends AppMode
 
         var unitData :UnitData = AppContext.defaultGameData.units[unitType];
         var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
-        unitButton.addEventListener(MouseEvent.CLICK,
+        this.registerEventListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.unitType = unitType;
             });
@@ -83,7 +83,7 @@ public class UnitAnimTestMode extends AppMode
 
         var color :uint = AppContext.defaultGameData.playerColors[playerNum];
         var unitButton :SimpleButton = UIBits.createButton("Player " + String(playerNum + 1));
-        unitButton.addEventListener(MouseEvent.CLICK,
+        this.registerEventListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.recolor = color;
             });

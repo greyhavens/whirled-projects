@@ -44,7 +44,7 @@ public class PrologueMode extends TransitionMode
         _skipButton = UIBits.createButton("Skip", 1.2);
         _skipButton.x = Constants.SCREEN_SIZE.x - _skipButton.width - 15;
         _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
-        _skipButton.addEventListener(MouseEvent.CLICK, onSkipClicked);
+        this.registerOneShotCallback(_skipButton, MouseEvent.CLICK, onSkipClicked);
 
         _modeLayer.addChild(_skipButton);
     }

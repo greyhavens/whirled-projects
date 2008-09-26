@@ -156,14 +156,12 @@ public class GameMode extends TransitionMode
         }
 
         // we want to know when a player leaves
-        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             handleOccupantLeft);
     }
 
     protected function shutdownPlayers () :void
     {
-        AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-            handleOccupantLeft);
     }
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
@@ -203,7 +201,7 @@ public class GameMode extends TransitionMode
             CastCreatureSpellMessage.createFactory());
 
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED,
+            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
                 handleGameEndedPrematurely);
         }
 
@@ -213,11 +211,6 @@ public class GameMode extends TransitionMode
     protected function shutdownNetwork () :void
     {
         _messageMgr.shutdown();
-
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.removeEventListener(StateChangedEvent.GAME_ENDED,
-                handleGameEndedPrematurely);
-        }
     }
 
     protected function setupDashboard () :void
@@ -569,8 +562,8 @@ public class GameMode extends TransitionMode
             baseView.targetEnemyBadgeVisible = (owningPlayerIndex == localPlayerInfo.targetedEnemyId);
 
             if (localPlayerInfo.teamId != owningPlayerInfo.teamId && !owningPlayerInfo.isInvincible) {
-                baseView.clickableObject.addEventListener(
-                    MouseEvent.MOUSE_DOWN, this.createBaseViewClickListener(baseView));
+                this.registerEventListener(baseView.clickableObject, MouseEvent.MOUSE_DOWN,
+                    this.createBaseViewClickListener(baseView));
             }
         }
     }

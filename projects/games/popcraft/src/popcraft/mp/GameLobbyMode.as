@@ -44,13 +44,12 @@ public class GameLobbyMode extends AppMode
 
         _statusText = bg["instructions"];
 
-        _handicapCheckbox = bg["handicap"];
-        _handicapCheckbox.addEventListener(MouseEvent.CLICK, onHandicapBoxClicked);
-        this.handicapOn = false;
-
-        AppContext.gameCtrl.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
-        AppContext.gameCtrl.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
-        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, onOccupantLeft);
+        this.registerEventListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+            onPropChanged);
+        this.registerEventListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+            onElemChanged);
+        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+            onOccupantLeft);
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
@@ -62,16 +61,12 @@ public class GameLobbyMode extends AppMode
             MultiplayerConfig.inited = true;
         }
 
-        this.updateTeamsDisplay();
+        _handicapCheckbox = bg["handicap"];
+        this.registerEventListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
+        this.handicapOn = false;
         this.updateHandicapsDisplay();
-    }
 
-    override protected function destroy () :void
-    {
-        super.destroy();
-
-        AppContext.gameCtrl.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
-        AppContext.gameCtrl.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
+        this.updateTeamsDisplay();
     }
 
     override protected function enter () :void
@@ -90,10 +85,10 @@ public class GameLobbyMode extends AppMode
     {
         var boxName :String = (teamId >= 0 ? TEAM_BOX_NAMES[teamId] : UNASSIGNED_BOX_NAME);
         var teamBox :MovieClip = bg[boxName];
-        teamBox.addEventListener(MouseEvent.CLICK,
+        this.registerEventListener(teamBox, MouseEvent.CLICK,
             function (...ignored) :void {
                 onTeamSelected(teamId);
-            });
+        });
     }
 
     override public function update (dt :Number) :void

@@ -27,16 +27,15 @@ public class MultiplayerFailureMode extends MultiplayerDialog
         this.modeSprite.addChild(tf);
 
         _button = UIBits.createButton("OK", 2);
-        _button.addEventListener(MouseEvent.CLICK, handleButtonClicked);
         _button.x = (Constants.SCREEN_SIZE.x - _button.width) * 0.5;
         _button.y = tf.y + tf.height + 30;
         this.modeSprite.addChild(_button);
+
+        this.registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
     }
 
     protected function handleButtonClicked (...ignored) :void
     {
-        _button.removeEventListener(MouseEvent.CLICK, handleButtonClicked);
-
         Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES, LevelSelectMode.create);
     }
 

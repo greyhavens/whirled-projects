@@ -53,7 +53,7 @@ public class PuzzleBoard extends SceneObject
         _sprite.graphics.endFill();
         _sprite.mouseEnabled = true;
 
-        _sprite.addEventListener(MouseEvent.CLICK, handleClicked);
+        this.registerEventListener(_sprite, MouseEvent.CLICK, handleClicked);
     }
 
     override protected function addedToDB () :void
