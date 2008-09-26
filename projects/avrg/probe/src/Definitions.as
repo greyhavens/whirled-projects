@@ -195,15 +195,15 @@ public class Definitions
                 new Parameter("msg", String)]),
             new FunctionSpec("getPaintableArea", local.getPaintableArea, [
                 new Parameter("full", Boolean, Parameter.OPTIONAL)]),
-            new FunctionSpec("stageToRoom", local.stageToRoom, [
+            new FunctionSpec("paintableToRoom", local.paintableToRoom, [
                 new PointParameter("p")]),
-            new FunctionSpec("roomToStage", local.roomToStage, [
+            new FunctionSpec("roomToPaintable", local.roomToPaintable, [
                 new PointParameter("p")]),
             new FunctionSpec("locationToRoom", local.locationToRoom, [
                 new Parameter("x", Number),
                 new Parameter("y", Number),
                 new Parameter("z", Number)]),
-            new FunctionSpec("locationToStage", local.locationToStage, [
+            new FunctionSpec("locationToPaintable", local.locationToPaintable, [
                 new Parameter("x", Number),
                 new Parameter("y", Number),
                 new Parameter("z", Number)]),
