@@ -276,21 +276,21 @@ public class AbstractRainbowController extends SceneObject
         var p :Point;
 
         var avatarInfo :AVRGameAvatar = (SimonMain.control.isConnected() ? SimonMain.control.room.getAvatarInfo(_playerId) : null);
-        var stageBounds :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.local.getPaintableArea(false) : null);
+        var paintableArea :Rectangle = (SimonMain.control.isConnected() ? SimonMain.control.local.getPaintableArea(false) : null);
 
-        if (null != avatarInfo && null != stageBounds) {
-            p = SimonMain.control.local.locationToStage(avatarInfo.x, avatarInfo.y, avatarInfo.z);
+        if (null != avatarInfo && null != paintableArea) {
+            p = SimonMain.control.local.locationToPaintable(avatarInfo.x, avatarInfo.y, avatarInfo.z);
             p.y -= avatarInfo.stageBounds.height;
 
             // clamp rainbow coordinates
-            p.x = Math.max(p.x, stageBounds.left + (RAINBOW_ANIMATION_WIDTH * 0.5));
-            p.x = Math.min(p.x, stageBounds.right - (RAINBOW_ANIMATION_WIDTH * 0.5));
+            p.x = Math.max(p.x, paintableArea.left + (RAINBOW_ANIMATION_WIDTH * 0.5));
+            p.x = Math.min(p.x, paintableArea.right - (RAINBOW_ANIMATION_WIDTH * 0.5));
             p.y = Math.max(p.y, MIN_RAINBOW_Y);
 
             log.info(
                 String(SimonMain.localPlayerId) +
                 " avatarInfo: (" + avatarInfo.x + "," + avatarInfo.y + "," + avatarInfo.z + ")" +
-                " stageLoc: (" + p.x + "," + p.y + ")");
+                " paintableLoc: (" + p.x + "," + p.y + ")");
 
         }
 
