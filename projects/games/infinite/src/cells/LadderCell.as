@@ -2,42 +2,25 @@ package cells
 {
 	import arithmetic.*;
 	
+	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
+	
 	import interactions.Oilable;
 	
-	public class LadderCell extends BackgroundCell implements Oilable
+	public class LadderCell extends PlayerCell implements Oilable
 	{
-		public function LadderCell(position:BoardCoordinates, type:int) :void
+		public function LadderCell(owner:Owner, position:BoardCoordinates, type:int) :void
 		{
-			super(position);
+			super(owner, position);
+			_owner = owner;
 			_part = type;
-			if (_part == LadderCell.BASE) {
-				_label = new OwnerLabel(this);
-			}
 		}
 		
 		public function oiled () :Cell
 		{
-			return new OiledLadderCell(_position, _part);
+			return new OiledLadderCell(_owner, _position, _part);
 		}
-		
-		override protected function showView (objective:Objective) :void		
-		{
-			super.showView(objective);
-			// we only label the base of a ladder
-			if (_label != null) {
-				objective.showLabel(_label);
-			}
-		}
-		
-		override protected function hideView (objective:Objective):void
-		{
-			super.hideView(objective);
-			// we only the base of a ladder
-			if (_label != null) {
-				objective.hideLabel(_label);
-			}
-		}
-		
+								
 		override protected function get initialAsset() :Class
 		{
 			switch (_part) {
@@ -69,6 +52,11 @@ package cells
 			}
 			
 			return false;
+		}
+
+		override public function get objectName () :String
+		{
+			return "ladder";
 		}
 
 		override public function get type () :String 
@@ -111,10 +99,7 @@ package cells
 				default: return false;
 			}
 		}
-
-		// Some cells have a label indicating who placed them on the board.
-		protected var _label:OwnerLabel;
-
+				
 		// A ladder cell can represent various parts of a ladder.  This value determines which part
 		// this one represents.
 		protected var _part:int;
@@ -122,7 +107,7 @@ package cells
 		// Various different ladder parts.
 		public static const BASE:int = 0;
 		public static const MIDDLE:int = 1;
-		public static const TOP:int = 2;		
+		public static const TOP:int = 2;
 				
 		[Embed(source="png/ladder-base.png")]
 		public static const ladderBase:Class;

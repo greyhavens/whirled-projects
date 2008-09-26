@@ -4,7 +4,7 @@ package sprites
 	{
 		public function PlayerSprite()
 		{
-			super(simplePlayer, CellBase.UNIT.dx, CellBase.UNIT.dy);
+			super(simplePlayer, Config.cellSize.dx, Config.cellSize.dy);
 		}
 
 		[Embed(source="png/simple-player.png")]

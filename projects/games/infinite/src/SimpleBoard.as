@@ -23,27 +23,27 @@ package
 				case 10:
 					switch (position.y) {
 						case 0: 
-							return new LadderCell(position, LadderCell.BASE);
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.BASE);
 						case -1: 
 						case -2:
-							return new LadderCell(position, LadderCell.MIDDLE);
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.MIDDLE);
 						case -3: 
-							return new LadderCell(position, LadderCell.TOP); 
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.TOP); 
 					};
 					break;
 					
 				case 5:
 					switch (position.y) {
 						case 0:
-							return new LadderCell(position, LadderCell.BASE);
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.BASE);
 						case -1:
 						case -2:
 						case -3:
 						case -4:
 						case -5:
-							return new LadderCell(position, LadderCell.MIDDLE);
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.MIDDLE);
 						case -6:
-							return new LadderCell(position, LadderCell.TOP);
+							return new LadderCell(Nobody.NOBODY, position, LadderCell.TOP);
 					};
 					break;
 

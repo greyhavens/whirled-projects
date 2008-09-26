@@ -11,14 +11,14 @@ package
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	
-	import items.ItemInteractions;
+	import items.ItemPlayer;
 	
 	import sprites.PlayerSprite;
 	
 	/**
 	 * Represents the player who is using the console.
 	 */
-	public class PlayerCharacter implements Character, CellInteractions, ItemInteractions, MoveInteractions
+	public class PlayerCharacter implements Character, CellInteractions, ItemPlayer, MoveInteractions
 	{
 		public function PlayerCharacter(name:String, inventory:Inventory)
 		{ 
@@ -104,8 +104,8 @@ package
 			const v:DisplayObject = view;
 			const cellPos:GraphicCoordinates = _objective.cellCoordinates(cell);
 			return new GraphicCoordinates(
-				cellPos.x + (CellBase.UNIT.dx / 2) - (v.width / 2),
-				cellPos.y + (CellBase.UNIT.dy - v.height)
+				cellPos.x + (Config.cellSize.dx / 2) - (v.width / 2),
+				cellPos.y + (Config.cellSize.dy - v.height)
 			);
 		}
 		
@@ -113,8 +113,8 @@ package
 		{
 			const v:DisplayObject = view;
 			return new GraphicCoordinates(
-				v.x - ((CellBase.UNIT.dx / 2) - (v.width / 2)),
-				v.y - (CellBase.UNIT.dy - v.height) 
+				v.x - ((Config.cellSize.dx / 2) - (v.width / 2)),
+				v.y - (Config.cellSize.dy - v.height) 
 			);
 		}
 		
@@ -223,8 +223,12 @@ package
 		
 		public function replace (position:BoardCoordinates, newCell:Cell) :void
 		{
-			newCell.setOwner(this);
 			_objective.replace(position, newCell);
+		}
+		
+		public function get name () :String
+		{
+			return _name;
 		}
 		
 		protected var _inventory:Inventory;				

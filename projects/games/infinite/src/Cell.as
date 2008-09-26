@@ -48,12 +48,6 @@ package
 		/**
 		 * Return true if this cell is on the same row as another.
 		 */
-		 function sameRowAs (other:Cell) :Boolean
-		 
-		/**
-		 * Set the owner of this cell.  Thanks actionscript, you sniggering mutley dog, for not 
-		 * letting me define this as a property access.
-		 */
-		 function setOwner (character:Character) :void
+		 function sameRowAs (other:Cell) :Boolean		 
 	}
 }

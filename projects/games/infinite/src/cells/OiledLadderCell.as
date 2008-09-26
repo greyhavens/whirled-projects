@@ -8,9 +8,9 @@ package cells
 	 */
 	public class OiledLadderCell extends LadderCell
 	{
-		public function OiledLadderCell(position:BoardCoordinates, type:int) :void
+		public function OiledLadderCell(owner:Owner, position:BoardCoordinates, type:int) :void
 		{
-			super(position, type);
+			super(owner, position, type);
 		}
 		
 		override public function get type () :String 

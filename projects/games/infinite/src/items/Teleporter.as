@@ -10,12 +10,12 @@ package items
 		/**
 		 * A teleporter can be used at any time.
 		 */
-		override public function isUsableBy (player:ItemInteractions) :Boolean
+		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			return true;
 		}
 		
-		override public function useBy (player:ItemInteractions) :void
+		override public function useBy (player:ItemPlayer) :void
 		{
 			player.teleport();
 		}

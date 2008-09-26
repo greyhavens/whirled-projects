@@ -33,7 +33,7 @@ package items
 			return ladderIcon;
 		}
 		
-		override public function isUsableBy (player:ItemInteractions) :Boolean
+		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			const target:Cell = player.cell;
 			const path:BoardPath = 
@@ -51,18 +51,18 @@ package items
 			return true;			
 		}
 		
-		override public function useBy (player:ItemInteractions) :void
+		override public function useBy (player:ItemPlayer) :void
 		{			
 			const target:Cell = player.cell;
-			player.replace(target.position, new LadderCell(target.position, LadderCell.BASE));
+			player.replace(target.position, new LadderCell(player, target.position, LadderCell.BASE));
 			var j:int;
 			for (j = 1; j <= _segments; j++) {
 				var pos:BoardCoordinates = target.position.translatedBy(new Vector(0, -j));				
-				player.replace(pos, new LadderCell(pos, LadderCell.MIDDLE));
+				player.replace(pos, new LadderCell(player, pos, LadderCell.MIDDLE));
 			}
 			const top:BoardCoordinates = 
 				target.position.translatedBy(new Vector(0, -(_segments + 1))); 
-			player.replace(top, new LadderCell(top, LadderCell.TOP));
+			player.replace(top, new LadderCell(player, top, LadderCell.TOP));
 		}
 				
 		protected var _segments:int;

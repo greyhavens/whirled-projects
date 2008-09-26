@@ -17,13 +17,13 @@ package items
 		/**
 		 * The oilcan can apply to a ladder.
 		 */
-		override public function isUsableBy (player:ItemInteractions) :Boolean
+		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			trace ("checking whether "+player+" can use oil");
 			return (player.cell is Oilable); 
 		}
 		
-		override public function useBy (player:ItemInteractions) :void
+		override public function useBy (player:ItemPlayer) :void
 		{			
 			const target:Cell = player.cell;
 			trace ("applying oil to "+target);

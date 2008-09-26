@@ -4,7 +4,7 @@ package sprites
 	{
 		public function CellSprite(asset:Class)
 		{
-			super(asset, CellBase.UNIT.dx, CellBase.UNIT.dy);
+			super(asset, Config.cellSize.dx, Config.cellSize.dy);
 		}						
 	}
 }

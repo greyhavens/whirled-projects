@@ -16,11 +16,11 @@ package actions
 
 			const move:Vector = GraphicCoordinates.fromDisplayObject(_view).distanceTo(_destination);
 			// trace ("complete movement is: "+move);
-			const cells:Number = move.length() / CellBase.UNIT.dy;
+			const cells:Number = move.length() / Config.cellSize.dy;
 			// trace ("which is "+cells+" cells");
 			_duration = durationInMillis(cells);
 			// trace ("duration is "+_duration);
-			_delta = move.divideByScalar(_duration);
+			_delta = move.divideByScalarF(_duration);
 			// trace ("moving by: "+_delta+" per ms");
 		}
 		

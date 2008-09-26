@@ -2,16 +2,20 @@ package
 {
 	import arithmetic.*;
 	
+	import cells.CellObjective;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	
+	import graphics.OwnerLabel;
 
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display
 	 * the playfield into a single instance.  The objective may also contain off-screen objects that
 	 * are prepared for later display.
 	 */
-	public class Objective extends Sprite implements BoardInteractions
+	public class Objective extends Sprite implements BoardInteractions, CellObjective
 	{
 		public function Objective(
 			viewer:Viewer, board:Board, startingPosition:BoardCoordinates)
@@ -38,7 +42,11 @@ package
 			// Most of the time there isn't a lot of change in the objective itself.
 			// only really when we add rows or columns
 			// so it almost certainly does improve performance if we cache it most of the time.
-			cacheAsBitmap = true;	
+			cacheAsBitmap = true;
+			
+			// Create a new OwnerLable() and add it to the top of the display list.
+			_label = new OwnerLabel(this);
+			addChild(_label); 
 		}		
 		
 		/**
@@ -61,6 +69,24 @@ package
 //			_cells.shiftBufferTo(boardSurround(boardCoordinates(coords)));				
 		}
 
+		/**
+		 * Return the coordinates relative to the objective itself of the point that will be 
+		 * displayed at the center of the current image.
+		 */ 
+		public function get centerPoint () :GraphicCoordinates 
+		{
+			return new GraphicCoordinates(scrollRect.x + (scrollRect.width / 2), 
+					scrollRect.y + (scrollRect.height / 2));
+		}
+
+		/**
+		 * Return the distance to a given display object from the center of the current view.
+		 */
+		public function distanceTo (targetPoint:GraphicCoordinates) :Vector
+		{
+			return centerPoint.distanceTo(targetPoint);
+		}
+
 		protected function boardCoordinates (coords:GraphicCoordinates) :BoardCoordinates
 		{
 			return coords.boardCoordinates(_cells.origin, _origin);
@@ -73,13 +99,13 @@ package
 		protected function computeMarginWidths () :Object
 		{
 			const margins:Object = {
-				top: (_viewer.viewPoint.y / CellBase.UNIT.dy) + 0.5 + BORDER,
+				top: (_viewer.viewPoint.y / Config.cellSize.dy) + 0.5 + BORDER,
 				bottom: ((_viewer.height - _viewer.viewPoint.y)
-					/ CellBase.UNIT.dy) - 0.5 + BORDER,
-				left: (_viewer.viewPoint.x / CellBase.UNIT.dx) + 0.5 + BORDER,
+					/ Config.cellSize.dy) - 0.5 + BORDER,
+				left: (_viewer.viewPoint.x / Config.cellSize.dx) + 0.5 + BORDER,
 				right:((_viewer.width - _viewer.viewPoint.x)
-					/ CellBase.UNIT.dx) - 0.5 + BORDER
-			} 
+					/ Config.cellSize.dx) - 0.5 + BORDER
+			}
 			
 			// dimensions must include the viewpoint square itself
 			margins.width = margins.left + margins.right + 1;
@@ -108,14 +134,16 @@ package
 			removeChild(c.view);
 		}
 		
-		public function showLabel (label:OwnerLabel) :void
+		public function displayOwnership (labellable:Labellable) :void
 		{
-			// I do nothing yet.
+			trace ("showing user that this is "+labellable.owner.name+"'s "+labellable.objectName);
+			_label.displayOwnership(labellable);
 		}
 				
-		public function hideLabel (label:OwnerLabel) :void
+		public function hideOwnership (labellable:Labellable) :void
 		{
-			// I do nothing yet.
+			trace ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);
+			_label.hide();
 		}
 				
 		/**
@@ -199,6 +227,9 @@ package
 			newCell.addToObjective(this);
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
+	
+		// owner label
+		protected var _label:OwnerLabel;
 	
 		// the viewer
 		protected var _viewer:Viewer;

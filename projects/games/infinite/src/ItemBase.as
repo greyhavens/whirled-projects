@@ -5,7 +5,7 @@ package
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
-	import items.ItemInteractions;
+	import items.ItemPlayer;
 	
 	import sprites.ItemSprite;
 
@@ -40,13 +40,13 @@ package
 			inventory.removeItem(this);
 		}		
 		
-		public function isUsableBy (player:ItemInteractions) :Boolean
+		public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			trace ("checking to see whether "+this+" can apply to the board - default answer: no");
 			return false;
 		}
 		
-		public function useBy (player:ItemInteractions) :void
+		public function useBy (player:ItemPlayer) :void
 		{
 			trace ("applying "+this+" to board which does nothing");
 			// do nothing

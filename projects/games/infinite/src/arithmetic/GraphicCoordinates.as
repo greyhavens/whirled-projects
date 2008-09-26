@@ -1,5 +1,7 @@
 package arithmetic
 {
+	import cells.CellBase;
+	
 	import flash.display.DisplayObject;
 	
 	public class GraphicCoordinates extends Coordinates
@@ -38,7 +40,7 @@ package arithmetic
 				other._y - _y
 			);
 		}
-		
+				
 		public function boardCoordinates 
 			(boardOrigin:BoardCoordinates, graphicsOrigin:GraphicCoordinates) :BoardCoordinates
 		{

@@ -1,8 +1,6 @@
-package
+package cells
 {
 	import arithmetic.*;
-	
-	import cells.CellInteractions;
 	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -30,6 +28,11 @@ package
 			return "base";
 		}
 		
+		public function get objectName () :String
+		{
+			return "cell that needs debugging";
+		}
+		
 		override public function toString () :String
 		{
 			return type+" cell at "+position;
@@ -43,6 +46,10 @@ package
 			return s;
 		}
 
+		/**
+		 * Register event handlers associated with the view for this cell.  May be overridden
+		 * by subclasses for things like mouseovers. 
+		 */
 		protected function registerEventHandlers (source:EventDispatcher) :void
 		{
 			source.addEventListener(MouseEvent.MOUSE_DOWN, handleCellClicked);			
@@ -96,9 +103,9 @@ package
 		/**
 		 * Hide all of the display objects associated with this cell.
 		 */
-		protected function hideView (objective:Objective) :void
+		protected function hideView (objective:CellObjective) :void
 		{
-			_objective.hideCell(this);
+			objective.hideCell(this);
 		}
 
 		public function iterator (board:BoardAccess, direction:Vector) :CellIterator
@@ -175,21 +182,33 @@ package
 			return false;			
 		}
 		
-		public function get owner () :Character
+		public function get owner () :Owner
 		{
-			return _owner;
+			return Nobody.NOBODY;
 		}
 		
-		public function setOwner (character:Character) :void
+		/**
+		 * Return the graphic center of the cell base.
+		 */
+		public function get graphicCenter () :GraphicCoordinates
 		{
-			_owner = character;
+			return GraphicCoordinates.fromDisplayObject(view).translatedBy(
+				Config.cellSize.divideByScalar(2));
 		}
 		
-		protected var _owner:Character;
+		/**
+		 * Return an anchor point for a pointer attaching to this object in the specified direction.
+		 * Not optimal.
+		 */
+		public function anchorPoint (direction:Vector) :GraphicCoordinates
+		{
+			return graphicCenter.translatedBy(
+				Config.cellSize.divideByScalar(2).multiplyByVector(direction).xComponent());
+		}
 		
 		protected var _position:BoardCoordinates;
 		
-		protected var _objective:Objective;
+		protected var _objective:CellObjective;
 				
 		public static const UNIT:Vector = Config.cellSize;
 		

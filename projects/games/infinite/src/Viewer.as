@@ -1,9 +1,12 @@
 package
 {
-	import sprites.*;
+	import cells.CellBase;
+	
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	
+	import sprites.*;
 	
 	public class Viewer extends Sprite
 	{

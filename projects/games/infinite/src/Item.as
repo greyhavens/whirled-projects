@@ -2,7 +2,7 @@ package
 {
 	import flash.events.IEventDispatcher;
 	
-	import items.ItemInteractions;
+	import items.ItemPlayer;
 	
 	/**
 	 * This is an item that the player can hold in their inventory.
@@ -13,8 +13,8 @@ package
 		
 		function removeFromInventory (inventory:Inventory) :void
 		
-		function isUsableBy (player:ItemInteractions) :Boolean
+		function isUsableBy (player:ItemPlayer) :Boolean
 		
-		function useBy (player:ItemInteractions) :void
+		function useBy (player:ItemPlayer) :void
 	}
 }

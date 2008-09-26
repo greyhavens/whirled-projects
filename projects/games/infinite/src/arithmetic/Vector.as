@@ -38,7 +38,15 @@ package arithmetic
 			);
 		}
 		
-		public function divideByScalar (scalar:int) :FloatVector
+		public function divideByScalar (scalar:int) :Vector
+		{
+			return new Vector(
+				dx / scalar,
+				dy / scalar
+			);			
+		}
+		
+		public function divideByScalarF (scalar:int) :FloatVector
 		{
 			return new FloatVector(
 				dx / scalar,
@@ -85,6 +93,22 @@ package arithmetic
 			}
 			
 			throw new Error("can only normalize vectors that are orthogonal to the axes");
+		}
+		
+		/**
+		 * Return only the x component of this vector.
+		 */
+		public function xComponent () :Vector
+		{
+			return new Vector(dx, 0);
+		}
+
+		/**
+		 * Return only the y component of this vector.
+		 */
+		public function yComponent () :Vector
+		{
+			return new Vector(0, dy);
 		}
 		
 		public function moveDisplayObject (object:DisplayObject) :void

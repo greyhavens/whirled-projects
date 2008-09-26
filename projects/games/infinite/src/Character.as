@@ -5,7 +5,7 @@ package
 	/**
 	 * Represents an active agent within the game.
 	 */
-	public interface Character extends Viewable
+	public interface Character extends Viewable, Owner
 	{		
 		/**
 		 * Return the cell that the player currently occupies if the player is currently in a 
@@ -16,6 +16,6 @@ package
 		/**
 		 * Set the objective in which this player will reside.
 		 */
-		function set objective (objective:Objective) :void;
+		function set objective (objective:Objective) :void;		
 	}
 }

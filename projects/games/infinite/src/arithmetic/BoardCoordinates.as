@@ -1,5 +1,7 @@
 package arithmetic
 {
+	import cells.CellBase;
+		
 	public class BoardCoordinates extends Coordinates
 	{
 		public function BoardCoordinates(x:int, y:int)

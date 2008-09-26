@@ -1,9 +1,9 @@
 package items
 {
 	/**
-	 * Various ways items can interact with players.  Implemented by players or their proxies.
+	 * Defines the features of a player that items interact with.
 	 */
-	public interface ItemInteractions extends BoardAccess, BoardInteractions
+	public interface ItemPlayer extends BoardAccess, BoardInteractions, Owner
 	{
 		/**
 		 * Return the player's current cell.
