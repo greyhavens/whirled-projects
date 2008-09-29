@@ -122,11 +122,10 @@ public class GameMode extends AppMode
                 }
             }
 
-            // TODO: enable this when trophy art is complete
-            /*if (trophies.size() > 0) {
+            if (trophies.size() > 0) {
                 ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
                     trophies.toArray());
-            }*/
+            }
         }
 
         _roundInPlay = false;
