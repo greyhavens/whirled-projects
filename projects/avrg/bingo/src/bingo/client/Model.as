@@ -1,8 +1,12 @@
 package bingo.client {
 
-import com.threerings.util.Log;
-
 import flash.events.EventDispatcher;
+import flash.utils.ByteArray;
+
+import com.threerings.util.Log;
+import com.whirled.avrg.AgentSubControl;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.PropertyGetSubControl;
 
 import bingo.*;
 
@@ -17,10 +21,45 @@ public class Model extends EventDispatcher
 {
     public function setup () :void
     {
+        _agentCtrl = ClientContext.gameCtrl.agent;
+        _propsCtrl = ClientContext.gameCtrl.room.props;
+
+        _propsCtrl.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
+
+        // read the current state
+        var stateBytes :ByteArray = (_propsCtrl.get(Constants.PROP_STATE) as ByteArray);
+        _curState = (stateBytes != null ? SharedState.fromBytes(stateBytes) : new SharedState());
+
+        // read current scores
+        var scoreBytes :ByteArray = (_propsCtrl.get(Constants.PROP_SCORES) as ByteArray);
+        _curScores = (scoreBytes != null ?
+            ScoreTable.fromBytes(scoreBytes, Constants.SCORETABLE_MAX_ENTRIES) :
+            new ScoreTable(Constants.SCORETABLE_MAX_ENTRIES));
     }
 
     public function destroy () :void
     {
+        _propsCtrl.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
+    }
+
+    protected function propChanged (e :PropertyChangedEvent) :void
+    {
+        switch (e.name) {
+        case Constants.PROP_STATE:
+            var newState :SharedState = SharedState.fromBytes(ByteArray(e.newValue));
+            this.setState(newState);
+            break;
+
+        case Constants.PROP_SCORES:
+            var newScores :ScoreTable = ScoreTable.fromBytes(ByteArray(e.newValue),
+                Constants.SCORETABLE_MAX_ENTRIES);
+            this.setScores(newScores);
+            break;
+
+        default:
+            log.warning("unrecognized property changed: " + e.name);
+            break;
+        }
     }
 
     /* state accessors */
@@ -51,7 +90,7 @@ public class Model extends EventDispatcher
 
     public function getPlayerOids () :Array
     {
-        throw new Error("subclasses must override getPlayerOids()");
+        return ClientContext.gameCtrl.room.getPlayerIds();
     }
 
     public function getPlayerNames () :Array
@@ -68,10 +107,12 @@ public class Model extends EventDispatcher
         _card = new BingoCard();
     }
 
-    /* shared state mutators (must be overridden) */
     public function callBingo () :void
     {
-        throw new Error("subclasses must override callBingo()");
+        // in a network game, calling bingo doesn't necessarily
+        // mean we've won the round. someone might get in before
+        // we do.
+        _agentCtrl.sendMessage(Constants.MSG_CALLBINGO, _curState.roundId);
     }
 
     /* private state mutators */
@@ -101,8 +142,12 @@ public class Model extends EventDispatcher
 
     // local state
     protected var _card :BingoCard;
+    protected var _bingoCalledThisRound :Boolean;
 
-    protected static var g_log :Log = Log.getLog(Model);
+    protected var _agentCtrl :AgentSubControl;
+    protected var _propsCtrl :PropertyGetSubControl;
+
+    protected static var log :Log = Log.getLog(Model);
 
 }
 

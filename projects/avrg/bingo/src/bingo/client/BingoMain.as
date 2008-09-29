@@ -4,7 +4,6 @@
 package bingo.client {
 
 import bingo.*;
-//import bingo.server.*;
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
@@ -20,11 +19,6 @@ public class BingoMain extends Sprite
 {
     public function BingoMain ()
     {
-        /*var c :Class;
-        c = GameController;
-        c = Server;
-        c = ServerBingoItems;*/
-
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
@@ -47,17 +41,12 @@ public class BingoMain extends Sprite
             ClientContext.gameCtrl = new AVRGameControl(this);
             ClientContext.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-            log.info(ClientContext.gameCtrl.isConnected() ?
-                "playing online game" : "playing offline game");
-
             ClientContext.ourPlayerId = (ClientContext.gameCtrl.isConnected()
                 ? ClientContext.gameCtrl.player.getPlayerId() : 666);
 
             ClientContext.items = new BingoItemManager(ClientBingoItems.ITEMS);
 
-            ClientContext.model =
-                (ClientContext.gameCtrl.isConnected() && !Constants.FORCE_SINGLEPLAYER ?
-                new OnlineModel() : new OfflineModel());
+            ClientContext.model = new Model();
             ClientContext.model.setup();
 
             MainLoop.instance.pushMode(new IntroMode());

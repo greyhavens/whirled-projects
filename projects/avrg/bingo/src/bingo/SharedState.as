@@ -33,7 +33,10 @@ public class SharedState
 
     public function isEqual (rhs :SharedState) :Boolean
     {
-        return (roundId == rhs.roundId && ballInPlay == rhs.ballInPlay && roundWinnerId == rhs.roundWinnerId && gameState == rhs.gameState);
+        return (roundId == rhs.roundId &&
+                ballInPlay == rhs.ballInPlay &&
+                roundWinnerId == rhs.roundWinnerId &&
+                gameState == rhs.gameState);
     }
 
     public function toBytes (bytes :ByteArray = null) :ByteArray

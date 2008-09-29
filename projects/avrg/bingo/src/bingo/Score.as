@@ -44,7 +44,9 @@ public class Score
 
     public function isEqual (rhs :Score) :Boolean
     {
-        return (this.playerId == rhs.playerId && this.score == rhs.score && this.date.time == rhs.date.time);
+        return (this.playerId == rhs.playerId &&
+                this.score == rhs.score &&
+                this.date.time == rhs.date.time);
     }
 
     public function clone () :Score

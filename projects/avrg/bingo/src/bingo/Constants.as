@@ -5,7 +5,6 @@ import flash.geom.Point;
 public class Constants
 {
     public static const ALLOW_CHEATS :Boolean = false;
-    public static const FORCE_SINGLEPLAYER :Boolean = false;
 
     // cosmetic bits
     public static const CARD_SCREEN_EDGE_OFFSET :Point = new Point(-460, 240);
