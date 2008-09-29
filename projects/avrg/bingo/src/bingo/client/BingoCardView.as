@@ -2,6 +2,7 @@ package bingo.client {
 
 import bingo.*;
 
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
@@ -69,6 +70,8 @@ public class BingoCardView extends SceneObject
             handleSizeChanged);
 
         handleSizeChanged();
+
+        log.info("created");
     }
 
     protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
@@ -151,6 +154,8 @@ public class BingoCardView extends SceneObject
     protected var _cardView :MovieClip;
     protected var _card :BingoCard;
     protected var _numMatchesThisBall :int;
+
+    protected static const log :Log = Log.getLog(BingoCardView);
 
     protected static const TARGET_TEXT_WIDTH :Number = 56;
 

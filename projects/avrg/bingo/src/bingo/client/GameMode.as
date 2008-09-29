@@ -75,7 +75,12 @@ public class GameMode extends AppMode
 
     protected function handleRoundOver () :void
     {
-        if (_roundInPlay && ClientContext.model.numPlayers > 1) {
+        var numFilledSquares :int = ClientContext.model.card.numFilledSquares;
+        var wonRound :Boolean =
+                (ClientContext.model.curState.roundWinnerId == ClientContext.ourPlayerId);
+
+        if (_roundInPlay && ClientContext.model.numPlayers > 1 && numFilledSquares > 0) {
+
             // if _roundInPlay is true, we didn't enter the game during the "we have a winner"
             // state, so count the round towards our total
             var trophies :HashSet = new HashSet();
@@ -86,9 +91,6 @@ public class GameMode extends AppMode
                 Trophies.ROUNDS_PLAYED_PREFIX,
                 _roundsPlayed,
                 trophies);
-
-            var wonRound :Boolean =
-                (ClientContext.model.curState.roundWinnerId == ClientContext.ourPlayerId);
 
             if (wonRound) {
                 _roundsWon++;
@@ -111,21 +113,23 @@ public class GameMode extends AppMode
                 }
 
             } else {
-                _roundsWonConsec = 0;
-
                 // if we didn't win the round, tell the server how many squares we filled in
                 // this round, so that we can get some consolation coins
-                var numFilledSquares :int = ClientContext.model.card.numFilledSquares;
+
                 if (numFilledSquares > 0) {
                     ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_CONSOLATIONPRIZE,
                         numFilledSquares);
                 }
             }
 
-            if (trophies.size() > 0) {
+            if (numFilledSquares > 0 && trophies.size() > 0) {
                 ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
                     trophies.toArray());
             }
+        }
+
+        if (!wonRound) {
+            _roundsWonConsec = 0;
         }
 
         _roundInPlay = false;
