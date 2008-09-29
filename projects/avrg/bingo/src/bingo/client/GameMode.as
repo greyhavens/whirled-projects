@@ -75,7 +75,8 @@ public class GameMode extends AppMode
 
     protected function handleRoundOver () :void
     {
-        var numFilledSquares :int = ClientContext.model.card.numFilledSquares;
+        var card :BingoCard = ClientContext.model.card;
+        var numFilledSquares :int = (card != null ? card.numFilledSquares : 0);
         var wonRound :Boolean =
                 (ClientContext.model.curState.roundWinnerId == ClientContext.ourPlayerId);
 
