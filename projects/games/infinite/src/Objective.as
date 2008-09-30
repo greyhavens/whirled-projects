@@ -8,6 +8,7 @@ package
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
+	import graphics.Diagram;
 	import graphics.OwnerLabel;
 
 	/**
@@ -15,7 +16,7 @@ package
 	 * the playfield into a single instance.  The objective may also contain off-screen objects that
 	 * are prepared for later display.
 	 */
-	public class Objective extends Sprite implements BoardInteractions, CellObjective
+	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram, CellMemory
 	{
 		public function Objective(
 			viewer:Viewer, board:Board, startingPosition:BoardCoordinates)
@@ -73,18 +74,23 @@ package
 		 * Return the coordinates relative to the objective itself of the point that will be 
 		 * displayed at the center of the current image.
 		 */ 
-		public function get centerPoint () :GraphicCoordinates 
+		public function get centerOfView () :GraphicCoordinates 
 		{
 			return new GraphicCoordinates(scrollRect.x + (scrollRect.width / 2), 
 					scrollRect.y + (scrollRect.height / 2));
 		}
 
+		public function get visibleArea () :GraphicRectangle
+		{
+			return GraphicRectangle.fromRectangle(scrollRect); 
+		}
+
 		/**
 		 * Return the distance to a given display object from the center of the current view.
 		 */
-		public function distanceTo (targetPoint:GraphicCoordinates) :Vector
+		public function centerTo (targetPoint:GraphicCoordinates) :Vector
 		{
-			return centerPoint.distanceTo(targetPoint);
+			return centerOfView.distanceTo(targetPoint);
 		}
 
 		protected function boardCoordinates (coords:GraphicCoordinates) :BoardCoordinates
@@ -210,10 +216,19 @@ package
 		{
 			_memory.remember(cell);
 		}
-	
+
+		/**
+		 * Recall the cell associated with the supplied position from the memory.  Does not refer
+		 * to the board or other sources.
+		 */
 		public function recall (position:BoardCoordinates) :Cell
 		{
 			return _memory.recall(position);
+		}
+	
+		public function forget (cell:Cell) :void
+		{
+			_memory.forget(cell);
 		}
 	
 		/**
@@ -238,7 +253,7 @@ package
 		protected var _player:PlayerCharacter;
 		
 		// memory for cell state that should be kept off the board.
-		protected var _memory:CellMemory = new CellMemory();
+		protected var _memory:CellMemory = new CellDictionary();
 				
 		// buffer of cells
 		protected var _cells:CellScrollBuffer;

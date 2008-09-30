@@ -16,7 +16,7 @@ package actions
 
 			const move:Vector = GraphicCoordinates.fromDisplayObject(_view).distanceTo(_destination);
 			// trace ("complete movement is: "+move);
-			const cells:Number = move.length() / Config.cellSize.dy;
+			const cells:Number = move.length / Config.cellSize.dy;
 			// trace ("which is "+cells+" cells");
 			_duration = durationInMillis(cells);
 			// trace ("duration is "+_duration);

@@ -321,7 +321,7 @@ package
 
 		public function memoryOrBoard (position:BoardCoordinates) :Cell 
 		{
-			const found:Cell = _objective.recall(position);
+			const found:Cell = _objective.cellAt(position);
 			if (found != null) {
 				// trace ("recalled "+found);
 				return found;

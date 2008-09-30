@@ -2,9 +2,6 @@ package cells
 {
 	import arithmetic.*;
 	
-	import flash.events.EventDispatcher;
-	import flash.events.MouseEvent;
-	
 	import interactions.Oilable;
 	
 	public class LadderCell extends PlayerCell implements Oilable
@@ -67,7 +64,23 @@ package cells
 				case TOP: return "ladder top";
 			}
 			return "unknown ladder section";	
-		}	
+		}
+		
+		/** 
+		 * When labelling the base, we want to point at the base of the ladder, not the side
+		 * of the cell.
+		 */
+		override public function anchorPoint (direction:Vector) :GraphicCoordinates
+		{			
+			if (_part == BASE) {
+				return new GraphicCoordinates(
+				 	super.anchorPoint(direction).x,
+				 	GraphicCoordinates.fromDisplayObject(view).translatedBy(FIRSTRUNG).y
+				 );
+			} else {
+				return super.anchorPoint(direction);
+			}
+		}		
 
 		override public function adjacentPartOf (cell:Cell) :Boolean
 		{
@@ -108,6 +121,10 @@ package cells
 		public static const BASE:int = 0;
 		public static const MIDDLE:int = 1;
 		public static const TOP:int = 2;
+				
+		// The ladder is this percentage of the way down the cell.
+		public static const FIRSTRUNG:Vector = 
+			Vector.DOWN.multiplyByVector(Config.cellSize).multiplyByScalar(0.1);
 				
 		[Embed(source="png/ladder-base.png")]
 		public static const ladderBase:Class;

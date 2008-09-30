@@ -48,6 +48,22 @@ package arithmetic
 				graphicsOrigin.distanceTo(this).divideByVector(CellBase.UNIT)
 			);			
 		}
+
+		/**
+		 * Return the coordinate system in which this point corresponds with the one provided.
+		 */
+		public function correspondsTo (other:GraphicCoordinates) :CoordinateSystem
+		{
+			return new CoordinateSystem(this, other);
+		}
+		
+		/**
+		 * Convert this point into a coordinate within the supplied system.
+		 */
+		public function from (system:CoordinateSystem) :GraphicCoordinates
+		{
+			return system.toLocal(this);
+		}
 		
 		override public function toString () :String
 		{

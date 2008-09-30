@@ -16,8 +16,8 @@ package
 		function get objectName () :String;
 		
 		/**
-		 * Get the anchor point that an arrow should attach to when the supplied vector points in
-		 * the direction of the edge of the desired anchor.
+		 * Get the anchor point that an arrow should attach to when the arrow points towards the
+		 * graphic center in the direction specified by the supplied vector.
 		 */
 		function anchorPoint (v:Vector) :GraphicCoordinates;
 		

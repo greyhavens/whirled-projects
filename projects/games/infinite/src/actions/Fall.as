@@ -31,7 +31,7 @@ package actions
 			_yDelta = _player.positionInCell(_targetCell.position).y - _yStart;
 			
 			_destination = _player.positionInCell(_targetCell.position);
-			_duration = (_yDelta * 250 / Config.cellSize.multiplyByVector(new Vector(0,1)).length()) 
+			_duration = (_yDelta * 250 / Config.cellSize.multiplyByVector(new Vector(0,1)).length) 
 		}
 
 		public function handleFrameEvent(event:FrameEvent):void

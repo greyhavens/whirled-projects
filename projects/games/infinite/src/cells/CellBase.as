@@ -198,12 +198,14 @@ package cells
 		
 		/**
 		 * Return an anchor point for a pointer attaching to this object in the specified direction.
-		 * Not optimal.
+		 * The default behavior for a cell is to return the center of the square face.
+		 * 
+		 * Not optimized.
 		 */
 		public function anchorPoint (direction:Vector) :GraphicCoordinates
 		{
 			return graphicCenter.translatedBy(
-				Config.cellSize.divideByScalar(2).multiplyByVector(direction).xComponent());
+				Config.cellSize.divideByScalar(2).multiplyByVector(direction.reversed).xComponent());
 		}
 		
 		protected var _position:BoardCoordinates;

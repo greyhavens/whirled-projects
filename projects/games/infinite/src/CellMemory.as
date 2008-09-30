@@ -2,39 +2,21 @@ package
 {
 	import arithmetic.BoardCoordinates;
 	
-	import flash.utils.Dictionary;
-	
-	/**
-	 * A different kind of cell buffer used by cells that have some state that needs to be remembered
-	 * when they would otherwise be scrolled off the board.
-	 */
-	public class CellMemory implements BoardAccess
+	public interface CellMemory
 	{
-		public function CellMemory()
-		{
-		}
-		
-		public function remember(cell:Cell) :void
-		{
-			// trace ("remembering "+cell+" key: "+cell.position.key);
-			_dictionary[cell.position.key] = cell;
-		}
-		
-		public function forget(cell:Cell) :void
-		{
-			delete _dictionary[cell.position.key];
-		}
-		
-		public function recall (position:BoardCoordinates) :Cell
-		{
-			return _dictionary[position.key];
-		}
+		/**
+		 * Remember the supplied cell in the memory.
+		 */
+		function remember (cell:Cell) :void
+
+		/**
+		 * Recall the cell associated with the supplied position from the memory.
+		 */
+		function recall (position:BoardCoordinates) :Cell
 			
-		public function cellAt (position:BoardCoordinates) :Cell
-		{
-			return _dictionary[position.key];
-		}
-			
-		protected var _dictionary:Dictionary = new Dictionary();
+		/**
+		 * Forget the supplied cell.
+		 */	
+		function forget (cell:Cell) :void
 	}
 }

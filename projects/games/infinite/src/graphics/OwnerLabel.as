@@ -1,11 +1,11 @@
 package graphics
 {
+	import arithmetic.CoordinateSystem;
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.GraphicRectangle;
 	import arithmetic.Vector;
 	
 	import flash.display.Graphics;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	
@@ -13,34 +13,41 @@ package graphics
 	
 	public class OwnerLabel extends Sprite
 	{
-		public function OwnerLabel (objective:Objective)
+		public function OwnerLabel (objective:Diagram)
 		{
 			_objective = objective;
 			_text = new TextField();
 			addChild(_text);
-		}	
+		}
 
 		public function displayOwnership (target:Labellable) :void
 		{
-			// the coordinate system of the label is the same coordinate system as the target
-			x = 0;
-			y = 0;
+			const center:GraphicCoordinates = _objective.centerOfView;
+			center.applyTo(this);			
+			_objectiveCoordinates = GraphicCoordinates.ORIGIN.correspondsTo(center);
 			
-			trace (" label position is: "+x+", "+y);
-			
+			trace (" label position is: "+x+", "+y);			
 			// update the text label
 			_text.text = labelText(target);
-			_text.x = 0;
-			_text.y = 0;
 			
-			const rect:GraphicRectangle = new GraphicRectangle(0,0, _text.textWidth, _text.textHeight); 
-			computeBackground(rect, target);			
+			trace("unnormalized direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView));
+			trace("normalized direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView).normalizeF());
+			trace("compass direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView).asCompassDiagonal());
+			
+//			const labelCenter:GraphicCoordinates = target.graphicCenter.translatedBy(target.graphicCenter.distanceTo(_objective.centerOfView).asCompassDiagonal().multiplyByScalar(Config.cellSize.dx)).from(_objectiveCoordinates);
+//			const textRectangle:GraphicRectangle = GraphicRectangle.fromText(_text);
+//			labelCenter.translatedBy(textRectangle.size.half).applyTo(_text);
+			
+			const direction:Vector = target.graphicCenter.distanceTo(_objective.centerOfView).xComponent().normalize();
+			_objective.visibleArea.half(Vector.UP).half(direction).center.from(_objectiveCoordinates).applyTo(_text);			
+			
+			const rect:GraphicRectangle = new GraphicRectangle(_text.x, _text.y, _text.textWidth, _text.textHeight).paddedBy(10); 
+			computeBackground(rect, target);
 			
 			// redraw the background shape
 			redrawBackground();
-			
-			x = target.view.x - (_text.textWidth + Config.cellSize.dy);
-			y = target.view.y;
+						
+			trace ("owner label at "+GraphicCoordinates.fromDisplayObject(this));			
 			visible = true;	
 		}
 		
@@ -50,14 +57,18 @@ package graphics
 		 */
 		protected function computeBackground (text:GraphicRectangle, target:Labellable) :void
 		{
-			trace ("objective center is "+_objective.centerPoint);
+			trace ("objective center is "+_objective.centerOfView);
 			
 			_rectangle = text;
-			// because the coordinate system of the label shape itself is the same as that of the 
-			// cell, we can simply use the anchorpoint directly.
-			_arrowHead = target.anchorPoint(
-				_objective.distanceTo(target.graphicCenter).xComponent().normalize());
-				
+						
+			const direction:Vector = 
+				_rectangle.center.distanceTo(target.graphicCenter.from(_objectiveCoordinates)).xComponent().normalize();
+
+			trace ("direction = "+direction);
+
+			_arrowHead = _objectiveCoordinates.toLocal(target.anchorPoint(direction));
+//			_arrowHead = new GraphicCoordinates(0, 0);
+
 			trace ("arrowhead position is "+_arrowHead);
 		}
 		
@@ -77,8 +88,7 @@ package graphics
 			if (! arrowLeft) {
 				g.lineTo(_arrowHead.x, _arrowHead.y);
 			} 
-			g.lineTo(_rectangle.right, _rectangle.bottom);
-			
+			g.lineTo(_rectangle.right, _rectangle.bottom);			
 			
 			// draw the bottom
 			g.lineTo(_rectangle.x, _rectangle.bottom);
@@ -88,6 +98,7 @@ package graphics
 				g.lineTo(_arrowHead.x, _arrowHead.y);
 			}
 			g.lineTo(_rectangle.x, _rectangle.y);			
+			trace ("after drawing, arrowhead position is "+_arrowHead);
 		}
 		
 		protected function labelText (target:Labellable) :String
@@ -99,12 +110,11 @@ package graphics
 		{
 			visible = false;
 		}
-
+		
+		protected var _objectiveCoordinates:CoordinateSystem;
 		protected var _rectangle:GraphicRectangle;
 		protected var _arrowHead:GraphicCoordinates;
-
-		protected var _text:TextField;
-		
-		protected var _objective:Objective;
+		protected var _text:TextField;		
+		protected var _objective:Diagram;
 	}
 }
