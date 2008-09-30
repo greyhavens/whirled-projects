@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.whirled.contrib.LevelPacks;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -19,6 +20,12 @@ public class AppContext
     public static var randStreamPuzzle :uint;
     public static var globalPlayerStats :PlayerStats;
 
+    public static function get isPremiumContentUnlocked () :Boolean
+    {
+        return (LevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
+                levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+    }
+
     public static function get isMultiplayer () :Boolean
     {
         return (gameCtrl.isConnected() && gameCtrl.game.seating.getPlayerIds().length > 1);
@@ -26,26 +33,37 @@ public class AppContext
 
     public static function get defaultGameData () :GameData
     {
-        var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
-        return dataRsrc.gameData;
+        return gameDataResource.gameData;
     }
 
     public static function get levelProgression () :LevelProgressionData
     {
-        var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
-        return dataRsrc.levelProgression;
+        return gameDataResource.levelProgression;
     }
 
     public static function get multiplayerSettings () :Array
     {
-        var dataRsrc :GameDataResource = ResourceManager.instance.getResource("defaultGameData") as GameDataResource;
-        return dataRsrc.multiplayerSettings;
+        return gameDataResource.multiplayerSettings;
     }
 
     public static function get gameVariants () :Array
     {
-        var variantResource :GameVariantsResource = ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;
+        var variantResource :GameVariantsResource =
+            ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;
         return variantResource.variants;
+    }
+
+    public static function showGameShop () :void
+    {
+        if (gameCtrl.isConnected()) {
+            gameCtrl.local.showGameShop(GameControl.LEVEL_PACK_SHOP,
+                Constants.PREMIUM_SP_LEVEL_PACK_ID);
+        }
+    }
+
+    protected static function get gameDataResource () :GameDataResource
+    {
+        return GameDataResource(ResourceManager.instance.getResource("defaultGameData"));
     }
 }
 

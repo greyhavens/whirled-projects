@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.game.GameContentEvent;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -57,6 +58,9 @@ public class LevelSelectMode extends DemoGameMode
         // overlay
         _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
+        registerEventListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+            onPlayerPurchasedContent);
+
         this.createTutorialLayout();
 
         this.fadeIn();
@@ -67,18 +71,16 @@ public class LevelSelectMode extends DemoGameMode
         var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
         var playerCompletedGame :Boolean = AppContext.levelMgr.playerBeatGame;
 
-        var playButtonName :String = (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
-        var playButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi", playButtonName);
+        var playButtonName :String =
+            (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
+        var playButton :SimpleButton =
+            SwfResource.instantiateButton("levelSelectUi", playButtonName);
 
-        // if the player has beaten the game, the Play button will just take them to the level select
-        // menu
-        this.registerOneShotCallback(playButton, MouseEvent.CLICK,
+        // if the player has beaten the game, the Play button will just take them to the level
+        // select menu
+        this.registerEventListener(playButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                if (playerCompletedGame) {
-                    createLevelSelectLayout();
-                } else {
-                    playNextLevel();
-                }
+                onPlayClicked();
             });
 
         _playButtonObj = new SimpleSceneObject(playButton);
@@ -95,6 +97,12 @@ public class LevelSelectMode extends DemoGameMode
         _levelSelectButton.y = 10;
         _modeLayer.addChild(_levelSelectButton);
 
+        _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
+        this.registerEventListener(_buyGameButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                AppContext.showGameShop();
+            });
+
         if (Constants.DEBUG_ALLOW_CHEATS) {
             var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
             this.registerOneShotCallback(unlockLevelsButton, MouseEvent.CLICK,
@@ -105,13 +113,22 @@ public class LevelSelectMode extends DemoGameMode
             unlockLevelsButton.y = 45;
             _modeLayer.addChild(unlockLevelsButton);
 
+            var lockLevelsButton :SimpleButton = UIBits.createButton("Lock levels", 1.2);
+            this.registerOneShotCallback(lockLevelsButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    lockLevels();
+                });
+            lockLevelsButton.x = 10;
+            lockLevelsButton.y = 80;
+            _modeLayer.addChild(lockLevelsButton);
+
             var testLevelButton :SimpleButton = UIBits.createButton("Test level", 1.2);
             this.registerOneShotCallback(testLevelButton, MouseEvent.CLICK,
                 function (...ignored) : void {
                     levelSelected(LevelManager.TEST_LEVEL);
                 });
             testLevelButton.x = 10;
-            testLevelButton.y = 80;
+            testLevelButton.y = 115;
             _modeLayer.addChild(testLevelButton);
         }
 
@@ -144,6 +161,21 @@ public class LevelSelectMode extends DemoGameMode
         this.addObject(_resourceIntro, _modeLayer);
 
         _showingTutorial = true;
+    }
+
+    protected function onPlayClicked () :void
+    {
+        if (!AppContext.isPremiumContentUnlocked &&
+            AppContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
+            AppContext.mainLoop.pushMode(new UpsellMode());
+
+        } else {
+            if (AppContext.levelMgr.playerBeatGame) {
+                createLevelSelectLayout();
+            } else {
+                playNextLevel();
+            }
+        }
     }
 
     protected static function createHelpTextAnimTask (obj :SceneObject, startX :Number, endX :Number) :void
@@ -192,6 +224,7 @@ public class LevelSelectMode extends DemoGameMode
         // clean up from the tutorial, if it was being displayed before
         if (_showingTutorial) {
             _levelSelectButton.parent.removeChild(_levelSelectButton);
+            _buyGameButton.parent.removeChild(_buyGameButton);
             _unitIntro.destroySelf();
             _resourceIntro.destroySelf();
             _puzzleIntro.destroySelf();
@@ -225,7 +258,8 @@ public class LevelSelectMode extends DemoGameMode
         var yLoc :Number;
         for (var i :int = 0; i < numLevels; ++i) {
             var levelRecord :LevelRecord = levelRecords[i];
-            if (!levelRecord.unlocked) {
+            if (!levelRecord.unlocked ||
+                (!AppContext.isPremiumContentUnlocked && i >= Constants.NUM_FREE_SP_LEVELS)) {
                 break;
             }
 
@@ -255,7 +289,7 @@ public class LevelSelectMode extends DemoGameMode
             button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
             button.x = EPILOGUE_LOC.x - (button.width * 0.5);
             button.y = EPILOGUE_LOC.y;
-            this.registerOneShotCallback(button, MouseEvent.CLICK, onEpilogueSelected);
+            registerOneShotCallback(button, MouseEvent.CLICK, onEpilogueSelected);
             buttonSprite.addChild(button);
         }
 
@@ -263,6 +297,17 @@ public class LevelSelectMode extends DemoGameMode
             (Constants.SCREEN_SIZE.x * 0.5) - (buttonSprite.width * 0.5) + 20, BUTTON_CONTAINER_Y);
 
         _modeLayer.addChild(buttonSprite);
+
+        // "Unlock Full Version!" button
+        if (!AppContext.isPremiumContentUnlocked) {
+            button = UIBits.createButton("Unlock Full Version To Continue!", 1.3);
+            button.x = UNLOCK_MANUAL_LOC.x - (button.width * 0.5);
+            button.y = UNLOCK_MANUAL_LOC.y;
+            registerEventListener(button, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    AppContext.showGameShop();
+                });
+        }
     }
 
     protected function onEpilogueSelected (e :MouseEvent) :void
@@ -272,6 +317,20 @@ public class LevelSelectMode extends DemoGameMode
                 Resources.EPILOGUE_RESOURCES,
                 new EpilogueMode(EpilogueMode.TRANSITION_LEVELSELECT));
         });
+    }
+
+    protected function lockLevels () :void
+    {
+        var levelRecords :Array = AppContext.levelMgr.levelRecords;
+        var isFirstLevel :Boolean = true;
+        for each (var lr :LevelRecord in levelRecords) {
+            lr.unlocked = isFirstLevel;
+            lr.score = 0;
+            isFirstLevel = false;
+        }
+
+        // reload the mode
+        LevelSelectMode.create();
     }
 
     protected function unlockLevels () :void
@@ -318,18 +377,30 @@ public class LevelSelectMode extends DemoGameMode
         }
     }
 
+    protected function onPlayerPurchasedContent (e :GameContentEvent) :void
+    {
+        if (e.contentType == GameContentEvent.LEVEL_PACK &&
+            e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
+            // recreate the level select mode, which will rebuild the UI and remove the
+            // "Unlock now!" buttons
+            LevelSelectMode.create();
+        }
+    }
+
     protected var _playButtonObj :SceneObject;
     protected var _puzzleIntro :SceneObject;
     protected var _unitIntro :SceneObject;
     protected var _resourceIntro :SceneObject;
     protected var _levelSelectButton :SimpleButton;
     protected var _showingTutorial :Boolean;
+    protected var _buyGameButton :SimpleButton;
 
     protected static var _demoLevel :LevelData;
 
     protected static const NUM_COLUMNS :int = 2;
     protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];
     protected static const EPILOGUE_LOC :Point = new Point(100, 240);
+    protected static const UNLOCK_MANUAL_LOC :Point = new Point(100, 245);
     protected static const BUTTON_CONTAINER_Y :Number = 180;
 
     protected static const LEVEL_SELECT_BUTTON_WIDTH :Number = 190;
