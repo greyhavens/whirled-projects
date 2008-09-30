@@ -183,6 +183,8 @@ public class GamePanel extends Sprite
         // TODO: center?
         clip.x = 50;
         clip.y = 50;
+
+        updateState(false);
     }
 
     protected function popdown (clip :DisplayObject) :void
@@ -192,6 +194,8 @@ public class GamePanel extends Sprite
             return;
         }
         this.removeChild(clip);
+
+        updateState(false);
     }
 
     protected function messageReceived (evt: MessageReceivedEvent) :void
@@ -234,7 +238,7 @@ public class GamePanel extends Sprite
     {
         var pClass :Class = null;
 
-        if (!Game.amDead()) {
+        if (_triumph.root == null && _revive.root == null) {
             switch(Game.state) {
             case Codes.STATE_SEEKING:
                 if (_seeking == false) {

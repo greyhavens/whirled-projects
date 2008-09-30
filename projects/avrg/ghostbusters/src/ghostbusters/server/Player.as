@@ -35,22 +35,32 @@ public class Player
             // this person has never played Ghosthunters before
             log.info("Initializing new player [playerId=" + playerId + "]");
             setLevel(1);
-            _maxHealth = calculateMaxHealth();
             setHealth(_maxHealth);
 
         } else {
-            _maxHealth = calculateMaxHealth();
+            updateMaxHealth();
 
             var healthValue :Object = _ctrl.props.get(Codes.PROP_MY_HEALTH);
             if (healthValue != null) {
-                log.info("Logging in existing player [playerId=" + playerId + "]");
                 _health = int(healthValue);
 
             } else {
                 // health should always be set if level is set, but let's play it safe
-                log.debug("Repairing broken player [playerId=" + playerId + "]");
+                log.debug("Repairing player health [playerId=" + playerId + "]");
                 setHealth(_maxHealth);
             }
+
+            var pointsValue :Object = _ctrl.props.get(Codes.PROP_MY_POINTS);
+            if (pointsValue != null) {
+                _points = int(pointsValue);
+
+            } else {
+                log.debug("Repairing player ectopoints [playerId=" + playerId + "]");
+                setPoints(0);
+            }
+
+            log.info("Logging in", "playerId", _playerId, "health", _health, "maxHealth",
+                     _maxHealth, "points", _points);
         }
     }
 
@@ -64,11 +74,6 @@ public class Player
         return _playerId;
     }
 
-    public function get level () :int
-    {
-        return _level;
-    }
-
     public function get health () :int
     {
         return _health;
@@ -77,6 +82,16 @@ public class Player
     public function get maxHealth () :int
     {
         return _maxHealth;
+    }
+
+    public function get points () :int
+    {
+        return _points;
+    }
+
+    public function get level () :int
+    {
+        return _level;
     }
 
     public function isDead () :Boolean
@@ -147,6 +162,13 @@ public class Player
         } else if (name == Codes.CMSG_LANTERN_POS) {
             _room.updateLanternPos(_playerId, value as Array);
         }
+    }
+
+    // called from Room
+    public function ghostDefeated (ectoPoints :Number, payoutFactor :Number) :void
+    {
+        setPoints(_points + ectoPoints);
+        _ctrl.completeTask(Codes.TASK_GHOST_DEFEATED, payoutFactor);
     }
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
@@ -232,7 +254,13 @@ public class Player
         _level = level;
         _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
 
-        // we'll probably need to add this to the room properties at some point, but not yet
+        // update our max health
+        updateMaxHealth();
+
+        // if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerHealthUpdated(this);
+        }
     }
 
     protected function setHealth (health :int) :void
@@ -260,18 +288,34 @@ public class Player
         }
     }
 
-    protected function calculateMaxHealth () :int
+    protected function setPoints (points :int) :void
+    {
+        if (points == _points) {
+            return;
+        }
+
+        while (points >= 100) {
+            setLevel(_level + 1);
+            points -= 100;
+        }
+
+        _points = points;
+        _ctrl.props.set(Codes.PROP_MY_POINTS, _points, true);
+    }
+
+    protected function updateMaxHealth () :void
     {
         // a level 1 player has 50 health
-        return 50 * Formulae.quadRamp(_level);
+        _maxHealth = 50 * Formulae.quadRamp(_level);
     }
 
     protected var _ctrl :PlayerServerSubControl;
     protected var _room :Room;
 
     protected var _playerId :int;
-    protected var _level :int;
     protected var _health :int;
     protected var _maxHealth :int;
+    protected var _points :int;
+    protected var _level :int;
 }
 }

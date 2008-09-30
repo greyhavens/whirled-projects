@@ -105,6 +105,9 @@ public class HUD extends Sprite
     {
         if (evt.name == Codes.PROP_MY_LEVEL) {
             _myLevel.text = String(evt.newValue);
+
+        } else if (evt.name == Codes.PROP_MY_POINTS) {
+            setPlayerPoints(int(evt.newValue));
         }
     }
 
@@ -162,7 +165,8 @@ public class HUD extends Sprite
 
         _myLevel = findSafely(MY_LEVEL) as TextField;
 
-        _myHealthBar = MovieClip(findSafely(MY_HEALTH_BAR));
+        _myPointsBar = MovieClip(findSafely(MY_POINTS_BAR));
+
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
         _ghostCaptureBar = MovieClip(findSafely(GHOST_CAPTURE_BAR));
 
@@ -192,6 +196,8 @@ public class HUD extends Sprite
 
         updateGhostHealth();
         updateLootState();
+
+        setPlayerPoints(int(Game.control.player.props.get(Codes.PROP_MY_POINTS)));
 
         _myLevel.text = String(Game.control.player.props.get(Codes.PROP_MY_LEVEL));
         Command.bind(_myLevel, MouseEvent.CLICK, GameController.GIMME_DEBUG_PANEL);
@@ -329,17 +335,17 @@ public class HUD extends Sprite
         // TODO: make use of all 100 frames!
         var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
 
-        if (us) {
-            bar = _myHealthBar;
-            bar.gotoAndStop(frame);
-//            _log.debug("Moved " + bar.name + " to frame #" + frame);
-            reallyStop(bar);
-        }
         var bar :MovieClip = _playerPanels[ix].healthBar;
         bar.visible = true;
         bar.gotoAndStop(frame);
 //        _log.debug("Moved " + bar.name + " to frame #" + frame);
         reallyStop(bar);
+    }
+
+    protected function setPlayerPoints (points :int) :void
+    {
+        _myPointsBar.gotoAndStop(99 - MathUtil.clamp(points, 0, 99));
+        reallyStop(_myPointsBar);
     }
 
     protected function reallyStop (obj :DisplayObject) :void
@@ -358,7 +364,7 @@ public class HUD extends Sprite
 
     protected var _ghostHealthBar :MovieClip;
     protected var _ghostCaptureBar :MovieClip;
-    protected var _myHealthBar :MovieClip;
+    protected var _myPointsBar :MovieClip;
     protected var _myLevel :TextField;
 
     protected var _lanternLoot :SimpleButton;
@@ -378,7 +384,7 @@ public class HUD extends Sprite
     protected static const PLAYER_NAME_PLATE :String = "PlayerPanel";
     protected static const PLAYER_HEALTH_BAR :String = "PlayerHealth";
 
-    protected static const MY_HEALTH_BAR :String = "YourHealth";
+    protected static const MY_POINTS_BAR :String = "YourHealth";
     protected static const MY_LEVEL :String = "levelNumber";
 
     protected static const GHOST_HEALTH_BAR :String = "GhostHealthBar";

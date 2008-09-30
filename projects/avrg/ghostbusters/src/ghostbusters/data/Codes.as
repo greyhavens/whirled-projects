@@ -128,7 +128,6 @@ public class Codes
     /**
      * The current health of a player in a room. This is an index within the PLAYER dictionary.
      *
-     * @see #DICT_PLAYER
      * @see #DICT_PFX_PLAYER
      */
     public static const IX_PLAYER_CUR_HEALTH :int = 0;
@@ -136,10 +135,24 @@ public class Codes
     /**
      * The maximum health of a player in a room. This is an index within the PLAYER dictionary.
      *
-     * @see #DICT_PLAYER
      * @see #DICT_PFX_PLAYER
      */
     public static const IX_PLAYER_MAX_HEALTH :int = 1;
+
+    /**
+     * The number of ectopoints a player in a room has. This is an index within the PLAYER
+     * dictinoary.
+     *
+     * @see #DICT_PFX_PLAYER
+     */
+    public static const IX_PLAYER_POINTS :int = 2;
+
+    /**
+     * The level of a player in a room. This is an index within the PLAYER dictinoary.
+     *
+     * @see #DICT_PFX_PLAYER
+     */
+    public static const IX_PLAYER_LEVEL :int = 3;
 
     /**
      * The health of a player, persistently stored in that player's property space. This value
@@ -148,7 +161,17 @@ public class Codes
     public static const PROP_MY_HEALTH :String = NetConstants.makePersistent("health");
 
     /**
-     * The level of a player, persistently stored in that player's property space.
+     * The ectopoints a player has, persistently stored in that player's property space. This
+     * value is copied into a room's property space when a player enters that room.
+     *
+     * This value cannot exceed the number of ectopoints needed for the next level; promotion
+     * happens automatically.
+     */
+    public static const PROP_MY_POINTS :String = NetConstants.makePersistent("level");
+
+    /**
+     * The level of a player, persistently stored in that player's property space. This value
+     * is copied into a room's property space when a player enters that room.
      */
     public static const PROP_MY_LEVEL :String = NetConstants.makePersistent("level");
 

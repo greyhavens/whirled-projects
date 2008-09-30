@@ -67,13 +67,16 @@ public class Room
 
     public function playerEntered (player :Player) :void
     {
+        log.debug("Copying player dictionary into room", "payerId", player.playerId,
+                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth,
+                  "level", player.level);
+
         // broadcast the arriving player's data using room properties
         var dict :Dictionary = new Dictionary();
         dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
         dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
+        dict[Codes.IX_PLAYER_LEVEL] = player.level;
 
-        log.debug("Copying player dictionary into room", "payerId", player.playerId,
-                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
 
         _players[player] = true;
@@ -189,6 +192,16 @@ public class Room
         _ctrl.props.setIn(
             Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_CUR_HEALTH,
             player.health, true);
+    }
+
+    internal function playerLevelUpdated (player :Player) :void
+    {
+        _ctrl.props.setIn(
+            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_LEVEL,
+            player.level, true);
+        _ctrl.props.setIn(
+            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_MAX_HEALTH,
+            player.maxHealth, true);
     }
 
     internal function reset () :void
@@ -424,8 +437,7 @@ public class Room
             // semi-linearly map this to a factor in [0.35, 1.65]
             var levelFactor :Number = 1 + Math.atan(levelDiff / 4);
 
-            player.ctrl.completeTask(
-                Codes.TASK_GHOST_DEFEATED, baseFactor * levelFactor * pointsArr[ii]);
+            player.ghostDefeated(77, baseFactor * levelFactor * pointsArr[ii]);
         }
     }
 
