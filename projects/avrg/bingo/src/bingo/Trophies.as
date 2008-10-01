@@ -26,13 +26,13 @@ public class Trophies
 
     // win a round with all bag items, etc
     public static const WON_WITH_ITEMS_VALUES :Array = [
-        "bag", "hat", "hair", "jewelry", "shoe", "pattern"
+        "bag", "hat", "hair", "jewelry", "shoes", "pattern"
     ];
     public static const WON_WITH_ITEMS_PREFIX :String = "won_with_";
 
     // win a round with an item from each of the listed categories
     public static const FASHIONISTA :String = "fashionista";
-    public static const FASHIONISTA_TAGS :Array = [ "bag", "hat", "hair", "jewelry", "shoe" ];
+    public static const FASHIONISTA_TAGS :Array = [ "bag", "hat", "hair", "jewelry", "shoes" ];
 
     // win a round without using the Free space
     public static const OVERACHIEVER :String = "overachiever";
