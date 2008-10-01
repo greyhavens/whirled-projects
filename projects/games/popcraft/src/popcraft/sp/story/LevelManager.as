@@ -149,9 +149,9 @@ public class LevelManager
                     // reload the default game data first, then load the level when it's complete
                     // (level requires that default game data already be loaded)
                     ResourceManager.instance.unload("defaultGameData");
-                    ResourceManager.instance.pendResourceLoad("gameData", "defaultGameData",
+                    ResourceManager.instance.queueResourceLoad("gameData", "defaultGameData",
                         { url: "levels/defaultGameData.xml" });
-                    ResourceManager.instance.load(
+                    ResourceManager.instance.loadQueuedResources(
                         function () :void { loadLevel(loadParams) },
                         onLoadError);
 
@@ -165,8 +165,8 @@ public class LevelManager
     protected function loadLevel (loadParams :Object) :void
     {
         ResourceManager.instance.unload("level");
-        ResourceManager.instance.pendResourceLoad("level", "level", loadParams);
-        ResourceManager.instance.load(onLevelLoaded, onLoadError);
+        ResourceManager.instance.queueResourceLoad("level", "level", loadParams);
+        ResourceManager.instance.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
     public function get curLevelName () :String

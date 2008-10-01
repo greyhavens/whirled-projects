@@ -135,7 +135,7 @@ class LoadingMode extends GenericLoadingMode
         if (Resources.pendLoadLevelPackResources(AppContext.isMultiplayer ?
             Resources.MP_LEVEL_PACK_RESOURCES :
             Resources.SP_LEVEL_PACK_RESOURCES)) {
-            ResourceManager.instance.load(resourceLoadComplete, onLoadError);
+            ResourceManager.instance.loadQueuedResources(resourceLoadComplete, onLoadError);
         }
     }
 

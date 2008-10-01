@@ -58,7 +58,7 @@ public class Resources
                     break;
                 }
 
-                rm.pendResourceLoad(resourceType, name, { url: mediaUrl });
+                rm.queueResourceLoad(resourceType, name, { url: mediaUrl });
                 needsLoad = true;
             }
         }
@@ -72,76 +72,76 @@ public class Resources
         var rm :ResourceManager = ResourceManager.instance;
 
         // data
-        rm.pendResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+        rm.queueResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
-        rm.pendResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
-        rm.pendResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
+        rm.queueResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
+        rm.queueResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
-        rm.pendResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
-        rm.pendResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
-        rm.pendResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
-        rm.pendResourceLoad("swf", "colossus", { embeddedClass: SWF_COLOSSUS });
-        rm.pendResourceLoad("swf", "courier", { embeddedClass: SWF_COURIER });
-        rm.pendResourceLoad("swf", "missile", { embeddedClass: SWF_MISSILE });
-        rm.pendResourceLoad("swf", "splatter", { embeddedClass: SWF_SPLATTER });
+        rm.queueResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
+        rm.queueResourceLoad("swf", "sapper", { embeddedClass: SWF_SAPPER });
+        rm.queueResourceLoad("swf", "heavy", { embeddedClass: SWF_HEAVY });
+        rm.queueResourceLoad("swf", "colossus", { embeddedClass: SWF_COLOSSUS });
+        rm.queueResourceLoad("swf", "courier", { embeddedClass: SWF_COURIER });
+        rm.queueResourceLoad("swf", "missile", { embeddedClass: SWF_MISSILE });
+        rm.queueResourceLoad("swf", "splatter", { embeddedClass: SWF_SPLATTER });
 
-        rm.pendResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PIECES });
-        rm.pendResourceLoad("swf", "dashboard", { embeddedClass: SWF_DASHBOARD });
-        rm.pendResourceLoad("swf", "infusions", { embeddedClass: SWF_INFUSIONS });
-        rm.pendResourceLoad("swf", "workshop", { embeddedClass: SWF_WORKSHOP });
+        rm.queueResourceLoad("swf", "puzzlePieces", { embeddedClass: SWF_PIECES });
+        rm.queueResourceLoad("swf", "dashboard", { embeddedClass: SWF_DASHBOARD });
+        rm.queueResourceLoad("swf", "infusions", { embeddedClass: SWF_INFUSIONS });
+        rm.queueResourceLoad("swf", "workshop", { embeddedClass: SWF_WORKSHOP });
 
         // sfx
-        rm.pendResourceLoad("sound", "sfx_introscreen", { embeddedClass: SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
-        rm.pendResourceLoad("sound", "sfx_pageturn", { embeddedClass: SOUND_PAGETURN, priority: 9 });
-        rm.pendResourceLoad("sound", "sfx_bookopenclose", { embeddedClass: SOUND_BOOKOPENCLOSE, priority: 9 });
+        rm.queueResourceLoad("sound", "sfx_introscreen", { embeddedClass: SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
+        rm.queueResourceLoad("sound", "sfx_pageturn", { embeddedClass: SOUND_PAGETURN, priority: 9 });
+        rm.queueResourceLoad("sound", "sfx_bookopenclose", { embeddedClass: SOUND_BOOKOPENCLOSE, priority: 9 });
 
-        rm.pendResourceLoad("sound", "sfx_create_grunt", { embeddedClass: SOUND_GRUNT, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_create_courier", { embeddedClass: SOUND_COURIER, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_create_boss", { embeddedClass: SOUND_BOSS, priority: 2 });
-        rm.pendResourceLoad("sound", "sfx_death_grunt", { embeddedClass: SOUND_GRUNTDEATH });
-        rm.pendResourceLoad("sound", "sfx_death_heavy", { embeddedClass: SOUND_HEAVYDEATH });
-        rm.pendResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_SAPPERDEATH });
-        rm.pendResourceLoad("sound", "sfx_death_courier", { embeddedClass: SOUND_COURIERDEATH, volume: 0.7 });
-        rm.pendResourceLoad("sound", "sfx_death_colossus", { embeddedClass: SOUND_COLOSSUSDEATH });
-        rm.pendResourceLoad("sound", "sfx_death_base", { embeddedClass: SOUND_BASEDESTROY, priority: 7 });
+        rm.queueResourceLoad("sound", "sfx_create_grunt", { embeddedClass: SOUND_GRUNT, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_create_heavy", { embeddedClass: SOUND_HEAVY, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_create_sapper", { embeddedClass: SOUND_SAPPER, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_create_colossus", { embeddedClass: SOUND_COLOSSUS, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_create_courier", { embeddedClass: SOUND_COURIER, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_create_boss", { embeddedClass: SOUND_BOSS, priority: 2 });
+        rm.queueResourceLoad("sound", "sfx_death_grunt", { embeddedClass: SOUND_GRUNTDEATH });
+        rm.queueResourceLoad("sound", "sfx_death_heavy", { embeddedClass: SOUND_HEAVYDEATH });
+        rm.queueResourceLoad("sound", "sfx_death_sapper", { embeddedClass: SOUND_SAPPERDEATH });
+        rm.queueResourceLoad("sound", "sfx_death_courier", { embeddedClass: SOUND_COURIERDEATH, volume: 0.7 });
+        rm.queueResourceLoad("sound", "sfx_death_colossus", { embeddedClass: SOUND_COLOSSUSDEATH });
+        rm.queueResourceLoad("sound", "sfx_death_base", { embeddedClass: SOUND_BASEDESTROY, priority: 7 });
 
-        rm.pendResourceLoad("sound", "sfx_rigormortis", { embeddedClass: SOUND_RIGORMORTIS, priority: 5 });
-        rm.pendResourceLoad("sound", "sfx_bloodlust", { embeddedClass: SOUND_BLOODLUST, priority: 5 });
-        rm.pendResourceLoad("sound", "sfx_puzzleshuffle", { embeddedClass: SOUND_PUZZLERESET, priority: 5 });
-        rm.pendResourceLoad("sound", "sfx_spellexpire", { embeddedClass: SOUND_SPELLEXPIRE, priority: 4 });
+        rm.queueResourceLoad("sound", "sfx_rigormortis", { embeddedClass: SOUND_RIGORMORTIS, priority: 5 });
+        rm.queueResourceLoad("sound", "sfx_bloodlust", { embeddedClass: SOUND_BLOODLUST, priority: 5 });
+        rm.queueResourceLoad("sound", "sfx_puzzleshuffle", { embeddedClass: SOUND_PUZZLERESET, priority: 5 });
+        rm.queueResourceLoad("sound", "sfx_spellexpire", { embeddedClass: SOUND_SPELLEXPIRE, priority: 4 });
 
-        rm.pendResourceLoad("sound", "sfx_losegame", { embeddedClass: SOUND_LOSEGAME });
-        rm.pendResourceLoad("sound", "sfx_wingame", { embeddedClass: SOUND_WINGAME });
+        rm.queueResourceLoad("sound", "sfx_losegame", { embeddedClass: SOUND_LOSEGAME });
+        rm.queueResourceLoad("sound", "sfx_wingame", { embeddedClass: SOUND_WINGAME });
 
-        rm.pendResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
-        rm.pendResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
-        rm.pendResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
-        rm.pendResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_SCRAP });
-        rm.pendResourceLoad("sound", "sfx_rsrc_lost", { embeddedClass: SOUND_LOSTRESOURCES });
+        rm.queueResourceLoad("sound", "sfx_rsrc_white", { embeddedClass: SOUND_FLESH });
+        rm.queueResourceLoad("sound", "sfx_rsrc_red", { embeddedClass: SOUND_BLOOD });
+        rm.queueResourceLoad("sound", "sfx_rsrc_blue", { embeddedClass: SOUND_ENERGY });
+        rm.queueResourceLoad("sound", "sfx_rsrc_yellow", { embeddedClass: SOUND_SCRAP });
+        rm.queueResourceLoad("sound", "sfx_rsrc_lost", { embeddedClass: SOUND_LOSTRESOURCES });
 
-        rm.pendResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER, priority: 9 });
-        rm.pendResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF, priority: 9 });
-        rm.pendResourceLoad("sound", "sfx_dawn", { embeddedClass: SOUND_CHIMES, priority: 9 });
+        rm.queueResourceLoad("sound", "sfx_day", { embeddedClass: SOUND_ROOSTER, priority: 9 });
+        rm.queueResourceLoad("sound", "sfx_night", { embeddedClass: SOUND_WOLF, priority: 9 });
+        rm.queueResourceLoad("sound", "sfx_dawn", { embeddedClass: SOUND_CHIMES, priority: 9 });
 
-        rm.pendResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1});
-        rm.pendResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
-        rm.pendResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
-        rm.pendResourceLoad("sound", "sfx_basehit1", { embeddedClass: SOUND_BASEHIT1, volume: 0.5 });
-        rm.pendResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2, volume: 0.5 });
-        rm.pendResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3, volume: 0.5 });
+        rm.queueResourceLoad("sound", "sfx_hit1", { embeddedClass: SOUND_HIT1});
+        rm.queueResourceLoad("sound", "sfx_hit2", { embeddedClass: SOUND_HIT2 });
+        rm.queueResourceLoad("sound", "sfx_hit3", { embeddedClass: SOUND_HIT3 });
+        rm.queueResourceLoad("sound", "sfx_basehit1", { embeddedClass: SOUND_BASEHIT1, volume: 0.5 });
+        rm.queueResourceLoad("sound", "sfx_basehit2", { embeddedClass: SOUND_BASEHIT2, volume: 0.5 });
+        rm.queueResourceLoad("sound", "sfx_basehit3", { embeddedClass: SOUND_BASEHIT3, volume: 0.5 });
 
-        rm.pendResourceLoad("sound", "sfx_spelldrop", { embeddedClass: SOUND_SPELLDROP, priority: 4 });
+        rm.queueResourceLoad("sound", "sfx_spelldrop", { embeddedClass: SOUND_SPELLDROP, priority: 4 });
 
         // the gameVariants must be loaded after the default game data has finished
         // loading, so do that in a callback function here
-        rm.load(
+        rm.loadQueuedResources(
             function () :void {
-                rm.pendResourceLoad("gameVariants", "gameVariants", { embeddedClass: GAME_VARIANTS_DATA });
-                rm.load(loadCompleteCallback, loadErrorCallback);
+                rm.queueResourceLoad("gameVariants", "gameVariants", { embeddedClass: GAME_VARIANTS_DATA });
+                rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
             },
             loadErrorCallback);
     }
@@ -152,7 +152,7 @@ public class Resources
         var rm :ResourceManager = ResourceManager.instance;
         var sound :SoundResource = rm.getResource(musicName) as SoundResource;
         if (sound == null) {
-            rm.pendResourceLoad(
+            rm.queueResourceLoad(
                 "sound",
                 musicName,
                 {   url: AppContext.allLevelPacks.getMediaURL(musicName),
@@ -162,7 +162,7 @@ public class Resources
                     priority: 10
                 }
             );
-            rm.load();
+            rm.loadQueuedResources();
             sound = rm.getResource(musicName) as SoundResource;
         }
 
@@ -363,7 +363,7 @@ class LevelPackLoadingMode extends GenericLoadingMode
 {
     public function LevelPackLoadingMode (callback :Function)
     {
-        ResourceManager.instance.load(
+        ResourceManager.instance.loadQueuedResources(
             function () :void {
                 AppContext.mainLoop.popMode();
                 callback();
