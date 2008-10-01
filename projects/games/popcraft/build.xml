@@ -38,4 +38,10 @@
 
   <target name="testpacks" depends="compile, copydata, test"/>
 
+  <target name="copylocalserver">
+	<copy file="PopCraft.swf" toFile="/export/msoy/pages/media/ddf95853289fa70cf2c6ab8a417372dced7657b9.swf" overwrite="true"/>
+  </target>
+
+  <target name="testlocalserver" depends="compile, copylocalserver"/>
+
 </project>

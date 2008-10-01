@@ -97,11 +97,16 @@ public class LevelSelectMode extends DemoGameMode
         _levelSelectButton.y = 10;
         _modeLayer.addChild(_levelSelectButton);
 
-        _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
-        this.registerEventListener(_buyGameButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                AppContext.showGameShop();
-            });
+        if (!AppContext.isPremiumContentUnlocked) {
+            _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
+            this.registerEventListener(_buyGameButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    AppContext.showGameShop();
+                });
+            _buyGameButton.x = Constants.SCREEN_SIZE.x - _buyGameButton.width - 10;
+            _buyGameButton.y = 10;
+            _modeLayer.addChild(_buyGameButton);
+        }
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
             var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
@@ -224,11 +229,20 @@ public class LevelSelectMode extends DemoGameMode
         // clean up from the tutorial, if it was being displayed before
         if (_showingTutorial) {
             _levelSelectButton.parent.removeChild(_levelSelectButton);
-            _buyGameButton.parent.removeChild(_buyGameButton);
             _unitIntro.destroySelf();
             _resourceIntro.destroySelf();
             _puzzleIntro.destroySelf();
             _showingTutorial = false;
+
+            _levelSelectButton = null;
+            _unitIntro = null;
+            _resourceIntro = null;
+            _puzzleIntro = null;
+
+            if (null != _buyGameButton) {
+                _buyGameButton.parent.removeChild(_buyGameButton);
+                _buyGameButton = null;
+            }
         }
 
         // put the "manual" up on the screen
@@ -329,6 +343,8 @@ public class LevelSelectMode extends DemoGameMode
             isFirstLevel = false;
         }
 
+        UserCookieManager.setNeedsUpdate();
+
         // reload the mode
         LevelSelectMode.create();
     }
@@ -340,6 +356,8 @@ public class LevelSelectMode extends DemoGameMode
             lr.unlocked = true;
             lr.score = 1;
         }
+
+        UserCookieManager.setNeedsUpdate();
 
         // reload the mode
         LevelSelectMode.create();
@@ -383,6 +401,7 @@ public class LevelSelectMode extends DemoGameMode
             e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
             // recreate the level select mode, which will rebuild the UI and remove the
             // "Unlock now!" buttons
+            AppContext.reloadPlayerLevelPacks();
             LevelSelectMode.create();
         }
     }

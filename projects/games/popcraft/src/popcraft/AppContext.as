@@ -1,6 +1,6 @@
 package popcraft {
 
-import com.whirled.contrib.LevelPacks;
+import com.whirled.contrib.LevelPackManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -19,10 +19,12 @@ public class AppContext
     public static var levelMgr :LevelManager;
     public static var randStreamPuzzle :uint;
     public static var globalPlayerStats :PlayerStats;
+    public static var allLevelPacks :LevelPackManager = new LevelPackManager();
+    public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
 
     public static function get isPremiumContentUnlocked () :Boolean
     {
-        return (LevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
+        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
                 levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
     }
 
@@ -58,6 +60,20 @@ public class AppContext
         if (gameCtrl.isConnected()) {
             gameCtrl.local.showGameShop(GameControl.LEVEL_PACK_SHOP,
                 Constants.PREMIUM_SP_LEVEL_PACK_ID);
+        }
+    }
+
+    public static function reloadLevelPacks () :void
+    {
+        if (gameCtrl.isConnected()) {
+            allLevelPacks.init(gameCtrl.game.getLevelPacks());
+        }
+    }
+
+    public static function reloadPlayerLevelPacks () :void
+    {
+        if (gameCtrl.isConnected()) {
+            playerLevelPacks.init(gameCtrl.player.getPlayerLevelPacks());
         }
     }
 

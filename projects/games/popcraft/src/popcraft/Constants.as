@@ -31,6 +31,7 @@ public class Constants
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_ENABLE_ENDLESS_MODE :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
 
     /* Enums, etc */
 

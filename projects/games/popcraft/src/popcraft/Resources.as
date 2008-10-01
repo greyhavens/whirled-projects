@@ -33,7 +33,7 @@ public class Resources
         var rm :ResourceManager = ResourceManager.instance;
         for each (var name :String in resourceNames) {
             if (rm.getResource(name) == null) {
-                var mediaUrl :String = LevelPacks.getMediaURL(name);
+                var mediaUrl :String = AppContext.allLevelPacks.getMediaURL(name);
                 if (mediaUrl == null) {
                     throw new Error("unrecognized resource: '" + name + "'");
                 }
@@ -155,7 +155,7 @@ public class Resources
             rm.pendResourceLoad(
                 "sound",
                 musicName,
-                {   url: LevelPacks.getMediaURL(musicName),
+                {   url: AppContext.allLevelPacks.getMediaURL(musicName),
                     completeImmediately: true,
                     type: "music",
                     volume: 0.7,

@@ -3,6 +3,7 @@
 
 package popcraft {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.LevelPacks;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
@@ -57,7 +58,8 @@ public class PopCraft extends Sprite
         ResourceManager.instance.registerResourceType("gameVariants", GameVariantsResource);
 
         // sound volume
-        AudioManager.instance.masterControls.volume(Constants.SOUND_MASTER_VOLUME);
+        AudioManager.instance.masterControls.volume(
+            Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         // create a new random stream for the puzzle
         AppContext.randStreamPuzzle = Rand.addStream();
@@ -81,7 +83,8 @@ public class PopCraft extends Sprite
             AppContext.gameCtrl.local.setShowReplay(false);
 
             // get level packs
-            LevelPacks.init(AppContext.gameCtrl.game.getLevelPacks());
+            AppContext.allLevelPacks.init(AppContext.gameCtrl.game.getLevelPacks());
+            AppContext.playerLevelPacks.init(AppContext.gameCtrl.player.getPlayerLevelPacks());
         }
 
         AppContext.mainLoop.pushMode(new LoadingMode());
@@ -104,6 +107,8 @@ public class PopCraft extends Sprite
 
         AppContext.mainLoop.shutdown();
     }
+
+    protected static var log :Log = Log.getLog(PopCraft);
 }
 
 }
