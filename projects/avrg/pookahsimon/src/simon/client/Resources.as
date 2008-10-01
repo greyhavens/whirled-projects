@@ -6,8 +6,8 @@ public class Resources
 {
     public static function load (loadCompleteCallback :Function = null, loadErrorCallback :Function = null) :void
     {
-        ResourceManager.instance.pendResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
-        ResourceManager.instance.load(loadCompleteCallback, loadErrorCallback);
+        ResourceManager.instance.queueResourceLoad("swf", "ui", { embeddedClass: Resources.SWF_RAINBOW });
+        ResourceManager.instance.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
     }
 
     // gfx

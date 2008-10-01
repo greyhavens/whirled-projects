@@ -197,7 +197,7 @@ public class AbstractRainbowController extends SceneObject
     }
 
     protected function playNoteAnimation (
-        noteIndex :int, clickLoc :Point, success :Boolean, 
+        noteIndex :int, clickLoc :Point, success :Boolean,
         completionCallback :Function = null) :void
     {
         this.stopNoteAnimation();
@@ -267,7 +267,7 @@ public class AbstractRainbowController extends SceneObject
             _curAnim.mouseChildren = true;
         }
 
-        
+
         _noteCompletionCallback = null;
     }
 
@@ -280,7 +280,7 @@ public class AbstractRainbowController extends SceneObject
 
         if (null != avatarInfo && null != paintableArea) {
             p = SimonMain.control.local.locationToPaintable(avatarInfo.x, avatarInfo.y, avatarInfo.z);
-            p.y -= avatarInfo.stageBounds.height;
+            p.y -= avatarInfo.bounds.height;
 
             // clamp rainbow coordinates
             p.x = Math.max(p.x, paintableArea.left + (RAINBOW_ANIMATION_WIDTH * 0.5));

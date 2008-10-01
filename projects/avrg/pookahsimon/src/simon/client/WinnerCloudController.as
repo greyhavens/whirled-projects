@@ -57,7 +57,7 @@ public class WinnerCloudController extends SceneObject
         var avatarInfo :AVRGameAvatar = (SimonMain.control.local.isConnected() ? SimonMain.control.room.getAvatarInfo(_playerId) : null);
         if (null != avatarInfo) {
             p = SimonMain.control.local.locationToPaintable(avatarInfo.x, avatarInfo.y, avatarInfo.z);
-            p.y -= avatarInfo.stageBounds.height;
+            p.y -= avatarInfo.bounds.height;
         }
 
         return (null != p ? p : new Point(150, 300));
