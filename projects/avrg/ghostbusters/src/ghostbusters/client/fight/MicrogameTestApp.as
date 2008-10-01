@@ -30,8 +30,8 @@ public class MicrogameTestApp extends Sprite
 
         MainLoop.instance.setup();
 
-        ResourceManager.instance.pendResourceLoad("swf", "testGhost", { embeddedClass: SWF_LANTERNGHOST });
-        ResourceManager.instance.load(handleResourcesLoaded);
+        ResourceManager.instance.queueResourceLoad("swf", "testGhost", { embeddedClass: SWF_LANTERNGHOST });
+        ResourceManager.instance.loadQueuedResources(handleResourcesLoaded);
     }
 
     protected function handleResourcesLoaded () :void

@@ -34,21 +34,21 @@ public class Resources
         // for now, just naively load all resources we might need.
         // change this if it becomes too much of a burden.
 
-        ResourceManager.instance.pendResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
-        ResourceManager.instance.pendResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
+        ResourceManager.instance.queueResourceLoad("swf", "intro.screen", { embeddedClass: SWF_INTROSCREEN });
+        ResourceManager.instance.queueResourceLoad("swf", "outro.screen", { embeddedClass: SWF_OUTROSCREEN });
 
-        ResourceManager.instance.pendResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
+        ResourceManager.instance.queueResourceLoad("swf", "lantern.heart", { embeddedClass: SWF_HEART });
 
-        ResourceManager.instance.pendResourceLoad("image", "ouija.planchette", { embeddedClass: IMAGE_PLANCHETTE });
-        ResourceManager.instance.pendResourceLoad("swf", "ouija.board", { embeddedClass: SWF_BOARD });
-        ResourceManager.instance.pendResourceLoad("swf", "ouija.timer", { embeddedClass: SWF_TIMER });
-        ResourceManager.instance.pendResourceLoad("image", "ouija.pictoboard", { embeddedClass: IMAGE_PICTOBOARD });
+        ResourceManager.instance.queueResourceLoad("image", "ouija.planchette", { embeddedClass: IMAGE_PLANCHETTE });
+        ResourceManager.instance.queueResourceLoad("swf", "ouija.board", { embeddedClass: SWF_BOARD });
+        ResourceManager.instance.queueResourceLoad("swf", "ouija.timer", { embeddedClass: SWF_TIMER });
+        ResourceManager.instance.queueResourceLoad("image", "ouija.pictoboard", { embeddedClass: IMAGE_PICTOBOARD });
 
-        ResourceManager.instance.pendResourceLoad("swf", "potions.board", { embeddedClass: SWF_HUEANDCRYBOARD });
+        ResourceManager.instance.queueResourceLoad("swf", "potions.board", { embeddedClass: SWF_HUEANDCRYBOARD });
 
-        ResourceManager.instance.pendResourceLoad("swf", "spiritshell.board", { embeddedClass: SWF_SPIRITSHELL });
+        ResourceManager.instance.queueResourceLoad("swf", "spiritshell.board", { embeddedClass: SWF_SPIRITSHELL });
 
-        ResourceManager.instance.load(completeCallback, errorCallback);
+        ResourceManager.instance.loadQueuedResources(completeCallback, errorCallback);
     }
 
     public function get isLoading () :Boolean
