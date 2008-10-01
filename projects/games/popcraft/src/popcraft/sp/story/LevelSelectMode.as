@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.game.GameContentEvent;
 
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -76,8 +77,6 @@ public class LevelSelectMode extends DemoGameMode
         var playButton :SimpleButton =
             SwfResource.instantiateButton("levelSelectUi", playButtonName);
 
-        // if the player has beaten the game, the Play button will just take them to the level
-        // select menu
         this.registerEventListener(playButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 onPlayClicked();
@@ -87,15 +86,6 @@ public class LevelSelectMode extends DemoGameMode
         _playButtonObj.x = 350;
         _playButtonObj.y = 350;
         this.addObject(_playButtonObj, _modeLayer);
-
-        _levelSelectButton = UIBits.createButton("Select Level", 1.2);
-        this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                createLevelSelectLayout();
-            });
-        _levelSelectButton.x = 10;
-        _levelSelectButton.y = 10;
-        _modeLayer.addChild(_levelSelectButton);
 
         if (!AppContext.isPremiumContentUnlocked) {
             _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
@@ -108,6 +98,18 @@ public class LevelSelectMode extends DemoGameMode
             _modeLayer.addChild(_buyGameButton);
         }
 
+        var buttonY :Number = 10;
+
+        _levelSelectButton = UIBits.createButton("Select Level", 1.2);
+        this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                createLevelSelectLayout();
+            });
+        _levelSelectButton.x = 10;
+        _levelSelectButton.y = buttonY;
+        buttonY += 35;
+        _modeLayer.addChild(_levelSelectButton);
+
         if (Constants.DEBUG_ALLOW_CHEATS) {
             var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
             this.registerOneShotCallback(unlockLevelsButton, MouseEvent.CLICK,
@@ -115,7 +117,8 @@ public class LevelSelectMode extends DemoGameMode
                     unlockLevels();
                 });
             unlockLevelsButton.x = 10;
-            unlockLevelsButton.y = 45;
+            unlockLevelsButton.y = buttonY;
+            buttonY += 35;
             _modeLayer.addChild(unlockLevelsButton);
 
             var lockLevelsButton :SimpleButton = UIBits.createButton("Lock levels", 1.2);
@@ -124,7 +127,8 @@ public class LevelSelectMode extends DemoGameMode
                     lockLevels();
                 });
             lockLevelsButton.x = 10;
-            lockLevelsButton.y = 80;
+            lockLevelsButton.y = buttonY;
+            buttonY += 35;
             _modeLayer.addChild(lockLevelsButton);
 
             var testLevelButton :SimpleButton = UIBits.createButton("Test level", 1.2);
@@ -133,8 +137,21 @@ public class LevelSelectMode extends DemoGameMode
                     levelSelected(LevelManager.TEST_LEVEL);
                 });
             testLevelButton.x = 10;
-            testLevelButton.y = 115;
+            testLevelButton.y = buttonY;
+            buttonY += 35;
             _modeLayer.addChild(testLevelButton);
+        }
+
+        if (Constants.DEBUG_ENABLE_ENDLESS_MODE) {
+            var endlessModeButton :SimpleButton = UIBits.createButton("Endless Mode", 1.2);
+            this.registerOneShotCallback(endlessModeButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    playEndlessLevel();
+                });
+            endlessModeButton.x = 10;
+            endlessModeButton.y = buttonY;
+            buttonY += 35;
+            _modeLayer.addChild(endlessModeButton);
         }
 
         // create the tutorial objects
@@ -176,6 +193,8 @@ public class LevelSelectMode extends DemoGameMode
 
         } else {
             if (AppContext.levelMgr.playerBeatGame) {
+                // if the player has beaten the game, the Play button will just take them to the
+                // level select menu
                 createLevelSelectLayout();
             } else {
                 playNextLevel();
@@ -211,16 +230,6 @@ public class LevelSelectMode extends DemoGameMode
             _playButtonObj.addTask(new RepeatingTask(
                 ScaleTask.CreateEaseIn(1.1, 1.1, 0.5),
                 ScaleTask.CreateEaseOut(1, 1, 0.5)));
-        }
-    }
-
-    protected function playNextLevel () :void
-    {
-        if (null != _playButtonObj) {
-            _playButtonObj.displayObject.parent.removeChild(_playButtonObj.displayObject);
-            _playButtonObj = null;
-
-            this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
         }
     }
 
@@ -372,6 +381,16 @@ public class LevelSelectMode extends DemoGameMode
             });
 
         return button;
+    }
+
+    protected function playNextLevel () :void
+    {
+        this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
+    }
+
+    protected function playEndlessLevel () :void
+    {
+
     }
 
     protected function levelSelected (levelNum :int) :void

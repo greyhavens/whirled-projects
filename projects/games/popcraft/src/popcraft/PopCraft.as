@@ -4,7 +4,6 @@
 package popcraft {
 
 import com.threerings.util.Log;
-import com.whirled.contrib.LevelPacks;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
@@ -53,9 +52,11 @@ public class PopCraft extends Sprite
         AppContext.mainLoop.setup();
 
         // custom resource factories
-        ResourceManager.instance.registerResourceType("level", LevelResource);
-        ResourceManager.instance.registerResourceType("gameData", GameDataResource);
-        ResourceManager.instance.registerResourceType("gameVariants", GameVariantsResource);
+        var rm :ResourceManager = ResourceManager.instance;
+        rm.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
+        rm.registerResourceType(Constants.RESTYPE_ENDLESS, EndlessLevelResource);
+        rm.registerResourceType(Constants.RESTYPE_GAMEDATA, GameDataResource);
+        rm.registerResourceType(Constants.RESTYPE_GAMEVARIANTS, GameVariantsResource);
 
         // sound volume
         AudioManager.instance.masterControls.volume(

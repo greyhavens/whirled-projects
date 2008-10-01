@@ -51,7 +51,7 @@ public class AppContext
     public static function get gameVariants () :Array
     {
         var variantResource :GameVariantsResource =
-            ResourceManager.instance.getResource("gameVariants") as GameVariantsResource;
+            GameVariantsResource(ResourceManager.instance.getResource(Constants.RSRC_GAMEVARIANTS));
         return variantResource.variants;
     }
 
@@ -79,7 +79,7 @@ public class AppContext
 
     protected static function get gameDataResource () :GameDataResource
     {
-        return GameDataResource(ResourceManager.instance.getResource("defaultGameData"));
+        return GameDataResource(ResourceManager.instance.getResource(Constants.RSRC_DEFAULTGAMEDATA));
     }
 }
 

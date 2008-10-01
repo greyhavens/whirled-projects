@@ -140,19 +140,29 @@ public class LevelManager
                         { embeddedClass: LEVEL_DEMO });
 
                 } else {
+                    var levelNumString :String = String(_curLevelIndex + 1);
+                    if (_curLevelIndex + 1 < 10) {
+                        levelNumString = "0" + levelNumString;
+                    }
+
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                        { url: "levels/level" + String(_curLevelIndex + 1) + ".xml" } :
+                        { url: "levels/story_" + levelNumString + ".xml" } :
                         { embeddedClass: LEVELS[_curLevelIndex] });
                 }
 
                 if (forceReload) {
                     // reload the default game data first, then load the level when it's complete
                     // (level requires that default game data already be loaded)
-                    ResourceManager.instance.unload("defaultGameData");
-                    ResourceManager.instance.queueResourceLoad("gameData", "defaultGameData",
+                    ResourceManager.instance.unload(Constants.RSRC_DEFAULTGAMEDATA);
+                    ResourceManager.instance.queueResourceLoad(
+                        Constants.RESTYPE_GAMEDATA,
+                        Constants.RSRC_DEFAULTGAMEDATA,
                         { url: "levels/defaultGameData.xml" });
+
                     ResourceManager.instance.loadQueuedResources(
-                        function () :void { loadLevel(loadParams) },
+                        function () :void {
+                            loadLevel(loadParams)
+                        },
                         onLoadError);
 
                 } else {
@@ -164,8 +174,9 @@ public class LevelManager
 
     protected function loadLevel (loadParams :Object) :void
     {
-        ResourceManager.instance.unload("level");
-        ResourceManager.instance.queueResourceLoad("level", "level", loadParams);
+        ResourceManager.instance.unload(RSRC_CURLEVEL);
+        ResourceManager.instance.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
+            loadParams);
         ResourceManager.instance.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
@@ -225,7 +236,7 @@ public class LevelManager
 
     protected function onLevelLoaded () :void
     {
-        _loadedLevel = (ResourceManager.instance.getResource("level") as LevelResource).levelData;
+        _loadedLevel = LevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
         this.startGame();
     }
 
@@ -256,34 +267,36 @@ public class LevelManager
 
     protected static var log :Log = Log.getLog(LevelManager);
 
+    protected static const RSRC_CURLEVEL :String = "curLevel";
+
     // Embedded level data
-    [Embed(source="../../../../levels/level1.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_01.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_1 :Class;
-    [Embed(source="../../../../levels/level2.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_02.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_2 :Class;
-    [Embed(source="../../../../levels/level3.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_03.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_3 :Class;
-    [Embed(source="../../../../levels/level4.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_04.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_4 :Class;
-    [Embed(source="../../../../levels/level5.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_05.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_5 :Class;
-    [Embed(source="../../../../levels/level6.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_06.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_6 :Class;
-    [Embed(source="../../../../levels/level7.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_07.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_7 :Class;
-    [Embed(source="../../../../levels/level8.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_08.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_8 :Class;
-    [Embed(source="../../../../levels/level9.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_09.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_9 :Class;
-    [Embed(source="../../../../levels/level10.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_10.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_10 :Class;
-    [Embed(source="../../../../levels/level11.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_11.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_11 :Class;
-    [Embed(source="../../../../levels/level12.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_12.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_12 :Class;
-    [Embed(source="../../../../levels/level13.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_13.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_13 :Class;
-    [Embed(source="../../../../levels/level14.xml", mimeType="application/octet-stream")]
+    [Embed(source="../../../../levels/story_14.xml", mimeType="application/octet-stream")]
     protected static const LEVEL_14 :Class;
 
     [Embed(source="../../../../levels/testlevel.xml", mimeType="application/octet-stream")]

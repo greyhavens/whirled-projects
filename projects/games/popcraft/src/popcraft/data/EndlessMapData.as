@@ -7,7 +7,7 @@ public class EndlessMapData
 {
     public var mapSettings :MapSettingsData;
 
-    public var computerGroups :Array = []; // array of arrays of ComputerPlayerDatas
+    public var computerGroups :Array = []; // array of arrays of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
     public var availableSpells :Array = [];
 
@@ -20,7 +20,7 @@ public class EndlessMapData
         for each (var computerGroupNode :XML in xml.ComputerGroups.Group) {
             var group :Array = [];
             for each (var computerNode :XML in computerGroupNode.Computer) {
-                group.push(ComputerPlayerData.fromXml(computerNode));
+                group.push(EndlessComputerPlayerData.fromXml(computerNode));
             }
 
             mapData.computerGroups.push(group);

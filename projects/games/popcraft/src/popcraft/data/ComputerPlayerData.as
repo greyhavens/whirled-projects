@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.resource.ImageResource;
 import flash.display.DisplayObject;
 
 import popcraft.*;
+import popcraft.sp.story.ComputerPlayer;
 import popcraft.util.*;
 
 public class ComputerPlayerData
@@ -24,24 +25,24 @@ public class ComputerPlayerData
         return ImageResource.instantiateBitmap(playerHeadshotName);
     }
 
-    public static function fromXml (xmlData :XML) :ComputerPlayerData
+    public static function fromXml (xml :XML, data :ComputerPlayerData = null) :ComputerPlayerData
     {
-        var computerPlayer :ComputerPlayerData = new ComputerPlayerData();
+        var computerPlayer :ComputerPlayerData = (data != null ? data : new ComputerPlayerData());
 
-        computerPlayer.playerName = XmlReader.getAttributeAsString(xmlData, "playerName");
-        computerPlayer.playerHeadshotName = XmlReader.getAttributeAsString(xmlData,
+        computerPlayer.playerName = XmlReader.getAttributeAsString(xml, "playerName");
+        computerPlayer.playerHeadshotName = XmlReader.getAttributeAsString(xml,
             "playerHeadshotName");
-        computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xmlData, "baseHealth");
-        computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xmlData, "baseStartHealth",
+        computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xml, "baseHealth");
+        computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xml, "baseStartHealth",
             computerPlayer.baseHealth);
-        computerPlayer.invincible = XmlReader.getAttributeAsBoolean(xmlData, "invincible", false);
-        computerPlayer.team = XmlReader.getAttributeAsUint(xmlData, "team");
+        computerPlayer.invincible = XmlReader.getAttributeAsBoolean(xml, "invincible", false);
+        computerPlayer.team = XmlReader.getAttributeAsUint(xml, "team");
 
-        for each (var initialDayData :XML in xmlData.InitialDays.Day) {
+        for each (var initialDayData :XML in xml.InitialDays.Day) {
             computerPlayer.initialDays.push(DaySequenceData.fromXml(initialDayData));
         }
 
-        for each (var repeatingDayData :XML in xmlData.RepeatingDays.Day) {
+        for each (var repeatingDayData :XML in xml.RepeatingDays.Day) {
             computerPlayer.repeatingDays.push(DaySequenceData.fromXml(repeatingDayData));
         }
 
@@ -51,7 +52,7 @@ public class ComputerPlayerData
         }
 
         // read spells
-        for each (var spellData :XML in xmlData.InitialSpells.Spell) {
+        for each (var spellData :XML in xml.InitialSpells.Spell) {
             spellType = XmlReader.getAttributeAsEnum(spellData, "type",
                 Constants.CREATURE_SPELL_NAMES);
             var amount :int = XmlReader.getAttributeAsUint(spellData, "amount");

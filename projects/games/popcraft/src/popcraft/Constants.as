@@ -10,6 +10,15 @@ import popcraft.util.*;
 
 public class Constants
 {
+    /* ResourceManager stuff */
+    public static const RESTYPE_LEVEL :String = "level";
+    public static const RESTYPE_ENDLESS :String = "endlessLevel";
+    public static const RESTYPE_GAMEDATA :String = "gameData";
+    public static const RESTYPE_GAMEVARIANTS :String = "gameVariants";
+
+    public static const RSRC_DEFAULTGAMEDATA :String = "defaultGameData";
+    public static const RSRC_GAMEVARIANTS :String = "defaultGameVariants";
+
     // how many levels are available to players that haven't purchased the full game
     public static const NUM_FREE_SP_LEVELS :int = 7;
     public static const PREMIUM_SP_LEVEL_PACK_NAME :String = "incident_premium";

@@ -72,7 +72,7 @@ public class Resources
         var rm :ResourceManager = ResourceManager.instance;
 
         // data
-        rm.queueResourceLoad("gameData", "defaultGameData", { embeddedClass: DEFAULT_GAME_DATA });
+        rm.queueResourceLoad(Constants.RESTYPE_GAMEDATA, Constants.RSRC_DEFAULTGAMEDATA, { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
         rm.queueResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
@@ -140,7 +140,11 @@ public class Resources
         // loading, so do that in a callback function here
         rm.loadQueuedResources(
             function () :void {
-                rm.queueResourceLoad("gameVariants", "gameVariants", { embeddedClass: GAME_VARIANTS_DATA });
+                rm.queueResourceLoad(
+                    Constants.RESTYPE_GAMEVARIANTS,
+                    Constants.RSRC_GAMEVARIANTS,
+                    { embeddedClass: GAME_VARIANTS_DATA });
+
                 rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
             },
             loadErrorCallback);
