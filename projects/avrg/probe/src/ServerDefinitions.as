@@ -4,9 +4,9 @@ import com.threerings.util.ClassUtil;
 import com.whirled.AbstractControl;
 import com.whirled.AbstractSubControl;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.MobServerSubControl;
-import com.whirled.avrg.PlayerServerSubControl;
-import com.whirled.avrg.RoomServerSubControl;
+import com.whirled.avrg.MobSubControlServer;
+import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.avrg.RoomSubControlServer;
 import com.whirled.net.PropertyGetSubControl;
 import com.whirled.net.PropertySubControl;
 
@@ -140,44 +140,44 @@ public class ServerDefinitions
 
     protected function createRoomFuncs () :Array
     {
-        function getInstance (id :int) :RoomServerSubControl {
-            var room :RoomServerSubControl = _ctrl.getRoom(id);
+        function getInstance (id :int) :RoomSubControlServer {
+            var room :RoomSubControlServer = _ctrl.getRoom(id);
             return room;
         }
 
-        function getRoomId (room :RoomServerSubControl) :Function {
+        function getRoomId (room :RoomSubControlServer) :Function {
             return room.getRoomId;
         }
 
-        function getPlayerIds (room :RoomServerSubControl) :Function {
+        function getPlayerIds (room :RoomSubControlServer) :Function {
             return room.getPlayerIds;
         }
 
-        function isPlayerHere (room :RoomServerSubControl) :Function {
+        function isPlayerHere (room :RoomSubControlServer) :Function {
             return room.isPlayerHere;
         }
 
-        function getAvatarInfo (room :RoomServerSubControl) :Function {
+        function getAvatarInfo (room :RoomSubControlServer) :Function {
             return room.getAvatarInfo;
         }
 
-        function getRoomBounds (room :RoomServerSubControl) :Function {
+        function getRoomBounds (room :RoomSubControlServer) :Function {
             return room.getRoomBounds;
         }
 
-        function spawnMob (room :RoomServerSubControl) :Function {
+        function spawnMob (room :RoomSubControlServer) :Function {
             return room.spawnMob;
         }
 
-        function despawnMob (room :RoomServerSubControl) :Function {
+        function despawnMob (room :RoomSubControlServer) :Function {
             return room.despawnMob;
         }
 
-        function getSpawnedMobs (room :RoomServerSubControl) :Function {
+        function getSpawnedMobs (room :RoomSubControlServer) :Function {
             return room.getSpawnedMobs;
         }
 
-        function sendMessage (room :RoomServerSubControl) :Function {
+        function sendMessage (room :RoomSubControlServer) :Function {
             return room.sendMessage;
         }
 
@@ -213,68 +213,68 @@ public class ServerDefinitions
     {
         var idParam :Parameter = new Parameter("playerId", int);
 
-        function getInstance (id :int) :PlayerServerSubControl {
-            var player :PlayerServerSubControl = _ctrl.getPlayer(id);
+        function getInstance (id :int) :PlayerSubControlServer {
+            var player :PlayerSubControlServer = _ctrl.getPlayer(id);
             return player;
         }
 
-        function getPlayerId (props :PlayerServerSubControl) :Function {
+        function getPlayerId (props :PlayerSubControlServer) :Function {
             return props.getPlayerId;
         }
 
-        function getRoomId (props :PlayerServerSubControl) :Function {
+        function getRoomId (props :PlayerSubControlServer) :Function {
             return props.getRoomId;
         }
 
-        function holdsTrophy (props :PlayerServerSubControl) :Function {
+        function holdsTrophy (props :PlayerSubControlServer) :Function {
             return props.holdsTrophy;
         }
 
-        function awardTrophy (props :PlayerServerSubControl) :Function {
+        function awardTrophy (props :PlayerSubControlServer) :Function {
             return props.awardTrophy;
         }
 
-        function awardPrize (props :PlayerServerSubControl) :Function {
+        function awardPrize (props :PlayerSubControlServer) :Function {
             return props.awardPrize;
         }
 
-        function getPlayerItemPacks (props :PlayerServerSubControl) :Function {
+        function getPlayerItemPacks (props :PlayerSubControlServer) :Function {
             return props.getPlayerItemPacks;
         }
 
-        function getPlayerLevelPacks (props :PlayerServerSubControl) :Function {
+        function getPlayerLevelPacks (props :PlayerSubControlServer) :Function {
             return props.getPlayerLevelPacks;
         }
 
-        function deactivateGame (props :PlayerServerSubControl) :Function {
+        function deactivateGame (props :PlayerSubControlServer) :Function {
             return props.deactivateGame;
         }
 
-        function completeTask (props :PlayerServerSubControl) :Function {
+        function completeTask (props :PlayerSubControlServer) :Function {
             return props.completeTask;
         }
 
-        function playAvatarAction (props :PlayerServerSubControl) :Function {
+        function playAvatarAction (props :PlayerSubControlServer) :Function {
             return props.playAvatarAction;
         }
 
-        function setAvatarState (props :PlayerServerSubControl) :Function {
+        function setAvatarState (props :PlayerSubControlServer) :Function {
             return props.setAvatarState;
         }
 
-        function setAvatarMoveSpeed (props :PlayerServerSubControl) :Function {
+        function setAvatarMoveSpeed (props :PlayerSubControlServer) :Function {
             return props.setAvatarMoveSpeed;
         }
 
-        function setAvatarLocation (props :PlayerServerSubControl) :Function {
+        function setAvatarLocation (props :PlayerSubControlServer) :Function {
             return props.setAvatarLocation;
         }
 
-        function setAvatarOrientation (props :PlayerServerSubControl) :Function {
+        function setAvatarOrientation (props :PlayerSubControlServer) :Function {
             return props.setAvatarOrientation;
         }
 
-        function sendMessage (props :PlayerServerSubControl) :Function {
+        function sendMessage (props :PlayerSubControlServer) :Function {
             return props.sendMessage;
         }
 
@@ -321,8 +321,8 @@ public class ServerDefinitions
         var roomIdParam :Parameter = new Parameter("roomId", int);
         var mobIdParam :Parameter = new Parameter("mobId", String);
 
-        function getInstance (roomId :int, mobId :String) :MobServerSubControl {
-            var mob :MobServerSubControl = _ctrl.getRoom(roomId).getMobSubControl(mobId);
+        function getInstance (roomId :int, mobId :String) :MobSubControlServer {
+            var mob :MobSubControlServer = _ctrl.getRoom(roomId).getMobSubControl(mobId);
             return mob;
         }
 

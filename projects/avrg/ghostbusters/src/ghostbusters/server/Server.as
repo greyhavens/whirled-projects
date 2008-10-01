@@ -10,8 +10,8 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.PlayerServerSubControl;
-import com.whirled.avrg.RoomServerSubControl;
+import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.avrg.RoomSubControlServer;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
@@ -60,9 +60,9 @@ public class Server extends ServerObject
     {
         var room :Room = _rooms[roomId];
         if (room == null) {
-            var ctrl :RoomServerSubControl = _ctrl.getRoom(roomId);
+            var ctrl :RoomSubControlServer = _ctrl.getRoom(roomId);
             if (ctrl == null) {
-                throw new Error("Failed to get RoomServerSubControl [roomId=" + roomId + "]");
+                throw new Error("Failed to get RoomSubControlServer [roomId=" + roomId + "]");
             }
             room = _rooms[roomId] = new Room(ctrl);
         }
@@ -107,9 +107,9 @@ public class Server extends ServerObject
     {
         var playerId :int = int(evt.value);
 
-        var pctrl :PlayerServerSubControl = _ctrl.getPlayer(playerId);
+        var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
         if (pctrl == null) {
-            throw new Error("Could not get PlayerServerSubControl for player!");
+            throw new Error("Could not get PlayerSubControlServer for player!");
         }
 
         if (_players[playerId] != null) {

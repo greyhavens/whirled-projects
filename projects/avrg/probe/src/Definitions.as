@@ -7,11 +7,11 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.GameSubControl;
-import com.whirled.avrg.RoomSubControl;
-import com.whirled.avrg.PlayerSubControl;
+import com.whirled.avrg.GameSubControlClient;
+import com.whirled.avrg.RoomSubControlClient;
+import com.whirled.avrg.PlayerSubControlClient;
 import com.whirled.avrg.LocalSubControl;
-import com.whirled.avrg.MobSubControl;
+import com.whirled.avrg.MobSubControlClient;
 import com.whirled.avrg.AgentSubControl;
 
 import com.whirled.net.PropertyChangedEvent;
@@ -118,7 +118,7 @@ public class Definitions
 
     protected function createRoomFuncs () :Array
     {
-        var room :RoomSubControl = _ctrl.room;
+        var room :RoomSubControlClient = _ctrl.room;
         var funcs :Array = [
             new FunctionSpec("getRoomId", room.getRoomId, []),
             new FunctionSpec("getPlayerIds", room.getPlayerIds, []),
@@ -135,7 +135,7 @@ public class Definitions
 
     protected function createGameFuncs () :Array 
     {
-        var game :GameSubControl = _ctrl.game;
+        var game :GameSubControlClient = _ctrl.game;
 
         var funcs :Array = [
             new FunctionSpec("getPlayerIds", game.getPlayerIds),
@@ -148,7 +148,7 @@ public class Definitions
 
     protected function createPlayerFuncs () :Array
     {
-        var player :PlayerSubControl = _ctrl.player;
+        var player :PlayerSubControlClient = _ctrl.player;
 
         var funcs :Array = [
             new FunctionSpec("getPlayerId", player.getPlayerId),
@@ -230,7 +230,7 @@ public class Definitions
     {
         var idParam :Parameter = new Parameter("id", String);
         
-        function mob (id :String) :MobSubControl {
+        function mob (id :String) :MobSubControlClient {
             return _ctrl.room.getMobSubControl(id);
         }
 

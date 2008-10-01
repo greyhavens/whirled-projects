@@ -219,8 +219,8 @@ public class FightPanel extends FrameSprite
                 _log.warning("Can't get avatar info [player=" + playerId + "]");
                 continue;
             }
-            var topLeft :Point = this.globalToLocal(info.stageBounds.topLeft);
-            var bottomRight :Point = this.globalToLocal(info.stageBounds.bottomRight);
+            var topLeft :Point = this.globalToLocal(info.bounds.topLeft);
+            var bottomRight :Point = this.globalToLocal(info.bounds.bottomRight);
 
             var height :Number = bottomRight.y - topLeft.y;
             var width :Number = bottomRight.x - topLeft.x;

@@ -8,7 +8,7 @@ import com.threerings.util.Log;
 import com.whirled.net.MessageReceivedEvent;
 
 import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.PlayerServerSubControl;
+import com.whirled.avrg.PlayerSubControlServer;
 
 import ghostbusters.data.Codes;
 import ghostbusters.server.util.Formulae;
@@ -22,7 +22,7 @@ public class Player
 
     public static var log :Log = Log.getLog(Player);
 
-    public function Player (ctrl :PlayerServerSubControl)
+    public function Player (ctrl :PlayerSubControlServer)
     {
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
@@ -64,7 +64,7 @@ public class Player
         }
     }
 
-    public function get ctrl () :PlayerServerSubControl
+    public function get ctrl () :PlayerSubControlServer
     {
         return _ctrl;
     }
@@ -309,7 +309,7 @@ public class Player
         _maxHealth = 50 * Formulae.quadRamp(_level);
     }
 
-    protected var _ctrl :PlayerServerSubControl;
+    protected var _ctrl :PlayerSubControlServer;
     protected var _room :Room;
 
     protected var _playerId :int;

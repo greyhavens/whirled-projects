@@ -11,7 +11,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
-import com.whirled.avrg.RoomServerSubControl;
+import com.whirled.avrg.RoomSubControlServer;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
@@ -20,7 +20,7 @@ public class Room
 {
     public static var log :Log = Log.getLog(Room);
 
-    public function Room (ctrl :RoomServerSubControl)
+    public function Room (ctrl :RoomSubControlServer)
     {
         _ctrl = ctrl;
 
@@ -36,7 +36,7 @@ public class Room
         return _ctrl.getRoomId();
     }
 
-    public function get ctrl () :RoomServerSubControl
+    public function get ctrl () :RoomSubControlServer
     {
         return _ctrl;
     }
@@ -491,7 +491,7 @@ public class Room
         _ghost = null;
     }
 
-    protected var _ctrl :RoomServerSubControl;
+    protected var _ctrl :RoomSubControlServer;
 
     protected var _state :String;
     protected var _players :Dictionary = new Dictionary();

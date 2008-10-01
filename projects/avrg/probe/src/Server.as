@@ -13,8 +13,7 @@ import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.RoomServerSubControl;
-import com.whirled.avrg.PlayerServerSubControl;
+import com.whirled.avrg.RoomSubControlServer;
 
 public class Server extends ServerObject
 {
