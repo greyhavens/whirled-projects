@@ -27,12 +27,12 @@ public class BingoMain extends Sprite
         MainLoop.instance.setup();
 
         // load resources
-        ResourceManager.instance.pendResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
-        ResourceManager.instance.pendResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
-        ResourceManager.instance.pendResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
-        ResourceManager.instance.pendResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
+        ResourceManager.instance.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
+        ResourceManager.instance.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
+        ResourceManager.instance.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
+        ResourceManager.instance.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
 
-        ResourceManager.instance.load(handleResourcesLoaded, handleResourceLoadError);
+        ResourceManager.instance.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
     }
 
     protected function maybeShowIntro () :void
