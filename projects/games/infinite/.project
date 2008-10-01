@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Infinite</name>
+	<name>Inf</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,36 @@
 	<natures>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] libraries-toybox-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/toybox/src/as</location>
+		</link>
+		<link>
+			<name>[source path] libraries-vilya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/vilya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] libraries-narya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/narya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] libraries-nenya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/nenya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] export-whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/src/as</location>
+		</link>
+		<link>
+			<name>[source path] sdk-whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/dist/sdk/whirled/src/as</location>
+		</link>
+	</linkedResources>
 </projectDescription>

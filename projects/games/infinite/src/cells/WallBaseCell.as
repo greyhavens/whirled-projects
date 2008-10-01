@@ -19,7 +19,7 @@ package cells
 		override public function get replacable () :Boolean { return true; }
 		override public function get canBecomeWindow() :Boolean { return true; }
 		
-		[Embed(source="png/wall.png")]
+		[Embed(source="../../rsrc/png/wall.png")]
 		public static const wall:Class;
 	}
 }

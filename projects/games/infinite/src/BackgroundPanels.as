@@ -17,16 +17,16 @@ package
 //		[Embed(source="svg/ground-cell.svg")]
 //		public static const groundCell:Class;
 
-		[Embed(source="png/error.png")]
+		[Embed(source="../rsrc/png/error.png")]
 		public static const error:Class;
 
-		[Embed(source="png/cliff-edge.png")]
+		[Embed(source="../rsrc/png/cliff-edge.png")]
 		public static const cliffEdge:Class; 
 						
-		[Embed(source="png/wall-base.png")]
+		[Embed(source="../rsrc/png/wall-base.png")]
 		public static const wallBase:Class;
 		
-		[Embed(source="png/white-ground-cell.png")]
+		[Embed(source="../rsrc/png/white-ground-cell.png")]
 		public static const groundCell:Class;
 							
 	}

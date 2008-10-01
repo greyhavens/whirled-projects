@@ -17,12 +17,11 @@ package cells
 		override protected function get initialAsset () :Class
 		{
 			return oiledWall;
-		}			
+		}
 
 		override public function get type () :String { return "oiled wall"; }	
 		
-		[Embed(source="png/wall-oiled.png")]
+		[Embed(source="../../rsrc/png/wall-oiled.png")]
 		public static const oiledWall:Class;
-
 	}
 }

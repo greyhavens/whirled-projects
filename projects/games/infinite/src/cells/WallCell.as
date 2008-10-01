@@ -23,7 +23,7 @@ package cells
 	
 		override public function get type () :String { return "wall"; }	
 		
-		[Embed(source="png/wall.png")]
+		[Embed(source="../../rsrc/png/wall.png")]
 		public static const wall:Class;
 	}
 }

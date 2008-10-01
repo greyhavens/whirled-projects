@@ -60,7 +60,7 @@ package items
 			return "an oilcan";
 		}
 		
-		[Embed(source="png/oilcan-icon.png")]
+		[Embed(source="../../rsrc/png/oilcan-icon.png")]
 		protected static const oilcanIcon:Class;			
 	}
 }

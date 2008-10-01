@@ -7,7 +7,7 @@ package sprites
 			super(simplePlayer, Config.cellSize.dx, Config.cellSize.dy);
 		}
 
-		[Embed(source="png/simple-player.png")]
+		[Embed(source="../../rsrc/png/simple-player.png")]
 		protected static const simplePlayer:Class;			
 	}
 }

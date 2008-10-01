@@ -39,7 +39,7 @@ package cells
 			return ! isAboveGroundLevel();
 		}
 		
-		[Embed(source="png/ladder-base-oiled.png")]
+		[Embed(source="../../rsrc/png/ladder-base-oiled.png")]
 		public static const oiledLadderBase:Class;	
 
 	}

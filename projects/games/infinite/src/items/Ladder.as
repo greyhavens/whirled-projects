@@ -67,7 +67,7 @@ package items
 				
 		protected var _segments:int;
 		
-		[Embed(source="png/ladder-icon.png")]
+		[Embed(source="../../rsrc/png/ladder-icon.png")]
 		protected static const ladderIcon:Class;
 	}
 }

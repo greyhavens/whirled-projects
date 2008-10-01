@@ -126,13 +126,13 @@ package cells
 		public static const FIRSTRUNG:Vector = 
 			Vector.DOWN.multiplyByVector(Config.cellSize).multiplyByScalar(0.1);
 				
-		[Embed(source="png/ladder-base.png")]
+		[Embed(source="../../rsrc/png/ladder-base.png")]
 		public static const ladderBase:Class;
 		
-		[Embed(source="png/ladder-middle.png")]		
+		[Embed(source="../../rsrc/png/ladder-middle.png")]		
 		public static const ladderMiddle:Class;
 		
-		[Embed(source="png/ladder-top.png")]
+		[Embed(source="../../rsrc/png/ladder-top.png")]
 		public static const ladderTop:Class;	
 	}
 }

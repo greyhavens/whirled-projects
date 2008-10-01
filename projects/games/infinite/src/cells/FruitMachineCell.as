@@ -204,16 +204,16 @@ package cells
 		public static const ACTIVATION_DELAY:int = 10000; // 10 seconds between state changes
 		public static const ROLL_PERIOD:int = 3000; // the machine rolls for 5 seconds
 		
-		[Embed(source="png/fruit-machine-inactive.png")]
+		[Embed(source="../../rsrc/png/fruit-machine-inactive.png")]
 		protected static const fruitMachineInactive:Class;
 		
-		[Embed(source="png/fruit-machine.png")]
+		[Embed(source="../../rsrc/png/fruit-machine.png")]
 		protected static const fruitMachineActive:Class;
 		
-		[Embed(source="png/fruit-machine-rolling.png")]
+		[Embed(source="../../rsrc/png/fruit-machine-rolling.png")]
 		protected static const fruitMachineRolling:Class;
 		
-		[Embed(source="png/fruit-machine-defunct.png")]
+		[Embed(source="../../rsrc/png/fruit-machine-defunct.png")]
 		protected static const fruitMachineDefunct:Class;		
 	}
 }

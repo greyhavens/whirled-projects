@@ -52,7 +52,7 @@ package
 			// do nothing
 		}
 		
-		[Embed(source="png/error-item.png")]
+		[Embed(source="../rsrc/png/error-item.png")]
 		public static const errorItem:Class;
 	}
 }

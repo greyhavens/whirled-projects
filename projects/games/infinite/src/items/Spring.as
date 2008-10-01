@@ -17,7 +17,7 @@ package items
 			return "a spring";
 		}
 		
-		[Embed(source="png/spring-icon.png")]
+		[Embed(source="../../rsrc/png/spring-icon.png")]
 		protected static const springIcon:Class;		
 	}
 }

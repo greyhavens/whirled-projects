@@ -30,7 +30,7 @@ package items
 			return "a teleporter";
 		}
 		
-		[Embed(source="png/teleport-icon.png")]
+		[Embed(source="../../rsrc/png/teleport-icon.png")]
 		protected static const teleportIcon:Class;			
 		
 	}

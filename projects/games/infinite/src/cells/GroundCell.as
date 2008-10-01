@@ -21,7 +21,7 @@ package cells
 			return "ground";
 		}				
 		
-		[Embed(source="png/ledge-ground-cell.png")]
+		[Embed(source="../../rsrc/png/ledge-ground-cell.png")]
 		public static const ledgeGroundCell:Class; 
 	}
 }

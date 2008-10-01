@@ -1,57 +1,24 @@
 package {
-	import sprites.*;
-	import flash.display.DisplayObject;
+	import com.threerings.parlor.game.client.GameController;
+	import com.whirled.game.GameControl;
+	
 	import flash.display.Sprite;
+	
+	import sprites.*;
 
 	[SWF(width="700", height="500")]
 	public class InfinitePlaytest extends Sprite
 	{
 		public function InfinitePlaytest()
 		{
-			// set the overall size of the game
-			SpriteUtil.addBackground(this, GAME_WIDTH, GAME_HEIGHT, SpriteUtil.GREY);
-			this.x = 0;
-			this.y = 0;			
+			_gameControl = new GameControl(this);
 			
-			_viewer = new Viewer(680, 420);
+			trace ("game controller connected: "+_gameControl.isConnected());
 			
-			_viewer.x = 10;
-			_viewer.y = 10;
-			addChild(_viewer);		
-			
-			_inventory = new Inventory(680, 50);
-			const invView:DisplayObject = _inventory.view;
-			invView.x = 10;
-			invView.y = 440;			
-			addChild(invView);
-			
-			_frameTimer = new FrameTimer();
-			_frameTimer.start();
-				
-			startGame();			
-		}
-				
-		public function startGame () :void 
-		{
-			_board = new SimpleBoard(LEVEL1);
-			_player = new PlayerCharacter("robin", _inventory);
-			_viewer.board = _board;
-			_viewer.player = _player;
-			_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
-			
-			trace("game size at end: "+width+", "+height);
-		}		
+			var simple:Sprite = new SimplePlaytest();
+			addChild(simple);
+		}				
 		
-		protected var _controller:PlayerController;
-		protected var _board:Board;
-		protected var _viewer:Viewer;
-		protected var _inventory:Inventory;
-		protected var _player:PlayerCharacter;
-		protected var _frameTimer:FrameTimer;		
-		
-		protected const GAME_WIDTH:int = 700;
-		protected const GAME_HEIGHT:int = 500;
-		
-		protected const LEVEL1:Level = new Level(50);	
+		protected var _gameControl:GameControl;
 	}
 }
