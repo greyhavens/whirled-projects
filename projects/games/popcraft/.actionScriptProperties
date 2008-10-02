@@ -30,6 +30,7 @@
 </compiler>
 <applications>
 <application path="popcraft/PopCraft_Standalone.as"/>
+<application path="popcraft/PopCraft.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>

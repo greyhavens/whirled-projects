@@ -51,6 +51,7 @@ import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import com.threerings.util.Log;
 import com.threerings.flash.Vector2;
+import popcraft.data.BaseLocationData;
 
 class HeavyFormationManager extends SimObject
 {
@@ -192,7 +193,7 @@ class HeavyAI extends AITaskTree
 
     protected function findDefenseLocation () :Vector2
     {
-        var ourBaseLoc :Vector2 = _unit.owningPlayerInfo.baseLoc;
+        var ourBaseLoc :Vector2 = _unit.owningPlayerInfo.baseLoc.loc;
 
         // it's unlikely but possible that we have no enemy base
         var enemyBase :WorkshopUnit = _unit.getEnemyBaseToAttack().object as WorkshopUnit;

@@ -26,9 +26,9 @@ Both girls must fall! Click an opponent's workshop to direct your creatures to i
         </Hints>
 
         <MapSettings backgroundName="Level2">
-            <BaseLocation x="60" y="285"/>
-            <BaseLocation x="585" y="225"/>
-            <BaseLocation x="585" y="350"/>
+            <BaseLocation x="60" y="285" team="0"/>
+            <BaseLocation x="585" y="225" team="1"/>
+            <BaseLocation x="585" y="350" team="1"/>
         </MapSettings>
 
         <InitialResources>

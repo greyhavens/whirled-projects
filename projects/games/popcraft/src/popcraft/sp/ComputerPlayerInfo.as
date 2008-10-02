@@ -1,15 +1,15 @@
 package popcraft.sp {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.Assert;
 
 import flash.display.DisplayObject;
 
 import popcraft.*;
+import popcraft.data.BaseLocationData;
 
 public class ComputerPlayerInfo extends PlayerInfo
 {
-    public function ComputerPlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2,
+    public function ComputerPlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         playerName :String, playerHeadshot :DisplayObject = null)
     {
         super(playerIndex, teamId, baseLoc, 1, playerName, playerHeadshot);

@@ -150,7 +150,7 @@ public class EndlessGameMode extends GameMode
 
     protected function get curMapData () :EndlessMapData
     {
-        return GameContext.endlessLevel.mapSequence[_mapDataIndex];
+        return _level.mapSequence[_mapDataIndex];
     }
 
     protected var _level :EndlessLevelData;

@@ -294,40 +294,40 @@ Lasts for 30 seconds."
         <!-- 1v1 settings -->
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level1">
-                <BaseLocation x="75" y="145"/>
-                <BaseLocation x="632" y="265"/>
+                <BaseLocation x="75" y="145" team="0"/>
+                <BaseLocation x="632" y="265" team="1"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level2">
-                <BaseLocation x="75" y="305"/>
-                <BaseLocation x="622" y="265"/>
+                <BaseLocation x="75" y="305" team="0"/>
+                <BaseLocation x="622" y="265" team="1"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="60" y="205"/>
-                <BaseLocation x="642" y="175"/>
+                <BaseLocation x="60" y="205" team="0"/>
+                <BaseLocation x="642" y="175" team="1"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <!-- 2v1 settings -->
         <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
             <MapSettings backgroundName="Level1">
-                <BaseLocation x="622" y="115"/>
-                <BaseLocation x="622" y="295"/>
-                <BaseLocation x="85" y="205"/>
+                <BaseLocation x="622" y="115" team="0"/>
+                <BaseLocation x="622" y="295" team="0"/>
+                <BaseLocation x="85" y="205" team="1"/>
                 <SpellDropLocation x="320" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="85" y="125"/>
-                <BaseLocation x="85" y="305"/>
-                <BaseLocation x="622" y="215"/>
+                <BaseLocation x="85" y="125" team="0"/>
+                <BaseLocation x="85" y="305" team="0"/>
+                <BaseLocation x="622" y="215" team="1"/>
                 <SpellDropLocation x="386" y="205"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -335,18 +335,18 @@ Lasts for 30 seconds."
         <!-- 1v1v1 settings -->
         <MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level1" mapScaleY="1.88">
-                <BaseLocation x="125" y="595"/>
-                <BaseLocation x="575" y="595"/>
-                <BaseLocation x="350" y="205"/>
+                <BaseLocation x="125" y="595" team="0"/>
+                <BaseLocation x="575" y="595" team="1"/>
+                <BaseLocation x="350" y="205" team="2"/>
                 <SpellDropLocation x="350" y="400"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level3" mapScaleY="1.88">
-                <BaseLocation x="125" y="205"/>
-                <BaseLocation x="575" y="205"/>
-                <BaseLocation x="350" y="595"/>
+                <BaseLocation x="125" y="205" team="0"/>
+                <BaseLocation x="575" y="205" team="1"/>
+                <BaseLocation x="350" y="595" team="2"/>
                 <SpellDropLocation x="350" y="400"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -354,20 +354,20 @@ Lasts for 30 seconds."
         <!-- 2v1v1 settings -->
         <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
             <MapSettings backgroundName="Level1">
-                <BaseLocation x="632" y="155"/>
-                <BaseLocation x="632" y="255"/>
-                <BaseLocation x="95" y="110"/>
-                <BaseLocation x="95" y="325"/>
+                <BaseLocation x="632" y="155" team="0"/>
+                <BaseLocation x="632" y="255" team="0"/>
+                <BaseLocation x="95" y="110" team="1"/>
+                <BaseLocation x="95" y="325" team="2"/>
                 <SpellDropLocation x="340" y="217"/>
             </MapSettings>
         </MultiplayerSettings>
 
         <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="90" y="155"/>
-                <BaseLocation x="90" y="255"/>
-                <BaseLocation x="627" y="110"/>
-                <BaseLocation x="627" y="305"/>
+                <BaseLocation x="90" y="155" team="0"/>
+                <BaseLocation x="90" y="255" team="0"/>
+                <BaseLocation x="627" y="110" team="1"/>
+                <BaseLocation x="627" y="305" team="2"/>
                 <SpellDropLocation x="378" y="217"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -375,10 +375,10 @@ Lasts for 30 seconds."
         <!-- 3v1 settings -->
         <MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="2.8">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="642" y="185"/>
-                <BaseLocation x="590" y="115"/>
-                <BaseLocation x="590" y="335"/>
-                <BaseLocation x="70" y="185"/>
+                <BaseLocation x="642" y="185" team="0"/>
+                <BaseLocation x="590" y="115" team="0"/>
+                <BaseLocation x="590" y="335" team="0"/>
+                <BaseLocation x="70" y="185" team="1"/>
                 <SpellDropLocation x="250" y="160"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -386,10 +386,10 @@ Lasts for 30 seconds."
         <!-- 2v2 settings -->
         <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level3">
-                <BaseLocation x="85" y="115"/>
-                <BaseLocation x="85" y="325"/>
-                <BaseLocation x="627" y="115"/>
-                <BaseLocation x="627" y="325"/>
+                <BaseLocation x="85" y="115" team="0"/>
+                <BaseLocation x="85" y="325" team="0"/>
+                <BaseLocation x="627" y="115" team="1"/>
+                <BaseLocation x="627" y="325" team="1"/>
                 <SpellDropLocation x="356" y="220"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -397,10 +397,10 @@ Lasts for 30 seconds."
 
         <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level1">
-                <BaseLocation x="627" y="155"/>
-                <BaseLocation x="627" y="265"/>
-                <BaseLocation x="85" y="155"/>
-                <BaseLocation x="85" y="265"/>
+                <BaseLocation x="627" y="155" team="0"/>
+                <BaseLocation x="627" y="265" team="0"/>
+                <BaseLocation x="85" y="155" team="1"/>
+                <BaseLocation x="85" y="265" team="1"/>
                 <SpellDropLocation x="356" y="210"/>
             </MapSettings>
         </MultiplayerSettings>
@@ -408,10 +408,10 @@ Lasts for 30 seconds."
         <!-- 1v1v1v1 settings -->
         <MultiplayerSettings arrangeType="1v1v1v1" smallerTeamHandicap="1">
             <MapSettings backgroundName="Level1" mapScaleY="1.88" scaleSprites="false">
-                <BaseLocation x="155" y="205"/>
-                <BaseLocation x="155" y="595"/>
-                <BaseLocation x="545" y="205"/>
-                <BaseLocation x="545" y="595"/>
+                <BaseLocation x="155" y="205" team="0"/>
+                <BaseLocation x="155" y="595" team="1"/>
+                <BaseLocation x="545" y="205" team="2"/>
+                <BaseLocation x="545" y="595" team="3"/>
                 <SpellDropLocation x="350" y="400"/>
             </MapSettings>
         </MultiplayerSettings>

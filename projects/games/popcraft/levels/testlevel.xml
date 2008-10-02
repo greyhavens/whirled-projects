@@ -14,9 +14,9 @@
             spellDropTimeMax="8"/>
 
         <MapSettings backgroundName="Level1">
-            <BaseLocation x="60" y="185"/>
-            <BaseLocation x="622" y="115"/>
-            <BaseLocation x="622" y="295"/>
+            <BaseLocation x="60" y="185" team="0"/>
+            <BaseLocation x="622" y="115" team="1"/>
+            <BaseLocation x="622" y="295" team="1"/>
         </MapSettings>
 
         <InitialResources>

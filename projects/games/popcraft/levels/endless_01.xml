@@ -7,8 +7,8 @@
         <MapSequence>
             <Map>
                 <MapSettings backgroundName="Level2">
-                    <BaseLocation x="180" y="295"/>
-                    <BaseLocation x="500" y="265"/>
+                    <BaseLocation x="180" y="295" team="0"/>
+                    <BaseLocation x="500" y="265" team="1"/>
                 </MapSettings>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>

@@ -1,7 +1,6 @@
 package popcraft.mp {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -40,28 +39,14 @@ public class MultiplayerGameMode extends GameMode
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
         // structures with base locations so that we can put everyone in the correct place.
-        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
+        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
         var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
-        var teamInfos :Array = [];
-        var teamInfo :TeamInfo;
-        for (var teamId :int = 0; teamId < teamSizes.length; ++teamId) {
-            teamInfo = new TeamInfo();
-            teamInfo.teamId = teamId;
-            teamInfo.teamSize = teamSizes[teamId];
-            teamInfos.push(teamInfo);
-        }
-
-        teamInfos.sort(TeamInfo.teamSizeCompare);
-        var baseLocIndex :int = 0;
-        for each (teamInfo in teamInfos) {
-            for (var i :int = 0; i < teamInfo.teamSize; ++i) {
-                teamInfo.baseLocs.push(baseLocs[baseLocIndex++]);
+        var largestTeamSize :int = -1;
+        for each (var teamSize :int in teamSizes) {
+            if (teamSize > largestTeamSize) {
+                largestTeamSize = teamSize;
             }
         }
-
-        var largestTeamSize :int = TeamInfo(teamInfos[0]).teamSize;
-
-        teamInfos.sort(TeamInfo.teamIdCompare);
 
         // get some information about the players in the game
         var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
@@ -71,29 +56,22 @@ public class MultiplayerGameMode extends GameMode
         GameContext.playerInfos = [];
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
-            var playerInfo :PlayerInfo;
-            teamId = teams[playerIndex];
-            teamInfo = teamInfos[teamId];
-            var baseLoc :Vector2 = teamInfo.baseLocs.shift();
+            var teamId :int = teams[playerIndex];
+            teamSize = teamSizes[teamId];
+            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, teamId);
 
             // calculate the player's handicap
             var handicap :Number = 1;
-            if (teamInfo.teamSize < largestTeamSize) {
+            if (teamSize < largestTeamSize) {
                 handicap = GameContext.mpSettings.smallerTeamHandicap;
             }
             if (handicaps[playerIndex]) {
                 handicap *= Constants.HANDICAPPED_MULTIPLIER;
             }
 
-            if (GameContext.localPlayerIndex == playerIndex) {
-                var localPlayerInfo :LocalPlayerInfo =
-                    new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap);
-                playerInfo = localPlayerInfo;
-            } else {
-                playerInfo = new PlayerInfo(playerIndex, teamId, baseLoc, handicap);
-            }
-
-            GameContext.playerInfos.push(playerInfo);
+            GameContext.playerInfos.push(GameContext.localPlayerIndex == playerIndex ?
+                new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap) :
+                new PlayerInfo(playerIndex, teamId, baseLoc, handicap));
         }
     }
 
@@ -114,7 +92,7 @@ public class MultiplayerGameMode extends GameMode
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
             var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :Vector2 = playerInfo.baseLoc;
+            var baseLoc :Vector2 = playerInfo.baseLoc.loc;
 
             var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex);
             base.x = baseLoc.x;
@@ -134,36 +112,3 @@ public class MultiplayerGameMode extends GameMode
 }
 
 }
-
-/** Used by createPlayers() */
-class TeamInfo
-{
-    public var teamId :int;
-    public var teamSize :int;
-    public var baseLocs :Array = [];
-
-    // Used to sort TeamInfos from largest to smallest team size
-    public static function teamSizeCompare (a :TeamInfo, b :TeamInfo) :int
-    {
-        if (a.teamSize > b.teamSize) {
-            return -1;
-        } else if (a.teamSize < b.teamSize) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    // Used to sort TeamInfos from smallest to largest teamId
-    public static function teamIdCompare (a :TeamInfo, b :TeamInfo) :int
-    {
-        if (a.teamId < b.teamId) {
-            return -1;
-        } else if (a.teamId > b.teamId) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-}
-

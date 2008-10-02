@@ -30,9 +30,9 @@
         </GameDataOverride>
 
         <MapSettings backgroundName="Level1">
-            <BaseLocation x="75" y="145"/>
-            <BaseLocation x="632" y="185"/>
-            <BaseLocation x="632" y="285"/>
+            <BaseLocation x="75" y="145" team="0"/>
+            <BaseLocation x="632" y="185" team="1"/>
+            <BaseLocation x="632" y="285" team="1"/>
             <SpellDropLocation x="300" y="300"/>
         </MapSettings>
 

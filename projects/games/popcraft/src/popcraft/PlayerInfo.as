@@ -1,6 +1,5 @@
 package popcraft {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.SimObjectRef;
 
@@ -8,13 +7,14 @@ import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
 import popcraft.battle.WorkshopUnit;
+import popcraft.data.BaseLocationData;
 
 /**
  * Encapsulates public information about a player in the game.
  */
 public class PlayerInfo extends EventDispatcher
 {
-    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :Vector2,
+    public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
@@ -96,7 +96,7 @@ public class PlayerInfo extends EventDispatcher
         _leftGame = val;
     }
 
-    public function get baseLoc () :Vector2
+    public function get baseLoc () :BaseLocationData
     {
         return _baseLoc;
     }
@@ -192,7 +192,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _handicap :Number;
     protected var _minResourceAmount :int;
     protected var _maxResourceAmount :int;
-    protected var _baseLoc :Vector2;
+    protected var _baseLoc :BaseLocationData;
 
     protected static var log :Log = Log.getLog(PlayerInfo);
 

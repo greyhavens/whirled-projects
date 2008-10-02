@@ -40,7 +40,9 @@ public class MultiplayerConfig
 
         for (var playerSeat :int = 0; playerSeat < theTeams.length; ++playerSeat) {
             var teamId :int = theTeams[playerSeat];
-            teamSizes[teamId] += 1;
+            if (teamId >= 0) {
+                teamSizes[teamId] += 1;
+            }
         }
 
         return teamSizes;

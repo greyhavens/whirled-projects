@@ -1,6 +1,5 @@
 package popcraft.sp.story {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.net.OfflineTickedMessageManager;
@@ -84,12 +83,13 @@ public class StoryGameMode extends GameMode
 
         var level :LevelData = _level;
 
-        // in single player levels, base location are arranged in order of player id
-        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
+        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
 
         // Create the local player (always playerIndex=0, team=0)
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
-            0, 0, baseLocs[0], 1, level.playerName, level.playerHeadshot);
+            0, 0,
+            MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
+            1, level.playerName, level.playerHeadshot);
 
         // grant the player some starting resources
         var initialResources :Array = level.initialResources;
@@ -109,9 +109,10 @@ public class StoryGameMode extends GameMode
         var numComputers :int = level.computers.length;
         for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
             var cpData :ComputerPlayerData = level.computers[playerIndex - 1];
+            var team :int = cpData.team;
+            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, team);
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
-                playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName,
-                cpData.playerHeadshot);
+                playerIndex, team, baseLoc, cpData.playerName, cpData.playerHeadshot);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
@@ -149,13 +150,13 @@ public class StoryGameMode extends GameMode
             }
 
             var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :Vector2 = playerInfo.baseLoc;
+            var baseLoc :BaseLocationData = playerInfo.baseLoc;
 
             var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex,
                 maxHealthOverride, startingHealthOverride);
             base.isInvincible = invincible;
-            base.x = baseLoc.x;
-            base.y = baseLoc.y;
+            base.x = baseLoc.loc.x;
+            base.y = baseLoc.loc.y;
 
             playerInfo.base = base;
         }

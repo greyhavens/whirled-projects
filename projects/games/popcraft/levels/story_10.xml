@@ -28,10 +28,10 @@
             spellDropScatterMax="30"/>
 
         <MapSettings backgroundName="Level3">
-            <BaseLocation x="70" y="185"/>
-            <BaseLocation x="642" y="185"/>
-            <BaseLocation x="590" y="115"/>
-            <BaseLocation x="590" y="335"/>
+            <BaseLocation x="70" y="185" team="0"/>
+            <BaseLocation x="642" y="185" team="1"/>
+            <BaseLocation x="590" y="115" team="1"/>
+            <BaseLocation x="590" y="335" team="1"/>
             <SpellDropLocation x="250" y="160"/>
         </MapSettings>
 

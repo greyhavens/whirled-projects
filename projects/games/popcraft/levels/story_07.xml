@@ -25,8 +25,8 @@ He's sending several your way, but he'll be vulnerable for a short while after t
         </Hints>
 
         <MapSettings backgroundName="Level3">
-            <BaseLocation x="60" y="205"/>
-            <BaseLocation x="642" y="175"/>
+            <BaseLocation x="60" y="205" team="0"/>
+            <BaseLocation x="642" y="175" team="1"/>
         </MapSettings>
 
         <InitialResources/>
