@@ -131,12 +131,12 @@ public class LevelManager
                 var loadParams :Object;
                 if (_curLevelIndex == TEST_LEVEL) {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                        { url: "levels/testlevel.xml" } :
+                        { url: LEVELS_DIR + "/testlevel.xml" } :
                         { embeddedClass: LEVEL_TEST });
 
                 } else if (_curLevelIndex == DEMO_LEVEL) {
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                        { url: "levels/demolevel.xml" } :
+                        { url: LEVELS_DIR + "/demolevel.xml" } :
                         { embeddedClass: LEVEL_DEMO });
 
                 } else {
@@ -146,7 +146,7 @@ public class LevelManager
                     }
 
                     loadParams = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                        { url: "levels/story_" + levelNumString + ".xml" } :
+                        { url: LEVELS_DIR + "/story_" + levelNumString + ".xml" } :
                         { embeddedClass: LEVELS[_curLevelIndex] });
                 }
 
@@ -268,6 +268,7 @@ public class LevelManager
     protected static var log :Log = Log.getLog(LevelManager);
 
     protected static const RSRC_CURLEVEL :String = "curLevel";
+    protected static const LEVELS_DIR :String = "../levels";
 
     // Embedded level data
     [Embed(source="../../../../levels/story_01.xml", mimeType="application/octet-stream")]

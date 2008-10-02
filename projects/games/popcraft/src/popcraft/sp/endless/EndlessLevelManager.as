@@ -30,7 +30,7 @@ public class EndlessLevelManager
             if (null == _loadedLevel) {
 
                 var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                    { url: "levels/endless_01.xml" } :
+                    { url: LEVELS_DIR + "/endless_01.xml" } :
                     { embeddedClass: ENDLESS_LEVEL_1 });
 
                 if (forceReload) {
@@ -40,7 +40,7 @@ public class EndlessLevelManager
                     ResourceManager.instance.queueResourceLoad(
                         Constants.RESTYPE_GAMEDATA,
                         Constants.RSRC_DEFAULTGAMEDATA,
-                        { url: "levels/defaultGameData.xml" });
+                        { url: LEVELS_DIR + "/defaultGameData.xml" });
 
                     ResourceManager.instance.loadQueuedResources(
                         function () :void {
@@ -95,6 +95,7 @@ public class EndlessLevelManager
     protected static var log :Log = Log.getLog(EndlessLevelManager);
 
     protected static const RSRC_CURLEVEL :String = "curEndlessLevel";
+    protected static const LEVELS_DIR :String = "../levels";
 
     // Embedded level data
     [Embed(source="../../../../levels/endless_01.xml", mimeType="application/octet-stream")]
