@@ -1,5 +1,6 @@
 package popcraft {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 import com.threerings.util.ClassUtil;
@@ -248,8 +249,7 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // create player bases
-        createInitialWorkshops();
-        setupWorkshopMouseHandlers();
+        createWorkshops(GameContext.playerInfos);
 
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
@@ -346,7 +346,7 @@ public class GameMode extends TransitionMode
                 // destroy the targeted enemy's base
                 var enemyPlayerInfo :PlayerInfo =
                     GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
-                var enemyBase :WorkshopUnit = enemyPlayerInfo.base;
+                var enemyBase :WorkshopUnit = enemyPlayerInfo.workshop;
                 if (null != enemyBase) {
                     enemyBase.health = 0;
                 }
@@ -358,7 +358,7 @@ public class GameMode extends TransitionMode
                 // destroy all enemy bases
                 for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                     if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
-                        enemyBase = playerInfo.base;
+                        enemyBase = playerInfo.workshop;
                         if (null != enemyBase) {
                             enemyBase.health = 0;
                         }
@@ -545,39 +545,49 @@ public class GameMode extends TransitionMode
         var baseViews :Array = WorkshopView.getAll();
         for each (var baseView :WorkshopView in baseViews) {
             baseView.targetEnemyBadgeVisible =
-                (baseView.baseUnit.owningPlayerIndex == targetEnemyId);
+                (baseView.workshop.owningPlayerIndex == targetEnemyId);
         }
     }
 
-    protected function setupWorkshopMouseHandlers () :void
+    protected function createWorkshops (playerInfos :Array) :void
     {
-        // add click listeners to all the enemy bases.
-        // when an enemy base is clicked, that player becomes the new "target enemy" for the
-        // local player.
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var baseViews :Array = WorkshopView.getAll();
-        for each (var baseView :WorkshopView in baseViews) {
-            var owningPlayerIndex :int = baseView.baseUnit.owningPlayerIndex;
-            var owningPlayerInfo :PlayerInfo = GameContext.playerInfos[owningPlayerIndex];
-            baseView.targetEnemyBadgeVisible = (owningPlayerIndex == localPlayerInfo.targetedEnemyId);
+        for each (var playerInfo :PlayerInfo in playerInfos) {
+            var view :WorkshopView = GameContext.unitFactory.createWorkshop(playerInfo);
+            var workshop :WorkshopUnit = view.workshop;
 
-            if (localPlayerInfo.teamId != owningPlayerInfo.teamId && !owningPlayerInfo.isInvincible) {
-                this.registerEventListener(baseView.clickableObject, MouseEvent.MOUSE_DOWN,
-                    this.createBaseViewClickListener(baseView));
+            var loc :Vector2 = playerInfo.baseLoc.loc;
+            workshop.x = loc.x;
+            workshop.y = loc.y;
+
+            var isEnemy :Boolean = (workshop.owningPlayerInfo.teamId != localPlayerInfo.teamId);
+
+            // add click listeners to enemy workshops
+            if (isEnemy && !workshop.isInvincible) {
+                this.registerEventListener(
+                    view.clickableObject,
+                    MouseEvent.MOUSE_DOWN,
+                    this.createBaseViewClickListener(view));
             }
+
+            playerInfo.workshop = workshop;
         }
+
+        this.updateTargetEnemyBadgeLocation(localPlayerInfo.targetedEnemyId);
     }
 
     protected function createBaseViewClickListener (baseView :WorkshopView) :Function
     {
-        return function (...ignored) :void { enemyBaseViewClicked(baseView); }
+        return function (...ignored) :void {
+            enemyBaseViewClicked(baseView);
+        }
     }
 
     protected function enemyBaseViewClicked (enemyBaseView :WorkshopView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var newTargetEnemyId :int = enemyBaseView.baseUnit.owningPlayerIndex;
+        var newTargetEnemyId :int = enemyBaseView.workshop.owningPlayerIndex;
 
         Assert.isTrue(newTargetEnemyId != GameContext.localPlayerIndex);
 
@@ -701,7 +711,8 @@ public class GameMode extends TransitionMode
 
     protected function rngSeeded () :void
     {
-        // no-op - subclasses can override
+        // no-op - subclasses can override to do any early setup that requires the RNG to
+        // be set up
     }
 
     protected function createPlayers () :void
@@ -710,11 +721,6 @@ public class GameMode extends TransitionMode
     }
 
     protected function createMessageManager () :TickedMessageManager
-    {
-        throw new Error("abstract");
-    }
-
-    protected function createInitialWorkshops () :void
     {
         throw new Error("abstract");
     }

@@ -72,20 +72,18 @@ public class UnitFactory extends EventDispatcher
         this.dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
     }
 
-    public function createBaseUnit (owningPlayerIndex :int, maxHealthOverride :int = 0,
-        startingHealthOverride :int = 0) :WorkshopUnit
+    public function createWorkshop (owningPlayerInfo :PlayerInfo) :WorkshopView
     {
-        var base :WorkshopUnit = new WorkshopUnit(owningPlayerIndex, maxHealthOverride,
-            startingHealthOverride);
+        var workshop :WorkshopUnit = new WorkshopUnit(owningPlayerInfo);
+        GameContext.netObjects.addObject(workshop);
 
-        GameContext.netObjects.addObject(base);
+        var workshopView :WorkshopView = new WorkshopView(workshop);
+        GameContext.gameMode.addObject(workshopView, GameContext.battleBoardView.unitViewParent);
 
-        var baseView :WorkshopView = new WorkshopView(base);
-        GameContext.gameMode.addObject(baseView, GameContext.battleBoardView.unitViewParent);
+        this.dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP,
+            owningPlayerInfo.playerIndex));
 
-        this.dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP, owningPlayerIndex));
-
-        return base;
+        return workshopView;
     }
 }
 

@@ -25,7 +25,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         super(owningPlayerIndex, Constants.UNIT_TYPE_COURIER);
 
-        _spawnLoc = _owningPlayerInfo.base.unitSpawnLoc;
+        _spawnLoc = _owningPlayerInfo.workshop.unitSpawnLoc;
 
         _courierAI = new CourierAI(this);
         _groupName = getGroupName(owningPlayerIndex);
@@ -193,7 +193,7 @@ class CourierAI extends AITaskTree
             //log.info("retrieved spell");
             _unit.pickupSpell(data as SpellDropObject);
             // let's try to go home and deliver it
-            var base :WorkshopUnit = _unit.owningPlayerInfo.base;
+            var base :WorkshopUnit = _unit.owningPlayerInfo.workshop;
             if (null != base) {
                 this.addSubtask(new CourierMoveTask(_unit, base.unitLoc));
             }

@@ -42,7 +42,7 @@ class BossAI extends ColossusAI
 
     override public function init () :void
     {
-        _homeLoc = _boss.owningPlayerInfo.base.unitSpawnLoc;
+        _homeLoc = _boss.owningPlayerInfo.workshop.unitSpawnLoc;
         super.init();
     }
 

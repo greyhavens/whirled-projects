@@ -89,6 +89,7 @@ public class StoryGameMode extends GameMode
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
             0, 0,
             MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
+            level.playerBaseHealth, level.playerBaseStartHealth, false,
             1, level.playerName, level.playerHeadshot);
 
         // grant the player some starting resources
@@ -112,7 +113,8 @@ public class StoryGameMode extends GameMode
             var team :int = cpData.team;
             var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, team);
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
-                playerIndex, team, baseLoc, cpData.playerName, cpData.playerHeadshot);
+                playerIndex, team, baseLoc, cpData.baseHealth, cpData.baseStartHealth,
+                cpData.invincible, cpData.playerName, cpData.playerHeadshot);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
@@ -128,38 +130,6 @@ public class StoryGameMode extends GameMode
     override protected function createMessageManager () :TickedMessageManager
     {
         return new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
-    }
-
-    override protected function createInitialWorkshops () :void
-    {
-        var numPlayers :int = GameContext.numPlayers;
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            // in single-player levels, bases have custom health
-            var maxHealthOverride :int = 0;
-            var startingHealthOverride :int = 0;
-            var invincible :Boolean;
-            if (playerIndex == 0) {
-                maxHealthOverride = _level.playerBaseHealth;
-                startingHealthOverride = _level.playerBaseStartHealth;
-            } else {
-                var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
-                maxHealthOverride = cpData.baseHealth;
-                startingHealthOverride = cpData.baseStartHealth;
-                invincible = cpData.invincible;
-            }
-
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :BaseLocationData = playerInfo.baseLoc;
-
-            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex,
-                maxHealthOverride, startingHealthOverride);
-            base.isInvincible = invincible;
-            base.x = baseLoc.loc.x;
-            base.y = baseLoc.loc.y;
-
-            playerInfo.base = base;
-        }
     }
 
     override protected function handleGameOver () :void

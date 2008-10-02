@@ -10,9 +10,11 @@ import popcraft.data.BaseLocationData;
 public class ComputerPlayerInfo extends PlayerInfo
 {
     public function ComputerPlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
+        maxHealth :Number, startHealth :Number, invincible :Boolean,
         playerName :String, playerHeadshot :DisplayObject = null)
     {
-        super(playerIndex, teamId, baseLoc, 1, playerName, playerHeadshot);
+        super(playerIndex, teamId, baseLoc, maxHealth, startHealth, invincible, 1, playerName,
+            playerHeadshot);
 
         _creatureSpells = new Array(Constants.CREATURE_SPELL_TYPE__LIMIT);
         for (var i :int = 0; i < _creatureSpells.length; ++i) {

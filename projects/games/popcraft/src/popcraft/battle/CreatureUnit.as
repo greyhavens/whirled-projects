@@ -36,7 +36,7 @@ public class CreatureUnit extends Unit
         super(owningPlayerIndex, unitType);
 
         // start at our owning player's base's spawn loc
-        var spawnLoc :Vector2 = _owningPlayerInfo.base.unitSpawnLoc;
+        var spawnLoc :Vector2 = _owningPlayerInfo.workshop.unitSpawnLoc;
         this.x = spawnLoc.x;
         this.y = spawnLoc.y;
 
@@ -189,11 +189,11 @@ public class CreatureUnit extends Unit
     {
         var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[_owningPlayerInfo.targetedEnemyId];
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
-            return enemyPlayerInfo.baseRef;
+            return enemyPlayerInfo.workshopRef;
         } else {
             var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerIndex);
             if (null != newEnemy) {
-                return newEnemy.baseRef;
+                return newEnemy.workshopRef;
             }
         }
 

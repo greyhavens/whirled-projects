@@ -1,6 +1,5 @@
 package popcraft.mp {
 
-import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -52,6 +51,9 @@ public class MultiplayerGameMode extends GameMode
         var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
         GameContext.localPlayerIndex = AppContext.gameCtrl.game.seating.getMyPosition();
 
+        var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
+        var workshopHealth :Number = workshopData.maxHealth;
+
         // create PlayerInfo structures
         GameContext.playerInfos = [];
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
@@ -70,8 +72,10 @@ public class MultiplayerGameMode extends GameMode
             }
 
             GameContext.playerInfos.push(GameContext.localPlayerIndex == playerIndex ?
-                new LocalPlayerInfo(playerIndex, teamId, baseLoc, handicap) :
-                new PlayerInfo(playerIndex, teamId, baseLoc, handicap));
+                new LocalPlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth,
+                                    false, handicap) :
+                new PlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth, false,
+                                handicap));
         }
     }
 
@@ -84,22 +88,6 @@ public class MultiplayerGameMode extends GameMode
     {
         return new OnlineTickedMessageManager(AppContext.gameCtrl,
              SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
-    }
-
-    override protected function createInitialWorkshops () :void
-    {
-        var numPlayers :int = GameContext.numPlayers;
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :Vector2 = playerInfo.baseLoc.loc;
-
-            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex);
-            base.x = baseLoc.x;
-            base.y = baseLoc.y;
-
-            playerInfo.base = base;
-        }
     }
 
     override protected function handleGameOver () :void

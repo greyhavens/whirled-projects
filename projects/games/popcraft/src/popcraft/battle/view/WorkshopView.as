@@ -264,7 +264,7 @@ public class WorkshopView extends BattlefieldSprite
         }
     }
 
-    public function get baseUnit () :WorkshopUnit
+    public function get workshop () :WorkshopUnit
     {
         return _unit;
     }

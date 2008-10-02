@@ -15,11 +15,15 @@ import popcraft.data.BaseLocationData;
 public class PlayerInfo extends EventDispatcher
 {
     public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
-        handicap :Number = 1, playerName :String = null, playerHeadshot :DisplayObject = null)
+        maxHealth :Number, startHealth :Number, invincible :Boolean,
+        handicap :Number, playerName :String = null, playerHeadshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
         _teamId = teamId;
         _baseLoc = baseLoc;
+        _maxHealth = maxHealth;
+        _startHealth = startHealth;
+        _invincible = invincible;
         _handicap = handicap;
 
         _minResourceAmount = GameContext.gameData.minResourceAmount;
@@ -101,19 +105,19 @@ public class PlayerInfo extends EventDispatcher
         return _baseLoc;
     }
 
-    public function get baseRef () :SimObjectRef
+    public function get workshopRef () :SimObjectRef
     {
-        return _baseRef;
+        return _workshopRef;
     }
 
-    public function get base () :WorkshopUnit
+    public function get workshop () :WorkshopUnit
     {
-        return _baseRef.object as WorkshopUnit;
+        return _workshopRef.object as WorkshopUnit;
     }
 
-    public function set base (val :WorkshopUnit) :void
+    public function set workshop (val :WorkshopUnit) :void
     {
-        _baseRef = val.ref;
+        _workshopRef = val.ref;
     }
 
     public function get isAlive () :Boolean
@@ -121,30 +125,33 @@ public class PlayerInfo extends EventDispatcher
         // If this is called before the game has been completely set up,
         // _baseRef will be null and (null != this.base) will NPE. We can
         // assume, in this situation, that the player is alive.
-        return (null == _baseRef || null != this.base);
+        return (null == _workshopRef || null != this.workshop);
     }
 
     public function get isInvincible () :Boolean
     {
-        return (null != _baseRef && this.base.isInvincible);
+        return _invincible;
     }
 
     public function get health () :Number
     {
-        var base :WorkshopUnit = this.base;
+        var base :WorkshopUnit = this.workshop;
         return (null != base ? base.health : 0);
     }
 
     public function get maxHealth () :Number
     {
-        var base :WorkshopUnit = this.base;
-        return (null != base ? base.maxHealth : 0);
+        return _maxHealth;
+    }
+
+    public function get startHealth () :Number
+    {
+        return _startHealth;
     }
 
     public function get healthPercent () :Number
     {
-        var base :WorkshopUnit = this.base;
-        return (null != base ? base.health / base.maxHealth : 0);
+        return (this.health / _maxHealth);
     }
 
     public function get targetedEnemyId () :int
@@ -184,11 +191,14 @@ public class PlayerInfo extends EventDispatcher
 
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
     protected var _teamId :int;
+    protected var _maxHealth :Number;
+    protected var _startHealth :Number;
+    protected var _invincible :Boolean;
     protected var _playerName :String;
     protected var _playerHeadshot :DisplayObject;
     protected var _leftGame :Boolean;
     protected var _targetedEnemyId :int;
-    protected var _baseRef :SimObjectRef;
+    protected var _workshopRef :SimObjectRef;
     protected var _handicap :Number;
     protected var _minResourceAmount :int;
     protected var _maxResourceAmount :int;

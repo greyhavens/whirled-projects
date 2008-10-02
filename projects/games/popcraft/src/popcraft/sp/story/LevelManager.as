@@ -157,7 +157,7 @@ public class LevelManager
                     ResourceManager.instance.queueResourceLoad(
                         Constants.RESTYPE_GAMEDATA,
                         Constants.RSRC_DEFAULTGAMEDATA,
-                        { url: "levels/defaultGameData.xml" });
+                        { url: LEVELS_DIR + "/defaultGameData.xml" });
 
                     ResourceManager.instance.loadQueuedResources(
                         function () :void {

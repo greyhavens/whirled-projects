@@ -109,38 +109,6 @@ public class EndlessGameMode extends GameMode
         }
     }
 
-    override protected function createInitialWorkshops () :void
-    {
-        /*var numPlayers :int = GameContext.numPlayers;
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            // in single-player levels, bases have custom health
-            var maxHealthOverride :int = 0;
-            var startingHealthOverride :int = 0;
-            var invincible :Boolean;
-            if (playerIndex == 0) {
-                maxHealthOverride = _level.playerBaseHealth;
-                startingHealthOverride = _level.playerBaseStartHealth;
-            } else {
-                var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
-                maxHealthOverride = cpData.baseHealth;
-                startingHealthOverride = cpData.baseStartHealth;
-                invincible = cpData.invincible;
-            }
-
-            var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-            var baseLoc :Vector2 = playerInfo.baseLoc;
-
-            var base :WorkshopUnit = GameContext.unitFactory.createBaseUnit(playerIndex,
-                maxHealthOverride, startingHealthOverride);
-            base.isInvincible = invincible;
-            base.x = baseLoc.x;
-            base.y = baseLoc.y;
-
-            playerInfo.base = base;
-        }*/
-    }
-
     override protected function handleGameOver () :void
     {
         fadeOutToMode(new EndlessLevelOutroMode(), FADE_OUT_TIME);

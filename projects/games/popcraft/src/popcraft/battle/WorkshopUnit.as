@@ -8,20 +8,19 @@ public class WorkshopUnit extends Unit
 {
     public static const GROUP_NAME :String = "PlayerBaseUnit";
 
-    public function WorkshopUnit (owningPlayerIndex :int, maxHealthOverride :int = 0, startingHealthOverride :int = 0)
+    public function WorkshopUnit (owningPlayerInfo :PlayerInfo)
     {
-        super(owningPlayerIndex, Constants.UNIT_TYPE_WORKSHOP);
+        super(owningPlayerInfo.playerIndex, Constants.UNIT_TYPE_WORKSHOP);
 
-        if (maxHealthOverride > 0) {
-            _maxHealth = maxHealthOverride;
-        }
-
-        _health = (startingHealthOverride > 0 ? startingHealthOverride : _maxHealth);
+        _maxHealth = owningPlayerInfo.maxHealth;
+        _health = owningPlayerInfo.startHealth;
+        _invincible = owningPlayerInfo.isInvincible;
     }
 
     public function get unitSpawnLoc () :Vector2
     {
-        var offset :Vector2 = (_loc.x <= Constants.SCREEN_SIZE.x * 0.5 ? LEFT_SPAWN_OFFSET : RIGHT_SPAWN_OFFSET);
+        var offset :Vector2 =
+            (_loc.x <= Constants.SCREEN_SIZE.x * 0.5 ? LEFT_SPAWN_OFFSET : RIGHT_SPAWN_OFFSET);
         return new Vector2(_loc.x + offset.x, _loc.y + offset.y);
     }
 
