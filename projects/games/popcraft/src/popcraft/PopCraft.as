@@ -65,10 +65,6 @@ public class PopCraft extends Sprite
         // create a new random stream for the puzzle
         AppContext.randStreamPuzzle = Rand.addStream();
 
-        // init other managers
-        AppContext.levelMgr = new LevelManager();
-        AppContext.globalPlayerStats = new PlayerStats();
-
         // init the cookie manager
         UserCookieManager.addDataSource(AppContext.levelMgr);
         UserCookieManager.addDataSource(AppContext.globalPlayerStats);
@@ -88,8 +84,8 @@ public class PopCraft extends Sprite
             AppContext.playerLevelPacks.init(AppContext.gameCtrl.player.getPlayerLevelPacks());
         }
 
-        AppContext.mainLoop.pushMode(new LoadingMode());
         AppContext.mainLoop.run();
+        AppContext.mainLoop.pushMode(new LoadingMode());
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -124,7 +120,7 @@ import popcraft.mp.GameLobbyMode;
 
 class LoadingMode extends GenericLoadingMode
 {
-    public function LoadingMode ()
+    override protected function setup () :void
     {
         _loadingResources = true;
         UserCookieManager.readCookie();
@@ -133,10 +129,13 @@ class LoadingMode extends GenericLoadingMode
 
     protected function loadSingleOrMultiplayerResources () :void
     {
-        if (Resources.pendLoadLevelPackResources(AppContext.isMultiplayer ?
+        if (Resources.queueLevelPackResources(AppContext.isMultiplayer ?
             Resources.MP_LEVEL_PACK_RESOURCES :
             Resources.SP_LEVEL_PACK_RESOURCES)) {
             ResourceManager.instance.loadQueuedResources(resourceLoadComplete, onLoadError);
+
+        } else {
+            resourceLoadComplete();
         }
     }
 

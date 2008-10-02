@@ -20,14 +20,14 @@ public class Resources
 
     public static function loadLevelPackResources (resourceNames :Array, callback :Function) :void
     {
-        if (pendLoadLevelPackResources(resourceNames)) {
+        if (queueLevelPackResources(resourceNames)) {
             MainLoop.instance.pushMode(new LevelPackLoadingMode(callback));
         } else {
             callback();
         }
     }
 
-    public static function pendLoadLevelPackResources (resourceNames :Array) :Boolean
+    public static function queueLevelPackResources (resourceNames :Array) :Boolean
     {
         var needsLoad :Boolean;
         var rm :ResourceManager = ResourceManager.instance;
@@ -69,6 +69,11 @@ public class Resources
     public static function loadBaseResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
+        // Comment these three lines out when doing a release!
+        if (Constants.DEBUG_NO_LEVEL_PACKS) {
+            Resources_Debug.queueLevelPackResources();
+        }
+
         var rm :ResourceManager = ResourceManager.instance;
 
         // data

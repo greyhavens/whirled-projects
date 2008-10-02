@@ -9,9 +9,9 @@ public class EndlessLevelResource extends XmlResource
         super(resourceName, loadParams, objectGenerator);
     }
 
-    public function get levelData () :LevelData
+    public function get levelData () :EndlessLevelData
     {
-        return super.generatedObject as LevelData;
+        return super.generatedObject as EndlessLevelData;
     }
 
     protected static function objectGenerator (xml :XML) :EndlessLevelData

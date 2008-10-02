@@ -26,17 +26,9 @@ public class EndlessMapData
             mapData.computerGroups.push(group);
         }
 
-        // parse the available units
-        for each (var unitData :XML in xml.AvailableUnits.Unit) {
-            mapData.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type",
-                Constants.PLAYER_CREATURE_UNIT_NAMES));
-        }
-
-        // parse available spells
-        for each (var spellData :XML in xml.AvailableSpells.Spell) {
-            mapData.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type",
-                Constants.SPELL_NAMES));
-        }
+        // parse the available units and spells
+        mapData.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
+        mapData.availableSpells = DataUtils.parseSpellTypes(xml.AvailableSpells[0]);
 
         return mapData;
     }

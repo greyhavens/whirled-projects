@@ -49,6 +49,8 @@
             <Unit type="grunt"/>
         </AvailableUnits>
 
+        <AvailableSpells/>
+
         <Computer
             playerName="Ralph"
             playerHeadshotName="portrait_ralph"

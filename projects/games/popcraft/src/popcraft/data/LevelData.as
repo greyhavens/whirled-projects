@@ -84,17 +84,9 @@ public class LevelData
             level.levelHints.push(String(hintData));
         }
 
-        // parse the available units
-        for each (var unitData :XML in xml.AvailableUnits.Unit) {
-            level.availableUnits.push(XmlReader.getAttributeAsEnum(unitData, "type",
-                Constants.PLAYER_CREATURE_UNIT_NAMES));
-        }
-
-        // parse available spells
-        for each (var spellData :XML in xml.AvailableSpells.Spell) {
-            level.availableSpells.push(XmlReader.getAttributeAsEnum(spellData, "type",
-                Constants.SPELL_NAMES));
-        }
+        // parse the available units and spells
+        level.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
+        level.availableSpells = DataUtils.parseSpellTypes(xml.AvailableSpells[0]);
 
         // parse the computer players
         for each (var computerData :XML in xml.Computer) {

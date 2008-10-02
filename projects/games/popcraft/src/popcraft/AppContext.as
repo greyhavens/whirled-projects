@@ -9,6 +9,7 @@ import com.whirled.game.GameControl;
 import flash.display.Sprite;
 
 import popcraft.data.*;
+import popcraft.sp.endless.EndlessLevelManager;
 import popcraft.sp.story.LevelManager;
 
 public class AppContext
@@ -16,9 +17,10 @@ public class AppContext
     public static var mainSprite :Sprite;
     public static var mainLoop :MainLoop;
     public static var gameCtrl :GameControl;
-    public static var levelMgr :LevelManager;
     public static var randStreamPuzzle :uint;
-    public static var globalPlayerStats :PlayerStats;
+    public static var levelMgr :LevelManager = new LevelManager();
+    public static var endlessLevelMgr :EndlessLevelManager = new EndlessLevelManager();
+    public static var globalPlayerStats :PlayerStats = new PlayerStats();
     public static var allLevelPacks :LevelPackManager = new LevelPackManager();
     public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
 

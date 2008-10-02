@@ -72,7 +72,7 @@ public class EndlessLevelManager
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.pushMode(new LevelLoadErrorMode(err));
+        AppContext.mainLoop.pushMode(new EndlessLevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -85,14 +85,14 @@ public class EndlessLevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new StoryGameMode(_loadedLevel));
+            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevel));
         }
     }
 
     protected var _loadedLevel :EndlessLevelData;
     protected var _levelReadyCallback :Function;
 
-    protected static var log :Log = Log.getLog(LevelManager);
+    protected static var log :Log = Log.getLog(EndlessLevelManager);
 
     protected static const RSRC_CURLEVEL :String = "curEndlessLevel";
 

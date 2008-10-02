@@ -1,24 +1,59 @@
 package popcraft.sp.endless {
 
-import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
+import com.threerings.util.ArrayUtil;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.net.*;
 
 import popcraft.*;
-import popcraft.data.EndlessMapData;
+import popcraft.battle.*;
+import popcraft.data.*;
 import popcraft.mp.*;
+import popcraft.sp.*;
 
 public class EndlessGameMode extends GameMode
 {
+    public function EndlessGameMode (level :EndlessLevelData)
+    {
+        _level = level;
+    }
+
+    override public function playerEarnedResources (resourceType :int, offset :int,
+        numClearPieces :int) :int
+    {
+        var actualResourcesEarned :int =
+            super.playerEarnedResources(resourceType, offset, numClearPieces);
+
+        // TODO - count this towards the player's score
+
+        return actualResourcesEarned;
+    }
+
     override public function get canPause () :Boolean
     {
         return GameContext.isSinglePlayerGame;
     }
 
+    override public function isAvailableUnit (unitType :int) :Boolean
+    {
+        return ArrayUtil.contains(curMapData.availableUnits, unitType);
+    }
+
+    override public function get availableSpells () :Array
+    {
+        return curMapData.availableSpells;
+    }
+
+    override public function get mapSettings () :MapSettingsData
+    {
+        return curMapData.mapSettings;
+    }
+
     override protected function createPlayers () :void
     {
-        GameContext.localPlayerIndex = 0;
+        /*GameContext.localPlayerIndex = 0;
         GameContext.playerInfos = [];
 
-        var level :LevelData = GameContext.storyLevel;
+        var level :LevelData = _level;
 
         // in single player levels, base location are arranged in order of player id
         var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
@@ -52,7 +87,7 @@ public class EndlessGameMode extends GameMode
 
             // create the computer player object
             GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
-        }
+        }*/
     }
 
     override protected function createRandSeed () :uint
@@ -76,7 +111,7 @@ public class EndlessGameMode extends GameMode
 
     override protected function createInitialWorkshops () :void
     {
-        var numPlayers :int = GameContext.numPlayers;
+        /*var numPlayers :int = GameContext.numPlayers;
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
             // in single-player levels, bases have custom health
@@ -84,10 +119,10 @@ public class EndlessGameMode extends GameMode
             var startingHealthOverride :int = 0;
             var invincible :Boolean;
             if (playerIndex == 0) {
-                maxHealthOverride = GameContext.storyLevel.playerBaseHealth;
-                startingHealthOverride = GameContext.storyLevel.playerBaseStartHealth;
+                maxHealthOverride = _level.playerBaseHealth;
+                startingHealthOverride = _level.playerBaseStartHealth;
             } else {
-                var cpData :ComputerPlayerData = GameContext.storyLevel.computers[playerIndex - 1];
+                var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
                 maxHealthOverride = cpData.baseHealth;
                 startingHealthOverride = cpData.baseStartHealth;
                 invincible = cpData.invincible;
@@ -103,44 +138,22 @@ public class EndlessGameMode extends GameMode
             base.y = baseLoc.y;
 
             playerInfo.base = base;
-        }
-    }
-
-    override public function localPlayerPurchasedCreature (unitType :int) :void
-    {
-        if (GameContext.storyLevel.isAvailableUnit(unitType)) {
-            super.localPlayerPurchasedCreature(unitType);
-        }
+        }*/
     }
 
     override protected function handleGameOver () :void
     {
-        // show the appropriate outro screen
-        var nextMode :AppMode;
-        var levelPackResources :Array = [];
-        if (AppContext.levelMgr.isLastLevel &&
-            GameContext.winningTeamId == GameContext.localPlayerInfo.teamId) {
-
-            nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO);
-            levelPackResources = Resources.EPILOGUE_RESOURCES;
-
-        } else {
-            nextMode = new LevelOutroMode();
-        }
-
-        fadeOut(function () :void {
-            Resources.loadLevelPackResourcesAndSwitchModes(levelPackResources, nextMode);
-        }, FADE_OUT_TIME);
-
+        fadeOutToMode(new EndlessLevelOutroMode(), FADE_OUT_TIME);
         GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
         GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
-    protected function get mapData () :EndlessMapData
+    protected function get curMapData () :EndlessMapData
     {
         return GameContext.endlessLevel.mapSequence[_mapDataIndex];
     }
 
+    protected var _level :EndlessLevelData;
     protected var _mapDataIndex :int;
 }
 

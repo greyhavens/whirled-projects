@@ -161,13 +161,6 @@ public class StoryGameMode extends GameMode
         }
     }
 
-    override public function localPlayerPurchasedCreature (unitType :int) :void
-    {
-        if (_level.isAvailableUnit(unitType)) {
-            super.localPlayerPurchasedCreature(unitType);
-        }
-    }
-
     override protected function handleGameOver () :void
     {
         // show the appropriate outro screen
