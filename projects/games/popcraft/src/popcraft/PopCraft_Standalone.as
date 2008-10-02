@@ -1,17 +1,21 @@
-//
-// DON'T COMPILE THIS FILE WHEN RELEASING!
-
 package popcraft {
 
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 
-public class Resources_Debug
+[SWF(width="700", height="500", frameRate="30")]
+public class PopCraft_Standalone extends PopCraft
 {
+    override public function loadResources (completeCallback :Function, errorCallback :Function) :void
+    {
+        queueLevelPackResources();
+        super.loadResources(completeCallback, errorCallback);
+    }
+
     /**
      * Queues resources that are normally loaded from level packs. This is purely a debug
      * convenience, to make it possible to test the game in the standalone flash player.
      */
-    public static function queueLevelPackResources () :void
+    protected function queueLevelPackResources () :void
     {
         var rm :ResourceManager = ResourceManager.instance;
 

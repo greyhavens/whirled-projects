@@ -69,11 +69,6 @@ public class Resources
     public static function loadBaseResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
-        // Comment these three lines out when doing a release!
-        if (Constants.DEBUG_NO_LEVEL_PACKS) {
-            Resources_Debug.queueLevelPackResources();
-        }
-
         var rm :ResourceManager = ResourceManager.instance;
 
         // data

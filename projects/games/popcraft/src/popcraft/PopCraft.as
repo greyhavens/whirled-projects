@@ -85,7 +85,7 @@ public class PopCraft extends Sprite
         }
 
         AppContext.mainLoop.run();
-        AppContext.mainLoop.pushMode(new LoadingMode());
+        AppContext.mainLoop.pushMode(new LoadingMode(this));
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -105,6 +105,22 @@ public class PopCraft extends Sprite
         AppContext.mainLoop.shutdown();
     }
 
+    public function loadResources (completeCallback :Function, errorCallback :Function) :void
+    {
+        function loadSingleOrMultiplayerResources () :void {
+            if (Resources.queueLevelPackResources(AppContext.isMultiplayer ?
+                Resources.MP_LEVEL_PACK_RESOURCES :
+                Resources.SP_LEVEL_PACK_RESOURCES)) {
+                ResourceManager.instance.loadQueuedResources(completeCallback, errorCallback);
+
+            } else {
+                completeCallback();
+            }
+        }
+
+        Resources.loadBaseResources(loadSingleOrMultiplayerResources, errorCallback);
+    }
+
     protected static var log :Log = Log.getLog(PopCraft);
 }
 
@@ -120,23 +136,16 @@ import popcraft.mp.GameLobbyMode;
 
 class LoadingMode extends GenericLoadingMode
 {
+    public function LoadingMode (mainSprite :PopCraft)
+    {
+        _mainSprite = mainSprite;
+    }
+
     override protected function setup () :void
     {
         _loadingResources = true;
         UserCookieManager.readCookie();
-        Resources.loadBaseResources(loadSingleOrMultiplayerResources, onLoadError);
-    }
-
-    protected function loadSingleOrMultiplayerResources () :void
-    {
-        if (Resources.queueLevelPackResources(AppContext.isMultiplayer ?
-            Resources.MP_LEVEL_PACK_RESOURCES :
-            Resources.SP_LEVEL_PACK_RESOURCES)) {
-            ResourceManager.instance.loadQueuedResources(resourceLoadComplete, onLoadError);
-
-        } else {
-            resourceLoadComplete();
-        }
+        _mainSprite.loadResources(resourceLoadComplete, onLoadError);
     }
 
     override public function update (dt :Number) :void
@@ -172,5 +181,6 @@ class LoadingMode extends GenericLoadingMode
         AppContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
     }
 
+    protected var _mainSprite :PopCraft;
     protected var _loadingResources :Boolean;
 }

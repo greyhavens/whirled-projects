@@ -31,19 +31,16 @@ public class Constants
     at the beginning of a multiplayer match. */
     public static const HANDICAPPED_MULTIPLIER :Number = 0.65;
 
-    /* Debug options - these should all be false for a release.
-    Also when releasing, ensure that Resources.loadBaseResources is not calling
-    any functions in Resources_Debug.as. */
+    /* Debug options - these should all be false for a release. */
     public static const DEBUG_DRAW_STATS :Boolean = false;
     public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false;
+    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_ENABLE_ENDLESS_MODE :Boolean = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean = true;
-    // ensure that Resources.
     public static const DEBUG_NO_LEVEL_PACKS :Boolean = true;
 
     /* Enums, etc */
