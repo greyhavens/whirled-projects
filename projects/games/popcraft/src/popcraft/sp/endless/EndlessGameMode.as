@@ -6,7 +6,6 @@ import com.whirled.contrib.simplegame.net.*;
 
 import popcraft.*;
 import popcraft.battle.*;
-import popcraft.battle.view.ScoreView;
 import popcraft.data.*;
 import popcraft.mp.*;
 import popcraft.sp.*;
@@ -15,7 +14,9 @@ public class EndlessGameMode extends GameMode
 {
     public function EndlessGameMode (level :EndlessLevelData)
     {
-        _level = level;
+        EndlessGameContext.gameMode = this;
+        EndlessGameContext.level = level;
+
         this.cycleMapData();
     }
 
@@ -23,7 +24,7 @@ public class EndlessGameMode extends GameMode
     {
         super.setup();
 
-        var scoreView :ScoreView = new ScoreView(this);
+        var scoreView :ScoreView = new ScoreView();
         scoreView.x = (Constants.SCREEN_SIZE.x - scoreView.width) * 0.5;
         scoreView.y = 5;
         this.addObject(scoreView, GameContext.overlayLayer);
@@ -45,7 +46,7 @@ public class EndlessGameMode extends GameMode
         var actualResourcesEarned :int =
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
-        this.incrementScore(actualResourcesEarned * _level.pointsPerResource);
+        this.incrementScore(actualResourcesEarned * EndlessGameContext.level.pointsPerResource);
 
         return actualResourcesEarned;
     }
@@ -55,7 +56,7 @@ public class EndlessGameMode extends GameMode
         super.creatureKilled(creature, killingPlayerIndex);
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
-            this.incrementScore(_level.pointsPerCreatureKill[creature.unitType]);
+            this.incrementScore(EndlessGameContext.level.pointsPerCreatureKill[creature.unitType]);
         }
     }
 
@@ -114,7 +115,7 @@ public class EndlessGameMode extends GameMode
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
-            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
+            GameContext.netObjects.addObject(new EndlessComputerPlayer(cpData, playerIndex));
         }
     }
 
@@ -146,16 +147,18 @@ public class EndlessGameMode extends GameMode
 
     protected function cycleMapData () :void
     {
+        var level :EndlessLevelData = EndlessGameContext.level;
+
         _computerGroupIndex = 0;
-        _curMapData = _level.mapSequence[(++_mapDataIndex) % _level.mapSequence.length];
-        if (_mapDataIndex >= _level.mapSequence.length && !_curMapData.repeats) {
+        _curMapData = level.mapSequence[(++_mapDataIndex) % level.mapSequence.length];
+        if (_mapDataIndex >= level.mapSequence.length && !_curMapData.repeats) {
             cycleMapData();
         }
     }
 
     protected function get mapCycleNumber () :int
     {
-        return Math.floor(_mapDataIndex / _level.mapSequence.length) + 1;
+        return Math.floor(_mapDataIndex / EndlessGameContext.level.mapSequence.length) + 1;
     }
 
     protected function get curComputerGroup () :Array
@@ -164,7 +167,6 @@ public class EndlessGameMode extends GameMode
         return groups[_computerGroupIndex % groups.length];
     }
 
-    protected var _level :EndlessLevelData;
     protected var _curMapData :EndlessMapData;
     protected var _mapDataIndex :int = -1;
     protected var _computerGroupIndex :int;

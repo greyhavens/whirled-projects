@@ -7,6 +7,9 @@
         pointsPerResource="1"
         pointsPerOpponentKill="500">
 
+		<GameDataOverride nightLength="20">
+      	</GameDataOverride>
+
         <PointsPerCreatureKill>
             <Unit type="grunt" points="10"/>
             <Unit type="heavy" points="10"/>
@@ -26,18 +29,21 @@
 
                 <ComputerGroups>
                     <Group>
+<!-- 
+	baseHealthScale: applied each time the computer player is cycled back through (usually > 1)
+	waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through (usually < 1)
+-->
                         <Computer
                             playerName="Ralph"
                             playerHeadshotName="portrait_ralph"
                             baseStartHealth="150"
                             baseHealth="150"
-                            baseHealthScale="1.1"
+                            baseHealthScale="1.5"
+							waveDelayScale="0.5"
                             team="1">
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                    <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave delayBefore="25"/>
+                                    <Wave delayBefore="5"><Unit type="grunt" count="1"/></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>

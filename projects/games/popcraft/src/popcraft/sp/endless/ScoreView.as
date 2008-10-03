@@ -1,4 +1,4 @@
-package popcraft.battle.view {
+package popcraft.sp.endless {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -14,10 +14,8 @@ import popcraft.ui.UIBits;
 
 public class ScoreView extends SceneObject
 {
-    public function ScoreView (mode :EndlessGameMode)
+    public function ScoreView ()
     {
-        _mode = mode;
-
         _tf = UIBits.createText("00000", 1.5, 0, 0xFFFFFF);
         _tf.x = 3;
         _tf.y = 3;
@@ -36,11 +34,11 @@ public class ScoreView extends SceneObject
         return _sprite;
     }
 
-    override protected function update (dt:Number) :void
+    override protected function update (dt :Number) :void
     {
         super.update(dt);
 
-        var newScore :int = _mode.score;
+        var newScore :int = EndlessGameContext.gameMode.score;
         if (_lastScore != newScore) {
 
             var text :String = String(newScore);
@@ -61,7 +59,6 @@ public class ScoreView extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _tf :TextField;
-    protected var _mode :EndlessGameMode;
     protected var _lastScore :int;
 
     protected static const NUM_DIGITS :int = 5;

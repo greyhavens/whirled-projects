@@ -7,7 +7,6 @@ import com.whirled.contrib.simplegame.util.Rand;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
-import popcraft.sp.ComputerPlayerInfo;
 
 public class ComputerPlayer extends SimObject
 {
@@ -49,8 +48,15 @@ public class ComputerPlayer extends SimObject
 
         ++_waveIndex;
 
-        this.addNamedTask(SEND_WAVE_TASK, After(_nextWave.delayBefore,
-            new FunctionTask(sendNextWave)));
+        this.addNamedTask(
+            SEND_WAVE_TASK,
+            After(getWaveDelay(_nextWave),
+                new FunctionTask(sendNextWave)));
+    }
+
+    protected function getWaveDelay (wave :UnitWaveData) :Number
+    {
+        return wave.delayBefore;
     }
 
     protected function sendNextWave () :void

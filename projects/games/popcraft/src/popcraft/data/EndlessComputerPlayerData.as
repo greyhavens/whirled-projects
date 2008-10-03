@@ -5,6 +5,7 @@ import popcraft.util.XmlReader;
 public class EndlessComputerPlayerData extends ComputerPlayerData
 {
     public var baseHealthScale :Number;
+    public var waveDelayScale :Number;
 
     public static function fromXml (xml :XML) :EndlessComputerPlayerData
     {
@@ -13,6 +14,7 @@ public class EndlessComputerPlayerData extends ComputerPlayerData
         ComputerPlayerData.fromXml(xml, data);
 
         data.baseHealthScale = XmlReader.getNumberAttr(xml, "baseHealthScale");
+        data.waveDelayScale = XmlReader.getNumberAttr(xml, "waveDelayScale");
 
         return data;
     }
