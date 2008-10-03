@@ -286,7 +286,7 @@ public class Player
 
         // if we're in a room, update the room properties
         if (_room != null) {
-            _room.playerHealthUpdated(this);
+            _room.playerUpdated(this);
         }
     }
 
@@ -311,7 +311,7 @@ public class Player
 
         // and if we're in a room, update the room properties
         if (_room != null) {
-            _room.playerHealthUpdated(this);
+            _room.playerUpdated(this);
         }
     }
 

@@ -192,21 +192,23 @@ public class Room
         _lanternsDirty = true;
     }
 
-    internal function playerHealthUpdated (player :Player) :void
+    internal function playerUpdated (player :Player) :void
     {
-        _ctrl.props.setIn(
-            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_CUR_HEALTH,
-            player.health, true);
-    }
+        var key :String = Codes.DICT_PFX_PLAYER + player.playerId;
+        var dict :Dictionary = _ctrl.props.get(key) as Dictionary;
+        if (dict == null) {
+            dict = new Dictionary();
+        }
 
-    internal function playerLevelUpdated (player :Player) :void
-    {
-        _ctrl.props.setIn(
-            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_LEVEL,
-            player.level, true);
-        _ctrl.props.setIn(
-            Codes.DICT_PFX_PLAYER + player.playerId, Codes.IX_PLAYER_MAX_HEALTH,
-            player.maxHealth, true);
+        if (dict[Codes.IX_PLAYER_LEVEL] != player.level) {
+            _ctrl.props.setIn(key, Codes.IX_PLAYER_LEVEL, player.level);
+        }
+        if (dict[Codes.IX_PLAYER_MAX_HEALTH] != player.maxHealth) {
+            _ctrl.props.setIn(key, Codes.IX_PLAYER_MAX_HEALTH, player.maxHealth);
+        }
+        if (dict[Codes.IX_PLAYER_CUR_HEALTH] != player.health) {
+            _ctrl.props.setIn(key, Codes.IX_PLAYER_CUR_HEALTH, player.health);
+        }
     }
 
     internal function reset () :void
@@ -415,7 +417,7 @@ public class Room
             var playerId :int = int(p);
 
             var player :Player = Server.getPlayer(playerId);
-            if (player == null || player.room || null || player.room.roomId != this.roomId) {
+            if (player == null || player.room == null || player.room.roomId != this.roomId) {
                 // for the time being, you only get credit if you're present when the ghost dies
                 continue;
             }
