@@ -15,6 +15,7 @@ public class EndlessGameMode extends GameMode
     public function EndlessGameMode (level :EndlessLevelData)
     {
         _level = level;
+        this.cycleMapData();
     }
 
     public function incrementScore (offset :int) :void
@@ -40,59 +41,56 @@ public class EndlessGameMode extends GameMode
 
     override public function isAvailableUnit (unitType :int) :Boolean
     {
-        return ArrayUtil.contains(curMapData.availableUnits, unitType);
+        return ArrayUtil.contains(_curMapData.availableUnits, unitType);
     }
 
     override public function get availableSpells () :Array
     {
-        return curMapData.availableSpells;
+        return _curMapData.availableSpells;
     }
 
     override public function get mapSettings () :MapSettingsData
     {
-        return curMapData.mapSettings;
+        return _curMapData.mapSettings;
     }
 
     override protected function createPlayers () :void
     {
-        /*GameContext.localPlayerIndex = 0;
+        if (GameContext.isMultiplayerGame) {
+            // TODO
+            throw new Error("implement this");
+        }
+
+        GameContext.localPlayerIndex = 0;
         GameContext.playerInfos = [];
 
-        var level :LevelData = _level;
+        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
 
-        // in single player levels, base location are arranged in order of player id
-        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs;
+        var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
+        var workshopHealth :Number = workshopData.maxHealth;
 
         // Create the local player (always playerIndex=0, team=0)
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
-            0, 0, baseLocs[0], 1, level.playerName, level.playerHeadshot);
-
-        // grant the player some starting resources
-        var initialResources :Array = level.initialResources;
-        for (var resType :int = 0; resType < initialResources.length; ++resType) {
-            localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
-        }
-
-        // ...and some starting spells
-        var initialSpells :Array = level.initialSpells;
-        for (var spellType :int = 0; spellType < initialSpells.length; ++spellType) {
-            localPlayerInfo.addSpell(spellType, int(initialSpells[spellType]));
-        }
+            GameContext.localPlayerIndex, 0,
+            MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
+            workshopHealth, workshopHealth, false,
+            1, "Dennis", null);
 
         GameContext.playerInfos.push(localPlayerInfo);
 
         // create computer players
-        var numComputers :int = level.computers.length;
-        for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
-            var cpData :ComputerPlayerData = level.computers[playerIndex - 1];
+        var playerIndex :int = 1;
+        for each (var cpData :EndlessComputerPlayerData in this.curComputerGroup) {
+            var team :int = cpData.team;
+            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, team);
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
-                playerIndex, cpData.team, baseLocs[playerIndex], cpData.playerName,
-                cpData.playerHeadshot);
+                playerIndex, team, baseLoc, cpData.baseHealth, cpData.baseStartHealth,
+                cpData.invincible, cpData.playerName, cpData.playerHeadshot);
             GameContext.playerInfos.push(computerPlayerInfo);
 
             // create the computer player object
             GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
-        }*/
+        }
     }
 
     override protected function createRandSeed () :uint
@@ -121,13 +119,30 @@ public class EndlessGameMode extends GameMode
         GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
-    protected function get curMapData () :EndlessMapData
+    protected function cycleMapData () :void
     {
-        return _level.mapSequence[_mapDataIndex];
+        _computerGroupIndex = 0;
+        _curMapData = _level.mapSequence[(++_mapDataIndex) % _level.mapSequence.length];
+        if (_mapDataIndex >= _level.mapSequence.length && !_curMapData.repeats) {
+            cycleMapData();
+        }
+    }
+
+    protected function get mapCycleNumber () :int
+    {
+        return Math.floor(_mapDataIndex / _level.mapSequence.length) + 1;
+    }
+
+    protected function get curComputerGroup () :Array
+    {
+        var groups :Array = _curMapData.computerGroups;
+        return groups[_computerGroupIndex % groups.length];
     }
 
     protected var _level :EndlessLevelData;
-    protected var _mapDataIndex :int;
+    protected var _curMapData :EndlessMapData;
+    protected var _mapDataIndex :int = -1;
+    protected var _computerGroupIndex :int;
     protected var _score :int;
 }
 

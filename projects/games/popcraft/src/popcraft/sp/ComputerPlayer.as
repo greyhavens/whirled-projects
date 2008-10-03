@@ -1,4 +1,4 @@
-package popcraft.sp.story {
+package popcraft.sp {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;

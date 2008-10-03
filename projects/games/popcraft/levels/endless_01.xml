@@ -2,7 +2,8 @@
     <EndlessLevel
         maxMultiplier="5"
         multiplierOverflowScoreValue="1000"
-        multiplierDamageSoak="15">
+        multiplierDamageSoak="15"
+        pointsPerResource="1">
 
         <MapSequence>
             <Map repeats="true">
@@ -14,15 +15,23 @@
                 <AvailableSpells all="true"/>
 
                 <ComputerGroups>
-                    <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseStartHealth="150" baseHealth="150" team="1">
-                        <RepeatingDays>
-                            <Day repeatWaves="true">
-                                <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
-                                <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
-                                <Wave delayBefore="25"/>
-                            </Day>
-                        </RepeatingDays>
-                    </Computer>
+					<Group>
+                    	<Computer 
+							playerName="Ralph" 
+							playerHeadshotName="portrait_ralph" 
+							baseStartHealth="150" 
+							baseHealth="150"
+							baseHealthScale="1.1" 
+							team="1">
+	                        <RepeatingDays>
+	                            <Day repeatWaves="true">
+	                                <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
+	                                <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
+	                                <Wave delayBefore="25"/>
+	                            </Day>
+	                        </RepeatingDays>
+	                    </Computer>
+					</Group>
                 </ComputerGroups>
             </Map>
         </MapSequence>

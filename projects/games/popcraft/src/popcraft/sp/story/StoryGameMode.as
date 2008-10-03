@@ -81,25 +81,23 @@ public class StoryGameMode extends GameMode
         GameContext.localPlayerIndex = 0;
         GameContext.playerInfos = [];
 
-        var level :LevelData = _level;
-
-        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
+        var baseLocs :Array = _level.mapSettings.baseLocs.slice();
 
         // Create the local player (always playerIndex=0, team=0)
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
             0, 0,
             MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
-            level.playerBaseHealth, level.playerBaseStartHealth, false,
-            1, level.playerName, level.playerHeadshot);
+            _level.playerBaseHealth, _level.playerBaseStartHealth, false,
+            1, _level.playerName, _level.playerHeadshot);
 
         // grant the player some starting resources
-        var initialResources :Array = level.initialResources;
+        var initialResources :Array = _level.initialResources;
         for (var resType :int = 0; resType < initialResources.length; ++resType) {
             localPlayerInfo.setResourceAmount(resType, int(initialResources[resType]));
         }
 
         // ...and some starting spells
-        var initialSpells :Array = level.initialSpells;
+        var initialSpells :Array = _level.initialSpells;
         for (var spellType :int = 0; spellType < initialSpells.length; ++spellType) {
             localPlayerInfo.addSpell(spellType, int(initialSpells[spellType]));
         }
@@ -107,9 +105,9 @@ public class StoryGameMode extends GameMode
         GameContext.playerInfos.push(localPlayerInfo);
 
         // create computer players
-        var numComputers :int = level.computers.length;
+        var numComputers :int = _level.computers.length;
         for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
-            var cpData :ComputerPlayerData = level.computers[playerIndex - 1];
+            var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
             var team :int = cpData.team;
             var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, team);
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
