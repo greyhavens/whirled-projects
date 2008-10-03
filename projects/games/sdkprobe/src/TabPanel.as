@@ -18,14 +18,14 @@ public class TabPanel extends Sprite
         tab.name = name;
         tab.button = button;
         tab.contents = contents;
-        _tabs.push(tab);
 
         var rhs :int = 0;
         if (_tabs.length > 0) {
             var lastButt :Button = _tabs[_tabs.length - 1].button;
-            trace("Last button width is " + lastButt.width);
-            rhs = lastButt.x + lastButt.width + 10;
+            rhs = lastButt.x + lastButt.width + 5;
         }
+
+        _tabs.push(tab);
         button.x = rhs;
         contents.visible = false;
         contents.y = 20;
