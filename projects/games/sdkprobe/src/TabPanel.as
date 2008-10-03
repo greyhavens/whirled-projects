@@ -20,7 +20,13 @@ public class TabPanel extends Sprite
         tab.contents = contents;
         _tabs.push(tab);
 
-        button.x = 40 * (_tabs.length - 1);
+        var rhs :int = 0;
+        if (_tabs.length > 0) {
+            var lastButt :Button = _tabs[_tabs.length - 1].button;
+            trace("Last button width is " + lastButt.width);
+            rhs = lastButt.x + lastButt.width + 10;
+        }
+        button.x = rhs;
         contents.visible = false;
         contents.y = 20;
         button.addEventListener(ButtonEvent.CLICK, handleButtonClick);
