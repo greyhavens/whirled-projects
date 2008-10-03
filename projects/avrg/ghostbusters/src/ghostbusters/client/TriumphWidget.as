@@ -42,7 +42,7 @@ public class TriumphWidget extends ClipHandler
 
     protected function buttonClicked (evt :MouseEvent) :void
     {
-        _buttonCallback(this);
+        _buttonCallback();
     }
 
     protected var _coins :int;

@@ -146,9 +146,10 @@ public class GamePanel extends Sprite
             return;
         }
 
-        popup(new TriumphWidget(int(evt.value), function (widget :TriumphWidget) :void {
-            popdown(widget);
-        }));
+        _triumph = new TriumphWidget(int(evt.value), function () :void {
+            popdown(_triumph);
+            _triumph = null;
+        });
     }
 
     protected function checkForDeath () :void
@@ -238,7 +239,7 @@ public class GamePanel extends Sprite
     {
         var pClass :Class = null;
 
-        if (_triumph.root == null && _revive.root == null) {
+        if (_triumph == null && _revive == null) {
             switch(Game.state) {
             case Codes.STATE_SEEKING:
                 if (_seeking == false) {
