@@ -33,10 +33,6 @@ public class Game extends Sprite
 
     public static var panel :GamePanel;
 
-    public static var stageSize :Rectangle;
-    public static var scrollSize :Rectangle;
-    public static var roomBounds :Rectangle;
-
     public static var ourRoomId :int;
     public static var ourPlayerId :int;
 
@@ -68,11 +64,6 @@ public class Game extends Sprite
             AVRGamePlayerEvent.ENTERED_ROOM, function (event :Event) :void {
                 newRoom();
             });
-
-        control.local.addEventListener(
-            AVRGameControlEvent.SIZE_CHANGED, function (event :Event) :void {
-                newSize();
-            });
     }
 
     // TODO: move this
@@ -100,60 +91,13 @@ public class Game extends Sprite
     protected function handleAdded (event :Event) :void
     {
         _log.info("Added to stage: Initializing...");
-        newSize();
         newRoom();
 //        gameController.panel.showSplash();
-    }
-
-    protected function newSize () :void
-    {
-        var resized :Boolean = false;
-
-        var newSize :Rectangle = control.local.getPaintableArea();
-        if (newSize != null) {
-            stageSize = newSize;
-            _log.debug("Setting stage size: " + stageSize);
-            resized = true;
-
-        } else if (stageSize != null) {
-            _log.warning("Eek - null stage size -- keeping old data.");
-
-        } else {
-            _log.warning("Eek - null stage size -- hard coding at 700x500");
-            stageSize = new Rectangle(0, 0, 700, 500);
-        }
-
-        newSize = control.local.getPaintableArea(false);
-        if (newSize != null) {
-            scrollSize = newSize;
-            _log.debug("Setting scroll size: " + scrollSize);
-            resized = true;
-
-        } else if (scrollSize != null) {
-            _log.warning("Eek - null scroll size -- keeping old data.");
-
-        } else {
-            _log.warning("Eek - null scroll size -- hard coding at 700x500");
-            scrollSize = new Rectangle(0, 0, 700, 500);
-        }
     }
 
     protected function newRoom () :void
     {
         ourRoomId = control.room.getRoomId();
-
-        var newBounds :Rectangle = control.room.getRoomBounds();
-        if (newBounds != null) {
-            roomBounds = newBounds;
-            _log.debug("Setting room bounds: " + roomBounds);
-
-        } else if (roomBounds != null) {
-            _log.warning("Eek - null room bounds -- keeping old data.");
-
-        } else {
-            _log.warning("Eek - null room bounds -- hard coding at 700x500");
-            roomBounds = new Rectangle(0, 0, 700, 500);
-        }
     }
 
     protected static const _log :Log = Log.getLog(Game);

@@ -9,6 +9,7 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.text.TextField;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -69,16 +70,22 @@ public class HUD extends Sprite
 
     public function getRightEdge () :int
     {
-        if (Game.scrollSize == null) {
-            _log.debug("getRightEdge: scrollSize == null");
-        } else if (Game.stageSize == null) {
-            _log.debug("getRightEdge: stageSize == null");
-        } else if (_visualHud == null) {
-            _log.debug("getRightEdge: visualHud == null");
+        if (_visualHud != null) {
+            var paintable :Rectangle = Game.control.local.getPaintableArea(true);
+            if (paintable != null) {
+                var scroll :Rectangle = Game.control.local.getPaintableArea(false);
+                if (scroll != null) {
+                    // put the HUD to the right of the visible screen, or flush with the stage edge
+                    return Math.max(0, Math.min(scroll.width - MARGIN_LEFT - BORDER_LEFT,
+                                                paintable.right - _visualHud.width - MARGIN_LEFT));
+                } else {
+                    _log.debug("getRightEdge: paintableArea(false) == null");
+                }
+            } else {
+                _log.debug("getRightEdge: paintableArea(true) == null");
+            }
         } else {
-            // put the HUD to the right of the visible screen, or flush with the stage edge
-            return Math.max(0, Math.min(Game.scrollSize.width - MARGIN_LEFT - BORDER_LEFT,
-                                        Game.stageSize.right - _visualHud.width - MARGIN_LEFT));
+            _log.debug("getRightEdge: visualHud == null");
         }
         // wild guess while debugging
         return 700;

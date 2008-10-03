@@ -6,6 +6,7 @@ package ghostbusters.client {
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -105,12 +106,18 @@ public class GamePanel extends Sprite
             _log.warning("Can't frame content; frame clip not yet loaded.");
             return;
         }
-        _frame.frameContent(content);
 
+        var paintable :Rectangle = Game.control.local.getPaintableArea(true);
+        if (paintable == null) {
+            _log.warning("Can't frame content; we have no dimensions!");
+            return;
+        }
+
+        _frame.frameContent(content);
         this.addChild(_frame);
 
-        _frame.x = (Game.stageSize.width - 100 - _frame.width) / 2;
-        _frame.y = (Game.stageSize.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
+        _frame.x = (paintable.width - 100 - _frame.width) / 2;
+        _frame.y = (paintable.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
     }
 
     public function getClipClass () :Class

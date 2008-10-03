@@ -172,9 +172,15 @@ public class SeekPanel extends FrameSprite
         // differently, especially for tall backgrounds) but it's effective enough
         // for the moment.
 
+        var roomBounds :Rectangle = Game.control.room.getRoomBounds();
+        if (roomBounds == null) {
+            _log.warning("Can't get room bounds to move ghost around.");
+            return;
+        }
+
         // figure effective movement ranges
-        var dX :Number = Math.max(0, Game.roomBounds.width - 2*_ghost.bounds.width);
-        var dY :Number = Math.max(0, Game.roomBounds.height - _ghost.bounds.height);
+        var dX :Number = Math.max(0, roomBounds.width - 2*_ghost.bounds.width);
+        var dY :Number = Math.max(0, roomBounds.height - _ghost.bounds.height);
 
         // place the ghost therein
         var x :Number = _ghost.bounds.width + dX * bits[0];
@@ -205,8 +211,13 @@ public class SeekPanel extends FrameSprite
     // FRAME HANDLER
     override protected function handleFrame (... ignored) :void
     {
-        var p :Point = new Point(Math.max(0, Math.min(Game.stageSize.width, this.mouseX)),
-                                 Math.max(0, Math.min(Game.stageSize.height, this.mouseY)));
+        var paintable :Rectangle = Game.control.local.getPaintableArea(true);
+        if (paintable == null) {
+            return;
+        }
+
+        var p :Point = new Point(Math.max(0, Math.min(paintable.width, this.mouseX)),
+                                 Math.max(0, Math.min(paintable.height, this.mouseY)));
         p = this.localToGlobal(p);
 
         if (_ghost != null) {
