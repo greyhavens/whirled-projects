@@ -9,6 +9,9 @@ public class Trophies
     public static const TROPHY_LEAGUE :String = "league";
     public static const TROPHY_PROT_CHARM :String = "prot_charm";
     public static const TROPHY_LAST_MAN :String = "last_man";
+    public static const TROPHY_RESUSCITATE :String = "resuscitate";
+    public static const TROPHY_BAG_OF_TRICKS :String = "tricks";
+    public static const TROPHY_WELL_READ :String = "well_read";
     public static const TROPHY_DEATHS_DOOR :String = "deaths_door";
     public static const TROPHY_MEAN_STREAK :String = "mean_streak";
     public static const TROPHY_5_KILLS :String = "5_kills";
