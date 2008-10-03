@@ -276,6 +276,9 @@ public class Player
         // update our max health
         updateMaxHealth();
 
+        // heal us, too
+        heal(_maxHealth);
+
         // if we're in a room, update the room properties
         if (_room != null) {
             _room.playerHealthUpdated(this);

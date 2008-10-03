@@ -150,6 +150,7 @@ public class GamePanel extends Sprite
             popdown(_triumph);
             _triumph = null;
         });
+        popup(_triumph);
     }
 
     protected function checkForDeath () :void
