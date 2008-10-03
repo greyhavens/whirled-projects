@@ -1,13 +1,16 @@
 package
 {
+	import arithmetic.GraphicRectangle;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.text.TextField;
 	
 	import sprites.SpriteUtil;
 	
-	public class SimplePlaytest extends Sprite
+	public class PlayTest extends Sprite
 	{
-		public function SimplePlaytest()
+		public function PlayTest()
 		{
 			// set the overall size of the game
 			SpriteUtil.addBackground(this, GAME_WIDTH, GAME_HEIGHT, SpriteUtil.GREY);
@@ -26,6 +29,14 @@ package
 			invView.y = 440;			
 			addChild(invView);
 			
+			var frame:GraphicRectangle = GraphicRectangle.fromDisplayObject(this);
+			
+			const modeView:TextField = new TextField();
+			modeView.text = mode + " mode";
+			var rect:GraphicRectangle = GraphicRectangle.fromText(modeView).paddedBy(10).alignBottomRightTo(frame);		
+			rect.origin.applyTo(modeView);
+			addChild(modeView);
+						
 			_frameTimer = new FrameTimer();
 			_frameTimer.start();
 				
@@ -41,7 +52,12 @@ package
 			_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
 			
 			trace("game size at end: "+width+", "+height);
-		}		
+		}	
+		
+		public function get mode () :String 
+		{
+			return "standalone";
+		}	
 		
 		protected var _controller:PlayerController;
 		protected var _board:Board;

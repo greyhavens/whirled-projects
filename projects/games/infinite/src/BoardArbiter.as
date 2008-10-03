@@ -2,25 +2,45 @@ package
 {
 	import arithmetic.*;
 	
-	public class BoardAnalyser
+	import paths.ClimbingPath;
+	import paths.Path;
+	import paths.PathEvent;
+	import paths.SidewaysPath;
+	
+	public class BoardArbiter
 	{
-		public function BoardAnalyser(board:BoardAccess)
+		public function BoardArbiter(board:BoardAccess)
 		{
 			_board = board;
 		}
 	
+		public function proposeMove (player:Character, destination:Cell) :void 
+		{
+			var path:Path;		
+			path = sidewaysPath(player, destination);
+			
+			if (path == null)
+			{
+				path = climbingPath(player, destination);
+			}
+			
+			if (path != null) {
+				dispatchStart(player, path);
+			}
+		}
+		
 		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function sidewaysPath (origin:Cell, destination:Cell) :Path
+		public function sidewaysPath (player:Character, destination:Cell) :Path
 		{			
 			// for now, there is no path between two positions that are not on the same level.
-			if (! origin.sameRowAs(destination)) {				
+			if (! player.cell.sameRowAs(destination)) {				
 				return null;
 			}
 
-			trace ("analysing sideways path from "+origin+" to "+destination);
-			var path:CellPath = new CellPath(_board, origin, destination);
+			trace ("analysing sideways path from "+player.cell+" to "+destination);
+			var path:CellPath = new CellPath(_board, player.cell, destination);
 			path.next(); // discard the start position since that's where the user already is.
 			while (path.hasNext()) {
 				var found:Cell = path.next();
@@ -33,26 +53,31 @@ package
 
 				// if the user is asking to traverse a cell that's not grippable - make them
 				// land there so that they fall. 
-				if (!found.grip) {
-					return new Path(origin, found);
+				if (!found.grip) {	
+					return new SidewaysPath(player.cell, found);
 				}
 			}			
 			
 			// each cell in the path could be entered and was grippable.
-			// so we return the whole path.
-			return new Path(origin, destination);
+			// so we return the whole path.			
+			return new SidewaysPath(player.cell, destination);
 		}
 		
-		public function hasClimbingPath (origin:Cell, destination:Cell):Boolean
+		protected function dispatchStart(player:Character, path:Path) :void
 		{
-			const start:BoardCoordinates = origin.position;
+			player.dispatchEvent(new PathEvent(PathEvent.PATH_START, path));
+		}
+		
+		public function climbingPath (player:Character, destination:Cell) :Path
+		{
+			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;
 			
 			trace("checking for climbing path...");
 			
 			// there is no way to climb horizontally.
 			if (start.x != finish.x) {
-				return false;				
+				return null;				
 			}
 						
 			var y:int;
@@ -62,10 +87,10 @@ package
 				trace("looking downwards");
 				for (y = start.y + 1; y <= finish.y; y++) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbDownTo ) {
-						return false;
+						return null;
 					}
 				}
-				return true;
+				return new ClimbingPath(player.cell, destination);
 			}
 			
 			// is the proposed climb downwards?
@@ -74,15 +99,15 @@ package
 				for (y = start.y - 1; y >= finish.y; y--) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbUpTo ) {
 						trace ("cannot climb up to cell at: "+start.x+", "+y);
-						return false;
+						return null;
 					}
 				}
 				// the player can climb up
-				return true;
+				return new ClimbingPath(player.cell, destination);
 			}
 			
 			// the selected cell is neither above nor below.
-			return false;
+			return null;
 		}		
 		
 		protected var _board:BoardAccess;

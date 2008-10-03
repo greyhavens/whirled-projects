@@ -9,11 +9,12 @@ package
 			inventory:Inventory)
 		{
 			_board = viewer.objective;
-			_analyser = new BoardAnalyser(_board);
+			_arbiter = new BoardArbiter(_board);
 			_viewer = viewer;
 			_player = player;
 			_viewer.playerController = this;
 			_player.playerController = this;
+			
 			frameTimer.addEventListener(FrameEvent.FRAME_START, handleFrameEvent);
 			inventory.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);				
 		}
@@ -34,21 +35,8 @@ package
 			if (_player.isMoving()) {
 				return;
 			} 
-						
-			// if the board tells us there is a clear path between here and the destination
-			// we move sideways
-			var path:Path = _analyser.sidewaysPath(_player.cell, event.cell);
-			if (path!= null)
-			{
-				_player.moveSideways(path.finish);
-				return;
-			}
-			
-			// is the player above?
-			if (_analyser.hasClimbingPath(_player.cell, event.cell)) {
-				_player.climb(event.cell);
-				return;
-			}
+
+			_arbiter.proposeMove(_player, event.cell);
 		}
 
 		public function handleItemClicked (event:ItemEvent) :void
@@ -61,7 +49,7 @@ package
 			}
 		}
 
-		protected var _analyser:BoardAnalyser;
+		protected var _arbiter:BoardArbiter;
 		protected var _board:BoardInteractions	
 		protected var _viewer:Viewer;
 		protected var _player:PlayerCharacter;

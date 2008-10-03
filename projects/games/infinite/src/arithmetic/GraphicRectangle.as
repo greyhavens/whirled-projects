@@ -1,5 +1,6 @@
 package arithmetic
 {
+	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	
@@ -73,6 +74,12 @@ package arithmetic
 			);
 		}
 		
+		public function alignBottomRightTo (other:GraphicRectangle) :GraphicRectangle
+		{
+			return new GraphicRectangle(other.right - width, other.bottom - height, width, height);
+		}	
+	
+		
 		public static function fromRectangle (rect:Rectangle) :GraphicRectangle
 		{
 			return new GraphicRectangle(rect.x, rect.y, rect.width, rect.height);
@@ -81,6 +88,11 @@ package arithmetic
 		public static function fromText (field:TextField) :GraphicRectangle
 		{
 			return new GraphicRectangle(field.x, field.y, field.textWidth, field.textHeight);
+		}
+		
+		public static function fromDisplayObject (object:DisplayObject) :GraphicRectangle
+		{
+			return new GraphicRectangle(0,0, object.width, object.height);
 		}
 				
 		public function toString () :String

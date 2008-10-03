@@ -13,10 +13,11 @@ package {
 		{
 			_gameControl = new GameControl(this);
 			
-			trace ("game controller connected: "+_gameControl.isConnected());
-			
-			var simple:Sprite = new SimplePlaytest();
-			addChild(simple);
+			if (_gameControl.isConnected()) {
+				addChild(new DistributedPlayTest(_gameControl));
+			} else {
+				addChild(new LocalPlayTest());				
+			}			
 		}				
 		
 		protected var _gameControl:GameControl;

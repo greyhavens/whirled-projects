@@ -9,21 +9,27 @@ package
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.events.EventDispatcher;
 	import flash.text.TextField;
 	
 	import items.ItemPlayer;
+	
+	import paths.Path;
+	import paths.PathEvent;
 	
 	import sprites.PlayerSprite;
 	
 	/**
 	 * Represents the player who is using the console.
 	 */
-	public class PlayerCharacter implements Character, CellInteractions, ItemPlayer, MoveInteractions
+	public class PlayerCharacter extends EventDispatcher implements Character, CellInteractions, ItemPlayer, MoveInteractions
 	{
 		public function PlayerCharacter(name:String, inventory:Inventory)
 		{ 
 			_name = name;
 			_inventory = inventory;
+			
+			addEventListener(PathEvent.PATH_START, handlePathStart);
 		}
 		
 		public function get view () :DisplayObject
@@ -229,6 +235,22 @@ package
 		public function get name () :String
 		{
 			return _name;
+		}
+		
+		/**
+		 * Follow the specified path.
+		 */
+		public function follow (path:Path) :void
+		{
+			path.applyTo(this);
+		}
+		
+		/**
+		 * Handle the reception of a path event.
+		 */
+		public function handlePathStart(event:PathEvent) :void
+		{
+			follow(event.path);
 		}
 		
 		protected var _inventory:Inventory;				
