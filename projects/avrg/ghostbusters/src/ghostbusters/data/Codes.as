@@ -90,6 +90,13 @@ public class Codes
     public static const CMSG_DEBUG_REQUEST :String = "dbg";
 
     /**
+     * Avatar choice request from the client. This happens when a new player has been shown the
+     * welcome screen and chosen either the male or the female avatar. The value is either
+     * AVT_MALE or AVT_FEMALE.
+     */
+    public static const CMSG_CHOOSE_AVATAR :String = "choose_avatar";
+
+    /**
      * A player successfully hovered over the ghost with their lantern (server version).
      *
      * Dispatched by the server to the room to notify everybody there that somebody (not
@@ -167,13 +174,19 @@ public class Codes
      * This value cannot exceed the number of ectopoints needed for the next level; promotion
      * happens automatically.
      */
-    public static const PROP_MY_POINTS :String = NetConstants.makePersistent("level");
+    public static const PROP_MY_POINTS :String = NetConstants.makePersistent("points");
 
     /**
      * The level of a player, persistently stored in that player's property space. This value
      * is copied into a room's property space when a player enters that room.
      */
     public static const PROP_MY_LEVEL :String = NetConstants.makePersistent("level");
+
+    /**
+     * The sex of this player's initial avatar choice. This value is null if the player
+     * has not yet chosen, else either AVT_MALE or AVT_FEMALE.
+     */
+    public static const PROP_AVATAR_TYPE :String = NetConstants.makePersistent("avtype");
 
     /**
      * The room property name for the GHOST dictionary container which summarizes the current
@@ -298,9 +311,17 @@ public class Codes
     public static const DBG_END_STATE :String = "es";
 
     /** Trophy related per-player properties. */
-
     public static const PROP_MEAN_KILLS :String = NetConstants.makePersistent("mean_kills");
     public static const PROP_LEAGUE_KILLS :String = NetConstants.makePersistent("league_kills");
     public static const PROP_KILLS :String = NetConstants.makePersistent("kills");
+
+    /** Values for CMSG_CHOOSE_AVATAR and PROP_AVATAR_TYPE. */
+    public static const AVT_MALE :String = "male";
+    public static const AVT_FEMALE :String = "female";
+
+    /** Prize identifiers for the male and female beginner avatars. */
+    public static const PRIZE_AVATAR_MALE :String = "avt_male";
+    public static const PRIZE_AVATAR_FEMALE :String = "avt_female";
+
 }
 }

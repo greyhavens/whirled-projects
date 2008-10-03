@@ -142,6 +142,25 @@ public class Player
                 handleDebugRequest(String(value));
             }
             return;
+        case Codes.CMSG_CHOOSE_AVATAR:
+            if (_ctrl.props.get(Codes.PROP_AVATAR_TYPE) != null) {
+                log.warning("Saw CHOOSE_AVATAR, but already chosen", "playerId", _playerId);
+                return;
+            }
+            var prize :String;
+            if (value == Codes.AVT_MALE) {
+                prize = Codes.PRIZE_AVATAR_MALE;
+            } else if (value == Codes.AVT_FEMALE) {
+                prize = Codes.PRIZE_AVATAR_FEMALE;
+            } else {
+                log.warning("Saw CHOOSE_AVATAR with unexpected value", "playerId", playerId,
+                            "value", value);
+                return;
+            }
+            // remember the choice
+            _ctrl.props.set(Codes.PROP_AVATAR_TYPE, value, true);
+            // then award the avatar
+            _ctrl.awardPrize(prize);
         }
 
         // if we're nowhere, drop out

@@ -84,7 +84,29 @@ public class TextBits extends Sprite
         _textField.htmlText = em(txt);
     }
 
-    public function addButton (label :String, right :Boolean, onClick :Function) :SimpleButton
+    public function addTextButton (label :String, right :Boolean, onClick :Function) :SimpleButton
+    {
+        var button :SimpleButton = new SimpleTextButton(
+            label, true, 0x003366, 0x6699CC, 0x0066FF, 5, getDefaultFormat());
+        button.addEventListener(MouseEvent.CLICK, function (evt :Event) :void {
+                onClick();
+            });
+        _buttons.addChild(button);
+
+        _textField.y = _buttons.y + _buttons.height + GAP;
+
+        if (right) {
+            button.x = _rightButtonEdge - button.width;
+            _rightButtonEdge -= button.width + GAP;
+        } else {
+            button.x = _leftButtonEdge;
+            _leftButtonEdge += button.width + GAP;
+        }
+
+        return button;
+    }
+
+    protected function addButton (label :String, right :Boolean, onClick :Function) :SimpleButton
     {
         var button :SimpleButton = new SimpleTextButton(
             label, true, 0x003366, 0x6699CC, 0x0066FF, 5, getDefaultFormat());
