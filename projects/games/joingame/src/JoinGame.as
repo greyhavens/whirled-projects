@@ -40,7 +40,7 @@ package
             }
             
             /*Disable the "Request Rematch" button*/
-            AppContext.gameCtrl.local.setShowReplay(false)
+            AppContext.gameCtrl.local.setShowReplay(false);
             
             // setup main loop
             AppContext.mainLoop = new MainLoop(this, (isConnected ? AppContext.gameCtrl.local : this.stage));

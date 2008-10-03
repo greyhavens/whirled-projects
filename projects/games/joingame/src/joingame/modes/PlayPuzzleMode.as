@@ -50,6 +50,13 @@ package joingame.modes
         
         protected function init() :void
         {
+            /*Start counting progress for coins again */
+            AppContext.gameCtrl.game.playerReady();
+            
+            /*Disable the "Request Rematch" button*/
+            AppContext.gameCtrl.local.setShowReplay(false);
+            
+            
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
             modeSprite.addChild(swfRoot);
             modeSprite.mouseEnabled = false;
