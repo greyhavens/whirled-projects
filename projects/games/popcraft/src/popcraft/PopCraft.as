@@ -37,10 +37,6 @@ public class PopCraft extends Sprite
 
         SeatingManager.init();
 
-        this.graphics.beginFill(0);
-        this.graphics.drawRect(0, 0, 700, 500);
-        this.graphics.endFill();
-
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         // set a clip rect

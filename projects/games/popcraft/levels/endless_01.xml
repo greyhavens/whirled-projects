@@ -3,7 +3,17 @@
         maxMultiplier="5"
         multiplierOverflowScoreValue="1000"
         multiplierDamageSoak="15"
-        pointsPerResource="1">
+
+        pointsPerResource="1"
+        pointsPerOpponentKill="500">
+
+        <PointsPerCreatureKill>
+            <Unit type="grunt" points="10"/>
+            <Unit type="heavy" points="10"/>
+            <Unit type="sapper" points="15"/>
+            <Unit type="courier" points="5"/>
+            <Unit type="colossus" points="25"/>
+        </PointsPerCreatureKill>
 
         <MapSequence>
             <Map repeats="true">
@@ -15,23 +25,23 @@
                 <AvailableSpells all="true"/>
 
                 <ComputerGroups>
-					<Group>
-                    	<Computer 
-							playerName="Ralph" 
-							playerHeadshotName="portrait_ralph" 
-							baseStartHealth="150" 
-							baseHealth="150"
-							baseHealthScale="1.1" 
-							team="1">
-	                        <RepeatingDays>
-	                            <Day repeatWaves="true">
-	                                <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
-	                                <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
-	                                <Wave delayBefore="25"/>
-	                            </Day>
-	                        </RepeatingDays>
-	                    </Computer>
-					</Group>
+                    <Group>
+                        <Computer
+                            playerName="Ralph"
+                            playerHeadshotName="portrait_ralph"
+                            baseStartHealth="150"
+                            baseHealth="150"
+                            baseHealthScale="1.1"
+                            team="1">
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+                                    <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
+                                    <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
+                                    <Wave delayBefore="25"/>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+                    </Group>
                 </ComputerGroups>
             </Map>
         </MapSequence>

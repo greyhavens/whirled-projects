@@ -599,7 +599,19 @@ public class GameMode extends TransitionMode
             // send a message to everyone
             this.selectTargetEnemy(GameContext.localPlayerIndex, newTargetEnemyId);
         }
+    }
 
+    public function creatureKilled (creature :CreatureUnit, killingPlayerIndex :int) :void
+    {
+        if (killingPlayerIndex == GameContext.localPlayerIndex) {
+            GameContext.playerStats.creaturesKilled[creature.unitType] += 1;
+
+            if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_WHATAMESS) &&
+                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= TrophyManager.WHATAMESS_NUMCREATURES) {
+                // awarded for killing 2500 creatures total
+                TrophyManager.awardTrophy(TrophyManager.TROPHY_WHATAMESS);
+            }
+        }
     }
 
     public function selectTargetEnemy (playerIndex :int, enemyId :int) :void

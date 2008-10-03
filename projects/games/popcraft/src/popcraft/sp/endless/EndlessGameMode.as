@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.net.*;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.battle.view.ScoreView;
 import popcraft.data.*;
 import popcraft.mp.*;
 import popcraft.sp.*;
@@ -18,9 +19,24 @@ public class EndlessGameMode extends GameMode
         this.cycleMapData();
     }
 
+    override protected function setup () :void
+    {
+        super.setup();
+
+        var scoreView :ScoreView = new ScoreView(this);
+        scoreView.x = (Constants.SCREEN_SIZE.x - scoreView.width) * 0.5;
+        scoreView.y = 5;
+        this.addObject(scoreView, GameContext.overlayLayer);
+    }
+
     public function incrementScore (offset :int) :void
     {
-        _score += offset;
+        _score += (offset * _scoreMultiplier);
+    }
+
+    public function get score () :int
+    {
+        return _score;
     }
 
     override public function playerEarnedResources (resourceType :int, offset :int,
@@ -32,6 +48,15 @@ public class EndlessGameMode extends GameMode
         this.incrementScore(actualResourcesEarned * _level.pointsPerResource);
 
         return actualResourcesEarned;
+    }
+
+    override public function creatureKilled (creature :CreatureUnit, killingPlayerIndex :int) :void
+    {
+        super.creatureKilled(creature, killingPlayerIndex);
+
+        if (killingPlayerIndex == GameContext.localPlayerIndex) {
+            this.incrementScore(_level.pointsPerCreatureKill[creature.unitType]);
+        }
     }
 
     override public function get canPause () :Boolean
@@ -143,7 +168,9 @@ public class EndlessGameMode extends GameMode
     protected var _curMapData :EndlessMapData;
     protected var _mapDataIndex :int = -1;
     protected var _computerGroupIndex :int;
+
     protected var _score :int;
+    protected var _scoreMultiplier :Number = 1;
 }
 
 }

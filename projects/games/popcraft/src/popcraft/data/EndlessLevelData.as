@@ -1,5 +1,7 @@
 package popcraft.data {
 
+import com.threerings.util.ArrayUtil;
+
 import popcraft.*;
 import popcraft.util.XmlReader;
 
@@ -10,6 +12,8 @@ public class EndlessLevelData
     public var multiplierDamageSoak :int;
 
     public var pointsPerResource :int;
+    public var pointsPerOpponentKill :int;
+    public var pointsPerCreatureKill :Array; // score for each unit type
 
     public var gameDataOverride :GameData;
 
@@ -31,9 +35,17 @@ public class EndlessLevelData
         level.multiplierDamageSoak = XmlReader.getUintAttr(xml, "multiplierDamageSoak");
 
         level.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource");
+        level.pointsPerOpponentKill = XmlReader.getIntAttr(xml, "pointsPerOpponentKill");
 
-        for each (var mapSequenceData :XML in xml.MapSequence.Map) {
-            level.mapSequence.push(EndlessMapData.fromXml(mapSequenceData));
+        level.pointsPerCreatureKill = ArrayUtil.create(Constants.CREATURE_UNIT_NAMES.length, 0);
+        for each (var unitXml :XML in xml.PointsPerCreatureKill.Unit) {
+            var unitType :int = XmlReader.getEnumAttr(unitXml, "type", Constants.CREATURE_UNIT_NAMES);
+            var points :int = XmlReader.getIntAttr(unitXml, "points");
+            level.pointsPerCreatureKill[unitType] = points;
+        }
+
+        for each (var mapSequenceXml :XML in xml.MapSequence.Map) {
+            level.mapSequence.push(EndlessMapData.fromXml(mapSequenceXml));
         }
 
         return level;
