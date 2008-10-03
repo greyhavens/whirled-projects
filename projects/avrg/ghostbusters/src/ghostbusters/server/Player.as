@@ -34,8 +34,8 @@ public class Player
         if (_level == 0) {
             // this person has never played Ghosthunters before
             log.info("Initializing new player [playerId=" + playerId + "]");
-            setLevel(1);
-            setHealth(_maxHealth);
+            setLevel(1, true);
+            setHealth(_maxHealth, true);
 
         } else {
             updateMaxHealth();
@@ -47,7 +47,7 @@ public class Player
             } else {
                 // health should always be set if level is set, but let's play it safe
                 log.debug("Repairing player health [playerId=" + playerId + "]");
-                setHealth(_maxHealth);
+                setHealth(_maxHealth, true);
             }
 
             var pointsValue :Object = _ctrl.props.get(Codes.PROP_MY_POINTS);
@@ -56,7 +56,7 @@ public class Player
 
             } else {
                 log.debug("Repairing player ectopoints [playerId=" + playerId + "]");
-                setPoints(0);
+                setPoints(0, true);
             }
 
             log.info("Logging in", "playerId", _playerId, "health", _health, "maxHealth",
@@ -267,11 +267,11 @@ public class Player
         }
     }
 
-    protected function setLevel (level :int) :void
+    protected function setLevel (level :int, force :Boolean = false) :void
     {
         // clamp level to [1, 9] for now
         level = Math.max(1, Math.min(9, level));
-        if (level == _level) {
+        if (!force && level == _level) {
             return;
         }
 
@@ -290,11 +290,11 @@ public class Player
         }
     }
 
-    protected function setHealth (health :int) :void
+    protected function setHealth (health :int, force :Boolean = false) :void
     {
         // update our runtime state
         health = Math.max(0, Math.min(health, _maxHealth));
-        if (health == _health) {
+        if (!force && health == _health) {
             return;
         }
 
@@ -315,9 +315,9 @@ public class Player
         }
     }
 
-    protected function setPoints (points :int) :void
+    protected function setPoints (points :int, force :Boolean = false) :void
     {
-        if (points == _points) {
+        if (!force && points == _points) {
             return;
         }
 
