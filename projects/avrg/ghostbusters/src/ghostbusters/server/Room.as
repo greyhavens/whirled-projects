@@ -266,9 +266,16 @@ public class Room
 
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
+        var now :int = getTimer();
+
+        if (_lanternsDirty && (now - _lanternUpdate) > 200) {
+            sendLanterns();
+        }
+
         if (_ghost == null) {
-            // maybe a delay here?
-            loadOrSpawnGhost();
+            if (now > _nextGhost) {
+                loadOrSpawnGhost();
+            }
             return;
         }
 
@@ -277,10 +284,6 @@ public class Room
             setState(Codes.STATE_APPEARING);
             _transitionFrame = frame + _ghost.definition.appearFrames;
             return;
-        }
-
-        if (_lanternsDirty && (getTimer() - _lanternUpdate) > 200) {
-            sendLanterns();
         }
 
         if (!newSecond) {
@@ -491,12 +494,14 @@ public class Room
         }
 
         _ghost = new Ghost(this, data);
+        _nextGhost = 0;
     }
 
     protected function terminateGhost () :void
     {
         _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
+        _nextGhost = getTimer() + 1000 * GHOST_RESPAWN_SECONDS;
     }
 
     protected var _ctrl :RoomSubControlServer;
@@ -509,11 +514,15 @@ public class Room
     protected var _lanternUpdate :int;
 
     protected var _ghost :Ghost;
+    protected var _nextGhost :int;
 
     protected var _nextZap :int = 0;
     protected var _transitionFrame :int = 0;
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
     protected var _stats :Dictionary = new Dictionary();
+
+    // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
+    protected static const GHOST_RESPAWN_SECONDS :int = 120;
 }
 }
