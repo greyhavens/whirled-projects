@@ -15,6 +15,7 @@ import com.whirled.avrg.RoomSubControlServer;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
+import ghostbusters.server.util.Formulae;
 
 public class Room
 {
@@ -172,12 +173,16 @@ public class Room
         // award 3 points for a win, 1 for a lose
         _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
 
+        // tweak damageDone and healingDone by the player's level
+        var tweak :Number = Formulae.quadRamp(player.level);
+
+        // then actually apply the damage or healing
         if (damageDone > 0) {
-            damageGhost(damageDone);
+            damageGhost(damageDone * tweak);
             _ctrl.sendMessage(Codes.SMSG_GHOST_ATTACKED, player.playerId);
         }
         if (healingDone > 0) {
-            doHealPlayers(healingDone);
+            doHealPlayers(healingDone * tweak);
         }
     }
 
@@ -410,8 +415,8 @@ public class Room
             var playerId :int = int(p);
 
             var player :Player = Server.getPlayer(playerId);
-            if (player == null) {
-                // they stopped playing, too bad
+            if (player == null || player.room || null || player.room.roomId != this.roomId) {
+                // for the time being, you only get credit if you're present when the ghost dies
                 continue;
             }
 
@@ -437,6 +442,7 @@ public class Room
             // semi-linearly map this to a factor in [0.35, 1.65]
             var levelFactor :Number = 1 + Math.atan(levelDiff / 4);
 
+            // TODO: Change this 77 into something meaninful, jeez.
             player.ghostDefeated(77, baseFactor * levelFactor * pointsArr[ii]);
         }
     }

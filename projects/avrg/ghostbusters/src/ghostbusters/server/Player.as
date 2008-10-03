@@ -74,6 +74,11 @@ public class Player
         return _playerId;
     }
 
+    public function get room () :Room
+    {
+        return _room;
+    }
+
     public function get health () :int
     {
         return _health;
