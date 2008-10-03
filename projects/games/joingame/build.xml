@@ -3,6 +3,9 @@
 	
 	<property name="players" value="3"/>
 	
+	<!-- Remixableness 
+	<property name="app.data-dir" value="rsrc"/>-->
+	
 	<!-- Our code uses server-side code -->
 	<property name="app.enable-server-agent" value="true"/>    
 	

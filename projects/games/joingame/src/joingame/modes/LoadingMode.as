@@ -1,5 +1,7 @@
 package joingame.modes
 {
+    import com.whirled.AvatarControl;
+    import com.whirled.DataPack;
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.resource.ResourceManager;
     
@@ -27,11 +29,17 @@ public class LoadingMode extends AppMode
         this.modeSprite.addChild(_text);
 
         this.load();
+        
 
         // load the user cookie
 //        UserCookieManager.readCookie();
     }
 
+    protected function gotPack () :void
+    {
+        
+    }
+    
     override public function update (dt :Number) :void
     {
         if (!_loading )

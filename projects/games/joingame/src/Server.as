@@ -117,15 +117,17 @@ package
             var id :int;
             var clientid :int;
 
+            trace(event.name);
             /* If all players have registered that they are ready, send the game state to all.*/   
             if (event.name == Server.REGISTER_PLAYER)
             {
                 if(!ArrayUtil.contains( _currentActivePlayers, event.senderId))
                 {
                     _currentActivePlayers.push( event.senderId );
-                    
+                    trace("adding "  + event.senderId + " to " + _currentActivePlayers);
                     if( _currentActivePlayers.length >= SeatingManager.numExpectedPlayers)
                     {
+                        trace("ok start the game");
                         /* We send all the random number generator seeds to the players.
                            This is to ease the sync requirements.  That way, new pieces are still 
                            random, but identical on server and client. */
@@ -134,17 +136,19 @@ package
                         _gameCtrl.net.set( POTENTIAL_PLAYERS, playerids);
                         _currentActivePlayers = playerids;
                         
-                        if(Constants.isMultiplayer) {
-                            
+                        Constants.isMultiplayer = _gameCtrl.game.seating.getPlayerIds().length > 1;
                         
+                        if(Constants.isMultiplayer) {
                             createNewMultiPlayerModel();
                             
                             msg = new Object;
                             msg[0] = _currentActivePlayers;
                             msg[1] = _gameModel.getModelMemento();
+                            trace("sending multiplayer" + REPLAY_CONFIRM);
                             _gameCtrl.net.sendMessage(REPLAY_CONFIRM, msg);
                         }
                         else {
+                            trace("sending singlepplayer" + ALL_PLAYERS_READY);
                             createNewSinglePlayerModel();
                             msg = new Object;
                             msg[0] = _gameModel.getModelMemento();
