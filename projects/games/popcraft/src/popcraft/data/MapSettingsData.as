@@ -18,15 +18,15 @@ public class MapSettingsData
     {
         var data :MapSettingsData = new MapSettingsData();
 
-        data.backgroundName = XmlReader.getAttributeAsString(xml, "backgroundName");
-        data.mapScaleX = XmlReader.getAttributeAsNumber(xml, "mapScaleX", 1);
-        data.mapScaleY = XmlReader.getAttributeAsNumber(xml, "mapScaleY", 1);
-        data.scaleSprites = XmlReader.getAttributeAsBoolean(xml, "scaleSprites", false);
+        data.backgroundName = XmlReader.getStringAttr(xml, "backgroundName");
+        data.mapScaleX = XmlReader.getNumberAttr(xml, "mapScaleX", 1);
+        data.mapScaleY = XmlReader.getNumberAttr(xml, "mapScaleY", 1);
+        data.scaleSprites = XmlReader.getBooleanAttr(xml, "scaleSprites", false);
 
         var spellDropXml :XML = XmlReader.getSingleChild(xml, "SpellDropLocation", null);
         if (null != spellDropXml) {
-            var x :Number = XmlReader.getAttributeAsNumber(spellDropXml, "x");
-            var y :Number = XmlReader.getAttributeAsNumber(spellDropXml, "y");
+            var x :Number = XmlReader.getNumberAttr(spellDropXml, "x");
+            var y :Number = XmlReader.getNumberAttr(spellDropXml, "y");
             data.spellDropLoc = new Vector2(x, y);
         }
 

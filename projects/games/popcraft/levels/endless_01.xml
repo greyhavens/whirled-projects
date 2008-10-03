@@ -5,25 +5,29 @@
         multiplierDamageSoak="15">
 
         <MapSequence>
-            <Map>
+            <Map repeats="true">
                 <MapSettings backgroundName="Level2">
                     <BaseLocation x="180" y="295" team="0"/>
                     <BaseLocation x="500" y="265" team="1"/>
                 </MapSettings>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>
+
+                <ComputerGroups>
+                    <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseStartHealth="150" baseHealth="150" team="1">
+                        <RepeatingDays>
+                            <Day repeatWaves="true">
+                                <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
+                                <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
+                                <Wave delayBefore="25"/>
+                            </Day>
+                        </RepeatingDays>
+                    </Computer>
+                </ComputerGroups>
             </Map>
         </MapSequence>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseStartHealth="15" baseHealth="50" team="1">
-            <RepeatingDays>
-                <Day repeatWaves="true">
-                    <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>
-                    <Wave delayBefore="40"><Unit type="grunt" count="1"/></Wave>
-                    <Wave delayBefore="25"/>
-                </Day>
-            </RepeatingDays>
-        </Computer>
+
 
     </EndlessLevel>
 

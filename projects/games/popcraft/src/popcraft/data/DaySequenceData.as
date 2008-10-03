@@ -22,7 +22,7 @@ public class DaySequenceData
     {
         var data :DaySequenceData = new DaySequenceData();
 
-        data.repeatWaves = XmlReader.getAttributeAsBoolean(xmlData, "repeatWaves");
+        data.repeatWaves = XmlReader.getBooleanAttr(xmlData, "repeatWaves");
 
         var totalWaveDelay :Number = 0;
         for each (var waveData :XML in xmlData.Wave) {
@@ -31,18 +31,18 @@ public class DaySequenceData
             data.unitWaves.push(uwd);
         }
 
-        var noticeSpellDropAfterMin :Number = XmlReader.getAttributeAsNumber(xmlData,
+        var noticeSpellDropAfterMin :Number = XmlReader.getNumberAttr(xmlData,
             "noticeSpellDropAfterMin", -1);
-        var noticeSpellDropAfterMax :Number = XmlReader.getAttributeAsNumber(xmlData,
+        var noticeSpellDropAfterMax :Number = XmlReader.getNumberAttr(xmlData,
             "noticeSpellDropAfterMax", -1);
         data.noticeSpellDropAfter = new NumRange(
             noticeSpellDropAfterMin,
             noticeSpellDropAfterMax,
             Rand.STREAM_GAME);
 
-        var spellDropCourierGroupSizeMin :int = XmlReader.getAttributeAsInt(xmlData,
+        var spellDropCourierGroupSizeMin :int = XmlReader.getIntAttr(xmlData,
             "spellDropCourierGroupSizeMin", -1);
-        var spellDropCourierGroupSizeMax :int = XmlReader.getAttributeAsInt(xmlData,
+        var spellDropCourierGroupSizeMax :int = XmlReader.getIntAttr(xmlData,
             "spellDropCourierGroupSizeMax", -1);
         data.spellDropCourierGroupSize = new IntRange(
             spellDropCourierGroupSizeMin,

@@ -15,26 +15,26 @@ public class UnitWaveData
         var unitWave :UnitWaveData = new UnitWaveData();
 
         if (XmlReader.hasAttribute(xmlData, "absoluteDelay")) {
-            var absoluteDelay :Number = XmlReader.getAttributeAsNumber(xmlData, "absoluteDelay");
+            var absoluteDelay :Number = XmlReader.getNumberAttr(xmlData, "absoluteDelay");
             unitWave.delayBefore = Math.max(absoluteDelay - totalDelay, 0.1);
         } else {
-            unitWave.delayBefore = XmlReader.getAttributeAsNumber(xmlData, "delayBefore");
+            unitWave.delayBefore = XmlReader.getNumberAttr(xmlData, "delayBefore");
         }
 
-        unitWave.spellCastChance = XmlReader.getAttributeAsNumber(xmlData, "spellCastChance", 0);
+        unitWave.spellCastChance = XmlReader.getNumberAttr(xmlData, "spellCastChance", 0);
 
         for each (var unitNode :XML in xmlData.Unit) {
-            var unitType :int = XmlReader.getAttributeAsEnum(unitNode, "type",
+            var unitType :int = XmlReader.getEnumAttr(unitNode, "type",
                 Constants.CREATURE_UNIT_NAMES);
-            var count :int = XmlReader.getAttributeAsUint(unitNode, "count");
-            var max :int = XmlReader.getAttributeAsInt(unitNode, "max", -1);
+            var count :int = XmlReader.getUintAttr(unitNode, "count");
+            var max :int = XmlReader.getIntAttr(unitNode, "max", -1);
 
             unitWave.units.push(unitType);
             unitWave.units.push(count);
             unitWave.units.push(max);
         }
 
-        unitWave.targetPlayerName = XmlReader.getAttributeAsString(xmlData, "targetPlayerName",
+        unitWave.targetPlayerName = XmlReader.getStringAttr(xmlData, "targetPlayerName",
             null);
 
         return unitWave;

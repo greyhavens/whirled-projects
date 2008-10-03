@@ -38,13 +38,13 @@ public class IntValueTable
     {
         var values :Array = [];
         for each (var indexData :XML in xmlData.Index) {
-            values.push(XmlReader.getAttributeAsInt(indexData, "value"));
+            values.push(XmlReader.getIntAttr(indexData, "value"));
         }
 
         var outOfBoundsScaleVal :int;
         var outOfBoundsScaleData :XML = xmlData.OutOfBoundsScale[0];
         if (null != outOfBoundsScaleData) {
-            outOfBoundsScaleVal = XmlReader.getAttributeAsInt(outOfBoundsScaleData, "value", 0);
+            outOfBoundsScaleVal = XmlReader.getIntAttr(outOfBoundsScaleData, "value", 0);
         }
 
         return new IntValueTable(values, outOfBoundsScaleVal);

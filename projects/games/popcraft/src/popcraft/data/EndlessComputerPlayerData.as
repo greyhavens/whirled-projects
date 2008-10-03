@@ -12,7 +12,7 @@ public class EndlessComputerPlayerData extends ComputerPlayerData
 
         ComputerPlayerData.fromXml(xml, data);
 
-        data.baseHealthScale = XmlReader.getAttributeAsNumber(xml, "baseHealthScale");
+        data.baseHealthScale = XmlReader.getNumberAttr(xml, "baseHealthScale");
 
         return data;
     }

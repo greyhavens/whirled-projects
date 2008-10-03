@@ -29,14 +29,13 @@ public class ComputerPlayerData
     {
         var computerPlayer :ComputerPlayerData = (data != null ? data : new ComputerPlayerData());
 
-        computerPlayer.playerName = XmlReader.getAttributeAsString(xml, "playerName");
-        computerPlayer.playerHeadshotName = XmlReader.getAttributeAsString(xml,
-            "playerHeadshotName");
-        computerPlayer.baseHealth = XmlReader.getAttributeAsInt(xml, "baseHealth");
-        computerPlayer.baseStartHealth = XmlReader.getAttributeAsInt(xml, "baseStartHealth",
+        computerPlayer.playerName = XmlReader.getStringAttr(xml, "playerName");
+        computerPlayer.playerHeadshotName = XmlReader.getStringAttr(xml, "playerHeadshotName");
+        computerPlayer.baseHealth = XmlReader.getIntAttr(xml, "baseHealth");
+        computerPlayer.baseStartHealth = XmlReader.getIntAttr(xml, "baseStartHealth",
             computerPlayer.baseHealth);
-        computerPlayer.invincible = XmlReader.getAttributeAsBoolean(xml, "invincible", false);
-        computerPlayer.team = XmlReader.getAttributeAsUint(xml, "team");
+        computerPlayer.invincible = XmlReader.getBooleanAttr(xml, "invincible", false);
+        computerPlayer.team = XmlReader.getUintAttr(xml, "team");
 
         for each (var initialDayData :XML in xml.InitialDays.Day) {
             computerPlayer.initialDays.push(DaySequenceData.fromXml(initialDayData));
@@ -53,9 +52,8 @@ public class ComputerPlayerData
 
         // read spells
         for each (var spellData :XML in xml.InitialSpells.Spell) {
-            spellType = XmlReader.getAttributeAsEnum(spellData, "type",
-                Constants.CREATURE_SPELL_NAMES);
-            var amount :int = XmlReader.getAttributeAsUint(spellData, "amount");
+            spellType = XmlReader.getEnumAttr(spellData, "type", Constants.CREATURE_SPELL_NAMES);
+            var amount :int = XmlReader.getUintAttr(spellData, "amount");
             computerPlayer.startingCreatureSpells[spellType] = amount;
         }
 

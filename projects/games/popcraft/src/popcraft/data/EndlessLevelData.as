@@ -9,6 +9,8 @@ public class EndlessLevelData
     public var multiplierOverflowScoreValue :int;
     public var multiplierDamageSoak :int;
 
+    public var pointsPerResource :int;
+
     public var gameDataOverride :GameData;
 
     public var mapSequence :Array = []; // array of EndlessMapDatas
@@ -24,9 +26,11 @@ public class EndlessLevelData
                 AppContext.defaultGameData.clone());
         }
 
-        level.maxMultiplier = XmlReader.getAttributeAsUint(xml, "maxMultiplier");
-        level.multiplierOverflowScoreValue = XmlReader.getAttributeAsInt(xml, "multiplierOverflowScoreValue");
-        level.multiplierDamageSoak = XmlReader.getAttributeAsUint(xml, "multiplierDamageSoak");
+        level.maxMultiplier = XmlReader.getUintAttr(xml, "maxMultiplier");
+        level.multiplierOverflowScoreValue = XmlReader.getIntAttr(xml, "multiplierOverflowScoreValue");
+        level.multiplierDamageSoak = XmlReader.getUintAttr(xml, "multiplierDamageSoak");
+
+        level.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource");
 
         for each (var mapSequenceData :XML in xml.MapSequence.Map) {
             level.mapSequence.push(EndlessMapData.fromXml(mapSequenceData));

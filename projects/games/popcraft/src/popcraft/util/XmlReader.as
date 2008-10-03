@@ -16,7 +16,8 @@ public class XmlReader
             if (undefined !== defaultValue) {
                 return defaultValue;
             } else {
-                throw new XmlReadError("In node '" + String(xml.localName()) + "': error accessing child '" + name + "': child does not exist");
+                throw new XmlReadError("In node '" + String(xml.localName()) +
+                    "': error accessing child '" + name + "': child does not exist");
             }
         }
 
@@ -28,40 +29,45 @@ public class XmlReader
         return (null != xml.attribute(name)[0]);
     }
 
-    public static function getAttributeAsEnum (xml :XML, name :String, stringMapping :Array, defaultValue :* = undefined) :int
+    public static function getEnumAttr (xml :XML, name :String, stringMapping :Array,
+        defaultValue :* = undefined) :int
     {
-        return getAttributeAs(xml, name, defaultValue,
+        return getAttr(xml, name, defaultValue,
             function (attrString :String) :int {
                 return parseEnum(attrString, stringMapping);
             });
     }
 
-    public static function getAttributeAsUint (xml :XML, name :String, defaultValue :* = undefined) :uint
+    public static function getUintAttr (xml :XML, name :String, defaultValue :* = undefined) :uint
     {
-        return getAttributeAs(xml, name, defaultValue, StringUtil.parseUnsignedInteger);
+        return getAttr(xml, name, defaultValue, StringUtil.parseUnsignedInteger);
     }
 
-    public static function getAttributeAsInt (xml :XML, name :String, defaultValue :* = undefined) :int
+    public static function getIntAttr (xml :XML, name :String, defaultValue :* = undefined) :int
     {
-        return getAttributeAs(xml, name, defaultValue, StringUtil.parseInteger);
+        return getAttr(xml, name, defaultValue, StringUtil.parseInteger);
     }
 
-    public static function getAttributeAsNumber (xml :XML, name :String, defaultValue :* = undefined) :Number
+    public static function getNumberAttr (xml :XML, name :String, defaultValue :* = undefined)
+        :Number
     {
-        return getAttributeAs(xml, name, defaultValue, StringUtil.parseNumber);
+        return getAttr(xml, name, defaultValue, StringUtil.parseNumber);
     }
 
-    public static function getAttributeAsBoolean (xml :XML, name :String, defaultValue :* = undefined) :Boolean
+    public static function getBooleanAttr (xml :XML, name :String, defaultValue :* = undefined)
+        :Boolean
     {
-        return getAttributeAs(xml, name, defaultValue, StringUtil.parseBoolean);
+        return getAttr(xml, name, defaultValue, StringUtil.parseBoolean);
     }
 
-    public static function getAttributeAsString (xml :XML, name :String, defaultValue :* = undefined) :String
+    public static function getStringAttr (xml :XML, name :String, defaultValue :* = undefined)
+        :String
     {
-        return getAttributeAs(xml, name, defaultValue);
+        return getAttr(xml, name, defaultValue);
     }
 
-    public static function getAttributeAs (xml :XML, name :String, defaultValue :*, parseFunction :Function = null) :*
+    public static function getAttr (xml :XML, name :String, defaultValue :*,
+        parseFunction :Function = null) :*
     {
         var value :*;
 
@@ -71,7 +77,8 @@ public class XmlReader
             if (undefined !== defaultValue) {
                 return defaultValue;
             } else {
-                throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': attribute does not exist");
+                throw new XmlReadError("In node '" + String(xml.localName()) +
+                    "': error reading attribute '" + name + "': attribute does not exist");
             }
         }
 
@@ -79,7 +86,8 @@ public class XmlReader
         try {
             value = (null != parseFunction ? parseFunction(attr) : attr);
         } catch (e :ArgumentError) {
-            throw new XmlReadError("In node '" + String(xml.localName()) + "': error reading attribute '" + name + "': " + e.message);
+            throw new XmlReadError("In node '" + String(xml.localName()) +
+                "': error reading attribute '" + name + "': " + e.message);
         }
 
         return value;
@@ -101,7 +109,8 @@ public class XmlReader
 
         if (!foundValue) {
             // we couldn't perform the mapping - generate an appropriate error string
-            var errString :String = "could not convert '" + stringVal + "' to the correct value (must be one of: ";
+            var errString :String = "could not convert '" + stringVal +
+                "' to the correct value (must be one of: ";
             for (ii = 0; ii < stringMapping.length; ++ii) {
                 errString += String(stringMapping[ii]);
                 if (ii < stringMapping.length - 1) {

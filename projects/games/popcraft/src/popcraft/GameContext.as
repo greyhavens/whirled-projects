@@ -48,7 +48,6 @@ public class GameContext
 
     public static var gameType :int;
     public static var gameData :GameData;
-    public static var mpSettings :MultiplayerSettingsData;
     public static var playerStats :PlayerStats;
 
     public static var gameMode :GameMode;

@@ -66,15 +66,15 @@ public class UnitData
 
         var unitData :UnitData = (useDefaults ? inheritFrom : new UnitData());
 
-        unitData.name = XmlReader.getAttributeAsString(xml, "type",
+        unitData.name = XmlReader.getStringAttr(xml, "type",
             (useDefaults ? inheritFrom.name : undefined));
-        unitData.displayName = XmlReader.getAttributeAsString(xml, "displayName",
+        unitData.displayName = XmlReader.getStringAttr(xml, "displayName",
             (useDefaults ? inheritFrom.displayName : undefined));
-        unitData.description = XmlReader.getAttributeAsString(xml, "description",
+        unitData.description = XmlReader.getStringAttr(xml, "description",
             (useDefaults ? inheritFrom.description : undefined));
-        unitData.introText = XmlReader.getAttributeAsString(xml, "introText",
+        unitData.introText = XmlReader.getStringAttr(xml, "introText",
             (useDefaults ? inheritFrom.introText : undefined));
-        unitData.introText2 = XmlReader.getAttributeAsString(xml, "introText2",
+        unitData.introText2 = XmlReader.getStringAttr(xml, "introText2",
             (useDefaults ? inheritFrom.introText2 : undefined));
 
         var resourceCostsNode :XML = xml.ResourceCosts[0];
@@ -82,22 +82,22 @@ public class UnitData
             // don't inherit resource costs
             unitData.resourceCosts = [ 0, 0, 0, 0 ];
             for each (var resourceNode :XML in resourceCostsNode.Resource) {
-                var resourceType :int = XmlReader.getAttributeAsEnum(resourceNode, "type",
+                var resourceType :int = XmlReader.getEnumAttr(resourceNode, "type",
                     Constants.RESOURCE_NAMES);
-                var cost :int = XmlReader.getAttributeAsUint(resourceNode, "amount");
+                var cost :int = XmlReader.getUintAttr(resourceNode, "amount");
                 unitData.resourceCosts[resourceType] = cost;
             }
         }
 
-        unitData.baseMoveSpeed = XmlReader.getAttributeAsNumber(xml, "baseMoveSpeed",
+        unitData.baseMoveSpeed = XmlReader.getNumberAttr(xml, "baseMoveSpeed",
             (useDefaults ? inheritFrom.baseMoveSpeed : undefined));
-        unitData.hasRepulseForce = XmlReader.getAttributeAsBoolean(xml, "hasRepulseForce",
+        unitData.hasRepulseForce = XmlReader.getBooleanAttr(xml, "hasRepulseForce",
             (useDefaults ? inheritFrom.hasRepulseForce : undefined));
-        unitData.survivesDaytime = XmlReader.getAttributeAsBoolean(xml, "survivesDaytime",
+        unitData.survivesDaytime = XmlReader.getBooleanAttr(xml, "survivesDaytime",
             (useDefaults ? inheritFrom.survivesDaytime : false));
-        unitData.minHealth = XmlReader.getAttributeAsUint(xml, "minHealth",
+        unitData.minHealth = XmlReader.getUintAttr(xml, "minHealth",
             (useDefaults ? inheritFrom.minHealth : 0));
-        unitData.maxHealth = XmlReader.getAttributeAsUint(xml, "maxHealth",
+        unitData.maxHealth = XmlReader.getUintAttr(xml, "maxHealth",
             (useDefaults ? inheritFrom.maxHealth : undefined));
 
         var armorNode :XML = xml.Armor[0];
@@ -111,11 +111,11 @@ public class UnitData
                 (useDefaults ? inheritFrom.weapon : null));
         }
 
-        unitData.collisionRadius = XmlReader.getAttributeAsNumber(xml, "collisionRadius",
+        unitData.collisionRadius = XmlReader.getNumberAttr(xml, "collisionRadius",
             (useDefaults ? inheritFrom.collisionRadius : undefined));
-        unitData.detectRadius = XmlReader.getAttributeAsNumber(xml, "detectRadius",
+        unitData.detectRadius = XmlReader.getNumberAttr(xml, "detectRadius",
             (useDefaults ? inheritFrom.detectRadius : undefined));
-        unitData.loseInterestRadius = XmlReader.getAttributeAsNumber(xml, "loseInterestRadius",
+        unitData.loseInterestRadius = XmlReader.getNumberAttr(xml, "loseInterestRadius",
             (useDefaults ? inheritFrom.loseInterestRadius : undefined));
 
         return unitData;

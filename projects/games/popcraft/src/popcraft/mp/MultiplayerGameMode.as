@@ -12,7 +12,7 @@ public class MultiplayerGameMode extends GameMode
 {
     override public function get mapSettings () :MapSettingsData
     {
-        return GameContext.mpSettings.mapSettings;
+        return _mpSettings.mapSettings;
     }
 
     override protected function rngSeeded () :void
@@ -27,7 +27,7 @@ public class MultiplayerGameMode extends GameMode
                 return (mpSettings.arrangeType == multiplayerArrangement);
             });
 
-        GameContext.mpSettings = Rand.nextElement(potentialSettings, Rand.STREAM_GAME);
+        _mpSettings = Rand.nextElement(potentialSettings, Rand.STREAM_GAME);
     }
 
     override protected function createPlayers () :void
@@ -65,7 +65,7 @@ public class MultiplayerGameMode extends GameMode
             // calculate the player's handicap
             var handicap :Number = 1;
             if (teamSize < largestTeamSize) {
-                handicap = GameContext.mpSettings.smallerTeamHandicap;
+                handicap = _mpSettings.smallerTeamHandicap;
             }
             if (handicaps[playerIndex]) {
                 handicap *= Constants.HANDICAPPED_MULTIPLIER;
@@ -97,6 +97,8 @@ public class MultiplayerGameMode extends GameMode
         GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
         GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
+
+    protected var _mpSettings :MultiplayerSettingsData;
 }
 
 }

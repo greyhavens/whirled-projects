@@ -41,11 +41,11 @@ public class CreatureSpellData extends SpellData
 
         SpellData.fromXml(xml, spell);
 
-        spell.expireTime = XmlReader.getAttributeAsNumber(xml, "expireTime",
+        spell.expireTime = XmlReader.getNumberAttr(xml, "expireTime",
             (useDefaults ? inheritFrom.expireTime : undefined));
-        spell.speedScaleOffset = XmlReader.getAttributeAsNumber(xml, "speedScaleOffset",
+        spell.speedScaleOffset = XmlReader.getNumberAttr(xml, "speedScaleOffset",
             (useDefaults ? inheritFrom.speedScaleOffset : 0));
-        spell.damageScaleOffset = XmlReader.getAttributeAsNumber(xml, "damageScaleOffset",
+        spell.damageScaleOffset = XmlReader.getNumberAttr(xml, "damageScaleOffset",
             (useDefaults ? inheritFrom.damageScaleOffset : 0));
 
         return spell;

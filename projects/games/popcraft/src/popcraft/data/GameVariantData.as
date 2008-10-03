@@ -13,8 +13,8 @@ public class GameVariantData
     {
         var variant :GameVariantData = new GameVariantData();
 
-        variant.name = XmlReader.getAttributeAsString(xml, "name");
-        variant.description = XmlReader.getAttributeAsString(xml, "description");
+        variant.name = XmlReader.getStringAttr(xml, "name");
+        variant.description = XmlReader.getStringAttr(xml, "description");
 
         var gameDataOverrideNode :XML = XmlReader.getSingleChild(xml, "GameDataOverride");
         variant.gameDataOverride = GameData.fromXml(gameDataOverrideNode,

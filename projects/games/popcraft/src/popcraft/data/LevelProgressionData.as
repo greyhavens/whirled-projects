@@ -11,7 +11,7 @@ public class LevelProgressionData
         var lpd :LevelProgressionData = new LevelProgressionData();
 
         for each (var level :XML in xml.Level) {
-            lpd.levelNames.push(XmlReader.getAttributeAsString(level, "name"));
+            lpd.levelNames.push(XmlReader.getStringAttr(level, "name"));
         }
 
         return lpd;

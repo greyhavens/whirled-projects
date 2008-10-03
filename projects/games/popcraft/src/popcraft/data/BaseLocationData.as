@@ -12,9 +12,9 @@ public class BaseLocationData
     public static function fromXml (xml :XML) :BaseLocationData
     {
         var data :BaseLocationData = new BaseLocationData();
-        data.loc.x = XmlReader.getAttributeAsNumber(xml, "x");
-        data.loc.y = XmlReader.getAttributeAsNumber(xml, "y");
-        data.team = XmlReader.getAttributeAsInt(xml, "team");
+        data.loc.x = XmlReader.getNumberAttr(xml, "x");
+        data.loc.y = XmlReader.getNumberAttr(xml, "y");
+        data.team = XmlReader.getIntAttr(xml, "team");
 
         return data;
     }

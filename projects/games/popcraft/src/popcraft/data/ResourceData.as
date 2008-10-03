@@ -25,13 +25,13 @@ public class ResourceData
 
         var resource :ResourceData = (useDefaults ? inheritFrom : new ResourceData());
 
-        resource.displayName = XmlReader.getAttributeAsString(xml, "displayName",
+        resource.displayName = XmlReader.getStringAttr(xml, "displayName",
             (useDefaults ? inheritFrom.displayName : undefined));
-        resource.color = XmlReader.getAttributeAsUint(xml, "color",
+        resource.color = XmlReader.getUintAttr(xml, "color",
             (useDefaults ? inheritFrom.color : undefined));
-        resource.hiliteColor = XmlReader.getAttributeAsUint(xml, "hiliteColor",
+        resource.hiliteColor = XmlReader.getUintAttr(xml, "hiliteColor",
             (useDefaults ? inheritFrom.hiliteColor : undefined));
-        resource.rarity = XmlReader.getAttributeAsNumber(xml, "rarity",
+        resource.rarity = XmlReader.getNumberAttr(xml, "rarity",
             (useDefaults ? inheritFrom.rarity : undefined));
 
         return resource;

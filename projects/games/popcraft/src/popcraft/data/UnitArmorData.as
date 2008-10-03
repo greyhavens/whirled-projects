@@ -39,9 +39,9 @@ public class UnitArmorData
             }
 
             for each (var damageNode :XML in xml.Damage) {
-                var type :int = XmlReader.getAttributeAsEnum(damageNode, "type",
+                var type :int = XmlReader.getEnumAttr(damageNode, "type",
                     Constants.DAMAGE_TYPE_NAMES);
-                var scale :Number = XmlReader.getAttributeAsNumber(damageNode, "scale");
+                var scale :Number = XmlReader.getNumberAttr(damageNode, "scale");
                 armorData.armor[type] = scale;
             }
         }

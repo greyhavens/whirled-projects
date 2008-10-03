@@ -10,6 +10,7 @@ public class EndlessMapData
     public var computerGroups :Array = []; // array of arrays of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
     public var availableSpells :Array = [];
+    public var repeats :Boolean; // does this MapData repeat when the map sequence cycles?
 
     public static function fromXml (xml :XML) :EndlessMapData
     {
@@ -29,6 +30,8 @@ public class EndlessMapData
         // parse the available units and spells
         mapData.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
         mapData.availableSpells = DataUtils.parseSpellTypes(xml.AvailableSpells[0]);
+
+        mapData.repeats = XmlReader.getBooleanAttr(xml, "repeats");
 
         return mapData;
     }

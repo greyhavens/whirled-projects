@@ -17,13 +17,18 @@ public class EndlessGameMode extends GameMode
         _level = level;
     }
 
+    public function incrementScore (offset :int) :void
+    {
+        _score += offset;
+    }
+
     override public function playerEarnedResources (resourceType :int, offset :int,
         numClearPieces :int) :int
     {
         var actualResourcesEarned :int =
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
-        // TODO - count this towards the player's score
+        this.incrementScore(actualResourcesEarned * _level.pointsPerResource);
 
         return actualResourcesEarned;
     }
@@ -123,6 +128,7 @@ public class EndlessGameMode extends GameMode
 
     protected var _level :EndlessLevelData;
     protected var _mapDataIndex :int;
+    protected var _score :int;
 }
 
 }

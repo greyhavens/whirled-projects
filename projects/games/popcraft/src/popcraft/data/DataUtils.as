@@ -19,14 +19,14 @@ public class DataUtils
     {
         var types :Array = [];
 
-        if (XmlReader.getAttributeAsBoolean(xml, "all", false)) {
+        if (XmlReader.getBooleanAttr(xml, "all", false)) {
             for (var type :int = 0; type < typeNames.length; ++type) {
                 types.push(type);
             }
 
         } else {
             for each (var unitData :XML in xml.elements(xmlNodeName)) {
-                types.push(XmlReader.getAttributeAsEnum(unitData, "type", typeNames));
+                types.push(XmlReader.getEnumAttr(unitData, "type", typeNames));
             }
         }
 
