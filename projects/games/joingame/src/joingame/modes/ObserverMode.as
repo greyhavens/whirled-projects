@@ -14,7 +14,11 @@ package joingame.modes
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
+    import flash.events.TimerEvent;
     import flash.filters.ColorMatrixFilter;
+    import flash.text.TextField;
+    import flash.utils.Timer;
+    import flash.utils.getTimer;
     
     import joingame.*;
     import joingame.model.*;
@@ -63,9 +67,6 @@ package joingame.modes
             
             
             Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS = (AppContext.gameHeight - _marquee_placer.y) + tempMarquee.height/2;
-//            trace("Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS=" + Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS);
-            
-            
             
             var winnerClass :Class = swf.getClass("winner");
             var _winnerClipMovieClip :MovieClip = new winnerClass();
@@ -78,7 +79,7 @@ package joingame.modes
             
             var replayButtonClass :Class = swf.getClass("replay_button");
             
-            var startButtonMovieClip :MovieClip = new replayButtonClass();//MovieClip(_winnerClipMovieClip["replay_button"]);
+            var startButtonMovieClip :MovieClip = new replayButtonClass();
             startButtonMovieClip.mouseEnabled = true;
             startButtonMovieClip.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             startButtonMovieClip.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
@@ -93,9 +94,61 @@ package joingame.modes
             
             addObject( _startButton, modeSprite);
             
-            var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0]
+            var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
             
+            _restartTimeTextField = new TextField();
+            _restartTimeTextField.selectable = false;
+            _restartTimeTextField.textColor = 0xFFFFFF;
+            _restartTimeTextField.width = 10;
+            _restartTimeTextField.x = 50;
+            _restartTimeTextField.x = AppContext.gameWidth/2 - _restartTimeTextField.width/2;
+            _restartTimeTextField.y = 258;
+            _restartTimeTextField.text = "";
+            _restartTimeTextField.visible = false;
+            this.modeSprite.addChild( _restartTimeTextField );
+            
+            _gameRestartTimer = new Timer(1000, 0);
+            _gameRestartTimer.addEventListener(TimerEvent.TIMER, gameTimer);
+            _totalTimeElapsedSinceNewGameTimerStarted = 0;
+        
+        
+            initGameData();
+        }
+        
+        protected function gameTimer(  e :TimerEvent) :void
+        {
+            _totalTimeElapsedSinceNewGameTimerStarted++;
+            _restartTimeTextField.text = "" + ( Constants.GAME_RESTART_TIME - _totalTimeElapsedSinceNewGameTimerStarted) ;
+            _restartTimeTextField.visible = true;
+            modeSprite.setChildIndex( _restartTimeTextField, modeSprite.numChildren - 1);
+            if( _totalTimeElapsedSinceNewGameTimerStarted >  Constants.GAME_RESTART_TIME) {
+                _restartTimeTextField.visible = false;
+                _gameRestartTimer.stop();
+                _totalTimeElapsedSinceNewGameTimerStarted = 0;
+            }
+        }
+        
+        protected function reset() :void
+        {
+            _winnerClip.y = -100;
+            _startButton.y = -100;
+            for each (var s :SceneObject in _id2HeadshotSceneObject.values()) {
+                s.destroySelf();
+            }
+            
+            for each ( s in _id2MarqueeSceneObject.values()) {
+                s.destroySelf();
+            }
+            
+            _id2HeadshotSceneObject.clear();
+            _id2MarqueeSceneObject.clear();
+            
+            
+            _gameRestartTimer.stop();
+            _gameRestartTimer.reset();
+            _restartTimeTextField.visible = false;
+            _totalTimeElapsedSinceNewGameTimerStarted = 0;
             
             initGameData();
         }
@@ -103,6 +156,8 @@ package joingame.modes
         override protected function destroy () :void
         {
             AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
+            _gameRestartTimer.stop();
             if(_startButton != null) {
                 
                 var movieClip :MovieClip = _startButton.displayObject as MovieClip;
@@ -113,7 +168,7 @@ package joingame.modes
             }
             if( _gameModel != null )
             {
-                _gameModel.removeEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, animateHeadshotsToLocation);
+                _gameModel.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
                 _gameModel.removeEventListener(JoinGameEvent.GAME_OVER, gameOver);
             }
             
@@ -123,17 +178,19 @@ package joingame.modes
         
         protected function initGameData() :void 
         {
+            
+            
             if(_boardsView != null) {
                 _boardsView.destroySelf();
             }
             
             if( _gameModel != null )
             {
-                _gameModel.removeEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, animateHeadshotsToLocation);
+                _gameModel.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
                 _gameModel.removeEventListener(JoinGameEvent.GAME_OVER, gameOver);
             }
             
-            _gameModel = GameContext.gameState;
+            _gameModel = GameContext.gameModel;
             
             
             _id2HeadshotSceneObject = new HashMap();
@@ -144,8 +201,6 @@ package joingame.modes
                 var so2 :SimpleSceneObject = new SimpleSceneObject(marquee);
                 _id2MarqueeSceneObject.put( id, so2);
                 addObject( so2, modeSprite);
-                /* Make sure they are just abobe the background */
-//                modeSprite.setChildIndex( so2.displayObject, 1);
             }
             
             for each ( id in _gameModel._initialSeatedPlayerIds) {
@@ -158,19 +213,21 @@ package joingame.modes
             }
             
             
-            _boardsView = new JoinGameBoardsView(GameContext.gameState, AppContext.gameCtrl, true);
+            _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl, true);
             addObject( _boardsView, _modeSprite);
             _boardsView.updateBoardDisplays();
-            _gameModel.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, animateHeadshotsToLocation);
+            _gameModel.addEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
             _gameModel.addEventListener(JoinGameEvent.GAME_OVER, gameOver);
             
-            animateHeadshotsToLocation(null);
+            animateHeadshotsToLocation(null, 0);
             
             trace("Player " + AppContext.myid + ", ObserverMode, initGameData(), _gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
-            if(_gameModel.currentSeatingOrder.length <= 1) {
+            if(_gameModel.currentSeatingOrder.length == 1) {
+                
                 gameOver();
             }
         }
+        
         
         /** Respond to messages from the server. */
         public function messageReceived (event :MessageReceivedEvent) :void
@@ -186,26 +243,11 @@ package joingame.modes
                 if( headshot != null ) {
                     headshot.displayObject.filters = [ _myColorMatrix_filter ];
                 }
-
+                _totalTimeElapsedSinceNewGameTimerStarted = 0;
             }
-//            else if (event.name == Server.ALL_PLAYERS_READY)
-//            {
-//                GameContext.gameState = new JoinGameModel( AppContext.gameCtrl);
-//                GameContext.gameState.setModelMemento( event.value[0] as Array );
-//                trace("setting new model, sending " + Server.PLAYER_RECEIVED_START_GAME_STATE);
-//                AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
-//                
-//            }
             else if (event.name == Server.REPLAY_CONFIRM)
             {
-                trace("\nPlayer " + AppContext.myid + ", " + Server.REPLAY_CONFIRM + " for " + AppContext.myid);
-                
                 var playerIdsAcceptedForNextGame :Array = event.value[0] as Array;
-                
-                trace("playerIdsAcceptedForNextGame=" + playerIdsAcceptedForNextGame);
-                
-                
-                
                 
                 var keys :Array = _id2HeadshotSceneObject.keys();
                 for each (var key :int in keys) {
@@ -216,13 +258,13 @@ package joingame.modes
                 }
 
                 if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.gameCtrl.game.getMyId())) {  
-                    trace("starting WaitingForPlayerDataModeAsPlayer");
+                    AppContext.beginToShowInstructionsTime = getTimer();
                     AppContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
                 }
                 else {
-                    trace("starting a new WaitingForPlayerDataModeAsObserver");
                     AppContext.isObserver = true;//Now a permenent observer
-                    AppContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsObserver());
+                    GameContext.gameModel.setModelMemento( event.value[1] as Array);
+                    reset();
                 }
             }
             
@@ -231,7 +273,6 @@ package joingame.modes
         private function mouseClicked( event:MouseEvent ) :void
         {
             _startButton.y -= 4;
-            trace("Player " + AppContext.myid + ", sending " + Server.REPLAY_REQUEST );
             AppContext.gameCtrl.net.sendMessage(Server.REPLAY_REQUEST, {});//, NetSubControl.TO_SERVER_AGENT
         }
         
@@ -253,20 +294,21 @@ package joingame.modes
         
         protected function gameOver( e :JoinGameEvent = null) :void
         {
-            trace("Player " + AppContext.myid + ", ObserverMode gameOver()");
             _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
             modeSprite.setChildIndex( _winnerClip.displayObject, modeSprite.numChildren - 1);
+            AudioManager.instance.playSoundNamed("final_applause");
             
-            if(!AppContext.isObserver) {
+            if(!AppContext.isObserver && AppContext.gameCtrl.isConnected() && (AppContext.gameCtrl.net.get( Server.POTENTIAL_PLAYERS) as Array).length > 1) {
                 _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                 modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
+                
+                _gameRestartTimer.reset();
+                _gameRestartTimer.start(); 
             }
         }
         
-        protected function animateHeadshotsToLocation( e :JoinGameEvent) :void
+        protected function animateHeadshotsToLocation( e :JoinGameEvent, animationDuration :Number = Constants.HEADSHOT_MOVEMENT_TIME) :void
         {
-            
-//            trace("\n!!!!!!!!!!animatePiecesToLocation() for player " + AppContext.gameCtrl.game.getMyId());
             
             var scaleTask: ScaleTask;
             var moveTask :LocationTask;
@@ -289,21 +331,34 @@ package joingame.modes
             var marquee :SceneObject;
             for each ( id in _gameModel.currentSeatingOrder) {
                 
-                headshot = _id2HeadshotSceneObject.get(id) as SceneObject;
-                headshot.scaleX = 1.0;
-                headshot.scaleY = 1.0;
                 marquee = _id2MarqueeSceneObject.get(id) as SceneObject;
+                
+                marquee.scaleX = 1.0;
+                marquee.scaleY = 1.0;
+                var marqueeScale :Number = actualBoardWidth / marquee.width as Number;
+                marqueeScale = Math.min(  marqueeScale, 1.0);
+                
+                marquee.scaleX = marqueeScale;
+                marquee.scaleY = marqueeScale;
+                
+                headshot = _id2HeadshotSceneObject.get(id) as SceneObject;
+                headshot.scaleX = marqueeScale;
+                headshot.scaleY = marqueeScale;
+                
+                
+                
                 
                 toX = currentXPosition + actualBoardWidth/2 - headshot.width/2;
                 toY = _marquee_placer.y - headshot.height/2;
                 
-                moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME);
-                headshot.addTask( moveTask ); 
+                moveTask = LocationTask.CreateEaseOut(toX, toY, animationDuration);
+                headshot.addTask( moveTask );
+                modeSprite.setChildIndex( headshot.displayObject, modeSprite.numChildren - 1); 
                 
                 toX = toX + headshot.width/2;
                 toY = toY + headshot.height/2;
                 
-                moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME);
+                moveTask = LocationTask.CreateEaseOut(toX, toY, animationDuration);
                 marquee.addTask( moveTask ); 
                 
                 currentXPosition +=  actualBoardWidth + Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_BOARDS;
@@ -337,8 +392,8 @@ package joingame.modes
                 toY = _out_placer.y - actualHeadshotHeight/2;
                 
                 
-                scaleTask = new ScaleTask(headshotScale, headshotScale, Constants.HEADSHOT_MOVEMENT_TIME);
-                moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME);
+                scaleTask = new ScaleTask(headshotScale, headshotScale, animationDuration);
+                moveTask = LocationTask.CreateEaseOut(toX, toY, animationDuration);
                 parallelTask = new ParallelTask( scaleTask, moveTask);
                 headshot.addTask( parallelTask );
                 
@@ -362,12 +417,14 @@ package joingame.modes
         protected var _marquee_placer :MovieClip;
         protected var _marqueeClass :Class;
         
-//        protected var _winnerClip :MovieClip;
         protected var _myColorMatrix_filter :ColorMatrixFilter;
         protected var _startButton :SimpleSceneObject;
         
         protected var _winnerClip :SceneObject;
         
+        protected var _restartTimeTextField :TextField;
+        protected var _gameRestartTimer :Timer;
+        protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
         
     }
 }

@@ -7,12 +7,12 @@ package joingame
         
 
         
-        public static const PUZZLE_HEIGHT :Number = 450.0;
+        public static const MAX_PUZZLE_HEIGHT :int = 3000;
         
         public static const PUZZLE_STARTING_COLS :int = 7;
         public static const PUZZLE_STARTING_ROWS :int = 10;
         
-        public static const MAX_BUILDING_SIZE :int = 500; 
+        public static const MAX_ROWS :int = 14; 
         
         public static const PUZZLE_TILE_SIZE :int = 30;
         public static const PUZZLE_TILE_SIZE_WHEN_DEAD :int = 10;
@@ -22,11 +22,12 @@ package joingame
         
         
         
-        public static const HEALING_ALLOWED :Boolean = true;
+        public static const HEALING_ALLOWED :Boolean = false;
         
-        public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
+//        public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
         
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * PUZZLE_STARTING_ROWS - 2;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
+//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -61,9 +62,9 @@ package joingame
         public static const GUI_BETWEEN_BOARDS: int = 40;
         public static const GUI_BOARD_FLOOR_GAP: int = 20;
         
-        public static const GUI_LEFT_BOARD_CENTER: int = 120;
-        public static const GUI_MIDDLE_BOARD_CENTER: int = 340;
-        public static const GUI_RIGHT_BOARD_CENTER: int = 560;
+        public static var GUI_WEST_BOARD_RIGHT: int = 120;
+        public static var GUI_MIDDLE_BOARD_CENTER: int = 340;
+        public static var GUI_EAST_BOARD_LEFT: int = 560;
         
         
         public static const GUI_OBSERVER_VIEW_GAP_BETWEEN_BOARDS: int = 10;
@@ -78,8 +79,11 @@ package joingame
         
         
         /* Animations */
-        public static const JOIN_ANIMATION_TIME: Number = 3.5;
-        public static const PIECE_DROP_TIME :Number = 0.3;//Time to fall
+        public static const VERTICAL_JOIN_ANIMATION_TIME: Number = 0.5;
+        public static const PIECE_DROP_TIME :Number = 0.5;//Time to fall
+
+        public static const VERTICAL_JOIN_DISSAPPEAR_TIME: Number = 0.3;
+        public static const PIECE_BOUNCE_TIME :Number = 0.2;//Time to bounce
         public static const DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL :int = 6;
         public static const PIECE_DROP_BOUNCE1_TIME :Number = 0.1;//THe 'shudder' as the piece falls
         public static const PIECE_DROP_BOUNCE2_TIME :Number = 0.05;//THe 'shudder' as the piece falls
@@ -88,14 +92,26 @@ package joingame
         public static const PIECE_SCALE_DOWN_TIME :Number = 0.4;
         public static const PIECE_JOIN_BOUNCE_DISTANCE :int = 70;
         
-        public static const BOARD_ENTER_DELAY :Number = 2.0;
-        public static const HEADSHOT_MOVEMENT_TIME :Number = 2.0;
+        public static const BOARD_ENTER_DELAY :Number = 1.0;
+        public static const HEADSHOT_MOVEMENT_TIME :Number = 1.0;
+        
+        public static const BOARD_DISTRUCTION_TIME :Number = 5.0;
+        
+
+
+//        public static const JOIN_ANIMATION_TIME: Number = 0.5;
+
         
         /* Game admin*/
         public static const GAME_RESTART_TIME :int = 10;
         
         public static const PLAYER_ID_TO_LOG :int = 2;
         
+        public static const TESTING_NEW_MECHANIC :Boolean = true;
+        
+        public static const TIME_TO_SHOW_INSTRUCTIONS :int = 6000; 
+        
+        public static var isMultiplayer :Boolean;
     }
 }
  

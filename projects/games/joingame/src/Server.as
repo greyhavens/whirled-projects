@@ -10,48 +10,45 @@ package
     
     import flash.events.TimerEvent;
     import flash.utils.Timer;
+    import flash.utils.getTimer;
     
     import joingame.Constants;
+    import joingame.GameContext;
     import joingame.SeatingManager;
-    import joingame.model.*;
+    import joingame.model.JoinGameModel;
+    import joingame.model.JoinGameBoardRepresentation;
+    import joingame.model.JoinGameJoin;
     import joingame.net.JoinGameEvent;
     
     
     public class Server extends ServerObject
     {
-        //IF we give a non-null GameControl, we assume that the server side is not running properly 
         public function Server(gameControl: GameControl = null)
         {
             _firstGame = true;
-//            _playerIDsInOrderOfPlay = new Array();
             _currentActivePlayers = new Array();
             _playersReady = new Array();
             _playersReceivedStartGameState = new Array();
-//            _currentActivePlayers = new Array();
-//            _currentActivePlayers = new Array();
             _playersThatWantToPlayAgain = new Array();
             
             _gameRestartTimer = new Timer(1000, 0);
             _gameRestartTimer.addEventListener(TimerEvent.TIMER, gameTimer);
             _totalTimeElapsedSinceNewGameTimerStarted = 0;
             
-            trace("Hello world! I'm your Joingame server!");
+//            trace("Hello world! I'm your Politik server!");
             
             _gameCtrl = new GameControl(this);
             
-            //We only add the listeners if we are running on the server, 
-            //not just used by another class as a stop-gap for the lack of server side code.
-            // send incoming message notifications to the messageReceived() method
-            //We only add the listeners if we are running on the server, 
             _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-                
-            // send incoming message notifications to the messageReceived() method
             _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
-            _gameModel = new JoinGameModel(_gameCtrl, false);
+            _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, occupantEntered);
+            
+            _gameModel = new JoinGameModel(_gameCtrl, true);
             _gameModel.addEventListener(JoinGameEvent.GAME_OVER, gameOver);
-            _gameModel.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, listenForPlayerEliminated);
-//            _gameModel.addEventListener(JoinGameEvent.REMOVE_ROW_NOTIFICATION, gameOver);
+            _gameModel.addEventListener(JoinGameEvent.PLAYER_REMOVED, listenForPlayerEliminated);
             SeatingManager.init(_gameCtrl);
+            
+            _gameCtrl.net.set(JoinGameModel.DELTA_STRING, [0,0,0,0]);
             
                     
         }
@@ -59,8 +56,6 @@ package
         protected function gameTimer(  e :TimerEvent) :void
         {
             _totalTimeElapsedSinceNewGameTimerStarted++;
-            trace("seconds elapsed for new game start " + _totalTimeElapsedSinceNewGameTimerStarted 
-                + " / " + Constants.GAME_RESTART_TIME);
             if(_totalTimeElapsedSinceNewGameTimerStarted >= Constants.GAME_RESTART_TIME) {
                 restartGameTimerComplete(e);
             }
@@ -68,19 +63,17 @@ package
 
         protected function restartGameTimerComplete( e :TimerEvent) :void
         {
-            trace("restartGameTimerComplete(), _playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain);
             _totalTimeElapsedSinceNewGameTimerStarted = 0;
             _gameRestartTimer.reset();
             
             if(_playersThatWantToPlayAgain.length > 1) {
                 _currentActivePlayers = _playersThatWantToPlayAgain;
-                createNewModel();
+                createNewMultiPlayerModel();
             }
         }
     
         protected function gameOver( e: JoinGameEvent) :void
         {
-            trace("Server side: game over, assigning scores");
             /* We assign scores according to an exponential scale, so the winner gets a big pot,
             while those knocked out early get very little. The winner gets half the pot, followed
             by 2nd place getting a quarter, 3rd gets 1/8 and so on.*/
@@ -89,19 +82,16 @@ package
             var playerIds :Array = new Array();
             var scores :Array = new Array();
             var playerIdsInOrderOfLoss :Array = _gameModel._playerIdsInOrderOfLoss.slice();
+            playerIdsInOrderOfLoss.push( _gameModel.currentSeatingOrder[0]);
             
-            
-            playerIds.push( _gameModel.currentSeatingOrder[0]);
-            var denominator :int = 2;
-            scores.push( int(  totalScore*(1.0/denominator)  ));
-            denominator *= 2;
-            while( playerIdsInOrderOfLoss.length > 0) {
-                playerIds.push( playerIdsInOrderOfLoss.pop() );
-                scores.push( int(  totalScore*(1.0/denominator)  ));
-                denominator *= 2;
+            for( var k :int = 0; k < playerIdsInOrderOfLoss.length; k++) {
+                playerIds.push( playerIdsInOrderOfLoss[k] );
+                scores.push( scoreFunction(k+1) );
             }
             
-            
+            function scoreFunction( playersDefeated :int) :int{
+                return playersDefeated*( 1.0 + (playersDefeated*1.1));
+            }
             
             trace("Awarding scores:\nPlayer\t|\tScore");
             for(var i :int = 0; i < playerIds.length; i++) {
@@ -111,9 +101,8 @@ package
             var msg :Object = new Object;
             msg[0] = playerIds;
             msg[1] = scores;
-            _gameCtrl.net.sendMessage( GAME_OVER, msg);
             _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
-
+            _gameCtrl.net.sendMessage( GAME_OVER, msg);
             _gameRestartTimer.start();
             
         }
@@ -123,7 +112,6 @@ package
 
         public function messageReceived (event :MessageReceivedEvent) :void
         {
-//            trace("Server messageReceived="+event);
             var msg :Object;
             var k: int;
             var id :int;
@@ -132,7 +120,6 @@ package
             /* If all players have registered that they are ready, send the game state to all.*/   
             if (event.name == Server.REGISTER_PLAYER)
             {
-                trace(REGISTER_PLAYER + " for player " + event.senderId);
                 if(!ArrayUtil.contains( _currentActivePlayers, event.senderId))
                 {
                     _currentActivePlayers.push( event.senderId );
@@ -144,16 +131,32 @@ package
                            random, but identical on server and client. */
                         var playerids:Array = _gameCtrl.game.seating.getPlayerIds();
                         
+                        _gameCtrl.net.set( POTENTIAL_PLAYERS, playerids);
                         _currentActivePlayers = playerids;
-                        createNewModel();
-                        _gameCtrl.net.sendMessage( REPLAY_CONFIRM, {});
+                        
+                        if(Constants.isMultiplayer) {
+                            
+                        
+                            createNewMultiPlayerModel();
+                            
+                            msg = new Object;
+                            msg[0] = _currentActivePlayers;
+                            msg[1] = _gameModel.getModelMemento();
+                            _gameCtrl.net.sendMessage(REPLAY_CONFIRM, msg);
+                        }
+                        else {
+                            createNewSinglePlayerModel();
+                            msg = new Object;
+                            msg[0] = _gameModel.getModelMemento();
+                            _gameCtrl.net.sendMessage(ALL_PLAYERS_READY, msg);
+                        }
+    
                     }
                 }
                 
             }
             else if (event.name == Server.PLAYER_READY)
             {
-                trace("Server PLAYER_READY for player " + event.senderId);
                 if(!ArrayUtil.contains( _playersReady, event.senderId))
                 {
                     _playersReady.push( event.senderId );
@@ -165,12 +168,9 @@ package
                         _gameCtrl.net.sendMessage(ALL_PLAYERS_READY, msg );
                     }
                 }
-                trace("_playersReady=" + _playersReady);
             }
             if (event.name == Server.PLAYER_RECEIVED_START_GAME_STATE)
             {
-                trace("Server PLAYER_RECEIVED_START_GAME_STATE for player " + event.senderId);
-                
                 
                 if(!ArrayUtil.contains( _playersReceivedStartGameState, event.senderId) && ArrayUtil.contains( _currentActivePlayers, event.senderId) )
                 {
@@ -178,7 +178,6 @@ package
                     
                     if( _playersReceivedStartGameState.length >= _currentActivePlayers.length)//SeatingManager.numExpectedPlayers
                     {
-                        trace("Server sending to all platers: " + START_PLAY);
                         _gameCtrl.net.sendMessage( START_PLAY, {});
                     }
                 }
@@ -188,12 +187,35 @@ package
                 //Only the owner can change her own board.
                 if(event.senderId == event.value[0])
                 {
-//                    trace(Server.BOARD_DELTA_REQUEST+ "[ " + event.value[0]+ " " + event.value[1]+ " " + event.value[2] + " " + event.value[3] + " ]");
-                    moveRequest(int(event.value[0]), int(event.value[2]), int(event.value[3]), int(event.value[4]), int(event.value[5]));
+                    deltaRequest(int(event.value[0]), int(event.value[2]), int(event.value[3]), int(event.value[4]), int(event.value[5]));
                 }
             }
-            else 
-            if (event.name == Server.BOARD_UPDATE_REQUEST)
+            else if (event.name == Server.BOARD_BOTTOM_ROW_REMOVAL_REQUEST_FROM_BUTTON)
+            {
+                //Only the owner can change her own board.
+                if(event.senderId == event.value[0])
+                {
+                    msg = new Object();
+                    msg[0] = event.senderId;
+                    if(_gameModel.doRemoveBottomRow( _gameModel.getBoardForPlayerID( event.senderId) ) ) {
+                        _gameCtrl.net.sendMessage(Server.BOARD_REMOVE_ROW_CONFIRM, msg);
+                    }
+                }
+            }
+            else if (event.name == Server.BOARD_REMOVE_ROW_CONFIRM_TO_SERVER)
+            {
+                id = int(event.value[0]);
+                if(id >= 0)
+                {
+                    msg = new Object();
+                    msg[0] = id;
+                    if(_gameModel.doRemoveBottomRow( _gameModel.getBoardForPlayerID( id) ) ) {
+                        _gameCtrl.net.sendMessage(Server.BOARD_REMOVE_ROW_CONFIRM, msg);
+                    }
+                    
+                }
+            }
+            else if (event.name == Server.BOARD_UPDATE_REQUEST)
             {
                 
                 clientid = int(event.value[0]);
@@ -202,7 +224,6 @@ package
                 if(boardplayerid >= 0 && isPlayerActive(boardplayerid))
                 {
                 
-//                    var alsoUpdatePlayerIDS:Boolean = false;
                     //If there is no board we have to generate one.
                     var board:JoinGameBoardRepresentation;
                     if(!_gameModel.isPlayer(boardplayerid))//This also means we haven't registered the player
@@ -212,23 +233,18 @@ package
                     }
                     board = _gameModel.getBoardForPlayerID(boardplayerid);
                     
-                    
-    //                trace("!!!Server: Sending update, clientid="+clientid+", boardplayerid="+boardplayerid+", board.getBoardAsCompactRepresentation()="+board.getBoardAsCompactRepresentation());
                     msg = new Object;
                     msg[0] = clientid;
                     msg[1] = boardplayerid;
                     msg[2] = board.getBoardAsCompactRepresentation();
                     
                     _gameCtrl.net.sendMessage(Server.BOARD_UPDATE_CONFIRM, msg, clientid );
-                    
-                    
                 }
                 else//If the player ID doesn't exist, send a dead board.
                 {
                     board = new JoinGameBoardRepresentation();
                     board._rows = Constants.PUZZLE_STARTING_ROWS;
                     board._cols = Constants.PUZZLE_STARTING_COLS;
-//                    trace("creating a board, here are the colors:");
                     for(k = 0; k < board._rows*board._cols; k++)
                     {
                         board._boardPieceColors[k] = 0;
@@ -242,38 +258,24 @@ package
                     _gameCtrl.net.sendMessage(Server.BOARD_UPDATE_CONFIRM, msg, clientid );
                 }
             }
-            else 
-            if (event.name == MODEL_REQUEST)
+            else if (event.name == MODEL_REQUEST)
             {
-                trace(Server.MODEL_REQUEST + " for player " + event.senderId);
-                trace("Seating ids=" + _gameCtrl.game.seating.getPlayerIds());
                 msg = new Object;
                 msg[0] = _gameModel.getModelMemento();
-                trace("sending " + MODEL_CONFIRM + " to player " + event.senderId);
                 _gameCtrl.net.sendMessage(MODEL_CONFIRM, msg);//, event.senderId );
-            }
-            else if (event.name == Server.BOARD_REMOVE_ROW_CONFIRM)
-            {
-                
-                id = int(event.value[0]);
-                if(id >= 0)
-                {
-                    _gameModel.doRemoveBottomRow( _gameModel.getBoardForPlayerID( id) );
-                }
             }
             else if (event.name == Server.REPLAY_REQUEST)
             {
-                trace(Server.REPLAY_REQUEST);
                 id = event.senderId;
-//                trace("id=" + id);
                 if(id >= 0 && !ArrayUtil.contains(_playersThatWantToPlayAgain, id) && ArrayUtil.contains(_currentActivePlayers, id))
                 {
                     _playersThatWantToPlayAgain.push( id);
-                    trace("_playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain);
+                    _totalTimeElapsedSinceNewGameTimerStarted = 0;
+                    _gameRestartTimer.reset();
+                    _gameRestartTimer.start();
                     if( _playersThatWantToPlayAgain.length == _currentActivePlayers.length && _currentActivePlayers.length > 1 ) {
                         _gameRestartTimer.reset();
-//                        _playersThatWantToPlayAgain = new Array();//Use this to track the players checking in
-                        createNewModel();
+                        createNewMultiPlayerModel();
                         
                     }
                 }
@@ -281,36 +283,39 @@ package
         }
 
 
-        protected function createNewModel() :void
+        protected function createNewMultiPlayerModel() :void
         {
-            trace("Server.createNewModel()");
             var k :int;
             
             _playersThatWantToPlayAgain = new Array();
             _playersReceivedStartGameState = new Array();
             _currentActivePlayers = randomizeArray(_currentActivePlayers);
             _playersReady = new Array();
-
             _gameModel.removeAllPlayers();
             
             for(k = 0; k < _currentActivePlayers.length; k++)
             {
                 _gameModel.addPlayer(_currentActivePlayers[k], createNewRandomBoard(_currentActivePlayers[k]));
             }
+            
             _gameModel._initialSeatedPlayerIds = _currentActivePlayers.slice();
             _gameModel.currentSeatingOrder = _currentActivePlayers.slice();
+           _gameModel.setModelIntoPropertySpaces();
+        }
+        
+        protected function createNewSinglePlayerModel() :void
+        {
+            _gameModel.removeAllPlayers();
+            _gameModel.addPlayer(_currentActivePlayers[0], createNewRandomBoard(_currentActivePlayers[0]));
+            /* Add 1 players to left and right.  These will get regenerated as they are killed */
+            /* Use ids below -1 to indicate computer players */
+            for each ( var id :int in [-2, -3]) {
+                _gameModel.addPlayer(id, createNewRandomBoard(id));
+            } 
+            _gameModel._initialSeatedPlayerIds = [_currentActivePlayers[0], -2, -3];
+            _gameModel.currentSeatingOrder = _gameModel._initialSeatedPlayerIds.slice();
+           _gameModel.setModelIntoPropertySpaces();
             
-            
-            
-            
-            var msg :Object = new Object;
-            msg[0] = _currentActivePlayers;
-            _gameCtrl.net.sendMessage(REPLAY_CONFIRM, msg);
-            
-//            trace("Server sending " + ALL_PLAYERS_READY);
-//            _gameCtrl.net.sendMessage( ALL_PLAYERS_READY, msg);
-            
-
         }
 
 
@@ -318,7 +323,7 @@ package
             var l:Number = array.length-1;
             for (var it :int = 0; it<l; it++) {
                 var r :int = Math.round(Math.random()*l)
-                var tmp = array[it];
+                var tmp :int = array[it] as int;
                 array[it] = array[r];
                 array[r] = tmp;
             }
@@ -327,7 +332,6 @@ package
             
         private function createNewRandomBoard(playerid:int): JoinGameBoardRepresentation
         {
-//            trace("createNewRandomBoard");
             var board:JoinGameBoardRepresentation = new JoinGameBoardRepresentation();
             board.playerID = playerid;
             board._rows = Constants.PUZZLE_STARTING_ROWS;
@@ -353,14 +357,11 @@ package
                     /* Remove pieces in the join */
                     for(var piecei :int = 0; piecei < join._piecesX.length; piecei++)
                     {
-                        board._boardPieceTypes[ board.coordsToIdx( join._piecesX[piecei], join._piecesY[piecei]) ]  = Constants.PIECE_TYPE_EMPTY;
-//                        trace("setting empty piece=" + join._piecesX[piecei] + ", " + join._piecesY[piecei] );
+                        board._boardPieceTypes[ board.coordsToIdx( join._piecesX[piecei], board.convertFromBottomYToFromTopY(join._piecesYFromBottom[piecei])) ]  = Constants.PIECE_TYPE_EMPTY;
                     }
-                    
-//                    _gameModel.doHorizontalJoinEffects(board, joins[i], false, false);
                 }
-                _gameModel.doPiecesFall(board);
-                _gameModel.addNewPieces(board);
+                _gameModel.doPiecesFall(board, 0, 0);
+                _gameModel.addNewPieces(board, 0, 0);
                 joins = board.checkForJoins();
             }
             return board;
@@ -388,14 +389,23 @@ package
         //If someone leaves the game, they are eliminated immediately
         protected function occupantLeft( event: OccupantChangedEvent): void
         {
-            trace(" occupantLeft="+event);
             if(event.player)//If a player and not a spectator.
             {
                 playerLeftOrKnockedOut( event.occupantId );
                 
+                var ids :Array = _gameCtrl.net.get( POTENTIAL_PLAYERS) as Array;
+                if( ArrayUtil.contains( ids, event.occupantId ) ) {
+                    ids.splice( ArrayUtil.indexOf( ids, event.occupantId), 1);
+                    _gameCtrl.net.set( POTENTIAL_PLAYERS, ids);
+                }
+            
                 /* Remove the possibility of this player replaying*/
                 if( ArrayUtil.contains( _currentActivePlayers, event.occupantId )) {
                     _currentActivePlayers.splice( _currentActivePlayers.indexOf( event.occupantId ), 1 );
+                }
+                
+                if( _gameModel.currentSeatingOrder.length <= 0) {
+                    _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
                 }
             }
             
@@ -403,11 +413,26 @@ package
             
         }    
         
+        
+        protected function destroy() :void
+        {
+            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
+        }
+        
+        protected function occupantEntered( event: OccupantChangedEvent): void
+        {
+            if(!event.player)//If a player and not a spectator.
+            {
+                var msg :Object = new Object;
+                msg[0] = _gameModel.getModelMemento();
+                _gameCtrl.net.sendMessage(MODEL_CONFIRM, msg, event.occupantId );
+            }
+            
+        } 
 
         
         protected static function generateRandomPieceColor(): int
         {
-//            return  Constants.PIECE_COLORS_ARRAY[randomNumber(0, Constants.PIECE_COLORS_ARRAY.length - 1)];
             return randomNumber(1, Constants.PIECE_COLORS_ARRAY.length);
         }
 
@@ -436,7 +461,7 @@ package
 
         
         
-        protected function moveRequest(playerID:int, oldX:int, oldY:int, newX:int, newY:int): void
+        protected function deltaRequest(playerID:int, oldX:int, oldY:int, newX:int, newY:int): void
         {
             var board: JoinGameBoardRepresentation = _gameModel.getBoardForPlayerID(playerID);
             
@@ -517,26 +542,6 @@ package
             return false;
         }
 
-
-        /**
-         * 
-         * If someone leaves the game, they are eliminated immediately
-         * 
-         */
-        protected function occupantChanged( event: OccupantChangedEvent): void
-        {
-            trace(" occupantChanged="+event);
-            if(event.player && ArrayUtil.contains( _gameModel.currentSeatingOrder, event.occupantId))//If a player and not a spectator.
-            {
-                playerLeftOrKnockedOut( event.occupantId );
-            }
-            /* Remove the possibility of this player replaying*/
-            if( ArrayUtil.contains( _currentActivePlayers, event.occupantId )) {
-                _currentActivePlayers.splice( _currentActivePlayers.indexOf( event.occupantId ), 1 );
-                trace("removing from _currentActivePlayers, =" + _currentActivePlayers);
-            }
-        }
-
         protected function listenForPlayerEliminated( event :JoinGameEvent ) :void 
         {
             if(ArrayUtil.contains( _gameModel.currentSeatingOrder, event.boardPlayerID))//If a player and not a spectator.
@@ -547,17 +552,33 @@ package
 
         protected function playerLeftOrKnockedOut( playerid :int) :void
         {
-            trace("playerLeftOrKnockedOut( " + playerid + " )");
-            _gameModel.removePlayer(playerid);
             
+            if( _gameModel.activePlayers > 1) {
+                
+                
+                
+                var msg :Object = new Object;
+                msg[0] = playerid;
+                
+                var time :int = getTimer();
+                _gameCtrl.net.sendMessage(PLAYER_DESTROYED, msg);
+                
+                var removePlayerOutAfterDelayTimer :Timer = new Timer( Constants.BOARD_DISTRUCTION_TIME * 1000, 1);
+                removePlayerOutAfterDelayTimer.addEventListener(TimerEvent.TIMER, removePlayer);
+                removePlayerOutAfterDelayTimer.start();
+            }
             
-            var msg :Object = new Object;
-            msg[0] = playerid;
-            
-            trace("Server sending message=" + PLAYER_KNOCKED_OUT + " " + playerid + " )");
-            _gameCtrl.net.sendMessage(PLAYER_KNOCKED_OUT, msg);
-            
-            trace("Seating ids=" + _gameCtrl.game.seating.getPlayerIds());
+            function removePlayer( e :TimerEvent ) :void
+            {
+                removePlayerOutAfterDelayTimer.removeEventListener(TimerEvent.TIMER, removePlayer);
+                _gameModel.removePlayer(playerid);
+                _gameCtrl.net.set( JoinGameModel.CURRENT_PLAYERS_STRING, _gameModel.currentSeatingOrder);
+                
+                var msg :Object = new Object;
+                msg[0] = playerid;
+                
+                _gameCtrl.net.sendMessage(PLAYER_REMOVED, msg);
+            }
         }
 
 
@@ -569,19 +590,11 @@ package
         //This variable represents the entire game state
         private var _gameModel: JoinGameModel;
         
-        
-        //The game is played in a circle.  As players are eliminated.        
-//        public var _playerIDsInOrderOfPlay: Array;
-//        public var _playerToBoardMap :HashMap;
-        
-        //When all players are here, we proceed to the game.
-        public var _currentActivePlayers: Array;
-        
         //When all players have received the start game state
         public var _playersReceivedStartGameState: Array;
         
         //Players that quit during the game are not eligible to play again
-//        public var _currentActivePlayers: Array;
+        public var _currentActivePlayers: Array;
         public var _playersThatWantToPlayAgain: Array;
         
         public var _playersReady: Array;
@@ -594,13 +607,15 @@ package
         
         protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
         
-        //Server states
-//        private var _isGameStateSent: Boolean = false;
         
         public static const BOARD_DELTA_REQUEST :String = "Server:Board Delta Request";
         public static const BOARD_DELTA_CONFIRM :String = "Server:Board Delta Confirm"; 
         public static const BOARD_UPDATE_REQUEST :String = "Server:Board Update Request";
         public static const BOARD_UPDATE_CONFIRM :String = "Server:Board Update Confirm";
+        
+        public static const BOARD_BOTTOM_ROW_REMOVAL_REQUEST_FROM_BUTTON :String = "Server:Board Bottom Row Removal Request From Button";
+        public static const BOARD_BOTTOM_ROW_REMOVAL_CONFIRM_FROM_BUTTON :String = "Server:Board Bottom Row Removal Confirm From Button";
+        
         
         public static const MODEL_REQUEST :String = "Server:Model Request";
         public static const MODEL_CONFIRM :String = "Server:Model Confirm";
@@ -609,6 +624,8 @@ package
         * If conflicts occur due to timing of events, tell a board to reset it's view.
         */
         public static const BOARD_REMOVE_ROW_CONFIRM :String = "Server:Board Remove Row Confirm";
+        public static const BOARD_REMOVE_ROW_CONFIRM_TO_SERVER :String = "Server:Board Remove Row Confirm Server Only";
+        
         
         public static const RESET_VIEW_TO_MODEL :String = "Server:Reset View To Model";   
         
@@ -621,19 +638,16 @@ package
         public static const REPLAY_REQUEST :String = "Server:Request Replay";
         public static const REPLAY_CONFIRM :String = "Server:Confirm Replay"; 
         public static const REGISTER_PLAYER :String = "Server:Register Player"; 
-//        public static const ALL_PLAYERS_REGISTERED :String = "Server:All Players Registered";  
         
-        /** Name of the shared property that will hold everyone's scores. */
-//        public static const PLAYER_ORDER :String = "Server:Player Order";
         
-        public static const PLAYER_KNOCKED_OUT :String = "Server:Player Knocked Out";
-        
-        /** The seeds for the random number generators generatoing the random piece colors */
-//        public static const RANDOM_NUMBER_SEEDS :String = "Server:Random Seeds";
-        
+        public static const PLAYER_DESTROYED :String = "Server:Player Destroyed";
+        public static const PLAYER_REMOVED :String = "Server:Player Removed";
         
         /** Request the entire game state */
         public static const REQUEST_START_STATE :String = "Server:Request Start State";
+        
+        /** All players that have not permamnently left the game */
+        public static const POTENTIAL_PLAYERS :String = "Server:Potential Players";
         
         private var LOG_TO_GAME:Boolean = false;
     }

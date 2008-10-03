@@ -8,11 +8,13 @@ package joingame.modes
     import com.whirled.contrib.simplegame.objects.SceneObject;
     import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
     import com.whirled.contrib.simplegame.resource.*;
+    import com.whirled.contrib.simplegame.tasks.FunctionTask;
     import com.whirled.contrib.simplegame.tasks.LocationTask;
     import com.whirled.contrib.simplegame.tasks.ParallelTask;
     import com.whirled.contrib.simplegame.tasks.ScaleTask;
     import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
     import com.whirled.contrib.simplegame.tasks.SerialTask;
+    import com.whirled.contrib.simplegame.tasks.TimedTask;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
     import com.whirled.net.MessageReceivedEvent;
@@ -25,7 +27,6 @@ package joingame.modes
     import joingame.net.JoinGameEvent;
     import joingame.view.*;
     
-    //The 'game' part of the game
     public class PlayPuzzleMode extends AppMode
     {
         
@@ -37,36 +38,34 @@ package joingame.modes
         override protected function setup () :void
         {
             
-            trace("\nPlayPuzzleMode");
             if(!AppContext.gameCtrl.isConnected()) {
                 return;
             }
             
             var rm :ResourceManager = ResourceManager.instance;
 
-            // gfx
-//            trace(" 0.1 " );
-//            rm.pendResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
-//            rm.pendResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
-//            rm.load(init, handleResourceLoadErr);
             init();
         }
         
         
         protected function init() :void
         {
-//            trace(" 1 " );
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
+            modeSprite.addChild(swfRoot);
+            modeSprite.mouseEnabled = false;
             swfRoot.mouseEnabled = false;
             
             _playerPlacerMain = MovieClip(swfRoot["player_placer_main"]);
             _playerPlacerMain.mouseEnabled = false;
+            Constants.GUI_MIDDLE_BOARD_CENTER = _playerPlacerMain.x;
             
             _playerPlacerEast = MovieClip(swfRoot["player_placer_east"]);
             _playerPlacerEast.mouseEnabled = false;
+            Constants.GUI_EAST_BOARD_LEFT = _playerPlacerEast.x + 65;
             
             _playerPlacerWest = MovieClip(swfRoot["player_placer_west"]);
             _playerPlacerWest.mouseEnabled = false;
+            Constants.GUI_WEST_BOARD_RIGHT = _playerPlacerWest.x - 65;
             
             _extraPlacerEast = MovieClip(swfRoot["extra_placer_east"]);
             _extraPlacerEast.mouseEnabled = false;
@@ -74,21 +73,7 @@ package joingame.modes
             _extraPlacerWest = MovieClip(swfRoot["extra_placer_west"]);
             _extraPlacerWest.mouseEnabled = false;
             
-            // add the swfRoot to stage
-            modeSprite.addChild(swfRoot);
-            modeSprite.mouseEnabled = false;
-            // do something with playerPlacerMain et al
-            //i think actually that this is what he intends you to do. you load the swf, put its displayRoot on the screen, and then get the display root's named children ("player_placer_main", etc) and attach headshots and whatnot to them
-            //so you never deal with coordinates directly; it's all embedded in the swf for you. you just take care of filling in the dynamic bits of the scene.
-            
-
-            
-            
-            
-            
-//            trace(" 2 " );
-            
-            _gameModel = GameContext.gameState; //new JoinGameModel(AppContext.gameCtrl);
+            _gameModel = GameContext.gameModel; //new JoinGameModel(AppContext.gameCtrl);
             
             _bg = ImageResource.instantiateBitmap("BG");
             
@@ -107,37 +92,37 @@ package joingame.modes
                 var headshot :DisplayObject = GameContext.getHeadshot(id);
                 var so :SimpleSceneObject = new SimpleSceneObject(headshot);
                 _id2HeadshotSceneObject.put(id, so);
-                so.x = 10;
-                so.y = 10;
+                so.x = 100;
+                so.y = 100;
                 addObject( so, modeSprite);
-//                trace("!!!adding headshot from " + id );
             }
-//            trace(" 3 " );
             placeHeadshotsToStartLocation();
             animateHeadshotsToLocation();
             
-            AppContext.gameCtrl.net.addEventListener(Server.GAME_OVER, gameOver);                
             _modeSprite.mouseEnabled = true;
             
             
-            _boardsView = new JoinGameBoardsView(GameContext.gameState, AppContext.gameCtrl);
+            _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl);
             
             addObject( _boardsView, _modeSprite);
             _boardsView.updateBoardDisplays();
-//            trace(" 4 " );
+            _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
             
-            _boardsView.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, playerKnockedOut);
-//            _gameModel.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, playerKnockedOut);s
+            _boardsView.addEventListener(JoinGameEvent.PLAYER_REMOVED, playerRemoved);
             
         }
         
         
-        protected function playerKnockedOut( e :JoinGameEvent ) :void
+        protected function playerRemoved( e :JoinGameEvent ) :void
         {
             if (e.boardPlayerID == AppContext.gameCtrl.game.getMyId() || _gameModel.currentSeatingOrder.length <= 1) {
-                trace("\nPlayer " + e.boardPlayerID + ", I'm knocked out (or seats<=1), going to observermode");
-//              this.destroy();
-                AppContext.mainLoop.unwindToMode(new ObserverMode());
+
+                    var sim  :SimObject = new SimObject();
+                    addObject(sim);
+                    var serialTask :SerialTask = new SerialTask();
+                    serialTask.addTask( new FunctionTask(startObserverMode) );
+                    
+                    sim.addTask( serialTask);
             }
             else {
                 animateHeadshotsToLocation();
@@ -146,22 +131,16 @@ package joingame.modes
         override protected function destroy() :void 
         {
             if(_boardsView != null) {
-                _boardsView.removeEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, animateHeadshotsToLocation);
+                _boardsView.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
                 _boardsView.destroySelf();
             }
-//            if( _gameModel != null) {
-//                _gameModel.removeEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, animateHeadshotsToLocation);
-//            }
-            AppContext.gameCtrl.net.removeEventListener(Server.GAME_OVER, gameOver); 
             super.destroy();
         }
         
         protected function placeHeadshotsToStartLocation() :void
         {
-//            trace("\nplacePiecesToStartLocation()");
             var headshotIdsAlreadyPlaced :Array = new Array();
             
-//            trace("\n!!!!!!!!!!animatePiecesToLocation()");
             var myid :int = AppContext.gameCtrl.game.getMyId();
             /* Place the centre piece */
             var headshot :SceneObject = _id2HeadshotSceneObject.get( myid ) as SceneObject;
@@ -174,7 +153,7 @@ package joingame.modes
             if( _gameModel.getPlayerIDToRightOfPlayer(myid) != id ||  _gameModel._initialSeatedPlayerIds.length == 2 ){
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
-                    headshot.x =  - 80;
+                    headshot.x =  0;
                     headshot.y = _playerPlacerWest.y - 30;
                     headshotIdsAlreadyPlaced.push(id);
                 }
@@ -251,14 +230,11 @@ package joingame.modes
         protected function animateHeadshotsToLocation() :void
         {
             
-//            trace("\n!!!!!!!!!!animatePiecesToLocation() for player " + AppContext.gameCtrl.game.getMyId());
             var myid :int = AppContext.gameCtrl.game.getMyId();
             if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, myid)) {
                 trace("animating headshots but should be in observer mode");
                 return;
             }
-            
-            
             
             var headshotIdsAlreadyPlaced :Array = new Array();
             
@@ -275,10 +251,8 @@ package joingame.modes
             
             /* Animate the left piece */
             var id :int = _gameModel.getPlayerIDToLeftOfPlayer(myid) as int;
-//            trace("left player=" + id);
             if( true || _gameModel.getPlayerIDToRightOfPlayer(myid) != id ||  _gameModel._initialSeatedPlayerIds.length == 2 ){
                 
-//                trace("animating left player");
                 var serialTask :SerialTask;
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
@@ -287,8 +261,8 @@ package joingame.modes
                     
                     serialTask = new SerialTask();
                     if( headshot.x > toX) {
-                        serialTask.addTask( LocationTask.CreateEaseOut( modeSprite.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
-                        serialTask.addTask( LocationTask.CreateLinear( 0 - 80, headshot.y, 0  ));
+                        serialTask.addTask( LocationTask.CreateEaseOut( AppContext.gameWidth - modeSprite.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
+                        serialTask.addTask( LocationTask.CreateLinear( 0, headshot.y, 0  ));
                         scaleTask = new ScaleTask(1.0, 1.0, Constants.HEADSHOT_MOVEMENT_TIME/2);
                         moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME/2);
                         parallelTask = new ParallelTask( scaleTask, moveTask);
@@ -305,14 +279,11 @@ package joingame.modes
                     headshotIdsAlreadyPlaced.push(id);
                 }
             }
-//            trace("headshotIdsAlreadyPlaced=" + headshotIdsAlreadyPlaced);
             
             /* Animate the right piece */
             id = _gameModel.getPlayerIDToRightOfPlayer(myid) as int;
-//            trace("right player=" + id);
             if( _gameModel.getPlayerIDToLeftOfPlayer(myid) != id){
                 
-//                trace("animating right player");            
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
                     toX = _playerPlacerEast.x - 40;
@@ -338,7 +309,6 @@ package joingame.modes
                     headshotIdsAlreadyPlaced.push(id);
                 }
             }
-//            trace("headshotIdsAlreadyPlaced=" + headshotIdsAlreadyPlaced);
             /* Starting with the right, move the remaining players alternating left and right*/
             var numberPlayersEachSideToFit :Number =  ((_gameModel.currentSeatingOrder.length - headshotIdsAlreadyPlaced.length) / 2) + (_gameModel.currentSeatingOrder.length - headshotIdsAlreadyPlaced.length) % 2;
             var spaceForEachHeadshot : Number = _extraPlacerWest.x / numberPlayersEachSideToFit;
@@ -347,8 +317,6 @@ package joingame.modes
             var isLeft :Boolean = false;
             var leftPlayerIds :Array = new Array();
             var rightPlayerIds :Array = new Array();
-//            trace("headshotIdsAlreadyPlaced=" + headshotIdsAlreadyPlaced);
-//            trace("_gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
             while( headshotIdsAlreadyPlaced.length < _gameModel.currentSeatingOrder.length) {
                 
                 if(isLeft) {
@@ -442,94 +410,35 @@ package joingame.modes
 //            AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
         }
 
-        public function gameOver (event :MessageReceivedEvent) :void
-        {
-            
-            var playerIds :Array = event.value[0] as Array;
-            var scores :Array = event.value[1] as Array;
-                
-            
-            
-                
-            trace("game over, going to end screen");
-            AppContext.mainLoop.unwindToMode(new GameOverMode(playerIds, scores));
-        }
-        
         
         /** Respond to messages from other clients. */
         public function messageReceived (event :MessageReceivedEvent) :void
         {
             var id :int;
-            if (event.name == Server.PLAYER_KNOCKED_OUT)
+            if (event.name == Server.PLAYER_REMOVED)
             {
                 id = int(event.value[0]);
                 
-                trace("\nPlayer " + AppContext.myid + ", received knockout for player=" + id);
-                
                 if(id == AppContext.myid)
                 {
-                    trace("\nPlayer " + id + ", I'm knocked out, going to observermode");
-                    AppContext.mainLoop.unwindToMode(new ObserverMode());
+                    var sim  :SimObject = new SimObject();
+                    addObject(sim);
+                    var serialTask :SerialTask = new SerialTask();
+                    serialTask.addTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME) );
+                    serialTask.addTask( new FunctionTask(startObserverMode) );
+                    
+                    sim.addTask( serialTask);
                 }
             }
         }
         
-//        //Must be called after createOrUpdateOtherPlayerDisplay() because we need the player order
-//        private function updateGameField(): void
-//        {
-////            if(GameContext._playerIDsInOrderOfPlay == null)
-////            {
-////                return;
-////            }
-//            
-//            leftBoardDisplay.x = Constants.GUI_DISTANCE_BOARD_FROM_LEFT;
-//            myBoardDisplay.x = leftBoardDisplay.x + leftBoardDisplay.width + Constants.GUI_BETWEEN_BOARDS;
-//            rightBoardDisplay.x = myBoardDisplay.x + myBoardDisplay.width + Constants.GUI_BETWEEN_BOARDS;
-//            
-//        }
-        
-        
-//        /** Responds to property changes. */
-//        public function propertyChanged (event :PropertyChangedEvent) :void
-//        {
-//            
-////            trace("\nWhen id="+AppContext.gameCtrl.game.getMyId()+" propertyChanged, left="+_gameModel.getPlayerIDToLeftOfPlayer(AppContext.gameCtrl.game.getMyId() )+ ", right="+_gameModel.getPlayerIDToRightOfPlayer(AppContext.gameCtrl.game.getMyId() ) );
-//            
-//            //We assume that the random seeds have already been created.
-//            if (event.name == Server.PLAYER_ORDER)
-//            {
-//                
-//                
-//                var playerToLeft:int = _gameModel.getPlayerIDToLeftOfPlayer( AppContext.gameCtrl.game.getMyId());
-//                var playerToRight:int = _gameModel.getPlayerIDToRightOfPlayer( AppContext.gameCtrl.game.getMyId());
-//                
-//                trace("playerToLeft="+playerToLeft);
-//                trace("playerToRight="+playerToRight);
-//                
-//                //These should request an update if the player id changes.
-//                if(leftBoardDisplay._boardRepresentation.playerID != playerToLeft)
-//                {
-//                    leftBoardDisplay._boardRepresentation.playerID = playerToLeft;
-//                    
-//                }
-//                
-//                if(rightBoardDisplay._boardRepresentation.playerID != playerToRight)
-//                {
-//                    rightBoardDisplay._boardRepresentation.playerID = playerToRight;
-//                }
-//            }
-//            
-//        }
-        
-        
-
-        
+        protected function startObserverMode() :void
+        {
+            AppContext.mainLoop.unwindToMode(new ObserverMode());
+        }
         
         protected var allOpponentsView :AllOpponentsView;
-//        protected var _elimatedOpponentsView;
-        
         protected var _boardsView :JoinGameBoardsView;
-        
         protected var _bg :DisplayObject;
         
         

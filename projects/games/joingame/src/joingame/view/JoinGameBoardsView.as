@@ -1,5 +1,6 @@
 package joingame.view
 {
+    import com.threerings.flash.SimpleTextButton;
     import com.threerings.util.ArrayUtil;
     import com.threerings.util.HashMap;
     import com.threerings.util.Random;
@@ -12,7 +13,9 @@ package joingame.view
     import com.whirled.game.GameControl;
     
     import flash.display.DisplayObject;
+    import flash.display.MovieClip;
     import flash.display.Sprite;
+    import flash.events.Event;
     
     import joingame.*;
     import joingame.model.*;
@@ -24,73 +27,73 @@ package joingame.view
      */
     public class JoinGameBoardsView extends SceneObject
     {
-        public function JoinGameBoardsView(joinGameModel :JoinGameModel, gameControl :GameControl, observerState :Boolean = false)
+        public function JoinGameBoardsView(joinGameModel :JoinGameModel, gameControl :GameControl, 
+         observerState :Boolean = false)
         {
-            AppContext.LOG("\nJoinGameBoardsView");
             if (joinGameModel == null || gameControl == null){
-                throw new Error("JoinGameBoardsView Problem!!! JoinGameModel or GameControl should not be null");
+                throw new Error("JoinGameBoardsView() JoinGameModel or GameControl cannot be null");
             }
-            _observer = observerState;
-            _id2Board = new HashMap();
             
-//            var swf :SwfResource = (ResourceManager.instance.getResource("puzzlePieces") as SwfResource);
-//            _piece_break_eastwardClass = swf.getClass("piece_break_eastward");
-//            _piece_break_westwardClass = swf.getClass("piece_break_westward");
-            
-            
-//            var bg :ImageResource = (ResourceManager.instance.getResource("puzzlePieces") as ImageResource);
-              _sprite = new Sprite();
-            
-            
-//            _sprite.y = gameControl.local.getSize().y - Constants.PUZZLE_HEIGHT;
-//            _sprite.graphics.beginFill(0.5);
-//            _sprite.graphics.drawRect(2,2,30,30);
-//            _sprite.graphics.endFill();
-//            _sprite.mouseEnabled = true;
-            
-            
-//             var imageLoader:Loader = new Loader();
-//             var theURL:String = "rsrc/thePic.jpg";
-//             var imageRequest = new URLRequest(theURL);
-//        
-//             imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
-//        
-//             imageLoader.load(imageRequest);
-//        
-//             function onComplete(evt:Event) {
-//        
-//                  addChild(imageLoader.content);
-//        
-//             }
-
-            
-            
-            
-            
-            
-            
-            _gameModel = joinGameModel; //new JoinGameModel(_gameControl);
+            _gameModel = joinGameModel; 
             _gameControl = gameControl;
+            _observer = observerState;
             
+            _id2Board = new HashMap();
+            _sprite = new Sprite();
             
-            _gameModel.addEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, playerKnockedOut);
+            var swf :SwfResource = (ResourceManager.instance.getResource("puzzlePieces") as SwfResource);
+            _piece_break_eastwardClass = swf.getClass("piece_break_eastward");
+            _piece_break_westwardClass = swf.getClass("piece_break_westward");
+            
+            _gameModel.addEventListener(JoinGameEvent.START_NEW_ANIMATIONS, startNewBoardAnimations);
+            _gameModel.addEventListener(JoinGameEvent.PLAYER_DESTROYED, playerDestroyed);
+            _gameModel.addEventListener(JoinGameEvent.PLAYER_REMOVED, playerRemoved);
             _gameModel.addEventListener(JoinGameEvent.RECEIVED_BOARDS_FROM_SERVER, updateBoardDisplays);
-//            _gameModel.addEventListener(JoinGameEvent.DO_JOIN_VISUALIZATIONS, doJoinVisualizations);
             _gameModel.addEventListener(JoinGameEvent.DELTA_CONFIRM, deltaConfirm);
             _gameModel.addEventListener(JoinGameEvent.DO_PIECES_FALL, doPiecesFall);
-            _gameModel.addEventListener(JoinGameEvent.ADD_NEW_PIECES, addNewPieces);
-            _gameModel.addEventListener(JoinGameEvent.VERTICAL_JOIN, doVerticalJoins);
+            _gameModel.addEventListener(JoinGameEvent.ADD_NEW_PIECES, doAddNewPieces);
+            _gameModel.addEventListener(JoinGameEvent.VERTICAL_JOIN, doSingleVerticalJoin);
             _gameModel.addEventListener(JoinGameEvent.ATTACKING_JOINS, doHorizontalAttack);
             _gameModel.addEventListener(JoinGameEvent.BOARD_UPDATED, boardUpdated);
             _gameModel.addEventListener(JoinGameEvent.DO_DEAD_PIECES, doDeadPieces);
             _gameModel.addEventListener(JoinGameEvent.REMOVE_ROW_PIECES, doRemoveRowPieces);
             _gameModel.addEventListener(JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES, removeBottomRowAndDropPieces);
             _gameModel.addEventListener(JoinGameEvent.RESET_VIEW_FROM_MODEL, resetViewFromModel);
+            _gameModel.addEventListener(JoinGameEvent.DONE_COMPLETE_DELTA, doFinishAnimations);
             
-            if(_observer) {//create the boards
+//            _destroyBottomRowButton  = new SimpleTextButton("Destroy Bottom Row");
+//            _destroyBottomRowButton.addEventListener( REMOVE_BOTTOM_ROW_BUTTON, requestBottomRowRemoval);
+//            _sprite.addChild( _destroyBottomRowButton );
+        }
+        
+        
+        protected function requestBottomRowRemoval( e :Event) :void
+        {
+            if( _myBoardDisplay != null && !AppContext.isObserver) {
                 
+                var msg :Object = new Object;
+                msg[0] = _myBoardDisplay._boardRepresentation.playerID;
+                
+                AppContext.gameCtrl.net.agent.sendMessage(Server.BOARD_BOTTOM_ROW_REMOVAL_REQUEST_FROM_BUTTON, msg);
             }
-            
+        }
+        
+        
+        protected function doFinishAnimations( e :JoinGameEvent) :void
+        {
+            var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+            if( board != null && !board._boardRepresentation._isGettingKnockedOut ) {
+                board.updating = false;
+            }
+        }
+        
+        protected function startNewBoardAnimations( e :JoinGameEvent) :void
+        {
+            var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+            if( board != null && !board._boardRepresentation._isGettingKnockedOut && board.isMovingPieces()) {
+                board.removePieceTasksAndSetCorrectLocations();
+                board.updating = true;
+            }
         }
         
         
@@ -98,52 +101,61 @@ package joingame.view
         {
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
             if( board != null) {
-                board.resetPositionOfPieces()
+                board.resetPositionOfPieces();
+                doGraphicsAndAnimationForDeadBottomRow(board);
             }
         }
+        
+        /**
+        * Animates the destruction of the bottom row.
+        */
         protected function removeBottomRowAndDropPieces( e :JoinGameEvent) :void
         {
-            
-            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
-            
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
             var piece :JoinGamePiece;
             var k :int;
-//            AppContext.LOG("model removeBottomRowAndDropPieces() model before: " + board._boardRepresentation);
-//            AppContext.LOG("view removeBottomRowAndDropPieces() board before: " + board);
             
             if( board != null) {
-                
                 for( var i :int = 0; i < board._cols; i++) {
                     piece = board.getPieceAt(i, board._rows - 1) as JoinGamePiece;
-                    if(piece != null){
+                    if(piece != null ){
                         
+                        //Remove the piece from the board.
                         board._boardPieces[ board.coordsToIdx(i, board._rows - 1) ] = null;
-                        piece.boardIndex = -1;//Test
-                        piece.destroySelf();
-                        
-                        var newPiece :JoinGamePiece = new JoinGamePiece();
-                        newPiece.scaleX = board._sprite.scaleX;
-                        newPiece.scaleY = board._sprite.scaleY;
-                        newPiece.color = piece.color;
-                        newPiece.type = piece.type
-                        newPiece.x = board.x + piece.x * board._sprite.scaleX;
-                        newPiece.y = board.y + piece.y * board._sprite.scaleY;
-                        db.addObject( newPiece, _sprite);
-                        
-                        //                        piece.addTask(LocationTask.CreateEaseOut(
-                        var pieceAnim :SerialTask = new SerialTask();
-                        pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, Constants.PIECE_SCALE_DOWN_TIME));
-                        pieceAnim.addTask(new SelfDestructTask());
-                        newPiece.addTask(pieceAnim);
+                        piece.boardIndex = -1;
+                        if( piece.isLiveObject) {
+                            piece.destroySelf();
+                        }
                         
                         
+                        createTimedExplosionForPiece( board, piece, 0); 
                         
+                        
+//                        var newPiece :JoinGamePiece = createPieceFromBoard(board, i, board._rows - 1);
+//                        newPiece.color = piece.color;
+//                        newPiece.type = piece.type
+//                        db.addObject( newPiece, board._sprite);
+//                        
+//                        var pieceAnim :SerialTask = new SerialTask();
+//                        pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, Constants.PIECE_SCALE_DOWN_TIME));
+//                        pieceAnim.addTask(new SelfDestructTask());
+//                        newPiece.addTask(pieceAnim);
                     }
                 }
                 board._boardPieces.splice((board._rows - 1)*board._cols, board._cols);
                 board._rows--;
+                board.updateNumberOfPieceBackgrounds();
                 
+                /* Animate the background falling */
+                for( k = 0; k < board._backgroundPieces.length; k++) {
+                    var back :SceneObject = board._backgroundPieces[k] as SceneObject;
+                    if(back != null) {
+                        back.addTask(LocationTask.CreateEaseIn( 
+                            board.getPieceXLoc(board.idxToX(k)), 
+                            board.getPieceYLoc(board.idxToY(k)),
+                            Constants.PIECE_DROP_TIME));
+                    }
+                }
                 
                 
                 
@@ -172,7 +184,7 @@ package joingame.view
                     }
                 }
                 
-                board.removeAndAddDisplayChildren();
+//                board.removeAndAddDisplayChildren();
                 
                     //Drop the board
                 toY = (AppContext.gameHeight - board.height - Constants.GUI_BOARD_FLOOR_GAP) + Constants.PUZZLE_TILE_SIZE*board._sprite.scaleX;
@@ -185,7 +197,9 @@ package joingame.view
                 taskAnimation.addTask( LocationTask.CreateEaseIn(board.x, toY - Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL/2, Constants.PIECE_DROP_BOUNCE1_TIME) );
                 taskAnimation.addTask( LocationTask.CreateEaseIn(board.x, toY, Constants.PIECE_DROP_BOUNCE1_TIME * 0.7));
                     
-                board.addNamedTask(MOVE_TASK_NAME, taskAnimation, true); 
+                    
+                    
+//                board.addNamedTask(MOVE_TASK_NAME, taskAnimation, true); 
                 
                 
                 
@@ -195,12 +209,13 @@ package joingame.view
                 
                 
                 
-//                board.updateYBasedOnBoardHeight();                
+//                board.updateYBasedOnBoardHeight();
+//                board.updating = false;                
             }
             else {
                 AppContext.LOG("!!!!!deleteRow(" + e.boardPlayerID + ") board is null");
             }
-            
+            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
 //            AppContext.LOG("view removeBottomRowAndDropPieces() board after: " + board);
                     
         }
@@ -212,6 +227,7 @@ package joingame.view
         {
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
             if( board != null) {
+//                board.updating = true;
 //                AppContext.LOG("view doRemoveRowPieces() before: " + board);
                 var row :int = e.row;
                 for( var i :int = 0; i < board._cols; i++) {
@@ -231,6 +247,7 @@ package joingame.view
                     }
                 }
 //                AppContext.LOG("view doRemoveRowPieces() after: " + board);
+//                board.updating = false;
             }
             else {
                 AppContext.LOG("!!!!!doRemoveRowPieces(" + e.boardPlayerID + ") board is null");
@@ -239,10 +256,12 @@ package joingame.view
         
         protected function doDeadPieces( e :JoinGameEvent ) :void
         {
+//            AppContext.LOG("doDeadPieces()");
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
             if( board != null){
-                
-                doGraphicsAndAnimationForDeadBottomRow(board);                
+//                board.updating = true;
+                doGraphicsAndAnimationForDeadBottomRow(board);
+//                board.updating = false;         
             }
         }
         
@@ -250,10 +269,17 @@ package joingame.view
         public function doGraphicsAndAnimationForDeadBottomRow( board :JoinGameBoardGameArea) :void
         {
             if( board != null){
-                
+//                board._updating = true;
                 for( var k :int = 0; k < board._boardPieces.length; k++){
+                    
+                    if(board == null || board._boardPieces[k] == null) {
+                        continue;
+                    }
                     if( board._boardRepresentation._boardPieceTypes[k] == Constants.PIECE_TYPE_POTENTIALLY_DEAD){
                         (board._boardPieces[k] as JoinGamePiece).type = Constants.PIECE_TYPE_POTENTIALLY_DEAD;
+//                        (board._boardPieces[k] as JoinGamePiece).removeNamedTasks(WOBBL_TASK_NAME);
+                    }
+                    else {
                         (board._boardPieces[k] as JoinGamePiece).removeNamedTasks(WOBBL_TASK_NAME);
                     }
                 }
@@ -270,21 +296,27 @@ package joingame.view
                     }
                 }
                 if(isDeadBottomRow) {
-                    AppContext.LOG("animating bottom wobble");
-                    for(i = 0; i < board._cols; i++) {
-                        piece = board.getPieceAt( i, board._rows - 1);
-                        if(piece != null && piece.type != Constants.PIECE_TYPE_INACTIVE) {
-                            
+                    board.startTimedBottomRowWobble();
+//                    for(i = 0; i < board._cols; i++) {
+//                        piece = board.getPieceAt( i, board._rows - 1);
+//                        if(piece != null && piece.type != Constants.PIECE_TYPE_INACTIVE) {
+//                            
 //                            var serialAnimation :SerialTask = new SerialTask(); 
 //                            serialAnimation.addTask( LocationTask.CreateEaseIn(piece.x - 2, piece.y, 0.05) );
 //                            serialAnimation.addTask( LocationTask.CreateEaseIn(piece.x + 2, piece.y, 0.1) );
 //                            serialAnimation.addTask( LocationTask.CreateEaseIn(piece.x, piece.y, 0.05) );
+//                            
 //                            var taskAnimation :RepeatingTask = new RepeatingTask(serialAnimation);
 //                            piece.addNamedTask(WOBBL_TASK_NAME, taskAnimation);  
-                        }
-                    }
+//                        }
+//                    }
+                }
+                else {
+                    board.stopTimedBottomRowWobble();
                 }
                 
+//                board.updatePieceBackgrounds();
+//                board._updating = false;
             }
         }
         
@@ -295,28 +327,22 @@ package joingame.view
         }
         
         /**
-        * The returned piece is scaled and positioned relative to the board
+        * The returned piece is positioned relative to the board
         * 
         */
         protected function createPieceFromBoard( board :JoinGameBoardGameArea, i :int, j :int) :JoinGamePiece
         {
             var newPiece :JoinGamePiece = new JoinGamePiece();
-            newPiece.scaleX = board._sprite.scaleX;
-            newPiece.scaleY = board._sprite.scaleY;
-            newPiece.x = board.x + board.getPieceXLoc(i) * board._sprite.scaleX;
-            newPiece.y = board.y + board.getPieceYLoc(j) * board._sprite.scaleY;
-            newPiece.size = Constants.PUZZLE_TILE_SIZE * board._sprite.scaleX;
+            newPiece.x = board.getPieceXLoc(i);
+            newPiece.y = board.getPieceYLoc(j);
+            
             return newPiece;
         }
         
         protected function doHorizontalAttack( e :JoinGameEvent ) :void
         {
-//            AppContext.LOG("\n\ndoHorizontalAttack(), e.boardAttacked=" + e.boardAttacked + ", boardPlayerID=" + e.boardPlayerID + " on defenders " + (e.side == Constants.LEFT ? " left" : "right, active players=" + _gameModel.currentSeatingOrder));
             var boardAttacked :JoinGameBoardGameArea = getBoardView( e.boardAttacked );
             var sourceboard :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-//            AppContext.LOG("board attacked.x=" + boardAttacked.x);
-//            AppContext.LOG("source board.x=" + sourceboard.x);
-//            AppContext.LOG("view doHorizontalAttack() board before:\n" + boardAttacked);
             
             var i :int;
             var k :int;
@@ -324,52 +350,27 @@ package joingame.view
             var join :JoinGameJoin = e.joins[0] as JoinGameJoin;
             
             /* Determine the animation coords */
-            var toX :int;//Relative to the attacking board, not this parent class
+            var toX :int;
             var toY :int;
+            var xToStartFromAfterWrapping :int;
+            var xToShootBeforeWrappingAround :int;
 
+            
+            
             
             if( boardAttacked != null && sourceboard != null) {
                 var rowIndex :int = boardAttacked._rows - 1 - join.attackRow;
                 var alreadyDamagedOffset :int = 0;
                 if(e.side == Constants.LEFT) {//This means its attacking the target's left
-
-                    toX = boardAttacked.x - sourceboard.x;
-                    
-                    
-                    
-//                    AppContext.LOG("attack to opponents LEFT, toX=" + toX);
-//                    for( i = 0; i < boardAttacked._cols; i++){
-//                        if(  boardAttacked.getPieceAt( i, rowIndex) != null && ( boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_NORMAL || boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_POTENTIALLY_DEAD)) {
-//                            break;
-//                        }
-//                        else {
-//                            alreadyDamagedOffset++;
-//                        }
-//                    }
-//                    
-//                    toX += (alreadyDamagedOffset + 0) * Constants.PUZZLE_TILE_SIZE;
-//                    AppContext.LOG("attack to opponents LEFT, toX=" + toX);
+                    toX = (boardAttacked.x - sourceboard.x) * (1/sourceboard.scaleX) - Constants.PUZZLE_TILE_SIZE*join._widthInPieces;
                 }
                 else {
-//                    toX = boardAttacked.x + boardAttacked.width;
-                    toX = boardAttacked.x + boardAttacked.width * boardAttacked.scaleX  - sourceboard.x;
-//                    AppContext.LOG("attack to opponents RIGHT, toX=" + toX + ", from boardAttacked.x (" + boardAttacked.x + ") + boardAttacked.width (" + boardAttacked.width + ")");
-//                    for( i = boardAttacked._cols - 1; i >= 0; i--){
-//                        if( boardAttacked.getPieceAt( i, rowIndex) != null && (boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_NORMAL || boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_POTENTIALLY_DEAD)) {
-//                            break;
-//                        }
-//                        else {
-//                            alreadyDamagedOffset++ ;
-//                        }
-//                    }
-//                    toX -= (alreadyDamagedOffset + 0) * Constants.PUZZLE_TILE_SIZE;
-//                    AppContext.LOG("attack to opponents RIGHT, toX=" + toX);
+                    toX = (boardAttacked.x + Constants.PUZZLE_STARTING_COLS * Constants.PUZZLE_TILE_SIZE * boardAttacked.scaleX  - sourceboard.x) * (1/sourceboard.scaleX);
                 }
                 
                 /* Find the smallest distance between any of the pieces, and the target piece */
                 var smallestDistanceBetweenJoinAndTargetPiece :int = 10000;
                 for( k = 0; k < join._piecesX.length; k++) {
-//                    piece = sourceboard.getPieceAt( join._piecesX[k], join._piecesY[k]);
                     var pieceX :int = sourceboard.getPieceXLoc( join._piecesX[k] );
                     smallestDistanceBetweenJoinAndTargetPiece = Math.min( Math.abs(toX - pieceX), smallestDistanceBetweenJoinAndTargetPiece );
                 }
@@ -379,94 +380,85 @@ package joingame.view
                 }
                 
                 /* Convert the pieces to the horizontal join graphic */
-                var newPieces :Array = new Array();
                 var xBounce :int;
                 var yBounce :int;
                 var bounceMoveTask :ObjectTask;
                 var bounceRotationTask :ObjectTask;
-                        
+                var pieceToHJoinTime :Number = Constants.VERTICAL_JOIN_ANIMATION_TIME * 0.6;
+                
+                
+                var joinSprite :Sprite = new Sprite();
+                var mostLeftPieceX :int = 10000;
                 for( k = 0; k < join._piecesX.length; k++) {
-                    piece = sourceboard.getPieceAt( join._piecesX[k], join._piecesY[k]);
+                    mostLeftPieceX = Math.min( mostLeftPieceX,  join._piecesX[k]);
+                }
+                joinSprite.x = sourceboard.getPieceXLoc(mostLeftPieceX);
+                joinSprite.y = sourceboard.getPieceYLoc( sourceboard.convertFromBottomYToFromTopY(join._piecesYFromBottom[0]) );
+                var joinSceneObject :SceneObject = new SimpleSceneObject(joinSprite);
+                db.addObject( joinSceneObject, sourceboard._sprite);
+                for( k = 0; k < join._piecesX.length; k++) {
+                    
+                    var timeToStartJoin :Number = pieceToHJoinTime * ((Math.abs(join._piecesX[k] - join._lastSwappedX) as Number) / (join._widthInPieces - 1));
+                    piece = sourceboard.getPieceAt( join._piecesX[k], sourceboard.convertFromBottomYToFromTopY(join._piecesYFromBottom[k]));
                     if(piece != null){/* If it's part of another join, it may already be removed */
-                        piece.toHorizontalJoin();
                         sourceboard._boardPieces[ piece.boardIndex ] = null;
-                        piece.boardIndex = -1;//Test
-                        piece.destroySelf();
-                        if(sourceboard._sprite.contains( piece.displayObject)) {
-                            sourceboard._sprite.removeChild( piece.displayObject)
-                        }
+
+                        var serialTask :SerialTask = new SerialTask();
+                        serialTask.addTask( new TimedTask( join._delay  ) );
+                        serialTask.addTask( new SelfDestructTask() );
+                        piece.addTask( serialTask );
                     }
                     
                     
-                    var newPiece :JoinGamePiece = createPieceFromBoard( sourceboard, join._piecesX[k], join._piecesY[k]);
-//                    newPiece.scaleX = sourceboard._sprite.scaleX;
-//                    newPiece.scaleY = sourceboard._sprite.scaleY;
-                    newPieces.push(newPiece);
+                    var newPiece :JoinGamePiece = new JoinGamePiece(); 
+                    
                     newPiece.color = join._color;
-//                    newPiece.x = sourceboard.x + sourceboard.getPieceXLoc(join._piecesX[k]) * sourceboard._sprite.scaleX;
-//                    newPiece.y = sourceboard.y + sourceboard.getPieceYLoc(join._piecesY[k]) * sourceboard._sprite.scaleY;
-//                    newPiece.size = Constants.PUZZLE_TILE_SIZE * sourceboard._sprite.scaleX;
-                    
-//                    newPiece.x = sourceboard.x + sourceboard.getPieceXLoc(join._piecesX[k]);
-//                    newPiece.y = sourceboard.y + sourceboard.getPieceYLoc(join._piecesY[k]);
-                    newPiece.toHorizontalJoin();
-                    db.addObject( newPiece, _sprite);
-//                    db.addObject( newPiece, sourceboard._sprite);
-//                    AppContext.LOG("smallestDistanceBetweenJoinAndTargetPiece="+smallestDistanceBetweenJoinAndTargetPiece);
-                    var newPieceXTarget :int = newPiece.x + smallestDistanceBetweenJoinAndTargetPiece;
-                    var joinAnim :SerialTask = new SerialTask();
-                    joinAnim.addTask(LocationTask.CreateLinear(newPieceXTarget, newPiece.y, Constants.JOIN_ANIMATION_TIME));
-                    
-                    /* Add a random angle to spin off  */
-//                    var angle :Number = rand.nextNumber() * 2 * Math.PI;
-//                    angle = rand.nextBoolean() ? -angle : angle;
-//                    var pieceBounceDistance :int = 40;
-                    
-//                    xBounce = Math.cos(angle) * Constants.PIECE_JOIN_BOUNCE_DISTANCE;
-//                    yBounce = Math.sin(angle) * Constants.PIECE_JOIN_BOUNCE_DISTANCE;
-//                    bounceMoveTask = LocationTask.CreateLinear( newPieceXTarget + xBounce, newPiece.y + yBounce, Constants.JOIN_ANIMATION_TIME);
-//                    bounceRotationTask = RotationTask.CreateLinear( 2*angle , Constants.JOIN_ANIMATION_TIME);
-//                    
-//                    joinAnim.addTask(new ParallelTask(bounceMoveTask, bounceRotationTask));
-                    joinAnim.addTask(new SelfDestructTask());
-                    newPiece.addTask(joinAnim);
-
+                    newPiece.visible = false;
+                    db.addObject( newPiece, joinSprite);
+                    newPiece.x = (join._piecesX[k] - mostLeftPieceX) * Constants.PUZZLE_TILE_SIZE;
+                    var pieceAnim :SerialTask = new SerialTask();
+                    pieceAnim.addTask( new TimedTask( join._delay) );
+                    pieceAnim.addTask( new VisibleTask(true) );
+                    pieceAnim.addTask( new TimedTask( timeToStartJoin) );
+                    pieceAnim.addTask( new PlaySoundTask("windup") );
+                    pieceAnim.addTask( new FunctionTask(newPiece.toHorizontalJoin) );
+                    newPiece.addTask( pieceAnim );
                 }
                 
-//                if(join._piecesX.length == 5 || join._piecesX.length == 7) { /* Joins fly in both directions */
-//                    
-//                    for( k = 0; k < newPieces.length; k++) {
-//                        piece = newPieces[k] as JoinGamePiece;
-//                        var newPiece2 : JoinGamePiece = new JoinGamePiece();
-//                        newPiece2.color = piece.color;
-//                        newPiece2.x = sourceboard.x + piece.x;
-//                        newPiece2.y = sourceboard.y + piece.y;
-//                        newPiece2.toHorizontalJoin();
-//                        db.addObject( newPiece2, _sprite);
-//                        
-//                        var newPieceXTarget :int = newPiece.x + smallestDistanceBetweenJoinAndTargetPiece;
-//                        var joinAnim :SerialTask = new SerialTask();
-//                        joinAnim.addTask(LocationTask.CreateLinear(newPieceXTarget, newPiece.y, Constants.JOIN_ANIMATION_TIME));
-//                    
-//                        
-//                        xBounce = Math.cos(angle) * pieceBounceDistance;
-//                        yBounce = Math.sin(angle) * pieceBounceDistance;
-//                        bounceMoveTask = LocationTask.CreateLinear( newPieceXTarget + xBounce, newPiece.y + yBounce, Constants.JOIN_ANIMATION_TIME);
-//                        bounceRotationTask = RotationTask.CreateLinear( 2*angle , Constants.JOIN_ANIMATION_TIME);
-//                        
-//                        joinAnim.addTask(new ParallelTask(bounceMoveTask, bounceRotationTask));
-//                        joinAnim.addTask(new SelfDestructTask());
-//                        newPiece.addTask(joinAnim);
-//                    }
+                var joinAnim :SerialTask = new SerialTask();
+                joinAnim.addTask( new TimedTask( join._delay + pieceToHJoinTime) );
+                var distance2Side :Number;
+                var distanceFromOtherSide2Target :Number;
+                var xOnTheOtherSideRelativeToBoardSprite :int;
+                if( e.side == Constants.LEFT && sourceboard.x > boardAttacked.x) {
+                    xToShootBeforeWrappingAround = Constants.PUZZLE_TILE_SIZE * (Constants.PUZZLE_STARTING_COLS + 2);
+                    xToStartFromAfterWrapping = toX - 2*Constants.PUZZLE_TILE_SIZE*join._widthInPieces;
                     
+                    joinAnim.addTask(LocationTask.CreateLinear(xToShootBeforeWrappingAround, joinSceneObject.y, (Constants.VERTICAL_JOIN_ANIMATION_TIME - pieceToHJoinTime) * 0.5));
+                    joinAnim.addTask(LocationTask.CreateLinear(xToStartFromAfterWrapping, joinSceneObject.y, 0 ));
+                    joinAnim.addTask(LocationTask.CreateLinear(toX, joinSceneObject.y, (Constants.VERTICAL_JOIN_ANIMATION_TIME - pieceToHJoinTime) * 0.5 ));
                     
-//                }
-             
-             
-             
-             
-             
-             
+                        
+                }
+                else if ( e.side == Constants.RIGHT && sourceboard.x < boardAttacked.x) {
+                    
+                    xToShootBeforeWrappingAround = -Constants.PUZZLE_TILE_SIZE*(join._widthInPieces + 2);
+                    xToStartFromAfterWrapping = toX + Constants.PUZZLE_TILE_SIZE*(join._widthInPieces + 2);
+                    
+                    joinAnim.addTask(LocationTask.CreateLinear(xToShootBeforeWrappingAround, joinSceneObject.y, (Constants.VERTICAL_JOIN_ANIMATION_TIME - pieceToHJoinTime) * 0.5));
+                    joinAnim.addTask(LocationTask.CreateLinear(xToStartFromAfterWrapping, joinSceneObject.y, 0 ));
+                    joinAnim.addTask(LocationTask.CreateLinear(toX, joinSceneObject.y, (Constants.VERTICAL_JOIN_ANIMATION_TIME - pieceToHJoinTime) * 0.5 ));
+                    
+                }
+                else {
+                    joinAnim.addTask(LocationTask.CreateLinear(toX, joinSceneObject.y, (Constants.VERTICAL_JOIN_ANIMATION_TIME - pieceToHJoinTime) ));
+                }
+                
+                joinAnim.addTask( new PlaySoundTask("crash") );
+                joinAnim.addTask(new SelfDestructTask());
+                joinSceneObject.addTask(joinAnim);
+                
+                boardAttacked._animationsToDestroyWhenIDie.push( joinSceneObject );
                 
             }
             else {
@@ -481,8 +473,6 @@ package joingame.view
             var coverPiece :JoinGamePiece;
             var coverAnimTask :SerialTask;
             
-//            var firingDuration :Number = 0.3;
-            
             var localRowIndex :int = ((_gameModel.getBoardForPlayerID(e.boardAttacked) as JoinGameBoardRepresentation)._rows - 1) - e.row;
             var piecesDestroyed :Array = new Array();
             
@@ -496,8 +486,6 @@ package joingame.view
                             if(leftPiece != null && (leftPiece.type == Constants.PIECE_TYPE_NORMAL || leftPiece.type == Constants.PIECE_TYPE_POTENTIALLY_DEAD)){
                                 leftPiece.type = Constants.PIECE_TYPE_DEAD;
                                 piecesDestroyed.push(leftPiece);
-//                                AppContext.LOG("adding to piecesdos, piecesDestroyed.length=" + piecesDestroyed.length);
-//                                pieceDestroyed = leftPiece;
                                 break;
                             }
                         }
@@ -511,15 +499,12 @@ package joingame.view
                             if(rightPiece != null && (rightPiece.type == Constants.PIECE_TYPE_NORMAL || rightPiece.type == Constants.PIECE_TYPE_POTENTIALLY_DEAD)){
                                 rightPiece.type = Constants.PIECE_TYPE_DEAD;
                                 piecesDestroyed.push(rightPiece);
-//                                AppContext.LOG("adding to piecesdos, piecesDestroyed.length=" + piecesDestroyed.length);
-//                                pieceDestroyed = rightPiece;
                                 break;
                             }
                         }
                     }
                 }
                 
-//                AppContext.LOG("piecesDestroyed.length=" + piecesDestroyed.length);
 //                Convert the damaged piece by animating a cover piece
                 if(piecesDestroyed.length > 0){
                     
@@ -531,18 +516,33 @@ package joingame.view
                         coverPiece.x = pieceDestroyed.x;
                         coverPiece.y = pieceDestroyed.y;
                         
+                        boardAttacked._animationsToDestroyWhenIDie.push( coverPiece );
                         
                         boardAttacked.db.addObject(coverPiece, boardAttacked._sprite);
                         
                         coverAnimTask = new SerialTask();
-                        coverAnimTask.addTask(new TimedTask(Constants.JOIN_ANIMATION_TIME));
+                        coverAnimTask.addTask(new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay));
                         coverAnimTask.addTask(ScaleTask.CreateEaseOut(0.1, 0.1, Constants.PIECE_SCALE_DOWN_TIME));
                         coverAnimTask.addTask(new SelfDestructTask());
                         coverPiece.addTask( coverAnimTask );
-//                        
-//                        function showExplosion() :void {
-//                            var _piece_break_eastward :MovieClip = new _piece_break_eastwardClass();
-//                        }
+                        
+                        /* And show an asplosion */
+                        var explosionMovie :MovieClip = new _piece_break_eastwardClass();
+                        var asplosionSprite :Sprite = new Sprite();
+                        asplosionSprite.addChild( explosionMovie);
+                        var asplosionScene :SceneObject = new SimpleSceneObject(asplosionSprite);
+                        boardAttacked.db.addObject(asplosionScene, boardAttacked._sprite);
+                        boardAttacked._animationsToDestroyWhenIDie.push( asplosionScene );
+                        asplosionScene.x = pieceDestroyed.x;
+                        asplosionScene.y = pieceDestroyed.y;
+                        asplosionScene.visible = false;
+                        
+                        coverAnimTask = new SerialTask();
+                        coverAnimTask.addTask(new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay));
+                        coverAnimTask.addTask(new VisibleTask(true));
+                        coverAnimTask.addTask(new TimedTask(0.4));
+                        coverAnimTask.addTask(new SelfDestructTask());
+                        asplosionScene.addTask( coverAnimTask );
                         
                     }
                     
@@ -558,7 +558,7 @@ package joingame.view
                         shockwavePieceMoveDistance *= 0.6;
                         if(pieceToShock != null) {
                             var shockAnimTask :SerialTask = new SerialTask();
-                            shockAnimTask.addTask( new TimedTask(Constants.JOIN_ANIMATION_TIME + currentShockwaveDistance*0.05) );
+                            shockAnimTask.addTask( new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay + currentShockwaveDistance*0.05) );
                             shockAnimTask.addTask( LocationTask.CreateEaseOut(pieceToShock.x + shockwavePieceMoveDistance*colIncrement*(1.0/(currentShockwaveDistance+1)), pieceToShock.y, 0.2) );
                             shockAnimTask.addTask( LocationTask.CreateEaseIn(pieceToShock.x, pieceToShock.y, 0.05) );
                             pieceToShock.addTask( shockAnimTask );
@@ -572,43 +572,6 @@ package joingame.view
                         colForShockwave += colIncrement;
                         currentShockwaveDistance++;
                     }
-                    
-                    
-                        //localRowIndex
-                        
-//                        var centerX :int = boardAttacked.idxToX(pieceDestroyed.boardIndex);
-//                        var centerY :int = boardAttacked.idxToY(pieceDestroyed.boardIndex);
-//                        var centerXCoord :int = boardAttacked.getPieceXLoc(centerX);
-//                        var centerYCoord :int = boardAttacked.getPieceYLoc(centerY);
-//                        for each (var distance :int in [2,1]) {
-//                            for( i = centerX - distance; i < centerX + distance; i++) {
-//                                for( var j :int = centerY - distance; j < centerY + distance; j++) {
-//                                    if( !(i == centerX && j == centerY)) {
-//                                        var pieceToWobble :JoinGamePiece = boardAttacked.getPieceAt(i, j) as JoinGamePiece;
-//                                        if(pieceToWobble != null) {
-//                                            
-//                                            var shockDistance :int = 5;
-//                                            
-//                                            var xDelta :int = boardAttacked.idxToX(pieceToWobble.boardIndex) < centerX ? -shockDistance*(1.0/distance) : shockDistance*(1.0/(distance*2));
-//                                            var yDelta :int = boardAttacked.idxToY(pieceToWobble.boardIndex) < centerY ? -shockDistance*(1.0/distance) : shockDistance*(1.0/(distance*2));
-//                                            
-//                                            
-//                                            var taskAnimation :SerialTask = new SerialTask();
-//                                            taskAnimation.addTask( new TimedTask(Constants.JOIN_ANIMATION_TIME) );
-//                                            taskAnimation.addTask( LocationTask.CreateEaseOut(pieceToWobble.x + xDelta, pieceToWobble.y + yDelta, 0.2) );
-//                                            taskAnimation.addTask( LocationTask.CreateEaseIn(pieceToWobble.x, pieceToWobble.y, 0.2) );
-//                                            taskAnimation.addTask( LocationTask.CreateEaseOut(pieceToWobble.x + xDelta, pieceToWobble.y + yDelta, 0.05) );
-//                                            taskAnimation.addTask( LocationTask.CreateEaseIn(pieceToWobble.x, pieceToWobble.y, 0.05) );
-//                                            
-//                                            pieceToWobble.addNamedTask(SHOCKWAVE_TASK_NAME, taskAnimation, true); 
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-                        
-//                    }                    
-                        
                 }
                 else {
                     AppContext.LOG("piecesDestroyed.length == 0 WTF");
@@ -617,207 +580,463 @@ package joingame.view
             
             doGraphicsAndAnimationForDeadBottomRow(boardAttacked);
             
-//            AppContext.LOG("\ndoHorizontalAttack(), view == model ? \n\t boardAttacked=" + boardAttacked.isModelAndViewSame() + "\n\tsourceBoard=" + sourceboard.isModelAndViewSame());
-            
-//            AppContext.LOG("view doHorizontalAttack() board after:\n" + boardAttacked);
-
-//            _myBoardDisplay.resetPositionOfPiecesNotMoving();
-//            _leftBoardDisplay.resetPositionOfPiecesNotMoving();
-//            _rightBoardDisplay.resetPositionOfPiecesNotMoving();
         }
         
 
         
-        
-        protected function doVerticalJoins( e :JoinGameEvent ) :void
+        /**
+        * Animate the join, and add and animate the new falling pieces.
+        */
+        protected function doSingleVerticalJoin( e :JoinGameEvent ) :void
         {
-                        
+                      
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+            var join :JoinGameJoin = e.joins[0] as JoinGameJoin;
             var k :int;
+            var i :int;
+            var j :int;
+            var col :int;
             var piece :JoinGamePiece;
-            AppContext.LOG("view doVerticalJoins() board before:\n" + board);
+            var serialTask :SerialTask;
+//            AppContext.LOG("view doVerticalJoins() view before:\n" + board + ", model before:\n" + board._boardRepresentation);
+            var startPositionTask :LocationTask;
             
-            
-            if( board != null){
+            if( board != null) {
+            AppContext.LOG("view doVerticalJoins(), delay=" + e.delay + " model: " + board._boardRepresentation + "\nview:" + board );    
+//                board.updating = true;
+               /* The join shoots up, pushing the pieces above until either the pushed pieces
+                or the join are one piece above the column height, at which point the join
+                dissappears and the new pieces 'roll' in.
+                 */
                 
-                var join :JoinGameJoin = e.joins[0] as JoinGameJoin;
-                /* Do the join animations */
-                for( k = 0; k < join._piecesX.length; k++) {
-                    piece = board.getPieceAt( join._piecesX[k], join._piecesY[k]);
-                    if(piece == null){/* If it's part of another join, it may already be removed */
-                        continue;
-                    }
-                    
-                    board._boardPieces[ piece.boardIndex ] = null;
-                    piece.boardIndex = -1;
-                    piece.destroySelf();
-                    
-                    
-                    var newPiece :JoinGamePiece = createPieceFromBoard( board, join._piecesX[k], join._piecesY[k]);
-                    newPiece.color = piece.color;
-                    newPiece.toVerticalJoin();
-                    db.addObject( newPiece, _sprite);
-                    
-                    var joinAnim :SerialTask = new SerialTask();
-                    var parallelTask :ParallelTask = new ParallelTask(
-                        LocationTask.CreateLinear(newPiece.x + newPiece.width/2, newPiece.y - 200, Constants.JOIN_ANIMATION_TIME),
-                        new ScaleTask(0, 0, Constants.JOIN_ANIMATION_TIME)
-                    );
-                    joinAnim.addTask(parallelTask);
-                    joinAnim.addTask(new SelfDestructTask());
-                    newPiece.addTask(joinAnim);
-                    
-                    
-                }
-                
-                
-                
-                
-                while( board._rows < board._boardRepresentation._rows){
+                /* First make sure that the view and the board correspond with the same number
+                   of rows */
+                while( board._rows < board._boardRepresentation._rows) {
                     board._rows++;
                     /* Add a new row to the pieces list */ 
                     for( var c :int = 0; c < board._cols; c++){
                         board._boardPieces.unshift(null); //Add nulls to the beginning
                     }
                     
-//                    AppContext.LOG("added a row of nulls:\n " + board); 
+                    /* Add inactive piece placeholders  */ 
+                    for( var colForNewPiece :int = 0; colForNewPiece < board._cols; colForNewPiece++){
+                        piece = board.addPieceAtPosition(colForNewPiece, 0, Constants.PIECE_TYPE_INACTIVE, 0);
+                    }
+                }
+//                AppContext.LOG("view doVerticalJoins() after adding a new row view:\n" + board + "model:\n" + board._boardRepresentation);
+                board.resetIndices();
+                
+                
+                updateBoardDisplays();
+                board.updateNumberOfPieceBackgrounds(false);
+                board.updatePieceBackgroundsPositions(false);
+                
+                /* Find the highest piece in the join */
+                var highestPointInJoin :int = AppContext.gameHeight;
+                for( k = 0; k < join._piecesX.length; k++) {
+                    var index :int = board.coordsToIdx( join._piecesX[k], board.convertFromBottomYToFromTopY( join._piecesYFromBottom[k]));
+                    var absoluteY :int = board.y + board.getPieceYLoc(board.idxToY(index)) * board._sprite.scaleY;
+                    highestPointInJoin = Math.min( absoluteY, highestPointInJoin);
+                }
+                
+                /* Do the join animations */
+                
+                /* Create the join sprite.  Real pieces deleted, fake pieces created to animate.*/
+                var joinSprite :Sprite = new Sprite();
+                var currentY :int = 0;
+                var joinSpriteX :int = 0;
+                
+                var joinSpriteY :int = Constants.MAX_PUZZLE_HEIGHT;
+                
+                for( k = 0; k < join._piecesX.length; k++) {
+//                    AppContext.LOG("destroying (" + join._piecesX[k] + ", " + board.convertFromBottomYToFromTopY( join._piecesYFromBottom[k]) + ")");
+                    piece = board.getPieceAt( join._piecesX[k], board.convertFromBottomYToFromTopY( join._piecesYFromBottom[k]));
+                    if(piece != null){/* If it's part of another join, it may already be removed */
+                        board._boardPieces[ piece.boardIndex ] = null;
+                        serialTask = new SerialTask();
+                        serialTask.addTask( new TimedTask( join._delay) );
+                        serialTask.addTask( new SelfDestructTask() );
+                        piece.addTask( serialTask );
+                        
+                        piece.boardIndex = -1;
+//                        piece.destroySelf();
+                    }
                     
-                    /* Adjust the indices and position*/
-/*                     board.adjustAllChildrenY(Constants.PUZZLE_TILE_SIZE);
-                    board.y = _gameControl.local.getSize().y - board._rows*Constants.PUZZLE_TILE_SIZE; */
                     
-                    for( var i :int = 0; i < board._boardPieces.length; i++){
-                        piece = board._boardPieces[i] as JoinGamePiece;
-                        if(piece != null){
-                            piece.boardIndex += board._cols;
-                            piece.x = board.getPieceXLoc(  board.idxToX( piece.boardIndex));
-                            piece.y = board.getPieceYLoc(  board.idxToY( piece.boardIndex));
+                    
+                    var volatilePiece :JoinGamePiece = createPieceFromBoard( board, join._piecesX[k], board.convertFromBottomYToFromTopY( join._piecesYFromBottom[k]));
+                    joinSpriteX = volatilePiece.x;
+                    joinSpriteY = Math.min( joinSpriteY, volatilePiece.y);
+                    
+                    volatilePiece.color = join._color;
+                    volatilePiece.toVerticalJoin();
+                    
+                    
+                    ///////Experiment
+                    joinSprite.addChild( volatilePiece.displayObject );
+                    joinSpriteX = volatilePiece.x;
+                    volatilePiece.displayObject.x = 0;
+                    volatilePiece.displayObject.y = currentY;
+                    currentY += volatilePiece.displayObject.height;
+                    
+                }
+                
+//                AppContext.LOG("view doVerticalJoins() after join animations, view:\n" + board + "model:\n" + board._boardRepresentation);
+                
+                
+                
+                /* Animate the join to move up one tile, then dissappear. */
+                var joinSceneObject :SceneObject = new SimpleSceneObject( joinSprite );
+                db.addObject( joinSceneObject, board._sprite);
+                joinSceneObject.x = joinSpriteX;
+                joinSceneObject.y = joinSpriteY
+                joinSceneObject.visible = false;
+                
+                var joinAnim :SerialTask = new SerialTask();
+                joinAnim.addTask(new TimedTask( join._delay));
+                joinAnim.addTask( new VisibleTask(true));
+                joinAnim.addTask( new PlaySoundTask("vertical_join_moves_up"));
+                
+                var toY :int = joinSceneObject.y - Constants.PUZZLE_TILE_SIZE*board._sprite.scaleX 
+                joinAnim.addTask(LocationTask.CreateEaseIn(joinSceneObject.x, toY, Constants.VERTICAL_JOIN_ANIMATION_TIME));
+                var parallelTask :ParallelTask = new ParallelTask(
+                    LocationTask.CreateLinear(joinSceneObject.x + joinSceneObject.width/2 , toY + joinSceneObject.height/2 , Constants.VERTICAL_JOIN_DISSAPPEAR_TIME),
+                    new ScaleTask(0, 0, Constants.VERTICAL_JOIN_DISSAPPEAR_TIME)  );
+                
+                joinAnim.addTask(parallelTask);
+                joinAnim.addTask(new SelfDestructTask());
+                joinSceneObject.addTask(joinAnim);
+                
+                
+                /* Animate the pieces above the join to also move up, the to fall down*/
+                /* Find the highest y coord */
+                
+                /* Find the highest piece in the join */
+                var lowestYInJoin :int = 3000;
+                for( k = 0; k < join._piecesX.length; k++) {
+                    lowestYInJoin = Math.min( board.convertFromBottomYToFromTopY( join._piecesYFromBottom[k]), lowestYInJoin);
+                }
+                /* Animate the pieces above the join to move up with it */
+                /* And the columns left and right */
+                /* And the pieces below (left and right) to abosrb the shocks*/
+                /* And the piece backgrounds */
+                if(true)
+                for each ( col in [join._buildCol - 1, join._buildCol, join._buildCol+1]) {
+                    for( j = lowestYInJoin - 1; j >= 0; j--) {
+                        piece = board.getPieceAt( col, j);
+                        
+                        
+                        if( piece != null && piece.type != Constants.PIECE_TYPE_INACTIVE) { 
+                            
+                            serialTask = new SerialTask();
+                            serialTask.addTask(new TimedTask( join._delay));
+    //                        serialTask.addTask( new FunctionTask(moveToHome));
+                            serialTask.addTask(LocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex)) - Constants.PUZZLE_TILE_SIZE, Constants.VERTICAL_JOIN_ANIMATION_TIME));
+                            piece.addTask( serialTask );
+                            
+                            
+                            if(  col != join._buildCol ) {
+                                
+                                serialTask = new SerialTask();
+                                serialTask.addTask( new TimedTask( Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay));
+//                                serialTask.addTask( ChangableTargetLocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex)), Constants.PIECE_DROP_TIME) );
+//                                serialTask.addTask( LocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex)), Constants.PIECE_DROP_TIME) );
+                                piece._targetX = piece.x;
+                                piece._targetY = board.getPieceYLoc( board.idxToY(piece.boardIndex));
+                                serialTask.addTask( LocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex)), Constants.PIECE_DROP_TIME) );
+                                serialTask.addTask( LocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex))  + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL, Constants.PIECE_BOUNCE_TIME*0.5) );
+                                serialTask.addTask( LocationTask.CreateEaseIn(piece.x, board.getPieceYLoc( board.idxToY(piece.boardIndex)) , Constants.PIECE_BOUNCE_TIME * 0.5));
+
+//                                piece.addNamedTask((e.joins[0] as JoinGameJoin)._searchIteration + FALL_AND_BOUNCE_TASK_NAME, serialTask, true);
+                                piece.addTask(serialTask);
+                            }
+                    
+                            
+                            
+                        }
+                        /* The shock absorbing pieces left and right (the middle gets the shock animation
+                        from the doPiecesFall */
+                        if(true);
+                        if( col != join._buildCol ) {
+                            piece = board.getPieceAt( col, j + 1);
+                            if( piece != null && piece.type != Constants.PIECE_TYPE_INACTIVE && !board.isEmptyPiecesUnderThisPiece(piece)) {
+
+                                var toX :int = board.getPieceXLoc(board.idxToX(piece.boardIndex));
+                                toY = board.getPieceYLoc(board.idxToY(piece.boardIndex));
+                                
+                                var taskAnimation :SerialTask = new SerialTask();
+                                taskAnimation.addTask( new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME + Constants.PIECE_DROP_TIME + join._delay) );
+                                taskAnimation.addTask( LocationTask.CreateEaseOut(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL, Constants.PIECE_BOUNCE_TIME*0.5) );
+                                taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_BOUNCE_TIME * 0.5) );
+                                piece.addNamedTask((e.joins[0] as JoinGameJoin)._searchIteration + FALL_AND_BOUNCE_TASK_NAME,  taskAnimation );
+                                
+                            }
+                        }
+                        
+                    }
+                    
+                    
+                }
+                
+                function moveToHome(piece :JoinGamePiece) :void
+                {
+                    piece.x = board.getPieceXLoc( board.idxToX( piece.boardIndex ));
+                    piece.y = board.getPieceYLoc( board.idxToY( piece.boardIndex ));
+                }
+                
+                if(e.alternativeVerticalJion) {
+                    
+                    for( i = 0; i < board._cols; i++) {
+                        piece = board.getPieceAt( i, board._rows - 1);
+                        if( piece != null) {
+                            board._boardPieces[ piece.boardIndex ] = null;
+                            serialTask = new SerialTask();
+                            serialTask.addTask( new TimedTask( Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay + 0.1) );
+                            serialTask.addTask( new SelfDestructTask() );
+                            piece.addTask( serialTask );
+                            
+                            piece.boardIndex = -1;
+                            createTimedExplosionForPiece( board, piece, Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay); 
+                            
+//                            var explosionMovieE :MovieClip = new _piece_break_eastwardClass();
+//                            var explosionMovieW :MovieClip = new _piece_break_westwardClass();
+//                            var asplosionSprite :Sprite = new Sprite();
+//                            asplosionSprite.addChild( explosionMovieE)
+//                            asplosionSprite.addChild( explosionMovieW);
+//                            var asplosionScene :SceneObject = new SimpleSceneObject(asplosionSprite);
+//                            board.db.addObject(asplosionScene, board._sprite);
+//                            board._animationsToDestroyWhenIDie.push( asplosionScene );
+//                            asplosionScene.x = piece.x;
+//                            asplosionScene.y = piece.y;
+//                            asplosionScene.visible = false;
+//                            
+//                            
+//                            var coverAnimTask :SerialTask = new SerialTask();
+//                            coverAnimTask.addTask(new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME + join._delay));
+//                            coverAnimTask.addTask(new VisibleTask(true));
+//                            coverAnimTask.addTask(new TimedTask(0.4));
+//                            coverAnimTask.addTask(new SelfDestructTask());
+//                            asplosionScene.addTask( coverAnimTask );
+                            
                         }
                     }
-//                    AppContext.LOG("adjusted indices:\n " + board); 
                     
-                    /* Add inactive piece placeholders  */ 
-                    for( var colForNewiece :int = 0; colForNewiece < board._cols; colForNewiece++){
-                        board.addPieceAtPosition(colForNewiece, 0, Constants.PIECE_TYPE_INACTIVE, 0);
-                    }
-                    AppContext.LOG("after adding new pieces:\n " + board);
+//                    board.clearBottomRow();
                 }
-                /* Then add empty pieces on the top of the board */
+//                else {
+                    /* Animate the piece backgrounds */
+                for each ( col in [join._buildCol - 1, join._buildCol, join._buildCol+1]) {
+                    if(col >= 0 && col < board._cols) {
+                        j = board._boardRepresentation.getHighestActiveRow(col);
+                        var back :SceneObject = board._backgroundPieces[ board.coordsToIdx( col, j) ];
+                        if(back != null) {
+                            back.visible = false;
+                            serialTask = new SerialTask();
+                            serialTask.addTask( new TimedTask( join._searchIteration * (Constants.VERTICAL_JOIN_ANIMATION_TIME + Constants.PIECE_DROP_TIME + Constants.PIECE_BOUNCE_TIME)) );
+                            serialTask.addTask(LocationTask.CreateLinear(back.x, board.getPieceYLoc(j + 1),  0));
+                            serialTask.addTask(new VisibleTask(true));
+                            serialTask.addTask(LocationTask.CreateEaseIn(back.x, board.getPieceYLoc(j), Constants.VERTICAL_JOIN_ANIMATION_TIME));
+                            back.addTask( serialTask);
+                        }   
+                        
+                    }
+                }
+//                }
                 
                 
                 
+            }
+//            AppContext.LOG("view doVerticalJoins() board after:\n" + board);
+            
+        }
+        
+        protected function createTimedExplosionForPiece( board :JoinGameBoardGameArea, piece :JoinGamePiece, delay :Number) :void
+        {
+            var explosionMovieE :MovieClip = new _piece_break_eastwardClass();
+            var explosionMovieW :MovieClip = new _piece_break_westwardClass();
+            var asplosionSprite :Sprite = new Sprite();
+            asplosionSprite.addChild( explosionMovieE)
+            asplosionSprite.addChild( explosionMovieW);
+            var asplosionScene :SceneObject = new SimpleSceneObject(asplosionSprite);
+            board.db.addObject(asplosionScene, board._sprite);
+            board._animationsToDestroyWhenIDie.push( asplosionScene );
+            asplosionScene.x = piece.x;
+            asplosionScene.y = piece.y;
+            asplosionScene.visible = false;
+            
+            
+            var coverAnimTask :SerialTask = new SerialTask();
+            coverAnimTask.addTask(new TimedTask(delay));
+            coverAnimTask.addTask(new VisibleTask(true));
+            coverAnimTask.addTask(new TimedTask(0.3));
+            coverAnimTask.addTask(new SelfDestructTask());
+            asplosionScene.addTask( coverAnimTask );
+            
+        }
+        
+        
+        
+        protected function doAddNewPieces( e :JoinGameEvent ) :void
+        {
+            AppContext.LOG("view doAddNewPieces()");
+            var toY :int;
+            var toX :int;
+            var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+            var index :int;
+            var pieceToChange :JoinGamePiece;
+            var dropFrom :int;
+            var parallelTask :ParallelTask;
+            
+//            New pieces start out 
+            
+            if( board != null) {
+//                board.updating = true;
+//                AppContext.LOG("view addNewPieces(), view=" + board);
+//                AppContext.LOG("view addNewPieces(), model=" + board._boardRepresentation);
                 
-                
-//                for( var index :int; index < board._boardPieces.length; index++){
-//                    var pieceToChange :JoinGamePiece = board._boardPieces[index] as JoinGamePiece;
-//                    /* Change the piece type if we haven't filled in an empty piece */
-//                    if(pieceToChange != null && pieceToChange.type != board._boardRepresentation._boardPieceTypes[index] ){//&& pieceToChange.type == Constants.PIECE_TYPE_EMPTY
-//                        pieceToChange.type = board._boardRepresentation._boardPieceTypes[index];
-//                        pieceToChange.color = board._boardRepresentation._boardPieceColors[index];
+//                /* Convert all nulls to inactives */
+//                for( index ; index < board._boardPieces.length; index++){
+//                    pieceToChange = board._boardPieces[index] as JoinGamePiece;
+//                    if(pieceToChange == null){
+//                        pieceToChange = board.addPieceAtPosition( board._boardRepresentation.idxToX(index), board._boardRepresentation.idxToY(index), Constants.PIECE_TYPE_INACTIVE, 1);
 //                    }
 //                }
                 
                 
-//                /* Add the new pieces.  Get the colors from the model. */
-//                var newPieceRow :int = board._boardRepresentation.getHighestRowBelowEmptyPieceOrJustTheHighestPiece(e.col);
-//                AppContext.LOG("newPieceRow=" + newPieceRow);
-//                AppContext.LOG("col=" + e.col);
-//                AppContext.LOG("previous type=" + board.getPieceAt( e.col, newPieceRow ).type);
-//                
-//                board.getPieceAt( e.col, newPieceRow ).type = Constants.PIECE_TYPE_NORMAL;
-//                AppContext.LOG("now type=" + board.getPieceAt( e.col, newPieceRow ).type);
-//                board.getPieceAt( e.col, newPieceRow ).color = board._boardRepresentation._boardPieceColors[ board._boardRepresentation.coordsToIdx( e.col, newPieceRow) ];
-//                if( e.col > 0){
-//                    newPieceRow = board._boardRepresentation.getHighestRowBelowEmptyPieceOrJustTheHighestPiece(e.col - 1);
-//                    AppContext.LOG("newPieceRow=" + newPieceRow);
-//                    AppContext.LOG("col=" + (e.col-1));
-//                    board.getPieceAt( e.col - 1, newPieceRow ).type = Constants.PIECE_TYPE_NORMAL;
-//                    board.getPieceAt( e.col - 1, newPieceRow ).color = board._boardRepresentation._boardPieceColors[ board._boardRepresentation.coordsToIdx( e.col - 1, newPieceRow) ];
-//                }
-//                if( e.col < board._cols  - 1){
-//                    newPieceRow = board._boardRepresentation.getHighestRowBelowEmptyPieceOrJustTheHighestPiece(e.col + 1);
-//                    AppContext.LOG("newPieceRow=" + newPieceRow);
-//                    AppContext.LOG("col=" + (e.col+1));
-//                    board.getPieceAt( e.col + 1, newPieceRow ).type = Constants.PIECE_TYPE_NORMAL;
-//                    board.getPieceAt( e.col + 1, newPieceRow ).color = board._boardRepresentation._boardPieceColors[ board._boardRepresentation.coordsToIdx( e.col + 1, newPieceRow) ];
-//                }
+                /* Find out how many pieces above and below this one are also to be added*/
+                var col2NewPieces :HashMap = new HashMap();
+                var col2HighestNullPieceRow :HashMap = new HashMap();
+                var index2NewPiecesBelow :HashMap = new HashMap();
+                for( var i :int = 0; i < board._cols; i++) {
+                    var newPieceCount :int = 0;
+                    for( var j :int = 0; j < board._rows; j++) {
+                        index = board.coordsToIdx( i, j);
+                        pieceToChange = board._boardPieces[index] as JoinGamePiece;
+                        if( pieceToChange == null || pieceToChange.type == Constants.PIECE_TYPE_INACTIVE && board._boardRepresentation._boardPieceTypes[index] == Constants.PIECE_TYPE_NORMAL) {
+                            newPieceCount++;
+                            if( !col2HighestNullPieceRow.containsKey( i)) {
+                                col2HighestNullPieceRow.put( i, j);
+                            }
+                            else {
+                                col2HighestNullPieceRow.put( i, Math.min(col2HighestNullPieceRow.get( i), j));
+                            }
+                            
+                            var newPiecesBelowThisOne :int = 0;
+                            for( var _j :int = j + 1; _j < board._rows; _j++) {
+                                var lowerindex :int = board.coordsToIdx( i, _j);
+                                var pieceLower :JoinGamePiece = board._boardPieces[lowerindex] as JoinGamePiece;
+                                if( pieceLower == null || pieceLower.type == Constants.PIECE_TYPE_INACTIVE && board._boardRepresentation._boardPieceTypes[lowerindex] == Constants.PIECE_TYPE_NORMAL) {
+                                    newPiecesBelowThisOne++;
+                                }
+                            }
+                            index2NewPiecesBelow.put( index, newPiecesBelowThisOne);
+                        }
+                    }
+                    col2NewPieces.put( i, newPieceCount);
+                    
+                }
+//                trace("col2NewPieces=" + col2NewPieces);
+//                col2NewPieces.forEach( function print( key :int, value :int) :void
+//                {
+//                    trace( key + "=" + value);
+//                });
                 
-//                board.removeAndAddDisplayChildren();
-                adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
-            }
-            
-            
-            
-            _myBoardDisplay.resetPositionOfPiecesNotMoving();
-            _leftBoardDisplay.resetPositionOfPiecesNotMoving();
-            _rightBoardDisplay.resetPositionOfPiecesNotMoving();
-            
-            
-            
-            
-            
-            
-
-//            AppContext.LOG("\ndoVerticalJoins() end, view == model ? \n\t board=" + board.isModelAndViewSame() );
-        }
-        protected function addNewPieces( e :JoinGameEvent ) :void
-        {
-//            AppContext.LOG("view addNewPieces()");
-            
-            var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-            
-            if( board != null){
                 
-//                AppContext.LOG("model:\n" + board._boardRepresentation);
-//                AppContext.LOG("view addNewPieces before:" + board);
+//                trace("index2NewPiecesBelow=" + index2NewPiecesBelow);
+//                index2NewPiecesBelow.forEach( function print( key :int, value :int) :void
+//                {
+//                    trace( key + "=" + value);
+//                });
                 
-                for( var index :int; index < board._boardPieces.length; index++){
-                    var pieceToChange :JoinGamePiece = board._boardPieces[index] as JoinGamePiece;
+                
+                
+                for( index = 0; index < board._boardPieces.length; index++){
+                    pieceToChange = board._boardPieces[index] as JoinGamePiece;
                     
                     if(pieceToChange == null){
-                        board.addPieceAtPosition( board._boardRepresentation.idxToX(index), board._boardRepresentation.idxToY(index), Constants.PIECE_TYPE_INACTIVE, 1);
-                        pieceToChange = board._boardPieces[index] as JoinGamePiece;
-//                        AppContext.LOG("adding piece at index=" + index);
+                        pieceToChange = board.addPieceAtPosition( board._boardRepresentation.idxToX(index), board._boardRepresentation.idxToY(index), Constants.PIECE_TYPE_INACTIVE, 1);
                     }
                     
+                    
+//                    board.updating = true;
                     /* Change the piece type if we haven't filled in an empty piece */
                     if( pieceToChange.type != board._boardRepresentation._boardPieceTypes[index]){// || pieceToChange.color != board._boardRepresentation._boardPieceColors[index] ){//&& pieceToChange.type == Constants.PIECE_TYPE_EMPTY
-//                        pieceToChange.x = 0;
-//                        pieceToChange.y = 0;
-//                        AppContext.LOG("changing piece type at index=" + index);
+                        
+//                        pieceToChange.x = board.getPieceXLoc( board.idxToX( pieceToChange.boardIndex ));
+                        pieceToChange.y = 0;
+                        
+                        board._sprite.setChildIndex( pieceToChange.displayObject, 1);
                         pieceToChange.color = board._boardRepresentation._boardPieceColors[index];
                         pieceToChange.type = board._boardRepresentation._boardPieceTypes[index];
-                        var pieceAnim :SerialTask = new SerialTask();
-//                        pieceAnim.addTask( new FunctionTask(pieceToChange.convertToNormal) );
-//                        pieceAnim.addTask(ScaleTask.CreateSmooth(1.0, 1.0, 2.0));
-                        pieceAnim.addTask(RotationTask.CreateLinear(360*1, 0.8));//.CreateEaseIn(1.0, 1.0, Constants.PIECE_SCALE_DOWN_TIME));
-                        pieceToChange.addTask(pieceAnim);
+                        pieceToChange.visible = false;
+//                        continue;
+                        /*  We could rotate the pieces in */
+//                        var pieceAnim :SerialTask = new SerialTask();
+//                        pieceAnim.addTask(RotationTask.CreateLinear(360*1, 0.8));//.CreateEaseIn(1.0, 1.0, Constants.PIECE_SCALE_DOWN_TIME));
+//                        pieceToChange.addTask(pieceAnim);
                         
                         
+                        
+                        
+                        /* We place the piece half a piece above the lowest empty tile */
+                        toY = board.getPieceYLoc( board.idxToY( pieceToChange.boardIndex ));
+                        
+                        var appearAnim :SerialTask = new SerialTask();
+                        appearAnim.addTask( new TimedTask(e.delay));
+                        
+                        var rowWhenStartBeingVisible :int = board._boardRepresentation.getHighestActiveRow( board.idxToX( pieceToChange.boardIndex) );
+//                        var dropFrom :int = board.getPieceYLoc( rowToDropFrom ) - Constants.PUZZLE_TILE_SIZE / 2;
+
+
+                        var fallTask :LocationTask = LocationTask.CreateEaseIn(pieceToChange.x, toY, Constants.PIECE_DROP_TIME); 
+                        
+                        
+                        
+                        
+                        
+                        if( rowWhenStartBeingVisible == board.idxToY( pieceToChange.boardIndex ) && col2NewPieces.get(board.idxToX( pieceToChange.boardIndex )) <= 1 ) {
+                            dropFrom = board.getPieceYLoc( board.idxToY( pieceToChange.boardIndex ) ) - Constants.PUZZLE_TILE_SIZE;
+                        }
+                        else {
+                            dropFrom = board.getPieceYLoc( board.idxToY( pieceToChange.boardIndex ) ) - Constants.PUZZLE_TILE_SIZE * col2NewPieces.get(board.idxToX( pieceToChange.boardIndex ));
+                        }
+                        appearAnim.addTask( LocationTask.CreateLinear( board.getPieceXLoc( board.idxToX( pieceToChange.boardIndex )), dropFrom, 0) );
+                        appearAnim.addTask( new TimedTask(Constants.VERTICAL_JOIN_ANIMATION_TIME ) );
+                        pieceToChange._yTrigger = board.getPieceYLoc( rowWhenStartBeingVisible ) - Constants.PUZZLE_TILE_SIZE/2;
+                        pieceToChange._visibiltyDependsOnY = true;
+//                        parallelTask = new ParallelTask( new RepeatingTask( new FunctionTask(pieceToChange.makeVisibleWhenOverYTrigger)), 
+//                            fallTask);
+                        appearAnim.addTask( fallTask );
+                        toX = board.getPieceXLoc( board.idxToX( pieceToChange.boardIndex ));
+                        
+                        appearAnim.addTask( LocationTask.CreateEaseIn(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL, Constants.PIECE_BOUNCE_TIME * 0.5));
+                        appearAnim.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_BOUNCE_TIME*0.5));
+//                        pieceToChange.addTask(appearAnim);
+                        
+                        pieceToChange.addNamedTask(e._searchIteration + FALL_AND_BOUNCE_TASK_NAME, appearAnim, true);
                         
                     }
+                    
+                    /*We may have added the piece via vertical joins, but then we didnt know the 
+                    color.  We know it now, so change it*/
+                    if( pieceToChange.color != board._boardRepresentation._boardPieceColors[index]){// || pieceToChange.color != board._boardRepresentation._boardPieceColors[index] ){//&& pieceToChange.type == Constants.PIECE_TYPE_EMPTY
+                        pieceToChange.color = board._boardRepresentation._boardPieceColors[index];
+                    }
+                    
+                    
                 }
-                
-//                AppContext.LOG("view addNewPieces after:" + board);
-                
-//                for( var k :int = 0; k < e.newIndices.length; k++){
-//                    AppContext.LOG("adding new piece at (" + board.idxToX(e.newIndices[k]) + ", " + board.idxToY(e.newIndices[k]) + "");
-//                    board.addPieceAtPosition( board.idxToX(e.newIndices[k]), board.idxToY(e.newIndices[k]), Constants.PIECE_TYPE_NORMAL, e.newColors[k]);
-////                    var piece :JoinGamePiece = new JoinGamePiece(Constants.PUZZLE_TILE_SIZE);
-////                    piece.type = Constants.PIECE_TYPE_NORMAL;
-////                    piece.color = e.newColors[k];
-////                    board._boardPieces[ e.indices[k] ] = piece;
-////                    (board._boardPieces[ e.indices[k] ] as JoinGamePiece).type = Constants.PIECE_TYPE_NORMAL;
-////                    (board._boardPieces[ e.indices[k] ] as JoinGamePiece).color = e.newColors[k];
-//                }
-//                AppContext.LOG(" after adding, model=\n" + board._boardRepresentation + " \n view:\n" + board);
+//                board.updating = false;
             }
-//            AppContext.LOG("view == model: " + board.isModelAndViewSame());
             
         }
         
+        
+
+        
+        
         protected function doPiecesFall( e :JoinGameEvent) :void
         {
+            AppContext.LOG("view doPiecesFall(), delay=" + e.delay);
             var taskAnimation :SerialTask;
             var toX :Number;
             var toY :Number;
@@ -826,18 +1045,18 @@ package joingame.view
 //              
 
                 var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-
+//                board.updating = true;
                 
-                AppContext.LOG("view doPiecesFall() before: " + board);
+//                AppContext.LOG("view doPiecesFall() before: " + board);
                 
                 var highestRowIndexToAbsorbShockForEachColumnWithFallingPieces :HashMap = new HashMap();
 //                var fallingPieces :Array = [];
                 
                 /* Before pieces fall, animate the pieces  */
                 
-                
+                var newBoardPieces :Array = new Array();
                 for( var i :int = 0; i < e.toFall.length; i++) {
-                    AppContext.LOG(" to fall: " + e.toFall[i] );
+//                    AppContext.LOG(" to fall: " + e.toFall[i] );
                     var fallArray :Array = e.toFall[i] as Array;
                     var piece :JoinGamePiece = board._boardPieces[ board.coordsToIdx( fallArray[0], fallArray[1]) ];
                     
@@ -861,22 +1080,28 @@ package joingame.view
 //                        columnsWithFallingPieces.push( fallArray[0] );
 //                    }
                     
+//                    piece.visible = false;
+                    
                     toX = board.getPieceXLoc(fallArray[2]);
                     toY = board.getPieceYLoc(fallArray[3]);
                     taskAnimation = new SerialTask();
-                    taskAnimation.addTask( new TimedTask(0) );
-                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL, Constants.PIECE_DROP_TIME) );
-                    taskAnimation.addTask( new TimedTask(Constants.PIECE_DROP_BOUNCE1_TIME) );
-//                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY - Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL/2, Constants.PIECE_DROP_BOUNCE1_TIME) );
-                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY - Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL/2, Constants.PIECE_DROP_BOUNCE1_TIME) );
-//                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY - Constants.PIECE_DROP_BOUNCE2_DISTANCE, Constants.PIECE_DROP_BOUNCE2_TIME) );
-                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_DROP_BOUNCE1_TIME * 0.7));
+                    taskAnimation.addTask( new TimedTask( e.delay + Constants.VERTICAL_JOIN_ANIMATION_TIME) );
                     
-                    piece.removeAllTasks();
-//                    piece.addNamedTask(MOVE_TASK_NAME, taskAnimation, true);
-                    piece.addTask(taskAnimation);  
-//                    AppContext.LOG("piece " + piece.boardIndex + " should be eased to " + toX + ", " + toY + ", at index=" + board.coordsToIdx( fallArray[2], fallArray[3])  );
                     
+                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY , Constants.PIECE_DROP_TIME ));// - dropTime) );
+                    taskAnimation.addTask( new PlaySoundTask("pieces_land"));
+                    
+                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL, Constants.PIECE_BOUNCE_TIME * 0.5));// - dropTime) );
+                    taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_BOUNCE_TIME*0.5));
+
+                        
+                    piece.addNamedTask(e._searchIteration + FALL_AND_BOUNCE_TASK_NAME, taskAnimation, true);
+                    
+                    
+                    piece._targetX = piece.x;
+                    piece._targetY = toY;
+                                  
+                                  
                     board._boardPieces[ piece.boardIndex ] = null;
                     piece.boardIndex = board.coordsToIdx( fallArray[2], fallArray[3]);
                     
@@ -885,56 +1110,52 @@ package joingame.view
 //                    AppContext.LOG("so, piece at index=" + piece.boardIndex + " is " + piece);
                 }
                 
+                
                 /* Animate the column absorbing the shock of the falling pieces */
 //                AppContext.LOG("highestRowIndexToAbsorbShockForEachColumnWithFallingPieces=" + highestRowIndexToAbsorbShockForEachColumnWithFallingPieces);
-                for each ( var key: int in highestRowIndexToAbsorbShockForEachColumnWithFallingPieces.keys()) {
-                    i = key;
-                    var j :int = highestRowIndexToAbsorbShockForEachColumnWithFallingPieces.get(key) as int;
-//                    AppContext.LOG("key=" + key + ", value=" + j);
-//                    for( var j :int = 0; j < board._rows; j++) {
-                        var nonFallingPiece :JoinGamePiece = board._boardPieces[ board.coordsToIdx( i, j) ];
-                        if( nonFallingPiece != null) { /* Only act on non-falling pieces */
-//                            AppContext.LOG("Animating ( " + i + ", " + j + ")");
 
-
-                            toX = board.getPieceXLoc(board.idxToX(nonFallingPiece.boardIndex));
-                            toY = board.getPieceYLoc(board.idxToY(nonFallingPiece.boardIndex));
-                            
-                            taskAnimation = new SerialTask();
-                            taskAnimation.addTask( new TimedTask(Constants.PIECE_DROP_TIME) );
-                            taskAnimation.addTask( LocationTask.CreateEaseOut(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL/2, Constants.PIECE_DROP_BOUNCE1_TIME) );
-                            taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_DROP_BOUNCE1_TIME * 0.7) );
-                            nonFallingPiece.removeAllTasks();
-                            nonFallingPiece.addTask( taskAnimation );
-                        }
-//                        else { AppContext.LOG(" piece null ");}
-//                    }
-                     
+                if(true) {
+                    for each ( var key: int in highestRowIndexToAbsorbShockForEachColumnWithFallingPieces.keys()) {
+                        i = key;
+                        var j :int = highestRowIndexToAbsorbShockForEachColumnWithFallingPieces.get(key) as int;
+    //                    AppContext.LOG("key=" + key + ", value=" + j);
+    //                    for( var j :int = 0; j < board._rows; j++) {
+                            var nonFallingPiece :JoinGamePiece = board._boardPieces[ board.coordsToIdx( i, j) ];
+                            if( nonFallingPiece != null) { /* Only act on non-falling pieces */
+    //                            AppContext.LOG("Animating ( " + i + ", " + j + ")");
+    
+    
+                                toX = board.getPieceXLoc(board.idxToX(nonFallingPiece.boardIndex));
+                                toY = board.getPieceYLoc(board.idxToY(nonFallingPiece.boardIndex));
+                                
+                                taskAnimation = new SerialTask();
+                                taskAnimation.addTask( new TimedTask(e.delay + Constants.VERTICAL_JOIN_ANIMATION_TIME + Constants.PIECE_DROP_TIME) );
+                                taskAnimation.addTask( LocationTask.CreateEaseOut(toX, toY + Constants.DISTANCE_OVER_TARGET_DROPPED_PIECES_FALL/2, Constants.PIECE_BOUNCE_TIME*0.5) );
+                                taskAnimation.addTask( LocationTask.CreateEaseIn(toX, toY, Constants.PIECE_BOUNCE_TIME * 0.5) );
+    //                            nonFallingPiece.removeAllTasks();
+                                nonFallingPiece.addTask( taskAnimation );
+                            }
+    //                        else { AppContext.LOG(" piece null ");}
+    //                    }
+                         
+                    }
                 }
-                
-                
-                
-                
-                
-                AppContext.LOG("view doPiecesFall() after: " + board);
-                
-//                AppContext.LOG("doPiecesFall() model " + e.boardPlayerID + "==view: " + board.isModelAndViewSame());
-                
-                
-//                adjustPieceIndicesFromFalling(board);
-                
-//                /* Put the pieces in the corrent array position */
-//                for( var k :int = 0; k < e.oldIndices.length; k++){
-//                    (board._boardPieces[ e.oldIndices[k] ] as JoinGamePiece).boardIndex = e.newIndices[k];
-//                }
-//                board.resetPiecesArrayPosition();
-                
+//                board._updating = false;    
             }
             else {AppContext.LOG("doPiecesFall() no board found for id=" + e.boardPlayerID );}
-            
-              
-            
         }
+        
+//        protected function redoFallingAnimationsDueToBoardSizeChange( board :JoinGameBoardGameArea) :void
+//        {
+//            for each ( var piece :JoinGamePiece in board._boardPieces) {
+//                if (piece != null ) {
+//                    if( piece.hasTasksNamed( FALL_AND_BOUNCE_TASK_NAME ) ){
+//                        piece.re
+//                    }
+//                }
+//            }
+//        }
+        
         
         /**
         * 
@@ -944,24 +1165,14 @@ package joingame.view
         */
         protected function deltaConfirm( e :JoinGameEvent) :void
         {
-            
             var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-            
             if( boardview != null)
             {
+                boardview.updating = true;
                 boardview.movePieceToLocationAndShufflePieces( e.deltaPiece1X, e.deltaPiece1Y, e.deltaPiece2X, e.deltaPiece2Y);
-//                AppContext.LOG("\nview deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
-                boardview.isModelAndViewSame();
-//                if( !) {
-//                    AppContext.LOG("model \n" + boardview._boardRepresentation);
-//                }
-//                AppContext.LOG("view \n" + boardview);
+                boardview._pendingDelta = false;
+                boardview.updating = false;
             }
-            
-//            _myBoardDisplay.resetPositionOfPiecesNotMoving();
-//            _leftBoardDisplay.resetPositionOfPiecesNotMoving();
-//            _rightBoardDisplay.resetPositionOfPiecesNotMoving();
-//            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
         }
         
         
@@ -972,21 +1183,35 @@ package joingame.view
         */
         public function updateBoardDisplays(event :JoinGameEvent = null) :void
         {
+            var animationDelay :int = 0;
+            if(event != null) {
+                animationDelay = Constants.HEADSHOT_MOVEMENT_TIME;
+            }
 //            AppContext.LOG("\updateBoardDisplays, _observer="+_observer);
             if(_observer) {
-                updateBoardDisplaysForObserver();
+                updateBoardDisplaysForObserver(animationDelay);
             }
             else {
-                updateBoardDisplaysFor3BoardViews();
+                updateBoardDisplaysFor3BoardViews(animationDelay);
             }
         }
         
-        protected function updateBoardDisplaysFor3BoardViews() :void 
+        protected function updateBoardDisplaysFor3BoardViews(movementDelay :int = 0) :void 
         {
-//            AppContext.LOG("\nJoinGameBoardsView.updateBoardDisplays()");
+            
+//            Check if any board are acive but shouldn't
+
+
+//            if( !_sprite.contains( _destroyBottomRowButton)) {
+//                _sprite.addChild( _destroyBottomRowButton);
+//            }
+            
+            AppContext.LOG("\nJoinGameBoardsView.updateBoardDisplays()");
             if(_myBoardDisplay != null && _myBoardDisplay.board.playerID != _gameControl.game.getMyId())
             {
-                _myBoardDisplay.doBoardDistructionAnimation();
+                if(_myBoardDisplay.isLiveObject) {
+                    _myBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+                }
                 _myBoardDisplay.board = null;
             }
                 
@@ -997,12 +1222,24 @@ package joingame.view
                 /* The board must be added AFTER the display is added to the db, so all the pieces
                 are added to the db also. */
                 _myBoardDisplay.board = _gameModel.getBoardForPlayerID( _gameControl.game.getMyId() );
+                adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
 //                _sprite.addChild(_myBoardDisplay);
-                _myBoardDisplay.doBoardEnterFromBottomAnimation( Constants.GUI_MIDDLE_BOARD_CENTER - _myBoardDisplay.width/2);
+                _myBoardDisplay.doBoardEnterFromBottomAnimation( Constants.GUI_MIDDLE_BOARD_CENTER );
                 
                 // add the BoardView to the mode, as a child of the board sprite
                 
+                
         
+            }
+            
+            if(_myBoardDisplay != null) {
+//                _myBoardDisplay.updatePieceBackgrounds();
+                _myBoardDisplay.updateYBasedOnBoardHeight();
+                if(_sprite.contains( _myBoardDisplay.displayObject)) {
+                    _sprite.setChildIndex( _myBoardDisplay.displayObject, _sprite.numChildren - 1);
+                }
+                
+                
             }
 
             var leftPlayerId :int =  _gameModel.getPlayerIDToLeftOfPlayer(_gameControl.game.getMyId());
@@ -1011,10 +1248,13 @@ package joingame.view
             if(_leftBoardDisplay != null && _leftBoardDisplay.board.playerID != _gameModel.getPlayerIDToLeftOfPlayer(_gameControl.game.getMyId()))
             {
 //                AppContext.LOG("removing player on left, as " + _leftBoardDisplay.board.playerID + "!=" + _gameModel.getPlayerIDToLeftOfPlayer(_gameControl.game.getMyId()) );
-                _leftBoardDisplay.doBoardDistructionAnimation();
+                if(_leftBoardDisplay.isLiveObject) {
+                    _leftBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+//                    _leftBoardDisplay.destroySelf();
+                }
                 _leftBoardDisplay = null;
             }
-            if(_leftBoardDisplay == null)
+            if(_leftBoardDisplay == null && _gameModel.currentSeatingOrder.length > 1 && !_gameModel.getBoardForPlayerID( leftPlayerId )._isGettingKnockedOut)
             {
 //                AppContext.LOG("adding board to my left");
                 _leftBoardDisplay = new JoinGameBoardGameArea( _gameControl );
@@ -1024,27 +1264,34 @@ package joingame.view
                 this.db.addObject(_leftBoardDisplay, _sprite);
 //                if( leftPlayerId != rightPlayerId ) {
 
-                    AppContext.LOG("me==" + AppContext.gameCtrl.game.getMyId() + ", leftPlayerId=" + leftPlayerId );
+//                    AppContext.LOG("me==" + AppContext.gameCtrl.game.getMyId() + ", leftPlayerId=" + leftPlayerId );
                     _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( leftPlayerId );
-//                }
-//                else if( _gameModel._initialSeatedPlayerIds.length == 2) {
-//                    _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( leftPlayerId );
-//                }
-//                else {
-//                    _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( -1 );
-//                }
-                _leftBoardDisplay.doBoardEnterFromSideAnimation(Constants.LEFT);
+                    if(!_leftBoardDisplay._boardRepresentation._isGettingKnockedOut) {
+                        _leftBoardDisplay.doBoardEnterFromSideAnimation(Constants.LEFT);
+                    }
+            }
+            
+            if(_leftBoardDisplay != null) {
+//                _leftBoardDisplay.updatePieceBackgrounds();
+                _leftBoardDisplay.updateYBasedOnBoardHeight();
+                if( _sprite.contains( _leftBoardDisplay.displayObject )) {
+                    _sprite.setChildIndex( _leftBoardDisplay.displayObject, 1);
+                }
+                
             }
             
             
-            if( _rightBoardDisplay != null && _leftBoardDisplay.board.playerID == _gameModel.getPlayerIDToRightOfPlayer(_gameControl.game.getMyId())) {
+            if( _rightBoardDisplay != null && _leftBoardDisplay != null && _leftBoardDisplay.board.playerID == _gameModel.getPlayerIDToRightOfPlayer(_gameControl.game.getMyId())) {
                 _rightBoardDisplay.addTask( new SerialTask( LocationTask.CreateEaseOut( 2000, _rightBoardDisplay.y, 0.5), new SelfDestructTask() ));
                 _rightBoardDisplay = null;
             }
             
             if(_rightBoardDisplay != null && _rightBoardDisplay.board.playerID != _gameModel.getPlayerIDToRightOfPlayer(_gameControl.game.getMyId()))
             {
-                _rightBoardDisplay.doBoardDistructionAnimation();
+                if(_rightBoardDisplay.isLiveObject) {
+                    _rightBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+//                    _rightBoardDisplay.destroySelf();
+                }
                 _rightBoardDisplay = null;
             }
             if(_rightBoardDisplay == null)
@@ -1062,11 +1309,20 @@ package joingame.view
                 _rightBoardDisplay.doBoardEnterFromSideAnimation(Constants.RIGHT);
             }
             
+            if(_rightBoardDisplay != null) {
+//                _rightBoardDisplay.updatePieceBackgrounds();
+                _rightBoardDisplay.updateYBasedOnBoardHeight();
+                if( _sprite.contains( _rightBoardDisplay.displayObject )) {
+                    _sprite.setChildIndex( _rightBoardDisplay.displayObject, 1);
+                }
+                
+            }
+            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
 //            AppContext.LOG("\nWhen id="+_gameControl.game.getMyId()+" starts, left="+_gameModel.getPlayerIDToLeftOfPlayer(_gameControl.game.getMyId() )+ ", right="+_gameModel.getPlayerIDToRightOfPlayer(_gameControl.game.getMyId() ));
 //            updateGameField();
         }
         
-        protected function updateBoardDisplaysForObserver() :void 
+        protected function updateBoardDisplaysForObserver( movementDelay :int = 0) :void 
         {
             
             var board :JoinGameBoardGameArea;  
@@ -1076,12 +1332,16 @@ package joingame.view
             var parallelTask :ParallelTask;
             var toX :int;
             var toY :int;   
-                      
+                 
+                 
+//            if( _sprite.contains( _destroyBottomRowButton)) {
+//                _sprite.removeChild( _destroyBottomRowButton);
+//            }     
             
                       
             for each ( id in _gameModel.currentSeatingOrder) {
                 
-                if( !_id2Board.containsKey( id) ) {//Create the board
+                if( !_id2Board.containsKey( id) && !_gameModel.getBoardForPlayerID( id )._isGettingKnockedOut) {//Create the board
                     board = new JoinGameBoardGameArea(null);
                     this.db.addObject(board, _sprite);
                     board.board = _gameModel.getBoardForPlayerID( id );
@@ -1113,317 +1373,65 @@ package joingame.view
                     board = new JoinGameBoardGameArea(null);
                     
                 }
+//                board.updatePieceBackgrounds();
                 
-                boardHeight = Constants.PUZZLE_TILE_SIZE * board._rows * boardScale;
+//                boardHeight = board.height; //Constants.PUZZLE_TILE_SIZE * board._rows * boardScale;
                 toX = currentXPosition;
-                toY = (AppContext.gameHeight - boardHeight) - Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS;
+//                toY = (AppContext.gameHeight - boardHeight) - Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS;
+                toY = -Constants.MAX_PUZZLE_HEIGHT*boardScale + (AppContext.gameHeight - Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_FLOOR_AND_BOARDS);
                 
-                scaleTask = new ScaleTask(boardScale, boardScale, Constants.HEADSHOT_MOVEMENT_TIME);
-                moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME);
+//                trace("bottom of board is toY=" + toY);
+                scaleTask = new ScaleTask(boardScale, boardScale, movementDelay);
+                moveTask = LocationTask.CreateEaseOut(toX, toY, movementDelay);
                 parallelTask = new ParallelTask( scaleTask, moveTask);
                 board.addTask( parallelTask ); 
                 currentXPosition +=  actualBoardWidth + Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_BOARDS;
+                
             }
+            
+//            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
         }
         
         
         /** Respond to messages from other clients. */
-        protected function playerKnockedOut (e :JoinGameEvent) :void
+        protected function playerDestroyed (e :JoinGameEvent) :void
         {
-            
+//            _gameControl.local.feedback("BoardsView.playerKnockedOut(" + e.boardPlayerID + ")");
+            //Play a board distruction animation
+            if( getBoardView( e.boardPlayerID ) != null)
+            {
+                /* Don't do board destruction animation if the winning player leaves. */
+                if( _gameModel.activePlayers > 1) {
+                    var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+                    boardview._boardRepresentation._isGettingKnockedOut = true;
+                    boardview.doBoardDistructionAnimation();
+                }
+//                AppContext.LOG("view deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
+            }
+            dispatchEvent( new JoinGameEvent( e.boardPlayerID, JoinGameEvent.PLAYER_DESTROYED));
+//            updateBoardDisplays();
+        }
+        
+        
+        
+        /** Respond to messages from other clients. */
+        protected function playerRemoved (e :JoinGameEvent) :void
+        {
+//            _gameControl.local.feedback("BoardsView.playerKnockedOut(" + e.boardPlayerID + ")");
             //Play a board distruction animation
             if( getBoardView( e.boardPlayerID ) != null)
             {
                 var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-                
-                boardview.doBoardDistructionAnimation();
 //                AppContext.LOG("view deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
             }
             
-            
-            
-//            AppContext.LOG("playerKnockedOut(), player=" + event.boardPlayerID);
+            dispatchEvent( new JoinGameEvent( e.boardPlayerID, JoinGameEvent.PLAYER_REMOVED));
             updateBoardDisplays();
-            
-            dispatchEvent( new JoinGameEvent( e.boardPlayerID, JoinGameEvent.PLAYER_KNOCKED_OUT));
-            
-//            AppContext.LOG("\nplayerKnockedOut="+event.boardPlayerID);
-//            
-//            if( _rightBoardDisplay._boardRepresentation.playerID == event.boardPlayerID)
-//            {
-//                _rightBoardDisplay.board = _gameModel.getBoardForPlayerID( _gameModel.getPlayerIDToRightOfPlayer( _myBoardDisplay._boardRepresentation.playerID));
-//            }
-//            
-//            if( _leftBoardDisplay._boardRepresentation.playerID == event.boardPlayerID)
-//            {
-//                _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( _gameModel.getPlayerIDToLeftOfPlayer( _myBoardDisplay._boardRepresentation.playerID));
-//            }
-//            
-//            if( _myBoardDisplay._boardRepresentation.playerID == event.boardPlayerID)
-//            {
-//                _myBoardDisplay.board = _gameModel.getBoardForPlayerID( -1);
-//            }
-//            
-//            updateGameField();
-
         }
         
         
-        protected function XXXDELETEdoJoinVisualizations( e :JoinGameEvent ) :void
-        {
-//            AppContext.LOG("view doJoinVisualizations()");
-            var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-            var k :int;
-            var i :int;
-            
-            if( boardview != null  && e.joins != null)
-            {
-                for( i = 0; i < e.joins.length; i++)
-                {
-                    var join :JoinGameJoin = e.joins[i] as JoinGameJoin;
-                    //TODO: put the animations here.
-                    
-                    if( join._widthInPieces > 1) {//Horizontal join
-                        
-                        var boardAttacked :JoinGameBoardGameArea = getBoardView( e.boardAttacked );
-                        var sourceboard :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-                        
-                        
-//                        AppContext.LOG("board attacked=" + e.boardAttacked);
-//                        AppContext.LOG("view doHorizontalAttack() board before:\n" + boardAttacked);
-                        
-                        
-                        
-                        /* Determine the animation coords */
-                        var fromX :int;
-                        var fromY :int;
-                        var toX :int;
-                        var toY :int;
-            
-                        if( sourceboard != null ) {//Get the x coord from the source board
-            //                var pieceIndex :int = sourceboard.coordsToIdx( join._piecesX[k], join._piecesY[k]);
-//                            fromX = sourceboard.getPieceXLoc( join._piecesX[0] );
-                            for( k = 1; k < join._piecesX.length; k++) {
-                                fromX = Math.min(fromX, sourceboard.getPieceXLoc( join._piecesX[k] ));
-                            } 
-                            fromX = sourceboard.x + fromX;
-                            fromY = sourceboard.y + sourceboard.getPieceYLoc( join._piecesY[0] );
-                            toY = fromY;
-                        }
-                        else {
-                            if(e.side == Constants.LEFT) {/* This means FROM the the left */
-                                fromX = boardAttacked.x - Constants.GUI_BETWEEN_BOARDS*2;//HACK
-                            }
-                            else {
-                                fromX = boardAttacked.x + boardAttacked.width + Constants.GUI_BETWEEN_BOARDS*2;
-                            }
-                        }
-                        
-                        if( boardAttacked != null ) {
-                            var rowIndex :int = boardAttacked._rows - 1 - join.attackRow;
-                            fromY = boardAttacked.y + boardAttacked.getPieceYLoc( rowIndex );
-                            toY = fromY;
-                            
-                            var alreadyDamagedOffset :int = 0;
-                            if(e.side == Constants.LEFT) {
-//                                AppContext.LOG("from left");
-                                toX = boardAttacked.x;
-                                for(  i = 0; i < boardAttacked._cols; i++){
-                                    if( boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_NORMAL || boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_POTENTIALLY_DEAD) {
-                                        break;
-                                    }
-                                    else {
-                                        alreadyDamagedOffset += Constants.PUZZLE_TILE_SIZE;
-                                    }
-                                }
-                                toX += alreadyDamagedOffset;
-                            }
-                            else {
-//                                AppContext.LOG("from right");
-                                toX = boardAttacked.x + boardAttacked.width;
-                                for( i = 0; i < boardAttacked._cols; i++){
-                                    if( boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_NORMAL || boardAttacked.getPieceAt( i, rowIndex).type == Constants.PIECE_TYPE_POTENTIALLY_DEAD) {
-                                        break;
-                                    }
-                                    else {
-                                        alreadyDamagedOffset += Constants.PUZZLE_TILE_SIZE;
-                                    }
-                                }
-                                toX -= alreadyDamagedOffset;
-                            }
-                            
-                            
-            //                fromX = sourceboard.getPieceXLoc( join._piecesX[0] );
-            //                for( var k :int = 1; k < join._piecesX.length; k++) {
-            //                    fromX = Math.min(fromX, sourceboard.getPieceXLoc( join._piecesX[k] ));
-            //                } 
-            //                fromX = sourceboard.x + fromX;
-            //                fromY = sourceboard.y + sourceboard.getPieceYLoc( join._piecesY[0] );
-            //                toY = fromY;
-                        }
-                        else {
-                            AppContext.LOG("target null, making up some coords");
-                            if(e.side == Constants.LEFT) {/* This means FROM the the left */
-                                toX = sourceboard.x + sourceboard.width + Constants.GUI_BETWEEN_BOARDS*2;//HACK
-                            }
-                            else {
-                                toX = sourceboard.x - Constants.GUI_BETWEEN_BOARDS*2;
-                            }
-                        }
-//                        AppContext.LOG("toX=" +toX);
-                        
-                        /* Convert the pieces to the horizontal join graphic */
-                        for( k = 0; k < join._piecesX.length; k++) {
-                            var piece :JoinGamePiece = boardview.getPieceAt( join._piecesX[k], join._piecesY[k]);
-                            
-                            
-                            
-                            
-                            if(piece == null){/* If it's part of another join, it may already be removed */
-                                continue;
-                            }
-                            piece.toHorizontalJoin();
-                            boardview._boardPieces[ piece.boardIndex ] = null;
-                            piece.boardIndex = -1;//Test
-                            var joinAnim :SerialTask = new SerialTask();
-                            
-                            joinAnim.addTask(LocationTask.CreateLinear(toX, toY, Constants.JOIN_ANIMATION_TIME));
-                            joinAnim.addTask(new SelfDestructTask());
-                            piece.addTask(joinAnim);
-                        }
-            
-//                        
-//                            
-//                            
-//                        /* Animate the horizontal join */ 
-//                        AppContext.LOG("starting h animation");
-//                        var joinClass :Class = SWF_HORIZ_CLASSES[join._color - 1];
-//                        var joinMovie :MovieClip = new joinClass();
-//                        joinMovie.mouseEnabled = false;
-//                        joinMovie.mouseChildren = false;
-//                        joinMovie.cacheAsBitmap = true;
-//                        var animation :SimpleSceneObject = new SimpleSceneObject(joinMovie);
-//                        
-//                        
-//                        
-//                        
-//                        
-//                        animation.x = fromX;
-//                        animation.y = fromY;
-//                        
-//                        
-//                        var joinAnim :SerialTask = new SerialTask();
-//                        joinAnim.addTask(LocationTask.CreateLinear(toX, toY, Constants.JOIN_ANIMATION_TIME));
-//                        joinAnim.addTask(new SelfDestructTask());
-//                        animation.addTask(joinAnim);
-//                        this.db.addObject(animation, _sprite);
-//                        
-//                        
-//                        
-                        
-                        
-                        
-                        
-                        
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-//                    for( var k :int = 0; k < join._piecesX.length; k++)
-//                    {
-//                        var piece :JoinGamePiece = boardview.getPieceAt( join._piecesX[k], join._piecesY[k]);
-//                        if(piece == null){/* If it's part of another join, it may already be removed */
-//                            continue;
-//                        }
-//                        // animate the pieces exploding
-//                        var pieceAnim :SerialTask = new SerialTask();
-//                        pieceAnim.addTask(ScaleTask.CreateEaseOut(0.3, 0.3, Constants.PIECE_SCALE_DOWN_TIME));
-//                        pieceAnim.addTask(new SelfDestructTask());
-//                        piece.addTask(pieceAnim);
-//                        boardview._boardPieces[ piece.boardIndex ] = null;
-//                        piece.boardIndex = -1;//Test
-//                        if( ArrayUtil.contains( boardview._boardPieces, piece) ){
-//                            AppContext.LOG("!!!doJoinVisualizations(), " + piece + " should be removed, but it's still there WTF? at index="+ ArrayUtil.indexOf(boardview._boardPieces, piece) );
-//                        }
-//                    }
-                }
-            }
-        }
         
         
-        public function adjustPieceIndicesFromFalling(board :JoinGameBoardGameArea): void
-        {
-                
-            //Start at the bottom row moving up
-            //If there are any empty pieces, swap with the next highest fallable block
-            
-            for(var j: int = board._rows - 2; j >= 0 ; j--)
-            {
-                for(var i: int = 0; i <  board._cols ; i++)
-                {
-                    var pieceIndex :int = board.coordsToIdx(i, j);
-                    var piece :JoinGamePiece = board._boardPieces[pieceIndex] as JoinGamePiece;
-                    //Now drop the piece as far as there are empty spaces below it.
-                    if( !(piece.type == Constants.PIECE_TYPE_NORMAL || piece.type == Constants.PIECE_TYPE_DEAD || piece.type == Constants.PIECE_TYPE_POTENTIALLY_DEAD))
-                    {
-                        continue;
-                    } 
-                    
-                    var yToFall: int = j;
-                
-                
-                    while(yToFall < board._rows)
-                    {
-                        if(  board.isPieceAt(i, yToFall+1) &&  (board._boardPieces[board.coordsToIdx(i, yToFall+1)] as JoinGamePiece).type == Constants.PIECE_TYPE_EMPTY)
-                        {
-                            yToFall++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    
-                    
-                    if( yToFall != j)
-                    {
-                        board.swapPieces(board.coordsToIdx(i, j), board.coordsToIdx(i, yToFall));
-//                        board.movePieceToLocationAndShufflePieces(board.coordsToIdx(i, j), board.coordsToIdx(i, yToFall));
-                    }
-                
-                
-                }
-            }
-            
-
-            
-        }
-
-        
-        /**
-         * 
-         * Must be called after createOrUpdateOtherPlayerDisplay() because we need the player order
-         * 
-         */
-        private function XXXDELETEupdateGameField(): void
-        {
-//            if(GameContext._playerIDsInOrderOfPlay == null)
-//            {
-//                return;
-//            }
-            
-            _leftBoardDisplay.x = Constants.GUI_LEFT_BOARD_CENTER - _leftBoardDisplay.width/2;
-            _myBoardDisplay.x = Constants.GUI_MIDDLE_BOARD_CENTER - _myBoardDisplay.width/2;
-            _rightBoardDisplay.x = Constants.GUI_RIGHT_BOARD_CENTER - _rightBoardDisplay.width/2;
-            
-            
-            
-            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
-            
-        }
         
         
         
@@ -1433,15 +1441,15 @@ package joingame.view
                 return _id2Board.get( playerid ) as JoinGameBoardGameArea;
             }
             else {
-                if( playerid == _myBoardDisplay._boardRepresentation.playerID )
+                if( _myBoardDisplay != null && playerid == _myBoardDisplay._boardRepresentation.playerID )
                 {
                     return _myBoardDisplay;
                 }
-                else if( playerid == _leftBoardDisplay._boardRepresentation.playerID )
+                else if( _leftBoardDisplay != null && playerid == _leftBoardDisplay._boardRepresentation.playerID )
                 {
                     return _leftBoardDisplay;
                 }
-                else if( playerid == _rightBoardDisplay._boardRepresentation.playerID )
+                else if( _rightBoardDisplay != null && playerid == _rightBoardDisplay._boardRepresentation.playerID )
                 {
                     return _rightBoardDisplay;
                 }
@@ -1450,17 +1458,17 @@ package joingame.view
         }
         
         
-        protected function adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard() :void
+        public function adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard() :void
         {
             
             
-//            AppContext.LOG("\nadjustZoomOfPlayAreaBasedOnCurrentPlayersBoard, _myBoardDisplay.height=" + _myBoardDisplay.height);
+//            AppContext.LOG("\nadjustZoomOfPlayAreaBasedOnCurrentPlayersBoard, _myBoardDisplay.height=" + (_myBoardDisplay != null ?_myBoardDisplay.height : "null"));
             
-            if( _myBoardDisplay != null && _myBoardDisplay.height > Constants.PUZZLE_HEIGHT) {
+            if( _myBoardDisplay != null && _myBoardDisplay._rows >= Constants.MAX_ROWS) {
                 
                 _myBoardDisplay.scaleX = 1.0;
                 _myBoardDisplay.scaleY = 1.0;
-                var newScale :Number = Constants.PUZZLE_HEIGHT / _myBoardDisplay.height;
+                var newScale :Number = Constants.MAX_ROWS / Number(_myBoardDisplay._rows);
                 _myBoardDisplay.scaleX = newScale;
                 _myBoardDisplay.scaleY = newScale;
                 
@@ -1479,18 +1487,21 @@ package joingame.view
             
             if(_myBoardDisplay != null) {
                 _myBoardDisplay.updateYBasedOnBoardHeight();
-                _myBoardDisplay.x = Constants.GUI_MIDDLE_BOARD_CENTER - _myBoardDisplay.width/2;
+                _myBoardDisplay.x = Constants.GUI_MIDDLE_BOARD_CENTER - _myBoardDisplay.scaleX*Constants.PUZZLE_STARTING_COLS*Constants.PUZZLE_TILE_SIZE/2;//_myBoardDisplay.width/2;
+                
+//                _destroyBottomRowButton.x = Constants.GUI_MIDDLE_BOARD_CENTER - _destroyBottomRowButton.width/2;
+//                _destroyBottomRowButton.y = (AppContext.gameHeight - Constants.GUI_BOARD_FLOOR_GAP) -10;
             }
             
             
             if(_leftBoardDisplay != null) {
                 _leftBoardDisplay.updateYBasedOnBoardHeight();
-                _leftBoardDisplay.x = Constants.GUI_LEFT_BOARD_CENTER - _leftBoardDisplay.width/2;
+                _leftBoardDisplay.x = Constants.GUI_WEST_BOARD_RIGHT - _leftBoardDisplay.scaleX*Constants.PUZZLE_STARTING_COLS*Constants.PUZZLE_TILE_SIZE/2;
             }
             
             if(_rightBoardDisplay != null) {
                 _rightBoardDisplay.updateYBasedOnBoardHeight();
-                _rightBoardDisplay.x = Constants.GUI_RIGHT_BOARD_CENTER - _rightBoardDisplay.width/2;
+                _rightBoardDisplay.x = Constants.GUI_EAST_BOARD_LEFT - _rightBoardDisplay.scaleX*Constants.PUZZLE_STARTING_COLS*Constants.PUZZLE_TILE_SIZE/2;
             }
             
         }
@@ -1498,20 +1509,23 @@ package joingame.view
         override public function destroySelf():void
         {
             super.destroySelf();
-            _gameModel.removeEventListener(JoinGameEvent.PLAYER_KNOCKED_OUT, playerKnockedOut);
+            _gameModel.removeEventListener(JoinGameEvent.PLAYER_DESTROYED, playerDestroyed);
+            _gameModel.removeEventListener(JoinGameEvent.PLAYER_REMOVED, playerRemoved);
             _gameModel.removeEventListener(JoinGameEvent.RECEIVED_BOARDS_FROM_SERVER, updateBoardDisplays);
 //            _gameModel.removeEventListener(JoinGameEvent.DO_JOIN_VISUALIZATIONS, doJoinVisualizations);
             _gameModel.removeEventListener(JoinGameEvent.DELTA_CONFIRM, deltaConfirm);
             _gameModel.removeEventListener(JoinGameEvent.DO_PIECES_FALL, doPiecesFall);
-            _gameModel.removeEventListener(JoinGameEvent.ADD_NEW_PIECES, addNewPieces);
-            _gameModel.removeEventListener(JoinGameEvent.VERTICAL_JOIN, doVerticalJoins);
+            _gameModel.removeEventListener(JoinGameEvent.ADD_NEW_PIECES, doAddNewPieces);
+            _gameModel.removeEventListener(JoinGameEvent.VERTICAL_JOIN, doSingleVerticalJoin);
             _gameModel.removeEventListener(JoinGameEvent.ATTACKING_JOINS, doHorizontalAttack);
             _gameModel.removeEventListener(JoinGameEvent.BOARD_UPDATED, boardUpdated);
             _gameModel.removeEventListener(JoinGameEvent.DO_DEAD_PIECES, doDeadPieces);
             _gameModel.removeEventListener(JoinGameEvent.REMOVE_ROW_PIECES, doRemoveRowPieces);
             _gameModel.removeEventListener(JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES, removeBottomRowAndDropPieces);
         }
-            
+        
+        
+//        protected function   
  
         override public function get displayObject () :DisplayObject
         {
@@ -1540,13 +1554,18 @@ package joingame.view
         protected static const SHOCKWAVE_TASK_NAME :String = "shock";
         public static const WOBBL_TASK_NAME :String = "wobble";
         
+        public static const FALL_AND_BOUNCE_TASK_NAME :String = "fall and bounce";
+        public static const PUSH_UP_FROM_VERTICAL_JOIN_NAME :String = "push up";
         
-        
+        public static const REMOVE_BOTTOM_ROW_BUTTON :String = "Request bottom row removal";
         
         private var _piece_break_eastwardClass :Class;
         private var _piece_break_westwardClass :Class;
         
-        private var _observer :Boolean;     
+        private var _observer :Boolean;    
+        
+        
+//        private var _destroyBottomRowButton :SimpleTextButton; 
 
         
         

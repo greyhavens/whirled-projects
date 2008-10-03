@@ -9,6 +9,7 @@ package joingame.modes
     import com.whirled.game.*;
     import com.whirled.net.MessageReceivedEvent;
     
+    import flash.display.DisplayObject;
     import flash.events.TimerEvent;
     import flash.text.TextField;
     import flash.utils.Timer;
@@ -28,32 +29,42 @@ package joingame.modes
                 return;
             }
             
-            _requestGameStateTimer = new Timer(5000, 0);
-            _requestGameStateTimer.addEventListener(TimerEvent.TIMER, timer);
-            _requestGameStateTimer.start();
+            _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             
+            if(_bg != null) {
+                _modeSprite.addChild(_bg);
+            }
+            else {
+                trace("!!!!!Background is null!!!");
+            }
             
             var _text :TextField = new TextField();
             _text.selectable = false;
-//            _text.autoSize = TextFieldAutoSize.CENTER;
             _text.textColor = 0xFFFFFF;
-            _text.scaleX = 2;
-            _text.scaleY = 2;
-            _text.width = 300;
-            _text.x = 50;
-            _text.y = 50;
-            _text.text = "Waiting for player data...";
+            _text.x = 550;
+            _text.y = 400;
+            _text.text = "Waiting for\nplayer data...";
     
             this.modeSprite.addChild(_text);
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
-            AppContext.gameCtrl.net.sendMessage(Server.MODEL_REQUEST, {}, NetSubControl.TO_SERVER_AGENT);
+            AppContext.isObserver = true;
+            
+            
+            if(GameContext.gameModel != null) {
+                GameContext.gameModel.removeAllPlayers();
+            }
+            else {
+                GameContext.gameModel = new JoinGameModel(AppContext.gameCtrl);
+            }
+            GameContext.gameModel.getModelFromPropertySpaces();
+            AppContext.mainLoop.unwindToMode(new ObserverMode());
+            
         }
         
         
         protected function timer( e :TimerEvent) :void
         {
-            trace("Player " + AppContext.myid + ", Resending game model request");
+//            trace("Player " + AppContext.myid + ", Resending game model request");
             if( AppContext.gameCtrl.isConnected() ) {
                 AppContext.gameCtrl.net.sendMessage(Server.MODEL_REQUEST, {}, NetSubControl.TO_SERVER_AGENT);
             }
@@ -62,27 +73,25 @@ package joingame.modes
         /** Respond to messages from other clients. */
         public function messageReceived (event :MessageReceivedEvent) :void
         {
-            trace("\nPlayer " + AppContext.myid + ", WaitingForPlayerDataModeAsObserver, messageReceived " + event.name);
             if (event.name == Server.MODEL_CONFIRM)
             {
-//                AppContext.gameCtrl.local.feedback("observer starting game (Observer Mode)");
-                GameContext.gameState = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameState.setModelMemento( event.value[0] as Array );
-                
+                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+                GameContext.gameModel.setModelMemento( event.value[0] as Array );
                 AppContext.mainLoop.unwindToMode(new ObserverMode());
             }
+            
+            
         }
         
         
         override protected function destroy () :void
         {
             AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            _requestGameStateTimer.removeEventListener(TimerEvent.TIMER, timer);
-            _requestGameStateTimer.stop();
             super.destroy();
         }
         
         
         protected var _requestGameStateTimer :Timer;
+        protected var _bg :DisplayObject;
     }
 }

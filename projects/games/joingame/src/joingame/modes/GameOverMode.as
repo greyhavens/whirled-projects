@@ -38,13 +38,11 @@ package joingame.modes
         
         override protected function setup ():void
         {
-            var winningPlayerID :int = GameContext.gameState.currentSeatingOrder[0];
+            var winningPlayerID :int = GameContext.gameModel.currentSeatingOrder[0];
             var _button :SimpleTextButton = new SimpleTextButton("Winning Player = " + winningPlayerID);
             _modeSprite.addChild(_button);
             _button.x = 100;
             _button.y = 100;
-            
-//            _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
             
         }
         

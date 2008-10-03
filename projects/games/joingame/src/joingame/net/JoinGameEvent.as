@@ -2,6 +2,10 @@ package joingame.net
 {
     import flash.events.Event;
 
+    /**
+    * Transmits various game state changes in between 
+    * the model and the graphical view.
+    */
     public class JoinGameEvent extends Event
     {
         public function JoinGameEvent(playerid :int, type:String)
@@ -13,6 +17,7 @@ package joingame.net
             newIndices = new Array();
             indices = new Array();
             newColors = new Array();
+            delay = 0;
         }
         
         override public function toString():String
@@ -26,9 +31,6 @@ package joingame.net
         //because clients show the boards to the left and right
         public var boardPlayerID :int;
         
-//        public var boardRepresentation :Array;
-        
-//        public var joins :Array;
         public var joins :Array;
         
         public var oldIndices :Array;
@@ -52,13 +54,24 @@ package joingame.net
         /* For vertical joins */
         public var col :int;
         
+        public var delay :Number;
+        
+        public var alternativeVerticalJion :Boolean;
+        
+        /**
+        * Measures the delay for animating the join, 
+        * as succesive searches and joins found should
+        * introduce a delay in the subsequent animations.
+        */
+        public var _searchIteration: int;
         
         public static const BOARD_UPDATED :String = "JoinGame Event: Board Updated";
         public static const RECEIVED_BOARDS_FROM_SERVER :String = "JoinGame Event: Boards Received From Server";
         
         public static const ATTACKING_JOINS :String = "JoinGame Event: Attacking Joins";
         
-        public static const PLAYER_KNOCKED_OUT :String = "JoinGame Event: Player Knocked Out";
+        public static const PLAYER_DESTROYED :String = "JoinGame Event: Player Destroyed";
+        public static const PLAYER_REMOVED :String = "JoinGame Event: Player Removed";
         
         public static const GAME_OVER :String = "JoinGame Event: Game Over";
         
@@ -77,6 +90,10 @@ package joingame.net
         
         public static const VERTICAL_JOIN :String = "JoinGame Event: Vertical Join";
         
+        public static const VERTICAL_JOIN_ANIMATION :String = "JoinGame Event: Vertical Join Animation";
+        
+        public static const CLEAR_BOTTOM_ROW :String = "JoinGame Event: Cleaar Botom Row";
+        
         public static const DO_DEAD_PIECES :String = "JoinGame Event: Show Dead Pieces";
         
         public static const REMOVE_ROW_PIECES :String = "JoinGame Event: Remove Row Pieces";
@@ -87,5 +104,10 @@ package joingame.net
         public static const REMOVE_BOTTOM_ROW_AND_DROP_PIECES :String = "JoinGame Event: Remove Bottom Row And Drop Pieces";
         
         public static const RESET_VIEW_FROM_MODEL :String = "JoinGame Event: Reset View From Model";
+        
+        public static const START_NEW_ANIMATIONS :String = "JoinGame Event: Start New Animations";
+        
+        public static const DONE_COMPLETE_DELTA :String = "JoinGame Event: Done Complete Delta";
+        
     }
 }

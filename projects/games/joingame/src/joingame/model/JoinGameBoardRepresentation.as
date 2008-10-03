@@ -1,5 +1,6 @@
 package joingame.model
 {
+    import com.threerings.util.ArrayUtil;
     import com.threerings.util.HashSet;
     import com.threerings.util.Random;
     import com.whirled.contrib.simplegame.util.ObjectSet;
@@ -21,21 +22,25 @@ package joingame.model
      */
     public class JoinGameBoardRepresentation extends EventDispatcher
     {
-        public function JoinGameBoardRepresentation( )//rows:int, cols:int,
+        public function JoinGameBoardRepresentation( playerid :int = -1, ctrl :GameControl = null )//rows:int, cols:int,
         {
-//            _control = gamecontrol;
+            _playerID = playerid;
             
-            _playerID = -1;
+            if(ctrl != null) {
+                getFromPropertySpaces( playerid, ctrl);
+            }
+            else {
             
-            _boardPieceColors = new Array();
-            _boardPieceTypes = new Array();
-            
-            _lastSwap = [0,0,0,0];
+                _boardPieceColors = new Array();
+                _boardPieceTypes = new Array();
+                
+                
+            }
             
             _bottomRowTimer = new Timer(Constants.TIME_UNTIL_DEAD_BOTTOM_ROW_REMOVAL, 1);
             _bottomRowTimer.addEventListener(TimerEvent.TIMER_COMPLETE, timerEnd);
-//            _bottomRowTimer.addEventListener(TimerEvent.TIMER, timerHandler);
-            
+            _lastSwap = [0,0,0,0];
+            _isGettingKnockedOut = false;
             
         }
 
@@ -81,28 +86,16 @@ package joingame.model
             }
             
             if(isBottomRowDead) {
-                trace("timerend, dispatching kill bottom row event");
                 var removeRowEvent :JoinGameEvent = new JoinGameEvent( this.playerID, JoinGameEvent.REMOVE_ROW_NOTIFICATION);
                 dispatchEvent( removeRowEvent );
             }
-            else {
-                trace("timerEnd, but bottom row is not dead, timer should have been stopped previously, board:\n" + toString());
-            }
-            
-            
-//            if(isBottomRowDead)
-//            {
-//        
-//                removeBottomRow();
-//            }
-//            
-//            checkForDeadBottomRow();
         }
         
         
         public function destroy(): void
         {
             _bottomRowTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerEnd);
+            _bottomRowTimer.stop();
         }
         
         public function removeRow( row :int ) :void
@@ -110,6 +103,15 @@ package joingame.model
             _boardPieceTypes.splice( row*_cols, _cols);
             _boardPieceColors.splice( row*_cols, _cols);
             _rows--;
+        }
+        
+        public function clearRow( row :int ) :void
+        {
+            for( var i :int = 0; i < _cols; i++) {
+                if( _boardPieceTypes[ coordsToIdx(i, row) ] != Constants.PIECE_TYPE_INACTIVE) {
+                    _boardPieceTypes[ coordsToIdx(i, row) ] = Constants.PIECE_TYPE_EMPTY;
+                }
+            }
         }
         
         public function get visiblePuzzleHeightInPieces() :int
@@ -132,7 +134,7 @@ package joingame.model
         }
         public function movePieceToLocationAndShufflePieces(index1 :int, index2 :int) :void
         {
-            trace("Model: delta confirmed=" + index1 + " to " + index2 ); 
+//            trace("Model: delta confirmed=" + index1 + " to " + index2 ); 
             var px1 :int = idxToX(index1);
             var py1 :int = idxToY(index1);
             var px2 :int = idxToX(index2);
@@ -205,27 +207,10 @@ package joingame.model
          */
         public function getBoardAsCompactRepresentation(): Array
         {
-            return [_playerID, _rows, _cols, _boardPieceColors, _boardPieceTypes, _seed, _numberOfCallsToRandom];
+            return [_playerID, _rows, _cols, _boardPieceColors, _boardPieceTypes, _seed, _numberOfCallsToRandom, _isGettingKnockedOut ? 1 : 0];
         }
         
-        public function setBoardFromCompactRepresentation(rep: Array):void
-        {
-            _playerID = rep[0] as int;
-            _rows = rep[1] as int;
-            _cols = rep[2] as int;
-            _boardPieceColors = rep[3] as Array;
-            _boardPieceTypes = rep[4] as Array;
-            this.randomSeed = int(rep[5]);
-            _numberOfCallsToRandom = int(rep[6]);
-            
-            for(var k:int = 0; k < _numberOfCallsToRandom; k++)
-            {
-                generateRandomPieceColor();
-            }
-            
-            //Tell the board display (if on the client) to update the display.
-            this.dispatchEvent(new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED));
-        }
+
         
         public function getPieceTypeAt(i:int, j:int): int
         {
@@ -239,21 +224,6 @@ package joingame.model
         
         public function set playerID(newID:int):void
         {
-//            _playerID = newID;
-//            if(newID != _playerID && _control != null)
-//            {
-//                //Request an entire board update, since we just started so have no pieces.
-//                var msg :Object = new Object;
-//                msg[0] = _control.game.getMyId();
-//                msg[1] = _playerID;
-////                LOG(" !!! Not Sending request update");
-//                //This call causing class cast problems
-//                _control.net.sendMessage(Server.BOARD_UPDATE_REQUEST,  msg, NetSubControl.TO_SERVER_AGENT);
-//            }
-//            else
-//            {
-//                trace("Control should not be null");
-//            }
             _playerID = newID;
         }
         
@@ -273,7 +243,6 @@ package joingame.model
         public function checkForJoins(): Array
         {
             var joins: Array = new Array();
-//            var isJoinsFound: Boolean = true;
             
             var pieceIndex: int;
             var i: int;
@@ -282,10 +251,10 @@ package joingame.model
             var miny:int;
             var maxy:int;
             var join: JoinGameJoin;
+            var piecex:int;
+            var piecey:int; 
                 
                 
-//            while(isJoinsFound)
-//            {
                 //Joins found in this cycle, afterwards pieces fall and these joins are not related to the others found.
                 var tempjoins: Array = new Array();
                 var piecesToRemove: ObjectSet = new ObjectSet();//Contains piece indices
@@ -302,78 +271,76 @@ package joingame.model
                     var a: Array = findHorizontallyConnectedSimilarPiecesAtLeastXlong (idxToX( boardIndex ), idxToY( boardIndex ), Constants.CONNECTION_MINIMUM);
                     var b: Array = findVerticallyConnectedSimilarPiecesAtLeastXlong (idxToX( boardIndex), idxToY( boardIndex), Constants.CONNECTION_MINIMUM);
                 
+                    minx = _cols;
+                    maxx = 0;
+                    miny = _rows;
+                    maxy = 0;
+
                     if(a.length >= Constants.CONNECTION_MINIMUM && b.length >= Constants.CONNECTION_MINIMUM)
                     {
                         
                         join = new JoinGameJoin(a.length, b.length, _boardPieceColors[boardIndex], 0);
-                        
-                        //Double clears clear the whole "box"
-                        minx = _cols;
-                        maxx = 0;
-                        miny = _rows;
-                        maxy = 0;
-                        
-                        for(i = 0; i < a.length; i++)
-                        {
-                            pieceIndex = a[i];
-                            join.addPiece( idxToX(pieceIndex), idxToY(pieceIndex));
-                            piecesToRemove.add(pieceIndex);
-                            
-                            join.attackRow = (_rows-1) - idxToY( pieceIndex );
-                            
-                            var piecex:int = idxToX( pieceIndex);
-                            var piecey:int = idxToY( pieceIndex);
-                            
-                            minx = Math.min(piecex, minx);
-                            maxx = Math.max(piecex, maxx);
-                            miny = Math.min(piecey, miny);
-                            maxy = Math.max(piecey, maxy);
-                        }
-                        for(i = 0; i < b.length; i++)
-                        {
-                            pieceIndex = b[i];
-                            join.addPiece( idxToX(pieceIndex), idxToY(pieceIndex));
-                            piecesToRemove.add(pieceIndex);
-                            
-                            join._buildCol = idxToX( pieceIndex );
-                            
-                            minx = Math.min(piecex, minx);
-                            maxx = Math.max(piecex, maxx);
-                            miny = Math.min(piecey, miny);
-                            maxy = Math.max(piecey, maxy);
-                        }
-                        
-                        for(i = minx; i < maxx+1; i++)
-                        {
-                            for(var j: int = miny; j < maxy+1; j++)
-                            {
-                                join._piecesWithHealingPower.push( coordsToIdx(i,j )); 
-                            }
-                        }
+                        addPiecesToHorizontalJoin(a);
+                        addPiecesToVerticalJoin(b);
+                        addPiecesWithHealingPower();
                         
                         //Find out which pieces have the same row, this is the target row (from the bottom)
-                        var attackRowCountingFromBottom: int = -1;
-                        
                         tempjoins.push(join);
                     } 
                     else if(a.length >= Constants.CONNECTION_MINIMUM)
                     {
                         join = new JoinGameJoin(a.length, 1, _boardPieceColors[boardIndex], 0);
-                        var sumXIndices: Number = 0;
+                        addPiecesToHorizontalJoin(a);
+                        addPiecesWithHealingPower();
+                        tempjoins.push(join);
+                    }
+                    else if(b.length >= Constants.CONNECTION_MINIMUM)
+                    {
                         
-                        minx = _cols;
-                        maxx = 0;
+                        join = new JoinGameJoin(a.length, b.length, _boardPieceColors[boardIndex], 0);
+                        addPiecesToVerticalJoin(b);
+                        addPiecesWithHealingPower();
+                        tempjoins.push(join);
+                        
+                        
+                    }
+                }
+                
+//                //If there are "dead" pieces adjacent to the cleared pieces, "heal" them
+                if(Constants.HEALING_ALLOWED)
+                {
+                    for(i = 0; i < piecesWithHealingPower.length; i++)
+                    {
+                        piecex = idxToX( piecesWithHealingPower[i] );
+                        piecey = idxToY( piecesWithHealingPower[i] );
+                        
+                        join._piecesWithHealingPower.push( [i,convertFromTopYToFromBottomY(piecey)]); 
+                        
+                        
+                        var adjacentPiecesIndicies:Array = getAdjacentPieceIndices(piecex, piecey);
+                        for(var k: int = 0; k < adjacentPiecesIndicies.length; k++)
+                        {
+                            var adjacentPieceIndex: int = adjacentPiecesIndicies[k];
+                            if( _boardPieceTypes[adjacentPieceIndex] == Constants.PIECE_TYPE_DEAD)
+                            {
+                                _boardPieceTypes[adjacentPieceIndex] = Constants.PIECE_TYPE_NORMAL;
+                                join._piecesHealed.push( [idxToX(adjacentPieceIndex), convertFromTopYToFromBottomY( idxToY(adjacentPieceIndex))]);
+                            }
+                        }
+                    }
+                }
+                
+                
+                
+                function addPiecesToHorizontalJoin( a :Array) :void {
                         
                         for(i = 0; i < a.length; i++)
                         {
                             pieceIndex = a[i];
-                            join.addPiece( idxToX(pieceIndex), idxToY(pieceIndex));
-                            piecesToRemove.add(pieceIndex);
+                            join.addPiece( idxToX(pieceIndex), convertFromTopYToFromBottomY(idxToY(pieceIndex)));
                             
-                            piecex = idxToX( pieceIndex);
-                            
-                            minx = Math.min(piecex, minx);
-                            maxx = Math.max(piecex, maxx);
+                            minx = Math.min( idxToX( pieceIndex), minx);
+                            maxx = Math.max( idxToX( pieceIndex), maxx);
                             
                             
                             //If the horizontal join is greater than 4, it becomes a healing clear
@@ -385,75 +352,57 @@ package joingame.model
                             //The last swapped piece decides the direction of even numbered joins 
                             var middleX:int = minx + (a.length / 2.0) - 1;
                             
+                            join._lastSwappedX = _lastSwap[0];
+                            
                             if( _lastSwap[0]  <= middleX)
                             {
-                                join.attackSide = JoinGameJoin.LEFT;
+                                join.attackSide = JoinGameJoin.RIGHT;
                             }
                             else
                             {
-                                join.attackSide = JoinGameJoin.RIGHT;
+                                join.attackSide = JoinGameJoin.LEFT;
                             }
                             
                             join.attackRow = (_rows-1) - idxToY( pieceIndex);
                             
                         }
-                        
-                        tempjoins.push(join);
+                }
+                
+                function addPiecesToVerticalJoin( b :Array) :void {
+                    for(i = 0; i < b.length; i++) {
+                            pieceIndex = b[i];
+                            join.addPiece( idxToX(pieceIndex), convertFromTopYToFromBottomY(idxToY(pieceIndex)));
+                            
+                            join._buildCol = idxToX( pieceIndex );
+                            
+                            minx = Math.min(piecex, minx);
+                            maxx = Math.max(piecex, maxx);
+                            miny = Math.min(piecey, miny);
+                            maxy = Math.max(piecey, maxy);
+                        }
+                }
+                
+                function addPiecesWithHealingPower() :void {
+                    if(a.length > 4) {
+                        for(i = 0; i < a.length; i++)
+                        {
+                            pieceIndex = a[i];
+                            if( !ArrayUtil.contains( piecesWithHealingPower, pieceIndex)) {
+                                piecesWithHealingPower.push( pieceIndex );
+                            }
+                        }
                     }
-                    else if(b.length >= Constants.CONNECTION_MINIMUM)
-                    {
-                        join = new JoinGameJoin(a.length, b.length, _boardPieceColors[boardIndex], 0);
+                    
+                    if(b.length > 4) {
                         for(i = 0; i < b.length; i++)
                         {
                             pieceIndex = b[i];
-                            join.addPiece( idxToX(pieceIndex), idxToY(pieceIndex));
-                            piecesToRemove.add(pieceIndex);
-                            
-                            join._buildCol =  idxToX( pieceIndex );
+                            if( !ArrayUtil.contains( piecesWithHealingPower, pieceIndex)) {
+                                piecesWithHealingPower.push( pieceIndex );
+                            }
                         }
-                        tempjoins.push(join);
                     }
                 }
-                
-                var removeArray: Array = piecesToRemove.toArray();
-                
-                
-//                //If there are "dead" pieces adjacent to the cleared pieces, "heal" them
-//                if(Constants.HEALING_ALLOWED)
-//                {
-//                    for(i = 0; i < piecesWithHealingPower.length; i++)
-//                    {
-//                        piecex = idxToX( piecesWithHealingPower[i] );
-//                        piecey = idxToY( piecesWithHealingPower[i]);
-//                        var adjacentPiecesIndicies:Array = getAdjacentPieceIndices(piecex, piecey);
-//                        for(var k: int = 0; k < adjacentPiecesIndicies.length; k++)
-//                        {
-//                            var adjacentPieceIndex: int = adjacentPiecesIndicies[k];
-//                            if( _boardPieceTypes[adjacentPieceIndex] == Constants.PIECE_TYPE_DEAD)
-//                            {
-//                                _boardPieceTypes[adjacentPieceIndex] = Constants.PIECE_TYPE_NORMAL;
-//                            }
-//                        }
-//                    }
-//                }
-//                
-//                
-//                
-//                for( i = 0; i < removeArray.length; i++)
-//                {
-//                    _boardPieceTypes[ removeArray[i] ]  = Constants.PIECE_TYPE_EMPTY;
-//                }
-//                
-//                if(piecesToRemove.size() > 0)
-//                {
-//                    replaceEmptyBlocks();
-//                    addNewPieces();
-//                }
-//                else
-//                {
-//                    //While no new joins are found, we don't keep searching after the first scan.
-//                    isJoinsFound = false;
-//                }
                 
                 //Add the joins to the total list
                 if(tempjoins.length > 0)
@@ -468,69 +417,6 @@ package joingame.model
             return joins;
         }
 
-
-        
-        
-//        protected function replaceEmptyBlocks(): void
-//        {
-//                
-//            //Start at the bottom row moving up
-//            //If there are any empty pieces, swap with the next highest fallable block
-//            
-//            
-//            for(var j: int = _rows - 2; j >= 0 ; j--)
-//            {
-//                for(var i: int = 0; i <  _cols ; i++)
-//                {
-//                    var pieceIndex :int = coordsToIdx(i, j);
-//            
-//                    //Now drop the piece as far as there are empty spaces below it.
-//                    if( !(_boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_NORMAL || _boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_DEAD || _boardPieceTypes[pieceIndex] == Constants.PIECE_TYPE_POTENTIALLY_DEAD))
-//                    {
-//                        continue;
-//                    } 
-//                    
-//                    var yToFall: int = j;
-//                
-//                
-//                    while(yToFall < _rows)
-//                    {
-//                        if(  isPieceAt(i, yToFall+1) &&  _boardPieceTypes[ coordsToIdx(i, yToFall+1) ] == Constants.PIECE_TYPE_EMPTY)
-//                        {
-//                            yToFall++;
-//                        }
-//                        else
-//                        {
-//                            break;
-//                        }
-//                    }
-//                    
-//                    
-//                    if( yToFall != j)
-//                    {
-//                        swapPieces(coordsToIdx(i, j), coordsToIdx(i, yToFall));
-//                    }
-//                
-//                
-//                }
-//            }
-//
-//            
-//        }
-
-//        protected function addNewPieces(): void
-//        {
-//            for( var i: int = 0; i < _boardPieceTypes.length; i++)
-//            {
-//                if(_boardPieceTypes[i] == Constants.PIECE_TYPE_EMPTY)
-//                {
-//                    _boardPieceTypes[i] = Constants.PIECE_TYPE_NORMAL;
-//                    _boardPieceColors[i] = generateRandomPieceColor();
-//                    //We record this for syncing the boards between players
-//                    _numberOfCallsToRandom++;
-//                }
-//            }
-//        }
         
         public function generateRandomPieceColor(): int
         {
@@ -567,7 +453,7 @@ package joingame.model
             for(var joinIndex:int  = 0; joinIndex < joinArray.length; joinIndex++)
             {
                 var join: JoinGameJoin = joinArray[joinIndex] as JoinGameJoin;
-                if(join.isContainsPiece(idxToX(pieceIndex), idxToY(pieceIndex)))
+                if(join.isContainsPiece(idxToX(pieceIndex), convertFromTopYToFromBottomY(idxToY(pieceIndex))))
                 {
                     return true;
                 }
@@ -675,7 +561,6 @@ package joingame.model
                     }
                 }
             }
-//            this.dispatchEvent(new JoinGameEvent(playerID, JoinGameEvent.BOARD_UPDATED));
         }
         
         public function  isAlive(): Boolean
@@ -700,10 +585,13 @@ package joingame.model
         //New idea, you get a piece to the left and right as well 
         private function addNewPieceToColumn(newPieceColumnIndex: int): void
         {
-//            trace("addNewPieceToColumn(" + newPieceColumnIndex + "), board=\n" + this.toString());
             var rowIndexFree: int = findRowIndexWhereThereIsAFreePieceAtColumn( newPieceColumnIndex );
-//            trace("rowIndexFree="+rowIndexFree);
-            if( rowIndexFree == -1)
+
+            if( Constants.TESTING_NEW_MECHANIC && _rows >= Constants.MAX_ROWS && rowIndexFree < 0) {
+                return;
+            }
+            
+            if( rowIndexFree == -1 )
             {
                 addRow(Constants.PIECE_TYPE_INACTIVE);
                  rowIndexFree = findRowIndexWhereThereIsAFreePieceAtColumn( newPieceColumnIndex );
@@ -711,7 +599,6 @@ package joingame.model
             }
             
             _boardPieceTypes[ coordsToIdx(newPieceColumnIndex, rowIndexFree) ] = Constants.PIECE_TYPE_EMPTY;
-//            trace("end addNewPieceToColumn(" + newPieceColumnIndex + "), board=\n" + this.toString());
         }    
         
         
@@ -762,9 +649,6 @@ package joingame.model
             {
                 addNewPieceToColumn(newPieceColumnIndex + 1);
             }
-//            markPotentiallyDead();
-            
-//            this.dispatchEvent(new JoinGameEvent(playerID, JoinGameEvent.BOARD_UPDATED));
         }
         
         /**
@@ -784,6 +668,18 @@ package joingame.model
             }
             return 0;
         }
+        
+        
+        public function getHighestActiveRow( col :int ) :int
+        {
+            for( var j :int = 0; j < _rows; j++) {
+                if( _boardPieceTypes[ coordsToIdx( col, j) ] != Constants.PIECE_TYPE_INACTIVE) {
+                    return j;
+                }
+            }
+            return -1;
+        }
+        
         
         /**
          * Mark normal pieces that do not have any available joins, 
@@ -1103,12 +999,123 @@ package joingame.model
             return s;
         }
         
+        public function setIntoPropertySpaces( ctrl :GameControl) :void
+        {
+            ctrl.net.set(_playerID + COLORS_STRING, _boardPieceColors);
+            ctrl.net.set(_playerID + TYPES_STRING, _boardPieceTypes);
+            ctrl.net.set(_playerID + DIMENSION_STRING, new Array( _rows, _cols));
+            ctrl.net.set(_playerID + SEED_STRING, _seed);
+            ctrl.net.set(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING, _numberOfCallsToRandom);
+            ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
+        }
+        
+        public function setIntoPropertySpacesWhereDifferent( ctrl :GameControl) :void
+        {
+            
+            
+            function same( a :Array, b :Array) :Boolean {
+                if(a == null || b == null || a.length != b.length ) {
+                    return false;
+                }
+                for(var i :int = 0; i < a.length; i++) {
+                    if(a[i] != b[i]) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            
+            var serverBoardColors :Array = ctrl.net.get(_playerID + COLORS_STRING) as Array;
+            if( !same(serverBoardColors, _boardPieceColors)) {
+                ctrl.net.set(_playerID + COLORS_STRING, _boardPieceColors);
+            }
+            
+            var serverBoardTypes :Array = ctrl.net.get(_playerID + TYPES_STRING) as Array;
+            if( !same(serverBoardTypes, _boardPieceTypes)) {
+                ctrl.net.set(_playerID + TYPES_STRING, _boardPieceTypes);
+            }
+            var dims :Array = ctrl.net.get(_playerID + DIMENSION_STRING) as Array;
+            if( dims == null || dims[0] != _rows || dims[1] != _cols) {
+                ctrl.net.set(_playerID + DIMENSION_STRING, new Array(_rows, _cols));
+            }
+            var seed :int = ctrl.net.get(_playerID + SEED_STRING) as int;
+            if( seed != _seed) {
+                ctrl.net.set(_playerID + SEED_STRING, _seed);
+            }
+            
+            var randoms :int = ctrl.net.get(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING) as int;
+            if( randoms != _numberOfCallsToRandom) {
+                ctrl.net.set(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING, _numberOfCallsToRandom);
+            }
+            
+            var destroyed :Boolean = ctrl.net.get(_playerID + IS_BEING_DESTROYED) as Boolean;
+            if( destroyed != _isGettingKnockedOut) {
+                ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
+            }
+            
+        }
+
+
+        public function convertFromTopYToFromBottomY( j :int ) :int
+        {
+            return (_rows - 1) - j;
+        }  
+        
+        public function convertFromBottomYToFromTopY( j :int ) :int
+        {
+            return (_rows - 1) - j;
+        }       
+        
+        public function setBoardFromCompactRepresentation(rep: Array):void
+        {
+            _playerID = rep[0] as int;
+            _rows = rep[1] as int;
+            _cols = rep[2] as int;
+            _boardPieceColors = rep[3] as Array;
+            _boardPieceTypes = rep[4] as Array;
+            this.randomSeed = int(rep[5]);
+            _numberOfCallsToRandom = int(rep[6]);
+            _isGettingKnockedOut = int(rep[7]) == 1;
+            
+            for(var k:int = 0; k < _numberOfCallsToRandom; k++)
+            {
+                generateRandomPieceColor();
+            }
+            
+            //Tell the board display (if on the client) to update the display.
+            this.dispatchEvent(new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED));
+        }
+        
+        
+        public function getFromPropertySpaces( playerid :int, ctrl :GameControl) :void
+        {
+            _playerID = playerid;
+            _rows = (ctrl.net.get(_playerID + DIMENSION_STRING) as Array)[0];
+            _cols = (ctrl.net.get(_playerID + DIMENSION_STRING) as Array)[1];
+            _boardPieceColors = (ctrl.net.get(_playerID + COLORS_STRING) as Array).slice();
+            _boardPieceTypes = (ctrl.net.get(_playerID + TYPES_STRING) as Array).slice();
+            this.randomSeed = ctrl.net.get(_playerID + SEED_STRING) as int;
+            _numberOfCallsToRandom = ctrl.net.get(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING) as int;
+            for(var k:int = 0; k < _numberOfCallsToRandom; k++)
+            {
+                generateRandomPieceColor();
+            }
+            _isGettingKnockedOut = ctrl.net.get(_playerID + IS_BEING_DESTROYED) as Boolean;
+            
+            this.dispatchEvent(new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED));
+        }
         
         
         
-//        var addEventListener:Function;
-//            var removeEventListener:Function;
-//            var dispatchEvent:Function;
+        public static const COLORS_STRING: String = "Colors";
+        public static const TYPES_STRING: String = "Types";
+        public static const DIMENSION_STRING: String = "Dimension";
+        public static const SEED_STRING: String = "Seed";
+        public static const NUMBER_OF_CALLS_TO_RANDOM_STRING: String = "CallsToRandom";
+        public static const IS_BEING_DESTROYED: String = "IsDestroyed";
+        
             
         public var _boardPieceColors :Array;
         public var _boardPieceTypes :Array;
@@ -1118,9 +1125,6 @@ package joingame.model
         
         private var _bottomRowTimer:Timer;
         
-//        public var _control :GameControl;
-        
-        //x1, y1, x2, y2
         private var _lastSwap: Array;
         
         private var _playerID:int;
@@ -1128,6 +1132,10 @@ package joingame.model
         private var r:Random;
         private var _seed:int;
         public var _numberOfCallsToRandom: int;
+        
+        
+        /** There is a slight delay between being destroyed and the next player replacement */  
+        public var _isGettingKnockedOut :Boolean;
 
     }
 }

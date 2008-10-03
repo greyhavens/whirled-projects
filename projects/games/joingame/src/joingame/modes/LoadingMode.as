@@ -1,8 +1,7 @@
 package joingame.modes
 {
-
     import com.whirled.contrib.simplegame.*;
-    import com.whirled.contrib.simplegame.resource.*;
+    import com.whirled.contrib.simplegame.resource.ResourceManager;
     
     import flash.display.Graphics;
     import flash.text.TextField;
@@ -14,14 +13,9 @@ public class LoadingMode extends AppMode
 {
     override protected function setup () :void
     {
-        var g :Graphics = this.modeSprite.graphics;
-//        g.beginFill(0, 1);
-//        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-//        g.endFill();
-
+        
         _text = new TextField();
         _text.selectable = false;
-//        _text.autoSize = TextFieldAutoSize.CENTER;
         _text.textColor = 0xFFFFFF;
         _text.width = 300;
         _text.scaleX = 2;
@@ -32,7 +26,6 @@ public class LoadingMode extends AppMode
 
         this.modeSprite.addChild(_text);
 
-        // load resources
         this.load();
 
         // load the user cookie
@@ -43,29 +36,39 @@ public class LoadingMode extends AppMode
     {
         if (!_loading )
         {
-//            AppContext.mainLoop.unwindToMode(new WaitingForReadyPlayersMode());
             AppContext.mainLoop.popMode();
         }
     }
 
     protected function load () :void
     {
-        trace("beginning to load");
         var rm :ResourceManager = ResourceManager.instance;
-
         // gfx
-        rm.pendResourceLoad("swf", "puzzlePieces",  { embeddedClass: Resources.PIECES_DATA });
-        rm.pendResourceLoad("image", "BG_watcher",  { embeddedClass: Resources.IMG_BG_WATCHER });
-        rm.pendResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
-        rm.pendResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
+        rm.queueResourceLoad("swf", "puzzlePieces",  { embeddedClass: Resources.PIECES_DATA });
+        rm.queueResourceLoad("image", "BG_watcher",  { embeddedClass: Resources.IMG_BG_WATCHER });
+        rm.queueResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
+        rm.queueResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
+        rm.queueResourceLoad("image", "INSTRUCTIONS",  { embeddedClass: Resources.IMG_INSTRUCTIONS_WHILE_LOADING });
         
-        rm.load(handleResourcesLoaded, handleResourceLoadErr);
+        // sfx
+        rm.queueResourceLoad("sound", "piece_move", { embeddedClass: Resources.BLOCK_MOVE, volume: 0.5, priority: 10 });
+        rm.queueResourceLoad("sound", "final_applause", { embeddedClass: Resources.GAME_OVER_SOUND, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "crash", { embeddedClass: Resources.HORIZONTAL_JOIN_HITS_BOARD, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "windup", { embeddedClass: Resources.PIECE_CONVERTS_TO_HORIZONTAL_JOIN, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "pieces_land", { embeddedClass: Resources.PIECES_LAND, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "vertical_join_moves_up", { embeddedClass: Resources.VERTICAL_JOIN_MOVES_UP, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "board_enters", { embeddedClass: Resources.BOARD_ENTERS_SOUND, volume: 0.7, priority: 10 });
+        rm.queueResourceLoad("sound", "board_explosion", { embeddedClass: Resources.BOARD_EXPLOSION, volume: 0.4, priority: 10 });
+        rm.queueResourceLoad("sound", "board_freezing", { embeddedClass: Resources.BOARD_FREEZING, volume: 0.7, priority: 10 });
+        
+        
+        
+        rm.loadQueuedResources(handleResourcesLoaded, handleResourceLoadErr);
         _loading = true;
     }
 
     protected function handleResourcesLoaded () :void
     {
-        trace("handleResourcesLoaded()");
         _loading = false;
         AppContext.mainLoop.popMode();
     }
@@ -88,7 +91,6 @@ import flash.display.Graphics;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-//import popcraft.*;
 
 class ResourceLoadErrorMode extends AppMode
 {
@@ -99,11 +101,7 @@ class ResourceLoadErrorMode extends AppMode
 
     override protected function setup () :void
     {
-//        trace("Loading mode");
         var g :Graphics = this.modeSprite.graphics;
-//        g.beginFill(0xFF7272);
-//        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-//        g.endFill();
 
         var tf :TextField = new TextField();
         tf.multiline = true;

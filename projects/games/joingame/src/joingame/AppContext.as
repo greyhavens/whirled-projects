@@ -55,6 +55,7 @@ public class AppContext
         {
             if( Constants.PLAYER_ID_TO_LOG == gameCtrl.game.getMyId() || gameCtrl.game.amServerAgent()) {
                 trace(s);
+//                gameCtrl.local.feedback(s);
             }
         }
     }
@@ -72,6 +73,8 @@ public class AppContext
     
     public static var gameHeight :int = 500;
     public static var gameWidth :int = 700;
+    
+    public static var beginToShowInstructionsTime :int = 0;
 }
 
 }

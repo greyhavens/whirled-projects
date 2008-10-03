@@ -18,13 +18,13 @@ public class GameContext
 {
     
 
-    
+
     public static var puzzleBoardMiddle :JoinGameBoardGameArea;
     
     public static var puzzleBoardLeft :JoinGameBoardGameArea;
     public static var puzzleBoardRight :JoinGameBoardGameArea;
         
-    public static var gameState: JoinGameModel;
+    public static var gameModel: JoinGameModel;
         
 //    public static const GAME_TYPE_MULTIPLAYER :int = 0;
 //    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
@@ -104,7 +104,7 @@ public class GameContext
         }
         else {
             var headshot :DisplayObject = AppContext.gameCtrl.local.getHeadShot( playerid);
-            if(headshot != null && false) {
+            if(headshot != null) {
                 _headshots.put(playerid, headshot);
                 return headshot; 
             }

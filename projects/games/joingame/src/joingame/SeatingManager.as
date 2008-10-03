@@ -137,7 +137,7 @@ package joingame {
     
         protected static function updatePlayers (...ignored) :void
         {
-            trace("SeatingManager is updating players");
+//            trace("SeatingManager is updating players " + _gameControl.game.seating.getPlayerIds());
             var playerIds :Array = _gameControl.game.seating.getPlayerIds();
             _numPlayers = 0;
             _lowestOccupiedSeat = -1;
@@ -158,7 +158,7 @@ package joingame {
     
                 _playersPresent[seatIndex] = playerPresent;
             }
-            trace(" _playersPresent="+_playersPresent);
+//            trace(" _playersPresent="+_playersPresent);
         }
     
         protected static var _playersPresent :Array;

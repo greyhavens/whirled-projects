@@ -4,11 +4,13 @@ package
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.game.*;
+    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.Sprite;
     import flash.events.Event;
     
     import joingame.*;
+    import joingame.model.JoinGameModel;
     import joingame.modes.*;
     
     
@@ -29,8 +31,19 @@ package
             this.graphics.drawRect(0, 0, 700, 500);
             this.graphics.endFill();
     
-            this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
     
+    
+            this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+            
+            if(!isConnected) {
+                return;
+            }
+            
+//            if(!ArrayUtil.contains( AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId())) {
+//                AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);    
+//            }
+            
+            
 //    
 //            AppContext.gameCtrl.net.sendMessage(Server.PLAYER_READY, {}, NetSubControl.TO_SERVER_AGENT);
 //            
@@ -55,20 +68,22 @@ package
                 // create a new random stream for the puzzle
                 //AppContext.randStreamPuzzle = Rand.addStream();
         
-
-            if(!ArrayUtil.contains( AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId())) {
-                AppContext.isObserver = true;
+        
+            Constants.isMultiplayer = AppContext.gameCtrl.game.seating.getPlayerIds().length > 1;
+            AppContext.isObserver = !ArrayUtil.contains(AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId());
+            
+            if(AppContext.isObserver) {
                 AppContext.mainLoop.pushMode(new WaitingForPlayerDataModeAsObserver());
             }
-            else {
-                AppContext.isObserver = false;
+            else if(Constants.isMultiplayer) {
                 AppContext.mainLoop.pushMode(new RegisterPlayerMode());
             }
-            
+            else {
+                AppContext.mainLoop.pushMode(new SinglePlayerIntroMode());
+            }
+        
             AppContext.mainLoop.pushMode(new LoadingMode());
             AppContext.mainLoop.run();
-        
-            
             
             
             
@@ -134,6 +149,27 @@ package
             
             
         }
+
+
+        
+        /** Respond to messages from other clients. */
+        public function messageReceived (event :MessageReceivedEvent) :void
+        {
+            AppContext.gameCtrl.local.feedback("\nPlayer " + AppContext.myid + ", JoinGame, messageReceived " + event.name);
+            if (event.name == Server.MODEL_CONFIRM)
+            {
+                AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+                
+//                AppContext.gameCtrl.local.feedback("observer starting game (Observer Mode)");
+                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+                
+                AppContext.mainLoop.unwindToMode(new ObserverMode());
+            }
+            
+            
+        }
+        
         
 //        protected function handleUnload (...ignored) :void
 //        {

@@ -1,6 +1,25 @@
 package joingame.modes
 {
-    import com.whirled.contrib.simplegame.AppMode;
+    import com.threerings.util.*;
+    import com.whirled.contrib.simplegame.*;
+    import com.whirled.contrib.simplegame.audio.*;
+    import com.whirled.contrib.simplegame.net.*;
+    import com.whirled.contrib.simplegame.objects.SceneObject;
+    import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+    import com.whirled.contrib.simplegame.resource.*;
+    import com.whirled.contrib.simplegame.util.*;
+    import com.whirled.game.*;
+    import com.whirled.net.MessageReceivedEvent;
+    
+    import flash.display.DisplayObject;
+    import flash.display.MovieClip;
+    import flash.events.MouseEvent;
+    import flash.events.TimerEvent;
+    import flash.filters.ColorMatrixFilter;
+    
+    import joingame.*;
+    import joingame.model.*;
+    import joingame.view.*;
 
     public class SinglePlayerIntroMode extends AppMode
     {
@@ -12,6 +31,14 @@ package joingame.modes
             
             _allPlayersReady = false;
             _startClicked = false;
+            
+            _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
+            if(_bg != null) {
+                _modeSprite.addChild(_bg);
+            }
+            else {
+                trace("!!!!!Background is null!!!");
+            }
             
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
             modeSprite.addChild(swfRoot);
@@ -29,44 +56,32 @@ package joingame.modes
             _startButton.mouseEnabled = true;
             _startButton.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             _startButton.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-            
-            _startButton.addEventListener(MouseEvent.CLICK, playerReady);
+            _startButton.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+            _startButton.addEventListener(MouseEvent.CLICK, mouseClicked);
             
             var brightness :int = 25;
             var contrast :int = 50;
-//            var myElements_array:Array = [1, 0, 0, 0, brightness,
-//                                          0, 1, 0, 0, brightness,
-//                                          0, 0, 1, 0, brightness,
-//                                          0, 0, 0, 1, 0];
-//                                          
                  
             /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */                         
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0]
                                                                                     
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
-            
-            
-            
-//            _playersReady = new Array();
-//            _button = new SimpleTextButton("Waiting for player data!");
-//            _modeSprite.addChild(_button);
-//            _button.addEventListener(MouseEvent.CLICK, playerReady);
-//            _button.x = 100;
-//            _button.y = 100;
-//            
             AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-//            _timer.addEventListener(TimerEvent.TIMER, timerListener);
-//            _timer.start();
             
-            playerReady(null);
             
         }
         
+        
+        
+        private function mouseDown( event:MouseEvent ) :void 
+        {
+            _startButton.y += 4;
+        }
+        
+        
         private function mouseOver( event:MouseEvent ) :void
         {
-            
             _startButton.filters = [_myColorMatrix_filter];
-            
         }
         
         private function mouseOut( event:MouseEvent ) :void 
@@ -74,61 +89,37 @@ package joingame.modes
             _startButton.filters = [];
         }
         
-        private function playerReady( event:MouseEvent ) :void
+        private function mouseClicked( event:MouseEvent ) :void
         {
+            _startButton.y -= 4;
             _startClicked = true;
-            if( _allPlayersReady ) {
-                AppContext.gameCtrl.net.sendMessage(Server.PLAYER_READY, {}, NetSubControl.TO_SERVER_AGENT);
-            }
+            AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
         }
         
         /** Respond to messages from other clients. */
         public function messageReceived (event :MessageReceivedEvent) :void
         {
-            
             if (event.name == Server.ALL_PLAYERS_READY)
             {
-//                trace("WaitingForReadyPlayersMode Server.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
-                GameContext.gameState = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameState.setModelMemento( event.value[0] as Array );
+                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+                GameContext.gameModel.setModelMemento( event.value[0] as Array );
                 
-                _allPlayersReady = true;
-                if(_startClicked) {
-                    playerReady(null);
-                }
+                AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
                 
             }
             else if (event.name == Server.START_PLAY)
             {
-//                trace("WaitingForReadyPlayersMode Server.START_PLAY for player " + AppContext.gameCtrl.game.getMyId());
                 AppContext.mainLoop.unwindToMode(new PlayPuzzleMode());
             }
         }
         
-//        protected function startPlay() :void 
-//        {
-//            AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
-//            
-//        }
         
         override protected function destroy () :void
         {
-//            _timer.removeEventListener(TimerEvent.TIMER, timerListener);
-//            _timer.stop();
-//            _button.removeEventListener(MouseEvent.CLICK, playerReady);
             AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            _startButton.removeEventListener(MouseEvent.CLICK, playerReady);
+            _startButton.removeEventListener(MouseEvent.CLICK, mouseClicked);
             super.destroy();
-            
         }
-        
-        private function timerListener(e:TimerEvent):void
-        {
-            playerReady(null);
-        }
-        
-//        private var _playersReady:Array;
-//        private var _button: SimpleTextButton;
         
         protected var _intro_panel :SceneObject;
         protected var _startButton :MovieClip;
@@ -136,7 +127,7 @@ package joingame.modes
         protected var _allPlayersReady :Boolean;
         protected var _startClicked :Boolean;
         
-//        private var _timer: Timer = new Timer(3000);//Ping the server every few seconds
+        protected var _bg :DisplayObject;
         
     }
 }
