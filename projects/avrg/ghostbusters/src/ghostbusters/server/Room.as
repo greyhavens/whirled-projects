@@ -447,8 +447,16 @@ public class Room
             // semi-linearly map this to a factor in [0.35, 1.65]
             var levelFactor :Number = 1 + Math.atan(levelDiff / 4);
 
-            // TODO: Change this 77 into something meaninful, jeez.
-            player.ghostDefeated(77, baseFactor * levelFactor * pointsArr[ii]);
+            // now figure the payout
+            var payout :Number = baseFactor * levelFactor * pointsArr[ii];
+
+            // it takes a L7 player, 7*5 = 35 L7 ghosts to gain L8
+            var ghostsToLevel :int = player.level * 5;
+            // and there's 100 ectopoints to each level; note this means you get 1 ectopoint
+            // per kill even if you're level 9 and the ghost is level 1
+            var points :int = Math.round((levelFactor * 100) / ghostsToLevel));
+
+            player.ghostDefeated(points, payout);
         }
     }
 
