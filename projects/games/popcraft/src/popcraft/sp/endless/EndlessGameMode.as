@@ -94,9 +94,19 @@ public class EndlessGameMode extends GameMode
     {
         super.spellDeliveredToPlayer(playerIndex, spellType);
 
-        if (spellType == Constants.SPELL_TYPE_MULTIPLIER &&
-            playerIndex == GameContext.localPlayerIndex) {
-            this.incrementMultiplier();
+        // multiplier spells increase the player's score multiplier, and also add little damage
+        // shields to his workshop
+        if (spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+            var workshop :WorkshopUnit = PlayerInfo(GameContext.playerInfos[playerIndex]).workshop;
+            if (workshop != null &&
+                workshop.damageShields.length < EndlessGameContext.level.maxMultiplier) {
+
+                workshop.addDamageShield(EndlessGameContext.level.multiplierDamageSoak);
+            }
+
+            if (playerIndex == GameContext.localPlayerIndex) {
+                this.incrementMultiplier();
+            }
         }
     }
 

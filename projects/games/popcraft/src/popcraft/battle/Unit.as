@@ -215,11 +215,26 @@ public class Unit extends SimObject
 
     public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
-        var damageTaken :Number = Math.min(this.getAttackDamage(attack), _health, maxDamage);
-        this.health -= damageTaken;
+        var damage :Number = Math.min(this.getAttackDamage(attack), maxDamage);
+
+        // if we have a damage shield, it will absorb the damage from this attack
+        // (currently, this only applies to Workshops in endless mode)
+        if (_damageShields.length > 0) {
+            var shield :UnitDamageShield = _damageShields[0];
+            damage = Math.min(damage, shield.health);
+            shield.health -= damage;
+            if (shield.health <= 0) {
+                _damageShields.splice(0, 1);
+            }
+
+        } else {
+            damage = Math.min(damage, _health);
+            this.health -= damage;
+        }
+
         this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
 
-        return damageTaken;
+        return damage;
     }
 
     public function getAttackDamage (attack :UnitAttack) :Number
@@ -244,6 +259,16 @@ public class Unit extends SimObject
     public function get maxHealth () :Number
     {
         return _maxHealth;
+    }
+
+    public function get damageShields () :Array
+    {
+        return _damageShields;
+    }
+
+    public function addDamageShield (shieldHealth :Number) :void
+    {
+        _damageShields.push(new UnitDamageShield(shieldHealth));
     }
 
     protected function die () :void
@@ -330,14 +355,16 @@ public class Unit extends SimObject
     protected var _owningPlayerInfo :PlayerInfo;
     protected var _unitType :int;
     protected var _unitData :UnitData;
+    protected var _currentAttackTarget :SimObjectRef;
+    protected var _speedScale :Number = 1;
+    protected var _needsAttackWarmup :Boolean = true;
+
     protected var _minHealth :Number;
     protected var _maxHealth :Number;
     protected var _health :Number;
     protected var _isDead :Boolean;
-    protected var _currentAttackTarget :SimObjectRef;
-    protected var _speedScale :Number = 1;
-    protected var _needsAttackWarmup :Boolean = true;
     protected var _invincible :Boolean;
+    protected var _damageShields :Array = [];
 
     protected var _loc :Vector2 = new Vector2();
 

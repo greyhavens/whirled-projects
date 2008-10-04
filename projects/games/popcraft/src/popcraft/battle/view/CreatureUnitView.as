@@ -17,6 +17,7 @@ import flash.geom.Rectangle;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.ui.RectMeterView;
 import popcraft.util.*;
 
 public class CreatureUnitView extends BattlefieldSprite
@@ -36,19 +37,20 @@ public class CreatureUnitView extends BattlefieldSprite
         this.setupAnimations(playerColor);
 
         // health meter
-        _healthMeter = new RectMeter();
+        _healthMeter = new RectMeterView();
         _healthMeter.minValue = 0;
         _healthMeter.maxValue = _unit.maxHealth;
         _healthMeter.value = _unit.health;
         _healthMeter.foregroundColor = playerColor;
         _healthMeter.backgroundColor = 0x888888;
         _healthMeter.outlineColor = 0x000000;
-        _healthMeter.width = 30;
-        _healthMeter.height = 3;
+        _healthMeter.meterWidth = 30;
+        _healthMeter.meterHeight = 3;
+        _healthMeter.updateDisplay();
+
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
-
-        this.db.addObject(_healthMeter, _sprite);
+        _sprite.addChild(_healthMeter);
 
         // draw some debugging circles
         if (Constants.DEBUG_DRAW_UNIT_DATA_CIRCLES) {
@@ -73,13 +75,6 @@ public class CreatureUnitView extends BattlefieldSprite
         this.updateUnitSpellIcons();
 
         super.addedToDB();
-    }
-
-    override protected function removedFromDB () :void
-    {
-        if (null != _healthMeter) {
-            _healthMeter.destroySelf();
-        }
     }
 
     protected function handleSpellSetModified (...ignored) :void
@@ -331,6 +326,9 @@ public class CreatureUnitView extends BattlefieldSprite
 
             if (null != _healthMeter) {
                 _healthMeter.value = _unit.health;
+                if (_healthMeter.needsDisplayUpdate) {
+                    _healthMeter.updateDisplay();
+                }
             }
         }
     }
@@ -370,7 +368,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected var _lastViewState :CreatureUnitViewState = new CreatureUnitViewState();
     protected var _sprite :Sprite = new Sprite();
-    protected var _healthMeter :RectMeter;
+    protected var _healthMeter :RectMeterView;
 
     protected var _animStanding :Array = [];
     protected var _animAttacking :Array = [];

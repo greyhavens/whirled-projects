@@ -18,6 +18,7 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.ui.RectMeterView;
 import popcraft.util.*;
 
 public class WorkshopView extends BattlefieldSprite
@@ -59,20 +60,25 @@ public class WorkshopView extends BattlefieldSprite
         var remainingMaxMeterValue :Number = _unit.maxHealth;
         var remainingMeterValue :Number = _unit.health;
         while (remainingMaxMeterValue > 0) {
-            var thisMeterMaxValue :Number = Math.min(remainingMaxMeterValue, HEALTH_METER_MAX_MAX_VALUE);
+            var thisMeterMaxValue :Number =
+                Math.min(remainingMaxMeterValue, HEALTH_METER_MAX_MAX_VALUE);
             var thisMeterValue :Number = Math.min(remainingMeterValue, thisMeterMaxValue);
 
-            var healthMeter :RectMeter = new RectMeter();
+            var healthMeter :RectMeterView = new RectMeterView();
             healthMeter.minValue = 0;
             healthMeter.maxValue = thisMeterMaxValue;
             healthMeter.value = thisMeterValue;
             healthMeter.foregroundColor = playerColor;
             healthMeter.backgroundColor = 0x888888;
             healthMeter.outlineColor = 0x000000;
-            healthMeter.width = HEALTH_METER_SIZE.x * (thisMeterMaxValue / HEALTH_METER_MAX_MAX_VALUE);
-            healthMeter.height = HEALTH_METER_SIZE.y;
+            healthMeter.meterWidth = HEALTH_METER_SIZE.x *
+                (thisMeterMaxValue / HEALTH_METER_MAX_MAX_VALUE);
+            healthMeter.meterHeight = HEALTH_METER_SIZE.y;
+            healthMeter.updateDisplay();
+
             healthMeter.x = -(healthMeter.width * 0.5);
             healthMeter.y = yOffset;
+            _sprite.addChild(healthMeter);
 
             _healthMeters.push(healthMeter);
 
@@ -137,13 +143,14 @@ public class WorkshopView extends BattlefieldSprite
 
     override protected function addedToDB () :void
     {
-        for each (var healthMeter :RectMeter in _healthMeters) {
-            this.db.addObject(healthMeter, _sprite);
-        }
-
-        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleAttacked);
-
         super.addedToDB();
+        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleAttacked);
+    }
+
+    override protected function removedFromDB () :void
+    {
+        _clickableSprite.parent.removeChild(_clickableSprite);
+        super.removedFromDB();
     }
 
     override protected function scaleSprites () :void
@@ -151,15 +158,6 @@ public class WorkshopView extends BattlefieldSprite
         super.scaleSprites();
         _clickableSprite.scaleX = _spriteScale;
         _clickableSprite.scaleY = _spriteScale;
-    }
-
-    override protected function removedFromDB () :void
-    {
-        for each (var healthMeter :RectMeter in _healthMeters) {
-            healthMeter.destroySelf();
-        }
-
-        _clickableSprite.parent.removeChild(_clickableSprite);
     }
 
     override public function get displayObject () :DisplayObject
@@ -204,10 +202,13 @@ public class WorkshopView extends BattlefieldSprite
             } else {
                 // update all health meters
                 var remainingValue :Number = health;
-                for each (var healthMeter :RectMeter in _healthMeters) {
+                for each (var healthMeter :RectMeterView in _healthMeters) {
                     var meterValue :Number = Math.min(remainingValue, healthMeter.maxValue);
                     healthMeter.value = meterValue;
                     remainingValue -= meterValue;
+                    if (healthMeter.needsDisplayUpdate) {
+                        healthMeter.updateDisplay();
+                    }
                 }
 
                 // swap in the burning workshop
@@ -232,9 +233,11 @@ public class WorkshopView extends BattlefieldSprite
         var debrisObj :SimpleSceneObject = new SimpleSceneObject(new g_debrisClass());
         debrisObj.addTask(After(0.3, new SelfDestructTask()));
 
-        // pick a random location for the blood
-        var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right, Rand.STREAM_COSMETIC);
-        var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom, Rand.STREAM_COSMETIC);
+        // pick a random location for the debris
+        var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right,
+            Rand.STREAM_COSMETIC);
+        var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom,
+            Rand.STREAM_COSMETIC);
         debrisObj.x = x;
         debrisObj.y = y;
 
@@ -286,7 +289,8 @@ public class WorkshopView extends BattlefieldSprite
     protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
-    protected static const HIT_SOUND_NAMES :Array = [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
+    protected static const HIT_SOUND_NAMES :Array =
+        [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];
 
     protected static const CLICKABLE_SPRITE_SIZE :Rectangle = new Rectangle(-27, -74, 55, 74);
     protected static const DEBRIS_RECT :Rectangle = new Rectangle(-27, -74, 55, 74);

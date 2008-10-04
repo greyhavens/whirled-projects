@@ -24,12 +24,7 @@ public class EndlessComputerPlayer extends ComputerPlayer
         var daysOver :int = Math.max(0, dayIndex + 1 - numInitialDays - numRepeatingDays);
         var cycle :int = Math.ceil(daysOver / numRepeatingDays);
 
-        var scale :Number = 1;
-        for (var ii :int = 0; ii < cycle; ++ii) {
-            scale *= _endlessData.waveDelayScale;
-        }
-
-        return scale;
+        return 1 * Math.pow(_endlessData.waveDelayScale, cycle);
     }
 
     protected var _endlessData :EndlessComputerPlayerData;
