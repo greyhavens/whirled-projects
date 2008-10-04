@@ -1,7 +1,7 @@
 package
 {
-	import arithmetic.VoidBoardRectangle;
-	
+	import arbitration.BoardArbiter;
+		
 	public class PlayerController
 	{
 		public function PlayerController(

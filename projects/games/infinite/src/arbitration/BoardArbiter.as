@@ -1,4 +1,4 @@
-package
+package arbitration
 {
 	import arithmetic.*;
 	
@@ -7,14 +7,14 @@ package
 	import paths.PathEvent;
 	import paths.SidewaysPath;
 	
-	public class BoardArbiter
+	public class BoardArbiter implements MoveArbiter
 	{
 		public function BoardArbiter(board:BoardAccess)
 		{
 			_board = board;
 		}
 	
-		public function proposeMove (player:Character, destination:Cell) :void 
+		public function proposeMove (player:MovableCharacter, destination:Cell) :void 
 		{
 			var path:Path;		
 			path = sidewaysPath(player, destination);
@@ -32,7 +32,7 @@ package
 		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function sidewaysPath (player:Character, destination:Cell) :Path
+		public function sidewaysPath (player:MovableCharacter, destination:Cell) :Path
 		{			
 			// for now, there is no path between two positions that are not on the same level.
 			if (! player.cell.sameRowAs(destination)) {				
@@ -54,21 +54,21 @@ package
 				// if the user is asking to traverse a cell that's not grippable - make them
 				// land there so that they fall. 
 				if (!found.grip) {	
-					return new SidewaysPath(player.cell, found);
+					return new SidewaysPath(player.cell.position, found.position);
 				}
 			}			
 			
 			// each cell in the path could be entered and was grippable.
 			// so we return the whole path.			
-			return new SidewaysPath(player.cell, destination);
+			return new SidewaysPath(player.cell.position, destination.position);
 		}
 		
-		protected function dispatchStart(player:Character, path:Path) :void
+		protected function dispatchStart(player:MovableCharacter, path:Path) :void
 		{
 			player.dispatchEvent(new PathEvent(PathEvent.PATH_START, path));
 		}
 		
-		public function climbingPath (player:Character, destination:Cell) :Path
+		public function climbingPath (player:MovableCharacter, destination:Cell) :Path
 		{
 			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;
@@ -90,7 +90,7 @@ package
 						return null;
 					}
 				}
-				return new ClimbingPath(player.cell, destination);
+				return new ClimbingPath(player.cell.position, destination.position);
 			}
 			
 			// is the proposed climb downwards?
@@ -103,7 +103,7 @@ package
 					}
 				}
 				// the player can climb up
-				return new ClimbingPath(player.cell, destination);
+				return new ClimbingPath(player.cell.position, destination.position);
 			}
 			
 			// the selected cell is neither above nor below.

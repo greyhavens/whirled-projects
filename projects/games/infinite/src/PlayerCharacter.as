@@ -2,6 +2,8 @@ package
 {
 	import actions.*;
 	
+	import arbitration.MovableCharacter;
+	
 	import arithmetic.*;
 	
 	import cells.CellInteractions;
@@ -16,13 +18,16 @@ package
 	
 	import paths.Path;
 	import paths.PathEvent;
+	import paths.PathFollower;
 	
 	import sprites.PlayerSprite;
 	
 	/**
 	 * Represents the player who is using the console.
 	 */
-	public class PlayerCharacter extends EventDispatcher implements Character, CellInteractions, ItemPlayer, MoveInteractions
+	public class PlayerCharacter extends EventDispatcher 
+		implements CellInteractions, ItemPlayer, MoveInteractions, MovableCharacter, Viewable, 
+			PathFollower, Owner
 	{
 		public function PlayerCharacter(name:String, inventory:Inventory)
 		{ 
@@ -150,8 +155,9 @@ package
 		 * Begin moving to the specified cell.  This assumes that there is already a clear
 		 * path to the cell.
 		 */
-		public function moveSideways (newCell:Cell) :void
+		public function moveSideways (destination:BoardCoordinates) :void
 		{
+			const newCell:Cell = cellAt(destination);
 			trace("player move sideways from " + _cell + " to " + newCell);
 			_playerAction = new MoveSideways(this, _objective, newCell);
 		}
@@ -160,8 +166,9 @@ package
 		 * Begin climbing to the specified cell.  This assumes that there is already a clear
 		 * path to the cell.
 		 */
-		public function climb (newCell:Cell) :void
-		{
+		public function climb (destination:BoardCoordinates) :void
+		{	
+			const newCell:Cell = cellAt(destination);			
 			trace("player climb from " + _cell + " to: " + newCell);
 			_playerAction = new Climb(this, _objective, newCell);
 		}		

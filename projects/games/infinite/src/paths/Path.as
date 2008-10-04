@@ -1,13 +1,13 @@
 package paths
 {
-	import arithmetic.VoidBoardRectangle;
+	import arithmetic.BoardCoordinates;
 	
 	public class Path
 	{
-		public var start:Cell;
-		public var finish:Cell;
+		public var start:BoardCoordinates;
+		public var finish:BoardCoordinates;
 		
-		public function Path(start:Cell, finish:Cell)
+		public function Path(start:BoardCoordinates, finish:BoardCoordinates)
 		{
 			this.start = start;
 			this.finish = finish;

@@ -1,5 +1,4 @@
 package {
-	import com.threerings.parlor.game.client.GameController;
 	import com.whirled.game.GameControl;
 	
 	import flash.display.Sprite;
@@ -19,6 +18,17 @@ package {
 				addChild(new LocalPlayTest());				
 			}			
 		}				
+
+		/**
+		 * The compiler in flexbuilder starts from this class and compiles all of the reachable code.
+		 * Under normal circumstances, this means that the server code isn't built.   This method
+		 * is never called, but is used to create reachability from the 'main' client class to the server
+		 * code.
+		 */
+		public function compileServer () :void
+		{
+			const server:Server = new Server();
+		}
 		
 		protected var _gameControl:GameControl;
 	}

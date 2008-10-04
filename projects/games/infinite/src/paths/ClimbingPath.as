@@ -1,8 +1,10 @@
 package paths
 {
+	import arithmetic.BoardCoordinates;
+	
 	public class ClimbingPath extends Path
 	{
-		public function ClimbingPath(start:Cell, finish:Cell)
+		public function ClimbingPath(start:BoardCoordinates, finish:BoardCoordinates)
 		{
 			super(start, finish);
 		}

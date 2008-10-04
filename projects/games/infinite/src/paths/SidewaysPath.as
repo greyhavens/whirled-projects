@@ -1,10 +1,10 @@
 package paths
 {
-	import arithmetic.VoidBoardRectangle;
+	import arithmetic.BoardCoordinates;
 	
 	public class SidewaysPath extends Path
 	{
-		public function SidewaysPath(start:Cell, finish:Cell)
+		public function SidewaysPath(start:BoardCoordinates, finish:BoardCoordinates)
 		{
 			super(start, finish);
 		}		
