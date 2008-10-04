@@ -117,7 +117,7 @@ public class PlayerStats
         mpGamesPlayed = ArrayUtil.create(Constants.TEAM_ARRANGEMENT_NAMES.length, 0);
         mpGamesWon = ArrayUtil.create(Constants.TEAM_ARRANGEMENT_NAMES.length, 0);
         resourcesGathered = ArrayUtil.create(Constants.RESOURCE__LIMIT, 0);
-        spellsCast = ArrayUtil.create(Constants.SPELL_TYPE__LIMIT, 0);
+        spellsCast = ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0);
         creaturesCreated = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
         creaturesKilled = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);
         creaturesLostToDaytime = ArrayUtil.create(Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT, 0);

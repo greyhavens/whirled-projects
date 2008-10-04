@@ -84,18 +84,20 @@ public class Constants
     /* Spells */
     public static const SPELL_TYPE_RIGORMORTIS :int = 0;
     public static const SPELL_TYPE_BLOODLUST :int = 1;
-
     public static const CREATURE_SPELL_TYPE__LIMIT :int = 2;
-
     public static const SPELL_TYPE_PUZZLERESET :int = 2;
+    public static const CASTABLE_SPELL_TYPE__LIMIT :int = 3;
+    public static const SPELL_TYPE_MULTIPLIER :int = 3;
+    public static const SPELL_TYPE__LIMIT :int = 4;
 
-    public static const SPELL_TYPE__LIMIT :int = 3;
-
-    public static const SPELL_NAMES :Array = [ "rigormortis", "bloodlust", "shuffle" ];
+    public static const SPELL_NAMES :Array =
+        [ "rigormortis", "bloodlust", "shuffle", "multiplier" ];
+    public static const CASTABLE_SPELL_NAMES :Array =
+        SPELL_NAMES.slice(0, CASTABLE_SPELL_TYPE__LIMIT);
     public static const CREATURE_SPELL_NAMES :Array =
-        SPELL_NAMES.slice(0, CREATURE_SPELL_TYPE__LIMIT);
+        CASTABLE_SPELL_NAMES.slice(0, CREATURE_SPELL_TYPE__LIMIT);
 
-    public static const SPELLS :Array =
+    public static const CASTABLE_SPELLS :Array =
         [ SPELL_TYPE_RIGORMORTIS, SPELL_TYPE_BLOODLUST, SPELL_TYPE_PUZZLERESET ];
 
     /* Units */

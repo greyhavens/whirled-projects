@@ -10,9 +10,9 @@ public class DataUtils
         return parseTypes(xml, "Unit", Constants.PLAYER_CREATURE_UNIT_NAMES);
     }
 
-    public static function parseSpellTypes (xml :XML) :Array
+    public static function parseCastableSpellTypes (xml :XML) :Array
     {
-        return parseTypes(xml, "Spell", Constants.SPELL_NAMES);
+        return parseTypes(xml, "Spell", Constants.CASTABLE_SPELL_NAMES);
     }
 
     protected static function parseTypes (xml :XML, xmlNodeName :String, typeNames :Array) :Array

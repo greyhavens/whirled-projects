@@ -262,6 +262,12 @@ Lasts for 30 seconds."
                 displayName="Shuffle"
                 introText="Flushes your resource console and refills it with large groups of Flesh, Blood, Energy, and Scrap."
                 />
+
+            <Spell
+                type="multiplier"
+                displayName="multiplier"
+                introText=""
+                />
         </Spells>
 
         <PlayerColors>

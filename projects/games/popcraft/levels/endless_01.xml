@@ -1,14 +1,14 @@
 <root>
     <EndlessLevel
         maxMultiplier="5"
-        multiplierOverflowScoreValue="1000"
         multiplierDamageSoak="15"
 
+        pointsPerExtraMultiplier="1000"
         pointsPerResource="1"
         pointsPerOpponentKill="500">
 
-		<GameDataOverride nightLength="20">
-      	</GameDataOverride>
+        <GameDataOverride nightLength="20">
+        </GameDataOverride>
 
         <PointsPerCreatureKill>
             <Unit type="grunt" points="10"/>
@@ -29,9 +29,9 @@
 
                 <ComputerGroups>
                     <Group>
-<!-- 
-	baseHealthScale: applied each time the computer player is cycled back through (usually > 1)
-	waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through (usually < 1)
+<!--
+    baseHealthScale: applied each time the computer player is cycled back through (usually > 1)
+    waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through (usually < 1)
 -->
                         <Computer
                             playerName="Ralph"
@@ -39,7 +39,7 @@
                             baseStartHealth="150"
                             baseHealth="150"
                             baseHealthScale="1.5"
-							waveDelayScale="0.5"
+                            waveDelayScale="0.5"
                             team="1">
                             <RepeatingDays>
                                 <Day repeatWaves="true">

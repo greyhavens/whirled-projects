@@ -30,9 +30,23 @@ public class EndlessGameMode extends GameMode
         this.addObject(scoreView, GameContext.overlayLayer);
     }
 
-    public function incrementScore (offset :int) :void
+    protected function incrementScore (offset :int) :void
     {
         _score += (offset * _scoreMultiplier);
+    }
+
+    protected function incrementMultiplier () :void
+    {
+        if (_scoreMultiplier < EndlessGameContext.level.maxMultiplier) {
+            ++_scoreMultiplier;
+        } else {
+            this.incrementScore(EndlessGameContext.level.pointsPerExtraMultiplier);
+        }
+    }
+
+    protected function decrementMultiplier () :void
+    {
+        _scoreMultiplier = Math.max(_scoreMultiplier - 1, 0);
     }
 
     public function get score () :int
@@ -57,6 +71,16 @@ public class EndlessGameMode extends GameMode
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
             this.incrementScore(EndlessGameContext.level.pointsPerCreatureKill[creature.unitType]);
+        }
+    }
+
+    override public function spellDeliveredToPlayer (playerIndex :int, spellType :int) :void
+    {
+        super.spellDeliveredToPlayer(playerIndex, spellType);
+
+        if (spellType == Constants.SPELL_TYPE_MULTIPLIER &&
+            playerIndex == GameContext.localPlayerIndex) {
+            this.incrementMultiplier();
         }
     }
 

@@ -16,6 +16,11 @@ public class SpellData
 
     public function get iconName () :String
     {
+        // TODO - change this when we get art
+        if (type == Constants.SPELL_TYPE_MULTIPLIER) {
+            return "infusion_rigormortis";
+        }
+
         return "infusion_" + this.name;
     }
 

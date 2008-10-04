@@ -51,7 +51,8 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         Assert.isNotNull(_carriedSpell);
 
-        this.owningPlayerInfo.addSpell(_carriedSpell.type);
+        GameContext.gameMode.spellDeliveredToPlayer(_owningPlayerInfo.playerIndex,
+            _carriedSpell.type);
         _carriedSpell = null;
 
         // the courier is destroyed when he delivers the spell

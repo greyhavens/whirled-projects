@@ -101,7 +101,7 @@ public class DashboardView extends SceneObject
 
         // _spellSlots keeps track of whether the individual spell slots are occupied
         // or empty
-        var numSlots :int = GameContext.gameData.maxSpellsPerType * Constants.SPELL_TYPE__LIMIT;
+        var numSlots :int = GameContext.gameData.maxSpellsPerType * Constants.CASTABLE_SPELL_TYPE__LIMIT;
         for (i = 0; i < numSlots; ++i) {
             _spellSlots.push(false);
         }
@@ -116,7 +116,7 @@ public class DashboardView extends SceneObject
     override protected function addedToDB () :void
     {
         // add any spells the player already has to the dashboard
-        for (var spellType :int = 0; spellType < Constants.SPELL_TYPE__LIMIT; ++spellType) {
+        for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT; ++spellType) {
             var count :int = GameContext.localPlayerInfo.getSpellCount(spellType);
             for (var i :int = 0; i < count; ++i) {
                 this.createSpellButton(spellType, false);

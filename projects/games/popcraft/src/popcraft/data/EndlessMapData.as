@@ -29,7 +29,7 @@ public class EndlessMapData
 
         // parse the available units and spells
         mapData.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
-        mapData.availableSpells = DataUtils.parseSpellTypes(xml.AvailableSpells[0]);
+        mapData.availableSpells = DataUtils.parseCastableSpellTypes(xml.AvailableSpells[0]);
 
         mapData.repeats = XmlReader.getBooleanAttr(xml, "repeats");
 

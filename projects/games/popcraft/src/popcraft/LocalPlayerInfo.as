@@ -25,7 +25,7 @@ public class LocalPlayerInfo extends PlayerInfo
             _resources[i] = 0;
         }
 
-        _spells = new Array(Constants.SPELL_NAMES.length);
+        _spells = new Array(Constants.CASTABLE_SPELL_NAMES.length);
         for (i = 0; i < _spells.length; ++i) {
             _spells[i] = 0;
         }

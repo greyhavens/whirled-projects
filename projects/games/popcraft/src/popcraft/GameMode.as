@@ -614,6 +614,14 @@ public class GameMode extends TransitionMode
         }
     }
 
+    public function spellDeliveredToPlayer (playerIndex :int, spellType :int) :void
+    {
+        // called when a courier delivers a spell back to its workshop
+        if (spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT) {
+            PlayerInfo(GameContext.playerInfos[playerIndex]).addSpell(spellType);
+        }
+    }
+
     public function selectTargetEnemy (playerIndex :int, enemyId :int) :void
     {
         _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId));
@@ -698,7 +706,7 @@ public class GameMode extends TransitionMode
 
     public function get availableSpells () :Array
     {
-        return Constants.SPELLS;
+        return Constants.CASTABLE_SPELLS;
     }
 
     public function get battlefieldWidth () :Number

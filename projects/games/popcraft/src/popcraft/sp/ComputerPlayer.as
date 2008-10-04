@@ -67,7 +67,7 @@ public class ComputerPlayer extends SimObject
             // player will cast a spell (if it has one available)
             if (Rand.nextNumberRange(0, 1, Rand.STREAM_GAME) < _nextWave.spellCastChance) {
                 var availableSpells :Array = [];
-                for (var spellType :int = 0; spellType < Constants.SPELL_NAMES.length; ++spellType) {
+                for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_NAMES.length; ++spellType) {
                     if (_playerInfo.canCastSpell(spellType)) {
                         availableSpells.push(spellType);
                     }
