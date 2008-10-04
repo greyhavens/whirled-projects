@@ -1,6 +1,7 @@
 package popcraft.sp.endless {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 
@@ -30,6 +31,16 @@ public class EndlessGameMode extends GameMode
         this.addObject(scoreView, GameContext.overlayLayer);
     }
 
+    public function get score () :int
+    {
+        return _score;
+    }
+
+    public function get scoreMultiplier () :int
+    {
+        return _scoreMultiplier;
+    }
+
     protected function incrementScore (offset :int) :void
     {
         _score += (offset * _scoreMultiplier);
@@ -49,9 +60,14 @@ public class EndlessGameMode extends GameMode
         _scoreMultiplier = Math.max(_scoreMultiplier - 1, 0);
     }
 
-    public function get score () :int
+    override protected function applyCheatCode (keyCode :uint) :void
     {
-        return _score;
+        if (keyCode == KeyboardCodes.M) {
+            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
+                Constants.SPELL_TYPE_MULTIPLIER);
+        } else {
+            super.applyCheatCode(keyCode);
+        }
     }
 
     override public function playerEarnedResources (resourceType :int, offset :int,

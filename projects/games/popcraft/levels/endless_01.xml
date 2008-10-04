@@ -3,7 +3,7 @@
         maxMultiplier="5"
         multiplierDamageSoak="15"
 
-        pointsPerExtraMultiplier="1000"
+        pointsPerExtraMultiplier="500"
         pointsPerResource="1"
         pointsPerOpponentKill="500">
 

@@ -6,17 +6,15 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 import popcraft.*;
-import popcraft.sp.endless.EndlessGameMode;
 import popcraft.ui.UIBits;
 
 public class ScoreView extends SceneObject
 {
     public function ScoreView ()
     {
-        _tf = UIBits.createText("00000", 1.5, 0, 0xFFFFFF);
+        _tf = UIBits.createText("00000 (1x)", 1.5, 0, 0xFFFFFF);
         _tf.x = 3;
         _tf.y = 3;
 
@@ -39,13 +37,16 @@ public class ScoreView extends SceneObject
         super.update(dt);
 
         var newScore :int = EndlessGameContext.gameMode.score;
-        if (_lastScore != newScore) {
+        var mult :int = EndlessGameContext.gameMode.scoreMultiplier;
+        if (_lastScore != newScore || _lastMultiplier != mult) {
 
             var text :String = String(newScore);
             var numLeadingDigits :int = NUM_DIGITS - text.length;
             for (var ii :int = 0; ii < numLeadingDigits; ++ii) {
                 text = "0" + text;
             }
+
+            text += " (" + mult + "x)";
 
             _sprite.removeChild(_tf);
             _tf = UIBits.createText(text, 1.5, 0, 0xFFFFFF);
@@ -54,12 +55,14 @@ public class ScoreView extends SceneObject
             _sprite.addChild(_tf);
 
             _lastScore = newScore;
+            _lastMultiplier = mult;
         }
     }
 
     protected var _sprite :Sprite;
     protected var _tf :TextField;
     protected var _lastScore :int;
+    protected var _lastMultiplier :int;
 
     protected static const NUM_DIGITS :int = 5;
 }

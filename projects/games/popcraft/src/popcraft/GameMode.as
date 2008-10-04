@@ -294,11 +294,9 @@ public class GameMode extends TransitionMode
             this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
             break;
 
-        case KeyboardCodes.NUMBER_4:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                    GameContext.localPlayerInfo.offsetResourceAmount(i, 500);
-                }
+        case KeyboardCodes.ESCAPE:
+            if (this.canPause) {
+                AppContext.mainLoop.pushMode(new PauseMode());
             }
             break;
 
@@ -308,68 +306,68 @@ public class GameMode extends TransitionMode
             }
             break;
 
-        case KeyboardCodes.B:
+        default:
             if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_BLOODLUST);
+                this.applyCheatCode(keyCode);
             }
+            break;
+        }
+    }
+
+    protected function applyCheatCode (keyCode :uint) :void
+    {
+        switch (keyCode) {
+        case KeyboardCodes.NUMBER_4:
+            for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
+                GameContext.localPlayerInfo.offsetResourceAmount(i, 500);
+            }
+            break;
+
+        case KeyboardCodes.B:
+            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
+                Constants.SPELL_TYPE_BLOODLUST);
             break;
 
         case KeyboardCodes.R:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_RIGORMORTIS);
-            }
+            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
+                Constants.SPELL_TYPE_RIGORMORTIS);
             break;
 
         case KeyboardCodes.P:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.localPlayerInfo.addSpell(Constants.SPELL_TYPE_PUZZLERESET);
-            }
+            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
+                Constants.SPELL_TYPE_PUZZLERESET);
             break;
 
         case KeyboardCodes.N:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.diurnalCycle.resetPhase(Constants.PHASE_NIGHT);
-            }
+            GameContext.diurnalCycle.resetPhase(Constants.PHASE_NIGHT);
             break;
 
         case KeyboardCodes.Y:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                GameContext.diurnalCycle.incrementDayCount();
-                GameContext.diurnalCycle.resetPhase(
-                    GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE :
-                    Constants.PHASE_DAY);
-            }
+            GameContext.diurnalCycle.incrementDayCount();
+            GameContext.diurnalCycle.resetPhase(
+                GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE :
+                Constants.PHASE_DAY);
             break;
 
         case KeyboardCodes.K:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                // destroy the targeted enemy's base
-                var enemyPlayerInfo :PlayerInfo =
-                    GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
-                var enemyBase :WorkshopUnit = enemyPlayerInfo.workshop;
-                if (null != enemyBase) {
-                    enemyBase.health = 0;
-                }
+            // destroy the targeted enemy's base
+            var enemyPlayerInfo :PlayerInfo =
+                GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
+            var enemyBase :WorkshopUnit = enemyPlayerInfo.workshop;
+            if (null != enemyBase) {
+                enemyBase.health = 0;
             }
             break;
 
         case KeyboardCodes.W:
-            if (Constants.DEBUG_ALLOW_CHEATS) {
-                // destroy all enemy bases
-                for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-                    if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
-                        enemyBase = playerInfo.workshop;
-                        if (null != enemyBase) {
-                            enemyBase.health = 0;
-                        }
+            // destroy all enemy bases
+            for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+                if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
+                    enemyBase = playerInfo.workshop;
+                    if (null != enemyBase) {
+                        enemyBase.health = 0;
                     }
                 }
-            }
-            break;
-
-        case KeyboardCodes.ESCAPE:
-            if (this.canPause) {
-                AppContext.mainLoop.pushMode(new PauseMode());
             }
             break;
         }
