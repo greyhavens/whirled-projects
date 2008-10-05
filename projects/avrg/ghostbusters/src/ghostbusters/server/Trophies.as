@@ -30,6 +30,7 @@ public class Trophies
             doAward(Player(liveTeam[0]), TROPHY_LAST_MAN);
         }
 
+        // do the trophies you only win if you were alive at the end
         for (var ii :int = 0; ii < liveTeam.length; ii ++) {
             var player :Player = Player(liveTeam[ii]);
 
@@ -38,10 +39,17 @@ public class Trophies
                 doAward(player, TROPHY_PROT_CHARM);
 
             } else if (player.health * 20 < player.maxHealth) {
-                // At Death's Door - beat a ghost with less than 10% of your health remaining
+                // At Death's Door - beat a ghost with less than 5% of your health remaining
                 doAward(player, TROPHY_DEATHS_DOOR);
 
-            } else if (fullTeam.length == Codes.MAX_TEAM_SIZE) {
+            }
+        }
+
+        // then trophies you get even if you died in battle
+        for (ii = 0; ii < fullTeam.length; ii ++) {
+            var player :Player = Player(liveTeam[ii]);
+
+            if (fullTeam.length == Codes.MAX_TEAM_SIZE) {
                 // League of Extraordinary Ghosthunters -
                 // Defeat 10 ghosts with a party of more than 7 people.
                 if (bumpProp(player, Codes.PROP_LEAGUE_KILLS) >= 10) {
