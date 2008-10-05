@@ -52,6 +52,11 @@ public class Room
         return _state;
     }
 
+    public function getMinigameStats (playerId :int) :Dictionary
+    {
+        return _minigames[playerId];
+    }
+
     public function getTeam (excludeDead :Boolean = false) :Array
     {
         var team :Array = new Array();
@@ -173,6 +178,16 @@ public class Room
         // award 3 points for a win, 1 for a lose
         _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
 
+        // record which minigame was used
+        var dict :Dictionary = _minigames[player.playerId];
+        if (dict == null) {
+            dict = new Dictionary();
+        }
+        dict[weapon] = int(dict[weapon]) + 1;
+        _minigames[player.playerId] = dict;
+
+        Trophies.handleMinigameCompletion(player, weapon);
+
         // tweak damageDone and healingDone by the player's level
         var tweak :Number = Formulae.quadRamp(player.level);
 
@@ -182,7 +197,7 @@ public class Room
             _ctrl.sendMessage(Codes.SMSG_GHOST_ATTACKED, player.playerId);
         }
         if (healingDone > 0) {
-            doHealPlayers(healingDone * tweak);
+            doHealPlayers(player, healingDone * tweak);
         }
     }
 
@@ -216,6 +231,7 @@ public class Room
         healTeam();
         terminateGhost();
         _stats = new Dictionary();
+        _minigames = new Dictionary();
         setState(Codes.STATE_SEEKING);
     }
 
@@ -363,13 +379,14 @@ public class Room
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
             _stats = new Dictionary();
+            _minigames = new Dictionary();
 
             // and go back to seek state
             setState(Codes.STATE_SEEKING);
         }
     }
 
-    protected function doHealPlayers (totHeal :int) :void
+    protected function doHealPlayers (healer :Player, totHeal :int) :void
     {
         var team :Array = getTeam(true);
 
@@ -384,7 +401,10 @@ public class Room
         log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
-            Player(team[ii]).heal((totHeal * playerDmg[ii]) / totDmg);
+            var player :Player = Player(team[ii]);
+            var amount :int = (totHeal * playerDmg[ii]) / totDmg;
+            player.heal(amount);
+            Trophies.handleHeal(healer, player, amount);
         }
     }
 
@@ -408,10 +428,6 @@ public class Room
     // around 1 (for killing a ghost your own level).
     protected function payout () :void
     {
-        if (_stats == null) {
-            return;
-        }
-
         var playerArr :Array = new Array();
         var pointsArr :Array = new Array();
         var totPoints :int = 0;
@@ -529,6 +545,9 @@ public class Room
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
     protected var _stats :Dictionary = new Dictionary();
+
+    // a dictionary of dictionaries of number of times each minigame was used by each player
+    protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
     protected static const GHOST_RESPAWN_SECONDS :int = 120;

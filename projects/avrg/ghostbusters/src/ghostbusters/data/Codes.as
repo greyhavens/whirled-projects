@@ -2,8 +2,8 @@
 // $Id$
 
 package ghostbusters.data {
-    import com.whirled.net.NetConstants;
 
+import com.whirled.net.NetConstants;
 
 public class Codes
 {

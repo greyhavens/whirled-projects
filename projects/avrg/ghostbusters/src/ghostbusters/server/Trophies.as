@@ -4,6 +4,8 @@
 package ghostbusters.server {
 
 import ghostbusters.data.Codes;
+
+import flash.utils.Dictionary;
 public class Trophies
 {
     public static const TROPHY_LEAGUE :String = "league";
@@ -47,7 +49,14 @@ public class Trophies
 
         // then trophies you get even if you died in battle
         for (ii = 0; ii < fullTeam.length; ii ++) {
-            var player :Player = Player(liveTeam[ii]);
+            player = Player(liveTeam[ii]);
+
+            var minigames :Dictionary = room.getMinigameStats(player.playerId);
+            if (minigames[Codes.WPN_LANTERN] && minigames[Codes.WPN_BLASTER] &&
+                minigames[Codes.WPN_OUIJA] && minigames[Codes.WPN_POTIONS]) {
+                // Bag of Tricks - Use all four minigames against a ghost
+                doAward(player, TROPHY_BAG_OF_TRICKS);
+            }
 
             if (fullTeam.length == Codes.MAX_TEAM_SIZE) {
                 // League of Extraordinary Ghosthunters -
@@ -78,6 +87,21 @@ public class Trophies
             if (kills >= 1000) {
                 doAward(player, TROPHY_1000_KILLS);
             }                
+        }
+    }
+
+    public static function handleMinigameCompletion (player :Player, weapon :int) :void
+    {
+        // TODO: minigame-specific trophies
+    }
+
+    public static function handleHeal (healer :Player, healee :Player, heal :int) :void
+    {
+        // if a player healed somebody else from under 5% to over 10%, award Resuscitate
+        if (healer.playerId != healee.playerId &&
+            (20 * (healee.health - heal)) < healee.maxHealth &&
+            (10 * healee.health) >= healee.maxHealth) {
+            doAward(healer, TROPHY_RESUSCITATE);
         }
     }
 
