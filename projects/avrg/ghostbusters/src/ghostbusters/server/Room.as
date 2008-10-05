@@ -165,10 +165,10 @@ public class Room
 
     // called from Player when a MSG_MINIGAME_RESULT comes in from a client
     public function minigameCompletion (
-        player :Player, win :Boolean, damageDone :int, healingDone :int) :void
+        player :Player, weapon :int, win :Boolean, damageDone :int, healingDone :int) :void
     {
-        log.debug("Minigame completion [playerId=" + player.playerId + ", damage=" +
-                  damageDone + ", healing=" + healingDone + "]");
+        log.debug("Minigame completion", "playerId", player.playerId, "weapon", weapon, "damage",
+                  damageDone, "healing", healingDone);
 
         // award 3 points for a win, 1 for a lose
         _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
@@ -454,9 +454,9 @@ public class Room
             var ghostsToLevel :int = player.level * 5;
             // and there's 100 ectopoints to each level; note this means you get 1 ectopoint
             // per kill even if you're level 9 and the ghost is level 1
-            var points :int = Math.round((levelFactor * 100) / ghostsToLevel));
+            var ectoPoints :int = Math.round((levelFactor * 100) / ghostsToLevel);
 
-            player.ghostDefeated(points, payout);
+            player.ghostDefeated(ectoPoints, payout);
         }
     }
 

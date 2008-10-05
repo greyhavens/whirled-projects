@@ -10,6 +10,11 @@ public class Codes
     /** The maximum number of players in a team. TODO: Move this elsewhere. */
     public static const MAX_TEAM_SIZE :int = 6;
 
+    public static const WPN_LANTERN :int = 0;
+    public static const WPN_BLASTER :int = 1;
+    public static const WPN_OUIJA :int = 2;
+    public static const WPN_POTIONS :int = 3;
+
     /**
      * A per-room property that indicates the current state of ghost combat in the room.
      *

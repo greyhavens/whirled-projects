@@ -22,6 +22,7 @@ import ghostbusters.client.ClipHandler;
 import ghostbusters.client.Content;
 import ghostbusters.client.GameController;
 import ghostbusters.client.Game;
+import ghostbusters.data.Codes;
 
 public class GameFrame extends Sprite
 {
@@ -67,13 +68,13 @@ public class GameFrame extends Sprite
         _inventory.y = (_frame.height + 20);
 
         Command.bind(findSafely(CHOOSE_LANTERN), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON, HUD.LOOT_LANTERN);
+                     GameController.CHOOSE_WEAPON, Codes.WPN_LANTERN);
         Command.bind(findSafely(CHOOSE_BLASTER), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON,  HUD.LOOT_BLASTER);
+                     GameController.CHOOSE_WEAPON, Codes.WPN_BLASTER);
         Command.bind(findSafely(CHOOSE_OUIJA), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON,  HUD.LOOT_OUIJA);
+                     GameController.CHOOSE_WEAPON, Codes.WPN_OUIJA);
         Command.bind(findSafely(CHOOSE_POTIONS), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON,  HUD.LOOT_POTIONS);
+                     GameController.CHOOSE_WEAPON, Codes.WPN_POTIONS);
 
         callback(this);
     }

@@ -36,11 +36,6 @@ import com.whirled.net.ElementChangedEvent;
 
 public class HUD extends Sprite
 {
-    public static const LOOT_LANTERN :int = 0;
-    public static const LOOT_BLASTER :int = 1;
-    public static const LOOT_OUIJA :int = 2;
-    public static const LOOT_POTIONS :int = 3;
-
     public function HUD ()
     {
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
@@ -93,13 +88,13 @@ public class HUD extends Sprite
 
     public function chooseWeapon (weapon :int) :void
     {
-        _lootIx = weapon;
+        _weaponIx = weapon;
         updateLootState();
     }
 
     public function getWeaponType () :int
     {
-        return _lootIx;
+        return _weaponIx;
     }
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
@@ -177,20 +172,13 @@ public class HUD extends Sprite
         _ghostHealthBar = MovieClip(findSafely(GHOST_HEALTH_BAR));
         _ghostCaptureBar = MovieClip(findSafely(GHOST_CAPTURE_BAR));
 
-        _lanternLoot = SimpleButton(findSafely(EQP_LANTERN));
-        Command.bind(_lanternLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
+        _weaponButtons = new Array(BUTTON_NAMES.length);
+        for (ii = 0; ii < BUTTON_NAMES.length; ii ++) {
+            _weaponButtons[ii] = findSafely(BUTTON_NAMES[ii]);
+            Command.bind(_weaponButtons[ii], MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
+        }
 
-        _blasterLoot = SimpleButton(findSafely(EQP_BLASTER));
-        Command.bind(_blasterLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
-
-        _ouijaLoot = SimpleButton(findSafely(EQP_OUIJA));
-        Command.bind(_ouijaLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
-
-        _potionsLoot = SimpleButton(findSafely(EQP_POTIONS));
-        Command.bind(_potionsLoot, MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
-
-        _loots = [ _lanternLoot, _blasterLoot, _ouijaLoot, _potionsLoot ];
-        _lootIx = 0;
+        _weaponIx = 0;
 
         _inventory = MovieClip(findSafely(INVENTORY));
         _inventory.visible = false;
@@ -212,8 +200,8 @@ public class HUD extends Sprite
 
     protected function updateLootState () :void
     {
-        for (var ii :int = 0; ii < _loots.length; ii ++) {
-            SimpleButton(_loots[ii]).visible = (ii == _lootIx);
+        for (var ii :int = 0; ii < _weaponButtons.length; ii ++) {
+            SimpleButton(_weaponButtons[ii]).visible = (ii == _weaponIx);
         }
     }
 
@@ -378,8 +366,8 @@ public class HUD extends Sprite
     protected var _blasterLoot :SimpleButton;
     protected var _ouijaLoot :SimpleButton;
     protected var _potionsLoot :SimpleButton;
-    protected var _loots :Array;
-    protected var _lootIx :int;
+    protected var _weaponButtons :Array;
+    protected var _weaponIx :int;
 
     protected var _inventory :MovieClip;
     protected var _ghostInfo :GhostInfoView;
@@ -400,10 +388,10 @@ public class HUD extends Sprite
     protected static const VISUAL_BOX :String = "HUDmain";
     protected static const JUNK_BOX :String = "HUDtopbox";
 
-    protected static const EQP_LANTERN :String = "equipped_lantern";
-    protected static const EQP_BLASTER :String = "equipped_blaster";
-    protected static const EQP_OUIJA :String = "equipped_ouija";
-    protected static const EQP_POTIONS :String = "equipped_heal";
+    // Note: The elements in this array must match the index in Codes.WPN_*
+    protected static const BUTTON_NAMES :Array = [
+        "equipped_lantern", "equipped_blaster", "equipped_ouija", "equipped_heal",
+        ];
 
     protected static const INVENTORY :String = "inventory1";
 

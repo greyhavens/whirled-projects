@@ -180,7 +180,8 @@ public class Player
 
         } else if (name == Codes.CMSG_MINIGAME_RESULT) {
             if (_room.checkState(Codes.STATE_FIGHTING)) {
-                _room.minigameCompletion(this, Boolean(value[0]), int(value[1]), int(value[2]));
+                _room.minigameCompletion(
+                    this, int(value[0]), Boolean(value[1]), int(value[2]), int(value[3]));
             }
 
         } else if (name == Codes.CMSG_LANTERN_POS) {

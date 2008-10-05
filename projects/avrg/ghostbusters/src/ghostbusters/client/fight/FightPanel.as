@@ -135,19 +135,19 @@ public class FightPanel extends FrameSprite
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
-        case HUD.LOOT_LANTERN:
+        case Codes.WPN_LANTERN:
             _player.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
             break;
 
-        case HUD.LOOT_BLASTER:
+        case Codes.WPN_BLASTER:
             _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
             break;
 
-        case HUD.LOOT_OUIJA:
+        case Codes.WPN_OUIJA:
             _player.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
             break;
 
-        case HUD.LOOT_POTIONS:
+        case Codes.WPN_POTIONS:
             _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
             break;
         default:
@@ -200,7 +200,7 @@ public class FightPanel extends FrameSprite
             } else if (_player.currentGame.isDone) {
                 // else if we finished a game, announce it to the world & start the next one
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
-                                      _player.currentGame.gameResult);
+                                      [ _selectedWeapon, _player.currentGame.gameResult ]);
                 if (_player != null) {
                     _player.beginNextGame();
                 }

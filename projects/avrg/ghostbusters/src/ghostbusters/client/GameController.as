@@ -110,10 +110,11 @@ public class GameController extends Controller
         FightPanel(panel.subPanel).weaponUpdated();
     }
 
-    public function handleGhostAttacked (result :MicrogameResult) :void
+    public function handleGhostAttacked (weapon :int, result :MicrogameResult) :void
     {
         Game.control.agent.sendMessage(
             Codes.CMSG_MINIGAME_RESULT, [
+                weapon,
                 result.success == MicrogameResult.SUCCESS,
                 result.damageOutput,
                 result.healthOutput
