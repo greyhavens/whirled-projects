@@ -282,24 +282,29 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function handleAttacked (...ignored) :void
     {
-        // show a "debris" effect
-        if (null == g_debrisClass) {
-            var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
-            g_debrisClass = swf.getClass("debris");
+        var timeNow :Number = AppContext.mainLoop.elapsedSeconds;
+        if (timeNow - _lastDebrisTime >= DEBRIS_INTERVAL_MIN) {
+            // show a "debris" effect
+            if (null == g_debrisClass) {
+                var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
+                g_debrisClass = swf.getClass("debris");
+            }
+
+            var debrisObj :SimpleSceneObject = new SimpleSceneObject(new g_debrisClass());
+            debrisObj.addTask(After(0.3, new SelfDestructTask()));
+
+            // pick a random location for the debris
+            var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right,
+                Rand.STREAM_COSMETIC);
+            var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom,
+                Rand.STREAM_COSMETIC);
+            debrisObj.x = x;
+            debrisObj.y = y;
+
+            this.db.addObject(debrisObj, _sprite);
+
+            _lastDebrisTime = timeNow;
         }
-
-        var debrisObj :SimpleSceneObject = new SimpleSceneObject(new g_debrisClass());
-        debrisObj.addTask(After(0.3, new SelfDestructTask()));
-
-        // pick a random location for the debris
-        var x :Number = Rand.nextNumberRange(DEBRIS_RECT.left, DEBRIS_RECT.right,
-            Rand.STREAM_COSMETIC);
-        var y :Number = Rand.nextNumberRange(DEBRIS_RECT.top, DEBRIS_RECT.bottom,
-            Rand.STREAM_COSMETIC);
-        debrisObj.x = x;
-        debrisObj.y = y;
-
-        this.db.addObject(debrisObj, _sprite);
 
         // play a sound
         var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
@@ -347,6 +352,8 @@ public class WorkshopView extends BattlefieldSprite
     protected var _shieldMeters :Array = [];
     protected var _shieldMeterParent :Sprite;
 
+    protected var _lastDebrisTime :Number = 0;
+
     protected static var g_debrisClass :Class;
 
     protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
@@ -362,6 +369,8 @@ public class WorkshopView extends BattlefieldSprite
     protected static const DEBRIS_RECT :Rectangle = new Rectangle(-27, -74, 55, 74);
 
     protected static const BURNING_HEALTH_PERCENT :Number = 0.5;
+
+    protected static const DEBRIS_INTERVAL_MIN :Number = 0.5;
 
 }
 

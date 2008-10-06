@@ -115,23 +115,28 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected function handleUnitAttacked (...ignored) :void
     {
-        // show a blood splatter
-        if (null == g_bloodClass) {
-            var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
-            g_bloodClass = swf.getClass("blood");
+        var timeNow :Number = AppContext.mainLoop.elapsedSeconds;
+        if (timeNow - _lastBloodTime >= BLOOD_INTERVAL_MIN) {
+            // show a blood splatter
+            if (null == g_bloodClass) {
+                var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
+                g_bloodClass = swf.getClass("blood");
+            }
+
+            var bloodObj :SimpleSceneObject = new SimpleSceneObject(new g_bloodClass());
+            bloodObj.addTask(After(0.3, new SelfDestructTask()));
+
+            // pick a random location for the blood
+            var bounds :Rectangle = _sprite.getBounds(_sprite);
+            var x :Number = Rand.nextNumberRange(bounds.left, bounds.right, Rand.STREAM_COSMETIC);
+            var y :Number = Rand.nextNumberRange(bounds.top, bounds.bottom, Rand.STREAM_COSMETIC);
+            bloodObj.x = x;
+            bloodObj.y = y;
+
+            this.db.addObject(bloodObj, _sprite);
+
+            _lastBloodTime = timeNow;
         }
-
-        var bloodObj :SimpleSceneObject = new SimpleSceneObject(new g_bloodClass());
-        bloodObj.addTask(After(0.3, new SelfDestructTask()));
-
-        // pick a random location for the blood
-        var bounds :Rectangle = _sprite.getBounds(_sprite);
-        var x :Number = Rand.nextNumberRange(bounds.left, bounds.right, Rand.STREAM_COSMETIC);
-        var y :Number = Rand.nextNumberRange(bounds.top, bounds.bottom, Rand.STREAM_COSMETIC);
-        bloodObj.x = x;
-        bloodObj.y = y;
-
-        this.db.addObject(bloodObj, _sprite);
 
         // play a sound
         var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
@@ -378,11 +383,13 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected var _lastUnitUpdateTimestamp :Number = 0;
     protected var _unitUpdateTimeDelta :Number = 0;
+    protected var _lastBloodTime :Number = 0;
 
     protected static var g_bloodClass :Class;
 
     protected static const log :Log = Log.getLog(CreatureUnitView);
     protected static const HIT_SOUND_NAMES :Array = [ "sfx_hit1", "sfx_hit2", "sfx_hit3" ];
+    protected static const BLOOD_INTERVAL_MIN :Number = 0.5;
 }
 
 }
