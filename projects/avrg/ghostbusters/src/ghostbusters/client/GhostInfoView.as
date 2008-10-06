@@ -26,9 +26,9 @@ public class GhostInfoView
         _level = TextField(findSafely(_box, GHOST_LEVEL));
 
         _abilities = [
-            TextField(
-            TextField(findSafely(_box, GHOST_ABILITY_2),
-            TextField(findSafely(_box, GHOST_ABILITY_3),
+            TextField(findSafely(_box, GHOST_ABILITY_1)),
+            TextField(findSafely(_box, GHOST_ABILITY_2)),
+            TextField(findSafely(_box, GHOST_ABILITY_3)),
                 ];
 
         _portraits = {
@@ -102,11 +102,16 @@ public class GhostInfoView
     protected var _name :TextField;
     protected var _level :TextField;
 
+    protected var _abilities :Array;
     protected var _portraits :Object;
 
     protected static const GHOST_PORTRAIT :String = "GhostPortrait";
     protected static const GHOST_NAME :String = "GhostName";
     protected static const GHOST_LEVEL :String = "GhostLvl";
+
+    protected static const GHOST_ABILITY_1 :String = "GhostAbility1";
+    protected static const GHOST_ABILITY_2 :String = "GhostAbility2";
+    protected static const GHOST_ABILITY_3 :String = "GhostAbility3";
 
     protected static const GHOST_INFO :String = "GhostInfoBox";
 }
