@@ -25,6 +25,12 @@ public class GhostInfoView
         _name = TextField(findSafely(_box, GHOST_NAME));
         _level = TextField(findSafely(_box, GHOST_LEVEL));
 
+        _abilities = [
+            TextField(
+            TextField(findSafely(_box, GHOST_ABILITY_2),
+            TextField(findSafely(_box, GHOST_ABILITY_3),
+                ];
+
         _portraits = {
           pinchy: findSafely(hud, "PincherPortrait"),
           duchess: findSafely(hud, "DuchessPortrait"),
@@ -66,6 +72,11 @@ public class GhostInfoView
             _name.htmlText = GhostModel.getName();
             _name.text = GhostModel.getName();
             _level.text = "Level: " + GhostModel.getLevel();
+
+            TextField(_abilities[0]).text = "Lethal Embrace";
+            TextField(_abilities[1]).text = "Slime Rain";
+            TextField(_abilities[2]).text = "";
+
             _box.visible = true;
 
         } else {
