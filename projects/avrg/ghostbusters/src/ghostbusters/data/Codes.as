@@ -316,8 +316,14 @@ public class Codes
     public static const DBG_END_STATE :String = "es";
 
     /** Trophy related per-player properties. */
+    public static const PROP_MINIGAME_PREFIX :String = NetConstants.makePersistent("minigame_");
+    public static const PROP_BLASTER_GAMES :String = NetConstants.makePersistent("blaster_games");
+    public static const PROP_OUIJA_GAMES :String = NetConstants.makePersistent("ouija_games");
+    public static const PROP_POTIONS_GAMES :String = NetConstants.makePersistent("potions_games");
+
     public static const PROP_MEAN_KILLS :String = NetConstants.makePersistent("mean_kills");
     public static const PROP_LEAGUE_KILLS :String = NetConstants.makePersistent("league_kills");
+    public static const PROP_LIBRARY_KILLS :String = NetConstants.makePersistent("library_kills");
     public static const PROP_KILLS :String = NetConstants.makePersistent("kills");
 
     /** Values for CMSG_CHOOSE_AVATAR and PROP_AVATAR_TYPE. */
