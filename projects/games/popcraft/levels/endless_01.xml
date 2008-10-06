@@ -7,7 +7,7 @@
         pointsPerResource="1"
         pointsPerOpponentKill="500">
 
-        <GameDataOverride nightLength="20">
+        <GameDataOverride>
         </GameDataOverride>
 
         <PointsPerCreatureKill>
@@ -43,7 +43,7 @@
                             team="1">
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                    <Wave delayBefore="5"><Unit type="grunt" count="1"/></Wave>
+                                    <Wave delayBefore="5"><Unit type="sapper" count="24"/></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>

@@ -54,7 +54,7 @@ public class GameMode extends TransitionMode
         log.info("Starting game with seed: " + randSeed);
 
         // allow subclasses to do some post-RNG-seeding early setup
-        rngSeeded();
+        this.rngSeeded();
 
         // cache some frequently-used values in GameContext
         GameContext.mapScaleXInv = 1 / GameContext.gameMode.mapSettings.mapScaleX;
@@ -69,11 +69,11 @@ public class GameMode extends TransitionMode
         _modeLayer.addChild(GameContext.dashboardLayer);
         _modeLayer.addChild(GameContext.overlayLayer);
 
-        setupAudio();
-        setupNetwork();
-        setupPlayers();
-        setupBattle();
-        setupDashboard();
+        this.setupAudio();
+        this.setupNetwork();
+        this.setupPlayers();
+        this.setupBattle();
+        this.setupDashboard();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
@@ -84,9 +84,9 @@ public class GameMode extends TransitionMode
 
     override protected function destroy () :void
     {
-        shutdownNetwork();
-        shutdownPlayers();
-        shutdownAudio();
+        this.shutdownNetwork();
+        this.shutdownPlayers();
+        this.shutdownAudio();
 
         Profiler.displayStats();
     }
@@ -140,21 +140,25 @@ public class GameMode extends TransitionMode
 
     protected function setupPlayers () :void
     {
-        createPlayers();
+        this.createPlayers();
 
-        // setup players' target enemies
+        // setup players' target enemies, create their creature spell sets, and discover the
+        // number of teams playing the game
+        var numTeams :int = 0;
+        GameContext.playerCreatureSpellSets = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             playerInfo.targetedEnemyId =
                 GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
-        }
 
-        // create players' unit spell sets (these are synchronized objects)
-        GameContext.playerCreatureSpellSets = [];
-        for (var playerIndex :int = 0; playerIndex < GameContext.numPlayers; ++playerIndex) {
+            // spell sets are synchronized objects
             var spellSet :CreatureSpellSet = new CreatureSpellSet();
             GameContext.netObjects.addObject(spellSet);
             GameContext.playerCreatureSpellSets.push(spellSet);
+
+            numTeams = Math.max(numTeams, playerInfo.teamId + 1);
         }
+
+        _teamLiveStatuses = ArrayUtil.create(numTeams, true);
 
         // we want to know when a player leaves
         this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
@@ -413,7 +417,7 @@ public class GameMode extends TransitionMode
             // process all messages from this tick
             var messageArray: Array = _messageMgr.getNextTick();
             for each (var msg :Message in messageArray) {
-                handleMessage(msg);
+                this.handleMessage(msg);
             }
 
             // run the simulation the appropriate amount
@@ -425,7 +429,8 @@ public class GameMode extends TransitionMode
             _gameTime += TICK_INTERVAL_S;
         }
 
-        checkForGameOver();
+        this.updateTeamLiveStatuses();
+        this.checkForGameOver();
 
         // update all non-net objects
         super.update(dt);
@@ -452,25 +457,35 @@ public class GameMode extends TransitionMode
         ++_updateCount;
     }
 
-    protected function checkForGameOver () :void
+    protected function updateTeamLiveStatuses () :void
     {
-        // The game is over if there's only one team standing
-        var liveTeamId :int = -1;
-        _gameOver = true;
+        for (var ii :int = 0; ii < _teamLiveStatuses.length; ++ii) {
+            _teamLiveStatuses[ii] = false;
+        }
+
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             // for the purposes of game-over detection, discount invincible players from the
             // live player count. this is kind of ugly - the last level is the only level
             // in which there's an invincible player (Professor Weardd).
             if (!playerInfo.leftGame && playerInfo.isAlive && !playerInfo.isInvincible) {
-                var playerTeam :int = playerInfo.teamId;
-                if (playerTeam != liveTeamId) {
-                    if (liveTeamId == -1) {
-                        liveTeamId = playerTeam;
-                    } else {
-                        // there's more than one live team
-                        _gameOver = false;
-                        break;
-                    }
+                _teamLiveStatuses[playerInfo.teamId] = true;
+            }
+        }
+    }
+
+    protected function checkForGameOver () :void
+    {
+        // The game is over if there's only one team standing
+        var liveTeamId :int = -1;
+        _gameOver = true;
+        for (var teamId :int = 0; teamId < _teamLiveStatuses.length; ++teamId) {
+            if (Boolean(_teamLiveStatuses[teamId])) {
+                if (liveTeamId == -1) {
+                    liveTeamId = teamId;
+                } else {
+                    // there's more than one live team
+                    _gameOver = false;
+                    break;
                 }
             }
         }
@@ -479,7 +494,7 @@ public class GameMode extends TransitionMode
             GameContext.playerStats.totalGameTime = _gameTime;
             GameContext.winningTeamId = liveTeamId;
 
-            handleGameOver();
+            this.handleGameOver();
         }
     }
 
@@ -755,6 +770,8 @@ public class GameMode extends TransitionMode
     protected var _gameTickCount :int;
     protected var _gameTime :Number;
     protected var _updateCount :int;
+
+    protected var _teamLiveStatuses :Array;
 
     protected var _trophyWatcher :TrophyWatcher;
 

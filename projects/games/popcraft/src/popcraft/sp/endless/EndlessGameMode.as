@@ -65,6 +65,11 @@ public class EndlessGameMode extends GameMode
         if (keyCode == KeyboardCodes.M) {
             this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
                 Constants.SPELL_TYPE_MULTIPLIER);
+        } else if (keyCode == KeyboardCodes.SLASH) {
+            // restart the level
+            // playLevel(true) forces the current level to reload
+            AppContext.endlessLevelMgr.playLevel(null, true);
+
         } else {
             super.applyCheatCode(keyCode);
         }
@@ -185,6 +190,15 @@ public class EndlessGameMode extends GameMode
         } else {
             return new OnlineTickedMessageManager(AppContext.gameCtrl,
                 SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
+        }
+    }
+
+    override protected function checkForGameOver () :void
+    {
+        // human players are always on team 0
+        if (!Boolean(_teamLiveStatuses[0])) {
+            _gameOver = true;
+            this.handleGameOver();
         }
     }
 

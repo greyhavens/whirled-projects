@@ -28,15 +28,15 @@ public class StoryGameMode extends GameMode
         AppContext.mainLoop.pushMode(new LevelIntroMode(_level));
     }
 
-    override public function onKeyDown (keyCode :uint) :void
+    override protected function applyCheatCode (keyCode :uint) :void
     {
-        if (Constants.DEBUG_ALLOW_CHEATS && keyCode == KeyboardCodes.SLASH) {
+        if (keyCode == KeyboardCodes.SLASH) {
             // restart the level
             // playLevel(true) forces the current level to reload
             AppContext.levelMgr.playLevel(null, true);
 
         } else {
-            super.onKeyDown(keyCode);
+            super.applyCheatCode(keyCode);
         }
     }
 

@@ -127,17 +127,17 @@ public class DiurnalCycle extends SimObject
 
     public function get isDay () :Boolean
     {
-        return DiurnalCycle.isDay(this.phaseOfDay);
+        return DiurnalCycle.isDay(_phaseOfDay);
     }
 
     public function get isNight () :Boolean
     {
-        return DiurnalCycle.isNight(this.phaseOfDay);
+        return DiurnalCycle.isNight(_phaseOfDay);
     }
 
     public function get isEclipse () :Boolean
     {
-        return DiurnalCycle.isEclipse(this.phaseOfDay);
+        return DiurnalCycle.isEclipse(_phaseOfDay);
     }
 
     public function get curPhaseTotalTime () :Number

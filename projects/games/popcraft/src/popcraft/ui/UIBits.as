@@ -134,7 +134,8 @@ public class UIBits
         tf.setTextFormat(format);
     }
 
-    public static function createButton (text :String, textScale :Number = 1, width :Number = -1) :SimpleButton
+    public static function createButton (text :String, textScale :Number = 1, width :Number = -1)
+        :SimpleButton
     {
         var button :SimpleButton = new SimpleButton();
         button.upState = makeButtonFace(FACE_UP, text, textScale, width);
@@ -146,7 +147,8 @@ public class UIBits
         return button;
     }
 
-    protected static function makeButtonFace (face :int, text :String, textScale :Number, width :Number) :DisplayObject
+    protected static function makeButtonFace (face :int, text :String, textScale :Number,
+        width :Number) :DisplayObject
     {
         var buttonUi :MovieClip = SwfResource.instantiateMovieClip("ui", "button_UI");
 
