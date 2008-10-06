@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
 
+import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.geom.Point;
@@ -38,6 +39,12 @@ public class PopCraft extends Sprite
         SeatingManager.init();
 
         this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+
+        // draw a black background
+        var g :Graphics = this.graphics;
+        g.beginFill(0);
+        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
+        g.endFill();
 
         // set a clip rect
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);

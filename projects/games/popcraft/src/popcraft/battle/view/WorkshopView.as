@@ -1,5 +1,6 @@
 package popcraft.battle.view {
 
+import com.threerings.flash.ColorUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
@@ -86,6 +87,10 @@ public class WorkshopView extends BattlefieldSprite
             remainingMaxMeterValue -= thisMeterMaxValue;
             remainingMeterValue -= thisMeterValue;
         }
+
+        _shieldMeterParent = new Sprite();
+        _shieldMeterParent.y = -_sprite.height + SHIELD_METER_Y_LOC;
+        _sprite.addChild(_shieldMeterParent);
 
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
@@ -220,6 +225,59 @@ public class WorkshopView extends BattlefieldSprite
 
             _lastHealth = health;
         }
+
+        // update damage shields
+        var shieldModCount :int = _unit.damageShieldModCount;
+        if (shieldModCount != _lastShieldsModCount) {
+            updateShieldMeters();
+            _lastShieldsModCount = shieldModCount;
+        }
+    }
+
+    protected function updateShieldMeters () :void
+    {
+        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var shieldColor :uint = ColorUtil.blend(playerColor, 0x000000);
+
+        var shields :Array = _unit.damageShields;
+        var meter :RectMeterView;
+
+        // remove destroyed shields
+        while (_shieldMeters.length > shields.length) {
+            meter = _shieldMeters[0];
+            meter.parent.removeChild(meter);
+            _shieldMeters.splice(0, 1);
+        }
+
+        // add new shields
+        while (_shieldMeters.length < shields.length) {
+            meter = new RectMeterView();
+            meter.foregroundColor = shieldColor;
+            meter.backgroundColor = 0xBBBBBB;
+            meter.outlineColor = 0x000000;
+            meter.meterHeight = SHIELD_METER_HEIGHT;
+            _shieldMeterParent.addChild(meter);
+            _shieldMeters.push(meter);
+        }
+
+        // update shields
+        var xLoc :Number = 0;
+        for (var ii :int = shields.length - 1; ii >= 0; --ii) {
+            meter = _shieldMeters[ii];
+            var shield :UnitDamageShield = shields[ii];
+
+            meter.maxValue = shield.maxHealth;
+            meter.value = shield.health;
+            meter.meterWidth = SHIELD_METER_WIDTH_PER_HEALTH * meter.maxValue;
+            if (meter.needsDisplayUpdate) {
+                meter.updateDisplay();
+            }
+
+            meter.x = xLoc;
+            xLoc += meter.meterWidth;
+        }
+
+        _shieldMeterParent.x = -(_shieldMeterParent.width * 0.5);
     }
 
     protected function handleAttacked (...ignored) :void
@@ -280,14 +338,22 @@ public class WorkshopView extends BattlefieldSprite
     protected var _targetBadgeIndex :int;
     protected var _targetBadgeVisible :Boolean;
     protected var _unit :WorkshopUnit;
-    protected var _healthMeters :Array = [];
     protected var _needsLocationUpdate :Boolean = true;
+
     protected var _lastHealth :Number;
+    protected var _healthMeters :Array = [];
+
+    protected var _lastShieldsModCount :int;
+    protected var _shieldMeters :Array = [];
+    protected var _shieldMeterParent :Sprite;
 
     protected static var g_debrisClass :Class;
 
     protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
     protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
+    protected static const SHIELD_METER_HEIGHT :Number = 4;
+    protected static const SHIELD_METER_Y_LOC :Number = 10;
+    protected static const SHIELD_METER_WIDTH_PER_HEALTH :Number = 50 / 75;
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array =
         [ "sfx_basehit1", "sfx_basehit2", "sfx_basehit3" ];

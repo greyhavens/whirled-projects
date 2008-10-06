@@ -226,6 +226,7 @@ public class Unit extends SimObject
             if (shield.health <= 0) {
                 _damageShields.splice(0, 1);
             }
+            ++_damageShieldsModCount;
 
         } else {
             damage = Math.min(damage, _health);
@@ -266,9 +267,15 @@ public class Unit extends SimObject
         return _damageShields;
     }
 
+    public function get damageShieldModCount () :int
+    {
+        return _damageShieldsModCount;
+    }
+
     public function addDamageShield (shieldHealth :Number) :void
     {
         _damageShields.push(new UnitDamageShield(shieldHealth));
+        ++_damageShieldsModCount;
     }
 
     protected function die () :void
@@ -365,6 +372,7 @@ public class Unit extends SimObject
     protected var _isDead :Boolean;
     protected var _invincible :Boolean;
     protected var _damageShields :Array = [];
+    protected var _damageShieldsModCount :int;
 
     protected var _loc :Vector2 = new Vector2();
 
