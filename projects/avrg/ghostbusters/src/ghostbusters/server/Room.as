@@ -186,7 +186,7 @@ public class Room
         dict[weapon] = int(dict[weapon]) + 1;
         _minigames[player.playerId] = dict;
 
-        Trophies.handleMinigameCompletion(player, weapon);
+        Trophies.handleMinigameCompletion(player, weapon, win);
 
         // tweak damageDone and healingDone by the player's level
         var tweak :Number = Formulae.quadRamp(player.level);

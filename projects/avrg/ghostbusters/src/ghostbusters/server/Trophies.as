@@ -8,6 +8,8 @@ import ghostbusters.data.Codes;
 import flash.utils.Dictionary;
 public class Trophies
 {
+    public static const LIBRARY_SCENES :Array = [ 2914 ];
+
     public static const TROPHY_LEAGUE :String = "league";
     public static const TROPHY_PROT_CHARM :String = "prot_charm";
     public static const TROPHY_LAST_MAN :String = "last_man";
@@ -21,11 +23,14 @@ public class Trophies
     public static const TROPHY_100_KILLS :String = "100_kills";
     public static const TROPHY_500_KILLS :String = "500_kills";
     public static const TROPHY_1000_KILLS :String = "1000_kills";
+    public static const TROPHY_MINIGAME_PREFIX :String = "minigame_";
 
     public static function handleGhostDefeat (room :Room) :void
     {
         var fullTeam :Array = room.getTeam(false);
         var liveTeam :Array = room.getTeam(true);
+
+        var inLibrary :Boolean = LIBRARY_SCENES.contains(room.roomId);
 
         // Last Man Standing - everyone else in your party dies, except for you.
         if (fullTeam.length > 3 && liveTeam.length == 1) {
@@ -56,6 +61,14 @@ public class Trophies
                 minigames[Codes.WPN_OUIJA] && minigames[Codes.WPN_POTIONS]) {
                 // Bag of Tricks - Use all four minigames against a ghost
                 doAward(player, TROPHY_BAG_OF_TRICKS);
+            }
+
+            if (inLibrary) {
+                // Well Read - Kill more than ten ghosts in a room with the GhostHunters
+                // library backdrop
+                if (bumpProp(player, Codes.PROP_LIBRARY_KILLS) >= 10) {
+                    doAward(player, TROPHY_WELL_READ);
+                }
             }
 
             if (fullTeam.length == Codes.MAX_TEAM_SIZE) {
@@ -90,9 +103,14 @@ public class Trophies
         }
     }
 
-    public static function handleMinigameCompletion (player :Player, weapon :int) :void
+    public static function handleMinigameCompletion (
+        player :Player, weapon :int, win :Boolean) :void
     {
-        // TODO: minigame-specific trophies
+        if (win) {
+            if (bumpProp(player, Codes.PROP_MINIGAME_PREFIX + weapon) >= 1000) {
+                doAward(player, TROPHY_MINIGAME_PREFIX + weapon);
+            }
+        }
     }
 
     public static function handleHeal (healer :Player, healee :Player, heal :int) :void
