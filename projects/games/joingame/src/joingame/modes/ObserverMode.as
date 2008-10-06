@@ -156,8 +156,8 @@ package joingame.modes
         override protected function destroy () :void
         {
             AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
-            _gameRestartTimer.stop();
+//            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
+//            _gameRestartTimer.stop();
             if(_startButton != null) {
                 
                 var movieClip :MovieClip = _startButton.displayObject as MovieClip;
@@ -302,8 +302,8 @@ package joingame.modes
                 _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                 modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
                 
-                _gameRestartTimer.reset();
-                _gameRestartTimer.start(); 
+//                _gameRestartTimer.reset();
+//                _gameRestartTimer.start(); 
             }
         }
         

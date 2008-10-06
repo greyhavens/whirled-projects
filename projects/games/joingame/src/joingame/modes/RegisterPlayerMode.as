@@ -65,7 +65,12 @@ package joingame.modes
         
         protected function tryAgain( e :TimerEvent ) :void
         {
-            AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
+            if( AppContext.gameCtrl.isConnected()) {
+                AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
+            }
+            else {
+                //quit game
+            }
         }
         
         /** Respond to messages from other clients. */
@@ -74,6 +79,7 @@ package joingame.modes
             
             if (event.name == Server.REPLAY_CONFIRM)
             {
+                AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
                 AppContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
             }
         }

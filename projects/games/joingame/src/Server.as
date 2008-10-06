@@ -78,7 +78,7 @@ package
             while those knocked out early get very little. The winner gets half the pot, followed
             by 2nd place getting a quarter, 3rd gets 1/8 and so on.*/
             
-            var totalScore :int = 1000*_gameModel._initialSeatedPlayerIds.length;
+//            var totalScore :int = 1000*_gameModel._initialSeatedPlayerIds.length;
             var playerIds :Array = new Array();
             var scores :Array = new Array();
             var playerIdsInOrderOfLoss :Array = _gameModel._playerIdsInOrderOfLoss.slice();
@@ -86,12 +86,18 @@ package
             
             for( var k :int = 0; k < playerIdsInOrderOfLoss.length; k++) {
                 playerIds.push( playerIdsInOrderOfLoss[k] );
-                scores.push( scoreFunction(k+1) );
+//                scores.push( scoreFunction(k+1) );
+                scores.push( (k+1) * 100 );
             }
             
-            function scoreFunction( playersDefeated :int) :int{
-                return playersDefeated*( 1.0 + (playersDefeated*1.1));
-            }
+//            function scoreFunction( playersDefeated :int) :int{
+//                return playersDefeated*( 1.0 + (playersDefeated*1.1));
+//            }
+            
+            /* Changed the score due losers in two player games not getting anything. */
+            
+            
+            
             
             trace("Awarding scores:\nPlayer\t|\tScore");
             for(var i :int = 0; i < playerIds.length; i++) {
@@ -103,7 +109,7 @@ package
             msg[1] = scores;
             _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
             _gameCtrl.net.sendMessage( GAME_OVER, msg);
-            _gameRestartTimer.start();
+//            _gameRestartTimer.start();
             
         }
 
@@ -271,16 +277,23 @@ package
             else if (event.name == Server.REPLAY_REQUEST)
             {
                 id = event.senderId;
+                trace("id=" + id + ", _playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain + ", _currentActivePlayers="+_currentActivePlayers);
                 if(id >= 0 && !ArrayUtil.contains(_playersThatWantToPlayAgain, id) && ArrayUtil.contains(_currentActivePlayers, id))
                 {
                     _playersThatWantToPlayAgain.push( id);
                     _totalTimeElapsedSinceNewGameTimerStarted = 0;
-                    _gameRestartTimer.reset();
-                    _gameRestartTimer.start();
+//                    _gameRestartTimer.reset();
+//                    _gameRestartTimer.start();
                     if( _playersThatWantToPlayAgain.length == _currentActivePlayers.length && _currentActivePlayers.length > 1 ) {
-                        _gameRestartTimer.reset();
+//                        _gameRestartTimer.reset();
                         createNewMultiPlayerModel();
                         
+                        msg = new Object;
+                        msg[0] = _currentActivePlayers;
+                        msg[1] = _gameModel.getModelMemento();
+                        trace("sending multiplayer" + REPLAY_CONFIRM);
+                        _gameCtrl.net.sendMessage(REPLAY_CONFIRM, msg);
+                            
                     }
                 }
             }

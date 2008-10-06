@@ -35,6 +35,7 @@ package joingame.model
             _playerIdsInOrderOfLoss = new Array();
             _isServerModel = isServerModel;
             
+            _gameOver = false;
             
             //Add the null board, for showing destroyed or missing players
             var board :JoinGameBoardRepresentation = new JoinGameBoardRepresentation();
@@ -563,6 +564,7 @@ package joingame.model
                 //animations accordingly.
                 board.addEventListener(JoinGameEvent.REMOVE_ROW_NOTIFICATION, listenToRemoveBottomRowEvent);
             }
+            _gameOver = false;
         }
         
         /**
@@ -630,6 +632,7 @@ package joingame.model
                 if( _currentSeatedPlayerIds.indexOf( playerID ) >= 0)
                 {
                     _currentSeatedPlayerIds.splice( _currentSeatedPlayerIds.indexOf( playerID ), 1);
+                    
                 }
                 else
                 {
@@ -637,20 +640,26 @@ package joingame.model
                 }
                 
                 _playerIdsInOrderOfLoss.push(playerID);
+                
+                var event :JoinGameEvent = new JoinGameEvent(playerID, JoinGameEvent.PLAYER_REMOVED);
+                dispatchEvent(event);
+                
+                
+                if( _currentSeatedPlayerIds.length <= 1 && !_gameOver)
+                {
+                    _gameOver = true;
+                    event = new JoinGameEvent(-1, JoinGameEvent.GAME_OVER);
+                    dispatchEvent(event);
+
+                }
+                
             }
             else
             {
                 LOG("removePlayer(" + playerID + ") but no such player exists");
             }
             
-            var event :JoinGameEvent = new JoinGameEvent(playerID, JoinGameEvent.PLAYER_REMOVED);
-            dispatchEvent(event);
             
-            if( _currentSeatedPlayerIds.length <= 1)
-            {
-                event = new JoinGameEvent(-1, JoinGameEvent.GAME_OVER);
-                dispatchEvent(event);
-            }
         }
         
         
@@ -1088,6 +1097,8 @@ package joingame.model
         private var _random: Random = new Random();
         
         private var _dateNow :Date = new Date();  
+        
+        private var _gameOver :Boolean;
         
     }
 }
