@@ -86,15 +86,8 @@ public class EndlessGameMode extends GameMode
                     _curMapData.multiplierDropLoc,
                     true);
 
-                // swap in the next opponents when either 5 seconds have passed
-                // and the multiplier has been retrieved, or when 10 seconds have passed
+                // swap in the next opponents when 10 seconds have passed
                 var obj :SimObject = new SimObject();
-                obj.addTask(new SerialTask(
-                    new TimedTask(5),
-                    new WaitOnPredicateTask(multiplierIsOnPlayfield),
-                    new FunctionTask(swapInNextOpponents),
-                    new SelfDestructTask()));
-
                 obj.addTask(new SerialTask(
                     new TimedTask(10),
                     new FunctionTask(swapInNextOpponents),
@@ -305,16 +298,19 @@ public class EndlessGameMode extends GameMode
             throw new Error("implement this");
         }
 
+        var mapCycleNumber :int = EndlessGameContext.mapCycleNumber;
+
         var playerIndex :int = 1;
         var computerGroup :Array = _curMapData.computerGroups[_computerGroupIndex];
         var newInfos :Array  = [];
         for each (var cpData :EndlessComputerPlayerData in computerGroup) {
+            var healthScale :Number = Math.pow(cpData.baseHealthScale, mapCycleNumber);
             var playerInfo :PlayerInfo = new ComputerPlayerInfo(
                 playerIndex,
                 cpData.team,
                 cpData.baseLoc,
-                cpData.baseHealth,
-                cpData.baseStartHealth,
+                cpData.baseHealth * healthScale,
+                cpData.baseStartHealth * healthScale,
                 cpData.invincible,
                 cpData.playerName,
                 cpData.playerHeadshot);

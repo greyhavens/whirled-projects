@@ -30,6 +30,23 @@ public class EndlessGameContext
         return mapData;
     }
 
+    public static function get mapCycleNumber () :int
+    {
+        // how many times has the player been through the map cycle?
+        // (first time through, mapCycleNumber=0)
+
+        var firstCycleLength :int = level.mapSequence.length;
+        var repeatCycleLength :int;
+        for each (var mapData :EndlessMapData in level.mapSequence) {
+            if (mapData.repeats) {
+                ++repeatCycleLength;
+            }
+        }
+
+        return (mapDataIndex < firstCycleLength ? 0 :
+                Math.ceil((mapDataIndex + 1 - firstCycleLength) / repeatCycleLength));
+    }
+
     public static function incrementScore (offset :int) :void
     {
         score += (offset * scoreMultiplier);
