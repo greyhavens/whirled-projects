@@ -205,7 +205,8 @@ public class CreatureUnit extends Unit
         return null;
     }
 
-    override public function receiveAttack (attack :UnitAttack, maxDamage :Number= Number.MAX_VALUE) :Number
+    override public function receiveAttack (attack :UnitAttack, maxDamage :Number= Number.MAX_VALUE)
+        :Number
     {
         var damageTaken :Number = 0;
 

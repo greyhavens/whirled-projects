@@ -1,11 +1,16 @@
 package popcraft.data {
 
+import com.threerings.flash.Vector2;
+
 import popcraft.*;
 import popcraft.util.XmlReader;
 
 public class EndlessMapData
 {
     public var mapSettings :MapSettingsData;
+
+    public var humanBaseLocs :Array = []; // array of BaseLocationDatas
+    public var multiplierDropLoc :Vector2 = new Vector2();
 
     public var computerGroups :Array = []; // array of arrays of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
@@ -18,10 +23,17 @@ public class EndlessMapData
 
         mapData.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
 
-        for each (var computerGroupNode :XML in xml.ComputerGroups.Group) {
+        for each (var baseLocXml :XML in xml.HumanBaseLocations.BaseLocation) {
+            mapData.humanBaseLocs.push(BaseLocationData.fromXml(baseLocXml));
+        }
+
+        mapData.multiplierDropLoc =
+            DataUtils.parseVector2(XmlReader.getSingleChild(xml, "MultiplierDropLocation"));
+
+        for each (var computerGroupXml :XML in xml.ComputerGroups.Group) {
             var group :Array = [];
-            for each (var computerNode :XML in computerGroupNode.Computer) {
-                group.push(EndlessComputerPlayerData.fromXml(computerNode));
+            for each (var computerXml :XML in computerGroupXml.Computer) {
+                group.push(EndlessComputerPlayerData.fromXml(computerXml));
             }
 
             mapData.computerGroups.push(group);

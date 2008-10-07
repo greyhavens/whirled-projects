@@ -253,7 +253,7 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // create player bases
-        createWorkshops(GameContext.playerInfos);
+        this.createWorkshops(GameContext.playerInfos);
 
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
@@ -408,34 +408,26 @@ public class GameMode extends TransitionMode
         // update the network
         _messageMgr.update(dt);
 
-        // if the network simulation is updated, we'll need to depth-sort
-        // the battlefield display objects
-        var sortDisplayChildren :Boolean = (_messageMgr.unprocessedTickCount > 0);
+        var displayChildrenNeedSort :Boolean
+        while (_messageMgr.unprocessedTickCount > 0 && !_gameOver) {
+            // update all networked objects - that is, all objects involved in the actual
+            // game simulation
+            this.updateNetworkedObjects();
 
-        while (_messageMgr.unprocessedTickCount > 0) {
-
-            // process all messages from this tick
-            var messageArray: Array = _messageMgr.getNextTick();
-            for each (var msg :Message in messageArray) {
-                this.handleMessage(msg);
-            }
-
-            // run the simulation the appropriate amount
-            // (our network update time is unrelated to the application's update time.
-            // network timeslices are always the same distance apart)
-            GameContext.netObjects.update(TICK_INTERVAL_S);
-
-            ++_gameTickCount;
-            _gameTime += TICK_INTERVAL_S;
+            // if the network simulation is updated, we'll need to depth-sort
+            // the battlefield display objects
+            displayChildrenNeedSort = true;
         }
 
-        this.updateTeamLiveStatuses();
-        this.checkForGameOver();
+        if (!_handlingGameOver && _gameOver) {
+            _handlingGameOver = true;
+            this.handleGameOver();
+        }
 
         // update all non-net objects
         super.update(dt);
 
-        if (sortDisplayChildren) {
+        if (displayChildrenNeedSort) {
             GameContext.battleBoardView.sortUnitDisplayChildren();
         }
 
@@ -455,6 +447,26 @@ public class GameMode extends TransitionMode
         }
 
         ++_updateCount;
+    }
+
+    protected function updateNetworkedObjects () :void
+    {
+        // process all messages from this tick
+        var messageArray: Array = _messageMgr.getNextTick();
+        for each (var msg :Message in messageArray) {
+            this.handleMessage(msg);
+        }
+
+        // run the simulation the appropriate amount
+        // (Our network update time is unrelated to the application's update time.
+        // Network timeslices are always the same distance apart)
+        GameContext.netObjects.update(TICK_INTERVAL_S);
+
+        this.updateTeamLiveStatuses();
+        this.checkForGameOver();
+
+        ++_gameTickCount;
+        _gameTime += TICK_INTERVAL_S;
     }
 
     protected function updateTeamLiveStatuses () :void
@@ -493,8 +505,6 @@ public class GameMode extends TransitionMode
         if (_gameOver) {
             GameContext.playerStats.totalGameTime = _gameTime;
             GameContext.winningTeamId = liveTeamId;
-
-            this.handleGameOver();
         }
     }
 
@@ -766,6 +776,7 @@ public class GameMode extends TransitionMode
     protected var _lastDayPhase :int = -1;
     protected var _startedMusic :Boolean;
     protected var _gameOver :Boolean;
+    protected var _handlingGameOver :Boolean;
 
     protected var _gameTickCount :int;
     protected var _gameTime :Number;

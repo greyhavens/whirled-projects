@@ -12,9 +12,15 @@ import popcraft.battle.WorkshopUnit;
 
 public class DeadWorkshopView extends BattlefieldSprite
 {
+    public static function getForPlayer (playerIndex :int) :DeadWorkshopView
+    {
+        return GameContext.netObjects.getObjectNamed(NAME_PREFIX + playerIndex) as DeadWorkshopView;
+    }
+
     public function DeadWorkshopView (unit :WorkshopUnit)
     {
         _movie = SwfResource.instantiateMovieClip("workshop", "base");
+        _owningPlayerIndex = unit.owningPlayerIndex;
 
         // player name
         var owningPlayer :PlayerInfo = unit.owningPlayerInfo;
@@ -43,13 +49,20 @@ public class DeadWorkshopView extends BattlefieldSprite
         this.updateLoc(unit.x, unit.y);
     }
 
+    override public function get objectName () :String
+    {
+        return NAME_PREFIX + _owningPlayerIndex;
+    }
+
     override public function get displayObject () :DisplayObject
     {
         return _movie;
     }
 
     protected var _movie :MovieClip;
+    protected var _owningPlayerIndex :int;
 
+    protected static const NAME_PREFIX :String = "DeadWorkshopView_";
 }
 
 }

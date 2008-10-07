@@ -20,10 +20,11 @@
 
         <MapSequence>
             <Map repeats="true">
-                <MapSettings backgroundName="Level2">
-                    <BaseLocation x="180" y="295" team="0"/>
-                    <BaseLocation x="500" y="265" team="1"/>
-                </MapSettings>
+                <MapSettings backgroundName="Level2"/>
+				<HumanBaseLocations>
+					<BaseLocation x="180" y="295" team="0"/>
+				</HumanBaseLocations>
+				<MultiplierDropLocation x="400" y="265"/>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>
 
@@ -36,23 +37,41 @@
                         <Computer
                             playerName="Ralph"
                             playerHeadshotName="portrait_ralph"
-                            baseStartHealth="150"
+                            baseStartHealth="15"
                             baseHealth="150"
                             baseHealthScale="1.5"
                             waveDelayScale="0.5"
                             team="1">
+							<BaseLocation x="500" y="265" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                    <Wave delayBefore="5"><Unit type="sapper" count="24"/></Wave>
+                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+					</Group>
+					
+					<Group>
+						<Computer
+                            playerName="Jack"
+                            playerHeadshotName="portrait_jack"
+                            baseStartHealth="15"
+                            baseHealth="150"
+                            baseHealthScale="1.5"
+                            waveDelayScale="0.5"
+                            team="1">
+							<BaseLocation x="500" y="265" team="1"/>
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
                     </Group>
+
                 </ComputerGroups>
             </Map>
         </MapSequence>
-
-
 
     </EndlessLevel>
 

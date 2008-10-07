@@ -10,6 +10,8 @@ import popcraft.data.*;
 
 public class ComputerPlayer extends SimObject
 {
+    public static const GROUP_NAME :String = "ComputerPlayer";
+
     public function ComputerPlayer (data :ComputerPlayerData, playerIndex :int)
     {
         _data = data;
@@ -20,6 +22,14 @@ public class ComputerPlayer extends SimObject
 
         // Computer players always target the local player
         _playerInfo.targetedEnemyId = GameContext.localPlayerIndex;
+    }
+
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch (groupNum) {
+        case 0: return GROUP_NAME;
+        default: return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData

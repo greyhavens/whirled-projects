@@ -36,8 +36,8 @@ public class ScoreView extends SceneObject
     {
         super.update(dt);
 
-        var newScore :int = EndlessGameContext.gameMode.score;
-        var mult :int = EndlessGameContext.gameMode.scoreMultiplier;
+        var newScore :int = EndlessGameContext.score;
+        var mult :int = EndlessGameContext.scoreMultiplier;
         if (_lastScore != newScore || _lastMultiplier != mult) {
 
             var text :String = String(newScore);

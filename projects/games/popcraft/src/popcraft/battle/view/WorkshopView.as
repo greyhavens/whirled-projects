@@ -26,12 +26,12 @@ public class WorkshopView extends BattlefieldSprite
 {
     public static function getAll () :Array
     {
-        return MainLoop.instance.topMode.getObjectsInGroup(GROUP_NAME);
+        return GameContext.gameMode.getObjectsInGroup(GROUP_NAME);
     }
 
     public static function getForPlayer (playerIndex :int) :WorkshopView
     {
-        return MainLoop.instance.topMode.getObjectNamed("BaseView_" + playerIndex) as WorkshopView;
+        return GameContext.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as WorkshopView;
     }
 
     public function WorkshopView (unit :WorkshopUnit)
@@ -91,6 +91,7 @@ public class WorkshopView extends BattlefieldSprite
         _shieldMeterParent = new Sprite();
         _shieldMeterParent.y = -_sprite.height + SHIELD_METER_Y_LOC;
         _sprite.addChild(_shieldMeterParent);
+        this.updateShieldMeters();
 
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
@@ -138,7 +139,7 @@ public class WorkshopView extends BattlefieldSprite
 
     override public function get objectName () :String
     {
-        return "BaseView_" + _unit.owningPlayerIndex;
+        return NAME_PREFIX + _unit.owningPlayerIndex;
     }
 
     public function unitCreated () :void
@@ -371,6 +372,7 @@ public class WorkshopView extends BattlefieldSprite
     protected static const BURNING_HEALTH_PERCENT :Number = 0.5;
 
     protected static const DEBRIS_INTERVAL_MIN :Number = 0.5;
+    protected static const NAME_PREFIX :String = "WorkshopView_";
 
 }
 

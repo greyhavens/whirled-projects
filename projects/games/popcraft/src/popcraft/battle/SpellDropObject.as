@@ -9,7 +9,7 @@ import popcraft.data.SpellData;
 public class SpellDropObject extends SimObject
     implements LocationComponent
 {
-    public static const GROUP_NAME :String = "SpellPickupObject";
+    public static const GROUP_NAME :String = "SpellDropObject";
     public static const RADIUS :Number = 20;
 
     public function SpellDropObject (spellType :int)
