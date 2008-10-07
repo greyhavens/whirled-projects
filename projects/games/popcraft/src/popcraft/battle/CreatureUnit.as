@@ -42,7 +42,9 @@ public class CreatureUnit extends Unit
 
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
-        _unitSpells = GameContext.playerCreatureSpellSets[owningPlayerIndex];
+        var owningPlayer :PlayerInfo = GameContext.playerInfos[owningPlayerIndex];
+        _unitSpells = owningPlayer.activeSpells;
+
         _lastDayCount = GameContext.diurnalCycle.dayCount;
         _eclipseEnabled = GameContext.gameData.enableEclipse;
     }
@@ -187,7 +189,7 @@ public class CreatureUnit extends Unit
     // returns an enemy base
     public function getEnemyBaseToAttack () :SimObjectRef
     {
-        var enemyPlayerInfo :PlayerInfo = GameContext.playerInfos[_owningPlayerInfo.targetedEnemyId];
+        var enemyPlayerInfo :PlayerInfo = _owningPlayerInfo.targetedEnemy;
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
             return enemyPlayerInfo.workshopRef;
         } else {

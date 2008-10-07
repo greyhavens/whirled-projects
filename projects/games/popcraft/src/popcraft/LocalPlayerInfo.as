@@ -25,9 +25,9 @@ public class LocalPlayerInfo extends PlayerInfo
             _resources[i] = 0;
         }
 
-        _spells = new Array(Constants.CASTABLE_SPELL_NAMES.length);
-        for (i = 0; i < _spells.length; ++i) {
-            _spells[i] = 0;
+        _heldSpells = new Array(Constants.CASTABLE_SPELL_NAMES.length);
+        for (i = 0; i < _heldSpells.length; ++i) {
+            _heldSpells[i] = 0;
         }
     }
 
@@ -135,7 +135,7 @@ public class LocalPlayerInfo extends PlayerInfo
         var curSpellCount :int = this.getSpellCount(spellType);
         count = Math.min(count, GameContext.gameData.maxSpellsPerType - curSpellCount);
         if (count > 0) {
-            _spells[spellType] = curSpellCount + count;
+            _heldSpells[spellType] = curSpellCount + count;
             this.dispatchEvent(new GotSpellEvent(spellType));
         }
     }
@@ -145,7 +145,7 @@ public class LocalPlayerInfo extends PlayerInfo
         // remove spell from holdings
         var spellCount :int = this.getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
-        _spells[spellType] = spellCount - 1;
+        _heldSpells[spellType] = spellCount - 1;
     }
 
     override public function canCastSpell (spellType :int) :Boolean
@@ -155,21 +155,36 @@ public class LocalPlayerInfo extends PlayerInfo
 
     public function getSpellCount (spellType :int) :int
     {
-        return _spells[spellType];
+        return _heldSpells[spellType];
     }
 
     public function get totalSpellCount () :int
     {
         var totalCount :int;
-        for each (var spellCount :int in _spells) {
+        for each (var spellCount :int in _heldSpells) {
             totalCount += spellCount;
         }
 
         return totalCount;
     }
 
+    public function get resourcesCopy () :Array
+    {
+        return _resources.slice();
+    }
+
+    public function get spellsCopy () :Array
+    {
+        return _heldSpells.slice();
+    }
+
+    public function get fourPlusPieceClearRunLength () :int
+    {
+        return _fourPlusPieceClearRunLength;
+    }
+
     protected var _resources :Array;
-    protected var _spells :Array;
+    protected var _heldSpells :Array;
     protected var _fourPlusPieceClearRunLength :int;
 }
 

@@ -1,8 +1,6 @@
 package popcraft {
 
-import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Assert;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
@@ -16,7 +14,6 @@ import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.battle.*;
@@ -71,9 +68,11 @@ public class GameMode extends TransitionMode
 
         this.setupAudio();
         this.setupNetwork();
-        this.setupPlayers();
         this.setupBattle();
+        this.setupPlayers();
         this.setupDashboard();
+
+        _trophyWatcher = new TrophyWatcher();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
@@ -85,7 +84,6 @@ public class GameMode extends TransitionMode
     override protected function destroy () :void
     {
         this.shutdownNetwork();
-        this.shutdownPlayers();
         this.shutdownAudio();
 
         Profiler.displayStats();
@@ -136,37 +134,6 @@ public class GameMode extends TransitionMode
 
         GameContext.sfxControls.release();
         GameContext.musicControls.release();
-    }
-
-    protected function setupPlayers () :void
-    {
-        this.createPlayers();
-
-        // setup players' target enemies, create their creature spell sets, and discover the
-        // number of teams playing the game
-        var numTeams :int = 0;
-        GameContext.playerCreatureSpellSets = [];
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            playerInfo.targetedEnemyId =
-                GameContext.findEnemyForPlayer(playerInfo.playerIndex).playerIndex;
-
-            // spell sets are synchronized objects
-            var spellSet :CreatureSpellSet = new CreatureSpellSet();
-            GameContext.netObjects.addObject(spellSet);
-            GameContext.playerCreatureSpellSets.push(spellSet);
-
-            numTeams = Math.max(numTeams, playerInfo.teamId + 1);
-        }
-
-        _teamLiveStatuses = ArrayUtil.create(numTeams, true);
-
-        // we want to know when a player leaves
-        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
-            handleOccupantLeft);
-    }
-
-    protected function shutdownPlayers () :void
-    {
     }
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
@@ -238,6 +205,24 @@ public class GameMode extends TransitionMode
         GameContext.puzzleBoard = puzzleBoard;
     }
 
+    protected function setupPlayers () :void
+    {
+        GameContext.playerInfos = [];
+
+        // we want to know when a player leaves
+        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+            handleOccupantLeft);
+
+        // subclasses create the players in this function
+        this.createPlayers();
+
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            playerInfo.init();
+        }
+
+        this.updateTargetEnemyBadgeLocation(GameContext.localPlayerInfo.targetedEnemy.playerIndex);
+    }
+
     protected function setupBattle () :void
     {
         GameContext.unitFactory = new UnitFactory();
@@ -252,9 +237,6 @@ public class GameMode extends TransitionMode
 
         GameContext.battleBoardView = battleBoardView;
 
-        // create player bases
-        this.createWorkshops(GameContext.playerInfos);
-
         // Day/night cycle
         GameContext.diurnalCycle = new DiurnalCycle();
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
@@ -267,8 +249,6 @@ public class GameMode extends TransitionMode
         }
 
         GameContext.netObjects.addObject(new SpellDropTimer());
-
-        _trophyWatcher = new TrophyWatcher();
     }
 
     override public function onKeyDown (keyCode :uint) :void
@@ -355,8 +335,7 @@ public class GameMode extends TransitionMode
 
         case KeyboardCodes.K:
             // destroy the targeted enemy's base
-            var enemyPlayerInfo :PlayerInfo =
-                GameContext.playerInfos[GameContext.localPlayerInfo.targetedEnemyId];
+            var enemyPlayerInfo :PlayerInfo = GameContext.localPlayerInfo.targetedEnemy;
             var enemyBase :WorkshopUnit = enemyPlayerInfo.workshop;
             if (null != enemyBase) {
                 enemyBase.health = 0;
@@ -471,11 +450,26 @@ public class GameMode extends TransitionMode
 
     protected function updateTeamLiveStatuses () :void
     {
+        var playerInfo :PlayerInfo;
+
+        if (_teamLiveStatuses == null) {
+            _teamLiveStatuses = [];
+            for each (playerInfo in GameContext.playerInfos) {
+                var teamId :int = playerInfo.teamId;
+                while (_teamLiveStatuses.length < teamId + 1) {
+                    _teamLiveStatuses.push(false);
+                }
+                if (playerInfo.isAlive) {
+                    _teamLiveStatuses[teamId] = true;
+                }
+            }
+        }
+
         for (var ii :int = 0; ii < _teamLiveStatuses.length; ++ii) {
             _teamLiveStatuses[ii] = false;
         }
 
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (playerInfo in GameContext.playerInfos) {
             // for the purposes of game-over detection, discount invincible players from the
             // live player count. this is kind of ugly - the last level is the only level
             // in which there's an invincible player (Professor Weardd).
@@ -542,7 +536,7 @@ public class GameMode extends TransitionMode
             var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
             playerIndex = castSpellMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
-                var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[playerIndex];
+                var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(playerIndex);
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
                 GameContext.playGameSound("sfx_" + spell.name);
@@ -555,7 +549,9 @@ public class GameMode extends TransitionMode
     protected function setTargetEnemy (playerIndex :int, targetEnemyId :int) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-        playerInfo.targetedEnemyId = targetEnemyId;
+        var enemyInfo :PlayerInfo = GameContext.playerInfos[targetEnemyId];
+
+        playerInfo.targetedEnemy = enemyInfo;
 
         if (playerIndex == GameContext.localPlayerIndex) {
             this.updateTargetEnemyBadgeLocation(targetEnemyId);
@@ -572,55 +568,21 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function createWorkshops (playerInfos :Array) :void
-    {
-        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        for each (var playerInfo :PlayerInfo in playerInfos) {
-            var view :WorkshopView = GameContext.unitFactory.createWorkshop(playerInfo);
-            var workshop :WorkshopUnit = view.workshop;
-
-            var loc :Vector2 = playerInfo.baseLoc.loc;
-            workshop.x = loc.x;
-            workshop.y = loc.y;
-
-            var isEnemy :Boolean = (workshop.owningPlayerInfo.teamId != localPlayerInfo.teamId);
-
-            // add click listeners to enemy workshops
-            if (isEnemy && !workshop.isInvincible) {
-                this.registerEventListener(
-                    view.clickableObject,
-                    MouseEvent.MOUSE_DOWN,
-                    this.createBaseViewClickListener(view));
-            }
-
-            playerInfo.workshop = workshop;
-        }
-
-        this.updateTargetEnemyBadgeLocation(localPlayerInfo.targetedEnemyId);
-    }
-
-    protected function createBaseViewClickListener (baseView :WorkshopView) :Function
-    {
-        return function (...ignored) :void {
-            enemyBaseViewClicked(baseView);
-        }
-    }
-
-    protected function enemyBaseViewClicked (enemyBaseView :WorkshopView) :void
+    public function workshopClicked (workshopView :WorkshopView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var newTargetEnemyId :int = enemyBaseView.workshop.owningPlayerIndex;
+        var targetInfo :PlayerInfo = workshopView.workshop.owningPlayerInfo;
+        var targetId :int = targetInfo.playerIndex;
 
-        Assert.isTrue(newTargetEnemyId != GameContext.localPlayerIndex);
-
-        if (newTargetEnemyId != localPlayerInfo.targetedEnemyId) {
+        if (localPlayerInfo.teamId != targetInfo.teamId &&
+            localPlayerInfo.targetedEnemy.playerIndex != targetId) {
             // update the "target enemy badge" location immediately, even though
             // the change won't be reflected in the game logic until the message round-trips
-            this.updateTargetEnemyBadgeLocation(newTargetEnemyId);
+            this.updateTargetEnemyBadgeLocation(targetId);
 
             // send a message to everyone
-            this.selectTargetEnemy(GameContext.localPlayerIndex, newTargetEnemyId);
+            this.selectTargetEnemy(GameContext.localPlayerIndex, targetId);
         }
     }
 

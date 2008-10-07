@@ -108,15 +108,11 @@ public class StoryGameMode extends GameMode
         var numComputers :int = _level.computers.length;
         for (var playerIndex :int = 1; playerIndex < numComputers + 1; ++playerIndex) {
             var cpData :ComputerPlayerData = _level.computers[playerIndex - 1];
-            var team :int = cpData.team;
-            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, team);
-            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(
-                playerIndex, team, baseLoc, cpData.baseHealth, cpData.baseStartHealth,
-                cpData.invincible, cpData.playerName, cpData.playerHeadshot);
+            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs,
+                cpData.team);
+            var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerIndex,
+                baseLoc, cpData);
             GameContext.playerInfos.push(computerPlayerInfo);
-
-            // create the computer player object
-            GameContext.netObjects.addObject(new ComputerPlayer(cpData, playerIndex));
         }
     }
 

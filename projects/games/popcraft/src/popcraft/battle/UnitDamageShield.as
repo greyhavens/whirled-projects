@@ -10,6 +10,13 @@ public class UnitDamageShield
         this.maxHealth = maxHealth;
         this.health = maxHealth;
     }
+
+    public function clone () :UnitDamageShield
+    {
+        var theClone :UnitDamageShield = new UnitDamageShield(maxHealth);
+        theClone.health = health;
+        return theClone;
+    }
 }
 
 }

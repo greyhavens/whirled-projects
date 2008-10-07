@@ -68,7 +68,6 @@ public class GameContext
     public static var sfxControls :AudioControls;
 
     public static var playerInfos :Array;
-    public static var playerCreatureSpellSets :Array;
     public static var localPlayerIndex :int;
 
     public static var winningTeamId :int;
@@ -81,6 +80,11 @@ public class GameContext
     public static function get numPlayers () :int
     {
         return playerInfos.length;
+    }
+
+    public static function getActiveSpellSet (playerIndex :int) :CreatureSpellSet
+    {
+        return PlayerInfo(playerInfos[playerIndex]).activeSpells;
     }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo

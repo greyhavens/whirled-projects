@@ -57,7 +57,8 @@ public class SpellButton extends SceneObject
             }
 
             // don't allow redundant creature spells
-            var playerSpellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
+            var playerSpellSet :CreatureSpellSet =
+                GameContext.getActiveSpellSet(GameContext.localPlayerIndex);
             if (playerSpellSet.isSpellActive(_spellType)) {
                 return false;
             }

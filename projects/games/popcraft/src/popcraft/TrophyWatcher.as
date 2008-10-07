@@ -15,7 +15,7 @@ public class TrophyWatcher
         var hasCryHavoc :Boolean = TrophyManager.hasTrophy(TrophyManager.TROPHY_CRYHAVOC);
 
         if (!hasDoomsday) {
-            _localPlayerSpellSet = GameContext.playerCreatureSpellSets[GameContext.localPlayerIndex];
+            _localPlayerSpellSet = GameContext.getActiveSpellSet(GameContext.localPlayerIndex);
             _localPlayerSpellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
         }
 

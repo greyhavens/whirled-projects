@@ -8,28 +8,25 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 
-public class ComputerPlayer extends SimObject
+public class ComputerPlayerAI extends SimObject
 {
-    public static const GROUP_NAME :String = "ComputerPlayer";
-
-    public function ComputerPlayer (data :ComputerPlayerData, playerIndex :int)
+    public function ComputerPlayerAI (data :ComputerPlayerData, playerIndex :int)
     {
         _data = data;
-        _playerInfo = GameContext.playerInfos[playerIndex] as ComputerPlayerInfo;
-
-        // add starting spells to our playerInfo
-        _playerInfo.setSpellCounts(data.startingCreatureSpells);
-
-        // Computer players always target the local player
-        _playerInfo.targetedEnemyId = GameContext.localPlayerIndex;
+        _playerIndex = playerIndex;
     }
 
-    override public function getObjectGroup (groupNum :int) :String
+    override protected function addedToDB () :void
     {
-        switch (groupNum) {
-        case 0: return GROUP_NAME;
-        default: return super.getObjectGroup(groupNum - 1);
-        }
+        super.addedToDB();
+
+        _playerInfo = ComputerPlayerInfo(GameContext.playerInfos[_playerIndex]);
+
+        // add starting spells to our playerInfo
+        _playerInfo.setSpellCounts(_data.startingCreatureSpells);
+
+        // Computer players always target the local player
+        _playerInfo.targetedEnemy = GameContext.localPlayerInfo;
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData
@@ -194,6 +191,7 @@ public class ComputerPlayer extends SimObject
     }
 
     protected var _data :ComputerPlayerData;
+    protected var _playerIndex :int;
     protected var _playerInfo :ComputerPlayerInfo;
     protected var _curDay :DaySequenceData;
     protected var _nextWave :UnitWaveData;

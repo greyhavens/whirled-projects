@@ -6,7 +6,10 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
+import popcraft.battle.CreatureSpellSet;
 import popcraft.battle.WorkshopUnit;
+import popcraft.battle.view.DeadWorkshopView;
+import popcraft.battle.view.WorkshopView;
 import popcraft.data.BaseLocationData;
 
 /**
@@ -43,6 +46,48 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerHeadshot = SeatingManager.getPlayerHeadshot(_playerIndex);
         }
+    }
+
+    public function init () :void
+    {
+        // create the creature spell set
+        _activeSpells = new CreatureSpellSet();
+        GameContext.netObjects.addObject(_activeSpells);
+
+        // create the workshop
+        var view :WorkshopView = GameContext.unitFactory.createWorkshop(this);
+        var workshop :WorkshopUnit = view.workshop;
+        workshop.x = _baseLoc.loc.x;
+        workshop.y = _baseLoc.loc.y;
+        _workshopRef = workshop.ref;
+    }
+
+    public function destroy () :void
+    {
+        // destroy the creature spell set
+        _activeSpells.destroySelf();
+        _activeSpells = null;
+
+        // destroy the workshop and its views
+        var workshop :WorkshopUnit = this.workshop;
+        if (workshop != null) {
+            workshop.destroySelf();
+        }
+
+        var workshopView :WorkshopView = WorkshopView.getForPlayer(_playerIndex);
+        if (workshopView != null) {
+            workshopView.destroySelf();
+        }
+
+        var deadWorkshopView :DeadWorkshopView = DeadWorkshopView.getForPlayer(_playerIndex);
+        if (deadWorkshopView != null) {
+            deadWorkshopView.destroySelf();
+        }
+    }
+
+    public function get activeSpells () :CreatureSpellSet
+    {
+        return _activeSpells;
     }
 
     public function get minResourceAmount () :int
@@ -115,11 +160,6 @@ public class PlayerInfo extends EventDispatcher
         return _workshopRef.object as WorkshopUnit;
     }
 
-    public function set workshop (val :WorkshopUnit) :void
-    {
-        _workshopRef = val.ref;
-    }
-
     public function get isAlive () :Boolean
     {
         // If this is called before the game has been completely set up,
@@ -154,14 +194,27 @@ public class PlayerInfo extends EventDispatcher
         return (this.health / _maxHealth);
     }
 
-    public function get targetedEnemyId () :int
+    public function get targetedEnemy () :PlayerInfo
     {
-        return _targetedEnemyId;
+        if (_targetedEnemy == null) {
+            _targetedEnemy = GameContext.findEnemyForPlayer(_playerIndex);
+        }
+
+        return _targetedEnemy;
     }
 
-    public function set targetedEnemyId (val :int) :void
+    /*public function get targetedEnemyId () :int
     {
-        _targetedEnemyId = val;
+        if (_targetedEnemy == null || !_targetedEnemy.isAlive) {
+            _targetedEnemy = GameContext.findEnemyForPlayer(_playerIndex);
+        }
+
+        return _targetedEnemyId;
+    }*/
+
+    public function set targetedEnemy (playerInfo :PlayerInfo) :void
+    {
+        _targetedEnemy = playerInfo;
     }
 
     public function canAffordCreature (unitType :int) :Boolean
@@ -197,15 +250,16 @@ public class PlayerInfo extends EventDispatcher
     protected var _playerName :String;
     protected var _playerHeadshot :DisplayObject;
     protected var _leftGame :Boolean;
-    protected var _targetedEnemyId :int;
+    protected var _targetedEnemy :PlayerInfo;
     protected var _workshopRef :SimObjectRef;
     protected var _handicap :Number;
     protected var _minResourceAmount :int;
     protected var _maxResourceAmount :int;
     protected var _baseLoc :BaseLocationData;
 
-    protected static var log :Log = Log.getLog(PlayerInfo);
+    protected var _activeSpells :CreatureSpellSet;
 
+    protected static var log :Log = Log.getLog(PlayerInfo);
 }
 
 }

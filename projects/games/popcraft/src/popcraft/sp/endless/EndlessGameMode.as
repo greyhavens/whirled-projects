@@ -8,7 +8,6 @@ import com.whirled.contrib.simplegame.tasks.FunctionTask;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
 import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
-import com.whirled.contrib.simplegame.tasks.WaitOnPredicateTask;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -20,6 +19,9 @@ import popcraft.sp.*;
 
 public class EndlessGameMode extends GameMode
 {
+    public static const HUMAN_TEAM_ID :int = 0;
+    public static const FIRST_COMPUTER_TEAM_ID :int = 1;
+
     public function EndlessGameMode (level :EndlessLevelData = null)
     {
         if (level != null) {
@@ -47,6 +49,24 @@ public class EndlessGameMode extends GameMode
         this.addObject(scoreView, GameContext.overlayLayer);
     }
 
+    override protected function destroy () :void
+    {
+        // save data about our human players so that they can be resurrected
+        // when the next round starts
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (playerInfo.teamId == HUMAN_TEAM_ID) {
+                if (playerInfo.playerIndex == GameContext.localPlayerIndex) {
+                    EndlessGameContext.savedLocalPlayer =
+                        new SavedLocalPlayerInfo(GameContext.localPlayerInfo);
+                } else {
+                    EndlessGameContext.savedRemotePlayer = new SavedPlayerInfo(playerInfo);
+                }
+            }
+        }
+
+        super.destroy();
+    }
+
     override protected function updateNetworkedObjects () :void
     {
         super.updateNetworkedObjects();
@@ -62,8 +82,7 @@ public class EndlessGameMode extends GameMode
 
     override protected function checkForGameOver () :void
     {
-        // human players are always on team 0
-        if (!Boolean(_teamLiveStatuses[0])) {
+        if (!Boolean(_teamLiveStatuses[HUMAN_TEAM_ID])) {
             _gameOver = true;
         }
     }
@@ -72,7 +91,8 @@ public class EndlessGameMode extends GameMode
     {
         if (!_swappingInNextOpponents) {
             var computersAreDead :Boolean = true;
-            for (var teamId :int = 1; teamId < _teamLiveStatuses.length; ++teamId) {
+            for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
+                ++teamId) {
                 if (Boolean(_teamLiveStatuses[teamId])) {
                     computersAreDead = false;
                     break;
@@ -116,49 +136,23 @@ public class EndlessGameMode extends GameMode
         if (_computerGroupIndex < _curMapData.computerGroups.length - 1) {
             // there are more opponents left on this map. swap the next ones in.
 
-            // Get rid of ComputerPlayer objects, PlayerInfos, and CreatureSpellSets
-            // that belong to the current computers.
-            // TODO - if this set of data gets any more complicated, encapsulate it
-            GameContext.netObjects.destroyObjectsInGroup(ComputerPlayer.GROUP_NAME);
-
             var playerInfo :PlayerInfo;
             var playerInfos :Array = GameContext.playerInfos;
-            var spellSets :Array = GameContext.playerCreatureSpellSets;
             for (;;) {
                 var playerIndex :int = playerInfos.length - 1;
                 playerInfo = playerInfos[playerIndex];
-                if (playerInfo.teamId == 0) {
+                if (playerInfo.teamId == HUMAN_TEAM_ID) {
                     break;
                 }
 
                 playerInfos.pop();
-
-                if (playerInfo.workshop != null) {
-                    playerInfo.workshop.destroySelf();
-                }
-
-                var workshopView :WorkshopView = WorkshopView.getForPlayer(playerIndex);
-                if (workshopView != null) {
-                    workshopView.destroySelf();
-                }
-
-                var deadWorkshopView :DeadWorkshopView = DeadWorkshopView.getForPlayer(playerIndex);
-                if (deadWorkshopView != null) {
-                    deadWorkshopView.destroySelf();
-                }
-
-                var spellSet :CreatureSpellSet = spellSets[playerIndex];
-                spellSet.destroySelf();
-                spellSets.pop();
+                playerInfo.destroy();
             }
 
             ++_computerGroupIndex;
             var newPlayerInfos :Array = this.createComputerPlayers();
-            this.createWorkshops(newPlayerInfos);
             for each (playerInfo in newPlayerInfos) {
-                spellSet = new CreatureSpellSet();
-                GameContext.netObjects.addObject(spellSet);
-                GameContext.playerCreatureSpellSets.push(spellSet);
+                playerInfo.init();
             }
 
             // switch immediately to daytime
@@ -279,9 +273,10 @@ public class EndlessGameMode extends GameMode
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
-        // Create the local player (always playerIndex=0, team=0)
+        // Create the local player
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
-            GameContext.localPlayerIndex, 0,
+            GameContext.localPlayerIndex,
+            HUMAN_TEAM_ID,
             _curMapData.humanBaseLocs[0],
             workshopHealth, workshopHealth, false,
             1, "Dennis", null);
@@ -305,21 +300,11 @@ public class EndlessGameMode extends GameMode
         var newInfos :Array  = [];
         for each (var cpData :EndlessComputerPlayerData in computerGroup) {
             var healthScale :Number = Math.pow(cpData.baseHealthScale, mapCycleNumber);
-            var playerInfo :PlayerInfo = new ComputerPlayerInfo(
-                playerIndex,
-                cpData.team,
-                cpData.baseLoc,
-                cpData.baseHealth * healthScale,
-                cpData.baseStartHealth * healthScale,
-                cpData.invincible,
-                cpData.playerName,
-                cpData.playerHeadshot);
+            var playerInfo :PlayerInfo =
+                new EndlessComputerPlayerInfo(playerIndex, cpData, healthScale);
 
             GameContext.playerInfos.push(playerInfo);
             newInfos.push(playerInfo);
-
-            // create the computer player object
-            GameContext.netObjects.addObject(new EndlessComputerPlayer(cpData, playerIndex));
 
             ++playerIndex;
         }

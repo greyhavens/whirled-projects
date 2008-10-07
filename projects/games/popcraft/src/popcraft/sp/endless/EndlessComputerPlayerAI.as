@@ -2,11 +2,11 @@ package popcraft.sp.endless {
 
 import popcraft.data.EndlessComputerPlayerData;
 import popcraft.data.UnitWaveData;
-import popcraft.sp.ComputerPlayer;
+import popcraft.sp.ComputerPlayerAI;
 
-public class EndlessComputerPlayer extends ComputerPlayer
+public class EndlessComputerPlayerAI extends ComputerPlayerAI
 {
-    public function EndlessComputerPlayer (data :EndlessComputerPlayerData, playerIndex :int)
+    public function EndlessComputerPlayerAI (data :EndlessComputerPlayerData, playerIndex :int)
     {
         super(data, playerIndex);
         _endlessData = data;

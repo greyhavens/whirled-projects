@@ -267,6 +267,16 @@ public class Unit extends SimObject
         return _damageShields;
     }
 
+    public function get damageShieldsClone () :Array
+    {
+        var theClone :Array = [];
+        for each (var shield :UnitDamageShield in _damageShields) {
+            theClone.push(shield.clone());
+        }
+
+        return theClone;
+    }
+
     public function get damageShieldModCount () :int
     {
         return _damageShieldsModCount;

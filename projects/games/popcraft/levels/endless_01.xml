@@ -37,7 +37,7 @@
                         <Computer
                             playerName="Ralph"
                             playerHeadshotName="portrait_ralph"
-                            baseStartHealth="15"
+                            baseStartHealth="1"
                             baseHealth="150"
                             baseHealthScale="1.5"
                             waveDelayScale="0.5"
@@ -55,12 +55,28 @@
 						<Computer
                             playerName="Jack"
                             playerHeadshotName="portrait_jack"
-                            baseStartHealth="15"
+                            baseStartHealth="1"
                             baseHealth="150"
                             baseHealthScale="1.5"
                             waveDelayScale="0.5"
                             team="1">
-							<BaseLocation x="500" y="265" team="1"/>
+							<BaseLocation x="500" y="205" team="1"/>
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+
+						<Computer
+                            playerName="Jill"
+                            playerHeadshotName="portrait_ivy"
+                            baseStartHealth="1"
+                            baseHealth="150"
+                            baseHealthScale="1.5"
+                            waveDelayScale="0.5"
+                            team="1">
+							<BaseLocation x="500" y="325" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
                                     <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>

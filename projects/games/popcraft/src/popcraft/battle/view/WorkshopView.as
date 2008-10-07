@@ -13,6 +13,7 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
@@ -108,6 +109,11 @@ public class WorkshopView extends BattlefieldSprite
         _clickableSprite.graphics.endFill();
 
         GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
+        var thisObj :WorkshopView = this;
+        this.registerEventListener(_clickableSprite, MouseEvent.CLICK,
+            function (...ignored) :void {
+                GameContext.gameMode.workshopClicked(thisObj);
+            });
 
         this.targetEnemyBadgeVisible = false;
     }

@@ -11,12 +11,16 @@ public class EndlessGameContext
     public static var score :int;
     public static var scoreMultiplier :Number;
     public static var mapDataIndex :int;
+    public static var savedLocalPlayer :SavedLocalPlayerInfo;
+    public static var savedRemotePlayer :SavedPlayerInfo;
 
     public static function reset () :void
     {
         score = 0;
         scoreMultiplier = 1;
         mapDataIndex = -1;
+        savedLocalPlayer = null;
+        savedRemotePlayer = null;
     }
 
     public static function cycleMapData () :EndlessMapData

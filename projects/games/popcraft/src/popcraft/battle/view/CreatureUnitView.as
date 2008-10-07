@@ -68,8 +68,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         this.registerEventListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet =
-            GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
+        var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
         this.registerEventListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
@@ -90,7 +89,7 @@ public class CreatureUnitView extends BattlefieldSprite
             _unitSpellIconParent = null;
         }
 
-        var spellSet :CreatureSpellSet = GameContext.playerCreatureSpellSets[_unit.owningPlayerIndex];
+        var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;
