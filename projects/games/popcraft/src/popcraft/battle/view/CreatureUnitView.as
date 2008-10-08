@@ -102,7 +102,8 @@ public class CreatureUnitView extends BattlefieldSprite
         // create new spell icons, arranged above the health meter
         var yOffset :Number = -_sprite.height - _healthMeter.height;
         for each (var spell :SpellData in spellSet.spells) {
-            var icon :MovieClip = SwfResource.instantiateMovieClip("infusions", "unit_" + spell.name);
+            var icon :MovieClip =
+                SwfResource.instantiateMovieClip("infusions", "unit_" + spell.name);
             icon.x = 0;
             icon.y = yOffset;
             icon.cacheAsBitmap = true;
@@ -118,7 +119,8 @@ public class CreatureUnitView extends BattlefieldSprite
         if (timeNow - _lastBloodTime >= BLOOD_INTERVAL_MIN) {
             // show a blood splatter
             if (null == g_bloodClass) {
-                var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
+                var swf :SwfResource =
+                    SwfResource(ResourceManager.instance.getResource("splatter"));
                 g_bloodClass = swf.getClass("blood");
             }
 
@@ -257,7 +259,8 @@ public class CreatureUnitView extends BattlefieldSprite
         }
     }
 
-    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
+    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState,
+        initialFrame :int = 0) :void
     {
         // flip if we need to
         anim.scaleX = ((newViewState.facing == Constants.FACING_NE || newViewState.facing == Constants.FACING_SE) ? -1 : 1);

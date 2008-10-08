@@ -9,7 +9,6 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.game.GameContentEvent;
 
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -18,6 +17,7 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
+import popcraft.sp.UnitAnimTestMode;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 
@@ -140,6 +140,16 @@ public class LevelSelectMode extends DemoGameMode
             testLevelButton.y = buttonY;
             buttonY += 35;
             _modeLayer.addChild(testLevelButton);
+
+            var testAnimButton :SimpleButton = UIBits.createButton("Anim test", 1.2);
+            this.registerEventListener(testAnimButton, MouseEvent.CLICK,
+                function (...ignored) : void {
+                    AppContext.mainLoop.pushMode(new UnitAnimTestMode());
+                });
+            testAnimButton.x = 10;
+            testAnimButton.y = buttonY;
+            buttonY += 35;
+            _modeLayer.addChild(testAnimButton);
         }
 
         if (Constants.DEBUG_ENABLE_ENDLESS_MODE) {

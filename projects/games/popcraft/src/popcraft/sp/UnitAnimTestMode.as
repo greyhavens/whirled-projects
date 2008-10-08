@@ -1,6 +1,5 @@
 package popcraft.sp {
 
-import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
@@ -120,23 +119,40 @@ public class UnitAnimTestMode extends AppMode
         for each (var animPrefix :String in ANIM_PREFIX_STRINGS) {
             for each (var facingString :String in FACING_STRINGS) {
                 var animName :String = animPrefix + facingString;
-                var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(unitData, _recolor, animName);
+                var anim :MovieClip =
+                    UnitAnimationFactory.instantiateUnitAnimation(unitData, _recolor, animName);
 
-                if (null == anim) {
-                    continue;
+                if (null != anim) {
+                    if (xLoc + anim.width > 680) {
+                        xLoc = 30;
+                        yLoc += anim.height + 20;
+                    }
+
+                    anim.x = xLoc;
+                    anim.y = yLoc;
+
+                    xLoc += anim.width + 20;
+
+                    _animSprite.addChild(anim);
                 }
 
-                if (xLoc + anim.width > 680) {
-                    xLoc = 30;
-                    yLoc += _animSprite.height + 20;
+                var bmAnim :BitmapAnim =
+                    UnitAnimationFactory.getBitmapAnim(_unitType, _recolor, animName);
+
+                if (null != bmAnim) {
+                    var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);
+                    this.addObject(bmaView, _animSprite);
+
+                    if (xLoc + bmaView.width > 680) {
+                        xLoc = 30;
+                        yLoc += bmaView.height + 20;
+                    }
+
+                    bmaView.x = xLoc;
+                    bmaView.y = yLoc;
+
+                    xLoc += bmaView.width + 20;
                 }
-
-                anim.x = xLoc;
-                anim.y = yLoc;
-
-                xLoc += anim.width + 20;
-
-                _animSprite.addChild(anim);
             }
         }
     }

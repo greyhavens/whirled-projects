@@ -6,29 +6,20 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-public class BitmapAnimation extends SceneObject
+public class BitmapAnimView extends SceneObject
 {
-    public function BitmapAnimation (frames :Array, frameRate :Number)
+    public function BitmapAnimView (anim :BitmapAnim)
     {
-        _frames = frames;
-        _frameRate = frameRate;
-
         _sprite = new Sprite();
         _bitmap = new Bitmap();
         _sprite.addChild(_bitmap);
 
-        this.setFrame(0);
+        this.anim = anim;
     }
 
-    public function set bitmapDatas (val :Array) :void
+    public function set anim (newAnim :BitmapAnim) :void
     {
-        _frames = val;
-        this.setFrame(0);
-    }
-
-    public function set frameRate (val :Number) :void
-    {
-        _frameRate = val;
+        _anim = newAnim;
         this.setFrame(0);
     }
 
@@ -41,21 +32,20 @@ public class BitmapAnimation extends SceneObject
     {
         _elapsedTime += dt;
 
-        var elapsedFrames :int = Math.floor(_elapsedTime * _frameRate);
-        this.setFrame(elapsedFrames % _frames.length);
+        var elapsedFrames :int = Math.floor(_elapsedTime * _anim.frameRate);
+        this.setFrame(elapsedFrames % _anim.frames.length);
     }
 
     protected function setFrame (index :int) :void
     {
-        var frame :BitmapAnimationFrame = _frames[index];
+        var frame :BitmapAnimFrame = _anim.frames[index];
 
         _bitmap.bitmapData = frame.bitmapData;
         _bitmap.x = frame.offset.x;
         _bitmap.y = frame.offset.y;
     }
 
-    protected var _frames :Array;
-    protected var _frameRate :Number;
+    protected var _anim :BitmapAnim;
     protected var _elapsedTime :Number = 0;
     protected var _sprite :Sprite;
     protected var _bitmap :Bitmap;
