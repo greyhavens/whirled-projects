@@ -22,22 +22,23 @@ import com.threerings.flash.MathUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 
-import ghostbusters.client.ClipHandler;
-import ghostbusters.client.GameController;
-import ghostbusters.data.Codes;
-import ghostbusters.client.util.GhostModel;
-import ghostbusters.client.util.PlayerModel;
-
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
+
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 
-public class HUD extends Sprite
+import ghostbusters.client.util.GhostModel;
+import ghostbusters.client.util.PlayerModel;
+import ghostbusters.data.Codes;
+
+public class HUD extends DraggableSprite
 {
     public function HUD ()
     {
+        super(Game.control);
+
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 
         Game.control.room.props.addEventListener(
@@ -47,43 +48,12 @@ public class HUD extends Sprite
 
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
-        Game.control.player.addEventListener(
-            AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
-
-        Game.control.local.addEventListener(
-            AVRGameControlEvent.SIZE_CHANGED, function (event :Event) :void {
-                placeHud();
-                teamUpdated();
-            });
     }
 
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
         return _hud != null && _hud.hitTestPoint(x, y, shapeFlag);
-    }
-
-    public function getRightEdge () :int
-    {
-        if (_visualHud != null) {
-            var paintable :Rectangle = Game.control.local.getPaintableArea(true);
-            if (paintable != null) {
-                var scroll :Rectangle = Game.control.local.getPaintableArea(false);
-                if (scroll != null) {
-                    // put the HUD to the right of the visible screen, or flush with the stage edge
-                    return Math.max(0, Math.min(scroll.width - MARGIN_LEFT - BORDER_LEFT,
-                                                paintable.right - _visualHud.width - MARGIN_LEFT));
-                } else {
-                    _log.debug("getRightEdge: paintableArea(false) == null");
-                }
-            } else {
-                _log.debug("getRightEdge: paintableArea(true) == null");
-            }
-        } else {
-            _log.debug("getRightEdge: visualHud == null");
-        }
-        // wild guess while debugging
-        return 700;
     }
 
     public function chooseWeapon (weapon :int) :void
@@ -97,8 +67,17 @@ public class HUD extends Sprite
         return _weaponIx;
     }
 
-    protected function enteredRoom (evt :AVRGamePlayerEvent) :void
+    override protected function handleSizeChanged (evt :AVRGameControlEvent) :void
     {
+        super.handleSizeChanged(evt);
+
+        teamUpdated();
+    }
+
+    override  protected function handleEnteredRoom (evt :AVRGameControlEvent) :void
+    {
+        super.handleEnteredRoom(evt);
+
         teamUpdated();
         updateGhostHealth();
     }
@@ -186,7 +165,12 @@ public class HUD extends Sprite
         _visualHud = MovieClip(findSafely(VISUAL_BOX));
 
         this.addChild(_hud);
-        placeHud();
+
+        // now that we know our dimensions, initialize DraggableSprite
+        super.init(new Rectangle(MARGIN_LEFT, MARGIN_TOP,
+                                 _visualHud.width, _visualHud.height + 2),
+                   SNAP_BROWSER_EDGE, -1, SNAP_TOP, -1, BORDER_LEFT);
+
         teamUpdated();
 
         updateGhostHealth();
@@ -203,17 +187,6 @@ public class HUD extends Sprite
         for (var ii :int = 0; ii < _weaponButtons.length; ii ++) {
             SimpleButton(_weaponButtons[ii]).visible = (ii == _weaponIx);
         }
-    }
-
-    protected function placeHud () :void
-    {
-        _log.debug("Looks like HUD's width is: " + _hud.width);
-        _log.debug("Looks like Visual HUD's width is: " + _visualHud.width);
-
-        _hud.x = getRightEdge();
-        _hud.y = 0;
-
-        _log.debug("Placing hud at (" + x + ", 0)...");
     }
 
     protected function findSafely (name :String) :DisplayObject
@@ -397,8 +370,9 @@ public class HUD extends Sprite
 
 //    protected static const WEAPON_DISPLAY :String = "WeaponDisplay";
 
-    protected static const MARGIN_LEFT :int = 22;
-    protected static const BORDER_LEFT :int = 33;
+    protected static const MARGIN_TOP :int = 10;
+    protected static const MARGIN_LEFT :int = 20;
+    protected static const BORDER_LEFT :int = 27;
 
     protected static const _log :Log = Log.getLog(HUD);
 }

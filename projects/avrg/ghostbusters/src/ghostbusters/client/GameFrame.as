@@ -24,10 +24,11 @@ import ghostbusters.client.GameController;
 import ghostbusters.client.Game;
 import ghostbusters.data.Codes;
 
-public class GameFrame extends Sprite
+public class GameFrame extends DraggableSprite
 {
     public function GameFrame (readyCallback :Function)
     {
+        super(Game.control);
 
         _frame = new ClipHandler(new Content.FRAME(), function () :void {
             maybeReady(readyCallback);
@@ -61,11 +62,15 @@ public class GameFrame extends Sprite
             // we'll be called again
             return;
         }
+
+        super.init(new Rectangle(0, 0, _frame.width, _frame.height),
+                   SNAP_NONE, 300, SNAP_TOP, -1);
+
         this.addChild(_frame);
         this.addChild(_inventory);
 
-        _inventory.x = (_frame.width - _inventory.width) / 2;
-        _inventory.y = (_frame.height + 20);
+        _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
+        _inventory.y = (_frame.height + 20 - INVENTORY.top);
 
         Command.bind(findSafely(CHOOSE_LANTERN), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_LANTERN);
@@ -95,6 +100,8 @@ public class GameFrame extends Sprite
 
     // relative the frame's coordinate system, where can we place the framed material?
     protected static const INSIDE :Rectangle = new Rectangle(22, 102, 305, 230);
+
+    protected static const INVENTORY :Rectangle = new Rectangle(88, 88, 144, 28);
 
     protected static const CHOOSE_LANTERN :String = "choose_lantern";
     protected static const CHOOSE_BLASTER :String = "choose_blaster";
