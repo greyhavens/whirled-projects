@@ -278,8 +278,7 @@ public class SeekPanel extends FrameSprite
         _lanterns = null;
         _ghost.appear();
 
-        var x :int = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
-        _ghost.newTarget(new Point(x, 100));
+        _ghost.newTarget(new Point(600, 100));
 
         _ghost.mask = null;
         this.removeChild(_maskLayer);

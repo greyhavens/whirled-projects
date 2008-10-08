@@ -59,7 +59,7 @@ public class FightPanel extends FrameSprite
 
         this.addChild(_ghost);
         _ghost.mask = null;
-        _ghost.x = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
+        _ghost.x = 600;
         _ghost.y = 100;
 
         // listen for notification messages from the server on the room control
