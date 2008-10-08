@@ -188,6 +188,15 @@ public class UnitAnimationFactory
           walk_NW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
           walk_S: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
           walk_SW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30)
+        },
+
+        // Prof. Weardd
+        { die: new CreatureBitmapAnimDesc([ 5, 16, 33 ], 33/30),
+
+          walk_N: new CreatureBitmapAnimDesc([ 1, 120, 240 ], 252/30),
+          walk_NW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
+          walk_S: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30)
         }
     ];
 }
