@@ -16,6 +16,18 @@ public class BitmapAnimation extends SceneObject
         this.setFrame(0);
     }
 
+    public function set bitmapDatas (val :Array) :void
+    {
+        _bitmapDatas = bitmapDatas;
+        this.setFrame(0);
+    }
+
+    public function set frameRate (val :Number) :void
+    {
+        _frameRate = val;
+        this.setFrame(0);
+    }
+
     override public function get displayObject () :DisplayObject
     {
         return _bitmap;
