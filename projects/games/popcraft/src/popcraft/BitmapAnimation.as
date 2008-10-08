@@ -18,7 +18,7 @@ public class BitmapAnimation extends SceneObject
 
     public function set bitmapDatas (val :Array) :void
     {
-        _bitmapDatas = bitmapDatas;
+        _bitmapDatas = val;
         this.setFrame(0);
     }
 
