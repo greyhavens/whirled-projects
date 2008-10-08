@@ -32,7 +32,7 @@ public class Constants
     public static const HANDICAPPED_MULTIPLIER :Number = 0.65;
 
     /* Debug options - these should all be false for a release. */
-    public static const DEBUG_DRAW_STATS :Boolean = false;
+    public static const DEBUG_DRAW_STATS :Boolean = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
@@ -42,6 +42,7 @@ public class Constants
     public static const DEBUG_ENABLE_ENDLESS_MODE :Boolean = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean = true;
     public static const DEBUG_NO_LEVEL_PACKS :Boolean = true;
+    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = true;
 
     /* Enums, etc */
 

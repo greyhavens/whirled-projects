@@ -20,7 +20,10 @@ public class StoryGameMode extends GameMode
     override protected function setup () :void
     {
         super.setup();
-        showIntro();
+
+        if (!Constants.DEBUG_SKIP_LEVEL_INTRO) {
+            this.showIntro();
+        }
     }
 
     protected function showIntro () :void
