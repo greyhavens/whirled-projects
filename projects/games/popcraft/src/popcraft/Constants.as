@@ -10,6 +10,8 @@ import popcraft.util.*;
 
 public class Constants
 {
+    public static const USE_BITMAP_ANIM_FRAMERATE_THRESHOLD :Number = 15;
+
     /* ResourceManager stuff */
     public static const RESTYPE_LEVEL :String = "level";
     public static const RESTYPE_ENDLESS :String = "endlessLevel";

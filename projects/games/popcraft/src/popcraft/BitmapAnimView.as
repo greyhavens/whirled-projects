@@ -20,7 +20,20 @@ public class BitmapAnimView extends SceneObject
     public function set anim (newAnim :BitmapAnim) :void
     {
         _anim = newAnim;
-        this.setFrame(0);
+        if (_anim != null) {
+            _elapsedTime = 0;
+            this.setFrame(0);
+        }
+    }
+
+    public function get anim () :BitmapAnim
+    {
+        return _anim;
+    }
+
+    public function get frameIndex () :int
+    {
+        return _curFrameIndex;
     }
 
     override public function get displayObject () :DisplayObject
@@ -30,10 +43,12 @@ public class BitmapAnimView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        _elapsedTime += dt;
+        if (_anim != null) {
+            _elapsedTime += dt;
 
-        var elapsedFrames :int = Math.floor(_elapsedTime * _anim.frameRate);
-        this.setFrame(elapsedFrames % _anim.frames.length);
+            var elapsedFrames :int = Math.floor(_elapsedTime * _anim.frameRate);
+            this.setFrame(elapsedFrames % _anim.frames.length);
+        }
     }
 
     protected function setFrame (index :int) :void
@@ -43,12 +58,16 @@ public class BitmapAnimView extends SceneObject
         _bitmap.bitmapData = frame.bitmapData;
         _bitmap.x = frame.offset.x;
         _bitmap.y = frame.offset.y;
+
+        _curFrameIndex = index;
     }
 
     protected var _anim :BitmapAnim;
     protected var _elapsedTime :Number = 0;
     protected var _sprite :Sprite;
     protected var _bitmap :Bitmap;
+
+    protected var _curFrameIndex :int;
 }
 
 }

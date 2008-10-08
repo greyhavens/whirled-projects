@@ -76,6 +76,15 @@ public class CreatureUnitView extends BattlefieldSprite
         super.addedToDB();
     }
 
+    override protected function removedFromDB () :void
+    {
+        if (_bitmapAnimView != null) {
+            _bitmapAnimView.destroySelf();
+        }
+
+        super.removedFromDB();
+    }
+
     protected function handleSpellSetModified (...ignored) :void
     {
         this.updateUnitSpellIcons();
@@ -146,6 +155,9 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected function setupAnimations (playerColor :uint) :void
     {
+        var useBitmapAnims :Boolean =
+            (PerfMonitor.framerate < Constants.USE_BITMAP_ANIM_FRAMERATE_THRESHOLD);
+
         for (var i :int = 0; i < 3; ++i) {
 
             var animArray :Array;
@@ -162,11 +174,20 @@ public class CreatureUnitView extends BattlefieldSprite
             for (var facing :int = Constants.FACING_N; facing <= Constants.FACING_S; ++facing) {
                 var animName :String = animNamePrefix + Constants.FACING_STRINGS[facing];
 
-                var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
-                    _unit.unitData, playerColor, animName);
+                if (useBitmapAnims) {
+                    var bitmapAnim :BitmapAnim = CreatureAnimFactory.getBitmapAnim(
+                        _unit.unitType, playerColor, animName);
+                    if (null != bitmapAnim) {
+                        animArray.push(bitmapAnim);
+                    }
 
-                if (null != anim) {
-                    animArray.push(anim);
+                } else {
+                    var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
+                        _unit.unitData, playerColor, animName);
+
+                    if (null != anim) {
+                        animArray.push(anim);
+                    }
                 }
             }
         }
@@ -182,7 +203,14 @@ public class CreatureUnitView extends BattlefieldSprite
             _animAttacking = _animStanding;
         }
 
-        _sprite.addChildAt(_animStanding[0], 0);
+        if (useBitmapAnims) {
+            _bitmapAnimView = new BitmapAnimView(_animStanding[0]);
+            GameContext.gameMode.addObject(_bitmapAnimView);
+            _sprite.addChildAt(_bitmapAnimView.displayObject, 0);
+
+        } else {
+            _sprite.addChildAt(_animStanding[0], 0);
+        }
     }
 
     protected function updateAnimations () :void
@@ -250,34 +278,48 @@ public class CreatureUnitView extends BattlefieldSprite
             // if only our facing direction has changed, start this new animation
             // on the same frame that the old one left off
             var initialFrame :int = 0;
-            if (newViewState.equalsExceptFacing(_lastViewState)) {
+            if (!this.usingBitmapAnimation && newViewState.equalsExceptFacing(_lastViewState)) {
                 var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
                 initialFrame = oldAnim.currentFrame;
             }
 
-            this.setNewAnimation(animArray[animIndex], newViewState);
+            this.setNewAnimation(animArray, animIndex, newViewState);
         }
     }
 
-    protected function setNewAnimation (anim :MovieClip, newViewState :CreatureUnitViewState,
-        initialFrame :int = 0) :void
+    protected function setNewAnimation (animArray :Array, animIndex :int,
+        newViewState :CreatureUnitViewState, initialFrame :int = 0) :void
     {
         // flip if we need to
-        anim.scaleX = ((newViewState.facing == Constants.FACING_NE || newViewState.facing == Constants.FACING_SE) ? -1 : 1);
+        var scaleX :Number = ((newViewState.facing == Constants.FACING_NE || newViewState.facing == Constants.FACING_SE) ? -1 : 1);
 
-        var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
-        if (anim != oldAnim) {
-            // only reset the animation if it's actually changed
-            _sprite.removeChildAt(0);
-            _sprite.addChildAt(anim, 0);
+        if (this.usingBitmapAnimation) {
+            var newBitmapAnim :BitmapAnim = animArray[animIndex];
+            _bitmapAnimView.scaleX = scaleX;
 
-            // we're not playing Handy-Man's idle animation for performance reasons
-            // @TODO - move this logic somewhere more appropriate!
-            if (_unit.unitType == Constants.UNIT_TYPE_HEAVY && newViewState.idle) {
-                anim.gotoAndStop(initialFrame);
-                anim.cacheAsBitmap = true;
-            } else {
-                anim.gotoAndPlay(initialFrame);
+            var oldBitmapAnim :BitmapAnim = _bitmapAnimView.anim;
+            if (oldBitmapAnim != newBitmapAnim) {
+                _bitmapAnimView.anim = newBitmapAnim;
+            }
+
+        } else {
+            var newAnim :MovieClip = animArray[animIndex];
+            newAnim.scaleX = scaleX;
+
+            var oldAnim :MovieClip = MovieClip(_sprite.getChildAt(0));
+            if (newAnim != oldAnim) {
+                // only reset the animation if it's actually changed
+                _sprite.removeChildAt(0);
+                _sprite.addChildAt(newAnim, 0);
+
+                // we're not playing Handy-Man's idle animation for performance reasons
+                // @TODO - move this logic somewhere more appropriate!
+                if (_unit.unitType == Constants.UNIT_TYPE_HEAVY && newViewState.idle) {
+                    newAnim.gotoAndStop(initialFrame);
+                    newAnim.cacheAsBitmap = true;
+                } else {
+                    newAnim.gotoAndPlay(initialFrame);
+                }
             }
         }
 
@@ -367,6 +409,11 @@ public class CreatureUnitView extends BattlefieldSprite
         return _sprite;
     }
 
+    protected function get usingBitmapAnimation () :Boolean
+    {
+        return (_bitmapAnimView != null);
+    }
+
     // Retain a pointer to the CreatureUnit rather than a SimObjectRef to
     // prevent a bunch of irritating checks against null. This isn't a big deal
     // here - the CreatureUnitView's lifespan is almost exactly that of its
@@ -380,6 +427,8 @@ public class CreatureUnitView extends BattlefieldSprite
     protected var _animStanding :Array = [];
     protected var _animAttacking :Array = [];
     protected var _animMoving :Array = [];
+
+    protected var _bitmapAnimView :BitmapAnimView;
 
     protected var _unitSpellIconParent :Sprite;
 
