@@ -77,6 +77,11 @@ public class MultiplayerGameMode extends GameMode
                 new PlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth, false,
                                 handicap));
         }
+
+        // init players
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            playerInfo.init();
+        }
     }
 
     override protected function createRandSeed () :uint

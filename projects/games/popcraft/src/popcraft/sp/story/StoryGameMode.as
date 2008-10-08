@@ -114,6 +114,11 @@ public class StoryGameMode extends GameMode
                 baseLoc, cpData);
             GameContext.playerInfos.push(computerPlayerInfo);
         }
+
+        // init players
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            playerInfo.init();
+        }
     }
 
     override protected function createRandSeed () :uint

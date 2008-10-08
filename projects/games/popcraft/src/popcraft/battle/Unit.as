@@ -262,6 +262,11 @@ public class Unit extends SimObject
         return _maxHealth;
     }
 
+    public function set damageShields (shields :Array) :void
+    {
+        _damageShields = shields;
+    }
+
     public function get damageShields () :Array
     {
         return _damageShields;

@@ -216,10 +216,6 @@ public class GameMode extends TransitionMode
         // subclasses create the players in this function
         this.createPlayers();
 
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            playerInfo.init();
-        }
-
         this.updateTargetEnemyBadgeLocation(GameContext.localPlayerInfo.targetedEnemy.playerIndex);
     }
 

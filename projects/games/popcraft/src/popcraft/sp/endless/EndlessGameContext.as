@@ -11,7 +11,7 @@ public class EndlessGameContext
     public static var score :int;
     public static var scoreMultiplier :Number;
     public static var mapDataIndex :int;
-    public static var savedLocalPlayer :SavedLocalPlayerInfo;
+    public static var savedLocalPlayer :SavedPlayerInfo;
     public static var savedRemotePlayer :SavedPlayerInfo;
 
     public static function reset () :void

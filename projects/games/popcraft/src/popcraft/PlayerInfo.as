@@ -11,6 +11,7 @@ import popcraft.battle.WorkshopUnit;
 import popcraft.battle.view.DeadWorkshopView;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.BaseLocationData;
+import popcraft.sp.endless.SavedPlayerInfo;
 
 /**
  * Encapsulates public information about a player in the game.
@@ -46,6 +47,20 @@ public class PlayerInfo extends EventDispatcher
         } else {
             _playerHeadshot = SeatingManager.getPlayerHeadshot(_playerIndex);
         }
+    }
+
+    public function saveData (outData :SavedPlayerInfo = null) :SavedPlayerInfo
+    {
+        var save :SavedPlayerInfo = (outData != null ? outData : new SavedPlayerInfo());
+        save.health = this.workshop.health;
+        save.damageShields = this.workshop.damageShieldsClone;
+        return save;
+    }
+
+    public function restoreSavedData (savedData :SavedPlayerInfo) :void
+    {
+        this.workshop.health = savedData.health;
+        this.workshop.damageShields = savedData.damageShields;
     }
 
     public function init () :void

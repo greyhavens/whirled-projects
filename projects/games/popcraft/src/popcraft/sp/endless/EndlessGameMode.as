@@ -56,10 +56,9 @@ public class EndlessGameMode extends GameMode
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (playerInfo.teamId == HUMAN_TEAM_ID) {
                 if (playerInfo.playerIndex == GameContext.localPlayerIndex) {
-                    EndlessGameContext.savedLocalPlayer =
-                        new SavedLocalPlayerInfo(GameContext.localPlayerInfo);
+                    EndlessGameContext.savedLocalPlayer = GameContext.localPlayerInfo.saveData();
                 } else {
-                    EndlessGameContext.savedRemotePlayer = new SavedPlayerInfo(playerInfo);
+                    EndlessGameContext.savedRemotePlayer = playerInfo.saveData();
                 }
             }
         }
@@ -284,6 +283,16 @@ public class EndlessGameMode extends GameMode
         GameContext.playerInfos.push(localPlayerInfo);
 
         this.createComputerPlayers();
+
+        // init players
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            playerInfo.init();
+        }
+
+        // restore saved data
+        if (EndlessGameContext.savedLocalPlayer != null) {
+            localPlayerInfo.restoreSavedData(EndlessGameContext.savedLocalPlayer);
+        }
     }
 
     protected function createComputerPlayers () :Array
