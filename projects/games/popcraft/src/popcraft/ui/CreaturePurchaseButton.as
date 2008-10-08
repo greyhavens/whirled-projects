@@ -53,14 +53,14 @@ public class CreaturePurchaseButton extends SimObject
         var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerIndex];
 
         // try instantiating some animations
-        _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
+        _enabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
         if (null == _enabledAnim) {
-            _enabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
+            _enabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         }
 
-        _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
+        _disabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
         if (null == _disabledAnim) {
-            _disabledAnim = UnitAnimationFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
+            _disabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
         }
 
         if (Constants.UNIT_TYPE_COURIER != unitType && Constants.UNIT_TYPE_SAPPER != unitType) {

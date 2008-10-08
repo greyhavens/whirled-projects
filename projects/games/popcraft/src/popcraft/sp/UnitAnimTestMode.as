@@ -120,7 +120,7 @@ public class UnitAnimTestMode extends AppMode
             for each (var facingString :String in FACING_STRINGS) {
                 var animName :String = animPrefix + facingString;
                 var anim :MovieClip =
-                    UnitAnimationFactory.instantiateUnitAnimation(unitData, _recolor, animName);
+                    CreatureAnimFactory.instantiateUnitAnimation(unitData, _recolor, animName);
 
                 if (null != anim) {
                     if (xLoc + anim.width > 680) {
@@ -137,7 +137,7 @@ public class UnitAnimTestMode extends AppMode
                 }
 
                 var bmAnim :BitmapAnim =
-                    UnitAnimationFactory.getBitmapAnim(_unitType, _recolor, animName);
+                    CreatureAnimFactory.getBitmapAnim(_unitType, _recolor, animName);
 
                 if (null != bmAnim) {
                     var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);

@@ -16,7 +16,7 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.battle.view.UnitAnimationFactory;
+import popcraft.battle.view.CreatureAnimFactory;
 import popcraft.data.LevelData;
 import popcraft.data.SpellData;
 import popcraft.data.UnitData;
@@ -129,10 +129,10 @@ public class LevelIntroMode extends AppMode
         case PHASE_CREATUREINTRO:
             var newCreatureType :int = _level.newCreatureType;
             var creatureData :UnitData = GameContext.gameData.units[newCreatureType];
-            var creatureAnim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+            var creatureAnim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
                 creatureData, GameContext.localPlayerInfo.playerColor, "walk_SW");
             if (null == creatureAnim) {
-                creatureAnim = UnitAnimationFactory.instantiateUnitAnimation(
+                creatureAnim = CreatureAnimFactory.instantiateUnitAnimation(
                     creatureData, GameContext.localPlayerInfo.playerColor, "stand_SW");
             }
             this.showPage(

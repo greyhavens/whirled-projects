@@ -162,7 +162,7 @@ public class CreatureUnitView extends BattlefieldSprite
             for (var facing :int = Constants.FACING_N; facing <= Constants.FACING_S; ++facing) {
                 var animName :String = animNamePrefix + Constants.FACING_STRINGS[facing];
 
-                var anim :MovieClip = UnitAnimationFactory.instantiateUnitAnimation(
+                var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
                     _unit.unitData, playerColor, animName);
 
                 if (null != anim) {

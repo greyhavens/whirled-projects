@@ -11,7 +11,7 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 
-public class UnitAnimationFactory
+public class CreatureAnimFactory
 {
     public static function initAllBitmapAnims (playerColor :uint) :void
     {

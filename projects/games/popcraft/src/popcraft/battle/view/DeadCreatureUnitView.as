@@ -23,9 +23,9 @@ public class DeadCreatureUnitView extends BattlefieldSprite
         var playerColor :uint = GameContext.gameData.playerColors[creature.owningPlayerIndex];
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
-        _movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);
+        _movie = CreatureAnimFactory.instantiateUnitAnimation(creature.unitData, playerColor, animName);
         if (null == _movie) {
-            _movie = UnitAnimationFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
+            _movie = CreatureAnimFactory.instantiateUnitAnimation(creature.unitData, playerColor, "die");
         }
 
         this.updateLoc(creature.x, creature.y);
