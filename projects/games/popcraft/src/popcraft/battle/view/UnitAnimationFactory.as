@@ -8,10 +8,24 @@ import flash.display.MovieClip;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.util.ImageUtil;
 
 public class UnitAnimationFactory
 {
-    public static function instantiateUnitAnimation (unitData :UnitData, playerColor :uint, animName :String) :MovieClip
+    public static function createBitmapFrames (unitData :UnitData, playerColor :uint,
+        animNames :Array) :Array
+    {
+        var frames :Array = [];
+        for each (var animName :String in animNames) {
+            var movie :MovieClip = instantiateUnitAnimation(unitData, playerColor, animName);
+            frames.push(ImageUtil.createSnapshot(movie));
+        }
+
+        return frames;
+    }
+
+    public static function instantiateUnitAnimation (unitData :UnitData, playerColor :uint,
+        animName :String) :MovieClip
     {
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
@@ -31,7 +45,8 @@ public class UnitAnimationFactory
         return anim;
     }
 
-    protected static function colorizeAnimation (anim :MovieClip, childName :String, tintMatrix :ColorMatrix) :Boolean
+    protected static function colorizeAnimation (anim :MovieClip, childName :String,
+        tintMatrix :ColorMatrix) :Boolean
     {
         var color :MovieClip = anim[childName];
         if (null != color) {
