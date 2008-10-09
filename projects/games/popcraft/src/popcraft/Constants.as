@@ -39,12 +39,11 @@ public class Constants
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
-    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_ENABLE_ENDLESS_MODE :Boolean = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean = true;
-    public static const DEBUG_NO_LEVEL_PACKS :Boolean = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = true;
+    public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 
     /* Enums, etc */
 

@@ -5,6 +5,11 @@ import com.whirled.contrib.simplegame.resource.ResourceManager;
 [SWF(width="700", height="500", frameRate="30")]
 public class PopCraft_Standalone extends PopCraft
 {
+    public function PopCraft_Standalone ()
+    {
+        Constants.DEBUG_LOAD_LEVELS_FROM_DISK = true;
+    }
+
     override public function loadResources (completeCallback :Function, errorCallback :Function) :void
     {
         queueLevelPackResources();
