@@ -106,7 +106,7 @@ public class Room
         if (ArrayUtil.contains(expected, _state)) {
             return true;
         }
-        log.debug("State mismatch [expected=" + expected + ", actual=" + _state + "]");
+        log.debug("State mismatch", "expected", expected, "actual", _state);
         return false;
     }
 
@@ -115,12 +115,12 @@ public class Room
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
             var timer :int = getTimer();
             if (timer < _nextZap) {
-                log.debug("Ignored too-early zap request [playerId=" + who.playerId + "]");
+                log.debug("Ignored too-early zap request", "playerId", who.playerId);
                 return;
             }
             // accept up to two zaps a second
             _nextZap = timer + 500;
-            log.debug("Accepting zap request [playerId=" + who.playerId + "]");
+            log.debug("Accepting zap request", "playerId", who.playerId);
             Server.control.doBatch(function () :void {
                 // let the other people in the room know there was a successful zapping
                 _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
@@ -146,8 +146,7 @@ public class Room
         case Codes.STATE_APPEARING:
             if (frame >= _transitionFrame) {
                 if (_transitionFrame == 0) {
-                    log.warning(
-                        "In APPEAR without transitionFrame [id=" + roomId + "]");
+                    log.warning("In APPEAR without transitionFrame", "id", roomId);
                 }
                 ghostFullyAppeared();
                 _transitionFrame = 0;
@@ -162,7 +161,7 @@ public class Room
         case Codes.STATE_GHOST_DEFEAT:
             if (frame >= _transitionFrame) {
                 if (_transitionFrame == 0) {
-                    log.warning("In TRIUMPH/DEFEAT without transitionFrame [id=" + roomId + "]");
+                    log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
                 }
                 ghostFullyGone();
                 _transitionFrame = 0;
@@ -247,14 +246,14 @@ public class Room
         for (var p :* in _players) {
             Player(p).roomStateChanged();
         }
-        log.debug("Room state set [roomId=" + roomId + ", state=" + state + "]");
+        log.debug("Room state set", "roomId", roomId, "state", state);
     }
 
     // server-specific parts of the model moved here
     internal function damageGhost (damage :int) :Boolean
     {
         var health :int = _ghost.health;
-        log.debug("Doing " + damage + " damage to a ghost with health " + health);
+        log.debug("Damaging ghost", "roomId", roomId, "damage", damage, "health", health);
         if (damage >= health) {
             _ghost.setHealth(0);
             return true;
@@ -401,7 +400,7 @@ public class Room
             totDmg += playerDmg[ii];
         }
 
-        log.debug("HEAL :: Total heal = " + totHeal + "; Total team damage = " + totDmg);
+        log.debug("HEAL", "totalHeal", totHeal, "totalTeamDamage", totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
             var player :Player = Player(team[ii]);
@@ -448,7 +447,7 @@ public class Room
             playerArr.unshift(player);
             pointsArr.unshift(points);
             totPoints += points;
-            log.debug("Player #" + playerId + " accrued " + points + " points...");
+            log.debug("Player accrual", "playerId", playerId, "points", points);
         }
 
         if (totPoints == 0) {

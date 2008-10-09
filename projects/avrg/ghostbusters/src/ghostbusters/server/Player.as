@@ -33,7 +33,7 @@ public class Player
         _level = int(_ctrl.props.get(Codes.PROP_MY_LEVEL));
         if (_level == 0) {
             // this person has never played Ghosthunters before
-            log.info("Initializing new player [playerId=" + playerId + "]");
+            log.info("Initializing new player", "playerId", playerId);
             setLevel(1, true);
             setHealth(_maxHealth, true);
             setPlaying(false, true);
@@ -46,7 +46,7 @@ public class Player
                 _playing = Boolean(playingValue);
 
             } else {
-                log.debug("Repairing player isPlaying [playerId=" + playerId + "]");
+                log.debug("Repairing player isPlaying", "playerId", playerId);
                 setPlaying(false, true);
             }
 
@@ -56,7 +56,7 @@ public class Player
 
             } else {
                 // health should always be set if level is set, but let's play it safe
-                log.debug("Repairing player health [playerId=" + playerId + "]");
+                log.debug("Repairing player health", "playerId", playerId);
                 setHealth(_maxHealth, true);
             }
 
@@ -65,7 +65,7 @@ public class Player
                 _points = int(pointsValue);
 
             } else {
-                log.debug("Repairing player ectopoints [playerId=" + playerId + "]");
+                log.debug("Repairing player ectopoints", "playerId", playerId);
                 setPoints(0, true);
             }
 
@@ -127,7 +127,7 @@ public class Player
 
     public function damage (damage :int) :void
     {
-        log.debug("Doing " + damage + " damage to a player with health " + _health);
+        log.debug("Damaging player", "playerId", _playerId, "damage", damage, "health", _health);
 
         // let the clients in the room know of the attack
         _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
@@ -262,7 +262,7 @@ public class Player
             }
             break;
         default:
-            log.warning("Unknown debug requests: " + request);
+            log.warning("Unknown debug request", "request", request);
             return;
         }
 

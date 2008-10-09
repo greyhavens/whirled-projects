@@ -162,7 +162,7 @@ public class Ghost
             case GhostDefinition.GHOST_WIDOW:
                 return "The Widow";
         }
-        log.warning("Name of unknown ghost requested [id=" + ghostId + "]");
+        log.warning("Name of unknown ghost requested", "id", ghostId);
         return "Unknown Ghost";
     }
 
