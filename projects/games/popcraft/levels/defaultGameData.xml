@@ -167,7 +167,7 @@ Students are advised that the Weardd Academy for Responsible Reanimation will no
 
             <Unit
                 type="boss"
-                displayName="" description="" introText="" introText2=""
+                displayName="Weardd" description="" introText="" introText2=""
                 baseMoveSpeed="30"
                 hasRepulseForce="true"
                 survivesDaytime="true"
