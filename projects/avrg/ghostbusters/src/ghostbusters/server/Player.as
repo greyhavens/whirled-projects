@@ -36,9 +36,19 @@ public class Player
             log.info("Initializing new player [playerId=" + playerId + "]");
             setLevel(1, true);
             setHealth(_maxHealth, true);
+            setPlaying(false, true);
 
         } else {
             updateMaxHealth();
+
+            var playingValue :Object = _ctrl.props.get(Codes.PROP_IS_PLAYING);
+            if (playingValue != null) {
+                _playing = Boolean(playingValue);
+
+            } else {
+                log.debug("Repairing player isPlaying [playerId=" + playerId + "]");
+                setPlaying(false, true);
+            }
 
             var healthValue :Object = _ctrl.props.get(Codes.PROP_MY_HEALTH);
             if (healthValue != null) {
@@ -77,6 +87,11 @@ public class Player
     public function get room () :Room
     {
         return _room;
+    }
+
+    public function get playing () :Boolean
+    {
+        return _playing;
     }
 
     public function get health () :int
@@ -291,6 +306,16 @@ public class Player
         }
     }
 
+    protected function setPlaying (playing :Boolean, force :Boolean = false) :void
+    {
+        if (!force && playing == _playing) {
+            return;
+        }
+        _playing = playing;
+
+        _ctrl.props.set(Codes.PROP_IS_PLAYING, _playing, true);
+    }
+
     protected function setHealth (health :int, force :Boolean = false) :void
     {
         // update our runtime state
@@ -340,6 +365,7 @@ public class Player
     protected var _ctrl :PlayerSubControlServer;
     protected var _room :Room;
 
+    protected var _playing :Boolean;
     protected var _playerId :int;
     protected var _health :int;
     protected var _maxHealth :int;

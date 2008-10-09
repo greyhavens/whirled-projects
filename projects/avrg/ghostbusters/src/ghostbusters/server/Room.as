@@ -63,6 +63,9 @@ public class Room
 
         for (var p :* in _players) {
             var player :Player = Player(p);
+            if (!player.playing) {
+                continue;
+            }
             if (excludeDead && player.isDead()) {
                 continue;
             }
