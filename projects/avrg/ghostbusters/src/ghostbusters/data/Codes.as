@@ -167,6 +167,12 @@ public class Codes
     public static const IX_PLAYER_LEVEL :int = 3;
 
     /**
+     * Whether or not this player is taking active part in the game. This property is
+     * persistently stored in that player's property space.
+     */
+    public static const PROP_IS_PLAYING :String = NetConstants.makePersistent("playing");
+
+    /**
      * The health of a player, persistently stored in that player's property space. This value
      * is copied into a room's property space when a player enters that room.
      */
