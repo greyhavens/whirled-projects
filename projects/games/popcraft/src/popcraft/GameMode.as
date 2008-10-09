@@ -367,10 +367,6 @@ public class GameMode extends TransitionMode
             } else {
                 return;
             }
-        } else if (_gameOver) {
-            // stop processing game logic when the game is over
-            super.update(dt);
-            return;
         }
 
         // start the game audio when _updateCount hits 1, allowing a full update to pass without

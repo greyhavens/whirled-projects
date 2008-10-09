@@ -30,6 +30,9 @@ public class PlayerStatusView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
         _movie.cacheAsBitmap = true;
 
+        var deathMovie :MovieClip = _movie["dead"];
+        deathMovie.visible = false;
+
         _healthMeter = _movie["health_meter"];
         _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.playerColor).createFilter() ];
         _meterArrow = _movie["meter_arrow"];
@@ -83,22 +86,35 @@ public class PlayerStatusView extends SceneObject
         return _movie;
     }
 
+    public function get isAlive () :Boolean
+    {
+        return _playerInfo.isAlive;
+    }
+
+    public function get playerInfo () :PlayerInfo
+    {
+        return _playerInfo;
+    }
+
     override protected function update (dt :Number) :void
     {
-        var healthPercent :Number = _playerInfo.healthPercent;
+        if (!_dead) {
+            if (!_playerInfo.isAlive) {
+                var deathMovie :MovieClip = _movie["dead"];
+                deathMovie.visible = true;
+                deathMovie.gotoAndPlay(2);
+                _dead = true;
 
-        if (_oldHealth != healthPercent) {
-            var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
-            _healthMeter.rotation = healthRotation;
-            _meterArrow.rotation = healthRotation;
+            } else {
+                var healthPercent :Number = _playerInfo.healthPercent;
+                if (_oldHealth != healthPercent) {
+                    var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
+                    _healthMeter.rotation = healthRotation;
+                    _meterArrow.rotation = healthRotation;
 
-            _oldHealth = healthPercent;
-        }
-
-        if (!_dead && !_playerInfo.isAlive) {
-            var deathMovie :MovieClip = _movie["dead"];
-            deathMovie.gotoAndPlay(2);
-            _dead = true;
+                    _oldHealth = healthPercent;
+                }
+            }
         }
     }
 

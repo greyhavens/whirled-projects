@@ -136,19 +136,19 @@ public class EndlessGameMode extends GameMode
             // there are more opponents left on this map. swap the next ones in.
 
             var playerInfo :PlayerInfo;
-            var playerInfos :Array = GameContext.playerInfos;
             for (;;) {
-                var playerIndex :int = playerInfos.length - 1;
-                playerInfo = playerInfos[playerIndex];
+                var playerIndex :int =  GameContext.playerInfos.length - 1;
+                playerInfo = GameContext.playerInfos[playerIndex];
                 if (playerInfo.teamId == HUMAN_TEAM_ID) {
                     break;
                 }
 
-                playerInfos.pop();
+                GameContext.playerInfos.pop();
                 playerInfo.destroy();
             }
 
             ++_computerGroupIndex;
+            // createComputerPlayers() populates GameContext.playerInfos
             var newPlayerInfos :Array = this.createComputerPlayers();
             for each (playerInfo in newPlayerInfos) {
                 playerInfo.init();
@@ -158,6 +158,8 @@ public class EndlessGameMode extends GameMode
             if (!GameContext.diurnalCycle.isDay) {
                 GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
             }
+
+            GameContext.dashboard.updatePlayerStatusViews();
 
         } else {
             // move to the next map (see handleGameOver())
@@ -184,16 +186,23 @@ public class EndlessGameMode extends GameMode
 
     override protected function applyCheatCode (keyCode :uint) :void
     {
-        if (keyCode == KeyboardCodes.M) {
+        switch (keyCode) {
+        case KeyboardCodes.M:
             this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
                 Constants.SPELL_TYPE_MULTIPLIER);
-        } else if (keyCode == KeyboardCodes.SLASH) {
-            // restart the level
-            // playLevel(true) forces the current level to reload
-            AppContext.endlessLevelMgr.playLevel(null, true);
+            break;
 
-        } else {
+        case KeyboardCodes.SLASH:
+            AppContext.endlessLevelMgr.playLevel(null, true);
+            break;
+
+        case KeyboardCodes.O:
+            this.swapInNextOpponents();
+            break;
+
+        default:
             super.applyCheatCode(keyCode);
+            break;
         }
     }
 

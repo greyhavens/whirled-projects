@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
@@ -74,17 +75,7 @@ public class DashboardView extends SceneObject
         }
 
         // setup PlayerStatusViews
-        var statusViewLocs :Array = PLAYER_STATUS_VIEW_LOCS[GameContext.playerInfos.length - 2];
-        var playerFrame :MovieClip = _movie["frame_players"];
-        for (var i :int = 0; i < statusViewLocs.length; ++i) {
-            var playerInfo :PlayerInfo = GameContext.playerInfos[i];
-            var loc :Point = statusViewLocs[i];
-
-            var psv :PlayerStatusView = new PlayerStatusView(playerInfo.playerIndex);
-            psv.x = loc.x;
-            psv.y = loc.y;
-            GameContext.gameMode.addObject(psv, playerFrame);
-        }
+        this.updatePlayerStatusViews();
 
         // pause button only visible in single-player games
         var pauseButton :SimpleButton = _movie["pause"];
@@ -102,7 +93,7 @@ public class DashboardView extends SceneObject
         // _spellSlots keeps track of whether the individual spell slots are occupied
         // or empty
         var numSlots :int = GameContext.gameData.maxSpellsPerType * Constants.CASTABLE_SPELL_TYPE__LIMIT;
-        for (i = 0; i < numSlots; ++i) {
+        for (var ii :int = 0; ii < numSlots; ++ii) {
             _spellSlots.push(false);
         }
 
@@ -111,6 +102,74 @@ public class DashboardView extends SceneObject
             onGotSpell);
 
         this.updateResourceMeters();
+    }
+
+    public function updatePlayerStatusViews () :void
+    {
+        var playerInfo :PlayerInfo;
+
+        var deadViews :Array = [];
+        var liveViews :Array = [];
+
+        // discover which existing views are dead
+        for each (var existingStatusView :PlayerStatusView in _playerStatusViews) {
+            if (existingStatusView.isAlive) {
+                liveViews.push(existingStatusView);
+            } else {
+                deadViews.push(existingStatusView);
+            }
+        }
+
+        // discover which players don't have views created for them
+        for each (playerInfo in GameContext.playerInfos) {
+            if (ArrayUtil.findIf(liveViews,
+                function (view :PlayerStatusView) :Boolean {
+                    return (view.playerInfo == playerInfo);
+                }) == null) {
+                liveViews.push(new PlayerStatusView(playerInfo.playerIndex));
+            }
+        }
+
+        // destroy dead views
+        for each (var deadView :PlayerStatusView in deadViews) {
+            deadView.addTask(new SerialTask(
+                LocationTask.CreateEaseIn(deadView.x, 47 + deadView.height, VIEW_MOVE_TIME),
+                new SelfDestructTask()));
+        }
+
+        // sort the live views by playerIndex
+        liveViews.sort(
+            function (a :PlayerStatusView, b :PlayerStatusView) :int {
+                var aIndex :int = a.playerInfo.playerIndex;
+                var bIndex :int = b.playerInfo.playerIndex;
+                if (aIndex < bIndex) {
+                    return -1;
+                } else if (aIndex > bIndex) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
+        var statusViewLocs :Array = PLAYER_STATUS_VIEW_LOCS[liveViews.length - 2];
+        var playerFrame :MovieClip = _movie["frame_players"];
+        for (var ii :int = 0; ii < liveViews.length; ++ii) {
+            var liveView :PlayerStatusView = liveViews[ii];
+            var loc :Point = statusViewLocs[ii];
+
+            // add the view to the DB if it was just created
+            if (!liveView.isLiveObject) {
+                liveView.x = loc.x;
+                liveView.y = loc.y + liveView.height;
+                GameContext.gameMode.addObject(liveView, playerFrame);
+            }
+
+            // animate the view to its new location
+            liveView.addTask(LocationTask.CreateEaseOut(loc.x, loc.y, VIEW_MOVE_TIME));
+
+        }
+
+        _playerStatusViews = liveViews;
     }
 
     override protected function addedToDB () :void
@@ -286,6 +345,7 @@ public class DashboardView extends SceneObject
     protected var _oldResourceAmounts :Array = [];
     protected var _showingDeathPanel :Boolean;
     protected var _spellSlots :Array = []; // of Booleans
+    protected var _playerStatusViews :Array = [];
 
     protected static const PUZZLE_SHUFFLE_TASK :String = "PuzzleShuffle";
 
@@ -303,6 +363,8 @@ public class DashboardView extends SceneObject
         [ new Point(40, 47), new Point(105, 47), new Point(170, 47), ],                     // 3 players
         [ new Point(29, 47), new Point(81, 47), new Point(133, 47), new Point(185, 47) ],   // 4 players
     ];
+
+    protected static const VIEW_MOVE_TIME :Number = 0.5;
 }
 
 }
