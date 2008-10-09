@@ -104,8 +104,6 @@ public class UnitAnimTestMode extends AppMode
 
     protected function updateView () :void
     {
-        var unitData :UnitData = AppContext.defaultGameData.units[_unitType];
-
         if (null != _animSprite) {
             this.modeSprite.removeChild(_animSprite);
         }
@@ -113,53 +111,63 @@ public class UnitAnimTestMode extends AppMode
         _animSprite = new Sprite();
         this.modeSprite.addChild(_animSprite);
 
-        var xLoc :Number = 30;
-        var yLoc :Number = 80;
+        _xLoc = 40;
+        _yLoc = 80;
 
         for each (var animPrefix :String in ANIM_PREFIX_STRINGS) {
             for each (var facingString :String in FACING_STRINGS) {
                 var animName :String = animPrefix + facingString;
-                var anim :MovieClip =
-                    CreatureAnimFactory.instantiateUnitAnimation(unitData, _recolor, animName);
-
-                if (null != anim) {
-                    if (xLoc + anim.width > 680) {
-                        xLoc = 30;
-                        yLoc += anim.height + 20;
-                    }
-
-                    anim.x = xLoc;
-                    anim.y = yLoc;
-
-                    xLoc += anim.width + 20;
-
-                    _animSprite.addChild(anim);
-                }
-
-                var bmAnim :BitmapAnim =
-                    CreatureAnimFactory.getBitmapAnim(_unitType, _recolor, animName);
-
-                if (null != bmAnim) {
-                    var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);
-                    this.addObject(bmaView, _animSprite);
-
-                    if (xLoc + bmaView.width > 680) {
-                        xLoc = 30;
-                        yLoc += bmaView.height + 20;
-                    }
-
-                    bmaView.x = xLoc;
-                    bmaView.y = yLoc;
-
-                    xLoc += bmaView.width + 20;
-                }
+                this.createAnimations(animName);
             }
+        }
+
+        this.createAnimations("die");
+    }
+
+    protected function createAnimations (animName :String) :void
+    {
+        var unitData :UnitData = AppContext.defaultGameData.units[_unitType];
+        var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(unitData, _recolor,
+            animName);
+
+        if (null != anim) {
+            if (_xLoc + anim.width > 680) {
+                _xLoc = 40;
+                _yLoc += anim.height + 20;
+            }
+
+            anim.x = _xLoc;
+            anim.y = _yLoc;
+
+            _xLoc += anim.width + 20;
+
+            _animSprite.addChild(anim);
+        }
+
+        var bmAnim :BitmapAnim = CreatureAnimFactory.getBitmapAnim(_unitType, _recolor, animName);
+
+        if (null != bmAnim) {
+            var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);
+            this.addObject(bmaView, _animSprite);
+
+            if (_xLoc + bmaView.width > 680) {
+                _xLoc = 40;
+                _yLoc += bmaView.height + 20;
+            }
+
+            bmaView.x = _xLoc;
+            bmaView.y = _yLoc;
+
+            _xLoc += bmaView.width + 20;
         }
     }
 
     protected var _animSprite :Sprite;
     protected var _recolor :uint;
     protected var _unitType :int = 0;
+
+    protected var _xLoc :Number;
+    protected var _yLoc :Number;
 
     protected static const ANIM_PREFIX_STRINGS :Array = [ "stand_", "walk_", "attack_", "die_" ];
     protected static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", ];
