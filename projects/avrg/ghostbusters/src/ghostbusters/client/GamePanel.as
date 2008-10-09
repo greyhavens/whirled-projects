@@ -103,13 +103,13 @@ public class GamePanel extends Sprite
     public function frameContent (content :DisplayObject) :void
     {
         if (_frame == null) {
-            _log.warning("Can't frame content; frame clip not yet loaded.");
+            log.warning("Can't frame content; frame clip not yet loaded.");
             return;
         }
 
         var paintable :Rectangle = Game.control.local.getPaintableArea(true);
         if (paintable == null) {
-            _log.warning("Can't frame content; we have no dimensions!");
+            log.warning("Can't frame content; we have no dimensions!");
             return;
         }
 
@@ -128,7 +128,7 @@ public class GamePanel extends Sprite
             if (clip != null) {
                 return clip;
             }
-            _log.debug("Erk, cannot find clip for id=" + id);
+            log.debug("Erk, cannot find clip", "id", id);
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class GamePanel extends Sprite
     protected function taskCompleted (evt :AVRGamePlayerEvent) :void
     {
         if (evt.name != Codes.TASK_GHOST_DEFEATED) {
-            _log.warning("Unknown task completed: " + evt.name);
+            log.warning("Unknown task completed", "task", evt.name);
             return;
         }
 
@@ -164,7 +164,7 @@ public class GamePanel extends Sprite
     {
         if (!Game.amDead()) {
             if (_revive != null) {
-                _log.debug("Popping DOWN the revive widget!");
+                log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
                 updateState(false);
@@ -173,7 +173,7 @@ public class GamePanel extends Sprite
         }
 
         if (_revive == null) {
-            _log.debug("Popping UP the revive widget!");
+            log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
             updateState(false);
@@ -183,8 +183,8 @@ public class GamePanel extends Sprite
     protected function popup (clip :DisplayObject) :void
     {
         if (clip.parent != null) {
-            _log.warning("Popup candidate already has a parent [popup=" + clip +
-                             ", parent=" + clip.parent + "]");
+            log.warning("Popup candidate already has a parent", "popup", clip,
+                        "parent", clip.parent);
             return;
         }
         this.addChild(clip);
@@ -199,7 +199,7 @@ public class GamePanel extends Sprite
     protected function popdown (clip :DisplayObject) :void
     {
         if (clip.parent != this) {
-            _log.warning("We're not displaying popdown candidate [clip=" + clip + "]");
+            log.warning("We're not displaying popdown candidate", "clip", clip);
             return;
         }
         this.removeChild(clip);
@@ -263,7 +263,7 @@ public class GamePanel extends Sprite
                 pClass = FightPanel;
                 break;
             default:
-                _log.warning("Aii, updateState() doesn't know what to do", "state", Game.state);
+                log.warning("Aii, updateState() doesn't know what to do", "state", Game.state);
                 return;
             }
         }
@@ -306,6 +306,6 @@ public class GamePanel extends Sprite
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;
 
-    protected static const _log :Log = Log.getLog(GamePanel);
+    protected static const log :Log = Log.getLog(GamePanel);
 }
 }

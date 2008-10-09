@@ -129,14 +129,14 @@ public class HUD extends DraggableSprite
 
             var bar :MovieClip = findSafely(PLAYER_HEALTH_BAR + ii) as MovieClip;
             if (bar == null) {
-                _log.warning("Failed to find player health bar #" + ii);
+                log.warning("Failed to find player health bar", "ix", ii);
                 continue;
             }
             panel.healthBar = bar;
 
             var plate :TextField = findSafely(PLAYER_NAME_PLATE + ii) as TextField;
             if (plate == null) {
-                _log.warning("Failed to find player name plate #" + ii);
+                log.warning("Failed to find player name plate", "ix", ii);
                 continue;
             }
             panel.namePlate = plate;
@@ -306,7 +306,7 @@ public class HUD extends DraggableSprite
         var bar :MovieClip = _playerPanels[ix].healthBar;
         bar.visible = true;
         bar.gotoAndStop(frame);
-//        _log.debug("Moved " + bar.name + " to frame #" + frame);
+//        log.debug("Moved " + bar.name + " to frame #" + frame);
         reallyStop(bar);
     }
 
@@ -374,7 +374,7 @@ public class HUD extends DraggableSprite
     protected static const MARGIN_LEFT :int = 20;
     protected static const BORDER_LEFT :int = 27;
 
-    protected static const _log :Log = Log.getLog(HUD);
+    protected static const log :Log = Log.getLog(HUD);
 }
 }
 

@@ -85,12 +85,12 @@ public class Game extends Sprite
 
     protected function handleUnload (event :Event) :void
     {
-        _log.info("Removed from stage - Unloading...");
+        log.info("Removed from stage - Unloading...");
     }
 
     protected function handleAdded (event :Event) :void
     {
-        _log.info("Added to stage: Initializing...");
+        log.info("Added to stage: Initializing...");
         newRoom();
 //        gameController.panel.showSplash();
     }
@@ -100,6 +100,6 @@ public class Game extends Sprite
         ourRoomId = control.room.getRoomId();
     }
 
-    protected static const _log :Log = Log.getLog(Game);
+    protected static const log :Log = Log.getLog(Game);
 }
 }

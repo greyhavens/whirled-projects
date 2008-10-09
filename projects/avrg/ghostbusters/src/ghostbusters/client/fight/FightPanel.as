@@ -77,7 +77,7 @@ public class FightPanel extends FrameSprite
 
         var clipClass :Class = Game.panel.getClipClass();
         if (clipClass == null) {
-            _log.debug("Urk, failed to find a ghost clip class");
+            log.debug("Urk, failed to find a ghost clip class");
             return;
         }
         var handler :ClipHandler;
@@ -99,14 +99,14 @@ public class FightPanel extends FrameSprite
     public function weaponUpdated () :void
     {
         if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            _log.debug("Weapon unchanged...");
+            log.debug("Weapon unchanged...");
             return;
         }
         if (_player.currentGame != null) {
-            _log.debug("Cancelling current game...");
+            log.debug("Cancelling current game...");
             _player.cancelCurrentGame();
         }
-        _log.debug("Starting new minigame.");
+        log.debug("Starting new minigame.");
         startMinigame();
     }
 
@@ -114,7 +114,7 @@ public class FightPanel extends FrameSprite
     {
         if (_player == null) {
             // this is either a miracle of timing, or an irrecoverable error condition
-            _log.warning("No minigame container in toggleGame()");
+            log.warning("No minigame container in toggleGame()");
             return;
         }
 
@@ -151,7 +151,7 @@ public class FightPanel extends FrameSprite
             _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
             break;
         default:
-            _log.warning("Eek, unknown weapon: " + _selectedWeapon);
+            log.warning("Eek, unknown weapon", "weapon", _selectedWeapon);
             return;
         }
 
@@ -218,7 +218,7 @@ public class FightPanel extends FrameSprite
 
             var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
             if (info == null) {
-                _log.warning("Can't get avatar info [player=" + playerId + "]");
+                log.warning("Can't get avatar info", "player", playerId);
                 continue;
             }
             var topLeft :Point = this.globalToLocal(info.bounds.topLeft);
@@ -313,6 +313,6 @@ public class FightPanel extends FrameSprite
 
     protected var _gameContext :MicrogameContext;
 
-    protected static const _log :Log = Log.getLog(FightPanel);
+    protected static const log :Log = Log.getLog(FightPanel);
 }
 }

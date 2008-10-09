@@ -13,7 +13,6 @@ import flash.filters.GlowFilter;
 
 import flash.geom.Point;
 
-import com.threerings.util.Log;
 import com.threerings.util.Random;
 
 import ghostbusters.client.ClipHandler;

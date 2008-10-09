@@ -174,7 +174,7 @@ public class SeekPanel extends FrameSprite
 
         var roomBounds :Rectangle = Game.control.room.getRoomBounds();
         if (roomBounds == null) {
-            _log.warning("Can't get room bounds to move ghost around.");
+            log.warning("Can't get room bounds to move ghost around.");
             return;
         }
 
@@ -189,8 +189,7 @@ public class SeekPanel extends FrameSprite
         // convert to actual local coordinates and go whee
         var pos :Point = Game.control.local.roomToPaintable(new Point(x, y));
         if (pos == null) {
-            _log.debug(
-                "Failed to convert ghost target to local coordinates [x=" + x + ", y=" + y + "]");
+            log.debug("Failed to convert ghost target to local coordinates", "x", x, "y", y);
             return;
         }
 
@@ -305,7 +304,7 @@ public class SeekPanel extends FrameSprite
     {
         var lantern :Lantern = _lanterns[playerId];
         pos = this.globalToLocal(pos);
-//        _log.debug("New lantern update", "pos", pos);
+//        log.debug("New lantern update", "pos", pos);
         if (lantern == null) {
             // a new lantern just appears, no splines involved
             lantern = new Lantern(playerId, pos);
@@ -347,6 +346,6 @@ public class SeekPanel extends FrameSprite
     protected static const FRAMES_PER_UPDATE :int = 6;
     protected static const ZAP_FRAMES :int = 30;
 
-    protected static const _log :Log = Log.getLog(SeekPanel);
+    protected static const log :Log = Log.getLog(SeekPanel);
 }
 }

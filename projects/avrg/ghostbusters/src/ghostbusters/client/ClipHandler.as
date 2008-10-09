@@ -46,7 +46,7 @@ public class ClipHandler extends FrameSprite
 
         for (var ii :int = 0; ii < _clip.scenes.length; ii ++) {
             var scene :Scene = _clip.scenes[ii];
-//            _log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
+//            log.debug("Indexing [scene=" + scene.name + ", frames=" + scene.numFrames +
 //                           ", labels=" + scene.labels + "]");
             scenes[scene.name] = scene;
         }
@@ -84,8 +84,8 @@ public class ClipHandler extends FrameSprite
             _callback = done;
             _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
             if (_scene.name) {  
-                _log.debug("Playing [scene=" + _scene.name + ", frames=" + _scene.numFrames +
-                               ", labels=" + _scene.labels + "]");
+                log.debug("Playing", "scene", _scene.name, "frames", _scene.numFrames,
+                           "labels", _scene.labels);
                 _clip.gotoAndPlay(1, _scene.name);
             } else {
                 _clip.gotoAndPlay(1);
@@ -131,6 +131,6 @@ public class ClipHandler extends FrameSprite
     protected var _callback :Function;
     protected var _lastFrame :int;
 
-    protected static const _log :Log = Log.getLog(ClipHandler);
+    protected static const log :Log = Log.getLog(ClipHandler);
 }
 }

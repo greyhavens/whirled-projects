@@ -70,7 +70,7 @@ public class GameController extends Controller
     {
         if (PlayerModel.isDead(Game.ourPlayerId)) {
             // the button is always disabled if you're dead -- revive first!
-            _log.debug("You can't toggle the lantern, you're dead!");
+            log.debug("You can't toggle the lantern, you're dead!");
             return;
         }
 
@@ -92,7 +92,7 @@ public class GameController extends Controller
             // no effect: you have to watch this bit
 
        } else {
-            _log.debug("Unexpected state in toggleLantern: " + state);
+            log.debug("Unexpected state in toggleLantern", "state", state);
         }
     }
 
@@ -104,7 +104,7 @@ public class GameController extends Controller
 
         if (!(panel.subPanel is FightPanel)) {
             // should not happen, but let's be robust
-            _log.debug("Eek, subpanel is not FightPanel");
+            log.debug("Eek, subpanel is not FightPanel");
             return;
         }
         FightPanel(panel.subPanel).weaponUpdated();
@@ -137,6 +137,6 @@ public class GameController extends Controller
         }
     }
 
-    protected static const _log :Log = Log.getLog(GameController);
+    protected static const log :Log = Log.getLog(GameController);
 }
 }

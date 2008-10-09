@@ -19,8 +19,6 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 
 public class DraggableSprite extends Sprite
 {
-    public static const log :Log = Log.getLog(DraggableSprite);
-
     public static const SNAP_NONE :int = 1;
     public static const SNAP_LEFT :int = 2;
     public static const SNAP_TOP :int = 2;  // alias
@@ -210,6 +208,8 @@ public class DraggableSprite extends Sprite
     protected var _paintable :Rectangle;
     protected var _painted :Rectangle;
 
-    public static const SNAP_MARGIN :int = 30;
+    protected static const SNAP_MARGIN :int = 30;
+
+    protected static const log :Log = Log.getLog(DraggableSprite);
 }
 }

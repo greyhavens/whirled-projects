@@ -80,28 +80,28 @@ public class Ghost extends Sprite
 
     public function damaged () :void
     {
-        _log.debug("Ghost damaged [_next=" + _next + "]");
+        log.debug("Ghost damaged", "next", _next);
         _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
     }
 
     public function attack () :void
     {
-        _log.debug("Ghost attacking [_next=" + _next + "]");
+        log.debug("Ghost attacking", "next", _next);
         _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
     }
 
     public function die (callback :Function = null) :void
     {
-        _log.debug("Ghost dying [_next=" + _next + "]");
+        log.debug("Ghost dying", "next", _next);
         _callback = callback;
         _next = ST_DIE;
     }
 
     public function triumph (callback :Function = null) :void
     {
-        _log.debug("Ghost triumphant [_next=" + _next + "]");
+        log.debug("Ghost triumphant", "next", _next);
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
     }
 
@@ -119,7 +119,7 @@ public class Ghost extends Sprite
         // refigure the bounds
         _bounds = ghost.getBounds(this);
 
-        _log.debug("Ghost finished loading [bounds=" + _bounds + "]");
+        log.debug("Ghost finished loading", "bounds", _bounds);
 
         if (_readyCallback != null) {
             _readyCallback(this);
@@ -143,7 +143,7 @@ public class Ghost extends Sprite
             handler.gotoScene(GamePanel.ST_GHOST_DEFEAT, _callback);
 
         } else {
-            _log.debug("unknown state: " + _next);
+            log.debug("unknown state: " + _next);
             handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
         }
     }
@@ -159,6 +159,6 @@ public class Ghost extends Sprite
     protected static const ST_ATTACK :int = 2;
     protected static const ST_DIE :int = 3;
 
-    protected static const _log :Log = Log.getLog(Ghost);
+    protected static const log :Log = Log.getLog(Ghost);
 }
 }
