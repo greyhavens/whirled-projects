@@ -46,8 +46,14 @@ public class BitmapAnimView extends SceneObject
         if (_anim != null) {
             _elapsedTime += dt;
 
-            var elapsedFrames :int = Math.floor(_elapsedTime * _anim.frameRate);
-            this.setFrame(elapsedFrames % _anim.frames.length);
+            var frameIndex :int = Math.floor(_elapsedTime * _anim.frameRate);
+            var totalFrames :int = _anim.frames.length;
+            if (frameIndex >= totalFrames) {
+                frameIndex = (_anim.endBehavior == BitmapAnim.LOOP ?
+                    frameIndex % totalFrames : totalFrames - 1);
+            }
+
+            this.setFrame(frameIndex);
         }
     }
 

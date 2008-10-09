@@ -114,10 +114,10 @@ public class CreatureAnimFactory
           attack_S: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
           attack_SW: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
 
-          die_N: new CreatureBitmapAnimDesc([ 30 ], 1),
-          die_NW: new CreatureBitmapAnimDesc([ 30 ], 1),
-          die_S: new CreatureBitmapAnimDesc([ 30 ], 1),
-          die_SW: new CreatureBitmapAnimDesc([ 30 ], 1),
+          die_N: new CreatureBitmapAnimDesc([ 30 ], 1, BitmapAnim.STOP),
+          die_NW: new CreatureBitmapAnimDesc([ 30 ], 1, BitmapAnim.STOP),
+          die_S: new CreatureBitmapAnimDesc([ 30 ], 1, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 30 ], 1, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
@@ -131,10 +131,10 @@ public class CreatureAnimFactory
           attack_S: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 55/30),
           attack_SW: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 55/30),
 
-          die_N: new CreatureBitmapAnimDesc([ 35 ], 1),
-          die_NW: new CreatureBitmapAnimDesc([ 35 ], 1),
-          die_S: new CreatureBitmapAnimDesc([ 35 ], 1),
-          die_SW: new CreatureBitmapAnimDesc([ 35 ], 1),
+          die_N: new CreatureBitmapAnimDesc([ 35 ], 1, BitmapAnim.STOP),
+          die_NW: new CreatureBitmapAnimDesc([ 35 ], 1, BitmapAnim.STOP),
+          die_S: new CreatureBitmapAnimDesc([ 35 ], 1, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 35 ], 1, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
@@ -148,10 +148,10 @@ public class CreatureAnimFactory
         },
 
         // Delivery Boy
-        { die_N: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30),
-          die_NW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30),
-          die_S: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30),
-          die_SW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30),
+        { die_N: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
+          die_NW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
+          die_S: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
@@ -165,10 +165,10 @@ public class CreatureAnimFactory
         },
 
         // Ladyfingers
-        { die_N: new CreatureBitmapAnimDesc([ 20 ], 1),
-          die_NW: new CreatureBitmapAnimDesc([ 20 ], 1),
-          die_S: new CreatureBitmapAnimDesc([ 20 ], 1),
-          die_SW: new CreatureBitmapAnimDesc([ 20 ], 1),
+        { die_N: new CreatureBitmapAnimDesc([ 20 ], 1, BitmapAnim.STOP),
+          die_NW: new CreatureBitmapAnimDesc([ 20 ], 1, BitmapAnim.STOP),
+          die_S: new CreatureBitmapAnimDesc([ 20 ], 1, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 20 ], 1, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
@@ -182,7 +182,7 @@ public class CreatureAnimFactory
         },
 
         // Flesh Behemoth
-        { die: new CreatureBitmapAnimDesc([ 5, 16, 33 ], 33/30),
+        { die: new CreatureBitmapAnimDesc([ 5, 16, 33 ], 33/30, BitmapAnim.STOP),
 
           walk_N: new CreatureBitmapAnimDesc([ 1, 120, 240 ], 252/30),
           walk_NW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
@@ -191,7 +191,7 @@ public class CreatureAnimFactory
         },
 
         // Prof. Weardd
-        { die: new CreatureBitmapAnimDesc([ 5, 16, 33 ], 33/30),
+        { die: new CreatureBitmapAnimDesc([ 5, 16, 33 ], 33/30, BitmapAnim.STOP),
 
           walk_N: new CreatureBitmapAnimDesc([ 1, 120, 240 ], 252/30),
           walk_NW: new CreatureBitmapAnimDesc([ 1, 11, 20 ], 252/30),
