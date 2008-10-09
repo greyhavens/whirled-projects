@@ -85,8 +85,10 @@ public class FightPanel extends FrameSprite
             var gameContext :MicrogameContext = new MicrogameContext();
             gameContext.ghostMovie = handler.clip;
             _player = new MicrogamePlayer(gameContext);
-            startMinigame();
+            maybeStartMinigame();
         });
+
+        _playing = Boolean(Game.control.player.props.get(Codes.PROP_IS_PLAYING));
     }
 
     override public function hitTestPoint (
@@ -107,7 +109,7 @@ public class FightPanel extends FrameSprite
             _player.cancelCurrentGame();
         }
         log.debug("Starting new minigame.");
-        startMinigame();
+        maybeStartMinigame();
     }
 
     public function toggleGame () :void
@@ -119,15 +121,19 @@ public class FightPanel extends FrameSprite
         }
 
         if (_player.root == null) {
-            startMinigame();
+            maybeStartMinigame();
 
         } else {
             endMinigame();
         }
     }
 
-    protected function startMinigame () :void
+    protected function maybeStartMinigame () :void
     {
+        if (!_playing) {
+            return;
+        }
+
         if (_player.root == null) {
             Game.panel.frameContent(_player);
         }
@@ -268,6 +274,10 @@ public class FightPanel extends FrameSprite
                 // if we just died, cancel minigame
                 endMinigame();
             }
+
+        } else if (evt.name == Codes.PROP_IS_PLAYING) {
+            _playing = Boolean(evt.newValue);
+            maybeStartMinigame();
         }
     }
 
@@ -304,6 +314,8 @@ public class FightPanel extends FrameSprite
     protected var _dimness :Dimness;
 
     protected var _battleLoop :SoundChannel;
+
+    protected var _playing :Boolean;
 
     protected var _spotlights :Dictionary = new Dictionary();
 
