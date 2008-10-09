@@ -1,7 +1,7 @@
 <root>
     <EndlessLevel
-        maxMultiplier="5"
-        multiplierDamageSoak="15"
+        maxMultiplier="4"
+        multiplierDamageSoak="18.75"
 
         pointsPerExtraMultiplier="500"
         pointsPerResource="1"
@@ -29,6 +29,7 @@
                 <AvailableSpells all="true"/>
 
                 <ComputerGroups>
+					<!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
                     <Group>
 <!--
     baseHealthScale: applied each time the computer player is cycled back through (usually > 1)
@@ -44,7 +45,17 @@
                             team="1">
                             <BaseLocation x="600" y="265" team="1"/>
                             <RepeatingDays>
+								<!-- Pigsley doesn't get harder till day 3 -->
                                 <Day repeatWaves="true">
+                                    <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
+                                    <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+                                    <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+                                </Day>
+								<Day repeatWaves="true">
                                     <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
                                     <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
                                     <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
@@ -57,39 +68,30 @@
                         </Computer>
                     </Group>
 
-                    <Group>
-                        <Computer
-                            playerName="Jack"
-                            playerHeadshotName="portrait_jack"
-                            baseStartHealth="1"
+					<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
+					<Group>
+						<Computer
+                            playerName="Horace"
+                            playerHeadshotName="portrait_horace"
+                            baseStartHealth="150"
                             baseHealth="150"
                             baseHealthScale="1.5"
-                            waveDelayScale="0.5"
+                            waveDelayScale="0.8"
                             team="1">
-                            <BaseLocation x="500" y="205" team="1"/>
+                            <BaseLocation x="600" y="295" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
+                                	<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+	                                <Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
+	                                <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+	                                <Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
+                                    <Wave absoluteDelay="105"><Unit type="colossus" count="2"/></Wave>
+                                    <Wave absoluteDelay="119"></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
-
-                        <Computer
-                            playerName="Jill"
-                            playerHeadshotName="portrait_ivy"
-                            baseStartHealth="1"
-                            baseHealth="150"
-                            baseHealthScale="1.5"
-                            waveDelayScale="0.5"
-                            team="1">
-                            <BaseLocation x="500" y="325" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true">
-                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
-                    </Group>
+					</Group>
 
                 </ComputerGroups>
             </Map>

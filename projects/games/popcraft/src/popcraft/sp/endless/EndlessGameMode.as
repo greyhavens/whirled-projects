@@ -287,7 +287,7 @@ public class EndlessGameMode extends GameMode
             HUMAN_TEAM_ID,
             _curMapData.humanBaseLocs[0],
             workshopHealth, workshopHealth, false,
-            1, "Dennis", null);
+            1, "Finley", null);
 
         GameContext.playerInfos.push(localPlayerInfo);
 

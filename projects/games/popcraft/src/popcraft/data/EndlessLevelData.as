@@ -8,7 +8,7 @@ import popcraft.util.XmlReader;
 public class EndlessLevelData
 {
     public var maxMultiplier :int;
-    public var multiplierDamageSoak :int;
+    public var multiplierDamageSoak :Number;
 
     public var pointsPerExtraMultiplier :int;
     public var pointsPerResource :int;
@@ -31,7 +31,7 @@ public class EndlessLevelData
         }
 
         level.maxMultiplier = XmlReader.getUintAttr(xml, "maxMultiplier");
-        level.multiplierDamageSoak = XmlReader.getUintAttr(xml, "multiplierDamageSoak");
+        level.multiplierDamageSoak = XmlReader.getNumberAttr(xml, "multiplierDamageSoak");
 
         level.pointsPerExtraMultiplier = XmlReader.getIntAttr(xml, "pointsPerExtraMultiplier");
         level.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource");

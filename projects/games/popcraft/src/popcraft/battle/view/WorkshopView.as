@@ -244,7 +244,7 @@ public class WorkshopView extends BattlefieldSprite
     protected function updateShieldMeters () :void
     {
         var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
-        var shieldColor :uint = ColorUtil.blend(playerColor, 0x000000);
+        var shieldColor :uint = 0xFFFFFF;//ColorUtil.blend(playerColor, 0x000000);
 
         var shields :Array = _unit.damageShields;
         var meter :RectMeterView;
