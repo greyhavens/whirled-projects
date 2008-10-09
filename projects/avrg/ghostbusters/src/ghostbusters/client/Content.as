@@ -21,6 +21,9 @@ public class Content
     [Embed(source="../../../rsrc/UI/inventory.swf", mimeType="application/octet-stream")]
     public static const INVENTORY :Class;
 
+    [Embed(source="../../../rsrc/UI/splash_help_01.swf", mimeType="application/octet-stream")]
+    public static const SPLASH :Class;
+
     // ghost clips
     [Embed(source="../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
     public static const GHOST_DUCHESS :Class;
