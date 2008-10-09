@@ -23,7 +23,7 @@
             <Hint>Send Street-Walkers ahead of your Delivery Boys to distract defenders long enough for impact!</Hint>
         </Hints>
 
-        <MapSettings backgroundName="Level2">
+        <MapSettings backgroundName="school">
             <BaseLocation x="75" y="255" team="0"/>
             <BaseLocation x="622" y="335" team="1"/>
         </MapSettings>

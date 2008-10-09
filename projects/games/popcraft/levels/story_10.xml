@@ -27,7 +27,7 @@
             spellDropScatterMin="15"
             spellDropScatterMax="30"/>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="wharf">
             <BaseLocation x="70" y="185" team="0"/>
             <BaseLocation x="642" y="185" team="1"/>
             <BaseLocation x="590" y="115" team="1"/>

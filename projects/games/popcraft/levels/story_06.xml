@@ -29,7 +29,7 @@
             spellDropTimeMin="30"
             spellDropTimeMax="30"/>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="wharf">
             <BaseLocation x="60" y="205" team="0"/>
             <BaseLocation x="642" y="175" team="1"/>
         </MapSettings>

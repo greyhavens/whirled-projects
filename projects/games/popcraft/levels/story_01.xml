@@ -21,7 +21,7 @@ Now Headmaster Weardd
 
         <GameDataOverride disableDiurnalCycle="true"/>
 
-        <MapSettings backgroundName="Level2">
+        <MapSettings backgroundName="school">
             <BaseLocation x="180" y="295" team="0"/>
             <BaseLocation x="500" y="265" team="1"/>
         </MapSettings>

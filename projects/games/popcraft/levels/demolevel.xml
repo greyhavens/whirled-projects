@@ -39,7 +39,7 @@
             </Resources>
         </GameDataOverride>
 
-        <MapSettings backgroundName="Level2">
+        <MapSettings backgroundName="school">
             <BaseLocation x="377" y="198" team="0"/> <!-- First player is hidden -->
             <BaseLocation x="80" y="240" team="2"/>
             <BaseLocation x="622" y="240" team="1"/>

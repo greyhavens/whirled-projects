@@ -22,7 +22,7 @@ He knows that, somehow,
             <Hint>An unprotected Flesh Behemoth will quickly fall to a well-prepared opponent. Send Street-Walkers ahead of your Behemoths to distract your enemy's Handy Men!</Hint>
         </Hints>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="wharf">
             <BaseLocation x="60" y="205" team="0"/>
             <BaseLocation x="642" y="175" team="1"/>
         </MapSettings>

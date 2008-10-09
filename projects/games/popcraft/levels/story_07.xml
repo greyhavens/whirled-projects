@@ -24,7 +24,7 @@ He's sending several your way, but he'll be vulnerable for a short while after t
             <Hint>Make sure you have a group of Handy Men waiting for enemy Flesh Behemoths. Handy Men can safely slow a Behemoth down with their severed hand attacks.</Hint>
         </Hints>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="wharf">
             <BaseLocation x="60" y="205" team="0"/>
             <BaseLocation x="642" y="175" team="1"/>
         </MapSettings>

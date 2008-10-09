@@ -20,11 +20,11 @@
 
         <MapSequence>
             <Map repeats="true">
-                <MapSettings backgroundName="Level2"/>
-				<HumanBaseLocations>
-					<BaseLocation x="180" y="295" team="0"/>
-				</HumanBaseLocations>
-				<MultiplierDropLocation x="400" y="265"/>
+                <MapSettings backgroundName="schoolnoburn"/>
+                <HumanBaseLocations>
+                    <BaseLocation x="80" y="295" team="0"/>
+                </HumanBaseLocations>
+                <MultiplierDropLocation x="400" y="265"/>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>
 
@@ -35,24 +35,30 @@
     waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through (usually < 1)
 -->
                         <Computer
-                            playerName="Ralph"
-                            playerHeadshotName="portrait_ralph"
-                            baseStartHealth="1"
+                            playerName="Pigsley"
+                            playerHeadshotName="portrait_pigsley"
+                            baseStartHealth="150"
                             baseHealth="150"
                             baseHealthScale="1.5"
-                            waveDelayScale="0.5"
+                            waveDelayScale="0.7"
                             team="1">
-							<BaseLocation x="500" y="265" team="1"/>
+                            <BaseLocation x="600" y="265" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                    <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
+                                    <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
+                                    <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+                                    <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
-					</Group>
-					
-					<Group>
-						<Computer
+                    </Group>
+
+                    <Group>
+                        <Computer
                             playerName="Jack"
                             playerHeadshotName="portrait_jack"
                             baseStartHealth="1"
@@ -60,7 +66,7 @@
                             baseHealthScale="1.5"
                             waveDelayScale="0.5"
                             team="1">
-							<BaseLocation x="500" y="205" team="1"/>
+                            <BaseLocation x="500" y="205" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
                                     <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>
@@ -68,7 +74,7 @@
                             </RepeatingDays>
                         </Computer>
 
-						<Computer
+                        <Computer
                             playerName="Jill"
                             playerHeadshotName="portrait_ivy"
                             baseStartHealth="1"
@@ -76,7 +82,7 @@
                             baseHealthScale="1.5"
                             waveDelayScale="0.5"
                             team="1">
-							<BaseLocation x="500" y="325" team="1"/>
+                            <BaseLocation x="500" y="325" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
                                     <Wave delayBefore="5"><Unit type="sapper" count="0"/></Wave>

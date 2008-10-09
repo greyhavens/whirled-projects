@@ -13,7 +13,7 @@
             spellDropTimeMin="3"
             spellDropTimeMax="8"/>
 
-        <MapSettings backgroundName="Level1">
+        <MapSettings backgroundName="city">
             <BaseLocation x="60" y="185" team="0"/>
             <BaseLocation x="622" y="115" team="1"/>
             <BaseLocation x="622" y="295" team="1"/>

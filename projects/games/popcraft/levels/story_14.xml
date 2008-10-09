@@ -29,7 +29,7 @@
             </PlayerColors>
         </GameDataOverride>
 
-        <MapSettings backgroundName="Level1">
+        <MapSettings backgroundName="city">
             <BaseLocation x="75" y="145" team="0"/>
             <BaseLocation x="632" y="185" team="1"/>
             <BaseLocation x="632" y="285" team="1"/>

@@ -22,7 +22,7 @@ Jack unloads this invective,
             <Hint>Infusions will appear closer to your workshop when your opponent has the advantage. Construct a solid defense, collect Infusions, and hit your opponent with everything you've got when the time is right!</Hint>
         </Hints>
 
-        <MapSettings backgroundName="Level3">
+        <MapSettings backgroundName="wharf">
             <BaseLocation x="60" y="205" team="0"/>
             <BaseLocation x="642" y="175" team="1"/>
         </MapSettings>

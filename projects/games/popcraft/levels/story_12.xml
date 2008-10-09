@@ -31,7 +31,7 @@ Ralph goads his foe,
             </Resources>
         </GameDataOverride>
 
-        <MapSettings backgroundName="Level1">
+        <MapSettings backgroundName="city">
             <BaseLocation x="75" y="145" team="0"/>
             <BaseLocation x="622" y="265" team="1"/>
         </MapSettings>
