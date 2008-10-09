@@ -135,14 +135,14 @@ public class CreatureAnimFactory
           die_N: new CreatureBitmapAnimDesc([ 10, 21, 30 ], 30/30, BitmapAnim.STOP),
           die_NW: new CreatureBitmapAnimDesc([ 10, 30, 40 ], 40/30, BitmapAnim.STOP),
           die_S: new CreatureBitmapAnimDesc([ 10, 34, 45 ], 45/30, BitmapAnim.STOP),
-          die_SW: new CreatureBitmapAnimDesc([ 10, 30, 40 ], 40/30, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 10, 24, 35 ], 40/30, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_S: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_SW: new CreatureBitmapAnimDesc([ 1 ], 1),
 
-          walk_N: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30),
+          walk_N: new CreatureBitmapAnimDesc([ 1, 7, 13, 7 ], 25/30),
           walk_NW: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30),
           walk_S: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30),
           walk_SW: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30)
@@ -185,17 +185,17 @@ public class CreatureAnimFactory
         // Flesh Behemoth
         { die: new CreatureBitmapAnimDesc([ 12, 22, 30 ], 33/30, BitmapAnim.STOP),
 
-          walk_N: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_NW: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_S: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_SW: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30)
+          walk_N: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_NW: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_S: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30)
         },
 
         // Prof. Weardd
-        { walk_N: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_NW: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_S: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30),
-          walk_SW: new CreatureBitmapAnimDesc([ 1, 40, 80, 120, 160, 200 ], 127/30)
+        { walk_N: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_NW: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_S: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 1, 30, 60, 90, 120, 150, 170, 200, 230 ], 127/30)
         }
     ];
 }
