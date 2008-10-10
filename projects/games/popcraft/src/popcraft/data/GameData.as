@@ -1,6 +1,7 @@
 package popcraft.data {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.SortedHashMap;
 import com.whirled.contrib.simplegame.util.*;
 
 import popcraft.*;
@@ -33,7 +34,8 @@ public class GameData
     public var units :Array = [];
     public var spells :Array = [];
 
-    public var playerDisplayDatas :HashMap = new HashMap(); // Map<String, PlayerDisplayData>
+    // Map<String, PlayerDisplayData>
+    public var playerDisplayDatas :SortedHashMap = new SortedHashMap(SortedHashMap.STRING_KEYS);
 
     public function getPlayerDisplayData (playerName :String) :PlayerDisplayData
     {
