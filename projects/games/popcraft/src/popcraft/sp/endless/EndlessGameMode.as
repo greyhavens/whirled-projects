@@ -1,13 +1,12 @@
 package popcraft.sp.endless {
 
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
-import com.whirled.contrib.simplegame.tasks.SerialTask;
-import com.whirled.contrib.simplegame.tasks.TimedTask;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -45,6 +44,11 @@ public class EndlessGameMode extends GameMode
         scoreView.x = (Constants.SCREEN_SIZE.x - scoreView.width) * 0.5;
         scoreView.y = 5;
         this.addObject(scoreView, GameContext.overlayLayer);
+
+        // create the multipliers that were left over from the last map
+        for (var ii :int = 0; ii < EndlessGameContext.numMultiplierObjects; ++ii) {
+            this.createMultiplierDrop(false);
+        }
     }
 
     override protected function destroy () :void
@@ -60,6 +64,24 @@ public class EndlessGameMode extends GameMode
                 }
             }
         }
+
+        // save the number of multipliers left on the field so the player has a chance
+        // to grab them on the next map
+        var numMultipliers :int;
+        var netObjs :ObjectDB = GameContext.netObjects;
+        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
+            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                numMultipliers += 1;
+            }
+        }
+
+        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
+            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                numMultipliers += 1;
+            }
+        }
+
+        EndlessGameContext.numMultiplierObjects = numMultipliers;
 
         super.destroy();
     }
@@ -97,25 +119,24 @@ public class EndlessGameMode extends GameMode
             }
 
             if (computersAreDead) {
-                // create the multiplier drop
-                SpellDropFactory.createSpellDrop(
-                    Constants.SPELL_TYPE_MULTIPLIER,
-                    _curMapData.multiplierDropLoc,
-                    true);
+                this.createMultiplierDrop(true);
 
-                // swap in the next opponents when 30 seconds have passed, or the multiplier
-                // has been retrieved
-                var obj :SimObject = new SimObject();
-                obj.addTask(new SerialTask(
-                    new WaitForMultiplierRetrievalTask(27),
-                    new TimedTask(3),
-                    new FunctionTask(swapInNextOpponents),
-                    new SelfDestructTask()));
-
-                GameContext.netObjects.addObject(obj);
+                // swap in the next opponents when 5 seconds have passed
+                GameContext.netObjects.addObject(new SimpleTimer(5, swapInNextOpponents));
                 _swappingInNextOpponents = true;
             }
         }
+    }
+
+    protected function createMultiplierDrop (playSound :Boolean) :void
+    {
+        var scatterLen :Number = Rand.nextNumberRange(0, _curMapData.multiplierScatterRadius,
+            Rand.STREAM_GAME);
+        var rotation :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var loc :Vector2 = Vector2.fromAngle(rotation, scatterLen).addLocal(
+            _curMapData.multiplierDropLoc);
+
+        SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER, loc, playSound);
     }
 
     protected function multiplierIsOnPlayfield () :Boolean

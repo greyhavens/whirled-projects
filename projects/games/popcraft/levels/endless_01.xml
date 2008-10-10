@@ -30,7 +30,7 @@
                 <HumanBaseLocations>
                     <BaseLocation x="80" y="295" team="0"/>
                 </HumanBaseLocations>
-                <MultiplierDropLocation x="400" y="265"/>
+                <MultiplierDropLocation x="400" y="265" scatterRadius="60"/>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>
 
@@ -106,7 +106,7 @@
                 <HumanBaseLocations>
                     <BaseLocation x="80" y="215" team="0"/>
                 </HumanBaseLocations>
-                <MultiplierDropLocation x="400" y="265"/>
+                <MultiplierDropLocation x="400" y="265" scatterRadius="60"/>
                 <AvailableUnits all="true"/>
                 <AvailableSpells all="true"/>
 
