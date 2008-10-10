@@ -49,16 +49,13 @@ public class ComputerPlayerAI extends SimObject
 
         if (_waveIndex < _curDay.unitWaves.length || _curDay.repeatWaves) {
             _nextWave = _curDay.unitWaves[_waveIndex % _curDay.unitWaves.length];
-        } else {
-            return;
+
+            if (_nextWave != null) {
+                ++_waveIndex;
+                this.addNamedTask(SEND_WAVE_TASK,
+                    After(this.getWaveDelay(_nextWave), new FunctionTask(sendNextWave)));
+            }
         }
-
-        ++_waveIndex;
-
-        this.addNamedTask(
-            SEND_WAVE_TASK,
-            After(getWaveDelay(_nextWave),
-                new FunctionTask(sendNextWave)));
     }
 
     protected function getWaveDelay (wave :UnitWaveData) :Number

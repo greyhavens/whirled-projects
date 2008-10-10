@@ -10,10 +10,10 @@
         <GameDataOverride>
         </GameDataOverride>
 
-		<HumanPlayers>
-			<Player name="Finley"/>
-			<Player name="Eloise"/>
-		</HumanPlayers>
+        <HumanPlayers>
+            <Player name="Finley"/>
+            <Player name="Eloise"/>
+        </HumanPlayers>
 
         <PointsPerCreatureKill>
             <Unit type="grunt" points="10"/>
@@ -24,6 +24,7 @@
         </PointsPerCreatureKill>
 
         <MapSequence>
+            <!-- ****** LEVEL 1 ****** -->
             <Map repeats="true">
                 <MapSettings backgroundName="schoolnoburn"/>
                 <HumanBaseLocations>
@@ -34,7 +35,7 @@
                 <AvailableSpells all="true"/>
 
                 <ComputerGroups>
-					<!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
+                    <!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
                     <Group>
 <!--
     baseHealthScale: applied each time the computer player is cycled back through (usually > 1)
@@ -49,7 +50,7 @@
                             team="1">
                             <BaseLocation x="600" y="265" team="1"/>
                             <RepeatingDays>
-								<!-- Pigsley doesn't get harder till day 3 -->
+                                <!-- Pigsley doesn't get harder till day 3 -->
                                 <Day repeatWaves="true">
                                     <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
                                     <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
@@ -59,7 +60,7 @@
                                     <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
                                     <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
                                 </Day>
-								<Day repeatWaves="true">
+                                <Day repeatWaves="true">
                                     <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
                                     <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
                                     <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
@@ -72,9 +73,9 @@
                         </Computer>
                     </Group>
 
-					<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
-					<Group>
-						<Computer
+                    <!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
+                    <Group>
+                        <Computer
                             playerName="Horace"
                             baseStartHealth="150"
                             baseHealth="150"
@@ -84,17 +85,66 @@
                             <BaseLocation x="600" y="295" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-                                	<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
                                     <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-	                                <Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
-	                                <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-	                                <Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
+                                    <Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
+                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+                                    <Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
                                     <Wave absoluteDelay="105"><Unit type="colossus" count="2"/></Wave>
                                     <Wave absoluteDelay="119"></Wave>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
-					</Group>
+                    </Group>
+
+                </ComputerGroups>
+            </Map>
+
+            <!-- ****** LEVEL 2 ****** -->
+            <Map repeats="true">
+                <MapSettings backgroundName="ballfield"/>
+                <HumanBaseLocations>
+                    <BaseLocation x="80" y="215" team="0"/>
+                </HumanBaseLocations>
+                <MultiplierDropLocation x="400" y="265"/>
+                <AvailableUnits all="true"/>
+                <AvailableSpells all="true"/>
+
+                <ComputerGroups>
+                    <!-- Iris and Ivy, the clever twins -->
+                    <Group>
+	
+                        <Computer
+                            playerName="Iris"
+                            baseStartHealth="150"
+                            baseHealth="150"
+                            baseHealthScale="1.5"
+                            waveDelayScale="0.7"
+                            team="1">
+                            <BaseLocation x="620" y="165" team="1"/>
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+									<Wave absoluteDelay="1"><Unit type="heavy" count="3"/></Wave>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+
+						<Computer
+                            playerName="Ivy"
+                            baseStartHealth="150"
+                            baseHealth="150"
+                            baseHealthScale="1.5"
+                            waveDelayScale="0.7"
+                            team="1">
+                            <BaseLocation x="620" y="275" team="1"/>
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+									<Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+
+                    </Group>
 
                 </ComputerGroups>
             </Map>
