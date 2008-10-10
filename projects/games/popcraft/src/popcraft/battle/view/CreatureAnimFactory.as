@@ -140,10 +140,10 @@ public class CreatureAnimFactory
         },
 
         // Handy Man
-        { attack_N: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
-          attack_NW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
-          attack_S: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
-          attack_SW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
+        { attack_N: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 1, 1, 1, 1 ], 55/30),
+          attack_NW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 1, 1, 1, 1 ], 55/30),
+          attack_S: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 1, 1, 1, 1 ], 55/30),
+          attack_SW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 1, 1, 1, 1 ], 55/30),
 
           die_N: new CreatureBitmapAnimDesc([ 10, 21, 30 ], 30/30, BitmapAnim.STOP),
           die_NW: new CreatureBitmapAnimDesc([ 10, 30, 40 ], 40/30, BitmapAnim.STOP),
