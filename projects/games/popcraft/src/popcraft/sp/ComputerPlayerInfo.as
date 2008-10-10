@@ -11,8 +11,12 @@ public class ComputerPlayerInfo extends PlayerInfo
     public function ComputerPlayerInfo (playerIndex :int, baseLoc :BaseLocationData,
         data :ComputerPlayerData)
     {
+        var playerDisplayData :PlayerDisplayData =
+            GameContext.gameData.getPlayerDisplayData(data.playerName);
+
         super(playerIndex, data.team, baseLoc, data.baseHealth, data.baseStartHealth,
-            data.invincible, 1, data.playerName, data.playerHeadshot);
+            data.invincible, 1, playerDisplayData.color, playerDisplayData.displayName,
+            playerDisplayData.headshot);
 
         _data = data;
 

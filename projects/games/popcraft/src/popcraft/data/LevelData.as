@@ -20,7 +20,6 @@ public class LevelData
     public var newSpellType :int;
 
     public var playerName :String;
-    public var playerHeadshotName :String;
     public var playerBaseHealth :int;
     public var playerBaseStartHealth :int;
 
@@ -34,11 +33,6 @@ public class LevelData
     public var mapSettings :MapSettingsData;
 
     public var gameDataOverride :GameData;
-
-    public function get playerHeadshot () :DisplayObject
-    {
-        return ImageResource.instantiateBitmap(playerHeadshotName);
-    }
 
     public function isAvailableUnit (unitType :int) :Boolean
     {
@@ -74,7 +68,6 @@ public class LevelData
             Constants.CASTABLE_SPELL_NAMES, -1);
 
         level.playerName = XmlReader.getStringAttr(xml, "playerName");
-        level.playerHeadshotName = XmlReader.getStringAttr(xml, "playerHeadshotName");
         level.playerBaseHealth = XmlReader.getIntAttr(xml, "playerBaseHealth");
         level.playerBaseStartHealth = XmlReader.getIntAttr(xml, "playerBaseStartHealth",
             level.playerBaseHealth);

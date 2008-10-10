@@ -24,7 +24,7 @@ public class DeadCreatureUnitView extends BattlefieldSprite
             _flipX = true;
         }
 
-        var playerColor :uint = GameContext.gameData.playerColors[creature.owningPlayerIndex];
+        var playerColor :uint = creature.owningPlayerInfo.color;
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
         if (PerfMonitor.framerate < Constants.USE_BITMAP_ANIM_FRAMERATE_THRESHOLD) {

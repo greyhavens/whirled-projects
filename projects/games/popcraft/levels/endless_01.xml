@@ -10,6 +10,11 @@
         <GameDataOverride>
         </GameDataOverride>
 
+		<HumanPlayers>
+			<Player name="Finley"/>
+			<Player name="Eloise"/>
+		</HumanPlayers>
+
         <PointsPerCreatureKill>
             <Unit type="grunt" points="10"/>
             <Unit type="heavy" points="10"/>
@@ -37,7 +42,6 @@
 -->
                         <Computer
                             playerName="Pigsley"
-                            playerHeadshotName="portrait_pigsley"
                             baseStartHealth="150"
                             baseHealth="150"
                             baseHealthScale="1.5"
@@ -72,7 +76,6 @@
 					<Group>
 						<Computer
                             playerName="Horace"
-                            playerHeadshotName="portrait_horace"
                             baseStartHealth="150"
                             baseHealth="150"
                             baseHealthScale="1.5"

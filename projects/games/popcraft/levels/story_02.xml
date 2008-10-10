@@ -17,7 +17,6 @@ Till the perp's apprehended,
         introText2=
 "Ralph's best friend, Iris, is creating Delivery Boys to reduce your workshop to rubble. The Handy Man can keep them at bay!"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="70">
 
         <GameDataOverride disableDiurnalCycle="true"/>
@@ -43,7 +42,7 @@ Till the perp's apprehended,
 
         <AvailableSpells/>
 
-        <Computer playerName="Iris" playerHeadshotName="portrait_iris" baseHealth="70" team="1">
+        <Computer playerName="Iris" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="5"><Unit type="sapper" count="1"/></Wave>

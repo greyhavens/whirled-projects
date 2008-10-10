@@ -20,7 +20,8 @@ public class PlayerInfo extends EventDispatcher
 {
     public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         maxHealth :Number, startHealth :Number, invincible :Boolean,
-        handicap :Number, playerName :String = null, playerHeadshot :DisplayObject = null)
+        handicap :Number, color :uint, displayName :String = null,
+        headshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
         _teamId = teamId;
@@ -29,6 +30,7 @@ public class PlayerInfo extends EventDispatcher
         _startHealth = startHealth;
         _invincible = invincible;
         _handicap = handicap;
+        _color = color;
 
         _minResourceAmount = GameContext.gameData.minResourceAmount;
         _maxResourceAmount = GameContext.gameData.maxResourceAmount;
@@ -36,16 +38,16 @@ public class PlayerInfo extends EventDispatcher
             _maxResourceAmount *= _handicap;
         }
 
-        if (null != playerName) {
-            _playerName = playerName;
+        if (null != displayName) {
+            _displayName = displayName;
         } else {
-            _playerName = SeatingManager.getPlayerName(_playerIndex);
+            _displayName = SeatingManager.getPlayerName(_playerIndex);
         }
 
-        if (null != playerHeadshot) {
-            _playerHeadshot = playerHeadshot;
+        if (null != headshot) {
+            _headshot = headshot;
         } else {
-            _playerHeadshot = SeatingManager.getPlayerHeadshot(_playerIndex);
+            _headshot = SeatingManager.getPlayerHeadshot(_playerIndex);
         }
     }
 
@@ -120,11 +122,6 @@ public class PlayerInfo extends EventDispatcher
         return _handicap;
     }
 
-    public function get playerColor () :uint
-    {
-        return GameContext.gameData.playerColors[_playerIndex];
-    }
-
     public function get playerIndex () :int
     {
         return _playerIndex;
@@ -140,14 +137,19 @@ public class PlayerInfo extends EventDispatcher
         return SeatingManager.getPlayerOccupantId(_playerIndex);
     }
 
-    public function get playerName () :String
+    public function get displayName () :String
     {
-        return _playerName;
+        return _displayName;
     }
 
-    public function get playerHeadshot () :DisplayObject
+    public function get headshot () :DisplayObject
     {
-        return _playerHeadshot;
+        return _headshot;
+    }
+
+    public function get color () :uint
+    {
+        return _color;
     }
 
     public function get leftGame () :Boolean
@@ -258,12 +260,13 @@ public class PlayerInfo extends EventDispatcher
     }
 
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position
+    protected var _color :uint;
     protected var _teamId :int;
     protected var _maxHealth :Number;
     protected var _startHealth :Number;
     protected var _invincible :Boolean;
-    protected var _playerName :String;
-    protected var _playerHeadshot :DisplayObject;
+    protected var _displayName :String;
+    protected var _headshot :DisplayObject;
     protected var _leftGame :Boolean;
     protected var _targetedEnemy :PlayerInfo;
     protected var _workshopRef :SimObjectRef;

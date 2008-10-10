@@ -91,7 +91,7 @@ public class GameContext
     {
         return ArrayUtil.findIf(
             playerInfos,
-            function (info :PlayerInfo) :Boolean { return info.playerName == playerName; });
+            function (info :PlayerInfo) :Boolean { return info.displayName == playerName; });
     }
 
     public static function isEnemy (playerIndex :int, otherPlayerIndex :int) :Boolean

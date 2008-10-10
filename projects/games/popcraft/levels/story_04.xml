@@ -15,7 +15,6 @@
   The boy's clearly insane.&quot;"
         introText2="Use the Delivery Boy's explosive attack to destroy the Street-Walkers Ralph is sending your way. A few Delivery Boys can take out large groups of enemies."
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <Hints>
@@ -41,7 +40,7 @@
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="100" team="1">
+        <Computer playerName="Ralph" baseHealth="100" team="1">
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>

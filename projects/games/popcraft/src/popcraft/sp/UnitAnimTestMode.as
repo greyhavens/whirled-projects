@@ -1,5 +1,6 @@
 package popcraft.sp {
 
+import com.threerings.util.HashMap;
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
@@ -17,9 +18,9 @@ public class UnitAnimTestMode extends AppMode
 {
     override protected function setup () :void
     {
-        var playerColors :Array = AppContext.defaultGameData.playerColors;
-
-        _recolor = playerColors[0];
+        var playerDisplayDatas :HashMap = AppContext.defaultGameData.playerDisplayDatas;
+        var playerDisplayData :PlayerDisplayData = playerDisplayDatas.values()[0];
+        _recolor = playerDisplayData.color;
 
         var g :Graphics = this.modeSprite.graphics;
 
@@ -41,8 +42,8 @@ public class UnitAnimTestMode extends AppMode
         // player color buttons
         xLoc = 10;
         yLoc = 350;
-        for (var playerNum :int = 0; playerNum < playerColors.length; ++playerNum) {
-            button = this.createPlayerColorButton(playerNum);
+        for each (playerDisplayData in playerDisplayDatas.values()) {
+            button = this.createPlayerColorButton(playerDisplayData);
             button.x = xLoc;
             button.y = yLoc;
             xLoc += button.width + 3;
@@ -76,15 +77,14 @@ public class UnitAnimTestMode extends AppMode
         return unitButton;
     }
 
-    protected function createPlayerColorButton (playerNum :int) :SimpleButton
+    protected function createPlayerColorButton (playerDisplayData :PlayerDisplayData) :SimpleButton
     {
         var thisObject :UnitAnimTestMode = this;
 
-        var color :uint = AppContext.defaultGameData.playerColors[playerNum];
-        var unitButton :SimpleButton = UIBits.createButton("Player " + String(playerNum + 1));
+        var unitButton :SimpleButton = UIBits.createButton(playerDisplayData.displayName);
         this.registerEventListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                thisObject.recolor = color;
+                thisObject.recolor = playerDisplayData.color;
             });
 
         return unitButton;

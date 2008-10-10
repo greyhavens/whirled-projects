@@ -14,7 +14,6 @@ Jack unloads this invective,
  &quot;You're both ugly as sin.&quot;"
         introText2="A fire has broken out in your workshop! You're in danger of being overwhelmed by Ivy, who's attempting to exploit your weakness. Construct a solid defense, quickly!"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="150"
         playerBaseStartHealth="50">
 
@@ -44,7 +43,7 @@ Jack unloads this invective,
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer playerName="Ivy" playerHeadshotName="portrait_ivy" baseHealth="150" team="1">
+        <Computer playerName="Ivy" baseHealth="150" team="1">
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

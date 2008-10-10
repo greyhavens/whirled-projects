@@ -53,7 +53,6 @@
 
         <Computer
             playerName="Ralph"
-            playerHeadshotName="portrait_ralph"
             team="2"
             baseHealth="1">
             <RepeatingDays>
@@ -67,7 +66,6 @@
 
         <Computer
             playerName="Jack"
-            playerHeadshotName="portrait_jack"
             team="1"
             baseHealth="1">
             <RepeatingDays>

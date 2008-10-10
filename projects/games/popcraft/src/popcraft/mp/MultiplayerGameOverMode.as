@@ -25,7 +25,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (!playerInfo.leftGame && playerInfo.teamId == GameContext.winningTeamId) {
-                winningPlayerNames.push(playerInfo.playerName);
+                winningPlayerNames.push(playerInfo.displayName);
             }
         }
 
@@ -149,7 +149,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
 
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                 if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
-                    playerInfo.playerName == TrophyManager.MALEDICTORIAN_NAME) {
+                    playerInfo.displayName == TrophyManager.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose
                     // Whirled name is "Professor Weardd"
                     TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);

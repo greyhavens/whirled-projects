@@ -32,7 +32,7 @@ public class CreatureUnitView extends BattlefieldSprite
         _sprite.mouseEnabled = false;
         _sprite.mouseChildren = false;
 
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var playerColor :uint = _unit.owningPlayerInfo.color;
 
         this.setupAnimations(playerColor);
 

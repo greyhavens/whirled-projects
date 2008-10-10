@@ -54,6 +54,8 @@ public class MultiplayerGameMode extends GameMode
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
+        var playerDisplayDatas :Array = GameContext.gameData.playerDisplayDatas.values();
+
         // create PlayerInfo structures
         GameContext.playerInfos = [];
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
@@ -71,11 +73,17 @@ public class MultiplayerGameMode extends GameMode
                 handicap *= Constants.HANDICAPPED_MULTIPLIER;
             }
 
+            // choose a random color for this player
+            var index :int = Rand.nextIntRange(0, playerDisplayDatas.length, Rand.STREAM_GAME);
+            var playerDisplayData :PlayerDisplayData = playerDisplayDatas[index];
+            playerDisplayDatas.splice(index, 1); // we're operating on a copy of the data
+            var playerColor :uint = playerDisplayData.color;
+
             GameContext.playerInfos.push(GameContext.localPlayerIndex == playerIndex ?
                 new LocalPlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth,
-                                    false, handicap) :
+                                    false, handicap, playerColor) :
                 new PlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth, false,
-                                handicap));
+                                handicap, playerColor));
         }
 
         // init players

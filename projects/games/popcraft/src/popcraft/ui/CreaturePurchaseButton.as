@@ -50,7 +50,7 @@ public class CreaturePurchaseButton extends SimObject
         this.registerEventListener(_button, MouseEvent.CLICK, onClicked);
 
         _unitData = GameContext.gameData.units[unitType];
-        var playerColor :uint = GameContext.gameData.playerColors[GameContext.localPlayerIndex];
+        var playerColor :uint = GameContext.localPlayerInfo.color;
 
         // try instantiating some animations
         _enabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");

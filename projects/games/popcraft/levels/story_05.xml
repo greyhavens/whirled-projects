@@ -17,7 +17,6 @@
 
 Both girls must fall! Click an opponent's workshop to direct your creatures to it."
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <Hints>
@@ -44,7 +43,7 @@ Both girls must fall! Click an opponent's workshop to direct your creatures to i
 
         <AvailableSpells/>
 
-        <Computer playerName="Iris" playerHeadshotName="portrait_iris" baseHealth="70" team="1">
+        <Computer playerName="Iris" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
@@ -58,7 +57,7 @@ Both girls must fall! Click an opponent's workshop to direct your creatures to i
             </RepeatingDays>
         </Computer>
 
-        <Computer playerName="Ivy" playerHeadshotName="portrait_ivy" baseHealth="70" team="1">
+        <Computer playerName="Ivy" baseHealth="70" team="1">
             <RepeatingDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>

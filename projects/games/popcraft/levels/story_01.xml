@@ -16,7 +16,6 @@ Now Headmaster Weardd
   is nowhere to be found."
         introText2="A massive fire has reduced the Academy to rubble. Ralph, that bastard, is taking advantage of the chaos to mount a small campaign against you. Turn your Flesh and Energy into Street-Walkers to tear down his workshop!"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="50">
 
         <GameDataOverride disableDiurnalCycle="true"/>
@@ -41,7 +40,7 @@ Now Headmaster Weardd
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseStartHealth="15" baseHealth="50" team="1">
+        <Computer playerName="Ralph" baseStartHealth="15" baseHealth="50" team="1">
             <RepeatingDays>
                 <Day repeatWaves="true">
                     <Wave delayBefore="15"><Unit type="grunt" count="1"/></Wave>

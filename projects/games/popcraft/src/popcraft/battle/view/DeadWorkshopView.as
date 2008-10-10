@@ -25,7 +25,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         // player name
         var owningPlayer :PlayerInfo = unit.owningPlayerInfo;
         var nameText :TextField = _movie["player_name"];
-        nameText.text = owningPlayer.playerName;
+        nameText.text = owningPlayer.displayName;
 
         // remove the "target" badge
         var targetBadge :MovieClip = _movie["target"];
@@ -42,7 +42,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         rubble.scaleX = (unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
 
         // recolor
-        var playerColor :uint = GameContext.gameData.playerColors[unit.owningPlayerIndex];
+        var playerColor :uint = unit.owningPlayerInfo.color;
         var recolor :MovieClip = rubble["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 

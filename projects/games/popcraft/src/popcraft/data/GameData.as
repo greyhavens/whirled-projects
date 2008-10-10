@@ -1,6 +1,6 @@
 package popcraft.data {
 
-import com.threerings.flash.Vector2;
+import com.threerings.util.HashMap;
 import com.whirled.contrib.simplegame.util.*;
 
 import popcraft.*;
@@ -32,7 +32,14 @@ public class GameData
     public var resources :Array = [];
     public var units :Array = [];
     public var spells :Array = [];
-    public var playerColors :Array = [];
+
+    public var playerDisplayDatas :HashMap = new HashMap(); // Map<String, PlayerDisplayData>
+
+    public function getPlayerDisplayData (playerName :String) :PlayerDisplayData
+    {
+        var data :PlayerDisplayData = playerDisplayDatas.get(playerName);
+        return (data != null ? data : PlayerDisplayData.unknown);
+    }
 
     public function clone () :GameData
     {
@@ -68,7 +75,9 @@ public class GameData
             theClone.spells.push(spellData.clone());
         }
 
-        theClone.playerColors = playerColors.slice();
+        for each (var playerDisplayData :PlayerDisplayData in playerDisplayDatas.values()) {
+            theClone.playerDisplayDatas.put(playerDisplayData.dataName, playerDisplayData.clone());
+        }
 
         return theClone;
     }
@@ -170,12 +179,15 @@ public class GameData
                 (useDefaults ? inheritFrom.spells[type] : null));
         }
 
-        // read player colors
-        for each (var playerColorNode :XML in xml.PlayerColors.PlayerColor) {
-            var player :int = XmlReader.getUintAttr(playerColorNode, "player");
-            var color :uint = XmlReader.getUintAttr(playerColorNode, "color");
-
-            gameData.playerColors[player - 1] = color;
+        // read PlayerDisplayData
+        for each (var playerDisplayXml :XML in xml.PlayerDisplayDatas.PlayerDisplay) {
+            var name :String = XmlReader.getStringAttr(playerDisplayXml, "name");
+            var inheritDisplayData :PlayerDisplayData;
+            if (inheritFrom != null) {
+                inheritDisplayData = inheritFrom.getPlayerDisplayData(name);
+            }
+            gameData.playerDisplayDatas.put(name,
+                PlayerDisplayData.fromXml(playerDisplayXml, inheritDisplayData));
         }
 
         return gameData;

@@ -14,7 +14,6 @@ Ralph goads his foe,
  &quot;Is that why you're irate?&quot;"
         introText2="A group of Ralph's cronies has broken into your resource reserves and made off with large amounts of Flesh and Blood. You'll have an easier time harvesting Energy and Scrap, but you'll be hard-pressed to create a Flesh Behemoth."
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -58,7 +57,6 @@ Ralph goads his foe,
 
         <Computer
             playerName="Ivy"
-            playerHeadshotName="portrait_ivy"
             baseHealth="150"
             team="1">
             <InitialSpells/>

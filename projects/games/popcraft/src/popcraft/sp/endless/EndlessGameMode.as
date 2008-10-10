@@ -11,8 +11,6 @@ import com.whirled.contrib.simplegame.tasks.TimedTask;
 
 import popcraft.*;
 import popcraft.battle.*;
-import popcraft.battle.view.DeadWorkshopView;
-import popcraft.battle.view.WorkshopView;
 import popcraft.data.*;
 import popcraft.mp.*;
 import popcraft.sp.*;
@@ -282,12 +280,14 @@ public class EndlessGameMode extends GameMode
         var workshopHealth :Number = workshopData.maxHealth;
 
         // Create the local player
+        var playerDisplayData :PlayerDisplayData =
+            GameContext.gameData.getPlayerDisplayData(EndlessGameContext.level.humanPlayerNames[0]);
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
             GameContext.localPlayerIndex,
             HUMAN_TEAM_ID,
             _curMapData.humanBaseLocs[0],
             workshopHealth, workshopHealth, false,
-            1, "Finley", null);
+            1, playerDisplayData.color, playerDisplayData.displayName, playerDisplayData.headshot);
 
         GameContext.playerInfos.push(localPlayerInfo);
 

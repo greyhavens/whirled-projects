@@ -34,20 +34,20 @@ public class PlayerStatusView extends SceneObject
         deathMovie.visible = false;
 
         _healthMeter = _movie["health_meter"];
-        _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.playerColor).createFilter() ];
+        _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.color).createFilter() ];
         _meterArrow = _movie["meter_arrow"];
 
         var playerName :TextField = _movie["player_name"];
-        playerName.text = _playerInfo.playerName;
+        playerName.text = _playerInfo.displayName;
 
         var namePlate :MovieClip = _movie["name_plate"];
-        namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.playerColor).createFilter() ];
+        namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.color).createFilter() ];
 
         // display the player headshot
         var headshotParent :Sprite = new Sprite();
 
         // add the headshot image
-        var headshot :DisplayObject = _playerInfo.playerHeadshot;
+        var headshot :DisplayObject = _playerInfo.headshot;
         headshot.scaleX = 1;
         headshot.scaleY = 1;
         var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height);

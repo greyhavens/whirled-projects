@@ -15,7 +15,6 @@
         introText2="Ralph, Iris, and Ivy have you surrounded! Use the Bloodlust Infusion to enrage your creatures, and send them to smash your foes!"
         newSpellType="bloodlust"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="120">
 
         <Hints>
@@ -55,7 +54,6 @@
 
         <Computer
             playerName="Ralph"
-            playerHeadshotName="portrait_ralph"
             baseHealth="120"
             team="1">
             <InitialSpells/>
@@ -102,7 +100,6 @@
 
         <Computer
             playerName="Iris"
-            playerHeadshotName="portrait_iris"
             baseHealth="80"
             team="1">
             <InitialSpells/>
@@ -153,7 +150,6 @@
 
         <Computer
             playerName="Ivy"
-            playerHeadshotName="portrait_ivy"
             baseHealth="80"
             team="1">
             <InitialSpells/>

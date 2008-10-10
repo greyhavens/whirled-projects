@@ -16,7 +16,6 @@
 
 He's sending several your way, but he'll be vulnerable for a short while after the attack. Swarm the Behemoths with Handy Men and Street-Walkers to slow their progress and take them down, then make your move!"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <Hints>
@@ -42,7 +41,7 @@ He's sending several your way, but he'll be vulnerable for a short while after t
             <Spell type="rigormortis"/>
         </AvailableSpells>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="100" team="1">
+        <Computer playerName="Ralph" baseHealth="100" team="1">
             <InitialSpells/>
             <InitialDays>
                 <Day repeatWaves="false"

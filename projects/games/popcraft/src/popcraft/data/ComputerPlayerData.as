@@ -11,7 +11,6 @@ import popcraft.util.*;
 public class ComputerPlayerData
 {
     public var playerName :String;
-    public var playerHeadshotName :String;
     public var baseHealth :int;
     public var baseStartHealth :int;
     public var invincible :Boolean;
@@ -20,17 +19,11 @@ public class ComputerPlayerData
     public var repeatingDays :Array = [];
     public var startingCreatureSpells :Array = [];
 
-    public function get playerHeadshot () :DisplayObject
-    {
-        return ImageResource.instantiateBitmap(playerHeadshotName);
-    }
-
     public static function fromXml (xml :XML, data :ComputerPlayerData = null) :ComputerPlayerData
     {
         var computerPlayer :ComputerPlayerData = (data != null ? data : new ComputerPlayerData());
 
         computerPlayer.playerName = XmlReader.getStringAttr(xml, "playerName");
-        computerPlayer.playerHeadshotName = XmlReader.getStringAttr(xml, "playerHeadshotName");
         computerPlayer.baseHealth = XmlReader.getIntAttr(xml, "baseHealth");
         computerPlayer.baseStartHealth = XmlReader.getIntAttr(xml, "baseStartHealth",
             computerPlayer.baseHealth);

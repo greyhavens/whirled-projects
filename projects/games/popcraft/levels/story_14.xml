@@ -15,7 +15,6 @@
         introText2=
 "With Pigsley's assistance, you've greatly optimized your creature creation process. You will create two creatures for every one you purchase. This is your chance to put Ralph down permanently!"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -24,9 +23,6 @@
         </Hints>
 
         <GameDataOverride enableEclipse="true" initialDayPhase="eclipse">
-            <PlayerColors>
-                <PlayerColor player="3" color="0xCB71FF"/>
-            </PlayerColors>
         </GameDataOverride>
 
         <MapSettings backgroundName="city">
@@ -61,7 +57,6 @@
 
         <Computer
             playerName="Ralph"
-            playerHeadshotName="portrait_ralph"
             baseHealth="450"
             team="1">
 
@@ -129,8 +124,7 @@
         </Computer>
 
         <Computer
-            playerName="Prof. Weardd"
-            playerHeadshotName="portrait_weardd"
+            playerName="Weardd"
             baseHealth="1"
             invincible="true"
             team="1">

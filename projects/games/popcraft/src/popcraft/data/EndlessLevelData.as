@@ -7,6 +7,8 @@ import popcraft.util.XmlReader;
 
 public class EndlessLevelData
 {
+    public var humanPlayerNames :Array = [];
+
     public var maxMultiplier :int;
     public var multiplierDamageSoak :Number;
 
@@ -28,6 +30,10 @@ public class EndlessLevelData
         if (null != gameDataOverrideNode) {
             level.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
                 AppContext.defaultGameData.clone());
+        }
+
+        for each (var nameXml :XML in xml.HumanPlayers.Player) {
+            level.humanPlayerNames.push(XmlReader.getStringAttr(nameXml, "name"));
         }
 
         level.maxMultiplier = XmlReader.getUintAttr(xml, "maxMultiplier");

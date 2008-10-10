@@ -15,7 +15,6 @@
         introText2="You've enlisted the aid of Pigsley Perkins, your most loyal sycophant, to topple your enemies. Pigsley is a notoriously slow child, and prefers brute force over tactics. He will send a steady stream of creatures at your opponents, but don't expect deep strategy from him."
         newSpellType="shuffle"
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="150">
 
         <Hints>
@@ -57,7 +56,6 @@
 
         <Computer
             playerName="Pigsley"
-            playerHeadshotName="portrait_pigsley"
             baseHealth="100"
             team="0">
             <InitialSpells/>
@@ -80,7 +78,6 @@
 
         <Computer
             playerName="Iris"
-            playerHeadshotName="portrait_iris"
             baseHealth="150"
             team="1">
             <InitialSpells/>
@@ -123,7 +120,6 @@
 
         <Computer
             playerName="Ivy"
-            playerHeadshotName="portrait_ivy"
             baseHealth="150"
             team="1">
             <InitialSpells/>

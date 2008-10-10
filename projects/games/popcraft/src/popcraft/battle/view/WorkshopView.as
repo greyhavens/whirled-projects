@@ -57,7 +57,7 @@ public class WorkshopView extends BattlefieldSprite
         _sprite.addChild(_movie);
 
         // create health meters
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var playerColor :uint = _unit.owningPlayerInfo.color;
         var yOffset :Number = -_sprite.height - HEALTH_METER_SIZE.y;
         var remainingMaxMeterValue :Number = _unit.maxHealth;
         var remainingMeterValue :Number = _unit.health;
@@ -97,7 +97,7 @@ public class WorkshopView extends BattlefieldSprite
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
         var nameText :TextField = _movie["player_name"];
-        nameText.text = owningPlayer.playerName;
+        nameText.text = owningPlayer.displayName;
 
         // clickable sprite
         _clickableSprite.graphics.beginFill(0, 0);
@@ -138,7 +138,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function recolorWorkshop (workshop :MovieClip) :void
     {
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var playerColor :uint = _unit.owningPlayerInfo.color;
         var recolor :MovieClip = workshop["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
     }
@@ -243,7 +243,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function updateShieldMeters () :void
     {
-        var playerColor :uint = GameContext.gameData.playerColors[_unit.owningPlayerIndex];
+        var playerColor :uint = _unit.owningPlayerInfo.color;
         var shieldColor :uint = 0xFFFFFF;//ColorUtil.blend(playerColor, 0x000000);
 
         var shields :Array = _unit.damageShields;

@@ -19,6 +19,19 @@
         maxResourceAmount="1000"
         maxSpellsPerType="3">
 
+        <PlayerDisplayDatas>
+            <PlayerDisplay name="Jack" displayName="Jack" headshotName="portrait_jack" color="0x9FBCFF"/>
+            <PlayerDisplay name="Ralph" displayName="Ralph" headshotName="portrait_ralph" color="0xFF0000"/>
+            <PlayerDisplay name="Iris" displayName="Iris" headshotName="portrait_iris" color="0x9C78E4"/>
+            <PlayerDisplay name="Ivy" displayName="Ivy" headshotName="portrait_ivy" color="0x51FF7E"/>
+            <PlayerDisplay name="Pigsley" displayName="Pigsley" headshotName="portrait_pigsley" color="0x996633"/>
+            <PlayerDisplay name="Weardd" displayName="Prof. Weardd" headshotName="portrait_weardd" color="0x666666"/>
+            <PlayerDisplay name="Finley" displayName="Finley" headshotName="portrait_finley" color="0xFFE75F"/>
+            <PlayerDisplay name="Eloise" displayName="Eloise" headshotName="portrait_eloise" color="0xFF8000"/>
+            <PlayerDisplay name="Horace" displayName="Horace" headshotName="portrait_horace" color="0x000099"/>
+            <PlayerDisplay name="Ursula" displayName="Ursula" headshotName="portrait_ursula" color="0xFF6FCF"/>
+        </PlayerDisplayDatas>
+
         <PuzzleClearValueTable>
             <Index value="-20"/>
             <Index value="-10"/>
@@ -269,13 +282,6 @@ Lasts for 30 seconds."
                 introText=""
                 />
         </Spells>
-
-        <PlayerColors>
-            <PlayerColor player="1" color="0x9FBCFF"/>
-            <PlayerColor player="2" color="0xFF0000"/>
-            <PlayerColor player="3" color="0x51FF7E"/>
-            <PlayerColor player="4" color="0xFFE75F"/>
-        </PlayerColors>
 
     </GameData>
 

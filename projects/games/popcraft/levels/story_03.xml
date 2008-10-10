@@ -15,7 +15,6 @@ One half follows Ralph;
         introText2=
 "Your creatures wither in the horrible sunlight! Use the daytime hours to stockpile materials and plan your next attack."
         playerName="Jack"
-        playerHeadshotName="portrait_jack"
         playerBaseHealth="100">
 
         <GameDataOverride initialDayPhase="night"/>
@@ -39,7 +38,7 @@ One half follows Ralph;
 
         <AvailableSpells/>
 
-        <Computer playerName="Ralph" playerHeadshotName="portrait_ralph" baseHealth="100" team="1">
+        <Computer playerName="Ralph" baseHealth="100" team="1">
             <InitialDays>
                 <Day repeatWaves="false">
                     <Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>

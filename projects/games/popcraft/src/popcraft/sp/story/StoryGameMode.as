@@ -87,11 +87,13 @@ public class StoryGameMode extends GameMode
         var baseLocs :Array = _level.mapSettings.baseLocs.slice();
 
         // Create the local player (always playerIndex=0, team=0)
+        var playerDisplayData :PlayerDisplayData =
+            GameContext.gameData.getPlayerDisplayData(_level.playerName);
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
             0, 0,
             MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
             _level.playerBaseHealth, _level.playerBaseStartHealth, false,
-            1, _level.playerName, _level.playerHeadshot);
+            1, playerDisplayData.color, playerDisplayData.displayName, playerDisplayData.headshot);
 
         // grant the player some starting resources
         var initialResources :Array = _level.initialResources;
