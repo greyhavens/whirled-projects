@@ -27,7 +27,10 @@ public class DeadCreatureUnitView extends BattlefieldSprite
         var playerColor :uint = creature.owningPlayerInfo.color;
         var animName :String = "die_" + Constants.FACING_STRINGS[facing];
 
-        if (PerfMonitor.framerate < Constants.USE_BITMAP_ANIM_FRAMERATE_THRESHOLD) {
+        var useBitmapAnims :Boolean =
+            PerfMonitor.framerate < Constants.BITMAP_DEATH_ANIM_THRESHOLDS[creature.unitType];
+
+        if (useBitmapAnims) {
             var bitmapAnim :BitmapAnim = CreatureAnimFactory.getBitmapAnim(creature.unitType,
                 playerColor, animName);
             if (null == bitmapAnim) {

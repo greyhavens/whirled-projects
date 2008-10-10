@@ -156,7 +156,7 @@ public class CreatureUnitView extends BattlefieldSprite
     protected function setupAnimations (playerColor :uint) :void
     {
         var useBitmapAnims :Boolean =
-            (PerfMonitor.framerate < Constants.USE_BITMAP_ANIM_FRAMERATE_THRESHOLD);
+            PerfMonitor.framerate < Constants.BITMAP_LIVE_ANIM_THRESHOLDS[_unit.unitType];
 
         for (var i :int = 0; i < 3; ++i) {
 

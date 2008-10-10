@@ -54,9 +54,22 @@ public class CreatureAnimFactory
                 // create the frame array
                 var creatureAnimDesc :CreatureBitmapAnimDesc = (BITMAP_ANIM_DESCS[unitType])[animName];
                 var frames :Array = [];
-                for each (var frameIndex :int in creatureAnimDesc.frameIndexes) {
-                    animMovie.gotoAndPlay(frameIndex);
-                    frames.push(BitmapAnimFrame.fromDisplayObject(animMovie));
+                var instantiatedFrameIndexes :Array = [];
+                var frameIndexes :Array = creatureAnimDesc.frameIndexes;
+                for each (var frameIndex :int in frameIndexes) {
+                    var frame :BitmapAnimFrame;
+                    // have we already instantiated this frame? if so, just insert the
+                    // existing bitmap back into the array
+                    var existingFrameIndex :int = instantiatedFrameIndexes.indexOf(frameIndex);
+                    if (existingFrameIndex >= 0) {
+                        frame = frames[existingFrameIndex];
+                    } else {
+                        animMovie.gotoAndPlay(frameIndex);
+                        frame = BitmapAnimFrame.fromDisplayObject(animMovie);
+                    }
+
+                    frames.push(frame);
+                    instantiatedFrameIndexes.push(frameIndex);
                 }
 
                 anim = new BitmapAnim(frames, creatureAnimDesc.frameRate,
@@ -127,25 +140,25 @@ public class CreatureAnimFactory
         },
 
         // Handy Man
-        { attack_N: new CreatureBitmapAnimDesc([ 1, 20, 25 ], 55/30),
-          attack_NW: new CreatureBitmapAnimDesc([ 1, 20, 25 ], 55/30),
-          attack_S: new CreatureBitmapAnimDesc([ 1, 20, 25 ], 55/30),
-          attack_SW: new CreatureBitmapAnimDesc([ 1, 20, 25 ], 55/30),
+        { attack_N: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
+          attack_NW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
+          attack_S: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
+          attack_SW: new CreatureBitmapAnimDesc([ 1, 6, 11, 16, 25, 31, 31, 31, 31, 31 ], 55/30),
 
           die_N: new CreatureBitmapAnimDesc([ 10, 21, 30 ], 30/30, BitmapAnim.STOP),
           die_NW: new CreatureBitmapAnimDesc([ 10, 30, 40 ], 40/30, BitmapAnim.STOP),
           die_S: new CreatureBitmapAnimDesc([ 10, 34, 45 ], 45/30, BitmapAnim.STOP),
           die_SW: new CreatureBitmapAnimDesc([ 10, 24, 35 ], 40/30, BitmapAnim.STOP),
 
-          stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
-          stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),
-          stand_S: new CreatureBitmapAnimDesc([ 1 ], 1),
-          stand_SW: new CreatureBitmapAnimDesc([ 1 ], 1),
+          stand_N: new CreatureBitmapAnimDesc([ 1, 16, 1, 46 ], 61/30),
+          stand_NW: new CreatureBitmapAnimDesc([ 1, 16, 1, 46 ], 61/30),
+          stand_S: new CreatureBitmapAnimDesc([ 1, 16, 1, 46 ], 61/30),
+          stand_SW: new CreatureBitmapAnimDesc([ 1, 16, 1, 46 ], 61/30),
 
           walk_N: new CreatureBitmapAnimDesc([ 1, 7, 13, 7 ], 25/30),
-          walk_NW: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30),
-          walk_S: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30),
-          walk_SW: new CreatureBitmapAnimDesc([ 1, 9, 17 ], 25/30)
+          walk_NW: new CreatureBitmapAnimDesc([ 7, 13, 19, 25 ], 25/30),
+          walk_S: new CreatureBitmapAnimDesc([ 7, 13, 19, 25 ], 25/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 7, 13, 19, 25 ], 25/30)
         },
 
         // Delivery Boy
@@ -176,10 +189,10 @@ public class CreatureAnimFactory
           stand_S: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_SW: new CreatureBitmapAnimDesc([ 1 ], 1),
 
-          walk_N: new CreatureBitmapAnimDesc([ 7, 14, 21 ], 22/30),
-          walk_NW: new CreatureBitmapAnimDesc([ 7, 14, 21 ], 22/30),
-          walk_S: new CreatureBitmapAnimDesc([ 7, 14, 21 ], 22/30),
-          walk_SW: new CreatureBitmapAnimDesc([ 7, 14, 21 ], 22/30)
+          walk_N: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
+          walk_NW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
+          walk_S: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30)
         },
 
         // Flesh Behemoth

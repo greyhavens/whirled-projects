@@ -116,35 +116,94 @@
 	
                         <Computer
                             playerName="Iris"
-                            baseStartHealth="150"
-                            baseHealth="150"
+                            baseStartHealth="100"
+                            baseHealth="100"
                             baseHealthScale="1.5"
-                            waveDelayScale="0.7"
+                            waveDelayScale="0.9"
                             team="1">
                             <BaseLocation x="620" y="165" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-									<Wave absoluteDelay="1"><Unit type="heavy" count="3"/></Wave>
+									<Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
+									<Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
+									<Wave absoluteDelay="25"><Unit type="sapper" count="3"/></Wave>
+									<Wave absoluteDelay="70"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="120"/>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
 
 						<Computer
                             playerName="Ivy"
-                            baseStartHealth="150"
-                            baseHealth="150"
+                            baseStartHealth="100"
+                            baseHealth="100"
                             baseHealthScale="1.5"
-                            waveDelayScale="0.7"
+                            waveDelayScale="0.9"
                             team="1">
                             <BaseLocation x="620" y="275" team="1"/>
                             <RepeatingDays>
                                 <Day repeatWaves="true">
-									<Wave absoluteDelay="2"><Unit type="heavy" count="3"/></Wave>
+									<Wave absoluteDelay="2"><Unit type="heavy" count="2"/></Wave>
+									<Wave absoluteDelay="6"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="9"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="23"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="26"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="69"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="70"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="120"/>
                                 </Day>
                             </RepeatingDays>
                         </Computer>
 
                     </Group>
+					
+					<Group>
+						<!-- Ursula, the animal lover -->
+						<Computer
+                            playerName="Ursula"
+                            baseStartHealth="150"
+                            baseHealth="150"
+                            baseHealthScale="1.5"
+                            waveDelayScale="0.9"
+                            team="1">
+                            <BaseLocation x="590" y="200" team="1"/>
+                            <RepeatingDays>
+                                <Day repeatWaves="true">
+									<Wave absoluteDelay="1"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="5.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="6"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="6.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="7"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="7.5"><Unit type="courier" count="1"/></Wave>
+									
+									<Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
+									
+									<Wave absoluteDelay="20"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="24"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="26"><Unit type="sapper" count="1"/></Wave>
+									
+									<Wave absoluteDelay="27.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="28"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="28.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="29"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="29.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="30"><Unit type="courier" count="1"/></Wave>
+									
+									<Wave absoluteDelay="83"><Unit type="sapper" count="5"/></Wave>
+									
+									<Wave absoluteDelay="89.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="90"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="90.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="91"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="91.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="92"><Unit type="courier" count="1"/></Wave>
+									
+									<Wave absoluteDelay="120"/>
+                                </Day>
+                            </RepeatingDays>
+                        </Computer>
+					</Group>
 
                 </ComputerGroups>
             </Map>

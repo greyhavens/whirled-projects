@@ -10,8 +10,6 @@ import popcraft.util.*;
 
 public class Constants
 {
-    public static const USE_BITMAP_ANIM_FRAMERATE_THRESHOLD :Number = 15;
-
     /* ResourceManager stuff */
     public static const RESTYPE_LEVEL :String = "level";
     public static const RESTYPE_ENDLESS :String = "endlessLevel";
@@ -41,8 +39,8 @@ public class Constants
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_ENABLE_ENDLESS_MODE :Boolean = true;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
-    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
+    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = false;
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 
     /* Enums, etc */
@@ -132,6 +130,25 @@ public class Constants
     public static const FACING_NE :int = 5;
 
     public static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", "SE", "NE" ];
+
+    /* Performance stuff */
+    public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [
+        16,  // grunt
+        35,  // heavy
+        35,   // sapper
+        35,   // courier
+        16,  // colossus
+        16,  // boss
+    ];
+    public static const BITMAP_DEATH_ANIM_THRESHOLDS :Array = [
+        16,  // grunt
+        16,  // heavy
+        16,  // sapper
+        16,  // courier
+        16,  // colossus
+        16,  // boss
+    ];
+
 }
 
 }
