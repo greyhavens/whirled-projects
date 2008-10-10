@@ -6,7 +6,6 @@ import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
 import popcraft.battle.ai.*;
-import popcraft.data.SpellData;
 
 /**
  * Couriers retrieve spell pickups from the battlefield and bring them back to their
@@ -34,7 +33,8 @@ public class CourierCreatureUnit extends CreatureUnit
     public function pickupSpell (spellObject :SpellDropObject) :void
     {
         Assert.isNull(_carriedSpell);
-        _carriedSpell = spellObject.spellData;
+        _carriedSpell = new CarriedSpellObject(spellObject.spellType);
+        GameContext.netObjects.addObject(_carriedSpell);
         spellObject.destroySelf();
     }
 
@@ -42,8 +42,8 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         if (null != _carriedSpell) {
             // don't play the "new spell" sound when the Courier drops a spell
-            SpellDropFactory.createSpellDrop(_carriedSpell.type, this.unitLoc, false);
-            _carriedSpell = null;
+            SpellDropFactory.createSpellDrop(_carriedSpell.spellType, this.unitLoc, false);
+            this.destroyCarriedSpell();
         }
     }
 
@@ -52,8 +52,9 @@ public class CourierCreatureUnit extends CreatureUnit
         Assert.isNotNull(_carriedSpell);
 
         GameContext.gameMode.spellDeliveredToPlayer(_owningPlayerInfo.playerIndex,
-            _carriedSpell.type);
-        _carriedSpell = null;
+            _carriedSpell.spellType);
+
+        this.destroyCarriedSpell();
 
         // the courier is destroyed when he delivers the spell
         // (but we don't want to play her death animation when this happens)
@@ -61,7 +62,7 @@ public class CourierCreatureUnit extends CreatureUnit
         this.die();
     }
 
-    public function get carriedSpell () :SpellData
+    public function get carriedSpell () :CarriedSpellObject
     {
         return _carriedSpell;
     }
@@ -70,6 +71,20 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         super.addedToDB();
         this.updateSpeedup();
+    }
+
+    override protected function removedFromDB () :void
+    {
+        this.destroyCarriedSpell();
+        super.removedFromDB();
+    }
+
+    protected function destroyCarriedSpell () :void
+    {
+        if (_carriedSpell != null) {
+            _carriedSpell.destroySelf();
+            _carriedSpell = null;
+        }
     }
 
     override protected function die () :void
@@ -134,7 +149,7 @@ public class CourierCreatureUnit extends CreatureUnit
     protected var _speedup :Number = 1;
     protected var _preventDeathAnimation :Boolean;
 
-    protected var _carriedSpell :SpellData;
+    protected var _carriedSpell :CarriedSpellObject;
 }
 
 }

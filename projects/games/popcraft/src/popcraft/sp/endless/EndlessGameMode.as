@@ -103,10 +103,12 @@ public class EndlessGameMode extends GameMode
                     _curMapData.multiplierDropLoc,
                     true);
 
-                // swap in the next opponents when 10 seconds have passed
+                // swap in the next opponents when 30 seconds have passed, or the multiplier
+                // has been retrieved
                 var obj :SimObject = new SimObject();
                 obj.addTask(new SerialTask(
-                    new TimedTask(10),
+                    new WaitForMultiplierRetrievalTask(27),
+                    new TimedTask(3),
                     new FunctionTask(swapInNextOpponents),
                     new SelfDestructTask()));
 
@@ -356,4 +358,59 @@ public class EndlessGameMode extends GameMode
     protected var _swappingInNextOpponents :Boolean;
 }
 
+}
+
+import com.whirled.contrib.simplegame.*;
+
+import popcraft.*;
+import popcraft.battle.*;
+
+class WaitForMultiplierRetrievalTask
+    implements ObjectTask
+{
+    public function WaitForMultiplierRetrievalTask (maxTime :Number)
+    {
+        _maxTime = maxTime;
+    }
+
+    public function update (dt :Number, obj :SimObject) :Boolean
+    {
+        _elapsedTime += dt;
+        if (_elapsedTime >= _maxTime) {
+            return true;
+        } else {
+            return !this.multipliersExist;
+        }
+    }
+
+    protected function get multipliersExist () :Boolean
+    {
+        var netObjs :ObjectDB = GameContext.netObjects;
+        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
+            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                return true;
+            }
+        }
+
+        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
+            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function clone () :ObjectTask
+    {
+        return new WaitForMultiplierRetrievalTask(_maxTime);
+    }
+
+    public function receiveMessage (msg :ObjectMessage) :Boolean
+    {
+        return false;
+    }
+
+    protected var _maxTime :Number;
+    protected var _elapsedTime :Number = 0;
 }

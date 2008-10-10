@@ -19,9 +19,10 @@ public class CourierCreatureUnitView extends CreatureUnitView
     override protected function update (dt :Number) :void
     {
         // if the Courier is carrying a spell, display it
-        var carriedSpell :SpellData = _courier.carriedSpell;
+        var carriedSpell :CarriedSpellObject = _courier.carriedSpell;
         if (null != carriedSpell && null == _carriedSpellIcon) {
-            _carriedSpellIcon = SwfResource.instantiateMovieClip("infusions", carriedSpell.iconName);
+            _carriedSpellIcon =
+                SwfResource.instantiateMovieClip("infusions", carriedSpell.spellData.iconName);
             _carriedSpellIcon.cacheAsBitmap = true;
             _sprite.addChild(_carriedSpellIcon);
         } else if (null == carriedSpell && null != _carriedSpellIcon) {
