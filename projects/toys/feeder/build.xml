@@ -1,0 +1,15 @@
+<!-- build configuration -->
+<project default="test" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Feeder"/>
+  <property name="app.type" value="toy"/>
+  <property name="app.data-dir" value="data"/>
+
+  <!--<property name="app.lib-extras" value="../../../lib/fl-components.swc"/>-->
+  <property name="app.lib-extras" value="../../../lib/corelib.swc"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>
