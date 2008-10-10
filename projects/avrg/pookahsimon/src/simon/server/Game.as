@@ -98,6 +98,11 @@ public class Game extends OneRoomGameRoom
             advanceCurrentPlayer();
         }
 
+        // We don't want to count players that leave before they miss a note
+        if (_state.getPlayerState(playerId) == State.PLAYER_READY) {
+            _playersInRound--;
+        }
+
         // remove the player from the state
         if (!_state.removePlayer(playerId)) {
             log.warning("Player leaving is not in game [playerId=" + playerId + "]");
@@ -260,6 +265,20 @@ public class Game extends OneRoomGameRoom
     }
 
     /**
+     * Awards a trophy to a player if he does not already have it.
+     * @return true if the trophy was awarded.
+     */
+    protected function testAndAward (playerId :int, trophy :String) :Boolean
+    {
+        if (!_gameCtrl.getPlayer(playerId).holdsTrophy(trophy)) {
+            log.info("Awarding trophy", "playerId", playerId, "trophy", trophy);
+            _gameCtrl.getPlayer(playerId).awardTrophy(trophy);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Ends the current round and designates the given player as the winner. The caller must send 
      * state and score updates.
      */
@@ -279,9 +298,25 @@ public class Game extends OneRoomGameRoom
             _gameCtrl.getPlayer(winnerId).completeTask("winner", payout);
         }
 
-        // TODO: trophy for consecutive wins
-        
-        // TODO: trophy for total wins in time period
+        // award at most one trophy for consecutive notes
+        var noteTrophies :Array = [5, 10, 15, 20, 25];
+        for each (var notes :int in noteTrophies) {
+            if (_state.pattern.length >= notes) {
+                if (testAndAward(winnerId, "notes_" + notes)) {
+                    break;
+                }
+            }
+        }
+
+        // award at most one trophy for number of player beaten
+        var playersBeatenTrophies :Array = [5, 10];
+        for each (var beaten :int in playersBeatenTrophies) {
+            if (_playersInRound >= beaten) {
+                if (testAndAward(winnerId, "players_" + notes)) {
+                    break;
+                }
+            }
+        }
 
         // kick off a new round in a bit
         startTimer(ROUND_BREAK, Constants.NEW_ROUND_DELAY_S);
@@ -370,6 +405,7 @@ public class Game extends OneRoomGameRoom
         _state.roundWinnerId = 0;
         _state.pattern = [];
         _remainingPattern = [];
+        _playersInRound = players.length;
 
         // stop the round timer, start the player timer
         startTimer(NOTE_REPLAY, Constants.PLAYER_GRACE_PERIOD_S);
@@ -441,6 +477,9 @@ public class Game extends OneRoomGameRoom
 
     /** The remaining notes that the current player has to play. */
     protected var _remainingPattern :Array = [];
+
+    /** The number of players in the current round who played the whole round. */
+    protected var _playersInRound :int;
 
     protected static const NONE :int = 0;
     protected static const ROUND_BREAK :int = 1;
