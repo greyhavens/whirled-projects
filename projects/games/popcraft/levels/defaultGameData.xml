@@ -20,6 +20,7 @@
         maxSpellsPerType="3">
 
         <PlayerDisplayDatas>
+            <PlayerDisplay name="demo" displayName="" headshotName="" color="0xFFFFFF"/>
             <PlayerDisplay name="Jack" displayName="Jack" headshotName="portrait_jack" color="0x9FBCFF"/>
             <PlayerDisplay name="Ralph" displayName="Ralph" headshotName="portrait_ralph" color="0xFF0000"/>
             <PlayerDisplay name="Iris" displayName="Iris" headshotName="portrait_iris" color="0x9C78E4"/>

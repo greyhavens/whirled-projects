@@ -4,8 +4,7 @@
         levelCompletionBonus="2000"
         expertCompletionBonus="2500"
         introText=""
-        playerName="nobody"
-        playerHeadshotName="portrait_jack"
+        playerName="demo"
         playerBaseHealth="1">
 
         <!-- Bases can't be damaged -->
@@ -26,11 +25,6 @@
                     </Armor>
                 </Unit>
             </Units>
-            <PlayerColors>
-                <PlayerColor player="1" color="0xFFFFFF"/>
-                <PlayerColor player="2" color="0xFF0000"/>
-                <PlayerColor player="3" color="0x9FBCFF"/>
-            </PlayerColors>
             <Resources>
                 <Resource type="white" rarity="1"/>
                 <Resource type="red" rarity="0.8"/>
