@@ -51,28 +51,11 @@ public class CreatureAnimFactory
             var animMovie :MovieClip = instantiateUnitAnimation(
                 GameContext.gameData.units[unitType], playerColor, animName);
             if (animMovie != null) {
-                // create the frame array
                 var creatureAnimDesc :CreatureBitmapAnimDesc = (BITMAP_ANIM_DESCS[unitType])[animName];
-                var frames :Array = [];
-                var instantiatedFrameIndexes :Array = [];
-                var frameIndexes :Array = creatureAnimDesc.frameIndexes;
-                for each (var frameIndex :int in frameIndexes) {
-                    var frame :BitmapAnimFrame;
-                    // have we already instantiated this frame? if so, just insert the
-                    // existing bitmap back into the array
-                    var existingFrameIndex :int = instantiatedFrameIndexes.indexOf(frameIndex);
-                    if (existingFrameIndex >= 0) {
-                        frame = frames[existingFrameIndex];
-                    } else {
-                        animMovie.gotoAndPlay(frameIndex);
-                        frame = BitmapAnimFrame.fromDisplayObject(animMovie);
-                    }
-
-                    frames.push(frame);
-                    instantiatedFrameIndexes.push(frameIndex);
-                }
-
-                anim = new BitmapAnim(frames, creatureAnimDesc.frameRate,
+                anim = BitmapAnim.fromMovie(
+                    animMovie,
+                    creatureAnimDesc.frameIndexes,
+                    creatureAnimDesc.totalTime,
                     creatureAnimDesc.endBehavior);
                 animMap.put(animName, anim);
             }

@@ -5,14 +5,14 @@ package popcraft.battle.view {
 public class CreatureBitmapAnimDesc
 {
     public var frameIndexes :Array;
-    public var frameRate :Number;
+    public var totalTime :Number;
     public var endBehavior :int;
 
     public function CreatureBitmapAnimDesc (frameIndexes :Array, totalTime :Number,
         endBehavior :int = BitmapAnim.LOOP)
     {
         this.frameIndexes = frameIndexes;
-        this.frameRate = frameIndexes.length / totalTime;
+        this.totalTime = totalTime;
         this.endBehavior = endBehavior;
     }
 
