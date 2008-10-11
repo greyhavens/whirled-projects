@@ -365,9 +365,9 @@ public class WorkshopView extends BattlefieldSprite
     protected static var g_debrisClass :Class;
 
     protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
-    protected static const HEALTH_METER_SIZE :Point = new Point(50, 5);
-    protected static const SHIELD_METER_HEIGHT :Number = 4;
-    protected static const SHIELD_METER_Y_LOC :Number = 10;
+    protected static const HEALTH_METER_SIZE :Point = new Point(50, 6);
+    protected static const SHIELD_METER_HEIGHT :Number = 7;
+    protected static const SHIELD_METER_Y_LOC :Number = 7;
     protected static const SHIELD_METER_WIDTH_PER_HEALTH :Number = 50 / 75;
     protected static const GROUP_NAME :String = "PlayerBaseUnitView";
     protected static const HIT_SOUND_NAMES :Array =
