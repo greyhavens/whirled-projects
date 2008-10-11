@@ -7,13 +7,14 @@ import popcraft.sp.ComputerPlayerInfo;
 public class EndlessComputerPlayerInfo extends ComputerPlayerInfo
 {
     public function EndlessComputerPlayerInfo (playerIndex :int, data :EndlessComputerPlayerData,
-        healthScale :Number)
+        mapCycleNumber :int)
     {
         super(playerIndex, data.baseLoc, data);
         _ecpData = data;
 
-        _maxHealth *= healthScale;
-        _startHealth *= healthScale;
+        var healthIncrement :int = mapCycleNumber * data.baseHealthIncrement;
+        _maxHealth += healthIncrement;
+        _startHealth += healthIncrement;
     }
 
     override protected function createAi () :ComputerPlayerAI

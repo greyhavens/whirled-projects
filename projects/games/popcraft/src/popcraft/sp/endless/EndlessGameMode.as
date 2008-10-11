@@ -344,9 +344,8 @@ public class EndlessGameMode extends GameMode
         var computerGroup :Array = _curMapData.computerGroups[_computerGroupIndex];
         var newInfos :Array  = [];
         for each (var cpData :EndlessComputerPlayerData in computerGroup) {
-            var healthScale :Number = Math.pow(cpData.baseHealthScale, mapCycleNumber);
-            var playerInfo :PlayerInfo =
-                new EndlessComputerPlayerInfo(playerIndex, cpData, healthScale);
+            var playerInfo :PlayerInfo = new EndlessComputerPlayerInfo(playerIndex, cpData,
+                mapCycleNumber);
 
             GameContext.playerInfos.push(playerInfo);
             newInfos.push(playerInfo);
