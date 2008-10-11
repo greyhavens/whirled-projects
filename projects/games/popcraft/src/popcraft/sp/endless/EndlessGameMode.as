@@ -108,7 +108,7 @@ public class EndlessGameMode extends GameMode
 
     protected function checkForComputerDeath () :void
     {
-        if (!_swappingInNextOpponents) {
+        if (!_gameOver && !_swappingInNextOpponents) {
             var computersAreDead :Boolean = true;
             for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
                 ++teamId) {
@@ -121,7 +121,11 @@ public class EndlessGameMode extends GameMode
             if (computersAreDead) {
                 this.createMultiplierDrop(true);
 
-                // swap in the next opponents when 5 seconds have passed
+                // switch to daytime, and swap in the next opponents when 5 seconds have passed
+                if (!GameContext.diurnalCycle.isDay) {
+                    GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
+                }
+
                 GameContext.netObjects.addObject(new SimpleTimer(5, swapInNextOpponents));
                 _swappingInNextOpponents = true;
             }
