@@ -236,8 +236,7 @@ public class WorkshopView extends BattlefieldSprite
         // update damage shields
         var shieldModCount :int = _unit.damageShieldModCount;
         if (shieldModCount != _lastShieldsModCount) {
-            updateShieldMeters();
-            _lastShieldsModCount = shieldModCount;
+            this.updateShieldMeters();
         }
     }
 
@@ -285,6 +284,8 @@ public class WorkshopView extends BattlefieldSprite
         }
 
         _shieldMeterParent.x = -(_shieldMeterParent.width * 0.5);
+
+        _lastShieldsModCount = _unit.damageShieldModCount;
     }
 
     protected function handleAttacked (...ignored) :void

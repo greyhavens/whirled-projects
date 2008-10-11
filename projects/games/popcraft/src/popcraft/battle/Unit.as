@@ -265,6 +265,7 @@ public class Unit extends SimObject
     public function set damageShields (shields :Array) :void
     {
         _damageShields = shields;
+        ++_damageShieldsModCount;
     }
 
     public function get damageShields () :Array

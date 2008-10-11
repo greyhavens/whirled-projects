@@ -325,7 +325,7 @@ public class EndlessGameMode extends GameMode
             playerInfo.init();
         }
 
-        // restore saved data
+        // restore data that was saved from the previous map
         if (EndlessGameContext.savedLocalPlayer != null) {
             localPlayerInfo.restoreSavedData(EndlessGameContext.savedLocalPlayer);
         }
