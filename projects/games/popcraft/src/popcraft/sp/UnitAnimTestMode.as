@@ -1,8 +1,11 @@
 package popcraft.sp {
 
 import com.threerings.util.HashMap;
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -30,8 +33,8 @@ public class UnitAnimTestMode extends AppMode
 
         // unit buttons
         var xLoc :Number = 10;
-        var yLoc :Number = 300;
-        for (var unitType :int = 0; unitType < Constants.UNIT_TYPE__CREATURE_LIMIT; ++unitType) {
+        var yLoc :Number = 380;
+        for (var unitType :int = 0; unitType < Constants.UNIT_NAMES.length; ++unitType) {
             var button :SimpleButton = this.createUnitButton(unitType);
             button.x = xLoc;
             button.y = yLoc;
@@ -41,7 +44,7 @@ public class UnitAnimTestMode extends AppMode
 
         // player color buttons
         xLoc = 10;
-        yLoc = 350;
+        yLoc = 420;
         for each (playerDisplayData in playerDisplayDatas.values()) {
             button = this.createPlayerColorButton(playerDisplayData);
             button.x = xLoc;
@@ -57,7 +60,7 @@ public class UnitAnimTestMode extends AppMode
                 AppContext.mainLoop.popMode();
             });
         button.x = 10;
-        button.y = 420;
+        button.y = 460;
         this.modeSprite.addChild(button);
 
         this.updateView();
@@ -111,55 +114,64 @@ public class UnitAnimTestMode extends AppMode
         _animSprite = new Sprite();
         this.modeSprite.addChild(_animSprite);
 
-        _xLoc = 40;
-        _yLoc = 80;
+        _xLoc = 50;
+        _yLoc = 90;
 
-        for each (var animPrefix :String in ANIM_PREFIX_STRINGS) {
-            for each (var facingString :String in FACING_STRINGS) {
-                var animName :String = animPrefix + facingString;
-                this.createAnimations(animName);
+        if (_unitType == Constants.UNIT_TYPE_WORKSHOP) {
+            this.createWorkshopAnimations();
+
+        } else {
+            for each (var animPrefix :String in ANIM_PREFIX_STRINGS) {
+                for each (var facingString :String in FACING_STRINGS) {
+                    var animName :String = animPrefix + facingString;
+                    this.createCreatureAnimations(animName);
+                }
             }
-        }
 
-        this.createAnimations("die");
+            this.createCreatureAnimations("die");
+        }
     }
 
-    protected function createAnimations (animName :String) :void
+    protected function createWorkshopAnimations () :void
+    {
+        var anim :MovieClip = SwfResource.instantiateMovieClip("workshop", "base");
+        var workshop :MovieClip = anim["workshop"];
+        var recolorMovie :MovieClip = workshop["recolor"];
+        recolorMovie.filters = [ ColorMatrix.create().colorize(_recolor).createFilter() ];
+        this.addAnimToWindow(anim);
+    }
+
+    protected function createCreatureAnimations (animName :String) :void
     {
         var unitData :UnitData = AppContext.defaultGameData.units[_unitType];
+
         var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(unitData, _recolor,
             animName);
-
         if (null != anim) {
-            if (_xLoc + anim.width > 680) {
-                _xLoc = 40;
-                _yLoc += anim.height + 20;
-            }
-
-            anim.x = _xLoc;
-            anim.y = _yLoc;
-
-            _xLoc += anim.width + 20;
-
-            _animSprite.addChild(anim);
+            this.addAnimToWindow(anim);
         }
 
         var bmAnim :BitmapAnim = CreatureAnimFactory.getBitmapAnim(_unitType, _recolor, animName);
-
         if (null != bmAnim) {
             var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);
-            this.addObject(bmaView, _animSprite);
-
-            if (_xLoc + bmaView.width > 680) {
-                _xLoc = 40;
-                _yLoc += bmaView.height + 20;
-            }
-
-            bmaView.x = _xLoc;
-            bmaView.y = _yLoc;
-
-            _xLoc += bmaView.width + 20;
+            this.addObject(bmaView);
+            this.addAnimToWindow(bmaView.displayObject);
         }
+    }
+
+    protected function addAnimToWindow (anim :DisplayObject) :void
+    {
+        if (_xLoc + anim.width > 680) {
+            _xLoc = 40;
+            _yLoc += anim.height + 20;
+        }
+
+        anim.x = _xLoc;
+        anim.y = _yLoc;
+
+        _xLoc += anim.width + 20;
+
+        _animSprite.addChild(anim);
     }
 
     protected var _animSprite :Sprite;

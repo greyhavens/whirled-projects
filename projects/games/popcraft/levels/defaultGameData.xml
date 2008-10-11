@@ -235,7 +235,7 @@ Be warned: the Ladyfingers’ delicate frame and small size render her quite fra
 
             <Unit
                 type="workshop"
-                displayName="" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
+                displayName="Workshop" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
                 maxHealth="150"
                 collisionRadius="20">
                 <ResourceCosts/>
