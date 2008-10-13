@@ -63,8 +63,8 @@ public class MultiplayerGameMode extends GameMode
         }
 
         // get some information about the players in the game
-        var numPlayers :int = AppContext.gameCtrl.game.seating.getPlayerIds().length;
-        GameContext.localPlayerIndex = AppContext.gameCtrl.game.seating.getMyPosition();
+        var numPlayers :int = SeatingManager.numExpectedPlayers;
+        GameContext.localPlayerIndex = SeatingManager.localPlayerSeat;
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;

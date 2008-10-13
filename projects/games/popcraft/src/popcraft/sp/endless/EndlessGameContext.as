@@ -14,8 +14,7 @@ public class EndlessGameContext
     public static var score :int;
     public static var scoreMultiplier :Number;
     public static var mapDataIndex :int;
-    public static var savedLocalPlayer :SavedPlayerInfo;
-    public static var savedRemotePlayer :SavedPlayerInfo;
+    public static var savedHumanPlayers :Array;
     public static var numMultiplierObjects :int;
 
     public static function get isNewGame () :Boolean
@@ -30,8 +29,7 @@ public class EndlessGameContext
         score = 0;
         scoreMultiplier = 1;
         mapDataIndex = -1;
-        savedLocalPlayer = null;
-        savedRemotePlayer = null;
+        savedHumanPlayers = [];
         numMultiplierObjects = 0;
 
         if (playerReadyMonitor != null) {

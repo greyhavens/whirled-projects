@@ -8,7 +8,6 @@ import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.net.ElementChangedEvent;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -92,11 +91,7 @@ public class EndlessGameMode extends GameMode
         // when the next round starts
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (playerInfo.teamId == HUMAN_TEAM_ID) {
-                if (playerInfo.playerIndex == GameContext.localPlayerIndex) {
-                    EndlessGameContext.savedLocalPlayer = GameContext.localPlayerInfo.saveData();
-                } else {
-                    EndlessGameContext.savedRemotePlayer = playerInfo.saveData();
-                }
+                EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
             }
         }
 
@@ -341,52 +336,72 @@ public class EndlessGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        if (GameContext.isMultiplayerGame) {
-            // TODO
-            throw new Error("implement this");
-        }
-
-        GameContext.localPlayerIndex = 0;
+        GameContext.localPlayerIndex = SeatingManager.localPlayerSeat;
         GameContext.playerInfos = [];
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
-        // Create the local player
-        var playerDisplayData :PlayerDisplayData =
-            GameContext.gameData.getPlayerDisplayData(EndlessGameContext.level.humanPlayerNames[0]);
-        var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
-            GameContext.localPlayerIndex,
-            HUMAN_TEAM_ID,
-            _curMapData.humanBaseLocs[0],
-            workshopHealth, workshopHealth, false,
-            1, playerDisplayData.color, playerDisplayData.displayName, playerDisplayData.headshot);
+        // create PlayerInfos for the human players
+        var numPlayers :int = SeatingManager.numExpectedPlayers;
+        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
 
-        GameContext.playerInfos.push(localPlayerInfo);
+            var playerDisplayData :PlayerDisplayData = GameContext.gameData.getPlayerDisplayData(
+                    EndlessGameContext.level.humanPlayerNames[playerIndex]);
+
+            if (playerIndex == GameContext.localPlayerIndex) {
+                GameContext.playerInfos.push(new LocalPlayerInfo(
+                    playerIndex,
+                    HUMAN_TEAM_ID,
+                    _curMapData.humanBaseLocs[playerIndex],
+                    workshopHealth,
+                    workshopHealth,
+                    false,
+                    1,
+                    playerDisplayData.color,
+                    playerDisplayData.displayName,
+                    playerDisplayData.headshot));
+
+            } else {
+                GameContext.playerInfos.push(new PlayerInfo(
+                    playerIndex,
+                    HUMAN_TEAM_ID,
+                    _curMapData.humanBaseLocs[playerIndex],
+                    workshopHealth,
+                    workshopHealth,
+                    false,
+                    1,
+                    playerDisplayData.color,
+                    playerDisplayData.displayName,
+                    playerDisplayData.headshot));
+            }
+        }
 
         this.createComputerPlayers();
 
-        // init players
+        // init all players players
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             playerInfo.init();
         }
 
-        // restore data that was saved from the previous map
-        if (EndlessGameContext.savedLocalPlayer != null) {
-            localPlayerInfo.restoreSavedData(EndlessGameContext.savedLocalPlayer);
+        // restore data that was saved from the previous map (must be done after playerInfos
+        // are init()'d)
+        for (playerIndex = 0; playerIndex < EndlessGameContext.savedHumanPlayers.length;
+            ++playerIndex) {
+
+            var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
+            var player :PlayerInfo = GameContext.playerInfos[playerIndex];
+            player.restoreSavedData(savedPlayer);
         }
     }
 
     protected function createComputerPlayers () :Array
     {
-        if (GameContext.isMultiplayerGame) {
-            // TODO
-            throw new Error("implement this");
-        }
-
         var mapCycleNumber :int = EndlessGameContext.mapCycleNumber;
 
-        var playerIndex :int = 1;
+        // the first computer index is 1 more than the number of human players in the game
+        var playerIndex :int = SeatingManager.numExpectedPlayers;
+
         var computerGroup :Array = _curMapData.computerGroups[_computerGroupIndex];
         var newInfos :Array  = [];
         for each (var cpData :EndlessComputerPlayerData in computerGroup) {
