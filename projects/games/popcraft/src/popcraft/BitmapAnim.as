@@ -17,6 +17,10 @@ public class BitmapAnim
     public static function fromMovie (movie :MovieClip, frameIndexes :Array, totalTime :Number,
         endBehavior :int = LOOP) :BitmapAnim
     {
+        if (totalTime <= 0) {
+            throw new ArgumentError("totalTime must be > 0");
+        }
+
         // create the frame array
         var frames :Array = [];
         var instantiatedFrameIndexes :Array = [];
@@ -36,7 +40,7 @@ public class BitmapAnim
             instantiatedFrameIndexes.push(frameIndex);
         }
 
-        var frameRate :Number = frameIndexes.length / Math.max(totalTime, 1/60);
+        var frameRate :Number = frameIndexes.length / totalTime;
         return new BitmapAnim(frames, frameRate, endBehavior);
     }
 
