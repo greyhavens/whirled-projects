@@ -172,8 +172,6 @@ public class GameMode extends TransitionMode
         _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName,
             CastCreatureSpellMessage.createFactory());
 
-        _messageMgr.setup();
-
         if (AppContext.gameCtrl.isConnected()) {
             // start the message manager when the game starts
             this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
@@ -195,7 +193,7 @@ public class GameMode extends TransitionMode
 
     protected function shutdownNetwork () :void
     {
-        _messageMgr.shutdown();
+        _messageMgr.stop();
     }
 
     protected function setupDashboard () :void
