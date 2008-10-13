@@ -164,7 +164,7 @@ public class GameMode extends TransitionMode
 
         // set up the message manager
         // TODO - change this to be more like zyraxxus messages
-        _messageMgr = createMessageManager();
+        _messageMgr = this.createMessageManager();
         _messageMgr.addMessageFactory(CreateUnitMessage.messageName,
             CreateUnitMessage.createFactory());
         _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName,
@@ -172,12 +172,25 @@ public class GameMode extends TransitionMode
         _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName,
             CastCreatureSpellMessage.createFactory());
 
+        _messageMgr.setup();
+
         if (AppContext.gameCtrl.isConnected()) {
+            // start the message manager when the game starts
+            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+                function (...ignored) :void {
+                    _messageMgr.run();
+                });
+
             this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
                 handleGameEndedPrematurely);
-        }
 
-        _messageMgr.setup();
+            // we're ready!
+            AppContext.gameCtrl.game.playerReady();
+
+        } else {
+            // if we're running in standalone mode, start the message manager immediately
+            _messageMgr.run();
+        }
     }
 
     protected function shutdownNetwork () :void

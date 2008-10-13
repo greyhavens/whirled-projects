@@ -7,7 +7,7 @@ public class PopCraft_Standalone extends PopCraft
 {
     public function PopCraft_Standalone ()
     {
-        Constants.DEBUG_LOAD_LEVELS_FROM_DISK = true;
+        Constants.DEBUG_LOAD_LEVELS_FROM_DISK = false;
     }
 
     override public function loadResources (completeCallback :Function, errorCallback :Function) :void

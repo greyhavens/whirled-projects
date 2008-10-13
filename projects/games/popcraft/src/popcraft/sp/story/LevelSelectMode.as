@@ -400,7 +400,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function playEndlessLevel () :void
     {
-        AppContext.endlessLevelMgr.playLevel();
+        AppContext.endlessLevelMgr.playSpLevel();
     }
 
     protected function levelSelected (levelNum :int) :void

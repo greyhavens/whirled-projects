@@ -11,9 +11,9 @@ import popcraft.*;
 import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
-public class EndlessLevelOutroMode extends AppMode
+public class EndlessLevelSpOutroMode extends AppMode
 {
-    public function EndlessLevelOutroMode ()
+    public function EndlessLevelSpOutroMode ()
     {
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0, 1);
@@ -33,7 +33,7 @@ public class EndlessLevelOutroMode extends AppMode
         this.modeSprite.addChild(retry);
         this.registerOneShotCallback(retry, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.endlessLevelMgr.playLevel();
+                AppContext.endlessLevelMgr.playSpLevel();
             });
 
         var mainMenu :SimpleButton = UIBits.createButton("Main Menu", 1.5);

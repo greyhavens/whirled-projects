@@ -51,7 +51,7 @@ public class EndlessLevelLoadErrorMode extends AppMode
         button = UIBits.createButton("Retry");
         this.registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.endlessLevelMgr.playLevel(null, true);
+                AppContext.endlessLevelMgr.playSpLevel(null, true);
             });
         button.x = 50;
         button.y = 450;

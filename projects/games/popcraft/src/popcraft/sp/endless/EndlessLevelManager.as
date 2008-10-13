@@ -9,7 +9,19 @@ import popcraft.util.*;
 
 public class EndlessLevelManager
 {
-    public function playLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
+    public function playSpLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
+        :void
+    {
+        this.playLevel(SP_LEVEL, levelReadyCallback, forceReload);
+    }
+
+    public function playMpLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
+        :void
+    {
+        this.playLevel(MP_LEVEL, levelReadyCallback, forceReload);
+    }
+
+    protected function playLevel (level :int, levelReadyCallback :Function, forceReload :Boolean)
         :void
     {
         _levelReadyCallback = levelReadyCallback;
@@ -28,10 +40,19 @@ public class EndlessLevelManager
         } else {
             // load the level
             if (null == _loadedLevel) {
+                var levelName :String;
+                var theEmbeddedClass :Class
+                if (level == SP_LEVEL) {
+                    levelName = "endless_sp_01.xml";
+                    theEmbeddedClass = ENDLESS_SP_LEVEL_1;
+                } else {
+                    levelName = "endless_mp_01.xml";
+                    theEmbeddedClass = ENDLESS_MP_LEVEL_1;
+                }
 
                 var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                    { url: LEVELS_DIR + "/endless_01.xml" } :
-                    { embeddedClass: ENDLESS_LEVEL_1 });
+                    { url: LEVELS_DIR + "/" + levelName } :
+                    { embeddedClass: theEmbeddedClass });
 
                 if (forceReload) {
                     // reload the default game data first, then load the level when it's complete
@@ -97,9 +118,14 @@ public class EndlessLevelManager
     protected static const RSRC_CURLEVEL :String = "curEndlessLevel";
     protected static const LEVELS_DIR :String = "../levels";
 
+    protected static const SP_LEVEL :int = 0;
+    protected static const MP_LEVEL :int = 1;
+
     // Embedded level data
-    [Embed(source="../../../../levels/endless_01.xml", mimeType="application/octet-stream")]
-    protected static const ENDLESS_LEVEL_1 :Class;
+    [Embed(source="../../../../levels/endless_sp_01.xml", mimeType="application/octet-stream")]
+    protected static const ENDLESS_SP_LEVEL_1 :Class;
+    [Embed(source="../../../../levels/endless_mp_01.xml", mimeType="application/octet-stream")]
+    protected static const ENDLESS_MP_LEVEL_1 :Class;
 }
 
 }

@@ -203,7 +203,7 @@ public class EndlessGameMode extends GameMode
             this.fadeOutToMode(new EndlessGameMode());
 
         } else {
-            this.fadeOutToMode(new EndlessLevelOutroMode(), FADE_OUT_TIME);
+            this.fadeOutToMode(new EndlessLevelSpOutroMode(), FADE_OUT_TIME);
             GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
             GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
         }
@@ -218,7 +218,9 @@ public class EndlessGameMode extends GameMode
             break;
 
         case KeyboardCodes.SLASH:
-            AppContext.endlessLevelMgr.playLevel(null, true);
+            if (GameContext.isMultiplayerGame) {
+                AppContext.endlessLevelMgr.playSpLevel(null, true);
+            }
             break;
 
         case KeyboardCodes.O:
