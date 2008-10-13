@@ -2,8 +2,6 @@ package starfight.client {
 
 import flash.display.Sprite;
 
-import starfight.server.*;
-
 /**
  * Game client entry point.
  */
@@ -13,14 +11,6 @@ public class StarFight extends Sprite
     public function StarFight ()
     {
         _appCtrl = new ClientAppController(this);
-
-        var c :Class;
-        c = Server;
-        c = ServerAppController;
-        c = ServerBoardController;
-        c = ServerContext;
-        c = ServerGameController;
-        c = ServerShip;
     }
 
     protected var _appCtrl :ClientAppController;
