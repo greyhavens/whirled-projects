@@ -54,11 +54,10 @@ public class Opponents extends Component
     }
 
     /**
-     * Choose and return an opponent at random
+     * Choose and return an opponent at random (from zero to length-1)
      */
     public function getRandomOpponent () :Opponent
     {
-        // pick a random opponent (from zero to length-1)
         var randomIndex :int = Math.round(Math.random() * (opponents.length-1));
         var opponent :Opponent = opponents[randomIndex];
         return opponent;

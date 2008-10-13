@@ -34,6 +34,7 @@ public class Card extends Component
         addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.mouseEventHandler.cardMouseDown);
         addEventListener(MouseEvent.MOUSE_UP, ctx.state.mouseEventHandler.cardMouseUp);
         addEventListener(MouseEvent.CLICK, ctx.state.mouseEventHandler.cardClick);
+        addEventListener(MouseEvent.ROLL_OVER, ctx.state.mouseEventHandler.cardMouseOver);
 
         super(ctx);
     }
@@ -108,25 +109,22 @@ public class Card extends Component
     {
         var textSprite :Sprite = new Sprite();
 
-        // set width to 300 to prevent wrapping, then back to textWidth + padding to fix hitmap
-        // TODO seriously?  would setting nowrap or autosize work instead?
-        var cardText :TextField = Content.defaultTextField(1.0, "left");
-        cardText.width = 300;
+        cardText = Content.defaultTextField(1.1, "left");
+        cardText.autoSize = "left";
+        cardText.wordWrap = false;
         cardText.text = text;
-        cardText.width = cardText.textWidth + 5;
         cardText.height = 30;
         textSprite.addChild(cardText);
-        textDisplayWidth = cardText.textWidth;
 
-        // create the highlight text object but do not add it as a child
+        // create the yellow highlight text object but do not add it as a child
         highlightSpriteText = new Sprite();
-        var cardTextHightlight :TextField = Content.defaultTextField(1.0, "left");
-        var cardTextFormat :TextFormat =  cardTextHightlight.defaultTextFormat;
-        cardTextFormat.color = 0xFFFF00;
-        cardTextHightlight.defaultTextFormat = cardTextFormat;
-        cardTextHightlight.width = 300;
+        var cardTextHightlight :TextField = Content.defaultTextField(1.1, "left");
+        var cardTextFormatHightlight :TextFormat =  cardTextHightlight.defaultTextFormat;
+        cardTextFormatHightlight.color = 0xFFFF00;
+        cardTextHightlight.defaultTextFormat = cardTextFormatHightlight;
+        cardTextHightlight.autoSize = "left";
+        cardTextHightlight.wordWrap = false;
         cardTextHightlight.text = text;
-        cardTextHightlight.width = cardText.textWidth + 5;
         cardTextHightlight.height = 30;
         highlightSpriteText.addChild(cardTextHightlight);
 
@@ -139,10 +137,25 @@ public class Card extends Component
     override public function get width () :Number
     {
         if (_cardContainer is Law) {
-            return textDisplayWidth;
+            return cardText.width;
         }
         else {
             return super.width;
+        }
+    }
+    
+    /**
+     * Called when the player's job changes.  Color the card text in a law if it matches the
+     * player's current job.
+     */
+    public function highlightJob () :void
+    {
+        if (group == Card.SUBJECT) {
+            if (type == _ctx.player.job.id) {
+                cardText.textColor = 0x990000;
+            } else {
+                cardText.textColor = 0x000000;      
+            }
         }
     }
 
@@ -382,6 +395,13 @@ public class Card extends Component
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
         if (_highlighted) {
+            cardText.textColor = 0xFFFF00;
+        } else {
+            cardText.textColor = 0x000000;
+            highlightJob();
+        }
+        /*
+        if (_highlighted) {
             if (!cardDisplay.contains(highlightSprite)) {
                 cardDisplay.addChild(highlightSprite);
             }
@@ -398,6 +418,7 @@ public class Card extends Component
                 textDisplay.removeChild(highlightSpriteText);
             }
         }
+        */
     }
 
     /** Contains card back, symbol, text */
@@ -405,9 +426,9 @@ public class Card extends Component
 
     /** Contains text-only version of this card */
     protected var textDisplay :Sprite;
-
-    /** Text width is different from the card display width, and different from textDisplay.width */
-    protected var textDisplayWidth :Number;
+    
+    /** Sprite displayed in laws */
+    protected var cardText :TextField;
 
     /** Display a box around the card when highlighted */
     protected var highlightSprite :Sprite;
@@ -433,10 +454,11 @@ public class Card extends Component
     /** Subtype JUDGE/PRIEST/GETS/GIVES/CARD/MONIE/START_TURN etc */
     protected var _type :int;
 
-    /** 0/1/2 etc for card types with values eg CARD, MONIE */
+    /** 1/2/3/4 for card types with values CARD or MONIE */
     protected var _value :int;
 
     /** card groups */
+    public static const NO_GROUP :int = -1;
     public static const SUBJECT :int = 0;
     public static const VERB :int = 1;
     public static const OBJECT :int = 2;

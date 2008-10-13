@@ -7,10 +7,6 @@ import flash.geom.Point;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.net.PropertyChangedEvent;
-import com.threerings.util.HashMap;
-
 import lawsanddisorder.component.*;
 
 /**
@@ -67,7 +63,7 @@ public class State
 
         // default to the current player
         if (targetPlayer == null) {
-            targetPlayer = _ctx.board.player;
+            targetPlayer = _ctx.player;
         }
 
         // target player has no cards to lose, return now.
@@ -85,7 +81,7 @@ public class State
         }
 
         var message :String;
-        if (targetPlayer == _ctx.board.player) {
+        if (targetPlayer == _ctx.player) {
             message = "Please select " + numCards + " card(s) from your hand.";
         }
         else {
@@ -135,7 +131,6 @@ public class State
     public function exchangeSubject (listener :Function) :void
     {
         var message :String = "Please drag a blue card from your hand and drop it over a blue card in a law";
-        //_ctx.notice(message);
         startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_EXCHANGE_SUBJECT;
@@ -148,7 +143,6 @@ public class State
     public function moveWhen (listener :Function) :void
     {
         var message :String = "Please drag a purple card from your hand onto a law, or select a purple card in a law to take";
-        //_ctx.notice(message);
         startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_MOVE_WHEN;
@@ -179,7 +173,6 @@ public class State
 
     /**
      * Stop selecting cards
-     * TODO clearing goal and listener helpful / necessary?
      */
     public function deselectCards () :void
     {
@@ -200,10 +193,10 @@ public class State
      */
     public function deselectOpponent () :void
     {
-        if (selectedOpponent != null) {
-            selectedOpponent.highlighted = false;
+        if (selectedPlayer != null && (selectedPlayer as Opponent)) {
+            Opponent(selectedPlayer).highlighted = false;
         }
-        selectedOpponent = null;
+        selectedPlayer = null;
         modeListener = null;
     }
 
@@ -283,7 +276,7 @@ public class State
      * be run in place of the 5th reminder message, after which the timer will be cancelled.
      */
     protected function startModeReminder (message :String, listener :Function = null, reminderNum :int = 1) :void
-    {
+    {        
         if (message == null) {
             if (modeReminderTimer != null) {
                 modeReminderTimer.stop();
@@ -291,6 +284,13 @@ public class State
             }
             return;
         }
+        
+        // in single player mode, don't display reminders.
+        if (_ctx.board.players.numHumanPlayers == 1) {
+            _ctx.notice(message);
+            return;
+        }
+        
         var reminderText :String;
 
         // first time through
@@ -338,7 +338,7 @@ public class State
      */
     protected function cancelUsingPower () :void
     {
-        _ctx.board.player.job.cancelUsePower();
+        _ctx.player.job.cancelUsePower();
         _ctx.board.usePowerButton.cancelUsingPower();
     }
 
@@ -372,7 +372,7 @@ public class State
     protected function selectRandomOpponent () :void
     {
         _ctx.notice("Selecting a random opponent for you.");
-        selectedOpponent = _ctx.board.opponents.getRandomOpponent();
+        selectedPlayer = _ctx.board.players.opponents.getRandomOpponent();
         doneMode();
     }
 
@@ -383,6 +383,25 @@ public class State
     {
         mode = MODE_DEFAULT;
     }
+    
+    /**
+     * Helper function for getting selectedCards[0].
+     */
+    public function get selectedCard () :Card
+    {
+        if (selectedCards == null || selectedCards.length == 0) {
+            return null;
+        }
+        return selectedCards[0];
+    }
+    
+    /**
+     * Helper function for setting selectedCards[0].
+     */
+    public function set selectedCard (card :Card) :void
+    {
+        selectedCards = new Array(card);
+    }
 
     /** The card being actively dragged, for notification purposes */
     public var activeCard :Card = null;
@@ -391,7 +410,7 @@ public class State
     public var selectedCards :Array = null;
 
     /** Currently selected opponents */
-    public var selectedOpponent :Opponent = null;
+    public var selectedPlayer :Player = null;
 
     /** Currently selected law */
     public var selectedLaw :Law = null;

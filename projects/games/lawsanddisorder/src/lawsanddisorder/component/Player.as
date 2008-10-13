@@ -1,8 +1,8 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 
 import lawsanddisorder.*;
 
@@ -31,7 +31,9 @@ public class Player extends Component
         this.serverId = serverId;
 
         // truncate player names for display on the opponent area, 10 chars maximum
-        if (name.length > 10) {
+        if (name == null) {
+            name = "theplayer";
+        } else if (name.length > 10) {
             name = name.substr(0, 10);
         }
         this._name = name;
@@ -106,20 +108,6 @@ public class Player extends Component
         addChild(_job);
 
         updateDisplay();
-    }
-
-    /**
-     * Display the player's / opponent's hand
-     * TODO only used in opponent - move there?
-     */
-    public function set showHand (value :Boolean) :void
-    {
-        if (value && !contains(hand)) {
-            addChild(hand);
-        }
-        else if (!value && contains(hand)) {
-            removeChild(hand);
-        }
     }
 
     /**
@@ -253,7 +241,24 @@ public class Player extends Component
     }
 
     /**
+     * Remove X cards from the player's hand and move them to the deck
+     */
+    public function discardCards (cardsToLose :Array) :void
+    {
+        if (cardsToLose == null || cardsToLose.length == 0) {
+            return;
+        }
+        hand.removeCards(cardsToLose);
+
+        // TODO add delay
+        for each (var card :Card in cardsToLose) {
+            _ctx.sendMessage(Deck.CARD_MOVED, new Array(card.id, this.id, Deck.DECK_ID));
+        } 
+    }
+
+    /**
      * Remove X cards from the player's hand
+     * TODO delete
      */
     public function loseCards (cardsToLose :Array) :void
     {
@@ -262,6 +267,7 @@ public class Player extends Component
         }
         // will set display and distributed data
         hand.removeCards(cardsToLose);
+        //_ctx.sendMessage(Deck.CARD_DISCARDED, id);
     }
 
     /**
@@ -269,14 +275,26 @@ public class Player extends Component
      */
     public function giveCardsTo (cardsToGive :Array, toPlayer :Player) :void
     {
+        if (cardsToGive == null) {
+            _ctx.log("WTF cardsToGive null in Player.giveCardsTo");
+            return;
+        }
+        if (toPlayer == null) {
+            _ctx.log("WTF toPlayer null in Player.giveCardsTo");
+            return;
+        }
+        
         // giving cards to self, no net change
         if (toPlayer == this) {
             return;
         }
-        loseCards(cardsToGive);
-        if (toPlayer != null) {
-            toPlayer.hand.addCards(cardsToGive);
-        }
+        hand.removeCards(cardsToGive);
+        toPlayer.hand.addCards(cardsToGive);
+
+        // TODO add delay
+        for each (var card :Card in cardsToGive) {
+            _ctx.sendMessage(Deck.CARD_MOVED, new Array(card.id, this.id, toPlayer.id));
+        } 
     }
 
     /**
@@ -288,6 +306,22 @@ public class Player extends Component
         _ctx.eventHandler.removeDataListener(Hand.HAND_DATA, handChanged, id);
         _ctx.eventHandler.removeDataListener(MONIES_DATA, moniesChanged, id);
         hand.unload();
+    }
+    
+    /**
+     * Return an integer from 0 to 100 that represents how well the player is doing right now,
+     * where 100 is winning (even if a tie) and 0 is last place.  Scores are based on the
+     * number of monies, plus the number of cards in hand divided by 2.
+     */
+    public function get winningPercentile () :int
+    {
+        var betterPlayers :int = 0;
+        for each (var player :Player in _ctx.board.players.playerObjects) {
+            if ((player.monies + player.hand.numCards/2) > (monies + hand.numCards/2)) {
+                betterPlayers++;
+            }
+        }
+        return Math.round((1 - betterPlayers / _ctx.board.players.numPlayers) * 100);
     }
 
     /** Can the player change jobs right now? */

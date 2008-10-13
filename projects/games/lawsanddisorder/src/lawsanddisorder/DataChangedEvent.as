@@ -1,18 +1,6 @@
 package lawsanddisorder {
 
-import flash.utils.Timer;
-import flash.events.TimerEvent;
-import flash.events.MouseEvent;
 import flash.events.Event;
-import flash.events.EventDispatcher;
-
-import com.whirled.net.PropertyChangedEvent;
-import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
-import com.threerings.util.HashMap;
-import com.whirled.game.GameSubControl;
-
-import lawsanddisorder.component.*;
 
 /**
  * Event class for dealing with changes to distributed data.
@@ -32,6 +20,5 @@ public class DataChangedEvent extends Event
     public var oldValue :*;
     public var newValue :*;
     public var index :int;
-
 }
 }

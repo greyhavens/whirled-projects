@@ -20,6 +20,14 @@ public class Context
     }
 
     /**
+     * Convienience pointer to board.players.player
+     */
+    public function get player () :Player
+    {
+        return board.players.player;
+    }
+
+    /**
      * Log this debugging message
      */
     public function log (message :String) :void
@@ -30,9 +38,11 @@ public class Context
     /**
      * Display an in-game notice message to the player
      */
-    public function notice (notice :String) :void
+    public function notice (notice :String, alsoLog :Boolean = true) :void
     {
-        board.notices.addNotice(notice);
+        if (board != null) {
+            board.notices.addNotice(notice, alsoLog);
+        }
     }
 
     /**
@@ -54,8 +64,8 @@ public class Context
      */
     public function broadcastOthers (message :String) :void
     {
-        for each (var player :Player in board.players) {
-            if (player != board.player) {
+        for each (var otherPlayer :Player in board.players.playerObjects) {
+            if (otherPlayer != player && otherPlayer.serverId > 0) {
                 _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
             }
         }
@@ -74,9 +84,10 @@ public class Context
      */
     public function kickPlayer () :void
     {
-        _control.local.backToWhirled();
+        //_control.local.backToWhirled();
+        // TODO: how to handle this now that backToWhirled is gone??
     }
-
+    
     /** Connection to the game server */
     protected var _control :GameControl;
 
@@ -88,5 +99,8 @@ public class Context
 
     /** Wraps incoming data and message events from the server */
     public var eventHandler :EventHandler;
+
+    /** Awards Whirled trophies - spoken to only through messages */
+    public var trophyHandler :TrophyHandler;
 }
 }

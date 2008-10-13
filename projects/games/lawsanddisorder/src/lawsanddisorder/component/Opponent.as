@@ -1,14 +1,13 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.ColorTransform;
+import flash.geom.Point;
+import flash.text.TextField;
 
-import com.whirled.game.StateChangedEvent;
-
-import lawsanddisorder.Context;
-import lawsanddisorder.Content;
+import lawsanddisorder.*;
 
 /**
  * Area containing details on a single player
@@ -24,13 +23,12 @@ public class Opponent extends Player
     {
         addEventListener(MouseEvent.CLICK, ctx.state.mouseEventHandler.opponentClick);
         super(ctx, id, serverId, name);
-        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        _ctx.eventHandler.addEventListener(EventHandler.TURN_CHANGED, turnChanged);
     }
 
     /**
      * Opponent jobs are not displayed; override and instead of making job a child, make
      * a new symbol child.
-     * TODO use event to trigger this
      */
     override public function set job (job :Job) :void
     {
@@ -44,7 +42,7 @@ public class Opponent extends Player
         jobSymbol.height = jobSymbol.height / 3.5;
         jobSymbol.x = 65;
         jobSymbol.y = 30;
-        //jobSymbol.alpha = 0.1;
+        
         var colorTransform :ColorTransform = new ColorTransform();
         colorTransform.color = 0x660033;
         jobSymbol.transform.colorTransform = colorTransform;
@@ -56,11 +54,10 @@ public class Opponent extends Player
 
     /**
      * Initialize the static display
-     * TODO cleaner way to instanciate/position all these display elements?
      */
     override protected function initDisplay () :void
     {
-        // position hand but do not display it
+        // position hand for theif stealing events but do not display it
         _hand.x = -550;
         _hand.y = 0;
 
@@ -79,7 +76,6 @@ public class Opponent extends Player
         numMoniesText.width = 25;
         addChild(numMoniesText);
 
-        //var monieIcon :Sprite = new Card.SYMBOL_MONIE();
         var monieIcon :Sprite = new Content.MONIE_BACK();
         monieIcon.width = monieIcon.width / 3.5;
         monieIcon.height = monieIcon.height / 3.5;
@@ -93,7 +89,6 @@ public class Opponent extends Player
         numCardsText.width = 25;
         addChild(numCardsText);
 
-        //var cardIcon :Sprite = new Card.SYMBOL_CARD();
         var cardIcon :Sprite = new Content.CARD_BACK();
         cardIcon.width = cardIcon.width / 4;
         cardIcon.height = cardIcon.height / 4;
@@ -115,7 +110,6 @@ public class Opponent extends Player
      */
     override protected function updateDisplay () :void
     {
-        //title.text = playerName + "\nJob: " + job + "\nMonies: " + monies + "\nCards: " + hand.numCards;
         infoText.text = playerName + "\n" + job;
         numMoniesText.text = String(monies);
         numCardsText.text = String(hand.numCards);
@@ -128,47 +122,49 @@ public class Opponent extends Player
         return _highlighted;
     }
 
-    /** Indicate that the opponent is selected
-     * TODO does state need to be stored?
+    /**
+     * Indicate that the opponent is selected
      */
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
-        /*
-        // draw a border, highlighted or not
-        if (value) {
-            graphics.lineStyle(5, 0xFFFF00);
+    }
+
+    /**
+     * Display the player's / opponent's hand
+     */
+    public function set showHand (value :Boolean) :void
+    {
+        if (value && !contains(hand)) {
+            addChild(hand);
         }
-        else {
-            graphics.lineStyle(5, 0x8888FF);
+        else if (!value && contains(hand)) {
+            removeChild(hand);
         }
-        graphics.drawRect(5, 5, 110, 50);
-        */
+    }
+    
+    public function getGlobalHandLocation () :Point
+    {
+        //_ctx.log("moving to " + localToGlobal(new Point(68, 40)).x + "," + localToGlobal(new Point(68, 40)).y);
+        return localToGlobal(new Point(0, 0));
     }
 
     /**
      * The turn just changed.  Display whether it is this opponent's turn.
      */
-    protected function turnChanged (event :StateChangedEvent) :void
+    protected function turnChanged (event :Event) :void
     {
-        var turnHolder :Player = _ctx.board.getTurnHolder();
-        if (turnHolder == this) {
+        if (_ctx.board.players.turnHolder == this) {
             if (!contains(turnIndicator)) {
                 addChild(turnIndicator);
             }
-            //graphics.lineStyle(5, 0xFFFF00);
-        }
-        else {
+        } else {
             if (contains(turnIndicator)) {
                 removeChild(turnIndicator);
             }
-            //graphics.lineStyle(5, 0x8888FF);
         }
-        //graphics.drawRect(0, 0, 120, 60);
     }
 
-    /** Indicates if it is the opponent's turn
-     * TODO better name that doesn't conflict with TurnIndicator class
-     */
+    /** Indicates if it is the opponent's turn */
     protected var turnIndicator :Sprite;
 
     /** Displays the number of monies */

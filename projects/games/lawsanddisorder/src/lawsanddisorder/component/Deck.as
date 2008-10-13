@@ -1,12 +1,11 @@
 ﻿package lawsanddisorder.component {
 
+import com.threerings.util.ArrayUtil;
+
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import flash.events.MouseEvent;
-
-import com.threerings.util.HashMap;
-import com.threerings.util.ArrayUtil;
 
 import lawsanddisorder.*;
 
@@ -21,6 +20,16 @@ public class Deck extends Component
     /** The name of the jobs data distributed value. */
     public static const JOBS_DATA :String = "jobsData";
 
+    /** Event indicating some card was moved. value[0] is card.id, value[1] is from player.id or 
+     * DECK_ID, value[2] is destination player.id or DECK_ID */
+    public static const CARD_MOVED :String = "cardMoved";
+    
+    /** Indicator that the person/thing giving or receiving a card is the deck not a player */
+    public static const DECK_ID :int = -5;
+    
+    /** The number of cards players draw at the start of their turn */
+    public static const CARDS_AT_START_OF_TURN :int = 2;
+
     /**
      * Constructor.  Initialize the discard pile and player jobs array, setup event handlers
      * then populate the jobs array and card deck.
@@ -32,6 +41,7 @@ public class Deck extends Component
 
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
         _ctx.eventHandler.addDataListener(JOBS_DATA, jobsChanged);
+        _ctx.eventHandler.addMessageListener(CARD_MOVED, cardMoved);
 
         // create the job objects
         createJob(Job.JUDGE);
@@ -41,18 +51,16 @@ public class Deck extends Component
         createJob(Job.PRIEST);
         createJob(Job.DOCTOR);
 
-        // TODO get this from somewhere else - board?
-        var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
-        playerJobs = new Array(playerCount).map(function (): int { return -1; });
+        playerJobs = new Array(LawsAndDisorder.NUM_PLAYERS).map(function (): int { return -1; });
 
         var numDecks :int;
         // 2 players 2 decks 10 laws 5 laws each
-        if (playerCount == 2) {
+        if (LawsAndDisorder.NUM_PLAYERS == 2) {
             numDecks = 2;
         }
         // 3 players 3 decks 15 laws 5 laws each
         // 4 players 3 decks 15 laws 4 laws each
-        else if (playerCount < 5) {
+        else if (LawsAndDisorder.NUM_PLAYERS < 5) {
             numDecks = 3;
         }
         // 5 players 4 decks 20 laws 4 laws each
@@ -60,7 +68,7 @@ public class Deck extends Component
         else {
             numDecks = 4;
         }
-
+/*
         // Change the size of the deck based on the number of players
         for (var i :int = 0; i < numDecks; i++) {
             // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
@@ -71,7 +79,7 @@ public class Deck extends Component
             addNewCards(2, Card.SUBJECT, Job.PRIEST);
             addNewCards(2, Card.SUBJECT, Job.DOCTOR);
             // take out gives for 2 player games
-            if (playerCount == 2) {
+            if (LawsAndDisorder.NUM_PLAYERS == 2) {
                 addNewCards(4, Card.VERB, Card.LOSES);
                 addNewCards(3, Card.VERB, Card.GETS);
             }
@@ -91,46 +99,45 @@ public class Deck extends Component
             addNewCards(1, Card.WHEN, Card.USE_ABILITY);
             addNewCards(1, Card.WHEN, Card.CREATE_LAW);
         }
-
-        /*
+*/
         // TODO custom deck for testing
         for (var i :int = 0; i < 1; i++) {
             // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
-            addNewCards(6, Card.SUBJECT, Job.JUDGE);
-            addNewCards(6, Card.SUBJECT, Job.THIEF);
-//            addNewCards(2, Card.SUBJECT, Job.BANKER);
-//            addNewCards(2, Card.SUBJECT, Job.TRADER);
-//            addNewCards(2, Card.SUBJECT, Job.PRIEST);
-//            addNewCards(2, Card.SUBJECT, Job.DOCTOR);
+            addNewCards(24, Card.SUBJECT, Job.JUDGE);
+            //addNewCards(6, Card.SUBJECT, Job.THIEF);
+            //addNewCards(6, Card.SUBJECT, Job.BANKER);
+           /// addNewCards(6, Card.SUBJECT, Job.TRADER);
+           // addNewCards(6, Card.SUBJECT, Job.PRIEST);
+            //addNewCards(24, Card.SUBJECT, Job.DOCTOR);
             // take out gives for 2 player games
 //            if (playerCount == 2) {
   //              addNewCards(4, Card.VERB, Card.LOSES);
     //            addNewCards(3, Card.VERB, Card.GETS);
       //      }
         //    else {
-                addNewCards(2, Card.VERB, Card.GIVES);
-                addNewCards(3, Card.VERB, Card.LOSES);
-                addNewCards(2, Card.VERB, Card.GETS);
+                addNewCards(9, Card.VERB, Card.GIVES);
+    //            addNewCards(3, Card.VERB, Card.LOSES);
+      //          addNewCards(2, Card.VERB, Card.GETS);
           //  }
 
-            addNewCards(2, Card.OBJECT, Card.CARD, 1);
-            addNewCards(2, Card.OBJECT, Card.CARD, 2);
+   //         addNewCards(4, Card.OBJECT, Card.CARD, 1);
+     //       addNewCards(4, Card.OBJECT, Card.CARD, 2);
 //            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
   //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
     //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
-      //      addNewCards(1, Card.OBJECT, Card.MONIE, 4);
-            addNewCards(1, Card.WHEN, Card.START_TURN);
-            addNewCards(1, Card.WHEN, Card.USE_ABILITY);
-            addNewCards(3, Card.WHEN, Card.CREATE_LAW);
+            addNewCards(8, Card.OBJECT, Card.MONIE, 4);
+            addNewCards(6, Card.WHEN, Card.START_TURN);
+            addNewCards(3, Card.WHEN, Card.USE_ABILITY);
+            //addNewCards(3, Card.WHEN, Card.CREATE_LAW);
         }
-        */
     }
-
+    
     /**
      * Create numCards new cards, add them to the array of card objects.  Does not fill the
      * deck with cards - that is done by the control player in setup().
      */
-    protected function addNewCards (numCards :int, cardGroup :int, cardType :int, cardValue :int = 0) :void
+    protected function addNewCards (
+        numCards :int, cardGroup :int, cardType :int, cardValue :int = 0) :void
     {
         for (var i :int = 1; i <= numCards; i++) {
             var cardId :int = cardObjects.length;
@@ -155,9 +162,10 @@ public class Deck extends Component
     }
 
     /**
-     * Remove the top card from the deck and return it
+     * Remove the top card from the deck and return it.  Animate a card moving from the deck
+     * to the player's hand.
      */
-    public function drawCard () :Card
+    public function drawCard (player :Player) :Card
     {
         // no cards in deck to draw
         if (numCards == 0) {
@@ -176,10 +184,56 @@ public class Deck extends Component
         if (numCards == 0) {
             _ctx.eventHandler.startLastRound();
         }
-
-        return cardObjects[cardIndex];
+        
+        var card :Card = cardObjects[cardIndex];
+        
+        // tell all players to animate the card drawing
+        _ctx.sendMessage(CARD_MOVED, new Array(card.id, DECK_ID, player.id));
+        //_ctx.sendMessage(CARD_DRAWN, player.id);
+        
+        return card;
     }
 
+    /**
+     * A card was moved from someone/somewhere to someone/somewhere, animate it.
+     * @param event event.value[0] is card.id, event.value[1] is source id, [2] destination id
+     */
+    protected function cardMoved (event :MessageEvent) :void
+    {
+        //_ctx.log("got card moved." + event.value);
+        var card :Card = getCard((event.value as Array)[0] as int);
+        var fromId :int = (event.value as Array)[1] as int;
+        var toId :int = (event.value as Array)[2] as int;
+        
+        var fromPoint :Point;
+        if (fromId == DECK_ID) {
+            fromPoint = localToGlobal(new Point(0,0));
+        } else {
+            var fromPlayer :Player = _ctx.board.players.getPlayer(fromId);
+            if (fromPlayer as Opponent) {
+                fromPoint = Opponent(fromPlayer).getGlobalHandLocation();
+            } else {
+                // TODO don't animate here? but animate actual card face at move time?
+                fromPoint = fromPlayer.hand.localToGlobal(new Point(300,0));
+            }
+        }
+        
+        var toPoint :Point;
+        if (toId == DECK_ID) {
+            toPoint = localToGlobal(new Point(0,0));
+        } else {
+            var toPlayer :Player = _ctx.board.players.getPlayer(toId);
+            if (toPlayer as Opponent) {
+                toPoint = Opponent(toPlayer).getGlobalHandLocation();
+            } else {
+                // TODO don't animate here? but animate actual card face at move time?
+                toPoint = toPlayer.hand.localToGlobal(new Point(300,0));
+            }
+        }
+        
+        _ctx.board.animateMove(new Content.CARD_BACK(), fromPoint, toPoint);
+    }
+    
     /**
      * Fetch an array of numCards cards for a starting hand.  Massage it so that it contains
      * at least two subjects, one object and one verb.
@@ -232,7 +286,10 @@ public class Deck extends Component
         var missingCardsNum :int = numCards - cardArray.length;
         if (missingCardsNum > 0) {
             for (var i :int = 0; i < missingCardsNum; i++) {
-                cardArray.push(Card(cardObjects[cards.pop() as int]));
+                var missingCard :Card = Card(cardObjects[cards.pop() as int]);
+                if (missingCard != null) {
+                    cardArray.push(missingCard);
+                }
             }
         }
 
@@ -291,14 +348,21 @@ public class Deck extends Component
     }
 
     /**
-     * Called when the player jobs array changes on the server.
+     * Called when the player jobs array changes on the server.  Also set the player for every
+     * job at this time.
+     * @event event.index is the player.id and event.newValue is the job.id
      */
     protected function jobsChanged (event :DataChangedEvent) :void
     {
         if (event.index > -1) {
             playerJobs[event.index] = event.newValue;
+            var player :Player = _ctx.board.players.getPlayer(event.index);
+            var job :Job = getJob(event.newValue);
+            job.player = player;
         }
         else {
+            // this will be blank setup data
+            _ctx.log("Deck clearing job data.");
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
         }
     }
@@ -377,18 +441,27 @@ public class Deck extends Component
         }
         playerJobs[player.id] = job.id;
         player.job = job;
+        job.player = player;
         _ctx.eventHandler.setData(JOBS_DATA, job.id, player.id);
 
         // job was on another player; assign old job to other player
         if (oldJob != null && oldPlayer != null) {
             playerJobs[oldPlayer.id] = oldJob.id;
             oldPlayer.job = oldJob;
+            oldJob.player = oldPlayer;
             _ctx.eventHandler.setData(JOBS_DATA, oldJob.id, oldPlayer.id);
             _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
         }
         else if (oldPlayer == null) {
             if (!duringSetup) {
                _ctx.broadcast(player.playerName + " became " + player.job);
+            }
+        }
+        
+        // highlight cards with the player's job
+        if (player == _ctx.player || oldPlayer == _ctx.player) {
+            for each (var card :Card in cardObjects) {
+                card.highlightJob();
             }
         }
     }
@@ -400,7 +473,7 @@ public class Deck extends Component
     {
         for (var playerId :int = 0; playerId < playerJobs.length; playerId++) {
             if (playerJobs[playerId] == jobId) {
-                return _ctx.board.getPlayer(playerId);
+                return _ctx.board.players.getPlayer(playerId);
             }
         }
         return null;
@@ -426,7 +499,7 @@ public class Deck extends Component
         if (playerId == -1) {
             return null;
         }
-        return _ctx.board.getPlayer(playerId);
+        return _ctx.board.players.getPlayer(playerId);
     }
 
     /** Displays the number of cards in the deck */

@@ -1,18 +1,18 @@
 ﻿package lawsanddisorder {
 
-import flash.utils.Timer;
-import flash.events.TimerEvent;
-import flash.events.MouseEvent;
+import com.threerings.util.HashMap;
+import com.whirled.game.CoinsAwardedEvent;
+import com.whirled.game.ElementChangedEvent;
+import com.whirled.game.GameSubControl;
+import com.whirled.game.MessageReceivedEvent;
+import com.whirled.game.PropertyChangedEvent;
+import com.whirled.game.StateChangedEvent;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
-
-import com.whirled.net.PropertyChangedEvent;
-import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.game.CoinsAwardedEvent;
-import com.whirled.game.StateChangedEvent;
-import com.threerings.util.HashMap;
-import com.whirled.game.GameSubControl;
+import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import lawsanddisorder.component.*;
 
@@ -23,17 +23,21 @@ import lawsanddisorder.component.*;
  */
 public class EventHandler extends EventDispatcher
 {
+    /** Event that fires when some player's turn just started (including AIs) */
+    public static const TURN_CHANGED :String = "turnChanged";
+    
     /** Event that fires when the player's turn is ending */
-    public static const PLAYER_TURN_ENDED :String = "turnEnded";
+    public static const MY_TURN_ENDED :String = "turnEnded";
 
     /** Event that fires when the player's turn is starting */
-    public static const PLAYER_TURN_STARTED :String = "turnStarted";
+    public static const MY_TURN_STARTED :String = "turnStarted";
 
     /** Event that fires when the last round starts */
     public static const LAST_ROUND_STARTED :String = "lastRoundStarted";
 
     /**
-     * Constructor - add event listeners and maybe get the board if it's setup */
+     * Constructor - add event listeners and maybe get the board if it's setup 
+     */
     public function EventHandler (ctx :Context)
     {
         _ctx = ctx;
@@ -42,17 +46,28 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
         addMessageListener(LAST_ROUND_STARTED, lastRoundStarted);
     }
 
     /**
-     * Invoke the given function in delay milliseconds.
-     * TODO remove - only used by mouseeventhandler to rearrange cards
+     * Invoke the given function in delay seconds.
+     * TODO: replace with startTimer
      */
     public static function invokeLater (delaySeconds :int, func :Function) :void
     {
         var timer :Timer = new Timer(delaySeconds*1000, 1);
         timer.addEventListener(TimerEvent.TIMER, func);
+        timer.start();
+    }
+
+    /**
+     * Invoke the given function in delay milliseconds.
+     */
+    public static function startTimer (delayMillis :int, func :Function, numFires :int = 1) :void
+    {
+        var timer :Timer = new Timer(delayMillis, numFires);
+        timer.addEventListener(TimerEvent.TIMER, function (event :Event): void { func(); });
         timer.start();
     }
 
@@ -100,12 +115,14 @@ public class EventHandler extends EventDispatcher
      */
     protected function messageReceived (event :MessageReceivedEvent) :void
     {
-        var listeners :Array = _messageListeners.get(event.name);
+        // convert from Whirled event to our own to reduce dependencies
+        var messageEvent :MessageEvent = new MessageEvent(event.name, event.value);
+        var listeners :Array = _messageListeners.get(messageEvent.name);
         if (listeners != null) {
             // iterate through and perform each listener
             for (var i :int = 0; i < listeners.length; i++) {
                 var listener :Function = listeners[i];
-                listener(event);
+                listener(messageEvent);
             }
         }
     }
@@ -239,20 +256,19 @@ public class EventHandler extends EventDispatcher
         if (_lastRoundStarted) {
             return;
         }
-        //_lastRoundStarted = true;
-		_lastTurnStarted = true;
-        _ctx.sendMessage(LAST_ROUND_STARTED, _ctx.board.player.id);
-        _ctx.broadcast("The deck is empty, so this is the last round.  This is " + _ctx.board.player.playerName + "'s last turn.");
-        //_ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, endGame);
+        _lastTurnStarted = true;
+        _ctx.sendMessage(LAST_ROUND_STARTED, _ctx.player.id);
+        _ctx.broadcast("The deck is empty, so this is the last round.  This is " +
+            _ctx.player.playerName + "'s last turn.");
     }
 
     /**
      * Message event received when the last round starts.
      */
-    protected function lastRoundStarted (event :MessageReceivedEvent) :void
+    protected function lastRoundStarted (event :MessageEvent) :void
     {
         _lastRoundStarted = true;
-		_ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, lastRoundTurnStarted);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, lastRoundTurnStarted);
     }
 
     /**
@@ -261,10 +277,13 @@ public class EventHandler extends EventDispatcher
      */
     protected function lastRoundTurnStarted (event :Event) :void
     {
+        _ctx.log("EventHandler.lastRoundTurnStarted");
         if (!_lastTurnStarted) {
             _lastTurnStarted = true;
         }
         else {
+            _ctx.eventHandler.removeEventListener(EventHandler.MY_TURN_STARTED, 
+               lastRoundTurnStarted);
             endGame();
         }
     }
@@ -276,24 +295,27 @@ public class EventHandler extends EventDispatcher
      */
     protected function endGame () :void
     {
+        _ctx.log("EventHandler.endGame");
         // whoever's turn it is when the game ends,
         // end every player's turn to lock the board.
         _ctx.board.endTurnButton.gameEnded();
 
         // prepare for a possible rematch
         _lastRoundStarted = false;
-		_lastTurnStarted = false;
-        _ctx.eventHandler.removeEventListener(EventHandler.PLAYER_TURN_STARTED, endGame);
+        _lastTurnStarted = false;
+        _ctx.eventHandler.removeEventListener(EventHandler.MY_TURN_STARTED, endGame);
 
         var playerIds :Array = new Array;
         var playerScores :Array = new Array;
 
-        for each (var player :Player in _ctx.board.players) {
+        // TODO use winning percentile instead?
+        for each (var player :Player in _ctx.board.players.playerObjects) {
             playerIds.push(player.serverId);
             playerScores.push(player.monies);
         }
 
-        _ctx.control.game.endGameWithScores(playerIds, playerScores, GameSubControl.CASCADING_PAYOUT);
+        _ctx.control.game.endGameWithScores(playerIds, playerScores, 
+            GameSubControl.CASCADING_PAYOUT);
     }
 
     /**
@@ -313,6 +335,21 @@ public class EventHandler extends EventDispatcher
         _ctx.notice("You got: " + event.amount + " coins for playing.  That's " + event.percentile + "%");
     }
 
+    /**
+     * Dispatch an internal turn changed event because the turn has changed.
+     */
+    protected function turnChanged (event :StateChangedEvent) :void
+    {
+        // there are two turnChanged events when the game starts, ignore the first
+        if (_ctx.board == null) {
+            return;
+        }
+        
+        // set the turnHolder before sending out the word to other components
+        _ctx.board.players.calculateTurnHolder();
+        dispatchEvent(new Event(EventHandler.TURN_CHANGED));
+    }
+    
     /** Context */
     protected var _ctx :Context;
 

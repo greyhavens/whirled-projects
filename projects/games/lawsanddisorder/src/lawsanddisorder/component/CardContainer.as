@@ -1,9 +1,9 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.events.MouseEvent;
 
 import lawsanddisorder.Context;
 
@@ -47,24 +47,9 @@ public class CardContainer extends Component
      */
     protected function addCard (card :Card, insertIndex :int = -1) :void
     {
-        if (!contains(card)) {
-            if (insertIndex == -1) {
-                addChild(card);
-            }
-            else {
-                if (numChildren < insertIndex) {
-                    // TODO how does this happen and can it be prevented?
-                    //_ctx.log("WTF Card insert at " + insertIndex + " with " + numChildren + " children.");
-                    addChild(card);
-                }
-                else {
-                    addChildAt(card, insertIndex + getStartingChildIndex());
-                }
-            }
-        }
-        else {
-            _ctx.log("WTF already contains child card: " + card);
-        }
+        // always add physical card object to the front regardless of insertIndex
+        addChild(card);
+        
         if (cards.indexOf(card) < 0) {
             if (insertIndex < 0 || insertIndex > cards.length) {
                 insertIndex = cards.length;
@@ -144,34 +129,25 @@ public class CardContainer extends Component
     }
 
     /**
-     * Serialize a set of cards for distributing to other players
+     * Serialize a set of cards for distributing to other players.  If cardList is not supplied,
+     * use this card container's card list.
      */
-    public function getSerializedCards () :Object
+    public function getSerializedCards (cardList :Array = null) :Object
     {
-        return cardIds;
-/*
-        if (cardIds == null) {
-            _ctx.log("WTF cardIds is null in CardContainer.getSerializedCards");
-            return "";
+        if (cardList == null) {
+            return cardIds;
         }
-        if (cardIds.length == 0) {
-_ctx.log("no cards in getSerializedCards");
-            return "";
+        else {
+            var cardListIds :Array = new Array();
+            for (var i :int = 0; i < cardList.length; i++) {
+                cardListIds[i] = cardList[i].id;
+            }
+            return cardListIds;
         }
-
-        var serializedCards :String = cardIds[0];
-        for (var i :int = 1; i < cardIds.length; i++) {
-            serializedCards += "," + cardIds[i];
-        }
-_ctx.log("get serialized cards: " + serializedCards);
-        return serializedCards;
-*/
     }
 
     /**
      * Set cards from a serialized list from other players, then update the card display
-     * TODO don't set serialized cards if this is the player who changed them
-     * TODO inefficient but simple - fix?
      */
     public function setSerializedCards (serializedCards :Object) :void
     {
@@ -179,62 +155,7 @@ _ctx.log("get serialized cards: " + serializedCards);
             _ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
             return;
         }
-//_ctx.log("set serialized cards: " + (serializedCards as String));
-//        var newCardIds :Array = serializedCards.split(",");
-//_ctx.log("set serialized len: " + newCardIds.length);
-/*
-_ctx.log("\n\nSET serialized cards : " + serializedCards);
-_ctx.log("old cardsids: " + cardIds);
-_ctx.log("old cards: " + cards);
-
-        var newCardIds :Array = serializedCards as Array;
-        for (var i :int = 0; i < newCardIds.length; i++) {
-
-            // add card to the end of the arrays
-            if (i >= cardIds.length) {
-                var addCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
-                cardIds.push(newCardIds[i]);
-                cards.push(addCard);
-                if (!contains(addCard)) {
-                    addChild(addCard);
-                }
-                addCard.cardContainer = this;
-            }
-
-            // replace card at index i
-            else if (cardIds[i] != newCardIds[i]) {
-                var oldCard :Card = cards[i];
-                var newCard :Card = _ctx.board.deck.getCard(newCardIds[i]);
-                cardIds[i] = newCardIds[i];
-                cards[i] = newCard;
-                if (!contains(newCard)) {
-                    addChild(newCard);
-                }
-                newCard.cardContainer = this;
-                // remove old card as child only if array doesn't contain it anymore
-                if (contains(oldCard) && cardIds.indexOf(oldCard.id) < 0) {
-                    removeChild(oldCard);
-                }
-            }
-        }
-
-        // truncate the cards arrays if required
-        if (cardIds.length > newCardIds.length) {
-            _ctx.log("cardIds longer: " + cardIds.length + " than: " + newCardIds.length);
-            for (var j :int = newCardIds.length; j < cardIds.length; j++) {
-
-                var extraOldCard :Card = cards[j];
-                _ctx.log("removing card : " + extraOldCard);
-                if (contains(extraOldCard) && cardIds.indexOf(extraOldCard.id) < 0) {
-                    _ctx.log("removing child extra old card");
-                    removeChild(extraOldCard);
-                }
-            }
-            cardIds.length = newCardIds.length;
-            cards.length = newCardIds.length;
-        }
-        */
-
+        
         // remove all cards then readd them
         // won't trigger redisplay or synchronize
         var oldLength :int = cards.length;
@@ -311,24 +232,47 @@ _ctx.log("old cards: " + cards);
     }
 
     /**
+     * Return a subset of cards that includes only verbs, subjects, objects or when cards
+     */
+    public function getCardsByGroup (group :int) :Array
+    {
+        var cardSublist :Array = new Array();
+        for each (var card :Card in cards) {
+            if (card.group == group) {
+                cardSublist.push(card);
+            }
+        }
+        return cardSublist;
+    }
+
+    /**
      * Convert this object to a string for debugging.
      */
     override public function toString () :String
     {
         return "Container [" + cards.length + " cards]";
     }
-
+    
     /**
-     * The cards will be added as children starting at this index
-     * TODO fugly
+     * Select a random card.  If group is supplied, card must be of that type.  Return null if
+     * no appropriate card could be found.  -1 is Card.NO_GROUP
      */
-    protected function getStartingChildIndex () :int
+    public function pickRandom (group :int = -1) :Card
     {
-        return 0;
+        var availableCards :Array = cards;
+        if (group != Card.NO_GROUP) {
+            availableCards = getCardsByGroup(group);
+        }
+        if (availableCards.length == 0) {
+            return null;
+        }
+        var randomIndex :int = Math.round(Math.random() * (availableCards.length-1));
+        var randomCard :Card = availableCards[randomIndex];
+        return randomCard;
     }
 
     /** Card objects in the container */
-    protected var cards :Array = new Array();
+    public var cards :Array = new Array();
 
     /** Card ids in the container */
     protected var cardIds :Array = new Array();

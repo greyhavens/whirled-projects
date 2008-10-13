@@ -47,55 +47,104 @@ public class NewLaw extends CardContainer
     }
 
     /**
-     * Determine if the contents of the card array form a valid law.
+     * Determine if the contents of the card array form a valid law.  If a cardList is provided
+     * use that, otherwise use the cardlist inside this NewLaw.
      */
-    public function isValidLaw () :Boolean
+    public function isValidLaw (cardList :Array = null) :Boolean
     {
-        if (cards == null) {
-            _ctx.log("WTF cards are null in isValidLaw");
+        if (cardList == null) {
+            cardList = cards;
+        }
+        
+        if (cardList == null) {
+            _ctx.log("WTF cardList are null in isValidLaw");
             return false;
         }
 
-        if (cards.length < 3) {
+        if (cardList.length < 3) {
             return false;
         }
-        if (cards[0].group != Card.SUBJECT) {
+        if (cardList[0].group != Card.SUBJECT) {
             return false;
         }
-        if (cards[1].group != Card.VERB) {
+        if (cardList[1].group != Card.VERB) {
             return false;
         }
-        if (cards[2].group == Card.OBJECT) {
-            if (cards.length == 3) {
+        if (cardList[2].group == Card.OBJECT) {
+            if (cardList.length == 3) {
                 // SUBECT VERB OBJECT
                 return true;
             }
-            if (cards[3].group == Card.WHEN) {
-                if (cards.length == 4) {
+            if (cardList[3].group == Card.WHEN) {
+                if (cardList.length == 4) {
                     // SUBJECT VERB OBJECT WHEN
                     return true;
                 }
             }
         }
-        else if (cards[1].type == Card.GIVES) {
-            if (cards[2].group != Card.SUBJECT) {
+        else if (cardList[1].type == Card.GIVES) {
+            if (cardList[2].group != Card.SUBJECT) {
                 return false;
             }
-            if (cards[3].group != Card.OBJECT) {
+            if (cardList[3].group != Card.OBJECT) {
                 return false;
             }
-            if (cards.length == 4) {
+            if (cardList.length == 4) {
                 // SUBJECT VERB:GIVES SUBECT OBJECT
                 return true;
             }
-            if (cards[4].group == Card.WHEN) {
-                if (cards.length == 5) {
+            if (cardList[4].group == Card.WHEN) {
+                if (cardList.length == 5) {
                     // SUBJECT VERB:GIVES SUBJECT OBJECT WHEN
                     return true;
                 }
             }
         }
         return false;
+    }
+    
+    /**
+     * Determine which player, if any, a law represented by an array of cards will benefit.
+     */
+    public function isGoodFor (cardList :Array = null) :Player
+    {
+        if (!isValidLaw(cardList)) {
+            _ctx.log("WTF law is invalid in NewLaw.isGoodFor");
+            return null;
+        }
+        
+        // return the player who GETS something
+        if (cardList[1].type == Card.GETS) {
+            return _ctx.board.deck.getPlayerByJobId(cardList[0].type);
+        
+        // return the player who receives something
+        } else if (cardList[1].type == Card.GIVES && cardList[2].group == Card.SUBJECT) {
+            return _ctx.board.deck.getPlayerByJobId(cardList[2].type);
+        
+        // return null because a player only LOSES or GIVES (to their choice of player)
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Determine which player, if any, a law represented by an array of cards will hurt.
+     */
+    public function isBadFor (cardList :Array = null) :Player
+    {
+        if (!isValidLaw(cardList)) {
+            _ctx.log("WTF law is invalid in NewLaw.isBadFor");
+            return null;
+        }
+
+        // return the player who LOSES or GIVES something
+        if (cardList[1].type == Card.GIVES || cardList[1].type == Card.LOSES) {
+            return _ctx.board.deck.getPlayerByJobId(cardList[0].type);
+        
+        // return null because a player only GETS something
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -110,20 +159,29 @@ public class NewLaw extends CardContainer
         if (!isValidLaw()) {
             _ctx.notice("That is not a legal law.");
             return;
-         }
-
-         _ctx.broadcast(_ctx.board.player.playerName + " got " + cards.length + " monies for making a new law.");
-        _ctx.board.player.getMonies(cards.length);
+        }
+        
         enabled = false;
-        _ctx.state.startEnactingLaws();
-
-        // tell other players and ourself about the new law
-        var newLawData :Object = this.getSerializedCards();
-        _ctx.sendMessage(Laws.NEW_LAW, newLawData);
+        makeLaw(cards, _ctx.player);
 
         // clear cards from new law and remove them from hand
         clear(false);
         _ctx.board.createLawButton.newLawCreated();
+    }
+    
+    /**
+     * Given a list of cards and a player, award monies and make a new law.
+     */
+    public function makeLaw (cardList :Array, player :Player) :void
+    {
+        _ctx.broadcast(player.playerName + " got " + cardList.length 
+            + " monies for making a new law: " + cardList);
+        player.getMonies(cardList.length);
+        _ctx.state.startEnactingLaws();
+
+        // tell other players that cards have been removed from hand, and the new law created
+        _ctx.sendMessage(Laws.NEW_LAW, getSerializedCards(cardList));
+        player.hand.removeCards(cardList, true);
     }
 
     /**
@@ -195,7 +253,6 @@ public class NewLaw extends CardContainer
 
     /**
      * Return all cards in new law to the player's hand.
-     * TODO like createLaw this method of moving cards should be improved
      */
     protected function clear (backToHand :Boolean = true) :void
     {
@@ -211,19 +268,8 @@ public class NewLaw extends CardContainer
         removeCards(cardArray, false);
 
         if (backToHand) {
-            _ctx.board.player.hand.addCards(cardArray, false);
+            _ctx.player.hand.addCards(cardArray, false);
         }
-        else {
-            _ctx.board.player.hand.removeCards(cardArray, true);
-        }
-    }
-
-    /**
-     * First child is the background, second is the create button
-     */
-    override protected function getStartingChildIndex () :int
-    {
-        return 2;
     }
 
     /**

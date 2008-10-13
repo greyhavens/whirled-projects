@@ -1,9 +1,6 @@
 ﻿package lawsanddisorder.component {
 
-import flash.display.Sprite;
 import flash.geom.Point;
-import flash.text.TextField;
-import flash.events.MouseEvent;
 
 import lawsanddisorder.*;
 
@@ -59,9 +56,37 @@ public class Hand extends CardContainer
      */
     public function drawCard (numCards :int = 1) :void
     {
+    /*
+        // draw cards a few miliseconds apart so they will animate seperately
+        var drawTimer :Timer = new Timer(20, numCards);
+        drawTimer.addEventListener(TimerEvent.TIMER, 
+            function (event :TimerEvent): void { 
+                //_ctx.log("drawing card.");
+                var card :Card = _ctx.board.deck.drawCard(player);
+                if (card != null) {
+                    // no more cards in the deck!
+                    addCards(new Array(card));
+                }
+            });
+        drawTimer.start();
+        */
+        
+        // draw cards a few miliseconds apart so they will animate seperately
+        EventHandler.startTimer(20, 
+            function (): void { 
+                //_ctx.log("drawing card.");
+                var card :Card = _ctx.board.deck.drawCard(player);
+                if (card != null) {
+                    // no more cards in the deck!
+                    addCards(new Array(card));
+                }
+            }, numCards);
+        
+        /*
         var cardArray :Array = new Array();
+        
         for (var i :int = 1; i <= numCards; i++) {
-            var card :Card = _ctx.board.deck.drawCard();
+            var card :Card = _ctx.board.deck.drawCard(this.player);
             if (card == null) {
                 // no more cards in the deck!
                 break;
@@ -69,6 +94,7 @@ public class Hand extends CardContainer
             cardArray.push(card);
         }
         addCards(cardArray);
+        */
     }
 
     /**
@@ -172,6 +198,7 @@ public class Hand extends CardContainer
      */
     protected function handChanged (event :DataChangedEvent) :void
     {
+        //_ctx.log("hand data changed: " + this);
         setSerializedCards(event.newValue);
     }
 
@@ -209,7 +236,8 @@ public class Hand extends CardContainer
     }
 
     /**
-     * Pick and return an array of random cards from this hand.
+     * Pick and return an array of random cards from this hand, or all the cards if the number
+     * to select is too many.
      */
     public function getRandomCards (numCards :int = 1) :Array
     {
@@ -217,6 +245,10 @@ public class Hand extends CardContainer
         var availableCards :Array = new Array();
         for each (var card :Card in cards) {
             availableCards.push(card);
+        }
+        
+        if (numCards >= availableCards.length) {
+            return availableCards;
         }
 
         var randomCards :Array = new Array();

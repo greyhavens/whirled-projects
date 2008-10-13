@@ -11,10 +11,10 @@ public class Content
 {
     /**
      * Build and return a new text field with default style and format.
-     * If percentSize is given, the font will default to that percentage of the default
-     * font size.
+     * If percentSize is given, the font will default to that percentage of the default font size.
      */
-    public static function defaultTextField (percentSize :Number = 1, align :String = "center") :TextField
+    public static function defaultTextField (
+        percentSize :Number = 1, align :String = "center") :TextField
     {
         var field :TextField = new TextField();
         field.defaultTextFormat = defaultTextFormat(percentSize, align);

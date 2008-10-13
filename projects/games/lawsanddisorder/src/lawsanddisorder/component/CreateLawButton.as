@@ -21,8 +21,8 @@ public class CreateLawButton extends Button
         super(ctx);
         text = "create law";
         addEventListener(MouseEvent.CLICK, createLawButtonClicked);
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_ENDED, turnEnded);
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_ENDED, turnEnded);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, turnStarted);
         enabled = false;
     }
 

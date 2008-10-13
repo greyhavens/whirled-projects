@@ -1,0 +1,30 @@
+
+For two players, use 2 times these cards.  For three or four players, use 3 times these cards.  For five or six players, use 4 times these cards.
+
+2 judge
+2 thief
+2 banker
+2 trader
+2 priest
+2 doctor
+
+(for 2 player):
+4 loses
+3 gets
+(for 3+ players);
+2 gives
+3 loses
+2 gets
+
+2 one card
+1 two cards
+1 one monie
+1 two monies
+1 three monies
+1 four monies
+
+1 when their turn starts
+1 when they use their ability
+1 when a law is created
+
+

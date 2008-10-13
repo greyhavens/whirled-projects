@@ -6,13 +6,10 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.utils.Dictionary;
 
-import com.whirled.net.MessageReceivedEvent;
-
 import lawsanddisorder.*;
 
 /**
  * Area filled with laws
- * TODO rename to LawsArea?
  */
 public class Laws extends Component
 {
@@ -35,9 +32,10 @@ public class Laws extends Component
         ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
         ctx.eventHandler.addMessageListener(NEW_LAW, addNewLaw);
 
-        ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+        ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, turnStarted);
+        ctx.eventHandler.addEventListener(Job.MY_POWER_USED, powerUsed);
     }
-
+    
     /**
      * For watchers who join partway through the game, fetch the existing law data
      */
@@ -72,15 +70,17 @@ public class Laws extends Component
      * as its cards, and add it to our array.  Next enact the law if applicable, then begin
      * triggering laws that have "when a new law is created".
      */
-    public function addNewLaw (event :MessageReceivedEvent) :void
+    protected function addNewLaw (event :MessageEvent) :void
     {
         var law :Law = new Law(_ctx, numLaws);
         law.setSerializedCards(event.value);
         addLaw(law);
         law.setDistributedLawData();
+        
+        //_ctx.log("triggering new law: " + law);
 
         // player whose turn it is starts law triggering
-        if (_ctx.board.isMyTurn()) {
+        if (_ctx.board.players.isMyTurn() || _ctx.board.players.amControllingAI() ) {
             if (law.when == -1) {
                 // to avoid multiple laws enacting at once, wait until this one is done before
                 // searching for laws that trigger on CREATE_LAW.
@@ -97,7 +97,7 @@ public class Laws extends Component
      * Called when a new law is successfully enacted.  Now scroll through all the laws and
      * enact any that trigger on CREATE_LAW.
      */
-    protected function newLawEnacted (event :MessageReceivedEvent) :void
+    protected function newLawEnacted (event :MessageEvent) :void
     {
         _ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, newLawEnacted);
         triggerWhen(Card.CREATE_LAW);
@@ -150,7 +150,7 @@ public class Laws extends Component
      * Called when a law is triggered.  Event value is the index of the triggered law.
      * Get the law card set from the server to make sure we have the newest version first.
      */
-    protected function enactLaw (event :MessageReceivedEvent) :void
+    protected function enactLaw (event :MessageEvent) :void
     {
         var lawId :int = event.value as int;
         updateLawData(lawId);
@@ -219,25 +219,29 @@ public class Laws extends Component
      */
     protected function turnStarted (event :Event) :void
     {
-        _ctx.board.laws.triggerWhen(Card.START_TURN, _ctx.board.player.job.id);
+        triggerWhen(Card.START_TURN, _ctx.player.job.id);
     }
 
     /**
      * A player just finished using their ability, or created a law, or it's the start
      * of their turn.  Trigger any laws with the appropriate WHEN card and their job as the
      * subject type.
+     * @param whenType Type of when card to execute, eg Card.START_TURN
+     * @job Optional (as for Card.CREATE_LAW) subject type eg Job.BANKER or _ctx.player.job.id
      */
-    public function triggerWhen (whenType :int, subjectType :int = -1) :void
+    public function triggerWhen (whenType :int, job :int = -1) :void
     {
         // tell the state that we're enacting laws; player can't do anything else.
-        _ctx.state.startEnactingLaws();
+        if (!(_ctx.board.players.turnHolder as AIPlayer)) {
+            _ctx.state.startEnactingLaws();
+        }
 
         triggerWhenType = whenType;
-        triggerSubjectType = subjectType;
+        triggerSubjectType = job;
         _ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, triggeringWhen);
 
         // kick off the loop through laws with a dummy event (oldestLawId-1 is the last law enacted).
-        var dummyEvent :MessageReceivedEvent = new MessageReceivedEvent(ENACT_LAW_DONE, oldestLawId-1);
+        var dummyEvent :MessageEvent = new MessageEvent(ENACT_LAW_DONE, oldestLawId-1);
         triggeringWhen(dummyEvent);
     }
 
@@ -245,7 +249,7 @@ public class Laws extends Component
      * Called when in the process of triggering laws.  To avoid enacting multiple laws at once,
      * this will only be called to continue once a law is finished enacting.
      */
-    protected function triggeringWhen (event :MessageReceivedEvent) :void
+    protected function triggeringWhen (event :MessageEvent) :void
     {
         // may be -1 the first time through
         var lastLawEnacted :int = event.value as int;
@@ -262,8 +266,13 @@ public class Laws extends Component
             }
         }
 
-        // action complete; return focus to the player if it is their turn
-        _ctx.state.doneEnactingLaws();
+        // action complete; return focus to the player or to the ai player
+        //_ctx.log("returning focus to player " + _ctx.board.players.turnHolder);
+        if (_ctx.board.players.turnHolder as AIPlayer) {
+            AIPlayer(_ctx.board.players.turnHolder).doneEnactingLaws();
+        } else {
+            _ctx.state.doneEnactingLaws();
+        }
     }
 
     /**
@@ -276,6 +285,23 @@ public class Laws extends Component
         _ctx.state.doneEnactingLaws();
     }
 
+    /**
+     * Choose and return a law at random.
+     */
+    public function getRandomLaw () :Law
+    {
+        var randomIndex :int = Math.round(Math.random() * (laws.length-1));
+        return laws[randomIndex];
+    }
+
+    /**
+     * Player has finished using their ability, trigger any laws with "WHEN USES THEIR ABILITY"
+     */
+    protected function powerUsed (event :Event) :void
+    {
+        _ctx.board.laws.triggerWhen(Card.USE_ABILITY, _ctx.board.players.player.job.id);
+    }
+    
     /** The position of the oldest still-visible law */
     protected var oldestLawId :int = 0;
 
@@ -289,9 +315,9 @@ public class Laws extends Component
     protected var laws :Array = new Array();
 
     /** Maximum number of laws; if another is added the first one will disappear */
-    protected var MAX_LAWS :int = 10;
+    protected var MAX_LAWS :int = 8;
 
     /** Number of pixels between laws */
-    protected var LAW_SPACING_Y :int = 34;
+    protected var LAW_SPACING_Y :int = 40;
 }
 }

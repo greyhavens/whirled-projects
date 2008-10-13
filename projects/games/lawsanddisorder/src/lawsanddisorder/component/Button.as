@@ -31,8 +31,8 @@ public class Button extends Component
 
         textLabel = Content.defaultTextField(1.5);
         textLabel.height = 20;
-        textLabel.width = 120;
-        textLabel.y = 2;
+        textLabel.width = 130;
+        textLabel.y = 3;
         addChild(textLabel);
 
         buttonMode = true;
@@ -88,7 +88,7 @@ public class Button extends Component
     /** Text to display for this button */
     protected var textLabel :TextField;
 
-    /** Background image for a player job */
+    /** Background image for a button */
     [Embed(source="../../../rsrc/components.swf#button")]
     protected static const BUTTON_BACKGROUND :Class;
 }

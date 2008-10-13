@@ -5,9 +5,6 @@ import flash.text.TextField;
 import flash.events.MouseEvent;
 import flash.events.Event;
 
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.game.StateChangedEvent;
-
 import lawsanddisorder.*;
 
 /**
@@ -23,8 +20,9 @@ public class UsePowerButton extends Button
         super(ctx);
         text = DEFAULT_TEXT;
         addEventListener(MouseEvent.CLICK, usePowerButtonClicked);
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_ENDED, turnEnded);
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_ENDED, turnEnded);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, turnStarted);
+        _ctx.eventHandler.addEventListener(Job.MY_POWER_USED, doneUsingPower);
         enabled = false;
     }
 
@@ -45,12 +43,12 @@ public class UsePowerButton extends Button
                 return;
             }
             text = CANCEL_TEXT;
-            _ctx.board.player.job.usePower();
+            _ctx.player.job.usePower();
         }
         // Cancel using power
         else {
             text = DEFAULT_TEXT;
-            _ctx.board.player.job.cancelUsePower();
+            _ctx.player.job.cancelUsePower();
         }
     }
 
@@ -58,7 +56,7 @@ public class UsePowerButton extends Button
      * Player has finished using their ability, or has passed the point of no return.
      * Set the text back to use power and disable it for the rest of the turn.
      */
-    public function doneUsingPower () :void
+    public function doneUsingPower (event :Event = null) :void
     {
         text = DEFAULT_TEXT;
         enabled = false;

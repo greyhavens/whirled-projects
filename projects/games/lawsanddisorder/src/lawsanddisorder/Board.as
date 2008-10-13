@@ -1,14 +1,13 @@
 ﻿package lawsanddisorder {
 
 import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import flash.text.TextFieldAutoSize;
-import flash.events.MouseEvent;
-import flash.events.Event;
-
-import com.threerings.util.HashMap;
-import com.whirled.game.StateChangedEvent;
+import flash.utils.Timer;
 
 import lawsanddisorder.component.*;
 
@@ -24,16 +23,11 @@ public class Board extends Sprite
     public function Board (ctx :Context)
     {
         _ctx = ctx;
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_ENDED, turnEnded);
-        _ctx.eventHandler.addEventListener(EventHandler.PLAYER_TURN_STARTED, turnStarted);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_ENDED, myTurnEnded);
+        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, myTurnStarted);
 
         // display background
         var background :Sprite = new BOARD_BACKGROUND();
-        var bgMask :Sprite = new Sprite();
-        bgMask.graphics.beginFill(0x000000);
-        bgMask.graphics.drawRect(0, 0, 700, 520);
-        bgMask.graphics.endFill();
-        background.mask = bgMask;
         background.mouseEnabled = false;
         addChild(background);
 
@@ -65,70 +59,12 @@ public class Board extends Sprite
         // list of laws
         laws = new Laws(_ctx);
         laws.x = 160;
-        laws.y = 30;
+        laws.y = 15;
         addChild(laws);
-
-        // lists player ids and names by seating position
-        var playerServerIds :Array = _ctx.control.game.seating.getPlayerIds();
-        var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
-
-        // get the player's position; -1 means the player is a watcher
-        var myPosition :int = _ctx.control.game.seating.getMyPosition();
-        var isWatcher :Boolean;
-        if (myPosition == -1) {
-            isWatcher = true;
-        }
-
-        /*
-        // TODO for testing, pretend as a watcher
-        playerServerIds.length = playerServerIds.length - 1;
-        playerNames.length = playerNames.length - 1;
-        if (myPosition == playerNames.length) {
-            isWatcher = true;
-        }
-        */
-
-        // watchers don't get a job, hand, etc.
-        if (isWatcher) {
-            player = new Player(_ctx, -1, -1, "watcher");
-            //player = null;
-        }
-        else {
-            player = new Player(_ctx, myPosition, playerServerIds[myPosition], playerNames[myPosition]);
-            playerObjects[myPosition] = player;
-        }
-        addChild(player);
-
-        opponents = new Opponents(_ctx);
-
-        // watchers see all players as opponents
-        if (isWatcher) {
-            for (var j :int = 0; j < playerServerIds.length; j++) {
-                var playerOpponent :Opponent = new Opponent(_ctx, j, playerServerIds[j], playerNames[j]);
-                opponents.addOpponent(playerOpponent);
-                playerObjects[j] = playerOpponent;
-            }
-        }
-
-        // players create the opponents in order, starting with the opponent whose turn is next
-        else {
-            var i :int = myPosition;
-            while (true) {
-                // increment i and wrap around once the last seat is reached
-                i = (i + 1) % playerServerIds.length;
-                var opponent :Opponent = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
-                opponents.addOpponent(opponent);
-                playerObjects[i] = opponent;
-                if ((i + 1) % playerServerIds.length == myPosition) {
-                    break;
-                }
-            }
-        }
-
-        // add opponents as child after player so they'll be displayed over top
-        opponents.x = 590;
-        opponents.y = 10;
-        addChild(opponents);
+        
+        // current player and opponents
+        players = new Players(_ctx);
+        addChild(players);
 
         // use power / cancel button
         usePowerButton = new UsePowerButton(_ctx);
@@ -145,12 +81,11 @@ public class Board extends Sprite
         endTurnButton.x = 12;
         endTurnButton.y = 290;
         addChild(endTurnButton);
-
-        // notices display above everything else
+        
         notices = new Notices(_ctx);
-        notices.x = 0;
-        notices.y = 380;
-        //addChild(notices);
+        notices.x = 170;
+        notices.y = 350;
+        addChild(notices);
 
         // displayed during the player's turn
         turnHighlight = new Sprite();
@@ -162,8 +97,15 @@ public class Board extends Sprite
         helpScreen.addEventListener(MouseEvent.CLICK, helpScreenClicked);
         helpScreen.buttonMode = true;
         addChild(helpScreen);
+        
+        // version
+        var version :TextField = new TextField();
+        version.text = "v 0.513"
+        version.height = 20;
+        version.y = 485;
+        addChild(version);
     }
-
+    
     /**
      * Setup is only performed by the player who is in control at the start of the game.
      * Called by the controller player; add cards to deck, deal hands, assign jobs to players.
@@ -172,11 +114,7 @@ public class Board extends Sprite
     {
         deck.setup();
         laws.setup();
-        // setup the player hands and jobs
-        for (var i :int = 0; i < playerObjects.length; i++) {
-            var player :Player = playerObjects[i];
-            player.setup();
-        }
+        players.setup();
         _setupComplete = true;
     }
 
@@ -207,22 +145,8 @@ public class Board extends Sprite
     public function refreshData () :void
     {
         laws.refreshData();
-        for each (var player :Player in players) {
-            player.refreshData();
-        }
+        players.refreshData();
         deck.refreshData();
-    }
-
-    /**
-     * Return the player with the given id.
-     */
-    public function getPlayer (playerId :int) :Player
-    {
-        if (playerId < 0 || playerId > playerObjects.length) {
-            _ctx.log("WTF playerId is " + playerId + " in getPlayer");
-            return null;
-        }
-        return playerObjects[playerId];
     }
 
     /**
@@ -233,55 +157,55 @@ public class Board extends Sprite
         if (contains(card)) {
             try {
                 removeChild(card);
-            }
-            catch (error :ArgumentError) {
+            } catch (error :ArgumentError) {
                 return;
             }
         }
     }
 
     /**
-     * Return the player whose turn it is.
-     * TODO could be more efficient?  Listen for turn changed event?  Does turn changed event
-     *      include turnholder id?  Should be here?  Should player array be moved?
+     * Move a sprite across the board from one point to another.
      */
-    public function getTurnHolder () :Player
+    public function animateMove (sprite :Sprite, fromPoint :Point, toPoint :Point) :void
     {
-        // getTurnHolder returns a serverId, not their seating position
-        var serverId :int = _ctx.control.game.getTurnHolderId();
-        for (var i :int = 0; i < playerObjects.length; i++) {
-            var player :Player = playerObjects[i];
-            if (player.serverId == serverId) {
-                return player;
-            }
-        }
-        return null;
+        var xIncrement :Number = (toPoint.x - fromPoint.x) / 15;
+        var yIncrement :Number = (toPoint.y - fromPoint.y) / 15;
+        //_ctx.log("from " + fromPoint.x + ","+ fromPoint.y + " to " + toPoint.x + "," + toPoint.y);
+        //_ctx.log("increments: " + xIncrement + " ," + yIncrement);
+        sprite.x = fromPoint.x;
+        sprite.y = fromPoint.y;
+        addChild(sprite);
+        var moveTimer :Timer = new Timer(5, 50);
+        moveTimer.addEventListener(TimerEvent.TIMER, 
+            function (event :TimerEvent): void { 
+                animateMoveFired(sprite, xIncrement, yIncrement, toPoint, moveTimer); 
+            });
+        moveTimer.start();
     }
-
+    
     /**
-     * Return true if it is this player's turn
-     * TODO not the place for this either
+     * Move a sprite one step across the board.
      */
-    public function isMyTurn () :Boolean
+    protected function animateMoveFired (sprite :Sprite, xIncrement :Number, 
+        yIncrement :Number, toPoint :Point, moveTimer :Timer) :void
     {
-        var turnHolder :Player = getTurnHolder();
-        if (turnHolder != null && turnHolder == player) {
-            return true;
+        var xDone :Boolean = xIncrement >= 0 ? sprite.x >= toPoint.x : sprite.x <= toPoint.x;
+        var yDone :Boolean = yIncrement >= 0 ? sprite.y >= toPoint.y : sprite.y <= toPoint.y;
+        if (xDone || yDone) {
+            //_ctx.log("end point reached.");
+            removeChild(sprite);
+            moveTimer.stop();
+            moveTimer = null;
+            return;
         }
-        return false;
+        sprite.x += xIncrement;
+        sprite.y += yIncrement;
     }
 
     /**
-     * Return the array of players in order of seating.
+     * TIndicate that it is now the player's turn
      */
-    public function get players () :Array {
-        return playerObjects;
-    }
-
-    /**
-     * The turn just changed.  Indicate if it is the player's turn
-     */
-    protected function turnStarted (event :Event) :void
+    protected function myTurnStarted (event :Event) :void
     {
         if (!contains(turnHighlight)){
             addChild(turnHighlight);
@@ -291,7 +215,7 @@ public class Board extends Sprite
     /**
      * Handler for end turn event - remove newlaw and turn highlight
      */
-    protected function turnEnded (event :Event) :void
+    protected function myTurnEnded (event :Event) :void
     {
         if (contains(newLaw)) {
             removeChild(newLaw);
@@ -299,53 +223,6 @@ public class Board extends Sprite
         if (contains(turnHighlight)){
             removeChild(turnHighlight);
         }
-    }
-
-    /**
-     * Called when a player leaves the game.  Remove them from the visible opponents and
-     * the list of player objects, and make their job available, but don't change player.ids or
-     * remove them from distributed data arrays.
-     */
-    public function playerLeft (playerServerId :int) :void
-    {
-        if (playerServerId == player.serverId) {
-            _ctx.log("WTF I'm the player who left?");
-            return;
-        }
-
-        // find and unload the opponent object
-        var opponent :Opponent;
-        for each (var tempPlayer :Player in playerObjects) {
-            if (tempPlayer.serverId == playerServerId) {
-                opponent = tempPlayer as Opponent;
-                break;
-            }
-        }
-
-        // return the player's job to the pile
-        if (_ctx.control.game.amInControl()) {
-            _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
-        }
-
-        // if anything was happening with any player, stop it now
-        // TODO only stop things that were waiting on the player who left
-        _ctx.notice("Cancelling all events and actions because a player left.");
-        _ctx.state.cancelMode();
-        laws.cancelTriggering();
-
-        // remove the player object
-        opponents.removeOpponent(opponent);
-        var index :int = playerObjects.indexOf(opponent);
-        playerObjects.splice(index, 1);
-
-        // control player may be unset, so have the player in seating position 0 control for now
-        if (getTurnHolder() == null && playerObjects.indexOf(player) == 0) {
-            _ctx.broadcast("Moving on to next player's turn.");
-            _ctx.control.game.startNextTurn();
-        }
-
-        // unload the opponent object
-        opponent.unload();
     }
 
     /** Displays a help screen overlay */
@@ -371,21 +248,15 @@ public class Board extends Sprite
 
     /** List of finished laws */
     public var laws :Laws;
-
-    /** All the other players */
-    public var opponents :Opponents;
-
+    
     /** Current player */
-    public var player :Player;
+    public var players :Players;
 
     /** Indicates that the game may start */
     protected var _setupComplete :Boolean = false;
 
     /** Game context */
     protected var _ctx :Context;
-
-    /** All player objects in the game, indexed by id */
-    protected var playerObjects :Array = new Array();
 
     /** Displays to indicate it is the player's turn */
     protected var turnHighlight :Sprite;
