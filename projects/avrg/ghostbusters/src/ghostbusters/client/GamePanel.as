@@ -53,8 +53,14 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-        _seeking = true;
 
+        if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
+            showSplash(false);
+            _seeking = false;
+
+        } else {
+            _seeking = true;
+        }
         checkForDeath();
     }
 
@@ -90,6 +96,25 @@ public class GamePanel extends Sprite
             _seeking = seeking;
             updateState(true);
         }
+    }
+
+    public function showSplash (howto :Boolean) :void
+    {
+        var state :String = howto ? SplashWidget.STATE_HOWTO : SplashWidget.STATE_WELCOME;
+        if (_splash != null) {
+            _splash.gotoState(state);
+            return;
+        }
+        _splash = new SplashWidget(state);
+        this.addChild(_splash);
+        _splash.x = 100;
+        _splash.y = 100;
+    }
+
+    public function hideSplash () :void
+    {
+        this.removeChild(_splash);
+        _splash = null;
     }
 
     public function unframeContent () :void
@@ -225,6 +250,20 @@ public class GamePanel extends Sprite
     {
         if (evt.name == Codes.PROP_MY_HEALTH) {
             checkForDeath();
+
+        } else if (evt.name == Codes.PROP_AVATAR_TYPE) {
+            // if we 
+            if (_splash != null && _splash.state == SplashWidget.STATE_AVATARS) {
+                _splash.gotoState(SplashWidget.STATE_BEGIN);
+            }
+
+        } else if (evt.name == Codes.PROP_IS_PLAYING) {
+            if (Boolean(evt.newValue) && _splash != null &&
+                _splash.state == SplashWidget.STATE_BEGIN) {
+                hideSplash();
+                _seeking = true;
+                updateState(true);
+            }
         }
     }
 
@@ -290,6 +329,8 @@ public class GamePanel extends Sprite
     protected var _ghost :Ghost;
 
     protected var _frame :GameFrame;
+
+    protected var _splash :SplashWidget;
 
     protected var _revive :ClipHandler;
     protected var _triumph :ClipHandler;

@@ -31,6 +31,17 @@ public class SplashWidget extends ClipHandler
         super(new Content.SPLASH(), handleSplashLoaded);
     }
 
+    public function get state () :String
+    {
+        return _state;
+    }
+
+    public function gotoState (state :String) :void
+    {
+        _state = state;
+        renderState();
+    }
+
     protected function handleSplashLoaded () :void
     {
         setupWelcome();
@@ -38,12 +49,6 @@ public class SplashWidget extends ClipHandler
         setupAvatars();
         setupBegin();
 
-        renderState();
-    }
-
-    protected function gotoState (state :String) :void
-    {
-        _state = state;
         renderState();
     }
 
@@ -78,7 +83,7 @@ public class SplashWidget extends ClipHandler
         _howto = DisplayObjectContainer(findSafely(this.clip, DSP_HOWTO));
 
         // only show the 'back' button if we have not yet chosen an avatar
-        var button :DisplayObject = findSafely(_welcome, BTN_HOWTO_BACK);
+        var button :DisplayObject = findSafely(_howto, BTN_HOWTO_BACK);
         if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
             button.visible = true;
             button.addEventListener(
@@ -90,7 +95,7 @@ public class SplashWidget extends ClipHandler
             button.visible = false;
         }
 
-        Command.bind(findSafely(_howto, BTN_WELCOME_CLOSE), MouseEvent.CLICK,
+        Command.bind(findSafely(_howto, BTN_HOWTO_CLOSE), MouseEvent.CLICK,
                      GameController.CLOSE_SPLASH);
     }
 
@@ -98,7 +103,7 @@ public class SplashWidget extends ClipHandler
     {
         _avatars = DisplayObjectContainer(findSafely(this.clip, DSP_AVATARS));
 
-        findSafely(_welcome, BTN_AVATARS_BACK).addEventListener(
+        findSafely(_avatars, BTN_AVATARS_BACK).addEventListener(
             MouseEvent.CLICK, function (evt :MouseEvent) :void {
                 gotoState(STATE_WELCOME);
         });
@@ -107,7 +112,7 @@ public class SplashWidget extends ClipHandler
                      GameController.CLOSE_SPLASH);
         Command.bind(findSafely(_avatars, BTN_AVATARS_CHOOSE_MALE), MouseEvent.CLICK,
                      GameController.CHOOSE_AVATAR, Codes.AVT_MALE);
-        Command.bind(findSafely(_avatars, BTN_AVATARS_CLOSE), MouseEvent.CLICK,
+        Command.bind(findSafely(_avatars, BTN_AVATARS_CHOOSE_FEMALE), MouseEvent.CLICK,
                      GameController.CHOOSE_AVATAR, Codes.AVT_FEMALE);
     }
 
