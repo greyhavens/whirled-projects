@@ -171,24 +171,6 @@ public class GameMode extends TransitionMode
             SelectTargetEnemyMessage.createFactory());
         _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName,
             CastCreatureSpellMessage.createFactory());
-
-        if (AppContext.gameCtrl.isConnected()) {
-            // start the message manager when the game starts
-            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
-                function (...ignored) :void {
-                    _messageMgr.run();
-                });
-
-            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
-                handleGameEndedPrematurely);
-
-            // we're ready!
-            AppContext.gameCtrl.game.playerReady();
-
-        } else {
-            // if we're running in standalone mode, start the message manager immediately
-            _messageMgr.run();
-        }
     }
 
     protected function shutdownNetwork () :void
@@ -256,6 +238,19 @@ public class GameMode extends TransitionMode
         }
 
         GameContext.netObjects.addObject(new SpellDropTimer());
+    }
+
+    /**
+     * Subclasses must call this function when they're ready to start the game. This should
+     * usually be when the GAME_STARTED event is received, or all players have checked in,
+     * or something similar.
+     */
+    protected function startGame () :void
+    {
+        this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
+            handleGameEndedPrematurely);
+
+        _messageMgr.run();
     }
 
     override public function onKeyDown (keyCode :uint) :void

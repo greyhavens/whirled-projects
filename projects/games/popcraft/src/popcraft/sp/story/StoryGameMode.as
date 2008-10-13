@@ -21,6 +21,15 @@ public class StoryGameMode extends GameMode
     {
         super.setup();
 
+        // start the game immediately
+        this.startGame();
+
+        // let the server know we're starting the game, so that coins can be awarded when
+        // the game ends
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.playerReady();
+        }
+
         if (!Constants.DEBUG_SKIP_LEVEL_INTRO) {
             this.showIntro();
         }

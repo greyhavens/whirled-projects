@@ -406,10 +406,10 @@ public class LevelSelectMode extends DemoGameMode
     protected function levelSelected (levelNum :int) :void
     {
         AppContext.levelMgr.curLevelIndex = levelNum;
-        AppContext.levelMgr.playLevel(startGame);
+        AppContext.levelMgr.playLevel(onLevelLoaded);
     }
 
-    protected function startGame (loadedLevel :LevelData) :void
+    protected function onLevelLoaded (loadedLevel :LevelData) :void
     {
         // called when the level is loaded
 

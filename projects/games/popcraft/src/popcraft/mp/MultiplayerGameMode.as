@@ -3,6 +3,7 @@ package popcraft.mp {
 import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.game.StateChangedEvent;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -13,6 +14,20 @@ public class MultiplayerGameMode extends GameMode
     override public function get mapSettings () :MapSettingsData
     {
         return _mpSettings.mapSettings;
+    }
+
+    override protected function setup () :void
+    {
+        super.setup();
+
+        // start the game when the GAME_STARTED event is received
+        this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+            function (...ignored) :void {
+                startGame();
+            });
+
+        // we're ready!
+        AppContext.gameCtrl.game.playerReady();
     }
 
     override protected function rngSeeded () :void

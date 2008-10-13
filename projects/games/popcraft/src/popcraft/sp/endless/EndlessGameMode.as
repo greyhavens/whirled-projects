@@ -7,6 +7,8 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.game.StateChangedEvent;
+import com.whirled.net.ElementChangedEvent;
 
 import popcraft.*;
 import popcraft.battle.*;
@@ -49,6 +51,42 @@ public class EndlessGameMode extends GameMode
         for (var ii :int = 0; ii < EndlessGameContext.numMultiplierObjects; ++ii) {
             this.createMultiplierDrop(false);
         }
+
+        if (!AppContext.gameCtrl.isConnected()) {
+            // if we're in standalone mode, start the game immediately
+            this.startGame();
+        } else if (GameContext.isSinglePlayerGame) {
+            // if this is a singleplayer game, start the game immediately,
+            // and tell the server we're playing the game so that coins can be awarded
+            this.startGame();
+            if (EndlessGameContext.isNewGame) {
+                AppContext.gameCtrl.game.playerReady();
+            }
+
+        } else if (EndlessGameContext.isNewGame) {
+            // if this is a new multiplayer game, start the game when the GAME_STARTED event
+            // is received
+            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+                function (...ignored) :void {
+                    startGame();
+                });
+
+            // we're ready!
+            AppContext.gameCtrl.game.playerReady();
+
+        } else {
+            // If we've moved to the next map in an existing multiplayer game, start the game
+            // when all the players have arrived. Use the PlayerReadyMonitor for this purpose -
+            // this is functionally the same thing as waiting for the GAME_STARTED event, as above,
+            // but doesn't require us to end the current game
+            EndlessGameContext.playerReadyMonitor.waitForAllPlayersReadyForCurRound(
+                function (...ignored) :void {
+                    startGame();
+                });
+
+            // we're ready
+            EndlessGameContext.playerReadyMonitor.setLocalPlayerReadyForCurRound();
+        }
     }
 
     override protected function destroy () :void
@@ -84,6 +122,15 @@ public class EndlessGameMode extends GameMode
         EndlessGameContext.numMultiplierObjects = numMultipliers;
 
         super.destroy();
+    }
+
+    override protected function startGame () :void
+    {
+        if (EndlessGameContext.isNewGame) {
+            super.startGame();
+        } else {
+
+        }
     }
 
     override protected function updateNetworkedObjects () :void
@@ -382,6 +429,8 @@ public class EndlessGameMode extends GameMode
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
     protected var _swappingInNextOpponents :Boolean;
+
+    protected var _playersCheckedIn :Array = [];
 }
 
 }

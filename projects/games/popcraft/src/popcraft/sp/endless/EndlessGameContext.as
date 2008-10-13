@@ -1,5 +1,6 @@
 package popcraft.sp.endless {
 
+import popcraft.*;
 import popcraft.data.EndlessLevelData;
 import popcraft.data.EndlessMapData;
 
@@ -8,12 +9,21 @@ public class EndlessGameContext
     public static var gameMode :EndlessGameMode;
     public static var level :EndlessLevelData;
 
+    public static var playerReadyMonitor :PlayerReadyMonitor;
+
     public static var score :int;
     public static var scoreMultiplier :Number;
     public static var mapDataIndex :int;
     public static var savedLocalPlayer :SavedPlayerInfo;
     public static var savedRemotePlayer :SavedPlayerInfo;
     public static var numMultiplierObjects :int;
+
+    public static function get isNewGame () :Boolean
+    {
+        // used by EndlessGameMode.startGame to determine if this is a new game, or simply
+        // the next map in an existing game
+        return (mapDataIndex <= 0);
+    }
 
     public static function reset () :void
     {
@@ -23,12 +33,19 @@ public class EndlessGameContext
         savedLocalPlayer = null;
         savedRemotePlayer = null;
         numMultiplierObjects = 0;
+
+        if (playerReadyMonitor != null) {
+            playerReadyMonitor.shutdown();
+            playerReadyMonitor = null;
+        }
+
+        playerReadyMonitor = new PlayerReadyMonitor(SeatingManager.numPlayers);
     }
 
     public static function cycleMapData () :EndlessMapData
     {
-        var mapData :EndlessMapData =
-            level.mapSequence[(++mapDataIndex) % level.mapSequence.length];
+        ++mapDataIndex;
+        var mapData :EndlessMapData = level.mapSequence[(mapDataIndex) % level.mapSequence.length];
         if (mapDataIndex >= level.mapSequence.length && !mapData.repeats) {
             cycleMapData();
         }
