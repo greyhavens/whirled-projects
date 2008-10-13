@@ -37,7 +37,7 @@ public class MessageManager extends EventDispatcher
         if (msgClass != null) {
             var msg :GameMessage = new msgClass();
             msg.fromBytes(ByteArray(e.value));
-            dispatchEvent(new MessageReceivedEvent(e.targetId, e.name, msg, e.senderId));
+            dispatchEvent(new MessageReceivedEvent(e.name, msg, e.senderId));
         }
     }
 
