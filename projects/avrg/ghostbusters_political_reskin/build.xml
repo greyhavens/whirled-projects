@@ -1,0 +1,25 @@
+<!-- build configuration -->
+<project name="ghostbusters_political_reskin" default="compile" basedir=".">
+	
+	<!-- define some basic project parameters -->
+	<property name="app.name" value="GH"/>
+	<property name="app.source-dir" value="src"/>
+	<property name="app.package-dir" value="ghostbusters"/>
+	
+	<property name="app.server-agent" value="server/Server"/>
+	<property name="app.enable-server-agent" value="true"/>
+  
+  
+	<!-- defines our project name and type -->
+	<property name="app.type" value="game"/>
+	
+	<!-- if you need to include extra source files, uncomment and edit this line -->
+	<property name="app.source-extras" value="../../contrib/src/as"/> 
+
+	<!-- if you need to compile with extra .SWC files, uncomment and edit this line -->
+	<property name="app.lib-extras" value="../../lib/fl-components.swc,/export/whirled/lib/tweener.swc"/>
+
+	<!-- include the standard build script -->
+	<import file="../../etc/project-include.xml"/>
+	
+</project>
