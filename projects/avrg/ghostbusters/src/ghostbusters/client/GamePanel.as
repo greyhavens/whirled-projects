@@ -53,10 +53,11 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-
         if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
-            showSplash(false);
-            _seeking = false;
+            showSplash(SplashWidget.STATE_WELCOME);
+
+        } else if (!Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
+            showSplash(SplashWidget.STATE_BEGIN);
 
         } else {
             _seeking = true;
@@ -98,9 +99,8 @@ public class GamePanel extends Sprite
         }
     }
 
-    public function showSplash (howto :Boolean) :void
+    public function showSplash (state :String) :void
     {
-        var state :String = howto ? SplashWidget.STATE_HOWTO : SplashWidget.STATE_WELCOME;
         if (_splash != null) {
             _splash.gotoState(state);
             return;
@@ -108,7 +108,10 @@ public class GamePanel extends Sprite
         _splash = new SplashWidget(state);
         this.addChild(_splash);
         _splash.x = 100;
-        _splash.y = 100;
+        _splash.y = 0;
+
+        // when we show a splash screen, turn off the seek mode
+        seeking = false;
     }
 
     public function hideSplash () :void

@@ -48,7 +48,12 @@ public class GameController extends Controller
 
     public function handleHelp () :void
     {
-        panel.showSplash(true);
+        panel.showSplash(SplashWidget.STATE_HOWTO);
+    }
+
+    public function handleCloseSplash () :void
+    {
+        panel.hideSplash();
     }
 
     public function handleGimmeDebugPanel () :void

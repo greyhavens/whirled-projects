@@ -163,11 +163,11 @@ public class Player
             }
             return;
         case Codes.CMSG_BEGIN_PLAYING:
-            if (_ctrl.props.get(Codes.PROP_IS_PLAYING)) {
+            if (_playing) {
                 log.warning("Saw BEGIN_PLAYING, but already am", "playerId", _playerId);
                 return;
             }
-            _ctrl.props.set(Codes.PROP_IS_PLAYING, true, true);
+            setPlaying(true);
             return;
 
         case Codes.CMSG_CHOOSE_AVATAR:
