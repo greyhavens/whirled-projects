@@ -72,6 +72,11 @@ public class GameContext
 
     public static var winningTeamId :int;
 
+    public static function get canResurrect () :Boolean
+    {
+        return (gameType == GAME_TYPE_ENDLESS_MP);
+    }
+
     public static function get localPlayerInfo () :LocalPlayerInfo
     {
         return playerInfos[localPlayerIndex];
@@ -110,6 +115,18 @@ public class GameContext
             var otherPlayer :PlayerInfo = playerInfos[otherPlayerIndex];
             if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive &&
                 !otherPlayer.isInvincible) {
+                return otherPlayer;
+            }
+        }
+
+        return null;
+    }
+
+    public static function findPlayerTeammate (playerIndex :int) :PlayerInfo
+    {
+        var thisPlayer :PlayerInfo = playerInfos[playerIndex];
+        for each (var otherPlayer :PlayerInfo in playerInfos) {
+            if (otherPlayer != thisPlayer && otherPlayer.teamId == thisPlayer.teamId) {
                 return otherPlayer;
             }
         }

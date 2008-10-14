@@ -8,7 +8,9 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
@@ -30,8 +32,8 @@ public class PlayerStatusView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
         _movie.cacheAsBitmap = true;
 
-        var deathMovie :MovieClip = _movie["dead"];
-        deathMovie.visible = false;
+        _deathMovie = _movie["dead"];
+        _deathMovie.visible = false;
 
         _healthMeter = _movie["health_meter"];
         _healthMeter.filters = [ ColorMatrix.create().tint(_playerInfo.color).createFilter() ];
@@ -98,28 +100,32 @@ public class PlayerStatusView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
+        var playerDead :Boolean = !_playerInfo.isAlive;
+        if (!_dead && playerDead) {
+            _deathMovie.visible = true;
+            _deathMovie.gotoAndPlay(2);
+            _dead = true;
+
+        } else if (_dead && !playerDead) {
+            _deathMovie.visible = false;
+            _dead = false;
+        }
+
         if (!_dead) {
-            if (!_playerInfo.isAlive) {
-                var deathMovie :MovieClip = _movie["dead"];
-                deathMovie.visible = true;
-                deathMovie.gotoAndPlay(2);
-                _dead = true;
+            var healthPercent :Number = _playerInfo.healthPercent;
+            if (_oldHealth != healthPercent) {
+                var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
+                _healthMeter.rotation = healthRotation;
+                _meterArrow.rotation = healthRotation;
 
-            } else {
-                var healthPercent :Number = _playerInfo.healthPercent;
-                if (_oldHealth != healthPercent) {
-                    var healthRotation :Number = (1.0 - healthPercent) * -180; // DisplayObject rotations are in degrees
-                    _healthMeter.rotation = healthRotation;
-                    _meterArrow.rotation = healthRotation;
-
-                    _oldHealth = healthPercent;
-                }
+                _oldHealth = healthPercent;
             }
         }
     }
 
     protected var _playerInfo :PlayerInfo;
     protected var _movie :MovieClip;
+    protected var _deathMovie :MovieClip;
     protected var _healthMeter :MovieClip;
     protected var _meterArrow :MovieClip;
     protected var _dead :Boolean;

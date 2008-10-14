@@ -32,6 +32,8 @@ public class DashboardView extends SceneObject
         _movie.cacheAsBitmap = true;
         puzzleFrame.cacheAsBitmap = true;
 
+        _deathPanel = _movie["death"];
+
         // the info panel is no longer used
         var infoPanel :MovieClip = _movie["info"];
         if (null != infoPanel) {
@@ -269,12 +271,44 @@ public class DashboardView extends SceneObject
         this.updateResourceMeters();
 
         // when the player dies, show the death panel
-        if (!_showingDeathPanel && !GameContext.localPlayerInfo.isAlive) {
-            var deathPanel :MovieClip = _movie["death"];
-            deathPanel.y = 6;
-            deathPanel.visible = true;
-            _showingDeathPanel = true;
+        var playerDead :Boolean = !GameContext.localPlayerInfo.isAlive;
+        if (!this.showingDeathPanel && playerDead) {
+            _deathPanel.y = 6;
+            _deathPanel.visible = true;
+
+        } else if (this.showingDeathPanel && !playerDead) {
+            _deathPanel.visible = false;
         }
+
+        // resurrect button
+        var shouldShowButton :Boolean = this.showResurrectButton;
+        if (_resurrectButton != null && !shouldShowButton) {
+            _resurrectButton.parent.removeChild(_resurrectButton);
+            _resurrectButton = null;
+
+        } else if (_resurrectButton == null && shouldShowButton) {
+            _resurrectButton = UIBits.createButton("Resurrect", 2.5);
+            _resurrectButton.x = (Constants.SCREEN_SIZE.x - _resurrectButton.width) * 0.5;
+            _resurrectButton.y = (Constants.SCREEN_SIZE.y - _resurrectButton.height - 70);
+            GameContext.dashboardLayer.addChild(_resurrectButton);
+
+            this.registerEventListener(_resurrectButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    GameContext.gameMode.resurrectLocalPlayer();
+                });
+        }
+    }
+
+    protected function get showingDeathPanel () :Boolean
+    {
+        return _deathPanel.visible;
+    }
+
+    protected function get showResurrectButton () :Boolean
+    {
+        return (showingDeathPanel &&
+            GameContext.canResurrect &&
+            GameContext.localPlayerInfo.canResurrect);
     }
 
     protected function updateResourceMeters () :void
@@ -340,13 +374,14 @@ public class DashboardView extends SceneObject
     }
 
     protected var _movie :MovieClip;
+    protected var _deathPanel :MovieClip;
     protected var _shuffleMovie :MovieClip;
     protected var _resourceTextObjs :Array = [];
     protected var _resourceBars :Array = [];
     protected var _oldResourceAmounts :Array = [];
-    protected var _showingDeathPanel :Boolean;
     protected var _spellSlots :Array = []; // of Booleans
     protected var _playerStatusViews :Array = [];
+    protected var _resurrectButton :SimpleButton;
 
     protected static const PUZZLE_SHUFFLE_TASK :String = "PuzzleShuffle";
 

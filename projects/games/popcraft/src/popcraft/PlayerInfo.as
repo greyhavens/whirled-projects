@@ -54,8 +54,16 @@ public class PlayerInfo extends EventDispatcher
     public function saveData (outData :SavedPlayerInfo = null) :SavedPlayerInfo
     {
         var save :SavedPlayerInfo = (outData != null ? outData : new SavedPlayerInfo());
-        save.health = this.workshop.health;
-        save.damageShields = this.workshop.damageShieldsClone;
+        var workshop :WorkshopUnit = this.workshop;
+        if (null != workshop) {
+            save.health = workshop.health;
+            save.damageShields = workshop.damageShieldsClone;
+
+        } else {
+            save.health = 0;
+            save.damageShields = [];
+        }
+
         return save;
     }
 
@@ -100,6 +108,13 @@ public class PlayerInfo extends EventDispatcher
         if (deadWorkshopView != null) {
             deadWorkshopView.destroySelf();
         }
+    }
+
+    public function resurrect (newHealth :Number) :void
+    {
+        this.destroy();
+        this.init();
+        this.workshop.health = newHealth;
     }
 
     public function get activeSpells () :CreatureSpellSet
@@ -257,6 +272,12 @@ public class PlayerInfo extends EventDispatcher
     public function spellCast (spellType :int) :void
     {
         // no-op
+    }
+
+    public function get canResurrect () :Boolean
+    {
+        var teammate :PlayerInfo = GameContext.findPlayerTeammate(_playerIndex);
+        return (teammate != null && teammate.isAlive);
     }
 
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position

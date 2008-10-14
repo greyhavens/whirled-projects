@@ -86,26 +86,6 @@ public class EndlessGameMode extends GameMode
         }
     }
 
-    override protected function setupNetwork () :void
-    {
-        super.setupNetwork();
-        _messageMgr.addMessageType(ResurrectPlayerMessage);
-    }
-
-    override protected function handleMessage (msg :Message) :void
-    {
-        if (msg is ResurrectPlayerMessage) {
-            // TODO
-        } else {
-            super.handleMessage(msg);
-        }
-    }
-
-    public function resurrectLocalPlayer () :void
-    {
-        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
-    }
-
     override protected function destroy () :void
     {
         // save data about our human players so that they can be resurrected

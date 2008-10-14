@@ -167,6 +167,7 @@ public class GameMode extends TransitionMode
         _messageMgr.addMessageType(CreateUnitMessage);
         _messageMgr.addMessageType(SelectTargetEnemyMessage);
         _messageMgr.addMessageType(CastCreatureSpellMessage);
+        _messageMgr.addMessageType(ResurrectPlayerMessage);
     }
 
     protected function shutdownNetwork () :void
@@ -513,6 +514,7 @@ public class GameMode extends TransitionMode
     protected function handleMessage (msg :Message) :void
     {
         var playerIndex :int;
+        var playerInfo :PlayerInfo;
 
         if (msg is CreateUnitMessage) {
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
@@ -540,6 +542,19 @@ public class GameMode extends TransitionMode
                 var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
                 GameContext.playGameSound("sfx_" + spell.name);
+            }
+
+        } else if (msg is ResurrectPlayerMessage) {
+            var resurrectMsg :ResurrectPlayerMessage = msg as ResurrectPlayerMessage;
+            playerIndex = resurrectMsg.playerIndex;
+            playerInfo = GameContext.playerInfos[playerIndex];
+            if (!playerInfo.isAlive) {
+                var teammate :PlayerInfo = GameContext.findPlayerTeammate(playerIndex);
+                if (teammate != null && teammate.isAlive) {
+                    var newHealth :Number = teammate.health * 0.5;
+                    teammate.workshop.health = newHealth;
+                    playerInfo.resurrect(newHealth);
+                }
             }
         }
     }
@@ -608,6 +623,11 @@ public class GameMode extends TransitionMode
     public function selectTargetEnemy (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
         this.sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
+    }
+
+    public function resurrectLocalPlayer () :void
+    {
+        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
     }
 
     public function localPlayerPurchasedCreature (unitType :int) :void
