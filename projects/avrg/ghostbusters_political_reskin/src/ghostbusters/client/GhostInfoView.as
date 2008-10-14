@@ -32,10 +32,10 @@ public class GhostInfoView
                 ];
 
         _portraits = {
-          pinchy: findSafely(hud, "PincherPortrait"),
-          duchess: findSafely(hud, "DuchessPortrait"),
-          widow: findSafely(hud, "WidowPortrait"),
-          demon: findSafely(hud, "DemonPortrait")
+//          pinchy: findSafely(hud, "PalinPortrait"),//SKIN
+          duchess: findSafely(hud, "McCainPortrait"),//SKIN
+          widow: findSafely(hud, "PalinPortrait")//SKIN
+//          demon: findSafely(hud, "DemonPortrait")//SKIN
         };
 
         Game.control.room.props.addEventListener(

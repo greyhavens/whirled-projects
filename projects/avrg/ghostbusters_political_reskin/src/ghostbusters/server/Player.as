@@ -162,6 +162,14 @@ public class Player
                 handleDebugRequest(String(value));
             }
             return;
+        case Codes.CMSG_BEGIN_PLAYING:
+            if (_playing) {
+                log.warning("Saw BEGIN_PLAYING, but already am", "playerId", _playerId);
+                return;
+            }
+            setPlaying(true);
+            return;
+
         case Codes.CMSG_CHOOSE_AVATAR:
             if (_ctrl.props.get(Codes.PROP_AVATAR_TYPE) != null) {
                 log.warning("Saw CHOOSE_AVATAR, but already chosen", "playerId", _playerId);
@@ -181,6 +189,7 @@ public class Player
             _ctrl.props.set(Codes.PROP_AVATAR_TYPE, value, true);
             // then award the avatar
             _ctrl.awardPrize(prize);
+            return;
         }
 
         // if we're nowhere, drop out

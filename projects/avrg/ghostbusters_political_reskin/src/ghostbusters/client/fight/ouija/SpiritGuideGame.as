@@ -61,7 +61,8 @@ public class SpiritGuideGame extends MicrogameMode
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
-            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
+//            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
+            _gameResult.healthOutput = (success ? _settings.damageOutput : 0);
 
             _done = true;
         }

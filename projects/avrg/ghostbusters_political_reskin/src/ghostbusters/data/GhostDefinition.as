@@ -12,10 +12,10 @@ import com.threerings.util.HashMap;
  */
 public class GhostDefinition
 {
-    public static const GHOST_PINCHER :String = "pinchy";
+//    public static const GHOST_PINCHER :String = "pinchy";
     public static const GHOST_DUCHESS :String = "duchess";
     public static const GHOST_WIDOW :String = "widow";
-    public static const GHOST_DEMON :String = "demon";
+//    public static const GHOST_DEMON :String = "demon";
 
     public static function getGhostIds () :Array
     {
@@ -74,10 +74,10 @@ public class GhostDefinition
     {
         _definitions = new HashMap();
 
-        addGhost(new GhostDefinition(GHOST_PINCHER, 72, 145, 80));
+//        addGhost(new GhostDefinition(GHOST_PINCHER, 72, 145, 80));
         addGhost(new GhostDefinition(GHOST_DUCHESS, 391, 114, 37));
         addGhost(new GhostDefinition(GHOST_WIDOW, 391, 114, 37));
-        addGhost(new GhostDefinition(GHOST_DEMON, 108, 220, 55));
+//        addGhost(new GhostDefinition(GHOST_DEMON, 108, 220, 55));
     }
 
     protected static function addGhost (def :GhostDefinition) :void

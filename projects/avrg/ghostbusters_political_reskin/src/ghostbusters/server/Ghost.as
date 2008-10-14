@@ -71,7 +71,8 @@ public class Ghost
 
     public function get zest () :int
     {
-        return _zest;
+        return 0;//SKIN We don't seek in the political reskin.
+//        return _zest;
     }
 
     public function get health () :int
@@ -153,12 +154,12 @@ public class Ghost
     protected static function buildName (ghostId :String) :String
     {
         switch(ghostId) {
-            case GhostDefinition.GHOST_DEMON:
-                return "Soul Crusher";
+//            case GhostDefinition.GHOST_DEMON:
+//                return "Soul Crusher";
             case GhostDefinition.GHOST_DUCHESS:
                 return "The Duchess";
-            case GhostDefinition.GHOST_PINCHER:
-                return "Mr. Pinchy";
+//            case GhostDefinition.GHOST_PINCHER:
+//                return "Mr. Pinchy";
             case GhostDefinition.GHOST_WIDOW:
                 return "The Widow";
         }

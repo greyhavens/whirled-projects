@@ -2,12 +2,10 @@ package ghostbusters.client.fight {
     
 public class WeaponType
 {
-    public static const NAME_FIND_TRUE_QUOTE :String = "Find Quote";
-    public static const NAME_GHOST_WRITER :String = "Ghost writer";
-    public static const NAME_GET_OUT_OF_IRAQ :String = "Iraq";
-    public static const NAME_GET_TO_VOTING_BOOTH :String = "Vote";
-//    public static const NAME_POTIONS :String = "Potions";
-    public static const NAME_QUESTION_BLASTER :String = "Questions";
+    public static const NAME_LANTERN :String = "Lantern";
+    public static const NAME_OUIJA :String = "Ouija";
+    public static const NAME_POTIONS :String = "Potions";
+    public static const NAME_PLASMA :String = "Plasma";
     
     public var name :String;
     public var level :int;

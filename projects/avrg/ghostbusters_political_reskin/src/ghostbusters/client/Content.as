@@ -21,18 +21,21 @@ public class Content
     [Embed(source="../../../rsrc/UI/inventory.swf", mimeType="application/octet-stream")]
     public static const INVENTORY :Class;
 
+    [Embed(source="../../../rsrc/UI/splash_help_01.swf", mimeType="application/octet-stream")]
+    public static const SPLASH :Class;
+
     // ghost clips
-    [Embed(source="../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/Ghosts/mccain.swf", mimeType="application/octet-stream")]
     public static const GHOST_DUCHESS :Class;
 
-    [Embed(source="../../../rsrc/Ghosts/Ghost_Widow.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/Ghosts/palin.swf", mimeType="application/octet-stream")]
     public static const GHOST_WIDOW :Class;
 
-    [Embed(source="../../../rsrc/Ghosts/Ghost_Pincher.swf", mimeType="application/octet-stream")]
-    public static const GHOST_PINCHER :Class;
+//    [Embed(source="../../../rsrc/Ghosts/Ghost_Pincher.swf", mimeType="application/octet-stream")]
+//    public static const GHOST_PINCHER :Class;
 
-    [Embed(source="../../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
-    public static const GHOST_DEMON :Class;
+//    [Embed(source="../../../rsrc/Ghosts/Ghost_Demon.swf", mimeType="application/octet-stream")]
+//    public static const GHOST_DEMON :Class;
 
     // fonts
     [Embed(source="../../../rsrc/Fonts/SunnySide.ttf", fontName="SunnySide",

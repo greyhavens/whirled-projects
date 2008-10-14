@@ -3,18 +3,40 @@
 
 package ghostbusters.client.fight {
 
-import com.threerings.flash.FrameSprite;
-import com.threerings.util.CommandEvent;
-import com.threerings.util.Log;
-import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.net.PropertyChangedEvent;
-
+import flash.display.BlendMode;
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.Shape;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.text.AntiAliasType;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 import flash.geom.Point;
+
+import flash.events.Event;
+import flash.events.MouseEvent;
+
 import flash.media.Sound;
 import flash.media.SoundChannel;
+
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
+import flash.utils.setTimeout;
+
+import com.threerings.flash.FrameSprite;
+import com.threerings.flash.SimpleTextButton;
+import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
+
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import ghostbusters.client.ClipHandler;
 import ghostbusters.client.Content;
@@ -33,12 +55,11 @@ public class FightPanel extends FrameSprite
         _ghost = ghost;
 
         _dimness = new Dimness(0.8, true);
-        this.addChild(_dimness);
+//        this.addChild(_dimness);
 
         this.addChild(_ghost);
         _ghost.mask = null;
-        
-        _ghost.x = Game.panel.hud.getRightEdge() - _ghost.bounds.width/2;
+        _ghost.x = 600;
         _ghost.y = 100;
 
         // listen for notification messages from the server on the room control
@@ -56,7 +77,7 @@ public class FightPanel extends FrameSprite
 
         var clipClass :Class = Game.panel.getClipClass();
         if (clipClass == null) {
-            _log.debug("Urk, failed to find a ghost clip class");
+            log.debug("Urk, failed to find a ghost clip class");
             return;
         }
         var handler :ClipHandler;
@@ -64,8 +85,10 @@ public class FightPanel extends FrameSprite
             var gameContext :MicrogameContext = new MicrogameContext();
             gameContext.ghostMovie = handler.clip;
             _player = new MicrogamePlayer(gameContext);
-            startMinigame();
+            maybeStartMinigame();
         });
+
+        _playing = Boolean(Game.control.player.props.get(Codes.PROP_IS_PLAYING));
     }
 
     override public function hitTestPoint (
@@ -78,35 +101,39 @@ public class FightPanel extends FrameSprite
     public function weaponUpdated () :void
     {
         if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            _log.debug("Weapon unchanged...");
+            log.debug("Weapon unchanged...");
             return;
         }
         if (_player.currentGame != null) {
-            _log.debug("Cancelling current game...");
+            log.debug("Cancelling current game...");
             _player.cancelCurrentGame();
         }
-        _log.debug("Starting new minigame.");
-        startMinigame();
+        log.debug("Starting new minigame.");
+        maybeStartMinigame();
     }
 
     public function toggleGame () :void
     {
         if (_player == null) {
             // this is either a miracle of timing, or an irrecoverable error condition
-            _log.warning("No minigame container in toggleGame()");
+            log.warning("No minigame container in toggleGame()");
             return;
         }
 
         if (_player.root == null) {
-            startMinigame();
+            maybeStartMinigame();
 
         } else {
             endMinigame();
         }
     }
 
-    protected function startMinigame () :void
+    protected function maybeStartMinigame () :void
     {
+        if (!_playing) {
+            return;
+        }
+
         if (_player.root == null) {
             Game.panel.frameContent(_player);
         }
@@ -114,23 +141,23 @@ public class FightPanel extends FrameSprite
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
-        case HUD.LOOT_LANTERN:
-            _player.weaponType = new WeaponType(WeaponType.NAME_FIND_TRUE_QUOTE, 1);
+        case Codes.WPN_LANTERN:
+            _player.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
             break;
 
-        case HUD.LOOT_BLASTER:
-            _player.weaponType = new WeaponType(WeaponType.NAME_QUESTION_BLASTER, 2);
+        case Codes.WPN_BLASTER:
+            _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
             break;
 
-        case HUD.LOOT_OUIJA:
-            _player.weaponType = new WeaponType(WeaponType.NAME_GHOST_WRITER, 1);
+        case Codes.WPN_OUIJA:
+            _player.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
             break;
 
-        case HUD.LOOT_POTIONS:
+        case Codes.WPN_POTIONS:
             _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
             break;
         default:
-            _log.warning("Eek, unknown weapon: " + _selectedWeapon);
+            log.warning("Eek, unknown weapon", "weapon", _selectedWeapon);
             return;
         }
 
@@ -158,7 +185,9 @@ public class FightPanel extends FrameSprite
         super.handleRemoved();
         _battleLoop.stop();
 
-        _player.shutdown();
+        if (_player != null) {
+            _player.shutdown();
+        }
     }
 
     override protected function handleFrame (... ignored) :void
@@ -177,7 +206,7 @@ public class FightPanel extends FrameSprite
             } else if (_player.currentGame.isDone) {
                 // else if we finished a game, announce it to the world & start the next one
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
-                                      _player.currentGame.gameResult);
+                                      [ _selectedWeapon, _player.currentGame.gameResult ]);
                 if (_player != null) {
                     _player.beginNextGame();
                 }
@@ -187,6 +216,7 @@ public class FightPanel extends FrameSprite
 
     protected function updateSpotlights () :void
     {
+        return; //SKIN
         var team :Array = PlayerModel.getTeam(false);
 
         // TODO: maintain our own list, calling this 30 times a second is rather silly
@@ -195,7 +225,7 @@ public class FightPanel extends FrameSprite
 
             var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
             if (info == null) {
-                _log.warning("Can't get avatar info [player=" + playerId + "]");
+                log.warning("Can't get avatar info", "player", playerId);
                 continue;
             }
             var topLeft :Point = this.globalToLocal(info.bounds.topLeft);
@@ -245,6 +275,10 @@ public class FightPanel extends FrameSprite
                 // if we just died, cancel minigame
                 endMinigame();
             }
+
+        } else if (evt.name == Codes.PROP_IS_PLAYING) {
+            _playing = Boolean(evt.newValue);
+            maybeStartMinigame();
         }
     }
 
@@ -282,6 +316,8 @@ public class FightPanel extends FrameSprite
 
     protected var _battleLoop :SoundChannel;
 
+    protected var _playing :Boolean;
+
     protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _player: MicrogamePlayer;
@@ -290,6 +326,6 @@ public class FightPanel extends FrameSprite
 
     protected var _gameContext :MicrogameContext;
 
-    protected static const _log :Log = Log.getLog(FightPanel);
+    protected static const log :Log = Log.getLog(FightPanel);
 }
 }

@@ -43,16 +43,15 @@ public class SeekPanel extends FrameSprite
         _ghost = ghost;
 
         _dimness = new Dimness(0.9, true);
-        this.addChild(_dimness);
-
+        this.addChild(_dimness);//SKIN
         _lightLayer = new Sprite();
-        this.addChild(_lightLayer);
+        this.addChild(_lightLayer);//SKIN
 
         _maskLayer = new Sprite();
         if (_ghost != null) {
             this.addChild(_ghost);
-            this.addChild(_maskLayer);
-            _ghost.mask = _maskLayer;
+            this.addChild(_maskLayer);//SKIN
+            _ghost.mask = _maskLayer;//SKIN
         }
 
         _lanterns = new Dictionary();
@@ -64,6 +63,8 @@ public class SeekPanel extends FrameSprite
         } else if (_ghost != null) {
             _ghost.hidden();
         }
+
+        _playing = Boolean(Game.control.player.props.get(Codes.PROP_IS_PLAYING));
     }
 
     override public function hitTestPoint (
@@ -77,6 +78,9 @@ public class SeekPanel extends FrameSprite
         super.handleAdded();
         _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
 
+        Game.control.player.props.addEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
+
         Game.control.room.addEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         Game.control.room.props.addEventListener(
@@ -89,6 +93,9 @@ public class SeekPanel extends FrameSprite
     {
         super.handleRemoved();
         _lanternLoop.stop();
+
+        Game.control.player.props.removeEventListener(
+            PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
 
         Game.control.room.removeEventListener(
             MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
@@ -123,6 +130,13 @@ public class SeekPanel extends FrameSprite
             if (evt.key == Codes.IX_GHOST_POS && _ghost != null) {
                 ghostPositionChanged(evt.newValue as Array);
             }
+        }
+    }
+
+    protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
+    {
+        if (evt.name == Codes.PROP_IS_PLAYING) {
+            _playing = Boolean(evt.newValue);
         }
     }
 
@@ -230,7 +244,8 @@ public class SeekPanel extends FrameSprite
                 _zapping --;
             }
 
-            if (_lanterns != null && _zapping == 0 && _ghost.hitTestPoint(p.x, p.y, true)) {
+            if (_playing && _lanterns != null && _zapping == 0 &&
+                _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, GameController.ZAP_GHOST);
                 _zapping = ZAP_FRAMES;
@@ -253,19 +268,21 @@ public class SeekPanel extends FrameSprite
             }
         }
 
-        // update our own lantern directly, nobody wants to watch roundtrip lag in action
-        if (!Game.DEBUG) {
-            updateLantern(Game.ourPlayerId, p);
-        }
+        if (_playing) {
+            // update our own lantern directly, nobody wants to watch roundtrip lag in action
+            if (!Game.DEBUG) {
+                updateLantern(Game.ourPlayerId, p);
+            }
 
-        // see if it's time to send a network update on our position
-        _ticker ++;
-        if (_ticker < FRAMES_PER_UPDATE) {
-            return;
-        }
-        _ticker = 0;
+            // see if it's time to send a network update on our position
+            _ticker ++;
+            if (_ticker < FRAMES_PER_UPDATE) {
+                return;
+            }
+            _ticker = 0;
 
-        transmitLanternPosition(p);
+            transmitLanternPosition(p);
+        }
     }
 
     // GHOST MANAGEMENT
@@ -280,7 +297,9 @@ public class SeekPanel extends FrameSprite
         _ghost.newTarget(new Point(600, 100));
 
         _ghost.mask = null;
-        this.removeChild(_maskLayer);
+        if( this.contains( _maskLayer) ){
+            this.removeChild(_maskLayer);
+        }
     }
 
     // LANTERN MANAGEMENT
@@ -295,9 +314,17 @@ public class SeekPanel extends FrameSprite
 
     protected function lanternOff (lantern :Lantern) :void
     {
-        _dimness.removeChild(lantern.hole);
-        _lightLayer.removeChild(lantern.light);
-        _maskLayer.removeChild(lantern.mask);
+        if( _dimness.contains( lantern.hole) ){
+            _dimness.removeChild(lantern.hole);
+        }
+        
+        if( _lightLayer.contains( lantern.light) ){
+            _lightLayer.removeChild(lantern.light);
+        }
+        
+        if( _maskLayer.contains( lantern.mask) ){
+            _maskLayer.removeChild(lantern.mask);
+        }
     }
 
     protected function updateLantern (playerId :int, pos :Point) :void
@@ -331,6 +358,8 @@ public class SeekPanel extends FrameSprite
     protected var _lanterns :Dictionary;
 
     protected var _ghost :Ghost;
+
+    protected var _playing :Boolean;
 
     protected var _zapping :int;
 

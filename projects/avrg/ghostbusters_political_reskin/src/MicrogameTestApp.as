@@ -1,4 +1,4 @@
-package ghostbusters.client.fight {
+package  {
 
 import com.threerings.flash.SimpleTextButton;
 import com.whirled.contrib.simplegame.*;
@@ -18,6 +18,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import ghostbusters.client.fight.common.*;
+import ghostbusters.client.fight.*;
 
 [SWF(width="305", height="330", frameRate="30")]
 public class MicrogameTestApp extends Sprite
@@ -101,7 +102,7 @@ public class MicrogameTestApp extends Sprite
         _player = new MicrogamePlayer(context);
         this.addChild(_player);
 
-        _curWeaponTypeName = WeaponType.NAME_FIND_TRUE_QUOTE;
+        _curWeaponTypeName = WeaponType.NAME_LANTERN;
         _curWeaponDifficulty = 0;
         _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
 
@@ -187,16 +188,16 @@ public class MicrogameTestApp extends Sprite
     protected var _curWeaponDifficulty :int;
 
     protected static const WEAPON_TYPES :Array = [
-        WeaponType.NAME_FIND_TRUE_QUOTE,
-        WeaponType.NAME_GHOST_WRITER,
-        WeaponType.NAME_QUESTION_BLASTER,
-        WeaponType.NAME_GET_OUT_OF_IRAQ,
-        WeaponType.NAME_GET_TO_VOTING_BOOTH,
+        WeaponType.NAME_LANTERN,
+//        WeaponType.NAME_GHOST_WRITER,
+        WeaponType.NAME_PLASMA,
+        WeaponType.NAME_OUIJA,
+        WeaponType.NAME_POTIONS,
 //        WeaponType.NAME_POTIONS,
     ];
 
     /* Lantern */
-    [Embed(source="../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
+    [Embed(source="../rsrc/Ghosts/palin.swf", mimeType="application/octet-stream")]
     protected static const SWF_LANTERNGHOST :Class;
 
 }

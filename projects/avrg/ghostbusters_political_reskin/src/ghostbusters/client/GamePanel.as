@@ -22,7 +22,7 @@ import ghostbusters.data.Codes;
 public class GamePanel extends Sprite
 {
     // ghost states
-    public static const ST_GHOST_HIDDEN :String = "hidden";
+    public static const ST_GHOST_HIDDEN :String = "appear_to_fighting";//"hidden";
     public static const ST_GHOST_APPEAR :String = "appear_to_fighting";
     public static const ST_GHOST_FIGHT :String = "fighting";
     public static const ST_GHOST_REEL :String = "reel";
@@ -53,8 +53,15 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
-        _seeking = true;
+        if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
+            showSplash(SplashWidget.STATE_WELCOME);
 
+        } else if (!Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
+            showSplash(SplashWidget.STATE_BEGIN);
+
+        } else {
+            _seeking = true;
+        }
         checkForDeath();
     }
 
@@ -90,6 +97,27 @@ public class GamePanel extends Sprite
             _seeking = seeking;
             updateState(true);
         }
+    }
+
+    public function showSplash (state :String) :void
+    {
+        if (_splash != null) {
+            _splash.gotoState(state);
+            return;
+        }
+        _splash = new SplashWidget(state);
+        this.addChild(_splash);
+        _splash.x = 100;
+        _splash.y = 0;
+
+        // when we show a splash screen, turn off the seek mode
+        seeking = false;
+    }
+
+    public function hideSplash () :void
+    {
+        this.removeChild(_splash);
+        _splash = null;
     }
 
     public function unframeContent () :void
@@ -225,6 +253,20 @@ public class GamePanel extends Sprite
     {
         if (evt.name == Codes.PROP_MY_HEALTH) {
             checkForDeath();
+
+        } else if (evt.name == Codes.PROP_AVATAR_TYPE) {
+            // if we 
+            if (_splash != null && _splash.state == SplashWidget.STATE_AVATARS) {
+                _splash.gotoState(SplashWidget.STATE_BEGIN);
+            }
+
+        } else if (evt.name == Codes.PROP_IS_PLAYING) {
+            if (Boolean(evt.newValue) && _splash != null &&
+                _splash.state == SplashWidget.STATE_BEGIN) {
+                hideSplash();
+                _seeking = true;
+                updateState(true);
+            }
         }
     }
 
@@ -291,6 +333,8 @@ public class GamePanel extends Sprite
 
     protected var _frame :GameFrame;
 
+    protected var _splash :SplashWidget;
+
     protected var _revive :ClipHandler;
     protected var _triumph :ClipHandler;
 
@@ -298,10 +342,10 @@ public class GamePanel extends Sprite
 
     // maps ghost id to model
     protected static const GHOST_CLIPS :Object = {
-      pinchy: Content.GHOST_PINCHER,
-      duchess: Content.GHOST_DUCHESS,
-      widow: Content.GHOST_WIDOW,
-      demon: Content.GHOST_DEMON
+//      pinchy: Content.GHOST_PINCHER,  //SKIN
+      duchess: Content.GHOST_DUCHESS,  //SKIN
+      widow: Content.GHOST_WIDOW  //SKIN
+//      demon: Content.GHOST_DEMON  //SKIN
     };
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;

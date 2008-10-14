@@ -102,6 +102,7 @@ public class SpiritShellGame extends MicrogameMode
 
         var ghostWidth :int = ghost.width;
         var ghostHeight :int = ghost.height;
+//        trace("ghostWidth=" + ghostWidth + ", ghostHeight=" + ghostHeight); 
 
         // create the ectoplasm
         var ectoClasses :Array = [
@@ -117,12 +118,17 @@ public class SpiritShellGame extends MicrogameMode
         for (var i :uint = 0; i < _settings.ectoplasmCount; ++i) {
             var ectoClass :Class = ectoClasses[Rand.nextIntRange(0, ectoClasses.length, Rand.STREAM_COSMETIC)];
             var ecto :Ectoplasm = new Ectoplasm(ectoClass);
-            ecto.x = Rand.nextIntRange(0, ghostWidth + 15, Rand.STREAM_COSMETIC);
-            ecto.y = Rand.nextIntRange(0, ghostHeight + 15, Rand.STREAM_COSMETIC);
+            
+            ecto.x = Rand.nextIntRange(0, ghostWidth, Rand.STREAM_COSMETIC);
+            ecto.y = Rand.nextIntRange(0, ghostHeight, Rand.STREAM_COSMETIC);
 //            ecto.alpha = Rand.nextNumberRange(0.5, 0.8, Rand.STREAM_COSMETIC);
 
             this.addObject(ecto, ghost.displayObject as DisplayObjectContainer);
         }
+        
+        ghostSprite.graphics.beginFill(0);
+        ghostSprite.graphics.drawRect(0, 0, ghostWidth,ghostHeight);
+        ghostSprite.graphics.endFill();
 
         // move the ghost
         this.moveGhost(ghost);
@@ -189,15 +195,19 @@ public class SpiritShellGame extends MicrogameMode
 
         var distance :Number = _settings.ghostWanderDist.next();
         var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
-
         var start :Vector2 = new Vector2(ghost.x, ghost.y);
         var dest :Vector2 = Vector2.fromAngle(direction, distance).addLocal(start);
+        trace("start=" + start);
+        trace("dest=" + dest);
         // clamp dest
-        var borderWidth :int = 70;
-        dest.x = Math.max(dest.x, ghost.width);
-        dest.x = Math.min(dest.x, 300 - ghost.width); // board width - ghost width
-        dest.y = Math.max(dest.y, ghost.height);
-        dest.y = Math.min(dest.y, (226 - ghost.height)); // board height - ghost height
+        trace("clamp[ x(" + ghost.width + ", " + (300 - ghost.width) + "), y(" + ghost.height + ", " + Math.max(0,(226 - ghost.height)) + ") ]");
+        var borderWidth :int = 0;
+        dest.x = Math.max(dest.x, 0);//
+        dest.x = Math.min(dest.x, 300 - ghost.width - borderWidth); // board width - ghost width
+        dest.y = Math.max(dest.y, ghost.height - borderWidth);
+//        borderWidth = (226 - ghost.height-borderWidth) < 0 ? 0: borderWidth;
+        dest.y = Math.min(dest.y, Math.max(0,(226 - ghost.height-borderWidth))); // board height - ghost height
+        trace("actual dest=" + dest.x + ", " + dest.y);
 //        dest.x = 300 - ghost.width;
 //        dest.y = 226 - ghost.height;
 //        // what's the actual distance we're moving?
@@ -209,7 +219,8 @@ public class SpiritShellGame extends MicrogameMode
         moveTask.addTask(LocationTask.CreateSmooth(dest.x, dest.y, totalTime));
         moveTask.addTask(new TimedTask(_settings.ghostWanderDelay.next()));
         moveTask.addTask(new FunctionTask(function () :void { moveGhost(ghost); }));
-
+        
+        
         ghost.addTask(moveTask);
     }
 
@@ -372,7 +383,7 @@ public class SpiritShellGame extends MicrogameMode
             8,      // gameTime
             47,     // ectoplasmCount
             140,//40,      // ghostSpeed
-            new NumRange(90, 100, Rand.STREAM_COSMETIC),   // ghostWanderDist
+            new NumRange(130, 150, Rand.STREAM_COSMETIC),   // ghostWanderDist
             new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             true,  // ghostBlink
             150,    // plasmaSpeed

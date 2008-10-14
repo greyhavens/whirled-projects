@@ -18,17 +18,18 @@ import ghostbusters.client.util.PlayerModel;
 
 public class GameController extends Controller
 {
-    public static const HELP :String = "Help";
-    public static const PLAY :String = "Play";
-    public static const TOGGLE_LANTERN :String = "ToggleLantern";
-    public static const TOGGLE_LOOT :String = "ToggleLoot";
+    public static const BEGIN_PLAYING :String = "BeginPlaying";
+    public static const CHOOSE_AVATAR :String = "ChooseAvatar";
     public static const CHOOSE_WEAPON :String = "ChooseWeapon";
+    public static const CLOSE_SPLASH :String = "CloseSplash";
     public static const END_GAME :String = "EndGame";
     public static const GHOST_ATTACKED :String = "GhostAttacked";
-    public static const PLAYER_ATTACKED :String = "PlayerAttacked";
-    public static const ZAP_GHOST :String = "ZapGhost";
-    public static const REVIVE :String = "Revive";
     public static const GIMME_DEBUG_PANEL :String = "GimmeDebugPanel";
+    public static const HELP :String = "Help";
+    public static const PLAYER_ATTACKED :String = "PlayerAttacked";
+    public static const REVIVE :String = "Revive";
+    public static const TOGGLE_LANTERN :String = "ToggleLantern";
+    public static const ZAP_GHOST :String = "ZapGhost";
 
     public var panel :GamePanel;
 
@@ -47,23 +48,18 @@ public class GameController extends Controller
 
     public function handleHelp () :void
     {
-        // TODO
+        panel.showSplash(SplashWidget.STATE_HOWTO);
     }
 
-    public function handleToggleLoot () :void
+    public function handleCloseSplash () :void
     {
-//        handleSpawnGhost();
+        panel.hideSplash();
     }
 
     public function handleGimmeDebugPanel () :void
     {
         // leave it entirely to the agent to decide if clicking here does anything
         Game.control.agent.sendMessage(Codes.CMSG_DEBUG_REQUEST, Codes.DBG_GIMME_PANEL);
-    }
-
-    public function handlePlay () :void
-    {
-        panel.seeking = false;
     }
 
     public function handleToggleLantern () :void
@@ -94,6 +90,16 @@ public class GameController extends Controller
        } else {
             log.debug("Unexpected state in toggleLantern", "state", state);
         }
+    }
+
+    public function handleBeginPlaying () :void
+    {
+        Game.control.agent.sendMessage(Codes.CMSG_BEGIN_PLAYING);        
+    }
+
+    public function handleChooseAvatar (avatar :String) :void
+    {
+        Game.control.agent.sendMessage(Codes.CMSG_CHOOSE_AVATAR, avatar);
     }
 
     public function handleChooseWeapon (weapon :int) :void

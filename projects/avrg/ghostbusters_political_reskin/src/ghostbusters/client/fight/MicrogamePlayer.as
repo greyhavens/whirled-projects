@@ -120,13 +120,13 @@ public class MicrogamePlayer extends Sprite
 
     protected static const GAME_DESCRIPTORS :Array = [
 
-        new MicrogameDescriptor(WeaponType.NAME_FIND_TRUE_QUOTE,    0, HeartOfDarknessGame),
+        new MicrogameDescriptor(WeaponType.NAME_LANTERN,    0, HeartOfDarknessGame),
 
-        new MicrogameDescriptor(WeaponType.NAME_GHOST_WRITER,      0, GhostWriterGame),
-        new MicrogameDescriptor(WeaponType.NAME_GET_OUT_OF_IRAQ,      0, PictoGeistGame),
-        new MicrogameDescriptor(WeaponType.NAME_GET_TO_VOTING_BOOTH,      0, SpiritGuideGame),
+//        new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, GhostWriterGame),
+        new MicrogameDescriptor(WeaponType.NAME_OUIJA,      0, PictoGeistGame),
+        new MicrogameDescriptor(WeaponType.NAME_POTIONS,      0, SpiritGuideGame),
 
-        new MicrogameDescriptor(WeaponType.NAME_QUESTION_BLASTER,     0, SpiritShellGame),
+        new MicrogameDescriptor(WeaponType.NAME_PLASMA,     0, SpiritShellGame),
 
 //        new MicrogameDescriptor(WeaponType.NAME_POTIONS,    0, HueAndCryGame),
 

@@ -102,6 +102,12 @@ public class Codes
     public static const CMSG_CHOOSE_AVATAR :String = "choose_avatar";
 
     /**
+     * The player is done with the welcome splash screen and is ready to begin playing. This
+     * just toggles the IS_PLAYING property on the server.
+     */
+    public static const CMSG_BEGIN_PLAYING :String = "begin_playing";
+
+    /**
      * A player successfully hovered over the ghost with their lantern (server version).
      *
      * Dispatched by the server to the room to notify everybody there that somebody (not
