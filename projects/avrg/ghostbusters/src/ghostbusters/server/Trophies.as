@@ -6,6 +6,9 @@ package ghostbusters.server {
 import ghostbusters.data.Codes;
 
 import flash.utils.Dictionary;
+
+import com.threerings.util.ArrayUtil;
+
 public class Trophies
 {
     public static const LIBRARY_SCENES :Array = [ 2914 ];
@@ -30,7 +33,7 @@ public class Trophies
         var fullTeam :Array = room.getTeam(false);
         var liveTeam :Array = room.getTeam(true);
 
-        var inLibrary :Boolean = LIBRARY_SCENES.contains(room.roomId);
+        var inLibrary :Boolean = ArrayUtil.contains(LIBRARY_SCENES, room.roomId);
 
         // Last Man Standing - everyone else in your party dies, except for you.
         if (fullTeam.length > 3 && liveTeam.length == 1) {
