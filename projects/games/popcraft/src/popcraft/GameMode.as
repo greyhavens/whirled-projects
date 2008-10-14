@@ -163,14 +163,10 @@ public class GameMode extends TransitionMode
         GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
-        // TODO - change this to be more like zyraxxus messages
         _messageMgr = this.createMessageManager();
-        _messageMgr.addMessageFactory(CreateUnitMessage.messageName,
-            CreateUnitMessage.createFactory());
-        _messageMgr.addMessageFactory(SelectTargetEnemyMessage.messageName,
-            SelectTargetEnemyMessage.createFactory());
-        _messageMgr.addMessageFactory(CastCreatureSpellMessage.messageName,
-            CastCreatureSpellMessage.createFactory());
+        _messageMgr.addMessageType(CreateUnitMessage);
+        _messageMgr.addMessageType(SelectTargetEnemyMessage);
+        _messageMgr.addMessageType(CastCreatureSpellMessage);
     }
 
     protected function shutdownNetwork () :void
@@ -518,8 +514,7 @@ public class GameMode extends TransitionMode
     {
         var playerIndex :int;
 
-        switch (msg.name) {
-        case CreateUnitMessage.messageName:
+        if (msg is CreateUnitMessage) {
             var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
             playerIndex = createUnitMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
@@ -529,17 +524,15 @@ public class GameMode extends TransitionMode
                     baseView.unitCreated();
                 }
             }
-            break;
 
-        case SelectTargetEnemyMessage.messageName:
+        } else if (msg is SelectTargetEnemyMessage) {
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
             playerIndex = selectTargetEnemyMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 this.setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             }
-            break;
 
-        case CastCreatureSpellMessage.messageName:
+        } else if (msg is CastCreatureSpellMessage) {
             var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
             playerIndex = castSpellMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
@@ -548,9 +541,7 @@ public class GameMode extends TransitionMode
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
                 GameContext.playGameSound("sfx_" + spell.name);
             }
-            break;
         }
-
     }
 
     protected function setTargetEnemy (playerIndex :int, targetEnemyId :int) :void
@@ -616,7 +607,7 @@ public class GameMode extends TransitionMode
 
     public function selectTargetEnemy (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
-        this.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId), isAiMsg);
+        this.sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
     }
 
     public function localPlayerPurchasedCreature (unitType :int) :void
@@ -648,7 +639,7 @@ public class GameMode extends TransitionMode
             playerInfo.deductCreatureCost(unitType);
         }
 
-        this.sendMessage(new CreateUnitMessage(playerIndex, unitType), isAiMsg);
+        this.sendMessage(CreateUnitMessage.create(playerIndex, unitType), isAiMsg);
 
         if (playerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesCreated[unitType] += 1;
@@ -668,7 +659,7 @@ public class GameMode extends TransitionMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            this.sendMessage(new CastCreatureSpellMessage(playerIndex, spellType), isAiMsg);
+            this.sendMessage(CastCreatureSpellMessage.create(playerIndex, spellType), isAiMsg);
 
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
