@@ -1,47 +1,36 @@
 package {
 
-import flash.display.Bitmap;
-import flash.display.Sprite;
-import flash.events.Event;
-import flash.events.MouseEvent;
+import flash.display.*;
+import flash.events.*;
 import flash.text.*;
 import flash.net.*;
 
 import com.adobe.serialization.json.JSON;
 
+import fl.containers.ScrollPane;
+import fl.controls.*;
+import fl.skins.*;
+
 import com.threerings.util.Command;
-import com.threerings.flash.FrameSprite;
 
 import com.whirled.*;
 
 [SWF(width="500", height="375")]
-public class Feeder extends FrameSprite
+public class Feeder extends Sprite
 {
+    DefaultScrollPaneSkins;
+    DefaultButtonSkins;
+
     public function Feeder ()
     {
-        //var top :Sprite = new Sprite();
-
-        /*_title = new TextField();
-        _title.text = "Hello";
-        top.addEventListener(MouseEvent.CLICK, onTitleClick);
-        _title.autoSize = TextFieldAutoSize.LEFT;
-        _title.mouseEnabled = false;
-        _story = new TextField();
-        _story.y = 20;
-        _story.text = "World";
-
-        top.addChild(_title);
-        top.buttonMode = true;
-        top.addChild(_story);
-        addChild(top);*/
-
         _ctrl = new ToyControl(this);
         DataPack.load(_ctrl.getDefaultDataPack(), onPack);
     }
 
     public function onPack (pack :DataPack) :void
     {
-        _source = pack.getString("feed");
+        _source = pack.getString("Feed");
+        _sourceCount = pack.getNumber("Count");
 
         update();
     }
@@ -54,6 +43,7 @@ public class Feeder extends FrameSprite
         var query :URLVariables = new URLVariables();
         query.q = _source;
         query.v = "1.0";
+        query.num = _sourceCount;
 
         request.url = "http://ajax.googleapis.com/ajax/services/feed/load";
         request.data = query;
@@ -62,6 +52,10 @@ public class Feeder extends FrameSprite
             var json :Object = JSON.decode(loader.data);
 
             if (json.responseStatus != 200) {
+                var error :TextField = new TextField();
+                error.text = json.responseDetails;
+                error.autoSize = TextFieldAutoSize.LEFT;
+                addChild(error);
                 throw new Error(json.responseDetails);
             }
 
@@ -75,33 +69,77 @@ public class Feeder extends FrameSprite
     {
         _feed = feed;
 
-        var text :String = _feed.title;
+        var title :TextField = new TextField();
+        title.styleSheet = Story.createStyleSheet();
+        title.htmlText += "<a class='title' href='event:"+_feed.link+"'>"+_feed.title+"</a>";
+        title.width = 220;
+        title.addEventListener(TextEvent.LINK, function (event :TextEvent) :void {
+            navigateToURL(new URLRequest(event.text));
+        });
         if (_feed.description) {
-            text += " - " + _feed.description;
+            title.htmlText += " :: " + _feed.description;
         }
-        var title :Label = new Label(text, _feed.link);
         addChild(title);
 
-        setStory(0);
+        var prev :Button = new Button();
+        prev.label = "Prev";
+        prev.setSize(50, 20);
+        prev.x = 320 - 100;
+        Command.bind(prev, MouseEvent.CLICK, nextStory, -1);
+        addChild(prev);
+
+        var next :Button = new Button();
+        next.label = "Next";
+        next.setSize(50, 20);
+        next.x = 320 - 50;
+        Command.bind(next, MouseEvent.CLICK, nextStory, +1);
+        addChild(next);
+
+        nextStory(0);
     }
 
-    protected function setStory (index :int) :void
+    protected function nextStory (delta :int) :void
     {
-        if (_story) {
-            removeChild(_story);
+        _index = (_index+delta) % _feed.entries.length;
+        while (_index < 0) {
+            _index += _feed.entries.length;
         }
 
-        _story = new Story(_feed.entries[index]);
-        Command.bind(_story, MouseEvent.CLICK, setStory, (index+1)%_feed.entries.length);
-        _story.y = 30;
-        addChild(_story);
+        setStory(new Story(_feed.entries[_index]));
+    }
+
+    protected function setStory (story :Story) :void
+    {
+        if (_storyPanel != null) {
+            removeChild(_storyPanel);
+        }
+
+        //Command.bind(story, MouseEvent.CLICK, setStory, (index+1)%_feed.entries.length);
+        //_story.y = 30;
+
+        _storyPanel = new ScrollPane();
+        _storyPanel.verticalScrollPolicy = ScrollPolicy.AUTO;
+        _storyPanel.horizontalScrollPolicy = ScrollPolicy.AUTO;
+        _storyPanel.y = 30;
+        _storyPanel.width = 320+ScrollBar.WIDTH;
+        _storyPanel.height = 240;
+
+        Command.bind(story, Event.CHANGE, function () :void {
+            story.width = story.width; // Needed to force the width to update. Only in Flash...
+            _storyPanel.update();
+        });
+
+        _storyPanel.source = story;
+        addChild(_storyPanel);
     }
 
     protected var _ctrl :ToyControl;
     protected var _source :String;
+    protected var _sourceCount :int;
 
-    protected var _story :Story;
+    protected var _storyPanel :ScrollPane;
 
     protected var _feed :Object;
+    protected var _index :int;
 }
 }

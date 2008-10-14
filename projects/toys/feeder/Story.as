@@ -1,22 +1,57 @@
 package {
 
 import flash.display.*;
+import flash.events.*;
 import flash.text.*;
 
-public class Story extends Sprite
+import flash.net.*;
+
+public class Story extends TextField
 {
     public function Story (entry :Object)
     {
-        var title :Label = new Label(entry.title, entry.link);
-        addChild(title);
+        width = 320;
+        multiline = true;
+        wordWrap = true;
+        autoSize = TextFieldAutoSize.LEFT;
 
-        var date :Label = new Label(entry.publishedDate);
-        date.y = 20;
-        addChild(date);
+        styleSheet = createStyleSheet();
 
-        var content :Label = new Label(entry.content);
-        content.y = 40;
-        addChild(content);
+        htmlText = proc("<a class='title' href='"+entry.link+"'>"+entry.title+"</a>");
+        htmlText += "<br><span class='date'>"+entry.publishedDate+"</span><br>";
+        htmlText += "<br><span class='text'>"+proc(entry.content)+"</span><br>";
+        //htmlText = "<a href='event:http://www.google.com'>hardcoded</a> hello world "+unfuck("<a href='http://www.google.com'>blah</a>");
+
+        // TODO: Umm, this doesn't get fired when this TextField is in a scrollpane... ugh.
+        addEventListener(TextEvent.LINK, function (event :TextEvent) :void {
+            navigateToURL(new URLRequest(event.text));
+        });
+    }
+
+    // Apparently web links don't work inside flex, so we have to prepend 'event:' to them and
+    // listen for LINK events
+    public static function proc (html :String) :String
+    {
+        //return html.replace(/<a\s+(.*)href=['"](.*)?['"]/g, "<a $1 href='event:$2'");
+        return html.replace(/href=['"](.*)?['"]/g, "href='event:$1'");
+    }
+
+    // TODO: Move to Resources.as
+    public static function createStyleSheet () :StyleSheet
+    {
+        var sheet :StyleSheet = new StyleSheet();
+        sheet.setStyle("a", {
+            color: "#0000ff",
+            textDecoration: "underline"
+        });
+        sheet.setStyle(".title", {
+            fontSize: "24px"
+        });
+        sheet.setStyle(".text", {
+            fontSize: "14px"
+        });
+
+        return sheet;
     }
 }
 
