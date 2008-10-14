@@ -13,6 +13,7 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 import popcraft.mp.*;
+import popcraft.net.ResurrectPlayerMessage;
 import popcraft.sp.*;
 
 public class EndlessGameMode extends GameMode
@@ -83,6 +84,26 @@ public class EndlessGameMode extends GameMode
             // we're ready
             EndlessGameContext.playerReadyMonitor.setLocalPlayerReadyForCurRound();
         }
+    }
+
+    override protected function setupNetwork () :void
+    {
+        super.setupNetwork();
+        _messageMgr.addMessageType(ResurrectPlayerMessage);
+    }
+
+    override protected function handleMessage (msg :Message) :void
+    {
+        if (msg is ResurrectPlayerMessage) {
+            // TODO
+        } else {
+            super.handleMessage(msg);
+        }
+    }
+
+    public function resurrectLocalPlayer () :void
+    {
+        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
     }
 
     override protected function destroy () :void
