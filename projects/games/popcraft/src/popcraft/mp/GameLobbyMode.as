@@ -166,7 +166,9 @@ public class GameLobbyMode extends AppMode
             MultiplayerConfig.inited = false;
         }
 
-        AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
+        //AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
+        // TEMP
+        AppContext.endlessLevelMgr.playMpLevel();
     }
 
     protected function onOccupantLeft (...ignored) :void

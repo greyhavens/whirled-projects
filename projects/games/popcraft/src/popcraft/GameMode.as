@@ -434,6 +434,15 @@ public class GameMode extends TransitionMode
             this.handleMessage(msg);
         }
 
+        // AI messages are identical to other messages, but are kept in a separate Array so
+        // that we don't generate unnecessary network traffic when playing a multiplayer game with
+        // computer AIs
+        for each (msg in _aiPlayerMessage) {
+            this.handleMessage(msg);
+        }
+
+        _aiPlayerMessage = [];
+
         // run the simulation the appropriate amount
         // (Our network update time is unrelated to the application's update time.
         // Network timeslices are always the same distance apart)
@@ -580,7 +589,7 @@ public class GameMode extends TransitionMode
             this.updateTargetEnemyBadgeLocation(targetId);
 
             // send a message to everyone
-            this.selectTargetEnemy(GameContext.localPlayerIndex, targetId);
+            this.selectTargetEnemy(GameContext.localPlayerIndex, targetId, false);
         }
     }
 
@@ -605,9 +614,9 @@ public class GameMode extends TransitionMode
         }
     }
 
-    public function selectTargetEnemy (playerIndex :int, enemyId :int) :void
+    public function selectTargetEnemy (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
-        _messageMgr.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId));
+        this.sendMessage(new SelectTargetEnemyMessage(playerIndex, enemyId), isAiMsg);
     }
 
     public function localPlayerPurchasedCreature (unitType :int) :void
@@ -617,15 +626,16 @@ public class GameMode extends TransitionMode
             return;
         }
 
-        this.buildCreature(GameContext.localPlayerIndex, unitType);
+        this.buildCreature(GameContext.localPlayerIndex, unitType, false, false);
 
         // when the sun is eclipsed, it's buy-one-get-one-free time!
         if (GameContext.diurnalCycle.isEclipse) {
-            this.buildCreature(GameContext.localPlayerIndex, unitType, true);
+            this.buildCreature(GameContext.localPlayerIndex, unitType, true, false);
         }
     }
 
-    public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean = false) :void
+    public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean,
+        isAiMsg :Boolean) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
 
@@ -638,14 +648,14 @@ public class GameMode extends TransitionMode
             playerInfo.deductCreatureCost(unitType);
         }
 
-        _messageMgr.sendMessage(new CreateUnitMessage(playerIndex, unitType));
+        this.sendMessage(new CreateUnitMessage(playerIndex, unitType), isAiMsg);
 
         if (playerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesCreated[unitType] += 1;
         }
     }
 
-    public function castSpell (playerIndex :int, spellType :int) :void
+    public function castSpell (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
         var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
@@ -658,13 +668,23 @@ public class GameMode extends TransitionMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            _messageMgr.sendMessage(new CastCreatureSpellMessage(playerIndex, spellType));
+            this.sendMessage(new CastCreatureSpellMessage(playerIndex, spellType), isAiMsg);
+
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
             GameContext.dashboard.puzzleShuffle();
         }
 
         GameContext.playerStats.spellsCast[spellType] += 1;
+    }
+
+    protected function sendMessage (msg :Message, isAiMsg :Boolean) :void
+    {
+        if (isAiMsg) {
+            _aiPlayerMessage.push(msg);
+        } else {
+            _messageMgr.sendMessage(msg);
+        }
     }
 
     public function playerEarnedResources (resourceType :int, offset :int, numClearPieces :int) :int
@@ -731,6 +751,7 @@ public class GameMode extends TransitionMode
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
+    protected var _aiPlayerMessage :Array = [];
     protected var _debugDataView :DebugDataView;
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;

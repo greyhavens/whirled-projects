@@ -116,15 +116,6 @@ public class EndlessGameMode extends GameMode
         super.destroy();
     }
 
-    override protected function startGame () :void
-    {
-        if (EndlessGameContext.isNewGame) {
-            super.startGame();
-        } else {
-
-        }
-    }
-
     override protected function updateNetworkedObjects () :void
     {
         super.updateNetworkedObjects();

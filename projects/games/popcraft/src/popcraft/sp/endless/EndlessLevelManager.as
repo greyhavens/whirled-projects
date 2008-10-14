@@ -45,9 +45,11 @@ public class EndlessLevelManager
                 if (level == SP_LEVEL) {
                     levelName = "endless_sp_01.xml";
                     theEmbeddedClass = ENDLESS_SP_LEVEL_1;
+                    _loadingMultiplayer = false;
                 } else {
                     levelName = "endless_mp_01.xml";
                     theEmbeddedClass = ENDLESS_MP_LEVEL_1;
+                    _loadingMultiplayer = true;
                 }
 
                 var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
@@ -98,7 +100,9 @@ public class EndlessLevelManager
 
     protected function startGame () :void
     {
-        GameContext.gameType = GameContext.GAME_TYPE_STORY;
+        GameContext.gameType = (_loadingMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
+            GameContext.GAME_TYPE_ENDLESS_SP);
+
         var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
         GameContext.gameData =
             (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
@@ -112,6 +116,7 @@ public class EndlessLevelManager
 
     protected var _loadedLevel :EndlessLevelData;
     protected var _levelReadyCallback :Function;
+    protected var _loadingMultiplayer :Boolean;
 
     protected static var log :Log = Log.getLog(EndlessLevelManager);
 

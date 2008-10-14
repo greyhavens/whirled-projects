@@ -25,8 +25,7 @@ public class ComputerPlayerAI extends SimObject
         // add starting spells to our playerInfo
         _playerInfo.setSpellCounts(_data.startingCreatureSpells);
 
-        // Computer players always target the local player
-        _playerInfo.targetedEnemy = GameContext.localPlayerInfo;
+        _playerInfo.targetedEnemy = GameContext.playerInfos[0];
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData
@@ -79,7 +78,7 @@ public class ComputerPlayerAI extends SimObject
 
                 if (availableSpells.length > 0) {
                     spellType = Rand.nextElement(availableSpells, Rand.STREAM_GAME);
-                    GameContext.gameMode.castSpell(_playerInfo.playerIndex, spellType);
+                    GameContext.gameMode.castSpell(_playerInfo.playerIndex, spellType, true);
                 }
             }
 
@@ -90,7 +89,7 @@ public class ComputerPlayerAI extends SimObject
 
                 if (null != targetPlayer) {
                     GameContext.gameMode.selectTargetEnemy(_playerInfo.playerIndex,
-                        targetPlayer.playerIndex);
+                        targetPlayer.playerIndex, true);
                 }
             }
 
@@ -118,7 +117,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function buildUnit (unitType :int) :void
     {
-        GameContext.gameMode.buildCreature(_playerInfo.playerIndex, unitType);
+        GameContext.gameMode.buildCreature(_playerInfo.playerIndex, unitType, false, true);
     }
 
     override protected function update (dt :Number) :void

@@ -19,7 +19,7 @@ public class EndlessGameContext
 
     public static function get isNewGame () :Boolean
     {
-        // used by EndlessGameMode.startGame to determine if this is a new game, or simply
+        // used by EndlessGameMode.setup to determine if this is a new game, or simply
         // the next map in an existing game
         return (mapDataIndex <= 0);
     }
