@@ -90,6 +90,7 @@ public class EndlessGameMode extends GameMode
     {
         // save data about our human players so that they can be resurrected
         // when the next round starts
+        EndlessGameContext.savedHumanPlayers = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
             if (playerInfo.teamId == HUMAN_TEAM_ID) {
                 EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
@@ -249,7 +250,7 @@ public class EndlessGameMode extends GameMode
             break;
 
         case KeyboardCodes.SLASH:
-            if (GameContext.isMultiplayerGame) {
+            if (GameContext.isSinglePlayerGame) {
                 AppContext.endlessLevelMgr.playSpLevel(null, true);
             }
             break;
