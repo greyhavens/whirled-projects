@@ -437,11 +437,11 @@ public class GameMode extends TransitionMode
         // AI messages are identical to other messages, but are kept in a separate Array so
         // that we don't generate unnecessary network traffic when playing a multiplayer game with
         // computer AIs
-        for each (msg in _aiPlayerMessage) {
+        for each (msg in _aiPlayerMessages) {
             this.handleMessage(msg);
         }
 
-        _aiPlayerMessage = [];
+        _aiPlayerMessages = [];
 
         // run the simulation the appropriate amount
         // (Our network update time is unrelated to the application's update time.
@@ -681,7 +681,7 @@ public class GameMode extends TransitionMode
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void
     {
         if (isAiMsg) {
-            _aiPlayerMessage.push(msg);
+            _aiPlayerMessages.push(msg);
         } else {
             _messageMgr.sendMessage(msg);
         }
@@ -751,7 +751,7 @@ public class GameMode extends TransitionMode
     protected var _gameIsRunning :Boolean;
 
     protected var _messageMgr :TickedMessageManager;
-    protected var _aiPlayerMessage :Array = [];
+    protected var _aiPlayerMessages :Array = [];
     protected var _debugDataView :DebugDataView;
     protected var _musicChannel :AudioChannel;
     protected var _lastDayPhase :int = -1;
