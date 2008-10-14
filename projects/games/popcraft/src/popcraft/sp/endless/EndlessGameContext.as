@@ -37,7 +37,9 @@ public class EndlessGameContext
             playerReadyMonitor = null;
         }
 
-        playerReadyMonitor = new PlayerReadyMonitor(SeatingManager.numPlayers);
+        if (GameContext.isMultiplayerGame) {
+            playerReadyMonitor = new PlayerReadyMonitor(SeatingManager.numPlayers);
+        }
     }
 
     public static function cycleMapData () :EndlessMapData

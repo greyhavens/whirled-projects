@@ -31,6 +31,7 @@
             <PlayerDisplay name="Eloise" displayName="Eloise" headshotName="portrait_eloise" color="0xFF8000"/>
             <PlayerDisplay name="Horace" displayName="Horace" headshotName="portrait_horace" color="0x0000BB"/>
             <PlayerDisplay name="Ursula" displayName="Ursula" headshotName="portrait_ursula" color="0xFF6FCF"/>
+            <PlayerDisplay name="Dante" displayName="Dante" headshotName="portrait_dante" color="0x666666"/>
         </PlayerDisplayDatas>
 
         <PuzzleClearValueTable>

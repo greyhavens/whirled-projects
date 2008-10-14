@@ -1,283 +1,283 @@
 <root>
-    <EndlessLevel
-        maxMultiplier="4"
-        multiplierDamageSoak="18.75"
+	<EndlessLevel
+		maxMultiplier="4"
+		multiplierDamageSoak="18.75"
 
-        pointsPerExtraMultiplier="500"
-        pointsPerResource="1"
-        pointsPerOpponentKill="500">
+		pointsPerExtraMultiplier="500"
+		pointsPerResource="1"
+		pointsPerOpponentKill="500">
 
-        <GameDataOverride>
-        </GameDataOverride>
+		<GameDataOverride>
+		</GameDataOverride>
 
-        <HumanPlayers>
-            <Player name="Finley"/>
-            <Player name="Eloise"/>
-        </HumanPlayers>
+		<HumanPlayers>
+			<Player name="Finley"/>
+			<Player name="Eloise"/>
+		</HumanPlayers>
 
-        <PointsPerCreatureKill>
-            <Unit type="grunt" points="10"/>
-            <Unit type="heavy" points="10"/>
-            <Unit type="sapper" points="15"/>
-            <Unit type="courier" points="5"/>
-            <Unit type="colossus" points="25"/>
-        </PointsPerCreatureKill>
+		<PointsPerCreatureKill>
+			<Unit type="grunt" points="10"/>
+			<Unit type="heavy" points="10"/>
+			<Unit type="sapper" points="15"/>
+			<Unit type="courier" points="5"/>
+			<Unit type="colossus" points="25"/>
+		</PointsPerCreatureKill>
 
-        <MapSequence>
-            <!-- ****** LEVEL 1 ****** -->
-            <Map repeats="true">
-                <MapSettings backgroundName="schoolnoburn"/>
-                <HumanBaseLocations>
-                    <BaseLocation x="80" y="214" team="0"/>
-                    <BaseLocation x="80" y="314" team="0"/>
-                </HumanBaseLocations>
-                <MultiplierDropLocation x="200" y="265" scatterRadius="60"/>
-                <AvailableUnits all="true"/>
-                <AvailableSpells all="true"/>
+		<MapSequence>
+			<!-- ****** LEVEL 1 ****** -->
+			<Map repeats="true">
+				<MapSettings backgroundName="schoolnoburn"/>
+				<HumanBaseLocations>
+					<BaseLocation x="80" y="214" team="0"/>
+					<BaseLocation x="80" y="314" team="0"/>
+				</HumanBaseLocations>
+				<MultiplierDropLocation x="200" y="265" scatterRadius="60"/>
+				<AvailableUnits all="true"/>
+				<AvailableSpells all="true"/>
 
-                <ComputerGroups>
-                    <!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
-                    <Group>
+				<ComputerGroups>
+					<!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
+					<Group>
 <!--
-    baseHealthIncrement: applied each time the computer player is cycled back through
-    waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through
+	baseHealthIncrement: applied each time the computer player is cycled back through
+	waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through
 -->
-                        <Computer
-                            playerName="Pigsley"
-                            baseStartHealth="1"
-                            baseHealth="150"
-                            baseHealthIncrement="75"
-                            waveDelayScale="0.7"
-                            team="1">
-                            <BaseLocation x="600" y="265" team="1"/>
-                            <RepeatingDays>
-                                <!-- Pigsley doesn't get harder till day 3 -->
-                                <Day repeatWaves="true">
-                                    <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-                                    <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
-                                </Day>
-                                <Day repeatWaves="true">
-                                    <Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-                                    <Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
-                    </Group>
+						<Computer
+							playerName="Pigsley"
+							baseStartHealth="1"
+							baseHealth="150"
+							baseHealthIncrement="75"
+							waveDelayScale="0.7"
+							team="1">
+							<BaseLocation x="600" y="265" team="1"/>
+							<RepeatingDays>
+								<!-- Pigsley doesn't get harder till day 3 -->
+								<Day repeatWaves="true">
+									<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+								</Day>
+								<Day repeatWaves="true">
+									<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+								</Day>
+							</RepeatingDays>
+						</Computer>
+					</Group>
 
-                    <!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
-                    <XGroup>
-                        <Computer
-                            playerName="Horace"
-                            baseStartHealth="150"
-                            baseHealth="150"
-                            baseHealthIncrement="75"
-                            waveDelayScale="0.8"
-                            noticeSpellDropAfterMin="8"
-                            noticeSpellDropAfterMax="10"
-                            spellDropCourierGroupSizeMin="1"
-                            spellDropCourierGroupSizeMax="1"
-                            team="1">
-                            <BaseLocation x="600" y="295" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true">
-                                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-                                    <Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="105"><Unit type="colossus" count="2"/></Wave>
-                                    <Wave absoluteDelay="119"></Wave>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
-                    </XGroup>
+					<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
+					<Group>
+						<Computer
+							playerName="Horace"
+							baseStartHealth="150"
+							baseHealth="150"
+							baseHealthIncrement="75"
+							waveDelayScale="0.8"
+							noticeSpellDropAfterMin="8"
+							noticeSpellDropAfterMax="10"
+							spellDropCourierGroupSizeMin="1"
+							spellDropCourierGroupSizeMax="1"
+							team="1">
+							<BaseLocation x="600" y="295" team="1"/>
+							<RepeatingDays>
+								<Day repeatWaves="true">
+									<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="105"><Unit type="colossus" count="2"/></Wave>
+									<Wave absoluteDelay="119"></Wave>
+								</Day>
+							</RepeatingDays>
+						</Computer>
+					</Group>
 
-                </ComputerGroups>
-            </Map>
+				</ComputerGroups>
+			</Map>
 
-            <!-- ****** LEVEL 2 ****** -->
-            <Map repeats="true">
-                <MapSettings backgroundName="ballfield"/>
-                <HumanBaseLocations>
-                    <BaseLocation x="80" y="115" team="0"/>
-                    <BaseLocation x="80" y="215" team="0"/>
-                </HumanBaseLocations>
-                <MultiplierDropLocation x="240" y="265" scatterRadius="60"/>
-                <AvailableUnits all="true"/>
-                <AvailableSpells all="true"/>
+			<!-- ****** LEVEL 2 ****** -->
+			<Map repeats="true">
+				<MapSettings backgroundName="ballfield"/>
+				<HumanBaseLocations>
+					<BaseLocation x="80" y="115" team="0"/>
+					<BaseLocation x="80" y="215" team="0"/>
+				</HumanBaseLocations>
+				<MultiplierDropLocation x="240" y="265" scatterRadius="60"/>
+				<AvailableUnits all="true"/>
+				<AvailableSpells all="true"/>
 
-                <ComputerGroups>
-                    <!-- Iris and Ivy, the clever twins -->
-                    <Group>
+				<ComputerGroups>
+					<!-- Iris and Ivy, the clever twins -->
+					<Group>
 
-                        <Computer
-                            playerName="Iris"
-                            baseStartHealth="100"
-                            baseHealth="100"
-                            baseHealthIncrement="50"
-                            waveDelayScale="0.8"
-                            team="1">
-                            <BaseLocation x="620" y="165" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true"
-                                    noticeSpellDropAfterMin="4"
-                                    noticeSpellDropAfterMax="5"
-                                    spellDropCourierGroupSizeMin="1"
-                                    spellDropCourierGroupSizeMax="1">
+						<Computer
+							playerName="Iris"
+							baseStartHealth="100"
+							baseHealth="100"
+							baseHealthIncrement="50"
+							waveDelayScale="0.8"
+							team="1">
+							<BaseLocation x="620" y="165" team="1"/>
+							<RepeatingDays>
+								<Day repeatWaves="true"
+									noticeSpellDropAfterMin="4"
+									noticeSpellDropAfterMax="5"
+									spellDropCourierGroupSizeMin="1"
+									spellDropCourierGroupSizeMax="1">
 
-                                    <Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
-                                    <Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
-                                    <Wave absoluteDelay="25"><Unit type="sapper" count="3"/></Wave>
-                                    <Wave absoluteDelay="70"><Unit type="colossus" count="1"/></Wave>
-                                    <Wave absoluteDelay="120"/>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
+									<Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
+									<Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
+									<Wave absoluteDelay="25"><Unit type="sapper" count="3"/></Wave>
+									<Wave absoluteDelay="70"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="120"/>
+								</Day>
+							</RepeatingDays>
+						</Computer>
 
-                        <Computer
-                            playerName="Ivy"
-                            baseStartHealth="100"
-                            baseHealth="100"
-                            baseHealthIncrement="50"
-                            waveDelayScale="0.8"
-                            team="1">
-                            <BaseLocation x="620" y="275" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true"
-                                    noticeSpellDropAfterMin="6"
-                                    noticeSpellDropAfterMax="7"
-                                    spellDropCourierGroupSizeMin="1"
-                                    spellDropCourierGroupSizeMax="1">
+						<Computer
+							playerName="Ivy"
+							baseStartHealth="100"
+							baseHealth="100"
+							baseHealthIncrement="50"
+							waveDelayScale="0.8"
+							team="1">
+							<BaseLocation x="620" y="275" team="1"/>
+							<RepeatingDays>
+								<Day repeatWaves="true"
+									noticeSpellDropAfterMin="6"
+									noticeSpellDropAfterMax="7"
+									spellDropCourierGroupSizeMin="1"
+									spellDropCourierGroupSizeMax="1">
 
-                                    <Wave absoluteDelay="2"><Unit type="heavy" count="2"/></Wave>
-                                    <Wave absoluteDelay="6"><Unit type="grunt" count="2"/></Wave>
-                                    <Wave absoluteDelay="9"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave absoluteDelay="23"><Unit type="grunt" count="2"/></Wave>
-                                    <Wave absoluteDelay="26"><Unit type="grunt" count="1"/></Wave>
-                                    <Wave absoluteDelay="69"><Unit type="sapper" count="2"/></Wave>
-                                    <Wave absoluteDelay="70"><Unit type="grunt" count="2"/></Wave>
-                                    <Wave absoluteDelay="120"/>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
+									<Wave absoluteDelay="2"><Unit type="heavy" count="2"/></Wave>
+									<Wave absoluteDelay="6"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="9"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="23"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="26"><Unit type="grunt" count="1"/></Wave>
+									<Wave absoluteDelay="69"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="70"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="120"/>
+								</Day>
+							</RepeatingDays>
+						</Computer>
 
-                    </Group>
+					</Group>
 
-                    <Group>
-                        <!-- Ursula, the animal lover -->
-                        <Computer
-                            playerName="Ursula"
-                            baseStartHealth="150"
-                            baseHealth="150"
-                            baseHealthIncrement="75"
-                            waveDelayScale="0.8"
-                            team="1">
-                            <BaseLocation x="590" y="200" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true"
-                                    noticeSpellDropAfterMin="7"
-                                    noticeSpellDropAfterMax="8"
-                                    spellDropCourierGroupSizeMin="3"
-                                    spellDropCourierGroupSizeMax="4">
+					<Group>
+						<!-- Ursula, the animal lover -->
+						<Computer
+							playerName="Ursula"
+							baseStartHealth="150"
+							baseHealth="150"
+							baseHealthIncrement="75"
+							waveDelayScale="0.8"
+							team="1">
+							<BaseLocation x="590" y="200" team="1"/>
+							<RepeatingDays>
+								<Day repeatWaves="true"
+									noticeSpellDropAfterMin="7"
+									noticeSpellDropAfterMax="8"
+									spellDropCourierGroupSizeMin="3"
+									spellDropCourierGroupSizeMax="4">
 
-                                    <Wave absoluteDelay="1"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="5.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="6"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="6.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="7"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="7.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="1"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="5.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="6"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="6.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="7"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="7.5"><Unit type="courier" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
+									<Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
 
-                                    <Wave absoluteDelay="20"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="24"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="26"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="20"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="22"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="24"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="26"><Unit type="sapper" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="27.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="28"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="28.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="29"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="29.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="30"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="27.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="28"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="28.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="29"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="29.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="30"><Unit type="courier" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="83"><Unit type="sapper" count="5"/></Wave>
+									<Wave absoluteDelay="83"><Unit type="sapper" count="5"/></Wave>
 
-                                    <Wave absoluteDelay="89.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="90"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="90.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="91"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="91.5"><Unit type="courier" count="1"/></Wave>
-                                    <Wave absoluteDelay="92"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="89.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="90"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="90.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="91"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="91.5"><Unit type="courier" count="1"/></Wave>
+									<Wave absoluteDelay="92"><Unit type="courier" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="98"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="98"><Unit type="colossus" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="120"/>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
-                    </Group>
+									<Wave absoluteDelay="120"/>
+								</Day>
+							</RepeatingDays>
+						</Computer>
+					</Group>
 
-                    <Group>
-                        <!-- Ralph - strong defense -->
-                        <Computer
-                            playerName="Ralph"
-                            baseStartHealth="150"
-                            baseHealth="150"
-                            baseHealthIncrement="75"
-                            waveDelayScale="0.8"
-                            team="1">
-                            <BaseLocation x="610" y="140" team="1"/>
-                            <RepeatingDays>
-                                <Day repeatWaves="true"
-                                    noticeSpellDropAfterMin="4"
-                                    noticeSpellDropAfterMax="5"
-                                    spellDropCourierGroupSizeMin="2"
-                                    spellDropCourierGroupSizeMax="2">
+					<Group>
+						<!-- Ralph - strong defense -->
+						<Computer
+							playerName="Ralph"
+							baseStartHealth="150"
+							baseHealth="150"
+							baseHealthIncrement="75"
+							waveDelayScale="0.8"
+							team="1">
+							<BaseLocation x="610" y="140" team="1"/>
+							<RepeatingDays>
+								<Day repeatWaves="true"
+									noticeSpellDropAfterMin="4"
+									noticeSpellDropAfterMax="5"
+									spellDropCourierGroupSizeMin="2"
+									spellDropCourierGroupSizeMax="2">
 
-                                    <Wave absoluteDelay="4"><Unit type="heavy" count="6" max="6"/></Wave>
+									<Wave absoluteDelay="4"><Unit type="heavy" count="6" max="6"/></Wave>
 
-                                    <Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="12"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="16" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="12"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="16" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="20"><Unit type="heavy" count="6" max="6"/></Wave>
+									<Wave absoluteDelay="20"><Unit type="heavy" count="6" max="6"/></Wave>
 
-                                    <Wave absoluteDelay="60"><Unit type="sapper" count="2"/></Wave>
-                                    <Wave absoluteDelay="65"><Unit type="heavy" count="6" max="6"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="65"><Unit type="heavy" count="6" max="6"/></Wave>
 
-                                    <Wave absoluteDelay="84"><Unit type="grunt" count="3"/></Wave>
-                                    <Wave absoluteDelay="85"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="88"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="91"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="94"><Unit type="sapper" count="1"/></Wave>
-                                    <Wave absoluteDelay="95" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="84"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="85"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="88"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="91"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="94"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="95" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 
-                                    <Wave absoluteDelay="110"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="110"><Unit type="sapper" count="2"/></Wave>
 
-                                    <Wave absoluteDelay="120"/>
-                                </Day>
-                            </RepeatingDays>
-                        </Computer>
-                    </Group>
+									<Wave absoluteDelay="120"/>
+								</Day>
+							</RepeatingDays>
+						</Computer>
+					</Group>
 
-                </ComputerGroups>
-            </Map>
-        </MapSequence>
+				</ComputerGroups>
+			</Map>
+		</MapSequence>
 
-    </EndlessLevel>
+	</EndlessLevel>
 
 </root>
