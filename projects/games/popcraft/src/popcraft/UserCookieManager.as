@@ -6,23 +6,28 @@ import flash.utils.ByteArray;
 
 public class UserCookieManager
 {
-    public static function addDataSource (dataSource :UserCookieDataSource) :void
+    public function UserCookieManager (cookieVersion :int)
+    {
+        _cookieVersion = cookieVersion;
+    }
+
+    public function addDataSource (dataSource :UserCookieDataSource) :void
     {
         _dataSources.push(dataSource);
     }
 
-    public static function setNeedsUpdate () :void
+    public function setNeedsUpdate () :void
     {
         // update immediately. is this wise?
-        writeCookie();
+        this.writeCookie();
     }
 
-    public static function get isLoadingCookie () :Boolean
+    public function get isLoadingCookie () :Boolean
     {
         return _loadingCookie;
     }
 
-    public static function readCookie () :void
+    public function readCookie () :void
     {
         if (!_loadingCookie) {
             if (AppContext.gameCtrl.isConnected()) {
@@ -34,15 +39,14 @@ public class UserCookieManager
         }
     }
 
-    protected static function writeCookie () :void
+    protected function writeCookie () :void
     {
         if (AppContext.gameCtrl.isConnected()) {
             var ba :ByteArray = new ByteArray();
             var success :Boolean;
             var errString :String;
             try {
-                // future-proof ourselves with a version number
-                ba.writeShort(VERSION);
+                ba.writeShort(_cookieVersion);
 
                 for each (var dataSource :UserCookieDataSource in _dataSources) {
                     dataSource.writeCookieData(ba);
@@ -51,7 +55,8 @@ public class UserCookieManager
 
                 success = AppContext.gameCtrl.player.setCookie(ba);
                 if (!success) {
-                    errString = "PlayerSubControl.setCookie() failed (" + ba.length + "-byte cookie too large?)";
+                    errString = "PlayerSubControl.setCookie() failed (" + ba.length +
+                        "-byte cookie too large?)";
                 }
 
             } catch (e :Error) {
@@ -67,7 +72,7 @@ public class UserCookieManager
         }
     }
 
-    protected static function completeLoadData (cookie :Object, ...unused) :void
+    protected function completeLoadData (cookie :Object, ...unused) :void
     {
         _loadingCookie = false;
 
@@ -80,17 +85,26 @@ public class UserCookieManager
             try {
                 ba.uncompress();
                 var version :int = ba.readShort();
-                if (version != VERSION) {
-                    errString = "bad cookie version (expected '" + VERSION + "', saw '" + version + "')";
+                if (version > _cookieVersion) {
+                    errString = "bad cookie version (expected <=" + _cookieVersion + ", got " +
+                        version + ")";
+
                 } else {
+                    log.info("Loading cookie version=" + version + " (our version=" +
+                        _cookieVersion + ")");
+
                     for each (var dataSource :UserCookieDataSource in _dataSources) {
-                        dataSource.readCookieData(ba);
+                        if (version >= dataSource.minVersion) {
+                            dataSource.readCookieData(version, ba);
+                        }
                     }
 
                     if (ba.bytesAvailable != 0) {
                         var totalSize :uint = ba.length;
                         var expectedSize :uint = ba.position;
-                        errString = "cookie was too large (expected " + expectedSize + "b, got " + totalSize + "b)";
+                        errString = "cookie was too large (expected " + expectedSize + "b, got " +
+                            totalSize + "b)";
+
                     } else {
                         success = true;
                     }
@@ -115,10 +129,10 @@ public class UserCookieManager
         }
     }
 
-    protected static var _dataSources :Array = [];
-    protected static var _loadingCookie :Boolean;
+    protected var _cookieVersion :int;
+    protected var _dataSources :Array = [];
+    protected var _loadingCookie :Boolean;
 
-    protected static const VERSION :int = 0;
     protected static const log :Log = Log.getLog(UserCookieManager);
 }
 

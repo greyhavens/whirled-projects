@@ -23,6 +23,7 @@ public class AppContext
     public static var globalPlayerStats :PlayerStats = new PlayerStats();
     public static var allLevelPacks :LevelPackManager = new LevelPackManager();
     public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
+    public static var userCookieMgr :UserCookieManager;
 
     public static function get isPremiumContentUnlocked () :Boolean
     {

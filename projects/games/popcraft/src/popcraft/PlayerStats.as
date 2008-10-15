@@ -76,7 +76,7 @@ public class PlayerStats
         cookie.writeBoolean(hasMorbidInfection);
     }
 
-    public function readCookieData (cookie :ByteArray) :void
+    public function readCookieData (version :int, cookie :ByteArray) :void
     {
         this.initStats();
 
@@ -90,6 +90,11 @@ public class PlayerStats
 
         totalGameTime = cookie.readDouble();
         hasMorbidInfection = cookie.readBoolean();
+    }
+
+    public function get minVersion () :int
+    {
+        return 0;
     }
 
     public function readFailed () :Boolean

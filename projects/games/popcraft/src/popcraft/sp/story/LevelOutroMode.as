@@ -159,7 +159,7 @@ public class LevelOutroMode extends AppMode
             }
 
             if (dataChanged) {
-                UserCookieManager.setNeedsUpdate();
+                AppContext.userCookieMgr.setNeedsUpdate();
             }
 
             // trophies

@@ -363,7 +363,7 @@ public class LevelSelectMode extends DemoGameMode
             isFirstLevel = false;
         }
 
-        UserCookieManager.setNeedsUpdate();
+        AppContext.userCookieMgr.setNeedsUpdate();
 
         // reload the mode
         LevelSelectMode.create();
@@ -377,7 +377,7 @@ public class LevelSelectMode extends DemoGameMode
             lr.score = 1;
         }
 
-        UserCookieManager.setNeedsUpdate();
+        AppContext.userCookieMgr.setNeedsUpdate();
 
         // reload the mode
         LevelSelectMode.create();

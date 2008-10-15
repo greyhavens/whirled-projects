@@ -31,7 +31,7 @@ public class LevelManager
         LevelRecord(_levelRecords[0]).unlocked = true;
     }
 
-    public function readCookieData (cookie :ByteArray) :void
+    public function readCookieData (version :int, cookie :ByteArray) :void
     {
         try {
             _levelRecords = [];
@@ -49,6 +49,11 @@ public class LevelManager
         for each (var lr :LevelRecord in _levelRecords) {
             lr.toByteArray(cookie);
         }
+    }
+
+    public function get minVersion () :int
+    {
+        return 0;
     }
 
     public function readFailed () :Boolean

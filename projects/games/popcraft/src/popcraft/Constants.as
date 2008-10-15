@@ -10,6 +10,9 @@ import popcraft.util.*;
 
 public class Constants
 {
+    /* Increment this whenever any cookie data changes. */
+    public static const USER_COOKIE_VERSION :int = 1;
+
     /* ResourceManager stuff */
     public static const RESTYPE_LEVEL :String = "level";
     public static const RESTYPE_ENDLESS :String = "endlessLevel";

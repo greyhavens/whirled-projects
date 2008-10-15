@@ -69,8 +69,9 @@ public class PopCraft extends Sprite
         AppContext.randStreamPuzzle = Rand.addStream();
 
         // init the cookie manager
-        UserCookieManager.addDataSource(AppContext.levelMgr);
-        UserCookieManager.addDataSource(AppContext.globalPlayerStats);
+        AppContext.userCookieMgr = new UserCookieManager(Constants.USER_COOKIE_VERSION);
+        AppContext.userCookieMgr.addDataSource(AppContext.levelMgr);
+        AppContext.userCookieMgr.addDataSource(AppContext.globalPlayerStats);
 
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
@@ -147,14 +148,14 @@ class LoadingMode extends GenericLoadingMode
     override protected function setup () :void
     {
         _loadingResources = true;
-        UserCookieManager.readCookie();
+        AppContext.userCookieMgr.readCookie();
         _mainSprite.loadResources(resourceLoadComplete, onLoadError);
     }
 
     override public function update (dt :Number) :void
     {
         super.update(dt);
-        if (!_loadingResources && !UserCookieManager.isLoadingCookie) {
+        if (!_loadingResources && !AppContext.userCookieMgr.isLoadingCookie) {
             if (SeatingManager.allPlayersPresent) {
                 startGame();
             } else {
