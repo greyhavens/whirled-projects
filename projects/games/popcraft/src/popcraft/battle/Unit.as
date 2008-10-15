@@ -294,9 +294,10 @@ public class Unit extends SimObject
         ++_damageShieldsModCount;
     }
 
-    protected function die () :void
+    public function die () :void
     {
         _isDead = true;
+        _health = 0;
         this.destroySelf();
     }
 

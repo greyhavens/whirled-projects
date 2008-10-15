@@ -107,7 +107,9 @@
 
 			<!-- ****** LEVEL 2 ****** -->
 			<Map repeats="true">
-				<MapSettings backgroundName="ballfield"/>
+				<MapSettings backgroundName="ballfield">
+		            <SpellDropLocation x="240" y="255"/>
+				</MapSettings>
 				<HumanBaseLocations>
 					<BaseLocation x="80" y="215" team="0"/>
 				</HumanBaseLocations>
@@ -276,7 +278,9 @@
 
 			<!-- ****** LEVEL 3 ****** -->
 			<Map repeats="true">
-				<MapSettings backgroundName="wharf"/>
+				<MapSettings backgroundName="wharf">
+		            <SpellDropLocation x="240" y="255"/>
+				</MapSettings>
 				<HumanBaseLocations>
 					<BaseLocation x="80" y="195" team="0"/>
 				</HumanBaseLocations>
@@ -378,11 +382,13 @@
 
 			<!-- ****** LEVEL 4 ****** -->
 			<Map repeats="true">
-				<MapSettings backgroundName="city"/>
+				<MapSettings backgroundName="city">
+		            <SpellDropLocation x="240" y="255"/>
+				</MapSettings>
 				<HumanBaseLocations>
 					<BaseLocation x="80" y="145" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="235" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="235" y="165" scatterRadius="60"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 

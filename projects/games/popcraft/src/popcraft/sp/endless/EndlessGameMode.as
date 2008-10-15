@@ -13,7 +13,6 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 import popcraft.mp.*;
-import popcraft.net.ResurrectPlayerMessage;
 import popcraft.sp.*;
 
 public class EndlessGameMode extends GameMode
@@ -140,7 +139,7 @@ public class EndlessGameMode extends GameMode
 
     protected function checkForComputerDeath () :void
     {
-        if (!_gameOver) {
+        if (!_gameOver && !_swappingInNextOpponents) {
             var computersAreDead :Boolean = true;
             for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
                 ++teamId) {
@@ -151,9 +150,18 @@ public class EndlessGameMode extends GameMode
             }
 
             if (computersAreDead) {
-                this.createMultiplierDrop(true);
-                this.swapInNextOpponents();
+                this.killAllCreatures();
+                // kill all creatures, wait a short while, then swap in the next opponents
+                GameContext.netObjects.addObject(new SimpleTimer(4, swapInNextOpponents));
+                _swappingInNextOpponents = true;
             }
+        }
+    }
+
+    protected function killAllCreatures () :void
+    {
+        for each (var creature :CreatureUnit in GameContext.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME)) {
+            creature.die();
         }
     }
 
@@ -182,8 +190,11 @@ public class EndlessGameMode extends GameMode
 
     protected function swapInNextOpponents () :void
     {
+        this.createMultiplierDrop(true);
+
         if (_computerGroupIndex < _curMapData.computerGroups.length - 1) {
             // there are more opponents left on this map. swap the next ones in.
+
             var playerInfo :PlayerInfo;
             for (;;) {
                 var playerIndex :int =  GameContext.playerInfos.length - 1;
@@ -215,6 +226,8 @@ public class EndlessGameMode extends GameMode
             _gameOver = true;
             _switchingMaps = true;
         }
+
+        _swappingInNextOpponents = false;
     }
 
     override protected function handleGameOver () :void
@@ -423,6 +436,7 @@ public class EndlessGameMode extends GameMode
     protected var _computerGroupIndex :int;
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
+    protected var _swappingInNextOpponents :Boolean;
 
     protected var _playersCheckedIn :Array = [];
 }
