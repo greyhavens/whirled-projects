@@ -87,7 +87,7 @@ public class CourierCreatureUnit extends CreatureUnit
         }
     }
 
-    override protected function die () :void
+    override public function die () :void
     {
         // drop the currently carried spell on the ground when we die.
         this.dropCarriedSpell();

@@ -47,7 +47,7 @@ public class SapperCreatureUnit extends CreatureUnit
         return damage;
     }
 
-    override protected function die () :void
+    override public function die () :void
     {
         if (!_isDead) {
             _isDead = true;
