@@ -140,7 +140,7 @@ public class EndlessGameMode extends GameMode
 
     protected function checkForComputerDeath () :void
     {
-        if (!_gameOver && !_swappingInNextOpponents) {
+        if (!_gameOver) {
             var computersAreDead :Boolean = true;
             for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
                 ++teamId) {
@@ -152,14 +152,7 @@ public class EndlessGameMode extends GameMode
 
             if (computersAreDead) {
                 this.createMultiplierDrop(true);
-
-                // switch to daytime, and swap in the next opponents when 5 seconds have passed
-                if (!GameContext.diurnalCycle.isDay) {
-                    GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
-                }
-
-                GameContext.netObjects.addObject(new SimpleTimer(5, swapInNextOpponents));
-                _swappingInNextOpponents = true;
+                this.swapInNextOpponents();
             }
         }
     }
@@ -191,7 +184,6 @@ public class EndlessGameMode extends GameMode
     {
         if (_computerGroupIndex < _curMapData.computerGroups.length - 1) {
             // there are more opponents left on this map. swap the next ones in.
-
             var playerInfo :PlayerInfo;
             for (;;) {
                 var playerIndex :int =  GameContext.playerInfos.length - 1;
@@ -223,8 +215,6 @@ public class EndlessGameMode extends GameMode
             _gameOver = true;
             _switchingMaps = true;
         }
-
-        _swappingInNextOpponents = false;
     }
 
     override protected function handleGameOver () :void
@@ -433,7 +423,6 @@ public class EndlessGameMode extends GameMode
     protected var _computerGroupIndex :int;
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
-    protected var _swappingInNextOpponents :Boolean;
 
     protected var _playersCheckedIn :Array = [];
 }
