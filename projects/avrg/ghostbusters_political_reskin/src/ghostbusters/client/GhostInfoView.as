@@ -31,11 +31,12 @@ public class GhostInfoView
             TextField(findSafely(_box, GHOST_ABILITY_3)),
                 ];
 
-        _portraits = {
-//          pinchy: findSafely(hud, "PalinPortrait"),//SKIN
-          duchess: findSafely(hud, "McCainPortrait"),//SKIN
-          widow: findSafely(hud, "PalinPortrait")//SKIN
-//          demon: findSafely(hud, "DemonPortrait")//SKIN
+        _portraits = {//SKIN
+//          pinchy: findSafely(hud, "PincherPortrait"),
+//          duchess: findSafely(hud, "McCainPortrait")
+	  mccain: findSafely(hud, "McCainPortrait"),
+          palin: findSafely(hud, "PalinPortrait")
+//          demon: findSafely(hud, "DemonPortrait")
         };
 
         Game.control.room.props.addEventListener(
@@ -73,9 +74,9 @@ public class GhostInfoView
             _name.text = GhostModel.getName();
             _level.text = "Level: " + GhostModel.getLevel();
 
-            TextField(_abilities[0]).text = "Lethal Embrace";
-            TextField(_abilities[1]).text = "Slime Rain";
-            TextField(_abilities[2]).text = "";
+//            TextField(_abilities[0]).text = "Lethal Embrace";
+//            TextField(_abilities[1]).text = "Slime Rain";
+//            TextField(_abilities[2]).text = "";
 
             _box.visible = true;
 

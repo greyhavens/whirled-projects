@@ -102,7 +102,7 @@ public class MicrogameTestApp extends Sprite
         _player = new MicrogamePlayer(context);
         this.addChild(_player);
 
-        _curWeaponTypeName = WeaponType.NAME_LANTERN;
+        _curWeaponTypeName = WeaponType.NAME_QUOTE;
         _curWeaponDifficulty = 0;
         _player.weaponType = new WeaponType(_curWeaponTypeName, _curWeaponDifficulty);
 
@@ -188,12 +188,10 @@ public class MicrogameTestApp extends Sprite
     protected var _curWeaponDifficulty :int;
 
     protected static const WEAPON_TYPES :Array = [
-        WeaponType.NAME_LANTERN,
-//        WeaponType.NAME_GHOST_WRITER,
-        WeaponType.NAME_PLASMA,
-        WeaponType.NAME_OUIJA,
-        WeaponType.NAME_POTIONS,
-//        WeaponType.NAME_POTIONS,
+        WeaponType.NAME_QUOTE,
+        WeaponType.NAME_PRESS,
+        WeaponType.NAME_VOTE,
+        WeaponType.NAME_IRAQ,
     ];
 
     /* Lantern */

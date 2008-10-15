@@ -362,14 +362,11 @@ public class HUD extends DraggableSprite
     protected static const JUNK_BOX :String = "HUDtopbox";
 
     // Note: The elements in this array must match the index in Codes.WPN_*
-    protected static const BUTTON_NAMES :Array = [
-        "equipped_quote", "equipped_iraq", "equipped_press", "equipped_vote"
+    protected static const BUTTON_NAMES :Array = [//SKIN
+        //"equipped_lantern", "equipped_blaster", "equipped_ouija", "equipped_heal",
+        "equipped_quote", "equipped_iraq", "equipped_press", "equipped_vote",
         ];
         
-        
-
-
- 
 
     protected static const INVENTORY :String = "inventory1";
 

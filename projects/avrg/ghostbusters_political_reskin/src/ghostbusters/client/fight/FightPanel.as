@@ -55,7 +55,7 @@ public class FightPanel extends FrameSprite
         _ghost = ghost;
 
         _dimness = new Dimness(0.8, true);
-//        this.addChild(_dimness);
+        this.addChild(_dimness);
 
         this.addChild(_ghost);
         _ghost.mask = null;
@@ -141,20 +141,20 @@ public class FightPanel extends FrameSprite
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
-        case Codes.WPN_LANTERN:
-            _player.weaponType = new WeaponType(WeaponType.NAME_LANTERN, 1);
+        case Codes.WPN_QUOTE:
+            _player.weaponType = new WeaponType(WeaponType.NAME_QUOTE, 1);
             break;
 
-        case Codes.WPN_BLASTER:
-            _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
+        case Codes.WPN_IRAQ:
+            _player.weaponType = new WeaponType(WeaponType.NAME_IRAQ, 2);
             break;
 
-        case Codes.WPN_OUIJA:
-            _player.weaponType = new WeaponType(WeaponType.NAME_OUIJA, 1);
+        case Codes.WPN_VOTE:
+            _player.weaponType = new WeaponType(WeaponType.NAME_VOTE, 1);
             break;
 
-        case Codes.WPN_POTIONS:
-            _player.weaponType = new WeaponType(WeaponType.NAME_POTIONS, 0);
+        case Codes.WPN_PRESS:
+            _player.weaponType = new WeaponType(WeaponType.NAME_PRESS, 0);
             break;
         default:
             log.warning("Eek, unknown weapon", "weapon", _selectedWeapon);
@@ -216,7 +216,6 @@ public class FightPanel extends FrameSprite
 
     protected function updateSpotlights () :void
     {
-        return; //SKIN
         var team :Array = PlayerModel.getTeam(false);
 
         // TODO: maintain our own list, calling this 30 times a second is rather silly

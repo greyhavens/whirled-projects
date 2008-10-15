@@ -284,7 +284,7 @@ public class Room
 
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
-        /* var now :int = getTimer();
+        var now :int = getTimer();
 
         if (_lanternsDirty && (now - _lanternUpdate) > 200) {
             sendLanterns();
@@ -295,7 +295,7 @@ public class Room
                 loadOrSpawnGhost();
             }
             return;
-        } */ //SKIN
+        }
 
         // if the ghost has been entirely unveiled, switch to appear phase
         if (_ghost.zest == 0) {

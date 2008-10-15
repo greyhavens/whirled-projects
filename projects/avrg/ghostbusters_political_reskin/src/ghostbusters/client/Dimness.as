@@ -19,7 +19,7 @@ public class Dimness extends Sprite
         _front.alpha = alpha;
 
         var g :Graphics = _front.graphics;
-        g.beginFill(0x000000);
+        g.beginFill(0xBCC9DA);
         g.drawRect(0, 0, 2000, 1000);
         g.endFill();
 

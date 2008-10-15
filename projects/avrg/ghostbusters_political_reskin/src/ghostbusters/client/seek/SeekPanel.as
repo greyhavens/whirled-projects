@@ -43,15 +43,16 @@ public class SeekPanel extends FrameSprite
         _ghost = ghost;
 
         _dimness = new Dimness(0.9, true);
-        this.addChild(_dimness);//SKIN
+        this.addChild(_dimness);
+
         _lightLayer = new Sprite();
-        this.addChild(_lightLayer);//SKIN
+        this.addChild(_lightLayer);
 
         _maskLayer = new Sprite();
         if (_ghost != null) {
             this.addChild(_ghost);
-            this.addChild(_maskLayer);//SKIN
-            _ghost.mask = _maskLayer;//SKIN
+            this.addChild(_maskLayer);
+            _ghost.mask = _maskLayer;
         }
 
         _lanterns = new Dictionary();
@@ -297,9 +298,7 @@ public class SeekPanel extends FrameSprite
         _ghost.newTarget(new Point(600, 100));
 
         _ghost.mask = null;
-        if( this.contains( _maskLayer) ){
-            this.removeChild(_maskLayer);
-        }
+        this.removeChild(_maskLayer);
     }
 
     // LANTERN MANAGEMENT
@@ -314,17 +313,9 @@ public class SeekPanel extends FrameSprite
 
     protected function lanternOff (lantern :Lantern) :void
     {
-        if( _dimness.contains( lantern.hole) ){
-            _dimness.removeChild(lantern.hole);
-        }
-        
-        if( _lightLayer.contains( lantern.light) ){
-            _lightLayer.removeChild(lantern.light);
-        }
-        
-        if( _maskLayer.contains( lantern.mask) ){
-            _maskLayer.removeChild(lantern.mask);
-        }
+        _dimness.removeChild(lantern.hole);
+        _lightLayer.removeChild(lantern.light);
+        _maskLayer.removeChild(lantern.mask);
     }
 
     protected function updateLantern (playerId :int, pos :Point) :void

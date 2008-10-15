@@ -137,6 +137,7 @@ public class Ghost extends Sprite
 
         } else if (_next == ST_ATTACK) {
             _next = ST_FIGHT;
+            log.info("RETALIATING!! ");
             handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
 
         } else if (_next == ST_DIE) {

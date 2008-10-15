@@ -75,8 +75,7 @@ public class Game extends Sprite
     public static function get state () :String
     {
         var state :Object = control.room.props.get(Codes.PROP_STATE);
-//        return (state is String) ? state as String : Codes.STATE_SEEKING; //SKIN
-        return (state is String) ? state as String : Codes.STATE_APPEARING; //SKIN
+        return (state is String) ? state as String : Codes.STATE_SEEKING;
     }
 
     public static function amDead () :Boolean

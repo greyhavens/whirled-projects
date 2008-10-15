@@ -71,15 +71,15 @@ public class GameFrame extends DraggableSprite
 
         _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
         _inventory.y = (_frame.height + 20 - INVENTORY.top);
-
-        Command.bind(findSafely(CHOOSE_LANTERN), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON, Codes.WPN_LANTERN);
-        Command.bind(findSafely(CHOOSE_BLASTER), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON, Codes.WPN_BLASTER);
-        Command.bind(findSafely(CHOOSE_OUIJA), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON, Codes.WPN_OUIJA);
-        Command.bind(findSafely(CHOOSE_POTIONS), MouseEvent.CLICK,
-                     GameController.CHOOSE_WEAPON, Codes.WPN_POTIONS);
+        //SKI
+        Command.bind(findSafely(CHOOSE_QUOTE), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON, Codes.WPN_QUOTE);
+        Command.bind(findSafely(CHOOSE_IRAQ), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON, Codes.WPN_IRAQ);
+        Command.bind(findSafely(CHOOSE_VOTE), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON, Codes.WPN_VOTE);
+        Command.bind(findSafely(CHOOSE_PRESS), MouseEvent.CLICK,
+                     GameController.CHOOSE_WEAPON, Codes.WPN_PRESS);
 
         callback(this);
     }
@@ -103,9 +103,21 @@ public class GameFrame extends DraggableSprite
 
     protected static const INVENTORY :Rectangle = new Rectangle(88, 88, 144, 28);
 
-    protected static const CHOOSE_LANTERN :String = "choose_lantern";
-    protected static const CHOOSE_BLASTER :String = "choose_blaster";
-    protected static const CHOOSE_OUIJA :String = "choose_ouija";
-    protected static const CHOOSE_POTIONS :String = "choose_heal";
+    protected static const CHOOSE_QUOTE :String = "choose_lantern";
+    protected static const CHOOSE_IRAQ :String = "choose_ouija";
+    protected static const CHOOSE_VOTE :String = "choose_heal";
+    protected static const CHOOSE_PRESS :String = "choose_blaster";
+    
+    
+//    protected static const CHOOSE_QUOTE :String = "choose_quote";
+//    protected static const CHOOSE_IRAQ :String = "choose_iraq";
+//    protected static const CHOOSE_VOTE :String = "choose_vote";
+//    protected static const CHOOSE_PRESS :String = "choose_press";
+    
+    //SKIN
+//    protected static const CHOOSE_LANTERN :String = "choose_lantern";
+//    protected static const CHOOSE_BLASTER :String = "choose_blaster";
+//    protected static const CHOOSE_OUIJA :String = "choose_ouija";
+//    protected static const CHOOSE_POTIONS :String = "choose_heal";
 }
 }

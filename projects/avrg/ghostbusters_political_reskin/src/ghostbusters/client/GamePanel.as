@@ -22,7 +22,7 @@ import ghostbusters.data.Codes;
 public class GamePanel extends Sprite
 {
     // ghost states
-    public static const ST_GHOST_HIDDEN :String = "appear_to_fighting";//"hidden";
+    public static const ST_GHOST_HIDDEN :String = "hidden";
     public static const ST_GHOST_APPEAR :String = "appear_to_fighting";
     public static const ST_GHOST_FIGHT :String = "fighting";
     public static const ST_GHOST_REEL :String = "reel";
@@ -341,11 +341,11 @@ public class GamePanel extends Sprite
     protected var _debugPanel :DebugPanel;
 
     // maps ghost id to model
-    protected static const GHOST_CLIPS :Object = {
-//      pinchy: Content.GHOST_PINCHER,  //SKIN
-      duchess: Content.GHOST_DUCHESS,  //SKIN
-      widow: Content.GHOST_WIDOW  //SKIN
-//      demon: Content.GHOST_DEMON  //SKIN
+    protected static const GHOST_CLIPS :Object = {//SKIN
+//      pinchy: Content.GHOST_PINCHER,
+      mccain: Content.GHOST_MCCAIN,
+      palin: Content.GHOST_PALIN
+//      demon: Content.GHOST_DEMON
     };
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;

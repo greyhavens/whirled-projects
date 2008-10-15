@@ -126,9 +126,10 @@ public class SpiritShellGame extends MicrogameMode
             this.addObject(ecto, ghost.displayObject as DisplayObjectContainer);
         }
         
-        ghostSprite.graphics.beginFill(0);
-        ghostSprite.graphics.drawRect(0, 0, ghostWidth,ghostHeight);
-        ghostSprite.graphics.endFill();
+        //Testing the sprite position
+//        ghostSprite.graphics.beginFill(0);
+//        ghostSprite.graphics.drawRect(0, 0, ghostWidth,ghostHeight);
+//        ghostSprite.graphics.endFill();
 
         // move the ghost
         this.moveGhost(ghost);
@@ -340,7 +341,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            50       // damage output
         ),
         
         new SpiritShellSettings(
@@ -352,7 +353,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            50       // damage output
         ),
         
         new SpiritShellSettings(
@@ -364,7 +365,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            50       // damage output
         ),
 
         new SpiritShellSettings(
@@ -376,7 +377,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            50      // damage output
         ),
 
         new SpiritShellSettings(
@@ -388,7 +389,7 @@ public class SpiritShellGame extends MicrogameMode
             true,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            50       // damage output
         )
 
     ];

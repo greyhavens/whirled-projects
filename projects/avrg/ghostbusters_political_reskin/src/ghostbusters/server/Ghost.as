@@ -71,7 +71,7 @@ public class Ghost
 
     public function get zest () :int
     {
-        return 0;//SKIN We don't seek in the political reskin.
+        return 0;//SKIN
 //        return _zest;
     }
 
@@ -93,6 +93,7 @@ public class Ghost
         }
 
         _zest = zest;
+        _zest = 0;//SKIN
         _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, _zest);
     }
 
@@ -153,15 +154,15 @@ public class Ghost
     // TODO: build more interesting names
     protected static function buildName (ghostId :String) :String
     {
-        switch(ghostId) {
+        switch(ghostId) {//SKIN
 //            case GhostDefinition.GHOST_DEMON:
 //                return "Soul Crusher";
-            case GhostDefinition.GHOST_DUCHESS:
-                return "The Duchess";
+            case GhostDefinition.GHOST_MCCAIN:
+                return "Senator McCain";
 //            case GhostDefinition.GHOST_PINCHER:
 //                return "Mr. Pinchy";
-            case GhostDefinition.GHOST_WIDOW:
-                return "The Widow";
+            case GhostDefinition.GHOST_PALIN:
+                return "Governor Palin";
         }
         log.warning("Name of unknown ghost requested", "id", ghostId);
         return "Unknown Ghost";

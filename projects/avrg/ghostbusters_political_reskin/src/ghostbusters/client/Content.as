@@ -24,12 +24,15 @@ public class Content
     [Embed(source="../../../rsrc/UI/splash_help_01.swf", mimeType="application/octet-stream")]
     public static const SPLASH :Class;
 
-    // ghost clips
+    // ghost clips //SKIN
+//    [Embed(source="../../../rsrc/Ghosts/Ghost_Duchess.swf", mimeType="application/octet-stream")]
+//    public static const GHOST_DUCHESS :Class;
+    
     [Embed(source="../../../rsrc/Ghosts/mccain.swf", mimeType="application/octet-stream")]
-    public static const GHOST_DUCHESS :Class;
+    public static const GHOST_MCCAIN :Class;
 
     [Embed(source="../../../rsrc/Ghosts/palin.swf", mimeType="application/octet-stream")]
-    public static const GHOST_WIDOW :Class;
+    public static const GHOST_PALIN :Class;
 
 //    [Embed(source="../../../rsrc/Ghosts/Ghost_Pincher.swf", mimeType="application/octet-stream")]
 //    public static const GHOST_PINCHER :Class;
