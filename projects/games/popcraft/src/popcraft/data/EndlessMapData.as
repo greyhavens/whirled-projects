@@ -1,6 +1,7 @@
 package popcraft.data {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.HashMap;
 
 import popcraft.*;
 import popcraft.util.XmlReader;
@@ -9,7 +10,7 @@ public class EndlessMapData
 {
     public var mapSettings :MapSettingsData;
 
-    public var humanBaseLocs :Array = []; // array of BaseLocationDatas
+    public var humanBaseLocs :HashMap = new HashMap(); // Map<PlayerName, BaseLocation>
     public var multiplierDropLoc :Vector2 = new Vector2();
     public var multiplierScatterRadius :Number;
 
@@ -25,7 +26,9 @@ public class EndlessMapData
         mapData.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
 
         for each (var baseLocXml :XML in xml.HumanBaseLocations.BaseLocation) {
-            mapData.humanBaseLocs.push(BaseLocationData.fromXml(baseLocXml));
+            var playerName :String = XmlReader.getStringAttr(baseLocXml, "playerName");
+            var baseLoc :BaseLocationData = BaseLocationData.fromXml(baseLocXml);
+            mapData.humanBaseLocs.put(playerName, baseLoc);
         }
 
         var multiplierDropXml :XML = XmlReader.getSingleChild(xml, "MultiplierDropLocation");

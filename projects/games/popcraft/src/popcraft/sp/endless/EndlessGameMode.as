@@ -345,11 +345,14 @@ public class EndlessGameMode extends GameMode
             var playerDisplayData :PlayerDisplayData = GameContext.gameData.getPlayerDisplayData(
                     EndlessGameContext.level.humanPlayerNames[playerIndex]);
 
+            var baseLoc :BaseLocationData =
+                _curMapData.humanBaseLocs.get(playerDisplayData.dataName);
+
             if (playerIndex == GameContext.localPlayerIndex) {
                 GameContext.playerInfos.push(new LocalPlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
-                    _curMapData.humanBaseLocs[playerIndex],
+                    baseLoc,
                     workshopHealth,
                     workshopHealth,
                     false,
@@ -362,7 +365,7 @@ public class EndlessGameMode extends GameMode
                 GameContext.playerInfos.push(new PlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
-                    _curMapData.humanBaseLocs[playerIndex],
+                    baseLoc,
                     workshopHealth,
                     workshopHealth,
                     false,
