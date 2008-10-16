@@ -31,7 +31,6 @@ public class PopCraft_Standalone extends PopCraft
         rm.queueResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
         rm.queueResourceLoad("swf", "manual", { embeddedClass: SWF_MANUAL });
         rm.queueResourceLoad("swf", "boss", { embeddedClass: SWF_BOSS });
-        rm.queueResourceLoad("image", "levelSelectOverlay", { embeddedClass: IMG_LEVEL_SELECT_OVERLAY });
         rm.queueResourceLoad("swf", "levelSelectUi", { embeddedClass: SWF_LEVEL_SELECT_UI });
         rm.queueResourceLoad("image", "portrait_iris", { embeddedClass: IMG_IRIS });
         rm.queueResourceLoad("image", "portrait_ivy", { embeddedClass: IMG_IVY });
@@ -57,8 +56,6 @@ public class PopCraft_Standalone extends PopCraft
     protected static const SWF_MANUAL :Class;
     [Embed(source="../../rsrc/sp/weardd.swf", mimeType="application/octet-stream")]
     protected static const SWF_BOSS :Class;
-    [Embed(source="../../rsrc/sp/splash.png", mimeType="application/octet-stream")]
-    protected static const IMG_LEVEL_SELECT_OVERLAY :Class;
     [Embed(source="../../rsrc/sp/splash_UI.swf", mimeType="application/octet-stream")]
     protected static const SWF_LEVEL_SELECT_UI :Class;
     [Embed(source="../../rsrc/sp/iris.png", mimeType="application/octet-stream")]

@@ -181,7 +181,6 @@ public class Resources
     public static const SP_LEVEL_PACK_RESOURCES :Array = [
         "manual",
         "boss",
-        "levelSelectOverlay",
         "levelSelectUi",
         "portrait_iris",
         "portrait_ivy",

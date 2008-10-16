@@ -58,7 +58,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // overlay
-        _modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
+        //_modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
         registerEventListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
             onPlayerPurchasedContent);
@@ -73,20 +73,49 @@ public class LevelSelectMode extends DemoGameMode
         var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
         var playerCompletedGame :Boolean = AppContext.levelMgr.playerBeatGame;
 
+        var storyBanner :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "story_banner");
+        _modeLayer.addChild(storyBanner);
+
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
         var playButton :SimpleButton =
             SwfResource.instantiateButton("levelSelectUi", playButtonName);
-
         this.registerEventListener(playButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 onPlayClicked();
             });
-
         _playButtonObj = new SimpleSceneObject(playButton);
-        _playButtonObj.x = 350;
-        _playButtonObj.y = 350;
         this.addObject(_playButtonObj, _modeLayer);
+
+        if (playerStartedGame) {
+            storyBanner.x = STORY_BANNER_LOC.x;
+            storyBanner.y = STORY_BANNER_LOC.y;
+            _playButtonObj.x = STORY_BUTTON_LOC.x;
+            _playButtonObj.y = STORY_BUTTON_LOC.y;
+
+            var endlessBanner :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+                "endless_banner");
+            endlessBanner.x = ENDLESS_BANNER_LOC.x;
+            endlessBanner.y = ENDLESS_BANNER_LOC.y;
+            _modeLayer.addChild(endlessBanner);
+
+            var endlessButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi",
+                "endless_button");
+            endlessButton.x = ENDLESS_BUTTON_LOC.x;
+            endlessButton.y = ENDLESS_BUTTON_LOC.y;
+            this.registerOneShotCallback(endlessButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    AppContext.mainLoop.changeMode(new EndlessLevelSelectMode());
+                });
+            _modeLayer.addChild(endlessButton);
+
+        } else {
+            storyBanner.x = STORY_BANNER_NEWPLAYER_LOC.x;
+            storyBanner.y = STORY_BANNER_NEWPLAYER_LOC.y;
+            _playButtonObj.x = STORY_BUTTON_NEWPLAYER_LOC.x;
+            _playButtonObj.y = STORY_BUTTON_NEWPLAYER_LOC.y;
+        }
 
         if (!AppContext.isPremiumContentUnlocked) {
             _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
@@ -151,18 +180,6 @@ public class LevelSelectMode extends DemoGameMode
             testAnimButton.y = buttonY;
             buttonY += 35;
             _modeLayer.addChild(testAnimButton);
-        }
-
-        if (Constants.DEBUG_ENABLE_ENDLESS_MODE) {
-            var endlessModeButton :SimpleButton = UIBits.createButton("Endless Mode", 1.2);
-            this.registerOneShotCallback(endlessModeButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    AppContext.mainLoop.changeMode(new EndlessLevelSelectMode());
-                });
-            endlessModeButton.x = 10;
-            endlessModeButton.y = buttonY;
-            buttonY += 35;
-            _modeLayer.addChild(endlessModeButton);
         }
 
         // create the tutorial objects
@@ -449,6 +466,15 @@ public class LevelSelectMode extends DemoGameMode
     protected static const BUTTON_CONTAINER_Y :Number = 180;
 
     protected static const LEVEL_SELECT_BUTTON_WIDTH :Number = 190;
+
+    protected static const RALPH_PORTRAIT_LOC :Point = new Point(62, 42);
+    protected static const JACK_PORTRAIT_LOC :Point = new Point(643, 43);
+    protected static const STORY_BANNER_NEWPLAYER_LOC :Point = new Point(350, 330);
+    protected static const STORY_BANNER_LOC :Point = new Point(350, 240);
+    protected static const STORY_BUTTON_NEWPLAYER_LOC :Point = new Point(350, 350);
+    protected static const STORY_BUTTON_LOC :Point = new Point(350, 263);
+    protected static const ENDLESS_BANNER_LOC :Point = new Point(350, 321);
+    protected static const ENDLESS_BUTTON_LOC :Point = new Point(350, 350);
 }
 
 }
