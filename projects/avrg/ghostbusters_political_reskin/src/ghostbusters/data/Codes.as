@@ -12,9 +12,10 @@ public class Codes
 
     //SKIN
     public static const WPN_QUOTE :int = 0;
-    public static const WPN_PRESS :int = 1;
-    public static const WPN_VOTE :int = 2;
-    public static const WPN_IRAQ :int = 3;
+    public static const WPN_IRAQ :int = 1;
+    public static const WPN_PRESS :int = 2;
+    public static const WPN_VOTE :int = 3;
+    
 
     /**
      * A per-room property that indicates the current state of ghost combat in the room.

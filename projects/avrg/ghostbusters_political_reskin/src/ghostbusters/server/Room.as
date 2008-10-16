@@ -3,15 +3,13 @@
 
 package ghostbusters.server {
 
-import flash.utils.Dictionary;
-import flash.utils.getTimer;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-import com.threerings.util.StringUtil;
-
 import com.whirled.avrg.RoomSubControlServer;
+
+import flash.utils.Dictionary;
+import flash.utils.getTimer;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
@@ -374,9 +372,34 @@ public class Room
 
             } else {
                 // delete ghost
+                
+                //SKIN
+                //Reset kill count so we don't fight another boss right away
+                var player :Player;
+                if( _ghost.definition.id == GhostDefinition.GHOST_MUTANT) {
+                    for each ( player in getTeam() ) {
+                        if(player != null) {
+                            player.killedGhosts = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    for each ( player in getTeam()) {
+                        if(player != null) {
+                            player.killedGhosts++;
+                        }
+                    }
+                }
+                
+                
                 payout();
                 healTeam();
                 terminateGhost();
+                
+                
+        
+        
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -502,18 +525,44 @@ public class Room
         if (data == null || data[Codes.IX_GHOST_ID] == null) {
             var roomRandom :Random = new Random(this.roomId);
 
-            // the ghost id/model is currently completely random; this will change
-            var ghosts :Array = GhostDefinition.getGhostIds();
-            var ix :int = Server.random.nextInt(ghosts.length);
 
+            //SKIN TODO
+            //The mutant mccain appears less often
+            // the ghost id/model is currently completely random; this will change
+            
+            var ghosts :Array = [GhostDefinition.GHOST_MCCAIN, GhostDefinition.GHOST_PALIN, GhostDefinition.GHOST_MUTANT] ;
+            var ix :int = Server.random.nextInt(ghosts.length - 1);
+            
+            //If any player killed more than x ghosts, make the next a boss
+            log.debug("loadOrSpawnGhost(), checking if ghost should be boss");
+            log.debug("getTeam()=" + getTeam());
+            log.debug("_players=" + _players);
+            
+            for each (var player :Player in getTeam()) {
+                if(player != null) {
+                    log.debug("player " + player.playerId + " ghost kill vount=" + player.killedGhosts); 
+                    if( player.killedGhosts % 2 == 0 && player.killedGhosts >= 1){
+                        ix = ghosts.length - 1;
+                        break;
+                    }
+                }
+                else { log.debug("player is null")}
+            }
             // the ghost's level base is (currently) completely determined by the room
             var rnd :Number = roomRandom.nextNumber();
 
             // the base is in [1, 5] and low level ghosts are more common than high level ones
             var levelBase :int = int(1 + 5*rnd*rnd);
+            
+            //If it's a boss, make it tougher
+            if( ix == ghosts.length - 1) {
+                levelBase++;
+            }
 
             // the actual level is the base plus a random stretch of 0 or 1
             var level :int = levelBase + Server.random.nextInt(2);
+            
+//            if( ghosts[ix] == GhostDefinition.GHOST_MUTANT
 
             data = Ghost.resetGhost(ghosts[ix], level);
             _ctrl.props.set(Codes.DICT_GHOST, data, true);

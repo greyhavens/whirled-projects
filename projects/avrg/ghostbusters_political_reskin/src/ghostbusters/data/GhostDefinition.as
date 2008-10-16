@@ -16,7 +16,7 @@ public class GhostDefinition
 //    public static const GHOST_PINCHER :String = "pinchy";
     public static const GHOST_MCCAIN :String = "mccain";
     public static const GHOST_PALIN :String = "palin";
-//    public static const GHOST_DEMON :String = "demon";
+    public static const GHOST_MUTANT :String = "mutant";
 
     public static function getGhostIds () :Array
     {
@@ -77,9 +77,9 @@ public class GhostDefinition
         _definitions = new HashMap();
         //SKIN
 //        addGhost(new GhostDefinition(GHOST_PINCHER, 72, 145, 80));
-        addGhost(new GhostDefinition(GHOST_MCCAIN, 391, 114, 37));
-//        addGhost(new GhostDefinition(GHOST_WIDOW, 391, 114, 37));
-//        addGhost(new GhostDefinition(GHOST_DEMON, 108, 220, 55));
+        addGhost(new GhostDefinition(GHOST_MCCAIN, 90+30, 85+30, 36+30));
+        addGhost(new GhostDefinition(GHOST_PALIN, 68+30, 96+30, 33+30));//+1 sec (30 frames);
+        addGhost(new GhostDefinition(GHOST_MUTANT, 76, 160, 61));
     }
 
     protected static function addGhost (def :GhostDefinition) :void

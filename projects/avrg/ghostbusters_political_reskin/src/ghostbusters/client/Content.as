@@ -34,6 +34,9 @@ public class Content
     [Embed(source="../../../rsrc/Ghosts/palin.swf", mimeType="application/octet-stream")]
     public static const GHOST_PALIN :Class;
 
+    [Embed(source="../../../rsrc/Ghosts/mccain_boss.swf", mimeType="application/octet-stream")]
+    public static const GHOST_MUTANT :Class;
+
 //    [Embed(source="../../../rsrc/Ghosts/Ghost_Pincher.swf", mimeType="application/octet-stream")]
 //    public static const GHOST_PINCHER :Class;
 

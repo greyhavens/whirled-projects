@@ -159,8 +159,8 @@ public class Ghost
 //                return "Soul Crusher";
             case GhostDefinition.GHOST_MCCAIN:
                 return "Senator McCain";
-//            case GhostDefinition.GHOST_PINCHER:
-//                return "Mr. Pinchy";
+            case GhostDefinition.GHOST_MUTANT:
+                return "GOP Monster";
             case GhostDefinition.GHOST_PALIN:
                 return "Governor Palin";
         }

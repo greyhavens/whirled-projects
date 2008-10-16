@@ -6,12 +6,11 @@ package ghostbusters.server {
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.whirled.ServerObject;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
@@ -39,6 +38,7 @@ public class Server extends ServerObject
             || playerId == 14001    // sirrocco
             || playerId == 14137    // coriolis
             || playerId == 14134    // sunshine
+            || playerId == 23340    // ragbeard
             ;
     }
 
@@ -140,6 +140,8 @@ public class Server extends ServerObject
     protected static var _ctrl :AVRServerGameControl;
     protected static var _rooms :Dictionary = new Dictionary();
     protected static var _players :Dictionary = new Dictionary();
+    
+    
 }
 }
 

@@ -163,10 +163,15 @@ public class SpiritGuideGame extends MicrogameMode
     ];
 
     protected static const WIN_STRINGS :Array = [
-        "\nVOTED!",
-        "YOUR VOTE\nCOUNTS!",
-        "VOTE\nCOUNTS!",
-        "NOVEMBER\n4th!",
+//        "\nVOTED!",
+//        "YOUR VOTE\nCOUNTS!",
+//        "VOTE\nCOUNTS!",
+//        "NOVEMBER\n4th!"
+        
+        "TEAM\nHEAL!",
+        "TEAM\nHEAL!",
+        "TEAM\nHEAL!",
+        "TEAM\nHEAL!"
     ];
 
     protected static const LOSE_STRINGS :Array = [

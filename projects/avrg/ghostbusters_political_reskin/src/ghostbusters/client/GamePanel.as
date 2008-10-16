@@ -3,16 +3,15 @@
 
 package ghostbusters.client {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
+import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import com.threerings.util.Log;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.client.seek.SeekPanel;
@@ -106,7 +105,9 @@ public class GamePanel extends Sprite
             return;
         }
         _splash = new SplashWidget(state);
+        
         this.addChild(_splash);
+//        _splash.gotoState( SplashWidget.STATE_BEGIN);
         _splash.x = 100;
         _splash.y = 0;
 
@@ -344,8 +345,8 @@ public class GamePanel extends Sprite
     protected static const GHOST_CLIPS :Object = {//SKIN
 //      pinchy: Content.GHOST_PINCHER,
       mccain: Content.GHOST_MCCAIN,
-      palin: Content.GHOST_PALIN
-//      demon: Content.GHOST_DEMON
+      palin: Content.GHOST_PALIN,
+      mutant: Content.GHOST_MUTANT
     };
 
     protected static const FRAME_DISPLACEMENT_Y :int = 20;

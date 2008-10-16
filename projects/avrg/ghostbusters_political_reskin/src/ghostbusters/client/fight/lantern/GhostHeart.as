@@ -3,6 +3,7 @@ package ghostbusters.client.fight.lantern {
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -44,6 +45,8 @@ public class GhostHeart extends SceneObject
 //        heart.getChildAt(1).alpha = 1;
 //        (heart.getChildAt(0) as MovieClip).getChildAt(1).alpha = 0;
         (heart.getChildAt(1) as MovieClip).getChildAt(0).alpha = 0;
+        
+        MovieClip(heart.sub.sub).gotoAndStop(Rand.nextIntRange(0, 14, Rand.STREAM_COSMETIC));
         
         //speech bubble = (heart.getChildAt(1) as MovieClip).getChildAt(1).alpha = 0;
 //        heart.getChildAt(1). = 0;

@@ -380,5 +380,8 @@ public class Player
     protected var _maxHealth :int;
     protected var _points :int;
     protected var _level :int;
+    
+    //SKIN HACK!!!
+    public var killedGhosts :int = 0;
 }
 }

@@ -1,5 +1,6 @@
 package ghostbusters.client.fight.lantern {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -179,8 +180,12 @@ public class HeartOfDarknessGame extends MicrogameMode
         var randomSpacing :int = 25;
         for( var k :int = 0; k < numberOfCluttersThatFitHorizontally; k++) {
             for( var j :int = 0; j < numberOfCluttersThatFitVertically; j++) { 
+                
+//                var o :DisplayObject = DisplayUtil.findInHierarchy(_inventory, name);
                 alternator = !alternator;
                 var clutter :MovieClip = new clutterClass();
+                MovieClip(clutter.sub).gotoAndStop(Rand.nextIntRange(0, 14, Rand.STREAM_COSMETIC));
+                
                 xSlot = k;//Rand.nextIntRange(0, numberOfCluttersThatFitHorizontally, Rand.STREAM_COSMETIC);
                 ySlot = j;//Rand.nextIntRange(0, numberOfCluttersThatFitHorizontally, Rand.STREAM_COSMETIC);
                 
@@ -291,6 +296,8 @@ public class HeartOfDarknessGame extends MicrogameMode
             }
         }
     }
+    
+    
 
     protected var _settings :HeartOfDarknessSettings;
 

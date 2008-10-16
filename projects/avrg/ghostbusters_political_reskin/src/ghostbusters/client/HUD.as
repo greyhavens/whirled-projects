@@ -3,31 +3,23 @@
 
 package ghostbusters.client {
 
-import flash.display.DisplayObject;
-import flash.display.MovieClip;
-import flash.display.SimpleButton;
-import flash.display.Sprite;
-import flash.text.TextField;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
-
-import flash.utils.ByteArray;
-import flash.utils.setTimeout;
-
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.MathUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
-
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.AVRGamePlayerEvent;
-
-import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.PropertyChangedEvent;
+
+import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
+import flash.events.MouseEvent;
+import flash.geom.Rectangle;
+import flash.text.TextField;
+import flash.utils.ByteArray;
+import flash.utils.setTimeout;
 
 import ghostbusters.client.util.GhostModel;
 import ghostbusters.client.util.PlayerModel;
@@ -154,7 +146,7 @@ public class HUD extends DraggableSprite
         _weaponButtons = new Array(BUTTON_NAMES.length);
         for (ii = 0; ii < BUTTON_NAMES.length; ii ++) {
             _weaponButtons[ii] = findSafely(BUTTON_NAMES[ii]);
-            Command.bind(_weaponButtons[ii], MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
+//            Command.bind(_weaponButtons[ii], MouseEvent.CLICK, GameController.TOGGLE_LANTERN);
         }
 
         _weaponIx = 0;
@@ -185,7 +177,10 @@ public class HUD extends DraggableSprite
     protected function updateLootState () :void
     {
         for (var ii :int = 0; ii < _weaponButtons.length; ii ++) {
-            SimpleButton(_weaponButtons[ii]).visible = (ii == _weaponIx);
+            //SKIN
+//            SimpleButton(_weaponButtons[ii]).visible = (ii == _weaponIx);
+            MovieClip(_weaponButtons[ii]).visible = (ii == _weaponIx);
+            trace("button " + ii + " visible=" + MovieClip(_weaponButtons[ii]).visible);
         }
     }
 
