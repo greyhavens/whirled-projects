@@ -100,13 +100,13 @@
 			<!-- ****** LEVEL 2 : Athletic Tryouts ****** -->
 			<Map displayName="Athletic Tryouts">
 				<MapSettings backgroundName="ballfield">
-		            <SpellDropLocation x="240" y="255"/>
+		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
 				<HumanBaseLocations>
-					<BaseLocation playerName="Finley" x="80" y="215" team="0"/>
-					<BaseLocation playerName="Eloise" x="80" y="215" team="0"/>
+					<BaseLocation playerName="Finley" x="90" y="155" team="0"/>
+					<BaseLocation playerName="Eloise" x="90" y="155" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="240" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="250" y="105" scatterRadius="40"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 
@@ -121,7 +121,7 @@
 							baseHealthIncrement="50"
 							waveDelayScale="0.8"
 							team="1">
-							<BaseLocation x="620" y="165" team="1"/>
+							<BaseLocation x="620" y="155" team="1"/>
 							<RepeatingDays>
 								<Day repeatWaves="true"
 									noticeSpellDropAfterMin="4"
@@ -129,11 +129,9 @@
 									spellDropCourierGroupSizeMin="1"
 									spellDropCourierGroupSizeMax="1">
 			
-									<Wave absoluteDelay="1"><Unit type="heavy" count="2"/></Wave>
-									<Wave absoluteDelay="8"><Unit type="sapper" count="3"/></Wave>
-									<Wave absoluteDelay="25"><Unit type="sapper" count="3"/></Wave>
-									<Wave absoluteDelay="70"><Unit type="colossus" count="1"/></Wave>
-									<Wave absoluteDelay="120"/>
+									<Wave absoluteDelay="5"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="6" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="60"/>
 								</Day>
 							</RepeatingDays>
 						</Computer>
@@ -145,7 +143,7 @@
 							baseHealthIncrement="50"
 							waveDelayScale="0.8"
 							team="1">
-							<BaseLocation x="620" y="275" team="1"/>
+							<BaseLocation x="420" y="295" team="1"/>
 							<RepeatingDays>
 								<Day repeatWaves="true"
 									noticeSpellDropAfterMin="6"
@@ -153,14 +151,18 @@
 									spellDropCourierGroupSizeMin="1"
 									spellDropCourierGroupSizeMax="1">
 			
-									<Wave absoluteDelay="2"><Unit type="heavy" count="2"/></Wave>
-									<Wave absoluteDelay="6"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="9"><Unit type="grunt" count="1"/></Wave>
-									<Wave absoluteDelay="23"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="26"><Unit type="grunt" count="1"/></Wave>
-									<Wave absoluteDelay="69"><Unit type="sapper" count="2"/></Wave>
-									<Wave absoluteDelay="70"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="120"/>
+									<Wave absoluteDelay="2"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="15"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="30"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="42"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="45"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="75"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="80"><Unit type="sapper" count="2"/></Wave>
+									<Wave absoluteDelay="90"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="105"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="120"><Unit type="heavy" count="4" max="4"/></Wave>
+									<Wave absoluteDelay="121"><Unit type="sapper" count="2"/></Wave>
 								</Day>
 							</RepeatingDays>
 						</Computer>
