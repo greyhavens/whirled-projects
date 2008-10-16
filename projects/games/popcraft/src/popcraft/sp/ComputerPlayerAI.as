@@ -162,7 +162,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function sendCouriersForSpellDrop () :void
     {
-        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
+        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight && this.spellDropOnBoard) {
             var numCouriers :int = _curDay.spellDropCourierGroupSize.next() -
                 this.numCouriersOnBoard;
             for (var i :int = 0; i < numCouriers; ++i) {

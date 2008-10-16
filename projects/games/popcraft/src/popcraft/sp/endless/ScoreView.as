@@ -44,8 +44,8 @@ public class ScoreView extends SceneObject
     protected function updateText () :void
     {
         var text :String = String(EndlessGameContext.score);
-        var numLeadingDigits :int = NUM_DIGITS - text.length;
-        for (var ii :int = 0; ii < numLeadingDigits; ++ii) {
+        var numLeadingZeros :int = NUM_DIGITS - text.length;
+        for (var ii :int = 0; ii < numLeadingZeros; ++ii) {
             text = "0" + text;
         }
 
@@ -59,7 +59,7 @@ public class ScoreView extends SceneObject
     protected var _lastScore :int;
     protected var _lastMultiplier :int;
 
-    protected static const NUM_DIGITS :int = 7;
+    protected static const NUM_DIGITS :int = 0;//7;
 }
 
 }
