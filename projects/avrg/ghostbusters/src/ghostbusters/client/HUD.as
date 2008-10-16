@@ -29,6 +29,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 
+import ghostbusters.client.util.ClipUtil;
 import ghostbusters.client.util.GhostModel;
 import ghostbusters.client.util.PlayerModel;
 import ghostbusters.data.Codes;
@@ -233,8 +234,8 @@ public class HUD extends DraggableSprite
         var frame :int = 76 - 75 * MathUtil.clamp(health, 0, 1);
         bar.gotoAndStop(frame);
 
-        reallyStop(bar);
-        reallyStop(other);
+        ClipUtil.reallyStop(bar);
+        ClipUtil.reallyStop(other);
     }
 
     protected function teamUpdated () :void
@@ -307,22 +308,13 @@ public class HUD extends DraggableSprite
         bar.visible = true;
         bar.gotoAndStop(frame);
 //        log.debug("Moved " + bar.name + " to frame #" + frame);
-        reallyStop(bar);
+        ClipUtil.reallyStop(bar);
     }
 
     protected function setPlayerPoints (points :int) :void
     {
         _myPointsBar.gotoAndStop(99 - MathUtil.clamp(points, 0, 99));
-        reallyStop(_myPointsBar);
-    }
-
-    protected function reallyStop (obj :DisplayObject) :void
-    {
-        DisplayUtil.applyToHierarchy(obj, function (disp :DisplayObject) :void {
-            if (disp is MovieClip) {
-                MovieClip(disp).stop();
-            }
-        });
+        ClipUtil.reallyStop(_myPointsBar);
     }
 
     protected var _hud :ClipHandler;

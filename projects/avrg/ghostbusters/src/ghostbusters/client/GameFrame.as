@@ -4,6 +4,7 @@
 package ghostbusters.client {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -22,6 +23,7 @@ import ghostbusters.client.ClipHandler;
 import ghostbusters.client.Content;
 import ghostbusters.client.GameController;
 import ghostbusters.client.Game;
+import ghostbusters.client.util.ClipUtil;
 import ghostbusters.data.Codes;
 
 public class GameFrame extends DraggableSprite
@@ -66,27 +68,29 @@ public class GameFrame extends DraggableSprite
         super.init(new Rectangle(0, 0, _frame.width, _frame.height),
                    SNAP_NONE, 300, SNAP_TOP, -1);
 
+        ClipUtil.reallyStop(findSafely(_frame, GAME_TIMER));
+
         this.addChild(_frame);
         this.addChild(_inventory);
 
         _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
         _inventory.y = (_frame.height + 20 - INVENTORY.top);
 
-        Command.bind(findSafely(CHOOSE_LANTERN), MouseEvent.CLICK,
+        Command.bind(findSafely(_inventory, CHOOSE_LANTERN), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_LANTERN);
-        Command.bind(findSafely(CHOOSE_BLASTER), MouseEvent.CLICK,
+        Command.bind(findSafely(_inventory, CHOOSE_BLASTER), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_BLASTER);
-        Command.bind(findSafely(CHOOSE_OUIJA), MouseEvent.CLICK,
+        Command.bind(findSafely(_inventory, CHOOSE_OUIJA), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_OUIJA);
-        Command.bind(findSafely(CHOOSE_POTIONS), MouseEvent.CLICK,
+        Command.bind(findSafely(_inventory, CHOOSE_POTIONS), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_POTIONS);
 
         callback(this);
     }
 
-    protected function findSafely (name :String) :DisplayObject
+    protected function findSafely (clip :DisplayObjectContainer, name :String) :DisplayObject
     {
-        var o :DisplayObject = DisplayUtil.findInHierarchy(_inventory, name);
+        var o :DisplayObject = DisplayUtil.findInHierarchy(clip, name);
         if (o == null) {
             throw new Error("Cannot find object: " + name);
         }
@@ -107,5 +111,7 @@ public class GameFrame extends DraggableSprite
     protected static const CHOOSE_BLASTER :String = "choose_blaster";
     protected static const CHOOSE_OUIJA :String = "choose_ouija";
     protected static const CHOOSE_POTIONS :String = "choose_heal";
+
+    protected static const GAME_TIMER :String = "gameTimer";
 }
 }
