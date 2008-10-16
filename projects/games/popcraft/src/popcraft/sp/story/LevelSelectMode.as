@@ -98,7 +98,8 @@ public class LevelSelectMode extends DemoGameMode
                 "endless_banner");
             endlessBanner.x = ENDLESS_BANNER_LOC.x;
             endlessBanner.y = ENDLESS_BANNER_LOC.y;
-            _modeLayer.addChild(endlessBanner);
+            // stick the endless banner behind the story banner
+            _modeLayer.addChildAt(endlessBanner, _modeLayer.getChildIndex(storyBanner));
 
             var endlessButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi",
                 "endless_button");
