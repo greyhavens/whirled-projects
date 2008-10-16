@@ -1,16 +1,14 @@
 package popcraft.sp.endless {
 
+import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Sprite;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.ui.UIBits;
 
 public class ScoreView extends SceneObject
 {
@@ -34,23 +32,22 @@ public class ScoreView extends SceneObject
     {
         super.update(dt);
 
-        var newScore :int = EndlessGameContext.score;
-        var mult :int = EndlessGameContext.scoreMultiplier;
-        if (_lastScore != newScore || _lastMultiplier != mult) {
+        if (_lastScore != EndlessGameContext.score ||
+            _lastMultiplier != EndlessGameContext.scoreMultiplier) {
             this.updateText();
         }
     }
 
     protected function updateText () :void
     {
-        var text :String = String(EndlessGameContext.score);
-        var numLeadingZeros :int = NUM_DIGITS - text.length;
-        for (var ii :int = 0; ii < numLeadingZeros; ++ii) {
-            text = "0" + text;
-        }
+        var score :int = EndlessGameContext.score;
+        var multiplier :int = EndlessGameContext.scoreMultiplier;
 
-        _scoreText.text = text;
-        _multiplierText.text = String(EndlessGameContext.scoreMultiplier);
+        _scoreText.text = StringUtil.formatNumber(score);
+        _multiplierText.text = String(multiplier);
+
+        _lastScore = score;
+        _lastMultiplier = multiplier;
     }
 
     protected var _movie :MovieClip;
@@ -58,8 +55,6 @@ public class ScoreView extends SceneObject
     protected var _multiplierText :TextField;
     protected var _lastScore :int;
     protected var _lastMultiplier :int;
-
-    protected static const NUM_DIGITS :int = 0;//7;
 }
 
 }

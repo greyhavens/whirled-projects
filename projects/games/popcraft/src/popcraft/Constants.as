@@ -43,7 +43,7 @@ public class Constants
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = false;
-    public static const DEBUG_LOCK_PREMIUM_CONTENT :Boolean = true;
+    public static const DEBUG_LOCK_PREMIUM_CONTENT :Boolean = false;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 
