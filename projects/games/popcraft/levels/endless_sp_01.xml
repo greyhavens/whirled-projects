@@ -47,28 +47,20 @@
 							baseStartHealth="150"
 							baseHealth="150"
 							baseHealthIncrement="75"
-							waveDelayScale="0.7"
+							waveDelayScale="0.85"
 							team="1">
 							<BaseLocation x="600" y="265" team="1"/>
 							<RepeatingDays>
-								<!-- Pigsley doesn't get harder till day 3 -->
 								<Day repeatWaves="true">
-									<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
 									<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
-								</Day>
-								<Day repeatWaves="true">
-									<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
-									<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="15"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="35"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="45"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="50"><Unit type="grunt" count="2"/></Wave>
+									<Wave absoluteDelay="60"><Unit type="grunt" count="4"/></Wave>
+									<Wave absoluteDelay="62"><Unit type="grunt" count="4"/></Wave>
 								</Day>
 							</RepeatingDays>
 						</Computer>
@@ -81,7 +73,7 @@
 							baseStartHealth="150"
 							baseHealth="150"
 							baseHealthIncrement="75"
-							waveDelayScale="0.8"
+							waveDelayScale="0.85"
 							team="1">
 							<BaseLocation x="600" y="295" team="1"/>
 							<RepeatingDays>
@@ -92,11 +84,10 @@
 									spellDropCourierGroupSizeMax="1">
 									
 									<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-									<Wave absoluteDelay="59"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-									<Wave absoluteDelay="61"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="105"><Unit type="colossus" count="2"/></Wave>
+									<Wave absoluteDelay="15"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="30"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="80"><Unit type="colossus" count="1"/></Wave>
+									<Wave absoluteDelay="95"><Unit type="colossus" count="1"/></Wave>
 									<Wave absoluteDelay="119"></Wave>
 								</Day>
 							</RepeatingDays>
