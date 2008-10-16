@@ -144,7 +144,8 @@ public class Room
             break;
 
         case Codes.STATE_APPEARING:
-            if (frame >= _transitionFrame) {
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
                 if (_transitionFrame == 0) {
                     log.warning("In APPEAR without transitionFrame", "id", roomId);
                 }
@@ -159,7 +160,8 @@ public class Room
 
         case Codes.STATE_GHOST_TRIUMPH:
         case Codes.STATE_GHOST_DEFEAT:
-            if (frame >= _transitionFrame) {
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
                 if (_transitionFrame == 0) {
                     log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
                 }
