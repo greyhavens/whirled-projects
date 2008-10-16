@@ -94,7 +94,7 @@ public class UserCookieManager
                         _cookieVersion + ")");
 
                     for each (var dataSource :UserCookieDataSource in _dataSources) {
-                        if (version >= dataSource.minVersion) {
+                        if (version >= dataSource.minCookieVersion) {
                             dataSource.readCookieData(version, ba);
                         }
                     }
@@ -120,7 +120,7 @@ public class UserCookieManager
             log.warning("failed to load user cookie: " + errString);
             var resave :Boolean;
             for each (dataSource in _dataSources) {
-                resave = (resave || dataSource.readFailed());
+                resave = (resave || dataSource.cookieReadFailed());
             }
 
             if (resave) {

@@ -98,12 +98,12 @@ public class EndlessLevelManager
         }
     }
 
-    public function get minVersion () :int
+    public function get minCookieVersion () :int
     {
         return 1;
     }
 
-    public function readFailed () :Boolean
+    public function cookieReadFailed () :Boolean
     {
         this.resetSavedData();
         return true;

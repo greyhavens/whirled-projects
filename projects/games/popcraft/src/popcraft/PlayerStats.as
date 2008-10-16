@@ -92,12 +92,12 @@ public class PlayerStats
         hasMorbidInfection = cookie.readBoolean();
     }
 
-    public function get minVersion () :int
+    public function get minCookieVersion () :int
     {
         return 0;
     }
 
-    public function readFailed () :Boolean
+    public function cookieReadFailed () :Boolean
     {
         this.initStats();
         return true;

@@ -51,12 +51,12 @@ public class LevelManager
         }
     }
 
-    public function get minVersion () :int
+    public function get minCookieVersion () :int
     {
         return 0;
     }
 
-    public function readFailed () :Boolean
+    public function cookieReadFailed () :Boolean
     {
         this.resetLevelData();
         return true;
