@@ -182,11 +182,11 @@
 							<RepeatingDays>
 								<Day repeatWaves="true">
 			
-									<Wave absoluteDelay="1"><Unit type="courier" count="1" max="20"/></Wave>
-									<Wave absoluteDelay="2"><Unit type="courier" count="1" max="20"/></Wave>
-									<Wave absoluteDelay="3"><Unit type="courier" count="1" max="20"/></Wave>
-									<Wave absoluteDelay="4"><Unit type="courier" count="1" max="20"/></Wave>
-									<Wave absoluteDelay="5"><Unit type="courier" count="1" max="20"/></Wave>
+									<Wave absoluteDelay="1"><Unit type="courier" count="1" max="10"/></Wave>
+									<Wave absoluteDelay="2"><Unit type="courier" count="1" max="10"/></Wave>
+									<Wave absoluteDelay="3"><Unit type="courier" count="1" max="10"/></Wave>
+									<Wave absoluteDelay="4"><Unit type="courier" count="1" max="10"/></Wave>
+									<Wave absoluteDelay="5"><Unit type="courier" count="1" max="10"/></Wave>
 									
 									<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
 									<Wave absoluteDelay="9"><Unit type="sapper" count="2"/></Wave>
@@ -215,28 +215,18 @@
 									spellDropCourierGroupSizeMin="2"
 									spellDropCourierGroupSizeMax="2">
 			
-									<Wave absoluteDelay="4"><Unit type="heavy" count="6" max="6"/></Wave>
+									<Wave absoluteDelay="4"><Unit type="heavy" count="6" max="7"/></Wave>
 									
 									<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
 									<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
 									<Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="12"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="15"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="16" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 									
-									<Wave absoluteDelay="20"><Unit type="heavy" count="6" max="6"/></Wave>
+									<Wave absoluteDelay="35"><Unit type="grunt" count="3"/></Wave>
+									<Wave absoluteDelay="36"><Unit type="sapper" count="1"/></Wave>
+									<Wave absoluteDelay="39"><Unit type="sapper" count="1"/></Wave>
 									
-									<Wave absoluteDelay="60"><Unit type="sapper" count="2"/></Wave>
-									<Wave absoluteDelay="65"><Unit type="heavy" count="6" max="6"/></Wave>
-									
-									<Wave absoluteDelay="84"><Unit type="grunt" count="2"/></Wave>
-									<Wave absoluteDelay="85"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="88"><Unit type="sapper" count="1"/></Wave>
-									<Wave absoluteDelay="89" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
-									
-									<Wave absoluteDelay="100"><Unit type="heavy" count="6" max="6"/></Wave>
-									
-									<Wave absoluteDelay="120"/>
+									<Wave absoluteDelay="69"><Unit type="heavy" count="6" max="7"/></Wave>
+									<Wave absoluteDelay="70" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 								</Day>
 							</RepeatingDays>
 						</Computer>
