@@ -1,50 +1,59 @@
 package popcraft.sp.story {
 
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.game.GameControl;
+import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
+import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
-import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.ui.UIBits;
 
 public class UpsellMode extends AppMode
 {
     override protected function setup () :void
     {
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-        g.endFill();
+        var movie :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
+        movie.gotoAndPlay("open");
 
-        var tf :TextField = new TextField();
-        UIBits.initTextField(tf, "Buy this game or we'll shoot this zombie.", 3, 0, 0xFFFFFF);
+        var leftPage :MovieClip = movie["pageL"];
+        var rightPage :MovieClip = movie["pageR"];
 
-        tf.x = (Constants.SCREEN_SIZE.x - tf.width) * 0.5;
-        tf.y = (Constants.SCREEN_SIZE.y - tf.height) * 0.5;
-        this.modeSprite.addChild(tf);
+        // show the upsell animations
+        MovieClip(leftPage["upsell_L"]).visible = true;
+        MovieClip(rightPage["upsell_R"]).visible = true;
 
-        var buy :SimpleButton = UIBits.createButton("Unlock!", 2);
-        buy.x = Constants.SCREEN_SIZE.x - buy.width - 20;
-        buy.y = Constants.SCREEN_SIZE.y - buy.height - 20;
-        this.modeSprite.addChild(buy);
-        registerOneShotCallback(buy, MouseEvent.CLICK, buyGame);
+        // hide everything else
+        MovieClip(leftPage["note"]).visible = false;
+        MovieClip(rightPage["note"]).visible = false;
+        MovieClip(leftPage["ladyfingers_image"]).visible = false;
 
-        var notNow :SimpleButton = UIBits.createButton("Not Now", 1.5);
-        notNow.x = buy.x - notNow.width - 20;
-        notNow.y = Constants.SCREEN_SIZE.y - notNow.height - 20;
-        this.modeSprite.addChild(notNow);
-        registerOneShotCallback(notNow, MouseEvent.CLICK, AppContext.mainLoop.popMode);
+        _manualObj = new SimpleSceneObject(movie);
+        _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
+        _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
+        this.addObject(_manualObj, this.modeSprite);
+
+        var okButton :SimpleButton = rightPage["ok"];
+        this.registerOneShotCallback(okButton, MouseEvent.CLICK, buyGame);
     }
 
-    protected function buyGame () :void
+    protected function buyGame (...ignored) :void
     {
+        _manualObj.removeAllTasks();
+        _manualObj.addTask(new SerialTask(
+            new PlaySoundTask("sfx_bookopenclose"),
+            new GoToFrameTask("close"),
+            new WaitForFrameTask("closed"),
+            LocationTask.CreateEaseIn(
+                Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7),
+            new FunctionTask(AppContext.mainLoop.popMode)));
+
         AppContext.showGameShop();
-        AppContext.mainLoop.popMode();
     }
+
+    protected var _manualObj :SimpleSceneObject;
 }
 
 }

@@ -87,16 +87,13 @@ public class LevelIntroMode extends AppMode
     protected function swapInManual () :void
     {
         // animate the book open
-        _manualObj = new SimpleSceneObject(SwfResource.instantiateMovieClip("manual", "manual"));
+        var manual :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
+        manual.gotoAndPlay("open");
+
+        _manualObj = new SimpleSceneObject(manual);
         _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
         _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
         this.addObject(_manualObj, this.modeSprite);
-
-        var animateTask :SerialTask = new SerialTask();
-        animateTask.addTask(new GoToFrameTask("open"));
-        animateTask.addTask(new WaitForFrameTask("opened"));
-
-        _manualObj.addTask(animateTask);
 
         this.doNextPhase();
     }
@@ -192,6 +189,10 @@ public class LevelIntroMode extends AppMode
         var rightPage :MovieClip = movie["pageR"];
         var leftNote :MovieClip = leftPage["note"];
         var rightNote :MovieClip = rightPage["note"];
+
+        // hide the upsell animations
+        MovieClip(leftPage["upsell_L"]).visible = false;
+        MovieClip(rightPage["upsell_R"]).visible = false;
 
         leftNote.visible = isNote;
         rightNote.visible = isNote;

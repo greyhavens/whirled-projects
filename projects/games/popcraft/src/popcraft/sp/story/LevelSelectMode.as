@@ -57,6 +57,18 @@ public class LevelSelectMode extends DemoGameMode
             view.visible = false;
         }
 
+        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "ralph_portrait");
+        ralphPortrait.x = RALPH_PORTRAIT_LOC.x;
+        ralphPortrait.y = RALPH_PORTRAIT_LOC.y;
+        _modeLayer.addChild(ralphPortrait);
+
+        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            "jack_portrait");
+        jackPortrait.x = JACK_PORTRAIT_LOC.x;
+        jackPortrait.y = JACK_PORTRAIT_LOC.y;
+        _modeLayer.addChild(jackPortrait);
+
         // overlay
         //_modeLayer.addChild(ImageResource.instantiateBitmap("levelSelectOverlay"));
 
@@ -81,10 +93,7 @@ public class LevelSelectMode extends DemoGameMode
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
         var playButton :SimpleButton =
             SwfResource.instantiateButton("levelSelectUi", playButtonName);
-        this.registerEventListener(playButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                onPlayClicked();
-            });
+        this.registerEventListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
         this.addObject(_playButtonObj, _modeLayer);
 
@@ -105,10 +114,7 @@ public class LevelSelectMode extends DemoGameMode
                 "endless_button");
             endlessButton.x = ENDLESS_BUTTON_LOC.x;
             endlessButton.y = ENDLESS_BUTTON_LOC.y;
-            this.registerOneShotCallback(endlessButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    AppContext.mainLoop.changeMode(new EndlessLevelSelectMode());
-                });
+            this.registerEventListener(endlessButton, MouseEvent.CLICK, onEndlessClicked);
             _modeLayer.addChild(endlessButton);
 
         } else {
@@ -214,7 +220,7 @@ public class LevelSelectMode extends DemoGameMode
         _showingTutorial = true;
     }
 
-    protected function onPlayClicked () :void
+    protected function onPlayClicked (...ignored) :void
     {
         if (!AppContext.isPremiumContentUnlocked &&
             AppContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
@@ -228,6 +234,15 @@ public class LevelSelectMode extends DemoGameMode
             } else {
                 playNextLevel();
             }
+        }
+    }
+
+    protected function onEndlessClicked (...ignored) :void
+    {
+        if (!AppContext.isPremiumContentUnlocked) {
+            AppContext.mainLoop.pushMode(new UpsellMode());
+        } else {
+            AppContext.mainLoop.unwindToMode(new EndlessLevelSelectMode());
         }
     }
 

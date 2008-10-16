@@ -27,8 +27,9 @@ public class AppContext
 
     public static function get isPremiumContentUnlocked () :Boolean
     {
-        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
-                levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+        return (!Constants.DEBUG_LOCK_PREMIUM_CONTENT &&
+            (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
+            levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS));
     }
 
     public static function get isMultiplayer () :Boolean
