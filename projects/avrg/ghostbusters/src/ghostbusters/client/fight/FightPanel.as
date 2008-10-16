@@ -130,7 +130,7 @@ public class FightPanel extends FrameSprite
 
     protected function maybeStartMinigame () :void
     {
-        if (!_playing) {
+        if (!_playing || Game.amDead()) {
             return;
         }
 

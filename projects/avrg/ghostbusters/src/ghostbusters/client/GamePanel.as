@@ -195,7 +195,6 @@ public class GamePanel extends Sprite
                 log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
-                updateState(false);
             }
             return;
         }
@@ -204,7 +203,6 @@ public class GamePanel extends Sprite
             log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
-            updateState(false);
         }
     }
 
@@ -289,7 +287,7 @@ public class GamePanel extends Sprite
     {
         var pClass :Class = null;
 
-        if (_triumph == null && _revive == null) {
+        if (_triumph == null) {
             switch(Game.state) {
             case Codes.STATE_SEEKING:
                 if (_seeking == false) {

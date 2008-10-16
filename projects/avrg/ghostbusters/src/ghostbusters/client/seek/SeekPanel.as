@@ -138,6 +138,13 @@ public class SeekPanel extends FrameSprite
     {
         if (evt.name == Codes.PROP_IS_PLAYING) {
             _playing = Boolean(evt.newValue);
+            if (!_playing) {
+                playerLanternOff(Game.ourPlayerId);
+            }
+        } else if (evt.name == Codes.PROP_MY_HEALTH) {
+            if (Game.amDead()) {
+                playerLanternOff(Game.ourPlayerId);
+            }
         }
     }
 
@@ -245,7 +252,7 @@ public class SeekPanel extends FrameSprite
                 _zapping --;
             }
 
-            if (_playing && _lanterns != null && _zapping == 0 &&
+            if (_playing && _lanterns != null && _zapping == 0 && !Game.amDead() &&
                 _ghost.hitTestPoint(p.x, p.y, true)) {
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, GameController.ZAP_GHOST);
@@ -269,7 +276,7 @@ public class SeekPanel extends FrameSprite
             }
         }
 
-        if (_playing) {
+        if (_playing && !Game.amDead()) {
             // update our own lantern directly, nobody wants to watch roundtrip lag in action
             if (!Game.DEBUG) {
                 updateLantern(Game.ourPlayerId, p);
