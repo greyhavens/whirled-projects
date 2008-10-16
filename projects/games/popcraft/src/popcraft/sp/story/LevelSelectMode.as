@@ -18,6 +18,7 @@ import popcraft.*;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
 import popcraft.sp.UnitAnimTestMode;
+import popcraft.sp.endless.EndlessLevelSelectMode;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 
@@ -156,7 +157,7 @@ public class LevelSelectMode extends DemoGameMode
             var endlessModeButton :SimpleButton = UIBits.createButton("Endless Mode", 1.2);
             this.registerOneShotCallback(endlessModeButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    playEndlessLevel();
+                    AppContext.mainLoop.changeMode(new EndlessLevelSelectMode());
                 });
             endlessModeButton.x = 10;
             endlessModeButton.y = buttonY;
@@ -397,11 +398,6 @@ public class LevelSelectMode extends DemoGameMode
     protected function playNextLevel () :void
     {
         this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
-    }
-
-    protected function playEndlessLevel () :void
-    {
-        AppContext.endlessLevelMgr.playSpLevel();
     }
 
     protected function levelSelected (levelNum :int) :void

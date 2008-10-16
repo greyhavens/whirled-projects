@@ -1,14 +1,23 @@
 package popcraft.sp.endless {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.resource.*;
+
+import flash.utils.ByteArray;
 
 import popcraft.*;
 import popcraft.data.*;
 import popcraft.util.*;
 
 public class EndlessLevelManager
+    implements UserCookieDataSource
 {
+    public function EndlessLevelManager ()
+    {
+        this.resetSavedData();
+    }
+
     public function playSpLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
         :void
     {
@@ -19,6 +28,101 @@ public class EndlessLevelManager
         :void
     {
         this.playLevel(MP_LEVEL, levelReadyCallback, forceReload);
+    }
+
+    public function saveCurrentGame () :void
+    {
+        var saveArray :Array = (GameContext.isSinglePlayerGame ? _savedSpGames : _savedMpGames);
+
+        var savedPlayerData :SavedLocalPlayerInfo =
+            EndlessGameContext.savedHumanPlayers[GameContext.localPlayerIndex];
+
+        // this is called when a level is ending, so we increment mapIndex
+        var newSave :SavedEndlessGame = SavedEndlessGame.create(
+            EndlessGameContext.mapIndex + 1,
+            EndlessGameContext.score,
+            EndlessGameContext.scoreMultiplier,
+            savedPlayerData.health);
+
+        var existingSaveIndex :int = ArrayUtil.indexIf(saveArray,
+            function (save :SavedEndlessGame) :Boolean {
+                return save.mapIndex == newSave.mapIndex;
+            });
+
+        if (existingSaveIndex != -1) {
+            var existingSave :SavedEndlessGame = saveArray[existingSaveIndex];
+            // combine this save with the existing save to get the max values of both
+            newSave = SavedEndlessGame.max(newSave, existingSave);
+            if (newSave.isEqual(existingSave)) {
+                // didn't make any progress - don't save
+                return;
+            }
+
+            saveArray[existingSaveIndex] = newSave;
+
+        } else {
+            saveArray.push(newSave);
+        }
+
+        // save the new data
+        AppContext.userCookieMgr.setNeedsUpdate();
+    }
+
+    public function writeCookieData (cookie :ByteArray) :void
+    {
+        writeSavedGames(_savedSpGames);
+        writeSavedGames(_savedMpGames);
+
+        function writeSavedGames (saves :Array) :void {
+            cookie.writeShort(saves.length);
+            for each (var save :SavedEndlessGame in saves) {
+                save.toBytes(cookie);
+            }
+        }
+    }
+
+    public function readCookieData (version :int, cookie :ByteArray) :void
+    {
+        this.resetSavedData();
+
+        readSavedGames(_savedSpGames);
+        readSavedGames(_savedMpGames);
+
+        function readSavedGames (saves :Array) :void {
+            var numSaves :int = cookie.readShort();
+            for (var ii :int = 0; ii < numSaves; ++ii) {
+                var save :SavedEndlessGame = new SavedEndlessGame();
+                save.fromBytes(cookie);
+                saves.push(save);
+            }
+        }
+    }
+
+    public function get minVersion () :int
+    {
+        return 1;
+    }
+
+    public function readFailed () :Boolean
+    {
+        this.resetSavedData();
+        return true;
+    }
+
+    public function get savedSpGames () :Array
+    {
+        return _savedSpGames;
+    }
+
+    public function get savedMpGames () :Array
+    {
+        return _savedMpGames;
+    }
+
+    protected function resetSavedData () :void
+    {
+        _savedSpGames = [];
+        _savedMpGames = [];
     }
 
     protected function playLevel (level :int, levelReadyCallback :Function, forceReload :Boolean)
@@ -110,13 +214,15 @@ public class EndlessLevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevel));
+            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevel, null, true));
         }
     }
 
     protected var _loadedLevel :EndlessLevelData;
     protected var _levelReadyCallback :Function;
     protected var _loadingMultiplayer :Boolean;
+    protected var _savedSpGames :Array = [];
+    protected var _savedMpGames :Array = [];
 
     protected static var log :Log = Log.getLog(EndlessLevelManager);
 

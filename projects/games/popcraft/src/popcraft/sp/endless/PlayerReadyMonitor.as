@@ -28,13 +28,13 @@ public class PlayerReadyMonitor
     {
         var bytes :ByteArray = new ByteArray();
         bytes.writeByte(GameContext.localPlayerIndex);
-        bytes.writeInt(EndlessGameContext.mapDataIndex);
+        bytes.writeInt(EndlessGameContext.mapIndex);
         AppContext.gameCtrl.net.sendMessage(MESSAGE_NAME, bytes);
     }
 
     public function waitForAllPlayersReadyForCurRound (callback :Function) :void
     {
-        var roundId :int = EndlessGameContext.mapDataIndex;
+        var roundId :int = EndlessGameContext.mapIndex;
 
         if (this.allPlayersReadyForRound(roundId)) {
             callback();

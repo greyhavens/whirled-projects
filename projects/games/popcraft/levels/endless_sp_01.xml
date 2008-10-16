@@ -24,8 +24,8 @@
 		</PointsPerCreatureKill>
 
 		<MapSequence>
-			<!-- ****** LEVEL 1 ****** -->
-			<Map repeats="true">
+			<!-- ****** LEVEL 1 : Welcoming Committee ****** -->
+			<Map displayName="Welcoming Committee">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
@@ -106,8 +106,8 @@
 				</ComputerGroups>
 			</Map>
 
-			<!-- ****** LEVEL 2 ****** -->
-			<Map repeats="true">
+			<!-- ****** LEVEL 2 : Athletic Tryouts ****** -->
+			<Map displayName="Athletic Tryouts">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="240" y="255"/>
 				</MapSettings>
@@ -278,8 +278,8 @@
 				</ComputerGroups>
 			</Map>
 
-			<!-- ****** LEVEL 3 ****** -->
-			<Map repeats="true">
+			<!-- ****** LEVEL 3 : Grave Concerns ****** -->
+			<Map displayName="Grave Concerns">
 				<MapSettings backgroundName="wharf">
 		            <SpellDropLocation x="240" y="255"/>
 				</MapSettings>
@@ -383,8 +383,8 @@
 				</ComputerGroups>
 			</Map>
 
-			<!-- ****** LEVEL 4 ****** -->
-			<Map repeats="true">
+			<!-- ****** LEVEL 4 : ****** -->
+			<Map displayName="Some Clever Name">
 				<MapSettings backgroundName="city">
 		            <SpellDropLocation x="240" y="255"/>
 				</MapSettings>

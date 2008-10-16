@@ -21,6 +21,16 @@ public class EndlessLevelData
 
     public var mapSequence :Array = []; // array of EndlessMapDatas
 
+    public function getMapData (mapIndex :int) :EndlessMapData
+    {
+        return mapSequence[mapIndex % mapSequence.length];
+    }
+
+    public function getMapCycleNumber (mapIndex :int) :int
+    {
+        return Math.floor(mapIndex / mapSequence.length);
+    }
+
     public static function fromXml (xml :XML) :EndlessLevelData
     {
         var level :EndlessLevelData = new EndlessLevelData();

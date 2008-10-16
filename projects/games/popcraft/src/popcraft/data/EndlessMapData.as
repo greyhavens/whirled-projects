@@ -10,6 +10,8 @@ public class EndlessMapData
 {
     public var mapSettings :MapSettingsData;
 
+    public var displayName :String;
+
     public var humanBaseLocs :HashMap = new HashMap(); // Map<PlayerName, BaseLocation>
     public var multiplierDropLoc :Vector2 = new Vector2();
     public var multiplierScatterRadius :Number;
@@ -17,13 +19,14 @@ public class EndlessMapData
     public var computerGroups :Array = []; // array of arrays of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
     public var availableSpells :Array = [];
-    public var repeats :Boolean; // does this MapData repeat when the map sequence cycles?
 
     public static function fromXml (xml :XML) :EndlessMapData
     {
         var mapData :EndlessMapData = new EndlessMapData();
 
         mapData.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+
+        mapData.displayName = XmlReader.getStringAttr(xml, "displayName");
 
         for each (var baseLocXml :XML in xml.HumanBaseLocations.BaseLocation) {
             var playerName :String = XmlReader.getStringAttr(baseLocXml, "playerName");
@@ -47,8 +50,6 @@ public class EndlessMapData
         // parse the available units and spells
         mapData.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
         mapData.availableSpells = DataUtils.parseCastableSpellTypes(xml.AvailableSpells[0]);
-
-        mapData.repeats = XmlReader.getBooleanAttr(xml, "repeats");
 
         return mapData;
     }

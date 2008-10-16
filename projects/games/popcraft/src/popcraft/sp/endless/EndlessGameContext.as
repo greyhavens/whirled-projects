@@ -13,7 +13,7 @@ public class EndlessGameContext
 
     public static var score :int;
     public static var scoreMultiplier :Number;
-    public static var mapDataIndex :int;
+    public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
     public static var numMultiplierObjects :int;
 
@@ -21,14 +21,14 @@ public class EndlessGameContext
     {
         // used by EndlessGameMode.setup to determine if this is a new game, or simply
         // the next map in an existing game
-        return (mapDataIndex <= 0);
+        return (mapIndex <= 0);
     }
 
     public static function reset () :void
     {
         score = 0;
         scoreMultiplier = 1;
-        mapDataIndex = -1;
+        mapIndex = -1;
         savedHumanPlayers = [];
         numMultiplierObjects = 0;
 
@@ -42,32 +42,12 @@ public class EndlessGameContext
         }
     }
 
-    public static function cycleMapData () :EndlessMapData
-    {
-        ++mapDataIndex;
-        var mapData :EndlessMapData = level.mapSequence[(mapDataIndex) % level.mapSequence.length];
-        if (mapDataIndex >= level.mapSequence.length && !mapData.repeats) {
-            cycleMapData();
-        }
-
-        return mapData;
-    }
-
     public static function get mapCycleNumber () :int
     {
         // how many times has the player been through the map cycle?
         // (first time through, mapCycleNumber=0)
 
-        var firstCycleLength :int = level.mapSequence.length;
-        var repeatCycleLength :int;
-        for each (var mapData :EndlessMapData in level.mapSequence) {
-            if (mapData.repeats) {
-                ++repeatCycleLength;
-            }
-        }
-
-        return (mapDataIndex < firstCycleLength ? 0 :
-                Math.ceil((mapDataIndex + 1 - firstCycleLength) / repeatCycleLength));
+        return level.getMapCycleNumber(mapIndex);
     }
 
     public static function incrementScore (offset :int) :void

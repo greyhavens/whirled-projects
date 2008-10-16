@@ -20,14 +20,12 @@ public class EndlessGameMode extends GameMode
     public static const HUMAN_TEAM_ID :int = 0;
     public static const FIRST_COMPUTER_TEAM_ID :int = 1;
 
-    public function EndlessGameMode (level :EndlessLevelData = null)
+    public function EndlessGameMode (level :EndlessLevelData, save :SavedEndlessGame,
+        isNewGame :Boolean)
     {
-        if (level != null) {
-            EndlessGameContext.level = level;
-            _needsReset = true;
-        } else {
-            _needsReset = false;
-        }
+        EndlessGameContext.level = level;
+        _savedGame = save;
+        _needsReset = isNewGame;
     }
 
     override protected function setup () :void
@@ -37,7 +35,19 @@ public class EndlessGameMode extends GameMode
         }
 
         EndlessGameContext.gameMode = this;
-        _curMapData = EndlessGameContext.cycleMapData();
+
+        if (_savedGame != null) {
+            // restore saved data if it exists
+            EndlessGameContext.mapIndex = _savedGame.mapIndex;
+            EndlessGameContext.score = _savedGame.score;
+            EndlessGameContext.scoreMultiplier = _savedGame.multiplier;
+
+        } else {
+            // otherwise, move to the next map
+            EndlessGameContext.mapIndex++;
+        }
+
+        _curMapData = EndlessGameContext.level.getMapData(EndlessGameContext.mapIndex);
 
         super.setup();
 
@@ -83,38 +93,6 @@ public class EndlessGameMode extends GameMode
             // we're ready
             EndlessGameContext.playerReadyMonitor.setLocalPlayerReadyForCurRound();
         }
-    }
-
-    override protected function destroy () :void
-    {
-        // save data about our human players so that they can be resurrected
-        // when the next round starts
-        EndlessGameContext.savedHumanPlayers = [];
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (playerInfo.teamId == HUMAN_TEAM_ID) {
-                EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
-            }
-        }
-
-        // save the number of multipliers left on the field so the player has a chance
-        // to grab them on the next map
-        var numMultipliers :int;
-        var netObjs :ObjectDB = GameContext.netObjects;
-        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
-            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                numMultipliers += 1;
-            }
-        }
-
-        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
-            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                numMultipliers += 1;
-            }
-        }
-
-        EndlessGameContext.numMultiplierObjects = numMultipliers;
-
-        super.destroy();
     }
 
     override protected function updateNetworkedObjects () :void
@@ -222,12 +200,47 @@ public class EndlessGameMode extends GameMode
             GameContext.dashboard.updatePlayerStatusViews();
 
         } else {
-            // move to the next map (see handleGameOver())
-            _gameOver = true;
-            _switchingMaps = true;
+            this.switchMaps();
         }
 
         _swappingInNextOpponents = false;
+    }
+
+    protected function switchMaps () :void
+    {
+        // save data about our human players so that they can be resurrected
+        // when the next round starts
+        EndlessGameContext.savedHumanPlayers = [];
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (playerInfo.teamId == HUMAN_TEAM_ID) {
+                EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
+            }
+        }
+
+        // save the number of multipliers left on the field so the player has a chance
+        // to grab them on the next map
+        var numMultipliers :int;
+        var netObjs :ObjectDB = GameContext.netObjects;
+        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
+            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                numMultipliers += 1;
+            }
+        }
+
+        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
+            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
+                numMultipliers += 1;
+            }
+        }
+
+        EndlessGameContext.numMultiplierObjects = numMultipliers;
+
+        // save the game (must be done after the human players are saved, above)
+        AppContext.endlessLevelMgr.saveCurrentGame();
+
+        // move to the next map (see handleGameOver())
+        _gameOver = true;
+        _switchingMaps = true;
     }
 
     override protected function handleGameOver () :void
@@ -235,7 +248,7 @@ public class EndlessGameMode extends GameMode
         if (_switchingMaps) {
             // if we're switching maps, don't show the game-over screen, just switch to a new
             // endless game mode
-            this.fadeOutToMode(new EndlessGameMode());
+            this.fadeOutToMode(new EndlessGameMode(EndlessGameContext.level, null, false));
 
         } else {
             this.fadeOutToMode(new EndlessLevelSpOutroMode(), FADE_OUT_TIME);
@@ -390,7 +403,13 @@ public class EndlessGameMode extends GameMode
 
             var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
             var player :PlayerInfo = GameContext.playerInfos[playerIndex];
-            player.restoreSavedData(savedPlayer);
+            player.restoreSavedPlayerInfo(savedPlayer);
+        }
+
+        // restore data from the saved game, if it exists
+        if (_savedGame != null) {
+            GameContext.localPlayerInfo.restoreSavedGameData(
+                _savedGame, EndlessGameContext.level.multiplierDamageSoak);
         }
     }
 
@@ -440,6 +459,7 @@ public class EndlessGameMode extends GameMode
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
     protected var _swappingInNextOpponents :Boolean;
+    protected var _savedGame :SavedEndlessGame;
 
     protected var _playersCheckedIn :Array = [];
 }

@@ -46,9 +46,9 @@ public class LocalPlayerInfo extends PlayerInfo
         return save;
     }
 
-    override public function restoreSavedData (savedData :SavedPlayerInfo) :void
+    override public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo) :void
     {
-        super.restoreSavedData(savedData);
+        super.restoreSavedPlayerInfo(savedData);
 
         var localData :SavedLocalPlayerInfo = SavedLocalPlayerInfo(savedData);
         _resources = localData.resources.slice();

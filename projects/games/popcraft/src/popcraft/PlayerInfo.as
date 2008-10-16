@@ -7,10 +7,12 @@ import flash.display.DisplayObject;
 import flash.events.EventDispatcher;
 
 import popcraft.battle.CreatureSpellSet;
+import popcraft.battle.UnitDamageShield;
 import popcraft.battle.WorkshopUnit;
 import popcraft.battle.view.DeadWorkshopView;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.BaseLocationData;
+import popcraft.sp.endless.SavedEndlessGame;
 import popcraft.sp.endless.SavedPlayerInfo;
 
 /**
@@ -67,10 +69,21 @@ public class PlayerInfo extends EventDispatcher
         return save;
     }
 
-    public function restoreSavedData (savedData :SavedPlayerInfo) :void
+    public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo) :void
     {
         this.workshop.health = savedData.health;
         this.workshop.damageShields = savedData.damageShields;
+    }
+
+    public function restoreSavedGameData (save :SavedEndlessGame, damageShieldHealth :Number) :void
+    {
+        var shields :Array = [];
+        for (var ii :int = 0; ii < save.multiplier - 1; ++ii) {
+            shields.push(new UnitDamageShield(damageShieldHealth));
+        }
+
+        this.workshop.health = save.health;
+        this.workshop.damageShields = shields;
     }
 
     public function init () :void

@@ -102,7 +102,7 @@ public class UserCookieManager
                     if (ba.bytesAvailable != 0) {
                         var totalSize :uint = ba.length;
                         var expectedSize :uint = ba.position;
-                        errString = "cookie was too large (expected " + expectedSize + "b, got " +
+                        errString = "did not read entire cookie (expected " + expectedSize + "b, got " +
                             totalSize + "b)";
 
                     } else {
