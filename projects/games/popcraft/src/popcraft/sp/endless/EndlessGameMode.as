@@ -52,8 +52,6 @@ public class EndlessGameMode extends GameMode
         super.setup();
 
         var scoreView :ScoreView = new ScoreView();
-        scoreView.x = (Constants.SCREEN_SIZE.x - scoreView.width) * 0.5;
-        scoreView.y = 5;
         this.addObject(scoreView, GameContext.overlayLayer);
 
         // create the multipliers that were left over from the last map
