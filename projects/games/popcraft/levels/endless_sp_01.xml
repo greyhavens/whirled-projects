@@ -29,7 +29,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 
 		<MapSequence>
 			<!-- ****** LEVEL 1 : Welcoming Committee (Pigsley) ****** -->
-			<Map displayName="Welcoming Committee" isSavePoint="true">
+			<Map displayName="Welcoming Committee" isSavePoint="false">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
@@ -65,7 +65,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			</Map>
 			
 			<!-- ****** LEVEL 1 : Welcoming Committee (Horace) ****** -->
-			<Map displayName="Welcoming Committee" isSavePoint="false">
+			<Map displayName="Welcoming Committee" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
@@ -103,7 +103,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			</Map>
 
 			<!-- ****** LEVEL 2 : Athletic Tryouts (Iris & Ivy) ****** -->
-			<Map displayName="Athletic Tryouts" isSavePoint="true">
+			<Map displayName="Athletic Tryouts" isSavePoint="false">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
@@ -212,7 +212,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			</Map>
 			
 			<!-- ****** LEVEL 2 : Athletic Tryouts (Ralph) ****** -->
-			<Map displayName="Athletic Tryouts" isSavePoint="false">
+			<Map displayName="Athletic Tryouts" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
@@ -257,7 +257,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			</Map>
 
 			<!-- ****** LEVEL 3 : Grave Concerns (Dante) ****** -->
-			<Map displayName="Grave Concerns" isSavePoint="true">
+			<Map displayName="Grave Concerns" isSavePoint="false">
 				<MapSettings backgroundName="wharf">
 		            <SpellDropLocation x="240" y="255"/>
 				</MapSettings>

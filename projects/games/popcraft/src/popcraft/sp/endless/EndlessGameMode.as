@@ -180,7 +180,9 @@ public class EndlessGameMode extends GameMode
         EndlessGameContext.numMultiplierObjects = numMultipliers;
 
         // save the game (must be done after the human players are saved, above)
-        AppContext.endlessLevelMgr.saveCurrentGame();
+        if (_curMapData.isSavePoint) {
+            AppContext.endlessLevelMgr.saveCurrentGame();
+        }
 
         // move to the next map (see handleGameOver())
         _gameOver = true;
