@@ -191,16 +191,15 @@ public class EndlessGameMode extends GameMode
 
     override protected function handleGameOver () :void
     {
-        if (_switchingMaps) {
-            // if we're switching maps, don't show the game-over screen, just switch to a new
-            // endless game mode
-            this.fadeOutToMode(new EndlessGameMode(EndlessGameContext.level, null, false));
+        // if we're switching maps, don't show the game-over screen, just switch to a new
+        // endless game mode
+        var nextMode :AppMode = (_switchingMaps ?
+            new EndlessGameMode(EndlessGameContext.level, null, false) :
+            new EndlessLevelSpOutroMode());
 
-        } else {
-            this.fadeOutToMode(new EndlessLevelSpOutroMode(), FADE_OUT_TIME);
-            GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
-            GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
-        }
+        this.fadeOutToMode(nextMode, FADE_OUT_TIME);
+        GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
     override protected function applyCheatCode (keyCode :uint) :void
