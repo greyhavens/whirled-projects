@@ -29,7 +29,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 
 		<MapSequence>
 			<!-- ****** LEVEL 1 : Welcoming Committee (Pigsley) ****** -->
-			<Map displayName="Welcoming Committee" isSavePoint="false">
+			<Map displayName="Welcoming Committee" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
@@ -64,8 +64,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 1 : Welcoming Committee (Horace) ****** -->
-			<Map displayName="Welcoming Committee" isSavePoint="true">
+			<!-- ****** LEVEL 2 : Opening Ceremonies (Horace) ****** -->
+			<Map displayName="Opening Ceremonies" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="100" y="250" team="0"/>
@@ -102,8 +102,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 
-			<!-- ****** LEVEL 2 : Athletic Tryouts (Iris & Ivy) ****** -->
-			<Map displayName="Athletic Tryouts" isSavePoint="false">
+			<!-- ****** LEVEL 3 : Double-Teamed (Iris & Ivy) ****** -->
+			<Map displayName="Double-Teamed" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
@@ -170,8 +170,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 2 : Athletic Tryouts (Ursula) ****** -->
-			<Map displayName="Athletic Tryouts" isSavePoint="false">
+			<!-- ****** LEVEL 4 : Athletic Tryouts (Ursula) ****** -->
+			<Map displayName="Athletic Tryouts" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
@@ -211,8 +211,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 2 : Athletic Tryouts (Ralph) ****** -->
-			<Map displayName="Athletic Tryouts" isSavePoint="true">
+			<!-- ****** LEVEL 5 : On the Offensive (Ralph) ****** -->
+			<Map displayName="On the Offensive" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
@@ -256,8 +256,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 
-			<!-- ****** LEVEL 3 : Grave Concerns (Dante) ****** -->
-			<Map displayName="Grave Concerns" isSavePoint="false">
+			<!-- ****** LEVEL 6 : Grave Concerns (Dante) ****** -->
+			<Map displayName="Grave Concerns" isSavePoint="true">
 				<MapSettings backgroundName="wharf">
 		            <SpellDropLocation x="240" y="255"/>
 				</MapSettings>
@@ -299,8 +299,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 3 : Grave Concerns (Jack & Pigsley) ****** -->
-			<Map displayName="Grave Concerns" isSavePoint="false">
+			<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley) ****** -->
+			<Map displayName="Bullied" isSavePoint="true">
 				<MapSettings backgroundName="wharf">
 		            <SpellDropLocation x="360" y="130"/>
 				</MapSettings>
