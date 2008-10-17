@@ -43,15 +43,15 @@ public class SeekPanel extends FrameSprite
         _ghost = ghost;
 
         _dimness = new Dimness(0.9, true);
-        this.addChild(_dimness);
+//        this.addChild(_dimness);
 
         _lightLayer = new Sprite();
-        this.addChild(_lightLayer);
+//        this.addChild(_lightLayer);
 
         _maskLayer = new Sprite();
         if (_ghost != null) {
-            this.addChild(_ghost);
-            this.addChild(_maskLayer);
+//            this.addChild(_ghost);
+//            this.addChild(_maskLayer);
             _ghost.mask = _maskLayer;
         }
 
@@ -110,7 +110,7 @@ public class SeekPanel extends FrameSprite
     {
         if (evt.name == Codes.SMSG_GHOST_ZAPPED) {
             _zapping = ZAP_FRAMES;
-            Sound(new Content.LANTERN_GHOST_SCREECH()).play();
+//            Sound(new Content.LANTERN_GHOST_SCREECH()).play();
         }
     }
 
@@ -293,12 +293,16 @@ public class SeekPanel extends FrameSprite
             lanternOff(lantern);
         }
         _lanterns = null;
-        _ghost.appear();
-
-        _ghost.newTarget(new Point(600, 100));
-
-        _ghost.mask = null;
-        this.removeChild(_maskLayer);
+        if( _ghost != null ){
+            _ghost.appear();
+    
+            _ghost.newTarget(new Point(600, 100));
+    
+            _ghost.mask = null;
+        }
+        if(this.contains(_maskLayer) ) {
+            this.removeChild(_maskLayer);
+        }
     }
 
     // LANTERN MANAGEMENT
@@ -313,9 +317,19 @@ public class SeekPanel extends FrameSprite
 
     protected function lanternOff (lantern :Lantern) :void
     {
-        _dimness.removeChild(lantern.hole);
-        _lightLayer.removeChild(lantern.light);
-        _maskLayer.removeChild(lantern.mask);
+        if( _dimness.contains(lantern.hole) ) {
+            _dimness.removeChild(lantern.hole);    
+        }
+        
+        if( _lightLayer.contains(lantern.light) ) {
+            _lightLayer.removeChild(lantern.light);    
+        }
+        
+        if( _maskLayer.contains(lantern.mask) ) {
+            _maskLayer.removeChild(lantern.mask);    
+        }
+        
+        
     }
 
     protected function updateLantern (playerId :int, pos :Point) :void

@@ -52,15 +52,28 @@ public class GamePanel extends Sprite
         Game.control.room.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, roomPropertyChanged);
 
+        //SKIN 
         if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
-            showSplash(SplashWidget.STATE_WELCOME);
+            showSplash(SplashWidget.STATE_BEGIN);
 
         } else if (!Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
             showSplash(SplashWidget.STATE_BEGIN);
 
         } else {
-            _seeking = true;
+            _seeking = false;
         }
+        
+//        if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
+//            showSplash(SplashWidget.STATE_WELCOME);
+//
+//        } else if (!Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
+//            showSplash(SplashWidget.STATE_BEGIN);
+//
+//        } else {
+//            _seeking = true;
+//        }
+        
+        
         checkForDeath();
     }
 
@@ -94,6 +107,7 @@ public class GamePanel extends Sprite
     {
         if (_seeking != seeking) {
             _seeking = seeking;
+            _seeking = false;//SKIN
             updateState(true);
         }
     }

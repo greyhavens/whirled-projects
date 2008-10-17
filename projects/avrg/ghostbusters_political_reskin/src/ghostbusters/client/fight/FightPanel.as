@@ -60,7 +60,7 @@ public class FightPanel extends FrameSprite
         this.addChild(_ghost);
         _ghost.mask = null;
         _ghost.x = 600;
-        _ghost.y = 20;//100
+        _ghost.y = 60;//100
 
         // listen for notification messages from the server on the room control
         Game.control.room.addEventListener(

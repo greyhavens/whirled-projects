@@ -282,18 +282,29 @@ public class Room
 
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
-        var now :int = getTimer();
-
-        if (_lanternsDirty && (now - _lanternUpdate) > 200) {
-            sendLanterns();
-        }
-
+        //SKIN moved up.  zest is always zero.
+        // if the ghost has been entirely unveiled, switch to appear phase
         if (_ghost == null) {
             if (now > _nextGhost) {
                 loadOrSpawnGhost();
             }
             return;
         }
+        
+        if (_ghost.zest == 0) {
+            setState(Codes.STATE_APPEARING);
+            _transitionFrame = frame + _ghost.definition.appearFrames;
+            return;
+        }
+        return;
+        
+        var now :int = getTimer();
+
+        if (_lanternsDirty && (now - _lanternUpdate) > 200) {
+            sendLanterns();
+        }
+
+        
 
         // if the ghost has been entirely unveiled, switch to appear phase
         if (_ghost.zest == 0) {
@@ -373,24 +384,26 @@ public class Room
             } else {
                 // delete ghost
                 
-                //SKIN
-                //Reset kill count so we don't fight another boss right away
-                var player :Player;
-                if( _ghost.definition.id == GhostDefinition.GHOST_MUTANT) {
-                    for each ( player in getTeam() ) {
-                        if(player != null) {
-                            player.killedGhosts = 0;
-                        }
-                    }
-                }
-                else
-                {
-                    for each ( player in getTeam()) {
-                        if(player != null) {
-                            player.killedGhosts++;
-                        }
-                    }
-                }
+//                trace("ghostFullyGone()");
+//                trace("getTeam()=" + getTeam() );
+//                //SKIN
+//                //Reset kill count so we don't fight another boss right away
+//                var player :Player;
+//                if( _ghost.definition.id == GhostDefinition.GHOST_MUTANT) {
+//                    for each ( player in getTeam() ) {
+//                        if(player != null) {
+//                            player.killedGhosts = 0;
+//                        }
+//                    }
+//                }
+//                else
+//                {
+//                    for each ( player in getTeam()) {
+//                        if(player != null) {
+//                            player.killedGhosts++;
+//                        }
+//                    }
+//                }
                 
                 
                 payout();
@@ -503,6 +516,7 @@ public class Room
 
     protected function healTeam () :void
     {
+        trace("healing, team=" + getTeam(true));
         for each (var player :Player in getTeam(true)) {
             player.heal(player.maxHealth);
         }
@@ -519,6 +533,11 @@ public class Room
         _lanternUpdate = getTimer();
     }
 
+
+    protected function isBossRoom () :Boolean
+    {
+        return false;
+    }
     protected function loadOrSpawnGhost () :void
     {
         var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
@@ -530,24 +549,33 @@ public class Room
             //The mutant mccain appears less often
             // the ghost id/model is currently completely random; this will change
             
-            var ghosts :Array = [GhostDefinition.GHOST_MCCAIN, GhostDefinition.GHOST_PALIN, GhostDefinition.GHOST_MUTANT] ;
+            var ghosts :Array = [GhostDefinition.GHOST_MCCAIN, GhostDefinition.GHOST_PALIN, GhostDefinition.GHOST_MUTANT];
+            
             var ix :int = Server.random.nextInt(ghosts.length - 1);
+            if(isBossRoom()) {
+                ix = ghosts.length - 1;
+            }
+            //the boss has a smaller p of appearing
+//            if(Server.random.nextNumber() <= 0.16) {
+//                ix = ghosts.length - 1;
+//            }
+            
             
             //If any player killed more than x ghosts, make the next a boss
-            log.debug("loadOrSpawnGhost(), checking if ghost should be boss");
-            log.debug("getTeam()=" + getTeam());
-            log.debug("_players=" + _players);
-            
-            for each (var player :Player in getTeam()) {
-                if(player != null) {
-                    log.debug("player " + player.playerId + " ghost kill vount=" + player.killedGhosts); 
-                    if( player.killedGhosts % 2 == 0 && player.killedGhosts >= 1){
-                        ix = ghosts.length - 1;
-                        break;
-                    }
-                }
-                else { log.debug("player is null")}
-            }
+//            log.debug("loadOrSpawnGhost(), checking if ghost should be boss");
+//            log.debug("getTeam()=" + getTeam());
+//            log.debug("_players=" + _players);
+//            
+//            for each (var player :Player in getTeam()) {
+//                if(player != null) {
+//                    log.debug("player " + player.playerId + " ghost kill vount=" + player.killedGhosts); 
+//                    if( player.killedGhosts % 2 == 0 && player.killedGhosts >= 1){
+//                        ix = ghosts.length - 1;
+//                        break;
+//                    }
+//                }
+//                else { log.debug("player is null")}
+//            }
             // the ghost's level base is (currently) completely determined by the room
             var rnd :Number = roomRandom.nextNumber();
 
@@ -577,6 +605,21 @@ public class Room
         _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
         _nextGhost = getTimer() + 1000 * GHOST_RESPAWN_SECONDS;
+        
+//        if( !_nextGhostIsBoss && isOnePlayerOneBossAwayFromLevelUp() ) {
+//            _nextGhost = getTimer();
+//            _nextGhostIsBoss = true;
+//        }
+//        else {
+//            _nextGhostIsBoss = false;
+//            
+//        }
+    }
+    
+    
+    protected function isOnePlayerOneBossAwayFromLevelUp() :Boolean
+    {
+        return true;    
     }
 
     protected var _ctrl :RoomSubControlServer;
@@ -601,6 +644,8 @@ public class Room
     protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_SECONDS :int = 120;
+    protected static const GHOST_RESPAWN_SECONDS :int = 60 * 1;
+    
+//    protected var _nextGhostIsBoss :Boolean = false;
 }
 }

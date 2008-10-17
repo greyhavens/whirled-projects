@@ -382,6 +382,6 @@ public class Player
     protected var _level :int;
     
     //SKIN HACK!!!
-    public var killedGhosts :int = 0;
+//    public var killedGhosts :int = 0;
 }
 }

@@ -35,8 +35,9 @@ public class GameController extends Controller
 
     public function GameController ()
     {
-        panel = new GamePanel()
+        panel = new GamePanel();
         setControlledPanel(panel);
+//        panel.seeking = false;
     }
 
     public function handleEndGame () :void
@@ -48,7 +49,10 @@ public class GameController extends Controller
 
     public function handleHelp () :void
     {
+        trace("handleHelp");
+        //SKIN
         panel.showSplash(SplashWidget.STATE_HOWTO);
+//        panel.showSplash(SplashWidget.STATE_BEGIN);
     }
 
     public function handleCloseSplash () :void
@@ -72,7 +76,8 @@ public class GameController extends Controller
 
         var state :String = Game.state;
         if (state == Codes.STATE_SEEKING) {
-            panel.seeking = !panel.seeking;
+//            panel.seeking = !panel.seeking;
+            panel.seeking = false;//SKIN we are never seeking
 
         } else if (state == Codes.STATE_APPEARING) {
             // no effect: you have to watch this bit

@@ -204,6 +204,9 @@ public class Codes
     /**
      * The sex of this player's initial avatar choice. This value is null if the player
      * has not yet chosen, else either AVT_MALE or AVT_FEMALE.
+     * 
+     * //SKIN this is changed to a switch.  Null means first time played.  ANything else
+     * means the player has already played the game.
      */
     public static const PROP_AVATAR_TYPE :String = NetConstants.makePersistent("avtype");
 
