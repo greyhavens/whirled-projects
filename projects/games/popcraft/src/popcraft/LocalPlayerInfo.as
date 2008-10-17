@@ -40,7 +40,6 @@ public class LocalPlayerInfo extends PlayerInfo
 
         super.saveData(save);
 
-        save.resources = _resources.slice();
         save.spells = _heldSpells.slice();
 
         return save;
@@ -51,7 +50,6 @@ public class LocalPlayerInfo extends PlayerInfo
         super.restoreSavedPlayerInfo(savedData);
 
         var localData :SavedLocalPlayerInfo = SavedLocalPlayerInfo(savedData);
-        _resources = localData.resources.slice();
         _heldSpells = localData.spells.slice();
     }
 
