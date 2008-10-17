@@ -215,7 +215,8 @@ public class Unit extends SimObject
 
     public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
-        var damage :Number = Math.min(this.getAttackDamage(attack), maxDamage);
+        var damage :Number = (GameContext.gameMode.isGameOver ? 0 :
+            Math.min(this.getAttackDamage(attack), maxDamage));
 
         // if we have a damage shield, it will absorb the damage from this attack
         // (currently, this only applies to Workshops in endless mode)

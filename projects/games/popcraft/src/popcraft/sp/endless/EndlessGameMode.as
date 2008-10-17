@@ -5,7 +5,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.StateChangedEvent;
 
@@ -115,7 +114,7 @@ public class EndlessGameMode extends GameMode
 
     protected function checkForComputerDeath () :void
     {
-        if (!_gameOver && !_swappingInNextOpponents) {
+        if (!_gameOver) {
             var computersAreDead :Boolean = true;
             for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
                 ++teamId) {
@@ -126,10 +125,7 @@ public class EndlessGameMode extends GameMode
             }
 
             if (computersAreDead) {
-                this.killAllCreatures();
-                // kill all creatures, wait a short while, then swap in the next opponents
-                GameContext.netObjects.addObject(new SimpleTimer(4, swapInNextOpponents));
-                _swappingInNextOpponents = true;
+                this.switchMaps();
             }
         }
     }
@@ -152,60 +148,10 @@ public class EndlessGameMode extends GameMode
         SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER, loc, playSound);
     }
 
-    protected function multiplierIsOnPlayfield () :Boolean
-    {
-        var spellDrops :Array = GameContext.netObjects.getObjectsInGroup(SpellDropObject.GROUP_NAME);
-        for each (var spellDrop :SpellDropObject in spellDrops) {
-            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function swapInNextOpponents () :void
+    protected function switchMaps () :void
     {
         this.createMultiplierDrop(true);
 
-        if (_computerGroupIndex < _curMapData.computerGroups.length - 1) {
-            // there are more opponents left on this map. swap the next ones in.
-
-            var playerInfo :PlayerInfo;
-            for (;;) {
-                var playerIndex :int =  GameContext.playerInfos.length - 1;
-                playerInfo = GameContext.playerInfos[playerIndex];
-                if (playerInfo.teamId == HUMAN_TEAM_ID) {
-                    break;
-                }
-
-                GameContext.playerInfos.pop();
-                playerInfo.destroy();
-            }
-
-            ++_computerGroupIndex;
-            // createComputerPlayers() populates GameContext.playerInfos
-            var newPlayerInfos :Array = this.createComputerPlayers();
-            for each (playerInfo in newPlayerInfos) {
-                playerInfo.init();
-            }
-
-            // switch immediately to daytime
-            if (!GameContext.diurnalCycle.isDay) {
-                GameContext.diurnalCycle.resetPhase(Constants.PHASE_DAY);
-            }
-
-            GameContext.dashboard.updatePlayerStatusViews();
-
-        } else {
-            this.switchMaps();
-        }
-
-        _swappingInNextOpponents = false;
-    }
-
-    protected function switchMaps () :void
-    {
         // save data about our human players so that they can be resurrected
         // when the next round starts
         EndlessGameContext.savedHumanPlayers = [];
@@ -270,7 +216,7 @@ public class EndlessGameMode extends GameMode
             break;
 
         case KeyboardCodes.O:
-            this.swapInNextOpponents();
+            this.switchMaps();
             break;
 
         default:
@@ -418,9 +364,8 @@ public class EndlessGameMode extends GameMode
         // the first computer index is 1 more than the number of human players in the game
         var playerIndex :int = SeatingManager.numExpectedPlayers;
 
-        var computerGroup :Array = _curMapData.computerGroups[_computerGroupIndex];
         var newInfos :Array  = [];
-        for each (var cpData :EndlessComputerPlayerData in computerGroup) {
+        for each (var cpData :EndlessComputerPlayerData in _curMapData.computers) {
             var playerInfo :PlayerInfo = new EndlessComputerPlayerInfo(playerIndex, cpData,
                 mapCycleNumber);
 
@@ -453,68 +398,11 @@ public class EndlessGameMode extends GameMode
     }
 
     protected var _curMapData :EndlessMapData;
-    protected var _computerGroupIndex :int;
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
-    protected var _swappingInNextOpponents :Boolean;
     protected var _savedGame :SavedEndlessGame;
 
     protected var _playersCheckedIn :Array = [];
 }
 
-}
-
-import com.whirled.contrib.simplegame.*;
-
-import popcraft.*;
-import popcraft.battle.*;
-
-class WaitForMultiplierRetrievalTask
-    implements ObjectTask
-{
-    public function WaitForMultiplierRetrievalTask (maxTime :Number)
-    {
-        _maxTime = maxTime;
-    }
-
-    public function update (dt :Number, obj :SimObject) :Boolean
-    {
-        _elapsedTime += dt;
-        if (_elapsedTime >= _maxTime) {
-            return true;
-        } else {
-            return !this.multipliersExist;
-        }
-    }
-
-    protected function get multipliersExist () :Boolean
-    {
-        var netObjs :ObjectDB = GameContext.netObjects;
-        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
-            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                return true;
-            }
-        }
-
-        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
-            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function clone () :ObjectTask
-    {
-        return new WaitForMultiplierRetrievalTask(_maxTime);
-    }
-
-    public function receiveMessage (msg :ObjectMessage) :Boolean
-    {
-        return false;
-    }
-
-    protected var _maxTime :Number;
-    protected var _elapsedTime :Number = 0;
 }

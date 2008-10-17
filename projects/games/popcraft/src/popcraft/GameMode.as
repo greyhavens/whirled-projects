@@ -718,6 +718,11 @@ public class GameMode extends TransitionMode
         return true;
     }
 
+    public function get isGameOver () :Boolean
+    {
+        return _gameOver;
+    }
+
     public function get availableSpells () :Array
     {
         return Constants.CASTABLE_SPELLS;
