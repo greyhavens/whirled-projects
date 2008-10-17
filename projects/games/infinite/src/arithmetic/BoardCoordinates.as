@@ -1,7 +1,5 @@
 package arithmetic
-{
-	import cells.CellBase;
-		
+{		
 	public class BoardCoordinates extends Coordinates
 	{
 		public function BoardCoordinates(x:int, y:int)
@@ -33,7 +31,7 @@ package arithmetic
 		public function graphicsCoordinates (
 			boardOrigin:BoardCoordinates, graphicsOrigin:GraphicCoordinates) :GraphicCoordinates
 		{
-			return graphicsOrigin.translatedBy(boardOrigin.distanceTo(this).multiplyByVector(CellBase.UNIT));
+			return graphicsOrigin.translatedBy(boardOrigin.distanceTo(this).multiplyByVector(Config.cellSize));
 		}
 		
 		public function above (other:BoardCoordinates) :Boolean

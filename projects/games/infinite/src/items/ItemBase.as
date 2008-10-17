@@ -1,4 +1,4 @@
-package
+package items
 {
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
@@ -9,7 +9,7 @@ package
 	
 	import sprites.ItemSprite;
 
-	public class ItemBase extends EventDispatcher implements Item
+	public class ItemBase extends EventDispatcher implements ViewableItem
 	{		
 		public function ItemBase(target:IEventDispatcher=null)
 		{
@@ -30,12 +30,12 @@ package
 			dispatchEvent(new ItemEvent(ItemEvent.ITEM_CLICKED, this));			
 		}
 	
-		public function addToInventory (inventory:Inventory) :void
+		public function addToInventory (inventory:ItemInventory) :void
 		{
 			inventory.addItem(this);
 		}
 		
-		public function removeFromInventory (inventory:Inventory) :void
+		public function removeFromInventory (inventory:ItemInventory) :void
 		{
 			inventory.removeItem(this);
 		}		
@@ -52,7 +52,7 @@ package
 			// do nothing
 		}
 		
-		[Embed(source="../rsrc/png/error-item.png")]
+		[Embed(source="../../rsrc/png/error-item.png")]
 		public static const errorItem:Class;
 	}
 }

@@ -2,6 +2,7 @@ package
 {
 	import cells.CellInteractions;
 	
+	import items.Item;
 	import items.Ladder;
 	import items.OilCan;
 	import items.Spring;

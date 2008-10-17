@@ -1,5 +1,6 @@
 package
 {
+	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
 	
 	import flash.display.DisplayObject;
@@ -34,7 +35,7 @@ package
 			const modeView:TextField = new TextField();
 			modeView.text = mode + " mode";
 			var rect:GraphicRectangle = GraphicRectangle.fromText(modeView).paddedBy(10).alignBottomRightTo(frame);		
-			rect.origin.applyTo(modeView);
+			Geometry.position(modeView, rect.origin);
 			addChild(modeView);
 						
 			_frameTimer = new FrameTimer();

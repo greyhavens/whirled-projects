@@ -3,8 +3,13 @@ package
 	import arithmetic.*;
 	
 	import cells.*;
+	import cells.fruitmachine.*;
+	import cells.ground.GroundCell;
+	import cells.ladder.*;
+	import cells.wall.*;
 	
 	import items.*;
+	
 	
 	public class SimpleBoard implements Board
 	{
@@ -23,27 +28,27 @@ package
 				case 10:
 					switch (position.y) {
 						case 0: 
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.BASE);
+							return new LadderBaseCell(Nobody.NOBODY, position);
 						case -1: 
 						case -2:
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.MIDDLE);
+							return new LadderMiddleCell(Nobody.NOBODY, position);
 						case -3: 
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.TOP); 
+							return new LadderTopCell(Nobody.NOBODY, position); 
 					};
 					break;
 					
 				case 5:
 					switch (position.y) {
 						case 0:
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.BASE);
+							return new LadderBaseCell(Nobody.NOBODY, position);
 						case -1:
 						case -2:
 						case -3:
 						case -4:
 						case -5:
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.MIDDLE);
+							return new LadderMiddleCell(Nobody.NOBODY, position);
 						case -6:
-							return new LadderCell(Nobody.NOBODY, position, LadderCell.TOP);
+							return new LadderTopCell(Nobody.NOBODY, position);
 					};
 					break;
 

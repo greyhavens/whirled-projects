@@ -14,6 +14,7 @@ package
 	import flash.events.EventDispatcher;
 	import flash.text.TextField;
 	
+	import items.Item;
 	import items.ItemPlayer;
 	
 	import paths.Path;
@@ -82,7 +83,7 @@ package
 		public function arriveInCell (cell:Cell) :void
 		{
 			_cell = cell;
-			positionInCell(_cell.position).applyTo(view);
+			Geometry.position(view, positionInCell(_cell.position));
 			_cell.playerHasArrived(this);
 			if (!cell.grip) {
 				fall();
@@ -228,7 +229,7 @@ package
 		{
 			return _cell;
 		}
-		
+				
 		public function cellAt (position:BoardCoordinates) :Cell
 		{
 			return _objective.cellAt(position);

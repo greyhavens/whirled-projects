@@ -1,6 +1,7 @@
 package graphics
 {
 	import arithmetic.CoordinateSystem;
+	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.GraphicRectangle;
 	import arithmetic.Vector;
@@ -23,7 +24,7 @@ package graphics
 		public function displayOwnership (target:Labellable) :void
 		{
 			const center:GraphicCoordinates = _objective.centerOfView;
-			center.applyTo(this);			
+			Geometry.position(this, center);			
 			_objectiveCoordinates = GraphicCoordinates.ORIGIN.correspondsTo(center);
 			
 			trace (" label position is: "+x+", "+y);			
@@ -39,7 +40,7 @@ package graphics
 //			labelCenter.translatedBy(textRectangle.size.half).applyTo(_text);
 			
 			const direction:Vector = target.graphicCenter.distanceTo(_objective.centerOfView).xComponent().normalize();
-			_objective.visibleArea.half(Vector.UP).half(direction).center.from(_objectiveCoordinates).applyTo(_text);			
+			Geometry.position(_text, _objective.visibleArea.half(Vector.UP).half(direction).center.from(_objectiveCoordinates));			
 			
 			const rect:GraphicRectangle = new GraphicRectangle(_text.x, _text.y, _text.textWidth, _text.textHeight).paddedBy(10); 
 			computeBackground(rect, target);
@@ -47,7 +48,7 @@ package graphics
 			// redraw the background shape
 			redrawBackground();
 						
-			trace ("owner label at "+GraphicCoordinates.fromDisplayObject(this));			
+			trace ("owner label at "+Geometry.coordsOf(this));			
 			visible = true;	
 		}
 		

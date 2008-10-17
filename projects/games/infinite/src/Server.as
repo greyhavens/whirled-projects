@@ -9,6 +9,7 @@ package {
 	import com.whirled.game.GameControl;
 	
 	import whirled.ArbitrationServer;
+	import whirled.ServerPlayerRegister;
 	
 	/**
 	 * The server agent for @project@. Automatically created by the 
@@ -21,13 +22,15 @@ package {
 	     */
 	    public function Server ()
 	    {
-	        _control = new GameControl(this);
-	        
-	        _arbiter = new ArbitrationServer(_control.net);
+	        _control = new GameControl(this);	        
+//	        _arbiter = new ArbitrationServer(_control.net);
+	        _players = new ServerPlayerRegister(_control.game);
 	    }
-
-		protected var _arbiter :ArbitrationServer
-	
+	    
+	    protected var _players :ServerPlayerRegister;
+//
+//		protected var _arbiter :ArbitrationServer
+//	
 	    protected var _control :GameControl;
 	}
 }

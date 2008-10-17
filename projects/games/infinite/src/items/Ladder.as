@@ -4,7 +4,7 @@ package items
 	import arithmetic.BoardPath;
 	import arithmetic.Vector;
 	
-	import cells.LadderCell;
+	import cells.ladder.*;
 	
 	import sprites.*;
 	
@@ -54,15 +54,15 @@ package items
 		override public function useBy (player:ItemPlayer) :void
 		{			
 			const target:Cell = player.cell;
-			player.replace(target.position, new LadderCell(player, target.position, LadderCell.BASE));
+			player.replace(target.position, new LadderBaseCell(player, target.position));
 			var j:int;
 			for (j = 1; j <= _segments; j++) {
 				var pos:BoardCoordinates = target.position.translatedBy(new Vector(0, -j));				
-				player.replace(pos, new LadderCell(player, pos, LadderCell.MIDDLE));
+				player.replace(pos, new LadderMiddleCell(player, pos));
 			}
 			const top:BoardCoordinates = 
 				target.position.translatedBy(new Vector(0, -(_segments + 1))); 
-			player.replace(top, new LadderCell(player, top, LadderCell.TOP));
+			player.replace(top, new LadderTopCell(player, top));
 		}
 				
 		protected var _segments:int;

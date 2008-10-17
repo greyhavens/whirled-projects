@@ -132,13 +132,13 @@ package arithmetic
 		{
 			return new Vector(-dx, -dy);
 		}
-		
-		public function moveDisplayObject (object:DisplayObject) :void
-		{
-			object.x += dx;
-			object.y += dy;
-		}
-		
+//		
+//		public function moveDisplayObject (object:DisplayObject) :void
+//		{
+//			object.x += dx;
+//			object.y += dy;
+//		}
+//		
 		/**
 		 * Return the compass diagonal associated with this vector.
 		 */

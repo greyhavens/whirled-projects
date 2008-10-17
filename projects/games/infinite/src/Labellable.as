@@ -3,7 +3,7 @@ package
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
 	
-	public interface Labellable extends Viewable
+	public interface Labellable 
 	{
     	/**
 		 * Return the character who placed this cell.

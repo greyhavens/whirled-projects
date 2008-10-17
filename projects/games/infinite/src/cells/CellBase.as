@@ -38,42 +38,10 @@ package cells
 			return type+" cell at "+position;
 		}
 
-		public function get view () :DisplayObject
-		{
-			const s:Sprite = new Sprite();
-			SpriteUtil.addBackground(s, UNIT.dx, UNIT.dy, SpriteUtil.GREY);
-			labelPosition(s);
-			return s;
-		}
-
-		/**
-		 * Register event handlers associated with the view for this cell.  May be overridden
-		 * by subclasses for things like mouseovers. 
-		 */
-		protected function registerEventHandlers (source:EventDispatcher) :void
-		{
-			source.addEventListener(MouseEvent.MOUSE_DOWN, handleCellClicked);			
-		}
-
-		protected function handleCellClicked (event:MouseEvent) :void
-		{
-			dispatchEvent(new CellEvent(CellEvent.CELL_CLICKED, this));			
-		}	
-
-		/**
-		 * Add a label with the current board position to the supplied container
-		 */
-		protected function labelPosition (s:DisplayObjectContainer) :void
-		{
-			const l:TextField = new TextField();
-			l.text = "(" + _position.x + ", " + _position.y + ")";
-			s.addChild(l);		
-		}
-
 		/**
 		 * Add this cell to the objective.
 		 */
-		public final function addToObjective(objective:Objective) :void
+		public final function addToObjective(objective:CellObjective) :void
 		{
 			_objective = objective;
 			showView(objective);
@@ -83,7 +51,7 @@ package cells
 		/**
 		 * Show all of the display objects associated with this cell.
 		 */
-		protected function showView (objective:Objective) :void
+		protected function showView (objective:CellObjective) :void
 		{
 			_objective.showCell(this);
 		}
@@ -186,26 +154,10 @@ package cells
 		{
 			return Nobody.NOBODY;
 		}
-		
-		/**
-		 * Return the graphic center of the cell base.
-		 */
-		public function get graphicCenter () :GraphicCoordinates
+				
+		public function get code () :int
 		{
-			return GraphicCoordinates.fromDisplayObject(view).translatedBy(
-				Config.cellSize.divideByScalar(2));
-		}
-		
-		/**
-		 * Return an anchor point for a pointer attaching to this object in the specified direction.
-		 * The default behavior for a cell is to return the center of the square face.
-		 * 
-		 * Not optimized.
-		 */
-		public function anchorPoint (direction:Vector) :GraphicCoordinates
-		{
-			return graphicCenter.translatedBy(
-				Config.cellSize.divideByScalar(2).multiplyByVector(direction.reversed).xComponent());
+			throw new Error(this + " has not been assigned a distinct code");
 		}
 		
 		protected var _position:BoardCoordinates;

@@ -1,6 +1,8 @@
-package cells
+package cells.wall
 {
 	import arithmetic.BoardCoordinates;
+	
+	import cells.CellCodes;
 
 	public class OiledWallCell extends WallCell
 	{
@@ -9,19 +11,19 @@ package cells
 			super(position);
 		}
 		
+		override public function get code () :int
+		{
+			return CellCodes.OILED_WALL;
+		}
+		
 		override public function get grip () :Boolean
 		{
 			return false;
 		}		
 		
-		override protected function get initialAsset () :Class
-		{
-			return oiledWall;
-		}
-
 		override public function get type () :String { return "oiled wall"; }	
 		
-		[Embed(source="../../rsrc/png/wall-oiled.png")]
+		[Embed(source="../../../rsrc/png/wall-oiled.png")]
 		public static const oiledWall:Class;
 	}
 }

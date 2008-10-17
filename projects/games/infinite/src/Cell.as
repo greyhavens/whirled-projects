@@ -4,13 +4,14 @@ package
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import cells.CellObjective;
+	
 	import flash.events.IEventDispatcher;
 		
 	/**
 	 * Interface providing the details of a cell within the game board.
 	 */
-	public interface Cell extends IEventDispatcher, Viewable, CellAffordances, PlayerInteractions,
-		Labellable
+	public interface Cell extends IEventDispatcher, CellAffordances, PlayerInteractions
 	{		
 		/**
 		 * Return the position on the board of this cell
@@ -21,7 +22,7 @@ package
 		/**
 		 * Called to cause the cell to add itself to the objective.
 		 */
-		 function addToObjective(objective:Objective) :void		
+		 function addToObjective(objective:CellObjective) :void		
 
 		/**
 		 * Called to cause the cell to remove itself from the objective.  Will do
@@ -48,6 +49,21 @@ package
 		/**
 		 * Return true if this cell is on the same row as another.
 		 */
-		 function sameRowAs (other:Cell) :Boolean		 
+		function sameRowAs (other:Cell) :Boolean		 
+		 
+		/**
+		 * Return the code for a given cell.
+		 */
+		function get code () :int
+		
+		/**
+		 * Return the name of the object as a string.
+		 */
+		function get objectName () :String
+		
+		/**
+		 * Return the owner of an object.
+		 */
+		function get owner () :Owner
 	}
 }

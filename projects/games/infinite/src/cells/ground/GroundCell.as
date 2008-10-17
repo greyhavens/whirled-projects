@@ -1,8 +1,9 @@
-package cells
+package cells.ground
 {
 	import arithmetic.*;
 	
-	import flash.display.DisplayObject;
+	import cells.BackgroundCell;
+	import cells.CellCodes;
 	
 	public class GroundCell extends BackgroundCell
 	{
@@ -10,10 +11,10 @@ package cells
 		{
 			super(position);
 		}
-
-		override protected function get initialAsset () :Class
+		
+		override public function get code () :int
 		{
-			return ledgeGroundCell;
+			return CellCodes.GROUND;
 		}
 		
 		override public function get type () :String
@@ -21,7 +22,7 @@ package cells
 			return "ground";
 		}				
 		
-		[Embed(source="../../rsrc/png/ledge-ground-cell.png")]
+		[Embed(source="../../../rsrc/png/ledge-ground-cell.png")]
 		public static const ledgeGroundCell:Class; 
 	}
 }

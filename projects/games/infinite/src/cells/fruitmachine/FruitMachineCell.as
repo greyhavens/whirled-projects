@@ -1,6 +1,10 @@
-package cells
+package cells.fruitmachine
 {
 	import arithmetic.*;
+	
+	import cells.BackgroundCell;
+	import cells.CellCodes;
+	import cells.CellInteractions;
 	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -9,33 +13,22 @@ package cells
 	
 	public class FruitMachineCell extends BackgroundCell
 	{
-		public function FruitMachineCell(position:BoardCoordinates, mode:int, box:ObjectBox)
+		public function FruitMachineCell(position:BoardCoordinates, startingMode:int, box:ObjectBox)
 		{
 			super(position);
 			_box = box;
-			_mode = mode;
+			mode = startingMode;
 			
 			// we don't need to remove these listeners because the cell itself is the dispatcher.
 			addEventListener(CellEvent.ADDED_TO_OBJECTIVE, handleAdded);
-			addEventListener(CellEvent.REMOVED_FROM_OBJECTIVE, handleRemoved);
+			addEventListener(CellEvent.REMOVED_FROM_OBJECTIVE, handleRemoved);			
+		}			
+		
+		override public function get code () :int
+		{
+			return CellCodes.FRUIT_MACHINE;
 		}
 		
-		override protected function get initialAsset() :Class
-		{
-			return currentAsset;
-		}
-		
-		override protected function get currentAsset() :Class
-		{
-			switch (_mode) {
-				case INACTIVE: return fruitMachineInactive;
-				case ACTIVE: return fruitMachineActive;
-				case ROLLING: return fruitMachineRolling;
-				case DEFUNCT: return fruitMachineDefunct;
-				default: return super.initialAsset;
-			}
-		}
-
 		override public function get type () :String
 		{
 			return "fruit machine";
@@ -114,8 +107,7 @@ package cells
 		public function activate () :void
 		{
 			if (_player == null ||  !_player.canReceiveItem()) {
-				_mode = ACTIVE;
-				updateAsset();
+				mode = ACTIVE;
 			} else {
 				rollWheel();
 			} 						
@@ -126,8 +118,7 @@ package cells
 		 */
 		public function deactivate () :void
 		{
-			_mode = INACTIVE;
-			updateAsset();
+			mode = INACTIVE;
 		}
 
 		override public function get climbRightTo () :Boolean
@@ -173,8 +164,7 @@ package cells
 		{
 			trace ("rolling fruit machine");
 			stopTimer();
-			_mode = ROLLING;
-			updateAsset();
+			mode = ROLLING;
 			startRollingTimer();
 		}
 		
@@ -183,12 +173,24 @@ package cells
 		 */
 		protected function rollComplete (event:TimerEvent) :void
 		{
-			_mode = DEFUNCT;
-			updateAsset();
+			mode = DEFUNCT;
 			_box.giveObjectTo(_player);
 		}
 
-		protected var _box:ObjectBox;
+		public function set mode (mode:int) :void
+		{
+			if (mode != _mode) {
+				_mode = mode;
+				dispatchEvent(new FruitMachineEvent(FruitMachineEvent.STATE_CHANGED, this));
+			}
+		}
+		
+		public function get mode () :int 
+		{
+			return _mode;
+		}
+
+       protected var _box:ObjectBox;
 
 		protected var _mode:int;
 	
@@ -202,18 +204,6 @@ package cells
 		public static const DEFUNCT:int = 3;
 		
 		public static const ACTIVATION_DELAY:int = 10000; // 10 seconds between state changes
-		public static const ROLL_PERIOD:int = 3000; // the machine rolls for 5 seconds
-		
-		[Embed(source="../../rsrc/png/fruit-machine-inactive.png")]
-		protected static const fruitMachineInactive:Class;
-		
-		[Embed(source="../../rsrc/png/fruit-machine.png")]
-		protected static const fruitMachineActive:Class;
-		
-		[Embed(source="../../rsrc/png/fruit-machine-rolling.png")]
-		protected static const fruitMachineRolling:Class;
-		
-		[Embed(source="../../rsrc/png/fruit-machine-defunct.png")]
-		protected static const fruitMachineDefunct:Class;		
+		public static const ROLL_PERIOD:int = 3000; // the machine rolls for 5 seconds			
 	}
 }

@@ -4,7 +4,7 @@ package
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
-	import cells.FruitMachineCell;
+	import cells.fruitmachine.*;
 	
 	public class BoxController implements BoardAccess
 	{

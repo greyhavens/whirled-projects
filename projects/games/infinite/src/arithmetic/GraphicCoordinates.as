@@ -1,6 +1,5 @@
 package arithmetic
 {
-	import cells.CellBase;
 	
 	import flash.display.DisplayObject;
 	
@@ -9,20 +8,6 @@ package arithmetic
 		public function GraphicCoordinates(x:int, y:int)
 		{
 			super(x, y);
-		}
-
-		public static function fromDisplayObject(object:DisplayObject) :GraphicCoordinates
-		{
-			return new GraphicCoordinates (
-				object.x,
-				object.y
-			);
-		}
-
-		public function applyTo (object:DisplayObject) :void 
-		{
-			object.x = x;
-			object.y = y;
 		}
 		
 		public function translatedBy (v:Vector) :GraphicCoordinates
@@ -45,7 +30,7 @@ package arithmetic
 			(boardOrigin:BoardCoordinates, graphicsOrigin:GraphicCoordinates) :BoardCoordinates
 		{
 			return boardOrigin.translatedBy(
-				graphicsOrigin.distanceTo(this).divideByVector(CellBase.UNIT)
+				graphicsOrigin.distanceTo(this).divideByVector(Config.cellSize)
 			);			
 		}
 

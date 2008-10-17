@@ -1,5 +1,7 @@
 package cells
 {
+	import items.Item;
+	
 	/**
 	 * Various different ways a cell can interact with a player.  Implemented by players or their
 	 * proxies.

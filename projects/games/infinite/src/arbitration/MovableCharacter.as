@@ -1,5 +1,7 @@
 package arbitration
 {
+	import arithmetic.BoardCoordinates;
+	
 	import flash.events.IEventDispatcher;
 	
 	public interface MovableCharacter extends IEventDispatcher
@@ -8,6 +10,6 @@ package arbitration
 		 * Return the cell that the player currently occupies if the player is currently in a 
 		 * cell, otherwise null.
 		 */
-		function get cell () :Cell;		
+		function get cell () :Cell;
 	}
 }

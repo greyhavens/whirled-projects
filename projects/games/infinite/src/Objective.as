@@ -3,6 +3,8 @@ package
 	import arithmetic.*;
 	
 	import cells.CellObjective;
+	import cells.ViewFactory;
+	import cells.views.CellView;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -47,7 +49,9 @@ package
 			
 			// Create a new OwnerLable() and add it to the top of the display list.
 			_label = new OwnerLabel(this);
-			addChild(_label); 
+			addChild(_label);
+			
+			_viewFactory = new ViewFactory(); 
 		}		
 		
 		/**
@@ -125,10 +129,10 @@ package
 		 */
 		public function showCell (c:Cell) :void 
 		{
-			const v:DisplayObject = c.view;
-			c.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);		
-			addChildAt(v, 0);
-			cellCoordinates(c.position).applyTo(v);
+			const v:CellView = _viewFactory.viewOf(c);
+			v.addToObjective(this);
+			_viewBuffer.store(c.position, v);	
+			v.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);				
 		}
 		
 		/**
@@ -137,18 +141,21 @@ package
 		 */
 		public function hideCell (c:Cell) :void
 		{
-			removeChild(c.view);
+			_viewBuffer.take(c.position).removeFromObjective(this);
 		}
 		
-		public function displayOwnership (labellable:Labellable) :void
+		public function displayOwnership (cell:Cell) :void
 		{
-			trace ("showing user that this is "+labellable.owner.name+"'s "+labellable.objectName);
-			_label.displayOwnership(labellable);
+			trace ("showing user that this is "+cell.owner.name+"'s "+cell.objectName);
+			const view:CellView = _viewBuffer.find(cell.position);
+			if (view is Labellable) {
+				_label.displayOwnership(view as Labellable);
+			}
 		}
 				
-		public function hideOwnership (labellable:Labellable) :void
+		public function hideOwnership (labellable:Cell) :void
 		{
-			trace ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);
+			trace ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
 			_label.hide();
 		}
 				
@@ -179,7 +186,7 @@ package
 			bufferViewpoint(player.cell.position);		
 			scrollViewPointTo(cellCoordinates(player.cell.position));
 			addChild(player.view);
-			player.positionInCell(player.cell.position).applyTo(player.view);
+			Geometry.position(player.view, player.positionInCell(player.cell.position));
 		}
 			
 		protected function bufferViewpoint (viewPoint:BoardCoordinates) :void
@@ -243,6 +250,7 @@ package
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
 	
+		protected var _viewFactory:ViewFactory;
 		// owner label
 		protected var _label:OwnerLabel;
 	
@@ -254,6 +262,9 @@ package
 		
 		// memory for cell state that should be kept off the board.
 		protected var _memory:CellMemory = new CellDictionary();
+				
+		// memory associating views with cells.
+		protected var _viewBuffer:ViewBuffer = new ViewBuffer();
 				
 		// buffer of cells
 		protected var _cells:CellScrollBuffer;

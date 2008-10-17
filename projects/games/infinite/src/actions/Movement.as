@@ -1,6 +1,7 @@
 package actions
 {	
 	import arithmetic.*;
+	
 	import flash.display.DisplayObject;
 	
 	public class Movement
@@ -14,7 +15,7 @@ package actions
 			_targetCell = targetCell;
 			_destination = player.positionInCell(targetCell.position);
 
-			const move:Vector = GraphicCoordinates.fromDisplayObject(_view).distanceTo(_destination);
+			const move:Vector = Geometry.coordsOf(_view).distanceTo(_destination);
 			// trace ("complete movement is: "+move);
 			const cells:Number = move.length / Config.cellSize.dy;
 			// trace ("which is "+cells+" cells");
@@ -47,7 +48,7 @@ package actions
 				_objective.scrollViewPointTo(_player.cellBoundary());
 			} else {
 				const step:Vector = _delta.multiplyByScalar(event.duration).toVector();
-				step.moveDisplayObject(_view);
+				Geometry.moveBy(step, _view);
 				_objective.scrollViewPointTo(_player.cellBoundary());
 			}
 		}

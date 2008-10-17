@@ -1,6 +1,9 @@
-package cells
+package cells.wall
 {
 	import arithmetic.BoardCoordinates;
+	
+	import cells.BackgroundCell;
+	import cells.CellCodes;
 	
 	public class WallBaseCell extends BackgroundCell
 	{
@@ -8,10 +11,11 @@ package cells
 		{
 			super(position);
 		}
-		override protected function get initialAsset () :Class
+		
+		override public function get code () :int
 		{
-			return wall;
-		}			
+			return CellCodes.WALL_BASE;
+		}
 	
 		override public function get type () :String { return "wall base"; }	
 		override public function get climbLeftTo () :Boolean { return true; }
@@ -19,7 +23,7 @@ package cells
 		override public function get replacable () :Boolean { return true; }
 		override public function get canBecomeWindow() :Boolean { return true; }
 		
-		[Embed(source="../../rsrc/png/wall.png")]
+		[Embed(source="../../../rsrc/png/wall.png")]
 		public static const wall:Class;
 	}
 }

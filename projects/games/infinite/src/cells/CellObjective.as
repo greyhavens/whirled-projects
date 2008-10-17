@@ -22,11 +22,11 @@ package cells
 		/**
 		 * Display ownership information about the cell to the user.
 		 */
-		function displayOwnership (cell:Labellable) :void
+		function displayOwnership (cell:Cell) :void
 		
 		/**
 		 * Stop displaying ownership information about the cell to the user.
 		 */
-		function hideOwnership (cell:Labellable) :void				
+		function hideOwnership (cell:Cell) :void				
 	}
 }
