@@ -1,5 +1,6 @@
 package popcraft.sp.endless {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Assert;
 
 import flash.utils.ByteArray;
@@ -12,8 +13,10 @@ public class SavedEndlessGame
     public var score :int;
     public var multiplier :int;
     public var health :int = 0;
+    public var spells :Array = ArrayUtil.create(NUM_SPELLS, 0);
 
-    public static function create (mapIndex :int, score :int, multiplier :int, health :int)
+    public static function create (mapIndex :int, score :int, multiplier :int, health :int,
+        spells :Array)
         :SavedEndlessGame
     {
         var save :SavedEndlessGame = new SavedEndlessGame();
@@ -21,6 +24,7 @@ public class SavedEndlessGame
         save.score = score;
         save.multiplier = multiplier;
         save.health = health;
+        save.spells = spells.slice();
         return save;
     }
 
@@ -29,23 +33,47 @@ public class SavedEndlessGame
         return (mapIndex == rhs.mapIndex &&
             score == rhs.score &&
             multiplier == rhs.multiplier &&
-            health == rhs.health);
+            health == rhs.health &&
+            this.spellsEqual(rhs));
+    }
+
+    protected function spellsEqual (rhs :SavedEndlessGame) :Boolean
+    {
+        for (var spellType :uint = 0; spellType < NUM_SPELLS; ++spellType) {
+            if (spells[spellType] != rhs.spells[spellType]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function fromBytes (ba :ByteArray) :void
     {
+        checkCookieValidity();
+
         mapIndex = ba.readShort();
         score = ba.readInt();
         multiplier = ba.readByte();
         health = ba.readShort();
+
+        for (var spellType :uint = 0; spellType < NUM_SPELLS; ++spellType) {
+            spells[spellType] = ba.readByte();
+        }
     }
 
     public function toBytes (ba :ByteArray) :void
     {
+        checkCookieValidity();
+
         ba.writeShort(mapIndex);
         ba.writeInt(score);
         ba.writeByte(multiplier);
         ba.writeShort(health);
+
+        for each (var spellCount :int in spells) {
+            ba.writeByte(spellCount);
+        }
     }
 
     public static function max (a :SavedEndlessGame, b :SavedEndlessGame) :SavedEndlessGame
@@ -57,9 +85,22 @@ public class SavedEndlessGame
         maxGame.score = Math.max(a.score, b.score);
         maxGame.multiplier = Math.max(a.multiplier, b.multiplier);
         maxGame.health = Math.max(a.health, b.health);
+
+        for (var spellType :int = 0; spellType < NUM_SPELLS; ++spellType) {
+            maxGame.spells[spellType] = Math.max(a.spells[spellType], b.spells[spellType]);
+        }
+
         return maxGame;
     }
 
+    protected static function checkCookieValidity () :void
+    {
+        if (NUM_SPELLS != Constants.CASTABLE_SPELL_TYPE__LIMIT) {
+            throw new Error("A new castable spell was added; update EndlessLevelManager's cookie logic");
+        }
+    }
+
+    protected static const NUM_SPELLS :int = 3;
 }
 
 }

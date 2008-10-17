@@ -69,12 +69,18 @@ public class PlayerInfo extends EventDispatcher
         return save;
     }
 
+    /**
+     * Used to restore data in endless mode when the player switches levels.
+     */
     public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo) :void
     {
         this.workshop.health = savedData.health;
         this.workshop.damageShields = savedData.damageShields;
     }
 
+    /**
+     * Used to restore data in endless mode when the player continues from a saved game.
+     */
     public function restoreSavedGameData (save :SavedEndlessGame, damageShieldHealth :Number) :void
     {
         var shields :Array = [];

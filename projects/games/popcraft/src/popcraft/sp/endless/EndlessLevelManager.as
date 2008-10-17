@@ -42,7 +42,8 @@ public class EndlessLevelManager
             EndlessGameContext.mapIndex + 1,
             EndlessGameContext.score,
             EndlessGameContext.scoreMultiplier,
-            savedPlayerData.health);
+            savedPlayerData.health,
+            savedPlayerData.spells);
 
         var existingSaveIndex :int = ArrayUtil.indexIf(saveArray,
             function (save :SavedEndlessGame) :Boolean {

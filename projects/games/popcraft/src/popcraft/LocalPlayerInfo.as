@@ -6,6 +6,7 @@ import flash.display.DisplayObject;
 
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.sp.endless.SavedEndlessGame;
 import popcraft.sp.endless.SavedLocalPlayerInfo;
 import popcraft.sp.endless.SavedPlayerInfo;
 import popcraft.ui.GotSpellEvent;
@@ -51,6 +52,13 @@ public class LocalPlayerInfo extends PlayerInfo
 
         var localData :SavedLocalPlayerInfo = SavedLocalPlayerInfo(savedData);
         _heldSpells = localData.spells.slice();
+    }
+
+    override public function restoreSavedGameData (save :SavedEndlessGame,
+        damageShieldHealth :Number) :void
+    {
+        super.restoreSavedGameData(save, damageShieldHealth);
+        _heldSpells = save.spells.slice();
     }
 
     public function getResourceAmount (resourceType :int) :int
