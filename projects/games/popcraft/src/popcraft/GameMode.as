@@ -788,7 +788,7 @@ public class GameMode extends TransitionMode
 
     protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
 
-    protected static const FADE_OUT_TIME :Number = 3;
+    protected static const FADE_OUT_TIME :Number = (Constants.DEBUG_ALLOW_CHEATS ? 0.5 : 3);
 
     protected static const DASHBOARD_LOC :Point = new Point(350, 430);
     protected static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);

@@ -125,6 +125,7 @@ public class EndlessGameMode extends GameMode
             }
 
             if (computersAreDead) {
+                this.createMultiplierDrop(true);
                 this.switchMaps();
             }
         }
@@ -150,8 +151,6 @@ public class EndlessGameMode extends GameMode
 
     protected function switchMaps () :void
     {
-        this.createMultiplierDrop(true);
-
         // save data about our human players so that they can be resurrected
         // when the next round starts
         EndlessGameContext.savedHumanPlayers = [];

@@ -68,10 +68,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			<Map displayName="Welcoming Committee" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
-					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
-					<BaseLocation playerName="Eloise" x="80" y="295" team="0"/>
+					<BaseLocation playerName="Finley" x="100" y="250" team="0"/>
+					<BaseLocation playerName="Eloise" x="100" y="250" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="200" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="230" y="300" scatterRadius="60"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -83,7 +83,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					baseHealthIncrement="75"
 					waveDelayScale="0.85"
 					team="1">
-					<BaseLocation x="600" y="295" team="1"/>
+					<BaseLocation x="600" y="340" team="1"/>
 					<RepeatingDays>
 						<Day repeatWaves="true"
 							noticeSpellDropAfterMin="8"
@@ -176,10 +176,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		            <SpellDropLocation x="270" y="125"/>
 				</MapSettings>
 				<HumanBaseLocations>
-					<BaseLocation playerName="Finley" x="90" y="155" team="0"/>
-					<BaseLocation playerName="Eloise" x="90" y="155" team="0"/>
+					<BaseLocation playerName="Finley" x="80" y="230" team="0"/>
+					<BaseLocation playerName="Eloise" x="80" y="230" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="250" y="105" scatterRadius="40"/>
+				<MultiplierDropLocation x="300" y="160" scatterRadius="20"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -191,7 +191,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					baseHealthIncrement="75"
 					waveDelayScale="0.85"
 					team="1">
-					<BaseLocation x="590" y="200" team="1"/>
+					<BaseLocation x="620" y="200" team="1"/>
 					<RepeatingDays>
 						<Day repeatWaves="true">
 	
@@ -220,7 +220,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="90" y="155" team="0"/>
 					<BaseLocation playerName="Eloise" x="90" y="155" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="250" y="105" scatterRadius="40"/>
+				<MultiplierDropLocation x="350" y="210" scatterRadius="40"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				<!-- Ralph - strong defense -->
@@ -231,7 +231,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					baseHealthIncrement="75"
 					waveDelayScale="0.85"
 					team="1">
-					<BaseLocation x="610" y="140" team="1"/>
+					<BaseLocation x="620" y="270" team="1"/>
 					<RepeatingDays>
 						<Day repeatWaves="true"
 							noticeSpellDropAfterMin="4"
@@ -302,13 +302,13 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			<!-- ****** LEVEL 3 : Grave Concerns (Jack & Pigsley) ****** -->
 			<Map displayName="Grave Concerns" isSavePoint="false">
 				<MapSettings backgroundName="wharf">
-		            <SpellDropLocation x="240" y="255"/>
+		            <SpellDropLocation x="360" y="130"/>
 				</MapSettings>
 				<HumanBaseLocations>
-					<BaseLocation playerName="Finley" x="80" y="195" team="0"/>
-					<BaseLocation playerName="Eloise" x="80" y="195" team="0"/>
+					<BaseLocation playerName="Finley" x="360" y="330" team="0"/>
+					<BaseLocation playerName="Eloise" x="360" y="330" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="235" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="360" y="120" scatterRadius="60"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -317,9 +317,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					baseStartHealth="150"
 					baseHealth="150"
 					baseHealthIncrement="75"
-					waveDelayScale="0.85"
+					waveDelayScale="0.9"
 					team="1">
-					<BaseLocation x="600" y="275" team="1"/>
+					<BaseLocation x="600" y="140" team="1"/>
 					<RepeatingDays>
 						<Day repeatWaves="true"
 							noticeSpellDropAfterMin="5"
@@ -327,15 +327,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 							spellDropCourierGroupSizeMin="1"
 							spellDropCourierGroupSizeMax="1">
 							
-							<Wave absoluteDelay="10"><Unit type="sapper" count="2"/></Wave>
-							<Wave absoluteDelay="20"><Unit type="sapper" count="2"/></Wave>
+							<Wave absoluteDelay="10"><Unit type="sapper" count="1"/></Wave>
+							<Wave absoluteDelay="20"><Unit type="heavy" count="3" max="3"/></Wave>
+							<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
 							<Wave absoluteDelay="40" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
-							<Wave absoluteDelay="45"><Unit type="heavy" count="2" max="2"/></Wave>
-							<Wave absoluteDelay="55"><Unit type="sapper" count="2"/></Wave>
-							<Wave absoluteDelay="65"><Unit type="sapper" count="2"/></Wave>
-							<Wave absoluteDelay="90" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
-							<Wave absoluteDelay="110"><Unit type="grunt" count="2"/></Wave>
-							<Wave absoluteDelay="120"/>
 						</Day>
 					</RepeatingDays>
 				</Computer>
@@ -345,19 +340,14 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					baseStartHealth="120"
 					baseHealth="120"
 					baseHealthIncrement="60"
-					waveDelayScale="0.85"
+					waveDelayScale="0.9"
 					team="1">
-					<BaseLocation x="500" y="110" team="1"/>
+					<BaseLocation x="80" y="140" team="1"/>
 					<RepeatingDays>
 						<Day repeatWaves="true">
 							<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
-							<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-							<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
-							<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
-							<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-							<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-							<Wave absoluteDelay="100"><Unit type="grunt" count="2"/></Wave>
-							<Wave absoluteDelay="120"/>
+							<Wave absoluteDelay="12"><Unit type="grunt" count="2"/></Wave>
+							<Wave absoluteDelay="24"/>
 						</Day>
 					</RepeatingDays>
 				</Computer>

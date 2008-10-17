@@ -41,7 +41,7 @@ public class Constants
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = false;
     public static const DEBUG_LOCK_PREMIUM_CONTENT :Boolean = false;
 
