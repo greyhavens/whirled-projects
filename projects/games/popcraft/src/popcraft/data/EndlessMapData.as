@@ -11,12 +11,13 @@ public class EndlessMapData
     public var mapSettings :MapSettingsData;
 
     public var displayName :String;
+    public var isSavePoint :Boolean;
 
     public var humanBaseLocs :HashMap = new HashMap(); // Map<PlayerName, BaseLocation>
     public var multiplierDropLoc :Vector2 = new Vector2();
     public var multiplierScatterRadius :Number;
 
-    public var computerGroups :Array = []; // array of arrays of EndlessComputerPlayerDatas
+    public var computers :Array = []; // array of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
     public var availableSpells :Array = [];
 
@@ -27,6 +28,7 @@ public class EndlessMapData
         mapData.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
 
         mapData.displayName = XmlReader.getStringAttr(xml, "displayName");
+        mapData.isSavePoint = XmlReader.getBooleanAttr(xml, "isSavePoint");
 
         for each (var baseLocXml :XML in xml.HumanBaseLocations.BaseLocation) {
             var playerName :String = XmlReader.getStringAttr(baseLocXml, "playerName");
@@ -38,13 +40,8 @@ public class EndlessMapData
         mapData.multiplierDropLoc = DataUtils.parseVector2(multiplierDropXml);
         mapData.multiplierScatterRadius = XmlReader.getNumberAttr(multiplierDropXml, "scatterRadius");
 
-        for each (var computerGroupXml :XML in xml.ComputerGroups.Group) {
-            var group :Array = [];
-            for each (var computerXml :XML in computerGroupXml.Computer) {
-                group.push(EndlessComputerPlayerData.fromXml(computerXml));
-            }
-
-            mapData.computerGroups.push(group);
+        for each (var computerXml :XML in xml.Computer) {
+            mapData.computers.push(EndlessComputerPlayerData.fromXml(computerXml));
         }
 
         // parse the available units and spells
