@@ -44,7 +44,7 @@ public class EndlessLevelSelectMode extends AppMode
         // insert a dummy Level 1 save into the save array, so that players can start
         // new games
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        var level1 :SavedEndlessGame = SavedEndlessGame.create(0, 0, 0, workshopData.maxHealth,
+        var level1 :SavedEndlessGame = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth,
             ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
         _saves.splice(0, 0, level1);
 
@@ -89,7 +89,7 @@ public class EndlessLevelSelectMode extends AppMode
             });
         _modeSprite.addChild(nextButton);
 
-        this.selectSave(0, ANIMATE_NONE);
+        this.selectSave(_saves.length - 1, ANIMATE_NONE);
     }
 
     protected function selectSave (saveIndex :int, animate :int) :void
@@ -192,8 +192,8 @@ public class EndlessLevelSelectMode extends AppMode
 
     protected static const ANIMATE_TIME :Number = 0.4;
     protected static const THUMBNAIL_LOC :Point = new Point(350, 360);
-    protected static const THUMBNAIL_NEXT_LOC :Point = new Point(650, 360);
-    protected static const THUMBNAIL_PREV_LOC :Point = new Point(50, 360);
+    protected static const THUMBNAIL_NEXT_LOC :Point = new Point(550, 360);
+    protected static const THUMBNAIL_PREV_LOC :Point = new Point(150, 360);
 
     protected static const ANIMATE_NONE :int = 0;
     protected static const ANIMATE_NEXT :int = 1;
@@ -217,6 +217,7 @@ import popcraft.data.EndlessMapData;
 import popcraft.battle.UnitDamageShield;
 import flash.text.TextField;
 import flash.display.Bitmap;
+import com.threerings.util.StringUtil;
 
 class SavedGameThumbnail extends SceneObject
 {
@@ -269,7 +270,7 @@ class SavedGameInfo extends SceneObject
         var cycleNumber :int = level.getMapCycleNumber(save.mapIndex);
 
         _titleText = UIBits.createText(mapData.displayName + " (" + cycleNumber + ")", 4, 0, 0xFFFFFF);
-        _infoText = UIBits.createText("Score: " + save.score + " x" + save.multiplier, 2, 0, 0xFFFFFF);
+        _infoText = UIBits.createText("Score: " + StringUtil.formatNumber(save.score) + " x" + save.multiplier, 2, 0, 0xFFFFFF);
 
         _sprite.addChild(_titleText);
         _sprite.addChild(_infoText);
