@@ -12,8 +12,13 @@ public class SavedEndlessGame
     public var mapIndex :int;
     public var score :int;
     public var multiplier :int;
-    public var health :int = 0;
+    public var health :int;
     public var spells :Array = ArrayUtil.create(NUM_SPELLS, 0);
+
+    public static function firstLevel () :SavedEndlessGame
+    {
+        return new SavedEndlessGame();
+    }
 
     public static function create (mapIndex :int, score :int, multiplier :int, health :int,
         spells :Array)

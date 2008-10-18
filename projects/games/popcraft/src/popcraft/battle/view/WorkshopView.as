@@ -1,6 +1,5 @@
 package popcraft.battle.view {
 
-import com.threerings.flash.ColorUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
@@ -14,12 +13,12 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;
 import popcraft.util.*;
 
@@ -57,36 +56,17 @@ public class WorkshopView extends BattlefieldSprite
         _sprite.addChild(_movie);
 
         // create health meters
-        var playerColor :uint = _unit.owningPlayerInfo.color;
-        var yOffset :Number = -_sprite.height - HEALTH_METER_SIZE.y;
-        var remainingMaxMeterValue :Number = _unit.maxHealth;
-        var remainingMeterValue :Number = _unit.health;
-        while (remainingMaxMeterValue > 0) {
-            var thisMeterMaxValue :Number =
-                Math.min(remainingMaxMeterValue, HEALTH_METER_MAX_MAX_VALUE);
-            var thisMeterValue :Number = Math.min(remainingMeterValue, thisMeterMaxValue);
+        _healthMeters = HealthMeters.createWorkshopMeters(
+            _unit.owningPlayerInfo.color,
+            _unit.maxHealth,
+            _unit.health);
 
-            var healthMeter :RectMeterView = new RectMeterView();
-            healthMeter.minValue = 0;
-            healthMeter.maxValue = thisMeterMaxValue;
-            healthMeter.value = thisMeterValue;
-            healthMeter.foregroundColor = playerColor;
-            healthMeter.backgroundColor = 0x888888;
-            healthMeter.outlineColor = 0x000000;
-            healthMeter.meterWidth = HEALTH_METER_SIZE.x *
-                (thisMeterMaxValue / HEALTH_METER_MAX_MAX_VALUE);
-            healthMeter.meterHeight = HEALTH_METER_SIZE.y;
-            healthMeter.updateDisplay();
-
+        var yOffset :Number = -_sprite.height;
+        for each (var healthMeter :RectMeterView in _healthMeters) {
             healthMeter.x = -(healthMeter.width * 0.5);
-            healthMeter.y = yOffset;
+            healthMeter.y = yOffset - healthMeter.height;
             _sprite.addChild(healthMeter);
-
-            _healthMeters.push(healthMeter);
-
-            yOffset -= (HEALTH_METER_SIZE.y + 1);
-            remainingMaxMeterValue -= thisMeterMaxValue;
-            remainingMeterValue -= thisMeterValue;
+            yOffset -= (healthMeter.height + 1);
         }
 
         _shieldMeterParent = new Sprite();
@@ -364,8 +344,6 @@ public class WorkshopView extends BattlefieldSprite
 
     protected static var g_debrisClass :Class;
 
-    protected static const HEALTH_METER_MAX_MAX_VALUE :Number = 150;
-    protected static const HEALTH_METER_SIZE :Point = new Point(50, 6);
     protected static const SHIELD_METER_HEIGHT :Number = 7;
     protected static const SHIELD_METER_Y_LOC :Number = 6;
     protected static const SHIELD_METER_WIDTH_PER_HEALTH :Number = 50 / 75;

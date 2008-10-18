@@ -75,6 +75,8 @@ public class Resources
         rm.queueResourceLoad(Constants.RESTYPE_GAMEDATA, Constants.RSRC_DEFAULTGAMEDATA, { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
+        rm.queueResourceLoad("image", "endlessThumb", { embeddedClass: IMG_ENDLESSTHUMB });
+
         rm.queueResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
         rm.queueResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
@@ -201,6 +203,9 @@ public class Resources
     protected static const GAME_VARIANTS_DATA :Class;
 
     // gfx - all
+    [Embed(source="../../rsrc/all/endless_1_thumb.png", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB :Class;
+
     [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
     protected static const SWF_UI :Class;
 

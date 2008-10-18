@@ -17,6 +17,7 @@ import flash.geom.Rectangle;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
+import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;
 import popcraft.util.*;
 
@@ -37,17 +38,7 @@ public class CreatureUnitView extends BattlefieldSprite
         this.setupAnimations(playerColor);
 
         // health meter
-        _healthMeter = new RectMeterView();
-        _healthMeter.minValue = 0;
-        _healthMeter.maxValue = _unit.maxHealth;
-        _healthMeter.value = _unit.health;
-        _healthMeter.foregroundColor = playerColor;
-        _healthMeter.backgroundColor = 0x888888;
-        _healthMeter.outlineColor = 0x000000;
-        _healthMeter.meterWidth = 30;
-        _healthMeter.meterHeight = 3;
-        _healthMeter.updateDisplay();
-
+        _healthMeter = HealthMeters.createCreatureMeter(playerColor, _unit.maxHealth, _unit.health);
         _healthMeter.x = -(_healthMeter.width * 0.5);
         _healthMeter.y = -_sprite.height - _healthMeter.height;
         _sprite.addChild(_healthMeter);
