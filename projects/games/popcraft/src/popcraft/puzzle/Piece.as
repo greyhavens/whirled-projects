@@ -5,12 +5,10 @@ import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import popcraft.*;
-import popcraft.data.ResourceData;
 import popcraft.util.*;
 
 public class Piece extends SceneObject
@@ -64,10 +62,7 @@ public class Piece extends SceneObject
 
         pieceMovie.cacheAsBitmap = true;
 
-        _sprite = new Sprite();
-        _sprite.mouseChildren = false;
-        _sprite.mouseEnabled = false;
-
+        _sprite = SpriteUtil.createSprite();
         _sprite.addChild(pieceMovie);
     }
 

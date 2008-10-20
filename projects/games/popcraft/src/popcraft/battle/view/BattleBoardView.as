@@ -12,6 +12,7 @@ import flash.display.Sprite;
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.net.*;
+import popcraft.util.*;
 
 public class BattleBoardView extends SceneObject
 {
@@ -23,17 +24,22 @@ public class BattleBoardView extends SceneObject
         _bg = SwfResource.instantiateMovieClip("bg", GameContext.gameMode.mapSettings.backgroundName);
         _bg.x = Constants.SCREEN_SIZE.x * 0.5;
         _bg.y = Constants.SCREEN_SIZE.y * 0.5;
+        _bg.mouseEnabled = false;
+        _bg.mouseChildren = false;
 
+        _parent = SpriteUtil.createSprite(true, false);
         _parent.addChild(_bg);
 
         var attach :MovieClip = _bg["attachment"];
 
+        _diurnalMeterParent = SpriteUtil.createSprite();
         _diurnalMeterParent.x = -_bg.x;
         _diurnalMeterParent.y = -_bg.y;
+        attach.addChild(_diurnalMeterParent);
+
+        _unitViewParent = SpriteUtil.createSprite();
         _unitViewParent.x = -_bg.x;
         _unitViewParent.y = -_bg.y;
-
-        attach.addChild(_diurnalMeterParent);
         attach.addChild(_unitViewParent);
 
         _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
@@ -106,9 +112,9 @@ public class BattleBoardView extends SceneObject
 
     protected var _width :int;
     protected var _height :int;
-    protected var _parent :Sprite = new Sprite();
-    protected var _unitViewParent :Sprite = new Sprite();
-    protected var _diurnalMeterParent :Sprite = new Sprite();
+    protected var _parent :Sprite;
+    protected var _unitViewParent :Sprite;
+    protected var _diurnalMeterParent :Sprite;
     protected var _lastDayPhase :int;
     protected var _bg :MovieClip;
 }

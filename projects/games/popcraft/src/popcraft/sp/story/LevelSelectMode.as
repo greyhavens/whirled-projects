@@ -21,6 +21,7 @@ import popcraft.sp.UnitAnimTestMode;
 import popcraft.sp.endless.EndlessLevelSelectMode;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
+import popcraft.util.SpriteUtil;
 
 public class LevelSelectMode extends DemoGameMode
 {
@@ -315,7 +316,7 @@ public class LevelSelectMode extends DemoGameMode
         var numLevels :int = levelRecords.length;
 
         // create a button for each level
-        var buttonSprite :Sprite = new Sprite();
+        var buttonSprite :Sprite = SpriteUtil.createSprite(true, false);
         var levelsPerColumn :int = numLevels / NUM_COLUMNS;
         var column :int = -1;
         var columnLoc :Point;

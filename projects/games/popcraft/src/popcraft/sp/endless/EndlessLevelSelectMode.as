@@ -218,6 +218,7 @@ import popcraft.battle.UnitDamageShield;
 import flash.text.TextField;
 import flash.display.Bitmap;
 import com.threerings.util.StringUtil;
+import popcraft.util.SpriteUtil;
 
 class SavedGameThumbnail extends SceneObject
 {
@@ -225,7 +226,7 @@ class SavedGameThumbnail extends SceneObject
     {
         _save = save;
 
-        _sprite = new Sprite();
+        _sprite = SpriteUtil.createSprite();
         var image :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
         image.x = -image.width * 0.5;
         image.y = -image.height * 0.5;
@@ -253,7 +254,7 @@ class SavedGameInfo extends SceneObject
 {
     public function SavedGameInfo ()
     {
-        _sprite = new Sprite();
+        _sprite = SpriteUtil.createSprite();
         _titleText = new TextField();
         _infoText = new TextField();
 

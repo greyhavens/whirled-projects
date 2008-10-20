@@ -15,6 +15,8 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
+import popcraft.util.SpriteUtil;
+
 public class UIBits
 {
     public static const PANEL_TEXT_H_MARGIN :Number = 14;
@@ -26,7 +28,7 @@ public class UIBits
         frame.scaleX = width / frame.width;
         frame.scaleY = height / frame.height;
 
-        var sprite :Sprite = new Sprite();
+        var sprite :Sprite = SpriteUtil.createSprite();
 
         // the scale9 slices for frame_UI are off by 0.028 pixels/pixel-width of the
         // display object. correct for that here.
@@ -92,7 +94,7 @@ public class UIBits
             (panel.width * 0.5) - (tf.width * 0.5),
             (panel.height * 0.5) - (tf.height * 0.5));
 
-        var sprite :Sprite = new Sprite();
+        var sprite :Sprite = SpriteUtil.createSprite();
         sprite.addChild(panel);
         sprite.addChild(tf);
 
@@ -104,6 +106,7 @@ public class UIBits
     {
         var wordWrap :Boolean = (maxWidth > 0);
 
+        tf.mouseEnabled = false;
         tf.selectable = false;
         tf.multiline = true;
         tf.wordWrap = wordWrap;
@@ -177,7 +180,7 @@ public class UIBits
 
         // Add the frame and text to a new sprite. Trying to align them
         // within button_UI is becoming more trouble than it's worth
-        var sprite :Sprite = new Sprite();
+        var sprite :Sprite = SpriteUtil.createSprite();
         sprite.addChild(frame);
         sprite.addChild(tf);
 

@@ -95,7 +95,7 @@ public class CreatureUnitView extends BattlefieldSprite
             return;
         }
 
-        _unitSpellIconParent = new Sprite();
+        _unitSpellIconParent = SpriteUtil.createSprite();
         _unitSpellIconParent.x = -_healthMeter.height;
         _sprite.addChild(_unitSpellIconParent);
 
@@ -412,7 +412,7 @@ public class CreatureUnitView extends BattlefieldSprite
     protected var _unit :CreatureUnit;
 
     protected var _lastViewState :CreatureUnitViewState = new CreatureUnitViewState();
-    protected var _sprite :Sprite = new Sprite();
+    protected var _sprite :Sprite = SpriteUtil.createSprite();
     protected var _healthMeter :RectMeterView;
 
     protected var _animStanding :Array = [];

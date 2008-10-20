@@ -16,6 +16,7 @@ import popcraft.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.ui.UIBits;
+import popcraft.util.SpriteUtil;
 
 public class UnitAnimTestMode extends AppMode
 {
@@ -111,7 +112,7 @@ public class UnitAnimTestMode extends AppMode
             this.modeSprite.removeChild(_animSprite);
         }
 
-        _animSprite = new Sprite();
+        _animSprite = SpriteUtil.createSprite();
         this.modeSprite.addChild(_animSprite);
 
         _xLoc = 50;

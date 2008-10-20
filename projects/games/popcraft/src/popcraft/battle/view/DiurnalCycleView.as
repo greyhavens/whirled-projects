@@ -10,12 +10,13 @@ import flash.display.Sprite;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.util.SpriteUtil;
 
 public class DiurnalCycleView extends SceneObject
 {
     public function DiurnalCycleView ()
     {
-        _sprite = new Sprite();
+        _sprite = SpriteUtil.createSprite();
 
         _sun = SwfResource.instantiateMovieClip("dashboard", "sun");
         _moon = SwfResource.instantiateMovieClip("dashboard", "moon");

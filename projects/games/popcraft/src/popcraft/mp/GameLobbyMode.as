@@ -390,12 +390,13 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import popcraft.*;
 import popcraft.ui.UIBits;
+import popcraft.util.SpriteUtil;
 
 class PlayerHeadshot extends Sprite
 {
     public function PlayerHeadshot (playerSeat :int)
     {
-        var headshotParent :Sprite = new Sprite();
+        var headshotParent :Sprite = SpriteUtil.createSprite();
         this.addChild(headshotParent);
 
         // add the headshot image

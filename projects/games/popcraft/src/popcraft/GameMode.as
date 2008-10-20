@@ -59,9 +59,9 @@ public class GameMode extends TransitionMode
         GameContext.scaleSprites = GameContext.gameMode.mapSettings.scaleSprites;
 
         // create some layers
-        GameContext.battleLayer = new Sprite();
-        GameContext.dashboardLayer = new Sprite();
-        GameContext.overlayLayer = new Sprite();
+        GameContext.battleLayer = SpriteUtil.createSprite(true, false);
+        GameContext.dashboardLayer = SpriteUtil.createSprite(true, false);
+        GameContext.overlayLayer = SpriteUtil.createSprite();
         _modeLayer.addChild(GameContext.battleLayer);
         _modeLayer.addChild(GameContext.dashboardLayer);
         _modeLayer.addChild(GameContext.overlayLayer);

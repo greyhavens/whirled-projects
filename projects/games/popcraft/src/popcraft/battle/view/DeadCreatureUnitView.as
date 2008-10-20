@@ -9,12 +9,13 @@ import flash.display.Sprite;
 import popcraft.*;
 import popcraft.battle.CreatureUnit;
 import popcraft.util.PerfMonitor;
+import popcraft.util.SpriteUtil;
 
 public class DeadCreatureUnitView extends BattlefieldSprite
 {
     public function DeadCreatureUnitView (creature :CreatureUnit, facing :int)
     {
-        _sprite = new Sprite();
+        _sprite = SpriteUtil.createSprite();
 
         if (Constants.FACING_NE == facing) {
             facing = Constants.FACING_NW;

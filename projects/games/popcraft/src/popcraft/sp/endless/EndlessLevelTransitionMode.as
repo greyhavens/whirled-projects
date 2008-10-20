@@ -14,9 +14,9 @@ import flash.text.TextField;
 import mx.effects.easing.*;
 
 import popcraft.*;
-import popcraft.sp.endless.*;
 import popcraft.data.*;
 import popcraft.ui.*;
+import popcraft.util.SpriteUtil;
 
 public class EndlessLevelTransitionMode extends AppMode
 {
@@ -31,7 +31,7 @@ public class EndlessLevelTransitionMode extends AppMode
         super.setup();
 
         // create the background, which will fade to black
-        var bgSprite :Sprite = new Sprite();
+        var bgSprite :Sprite = SpriteUtil.createSprite();
         var g :Graphics = bgSprite.graphics;
         g.beginFill(0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
@@ -96,6 +96,7 @@ import com.threerings.flash.Vector2;
 import mx.effects.easing.Quintic;
 import popcraft.ui.UIBits;
 import popcraft.data.EndlessMapData;
+import popcraft.util.SpriteUtil;
 
 const FADE_IN_TIME :Number = 2;
 const TITLE_TIME :Number = 2;
@@ -116,7 +117,7 @@ class EndlessLevelTransitionOutMode extends AppMode
         super.setup();
 
         // create the background, which will fade from black
-        var bgSprite :Sprite = new Sprite();
+        var bgSprite :Sprite = SpriteUtil.createSprite();
         var g :Graphics = bgSprite.graphics;
         g.beginFill(0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);

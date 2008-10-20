@@ -69,7 +69,7 @@ public class WorkshopView extends BattlefieldSprite
             yOffset -= (healthMeter.height + 1);
         }
 
-        _shieldMeterParent = new Sprite();
+        _shieldMeterParent = SpriteUtil.createSprite();
         _shieldMeterParent.y = -_sprite.height + SHIELD_METER_Y_LOC;
         _sprite.addChild(_shieldMeterParent);
         this.updateShieldMeters();
@@ -323,8 +323,8 @@ public class WorkshopView extends BattlefieldSprite
         return _unit;
     }
 
-    protected var _sprite :Sprite = new Sprite();
-    protected var _clickableSprite :Sprite = new Sprite();
+    protected var _sprite :Sprite = SpriteUtil.createSprite();
+    protected var _clickableSprite :Sprite = SpriteUtil.createSprite(true, true);
     protected var _movie :MovieClip;
     protected var _workshop :MovieClip;
     protected var _targetBadge :MovieClip;

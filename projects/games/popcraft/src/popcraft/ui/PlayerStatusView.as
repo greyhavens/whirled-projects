@@ -8,13 +8,12 @@ import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
-import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.util.SpriteUtil;
 
 public class PlayerStatusView extends SceneObject
 {
@@ -46,7 +45,7 @@ public class PlayerStatusView extends SceneObject
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.color).createFilter() ];
 
         // display the player headshot
-        var headshotParent :Sprite = new Sprite();
+        var headshotParent :Sprite = SpriteUtil.createSprite();
 
         // add the headshot image
         var headshot :DisplayObject = _playerInfo.headshot;

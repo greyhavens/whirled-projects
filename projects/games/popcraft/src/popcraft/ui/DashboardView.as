@@ -19,6 +19,7 @@ import flash.text.TextField;
 import popcraft.*;
 import popcraft.data.ResourceData;
 import popcraft.sp.PauseMode;
+import popcraft.util.SpriteUtil;
 
 public class DashboardView extends SceneObject
 {
@@ -338,7 +339,7 @@ public class DashboardView extends SceneObject
         var resourceBarParent :Sprite = _resourceBars[resType];
 
         if (null == resourceBarParent) {
-            resourceBarParent = new Sprite();
+            resourceBarParent = SpriteUtil.createSprite();
             _resourceBars[resType] = resourceBarParent;
             puzzleFrame.addChildAt(resourceBarParent, 1);
         }

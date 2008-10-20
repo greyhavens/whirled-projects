@@ -43,7 +43,7 @@ public class PuzzleBoard extends SceneObject
         _resourceGenerator = new WeightedTable(table, AppContext.randStreamPuzzle);
 
         // create the visual representation of the board
-        _sprite = new Sprite();
+        _sprite = SpriteUtil.createSprite(false, true);
         _sprite.graphics.clear();
         _sprite.graphics.beginFill(0);
         _sprite.graphics.drawRect(
@@ -51,7 +51,6 @@ public class PuzzleBoard extends SceneObject
             (_cols * tileSize) - (_cols - 1),
             (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
-        _sprite.mouseEnabled = true;
 
         this.registerEventListener(_sprite, MouseEvent.CLICK, handleClicked);
     }
