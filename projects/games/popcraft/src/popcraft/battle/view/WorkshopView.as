@@ -96,6 +96,8 @@ public class WorkshopView extends BattlefieldSprite
             });
 
         this.targetEnemyBadgeVisible = false;
+
+        this.updateWorkshopLocation();
     }
 
     protected function setBurning () :void
@@ -111,9 +113,7 @@ public class WorkshopView extends BattlefieldSprite
         _movie.addChildAt(workshop, index);
         _workshop = workshop;
 
-        this.updateViewFlip();
-
-        _needsLocationUpdate = true;
+        this.updateWorkshopLocation();
     }
 
     protected function recolorWorkshop (workshop :MovieClip) :void
@@ -162,24 +162,19 @@ public class WorkshopView extends BattlefieldSprite
         return _clickableSprite;
     }
 
-    protected function updateViewFlip () :void
+    protected function updateWorkshopLocation () :void
     {
+        this.updateLoc(_unit.x, _unit.y);
+
         // flip the movie if we're on the left side of the board
         _workshop.scaleX = (_unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
+
+        _clickableSprite.x = this.x;
+        _clickableSprite.y = this.y;
     }
 
     override protected function update (dt :Number) :void
     {
-        if (_needsLocationUpdate) {
-            this.updateLoc(_unit.x, _unit.y);
-            this.updateViewFlip();
-
-            _clickableSprite.x = this.x;
-            _clickableSprite.y = this.y;
-
-            _needsLocationUpdate = false;
-        }
-
         var health :Number = _unit.health;
         if (health != _lastHealth) {
             if (health <= 0) {
@@ -331,7 +326,6 @@ public class WorkshopView extends BattlefieldSprite
     protected var _targetBadgeIndex :int;
     protected var _targetBadgeVisible :Boolean;
     protected var _unit :WorkshopUnit;
-    protected var _needsLocationUpdate :Boolean = true;
 
     protected var _lastHealth :Number;
     protected var _healthMeters :Array = [];

@@ -59,7 +59,7 @@ public class EndlessLevelTransitionMode extends AppMode
             MULTIPLIER_TITLE_LOC.y,
             MULTIPLIER_ARC_TIME,
             mx.effects.easing.Linear.easeNone,
-            mx.effects.easing.Quintic.easeOut));
+            mx.effects.easing.Cubic.easeOut));
 
         this.addObject(multiplierObj, _modeSprite);
 
@@ -98,9 +98,9 @@ import popcraft.ui.UIBits;
 import popcraft.data.EndlessMapData;
 import popcraft.util.SpriteUtil;
 
-const FADE_IN_TIME :Number = 2;
+const FADE_IN_TIME :Number = 1;
 const TITLE_TIME :Number = 2;
-const FADE_OUT_TIME :Number = 2;
+const FADE_OUT_TIME :Number = 1;
 const MULTIPLIER_ARC_TIME :Number = 1;
 const MULTIPLIER_TITLE_LOC :Point = new Point(350, 100);
 
@@ -147,7 +147,7 @@ class EndlessLevelTransitionOutMode extends AppMode
                 _nextMap.multiplierDropLoc.y,
                 MULTIPLIER_ARC_TIME,
                 mx.effects.easing.Linear.easeNone,
-                mx.effects.easing.Quintic.easeIn)));
+                mx.effects.easing.Cubic.easeIn)));
 
         this.addObject(multiplierObj, _modeSprite);
 

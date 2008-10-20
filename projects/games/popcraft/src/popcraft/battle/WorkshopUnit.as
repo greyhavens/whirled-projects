@@ -15,6 +15,8 @@ public class WorkshopUnit extends Unit
         _maxHealth = owningPlayerInfo.maxHealth;
         _health = owningPlayerInfo.startHealth;
         _invincible = owningPlayerInfo.isInvincible;
+        _loc.x = owningPlayerInfo.baseLoc.loc.x;
+        _loc.y = owningPlayerInfo.baseLoc.loc.y;
     }
 
     public function get unitSpawnLoc () :Vector2

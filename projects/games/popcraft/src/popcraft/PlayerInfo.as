@@ -100,10 +100,7 @@ public class PlayerInfo extends EventDispatcher
 
         // create the workshop
         var view :WorkshopView = GameContext.unitFactory.createWorkshop(this);
-        var workshop :WorkshopUnit = view.workshop;
-        workshop.x = _baseLoc.loc.x;
-        workshop.y = _baseLoc.loc.y;
-        _workshopRef = workshop.ref;
+        _workshopRef = view.workshop.ref;
     }
 
     public function destroy () :void
