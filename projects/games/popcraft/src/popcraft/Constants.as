@@ -137,20 +137,20 @@ public class Constants
 
     /* Performance stuff */
     public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [
-        16,  // grunt
-        35,  // heavy
-        35,   // sapper
-        35,   // courier
-        16,  // colossus
-        16,  // boss
+        17,  // grunt
+        29,  // heavy
+        29,   // sapper
+        29,   // courier
+        22,  // colossus
+        17,  // boss
     ];
     public static const BITMAP_DEATH_ANIM_THRESHOLDS :Array = [
-        16,  // grunt
-        16,  // heavy
-        16,  // sapper
-        16,  // courier
-        16,  // colossus
-        16,  // boss
+        17,  // grunt
+        17,  // heavy
+        17,  // sapper
+        17,  // courier
+        17,  // colossus
+        17,  // boss
     ];
 
 }

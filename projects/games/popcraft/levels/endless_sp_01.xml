@@ -35,7 +35,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
 					<BaseLocation playerName="Eloise" x="80" y="295" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="200" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="200" y="265"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -71,7 +71,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="100" y="250" team="0"/>
 					<BaseLocation playerName="Eloise" x="100" y="250" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="230" y="300" scatterRadius="60"/>
+				<MultiplierDropLocation x="230" y="300"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -111,7 +111,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="90" y="155" team="0"/>
 					<BaseLocation playerName="Eloise" x="90" y="155" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="250" y="105" scatterRadius="40"/>
+				<MultiplierDropLocation x="250" y="105"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -179,7 +179,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="80" y="230" team="0"/>
 					<BaseLocation playerName="Eloise" x="80" y="230" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="300" y="160" scatterRadius="20"/>
+				<MultiplierDropLocation x="300" y="160"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -220,7 +220,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="90" y="155" team="0"/>
 					<BaseLocation playerName="Eloise" x="90" y="155" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="350" y="210" scatterRadius="40"/>
+				<MultiplierDropLocation x="350" y="210"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				<!-- Ralph - strong defense -->
@@ -265,7 +265,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="80" y="195" team="0"/>
 					<BaseLocation playerName="Eloise" x="80" y="195" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="235" y="265" scatterRadius="60"/>
+				<MultiplierDropLocation x="235" y="265"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 					
@@ -308,7 +308,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="360" y="330" team="0"/>
 					<BaseLocation playerName="Eloise" x="360" y="330" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="360" y="120" scatterRadius="60"/>
+				<MultiplierDropLocation x="360" y="120"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				

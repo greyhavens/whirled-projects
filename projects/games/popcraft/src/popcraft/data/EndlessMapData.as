@@ -15,7 +15,6 @@ public class EndlessMapData
 
     public var humanBaseLocs :HashMap = new HashMap(); // Map<PlayerName, BaseLocation>
     public var multiplierDropLoc :Vector2 = new Vector2();
-    public var multiplierScatterRadius :Number;
 
     public var computers :Array = []; // array of EndlessComputerPlayerDatas
     public var availableUnits :Array = [];
@@ -38,7 +37,6 @@ public class EndlessMapData
 
         var multiplierDropXml :XML = XmlReader.getSingleChild(xml, "MultiplierDropLocation");
         mapData.multiplierDropLoc = DataUtils.parseVector2(multiplierDropXml);
-        mapData.multiplierScatterRadius = XmlReader.getNumberAttr(multiplierDropXml, "scatterRadius");
 
         for each (var computerXml :XML in xml.Computer) {
             mapData.computers.push(EndlessComputerPlayerData.fromXml(computerXml));

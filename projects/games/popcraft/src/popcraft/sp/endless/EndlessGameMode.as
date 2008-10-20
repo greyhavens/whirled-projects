@@ -5,7 +5,6 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
-import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.StateChangedEvent;
 
 import popcraft.*;
@@ -52,10 +51,14 @@ public class EndlessGameMode extends GameMode
 
         var scoreView :ScoreView = new ScoreView();
         this.addObject(scoreView, GameContext.overlayLayer);
+    }
 
-        // create the multipliers that were left over from the last map
-        for (var ii :int = 0; ii < EndlessGameContext.numMultiplierObjects; ++ii) {
-            this.createMultiplierDrop(false);
+    override protected function enter () :void
+    {
+        super.enter();
+
+        if (_readyToStart) {
+            return;
         }
 
         if (!AppContext.gameCtrl.isConnected()) {
@@ -90,6 +93,18 @@ public class EndlessGameMode extends GameMode
             // we're ready
             EndlessGameContext.playerReadyMonitor.setLocalPlayerReadyForCurRound();
         }
+
+        _readyToStart = true;
+    }
+
+    override protected function startGame () :void
+    {
+        super.startGame();
+
+        // if this is not the first level, create a new multiplier drop object
+        if (EndlessGameContext.mapIndex != 0) {
+            this.createMultiplierDrop(false);
+        }
     }
 
     override protected function updateNetworkedObjects () :void
@@ -115,17 +130,28 @@ public class EndlessGameMode extends GameMode
     protected function checkForComputerDeath () :void
     {
         if (!_gameOver) {
-            var computersAreDead :Boolean = true;
+            for (var ii :int = 0; ii < _liveComputers.length; ++ii) {
+                var computerInfo :PlayerInfo = _liveComputers[ii];
+                if (!computerInfo.isAlive) {
+                    _liveComputers.splice(ii, 1);
+                    ii--;
+
+                    if (_liveComputers.length == 0) {
+                        _lastLiveComputerLoc = computerInfo.baseLoc.loc;
+                    }
+                }
+            }
+
+            /*var computersAreDead :Boolean = true;
             for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
                 ++teamId) {
                 if (Boolean(_teamLiveStatuses[teamId])) {
                     computersAreDead = false;
                     break;
                 }
-            }
+            }*/
 
-            if (computersAreDead) {
-                this.createMultiplierDrop(true);
+            if (_liveComputers.length == 0) {
                 this.switchMaps();
             }
         }
@@ -140,13 +166,8 @@ public class EndlessGameMode extends GameMode
 
     protected function createMultiplierDrop (playSound :Boolean) :void
     {
-        var scatterLen :Number = Rand.nextNumberRange(0, _curMapData.multiplierScatterRadius,
-            Rand.STREAM_GAME);
-        var rotation :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-        var loc :Vector2 = Vector2.fromAngle(rotation, scatterLen).addLocal(
-            _curMapData.multiplierDropLoc);
-
-        SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER, loc, playSound);
+        SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER,
+            _curMapData.multiplierDropLoc, playSound);
     }
 
     protected function switchMaps () :void
@@ -159,24 +180,6 @@ public class EndlessGameMode extends GameMode
                 EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
             }
         }
-
-        // save the number of multipliers left on the field so the player has a chance
-        // to grab them on the next map
-        var numMultipliers :int;
-        var netObjs :ObjectDB = GameContext.netObjects;
-        for each (var spellDrop :SpellDropObject in netObjs.getObjectsInGroup(SpellDropObject.GROUP_NAME)) {
-            if (spellDrop.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                numMultipliers += 1;
-            }
-        }
-
-        for each (var carriedSpell :CarriedSpellObject in netObjs.getObjectsInGroup(CarriedSpellObject.GROUP_NAME)) {
-            if (carriedSpell.spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-                numMultipliers += 1;
-            }
-        }
-
-        EndlessGameContext.numMultiplierObjects = numMultipliers;
 
         // save the game (must be done after the human players are saved, above)
         if (_curMapData.isSavePoint) {
@@ -192,11 +195,12 @@ public class EndlessGameMode extends GameMode
     {
         // if we're switching maps, don't show the game-over screen, just switch to a new
         // endless game mode
-        var nextMode :AppMode = (_switchingMaps ?
-            new EndlessGameMode(EndlessGameContext.level, null, false) :
-            new EndlessLevelSpOutroMode());
+        if (_switchingMaps) {
+            AppContext.mainLoop.pushMode(new EndlessLevelTransitionMode(_lastLiveComputerLoc));
+        } else {
+            this.fadeOutToMode(new EndlessLevelSpOutroMode());
+        }
 
-        this.fadeOutToMode(nextMode, FADE_OUT_TIME);
         GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
         GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
@@ -333,7 +337,7 @@ public class EndlessGameMode extends GameMode
             }
         }
 
-        this.createComputerPlayers();
+        _liveComputers = this.createComputerPlayers();
 
         // init all players players
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -401,6 +405,9 @@ public class EndlessGameMode extends GameMode
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
     protected var _savedGame :SavedEndlessGame;
+    protected var _liveComputers :Array;
+    protected var _lastLiveComputerLoc :Vector2 = new Vector2();
+    protected var _readyToStart :Boolean;
 
     protected var _playersCheckedIn :Array = [];
 }

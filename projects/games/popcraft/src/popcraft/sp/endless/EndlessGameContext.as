@@ -15,7 +15,6 @@ public class EndlessGameContext
     public static var scoreMultiplier :Number;
     public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
-    public static var numMultiplierObjects :int;
 
     public static function get isNewGame () :Boolean
     {
@@ -30,7 +29,6 @@ public class EndlessGameContext
         scoreMultiplier = 1;
         mapIndex = -1;
         savedHumanPlayers = [];
-        numMultiplierObjects = 0;
 
         if (playerReadyMonitor != null) {
             playerReadyMonitor.shutdown();
