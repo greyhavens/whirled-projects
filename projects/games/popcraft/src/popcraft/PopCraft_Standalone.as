@@ -31,7 +31,7 @@ public class PopCraft_Standalone extends PopCraft
         rm.queueResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
         rm.queueResourceLoad("swf", "manual", { embeddedClass: SWF_MANUAL });
         rm.queueResourceLoad("swf", "boss", { embeddedClass: SWF_BOSS });
-        rm.queueResourceLoad("swf", "levelSelectUi", { embeddedClass: SWF_LEVEL_SELECT_UI });
+        rm.queueResourceLoad("swf", "splashUi", { embeddedClass: SWF_SPLASH_UI });
         rm.queueResourceLoad("image", "portrait_iris", { embeddedClass: IMG_IRIS });
         rm.queueResourceLoad("image", "portrait_ivy", { embeddedClass: IMG_IVY });
         rm.queueResourceLoad("image", "portrait_jack", { embeddedClass: IMG_JACK });
@@ -57,7 +57,7 @@ public class PopCraft_Standalone extends PopCraft
     [Embed(source="../../rsrc/sp/weardd.swf", mimeType="application/octet-stream")]
     protected static const SWF_BOSS :Class;
     [Embed(source="../../rsrc/sp/splash_UI.swf", mimeType="application/octet-stream")]
-    protected static const SWF_LEVEL_SELECT_UI :Class;
+    protected static const SWF_SPLASH_UI :Class;
     [Embed(source="../../rsrc/sp/iris.png", mimeType="application/octet-stream")]
     protected static const IMG_IRIS :Class;
     [Embed(source="../../rsrc/sp/ivy.png", mimeType="application/octet-stream")]

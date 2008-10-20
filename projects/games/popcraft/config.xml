@@ -15,7 +15,7 @@
     <level ident="epilogue" name="epilogue" mediaURL="http://127.0.0.1:8080/levelpacks/sp/epilogue.swf"/>
     <level ident="manual" name="manual" mediaURL="http://127.0.0.1:8080/levelpacks/sp/manual.swf"/>
     <level ident="boss" name="boss" mediaURL="http://127.0.0.1:8080/levelpacks/sp/weardd.swf"/>
-    <level ident="levelSelectUi" name="levelSelectUi" mediaURL="http://127.0.0.1:8080/levelpacks/sp/splash_UI.swf"/>
+    <level ident="splashUi" name="splashUi" mediaURL="http://127.0.0.1:8080/levelpacks/sp/splash_UI.swf"/>
     <level ident="portrait_iris" name="portrait_iris" mediaURL="http://127.0.0.1:8080/levelpacks/sp/iris.png"/>
     <level ident="portrait_ivy" name="portrait_ivy" mediaURL="http://127.0.0.1:8080/levelpacks/sp/ivy.png"/>
     <level ident="portrait_jack" name="portrait_jack" mediaURL="http://127.0.0.1:8080/levelpacks/sp/jack.png"/>

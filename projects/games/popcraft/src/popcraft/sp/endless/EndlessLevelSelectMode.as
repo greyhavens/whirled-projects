@@ -4,27 +4,19 @@ import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
-import popcraft.data.EndlessMapData;
 import popcraft.data.UnitData;
-import popcraft.ui.UIBits;
 
 public class EndlessLevelSelectMode extends AppMode
 {
     override protected function setup () :void
     {
         super.setup();
-
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-        g.endFill();
 
         // we need to load the endless level in order to create the UI
         if (this.isMultiplayer) {
@@ -48,122 +40,55 @@ public class EndlessLevelSelectMode extends AppMode
             ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
         _saves.splice(0, 0, level1);
 
-        _info = new SavedGameInfo();
-        _info.x = 350;
-        _info.y = 60;
-        this.addObject(_info, _modeSprite);
+        this.selectSave(_saves.length - 1);
+    }
 
-        // buttons
-        var playButton :SimpleButton = UIBits.createButton("Play", 2);
-        playButton.x = 350 - (playButton.width * 0.5);
-        playButton.y = 190;
-        this.registerOneShotCallback(playButton, MouseEvent.CLICK,
+    protected function selectSave (saveIndex :int) :void
+    {
+        _saveIndex = saveIndex;
+
+        if (null != _saveView) {
+            _saveView.removeAllTasks();
+            _saveView.addTask(After(ANIMATE_TIME, new SelfDestructTask()));
+        }
+
+        _saveView = new SaveView(_level, _saves[saveIndex]);
+        _saveView.x = START_LOC.x;
+        _saveView.y = START_LOC.y;
+        _saveView.addTask(LocationTask.CreateEaseIn(END_LOC.x, END_LOC.y, ANIMATE_TIME));
+        this.addObject(_saveView, _modeSprite);
+
+        // wire up buttons
+        var nextButton :SimpleButton = _saveView.nextButton;
+        var prevButton :SimpleButton = _saveView.prevButton;
+        if (_saves.length > 1) {
+            this.registerEventListener(nextButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    var index :int = _saveIndex + 1;
+                    if (index >= _saves.length) {
+                        index = 0;
+                    }
+                    selectSave(index);
+                });
+
+            this.registerEventListener(prevButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    var index :int = _saveIndex - 1;
+                    if (index < 0) {
+                        index = _saves.length - 1;
+                    }
+                    selectSave(index);
+                });
+
+        } else {
+            nextButton.visible = false;
+            prevButton.visible = false;
+        }
+
+        this.registerEventListener(_saveView.playButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 startGame(_saves[_saveIndex]);
             });
-        _modeSprite.addChild(playButton);
-
-        var prevButton :SimpleButton = UIBits.createButton("Prev", 2);
-        prevButton.x = 50;
-        prevButton.y = 370;
-        this.registerEventListener(prevButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                var index :int = _saveIndex - 1;
-                if (index < 0) {
-                    index = _saves.length - 1;
-                }
-                selectSave(index, ANIMATE_PREV);
-            });
-        _modeSprite.addChild(prevButton);
-
-        var nextButton :SimpleButton = UIBits.createButton("Next", 2);
-        nextButton.x = 650 - nextButton.width;
-        nextButton.y = 370;
-        this.registerEventListener(nextButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                var index :int = _saveIndex + 1;
-                if (index >= _saves.length) {
-                    index = 0;
-                }
-                selectSave(index, ANIMATE_NEXT);
-            });
-        _modeSprite.addChild(nextButton);
-
-        this.selectSave(_saves.length - 1, ANIMATE_NONE);
-    }
-
-    protected function selectSave (saveIndex :int, animate :int) :void
-    {
-        var save :SavedEndlessGame = _saves[saveIndex];
-
-        // are we animating from left-to-right, or right-to-left?
-        var outLoc :Point;
-        var inLoc :Point;
-        if (animate == ANIMATE_NEXT) {
-            outLoc = THUMBNAIL_PREV_LOC;
-            inLoc = THUMBNAIL_NEXT_LOC;
-        } else {
-            outLoc = THUMBNAIL_NEXT_LOC;
-            inLoc = THUMBNAIL_PREV_LOC;
-        }
-
-        // animate out the old thumbnail
-        if (_thumbnail != null) {
-            _thumbnail.removeAllTasks();
-            if (animate == ANIMATE_NONE) {
-                _thumbnail.destroySelf();
-
-            } else {
-                _thumbnail.alpha = 1;
-                _thumbnail.addTask(new SerialTask(
-                    new ParallelTask(
-                        LocationTask.CreateSmooth(outLoc.x, outLoc.y, ANIMATE_TIME),
-                        new AlphaTask(0, ANIMATE_TIME)),
-                    new SelfDestructTask()));
-            }
-        }
-
-        // create the thumbnail, and animate it in
-        _thumbnail = new SavedGameThumbnail(save);
-        this.addObject(_thumbnail, _modeSprite);
-        if (animate == ANIMATE_NONE) {
-            _thumbnail.x = THUMBNAIL_LOC.x;
-            _thumbnail.y = THUMBNAIL_LOC.y;
-
-        } else {
-            _thumbnail.x = inLoc.x;
-            _thumbnail.y = inLoc.y;
-            _thumbnail.alpha = 0;
-            _thumbnail.addTask(new ParallelTask(
-                LocationTask.CreateSmooth(THUMBNAIL_LOC.x, THUMBNAIL_LOC.y, ANIMATE_TIME),
-                new AlphaTask(1, ANIMATE_TIME)));
-        }
-
-        // animate in the new level info
-        _info.removeAllTasks();
-        if (animate == ANIMATE_NONE) {
-            _info.updateInfo(_level, save);
-
-        } else {
-            _info.addTask(new SerialTask(
-                new AlphaTask(0, ANIMATE_TIME * 0.5),
-                new FunctionTask(
-                    function () :void {
-                        _info.updateInfo(_level, save);
-                    }),
-                new AlphaTask(1, ANIMATE_TIME * 0.5)));
-        }
-
-        _saveIndex = saveIndex;
-    }
-
-    protected function createSavedGameButton (save :SavedEndlessGame) :SimpleButton
-    {
-        var mapData :EndlessMapData = _level.getMapData(save.mapIndex);
-        var cycleNumber :int = _level.getMapCycleNumber(save.mapIndex);
-
-        var buttonName :String = mapData.displayName + " (" + String(cycleNumber + 1) + ")";
-        return UIBits.createButton(buttonName, 2);
     }
 
     protected function startGame (save :SavedEndlessGame) :void
@@ -187,106 +112,126 @@ public class EndlessLevelSelectMode extends AppMode
     protected var _saves :Array;
     protected var _saveIndex :int = -1;
     protected var _level :EndlessLevelData;
-    protected var _thumbnail :SavedGameThumbnail;
-    protected var _info :SavedGameInfo;
+    protected var _saveView :SaveView;
 
-    protected static const ANIMATE_TIME :Number = 0.4;
-    protected static const THUMBNAIL_LOC :Point = new Point(350, 360);
-    protected static const THUMBNAIL_NEXT_LOC :Point = new Point(550, 360);
-    protected static const THUMBNAIL_PREV_LOC :Point = new Point(150, 360);
-
-    protected static const ANIMATE_NONE :int = 0;
-    protected static const ANIMATE_NEXT :int = 1;
-    protected static const ANIMATE_PREV :int = 2;
+    protected static const ANIMATE_TIME :Number = 0.6;
+    protected static const START_LOC :Point = new Point(350, -250);
+    protected static const END_LOC :Point = new Point(350, 250);
 }
 
 }
 
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.threerings.util.StringUtil;
 
-import flash.display.Sprite;
 import flash.display.DisplayObject;
-import flash.display.InteractiveObject;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
+import flash.text.TextField;
+import flash.display.Sprite;
+import flash.geom.Point;
+import flash.display.Bitmap;
 
 import popcraft.*;
-import popcraft.sp.endless.SavedEndlessGame;
-import popcraft.ui.*;
-import popcraft.data.EndlessLevelData;
-import popcraft.data.EndlessMapData;
-import popcraft.battle.UnitDamageShield;
-import flash.text.TextField;
-import flash.display.Bitmap;
-import com.threerings.util.StringUtil;
 import popcraft.util.SpriteUtil;
+import popcraft.data.*;
+import popcraft.sp.endless.*;
+import popcraft.ui.UIBits;
 
-class SavedGameThumbnail extends SceneObject
+class SaveView extends SceneObject
 {
-    public function SavedGameThumbnail (save :SavedEndlessGame)
+    public function SaveView (level :EndlessLevelData, save :SavedEndlessGame)
     {
-        _save = save;
-
-        _sprite = SpriteUtil.createSprite();
-        var image :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
-        image.x = -image.width * 0.5;
-        image.y = -image.height * 0.5;
-        _sprite.addChild(image);
-    }
-
-    public function get save () :SavedEndlessGame
-    {
-        return _save;
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
-    protected var _save :SavedEndlessGame;
-    protected var _sprite :Sprite;
-
-    protected static const WIDTH :Number = 180;
-    protected static const HEIGHT :Number = 135;
-}
-
-class SavedGameInfo extends SceneObject
-{
-    public function SavedGameInfo ()
-    {
-        _sprite = SpriteUtil.createSprite();
-        _titleText = new TextField();
-        _infoText = new TextField();
-
-        _sprite.addChild(_titleText);
-        _sprite.addChild(_infoText);
-    }
-
-    public function updateInfo (level :EndlessLevelData, save :SavedEndlessGame) :void
-    {
-        _sprite.removeChild(_titleText);
-        _sprite.removeChild(_infoText);
-
         var mapData :EndlessMapData = level.getMapData(save.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(save.mapIndex);
 
-        _titleText = UIBits.createText(mapData.displayName + " (" + cycleNumber + ")", 4, 0, 0xFFFFFF);
-        _infoText = UIBits.createText("Score: " + StringUtil.formatNumber(save.score) + " x" + save.multiplier, 2, 0, 0xFFFFFF);
+        _movie = SwfResource.instantiateMovieClip("splashUi", "grate");
+        _movie.cacheAsBitmap = true;
 
-        _sprite.addChild(_titleText);
-        _sprite.addChild(_infoText);
+        // text
+        var titleText :TextField = _movie["level_title"];
+        titleText.text = mapData.displayName;
 
-        _titleText.x = -_titleText.width * 0.5;
-        _infoText.x = -_infoText.width * 0.5;
-        _infoText.y = _titleText.height + 2;
+        var scoreText :TextField = _movie["level_score"];
+        scoreText.text = "Score: " + StringUtil.formatNumber(save.score);
+
+        var ii :int;
+
+        // cycle number
+        if (cycleNumber > 0) {
+            var cycleSprite :Sprite = SpriteUtil.createSprite();
+            for (ii = 0; ii < cycleNumber; ++ii) {
+                var cycleMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "cycle");
+                cycleMovie.x = cycleSprite.width + (cycleMovie.width * 0.5);
+                cycleSprite.addChild(cycleMovie);
+            }
+
+            cycleSprite.x = CYCLE_LOC.x - (cycleSprite.width * 0.5);
+            cycleSprite.y = CYCLE_LOC.y;
+            _movie.addChild(cycleSprite);
+        }
+
+        this.drawIcons("multiplier", save.multiplier - 1, MULTIPLIER_START, MULTIPLIER_OFFSET);
+        this.drawIcons("infusion_bloodlust", save.spells[Constants.SPELL_TYPE_BLOODLUST], BLOODLUST_START, BLOODLUST_OFFSET);
+        this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
+        this.drawIcons("infusion_shuffle", save.spells[Constants.SPELL_TYPE_PUZZLERESET], SHUFFLE_START, SHUFFLE_OFFSET);
+
+        // thumbnail
+        var thumbnail :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
+        thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
+        thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
+        _movie.addChild(thumbnail);
+
+        // play button
+        _playButton = UIBits.createButton("Play", 2);
+        _playButton.x = PLAY_LOC.x - (_playButton.width * 0.5);
+        _playButton.y = PLAY_LOC.y - (_playButton.height * 0.5);
+        _movie.addChild(_playButton);
+    }
+
+    protected function drawIcons (name :String, count :int, start :Point, offset :Point) :void
+    {
+        for (var ii :int = count - 1; ii >= 0; --ii) {
+            var icon :MovieClip = SwfResource.instantiateMovieClip("splashUi", name);
+            icon.x = start.x + (offset.x * ii);
+            icon.y = start.y + (offset.y * ii);
+            _movie.addChild(icon);
+        }
     }
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
-    protected var _sprite :Sprite;
-    protected var _titleText :TextField;
-    protected var _infoText :TextField;
+    public function get nextButton () :SimpleButton
+    {
+        return _movie["next"];
+    }
+
+    public function get prevButton () :SimpleButton
+    {
+        return _movie["previous"];
+    }
+
+    public function get playButton () :SimpleButton
+    {
+        return _playButton;
+    }
+
+    protected var _movie :MovieClip;
+    protected var _playButton :SimpleButton;
+
+    protected static const PLAY_LOC :Point = new Point(0, 190);
+    protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
+    protected static const CYCLE_LOC :Point = new Point(0, -213);
+    protected static const MULTIPLIER_START :Point = new Point(-160, -64);
+    protected static const MULTIPLIER_OFFSET :Point = new Point(15, 0);
+    protected static const BLOODLUST_START :Point = new Point(-62, -64);
+    protected static const BLOODLUST_OFFSET :Point = new Point(15, 0);
+    protected static const RIGORMORTIS_START :Point = new Point(-2, -64);
+    protected static const RIGORMORTIS_OFFSET :Point = new Point(15, 0);
+    protected static const SHUFFLE_START :Point = new Point(58, -64);
+    protected static const SHUFFLE_OFFSET :Point = new Point(15, 0);
 }

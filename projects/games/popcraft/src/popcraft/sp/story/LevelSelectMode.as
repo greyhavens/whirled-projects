@@ -58,13 +58,13 @@ public class LevelSelectMode extends DemoGameMode
             view.visible = false;
         }
 
-        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "ralph_portrait");
         ralphPortrait.x = RALPH_PORTRAIT_LOC.x;
         ralphPortrait.y = RALPH_PORTRAIT_LOC.y;
         _modeLayer.addChild(ralphPortrait);
 
-        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "jack_portrait");
         jackPortrait.x = JACK_PORTRAIT_LOC.x;
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
@@ -83,14 +83,14 @@ public class LevelSelectMode extends DemoGameMode
         var playerStartedGame :Boolean = AppContext.levelMgr.playerStartedGame;
         var playerCompletedGame :Boolean = AppContext.levelMgr.playerBeatGame;
 
-        var storyBanner :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var storyBanner :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "story_banner");
         _modeLayer.addChild(storyBanner);
 
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
         var playButton :SimpleButton =
-            SwfResource.instantiateButton("levelSelectUi", playButtonName);
+            SwfResource.instantiateButton("splashUi", playButtonName);
         this.registerEventListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
         this.addObject(_playButtonObj, _modeLayer);
@@ -101,14 +101,14 @@ public class LevelSelectMode extends DemoGameMode
             _playButtonObj.x = STORY_BUTTON_LOC.x;
             _playButtonObj.y = STORY_BUTTON_LOC.y;
 
-            var endlessBanner :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+            var endlessBanner :MovieClip = SwfResource.instantiateMovieClip("splashUi",
                 "endless_banner");
             endlessBanner.x = ENDLESS_BANNER_LOC.x;
             endlessBanner.y = ENDLESS_BANNER_LOC.y;
             // stick the endless banner behind the story banner
             _modeLayer.addChildAt(endlessBanner, _modeLayer.getChildIndex(storyBanner));
 
-            var endlessButton :SimpleButton = SwfResource.instantiateButton("levelSelectUi",
+            var endlessButton :SimpleButton = SwfResource.instantiateButton("splashUi",
                 "endless_button");
             endlessButton.x = ENDLESS_BUTTON_LOC.x;
             endlessButton.y = ENDLESS_BUTTON_LOC.y;
@@ -188,7 +188,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // create the tutorial objects
-        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "puzzle_intro");
         puzzleIntroMovie.mouseEnabled = false;
         _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
@@ -197,7 +197,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
         this.addObject(_puzzleIntro, _modeLayer);
 
-        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "unit_intro");
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
@@ -206,7 +206,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_unitIntro, 9, 4);
         this.addObject(_unitIntro, _modeLayer);
 
-        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("levelSelectUi",
+        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "resource_intro");
         resourceIntroMovie.mouseEnabled = false;
         _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
@@ -240,7 +240,7 @@ public class LevelSelectMode extends DemoGameMode
         if (!AppContext.isPremiumContentUnlocked) {
             AppContext.mainLoop.pushMode(new UpsellMode());
         } else {
-            AppContext.mainLoop.unwindToMode(new EndlessLevelSelectMode());
+            AppContext.mainLoop.pushMode(new EndlessLevelSelectMode());
         }
     }
 
