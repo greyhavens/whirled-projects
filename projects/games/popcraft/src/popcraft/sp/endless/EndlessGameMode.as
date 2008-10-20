@@ -196,7 +196,13 @@ public class EndlessGameMode extends GameMode
         // if we're switching maps, don't show the game-over screen, just switch to a new
         // endless game mode
         if (_switchingMaps) {
-            AppContext.mainLoop.pushMode(new EndlessLevelTransitionMode(_lastLiveComputerLoc));
+            if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
+                AppContext.mainLoop.unwindToMode(
+                    new EndlessGameMode(EndlessGameContext.level, null, false));
+            } else {
+                AppContext.mainLoop.pushMode(new EndlessLevelTransitionMode(_lastLiveComputerLoc));
+            }
+
         } else {
             this.fadeOutToMode(new EndlessLevelSpOutroMode());
         }

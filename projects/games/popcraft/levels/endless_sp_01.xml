@@ -2,7 +2,6 @@
 	<EndlessLevel
 		maxMultiplier="4"
 		multiplierDamageSoak="18.75"
-
 		pointsPerExtraMultiplier="500"
 		pointsPerResource="1"
 		pointsPerOpponentKill="500">
@@ -35,7 +34,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<BaseLocation playerName="Finley" x="80" y="295" team="0"/>
 					<BaseLocation playerName="Eloise" x="80" y="295" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="200" y="265"/>
+				<MultiplierDropLocation x="300" y="265"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
@@ -259,13 +258,13 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			<!-- ****** LEVEL 6 : Grave Concerns (Dante) ****** -->
 			<Map displayName="Grave Concerns" isSavePoint="true">
 				<MapSettings backgroundName="wharf">
-		            <SpellDropLocation x="240" y="255"/>
+		            <SpellDropLocation x="360" y="150"/>
 				</MapSettings>
 				<HumanBaseLocations>
 					<BaseLocation playerName="Finley" x="80" y="195" team="0"/>
 					<BaseLocation playerName="Eloise" x="80" y="195" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="235" y="265"/>
+				<MultiplierDropLocation x="360" y="150"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 					
@@ -348,6 +347,75 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 							<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
 							<Wave absoluteDelay="12"><Unit type="grunt" count="2"/></Wave>
 							<Wave absoluteDelay="24"/>
+						</Day>
+					</RepeatingDays>
+				</Computer>
+			</Map>
+			
+			<!-- ****** LEVEL 8 : Something (Ursula & Ralph) ****** -->
+			<Map displayName="Something" isSavePoint="true">
+				<MapSettings backgroundName="city">
+		            <SpellDropLocation x="305" y="100"/>
+				</MapSettings>
+				<HumanBaseLocations>
+					<BaseLocation playerName="Finley" x="80" y="140" team="0"/>
+					<BaseLocation playerName="Eloise" x="80" y="140" team="0"/>
+				</HumanBaseLocations>
+				<MultiplierDropLocation x="305" y="100"/>
+				<AvailableUnits all="true"/>
+				<AvailableSpells all="true"/>
+				
+				<Computer
+					playerName="Ursula"
+					baseStartHealth="120"
+					baseHealth="120"
+					baseHealthIncrement="60"
+					waveDelayScale="0.9"
+					team="1">
+					<BaseLocation x="370" y="330" team="1"/>
+					<RepeatingDays>
+						<Day repeatWaves="true">
+	
+							<Wave absoluteDelay="3" spellCastChance="1"><Unit type="courier" count="1" max="10"/></Wave>
+							<Wave absoluteDelay="4"><Unit type="courier" count="1" max="10"/></Wave>
+							<Wave absoluteDelay="5"><Unit type="courier" count="1" max="10"/></Wave>
+							
+							<Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
+							<Wave absoluteDelay="9"><Unit type="sapper" count="2"/></Wave>
+							<Wave absoluteDelay="12"><Unit type="sapper" count="1"/></Wave>
+							
+							<Wave absoluteDelay="25"/>
+						</Day>
+					</RepeatingDays>
+				</Computer>
+				
+				<Computer
+					playerName="Ralph"
+					baseStartHealth="150"
+					baseHealth="150"
+					baseHealthIncrement="75"
+					waveDelayScale="0.9"
+					team="1">
+					<BaseLocation x="620" y="265" team="1"/>
+					<RepeatingDays>
+						<Day repeatWaves="true"
+							noticeSpellDropAfterMin="6"
+							noticeSpellDropAfterMax="6"
+							spellDropCourierGroupSizeMin="1"
+							spellDropCourierGroupSizeMax="1">
+	
+							<Wave absoluteDelay="4"><Unit type="heavy" count="5" max="5"/></Wave>
+							
+							<Wave absoluteDelay="9"><Unit type="grunt" count="2"/></Wave>
+							<Wave absoluteDelay="11"><Unit type="grunt" count="1"/></Wave>
+							
+							<Wave absoluteDelay="34"><Unit type="grunt" count="2"/></Wave>
+							<Wave absoluteDelay="36"><Unit type="grunt" count="1"/></Wave>
+							
+							<Wave absoluteDelay="37"><Unit type="heavy" count="2" max="5"/></Wave>
+							
+							<Wave absoluteDelay="70" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+							<Wave absoluteDelay="75"/>
 						</Day>
 					</RepeatingDays>
 				</Computer>
