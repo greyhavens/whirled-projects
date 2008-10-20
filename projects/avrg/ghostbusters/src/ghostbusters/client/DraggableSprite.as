@@ -65,39 +65,45 @@ public class DraggableSprite extends Sprite
 
     protected function handleFrame (evt :Event) :void
     {
-        if (_grab != null) {
-            var p :Point = new Point(this.parent.mouseX - _grab.x, this.parent.mouseY - _grab.y);
+        if (_grab == null || this.parent == null) {
+            // be resilient in unusual circumstances
+            this.removeEventListener(Event.ENTER_FRAME, handleFrame);
+            // make sure we're fully reset
+            _grab = null;
+            return;
+        }
 
-            if (_bounds != null) {
-                // boundaries are configured: check for snapping
-                if (Math.abs(p.x + _bounds.left - _paintable.left) < SNAP_MARGIN) {
-                    _xSnap = SNAP_LEFT;
+        var p :Point = new Point(this.parent.mouseX - _grab.x, this.parent.mouseY - _grab.y);
 
-                } else if (Math.abs(p.x + _bleed + _bounds.left - _painted.right) < SNAP_MARGIN) {
-                    _xSnap = SNAP_ROOM_EDGE;
+        if (_bounds != null) {
+            // boundaries are configured: check for snapping
+            if (Math.abs(p.x + _bounds.left - _paintable.left) < SNAP_MARGIN) {
+                _xSnap = SNAP_LEFT;
 
-                } else if (Math.abs(p.x + _bounds.right - _paintable.right) < SNAP_MARGIN) {
-                    _xSnap = SNAP_BROWSER_EDGE;
+            } else if (Math.abs(p.x + _bleed + _bounds.left - _painted.right) < SNAP_MARGIN) {
+                _xSnap = SNAP_ROOM_EDGE;
 
-                } else {
-                    _xSnap = SNAP_NONE;
-                    _xFix = p.x;
-                }
+            } else if (Math.abs(p.x + _bounds.right - _paintable.right) < SNAP_MARGIN) {
+                _xSnap = SNAP_BROWSER_EDGE;
 
-                if (Math.abs(p.y + _bounds.top - _paintable.top) < SNAP_MARGIN) {
-                    _ySnap = SNAP_TOP;
-
-                } else if (Math.abs(p.y + _bounds.bottom - _paintable.bottom) < SNAP_MARGIN) {
-                    _ySnap = SNAP_BROWSER_EDGE;
-
-                } else {
-                    _ySnap = SNAP_NONE;
-                    _yFix = p.y;
-                }
+            } else {
+                _xSnap = SNAP_NONE;
+                _xFix = p.x;
             }
 
-            layout();
+            if (Math.abs(p.y + _bounds.top - _paintable.top) < SNAP_MARGIN) {
+                _ySnap = SNAP_TOP;
+
+            } else if (Math.abs(p.y + _bounds.bottom - _paintable.bottom) < SNAP_MARGIN) {
+                _ySnap = SNAP_BROWSER_EDGE;
+
+            } else {
+                _ySnap = SNAP_NONE;
+                _yFix = p.y;
+            }
         }
+
+        layout();
     }
 
     protected function handleMouseUp (evt :MouseEvent) :void
