@@ -338,11 +338,13 @@ public class Player
         // persist it, too
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
 
-        // if we just died, update our state
+        // if we just died, let the trophy code now
         if (_health == 0) {
-            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
             Trophies.handlePlayerDied(this);
         }
+
+        // always update our avatar state
+        updateAvatarState();
 
         // and if we're in a room, update the room properties
         if (_room != null) {
