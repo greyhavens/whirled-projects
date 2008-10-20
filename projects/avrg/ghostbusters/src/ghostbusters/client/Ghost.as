@@ -38,7 +38,7 @@ public class Ghost extends Sprite
         }
         var hudBounds :Rectangle = Game.panel.hud.getBounds(Game.panel);
 
-        return Math.min(painted.right, hudBounds.left) - _bounds.width - 100;
+        return Math.min(painted.right, hudBounds.left) - _bounds.width - 40;
     }
 
     public function isIdle () :Boolean
