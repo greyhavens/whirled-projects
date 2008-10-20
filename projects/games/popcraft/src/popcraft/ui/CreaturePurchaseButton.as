@@ -40,8 +40,8 @@ public class CreaturePurchaseButton extends SimObject
 
         // instaniate some alternate highlight movies, for spells
         _defaultHilite = _hilite;
-        _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust");
-        _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis");
+        _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust", true);
+        _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis", true);
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.localPlayerInfo.activeSpells;
@@ -85,8 +85,10 @@ public class CreaturePurchaseButton extends SimObject
         }
 
         // put some colored rectangles behind the cost texts
-        var resource1Tile :MovieClip = SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource1Type]);
-        var resource2Tile :MovieClip = SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource2Type]);
+        var resource1Tile :MovieClip =
+            SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource1Type], true);
+        var resource2Tile :MovieClip =
+            SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource2Type], true);
         resource1Tile.x = -(resource1Tile.width * 0.5);
         resource1Tile.y = -2;
         resource2Tile.x = 18 - (resource2Tile.width * 0.5);

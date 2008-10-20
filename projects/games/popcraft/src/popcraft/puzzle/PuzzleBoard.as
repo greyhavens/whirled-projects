@@ -204,7 +204,7 @@ public class PuzzleBoard extends SceneObject
             POS_CLEAR_FEEDBACK_ANIM_NAMES[resType] :
             NEG_CLEAR_FEEDBACK_ANIM_NAMES[resType]);
 
-        var movie :MovieClip = SwfResource.instantiateMovieClip("dashboard", movieName);
+        var movie :MovieClip = SwfResource.instantiateMovieClip("dashboard", movieName, true);
 
         // fill in the text
         var textField :TextField = movie["feedback"];

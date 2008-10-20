@@ -24,7 +24,7 @@ public class MissileView extends BattlefieldSprite
         var missileName :String =
             (Math.abs(travelVec.x) >= Math.abs(travelVec.y) ? "handy_attack_X" : "handy_attack_Y");
 
-        _movie = SwfResource.instantiateMovieClip("missile", missileName);
+        _movie = SwfResource.instantiateMovieClip("missile", missileName, true);
     }
 
     override public function get displayObject () :DisplayObject

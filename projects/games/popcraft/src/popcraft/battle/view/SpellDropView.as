@@ -18,7 +18,7 @@ public class SpellDropView extends BattlefieldSprite
         _spellObjRef = spellDrop.ref;
 
         var spellData :SpellData = spellDrop.spellData;
-        _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName);
+        _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName, true);
 
         // pulse animation, to draw players' attention
         this.addTask(new RepeatingTask(

@@ -70,7 +70,7 @@ public class CreatureAnimFactory
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
 
-        var anim :MovieClip = SwfResource.instantiateMovieClip(unitData.name, animName);
+        var anim :MovieClip = SwfResource.instantiateMovieClip(unitData.name, animName, true);
         if (null != anim) {
             // colorize the animation's recolor1, recolor2, etc children
             var i :int = 1;

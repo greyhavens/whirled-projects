@@ -24,7 +24,7 @@ public class UIBits
 
     public static function createFrame (width :Number, height :Number) :Sprite
     {
-        var frame :MovieClip = SwfResource.instantiateMovieClip("ui", "frame_UI");
+        var frame :MovieClip = SwfResource.instantiateMovieClip("ui", "frame_UI", true);
         frame.scaleX = width / frame.width;
         frame.scaleY = height / frame.height;
 

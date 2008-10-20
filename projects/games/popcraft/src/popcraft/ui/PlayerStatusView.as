@@ -28,7 +28,7 @@ public class PlayerStatusView extends SceneObject
     {
         _playerInfo = GameContext.playerInfos[playerIndex];
 
-        _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot");
+        _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot", true);
         _movie.cacheAsBitmap = true;
 
         _deathMovie = _movie["dead"];
