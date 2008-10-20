@@ -28,7 +28,7 @@ public class UIBits
         frame.scaleX = width / frame.width;
         frame.scaleY = height / frame.height;
 
-        var sprite :Sprite = SpriteUtil.createSprite();
+        var sprite :Sprite = SpriteUtil.createSprite(true, false);
 
         // the scale9 slices for frame_UI are off by 0.028 pixels/pixel-width of the
         // display object. correct for that here.
