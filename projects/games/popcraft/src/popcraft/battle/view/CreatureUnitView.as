@@ -174,7 +174,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
                 } else {
                     var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
-                        _unit.unitData, playerColor, animName);
+                        _unit.unitType, playerColor, animName);
 
                     if (null != anim) {
                         animArray.push(anim);

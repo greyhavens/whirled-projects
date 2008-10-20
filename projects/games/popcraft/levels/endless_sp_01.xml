@@ -352,8 +352,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 8 : Something (Ursula & Ralph) ****** -->
-			<Map displayName="Something" isSavePoint="true">
+			<!-- ****** LEVEL 8 : Animal Welfare (Ursula & Ralph) ****** -->
+			<Map displayName="Animal Welfare" isSavePoint="true">
 				<MapSettings backgroundName="city">
 		            <SpellDropLocation x="305" y="100"/>
 				</MapSettings>

@@ -127,10 +127,10 @@ public class LevelIntroMode extends AppMode
             var newCreatureType :int = _level.newCreatureType;
             var creatureData :UnitData = GameContext.gameData.units[newCreatureType];
             var creatureAnim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
-                creatureData, GameContext.localPlayerInfo.color, "walk_SW");
+                newCreatureType, GameContext.localPlayerInfo.color, "walk_SW");
             if (null == creatureAnim) {
                 creatureAnim = CreatureAnimFactory.instantiateUnitAnimation(
-                    creatureData, GameContext.localPlayerInfo.color, "stand_SW");
+                    newCreatureType, GameContext.localPlayerInfo.color, "stand_SW");
             }
             this.showPage(
                 TYPE_PAGE,

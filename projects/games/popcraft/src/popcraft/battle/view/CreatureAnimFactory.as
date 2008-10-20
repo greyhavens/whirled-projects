@@ -48,8 +48,7 @@ public class CreatureAnimFactory
             anim = animEntry as BitmapAnim;
 
         } else {
-            var animMovie :MovieClip = instantiateUnitAnimation(
-                GameContext.gameData.units[unitType], playerColor, animName);
+            var animMovie :MovieClip = instantiateUnitAnimation(unitType, playerColor, animName);
             if (animMovie != null) {
                 var creatureAnimDesc :CreatureBitmapAnimDesc = (BITMAP_ANIM_DESCS[unitType])[animName];
                 anim = BitmapAnim.fromMovie(
@@ -64,11 +63,13 @@ public class CreatureAnimFactory
         return anim;
     }
 
-    public static function instantiateUnitAnimation (unitData :UnitData, playerColor :uint,
+    public static function instantiateUnitAnimation (unitType :int, playerColor :uint,
         animName :String) :MovieClip
     {
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
+
+        var unitData :UnitData = GameContext.gameData.units[unitType];
 
         var anim :MovieClip = SwfResource.instantiateMovieClip(unitData.name, animName, true);
         if (null != anim) {
@@ -106,10 +107,10 @@ public class CreatureAnimFactory
 
     protected static const BITMAP_ANIM_DESCS :Array = [
         // Street-Walker
-        { attack_N: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
-          attack_NW: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
-          attack_S: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
-          attack_SW: new CreatureBitmapAnimDesc([ 19, 24, 27 ], 59/60),
+        { attack_N: new CreatureBitmapAnimDesc([ 1, 6, 12, 18, 24 ], 59/60),
+          attack_NW: new CreatureBitmapAnimDesc([ 1, 6, 12, 18, 24 ], 59/60),
+          attack_S: new CreatureBitmapAnimDesc([ 1, 6, 12, 18, 24 ], 59/60),
+          attack_SW: new CreatureBitmapAnimDesc([ 1, 6, 12, 18, 24 ], 59/60),
 
           die_N: new CreatureBitmapAnimDesc([ 12, 22, 30 ], 30/30, BitmapAnim.STOP),
           die_NW: new CreatureBitmapAnimDesc([ 12, 22, 30 ], 30/30, BitmapAnim.STOP),
@@ -172,10 +173,10 @@ public class CreatureAnimFactory
           stand_S: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_SW: new CreatureBitmapAnimDesc([ 1 ], 1),
 
-          walk_N: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
-          walk_NW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
-          walk_S: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30),
-          walk_SW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 22/30)
+          walk_N: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 23/30),
+          walk_NW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 23/30),
+          walk_S: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 23/30),
+          walk_SW: new CreatureBitmapAnimDesc([ 6, 11, 16, 20 ], 23/30)
         },
 
         // Flesh Behemoth

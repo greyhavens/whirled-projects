@@ -144,9 +144,7 @@ public class UnitAnimTestMode extends AppMode
 
     protected function createCreatureAnimations (animName :String) :void
     {
-        var unitData :UnitData = AppContext.defaultGameData.units[_unitType];
-
-        var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(unitData, _recolor,
+        var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(_unitType, _recolor,
             animName);
         if (null != anim) {
             this.addAnimToWindow(anim);

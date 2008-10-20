@@ -47,10 +47,10 @@ public class DeadCreatureUnitView extends BattlefieldSprite
 
         } else {
             var movie :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
-                creature.unitData, playerColor, animName);
+                creature.unitType, playerColor, animName);
             if (null == movie) {
                 movie = CreatureAnimFactory.instantiateUnitAnimation(
-                    creature.unitData, playerColor, "die");
+                    creature.unitType, playerColor, "die");
             }
 
             _sprite.addChild(movie);

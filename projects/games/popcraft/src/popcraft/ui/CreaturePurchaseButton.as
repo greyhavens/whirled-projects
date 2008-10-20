@@ -53,19 +53,14 @@ public class CreaturePurchaseButton extends SimObject
         var playerColor :uint = GameContext.localPlayerInfo.color;
 
         // try instantiating some animations
-        _enabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "attack_SW");
+        _enabledAnim = CreatureAnimFactory.getBitmapAnim(unitType, playerColor, "attack_SW");
         if (null == _enabledAnim) {
-            _enabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
+            _enabledAnim = CreatureAnimFactory.getBitmapAnim(unitType, playerColor, "walk_SW");
         }
 
-        _disabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "stand_SW");
+        _disabledAnim = CreatureAnimFactory.getBitmapAnim(unitType, playerColor, "stand_SW");
         if (null == _disabledAnim) {
-            _disabledAnim = CreatureAnimFactory.instantiateUnitAnimation(_unitData, playerColor, "walk_SW");
-        }
-
-        if (Constants.UNIT_TYPE_COURIER != unitType && Constants.UNIT_TYPE_SAPPER != unitType) {
-            _enabledAnim.y = 30;
-            _disabledAnim.y = 30;
+            _disabledAnim = CreatureAnimFactory.getBitmapAnim(unitType, playerColor, "walk_SW");
         }
 
         // set up the Unit Cost indicators
@@ -108,8 +103,25 @@ public class CreaturePurchaseButton extends SimObject
         cost2Text.text = String(_resource2Cost);
 
         this.createPurchaseMeters();
+    }
+
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+        _animView = new BitmapAnimView(_disabledAnim);
+        this.db.addObject(_animView, _unitDisplay);
+
+        if (Constants.UNIT_TYPE_COURIER != _unitType && Constants.UNIT_TYPE_SAPPER != _unitType) {
+            _animView.y = 30;
+        }
 
         this.updateDisplayState();
+    }
+
+    override protected function removedFromDB () :void
+    {
+        super.removedFromDB();
+        _animView.destroySelf();
     }
 
     protected function onSpellSetModified (e :Event) :void
@@ -172,7 +184,7 @@ public class CreaturePurchaseButton extends SimObject
 
     protected function updateDisplayState () :void
     {
-        if (_enabled) {
+        /*if (_enabled) {
             if (null != _disabledAnim.parent) {
                 _unitDisplay.removeChild(_disabledAnim);
             }
@@ -182,8 +194,8 @@ public class CreaturePurchaseButton extends SimObject
                 _unitDisplay.removeChild(_enabledAnim);
             }
             _unitDisplay.addChild(_disabledAnim);
-        }
-
+        }*/
+        _animView.anim = (_enabled ? _enabledAnim : _disabledAnim);
         _button.enabled = _enabled;
 
         // if we're playing the deploy animation, these animations
@@ -319,8 +331,11 @@ public class CreaturePurchaseButton extends SimObject
     protected var _button :SimpleButton;
     protected var _multiplicity :TextField;
 
-    protected var _enabledAnim :MovieClip;
-    protected var _disabledAnim :MovieClip;
+    //protected var _enabledAnim :MovieClip;
+    //protected var _disabledAnim :MovieClip;
+    protected var _enabledAnim :BitmapAnim;
+    protected var _disabledAnim :BitmapAnim;
+    protected var _animView :BitmapAnimView;
 
     protected var _resource1Type :int;
     protected var _resource2Type :int;
