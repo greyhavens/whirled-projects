@@ -13,9 +13,9 @@ public class BasicBrain
         _room = room;
     }
 
-    public function tick (timer :int) :void
+    public function tick (seconds :int) :void
     {
-        if (timer - _lastAttack < 5) {
+        if (seconds - _lastAttack < 5) {
             // all attacks have a 5 second cooldown, basically to make sure the animation finished
             return;
         }
@@ -51,7 +51,7 @@ public class BasicBrain
         }
 
         // remember when the attack happened
-        _lastAttack = timer;
+        _lastAttack = seconds;
     }
 
     protected var _room :Room;

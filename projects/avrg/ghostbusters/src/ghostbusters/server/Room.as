@@ -316,7 +316,7 @@ public class Room
         _ghost.setPosition(x, y);
 
         // do a ghost tick
-        _ghost.tick(frame);
+        _ghost.tick(frame / Server.FRAMES_PER_SECOND);
     }
 
     protected function fightTick (frame :int, newSecond :Boolean) :void

@@ -124,10 +124,10 @@ public class Ghost
         setZest(_maxZest);
     }
 
-    public function tick (timer :int) :void
+    public function tick (seconds :int) :void
     {
         if (_room.state == Codes.STATE_FIGHTING && _brain != null) {
-            _brain.tick(timer);
+            _brain.tick(seconds);
         }
 
         // a level 1 ghost heals 0.25 hp/second, but let's not bother with fractional healing
