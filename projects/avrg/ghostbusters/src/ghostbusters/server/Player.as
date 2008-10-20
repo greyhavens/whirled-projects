@@ -338,7 +338,7 @@ public class Player
         // persist it, too
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
 
-        // if we just died, let the trophy code now
+        // if we just died, let the trophy code know
         if (_health == 0) {
             Trophies.handlePlayerDied(this);
         }

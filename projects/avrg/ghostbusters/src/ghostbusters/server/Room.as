@@ -554,6 +554,6 @@ public class Room
     protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_SECONDS :int = 120;
+    protected static const GHOST_RESPAWN_SECONDS :int = 600;
 }
 }
