@@ -30,6 +30,17 @@ public class Ghost extends Sprite
         _pather = new SplinePather(pos);
     }
 
+    public function findEdge () :int
+    {
+        var painted :Rectangle = Game.control.local.getPaintableArea(false);
+        if (painted != null) {
+            return 600;
+        }
+        var hudBounds :Rectangle = Game.panel.hud.getBounds(Game.panel);
+
+        return Math.min(painted.right, hudBounds.left) - _bounds.width - 100;
+    }
+
     public function isIdle () :Boolean
     {
         return _pather.idle;

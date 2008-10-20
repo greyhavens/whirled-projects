@@ -302,7 +302,7 @@ public class SeekPanel extends FrameSprite
         _lanterns = null;
         _ghost.appear();
 
-        _ghost.newTarget(new Point(600, 100));
+        _ghost.newTarget(new Point(_ghost.findEdge(), 100));
 
         _ghost.mask = null;
         this.removeChild(_maskLayer);
