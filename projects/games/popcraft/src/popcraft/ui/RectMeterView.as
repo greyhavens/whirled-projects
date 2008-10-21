@@ -60,6 +60,19 @@ public class RectMeterView extends Shape
         }
     }
 
+    public function get outlineSize () :Number
+    {
+        return _outlineSize;
+    }
+
+    public function set outlineSize (val :Number) :void
+    {
+        if (_outlineSize != val) {
+            _outlineSize = val;
+            _needsDisplayUpdate = true;
+        }
+    }
+
     public function get outlineColor () :uint
     {
         return _outlineColor;
@@ -150,13 +163,14 @@ public class RectMeterView extends Shape
             g.endFill();
         }
 
-        g.lineStyle(1, _outlineColor, 1);
+        g.lineStyle(_outlineSize, _outlineColor);
         g.drawRect(0, 0, _width, _height);
 
         _needsDisplayUpdate = false;
     }
 
     protected var _outlineColor :uint;
+    protected var _outlineSize :Number = 1;
     protected var _backgroundColor :uint;
     protected var _foregroundColor :uint;
     protected var _width :Number;

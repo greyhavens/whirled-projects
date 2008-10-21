@@ -138,6 +138,8 @@ import popcraft.util.SpriteUtil;
 import popcraft.data.*;
 import popcraft.sp.endless.*;
 import popcraft.ui.UIBits;
+import popcraft.ui.RectMeterView;
+import popcraft.ui.HealthMeters;
 
 class SaveView extends SceneObject
 {
@@ -158,7 +160,7 @@ class SaveView extends SceneObject
 
         var ii :int;
 
-        // cycle number
+       // cycle number (skulls across title)
         if (cycleNumber > 0) {
             var cycleSprite :Sprite = SpriteUtil.createSprite();
             for (ii = 0; ii < cycleNumber; ++ii) {
@@ -172,6 +174,43 @@ class SaveView extends SceneObject
             _movie.addChild(cycleSprite);
         }
 
+        // health/shield meters
+        var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
+        var healthMeter :RectMeterView = new RectMeterView();
+        healthMeter.minValue = 0;
+        healthMeter.maxValue = workshopData.maxHealth;
+        healthMeter.value = save.health;
+        healthMeter.foregroundColor = 0xFF0000;
+        healthMeter.backgroundColor = 0x888888;
+        healthMeter.outlineColor = 0x000000;
+        healthMeter.outlineSize = 2;
+        healthMeter.meterWidth = 80;
+        healthMeter.meterHeight = 15;
+        healthMeter.updateDisplay();
+        healthMeter.x = HEALTH_LOC.x;
+        healthMeter.y = HEALTH_LOC.y;
+        _movie.addChild(healthMeter);
+
+        var shieldParent :Sprite = SpriteUtil.createSprite();
+        for (ii = 0; ii < save.multiplier - 1; ++ii) {
+            var shieldMeter :RectMeterView = new RectMeterView();
+            shieldMeter.minValue = 0;
+            shieldMeter.maxValue = 1;
+            shieldMeter.value = 1;
+            shieldMeter.foregroundColor = 0xFFFFFF;
+            shieldMeter.outlineColor = 0x000000;
+            shieldMeter.outlineSize = 2;
+            shieldMeter.meterWidth = 20;
+            shieldMeter.meterHeight = 15;
+            shieldMeter.updateDisplay();
+            shieldMeter.x = 20 * ii;
+            shieldParent.addChild(shieldMeter);
+        }
+        shieldParent.x = SHIELD_CENTER_LOC.x - (shieldParent.width * 0.5);
+        shieldParent.y = SHIELD_CENTER_LOC.y;
+        _movie.addChild(shieldParent);
+
+        // icons
         this.drawIcons("multiplier", save.multiplier - 1, MULTIPLIER_START, MULTIPLIER_OFFSET);
         this.drawIcons("infusion_bloodlust", save.spells[Constants.SPELL_TYPE_BLOODLUST], BLOODLUST_START, BLOODLUST_OFFSET);
         this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
@@ -226,6 +265,8 @@ class SaveView extends SceneObject
     protected static const PLAY_LOC :Point = new Point(0, 190);
     protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
+    protected static const SHIELD_CENTER_LOC :Point = new Point(-219, -78);
+    protected static const HEALTH_LOC :Point = new Point(-260, -63);
     protected static const MULTIPLIER_START :Point = new Point(-160, -64);
     protected static const MULTIPLIER_OFFSET :Point = new Point(15, 0);
     protected static const BLOODLUST_START :Point = new Point(-62, -64);
