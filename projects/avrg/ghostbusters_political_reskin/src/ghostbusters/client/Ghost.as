@@ -113,9 +113,13 @@ public class Ghost extends Sprite
         _bounds = ghost.getBounds(this);
 
         // register the sprite
-        ghost.x = - (_bounds.left + _bounds.width/2);
-        ghost.y = - _bounds.top;
+//        ghost.x = - (_bounds.left + _bounds.width/2);
+//        ghost.y = - _bounds.top;
 
+        //SKIN HACK set the position of the ghost by hand.
+        ghost.x = -100;
+        ghost.y = -80;
+        
         // refigure the bounds
         _bounds = ghost.getBounds(this);
 

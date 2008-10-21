@@ -27,7 +27,8 @@ public class PictoGeistGame extends MicrogameMode
         _settings = DIFFICULTY_SETTINGS[Math.min(difficulty, DIFFICULTY_SETTINGS.length - 1)];
 
         // choose a picture to draw
-        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(difficulty, Math.min(difficulty + 5, Constants.PICTO_PICTURES.length), Rand.STREAM_COSMETIC)];
+//        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(difficulty, Math.min(difficulty + 5, Constants.PICTO_PICTURES.length), Rand.STREAM_COSMETIC)];
+        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(0,  Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC)];
     }
 
     override public function begin () :void

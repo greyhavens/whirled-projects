@@ -64,13 +64,16 @@ public class GameFrame extends DraggableSprite
         }
 
         super.init(new Rectangle(0, 0, _frame.width, _frame.height),
-                   SNAP_NONE, 300, SNAP_TOP, -1);
+//                   SNAP_NONE, 300, SNAP_TOP, -1);
+                   SNAP_LEFT, 0, SNAP_TOP, -1);//SKIN
 
         this.addChild(_frame);
         this.addChild(_inventory);
 
-        _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
+//        _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
+        _inventory.x = 0;
         _inventory.y = (_frame.height + 20 - INVENTORY.top);
+        
         //SKIN
         Command.bind(findSafely(CHOOSE_QUOTE), MouseEvent.CLICK,
                      GameController.CHOOSE_WEAPON, Codes.WPN_QUOTE);
@@ -99,9 +102,11 @@ public class GameFrame extends DraggableSprite
     protected var _content :DisplayObject;
 
     // relative the frame's coordinate system, where can we place the framed material?
+//    protected static const INSIDE :Rectangle = new Rectangle(22, 102, 305, 230);
+//    protected static const INVENTORY :Rectangle = new Rectangle(88, 88, 144, 28);
+    
     protected static const INSIDE :Rectangle = new Rectangle(22, 102, 305, 230);
-
-    protected static const INVENTORY :Rectangle = new Rectangle(88, 88, 144, 28);
+    protected static const INVENTORY :Rectangle = new Rectangle(0, 88, 144, 28);
 
      //SKIN
     protected static const CHOOSE_QUOTE :String = "choose_quote";

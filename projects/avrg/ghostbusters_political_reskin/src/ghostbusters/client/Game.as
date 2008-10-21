@@ -55,6 +55,7 @@ public class Game extends Sprite
 
         addChild(panel = gameController.panel);
 
+        //SKIN we don't need this?
         control.local.setHitPointTester(panel.hitTestPoint);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);

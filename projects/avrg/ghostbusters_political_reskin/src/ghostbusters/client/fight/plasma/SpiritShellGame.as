@@ -332,29 +332,29 @@ public class SpiritShellGame extends MicrogameMode
 
     protected static const DIFFICULTY_SETTINGS :Array = [
 
-        new SpiritShellSettings(
-            6,      // gameTime
-            15,     // ectoplasmCount
-            5,      // ghostSpeed
-            new NumRange(15, 20, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0.3, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
-            false,  // ghostBlink
-            150,    // plasmaSpeed
-            0.1,     // plasmaFireDelay
-            50       // damage output
-        ),
+//        new SpiritShellSettings(
+//            6,      // gameTime
+//            20,     // ectoplasmCount
+//            5,      // ghostSpeed
+//            new NumRange(15, 20, Rand.STREAM_COSMETIC),   // ghostWanderDist
+//            new NumRange(0.3, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+//            false,  // ghostBlink
+//            150,    // plasmaSpeed
+//            0.1,     // plasmaFireDelay
+//            500       // damage output
+//        ),
         
-        new SpiritShellSettings(
-            6,      // gameTime
-            25,     // ectoplasmCount
-            30,      // ghostSpeed
-            new NumRange(15, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
-            false,  // ghostBlink
-            150,    // plasmaSpeed
-            0.1,     // plasmaFireDelay
-            50       // damage output
-        ),
+//        new SpiritShellSettings(
+//            6,      // gameTime
+//            25,     // ectoplasmCount
+//            30,      // ghostSpeed
+//            new NumRange(15, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
+//            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+//            false,  // ghostBlink
+//            150,    // plasmaSpeed
+//            0.1,     // plasmaFireDelay
+//            50       // damage output
+//        ),
         
         new SpiritShellSettings(
             6,      // gameTime
@@ -365,7 +365,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            50       // damage output
+            5       // damage output
         ),
 
         new SpiritShellSettings(
@@ -377,7 +377,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            50      // damage output
+            10      // damage output
         ),
 
         new SpiritShellSettings(
@@ -389,7 +389,7 @@ public class SpiritShellGame extends MicrogameMode
             true,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            50       // damage output
+            15       // damage output
         )
 
     ];

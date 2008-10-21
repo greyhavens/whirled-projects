@@ -77,7 +77,7 @@ public class SeekPanel extends FrameSprite
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
-        _lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
+        //_lanternLoop = Sound(new Content.LANTERN_LOOP_AUDIO()).play();
 
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
@@ -93,7 +93,7 @@ public class SeekPanel extends FrameSprite
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
-        _lanternLoop.stop();
+        //_lanternLoop.stop();
 
         Game.control.player.props.removeEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
@@ -375,7 +375,7 @@ public class SeekPanel extends FrameSprite
     protected var _lightLayer :Sprite;
     protected var _maskLayer :Sprite;
 
-    protected var _lanternLoop :SoundChannel;
+    //protected var _lanternLoop :SoundChannel;
 
     protected static const FRAMES_PER_UPDATE :int = 6;
     protected static const ZAP_FRAMES :int = 30;

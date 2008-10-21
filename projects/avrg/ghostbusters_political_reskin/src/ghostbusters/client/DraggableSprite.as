@@ -163,6 +163,7 @@ public class DraggableSprite extends Sprite
             break;
         case SNAP_LEFT:
             this.x = _paintable.left - _bounds.left;
+            trace(" gameframe.x=" + this.x);
             break;
         case SNAP_ROOM_EDGE:
             this.x = Math.max(0, Math.min(_paintable.right - _bounds.right,

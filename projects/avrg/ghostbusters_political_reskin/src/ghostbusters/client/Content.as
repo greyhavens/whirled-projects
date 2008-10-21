@@ -49,13 +49,13 @@ public class Content
     public static const FONT_SUNNYSIDE :Class;
 
     // audio
-    [Embed(source="../../../rsrc/Sounds/473674_SOUNDDOGS_Am.mp3")]
-    public static const LANTERN_LOOP_AUDIO :Class;
-
-    [Embed(source="../../../rsrc/Sounds/473674_SOUNDDOGS_Am.mp3")]
-    public static const BATTLE_LOOP_AUDIO :Class;
-
-    [Embed(source="../../../rsrc/Sounds/143135_SOUNDDOGS_MO_modded.mp3")]
-    public static const LANTERN_GHOST_SCREECH :Class;
+//    [Embed(source="../../../rsrc/Sounds/473674_SOUNDDOGS_Am.mp3")]
+//    public static const LANTERN_LOOP_AUDIO :Class;
+//
+//    [Embed(source="../../../rsrc/Sounds/473674_SOUNDDOGS_Am.mp3")]
+//    public static const BATTLE_LOOP_AUDIO :Class;
+//
+//    [Embed(source="../../../rsrc/Sounds/143135_SOUNDDOGS_MO_modded.mp3")]
+//    public static const LANTERN_GHOST_SCREECH :Class;
 }
 }

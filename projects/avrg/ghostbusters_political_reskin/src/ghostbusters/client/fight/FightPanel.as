@@ -59,7 +59,7 @@ public class FightPanel extends FrameSprite
 
         this.addChild(_ghost);
         _ghost.mask = null;
-        _ghost.x = 600;
+        _ghost.x = 400;
         _ghost.y = 60;//100
 
         // listen for notification messages from the server on the room control
@@ -177,13 +177,13 @@ public class FightPanel extends FrameSprite
     override protected function handleAdded (... ignored) :void
     {
         super.handleAdded();
-        _battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
+        //_battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
     }
 
     override protected function handleRemoved (... ignored) :void
     {
         super.handleRemoved();
-        _battleLoop.stop();
+        //_battleLoop.stop();
 
         if (_player != null) {
             _player.shutdown();
@@ -313,7 +313,7 @@ public class FightPanel extends FrameSprite
 
     protected var _dimness :Dimness;
 
-    protected var _battleLoop :SoundChannel;
+    //protected var _battleLoop :SoundChannel;
 
     protected var _playing :Boolean;
 

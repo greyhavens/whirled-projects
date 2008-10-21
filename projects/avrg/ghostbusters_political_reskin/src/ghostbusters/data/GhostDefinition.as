@@ -77,8 +77,8 @@ public class GhostDefinition
         _definitions = new HashMap();
         //SKIN
 //        addGhost(new GhostDefinition(GHOST_PINCHER, 72, 145, 80));
-        addGhost(new GhostDefinition(GHOST_MCCAIN, 90+30, 85+30, 36+30));
-        addGhost(new GhostDefinition(GHOST_PALIN, 68+30, 96+30, 33+30));//+1 sec (30 frames);
+        addGhost(new GhostDefinition(GHOST_MCCAIN, 90, 85, 36));
+        addGhost(new GhostDefinition(GHOST_PALIN, 68, 96, 33));//+1 sec (30 frames);
         addGhost(new GhostDefinition(GHOST_MUTANT, 76, 160, 61));
     }
 

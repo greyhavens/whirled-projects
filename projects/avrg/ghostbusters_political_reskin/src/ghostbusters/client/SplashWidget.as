@@ -142,7 +142,7 @@ public class SplashWidget extends ClipHandler
     {
         _begin = DisplayObjectContainer(findSafely(this.clip, DSP_WELCOME));
 
-        if( _begin == null)
+//        if( _begin == null)
         //SKIN "set" an avater.  We don't use avatars, we simply use 
         //this as a switch to determine whether to show the help again.
         Command.dispatch(findSafely(_begin, DSP_WELCOME),

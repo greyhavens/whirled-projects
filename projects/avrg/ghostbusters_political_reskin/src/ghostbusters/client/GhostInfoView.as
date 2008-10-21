@@ -36,7 +36,7 @@ public class GhostInfoView
 //          duchess: findSafely(hud, "McCainPortrait")
 	      mccain: findSafely(hud, "McCainPortrait"),
           palin: findSafely(hud, "PalinPortrait"),
-//	      mutant: findSafely(hud, "GOPMonsterPortrait")
+	      mutant: findSafely(hud, "GOPPortrait")
 //          demon: findSafely(hud, "DemonPortrait")
         };
 

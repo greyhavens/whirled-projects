@@ -131,6 +131,8 @@ public class Room
 
     public function tick (frame :int, newSecond :Boolean) :void
     {
+        
+        
         // if there are no players in this room, we cannot assume it's loaded, so do nothing
         if (_ctrl.getPlayerIds().length == 0) {
             return;
@@ -142,7 +144,8 @@ public class Room
             break;
 
         case Codes.STATE_APPEARING:
-            if (frame >= _transitionFrame) {
+            // let's add a 2-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 3) {
                 if (_transitionFrame == 0) {
                     log.warning("In APPEAR without transitionFrame", "id", roomId);
                 }
@@ -157,7 +160,8 @@ public class Room
 
         case Codes.STATE_GHOST_TRIUMPH:
         case Codes.STATE_GHOST_DEFEAT:
-            if (frame >= _transitionFrame) {
+            // let's add a 2-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 3) {
                 if (_transitionFrame == 0) {
                     log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
                 }
@@ -166,6 +170,7 @@ public class Room
             }
             break;
         }
+
     }
 
     // called from Player when a MSG_MINIGAME_RESULT comes in from a client
@@ -551,10 +556,10 @@ public class Room
             
             var ghosts :Array = [GhostDefinition.GHOST_MCCAIN, GhostDefinition.GHOST_PALIN, GhostDefinition.GHOST_MUTANT];
             
-            var ix :int = Server.random.nextInt(ghosts.length - 1);
-            if(isBossRoom()) {
-                ix = ghosts.length - 1;
-            }
+            var ix :int = Server.random.nextInt(ghosts.length);
+//            if(isBossRoom()) {
+//                ix = ghosts.length - 1;
+//            }
             //the boss has a smaller p of appearing
 //            if(Server.random.nextNumber() <= 0.16) {
 //                ix = ghosts.length - 1;
@@ -606,6 +611,8 @@ public class Room
         _ghost = null;
         _nextGhost = getTimer() + 1000 * GHOST_RESPAWN_SECONDS;
         
+        
+        //SKIN
 //        if( !_nextGhostIsBoss && isOnePlayerOneBossAwayFromLevelUp() ) {
 //            _nextGhost = getTimer();
 //            _nextGhostIsBoss = true;

@@ -54,13 +54,15 @@ public class GamePanel extends Sprite
 
         //SKIN 
         if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
+            trace("no avatar=we are new at the game");
             showSplash(SplashWidget.STATE_BEGIN);
 
         } else if (!Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
             showSplash(SplashWidget.STATE_BEGIN);
+            trace("have avatar=we are NOT new at the game");
 
         } else {
-            _seeking = false;
+            _seeking = true;
         }
         
 //        if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
@@ -161,6 +163,10 @@ public class GamePanel extends Sprite
 
         _frame.x = (paintable.width - 100 - _frame.width) / 2;
         _frame.y = (paintable.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
+        _frame.x = 20;
+        trace("paintable=" + paintable);
+        trace("_frame.width=" + _frame.width);
+        trace("_frame coords=" + _frame.x + ", " + _frame.y);
     }
 
     public function getClipClass () :Class
