@@ -14,6 +14,8 @@ package
 	import flash.events.EventDispatcher;
 	import flash.text.TextField;
 	
+	import inventory.ClientInventory;
+	
 	import items.Item;
 	import items.ItemPlayer;
 	
@@ -30,7 +32,7 @@ package
 		implements CellInteractions, ItemPlayer, MoveInteractions, MovableCharacter, Viewable, 
 			PathFollower, Owner
 	{
-		public function PlayerCharacter(name:String, inventory:Inventory)
+		public function PlayerCharacter(name:String, inventory:ClientInventory)
 		{ 
 			_name = name;
 			_inventory = inventory;
@@ -147,8 +149,7 @@ package
 		}
 		
 		public function movementComplete () :void
-		{
-			
+		{			
 			actionComplete();
 		}
 		
@@ -261,7 +262,7 @@ package
 			follow(event.path);
 		}
 		
-		protected var _inventory:Inventory;				
+		protected var _inventory:ClientInventory;				
 		protected var _playerAction:PlayerAction;
 		protected var _playerController:PlayerController;
 		protected var _objective:Objective;

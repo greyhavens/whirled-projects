@@ -1,4 +1,4 @@
-package items
+package items.oilcan
 {
 	import arithmetic.BoardIterator;
 	import arithmetic.CellIterator;
@@ -6,8 +6,12 @@ package items
 	
 	import interactions.Oilable;
 	
+	import items.ItemBase;
+	import items.ItemCodes;
+	import items.ItemPlayer;
+	
 
-	public class OilCan extends SimpleItem
+	public class OilCan extends ItemBase
 	{
 		public function OilCan()
 		{
@@ -20,7 +24,7 @@ package items
 		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			trace ("checking whether "+player+" can use oil");
-			return (player.cell is Oilable); 
+			return (player.cell is Oilable);
 		}
 		
 		override public function useBy (player:ItemPlayer) :void
@@ -49,18 +53,15 @@ package items
 				cell = player.cellAt(iterator.next());		
 			} while (cell.adjacentPartOf(toReplace));
 		}
-		
-		override public function get initialAsset () :Class
+				
+		override public function get code () :int
 		{
-			return oilcanIcon;
+			return ItemCodes.OIL_CAN;
 		}
 
 		override public function toString() :String
 		{
 			return "an oilcan";
-		}
-		
-		[Embed(source="../../rsrc/png/oilcan-icon.png")]
-		protected static const oilcanIcon:Class;			
+		}		
 	}
 }

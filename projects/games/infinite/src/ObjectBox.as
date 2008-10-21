@@ -1,12 +1,12 @@
-package
+package 
 {
 	import cells.CellInteractions;
 	
 	import items.Item;
-	import items.Ladder;
-	import items.OilCan;
-	import items.Spring;
-	import items.Teleporter;
+	import items.ladder.*;
+	import items.oilcan.*;
+	import items.spring.*;
+	import items.teleporter.*;
 	
 	/**
 	 * A box containing a set of objects, one of which could be given out to the user.

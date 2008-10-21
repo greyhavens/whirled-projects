@@ -5,19 +5,13 @@ package items
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
-	import items.ItemPlayer;
-	
 	import sprites.ItemSprite;
 
-	public class ItemBase extends EventDispatcher implements ViewableItem
+	public class ItemBase extends EventDispatcher implements Item
 	{		
 		public function ItemBase(target:IEventDispatcher=null)
 		{
 			super(target);
-		}
-	
-		public function get view () :DisplayObject {
-			return new ItemSprite(errorItem);
 		}
 		
 		protected function registerEventHandlers (source:EventDispatcher) :void
@@ -52,7 +46,9 @@ package items
 			// do nothing
 		}
 		
-		[Embed(source="../../rsrc/png/error-item.png")]
-		public static const errorItem:Class;
+		public function get code () :int
+		{
+			throw new Error(this + " doesn't have a code assigned to it");
+		}		
 	}
 }

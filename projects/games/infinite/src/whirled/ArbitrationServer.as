@@ -25,14 +25,14 @@ package whirled
 					throw new Error("received a "+event.name+
 						" message but couldn't cast the value "+event.value+" to MoveProposal"); 
 				}
-									
+
 				const player:MultiplayerCharacter = _players.findPlayer(event.senderId);
 				const cell:Cell = _board.cellAt(proposal.destination);
 				if (player.cell.position.equals(proposal.origin)) {
 					_arbiter.proposeMove(player, cell);
 				} else {
 					throw new Error("the server thinks "+player+
-						" is in a differrent place than the client which thinks it's "+
+						" is in a different place than the client which thinks it's "+
 						proposal.origin);
 				}
 			}

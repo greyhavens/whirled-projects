@@ -10,12 +10,14 @@ package items
 	 */
 	public interface Item extends IEventDispatcher
 	{
-		function addToInventory (inventory:ItemInventory) :void
+		function get code () :int;
 		
-		function removeFromInventory (inventory:ItemInventory) :void
+		function addToInventory (inventory:ItemInventory) :void;
 		
-		function isUsableBy (player:ItemPlayer) :Boolean
+		function removeFromInventory (inventory:ItemInventory) :void;
 		
-		function useBy (player:ItemPlayer) :void
+		function isUsableBy (player:ItemPlayer) :Boolean;
+		
+		function useBy (player:ItemPlayer) :void;
 	}
 }

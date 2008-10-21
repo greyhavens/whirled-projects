@@ -23,13 +23,13 @@ package {
 	    public function Server ()
 	    {
 	        _control = new GameControl(this);	        
-//	        _arbiter = new ArbitrationServer(_control.net);
+	        _arbiter = new ArbitrationServer(_control.net);
 	        _players = new ServerPlayerRegister(_control.game);
 	    }
 	    
 	    protected var _players :ServerPlayerRegister;
 //
-//		protected var _arbiter :ArbitrationServer
+		protected var _arbiter :ArbitrationServer
 //	
 	    protected var _control :GameControl;
 	}

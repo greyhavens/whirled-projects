@@ -7,6 +7,8 @@ package
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	
+	import inventory.ClientInventory;
+	
 	import sprites.SpriteUtil;
 	
 	public class PlayTest extends Sprite
@@ -24,7 +26,7 @@ package
 			_viewer.y = 10;
 			addChild(_viewer);		
 			
-			_inventory = new Inventory(680, 50);
+			_inventory = new ClientInventory(680, 50);
 			const invView:DisplayObject = _inventory.view;
 			invView.x = 10;
 			invView.y = 440;			
@@ -63,7 +65,7 @@ package
 		protected var _controller:PlayerController;
 		protected var _board:Board;
 		protected var _viewer:Viewer;
-		protected var _inventory:Inventory;
+		protected var _inventory:ClientInventory;
 		protected var _player:PlayerCharacter;
 		protected var _frameTimer:FrameTimer;		
 		

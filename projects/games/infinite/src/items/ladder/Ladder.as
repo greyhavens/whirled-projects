@@ -1,4 +1,4 @@
-package items
+package items.ladder
 {
 	import arithmetic.BoardCoordinates;
 	import arithmetic.BoardPath;
@@ -6,12 +6,16 @@ package items
 	
 	import cells.ladder.*;
 	
+	import items.ItemBase;
+	import items.ItemCodes;
+	import items.ItemPlayer;
+	
 	import sprites.*;
 	
 	/**
 	 * This a ladder object.
 	 */
-	public class Ladder extends SimpleItem
+	public class Ladder extends ItemBase
 	{
 		/**
 		 * Create a ladder with the specified number of segments.  All ladders have a base
@@ -27,12 +31,7 @@ package items
 		{
 			return "a ladder";
 		}
-				
-		override public function get initialAsset () :Class
-		{
-			return ladderIcon;
-		}
-		
+						
 		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
 			const target:Cell = player.cell;
@@ -64,10 +63,12 @@ package items
 				target.position.translatedBy(new Vector(0, -(_segments + 1))); 
 			player.replace(top, new LadderTopCell(player, top));
 		}
+
+        override public function get code () :int
+        {
+        	return ItemCodes.LADDER;
+        }
 				
-		protected var _segments:int;
-		
-		[Embed(source="../../rsrc/png/ladder-icon.png")]
-		protected static const ladderIcon:Class;
+		protected var _segments:int;		
 	}
 }

@@ -1,6 +1,10 @@
-package items
+package items.teleporter
 {
-	public class Teleporter extends SimpleItem
+	import items.ItemBase;
+	import items.ItemCodes;
+	import items.ItemPlayer;
+	
+	public class Teleporter extends ItemBase
 	{
 		public function Teleporter()
 		{
@@ -20,18 +24,14 @@ package items
 			player.teleport();
 		}
 
-		override public function get initialAsset () :Class
-		{
-			return teleportIcon;
-		}
-
 		override public function toString() :String
 		{
 			return "a teleporter";
 		}
 		
-		[Embed(source="../../rsrc/png/teleport-icon.png")]
-		protected static const teleportIcon:Class;			
-		
+		override public function get code () :int 
+		{
+			return ItemCodes.TELEPORTER;
+		}		
 	}
 }

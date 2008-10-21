@@ -1,4 +1,4 @@
-package
+package inventory
 {	
 	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
@@ -11,13 +11,13 @@ package
 	import items.Item;
 	import items.ItemEvent;
 	import items.ItemInventory;
-	import items.ViewableItem;
+	import items.ItemViewFactory;
 	
 	import sprites.*;
 	
-	public class Inventory extends EventDispatcher implements ItemInventory, Viewable
+	public class ClientInventory extends EventDispatcher implements ItemInventory, Viewable
 	{
-		public function Inventory(width:int, height:int)
+		public function ClientInventory(width:int, height:int)
 		{
 			_width = width;
 			_height = height;
@@ -45,14 +45,9 @@ package
 	
 		public function addItem (item:Item) :void
 		{
-			const viewable:ViewableItem = item as ViewableItem;
-			if (viewable != null) {
-				_items.push(viewable);
-				displayItem(viewable, _items.length - 1);
-				item.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
-			} else {
-				throw new Error("cannot add "+item+" that isn't viewable to the inventory.");
-			}
+			_items.push(item);
+			displayItem(item, _items.length - 1);
+			item.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
 		}
 		
 		/**
@@ -60,23 +55,20 @@ package
 		 */
 		public function removeItem (item:Item) :void
 		{			
-			const viewable:ViewableItem = item as ViewableItem;
-			if (viewable != null) {
-				var i:int;
-				for (i = 0; i < _items.length; i++)
-				{
-					if (_items[i] == viewable) {
-						_view.removeChild(viewable.view);					
-						var last:int = _items.length - 1;
-						var j:int;
-						for (j = i; j < last; j++) {
-							var shiftLeft:ViewableItem = _items[j+1];
-							_items[j] = shiftLeft;
-							positionItem(shiftLeft,j);
-						}
-						_items.pop();
-						break;
+			var i:int;
+			for (i = 0; i < _items.length; i++)
+			{
+				if (_items[i] == item) {
+					_view.removeChild(_viewBuffer.take(item));					
+					var last:int = _items.length - 1;
+					var j:int;
+					for (j = i; j < last; j++) {
+						var shiftLeft:Item = _items[j+1];
+						_items[j] = shiftLeft;
+						positionItem(_viewBuffer.find(shiftLeft), j);
 					}
+					_items.pop();
+					break;
 				}
 			}
 		}
@@ -84,20 +76,24 @@ package
 		public function handleItemClicked (event:ItemEvent) :void
 		{
 			dispatchEvent(new ItemEvent(event.type, event.item));
-		}
+		}       	
 	
-		protected function displayItem (item:ViewableItem, position:int) :void
+		protected function displayItem (item:Item, position:int) :void
 		{
 			trace ("inventory displaying "+item);
-			_view.addChild(item.view);
-			positionItem(item, position);
+			const view:DisplayObject = _itemViews.viewOf(item);
+			_view.addChild(view);
+			positionItem(view, position);
 		}
-	
-		protected function positionItem (item:ViewableItem, position:int) :void
+		
+		protected function positionItem (object:DisplayObject, position:int) :void
 		{
 			const offset:Vector = positioningUnit.multiplyByVector(new Vector(position, 0));
-			Geometry.position(item.view, GraphicCoordinates.ORIGIN.translatedBy(offset));			
+			Geometry.position(object, GraphicCoordinates.ORIGIN.translatedBy(offset));			
 		}
+		
+		protected var _viewBuffer:ItemViewBuffer = new ItemViewBuffer();	
+	    protected var _itemViews:ItemViewFactory = new ItemViewFactory();
 	
 		protected var positioningUnit:Vector = ItemSprite.UNIT.add(new Vector(10 ,0));
 	

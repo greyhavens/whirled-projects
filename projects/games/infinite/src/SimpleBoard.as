@@ -8,8 +8,10 @@ package
 	import cells.ladder.*;
 	import cells.wall.*;
 	
-	import items.*;
-	
+	import items.ladder.*;
+	import items.oilcan.*;
+	import items.spring.*;
+	import items.teleporter.*;
 	
 	public class SimpleBoard implements Board
 	{
