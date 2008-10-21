@@ -4,6 +4,7 @@
 package ghostbusters.client {
 
 import flash.display.Sprite;
+import flash.utils.Dictionary;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -16,6 +17,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.net.NetConstants;
 
 public class DraggableSprite extends Sprite
 {
@@ -25,9 +27,16 @@ public class DraggableSprite extends Sprite
     public static const SNAP_ROOM_EDGE :int = 3;
     public static const SNAP_BROWSER_EDGE :int = 4;
 
-    public function DraggableSprite (ctrl :AVRGameControl)
+    public static const PROP_PREFIX :String = NetConstants.makePersistent("draggable_");
+    public static const IX_XSNAP :int = 0;
+    public static const IX_XFIX :int = 1;
+    public static const IX_YSNAP :int = 2;
+    public static const IX_YFIX :int = 3;
+
+    public function DraggableSprite (ctrl :AVRGameControl, persistId :String = null)
     {
         _ctrl = ctrl;
+        _persistId = persistId;
 
         _ctrl.local.addEventListener(AVRGameControlEvent.SIZE_CHANGED, handleSizeChanged);
         _ctrl.player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, handleEnteredRoom);
@@ -42,14 +51,23 @@ public class DraggableSprite extends Sprite
                              ySnap :int, yPos :Number, bleed :Number = 0) :void
     {
         _bounds = bounds;
-
-        _xSnap = xSnap;
-        _xFix = xPos;
-
-        _ySnap = ySnap;
-        _yFix = yPos;
-
         _bleed = bleed;
+
+        var locData :Dictionary = (_persistId != null) ?
+            _ctrl.player.props.get(PROP_PREFIX + _persistId) as Dictionary : null;
+
+        if (locData != null) {
+            _xSnap = locData[IX_XSNAP];
+            _xFix = locData[IX_XFIX];
+            _ySnap = locData[IX_YSNAP];
+            _yFix = locData[IX_YFIX];
+
+        } else {
+            _xSnap = xSnap;
+            _xFix = xPos;
+            _ySnap = ySnap;
+            _yFix = yPos;
+        }
 
         layout();
     }
@@ -101,6 +119,17 @@ public class DraggableSprite extends Sprite
                 _ySnap = SNAP_NONE;
                 _yFix = p.y;
             }
+
+            if (_persistId != null) {
+                var locData :Dictionary = new Dictionary();
+                locData[IX_XSNAP] = _xSnap;
+                locData[IX_XFIX] = _xFix;
+                locData[IX_YSNAP] = _ySnap;
+                locData[IX_YFIX] = _yFix;
+
+                _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
+            }
+
         }
 
         layout();
@@ -199,6 +228,8 @@ public class DraggableSprite extends Sprite
     protected var _ctrl :AVRGameControl;
 
     protected var _mode :String;
+
+    protected var _persistId :String;
 
     protected var _bounds :Rectangle;
 

@@ -38,7 +38,7 @@ public class HUD extends DraggableSprite
 {
     public function HUD ()
     {
-        super(Game.control);
+        super(Game.control, "HUD");
 
         _hud = new ClipHandler(ByteArray(new Content.HUD_VISUAL()), handleHUDLoaded);
 

@@ -30,7 +30,7 @@ public class GameFrame extends DraggableSprite
 {
     public function GameFrame (readyCallback :Function)
     {
-        super(Game.control);
+        super(Game.control, "frame");
 
         _frame = new ClipHandler(new Content.FRAME(), function () :void {
             maybeReady(readyCallback);
