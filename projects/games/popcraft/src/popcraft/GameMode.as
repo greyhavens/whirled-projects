@@ -30,6 +30,8 @@ import popcraft.util.*;
 
 public class GameMode extends TransitionMode
 {
+    public static const FADE_OUT_TIME :Number = 3;
+
     public function GameMode ()
     {
         if (ClassUtil.getClass(this) == GameMode) {
@@ -102,6 +104,11 @@ public class GameMode extends TransitionMode
 
     override protected function exit () :void
     {
+        // if the game is over, we're already fading out our music
+        if (_gameOver) {
+            return;
+        }
+
         if (GameContext.sfxControls != null) {
             GameContext.sfxControls.pause(true);
         }
@@ -279,7 +286,7 @@ public class GameMode extends TransitionMode
 
         case KeyboardCodes.ESCAPE:
             if (this.canPause) {
-                AppContext.mainLoop.pushMode(new PauseMode());
+                this.pause();
             }
             break;
 
@@ -294,6 +301,13 @@ public class GameMode extends TransitionMode
                 this.applyCheatCode(keyCode);
             }
             break;
+        }
+    }
+
+    public function pause () :void
+    {
+        if (!_gameOver && this.canPause) {
+            AppContext.mainLoop.pushMode(new PauseMode());
         }
     }
 
@@ -787,8 +801,6 @@ public class GameMode extends TransitionMode
     protected static const TICK_INTERVAL_S :Number = (Number(TICK_INTERVAL_MS) / Number(1000));
 
     protected static const CHECKSUM_BUFFER_LENGTH :int = 10;
-
-    protected static const FADE_OUT_TIME :Number = (Constants.DEBUG_ALLOW_CHEATS ? 0.5 : 3);
 
     protected static const DASHBOARD_LOC :Point = new Point(350, 430);
     protected static const PUZZLE_BOARD_LOC :Point = new Point(-131, -63);

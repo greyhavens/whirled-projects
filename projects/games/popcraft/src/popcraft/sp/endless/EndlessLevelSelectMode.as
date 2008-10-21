@@ -169,7 +169,7 @@ class SaveView extends SceneObject
 
         // text
         var titleText :TextField = _movie["level_title"];
-        titleText.text = mapData.displayName;
+        titleText.text = level.getMapNumberedDisplayName(save.mapIndex);
 
         var scoreText :TextField = _movie["level_score"];
         scoreText.text = "Score: " + StringUtil.formatNumber(save.score);

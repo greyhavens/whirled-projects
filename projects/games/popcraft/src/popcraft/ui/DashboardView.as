@@ -86,7 +86,7 @@ public class DashboardView extends SceneObject
             pauseButton.visible = true;
             this.registerEventListener(pauseButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    MainLoop.instance.pushMode(new PauseMode());
+                    GameContext.gameMode.pause();
                 });
 
         } else {
