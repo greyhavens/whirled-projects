@@ -142,15 +142,6 @@ public class EndlessGameMode extends GameMode
                 }
             }
 
-            /*var computersAreDead :Boolean = true;
-            for (var teamId :int = FIRST_COMPUTER_TEAM_ID; teamId < _teamLiveStatuses.length;
-                ++teamId) {
-                if (Boolean(_teamLiveStatuses[teamId])) {
-                    computersAreDead = false;
-                    break;
-                }
-            }*/
-
             if (_liveComputers.length == 0) {
                 this.switchMaps();
             }

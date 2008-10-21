@@ -10,8 +10,8 @@
 		</GameDataOverride>
 
 		<HumanPlayers>
-			<Player name="Finley"/>
 			<Player name="Eloise"/>
+			<Player name="Finley"/>
 		</HumanPlayers>
 
 		<PointsPerCreatureKill>

@@ -39,6 +39,11 @@ public class PopCraft_Standalone extends PopCraft
         rm.queueResourceLoad("image", "portrait_ralph", { embeddedClass: IMG_RALPH });
         rm.queueResourceLoad("image", "portrait_weardd", { embeddedClass: IMG_WEARDD });
 
+        rm.queueResourceLoad("image", "portrait_dante", { embeddedClass: IMG_DANTE });
+        rm.queueResourceLoad("image", "portrait_eloise", { embeddedClass: IMG_ELOISE });
+        rm.queueResourceLoad("image", "portrait_horace", { embeddedClass: IMG_HORACE });
+        rm.queueResourceLoad("image", "portrait_ursula", { embeddedClass: IMG_URSULA });
+
         rm.queueResourceLoad("sound", "mus_day", { embeddedClass: MUSIC_DAY });
         rm.queueResourceLoad("sound", "mus_night", { embeddedClass: MUSIC_NIGHT });
     }
@@ -70,6 +75,15 @@ public class PopCraft_Standalone extends PopCraft
     protected static const IMG_RALPH :Class;
     [Embed(source="../../rsrc/sp/weardd.png", mimeType="application/octet-stream")]
     protected static const IMG_WEARDD :Class;
+
+    [Embed(source="../../rsrc/sp/dante.png", mimeType="application/octet-stream")]
+    protected static const IMG_DANTE :Class;
+    [Embed(source="../../rsrc/sp/eloise.png", mimeType="application/octet-stream")]
+    protected static const IMG_ELOISE :Class;
+    [Embed(source="../../rsrc/sp/horace.png", mimeType="application/octet-stream")]
+    protected static const IMG_HORACE :Class;
+    [Embed(source="../../rsrc/sp/ursula.png", mimeType="application/octet-stream")]
+    protected static const IMG_URSULA :Class;
 
     [Embed(source="../../rsrc/audio/music/popcraft_music_day.mp3")]
     protected static const MUSIC_DAY :Class;

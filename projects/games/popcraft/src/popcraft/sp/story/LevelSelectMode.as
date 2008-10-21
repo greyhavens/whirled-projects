@@ -185,6 +185,16 @@ public class LevelSelectMode extends DemoGameMode
             testAnimButton.y = buttonY;
             buttonY += 35;
             _modeLayer.addChild(testAnimButton);
+
+            var upsellButton :SimpleButton = UIBits.createButton("Upsell", 1.2);
+            this.registerEventListener(upsellButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    AppContext.mainLoop.pushMode(new UpsellMode());
+                });
+            upsellButton.x = 10;
+            upsellButton.y = buttonY;
+            buttonY += 35;
+            _modeLayer.addChild(upsellButton);
         }
 
         // create the tutorial objects
