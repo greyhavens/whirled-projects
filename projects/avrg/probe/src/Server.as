@@ -10,6 +10,7 @@ public class Server extends ServerObject
     {
         _ctrl = new AVRServerGameControl(this);
         _module = new ServerModule(_ctrl);
+        _module.activate();
     }
 
     protected var _ctrl :AVRServerGameControl;
