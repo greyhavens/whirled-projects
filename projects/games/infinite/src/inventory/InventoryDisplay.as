@@ -15,9 +15,9 @@ package inventory
 	
 	import sprites.*;
 	
-	public class ClientInventory extends EventDispatcher implements ItemInventory, Viewable
+	public class InventoryDisplay extends EventDispatcher implements ItemInventory
 	{
-		public function ClientInventory(width:int, height:int)
+		public function InventoryDisplay(width:int, height:int)
 		{
 			_width = width;
 			_height = height;

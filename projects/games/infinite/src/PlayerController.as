@@ -2,7 +2,7 @@ package
 {
 	import arbitration.BoardArbiter;
 	
-	import inventory.ClientInventory;
+	import inventory.InventoryDisplay;
 	
 	import items.Item;
 	import items.ItemEvent;
@@ -11,7 +11,7 @@ package
 	{
 		public function PlayerController(
 			frameTimer:FrameTimer, viewer:Viewer, player:PlayerCharacter, 
-			clientInventory:ClientInventory)
+			inventoryDisplay:InventoryDisplay)
 		{
 			_board = viewer.objective;
 			_arbiter = new BoardArbiter(_board);
@@ -21,7 +21,7 @@ package
 			_player.playerController = this;
 			
 			frameTimer.addEventListener(FrameEvent.FRAME_START, handleFrameEvent);					
-			clientInventory.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
+			inventoryDisplay.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
 		}
 
 		protected function handleFrameEvent (event:FrameEvent) :void
