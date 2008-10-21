@@ -40,10 +40,10 @@ public class EndlessLevelSelectMode extends AppMode
             ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
         _saves.splice(0, 0, level1);
 
-        this.selectSave(_saves.length - 1);
+        this.selectSave(_saves.length - 1, true);
     }
 
-    protected function selectSave (saveIndex :int) :void
+    protected function selectSave (saveIndex :int, removeModeUnderneath :Boolean) :void
     {
         _saveIndex = saveIndex;
 
@@ -52,10 +52,19 @@ public class EndlessLevelSelectMode extends AppMode
             _saveView.addTask(After(ANIMATE_TIME, new SelfDestructTask()));
         }
 
+        var saveViewTask :SerialTask =
+            new SerialTask(LocationTask.CreateSmooth(END_LOC.x, END_LOC.y, ANIMATE_TIME));
+        if (removeModeUnderneath) {
+            saveViewTask.addTask(new FunctionTask(
+                function () :void {
+                    AppContext.mainLoop.removeMode(-2);
+                }));
+        }
+
         _saveView = new SaveView(_level, _saves[saveIndex]);
         _saveView.x = START_LOC.x;
         _saveView.y = START_LOC.y;
-        _saveView.addTask(LocationTask.CreateEaseIn(END_LOC.x, END_LOC.y, ANIMATE_TIME));
+        _saveView.addTask(saveViewTask);
         this.addObject(_saveView, _modeSprite);
 
         // wire up buttons
@@ -68,7 +77,7 @@ public class EndlessLevelSelectMode extends AppMode
                     if (index >= _saves.length) {
                         index = 0;
                     }
-                    selectSave(index);
+                    selectSave(index, false);
                 });
 
             this.registerEventListener(prevButton, MouseEvent.CLICK,
@@ -77,7 +86,7 @@ public class EndlessLevelSelectMode extends AppMode
                     if (index < 0) {
                         index = _saves.length - 1;
                     }
-                    selectSave(index);
+                    selectSave(index, false);
                 });
 
         } else {
@@ -96,7 +105,14 @@ public class EndlessLevelSelectMode extends AppMode
         GameContext.gameType = (this.isMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
             GameContext.GAME_TYPE_ENDLESS_SP);
 
-        AppContext.mainLoop.unwindToMode(new EndlessGameMode(_level, save, true));
+        AppContext.mainLoop.insertMode(new EndlessGameMode(_level, save, true), -1);
+
+        _saveView.removeAllTasks();
+        _saveView.x = END_LOC.x;
+        _saveView.y = END_LOC.y;
+        _saveView.addTask(new SerialTask(
+            LocationTask.CreateSmooth(START_LOC.x, START_LOC.y, ANIMATE_TIME),
+            new FunctionTask(AppContext.mainLoop.popMode)));
     }
 
     protected function get isMultiplayer () :Boolean
@@ -114,9 +130,9 @@ public class EndlessLevelSelectMode extends AppMode
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
 
-    protected static const ANIMATE_TIME :Number = 0.6;
-    protected static const START_LOC :Point = new Point(350, -250);
-    protected static const END_LOC :Point = new Point(350, 250);
+    protected static const ANIMATE_TIME :Number = 1.5;
+    protected static const START_LOC :Point = new Point(350, -328);
+    protected static const END_LOC :Point = new Point(350, 274);
 }
 
 }

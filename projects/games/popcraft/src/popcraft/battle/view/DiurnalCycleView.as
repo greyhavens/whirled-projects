@@ -96,6 +96,8 @@ public class DiurnalCycleView extends SceneObject
             _sprite.addChild(newVisibleBody);
         }
 
+        newVisibleBody.x = BODY_START_X;
+
         _curVisibleBody = newVisibleBody;
         _lastPhase = newPhase;
     }

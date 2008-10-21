@@ -124,14 +124,14 @@ public class PuzzleBoard extends SceneObject
         for (var i :int = 0; i < boardSize; ++i) {
             piece = createNewPieceOnBoard(i);
 
-            if (animate) {
+            /*if (animate) {
                 // show a clever scale effect
                 piece.scaleX = 0;
                 piece.scaleY = 0;
                 piece.addTask(new SerialTask(
                     new TimedTask(Rand.nextNumberRange(0.25, 1, Rand.STREAM_COSMETIC)),
                     ScaleTask.CreateSmooth(1, 1, 0.25)));
-            }
+            }*/
         }
     }
 
