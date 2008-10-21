@@ -75,7 +75,7 @@ public class HUD extends DraggableSprite
         teamUpdated();
     }
 
-    override  protected function handleEnteredRoom (evt :AVRGameControlEvent) :void
+    override protected function handleEnteredRoom (evt :AVRGameControlEvent) :void
     {
         super.handleEnteredRoom(evt);
 
@@ -95,8 +95,12 @@ public class HUD extends DraggableSprite
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
-        if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+        if (evt.name == Codes.PROP_STATE) {
+            updateGhostHealth();
+
+        } else if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
             teamUpdated();
+
         }
     }
 
