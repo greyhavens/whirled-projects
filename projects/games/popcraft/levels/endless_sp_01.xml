@@ -27,7 +27,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 -->
 
 		<MapSequence>
-			<!-- ****** LEVEL 1 : Welcoming Committee (Pigsley) ****** -->
+			<!-- ****** LEVEL 1 : Welcoming Committee (Pigsley, School) ****** -->
 			<Map displayName="Welcoming Committee" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
@@ -63,7 +63,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 2 : Opening Ceremonies (Horace) ****** -->
+			<!-- ****** LEVEL 2 : Opening Ceremonies (Horace, School) ****** -->
 			<Map displayName="Opening Ceremonies" isSavePoint="true">
 				<MapSettings backgroundName="schoolnoburn"/>
 				<HumanBaseLocations>
@@ -101,7 +101,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 
-			<!-- ****** LEVEL 3 : Double-Teamed (Iris & Ivy) ****** -->
+			<!-- ****** LEVEL 3 : Double-Teamed (Iris & Ivy, Ballfield) ****** -->
 			<Map displayName="Double-Teamed" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
@@ -169,7 +169,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 4 : Athletic Tryouts (Ursula) ****** -->
+			<!-- ****** LEVEL 4 : Athletic Tryouts (Ursula, Ballfield) ****** -->
 			<Map displayName="Athletic Tryouts" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
@@ -210,7 +210,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 5 : On the Offensive (Ralph) ****** -->
+			<!-- ****** LEVEL 5 : On the Offensive (Ralph, Ballfield) ****** -->
 			<Map displayName="On the Offensive" isSavePoint="true">
 				<MapSettings backgroundName="ballfield">
 		            <SpellDropLocation x="270" y="125"/>
@@ -255,9 +255,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 
-			<!-- ****** LEVEL 6 : Grave Concerns (Dante) ****** -->
+			<!-- ****** LEVEL 6 : Grave Concerns (Dante, Graveyard) ****** -->
 			<Map displayName="Grave Concerns" isSavePoint="true">
-				<MapSettings backgroundName="wharf">
+				<MapSettings backgroundName="graveyard">
 		            <SpellDropLocation x="360" y="150"/>
 				</MapSettings>
 				<HumanBaseLocations>
@@ -298,9 +298,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley) ****** -->
+			<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley, Graveyard) ****** -->
 			<Map displayName="Bullied" isSavePoint="true">
-				<MapSettings backgroundName="wharf">
+				<MapSettings backgroundName="graveyard">
 		            <SpellDropLocation x="360" y="130"/>
 				</MapSettings>
 				<HumanBaseLocations>
@@ -421,6 +421,66 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
+			<!-- ****** LEVEL 9 : Something (Jack & Dante) ****** -->
+			<Map displayName="Something" isSavePoint="true">
+				<MapSettings backgroundName="city">
+		            <SpellDropLocation x="305" y="100"/>
+				</MapSettings>
+				<HumanBaseLocations>
+					<BaseLocation playerName="Finley" x="80" y="140" team="0"/>
+					<BaseLocation playerName="Eloise" x="80" y="140" team="0"/>
+				</HumanBaseLocations>
+				<MultiplierDropLocation x="305" y="100"/>
+				<AvailableUnits all="true"/>
+				<AvailableSpells all="true"/>
+				
+				<Computer
+					playerName="Jack"
+					baseStartHealth="150"
+					baseHealth="150"
+					baseHealthIncrement="75"
+					waveDelayScale="0.9"
+					team="1">
+					<BaseLocation x="600" y="140" team="1"/>
+					<RepeatingDays>
+						<Day repeatWaves="true"
+							noticeSpellDropAfterMin="5"
+							noticeSpellDropAfterMax="6"
+							spellDropCourierGroupSizeMin="1"
+							spellDropCourierGroupSizeMax="1">
+							
+							<Wave absoluteDelay="10"><Unit type="sapper" count="1"/></Wave>
+							<Wave absoluteDelay="20"><Unit type="sapper" count="1"/></Wave>
+							<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
+							<Wave absoluteDelay="60" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+							<Wave absoluteDelay="110"/>
+						</Day>
+					</RepeatingDays>
+				</Computer>
+				
+				<Computer
+					playerName="Dante"
+					baseStartHealth="150"
+					baseHealth="150"
+					baseHealthIncrement="75"
+					waveDelayScale="0.9"
+					team="1">
+					<BaseLocation x="600" y="285" team="1"/>
+					<RepeatingDays>
+						<Day repeatWaves="true"
+							noticeSpellDropAfterMin="8"
+							noticeSpellDropAfterMax="8"
+							spellDropCourierGroupSizeMin="1"
+							spellDropCourierGroupSizeMax="1">
+							
+							<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+							<Wave absoluteDelay="60"><Unit type="colossus" count="1"/></Wave>
+							<Wave absoluteDelay="110"/>
+						</Day>
+					</RepeatingDays>
+				</Computer>
+				
+			</Map>
 		</MapSequence>
 
 	</EndlessLevel>

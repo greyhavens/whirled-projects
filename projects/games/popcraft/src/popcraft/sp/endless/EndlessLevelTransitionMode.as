@@ -25,6 +25,7 @@ public class EndlessLevelTransitionMode extends AppMode
     {
         _multiplierStartLoc = multiplierStartLoc;
         _nextMap = EndlessGameContext.level.getMapData(EndlessGameContext.mapIndex + 1);
+        _cycleNumber = EndlessGameContext.level.getMapCycleNumber(EndlessGameContext.mapIndex + 1);
     }
 
     override protected function setup () :void
@@ -60,6 +61,20 @@ public class EndlessLevelTransitionMode extends AppMode
         titleText.y = 200;
         bgSprite.addChild(titleText);
 
+        // create the skulls
+        if (_cycleNumber > 0) {
+            var cycleSprite :Sprite = SpriteUtil.createSprite();
+            for (var ii :int = 0; ii < _cycleNumber; ++ii) {
+                var cycleMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "cycle");
+                cycleMovie.x = cycleSprite.width + (cycleMovie.width * 0.5);
+                cycleSprite.addChild(cycleMovie);
+            }
+
+            cycleSprite.x = CYCLE_SPRITE_LOC.x - (cycleSprite.width * 0.5);
+            cycleSprite.y = CYCLE_SPRITE_LOC.y;
+            bgSprite.addChild(cycleSprite);
+        }
+
         // create the multiplier object, which will move to the center of the screen, pause,
         // and then move to its location in the new level
         _multiplierMovie = SwfResource.instantiateMovieClip("infusions", "infusion_multiplier");
@@ -71,14 +86,14 @@ public class EndlessLevelTransitionMode extends AppMode
                 MULTIPLIER_TITLE_LOC.x,
                 MULTIPLIER_TITLE_LOC.y,
                 MULTIPLIER_ARC_TIME,
-                mx.effects.easing.Linear.easeNone,
+                mx.effects.easing.Cubic.easeInOut,
                 mx.effects.easing.Cubic.easeOut),
             new TimedTask(TITLE_TIME),
             new AdvancedLocationTask(
                 _nextMap.multiplierDropLoc.x,
                 _nextMap.multiplierDropLoc.y,
                 MULTIPLIER_ARC_TIME,
-                mx.effects.easing.Linear.easeNone,
+                mx.effects.easing.Cubic.easeInOut,
                 mx.effects.easing.Cubic.easeIn)));
 
         this.addObject(multiplierObj, _modeSprite);
@@ -86,14 +101,16 @@ public class EndlessLevelTransitionMode extends AppMode
     }
 
     protected var _nextMap :EndlessMapData;
+    protected var _cycleNumber :int;
     protected var _multiplierStartLoc :Vector2;
     protected var _multiplierMovie :MovieClip;
 
-    protected const FADE_IN_TIME :Number = 1;
-    protected const TITLE_TIME :Number = 2;
-    protected const FADE_OUT_TIME :Number = 1;
-    protected const MULTIPLIER_ARC_TIME :Number = 1;
-    protected const MULTIPLIER_TITLE_LOC :Point = new Point(350, 100);
+    protected static const FADE_IN_TIME :Number = 1;
+    protected static const TITLE_TIME :Number = 2;
+    protected static const FADE_OUT_TIME :Number = 1;
+    protected static const MULTIPLIER_ARC_TIME :Number = 1;
+    protected static const MULTIPLIER_TITLE_LOC :Point = new Point(350, 100);
+    protected static const CYCLE_SPRITE_LOC :Point = new Point(350, 190);
 }
 
 }

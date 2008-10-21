@@ -176,7 +176,7 @@ class SaveView extends SceneObject
 
         var ii :int;
 
-       // cycle number (skulls across title)
+        // cycle number (skulls across title)
         if (cycleNumber > 0) {
             var cycleSprite :Sprite = SpriteUtil.createSprite();
             for (ii = 0; ii < cycleNumber; ++ii) {
