@@ -169,6 +169,7 @@ public class DraggableSprite extends Sprite
                 _paintable = new Rectangle(0, 0, 700, 500);
             }
         }
+
     }
 
     protected function updateRoom () :void
@@ -187,7 +188,7 @@ public class DraggableSprite extends Sprite
 
     protected function layout () :void
     {
-        if (_bounds == null) {
+        if (_bounds == null || _paintable == null || _painted == null) {
             // not yet initialized
             return;
         }

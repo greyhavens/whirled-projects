@@ -281,6 +281,9 @@ public class Player
 
     protected function updateAvatarState () :void
     {
+        if (_room == null) {
+            return;
+        }
         if (isDead()) {
             _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
 

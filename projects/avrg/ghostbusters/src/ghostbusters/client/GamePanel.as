@@ -253,17 +253,20 @@ public class GamePanel extends Sprite
             checkForDeath();
 
         } else if (evt.name == Codes.PROP_AVATAR_TYPE) {
-            // if we 
-            if (_splash != null && _splash.state == SplashWidget.STATE_AVATARS) {
-                _splash.gotoState(SplashWidget.STATE_BEGIN);
+            if (_splash != null) {
+                if (Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
+                    hideSplash();
+                    this.seeking = true;
+
+                } else {
+                    _splash.gotoState(SplashWidget.STATE_BEGIN);
+                }
             }
 
         } else if (evt.name == Codes.PROP_IS_PLAYING) {
-            if (Boolean(evt.newValue) && _splash != null &&
-                _splash.state == SplashWidget.STATE_BEGIN) {
+            if (Boolean(evt.newValue) && _splash != null) {
                 hideSplash();
-                _seeking = true;
-                updateState(true);
+                this.seeking = true;
             }
         }
     }

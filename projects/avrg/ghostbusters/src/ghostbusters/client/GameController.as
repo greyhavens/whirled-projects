@@ -53,7 +53,13 @@ public class GameController extends Controller
 
     public function handleCloseSplash () :void
     {
-        panel.hideSplash();
+        if (Game.control.player.props.get(Codes.PROP_IS_PLAYING)) {
+            panel.hideSplash();
+
+        } else {
+            Game.control.agent.sendMessage(Codes.CMSG_BEGIN_PLAYING);
+        }
+        
     }
 
     public function handleGimmeDebugPanel () :void
