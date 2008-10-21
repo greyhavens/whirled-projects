@@ -1,29 +1,15 @@
 package {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.text.TextField;
-import flash.events.Event;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.net.MessageReceivedEvent;
-import com.threerings.util.StringUtil;
-import com.threerings.util.ClassUtil;
+import com.whirled.contrib.avrg.probe.Button;
+import com.whirled.contrib.avrg.probe.ButtonEvent;
+import com.whirled.contrib.avrg.probe.ClientPanel;
 
-public class Probe extends Sprite
+public class Probe extends ClientPanel
 {
-    public static function toString (obj :Object) :String
-    {
-        if (ClassUtil.tinyClassName(obj) == 'AVRGameAvatar') {
-            return StringUtil.simpleToString(obj);
-        }
-        return StringUtil.toString(obj);
-    }
-
     public function Probe ()
     {
-        _ctrl = new AVRGameControl(this);
-        _tabPanel = new TabPanel();
-        addChild(_tabPanel);
+        super(new AVRGameControl(this));
 
         var close :Button = new Button("X");
         close.x = 330;
@@ -44,61 +30,8 @@ public class Probe extends Sprite
         shift.addEventListener(ButtonEvent.CLICK, handleShift);
         addChild(shift);
 
-        graphics.beginFill(0xffffff);
-        graphics.drawRect(0, 0, 350, 250);
-        graphics.endFill();
-
         x = (_ctrl.local.getPaintableArea().width - width) / 2;
         y = 10;
-
-        var defs :Definitions = new Definitions(_ctrl, function () :Sprite {
-            return new DecorationSprite();
-        });
-
-        _tabPanel.addTab("test", new Button("Test"), new TestPanel());
-
-        var client :TabPanel = new TabPanel();
-        _tabPanel.addTab("client", new Button("Client"), client);
-
-        var key :String;
-        for each (key in defs.getFuncKeys(false)) {
-            client.addTab(key, new Button(key.substr(0, 1).toUpperCase() + key.substr(1)), 
-                new FunctionPanel(_ctrl, defs.getFuncs(key), false));
-        }
-
-        var server :TabPanel = new TabPanel();
-        _tabPanel.addTab("server", new Button("Server"), server);
-
-        for each (key in defs.getFuncKeys(true)) {
-            server.addTab(key, new Button(key.substr(6)), 
-                new FunctionPanel(_ctrl, defs.getFuncs(key), true));
-        }
-
-        defs.addListenerToAll(logEvent);
-
-        _ctrl.player.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, 
-            handleGameMessage);
-
-        _ctrl.local.setMobSpriteExporter(createMob);
-    }
-
-    protected function handleGameMessage (evt :MessageReceivedEvent) :void
-    {
-        if (evt.name == Server.BACKEND_CALL_RESULT) {
-            _ctrl.local.feedback(
-                "Result received from server agent: " + Probe.toString(evt.value));
-
-        } else if (evt.name == Server.CALLBACK_INVOKED) {
-            _ctrl.local.feedback(
-                "Callback invoked on server agent: " + Probe.toString(evt.value));
-        }
-    }
-
-    protected function logEvent (event :Event) :void
-    {
-        _ctrl.local.feedback(String(event));
-        trace("Got event [" + _ctrl.player.getPlayerId() + "]: " + event);
     }
 
     protected function handleClose (event :ButtonEvent) :void
@@ -128,14 +61,6 @@ public class Probe extends Sprite
         idx = (idx + dir + positions.length) % positions.length;
         x = xpos(positions[idx]);
     }
-
-    protected function createMob (id :String) :DisplayObject
-    {
-        return new MobSprite(id);
-    }
-
-    protected var _ctrl :AVRGameControl;
-    protected var _tabPanel :TabPanel;
 }
 
 }
