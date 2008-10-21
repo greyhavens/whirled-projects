@@ -14,5 +14,7 @@ package cells
 		public static const OILED_LADDER_MIDDLE:int = 9;
 		public static const OILED_LADDER_TOP:int = 10;
 		public static const GROUND:int = 11;
+		public static const DEBUG:int = 12;
+		public static const DEBUG_GROUND:int = 13;
 	}
 }

@@ -81,5 +81,7 @@ package sprites
 		
 		protected var _cell:Cell;
 		protected var _objective:CellObjective;
+
+        public static const DEBUG:Boolean = Config.cellDebug;       
 	}
 }

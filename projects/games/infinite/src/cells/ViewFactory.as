@@ -1,12 +1,12 @@
 package cells
 {
+	import cells.debug.DebugGroundView;
+	import cells.debug.DebugView;
 	import cells.fruitmachine.*;
 	import cells.ground.GroundView;
 	import cells.ladder.*;
 	import cells.views.*;
 	import cells.wall.*;
-	
-	import flash.display.DisplayObject;
 	
 	/**
 	 * The view factory is used by the objective to obtain a new view for a specific cell.  Thus the
@@ -31,6 +31,8 @@ package cells
 				case CellCodes.OILED_LADDER_TOP: return new LadderTopView(cell);
 				case CellCodes.WALL_BASE: return new WallBaseView(cell);
 				case CellCodes.GROUND: return new GroundView(cell);
+				case CellCodes.DEBUG: return new DebugView(cell);
+				case CellCodes.DEBUG_GROUND: return new DebugGroundView(cell);
 			}
 			throw new Error("the viewfactory doesn't know how to construct a view for "+cell);
 		}		

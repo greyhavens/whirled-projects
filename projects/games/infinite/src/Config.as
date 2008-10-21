@@ -14,7 +14,7 @@ package
 		public static const showViewPoint:Boolean = false;
 		
 		// Display a debug overlay on cells.
-		public static const cellDebug:Boolean = false;
+		public static const cellDebug:Boolean = true;
 		
 		// Set the unit size of a cell.
 		public static const cellSize:Vector = new Vector(100, 100);		

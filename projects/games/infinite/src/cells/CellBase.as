@@ -164,8 +164,6 @@ package cells
 		
 		protected var _objective:CellObjective;
 				
-		public static const UNIT:Vector = Config.cellSize;
-		
-		public static const DEBUG:Boolean = Config.cellDebug;		
+		public static const UNIT:Vector = Config.cellSize;		
 	}
 }

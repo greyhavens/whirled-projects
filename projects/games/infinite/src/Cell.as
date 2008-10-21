@@ -65,5 +65,6 @@ package
 		 * Return the owner of an object.
 		 */
 		function get owner () :Owner
+
 	}
 }

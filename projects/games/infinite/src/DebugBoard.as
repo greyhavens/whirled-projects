@@ -1,5 +1,10 @@
 package
 {
+	import arithmetic.BoardCoordinates;
+	
+	import cells.debug.DebugCell;
+	import cells.debug.DebugGroundCell;
+	
 	/**
 	 * The board class represents the game board for the current level.  The board is composed of an
 	 * infinite grid of cells.  The cells are blank until users populate them with objects.
@@ -24,13 +29,13 @@ package
 		/**
 		 * Return the cell at a given position on the board.
 		 */
-		public function cellAt (x:int, y:int) :Cell
-		{
+		public function cellAt (p:BoardCoordinates) :Cell
+		{			
 			//for now, all we want to do is display a 'matrix'
-			if (y > 0) {
-				return new DebugGroundCell(x, y);
+			if (p.y > 0) {
+				return new DebugGroundCell(p);
 			} else {
-				return new DebugCell(x, y);
+				return new DebugCell(p);
 			}
 		}
 

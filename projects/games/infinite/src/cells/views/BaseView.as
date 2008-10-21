@@ -6,14 +6,18 @@ package cells.views
 	
 	import sprites.SpriteUtil;
 	
-	public class BaseView extends Sprite
+	public class BaseView extends Sprite implements CellView
 	{
 		public function BaseView(cell:Cell)
 		{
 			_cell = cell;
-			const s:Sprite = new Sprite();
-			SpriteUtil.addBackground(this, Config.cellSize.dx, Config.cellSize.dy, SpriteUtil.GREY);
+            SpriteUtil.addBackground(this, Config.cellSize.dx, Config.cellSize.dy, backgroundColor);            
 			labelPosition(this);
+		}
+		
+		protected function get backgroundColor () :uint
+		{
+			return SpriteUtil.GREY;
 		}
 		
 		/**

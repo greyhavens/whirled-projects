@@ -48,7 +48,8 @@ package
 				
 		public function startGame () :void 
 		{
-			_board = new SimpleBoard(LEVEL1);
+			_board = new DebugBoard(LEVEL1);
+//			_board = new SimpleBoard(LEVEL1);
 			_player = new PlayerCharacter("robin", _inventory);
 			_viewer.board = _board;
 			_viewer.player = _player;
