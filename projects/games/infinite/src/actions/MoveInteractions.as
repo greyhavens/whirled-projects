@@ -5,9 +5,7 @@ package actions
 	public interface MoveInteractions
 	{
 		function get cell () :Cell
-		
-		function cellBoundary () :GraphicCoordinates
-		
+				
 		/**
 		 * Called at the end of a motion between cells.
 		 */

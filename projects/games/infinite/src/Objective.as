@@ -6,12 +6,13 @@ package
 	import cells.ViewFactory;
 	import cells.views.CellView;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
+	
+	import sprites.PlayerSprite;
 
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display
@@ -53,6 +54,11 @@ package
 			
 			_viewFactory = new ViewFactory(); 
 		}		
+		
+		public function scrollViewPointToPlayer () :void
+		{
+			scrollViewPointTo(_playerView.cellBoundary());
+		}
 		
 		/**
 		 * Scroll the objective so that the viewpoint is at the provided coordinates which
@@ -183,10 +189,11 @@ package
 		{
 			_player = player;
 			player.objective = this;
+			_playerView = new PlayerSprite(player);
 			bufferViewpoint(player.cell.position);		
 			scrollViewPointTo(cellCoordinates(player.cell.position));
-			addChild(player.view);
-			Geometry.position(player.view, player.positionInCell(player.cell.position));
+			addChild(_playerView);
+			Geometry.position(_playerView, _playerView.positionInCell(this, player.cell.position));
 		}
 			
 		protected function bufferViewpoint (viewPoint:BoardCoordinates) :void
@@ -249,6 +256,13 @@ package
 			newCell.addToObjective(this);
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
+		
+		public function get playerView () :PlayerSprite 
+		{
+			return _playerView;
+		}
+	
+	    protected var _playerView:PlayerSprite;
 	
 		protected var _viewFactory:ViewFactory;
 		// owner label

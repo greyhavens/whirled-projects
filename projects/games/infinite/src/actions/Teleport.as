@@ -17,8 +17,8 @@ package actions
 		{
 			_player.actionComplete();				
 			_player.arriveInCell(_target);
-			_objective.scrollViewPointTo(_player.cellBoundary());
-		}		
+			_objective.scrollViewPointToPlayer();
+		}
 		
 		protected var _player:MoveInteractions;
 		protected var _objective:Objective;

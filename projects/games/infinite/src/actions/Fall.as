@@ -6,14 +6,14 @@ package actions
 	
 	import contrib.Easing;
 	
-	import flash.display.DisplayObject;
+	import sprites.PlayerSprite;
 	
 	public class Fall implements PlayerAction
 	{
 		public function Fall(player:PlayerCharacter, objective:Objective)
 		{
 			_player = player;
-			_view = player.view;
+			_view = objective.playerView;
 			_objective = objective;
 			
 			// The player will fall until they reach a cell that they can grip
@@ -27,10 +27,10 @@ package actions
 			} while (_targetCell == null);
 			trace ("falling to "+_targetCell);
 			
-			_yStart = _player.positionInCell(player.cell.position).y;
-			_yDelta = _player.positionInCell(_targetCell.position).y - _yStart;
+			_yStart = _view.positionInCell(_objective, player.cell.position).y;
+			_yDelta = _view.positionInCell(_objective, _targetCell.position).y - _yStart;
 			
-			_destination = _player.positionInCell(_targetCell.position);
+			_destination = _view.positionInCell(_objective, _targetCell.position);
 			_duration = (_yDelta * 250 / Config.cellSize.multiplyByVector(new Vector(0,1)).length) 
 		}
 
@@ -49,10 +49,10 @@ package actions
 				// automatically.
 				_player.actionComplete();				
 				_player.arriveInCell(_targetCell);
-				_objective.scrollViewPointTo(_player.cellBoundary());
+				_objective.scrollViewPointToPlayer();
 			} else {
 				ease(event);
-				_objective.scrollViewPointTo(_player.cellBoundary());
+                _objective.scrollViewPointToPlayer();
 			}
 		}
 	
@@ -68,7 +68,7 @@ package actions
 		protected var _duration:Number;
 		
 		protected var _targetCell:Cell;
-		protected var _view:DisplayObject;
+		protected var _view:PlayerSprite;
 		protected var _startTime:Date;
 		protected var _destination:GraphicCoordinates;
 		protected var _player:PlayerCharacter; 

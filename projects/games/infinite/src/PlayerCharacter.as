@@ -8,9 +8,6 @@ package
 	
 	import cells.CellInteractions;
 	
-	import flash.display.DisplayObject;
-	import flash.display.Shape;
-	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
 	import flash.text.TextField;
 	
@@ -29,7 +26,7 @@ package
 	 * Represents the player who is using the console.
 	 */
 	public class PlayerCharacter extends EventDispatcher 
-		implements CellInteractions, ItemPlayer, MoveInteractions, MovableCharacter, Viewable, 
+		implements CellInteractions, ItemPlayer, MoveInteractions, MovableCharacter, 
 			PathFollower, Owner
 	{
 		public function PlayerCharacter(name:String, inventory:InventoryDisplay)
@@ -39,53 +36,10 @@ package
 			
 			addEventListener(PathEvent.PATH_START, handlePathStart);
 		}
-		
-		public function get view () :DisplayObject
-		{
-			if (_view == null) {
-				_view = createView();
-			}
-			return _view;
-		}
-		
-		public function createView () :PlayerSprite
-		{
-			return new PlayerSprite();
-		}
-		
-		protected function createTestView() :DisplayObject
-		{
-			var s:Sprite = new Sprite();
-			var r:Shape = new Shape();
-			
-			with (r.graphics) {
-				beginFill(0x808000, 1);
-				drawRect(0,0, 20,60);
-				endFill();
-			}
-			
-			var l:TextField = new TextField();
-			with (l) {
-				text = _name;
-			 	width = textWidth;
-				height = textHeight;
-			}
-			
-			s.addChild(l);												
-			s.addChild(r);
-			
-			// position the symbolic rectange below and centered on the name
-			r.y = l.textHeight;
-			if (l.textWidth > r.width) {
-				r.x = (l.textWidth/2) - (r.width/2);
-			}						
-			return s;
-		}
 			
 		public function arriveInCell (cell:Cell) :void
 		{
 			_cell = cell;
-			Geometry.position(view, positionInCell(_cell.position));
 			_cell.playerHasArrived(this);
 			if (!cell.grip) {
 				fall();
@@ -108,30 +62,7 @@ package
 				_cell = event.cell;
 			}
 		}
-		
-		/**
-		 * Return the graphics coordinates that puts the player at their resting position within
-		 * the cell.
-		 */
-		public function positionInCell (cell:BoardCoordinates) :GraphicCoordinates
-		{
-			const v:DisplayObject = view;
-			const cellPos:GraphicCoordinates = _objective.cellCoordinates(cell);
-			return new GraphicCoordinates(
-				cellPos.x + (Config.cellSize.dx / 2) - (v.width / 2),
-				cellPos.y + (Config.cellSize.dy - v.height)
-			);
-		}
-		
-		public function cellBoundary() :GraphicCoordinates
-		{
-			const v:DisplayObject = view;
-			return new GraphicCoordinates(
-				v.x - ((Config.cellSize.dx / 2) - (v.width / 2)),
-				v.y - (Config.cellSize.dy - v.height) 
-			);
-		}
-		
+				
 		public function set playerController (playerController:PlayerController) :void
 		{
 			_playerController = playerController;
@@ -267,7 +198,6 @@ package
 		protected var _playerController:PlayerController;
 		protected var _objective:Objective;
 		protected var _cell:Cell;
-		protected var _view:DisplayObject;
 		protected var _name:String;
 	}
 }

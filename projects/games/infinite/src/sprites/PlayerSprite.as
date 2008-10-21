@@ -1,11 +1,38 @@
 package sprites
 {
+	import arithmetic.BoardCoordinates;
+	import arithmetic.GraphicCoordinates;
+	
 	public class PlayerSprite extends AssetSprite
 	{
-		public function PlayerSprite()
+		public function PlayerSprite(character:PlayerCharacter)
 		{
+			_player = character;
 			super(simplePlayer, Config.cellSize.dx, Config.cellSize.dy);
 		}
+
+        /**
+         * Return the graphics coordinates that puts the player at their resting position within
+         * the cell.
+         */
+        public function positionInCell (objective:Objective, cell:BoardCoordinates) :GraphicCoordinates
+        {
+            const cellPos:GraphicCoordinates = objective.cellCoordinates(_player.cell.position);
+            return new GraphicCoordinates(
+                cellPos.x + (Config.cellSize.dx / 2) - (width / 2),
+                cellPos.y + (Config.cellSize.dy - height)
+            );
+        }
+        
+        public function cellBoundary() :GraphicCoordinates
+        {
+            return new GraphicCoordinates(
+                x - ((Config.cellSize.dx / 2) - (width / 2)),
+                y - (Config.cellSize.dy - height) 
+            );
+        }
+        
+        protected var _player:PlayerCharacter;
 
 		[Embed(source="../../rsrc/png/simple-player.png")]
 		protected static const simplePlayer:Class;			
