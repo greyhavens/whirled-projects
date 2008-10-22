@@ -262,7 +262,7 @@ class SaveView extends SceneObject
         _movie.addChild(thumbnail);
 
         // play button
-        _playButton = UIBits.createButton("Play", 2);
+        _playButton = UIBits.createButton("Play", 2.5);
         _playButton.x = PLAY_CENTER_LOC.x - (_playButton.width * 0.5);
         _playButton.y = PLAY_CENTER_LOC.y - (_playButton.height * 0.5);
         _movie.addChild(_playButton);
@@ -314,7 +314,7 @@ class SaveView extends SceneObject
     protected var _backButton :SimpleButton;
 
     protected static const BACK_LOC :Point = new Point(-330, 179);
-    protected static const PLAY_CENTER_LOC :Point = new Point(0, 190);
+    protected static const PLAY_CENTER_LOC :Point = new Point(0, 185);
     protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
     protected static const SHIELD_CENTER_LOC :Point = new Point(-219, -78);
