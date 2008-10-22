@@ -14,7 +14,7 @@ package
 		public static const showViewPoint:Boolean = false;
 		
 		// Show the debug board
-		public static const boardDebug:Boolean = true;
+		public static const boardDebug:Boolean = false;
 		
 		// Display a debug overlay on cells.
 		public static const cellDebug:Boolean = true;
