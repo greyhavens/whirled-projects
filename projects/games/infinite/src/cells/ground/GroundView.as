@@ -1,6 +1,7 @@
 package cells.ground
 {
 	import sprites.CellSprite;
+    import world.Cell;
 
 	public class GroundView extends CellSprite
 	{

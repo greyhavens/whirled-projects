@@ -1,8 +1,8 @@
 package cells.fruitmachine
 {
-	import flash.events.Event;
-	
+	import flash.events.Event;	
 	import sprites.CellSprite;
+    import world.Cell;
 
 	public class FruitMachineView extends CellSprite
 	{

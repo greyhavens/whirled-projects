@@ -13,6 +13,8 @@ package client
 	import graphics.OwnerLabel;
 	
 	import sprites.PlayerSprite;
+	import world.BoxController;
+    import world.Cell;
 
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display

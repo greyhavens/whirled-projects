@@ -6,6 +6,7 @@ package cells.debug
 	import cells.CellCodes;
 	
 	import flash.display.DisplayObject;
+    import world.Cell;
 
 	/**
 	 * A debug cell just shows its coordinates within the board.

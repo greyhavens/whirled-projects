@@ -2,6 +2,7 @@ package actions
 {
 	import client.Objective;
 	import flash.display.DisplayObject;
+	import world.Cell;
 	
 	public class MoveSideways extends Movement implements PlayerAction 
 	{

@@ -8,6 +8,8 @@ package whirled
 	
 	import paths.PathEvent;
 	
+    import world.Cell;
+	
 	public class ServerCharacter extends EventDispatcher implements MovableCharacter, WhirledCharacter
 	{
 		public function ServerCharacter(playerId:int) 

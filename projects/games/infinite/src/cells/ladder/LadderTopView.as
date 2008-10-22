@@ -1,6 +1,7 @@
 package cells.ladder
 {
 	import sprites.CellSprite;
+    import world.Cell;
 
 	public class LadderTopView extends CellSprite
 	{

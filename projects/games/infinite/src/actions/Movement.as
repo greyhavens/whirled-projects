@@ -5,6 +5,8 @@ package actions
 	import client.FrameEvent;
 	import sprites.PlayerSprite;
 	
+	import world.Cell;
+	
 	public class Movement
 	{
 		public function Movement(

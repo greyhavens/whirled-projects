@@ -2,6 +2,7 @@ package
 {
 	import arithmetic.BoardPath;
 	import arithmetic.Vector;
+    import world.Cell;
 	
 	public class CellPath
 	{

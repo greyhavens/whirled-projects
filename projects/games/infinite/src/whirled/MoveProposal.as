@@ -1,6 +1,7 @@
 package whirled
 {
 	import arithmetic.BoardCoordinates;
+    import world.Cell;
 	
 	public class MoveProposal
 	{

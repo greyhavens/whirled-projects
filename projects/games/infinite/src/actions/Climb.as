@@ -1,6 +1,7 @@
 package actions
 {
 	import client.Objective;
+    import world.Cell;
 	
 	public class Climb extends Movement implements PlayerAction
 	{

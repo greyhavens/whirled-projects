@@ -1,6 +1,7 @@
 package cells
 {
 	import arithmetic.VoidBoardRectangle;
+    import world.Cell;
 	
 	public interface CellObjective
 	{

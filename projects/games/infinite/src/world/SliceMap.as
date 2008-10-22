@@ -1,4 +1,4 @@
-package
+package world
 {
 	import arithmetic.BoardCoordinates;
 	import arithmetic.Vector;

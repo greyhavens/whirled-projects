@@ -4,6 +4,8 @@ package cells.ladder
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
 
+    import world.Cell;
+
 	public class LadderBaseView extends LadderView
 	{
 		public function LadderBaseView(cell:Cell)

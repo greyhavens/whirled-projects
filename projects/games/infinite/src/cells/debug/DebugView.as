@@ -1,6 +1,7 @@
 package cells.debug
 {
 	import sprites.CellSprite;
+    import world.Cell;
 
 	public class DebugView extends CellSprite
 	{

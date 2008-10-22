@@ -26,6 +26,8 @@ package
 	
 	import sprites.PlayerSprite;
 	
+	import world.Cell;
+	
 	/**
 	 * Represents the player who is using the console.
 	 */

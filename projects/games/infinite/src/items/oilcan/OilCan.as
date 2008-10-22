@@ -10,6 +10,7 @@ package items.oilcan
 	import items.ItemCodes;
 	import items.ItemPlayer;
 	
+    import world.Cell;
 
 	public class OilCan extends ItemBase
 	{

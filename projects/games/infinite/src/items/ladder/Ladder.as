@@ -11,6 +11,8 @@ package items.ladder
 	import items.ItemPlayer;
 	
 	import sprites.*;
+
+    import world.Cell;
 	
 	/**
 	 * This a ladder object.

@@ -6,6 +6,7 @@ package cells.ladder
 	import cells.PlayerCell;
 	
 	import interactions.Oilable;
+    import world.Cell;
 	
 	public class LadderMiddleCell extends PlayerCell implements Oilable
 	{

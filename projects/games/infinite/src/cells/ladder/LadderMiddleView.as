@@ -1,6 +1,8 @@
 package cells.ladder
 {
 	import sprites.CellSprite;
+    import world.Cell;
+    import world.Cell;
 
 	public class LadderMiddleView extends CellSprite
 	{

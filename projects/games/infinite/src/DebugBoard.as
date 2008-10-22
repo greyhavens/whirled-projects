@@ -4,6 +4,8 @@ package
 	
 	import cells.debug.DebugCell;
 	import cells.debug.DebugGroundCell;
+
+    import world.Cell;
 	
 	/**
 	 * The board class represents the game board for the current level.  The board is composed of an

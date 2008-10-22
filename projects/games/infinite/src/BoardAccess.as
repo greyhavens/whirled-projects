@@ -1,6 +1,7 @@
 package
 {
 	import arithmetic.BoardCoordinates;
+	import world.Cell;
 	
 	/**
 	 * Provide basic access to the board

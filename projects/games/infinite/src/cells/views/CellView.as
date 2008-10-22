@@ -2,6 +2,7 @@ package cells.views
 {   
     import client.Objective;
 	import flash.events.IEventDispatcher;
+    import world.Cell;
 	
 	public interface CellView extends Labellable, IEventDispatcher
 	{

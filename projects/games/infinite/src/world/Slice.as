@@ -1,6 +1,8 @@
-package
+package world
 {
 	import arithmetic.Vector;
+	
+	import world.Cell;
 	
 	public class Slice
 	{

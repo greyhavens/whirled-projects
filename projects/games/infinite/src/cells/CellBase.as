@@ -11,6 +11,8 @@ package cells
 	
 	import sprites.*;
 	
+	import world.Cell;
+	
 	public class CellBase extends EventDispatcher implements Cell
 	{
 		public function CellBase(position:BoardCoordinates) :void 

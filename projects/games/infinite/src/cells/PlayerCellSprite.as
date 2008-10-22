@@ -2,8 +2,10 @@ package cells
 {
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
-	
+		
 	import sprites.CellSprite;
+	
+    import world.Cell;
 
 	public class PlayerCellSprite extends CellSprite
 	{

@@ -7,6 +7,7 @@ package cells
 	import cells.ladder.*;
 	import cells.views.*;
 	import cells.wall.*;
+	import world.Cell;
 	
 	/**
 	 * The view factory is used by the objective to obtain a new view for a specific cell.  Thus the

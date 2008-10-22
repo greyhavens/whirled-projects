@@ -9,6 +9,9 @@ package actions
 	import sprites.PlayerSprite;
 	import client.Objective;	
     import client.FrameEvent;
+    
+    import world.Cell;
+    
     	
 	public class Fall implements PlayerAction
 	{

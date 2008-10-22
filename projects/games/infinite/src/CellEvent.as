@@ -1,6 +1,7 @@
 package
 {
 	import flash.events.Event;
+    import world.Cell;
 	
 	public class CellEvent extends Event
 	{

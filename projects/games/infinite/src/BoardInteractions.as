@@ -1,6 +1,7 @@
 package
 {
 	import arithmetic.BoardCoordinates;
+    import world.Cell;
 	
 	public interface BoardInteractions extends BoardAccess
 	{

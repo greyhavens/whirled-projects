@@ -1,6 +1,7 @@
 package cells.wall
 {
 	import sprites.CellSprite;
+    import world.Cell;
 
 	public class WallBaseView extends CellSprite
 	{

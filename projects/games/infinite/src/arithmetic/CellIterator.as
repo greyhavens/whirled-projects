@@ -1,5 +1,7 @@
 package arithmetic
 {
+    import world.Cell;
+	
 	public class CellIterator
 	{
 		public function CellIterator(start:Cell, board:BoardAccess, delta:Vector)

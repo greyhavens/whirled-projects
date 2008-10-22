@@ -12,6 +12,8 @@ package
 	import items.oilcan.*;
 	import items.spring.*;
 	import items.teleporter.*;
+
+    import world.Cell;
 	
 	public class SimpleBoard implements Board
 	{

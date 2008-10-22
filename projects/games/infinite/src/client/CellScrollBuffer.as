@@ -1,6 +1,7 @@
 package client
 {
 	import arithmetic.*;
+	import world.Cell;
 	
 	public class CellScrollBuffer implements BoardAccess
 	{

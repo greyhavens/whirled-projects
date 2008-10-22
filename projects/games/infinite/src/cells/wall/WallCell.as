@@ -5,6 +5,7 @@ package cells.wall
 	import cells.CellCodes;
 	
 	import interactions.Oilable;
+    import world.Cell;
 	
 	public class WallCell extends WallBaseCell implements Oilable
 	{

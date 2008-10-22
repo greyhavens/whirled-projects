@@ -5,6 +5,7 @@ package sprites
 	import arithmetic.GraphicCoordinates;
 	
 	import client.Objective;
+    import world.Cell;
 	
 	public class PlayerSprite extends AssetSprite
 	{

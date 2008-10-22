@@ -1,8 +1,9 @@
 package
 {
-	import arithmetic.BoardCoordinates;
-	
+	import arithmetic.BoardCoordinates;	
 	import flash.utils.Dictionary;
+	import world.Cell;
+	
 	
 	/**
 	 * A different kind of cell buffer used by cells that have some state that needs to be remembered

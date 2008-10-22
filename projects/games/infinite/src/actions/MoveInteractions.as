@@ -2,6 +2,8 @@ package actions
 {
 	import arithmetic.GraphicCoordinates;
 	
+	import world.Cell;
+	
 	public interface MoveInteractions
 	{
 		function get cell () :Cell

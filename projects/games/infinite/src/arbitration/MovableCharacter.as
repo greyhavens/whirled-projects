@@ -1,8 +1,8 @@
 package arbitration
 {
-	import arithmetic.BoardCoordinates;
-	
+	import arithmetic.BoardCoordinates;	
 	import flash.events.IEventDispatcher;
+	import world.Cell;
 	
 	public interface MovableCharacter extends IEventDispatcher
 	{

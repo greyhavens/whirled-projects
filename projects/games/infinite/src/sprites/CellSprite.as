@@ -14,6 +14,8 @@ package sprites
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
+	import world.Cell;
+		
 	public class CellSprite extends AssetSprite implements CellView
 	{
 		public function CellSprite(cell:Cell, asset:Class)

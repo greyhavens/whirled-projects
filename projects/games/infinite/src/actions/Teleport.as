@@ -4,6 +4,7 @@ package actions
 	import arithmetic.Vector;
     import client.Objective;
     import client.FrameEvent;
+    import world.Cell;
 	
 	public class Teleport implements PlayerAction
 	{

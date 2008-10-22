@@ -4,6 +4,7 @@ package cells.ladder
 	import arithmetic.Vector;
 	
 	import cells.PlayerCellSprite;
+    import world.Cell;
 	
 	public class LadderView extends PlayerCellSprite
 	{

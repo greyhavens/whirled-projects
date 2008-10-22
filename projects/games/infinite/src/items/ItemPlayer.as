@@ -1,5 +1,7 @@
 package items
 {
+    import world.Cell;
+    
 	/**
 	 * Defines the features of a player that items interact with.
 	 */

@@ -1,5 +1,7 @@
 package cells.ladder
 {
+	import world.Cell;
+	
 	public class OiledLadderBaseView extends LadderBaseView
 	{
 		public function OiledLadderBaseView(cell:Cell)
