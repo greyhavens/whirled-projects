@@ -19,6 +19,6 @@ package cells.ladder
 		override public function anchorPoint (direction:Vector) :GraphicCoordinates
 		{			
 			return super.anchorPoint(direction);
-		}						
+		}
 	}
 }

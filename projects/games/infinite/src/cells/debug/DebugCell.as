@@ -27,6 +27,9 @@ package cells.debug
 			return CellCodes.DEBUG;
 		}
 		 
+        override public function get climbLeftTo() :Boolean { return true; }
+        override public function get climbRightTo() :Boolean { return true; }
+				 
 		protected var _view :DisplayObject;
 						
 		protected const DEBUG:Boolean = false;

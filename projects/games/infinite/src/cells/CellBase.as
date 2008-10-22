@@ -158,7 +158,7 @@ package cells
 		public function get code () :int
 		{
 			throw new Error(this + " has not been assigned a distinct code");
-		}
+		}			
 		
 		protected var _position:BoardCoordinates;
 		

@@ -4,6 +4,10 @@ package {
 	import flash.display.Sprite;
 	
 	import sprites.*;
+	
+	import world.InfiniteWorld;
+	import world.LocalWorld;
+	import world.RemoteWorld;
 
 	[SWF(width="700", height="500")]
 	public class InfinitePlaytest extends Sprite
@@ -12,11 +16,10 @@ package {
 		{
 			_gameControl = new GameControl(this);
 			
-			if (_gameControl.isConnected()) {
-				addChild(new DistributedPlayTest(_gameControl));
-			} else {
-				addChild(new LocalPlayTest());				
-			}			
+			const world:InfiniteWorld =
+			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld();
+			
+			addChild(new Client(world));
 		}				
 
 		/**

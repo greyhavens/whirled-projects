@@ -15,14 +15,16 @@ package actions
 			_targetCell = targetCell;
 			_destination = _view.positionInCell(_objective, targetCell.position);
 
+            trace("movement from "+Geometry.coordsOf(_view)+" to "+_destination);
+            
 			const move:Vector = Geometry.coordsOf(_view).distanceTo(_destination);
-			// trace ("complete movement is: "+move);
+			trace ("complete movement is: "+move);
 			const cells:Number = move.length / Config.cellSize.dy;
-			// trace ("which is "+cells+" cells");
+			trace ("which is "+cells+" cells");
 			_duration = durationInMillis(cells);
-			// trace ("duration is "+_duration);
+			trace ("duration is "+_duration);
 			_delta = move.divideByScalarF(_duration);
-			// trace ("moving by: "+_delta+" per ms");
+			trace ("moving by: "+_delta+" per ms");
 		}
 		
     	protected function durationInMillis(cellsToTraverse:Number) :int
@@ -43,9 +45,10 @@ package actions
 			if (event.currentTime.time - _startTime.time > _duration) {
 				// setting the player's position to the target cell sets their graphics position
 				// automatically.
-				_player.actionComplete();				
 				_player.arriveInCell(_targetCell);
-				_objective.scrollViewPointToPlayer();
+				_view.moveToCell(_objective, _targetCell);
+ 				_objective.scrollViewPointToPlayer();
+                _player.actionComplete();               
 			} else {
 				const step:Vector = _delta.multiplyByScalar(event.duration).toVector();
 				Geometry.moveBy(step, _view);

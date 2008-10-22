@@ -1,6 +1,7 @@
 package sprites
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
 	
 	public class PlayerSprite extends AssetSprite
@@ -22,6 +23,12 @@ package sprites
                 cellPos.x + (Config.cellSize.dx / 2) - (width / 2),
                 cellPos.y + (Config.cellSize.dy - height)
             );
+        }
+        
+        public function moveToCell (objective:Objective, cell:Cell) :void
+        {
+        	trace ("positioning player sprite in "+cell);
+            Geometry.position(this, positionInCell(objective, cell.position));
         }
         
         public function cellBoundary() :GraphicCoordinates

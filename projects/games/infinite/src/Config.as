@@ -13,6 +13,9 @@ package
 		// Show a yellow box over the viewpoint.
 		public static const showViewPoint:Boolean = false;
 		
+		// Show the debug board
+		public static const boardDebug:Boolean = true;
+		
 		// Display a debug overlay on cells.
 		public static const cellDebug:Boolean = true;
 		

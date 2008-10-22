@@ -7,8 +7,10 @@ package sprites
 	import cells.CellObjective;
 	import cells.views.CellView;
 	
+	import flash.display.DisplayObjectContainer;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	
 	public class CellSprite extends AssetSprite implements CellView
 	{
@@ -17,6 +19,9 @@ package sprites
 			_cell = cell;
 			super(asset, Config.cellSize.dx, Config.cellSize.dy);
 			registerEventHandlers(this);
+			if (Config.cellDebug) {
+				labelPosition(this);
+			}
 		}
 		
 		/**
@@ -78,6 +83,16 @@ package sprites
 			objective.removeChild(this);
 			_objective = null;
 		}
+		
+		/**
+         * Add a label with the current board position to the supplied container
+         */
+        protected function labelPosition (s:DisplayObjectContainer) :void
+        {
+            const l:TextField = new TextField();
+            l.text = "(" + _cell.position.x + ", " + _cell.position.y + ")";
+            s.addChild(l);      
+        }
 		
 		protected var _cell:Cell;
 		protected var _objective:CellObjective;

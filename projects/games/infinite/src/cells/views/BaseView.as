@@ -19,17 +19,7 @@ package cells.views
 		{
 			return SpriteUtil.GREY;
 		}
-		
-		/**
-		 * Add a label with the current board position to the supplied container
-		 */
-		protected function labelPosition (s:DisplayObjectContainer) :void
-		{
-			const l:TextField = new TextField();
-			l.text = "(" + _cell.position.x + ", " + _cell.position.y + ")";
-			s.addChild(l);		
-		}
-		
+				
 		protected var _cell:Cell;
 	}
 }

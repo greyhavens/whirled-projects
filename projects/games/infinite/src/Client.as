@@ -11,10 +11,14 @@ package
 	
 	import sprites.SpriteUtil;
 	
-	public class PlayTest extends Sprite
+	import world.InfiniteWorld;
+	
+	public class Client extends Sprite
 	{
-		public function PlayTest()
+		public function Client(world:InfiniteWorld)
 		{
+			_world = world;
+			
 			// set the overall size of the game
 			SpriteUtil.addBackground(this, GAME_WIDTH, GAME_HEIGHT, SpriteUtil.GREY);
 			this.x = 0;
@@ -48,8 +52,12 @@ package
 				
 		public function startGame () :void 
 		{
-			_board = new DebugBoard(LEVEL1);
-//			_board = new SimpleBoard(LEVEL1);
+			if (Config.boardDebug) {
+    			_board = new DebugBoard(LEVEL1);
+            } else {
+			    _board = new SimpleBoard(LEVEL1);
+            }
+            
 			_player = new PlayerCharacter("robin", _inventory);
 			_viewer.board = _board;
 			_viewer.player = _player;
@@ -62,6 +70,8 @@ package
 		{
 			return "standalone";
 		}	
+		
+		protected var _world:InfiniteWorld;
 		
 		protected var _controller:PlayerController;
 		protected var _board:Board;
