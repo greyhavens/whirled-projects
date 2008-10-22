@@ -59,11 +59,11 @@ public class PlayerInfo extends EventDispatcher
         var workshop :WorkshopUnit = this.workshop;
         if (null != workshop) {
             save.health = workshop.health;
-            save.damageShields = workshop.damageShieldsClone;
+            save.numDamageShields = workshop.damageShields.length;
 
         } else {
             save.health = 0;
-            save.damageShields = [];
+            save.numDamageShields = 0;
         }
 
         return save;
@@ -72,10 +72,16 @@ public class PlayerInfo extends EventDispatcher
     /**
      * Used to restore data in endless mode when the player switches levels.
      */
-    public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo) :void
+    public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo, damageShieldHealth :Number)
+        :void
     {
+        var shields :Array = [];
+        for (var ii :int = 0; ii < savedData.numDamageShields; ++ii) {
+            shields.push(new UnitDamageShield(damageShieldHealth));
+        }
+
         this.workshop.health = savedData.health;
-        this.workshop.damageShields = savedData.damageShields;
+        this.workshop.damageShields = shields;
     }
 
     /**

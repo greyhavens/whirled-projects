@@ -46,9 +46,10 @@ public class LocalPlayerInfo extends PlayerInfo
         return save;
     }
 
-    override public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo) :void
+    override public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo,
+        damageShieldHealth :Number) :void
     {
-        super.restoreSavedPlayerInfo(savedData);
+        super.restoreSavedPlayerInfo(savedData, damageShieldHealth);
 
         var localData :SavedLocalPlayerInfo = SavedLocalPlayerInfo(savedData);
         _heldSpells = localData.spells.slice();

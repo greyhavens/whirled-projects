@@ -392,6 +392,8 @@ public class EndlessGameMode extends GameMode
             playerInfo.init();
         }
 
+        var damageShieldHealth :Number = EndlessGameContext.level.multiplierDamageSoak;
+
         // restore data that was saved from the previous map (must be done after playerInfos
         // are init()'d)
         for (playerIndex = 0; playerIndex < EndlessGameContext.savedHumanPlayers.length;
@@ -399,13 +401,12 @@ public class EndlessGameMode extends GameMode
 
             var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
             var player :PlayerInfo = GameContext.playerInfos[playerIndex];
-            player.restoreSavedPlayerInfo(savedPlayer);
+            player.restoreSavedPlayerInfo(savedPlayer, damageShieldHealth);
         }
 
         // restore data from the saved game, if it exists
         if (_savedGame != null) {
-            GameContext.localPlayerInfo.restoreSavedGameData(
-                _savedGame, EndlessGameContext.level.multiplierDamageSoak);
+            GameContext.localPlayerInfo.restoreSavedGameData(_savedGame, damageShieldHealth);
         }
 
         _playerGotMultiplier = ArrayUtil.create(GameContext.numPlayers, false);

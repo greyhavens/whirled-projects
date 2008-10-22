@@ -6,7 +6,7 @@ import popcraft.battle.WorkshopUnit;
 public class SavedPlayerInfo
 {
     public var health :Number;
-    public var damageShields :Array;
+    public var numDamageShields :int;
 }
 
 }
