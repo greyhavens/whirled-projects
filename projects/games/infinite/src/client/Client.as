@@ -16,6 +16,7 @@ package client
 	import world.DebugBoard;
 	import world.SimpleBoard;
 	import world.WorldClient;
+	import world.Level;
 	
 	public class Client extends Sprite implements WorldClient
 	{
@@ -92,6 +93,6 @@ package client
 		protected const GAME_WIDTH:int = 700;
 		protected const GAME_HEIGHT:int = 500;
 		
-		protected const LEVEL1:Level = new Level(50);
+		protected const LEVEL1:Level = new Level(1, 50);
 	}	
 }
