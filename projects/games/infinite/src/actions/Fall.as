@@ -7,6 +7,7 @@ package actions
 	import contrib.Easing;
 	
 	import sprites.PlayerSprite;
+	import client.Objective
 	
 	public class Fall implements PlayerAction
 	{

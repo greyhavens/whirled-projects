@@ -1,5 +1,7 @@
 package actions
 {
+	import client.Objective;
+	
 	public class Climb extends Movement implements PlayerAction
 	{
 		public function Climb (

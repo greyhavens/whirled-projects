@@ -4,6 +4,7 @@ package
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import cells.CellAffordances;
 	import cells.CellObjective;
 	
 	import flash.events.IEventDispatcher;

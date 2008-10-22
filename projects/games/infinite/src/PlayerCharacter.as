@@ -8,6 +8,9 @@ package
 	
 	import cells.CellInteractions;
 	
+    import client.Objective;
+	import client.PlayerController;
+	
 	import flash.events.EventDispatcher;
 	import flash.text.TextField;
 	

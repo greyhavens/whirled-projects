@@ -2,6 +2,7 @@ package actions
 {
 	import arithmetic.BoardCoordinates;
 	import arithmetic.Vector;
+    import client.Objective;
 	
 	public class Teleport implements PlayerAction
 	{

@@ -4,6 +4,8 @@ package sprites
 	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
 	
+	import client.Objective;
+	
 	public class PlayerSprite extends AssetSprite
 	{
 		public function PlayerSprite(character:PlayerCharacter)

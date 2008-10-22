@@ -1,7 +1,7 @@
 package actions
 {	
 	import arithmetic.*;
-	
+	import client.Objective;
 	import sprites.PlayerSprite;
 	
 	public class Movement

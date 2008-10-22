@@ -1,5 +1,6 @@
 package cells.views
-{
+{   
+    import client.Objective;
 	import flash.events.IEventDispatcher;
 	
 	public interface CellView extends Labellable, IEventDispatcher

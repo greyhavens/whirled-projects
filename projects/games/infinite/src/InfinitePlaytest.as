@@ -5,6 +5,8 @@ package {
 	
 	import sprites.*;
 	
+	import client.Client;
+	
 	import world.InfiniteWorld;
 	import world.LocalWorld;
 	import world.RemoteWorld;

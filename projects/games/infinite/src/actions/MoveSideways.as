@@ -1,5 +1,6 @@
 package actions
 {
+	import client.Objective;
 	import flash.display.DisplayObject;
 	
 	public class MoveSideways extends Movement implements PlayerAction 

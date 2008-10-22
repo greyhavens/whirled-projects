@@ -1,4 +1,4 @@
-package
+package client
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;

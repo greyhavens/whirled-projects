@@ -7,6 +7,8 @@ package sprites
 	import cells.CellObjective;
 	import cells.views.CellView;
 	
+	import client.Objective;
+	
 	import flash.display.DisplayObjectContainer;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
