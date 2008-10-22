@@ -49,20 +49,47 @@ public class EndlessLevelSelectMode extends AppMode
             ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
         _saves.splice(0, 0, level1);
 
-        this.selectSave(_saves.length - 1, true);
+        this.selectSave(_saves.length - 1, ANIMATE_DOWN, true);
     }
 
-    protected function selectSave (saveIndex :int, removeModeUnderneath :Boolean) :void
+    protected function selectSave (saveIndex :int, animationType :int,
+        removeModeUnderneath :Boolean) :void
     {
         _saveIndex = saveIndex;
 
-        if (null != _saveView) {
-            _saveView.removeAllTasks();
-            _saveView.addTask(After(ANIMATE_TIME, new SelfDestructTask()));
+        var newStartLoc :Point;
+        var oldStartLoc :Point;
+        var newLocTask :LocationTask;
+        var oldLocTask :LocationTask;
+        switch (animationType) {
+        case ANIMATE_DOWN:
+            newStartLoc = UP_LOC;
+            newLocTask = LocationTask.CreateEaseIn(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_DOWN_TIME);
+            break;
+
+        case ANIMATE_NEXT:
+            newStartLoc = NEXT_LOC;
+            newLocTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
+            oldStartLoc = DOWN_LOC;
+            oldLocTask = LocationTask.CreateSmooth(PREV_LOC.x, PREV_LOC.y, ANIMATE_NEXTPREV_TIME);
+            break;
+
+        case ANIMATE_PREV:
+            newStartLoc = PREV_LOC;
+            newLocTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
+            oldStartLoc = DOWN_LOC;
+            oldLocTask = LocationTask.CreateSmooth(NEXT_LOC.x, NEXT_LOC.y, ANIMATE_NEXTPREV_TIME);
+            break;
         }
 
-        var saveViewTask :SerialTask =
-            new SerialTask(LocationTask.CreateSmooth(END_LOC.x, END_LOC.y, ANIMATE_TIME));
+        if (null != _saveView) {
+            _saveView.x = oldStartLoc.x;
+            _saveView.y = oldStartLoc.y;
+            _saveView.removeAllTasks();
+            _saveView.addTask(new SerialTask(oldLocTask, new SelfDestructTask()));
+        }
+
+        var saveViewTask :SerialTask = new SerialTask(newLocTask);
         if (removeModeUnderneath) {
             saveViewTask.addTask(new FunctionTask(
                 function () :void {
@@ -71,8 +98,8 @@ public class EndlessLevelSelectMode extends AppMode
         }
 
         _saveView = new SaveView(_level, _saves[saveIndex]);
-        _saveView.x = START_LOC.x;
-        _saveView.y = START_LOC.y;
+        _saveView.x = newStartLoc.x;
+        _saveView.y = newStartLoc.y;
         _saveView.addTask(saveViewTask);
         this.addObject(_saveView, _saveViewLayer);
 
@@ -86,7 +113,7 @@ public class EndlessLevelSelectMode extends AppMode
                     if (index >= _saves.length) {
                         index = 0;
                     }
-                    selectSave(index, false);
+                    selectSave(index, ANIMATE_NEXT, false);
                 });
 
             this.registerOneShotCallback(prevButton, MouseEvent.CLICK,
@@ -95,7 +122,7 @@ public class EndlessLevelSelectMode extends AppMode
                     if (index < 0) {
                         index = _saves.length - 1;
                     }
-                    selectSave(index, false);
+                    selectSave(index, ANIMATE_PREV, false);
                 });
 
         } else {
@@ -129,10 +156,10 @@ public class EndlessLevelSelectMode extends AppMode
         AppContext.mainLoop.insertMode(nextMode, -1);
 
         _saveView.removeAllTasks();
-        _saveView.x = END_LOC.x;
-        _saveView.y = END_LOC.y;
+        _saveView.x = DOWN_LOC.x;
+        _saveView.y = DOWN_LOC.y;
         _saveView.addTask(new SerialTask(
-            LocationTask.CreateSmooth(START_LOC.x, START_LOC.y, ANIMATE_TIME),
+            LocationTask.CreateSmooth(UP_LOC.x, UP_LOC.y, ANIMATE_UP_TIME),
             new FunctionTask(AppContext.mainLoop.popMode)));
     }
 
@@ -153,9 +180,17 @@ public class EndlessLevelSelectMode extends AppMode
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
 
-    protected static const ANIMATE_TIME :Number = 1.5;
-    protected static const START_LOC :Point = new Point(350, -328);
-    protected static const END_LOC :Point = new Point(350, 274);
+    protected static const ANIMATE_DOWN_TIME :Number = 1.5;
+    protected static const ANIMATE_UP_TIME :Number = 1.5;
+    protected static const ANIMATE_NEXTPREV_TIME :Number = 0.5;
+    protected static const UP_LOC :Point = new Point(350, -328);
+    protected static const DOWN_LOC :Point = new Point(350, 274);
+    protected static const NEXT_LOC :Point = new Point(1050, 274);
+    protected static const PREV_LOC :Point = new Point(-450, 274);
+
+    protected static const ANIMATE_DOWN :int = 0;
+    protected static const ANIMATE_NEXT :int = 1;
+    protected static const ANIMATE_PREV :int = 2;
 }
 
 }

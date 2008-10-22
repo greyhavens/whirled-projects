@@ -85,19 +85,23 @@ public class EndlessLevelTransitionMode extends AppMode
         multiplierObj.x = _multiplierStartLoc.x;
         multiplierObj.y = _multiplierStartLoc.y;
         multiplierObj.addTask(new SerialTask(
-            new AdvancedLocationTask(
-                MULTIPLIER_TITLE_LOC.x,
-                MULTIPLIER_TITLE_LOC.y,
-                FADE_IN_TIME,
-                mx.effects.easing.Cubic.easeInOut,
-                mx.effects.easing.Cubic.easeOut),
+            new ParallelTask(
+                new AdvancedLocationTask(
+                    MULTIPLIER_TITLE_LOC.x,
+                    MULTIPLIER_TITLE_LOC.y,
+                    FADE_IN_TIME,
+                    mx.effects.easing.Linear.easeNone,
+                    mx.effects.easing.Cubic.easeOut),
+                new ScaleTask(2, 2, FADE_IN_TIME)),
             new TimedTask(TITLE_TIME),
-            new AdvancedLocationTask(
-                nextMap.multiplierDropLoc.x,
-                nextMap.multiplierDropLoc.y,
-                FADE_OUT_TIME,
-                mx.effects.easing.Cubic.easeInOut,
-                mx.effects.easing.Cubic.easeIn)));
+            new ParallelTask(
+                new AdvancedLocationTask(
+                    nextMap.multiplierDropLoc.x,
+                    nextMap.multiplierDropLoc.y,
+                    FADE_OUT_TIME,
+                    mx.effects.easing.Linear.easeNone,
+                    mx.effects.easing.Cubic.easeIn),
+                new ScaleTask(1, 1, FADE_OUT_TIME))));
 
         this.addObject(multiplierObj, _modeSprite);
 

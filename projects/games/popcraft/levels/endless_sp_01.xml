@@ -352,9 +352,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 8 : Animal Welfare (Ursula & Ralph) ****** -->
+			<!-- ****** LEVEL 8 : Animal Welfare (Ursula & Ralph, Tesla) ****** -->
 			<Map displayName="Animal Welfare" isSavePoint="true">
-				<MapSettings backgroundName="city">
+				<MapSettings backgroundName="tesla">
 		            <SpellDropLocation x="305" y="100"/>
 				</MapSettings>
 				<HumanBaseLocations>
@@ -421,9 +421,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 9 : Strange Bedfellows (Jack & Dante) ****** -->
+			<!-- ****** LEVEL 9 : Strange Bedfellows (Jack & Dante, Tesla) ****** -->
 			<Map displayName="Strange Bedfellows" isSavePoint="true">
-				<MapSettings backgroundName="city">
+				<MapSettings backgroundName="tesla">
 		            <SpellDropLocation x="305" y="100"/>
 				</MapSettings>
 				<HumanBaseLocations>
