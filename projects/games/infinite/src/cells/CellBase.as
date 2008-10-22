@@ -2,6 +2,8 @@ package cells
 {
 	import arithmetic.*;
 	
+	import client.CellEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;

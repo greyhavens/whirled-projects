@@ -5,6 +5,8 @@ package client
 	import cells.CellObjective;
 	import cells.ViewFactory;
 	import cells.views.CellView;
+	import cells.CellMemory;
+	import cells.CellDictionary;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -18,6 +20,8 @@ package client
     import world.Cell;
     import world.Board;    
     import world.BoardInteractions;
+    
+    import client.CellEvent;
     
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display

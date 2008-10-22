@@ -1,14 +1,15 @@
 package arbitration
 {
 	import arithmetic.*;
-	
+		
 	import paths.ClimbingPath;
 	import paths.Path;
 	import paths.PathEvent;
 	import paths.SidewaysPath;
 	
-	import world.Cell;	
     import world.BoardAccess;
+	import world.Cell;	
+	import world.CellPath;
 	
 	public class BoardArbiter implements MoveArbiter
 	{

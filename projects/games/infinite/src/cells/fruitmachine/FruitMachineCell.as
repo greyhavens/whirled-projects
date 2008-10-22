@@ -2,6 +2,7 @@ package cells.fruitmachine
 {
 	import arithmetic.*;
 	
+	import client.CellEvent;
 	import cells.BackgroundCell;
 	import cells.CellCodes;
 	import cells.CellInteractions;

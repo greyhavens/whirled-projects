@@ -1,4 +1,4 @@
-package
+package cells
 {
 	import arithmetic.BoardCoordinates;
     import world.Cell;

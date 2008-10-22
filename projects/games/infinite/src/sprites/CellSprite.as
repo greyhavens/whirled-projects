@@ -3,10 +3,11 @@ package sprites
 	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
-	
+		
 	import cells.CellObjective;
 	import cells.views.CellView;
 	
+	import client.CellEvent;
 	import client.Objective;
 	
 	import flash.display.DisplayObjectContainer;
