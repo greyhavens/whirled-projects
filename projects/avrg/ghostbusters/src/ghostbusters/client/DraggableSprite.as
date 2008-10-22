@@ -74,24 +74,28 @@ public class DraggableSprite extends Sprite
 
     protected function handleMouseDown (evt :MouseEvent) :void
     {
-        if (_grab == null) {
+        if (_offset == null) {
             this.addEventListener(Event.ENTER_FRAME, handleFrame);
         }
 
-        _grab = new Point(this.parent.mouseX - this.x, this.parent.mouseY - this.y);
+        _mouse = new Point(this.parent.mouseX, this.parent.mouseY);
+        _offset = new Point(_mouse.x - this.x, _mouse.y - this.y);
     }
 
     protected function handleFrame (evt :Event) :void
     {
-        if (_grab == null || this.parent == null) {
+        if (_offset == null || this.parent == null) {
             // be resilient in unusual circumstances
             this.removeEventListener(Event.ENTER_FRAME, handleFrame);
             // make sure we're fully reset
-            _grab = null;
+            _offset = null;
             return;
         }
 
-        var p :Point = new Point(this.parent.mouseX - _grab.x, this.parent.mouseY - _grab.y);
+        var p :Point = new Point(this.parent.mouseX - _offset.x, this.parent.mouseY - _offset.y);
+
+        var xTodo :Boolean = false;
+        var yTodo :Boolean = false;
 
         if (_bounds != null) {
             // boundaries are configured: check for snapping
@@ -105,8 +109,7 @@ public class DraggableSprite extends Sprite
                 _xSnap = SNAP_BROWSER_EDGE;
 
             } else {
-                _xSnap = SNAP_NONE;
-                _xFix = p.x;
+                xTodo = true;
             }
 
             if (Math.abs(p.y + _bounds.top - _paintable.top) < SNAP_MARGIN) {
@@ -116,20 +119,30 @@ public class DraggableSprite extends Sprite
                 _ySnap = SNAP_BROWSER_EDGE;
 
             } else {
-                _ySnap = SNAP_NONE;
-                _yFix = p.y;
+                yTodo = true;
             }
+        }
 
-            if (_persistId != null) {
-                var locData :Dictionary = new Dictionary();
-                locData[IX_XSNAP] = _xSnap;
-                locData[IX_XFIX] = _xFix;
-                locData[IX_YSNAP] = _ySnap;
-                locData[IX_YFIX] = _yFix;
+        if (xTodo && Math.abs(this.parent.mouseX - _mouse.x) > DRAG_SAFETY) {
+            _xSnap = SNAP_NONE;
+            _xFix = p.x;
+            xTodo = false;
+        }
 
-                _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
-            }
+        if (yTodo && Math.abs(this.parent.mouseY - _mouse.y) > DRAG_SAFETY) {
+            _ySnap = SNAP_NONE;
+            _yFix = p.y;
+            yTodo = false;
+        }
 
+        if ((xTodo || yTodo) && _persistId != null) {
+            var locData :Dictionary = new Dictionary();
+            locData[IX_XSNAP] = _xSnap;
+            locData[IX_XFIX] = _xFix;
+            locData[IX_YSNAP] = _ySnap;
+            locData[IX_YFIX] = _yFix;
+
+            _ctrl.player.props.set(PROP_PREFIX + _persistId, locData);
         }
 
         layout();
@@ -139,7 +152,7 @@ public class DraggableSprite extends Sprite
     {
         this.removeEventListener(Event.ENTER_FRAME, handleFrame);
 
-        _grab = null;
+        _offset = null;
     }
 
     protected function handleSizeChanged (evt :AVRGameControlEvent) :void
@@ -241,12 +254,14 @@ public class DraggableSprite extends Sprite
     protected var _yFix :Number;
     protected var _bleed :Number;
 
-    protected var _grab :Point;
+    protected var _mouse :Point;
+    protected var _offset :Point;
 
     protected var _paintable :Rectangle;
     protected var _painted :Rectangle;
 
-    protected static const SNAP_MARGIN :int = 30;
+    protected static const SNAP_MARGIN :int = 20;
+    protected static const DRAG_SAFETY :int = 8;
 
     protected static const log :Log = Log.getLog(DraggableSprite);
 }
