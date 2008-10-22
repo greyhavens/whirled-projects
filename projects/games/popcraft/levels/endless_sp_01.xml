@@ -421,8 +421,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</Computer>
 			</Map>
 			
-			<!-- ****** LEVEL 9 : Something (Jack & Dante) ****** -->
-			<Map displayName="Something" isSavePoint="true">
+			<!-- ****** LEVEL 9 : Strange Bedfellows (Jack & Dante) ****** -->
+			<Map displayName="Strange Bedfellows" isSavePoint="true">
 				<MapSettings backgroundName="city">
 		            <SpellDropLocation x="305" y="100"/>
 				</MapSettings>
