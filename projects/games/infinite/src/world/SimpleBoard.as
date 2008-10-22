@@ -1,4 +1,4 @@
-package
+package world
 {
 	import arithmetic.*;
 	

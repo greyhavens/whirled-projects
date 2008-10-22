@@ -12,6 +12,8 @@ package client
 	import sprites.SpriteUtil;
 	
 	import world.InfiniteWorld;
+	import world.DebugBoard;
+	import world.SimpleBoard;
 	
 	public class Client extends Sprite
 	{
