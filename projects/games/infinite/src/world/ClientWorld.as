@@ -7,7 +7,7 @@ package world
 	 * implementation will be provided, otherwise an implementation which communicated with the
 	 * server via messages will be used.
 	 */
-	public interface InfiniteWorld extends IEventDispatcher
+	public interface ClientWorld extends IEventDispatcher
 	{
 		
 	}
