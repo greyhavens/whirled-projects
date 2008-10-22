@@ -8,6 +8,17 @@ package world
 	{
 		public function World()
 		{
+			_players = new PlayerRegister();
 		}
+		
+		/**
+		 * A player enters the world.
+		 */
+		public function playerEnters(id:int) :void
+		{
+	     
+		}
+		
+		protected var _players:PlayerRegister;
 	}
 }

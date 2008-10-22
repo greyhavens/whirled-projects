@@ -6,9 +6,9 @@ package {
 	import sprites.*;
 	
 	import client.Client;	
-	import client.LocalWorld;
-	import client.RemoteWorld;
     import world.ClientWorld;
+	import client.LocalWorld;
+	import server.RemoteWorld;
 
 	[SWF(width="700", height="500")]
 	public class InfinitePlaytest extends Sprite

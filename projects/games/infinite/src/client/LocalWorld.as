@@ -20,9 +20,12 @@ package client
 		
 		public function enter (client:WorldClient) :void
 		{
-			
+			_world.playerEnters(ID);
 		}
 		
 		protected var _world:World;
+		
+		// the local player is always ID 0.
+		protected static const ID:int = 0;
 	}
 }
