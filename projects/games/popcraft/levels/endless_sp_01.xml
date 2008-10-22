@@ -449,6 +449,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 							spellDropCourierGroupSizeMin="1"
 							spellDropCourierGroupSizeMax="1">
 							
+							<Wave absoluteDelay="5"><Unit type="heavy" count="2" max="2"/></Wave>
 							<Wave absoluteDelay="10"><Unit type="sapper" count="1"/></Wave>
 							<Wave absoluteDelay="20"><Unit type="sapper" count="1"/></Wave>
 							<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
@@ -467,12 +468,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					team="1">
 					<BaseLocation x="600" y="285" team="1"/>
 					<RepeatingDays>
-						<Day repeatWaves="true"
-							noticeSpellDropAfterMin="8"
-							noticeSpellDropAfterMax="8"
-							spellDropCourierGroupSizeMin="1"
-							spellDropCourierGroupSizeMax="1">
-							
+						<Day repeatWaves="true">
+							<Wave absoluteDelay="5"><Unit type="heavy" count="2" max="2"/></Wave>
 							<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
 							<Wave absoluteDelay="60"><Unit type="colossus" count="1"/></Wave>
 							<Wave absoluteDelay="110"/>
