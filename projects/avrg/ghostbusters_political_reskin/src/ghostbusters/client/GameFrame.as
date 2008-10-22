@@ -38,6 +38,25 @@ public class GameFrame extends DraggableSprite
         });
     }
 
+    //SKIN hackery: we just don't move these, since they are on the hard left anyhow.
+    override protected function handleMouseDown (evt :MouseEvent) :void
+    {
+//        if (_grab == null) {
+//            this.addEventListener(Event.ENTER_FRAME, handleFrame);
+//        }
+//
+//        _grab = new Point(this.parent.mouseX - this.x, this.parent.mouseY - this.y);
+    }
+    
+    override protected function handleMouseUp (evt :MouseEvent) :void
+    {
+//        if (_grab == null) {
+//            this.addEventListener(Event.ENTER_FRAME, handleFrame);
+//        }
+//
+//        _grab = new Point(this.parent.mouseX - this.x, this.parent.mouseY - this.y);
+    }
+    
     public function frameContent (content :DisplayObject) :void
     {
         if (_content != null) {
@@ -65,13 +84,15 @@ public class GameFrame extends DraggableSprite
 
         super.init(new Rectangle(0, 0, _frame.width, _frame.height),
 //                   SNAP_NONE, 300, SNAP_TOP, -1);
-                   SNAP_LEFT, 0, SNAP_TOP, -1);//SKIN
+//                   SNAP_LEFT, 0, SNAP_TOP, -1);//SKIN
+                   SNAP_NONE, 20, SNAP_TOP, -1);//SKIN
 
         this.addChild(_frame);
         this.addChild(_inventory);
 
-//        _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
-        _inventory.x = 0;
+        //SKIN, should not need to modify this, should be the _frame, not _inventory
+        _inventory.x = (_frame.width - _inventory.width - INVENTORY.left) / 2;
+//        _inventory.x = 0;
         _inventory.y = (_frame.height + 20 - INVENTORY.top);
         
         //SKIN
