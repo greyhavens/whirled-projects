@@ -8,6 +8,7 @@ package
 	
 	import cells.CellInteractions;
 	
+    import client.FrameEvent;
     import client.Objective;
 	import client.PlayerController;
 	

@@ -7,8 +7,9 @@ package actions
 	import contrib.Easing;
 	
 	import sprites.PlayerSprite;
-	import client.Objective
-	
+	import client.Objective;	
+    import client.FrameEvent;
+    	
 	public class Fall implements PlayerAction
 	{
 		public function Fall(player:PlayerCharacter, objective:Objective)

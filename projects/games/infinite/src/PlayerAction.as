@@ -1,5 +1,7 @@
 package
 {
+    import client.FrameEvent;
+    
 	public interface PlayerAction
 	{
 		/**

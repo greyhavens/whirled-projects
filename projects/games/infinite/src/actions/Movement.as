@@ -2,6 +2,7 @@ package actions
 {	
 	import arithmetic.*;
 	import client.Objective;
+	import client.FrameEvent;
 	import sprites.PlayerSprite;
 	
 	public class Movement

@@ -2,10 +2,12 @@ package client
 {
 	import arbitration.BoardArbiter;
 	
-	import inventory.InventoryDisplay;
-	
+	import inventory.InventoryDisplay;	
 	import items.Item;
 	import items.ItemEvent;
+	
+	import client.FrameEvent;
+	
 		
 	public class PlayerController
 	{

@@ -1,4 +1,4 @@
-package
+package client
 {
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
