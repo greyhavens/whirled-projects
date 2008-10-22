@@ -5,12 +5,16 @@ import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
 import popcraft.data.UnitData;
+import popcraft.sp.story.LevelSelectMode;
+import popcraft.ui.UIBits;
+import popcraft.util.SpriteUtil;
 
 public class EndlessLevelSelectMode extends AppMode
 {
@@ -28,6 +32,11 @@ public class EndlessLevelSelectMode extends AppMode
 
     protected function createUi (level :EndlessLevelData) :void
     {
+        _saveViewLayer = SpriteUtil.createSprite(true);
+        _topLayer = SpriteUtil.createSprite(true);
+        _modeSprite.addChild(_saveViewLayer);
+        _modeSprite.addChild(_topLayer);
+
         _level = level;
 
         _saves = (this.isMultiplayer ? AppContext.endlessLevelMgr.savedMpGames :
@@ -65,13 +74,13 @@ public class EndlessLevelSelectMode extends AppMode
         _saveView.x = START_LOC.x;
         _saveView.y = START_LOC.y;
         _saveView.addTask(saveViewTask);
-        this.addObject(_saveView, _modeSprite);
+        this.addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
         var nextButton :SimpleButton = _saveView.nextButton;
         var prevButton :SimpleButton = _saveView.prevButton;
         if (_saves.length > 1) {
-            this.registerEventListener(nextButton, MouseEvent.CLICK,
+            this.registerOneShotCallback(nextButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     var index :int = _saveIndex + 1;
                     if (index >= _saves.length) {
@@ -80,7 +89,7 @@ public class EndlessLevelSelectMode extends AppMode
                     selectSave(index, false);
                 });
 
-            this.registerEventListener(prevButton, MouseEvent.CLICK,
+            this.registerOneShotCallback(prevButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     var index :int = _saveIndex - 1;
                     if (index < 0) {
@@ -94,10 +103,12 @@ public class EndlessLevelSelectMode extends AppMode
             prevButton.visible = false;
         }
 
-        this.registerEventListener(_saveView.playButton, MouseEvent.CLICK,
+        this.registerOneShotCallback(_saveView.playButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 startGame(_saves[_saveIndex]);
             });
+
+        this.registerOneShotCallback(_saveView.backButton, MouseEvent.CLICK, backToMainMenu);
     }
 
     protected function startGame (save :SavedEndlessGame) :void
@@ -105,7 +116,17 @@ public class EndlessLevelSelectMode extends AppMode
         GameContext.gameType = (this.isMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
             GameContext.GAME_TYPE_ENDLESS_SP);
 
-        AppContext.mainLoop.insertMode(new EndlessGameMode(_level, save, true), -1);
+        this.animateToMode(new EndlessGameMode(_level, save, true));
+    }
+
+    protected function backToMainMenu (...ignored) :void
+    {
+        LevelSelectMode.create(false, animateToMode);
+    }
+
+    protected function animateToMode (nextMode :AppMode) :void
+    {
+        AppContext.mainLoop.insertMode(nextMode, -1);
 
         _saveView.removeAllTasks();
         _saveView.x = END_LOC.x;
@@ -125,6 +146,8 @@ public class EndlessLevelSelectMode extends AppMode
         return !isMultiplayer;
     }
 
+    protected var _saveViewLayer :Sprite;
+    protected var _topLayer :Sprite;
     protected var _saves :Array;
     protected var _saveIndex :int = -1;
     protected var _level :EndlessLevelData;
@@ -240,9 +263,15 @@ class SaveView extends SceneObject
 
         // play button
         _playButton = UIBits.createButton("Play", 2);
-        _playButton.x = PLAY_LOC.x - (_playButton.width * 0.5);
-        _playButton.y = PLAY_LOC.y - (_playButton.height * 0.5);
+        _playButton.x = PLAY_CENTER_LOC.x - (_playButton.width * 0.5);
+        _playButton.y = PLAY_CENTER_LOC.y - (_playButton.height * 0.5);
         _movie.addChild(_playButton);
+
+        // back button
+        _backButton = UIBits.createButton("Main Menu", 1.2);
+        _backButton.x = BACK_LOC.x;
+        _backButton.y = BACK_LOC.y;
+        _movie.addChild(_backButton);
     }
 
     protected function drawIcons (name :String, count :int, start :Point, offset :Point) :void
@@ -275,10 +304,17 @@ class SaveView extends SceneObject
         return _playButton;
     }
 
+    public function get backButton () :SimpleButton
+    {
+        return _backButton;
+    }
+
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
+    protected var _backButton :SimpleButton;
 
-    protected static const PLAY_LOC :Point = new Point(0, 190);
+    protected static const BACK_LOC :Point = new Point(-330, 179);
+    protected static const PLAY_CENTER_LOC :Point = new Point(0, 190);
     protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
     protected static const SHIELD_CENTER_LOC :Point = new Point(-219, -78);

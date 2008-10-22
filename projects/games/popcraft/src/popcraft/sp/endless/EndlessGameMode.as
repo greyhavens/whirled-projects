@@ -215,7 +215,7 @@ public class EndlessGameMode extends GameMode
             }
 
         } else {
-            this.fadeOutToMode(new EndlessLevelSpOutroMode());
+            this.fadeOutToMode(new EndlessSpGameOverMode());
         }
 
         GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);

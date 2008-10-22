@@ -8,12 +8,11 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
-public class EndlessLevelSpOutroMode extends AppMode
+public class EndlessSpGameOverMode extends AppMode
 {
-    public function EndlessLevelSpOutroMode ()
+    public function EndlessSpGameOverMode ()
     {
         var g :Graphics = this.modeSprite.graphics;
         g.beginFill(0, 1);
@@ -42,7 +41,7 @@ public class EndlessLevelSpOutroMode extends AppMode
         this.modeSprite.addChild(mainMenu);
         this.registerOneShotCallback(mainMenu, MouseEvent.CLICK,
             function (...ignored) :void {
-                LevelSelectMode.create();
+                AppContext.mainLoop.pushMode(new EndlessLevelSelectMode());
             });
     }
 

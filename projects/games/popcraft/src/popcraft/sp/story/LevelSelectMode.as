@@ -25,23 +25,30 @@ import popcraft.util.SpriteUtil;
 
 public class LevelSelectMode extends DemoGameMode
 {
-    public static function create () :void
+    public static function create (fadeIn :Boolean = true, callback :Function = null) :void
     {
         AppContext.levelMgr.curLevelIndex = LevelManager.DEMO_LEVEL;
         AppContext.levelMgr.playLevel(
             function (level :LevelData) :void {
                 _demoLevel = level;
-                AppContext.mainLoop.unwindToMode(new LevelSelectMode());
+                var mode :LevelSelectMode = new LevelSelectMode(fadeIn);
+                if (callback != null) {
+                    callback(mode);
+                } else {
+                    AppContext.mainLoop.unwindToMode(mode);
+                }
             });
     }
 
-    public function LevelSelectMode ()
+    public function LevelSelectMode (fadeIn :Boolean)
     {
         super(_demoLevel);
 
         if (_demoLevel == null) {
             throw new Error("LevelSelectMode must be instantiated via LevelSelectMode.create()");
         }
+
+        _shouldFadeIn = fadeIn;
     }
 
     override protected function setup () :void
@@ -75,7 +82,9 @@ public class LevelSelectMode extends DemoGameMode
 
         this.createTutorialLayout();
 
-        this.fadeIn();
+        if (_shouldFadeIn) {
+            this.fadeIn();
+        }
     }
 
     protected function createTutorialLayout () :void
@@ -226,6 +235,7 @@ public class LevelSelectMode extends DemoGameMode
         this.addObject(_resourceIntro, _modeLayer);
 
         _showingTutorial = true;
+        this.updateTutorial();
     }
 
     protected function onPlayClicked (...ignored) :void
@@ -267,10 +277,15 @@ public class LevelSelectMode extends DemoGameMode
         super.update(dt);
 
         if (_showingTutorial) {
-            _unitIntro.visible = GameContext.localPlayerInfo.canAffordCreature(Constants.UNIT_TYPE_GRUNT);
-            _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
-            _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
+            this.updateTutorial();
         }
+    }
+
+    protected function updateTutorial () :void
+    {
+        _unitIntro.visible = GameContext.localPlayerInfo.canAffordCreature(Constants.UNIT_TYPE_GRUNT);
+        _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
+        _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
     }
 
     override public function sendBuildCreatureMsg (playerIndex :int, unitType :int, noCost :Boolean,
@@ -480,6 +495,7 @@ public class LevelSelectMode extends DemoGameMode
     protected var _levelSelectButton :SimpleButton;
     protected var _showingTutorial :Boolean;
     protected var _buyGameButton :SimpleButton;
+    protected var _shouldFadeIn :Boolean;
 
     protected static var _demoLevel :LevelData;
 
