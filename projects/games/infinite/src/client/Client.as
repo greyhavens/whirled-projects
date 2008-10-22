@@ -11,14 +11,15 @@ package client
 	
 	import sprites.SpriteUtil;
 	
-	import world.InfiniteWorld;
 	import world.Board;
+	import world.ClientWorld;
 	import world.DebugBoard;
 	import world.SimpleBoard;
+	import world.WorldClient;
 	
-	public class Client extends Sprite
+	public class Client extends Sprite implements WorldClient
 	{
-		public function Client(world:InfiniteWorld)
+		public function Client(world:ClientWorld)
 		{
 			_world = world;
 			
@@ -50,9 +51,14 @@ package client
 			_frameTimer = new FrameTimer();
 			_frameTimer.start();
 				
-			startGame();			
+			enterWorld();			
 		}
-				
+						
+		public function enterWorld () :void
+		{
+			_world.enter(this);
+		}
+								
 		public function startGame () :void 
 		{
 			if (Config.boardDebug) {
@@ -71,10 +77,10 @@ package client
 		
 		public function get mode () :String 
 		{
-			return "standalone";
+			return _world.worldType;
 		}	
 		
-		protected var _world:InfiniteWorld;
+		protected var _world:ClientWorld;
 		
 		protected var _controller:PlayerController;
 		protected var _board:Board;

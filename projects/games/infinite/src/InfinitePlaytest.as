@@ -8,8 +8,7 @@ package {
 	import client.Client;	
 	import client.LocalWorld;
 	import client.RemoteWorld;
-
-    import world.InfiniteWorld;
+    import world.ClientWorld;
 
 	[SWF(width="700", height="500")]
 	public class InfinitePlaytest extends Sprite
@@ -18,7 +17,7 @@ package {
 		{
 			_gameControl = new GameControl(this);
 			
-			const world:InfiniteWorld =
+			const world:ClientWorld =
 			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld();
 			
 			addChild(new Client(world));

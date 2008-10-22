@@ -8,7 +8,15 @@ package world
 	 * server via messages will be used.
 	 */
 	public interface ClientWorld extends IEventDispatcher
-	{
+	{	
+		/**
+		 * Return a human readable string describing the type of this world.
+		 */	
+		function get worldType () :String
 		
+		/**
+		 * A request from the specified client to enter the world.
+		 */
+		function enter (client:WorldClient) :void
 	}
 }

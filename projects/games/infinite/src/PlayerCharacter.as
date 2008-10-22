@@ -2,7 +2,7 @@ package
 {
 	import actions.*;
 	
-	import arbitration.MovableCharacter;
+	import world.arbitration.MovableCharacter;
 	
 	import arithmetic.*;
 	
@@ -28,6 +28,7 @@ package
 	import sprites.PlayerSprite;
 	
 	import world.Cell;
+	import world.arbitration.MovableCharacter;
 	
 	/**
 	 * Represents the player who is using the console.

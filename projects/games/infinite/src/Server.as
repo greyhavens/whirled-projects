@@ -8,9 +8,8 @@ package {
 	import com.whirled.ServerObject;
 	import com.whirled.game.GameControl;
 	
-	import whirled.ArbitrationServer;
-	import whirled.ServerPlayerRegister;
-	
+	import server.WorldServer;
+		
 	/**
 	 * The server agent for @project@. Automatically created by the 
 	 * whirled server whenever a new game is started. 
@@ -22,15 +21,11 @@ package {
 	     */
 	    public function Server ()
 	    {
-	        _control = new GameControl(this);	        
-	        _arbiter = new ArbitrationServer(_control.net);
-	        _players = new ServerPlayerRegister(_control.game);
+	        _control = new GameControl(this);
+	        _worldServer = new WorldServer(_control);
 	    }
 	    
-	    protected var _players :ServerPlayerRegister;
-//
-		protected var _arbiter :ArbitrationServer
-//	
+	    protected var _worldServer :WorldServer;
 	    protected var _control :GameControl;
 	}
 }

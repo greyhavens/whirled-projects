@@ -1,6 +1,6 @@
 package client
 {
-	import arbitration.BoardArbiter;
+	import world.arbitration.BoardArbiter;
 	
 	import inventory.InventoryDisplay;	
 	import items.Item;
