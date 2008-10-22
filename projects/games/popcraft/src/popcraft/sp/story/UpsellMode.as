@@ -20,10 +20,12 @@ public class UpsellMode extends AppMode
 
         var leftPage :MovieClip = movie["pageL"];
         var rightPage :MovieClip = movie["pageR"];
+        var leftUpsell :MovieClip = leftPage["upsell_L"];
+        var rightUpsell :MovieClip = rightPage["upsell_R"];
 
         // show the upsell animations
-        MovieClip(leftPage["upsell_L"]).visible = true;
-        MovieClip(rightPage["upsell_R"]).visible = true;
+        leftUpsell.visible = true;
+        rightUpsell.visible = true;
 
         // hide everything else
         MovieClip(leftPage["note"]).visible = false;
@@ -36,10 +38,20 @@ public class UpsellMode extends AppMode
         this.addObject(_manualObj, this.modeSprite);
 
         var okButton :SimpleButton = rightPage["ok"];
-        this.registerOneShotCallback(okButton, MouseEvent.CLICK, buyGame);
+        this.registerOneShotCallback(okButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                closeMode();
+            });
+
+        var unlockButton :SimpleButton = rightUpsell["unlock_button"];
+        this.registerOneShotCallback(unlockButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                closeMode();
+                AppContext.showGameShop();
+            });
     }
 
-    protected function buyGame (...ignored) :void
+    protected function closeMode () :void
     {
         _manualObj.removeAllTasks();
         _manualObj.addTask(new SerialTask(
@@ -49,8 +61,6 @@ public class UpsellMode extends AppMode
             LocationTask.CreateEaseIn(
                 Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7),
             new FunctionTask(AppContext.mainLoop.popMode)));
-
-        AppContext.showGameShop();
     }
 
     protected var _manualObj :SimpleSceneObject;
