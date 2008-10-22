@@ -203,8 +203,8 @@ public class EndlessGameMode extends GameMode
                     AppContext.awardTrophy(Trophies.ABECEDARIAN);
                 }
                 // get all the way through the levels
-                for (var ii :int = 1; ii <= Trophies.ENDLESS_SP_COMPLETION_TROPHIES.length; ++ii) {
-                    if (mapIndex + 1 >= (mapIndex * ii)) {
+                for (var ii :int = 0; ii <= Trophies.ENDLESS_SP_COMPLETION_TROPHIES.length; ++ii) {
+                    if (mapIndex + 1 >= (numLevels * (ii + 1))) {
                         AppContext.awardTrophy(Trophies.ENDLESS_SP_COMPLETION_TROPHIES[ii]);
                     }
                 }
