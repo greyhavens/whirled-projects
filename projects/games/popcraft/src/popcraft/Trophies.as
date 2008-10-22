@@ -19,6 +19,8 @@ public class Trophies
     public static const REANIMATOR :String = "Reanimator";
     // get your multiplier to 5x
     public static const MAX_X :String = "MaxX";
+    // defeat an opponent who took a multiplier from the battlefield
+    public static const HANDICAPPER :String = "Handicapper";
 
     /* single-player trophies */
 

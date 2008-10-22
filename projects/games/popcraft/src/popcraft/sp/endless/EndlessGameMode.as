@@ -278,6 +278,21 @@ public class EndlessGameMode extends GameMode
         }
     }
 
+    override public function workshopKilled (workshop :WorkshopUnit, killingPlayerIndex :int) :void
+    {
+        super.workshopKilled(workshop, killingPlayerIndex);
+
+        if (killingPlayerIndex == GameContext.localPlayerIndex) {
+            EndlessGameContext.incrementScore(EndlessGameContext.level.pointsPerOpponentKill);
+
+            // award the Handicapper trophy if the local player killed an opponent who stole
+            // a multiplier from the battlefield
+            if (_playerGotMultiplier[workshop.owningPlayerIndex]) {
+                AppContext.awardTrophy(Trophies.HANDICAPPER);
+            }
+        }
+    }
+
     override public function spellDeliveredToPlayer (playerIndex :int, spellType :int) :void
     {
         super.spellDeliveredToPlayer(playerIndex, spellType);
@@ -298,6 +313,9 @@ public class EndlessGameMode extends GameMode
                     AppContext.awardTrophy(Trophies.MAX_X);
                 }
             }
+
+            // we keep track of this for the "Handicapper" trophy
+            _playerGotMultiplier[playerIndex] = true;
         }
     }
 
@@ -389,6 +407,8 @@ public class EndlessGameMode extends GameMode
             GameContext.localPlayerInfo.restoreSavedGameData(
                 _savedGame, EndlessGameContext.level.multiplierDamageSoak);
         }
+
+        _playerGotMultiplier = ArrayUtil.create(GameContext.numPlayers, false);
     }
 
     protected function createComputerPlayers () :Array
@@ -438,6 +458,7 @@ public class EndlessGameMode extends GameMode
     protected var _liveComputers :Array;
     protected var _lastLiveComputerLoc :Vector2 = new Vector2();
     protected var _readyToStart :Boolean;
+    protected var _playerGotMultiplier :Array;
 
     protected var _playersCheckedIn :Array = [];
 }

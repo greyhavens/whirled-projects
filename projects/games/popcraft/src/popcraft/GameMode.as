@@ -632,6 +632,11 @@ public class GameMode extends TransitionMode
         }
     }
 
+    public function workshopKilled (workshop :WorkshopUnit, killingPlayerIndex :int) :void
+    {
+        // no-op
+    }
+
     public function spellDeliveredToPlayer (playerIndex :int, spellType :int) :void
     {
         // called when a courier delivers a spell back to its workshop

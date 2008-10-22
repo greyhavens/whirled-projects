@@ -34,6 +34,17 @@ public class WorkshopUnit extends Unit
         }
     }
 
+    override public function receiveAttack (attack :UnitAttack, maxDamage :Number=Number.MAX_VALUE)
+        :Number
+    {
+        var wasDead :Boolean = _isDead;
+        var damageTaken :Number = super.receiveAttack(attack, maxDamage);
+        if (!wasDead && _isDead) {
+            GameContext.gameMode.workshopKilled(this, attack.attackingUnitOwningPlayerIndex);
+        }
+        return damageTaken;
+    }
+
     protected static const LEFT_SPAWN_OFFSET :Vector2 = new Vector2(30, 0);
     protected static const RIGHT_SPAWN_OFFSET :Vector2 = new Vector2(-30, 0);
 }

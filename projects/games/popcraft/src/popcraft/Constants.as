@@ -152,7 +152,6 @@ public class Constants
         17,  // colossus
         17,  // boss
     ];
-
 }
 
 }
