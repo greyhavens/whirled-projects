@@ -57,7 +57,7 @@ public class Trophies
 
         // then trophies you get even if you died in battle
         for (ii = 0; ii < fullTeam.length; ii ++) {
-            player = Player(liveTeam[ii]);
+            player = Player(fullTeam[ii]);
 
             var minigames :Dictionary = room.getMinigameStats(player.playerId);
             if (minigames[Codes.WPN_LANTERN] && minigames[Codes.WPN_BLASTER] &&
