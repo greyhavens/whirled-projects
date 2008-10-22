@@ -11,8 +11,8 @@ public class TrophyWatcher
 {
     public function TrophyWatcher ()
     {
-        var hasDoomsday :Boolean = TrophyManager.hasTrophy(TrophyManager.TROPHY_DOOMSDAY);
-        var hasCryHavoc :Boolean = TrophyManager.hasTrophy(TrophyManager.TROPHY_CRYHAVOC);
+        var hasDoomsday :Boolean = AppContext.hasTrophy(Trophies.DOOMSDAY);
+        var hasCryHavoc :Boolean = AppContext.hasTrophy(Trophies.CRYHAVOC);
 
         if (!hasDoomsday) {
             _localPlayerSpellSet = GameContext.getActiveSpellSet(GameContext.localPlayerIndex);
@@ -43,27 +43,27 @@ public class TrophyWatcher
 
     protected function checkDoomsdayTrophy () :void
     {
-        if (TrophyManager.hasTrophy(TrophyManager.TROPHY_DOOMSDAY)) {
+        if (AppContext.hasTrophy(Trophies.DOOMSDAY)) {
             return;
         }
 
         if (_localPlayerSpellSet.isSpellActive(Constants.SPELL_TYPE_BLOODLUST) &&
             _localPlayerSpellSet.isSpellActive(Constants.SPELL_TYPE_RIGORMORTIS) &&
             CreatureUnit.getNumPlayerCreatures(GameContext.localPlayerIndex, Constants.UNIT_TYPE_COLOSSUS) >=
-                TrophyManager.DOOMSDAY_BEHEMOTHS) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_DOOMSDAY);
+                Trophies.DOOMSDAY_BEHEMOTHS) {
+            AppContext.awardTrophy(Trophies.DOOMSDAY);
         }
     }
 
     protected function checkCryHavocTrophy () :void
     {
-        if (TrophyManager.hasTrophy(TrophyManager.TROPHY_CRYHAVOC)) {
+        if (AppContext.hasTrophy(Trophies.CRYHAVOC)) {
             return;
         }
 
         if (CreatureUnit.getNumPlayerCreatures(GameContext.localPlayerIndex, Constants.UNIT_TYPE_SAPPER) >=
-             TrophyManager.CRYHAVOC_SAPPERS) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_CRYHAVOC);
+             Trophies.CRYHAVOC_SAPPERS) {
+            AppContext.awardTrophy(Trophies.CRYHAVOC);
         }
     }
 

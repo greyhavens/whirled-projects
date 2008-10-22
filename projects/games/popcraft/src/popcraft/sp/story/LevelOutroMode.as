@@ -165,19 +165,19 @@ public class LevelOutroMode extends AppMode
             // trophies
             var levelTrophy :String;
             switch (thisLevelIndex) {
-            case TrophyManager.FRESHMAN_LEVEL: levelTrophy = TrophyManager.TROPHY_FRESHMAN; break;
-            case TrophyManager.SOPHOMORE_LEVEL: levelTrophy = TrophyManager.TROPHY_SOPHOMORE; break;
-            case TrophyManager.JUNIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_JUNIOR; break;
-            case TrophyManager.SENIOR_LEVEL: levelTrophy = TrophyManager.TROPHY_SENIOR; break;
-            case TrophyManager.GRADUATE_LEVEL: levelTrophy = TrophyManager.TROPHY_GRADUATE; break;
+            case Trophies.FRESHMAN_LEVEL: levelTrophy = Trophies.FRESHMAN; break;
+            case Trophies.SOPHOMORE_LEVEL: levelTrophy = Trophies.SOPHOMORE; break;
+            case Trophies.JUNIOR_LEVEL: levelTrophy = Trophies.JUNIOR; break;
+            case Trophies.SENIOR_LEVEL: levelTrophy = Trophies.SENIOR; break;
+            case Trophies.GRADUATE_LEVEL: levelTrophy = Trophies.GRADUATE; break;
             }
 
             if (null != levelTrophy) {
-                TrophyManager.awardTrophy(levelTrophy);
+                AppContext.awardTrophy(levelTrophy);
             }
 
             if (AppContext.levelMgr.playerBeatGameWithExpertScore) {
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAGNACUMLAUDE);
+                AppContext.awardTrophy(Trophies.MAGNACUMLAUDE);
             }
         }
     }

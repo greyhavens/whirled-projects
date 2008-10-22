@@ -273,10 +273,10 @@ public class LevelSelectMode extends DemoGameMode
         }
     }
 
-    override public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean,
+    override public function sendBuildCreatureMsg (playerIndex :int, unitType :int, noCost :Boolean,
         isAiMsg :Boolean) :void
     {
-        super.buildCreature(playerIndex, unitType, noCost, isAiMsg);
+        super.sendBuildCreatureMsg(playerIndex, unitType, noCost, isAiMsg);
 
         if (null != _playButtonObj && playerIndex == GameContext.localPlayerIndex && !_playButtonObj.hasTasks()) {
             // the play button starts pulsing when the player creates a creature

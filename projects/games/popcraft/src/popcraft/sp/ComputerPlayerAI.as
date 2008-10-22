@@ -78,7 +78,7 @@ public class ComputerPlayerAI extends SimObject
 
                 if (availableSpells.length > 0) {
                     spellType = Rand.nextElement(availableSpells, Rand.STREAM_GAME);
-                    GameContext.gameMode.castSpell(_playerInfo.playerIndex, spellType, true);
+                    GameContext.gameMode.sendCastSpellMsg(_playerInfo.playerIndex, spellType, true);
                 }
             }
 
@@ -88,7 +88,7 @@ public class ComputerPlayerAI extends SimObject
                     GameContext.getPlayerByName(_nextWave.targetPlayerName);
 
                 if (null != targetPlayer) {
-                    GameContext.gameMode.selectTargetEnemy(_playerInfo.playerIndex,
+                    GameContext.gameMode.sendTargetEnemyMsg(_playerInfo.playerIndex,
                         targetPlayer.playerIndex, true);
                 }
             }
@@ -117,7 +117,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function buildUnit (unitType :int) :void
     {
-        GameContext.gameMode.buildCreature(_playerInfo.playerIndex, unitType, false, true);
+        GameContext.gameMode.sendBuildCreatureMsg(_playerInfo.playerIndex, unitType, false, true);
     }
 
     override protected function update (dt :Number) :void

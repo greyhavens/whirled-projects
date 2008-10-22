@@ -25,6 +25,20 @@ public class AppContext
     public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
     public static var userCookieMgr :UserCookieManager;
 
+    public static function awardTrophy (trophyName :String) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            gameCtrl.player.awardTrophy(trophyName);
+        } else {
+            PopCraft.log.info("Trophy awarded: " + trophyName);
+        }
+    }
+
+    public static function hasTrophy (trophyName :String) :Boolean
+    {
+        return (gameCtrl.isConnected() && gameCtrl.player.holdsTrophy(trophyName));
+    }
+
     public static function get isPremiumContentUnlocked () :Boolean
     {
         return (!Constants.DEBUG_LOCK_PREMIUM_CONTENT &&

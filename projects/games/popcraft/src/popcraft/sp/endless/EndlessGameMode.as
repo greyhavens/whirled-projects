@@ -194,6 +194,26 @@ public class EndlessGameMode extends GameMode
                 AppContext.mainLoop.pushMode(new EndlessLevelTransitionMode(_lastLiveComputerLoc));
             }
 
+            // end-of-level trophies
+            var mapIndex :int = EndlessGameContext.mapIndex;
+            var numLevels :int = EndlessGameContext.level.mapSequence.length;
+            if (GameContext.isSinglePlayerGame) {
+                // get halfway through the levels
+                if (mapIndex >= Trophies.ABECEDARIAN_MAP_INDEX) {
+                    AppContext.awardTrophy(Trophies.ABECEDARIAN);
+                }
+                // get all the way through the levels
+                for (var ii :int = 1; ii <= Trophies.ENDLESS_SP_COMPLETION_TROPHIES.length; ++ii) {
+                    if (mapIndex + 1 >= (mapIndex * ii)) {
+                        AppContext.awardTrophy(Trophies.ENDLESS_SP_COMPLETION_TROPHIES[ii]);
+                    }
+                }
+
+            } else {
+                // complete any MP level
+                AppContext.awardTrophy(Trophies.COLLABORATOR);
+            }
+
         } else {
             this.fadeOutToMode(new EndlessLevelSpOutroMode());
         }
@@ -224,6 +244,16 @@ public class EndlessGameMode extends GameMode
             super.applyCheatCode(keyCode);
             break;
         }
+    }
+
+    override protected function resurrectPlayer (deadPlayerIndex :int) :int
+    {
+        var resurrectingPlayerIndex :int = super.resurrectPlayer(deadPlayerIndex);
+        if (resurrectingPlayerIndex == GameContext.localPlayerIndex) {
+            AppContext.awardTrophy(Trophies.REANIMATOR);
+        }
+
+        return resurrectingPlayerIndex;
     }
 
     override public function playerEarnedResources (resourceType :int, offset :int,
@@ -264,6 +294,9 @@ public class EndlessGameMode extends GameMode
 
             if (playerIndex == GameContext.localPlayerIndex) {
                 EndlessGameContext.incrementMultiplier();
+                if (EndlessGameContext.scoreMultiplier >= 5) {
+                    AppContext.awardTrophy(Trophies.MAX_X);
+                }
             }
         }
     }

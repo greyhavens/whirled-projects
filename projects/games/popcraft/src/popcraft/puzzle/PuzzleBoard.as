@@ -280,8 +280,8 @@ public class PuzzleBoard extends SceneObject
             "sfx_rsrc_lost");
 
         // award trophy
-        if (clearPieces.length >= TrophyManager.TROPHY_RESOURCE_CLEAR_TILE_COUNT) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_RESOURCE_CLEAR[resourceType]);
+        if (clearPieces.length >= Trophies.RESOURCE_CLEAR_TILE_COUNT) {
+            AppContext.awardTrophy(Trophies.RESOURCE_CLEAR_TROPHIES[resourceType]);
         }
     }
 

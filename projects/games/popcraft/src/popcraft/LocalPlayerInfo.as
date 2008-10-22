@@ -109,16 +109,16 @@ public class LocalPlayerInfo extends PlayerInfo
         } else {
             _fourPlusPieceClearRunLength += 1;
 
-            for (var i :int = 0; i < TrophyManager.TROPHY_PIECECLEARRUNS.length; i += 2) {
-                var runLength :int = TrophyManager.TROPHY_PIECECLEARRUNS[i+1];
+            for (var i :int = 0; i < Trophies.PIECE_CLEAR_RUN_TROPHIES.length; i += 2) {
+                var runLength :int = Trophies.PIECE_CLEAR_RUN_TROPHIES[i+1];
                 if (_fourPlusPieceClearRunLength == runLength) {
-                    var trophyName :String = TrophyManager.TROPHY_PIECECLEARRUNS[i];
-                    TrophyManager.awardTrophy(trophyName);
+                    var trophyName :String = Trophies.PIECE_CLEAR_RUN_TROPHIES[i];
+                    AppContext.awardTrophy(trophyName);
                 }
             }
         }
 
-        if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_MAXEDOUT)) {
+        if (!AppContext.hasTrophy(Trophies.MAXEDOUT)) {
             var isMaxedOut :Boolean = true;
             for each (var resAmount :int in _resources) {
                 if (resAmount < _maxResourceAmount) {
@@ -128,7 +128,7 @@ public class LocalPlayerInfo extends PlayerInfo
             }
 
             if (isMaxedOut) {
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_MAXEDOUT);
+                AppContext.awardTrophy(Trophies.MAXEDOUT);
             }
         }
 

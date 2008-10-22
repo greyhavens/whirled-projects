@@ -112,53 +112,53 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
     {
         // award trophies for playing lots of multiplayer games
         var totalGamesPlayed :int = AppContext.globalPlayerStats.totalGamesPlayed;
-        if (totalGamesPlayed >= TrophyManager.RALPH_NUMGAMES) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_RALPH);
+        if (totalGamesPlayed >= Trophies.RALPH_NUMGAMES) {
+            AppContext.awardTrophy(Trophies.RALPH);
         }
-        if (totalGamesPlayed >= TrophyManager.JACK_NUMGAMES) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_JACK);
+        if (totalGamesPlayed >= Trophies.JACK_NUMGAMES) {
+            AppContext.awardTrophy(Trophies.JACK);
         }
-        if (totalGamesPlayed >= TrophyManager.WEARDD_NUMGAMES) {
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_WEARDD);
+        if (totalGamesPlayed >= Trophies.WEARDD_NUMGAMES) {
+            AppContext.awardTrophy(Trophies.WEARDD);
         }
 
         if (AppContext.globalPlayerStats.hasMorbidInfection) {
             // awarded for playing a game with another player who has the Morbid Infection trophy
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_MORBIDINFECTION);
+            AppContext.awardTrophy(Trophies.MORBIDINFECTION);
         }
 
-        if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_LIBERALARTS)) {
+        if (!AppContext.hasTrophy(Trophies.LIBERALARTS)) {
             if (ArrayUtil.indexIf(AppContext.globalPlayerStats.mpGamesPlayed,
                   function (gamesPlayed :int) :Boolean { return gamesPlayed < 1; }) < 0) {
                 // awarded for playing one of each multiplayer game arrangement
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_LIBERALARTS);
+                AppContext.awardTrophy(Trophies.LIBERALARTS);
             }
         }
 
         if (this.playerWon) {
             // awarded for winning a multiplayer game
-            TrophyManager.awardTrophy(TrophyManager.TROPHY_BULLY);
+            AppContext.awardTrophy(Trophies.BULLY);
 
             if (GameContext.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_FLAWLESS);
-            } else if (GameContext.localPlayerInfo.healthPercent <= TrophyManager.CHEATDEATH_HEALTH_PERCENT) {
+                AppContext.awardTrophy(Trophies.FLAWLESS);
+            } else if (GameContext.localPlayerInfo.healthPercent <= Trophies.CHEATDEATH_HEALTH_PERCENT) {
                 // awarded for winning a multiplayer game with very low health
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_CHEATDEATH);
+                AppContext.awardTrophy(Trophies.CHEATDEATH);
             }
 
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                 if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
-                    playerInfo.displayName == TrophyManager.MALEDICTORIAN_NAME) {
+                    playerInfo.displayName == Trophies.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose
                     // Whirled name is "Professor Weardd"
-                    TrophyManager.awardTrophy(TrophyManager.TROPHY_MALEDICTORIAN);
+                    AppContext.awardTrophy(Trophies.MALEDICTORIAN);
                 }
             }
 
             if (MoonCalculation.isFullMoonToday) {
                 // awarded for winning a multiplayer game on a full moon
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_BADMOON);
+                AppContext.awardTrophy(Trophies.BADMOON);
             }
         }
     }

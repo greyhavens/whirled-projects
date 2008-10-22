@@ -13,7 +13,6 @@ import com.whirled.game.OccupantChangedEvent;
 import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObjectContainer;
-import flash.display.Sprite;
 import flash.geom.Point;
 
 import popcraft.battle.*;
@@ -560,17 +559,24 @@ public class GameMode extends TransitionMode
 
         } else if (msg is ResurrectPlayerMessage) {
             var resurrectMsg :ResurrectPlayerMessage = msg as ResurrectPlayerMessage;
-            playerIndex = resurrectMsg.playerIndex;
-            playerInfo = GameContext.playerInfos[playerIndex];
-            if (!playerInfo.isAlive) {
-                var teammate :PlayerInfo = GameContext.findPlayerTeammate(playerIndex);
-                if (teammate != null && teammate.isAlive) {
-                    var newHealth :Number = teammate.health * 0.5;
-                    teammate.workshop.health = newHealth;
-                    playerInfo.resurrect(newHealth);
-                }
+            this.resurrectPlayer(resurrectMsg.playerIndex);
+        }
+    }
+
+    protected function resurrectPlayer (deadPlayerIndex :int) :int
+    {
+        var playerInfo :PlayerInfo = GameContext.playerInfos[deadPlayerIndex];
+        if (!playerInfo.isAlive) {
+            var teammate :PlayerInfo = GameContext.findPlayerTeammate(deadPlayerIndex);
+            if (teammate != null && teammate.isAlive) {
+                var newHealth :Number = teammate.health * 0.5;
+                teammate.workshop.health = newHealth;
+                playerInfo.resurrect(newHealth);
+                return teammate.playerIndex;
             }
         }
+
+        return -1;
     }
 
     protected function setTargetEnemy (playerIndex :int, targetEnemyId :int) :void
@@ -609,7 +615,7 @@ public class GameMode extends TransitionMode
             this.updateTargetEnemyBadgeLocation(targetId);
 
             // send a message to everyone
-            this.selectTargetEnemy(GameContext.localPlayerIndex, targetId, false);
+            this.sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
         }
     }
 
@@ -618,10 +624,10 @@ public class GameMode extends TransitionMode
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesKilled[creature.unitType] += 1;
 
-            if (!TrophyManager.hasTrophy(TrophyManager.TROPHY_WHATAMESS) &&
-                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= TrophyManager.WHATAMESS_NUMCREATURES) {
+            if (!AppContext.hasTrophy(Trophies.WHATAMESS) &&
+                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
                 // awarded for killing 2500 creatures total
-                TrophyManager.awardTrophy(TrophyManager.TROPHY_WHATAMESS);
+                AppContext.awardTrophy(Trophies.WHATAMESS);
             }
         }
     }
@@ -634,16 +640,6 @@ public class GameMode extends TransitionMode
         }
     }
 
-    public function selectTargetEnemy (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
-    {
-        this.sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
-    }
-
-    public function resurrectLocalPlayer () :void
-    {
-        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
-    }
-
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
         if (!this.isAvailableUnit(unitType) ||
@@ -651,15 +647,15 @@ public class GameMode extends TransitionMode
             return;
         }
 
-        this.buildCreature(GameContext.localPlayerIndex, unitType, false, false);
+        this.sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, false, false);
 
         // when the sun is eclipsed, it's buy-one-get-one-free time!
         if (GameContext.diurnalCycle.isEclipse) {
-            this.buildCreature(GameContext.localPlayerIndex, unitType, true, false);
+            this.sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, true, false);
         }
     }
 
-    public function buildCreature (playerIndex :int, unitType :int, noCost :Boolean,
+    public function sendBuildCreatureMsg (playerIndex :int, unitType :int, noCost :Boolean,
         isAiMsg :Boolean) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
@@ -680,7 +676,7 @@ public class GameMode extends TransitionMode
         }
     }
 
-    public function castSpell (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
+    public function sendCastSpellMsg (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
         var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
@@ -701,6 +697,16 @@ public class GameMode extends TransitionMode
         }
 
         GameContext.playerStats.spellsCast[spellType] += 1;
+    }
+
+    public function sendTargetEnemyMsg (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
+    {
+        this.sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
+    }
+
+    public function sendResurrectPlayerMsg () :void
+    {
+        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
     }
 
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void

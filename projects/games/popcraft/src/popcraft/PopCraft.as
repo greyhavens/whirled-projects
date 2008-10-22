@@ -28,6 +28,8 @@ import popcraft.util.*;
 [SWF(width="700", height="500", frameRate="30")]
 public class PopCraft extends Sprite
 {
+    public static var log :Log = Log.getLog(PopCraft);
+
     public function PopCraft ()
     {
         AppContext.mainSprite = this;
@@ -125,8 +127,6 @@ public class PopCraft extends Sprite
 
         Resources.loadBaseResources(loadSingleOrMultiplayerResources, errorCallback);
     }
-
-    protected static var log :Log = Log.getLog(PopCraft);
 }
 
 }

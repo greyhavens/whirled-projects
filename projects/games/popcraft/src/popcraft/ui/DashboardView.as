@@ -249,7 +249,7 @@ public class DashboardView extends SceneObject
         if (!spellButton.isCastable) {
             spellButton.showUncastableJiggle();
         } else {
-            GameContext.gameMode.castSpell(GameContext.localPlayerIndex, spellButton.spellType,
+            GameContext.gameMode.sendCastSpellMsg(GameContext.localPlayerIndex, spellButton.spellType,
                 false);
             // un-occupy the slot
             _spellSlots[spellButton.slot] = false;
@@ -295,7 +295,7 @@ public class DashboardView extends SceneObject
 
             this.registerEventListener(_resurrectButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    GameContext.gameMode.resurrectLocalPlayer();
+                    GameContext.gameMode.sendResurrectPlayerMsg();
                 });
         }
     }
