@@ -424,13 +424,13 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			<!-- ****** LEVEL 9 : Strange Bedfellows (Jack & Dante, Tesla) ****** -->
 			<Map displayName="Strange Bedfellows" isSavePoint="true">
 				<MapSettings backgroundName="tesla">
-		            <SpellDropLocation x="305" y="100"/>
+		            <SpellDropLocation x="340" y="165"/>
 				</MapSettings>
 				<HumanBaseLocations>
-					<BaseLocation playerName="Finley" x="80" y="140" team="0"/>
-					<BaseLocation playerName="Eloise" x="80" y="140" team="0"/>
+					<BaseLocation playerName="Finley" x="80" y="180" team="0"/>
+					<BaseLocation playerName="Eloise" x="80" y="180" team="0"/>
 				</HumanBaseLocations>
-				<MultiplierDropLocation x="305" y="100"/>
+				<MultiplierDropLocation x="340" y="165"/>
 				<AvailableUnits all="true"/>
 				<AvailableSpells all="true"/>
 				
