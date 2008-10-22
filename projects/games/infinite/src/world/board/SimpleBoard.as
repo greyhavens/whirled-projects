@@ -1,4 +1,4 @@
-package world
+package world.board
 {
 	import arithmetic.*;
 	
@@ -17,7 +17,7 @@ package world
 	
 	public class SimpleBoard implements Board
 	{
-		public function SimpleBoard (level:Level)
+		public function SimpleBoard ()
 		{
 			
 		}

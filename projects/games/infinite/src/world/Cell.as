@@ -9,6 +9,8 @@ package world
 	
 	import flash.events.IEventDispatcher;
 		
+	import world.board.*;
+		
 	/**
 	 * Interface providing the details of a cell within the game board.
 	 */

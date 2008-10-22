@@ -18,9 +18,8 @@ package client
 	
 	import world.BoxController;
     import world.Cell;
-    import world.Board;    
-    import world.BoardInteractions;
-    
+    import world.board.*;
+   
     import client.CellEvent;
     
 	/**
@@ -258,9 +257,9 @@ package client
 		 * Replace a cell at a given position with the new cell that is supplied.
 		 * TODO: REPLACE THIS WITH REAL PERSISTENCE TO THE BOARD
 		 */
-		public function replace (position:BoardCoordinates, newCell:Cell) :void
+		public function replace (newCell:Cell) :void
 		{
-			cellAt(position).removeFromObjective();
+			cellAt(newCell.position).removeFromObjective();
 			remember(newCell);
 			newCell.addToObjective(this);
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));

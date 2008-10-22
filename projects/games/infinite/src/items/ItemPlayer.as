@@ -1,8 +1,7 @@
 package items
 {
     import world.Cell;
-    import world.BoardAccess;
-    import world.BoardInteractions;
+    import world.board.*;
     
 	/**
 	 * Defines the features of a player that items interact with.

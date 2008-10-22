@@ -1,7 +1,7 @@
 package arithmetic
 {
     import world.Cell;
-    import world.BoardAccess;
+    import world.board.*;
 	
 	public class CellIterator
 	{

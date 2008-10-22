@@ -1,4 +1,4 @@
-package world
+package world.board
 {
 	import arithmetic.BoardCoordinates;
     import world.Cell;
@@ -6,8 +6,8 @@ package world
 	public interface BoardInteractions extends BoardAccess
 	{
 		/**
-		 * Replace a board cell at the given position
+		 * Replace a board cell with a new one positioned at the same position.
 		 */
-		function replace (position:BoardCoordinates, newCell:Cell) :void
+		function replace (newCell:Cell) :void
 	}
 }

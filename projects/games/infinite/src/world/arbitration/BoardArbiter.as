@@ -7,7 +7,7 @@ package world.arbitration
 	import paths.PathEvent;
 	import paths.SidewaysPath;
 	
-    import world.BoardAccess;
+    import world.board.*;
 	import world.Cell;	
 	import world.CellPath;
 	

@@ -5,6 +5,8 @@ package world
 	import arithmetic.Vector;
 	
 	import cells.fruitmachine.*;
+
+    import world.board.*;
 	
 	public class BoxController implements BoardAccess
 	{

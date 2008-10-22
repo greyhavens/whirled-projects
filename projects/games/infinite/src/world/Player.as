@@ -1,5 +1,7 @@
 package world
 {
+	import world.level.*;
+	
 	public class Player
 	{
 		public function Player(id:int)

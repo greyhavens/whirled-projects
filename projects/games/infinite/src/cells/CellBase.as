@@ -14,7 +14,7 @@ package cells
 	import sprites.*;
 	
 	import world.Cell;
-    import world.BoardAccess;
+    import world.board.*;
 	
 	public class CellBase extends EventDispatcher implements Cell
 	{

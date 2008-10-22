@@ -175,9 +175,9 @@ package
 			return _objective.cellAt(position);
 		}
 		
-		public function replace (position:BoardCoordinates, newCell:Cell) :void
+		public function replace (newCell:Cell) :void
 		{
-			_objective.replace(position, newCell);
+			_objective.replace(newCell);
 		}
 		
 		public function get name () :String

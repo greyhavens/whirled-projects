@@ -55,15 +55,15 @@ package items.ladder
 		override public function useBy (player:ItemPlayer) :void
 		{			
 			const target:Cell = player.cell;
-			player.replace(target.position, new LadderBaseCell(player, target.position));
+			player.replace(new LadderBaseCell(player, target.position));
 			var j:int;
 			for (j = 1; j <= _segments; j++) {
 				var pos:BoardCoordinates = target.position.translatedBy(new Vector(0, -j));				
-				player.replace(pos, new LadderMiddleCell(player, pos));
+				player.replace(new LadderMiddleCell(player, pos));
 			}
 			const top:BoardCoordinates = 
 				target.position.translatedBy(new Vector(0, -(_segments + 1))); 
-			player.replace(top, new LadderTopCell(player, top));
+			player.replace(new LadderTopCell(player, top));
 		}
 
         override public function get code () :int

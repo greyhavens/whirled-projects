@@ -1,4 +1,4 @@
-package world
+package world.board
 {
 	import arithmetic.BoardCoordinates;
 	
@@ -6,6 +6,8 @@ package world
 	import cells.debug.DebugGroundCell;
 
     import world.Cell;
+    import world.level.Level;
+    import world.board.Board;
 	
 	/**
 	 * The board class represents the game board for the current level.  The board is composed of an

@@ -3,7 +3,7 @@ package world
 	import arithmetic.BoardPath;
 	import arithmetic.Vector;
     import world.Cell;
-    import world.BoardAccess;
+	import world.board.*
 	
 	public class CellPath
 	{

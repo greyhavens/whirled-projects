@@ -8,7 +8,7 @@ package client
 	
 	import sprites.*;
 	
-	import world.Board;
+	import world.board.*;
 	
 	public class Viewer extends Sprite
 	{

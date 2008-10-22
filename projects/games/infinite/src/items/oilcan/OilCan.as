@@ -50,7 +50,7 @@ package items.oilcan
 			do {
 				var toReplace:Cell = cell;
 				trace ("replacing "+cell);
-				player.replace(toReplace.position, (toReplace as Oilable).oiled());
+				player.replace((toReplace as Oilable).oiled());
 				cell = player.cellAt(iterator.next());		
 			} while (cell.adjacentPartOf(toReplace));
 		}

@@ -1,10 +1,12 @@
-package world
+package world.level
 {
+	import world.Player;
+	
 	public class LevelRegister
 	{
 		public function LevelRegister()
 		{
-			_levels[FIRST_LEVEL] = new Level(FIRST_LEVEL, Level.DEFAULT_HEIGHT);
+			_levels[FIRST_LEVEL] = _factory.makeLevel(FIRST_LEVEL);
 		}
         
         /**
@@ -25,7 +27,8 @@ package world
         	return found;
         }
  
-        protected static const FIRST_LEVEL:int = 1; 
+        public static const FIRST_LEVEL:int = 1; 
         protected const _levels:Array = new Array();
+        protected const _factory:LevelFactory = new LevelFactory();
 	}
 }
