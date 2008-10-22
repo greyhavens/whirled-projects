@@ -7,6 +7,7 @@ package whirled
 	
 	import multiplayer.MultiplayerCharacter;
     import world.Cell;
+	import world.BoardAccess;
 	
 	public class ArbitrationServer
 	{

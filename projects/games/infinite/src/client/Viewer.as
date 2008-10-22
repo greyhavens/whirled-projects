@@ -8,6 +8,8 @@ package client
 	
 	import sprites.*;
 	
+	import world.Board;
+	
 	public class Viewer extends Sprite
 	{
 	    // the position of the viewpoint in graphics coordinates

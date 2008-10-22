@@ -7,8 +7,8 @@ package client
 	import items.ItemEvent;
 	
 	import client.FrameEvent;
-	
-		
+    import world.BoardInteractions;
+			
 	public class PlayerController
 	{
 		public function PlayerController(

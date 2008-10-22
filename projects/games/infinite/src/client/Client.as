@@ -12,6 +12,7 @@ package client
 	import sprites.SpriteUtil;
 	
 	import world.InfiniteWorld;
+	import world.Board;
 	import world.DebugBoard;
 	import world.SimpleBoard;
 	

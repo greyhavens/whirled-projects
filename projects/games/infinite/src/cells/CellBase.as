@@ -12,6 +12,7 @@ package cells
 	import sprites.*;
 	
 	import world.Cell;
+    import world.BoardAccess;
 	
 	public class CellBase extends EventDispatcher implements Cell
 	{

@@ -13,9 +13,12 @@ package client
 	import graphics.OwnerLabel;
 	
 	import sprites.PlayerSprite;
+	
 	import world.BoxController;
     import world.Cell;
-
+    import world.Board;    
+    import world.BoardInteractions;
+    
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display
 	 * the playfield into a single instance.  The objective may also contain off-screen objects that

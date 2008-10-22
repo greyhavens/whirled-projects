@@ -8,6 +8,7 @@ package arbitration
 	import paths.SidewaysPath;
 	
 	import world.Cell;	
+    import world.BoardAccess;
 	
 	public class BoardArbiter implements MoveArbiter
 	{

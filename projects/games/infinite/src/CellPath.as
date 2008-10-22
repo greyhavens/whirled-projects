@@ -3,6 +3,7 @@ package
 	import arithmetic.BoardPath;
 	import arithmetic.Vector;
     import world.Cell;
+    import world.BoardAccess;
 	
 	public class CellPath
 	{
