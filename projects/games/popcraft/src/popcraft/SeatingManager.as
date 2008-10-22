@@ -86,9 +86,9 @@ public class SeatingManager
     {
         var headshot :DisplayObject;
 
-        /*if (playerSeat < _numExpectedPlayers) {
+        if (playerSeat < _numExpectedPlayers) {
             headshot = _headshots[playerSeat];
-        }*/
+        }
 
         if (null == headshot) {
             // construct a default headshot (box with an X through it)
