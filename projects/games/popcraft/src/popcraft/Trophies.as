@@ -1,6 +1,4 @@
 package popcraft {
-    import com.threerings.util.Log;
-
 
 public class Trophies
 {
