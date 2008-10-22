@@ -12,6 +12,22 @@ public class MultiplayerConfig
     public static const PROP_HANDICAPS :String = "Handicaps";
     public static const PROP_RANDSEED :String = "RandSeed";
     public static const PROP_HASMORBIDINFECTION :String = "HMI";
+    public static const PROP_HASPREMIUMCONTENT :String = "HasPremium";
+
+    public static function init (numTeams :int, numPlayers :int) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.doBatch(function () :void {
+                MultiplayerConfig.gameStarting = false;
+                MultiplayerConfig.teams = ArrayUtil.create(numTeams, -1);
+                MultiplayerConfig.handicaps = ArrayUtil.create(numPlayers, false);
+                MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
+                MultiplayerConfig.morbidInfections = ArrayUtil.create(numPlayers, false);
+                MultiplayerConfig.premiumContents = ArrayUtil.create(numPlayers, false);
+                MultiplayerConfig.inited = true;
+            });
+        }
+    }
 
     public static function set teams (val :Array) :void
     {
@@ -151,6 +167,31 @@ public class MultiplayerConfig
     {
         return (AppContext.gameCtrl.isConnected() ?
             AppContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
+    }
+
+    public static function set premiumContents (val :Array) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.set(PROP_HASPREMIUMCONTENT, val);
+        }
+    }
+
+    public static function setPlayerHasPremiumContent (playerSeat :int) :void
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.net.setAt(PROP_HASPREMIUMCONTENT, playerSeat, true, true);
+        }
+    }
+
+    public static function get premiumContents () :Array
+    {
+        return (AppContext.gameCtrl.isConnected() ?
+            AppContext.gameCtrl.net.get(PROP_HASPREMIUMCONTENT) as Array : []);
+    }
+
+    public static function get someoneHasPremiumContent () :Boolean
+    {
+        return ArrayUtil.contains(MultiplayerConfig.premiumContents, true);
     }
 }
 

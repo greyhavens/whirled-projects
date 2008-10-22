@@ -77,8 +77,8 @@ public class LevelSelectMode extends DemoGameMode
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
         _modeLayer.addChild(jackPortrait);
 
-        registerEventListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
-            onPlayerPurchasedContent);
+        this.registerEventListener(AppContext.gameCtrl.player,
+            GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
 
         this.createTutorialLayout();
 

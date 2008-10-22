@@ -6,6 +6,7 @@ import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.game.GameContentEvent;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
@@ -13,6 +14,7 @@ import com.whirled.net.PropertyChangedEvent;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.display.StageQuality;
 import flash.events.MouseEvent;
@@ -23,14 +25,14 @@ import popcraft.*;
 import popcraft.data.GameVariantData;
 import popcraft.ui.UIBits;
 
-public class GameLobbyMode extends AppMode
+public class MultiplayerLobbyMode extends AppMode
 {
     override protected function setup () :void
     {
         super.setup();
 
-        var bg :MovieClip = SwfResource.getSwfDisplayRoot("multiplayer_lobby") as MovieClip;
-        this.modeSprite.addChild(bg);
+        _bg = SwfResource.getSwfDisplayRoot("multiplayer_lobby") as MovieClip;
+        this.modeSprite.addChild(_bg);
 
         // create headshots
         for (var seat :int = 0; seat < SeatingManager.numExpectedPlayers; ++seat) {
@@ -38,11 +40,11 @@ public class GameLobbyMode extends AppMode
         }
 
         // handle clicks on the team boxes
-        for (var teamId :int = -1; teamId < NUM_TEAMS; ++teamId) {
-            this.createTeamBoxMouseListener(bg, teamId);
+        for (var teamId :int = ENDLESS_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
+            this.createTeamBoxMouseListener(_bg, teamId);
         }
 
-        _statusText = bg["instructions"];
+        _statusText = _bg["instructions"];
 
         this.registerEventListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
@@ -53,20 +55,23 @@ public class GameLobbyMode extends AppMode
 
         if (SeatingManager.isLocalPlayerInControl) {
             // initialize everything if we're the first player
-            MultiplayerConfig.gameStarting = false;
-            MultiplayerConfig.teams = ArrayUtil.create(NUM_TEAMS, -1);
-            MultiplayerConfig.handicaps = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
-            MultiplayerConfig.randSeed = uint(Math.random() * uint.MAX_VALUE);
-            MultiplayerConfig.morbidInfections = ArrayUtil.create(SeatingManager.numExpectedPlayers, false);
-            MultiplayerConfig.inited = true;
+            MultiplayerConfig.init(NUM_TEAMS, SeatingManager.numExpectedPlayers);
         }
 
-        _handicapCheckbox = bg["handicap"];
+        if (MultiplayerConfig.inited) {
+            this.initLocalPlayerData();
+        }
+
+        _handicapCheckbox = _bg["handicap"];
         this.registerEventListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
         this.handicapOn = false;
-        this.updateHandicapsDisplay();
 
+        this.updateHandicapsDisplay();
         this.updateTeamsDisplay();
+        this.updatePremiumContentDisplay();
+
+        this.registerEventListener(AppContext.gameCtrl.player,
+            GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
     }
 
     override protected function enter () :void
@@ -81,10 +86,49 @@ public class GameLobbyMode extends AppMode
         StageQualityManager.popStageQuality();
     }
 
-    protected function createTeamBoxMouseListener (bg :MovieClip, teamId :int) :void
+    protected function onPlayerPurchasedContent (e :GameContentEvent) :void
     {
-        var boxName :String = (teamId >= 0 ? TEAM_BOX_NAMES[teamId] : UNASSIGNED_BOX_NAME);
-        var teamBox :MovieClip = bg[boxName];
+        if (e.contentType == GameContentEvent.LEVEL_PACK &&
+            e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
+            MultiplayerConfig.setPlayerHasPremiumContent(SeatingManager.localPlayerSeat);
+        }
+    }
+
+    protected function initLocalPlayerData () :void
+    {
+        if (Constants.DEBUG_GIVE_MORBID_INFECTION) {
+            AppContext.globalPlayerStats.hasMorbidInfection = true;
+        }
+
+        if (AppContext.globalPlayerStats.hasMorbidInfection) {
+            MultiplayerConfig.setPlayerHasMorbidInfection(SeatingManager.localPlayerSeat);
+        }
+
+        if (AppContext.isPremiumContentUnlocked) {
+            MultiplayerConfig.setPlayerHasPremiumContent(SeatingManager.localPlayerSeat);
+        }
+
+        _initedLocalPlayerData = true;
+    }
+
+    protected function createTeamBoxMouseListener (_bg :MovieClip, teamId :int) :void
+    {
+        var boxName :String;
+        switch (teamId) {
+        case UNASSIGNED_TEAM_ID:
+            boxName = UNASSIGNED_BOX_NAME;
+            break;
+
+        case ENDLESS_TEAM_ID:
+            boxName = ENDLESS_BOX_NAME;
+            break;
+
+        default:
+            boxName = TEAM_BOX_NAMES[teamId];
+            break;
+        }
+
+        var teamBox :MovieClip = _bg[boxName];
         this.registerEventListener(teamBox, MouseEvent.CLICK,
             function (...ignored) :void {
                 onTeamSelected(teamId);
@@ -103,25 +147,12 @@ public class GameLobbyMode extends AppMode
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
 
-        // other players need to know if we have the Morbid Infection trophy
-        if (!_hasSetMorbidInfection && MultiplayerConfig.inited) {
-            if (Constants.DEBUG_GIVE_MORBID_INFECTION) {
-                AppContext.globalPlayerStats.hasMorbidInfection = true;
-            }
-
-            if (AppContext.globalPlayerStats.hasMorbidInfection) {
-                MultiplayerConfig.setPlayerHasMorbidInfection(SeatingManager.localPlayerSeat);
-            }
-
-            _hasSetMorbidInfection = true;
-        }
-
         var statusText :String = "";
 
         if (!this.allPlayersDecided) {
-            statusText = "Divide into teams! Players on smaller teams will earn more resources.";
+            statusText = "Divide into teams!";
         } else if (!this.teamsDividedProperly) {
-            statusText = "Two teams are required to start the game."
+            statusText = "At least two teams are required to start the game."
         } else if (!_gameStartTimer.isNull) {
             var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
             statusText = "Starting in " + Math.ceil(timer.timeLeft) + "...";
@@ -133,8 +164,13 @@ public class GameLobbyMode extends AppMode
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
         if (e.name == MultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
+            if (!_initedLocalPlayerData) {
+                this.initLocalPlayerData();
+            }
+
             this.updateTeamsDisplay();
             this.updateHandicapsDisplay();
+
         } else if (e.name == MultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
             this.startGame();
         }
@@ -148,13 +184,13 @@ public class GameLobbyMode extends AppMode
         } else if (e.name == MultiplayerConfig.PROP_HANDICAPS) {
             this.updateHandicapsDisplay();
             this.stopOrResetTimer();
+        } else if (e.name == MultiplayerConfig.PROP_HASPREMIUMCONTENT) {
+            this.updatePremiumContentDisplay();
         }
     }
 
     protected function startGame () :void
     {
-        GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
-
         // @TODO - change this when we have real game variants
         var variants :Array = AppContext.gameVariants;
         var variant :GameVariantData = variants[0];
@@ -166,9 +202,12 @@ public class GameLobbyMode extends AppMode
             MultiplayerConfig.inited = false;
         }
 
-        //AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
-        // TEMP
-        AppContext.endlessLevelMgr.playMpLevel();
+        if (this.isEndlessModeSelected) {
+            AppContext.endlessLevelMgr.playMpLevel();
+        } else {
+            GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
+            AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
+        }
     }
 
     protected function onOccupantLeft (...ignored) :void
@@ -203,6 +242,13 @@ public class GameLobbyMode extends AppMode
     protected function onTeamSelected (teamId :int) :void
     {
         if (!MultiplayerConfig.inited) {
+            return;
+        }
+
+        // don't allow selection of the endless team unless there are 2 players
+        // and somebody has unlocked the premium content
+        if (teamId == ENDLESS_TEAM_ID &&  (SeatingManager.numExpectedPlayers != 2 ||
+            !MultiplayerConfig.someoneHasPremiumContent)) {
             return;
         }
 
@@ -250,23 +296,59 @@ public class GameLobbyMode extends AppMode
         var teams :Array = MultiplayerConfig.teams;
         var handicaps :Array = MultiplayerConfig.handicaps;
 
-        for (var teamId :int = -1; teamId < NUM_TEAMS; ++teamId) {
-            var boxLoc :Point = (teamId == -1 ? UNASSIGNED_BOX_LOC : TEAM_BOX_LOCS[teamId]);
+        for (var teamId :int = ENDLESS_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
+            var boxLoc :Point;
+            switch (teamId) {
+            case UNASSIGNED_TEAM_ID:
+                boxLoc = UNASSIGNED_BOX_LOC;
+                break;
+
+            case ENDLESS_TEAM_ID:
+                boxLoc = ENDLESS_BOX_LOC;
+                break;
+
+            default:
+                boxLoc = TEAM_BOX_LOCS[teamId];
+                break;
+            }
+
+            var xLoc :Number = boxLoc.x;
             var yLoc :Number = boxLoc.y;
 
             for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
                 if (teams[playerSeat] == teamId) {
                     var headshot :PlayerHeadshot = _headshots[playerSeat];
-                    headshot.x = boxLoc.x;
+                    headshot.x = xLoc;
                     headshot.y = yLoc;
 
                     if (null == headshot.parent) {
                         this.modeSprite.addChild(headshot);
                     }
 
-                    yLoc += HEADSHOT_OFFSET;
+                    if (teamId == ENDLESS_TEAM_ID) {
+                        xLoc += headshot.width;
+                    } else {
+                        yLoc += HEADSHOT_OFFSET;
+                    }
                 }
             }
+        }
+    }
+
+    protected function updatePremiumContentDisplay () :void
+    {
+        var someoneHasPremiumContent :Boolean = MultiplayerConfig.someoneHasPremiumContent;
+        var unlockButton :SimpleButton = _bg["unlock_button"];
+
+        if (!_showingPremiumContent && someoneHasPremiumContent) {
+            unlockButton.visible = false;
+            _showingPremiumContent = true;
+        } else {
+            unlockButton.visible = true;
+            this.registerEventListener(unlockButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    AppContext.showGameShop();
+                });
         }
     }
 
@@ -300,7 +382,7 @@ public class GameLobbyMode extends AppMode
         for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
             if (SeatingManager.isPlayerPresent(playerSeat)) {
                 var teamId :int = teams[playerSeat];
-                if (teamId < 0) {
+                if (teamId == UNASSIGNED_TEAM_ID) {
                     return false;
                 }
             }
@@ -311,10 +393,32 @@ public class GameLobbyMode extends AppMode
 
     protected function get teamsDividedProperly () :Boolean
     {
+        // if this is a two player game, and both players have chosen endless mode,
+        // we can start the game
+        if (this.isEndlessModeSelected) {
+            return true;
+        }
+
         // does one team have all the players?
         var teamSizes :Array = this.computeTeamSizes();
         for each (var teamSize :int in teamSizes) {
             if (teamSize == SeatingManager.numPlayers) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function get isEndlessModeSelected () :Boolean
+    {
+        if (SeatingManager.numExpectedPlayers != 2) {
+            return false;
+        }
+
+        var teams :Array = MultiplayerConfig.teams;
+        for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+            if (!SeatingManager.isPlayerPresent(playerSeat) || teams[playerSeat] != ENDLESS_TEAM_ID) {
                 return false;
             }
         }
@@ -343,32 +447,39 @@ public class GameLobbyMode extends AppMode
         return teamSizes;
     }
 
+    protected var _bg :MovieClip;
     protected var _headshots :Array = [];
     protected var _statusText :TextField;
     protected var _handicapCheckbox :MovieClip;
     protected var _handicapOn :Boolean;
-    protected var _hasSetMorbidInfection :Boolean;
+    protected var _initedLocalPlayerData :Boolean;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
+    protected var _showingPremiumContent :Boolean;
 
-    protected static var log :Log = Log.getLog(GameLobbyMode);
+    protected static var log :Log = Log.getLog(MultiplayerLobbyMode);
 
     protected static const TEAM_BOX_LOCS :Array = [
-        new Point(240, 78),
-        new Point(468, 78),
-        new Point(240, 291),
-        new Point(468, 291) ];
+        new Point(240, 115),
+        new Point(468, 115),
+        new Point(240, 255),
+        new Point(468, 255) ];
 
-    protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 78);
+    protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 132);
+    protected static const ENDLESS_BOX_LOC :Point = new Point(240, 435);
 
     protected static const TEAM_BOX_NAMES :Array = [ "red_box", "blue_box", "green_box", "yellow_box" ];
     protected static const UNASSIGNED_BOX_NAME :String = "unassigned_box";
+    protected static const ENDLESS_BOX_NAME :String = "survival_box";
 
-    protected static const HEADSHOT_OFFSET :Number = 62;
+    protected static const HEADSHOT_OFFSET :Number = 40;
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
     protected static const GAME_START_COUNTDOWN :Number = 5;
     protected static const NUM_TEAMS :int = 4;
     protected static const MAX_TEAM_SIZE :int = 3;
+
+    protected static const UNASSIGNED_TEAM_ID :int = -1;
+    protected static const ENDLESS_TEAM_ID :int = -2;
 }
 
 }
@@ -445,7 +556,7 @@ class PlayerHeadshot extends Sprite
     protected var _handicapOn :Boolean;
     protected var _handicapObj :DisplayObject;
 
-    protected static const HEADSHOT_SIZE :Point = new Point(60, 60);
+    protected static const HEADSHOT_SIZE :Point = new Point(38, 38);
     protected static const NAME_OFFSET :Number = HEADSHOT_SIZE.x + 3;
     protected static const NAME_MAX_WIDTH :Number = 120;
 }

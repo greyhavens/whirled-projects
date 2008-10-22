@@ -105,7 +105,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
 
         // combine local stats into global, and save
         AppContext.globalPlayerStats.combineWith(GameContext.playerStats);
-        UserCookieManager.setNeedsUpdate();
+        AppContext.userCookieMgr.setNeedsUpdate();
     }
 
     protected function awardTrophies () :void
@@ -174,7 +174,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         // @TODO - change this if Whirled allows seated games that are missing players to
         // be restarted
         if (SeatingManager.allPlayersPresent) {
-            AppContext.mainLoop.unwindToMode(new GameLobbyMode());
+            AppContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
             AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }

@@ -137,7 +137,7 @@ import popcraft.ui.GenericLoadingMode;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
 import popcraft.sp.story.LevelSelectMode;
-import popcraft.mp.GameLobbyMode;
+import popcraft.mp.MultiplayerLobbyMode;
 
 class LoadingMode extends GenericLoadingMode
 {
@@ -169,7 +169,7 @@ class LoadingMode extends GenericLoadingMode
     {
         if (AppContext.isMultiplayer) {
             GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
-            AppContext.mainLoop.unwindToMode(new GameLobbyMode());
+            AppContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
             GameContext.gameType = GameContext.GAME_TYPE_STORY;
             LevelSelectMode.create();

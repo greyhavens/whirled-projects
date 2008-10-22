@@ -180,7 +180,7 @@ public class EndlessLevelSelectMode extends AppMode
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
 
-    protected static const ANIMATE_DOWN_TIME :Number = 1.5;
+    protected static const ANIMATE_DOWN_TIME :Number = 0.75;
     protected static const ANIMATE_UP_TIME :Number = 1.5;
     protected static const ANIMATE_NEXTPREV_TIME :Number = 0.5;
     protected static const UP_LOC :Point = new Point(350, -328);
