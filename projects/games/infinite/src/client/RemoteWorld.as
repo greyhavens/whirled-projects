@@ -1,4 +1,4 @@
-package world
+package client
 {
 	import com.whirled.game.GameControl;
 	

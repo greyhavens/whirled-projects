@@ -1,4 +1,4 @@
-package world
+package client
 {
 	import flash.events.EventDispatcher;
 	

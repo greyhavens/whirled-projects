@@ -5,11 +5,11 @@ package {
 	
 	import sprites.*;
 	
-	import client.Client;
-	
-	import world.InfiniteWorld;
-	import world.LocalWorld;
-	import world.RemoteWorld;
+	import client.Client;	
+	import client.LocalWorld;
+	import client.RemoteWorld;
+
+    import world.InfiniteWorld;
 
 	[SWF(width="700", height="500")]
 	public class InfinitePlaytest extends Sprite
