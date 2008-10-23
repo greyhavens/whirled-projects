@@ -36,8 +36,8 @@ public class Trophies
     public static const TROPHY_LEVEL_9 :String = "level_9";
     
     
-    public static const AWARD_AVATAR_1 :String = "award_avatar_mccain";
-    public static const AWARD_AVATAR_2 :String = "award_avatar_palin";
+    public static const AWARD_AVATAR_1 :String = "award_avatar_palin";
+    public static const AWARD_AVATAR_2 :String = "award_avatar_mccain";
     public static const AWARD_AVATAR_3 :String = "award_avatar_gopmonster";
     
     
@@ -74,11 +74,11 @@ public class Trophies
         for (var ii :int = 0; ii < fullTeam.length; ii ++) {
             var player :Player = Player(liveTeam[ii]);
             
-            if( player.level >= 1) {
-                if( doAward( player, TROPHY_LEVEL_1) ) {
-//                   player.ctrl.awardPrize(AWARD_AVATAR_1);
-                }
-            }
+//            if( player.level >= 1) {
+////                if( doAward( player, TROPHY_LEVEL_1) ) {
+////                   player.ctrl.awardPrize(AWARD_AVATAR_1);
+////                }
+//            }
             
             if( player.level >= 2) {
                 if( doAward( player, TROPHY_LEVEL_2) ) {
