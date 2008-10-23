@@ -26,7 +26,7 @@ public class SplashWidget extends ClipHandler
 
     public function SplashWidget (state :String)
     {
-        _state = state;
+        _state = "";
 
         super(new Content.SPLASH(), handleSplashLoaded);
         
@@ -88,7 +88,9 @@ public class SplashWidget extends ClipHandler
     protected function setupHowto () :void
     {
         _howto = DisplayObjectContainer(findSafely(this.clip, DSP_HOWTO));
-                    
+        if( _howto != null ) {
+            _howto.visible = false;
+        }     
         // only show the 'back' button if we have not yet chosen an avatar
 //        var button :DisplayObject = findSafely(_howto, BTN_HOWTO_BACK);
 //        //SKIN changing the howto -> begin
@@ -141,7 +143,9 @@ public class SplashWidget extends ClipHandler
     protected function setupBegin () :void
     {
         _begin = DisplayObjectContainer(findSafely(this.clip, DSP_WELCOME));
-
+        if( _begin != null) {
+            _begin.visible = false;
+        }
 //        if( _begin == null)
         //SKIN "set" an avater.  We don't use avatars, we simply use 
         //this as a switch to determine whether to show the help again.
@@ -153,6 +157,8 @@ public class SplashWidget extends ClipHandler
 //                     GameController.CLOSE_SPLASH);
         Command.bind(findSafely(_begin, BTN_WELCOME_CONTINUE), MouseEvent.CLICK,
                      GameController.BEGIN_PLAYING);
+        Command.bind(findSafely(_begin, BTN_WELCOME_CONTINUE), MouseEvent.CLICK,
+                     GameController.CLOSE_SPLASH);
     }
     
     protected function findSafely (parent :DisplayObjectContainer, name :String) :DisplayObject
