@@ -90,7 +90,7 @@ public class WorkshopView extends BattlefieldSprite
 
         GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
         var thisObj :WorkshopView = this;
-        this.registerEventListener(_clickableSprite, MouseEvent.CLICK,
+        this.registerListener(_clickableSprite, MouseEvent.CLICK,
             function (...ignored) :void {
                 GameContext.gameMode.workshopClicked(thisObj);
             });
@@ -136,7 +136,7 @@ public class WorkshopView extends BattlefieldSprite
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleAttacked);
+        this.registerListener(_unit, UnitEvent.ATTACKED, handleAttacked);
     }
 
     override protected function removedFromDB () :void

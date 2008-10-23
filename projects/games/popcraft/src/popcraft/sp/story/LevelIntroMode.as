@@ -215,7 +215,7 @@ public class LevelIntroMode extends AppMode
 
         // ok button
         _okButton = rightPage["ok"];
-        this.registerEventListener(_okButton, MouseEvent.CLICK, okClicked);
+        this.registerListener(_okButton, MouseEvent.CLICK, okClicked);
 
         // page number
         _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);

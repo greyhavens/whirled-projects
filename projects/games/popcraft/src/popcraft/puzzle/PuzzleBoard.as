@@ -52,7 +52,7 @@ public class PuzzleBoard extends SceneObject
             (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
 
-        this.registerEventListener(_sprite, MouseEvent.CLICK, handleClicked);
+        this.registerListener(_sprite, MouseEvent.CLICK, handleClicked);
     }
 
     override protected function addedToDB () :void

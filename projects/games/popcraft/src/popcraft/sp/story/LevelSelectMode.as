@@ -77,7 +77,7 @@ public class LevelSelectMode extends DemoGameMode
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
         _modeLayer.addChild(jackPortrait);
 
-        this.registerEventListener(AppContext.gameCtrl.player,
+        this.registerListener(AppContext.gameCtrl.player,
             GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
 
         this.createTutorialLayout();
@@ -100,7 +100,7 @@ public class LevelSelectMode extends DemoGameMode
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
         var playButton :SimpleButton =
             SwfResource.instantiateButton("splashUi", playButtonName);
-        this.registerEventListener(playButton, MouseEvent.CLICK, onPlayClicked);
+        this.registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
         this.addObject(_playButtonObj, _modeLayer);
 
@@ -121,7 +121,7 @@ public class LevelSelectMode extends DemoGameMode
                 "endless_button");
             endlessButton.x = ENDLESS_BUTTON_LOC.x;
             endlessButton.y = ENDLESS_BUTTON_LOC.y;
-            this.registerEventListener(endlessButton, MouseEvent.CLICK, onEndlessClicked);
+            this.registerListener(endlessButton, MouseEvent.CLICK, onEndlessClicked);
             _modeLayer.addChild(endlessButton);
 
         } else {
@@ -133,7 +133,7 @@ public class LevelSelectMode extends DemoGameMode
 
         if (!AppContext.isPremiumContentUnlocked) {
             _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
-            this.registerEventListener(_buyGameButton, MouseEvent.CLICK,
+            this.registerListener(_buyGameButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });
@@ -186,7 +186,7 @@ public class LevelSelectMode extends DemoGameMode
             _modeLayer.addChild(testLevelButton);
 
             var testAnimButton :SimpleButton = UIBits.createButton("Anim test", 1.2);
-            this.registerEventListener(testAnimButton, MouseEvent.CLICK,
+            this.registerListener(testAnimButton, MouseEvent.CLICK,
                 function (...ignored) : void {
                     AppContext.mainLoop.pushMode(new UnitAnimTestMode());
                 });
@@ -196,7 +196,7 @@ public class LevelSelectMode extends DemoGameMode
             _modeLayer.addChild(testAnimButton);
 
             var upsellButton :SimpleButton = UIBits.createButton("Upsell", 1.2);
-            this.registerEventListener(upsellButton, MouseEvent.CLICK,
+            this.registerListener(upsellButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.mainLoop.pushMode(new UpsellMode());
                 });
@@ -395,7 +395,7 @@ public class LevelSelectMode extends DemoGameMode
             button = UIBits.createButton("Unlock Full Version To Continue!", 1.3);
             button.x = UNLOCK_MANUAL_LOC.x - (button.width * 0.5);
             button.y = UNLOCK_MANUAL_LOC.y;
-            registerEventListener(button, MouseEvent.CLICK,
+            registerListener(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });

@@ -46,11 +46,11 @@ public class MultiplayerLobbyMode extends AppMode
 
         _statusText = _bg["instructions"];
 
-        this.registerEventListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+        this.registerListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
-        this.registerEventListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+        this.registerListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
-        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        this.registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             onOccupantLeft);
 
         if (SeatingManager.isLocalPlayerInControl) {
@@ -63,14 +63,14 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         _handicapCheckbox = _bg["handicap"];
-        this.registerEventListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
+        this.registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
         this.handicapOn = false;
 
         this.updateHandicapsDisplay();
         this.updateTeamsDisplay();
         this.updatePremiumContentDisplay();
 
-        this.registerEventListener(AppContext.gameCtrl.player,
+        this.registerListener(AppContext.gameCtrl.player,
             GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
     }
 
@@ -129,7 +129,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         var teamBox :MovieClip = _bg[boxName];
-        this.registerEventListener(teamBox, MouseEvent.CLICK,
+        this.registerListener(teamBox, MouseEvent.CLICK,
             function (...ignored) :void {
                 onTeamSelected(teamId);
         });
@@ -345,7 +345,7 @@ public class MultiplayerLobbyMode extends AppMode
             _showingPremiumContent = true;
         } else {
             unlockButton.visible = true;
-            this.registerEventListener(unlockButton, MouseEvent.CLICK,
+            this.registerListener(unlockButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });

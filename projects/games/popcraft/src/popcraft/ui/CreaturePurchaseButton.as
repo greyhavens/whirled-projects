@@ -45,9 +45,9 @@ public class CreaturePurchaseButton extends SimObject
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.localPlayerInfo.activeSpells;
-        this.registerEventListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
+        this.registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
-        this.registerEventListener(_button, MouseEvent.CLICK, onClicked);
+        this.registerListener(_button, MouseEvent.CLICK, onClicked);
 
         _unitData = GameContext.gameData.units[unitType];
         var playerColor :uint = GameContext.localPlayerInfo.color;

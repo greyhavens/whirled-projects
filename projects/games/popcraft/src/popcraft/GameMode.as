@@ -206,7 +206,7 @@ public class GameMode extends TransitionMode
         GameContext.playerInfos = [];
 
         // we want to know when a player leaves
-        this.registerEventListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        this.registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             handleOccupantLeft);
 
         // subclasses create the players in this function
@@ -250,7 +250,7 @@ public class GameMode extends TransitionMode
      */
     protected function startGame () :void
     {
-        this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
+        this.registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
             handleGameEndedPrematurely);
 
         _messageMgr.run();

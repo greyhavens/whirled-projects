@@ -75,7 +75,7 @@ public class EndlessGameMode extends GameMode
         } else if (EndlessGameContext.isNewGame) {
             // if this is a new multiplayer game, start the game when the GAME_STARTED event
             // is received
-            this.registerEventListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+            this.registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
                 function (...ignored) :void {
                     startGame();
                 });

@@ -57,10 +57,10 @@ public class CreatureUnitView extends BattlefieldSprite
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
 
-        this.registerEventListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
+        this.registerListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
 
         var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
-        this.registerEventListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
+        this.registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         this.updateUnitSpellIcons();
 

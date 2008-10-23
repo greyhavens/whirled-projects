@@ -73,7 +73,7 @@ public class UnitAnimTestMode extends AppMode
 
         var unitData :UnitData = AppContext.defaultGameData.units[unitType];
         var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
-        this.registerEventListener(unitButton, MouseEvent.CLICK,
+        this.registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.unitType = unitType;
             });
@@ -86,7 +86,7 @@ public class UnitAnimTestMode extends AppMode
         var thisObject :UnitAnimTestMode = this;
 
         var unitButton :SimpleButton = UIBits.createButton(playerDisplayData.displayName);
-        this.registerEventListener(unitButton, MouseEvent.CLICK,
+        this.registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.recolor = playerDisplayData.color;
             });

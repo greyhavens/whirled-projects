@@ -84,7 +84,7 @@ public class DashboardView extends SceneObject
         var pauseButton :SimpleButton = _movie["pause"];
         if (GameContext.gameMode.canPause) {
             pauseButton.visible = true;
-            this.registerEventListener(pauseButton, MouseEvent.CLICK,
+            this.registerListener(pauseButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     GameContext.gameMode.pause();
                 });
@@ -101,7 +101,7 @@ public class DashboardView extends SceneObject
         }
 
         // we need to know when the player gets a spell
-        this.registerEventListener(GameContext.localPlayerInfo, GotSpellEvent.GOT_SPELL,
+        this.registerListener(GameContext.localPlayerInfo, GotSpellEvent.GOT_SPELL,
             onGotSpell);
 
         this.updateResourceMeters();
@@ -231,7 +231,7 @@ public class DashboardView extends SceneObject
 
         // create a new icon
         var spellButton :SpellButton = new SpellButton(spellType, slot, animateIn);
-        this.registerEventListener(spellButton.clickableObject, MouseEvent.CLICK,
+        this.registerListener(spellButton.clickableObject, MouseEvent.CLICK,
             function (...ignored) :void {
                 onSpellButtonClicked(spellButton);
             });
@@ -293,7 +293,7 @@ public class DashboardView extends SceneObject
             _resurrectButton.y = (Constants.SCREEN_SIZE.y - _resurrectButton.height - 70);
             GameContext.dashboardLayer.addChild(_resurrectButton);
 
-            this.registerEventListener(_resurrectButton, MouseEvent.CLICK,
+            this.registerListener(_resurrectButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     GameContext.gameMode.sendResurrectPlayerMsg();
                 });
