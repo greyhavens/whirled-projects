@@ -244,9 +244,6 @@ class SaveView extends SceneObject
         var titleText :TextField = _movie["level_title"];
         titleText.text = level.getMapNumberedDisplayName(save.mapIndex);
 
-        var scoreText :TextField = _movie["level_score"];
-        scoreText.text = "Score: " + StringUtil.formatNumber(save.score);
-
         var ii :int;
 
         // cycle number (skulls across title)
@@ -263,49 +260,6 @@ class SaveView extends SceneObject
             _movie.addChild(cycleSprite);
         }
 
-        // health/shield meters
-        var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        var healthMeter :RectMeterView = new RectMeterView();
-        healthMeter.minValue = 0;
-        healthMeter.maxValue = workshopData.maxHealth;
-        healthMeter.value = save.health;
-        healthMeter.foregroundColor = 0xFF0000;
-        healthMeter.backgroundColor = 0x888888;
-        healthMeter.outlineColor = 0x000000;
-        healthMeter.outlineSize = 2;
-        healthMeter.meterWidth = 80;
-        healthMeter.meterHeight = 15;
-        healthMeter.updateDisplay();
-        healthMeter.x = HEALTH_LOC.x;
-        healthMeter.y = HEALTH_LOC.y;
-        _movie.addChild(healthMeter);
-
-        var shieldParent :Sprite = SpriteUtil.createSprite();
-        for (ii = 0; ii < save.multiplier - 1; ++ii) {
-            var shieldMeter :RectMeterView = new RectMeterView();
-            shieldMeter.minValue = 0;
-            shieldMeter.maxValue = 1;
-            shieldMeter.value = 1;
-            shieldMeter.foregroundColor = 0xFFFFFF;
-            shieldMeter.outlineColor = 0x000000;
-            shieldMeter.outlineSize = 2;
-            shieldMeter.meterWidth = 20;
-            shieldMeter.meterHeight = 15;
-            shieldMeter.updateDisplay();
-            shieldMeter.x = 20 * ii;
-            shieldParent.addChild(shieldMeter);
-        }
-        shieldParent.x = SHIELD_CENTER_LOC.x - (shieldParent.width * 0.5);
-        shieldParent.y = SHIELD_CENTER_LOC.y;
-        _movie.addChild(shieldParent);
-
-        // icons
-        this.drawIcons("multiplier", save.multiplier - 1, MULTIPLIER_START, MULTIPLIER_OFFSET);
-        this.drawIcons("infusion_bloodlust", save.spells[Constants.SPELL_TYPE_BLOODLUST], BLOODLUST_START, BLOODLUST_OFFSET);
-        this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
-        this.drawIcons("infusion_shuffle", save.spells[Constants.SPELL_TYPE_PUZZLERESET], SHUFFLE_START, SHUFFLE_OFFSET);
-
-
         // play button
         _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
         _playButton.x = PLAY_CENTER_LOC.x - (_playButton.width * 0.5);
@@ -320,8 +274,10 @@ class SaveView extends SceneObject
 
         // stats
         var statPanel :MovieClip = _movie["stat_panel"];
+        var scoreText :TextField = _movie["level_score"];
         if (showGameOverStats) {
             statPanel.visible = true;
+            scoreText.visible = false;
 
             // opponent portraits
             var xLoc :Number = 0;
@@ -341,9 +297,8 @@ class SaveView extends SceneObject
 
             opponentPortraitSprite.x =
                 OPPONENT_PORTRAITS_LOC.x - (opponentPortraitSprite.width * 0.5);
-            opponentPortraitSprite.y =
-                OPPONENT_PORTRAITS_LOC.y - (opponentPortraitSprite.height * 0.5);
-            statPanel.addChild(opponentPortraitSprite);
+            opponentPortraitSprite.y = OPPONENT_PORTRAITS_LOC.y;
+            _movie.addChild(opponentPortraitSprite);
 
             var numOpponentsDefeated :int;
             for (var mapIndex :int = 0; mapIndex < save.mapIndex; ++mapIndex) {
@@ -354,15 +309,62 @@ class SaveView extends SceneObject
             statText.text =
                 "You were defeated by " + MyStringUtil.commafyWords(opponentNames) + "!\n" +
                 "Final score: " + StringUtil.formatNumber(EndlessGameContext.score) + "\n" +
-                "Classmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
+                "Schoolmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
 
         } else {
             statPanel.visible = false;
+            scoreText.visible = true;
+
             // thumbnail
             var thumbnail :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
             thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
             thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
             _movie.addChild(thumbnail);
+
+            // score text
+            scoreText.text = "Score: " + StringUtil.formatNumber(save.score);
+
+            // health/shield meters
+            var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
+            var healthMeter :RectMeterView = new RectMeterView();
+            healthMeter.minValue = 0;
+            healthMeter.maxValue = workshopData.maxHealth;
+            healthMeter.value = save.health;
+            healthMeter.foregroundColor = 0xFF0000;
+            healthMeter.backgroundColor = 0x888888;
+            healthMeter.outlineColor = 0x000000;
+            healthMeter.outlineSize = 2;
+            healthMeter.meterWidth = 80;
+            healthMeter.meterHeight = 15;
+            healthMeter.updateDisplay();
+            healthMeter.x = HEALTH_LOC.x;
+            healthMeter.y = HEALTH_LOC.y;
+            _movie.addChild(healthMeter);
+
+            var shieldParent :Sprite = SpriteUtil.createSprite();
+            for (ii = 0; ii < save.multiplier - 1; ++ii) {
+                var shieldMeter :RectMeterView = new RectMeterView();
+                shieldMeter.minValue = 0;
+                shieldMeter.maxValue = 1;
+                shieldMeter.value = 1;
+                shieldMeter.foregroundColor = 0xFFFFFF;
+                shieldMeter.outlineColor = 0x000000;
+                shieldMeter.outlineSize = 2;
+                shieldMeter.meterWidth = 20;
+                shieldMeter.meterHeight = 15;
+                shieldMeter.updateDisplay();
+                shieldMeter.x = 20 * ii;
+                shieldParent.addChild(shieldMeter);
+            }
+            shieldParent.x = SHIELD_CENTER_LOC.x - (shieldParent.width * 0.5);
+            shieldParent.y = SHIELD_CENTER_LOC.y;
+            _movie.addChild(shieldParent);
+
+            // icons
+            this.drawIcons("multiplier", save.multiplier - 1, MULTIPLIER_START, MULTIPLIER_OFFSET);
+            this.drawIcons("infusion_bloodlust", save.spells[Constants.SPELL_TYPE_BLOODLUST], BLOODLUST_START, BLOODLUST_OFFSET);
+            this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
+            this.drawIcons("infusion_shuffle", save.spells[Constants.SPELL_TYPE_PUZZLERESET], SHUFFLE_START, SHUFFLE_OFFSET);
         }
     }
 
