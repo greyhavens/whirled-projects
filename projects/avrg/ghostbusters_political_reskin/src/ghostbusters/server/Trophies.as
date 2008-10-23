@@ -88,7 +88,7 @@ public class Trophies
             
             if( player.level >= 3) {
                 if( doAward( player, TROPHY_LEVEL_3) ) {
-                   player.ctrl.awardPrize(AWARD_AVATAR_1);
+//                   player.ctrl.awardPrize(AWARD_AVATAR_1);
                 }
             }
             
@@ -106,13 +106,13 @@ public class Trophies
             
             if( player.level >= 6) {
                 if( doAward( player, TROPHY_LEVEL_6) ) {
-                   player.ctrl.awardPrize(AWARD_AVATAR_2);
+//                   player.ctrl.awardPrize(AWARD_AVATAR_2);
                 }
             }
             
             if( player.level >= 7) {
                 if( doAward( player, TROPHY_LEVEL_7) ) {
-//                    player.ctrl.awardPrize(AWARD_AVATAR_2);
+                    player.ctrl.awardPrize(AWARD_AVATAR_2);
                 }
             }
             
