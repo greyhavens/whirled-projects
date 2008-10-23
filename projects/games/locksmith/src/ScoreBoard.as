@@ -112,12 +112,12 @@ public class ScoreBoard extends Sprite
 
         addChild(_victory = new ScoreBoard["WINNER_" + (player == MOON_PLAYER ? "MOON" : "SUN")]()
             as MovieClip);
-        EventHandlers.registerEventListener(_victory, Event.ENTER_FRAME, 
+        EventHandlers.registerListener(_victory, Event.ENTER_FRAME, 
             function (event :Event) :void {
                 var targetMovie :MovieClip = event.target as MovieClip;
                 if (_victory == null || targetMovie.currentFrame == targetMovie.totalFrames) {
                     targetMovie.stop();
-                    EventHandlers.unregisterEventListener(
+                    EventHandlers.unregisterListener(
                         targetMovie, Event.ENTER_FRAME, arguments.callee);
                 }
             });
@@ -315,7 +315,7 @@ class RampAnimation
         _darkness.blendMode = BlendMode.ALPHA;
         _marble.addChild(_darkness);
 
-        EventHandlers.registerEventListener(_marble, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(_marble, Event.ENTER_FRAME, enterFrame);
     }
 
     protected function enterFrame (evt :Event) :void
@@ -326,7 +326,7 @@ class RampAnimation
         case PHASE_MOVE_DOWN_RAMP: moveDownRamp(); break;
         default:
             log.debug("Unknown phase [" + _phase + "]");
-            EventHandlers.unregisterEventListener(_marble, Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterListener(_marble, Event.ENTER_FRAME, enterFrame);
         }
     }
 
@@ -365,7 +365,7 @@ class RampAnimation
         var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
         percent = Math.pow(percent, 2);
         if (percent >= (1 - (_myScore - 1) / Locksmith.WIN_SCORE)) {
-            EventHandlers.unregisterEventListener(_marble, Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterListener(_marble, Event.ENTER_FRAME, enterFrame);
             _marble.stop();
             percent = 1 - (_myScore - 1) / Locksmith.WIN_SCORE;
         } 
@@ -418,7 +418,7 @@ class CoinsDisplay extends Sprite
             log.debug("not giving enough digits to display coins value [" + coins + "]");
         }
 
-        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     protected function enterFrame (event :Event) :void
@@ -428,7 +428,7 @@ class CoinsDisplay extends Sprite
         addChild(digitSprite);
 
         if (_digits.length == 0) {
-            EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterListener(this, Event.ENTER_FRAME, enterFrame);
         }
     }
 
@@ -448,7 +448,7 @@ class CoinsDigit extends Sprite
 
         _digitNum = digit;
         addChild(_digit = new FLOW_DIGIT() as MovieClip);
-        EventHandlers.registerEventListener(_digit, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(_digit, Event.ENTER_FRAME, enterFrame);
     }
 
     protected function enterFrame (event :Event) :void
@@ -463,7 +463,7 @@ class CoinsDigit extends Sprite
 
         if (_digit.currentFrame == _digit.totalFrames) {
             _digit.stop();
-            EventHandlers.unregisterEventListener(_digit, Event.ENTER_FRAME, enterFrame);
+            EventHandlers.unregisterListener(_digit, Event.ENTER_FRAME, enterFrame);
         }
     }
 

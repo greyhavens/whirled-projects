@@ -42,7 +42,7 @@ public class Marble extends Sprite
         y = _origin.y;
         updateRotation();
 
-        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function set pos (pos :int) :void 
@@ -86,7 +86,7 @@ public class Marble extends Sprite
                 }
             } else if (_nextRing.outer == null) {
                 // only go away if we're in a launcher
-                EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+                EventHandlers.unregisterListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
             } 
             return false;
@@ -146,7 +146,7 @@ public class Marble extends Sprite
 
             // check if we're in the middle and should be removed from the board.
             if (_destination.equals(new Point(0, 0))) {
-                EventHandlers.unregisterEventListener(this, Event.ENTER_FRAME, enterFrame);
+                EventHandlers.unregisterListener(this, Event.ENTER_FRAME, enterFrame);
                 _board.removeChild(this);
                 _board.marbleIsRoaming(this, false);
                 return;

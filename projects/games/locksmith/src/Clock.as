@@ -25,10 +25,10 @@ public class Clock extends Sprite
         _inTurn = false;
 
         _secondTimer = new Timer(1000);
-        EventHandlers.registerEventListener(_secondTimer, TimerEvent.TIMER, updateTime);
+        EventHandlers.registerListener(_secondTimer, TimerEvent.TIMER, updateTime);
         _secondTimer.start();
 
-        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, fastRotation);
+        EventHandlers.registerListener(this, Event.ENTER_FRAME, fastRotation);
     }
 
     public function turnOver () :void

@@ -50,7 +50,7 @@ public class Ring extends Sprite
             _channels.push(new Channel(channelMovie, hole));
         }
 
-        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function rotate (direction :int) :void

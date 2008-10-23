@@ -45,18 +45,18 @@ public class Locksmith extends Sprite
         _board.y = DISPLAY_HEIGHT / 2;
         _wgc = new GameControl(this);
         if (_wgc.game.isConnected()) {
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.game, StateChangedEvent.GAME_STARTED, gameStarted);
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.game, StateChangedEvent.GAME_ENDED, gameEnded);
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.game, StateChangedEvent.TURN_CHANGED, turnChanged);
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.net, MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.net, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-            EventHandlers.registerEventListener(_wgc.local, KeyboardEvent.KEY_DOWN, keyDownHandler);
-            EventHandlers.registerEventListener(_wgc.player, CoinsAwardedEvent.COINS_AWARDED, 
+            EventHandlers.registerListener(_wgc.local, KeyboardEvent.KEY_DOWN, keyDownHandler);
+            EventHandlers.registerListener(_wgc.player, CoinsAwardedEvent.COINS_AWARDED, 
                 function (event :CoinsAwardedEvent) :void {
                     log.debug("coins award [" + event.amount + "]");
                     _wgc.net.setAt(COINS_AWARD, _wgc.game.seating.getMyPosition(), event.amount);
@@ -69,11 +69,11 @@ public class Locksmith extends Sprite
             _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
             _rightBackground.width = _leftBackground.width;
             _rightBackground.x = _leftBackground.width + DISPLAY_WIDTH - 1;
-            EventHandlers.registerEventListener(
+            EventHandlers.registerListener(
                 _wgc.local, SizeChangedEvent.SIZE_CHANGED, updateBackgrounds);
 
             // TODO: fix rematching
-            _wgc.local.setShowButtons(false);
+            _wgc.local.setShowReplay(false);
         } else {
             // show some rings so there is something visible when the game is not connected
             var ringData: Array = createRings();

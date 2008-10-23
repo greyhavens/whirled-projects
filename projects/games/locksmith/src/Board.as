@@ -58,7 +58,7 @@ public class Board extends Sprite
 
         _loadedLauncher = -1;
 
-        EventHandlers.registerEventListener(this, Event.ENTER_FRAME, enterFrame);
+        EventHandlers.registerListener(this, Event.ENTER_FRAME, enterFrame);
     }
 
     public function get clock () :Clock
@@ -347,13 +347,13 @@ class LaunchAnimation
     public function load (marble :Marble) :void
     {
         _marble = marble;
-        EventHandlers.registerEventListener(_movie, Event.ENTER_FRAME, 
+        EventHandlers.registerListener(_movie, Event.ENTER_FRAME, 
             function (event :Event) :void {
                 _movie.gotoAndStop(_movie.currentFrame - 1);
                 if (_movie.currentFrame == MARBLE_FRAME) {
                     _board.addChild(marble);
                 } else if (_movie.currentFrame == 1) {
-                    EventHandlers.unregisterEventListener(
+                    EventHandlers.unregisterListener(
                         _movie, Event.ENTER_FRAME, arguments.callee);
                 }
             });
@@ -366,14 +366,14 @@ class LaunchAnimation
             return;
         }
 
-        EventHandlers.registerEventListener(_movie, Event.ENTER_FRAME,
+        EventHandlers.registerListener(_movie, Event.ENTER_FRAME,
             function (event :Event) :void {
                 _movie.gotoAndStop(_movie.currentFrame + 1);
                 if (_movie.currentFrame == MARBLE_FRAME) {
                     _marble.launch();
                     _marble == null;
                 } else if (_movie.currentFrame == _movie.totalFrames) {
-                    EventHandlers.unregisterEventListener(
+                    EventHandlers.unregisterListener(
                         _movie, Event.ENTER_FRAME, arguments.callee);
                 }
             });
