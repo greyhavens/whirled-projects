@@ -348,9 +348,16 @@ public class GameMode extends TransitionMode
         case KeyboardCodes.K:
             // destroy the targeted enemy's base
             var enemyPlayerInfo :PlayerInfo = GameContext.localPlayerInfo.targetedEnemy;
-            var enemyBase :WorkshopUnit = enemyPlayerInfo.workshop;
-            if (null != enemyBase) {
-                enemyBase.health = 0;
+            if (null != enemyPlayerInfo.workshop) {
+                enemyPlayerInfo.workshop.health = 0;
+            }
+            break;
+
+        case KeyboardCodes.E:
+            // destroy the local player's base
+            var localWorkshop :WorkshopUnit = GameContext.localPlayerInfo.workshop;
+            if (null != GameContext.localPlayerInfo.workshop) {
+                GameContext.localPlayerInfo.workshop.health = 0;
             }
             break;
 
@@ -358,9 +365,8 @@ public class GameMode extends TransitionMode
             // destroy all enemy bases
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
                 if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
-                    enemyBase = playerInfo.workshop;
-                    if (null != enemyBase) {
-                        enemyBase.health = 0;
+                    if (null != playerInfo.workshop) {
+                        playerInfo.workshop.health = 0;
                     }
                 }
             }

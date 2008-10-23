@@ -18,6 +18,14 @@ import popcraft.util.SpriteUtil;
 
 public class EndlessLevelSelectMode extends AppMode
 {
+    public static const LEVEL_SELECT_MODE :int = 0;
+    public static const GAME_OVER_MODE :int = 1;
+
+    public function EndlessLevelSelectMode (mode :int)
+    {
+        _mode = mode;
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -97,7 +105,11 @@ public class EndlessLevelSelectMode extends AppMode
                 }));
         }
 
-        _saveView = new SaveView(_level, _saves[saveIndex]);
+        var save :SavedEndlessGame = _saves[saveIndex];
+        var showStats :Boolean =
+            (_mode == GAME_OVER_MODE && save.mapIndex == EndlessGameContext.mapIndex);
+
+        _saveView = new SaveView(_level, _saves[saveIndex], showStats);
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
         _saveView.addTask(saveViewTask);
@@ -173,6 +185,7 @@ public class EndlessLevelSelectMode extends AppMode
         return !isMultiplayer;
     }
 
+    protected var _mode :int;
     protected var _saveViewLayer :Sprite;
     protected var _topLayer :Sprite;
     protected var _saves :Array;
@@ -214,10 +227,12 @@ import popcraft.sp.endless.*;
 import popcraft.ui.UIBits;
 import popcraft.ui.RectMeterView;
 import popcraft.ui.HealthMeters;
+import popcraft.util.MyStringUtil;
 
 class SaveView extends SceneObject
 {
-    public function SaveView (level :EndlessLevelData, save :SavedEndlessGame)
+    public function SaveView (level :EndlessLevelData, save :SavedEndlessGame,
+        showGameOverStats :Boolean)
     {
         var mapData :EndlessMapData = level.getMapData(save.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(save.mapIndex);
@@ -290,14 +305,9 @@ class SaveView extends SceneObject
         this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
         this.drawIcons("infusion_shuffle", save.spells[Constants.SPELL_TYPE_PUZZLERESET], SHUFFLE_START, SHUFFLE_OFFSET);
 
-        // thumbnail
-        var thumbnail :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
-        thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
-        thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
-        _movie.addChild(thumbnail);
 
         // play button
-        _playButton = UIBits.createButton("Play", 2.5);
+        _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
         _playButton.x = PLAY_CENTER_LOC.x - (_playButton.width * 0.5);
         _playButton.y = PLAY_CENTER_LOC.y - (_playButton.height * 0.5);
         _movie.addChild(_playButton);
@@ -307,6 +317,53 @@ class SaveView extends SceneObject
         _backButton.x = BACK_LOC.x;
         _backButton.y = BACK_LOC.y;
         _movie.addChild(_backButton);
+
+        // stats
+        var statPanel :MovieClip = _movie["stat_panel"];
+        if (showGameOverStats) {
+            statPanel.visible = true;
+
+            // opponent portraits
+            var xLoc :Number = 0;
+            var opponentPortraitSprite :Sprite = SpriteUtil.createSprite();
+            var opponentNames :Array = [];
+            for each (var opponentData :EndlessComputerPlayerData in mapData.computers) {
+                var displayData :PlayerDisplayData =
+                    GameContext.gameData.getPlayerDisplayData(opponentData.playerName);
+                var opponentPortrait :DisplayObject = displayData.headshot;
+                opponentPortrait.x = xLoc;
+                opponentPortraitSprite.addChild(opponentPortrait);
+
+                xLoc += opponentPortrait.width + OPPONENT_PORTRAIT_X_OFFSET;
+
+                opponentNames.push(displayData.displayName);
+            }
+
+            opponentPortraitSprite.x =
+                OPPONENT_PORTRAITS_LOC.x - (opponentPortraitSprite.width * 0.5);
+            opponentPortraitSprite.y =
+                OPPONENT_PORTRAITS_LOC.y - (opponentPortraitSprite.height * 0.5);
+            statPanel.addChild(opponentPortraitSprite);
+
+            var numOpponentsDefeated :int;
+            for (var mapIndex :int = 0; mapIndex < save.mapIndex; ++mapIndex) {
+                numOpponentsDefeated += level.getMapData(mapIndex).computers.length;
+            }
+
+            var statText :TextField = statPanel["flavor_text"];
+            statText.text =
+                "You were defeated by " + MyStringUtil.commafyWords(opponentNames) + "!\n" +
+                "Final score: " + StringUtil.formatNumber(EndlessGameContext.score) + "\n" +
+                "Classmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
+
+        } else {
+            statPanel.visible = false;
+            // thumbnail
+            var thumbnail :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
+            thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
+            thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
+            _movie.addChild(thumbnail);
+        }
     }
 
     protected function drawIcons (name :String, count :int, start :Point, offset :Point) :void
@@ -344,6 +401,7 @@ class SaveView extends SceneObject
         return _backButton;
     }
 
+    protected var _mode :int;
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
     protected var _backButton :SimpleButton;
@@ -362,4 +420,6 @@ class SaveView extends SceneObject
     protected static const RIGORMORTIS_OFFSET :Point = new Point(15, 0);
     protected static const SHUFFLE_START :Point = new Point(58, -64);
     protected static const SHUFFLE_OFFSET :Point = new Point(15, 0);
+    protected static const OPPONENT_PORTRAITS_LOC :Point = new Point(0, -80);
+    protected static const OPPONENT_PORTRAIT_X_OFFSET :Number = 20;
 }

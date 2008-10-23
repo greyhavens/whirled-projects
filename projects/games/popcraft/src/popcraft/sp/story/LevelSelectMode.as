@@ -260,7 +260,8 @@ public class LevelSelectMode extends DemoGameMode
         if (!AppContext.isPremiumContentUnlocked) {
             AppContext.mainLoop.pushMode(new UpsellMode());
         } else {
-            AppContext.mainLoop.pushMode(new EndlessLevelSelectMode());
+            AppContext.mainLoop.pushMode(
+                new EndlessLevelSelectMode(EndlessLevelSelectMode.LEVEL_SELECT_MODE));
         }
     }
 
