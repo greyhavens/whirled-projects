@@ -21,7 +21,7 @@ public class HelpMode extends AppMode
 
         // wire up buttons
         var exitButton :InteractiveObject = _screen["x_button"];
-        registerEventListener(exitButton, MouseEvent.CLICK, handleExitButtonClick);
+        registerListener(exitButton, MouseEvent.CLICK, handleExitButtonClick);
 
         this.modeSprite.addChild(_screen);
     }

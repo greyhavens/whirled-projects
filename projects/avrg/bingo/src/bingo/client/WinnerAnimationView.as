@@ -40,7 +40,7 @@ public class WinnerAnimationView extends SceneObject
         // Listen for the "complete" event. We'll show the countdown timer afterwards.
         registerOneShotCallback(_winnerAnim, Event.COMPLETE, winnerAnimComplete);
 
-        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
     }
 

@@ -22,7 +22,7 @@ public class InGameHelpView extends SceneObject
 
         // wire up buttons
         var exitButton :InteractiveObject = _screen["x_button"];
-        registerEventListener(exitButton, MouseEvent.CLICK, handleExitButtonClick);
+        registerListener(exitButton, MouseEvent.CLICK, handleExitButtonClick);
     }
 
     override public function get displayObject () :DisplayObject

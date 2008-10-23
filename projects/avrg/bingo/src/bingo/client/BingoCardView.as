@@ -44,7 +44,7 @@ public class BingoCardView extends SceneObject
 
                     gridSquare.mouseChildren = false;
 
-                    registerEventListener(gridSquare, MouseEvent.MOUSE_DOWN,
+                    registerListener(gridSquare, MouseEvent.MOUSE_DOWN,
                         this.createGridSquareMouseHandler(gridSquare, col, row));
 
                     gridSquare.addChild(itemView);
@@ -65,8 +65,8 @@ public class BingoCardView extends SceneObject
 
     override protected function addedToDB () :void
     {
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
         handleSizeChanged();
@@ -74,7 +74,8 @@ public class BingoCardView extends SceneObject
         log.info("created");
     }
 
-    protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, row :int) :Function
+    protected function createGridSquareMouseHandler (gridSquare :MovieClip, col :int, 
+        row :int) :Function
     {
         return function (...ignored) :void {
             handleClick(gridSquare, col, row);
@@ -94,7 +95,8 @@ public class BingoCardView extends SceneObject
 
             var item :BingoItem = _card.getItemAt(col, row);
 
-            if (null != item && (Constants.ALLOW_CHEATS || item.containsTag(ClientContext.model.curState.ballInPlay))) {
+            if (null != item && (Constants.ALLOW_CHEATS || 
+                item.containsTag(ClientContext.model.curState.ballInPlay))) {
                 _card.setFilledAt(col, row);
 
                 gridSquare.gotoAndStop(2);
@@ -158,7 +160,5 @@ public class BingoCardView extends SceneObject
     protected static const log :Log = Log.getLog(BingoCardView);
 
     protected static const TARGET_TEXT_WIDTH :Number = 56;
-
 }
-
 }

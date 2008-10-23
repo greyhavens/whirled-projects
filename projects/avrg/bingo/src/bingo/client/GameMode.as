@@ -28,11 +28,11 @@ public class GameMode extends AppMode
         this.hideHelpScreen();
 
         // wire up event handlers with priority 1 to get state updates before UI controllers
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChange, false, 1);
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
+        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
             handleNewBall, false, 1);
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
+        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
             handleNewScores, false, 1);
 
         // get current game state
@@ -209,7 +209,5 @@ public class GameMode extends AppMode
     protected static var log :Log = Log.getLog(GameMode);
 
     protected static const NEW_BALL_TIMER_NAME :String = "NewBallTimer";
-
 }
-
 }

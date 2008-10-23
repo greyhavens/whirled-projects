@@ -39,30 +39,30 @@ public class HUDView extends SceneObject
 
         // wire up buttons
         var quitButton :InteractiveObject = _hud["x_button"];
-        registerEventListener(quitButton, MouseEvent.CLICK, handleQuit);
+        registerListener(quitButton, MouseEvent.CLICK, handleQuit);
 
         var bingoButton :InteractiveObject = _hud["bingo_button"];
-        registerEventListener(bingoButton, MouseEvent.CLICK, handleBingo);
+        registerListener(bingoButton, MouseEvent.CLICK, handleBingo);
 
         var helpButton :InteractiveObject = _hud["help_button"];
-        registerEventListener(helpButton, MouseEvent.CLICK, handleHelp);
+        registerListener(helpButton, MouseEvent.CLICK, handleHelp);
 
         // listen for state events
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
+        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
             updateScores);
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
+        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
             updateBall);
-        registerEventListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChanged);
-        registerEventListener(ClientContext.model, LocalStateChangedEvent.CARD_COMPLETED,
+        registerListener(ClientContext.model, LocalStateChangedEvent.CARD_COMPLETED,
             updateBingoButton);
 
-        registerEventListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
-        registerEventListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
+        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
             updateScores);
-        registerEventListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_LEFT,
+        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             updateScores);
     }
 
