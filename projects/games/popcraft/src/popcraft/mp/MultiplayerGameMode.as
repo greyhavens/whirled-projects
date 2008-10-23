@@ -95,10 +95,27 @@ public class MultiplayerGameMode extends GameMode
             var playerColor :uint = playerDisplayData.color;
 
             GameContext.playerInfos.push(GameContext.localPlayerIndex == playerIndex ?
-                new LocalPlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth,
-                                    false, handicap, playerColor) :
-                new PlayerInfo(playerIndex, teamId, baseLoc, workshopHealth, workshopHealth, false,
-                                handicap, playerColor));
+                new LocalPlayerInfo(
+                    playerIndex,
+                    teamId,
+                    baseLoc,
+                    workshopHealth,
+                    workshopHealth,
+                    false,
+                    handicap,
+                    playerColor,
+                    "player_" + index) :
+
+                new PlayerInfo(
+                    playerIndex,
+                    teamId,
+                    baseLoc,
+                    workshopHealth,
+                    workshopHealth,
+                    false,
+                    handicap,
+                    playerColor,
+                    "player_" + index));
         }
 
         // init players

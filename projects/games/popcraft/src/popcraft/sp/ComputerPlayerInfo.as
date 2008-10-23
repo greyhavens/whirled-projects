@@ -15,8 +15,8 @@ public class ComputerPlayerInfo extends PlayerInfo
             GameContext.gameData.getPlayerDisplayData(data.playerName);
 
         super(playerIndex, data.team, baseLoc, data.baseHealth, data.baseStartHealth,
-            data.invincible, 1, playerDisplayData.color, playerDisplayData.displayName,
-            playerDisplayData.headshot);
+            data.invincible, 1, playerDisplayData.color, data.playerName,
+            playerDisplayData.displayName, playerDisplayData.headshot);
 
         _data = data;
 

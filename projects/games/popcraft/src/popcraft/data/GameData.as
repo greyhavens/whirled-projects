@@ -78,7 +78,7 @@ public class GameData
         }
 
         for each (var playerDisplayData :PlayerDisplayData in playerDisplayDatas.values()) {
-            theClone.playerDisplayDatas.put(playerDisplayData.dataName, playerDisplayData.clone());
+            theClone.playerDisplayDatas.put(playerDisplayData.playerName, playerDisplayData.clone());
         }
 
         return theClone;

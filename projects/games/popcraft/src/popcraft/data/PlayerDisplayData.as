@@ -8,7 +8,7 @@ import popcraft.util.XmlReader;
 
 public class PlayerDisplayData
 {
-    public var dataName :String;
+    public var playerName :String;
     public var displayName :String;
     public var headshotName :String;
     public var color :uint;
@@ -21,7 +21,7 @@ public class PlayerDisplayData
     public function clone () :PlayerDisplayData
     {
         var theClone :PlayerDisplayData = new PlayerDisplayData();
-        theClone.dataName = dataName;
+        theClone.playerName = playerName;
         theClone.displayName = displayName;
         theClone.headshotName = headshotName;
         theClone.color = color;
@@ -34,7 +34,7 @@ public class PlayerDisplayData
     {
         var data :PlayerDisplayData = new PlayerDisplayData();
 
-        data.dataName = XmlReader.getStringAttr(xml, "name");
+        data.playerName = XmlReader.getStringAttr(xml, "name");
         data.displayName = XmlReader.getStringAttr(xml, "displayName",
             (null != inheritFrom ? inheritFrom.displayName : undefined));
         data.headshotName = XmlReader.getStringAttr(xml, "headshotName",
@@ -49,7 +49,7 @@ public class PlayerDisplayData
     {
         if (_unknown == null) {
             _unknown = new PlayerDisplayData();
-            _unknown.dataName = "unknown";
+            _unknown.playerName = "unknown";
             _unknown.displayName = "???";
             _unknown.headshotName = "???";
             _unknown.color = 0;

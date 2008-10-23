@@ -7,6 +7,8 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.game.StateChangedEvent;
 
+import flash.display.DisplayObject;
+
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
@@ -351,11 +353,21 @@ public class EndlessGameMode extends GameMode
         // create PlayerInfos for the human players
         var numPlayers :int = SeatingManager.numExpectedPlayers;
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-            var playerDisplayData :PlayerDisplayData = GameContext.gameData.getPlayerDisplayData(
-                    EndlessGameContext.level.humanPlayerNames[playerIndex]);
+            var playerName :String = EndlessGameContext.level.humanPlayerNames[playerIndex];
+            var playerDisplayData :PlayerDisplayData =
+                GameContext.gameData.getPlayerDisplayData(playerName);
 
             var humanPlayerData :EndlessHumanPlayerData =
-                _curMapData.humans.get(playerDisplayData.dataName);
+                _curMapData.humans.get(playerDisplayData.playerName);
+
+            // if this is a multiplayer game, pass null for the human player display names
+            // and headshots, which will cause that data to be pulled from whirled
+            var displayName :String = null;
+            var headshot :DisplayObject = null
+            if (GameContext.isSinglePlayerGame) {
+                displayName = playerDisplayData.displayName;
+                headshot = playerDisplayData.headshot;
+            }
 
             if (playerIndex == GameContext.localPlayerIndex) {
                 GameContext.playerInfos.push(new LocalPlayerInfo(
@@ -367,8 +379,9 @@ public class EndlessGameMode extends GameMode
                     false,
                     humanPlayerData.resourceHandicap,
                     playerDisplayData.color,
-                    playerDisplayData.displayName,
-                    playerDisplayData.headshot));
+                    playerName,
+                    displayName,
+                    headshot));
 
                 _localHumanPlayerData = humanPlayerData;
 
@@ -382,8 +395,9 @@ public class EndlessGameMode extends GameMode
                     false,
                     humanPlayerData.resourceHandicap,
                     playerDisplayData.color,
-                    playerDisplayData.displayName,
-                    playerDisplayData.headshot));
+                    playerName,
+                    displayName,
+                    headshot));
             }
         }
 

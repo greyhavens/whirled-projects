@@ -22,7 +22,7 @@ public class PlayerInfo extends EventDispatcher
 {
     public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         maxHealth :Number, startHealth :Number, invincible :Boolean,
-        handicap :Number, color :uint, displayName :String = null,
+        handicap :Number, color :uint, playerName :String, displayName :String = null,
         headshot :DisplayObject = null)
     {
         _playerIndex = playerIndex;
@@ -33,6 +33,7 @@ public class PlayerInfo extends EventDispatcher
         _invincible = invincible;
         _handicap = handicap;
         _color = color;
+        _playerName = playerName;
 
         _minResourceAmount = GameContext.gameData.minResourceAmount;
         _maxResourceAmount = GameContext.gameData.maxResourceAmount;
@@ -179,6 +180,11 @@ public class PlayerInfo extends EventDispatcher
         return _displayName;
     }
 
+    public function get playerName () :String
+    {
+        return _playerName;
+    }
+
     public function get headshot () :DisplayObject
     {
         return _headshot;
@@ -308,6 +314,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _maxHealth :Number;
     protected var _startHealth :Number;
     protected var _invincible :Boolean;
+    protected var _playerName :String;
     protected var _displayName :String;
     protected var _headshot :DisplayObject;
     protected var _leftGame :Boolean;

@@ -102,7 +102,8 @@ public class StoryGameMode extends GameMode
             0, 0,
             MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
             _level.playerBaseHealth, _level.playerBaseStartHealth, false,
-            1, playerDisplayData.color, playerDisplayData.displayName, playerDisplayData.headshot);
+            1, playerDisplayData.color, _level.playerName,
+            playerDisplayData.displayName, playerDisplayData.headshot);
 
         // grant the player some starting resources
         var initialResources :Array = _level.initialResources;

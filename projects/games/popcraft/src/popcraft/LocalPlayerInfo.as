@@ -18,10 +18,10 @@ public class LocalPlayerInfo extends PlayerInfo
 {
     public function LocalPlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         maxHealth :Number, startHealth :Number, invincible :Boolean, handicap :Number, color :uint,
-        displayName :String = null, headshot :DisplayObject = null)
+        playerName :String, displayName :String = null, headshot :DisplayObject = null)
     {
         super(playerIndex, teamId, baseLoc, maxHealth, startHealth, invincible, handicap, color,
-            displayName, headshot);
+            playerName, displayName, headshot);
 
         _resources = new Array(Constants.RESOURCE_NAMES.length);
         for (var i :int = 0; i < _resources.length; ++i) {
