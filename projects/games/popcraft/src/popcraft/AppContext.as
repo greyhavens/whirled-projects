@@ -39,11 +39,20 @@ public class AppContext
         return (gameCtrl.isConnected() && gameCtrl.player.holdsTrophy(trophyName));
     }
 
-    public static function get isPremiumContentUnlocked () :Boolean
+    public static function get isEndlessModeUnlocked () :Boolean
     {
-        return (!Constants.DEBUG_LOCK_PREMIUM_CONTENT &&
-            (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null ||
-            levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS));
+        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT || hasPremiumLevelPack);
+    }
+
+    public static function get isStoryModeUnlocked () :Boolean
+    {
+        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT || hasPremiumLevelPack ||
+            levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+    }
+
+    public static function get hasPremiumLevelPack () :Boolean
+    {
+        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
     }
 
     public static function get isMultiplayer () :Boolean

@@ -104,7 +104,7 @@ public class MultiplayerLobbyMode extends AppMode
             MultiplayerConfig.setPlayerHasMorbidInfection(SeatingManager.localPlayerSeat);
         }
 
-        if (AppContext.isPremiumContentUnlocked) {
+        if (AppContext.isEndlessModeUnlocked) {
             MultiplayerConfig.setPlayerHasPremiumContent(SeatingManager.localPlayerSeat);
         }
 
@@ -337,18 +337,22 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function updatePremiumContentDisplay () :void
     {
-        var someoneHasPremiumContent :Boolean = MultiplayerConfig.someoneHasPremiumContent;
+        var someoneHasPremiumContent :Boolean =
+            (AppContext.isEndlessModeUnlocked || MultiplayerConfig.someoneHasPremiumContent);
+
         var unlockButton :SimpleButton = _bg["unlock_button"];
 
         if (!_showingPremiumContent && someoneHasPremiumContent) {
             unlockButton.visible = false;
             _showingPremiumContent = true;
-        } else {
+
+        } else if (!someoneHasPremiumContent) {
             unlockButton.visible = true;
             this.registerListener(unlockButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });
+            _showingPremiumContent = false;
         }
     }
 

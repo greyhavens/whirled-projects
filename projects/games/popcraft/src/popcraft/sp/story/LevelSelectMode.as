@@ -237,7 +237,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function onPlayClicked (...ignored) :void
     {
-        if (!AppContext.isPremiumContentUnlocked &&
+        if (!AppContext.isStoryModeUnlocked &&
             AppContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
             AppContext.mainLoop.pushMode(new UpsellMode());
 
@@ -254,7 +254,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function onEndlessClicked (...ignored) :void
     {
-        if (!AppContext.isPremiumContentUnlocked) {
+        if (!AppContext.isEndlessModeUnlocked) {
             AppContext.mainLoop.pushMode(new UpsellMode());
         } else {
             AppContext.mainLoop.pushMode(
@@ -348,7 +348,7 @@ public class LevelSelectMode extends DemoGameMode
         for (var i :int = 0; i < numLevels; ++i) {
             var levelRecord :LevelRecord = levelRecords[i];
             if (!levelRecord.unlocked ||
-                (!AppContext.isPremiumContentUnlocked && i >= Constants.NUM_FREE_SP_LEVELS)) {
+                (!AppContext.isStoryModeUnlocked && i >= Constants.NUM_FREE_SP_LEVELS)) {
                 break;
             }
 
@@ -388,7 +388,7 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(buttonSprite);
 
         // "Unlock Full Version!" button
-        if (!AppContext.isPremiumContentUnlocked) {
+        if (!AppContext.isStoryModeUnlocked) {
             button = UIBits.createButton("Unlock Full Version To Continue!", 1.3);
             button.x = UNLOCK_MANUAL_LOC.x - (button.width * 0.5);
             button.y = UNLOCK_MANUAL_LOC.y;
