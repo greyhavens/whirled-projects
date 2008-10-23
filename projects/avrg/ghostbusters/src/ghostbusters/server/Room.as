@@ -190,7 +190,12 @@ public class Room
         dict[weapon] = int(dict[weapon]) + 1;
         _minigames[player.playerId] = dict;
 
-        Trophies.handleMinigameCompletion(player, weapon, win);
+        try {
+            Trophies.handleMinigameCompletion(player, weapon, win);
+        } catch (e :Error) {
+            log.warning("Error in handleMinigameCompletion", "roomId", roomId, "playerId",
+                        player.playerId, e);
+        }
 
         // tweak damageDone and healingDone by the player's level
         var tweak :Number = Formulae.quadRamp(player.level);
@@ -329,7 +334,12 @@ public class Room
 
         // if the ghost died, leave fight state and show the ghost's death throes
         if (_ghost.isDead()) {
-            Trophies.handleGhostDefeat(this);
+            try {
+                Trophies.handleGhostDefeat(this);
+            } catch (e :Error) {
+                log.warning("Error in handleGhostDefeat", "roomId", roomId, e);
+            }
+
             setState(Codes.STATE_GHOST_DEFEAT);
             // schedule a transition
             _transitionFrame = frame + _ghost.definition.defeatFrames;
@@ -408,7 +418,12 @@ public class Room
             var player :Player = Player(team[ii]);
             var amount :int = (totHeal * playerDmg[ii]) / totDmg;
             player.heal(amount);
-            Trophies.handleHeal(healer, player, amount);
+            try {
+                Trophies.handleHeal(healer, player, amount);
+            } catch (e :Error) {
+                log.warning("Error in handleHeal", "roomId", roomId, "targetId",
+                            player.playerId, "healerId", healer.playerId, e);
+            }
         }
     }
 

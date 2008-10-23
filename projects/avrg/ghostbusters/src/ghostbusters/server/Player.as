@@ -343,7 +343,11 @@ public class Player
 
         // if we just died, let the trophy code know
         if (_health == 0) {
-            Trophies.handlePlayerDied(this);
+            try {
+                Trophies.handlePlayerDied(this);
+            } catch (e :Error) {
+                log.warning("Error in handlePlayerDied", "playerId", _playerId, e);
+            }
         }
 
         // always update our avatar state
