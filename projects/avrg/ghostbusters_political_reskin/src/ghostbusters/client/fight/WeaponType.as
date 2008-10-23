@@ -7,6 +7,8 @@ public class WeaponType
     public static const NAME_IRAQ :String = "Iraq";
     public static const NAME_PRESS :String = "Press";
     
+    public static const WEAPONS :Array = [NAME_QUOTE, NAME_IRAQ, NAME_PRESS, NAME_VOTE];
+    
     public var name :String;
     public var level :int;
     

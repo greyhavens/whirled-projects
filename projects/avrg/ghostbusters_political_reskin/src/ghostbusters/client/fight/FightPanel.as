@@ -130,7 +130,7 @@ public class FightPanel extends FrameSprite
 
     protected function maybeStartMinigame () :void
     {
-        if (!_playing) {
+        if (!_playing || Game.amDead()) {
             return;
         }
 
@@ -208,6 +208,7 @@ public class FightPanel extends FrameSprite
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
                                       [ _selectedWeapon, _player.currentGame.gameResult ]);
                 if (_player != null) {
+                    _player.nextWeaponType();
                     _player.beginNextGame();
                 }
             }
@@ -249,10 +250,12 @@ public class FightPanel extends FrameSprite
     protected function messageReceived (event: MessageReceivedEvent) :void
     {
         if (event.name == Codes.SMSG_GHOST_ATTACKED) {
-            var bits :Array = (event.value as Array);
-            if (bits != null && bits[2] > 0) {
+            //SKIN this is borked.
+//            var bits :Array = (event.value as Array);
+//            if (bits != null && bits[2] > 0) {
+//                log.debug("showing ghost damage.  we should see a reel...");
                 showGhostDamage();
-            }
+//            }
 
         } else if (event.name == Codes.SMSG_PLAYER_ATTACKED) {
             _ghost.attack();
@@ -301,6 +304,7 @@ public class FightPanel extends FrameSprite
 
     protected function handleGhostTriumph () :void
     {
+        log.debug("calling _ghost.triumph()");
         _ghost.triumph();
     }
 

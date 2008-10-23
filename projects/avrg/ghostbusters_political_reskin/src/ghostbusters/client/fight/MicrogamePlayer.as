@@ -1,5 +1,6 @@
 package ghostbusters.client.fight {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
@@ -110,6 +111,25 @@ public class MicrogamePlayer extends Sprite
     {
         MainLoop.instance.popAllModes();
         _currentGame = null;
+    }
+    
+    /**
+    * Rotates the weapons, to avoid repitition
+    */
+    public function nextWeaponType() :void
+    {
+        if( _weaponType == null) {
+            _weaponType = new WeaponType(WeaponType.WEAPONS[0], 1);
+            return;
+        }
+        
+        var index :int = ArrayUtil.indexOf( WeaponType.WEAPONS, _weaponType.name);
+        
+        index++;
+        if(index >= WeaponType.WEAPONS.length) {
+            index = 0;
+        }
+        _weaponType = new WeaponType(WeaponType.WEAPONS[index], 1);
     }
 
     protected var _context :MicrogameContext;
