@@ -107,6 +107,7 @@ package cells
 		public function get leave() :Boolean { return true; }
 		public function get replacable() :Boolean { return false; }
 		public function get canBecomeWindow() :Boolean { return false; }
+        public function get canBeStartingPosition() :Boolean { return false; }
 		
 		/**
 		 * Cell interactions

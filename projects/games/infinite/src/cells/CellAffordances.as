@@ -51,5 +51,11 @@ package cells
 		 * True if this cell can be changed into a window.
 		 */
 		function get canBecomeWindow () :Boolean		
+				
+		/**
+		 * True if this cell can be a starting positiong for a new player entering a
+		 * level.
+		 */
+		function get canBeStartingPosition () :Boolean		 
 	}
 }

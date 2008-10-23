@@ -25,9 +25,13 @@ package arithmetic
 		
 		public function get key () :String 
 		{
-			return _x+","+_y;
+			if (_key == null) {
+				_key = _x+","+_y; 
+			}
+			return key;
 		}
 		
+		protected var _key:String;
 		protected var _x:int;
 		protected var _y:int;	
 	}

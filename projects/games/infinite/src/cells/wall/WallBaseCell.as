@@ -22,6 +22,7 @@ package cells.wall
 		override public function get climbRightTo () :Boolean { return true; }
 		override public function get replacable () :Boolean { return true; }
 		override public function get canBecomeWindow() :Boolean { return true; }
+        override public function get canBeStartingPosition() :Boolean { return true; }
 		
 		[Embed(source="../../../rsrc/png/wall.png")]
 		public static const wall:Class;
