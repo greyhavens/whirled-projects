@@ -49,7 +49,7 @@ public class GameController extends Controller
 
     public function handleHelp () :void
     {
-        trace("handleHelp");
+        log.debug("handleHelp");
         //SKIN
         panel.showSplash(SplashWidget.STATE_HOWTO);
 //        panel.showSplash(SplashWidget.STATE_BEGIN);
@@ -57,6 +57,7 @@ public class GameController extends Controller
 
     public function handleCloseSplash () :void
     {
+        log.debug("handleCloseSplash");
         panel.hideSplash();
     }
 
@@ -76,8 +77,8 @@ public class GameController extends Controller
 
         var state :String = Game.state;
         if (state == Codes.STATE_SEEKING) {
-//            panel.seeking = !panel.seeking;
-            panel.seeking = false;//SKIN we are never seeking
+            panel.seeking = !panel.seeking;
+//            panel.seeking = true;//SKIN we are never seeking
 
         } else if (state == Codes.STATE_APPEARING) {
             // no effect: you have to watch this bit
@@ -99,7 +100,10 @@ public class GameController extends Controller
 
     public function handleBeginPlaying () :void
     {
-        Game.control.agent.sendMessage(Codes.CMSG_BEGIN_PLAYING);        
+        Game.control.agent.sendMessage(Codes.CMSG_BEGIN_PLAYING);       
+        if( panel.ghost != null) {//SKIN 
+            panel.ghost.visible = true;
+        }
     }
 
     public function handleChooseAvatar (avatar :String) :void
@@ -143,9 +147,11 @@ public class GameController extends Controller
 
     public function handleRevive () :void
     {
+        
         if (PlayerModel.isDead(Game.ourPlayerId) && Game.state != Codes.STATE_FIGHTING) {
             Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
         }
+        panel.removeReviveSplash();
     }
 
     protected static const log :Log = Log.getLog(GameController);

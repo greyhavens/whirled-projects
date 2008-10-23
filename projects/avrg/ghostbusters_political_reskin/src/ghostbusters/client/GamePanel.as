@@ -65,6 +65,12 @@ public class GamePanel extends Sprite
             _seeking = true;
         }
         
+        
+//        if( _ghost != null) {//SKIN 
+//            _ghost.visible = false;
+//        }
+        
+        
 //        if (Game.control.player.props.get(Codes.PROP_AVATAR_TYPE) == null) {
 //            showSplash(SplashWidget.STATE_WELCOME);
 //
@@ -128,7 +134,8 @@ public class GamePanel extends Sprite
         _splash.y = 0;
 
         // when we show a splash screen, turn off the seek mode
-        seeking = false;
+        seeking = true;//SKIN
+//        seeking = false;
     }
 
     public function hideSplash () :void
@@ -164,9 +171,9 @@ public class GamePanel extends Sprite
         _frame.x = (paintable.width - 100 - _frame.width) / 2;
         _frame.y = (paintable.height - _frame.height) / 2 - FRAME_DISPLACEMENT_Y;
         _frame.x = 20;
-        trace("paintable=" + paintable);
-        trace("_frame.width=" + _frame.width);
-        trace("_frame coords=" + _frame.x + ", " + _frame.y);
+//        trace("paintable=" + paintable);
+//        trace("_frame.width=" + _frame.width);
+//        trace("_frame coords=" + _frame.x + ", " + _frame.y);
     }
 
     public function getClipClass () :Class
@@ -193,6 +200,11 @@ public class GamePanel extends Sprite
                 updateState(true);
             });
         }
+        
+        //SKIN
+//        if( _splash.state == SplashWidget.STATE_BEGIN && _ghost != null ) { 
+//            _ghost.visible = false;
+//        }
     }
 
     protected function taskCompleted (evt :AVRGamePlayerEvent) :void
@@ -216,7 +228,7 @@ public class GamePanel extends Sprite
                 log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
-                updateState(false);
+//                updateState(false);
             }
             return;
         }
@@ -225,7 +237,7 @@ public class GamePanel extends Sprite
             log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
-            updateState(false);
+//            updateState(false);
         }
     }
 
@@ -294,7 +306,8 @@ public class GamePanel extends Sprite
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-            updateState(false);
+//            updateState(false);
+            updateState(true);//SKIN
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
@@ -310,7 +323,7 @@ public class GamePanel extends Sprite
     {
         var pClass :Class = null;
 
-        if (_triumph == null && _revive == null) {
+        if (_triumph == null ) {
             switch(Game.state) {
             case Codes.STATE_SEEKING:
                 if (_seeking == false) {
@@ -341,11 +354,27 @@ public class GamePanel extends Sprite
             _panel = null;
         }
         if (pClass != null) {
-            _panel = new pClass(_ghost);
-            this.addChildAt(_panel, 0);
+            if( _ghost != null) {
+                _panel = new pClass(_ghost);
+                this.addChildAt(_panel, 0);
+            }
+            else {
+                log.error( "Game.state=" + Game.state + ", _ghost == null");
+            }
+            
         }
     }
 
+    /**
+    * A horrible hack.  Testing the removal of the buggy revive widget takes
+    * too long.  Attempting to remove with prejudice, and see what happens.
+    */
+    public function removeReviveSplash() :void
+    {
+        if( this.contains( _revive) ) {
+            this.removeChild( _revive);
+        }
+    }
     protected var _seeking :Boolean;
 
     protected var _panel :DisplayObject;

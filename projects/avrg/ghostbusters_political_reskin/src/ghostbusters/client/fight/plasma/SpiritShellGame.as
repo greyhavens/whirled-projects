@@ -198,17 +198,17 @@ public class SpiritShellGame extends MicrogameMode
         var direction :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_COSMETIC);
         var start :Vector2 = new Vector2(ghost.x, ghost.y);
         var dest :Vector2 = Vector2.fromAngle(direction, distance).addLocal(start);
-        trace("start=" + start);
-        trace("dest=" + dest);
+//        trace("start=" + start);
+//        trace("dest=" + dest);
         // clamp dest
-        trace("clamp[ x(" + ghost.width + ", " + (300 - ghost.width) + "), y(" + ghost.height + ", " + Math.max(0,(226 - ghost.height)) + ") ]");
+//        trace("clamp[ x(" + ghost.width + ", " + (300 - ghost.width) + "), y(" + ghost.height + ", " + Math.max(0,(226 - ghost.height)) + ") ]");
         var borderWidth :int = 0;
         dest.x = Math.max(dest.x, 0);//
         dest.x = Math.min(dest.x, 300 - ghost.width - borderWidth); // board width - ghost width
         dest.y = Math.max(dest.y, ghost.height - borderWidth);
 //        borderWidth = (226 - ghost.height-borderWidth) < 0 ? 0: borderWidth;
         dest.y = Math.min(dest.y, Math.max(0,(226 - ghost.height-borderWidth))); // board height - ghost height
-        trace("actual dest=" + dest.x + ", " + dest.y);
+//        trace("actual dest=" + dest.x + ", " + dest.y);
 //        dest.x = 300 - ghost.width;
 //        dest.y = 226 - ghost.height;
 //        // what's the actual distance we're moving?
@@ -344,29 +344,29 @@ public class SpiritShellGame extends MicrogameMode
 //            500       // damage output
 //        ),
         
-//        new SpiritShellSettings(
-//            6,      // gameTime
-//            25,     // ectoplasmCount
-//            30,      // ghostSpeed
-//            new NumRange(15, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
-//            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
-//            false,  // ghostBlink
-//            150,    // plasmaSpeed
-//            0.1,     // plasmaFireDelay
-//            50       // damage output
-//        ),
-        
         new SpiritShellSettings(
             6,      // gameTime
-            30,     // ectoplasmCount
-            70,      // ghostSpeed
-            new NumRange(15, 50, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0.1, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+            25,     // ectoplasmCount
+            30,      // ghostSpeed
+            new NumRange(15, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
+            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            5       // damage output
+            500//5       // damage output
         ),
+        
+//        new SpiritShellSettings(
+//            6,      // gameTime
+//            20,     // ectoplasmCount
+//            70,      // ghostSpeed
+//            new NumRange(15, 50, Rand.STREAM_COSMETIC),   // ghostWanderDist
+//            new NumRange(0.1, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+//            false,  // ghostBlink
+//            150,    // plasmaSpeed
+//            0.1,     // plasmaFireDelay
+//            5       // damage output
+//        ),
 
         new SpiritShellSettings(
             6,      // gameTime
@@ -377,7 +377,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            10      // damage output
+            500//10      // damage output
         ),
 
         new SpiritShellSettings(
@@ -389,7 +389,7 @@ public class SpiritShellGame extends MicrogameMode
             true,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            15       // damage output
+            500//15       // damage output
         )
 
     ];

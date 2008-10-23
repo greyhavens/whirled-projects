@@ -97,6 +97,8 @@ public class ClipHandler extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
+//        trace("_clip.currentFrame=" + (_clip != null ? _clip.currentFrame : "_clip is null"));
+//        trace("_lastFrame=" + _lastFrame);
         if (_clip == null || _lastFrame < 0) {
             return;
         }

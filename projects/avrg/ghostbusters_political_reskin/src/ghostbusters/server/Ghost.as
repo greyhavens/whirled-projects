@@ -23,13 +23,13 @@ public class Ghost
         data[Codes.IX_GHOST_NAME] = buildName(id);
         data[Codes.IX_GHOST_LEVEL] = level;
 
-        // max zest at level 1 is 50
-        data[Codes.IX_GHOST_CUR_ZEST] = data[Codes.IX_GHOST_MAX_ZEST] =
-            50 * Formulae.quadRamp(level);
+        // max zest at level 1 is 50  //SKIN we don't need this
+//        data[Codes.IX_GHOST_CUR_ZEST] = data[Codes.IX_GHOST_MAX_ZEST] =
+//            50 * Formulae.quadRamp(level);
 
         // max health at level 1 is 50
         data[Codes.IX_GHOST_CUR_HEALTH] = data[Codes.IX_GHOST_MAX_HEALTH] =
-            50 * Formulae.quadRamp(level);
+            50 * Formulae.quadRamp(level);//SKIN 50 -> 40, the games are hard...
 
         return data;
     }
@@ -126,17 +126,17 @@ public class Ghost
         setZest(_maxZest);
     }
 
-    public function tick (timer :int) :void
+    public function tick (seconds :int) :void
     {
         if (_room.state == Codes.STATE_FIGHTING && _brain != null) {
-            _brain.tick(timer);
+            _brain.tick(seconds);
         }
 
         // a level 1 ghost heals 0.25 hp/second, but let's not bother with fractional healing
         setHealth(_health + Math.floor(0.25 * Formulae.quadRamp(_level)));
-        if (_room.state == Codes.STATE_SEEKING) {
-            setZest(_zest + 1);
-        }
+//        if (_room.state == Codes.STATE_SEEKING) {//SKIN we don't bother with zest
+//            setZest(_zest + 1);
+//        }
     }
 
     public function calculateSingleAttack () :int

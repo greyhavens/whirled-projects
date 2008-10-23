@@ -3,35 +3,18 @@
 
 package ghostbusters.client.seek {
 
-import flash.display.BlendMode;
-import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.MovieClip;
-import flash.display.Sprite;
-import flash.media.Sound;
-import flash.media.SoundChannel;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
-
-import flash.geom.ColorTransform;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
-import flash.utils.Dictionary;
-import flash.utils.setTimeout;
-
-import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGameControlEvent;
+import com.threerings.flash.FrameSprite;
+import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
-import com.threerings.flash.FrameSprite;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.CommandEvent;
-import com.threerings.util.Log;
-import com.threerings.util.Random;
+import flash.display.Sprite;
+import flash.geom.ColorTransform;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.utils.Dictionary;
 
 import ghostbusters.client.*;
 import ghostbusters.data.Codes;
@@ -138,6 +121,14 @@ public class SeekPanel extends FrameSprite
     {
         if (evt.name == Codes.PROP_IS_PLAYING) {
             _playing = Boolean(evt.newValue);
+            
+           if (!_playing) {
+                playerLanternOff(Game.ourPlayerId);
+            } else if (evt.name == Codes.PROP_MY_HEALTH) {
+                if (Game.amDead()) {
+                    playerLanternOff(Game.ourPlayerId);
+                }
+            }
         }
     }
 
@@ -244,9 +235,9 @@ public class SeekPanel extends FrameSprite
 
                 _zapping --;
             }
-
-            if (_playing && _lanterns != null && _zapping == 0 &&
-                _ghost.hitTestPoint(p.x, p.y, true)) {
+            if (_playing && _lanterns != null && _zapping == 0 && !Game.amDead() &&
+                 _ghost.hitTestPoint(p.x, p.y, true)) {
+                     
                 // the player is hovering right over the ghost!
                 CommandEvent.dispatch(this, GameController.ZAP_GHOST);
                 _zapping = ZAP_FRAMES;
@@ -269,7 +260,7 @@ public class SeekPanel extends FrameSprite
             }
         }
 
-        if (_playing) {
+        if (_playing && Game.amDead()) {
             // update our own lantern directly, nobody wants to watch roundtrip lag in action
             if (!Game.DEBUG) {
                 updateLantern(Game.ourPlayerId, p);

@@ -21,7 +21,7 @@ import ghostbusters.client.fight.ouija.BoardTimer;
 public class HeartOfDarknessGame extends MicrogameMode
 {
     public static const GAME_NAME :String = "";//FactFinder";
-    public static const GAME_DIRECTIONS :String = "Find the true Quote!";
+    public static const GAME_DIRECTIONS :String = "Find the Revealing Quote!";
 
     public function HeartOfDarknessGame (difficulty :int, context :MicrogameContext)
     {
@@ -329,23 +329,23 @@ public class HeartOfDarknessGame extends MicrogameMode
 
     protected static const DIFFICULTY_SETTINGS :Array = [
 
-        new HeartOfDarknessSettings(
-            8,     // game time
-            3,      // heart shine time
-            80,     // lantern beam radius
-            20,     // heart radius
-            1.2,     // ghost scale
-            5      // damage output
-        ),
-        
-        new HeartOfDarknessSettings(
-            8,     // game time
-            3,      // heart shine time
-            80,     // lantern beam radius
-            20,     // heart radius
-            1.3,     // ghost scale
-            5      // damage output
-        ),
+//        new HeartOfDarknessSettings(
+//            8,     // game time
+//            3,      // heart shine time
+//            80,     // lantern beam radius
+//            20,     // heart radius
+//            1.2,     // ghost scale
+//            5      // damage output
+//        ),
+//        
+//        new HeartOfDarknessSettings(
+//            8,     // game time
+//            3,      // heart shine time
+//            80,     // lantern beam radius
+//            20,     // heart radius
+//            1.3,     // ghost scale
+//            5      // damage output
+//        ),
         
         new HeartOfDarknessSettings(
             8,     // game time
@@ -353,7 +353,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             80,     // lantern beam radius
             20,     // heart radius
             1.5,     // ghost scale
-            5      // damage output
+            7      // damage output
         ),
         
         new HeartOfDarknessSettings(
@@ -362,7 +362,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             80,     // lantern beam radius
             20,     // heart radius
             1.7,     // ghost scale
-            5      // damage output
+            12      // damage output
         ),
         
         new HeartOfDarknessSettings(
@@ -371,7 +371,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             80,     // lantern beam radius
             20,     // heart radius
             2.0,     // ghost scale
-            5      // damage output
+            20      // damage output
         )
 
         

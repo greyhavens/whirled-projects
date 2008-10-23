@@ -3,64 +3,41 @@
 
 package ghostbusters.client.fight {
 
-import flash.display.BlendMode;
-import flash.display.DisplayObject;
-import flash.display.MovieClip;
-import flash.display.Shape;
-import flash.display.SimpleButton;
-import flash.display.Sprite;
-import flash.text.AntiAliasType;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.text.TextFormat;
-import flash.geom.Point;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
-
-import flash.media.Sound;
-import flash.media.SoundChannel;
-
-import flash.utils.ByteArray;
-import flash.utils.Dictionary;
-import flash.utils.setTimeout;
-
 import com.threerings.flash.FrameSprite;
-import com.threerings.flash.SimpleTextButton;
-import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
-import com.threerings.util.StringUtil;
-
-import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
+import flash.utils.ByteArray;
+import flash.utils.Dictionary;
+import flash.utils.getTimer;
+
 import ghostbusters.client.ClipHandler;
-import ghostbusters.client.Content;
 import ghostbusters.client.Dimness;
 import ghostbusters.client.Game;
 import ghostbusters.client.GameController;
 import ghostbusters.client.Ghost;
-import ghostbusters.client.HUD;
-import ghostbusters.client.util.PlayerModel;
 import ghostbusters.data.Codes;
 
 public class FightPanel extends FrameSprite
 {
     public function FightPanel (ghost :Ghost)
     {
+        graphics.clear();
+        
         _ghost = ghost;
 
         _dimness = new Dimness(0.8, true);
+        
         this.addChild(_dimness);
 
         this.addChild(_ghost);
         _ghost.mask = null;
         _ghost.x = 400;
         _ghost.y = 60;//100
+        _ghost.visible = true
 
         // listen for notification messages from the server on the room control
         Game.control.room.addEventListener(
@@ -75,6 +52,11 @@ public class FightPanel extends FrameSprite
 
         checkForSpecialStates();
 
+        //SKIN
+        if( _ghostDying) {
+            return;
+        }
+        
         var clipClass :Class = Game.panel.getClipClass();
         if (clipClass == null) {
             log.debug("Urk, failed to find a ghost clip class");
@@ -100,9 +82,13 @@ public class FightPanel extends FrameSprite
 
     public function weaponUpdated () :void
     {
-        if (_player == null || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            log.debug("Weapon unchanged...");
-            return;
+        if (_player == null){// || _selectedWeapon == Game.panel.hud.getWeaponType()) {
+            var index :int = ArrayUtil.indexOf(WeaponType.WEAPONS, _player.weaponType.name);
+            if( index == Game.panel.hud.getWeaponType())
+            {
+                log.debug("Weapon unchanged...");
+                return;
+            }
         }
         if (_player.currentGame != null) {
             log.debug("Cancelling current game...");
@@ -134,10 +120,16 @@ public class FightPanel extends FrameSprite
             return;
         }
 
+        if( _ghost != null) {
+            _ghost.visible = true;
+        }
         if (_player.root == null) {
             Game.panel.frameContent(_player);
         }
-
+        
+        //SKIN
+        _ghostDying = false;
+        
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
@@ -161,21 +153,30 @@ public class FightPanel extends FrameSprite
             return;
         }
 
+        trace("starting a new minigame, type 3!!");
         _player.beginNextGame();
     }
 
     protected function endMinigame () :void
     {
-        if (_player.root != null) {
-            if (_player.currentGame != null) {
+        if (_player != null ){//&& _player.root != null) {
+//            if (_player.currentGame != null) {
+                
                 _player.cancelCurrentGame();
-            }
-            Game.panel.unframeContent();
+                _player.shutdown();
+                trace("cancelling minigame");
+                Game.panel.unframeContent();
+//            }
+            
         }
+        
     }
 
     override protected function handleAdded (... ignored) :void
     {
+        if( _ghost != null) {
+            _ghost.visible = true;
+        }
         super.handleAdded();
         //_battleLoop = Sound(new Content.BATTLE_LOOP_AUDIO()).play();
     }
@@ -192,15 +193,23 @@ public class FightPanel extends FrameSprite
 
     override protected function handleFrame (... ignored) :void
     {
+        //SKIN white flash hackery
+        if( _isWhite && getTimer() > _startTimeForWhiteFlash + _durationWhiteFlash) {
+            _isWhite = false;
+            graphics.clear();    
+        }
+        
+        
         // TODO: when we have real teams, we have a fixed order of players, but for now we
         // TODO: just grab the first six in the order the client exports them
-
-        updateSpotlights();
+        
+//        updateSpotlights();
 
         // if we've got the minigame player up, do some extra checks
-        if (_player != null && _player.root != null) {
+        if (_player != null && _player.root != null && !_ghostDying) {
             if (_player.currentGame == null) {
                 // if we've no current game, start a new one
+                trace("starting a new minigame!!");
                 _player.beginNextGame();
 
             } else if (_player.currentGame.isDone) {
@@ -208,8 +217,8 @@ public class FightPanel extends FrameSprite
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
                                       [ _selectedWeapon, _player.currentGame.gameResult ]);
                 if (_player != null) {
-                    _player.nextWeaponType();
-                    _player.beginNextGame();
+                    trace("starting a new minigame, type 2!!");
+                    _player.beginNextGame(true);
                 }
             }
         }
@@ -217,32 +226,32 @@ public class FightPanel extends FrameSprite
 
     protected function updateSpotlights () :void
     {
-        var team :Array = PlayerModel.getTeam(false);
-
-        // TODO: maintain our own list, calling this 30 times a second is rather silly
-        for (var ii :int = 0; ii < team.length; ii ++) {
-            var playerId :int = team[ii] as int;
-
-            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
-            if (info == null) {
-                log.warning("Can't get avatar info", "player", playerId);
-                continue;
-            }
-            var topLeft :Point = this.globalToLocal(info.bounds.topLeft);
-            var bottomRight :Point = this.globalToLocal(info.bounds.bottomRight);
-
-            var height :Number = bottomRight.y - topLeft.y;
-            var width :Number = bottomRight.x - topLeft.x;
-
-            var spotlight :Spotlight = _spotlights[playerId];
-            if (spotlight == null) {
-                spotlight = new Spotlight(playerId);
-                _spotlights[playerId] = spotlight;
-
-                _dimness.addChild(spotlight.hole);
-            }
-            spotlight.redraw(topLeft.x + width/2, topLeft.y + height/2, width, height);
-        }
+//        var team :Array = PlayerModel.getTeam(false);
+//
+//        // TODO: maintain our own list, calling this 30 times a second is rather silly
+//        for (var ii :int = 0; ii < team.length; ii ++) {
+//            var playerId :int = team[ii] as int;
+//
+//            var info :AVRGameAvatar = Game.control.room.getAvatarInfo(playerId);
+//            if (info == null) {
+//                log.warning("Can't get avatar info", "player", playerId);
+//                continue;
+//            }
+//            var topLeft :Point = this.globalToLocal(info.bounds.topLeft);
+//            var bottomRight :Point = this.globalToLocal(info.bounds.bottomRight);
+//
+//            var height :Number = bottomRight.y - topLeft.y;
+//            var width :Number = bottomRight.x - topLeft.x;
+//
+//            var spotlight :Spotlight = _spotlights[playerId];
+//            if (spotlight == null) {
+//                spotlight = new Spotlight(playerId);
+//                _spotlights[playerId] = spotlight;
+//
+//                _dimness.addChild(spotlight.hole);
+//            }
+//            spotlight.redraw(topLeft.x + width/2, topLeft.y + height/2, width, height);
+//        }
 
         // TODO: remove spotlights when people leave
     }
@@ -296,22 +305,54 @@ public class FightPanel extends FrameSprite
 
     protected function showGhostDeath () :void
     {
+        _ghostDying = true;
         // cancel minigame
+        trace("cancelling minigame, should expect no more updates.");
         endMinigame();
 
         _ghost.die();
+        
+        endMinigame();
     }
 
     protected function handleGhostTriumph () :void
     {
         log.debug("calling _ghost.triumph()");
-        _ghost.triumph();
+        if( _player != null ) {
+            _player.shutdown();
+            _player.cancelCurrentGame();
+        }
+        log.debug("Should not be playing minigame code from now on");
+        _ghost.triumph(whitenPanelOnDeath);
     }
 
+    protected function whitenPanelOnDeath() :void
+    {
+        if( contains( _dimness )) {
+            removeChild( _dimness);
+        }
+        _ghost.visible = false;
+        graphics.beginFill(0xffffff);
+        graphics.drawRect(-700, -500, 3000, 2000);//HACK, I want it to cover the entire screen
+        graphics.endFill();
+        
+        _isWhite = true;
+        _startTimeForWhiteFlash = getTimer();
+        
+        
+    }
+    
     protected function showGhostDamage () :void
     {
         _ghost.damaged();
     }
+
+    //Some hackery for a flash of white after the ghost dies
+    protected var _isWhite :Boolean = false;
+    protected var _startTimeForWhiteFlash :int;
+    protected var _durationWhiteFlash :int = 1000; 
+    protected var _ghostDying :Boolean; //UTTER HACKERY, but why doesn't the minigame panel stop when the ghost dies?
+
 
     protected var _ghost :Ghost;
 

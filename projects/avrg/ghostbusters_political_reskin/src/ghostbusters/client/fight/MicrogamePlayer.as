@@ -38,7 +38,7 @@ public class MicrogamePlayer extends Sprite
     public function shutdown () :void
     {
         MainLoop.instance.stop();
-        AudioManager.instance.stopAllSounds();
+//        AudioManager.instance.stopAllSounds();
     }
 
     public function get weaponType () :WeaponType
@@ -54,10 +54,14 @@ public class MicrogamePlayer extends Sprite
         }
     }
 
-    public function beginNextGame () :Microgame
+    public function beginNextGame ( rotateToNextGame :Boolean = false) :Microgame
     {
         if (null == _weaponType) {
             throw new Error("weaponType must be set before the games can begin!");
+        }
+        
+        if(rotateToNextGame) {
+            nextWeaponType();
         }
 
         if (null != _currentGame) {

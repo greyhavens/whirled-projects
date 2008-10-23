@@ -44,9 +44,9 @@ public class Content
 //    public static const GHOST_DEMON :Class;
 
     // fonts
-    [Embed(source="../../../rsrc/Fonts/SunnySide.ttf", fontName="SunnySide",
-           unicodeRange="U+0020-U+007E,U+2022")]
-    public static const FONT_SUNNYSIDE :Class;
+//    [Embed(source="../../../rsrc/Fonts/SunnySide.ttf", fontName="SunnySide",
+//           unicodeRange="U+0020-U+007E,U+2022")]
+//    public static const FONT_SUNNYSIDE :Class;
 
     // audio
 //    [Embed(source="../../../rsrc/Sounds/473674_SOUNDDOGS_Am.mp3")]

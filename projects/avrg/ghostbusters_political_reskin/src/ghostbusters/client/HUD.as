@@ -87,7 +87,13 @@ public class HUD extends DraggableSprite
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
-            teamUpdated();
+            if (evt.name == Codes.PROP_STATE) {
+                updateGhostHealth();
+    
+            } else if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+                teamUpdated();
+    
+            }
         }
     }
 
@@ -180,7 +186,6 @@ public class HUD extends DraggableSprite
             //SKIN
 //            SimpleButton(_weaponButtons[ii]).visible = (ii == _weaponIx);
             MovieClip(_weaponButtons[ii]).visible = (ii == _weaponIx);
-            trace("button " + ii + " visible=" + MovieClip(_weaponButtons[ii]).visible);
         }
     }
 

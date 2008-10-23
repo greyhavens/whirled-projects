@@ -97,17 +97,17 @@ public class Ghost extends Sprite
 
     public function die (callback :Function = null) :void
     {
-        log.debug("Ghost dying", "next", _next);
         _callback = callback;
         _next = ST_DIE;
+        log.debug("Ghost dying", "next", _next);
     }
 
     public function triumph (callback :Function = null) :void
     {
         log.debug("Ghost triumphant", "next", _next);
 //        _next = ST_FIGHT;
-//        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
-        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, function () :void { handler.clip.visible = false; });//SKIN
+        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
+//        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, function () :void { handler.clip.visible = false;  });//SKIN
     }
 
     protected function setupUI () :void

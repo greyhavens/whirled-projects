@@ -65,7 +65,8 @@ public class DraggableSprite extends Sprite
 
     protected function handleFrame (evt :Event) :void
     {
-        if (_grab != null) {
+//        if (_grab != null) {
+        if (_grab != null && this.parent != null) {//SKIN
             var p :Point = new Point(this.parent.mouseX - _grab.x, this.parent.mouseY - _grab.y);
 
             if (_bounds != null) {
