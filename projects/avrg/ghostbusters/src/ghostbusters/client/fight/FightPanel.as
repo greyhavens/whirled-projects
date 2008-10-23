@@ -249,10 +249,7 @@ public class FightPanel extends FrameSprite
     protected function messageReceived (event: MessageReceivedEvent) :void
     {
         if (event.name == Codes.SMSG_GHOST_ATTACKED) {
-            var bits :Array = (event.value as Array);
-            if (bits != null && bits[2] > 0) {
-                showGhostDamage();
-            }
+            showGhostDamage();
 
         } else if (event.name == Codes.SMSG_PLAYER_ATTACKED) {
             _ghost.attack();
