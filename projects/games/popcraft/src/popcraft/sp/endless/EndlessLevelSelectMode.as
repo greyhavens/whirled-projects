@@ -324,7 +324,13 @@ class SaveView extends SceneObject
             // score text
             scoreText.text = "Score: " + StringUtil.formatNumber(save.score);
 
+            // elementsSprite contains all the visual elements of the save data -
+            // health/shields, infusions, and multipliers, spaced out from each other
+            var elementsSprite :Sprite = SpriteUtil.createSprite();
+            var elementLoc :Point = new Point(0, 0);
+
             // health/shield meters
+            var healthSprite :Sprite = SpriteUtil.createSprite();
             var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
             var healthMeter :RectMeterView = new RectMeterView();
             healthMeter.minValue = 0;
@@ -337,44 +343,82 @@ class SaveView extends SceneObject
             healthMeter.meterWidth = 80;
             healthMeter.meterHeight = 15;
             healthMeter.updateDisplay();
-            healthMeter.x = HEALTH_LOC.x;
-            healthMeter.y = HEALTH_LOC.y;
-            _movie.addChild(healthMeter);
+            healthSprite.addChild(healthMeter);
 
-            var shieldParent :Sprite = SpriteUtil.createSprite();
-            for (ii = 0; ii < save.multiplier - 1; ++ii) {
-                var shieldMeter :RectMeterView = new RectMeterView();
-                shieldMeter.minValue = 0;
-                shieldMeter.maxValue = 1;
-                shieldMeter.value = 1;
-                shieldMeter.foregroundColor = 0xFFFFFF;
-                shieldMeter.outlineColor = 0x000000;
-                shieldMeter.outlineSize = 2;
-                shieldMeter.meterWidth = 20;
-                shieldMeter.meterHeight = 15;
-                shieldMeter.updateDisplay();
-                shieldMeter.x = 20 * ii;
-                shieldParent.addChild(shieldMeter);
+            var numShields :int = save.multiplier - 1;
+            if (numShields > 0) {
+                var shieldSprite :Sprite = SpriteUtil.createSprite();
+                for (ii = 0; ii < numShields; ++ii) {
+                    var shieldMeter :RectMeterView = new RectMeterView();
+                    shieldMeter.minValue = 0;
+                    shieldMeter.maxValue = 1;
+                    shieldMeter.value = 1;
+                    shieldMeter.foregroundColor = 0xFFFFFF;
+                    shieldMeter.outlineColor = 0x000000;
+                    shieldMeter.outlineSize = 2;
+                    shieldMeter.meterWidth = 20;
+                    shieldMeter.meterHeight = 15;
+                    shieldMeter.updateDisplay();
+                    shieldMeter.x = 20 * ii;
+                    shieldSprite.addChild(shieldMeter);
+                }
+                shieldSprite.x = (healthSprite.width - shieldSprite.width) * 0.5;
+                shieldSprite.y = 0;
+                healthSprite.addChild(shieldSprite);
+
+                healthMeter.y = shieldSprite.height - 2;
             }
-            shieldParent.x = SHIELD_CENTER_LOC.x - (shieldParent.width * 0.5);
-            shieldParent.y = SHIELD_CENTER_LOC.y;
-            _movie.addChild(shieldParent);
 
-            // icons
-            this.drawIcons("multiplier", save.multiplier - 1, MULTIPLIER_START, MULTIPLIER_OFFSET);
-            this.drawIcons("infusion_bloodlust", save.spells[Constants.SPELL_TYPE_BLOODLUST], BLOODLUST_START, BLOODLUST_OFFSET);
-            this.drawIcons("infusion_rigormortis", save.spells[Constants.SPELL_TYPE_RIGORMORTIS], RIGORMORTIS_START, RIGORMORTIS_OFFSET);
-            this.drawIcons("infusion_shuffle", save.spells[Constants.SPELL_TYPE_PUZZLERESET], SHUFFLE_START, SHUFFLE_OFFSET);
+            healthSprite.x = elementLoc.x;
+            healthSprite.y = elementLoc.y - (healthSprite.height * 0.5);
+            elementsSprite.addChild(healthSprite);
+            elementLoc.x += healthSprite.width + ELEMENT_X_OFFSET;
+
+            // infusions
+            var blCount :int = save.spells[Constants.SPELL_TYPE_BLOODLUST];
+            var rmCount :int = save.spells[Constants.SPELL_TYPE_RIGORMORTIS];
+            var prCount :int = save.spells[Constants.SPELL_TYPE_PUZZLERESET];
+            if (blCount > 0 || rmCount > 0 || prCount > 0) {
+                var infusionSprite :Sprite = SpriteUtil.createSprite();
+
+                var loc :Point = new Point(0, 0);
+                this.drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
+                loc.x = infusionSprite.width + 2;
+                this.drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
+                loc.x = infusionSprite.width + 2;
+                this.drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
+
+                infusionSprite.x = elementLoc.x;
+                infusionSprite.y = elementLoc.y;
+                elementsSprite.addChild(infusionSprite);
+                elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
+            }
+
+            // multipliers
+            var numMultipliers :int = save.multiplier - 1;
+            if (numMultipliers > 0) {
+                var multiplierSprite :Sprite = SpriteUtil.createSprite();
+                loc = new Point(0, 0);
+                this.drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
+                multiplierSprite.x = elementLoc.x
+                multiplierSprite.y = elementLoc.y;
+                elementsSprite.addChild(multiplierSprite);
+            }
+
+            elementsSprite.x = ELEMENTS_CTR_LOC.x - (elementsSprite.width * 0.5);
+            elementsSprite.y = ELEMENTS_CTR_LOC.y;
+            _movie.addChild(elementsSprite);
         }
     }
 
-    protected function drawIcons (name :String, count :int, start :Point, offset :Point) :void
+    protected function drawIcons (sprite :Sprite, name :String, count :int, start :Point,
+        xOffset :Number) :void
     {
         for (var ii :int = count - 1; ii >= 0; --ii) {
             var icon :MovieClip = SwfResource.instantiateMovieClip("splashUi", name);
-            icon.x = start.x + (offset.x * ii);
-            icon.y = start.y + (offset.y * ii);
-            _movie.addChild(icon);
+            icon.x = start.x + (xOffset * ii);
+            icon.y = start.y;
+            sprite.addChild(icon);
         }
     }
 
@@ -412,16 +456,10 @@ class SaveView extends SceneObject
     protected static const PLAY_CENTER_LOC :Point = new Point(0, 185);
     protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
-    protected static const SHIELD_CENTER_LOC :Point = new Point(-219, -78);
-    protected static const HEALTH_LOC :Point = new Point(-260, -63);
-    protected static const MULTIPLIER_START :Point = new Point(-160, -64);
-    protected static const MULTIPLIER_OFFSET :Point = new Point(15, 0);
-    protected static const BLOODLUST_START :Point = new Point(-62, -64);
-    protected static const BLOODLUST_OFFSET :Point = new Point(15, 0);
-    protected static const RIGORMORTIS_START :Point = new Point(-2, -64);
-    protected static const RIGORMORTIS_OFFSET :Point = new Point(15, 0);
-    protected static const SHUFFLE_START :Point = new Point(58, -64);
-    protected static const SHUFFLE_OFFSET :Point = new Point(15, 0);
+    protected static const INFUSION_X_OFFSET :Number = 15;
+    protected static const MULTIPLIER_X_OFFSET :Number = 16;
+    protected static const ELEMENT_X_OFFSET :Number = 30;
+    protected static const ELEMENTS_CTR_LOC :Point = new Point(0, -63);
     protected static const OPPONENT_PORTRAITS_LOC :Point = new Point(0, -80);
     protected static const OPPONENT_PORTRAIT_X_OFFSET :Number = 20;
 }
