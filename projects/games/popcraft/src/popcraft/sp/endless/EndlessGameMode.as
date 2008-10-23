@@ -327,12 +327,12 @@ public class EndlessGameMode extends GameMode
 
     override public function isAvailableUnit (unitType :int) :Boolean
     {
-        return ArrayUtil.contains(_curMapData.availableUnits, unitType);
+        return ArrayUtil.contains(_localHumanPlayerData.availableUnits, unitType);
     }
 
     override public function get availableSpells () :Array
     {
-        return _curMapData.availableSpells;
+        return _localHumanPlayerData.availableSpells;
     }
 
     override public function get mapSettings () :MapSettingsData
@@ -351,35 +351,36 @@ public class EndlessGameMode extends GameMode
         // create PlayerInfos for the human players
         var numPlayers :int = SeatingManager.numExpectedPlayers;
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
             var playerDisplayData :PlayerDisplayData = GameContext.gameData.getPlayerDisplayData(
                     EndlessGameContext.level.humanPlayerNames[playerIndex]);
 
-            var baseLoc :BaseLocationData =
-                _curMapData.humanBaseLocs.get(playerDisplayData.dataName);
+            var humanPlayerData :EndlessHumanPlayerData =
+                _curMapData.humans.get(playerDisplayData.dataName);
 
             if (playerIndex == GameContext.localPlayerIndex) {
                 GameContext.playerInfos.push(new LocalPlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
-                    baseLoc,
+                    humanPlayerData.baseLoc,
                     workshopHealth,
                     workshopHealth,
                     false,
-                    1,
+                    humanPlayerData.resourceHandicap,
                     playerDisplayData.color,
                     playerDisplayData.displayName,
                     playerDisplayData.headshot));
+
+                _localHumanPlayerData = humanPlayerData;
 
             } else {
                 GameContext.playerInfos.push(new PlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
-                    baseLoc,
+                    humanPlayerData.baseLoc,
                     workshopHealth,
                     workshopHealth,
                     false,
-                    1,
+                    humanPlayerData.resourceHandicap,
                     playerDisplayData.color,
                     playerDisplayData.displayName,
                     playerDisplayData.headshot));
@@ -454,6 +455,7 @@ public class EndlessGameMode extends GameMode
     }
 
     protected var _curMapData :EndlessMapData;
+    protected var _localHumanPlayerData :EndlessHumanPlayerData;
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
     protected var _savedGame :SavedEndlessGame;

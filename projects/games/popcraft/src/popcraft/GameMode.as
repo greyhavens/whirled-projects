@@ -73,6 +73,10 @@ public class GameMode extends TransitionMode
         this.setupPlayers();
         this.setupDashboard();
 
+        // create the spell drop timer after setting up players; available
+        // spells may not be known until this point
+        GameContext.netObjects.addObject(new SpellDropTimer());
+
         _trophyWatcher = new TrophyWatcher();
 
         if (Constants.DEBUG_DRAW_STATS) {
@@ -239,8 +243,6 @@ public class GameMode extends TransitionMode
             diurnalMeter.y = DIURNAL_METER_LOC.y;
             this.addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
         }
-
-        GameContext.netObjects.addObject(new SpellDropTimer());
     }
 
     /**
