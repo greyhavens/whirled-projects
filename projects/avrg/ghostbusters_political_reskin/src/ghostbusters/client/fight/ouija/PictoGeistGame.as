@@ -28,7 +28,8 @@ public class PictoGeistGame extends MicrogameMode
 
         // choose a picture to draw
 //        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(difficulty, Math.min(difficulty + 5, Constants.PICTO_PICTURES.length), Rand.STREAM_COSMETIC)];
-        _picture = Constants.PICTO_PICTURES[Rand.nextIntRange(0,  Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC)];
+        _difficulty = Rand.nextIntRange(0,  Constants.PICTO_PICTURES.length, Rand.STREAM_COSMETIC);
+        _picture = Constants.PICTO_PICTURES[_difficulty];
     }
 
     override public function begin () :void
@@ -114,7 +115,7 @@ public class PictoGeistGame extends MicrogameMode
 
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
-            _gameResult.damageOutput = (success ? _settings.damageOutput : 0);
+            _gameResult.damageOutput = (success ? _settings.damageOutput + _difficulty: 0);
 
             _done = true;
         }
@@ -280,7 +281,7 @@ public class PictoGeistGame extends MicrogameMode
 
     protected static const DIFFICULTY_SETTINGS :Array = [
 
-        new PictoGeistSettings(7, 5),
+        new PictoGeistSettings(7, 4),
 
     ];
 
@@ -315,65 +316,66 @@ public class PictoGeistGame extends MicrogameMode
 ///*
 
 
-class ImageRecordMode extends AppMode
-{
-    override protected function setup () :void
-    {
-        _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFFFFFF, 1);
-
-//        this.modeSprite.addChild(new Content.IMAGE_PICTOBOARD);
-        this.modeSprite.addChild( SwfResource.getSwfDisplayRoot("iraq.board") );
-        this.modeSprite.addChild(_drawing);
-        this.modeSprite.addChild(_linePreview);
-
-        var doneButton :SimpleTextButton = new SimpleTextButton("Done");
-        this.modeSprite.addChild(doneButton);
-        doneButton.addEventListener(MouseEvent.MOUSE_DOWN, handleDone, false, 0, true);
-
-        this.modeSprite.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false, 0, true);
-        this.modeSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove, false, 0, true);
-    }
-
-    protected function handleMouseDown (e :MouseEvent) :void
-    {
-        var p :Vector2 = new Vector2(e.localX, e.localY);
-        if (_points.length == 0) {
-            _drawing.graphics.moveTo(p.x, p.y);
-        } else {
-            _drawing.graphics.lineTo(p.x, p.y);
-        }
-
-        _points.push(p);
-    }
-
-    protected function handleMouseMove (e :MouseEvent) :void
-    {
-        if (_points.length > 0) {
-            var lastPoint :Vector2 = _points[_points.length - 1];
-
-            _linePreview.graphics.clear();
-            _linePreview.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFF0000, 1);
-            _linePreview.graphics.moveTo(lastPoint.x, lastPoint.y);
-            _linePreview.graphics.lineTo(e.localX, e.localY);
-        }
-    }
-
-    protected function handleDone (e :MouseEvent) :void
-    {
-        trace("[");
-        for each (var p :Vector2 in _points) {
-            trace("    new Vector2(" + p.x + ", " + p.y + "),");
-        }
-        trace("],");
-
-        MainLoop.instance.popMode();
-    }
-
-    
-    protected var _points :Array = new Array();
-    protected var _drawing :Shape = new Shape();
-    protected var _linePreview :Shape = new Shape();
-}
+//class ImageRecordMode extends AppMode
+//{
+//    override protected function setup () :void
+//    {
+//        _drawing.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFFFFFF, 1);
+//
+////        this.modeSprite.addChild(new Content.IMAGE_PICTOBOARD);
+//        this.modeSprite.addChild( SwfResource.getSwfDisplayRoot("iraq.board") );
+//        this.modeSprite.addChild(_drawing);
+//        this.modeSprite.addChild(_linePreview);
+//
+//        var doneButton :SimpleTextButton = new SimpleTextButton("Done");
+//        this.modeSprite.addChild(doneButton);
+//        doneButton.addEventListener(MouseEvent.MOUSE_DOWN, handleDone, false, 0, true);
+//
+//        this.modeSprite.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown, false, 0, true);
+//        this.modeSprite.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove, false, 0, true);
+//    }
+//
+//    protected function handleMouseDown (e :MouseEvent) :void
+//    {
+//        var p :Vector2 = new Vector2(e.localX, e.localY);
+//        if (_points.length == 0) {
+//            _drawing.graphics.moveTo(p.x, p.y);
+//        } else {
+//            _drawing.graphics.lineTo(p.x, p.y);
+//        }
+//
+//        _points.push(p);
+//    }
+//
+//    protected function handleMouseMove (e :MouseEvent) :void
+//    {
+//        if (_points.length > 0) {
+//            var lastPoint :Vector2 = _points[_points.length - 1];
+//
+//            _linePreview.graphics.clear();
+//            _linePreview.graphics.lineStyle(Constants.PICTO_LINEWIDTH, 0xFF0000, 1);
+//            _linePreview.graphics.moveTo(lastPoint.x, lastPoint.y);
+//            _linePreview.graphics.lineTo(e.localX, e.localY);
+//        }
+//    }
+//
+//    protected function handleDone (e :MouseEvent) :void
+//    {
+//        trace("[");
+//        for each (var p :Vector2 in _points) {
+//            trace("    new Vector2(" + p.x + ", " + p.y + "),");
+//        }
+//        trace("],");
+//
+//        MainLoop.instance.popMode();
+//    }
+//
+//    
+//    protected var _points :Array = new Array();
+//    protected var _drawing :Shape = new Shape();
+//    protected var _linePreview :Shape = new Shape();
+//    protected var _difficulty :int;
+//}
 //*/
 
 
