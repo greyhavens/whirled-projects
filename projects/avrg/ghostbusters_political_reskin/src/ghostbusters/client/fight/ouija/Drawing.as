@@ -46,19 +46,20 @@ public class Drawing extends SceneObject
         // can we start drawing yet?
         if (null == _endTarget) {
             var delta1 :Vector2 = loc.subtract(_target1);
-            var delta2 :Vector2 = loc.subtract(_target2);
+//            var delta2 :Vector2 = loc.subtract(_target2);
 
             if (delta1.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
                 _points.push(loc);
                 _drawing.graphics.moveTo(loc.x, loc.y);
                 _endTarget = _target2;
                 dispatchEvent( new Event(STARTED_DRAWING));
-            } else if (delta2.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
-                _points.push(loc);
-                _drawing.graphics.moveTo(loc.x, loc.y);
-                _endTarget = _target1;
-                dispatchEvent( new Event(STARTED_DRAWING));
-            }
+            } 
+//            else if (delta2.lengthSquared <= (Constants.PICTO_TARGETRADIUS * Constants.PICTO_TARGETRADIUS)) {
+//                _points.push(loc);
+//                _drawing.graphics.moveTo(loc.x, loc.y);
+//                _endTarget = _target1;
+//                dispatchEvent( new Event(STARTED_DRAWING));
+//            }
 
             return;
         }
