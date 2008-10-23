@@ -77,7 +77,19 @@ public class Resources
         // gfx
         rm.queueResourceLoad("image", "endlessThumb", { embeddedClass: IMG_ENDLESSTHUMB });
 
-        rm.queueResourceLoad("swf", "ui",  { embeddedClass: SWF_UI });
+        rm.queueResourceLoad("image", "portrait_iris", { embeddedClass: IMG_PORTRAIT_IRIS });
+        rm.queueResourceLoad("image", "portrait_ivy", { embeddedClass: IMG_PORTRAIT_IVY });
+        rm.queueResourceLoad("image", "portrait_jack", { embeddedClass: IMG_PORTRAIT_JACK });
+        rm.queueResourceLoad("image", "portrait_pigsley", { embeddedClass: IMG_PORTRAIT_PIGSLEY });
+        rm.queueResourceLoad("image", "portrait_ralph", { embeddedClass: IMG_PORTRAIT_RALPH });
+        rm.queueResourceLoad("image", "portrait_weardd", { embeddedClass: IMG_PORTRAIT_WEARDD });
+        rm.queueResourceLoad("image", "portrait_dante", { embeddedClass: IMG_PORTRAIT_DANTE });
+        rm.queueResourceLoad("image", "portrait_eloise", { embeddedClass: IMG_PORTRAIT_ELOISE });
+        rm.queueResourceLoad("image", "portrait_horace", { embeddedClass: IMG_PORTRAIT_HORACE });
+        rm.queueResourceLoad("image", "portrait_ursula", { embeddedClass: IMG_PORTRAIT_URSULA });
+
+        rm.queueResourceLoad("swf", "splashUi", { embeddedClass: SWF_SPLASH_UI });
+        rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
         rm.queueResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
@@ -183,13 +195,6 @@ public class Resources
     public static const SP_LEVEL_PACK_RESOURCES :Array = [
         "manual",
         "boss",
-        "splashUi",
-        "portrait_iris",
-        "portrait_ivy",
-        "portrait_jack",
-        "portrait_pigsley",
-        "portrait_ralph",
-        "portrait_weardd",
     ];
 
     public static const PROLOGUE_RESOURCES :Array = [ "prologue" ];
@@ -203,11 +208,35 @@ public class Resources
     protected static const GAME_VARIANTS_DATA :Class;
 
     // gfx - all
+    [Embed(source="../../rsrc/all/iris.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_IRIS :Class;
+    [Embed(source="../../rsrc/all/ivy.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_IVY :Class;
+    [Embed(source="../../rsrc/all/jack.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_JACK :Class;
+    [Embed(source="../../rsrc/all/pigsley.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_PIGSLEY :Class;
+    [Embed(source="../../rsrc/all/RALPH.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_RALPH :Class;
+    [Embed(source="../../rsrc/all/weardd.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_WEARDD :Class;
+    [Embed(source="../../rsrc/all/dante.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_DANTE :Class;
+    [Embed(source="../../rsrc/all/eloise.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_ELOISE :Class;
+    [Embed(source="../../rsrc/all/horace.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_HORACE :Class;
+    [Embed(source="../../rsrc/all/ursula.png", mimeType="application/octet-stream")]
+    protected static const IMG_PORTRAIT_URSULA :Class;
+
+    [Embed(source="../../rsrc/all/splash_UI.swf", mimeType="application/octet-stream")]
+    protected static const SWF_SPLASH_UI :Class;
+
     [Embed(source="../../rsrc/all/endless_1_thumb.png", mimeType="application/octet-stream")]
     protected static const IMG_ENDLESSTHUMB :Class;
 
     [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
-    protected static const SWF_UI :Class;
+    protected static const SWF_UIBITS :Class;
 
     [Embed(source="../../rsrc/all/backgrounds.swf", mimeType="application/octet-stream")]
     protected static const SWF_BG :Class;

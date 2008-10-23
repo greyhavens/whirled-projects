@@ -24,7 +24,7 @@ public class UIBits
 
     public static function createFrame (width :Number, height :Number) :Sprite
     {
-        var frame :MovieClip = SwfResource.instantiateMovieClip("ui", "frame_UI", true);
+        var frame :MovieClip = SwfResource.instantiateMovieClip("uiBits", "frame_UI", true);
         frame.scaleX = width / frame.width;
         frame.scaleY = height / frame.height;
 
@@ -53,7 +53,7 @@ public class UIBits
     public static function createText (text :String, textScale :Number = 1, maxWidth :int = 0,
         textColor :uint = 0, align :String = TextFormatAlign.CENTER) :TextField
     {
-        var textClip :MovieClip = SwfResource.instantiateMovieClip("ui", "text_UI");
+        var textClip :MovieClip = SwfResource.instantiateMovieClip("uiBits", "text_UI");
         var tf :TextField = textClip["text"];
         textClip.removeChild(tf);
 
@@ -65,7 +65,7 @@ public class UIBits
     public static function createTitleText (text :String, textScale :Number = 1,
         maxWidth :int = 0, align :String = TextFormatAlign.CENTER) :TextField
     {
-        var textClip :MovieClip = SwfResource.instantiateMovieClip("ui", "title_UI");
+        var textClip :MovieClip = SwfResource.instantiateMovieClip("uiBits", "title_UI");
         var tf :TextField = textClip["title_text"];
         initTextField(tf, text, textScale, maxWidth, -1, align);
 
@@ -83,7 +83,7 @@ public class UIBits
 
         var tf :TextField = createText(text, textScale, maxWidth, textColor, align);
 
-        var panel :MovieClip = SwfResource.instantiateMovieClip("ui", "panel_UI");
+        var panel :MovieClip = SwfResource.instantiateMovieClip("uiBits", "panel_UI");
 
         panel.width = (tf.width + (hMargin * 2));
         panel.height = (tf.height + (vMargin * 2));
@@ -153,7 +153,7 @@ public class UIBits
     protected static function makeButtonFace (face :int, text :String, textScale :Number,
         width :Number) :DisplayObject
     {
-        var buttonUi :MovieClip = SwfResource.instantiateMovieClip("ui", "button_UI");
+        var buttonUi :MovieClip = SwfResource.instantiateMovieClip("uiBits", "button_UI");
 
         var tf :TextField = buttonUi["button_text"];
         tf.multiline = false;
