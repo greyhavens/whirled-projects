@@ -2,6 +2,7 @@ package world
 {
 	import flash.events.EventDispatcher;
 	
+	import world.level.LevelEvent;
 	import world.level.LevelRegister;	
 	
 	/**
@@ -34,12 +35,16 @@ package world
 		{
 			// construct the player object.
 			const player:Player = new Player(id);
-		    
+			
+			// redispatch events from players
+		    player.addEventListener(LevelEvent.LEVEL_ENTERED, dispatchEvent);
+		    player.addEventListener(PlayerEvent.MOVE_COMPLETED, dispatchEvent);
+		    		    
 		    // register the player and place them on the first level.
             _levels.playerEnters(player);
             _players.register(player);
             return player;
-		}
+		}		
 		
 		protected var _levels:LevelRegister;
 		protected var _players:PlayerRegister;
