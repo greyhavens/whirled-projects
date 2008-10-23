@@ -61,8 +61,10 @@ public class LevelOutroMode extends AppMode
 
             // if it's not the last level, display a "Continue playing?" text
             if (!AppContext.levelMgr.isLastLevel) {
-                var tfMessage :DisplayObject = UIBits.createText(
-                    "Your progress has been saved.\nContinue playing?", 1, WIDTH - 30);
+                var saveGameMessage :String = (SeatingManager.isLocalPlayerGuest ?
+                    "Create an account on Whirled to save your progress!\nContinue playing?" :
+                    "Your progress has been saved.\nContinue playing?");
+                var tfMessage :DisplayObject = UIBits.createText(saveGameMessage, 1, WIDTH - 30);
                 tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
                 tfMessage.y = tfScore.y + tfScore.height + 11;
                 bgSprite.addChild(tfMessage);

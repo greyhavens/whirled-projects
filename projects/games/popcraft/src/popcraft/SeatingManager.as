@@ -6,7 +6,6 @@ import com.whirled.game.OccupantChangedEvent;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
-import flash.display.Sprite;
 
 public class SeatingManager
 {
@@ -56,6 +55,12 @@ public class SeatingManager
     public static function get localPlayerOccupantId () :int
     {
         return getPlayerOccupantId(_localPlayerSeat);
+    }
+
+    public static function get isLocalPlayerGuest () :Boolean
+    {
+        // NB: this won't return true until Whirled games are given memberIds
+        return (localPlayerOccupantId < 0);
     }
 
     public static function isPlayerPresent (playerSeat :int) :Boolean
