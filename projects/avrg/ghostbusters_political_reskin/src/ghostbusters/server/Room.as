@@ -140,12 +140,14 @@ public class Room
 
         switch(_state) {
         case Codes.STATE_SEEKING:
-            seekTick(frame, newSecond);
+            if( !isEverybodyDead()) {
+                seekTick(frame, newSecond);
+            }
             break;
 
         case Codes.STATE_APPEARING:
             // let's add a 2-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 3) {
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
                 if (_transitionFrame == 0) {
                     log.warning("In APPEAR without transitionFrame", "id", roomId);
                 }
@@ -161,7 +163,7 @@ public class Room
         case Codes.STATE_GHOST_TRIUMPH:
         case Codes.STATE_GHOST_DEFEAT:
             // let's add a 2-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 3) {
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
                 if (_transitionFrame == 0) {
                     log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
                 }
@@ -328,7 +330,7 @@ public class Room
         _ghost.setPosition(x, y);
 
         // do a ghost tick
-        _ghost.tick(frame);
+        _ghost.tick(frame / Server.FRAMES_PER_SECOND);
     }
 
     protected function fightTick (frame :int, newSecond :Boolean) :void
@@ -352,7 +354,7 @@ public class Room
         if (isEverybodyDead()) {
             setState(Codes.STATE_GHOST_TRIUMPH);
             // schedule a transition
-            _transitionFrame = frame + _ghost.definition.triumphFrames;
+            _transitionFrame = frame + _ghost.definition.triumphFrames;//SKIN we are not seeing the triumph scenes
             return;
         }
 
@@ -361,7 +363,8 @@ public class Room
         }
 
         // if ghost is alive and at least one player is still up, do a ghost tick
-        _ghost.tick(frame);
+        _ghost.tick(frame / Server.FRAMES_PER_SECOND);
+
     }
 
     protected function ghostFullyAppeared () :void
@@ -385,39 +388,13 @@ public class Room
             if (_state == Codes.STATE_GHOST_TRIUMPH) {
                 // heal ghost
                 _ghost.heal();
+                log.debug( "healing ghost");
 
             } else {
                 // delete ghost
-                
-//                trace("ghostFullyGone()");
-//                trace("getTeam()=" + getTeam() );
-//                //SKIN
-//                //Reset kill count so we don't fight another boss right away
-//                var player :Player;
-//                if( _ghost.definition.id == GhostDefinition.GHOST_MUTANT) {
-//                    for each ( player in getTeam() ) {
-//                        if(player != null) {
-//                            player.killedGhosts = 0;
-//                        }
-//                    }
-//                }
-//                else
-//                {
-//                    for each ( player in getTeam()) {
-//                        if(player != null) {
-//                            player.killedGhosts++;
-//                        }
-//                    }
-//                }
-                
-                
                 payout();
                 healTeam();
                 terminateGhost();
-                
-                
-        
-        
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -539,10 +516,6 @@ public class Room
     }
 
 
-    protected function isBossRoom () :Boolean
-    {
-        return false;
-    }
     protected function loadOrSpawnGhost () :void
     {
         var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
@@ -624,10 +597,7 @@ public class Room
     }
     
     
-    protected function isOnePlayerOneBossAwayFromLevelUp() :Boolean
-    {
-        return true;    
-    }
+    
 
     protected var _ctrl :RoomSubControlServer;
 

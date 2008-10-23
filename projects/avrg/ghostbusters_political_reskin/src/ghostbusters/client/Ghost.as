@@ -55,6 +55,7 @@ public class Ghost extends Sprite
     public function appear () :int
     {
         return handler.gotoScene(GamePanel.ST_GHOST_APPEAR, function () :String {
+            handler.clip.visible = true;
             // stay in FIGHT state for the brief period until the entire SeekPanel disappears
             return GamePanel.ST_GHOST_FIGHT;
         });
@@ -74,6 +75,7 @@ public class Ghost extends Sprite
 
     public function fighting () :void
     {
+        handler.clip.visible = true;
         _next = ST_FIGHT;
         play();
     }
@@ -82,6 +84,7 @@ public class Ghost extends Sprite
     {
         log.debug("Ghost damaged", "next", _next);
         _next = ST_FIGHT;
+//        _next = ST_REEL;
         handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
     }
 
@@ -102,7 +105,9 @@ public class Ghost extends Sprite
     public function triumph (callback :Function = null) :void
     {
         log.debug("Ghost triumphant", "next", _next);
-        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
+//        _next = ST_FIGHT;
+//        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
+        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, function () :void { handler.clip.visible = false; });//SKIN
     }
 
     protected function setupUI () :void
@@ -133,18 +138,21 @@ public class Ghost extends Sprite
     protected function play () :void
     {
         if (_next == ST_FIGHT) {
+            log.info("gotoScene " + GamePanel.ST_GHOST_FIGHT);
             handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
 
         } else if (_next == ST_REEL) {
+            log.info("gotoScene " + GamePanel.ST_GHOST_REEL);
             _next = ST_FIGHT;
             handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
 
         } else if (_next == ST_ATTACK) {
             _next = ST_FIGHT;
-            log.info("RETALIATING!! ");
+            log.info("gotoScene " + GamePanel.ST_GHOST_RETALIATE);
             handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
 
         } else if (_next == ST_DIE) {
+            log.info("gotoScene " + GamePanel.ST_GHOST_DEFEAT);
             handler.gotoScene(GamePanel.ST_GHOST_DEFEAT, _callback);
 
         } else {
