@@ -527,7 +527,7 @@ public class Room
             var rnd :Number = roomRandom.nextNumber();
 
             // the base is in [1, 5] and low level ghosts are more common than high level ones
-            var levelBase :int = int(1 + 5*rnd*rnd);
+            var levelBase :int = int(1 + 9*rnd*rnd);
 
             // the actual level is the base plus a random stretch of 0 or 1
             var level :int = levelBase + Server.random.nextInt(2);
@@ -569,6 +569,6 @@ public class Room
     protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_SECONDS :int = 600;
+    protected static const GHOST_RESPAWN_SECONDS :int = 60;
 }
 }
