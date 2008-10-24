@@ -18,8 +18,11 @@ public class BoardTimer extends SceneObject
         _swf = (SwfResource.getSwfDisplayRoot("ouija.timer") as MovieClip);
         _swf.mouseEnabled = false;
         _swf.mouseChildren = false;
-        _swf.x = TIMER_LOC.x;
-        _swf.y = TIMER_LOC.y;
+//        _swf.x = TIMER_LOC.x;
+//        _swf.y = TIMER_LOC.y;
+        
+        _swf.x = MicrogameConstants.GAME_WIDTH/2 - _swf.width/2;
+        _swf.y = MicrogameConstants.GAME_HEIGHT - _swf.height;
     }
 
     override protected function update (dt :Number) :void
