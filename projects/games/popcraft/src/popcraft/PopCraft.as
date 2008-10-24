@@ -75,6 +75,7 @@ public class PopCraft extends Sprite
         AppContext.userCookieMgr.addDataSource(AppContext.levelMgr);
         AppContext.userCookieMgr.addDataSource(AppContext.globalPlayerStats);
         AppContext.userCookieMgr.addDataSource(AppContext.endlessLevelMgr);
+        AppContext.userCookieMgr.addDataSource(AppContext.prizeMgr);
 
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
@@ -173,6 +174,11 @@ class LoadingMode extends GenericLoadingMode
         } else {
             GameContext.gameType = GameContext.GAME_TYPE_STORY;
             LevelSelectMode.create();
+        }
+
+        // award a prize to players that have purchased the game
+        if (AppContext.hasPremiumLevelPack) {
+            AppContext.prizeMgr.awardPremiumPrize();
         }
     }
 
