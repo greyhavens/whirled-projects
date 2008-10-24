@@ -118,7 +118,11 @@ public class HueAndCryGame extends MicrogameMode
 
         for (var i :uint = 0; i < 3; ++i) {
             var dropper :Dropper = new Dropper(dropperColors[i], droppers[i]);
-            (dropper.displayObject as InteractiveObject).addEventListener(MouseEvent.MOUSE_DOWN, this.createDropperClickHandler(dropper));
+            this.registerListener(
+                (dropper.displayObject as InteractiveObject),
+                MouseEvent.MOUSE_DOWN,
+                this.createDropperClickHandler(dropper));
+
             this.addObject(dropper);
 
             // tint the drop
