@@ -228,6 +228,7 @@ import popcraft.ui.UIBits;
 import popcraft.ui.RectMeterView;
 import popcraft.ui.HealthMeters;
 import popcraft.util.MyStringUtil;
+import com.threerings.flash.DisplayUtil;
 
 class SaveView extends SceneObject
 {
@@ -369,8 +370,7 @@ class SaveView extends SceneObject
                 healthMeter.y = shieldSprite.height - 2;
             }
 
-            healthSprite.x = elementLoc.x;
-            healthSprite.y = elementLoc.y - (healthSprite.height * 0.5);
+            DisplayUtil.positionBounds(healthSprite, elementLoc.x, elementLoc.y - (healthSprite.height * 0.5));
             elementsSprite.addChild(healthSprite);
             elementLoc.x += healthSprite.width + ELEMENT_X_OFFSET;
 
@@ -388,8 +388,7 @@ class SaveView extends SceneObject
                 loc.x = infusionSprite.width + 2;
                 this.drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
 
-                infusionSprite.x = elementLoc.x;
-                infusionSprite.y = elementLoc.y;
+                DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
                 elementsSprite.addChild(infusionSprite);
                 elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
             }
@@ -400,8 +399,7 @@ class SaveView extends SceneObject
                 var multiplierSprite :Sprite = SpriteUtil.createSprite();
                 loc = new Point(0, 0);
                 this.drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
-                multiplierSprite.x = elementLoc.x
-                multiplierSprite.y = elementLoc.y;
+                DisplayUtil.positionBounds(multiplierSprite, elementLoc.x, elementLoc.y - (multiplierSprite.height * 0.5));
                 elementsSprite.addChild(multiplierSprite);
             }
 
