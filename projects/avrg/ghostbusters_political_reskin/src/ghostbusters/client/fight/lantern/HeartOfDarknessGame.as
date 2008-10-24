@@ -350,7 +350,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         new HeartOfDarknessSettings(
             8,     // game time
             3,      // heart shine time
-            80,     // lantern beam radius
+            120,     // lantern beam radius
             20,     // heart radius
             1.5,     // ghost scale
             7      // damage output
@@ -359,7 +359,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         new HeartOfDarknessSettings(
             8,     // game time
             3,      // heart shine time
-            80,     // lantern beam radius
+            120,     // lantern beam radius
             20,     // heart radius
             1.7,     // ghost scale
             12      // damage output
@@ -368,7 +368,7 @@ public class HeartOfDarknessGame extends MicrogameMode
         new HeartOfDarknessSettings(
             8,     // game time
             3,      // heart shine time
-            80,     // lantern beam radius
+            120,     // lantern beam radius
             20,     // heart radius
             2.0,     // ghost scale
             20      // damage output
