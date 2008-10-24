@@ -136,7 +136,7 @@ public class Trophies
     protected static function bumpProp (player :Player, prop :String) :int
     {
         var num :int = int(player.ctrl.props.get(prop));
-        player.ctrl.props.set(Codes.prop, num + 1, true);
+        player.ctrl.props.set(prop, num + 1, true);
         return num;
     }
 

@@ -137,6 +137,11 @@ public class Codes
     public static const SMSG_DEBUG_RESPONSE :String = "dbg";
 
     /**
+     * The agent orders you to display a reboot warning.
+     */
+    public static const SMSG_REBOOT_WARNING :String = "rbw";
+
+    /**
      * The prefix for the PLAYER dictionary container which summarizes the current state
      * of a player in a room (currently health and max health). The full room property name
      * is constructed by appending the player's numerical id.
@@ -326,6 +331,7 @@ public class Codes
     public static const DBG_LEVEL_DOWN :String = "ld";
     public static const DBG_RESET_ROOM :String = "rr";
     public static const DBG_END_STATE :String = "es";
+    public static const DBG_REBOOT_WARNING :String = "rw";
 
     /** Trophy related per-player properties. */
     public static const PROP_MINIGAME_PREFIX :String = NetConstants.makePersistent("minigame_");

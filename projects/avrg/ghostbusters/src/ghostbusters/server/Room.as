@@ -53,6 +53,11 @@ public class Room
         return _state;
     }
 
+    public function get isShutdown () :Boolean
+    {
+        return _errorCount > 20;
+    }
+
     public function getMinigameStats (playerId :int) :Dictionary
     {
         return _minigames[playerId];
@@ -150,42 +155,28 @@ public class Room
 
     public function tick (frame :int, newSecond :Boolean) :void
     {
+        // if we're shut down due to excessive errors, do nothing
+        if (isShutdown) {
+            return;
+        }
+
         // if there are no players in this room, we cannot assume it's loaded, so do nothing
         if (_ctrl.getPlayerIds().length == 0) {
             return;
         }
 
-        switch(_state) {
-        case Codes.STATE_SEEKING:
-            seekTick(frame, newSecond);
-            break;
+        try {
+            _tick(frame, newSecond);
 
-        case Codes.STATE_APPEARING:
-            if (_transitionFrame == 0) {
-                log.warning("In APPEAR without transitionFrame", "id", roomId);
-            }
-            // let's add a 1-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
-                ghostFullyAppeared();
-                _transitionFrame = 0;
-            }
-            break;
+        } catch (e :Error) {
+            log.error("Tick error", e);
 
-        case Codes.STATE_FIGHTING:
-            fightTick(frame, newSecond);
-            break;
-
-        case Codes.STATE_GHOST_TRIUMPH:
-        case Codes.STATE_GHOST_DEFEAT:
-            if (_transitionFrame == 0) {
-                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
+            _errorCount ++;
+            if (isShutdown) {
+                log.info("Giving up on room tick() due to error overflow", "roomId", roomId);
+                reset();
+                return;
             }
-            // let's add a 1-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
-                ghostFullyGone();
-                _transitionFrame = 0;
-            }
-            break;
         }
     }
 
@@ -255,7 +246,7 @@ public class Room
     internal function reset () :void
     {
         healTeam();
-        terminateGhost();
+        terminateGhost(false);
         _stats = new Dictionary();
         _minigames = new Dictionary();
         setState(Codes.STATE_SEEKING);
@@ -304,6 +295,42 @@ public class Room
             }
         }
         return true;
+    }
+
+    protected function _tick (frame :int, newSecond :Boolean) :void
+    {
+        switch(_state) {
+        case Codes.STATE_SEEKING:
+            seekTick(frame, newSecond);
+            break;
+
+        case Codes.STATE_APPEARING:
+            if (_transitionFrame == 0) {
+                log.warning("In APPEAR without transitionFrame", "id", roomId);
+            }
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
+                ghostFullyAppeared();
+                _transitionFrame = 0;
+            }
+            break;
+
+        case Codes.STATE_FIGHTING:
+            fightTick(frame, newSecond);
+            break;
+
+        case Codes.STATE_GHOST_TRIUMPH:
+        case Codes.STATE_GHOST_DEFEAT:
+            if (_transitionFrame == 0) {
+                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
+            }
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
+                ghostFullyGone();
+                _transitionFrame = 0;
+            }
+            break;
+        }
     }
 
     protected function seekTick (frame :int, newSecond :Boolean) :void
@@ -405,7 +432,7 @@ public class Room
                 // delete ghost
                 payout();
                 healTeam();
-                terminateGhost();
+                terminateGhost(false);
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -557,11 +584,15 @@ public class Room
         _nextGhost = 0;
     }
 
-    protected function terminateGhost () :void
+    protected function terminateGhost (immediateRespawn :Boolean) :void
     {
         _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
-        _nextGhost = getTimer() + 1000 * GHOST_RESPAWN_SECONDS;
+        if (immediateRespawn) {
+            _nextGhost = 0;
+        } else {
+            _nextGhost = getTimer() + 1000 * 60 * GHOST_RESPAWN_MINUTES;
+        }
     }
 
     protected var _ctrl :RoomSubControlServer;
@@ -579,6 +610,8 @@ public class Room
     protected var _nextZap :int = 0;
     protected var _transitionFrame :int = 0;
 
+    protected var _errorCount :int = 0;
+
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
     protected var _stats :Dictionary = new Dictionary();
 
@@ -586,6 +619,6 @@ public class Room
     protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_SECONDS :int = 60;
+    protected static const GHOST_RESPAWN_MINUTES :int = 1;
 }
 }
