@@ -72,7 +72,7 @@ public class Trophies
 
         // then trophies you get even if you died in battle
         for (var ii :int = 0; ii < fullTeam.length; ii ++) {
-            var player :Player = Player(liveTeam[ii]);
+            var player :Player = Player(fullTeam[ii]);
             
 //            if( player.level >= 1) {
 ////                if( doAward( player, TROPHY_LEVEL_1) ) {
