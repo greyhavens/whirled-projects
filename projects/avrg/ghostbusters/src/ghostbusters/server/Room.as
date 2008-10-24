@@ -11,6 +11,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
+import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
 
 import ghostbusters.data.Codes;
@@ -63,6 +64,22 @@ public class Room
 
         for (var p :* in _players) {
             var player :Player = Player(p);
+
+            /* TODO: BEGIN SANITY CHECK */
+            var subctrl :PlayerSubControlServer = Server.control.getPlayer(player.playerId);
+            if (subctrl == null || subctrl.getRoomId() != roomId) {
+                if (subctrl == null) {
+                    log.warning("Removing unknown player in getTeam()", "teamRoomId", roomId,
+                                "playerId", player.playerId);
+                } else {
+                    log.warning("Removing misfiled player in getTeam()", "teamRoomId", roomId,
+                                "playerId", player.playerId, "playerRoomId", subctrl.getRoomId);
+                }
+                delete _players[player];
+                continue;
+            }
+            /* TODO: END SANITY CHECK */
+
             if (!player.playing) {
                 continue;
             }
