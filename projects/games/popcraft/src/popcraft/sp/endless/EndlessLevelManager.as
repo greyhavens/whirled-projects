@@ -54,32 +54,16 @@ public class EndlessLevelManager
 
     public function writeCookieData (cookie :ByteArray) :void
     {
-        writeSavedGames(_savedSpGames);
-        writeSavedGames(_savedMpGames);
-
-        function writeSavedGames (saves :Array) :void {
-            cookie.writeShort(saves.length);
-            for each (var save :SavedEndlessGame in saves) {
-                save.toBytes(cookie);
-            }
-        }
+        _savedSpGames.toBytes(cookie);
+        _savedMpGames.toBytes(cookie);
     }
 
     public function readCookieData (version :int, cookie :ByteArray) :void
     {
         this.resetSavedData();
 
-        readSavedGames(_savedSpGames);
-        readSavedGames(_savedMpGames);
-
-        function readSavedGames (saves :Array) :void {
-            var numSaves :int = cookie.readShort();
-            for (var ii :int = 0; ii < numSaves; ++ii) {
-                var save :SavedEndlessGame = new SavedEndlessGame();
-                save.fromBytes(cookie);
-                saves.push(save);
-            }
-        }
+        _savedSpGames.fromBytes(cookie);
+        _savedMpGames.fromBytes(cookie);
     }
 
     public function get minCookieVersion () :int
