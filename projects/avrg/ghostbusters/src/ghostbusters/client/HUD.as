@@ -277,8 +277,8 @@ public class HUD extends DraggableSprite
             }
 
             setPlayerHealth(
-                teamIx, Game.relative(PlayerModel.getHealth(players[teamIx]),
-                                      PlayerModel.getMaxHealth(players[teamIx])),
+                hudIx, Game.relative(PlayerModel.getHealth(players[teamIx]),
+                                     PlayerModel.getMaxHealth(players[teamIx])),
                 players[teamIx] == Game.ourPlayerId);
             panel.namePlate.visible = true;
             panel.namePlate.text = info.name;
@@ -308,7 +308,12 @@ public class HUD extends DraggableSprite
         // TODO: make use of all 100 frames!
         var frame :int = 99 - 98 * MathUtil.clamp(health, 0, 1);
 
-        var bar :MovieClip = _playerPanels[ix].healthBar;
+        var panel :PlayerPanel = _playerPanels[ix];
+        if (panel == null) {
+            log.warning("Missing PlayerPanel", "ix", ix);
+            return;
+        }
+        var bar :MovieClip = panel.healthBar;
         bar.visible = true;
         bar.gotoAndStop(frame);
 //        log.debug("Moved " + bar.name + " to frame #" + frame);
