@@ -19,6 +19,7 @@ import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
 import popcraft.sp.UnitAnimTestMode;
 import popcraft.sp.endless.EndlessLevelSelectMode;
+import popcraft.sp.endless.EndlessLevelSelectModeBase;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
@@ -257,8 +258,7 @@ public class LevelSelectMode extends DemoGameMode
         if (!AppContext.isEndlessModeUnlocked) {
             AppContext.mainLoop.pushMode(new UpsellMode());
         } else {
-            AppContext.mainLoop.pushMode(
-                new EndlessLevelSelectMode(EndlessLevelSelectMode.LEVEL_SELECT_MODE));
+            AppContext.mainLoop.pushMode(new EndlessLevelSelectMode());
         }
     }
 
