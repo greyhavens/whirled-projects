@@ -281,17 +281,23 @@ class SaveView extends SceneObject
             _movie.addChild(cycleSprite);
         }
 
-        // play button
-        _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
-        _playButton.x = PLAY_CENTER_LOC.x - (_playButton.width * 0.5);
-        _playButton.y = PLAY_CENTER_LOC.y - (_playButton.height * 0.5);
-        _movie.addChild(_playButton);
+        // buttons
+        var buttonSprite :Sprite = SpriteUtil.createSprite(true);
 
-        // back button
-        _backButton = UIBits.createButton("Main Menu", 1.2);
-        _backButton.x = BACK_LOC.x;
-        _backButton.y = BACK_LOC.y;
-        _movie.addChild(_backButton);
+        _backButton = UIBits.createButton("Quit", 1.5);
+        DisplayUtil.positionBounds(_backButton, 0, -backButton.height * 0.5);
+        buttonSprite.addChild(_backButton);
+
+        _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
+        DisplayUtil.positionBounds(_playButton,
+            buttonSprite.width + BUTTON_X_OFFSET,
+            -_playButton.height * 0.5);
+        buttonSprite.addChild(_playButton);
+
+        DisplayUtil.positionBounds(buttonSprite,
+            BUTTONS_CTR_LOC.x - (buttonSprite.width * 0.5),
+            BUTTONS_CTR_LOC.y - (buttonSprite.height * 0.5));
+        _movie.addChild(buttonSprite);
 
         // stats
         var statPanel :MovieClip = _movie["stat_panel"];
@@ -472,8 +478,8 @@ class SaveView extends SceneObject
     protected var _playButton :SimpleButton;
     protected var _backButton :SimpleButton;
 
-    protected static const BACK_LOC :Point = new Point(-330, 179);
-    protected static const PLAY_CENTER_LOC :Point = new Point(0, 185);
+    protected static const BUTTONS_CTR_LOC :Point = new Point(0, 180);
+    protected static const BUTTON_X_OFFSET :Number = 15;
     protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
     protected static const INFUSION_X_OFFSET :Number = 15;
