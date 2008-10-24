@@ -41,8 +41,11 @@ public class GamePanel extends Sprite
             _frame = frame;
         });
 
+        Game.control.game.addEventListener(
+            MessageReceivedEvent.MESSAGE_RECEIVED, gameMessageReceived);
+
         Game.control.player.addEventListener(
-            MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            MessageReceivedEvent.MESSAGE_RECEIVED, playerMessageReceived);
         Game.control.player.props.addEventListener(
             PropertyChangedEvent.PROPERTY_CHANGED, playerPropertyChanged);
         Game.control.player.addEventListener(
@@ -233,7 +236,16 @@ public class GamePanel extends Sprite
         updateState(false);
     }
 
-    protected function messageReceived (evt: MessageReceivedEvent) :void
+    protected function gameMessageReceived (evt: MessageReceivedEvent) :void
+    {
+        if (evt.name == Codes.SMSG_REBOOT_WARNING) {
+            var warning :Sprite = new RebootWarning();
+            this.addChild(warning);
+            warning.x = warning.y = 200;
+        }
+    }
+
+    protected function playerMessageReceived (evt: MessageReceivedEvent) :void
     {
         if (evt.name == Codes.SMSG_DEBUG_RESPONSE && evt.value == Codes.DBG_GIMME_PANEL) {
             if (_debugPanel != null) {

@@ -34,6 +34,7 @@ public class DebugPanel extends Sprite
         _bits.addButton("Lev-", false, function () :void { dbg(Codes.DBG_LEVEL_DOWN); });
         _bits.addButton("Skip", true, function () :void { dbg(Codes.DBG_END_STATE); });
         _bits.addButton("Reset", true, function () :void { dbg(Codes.DBG_RESET_ROOM); });
+        _bits.addButton("BootWarn", true, function () :void { dbg(Codes.DBG_REBOOT_WARNING); });
 
         updateDisplay();
     }
