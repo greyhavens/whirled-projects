@@ -22,7 +22,6 @@ public class MicrogameMode extends AppMode
 
     override public function update(dt:Number):void
     {
-        trace(" updating MicrogameMode)");
         super.update(dt);
     }
     public function get context () :MicrogameContext
