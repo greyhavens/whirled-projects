@@ -2,6 +2,8 @@ package client
 {
 	import cells.CellBase;
 	
+	import client.player.Player;
+	
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -82,7 +84,7 @@ package client
 			return _objective;
 		}
 
-		public function set player (player:LocalPlayer) :void
+		public function set player (player:Player) :void
 		{
 			_objective.player = player;
 		}

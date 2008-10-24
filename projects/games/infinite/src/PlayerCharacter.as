@@ -53,17 +53,7 @@ package
 				fall();
 			}
 		}
-						
-		/**
-		 * Sets the objective in which this player is situated.
-		 */
-		public function set objective (objective:Objective) :void
-		{
-			_objective = objective;
-			_cell = objective.getPlayerStartPosition();
-			_objective.addEventListener(CellEvent.CELL_REPLACED, handleCellChanged);
-		}
-		
+							
 		protected function handleCellChanged (event:CellEvent) :void
 		{
 			if (_cell != null && _cell.position.equals(event.cell.position)) {

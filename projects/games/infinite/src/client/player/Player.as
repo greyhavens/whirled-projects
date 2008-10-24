@@ -1,16 +1,20 @@
-package client
+package client.player
 {
 	import arithmetic.BoardCoordinates;
 	
-	import world.Cell;
-	import world.board.BoardAccess;
+	import client.Client;
+	import client.Objective;
 	
-	public class RemotePlayer implements Player
+	import flash.events.EventDispatcher;
+	
+	import world.Cell;
+	
+	public class Player extends EventDispatcher 
 	{
 		public var id:int;
 		public var level:int;
 		
-		public function RemotePlayer (client:Client, id:int)
+		public function Player (client:Client, id:int)
 		{
 			_client = client;
 			this.id = id;
@@ -20,18 +24,14 @@ package client
 		{
 			this.level = level;
 			_position = position;
+			dispatchEvent(new PlayerEvent(PlayerEvent.CHANGED_LEVEL, this));
 		}
 		
-		public function get cell () :Cell
-		{
-			return _objective.cellAt(_position);
-		}	
-
-        public function set objective (objective:Objective) :void
+        public function get position () :BoardCoordinates
         {
-            _objective = objective;         
+        	return _position;
         }
-        
+        		
         protected var _objective:Objective;
         protected var _position:BoardCoordinates;
         protected var _client:Client;

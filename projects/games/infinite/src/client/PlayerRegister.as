@@ -1,5 +1,7 @@
 package client
 {
+	import client.player.Player;
+	
 	import flash.utils.Dictionary;
 	
 	
@@ -9,12 +11,12 @@ package client
 		{
 		}
 		
-		public function find (id:int) :RemotePlayer
+		public function find (id:int) :Player
 		{
-			return _dictionary[id] as RemotePlayer;
+			return _dictionary[id] as Player;
 		}
 		
-		public function register (player:RemotePlayer) :void
+		public function register (player:Player) :void
 		{
 			_dictionary[player.id] = player;
 		}

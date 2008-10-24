@@ -8,6 +8,8 @@ package client
 	import cells.ViewFactory;
 	import cells.views.CellView;
 	
+	import client.player.Player;
+	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
@@ -15,6 +17,7 @@ package client
 	import graphics.OwnerLabel;
 	
 	import sprites.PlayerSprite;
+	import sprites.ViewEvent;
 	
 	import world.BoxController;
 	import world.Cell;
@@ -61,10 +64,10 @@ package client
 			_viewFactory = new ViewFactory(); 
 		}		
 		
-		public function scrollViewPointToPlayer () :void
-		{
-			scrollViewPointTo(_playerView.cellBoundary());
-		}
+//		public function scrollViewPointToPlayer () :void
+//		{
+//			scrollViewPointTo(_playerView.cellBoundary());
+//		}
 		
 		/**
 		 * Scroll the objective so that the viewpoint is at the provided coordinates which
@@ -191,15 +194,15 @@ package client
 			trace("clicked on "+event.cell);
 		}		
 		
-		public function set player (player:LocalPlayer) :void
+		public function set player (player:Player) :void
 		{
 			_player = player;
-			player.objective = this;
+			//player.objective = this;
 			_playerView = new PlayerSprite(player);
-			bufferViewpoint(player.cell.position);		
-			scrollViewPointTo(cellCoordinates(player.cell.position));
+			bufferViewpoint(player.position);		
+			scrollViewPointTo(cellCoordinates(player.position));
 			addChild(_playerView);
-			Geometry.position(_playerView, _playerView.positionInCell(this, player.cell.position));
+			Geometry.position(_playerView, _playerView.positionInCell(this, player.position));
 		}
 			
 		protected function bufferViewpoint (viewPoint:BoardCoordinates) :void
@@ -212,16 +215,8 @@ package client
 		public function cellCoordinates (position:BoardCoordinates) :GraphicCoordinates
 		{
 			return position.graphicsCoordinates(_cells.origin, _origin);
-		}
-						
-		/**
-		 * Return a starting cell suitable for a new player.
-		 */
-		public function getPlayerStartPosition() :Cell
-		{
-			return _cells.cellAt(new BoardCoordinates(_board.startingPosition.x, _board.startingPosition.y));
-		}
-
+		}		
+		
 		/**
 		 * Return the cell at a given point in the board coordinates.  Returns the live cell that
 		 * is part of the objective if the cell is in play, otherwise returns an inactive one from
@@ -250,7 +245,7 @@ package client
 		{
 			_memory.forget(cell);
 		}
-	
+		
 		/**
 		 * Replace a cell at a given position with the new cell that is supplied.
 		 * TODO: REPLACE THIS WITH REAL PERSISTENCE TO THE BOARD
@@ -263,13 +258,76 @@ package client
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
 		
-		public function get playerView () :PlayerSprite 
-		{
-			return _playerView;
-		}
+	    /**
+	     * Add a local player to the level that this objective is currently associated with, displaying
+	     * the player at the focus of the camera immediately.  The camera will normally track this
+	     * player from that point forward.
+	     */
+	    public function addLocalPlayer (player:Player) :void
+	    { 	    	
+	    	const sprite:PlayerSprite = addPlayer(player);
+	    	follow(sprite);
+	    }
 	
-	    protected var _playerView:PlayerSprite;
-	
+	    /**
+	     * Track the give sprite with the camera.
+	     */  
+	    public function follow (sprite:PlayerSprite) :void
+	    {
+	    	stopFollowing();
+	    	sprite.addEventListener(ViewEvent.MOVED, handleSubjectMoved);
+	    	_cameraTracking = sprite;
+	    }
+	    
+	    /**
+	     * Stop tracking whatever sprite we are following.
+	     */
+	    public function stopFollowing() :void
+	    {
+	    	if (_cameraTracking != null) {
+	    		_cameraTracking.removeEventListener(ViewEvent.MOVED, handleSubjectMoved);
+	    		_cameraTracking = null;
+	    	}
+	    }
+	   
+	    public function handleSubjectMoved (event:ViewEvent) {
+	    	scrollViewPointTo(Geometry.coordsOf(event.view));
+	    }
+	        
+	    /**
+	     * Add a player to the level that this objective is currently associated with, displaying the
+	     * player immediately.
+	     */ 
+        public function addPlayer (player:Player) :PlayerSprite
+        {
+        	const found = _playerViews.find(player);
+        	if (found != null) {
+        		return found;
+        	}
+        	
+        	const sprite:PlayerSprite = new PlayerSprite(player);
+        	_playerViews.add(player, sprite);
+        	
+        	addChild(sprite);
+        	return sprite;
+        }
+	       
+	    /**
+	     * Remove a player from the level that this objective is currently associate with, making
+	     * hiding the player immediately.
+	     */
+        public function removePlayer (player:Player) :void
+        {
+        	const sprite:PlayerSprite = _playerViews.take(player);
+        	if (sprite != null) {
+        		removeChild(sprite);
+        	}
+        }            
+        
+        protected var _cameraTracking:PlayerSprite;
+            
+        protected var _playerViews:PlayerViews = new PlayerViews();
+            	
 		protected var _viewFactory:ViewFactory;
 		// owner label
 		protected var _label:OwnerLabel;
@@ -278,7 +336,7 @@ package client
 		protected var _viewer:Viewer;
 			
 		// a representation of the player character 
-		protected var _player:LocalPlayer;
+		protected var _player:Player;
 		
 		// memory for cell state that should be kept off the board.
 		protected var _memory:CellMemory = new CellDictionary();

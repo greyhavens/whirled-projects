@@ -1,18 +1,19 @@
 package client
 {
-	import world.arbitration.BoardArbiter;
+	import client.player.*;
 	
-	import inventory.InventoryDisplay;	
+	import inventory.InventoryDisplay;
+	
 	import items.Item;
 	import items.ItemEvent;
 	
-	import client.FrameEvent;
-    import world.board.*;
+	import world.arbitration.BoardArbiter;
+	import world.board.*;
 			
 	public class PlayerController
 	{
 		public function PlayerController(
-			frameTimer:FrameTimer, viewer:Viewer, player:PlayerCharacter, 
+			frameTimer:FrameTimer, viewer:Viewer, player:Player, 
 			inventoryDisplay:InventoryDisplay)
 		{
 			_board = viewer.objective;
@@ -59,6 +60,6 @@ package client
 		protected var _arbiter:BoardArbiter;
 		protected var _board:BoardInteractions	
 		protected var _viewer:Viewer;
-		protected var _player:PlayerCharacter;
+		protected var _player:Player;
 	}
 }

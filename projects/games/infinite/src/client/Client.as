@@ -3,6 +3,9 @@ package client
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
 	
+	import client.player.Player;
+	import client.player.PlayerEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.text.TextField;
@@ -72,7 +75,7 @@ package client
 			//_player = new PlayerCharacter("robin", _inventory);
 			_viewer.board = _board;
 			//_viewer.player = _player;
-			_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
+			//_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
 			
 			trace("game size at end: "+width+", "+height);
 		}
@@ -83,7 +86,7 @@ package client
 		public function levelEntered(detail:LevelEntered) :void
 		{
 			// find the player
-			var player:RemotePlayer = _players.find(detail.userId);
+			var player:Player = _players.find(detail.userId);
 		     
             // if we don't already know about the player, create a new one.
             if (player == null)
@@ -100,13 +103,31 @@ package client
 		/**
 		 * Create a new player.
 		 */
-		protected function newPlayer(id:int) :RemotePlayer
+		protected function newPlayer(id:int) :Player
 		{
-			if (id == _world.clientId) {
-				_localPlayer = new LocalPlayer(this, id);
-				return _localPlayer;
-			} else {
-    			return new RemotePlayer(this, id);
+			const player:Player = new Player(this, id);
+            if (id = _world.clientId) {
+            	_localPlayer = player;
+            }
+			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);			
+		    return player;
+		}
+		
+		protected function handleChangedLevel(event:PlayerEvent) :void
+		{
+			// if it's the local player, then switch level to the player's new
+			// level.
+			if (event.player == _localPlayer) {
+    			selectLevel (event.player.level);
+    			_objective.addLocalPlayer(player);
+            } else {
+            	// otherwise, if the player has entered the level that the local
+            	// player is on, then 
+            	if (event.player.level == _level) {
+            		_objective.addPlayer(player);
+            	} else {
+            		_objective.removePlayer(player);
+            	}
             }
 		}
 		
@@ -129,6 +150,8 @@ package client
 			// and assign a new board to the view.
 			_viewer.board = _board;
             _viewer.player = _localPlayer;
+            _controller = new PlayerController(_frameTimer, _viewer, _localPlayer, _inventory);
+            
 			_level = level;
 		}
 		
@@ -138,8 +161,9 @@ package client
 		}	
 		
 		
-		protected var _localPlayer:LocalPlayer;
-		protected var _world:ClientWorld;		
+		protected var _localPlayer:Player;
+		protected var _world:ClientWorld;
+		protected var _objective:Objective;		
 		protected var _players:PlayerRegister = new PlayerRegister();
 		protected var _level:int = NO_LEVEL;
 		
@@ -147,7 +171,6 @@ package client
 		protected var _board:Board;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
-		protected var _player:PlayerCharacter;
 		protected var _frameTimer:FrameTimer;		
 		
 		protected const GAME_WIDTH:int = 700;
