@@ -74,6 +74,10 @@ public class DraggableSprite extends Sprite
 
     protected function handleMouseDown (evt :MouseEvent) :void
     {
+        if (!evt.shiftKey) {
+            return;
+        }
+
         if (_offset == null) {
             this.addEventListener(Event.ENTER_FRAME, handleFrame);
         }
