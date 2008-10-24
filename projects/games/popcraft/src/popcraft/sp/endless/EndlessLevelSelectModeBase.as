@@ -115,36 +115,56 @@ public class EndlessLevelSelectModeBase extends AppMode
         // wire up buttons
         var nextButton :SimpleButton = _saveView.nextButton;
         var prevButton :SimpleButton = _saveView.prevButton;
-        if (_saves.length > 1) {
-            this.registerOneShotCallback(nextButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    var index :int = _saveIndex + 1;
-                    if (index >= _saves.length) {
-                        index = 0;
-                    }
-                    selectSave(index, ANIMATE_NEXT, false);
-                });
+        var playButton :SimpleButton = _saveView.playButton;
+        var backButton :SimpleButton = _saveView.backButton;
 
-            this.registerOneShotCallback(prevButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    var index :int = _saveIndex - 1;
-                    if (index < 0) {
-                        index = _saves.length - 1;
-                    }
-                    selectSave(index, ANIMATE_PREV, false);
-                });
-
+        // back button never visible in multiplayer
+        if (this.isMultiplayer) {
+            backButton.visible = false;
         } else {
-            nextButton.visible = false;
-            prevButton.visible = false;
+            backButton.visible = true;
+            this.registerOneShotCallback(backButton, MouseEvent.CLICK, backToMainMenu);
         }
 
-        this.registerOneShotCallback(_saveView.playButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                startGame(_saves[_saveIndex]);
-            });
+        // if this player is not in control, they don't get to play with the buttons
+        if (this.isMultiplayer && !SeatingManager.isLocalPlayerInControl) {
+            nextButton.visible = false;
+            prevButton.visible = false;
+            playButton.visible = false;
 
-        this.registerOneShotCallback(_saveView.backButton, MouseEvent.CLICK, backToMainMenu);
+        } else {
+            if (_saves.length > 1) {
+                nextButton.visible = true;
+                prevButton.visible = true;
+                this.registerOneShotCallback(nextButton, MouseEvent.CLICK,
+                    function (...ignored) :void {
+                        var index :int = _saveIndex + 1;
+                        if (index >= _saves.length) {
+                            index = 0;
+                        }
+                        selectSave(index, ANIMATE_NEXT, false);
+                    });
+
+                this.registerOneShotCallback(prevButton, MouseEvent.CLICK,
+                    function (...ignored) :void {
+                        var index :int = _saveIndex - 1;
+                        if (index < 0) {
+                            index = _saves.length - 1;
+                        }
+                        selectSave(index, ANIMATE_PREV, false);
+                    });
+
+            } else {
+                nextButton.visible = false;
+                prevButton.visible = false;
+            }
+
+            playButton.visible = true;
+            this.registerOneShotCallback(playButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    startGame(_saves[_saveIndex]);
+                });
+        }
     }
 
     protected function startGame (save :SavedEndlessGame) :void

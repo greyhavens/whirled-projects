@@ -32,7 +32,8 @@ public class EndlessLevelManager
 
     public function saveCurrentGame () :void
     {
-        var saveArray :Array = (GameContext.isSinglePlayerGame ? _savedSpGames : _savedMpGames);
+        var saveList :SavedEndlessGameList =
+            (GameContext.isSinglePlayerGame ? _savedSpGames : _savedMpGames);
 
         var savedPlayerData :SavedLocalPlayerInfo =
             EndlessGameContext.savedHumanPlayers[GameContext.localPlayerIndex];
@@ -45,28 +46,10 @@ public class EndlessLevelManager
             savedPlayerData.health,
             savedPlayerData.spells);
 
-        var existingSaveIndex :int = ArrayUtil.indexIf(saveArray,
-            function (save :SavedEndlessGame) :Boolean {
-                return save.mapIndex == newSave.mapIndex;
-            });
-
-        if (existingSaveIndex != -1) {
-            var existingSave :SavedEndlessGame = saveArray[existingSaveIndex];
-            // combine this save with the existing save to get the max values of both
-            newSave = SavedEndlessGame.max(newSave, existingSave);
-            if (newSave.isEqual(existingSave)) {
-                // didn't make any progress - don't save
-                return;
-            }
-
-            saveArray[existingSaveIndex] = newSave;
-
-        } else {
-            saveArray.push(newSave);
+        if (saveList.addSave(newSave)) {
+            // save the new data
+            AppContext.userCookieMgr.setNeedsUpdate();
         }
-
-        // save the new data
-        AppContext.userCookieMgr.setNeedsUpdate();
     }
 
     public function writeCookieData (cookie :ByteArray) :void
@@ -110,20 +93,20 @@ public class EndlessLevelManager
         return true;
     }
 
-    public function get savedSpGames () :Array
+    public function get savedSpGames () :SavedEndlessGameList
     {
         return _savedSpGames;
     }
 
-    public function get savedMpGames () :Array
+    public function get savedMpGames () :SavedEndlessGameList
     {
         return _savedMpGames;
     }
 
     protected function resetSavedData () :void
     {
-        _savedSpGames = [];
-        _savedMpGames = [];
+        _savedSpGames = new SavedEndlessGameList();
+        _savedMpGames = new SavedEndlessGameList();
     }
 
     protected function playLevel (level :int, levelReadyCallback :Function, forceReload :Boolean)
@@ -222,8 +205,8 @@ public class EndlessLevelManager
     protected var _loadedLevel :EndlessLevelData;
     protected var _levelReadyCallback :Function;
     protected var _loadingMultiplayer :Boolean;
-    protected var _savedSpGames :Array = [];
-    protected var _savedMpGames :Array = [];
+    protected var _savedSpGames :SavedEndlessGameList = new SavedEndlessGameList();
+    protected var _savedMpGames :SavedEndlessGameList = new SavedEndlessGameList();
 
     protected static var log :Log = Log.getLog(EndlessLevelManager);
 

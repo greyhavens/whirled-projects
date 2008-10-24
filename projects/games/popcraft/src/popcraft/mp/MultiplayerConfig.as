@@ -6,13 +6,13 @@ import popcraft.*;
 
 public class MultiplayerConfig
 {
-    public static const PROP_INITED :String = "Inited";
-    public static const PROP_TEAMS :String = "Teams";
-    public static const PROP_GAMESTARTING :String = "Starting";
-    public static const PROP_HANDICAPS :String = "Handicaps";
-    public static const PROP_RANDSEED :String = "RandSeed";
-    public static const PROP_HASMORBIDINFECTION :String = "HMI";
-    public static const PROP_HASPREMIUMCONTENT :String = "HasPremium";
+    public static const PROP_INITED :String = "mc_Inited";
+    public static const PROP_TEAMS :String = "mc_Teams";
+    public static const PROP_GAMESTARTING :String = "mc_Starting";
+    public static const PROP_HANDICAPS :String = "mc_Handicaps";
+    public static const PROP_RANDSEED :String = "mc_RandSeed";
+    public static const PROP_HASMORBIDINFECTION :String = "mc_HMI";
+    public static const PROP_HASPREMIUMCONTENT :String = "mc_HasPremium";
 
     public static function init (numTeams :int, numPlayers :int) :void
     {
@@ -130,10 +130,10 @@ public class MultiplayerConfig
         }
     }
 
-    public static function get gameStarting () :Boolean
+    public static function get inited () :Boolean
     {
         return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
+            AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
     }
 
     public static function set gameStarting (val :Boolean) :void
@@ -143,10 +143,10 @@ public class MultiplayerConfig
         }
     }
 
-    public static function get inited () :Boolean
+    public static function get gameStarting () :Boolean
     {
         return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
+            AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
     }
 
     public static function set morbidInfections (val :Array) :void
