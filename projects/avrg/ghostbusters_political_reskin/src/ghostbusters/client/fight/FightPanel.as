@@ -310,7 +310,7 @@ public class FightPanel extends FrameSprite
         trace("cancelling minigame, should expect no more updates.");
         endMinigame();
 
-        _ghost.die();
+        _ghost.die(function () :void { _ghost.visible = false;});
         
         endMinigame();
     }
