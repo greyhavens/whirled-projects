@@ -6,15 +6,20 @@ package world.level
 
 	public class LevelEvent extends Event
 	{
+        public var level:Level;
+        public var player:Player;
+		
 		public function LevelEvent(type:String, level:Level, player:Player)
 		{
 			super(type);
-			_level = level;
-			_player = player;
-		}
+			this.level = level;
+		    this.player = player;
+		}        
 		
-		protected var _level:Level;
-		protected var _player:Player;
+		override public function clone() :Event
+		{
+			return new LevelEvent(type, level, player);
+		}
 		
 		public static const LEVEL_ENTERED:String = "level_entered";
 	}

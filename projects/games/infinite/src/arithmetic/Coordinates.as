@@ -28,7 +28,7 @@ package arithmetic
 			if (_key == null) {
 				_key = _x+","+_y; 
 			}
-			return key;
+			return _key;
 		}
 		
 		protected var _key:String;

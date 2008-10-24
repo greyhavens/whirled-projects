@@ -9,12 +9,15 @@ package client
 	
 	import inventory.InventoryDisplay;
 	
+	import server.Messages.LevelEntered;
+	
 	import sprites.SpriteUtil;
 	
-	import world.board.*;
 	import world.ClientWorld;
-	import world.level.*;
+	import world.MutableBoard;
 	import world.WorldClient;
+	import world.board.*;
+	import world.level.*;
 	
 	public class Client extends Sprite implements WorldClient
 	{
@@ -72,14 +75,69 @@ package client
 			_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
 			
 			trace("game size at end: "+width+", "+height);
-		}	
+		}
+		
+		/**
+		 * Receive a message that a player has entered a level.
+		 */
+		public function levelEntered(detail:LevelEntered) :void
+		{
+			// find the player
+			var player:RemotePlayer = _players.find(detail.userId);
+		     
+            // if we don't already know about the player, create a new one.
+            if (player == null)
+            {
+            	player = newPlayer(detail.userId);
+            }
+            
+            /**
+             * Move the player to the appropriate level.
+             */ 
+            player.enterLevel(detail.level, detail.position);
+		}
+		
+		/**
+		 * Create a new player.
+		 */
+		protected function newPlayer(id:int) :RemotePlayer
+		{
+			if (id == _world.clientId) {
+				return new LocalPlayer(this, id);
+			} else {
+    			return new RemotePlayer(this, id);
+            }
+		}
+		
+		/**
+		 * Cause the client to start displaying a new level.
+		 */
+		public function selectLevel (level:int) :void
+		{
+			trace(this+" selecting level "+level);
+			
+			// if the client is already displaying the requested level, return.
+			if (_level == level) {
+				return;
+			}
+			
+			// we can start off with the default blank board.
+			_board = new MutableBoard(new BlankBoard);
+            trace(this+" created "+_board);            
+			
+			// and assign a new board to the view.
+			_viewer.board = _board;			
+			_level = level;
+		}
 		
 		public function get mode () :String 
 		{
 			return _world.worldType;
 		}	
 		
-		protected var _world:ClientWorld;
+		protected var _world:ClientWorld;		
+		protected var _players:PlayerRegister = new PlayerRegister();
+		protected var _level:int = NO_LEVEL;
 		
 		protected var _controller:PlayerController;
 		protected var _board:Board;
@@ -92,5 +150,7 @@ package client
 		protected const GAME_HEIGHT:int = 500;
 		
 		protected const LEVEL1:Level = new Level(1, 50, new SimpleBoard());
+		
+		protected static const NO_LEVEL:int = -1;
 	}	
 }

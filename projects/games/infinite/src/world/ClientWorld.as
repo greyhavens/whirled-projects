@@ -18,5 +18,10 @@ package world
 		 * A request from the specified client to enter the world.
 		 */
 		function enter (client:WorldClient) :void
+		
+		/**
+		 * Return the id of this client.
+		 */
+		function get clientId () :int
 	}
 }

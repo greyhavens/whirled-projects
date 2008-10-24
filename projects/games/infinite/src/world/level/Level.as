@@ -11,9 +11,11 @@ package world.level
 	
 	public class Level
 	{
+		public var number:int;
+		
 		public function Level(number:int, height:int, starting:Board)		
 		{
-			_number = number;
+			this.number = number;
 			_height = height;
 			_board = new MutableBoard(starting);
 		}
@@ -56,11 +58,10 @@ package world.level
                 
         public function toString () :String
         {
-        	return "level "+_number;
+        	return "level "+number;
         }
                 
         protected var _board:Board;
-        protected var _number:int;
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		

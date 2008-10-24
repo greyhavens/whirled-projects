@@ -2,8 +2,11 @@ package server
 {
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
+	import com.whirled.net.MessageReceivedEvent;
 	
 	import flash.events.EventDispatcher;
+	
+	import server.Messages.LevelEntered;
 	
 	import world.ClientWorld;
 	import world.WorldClient;
@@ -16,12 +19,36 @@ package server
 		public function RemoteWorld(gameControl:GameControl)
 		{
 			_gameControl = gameControl;
-			_netControl = _gameControl.net; 
-		}
+			_net = _gameControl.net; 
+			_net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+		}		
 
         public function get worldType () :String
         {
         	return "shared";
+        }
+        
+        public function handleMessageReceived (event:MessageReceivedEvent) :void
+        {
+        	const message:int = int(event.name);
+            switch (message) {
+                case LEVEL_ENTERED: levelEntered(event);
+            }       
+            throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
+        }
+        
+        public function levelEntered (event:MessageReceivedEvent) :void
+        {
+        	const levelEntered:LevelEntered = event.value as LevelEntered;
+        	if (levelEntered == null) {
+        		throw new Error(this+" expected LevelEntered value but received "+event.value); 
+        	}
+            _client.levelEntered(levelEntered);
+        }        
+        
+        override public function toString () :String
+        {
+            return "world client for "+_gameControl.player;
         }
         
         /**
@@ -31,8 +58,7 @@ package server
         {
         	// remember the client
         	_client = client;
-        	signalServer(WorldServer.CLIENT_ENTERS);
-        
+        	signalServer(WorldServer.CLIENT_ENTERS);        
         }
         
         /**
@@ -48,11 +74,21 @@ package server
          */ 
         protected function sendToServer(message:int, data:Object) :void
         {
-        	_netControl.sendMessage(String(message), data, NetSubControl.TO_SERVER_AGENT);
+        	_net.sendMessage(String(message), data, NetSubControl.TO_SERVER_AGENT);
+        }
+
+        public function get clientId () :int
+        {        	
+        	return _gameControl.game.getMyId();
         }
 
         protected var _client:WorldClient;
         protected var _gameControl:GameControl;
-        protected var _netControl:NetSubControl;
+        protected var _net:NetSubControl;
+        
+        /**
+         * Messages that remote clients can receive from the server.
+         */ 
+        public static const LEVEL_ENTERED:int = 0;        
 	}
 }

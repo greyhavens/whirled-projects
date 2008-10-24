@@ -15,7 +15,7 @@ package world
 
         public function get id () :int 
         {
-        	return id;
+        	return _id;
         }
 
         public function enterLevel (level:Level) :void

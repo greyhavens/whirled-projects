@@ -14,6 +14,12 @@ package world
 		public function World()
 		{
 			_players = new PlayerRegister();
+			_levels = new LevelRegister();
+		}
+		
+		public function addListener (listener:WorldListener) :void
+		{
+            addEventListener(LevelEvent.LEVEL_ENTERED, listener.handleLevelEntered);			
 		}
 		
 		/**
@@ -45,7 +51,7 @@ package world
             _players.register(player);
             return player;
 		}		
-		
+				
 		protected var _levels:LevelRegister;
 		protected var _players:PlayerRegister;
 	}
