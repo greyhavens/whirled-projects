@@ -60,7 +60,8 @@ public class Trophies
             player = Player(fullTeam[ii]);
 
             var minigames :Dictionary = room.getMinigameStats(player.playerId);
-            if (minigames[Codes.WPN_LANTERN] && minigames[Codes.WPN_BLASTER] &&
+            if (minigames != null &&
+                minigames[Codes.WPN_LANTERN] && minigames[Codes.WPN_BLASTER] &&
                 minigames[Codes.WPN_OUIJA] && minigames[Codes.WPN_POTIONS]) {
                 // Bag of Tricks - Use all four minigames against a ghost
                 doAward(player, TROPHY_BAG_OF_TRICKS);
