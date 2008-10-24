@@ -4,15 +4,9 @@ package cells
 	
 	import client.CellEvent;
 	
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
-	import flash.text.TextField;
-	
-	import sprites.*;
-	
+		
 	import world.Cell;
     import world.board.*;
 	

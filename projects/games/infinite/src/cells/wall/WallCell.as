@@ -25,8 +25,5 @@ package cells.wall
 		}
 	
 		override public function get type () :String { return "wall"; }	
-		
-		[Embed(source="../../../rsrc/png/wall.png")]
-		public static const wall:Class;
 	}
 }

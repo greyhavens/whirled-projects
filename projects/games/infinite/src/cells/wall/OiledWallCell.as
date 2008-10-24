@@ -21,9 +21,6 @@ package cells.wall
 			return false;
 		}		
 		
-		override public function get type () :String { return "oiled wall"; }	
-		
-		[Embed(source="../../../rsrc/png/wall-oiled.png")]
-		public static const oiledWall:Class;
+		override public function get type () :String { return "oiled wall"; }			
 	}
 }

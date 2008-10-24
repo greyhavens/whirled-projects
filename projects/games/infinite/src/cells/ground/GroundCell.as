@@ -20,9 +20,6 @@ package cells.ground
 		override public function get type () :String
 		{
 			return "ground";
-		}				
-		
-		[Embed(source="../../../rsrc/png/ledge-ground-cell.png")]
-		public static const ledgeGroundCell:Class; 
+		}						
 	}
 }

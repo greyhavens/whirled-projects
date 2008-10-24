@@ -5,13 +5,15 @@ package sprites
 	import arithmetic.GraphicCoordinates;
 	
 	import client.Objective;
-    import world.Cell;
+	import client.Player;
+	
+	import world.Cell;
 	
 	public class PlayerSprite extends AssetSprite
 	{
-		public function PlayerSprite(character:PlayerCharacter)
+		public function PlayerSprite(player:Player)
 		{
-			_player = character;
+			_player = player;
 			super(simplePlayer, Config.cellSize.dx, Config.cellSize.dy);
 		}
 
@@ -42,7 +44,7 @@ package sprites
             );
         }
         
-        protected var _player:PlayerCharacter;
+        protected var _player:Player;
 
 		[Embed(source="../../rsrc/png/simple-player.png")]
 		protected static const simplePlayer:Class;			

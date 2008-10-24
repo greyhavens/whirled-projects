@@ -2,11 +2,11 @@ package client
 {
 	import arithmetic.*;
 	
+	import cells.CellDictionary;
+	import cells.CellMemory;
 	import cells.CellObjective;
 	import cells.ViewFactory;
 	import cells.views.CellView;
-	import cells.CellMemory;
-	import cells.CellDictionary;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -17,10 +17,8 @@ package client
 	import sprites.PlayerSprite;
 	
 	import world.BoxController;
-    import world.Cell;
-    import world.board.*;
-   
-    import client.CellEvent;
+	import world.Cell;
+	import world.board.*;
     
 	/**
 	 * The objective is a renderable sprite combining all of the objects necessary to display
@@ -193,7 +191,7 @@ package client
 			trace("clicked on "+event.cell);
 		}		
 		
-		public function set player (player:PlayerCharacter) :void
+		public function set player (player:LocalPlayer) :void
 		{
 			_player = player;
 			player.objective = this;
@@ -280,7 +278,7 @@ package client
 		protected var _viewer:Viewer;
 			
 		// a representation of the player character 
-		protected var _player:PlayerCharacter;
+		protected var _player:LocalPlayer;
 		
 		// memory for cell state that should be kept off the board.
 		protected var _memory:CellMemory = new CellDictionary();

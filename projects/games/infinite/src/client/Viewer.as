@@ -82,7 +82,7 @@ package client
 			return _objective;
 		}
 
-		public function set player (player:PlayerCharacter) :void
+		public function set player (player:LocalPlayer) :void
 		{
 			_objective.player = player;
 		}

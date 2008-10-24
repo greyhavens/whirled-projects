@@ -12,8 +12,8 @@ package client
 		override public function enterLevel(level:int, position:BoardCoordinates) :void
 		{
 			// make sure the client is viewing the requested level.
-			_client.selectLevel(level);
 			super.enterLevel(level, position);
-		}
+            _client.selectLevel(level);
+		}		
 	}
 }

@@ -69,9 +69,9 @@ package client
 			    _board = new SimpleBoard();
             }
             
-			_player = new PlayerCharacter("robin", _inventory);
+			//_player = new PlayerCharacter("robin", _inventory);
 			_viewer.board = _board;
-			_viewer.player = _player;
+			//_viewer.player = _player;
 			_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
 			
 			trace("game size at end: "+width+", "+height);
@@ -103,7 +103,8 @@ package client
 		protected function newPlayer(id:int) :RemotePlayer
 		{
 			if (id == _world.clientId) {
-				return new LocalPlayer(this, id);
+				_localPlayer = new LocalPlayer(this, id);
+				return _localPlayer;
 			} else {
     			return new RemotePlayer(this, id);
             }
@@ -126,7 +127,8 @@ package client
             trace(this+" created "+_board);            
 			
 			// and assign a new board to the view.
-			_viewer.board = _board;			
+			_viewer.board = _board;
+            _viewer.player = _localPlayer;
 			_level = level;
 		}
 		
@@ -135,6 +137,8 @@ package client
 			return _world.worldType;
 		}	
 		
+		
+		protected var _localPlayer:LocalPlayer;
 		protected var _world:ClientWorld;		
 		protected var _players:PlayerRegister = new PlayerRegister();
 		protected var _level:int = NO_LEVEL;
