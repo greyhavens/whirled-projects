@@ -3,9 +3,10 @@ package popcraft.sp.endless {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.Bitmap;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
@@ -19,9 +20,9 @@ import popcraft.data.*;
 import popcraft.ui.*;
 import popcraft.util.SpriteUtil;
 
-public class EndlessLevelTransitionMode extends AppMode
+public class EndlessInterstitialMode extends AppMode
 {
-    public function EndlessLevelTransitionMode (multiplierStartLoc :Vector2)
+    public function EndlessInterstitialMode (multiplierStartLoc :Vector2)
     {
         _multiplierStartLoc = multiplierStartLoc;
         _mapIndex = EndlessGameContext.mapIndex + 1;
@@ -60,8 +61,8 @@ public class EndlessLevelTransitionMode extends AppMode
         // create the title
         var mapName :String = EndlessGameContext.level.getMapNumberedDisplayName(_mapIndex);
         var titleText :TextField = UIBits.createText(mapName, 3, 0, 0xFFFFFF);
-        titleText.x = (Constants.SCREEN_SIZE.x - titleText.width) * 0.5;
-        titleText.y = 200;
+        titleText.x = TITLE_LOC.x - (titleText.width * 0.5);
+        titleText.y = TITLE_LOC.y;
         bgSprite.addChild(titleText);
 
         // create the skulls
@@ -77,6 +78,14 @@ public class EndlessLevelTransitionMode extends AppMode
             cycleSprite.y = CYCLE_SPRITE_LOC.y;
             bgSprite.addChild(cycleSprite);
         }
+
+        // thumbnail
+        var mapNumber :int = _mapIndex % EndlessGameContext.level.mapSequence.length;
+        var thumbnail :Bitmap =
+            ImageResource.instantiateBitmap("endlessThumb" + String(mapNumber + 1));
+        thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
+        thumbnail.y = THUMBNAIL_LOC.y;
+        bgSprite.addChild(thumbnail);
 
         // create the multiplier object, which will move to the center of the screen, pause,
         // and then move to its location in the new level
@@ -115,7 +124,9 @@ public class EndlessLevelTransitionMode extends AppMode
     protected static const FADE_OUT_TIME :Number = 1;
     protected static const TITLE_TIME :Number = 2;
     protected static const MULTIPLIER_TITLE_LOC :Point = new Point(350, 100);
-    protected static const CYCLE_SPRITE_LOC :Point = new Point(350, 190);
+    protected static const CYCLE_SPRITE_LOC :Point = new Point(350, 160);
+    protected static const TITLE_LOC :Point = new Point(350, 170);
+    protected static const THUMBNAIL_LOC :Point = new Point(350, 250);
 }
 
 }

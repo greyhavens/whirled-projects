@@ -193,7 +193,7 @@ public class EndlessGameMode extends GameMode
                 AppContext.mainLoop.unwindToMode(
                     new EndlessGameMode(EndlessGameContext.level, null, false));
             } else {
-                AppContext.mainLoop.pushMode(new EndlessLevelTransitionMode(_lastLiveComputerLoc));
+                AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
             }
 
             // end-of-level trophies

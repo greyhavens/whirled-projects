@@ -44,8 +44,8 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         _level = level;
 
-        _saves = (this.isMultiplayer ? AppContext.endlessLevelMgr.savedMpGames :
-            AppContext.endlessLevelMgr.savedSpGames).slice();
+        _saves = (this.isMultiplayer ? AppContext.endlessLevelMgr.savedMpGames.saves :
+            AppContext.endlessLevelMgr.savedSpGames.saves).slice();
 
         // insert a dummy Level 1 save into the save array, so that players can start
         // new games
@@ -337,7 +337,9 @@ class SaveView extends SceneObject
             scoreText.visible = true;
 
             // thumbnail
-            var thumbnail :Bitmap = ImageResource.instantiateBitmap("endlessThumb");
+            var mapNumber :int = save.mapIndex % level.mapSequence.length;
+            var thumbnail :Bitmap =
+                ImageResource.instantiateBitmap("endlessThumb" + String(mapNumber + 1));
             thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
             thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
             _movie.addChild(thumbnail);

@@ -1,6 +1,7 @@
 package popcraft.sp.endless {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Integer;
 
 import flash.utils.ByteArray;
 
@@ -28,6 +29,9 @@ public class SavedEndlessGameList
 
         } else {
             saves.push(newSave);
+            saves.sort(function (a :SavedEndlessGame, b :SavedEndlessGame) :int {
+                return Integer.compare(a.mapIndex, b.mapIndex);
+            });
         }
 
         return true;

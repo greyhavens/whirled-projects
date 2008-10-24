@@ -75,7 +75,15 @@ public class Resources
         rm.queueResourceLoad(Constants.RESTYPE_GAMEDATA, Constants.RSRC_DEFAULTGAMEDATA, { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
-        rm.queueResourceLoad("image", "endlessThumb", { embeddedClass: IMG_ENDLESSTHUMB });
+        rm.queueResourceLoad("image", "endlessThumb1", { embeddedClass: IMG_ENDLESSTHUMB1 });
+        rm.queueResourceLoad("image", "endlessThumb2", { embeddedClass: IMG_ENDLESSTHUMB2 });
+        rm.queueResourceLoad("image", "endlessThumb3", { embeddedClass: IMG_ENDLESSTHUMB3 });
+        rm.queueResourceLoad("image", "endlessThumb4", { embeddedClass: IMG_ENDLESSTHUMB4 });
+        rm.queueResourceLoad("image", "endlessThumb5", { embeddedClass: IMG_ENDLESSTHUMB5 });
+        rm.queueResourceLoad("image", "endlessThumb6", { embeddedClass: IMG_ENDLESSTHUMB6 });
+        rm.queueResourceLoad("image", "endlessThumb7", { embeddedClass: IMG_ENDLESSTHUMB7 });
+        rm.queueResourceLoad("image", "endlessThumb8", { embeddedClass: IMG_ENDLESSTHUMB8 });
+        rm.queueResourceLoad("image", "endlessThumb9", { embeddedClass: IMG_ENDLESSTHUMB9 });
 
         rm.queueResourceLoad("image", "portrait_iris", { embeddedClass: IMG_PORTRAIT_IRIS });
         rm.queueResourceLoad("image", "portrait_ivy", { embeddedClass: IMG_PORTRAIT_IVY });
@@ -232,8 +240,24 @@ public class Resources
     [Embed(source="../../rsrc/all/splash_UI.swf", mimeType="application/octet-stream")]
     protected static const SWF_SPLASH_UI :Class;
 
-    [Embed(source="../../rsrc/all/endless_1_thumb.png", mimeType="application/octet-stream")]
-    protected static const IMG_ENDLESSTHUMB :Class;
+    [Embed(source="../../rsrc/all/endless_1_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB1 :Class;
+    [Embed(source="../../rsrc/all/endless_2_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB2 :Class;
+    [Embed(source="../../rsrc/all/endless_3_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB3 :Class;
+    [Embed(source="../../rsrc/all/endless_4_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB4 :Class;
+    [Embed(source="../../rsrc/all/endless_5_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB5 :Class;
+    [Embed(source="../../rsrc/all/endless_6_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB6 :Class;
+    [Embed(source="../../rsrc/all/endless_7_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB7 :Class;
+    [Embed(source="../../rsrc/all/endless_8_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB8 :Class;
+    [Embed(source="../../rsrc/all/endless_9_thumb.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ENDLESSTHUMB9 :Class;
 
     [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
     protected static const SWF_UIBITS :Class;
