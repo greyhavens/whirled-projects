@@ -161,12 +161,6 @@ public class GameMode extends TransitionMode
         }
     }
 
-    protected function handleGameEndedPrematurely (...ignored) :void
-    {
-        // If the game ends prematurely for some reason, handle it gracefully
-        AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
-    }
-
     protected function setupNetwork () :void
     {
         // create a special ObjectDB for all objects that are synchronized over the network.
@@ -252,9 +246,6 @@ public class GameMode extends TransitionMode
      */
     protected function startGame () :void
     {
-        this.registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_ENDED,
-            handleGameEndedPrematurely);
-
         _messageMgr.run();
     }
 
