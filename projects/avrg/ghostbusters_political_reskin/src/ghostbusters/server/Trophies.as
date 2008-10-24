@@ -100,7 +100,7 @@ public class Trophies
             
             if( player.level >= 5) {
                 if( doAward( player, TROPHY_LEVEL_5) ) {
-//                   player.ctrl.awardPrize(AWARD_AVATAR_1);
+                   player.ctrl.awardPrize(AWARD_AVATAR_1);
                 }
             }
             

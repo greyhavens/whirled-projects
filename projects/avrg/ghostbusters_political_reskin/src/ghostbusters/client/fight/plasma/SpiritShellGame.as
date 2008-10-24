@@ -353,7 +353,7 @@ public class SpiritShellGame extends MicrogameMode
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            500//5       // damage output
+            5       // damage output
         ),
         
 //        new SpiritShellSettings(
@@ -370,26 +370,26 @@ public class SpiritShellGame extends MicrogameMode
 
         new SpiritShellSettings(
             6,      // gameTime
-            35,     // ectoplasmCount
+            30,     // ectoplasmCount
             90,//30,      // ghostSpeed
             new NumRange(50, 100, Rand.STREAM_COSMETIC),   // ghostWanderDist
             new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            500//10      // damage output
+            10      // damage output
         ),
 
         new SpiritShellSettings(
             8,      // gameTime
-            47,     // ectoplasmCount
+            40,     // ectoplasmCount
             140,//40,      // ghostSpeed
             new NumRange(130, 150, Rand.STREAM_COSMETIC),   // ghostWanderDist
             new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             true,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
-            500//15       // damage output
+            15       // damage output
         )
 
     ];

@@ -25,6 +25,12 @@ public class FightPanel extends FrameSprite
 {
     public function FightPanel (ghost :Ghost)
     {
+        
+//        if(Game.state == Codes.STATE_GHOST_DEFEAT) {
+//            trace(" new FightPanel, but empty, since ghost was defetaed.");
+//            return;
+//        }
+        
         graphics.clear();
         
         _ghost = ghost;
@@ -53,9 +59,11 @@ public class FightPanel extends FrameSprite
         checkForSpecialStates();
 
         //SKIN
-        if( _ghostDying) {
-            return;
-        }
+        _ghostDying = false;
+//        if( _ghostDying) {
+//            trace( Game.ourPlayerId + " _ghostDying=true, returning from constructor, weird");
+//            return;
+//        }
         
         var clipClass :Class = Game.panel.getClipClass();
         if (clipClass == null) {
@@ -69,8 +77,9 @@ public class FightPanel extends FrameSprite
             _player = new MicrogamePlayer(gameContext);
             maybeStartMinigame();
         });
-
+        
         _playing = Boolean(Game.control.player.props.get(Codes.PROP_IS_PLAYING));
+//        trace( Game.ourPlayerId + " starting FightPanel, _playing=" + _playing + ", Game.state=" + Game.state);
     }
 
     override public function hitTestPoint (
@@ -82,19 +91,34 @@ public class FightPanel extends FrameSprite
 
     public function weaponUpdated () :void
     {
+//        trace("Game.panel.hud.getWeaponType())=" + Game.panel.hud.getWeaponType());
+//        trace("_player.weaponType.name=" + _player.weaponType.name);
+//        trace("WeaponType.WEAPONS=" + WeaponType.WEAPONS);
+        
+       
+        
+        
+        
         if (_player == null){// || _selectedWeapon == Game.panel.hud.getWeaponType()) {
-            var index :int = ArrayUtil.indexOf(WeaponType.WEAPONS, _player.weaponType.name);
-            if( index == Game.panel.hud.getWeaponType())
-            {
-                log.debug("Weapon unchanged...");
-                return;
-            }
+            log.debug("Weapon unchanged...");
+            return;
         }
+        
+        
+        var index :int = ArrayUtil.indexOf(WeaponType.WEAPONS, _player.weaponType.name);
+        if( index == Game.panel.hud.getWeaponType())
+        {
+            log.debug("Weapon unchanged...");
+            return;
+        }
+            
+        
+        
         if (_player.currentGame != null) {
-            log.debug("Cancelling current game...");
+            log.debug(Game.ourPlayerId + " Cancelling current game...");
             _player.cancelCurrentGame();
         }
-        log.debug("Starting new minigame.");
+        log.debug(Game.ourPlayerId + " Starting new minigame.");
         maybeStartMinigame();
     }
 
@@ -116,6 +140,11 @@ public class FightPanel extends FrameSprite
 
     protected function maybeStartMinigame () :void
     {
+        if(_ghostDying)
+        {
+            return
+        }
+        
         if (!_playing || Game.amDead()) {
             return;
         }
@@ -128,21 +157,22 @@ public class FightPanel extends FrameSprite
         }
         
         //SKIN
-        _ghostDying = false;
+        
+//        _ghostDying = false;
         
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
         case Codes.WPN_QUOTE:
-            _player.weaponType = new WeaponType(WeaponType.NAME_QUOTE, 1);
+            _player.weaponType = new WeaponType(WeaponType.NAME_QUOTE, 0);
             break;
 
         case Codes.WPN_IRAQ:
-            _player.weaponType = new WeaponType(WeaponType.NAME_IRAQ, 2);
+            _player.weaponType = new WeaponType(WeaponType.NAME_IRAQ, 0);
             break;
 
         case Codes.WPN_VOTE:
-            _player.weaponType = new WeaponType(WeaponType.NAME_VOTE, 1);
+            _player.weaponType = new WeaponType(WeaponType.NAME_VOTE, 0);
             break;
 
         case Codes.WPN_PRESS:
@@ -153,22 +183,22 @@ public class FightPanel extends FrameSprite
             return;
         }
 
-        trace("starting a new minigame, type 3!!");
+        trace(Game.ourPlayerId + " starting a new minigame, type 3!!");
         _player.beginNextGame();
     }
 
     protected function endMinigame () :void
     {
-        if (_player != null ){//&& _player.root != null) {
-//            if (_player.currentGame != null) {
+//        if (_player != null && _player.root != null) {
+            if (_player != null ) {
                 
                 _player.cancelCurrentGame();
                 _player.shutdown();
-                trace("cancelling minigame");
+                trace(Game.ourPlayerId + " cancelling minigame");
                 Game.panel.unframeContent();
-//            }
+            }
             
-        }
+//        }
         
     }
 
@@ -199,6 +229,9 @@ public class FightPanel extends FrameSprite
             graphics.clear();    
         }
         
+        if( _ghostDying ) {
+            endMinigame();
+        }
         
         // TODO: when we have real teams, we have a fixed order of players, but for now we
         // TODO: just grab the first six in the order the client exports them
@@ -209,7 +242,7 @@ public class FightPanel extends FrameSprite
         if (_player != null && _player.root != null && !_ghostDying) {
             if (_player.currentGame == null) {
                 // if we've no current game, start a new one
-                trace("starting a new minigame!!");
+                trace(Game.ourPlayerId + " starting a new minigame!!");
                 _player.beginNextGame();
 
             } else if (_player.currentGame.isDone) {
@@ -217,7 +250,7 @@ public class FightPanel extends FrameSprite
                 CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
                                       [ _selectedWeapon, _player.currentGame.gameResult ]);
                 if (_player != null) {
-                    trace("starting a new minigame, type 2!!");
+                    trace(Game.ourPlayerId +  " starting a new minigame, type 2!!");
                     _player.beginNextGame(true);
                 }
             }
@@ -305,21 +338,22 @@ public class FightPanel extends FrameSprite
 
     protected function showGhostDeath () :void
     {
-        _ghostDying = true;
+        _ghostDying = true;//SKIN prevent games restarting.
         // cancel minigame
-        trace("cancelling minigame, should expect no more updates.");
+        trace(Game.ourPlayerId + " cancelling minigame, should expect no more updates.");
         endMinigame();
 
         _ghost.die(function () :void { _ghost.visible = false;});
         
         endMinigame();
+        
     }
 
     protected function handleGhostTriumph () :void
     {
         log.debug("calling _ghost.triumph()");
         if( _player != null ) {
-            _player.shutdown();
+            _player.shutdown();//SKIN
             _player.cancelCurrentGame();
         }
         log.debug("Should not be playing minigame code from now on");

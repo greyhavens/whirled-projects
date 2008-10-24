@@ -122,10 +122,12 @@ public class GamePanel extends Sprite
 
     public function showSplash (state :String) :void
     {
+        trace("showing splash");
         if (_splash != null) {
             _splash.gotoState(state);
             return;
         }
+        trace("creating new splashwidget");
         _splash = new SplashWidget(state);
         
         this.addChild(_splash);
@@ -134,7 +136,7 @@ public class GamePanel extends Sprite
         _splash.y = 0;
 
         // when we show a splash screen, turn off the seek mode
-        seeking = true;//SKIN
+//        seeking = true;//SKIN
 //        seeking = false;
     }
 
@@ -228,7 +230,7 @@ public class GamePanel extends Sprite
                 log.debug("Popping DOWN the revive widget!");
                 popdown(_revive);
                 _revive = null;
-//                updateState(false);
+                updateState(false);
             }
             return;
         }
@@ -237,7 +239,7 @@ public class GamePanel extends Sprite
             log.debug("Popping UP the revive widget!");
             _revive = new ReviveWidget();
             popup(_revive);
-//            updateState(false);
+            updateState(false);
         }
     }
 
@@ -285,7 +287,14 @@ public class GamePanel extends Sprite
     protected function playerPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_MY_HEALTH) {
-            checkForDeath();
+            trace(Game.ourPlayerId + " health changed from " + evt.oldValue + " to=" + evt.newValue);
+            checkForDeath(); 
+            if( evt.oldValue <= 0 && evt.newValue > 0) {
+                updateState(true);//SKIN
+            }
+            else {
+                updateState(false);//SKIN
+            }
 
         } else if (evt.name == Codes.PROP_AVATAR_TYPE) {
             // if we 
@@ -306,12 +315,13 @@ public class GamePanel extends Sprite
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
         if (evt.name == Codes.PROP_STATE) {
-//            updateState(false);
-            updateState(true);//SKIN
+            updateState(false);
+//            updateState(true);//SKIN
 
         } else if (evt.name == Codes.DICT_GHOST) {
             newGhost();
         }
+        
     }
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
@@ -355,6 +365,7 @@ public class GamePanel extends Sprite
         }
         if (pClass != null) {
             if( _ghost != null) {
+                trace("updateState, creating new " + _panel + "for state=" + Game.state);
                 _panel = new pClass(_ghost);
                 this.addChildAt(_panel, 0);
             }

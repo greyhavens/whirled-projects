@@ -86,15 +86,26 @@ public class HUD extends DraggableSprite
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
-        if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
-            if (evt.name == Codes.PROP_STATE) {
-                updateGhostHealth();
-    
-            } else if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
-                teamUpdated();
-    
-            }
-        }
+//        if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+//            if (evt.name == Codes.PROP_STATE) {
+//                updateGhostHealth();
+//    
+//            } else if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+//                teamUpdated();
+//    
+//            }
+//        }
+        
+        
+       if (evt.name == Codes.PROP_STATE) {
+           updateGhostHealth();
+
+       } else if (PlayerModel.parsePlayerProperty(evt.name) > 0) {
+           teamUpdated();
+
+       }
+       
+       
     }
 
     protected function roomElementChanged (evt :ElementChangedEvent) :void

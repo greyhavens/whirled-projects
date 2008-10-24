@@ -26,7 +26,7 @@ public class SplashWidget extends ClipHandler
 
     public function SplashWidget (state :String)
     {
-        _state = "";
+        _state = state;
 
         super(new Content.SPLASH(), handleSplashLoaded);
         

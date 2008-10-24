@@ -82,15 +82,14 @@ public class Ghost extends Sprite
 
     public function damaged () :void
     {
-        log.debug("Ghost damaged", "next", _next);
+//        log.debug("Ghost damaged", "next", _next);
         _next = ST_FIGHT;
-//        _next = ST_REEL;
         handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
     }
 
     public function attack () :void
     {
-        log.debug("Ghost attacking", "next", _next);
+//        log.debug("Ghost attacking", "next", _next);
         _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
     }
@@ -99,15 +98,14 @@ public class Ghost extends Sprite
     {
         _callback = callback;
         _next = ST_DIE;
-        log.debug("Ghost dying", "next", _next);
+//        log.debug("Ghost dying", "next", _next);
     }
 
     public function triumph (callback :Function = null) :void
     {
-        log.debug("Ghost triumphant", "next", _next);
+//        log.debug("Ghost triumphant", "next", _next);
 //        _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
-//        handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, function () :void { handler.clip.visible = false;  });//SKIN
     }
 
     protected function setupUI () :void
@@ -128,7 +126,7 @@ public class Ghost extends Sprite
         // refigure the bounds
         _bounds = ghost.getBounds(this);
 
-        log.debug("Ghost finished loading", "bounds", _bounds);
+//        log.debug("Ghost finished loading", "bounds", _bounds);
 
         if (_readyCallback != null) {
             _readyCallback(this);
@@ -138,25 +136,25 @@ public class Ghost extends Sprite
     protected function play () :void
     {
         if (_next == ST_FIGHT) {
-            log.info("gotoScene " + GamePanel.ST_GHOST_FIGHT);
+//            log.info("gotoScene " + GamePanel.ST_GHOST_FIGHT);
             handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
 
         } else if (_next == ST_REEL) {
-            log.info("gotoScene " + GamePanel.ST_GHOST_REEL);
+//            log.info("gotoScene " + GamePanel.ST_GHOST_REEL);
             _next = ST_FIGHT;
             handler.gotoScene(GamePanel.ST_GHOST_REEL, play);
 
         } else if (_next == ST_ATTACK) {
             _next = ST_FIGHT;
-            log.info("gotoScene " + GamePanel.ST_GHOST_RETALIATE);
+//            log.info("gotoScene " + GamePanel.ST_GHOST_RETALIATE);
             handler.gotoScene(GamePanel.ST_GHOST_RETALIATE, play);
 
         } else if (_next == ST_DIE) {
-            log.info("gotoScene " + GamePanel.ST_GHOST_DEFEAT);
+//            log.info("gotoScene " + GamePanel.ST_GHOST_DEFEAT);
             handler.gotoScene(GamePanel.ST_GHOST_DEFEAT, _callback);
 
         } else {
-            log.debug("unknown state: " + _next);
+//            log.debug("unknown state: " + _next);
             handler.gotoScene(GamePanel.ST_GHOST_FIGHT, play);
         }
     }

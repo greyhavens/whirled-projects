@@ -84,8 +84,8 @@ public class ClipHandler extends FrameSprite
             _callback = done;
             _lastFrame = toFrame >= 0 ? toFrame : _scene.numFrames;
             if (_scene.name) {  
-                log.debug("Playing", "scene", _scene.name, "frames", _scene.numFrames,
-                           "labels", _scene.labels);
+//                log.debug("Playing", "scene", _scene.name, "frames", _scene.numFrames,
+//                           "labels", _scene.labels);
                 _clip.gotoAndPlay(1, _scene.name);
             } else {
                 _clip.gotoAndPlay(1);

@@ -146,7 +146,7 @@ public class Player
 
     public function roomStateChanged () :void
     {
-        updateAvatarState();
+//        updateAvatarState();
     }
 
     // called from Server
@@ -155,6 +155,7 @@ public class Player
         // handle messages that make (at least some) sense even if we're between rooms
         switch(name) {
         case Codes.CMSG_PLAYER_REVIVE:
+            log.debug("reviving " + _playerId);
             setHealth(_maxHealth);
             return;
         case Codes.CMSG_DEBUG_REQUEST:
@@ -226,7 +227,7 @@ public class Player
         _room = Server.getRoom(int(evt.value));
         Server.control.doBatch(function () :void {
             _room.playerEntered(thisPlayer);
-            updateAvatarState();
+//            updateAvatarState();
         });
     }
 
@@ -281,15 +282,15 @@ public class Player
 
     protected function updateAvatarState () :void
     {
-        if (isDead()) {
-            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
-
-        } else if (_room.state == Codes.STATE_SEEKING || _room.state == Codes.STATE_APPEARING) {
-            _ctrl.setAvatarState(ST_PLAYER_DEFAULT);
-
-        } else {
-            _ctrl.setAvatarState(ST_PLAYER_FIGHT);
-        }
+//        if (isDead()) {
+//            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
+//
+//        } else if (_room.state == Codes.STATE_SEEKING || _room.state == Codes.STATE_APPEARING) {
+//            _ctrl.setAvatarState(ST_PLAYER_DEFAULT);
+//
+//        } else {
+//            _ctrl.setAvatarState(ST_PLAYER_FIGHT);
+//        }
     }
 
     protected function setLevel (level :int, force :Boolean = false) :void
@@ -336,11 +337,12 @@ public class Player
         _health = health;
 
         // persist it, too
+        
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
 
         // if we just died, update our state
         if (_health == 0) {
-            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
+//            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
             Trophies.handlePlayerDied(this);
         }
 

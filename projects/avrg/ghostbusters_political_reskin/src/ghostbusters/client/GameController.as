@@ -3,18 +3,16 @@
 
 package ghostbusters.client {
 
-import flash.display.DisplayObject;
-
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 
-import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.avrg.AVRGameControlEvent;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import ghostbusters.client.fight.FightPanel;
 import ghostbusters.client.fight.MicrogameResult;
-import ghostbusters.data.Codes;
 import ghostbusters.client.util.PlayerModel;
+import ghostbusters.data.Codes;
 
 public class GameController extends Controller
 {
@@ -45,6 +43,10 @@ public class GameController extends Controller
 // TODO: what is the best way to reset the state of a departing AVRG player?
 //        setAvatarState(GamePanel.ST_PLAYER_DEFAULT);
         Game.control.player.deactivateGame();
+        if( _reviveTimer != null) {
+            _reviveTimer.stop();
+            _reviveTimer = null;
+        }
     }
 
     public function handleHelp () :void
@@ -147,12 +149,26 @@ public class GameController extends Controller
 
     public function handleRevive () :void
     {
-        
-        if (PlayerModel.isDead(Game.ourPlayerId) && Game.state != Codes.STATE_FIGHTING) {
-            Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
+        trace(Game.ourPlayerId + " handleRevive()");
+        if (PlayerModel.isDead(Game.ourPlayerId) ) {//&& Game.state != Codes.STATE_FIGHTING) {//SKIN shouldn't we be in STATE_FIGHTING??
+            if( _reviveTimer == null) {
+                _reviveTimer = new Timer( 10000, 1);
+                _reviveTimer.addEventListener( TimerEvent.TIMER, function ( e :TimerEvent ) :void {
+                    Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
+                    trace(Game.ourPlayerId + " sent revive message to server");
+                    _reviveTimer.stop();
+                    _reviveTimer = null;
+                    });
+                _reviveTimer.start();
+            }
+        }
+        else {
+            trace("no revive message sent to server");
         }
         panel.removeReviveSplash();
     }
+    
+    protected var _reviveTimer :Timer;
 
     protected static const log :Log = Log.getLog(GameController);
 }

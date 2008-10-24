@@ -116,7 +116,7 @@ public class PictoGeistGame extends MicrogameMode
             _gameResult = new MicrogameResult();
             _gameResult.success = (success ? MicrogameResult.SUCCESS : MicrogameResult.FAILURE);
             _gameResult.damageOutput = (success ? _settings.damageOutput + _difficulty: 0);
-
+//            _gameResult.damageOutput = (success ? 500: 0);0;//TESTING, nuke the ghost!!
             _done = true;
         }
     }

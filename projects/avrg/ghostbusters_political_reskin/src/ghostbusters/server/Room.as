@@ -568,6 +568,11 @@ public class Room
             // the actual level is the base plus a random stretch of 0 or 1
             var level :int = levelBase + Server.random.nextInt(2);
             
+            //If it's the starting room, make it an easy foe
+            
+            if( this.roomId == 60191) {
+                level = 1;
+            }
 //            if( ghosts[ix] == GhostDefinition.GHOST_MUTANT
 
             data = Ghost.resetGhost(ghosts[ix], level);
