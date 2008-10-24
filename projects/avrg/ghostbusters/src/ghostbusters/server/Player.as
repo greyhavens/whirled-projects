@@ -241,6 +241,7 @@ public class Player
 
     protected function handleDebugRequest (request :String) :void
     {
+        log.info("Incoming debug request", "request", request);
         switch(request) {
         case Codes.DBG_GIMME_PANEL:
             break;
@@ -269,6 +270,9 @@ public class Player
                     break;
                 }
             }
+            break;
+        case Codes.DBG_REBOOT_WARNING:
+            Server.control.game.sendMessage(Codes.SMSG_REBOOT_WARNING);
             break;
         default:
             log.warning("Unknown debug request", "request", request);
