@@ -20,6 +20,11 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         super(mode);
     }
 
+    override public function update(dt:Number):void
+    {
+        super.update(dt);
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -27,13 +32,13 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         // create a "Waiting for players..." overlay
         _waitScreen = SpriteUtil.createSprite(false, true);
         var g :Graphics = _waitScreen.graphics;
-        g.beginFill(0);
+        g.beginFill(0, 0);
         g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
         g.endFill();
-        var waitText :TextField = UIBits.createText("Waiting for players...", 2, 0, 0xFFFFFF);
+        /*var waitText :TextField = UIBits.createText("Waiting for players...", 2, 0, 0xFFFFFF);
         waitText.x = (Constants.SCREEN_SIZE.x - waitText.width) * 0.5;
         waitText.y = (Constants.SCREEN_SIZE.y - waitText.height) * 0.5;
-        _waitScreen.addChild(waitText);
+        _waitScreen.addChild(waitText);*/
         _modeSprite.addChild(_waitScreen);
 
         if (SeatingManager.isLocalPlayerInControl) {
@@ -74,7 +79,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         return (_level != null &&
             EndlessMultiplayerConfig.inited &&
-            EndlessMultiplayerConfig.savedGames.length == 2);
+            EndlessMultiplayerConfig.areSavedGamesValid);
     }
 
     protected function initLocalPlayerData () :void
@@ -90,8 +95,8 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         if (e.name == EndlessMultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
             initLocalPlayerData();
-        } else if (_createdUi && e.name == EndlessMultiplayerConfig.PROP_SELECTEDLEVELIDX) {
-            var newSaveIndex :int = int(e.newValue);
+        } else if (_createdUi && e.name == EndlessMultiplayerConfig.PROP_SELECTEDMAPIDX) {
+            var newSaveIndex :int = EndlessMultiplayerConfig.selectedMapIdx;
             if (newSaveIndex != _saveIndex) {
                 var animationType :int;
                 if (newSaveIndex > _saveIndex || (newSaveIndex == 0 && _saveIndex == _saves.length - 1)) {
@@ -101,11 +106,23 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
                 }
                 selectSave(newSaveIndex, animationType, false);
             }
+
         } else if (e.name == EndlessMultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
-            log.info("Starting game");
+            onGameStarting();
         }
 
         tryCreateUi();
+    }
+
+    protected function onGameStarting () :void
+    {
+        // get the proper saved games
+        var saves :Array = [];
+        for each (var saveList :SavedEndlessGameList in EndlessMultiplayerConfig.savedGames) {
+            saves.push(saveList.saves[EndlessMultiplayerConfig.selectedMapIdx]);
+        }
+
+        animateToMode(new EndlessGameMode(_level, saves, true));
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
@@ -137,6 +154,11 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         // only the player in control gets to change levels or start the game
         return SeatingManager.isLocalPlayerInControl;
+    }
+
+    override protected function get enableQuitButton () :Boolean
+    {
+        return false;
     }
 
     protected var _showingWaitScreen :Boolean;

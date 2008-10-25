@@ -20,11 +20,10 @@ public class EndlessGameMode extends GameMode
     public static const HUMAN_TEAM_ID :int = 0;
     public static const FIRST_COMPUTER_TEAM_ID :int = 1;
 
-    public function EndlessGameMode (level :EndlessLevelData, save :SavedEndlessGame,
-        isNewGame :Boolean)
+    public function EndlessGameMode (level :EndlessLevelData, saves :Array, isNewGame :Boolean)
     {
         EndlessGameContext.level = level;
-        _savedGame = save;
+        _playerSaves = saves;
         _needsReset = isNewGame;
     }
 
@@ -36,11 +35,14 @@ public class EndlessGameMode extends GameMode
 
         EndlessGameContext.gameMode = this;
 
-        if (_savedGame != null) {
+        if (_playerSaves != null) {
+            // all saved games will point to the same mapIndex
+            var save :SavedEndlessGame = _playerSaves[GameContext.localPlayerIndex];
+
             // restore saved data if it exists
-            EndlessGameContext.mapIndex = _savedGame.mapIndex;
-            EndlessGameContext.score = _savedGame.score;
-            EndlessGameContext.scoreMultiplier = _savedGame.multiplier;
+            EndlessGameContext.mapIndex = save.mapIndex;
+            EndlessGameContext.score = save.score;
+            EndlessGameContext.scoreMultiplier = save.multiplier;
 
         } else {
             // otherwise, move to the next map
@@ -406,8 +408,10 @@ public class EndlessGameMode extends GameMode
 
         _liveComputers = this.createComputerPlayers();
 
+        var playerInfo :PlayerInfo;
+
         // init all players players
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (playerInfo in GameContext.playerInfos) {
             playerInfo.init();
         }
 
@@ -419,13 +423,17 @@ public class EndlessGameMode extends GameMode
             ++playerIndex) {
 
             var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
-            var player :PlayerInfo = GameContext.playerInfos[playerIndex];
-            player.restoreSavedPlayerInfo(savedPlayer, damageShieldHealth);
+            playerInfo = GameContext.playerInfos[playerIndex];
+            playerInfo.restoreSavedPlayerInfo(savedPlayer, damageShieldHealth);
         }
 
-        // restore data from the saved game, if it exists
-        if (_savedGame != null) {
-            GameContext.localPlayerInfo.restoreSavedGameData(_savedGame, damageShieldHealth);
+        // restore data from the saved games, if they exist
+        if (_playerSaves != null) {
+            for (playerIndex = 0; playerIndex < _playerSaves.length; ++playerIndex) {
+                var save :SavedEndlessGame = _playerSaves[playerIndex];
+                playerInfo = GameContext.playerInfos[playerIndex];
+                playerInfo.restoreSavedGameData(save, damageShieldHealth);
+            }
         }
 
         _playerGotMultiplier = ArrayUtil.create(GameContext.numPlayers, false);
@@ -475,7 +483,7 @@ public class EndlessGameMode extends GameMode
     protected var _localHumanPlayerData :EndlessHumanPlayerData;
     protected var _needsReset :Boolean;
     protected var _switchingMaps :Boolean;
-    protected var _savedGame :SavedEndlessGame;
+    protected var _playerSaves :Array;
     protected var _liveComputers :Array;
     protected var _lastLiveComputerLoc :Vector2 = new Vector2();
     protected var _readyToStart :Boolean;

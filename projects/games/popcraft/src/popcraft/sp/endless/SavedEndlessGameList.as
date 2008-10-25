@@ -37,6 +37,14 @@ public class SavedEndlessGameList
         return true;
     }
 
+    public function getSave (mapIndex :int) :SavedEndlessGame
+    {
+        return ArrayUtil.findIf(saves,
+            function (save :SavedEndlessGame) :Boolean {
+                return save.mapIndex == mapIndex;
+            });
+    }
+
     public function fromBytes (ba :ByteArray) :void
     {
         saves = [];
