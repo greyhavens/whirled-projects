@@ -49,12 +49,16 @@ public class SavedEndlessGameList
         }
     }
 
-    public function toBytes (ba :ByteArray) :void
+    public function toBytes (ba :ByteArray = null) :ByteArray
     {
+        ba = (ba != null ? ba : new ByteArray());
+
         ba.writeShort(saves.length);
         for each (var save :SavedEndlessGame in saves) {
             save.toBytes(ba);
         }
+
+        return ba;
     }
 }
 

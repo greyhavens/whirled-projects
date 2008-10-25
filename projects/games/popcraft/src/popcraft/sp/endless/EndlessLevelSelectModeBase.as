@@ -12,7 +12,6 @@ import flash.geom.Point;
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
 import popcraft.data.UnitData;
-import popcraft.sp.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 
@@ -23,16 +22,9 @@ public class EndlessLevelSelectModeBase extends AppMode
         _mode = mode;
     }
 
-    override protected function setup () :void
+    protected function onLevelLoaded (level :EndlessLevelData) :void
     {
-        super.setup();
-
-        // we need to load the endless level in order to create the UI
-        if (this.isMultiplayer) {
-            AppContext.endlessLevelMgr.playMpLevel(createUi);
-        } else {
-            AppContext.endlessLevelMgr.playSpLevel(createUi);
-        }
+        createUi(level);
     }
 
     protected function createUi (level :EndlessLevelData) :void
@@ -44,8 +36,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         _level = level;
 
-        _saves = (this.isMultiplayer ? AppContext.endlessLevelMgr.savedMpGames.saves :
-            AppContext.endlessLevelMgr.savedSpGames.saves).slice();
+        _saves = getSavedGames().slice();
 
         // insert a dummy Level 1 save into the save array, so that players can start
         // new games
@@ -54,7 +45,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
         _saves.splice(0, 0, level1);
 
-        this.selectSave(_saves.length - 1, ANIMATE_DOWN, true);
+        selectSave(_saves.length - 1, ANIMATE_DOWN, true);
     }
 
     protected function selectSave (saveIndex :int, animationType :int,
@@ -110,24 +101,22 @@ public class EndlessLevelSelectModeBase extends AppMode
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
         _saveView.addTask(saveViewTask);
-        this.addObject(_saveView, _saveViewLayer);
+        addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
         var nextButton :SimpleButton = _saveView.nextButton;
         var prevButton :SimpleButton = _saveView.prevButton;
         var playButton :SimpleButton = _saveView.playButton;
-        var backButton :SimpleButton = _saveView.backButton;
+        var quitButton :SimpleButton = _saveView.quitButton;
 
-        // back button never visible in multiplayer
-        if (this.isMultiplayer) {
-            backButton.visible = false;
+        if (!enableQuitButton) {
+            quitButton.visible = false;
         } else {
-            backButton.visible = true;
-            this.registerOneShotCallback(backButton, MouseEvent.CLICK, backToMainMenu);
+            quitButton.visible = true;
+            registerOneShotCallback(quitButton, MouseEvent.CLICK, onQuitClicked);
         }
 
-        // if this player is not in control, they don't get to play with the buttons
-        if (this.isMultiplayer && !SeatingManager.isLocalPlayerInControl) {
+        if (!enableNextPrevPlayButtons) {
             nextButton.visible = false;
             prevButton.visible = false;
             playButton.visible = false;
@@ -136,7 +125,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             if (_saves.length > 1) {
                 nextButton.visible = true;
                 prevButton.visible = true;
-                this.registerOneShotCallback(nextButton, MouseEvent.CLICK,
+                registerOneShotCallback(nextButton, MouseEvent.CLICK,
                     function (...ignored) :void {
                         var index :int = _saveIndex + 1;
                         if (index >= _saves.length) {
@@ -145,7 +134,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                         selectSave(index, ANIMATE_NEXT, false);
                     });
 
-                this.registerOneShotCallback(prevButton, MouseEvent.CLICK,
+                registerOneShotCallback(prevButton, MouseEvent.CLICK,
                     function (...ignored) :void {
                         var index :int = _saveIndex - 1;
                         if (index < 0) {
@@ -160,24 +149,11 @@ public class EndlessLevelSelectModeBase extends AppMode
             }
 
             playButton.visible = true;
-            this.registerOneShotCallback(playButton, MouseEvent.CLICK,
+            registerOneShotCallback(playButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    startGame(_saves[_saveIndex]);
+                    onPlayClicked(_saves[_saveIndex]);
                 });
         }
-    }
-
-    protected function startGame (save :SavedEndlessGame) :void
-    {
-        GameContext.gameType = (this.isMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
-            GameContext.GAME_TYPE_ENDLESS_SP);
-
-        this.animateToMode(new EndlessGameMode(_level, save, true));
-    }
-
-    protected function backToMainMenu (...ignored) :void
-    {
-        LevelSelectMode.create(false, animateToMode);
     }
 
     protected function animateToMode (nextMode :AppMode) :void
@@ -192,14 +168,29 @@ public class EndlessLevelSelectModeBase extends AppMode
             new FunctionTask(AppContext.mainLoop.popMode)));
     }
 
-    protected function get isMultiplayer () :Boolean
+    protected function onPlayClicked (save :SavedEndlessGame) :void
     {
-        return SeatingManager.numExpectedPlayers > 1;
+        throw new Error("abstract");
     }
 
-    protected function get isSinglePlayer () :Boolean
+    protected function onQuitClicked (...ignored) :void
     {
-        return !isMultiplayer;
+        throw new Error("abstract");
+    }
+
+    protected function getSavedGames () :Array
+    {
+        throw new Error("abstract");
+    }
+
+    protected function get enableNextPrevPlayButtons () :Boolean
+    {
+        return true;
+    }
+
+    protected function get enableQuitButton () :Boolean
+    {
+        return true;
     }
 
     protected var _mode :int;
@@ -209,6 +200,7 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _saveIndex :int = -1;
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
+    protected var _initedLocalPlayerData :Boolean;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
     protected static const ANIMATE_UP_TIME :Number = 1.5;
@@ -285,7 +277,7 @@ class SaveView extends SceneObject
         var buttonSprite :Sprite = SpriteUtil.createSprite(true);
 
         _backButton = UIBits.createButton("Quit", 1.5);
-        DisplayUtil.positionBounds(_backButton, 0, -backButton.height * 0.5);
+        DisplayUtil.positionBounds(_backButton, 0, -quitButton.height * 0.5);
         buttonSprite.addChild(_backButton);
 
         _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
@@ -410,11 +402,11 @@ class SaveView extends SceneObject
                 var infusionSprite :Sprite = SpriteUtil.createSprite();
 
                 var loc :Point = new Point(0, 0);
-                this.drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
+                drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
                 loc.x = infusionSprite.width + 2;
-                this.drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
+                drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
                 loc.x = infusionSprite.width + 2;
-                this.drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
+                drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
 
                 DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
                 elementsSprite.addChild(infusionSprite);
@@ -426,7 +418,7 @@ class SaveView extends SceneObject
             if (numMultipliers > 0) {
                 var multiplierSprite :Sprite = SpriteUtil.createSprite();
                 loc = new Point(0, 0);
-                this.drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
+                drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
                 DisplayUtil.positionBounds(multiplierSprite, elementLoc.x, elementLoc.y - (multiplierSprite.height * 0.5));
                 elementsSprite.addChild(multiplierSprite);
             }
@@ -468,7 +460,7 @@ class SaveView extends SceneObject
         return _playButton;
     }
 
-    public function get backButton () :SimpleButton
+    public function get quitButton () :SimpleButton
     {
         return _backButton;
     }

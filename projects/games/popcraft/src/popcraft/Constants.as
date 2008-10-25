@@ -13,6 +13,10 @@ public class Constants
     /* Increment this whenever any cookie data changes. */
     public static const USER_COOKIE_VERSION :int = 1;
 
+    /* Scoring game modes */
+    public static const SCORE_MODE_STORY :int = 0;
+    public static const SCORE_MODE_ENDLESS :int = 1;
+
     /* ResourceManager stuff */
     public static const RESTYPE_LEVEL :String = "level";
     public static const RESTYPE_ENDLESS :String = "endlessLevel";
@@ -138,19 +142,19 @@ public class Constants
     /* Performance stuff */
     public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [
         17,  // grunt
-        29,  // heavy
+        30,  // heavy
         29,   // sapper
         29,   // courier
-        22,  // colossus
-        17,  // boss
+        24,  // colossus
+        24,  // boss
     ];
     public static const BITMAP_DEATH_ANIM_THRESHOLDS :Array = [
-        17,  // grunt
-        17,  // heavy
-        17,  // sapper
-        17,  // courier
-        17,  // colossus
-        17,  // boss
+        19,  // grunt
+        19,  // heavy
+        19,  // sapper
+        19,  // courier
+        19,  // colossus
+        19,  // boss
     ];
 }
 

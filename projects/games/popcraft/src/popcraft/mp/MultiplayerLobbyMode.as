@@ -23,6 +23,7 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.GameVariantData;
+import popcraft.sp.endless.MpEndlessLevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class MultiplayerLobbyMode extends AppMode
@@ -46,11 +47,11 @@ public class MultiplayerLobbyMode extends AppMode
 
         _statusText = _bg["instructions"];
 
-        this.registerListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+        registerListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
-        this.registerListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+        registerListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
-        this.registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             onOccupantLeft);
 
         if (SeatingManager.isLocalPlayerInControl) {
@@ -59,19 +60,19 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         if (MultiplayerConfig.inited) {
-            this.initLocalPlayerData();
+            initLocalPlayerData();
         }
 
         _handicapCheckbox = _bg["handicap"];
-        this.registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
+        registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
         this.handicapOn = false;
 
-        this.updateHandicapsDisplay();
-        this.updateTeamsDisplay();
-        this.updatePremiumContentDisplay();
+        updateHandicapsDisplay();
+        updateTeamsDisplay();
+        updatePremiumContentDisplay();
 
-        this.registerListener(AppContext.gameCtrl.player,
-            GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
+        registerListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+            onPlayerPurchasedContent);
     }
 
     override protected function enter () :void
@@ -203,7 +204,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         if (this.isEndlessModeSelected) {
-            AppContext.endlessLevelMgr.playMpLevel();
+            AppContext.mainLoop.pushMode(new MpEndlessLevelSelectMode());
         } else {
             GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
             AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
@@ -401,6 +402,9 @@ public class MultiplayerLobbyMode extends AppMode
         // we can start the game
         if (this.isEndlessModeSelected) {
             return true;
+        } else if (this.isSomeoneInEndlessMode) {
+            // unless everyone has selected endless mode, nobody can select it
+            return false;
         }
 
         // does one team have all the players?
@@ -412,6 +416,18 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         return true;
+    }
+
+    protected function get isSomeoneInEndlessMode () :Boolean
+    {
+        var teams :Array = MultiplayerConfig.teams;
+        for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
+            if (SeatingManager.isPlayerPresent(playerSeat) && teams[playerSeat] == ENDLESS_TEAM_ID) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function get isEndlessModeSelected () :Boolean

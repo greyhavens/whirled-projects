@@ -217,7 +217,11 @@ public class EndlessGameMode extends GameMode
             }
 
         } else {
-            AppContext.mainLoop.pushMode(new EndlessGameOverMode());
+            if (GameContext.isSinglePlayerGame) {
+                AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
+            } else {
+                AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
+            }
         }
 
         GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);

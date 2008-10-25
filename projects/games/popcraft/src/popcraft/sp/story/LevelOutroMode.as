@@ -132,7 +132,7 @@ public class LevelOutroMode extends AppMode
         var awardedScore :int = (_success ? this.totalScore : this.resourcesScore);
 
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.endGameWithScore(awardedScore);
+            AppContext.gameCtrl.game.endGameWithScore(awardedScore, Constants.SCORE_MODE_STORY);
 
         } else {
             log.info("Level score: " + awardedScore);

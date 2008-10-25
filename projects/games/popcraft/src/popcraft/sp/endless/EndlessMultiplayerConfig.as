@@ -1,5 +1,7 @@
 package popcraft.sp.endless {
 
+import com.threerings.util.ArrayUtil;
+
 import popcraft.*;
 
 public class EndlessMultiplayerConfig
@@ -14,7 +16,7 @@ public class EndlessMultiplayerConfig
         AppContext.gameCtrl.net.doBatch(function () :void {
             EndlessMultiplayerConfig.gameStarting = false;
             EndlessMultiplayerConfig.selectedLevelIndex = 0;
-            EndlessMultiplayerConfig.savedGames = null;
+            EndlessMultiplayerConfig.savedGames = ArrayUtil.create(2, null);
             EndlessMultiplayerConfig.inited = true;
         });
     }
@@ -54,14 +56,14 @@ public class EndlessMultiplayerConfig
         AppContext.gameCtrl.net.set(PROP_SAVEDGAMES, val);
     }
 
-    public static function get savedGames (val :Array) :void
+    public static function get savedGames () :Array
     {
         return AppContext.gameCtrl.net.get(PROP_SAVEDGAMES) as Array;
     }
 
-    public function setLocalPlayerSavedGames (val :Array) :void
+    public static function setPlayerSavedGames (playerSeat :int, val :SavedEndlessGameList) :void
     {
-        // TODO
+        AppContext.gameCtrl.net.setAt(PROP_SAVEDGAMES, playerSeat, val.toBytes());
     }
 
 }

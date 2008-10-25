@@ -62,9 +62,11 @@ public class SavedEndlessGame
         }
     }
 
-    public function toBytes (ba :ByteArray) :void
+    public function toBytes (ba :ByteArray = null) :ByteArray
     {
         checkCookieValidity();
+
+        ba = (ba != null ? ba : new ByteArray());
 
         ba.writeShort(mapIndex);
         ba.writeInt(score);
@@ -74,6 +76,8 @@ public class SavedEndlessGame
         for each (var spellCount :int in spells) {
             ba.writeByte(spellCount);
         }
+
+        return ba;
     }
 
     public static function max (a :SavedEndlessGame, b :SavedEndlessGame) :SavedEndlessGame
