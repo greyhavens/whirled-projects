@@ -36,22 +36,21 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         _level = level;
 
-        _saves = getSavedGames().slice();
+        _saves = getSavedGames().saves.slice();
 
         // insert a dummy Level 1 save into the save array, so that players can start
         // new games
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        var level1 :SavedEndlessGame = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth,
-            ArrayUtil.create(Constants.CASTABLE_SPELL_TYPE__LIMIT, 0));
+        var level1 :SavedEndlessGame = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth);
         _saves.splice(0, 0, level1);
 
-        selectSave(_saves.length - 1, ANIMATE_DOWN, true);
+        selectLevel(_saves.length - 1, ANIMATE_DOWN, true);
     }
 
-    protected function selectSave (saveIndex :int, animationType :int,
+    protected function selectLevel (mapIndex :int, animationType :int,
         removeModeUnderneath :Boolean) :void
     {
-        _saveIndex = saveIndex;
+        _mapIndex = mapIndex;
 
         var newStartLoc :Point;
         var oldStartLoc :Point;
@@ -93,11 +92,11 @@ public class EndlessLevelSelectModeBase extends AppMode
                 }));
         }
 
-        var save :SavedEndlessGame = _saves[saveIndex];
+        var save :SavedEndlessGame = _saves[mapIndex];
         var showStats :Boolean =
             (_mode == GAME_OVER_MODE && save.mapIndex == EndlessGameContext.mapIndex);
 
-        _saveView = new SaveView(_level, _saves[saveIndex], showStats);
+        _saveView = new SaveView(_level, _saves[mapIndex], showStats);
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
         _saveView.addTask(saveViewTask);
@@ -127,20 +126,20 @@ public class EndlessLevelSelectModeBase extends AppMode
                 prevButton.visible = true;
                 registerOneShotCallback(nextButton, MouseEvent.CLICK,
                     function (...ignored) :void {
-                        var index :int = _saveIndex + 1;
+                        var index :int = _mapIndex + 1;
                         if (index >= _saves.length) {
                             index = 0;
                         }
-                        selectSave(index, ANIMATE_NEXT, false);
+                        selectLevel(index, ANIMATE_NEXT, false);
                     });
 
                 registerOneShotCallback(prevButton, MouseEvent.CLICK,
                     function (...ignored) :void {
-                        var index :int = _saveIndex - 1;
+                        var index :int = _mapIndex - 1;
                         if (index < 0) {
                             index = _saves.length - 1;
                         }
-                        selectSave(index, ANIMATE_PREV, false);
+                        selectLevel(index, ANIMATE_PREV, false);
                     });
 
             } else {
@@ -151,7 +150,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             playButton.visible = true;
             registerOneShotCallback(playButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    onPlayClicked(_saves[_saveIndex]);
+                    onPlayClicked(_saves[_mapIndex]);
                 });
         }
     }
@@ -178,7 +177,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         throw new Error("abstract");
     }
 
-    protected function getSavedGames () :Array
+    protected function getSavedGames () :SavedEndlessGameList
     {
         throw new Error("abstract");
     }
@@ -197,7 +196,7 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _saveViewLayer :Sprite;
     protected var _topLayer :Sprite;
     protected var _saves :Array;
-    protected var _saveIndex :int = -1;
+    protected var _mapIndex :int = -1;
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
     protected var _initedLocalPlayerData :Boolean;

@@ -6,11 +6,10 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
-import popcraft.ui.UIBits;
+import popcraft.data.UnitData;
 import popcraft.util.SpriteUtil;
 
 public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
@@ -96,15 +95,15 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         if (e.name == EndlessMultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
             initLocalPlayerData();
         } else if (_createdUi && e.name == EndlessMultiplayerConfig.PROP_SELECTEDMAPIDX) {
-            var newSaveIndex :int = EndlessMultiplayerConfig.selectedMapIdx;
-            if (newSaveIndex != _saveIndex) {
+            var newMapIndex :int = EndlessMultiplayerConfig.selectedMapIdx;
+            if (newMapIndex != _mapIndex) {
                 var animationType :int;
-                if (newSaveIndex > _saveIndex || (newSaveIndex == 0 && _saveIndex == _saves.length - 1)) {
+                if (newMapIndex > _mapIndex || (newMapIndex == 0 && _mapIndex == _saves.length - 1)) {
                     animationType = ANIMATE_NEXT;
                 } else {
                     animationType = ANIMATE_PREV;
                 }
-                selectSave(newSaveIndex, animationType, false);
+                selectLevel(newMapIndex, animationType, false);
             }
 
         } else if (e.name == EndlessMultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
@@ -118,8 +117,16 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         // get the proper saved games
         var saves :Array = [];
+        var mapIdx :int = EndlessMultiplayerConfig.selectedMapIdx;
+        var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
         for each (var saveList :SavedEndlessGameList in EndlessMultiplayerConfig.savedGames) {
-            saves.push(saveList.saves[EndlessMultiplayerConfig.selectedMapIdx]);
+            // get the correct save for this player, or create a new one if it doesn't
+            // already exist
+            var save :SavedEndlessGame = saveList.getSave(mapIdx);
+            if (save == null) {
+                save = SavedEndlessGame.create(mapIdx, 0, 1, workshopData.maxHealth);
+            }
+            saves.push(save);
         }
 
         animateToMode(new EndlessGameMode(_level, saves, true));
@@ -130,9 +137,16 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         tryCreateUi();
     }
 
-    override protected function getSavedGames () :Array
+    override protected function getSavedGames () :SavedEndlessGameList
     {
-        return AppContext.endlessLevelMgr.savedMpGames.saves;
+        var shortestSaves :SavedEndlessGameList;
+        for each (var saves :SavedEndlessGameList in EndlessMultiplayerConfig.savedGames) {
+            if (shortestSaves == null || saves.numSaves < shortestSaves.numSaves) {
+                shortestSaves = saves;
+            }
+        }
+
+        return shortestSaves;
     }
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void

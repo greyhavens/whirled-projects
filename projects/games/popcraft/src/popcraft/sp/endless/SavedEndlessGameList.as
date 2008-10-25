@@ -37,6 +37,11 @@ public class SavedEndlessGameList
         return true;
     }
 
+    public function get numSaves () :int
+    {
+        return saves.length;
+    }
+
     public function getSave (mapIndex :int) :SavedEndlessGame
     {
         return ArrayUtil.findIf(saves,

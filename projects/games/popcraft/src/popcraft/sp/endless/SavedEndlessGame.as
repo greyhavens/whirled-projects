@@ -16,7 +16,7 @@ public class SavedEndlessGame
     public var spells :Array = ArrayUtil.create(NUM_SPELLS, 0);
 
     public static function create (mapIndex :int, score :int, multiplier :int, health :int,
-        spells :Array)
+        spells :Array = null)
         :SavedEndlessGame
     {
         var save :SavedEndlessGame = new SavedEndlessGame();
@@ -24,7 +24,9 @@ public class SavedEndlessGame
         save.score = score;
         save.multiplier = multiplier;
         save.health = health;
-        save.spells = spells.slice();
+        if (spells != null) {
+            save.spells = spells.slice();
+        }
         return save;
     }
 
