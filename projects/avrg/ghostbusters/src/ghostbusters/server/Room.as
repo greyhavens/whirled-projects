@@ -174,7 +174,6 @@ public class Room
             _errorCount ++;
             if (isShutdown) {
                 log.info("Giving up on room tick() due to error overflow", "roomId", roomId);
-                reset();
                 return;
             }
         }
