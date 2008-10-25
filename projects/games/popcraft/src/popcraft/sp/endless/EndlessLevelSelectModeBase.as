@@ -1,6 +1,5 @@
 package popcraft.sp.endless {
 
-import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -96,31 +95,24 @@ public class EndlessLevelSelectModeBase extends AppMode
         var showStats :Boolean =
             (_mode == GAME_OVER_MODE && save.mapIndex == EndlessGameContext.mapIndex);
 
-        _saveView = new SaveView(_level, _saves[mapIndex], showStats);
+        _saveView = new SaveView(_level, _saves[mapIndex], showStats,
+            this.enableNextPrevPlayButtons, this.enableQuitButton);
+
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
         _saveView.addTask(saveViewTask);
         addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
-        var nextButton :SimpleButton = _saveView.nextButton;
-        var prevButton :SimpleButton = _saveView.prevButton;
-        var playButton :SimpleButton = _saveView.playButton;
-        var quitButton :SimpleButton = _saveView.quitButton;
-
-        if (!enableQuitButton) {
-            quitButton.visible = false;
-        } else {
-            quitButton.visible = true;
-            registerOneShotCallback(quitButton, MouseEvent.CLICK, onQuitClicked);
+        if (this.enableQuitButton) {
+            registerOneShotCallback(_saveView.quitButton, MouseEvent.CLICK, onQuitClicked);
         }
 
-        if (!enableNextPrevPlayButtons) {
-            nextButton.visible = false;
-            prevButton.visible = false;
-            playButton.visible = false;
+        if (this.enableNextPrevPlayButtons) {
+            var nextButton :SimpleButton = _saveView.nextButton;
+            var prevButton :SimpleButton = _saveView.prevButton;
+            var playButton :SimpleButton = _saveView.playButton;
 
-        } else {
             if (_saves.length > 1) {
                 nextButton.visible = true;
                 prevButton.visible = true;
@@ -244,7 +236,7 @@ import com.threerings.flash.DisplayUtil;
 class SaveView extends SceneObject
 {
     public function SaveView (level :EndlessLevelData, save :SavedEndlessGame,
-        showGameOverStats :Boolean)
+        showGameOverStats :Boolean, createNextPrevPlayButtons :Boolean, createQuitButton :Boolean)
     {
         var mapData :EndlessMapData = level.getMapData(save.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(save.mapIndex);
@@ -275,15 +267,24 @@ class SaveView extends SceneObject
         // buttons
         var buttonSprite :Sprite = SpriteUtil.createSprite(true);
 
-        _backButton = UIBits.createButton("Quit", 1.5);
-        DisplayUtil.positionBounds(_backButton, 0, -quitButton.height * 0.5);
-        buttonSprite.addChild(_backButton);
+        if (createQuitButton) {
+            _quitButton = UIBits.createButton("Quit", 1.5);
+            DisplayUtil.positionBounds(_quitButton, 0, -quitButton.height * 0.5);
+            buttonSprite.addChild(_quitButton);
+        }
 
-        _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
-        DisplayUtil.positionBounds(_playButton,
-            buttonSprite.width + BUTTON_X_OFFSET,
-            -_playButton.height * 0.5);
-        buttonSprite.addChild(_playButton);
+        if (createNextPrevPlayButtons) {
+            _playButton = UIBits.createButton((showGameOverStats ? "Retry" : "Play"), 2.5);
+            DisplayUtil.positionBounds(_playButton,
+                buttonSprite.width + BUTTON_X_OFFSET,
+                -_playButton.height * 0.5);
+            buttonSprite.addChild(_playButton);
+
+        } else {
+            // these buttons are part of the movie
+            this.nextButton.visible = false;
+            this.prevButton.visible = false;
+        }
 
         DisplayUtil.positionBounds(buttonSprite,
             BUTTONS_CTR_LOC.x - (buttonSprite.width * 0.5),
@@ -461,13 +462,13 @@ class SaveView extends SceneObject
 
     public function get quitButton () :SimpleButton
     {
-        return _backButton;
+        return _quitButton;
     }
 
     protected var _mode :int;
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
-    protected var _backButton :SimpleButton;
+    protected var _quitButton :SimpleButton;
 
     protected static const BUTTONS_CTR_LOC :Point = new Point(0, 180);
     protected static const BUTTON_X_OFFSET :Number = 15;
