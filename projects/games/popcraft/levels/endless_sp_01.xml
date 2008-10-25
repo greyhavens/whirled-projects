@@ -43,7 +43,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Pigsley"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
+				baseHealthIncrement="50"
 				waveDelayScale="0.85"
 				team="1">
 				<BaseLocation x="600" y="265" team="1"/>
@@ -82,8 +82,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Horace"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
-				waveDelayScale="0.85"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="340" team="1"/>
 				<RepeatingDays>
@@ -96,7 +96,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="15"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="30"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="80"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="95"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="119"></Wave>
 					</Day>
@@ -125,8 +125,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Iris"
 				baseStartHealth="100"
 				baseHealth="100"
-				baseHealthIncrement="50"
-				waveDelayScale="0.85"
+				baseHealthIncrement="33"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="620" y="155" team="1"/>
 				<RepeatingDays>
@@ -147,8 +147,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Ivy"
 				baseStartHealth="100"
 				baseHealth="100"
-				baseHealthIncrement="50"
-				waveDelayScale="0.85"
+				baseHealthIncrement="33"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="420" y="295" team="1"/>
 				<RepeatingDays>
@@ -196,8 +196,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Ursula"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
-				waveDelayScale="0.85"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="620" y="200" team="1"/>
 				<RepeatingDays>
@@ -239,8 +239,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Ralph"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
-				waveDelayScale="0.85"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="620" y="270" team="1"/>
 				<RepeatingDays>
@@ -288,8 +288,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Dante"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
-				waveDelayScale="0.85"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="285" team="1"/>
 				<RepeatingDays>
@@ -333,7 +333,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Jack"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
+				baseHealthIncrement="50"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="140" team="1"/>
@@ -356,7 +356,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Pigsley"
 				baseStartHealth="120"
 				baseHealth="120"
-				baseHealthIncrement="60"
+				baseHealthIncrement="40"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="80" y="140" team="1"/>
@@ -390,7 +390,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Ursula"
 				baseStartHealth="120"
 				baseHealth="120"
-				baseHealthIncrement="60"
+				baseHealthIncrement="40"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="370" y="330" team="1"/>
@@ -414,7 +414,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Ralph"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
+				baseHealthIncrement="50"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="620" y="265" team="1"/>
@@ -462,7 +462,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Jack"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
+				baseHealthIncrement="50"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="140" team="1"/>
@@ -487,7 +487,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				playerName="Dante"
 				baseStartHealth="150"
 				baseHealth="150"
-				baseHealthIncrement="75"
+				baseHealthIncrement="50"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="285" team="1"/>
