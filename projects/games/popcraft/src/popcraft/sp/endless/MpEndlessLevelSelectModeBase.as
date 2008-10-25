@@ -59,6 +59,16 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         tryCreateUi();
     }
 
+    override protected function selectLevel (mapIndex :int, animationType :int,
+        removeModeUnderneath :Boolean) :void
+    {
+        super.selectLevel(mapIndex, animationType, removeModeUnderneath);
+
+        if (SeatingManager.isLocalPlayerInControl) {
+            EndlessMultiplayerConfig.selectedMapIdx = mapIndex;
+        }
+    }
+
     override protected function onLevelLoaded (level :EndlessLevelData) :void
     {
         _level = level;
