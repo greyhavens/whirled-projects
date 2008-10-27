@@ -1,11 +1,11 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.geom.ColorTransform;
 import flash.text.TextField;
-import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
-import flash.events.Event;
+import flash.text.TextFormat;
 
 import lawsanddisorder.*;
 
@@ -15,7 +15,7 @@ import lawsanddisorder.*;
 public class Job extends Component
 {
     /** Event fired when this player is finished using their power. */
-    public static const MY_POWER_USED :String = "myPowerUsed";
+    public static const POWER_USED :String = "powerUsed";
     
     /**
      * Constructor
@@ -88,7 +88,7 @@ public class Job extends Component
 
         // display description with/without instructions for changing jobs
         if (player.jobEnabled) {
-            jobDescription.text = description + "\n\n (Drag a blue card here to change jobs)";
+            jobDescription.text = description + "\n\n (Drop a blue card to change)";
         }
         else {
             jobDescription.text = description;
@@ -186,8 +186,7 @@ public class Job extends Component
                 reachedPointOfNoReturn();
                 player.loseMonies(2);
                 player.hand.drawCard(2);
-                _ctx.broadcast(player.playerName + 
-                    " (The Trader) used their ability to draw two cards");
+                announcePowerUsed("used Trader's power to draw two cards");
                 doneUsingPower();
                 return;
 
@@ -232,7 +231,7 @@ public class Job extends Component
                 _ctx.state.selectedLaw = aiPlayer.selectLaw();
                 if (_ctx.state.selectedLaw.hasGivesTarget()) {
                     // error if law has a gives target, abort by giving focus back to ai
-                    _ctx.log("AI tried to use banker's ability on a law with a gives target.");
+                    //_ctx.log("AI tried to use banker's ability on a law with a gives target.");
                     _ctx.state.selectedCards = null;
                     aiPlayer.doneEnactingLaws();
                     return;
@@ -265,8 +264,7 @@ public class Job extends Component
                 // the trader's ability happens immediately
                 player.loseMonies(2);
                 player.hand.drawCard(2);
-                _ctx.broadcast(player.playerName + 
-                    " (The Trader) used their ability to draw two cards");
+                announcePowerUsed("used Trader's power to draw two cards");
                 doneUsingPower();
                 return;
 
@@ -346,7 +344,7 @@ public class Job extends Component
         reachedPointOfNoReturn();
         player.loseMonies(2);
         var law :Law = _ctx.state.selectedLaw;
-        _ctx.broadcast(player.playerName + " (The Judge) is enacting law " + law.displayId);
+        announcePowerUsed("is enacting a law: '" + law + "'");
         _ctx.state.deselectLaw();
         _ctx.eventHandler.addMessageListener(Laws.ENACT_LAW_DONE, judgeLawEnacted);
         _ctx.sendMessage(Laws.ENACT_LAW, law.id);
@@ -374,7 +372,7 @@ public class Job extends Component
             // pick cards automatically
             if (opponent.hand.cards.length == 0) {
                 // Error if chosen opponent has no cards
-                _ctx.log("ai tried to steal a card form someone with no cards");
+                //_ctx.log("AI tried to steal a card form someone with no cards");
                 AIPlayer(player).doneEnactingLaws();
             }
             _ctx.state.selectedCards = opponent.hand.getRandomCards(1);
@@ -402,15 +400,14 @@ public class Job extends Component
         _ctx.state.deselectCards();
 
         // give different players different information
-        _ctx.broadcast(player.playerName + " (The Thief) stole a card from " + 
-            opponent.playerName);
+        announcePowerUsed("stole a card from " + opponent.name);
         if (!(opponent as AIPlayer)) {
-            _ctx.broadcast(player.playerName + " (The Thief) stole '" + stolenCard.text + 
+            _ctx.broadcast(player.name + " stole a '" + stolenCard.text + 
                 "' card from you", opponent);
         }
         if (!(player as AIPlayer)) {
             Opponent(opponent).showHand = false;
-            _ctx.notice("You stole '" + stolenCard.text + "' card from " + opponent.playerName);
+            _ctx.notice("You stole a '" + stolenCard.text + "' card from " + opponent.name);
         }
         doneUsingPower();
     }
@@ -424,8 +421,8 @@ public class Job extends Component
         var card :Card = _ctx.state.activeCard;
         var targetCard :Card = _ctx.state.selectedCard;
         var law :Law = _ctx.state.selectedLaw;
-        _ctx.broadcast(player.playerName + " (The Banker) swapped '" +
-           targetCard.text + "' with '" + card.text + "' in Law " + law.displayId);
+        announcePowerUsed("swapped '" + targetCard.text + "' with '" + card.text + 
+            "' to make '" + law + "'");
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();
         doneUsingPower();
@@ -440,8 +437,8 @@ public class Job extends Component
         var card :Card = _ctx.state.activeCard;
         var targetCard :Card = _ctx.state.selectedCard;
         var law :Law = _ctx.state.selectedLaw;
-        _ctx.broadcast(player.playerName + " (The Priest) swapped '" +
-           targetCard.text + "' with '" + card.text + "' in Law " + law.displayId);
+        announcePowerUsed("swapped '" + targetCard.text + "' with '" + card.text + 
+            "' to make '" + law + "'");
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();
         doneUsingPower();
@@ -456,17 +453,28 @@ public class Job extends Component
         var card :Card = _ctx.state.activeCard;
         // if the when card is in the law, it was just added to it
         if (card.cardContainer == law) {
-            _ctx.broadcast(player.playerName + " (The Doctor) added '" +
-               card.text + "' to Law " + law.displayId);
+            announcePowerUsed("added '" + card.text + "' to make '" + law + "'");
         }
         else {
             var targetCard :Card = _ctx.state.selectedCard;
-            _ctx.broadcast(player.playerName + " (The Doctor) removed '" +
-               targetCard.text + "' from Law " + law.displayId);
+           announcePowerUsed("removed '" + targetCard.text + "' to make '" + law + "'");
         }
         _ctx.state.deselectLaw();
         _ctx.state.deselectCards();
         doneUsingPower();
+    }
+    
+    /**
+     * Tell players that a power was just used.  Display "You ..." or "Bob The Banker ...".
+     */
+    protected function announcePowerUsed (message :String) :void
+    {
+        if (_ctx.board.players.isMyTurn()) {
+            _ctx.notice("You " + message);
+            _ctx.broadcastOthers(player.name + " " + message);
+        } else {
+            _ctx.broadcast(player.name + " " + message);
+        }
     }
 
     /**
@@ -477,11 +485,7 @@ public class Job extends Component
     {
         // this may have already been called for some powers
         reachedPointOfNoReturn();
-        _ctx.eventHandler.dispatchEvent(new Event(MY_POWER_USED));
-        
-        //_ctx.board.usePowerButton.doneUsingPower();
-        // enact laws that trigger when this player uses their ability
-        //_ctx.board.laws.triggerWhen(Card.USE_ABILITY, player.job.id);
+        _ctx.eventHandler.dispatchEvent(new Event(POWER_USED));
     }
 
     /**
@@ -493,7 +497,7 @@ public class Job extends Component
     {
         _ctx.state.cancelMode();
         _ctx.board.usePowerButton.cancelUsingPower();
-        _ctx.notice("Power cancelled.");
+        _ctx.log("Power cancelled.");
     }
 
     /**
@@ -503,19 +507,19 @@ public class Job extends Component
     {
         switch (id) {
             case WATCHER:
-                return "Watching";
+                return "Watcher";
             case JUDGE:
-                return "The Judge";
+                return "Judge";
             case Job.THIEF:
-                return "The Thief";
+                return "Thief";
             case Job.BANKER:
-                return "The Banker";
+                return "Banker";
             case Job.TRADER:
-                return "The Trader";
+                return "Trader";
             case Job.PRIEST:
-                return "The Priest";
+                return "Priest";
             case Job.DOCTOR:
-                return "The Doctor";
+                return "Doctor";
         }
         _ctx.log("WTF Unknown job in job get name.");
         return "UNKNOWN";
@@ -534,13 +538,13 @@ public class Job extends Component
             case Job.THIEF:
                 return "Pay $2 to steal a card from another player";
             case Job.BANKER:
-                return "Switch a red card in your hand with one in a law";
+                return "Swap a red card in your hand with one in a law";
             case Job.TRADER:
                 return "Pay $2 to draw two cards";
             case Job.PRIEST:
-                return "Switch a blue card in your hand with one in a law";
+                return "Swap a blue card in your hand with one in a law";
             case Job.DOCTOR:
-                return "Add a purple card to a law or take one from a law";
+                return "Add a 'when' card to a law or take one from a law";
         }
         _ctx.log("WTF Unknown job in job get description.");
         return "UNKNOWN";

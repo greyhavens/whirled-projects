@@ -22,12 +22,13 @@ public class AIPlayer extends Opponent
         
         // the smaller the dumbnessFactor, the choosier the ai will be about the decisions
         // they make during their turn.
-        dumbnessFactor = (Math.round(Math.random() * 100));
+        this.dumbnessFactor = _ctx.aiDumbnessFactor;
+        //dumbnessFactor = (Math.round(Math.random() * 100));
     }
     
     public function startTurn() :void
     {
-        //_ctx.notice("\nI, " + playerName + " am starting my turn!");
+        //_ctx.notice("\nI, " + name + " am starting my turn!");
         hand.drawCard(Deck.CARDS_AT_START_OF_TURN);
         
         createdLaw = false;
@@ -48,7 +49,7 @@ public class AIPlayer extends Opponent
         if (opponent == this) {
             opponent = _ctx.player;
         }
-        //_ctx.log(playerName + " selected opponent " + opponent.playerName);
+        //_ctx.log(name + " selected opponent " + opponent.name);
         return opponent;
     }
     
@@ -60,7 +61,7 @@ public class AIPlayer extends Opponent
     {
         // TODO pick strategically
         var selectedCards :Array = hand.getRandomCards(numCards);
-        //_ctx.log(playerName + " selected cards " + selectedCards);
+        //_ctx.log(name + " selected cards " + selectedCards);
         return selectedCards;
     }
     
@@ -79,8 +80,8 @@ public class AIPlayer extends Opponent
      */
     public function doneEnactingLaws () :void
     {
-        //_ctx.log(playerName + " has focus again, returning to play");
-        EventHandler.invokeLater(DELAY_SECONDS, play);
+        //_ctx.log(name + " has focus again, returning to play");
+        EventHandler.invokeLater(_ctx.aiDelaySeconds, play);
     }
     
     /**
@@ -162,11 +163,15 @@ public class AIPlayer extends Opponent
             playOptions.push(function (): void { changeJobs(selectedCard); });
             // weight is increased if the player with this job is doing well, or if the ai
             // has other cards of the same SUBJECT.  From 0 to 75+, avg ~30
-            var weight :int = (playerWithJob.winningPercentile/2 + (cardCount -1) * 25)/2;
+            var playerWeight :int = 20;
+            if (playerWithJob != null) {
+                playerWeight = playerWithJob.getWinningPercentile();
+            }
+            var weight :int = (playerWeight/2 + (cardCount -1) * 25)/2;
             playOptionWeights.push(weight);
             //_ctx.log("weight for job " + selectedCard + " is " + weight);
             //_ctx.log("cardCount is " + cardCount);
-            //_ctx.log("player with job.winningPercentile is " + playerWithJob.winningPercentile);
+            //_ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
         }
     }
     
@@ -228,11 +233,11 @@ public class AIPlayer extends Opponent
             } else if (gainingPlayer == this) {
                 weight = 125;
             } else if (gainingPlayer != null && losingPlayer != null) {
-                weight = ((100 - gainingPlayer.winningPercentile) + (losingPlayer.winningPercentile)) / 2;
+                weight = ((100 - gainingPlayer.getWinningPercentile()) + (losingPlayer.getWinningPercentile())) / 2;
             } else if (gainingPlayer != null) {
-                weight = Math.max(0, 50 - gainingPlayer.winningPercentile);
+                weight = Math.max(0, 50 - gainingPlayer.getWinningPercentile());
             } else if (losingPlayer != null) {
-                weight = losingPlayer.winningPercentile;
+                weight = losingPlayer.getWinningPercentile();
             }
             
             // adjust the weight: 2 cards at the start of your turn is better than 1 monie now
@@ -250,10 +255,10 @@ public class AIPlayer extends Opponent
             _ctx.log("power multiplier is " + powerMultiplier);
             
             if (gainingPlayer != null) {
-                _ctx.log("gaining player.winning: " + gainingPlayer.winningPercentile);
+                _ctx.log("gaining player.winning: " + gainingPlayer.getWinningPercentile());
             } 
             if (losingPlayer != null) {
-                _ctx.log("losingPlayer.winning: " + losingPlayer.winningPercentile);
+                _ctx.log("losingPlayer.winning: " + losingPlayer.getWinningPercentile());
             } 
             */
             playOptions.push(function (): void { createLaw(cardList); });
@@ -287,7 +292,7 @@ public class AIPlayer extends Opponent
         hand.removeCards(new Array(card));
         var newJob :Job = _ctx.board.deck.getJob(card.type);
         _ctx.board.deck.switchJobs(newJob, this);
-        EventHandler.invokeLater(DELAY_SECONDS, play);
+        EventHandler.invokeLater(_ctx.aiDelaySeconds, play);
     }
     
     /**
@@ -346,8 +351,5 @@ public class AIPlayer extends Opponent
     
     /** Will be added to weights prior to decision making, the higher, the dumber, from 0 - 100 */
     protected var dumbnessFactor :Number;
-    
-    /** How many seconds to wait between each ai action on their turn */
-    protected static const DELAY_SECONDS :int = 1;
 }
 }

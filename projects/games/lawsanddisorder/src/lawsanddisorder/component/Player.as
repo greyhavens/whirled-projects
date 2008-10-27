@@ -311,17 +311,25 @@ public class Player extends Component
     /**
      * Return an integer from 0 to 100 that represents how well the player is doing right now,
      * where 100 is winning (even if a tie) and 0 is last place.  Scores are based on the
-     * number of monies, plus the number of cards in hand divided by 2.
+     * number of monies.  If includeCards is true, add the number of cards in hand divided by 2.
+     * AIs use includeCards when choosing someone to pick on; at the end of the game only monies
+     * matter.
      */
-    public function get winningPercentile () :int
+    public function getWinningPercentile (includeCards :Boolean = true) :int
     {
         var betterPlayers :int = 0;
         for each (var player :Player in _ctx.board.players.playerObjects) {
-            if ((player.monies + player.hand.numCards/2) > (monies + hand.numCards/2)) {
-                betterPlayers++;
+            if (includeCards) {
+                if ((player.monies + player.hand.numCards/2) > (monies + hand.numCards/2)) {
+                    betterPlayers++;
+                }
+            } else {
+                if (player.monies > monies) {
+                    betterPlayers++;
+                }
             }
         }
-        return Math.round((1 - betterPlayers / _ctx.board.players.numPlayers) * 100);
+        return Math.round((1 - betterPlayers / _ctx.numPlayers) * 100);
     }
 
     /** Can the player change jobs right now? */
@@ -339,7 +347,16 @@ public class Player extends Component
         return _hand;
     }
 
-    /** Return the player's name */
+    /** Return the player's name and job eg "Bob The Judge" */
+    public override function get name () :String {
+        if (job == null) {
+            return _name;
+        } else {
+            return job + " " + _name;
+        }
+    }
+    
+    /** Return the player's name only without their job, eg "Bob". */
     public function get playerName () :String {
         return _name;
     }
@@ -351,9 +368,6 @@ public class Player extends Component
         return _monies;
     }
 
-    /** Can the player change jobs right now? */
-    protected var _jobEnabled :Boolean;
-
     /** Is the player a real player or are they just watching? */
     public var isWatcher :Boolean = false;
 
@@ -362,6 +376,9 @@ public class Player extends Component
 
     /** Id assigned by the server; differs from their place at the table */
     public var serverId :int;
+
+    /** Can the player change jobs right now? */
+    protected var _jobEnabled :Boolean;
 
     /** Name of this player from the server */
     protected var _name :String;

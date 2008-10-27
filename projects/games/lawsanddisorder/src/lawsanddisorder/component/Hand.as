@@ -206,15 +206,25 @@ public class Hand extends CardContainer
      * If player has more than the maximum allowed number of cards in their hand, force them to
      * select and discard the excess number of cards.  When finished, call the listener function.
      */
-    public function discardDown (listener :Function) :void
+    public function discardDown (listener :Function, autoDiscard :Boolean = false) :void
     {
         if (cards.length <= MAX_HAND_SIZE) {
             listener();
             return;
         }
-        _ctx.notice("You have too many cards... please discard down to " + MAX_HAND_SIZE);
-        discardDownListener = listener;
-        _ctx.state.selectCards(cards.length - MAX_HAND_SIZE, discardDownCardsSelected);
+        var numCards :int = cards.length - MAX_HAND_SIZE;
+        
+        if (autoDiscard) {
+            _ctx.notice("You had too many cards, and lost " + Content.cardCount(numCards) + 
+                " at random.");
+            _ctx.state.selectedCards = _ctx.player.hand.getRandomCards(numCards);
+            discardDownCardsSelected();
+        } else {
+            var message :String = "You have too many cards, please pick " + numCards + 
+                " to lose.";
+            discardDownListener = listener;
+            _ctx.state.selectCards(numCards, discardDownCardsSelected, null, message);
+        }
     }
 
     /**
@@ -224,6 +234,10 @@ public class Hand extends CardContainer
     {
         player.loseCards(_ctx.state.selectedCards);
         _ctx.state.deselectCards();
+        _ctx.notice("");
+        if (discardDownListener == null) {
+            _ctx.log("WTF discardDownListener is null in Hand.discardDownCardsSelected");
+        }
         discardDownListener();
     }
 

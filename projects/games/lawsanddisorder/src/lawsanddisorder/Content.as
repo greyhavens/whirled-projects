@@ -10,6 +10,34 @@ import flash.text.AntiAliasType;
 public class Content
 {
     /**
+     * Return a string like "a card" or "3 cards".
+     */
+    public static function cardCount (count :int) :String
+    {
+        if (count == 0) {
+            return "no cards";
+        } else if (count == 1) {
+            return "a card";
+        } else {
+            return count + " cards";
+        }
+    }
+    
+    /**
+     * Return a string like "no monies" or "3 monies".
+     */
+    public static function monieCount (count :int) :String
+    {
+        if (count == 0) {
+            return "no monies";
+        } else if (count == 1) {
+            return "1 monie";
+        } else {
+            return count + " monies";
+        }
+    }
+    
+    /**
      * Build and return a new text field with default style and format.
      * If percentSize is given, the font will default to that percentage of the default font size.
      */

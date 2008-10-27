@@ -11,12 +11,8 @@ public class Context
 {
     public function Context (control :GameControl)
     {
-        _control = control;
-    }
-
-    public function get control () :GameControl
-    {
-        return _control;
+        this.control = control;
+        gatherConfig();
     }
 
     /**
@@ -32,7 +28,7 @@ public class Context
      */
     public function log (message :String) :void
     {
-        _control.local.feedback(message + "\n");
+        control.local.feedback(message + "\n");
     }
 
     /**
@@ -48,13 +44,18 @@ public class Context
     /**
      * Display an in-game notice message to all players or to one specific player
      */
-    public function broadcast (message :String, player :Player = null) :void
+    public function broadcast (message :String, player :Player = null, 
+        displayInNotice :Boolean = false) :void
     {
+        var messageName :String = Notices.BROADCAST;
+        if (displayInNotice) {
+            messageName = Notices.BROADCAST_NOTICE;
+        }
         if (player != null) {
-           _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
+           control.net.sendMessage(messageName, message, player.serverId);
         }
         else {
-            _control.net.sendMessage(Notices.BROADCAST, message);
+            control.net.sendMessage(messageName, message);
         }
     }
 
@@ -62,11 +63,19 @@ public class Context
      * Display an in-game notice message to all other players
      * TODO watchers don't see this message
      */
-    public function broadcastOthers (message :String) :void
+    public function broadcastOthers (message :String, notPlayer :Player = null, 
+        displayInNotice :Boolean = false) :void
     {
+        if (notPlayer == null) {
+            notPlayer = player;
+        }
+        var messageName :String = Notices.BROADCAST;
+        if (displayInNotice) {
+            messageName = Notices.BROADCAST_NOTICE;
+        }
         for each (var otherPlayer :Player in board.players.playerObjects) {
-            if (otherPlayer != player && otherPlayer.serverId > 0) {
-                _control.net.sendMessage(Notices.BROADCAST, message, player.serverId);
+            if (otherPlayer != notPlayer && !(otherPlayer as AIPlayer)) {
+                control.net.sendMessage(messageName, message, otherPlayer.serverId);
             }
         }
     }
@@ -74,22 +83,92 @@ public class Context
     /**
      * Wrapper for sending messages through the WhirledGameControl
      */
-    public function sendMessage (type :String, value :*) :void
+    public function sendMessage (type :String, value :* = "") :void
     {
-        _control.net.sendMessage(type, value);
+        control.net.sendMessage(type, value);
     }
-
+    
     /**
-     * Kick this player from the game.
+     * Gather number and level of AI players from game instance parameters
      */
-    public function kickPlayer () :void
+    protected function gatherConfig () :void
     {
-        //_control.local.backToWhirled();
-        // TODO: how to handle this now that backToWhirled is gone??
+        var config :Object = control.game.getConfig();
+        
+        // how many ais will be added to a maximum of 6 total players
+        var numHumanPlayers :int = control.game.seating.getPlayerIds().length;
+        var maxAIPlayers :int = 6 - numHumanPlayers;
+        var aiCountString :String = config["AI Players"];
+        var numAIPlayers :int = 0;
+        switch (aiCountString) {
+            case "none":
+                if (numHumanPlayers == 1) {
+                    log("Adding one AI Player - there must be at least two players.");
+                    numAIPlayers = 1;
+                } else {
+                    numAIPlayers = 0;
+                }
+                break;
+            case "1":
+                numAIPlayers = Math.min(maxAIPlayers, 1);
+                break;
+            case "2":
+                numAIPlayers = Math.min(maxAIPlayers, 2);
+                break;
+            case "3":
+                numAIPlayers = Math.min(maxAIPlayers, 3);
+                break;
+            case "4":
+                numAIPlayers = Math.min(maxAIPlayers, 4);
+                break;
+            case "fill to 6 seats":
+                numAIPlayers = Math.min(maxAIPlayers, 6);
+                break;
+            default:
+                log("WTF unknown value for 'AI Players': " + aiCountString);
+                break;
+        }
+        //log("Number of AI Players: " + numAIPlayers);
+        //log("Total players: " + (numHumanPlayers + numAIPlayers));
+        numPlayers = numHumanPlayers + numAIPlayers;
+        
+        // multiplier for random ai behavior from 0 (smartest) to 100 (dumbest)
+        var aiLevelString :String = config["AI Level"];
+        switch (aiLevelString) {
+            case "S-M-R-T":
+                aiDumbnessFactor = 0;
+                break;
+            case "dumber":
+                aiDumbnessFactor = 50;
+                break;
+            case "dumbest":
+                aiDumbnessFactor = 100;
+                break;
+            default:
+                log("WTF unknown value for 'AI Level': " + aiLevelString);
+                break;
+        }
+        
+        // delay between actions on an ai's turn (1 - 6 seconds)
+        var aiSpeedString :String = config["AI Speed"];
+        switch (aiSpeedString) {
+            case "slow":
+                aiDelaySeconds = 8;
+                break;
+            case "normal":
+                aiDelaySeconds = 5;
+                break;
+            case "lightspeed":
+                aiDelaySeconds = 1;
+                break;
+            default:
+                log("WTF unknown value for 'AI Speed': " + aiSpeedString);
+                break;
+        }
     }
     
     /** Connection to the game server */
-    protected var _control :GameControl;
+    public var control :GameControl;
 
     /** Controls the user interface and player actions */
     public var state :State;
@@ -102,5 +181,17 @@ public class Context
 
     /** Awards Whirled trophies - spoken to only through messages */
     public var trophyHandler :TrophyHandler;
+
+    /** Has the game started */
+    public var gameStarted :Boolean = false;
+    
+    /** config - The number of players in the game, human + ai, from 2 to 6 */
+    public var numPlayers :int;
+    
+    /** config - Multiplier for random ai behavior from 0 (smartest) to 100 (dumbest) */
+    public var aiDumbnessFactor :int;
+    
+    /** config - How many seconds to wait between each ai action on their turn */
+    public var aiDelaySeconds :int;
 }
 }

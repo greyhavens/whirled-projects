@@ -8,7 +8,6 @@ import flash.utils.Timer;
 import flash.events.TimerEvent;
 
 import com.whirled.contrib.UserCookie;
-import com.whirled.game.StateChangedEvent;
 
 import lawsanddisorder.component.*;
 
@@ -39,9 +38,9 @@ public class TrophyHandler
     {
         _ctx = ctx;
         _ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobsChanged);
-        _ctx.control.game.addEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
-        _ctx.eventHandler.addMessageListener(Laws.NEW_LAW, lawCreated);
-        _ctx.eventHandler.addEventListener(Job.MY_POWER_USED, powerUsed);
+        _ctx.eventHandler.addEventListener(Laws.NEW_LAW, lawCreated);
+        _ctx.eventHandler.addEventListener(Job.POWER_USED, powerUsed);
+        _ctx.eventHandler.addEventListener(EventHandler.GAME_ENDED, gameEnded);
         
         // set up counters for this game
         _jobsHeld = new Array(6).map(function (): Boolean { return false; });
@@ -76,7 +75,7 @@ public class TrophyHandler
         }
         
         var job :Job = _ctx.board.deck.getJob(event.newValue);
-        _ctx.log("recording that you changed to " + job);
+        //_ctx.log("recording that you changed to " + job);
         
         _jobsHeld[job.id] = true;
         
@@ -102,7 +101,7 @@ public class TrophyHandler
             return;
         }
         
-        _ctx.log("recording that you used a new power");
+        //_ctx.log("recording that you used a new power");
         _cookie.set(POWERS_USED, 1, player.job.id);
         
         for (var jobId :int = 0; jobId < 6; jobId++) {
@@ -118,17 +117,17 @@ public class TrophyHandler
      * Called when some player creates a new law
      * @param event event.value is the serialized cards of the new law
      */
-    protected function lawCreated (event :MessageEvent) :void
+    protected function lawCreated (event :Event) :void
     {
         if (!_ctx.board.players.isMyTurn()) {
             return;
         }
         
-        // create a dummy law from the event.value
+        // create a dummy law from the newlaw contents
         var law :Law = new Law(_ctx, -1);
-        law.setSerializedCards(event.value);
+        law.setSerializedCards(_ctx.board.newLaw.getSerializedCards());
         
-        _ctx.log("recording that you made a law: " + law);
+        //_ctx.log("recording that you made a law: " + law);
         var newNumLaws :int = (_cookie.get(NUM_LAWS_PLAYED) as int) + 1;
         _cookie.set(NUM_LAWS_PLAYED, newNumLaws);
         
@@ -153,18 +152,27 @@ public class TrophyHandler
     /**
      * Called when the game is over and scores have been posted
      */
-    protected function gameEnded (event :StateChangedEvent) :void
+    protected function gameEnded (event :Event) :void
     {
-        if (player.winningPercentile < 100) {
+        /*
+        _ctx.log("game ended.  score percentiles are : ");
+        for each (var pl :Player in _ctx.board.players.playerObjects) {
+            _ctx.log(pl + " : " + pl.getWinningPercentile(false));
+        }
+        _ctx.log("yours is " + player + " : " + player.getWinningPercentile(false));
+        */
+            
+        if (player.getWinningPercentile(false) < 100) {
             return;
         }
+        _ctx.log("You came in first place!");
         
         if (_ctx.board.players.numHumanPlayers == 1) {
             awardTrophy("winnerVsBots");
         } else {
             awardTrophy("winnerVsHumans");
             if (_ctx.board.players.numHumanPlayers == 6) {
-                awardTrophy("winnerVsSixHumans");
+                awardTrophy("winnerVsFiveHumans");
             }
         }
         
@@ -179,16 +187,17 @@ public class TrophyHandler
         }
     }
     
+    /** Helper for giving trophies */
+    protected function awardTrophy (trophy :String) :void
+    {
+        _ctx.log("You got a trophy: " + trophy);
+        _ctx.control.player.awardTrophy(trophy);
+    }
+    
     /** Helper for getting the player object */
     protected function get player () :Player
     {
         return _ctx.board.players.player;
-    }
-    
-    /** Helper for giving trophies */
-    protected function awardTrophy (trophy :String) :void
-    {
-        _ctx.control.player.awardTrophy(trophy);
     }
     
     /** Context */

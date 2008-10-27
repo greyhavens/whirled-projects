@@ -2,11 +2,11 @@
 
 import com.threerings.util.HashMap;
 import com.whirled.game.CoinsAwardedEvent;
-import com.whirled.game.ElementChangedEvent;
 import com.whirled.game.GameSubControl;
-import com.whirled.game.MessageReceivedEvent;
-import com.whirled.game.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -17,9 +17,8 @@ import flash.utils.Timer;
 import lawsanddisorder.component.*;
 
 /**
- * Manages property and message events, propagating them out to registered listeners.
- * TODO don't pass events in to listeners; detach from com.whirled.game?
- * TODO actually dispatch events
+ * Manages property and message events, propagating them out to registered listeners.  Also 
+ * handles game end.
  */
 public class EventHandler extends EventDispatcher
 {
@@ -31,9 +30,12 @@ public class EventHandler extends EventDispatcher
 
     /** Event that fires when the player's turn is starting */
     public static const MY_TURN_STARTED :String = "turnStarted";
-
-    /** Event that fires when the last round starts */
-    public static const LAST_ROUND_STARTED :String = "lastRoundStarted";
+    
+    /** Event that fires when last round starts, value is the id of the last player */
+    public static const END_GAME_PLAYER :String = "endGamePlayer";
+    
+    /** Event that fires when the server reports the game has ended */
+    public static const GAME_ENDED :String = "gameEnded";
 
     /**
      * Constructor - add event listeners and maybe get the board if it's setup 
@@ -47,7 +49,9 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
-        addMessageListener(LAST_ROUND_STARTED, lastRoundStarted);
+        
+        // For AIs, the TURN_CHANGED event will come as a MessageReceivedEvent from the server
+        addMessageListener(TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -69,6 +73,19 @@ public class EventHandler extends EventDispatcher
         var timer :Timer = new Timer(delayMillis, numFires);
         timer.addEventListener(TimerEvent.TIMER, function (event :Event): void { func(); });
         timer.start();
+    }
+    
+    /**
+     * Called when this handler is removed; sever connections to the server
+     */
+    public function unload () :void
+    {
+        _ctx.control.game.removeEventListener(StateChangedEvent.GAME_ENDED, gameEnded);
+        _ctx.control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
+        _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
+        _ctx.control.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
+        _ctx.control.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+        _ctx.control.game.removeEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -247,63 +264,15 @@ public class EventHandler extends EventDispatcher
     }
 
     /**
-     * The deck is empty; start the last round.  When this player's turn starts again, that
-     * will signal the end of the game.
-     */
-    public function startLastRound () :void
-    {
-        // last round has already started, quit
-        if (_lastRoundStarted) {
-            return;
-        }
-        _lastTurnStarted = true;
-        _ctx.sendMessage(LAST_ROUND_STARTED, _ctx.player.id);
-        _ctx.broadcast("The deck is empty, so this is the last round.  This is " +
-            _ctx.player.playerName + "'s last turn.");
-    }
-
-    /**
-     * Message event received when the last round starts.
-     */
-    protected function lastRoundStarted (event :MessageEvent) :void
-    {
-        _lastRoundStarted = true;
-        _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, lastRoundTurnStarted);
-    }
-
-    /**
-     * Fires when a turn starts during the last round.  If this is the player's second
-     * turn during the last round, end the game.
-     */
-    protected function lastRoundTurnStarted (event :Event) :void
-    {
-        _ctx.log("EventHandler.lastRoundTurnStarted");
-        if (!_lastTurnStarted) {
-            _lastTurnStarted = true;
-        }
-        else {
-            _ctx.eventHandler.removeEventListener(EventHandler.MY_TURN_STARTED, 
-               lastRoundTurnStarted);
-            endGame();
-        }
-    }
-
-    /**
      * The last round ended, so finally end the game.
      * Calculate the scores and send a message to everyone, awarding flow.
      * Assumes player seats may have changed during the game and rebuilds playerIds array.
      */
-    protected function endGame () :void
+    public function endGame () :void
     {
-        _ctx.log("EventHandler.endGame");
         // whoever's turn it is when the game ends,
         // end every player's turn to lock the board.
         _ctx.board.endTurnButton.gameEnded();
-
-        // prepare for a possible rematch
-        _lastRoundStarted = false;
-        _lastTurnStarted = false;
-        _ctx.eventHandler.removeEventListener(EventHandler.MY_TURN_STARTED, endGame);
 
         var playerIds :Array = new Array;
         var playerScores :Array = new Array;
@@ -323,8 +292,8 @@ public class EventHandler extends EventDispatcher
      */
     protected function gameEnded (event :StateChangedEvent) :void
     {
-        _ctx.notice("Game over - thanks for playing!");
-        _lastRoundStarted = false;
+        _ctx.gameStarted = false;
+        dispatchEvent(new Event(GAME_ENDED));
     }
 
     /**
@@ -332,22 +301,31 @@ public class EventHandler extends EventDispatcher
      */
     protected function coinsAwarded (event :CoinsAwardedEvent) :void
     {
-        _ctx.notice("You got: " + event.amount + " coins for playing.  That's " + event.percentile + "%");
+        _ctx.notice("\nGame over - thanks for playing!");
     }
 
     /**
      * Dispatch an internal turn changed event because the turn has changed.
      */
-    protected function turnChanged (event :StateChangedEvent) :void
+    protected function turnChanged (event :Event) :void
     {
-        // there are two turnChanged events when the game starts, ignore the first
-        if (_ctx.board == null) {
+        // during rematches this is sent by the server before GAME_STARTED; ignore it
+        if (!_ctx.gameStarted) {
             return;
         }
         
         // set the turnHolder before sending out the word to other components
-        _ctx.board.players.calculateTurnHolder();
-        dispatchEvent(new Event(EventHandler.TURN_CHANGED));
+        if (_ctx.board.players.turnHolder == null) {
+            _ctx.board.players.calculateTurnHolder();
+        } else {
+            var nextPlayer :Player = _ctx.board.players.nextPlayer;
+            if (nextPlayer as AIPlayer) {
+                _ctx.board.players.calculateTurnHolder(nextPlayer);
+            } else {
+                _ctx.board.players.calculateTurnHolder();
+            }
+        }
+        dispatchEvent(new Event(TURN_CHANGED));
     }
     
     /** Context */
@@ -360,11 +338,5 @@ public class EventHandler extends EventDispatcher
     /** Map of listener functions for game messages.
      *  Types <String, Array<Function>> */
     protected var _messageListeners :HashMap = new HashMap();
-
-    /** Determines whether the last round of the game has begun */
-    protected var _lastRoundStarted :Boolean = false;
-
-    /** Whether the player has taken their last turn or not */
-    protected var _lastTurnStarted :Boolean = false;
 }
 }

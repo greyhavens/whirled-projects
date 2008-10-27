@@ -1,11 +1,11 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
-import flash.text.TextFormat;
-import flash.text.TextFieldAutoSize;
-import flash.events.MouseEvent;
 import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import lawsanddisorder.*;
 
@@ -25,7 +25,8 @@ public class Players extends Component
         var playerServerIds :Array = _ctx.control.game.seating.getPlayerIds();
         var playerNames :Array = _ctx.control.game.seating.getPlayerNames();
         numHumanPlayers = playerServerIds.length;
-
+        playerObjects = new Array(_ctx.numPlayers);
+        
         // get the player's position; -1 means the player is a watcher
         var myPosition :int = _ctx.control.game.seating.getMyPosition();
         var isWatcher :Boolean;
@@ -40,6 +41,7 @@ public class Players extends Component
         playerNames.length = numHumanPlayers;
         if (myPosition == numHumanPlayers) {
             isWatcher = true;
+            myPosition = -1;
         }
         */
 
@@ -55,39 +57,37 @@ public class Players extends Component
 
         opponents = new Opponents(_ctx);
 
-        // watchers see all players as opponents
-        if (isWatcher) {
-            for (var j :int = 0; j < numHumanPlayers; j++) {
-                var playerOpponent :Opponent = new Opponent(_ctx, j, playerServerIds[j], playerNames[j]);
-                opponents.addOpponent(playerOpponent);
-                playerObjects[j] = playerOpponent;
-            }
-        }
-
         // players create the opponents in order, starting with the opponent whose turn is next
-        else {
-            var i :int = myPosition;
-            while (numHumanPlayers > 1) {
-                // increment i and wrap around once the last seat is reached
-                i = (i + 1) % numHumanPlayers;
-                var opponent :Opponent = new Opponent(_ctx, i, playerServerIds[i], playerNames[i]);
-                opponents.addOpponent(opponent);
-                playerObjects[i] = opponent;
-                if ((i + 1) % numHumanPlayers == myPosition) {
-                    break;
-                }
-            }
+        var playerId :int = myPosition + 1;
+        while (playerId < numHumanPlayers) {
+            var nextOpponent :Opponent = new Opponent(
+                _ctx, playerId, playerServerIds[playerId], playerNames[playerId]);
+            opponents.addOpponent(nextOpponent);
+            playerObjects[playerId] = nextOpponent;
+            playerId++;
         }
         
-        // add ai players after all the opponents to fill the seats up to NUM_PLAYERS
-        for (var k :int = numHumanPlayers; k < LawsAndDisorder.NUM_PLAYERS; k++) {
-            var aiPlayer :AIPlayer = new AIPlayer(_ctx, k);
+        // add ai players after last human player to fill the seats up to NUM_PLAYERS
+        while (playerId < _ctx.numPlayers) {
+            var aiPlayer :AIPlayer = new AIPlayer(_ctx, playerId);
             opponents.addOpponent(aiPlayer);
-            playerObjects[k] = aiPlayer;
+            playerObjects[playerId] = aiPlayer;
             // last player controls all ais that are added after them
             if (player.id == numHumanPlayers - 1) {
                 aiPlayer.isController = true;
             }
+            
+            playerId++;
+        }
+        
+        // finish by adding human players who came before this player
+        playerId = 0;
+        while (playerId < myPosition) {
+            var prevOpponent :Opponent = new Opponent(
+                _ctx, playerId, playerServerIds[playerId], playerNames[playerId]);
+            opponents.addOpponent(prevOpponent);
+            playerObjects[playerId] = prevOpponent;
+            playerId++;
         }
 
         // add opponents as child after player so they'll be displayed over top
@@ -148,6 +148,12 @@ public class Players extends Component
                 turnHolder = player;
             }
         }
+        
+        if (turnHolder == null) {
+            _ctx.log("TURN HOLDER NULL... serverId: " + serverId);
+            _ctx.log("playerObjects[0]:" + playerObjects[0]);
+            turnHolder = playerObjects[0];
+        }
     }
 
     /**
@@ -169,17 +175,6 @@ public class Players extends Component
     {
         if (turnHolder is AIPlayer && AIPlayer(turnHolder).isController) {
             return true;
-            /*
-            _ctx.log("turnholder is an ai.  turnholder.id is " + turnHolder.id + " and player.id is " + player.id);
-            if (turnHolder.id == 0 && player.id == numPlayers - 1) {
-                _ctx.log("turnholder.id is 0 and player.id is numPlayers-1");
-                return true;
-            } else if (turnHolder.id - 1 == player.id) {
-                _ctx.log("turnholder.id comes directly after player.id");
-                return true;
-            }
-            _ctx.log("not controlling ai turnholder"); 
-            */
         }
         return false;
     }
@@ -189,6 +184,14 @@ public class Players extends Component
      */
     public function get nextPlayer () :Player
     {
+        if (playerObjects == null) {
+            _ctx.log("WTF playerOjbects null in Players.nextPlayer");
+            return null;
+        }
+        if (turnHolder == null) {
+            _ctx.log("WTF turnHolder null in Players.nextPlayer");
+            calculateTurnHolder();
+        }
         return playerObjects[((turnHolder.id+1) % playerObjects.length)];
     }
 
@@ -238,17 +241,9 @@ public class Players extends Component
         // unload the opponent object
         opponent.unload();
     }
-    
-    /**
-     * Return the number of players (including AIs) in the game right now.
-     */
-    public function get numPlayers () :int
-    {
-        return playerObjects.length;
-    }
 
     /** All player objects in the game, indexed by id */
-    public var playerObjects :Array = new Array();
+    public var playerObjects :Array;
 
     /** All the other players */
     public var opponents :Opponents;

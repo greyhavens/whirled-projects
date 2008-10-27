@@ -36,7 +36,6 @@ public class Deck extends Component
      */
     public function Deck (ctx :Context)
     {
-        //discardPile = new CardContainer(ctx);
         super(ctx);
 
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
@@ -51,16 +50,16 @@ public class Deck extends Component
         createJob(Job.PRIEST);
         createJob(Job.DOCTOR);
 
-        playerJobs = new Array(LawsAndDisorder.NUM_PLAYERS).map(function (): int { return -1; });
+        playerJobs = new Array(_ctx.numPlayers).map(function (): int { return -1; });
 
         var numDecks :int;
         // 2 players 2 decks 10 laws 5 laws each
-        if (LawsAndDisorder.NUM_PLAYERS == 2) {
+        if (_ctx.numPlayers == 2) {
             numDecks = 2;
         }
         // 3 players 3 decks 15 laws 5 laws each
         // 4 players 3 decks 15 laws 4 laws each
-        else if (LawsAndDisorder.NUM_PLAYERS < 5) {
+        else if (_ctx.numPlayers < 5) {
             numDecks = 3;
         }
         // 5 players 4 decks 20 laws 4 laws each
@@ -68,67 +67,73 @@ public class Deck extends Component
         else {
             numDecks = 4;
         }
-/*
-        // Change the size of the deck based on the number of players
-        for (var i :int = 0; i < numDecks; i++) {
-            // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
-            addNewCards(2, Card.SUBJECT, Job.JUDGE);
-            addNewCards(2, Card.SUBJECT, Job.THIEF);
-            addNewCards(2, Card.SUBJECT, Job.BANKER);
-            addNewCards(2, Card.SUBJECT, Job.TRADER);
-            addNewCards(2, Card.SUBJECT, Job.PRIEST);
-            addNewCards(2, Card.SUBJECT, Job.DOCTOR);
-            // take out gives for 2 player games
-            if (LawsAndDisorder.NUM_PLAYERS == 2) {
-                addNewCards(4, Card.VERB, Card.LOSES);
-                addNewCards(3, Card.VERB, Card.GETS);
+        
+        // set to false for a test deck
+        if (true) { 
+    
+            // Change the size of the deck based on the number of players
+            for (var i :int = 0; i < numDecks; i++) {
+                // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+                addNewCards(2, Card.SUBJECT, Job.JUDGE);
+                addNewCards(2, Card.SUBJECT, Job.THIEF);
+                addNewCards(2, Card.SUBJECT, Job.BANKER);
+                addNewCards(2, Card.SUBJECT, Job.TRADER);
+                addNewCards(2, Card.SUBJECT, Job.PRIEST);
+                addNewCards(2, Card.SUBJECT, Job.DOCTOR);
+                // take out gives for 2 player games
+                if (_ctx.numPlayers == 2) {
+                    addNewCards(4, Card.VERB, Card.LOSES);
+                    addNewCards(3, Card.VERB, Card.GETS);
+                }
+                else {
+                    addNewCards(2, Card.VERB, Card.GIVES);
+                    addNewCards(3, Card.VERB, Card.LOSES);
+                    addNewCards(2, Card.VERB, Card.GETS);
+                }
+    
+                addNewCards(2, Card.OBJECT, Card.CARD, 1);
+                addNewCards(1, Card.OBJECT, Card.CARD, 2);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 1);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 2);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 4);
+                addNewCards(1, Card.WHEN, Card.START_TURN);
+                addNewCards(1, Card.WHEN, Card.USE_ABILITY);
+                addNewCards(1, Card.WHEN, Card.CREATE_LAW);
             }
-            else {
-                addNewCards(2, Card.VERB, Card.GIVES);
-                addNewCards(3, Card.VERB, Card.LOSES);
-                addNewCards(2, Card.VERB, Card.GETS);
+        
+        } else {
+    
+            // custom deck for testing
+            for (var j :int = 0; j < 1; j++) {
+                // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+                //addNewCards(24, Card.SUBJECT, Job.JUDGE);
+                //addNewCards(6, Card.SUBJECT, Job.THIEF);
+                //addNewCards(6, Card.SUBJECT, Job.BANKER);
+               /// addNewCards(6, Card.SUBJECT, Job.TRADER);
+               // addNewCards(6, Card.SUBJECT, Job.PRIEST);
+                addNewCards(10, Card.SUBJECT, Job.DOCTOR);
+                // take out gives for 2 player games
+    //            if (playerCount == 2) {
+      //              addNewCards(4, Card.VERB, Card.LOSES);
+        //            addNewCards(3, Card.VERB, Card.GETS);
+          //      }
+            //    else {
+                    addNewCards(7, Card.VERB, Card.GIVES);
+        //            addNewCards(3, Card.VERB, Card.LOSES);
+          //          addNewCards(2, Card.VERB, Card.GETS);
+              //  }
+    
+                //addNewCards(4, Card.OBJECT, Card.CARD, 1);
+         //       addNewCards(4, Card.OBJECT, Card.CARD, 2);
+    //            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
+      //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
+        //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+                addNewCards(6, Card.OBJECT, Card.MONIE, 4);
+                //addNewCards(6, Card.WHEN, Card.START_TURN);
+                addNewCards(3, Card.WHEN, Card.USE_ABILITY);
+                //addNewCards(3, Card.WHEN, Card.CREATE_LAW);
             }
-
-            addNewCards(2, Card.OBJECT, Card.CARD, 1);
-            addNewCards(1, Card.OBJECT, Card.CARD, 2);
-            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
-            addNewCards(1, Card.OBJECT, Card.MONIE, 2);
-            addNewCards(1, Card.OBJECT, Card.MONIE, 3);
-            addNewCards(1, Card.OBJECT, Card.MONIE, 4);
-            addNewCards(1, Card.WHEN, Card.START_TURN);
-            addNewCards(1, Card.WHEN, Card.USE_ABILITY);
-            addNewCards(1, Card.WHEN, Card.CREATE_LAW);
-        }
-*/
-        // TODO custom deck for testing
-        for (var i :int = 0; i < 1; i++) {
-            // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
-            addNewCards(24, Card.SUBJECT, Job.JUDGE);
-            //addNewCards(6, Card.SUBJECT, Job.THIEF);
-            //addNewCards(6, Card.SUBJECT, Job.BANKER);
-           /// addNewCards(6, Card.SUBJECT, Job.TRADER);
-           // addNewCards(6, Card.SUBJECT, Job.PRIEST);
-            //addNewCards(24, Card.SUBJECT, Job.DOCTOR);
-            // take out gives for 2 player games
-//            if (playerCount == 2) {
-  //              addNewCards(4, Card.VERB, Card.LOSES);
-    //            addNewCards(3, Card.VERB, Card.GETS);
-      //      }
-        //    else {
-                addNewCards(9, Card.VERB, Card.GIVES);
-    //            addNewCards(3, Card.VERB, Card.LOSES);
-      //          addNewCards(2, Card.VERB, Card.GETS);
-          //  }
-
-   //         addNewCards(4, Card.OBJECT, Card.CARD, 1);
-     //       addNewCards(4, Card.OBJECT, Card.CARD, 2);
-//            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
-  //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
-    //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
-            addNewCards(8, Card.OBJECT, Card.MONIE, 4);
-            addNewCards(6, Card.WHEN, Card.START_TURN);
-            addNewCards(3, Card.WHEN, Card.USE_ABILITY);
-            //addNewCards(3, Card.WHEN, Card.CREATE_LAW);
         }
     }
     
@@ -177,12 +182,12 @@ public class Deck extends Component
 
         // warn that the game will be ending soon
         if (cards.length == 5) {
-            _ctx.broadcast("Only 5 cards left in the deck!");
+            _ctx.broadcast("Only 5 cards left in the deck!", null, true);
         }
 
         // if the deck is ever empty after drawing from it, game ends
         if (numCards == 0) {
-            _ctx.eventHandler.startLastRound();
+            _ctx.board.endTurnButton.startLastRound();
         }
         
         var card :Card = cardObjects[cardIndex];
@@ -358,11 +363,27 @@ public class Deck extends Component
             playerJobs[event.index] = event.newValue;
             var player :Player = _ctx.board.players.getPlayer(event.index);
             var job :Job = getJob(event.newValue);
+            
+            if (job == null) {
+                _ctx.log("WTF null job in Deck.jobsChanged for id " + event.newValue);
+                return;
+            }
+            if (player == job.player) {
+                // this may happen during setup
+                return;
+            }
+            var oldPlayer :Player = job.player;
             job.player = player;
+        
+            // highlight cards with the player's job
+            if (player == _ctx.player || oldPlayer == _ctx.player) {
+                for each (var card :Card in cardObjects) {
+                    card.highlightJob();
+                }
+            }
         }
         else {
             // this will be blank setup data
-            _ctx.log("Deck clearing job data.");
             playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
         }
     }
@@ -450,18 +471,27 @@ public class Deck extends Component
             oldPlayer.job = oldJob;
             oldJob.player = oldPlayer;
             _ctx.eventHandler.setData(JOBS_DATA, oldJob.id, oldPlayer.id);
-            _ctx.broadcast(player.playerName + " swapped jobs with " + oldPlayer.playerName);
+            if (player == _ctx.player) {
+                _ctx.notice("You swapped jobs with " + oldPlayer.playerName + 
+                    " - you're the " + job + " now!");
+                _ctx.broadcastOthers(player.name + " swapped jobs with " + oldPlayer.name);
+            } else {
+                _ctx.broadcast(player.name + " swapped jobs with " + oldPlayer.name);
+            }
+            // also notify the other player whose job was changed
+            if (!(oldPlayer as AIPlayer)) {
+                _ctx.broadcast(player.playerName + " swapped jobs with you " + 
+                    " - you're the " + oldJob + " now!", oldPlayer, true);
+            }
         }
         else if (oldPlayer == null) {
             if (!duringSetup) {
-               _ctx.broadcast(player.playerName + " became " + player.job);
-            }
-        }
-        
-        // highlight cards with the player's job
-        if (player == _ctx.player || oldPlayer == _ctx.player) {
-            for each (var card :Card in cardObjects) {
-                card.highlightJob();
+                if (player == _ctx.player) {
+                    _ctx.notice("You became the " + job);
+                    _ctx.broadcastOthers(player.playerName + " became the " + job);
+                } else {
+                    _ctx.broadcast(player.playerName + " became the " + job);
+                }
             }
         }
     }

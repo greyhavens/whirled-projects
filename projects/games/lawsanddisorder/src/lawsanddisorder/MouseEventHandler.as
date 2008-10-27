@@ -522,11 +522,11 @@ public class MouseEventHandler
             return;
         }
         if (mouseOverLaw != null) {
-            mouseOverLaw.highlighted = false;
+            mouseOverLaw.setHighlighted(false);
         }
         mouseOverLaw = law;
         if (law != null) {
-            law.highlighted = true;
+            law.setHighlighted(true);
             if (activeCard != null) {
                 activeCard.highlighted = true;
             }

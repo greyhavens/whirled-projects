@@ -1,10 +1,10 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
-import flash.geom.Point;
-import flash.events.MouseEvent;
 import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.text.TextField;
 
 import lawsanddisorder.*;
 
@@ -19,31 +19,6 @@ public class NewLaw extends CardContainer
     public function NewLaw (ctx :Context)
     {
         super(ctx);
-    }
-
-    /**
-     * Draw the new law area
-     */
-    override protected function initDisplay () :void
-    {
-        var background :Sprite = new NEWLAW_BACKGROUND();
-        addChild(background);
-
-        makeLawButton = new Button(_ctx);
-        makeLawButton.text = "create";
-        makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
-        makeLawButton.enabled = false;
-        makeLawButton.x = 150;
-        makeLawButton.y = 90;
-        addChild(makeLawButton);
-    }
-
-    /**
-     * Rearrange hand when cards are added or subtracted
-     */
-    override protected function updateDisplay () :void
-    {
-        arrangeCards();
     }
 
     /**
@@ -146,41 +121,28 @@ public class NewLaw extends CardContainer
             return null;
         }
     }
-
-    /**
-     * Make law button was pressed
-     */
-    protected function makeLawButtonClicked (event :MouseEvent) :void
-    {
-        if (!_enabled) {
-            _ctx.log("WTF tried to create a law while disabled");
-            return;
-        }
-        if (!isValidLaw()) {
-            _ctx.notice("That is not a legal law.");
-            return;
-        }
-        
-        enabled = false;
-        makeLaw(cards, _ctx.player);
-
-        // clear cards from new law and remove them from hand
-        clear(false);
-        _ctx.board.createLawButton.newLawCreated();
-    }
     
     /**
      * Given a list of cards and a player, award monies and make a new law.
      */
     public function makeLaw (cardList :Array, player :Player) :void
     {
-        _ctx.broadcast(player.playerName + " got " + cardList.length 
-            + " monies for making a new law: " + cardList);
+        if (player == _ctx.player) {
+            _ctx.broadcastOthers(player.name + " got " + cardList.length 
+                + " monies for making a law.");
+            _ctx.notice("You got " + cardList.length + " monies for making a law.");
+        } else {
+            _ctx.broadcast(player.name + " got " + cardList.length 
+                + " monies for making a law.");
+        }
         player.getMonies(cardList.length);
         _ctx.state.startEnactingLaws();
 
         // tell other players that cards have been removed from hand, and the new law created
-        _ctx.sendMessage(Laws.NEW_LAW, getSerializedCards(cardList));
+        //_ctx.sendMessage(Laws.NEW_LAW, getSerializedCards(cardList));
+        _ctx.eventHandler.setData(Laws.LAWS_DATA, getSerializedCards(cardList), 
+            _ctx.board.laws.numLaws, true);
+        _ctx.eventHandler.dispatchEvent(new Event(Laws.NEW_LAW));
         player.hand.removeCards(cardList, true);
     }
 
@@ -233,6 +195,53 @@ public class NewLaw extends CardContainer
                 card.x = CARD_LEFT_START + i * CARD_SPACING_X;
             }
         }
+    }
+
+    /**
+     * Draw the new law area
+     */
+    override protected function initDisplay () :void
+    {
+        var background :Sprite = new NEWLAW_BACKGROUND();
+        addChild(background);
+
+        makeLawButton = new Button(_ctx);
+        makeLawButton.text = "create";
+        makeLawButton.addEventListener(MouseEvent.CLICK, makeLawButtonClicked);
+        makeLawButton.enabled = false;
+        makeLawButton.x = 150;
+        makeLawButton.y = 85;
+        addChild(makeLawButton);
+    }
+
+    /**
+     * Rearrange hand when cards are added or subtracted
+     */
+    override protected function updateDisplay () :void
+    {
+        arrangeCards();
+    }
+
+    /**
+     * Make law button was pressed
+     */
+    protected function makeLawButtonClicked (event :MouseEvent) :void
+    {
+        if (!_enabled) {
+            _ctx.log("WTF tried to create a law while disabled");
+            return;
+        }
+        if (!isValidLaw()) {
+            _ctx.notice("That is not a legal law.");
+            return;
+        }
+        
+        enabled = false;
+        makeLaw(cards, _ctx.player);
+
+        // clear cards from new law and remove them from hand
+        clear(false);
+        _ctx.board.createLawButton.newLawCreated();
     }
 
     /**

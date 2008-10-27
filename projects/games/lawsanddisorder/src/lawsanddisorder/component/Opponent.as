@@ -96,13 +96,12 @@ public class Opponent extends Player
         cardIcon.y = 40;
         addChild(cardIcon);
 
-        // little icon will be displayed during this opponent's turn
-        turnIndicator = new Sprite();
-        turnIndicator.graphics.beginFill(0xFFFF00);
-        turnIndicator.graphics.drawCircle(0, 0, 8);
-        turnIndicator.graphics.endFill();
-        turnIndicator.x = 90;
-        turnIndicator.y = 20;
+        // create the highlight object but do not add it as a child
+        highlightSprite = new Sprite();
+        highlightSprite.graphics.lineStyle(5, 0xFFFF00);
+        highlightSprite.graphics.drawRect(5, 5, 80, 45);
+        highlightSprite.x = 5;
+        highlightSprite.y = 5;
     }
 
     /**
@@ -110,7 +109,7 @@ public class Opponent extends Player
      */
     override protected function updateDisplay () :void
     {
-        infoText.text = playerName + "\n" + job;
+        infoText.text = job + "\n" + _name;
         numMoniesText.text = String(monies);
         numCardsText.text = String(hand.numCards);
     }
@@ -144,7 +143,6 @@ public class Opponent extends Player
     
     public function getGlobalHandLocation () :Point
     {
-        //_ctx.log("moving to " + localToGlobal(new Point(68, 40)).x + "," + localToGlobal(new Point(68, 40)).y);
         return localToGlobal(new Point(0, 0));
     }
 
@@ -152,20 +150,19 @@ public class Opponent extends Player
      * The turn just changed.  Display whether it is this opponent's turn.
      */
     protected function turnChanged (event :Event) :void
-    {
+    {       
         if (_ctx.board.players.turnHolder == this) {
-            if (!contains(turnIndicator)) {
-                addChild(turnIndicator);
+            infoText.textColor = 0x990000;
+            if (!contains(highlightSprite)) {
+                addChildAt(highlightSprite, 1);
             }
         } else {
-            if (contains(turnIndicator)) {
-                removeChild(turnIndicator);
+            infoText.textColor = 0x000000;
+            if (contains(highlightSprite)) {
+                removeChild(highlightSprite);
             }
         }
     }
-
-    /** Indicates if it is the opponent's turn */
-    protected var turnIndicator :Sprite;
 
     /** Displays the number of monies */
     protected var numMoniesText :TextField;
@@ -181,6 +178,9 @@ public class Opponent extends Player
 
     /** Symbol for the current job */
     protected var jobSymbol :Sprite;
+
+    /** Display a box around the card when highlighted */
+    protected var highlightSprite :Sprite;
 
     /** Background image for an opponent */
     [Embed(source="../../../rsrc/components.swf#opponent")]

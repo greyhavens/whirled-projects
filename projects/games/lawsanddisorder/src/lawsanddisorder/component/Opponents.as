@@ -4,7 +4,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 import flash.events.MouseEvent;
 
-import lawsanddisorder.Context;
+import lawsanddisorder.*;
 
 /**
  * Area containing list of opposing players

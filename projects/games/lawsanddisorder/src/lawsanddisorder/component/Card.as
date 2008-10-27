@@ -1,16 +1,16 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
-import flash.text.TextFormat;
-import flash.text.TextFieldAutoSize;
 import flash.events.MouseEvent;
-import flash.geom.Rectangle;
-import flash.geom.ColorTransform;
 import flash.filters.ColorMatrixFilter;
+import flash.geom.ColorTransform;
+import flash.geom.Rectangle;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
-import lawsanddisorder.Context;
 import lawsanddisorder.Content;
+import lawsanddisorder.Context;
 
 /**
  * A single card element
@@ -30,6 +30,7 @@ public class Card extends Component
         _group = group;
         _type = type;
         _value = value;
+        text = calculatelawText();
 
         addEventListener(MouseEvent.MOUSE_DOWN, ctx.state.mouseEventHandler.cardMouseDown);
         addEventListener(MouseEvent.MOUSE_UP, ctx.state.mouseEventHandler.cardMouseUp);
@@ -38,7 +39,30 @@ public class Card extends Component
 
         super(ctx);
     }
+        
+    /**
+     * Called when the player's job changes.  Color the card text in a law if it matches the
+     * player's current job.
+     */
+    public function highlightJob () :void
+    {
+        if (group == Card.SUBJECT) {
+            if (type == _ctx.player.job.id) {
+                lawText.textColor = 0x990000;
+            } else {
+                lawText.textColor = 0x000000;      
+            }
+        }
+    }
 
+    /**
+     * Display contents of card for debugging purposes
+     */
+    override public function toString () :String
+    {
+        return "card[" + text + " id:"+ id +"]";
+    }
+    
     /**
      * Build the card sprite, the text-only version of the card sprite, and the highlight sprite.
      */
@@ -48,7 +72,7 @@ public class Card extends Component
         cardDisplay = buildCardDisplay();
 
         // text version of the card for displaying in laws
-        textDisplay = buildTextDisplay();
+        lawDisplay = buildLawDisplay();
 
         // create the highlight object but do not add it as a child
         highlightSprite = new Sprite();
@@ -91,13 +115,13 @@ public class Card extends Component
             cardSprite.addChild(symbol);
         }
 
-        var cardText :TextField = Content.defaultTextField();
-        cardText.text = text;
-        cardText.width = 50;
-        cardText.height = 60;
-        cardText.y = 5;
-        cardText.x = 0;
-        cardSprite.addChild(cardText);
+        var lawText :TextField = Content.defaultTextField();
+        lawText.text = text;
+        lawText.width = 50;
+        lawText.height = 60;
+        lawText.y = 5;
+        lawText.x = 0;
+        cardSprite.addChild(lawText);
 
         return cardSprite;
     }
@@ -105,58 +129,16 @@ public class Card extends Component
     /**
      * Create and return the sprite to display when this card is in a law.
      */
-    protected function buildTextDisplay () :Sprite
+    protected function buildLawDisplay () :Sprite
     {
-        var textSprite :Sprite = new Sprite();
-
-        cardText = Content.defaultTextField(1.1, "left");
-        cardText.autoSize = "left";
-        cardText.wordWrap = false;
-        cardText.text = text;
-        cardText.height = 30;
-        textSprite.addChild(cardText);
-
-        // create the yellow highlight text object but do not add it as a child
-        highlightSpriteText = new Sprite();
-        var cardTextHightlight :TextField = Content.defaultTextField(1.1, "left");
-        var cardTextFormatHightlight :TextFormat =  cardTextHightlight.defaultTextFormat;
-        cardTextFormatHightlight.color = 0xFFFF00;
-        cardTextHightlight.defaultTextFormat = cardTextFormatHightlight;
-        cardTextHightlight.autoSize = "left";
-        cardTextHightlight.wordWrap = false;
-        cardTextHightlight.text = text;
-        cardTextHightlight.height = 30;
-        highlightSpriteText.addChild(cardTextHightlight);
-
-        return textSprite;
-    }
-
-    /**
-     * Width differs depending on the parent container
-     */
-    override public function get width () :Number
-    {
-        if (_cardContainer is Law) {
-            return cardText.width;
-        }
-        else {
-            return super.width;
-        }
-    }
-    
-    /**
-     * Called when the player's job changes.  Color the card text in a law if it matches the
-     * player's current job.
-     */
-    public function highlightJob () :void
-    {
-        if (group == Card.SUBJECT) {
-            if (type == _ctx.player.job.id) {
-                cardText.textColor = 0x990000;
-            } else {
-                cardText.textColor = 0x000000;      
-            }
-        }
+        var lawSprite :Sprite = new Sprite();
+        lawText = Content.defaultTextField(1.2, "left");
+        lawText.autoSize = "left";
+        lawText.wordWrap = false;
+        lawText.text = text;
+        lawText.height = 30;
+        lawSprite.addChild(lawText);
+        return lawSprite;
     }
 
     /**
@@ -169,14 +151,14 @@ public class Card extends Component
             if (contains(cardDisplay)) {
                 removeChild(cardDisplay);
             }
-            if (!contains(textDisplay)) {
-                addChild(textDisplay);
+            if (!contains(lawDisplay)) {
+                addChild(lawDisplay);
             }
             buttonMode = false;
         }
         else {
-            if (contains(textDisplay)) {
-                removeChild(textDisplay);
+            if (contains(lawDisplay)) {
+                removeChild(lawDisplay);
             }
             if (!contains(cardDisplay)) {
                 addChild(cardDisplay);
@@ -249,27 +231,27 @@ public class Card extends Component
         }
         return null;
     }
-
+    
     /**
-     * Return the text for the card face
+     * Return the text for the face of this card.
      */
-    public function get text () :String
+    protected function calculatelawText () :String
     {
         switch (group) {
             case SUBJECT:
                 switch (type) {
                     case Job.JUDGE:
-                        return "The Judge";
+                        return "Judge";
                     case Job.THIEF:
-                        return "The Thief";
+                        return "Thief";
                     case Job.BANKER:
-                        return "The Banker";
+                        return "Banker";
                     case Job.TRADER:
-                        return "The Trader";
+                        return "Trader";
                     case Job.PRIEST:
-                        return "The Priest";
+                        return "Priest";
                     case Job.DOCTOR:
-                        return "The Doctor";
+                        return "Doctor";
                 }
                 break;
             case VERB:
@@ -328,17 +310,21 @@ public class Card extends Component
         else {
             return value + name + "s";
         }
-
     }
 
     /**
-     * Display contents of card for debugging purposes
+     * Width differs depending on the parent container
      */
-    override public function toString () :String
+    override public function get width () :Number
     {
-        return "card[" + text + " id:"+ id +"]";
+        if (_cardContainer is Law) {
+            return lawText.width;
+        }
+        else {
+            return super.width;
+        }
     }
-
+    
     /**
      * Return the parent container of this card.  May not be the display parent if card is
      * being dragged on the board.
@@ -395,46 +381,42 @@ public class Card extends Component
     public function set highlighted (value :Boolean) :void {
         _highlighted = value;
         if (_highlighted) {
-            cardText.textColor = 0xFFFF00;
+            if (_cardContainer is Law) {
+                lawText.textColor = 0xFFFF00;
+            } else {
+                if (!contains(highlightSprite)) {
+                    addChild(highlightSprite);
+                }
+            }
         } else {
-            cardText.textColor = 0x000000;
-            highlightJob();
-        }
-        /*
-        if (_highlighted) {
-            if (!cardDisplay.contains(highlightSprite)) {
-                cardDisplay.addChild(highlightSprite);
-            }
-
-            if (!textDisplay.contains(highlightSpriteText)) {
-                textDisplay.addChild(highlightSpriteText)
+            if (_cardContainer is Law) {
+                lawText.textColor = 0x000000;
+                highlightJob();
+            } else {
+                if (contains(highlightSprite)) {
+                    removeChild(highlightSprite);
+                }
             }
         }
-        else {
-            if (cardDisplay.contains(highlightSprite)) {
-                cardDisplay.removeChild(highlightSprite);
-            }
-            if (textDisplay.contains(highlightSpriteText)) {
-                textDisplay.removeChild(highlightSpriteText);
-            }
-        }
-        */
     }
+    
+    /** Text for the face of this card */
+    public var text :String;
 
     /** Contains card back, symbol, text */
     protected var cardDisplay :Sprite;
 
     /** Contains text-only version of this card */
-    protected var textDisplay :Sprite;
+    protected var lawDisplay :Sprite;
     
     /** Sprite displayed in laws */
-    protected var cardText :TextField;
+    protected var lawText :TextField;
 
     /** Display a box around the card when highlighted */
     protected var highlightSprite :Sprite;
 
-    /** Display a box around the card when highlighted and in text form */
-    protected var highlightSpriteText :Sprite;
+    ///** Display a box around the card when highlighted and in text form */
+    //protected var highlightSpriteText :Sprite;
 
     /** Is the card highlighted? */
     protected var _highlighted :Boolean = false;

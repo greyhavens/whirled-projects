@@ -14,6 +14,9 @@ import lawsanddisorder.component.*;
  */
 public class State
 {
+    /** Event fired when player can once again move on their turn. */
+    public static const FOCUS_GAINED :String = "focusGained";
+    
     /**
      * Constructor - add event listeners and maybe get the board if it's setup
      */
@@ -44,10 +47,16 @@ public class State
         }
 
         var message :String = "Please select an opponent.";
-        //_ctx.notice(message);
-        startModeReminder(message, selectRandomOpponent);
         modeListener = listener;
         mode = MODE_SELECT_OPPONENT;
+        
+        // select opponents randomly instead of waiting for booted players.
+        if (_ctx.board.endTurnButton.booted) {
+            selectRandomOpponent();
+            return;
+        }
+        
+        startModeReminder(message, selectRandomOpponent);
     }
 
     /**
@@ -55,7 +64,8 @@ public class State
      * numCards is greater than the number of cards in the hand, wait to select all the cards in
      * the hand.
      */
-    public function selectCards (numCards :int, listener :Function, targetPlayer :Player = null) :void
+    public function selectCards (numCards :int, listener :Function, targetPlayer :Player = null,
+        message :String = null) :void
     {
         if (mode != MODE_DEFAULT) {
             _ctx.log("WTF mode is not default when selecting cards.  Continuing...");
@@ -68,7 +78,8 @@ public class State
 
         // target player has no cards to lose, return now.
         if (targetPlayer.hand.numCards == 0) {
-            _ctx.notice("You had to select " + numCards + " card(s), but there are none to select.");
+            _ctx.notice("You had to pick " + Content.cardCount(numCards) + 
+                ", but there aren't any!");
             selectedCards = new Array();
             selectedGoal = 0;
             listener();
@@ -79,22 +90,29 @@ public class State
         if (numCards > targetPlayer.hand.numCards) {
             numCards = targetPlayer.hand.numCards;
         }
-
-        var message :String;
-        if (targetPlayer == _ctx.player) {
-            message = "Please select " + numCards + " card(s) from your hand.";
+        
+        if (message == null) {
+            if (targetPlayer == _ctx.player) {
+                message = "Please pick " + Content.cardCount(numCards) + " from your hand.";
+            } else {
+                message = "Please pick " + Content.cardCount(numCards) + " from " +  
+                    targetPlayer.name + "'s hand.";
+            }
         }
-        else {
-            message = "Please select " + numCards + " card(s) from " + targetPlayer.playerName + "'s hand.";
-        }
-        //_ctx.notice(message);
-        startModeReminder(message, selectRandomCards);
 
         modeListener = listener;
         mode = MODE_SELECT_HAND_CARDS;
         selectedGoal = numCards;
         selectedCards = new Array();
         selectCardsTargetPlayer = targetPlayer;
+        
+        // select cards randomly instead of waiting for booted players.
+        if (_ctx.board.endTurnButton.booted) {
+            selectRandomCards();
+            return;
+        }
+        
+        startModeReminder(message, selectRandomCards);
     }
 
     /**
@@ -107,10 +125,9 @@ public class State
             _ctx.log("WTF mode is not default when selecting law.  Continuing...");
         }
         var message :String = "Please select a law.";
-        //_ctx.notice(message);
-        startModeReminder(message, cancelUsingPower);
         modeListener = listener;
         mode = MODE_SELECT_LAW;
+        startModeReminder(message, cancelUsingPower);
     }
 
     /**
@@ -169,6 +186,7 @@ public class State
         }
         enactingLaws = false;
         waitingForOpponent = null;
+        focusGained();
     }
 
     /**
@@ -215,16 +233,12 @@ public class State
      */
     public function hasFocus (displayNotices :Boolean = true) :Boolean
     {
-       // if (_performingAction) {
-         //   _ctx.notice("You can't interact with the board while performing an action.");
-        //}
-        //if (mode == MODE_DEFAULT && _ctx.control.game.isMyTurn() && !_performingAction) {
-        if (mode == MODE_DEFAULT && _ctx.control.game.isMyTurn() && !enactingLaws) {
+        if (mode == MODE_DEFAULT && _ctx.board.players.isMyTurn() && !enactingLaws) {
             return true;
         }
         if (enactingLaws && waitingForOpponent != null) {
             if (displayNotices) {
-                _ctx.notice("Waiting for " + waitingForOpponent.playerName);
+                _ctx.notice("Waiting for " + waitingForOpponent.name);
             }
         }
         else if (mode != MODE_DEFAULT) {
@@ -244,6 +258,18 @@ public class State
         }
         return false;
     }
+    
+    /**
+     * Called when the player gains focus on their turn, either after cancelling an action, or
+     * completing one (once the laws are finished triggering).  Used when delaying actions such
+     * as ending the turn until focus is returned.
+     */
+    public function focusGained () :void
+    {
+        if (_ctx.board.players.isMyTurn()) {
+            _ctx.eventHandler.dispatchEvent(new Event(FOCUS_GAINED));
+        }
+    }
 
     /**
      * Reset the mode to MODE_DEFAULT and deselect all items.
@@ -255,6 +281,7 @@ public class State
         deselectCards();
         deselectOpponent();
         deselectLaw();
+        focusGained();
     }
 
     /**
@@ -263,6 +290,7 @@ public class State
      */
     public function doneMode () :void
     {
+        _ctx.notice("");
         startModeReminder(null);
         mode = MODE_DEFAULT;
         if (modeListener != null) {
@@ -333,8 +361,6 @@ public class State
     /**
      * Player took too long to use their ability; cancel it.  Don't need
      * to cancel mode here; job.cancelUsePower() will deal with all that.
-     *
-     * TODO wow spaghetti - use events?
      */
     protected function cancelUsingPower () :void
     {

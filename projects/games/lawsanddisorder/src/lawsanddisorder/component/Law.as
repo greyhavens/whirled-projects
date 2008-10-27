@@ -1,10 +1,10 @@
 ﻿package lawsanddisorder.component {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.events.MouseEvent;
-import flash.display.DisplayObject;
 
 import lawsanddisorder.*;
 
@@ -26,20 +26,25 @@ public class Law extends CardContainer
     }
 
     /**
+     * Return this law as a sentence
+     */
+    override public function toString () :String
+    {
+        var string :String = "";
+        for each (var card :Card in cards) {
+            string += card.text + " ";
+        }
+        string = string.substr(0, string.length - 1);
+        return string;
+    }
+
+    /**
      * Draw the law area
      */
     override protected function initDisplay () :void
     {
         var background :Sprite = new LAW_BACKGROUND();
         addChild(background);
-
-/*
-        var lawNum :TextField = Content.defaultTextField(1.0, "left");
-        lawNum.text = "Law " + displayId + ":";
-        lawNum.x = 5;
-        lawNum.y = 8;
-        addChild(lawNum);
-        */
     }
 
     /**
@@ -47,12 +52,12 @@ public class Law extends CardContainer
      */
     override protected function updateDisplay () :void
     {
-        var cardX :Number = 5;
+        var cardX :Number = 9;
         for (var i :int = 0; i < cards.length; i++) {
             // update text version of the law
             var card :Card = cards[i];
             card.x = cardX;
-            card.y = 8;
+            card.y = 7;
             cardX += card.width + 0;
         }
     }
@@ -100,8 +105,8 @@ public class Law extends CardContainer
                     toPlayer = _ctx.state.selectedPlayer;
                     if (toPlayer == null) {
                         // return here once an opponent has been selected
-                        _ctx.broadcastOthers("(law " + displayId + " triggered): waiting for " + 
-                            fromPlayer.playerName + " to pick an opponent.");
+                        _ctx.broadcastOthers("Waiting for " +  fromPlayer.name + 
+                            " to pick an opponent to give to.", fromPlayer, true);
                         _ctx.state.selectOpponent(enactLaw);
                         return;
                     }
@@ -131,16 +136,21 @@ public class Law extends CardContainer
         if (verb == Card.GETS) {
             if (object == Card.MONIE) {
                 fromPlayer.getMonies(amount);
-                message = fromPlayer.playerName + " got " + amount + " monies";
+                message = " got " + Content.monieCount(amount);
             }
             else {
                 if (_ctx.board.deck.numCards < amount) {
-                    message = fromPlayer.playerName + " would have got " + amount 
-                        + " cards, but there was " + _ctx.board.deck.numCards + " left in the deck";
                     amount = _ctx.board.deck.numCards;
-                }
-                else {
-                    message = fromPlayer.playerName + " got " + amount + " cards";
+                    message = " would have got " + Content.cardCount(amount) + ", but there ";
+                    if (amount == 1) {
+                        message += "was only 1 left!";
+                    } else if (amount == 0) {
+                        message += "were none left!";
+                    } else {
+                        message += "were only " + amount + " left!";
+                    }
+                } else {
+                    message = " got " + Content.cardCount(amount);
                 }
                 fromPlayer.getCards(amount);
             }
@@ -157,11 +167,11 @@ public class Law extends CardContainer
                 // GIVES monies to somebody
                 if (verb == Card.GIVES && toPlayer != null) {
                     toPlayer.getMonies(amount);
-                    message = fromPlayer.playerName + " gave " + amount + " monies to " + 
-                        toPlayer.playerName;
+                    message = " gave " + Content.monieCount(amount) +  
+                        " to " + toPlayer.name;
                 }
                 else {
-                    message = fromPlayer.playerName + " lost " + amount + " monies";
+                    message = " lost " + Content.monieCount(amount);
                 }
             }
             else {
@@ -172,8 +182,8 @@ public class Law extends CardContainer
                     selectedCards = _ctx.state.selectedCards;
                     if (selectedCards == null) {
                         // return to here once player has selected X cards
-                        _ctx.broadcastOthers("(law " + displayId + " triggered): waiting for " + 
-                            fromPlayer.playerName + " to pick card(s).");
+                        _ctx.broadcastOthers("Waiting for " +  fromPlayer.name + " to pick " + 
+                            Content.cardCount(amount) + " to lose.", fromPlayer, true);
                         _ctx.state.selectCards(amount, enactLaw);
                         return;
                     }
@@ -183,29 +193,33 @@ public class Law extends CardContainer
                 if (verb == Card.GIVES && toPlayer != null) {
                     fromPlayer.giveCardsTo(selectedCards, toPlayer);
                     if (selectedCards.length < amount) {
-                        message = fromPlayer.playerName + " would have given " + 
-                            toPlayer.playerName + " " + amount + " cards, but had " + 
-                            selectedCards.length + " to give";
+                        message = " would have given " + 
+                            toPlayer.name + " " + Content.cardCount(amount) +  
+                            ", but had " + selectedCards.length + " to give";
                     } else {
-                        message = fromPlayer.playerName + " gave " + amount + " cards to " + 
-                            toPlayer.playerName;
+                        message = " gave " + Content.cardCount(amount) + 
+                            " to " + toPlayer.name;
                     }
-
                 }
                 // LOSES / GIVES cards to nobody
                 else {
                     fromPlayer.discardCards(selectedCards);
                     if (selectedCards.length < amount) {
-                        message = fromPlayer.playerName + " would have lost " + amount + 
-                            " cards, but had " + selectedCards.length + " to lose";
+                        message = " would have lost " + Content.cardCount(amount) + 
+                            ", but had " + selectedCards.length + " to lose";
                     } else {
-                        message = fromPlayer.playerName + " lost " + amount + " cards";
+                        message = " lost " + Content.cardCount(amount);
                     }
                 }
             }
         }
 
-        _ctx.broadcast("(law " + displayId + " triggered): " + message + ".");
+        if (fromPlayer == _ctx.player) {
+            _ctx.notice("(law): You" + message + ".");
+            _ctx.broadcastOthers("(law): " + fromPlayer.name + message + ".");
+        } else {
+            _ctx.broadcast("(law): " + fromPlayer.name + message + ".");
+        }
 
         _ctx.state.deselectCards();
         _ctx.state.deselectOpponent();
@@ -248,31 +262,38 @@ public class Law extends CardContainer
     {
         _ctx.eventHandler.setData(Laws.LAWS_DATA, getSerializedCards(), _id, true);
     }
-
+    
     /**
-     * Public function to allow setting distributed hand data
-     * TODO make setDistributedData public or find another solution
+     * Called when the contents of this law change; determine whether there's a gives target.
      */
-    public function setDistributedLawData () :void
+    override public function setSerializedCards (serializedCards :Object, 
+        distributeData :Boolean = false) :void
     {
-        setDistributedData();
+        super.setSerializedCards(serializedCards, distributeData);
+        
+        if (cards == null || cards.length < 3) {
+            _ctx.log("WTF no or not enough cards duing law.setSerializedCards");
+            return;
+        }
+        
+        // highlight cards with the player's job
+        for each (var card :Card in cards) {
+            card.highlightJob();
+        }
+            
+        if (cards[1].type == Card.GIVES && cards[2].group == Card.SUBJECT) {
+            _hasGivesTarget = true;
+        } else {
+            _hasGivesTarget = false;
+        }
     }
 
     /**
      * Is this law of the form SUBJECT GIVES TARGET OBJECT {WHEN}+?
-     * Assumes a valid law format.
-     * TODO don't calculate this every time for finished laws; calculate it once and properly
      */
     public function hasGivesTarget () :Boolean
     {
-        if (cards == null || cards.length == 0) {
-            _ctx.log("WTF no cards duing law.hasGivesTarget");
-            return false;
-        }
-        if (cards[1].type == Card.GIVES && cards[2].group == Card.SUBJECT) {
-            return true;
-        }
-        return false;
+        return _hasGivesTarget;
     }
 
     /** Fetch the index of the law in the list of laws */
@@ -287,11 +308,6 @@ public class Law extends CardContainer
         return (_id + 1);
     }
 
-    /** For testing, return this law as a string */
-    override public function toString () :String {
-        return "Law " + _id + " [" + cards.toString() + "]";
-    }
-
     /**
      * Is the law displaying that it is selected?
      */
@@ -299,17 +315,47 @@ public class Law extends CardContainer
         return _highlighted;
     }
 
+    /*
+     * Change whether the law appears selected, by highlighting
+     * all the cards in it.
+     *
+    public function set highlighted (value :Boolean) :void {
+        _highlighted = value;
+        if (!_highlighted) {
+            // perform de-highliting after a short delay
+            EventHandler.invokeLater(1, function () :void {
+                for each (var litCard :Card in cards) {
+                    litCard.highlighted = false;
+                }
+            });
+        } else {
+            for each (var unlitCard :Card in cards) {
+                unlitCard.highlighted = true;
+            }
+        }
+    }*/
+    
     /**
      * Change whether the law appears selected, by highlighting
      * all the cards in it.
      */
-    public function set highlighted (value :Boolean) :void {
+    public function setHighlighted (value :Boolean, delay :Boolean = false) :void
+    {
         _highlighted = value;
-        for each (var card :Card in cards) {
-            card.highlighted = _highlighted;
+        if (delay) {
+            // perform de-highliting after a short delay
+            EventHandler.invokeLater(2, function () :void {
+                for each (var litCard :Card in cards) {
+                    litCard.highlighted = _highlighted;
+                }
+            });
+        } else {
+            for each (var unlitCard :Card in cards) {
+                unlitCard.highlighted = _highlighted;
+            }
         }
     }
-
+    
     /** Is the law highlighted? */
     protected var _highlighted :Boolean = false;
 
@@ -317,7 +363,10 @@ public class Law extends CardContainer
     private var _id :int;
 
     /** Contains the compacted text version of the law */
-    protected var lawText :Sprite
+    protected var lawText :Sprite;
+    
+    /** True if law is of the format [SUBJECT] [GIVES] [JOB] [OBJECT] */
+    protected var _hasGivesTarget :Boolean;
 
     /** Background image for the entire board */
     [Embed(source="../../../rsrc/components.swf#law")]

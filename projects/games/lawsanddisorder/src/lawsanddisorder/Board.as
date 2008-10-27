@@ -48,12 +48,12 @@ public class Board extends Sprite
         addChild(helpButton);
 
         deck = new Deck(_ctx);
-        deck.x = 15;
-        deck.y = 330;
+        deck.x = 30;
+        deck.y = 320;
         addChild(deck);
 
         newLaw = new NewLaw(_ctx);
-        newLaw.x = 170;
+        newLaw.x = 160;
         newLaw.y = 200;
 
         // list of laws
@@ -62,35 +62,30 @@ public class Board extends Sprite
         laws.y = 15;
         addChild(laws);
         
+        notices = new Notices(_ctx);
+        notices.x = 170;
+        notices.y = 350;
+        addChild(notices);
+        
         // current player and opponents
         players = new Players(_ctx);
         addChild(players);
 
         // use power / cancel button
         usePowerButton = new UsePowerButton(_ctx);
-        usePowerButton.x = 12;
-        usePowerButton.y = 210;
+        usePowerButton.x = 9;
+        usePowerButton.y = 180;
         addChild(usePowerButton);
 
         createLawButton = new CreateLawButton(_ctx);
-        createLawButton.x = 12;
-        createLawButton.y = 250;
+        createLawButton.x = 9;
+        createLawButton.y = 225;
         addChild(createLawButton);
 
         endTurnButton = new EndTurnButton(_ctx, this);
-        endTurnButton.x = 12;
-        endTurnButton.y = 290;
+        endTurnButton.x = 9;
+        endTurnButton.y = 270;
         addChild(endTurnButton);
-        
-        notices = new Notices(_ctx);
-        notices.x = 170;
-        notices.y = 350;
-        addChild(notices);
-
-        // displayed during the player's turn
-        turnHighlight = new Sprite();
-        turnHighlight.graphics.lineStyle(5, 0xFFFF00);
-        turnHighlight.graphics.drawRect(2, 2, 695, 495);
 
         // show the splash screen over the entire board
         helpScreen = new SPLASH_SCREEN();
@@ -104,6 +99,11 @@ public class Board extends Sprite
         version.height = 20;
         version.y = 485;
         addChild(version);
+
+        // displayed during the player's turn
+        turnHighlight = new Sprite();
+        turnHighlight.graphics.lineStyle(8, 0xFFFF00);
+        turnHighlight.graphics.drawRect(3, 3, 694, 494);
     }
     
     /**
@@ -135,7 +135,7 @@ public class Board extends Sprite
     {
         if (!contains(helpScreen)) {
            addChild(helpScreen);
-           _ctx.notice("Displaying help.  Click on the board to continue.")
+           //_ctx.notice("Displaying help.  Click on the board to continue.")
         }
     }
 
@@ -166,8 +166,11 @@ public class Board extends Sprite
     /**
      * Move a sprite across the board from one point to another.
      */
-    public function animateMove (sprite :Sprite, fromPoint :Point, toPoint :Point) :void
+    public function animateMove (sprite :Sprite, fromPoint :Point, toPoint :Point, 
+        doneListener :Function = null) :void
     {
+        fromPoint = this.globalToLocal(fromPoint);
+        toPoint = this.globalToLocal(toPoint);
         var xIncrement :Number = (toPoint.x - fromPoint.x) / 15;
         var yIncrement :Number = (toPoint.y - fromPoint.y) / 15;
         //_ctx.log("from " + fromPoint.x + ","+ fromPoint.y + " to " + toPoint.x + "," + toPoint.y);
@@ -178,7 +181,7 @@ public class Board extends Sprite
         var moveTimer :Timer = new Timer(5, 50);
         moveTimer.addEventListener(TimerEvent.TIMER, 
             function (event :TimerEvent): void { 
-                animateMoveFired(sprite, xIncrement, yIncrement, toPoint, moveTimer); 
+                animateMoveFired(sprite, xIncrement, yIncrement, toPoint, moveTimer, doneListener); 
             });
         moveTimer.start();
     }
@@ -187,15 +190,17 @@ public class Board extends Sprite
      * Move a sprite one step across the board.
      */
     protected function animateMoveFired (sprite :Sprite, xIncrement :Number, 
-        yIncrement :Number, toPoint :Point, moveTimer :Timer) :void
+        yIncrement :Number, toPoint :Point, moveTimer :Timer, doneListener :Function) :void
     {
         var xDone :Boolean = xIncrement >= 0 ? sprite.x >= toPoint.x : sprite.x <= toPoint.x;
         var yDone :Boolean = yIncrement >= 0 ? sprite.y >= toPoint.y : sprite.y <= toPoint.y;
         if (xDone || yDone) {
-            //_ctx.log("end point reached.");
             removeChild(sprite);
             moveTimer.stop();
             moveTimer = null;
+            if (doneListener != null) {
+                doneListener();
+            }
             return;
         }
         sprite.x += xIncrement;

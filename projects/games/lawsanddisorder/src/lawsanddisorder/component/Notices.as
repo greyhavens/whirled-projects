@@ -2,6 +2,7 @@
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -13,17 +14,21 @@ import lawsanddisorder.*;
  */
 public class Notices extends Component
 {
-    /** Name of the message sent when broadcasting in-game to all players */
+    /** Message sent when broadcasting in-game to all players in the chat */
     public static const BROADCAST :String = "broadcast";
+    
+    /** Message sent when sending in-game to all players that will appear in their notice area */
+    public static const BROADCAST_NOTICE :String = "broadcastNotice";
 
     /**
      * Constructor
      */
     public function Notices (ctx :Context)
     {
-        notices = new Array();
+        //notices = new Array();
         super(ctx);
         ctx.eventHandler.addMessageListener(BROADCAST, gotBroadcast);
+        ctx.eventHandler.addMessageListener(BROADCAST_NOTICE, gotBroadcast);
         addEventListener(MouseEvent.CLICK, viewHistoryButtonClicked);
     }
 
@@ -37,32 +42,27 @@ public class Notices extends Component
 
         // main notice area
         currentNotice = Content.defaultTextField();
-        currentNotice.height = 30;
+        currentNotice.height = 35;
         currentNotice.width = 300;
         currentNotice.x = 40;
-        currentNotice.y = 6;
-        currentNotice.wordWrap = false;
+        currentNotice.y = 10;
         addChild(currentNotice);
-
-        // view history button
-        /*
-        viewHistoryButton = Content.defaultTextField(0.9);
-        viewHistoryButton.text = "more";
-        viewHistoryButton.x = 300;
-        viewHistoryButton.y = 7;
-        viewHistoryButton.addEventListener(MouseEvent.CLICK, viewHistoryButtonClicked);
-        addChild(viewHistoryButton);
-        */
-
+        
         // history area and text
         history = new Sprite();
         history.graphics.beginFill(0xB9B9B9);
         history.graphics.drawRect(0, 0, 355, 380);
         history.x = 15;
+        //var pt :Point = this.globalToLocal(new Point(0,0));
+        //_ctx.log("zero locally is :" + pt.y);
+        //history.y = globalToLocal(new Point(0,0)).y;
         history.y = -380;
         historyText = Content.defaultTextField(1.0, "left");
+        //historyText.border = true;
         historyText.width = 320;
-        historyText.x = 30;
+        historyText.x = 20;
+        //historyText.border = true;
+        
         history.addChild(historyText);
         addEventListener(MouseEvent.ROLL_OUT, historyRollOut);
         history.addEventListener(MouseEvent.ROLL_OUT, historyRollOut);
@@ -73,20 +73,22 @@ public class Notices extends Component
      */
     override protected function updateDisplay () :void
     {
-        if (notices != null && notices.length > 0) {
+        //if (notices != null && notices.length > 0) {
+        /*
             var noticeText :String = notices[notices.length-1];
             if (noticeText == null) {
                 _ctx.log("WTF tried to display null notice text.");
                 return;
             }
-            noticeText = noticeText.replace("\n", "");
             currentNotice.text = noticeText;
+            */
 
             // position text at the bottom of the history area
-            if (contains(history)) {
-                historyText.y = 365 - historyText.textHeight;
-            }
-         }
+            //_ctx.log("historyText textheight: " + historyText.textHeight);
+            //historyText.height = Math.min(historyText.textHeight + 20, 360);
+            historyText.height = historyText.textHeight + 10;
+            historyText.y = 375 - historyText.height;//historyText.textHeight;
+         //}
     }
 
     /**
@@ -94,19 +96,29 @@ public class Notices extends Component
      */
     public function addNotice (notice :String, alsoLog :Boolean = true) :void
     {
-        notices.push(notice);
-        if (contains(history)) {
-            historyText.appendText(notice + "\n");
+        // if blank, just clear the current notice but do not log to history
+        if (notice == null || notice.length == 0) {
+            if (_ctx.board.players.isMyTurn()) {
+                currentNotice.text = "It's your turn."
+            } else {
+                currentNotice.text = "It's " + _ctx.board.players.turnHolder.name + "'s turn."
+            }
+            return;
         }
-        if (notices.length > MAX_NOTICES) {
-            notices.splice(0, notices.length - MAX_NOTICES);
-            // TODO also update history if showing
-        }
-        updateDisplay();
-        
+    
         if (alsoLog) {
             _ctx.log(notice);
         }
+        
+        notice = notice.replace("\n", "");
+        currentNotice.text = notice;
+        //notices.push(notice);
+        historyText.appendText(notice + "\n");
+        //if (notices.length > MAX_NOTICES) {
+        //    notices.splice(0, notices.length - MAX_NOTICES);
+        //}
+        
+        updateDisplay();
     }
 
     /**
@@ -115,8 +127,11 @@ public class Notices extends Component
     protected function gotBroadcast (event :MessageEvent) :void
     {
         //_ctx.log("[broadcast]: " + event.value);
-        _ctx.log(event.value as String);
-        //addNotice(event.value as String);
+        if (event.name == Notices.BROADCAST_NOTICE) {
+            _ctx.notice(event.value as String);
+        } else {
+            _ctx.log(event.value as String);
+        }
     }
 
     /**
@@ -124,7 +139,6 @@ public class Notices extends Component
      */
     protected function viewHistoryButtonClicked (event :MouseEvent) :void
     {
-        _ctx.log("view history button clicked");
         if (contains(history)) {
             showHistory = false;
         }
@@ -149,22 +163,18 @@ public class Notices extends Component
     protected function set showHistory (value :Boolean) :void
     {
         if (value && !contains(history)) {
-            // reset the history contents
-            historyText.text = "";
-            for each (var notice :String in notices) {
-                historyText.appendText(notice + "\n");
-            }
-            _ctx.log("adding history");
-            addChild(history);
+            addChildAt(history, 0);
             updateDisplay();
         }
         else if (!value && contains(history)) {
             removeChild(history);
         }
+        //_ctx.log("\nHISTORY text is now =====\n" + historyText.text + "\n=====\n");
+        //_ctx.log("height: " + historyText.height + ", textheight: " + historyText.textHeight);
     }
 
-    /** Array of messages in chronolocial order */
-    protected var notices :Array;
+    ///** Array of messages in chronolocial order */
+    //protected var notices :Array;
 
     /** Displays text of the most recent notice. */
     protected var currentNotice :TextField;
@@ -178,8 +188,8 @@ public class Notices extends Component
     /** Press this button to view the history */
     protected var viewHistoryButton :TextField;
 
-    /** Maximum number of notices to record in history */
-    protected var MAX_NOTICES :int = 30;
+    ///** Maximum number of notices to record in history */
+    //protected var MAX_NOTICES :int = 30;
 
     /** Background image for the notices */
     [Embed(source="../../../rsrc/components.swf#notices")]

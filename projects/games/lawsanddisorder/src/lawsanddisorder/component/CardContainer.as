@@ -149,7 +149,8 @@ public class CardContainer extends Component
     /**
      * Set cards from a serialized list from other players, then update the card display
      */
-    public function setSerializedCards (serializedCards :Object) :void
+    public function setSerializedCards (serializedCards :Object, 
+        distributeData :Boolean = false) :void
     {
         if (serializedCards == null) {
             _ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
@@ -170,6 +171,11 @@ public class CardContainer extends Component
         }
 
         updateDisplay();
+        
+        if (distributeData) {
+            _ctx.log("setSerializedCards distributing cardcontaer data.");
+            setDistributedData();
+        }
     }
 
     /**
