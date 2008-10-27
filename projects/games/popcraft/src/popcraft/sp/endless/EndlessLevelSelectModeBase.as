@@ -426,6 +426,22 @@ class SaveView extends SceneObject
             scoreText.text = "Score: " + StringUtil.formatNumber(localSave.score);
 
             // save panels
+            if (remoteSave != null) {
+                for (var playerIndex :int = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
+                    var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
+                    var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
+                        LOCAL_HEADSHOT_LOC :
+                        REMOTE_HEADSHOT_LOC);
+
+                    var scale :Number = Math.min(1, MAX_HEADSHOT_HEIGHT / headshot.height);
+                    headshot.scaleX = scale;
+                    headshot.scaleY = scale;
+                    headshot.x = hsLoc.x - (headshot.width * 0.5);
+                    headshot.y = hsLoc.y - (headshot.height * 0.5);
+                    _movie.addChild(headshot);
+                }
+            }
+
             var saveStatsSprite :Sprite = createSaveStatsSprite(level, localSave);
             saveStatsSprite.x = SAVESTATS1_CTR_LOC.x - (saveStatsSprite.width * 0.5);
             saveStatsSprite.y = SAVESTATS1_CTR_LOC.y;
@@ -447,6 +463,7 @@ class SaveView extends SceneObject
         // elementsSprite contains all the visual elements of the save data -
         // health/shields, infusions, and multipliers, spaced out from each other
         var elementsSprite :Sprite = SpriteUtil.createSprite();
+
         var elementLoc :Point = new Point(0, 0);
 
         // health/shield meters
@@ -569,6 +586,9 @@ class SaveView extends SceneObject
     protected var _quitButton :SimpleButton;
     protected var _helpButton :SimpleButton;
 
+    protected static const LOCAL_HEADSHOT_LOC :Point = new Point(-232, -63);
+    protected static const REMOTE_HEADSHOT_LOC :Point = new Point(-232, -23);
+    protected static const MAX_HEADSHOT_HEIGHT :int = 30;
     protected static const BUTTONS_CTR_LOC :Point = new Point(0, 190);
     protected static const BUTTON_X_OFFSET :Number = 15;
     protected static const THUMBNAIL_LOC :Point = new Point(0, 80);
