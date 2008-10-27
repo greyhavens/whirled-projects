@@ -11,7 +11,7 @@ import com.threerings.util.ArrayUtil;
 
 public class Trophies
 {
-    public static const LIBRARY_SCENES :Array = [ 2914 ];
+    public static const LIBRARY_SCENES :Array = [ 2914, 580, 5698, 78924  ];
 
     public static const TROPHY_LEAGUE :String = "league";
     public static const TROPHY_PROT_CHARM :String = "prot_charm";
