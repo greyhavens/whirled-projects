@@ -494,23 +494,20 @@ class SaveView extends SceneObject
         elementLoc.x += healthSprite.width + ELEMENT_X_OFFSET;
 
         // infusions
-        var blCount :int = save.spells[Constants.SPELL_TYPE_BLOODLUST];
-        var rmCount :int = save.spells[Constants.SPELL_TYPE_RIGORMORTIS];
-        var prCount :int = save.spells[Constants.SPELL_TYPE_PUZZLERESET];
-        if (blCount > 0 || rmCount > 0 || prCount > 0) {
-            var infusionSprite :Sprite = SpriteUtil.createSprite();
+        var infusionSprite :Sprite = SpriteUtil.createSprite();
+        var loc :Point = new Point(0, 0);
+        drawIcons(infusionSprite, "infusion_bloodlust",
+            save.spells[Constants.SPELL_TYPE_BLOODLUST], loc, INFUSION_X_OFFSET);
+        loc.x = infusionSprite.width + 2;
+        drawIcons(infusionSprite, "infusion_rigormortis",
+            save.spells[Constants.SPELL_TYPE_RIGORMORTIS], loc, INFUSION_X_OFFSET);
+        loc.x = infusionSprite.width + 2;
+        drawIcons(infusionSprite, "infusion_shuffle",
+            save.spells[Constants.SPELL_TYPE_PUZZLERESET], loc, INFUSION_X_OFFSET);
 
-            var loc :Point = new Point(0, 0);
-            drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
-            loc.x = infusionSprite.width + 2;
-            drawIcons(infusionSprite, "infusion_rigormortis", rmCount, loc, INFUSION_X_OFFSET);
-            loc.x = infusionSprite.width + 2;
-            drawIcons(infusionSprite, "infusion_shuffle", prCount, loc, INFUSION_X_OFFSET);
-
-            DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
-            elementsSprite.addChild(infusionSprite);
-            elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
-        }
+        DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
+        elementsSprite.addChild(infusionSprite);
+        elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
 
         // multipliers
         var numMultipliers :int = save.multiplier - 1;
