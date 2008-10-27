@@ -503,9 +503,9 @@ class SaveView extends SceneObject
             var loc :Point = new Point(0, 0);
             drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
             loc.x = infusionSprite.width + 2;
-            drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
+            drawIcons(infusionSprite, "infusion_rigormortis", rmCount, loc, INFUSION_X_OFFSET);
             loc.x = infusionSprite.width + 2;
-            drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
+            drawIcons(infusionSprite, "infusion_shuffle", prCount, loc, INFUSION_X_OFFSET);
 
             DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
             elementsSprite.addChild(infusionSprite);
