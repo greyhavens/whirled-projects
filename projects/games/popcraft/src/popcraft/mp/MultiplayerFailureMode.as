@@ -18,7 +18,7 @@ public class MultiplayerFailureMode extends MultiplayerDialog
         super.setup();
 
         var tf :DisplayObject = UIBits.createTextPanel(
-            "Your enemies have fled!\nPlay the story instead?",
+            "Your classmates have fled!\nPlay by yourself instead?",
             3, 0, 0, TextFormatAlign.CENTER, 20, 15);
 
         tf.x = (Constants.SCREEN_SIZE.x - tf.width) * 0.5;

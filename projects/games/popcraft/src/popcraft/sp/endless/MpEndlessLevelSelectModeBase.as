@@ -10,6 +10,7 @@ import flash.display.Sprite;
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
 import popcraft.data.UnitData;
+import popcraft.mp.MultiplayerFailureMode;
 import popcraft.util.SpriteUtil;
 
 public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
@@ -19,9 +20,13 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         super(mode);
     }
 
-    override public function update(dt:Number):void
+    override public function update (dt :Number) :void
     {
         super.update(dt);
+
+        if (!SeatingManager.allPlayersPresent) {
+            AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        }
     }
 
     override protected function setup () :void
