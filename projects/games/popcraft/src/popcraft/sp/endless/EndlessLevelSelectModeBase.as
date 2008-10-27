@@ -3,6 +3,7 @@ package popcraft.sp.endless {
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
@@ -29,9 +30,9 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected function createUi (level :EndlessLevelData) :void
     {
         _saveViewLayer = SpriteUtil.createSprite(true);
-        _topLayer = SpriteUtil.createSprite(true);
+        _helpLayer = SpriteUtil.createSprite(true);
         _modeSprite.addChild(_saveViewLayer);
-        _modeSprite.addChild(_topLayer);
+        _modeSprite.addChild(_helpLayer);
 
         _level = level;
 
@@ -104,6 +105,8 @@ public class EndlessLevelSelectModeBase extends AppMode
         addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
+        registerListener(_saveView.helpButton, MouseEvent.CLICK, onHelpClicked);
+
         if (this.enableQuitButton) {
             registerOneShotCallback(_saveView.quitButton, MouseEvent.CLICK, onQuitClicked);
         }
@@ -159,6 +162,18 @@ public class EndlessLevelSelectModeBase extends AppMode
             new FunctionTask(AppContext.mainLoop.popMode)));
     }
 
+    protected function onHelpClicked (...ignored) :void
+    {
+        if (_helpView == null) {
+            _helpView = new HelpView();
+            _helpView.x = HELP_VIEW_LOC.x;
+            _helpView.y = HELP_VIEW_LOC.y;
+            addObject(_helpView, _helpLayer);
+        }
+
+        _helpView.visible = true;
+    }
+
     protected function onPlayClicked (save :SavedEndlessGame) :void
     {
         throw new Error("abstract");
@@ -186,12 +201,13 @@ public class EndlessLevelSelectModeBase extends AppMode
 
     protected var _mode :int;
     protected var _saveViewLayer :Sprite;
-    protected var _topLayer :Sprite;
+    protected var _helpLayer :Sprite;
     protected var _saves :Array;
     protected var _mapIndex :int = -1;
     protected var _level :EndlessLevelData;
     protected var _saveView :SaveView;
     protected var _initedLocalPlayerData :Boolean;
+    protected var _helpView :HelpView;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
     protected static const ANIMATE_UP_TIME :Number = 1.5;
@@ -200,6 +216,8 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected static const DOWN_LOC :Point = new Point(350, 274);
     protected static const NEXT_LOC :Point = new Point(1050, 274);
     protected static const PREV_LOC :Point = new Point(-450, 274);
+
+    protected static const HELP_VIEW_LOC :Point = new Point(350, 250);
 
     protected static const ANIMATE_DOWN :int = 0;
     protected static const ANIMATE_NEXT :int = 1;
@@ -232,6 +250,39 @@ import popcraft.ui.RectMeterView;
 import popcraft.ui.HealthMeters;
 import popcraft.util.MyStringUtil;
 import com.threerings.flash.DisplayUtil;
+import flash.events.MouseEvent;
+
+class HelpView extends SceneObject
+{
+    public function HelpView ()
+    {
+        _movie = SwfResource.instantiateMovieClip("splashUi", "help");
+
+        var yearbook :MovieClip = _movie["yearbook"];
+        for each (var name :String in STUDENT_NAMES) {
+            var portraitParent :MovieClip = yearbook["p" + name];
+            var portrait :Bitmap = ImageResource.instantiateBitmap("portrait_" + name.toLowerCase());
+            portraitParent.addChild(portrait);
+        }
+
+        var closeButton :SimpleButton = _movie["close"];
+        var localThis :HelpView = this;
+        registerListener(closeButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                localThis.visible = false;
+            });
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _movie;
+    }
+
+    protected var _movie :MovieClip;
+
+    protected static const STUDENT_NAMES :Array =
+        [ "Pigsley", "Horace", "Iris", "Ivy", "Ursula", "Dante", "Ralph", "Jack" ];
+}
 
 class SaveView extends SceneObject
 {
@@ -285,6 +336,12 @@ class SaveView extends SceneObject
             this.nextButton.visible = false;
             this.prevButton.visible = false;
         }
+
+        _helpButton = UIBits.createButton("Help", 1.5);
+        DisplayUtil.positionBounds(_helpButton,
+            buttonSprite.width + BUTTON_X_OFFSET,
+            -_helpButton.height * 0.5);
+        buttonSprite.addChild(_helpButton);
 
         DisplayUtil.positionBounds(buttonSprite,
             BUTTONS_CTR_LOC.x - (buttonSprite.width * 0.5),
@@ -465,10 +522,16 @@ class SaveView extends SceneObject
         return _quitButton;
     }
 
+    public function get helpButton () :SimpleButton
+    {
+        return _helpButton;
+    }
+
     protected var _mode :int;
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
     protected var _quitButton :SimpleButton;
+    protected var _helpButton :SimpleButton;
 
     protected static const BUTTONS_CTR_LOC :Point = new Point(0, 180);
     protected static const BUTTON_X_OFFSET :Number = 15;
