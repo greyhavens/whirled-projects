@@ -38,7 +38,7 @@ public class EndlessLevelManager
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
             score += Rand.nextIntRange(100, 10000, Rand.STREAM_COSMETIC);
             var multiplier :int = Rand.nextIntRange(1, 6, Rand.STREAM_COSMETIC);
-            var health :int = Rand.nextIntRange(0, 150, Rand.STREAM_COSMETIC);
+            var health :int = Rand.nextIntRange(5, 151, Rand.STREAM_COSMETIC);
             var spells :Array = [];
             for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT; ++spellType) {
                 var numSpells :int = Rand.nextIntRange(0, 4, Rand.STREAM_COSMETIC);
