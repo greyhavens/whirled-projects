@@ -144,6 +144,10 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             saves.push(save);
         }
 
+        if (_helpView != null) {
+            _helpView.visible = false;
+        }
+
         animateToMode(new EndlessGameMode(_level, saves, true));
     }
 
