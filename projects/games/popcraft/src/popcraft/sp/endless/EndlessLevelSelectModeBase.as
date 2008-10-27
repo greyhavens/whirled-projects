@@ -36,18 +36,23 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         _level = level;
 
-        _saves = getSavedGames().saves.slice();
+        _localSaves = getLocalSavedGames();
+        _remoteSaves = getRemoteSavedGames();
 
-        // insert a dummy Level 1 save into the save array, so that players can start
-        // new games
+        if (null == _remoteSaves) {
+            _highestMapIndex = _localSaves.numSaves;
+        } else {
+            _highestMapIndex = Math.min(_localSaves.numSaves, _remoteSaves.numSaves);
+        }
+
+        // create a dummy Level 1 save, so that players can start new games
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        var level1 :SavedEndlessGame = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth);
-        _saves.splice(0, 0, level1);
+        _level1 = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth);
 
-        selectLevel(_saves.length - 1, ANIMATE_DOWN, true);
+        selectMap(_highestMapIndex, ANIMATE_DOWN, true);
     }
 
-    protected function selectLevel (mapIndex :int, animationType :int,
+    protected function selectMap (mapIndex :int, animationType :int,
         removeModeUnderneath :Boolean) :void
     {
         _mapIndex = mapIndex;
@@ -92,11 +97,20 @@ public class EndlessLevelSelectModeBase extends AppMode
                 }));
         }
 
-        var save :SavedEndlessGame = _saves[mapIndex];
-        var showStats :Boolean =
-            (_mode == GAME_OVER_MODE && save.mapIndex == EndlessGameContext.mapIndex);
+        var localSave :SavedEndlessGame;
+        var remoteSave :SavedEndlessGame;
+        if (mapIndex == 0) {
+            localSave = _level1;
+            remoteSave = (_remoteSaves != null ? _level1 : null);
+        } else {
+            localSave = _localSaves.getSave(mapIndex);
+            remoteSave = (_remoteSaves != null ? _remoteSaves.getSave(mapIndex) : null);
+        }
 
-        _saveView = new SaveView(_level, _saves[mapIndex], showStats,
+        var showStats :Boolean =
+            (_mode == GAME_OVER_MODE && mapIndex == EndlessGameContext.mapIndex);
+
+        _saveView = new SaveView(_level, localSave, remoteSave, showStats,
             this.enableNextPrevPlayButtons, this.enableQuitButton);
 
         _saveView.x = newStartLoc.x;
@@ -116,25 +130,25 @@ public class EndlessLevelSelectModeBase extends AppMode
             var prevButton :SimpleButton = _saveView.prevButton;
             var playButton :SimpleButton = _saveView.playButton;
 
-            if (_saves.length > 1) {
+            if (_highestMapIndex > 1) {
                 nextButton.visible = true;
                 prevButton.visible = true;
                 registerOneShotCallback(nextButton, MouseEvent.CLICK,
                     function (...ignored) :void {
                         var index :int = _mapIndex + 1;
-                        if (index >= _saves.length) {
+                        if (index > _highestMapIndex) {
                             index = 0;
                         }
-                        selectLevel(index, ANIMATE_NEXT, false);
+                        selectMap(index, ANIMATE_NEXT, false);
                     });
 
                 registerOneShotCallback(prevButton, MouseEvent.CLICK,
                     function (...ignored) :void {
                         var index :int = _mapIndex - 1;
                         if (index < 0) {
-                            index = _saves.length - 1;
+                            index = _highestMapIndex;
                         }
-                        selectLevel(index, ANIMATE_PREV, false);
+                        selectMap(index, ANIMATE_PREV, false);
                     });
 
             } else {
@@ -145,7 +159,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             playButton.visible = true;
             registerOneShotCallback(playButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    onPlayClicked(_saves[_mapIndex]);
+                    onPlayClicked(mapIndex == 0 ? _level1 : _localSaves.getSave(mapIndex));
                 });
         }
     }
@@ -184,9 +198,14 @@ public class EndlessLevelSelectModeBase extends AppMode
         throw new Error("abstract");
     }
 
-    protected function getSavedGames () :SavedEndlessGameList
+    protected function getLocalSavedGames () :SavedEndlessGameList
     {
         throw new Error("abstract");
+    }
+
+    protected function getRemoteSavedGames () :SavedEndlessGameList
+    {
+        return null;
     }
 
     protected function get enableNextPrevPlayButtons () :Boolean
@@ -202,9 +221,12 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _mode :int;
     protected var _saveViewLayer :Sprite;
     protected var _helpLayer :Sprite;
-    protected var _saves :Array;
+    protected var _highestMapIndex :int;
     protected var _mapIndex :int = -1;
     protected var _level :EndlessLevelData;
+    protected var _localSaves :SavedEndlessGameList;
+    protected var _remoteSaves :SavedEndlessGameList;
+    protected var _level1 :SavedEndlessGame;
     protected var _saveView :SaveView;
     protected var _initedLocalPlayerData :Boolean;
     protected var _helpView :HelpView;
@@ -286,25 +308,24 @@ class HelpView extends SceneObject
 
 class SaveView extends SceneObject
 {
-    public function SaveView (level :EndlessLevelData, save :SavedEndlessGame,
-        showGameOverStats :Boolean, createNextPrevPlayButtons :Boolean, createQuitButton :Boolean)
+    public function SaveView (level :EndlessLevelData, localSave :SavedEndlessGame,
+        remoteSave :SavedEndlessGame, showGameOverStats :Boolean,
+        createNextPrevPlayButtons :Boolean, createQuitButton :Boolean)
     {
-        var mapData :EndlessMapData = level.getMapData(save.mapIndex);
-        var cycleNumber :int = level.getMapCycleNumber(save.mapIndex);
+        var mapData :EndlessMapData = level.getMapData(localSave.mapIndex);
+        var cycleNumber :int = level.getMapCycleNumber(localSave.mapIndex);
 
         _movie = SwfResource.instantiateMovieClip("splashUi", "grate");
         _movie.cacheAsBitmap = true;
 
         // text
         var titleText :TextField = _movie["level_title"];
-        titleText.text = level.getMapNumberedDisplayName(save.mapIndex);
-
-        var ii :int;
+        titleText.text = level.getMapNumberedDisplayName(localSave.mapIndex);
 
         // cycle number (skulls across title)
         if (cycleNumber > 0) {
             var cycleSprite :Sprite = SpriteUtil.createSprite();
-            for (ii = 0; ii < cycleNumber; ++ii) {
+            for (var ii :int = 0; ii < cycleNumber; ++ii) {
                 var cycleMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "cycle");
                 cycleMovie.x = cycleSprite.width + (cycleMovie.width * 0.5);
                 cycleSprite.addChild(cycleMovie);
@@ -351,9 +372,11 @@ class SaveView extends SceneObject
         // stats
         var statPanel :MovieClip = _movie["stat_panel"];
         var scoreText :TextField = _movie["level_score"];
+        var remoteSavePanel :MovieClip = _movie["second_row"];
         if (showGameOverStats) {
             statPanel.visible = true;
             scoreText.visible = false;
+            remoteSavePanel.visible = false;
 
             // opponent portraits
             var xLoc :Number = 0;
@@ -377,7 +400,7 @@ class SaveView extends SceneObject
             _movie.addChild(opponentPortraitSprite);
 
             var numOpponentsDefeated :int;
-            for (var mapIndex :int = 0; mapIndex < save.mapIndex; ++mapIndex) {
+            for (var mapIndex :int = 0; mapIndex < localSave.mapIndex; ++mapIndex) {
                 numOpponentsDefeated += level.getMapData(mapIndex).computers.length;
             }
 
@@ -392,7 +415,7 @@ class SaveView extends SceneObject
             scoreText.visible = true;
 
             // thumbnail
-            var mapNumber :int = save.mapIndex % level.mapSequence.length;
+            var mapNumber :int = localSave.mapIndex % level.mapSequence.length;
             var thumbnail :Bitmap =
                 ImageResource.instantiateBitmap("endlessThumb" + String(mapNumber + 1));
             thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
@@ -400,90 +423,106 @@ class SaveView extends SceneObject
             _movie.addChild(thumbnail);
 
             // score text
-            scoreText.text = "Score: " + StringUtil.formatNumber(save.score);
+            scoreText.text = "Score: " + StringUtil.formatNumber(localSave.score);
 
-            // elementsSprite contains all the visual elements of the save data -
-            // health/shields, infusions, and multipliers, spaced out from each other
-            var elementsSprite :Sprite = SpriteUtil.createSprite();
-            var elementLoc :Point = new Point(0, 0);
+            // save panels
+            var saveStatsSprite :Sprite = createSaveStatsSprite(level, localSave);
+            saveStatsSprite.x = SAVESTATS1_CTR_LOC.x - (saveStatsSprite.width * 0.5);
+            saveStatsSprite.y = SAVESTATS1_CTR_LOC.y;
+            _movie.addChild(saveStatsSprite);
 
-            // health/shield meters
-            var healthSprite :Sprite = SpriteUtil.createSprite();
-            var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-            var healthMeter :RectMeterView = new RectMeterView();
-            healthMeter.minValue = 0;
-            healthMeter.maxValue = workshopData.maxHealth;
-            healthMeter.value = save.health;
-            healthMeter.foregroundColor = 0xFF0000;
-            healthMeter.backgroundColor = 0x888888;
-            healthMeter.outlineColor = 0x000000;
-            healthMeter.outlineSize = 2;
-            healthMeter.meterWidth = 80;
-            healthMeter.meterHeight = 15;
-            healthMeter.updateDisplay();
-            healthSprite.addChild(healthMeter);
-
-            var numShields :int = save.multiplier - 1;
-            if (numShields > 0) {
-                var shieldSprite :Sprite = SpriteUtil.createSprite();
-                for (ii = 0; ii < numShields; ++ii) {
-                    var shieldMeter :RectMeterView = new RectMeterView();
-                    shieldMeter.minValue = 0;
-                    shieldMeter.maxValue = 1;
-                    shieldMeter.value = 1;
-                    shieldMeter.foregroundColor = 0xFFFFFF;
-                    shieldMeter.outlineColor = 0x000000;
-                    shieldMeter.outlineSize = 2;
-                    shieldMeter.meterWidth = 20;
-                    shieldMeter.meterHeight = 15;
-                    shieldMeter.updateDisplay();
-                    shieldMeter.x = 20 * ii;
-                    shieldSprite.addChild(shieldMeter);
-                }
-                shieldSprite.x = (healthSprite.width - shieldSprite.width) * 0.5;
-                shieldSprite.y = 0;
-                healthSprite.addChild(shieldSprite);
-
-                healthMeter.y = shieldSprite.height - 2;
+            remoteSavePanel.visible = (remoteSave != null);
+            if (remoteSave != null) {
+                saveStatsSprite = createSaveStatsSprite(level, remoteSave);
+                saveStatsSprite.x = SAVESTATS2_CTR_LOC.x - (saveStatsSprite.width * 0.5);
+                saveStatsSprite.y = SAVESTATS2_CTR_LOC.y;
+                _movie.addChild(saveStatsSprite);
             }
-
-            DisplayUtil.positionBounds(healthSprite, elementLoc.x, elementLoc.y - (healthSprite.height * 0.5));
-            elementsSprite.addChild(healthSprite);
-            elementLoc.x += healthSprite.width + ELEMENT_X_OFFSET;
-
-            // infusions
-            var blCount :int = save.spells[Constants.SPELL_TYPE_BLOODLUST];
-            var rmCount :int = save.spells[Constants.SPELL_TYPE_RIGORMORTIS];
-            var prCount :int = save.spells[Constants.SPELL_TYPE_PUZZLERESET];
-            if (blCount > 0 || rmCount > 0 || prCount > 0) {
-                var infusionSprite :Sprite = SpriteUtil.createSprite();
-
-                var loc :Point = new Point(0, 0);
-                drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
-                loc.x = infusionSprite.width + 2;
-                drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
-                loc.x = infusionSprite.width + 2;
-                drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
-
-                DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
-                elementsSprite.addChild(infusionSprite);
-                elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
-            }
-
-            // multipliers
-            var numMultipliers :int = save.multiplier - 1;
-            if (numMultipliers > 0) {
-                var multiplierSprite :Sprite = SpriteUtil.createSprite();
-                loc = new Point(0, 0);
-                drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
-                DisplayUtil.positionBounds(multiplierSprite, elementLoc.x, elementLoc.y - (multiplierSprite.height * 0.5));
-                elementsSprite.addChild(multiplierSprite);
-            }
-
-            elementsSprite.x = ELEMENTS_CTR_LOC.x - (elementsSprite.width * 0.5);
-            elementsSprite.y = ELEMENTS_CTR_LOC.y;
-            _movie.addChild(elementsSprite);
         }
+    }
+
+    protected function createSaveStatsSprite (level :EndlessLevelData, save :SavedEndlessGame)
+        :Sprite
+    {
+        // elementsSprite contains all the visual elements of the save data -
+        // health/shields, infusions, and multipliers, spaced out from each other
+        var elementsSprite :Sprite = SpriteUtil.createSprite();
+        var elementLoc :Point = new Point(0, 0);
+
+        // health/shield meters
+        var healthSprite :Sprite = SpriteUtil.createSprite();
+        var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
+        var healthMeter :RectMeterView = new RectMeterView();
+        healthMeter.minValue = 0;
+        healthMeter.maxValue = workshopData.maxHealth;
+        healthMeter.value = save.health;
+        healthMeter.foregroundColor = 0xFF0000;
+        healthMeter.backgroundColor = 0x888888;
+        healthMeter.outlineColor = 0x000000;
+        healthMeter.outlineSize = 2;
+        healthMeter.meterWidth = 80;
+        healthMeter.meterHeight = 15;
+        healthMeter.updateDisplay();
+        healthSprite.addChild(healthMeter);
+
+        var numShields :int = save.multiplier - 1;
+        if (numShields > 0) {
+            var shieldSprite :Sprite = SpriteUtil.createSprite();
+            for (var ii :int = 0; ii < numShields; ++ii) {
+                var shieldMeter :RectMeterView = new RectMeterView();
+                shieldMeter.minValue = 0;
+                shieldMeter.maxValue = 1;
+                shieldMeter.value = 1;
+                shieldMeter.foregroundColor = 0xFFFFFF;
+                shieldMeter.outlineColor = 0x000000;
+                shieldMeter.outlineSize = 2;
+                shieldMeter.meterWidth = 20;
+                shieldMeter.meterHeight = 15;
+                shieldMeter.updateDisplay();
+                shieldMeter.x = 20 * ii;
+                shieldSprite.addChild(shieldMeter);
+            }
+            shieldSprite.x = (healthSprite.width - shieldSprite.width) * 0.5;
+            shieldSprite.y = 0;
+            healthSprite.addChild(shieldSprite);
+
+            healthMeter.y = shieldSprite.height - 2;
+        }
+
+        DisplayUtil.positionBounds(healthSprite, elementLoc.x, elementLoc.y - (healthSprite.height * 0.5));
+        elementsSprite.addChild(healthSprite);
+        elementLoc.x += healthSprite.width + ELEMENT_X_OFFSET;
+
+        // infusions
+        var blCount :int = save.spells[Constants.SPELL_TYPE_BLOODLUST];
+        var rmCount :int = save.spells[Constants.SPELL_TYPE_RIGORMORTIS];
+        var prCount :int = save.spells[Constants.SPELL_TYPE_PUZZLERESET];
+        if (blCount > 0 || rmCount > 0 || prCount > 0) {
+            var infusionSprite :Sprite = SpriteUtil.createSprite();
+
+            var loc :Point = new Point(0, 0);
+            drawIcons(infusionSprite, "infusion_bloodlust", blCount, loc, INFUSION_X_OFFSET);
+            loc.x = infusionSprite.width + 2;
+            drawIcons(infusionSprite, "infusion_rigormortis", blCount, loc, INFUSION_X_OFFSET);
+            loc.x = infusionSprite.width + 2;
+            drawIcons(infusionSprite, "infusion_shuffle", blCount, loc, INFUSION_X_OFFSET);
+
+            DisplayUtil.positionBounds(infusionSprite, elementLoc.x, elementLoc.y - (infusionSprite.height * 0.5));
+            elementsSprite.addChild(infusionSprite);
+            elementLoc.x += infusionSprite.width + ELEMENT_X_OFFSET;
+        }
+
+        // multipliers
+        var numMultipliers :int = save.multiplier - 1;
+        if (numMultipliers > 0) {
+            var multiplierSprite :Sprite = SpriteUtil.createSprite();
+            loc = new Point(0, 0);
+            drawIcons(multiplierSprite, "multiplier", numMultipliers, loc, MULTIPLIER_X_OFFSET);
+            DisplayUtil.positionBounds(multiplierSprite, elementLoc.x, elementLoc.y - (multiplierSprite.height * 0.5));
+            elementsSprite.addChild(multiplierSprite);
+        }
+
+        return elementsSprite;
     }
 
     protected function drawIcons (sprite :Sprite, name :String, count :int, start :Point,
@@ -533,14 +572,15 @@ class SaveView extends SceneObject
     protected var _quitButton :SimpleButton;
     protected var _helpButton :SimpleButton;
 
-    protected static const BUTTONS_CTR_LOC :Point = new Point(0, 180);
+    protected static const BUTTONS_CTR_LOC :Point = new Point(0, 190);
     protected static const BUTTON_X_OFFSET :Number = 15;
-    protected static const THUMBNAIL_LOC :Point = new Point(0, 60);
+    protected static const THUMBNAIL_LOC :Point = new Point(0, 80);
     protected static const CYCLE_LOC :Point = new Point(0, -213);
     protected static const INFUSION_X_OFFSET :Number = 15;
     protected static const MULTIPLIER_X_OFFSET :Number = 16;
     protected static const ELEMENT_X_OFFSET :Number = 30;
-    protected static const ELEMENTS_CTR_LOC :Point = new Point(0, -63);
+    protected static const SAVESTATS1_CTR_LOC :Point = new Point(0, -63);
+    protected static const SAVESTATS2_CTR_LOC :Point = new Point(0, -23);
     protected static const OPPONENT_PORTRAITS_LOC :Point = new Point(0, -80);
     protected static const OPPONENT_PORTRAIT_X_OFFSET :Number = 20;
 }

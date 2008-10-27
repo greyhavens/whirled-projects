@@ -18,7 +18,7 @@ public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         AppContext.endlessLevelMgr.playSpLevel(onLevelLoaded);
     }
 
-    override protected function getSavedGames () :SavedEndlessGameList
+    override protected function getLocalSavedGames () :SavedEndlessGameList
     {
         return AppContext.endlessLevelMgr.savedSpGames;
     }

@@ -59,10 +59,10 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         tryCreateUi();
     }
 
-    override protected function selectLevel (mapIndex :int, animationType :int,
+    override protected function selectMap (mapIndex :int, animationType :int,
         removeModeUnderneath :Boolean) :void
     {
-        super.selectLevel(mapIndex, animationType, removeModeUnderneath);
+        super.selectMap(mapIndex, animationType, removeModeUnderneath);
 
         if (SeatingManager.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.selectedMapIdx = mapIndex;
@@ -108,12 +108,12 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             var newMapIndex :int = EndlessMultiplayerConfig.selectedMapIdx;
             if (newMapIndex != _mapIndex) {
                 var animationType :int;
-                if (newMapIndex > _mapIndex || (newMapIndex == 0 && _mapIndex == _saves.length - 1)) {
+                if (newMapIndex > _mapIndex || (newMapIndex == 0 && _mapIndex == _highestMapIndex)) {
                     animationType = ANIMATE_NEXT;
                 } else {
                     animationType = ANIMATE_PREV;
                 }
-                selectLevel(newMapIndex, animationType, false);
+                selectMap(newMapIndex, animationType, false);
             }
 
         } else if (e.name == EndlessMultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
@@ -147,16 +147,21 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         tryCreateUi();
     }
 
-    override protected function getSavedGames () :SavedEndlessGameList
+    override protected function getLocalSavedGames () :SavedEndlessGameList
     {
-        var shortestSaves :SavedEndlessGameList;
-        for each (var saves :SavedEndlessGameList in EndlessMultiplayerConfig.savedGames) {
-            if (shortestSaves == null || saves.numSaves < shortestSaves.numSaves) {
-                shortestSaves = saves;
+        return AppContext.endlessLevelMgr.savedMpGames;
+    }
+
+    override protected function getRemoteSavedGames () :SavedEndlessGameList
+    {
+        var saves :Array = EndlessMultiplayerConfig.savedGames;
+        for (var ii :int = 0; ii < saves.length; ++ii) {
+            if (ii != SeatingManager.localPlayerSeat) {
+                return saves[ii];
             }
         }
 
-        return shortestSaves;
+        return null;
     }
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void
