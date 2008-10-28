@@ -1,8 +1,13 @@
 package popcraft.battle.view {
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.FunctionTask;
+import com.whirled.contrib.simplegame.tasks.RepeatingTask;
+import com.whirled.contrib.simplegame.tasks.WaitForFrameTask;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -46,6 +51,24 @@ public class BattleBoardView extends SceneObject
 
         _bg.gotoAndStop(DiurnalCycle.isNight(_lastDayPhase) ? "night" : "day");
         _bg.cacheAsBitmap = true;
+
+        // in the Tesla background, sync a sound with the zap animation
+        var zapParent :MovieClip = _bg["zap3"];
+        if (zapParent != null) {
+            zapParent  = zapParent["zap2"];
+            for each (var zapName :String in TESLA_ZAPS) {
+                var zap :MovieClip = zapParent[zapName];
+                addTask(new RepeatingTask(
+                    new WaitForFrameTask(11, zap),
+                    new FunctionTask(playZapSound)));
+            }
+        }
+    }
+
+    protected function playZapSound () :void
+    {
+        GameContext.playGameSound(
+            Rand.nextBoolean(Rand.STREAM_COSMETIC) ? "sfx_tesla1" : "sfx_tesla2");
     }
 
     override protected function update (dt :Number) :void
@@ -117,6 +140,8 @@ public class BattleBoardView extends SceneObject
     protected var _diurnalMeterParent :Sprite;
     protected var _lastDayPhase :int;
     protected var _bg :MovieClip;
+
+    protected static const TESLA_ZAPS :Array = [ "zapa", "zapb", "zapc", "zapd" ];
 }
 
 }
