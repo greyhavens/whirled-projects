@@ -188,9 +188,13 @@ public class EndlessGameMode extends GameMode
 
     override protected function handleGameOver () :void
     {
+        var audioFadeOutTime :Number = 0;
+
         // if we're switching maps, don't show the game-over screen, just switch to a new
         // endless game mode
         if (_switchingMaps) {
+            audioFadeOutTime = SWITCH_MAP_AUDIO_FADE_TIME;
+
             if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
                 AppContext.mainLoop.unwindToMode(
                     new EndlessGameMode(EndlessGameContext.level, null, false));
@@ -219,6 +223,8 @@ public class EndlessGameMode extends GameMode
             }
 
         } else {
+            audioFadeOutTime = GAME_OVER_AUDIO_FADE_TIME;
+
             if (GameContext.isSinglePlayerGame) {
                 AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
             } else {
@@ -236,8 +242,8 @@ public class EndlessGameMode extends GameMode
             }
         }
 
-        GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
-        GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameContext.musicControls.fadeOut(audioFadeOutTime);
+        GameContext.sfxControls.fadeOut(audioFadeOutTime);
     }
 
     override protected function applyCheatCode (keyCode :uint) :void
@@ -500,6 +506,9 @@ public class EndlessGameMode extends GameMode
     protected var _playerGotMultiplier :Array;
 
     protected var _playersCheckedIn :Array = [];
+
+    protected static const SWITCH_MAP_AUDIO_FADE_TIME :Number = 2.5;
+    protected static const GAME_OVER_AUDIO_FADE_TIME :Number = 2.75;
 }
 
 }

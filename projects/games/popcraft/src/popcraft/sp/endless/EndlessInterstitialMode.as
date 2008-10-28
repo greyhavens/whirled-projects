@@ -44,6 +44,7 @@ public class EndlessInterstitialMode extends AppMode
         var bgObj :SceneObject = new SimpleSceneObject(bgSprite);
         bgObj.alpha = 0;
         bgObj.addTask(new SerialTask(
+            new TimedTask(FADE_IN_PAUSE_TIME),
             new AlphaTask(1, FADE_IN_TIME),
             new FunctionTask(function () :void {
                 // remove the old game mode, beneath this one, and insert the new one in its
@@ -52,7 +53,7 @@ public class EndlessInterstitialMode extends AppMode
                 AppContext.mainLoop.insertMode(
                     new EndlessGameMode(EndlessGameContext.level, null, false), -1);
             }),
-            new TimedTask(TITLE_TIME),
+            new TimedTask(FADE_OUT_PAUSE_TIME),
             new AlphaTask(0, FADE_OUT_TIME),
             new FunctionTask(AppContext.mainLoop.popMode)));
 
@@ -93,24 +94,27 @@ public class EndlessInterstitialMode extends AppMode
         var multiplierObj :SceneObject = new SimpleSceneObject(_multiplierMovie);
         multiplierObj.x = _multiplierStartLoc.x;
         multiplierObj.y = _multiplierStartLoc.y;
+        multiplierObj.visible = false;
         multiplierObj.addTask(new SerialTask(
+            new TimedTask(MULTIPLIER_IN_PAUSE_TIME),
+            new VisibleTask(true),
             new ParallelTask(
                 new AdvancedLocationTask(
                     MULTIPLIER_TITLE_LOC.x,
                     MULTIPLIER_TITLE_LOC.y,
-                    FADE_IN_TIME,
+                    MULTIPLIER_IN_MOVE_TIME,
                     mx.effects.easing.Linear.easeNone,
                     mx.effects.easing.Cubic.easeOut),
-                new ScaleTask(2, 2, FADE_IN_TIME)),
-            new TimedTask(TITLE_TIME),
+                new ScaleTask(2, 2, MULTIPLIER_IN_MOVE_TIME)),
+            new TimedTask(MULTIPLIER_OUT_PAUSE_TIME),
             new ParallelTask(
                 new AdvancedLocationTask(
                     nextMap.multiplierDropLoc.x,
                     nextMap.multiplierDropLoc.y,
-                    FADE_OUT_TIME,
+                    MULTIPLIER_OUT_TIME,
                     mx.effects.easing.Linear.easeNone,
                     mx.effects.easing.Cubic.easeIn),
-                new ScaleTask(1, 1, FADE_OUT_TIME))));
+                new ScaleTask(1, 1, MULTIPLIER_OUT_TIME))));
 
         this.addObject(multiplierObj, _modeSprite);
 
@@ -120,9 +124,16 @@ public class EndlessInterstitialMode extends AppMode
     protected var _multiplierStartLoc :Vector2;
     protected var _multiplierMovie :MovieClip;
 
-    protected static const FADE_IN_TIME :Number = GameMode.FADE_OUT_TIME;
+    protected static const FADE_IN_PAUSE_TIME :Number = 1.5;
+    protected static const FADE_IN_TIME :Number = 0.8;
+    protected static const FADE_OUT_PAUSE_TIME :Number = 3;
     protected static const FADE_OUT_TIME :Number = 1;
-    protected static const TITLE_TIME :Number = 2;
+
+    protected static const MULTIPLIER_IN_PAUSE_TIME :Number = 1.4;
+    protected static const MULTIPLIER_IN_MOVE_TIME :Number = 1.9;
+    protected static const MULTIPLIER_OUT_PAUSE_TIME :Number = 2;
+    protected static const MULTIPLIER_OUT_TIME :Number = 1;
+
     protected static const MULTIPLIER_TITLE_LOC :Point = new Point(350, 100);
     protected static const CYCLE_SPRITE_LOC :Point = new Point(350, 160);
     protected static const TITLE_LOC :Point = new Point(350, 170);
