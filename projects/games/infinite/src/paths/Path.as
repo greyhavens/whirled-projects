@@ -2,6 +2,8 @@ package paths
 {
 	import arithmetic.BoardCoordinates;
 	
+	import world.Player;
+	
 	public class Path
 	{
 		public var start:BoardCoordinates;

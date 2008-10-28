@@ -62,6 +62,8 @@ package client
 			addChild(_label);
 			
 			_viewFactory = new ViewFactory(); 
+			
+			initializeViewpoint(startingPosition);
 		}		
 		
 //		public function scrollViewPointToPlayer () :void
@@ -193,19 +195,11 @@ package client
 			_viewer.handleCellClicked(event);
 			trace("clicked on "+event.cell);
 		}		
-		
-		public function set player (player:Player) :void
-		{
-			_player = player;
-			//player.objective = this;
-			_playerView = new PlayerSprite(player);
-			bufferViewpoint(player.position);		
-			scrollViewPointTo(cellCoordinates(player.position));
-			addChild(_playerView);
-			Geometry.position(_playerView, _playerView.positionInCell(this, player.position));
-		}
-			
-		protected function bufferViewpoint (viewPoint:BoardCoordinates) :void
+				
+		/**	
+		 * Initialize the bugger, positioning the specificed point at the viewpoint.
+		 */
+		protected function initializeViewpoint (viewPoint:BoardCoordinates) :void
 		{
 			const rect:BoardRectangle = boardSurround(viewPoint);
 			_origin = new GraphicCoordinates(0,0);
@@ -270,13 +264,18 @@ package client
 	    }
 	
 	    /**
-	     * Track the give sprite with the camera.
+	     * Track the given sprite with the camera.
 	     */  
 	    public function follow (sprite:PlayerSprite) :void
 	    {
 	    	stopFollowing();
+	    	
+	    	// start listening for events from this sprite
 	    	sprite.addEventListener(ViewEvent.MOVED, handleSubjectMoved);
 	    	_cameraTracking = sprite;
+	    	
+	    	// immediately move the sprite into view
+            scrollViewPointTo(cellCoordinates(sprite.player.position));
 	    }
 	    
 	    /**
@@ -290,7 +289,8 @@ package client
 	    	}
 	    }
 	   
-	    public function handleSubjectMoved (event:ViewEvent) {
+	    protected function handleSubjectMoved (event:ViewEvent) :void 
+	    {
 	    	scrollViewPointTo(Geometry.coordsOf(event.view));
 	    }
 	        
@@ -300,15 +300,19 @@ package client
 	     */ 
         public function addPlayer (player:Player) :PlayerSprite
         {
-        	const found = _playerViews.find(player);
+        	// if we're already displaying the view, just return it
+        	const found:PlayerSprite = _playerViews.find(player);
         	if (found != null) {
         		return found;
         	}
         	
+        	// construct a new view
         	const sprite:PlayerSprite = new PlayerSprite(player);
         	_playerViews.add(player, sprite);
         	
+        	// start displaying the view immediately        	
         	addChild(sprite);
+            Geometry.position(sprite, sprite.positionInCell(this, player.position));
         	return sprite;
         }
 	       

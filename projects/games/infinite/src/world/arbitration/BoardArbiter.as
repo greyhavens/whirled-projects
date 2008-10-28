@@ -1,15 +1,16 @@
 package world.arbitration
 {
 	import arithmetic.*;
-		
+	
 	import paths.ClimbingPath;
 	import paths.Path;
-	import paths.PathEvent;
 	import paths.SidewaysPath;
 	
-    import world.board.*;
-	import world.Cell;	
+    import world.arbitration.MoveEvent;
+	import world.Cell;
 	import world.CellPath;
+	import world.Player;
+	import world.board.*;
 	
 	public class BoardArbiter implements MoveArbiter
 	{
@@ -18,7 +19,7 @@ package world.arbitration
 			_board = board;
 		}
 	
-		public function proposeMove (player:MovableCharacter, destination:Cell) :void 
+		public function proposeMove (player:Player, destination:Cell) :void 
 		{
 			var path:Path;		
 			path = sidewaysPath(player, destination);
@@ -36,7 +37,7 @@ package world.arbitration
 		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function sidewaysPath (player:MovableCharacter, destination:Cell) :Path
+		public function sidewaysPath (player:Player, destination:Cell) :Path
 		{			
 			// for now, there is no path between two positions that are not on the same level.
 			if (! player.cell.sameRowAs(destination)) {				
@@ -67,12 +68,12 @@ package world.arbitration
 			return new SidewaysPath(player.cell.position, destination.position);
 		}
 		
-		protected function dispatchStart(player:MovableCharacter, path:Path) :void
+		protected function dispatchStart(player:Player, path:Path) :void
 		{
-			player.dispatchEvent(new PathEvent(PathEvent.PATH_START, path));
+			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
 		}
 		
-		public function climbingPath (player:MovableCharacter, destination:Cell) :Path
+		public function climbingPath (player:Player, destination:Cell) :Path
 		{
 			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;

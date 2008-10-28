@@ -6,7 +6,7 @@ package world
 	
 	import world.level.*;
 	
-	public class Player extends EventDispatcher
+	public class Player extends EventDispatcher 
 	{
 		public function Player(id:int)
 		{
@@ -27,16 +27,31 @@ package world
 
         public function get position () :BoardCoordinates
         {
-            return _position;
+            return _cell.position;
         }
         
-        public function set position (coords:BoardCoordinates) :void
+        public function set cell (cell:Cell) :void
         {
-        	_position = coords;
+        	_cell = cell;
         	dispatchEvent(new PlayerEvent(PlayerEvent.MOVE_COMPLETED, this));
         }
-
-        protected var _position:BoardCoordinates;
+        
+        public function get cell () :Cell
+        {
+        	return _cell;
+        }
+        
+        public function proposeMove (coords:BoardCoordinates) :void
+        {
+        	_level.proposeMove(this, coords);
+        }
+        
+        public function get level () :Level
+        {
+        	return _level;
+        }
+        
+        protected var _cell:Cell;
         protected var _level:Level;
         protected var _id:int;
 	}

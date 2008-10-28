@@ -22,7 +22,7 @@ package
 	import items.ItemPlayer;
 	
 	import paths.Path;
-	import paths.PathEvent;
+	import paths.MoveEvent;
 	import paths.PathFollower;
 	
 	import sprites.PlayerSprite;
@@ -42,7 +42,7 @@ package
 			_name = name;
 			_inventory = inventory;
 			
-			addEventListener(PathEvent.PATH_START, handlePathStart);
+			addEventListener(MoveEvent.PATH_START, handlePathStart);
 		}
 			
 		public function arriveInCell (cell:Cell) :void
@@ -186,7 +186,7 @@ package
 		/**
 		 * Handle the reception of a path event.
 		 */
-		public function handlePathStart(event:PathEvent) :void
+		public function handlePathStart(event:MoveEvent) :void
 		{
 			follow(event.path);
 		}

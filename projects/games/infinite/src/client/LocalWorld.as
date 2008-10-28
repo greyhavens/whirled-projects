@@ -1,9 +1,13 @@
 package client
 {
+	import arithmetic.BoardCoordinates;
+	
 	import flash.events.EventDispatcher;
-	
+		
 	import server.Messages.LevelEntered;
+	import server.Messages.PathStart;
 	
+	import world.arbitration.MoveEvent;
 	import world.ClientWorld;
 	import world.World;
 	import world.WorldClient;
@@ -23,15 +27,15 @@ package client
 			return "standalone";
 		}
 		
-		public function enter (client:WorldClient) :void
-		{
-			_client = client;
-			_world.playerEnters(ID);
-		}
-
         public function get clientId () :int
         {
-        	return ID;
+            return ID;
+        }
+        
+        public function enter (client:WorldClient) :void
+        {
+            _client = client;
+            _world.playerEnters(ID);
         }
         
         /**
@@ -42,7 +46,18 @@ package client
             _client.levelEntered(
                 new LevelEntered(event.player.id, event.level.number, event.player.position));
         }     
-        	
+        
+        public function proposeMove (coords:BoardCoordinates) :void
+        {
+            _world.moveProposed(ID, coords);
+        }
+
+        public function handlePathStart (event:MoveEvent) :void
+        {
+        	_client.startPath(new PathStart(event.player.id, event.path));
+        }
+        
+                	
         protected var _client:WorldClient;	
 		protected var _world:World;
 		

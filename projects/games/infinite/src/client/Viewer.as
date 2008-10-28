@@ -83,11 +83,6 @@ package client
 		public function get objective () :Objective {
 			return _objective;
 		}
-
-		public function set player (player:Player) :void
-		{
-			_objective.player = player;
-		}
 		
 		public function set playerController (playerController:PlayerController) :void
 		{

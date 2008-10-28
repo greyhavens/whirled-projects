@@ -17,6 +17,8 @@ package world
         	}
         	_positions[player.position.key] = player;
             _ids[player.id] = player;
+            _list.push(player);
+            
             player.addEventListener(PlayerEvent.MOVE_COMPLETED, handleMoveCompleted);
         }
         
@@ -44,7 +46,16 @@ package world
         	return _ids[id] as Player;
         }
         
+        /**
+         * Return a list of the players
+         */ 
+        public function get list () :Array
+        {
+        	return _list;
+        }
+        
         protected var _ids:Dictionary = new Dictionary();
         protected var _positions:Dictionary = new Dictionary();
+        protected var _list:Array = new Array();
 	}
 }

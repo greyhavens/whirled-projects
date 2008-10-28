@@ -1,11 +1,16 @@
 package server
 {
+	import arithmetic.BoardCoordinates;
+	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
 	import com.whirled.net.MessageReceivedEvent;
-	
+		
 	import server.Messages.LevelEntered;
+	import server.Messages.PathStart;
 	
+    import world.arbitration.MoveEvent;
+	import world.Player;
 	import world.World;
 	import world.WorldListener;
 	import world.level.LevelEvent;
@@ -25,7 +30,7 @@ package server
 		/** 
 		 * A user entered a level.  Send the appropriate messages to the clients.
 		 */
-		public function handleLevelEntered(event:LevelEvent) :void
+		public function handleLevelEntered (event:LevelEvent) :void
 		{
 			// create the message
             const message:LevelEntered = 
@@ -33,6 +38,14 @@ package server
                 
             // who do we send the message to?
             sendToAll(RemoteWorld.LEVEL_ENTERED, message);
+		}
+		
+		public function handlePathStart (event:MoveEvent) :void
+		{
+			const message:PathStart =
+			     new PathStart(event.player.id, event.path);
+			     
+			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, event.path);
 		}
 		
 		/**
@@ -44,6 +57,7 @@ package server
 			const message:int = int(event.name);
 			switch (message) {
 				case CLIENT_ENTERS: clientEnters(event);
+				case MOVE_PROPOSED: moveProposed(event);
 			}			
 			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
 		}
@@ -61,6 +75,11 @@ package server
 	       _world.playerEnters(event.senderId);
 		}
 		
+		protected function moveProposed (event:MessageReceivedEvent) :void
+		{
+			_world.moveProposed(event.senderId, event.value as BoardCoordinates);
+		}
+		
 		/**
 		 * Send a message with a payload to all clients.
 		 */
@@ -68,11 +87,19 @@ package server
 		{
 			_net.sendMessage(String(message), payload)
 		}
+		
+		protected function sendToGroup (group:Array, message:int, payload:Object) :void
+		{
+			for each (var player:Player in group) {
+				_net.sendMessage(String(message), payload, player.id);
+			}
+		}
 			
 		protected var _world:World;
 		protected var _net:NetSubControl;
 		protected var _control:GameControl;
 		
-	    public static const CLIENT_ENTERS:int = 0; 
+	    public static const CLIENT_ENTERS:int = 0;
+	    public static const MOVE_PROPOSED:int = 1;
 	}
 }

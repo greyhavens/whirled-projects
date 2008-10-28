@@ -23,7 +23,7 @@ package sprites
          */
         public function positionInCell (objective:Objective, cell:BoardCoordinates) :GraphicCoordinates
         {
-            const cellPos:GraphicCoordinates = objective.cellCoordinates(_player.cell.position);
+            const cellPos:GraphicCoordinates = objective.cellCoordinates(_player.position);
             return new GraphicCoordinates(
                 cellPos.x + (Config.cellSize.dx / 2) - (width / 2),
                 cellPos.y + (Config.cellSize.dy - height)
@@ -42,6 +42,11 @@ package sprites
                 x - ((Config.cellSize.dx / 2) - (width / 2)),
                 y - (Config.cellSize.dy - height) 
             );
+        }
+ 
+        public function get player () :Player
+        {
+        	return _player;
         }
         
         protected var _player:Player;

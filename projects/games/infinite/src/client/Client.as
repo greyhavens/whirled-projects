@@ -11,8 +11,9 @@ package client
 	import flash.text.TextField;
 	
 	import inventory.InventoryDisplay;
-	
+		
 	import server.Messages.LevelEntered;
+	import server.Messages.PathStart;
 	
 	import sprites.SpriteUtil;
 	
@@ -106,7 +107,7 @@ package client
 		protected function newPlayer(id:int) :Player
 		{
 			const player:Player = new Player(this, id);
-            if (id = _world.clientId) {
+            if (id == _world.clientId) {
             	_localPlayer = player;
             }
 			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);			
@@ -119,14 +120,14 @@ package client
 			// level.
 			if (event.player == _localPlayer) {
     			selectLevel (event.player.level);
-    			_objective.addLocalPlayer(player);
+    			_objective.addLocalPlayer(event.player);
             } else {
             	// otherwise, if the player has entered the level that the local
             	// player is on, then 
             	if (event.player.level == _level) {
-            		_objective.addPlayer(player);
+            		_objective.addPlayer(event.player);
             	} else {
-            		_objective.removePlayer(player);
+            		_objective.removePlayer(event.player);
             	}
             }
 		}
@@ -149,8 +150,7 @@ package client
 			
 			// and assign a new board to the view.
 			_viewer.board = _board;
-            _viewer.player = _localPlayer;
-            _controller = new PlayerController(_frameTimer, _viewer, _localPlayer, _inventory);
+            _controller = new PlayerController(_world, _viewer, _localPlayer, _inventory);
             
 			_level = level;
 		}
@@ -158,8 +158,13 @@ package client
 		public function get mode () :String 
 		{
 			return _world.worldType;
-		}	
+		}
 		
+		public function startPath (detail:PathStart) :void
+		{
+            const player:Player = _players.find(detail.userId);
+//            player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, 
+		}
 		
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;

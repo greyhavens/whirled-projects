@@ -31,7 +31,23 @@ package client.player
         {
         	return _position;
         }
+        
+        public function get cell () :Cell
+        {
+        	return _cell;
+        }
         		
+        public function set cell (cell:Cell) :void
+        {
+        	_cell = cell;
+        }
+        		
+        public function isMoving () :Boolean
+        {
+        	return false;
+        }
+        		
+        protected var _cell:Cell;
         protected var _objective:Objective;
         protected var _position:BoardCoordinates;
         protected var _client:Client;

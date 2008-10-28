@@ -1,5 +1,7 @@
 package world
 {
+	import arithmetic.BoardCoordinates;
+	
 	import flash.events.IEventDispatcher;
 	
 	/**
@@ -23,5 +25,10 @@ package world
 		 * Return the id of this client.
 		 */
 		function get clientId () :int
+		
+		/**
+		 * Propose to the world that the player be moved to the coordinates supplied.
+		 */
+		function proposeMove (coords:BoardCoordinates) :void		
 	}
 }

@@ -18,7 +18,8 @@ package client
 		}
 
 		/**
-		 * Buffer a region of the board.  This assumes that the buffer is empty; 
+		 * Buffer a region of the board.  An cells already in the buffer are cleared without
+		 * notice.
 		 */
 		public function initializeWith (rect:BoardRectangle) :void
 		{

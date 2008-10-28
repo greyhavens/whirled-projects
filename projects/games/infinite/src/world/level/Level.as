@@ -1,5 +1,6 @@
 package world.level
 {
+	import arithmetic.BoardCoordinates;
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
@@ -7,6 +8,7 @@ package world.level
 	import world.MutableBoard;
 	import world.Player;
 	import world.PlayerMap;
+	import world.arbitration.BoardArbiter;
 	import world.board.Board;
 	
 	public class Level
@@ -18,6 +20,7 @@ package world.level
 			this.number = number;
 			_height = height;
 			_board = new MutableBoard(starting);
+			_arbiter = new BoardArbiter(_board);
 		}
 
 		public function get height () :int
@@ -37,7 +40,7 @@ package world.level
             
             if (! _players.occupying(_board.startingPosition)) {
             	// if the starting position for the board is unoccupied, put the player there.
-            	player.position = _board.startingPosition;
+            	player.cell = _board.cellAt(_board.startingPosition);
             } else {            
             	// otherwise iterate from there until we find a suitable cell
 	        	var iterator:CellIterator= 
@@ -49,18 +52,32 @@ package world.level
 	            } 
 	            while ( !cell.canBeStartingPosition && ! _players.occupying(cell.position))
 	            
-	            player.position = cell.position;
+	            player.cell = cell;
             }
             
             // now that we've established the starting position, track the player.
             _players.trackPlayer(player);        	   
         }
                 
+        public function proposeMove (player:Player, coords:BoardCoordinates) :void
+        {
+        	_arbiter.proposeMove(player, _board.cellAt(coords));
+        }
+                
         public function toString () :String
         {
         	return "level "+number;
         }
+        
+        /**
+         * Return a list of the players on this level.
+         */
+        public function get players () :Array
+        {
+        	return _players.list;
+        }
                 
+        protected var _arbiter:BoardArbiter;
         protected var _board:Board;
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();

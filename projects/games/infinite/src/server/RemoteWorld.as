@@ -1,5 +1,7 @@
 package server
 {
+	import arithmetic.BoardCoordinates;
+	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
 	import com.whirled.net.MessageReceivedEvent;
@@ -7,6 +9,7 @@ package server
 	import flash.events.EventDispatcher;
 	
 	import server.Messages.LevelEntered;
+	import server.Messages.PathStart;
 	
 	import world.ClientWorld;
 	import world.WorldClient;
@@ -33,18 +36,21 @@ package server
         	const message:int = int(event.name);
             switch (message) {
                 case LEVEL_ENTERED: levelEntered(event);
+                case START_PATH: pathStart(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
         
         public function levelEntered (event:MessageReceivedEvent) :void
         {
-        	const levelEntered:LevelEntered = event.value as LevelEntered;
-        	if (levelEntered == null) {
-        		throw new Error(this+" expected LevelEntered value but received "+event.value); 
-        	}
-            _client.levelEntered(levelEntered);
+            _client.levelEntered(event.value as LevelEntered);
         }        
+        
+        public function pathStart (event:MessageReceivedEvent) :void
+        {
+        	_client.startPath(event.value as PathStart);
+        }
+        
         
         override public function toString () :String
         {
@@ -61,6 +67,11 @@ package server
         	signalServer(WorldServer.CLIENT_ENTERS);        
         }
         
+        public function proposeMove (coords:BoardCoordinates) :void
+        {
+        	sendToServer(WorldServer.MOVE_PROPOSED, coords);
+        }
+
         /**
          * Send a simple 'signal' to the server.  This is numbered message with no data payload.
          */ 
@@ -89,6 +100,7 @@ package server
         /**
          * Messages that remote clients can receive from the server.
          */ 
-        public static const LEVEL_ENTERED:int = 0;        
+        public static const LEVEL_ENTERED:int = 0;
+        public static const START_PATH:int = 1;        
 	}
 }

@@ -1,9 +1,10 @@
 package world.arbitration
 {	
     import world.Cell;
+    import world.Player;
 	
 	public interface MoveArbiter
 	{
-		function proposeMove (player:MovableCharacter, destination:Cell) :void 		
+		function proposeMove (player:Player, destination:Cell) :void 		
 	}
 }

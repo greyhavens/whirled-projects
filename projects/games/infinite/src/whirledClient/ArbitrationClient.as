@@ -6,7 +6,7 @@ package whirled
 	import multiplayer.MultiplayerCharacter;
 	
 	import paths.Path;
-	import paths.PathEvent;
+	import paths.MoveEvent;
 	
 	import whirledClient.ClientPlayerRegister;
 	
@@ -24,7 +24,7 @@ package whirled
 				const path:Path = event.value as Path;
 				const player:MultiplayerCharacter = _playerRegister.findPlayer(event.targetId);
 				if (player != null) {
-				 	player.dispatchEvent(new PathEvent(path));
+				 	player.dispatchEvent(new MoveEvent(path));
 				} else {
 					throw new Error("received a path start for an unknown player: "+event.targetId);
 				}
