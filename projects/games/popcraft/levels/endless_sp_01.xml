@@ -74,8 +74,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="230" y="300"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 			<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
 			<Computer
@@ -117,8 +115,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="250" y="105"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 				<!-- Iris and Ivy, the clever twins -->
 			<Computer
@@ -188,8 +184,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="300" y="160"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 			<!-- Ursula, the animal lover -->
 			<Computer
@@ -232,8 +226,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="350" y="210"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			<!-- Ralph - strong defense -->
 			<Computer
 				playerName="Ralph"
@@ -280,8 +272,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="360" y="150"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 				
 			<!-- Intro Dante, the creepy kid. Loves Behemoths -->
 			<Computer
@@ -326,8 +316,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="360" y="120"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 			<Computer
 				playerName="Jack"
@@ -383,8 +371,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="305" y="100"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 			<Computer
 				playerName="Ursula"
@@ -455,8 +441,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="340" y="165"/>
-			<AvailableUnits all="true"/>
-			<AvailableSpells all="true"/>
 			
 			<Computer
 				playerName="Jack"
