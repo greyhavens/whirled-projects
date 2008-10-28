@@ -222,7 +222,7 @@ public class EndlessGameMode extends GameMode
             if (GameContext.isSinglePlayerGame) {
                 AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
             } else {
-                // send our new saved games to everyone, in the game is restarted.
+                // send our new saved games to everyone, in case the game is restarted.
                 EndlessMultiplayerConfig.setPlayerSavedGames(
                     SeatingManager.localPlayerSeat, AppContext.endlessLevelMgr.savedMpGames);
 
