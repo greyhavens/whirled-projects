@@ -18,7 +18,6 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.data.ResourceData;
-import popcraft.sp.PauseMode;
 import popcraft.util.SpriteUtil;
 
 public class DashboardView extends SceneObject
@@ -289,8 +288,8 @@ public class DashboardView extends SceneObject
 
         } else if (_resurrectButton == null && shouldShowButton) {
             _resurrectButton = UIBits.createButton("Resurrect", 2.5);
-            _resurrectButton.x = (Constants.SCREEN_SIZE.x - _resurrectButton.width) * 0.5;
-            _resurrectButton.y = (Constants.SCREEN_SIZE.y - _resurrectButton.height - 70);
+            _resurrectButton.x = RESURRECT_BUTTON_LOC.x - (_resurrectButton.width * 0.5);
+            _resurrectButton.y = RESURRECT_BUTTON_LOC.y - (_resurrectButton.height * 0.5);
             GameContext.dashboardLayer.addChild(_resurrectButton);
 
             this.registerListener(_resurrectButton, MouseEvent.CLICK,
@@ -400,6 +399,8 @@ public class DashboardView extends SceneObject
         [ new Point(40, 47), new Point(105, 47), new Point(170, 47), ],                     // 3 players
         [ new Point(29, 47), new Point(81, 47), new Point(133, 47), new Point(185, 47) ],   // 4 players
     ];
+
+    protected static const RESURRECT_BUTTON_LOC :Point = new Point(350, 422);
 
     protected static const VIEW_MOVE_TIME :Number = 0.5;
 }

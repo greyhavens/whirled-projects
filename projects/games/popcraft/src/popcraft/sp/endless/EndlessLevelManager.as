@@ -30,30 +30,27 @@ public class EndlessLevelManager
         this.playLevel(MP_LEVEL, levelReadyCallback, forceReload);
     }
 
+    public function createDummySpSaves () :void
+    {
+        _savedSpGames = createDummySaves();
+    }
+
     public function createDummyMpSaves () :void
+    {
+        _savedMpGames = createDummySaves();
+    }
+
+    protected function createDummySaves () :SavedEndlessGameList
     {
         var dummySaves :SavedEndlessGameList = new SavedEndlessGameList();
         var numSaves :int = Rand.nextIntRange(9, 15, Rand.STREAM_COSMETIC);
         var score :int;
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
             score += Rand.nextIntRange(100, 10000, Rand.STREAM_COSMETIC);
-            var multiplier :int = Rand.nextIntRange(1, 6, Rand.STREAM_COSMETIC);
-            var health :int = Rand.nextIntRange(5, 151, Rand.STREAM_COSMETIC);
-            var spells :Array = [];
-            for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT; ++spellType) {
-                var numSpells :int = Rand.nextIntRange(0, 4, Rand.STREAM_COSMETIC);
-                spells.push(numSpells);
-            }
-
-            dummySaves.addSave(SavedEndlessGame.create(
-                mapIndex,
-                score,
-                multiplier,
-                health,
-                spells));
+            dummySaves.addSave(SavedEndlessGame.create(mapIndex, score, 1, 150));
         }
 
-        _savedMpGames = dummySaves;
+        return dummySaves;
     }
 
     public function saveCurrentGame () :void
