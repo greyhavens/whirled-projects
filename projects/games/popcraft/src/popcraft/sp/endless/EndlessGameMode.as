@@ -222,10 +222,13 @@ public class EndlessGameMode extends GameMode
             if (GameContext.isSinglePlayerGame) {
                 AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
             } else {
-                EndlessGameContext.playerMonitor.reportLocalPlayerScore();
+                // send our new saved games to everyone, in the game is restarted.
+                EndlessMultiplayerConfig.setPlayerSavedGames(
+                    SeatingManager.localPlayerSeat, AppContext.endlessLevelMgr.savedMpGames);
 
                 // Wait for everyone to report their scores so that the GameOverMode
                 // can call endGameWithScores
+                EndlessGameContext.playerMonitor.reportLocalPlayerScore();
                 EndlessGameContext.playerMonitor.waitForPlayerScores(
                     function () :void {
                         AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
