@@ -29,20 +29,22 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 	<MapSequence>
 		<!-- ****** LEVEL 1 : Welcoming Committee (Pigsley, School) ****** -->
 		<Map displayName="Welcoming Committee" isSavePoint="true">
-			<MapSettings backgroundName="schoolnoburn"/>
+			<MapSettings backgroundName="schoolnoburn">
+				<SpellDropLocation x="300" y="300"/>
+			</MapSettings>
 			<HumanPlayers>
-				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
 					<BaseLocation x="120" y="250" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
-				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
 					<BaseLocation x="120" y="350" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="300" y="265"/>
+			<MultiplierDropLocation x="300" y="300"/>
 			
 			<!-- Intro Pigsley, the brute-force, stupid one. Steady stream of grunts -->
 			<Computer
@@ -50,7 +52,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				baseStartHealth="150"
 				baseHealth="150"
 				baseHealthIncrement="75"
-				waveDelayScale="0.85"
+				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="265" team="1"/>
 				<RepeatingDays>
@@ -67,20 +69,22 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		
 		<!-- ****** LEVEL 2 : Opening Ceremonies (Horace, School) ****** -->
 		<Map displayName="Opening Ceremonies" isSavePoint="true">
-			<MapSettings backgroundName="schoolnoburn"/>
+			<MapSettings backgroundName="schoolnoburn">
+				<SpellDropLocation x="300" y="300"/>
+			</MapSettings>
 			<HumanPlayers>
-				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
 					<BaseLocation x="120" y="275" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
-				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
 					<BaseLocation x="120" y="325" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="230" y="300"/>
+			<MultiplierDropLocation x="300" y="300"/>
 			
 			<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
 			<Computer
@@ -114,21 +118,21 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 3 : Double-Teamed (Iris & Ivy, Ballfield) ****** -->
 		<Map displayName="Double-Teamed" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+	            <SpellDropLocation x="270" y="180"/>
 			</MapSettings>
 			<HumanPlayers>
-				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
 					<BaseLocation x="90" y="155" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
-				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.65">
-					<BaseLocation x="90" y="295" team="0"/>
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
+					<BaseLocation x="90" y="205" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="250" y="105"/>
+			<MultiplierDropLocation x="250" y="180"/>
 			<AvailableUnits all="true"/>
 			<AvailableSpells all="true"/>
 			
@@ -149,7 +153,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMax="1">
 
 						<Wave absoluteDelay="5" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="6" spellCastChance="1" targetPlayerName="EndlessMp2"><Unit type="grunt" count="4"/></Wave>
+						<Wave absoluteDelay="6" spellCastChance="1" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="7" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="40"/>
 					</Day>
 				</RepeatingDays>
@@ -172,8 +177,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 
 						<Wave absoluteDelay="0" targetPlayerName="EndlessMp2"><Unit type="heavy" count="4" max="4"/></Wave>
 						<Wave absoluteDelay="5"><Unit type="sapper" count="2"/></Wave>
-						<Wave absoluteDelay="8"><Unit type="sapper" count="2"/></Wave>
-						<Wave absoluteDelay="30"/>
+						<Wave absoluteDelay="10"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="35"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -182,21 +187,21 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 4 : Athletic Ability (Ursula, Ballfield) ****** -->
 		<Map displayName="Athletic Ability" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+	            <SpellDropLocation x="270" y="225"/>
 			</MapSettings>
 			<HumanPlayers>
-				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
 					<BaseLocation x="90" y="155" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
-				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
 					<BaseLocation x="90" y="295" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="300" y="160"/>
+			<MultiplierDropLocation x="290" y="225"/>
 			
 			<!-- Ursula, the animal lover -->
 			<Computer
@@ -231,21 +236,21 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 5 : On the Offensive (Ralph, Ballfield) ****** -->
 		<Map displayName="On the Offensive" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+	            <SpellDropLocation x="270" y="225"/>
 			</MapSettings>
 			<HumanPlayers>
-				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
 					<BaseLocation x="90" y="155" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
-				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.65">
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
 					<BaseLocation x="90" y="295" team="0"/>
 					<AvailableUnits all="true"/>
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="350" y="210"/>
+			<MultiplierDropLocation x="350" y="225"/>
 			<!-- Ralph - strong defense -->
 			<Computer
 				playerName="Ralph"

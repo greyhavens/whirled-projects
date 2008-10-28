@@ -436,12 +436,17 @@ class SaveView extends SceneObject
 
             // save panels
             if (remoteSave != null) {
+                // player headshots
                 for (var playerIndex :int = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
                     var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
                     var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
                         LOCAL_HEADSHOT_LOC :
                         REMOTE_HEADSHOT_LOC);
 
+                    // make sure the headshots aren't already scaled
+                    headshot.scaleX = 1;
+                    headshot.scaleY = 1;
+                    // scale them to fit in the space
                     var scale :Number = Math.min(1, MAX_HEADSHOT_HEIGHT / headshot.height);
                     headshot.scaleX = scale;
                     headshot.scaleY = scale;
