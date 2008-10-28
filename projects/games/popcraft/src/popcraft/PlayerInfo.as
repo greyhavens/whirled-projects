@@ -76,13 +76,12 @@ public class PlayerInfo extends EventDispatcher
     public function restoreSavedPlayerInfo (savedData :SavedPlayerInfo, damageShieldHealth :Number)
         :void
     {
-        var shields :Array = [];
+        _startShields = [];
         for (var ii :int = 0; ii < savedData.numDamageShields; ++ii) {
-            shields.push(new UnitDamageShield(damageShieldHealth));
+            _startShields.push(new UnitDamageShield(damageShieldHealth));
         }
 
-        this.workshop.health = savedData.health;
-        this.workshop.damageShields = shields;
+        _startHealth = savedData.health;
     }
 
     /**
@@ -90,13 +89,12 @@ public class PlayerInfo extends EventDispatcher
      */
     public function restoreSavedGameData (save :SavedEndlessGame, damageShieldHealth :Number) :void
     {
-        var shields :Array = [];
+        _startShields = [];
         for (var ii :int = 0; ii < save.multiplier - 1; ++ii) {
-            shields.push(new UnitDamageShield(damageShieldHealth));
+            _startShields.push(new UnitDamageShield(damageShieldHealth));
         }
 
-        this.workshop.health = save.health;
-        this.workshop.damageShields = shields;
+        _startHealth = save.health;
     }
 
     public function init () :void
@@ -254,6 +252,14 @@ public class PlayerInfo extends EventDispatcher
         return (this.health / _maxHealth);
     }
 
+    public function get startShieldsCopy () :Array
+    {
+        return _startShields.map(
+            function (shield :UnitDamageShield, index :int, arr :Array) :UnitDamageShield {
+                return shield.clone();
+            });
+    }
+
     public function get targetedEnemy () :PlayerInfo
     {
         if (_targetedEnemy == null) {
@@ -313,6 +319,7 @@ public class PlayerInfo extends EventDispatcher
     protected var _teamId :int;
     protected var _maxHealth :Number;
     protected var _startHealth :Number;
+    protected var _startShields :Array = [];
     protected var _invincible :Boolean;
     protected var _playerName :String;
     protected var _displayName :String;

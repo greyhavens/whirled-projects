@@ -72,7 +72,7 @@ public class WorkshopView extends BattlefieldSprite
         _shieldMeterParent = SpriteUtil.createSprite();
         _shieldMeterParent.y = -_sprite.height + SHIELD_METER_Y_LOC;
         _sprite.addChild(_shieldMeterParent);
-        this.updateShieldMeters();
+        this.updateShieldMeters(false);
 
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
@@ -211,11 +211,11 @@ public class WorkshopView extends BattlefieldSprite
         // update damage shields
         var shieldModCount :int = _unit.damageShieldModCount;
         if (shieldModCount != _lastShieldsModCount) {
-            this.updateShieldMeters();
+            this.updateShieldMeters(true);
         }
     }
 
-    protected function updateShieldMeters () :void
+    protected function updateShieldMeters (playSounds :Boolean) :void
     {
         var playerColor :uint = _unit.owningPlayerInfo.color;
         var shieldColor :uint = 0xFFFFFF;//ColorUtil.blend(playerColor, 0x000000);
@@ -224,10 +224,12 @@ public class WorkshopView extends BattlefieldSprite
         var meter :RectMeterView;
 
         // remove destroyed shields
+        var soundName :String;
         while (_shieldMeters.length > shields.length) {
             meter = _shieldMeters[0];
             meter.parent.removeChild(meter);
             _shieldMeters.splice(0, 1);
+            soundName = "sfx_lostmultiplier";
         }
 
         // add new shields
@@ -239,6 +241,11 @@ public class WorkshopView extends BattlefieldSprite
             meter.meterHeight = SHIELD_METER_HEIGHT;
             _shieldMeterParent.addChild(meter);
             _shieldMeters.push(meter);
+            soundName = "sfx_gotmultiplier";
+        }
+
+        if (playSounds && soundName != null) {
+            GameContext.playGameSound(soundName);
         }
 
         // update shields

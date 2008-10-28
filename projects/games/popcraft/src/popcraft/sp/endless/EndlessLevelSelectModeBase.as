@@ -63,10 +63,12 @@ public class EndlessLevelSelectModeBase extends AppMode
         var oldStartLoc :Point;
         var newLocTask :LocationTask;
         var oldLocTask :LocationTask;
+        var soundName :String;
         switch (animationType) {
         case ANIMATE_DOWN:
             newStartLoc = UP_LOC;
             newLocTask = LocationTask.CreateEaseIn(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_DOWN_TIME);
+            soundName = "sfx_gatedrop";
             break;
 
         case ANIMATE_NEXT:
@@ -97,6 +99,10 @@ public class EndlessLevelSelectModeBase extends AppMode
                 function () :void {
                     AppContext.mainLoop.removeMode(-2);
                 }));
+        }
+
+        if (soundName != null) {
+            saveViewTask.addTask(new PlaySoundTask(soundName));
         }
 
         var localSave :SavedEndlessGame;
@@ -174,6 +180,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         _saveView.x = DOWN_LOC.x;
         _saveView.y = DOWN_LOC.y;
         _saveView.addTask(new SerialTask(
+            new PlaySoundTask("sfx_gateopen"),
             LocationTask.CreateSmooth(UP_LOC.x, UP_LOC.y, ANIMATE_UP_TIME),
             new FunctionTask(AppContext.mainLoop.popMode)));
     }
@@ -234,7 +241,7 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _helpView :HelpView;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
-    protected static const ANIMATE_UP_TIME :Number = 1.5;
+    protected static const ANIMATE_UP_TIME :Number = 1.3;
     protected static const ANIMATE_NEXTPREV_TIME :Number = 0.5;
     protected static const UP_LOC :Point = new Point(350, -328);
     protected static const DOWN_LOC :Point = new Point(350, 274);

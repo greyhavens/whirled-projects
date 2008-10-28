@@ -114,6 +114,14 @@ public class Resources
         rm.queueResourceLoad("swf", "workshop", { embeddedClass: SWF_WORKSHOP });
 
         // sfx
+        rm.queueResourceLoad("sound", "sfx_gatedrop", { embeddedClass: SOUND_GATEDROP, priority: 8 });
+        rm.queueResourceLoad("sound", "sfx_gateopen", { embeddedClass: SOUND_GATEOPEN, priority: 8 });
+        rm.queueResourceLoad("sound", "sfx_gotmultiplier", { embeddedClass: SOUND_GOTMULTIPLIER, priority: 4 });
+        rm.queueResourceLoad("sound", "sfx_lostmultiplier", { embeddedClass: SOUND_LOSTMULTIPLIER, priority: 4 });
+        rm.queueResourceLoad("sound", "sfx_tesla1", { embeddedClass: SOUND_TESLA1, volume: 0.4 });
+        rm.queueResourceLoad("sound", "sfx_tesla2", { embeddedClass: SOUND_TESLA2, volume: 0.4 });
+        rm.queueResourceLoad("sound", "sfx_resurrect", { embeddedClass: SOUND_RESURRECT, priority: 9 });
+
         rm.queueResourceLoad("sound", "sfx_introscreen", { embeddedClass: SOUND_INTROSCREEN, volume: 0.3, priority: 10 });
         rm.queueResourceLoad("sound", "sfx_pageturn", { embeddedClass: SOUND_PAGETURN, priority: 9 });
         rm.queueResourceLoad("sound", "sfx_bookopenclose", { embeddedClass: SOUND_BOOKOPENCLOSE, priority: 9 });
@@ -211,7 +219,6 @@ public class Resources
     // game data
     [Embed(source="../../levels/defaultGameData.xml", mimeType="application/octet-stream")]
     protected static const DEFAULT_GAME_DATA :Class;
-
     [Embed(source="../../levels/gameVariants.xml", mimeType="application/octet-stream")]
     protected static const GAME_VARIANTS_DATA :Class;
 
@@ -237,9 +244,6 @@ public class Resources
     [Embed(source="../../rsrc/all/ursula.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_URSULA :Class;
 
-    [Embed(source="../../rsrc/all/splash_UI.swf", mimeType="application/octet-stream")]
-    protected static const SWF_SPLASH_UI :Class;
-
     [Embed(source="../../rsrc/all/endless_1_thumb.jpg", mimeType="application/octet-stream")]
     protected static const IMG_ENDLESSTHUMB1 :Class;
     [Embed(source="../../rsrc/all/endless_2_thumb.jpg", mimeType="application/octet-stream")]
@@ -259,151 +263,121 @@ public class Resources
     [Embed(source="../../rsrc/all/endless_9_thumb.jpg", mimeType="application/octet-stream")]
     protected static const IMG_ENDLESSTHUMB9 :Class;
 
+    [Embed(source="../../rsrc/all/splash_UI.swf", mimeType="application/octet-stream")]
+    protected static const SWF_SPLASH_UI :Class;
     [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
     protected static const SWF_UIBITS :Class;
-
     [Embed(source="../../rsrc/all/backgrounds.swf", mimeType="application/octet-stream")]
     protected static const SWF_BG :Class;
-
     [Embed(source="../../rsrc/all/streetwalker.swf", mimeType="application/octet-stream")]
     protected static const SWF_GRUNT :Class;
-
     [Embed(source="../../rsrc/all/runt.swf", mimeType="application/octet-stream")]
     protected static const SWF_SAPPER :Class;
-
     [Embed(source="../../rsrc/all/handyman.swf", mimeType="application/octet-stream")]
     protected static const SWF_HEAVY :Class;
-
     [Embed(source="../../rsrc/all/flesh.swf", mimeType="application/octet-stream")]
     protected static const SWF_COLOSSUS :Class;
-
     [Embed(source="../../rsrc/all/ladyfingers.swf", mimeType="application/octet-stream")]
     protected static const SWF_COURIER :Class;
-
     [Embed(source="../../rsrc/all/handy_attack.swf", mimeType="application/octet-stream")]
     protected static const SWF_MISSILE :Class;
-
     [Embed(source="../../rsrc/all/splatter.swf", mimeType="application/octet-stream")]
     protected static const SWF_SPLATTER :Class;
-
     [Embed(source="../../rsrc/all/pieces.swf", mimeType="application/octet-stream")]
     protected static const SWF_PIECES :Class;
-
     [Embed(source="../../rsrc/all/dashboard.swf", mimeType="application/octet-stream")]
     protected static const SWF_DASHBOARD :Class;
-
     [Embed(source="../../rsrc/all/infusions.swf", mimeType="application/octet-stream")]
     protected static const SWF_INFUSIONS :Class;
-
     [Embed(source="../../rsrc/all/workshop.swf", mimeType="application/octet-stream")]
     protected static const SWF_WORKSHOP :Class;
 
     // sfx
+    [Embed(source="../../rsrc/audio/sfx/gatedrop_1.mp3")]
+    protected static const SOUND_GATEDROP :Class;
+    [Embed(source="../../rsrc/audio/sfx/gateopen_3_revision.mp3")]
+    protected static const SOUND_GATEOPEN :Class;
+    [Embed(source="../../rsrc/audio/sfx/multiplier_got3.mp3")]
+    protected static const SOUND_GOTMULTIPLIER :Class;
+    [Embed(source="../../rsrc/audio/sfx/multiplier_lost2b.mp3")]
+    protected static const SOUND_LOSTMULTIPLIER :Class;
+    [Embed(source="../../rsrc/audio/sfx/tesla1.mp3")]
+    protected static const SOUND_TESLA1 :Class;
+    [Embed(source="../../rsrc/audio/sfx/tesla2.mp3")]
+    protected static const SOUND_TESLA2 :Class;
+    [Embed(source="../../rsrc/audio/sfx/workshop_revive_revision2.mp3")]
+    protected static const SOUND_RESURRECT :Class;
+
     [Embed(source="../../rsrc/audio/sfx/introscreen.mp3")]
     protected static const SOUND_INTROSCREEN :Class;
-
     [Embed(source="../../rsrc/audio/sfx/book_pageturn1.mp3")]
     protected static const SOUND_PAGETURN :Class;
-
     [Embed(source="../../rsrc/audio/sfx/book_pageturn2.mp3")]
     protected static const SOUND_BOOKOPENCLOSE :Class;
-
     [Embed(source="../../rsrc/audio/sfx/base_destroy.mp3")]
     protected static const SOUND_BASEDESTROY :Class;
-
     [Embed(source="../../rsrc/audio/sfx/player_lose.mp3")]
     protected static const SOUND_LOSEGAME :Class;
-
     [Embed(source="../../rsrc/audio/sfx/player_win.mp3")]
     protected static const SOUND_WINGAME :Class;
-
     [Embed(source="../../rsrc/audio/sfx/spell_armor.mp3")]
     protected static const SOUND_RIGORMORTIS :Class;
-
     [Embed(source="../../rsrc/audio/sfx/spell_bloodlust.mp3")]
     protected static const SOUND_BLOODLUST :Class;
-
     [Embed(source="../../rsrc/audio/sfx/spell_puzzle_mix.mp3")]
     protected static const SOUND_PUZZLERESET :Class;
-
     [Embed(source="../../rsrc/audio/sfx/spell_expire.mp3")]
     protected static const SOUND_SPELLEXPIRE :Class;
-
     [Embed(source="../../rsrc/audio/sfx/MONSTER_HISSING_01_IN.mp3")]
     protected static const SOUND_GRUNT :Class;
-
     [Embed(source="../../rsrc/audio/sfx/streetwalker_death2.mp3")]
     protected static const SOUND_GRUNTDEATH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/ANIMAL_DEEP_GRUNT_1_JD.mp3")]
     protected static const SOUND_HEAVY :Class;
-
     [Embed(source="../../rsrc/audio/sfx/handyman_death.mp3")]
     protected static const SOUND_HEAVYDEATH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/SMALL_DOG_SINGLE_BARK_01_S4.mp3")]
     protected static const SOUND_SAPPER :Class;
-
     [Embed(source="../../rsrc/audio/sfx/EXPLOSION_CTE01_56_1.mp3")]
     protected static const SOUND_SAPPERDEATH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/fleshbehemoth_create.mp3")]
     protected static const SOUND_COLOSSUS :Class;
-
     [Embed(source="../../rsrc/audio/sfx/fleshbehemoth_death.mp3")]
     protected static const SOUND_COLOSSUSDEATH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/KATYDID_SHAKING_JB.mp3")]
     protected static const SOUND_COURIER :Class;
-
     [Embed(source="../../rsrc/audio/sfx/ladyfinger_death.mp3")]
     protected static const SOUND_COURIERDEATH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/boss_professor_spawn.mp3")]
     protected static const SOUND_BOSS :Class;
-
     [Embed(source="../../rsrc/audio/sfx/submit_flesh.mp3")]
     protected static const SOUND_FLESH :Class;
-
     [Embed(source="../../rsrc/audio/sfx/submit_blood.mp3")]
     protected static const SOUND_BLOOD :Class;
-
     [Embed(source="../../rsrc/audio/sfx/submit_energy.mp3")]
     protected static const SOUND_ENERGY :Class;
-
     [Embed(source="../../rsrc/audio/sfx/submit_metal4.mp3")]
     protected static const SOUND_SCRAP :Class;
-
     [Embed(source="../../rsrc/audio/sfx/FAST_POWER_FAILURE_01_TF.mp3")]
     protected static const SOUND_LOSTRESOURCES :Class;
-
     [Embed(source="../../rsrc/audio/sfx/B-BIRD-ROOSTER.mp3")]
     protected static const SOUND_ROOSTER :Class;
-
     [Embed(source="../../rsrc/audio/sfx/WOLF_HOWLS_02_WW.mp3")]
     protected static const SOUND_WOLF :Class;
-
     [Embed(source="../../rsrc/audio/sfx/CHIMES_1020_37_06.mp3")]
     protected static const SOUND_CHIMES :Class;
-
     [Embed(source="../../rsrc/audio/sfx/ARM_SWING_PUNCH_2_S4.mp3")]
     protected static const SOUND_HIT1 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/ARM_SWING_PUNCH_3_S4.mp3")]
     protected static const SOUND_HIT2 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/ARM_SWING_PUNCH_6_S4.mp3")]
     protected static const SOUND_HIT3 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/AOS01061_TableHit01.mp3")]
     protected static const SOUND_BASEHIT1 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/AOS01062_TbleHit02.mp3")]
     protected static const SOUND_BASEHIT2 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/AOS01064_TbleHit04.mp3")]
     protected static const SOUND_BASEHIT3 :Class;
-
     [Embed(source="../../rsrc/audio/sfx/SCI_FI_MAGICAL_ZING_03_G1.mp3")]
     protected static const SOUND_SPELLDROP :Class;
 }

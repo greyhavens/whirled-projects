@@ -420,11 +420,6 @@ public class EndlessGameMode extends GameMode
 
         var playerInfo :PlayerInfo;
 
-        // init all players players
-        for each (playerInfo in GameContext.playerInfos) {
-            playerInfo.init();
-        }
-
         var damageShieldHealth :Number = EndlessGameContext.level.multiplierDamageSoak;
 
         // restore data that was saved from the previous map (must be done after playerInfos
@@ -444,6 +439,11 @@ public class EndlessGameMode extends GameMode
                 playerInfo = GameContext.playerInfos[playerIndex];
                 playerInfo.restoreSavedGameData(save, damageShieldHealth);
             }
+        }
+
+        // init all players (creates Workshop units)
+        for each (playerInfo in GameContext.playerInfos) {
+            playerInfo.init();
         }
 
         _playerGotMultiplier = ArrayUtil.create(GameContext.numPlayers, false);

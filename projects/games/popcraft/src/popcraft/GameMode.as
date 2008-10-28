@@ -571,6 +571,9 @@ public class GameMode extends TransitionMode
                 var newHealth :Number = teammate.health * 0.5;
                 teammate.workshop.health = newHealth;
                 playerInfo.resurrect(newHealth);
+
+                GameContext.playGameSound("sfx_resurrect");
+
                 return teammate.playerIndex;
             }
         }
