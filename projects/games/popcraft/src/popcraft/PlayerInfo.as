@@ -135,6 +135,7 @@ public class PlayerInfo extends EventDispatcher
     {
         this.destroy();
         this.init();
+        this.workshop.damageShields = [];
         this.workshop.health = newHealth;
     }
 
