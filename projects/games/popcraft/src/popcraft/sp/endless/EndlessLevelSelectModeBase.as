@@ -49,7 +49,9 @@ public class EndlessLevelSelectModeBase extends AppMode
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
         _level1 = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth);
 
-        selectMap(_highestMapIndex, ANIMATE_DOWN, true);
+        var initialMapIndex :int =
+            (_mode == GAME_OVER_MODE ? EndlessGameContext.mapIndex : _highestMapIndex);
+        selectMap(initialMapIndex, ANIMATE_DOWN, true);
     }
 
     protected function selectMap (mapIndex :int, animationType :int,
