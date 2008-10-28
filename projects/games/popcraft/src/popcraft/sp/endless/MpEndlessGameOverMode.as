@@ -1,5 +1,7 @@
 package popcraft.sp.endless {
 
+import com.whirled.game.GameSubControl;
+
 import popcraft.*;
 
 public class MpEndlessGameOverMode extends MpEndlessLevelSelectModeBase
@@ -14,9 +16,13 @@ public class MpEndlessGameOverMode extends MpEndlessLevelSelectModeBase
         super.setup();
 
         if (SeatingManager.isLocalPlayerInControl) {
-            // TODO
-            /*AppContext.gameCtrl.game.endGameWithScore(EndlessGameContext.score,
-                Constants.SCORE_MODE_ENDLESS);*/
+            AppContext.gameCtrl.game.endGameWithScores(
+                SeatingManager.getPlayerIds(),
+                EndlessGameContext.playerMonitor.playerScores,
+                GameSubControl.TO_EACH_THEIR_OWN,
+                Constants.SCORE_MODE_ENDLESS);
+
+            log.info("Ending game with scores: " + EndlessGameContext.playerMonitor.playerScores);
         }
     }
 

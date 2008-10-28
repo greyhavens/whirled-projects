@@ -222,7 +222,14 @@ public class EndlessGameMode extends GameMode
             if (GameContext.isSinglePlayerGame) {
                 AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
             } else {
-                AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
+                EndlessGameContext.playerMonitor.reportLocalPlayerScore();
+
+                // Wait for everyone to report their scores so that the GameOverMode
+                // can call endGameWithScores
+                EndlessGameContext.playerMonitor.waitForPlayerScores(
+                    function () :void {
+                        AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
+                    });
             }
         }
 
