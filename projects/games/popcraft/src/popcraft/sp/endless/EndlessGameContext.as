@@ -2,14 +2,13 @@ package popcraft.sp.endless {
 
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
-import popcraft.data.EndlessMapData;
 
 public class EndlessGameContext
 {
     public static var gameMode :EndlessGameMode;
     public static var level :EndlessLevelData;
 
-    public static var playerReadyMonitor :PlayerReadyMonitor;
+    public static var playerMonitor :PlayerMonitor;
 
     public static var score :int;
     public static var scoreMultiplier :Number;
@@ -30,13 +29,13 @@ public class EndlessGameContext
         mapIndex = -1;
         savedHumanPlayers = [];
 
-        if (playerReadyMonitor != null) {
-            playerReadyMonitor.shutdown();
-            playerReadyMonitor = null;
+        if (playerMonitor != null) {
+            playerMonitor.shutdown();
+            playerMonitor = null;
         }
 
         if (GameContext.isMultiplayerGame) {
-            playerReadyMonitor = new PlayerReadyMonitor(SeatingManager.numPlayers);
+            playerMonitor = new PlayerMonitor(SeatingManager.numPlayers);
         }
     }
 

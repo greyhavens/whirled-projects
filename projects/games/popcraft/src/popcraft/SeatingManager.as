@@ -87,6 +87,15 @@ public class SeatingManager
         }
     }
 
+    public static function getPlayerSeat (playerId :int) :int
+    {
+        if (AppContext.gameCtrl.isConnected()) {
+            return AppContext.gameCtrl.game.seating.getPlayerPosition(playerId);
+        } else {
+            return 0;
+        }
+    }
+
     public static function getPlayerHeadshot (playerSeat :int) :DisplayObject
     {
         var headshot :DisplayObject;

@@ -2,18 +2,22 @@ package popcraft.sp.endless {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.ByteArray;
 
 import popcraft.*;
 
-public class PlayerReadyMonitor
+public class PlayerMonitor
 {
-    public function PlayerReadyMonitor (numPlayers :int)
+    public function PlayerMonitor (numPlayers :int)
     {
         AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
+
+        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            onPlayerLeft);
 
         _playersReadyForRound = ArrayUtil.create(numPlayers, -1);
     }
@@ -22,6 +26,9 @@ public class PlayerReadyMonitor
     {
         AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
+
+        AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            onPlayerLeft);
     }
 
     public function setLocalPlayerReadyForCurRound () :void
@@ -29,7 +36,7 @@ public class PlayerReadyMonitor
         var bytes :ByteArray = new ByteArray();
         bytes.writeByte(GameContext.localPlayerIndex);
         bytes.writeInt(EndlessGameContext.mapIndex);
-        AppContext.gameCtrl.net.sendMessage(MESSAGE_NAME, bytes);
+        AppContext.gameCtrl.net.sendMessage(PLAYER_READY_MSG, bytes);
     }
 
     public function waitForAllPlayersReadyForCurRound (callback :Function) :void
@@ -46,8 +53,9 @@ public class PlayerReadyMonitor
 
     protected function allPlayersReadyForRound (roundId :int) :Boolean
     {
-        for each (var readyForRoundId :int in _playersReadyForRound) {
-            if (roundId != readyForRoundId) {
+        for (var playerSeat :int = 0; playerSeat < _playersReadyForRound.length; ++playerSeat) {
+            if (SeatingManager.isPlayerPresent(playerSeat) &&
+                _playersReadyForRound[playerSeat] != roundId) {
                 return false;
             }
         }
@@ -57,7 +65,7 @@ public class PlayerReadyMonitor
 
     protected function onMessageReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name != MESSAGE_NAME) {
+        if (e.name != PLAYER_READY_MSG) {
             return;
         }
 
@@ -81,8 +89,20 @@ public class PlayerReadyMonitor
 
         _playersReadyForRound[playerIndex] = roundId;
 
+        checkPlayersReadyForRound();
+    }
+
+    protected function onPlayerLeft (e :OccupantChangedEvent) :void
+    {
+        if (_waitForAllPlayersReadyForRoundId >= 0) {
+            checkPlayersReadyForRound();
+        }
+    }
+
+    protected function checkPlayersReadyForRound () :void
+    {
         if (_waitForAllPlayersReadyForRoundId >= 0 &&
-            this.allPlayersReadyForRound(_waitForAllPlayersReadyForRoundId)) {
+            allPlayersReadyForRound(_waitForAllPlayersReadyForRoundId)) {
 
             _playersReadyCallback();
             _playersReadyCallback = null;
@@ -95,9 +115,9 @@ public class PlayerReadyMonitor
     protected var _playersReadyCallback :Function;
     protected var _waitForAllPlayersReadyForRoundId :int = -1;
 
-    protected static var log :Log = Log.getLog(PlayerReadyMonitor);
+    protected static var log :Log = Log.getLog(PlayerMonitor);
 
-    protected static const MESSAGE_NAME :String = "pr";
+    protected static const PLAYER_READY_MSG :String = "player_ready";
 }
 
 }

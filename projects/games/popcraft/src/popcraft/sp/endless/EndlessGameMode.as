@@ -92,10 +92,10 @@ public class EndlessGameMode extends GameMode
             // when all the players have arrived. Use the PlayerReadyMonitor for this purpose -
             // this is functionally the same thing as waiting for the GAME_STARTED event, as above,
             // but doesn't require us to end the current game
-            EndlessGameContext.playerReadyMonitor.waitForAllPlayersReadyForCurRound(startGame);
+            EndlessGameContext.playerMonitor.waitForAllPlayersReadyForCurRound(startGame);
 
             // we're ready
-            EndlessGameContext.playerReadyMonitor.setLocalPlayerReadyForCurRound();
+            EndlessGameContext.playerMonitor.setLocalPlayerReadyForCurRound();
         }
 
         _readyToStart = true;
