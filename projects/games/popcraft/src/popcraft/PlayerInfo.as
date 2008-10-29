@@ -312,7 +312,7 @@ public class PlayerInfo extends EventDispatcher
     public function get canResurrect () :Boolean
     {
         var teammate :PlayerInfo = GameContext.findPlayerTeammate(_playerIndex);
-        return (teammate != null && teammate.isAlive);
+        return (teammate != null && teammate.isAlive && teammate.health >= Constants.MIN_RESURRECT_HEALTH);
     }
 
     protected var _playerIndex :int;  // an unsigned integer corresponding to the player's seating position

@@ -565,17 +565,15 @@ public class GameMode extends TransitionMode
     protected function resurrectPlayer (deadPlayerIndex :int) :int
     {
         var playerInfo :PlayerInfo = GameContext.playerInfos[deadPlayerIndex];
-        if (!playerInfo.isAlive) {
+        if (!playerInfo.isAlive && playerInfo.canResurrect) {
             var teammate :PlayerInfo = GameContext.findPlayerTeammate(deadPlayerIndex);
-            if (teammate != null && teammate.isAlive) {
-                var newHealth :Number = teammate.health * 0.5;
-                teammate.workshop.health = newHealth;
-                playerInfo.resurrect(newHealth);
+            var newHealth :Number = teammate.health * 0.5;
+            teammate.workshop.health = newHealth;
+            playerInfo.resurrect(newHealth);
 
-                GameContext.playGameSound("sfx_resurrect");
+            GameContext.playGameSound("sfx_resurrect");
 
-                return teammate.playerIndex;
-            }
+            return teammate.playerIndex;
         }
 
         return -1;

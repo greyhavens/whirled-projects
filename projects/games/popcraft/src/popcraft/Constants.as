@@ -10,6 +10,8 @@ import popcraft.util.*;
 
 public class Constants
 {
+    public static const MIN_RESURRECT_HEALTH :Number = 10;
+
     /* Increment this whenever any cookie data changes. */
     public static const USER_COOKIE_VERSION :int = 1;
 
@@ -46,7 +48,7 @@ public class Constants
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean = true;
-    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = true;
+    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = false;
     public static const DEBUG_UNLOCK_PREMIUM_CONTENT :Boolean = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean = true;
 
