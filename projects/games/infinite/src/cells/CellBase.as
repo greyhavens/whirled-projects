@@ -44,7 +44,7 @@ package cells
 		{
 			_objective = objective;
 			showView(objective);
-			dispatchEvent(new CellEvent(CellEvent.ADDED_TO_OBJECTIVE, this));			
+			dispatchEvent(new CellEvent(CellEvent.ADDED_TO_OBJECTIVE, this));
 		}
 
 		/**

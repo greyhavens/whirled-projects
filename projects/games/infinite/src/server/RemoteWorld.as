@@ -7,9 +7,11 @@ package server
 	import com.whirled.net.MessageReceivedEvent;
 	
 	import flash.events.EventDispatcher;
+	import flash.utils.ByteArray;
 	
 	import server.Messages.LevelEntered;
 	import server.Messages.PathStart;
+	import server.Messages.Serializable;
 	
 	import world.ClientWorld;
 	import world.WorldClient;
@@ -43,12 +45,12 @@ package server
         
         public function levelEntered (event:MessageReceivedEvent) :void
         {
-            _client.levelEntered(event.value as LevelEntered);
+            _client.levelEntered(LevelEntered.readFromArray(event.value as ByteArray));
         }        
         
         public function pathStart (event:MessageReceivedEvent) :void
         {
-        	_client.startPath(event.value as PathStart);
+        	_client.startPath(PathStart.readFromArray(event.value as ByteArray));
         }
         
         
@@ -82,15 +84,17 @@ package server
          */ 
         protected function signalServer(message:int) :void
         {
-        	sendToServer(message, null);
+        	_net.sendMessage(String(message), null, NetSubControl.TO_SERVER_AGENT);
         }
 
         /**
          * Send a message with a payload to the server.
          */ 
-        protected function sendToServer(message:int, data:Object) :void
+        protected function sendToServer(message:int, data:Serializable) :void
         {
-        	_net.sendMessage(String(message), data, NetSubControl.TO_SERVER_AGENT);
+        	trace ("sending to server "+data);
+        	_net.sendMessage(String(message), data.writeToArray(new ByteArray()),
+        	    NetSubControl.TO_SERVER_AGENT);
         }
 
         public function get clientId () :int

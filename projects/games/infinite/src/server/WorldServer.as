@@ -6,8 +6,11 @@ package server
 	import com.whirled.game.NetSubControl;
 	import com.whirled.net.MessageReceivedEvent;
 	
+	import flash.utils.ByteArray;
+	
 	import server.Messages.LevelEntered;
 	import server.Messages.PathStart;
+	import server.Messages.Serializable;
 	
 	import world.Player;
 	import world.World;
@@ -45,7 +48,8 @@ package server
 			const message:PathStart =
 			     new PathStart(event.player.id, event.path);
 			     
-			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, event.path);
+			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, 
+			     message);
 		}
 		
 		/**
@@ -54,6 +58,7 @@ package server
 		 */
 		protected function handleMessageReceived(event:MessageReceivedEvent) :void
 		{
+			trace (this+" received message "+event);
 			const message:int = int(event.name);
 			switch (message) {
 				case CLIENT_ENTERS: clientEnters(event);
@@ -89,15 +94,15 @@ package server
 		/**
 		 * Send a message with a payload to all clients.
 		 */
-		protected function sendToAll (message:int, payload:Object) :void
+		protected function sendToAll (message:int, payload:Serializable) :void
 		{
-			_net.sendMessage(String(message), payload)
+			_net.sendMessage(String(message), payload.writeToArray(new ByteArray()));
 		}
 		
-		protected function sendToGroup (group:Array, message:int, payload:Object) :void
+		protected function sendToGroup (group:Array, message:int, payload:Serializable) :void
 		{
 			for each (var player:Player in group) {
-				_net.sendMessage(String(message), payload, player.id);
+				_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), player.id);
 			}
 		}
 			

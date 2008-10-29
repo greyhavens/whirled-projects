@@ -1,6 +1,10 @@
 package arithmetic
-{		
-	public class BoardCoordinates extends Coordinates
+{
+	import flash.utils.ByteArray;
+	
+	import server.Messages.Serializable;
+			
+	public class BoardCoordinates extends Coordinates implements Serializable
 	{
 		public function BoardCoordinates(x:int, y:int)
 		{ 
@@ -58,5 +62,17 @@ package arithmetic
 		{
 			return this._x == other._x && this._y == other._y;
 		} 
+		
+		public function writeToArray(array:ByteArray) :ByteArray
+		{
+			array.writeInt(x);
+			array.writeInt(y);
+			return array;
+		}
+		
+		public static function readFromArray(array:ByteArray) :BoardCoordinates
+		{
+			return new BoardCoordinates(array.readInt(), array.readInt());
+		}
 	}
 }
