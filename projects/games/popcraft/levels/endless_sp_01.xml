@@ -51,11 +51,13 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<Day repeatWaves="true">
 						<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="15"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="20"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="35"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="45"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="50"><Unit type="grunt" count="2"/></Wave>
-						<Wave absoluteDelay="50"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="60"><Unit type="grunt" count="4"/></Wave>
-						<Wave absoluteDelay="70"><Unit type="grunt" count="4"/></Wave>
+						<Wave absoluteDelay="62"><Unit type="grunt" count="4"/></Wave>
 					</Day>
 				</RepeatingDays>
 			</Computer>
