@@ -148,7 +148,7 @@ public class LevelSelectMode extends DemoGameMode
             var creditsButton :SimpleButton = UIBits.createButton("Credits", 1.5);
             this.registerOneShotCallback(creditsButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    // TODO
+                    AppContext.mainLoop.unwindToMode(new CreditsMode());
                 });
             DisplayUtil.positionBounds(creditsButton, -creditsButton.width * 0.5,
                 buttonParent.height + 5);
@@ -542,7 +542,7 @@ public class LevelSelectMode extends DemoGameMode
     protected static const JACK_PORTRAIT_LOC :Point = new Point(643, 43);
     protected static const STORY_BANNER_LOC :Point = new Point(350, 330);
     protected static const STORY_BUTTON_LOC :Point = new Point(350, 350);
-    protected static const ENDLESS_PANEL_LOC :Point = new Point(488, 390);
+    protected static const ENDLESS_PANEL_LOC :Point = new Point(488, 391);
     protected static const SELECT_PANEL_LOC :Point = new Point(0, 391);
 }
 

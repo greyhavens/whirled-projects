@@ -1,13 +1,9 @@
 package popcraft.battle.view {
 
 import com.threerings.flash.DisplayUtil;
-import com.threerings.util.Log;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.WaitForFrameTask;
-import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -26,7 +22,9 @@ public class BattleBoardView extends SceneObject
         _width = width;
         _height = height;
 
-        _bg = SwfResource.instantiateMovieClip("bg", GameContext.gameMode.mapSettings.backgroundName, true);
+        _bgName = GameContext.gameMode.mapSettings.backgroundName;
+
+        _bg = SwfResource.instantiateMovieClip("bg", _bgName, true);
         _bg.x = Constants.SCREEN_SIZE.x * 0.5;
         _bg.y = Constants.SCREEN_SIZE.y * 0.5;
         _bg.mouseEnabled = false;
@@ -51,23 +49,23 @@ public class BattleBoardView extends SceneObject
 
         _bg.gotoAndStop(DiurnalCycle.isNight(_lastDayPhase) ? "night" : "day");
         _bg.cacheAsBitmap = true;
+    }
 
-        // in the Tesla background, sync a sound with the zap animation
-        var zapParent :MovieClip = _bg["zap3"];
-        if (zapParent != null) {
-            zapParent  = zapParent["zap2"];
-            for each (var zapName :String in TESLA_ZAPS) {
-                var zap :MovieClip = zapParent[zapName];
-                addTask(new RepeatingTask(
-                    new WaitForFrameTask(14, zap),
-                    new FunctionTask(playZapSound)));
-            }
+    override protected function addedToDB () :void
+    {
+        // if this is the Tesla background, create an object that will play a sound
+        // when the Tesla lightning animation plays.
+        if (_bgName == "tesla") {
+            _teslaSoundPlayer = new TeslaSoundPlayer(_bg, GameContext.playGameSound);
+            GameContext.gameMode.addObject(_teslaSoundPlayer);
         }
     }
 
-    protected function playZapSound () :void
+    override protected function removedFromDB () :void
     {
-        GameContext.playGameSound("sfx_tesla2");
+        if (_teslaSoundPlayer != null) {
+            _teslaSoundPlayer.destroySelf();
+        }
     }
 
     override protected function update (dt :Number) :void
@@ -132,6 +130,7 @@ public class BattleBoardView extends SceneObject
         }
     }
 
+    protected var _bgName :String;
     protected var _width :int;
     protected var _height :int;
     protected var _parent :Sprite;
@@ -140,7 +139,7 @@ public class BattleBoardView extends SceneObject
     protected var _lastDayPhase :int;
     protected var _bg :MovieClip;
 
-    protected static const TESLA_ZAPS :Array = [ "zapa", "zapb", "zapc", "zapd" ];
+    protected var _teslaSoundPlayer :TeslaSoundPlayer;
 }
 
 }
