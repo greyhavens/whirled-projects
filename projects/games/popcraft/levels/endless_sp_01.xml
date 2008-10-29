@@ -195,11 +195,11 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<RepeatingDays>
 					<Day repeatWaves="true">
 
-						<Wave absoluteDelay="1"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="2"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="3"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="10"/></Wave>
+						<Wave absoluteDelay="1"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="2"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="3"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="5"/></Wave>
 						
 						<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="9"><Unit type="sapper" count="2"/></Wave>
@@ -381,9 +381,9 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<RepeatingDays>
 					<Day repeatWaves="true">
 
-						<Wave absoluteDelay="3" spellCastChance="1"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="10"/></Wave>
+						<Wave absoluteDelay="3" spellCastChance="1"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="5"/></Wave>
 						
 						<Wave absoluteDelay="7"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="9"><Unit type="sapper" count="2"/></Wave>
