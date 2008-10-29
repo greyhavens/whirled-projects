@@ -52,9 +52,9 @@ public class CreditsMode extends AppMode
 
         // show little units next to Tim, Jon, and Harry
         MovieClip(creditsMovie["tim"]).addChild(CreatureAnimFactory.instantiateUnitAnimation(
-            Constants.UNIT_TYPE_GRUNT, 0x9FBCFF, "attack_SW"));
+            Constants.UNIT_TYPE_BOSS, 0x9FBCFF, "walk_SW"));
         MovieClip(creditsMovie["jon"]).addChild(CreatureAnimFactory.instantiateUnitAnimation(
-            Constants.UNIT_TYPE_HEAVY, 0x9FBCFF, "attack_SW"));
+            Constants.UNIT_TYPE_HEAVY, 0x9FBCFF, "walk_SW"));
         MovieClip(creditsMovie["harry"]).addChild(CreatureAnimFactory.instantiateUnitAnimation(
             Constants.UNIT_TYPE_SAPPER, 0x9FBCFF, "walk_SW"));
 
