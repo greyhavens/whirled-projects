@@ -265,7 +265,7 @@ public class DraggableSprite extends Sprite
     protected var _painted :Rectangle;
 
     protected static const SNAP_MARGIN :int = 20;
-    protected static const DRAG_SAFETY :int = 8;
+    protected static const DRAG_SAFETY :int = 0;
 
     protected static const log :Log = Log.getLog(DraggableSprite);
 }
