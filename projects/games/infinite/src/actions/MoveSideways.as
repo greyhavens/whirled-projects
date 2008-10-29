@@ -1,15 +1,18 @@
 package actions
 {
 	import client.Objective;
-	import flash.display.DisplayObject;
+	import client.player.Player;
+	
+	import sprites.PlayerSprite;
+	
 	import world.Cell;
 	
 	public class MoveSideways extends Movement implements PlayerAction 
 	{
 		public function MoveSideways(
-			player:PlayerCharacter, objective:Objective, targetCell:Cell)
+			player:Player, view:PlayerSprite, objective:Objective, targetCell:Cell)
 		{		
-			super(player, objective, targetCell);							
+			super(player, view, objective, targetCell);							
 		}
 	}
 }

@@ -20,5 +20,10 @@ package world.arbitration
 			this.player = player;
 			this.path = path;
 		}
+		
+		override public function clone () :Event
+		{
+			return new MoveEvent(type, player, path);
+		}
 	}
 }

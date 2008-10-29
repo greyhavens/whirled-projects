@@ -5,14 +5,14 @@ package server
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
 	import com.whirled.net.MessageReceivedEvent;
-		
+	
 	import server.Messages.LevelEntered;
 	import server.Messages.PathStart;
 	
-    import world.arbitration.MoveEvent;
 	import world.Player;
 	import world.World;
 	import world.WorldListener;
+	import world.arbitration.MoveEvent;
 	import world.level.LevelEvent;
 	
 	public class WorldServer implements WorldListener
@@ -58,6 +58,7 @@ package server
 			switch (message) {
 				case CLIENT_ENTERS: clientEnters(event);
 				case MOVE_PROPOSED: moveProposed(event);
+				case MOVE_COMPLETED: moveCompleted(event);
 			}			
 			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
 		}
@@ -78,6 +79,11 @@ package server
 		protected function moveProposed (event:MessageReceivedEvent) :void
 		{
 			_world.moveProposed(event.senderId, event.value as BoardCoordinates);
+		}
+		
+		protected function moveCompleted (event:MessageReceivedEvent) :void
+		{
+			_world.moveCompleted(event.senderId, event.value as BoardCoordinates);
 		}
 		
 		/**
@@ -101,5 +107,6 @@ package server
 		
 	    public static const CLIENT_ENTERS:int = 0;
 	    public static const MOVE_PROPOSED:int = 1;
+	    public static const MOVE_COMPLETED:int = 2;
 	}
 }

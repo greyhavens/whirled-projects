@@ -16,6 +16,7 @@ package client
 		public function PlayerController(world:ClientWorld, viewer:Viewer, player:Player, 
 			inventoryDisplay:InventoryDisplay)
 		{
+			_world = world;
 			_board = viewer.objective;
 			_arbiter = new BoardArbiter(_board);
 			_viewer = viewer;

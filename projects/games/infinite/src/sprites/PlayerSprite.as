@@ -1,20 +1,30 @@
 package sprites
 {
-	import arithmetic.BoardCoordinates;
-	import arithmetic.Geometry;
-	import arithmetic.GraphicCoordinates;
+	import actions.Climb;
+	import actions.MoveSideways;
+	import actions.Movement;
 	
+	import arithmetic.BoardCoordinates;
+	import arithmetic.GraphicCoordinates;
+	import arithmetic.Vector;
+	
+	import client.FrameEvent;
 	import client.Objective;
+	import client.player.Player;
+	import client.player.PlayerEvent;
+	
+	import paths.PathFollower;
 	
 	import world.Cell;
-	import client.player.Player;
 	
-	public class PlayerSprite extends AssetSprite
+	public class PlayerSprite extends AssetSprite implements PathFollower
 	{
-		public function PlayerSprite(player:Player)
+		public function PlayerSprite(objective:Objective, player:Player)
 		{
+			_objective = objective;
 			_player = player;
 			super(simplePlayer, Config.cellSize.dx, Config.cellSize.dy);
+			_player.addEventListener(PlayerEvent.PATH_STARTED, handlePathStarted);
 		}
 
         /**
@@ -23,7 +33,7 @@ package sprites
          */
         public function positionInCell (objective:Objective, cell:BoardCoordinates) :GraphicCoordinates
         {
-            const cellPos:GraphicCoordinates = objective.cellCoordinates(_player.position);
+            const cellPos:GraphicCoordinates = objective.cellCoordinates(cell);
             return new GraphicCoordinates(
                 cellPos.x + (Config.cellSize.dx / 2) - (width / 2),
                 cellPos.y + (Config.cellSize.dy - height)
@@ -33,7 +43,7 @@ package sprites
         public function moveToCell (objective:Objective, cell:Cell) :void
         {
         	trace ("positioning player sprite in "+cell);
-            Geometry.position(this, positionInCell(objective, cell.position));
+            moveTo(positionInCell(objective, cell.position));
         }
         
         public function cellBoundary() :GraphicCoordinates
@@ -49,6 +59,57 @@ package sprites
         	return _player;
         }
         
+        public function handlePathStarted (event:PlayerEvent) :void
+        {
+        	event.player.path.applyTo(this);
+        }
+        
+        /**
+         * Move sideways to the given cell.
+         */
+        public function moveSideways (newCell:BoardCoordinates) :void
+        {
+            startMovement(new MoveSideways(_player, this, _objective, _objective.cellAt(newCell)));
+        }
+        
+        /**
+         * Climb up or down to the given cell.
+         */
+        public function climb (newCell:BoardCoordinates) :void
+        {
+            startMovement(new Climb(_player, this, _objective, _objective.cellAt(newCell)));
+        }
+        
+        protected function startMovement(movement:Movement) :void
+        {
+        	_movement = movement;
+        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _movement.handleFrameEvent);
+        	
+        }
+        
+        public function moveComplete () :void
+        {
+        	_objective.frameTimer.removeEventListener(FrameEvent.FRAME_START, _movement.handleFrameEvent);
+        	_movement = null;
+        	_player.pathComplete();
+        }
+         
+        public function moveBy (v:Vector) :void
+        {
+        	x += v.dx;
+        	y += v.dy;
+        	dispatchEvent(new ViewEvent(ViewEvent.MOVED, this));
+        }
+        
+        public function moveTo (coords:GraphicCoordinates) :void
+        {
+        	x = coords.x;
+        	y = coords.y;
+            dispatchEvent(new ViewEvent(ViewEvent.MOVED, this));        	
+        }
+                 
+        protected var _movement:Movement;
+        protected var _objective:Objective;
         protected var _player:Player;
 
 		[Embed(source="../../rsrc/png/simple-player.png")]

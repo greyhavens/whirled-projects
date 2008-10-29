@@ -13,5 +13,10 @@ package paths
 		{
 			moveable.moveSideways(finish);
 		}
+		
+		public function toString () :String
+		{
+			return "a sideways movement to "+finish;
+		}
 	}
 }

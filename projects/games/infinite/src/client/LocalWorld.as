@@ -3,15 +3,15 @@ package client
 	import arithmetic.BoardCoordinates;
 	
 	import flash.events.EventDispatcher;
-		
+	
 	import server.Messages.LevelEntered;
 	import server.Messages.PathStart;
 	
-	import world.arbitration.MoveEvent;
 	import world.ClientWorld;
 	import world.World;
 	import world.WorldClient;
 	import world.WorldListener;
+	import world.arbitration.MoveEvent;
 	import world.level.LevelEvent;
 	
 	public class LocalWorld extends EventDispatcher implements ClientWorld, WorldListener
@@ -55,8 +55,12 @@ package client
         public function handlePathStart (event:MoveEvent) :void
         {
         	_client.startPath(new PathStart(event.player.id, event.path));
+        }        
+                	
+        public function moveComplete (coords:BoardCoordinates) :void
+        {
+        	_world.moveCompleted(ID, coords);
         }
-        
                 	
         protected var _client:WorldClient;	
 		protected var _world:World;

@@ -72,6 +72,11 @@ package server
         	sendToServer(WorldServer.MOVE_PROPOSED, coords);
         }
 
+        public function moveComplete (coords:BoardCoordinates) :void
+        {
+        	sendToServer(WorldServer.MOVE_COMPLETED, coords);
+        }
+
         /**
          * Send a simple 'signal' to the server.  This is numbered message with no data payload.
          */ 

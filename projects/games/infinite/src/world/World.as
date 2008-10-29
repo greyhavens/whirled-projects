@@ -3,8 +3,8 @@ package world
 	import arithmetic.BoardCoordinates;
 	
 	import flash.events.EventDispatcher;
-		
-    import world.arbitration.MoveEvent;
+	
+	import world.arbitration.MoveEvent;
 	import world.level.LevelEvent;
 	import world.level.LevelRegister;	
 	
@@ -47,8 +47,16 @@ package world
 			if (player == null) {
 				throw new Error("move to "+coords+" proposed for unknown player "+id); 
 			}
-			
 			player.proposeMove(coords);
+		}
+		
+		public function moveCompleted (id:int, coords:BoardCoordinates) :void
+		{
+			var player:Player = _players.find(id);
+			if (player == null) {
+				throw new Error("move to " +coords+" proposed for unknown player "+id);
+			}
+			player.moveComplete(coords);
 		}
 		
 		/**

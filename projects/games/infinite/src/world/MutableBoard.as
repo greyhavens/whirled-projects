@@ -34,6 +34,11 @@ package world
         {
         	_changed.remember(newCell);
         }
+        
+        public function toString () :String
+        {
+        	return "mutable board starting as "+_starting;
+        }
 		
         protected var _starting:Board;
         protected var _changed:CellMemory;

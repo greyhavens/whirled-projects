@@ -94,6 +94,21 @@ package client
 			_playerController.handleCellClicked(event);
 		}
 		
+		public function addPlayer (player:Player) :void
+		{
+			_objective.addPlayer(player);
+		}
+		
+		public function addLocalPlayer (player:Player) :void
+		{
+			_objective.addLocalPlayer(player);
+		}
+		
+		public function removePlayer (player:Player) :void
+		{
+			_objective.removePlayer(player);
+		}
+				
 		protected var _playerController:PlayerController;
 		
 		// a shape for the viewpoint - to display for debugging or whatever

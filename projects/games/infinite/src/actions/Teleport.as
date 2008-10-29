@@ -20,7 +20,6 @@ package actions
 		{
 			_player.actionComplete();				
 			_player.arriveInCell(_target);
-			_objective.scrollViewPointToPlayer();
 		}
 		
 		protected var _player:MoveInteractions;

@@ -2,19 +2,16 @@ package
 {
 	import actions.*;
 	
-	import world.arbitration.MovableCharacter;
-	
 	import arithmetic.*;
 	
 	import cells.CellInteractions;
 	
 	import client.CellEvent;
-    import client.FrameEvent;
-    import client.Objective;
+	import client.FrameEvent;
+	import client.Objective;
 	import client.PlayerController;
 	
 	import flash.events.EventDispatcher;
-	import flash.text.TextField;
 	
 	import inventory.InventoryDisplay;
 	
@@ -22,19 +19,16 @@ package
 	import items.ItemPlayer;
 	
 	import paths.Path;
-	import paths.MoveEvent;
 	import paths.PathFollower;
 	
-	import sprites.PlayerSprite;
-	
 	import world.Cell;
-	import world.arbitration.MovableCharacter;
+	import world.arbitration.MoveEvent;
 	
 	/**
 	 * Represents the player who is using the console.
 	 */
 	public class PlayerCharacter extends EventDispatcher 
-		implements CellInteractions, ItemPlayer, MoveInteractions, MovableCharacter, 
+		implements CellInteractions, ItemPlayer, MoveInteractions,  
 			PathFollower, Owner
 	{
 		public function PlayerCharacter(name:String, inventory:InventoryDisplay)

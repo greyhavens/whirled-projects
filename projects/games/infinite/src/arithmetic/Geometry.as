@@ -21,12 +21,5 @@ package arithmetic
 			object.x = pos.x;
 			object.y = pos.y;
 		}
-
-		
-		public static function moveBy(v:Vector, object:DisplayObject) :void
-		{
-			object.x += v.dx;
-			object.y += v.dy;
-		}	
 	}
 }

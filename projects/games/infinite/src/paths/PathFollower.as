@@ -5,11 +5,6 @@ package paths
 	public interface PathFollower
 	{
 		/**
-		 * Follow the supplied path.
-		 */
-		function follow (path:Path) :void;		
-
-		/**
 		 * Move sideways to the given cell.
 		 */
 		function moveSideways (newCell:BoardCoordinates) :void

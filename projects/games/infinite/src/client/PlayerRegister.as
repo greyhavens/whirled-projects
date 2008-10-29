@@ -18,7 +18,13 @@ package client
 		
 		public function register (player:Player) :void
 		{
+		     trace(this + " registering " + player);
 			_dictionary[player.id] = player;
+		}
+		
+		public function toString () :String 
+		{
+			return "client player register";
 		}
 
         protected var _dictionary:Dictionary = new Dictionary();

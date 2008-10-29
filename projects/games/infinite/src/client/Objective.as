@@ -64,6 +64,7 @@ package client
 			_viewFactory = new ViewFactory(); 
 			
 			initializeViewpoint(startingPosition);
+			_frameTimer.start();
 		}		
 		
 //		public function scrollViewPointToPlayer () :void
@@ -307,12 +308,12 @@ package client
         	}
         	
         	// construct a new view
-        	const sprite:PlayerSprite = new PlayerSprite(player);
+        	const sprite:PlayerSprite = new PlayerSprite(this, player);
         	_playerViews.add(player, sprite);
         	
         	// start displaying the view immediately        	
         	addChild(sprite);
-            Geometry.position(sprite, sprite.positionInCell(this, player.position));
+        	sprite.moveTo(sprite.positionInCell(this, player.position));
         	return sprite;
         }
 	       
@@ -327,6 +328,13 @@ package client
         		removeChild(sprite);
         	}
         }            
+        
+        public function get frameTimer () :FrameTimer
+        {
+        	return _frameTimer;
+        }
+        
+        protected var _frameTimer:FrameTimer = new FrameTimer();
         
         protected var _cameraTracking:PlayerSprite;
             

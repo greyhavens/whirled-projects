@@ -13,5 +13,10 @@ package paths
 		{
 			moveable.climb(finish);
 		}		
+		
+		public function toString () :String
+		{
+			return "a climb to "+finish; 
+		}
 	}
 }

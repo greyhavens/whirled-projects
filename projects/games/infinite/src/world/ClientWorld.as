@@ -30,5 +30,11 @@ package world
 		 * Propose to the world that the player be moved to the coordinates supplied.
 		 */
 		function proposeMove (coords:BoardCoordinates) :void		
+		
+		/**
+		 * Inform the world that the player has completed a move and is now at the location
+		 * specified.
+		 */
+		function moveComplete (coords:BoardCoordinates) :void
 	}
 }

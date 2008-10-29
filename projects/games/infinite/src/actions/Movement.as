@@ -1,8 +1,11 @@
 package actions
 {	
 	import arithmetic.*;
-	import client.Objective;
+	
 	import client.FrameEvent;
+	import client.Objective;
+	import client.player.Player;
+	
 	import sprites.PlayerSprite;
 	
 	import world.Cell;
@@ -10,15 +13,15 @@ package actions
 	public class Movement
 	{
 		public function Movement(
-			player:PlayerCharacter, objective:Objective, targetCell:Cell)
-		{		
+			player:Player, sprite:PlayerSprite, objective:Objective, targetCell:Cell)
+		{
 			_player = player;
 			_objective = objective;
-			_view = objective.playerView;			
+			_view = sprite;			
 			_targetCell = targetCell;
 			_destination = _view.positionInCell(_objective, targetCell.position);
 
-            trace("movement from "+Geometry.coordsOf(_view)+" to "+_destination);
+            trace("calculating movement from "+Geometry.coordsOf(_view)+" to "+_destination);
             
 			const move:Vector = Geometry.coordsOf(_view).distanceTo(_destination);
 			trace ("complete movement is: "+move);
@@ -41,26 +44,22 @@ package actions
 			if (_startTime == null) {
 				_startTime = event.previousTime;
 				_duration -= event.duration / 2;
-				_player.cell.playerBeginsToDepart();
 			}
 
 			// if we're close enough to the end time finish up
 			if (event.currentTime.time - _startTime.time > _duration) {
 				// setting the player's position to the target cell sets their graphics position
 				// automatically.
-				_player.arriveInCell(_targetCell);
 				_view.moveToCell(_objective, _targetCell);
- 				_objective.scrollViewPointToPlayer();
-                _player.actionComplete();               
+                _view.moveComplete();               
 			} else {
 				const step:Vector = _delta.multiplyByScalar(event.duration).toVector();
-				Geometry.moveBy(step, _view);
-                _objective.scrollViewPointToPlayer();
+				_view.moveBy(step);
 			}
 		}
 		
 		protected var _view:PlayerSprite;
-		protected var _player:PlayerCharacter;
+		protected var _player:Player;
 		protected var _objective:Objective;
 		protected var _targetCell:Cell;
 		protected var _destination:GraphicCoordinates;

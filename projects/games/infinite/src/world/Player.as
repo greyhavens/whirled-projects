@@ -4,13 +4,17 @@ package world
 	
 	import flash.events.EventDispatcher;
 	
+	import paths.Path;
+	
+	import world.arbitration.MoveEvent;
 	import world.level.*;
 	
 	public class Player extends EventDispatcher 
 	{
 		public function Player(id:int)
 		{
-			_id = id;			
+			_id = id;
+			addEventListener(MoveEvent.PATH_START, handlePathStart);			
 		}
 
         public function get id () :int 
@@ -51,6 +55,32 @@ package world
         	return _level;
         }
         
+        /**
+         * When movement starts, keep track of it.
+         */ 
+        public function handlePathStart (event:MoveEvent) :void
+        {
+        	_path = event.path;
+        }
+        
+        public function moveComplete (coords:BoardCoordinates) :void
+        {
+            if (_path.finish.equals(coords)) {
+            	_path = null;
+            }
+        }
+        
+        public function isMoving () :Boolean
+        {
+        	return _path != null;
+        }
+        
+        override public function toString () :String
+        {
+        	return "world player "+_id;
+        }
+        
+        protected var _path:Path;
         protected var _cell:Cell;
         protected var _level:Level;
         protected var _id:int;

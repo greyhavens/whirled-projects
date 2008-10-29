@@ -7,9 +7,12 @@ package client.player
 	
 	import flash.events.EventDispatcher;
 	
+	import paths.Path;
+	import paths.PathFollower;
+	
 	import world.Cell;
 	
-	public class Player extends EventDispatcher 
+	public class Player extends EventDispatcher
 	{
 		public var id:int;
 		public var level:int;
@@ -46,7 +49,34 @@ package client.player
         {
         	return false;
         }
-        		
+        
+        public function follow (path:Path) :void
+        {
+        	_path = path;
+            dispatchEvent(new PlayerEvent(PlayerEvent.PATH_STARTED, this));
+        }
+                
+        public function get path () :Path
+        {
+        	return _path;
+        }
+                
+        public function pathComplete () :void
+        {
+            dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
+        }
+
+        public function clearPath () :void
+        {
+        	_path = null;
+        }
+        
+        override public function toString () :String
+        {
+        	return "player "+id;
+        }
+                
+        protected var _path:Path;		
         protected var _cell:Cell;
         protected var _objective:Objective;
         protected var _position:BoardCoordinates;

@@ -21,6 +21,12 @@ package world.arbitration
 	
 		public function proposeMove (player:Player, destination:Cell) :void 
 		{
+			if (player.isMoving()) {
+				trace (this+" ignoring proposed move to "+destination+" because "+player+
+				    " is already moving");
+				return;
+			}
+			
 			var path:Path;		
 			path = sidewaysPath(player, destination);
 			
@@ -70,6 +76,7 @@ package world.arbitration
 		
 		protected function dispatchStart(player:Player, path:Path) :void
 		{
+			trace("dispatching "+path+" to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
 		}
 		
@@ -113,7 +120,12 @@ package world.arbitration
 			
 			// the selected cell is neither above nor below.
 			return null;
-		}		
+		}
+		
+		public function toString () :String
+		{
+			return "board arbiter";
+		} 
 		
 		protected var _board:BoardAccess;
 	}

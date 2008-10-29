@@ -11,7 +11,7 @@ package client
 	import flash.text.TextField;
 	
 	import inventory.InventoryDisplay;
-		
+	
 	import server.Messages.LevelEntered;
 	import server.Messages.PathStart;
 	
@@ -53,9 +53,6 @@ package client
 			var rect:GraphicRectangle = GraphicRectangle.fromText(modeView).paddedBy(10).alignBottomRightTo(frame);		
 			Geometry.position(modeView, rect.origin);
 			addChild(modeView);
-						
-			_frameTimer = new FrameTimer();
-			_frameTimer.start();
 				
 			enterWorld();			
 		}
@@ -93,6 +90,7 @@ package client
             if (player == null)
             {
             	player = newPlayer(detail.userId);
+            	_players.register(player);
             }
             
             /**
@@ -110,26 +108,33 @@ package client
             if (id == _world.clientId) {
             	_localPlayer = player;
             }
-			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);			
+			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);
+			player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);			
 		    return player;
 		}
 		
-		protected function handleChangedLevel(event:PlayerEvent) :void
+		protected function handleChangedLevel (event:PlayerEvent) :void
 		{
 			// if it's the local player, then switch level to the player's new
 			// level.
 			if (event.player == _localPlayer) {
     			selectLevel (event.player.level);
-    			_objective.addLocalPlayer(event.player);
+    			_viewer.addLocalPlayer(event.player);
             } else {
             	// otherwise, if the player has entered the level that the local
             	// player is on, then 
             	if (event.player.level == _level) {
-            		_objective.addPlayer(event.player);
+            		_viewer.addPlayer(event.player);
             	} else {
-            		_objective.removePlayer(event.player);
+            		_viewer.removePlayer(event.player);
             	}
             }
+		}
+		
+		protected function handlePathComplete (event:PlayerEvent) :void
+		{
+			_world.moveComplete(event.player.path.finish);
+			event.player.clearPath();
 		}
 		
 		/**
@@ -163,12 +168,16 @@ package client
 		public function startPath (detail:PathStart) :void
 		{
             const player:Player = _players.find(detail.userId);
-//            player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, 
+            player.follow(detail.path);
+		}
+		
+		override public function toString () :String
+		{
+			return "client "+_world.clientId; 
 		}
 		
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
-		protected var _objective:Objective;		
 		protected var _players:PlayerRegister = new PlayerRegister();
 		protected var _level:int = NO_LEVEL;
 		
@@ -176,7 +185,6 @@ package client
 		protected var _board:Board;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
-		protected var _frameTimer:FrameTimer;		
 		
 		protected const GAME_WIDTH:int = 700;
 		protected const GAME_HEIGHT:int = 500;
