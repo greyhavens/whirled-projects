@@ -107,23 +107,58 @@ public class LevelSelectMode extends DemoGameMode
         _playButtonObj = new SimpleSceneObject(playButton);
         this.addObject(_playButtonObj, _modeLayer);
 
-        if (AppContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
-            // The player has unlocked endless mode. Show the endless mode button
-            var endlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
-                "challenge_panel");
-            endlessPanel.x = ENDLESS_PANEL_LOC.x;
-            endlessPanel.y = ENDLESS_PANEL_LOC.y;
-            _modeLayer.addChild(endlessPanel);
-            var endlessButton :SimpleButton = endlessPanel["challenge_button"];
-            registerOneShotCallback(endlessButton, MouseEvent.CLICK, onEndlessClicked);
+        if (playerStartedGame) {
+            if (AppContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
+                // The player has unlocked endless mode. Show the endless mode button
+                var endlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                    "challenge_panel");
+                endlessPanel.x = ENDLESS_PANEL_LOC.x;
+                endlessPanel.y = ENDLESS_PANEL_LOC.y;
+                _modeLayer.addChild(endlessPanel);
+                var endlessButton :SimpleButton = endlessPanel["challenge_button"];
+                registerOneShotCallback(endlessButton, MouseEvent.CLICK, onEndlessClicked);
 
-        } else if (playerStartedGame) {
-            // the player has played the game but hasn't unlocked endless mode.
-            var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
-                "challenge_panel_locked");
-            lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
-            lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
-            _modeLayer.addChild(lockedEndlessPanel);
+            } else {
+                // the player has played the game but hasn't unlocked endless mode.
+                var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                    "challenge_panel_locked");
+                lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
+                lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
+                _modeLayer.addChild(lockedEndlessPanel);
+            }
+
+            // show the "select panel, which shows the level-select and credits buttons
+            var selectPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                "select_panel");
+            selectPanel.x = SELECT_PANEL_LOC.x;
+            selectPanel.y = SELECT_PANEL_LOC.y;
+            _modeLayer.addChild(selectPanel);
+
+            // buttons
+            var buttonParent :Sprite = SpriteUtil.createSprite(true);
+
+            _levelSelectButton = UIBits.createButton("Select Level", 1.5);
+            this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    createLevelSelectLayout();
+                });
+            DisplayUtil.positionBounds(_levelSelectButton, -_levelSelectButton.width * 0.5, 0);
+            buttonParent.addChild(_levelSelectButton);
+
+            var creditsButton :SimpleButton = UIBits.createButton("Credits", 1.5);
+            this.registerOneShotCallback(creditsButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    // TODO
+                });
+            DisplayUtil.positionBounds(creditsButton, -creditsButton.width * 0.5,
+                buttonParent.height + 5);
+            buttonParent.addChild(creditsButton);
+
+            DisplayUtil.positionBounds(buttonParent,
+                (selectPanel.width - buttonParent.width) * 0.5,
+                (selectPanel.height - buttonParent.height) * 0.5);
+            selectPanel.addChild(buttonParent);
+
 
         } else {
             // it's the player's first time playing: show them the tutorial
@@ -140,15 +175,6 @@ public class LevelSelectMode extends DemoGameMode
             _buyGameButton.y = 10;
             _modeLayer.addChild(_buyGameButton);
         }*/
-
-        _levelSelectButton = UIBits.createButton("Select Level", 1.2);
-        this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                createLevelSelectLayout();
-            });
-        _levelSelectButton.x = 10;
-        _levelSelectButton.y = 10;
-        _modeLayer.addChild(_levelSelectButton);
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
             this.createDebugLayout();
@@ -516,7 +542,8 @@ public class LevelSelectMode extends DemoGameMode
     protected static const JACK_PORTRAIT_LOC :Point = new Point(643, 43);
     protected static const STORY_BANNER_LOC :Point = new Point(350, 330);
     protected static const STORY_BUTTON_LOC :Point = new Point(350, 350);
-    protected static const ENDLESS_PANEL_LOC :Point = new Point(488, 395);
+    protected static const ENDLESS_PANEL_LOC :Point = new Point(488, 390);
+    protected static const SELECT_PANEL_LOC :Point = new Point(0, 391);
 }
 
 }
