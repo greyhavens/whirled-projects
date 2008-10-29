@@ -98,9 +98,9 @@ public class Room
 
     public function playerEntered (player :Player) :void
     {
-        log.debug("Copying player dictionary into room", "payerId", player.playerId,
-                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth,
-                  "level", player.level);
+//        log.debug("Copying player dictionary into room", "payerId", player.playerId,
+//                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth,
+//                  "level", player.level);
 
         // broadcast the arriving player's data using room properties
         var dict :Dictionary = new Dictionary();
@@ -116,8 +116,8 @@ public class Room
     public function playerLeft (player :Player) :void
     {
         // erase the departing player's data from the room properties
-        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
-                  "roomId", roomId);
+//        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
+//                  "roomId", roomId);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
 
         delete _players[player];
@@ -142,7 +142,7 @@ public class Room
             }
             // accept up to two zaps a second
             _nextZap = timer + 500;
-            log.debug("Accepting zap request", "playerId", who.playerId);
+//            log.debug("Accepting zap request", "playerId", who.playerId);
             Server.control.doBatch(function () :void {
                 // let the other people in the room know there was a successful zapping
                 _ctrl.sendMessage(Codes.SMSG_GHOST_ZAPPED, who.playerId);
@@ -183,8 +183,8 @@ public class Room
     public function minigameCompletion (
         player :Player, weapon :int, win :Boolean, damageDone :int, healingDone :int) :void
     {
-        log.debug("Minigame completion", "playerId", player.playerId, "weapon", weapon, "damage",
-                  damageDone, "healing", healingDone);
+//        log.debug("Minigame completion", "playerId", player.playerId, "weapon", weapon, "damage",
+//                  damageDone, "healing", healingDone);
 
         // award 3 points for a win, 1 for a lose
         _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
@@ -267,7 +267,7 @@ public class Room
     internal function damageGhost (damage :int) :Boolean
     {
         var health :int = _ghost.health;
-        log.debug("Damaging ghost", "roomId", roomId, "damage", damage, "health", health);
+//        log.debug("Damaging ghost", "roomId", roomId, "damage", damage, "health", health);
         if (damage >= health) {
             _ghost.setHealth(0);
             return true;
@@ -455,7 +455,7 @@ public class Room
             totDmg += playerDmg[ii];
         }
 
-        log.debug("HEAL", "totalHeal", totHeal, "totalTeamDamage", totDmg);
+//        log.debug("HEAL", "totalHeal", totHeal, "totalTeamDamage", totDmg);
         // hand totHeal out proportionally to each player's relative hurtness
         for (ii = 0; ii < team.length; ii ++) {
             var player :Player = Player(team[ii]);
@@ -507,7 +507,7 @@ public class Room
             playerArr.unshift(player);
             pointsArr.unshift(points);
             totPoints += points;
-            log.debug("Player accrual", "playerId", playerId, "points", points);
+//            log.debug("Player accrual", "playerId", playerId, "points", points);
         }
 
         if (totPoints == 0) {
@@ -569,8 +569,15 @@ public class Room
             // the ghost's level base is (currently) completely determined by the room
             var rnd :Number = roomRandom.nextNumber();
 
-            // the base is in [1, 5] and low level ghosts are more common than high level ones
-            var levelBase :int = int(1 + 9*rnd*rnd);
+            var levelBase :int;
+            if (ArrayUtil.contains(LIBRARY_SCENES, roomId)) {
+                // the ghosts in the library are level 1-8
+                levelBase = int(1 + 7*rnd*rnd);
+            } else {
+                // the ghosts spawn in a range of levels 1 to 40, and we distribute them as
+                // rnd()^3, i.e. ghosts L1-10 account for 63% of the ghosts, L30-40 for 10%
+                // and only one ghost in 119 is level 40.
+            var levelBase :int = int(1 + 39*rnd*rnd*rnd);
 
             // the actual level is the base plus a random stretch of 0 or 1
             var level :int = levelBase + Server.random.nextInt(2);

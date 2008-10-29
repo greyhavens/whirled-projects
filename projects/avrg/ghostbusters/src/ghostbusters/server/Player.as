@@ -127,7 +127,7 @@ public class Player
 
     public function damage (damage :int) :void
     {
-        log.debug("Damaging player", "playerId", _playerId, "damage", damage, "health", _health);
+//        log.debug("Damaging player", "playerId", _playerId, "damage", damage, "health", _health);
 
         // let the clients in the room know of the attack
         _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
