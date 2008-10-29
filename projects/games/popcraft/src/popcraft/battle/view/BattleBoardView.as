@@ -67,8 +67,7 @@ public class BattleBoardView extends SceneObject
 
     protected function playZapSound () :void
     {
-        GameContext.playGameSound(
-            Rand.nextBoolean(Rand.STREAM_COSMETIC) ? "sfx_tesla1" : "sfx_tesla2");
+        GameContext.playGameSound("sfx_tesla2");
     }
 
     override protected function update (dt :Number) :void

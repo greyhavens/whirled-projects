@@ -118,7 +118,6 @@ public class Resources
         rm.queueResourceLoad("sound", "sfx_gateopen", { embeddedClass: SOUND_GATEOPEN, priority: 8 });
         rm.queueResourceLoad("sound", "sfx_gotmultiplier", { embeddedClass: SOUND_GOTMULTIPLIER, priority: 4 });
         rm.queueResourceLoad("sound", "sfx_lostmultiplier", { embeddedClass: SOUND_LOSTMULTIPLIER, priority: 4 });
-        rm.queueResourceLoad("sound", "sfx_tesla1", { embeddedClass: SOUND_TESLA1, volume: 0.3 });
         rm.queueResourceLoad("sound", "sfx_tesla2", { embeddedClass: SOUND_TESLA2, volume: 0.3 });
         rm.queueResourceLoad("sound", "sfx_resurrect", { embeddedClass: SOUND_RESURRECT, priority: 9 });
 
@@ -301,8 +300,6 @@ public class Resources
     protected static const SOUND_GOTMULTIPLIER :Class;
     [Embed(source="../../rsrc/audio/sfx/multiplier_lost2b.mp3")]
     protected static const SOUND_LOSTMULTIPLIER :Class;
-    [Embed(source="../../rsrc/audio/sfx/tesla1.mp3")]
-    protected static const SOUND_TESLA1 :Class;
     [Embed(source="../../rsrc/audio/sfx/tesla2.mp3")]
     protected static const SOUND_TESLA2 :Class;
     [Embed(source="../../rsrc/audio/sfx/workshop_revive_revision2.mp3")]
