@@ -9,6 +9,8 @@ import flash.display.Graphics;
 
 import fl.controls.ScrollBar;
 
+import flash.media.Sound;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
@@ -90,6 +92,8 @@ public class Display extends Sprite
 
         logRoundStarted();
         setEnableState(true);
+
+        Audio.playMusic(Audio.theme, 1);
     }
 
     /** Called when the round ends - disables display. */
@@ -108,6 +112,8 @@ public class Display extends Sprite
 
         // Disabled for now -- Bruno
         //_stats.show(model, board);
+
+        Audio.stopMusic();
     }
 
     /** If this board letter is already selected as part of the word, returns true.  */
@@ -133,6 +139,7 @@ public class Display extends Sprite
     /** Adds a new letter to the word (by adding a pair of coordinates) */
     public function selectLetterAtPosition (position :Point) :void
     {
+        Audio.click.play();
         _word.push(position);
         updateLetterSelection(_word);
     }
@@ -234,6 +241,8 @@ public class Display extends Sprite
             pulsate(_letters[p.x][p.y]._label,
                     Resources.TEXT_COLOR_NORMAL, Resources.TEXT_COLOR_PULSE, Resources.PULSE_DURATION);
         }
+
+        Audio.success.play();
     }
 
     /** Updates the log with a failure message */
@@ -340,6 +349,7 @@ public class Display extends Sprite
             _controller.tryScoreWord(_wordfield.text);
         } catch (e :TangleWordError) {
             _logger.log(e.message, Logger.INVALID_WORD);
+            Audio.error.play();
         }
 
         removeAllSelectedLetters();
