@@ -44,10 +44,8 @@ public class EndlessLevelManager
     {
         var dummySaves :SavedEndlessGameList = new SavedEndlessGameList();
         var numSaves :int = Rand.nextIntRange(9, 15, Rand.STREAM_COSMETIC);
-        var score :int;
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
-            score += Rand.nextIntRange(100, 10000, Rand.STREAM_COSMETIC);
-            dummySaves.addSave(SavedEndlessGame.create(mapIndex, score, 1, 150));
+            dummySaves.addSave(SavedEndlessGame.create(mapIndex, 0, 1, 150));
         }
 
         return dummySaves;

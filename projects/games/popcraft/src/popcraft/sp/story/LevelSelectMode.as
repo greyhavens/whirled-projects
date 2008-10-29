@@ -19,7 +19,6 @@ import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
 import popcraft.sp.UnitAnimTestMode;
 import popcraft.sp.endless.SpEndlessLevelSelectMode;
-import popcraft.sp.endless.EndlessLevelSelectModeBase;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
@@ -108,8 +107,8 @@ public class LevelSelectMode extends DemoGameMode
         _playButtonObj = new SimpleSceneObject(playButton);
         this.addObject(_playButtonObj, _modeLayer);
 
-        if (playerStartedGame) {
-            // the player has already played the game: show the Endless Mode button
+        if (AppContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
+            // The player has unlocked endless mode. Show the endless mode button
             var endlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
                 "challenge_panel");
             endlessPanel.x = ENDLESS_PANEL_LOC.x;
@@ -117,6 +116,14 @@ public class LevelSelectMode extends DemoGameMode
             _modeLayer.addChild(endlessPanel);
             var endlessButton :SimpleButton = endlessPanel["challenge_button"];
             registerOneShotCallback(endlessButton, MouseEvent.CLICK, onEndlessClicked);
+
+        } else if (playerStartedGame) {
+            // the player has played the game but hasn't unlocked endless mode.
+            var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                "challenge_panel_locked");
+            lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
+            lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
+            _modeLayer.addChild(lockedEndlessPanel);
 
         } else {
             // it's the player's first time playing: show them the tutorial
