@@ -11,6 +11,7 @@ import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.display.StageQuality;
 import flash.events.MouseEvent;
 
 import popcraft.battle.view.CreatureAnimFactory;
@@ -105,6 +106,18 @@ public class CreditsMode extends AppMode
 
             addObject(animView, _unitParent);
         }
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+        StageQualityManager.pushStageQuality(StageQuality.HIGH);
+    }
+
+    override protected function exit () :void
+    {
+        StageQualityManager.popStageQuality();
+        super.exit();
     }
 
     override public function update (dt :Number) :void
