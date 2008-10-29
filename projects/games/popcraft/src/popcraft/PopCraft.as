@@ -76,6 +76,7 @@ public class PopCraft extends Sprite
         AppContext.userCookieMgr.addDataSource(AppContext.globalPlayerStats);
         AppContext.userCookieMgr.addDataSource(AppContext.endlessLevelMgr);
         AppContext.userCookieMgr.addDataSource(AppContext.prizeMgr);
+        AppContext.userCookieMgr.addDataSource(AppContext.savedPlayerBits);
 
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty

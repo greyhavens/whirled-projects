@@ -24,6 +24,8 @@ public class AppContext
     public static var allLevelPacks :LevelPackManager = new LevelPackManager();
     public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
     public static var prizeMgr :PrizeManager = new PrizeManager();
+    public static var savedPlayerBits :SavedPlayerBits = new SavedPlayerBits();
+
     public static var userCookieMgr :UserCookieManager;
 
     public static function awardTrophy (trophyName :String) :void
@@ -42,18 +44,18 @@ public class AppContext
 
     public static function get isEndlessModeUnlocked () :Boolean
     {
-        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT || hasPremiumLevelPack);
+        return AppContext.hasPremiumLevelPack;
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
-        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT || hasPremiumLevelPack ||
-            levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+        return (AppContext.hasPremiumLevelPack || savedPlayerBits.hasFreeStoryMode);
     }
 
     public static function get hasPremiumLevelPack () :Boolean
     {
-        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
+        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT ||
+            playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
     }
 
     public static function get isMultiplayer () :Boolean
