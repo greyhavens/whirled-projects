@@ -242,7 +242,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="2"
 						spellDropCourierGroupSizeMax="2">
 
-						<Wave absoluteDelay="4"><Unit type="heavy" count="6" max="7"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="heavy" count="5" max="6"/></Wave>
 						
 						<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
@@ -252,7 +252,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="36"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="39"><Unit type="sapper" count="1"/></Wave>
 						
-						<Wave absoluteDelay="69"><Unit type="heavy" count="6" max="7"/></Wave>
+						<Wave absoluteDelay="69"><Unit type="heavy" count="5" max="6"/></Wave>
 						<Wave absoluteDelay="70" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 					</Day>
 				</RepeatingDays>
@@ -411,7 +411,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
 
-						<Wave absoluteDelay="4"><Unit type="heavy" count="5" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="heavy" count="3" max="5"/></Wave>
 						
 						<Wave absoluteDelay="9"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="11"><Unit type="grunt" count="1"/></Wave>
