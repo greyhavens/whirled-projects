@@ -108,6 +108,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="30" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="80" targetPlayerName="EndlessMp2"><Unit type="grunt" count="5"/></Wave>
 						<Wave absoluteDelay="85" targetPlayerName="EndlessMp2"><Unit type="grunt" count="5"/></Wave>
+						<Wave absoluteDelay="90" targetPlayerName="EndlessMp2"><Unit type="grunt" count="5"/></Wave>
 						<Wave absoluteDelay="95" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="119"></Wave>
 					</Day>
@@ -215,11 +216,11 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<RepeatingDays>
 					<Day repeatWaves="true">
 
-						<Wave absoluteDelay="1"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="2"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="3"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="10"/></Wave>
-						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="10"/></Wave>
+						<Wave absoluteDelay="1"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="2"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="3"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="5"/></Wave>
 						
 						<Wave absoluteDelay="6" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="9" targetPlayerName="EndlessMp1"><Unit type="sapper" count="2"/></Wave>
@@ -280,6 +281,197 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="69"><Unit type="heavy" count="7" max="8"/></Wave>
 						<Wave absoluteDelay="70" spellCastChance="1" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="70" spellCastChance="1" targetPlayerName="EndlessMp2"><Unit type="colossus" count="1"/></Wave>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+		</Map>
+		
+		<!-- ****** LEVEL 6 : Grave Concerns (Dante, Graveyard) ****** -->
+		<Map displayName="Grave Concerns" isSavePoint="true">
+			<MapSettings backgroundName="graveyard">
+	            <SpellDropLocation x="350" y="220"/>
+			</MapSettings>
+			<HumanPlayers>
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
+					<BaseLocation x="90" y="255" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
+					<BaseLocation x="210" y="135" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+			</HumanPlayers>
+			<MultiplierDropLocation x="350" y="220"/>
+				
+			<!-- Intro Dante, the creepy kid. Loves Behemoths -->
+			<Computer
+				playerName="Dante"
+				baseStartHealth="150"
+				baseHealth="150"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="600" y="285" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true"
+						noticeSpellDropAfterMin="8"
+						noticeSpellDropAfterMax="8"
+						spellDropCourierGroupSizeMin="1"
+						spellDropCourierGroupSizeMax="2">
+						
+						<Wave absoluteDelay="2" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="15" targetPlayerName="EndlessMp2"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="45"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="50" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="80"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="85" targetPlayerName="EndlessMp2"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="115"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="140"/>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+		</Map>
+		
+		<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley, Graveyard) ****** -->
+		<Map displayName="Bullied" isSavePoint="true">
+			<MapSettings backgroundName="graveyard">
+	            <SpellDropLocation x="350" y="130"/>
+			</MapSettings>
+			<HumanPlayers>
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
+					<BaseLocation x="310" y="330" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
+					<BaseLocation x="390" y="330" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+			</HumanPlayers>
+			<MultiplierDropLocation x="350" y="120"/>
+			
+			<Computer
+				playerName="Jack"
+				baseStartHealth="150"
+				baseHealth="150"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="600" y="140" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true"
+						noticeSpellDropAfterMin="5"
+						noticeSpellDropAfterMax="6"
+						spellDropCourierGroupSizeMin="1"
+						spellDropCourierGroupSizeMax="1">
+						
+						<Wave absoluteDelay="10" targetPlayerName="EndlessMp1"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="20"><Unit type="heavy" count="4" max="5"/></Wave>
+						<Wave absoluteDelay="30" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="40" targetPlayerName="EndlessMp2" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="48"/>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+			
+			<Computer
+				playerName="Pigsley"
+				baseStartHealth="120"
+				baseHealth="120"
+				baseHealthIncrement="40"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="80" y="140" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true">
+						<Wave absoluteDelay="0" targetPlayerName="EndlessMp1"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="12" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="24" targetPlayerName="EndlessMp2"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="36" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="40" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="48"/>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+		</Map>
+		
+		<!-- ****** LEVEL 8 : Animal Welfare (Ursula & Ralph, Tesla) ****** -->
+		<Map displayName="Animal Welfare" isSavePoint="true">
+			<MapSettings backgroundName="tesla">
+	            <SpellDropLocation x="300" y="205"/>
+			</MapSettings>
+			<HumanPlayers>
+				<HumanPlayer playerName="EndlessMp1" resourceHandicap="0.75">
+					<BaseLocation x="160" y="130" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+				<HumanPlayer playerName="EndlessMp2" resourceHandicap="0.75">
+					<BaseLocation x="80" y="200" team="0"/>
+					<AvailableUnits all="true"/>
+					<AvailableSpells all="true"/>
+				</HumanPlayer>
+			</HumanPlayers>
+			<MultiplierDropLocation x="300" y="205"/>
+			
+			<Computer
+				playerName="Ursula"
+				baseStartHealth="120"
+				baseHealth="120"
+				baseHealthIncrement="40"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="500" y="330" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true">
+
+						<Wave absoluteDelay="3" spellCastChance="1"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="courier" count="1" max="5"/></Wave>
+						<Wave absoluteDelay="6"><Unit type="courier" count="1" max="5"/></Wave>
+						
+						<Wave absoluteDelay="7" targetPlayerName="EndlessMp1"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="9" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="12" targetPlayerName="EndlessMp1"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="15" targetPlayerName="EndlessMp2"><Unit type="sapper" count="2"/></Wave>
+						
+						<Wave absoluteDelay="25"/>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+			
+			<Computer
+				playerName="Ralph"
+				baseStartHealth="150"
+				baseHealth="150"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="620" y="225" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true"
+						noticeSpellDropAfterMin="6"
+						noticeSpellDropAfterMax="6"
+						spellDropCourierGroupSizeMin="1"
+						spellDropCourierGroupSizeMax="1">
+
+						<Wave absoluteDelay="4"><Unit type="heavy" count="5" max="5"/></Wave>
+						
+						<Wave absoluteDelay="9" targetPlayerName="EndlessMp2"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="11" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
+						
+						<Wave absoluteDelay="34" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="36" targetPlayerName="EndlessMp1"><Unit type="grunt" count="3"/></Wave>
+						
+						<Wave absoluteDelay="37"><Unit type="heavy" count="3" max="5"/></Wave>
+						
+						<Wave absoluteDelay="70" targetPlayerName="EndlessMp1" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="71" targetPlayerName="EndlessMp2" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="75"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
