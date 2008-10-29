@@ -11,6 +11,7 @@ import flash.display.DisplayObject;
 
 import popcraft.*;
 import popcraft.battle.*;
+import popcraft.battle.view.SpellDropView;
 import popcraft.data.*;
 import popcraft.mp.*;
 import popcraft.sp.*;
@@ -53,6 +54,15 @@ public class EndlessGameMode extends GameMode
 
         super.setup();
 
+        // if this is not the first level, create a new multiplier drop object
+        if (EndlessGameContext.mapIndex != 0) {
+            var multiplierView :SpellDropView = this.createMultiplierDrop(false);
+            // hide the multiplier until the mode is entered for the first time,
+            // to allow the interstitial movie to play
+            multiplierView.visible = false;
+            _unhideMultiplierOnEnter = multiplierView.ref;
+        }
+
         var scoreView :ScoreView = new ScoreView();
         this.addObject(scoreView, GameContext.overlayLayer);
     }
@@ -60,6 +70,15 @@ public class EndlessGameMode extends GameMode
     override protected function enter () :void
     {
         super.enter();
+
+        if (_unhideMultiplierOnEnter != null) {
+            var spellDropView :SpellDropView = _unhideMultiplierOnEnter.object as SpellDropView;
+            if (spellDropView != null) {
+                spellDropView.visible = true;
+            }
+
+            _unhideMultiplierOnEnter = null;
+        }
 
         if (_readyToStart) {
             return;
@@ -99,16 +118,6 @@ public class EndlessGameMode extends GameMode
         }
 
         _readyToStart = true;
-    }
-
-    override protected function startGame () :void
-    {
-        super.startGame();
-
-        // if this is not the first level, create a new multiplier drop object
-        if (EndlessGameContext.mapIndex != 0) {
-            this.createMultiplierDrop(false);
-        }
     }
 
     override protected function updateNetworkedObjects () :void
@@ -159,9 +168,9 @@ public class EndlessGameMode extends GameMode
         }
     }
 
-    protected function createMultiplierDrop (playSound :Boolean) :void
+    protected function createMultiplierDrop (playSound :Boolean) :SpellDropView
     {
-        SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER,
+        return SpellDropFactory.createSpellDrop(Constants.SPELL_TYPE_MULTIPLIER,
             _curMapData.multiplierDropLoc, playSound);
     }
 
@@ -504,6 +513,8 @@ public class EndlessGameMode extends GameMode
     protected var _lastLiveComputerLoc :Vector2 = new Vector2();
     protected var _readyToStart :Boolean;
     protected var _playerGotMultiplier :Array;
+
+    protected var _unhideMultiplierOnEnter :SimObjectRef;
 
     protected var _playersCheckedIn :Array = [];
 

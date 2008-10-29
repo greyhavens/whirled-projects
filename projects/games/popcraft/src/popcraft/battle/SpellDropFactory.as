@@ -1,7 +1,6 @@
 package popcraft.battle {
 
 import com.threerings.flash.Vector2;
-
 import com.whirled.contrib.simplegame.audio.*;
 
 import popcraft.*;
@@ -10,7 +9,7 @@ import popcraft.battle.view.SpellDropView;
 public class SpellDropFactory
 {
     public static function createSpellDrop (spellType :int, loc :Vector2, playSound :Boolean)
-        :SpellDropObject
+        :SpellDropView
     {
         var spellDrop :SpellDropObject = new SpellDropObject(spellType);
         spellDrop.x = loc.x;
@@ -29,7 +28,7 @@ public class SpellDropFactory
             GameContext.playGameSound("sfx_spelldrop");
         }
 
-        return spellDrop;
+        return spellDropView;
     }
 }
 
