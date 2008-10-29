@@ -118,8 +118,8 @@ public class Resources
         rm.queueResourceLoad("sound", "sfx_gateopen", { embeddedClass: SOUND_GATEOPEN, priority: 8 });
         rm.queueResourceLoad("sound", "sfx_gotmultiplier", { embeddedClass: SOUND_GOTMULTIPLIER, priority: 4 });
         rm.queueResourceLoad("sound", "sfx_lostmultiplier", { embeddedClass: SOUND_LOSTMULTIPLIER, priority: 4 });
-        rm.queueResourceLoad("sound", "sfx_tesla1", { embeddedClass: SOUND_TESLA1, volume: 0.4 });
-        rm.queueResourceLoad("sound", "sfx_tesla2", { embeddedClass: SOUND_TESLA2, volume: 0.4 });
+        rm.queueResourceLoad("sound", "sfx_tesla1", { embeddedClass: SOUND_TESLA1, volume: 0.3 });
+        rm.queueResourceLoad("sound", "sfx_tesla2", { embeddedClass: SOUND_TESLA2, volume: 0.3 });
         rm.queueResourceLoad("sound", "sfx_resurrect", { embeddedClass: SOUND_RESURRECT, priority: 9 });
 
         rm.queueResourceLoad("sound", "sfx_introscreen", { embeddedClass: SOUND_INTROSCREEN, volume: 0.3, priority: 10 });

@@ -59,7 +59,7 @@ public class BattleBoardView extends SceneObject
             for each (var zapName :String in TESLA_ZAPS) {
                 var zap :MovieClip = zapParent[zapName];
                 addTask(new RepeatingTask(
-                    new WaitForFrameTask(11, zap),
+                    new WaitForFrameTask(14, zap),
                     new FunctionTask(playZapSound)));
             }
         }
