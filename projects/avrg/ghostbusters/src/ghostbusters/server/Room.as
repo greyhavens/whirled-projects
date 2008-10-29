@@ -571,13 +571,11 @@ public class Room
 
             var levelBase :int;
             if (ArrayUtil.contains(Trophies.LIBRARY_SCENES, roomId)) {
-                // the ghosts in the library are level 1-8
-                levelBase = int(1 + 7*rnd*rnd);
+                // the ghosts in the library are level 1-5
+                levelBase = int(1 + 4*rnd*rnd);
             } else {
-                // the ghosts spawn in a range of levels 1 to 40, and we distribute them as
-                // rnd()^3, i.e. ghosts L1-10 account for 63% of the ghosts, L30-40 for 10%
-                // and only one ghost in 119 is level 40.
-                levelBase = int(1 + 39*rnd*rnd*rnd);
+                // the whirled ghosts spawn in a range of levels 1 to 40
+                levelBase = int(2 + 39*rnd*rnd);
             }
 
             // the actual level is the base plus a random stretch of 0 or 1
