@@ -151,13 +151,13 @@ public class LevelSelectMode extends DemoGameMode
             DisplayUtil.positionBounds(levelSelectButton, -levelSelectButton.width * 0.5, 0);
             buttonParent.addChild(levelSelectButton);
 
-            var creditsButton :SimpleButton = UIBits.createButton("Credits", 1.5);
+            var creditsButton :SimpleButton = UIBits.createButton("About", 1.2);
             registerOneShotCallback(creditsButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.mainLoop.unwindToMode(new CreditsMode());
                 });
             DisplayUtil.positionBounds(creditsButton, -creditsButton.width * 0.5,
-                buttonParent.height + 5);
+                buttonParent.height + 10);
             buttonParent.addChild(creditsButton);
 
             DisplayUtil.positionBounds(buttonParent,
