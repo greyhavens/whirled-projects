@@ -4,11 +4,11 @@ public class Trophies
 {
     /* endless mode trophies */
 
-    // complete sp level 5
+    // complete level 5
     public static const ABECEDARIAN :String = "Abecedarian";
     public static const ABECEDARIAN_MAP_INDEX :int = 4;
     // complete all sp levels 1, 2, 3 times
-    public static const ENDLESS_SP_COMPLETION_TROPHIES :Array = [
+    public static const ENDLESS_COMPLETION_TROPHIES :Array = [
         "Adequate",
         "Accepted",
         "Admired",
@@ -21,6 +21,9 @@ public class Trophies
     public static const MAX_X :String = "MaxX";
     // defeat an opponent who took a multiplier from the battlefield
     public static const HANDICAPPER :String = "Handicapper";
+    // get a very high score
+    public static const HEAD_OF_THE_CLASS :String = "HeadOfTheClass";
+    public static const HEAD_OF_THE_CLASS_SCORE :int = 150000;
 
     /* single-player trophies */
 

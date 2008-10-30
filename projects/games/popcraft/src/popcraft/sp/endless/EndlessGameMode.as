@@ -238,19 +238,18 @@ public class EndlessGameMode extends GameMode
             // end-of-level trophies
             var mapIndex :int = EndlessGameContext.mapIndex;
             var numLevels :int = EndlessGameContext.level.mapSequence.length;
-            if (GameContext.isSinglePlayerGame) {
-                // get halfway through the levels
-                if (mapIndex >= Trophies.ABECEDARIAN_MAP_INDEX) {
-                    AppContext.awardTrophy(Trophies.ABECEDARIAN);
+            // get halfway through the levels
+            if (mapIndex >= Trophies.ABECEDARIAN_MAP_INDEX) {
+                AppContext.awardTrophy(Trophies.ABECEDARIAN);
+            }
+            // get all the way through the levels
+            for (var ii :int = 0; ii <= Trophies.ENDLESS_COMPLETION_TROPHIES.length; ++ii) {
+                if (mapIndex + 1 >= (numLevels * (ii + 1))) {
+                    AppContext.awardTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[ii]);
                 }
-                // get all the way through the levels
-                for (var ii :int = 0; ii <= Trophies.ENDLESS_SP_COMPLETION_TROPHIES.length; ++ii) {
-                    if (mapIndex + 1 >= (numLevels * (ii + 1))) {
-                        AppContext.awardTrophy(Trophies.ENDLESS_SP_COMPLETION_TROPHIES[ii]);
-                    }
-                }
+            }
 
-            } else {
+            if (GameContext.isMultiplayerGame) {
                 // complete any MP level
                 AppContext.awardTrophy(Trophies.COLLABORATOR);
             }

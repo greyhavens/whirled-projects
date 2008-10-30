@@ -77,6 +77,8 @@ public class EndlessGameContext
         offset *= scoreMultiplier;
         resourceScore += offset;
         resourceScoreThisRound += offset;
+
+        EndlessGameContext.checkHeadOfTheClassTrophy();
     }
 
     public static function incrementDamageScore (offset :int) :void
@@ -84,6 +86,15 @@ public class EndlessGameContext
         offset *= scoreMultiplier;
         damageScore += offset;
         damageScoreThisRound += offset;
+
+        EndlessGameContext.checkHeadOfTheClassTrophy();
+    }
+
+    protected static function checkHeadOfTheClassTrophy () :void
+    {
+        if (EndlessGameContext.totalScore >= Trophies.HEAD_OF_THE_CLASS_SCORE) {
+            AppContext.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
+        }
     }
 
     public static function incrementMultiplier () :void
