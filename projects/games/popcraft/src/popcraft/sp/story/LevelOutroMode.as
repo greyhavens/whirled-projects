@@ -61,10 +61,16 @@ public class LevelOutroMode extends AppMode
 
             // if it's not the last level, display a "Continue playing?" text
             if (!AppContext.levelMgr.isLastLevel) {
-                var saveGameMessage :String = (SeatingManager.isLocalPlayerGuest ?
-                    "Create an account on Whirled to save your progress!\nContinue playing?" :
-                    "Your progress has been saved.\nContinue playing?");
-                var tfMessage :DisplayObject = UIBits.createText(saveGameMessage, 1, WIDTH - 30);
+                var message :String;
+                if (AppContext.levelMgr.curLevelIndex == Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
+                    message = "Initiation Challenge has been unlocked in the Main Menu!";
+                } else {
+                    message = (SeatingManager.isLocalPlayerGuest ?
+                        "Create an account on Whirled to save your progress!" :
+                        "Your progress has been saved.") + "\nContinue playing?"
+                }
+
+                var tfMessage :DisplayObject = UIBits.createText(message, 1.1, WIDTH - 30);
                 tfMessage.x = (WIDTH * 0.5) - (tfMessage.width * 0.5);
                 tfMessage.y = tfScore.y + tfScore.height + 11;
                 bgSprite.addChild(tfMessage);
