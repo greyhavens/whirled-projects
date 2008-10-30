@@ -14,12 +14,11 @@ public class EndlessGameContext
     public static var scoreMultiplier :Number;
     public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
+    public static var gameStarted :Boolean;
 
     public static function get isNewGame () :Boolean
     {
-        // used by EndlessGameMode.setup to determine if this is a new game, or simply
-        // the next map in an existing game
-        return (mapIndex <= 0);
+        return !gameStarted;
     }
 
     public static function reset () :void
@@ -37,6 +36,8 @@ public class EndlessGameContext
         if (GameContext.isMultiplayerGame) {
             playerMonitor = new PlayerMonitor(SeatingManager.numPlayers);
         }
+
+        gameStarted = false;
     }
 
     public static function get mapCycleNumber () :int

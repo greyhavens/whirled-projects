@@ -120,6 +120,12 @@ public class EndlessGameMode extends GameMode
         _readyToStart = true;
     }
 
+    override protected function startGame () :void
+    {
+        EndlessGameContext.gameStarted = true;
+        super.startGame();
+    }
+
     override protected function updateNetworkedObjects () :void
     {
         super.updateNetworkedObjects();
