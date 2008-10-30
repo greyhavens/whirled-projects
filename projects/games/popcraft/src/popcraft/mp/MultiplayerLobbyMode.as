@@ -41,7 +41,17 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         // handle clicks on the team boxes
-        for (var teamId :int = ENDLESS_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
+        if (SeatingManager.numExpectedPlayers == 2) {
+            this.createTeamBoxMouseListener(_bg, ENDLESS_TEAM_ID);
+        } else {
+            _endlessWarnText = UIBits.createText(
+                "Team Survival is accessible in 2-player games only", 1.2, 0, 0x444444);
+            _endlessWarnText.x = ENDLESS_MODE_WARN_LOC.x - (_endlessWarnText.width * 0.5);
+            _endlessWarnText.y = ENDLESS_MODE_WARN_LOC.y - (_endlessWarnText.height * 0.5);
+            _bg.addChild(_endlessWarnText);
+        }
+
+        for (var teamId :int = UNASSIGNED_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
             this.createTeamBoxMouseListener(_bg, teamId);
         }
 
@@ -345,10 +355,16 @@ public class MultiplayerLobbyMode extends AppMode
 
         if (!_showingPremiumContent && someoneHasPremiumContent) {
             unlockButton.visible = false;
+            if (_endlessWarnText != null) {
+                _endlessWarnText.visible = true;
+            }
             _showingPremiumContent = true;
 
         } else if (!someoneHasPremiumContent) {
             unlockButton.visible = true;
+            if (_endlessWarnText != null) {
+                _endlessWarnText.visible = false;
+            }
             this.registerListener(unlockButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
@@ -475,6 +491,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _initedLocalPlayerData :Boolean;
     protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
     protected var _showingPremiumContent :Boolean;
+    protected var _endlessWarnText :TextField;
 
     protected static var log :Log = Log.getLog(MultiplayerLobbyMode);
 
@@ -486,6 +503,8 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 132);
     protected static const ENDLESS_BOX_LOC :Point = new Point(240, 435);
+
+    protected static const ENDLESS_MODE_WARN_LOC :Point = new Point(455, 454);
 
     protected static const TEAM_BOX_NAMES :Array = [ "red_box", "blue_box", "green_box", "yellow_box" ];
     protected static const UNASSIGNED_BOX_NAME :String = "unassigned_box";
