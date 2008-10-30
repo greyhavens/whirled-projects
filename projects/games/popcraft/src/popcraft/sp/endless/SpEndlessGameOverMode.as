@@ -14,7 +14,7 @@ public class SpEndlessGameOverMode extends SpEndlessLevelSelectModeBase
         super.setup();
 
         if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.endGameWithScore(EndlessGameContext.score,
+            AppContext.gameCtrl.game.endGameWithScore(EndlessGameContext.totalScore,
                 Constants.SCORE_MODE_ENDLESS);
         }
     }

@@ -44,7 +44,7 @@ public class PlayerMonitor
     {
         var bytes :ByteArray = new ByteArray();
         bytes.writeByte(GameContext.localPlayerIndex);
-        bytes.writeInt(EndlessGameContext.score);
+        bytes.writeInt(EndlessGameContext.totalScore);
         AppContext.gameCtrl.net.sendMessage(PLAYER_SCORE_MSG, bytes);
     }
 

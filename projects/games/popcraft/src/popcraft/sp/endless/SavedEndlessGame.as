@@ -10,18 +10,25 @@ import popcraft.*;
 public class SavedEndlessGame
 {
     public var mapIndex :int;
-    public var score :int;
+    public var resourceScore :int;
+    public var damageScore :int;
     public var multiplier :int = 1;
     public var health :int;
     public var spells :Array = ArrayUtil.create(NUM_SPELLS, 0);
 
-    public static function create (mapIndex :int, score :int, multiplier :int, health :int,
-        spells :Array = null)
+    public function get totalScore () :int
+    {
+        return resourceScore + damageScore;
+    }
+
+    public static function create (mapIndex :int, resourceScore :int, damageScore :int,
+        multiplier :int, health :int, spells :Array = null)
         :SavedEndlessGame
     {
         var save :SavedEndlessGame = new SavedEndlessGame();
         save.mapIndex = mapIndex;
-        save.score = score;
+        save.resourceScore = resourceScore;
+        save.damageScore = damageScore;
         save.multiplier = multiplier;
         save.health = health;
         if (spells != null) {
@@ -33,7 +40,8 @@ public class SavedEndlessGame
     public function isEqual (rhs :SavedEndlessGame) :Boolean
     {
         return (mapIndex == rhs.mapIndex &&
-            score == rhs.score &&
+            resourceScore == rhs.resourceScore &&
+            damageScore == rhs.damageScore &&
             multiplier == rhs.multiplier &&
             health == rhs.health &&
             this.spellsEqual(rhs));
@@ -55,7 +63,8 @@ public class SavedEndlessGame
         checkCookieValidity();
 
         mapIndex = ba.readShort();
-        score = ba.readInt();
+        resourceScore = ba.readInt();
+        damageScore = ba.readInt();
         multiplier = ba.readByte();
         health = ba.readShort();
 
@@ -71,7 +80,8 @@ public class SavedEndlessGame
         ba = (ba != null ? ba : new ByteArray());
 
         ba.writeShort(mapIndex);
-        ba.writeInt(score);
+        ba.writeInt(resourceScore);
+        ba.writeInt(damageScore);
         ba.writeByte(multiplier);
         ba.writeShort(health);
 
@@ -88,7 +98,8 @@ public class SavedEndlessGame
 
         var maxGame :SavedEndlessGame = new SavedEndlessGame();
         maxGame.mapIndex = a.mapIndex;
-        maxGame.score = Math.max(a.score, b.score);
+        maxGame.resourceScore = Math.max(a.resourceScore, b.resourceScore);
+        maxGame.damageScore = Math.max(a.damageScore, b.damageScore);
         maxGame.multiplier = Math.max(a.multiplier, b.multiplier);
         maxGame.health = Math.max(a.health, b.health);
 

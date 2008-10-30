@@ -47,7 +47,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         // create a dummy Level 1 save, so that players can start new games
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        _level1 = SavedEndlessGame.create(0, 0, 1, workshopData.maxHealth);
+        _level1 = SavedEndlessGame.create(0, 0, 0, 1, workshopData.maxHealth);
 
         var initialMapIndex :int =
             (_mode == GAME_OVER_MODE ? EndlessGameContext.mapIndex : _highestMapIndex);
@@ -256,6 +256,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
     protected static const LEVEL_SELECT_MODE :int = 0;
     protected static const GAME_OVER_MODE :int = 1;
+    protected static const INTERSTITIAL_MODE :int = 2;
 }
 
 }
@@ -416,7 +417,7 @@ class SaveView extends SceneObject
             var statText :TextField = statPanel["flavor_text"];
             statText.text =
                 "You were defeated by " + MyStringUtil.commafyWords(opponentNames) + "!\n" +
-                "Final score: " + StringUtil.formatNumber(EndlessGameContext.score) + "\n" +
+                "Final score: " + StringUtil.formatNumber(EndlessGameContext.totalScore) + "\n" +
                 "Schoolmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
 
         } else {
@@ -432,7 +433,7 @@ class SaveView extends SceneObject
             _movie.addChild(thumbnail);
 
             // score text
-            scoreText.text = "Score: " + StringUtil.formatNumber(localSave.score);
+            scoreText.text = "Score: " + StringUtil.formatNumber(localSave.totalScore);
 
             // save panels
             if (remoteSave != null) {

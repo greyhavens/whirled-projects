@@ -10,20 +10,36 @@ public class EndlessGameContext
 
     public static var playerMonitor :PlayerMonitor;
 
-    public static var score :int;
+    public static var resourceScore :int;
+    public static var damageScore :int;
+    public static var resourceScoreThisLevel :int;
+    public static var damageScoreThisLevel :int;
     public static var scoreMultiplier :Number;
     public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
     public static var gameStarted :Boolean;
+
+    public static function get totalScore () :int
+    {
+        return resourceScore + damageScore;
+    }
+
+    public static function get totalScoreThisLevel () :int
+    {
+        return resourceScoreThisLevel + damageScoreThisLevel;
+    }
 
     public static function get isNewGame () :Boolean
     {
         return !gameStarted;
     }
 
-    public static function reset () :void
+    public static function resetGameData () :void
     {
-        score = 0;
+        EndlessGameContext.resetLevelData();
+
+        resourceScore = 0;
+        damageScore = 0;
         scoreMultiplier = 1;
         mapIndex = -1;
         savedHumanPlayers = [];
@@ -40,6 +56,12 @@ public class EndlessGameContext
         gameStarted = false;
     }
 
+    public static function resetLevelData () :void
+    {
+        resourceScoreThisLevel = 0;
+        damageScoreThisLevel = 0;
+    }
+
     public static function get mapCycleNumber () :int
     {
         // how many times has the player been through the map cycle?
@@ -48,9 +70,18 @@ public class EndlessGameContext
         return level.getMapCycleNumber(mapIndex);
     }
 
-    public static function incrementScore (offset :int) :void
+    public static function incrementResourceScore (offset :int) :void
     {
-        score += (offset * scoreMultiplier);
+        offset *= scoreMultiplier;
+        resourceScore += offset;
+        resourceScoreThisLevel += offset;
+    }
+
+    public static function incrementDamageScore (offset :int) :void
+    {
+        offset *= scoreMultiplier;
+        damageScore += offset;
+        damageScoreThisLevel += offset;
     }
 
     public static function incrementMultiplier () :void
@@ -58,7 +89,7 @@ public class EndlessGameContext
         if (scoreMultiplier < level.maxMultiplier) {
             ++scoreMultiplier;
         } else {
-            incrementScore(level.pointsPerExtraMultiplier);
+            EndlessGameContext.incrementResourceScore(level.pointsPerExtraMultiplier);
         }
     }
 

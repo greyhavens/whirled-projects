@@ -45,7 +45,7 @@ public class EndlessLevelManager
         var dummySaves :SavedEndlessGameList = new SavedEndlessGameList();
         var numSaves :int = Rand.nextIntRange(9, 15, Rand.STREAM_COSMETIC);
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
-            dummySaves.addSave(SavedEndlessGame.create(mapIndex, 0, 1, 150));
+            dummySaves.addSave(SavedEndlessGame.create(mapIndex, 0, 0, 1, 150));
         }
 
         return dummySaves;
@@ -62,7 +62,8 @@ public class EndlessLevelManager
         // this is called when a level is ending, so we increment mapIndex
         var newSave :SavedEndlessGame = SavedEndlessGame.create(
             EndlessGameContext.mapIndex + 1,
-            EndlessGameContext.score,
+            EndlessGameContext.resourceScore,
+            EndlessGameContext.damageScore,
             EndlessGameContext.scoreMultiplier,
             savedPlayerData.health,
             savedPlayerData.spells);

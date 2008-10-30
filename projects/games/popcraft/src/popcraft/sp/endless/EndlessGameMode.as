@@ -31,7 +31,7 @@ public class EndlessGameMode extends GameMode
     override protected function setup () :void
     {
         if (_needsReset) {
-            EndlessGameContext.reset();
+            EndlessGameContext.resetGameData();
         }
 
         EndlessGameContext.gameMode = this;
@@ -42,7 +42,8 @@ public class EndlessGameMode extends GameMode
 
             // restore saved data if it exists
             EndlessGameContext.mapIndex = save.mapIndex;
-            EndlessGameContext.score = save.score;
+            EndlessGameContext.resourceScore = save.resourceScore;
+            EndlessGameContext.damageScore = save.damageScore;
             EndlessGameContext.scoreMultiplier = save.multiplier;
 
         } else {
@@ -301,7 +302,7 @@ public class EndlessGameMode extends GameMode
         var actualResourcesEarned :int =
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
-        EndlessGameContext.incrementScore(
+        EndlessGameContext.incrementResourceScore(
             actualResourcesEarned * EndlessGameContext.level.pointsPerResource);
 
         return actualResourcesEarned;
@@ -312,7 +313,7 @@ public class EndlessGameMode extends GameMode
         super.creatureKilled(creature, killingPlayerIndex);
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
-            EndlessGameContext.incrementScore(
+            EndlessGameContext.incrementDamageScore(
                 EndlessGameContext.level.pointsPerCreatureKill[creature.unitType]);
         }
     }
@@ -322,7 +323,7 @@ public class EndlessGameMode extends GameMode
         super.workshopKilled(workshop, killingPlayerIndex);
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
-            EndlessGameContext.incrementScore(EndlessGameContext.level.pointsPerOpponentKill);
+            EndlessGameContext.incrementDamageScore(EndlessGameContext.level.pointsPerOpponentKill);
 
             // award the Handicapper trophy if the local player killed an opponent who stole
             // a multiplier from the battlefield

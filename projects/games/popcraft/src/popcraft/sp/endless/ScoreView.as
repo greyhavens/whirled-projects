@@ -32,7 +32,7 @@ public class ScoreView extends SceneObject
     {
         super.update(dt);
 
-        if (_lastScore != EndlessGameContext.score ||
+        if (_lastScore != EndlessGameContext.totalScoreThisLevel ||
             _lastMultiplier != EndlessGameContext.scoreMultiplier) {
             this.updateText();
         }
@@ -40,7 +40,7 @@ public class ScoreView extends SceneObject
 
     protected function updateText () :void
     {
-        var score :int = EndlessGameContext.score;
+        var score :int = EndlessGameContext.totalScoreThisLevel;
         var multiplier :int = EndlessGameContext.scoreMultiplier;
 
         _scoreText.text = StringUtil.formatNumber(score);
