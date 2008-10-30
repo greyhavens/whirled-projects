@@ -60,7 +60,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="5" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="10" targetPlayerName="EndlessMp2"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="20" targetPlayerName="EndlessMp1"><Unit type="grunt" count="3"/></Wave>
-						<Wave absoluteDelay="25" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="25" targetPlayerName="EndlessMp2"><Unit type="grunt" count="4"/></Wave>
 						<Wave absoluteDelay="30"/>
 					</Day>
 				</RepeatingDays>
@@ -182,6 +182,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="20"><Unit type="sapper" count="2"/></Wave>
 						<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="40"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="45"><Unit type="sapper" count="2"/></Wave>
 						<Wave absoluteDelay="50"/>
 					</Day>
 				</RepeatingDays>
@@ -271,7 +272,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="2"
 						spellDropCourierGroupSizeMax="2">
 
-						<Wave absoluteDelay="4" targetPlayerName="EndlessMp1"><Unit type="heavy" count="6" max="6"/></Wave>
+						<Wave absoluteDelay="4" targetPlayerName="EndlessMp1"><Unit type="heavy" count="7" max="7"/></Wave>
 						
 						<Wave absoluteDelay="5" targetPlayerName="EndlessMp1"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
@@ -327,12 +328,12 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="2" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
 						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="15" targetPlayerName="EndlessMp2"><Unit type="heavy" count="3" max="4"/></Wave>
-						<Wave absoluteDelay="45"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="50" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
-						<Wave absoluteDelay="80"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="85" targetPlayerName="EndlessMp2"><Unit type="heavy" count="3" max="4"/></Wave>
-						<Wave absoluteDelay="115"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="140"/>
+						<Wave absoluteDelay="40"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="45" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="70"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="75" targetPlayerName="EndlessMp2"><Unit type="heavy" count="3" max="4"/></Wave>
+						<Wave absoluteDelay="100"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="120"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -462,7 +463,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
 
-						<Wave absoluteDelay="4"><Unit type="heavy" count="5" max="5"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="heavy" count="6" max="6"/></Wave>
 						
 						<Wave absoluteDelay="9" targetPlayerName="EndlessMp2"><Unit type="grunt" count="3"/></Wave>
 						<Wave absoluteDelay="11" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
@@ -470,7 +471,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="34" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="36" targetPlayerName="EndlessMp1"><Unit type="grunt" count="3"/></Wave>
 						
-						<Wave absoluteDelay="37"><Unit type="heavy" count="3" max="5"/></Wave>
+						<Wave absoluteDelay="37"><Unit type="heavy" count="3" max="6"/></Wave>
 						
 						<Wave absoluteDelay="70" targetPlayerName="EndlessMp1" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="85" targetPlayerName="EndlessMp2" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
@@ -514,7 +515,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
 						
-						<Wave absoluteDelay="5" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="3"/></Wave>
+						<Wave absoluteDelay="5" targetPlayerName="EndlessMp1"><Unit type="heavy" count="3" max="4"/></Wave>
 						<Wave absoluteDelay="10" targetPlayerName="EndlessMp1"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="20" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="30" targetPlayerName="EndlessMp1"><Unit type="sapper" count="1"/></Wave>
@@ -522,6 +523,8 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="60" targetPlayerName="EndlessMp2" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="75" targetPlayerName="EndlessMp1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="80" targetPlayerName="EndlessMp2"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="90" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="95" targetPlayerName="EndlessMp2"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="110"/>
 					</Day>
 				</RepeatingDays>
@@ -540,6 +543,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="5"><Unit type="heavy" count="2" max="4"/></Wave>
 						<Wave absoluteDelay="10" targetPlayerName="EndlessMp2"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="60" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="90" targetPlayerName="EndlessMp1"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="110"/>
 					</Day>
 				</RepeatingDays>
