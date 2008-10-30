@@ -68,7 +68,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             break;
         }
 
-        selectMap(initialMapIndex, ANIMATE_DOWN, true);
+        selectMap(initialMapIndex, ANIMATE_DOWN);
 
         if (_mode == INTERSTITIAL_MODE) {
             // if this is a level interstitial, show the scores for the current level,
@@ -78,7 +78,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new TimedTask(4),
                 new FunctionTask(
                     function () :void {
-                        selectMap(initialMapIndex + 1, ANIMATE_NEXT, false);
+                        selectMap(initialMapIndex + 1, ANIMATE_NEXT);
                     }),
                 new TimedTask(2),
                 new FunctionTask(
@@ -120,35 +120,39 @@ public class EndlessLevelSelectModeBase extends AppMode
         }
     }
 
-    protected function selectMap (mapIndex :int, animationType :int,
-        removeModeUnderneath :Boolean) :void
+    protected function selectMap (mapIndex :int, animationType :int) :void
     {
         _mapIndex = mapIndex;
 
         var newStartLoc :Point;
         var oldStartLoc :Point;
-        var newLocTask :LocationTask;
-        var oldLocTask :LocationTask;
-        var soundName :String;
+        var newViewTask :ObjectTask;
+        var oldViewTask :ObjectTask;
         switch (animationType) {
         case ANIMATE_DOWN:
             newStartLoc = UP_LOC;
-            newLocTask = LocationTask.CreateEaseIn(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_DOWN_TIME);
-            soundName = "sfx_gatedrop";
+            newViewTask = new SerialTask(
+                LocationTask.CreateEaseIn(OVERSHOOT_LOC.x, OVERSHOOT_LOC.y, ANIMATE_DOWN_TIME),
+                new PlaySoundTask("sfx_gatedrop"),
+                new FunctionTask(
+                    function () :void {
+                        AppContext.mainLoop.removeMode(-2);
+                    }),
+               LocationTask.CreateEaseIn(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
             break;
 
         case ANIMATE_NEXT:
             newStartLoc = NEXT_LOC;
-            newLocTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
+            newViewTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
             oldStartLoc = DOWN_LOC;
-            oldLocTask = LocationTask.CreateSmooth(PREV_LOC.x, PREV_LOC.y, ANIMATE_NEXTPREV_TIME);
+            oldViewTask = LocationTask.CreateSmooth(PREV_LOC.x, PREV_LOC.y, ANIMATE_NEXTPREV_TIME);
             break;
 
         case ANIMATE_PREV:
             newStartLoc = PREV_LOC;
-            newLocTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
+            newViewTask = LocationTask.CreateSmooth(DOWN_LOC.x, DOWN_LOC.y, ANIMATE_NEXTPREV_TIME);
             oldStartLoc = DOWN_LOC;
-            oldLocTask = LocationTask.CreateSmooth(NEXT_LOC.x, NEXT_LOC.y, ANIMATE_NEXTPREV_TIME);
+            oldViewTask = LocationTask.CreateSmooth(NEXT_LOC.x, NEXT_LOC.y, ANIMATE_NEXTPREV_TIME);
             break;
         }
 
@@ -156,19 +160,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             _saveView.x = oldStartLoc.x;
             _saveView.y = oldStartLoc.y;
             _saveView.removeAllTasks();
-            _saveView.addTask(new SerialTask(oldLocTask, new SelfDestructTask()));
-        }
-
-        var saveViewTask :SerialTask = new SerialTask(newLocTask);
-        if (removeModeUnderneath) {
-            saveViewTask.addTask(new FunctionTask(
-                function () :void {
-                    AppContext.mainLoop.removeMode(-2);
-                }));
-        }
-
-        if (soundName != null) {
-            saveViewTask.addTask(new PlaySoundTask(soundName));
+            _saveView.addTask(new SerialTask(oldViewTask, new SelfDestructTask()));
         }
 
         var localSave :SavedEndlessGame;
@@ -204,7 +196,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
-        _saveView.addTask(saveViewTask);
+        _saveView.addTask(newViewTask);
         addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
@@ -230,7 +222,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                         if (index > _highestMapIndex) {
                             index = 0;
                         }
-                        selectMap(index, ANIMATE_NEXT, false);
+                        selectMap(index, ANIMATE_NEXT);
                     });
 
                 registerOneShotCallback(prevButton, MouseEvent.CLICK,
@@ -239,7 +231,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                         if (index < 0) {
                             index = _highestMapIndex;
                         }
-                        selectMap(index, ANIMATE_PREV, false);
+                        selectMap(index, ANIMATE_PREV);
                     });
 
             } else {
@@ -331,12 +323,14 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _helpView :HelpView;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
+    protected static const OVERSHOOT_TIME :Number = 0.4;
     protected static const ANIMATE_UP_TIME :Number = 1.3;
     protected static const ANIMATE_NEXTPREV_TIME :Number = 0.5;
     protected static const UP_LOC :Point = new Point(350, -328);
-    protected static const DOWN_LOC :Point = new Point(350, 274);
-    protected static const NEXT_LOC :Point = new Point(1050, 274);
-    protected static const PREV_LOC :Point = new Point(-450, 274);
+    protected static const DOWN_LOC :Point = new Point(350, 264);
+    protected static const OVERSHOOT_LOC :Point = new Point(350, 274);
+    protected static const NEXT_LOC :Point = new Point(1050, 264);
+    protected static const PREV_LOC :Point = new Point(-450, 264);
 
     protected static const HELP_VIEW_LOC :Point = new Point(350, 250);
 

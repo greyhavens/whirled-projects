@@ -64,10 +64,9 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         tryCreateUi();
     }
 
-    override protected function selectMap (mapIndex :int, animationType :int,
-        removeModeUnderneath :Boolean) :void
+    override protected function selectMap (mapIndex :int, animationType :int) :void
     {
-        super.selectMap(mapIndex, animationType, removeModeUnderneath);
+        super.selectMap(mapIndex, animationType);
 
         if (SeatingManager.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.selectedMapIdx = mapIndex;
@@ -118,7 +117,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
                 } else {
                     animationType = ANIMATE_PREV;
                 }
-                selectMap(newMapIndex, animationType, false);
+                selectMap(newMapIndex, animationType);
             }
 
         } else if (e.name == EndlessMultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
