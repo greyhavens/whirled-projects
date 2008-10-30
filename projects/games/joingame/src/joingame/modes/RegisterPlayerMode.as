@@ -17,6 +17,8 @@ package joingame.modes
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.net.RegisterPlayerMessage;
+    import joingame.net.ReplayConfirmMessage;
     import joingame.view.*;
     
     /**
@@ -26,9 +28,13 @@ package joingame.modes
      */
     public class RegisterPlayerMode extends AppMode
     {
+        protected static var log :Log = AppContext.log;
+        
         override protected function setup ():void
         {
-            if( !AppContext.gameCtrl.isConnected() ) {
+            log.debug("RegisterPlayerMode...");
+            
+            if( !AppContext.isConnected ) {
                 return;
             }
             
@@ -48,14 +54,14 @@ package joingame.modes
             _text.width = 300;
             _text.x = 550;
             _text.y = 400;
-            _text.text = "Saying hello\nto the server...";
+            _text.text = "Saying hello\nto the JoingameServer...";
     
             this.modeSprite.addChild(_text);
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             
             AppContext.beginToShowInstructionsTime = getTimer();
             
-            AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
+            AppContext.messageManager.sendMessage(new RegisterPlayerMessage(AppContext.playerId));
             
             timer = new Timer(3000, 0);
             timer.addEventListener(TimerEvent.TIMER, tryAgain);
@@ -66,7 +72,7 @@ package joingame.modes
         protected function tryAgain( e :TimerEvent ) :void
         {
             if( AppContext.gameCtrl.isConnected()) {
-                AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
+                AppContext.messageManager.sendMessage(new RegisterPlayerMessage(AppContext.playerId));
             }
             else {
                 //quit game
@@ -74,24 +80,29 @@ package joingame.modes
         }
         
         /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
+        public function handleReplayConfirm (event :ReplayConfirmMessage) :void
         {
-            
-            if (event.name == Server.REPLAY_CONFIRM)
-            {
-                AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-                AppContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
-            }
+            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            GameContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
         }
         
         
         override protected function destroy () :void
         {
-            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             timer.removeEventListener(TimerEvent.TIMER, tryAgain);
-            timer.stop();
+            if( timer.running ) { timer.stop(); }
             
             super.destroy();
+        }
+        
+        override protected function exit () :void
+        {
+            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            timer.removeEventListener(TimerEvent.TIMER, tryAgain);
+            if( timer.running ) { timer.stop(); }
+            
+            super.exit();
         }
         
         protected var timer :Timer;

@@ -1,12 +1,13 @@
 package joingame {
 
-import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
-import flash.display.Sprite;
+
+import joingame.net.JoinMessageManager;
 
 //import popcraft.data.*;
 //import popcraft.sp.LevelManager;
@@ -14,11 +15,24 @@ import flash.display.Sprite;
 //Copied and modified from popcraft
 public class AppContext
 {
-    public static var mainSprite :Sprite;
-    public static var mainLoop :MainLoop;
+    
+    
     public static var gameCtrl :GameControl;
 //    public static var levelMgr :LevelManager;
     public static var randStreamPuzzle :uint;
+    
+    public static var localServer :JoingameServer;
+    public static var messageManager :JoinMessageManager;
+    
+    public static var playerId :int;
+    
+    public static var isConnected :Boolean;
+    
+    public static var isMultiplayer :Boolean;
+    
+    public static var log :Log = Log.getLog(AppContext);
+    
+    
 //    public static var globalPlayerStats :PlayerStats;
 
 //    public static function get defaultGameData () :GameData
@@ -45,20 +59,20 @@ public class AppContext
 //        return variantResource.variants;
 //    }
 
-    public static function LOG(s: String): void
-    {
-        if(false && gameCtrl != null && gameCtrl.local != null && gameCtrl.net.isConnected())
-        {
-            gameCtrl.local.feedback(s);
-        }
-        else
-        {
-            if( Constants.PLAYER_ID_TO_LOG == gameCtrl.game.getMyId() || gameCtrl.game.amServerAgent()) {
-                trace(s);
-//                gameCtrl.local.feedback(s);
-            }
-        }
-    }
+//    public static function LOG(s: String): void
+//    {
+//        if(false && gameCtrl != null && gameCtrl.local != null && gameCtrl.net.isConnected())
+//        {
+//            gameCtrl.local.feedback(s);
+//        }
+//        else
+//        {
+//            if( Constants.PLAYER_ID_TO_LOG == gameCtrl.game.getMyId() || gameCtrl.game.amServerAgent()) {
+//                trace(s);
+////                gameCtrl.local.feedback(s);
+//            }
+//        }
+//    }
     
     
     /**

@@ -1,21 +1,27 @@
 package joingame.modes
 {
-    import com.whirled.AvatarControl;
-    import com.whirled.DataPack;
+    import com.threerings.util.Log;
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.resource.ResourceManager;
+    import com.whirled.contrib.simplegame.resource.SwfResource;
     
     import flash.display.Graphics;
+    import flash.display.MovieClip;
     import flash.text.TextField;
     import flash.text.TextFieldAutoSize;
     
     import joingame.*;
+    
+    import mx.states.AddChild;
 
 public class LoadingMode extends AppMode
 {
+    
+    protected static var log :Log = AppContext.log;
+    
     override protected function setup () :void
     {
-        
+        log.debug("LoadingMode...");
         _text = new TextField();
         _text.selectable = false;
         _text.textColor = 0xFFFFFF;
@@ -44,7 +50,7 @@ public class LoadingMode extends AppMode
     {
         if (!_loading )
         {
-            AppContext.mainLoop.popMode();
+            GameContext.mainLoop.popMode();
         }
     }
 
@@ -77,13 +83,24 @@ public class LoadingMode extends AppMode
 
     protected function handleResourcesLoaded () :void
     {
+        log.debug("Finished loading media");
         _loading = false;
-        AppContext.mainLoop.popMode();
+//        GameContext.mainLoop.popMode();
+
+//        var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
+//        if( swfRoot == null ) {
+//            log.error("Why is UI swfroot null?");
+//            return;
+//        }
+//        modeSprite.addChild(swfRoot);
+//        
+//        var swf :SwfResource = (ResourceManager.instance.getResource("UI") as SwfResource);
+//        modeSprite.addChild( swf.displayRoot);
     }
 
     protected function handleResourceLoadErr (err :String) :void
     {
-        AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
+        GameContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
     }
 
     protected var _text :TextField;

@@ -16,6 +16,7 @@ package joingame.modes
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.net.ModelRequestMessage;
     import joingame.view.*;
     
     /**
@@ -23,11 +24,15 @@ package joingame.modes
      */
     public class WaitingForPlayerDataModeAsObserver extends AppMode
     {
+        protected static var log :Log = AppContext.log;
+        
         override protected function setup ():void
         {
-            if( !AppContext.gameCtrl.isConnected() ) {
-                return;
-            }
+            log.debug("WaitingForPlayerDataModeAsObserver...");
+            
+//            if( !AppContext.gameCtrl.isConnected() ) {
+//                return;
+//            }
             
             _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             
@@ -57,37 +62,43 @@ package joingame.modes
                 GameContext.gameModel = new JoinGameModel(AppContext.gameCtrl);
             }
             GameContext.gameModel.getModelFromPropertySpaces();
-            AppContext.mainLoop.unwindToMode(new ObserverMode());
+            GameContext.mainLoop.unwindToMode(new ObserverMode());
             
         }
         
         
-        protected function timer( e :TimerEvent) :void
-        {
-//            trace("Player " + AppContext.myid + ", Resending game model request");
-            if( AppContext.gameCtrl.isConnected() ) {
-                AppContext.gameCtrl.net.sendMessage(Server.MODEL_REQUEST, {}, NetSubControl.TO_SERVER_AGENT);
-            }
-        }
-        
-        /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
-        {
-            if (event.name == Server.MODEL_CONFIRM)
-            {
-                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameModel.setModelMemento( event.value[0] as Array );
-                AppContext.mainLoop.unwindToMode(new ObserverMode());
-            }
-            
-            
-        }
+//        protected function timer( e :TimerEvent) :void
+//        {
+////            trace("Player " + AppContext.myid + ", Resending game model request");
+//            if( AppContext.gameCtrl.isConnected() ) {
+//                AppContext.messageManager.sendMessage(new ModelRequestMessage(AppContext.playerId));
+//            }
+//        }
+//        
+//        /** Respond to messages from other clients. */
+//        public function messageReceived (event :MessageReceivedEvent) :void
+//        {
+//            if (event.name == JoingameServer.MODEL_CONFIRM)
+//            {
+//                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+//                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+//                GameContext.mainLoop.unwindToMode(new ObserverMode());
+//            }
+//            
+//            
+//        }
         
         
         override protected function destroy () :void
         {
-            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             super.destroy();
+        }
+        
+        override protected function exit () :void
+        {
+//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            super.exit();
         }
         
         

@@ -7,7 +7,6 @@ package joingame.modes
     import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
-    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.DisplayObject;
     import flash.events.TimerEvent;
@@ -17,6 +16,9 @@ package joingame.modes
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.net.AllPlayersReadyMessage;
+    import joingame.net.PlayerReceivedGameStateMessage;
+    import joingame.net.StartPlayMessage;
     import joingame.view.*;
     
     /**
@@ -26,8 +28,12 @@ package joingame.modes
      */
     public class WaitingForPlayerDataModeAsPlayer extends AppMode
     {
+        protected static var log :Log = AppContext.log;
+        
         override protected function setup ():void
         {
+            log.debug("WaitingForPlayerDataModeAsPlayer...");
+            
             if( !AppContext.gameCtrl.isConnected() ) {
                 return;
             }
@@ -49,12 +55,15 @@ package joingame.modes
             _text.text = "Waiting for other\nplayers to check in...";
     
             this.modeSprite.addChild(_text);
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            
+            AppContext.messageManager.addEventListener(AllPlayersReadyMessage.NAME, messageReceivedAllPlayersReady);
+            AppContext.messageManager.addEventListener(StartPlayMessage.NAME, messageReceivedStartPlay);
             
             
             
             /* Double check that we are a player, and not a player theat became an observer */
-            AppContext.gameCtrl.net.sendMessage(Server.PLAYER_READY, {}, NetSubControl.TO_SERVER_AGENT);
+//            AppContext.messageManager.sendMessageToServer(JoingameServer.PLAYER_READY, {});
             
             _readyToStart = false;
             _startTimer = new Timer(1000, 0);
@@ -67,39 +76,64 @@ package joingame.modes
             if(_readyToStart && (getTimer() - AppContext.beginToShowInstructionsTime) >= Constants.TIME_TO_SHOW_INSTRUCTIONS) {
                 _startTimer.removeEventListener(TimerEvent.TIMER, timerEvent);
                 _startTimer.stop();
-                AppContext.mainLoop.unwindToMode(new PlayPuzzleMode());    
+                GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());    
             }
             
         }
-        
         
         
         /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
+        public function messageReceivedAllPlayersReady (event :AllPlayersReadyMessage) :void
         {
+        
+            trace("WaitingForReadyPlayersMode JoingameServer.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
+            GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+            GameContext.gameModel.setModelMemento( event.model );
             
-            if (event.name == Server.ALL_PLAYERS_READY)
-            {
-                trace("WaitingForReadyPlayersMode Server.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
-                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+            AppContext.messageManager.sendMessage(new PlayerReceivedGameStateMessage(AppContext.playerId));
                 
-                AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
-                
-            }
-            else if (event.name == Server.START_PLAY)
-            {
-                _readyToStart = true;
-                timerEvent(null);
-            }
         }
         
-        
-        override protected function destroy () :void
+        /** Respond to messages from other clients. */
+        public function messageReceivedStartPlay (event :StartPlayMessage) :void
         {
-            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            super.destroy();
+            _readyToStart = true;
+            timerEvent(null);
         }
+        
+        
+        
+        
+//        /** Respond to messages from other clients. */
+//        public function messageReceived (event :MessageReceivedEvent) :void
+//        {
+//            
+//            if (event.name == JoingameServer.ALL_PLAYERS_READY)
+//            {
+//                trace("WaitingForReadyPlayersMode JoingameServer.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
+//                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+//                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+//                
+//                AppContext.messageManager.sendMessageToServer(JoingameServer.PLAYER_RECEIVED_START_GAME_STATE, {});
+//                
+//            }
+//            else if (event.name == JoingameServer.START_PLAY)
+//            {
+//                _readyToStart = true;
+//                timerEvent(null);
+//            }
+//        }
+        
+        
+        override protected function exit () :void
+        {
+            AppContext.messageManager.removeEventListener(AllPlayersReadyMessage.NAME, messageReceivedAllPlayersReady);
+            AppContext.messageManager.removeEventListener(StartPlayMessage.NAME, messageReceivedStartPlay);
+            
+//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            super.exit();
+        }
+        
         
         protected var _bg :DisplayObject;
         protected var _readyToStart :Boolean;

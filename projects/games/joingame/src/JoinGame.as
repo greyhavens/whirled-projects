@@ -4,14 +4,13 @@ package
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.game.*;
-    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.Sprite;
     import flash.events.Event;
     
     import joingame.*;
-    import joingame.model.JoinGameModel;
     import joingame.modes.*;
+    import joingame.net.JoinMessageManagerClient;
     
     
     [SWF(width="700", height="500", frameRate="30")]
@@ -20,68 +19,89 @@ package
         
         public function JoinGame()
         {
-            AppContext.mainSprite = this;
+            GameContext.mainSprite = this;
 
             // setup GameControl
             AppContext.gameCtrl = new GameControl(this, true);
-            var isConnected :Boolean = AppContext.gameCtrl.isConnected();
+            AppContext.messageManager = new JoinMessageManagerClient( AppContext.gameCtrl );
+            AppContext.isConnected = AppContext.gameCtrl.isConnected();
             
             graphics.clear();
-            this.graphics.beginFill(0);
-            this.graphics.drawRect(0, 0, 700, 500);
-            this.graphics.endFill();
-    
-    
-    
-            this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+            graphics.beginFill(0);
+            graphics.drawRect(0, 0, 700, 500);
+            graphics.endFill();
             
-            if(!isConnected) {
+            if(!AppContext.isConnected && !Constants.LOCAL_MODE) {
+                log.error("No connection, and it's not local, so poop, I'm leaving");
                 return;
             }
             
-            /*Disable the "Request Rematch" button*/
-            AppContext.gameCtrl.local.setShowReplay(false);
+            this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
             
-            // setup main loop
-            AppContext.mainLoop = new MainLoop(this, (isConnected ? AppContext.gameCtrl.local : this.stage));
-            AppContext.mainLoop.setup();
-    
-            Constants.isMultiplayer = AppContext.gameCtrl.game.seating.getPlayerIds().length > 1;
-            AppContext.isObserver = !ArrayUtil.contains(AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId());
             
-            if(AppContext.isObserver) {
-                AppContext.mainLoop.pushMode(new WaitingForPlayerDataModeAsObserver());
-            }
-            else if(Constants.isMultiplayer) {
-                AppContext.mainLoop.pushMode(new RegisterPlayerMode());
+            
+            if( Constants.LOCAL_MODE ) { 
+                
+                AppContext.playerId = 1;
+                
+                AppContext.localServer = new JoingameServer(AppContext.gameCtrl);//AppContext.gameCtrl
+                
+                // setup main loop
+                GameContext.mainLoop = new MainLoop(this,  this.stage);
+                GameContext.mainLoop.setup();
+                
+                AppContext.isMultiplayer = false;
+                AppContext.isObserver = false;
+                
+                GameContext.mainLoop.pushMode(new SinglePlayerIntroMode());
             }
             else {
-                AppContext.mainLoop.pushMode(new SinglePlayerIntroMode());
+                
+                AppContext.playerId = AppContext.gameCtrl.game.getMyId();
+                /*Disable the "Request Rematch" button*/
+                AppContext.gameCtrl.local.setShowReplay(false);
+                
+                // setup main loop
+                GameContext.mainLoop = new MainLoop(this, (AppContext.isConnected ? AppContext.gameCtrl.local : this.stage));
+                GameContext.mainLoop.setup();
+        
+                AppContext.isMultiplayer = AppContext.gameCtrl.game.seating.getPlayerIds().length > 1;
+                AppContext.isObserver = !ArrayUtil.contains(AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId());
+                
+                if(AppContext.isObserver) {
+                    GameContext.mainLoop.pushMode(new WaitingForPlayerDataModeAsObserver());
+                }
+                else if(AppContext.isMultiplayer) {
+                    GameContext.mainLoop.pushMode(new RegisterPlayerMode());
+                }
+                else {
+                    GameContext.mainLoop.pushMode(new SinglePlayerIntroMode());
+                }
             }
         
-            AppContext.mainLoop.pushMode(new LoadingMode());
-            AppContext.mainLoop.run();
+            GameContext.mainLoop.pushMode(new LoadingMode());
+            GameContext.mainLoop.run();
             
         }
 
 
-        
-        /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
-        {
-            AppContext.gameCtrl.local.feedback("\nPlayer " + AppContext.myid + ", JoinGame, messageReceived " + event.name);
-            if (event.name == Server.MODEL_CONFIRM)
-            {
-                AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-                
-                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameModel.setModelMemento( event.value[0] as Array );
-                
-                AppContext.mainLoop.unwindToMode(new ObserverMode());
-            }
-            
-            
-        }
+//        
+//        /** Respond to messages from other clients. */
+//        public function messageReceived (event :MessageReceivedEvent) :void
+//        {
+//            AppContext.gameCtrl.local.feedback("\nPlayer " + AppContext.myid + ", JoinGame, messageReceived " + event.name);
+//            if (event.name == JoingameServer.MODEL_CONFIRM)
+//            {
+//                AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//                
+//                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+//                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+//                
+//                GameContext.mainLoop.unwindToMode(new ObserverMode());
+//            }
+//            
+//            
+//        }
 
         
 
@@ -91,10 +111,10 @@ package
         protected function handleUnload (event :Event) :void
         {
             // stop any sounds, clean up any resources that need it
-            AppContext.mainLoop.shutdown();
+            GameContext.mainLoop.shutdown();
         }
         
-        
+        public static const log :Log = Log.getLog(JoinGame);
         
     }
     

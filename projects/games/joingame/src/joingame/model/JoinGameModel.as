@@ -1,7 +1,9 @@
 package joingame.model
 {
     import com.threerings.util.ArrayUtil;
+    import com.threerings.util.ClassUtil;
     import com.threerings.util.HashMap;
+    import com.threerings.util.Log;
     import com.threerings.util.Random;
     import com.whirled.game.GameControl;
     import com.whirled.net.MessageReceivedEvent;
@@ -9,25 +11,38 @@ package joingame.model
     import flash.events.EventDispatcher;
     import flash.utils.getTimer;
     
+    import joingame.AppContext;
     import joingame.Constants;
-    import joingame.net.JoinGameEvent;
+    import joingame.net.AddPlayerMessage;
+    import joingame.net.BoardRowRemoveConfirmtoServer;
+    import joingame.net.BoardUpdateConfirmMessage;
+    import joingame.net.BottomRowRemovalConfirmMessage;
+    import joingame.net.DeltaConfirmMessage;
+    import joingame.net.InternalJoinGameEvent;
+    import joingame.net.PlayerDestroyedMessage;
+    import joingame.net.PlayerRemovedMessage;
+    import joingame.net.ResetViewToModelMessage;
     
     /**
      * The state of the entire game is represented by this class.
      * It contains as many JoinGameBoardRepresentationss as there are players.
      * Each player, and the server, maintain an instance of this 
-     * class, synchronised by the server.
+     * class, synchronised by the JoingameServer.
      * 
      * 
-     * Main listener to the server.  Notifies other, more graphically
+     * Main listener to the JoingameServer.  Notifies other, more graphically
      * oriented classes of changes that require animations and other similar changes.
      */
     public class JoinGameModel extends EventDispatcher
     {
-        
         public function JoinGameModel(gameControl:GameControl, isServerModel :Boolean = false)
         {
             _gameCtrl = gameControl;
+            
+//            if( _gameCtrl != null && !_gameCtrl.net.isConnected() ) {
+//                throw new Error( "GameControl must be connected if passing to " + ClassUtil.shortClassName(this));
+//            }
+            
             
             _playerToBoardMap = new HashMap();
             _currentSeatedPlayerIds = new Array();
@@ -55,14 +70,104 @@ package joingame.model
             //update our model and add animations accordingly.
             if( !_isServerModel)
             {
-                _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//                _gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+                
+                AppContext.messageManager.addEventListener( DeltaConfirmMessage.NAME, handleDeltaConfirm);
+                AppContext.messageManager.addEventListener( BoardUpdateConfirmMessage.NAME, handleBoardUpdateConfirm);
+                AppContext.messageManager.addEventListener( PlayerDestroyedMessage.NAME, handlePlayerDestroyed);
+                AppContext.messageManager.addEventListener( PlayerRemovedMessage.NAME, handlePlayerRemoved);
+                AppContext.messageManager.addEventListener( BottomRowRemovalConfirmMessage.NAME, handleBoardRemoveRowConfirm);
+                AppContext.messageManager.addEventListener( AddPlayerMessage.NAME, handleAddPlayer);
             }
         }
 
 
+        public function getComputerIdsAdjacentToHumanPlayer () :Array
+        {
+            var humanId :int = getHumanPlayerId();
+            return [ getPlayerIDToLeftOfPlayer( humanId), getPlayerIDToRightOfPlayer( humanId) ]
+        }
+        
+        public function getHumanPlayerId () :int
+        {
+            for each (var id :int in currentSeatingOrder) {
+                if( id > 0) {
+                    return id;
+                }
+            }
+            return 0;
+        }
+        
+        protected function handleAddPlayer( event :AddPlayerMessage ) :void
+        {
+            if( event.fromServer ) {
+                var board :JoinGameBoardRepresentation = new JoinGameBoardRepresentation();
+                board.setBoardFromCompactRepresentation( event.board );
+                addPlayer( board.playerID, board);
+            }
+        }
+
+        protected function handleDeltaConfirm( event :DeltaConfirmMessage ) :void
+        {
+            log.debug((_isServerModel ? "SERVER: " : "CLIENT: " ) +event);
+            var board :JoinGameBoardRepresentation = _playerToBoardMap.get(event.playerId) as JoinGameBoardRepresentation;
+            
+            if(board != null) {
+                deltaConfirm(event.playerId, event.fromIndex, event.toIndex);
+            }
+            else {
+                log.error("BOARD_DELTA_CONFIRM sent but no board with id="+event.playerId);
+            }
+        }
+        
+        protected function handleBoardUpdateConfirm( event :BoardUpdateConfirmMessage ) :void
+        {
+            log.debug(event);
+            var board :JoinGameBoardRepresentation = _playerToBoardMap.get(event.boardId) as JoinGameBoardRepresentation;
+            var boardRep:Array = event.board;
+            board.setBoardFromCompactRepresentation(boardRep);
+        }
+        
+        protected function handlePlayerDestroyed( event :PlayerDestroyedMessage ) :void
+        {
+            log.debug(event);
+            dispatchEvent( new InternalJoinGameEvent( event.playerId, InternalJoinGameEvent.PLAYER_DESTROYED));
+        }
+        
+        protected function handlePlayerRemoved( event :PlayerRemovedMessage ) :void
+        {
+            log.debug(event);
+            var id :int = event.playerId;
+            if(id != 0)
+            {
+                removePlayer(id);
+                if( _isServerModel ) {//The server model notifies the server itself.
+                    dispatchEvent( new InternalJoinGameEvent( id, InternalJoinGameEvent.PLAYER_REMOVED));
+                }
+            }
+        }
+        
+        protected function handleBoardRemoveRowConfirm( event :BottomRowRemovalConfirmMessage ) :void
+        {
+            log.debug(event);
+            doRemoveBottomRow( getBoardForPlayerID( event.playerId) );
+        }
+        
+        protected function handleResetViewToModel( event :ResetViewToModelMessage ) :void
+        {
+            log.debug(event);
+            dispatchEvent( new InternalJoinGameEvent( event.playerId, InternalJoinGameEvent.RESET_VIEW_FROM_MODEL));
+        }
+
         public function destroy() :void 
         {
-            _gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            
+            AppContext.messageManager.removeEventListener( DeltaConfirmMessage.NAME, handleDeltaConfirm);
+            AppContext.messageManager.removeEventListener( BoardUpdateConfirmMessage.NAME, handleBoardUpdateConfirm);
+            AppContext.messageManager.removeEventListener( PlayerDestroyedMessage.NAME, handlePlayerDestroyed);
+            AppContext.messageManager.removeEventListener( PlayerRemovedMessage.NAME, handlePlayerRemoved);
+            AppContext.messageManager.removeEventListener( BottomRowRemovalConfirmMessage.NAME, handleBoardRemoveRowConfirm);
+                
             for each (var board :JoinGameBoardRepresentation in _playerToBoardMap.values()) {
                 if( board != null) { 
                     board.destroy();
@@ -70,14 +175,28 @@ package joingame.model
             }
         }
 
+
+        /**
+        * Returns a copy.
+        */
         public function get currentSeatingOrder() :Array
         {
-            return _currentSeatedPlayerIds.slice();
+            if( AppContext.isConnected ) {
+                return _gameCtrl.net.get( CURRENT_PLAYERS_STRING ) as Array;
+            }
+            else {
+                return _currentSeatedPlayerIds.slice();
+            }
         }
         
         public function set currentSeatingOrder( playerids :Array) :void
         {
-            _currentSeatedPlayerIds = playerids;
+            if( _isServerModel && AppContext.isConnected) {
+                _gameCtrl.net.set( CURRENT_PLAYERS_STRING, playerids);
+            }
+            else {
+                _currentSeatedPlayerIds = playerids.slice();
+            }
         }
         
         /**
@@ -87,9 +206,9 @@ package joingame.model
         {
             var boards:Array = new Array();
 
-            boards.push(_currentSeatedPlayerIds);
-            boards.push(_initialSeatedPlayerIds);
-            boards.push(_playerIdsInOrderOfLoss);
+            boards.push(_currentSeatedPlayerIds.slice());
+            boards.push(_initialSeatedPlayerIds.slice());
+            boards.push(_playerIdsInOrderOfLoss.slice());
             
             var keys:Array = _playerToBoardMap.keys();
             
@@ -127,14 +246,14 @@ package joingame.model
                 _playerToBoardMap.put( playerID, board);
             }
             
-            dispatchEvent(new JoinGameEvent(-1, JoinGameEvent.RECEIVED_BOARDS_FROM_SERVER));
+            dispatchEvent(new InternalJoinGameEvent(-1, InternalJoinGameEvent.RECEIVED_BOARDS_FROM_SERVER));
         }
         
 
         private static function getPlayerIDToLeft(myid:int, _playerIDsInOrderOfPlay:Array): int 
         {
             if( _playerIDsInOrderOfPlay == null || _playerIDsInOrderOfPlay.length <= 1)
-                return -1;
+                return 0;
             
             var myIDIndex: int = ArrayUtil.indexOf(_playerIDsInOrderOfPlay, myid );
             if( myIDIndex != -1)
@@ -148,13 +267,13 @@ package joingame.model
                     return _playerIDsInOrderOfPlay[ myIDIndex - 1];
                 }
             }
-            return -1;
+            return 0;
         }
         
         private static function getPlayerIDToRight(myid:int, _playerIDsInOrderOfPlay:Array): int 
         {
             if(  _playerIDsInOrderOfPlay == null ||  _playerIDsInOrderOfPlay.length <= 1)
-                return -1;
+                return 0;
                 
             var myIDIndex: int = ArrayUtil.indexOf(_playerIDsInOrderOfPlay, myid);
             if( myIDIndex != -1)
@@ -168,7 +287,7 @@ package joingame.model
                     return _playerIDsInOrderOfPlay[ myIDIndex + 1];
                 }
             }
-            return -1;
+            return 0;
         }
 
 
@@ -227,7 +346,7 @@ package joingame.model
                     }
                 }
                 
-                var atackevent :JoinGameEvent;
+                var atackevent :InternalJoinGameEvent;
                 if(doJoinEffects)
                 {
                     //Attack the other side
@@ -243,7 +362,7 @@ package joingame.model
                         {
                             doAttack(_playerToBoardMap.get(idOfPlayerToAttack), sideAttackComesFromForAttacked, join.attackRow, 1);
                             
-                            atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                            atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                             atackevent.joins = [join];
                             atackevent.boardAttacked = idOfPlayerToAttack;
                             atackevent.row = join.attackRow;
@@ -257,7 +376,7 @@ package joingame.model
                             doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, 1);
                             doAttack(_playerToBoardMap.get(idRight), Constants.LEFT, join.attackRow, 1);
                             
-                            atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                            atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                             atackevent.joins = [join];
                             atackevent.boardAttacked = idLeft;
                             atackevent.row = join.attackRow;
@@ -265,7 +384,7 @@ package joingame.model
                             atackevent.side = Constants.RIGHT;
                             dispatchEvent( atackevent);
                             
-                            atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                            atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                             atackevent.joins = [join];
                             atackevent.boardAttacked = idRight;
                             atackevent.row = join.attackRow;
@@ -277,7 +396,7 @@ package joingame.model
                         {
                             doAttack(_playerToBoardMap.get(idOfPlayerToAttack), sideAttackComesFromForAttacked, join.attackRow, damageFor7Join);
                             
-                            atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                            atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                             atackevent.joins = [join];
                             atackevent.boardAttacked = idOfPlayerToAttack;
                             atackevent.row = join.attackRow;
@@ -294,7 +413,7 @@ package joingame.model
                                 {
                                     doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, damageFor7Join);
                                     
-                                    atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                                    atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                                     atackevent.joins = [join];
                                     atackevent.boardAttacked = idLeft;
                                     atackevent.row = join.attackRow;
@@ -306,7 +425,7 @@ package joingame.model
                                 {
                                     doAttack(_playerToBoardMap.get(idRight), Constants.RIGHT, join.attackRow, damageFor7Join);
                                     
-                                    atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                                    atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                                     atackevent.joins = [join];
                                     atackevent.boardAttacked = idRight;
                                     atackevent.row = join.attackRow;
@@ -321,7 +440,7 @@ package joingame.model
                                 doAttack(_playerToBoardMap.get(idLeft), Constants.RIGHT, join.attackRow, damageFor7Join);
                                 doAttack(_playerToBoardMap.get(idRight), Constants.LEFT, join.attackRow, damageFor7Join);
                                 
-                                atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                                atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                                 atackevent.joins = [join];
                                 atackevent.boardAttacked = idLeft;
                                 atackevent.row = join.attackRow;
@@ -329,7 +448,7 @@ package joingame.model
                                 atackevent.side = Constants.RIGHT;
                                 dispatchEvent( atackevent);
                                 
-                                atackevent = new JoinGameEvent( board.playerID, JoinGameEvent.ATTACKING_JOINS);
+                                atackevent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.ATTACKING_JOINS);
                                 atackevent.joins = [join];
                                 atackevent.boardAttacked = idRight;
                                 atackevent.row = join.attackRow;
@@ -364,7 +483,7 @@ package joingame.model
                     /* Build up */
                     if(join._heighInPiecest > 1 )
                     {
-                        var event :JoinGameEvent = new JoinGameEvent( board.playerID, JoinGameEvent.VERTICAL_JOIN);
+                        var event :InternalJoinGameEvent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.VERTICAL_JOIN);
                         
                         
 //                        trace("model: doSingleVerticalJoinEffects() before clear row: " + board);
@@ -407,7 +526,7 @@ package joingame.model
         */
         public function addNewPieces( board :JoinGameBoardRepresentation, searchIteration :int,  delay :Number ): void
         {
-            var addPiecesEvent :JoinGameEvent = new JoinGameEvent(board.playerID,  JoinGameEvent.ADD_NEW_PIECES);
+            var addPiecesEvent :InternalJoinGameEvent = new InternalJoinGameEvent(board.playerID,  InternalJoinGameEvent.ADD_NEW_PIECES);
             addPiecesEvent.delay = delay;
             addPiecesEvent._searchIteration = searchIteration;
             for( var i: int = 0; i < board._boardPieceTypes.length; i++)
@@ -435,7 +554,7 @@ package joingame.model
             //Start at the bottom row moving up
             //If there are any empty pieces, swap with the next highest fallable block
             
-            var fallEvent :JoinGameEvent = new JoinGameEvent(board.playerID, JoinGameEvent.DO_PIECES_FALL);
+            var fallEvent :InternalJoinGameEvent = new InternalJoinGameEvent(board.playerID, InternalJoinGameEvent.DO_PIECES_FALL);
             fallEvent._searchIteration = searchIteration;
             fallEvent.delay = delay;
             var newIndex2OldIndex :HashMap = new HashMap();
@@ -546,41 +665,56 @@ package joingame.model
         
         public function addPlayer(playerID:int, board:JoinGameBoardRepresentation):void
         {
+            trace((_isServerModel ? "Server" : "Client") + " adding new player=" + playerID);
+            if( _playerToBoardMap.containsKey( playerID ) )
+            {
+                log.debug("addplayer( " + playerID + " ), but player already exists. Not adding.");
+                return;   
+            }
+            
             _playerToBoardMap.put(playerID, board);
             
-            if( !ArrayUtil.contains( _currentSeatedPlayerIds, playerID))
+            if( !ArrayUtil.contains( currentSeatingOrder, playerID))
             {
-                _currentSeatedPlayerIds.push(playerID);
+                var tempArray :Array = currentSeatingOrder;
+                tempArray.splice(tempArray.length - 1, 0, playerID)
+                currentSeatingOrder = tempArray;
             }
             
-            if( !ArrayUtil.contains( _initialSeatedPlayerIds, playerID))
-            {
-                _initialSeatedPlayerIds.push(playerID);
-            }
+//            if( !ArrayUtil.contains( _initialSeatedPlayerIds, playerID))
+//            {
+//                _initialSeatedPlayerIds.push(playerID);
+//            }
             
             if(board != null && _isServerModel)
             {
                 //We listen for when the board (representation on the server) is changed and add
                 //animations accordingly.
-                board.addEventListener(JoinGameEvent.REMOVE_ROW_NOTIFICATION, listenToRemoveBottomRowEvent);
+                board.addEventListener(InternalJoinGameEvent.REMOVE_ROW_NOTIFICATION, listenToRemoveBottomRowEvent);
             }
             _gameOver = false;
+            
+            trace((_isServerModel ? "Server" : "Client") + " currentSeatingOrder=" + currentSeatingOrder);
+            var event :InternalJoinGameEvent = new InternalJoinGameEvent(playerID, InternalJoinGameEvent.PLAYER_ADDED);
+            dispatchEvent(event);
         }
         
         /**
         * Only called on the server side, as only server side boards time the bottom row
         * destruction.
         */
-        protected function listenToRemoveBottomRowEvent( e :JoinGameEvent ) :void
+        protected function listenToRemoveBottomRowEvent( e :InternalJoinGameEvent ) :void
         {
             if( _isServerModel) {
                 LOG("!!!!!Should only be called on the server");
             }
             
             if(_isServerModel) {
-                var msg :Object = new Object;
-                msg[0] = e.boardPlayerID;
-                _gameCtrl.net.agent.sendMessage(Server.BOARD_REMOVE_ROW_CONFIRM_TO_SERVER, msg);
+//                var msg :Object = new Object;
+//                msg[0] = e.boardPlayerID;
+//                _gameCtrl.net.agent.sendMessage(JoingameServer.BOARD_REMOVE_ROW_CONFIRM_TO_SERVER, msg);
+                
+                AppContext.messageManager.sendMessage( new BoardRowRemoveConfirmtoServer( e.boardPlayerID));
             }
         }
         
@@ -590,7 +724,7 @@ package joingame.model
                 return false;
             }
             
-            var removeRowAndDropPiecesEvent :JoinGameEvent = new JoinGameEvent( board.playerID, JoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES);
+            var removeRowAndDropPiecesEvent :InternalJoinGameEvent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES);
             dispatchEvent( removeRowAndDropPiecesEvent );
             
             
@@ -619,7 +753,7 @@ package joingame.model
             {
                 var board :JoinGameBoardRepresentation = _playerToBoardMap.get( playerID ) as JoinGameBoardRepresentation;
                 board._isGettingKnockedOut = true;
-                var event :JoinGameEvent = new JoinGameEvent(playerID, JoinGameEvent.PLAYER_DESTROYED);
+                var event :InternalJoinGameEvent = new InternalJoinGameEvent(playerID, InternalJoinGameEvent.PLAYER_DESTROYED);
                 dispatchEvent(event);
             }
         }
@@ -631,7 +765,9 @@ package joingame.model
                 _playerToBoardMap.remove(playerID);
                 if( _currentSeatedPlayerIds.indexOf( playerID ) >= 0)
                 {
+                    _currentSeatedPlayerIds = currentSeatingOrder;
                     _currentSeatedPlayerIds.splice( _currentSeatedPlayerIds.indexOf( playerID ), 1);
+                    currentSeatingOrder = _currentSeatedPlayerIds;
                     
                 }
                 else
@@ -641,14 +777,15 @@ package joingame.model
                 
                 _playerIdsInOrderOfLoss.push(playerID);
                 
-                var event :JoinGameEvent = new JoinGameEvent(playerID, JoinGameEvent.PLAYER_REMOVED);
+                
+                var event :InternalJoinGameEvent = new InternalJoinGameEvent(playerID, InternalJoinGameEvent.PLAYER_REMOVED);
                 dispatchEvent(event);
                 
                 
-                if( _currentSeatedPlayerIds.length <= 1 && !_gameOver)
+                if( currentSeatingOrder.length <= 1 && !_gameOver)
                 {
                     _gameOver = true;
-                    event = new JoinGameEvent(-1, JoinGameEvent.GAME_OVER);
+                    event = new InternalJoinGameEvent(-1, InternalJoinGameEvent.GAME_OVER);
                     dispatchEvent(event);
 
                 }
@@ -656,11 +793,11 @@ package joingame.model
             }
             else
             {
-                LOG("removePlayer(" + playerID + ") but no such player exists");
+                log.error("removePlayer(" + playerID + ") but no such player exists");
             }
-            
-            
         }
+        
+      
         
         
         
@@ -674,9 +811,19 @@ package joingame.model
         */
         public function deltaConfirm(boardId :int, fromIndex :int, toIndex :int) :void
         {
+            log.debug( ClassUtil.shortClassName( JoinGameModel) + (_isServerModel ? " Server " : " Client ") + "deltaConfirm()"); 
+            
+            
+            
             var time :int = getTimer();
             
-            var board: JoinGameBoardRepresentation = _playerToBoardMap.get(boardId) as JoinGameBoardRepresentation;;    
+            var board: JoinGameBoardRepresentation = _playerToBoardMap.get(boardId) as JoinGameBoardRepresentation;;
+            
+//            if( !_isServerModel) {
+//                log.debug("Client board before delta:" + board);
+//            }
+            
+                
             var i :int;
             var j :int;
             var k :int;
@@ -690,9 +837,15 @@ package joingame.model
                
             
             /* Move the pieces, and notify listeners to also change piece indices */
-            board.movePieceToLocationAndShufflePieces( fromIndex, toIndex);
+            board.movePieceToLocationAndShufflePieces( fromIndex, toIndex);            
             
-            var deltaEvent :JoinGameEvent = new JoinGameEvent( board.playerID, JoinGameEvent.DELTA_CONFIRM);
+            if( _isServerModel ) {
+                AppContext.messageManager.sendMessage( new DeltaConfirmMessage( boardId, fromIndex, toIndex) );
+                
+            }
+            
+            
+            var deltaEvent :InternalJoinGameEvent = new InternalJoinGameEvent( board.playerID, InternalJoinGameEvent.DELTA_CONFIRM);
             deltaEvent.deltaPiece1X = board.idxToX(fromIndex);
             deltaEvent.deltaPiece1Y = board.idxToY(fromIndex);
             deltaEvent.deltaPiece2X = board.idxToX(toIndex);
@@ -709,6 +862,13 @@ package joingame.model
             var wasVerticalJoin :Boolean = false; //If true, we update the property state
             var verticalJoinCol: int = -1; 
             var joins:Array = board.checkForJoins();
+//            if(board.playerID == 1) {
+//                log.debug(_isServerModel ? "Server: " : "Client");
+//                log.debug("joins=" + joins);
+//                log.debug("board=" + board);
+//            }
+            
+            
             var numberOfTimesJoinsSearched :int = 1;
             var joinSearchInteration :int = 0;
             
@@ -721,7 +881,7 @@ package joingame.model
                 
                 
                 if( joinSearchInteration == 0) {
-                    dispatchEvent( new JoinGameEvent(board.playerID, JoinGameEvent.START_NEW_ANIMATIONS) );
+                    dispatchEvent( new InternalJoinGameEvent(board.playerID, InternalJoinGameEvent.START_NEW_ANIMATIONS) );
                 }
                 
                 /* All joined pieces are now null. */
@@ -785,7 +945,7 @@ package joingame.model
             checkForDeadBoards();
     
     
-            dispatchEvent( new JoinGameEvent(board.playerID, JoinGameEvent.DONE_COMPLETE_DELTA) );
+            dispatchEvent( new InternalJoinGameEvent(board.playerID, InternalJoinGameEvent.DONE_COMPLETE_DELTA) );
             
             if(_isServerModel) {
                 
@@ -819,7 +979,7 @@ package joingame.model
                 for each (var playerid :int in _currentSeatedPlayerIds) {
                     var board :JoinGameBoardRepresentation =  _playerToBoardMap.get(playerid) as JoinGameBoardRepresentation;
                     if(board != null && !board.isAlive()) {
-                        dispatchEvent( new JoinGameEvent( playerid, JoinGameEvent.PLAYER_REMOVED));
+                        dispatchEvent( new InternalJoinGameEvent( playerid, InternalJoinGameEvent.PLAYER_REMOVED));
                     }
                 }
             }
@@ -832,7 +992,7 @@ package joingame.model
             var adjacentBoard :JoinGameBoardRepresentation;
                 
             convertDeadToDead(board);
-            var event :JoinGameEvent = new JoinGameEvent(board.playerID, JoinGameEvent.DO_DEAD_PIECES);
+            var event :InternalJoinGameEvent = new InternalJoinGameEvent(board.playerID, InternalJoinGameEvent.DO_DEAD_PIECES);
             dispatchEvent( event );
             
             if(_isServerModel){ /*If running on the server, adjust/start the bottom row timer if necessary */
@@ -845,10 +1005,10 @@ package joingame.model
             }
         
             id = getPlayerIDToLeftOfPlayer(board.playerID);
-            if(id >= 0) {
+            if(id != 0) {
                 adjacentBoard = getBoardForPlayerID(id);
                 convertDeadToDead(adjacentBoard);
-                event = new JoinGameEvent(id, JoinGameEvent.DO_DEAD_PIECES);
+                event = new InternalJoinGameEvent(id, InternalJoinGameEvent.DO_DEAD_PIECES);
                 dispatchEvent( event );
                 
                 if(_isServerModel){ /*If running on the server, adjust/start the bottom row timer if necessary */
@@ -861,11 +1021,11 @@ package joingame.model
                 }
             }
             id = getPlayerIDToRightOfPlayer(board.playerID);
-            if(id >= 0)
+            if(id != 0)
             {
                 adjacentBoard = getBoardForPlayerID(id);
                 convertDeadToDead(adjacentBoard);
-                event = new JoinGameEvent(id, JoinGameEvent.DO_DEAD_PIECES);
+                event = new InternalJoinGameEvent(id, InternalJoinGameEvent.DO_DEAD_PIECES);
                 dispatchEvent( event );
                 
                 if(_isServerModel){ /*If running on the server, adjust/start the bottom row timer if necessary */
@@ -886,7 +1046,7 @@ package joingame.model
          * Converts the pieces that cannot possiblly form joins into 
          * "dead" pieces, marking them as unavailable.
          * 
-         * Also starts the timer for the bottom row, if present on the server.
+         * Also starts the timer for the bottom row, if present on the JoingameServer.
          * 
          */
         private function convertDeadToDead(board :JoinGameBoardRepresentation, serverside :Boolean = false) :Boolean
@@ -940,76 +1100,76 @@ package joingame.model
         /** Respond to messages from other clients. */
         public function messageReceived (event :MessageReceivedEvent) :void
         {
-            
-            var id :int;
-            var board: JoinGameBoardRepresentation;
+            log.error("Deprecated");
+//            var id :int;
+//            var board: JoinGameBoardRepresentation;
             
             //If the update refers to us, update, and notify the display
-            if (event.name == Server.BOARD_DELTA_CONFIRM)
-            {
-                
-                id = int(event.value[0]);
-                board = _playerToBoardMap.get(id) as JoinGameBoardRepresentation;
-                var fromIndex :int = int(event.value[1]);
-                var toIndex :int = int(event.value[2]);
-                
-                
-                if(board != null)
-                {
-                    deltaConfirm(id, fromIndex, toIndex);
-                }
-                else
-                {
-                    LOG("BOARD_DELTA_CONFIRM sent but no board with id="+id);
-                }
-            }
-            else
-            if (event.name == Server.BOARD_UPDATE_CONFIRM)
-            {
-                
-                id = int(event.value[0]);
-                
-                board = _playerToBoardMap.get(id) as JoinGameBoardRepresentation;
-                var boardRep:Array = event.value[1] as Array;
-                board.setBoardFromCompactRepresentation(boardRep);
-            }
-            else if (event.name == Server.PLAYER_DESTROYED)
-            {
-                
-                id = int(event.value[0]);
-                if(id >= 0)
-                {
-                    dispatchEvent( new JoinGameEvent( id, JoinGameEvent.PLAYER_DESTROYED));
-                }
-            }
-            else if (event.name == Server.PLAYER_REMOVED)
-            {
-                
-                id = int(event.value[0]);
-                if(id >= 0)
-                {
-                    removePlayer(id);
-                    if( _isServerModel ) {//The server model notifies the server itself.
-                        dispatchEvent( new JoinGameEvent( id, JoinGameEvent.PLAYER_REMOVED));
-                    }
-                }
-            }
-            else if (event.name == Server.BOARD_REMOVE_ROW_CONFIRM)
-            {
-                
-                id = int(event.value[0]);
-                if(id >= 0)
-                {
-                    doRemoveBottomRow( getBoardForPlayerID( id) );
-                }
-            }
-            else if (event.name == Server.RESET_VIEW_TO_MODEL)
-            {
-                id = int(event.value[0]);
-                if(id >= 0) {
-                    dispatchEvent( new JoinGameEvent( id, JoinGameEvent.RESET_VIEW_FROM_MODEL));
-                }
-            }
+//            if (event.name == JoingameServer.BOARD_DELTA_CONFIRM)
+//            {
+//                
+//                id = int(event.value[0]);
+//                board = _playerToBoardMap.get(id) as JoinGameBoardRepresentation;
+//                var fromIndex :int = int(event.value[1]);
+//                var toIndex :int = int(event.value[2]);
+//                
+//                
+//                if(board != null)
+//                {
+//                    deltaConfirm(id, fromIndex, toIndex);
+//                }
+//                else
+//                {
+//                    LOG("BOARD_DELTA_CONFIRM sent but no board with id="+id);
+//                }
+//            }
+//            else
+//            if (event.name == JoingameServer.BOARD_UPDATE_CONFIRM)
+//            {
+//                
+//                id = int(event.value[0]);
+//                
+//                board = _playerToBoardMap.get(id) as JoinGameBoardRepresentation;
+//                var boardRep:Array = event.value[1] as Array;
+//                board.setBoardFromCompactRepresentation(boardRep);
+//            }
+//            else if (event.name == JoingameServer.PLAYER_DESTROYED)
+//            {
+//                
+//                id = int(event.value[0]);
+//                if(id >= 0)
+//                {
+//                    dispatchEvent( new InternalJoinGameEvent( id, InternalJoinGameEvent.PLAYER_DESTROYED));
+//                }
+//            }
+//            else if (event.name == JoingameServer.PLAYER_REMOVED)
+//            {
+//                
+//                id = int(event.value[0]);
+//                if(id >= 0)
+//                {
+//                    removePlayer(id);
+//                    if( _isServerModel ) {//The server model notifies the server itself.
+//                        dispatchEvent( new InternalJoinGameEvent( id, InternalJoinGameEvent.PLAYER_REMOVED));
+//                    }
+//                }
+//            }
+//            else if (event.name == JoingameServer.BOARD_REMOVE_ROW_CONFIRM)
+//            {
+//                
+//                id = int(event.value[0]);
+//                if(id >= 0)
+//                {
+//                    doRemoveBottomRow( getBoardForPlayerID( id) );
+//                }
+//            }
+//            else if (event.name == JoingameServer.RESET_VIEW_TO_MODEL)
+//            {
+//                id = int(event.value[0]);
+//                if(id >= 0) {
+//                    dispatchEvent( new InternalJoinGameEvent( id, InternalJoinGameEvent.RESET_VIEW_FROM_MODEL));
+//                }
+//            }
             
         }
         
@@ -1044,6 +1204,10 @@ package joingame.model
         
         public function setModelIntoPropertySpaces() :void
         {
+            if( !AppContext.isConnected ) {
+                log.warning("We are not connected, so no model written to property spaces.");
+                return;
+            }
             _gameCtrl.net.set(CURRENT_PLAYERS_STRING, _currentSeatedPlayerIds);
             _gameCtrl.net.set(INITIAL_PLAYERS_STRING, _initialSeatedPlayerIds);
             
@@ -1056,6 +1220,9 @@ package joingame.model
         
         public function getModelFromPropertySpaces() :void
         {
+            if( !AppContext.isConnected ) {
+                throw new Error("Cannot get model from property spaces when not connected");
+            }
             _currentSeatedPlayerIds = _gameCtrl.net.get(CURRENT_PLAYERS_STRING) as Array;
             _initialSeatedPlayerIds = _gameCtrl.net.get(INITIAL_PLAYERS_STRING) as Array;
             
@@ -1079,11 +1246,55 @@ package joingame.model
             return activePlayers;
         }
         
+        public function get potentialPlayerIds () :Array
+        {
+            if( AppContext.isConnected ) {
+                return _gameCtrl.net.get( POTENTIAL_PLAYERS) as Array;
+            }
+            else {
+                return _potentialPlayerIds;    
+            }
+        }
+        
+        public function set potentialPlayerIds (playerids :Array) :void
+        {
+            if( AppContext.isConnected && _isServerModel) {
+                _gameCtrl.net.set( POTENTIAL_PLAYERS, playerids);
+            }
+            else {
+                _potentialPlayerIds = playerids;
+            }
+        }
+        
+        public function get singlePlayerLevel () :int
+        {
+            if( AppContext.isConnected ) {
+                return _gameCtrl.net.get( SINGLE_PLAYER_LEVEL_STRING) as int;
+            }
+            else {
+                return _singlePlayerLevel;    
+            }
+        }
+        
+        public function set singlePlayerLevel (level :int) :void
+        {
+            if( AppContext.isConnected  && _isServerModel) {
+                _gameCtrl.net.set( SINGLE_PLAYER_LEVEL_STRING, level);
+            }
+            else {
+                _singlePlayerLevel = level;
+            }
+        }
+        
         
         
         public static const CURRENT_PLAYERS_STRING: String = "CurrentPlayers";
         public static const INITIAL_PLAYERS_STRING: String = "InitialPlayers";
         public static const DELTA_STRING: String = "Delta";
+        public static const SINGLE_PLAYER_LEVEL_STRING: String = "Single Player Level";
+        
+        /** All players that have not permamnently left the game */
+        public static const POTENTIAL_PLAYERS :String = "Server:Potential Players";
         
         private var _gameCtrl :GameControl;
         private var _playerToBoardMap :HashMap;
@@ -1092,13 +1303,17 @@ package joingame.model
         public var _playerIdsInOrderOfLoss:Array;
         private var _isServerModel :Boolean;
         
-        public var _singlePlayerLevel :int;
+        private var _potentialPlayerIds :Array;
+        
+        protected var _singlePlayerLevel :int;
         
         private var _random: Random = new Random();
         
         private var _dateNow :Date = new Date();  
         
         private var _gameOver :Boolean;
+        
+        private static const log :Log = Log.getLog(JoinGameModel);
         
     }
 }

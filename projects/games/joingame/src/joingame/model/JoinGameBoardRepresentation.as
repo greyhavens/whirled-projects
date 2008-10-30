@@ -1,7 +1,9 @@
 package joingame.model
 {
     import com.threerings.util.ArrayUtil;
+    import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
+    import com.threerings.util.Log;
     import com.threerings.util.Random;
     import com.whirled.contrib.simplegame.util.ObjectSet;
     import com.whirled.game.GameControl;
@@ -10,8 +12,9 @@ package joingame.model
     import flash.events.TimerEvent;
     import flash.utils.Timer;
     
+    import joingame.AppContext;
     import joingame.Constants;
-    import joingame.net.JoinGameEvent;
+    import joingame.net.InternalJoinGameEvent;
     
     /**
      * A representation of the game board.  This is used by the server and the client.
@@ -86,7 +89,7 @@ package joingame.model
             }
             
             if(isBottomRowDead) {
-                var removeRowEvent :JoinGameEvent = new JoinGameEvent( this.playerID, JoinGameEvent.REMOVE_ROW_NOTIFICATION);
+                var removeRowEvent :InternalJoinGameEvent = new InternalJoinGameEvent( this.playerID, InternalJoinGameEvent.REMOVE_ROW_NOTIFICATION);
                 dispatchEvent( removeRowEvent );
             }
         }
@@ -159,7 +162,6 @@ package joingame.model
         
         public function swapPieces (index1 :int, index2 :int) :void
         {
-            
             var temp:int = _boardPieceColors[index1];
             _boardPieceColors[index1] = _boardPieceColors[index2];
             _boardPieceColors[index2] = temp;
@@ -207,7 +209,7 @@ package joingame.model
          */
         public function getBoardAsCompactRepresentation(): Array
         {
-            return [_playerID, _rows, _cols, _boardPieceColors, _boardPieceTypes, _seed, _numberOfCallsToRandom, _isGettingKnockedOut ? 1 : 0];
+            return [_playerID, _rows, _cols, _boardPieceColors.slice(), _boardPieceTypes.slice(), _seed, _numberOfCallsToRandom, _isGettingKnockedOut ? 1 : 0, _isComputerPlayer ? 1 : 0];
         }
         
 
@@ -581,6 +583,66 @@ package joingame.model
             return count;
         }    
         
+        /**
+        * Returns an array of:
+        * [position index, color] 
+        */
+        public function getBestJoinLengthAndColorForEachRow() :Array
+        {
+            var joinLengths :Array = new Array();
+            var joinColors :Array = new Array();
+            
+            var row :int;
+            var col :int;
+//            var col2AvailableColors :HashMap = new HashMap();
+            var color2CurrentLongestLength :HashMap = new HashMap();
+            
+            var currentLongestLength :int;
+            for ( row = 0; row < _rows; row++) {
+                color2CurrentLongestLength.clear();
+                
+                for( col = 0; col < _cols; col++) {
+                    color2CurrentLongestLength.put( col, 0);
+                }
+                
+                for( col = 0; col < _cols; col++) {
+                    var colorsAvailable :Array = getAvailableColorsFromLocation(col, row);
+                    
+                }
+            }
+            
+            
+            return [joinLengths, joinColors];
+        }
+        
+        protected function getAvailableColorsFromLocation( locX :int, locY :int ) :Array
+        {
+            var results :HashMap = new HashMap();
+            if( _boardPieceTypes[ coordsToIdx( locX, locY ) ] != Constants.PIECE_TYPE_NORMAL ) {
+                return results.keys();
+            }
+            var j :int;
+            results.put(  _boardPieceColors[ coordsToIdx( locX, locY )], 0);
+            
+            /* Look up*/
+            for ( j = locY - 1; j >= 0; j--) {
+                if( _boardPieceTypes[ coordsToIdx( locX, j ) ] != Constants.PIECE_TYPE_NORMAL ) {
+                    break;
+                }
+                results.put( _boardPieceColors[ coordsToIdx( locX, j )], 0);
+            }
+            
+            /* Look down*/
+            for ( j = locY + 1; j < _rows; j++) {
+                if( _boardPieceTypes[ coordsToIdx( locX, j ) ] != Constants.PIECE_TYPE_NORMAL ) {
+                    break;
+                }
+                results.put( _boardPieceColors[ coordsToIdx( locX, j )], 0);
+            }
+            
+            
+            return results.keys();
+        }
             
         //New idea, you get a piece to the left and right as well 
         private function addNewPieceToColumn(newPieceColumnIndex: int): void
@@ -971,7 +1033,7 @@ package joingame.model
         
         public function sendBoardUpdateEvent() :void
         {
-            var update:JoinGameEvent = new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED);
+            var update:InternalJoinGameEvent = new InternalJoinGameEvent(_playerID, InternalJoinGameEvent.BOARD_UPDATED);
             
             //ATM we just redraw the entire board.
             dispatchEvent(update);    
@@ -982,14 +1044,16 @@ package joingame.model
         
         override public function toString() :String
         {
+            var i :int;
+            var j :int;
             var s :String = "player id=" + _playerID + "\n";
-            for( var j :int = 0; j < _rows; j++){
-                for( var i :int = 0; i < _cols; i++){
-                       s += "\t" + _boardPieceTypes[ coordsToIdx(i,j)];
-                }
-                s += "\n";
-            }
-            s += "\n";
+//            for( var j :int = 0; j < _rows; j++){
+//                for( var i :int = 0; i < _cols; i++){
+//                       s += "\t" + _boardPieceTypes[ coordsToIdx(i,j)];
+//                }
+//                s += "\n";
+//            }
+//            s += "\n";
             for( j = 0; j < _rows; j++){
                 for( i = 0; i < _cols; i++){
                     s += "\t" + _boardPieceColors[ coordsToIdx(i,j)]
@@ -1007,11 +1071,15 @@ package joingame.model
             ctrl.net.set(_playerID + SEED_STRING, _seed);
             ctrl.net.set(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING, _numberOfCallsToRandom);
             ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
+            ctrl.net.set(_playerID + IS_COMPUTER_PLAYER, _isComputerPlayer);
         }
         
         public function setIntoPropertySpacesWhereDifferent( ctrl :GameControl) :void
         {
-            
+            if( !AppContext.isConnected ) {
+                log.error("setIntoPropertySpacesWhereDifferent(), we are not connected.");
+                return;
+            }
             
             function same( a :Array, b :Array) :Boolean {
                 if(a == null || b == null || a.length != b.length ) {
@@ -1055,6 +1123,11 @@ package joingame.model
                 ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
             }
             
+            var computerPlayer :Boolean = ctrl.net.get(_playerID + IS_COMPUTER_PLAYER) as Boolean;
+            if( computerPlayer != _isComputerPlayer) {
+                ctrl.net.set(_playerID + IS_COMPUTER_PLAYER, _isComputerPlayer);
+            }
+            
         }
 
 
@@ -1073,11 +1146,12 @@ package joingame.model
             _playerID = rep[0] as int;
             _rows = rep[1] as int;
             _cols = rep[2] as int;
-            _boardPieceColors = rep[3] as Array;
-            _boardPieceTypes = rep[4] as Array;
+            _boardPieceColors = (rep[3] as Array).slice();
+            _boardPieceTypes = (rep[4] as Array).slice();
             this.randomSeed = int(rep[5]);
             _numberOfCallsToRandom = int(rep[6]);
             _isGettingKnockedOut = int(rep[7]) == 1;
+            _isComputerPlayer = int(rep[8]) == 1;
             
             for(var k:int = 0; k < _numberOfCallsToRandom; k++)
             {
@@ -1085,7 +1159,7 @@ package joingame.model
             }
             
             //Tell the board display (if on the client) to update the display.
-            this.dispatchEvent(new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED));
+            this.dispatchEvent(new InternalJoinGameEvent(_playerID, InternalJoinGameEvent.BOARD_UPDATED));
         }
         
         
@@ -1103,8 +1177,9 @@ package joingame.model
                 generateRandomPieceColor();
             }
             _isGettingKnockedOut = ctrl.net.get(_playerID + IS_BEING_DESTROYED) as Boolean;
+            _isComputerPlayer = ctrl.net.get(_playerID + IS_COMPUTER_PLAYER) as Boolean;
             
-            this.dispatchEvent(new JoinGameEvent(_playerID, JoinGameEvent.BOARD_UPDATED));
+            this.dispatchEvent(new InternalJoinGameEvent(_playerID, InternalJoinGameEvent.BOARD_UPDATED));
         }
         
         
@@ -1115,6 +1190,7 @@ package joingame.model
         public static const SEED_STRING: String = "Seed";
         public static const NUMBER_OF_CALLS_TO_RANDOM_STRING: String = "CallsToRandom";
         public static const IS_BEING_DESTROYED: String = "IsDestroyed";
+        public static const IS_COMPUTER_PLAYER: String = "IsComputer";
         
             
         public var _boardPieceColors :Array;
@@ -1133,9 +1209,13 @@ package joingame.model
         private var _seed:int;
         public var _numberOfCallsToRandom: int;
         
+        public var _isComputerPlayer: Boolean;
+        
         
         /** There is a slight delay between being destroyed and the next player replacement */  
         public var _isGettingKnockedOut :Boolean;
+        
+        private static const log :Log = Log.getLog(JoinGameBoardRepresentation);
 
     }
 }

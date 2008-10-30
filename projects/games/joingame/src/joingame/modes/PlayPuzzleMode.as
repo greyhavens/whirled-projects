@@ -14,17 +14,16 @@ package joingame.modes
     import com.whirled.contrib.simplegame.tasks.ScaleTask;
     import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
     import com.whirled.contrib.simplegame.tasks.SerialTask;
-    import com.whirled.contrib.simplegame.tasks.TimedTask;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
-    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
     
     import joingame.*;
     import joingame.model.*;
-    import joingame.net.JoinGameEvent;
+    import joingame.net.AddPlayerMessage;
+    import joingame.net.InternalJoinGameEvent;
     import joingame.view.*;
     
     public class PlayPuzzleMode extends AppMode
@@ -37,10 +36,11 @@ package joingame.modes
          */
         override protected function setup () :void
         {
+            log.debug("PlayPuzzleMode...");
             
-            if(!AppContext.gameCtrl.isConnected()) {
-                return;
-            }
+//            if(!AppContext.isConnected) {
+//                return;
+//            }
             
             var rm :ResourceManager = ResourceManager.instance;
 
@@ -48,14 +48,27 @@ package joingame.modes
         }
         
         
+        /** Called when a key is pressed while this mode is active */
+        override public function onKeyDown (keyCode :uint) :void
+        {
+            if( keyCode == KeyboardCodes.A) {
+                trace("Client sending addPlayer message");
+                AppContext.messageManager.sendMessage( new AddPlayerMessage(0, false));
+            }
+            
+        }
+        
         protected function init() :void
         {
-            /*Start counting progress for coins again */
-            AppContext.gameCtrl.game.playerReady();
             
-            /*Disable the "Request Rematch" button*/
-            AppContext.gameCtrl.local.setShowReplay(false);
+//            log.debug("init");
+//            /*Disable the "Request Rematch" button*/
+//            AppContext.gameCtrl.local.setShowReplay(false);
             
+            
+            modeSprite.graphics.beginFill(0xffffff);
+            modeSprite.graphics.drawCircle(50, 50, 30);
+            modeSprite.graphics.endFill();
             
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
             modeSprite.addChild(swfRoot);
@@ -90,7 +103,7 @@ package joingame.modes
                 AppContext.gameHeight = _bg.height;
             }
             else {
-                trace("!!!!!Background is null!!!");
+                log.error("!!!!!Background is null!!!");
             }
             
             _id2HeadshotSceneObject = new HashMap();
@@ -115,14 +128,23 @@ package joingame.modes
             _boardsView.updateBoardDisplays();
             _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
             
-            _boardsView.addEventListener(JoinGameEvent.PLAYER_REMOVED, playerRemoved);
+            _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
+            _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_ADDED, playerAdded);
             
         }
         
-        
-        protected function playerRemoved( e :JoinGameEvent ) :void
+        /** Called when the mode becomes active on the mode stack */
+        override protected function enter () :void
         {
-            if (e.boardPlayerID == AppContext.gameCtrl.game.getMyId() || _gameModel.currentSeatingOrder.length <= 1) {
+            /*Start counting progress for coins again */
+            if(AppContext.isConnected) {
+                AppContext.gameCtrl.game.playerReady();
+            }
+        }
+        
+        protected function playerRemoved( e :InternalJoinGameEvent ) :void
+        {
+            if (e.boardPlayerID == AppContext.playerId || _gameModel.currentSeatingOrder.length <= 1) {
 
                     var sim  :SimObject = new SimObject();
                     addObject(sim);
@@ -135,20 +157,40 @@ package joingame.modes
                 animateHeadshotsToLocation();
             }
         }
-        override protected function destroy() :void 
+        
+        protected function playerAdded( e :InternalJoinGameEvent ) :void
         {
-            if(_boardsView != null) {
-                _boardsView.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
-                _boardsView.destroySelf();
-            }
-            super.destroy();
+            var id :int = e.boardPlayerID;
+            var headshot :DisplayObject = GameContext.getHeadshot(id);
+            var so :SimpleSceneObject = new SimpleSceneObject(headshot);
+            _id2HeadshotSceneObject.put(id, so);
+            so.x = -100;
+            so.y = 100;
+            addObject( so, modeSprite);
+            
+            log.debug("playerAdded( " + e.boardPlayerID + "), animating headshots");
+            animateHeadshotsToLocation();
         }
+        
+        override protected function exit() :void 
+        {
+            log.debug("exiting " + ClassUtil.shortClassName(PlayPuzzleMode));
+            if(_boardsView != null) {
+                _boardsView.removeEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
+                _boardsView.removeEventListener(InternalJoinGameEvent.PLAYER_ADDED, playerAdded);
+                _boardsView.destroySelf();
+                _boardsView = null;
+            }
+            super.exit();
+        }
+        
+        
         
         protected function placeHeadshotsToStartLocation() :void
         {
             var headshotIdsAlreadyPlaced :Array = new Array();
             
-            var myid :int = AppContext.gameCtrl.game.getMyId();
+            var myid :int = AppContext.playerId;
             /* Place the centre piece */
             var headshot :SceneObject = _id2HeadshotSceneObject.get( myid ) as SceneObject;
             headshot.x = _playerPlacerMain.x - 40;
@@ -206,7 +248,7 @@ package joingame.modes
                     }
                 }
                 
-                if(id > 0) {
+                if(id != 0) {
                     
                     var distanceFromSideAnchor :int = (isLeft ? -(leftPlayerIds.length+1) : rightPlayerIds.length) * 80 * headshotScaleToFit;
                     var toX :int = (isLeft ? -80 - spaceForEachHeadshot: modeSprite.width + 80) + distanceFromSideAnchor;
@@ -237,7 +279,7 @@ package joingame.modes
         protected function animateHeadshotsToLocation() :void
         {
             
-            var myid :int = AppContext.gameCtrl.game.getMyId();
+            var myid :int = AppContext.playerId;
             if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, myid)) {
                 trace("animating headshots but should be in observer mode");
                 return;
@@ -259,7 +301,6 @@ package joingame.modes
             /* Animate the left piece */
             var id :int = _gameModel.getPlayerIDToLeftOfPlayer(myid) as int;
             if( true || _gameModel.getPlayerIDToRightOfPlayer(myid) != id ||  _gameModel._initialSeatedPlayerIds.length == 2 ){
-                
                 var serialTask :SerialTask;
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
@@ -286,11 +327,9 @@ package joingame.modes
                     headshotIdsAlreadyPlaced.push(id);
                 }
             }
-            
             /* Animate the right piece */
             id = _gameModel.getPlayerIDToRightOfPlayer(myid) as int;
             if( _gameModel.getPlayerIDToLeftOfPlayer(myid) != id){
-                
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
                     toX = _playerPlacerEast.x - 40;
@@ -343,7 +382,7 @@ package joingame.modes
                     }
                 }
                 
-                if(id > 0) {
+                if(id != 0) {
                     
                     var distanceFromSideAnchor :int = (isLeft ? -(leftPlayerIds.length+1) : rightPlayerIds.length) * 80 * headshotScaleToFit;
                     toX = (isLeft ? _extraPlacerWest.x : _extraPlacerEast.x) + distanceFromSideAnchor;
@@ -409,39 +448,39 @@ package joingame.modes
                 }
             }
             
-            
+            trace("finished animating headshots");   
         }
         
         protected function handleResourceLoadErr (err :String) :void
         {
-//            AppContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
+//            GameContext.mainLoop.unwindToMode(new ResourceLoadErrorMode(err));
         }
 
         
-        /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
-        {
-            var id :int;
-            if (event.name == Server.PLAYER_REMOVED)
-            {
-                id = int(event.value[0]);
-                
-                if(id == AppContext.myid)
-                {
-                    var sim  :SimObject = new SimObject();
-                    addObject(sim);
-                    var serialTask :SerialTask = new SerialTask();
-                    serialTask.addTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME) );
-                    serialTask.addTask( new FunctionTask(startObserverMode) );
-                    
-                    sim.addTask( serialTask);
-                }
-            }
-        }
+//        /** Respond to messages from other clients. */
+//        public function messageReceived (event :MessageReceivedEvent) :void
+//        {
+//            var id :int;
+//            if (event.name == JoingameServer.PLAYER_REMOVED)
+//            {
+//                id = int(event.value[0]);
+//                
+//                if(id == AppContext.myid)
+//                {
+//                    var sim  :SimObject = new SimObject();
+//                    addObject(sim);
+//                    var serialTask :SerialTask = new SerialTask();
+//                    serialTask.addTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME) );
+//                    serialTask.addTask( new FunctionTask(startObserverMode) );
+//                    
+//                    sim.addTask( serialTask);
+//                }
+//            }
+//        }
         
         protected function startObserverMode() :void
         {
-            AppContext.mainLoop.unwindToMode(new ObserverMode());
+            GameContext.mainLoop.unwindToMode(new ObserverMode());
         }
         
         protected var allOpponentsView :AllOpponentsView;
@@ -462,6 +501,6 @@ package joingame.modes
         protected var _extraPlacerWest :MovieClip;
         
         
-    
+        private static const log :Log = Log.getLog(PlayPuzzleMode);
     }
 }

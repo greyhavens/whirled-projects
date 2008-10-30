@@ -22,19 +22,25 @@ package joingame.modes
     
     import joingame.*;
     import joingame.model.*;
-    import joingame.net.JoinGameEvent;
+    import joingame.net.InternalJoinGameEvent;
+    import joingame.net.ReplayConfirmMessage;
+    import joingame.net.ReplayRequestMessage;
     import joingame.view.*;
     
     public class ObserverMode extends AppMode
     {
+        protected static var log :Log = AppContext.log;
         
         override protected function setup () :void
         {
-            trace("\nPlayer " + AppContext.myid + ", ObserverMode()");
+            log.debug("Player " + AppContext.myid + ",PlayPuzzleMode...");
             if(!AppContext.gameCtrl.isConnected()) {
                 return;
             }
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            
+            AppContext.messageManager.addEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
+            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             
             _modeSprite.mouseEnabled = false;
             
@@ -153,9 +159,11 @@ package joingame.modes
             initGameData();
         }
         
-        override protected function destroy () :void
+        override protected function exit () :void
         {
-            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.removeEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
+            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
 //            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
 //            _gameRestartTimer.stop();
             if(_startButton != null) {
@@ -168,11 +176,11 @@ package joingame.modes
             }
             if( _gameModel != null )
             {
-                _gameModel.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
-                _gameModel.removeEventListener(JoinGameEvent.GAME_OVER, gameOver);
+                _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
+                _gameModel.removeEventListener(InternalJoinGameEvent.GAME_OVER, gameOver);
             }
             
-            super.destroy();
+            super.exit();
         }
         
         
@@ -186,8 +194,8 @@ package joingame.modes
             
             if( _gameModel != null )
             {
-                _gameModel.removeEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
-                _gameModel.removeEventListener(JoinGameEvent.GAME_OVER, gameOver);
+                _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
+                _gameModel.removeEventListener(InternalJoinGameEvent.GAME_OVER, gameOver);
             }
             
             _gameModel = GameContext.gameModel;
@@ -216,8 +224,8 @@ package joingame.modes
             _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl, true);
             addObject( _boardsView, _modeSprite);
             _boardsView.updateBoardDisplays();
-            _gameModel.addEventListener(JoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
-            _gameModel.addEventListener(JoinGameEvent.GAME_OVER, gameOver);
+            _gameModel.addEventListener(InternalJoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
+            _gameModel.addEventListener(InternalJoinGameEvent.GAME_OVER, gameOver);
             
             animateHeadshotsToLocation(null, 0);
             
@@ -229,51 +237,92 @@ package joingame.modes
         }
         
         
-        /** Respond to messages from the server. */
-        public function messageReceived (event :MessageReceivedEvent) :void
+        
+        /** Respond to messages from the JoingameServer. */
+        protected function handleReplayRequest (event :ReplayRequestMessage) :void
         {
-            var id :int;  
-            var headshot :SceneObject;          
             /* This is simply mark the headshots of those that have 
-                requested to play again */
-            if (event.name == Server.REPLAY_REQUEST)
-            {
-                id = event.senderId;
-                headshot = _id2HeadshotSceneObject.get(id) as SceneObject;
-                if( headshot != null ) {
-                    headshot.displayObject.filters = [ _myColorMatrix_filter ];
-                }
-                _totalTimeElapsedSinceNewGameTimerStarted = 0;
+            requested to play again */
+            var id :int = event.playerId;
+            var headshot :SceneObject = _id2HeadshotSceneObject.get(id) as SceneObject;
+            if( headshot != null ) {
+                headshot.displayObject.filters = [ _myColorMatrix_filter ];
             }
-            else if (event.name == Server.REPLAY_CONFIRM)
-            {
-                var playerIdsAcceptedForNextGame :Array = event.value[0] as Array;
+            _totalTimeElapsedSinceNewGameTimerStarted = 0;
+            
+        }
+        
+        /** Respond to messages from the JoingameServer. */
+        protected function handleReplayConfirm (event :ReplayConfirmMessage) :void
+        {
+            var playerIdsAcceptedForNextGame :Array = event.currentActivePlayers;
                 
-                var keys :Array = _id2HeadshotSceneObject.keys();
-                for each (var key :int in keys) {
-                    headshot = _id2HeadshotSceneObject.get(key) as SceneObject;
-                    if( headshot != null ) {
-                        headshot.displayObject.filters = [];
-                    }
+            var keys :Array = _id2HeadshotSceneObject.keys();
+            for each (var key :int in keys) {
+                var headshot :SceneObject = _id2HeadshotSceneObject.get(key) as SceneObject;
+                if( headshot != null ) {
+                    headshot.displayObject.filters = [];
                 }
+            }
 
-                if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.gameCtrl.game.getMyId())) {  
-                    AppContext.beginToShowInstructionsTime = getTimer();
-                    AppContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
-                }
-                else {
-                    AppContext.isObserver = true;//Now a permenent observer
-                    GameContext.gameModel.setModelMemento( event.value[1] as Array);
-                    reset();
-                }
+            if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.gameCtrl.game.getMyId())) {  
+                AppContext.beginToShowInstructionsTime = getTimer();
+                GameContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
+            }
+            else {
+                AppContext.isObserver = true;//Now a permenent observer
+                GameContext.gameModel.setModelMemento( event.modelMemento);
+                reset();
             }
             
         }
         
+//        
+//        /** Respond to messages from the JoingameServer. */
+//        public function messageReceived (event :MessageReceivedEvent) :void
+//        {
+//            var id :int;  
+//            var headshot :SceneObject;          
+//            /* This is simply mark the headshots of those that have 
+//                requested to play again */
+//            if (event.name == JoingameServer.REPLAY_REQUEST)
+//            {
+//                id = event.senderId;
+//                headshot = _id2HeadshotSceneObject.get(id) as SceneObject;
+//                if( headshot != null ) {
+//                    headshot.displayObject.filters = [ _myColorMatrix_filter ];
+//                }
+//                _totalTimeElapsedSinceNewGameTimerStarted = 0;
+//            }
+//            else if (event.name == JoingameServer.REPLAY_CONFIRM)
+//            {
+//                var playerIdsAcceptedForNextGame :Array = event.value[0] as Array;
+//                
+//                var keys :Array = _id2HeadshotSceneObject.keys();
+//                for each (var key :int in keys) {
+//                    headshot = _id2HeadshotSceneObject.get(key) as SceneObject;
+//                    if( headshot != null ) {
+//                        headshot.displayObject.filters = [];
+//                    }
+//                }
+//
+//                if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.gameCtrl.game.getMyId())) {  
+//                    AppContext.beginToShowInstructionsTime = getTimer();
+//                    GameContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
+//                }
+//                else {
+//                    AppContext.isObserver = true;//Now a permenent observer
+//                    GameContext.gameModel.setModelMemento( event.value[1] as Array);
+//                    reset();
+//                }
+//            }
+//            
+//        }
+        
         private function mouseClicked( event:MouseEvent ) :void
         {
             _startButton.y -= 4;
-            AppContext.gameCtrl.net.sendMessage(Server.REPLAY_REQUEST, {});//, NetSubControl.TO_SERVER_AGENT
+            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId), NetSubControl.TO_ALL);
         }
         
         private function mouseOver( event:MouseEvent ) :void
@@ -292,13 +341,13 @@ package joingame.modes
         }
         
         
-        protected function gameOver( e :JoinGameEvent = null) :void
+        protected function gameOver( e :InternalJoinGameEvent = null) :void
         {
             _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
             modeSprite.setChildIndex( _winnerClip.displayObject, modeSprite.numChildren - 1);
             AudioManager.instance.playSoundNamed("final_applause");
             
-            if(!AppContext.isObserver && AppContext.gameCtrl.isConnected() && (AppContext.gameCtrl.net.get( Server.POTENTIAL_PLAYERS) as Array).length > 1) {
+            if(!AppContext.isObserver && AppContext.gameCtrl.isConnected() && GameContext.gameModel.potentialPlayerIds.length > 1) {
                 _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                 modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
                 
@@ -307,7 +356,7 @@ package joingame.modes
             }
         }
         
-        protected function animateHeadshotsToLocation( e :JoinGameEvent, animationDuration :Number = Constants.HEADSHOT_MOVEMENT_TIME) :void
+        protected function animateHeadshotsToLocation( e :InternalJoinGameEvent, animationDuration :Number = Constants.HEADSHOT_MOVEMENT_TIME) :void
         {
             
             var scaleTask: ScaleTask;

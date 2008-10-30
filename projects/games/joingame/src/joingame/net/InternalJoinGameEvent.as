@@ -4,11 +4,13 @@ package joingame.net
 
     /**
     * Transmits various game state changes in between 
-    * the model and the graphical view.
+    * the model and the graphical view.  
+    * 
+    * *Not* used for client/server communication, as it is quite inefficient (bloated).
     */
-    public class JoinGameEvent extends Event
+    public class InternalJoinGameEvent extends Event
     {
-        public function JoinGameEvent(playerid :int, type:String)
+        public function InternalJoinGameEvent(playerid :int, type:String)
         {
             super(type, false, false);
             boardPlayerID = playerid;
@@ -72,6 +74,7 @@ package joingame.net
         
         public static const PLAYER_DESTROYED :String = "JoinGame Event: Player Destroyed";
         public static const PLAYER_REMOVED :String = "JoinGame Event: Player Removed";
+        public static const PLAYER_ADDED :String = "JoinGame Event: Player Added";
         
         public static const GAME_OVER :String = "JoinGame Event: Game Over";
         

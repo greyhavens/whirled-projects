@@ -13,6 +13,8 @@ package joingame.modes
     
     public class GameOverMode extends AppMode
     {
+        protected static var log :Log = AppContext.log;
+        
         public function GameOverMode( playerids :Array, scores :Array)
         {
             super();
@@ -38,6 +40,7 @@ package joingame.modes
         
         override protected function setup ():void
         {
+            log.debug("GameOverMode...");
             var winningPlayerID :int = GameContext.gameModel.currentSeatingOrder[0];
             var _button :SimpleTextButton = new SimpleTextButton("Winning Player = " + winningPlayerID);
             _modeSprite.addChild(_button);

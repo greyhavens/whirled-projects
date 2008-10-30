@@ -2,6 +2,7 @@ package joingame {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
+import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
@@ -17,7 +18,9 @@ import joingame.view.*;
 public class GameContext
 {
     
-
+    public static var mainSprite :Sprite;
+    
+    public static var mainLoop :MainLoop;
 
     public static var puzzleBoardMiddle :JoinGameBoardGameArea;
     
@@ -103,7 +106,9 @@ public class GameContext
             return _headshots.get(playerid) as DisplayObject;
         }
         else {
-            var headshot :DisplayObject = AppContext.gameCtrl.local.getHeadShot( playerid);
+            var headshot :DisplayObject = AppContext.isConnected ? 
+                                    AppContext.gameCtrl.local.getHeadShot( playerid) :
+                                    null;
             if(headshot != null) {
                 _headshots.put(playerid, headshot);
                 return headshot; 

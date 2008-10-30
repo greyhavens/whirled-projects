@@ -26,8 +26,8 @@ package joingame
         
 //        public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
         
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
-//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
+//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -92,8 +92,8 @@ package joingame
         public static const PIECE_SCALE_DOWN_TIME :Number = 0.4;
         public static const PIECE_JOIN_BOUNCE_DISTANCE :int = 70;
         
-        public static const BOARD_ENTER_DELAY :Number = 1.0;
-        public static const HEADSHOT_MOVEMENT_TIME :Number = 1.0;
+        public static const BOARD_ENTER_DELAY :Number = 0.1;//1.0;
+        public static const HEADSHOT_MOVEMENT_TIME :Number = 0.1;//1.0;
         
         public static const BOARD_DISTRUCTION_TIME :Number = 5.0;
         
@@ -111,7 +111,9 @@ package joingame
         
         public static const TIME_TO_SHOW_INSTRUCTIONS :int = 6000; 
         
-        public static var isMultiplayer :Boolean;
+        
+        
+        public static const LOCAL_MODE :Boolean = true;
     }
 }
  

@@ -9,25 +9,31 @@ package joingame.modes
     import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
-    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
     import flash.events.MouseEvent;
-    import flash.events.TimerEvent;
     import flash.filters.ColorMatrixFilter;
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.net.AllPlayersReadyMessage;
+    import joingame.net.PlayerReceivedGameStateMessage;
+    import joingame.net.RegisterPlayerMessage;
+    import joingame.net.StartPlayMessage;
     import joingame.view.*;
 
     public class SinglePlayerIntroMode extends AppMode
     {
-        override protected function setup ():void
+        protected static var log :Log = AppContext.log;
+        
+        override protected function enter ():void
         {
-            if( !AppContext.gameCtrl.isConnected() ) {
-                return;
-            }
+            log.debug("SinglePlayerIntroMode...");
+            
+//            if( !AppContext.gameCtrl.isConnected() ) {
+//                return;
+//            }
             
             _allPlayersReady = false;
             _startClicked = false;
@@ -59,6 +65,8 @@ package joingame.modes
             _startButton.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
             _startButton.addEventListener(MouseEvent.CLICK, mouseClicked);
             
+            modeSprite.addChild(_startButton);
+            
             var brightness :int = 25;
             var contrast :int = 50;
                  
@@ -66,9 +74,11 @@ package joingame.modes
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0]
                                                                                     
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
-            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.addEventListener( AllPlayersReadyMessage.NAME, handleAllPlayersReady);
+            AppContext.messageManager.addEventListener( StartPlayMessage.NAME, handleStartPlay);
+//            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
-            
+            AppContext.messageManager.sendMessage(new RegisterPlayerMessage( AppContext.playerId));
         }
         
         
@@ -93,30 +103,39 @@ package joingame.modes
         {
             _startButton.y -= 4;
             _startClicked = true;
-            AppContext.gameCtrl.net.sendMessage(Server.REGISTER_PLAYER, {}, NetSubControl.TO_SERVER_AGENT);
+            
+            AppContext.messageManager.sendMessage(new RegisterPlayerMessage( AppContext.playerId));
         }
         
         /** Respond to messages from other clients. */
-        public function messageReceived (event :MessageReceivedEvent) :void
+        protected function handleAllPlayersReady (event :AllPlayersReadyMessage) :void
         {
-            if (event.name == Server.ALL_PLAYERS_READY)
-            {
-                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
-                GameContext.gameModel.setModelMemento( event.value[0] as Array );
+            GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
+            GameContext.gameModel.setModelMemento( event.model );
+            
+//            log.debug(ClassUtil.shortClassName(SinglePlayerIntroMode) + " sending " + ClassUtil.shortClassName(PlayerReceivedGameStateMessage));
+            AppContext.messageManager.sendMessage(new PlayerReceivedGameStateMessage(AppContext.playerId));
                 
-                AppContext.gameCtrl.net.sendMessage(Server.PLAYER_RECEIVED_START_GAME_STATE, {}, NetSubControl.TO_SERVER_AGENT);
-                
-            }
-            else if (event.name == Server.START_PLAY)
-            {
-                AppContext.mainLoop.unwindToMode(new PlayPuzzleMode());
-            }
         }
         
+        /** Respond to messages from other clients. */
+        public function handleStartPlay (event :StartPlayMessage) :void
+        {
+            GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());
+        }
+        
+        override protected function exit () :void
+        {
+            AppContext.messageManager.removeEventListener( AllPlayersReadyMessage.NAME, handleAllPlayersReady);
+            AppContext.messageManager.removeEventListener( StartPlayMessage.NAME, handleStartPlay);
+            _startButton.removeEventListener(MouseEvent.CLICK, mouseClicked);
+            super.exit();
+        }
         
         override protected function destroy () :void
         {
-            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.removeEventListener( AllPlayersReadyMessage.NAME, handleAllPlayersReady);
+            AppContext.messageManager.removeEventListener( StartPlayMessage.NAME, handleStartPlay);
             _startButton.removeEventListener(MouseEvent.CLICK, mouseClicked);
             super.destroy();
         }

@@ -17,7 +17,7 @@ package joingame.view
     
     import joingame.*;
     import joingame.model.*;
-    import joingame.net.JoinGameEvent;
+    import joingame.net.InternalJoinGameEvent;
     
     public class JoinAttackAnimation extends SceneObject
     {
