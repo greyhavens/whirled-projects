@@ -33,7 +33,8 @@ public class Story extends TextField
     public static function proc (html :String) :String
     {
         //return html.replace(/<a\s+(.*)href=['"](.*)?['"]/g, "<a $1 href='event:$2'");
-        return html.replace(/href=['"](.*)?['"]/g, "href='event:$1'");
+        //return html.replace(/href=['"](.*)?['"]/g, "href='event:$1'");
+        return html;
     }
 
     // TODO: Move to Resources.as

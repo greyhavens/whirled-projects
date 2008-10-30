@@ -1,6 +1,6 @@
 <datapack>
   <!--<data name="feed" type="String" value="http://www.whirled.com/rss/86" info="TODO" />-->
-  <data name="Feed" type="String" value="http://demo.tumblr.com/rss" info="The URL of the feed. RSS and Atom are supported." />
+  <data name="Feed" type="String" value="http://rss.news.yahoo.com/rss/world" info="The URL of the feed. RSS and Atom are supported." />
   <data name="Count" type="Number" value="-1" info="The number of articles to download, or -1 to get all available articles from the feed." />
 
   <file name="_CONTENT" type="Blob" value="Feeder.swf"/>

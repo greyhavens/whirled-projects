@@ -15,7 +15,7 @@ import com.threerings.util.Command;
 
 import com.whirled.*;
 
-[SWF(width="500", height="375")]
+[SWF(width="335", height="268")]
 public class Feeder extends Sprite
 {
     DefaultScrollPaneSkins;
@@ -72,7 +72,6 @@ public class Feeder extends Sprite
         var title :TextField = new TextField();
         title.styleSheet = Story.createStyleSheet();
         title.htmlText += "<a class='title' href='event:"+_feed.link+"'>"+_feed.title+"</a>";
-        title.width = 220;
         title.addEventListener(TextEvent.LINK, function (event :TextEvent) :void {
             navigateToURL(new URLRequest(event.text));
         });
@@ -81,21 +80,32 @@ public class Feeder extends Sprite
         }
         addChild(title);
 
-        var prev :Button = new Button();
-        prev.label = "Prev";
-        prev.setSize(50, 20);
-        prev.x = 320 - 100;
+        var prev :Button = createButton(PREV, 3);
         Command.bind(prev, MouseEvent.CLICK, nextStory, -1);
         addChild(prev);
 
-        var next :Button = new Button();
-        next.label = "Next";
-        next.setSize(50, 20);
-        next.x = 320 - 50;
+        title.width = prev.x;
+
+        var next :Button = createButton(NEXT, 2);
         Command.bind(next, MouseEvent.CLICK, nextStory, +1);
         addChild(next);
 
+        var reload :Button = createButton(RELOAD, 1);
+        Command.bind(reload, MouseEvent.CLICK, update);
+        addChild(reload);
+
+        _index = 0;
         nextStory(0);
+    }
+
+    protected function createButton (icon :Class, right :int) :Button
+    {
+        var button :Button = new Button();
+        button.label = "";
+        button.setStyle("icon", DisplayObject(new icon()));
+        button.x = 320+ScrollBar.WIDTH - right*30;
+        button.setSize(30, 20);
+        return button;
     }
 
     protected function nextStory (delta :int) :void
@@ -141,5 +151,12 @@ public class Feeder extends Sprite
 
     protected var _feed :Object;
     protected var _index :int;
+
+    [Embed(source="arrow_left.png")]
+    protected static const PREV :Class;
+    [Embed(source="arrow_rotate_clockwise.png")]
+    protected static const RELOAD :Class;
+    [Embed(source="arrow_right.png")]
+    protected static const NEXT :Class;
 }
 }
