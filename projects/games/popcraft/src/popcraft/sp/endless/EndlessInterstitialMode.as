@@ -4,9 +4,9 @@ import com.threerings.flash.Vector2;
 
 import popcraft.*;
 
-public class SpEndlessInterstitialMode extends EndlessLevelSelectModeBase
+public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
 {
-    public function SpEndlessInterstitialMode (multiplierStartLoc :Vector2)
+    public function EndlessInterstitialMode (multiplierStartLoc :Vector2)
     {
         var scores :Array;
         if (GameContext.isSinglePlayerGame) {

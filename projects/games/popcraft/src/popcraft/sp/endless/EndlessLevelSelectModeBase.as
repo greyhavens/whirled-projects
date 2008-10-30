@@ -3,8 +3,8 @@ package popcraft.sp.endless {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
-import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -181,7 +181,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             remoteSave = (_remoteSaves != null ? _remoteSaves.getSave(mapIndex) : null);
         }
 
-        var showStats :Boolean =
+        var showGameOverStats :Boolean =
             (_mode == GAME_OVER_MODE && mapIndex == EndlessGameContext.mapIndex);
 
         var showRoundScores :Array;
@@ -189,15 +189,18 @@ public class EndlessLevelSelectModeBase extends AppMode
             showRoundScores = _roundScores;
         }
 
+        var showScoreAndResources :Boolean = (_mode != INTERSTITIAL_MODE);
+
         _saveView = new SaveView(
             _level,
             localSave,
             remoteSave,
-            showStats,
+            showGameOverStats,
+            showScoreAndResources,
+            showRoundScores,
             this.enableNextPrevPlayButtons,
             this.enableQuitButton,
-            this.enableHelpButton,
-            showRoundScores);
+            this.enableHelpButton);
 
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
@@ -370,6 +373,7 @@ import popcraft.ui.HealthMeters;
 import popcraft.util.MyStringUtil;
 import com.threerings.flash.DisplayUtil;
 import flash.events.MouseEvent;
+import com.threerings.util.Integer;
 
 class HelpView extends SceneObject
 {
@@ -405,10 +409,16 @@ class HelpView extends SceneObject
 
 class SaveView extends SceneObject
 {
-    public function SaveView (level :EndlessLevelData, localSave :SavedEndlessGame,
-        remoteSave :SavedEndlessGame, showGameOverStats :Boolean,
-        createNextPrevPlayButtons :Boolean, createQuitButton :Boolean, createHelpButton :Boolean,
-        roundScores :Array)
+    public function SaveView (
+        level :EndlessLevelData,
+        localSave :SavedEndlessGame,
+        remoteSave :SavedEndlessGame,
+        showGameOverStats :Boolean,
+        showScoreAndResources :Boolean,
+        roundScores :Array,
+        createNextPrevPlayButtons :Boolean,
+        createQuitButton :Boolean,
+        createHelpButton :Boolean)
     {
         var mapData :EndlessMapData = level.getMapData(localSave.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(localSave.mapIndex);
@@ -476,28 +486,38 @@ class SaveView extends SceneObject
         var totalScoreText :TextField = _movie["level_score"];
         var remoteSavePanel :MovieClip = _movie["second_row"];
 
+        statPanel.visible = false;
+        totalScoreText.visible = false;
+        remoteSavePanel.visible = false;
+
         if (roundScores != null) {
             statPanel.visible = true;
-            totalScoreText.visible = false;
-            remoteSavePanel.visible = false;
 
-            for (playerIndex = 0; playerIndex < 2; ++playerIndex) {
+            // we're going to modify the array, so make a copy
+            roundScores = roundScores.slice();
+            roundScores.sort(
+                function (a :PlayerScore, b :PlayerScore) :int {
+                    // bigger scores come first
+                    return Integer.compare(b.totalScore, a.totalScore);
+                });
+
+            for (var playerRank :int = 0; playerRank < 2; ++playerRank) {
                 showPlayerScores(
-                    playerIndex,
-                    (playerIndex < roundScores.length ? roundScores[playerIndex] : null));
+                    playerRank,
+                    (playerRank < roundScores.length ? roundScores[playerRank] : null));
             }
 
-            function showPlayerScores (playerIndex :int, score :PlayerScore) :void {
-                var playerNum :int = playerIndex + 1;
-                var scorePanel :MovieClip = statPanel["player_" + playerNum + "_marker"];
-                var portrait :MovieClip = statPanel["player_" + playerNum + "_portrait"];
-                var levelScoreText :TextField = statPanel["player_" + playerNum + "_text"];
+            function showPlayerScores (playerRank :int, score :PlayerScore) :void {
+                playerRank += 1;
+                var scorePanel :MovieClip = statPanel["player_" + playerRank + "_marker"];
+                var portrait :MovieClip = statPanel["player_" + playerRank + "_portrait"];
+                var levelScoreText :TextField = statPanel["player_" + playerRank + "_text"];
                 if (score == null) {
                     scorePanel.visible = false;
                     portrait.visible = false;
                     levelScoreText.visible = false;
                 } else {
-                    var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
+                    var playerInfo :PlayerInfo = GameContext.playerInfos[score.playerIndex];
                     portrait.addChild(playerInfo.headshot);
                     scorePanel.visible = true;
                     levelScoreText.text = "Resource score: " + score.resourceScore + "\n" +
@@ -506,14 +526,10 @@ class SaveView extends SceneObject
                 }
             }
 
-
-
         } else if (showGameOverStats) {
             statPanel.visible = true;
             statPanel["player_1_marker"].visible = false;
             statPanel["player_2_marker"].visible = false;
-            totalScoreText.visible = false;
-            remoteSavePanel.visible = false;
 
             // opponent portraits
             var xLoc :Number = 0;
@@ -548,9 +564,6 @@ class SaveView extends SceneObject
                 "Schoolmates whipped: " + numOpponentsDefeated + "\n\nHave another go?";
 
         } else {
-            statPanel.visible = false;
-            totalScoreText.visible = true;
-
             // thumbnail
             var mapNumber :int = localSave.mapIndex % level.mapSequence.length;
             var thumbnail :Bitmap =
@@ -559,42 +572,45 @@ class SaveView extends SceneObject
             thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
             _movie.addChild(thumbnail);
 
-            // score text
-            totalScoreText.text = "Score: " + StringUtil.formatNumber(localSave.totalScore);
+            if (showScoreAndResources) {
+                // score text
+                totalScoreText.visible = true;
+                totalScoreText.text = "Score: " + StringUtil.formatNumber(localSave.totalScore);
 
-            // save panels
-            if (remoteSave != null) {
-                // player headshots
-                for (playerIndex = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
-                    var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
-                    var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
-                        LOCAL_HEADSHOT_LOC :
-                        REMOTE_HEADSHOT_LOC);
+                // save panels
+                if (remoteSave != null) {
+                    // player headshots
+                    for (playerIndex = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
+                        var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
+                        var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
+                            LOCAL_HEADSHOT_LOC :
+                            REMOTE_HEADSHOT_LOC);
 
-                    // make sure the headshots aren't already scaled
-                    headshot.scaleX = 1;
-                    headshot.scaleY = 1;
-                    // scale them to fit in the space
-                    var scale :Number = Math.min(1, MAX_HEADSHOT_HEIGHT / headshot.height);
-                    headshot.scaleX = scale;
-                    headshot.scaleY = scale;
-                    headshot.x = hsLoc.x - (headshot.width * 0.5);
-                    headshot.y = hsLoc.y - (headshot.height * 0.5);
-                    _movie.addChild(headshot);
+                        // make sure the headshots aren't already scaled
+                        headshot.scaleX = 1;
+                        headshot.scaleY = 1;
+                        // scale them to fit in the space
+                        var scale :Number = Math.min(1, MAX_HEADSHOT_HEIGHT / headshot.height);
+                        headshot.scaleX = scale;
+                        headshot.scaleY = scale;
+                        headshot.x = hsLoc.x - (headshot.width * 0.5);
+                        headshot.y = hsLoc.y - (headshot.height * 0.5);
+                        _movie.addChild(headshot);
+                    }
                 }
-            }
 
-            var saveStatsSprite :Sprite = createSaveStatsSprite(level, localSave);
-            saveStatsSprite.x = SAVESTATS1_CTR_LOC.x - (saveStatsSprite.width * 0.5);
-            saveStatsSprite.y = SAVESTATS1_CTR_LOC.y;
-            _movie.addChild(saveStatsSprite);
-
-            remoteSavePanel.visible = (remoteSave != null);
-            if (remoteSave != null) {
-                saveStatsSprite = createSaveStatsSprite(level, remoteSave);
-                saveStatsSprite.x = SAVESTATS2_CTR_LOC.x - (saveStatsSprite.width * 0.5);
-                saveStatsSprite.y = SAVESTATS2_CTR_LOC.y;
+                var saveStatsSprite :Sprite = createSaveStatsSprite(level, localSave);
+                saveStatsSprite.x = SAVESTATS1_CTR_LOC.x - (saveStatsSprite.width * 0.5);
+                saveStatsSprite.y = SAVESTATS1_CTR_LOC.y;
                 _movie.addChild(saveStatsSprite);
+
+                remoteSavePanel.visible = (remoteSave != null);
+                if (remoteSave != null) {
+                    saveStatsSprite = createSaveStatsSprite(level, remoteSave);
+                    saveStatsSprite.x = SAVESTATS2_CTR_LOC.x - (saveStatsSprite.width * 0.5);
+                    saveStatsSprite.y = SAVESTATS2_CTR_LOC.y;
+                    _movie.addChild(saveStatsSprite);
+                }
             }
         }
     }
