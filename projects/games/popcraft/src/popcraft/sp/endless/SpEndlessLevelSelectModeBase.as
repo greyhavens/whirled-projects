@@ -1,5 +1,6 @@
 package popcraft.sp.endless {
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import popcraft.*;
@@ -7,9 +8,10 @@ import popcraft.sp.story.LevelSelectMode;
 
 public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 {
-    public function SpEndlessLevelSelectModeBase(mode:int)
+    public function SpEndlessLevelSelectModeBase (mode :int, roundScores :Array = null,
+        multiplierStartLoc :Vector2 = null)
     {
-        super(mode);
+        super(mode, roundScores, multiplierStartLoc);
     }
 
     override protected function setup () :void

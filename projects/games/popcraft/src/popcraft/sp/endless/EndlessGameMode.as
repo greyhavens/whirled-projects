@@ -219,7 +219,9 @@ public class EndlessGameMode extends GameMode
                     new EndlessGameMode(EndlessGameContext.level, null, false));
             } else {
                 if (GameContext.isSinglePlayerGame) {
-                    AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
+                    //AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
+                    AppContext.mainLoop.pushMode(
+                        new SpEndlessInterstitialMode(_lastLiveComputerLoc));
                 } else {
                     // This is a multiplayer game. Report our scores for this round to everybody,
                     // so that the interstitial screen can display them, and wait for all scores
@@ -227,7 +229,7 @@ public class EndlessGameMode extends GameMode
                     EndlessGameContext.playerMonitor.reportLocalPlayerRoundScore();
                     EndlessGameContext.playerMonitor.waitForRoundScoresForCurRound(
                         function () :void {
-                            AppContext.mainLoop.pushMode(new EndlessInterstitialMode(
+                            AppContext.mainLoop.pushMode(new SpEndlessInterstitialMode(
                                 _lastLiveComputerLoc));
                         });
                 }

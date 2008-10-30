@@ -1,7 +1,10 @@
 package popcraft.sp.endless {
 
-import com.whirled.contrib.simplegame.AppMode;
+import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
@@ -9,17 +12,21 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import mx.effects.easing.*;
+
 import popcraft.*;
-import popcraft.data.EndlessLevelData;
-import popcraft.data.UnitData;
+import popcraft.data.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 
 public class EndlessLevelSelectModeBase extends AppMode
 {
-    public function EndlessLevelSelectModeBase (mode :int)
+    public function EndlessLevelSelectModeBase (mode :int, roundScores :Array = null,
+        multiplierStartLoc :Vector2 = null)
     {
         _mode = mode;
+        _roundScores = roundScores;
+        _multiplierStartLoc = multiplierStartLoc;
     }
 
     protected function onLevelLoaded (level :EndlessLevelData) :void
@@ -49,9 +56,68 @@ public class EndlessLevelSelectModeBase extends AppMode
         var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
         _level1 = SavedEndlessGame.create(0, 0, 0, 1, workshopData.maxHealth);
 
-        var initialMapIndex :int =
-            (_mode == GAME_OVER_MODE ? EndlessGameContext.mapIndex : _highestMapIndex);
+        var initialMapIndex :int;
+        switch (_mode) {
+        case GAME_OVER_MODE:
+        case INTERSTITIAL_MODE:
+            initialMapIndex = EndlessGameContext.mapIndex;
+            break;
+
+        case LEVEL_SELECT_MODE:
+            initialMapIndex = _highestMapIndex;
+            break;
+        }
+
         selectMap(initialMapIndex, ANIMATE_DOWN, true);
+
+        if (_mode == INTERSTITIAL_MODE) {
+            // if this is a level interstitial, show the scores for the current level,
+            // then animate the move to the next level, then move to the next level
+            var interstitialAnimObj :SimObject = new SimObject();
+            interstitialAnimObj.addTask(new SerialTask(
+                new TimedTask(4),
+                new FunctionTask(
+                    function () :void {
+                        selectMap(initialMapIndex + 1, ANIMATE_NEXT, false);
+                    }),
+                new TimedTask(2),
+                new FunctionTask(
+                    function () :void {
+                        animateToMode(new EndlessGameMode(EndlessGameContext.level, null, false));
+                    })));
+            addObject(interstitialAnimObj);
+
+            // create the multiplier object, which will move to the center of the screen, pause,
+            // and then move to its location in the new level
+            var nextMap :EndlessMapData = EndlessGameContext.level.getMapData(initialMapIndex + 1);
+            var multiplierMovie :MovieClip =
+                SwfResource.instantiateMovieClip("infusions", "infusion_multiplier");
+            var multiplierObj :SceneObject = new SimpleSceneObject(multiplierMovie);
+            multiplierObj.x = _multiplierStartLoc.x;
+            multiplierObj.y = _multiplierStartLoc.y;
+            multiplierObj.visible = false;
+            multiplierObj.addTask(new SerialTask(
+                new VisibleTask(true),
+                new ParallelTask(
+                    new AdvancedLocationTask(
+                        Constants.SCREEN_SIZE.x * 0.5,
+                        (Constants.SCREEN_SIZE.y * 0.5) - 20,
+                        1,
+                        mx.effects.easing.Linear.easeNone,
+                        mx.effects.easing.Cubic.easeOut),
+                    new ScaleTask(2, 2, 1)),
+                new TimedTask(4.5),
+                new ParallelTask(
+                    new AdvancedLocationTask(
+                        nextMap.multiplierDropLoc.x,
+                        nextMap.multiplierDropLoc.y,
+                        1,
+                        mx.effects.easing.Linear.easeNone,
+                        mx.effects.easing.Cubic.easeIn),
+                    new ScaleTask(1, 1, 1))));
+
+            addObject(multiplierObj, _modeSprite);
+        }
     }
 
     protected function selectMap (mapIndex :int, animationType :int,
@@ -118,8 +184,20 @@ public class EndlessLevelSelectModeBase extends AppMode
         var showStats :Boolean =
             (_mode == GAME_OVER_MODE && mapIndex == EndlessGameContext.mapIndex);
 
-        _saveView = new SaveView(_level, localSave, remoteSave, showStats,
-            this.enableNextPrevPlayButtons, this.enableQuitButton);
+        var showRoundScores :Array;
+        if (_mode == INTERSTITIAL_MODE && mapIndex == EndlessGameContext.mapIndex) {
+            showRoundScores = _roundScores;
+        }
+
+        _saveView = new SaveView(
+            _level,
+            localSave,
+            remoteSave,
+            showStats,
+            this.enableNextPrevPlayButtons,
+            this.enableQuitButton,
+            this.enableHelpButton,
+            showRoundScores);
 
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
@@ -127,7 +205,9 @@ public class EndlessLevelSelectModeBase extends AppMode
         addObject(_saveView, _saveViewLayer);
 
         // wire up buttons
-        registerListener(_saveView.helpButton, MouseEvent.CLICK, onHelpClicked);
+        if (this.enableHelpButton) {
+            registerListener(_saveView.helpButton, MouseEvent.CLICK, onHelpClicked);
+        }
 
         if (this.enableQuitButton) {
             registerOneShotCallback(_saveView.quitButton, MouseEvent.CLICK, onQuitClicked);
@@ -227,7 +307,14 @@ public class EndlessLevelSelectModeBase extends AppMode
         return true;
     }
 
+    protected function get enableHelpButton () :Boolean
+    {
+        return true;
+    }
+
     protected var _mode :int;
+    protected var _roundScores :Array; // Array<PlayerScore>
+    protected var _multiplierStartLoc :Vector2;
     protected var _saveViewLayer :Sprite;
     protected var _helpLayer :Sprite;
     protected var _highestMapIndex :int;
@@ -320,7 +407,8 @@ class SaveView extends SceneObject
 {
     public function SaveView (level :EndlessLevelData, localSave :SavedEndlessGame,
         remoteSave :SavedEndlessGame, showGameOverStats :Boolean,
-        createNextPrevPlayButtons :Boolean, createQuitButton :Boolean)
+        createNextPrevPlayButtons :Boolean, createQuitButton :Boolean, createHelpButton :Boolean,
+        roundScores :Array)
     {
         var mapData :EndlessMapData = level.getMapData(localSave.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(localSave.mapIndex);
@@ -368,24 +456,63 @@ class SaveView extends SceneObject
             this.prevButton.visible = false;
         }
 
-        _helpButton = UIBits.createButton("Help", 1.5);
-        DisplayUtil.positionBounds(_helpButton,
-            buttonSprite.width + BUTTON_X_OFFSET,
-            -_helpButton.height * 0.5);
-        buttonSprite.addChild(_helpButton);
+        if (createHelpButton) {
+            _helpButton = UIBits.createButton("Help", 1.5);
+            DisplayUtil.positionBounds(_helpButton,
+                buttonSprite.width + BUTTON_X_OFFSET,
+                -_helpButton.height * 0.5);
+            buttonSprite.addChild(_helpButton);
+        }
 
         DisplayUtil.positionBounds(buttonSprite,
             BUTTONS_CTR_LOC.x - (buttonSprite.width * 0.5),
             BUTTONS_CTR_LOC.y - (buttonSprite.height * 0.5));
         _movie.addChild(buttonSprite);
 
+        var playerIndex :int;
+
         // stats
         var statPanel :MovieClip = _movie["stat_panel"];
-        var scoreText :TextField = _movie["level_score"];
+        var totalScoreText :TextField = _movie["level_score"];
         var remoteSavePanel :MovieClip = _movie["second_row"];
-        if (showGameOverStats) {
+
+        if (roundScores != null) {
             statPanel.visible = true;
-            scoreText.visible = false;
+            totalScoreText.visible = false;
+            remoteSavePanel.visible = false;
+
+            for (playerIndex = 0; playerIndex < 2; ++playerIndex) {
+                showPlayerScores(
+                    playerIndex,
+                    (playerIndex < roundScores.length ? roundScores[playerIndex] : null));
+            }
+
+            function showPlayerScores (playerIndex :int, score :PlayerScore) :void {
+                var playerNum :int = playerIndex + 1;
+                var scorePanel :MovieClip = statPanel["player_" + playerNum + "_marker"];
+                var portrait :MovieClip = statPanel["player_" + playerNum + "_portrait"];
+                var levelScoreText :TextField = statPanel["player_" + playerNum + "_text"];
+                if (score == null) {
+                    scorePanel.visible = false;
+                    portrait.visible = false;
+                    levelScoreText.visible = false;
+                } else {
+                    var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
+                    portrait.addChild(playerInfo.headshot);
+                    scorePanel.visible = true;
+                    levelScoreText.text = "Resource score: " + score.resourceScore + "\n" +
+                        "Damage score: " + score.damageScore + "\n" +
+                        "Total score: " + score.totalScore;
+                }
+            }
+
+
+
+        } else if (showGameOverStats) {
+            statPanel.visible = true;
+            statPanel["player_1_marker"].visible = false;
+            statPanel["player_2_marker"].visible = false;
+            totalScoreText.visible = false;
             remoteSavePanel.visible = false;
 
             // opponent portraits
@@ -422,7 +549,7 @@ class SaveView extends SceneObject
 
         } else {
             statPanel.visible = false;
-            scoreText.visible = true;
+            totalScoreText.visible = true;
 
             // thumbnail
             var mapNumber :int = localSave.mapIndex % level.mapSequence.length;
@@ -433,12 +560,12 @@ class SaveView extends SceneObject
             _movie.addChild(thumbnail);
 
             // score text
-            scoreText.text = "Score: " + StringUtil.formatNumber(localSave.totalScore);
+            totalScoreText.text = "Score: " + StringUtil.formatNumber(localSave.totalScore);
 
             // save panels
             if (remoteSave != null) {
                 // player headshots
-                for (var playerIndex :int = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
+                for (playerIndex = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
                     var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
                     var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
                         LOCAL_HEADSHOT_LOC :
