@@ -376,12 +376,27 @@ class HelpView extends SceneObject
         _movie = SwfResource.instantiateMovieClip("splashUi", "help");
 
         var yearbook :MovieClip = _movie["yearbook"];
+
+        // Eloise portrait
+        /*_eloisePage = yearbook["eloise"];
+        var pEloise :MovieClip = _eloisePage["pEloise"];
+        pEloise.addChild(ImageResource.instantiateBitmap("portrait_eloise"));*/
+
+        // everyone else's portrait
         for each (var name :String in STUDENT_NAMES) {
             var portraitParent :MovieClip = yearbook["p" + name];
             var portrait :Bitmap = ImageResource.instantiateBitmap("portrait_" + name.toLowerCase());
             portraitParent.addChild(portrait);
         }
 
+        // turn-page button
+        /*var turnButton :SimpleButton = yearbook["turn"];
+        registerListener(turnButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                _eloisePage.gotoAndPlay(_eloisePage.currentFrame + 1);
+            });*/
+
+        // close button
         var closeButton :SimpleButton = _movie["close"];
         var localThis :HelpView = this;
         registerListener(closeButton, MouseEvent.CLICK,
@@ -390,12 +405,22 @@ class HelpView extends SceneObject
             });
     }
 
+    /*override public function set visible (val :Boolean) :void
+    {
+        if (val) {
+            _eloisePage.gotoAndStop(1);
+        }
+
+        super.visible = val;
+    }*/
+
     override public function get displayObject () :DisplayObject
     {
         return _movie;
     }
 
     protected var _movie :MovieClip;
+    //protected var _eloisePage :MovieClip;
 
     protected static const STUDENT_NAMES :Array =
         [ "Pigsley", "Horace", "Iris", "Ivy", "Ursula", "Dante", "Ralph", "Jack" ];
