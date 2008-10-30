@@ -75,6 +75,8 @@ public class Resources
         rm.queueResourceLoad(Constants.RESTYPE_GAMEDATA, Constants.RSRC_DEFAULTGAMEDATA, { embeddedClass: DEFAULT_GAME_DATA });
 
         // gfx
+        rm.queueResourceLoad("swf", "manual", { embeddedClass: SWF_MANUAL });
+
         rm.queueResourceLoad("image", "endlessThumb1", { embeddedClass: IMG_ENDLESSTHUMB1 });
         rm.queueResourceLoad("image", "endlessThumb2", { embeddedClass: IMG_ENDLESSTHUMB2 });
         rm.queueResourceLoad("image", "endlessThumb3", { embeddedClass: IMG_ENDLESSTHUMB3 });
@@ -208,7 +210,6 @@ public class Resources
     ];
 
     public static const SP_LEVEL_PACK_RESOURCES :Array = [
-        "manual",
         "boss",
     ];
 
@@ -222,6 +223,9 @@ public class Resources
     protected static const GAME_VARIANTS_DATA :Class;
 
     // gfx - all
+    [Embed(source="../../rsrc/all/manual.swf", mimeType="application/octet-stream")]
+    protected static const SWF_MANUAL :Class;
+
     [Embed(source="../../rsrc/all/iris.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_IRIS :Class;
     [Embed(source="../../rsrc/all/ivy.png", mimeType="application/octet-stream")]

@@ -29,7 +29,6 @@ public class PopCraft_Standalone extends PopCraft
 
         rm.queueResourceLoad("swf", "prologue", { embeddedClass: SWF_PROLOGUE });
         rm.queueResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
-        rm.queueResourceLoad("swf", "manual", { embeddedClass: SWF_MANUAL });
         rm.queueResourceLoad("swf", "boss", { embeddedClass: SWF_BOSS });
 
         rm.queueResourceLoad("sound", "mus_day", { embeddedClass: MUSIC_DAY });
@@ -45,8 +44,6 @@ public class PopCraft_Standalone extends PopCraft
     protected static const SWF_PROLOGUE :Class;
     [Embed(source="../../rsrc/sp/epilogue.swf", mimeType="application/octet-stream")]
     protected static const SWF_EPILOGUE :Class;
-    [Embed(source="../../rsrc/sp/manual.swf", mimeType="application/octet-stream")]
-    protected static const SWF_MANUAL :Class;
     [Embed(source="../../rsrc/sp/weardd.swf", mimeType="application/octet-stream")]
     protected static const SWF_BOSS :Class;
 

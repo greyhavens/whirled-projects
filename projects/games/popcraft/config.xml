@@ -13,7 +13,6 @@
     <!-- Single player -->
     <level ident="prologue" name="prologue" mediaURL="http://127.0.0.1:8080/levelpacks/sp/prologue.swf"/>
     <level ident="epilogue" name="epilogue" mediaURL="http://127.0.0.1:8080/levelpacks/sp/epilogue.swf"/>
-    <level ident="manual" name="manual" mediaURL="http://127.0.0.1:8080/levelpacks/sp/manual.swf"/>
     <level ident="boss" name="boss" mediaURL="http://127.0.0.1:8080/levelpacks/sp/weardd.swf"/>
   </packs>
 </game>
