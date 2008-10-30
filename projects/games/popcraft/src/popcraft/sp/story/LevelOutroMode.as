@@ -85,10 +85,15 @@ public class LevelOutroMode extends AppMode
 
         if (_success && !AppContext.levelMgr.isLastLevel) {
             button = UIBits.createButton("Next Level", 1.5, 150);
+            var localThis :LevelOutroMode = this;
             this.registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    AppContext.levelMgr.incrementCurLevelIndex();
-                    AppContext.levelMgr.playLevel();
+                    if (localThis.showUpsellScreen) {
+                        AppContext.mainLoop.pushMode(new UpsellMode());
+                    } else {
+                        AppContext.levelMgr.incrementCurLevelIndex();
+                        AppContext.levelMgr.playLevel();
+                    }
                 });
 
         } else if (!_success) {
@@ -124,6 +129,17 @@ public class LevelOutroMode extends AppMode
             AudioManager.instance.playSoundNamed(_success ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
         }
+
+        if (!_showedUpsellMode && this.showUpsellScreen) {
+            AppContext.mainLoop.pushMode(new UpsellMode());
+            _showedUpsellMode = true;
+        }
+    }
+
+    protected function get showUpsellScreen () :Boolean
+    {
+        return (AppContext.levelMgr.curLevelIndex >= Constants.NUM_FREE_SP_LEVELS - 1 &&
+            !AppContext.isStoryModeUnlocked);
     }
 
     protected function saveProgress () :void
@@ -223,6 +239,7 @@ public class LevelOutroMode extends AppMode
     protected var _level :LevelData;
     protected var _success :Boolean;
     protected var _playedSound :Boolean;
+    protected var _showedUpsellMode :Boolean;
 
     protected static var log :Log = Log.getLog(LevelOutroMode);
 
