@@ -115,7 +115,7 @@ public class EndlessGameMode extends GameMode
             EndlessGameContext.playerMonitor.waitForAllPlayersReadyForCurRound(startGame);
 
             // we're ready
-            EndlessGameContext.playerMonitor.setLocalPlayerReadyForCurRound();
+            EndlessGameContext.playerMonitor.reportLocalPlayerReadyForCurRound();
         }
 
         _readyToStart = true;
@@ -250,8 +250,8 @@ public class EndlessGameMode extends GameMode
 
                 // Wait for everyone to report their scores so that the GameOverMode
                 // can call endGameWithScores
-                EndlessGameContext.playerMonitor.reportLocalPlayerScore();
-                EndlessGameContext.playerMonitor.waitForPlayerScores(
+                EndlessGameContext.playerMonitor.reportLocalPlayerFinalScore();
+                EndlessGameContext.playerMonitor.waitForFinalScores(
                     function () :void {
                         AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
                     });

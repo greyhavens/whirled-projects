@@ -20,7 +20,7 @@ public class PlayerMonitor
             onPlayerLeft);
 
         _playersReadyForRound = ArrayUtil.create(numPlayers, -1);
-        _playerScores = ArrayUtil.create(numPlayers, -1);
+        _finalScores = ArrayUtil.create(numPlayers, null);
     }
 
     public function shutdown () :void
@@ -32,7 +32,7 @@ public class PlayerMonitor
             onPlayerLeft);
     }
 
-    public function setLocalPlayerReadyForCurRound () :void
+    public function reportLocalPlayerReadyForCurRound () :void
     {
         var bytes :ByteArray = new ByteArray();
         bytes.writeByte(GameContext.localPlayerIndex);
@@ -40,26 +40,11 @@ public class PlayerMonitor
         AppContext.gameCtrl.net.sendMessage(PLAYER_READY_MSG, bytes);
     }
 
-    public function reportLocalPlayerScore () :void
-    {
-        var bytes :ByteArray = new ByteArray();
-        bytes.writeByte(GameContext.localPlayerIndex);
-        bytes.writeInt(EndlessGameContext.totalScore);
-        AppContext.gameCtrl.net.sendMessage(PLAYER_SCORE_MSG, bytes);
-    }
-
     public function waitForAllPlayersReadyForCurRound (callback :Function) :void
     {
         _waitingForPlayersReadyForRoundId = EndlessGameContext.mapIndex;
         _playersReadyCallback = callback;
         checkPlayersReadyForRound();
-    }
-
-    public function waitForPlayerScores (callback :Function) :void
-    {
-        _waitingForPlayerScores = true;
-        _gotPlayerScoresCallback = callback;
-        checkPlayerScores();
     }
 
     protected function allPlayersReadyForRound (roundId :int) :Boolean
@@ -74,15 +59,57 @@ public class PlayerMonitor
         return true;
     }
 
-    protected function get gotAllPlayerScores () :Boolean
+    protected function checkPlayersReadyForRound () :void
+    {
+        if (_waitingForPlayersReadyForRoundId >= 0 &&
+            allPlayersReadyForRound(_waitingForPlayersReadyForRoundId)) {
+
+            _playersReadyCallback();
+            _playersReadyCallback = null;
+            _waitingForPlayersReadyForRoundId = -1;
+        }
+    }
+
+    public function reportLocalPlayerFinalScore () :void
+    {
+        AppContext.gameCtrl.net.sendMessage(
+            FINAL_SCORE_MSG,
+            PlayerScore.create(
+                GameContext.localPlayerIndex,
+                EndlessGameContext.resourceScore,
+                EndlessGameContext.damageScore).toBytes());
+    }
+
+    public function waitForFinalScores (callback :Function) :void
+    {
+        _waitingForFinalScores = true;
+        _gotFinalScoresCallback = callback;
+        checkFinalScores();
+    }
+
+    protected function get gotAllFinalScores () :Boolean
     {
         for (var playerSeat :int = 0; playerSeat < _playersReadyForRound.length; ++playerSeat) {
-            if (SeatingManager.isPlayerPresent(playerSeat) && _playerScores[playerSeat] < 0) {
+            if (SeatingManager.isPlayerPresent(playerSeat) && _finalScores[playerSeat] == null) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    protected function checkFinalScores () :void
+    {
+        if (_waitingForFinalScores && this.gotAllFinalScores) {
+            _gotFinalScoresCallback();
+            _gotFinalScoresCallback = null;
+            _waitingForFinalScores = false;
+        }
+    }
+
+    public function get finalScores () :Array
+    {
+        return _finalScores;
     }
 
     protected function onPlayerLeft (e :OccupantChangedEvent) :void
@@ -91,8 +118,8 @@ public class PlayerMonitor
             checkPlayersReadyForRound();
         }
 
-        if (_waitingForPlayerScores) {
-            checkPlayerScores();
+        if (_waitingForFinalScores) {
+            checkFinalScores();
         }
     }
 
@@ -108,8 +135,8 @@ public class PlayerMonitor
                 playerIndex = bytes.readByte();
                 roundId = bytes.readInt();
 
-            } catch (e :Error) {
-                log.warning("Bad PlayerReady message received", e);
+            } catch (err :Error) {
+                log.warning("Bad PlayerReady message received", err);
                 return;
             }
 
@@ -123,65 +150,37 @@ public class PlayerMonitor
 
             checkPlayersReadyForRound();
 
-        } else if (e.name == PLAYER_SCORE_MSG) {
-            var score :int;
+        } else if (e.name == FINAL_SCORE_MSG) {
+            var ps :PlayerScore = new PlayerScore();
             try {
-                bytes = ByteArray(e.value);
-                playerIndex = bytes.readByte();
-                score = bytes.readInt();
-            } catch (e :Error) {
-                log.warning("Bad PlayerScore message received", e);
+                ps.fromBytes(ByteArray(e.value));
+            } catch (err :Error) {
+                log.warning("Bad PlayerScore message received", err);
                 return;
             }
 
-            if (playerIndex < 0 || playerIndex >= _playerScores.length || score < 0) {
-                log.warning("Bad PlayerScore message received", "playerIndex", playerIndex,
-                    "score", score);
+            if (ps.playerIndex < 0 || ps.playerIndex >= _finalScores.length || ps.totalScore < 0) {
+                log.warning("Bad PlayerScore message received", "PlayerScore", ps);
             }
 
-            _playerScores[playerIndex] = score;
+            _finalScores[ps.playerIndex] = ps;
 
-            checkPlayerScores();
+            checkFinalScores();
         }
-    }
-
-    protected function checkPlayersReadyForRound () :void
-    {
-        if (_waitingForPlayersReadyForRoundId >= 0 &&
-            allPlayersReadyForRound(_waitingForPlayersReadyForRoundId)) {
-
-            _playersReadyCallback();
-            _playersReadyCallback = null;
-            _waitingForPlayersReadyForRoundId = -1;
-        }
-    }
-
-    protected function checkPlayerScores () :void
-    {
-        if (_waitingForPlayerScores && this.gotAllPlayerScores) {
-            _gotPlayerScoresCallback();
-            _gotPlayerScoresCallback = null;
-            _waitingForPlayerScores = false;
-        }
-    }
-
-    public function get playerScores () :Array
-    {
-        return _playerScores;
     }
 
     protected var _playersReadyForRound :Array;
     protected var _playersReadyCallback :Function;
     protected var _waitingForPlayersReadyForRoundId :int = -1;
 
-    protected var _waitingForPlayerScores :Boolean;
-    protected var _playerScores :Array;
-    protected var _gotPlayerScoresCallback :Function;
+    protected var _waitingForFinalScores :Boolean;
+    protected var _finalScores :Array; // Array<PlayerScore>
+    protected var _gotFinalScoresCallback :Function;
 
     protected static var log :Log = Log.getLog(PlayerMonitor);
 
     protected static const PLAYER_READY_MSG :String = "player_ready";
-    protected static const PLAYER_SCORE_MSG :String = "player_score";
+    protected static const FINAL_SCORE_MSG :String = "final_score";
 }
 
 }
