@@ -32,6 +32,9 @@ public class EndlessGameMode extends GameMode
     {
         if (_needsReset) {
             EndlessGameContext.resetGameData();
+        } else {
+            EndlessGameContext.resetLevelData();
+            EndlessGameContext.roundId += 1;
         }
 
         EndlessGameContext.gameMode = this;
@@ -215,7 +218,19 @@ public class EndlessGameMode extends GameMode
                 AppContext.mainLoop.unwindToMode(
                     new EndlessGameMode(EndlessGameContext.level, null, false));
             } else {
-                AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
+                if (GameContext.isSinglePlayerGame) {
+                    AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
+                } else {
+                    // This is a multiplayer game. Report our scores for this round to everybody,
+                    // so that the interstitial screen can display them, and wait for all scores
+                    // to be received before showing the interstitial.
+                    EndlessGameContext.playerMonitor.reportLocalPlayerRoundScore();
+                    EndlessGameContext.playerMonitor.waitForRoundScoresForCurRound(
+                        function () :void {
+                            AppContext.mainLoop.pushMode(new EndlessInterstitialMode(
+                                _lastLiveComputerLoc));
+                        });
+                }
             }
 
             // end-of-level trophies

@@ -12,12 +12,13 @@ public class EndlessGameContext
 
     public static var resourceScore :int;
     public static var damageScore :int;
-    public static var resourceScoreThisLevel :int;
-    public static var damageScoreThisLevel :int;
+    public static var resourceScoreThisRound :int;
+    public static var damageScoreThisRound :int;
     public static var scoreMultiplier :Number;
     public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
     public static var gameStarted :Boolean;
+    public static var roundId :int;
 
     public static function get totalScore () :int
     {
@@ -26,7 +27,7 @@ public class EndlessGameContext
 
     public static function get totalScoreThisLevel () :int
     {
-        return resourceScoreThisLevel + damageScoreThisLevel;
+        return resourceScoreThisRound + damageScoreThisRound;
     }
 
     public static function get isNewGame () :Boolean
@@ -54,12 +55,13 @@ public class EndlessGameContext
         }
 
         gameStarted = false;
+        roundId = 0;
     }
 
     public static function resetLevelData () :void
     {
-        resourceScoreThisLevel = 0;
-        damageScoreThisLevel = 0;
+        resourceScoreThisRound = 0;
+        damageScoreThisRound = 0;
     }
 
     public static function get mapCycleNumber () :int
@@ -74,14 +76,14 @@ public class EndlessGameContext
     {
         offset *= scoreMultiplier;
         resourceScore += offset;
-        resourceScoreThisLevel += offset;
+        resourceScoreThisRound += offset;
     }
 
     public static function incrementDamageScore (offset :int) :void
     {
         offset *= scoreMultiplier;
         damageScore += offset;
-        damageScoreThisLevel += offset;
+        damageScoreThisRound += offset;
     }
 
     public static function incrementMultiplier () :void
