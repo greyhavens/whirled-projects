@@ -79,6 +79,8 @@ public class Display extends Sprite
         removeEventListener(MouseEvent.CLICK, clickHandler);
         removeEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
         removeEventListener(KeyboardEvent.KEY_DOWN, typingHandler);
+
+        Audio.stopMusic();
     }
 
     /** Called when the round starts - enables display. */
@@ -139,9 +141,10 @@ public class Display extends Sprite
     /** Adds a new letter to the word (by adding a pair of coordinates) */
     public function selectLetterAtPosition (position :Point) :void
     {
-        Audio.click.play();
         _word.push(position);
         updateLetterSelection(_word);
+
+        Audio.click.play();
     }
 
     /** Removes last selected letter from the word (if applicable) */
@@ -384,6 +387,7 @@ public class Display extends Sprite
             if (getLastLetterPosition() != null) {
                 removeAllSelectedLetters();
             }
+            Audio.click.play();
             break;
         }
     }
