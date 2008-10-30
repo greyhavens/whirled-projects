@@ -80,6 +80,12 @@ public class LevelSelectMode extends DemoGameMode
         this.registerListener(AppContext.gameCtrl.player,
             GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
 
+        _mainUiLayer = SpriteUtil.createSprite(true);
+        _levelSelectUiLayer = SpriteUtil.createSprite(true);
+
+        _modeLayer.addChild(_mainUiLayer);
+        _modeLayer.addChild(_levelSelectUiLayer);
+
         this.createDefaultLayout();
 
         if (_shouldFadeIn) {
@@ -96,7 +102,7 @@ public class LevelSelectMode extends DemoGameMode
             "story_banner");
         storyBanner.x = STORY_BANNER_LOC.x;
         storyBanner.y = STORY_BANNER_LOC.y;
-        _modeLayer.addChild(storyBanner);
+        _mainUiLayer.addChild(storyBanner);
 
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
@@ -105,7 +111,7 @@ public class LevelSelectMode extends DemoGameMode
         playButton.y = STORY_BUTTON_LOC.y;
         this.registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
-        this.addObject(_playButtonObj, _modeLayer);
+        this.addObject(_playButtonObj, _mainUiLayer);
 
         if (playerStartedGame) {
             if (AppContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
@@ -114,7 +120,7 @@ public class LevelSelectMode extends DemoGameMode
                     "challenge_panel");
                 endlessPanel.x = ENDLESS_PANEL_LOC.x;
                 endlessPanel.y = ENDLESS_PANEL_LOC.y;
-                _modeLayer.addChild(endlessPanel);
+                _mainUiLayer.addChild(endlessPanel);
                 var endlessButton :SimpleButton = endlessPanel["challenge_button"];
                 registerOneShotCallback(endlessButton, MouseEvent.CLICK, onEndlessClicked);
 
@@ -124,7 +130,7 @@ public class LevelSelectMode extends DemoGameMode
                     "challenge_panel_locked");
                 lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
                 lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
-                _modeLayer.addChild(lockedEndlessPanel);
+                _mainUiLayer.addChild(lockedEndlessPanel);
             }
 
             // show the "select panel, which shows the level-select and credits buttons
@@ -132,21 +138,21 @@ public class LevelSelectMode extends DemoGameMode
                 "select_panel");
             selectPanel.x = SELECT_PANEL_LOC.x;
             selectPanel.y = SELECT_PANEL_LOC.y;
-            _modeLayer.addChild(selectPanel);
+            _mainUiLayer.addChild(selectPanel);
 
             // buttons
             var buttonParent :Sprite = SpriteUtil.createSprite(true);
 
-            _levelSelectButton = UIBits.createButton("Select Level", 1.5);
-            this.registerOneShotCallback(_levelSelectButton, MouseEvent.CLICK,
+            var levelSelectButton :SimpleButton = UIBits.createButton("Select Level", 1.5);
+            registerListener(levelSelectButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    createLevelSelectLayout();
+                    showLevelSelectLayout();
                 });
-            DisplayUtil.positionBounds(_levelSelectButton, -_levelSelectButton.width * 0.5, 0);
-            buttonParent.addChild(_levelSelectButton);
+            DisplayUtil.positionBounds(levelSelectButton, -levelSelectButton.width * 0.5, 0);
+            buttonParent.addChild(levelSelectButton);
 
             var creditsButton :SimpleButton = UIBits.createButton("Credits", 1.5);
-            this.registerOneShotCallback(creditsButton, MouseEvent.CLICK,
+            registerOneShotCallback(creditsButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.mainLoop.unwindToMode(new CreditsMode());
                 });
@@ -162,23 +168,36 @@ public class LevelSelectMode extends DemoGameMode
 
         } else {
             // it's the player's first time playing: show them the tutorial
-            this.createTutorialLayout();
+            createTutorialLayout();
         }
 
-        /*if (!AppContext.isPremiumContentUnlocked) {
-            _buyGameButton = UIBits.createButton("Unlock Full Version!", 1.2);
-            this.registerListener(_buyGameButton, MouseEvent.CLICK,
+        if (!AppContext.isPremiumContentUnlocked) {
+            var buyGameButton :SimpleButton = UIBits.createButton("Unlock Full Version!", 1.2);
+            this.registerListener(buyGameButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    AppContext.showGameShop();
+                    AppContext.mainLoop.pushMode(new UpsellMode());
                 });
-            _buyGameButton.x = Constants.SCREEN_SIZE.x - _buyGameButton.width - 10;
-            _buyGameButton.y = 10;
-            _modeLayer.addChild(_buyGameButton);
-        }*/
+            buyGameButton.x = Constants.SCREEN_SIZE.x - buyGameButton.width - 10;
+            buyGameButton.y = 10;
+            _mainUiLayer.addChild(buyGameButton);
+        }
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
             this.createDebugLayout();
         }
+    }
+
+    protected function showLevelSelectLayout () :void
+    {
+        createLevelSelectLayout();
+        _mainUiLayer.visible = false;
+        _levelSelectUiLayer.visible = true;
+    }
+
+    protected function showMainLayout () :void
+    {
+        _mainUiLayer.visible = true;
+        _levelSelectUiLayer.visible = false;
     }
 
     protected function createTutorialLayout () :void
@@ -190,7 +209,7 @@ public class LevelSelectMode extends DemoGameMode
         _puzzleIntro.x = 470;
         _puzzleIntro.y = 395;
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
-        this.addObject(_puzzleIntro, _modeLayer);
+        this.addObject(_puzzleIntro, _mainUiLayer);
 
         var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "unit_intro");
@@ -199,7 +218,7 @@ public class LevelSelectMode extends DemoGameMode
         _unitIntro.x = 9;
         _unitIntro.y = 385;
         createHelpTextAnimTask(_unitIntro, 9, 4);
-        this.addObject(_unitIntro, _modeLayer);
+        this.addObject(_unitIntro, _mainUiLayer);
 
         var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "resource_intro");
@@ -208,7 +227,7 @@ public class LevelSelectMode extends DemoGameMode
         _resourceIntro.x = 9;
         _resourceIntro.y = 385;
         createHelpTextAnimTask(_resourceIntro, 9, 4);
-        this.addObject(_resourceIntro, _modeLayer);
+        this.addObject(_resourceIntro, _mainUiLayer);
 
         _showingTutorial = true;
         this.updateTutorial();
@@ -334,23 +353,8 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createLevelSelectLayout () :void
     {
-        // clean up from the tutorial, if it was being displayed before
-        if (_showingTutorial) {
-            _levelSelectButton.parent.removeChild(_levelSelectButton);
-            _unitIntro.destroySelf();
-            _resourceIntro.destroySelf();
-            _puzzleIntro.destroySelf();
-            _showingTutorial = false;
-
-            _levelSelectButton = null;
-            _unitIntro = null;
-            _resourceIntro = null;
-            _puzzleIntro = null;
-
-            if (null != _buyGameButton) {
-                _buyGameButton.parent.removeChild(_buyGameButton);
-                _buyGameButton = null;
-            }
+        if (_levelSelectLayoutCreated) {
+            return;
         }
 
         // put the "manual" up on the screen
@@ -365,7 +369,7 @@ public class LevelSelectMode extends DemoGameMode
         var primer :MovieClip = cover["primer"];
         primer.visible = false;
 
-        _modeLayer.addChild(manualFront);
+        _levelSelectUiLayer.addChild(manualFront);
 
         var levelNames :Array = AppContext.levelProgression.levelNames;
         var levelRecords :Array = AppContext.levelMgr.levelRecords;
@@ -407,7 +411,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // epilogue button
-        if (AppContext.levelMgr.playerBeatGame) {
+        if (AppContext.levelMgr.playerBeatGame && AppContext.isStoryModeUnlocked) {
             button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
             button.x = EPILOGUE_LOC.x - (button.width * 0.5);
             button.y = EPILOGUE_LOC.y;
@@ -418,18 +422,32 @@ public class LevelSelectMode extends DemoGameMode
         DisplayUtil.positionBounds(buttonSprite,
             (Constants.SCREEN_SIZE.x * 0.5) - (buttonSprite.width * 0.5) + 20, BUTTON_CONTAINER_Y);
 
-        _modeLayer.addChild(buttonSprite);
+        _levelSelectUiLayer.addChild(buttonSprite);
 
         // "Unlock Full Version!" button
         if (!AppContext.isStoryModeUnlocked) {
-            button = UIBits.createButton("Unlock Full Version To Continue!", 1.3);
+            button = UIBits.createButton("Unlock Full Version To Play The Rest Of The Story!", 1.4,
+                380);
             button.x = UNLOCK_MANUAL_LOC.x - (button.width * 0.5);
             button.y = UNLOCK_MANUAL_LOC.y;
             registerListener(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });
+            _levelSelectUiLayer.addChild(button);
         }
+
+        // Back button
+        var backButton :SimpleButton = UIBits.createButton("Back", 1.5);
+        backButton.x = 10;
+        backButton.y = 10;
+        registerListener(backButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                showMainLayout();
+            });
+        _levelSelectUiLayer.addChild(backButton);
+
+        _levelSelectLayoutCreated = true;
     }
 
     protected function onEpilogueSelected (e :MouseEvent) :void
@@ -519,21 +537,23 @@ public class LevelSelectMode extends DemoGameMode
         }
     }
 
+    protected var _mainUiLayer :Sprite;
+    protected var _levelSelectUiLayer :Sprite;
+
     protected var _playButtonObj :SceneObject;
     protected var _puzzleIntro :SceneObject;
     protected var _unitIntro :SceneObject;
     protected var _resourceIntro :SceneObject;
-    protected var _levelSelectButton :SimpleButton;
-    protected var _showingTutorial :Boolean;
-    protected var _buyGameButton :SimpleButton;
     protected var _shouldFadeIn :Boolean;
+    protected var _showingTutorial :Boolean;
+    protected var _levelSelectLayoutCreated :Boolean;
 
     protected static var _demoLevel :LevelData;
 
     protected static const NUM_COLUMNS :int = 2;
     protected static const COLUMN_LOCS :Array = [ new Point(0, 0), new Point(200, 0) ];
     protected static const EPILOGUE_LOC :Point = new Point(100, 240);
-    protected static const UNLOCK_MANUAL_LOC :Point = new Point(100, 245);
+    protected static const UNLOCK_MANUAL_LOC :Point = new Point(370, 440);
     protected static const BUTTON_CONTAINER_Y :Number = 180;
 
     protected static const LEVEL_SELECT_BUTTON_WIDTH :Number = 190;

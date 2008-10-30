@@ -44,7 +44,7 @@ public class CreditsMode extends AppMode
         attach.addChild(_unitParent);
 
         // play the zap sound for the Tesla animation
-        this.addObject(new TeslaSoundPlayer(bg, AudioManager.instance.playSoundNamed));
+        addObject(new TeslaSoundPlayer(bg, AudioManager.instance.playSoundNamed));
 
         var creditsMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "credits");
         creditsMovie.x = 350;

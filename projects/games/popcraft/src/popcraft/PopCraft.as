@@ -180,7 +180,7 @@ class LoadingMode extends GenericLoadingMode
         }
 
         // award a prize to players that have purchased the game
-        if (AppContext.hasPremiumLevelPack) {
+        if (AppContext.isPremiumContentUnlocked) {
             AppContext.prizeMgr.awardPremiumPrize();
         }
     }

@@ -44,15 +44,15 @@ public class AppContext
 
     public static function get isEndlessModeUnlocked () :Boolean
     {
-        return AppContext.hasPremiumLevelPack;
+        return AppContext.isPremiumContentUnlocked;
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
-        return (AppContext.hasPremiumLevelPack || savedPlayerBits.hasFreeStoryMode);
+        return (AppContext.isPremiumContentUnlocked || savedPlayerBits.hasFreeStoryMode);
     }
 
-    public static function get hasPremiumLevelPack () :Boolean
+    public static function get isPremiumContentUnlocked () :Boolean
     {
         return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT ||
             playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
