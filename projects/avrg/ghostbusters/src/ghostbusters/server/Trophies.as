@@ -11,7 +11,14 @@ import com.threerings.util.ArrayUtil;
 
 public class Trophies
 {
-    public static const LIBRARY_SCENES :Array = [ 2914, 580, 5698, 78924  ];
+    public static function isInLibrary (scene :int) :Boolean
+    {
+        switch(scene) {
+        case 2914: case 580: case 5698: case 7829: case 78924:
+            return true;
+        }
+        return false;
+    }
 
     public static const TROPHY_LEAGUE :String = "league";
     public static const TROPHY_PROT_CHARM :String = "prot_charm";
@@ -33,7 +40,7 @@ public class Trophies
         var fullTeam :Array = room.getTeam(false);
         var liveTeam :Array = room.getTeam(true);
 
-        var inLibrary :Boolean = ArrayUtil.contains(LIBRARY_SCENES, room.roomId);
+        var inLibrary :Boolean = isInLibrary(room.roomId);
 
         // Last Man Standing - everyone else in your party dies, except for you.
         if (fullTeam.length > 3 && liveTeam.length == 1) {
