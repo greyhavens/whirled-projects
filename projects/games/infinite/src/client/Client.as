@@ -12,6 +12,7 @@ package client
 	
 	import inventory.InventoryDisplay;
 	
+	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -64,23 +65,7 @@ package client
 		{
 			_world.enter(this);
 		}
-								
-		public function startGame () :void 
-		{
-			if (Config.boardDebug) {
-    			_board = new DebugBoard(LEVEL1);
-            } else {
-			    _board = new SimpleBoard();
-            }
-            
-			//_player = new PlayerCharacter("robin", _inventory);
-			_viewer.board = _board;
-			//_viewer.player = _player;
-			//_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
-			
-			Log.debug("game size at end: "+width+", "+height);
-		}
-		
+										
 		public function levelUpdate(update:LevelUpdate) :void
 		{
 			Log.debug("processing level update");
@@ -199,6 +184,11 @@ package client
             player.follow(detail.path);
 		}
 		
+		public function updatedCells (detail:CellUpdate) :void
+		{
+			_viewer.updatedCells(detail);
+		}
+		
 		override public function toString () :String
 		{
 			return "client "+_world.clientId; 
@@ -210,7 +200,7 @@ package client
 		protected var _level:int = NO_LEVEL;
 		
 		protected var _controller:PlayerController;
-		protected var _board:Board;
+		protected var _board:BoardInteractions;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
 		

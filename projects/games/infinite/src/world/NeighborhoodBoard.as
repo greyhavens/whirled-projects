@@ -1,0 +1,52 @@
+package world
+{
+	import arithmetic.BoardCoordinates;
+	
+	import cells.NeighborhoodMemory;
+	
+	import server.Messages.CellUpdate;
+	import server.Messages.Neighborhood;
+	
+	import world.board.Board;
+	import world.board.BoardInteractions;
+	
+	public class NeighborhoodBoard implements Board, BoardInteractions
+    {
+        public function NeighborhoodBoard(starting:Board)
+        {
+            _starting = starting;
+            _changed = new NeighborhoodMemory();           
+		}
+		
+		public function cellAt (position:BoardCoordinates) :Cell
+		{
+			const found:Cell = _changed.recall(position);
+			if (found != null) {
+				return found;
+			}
+			return _starting.cellAt(position);
+		}
+		
+		public function get startingPosition () :BoardCoordinates
+		{
+			return _starting.startingPosition;
+		}
+		
+		public function replace (cell:Cell) :void
+		{
+			_changed.remember(cell);
+		}
+		
+		public function neighborhood (hood:Neighborhood) :CellUpdate
+		{
+			const update:CellUpdate = new CellUpdate();
+			for each (var vicinity:String in hood) {
+				update.addCells(_changed.inVicinity(vicinity));
+			}
+			return update;
+		}
+		
+		protected var _starting:Board;
+		protected var _changed:NeighborhoodMemory;
+	}
+}

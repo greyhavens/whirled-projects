@@ -166,6 +166,13 @@ package cells
 			return new CellState(code, position);
 		}
 		
+		public function updateState (board:BoardInteractions, state:CellState) :void
+		{
+		    if (state.code != code) {
+		        board.replace(state.newCell(this));
+		    }
+		}
+		
 		protected var _position:BoardCoordinates;
 		
 		protected var _objective:CellObjective;

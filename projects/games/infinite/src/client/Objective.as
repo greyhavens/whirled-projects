@@ -17,6 +17,8 @@ package client
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
 	
+	import server.Messages.CellState;
+	import server.Messages.CellUpdate;
 	import server.Messages.Neighborhood;
 	
 	import sprites.PlayerSprite;
@@ -35,7 +37,7 @@ package client
 	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram, CellMemory
 	{
 		public function Objective(
-			viewer:Viewer, board:Board, startingPosition:BoardCoordinates)
+			viewer:Viewer, board:BoardInteractions, startingPosition:BoardCoordinates)
 		{
 			_viewer = viewer;
 			
@@ -334,11 +336,23 @@ package client
         	if (sprite != null) {
         		removeChild(sprite);
         	}
-        }            
+        }
         
+        public function updateCells (update:CellUpdate) :void
+        {
+        	for each (var state:CellState in update.states) {
+        		state.update(_board);
+        	}
+        }
+                
         public function get frameTimer () :FrameTimer
         {
         	return _frameTimer;
+        }
+        
+        public function get startingPosition () :BoardCoordinates
+        {
+        	return _board.startingPosition;
         }
         
         protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
@@ -376,7 +390,7 @@ package client
 		// enough to keep the action going.
 		protected var _boxController:BoxController;		
 				
-		protected var _board:Board;		
+		protected var _board:BoardInteractions;		
 		
 		// width and height in board cells computed by dividing the pixel size by the tile size
 		// and assuming whole cells with no bleed.

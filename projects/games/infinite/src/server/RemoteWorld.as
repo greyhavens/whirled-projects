@@ -10,6 +10,7 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
@@ -45,6 +46,7 @@ package server
                 case LEVEL_ENTERED: return levelEntered(event);
                 case START_PATH: return pathStart(event);
                 case LEVEL_UPDATE: return levelUpdate(event);
+                case UPDATED_CELLS: return updatedCells(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -63,6 +65,11 @@ package server
         {
         	_client.levelUpdate(LevelUpdate.readFromArray(event.value as ByteArray));
         }        
+        
+        public function updatedCells (event:MessageReceivedEvent) :void
+        {
+        	_client.updatedCells(CellUpdate.readFromArray(event.value as ByteArray));
+        }
         
         override public function toString () :String
         {
@@ -128,10 +135,12 @@ package server
         public static const LEVEL_ENTERED:int = 0;
         public static const START_PATH:int = 1;
         public static const LEVEL_UPDATE:int = 2;
+        public static const UPDATED_CELLS:int = 3;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
         messageName[START_PATH] = "start path";
-        messageName[LEVEL_UPDATE] = "level update";        
+        messageName[LEVEL_UPDATE] = "level update";
+        messageName[UPDATED_CELLS] = "updated cells";        
 	}
 }

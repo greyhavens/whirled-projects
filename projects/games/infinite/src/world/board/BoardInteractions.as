@@ -1,9 +1,8 @@
 package world.board
 {
-	import arithmetic.BoardCoordinates;
-    import world.Cell;
+	import world.Cell;
 	
-	public interface BoardInteractions extends BoardAccess
+	public interface BoardInteractions extends Board
 	{
 		/**
 		 * Replace a board cell with a new one positioned at the same position.

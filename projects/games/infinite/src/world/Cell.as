@@ -75,5 +75,10 @@ package world
          * Return a snapshot of this cell's state.
          */ 
         function get state () :CellState
+        
+        /**
+         * Update the state of a given cell.
+         */ 
+        function updateState (board:BoardInteractions, state:CellState) :void
 	}
 }

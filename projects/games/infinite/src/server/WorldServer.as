@@ -104,8 +104,7 @@ package server
 		protected function requestCells (event:MessageReceivedEvent) :void
 		{
 			send(event.senderId, RemoteWorld.UPDATED_CELLS, 
-			   world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray));
-			
+			   _world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray)));			
 		}
 		
 		/**

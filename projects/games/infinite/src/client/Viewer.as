@@ -8,6 +8,8 @@ package client
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
+	import server.Messages.CellUpdate;
+	
 	import sprites.*;
 	
 	import world.NeighborhoodEvent;
@@ -60,7 +62,7 @@ package client
 			}
 		}
 		
-		public function set board (board:Board) :void
+		public function set board (board:BoardInteractions) :void
 		{			
 			Log.debug("viewer width:"+width);
 			_board = board;
@@ -82,8 +84,14 @@ package client
 				showViewPoint();
 			}
 		}
+		
+		public function updatedCells (update:CellUpdate) :void
+		{
+			_objective.updateCells(update);
+		}
 
-		public function get objective () :Objective {
+		public function get objective () :Objective 
+		{
 			return _objective;
 		}
 		
@@ -122,7 +130,7 @@ package client
 		protected var _viewPointShape:Shape; 
 
 		// the board data
-		protected var _board:Board;
+		protected var _board:BoardInteractions;
 		
 		// the part of reality that we can interact with
 		protected var _objective:Objective;
