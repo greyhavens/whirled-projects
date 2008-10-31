@@ -63,16 +63,23 @@ package arithmetic
 			return this._x == other._x && this._y == other._y;
 		} 
 		
+		public function get vicinity () :Vicinity 
+		{
+			return new Vicinity(this);
+		}
+		
 		public function writeToArray(array:ByteArray) :ByteArray
 		{
 			array.writeInt(x);
 			array.writeInt(y);
 			return array;
 		}
-		
+				
 		public static function readFromArray(array:ByteArray) :BoardCoordinates
 		{
 			return new BoardCoordinates(array.readInt(), array.readInt());
 		}
+		
+		public static const VICINITY_SCALE:int = 4;
 	}
 }

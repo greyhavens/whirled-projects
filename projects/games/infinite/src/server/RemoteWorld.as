@@ -11,6 +11,7 @@ package server
 	import flash.utils.Dictionary;
 	
 	import server.Messages.LevelUpdate;
+	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	import server.Messages.Serializable;
@@ -86,6 +87,11 @@ package server
         public function moveComplete (coords:BoardCoordinates) :void
         {
         	sendToServer(WorldServer.MOVE_COMPLETED, coords);
+        }
+
+        public function requestCellUpdate (hood:Neighborhood) :void
+        {
+        	sendToServer(WorldServer.REQUEST_CELLS, hood);
         }
 
         /**

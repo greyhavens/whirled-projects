@@ -4,8 +4,9 @@ package client
 	
 	import flash.events.EventDispatcher;
 	
-	import server.Messages.PlayerPosition;
+	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
+	import server.Messages.PlayerPosition;
 	
 	import world.ClientWorld;
 	import world.World;
@@ -60,6 +61,11 @@ package client
         public function moveComplete (coords:BoardCoordinates) :void
         {
         	_world.moveCompleted(ID, coords);
+        }
+        
+        public function requestCellUpdate (hood:Neighborhood) :void
+        {
+        	_world.cellState (ID, hood);
         }
                 	
         protected var _client:WorldClient;	

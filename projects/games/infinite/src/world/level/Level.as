@@ -4,11 +4,13 @@ package world.level
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
+	import server.Messages.Neighborhood;
 	import server.Messages.PlayerPosition;
 	
 	import world.Cell;
-	import world.MutableBoard;
+	import world.NeighborhoodBoard;
 	import world.Player;
 	import world.PlayerMap;
 	import world.arbitration.BoardArbiter;
@@ -22,7 +24,7 @@ package world.level
 		{
 			this.number = number;
 			_height = height;
-			_board = new MutableBoard(starting);
+			_board = new NeighborhoodBoard(starting);
 			_arbiter = new BoardArbiter(_board);
 		}
 
@@ -89,9 +91,14 @@ package world.level
         	} 
         	return update;
         }
+        
+        public function cellState (hood:Neighborhood) :CellUpdate
+        {
+        	return _board.neighborhood(hood);
+        }
                 
         protected var _arbiter:BoardArbiter;
-        protected var _board:Board;
+        protected var _board:NeighborhoodBoard;
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		

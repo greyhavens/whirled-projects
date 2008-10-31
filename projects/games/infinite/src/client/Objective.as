@@ -9,6 +9,7 @@ package client
 	import cells.views.CellView;
 	
 	import client.player.Player;
+	import client.player.PlayerEvent;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -16,11 +17,14 @@ package client
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
 	
+	import server.Messages.Neighborhood;
+	
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
 	import world.BoxController;
 	import world.Cell;
+	import world.NeighborhoodEvent;
 	import world.board.*;
     
 	/**
@@ -40,15 +44,9 @@ package client
 			pixelWidth = _viewer.width;
 			pixelHeight = _viewer.height;
 			
-			_board = board;
-			_boxController = new BoxController(_board);
+			_board = board;			
 			
-			
-			if (Config.distributeFruitMachines) {
-				_cells = new CellScrollBuffer(this, _boxController);
-			} else {
-				_cells = new CellScrollBuffer(this, _board);
-			}
+    		_cells = new CellScrollBuffer(this, _board);
 
 			CELL_MARGINS = computeMarginWidths();						
 			
@@ -262,6 +260,15 @@ package client
 	    { 	    	
 	    	const sprite:PlayerSprite = addPlayer(player);
 	    	follow(sprite);
+	    	player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
+	    }
+	    
+	    protected function handlePathCompleted (event:PlayerEvent) :void
+        {
+        	const unmapped:Neighborhood = _breadcrumbs.visit(event.player.path.finish);
+        	if (! unmapped.isEmpty()) {
+        		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
+        	}
 	    }
 	
 	    /**
@@ -333,6 +340,8 @@ package client
         {
         	return _frameTimer;
         }
+        
+        protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
         
         protected var _frameTimer:FrameTimer = new FrameTimer();
         

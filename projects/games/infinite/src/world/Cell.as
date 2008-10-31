@@ -8,7 +8,9 @@ package world
 	import cells.CellObjective;
 	
 	import flash.events.IEventDispatcher;
-		
+	
+	import server.Messages.CellState;
+	
 	import world.board.*;
 		
 	/**
@@ -69,5 +71,9 @@ package world
 		 */
 		function get owner () :Owner
 
+        /**
+         * Return a snapshot of this cell's state.
+         */ 
+        function get state () :CellState
 	}
 }

@@ -5,10 +5,11 @@ package cells
 	import client.CellEvent;
 	
 	import flash.events.EventDispatcher;
-	import flash.events.MouseEvent;
-		
+	
+	import server.Messages.CellState;
+	
 	import world.Cell;
-    import world.board.*;
+	import world.board.*;
 	
 	public class CellBase extends EventDispatcher implements Cell
 	{
@@ -159,6 +160,11 @@ package cells
 		{
 			throw new Error(this + " has not been assigned a distinct code");
 		}			
+		
+		public function get state () :CellState
+		{
+			return new CellState(code, position);
+		}
 		
 		protected var _position:BoardCoordinates;
 		

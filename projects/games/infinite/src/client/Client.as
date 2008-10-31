@@ -20,6 +20,7 @@ package client
 	
 	import world.ClientWorld;
 	import world.MutableBoard;
+	import world.NeighborhoodEvent;
 	import world.WorldClient;
 	import world.board.*;
 	import world.level.*;
@@ -36,6 +37,7 @@ package client
 			this.y = 0;			
 			
 			_viewer = new Viewer(680, 420);
+			_viewer.addEventListener(NeighborhoodEvent.UNMAPPED, handleUnmappedNeighborhood);
 			
 			_viewer.x = 10;
 			_viewer.y = 10;
@@ -148,6 +150,11 @@ package client
 		{
 			_world.moveComplete(event.player.path.finish);
 			event.player.clearPath();
+		}
+		
+		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
+		{
+			_world.requestCellUpdate(event.hood);
 		}
 		
 		/**

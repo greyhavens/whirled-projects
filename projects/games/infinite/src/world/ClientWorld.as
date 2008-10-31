@@ -4,6 +4,8 @@ package world
 	
 	import flash.events.IEventDispatcher;
 	
+	import server.Messages.Neighborhood;
+	
 	/**
 	 * This is the principal interface used to access the shared world.  In standalone, a local
 	 * implementation will be provided, otherwise an implementation which communicated with the
@@ -36,5 +38,11 @@ package world
 		 * specified.
 		 */
 		function moveComplete (coords:BoardCoordinates) :void
+		
+		
+		/**
+		 * Request that a region of cells be updated soon.
+		 */
+		function requestCellUpdate (hood:Neighborhood) :void
 	}
 }

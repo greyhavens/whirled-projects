@@ -17,7 +17,6 @@ package server.Messages
         public function add (position:PlayerPosition) :void
         {        	
         	_positions.push(position);
-        	Log.debug("constructing level update, added "+position);
         }
 
         public function get positions () :Array
@@ -35,7 +34,6 @@ package server.Messages
 		
 		public static function readFromArray(array:ByteArray) :LevelUpdate
 		{
-			Log.debug("deserializing level update");
             const update:LevelUpdate = new LevelUpdate();
 		    while (array.bytesAvailable) {
 		    	update.add(PlayerPosition.readFromArray(array));

@@ -10,6 +10,7 @@ package client
 	
 	import sprites.*;
 	
+	import world.NeighborhoodEvent;
 	import world.board.*;
 	
 	public class Viewer extends Sprite
@@ -70,6 +71,8 @@ package client
 				_objective = null;				
 			}
 			_objective = new Objective(this, board, board.startingPosition);
+			
+			_objective.addEventListener(NeighborhoodEvent.UNMAPPED, dispatchEvent);
 			
 			// add the objective 
 			addChild(_objective);

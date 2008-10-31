@@ -9,6 +9,7 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	import server.Messages.Serializable;
@@ -43,6 +44,7 @@ package server
             // who do we send the message to?
             sendToAll(RemoteWorld.LEVEL_ENTERED, message);
             send(event.player.id, RemoteWorld.LEVEL_UPDATE, event.level.makeUpdate());
+            
 		}
 		
 		public function handlePathStart (event:MoveEvent) :void
@@ -71,6 +73,7 @@ package server
 				case CLIENT_ENTERS: return clientEnters(event);
 				case MOVE_PROPOSED: return moveProposed(event);
 				case MOVE_COMPLETED: return moveCompleted(event); 
+				case REQUEST_CELLS: return requestCells(event);
 			}			
 			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
 		}
@@ -96,6 +99,13 @@ package server
 		protected function moveCompleted (event:MessageReceivedEvent) :void
 		{
 			_world.moveCompleted(event.senderId, BoardCoordinates.readFromArray(event.value as ByteArray));
+		}
+		
+		protected function requestCells (event:MessageReceivedEvent) :void
+		{
+			send(event.senderId, RemoteWorld.UPDATED_CELLS, 
+			   world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray));
+			
 		}
 		
 		/**
@@ -136,10 +146,12 @@ package server
 	    public static const CLIENT_ENTERS:int = 0;
 	    public static const MOVE_PROPOSED:int = 1;
 	    public static const MOVE_COMPLETED:int = 2;
-	    
+        public static const REQUEST_CELLS:int = 3;
+
 	    public static const messageName:Dictionary = new Dictionary();
 	    messageName[CLIENT_ENTERS] = "client enters";
 	    messageName[MOVE_PROPOSED] = "move proposed";
 	    messageName[MOVE_COMPLETED] = "move completed";
+	    messageName[REQUEST_CELLS] = "request cells";
 	}
 }

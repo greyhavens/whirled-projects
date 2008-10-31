@@ -95,7 +95,7 @@ package sprites
         protected function labelPosition (s:DisplayObjectContainer) :void
         {
             const l:TextField = new TextField();
-            l.text = "(" + _cell.position.x + ", " + _cell.position.y + ")";
+            l.text = "(" + _cell.position.x + ", " + _cell.position.y + ") "+_cell.position.vicinity;
             s.addChild(l);      
         }
 		

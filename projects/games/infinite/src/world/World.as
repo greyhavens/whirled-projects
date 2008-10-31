@@ -4,6 +4,9 @@ package world
 	
 	import flash.events.EventDispatcher;
 	
+	import server.Messages.CellUpdate;
+	import server.Messages.Neighborhood;
+	
 	import world.arbitration.MoveEvent;
 	import world.level.LevelEvent;
 	import world.level.LevelRegister;	
@@ -71,12 +74,18 @@ package world
 		    player.addEventListener(LevelEvent.LEVEL_ENTERED, dispatchEvent);
 		    player.addEventListener(PlayerEvent.MOVE_COMPLETED, dispatchEvent);
 		    player.addEventListener(MoveEvent.PATH_START, dispatchEvent);
-		    		    
+            		    		    
 		    // register the player and place them on the first level.
             _levels.playerEnters(player);
             _players.register(player);
             return player;
 		}		
+		
+		public function cellState (id:int, hood:Neighborhood) :CellUpdate
+		{
+			const player:Player = _players.find(id);
+			return player.level.cellState(hood);
+		}
 				
 		protected var _levels:LevelRegister;
 		protected var _players:PlayerRegister;
