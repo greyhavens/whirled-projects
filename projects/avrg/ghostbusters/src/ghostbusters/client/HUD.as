@@ -265,10 +265,6 @@ public class HUD extends DraggableSprite
                 hudIx ++;
                 continue;
             }
-//            if (players[teamIx] == Game.ourPlayerId) {
-//                teamIx ++;
-//                continue;
-//            }
             var info :AVRGameAvatar = Game.control.room.getAvatarInfo(players[teamIx]);
             if (info == null) {
                 // most likely explanation: they are not in our room
@@ -281,7 +277,7 @@ public class HUD extends DraggableSprite
                                      PlayerModel.getMaxHealth(players[teamIx])),
                 players[teamIx] == Game.ourPlayerId);
             panel.namePlate.visible = true;
-            panel.namePlate.text = info.name;
+            panel.namePlate.text = PlayerModel.getLevel(players[teamIx]) + " " + info.name;
             panel.id = players[teamIx];
             teamIx ++;
             hudIx ++;

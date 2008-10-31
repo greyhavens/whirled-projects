@@ -43,6 +43,11 @@ public class PlayerModel
         return playerData(playerId, Codes.IX_PLAYER_CUR_HEALTH) === 0;
     }
 
+    public static function getLevel (playerId :int) :int
+    {
+        return int(playerData(playerId, Codes.IX_PLAYER_LEVEL));
+    }
+
     public static function getHealth (playerId :int) :int
     {
         return Math.max(0, int(playerData(playerId, Codes.IX_PLAYER_CUR_HEALTH)));
