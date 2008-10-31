@@ -213,7 +213,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             var prevButton :SimpleButton = _saveView.prevButton;
             var playButton :SimpleButton = _saveView.playButton;
 
-            if (_highestMapIndex > 1) {
+            if (_highestMapIndex > 0) {
                 nextButton.visible = true;
                 prevButton.visible = true;
                 registerOneShotCallback(nextButton, MouseEvent.CLICK,
