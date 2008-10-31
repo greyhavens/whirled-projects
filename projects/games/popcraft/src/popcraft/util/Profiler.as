@@ -15,6 +15,24 @@ public class Profiler
         }
     }
 
+    public static function pushTimer (timerName :String) :void
+    {
+        if (ENABLED) {
+            _runningTimerNames.push(startTimer(timerName));
+        }
+    }
+
+    public static function popTimer () :void
+    {
+        if (ENABLED) {
+            if (_runningTimerNames.length == 0) {
+                log.warning("popTimer() called without a corresponding pushTimer()");
+            } else {
+                stopTimer(_runningTimerNames.pop());
+            }
+        }
+    }
+
     public static function startTimer (timerName :String) :String
     {
         if (ENABLED) {
@@ -67,8 +85,10 @@ public class Profiler
         return timer;
     }
 
+    protected static var _runningTimerNames :Array = [];
     protected static var _timers :HashMap = new HashMap();
     protected static const ENABLED :Boolean = Capabilities.isDebugger;
+    protected static const log :Log = Log.getLog(Profiler);
 }
 
 }
