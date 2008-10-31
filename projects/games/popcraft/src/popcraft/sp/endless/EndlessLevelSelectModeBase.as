@@ -451,7 +451,7 @@ class SaveView extends SceneObject
 
         // text
         var titleText :TextField = _movie["level_title"];
-        titleText.text = level.getMapNumberedDisplayName(localSave.mapIndex);
+        titleText.text = level.getNumberedMapDisplayName(localSave.mapIndex);
 
         // cycle number (skulls across title)
         if (cycleNumber > 0) {

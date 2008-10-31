@@ -31,7 +31,7 @@ public class EndlessLevelData
         return Math.floor(mapIndex / mapSequence.length);
     }
 
-    public function getMapNumberedDisplayName (mapIndex :int) :String
+    public function getNumberedMapDisplayName (mapIndex :int) :String
     {
         return String(mapIndex + 1) + ". " + getMapData(mapIndex).displayName
     }
