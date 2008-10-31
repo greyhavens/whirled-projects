@@ -31,11 +31,13 @@ public class Room
 
         // see if there's an undefeated (persistent) ghost here, else make a new one
         loadOrSpawnGhost();
+
+        _roomId = _ctrl.getRoomId();
     }
 
     public function get roomId () :int
     {
-        return _ctrl.getRoomId();
+        return _roomId;
     }
 
     public function get ctrl () :RoomSubControlServer
@@ -55,7 +57,7 @@ public class Room
 
     public function get isShutdown () :Boolean
     {
-        return _errorCount > 20;
+        return _errorCount > 5;
     }
 
     public function getMinigameStats (playerId :int) :Dictionary
@@ -69,21 +71,6 @@ public class Room
 
         for (var p :* in _players) {
             var player :Player = Player(p);
-
-            /* TODO: BEGIN SANITY CHECK */
-            var subctrl :PlayerSubControlServer = Server.control.getPlayer(player.playerId);
-            if (subctrl == null || subctrl.getRoomId() != roomId) {
-                if (subctrl == null) {
-                    log.warning("Removing unknown player in getTeam()", "teamRoomId", roomId,
-                                "playerId", player.playerId);
-                } else {
-                    log.warning("Removing misfiled player in getTeam()", "teamRoomId", roomId,
-                                "playerId", player.playerId, "playerRoomId", subctrl.getRoomId);
-                }
-                delete _players[player];
-                continue;
-            }
-            /* TODO: END SANITY CHECK */
 
             if (!player.playing) {
                 continue;
@@ -99,7 +86,7 @@ public class Room
     public function playerEntered (player :Player) :void
     {
 //        log.debug("Copying player dictionary into room", "payerId", player.playerId,
-//                  "roomId", roomId, "health", player.health, "maxHealth", player.maxHealth,
+//                  "roomId", _roomId, "health", player.health, "maxHealth", player.maxHealth,
 //                  "level", player.level);
 
         // broadcast the arriving player's data using room properties
@@ -117,7 +104,7 @@ public class Room
     {
         // erase the departing player's data from the room properties
 //        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
-//                  "roomId", roomId);
+//                  "roomId", _roomId);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
 
         delete _players[player];
@@ -161,7 +148,12 @@ public class Room
         }
 
         // if there are no players in this room, we cannot assume it's loaded, so do nothing
-        if (_ctrl.getPlayerIds().length == 0) {
+        // TODO: this is insane, use a HashMap instead
+        var playersHere :Boolean = false;
+        for (var p :* in _players) {
+            playersHere = true;
+        }
+        if (!playersHere) {
             return;
         }
 
@@ -173,7 +165,7 @@ public class Room
 
             _errorCount ++;
             if (isShutdown) {
-                log.info("Giving up on room tick() due to error overflow", "roomId", roomId);
+                log.info("Giving up on room tick() due to error overflow", "roomId", _roomId);
                 return;
             }
         }
@@ -200,7 +192,7 @@ public class Room
         try {
             Trophies.handleMinigameCompletion(player, weapon, win);
         } catch (e :Error) {
-            log.warning("Error in handleMinigameCompletion", "roomId", roomId, "playerId",
+            log.warning("Error in handleMinigameCompletion", "roomId", _roomId, "playerId",
                         player.playerId, e);
         }
 
@@ -260,14 +252,14 @@ public class Room
         for (var p :* in _players) {
             Player(p).roomStateChanged();
         }
-        log.debug("Room state set", "roomId", roomId, "state", state);
+//        log.debug("Room state set", "roomId", _roomId, "state", state);
     }
 
     // server-specific parts of the model moved here
     internal function damageGhost (damage :int) :Boolean
     {
         var health :int = _ghost.health;
-//        log.debug("Damaging ghost", "roomId", roomId, "damage", damage, "health", health);
+//        log.debug("Damaging ghost", "roomId", _roomId, "damage", damage, "health", health);
         if (damage >= health) {
             _ghost.setHealth(0);
             return true;
@@ -305,7 +297,7 @@ public class Room
 
         case Codes.STATE_APPEARING:
             if (_transitionFrame == 0) {
-                log.warning("In APPEAR without transitionFrame", "id", roomId);
+                log.warning("In APPEAR without transitionFrame", "id", _roomId);
             }
             // let's add a 1-second grace period on the transition
             if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
@@ -321,7 +313,7 @@ public class Room
         case Codes.STATE_GHOST_TRIUMPH:
         case Codes.STATE_GHOST_DEFEAT:
             if (_transitionFrame == 0) {
-                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
+                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", _roomId);
             }
             // let's add a 1-second grace period on the transition
             if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
@@ -380,7 +372,7 @@ public class Room
             try {
                 Trophies.handleGhostDefeat(this);
             } catch (e :Error) {
-                log.warning("Error in handleGhostDefeat", "roomId", roomId, e);
+                log.warning("Error in handleGhostDefeat", "roomId", _roomId, e);
             }
 
             setState(Codes.STATE_GHOST_DEFEAT);
@@ -464,7 +456,7 @@ public class Room
             try {
                 Trophies.handleHeal(healer, player, amount);
             } catch (e :Error) {
-                log.warning("Error in handleHeal", "roomId", roomId, "targetId",
+                log.warning("Error in handleHeal", "roomId", _roomId, "targetId",
                             player.playerId, "healerId", healer.playerId, e);
             }
         }
@@ -498,7 +490,7 @@ public class Room
             var playerId :int = int(p);
 
             var player :Player = Server.getPlayer(playerId);
-            if (player == null || player.room == null || player.room.roomId != this.roomId) {
+            if (player == null || player.room == null || player.room.roomId != _roomId) {
                 // for the time being, you only get credit if you're present when the ghost dies
                 continue;
             }
@@ -560,7 +552,7 @@ public class Room
     {
         var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
         if (data == null || data[Codes.IX_GHOST_ID] == null) {
-            var roomRandom :Random = new Random(this.roomId);
+            var roomRandom :Random = new Random(_roomId);
 
             // the ghost id/model is currently completely random; this will change
             var ghosts :Array = GhostDefinition.getGhostIds();
@@ -570,10 +562,13 @@ public class Room
             var rnd :Number = roomRandom.nextNumber();
 
             var levelBase :int;
-            if (ArrayUtil.contains(Trophies.LIBRARY_SCENES, roomId)) {
+            if (Trophies.isInLibrary(_roomId)) {
+                log.debug("Spawning a ghost in the library", "roomId", _roomId);
                 // the ghosts in the library are level 1-5
                 levelBase = int(1 + 4*rnd*rnd);
+
             } else {
+                log.debug("Spawning a ghost in the Whirled proper", "roomId", _roomId);
                 // the whirled ghosts spawn in a range of levels 1 to 40
                 levelBase = int(2 + 39*rnd*rnd);
             }
@@ -601,6 +596,7 @@ public class Room
     }
 
     protected var _ctrl :RoomSubControlServer;
+    protected var _roomId :int;
 
     protected var _state :String;
     protected var _players :Dictionary = new Dictionary();
