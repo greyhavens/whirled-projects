@@ -32,7 +32,7 @@ public class Constants
     // how many levels are available to players that haven't purchased the full game
     public static const NUM_FREE_SP_LEVELS :int = 7;
     public static const PREMIUM_SP_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
-    public static const PREMIUM_SP_LEVEL_PACK_ID :int = 0; // TODO
+    public static const PREMIUM_SP_LEVEL_PACK_ID :int = 95;
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 0.7;
