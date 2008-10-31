@@ -24,7 +24,12 @@ public class SpriteUtil
             return new mcClass() as MovieClip;
         }
         var cache :Array = getCache(mcClass);
-        return (cache.length > 0 ? cache.pop() : new mcClass()) as MovieClip;
+        if (cache.length > 0) {
+            var mc :MovieClip = cache.pop();
+            mc.gotoAndPlay(1);
+            return mc;
+        }
+        return new mcClass() as MovieClip;
     }
 
     public static function releaseMC (mc :MovieClip) :void
@@ -35,7 +40,7 @@ public class SpriteUtil
         if (mc.parent != null) {
             mc.parent.removeChild(mc);
         }
-        mc.gotoAndStop(1);
+        mc.stop();
         getCache(ClassUtil.getClass(mc)).push(mc);
     }
 

@@ -13,6 +13,8 @@ import popcraft.data.*;
 
 public class CreatureAnimFactory
 {
+    public static const USE_CACHE :Boolean = true;
+
     public static function initAllBitmapAnims (playerColor :uint) :void
     {
         for (var unitType :int = 0; unitType < Constants.PLAYER_CREATURE_UNIT_NAMES.length;
@@ -71,7 +73,8 @@ public class CreatureAnimFactory
 
         var unitData :UnitData = GameContext.gameData.units[unitType];
 
-        var anim :MovieClip = SwfResource.instantiateMovieClip(unitData.name, animName, true);
+        var anim :MovieClip =
+                SwfResource.instantiateMovieClip(unitData.name, animName, true, USE_CACHE);
         if (null != anim) {
             // colorize the animation's recolor1, recolor2, etc children
             var i :int = 1;
@@ -84,6 +87,13 @@ public class CreatureAnimFactory
         }
 
         return anim;
+    }
+
+    public static function releaseUnitAnimation (mc :MovieClip) :void
+    {
+        if (USE_CACHE) {
+            SwfResource.releaseMovieClip(mc);
+        }
     }
 
     protected static function colorizeAnimation (anim :MovieClip, childName :String,

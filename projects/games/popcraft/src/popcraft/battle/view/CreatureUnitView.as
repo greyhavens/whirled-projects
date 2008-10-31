@@ -405,6 +405,21 @@ public class CreatureUnitView extends BattlefieldSprite
         return (_bitmapAnimView != null);
     }
 
+    override protected function destroyed () :void
+    {
+        super.destroyed();
+        _animStanding.forEach(releaseEachMC);
+        _animAttacking.forEach(releaseEachMC);
+        _animMoving.forEach(releaseEachMC);
+    }
+
+    protected function releaseEachMC (item :*, index :int, array :Array) :void
+    {
+        if (item is MovieClip) {
+           CreatureAnimFactory.releaseUnitAnimation(item as MovieClip);
+        }
+    }
+
     // Retain a pointer to the CreatureUnit rather than a SimObjectRef to
     // prevent a bunch of irritating checks against null. This isn't a big deal
     // here - the CreatureUnitView's lifespan is almost exactly that of its
