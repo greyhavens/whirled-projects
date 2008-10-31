@@ -41,7 +41,7 @@ public class EndlessGameMode extends GameMode
 
         if (_playerSaves != null) {
             // all saved games will point to the same mapIndex
-            var save :SavedEndlessGame = _playerSaves[GameContext.localPlayerIndex];
+            var save :SavedEndlessGame = _playerSaves[0];
 
             // restore saved data if it exists
             EndlessGameContext.mapIndex = save.mapIndex;
@@ -397,15 +397,15 @@ public class EndlessGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        GameContext.localPlayerIndex = SeatingManager.localPlayerSeat;
+        GameContext.localPlayerIndex =
+            (GameContext.isMultiplayerGame ? SeatingManager.localPlayerSeat : 0);
         GameContext.playerInfos = [];
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
         // create PlayerInfos for the human players
-        var numPlayers :int = SeatingManager.numExpectedPlayers;
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
+        for (var playerIndex :int = 0; playerIndex < this.numHumanPlayers; ++playerIndex) {
             var playerName :String = EndlessGameContext.level.humanPlayerNames[playerIndex];
             var playerDisplayData :PlayerDisplayData =
                 GameContext.gameData.getPlayerDisplayData(playerName);
@@ -492,7 +492,7 @@ public class EndlessGameMode extends GameMode
         var mapCycleNumber :int = EndlessGameContext.mapCycleNumber;
 
         // the first computer index is 1 more than the number of human players in the game
-        var playerIndex :int = SeatingManager.numExpectedPlayers;
+        var playerIndex :int = this.numHumanPlayers;
 
         var newInfos :Array  = [];
         for each (var cpData :EndlessComputerPlayerData in _curMapData.computers) {
@@ -506,6 +506,11 @@ public class EndlessGameMode extends GameMode
         }
 
         return newInfos;
+    }
+
+    protected function get numHumanPlayers () :int
+    {
+        return (GameContext.isMultiplayerGame ? SeatingManager.numExpectedPlayers : 1);
     }
 
     override protected function createRandSeed () :uint

@@ -375,26 +375,28 @@ class HelpView extends SceneObject
     {
         _movie = SwfResource.instantiateMovieClip("splashUi", "help");
 
-        var yearbook :MovieClip = _movie["yearbook"];
+        _yearbook = _movie["yearbook"];
+        _yearbook.gotoAndStop(1);
 
         // Eloise portrait
-        /*_eloisePage = yearbook["eloise"];
-        var pEloise :MovieClip = _eloisePage["pEloise"];
-        pEloise.addChild(ImageResource.instantiateBitmap("portrait_eloise"));*/
+        var eloisePage :MovieClip = _yearbook["eloise"];
+        var pEloise :MovieClip = eloisePage["pEloise"];
+        pEloise.addChild(ImageResource.instantiateBitmap("portrait_eloise"));
 
         // everyone else's portrait
         for each (var name :String in STUDENT_NAMES) {
-            var portraitParent :MovieClip = yearbook["p" + name];
+            var portraitParent :MovieClip = _yearbook["p" + name];
             var portrait :Bitmap = ImageResource.instantiateBitmap("portrait_" + name.toLowerCase());
             portraitParent.addChild(portrait);
         }
 
         // turn-page button
-        /*var turnButton :SimpleButton = yearbook["turn"];
-        registerListener(turnButton, MouseEvent.CLICK,
+        _turnButton = _yearbook["turn"];
+        registerListener(_turnButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                _eloisePage.gotoAndPlay(_eloisePage.currentFrame + 1);
-            });*/
+                _yearbook.gotoAndPlay(2);
+                _turnButton.visible = false;
+            });
 
         // close button
         var closeButton :SimpleButton = _movie["close"];
@@ -405,14 +407,15 @@ class HelpView extends SceneObject
             });
     }
 
-    /*override public function set visible (val :Boolean) :void
+    override public function set visible (val :Boolean) :void
     {
         if (val) {
-            _eloisePage.gotoAndStop(1);
+            _yearbook.gotoAndStop(1);
+            _turnButton.visible = true;
         }
 
         super.visible = val;
-    }*/
+    }
 
     override public function get displayObject () :DisplayObject
     {
@@ -420,7 +423,8 @@ class HelpView extends SceneObject
     }
 
     protected var _movie :MovieClip;
-    //protected var _eloisePage :MovieClip;
+    protected var _yearbook :MovieClip;
+    protected var _turnButton :SimpleButton;
 
     protected static const STUDENT_NAMES :Array =
         [ "Pigsley", "Horace", "Iris", "Ivy", "Ursula", "Dante", "Ralph", "Jack" ];

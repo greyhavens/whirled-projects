@@ -147,6 +147,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             _helpView.visible = false;
         }
 
+        GameContext.gameType = GameContext.GAME_TYPE_ENDLESS_MP;
         animateToMode(new EndlessGameMode(_level, saves, true));
     }
 

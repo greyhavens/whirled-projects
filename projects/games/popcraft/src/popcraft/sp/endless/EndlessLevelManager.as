@@ -115,7 +115,7 @@ public class EndlessLevelManager
         _savedMpGames = new SavedEndlessGameList();
     }
 
-    protected function playLevel (level :int, levelReadyCallback :Function, forceReload :Boolean)
+    protected function playLevel (levelType :int, levelReadyCallback :Function, forceReload :Boolean)
         :void
     {
         _levelReadyCallback = levelReadyCallback;
@@ -124,50 +124,48 @@ public class EndlessLevelManager
         // they can therefore be edited at runtime)
         forceReload &&= Constants.DEBUG_LOAD_LEVELS_FROM_DISK;
 
-        if (forceReload) {
+        if (forceReload || levelType != _loadedLevelType) {
             _loadedLevel = null;
         }
+
+        _loadedLevelType = levelType;
 
         if (null != _loadedLevel) {
             this.startGame();
 
         } else {
             // load the level
-            if (null == _loadedLevel) {
-                var levelName :String;
-                var theEmbeddedClass :Class
-                if (level == SP_LEVEL) {
-                    levelName = "endless_sp_01.xml";
-                    theEmbeddedClass = ENDLESS_SP_LEVEL_1;
-                    _loadingMultiplayer = false;
-                } else {
-                    levelName = "endless_mp_01.xml";
-                    theEmbeddedClass = ENDLESS_MP_LEVEL_1;
-                    _loadingMultiplayer = true;
-                }
+            var levelName :String;
+            var theEmbeddedClass :Class
+            if (levelType == SP_LEVEL) {
+                levelName = "endless_sp_01.xml";
+                theEmbeddedClass = ENDLESS_SP_LEVEL_1;
+            } else {
+                levelName = "endless_mp_01.xml";
+                theEmbeddedClass = ENDLESS_MP_LEVEL_1;
+            }
 
-                var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
-                    { url: LEVELS_DIR + "/" + levelName } :
-                    { embeddedClass: theEmbeddedClass });
+            var loadParams :Object = (Constants.DEBUG_LOAD_LEVELS_FROM_DISK ?
+                { url: LEVELS_DIR + "/" + levelName } :
+                { embeddedClass: theEmbeddedClass });
 
-                if (forceReload) {
-                    // reload the default game data first, then load the level when it's complete
-                    // (level requires that default game data already be loaded)
-                    ResourceManager.instance.unload(Constants.RSRC_DEFAULTGAMEDATA);
-                    ResourceManager.instance.queueResourceLoad(
-                        Constants.RESTYPE_GAMEDATA,
-                        Constants.RSRC_DEFAULTGAMEDATA,
-                        { url: LEVELS_DIR + "/defaultGameData.xml" });
+            if (forceReload) {
+                // reload the default game data first, then load the level when it's complete
+                // (level requires that default game data already be loaded)
+                ResourceManager.instance.unload(Constants.RSRC_DEFAULTGAMEDATA);
+                ResourceManager.instance.queueResourceLoad(
+                    Constants.RESTYPE_GAMEDATA,
+                    Constants.RSRC_DEFAULTGAMEDATA,
+                    { url: LEVELS_DIR + "/defaultGameData.xml" });
 
-                    ResourceManager.instance.loadQueuedResources(
-                        function () :void {
-                            loadLevel(loadParams)
-                        },
-                        onLoadError);
+                ResourceManager.instance.loadQueuedResources(
+                    function () :void {
+                        loadLevel(loadParams)
+                    },
+                    onLoadError);
 
-                } else {
-                    this.loadLevel(loadParams);
-                }
+            } else {
+                this.loadLevel(loadParams);
             }
         }
     }
@@ -194,7 +192,7 @@ public class EndlessLevelManager
 
     protected function startGame () :void
     {
-        GameContext.gameType = (_loadingMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
+        GameContext.gameType = (_loadedLevelType == MP_LEVEL ? GameContext.GAME_TYPE_ENDLESS_MP :
             GameContext.GAME_TYPE_ENDLESS_SP);
 
         var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
@@ -208,9 +206,9 @@ public class EndlessLevelManager
         }
     }
 
+    protected var _loadedLevelType :int = -1;
     protected var _loadedLevel :EndlessLevelData;
     protected var _levelReadyCallback :Function;
-    protected var _loadingMultiplayer :Boolean;
     protected var _savedSpGames :SavedEndlessGameList = new SavedEndlessGameList();
     protected var _savedMpGames :SavedEndlessGameList = new SavedEndlessGameList();
 
