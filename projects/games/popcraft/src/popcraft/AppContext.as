@@ -100,6 +100,9 @@ public class AppContext
         if (gameCtrl.isConnected()) {
             allLevelPacks.init(gameCtrl.game.getLevelPacks());
             playerLevelPacks.init(gameCtrl.player.getPlayerLevelPacks());
+
+            PopCraft.log.info("Level packs: " + allLevelPacks.getAvailableIdents() +
+                "\nPlayer level packs: " + playerLevelPacks.getAvailableIdents());
         }
     }
 
