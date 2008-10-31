@@ -249,7 +249,7 @@ public class EndlessGameMode extends GameMode
                 }
             }
 
-            if (GameContext.isMultiplayerGame) {
+            if (GameContext.isMultiplayerGame && mapIndex >= Trophies.COLLABORATOR_MP_MAP_INDEX) {
                 // complete any MP level
                 AppContext.awardTrophy(Trophies.COLLABORATOR);
             }

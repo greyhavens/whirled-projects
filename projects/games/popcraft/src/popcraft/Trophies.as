@@ -13,8 +13,9 @@ public class Trophies
         "Accepted",
         "Admired",
     ];
-    // complete any mp level
+    // complete mp level 9
     public static const COLLABORATOR :String = "Collaborator";
+    public static const COLLABORATOR_MP_MAP_INDEX :int = 8;
     // resurrect your teammate in multiplayer
     public static const REANIMATOR :String = "Reanimator";
     // get your multiplier to 5x
