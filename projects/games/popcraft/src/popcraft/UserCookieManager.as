@@ -16,7 +16,7 @@ public class UserCookieManager
         _dataSources.push(dataSource);
     }
 
-    public function setNeedsUpdate () :void
+    public function needsUpdate () :void
     {
         // update immediately. is this wise?
         this.writeCookie();

@@ -105,7 +105,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
 
         // combine local stats into global, and save
         AppContext.globalPlayerStats.combineWith(GameContext.playerStats);
-        AppContext.userCookieMgr.setNeedsUpdate();
+        AppContext.userCookieMgr.needsUpdate();
     }
 
     protected function awardTrophies () :void

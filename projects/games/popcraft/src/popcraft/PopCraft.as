@@ -179,10 +179,8 @@ class LoadingMode extends GenericLoadingMode
             LevelSelectMode.create();
         }
 
-        // award a prize to players that have purchased the game
-        if (AppContext.isPremiumContentUnlocked) {
-            AppContext.prizeMgr.awardPremiumPrize();
-        }
+        // award the player any prizes they haven't gotten yet
+        AppContext.prizeMgr.checkPrizes();
     }
 
     protected function resourceLoadComplete () :void

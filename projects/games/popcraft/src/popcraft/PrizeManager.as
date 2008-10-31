@@ -1,38 +1,91 @@
 package popcraft {
 
+import com.threerings.util.ArrayUtil;
+
 import flash.utils.ByteArray;
 
 public class PrizeManager
     implements UserCookieDataSource
 {
-    public function awardPremiumPrize () :void
+    public static const LADYFINGERS :int = 0;   // buy the game
+    public static const BEHEMOTH :int = 1;      // get the "Magna Cum Laude" trophy
+    public static const JACK :int = 2;          // get the "Admired" trophy
+    public static const RALPH :int = 3;         // get the "Head of the Class" trophy
+    public static const IVY :int = 4;           // get the "Collaborator" trophy
+
+    public function PrizeManager ()
     {
-        if (!_premiumPrizeAwarded && AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.player.awardPrize(PREMIUM_PRIZE_IDENT);
-            _premiumPrizeAwarded = true;
-            AppContext.userCookieMgr.setNeedsUpdate();
+        init();
+    }
+
+    public function checkPrizes () :void
+    {
+        var prizes :Array = [];
+        if (AppContext.isPremiumContentUnlocked) {
+            prizes.push(LADYFINGERS);
+        }
+        if (AppContext.hasTrophy(Trophies.MAGNACUMLAUDE)) {
+            prizes.push(BEHEMOTH);
+        }
+        if (AppContext.hasTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[2])) {
+            prizes.push(JACK);
+        }
+        if (AppContext.hasTrophy(Trophies.HEAD_OF_THE_CLASS)) {
+            prizes.push(RALPH);
+        }
+        if (AppContext.hasTrophy(Trophies.COLLABORATOR)) {
+            prizes.push(IVY);
+        }
+
+        if (prizes.length > 0) {
+            awardPrizes(prizes);
         }
     }
 
-    public function awardScorePrize () :void
+    public function awardPrize (prizeId :int) :void
     {
-        if (!_scorePrizeAwarded && AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.player.awardPrize(SCORE_PRIZE_IDENT);
-            _scorePrizeAwarded = true;
-            AppContext.userCookieMgr.setNeedsUpdate();
+        awardPrizes([ prizeId ]);
+    }
+
+    public function awardPrizes (prizeIds :Array) :void
+    {
+        if (!AppContext.isPremiumContentUnlocked || !AppContext.gameCtrl.isConnected()) {
+            return;
+        }
+
+        var prizeAwarded :Boolean;
+        for each (var prizeId :int in prizeIds) {
+            if (!_prizesAwarded[prizeId]) {
+                AppContext.gameCtrl.player.awardPrize(PRIZE_IDENTS[prizeId])
+                _prizesAwarded[prizeId] = true;
+                prizeAwarded = true;
+            }
+        }
+
+        if (prizeAwarded) {
+            AppContext.userCookieMgr.needsUpdate();
         }
     }
 
     public function writeCookieData (cookie :ByteArray) :void
     {
-        cookie.writeBoolean(_premiumPrizeAwarded);
-        cookie.writeBoolean(_scorePrizeAwarded);
+        cookie.writeInt(_prizesAwarded.length);
+        for each (var prizeAwarded :Boolean in _prizesAwarded) {
+            cookie.writeBoolean(prizeAwarded);
+        }
     }
 
     public function readCookieData (version :int, cookie :ByteArray) :void
     {
-        _premiumPrizeAwarded = cookie.readBoolean();
-        _scorePrizeAwarded = cookie.readBoolean();
+        init();
+
+        var numEntries :int = cookie.readInt();
+        for (var ii :int = 0; ii < numEntries; ++ii) {
+            var prizeAwarded :Boolean = cookie.readBoolean();
+            if (ii < _prizesAwarded.length) {
+                _prizesAwarded[ii] = prizeAwarded;
+            }
+        }
     }
 
     public function get minCookieVersion () :int
@@ -48,15 +101,22 @@ public class PrizeManager
 
     protected function init () :void
     {
-        _premiumPrizeAwarded = false;
-        _scorePrizeAwarded = false;
+        _prizesAwarded = ArrayUtil.create(PRIZE_IDENTS.length, false);
     }
 
-    protected var _premiumPrizeAwarded :Boolean;
-    protected var _scorePrizeAwarded :Boolean;
+    protected var _prizesAwarded :Array;
+    protected var _behemothAwarded :Boolean;
+    protected var _jackAwarded :Boolean;
+    protected var _ralphAwarded :Boolean;
+    protected var _ivyAwarded :Boolean;
 
-    protected static const PREMIUM_PRIZE_IDENT :String = "ladyfingers_avatar";
-    protected static const SCORE_PRIZE_IDENT :String = "behemoth_avatar";
+    protected static const PRIZE_IDENTS :Array = [
+        "ladyfingers_avatar",
+        "behemoth_avatar",
+        "jack_avatar",
+        "ralph_avatar",
+        "ivy_avatar",
+    ];
 }
 
 }

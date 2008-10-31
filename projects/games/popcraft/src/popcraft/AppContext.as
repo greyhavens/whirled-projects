@@ -31,7 +31,9 @@ public class AppContext
     public static function awardTrophy (trophyName :String) :void
     {
         if (AppContext.gameCtrl.isConnected()) {
-            gameCtrl.player.awardTrophy(trophyName);
+            if (gameCtrl.player.awardTrophy(trophyName)) {
+                prizeMgr.checkPrizes();
+            }
         } else {
             PopCraft.log.info("Trophy awarded: " + trophyName);
         }

@@ -70,7 +70,7 @@ public class EndlessLevelManager
 
         if (saveList.addSave(newSave)) {
             // save the new data
-            AppContext.userCookieMgr.setNeedsUpdate();
+            AppContext.userCookieMgr.needsUpdate();
         }
     }
 
