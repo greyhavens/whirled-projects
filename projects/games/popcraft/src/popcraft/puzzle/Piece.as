@@ -54,8 +54,11 @@ public class Piece extends SceneObject
 
         _resourceType = newType;
 
+        var pieceMovie :MovieClip = SpriteUtil.newMC(SWF_CLASSES[newType]);
+        /*
         var pieceClass :Class = SWF_CLASSES[newType];
         var pieceMovie :MovieClip = new pieceClass();
+        */
 
         pieceMovie.x = -(pieceMovie.width * 0.5);
         pieceMovie.y = -(pieceMovie.height * 0.5);
@@ -64,6 +67,12 @@ public class Piece extends SceneObject
 
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(pieceMovie);
+    }
+
+    override public function destroySelf () :void
+    {
+        super.destroySelf();
+        SpriteUtil.releaseMC(_sprite.getChildAt(0) as MovieClip);
     }
 
     protected var _boardIndex :int;

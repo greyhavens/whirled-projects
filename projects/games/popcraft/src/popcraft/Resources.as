@@ -234,7 +234,7 @@ public class Resources
     protected static const IMG_PORTRAIT_JACK :Class;
     [Embed(source="../../rsrc/all/pigsley.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_PIGSLEY :Class;
-    [Embed(source="../../rsrc/all/RALPH.png", mimeType="application/octet-stream")]
+    [Embed(source="../../rsrc/all/ralph.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_RALPH :Class;
     [Embed(source="../../rsrc/all/weardd.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_WEARDD :Class;
