@@ -1,5 +1,6 @@
 package popcraft.ui {
 
+import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
@@ -54,8 +55,9 @@ public class PlayerStatusView extends SceneObject
         var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height);
         headshot.width *= scale;
         headshot.height *= scale;
-        headshot.x = (HEADSHOT_SIZE.x - headshot.width) * 0.5;
-        headshot.y = (HEADSHOT_SIZE.y - headshot.height) * 0.5;
+        DisplayUtil.positionBounds(headshot,
+            (HEADSHOT_SIZE.x - headshot.width) * 0.5,
+            (HEADSHOT_SIZE.y - headshot.height) * 0.5);
         headshotParent.addChild(headshot);
 
         // mask the headshot
@@ -69,8 +71,9 @@ public class PlayerStatusView extends SceneObject
 
         // add to the PlayerStatusView
         var frame :MovieClip = _movie["player_headshot"];
-        headshotParent.x = -headshotParent.width * 0.5;
-        headshotParent.y = (-headshotParent.height * 0.5) - 2;
+        DisplayUtil.positionBounds(headshotParent,
+            -headshotParent.width * 0.5,
+            (-headshotParent.height * 0.5) - 2);
         frame.addChild(headshotParent);
     }
 
