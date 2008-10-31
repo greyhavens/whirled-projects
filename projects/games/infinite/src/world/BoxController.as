@@ -4,9 +4,12 @@ package world
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import cells.CellCodes;
 	import cells.fruitmachine.*;
-
-    import world.board.*;
+	
+	import server.Messages.CellState;
+	
+	import world.board.*;
 	
 	public class BoxController implements BoardAccess
 	{
@@ -46,7 +49,7 @@ package world
 			if (Math.random() < p) {
 				// if the dice throw wins, then we return a Fruit Machine.
 //				Log.debug ("returning new machine");  
-				return new FruitMachineCell(current.position, FruitMachineCell.ACTIVE, ObjectBox.random());
+				return FruitMachineCell.withItemAt(current.position, ObjectBox.random().item);
 			}
 			
 //			Log.debug ("dice rolls failed");
@@ -90,7 +93,7 @@ package world
 				if (Math.random() < p) {
 					// if the dice throw wins, then we return a Fruit Machine.
 					Log.debug ("returning new machine");  
-					return new FruitMachineCell(cell.position, FruitMachineCell.ACTIVE, ObjectBox.random());
+					return FruitMachineCell.withItemAt(cell.position, ObjectBox.random().item);
 				}
 			}
 			Log.debug ("dice rolls all failed");

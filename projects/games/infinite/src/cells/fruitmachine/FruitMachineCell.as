@@ -2,29 +2,50 @@ package cells.fruitmachine
 {
 	import arithmetic.*;
 	
-	import client.CellEvent;
 	import cells.BackgroundCell;
 	import cells.CellCodes;
 	import cells.CellInteractions;
+	
+	import client.CellEvent;
 	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
 	import items.*;
 	
+	import server.Messages.CellState;
+	
+	import world.Cell;
+	
 	public class FruitMachineCell extends BackgroundCell
 	{
-		public function FruitMachineCell(position:BoardCoordinates, startingMode:int, box:ObjectBox)
+		public function FruitMachineCell(state:CellState)
 		{
-			super(position);
-			_box = box;
-			mode = startingMode;
+			super(state.position);
+			_box = new ObjectBox(item(state.attributes.item));
+			mode = state.attributes.mode;
 			
 			// we don't need to remove these listeners because the cell itself is the dispatcher.
 			addEventListener(CellEvent.ADDED_TO_OBJECTIVE, handleAdded);
 			addEventListener(CellEvent.REMOVED_FROM_OBJECTIVE, handleRemoved);			
-		}			
-		
+		    
+		}
+
+        override public function get state () :CellState
+        {
+        	const created:CellState = super.state;
+        	created.attributes = {
+        		mode: mode,
+        		item: _box.item.attributes
+        	}
+        	return created;
+        }
+
+        protected function item (itemAttributes:Object) :Item
+        {
+        	return _factory.makeItem(itemAttributes);
+        }
+				
 		override public function get code () :int
 		{
 			return CellCodes.FRUIT_MACHINE;
@@ -191,13 +212,25 @@ package cells.fruitmachine
 			return _mode;
 		}
 
-       protected var _box:ObjectBox;
+        public static function withItemAt (position:BoardCoordinates, item:Item) :Cell
+        {
+            const state:CellState = new CellState(CellCodes.FRUIT_MACHINE, position);
+            state.attributes = {
+                mode: FruitMachineCell.ACTIVE,
+                item: item.attributes
+            };
+            return new FruitMachineCell(state);
+        }
+
+        protected var _box:ObjectBox;
 
 		protected var _mode:int;
 	
 		protected var _timer:Timer;
 	
 		protected var _player:CellInteractions;
+	
+	    protected static const _factory:ItemFactory = new ItemFactory(); 
 	
 		public static const INACTIVE:int = 0;
 		public static const ACTIVE:int = 1;

@@ -30,9 +30,7 @@ package server.Messages
         {
         	array.writeInt(_code);
         	_position.writeToArray(array);
-        	for each (var value:int in _state) {
-        		array.writeInt(value);
-        	}
+        	array.writeObject(attributes);
         	return array;
         }
         
@@ -42,9 +40,7 @@ package server.Messages
         	   array.readInt(),
         	   BoardCoordinates.readFromArray(array)
         	)
-        	while (array.bytesAvailable) {
-        	   read.addState(array.readInt());
-        	}
+        	read.attributes = array.readObject();
         	return read;
         }
         
@@ -52,28 +48,33 @@ package server.Messages
          * Return an array of ints that can be used by a particular cell type to encode its own
          * state.
          */  
-        public function get state () :Array
+        public function get attributes () :Object
         {
-        	return _state;
+        	return _attributes;
         }
-        
-        protected function addState(value:int) :void
+
+        public function set attributes (object:Object) :void
         {
-        	_state.push(value);
-        } 
+        	_attributes = object;
+        }        
         
         public function newCell (old:Cell) :Cell
         {
-        	return makeCell(_code, old.owner, old.position);
+        	return makeCell(old.owner, this);
         }
         
         public function get code () :int
         {
         	return _code;
         }
+        
+        public function get position () :BoardCoordinates
+        {
+        	return _position;
+        }
 
         protected var _code:int;
         protected var _position:BoardCoordinates;
-        protected var _state:Array = new Array();
+        protected var _attributes:Object
 	}
 }

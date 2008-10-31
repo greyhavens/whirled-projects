@@ -8,12 +8,13 @@ package world.board
 	import cells.ladder.*;
 	import cells.wall.*;
 	
+	import items.Item;
 	import items.ladder.*;
 	import items.oilcan.*;
 	import items.spring.*;
 	import items.teleporter.*;
-
-    import world.Cell;
+	
+	import world.Cell;
 	
 	public class SimpleBoard implements Board
 	{
@@ -59,28 +60,28 @@ package world.board
 				case -3:
 					switch (position.y) {
 						case 0:
-							return new FruitMachineCell(position, FruitMachineCell.ACTIVE, new ObjectBox(new Spring()));
+							return FruitMachineCell.withItemAt(position, new Spring());
 					};
 					break;
 
 				case -5:
 					switch (position.y) {
 						case 0:
-							return new FruitMachineCell(position, FruitMachineCell.ACTIVE, new ObjectBox(new Teleporter()));
+							return FruitMachineCell.withItemAt(position, new Teleporter());
 					};
 					break;
 					
 				case -7:
 					switch (position.y) {
 						case 0:
-							return new FruitMachineCell(position, FruitMachineCell.ACTIVE, new ObjectBox(new OilCan()));
+							return FruitMachineCell.withItemAt(position, new OilCan());
 					};
 					break;
 					
 				case -11:
 					switch (position.y) {
 						case 0:
-							return new FruitMachineCell(position, FruitMachineCell.ACTIVE, new ObjectBox(new Ladder(3)));
+							return FruitMachineCell.withItemAt(position, new Ladder(3));
 					};
 					break;		
 			}
@@ -106,7 +107,7 @@ package world.board
 			
 			return true;	
 		}
-				
+						
 		public function get startingPosition ():BoardCoordinates
 		{
 			return new BoardCoordinates(0,0);

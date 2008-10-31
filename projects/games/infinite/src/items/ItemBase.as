@@ -1,7 +1,6 @@
 package items
 {
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
 	
 	public class ItemBase extends EventDispatcher implements Item
 	{		
@@ -34,6 +33,13 @@ package items
 		public function get code () :int
 		{
 			throw new Error(this + " doesn't have a code assigned to it");
+		}
+		
+		public function get attributes () :Object
+		{
+			return {
+				code: code
+			}
 		}		
 	}
 }

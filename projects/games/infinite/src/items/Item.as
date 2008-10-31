@@ -2,9 +2,6 @@ package items
 {
 	import flash.events.IEventDispatcher;
 	
-	import items.ItemInventory;
-	import items.ItemPlayer;
-	
 	/**
 	 * This is an item that the player can hold in their inventory.
 	 */
@@ -19,5 +16,7 @@ package items
 		function isUsableBy (player:ItemPlayer) :Boolean;
 		
 		function useBy (player:ItemPlayer) :void;
+		
+		function get attributes () :Object;
 	}
 }

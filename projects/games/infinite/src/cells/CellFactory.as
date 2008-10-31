@@ -1,6 +1,14 @@
 package cells
 {
-	import arithmetic.BoardCoordinates;
+	import cells.fruitmachine.FruitMachineCell;
+	import cells.ladder.LadderBaseCell;
+	import cells.ladder.LadderMiddleCell;
+	import cells.ladder.LadderTopCell;
+	import cells.wall.OiledWallCell;
+	import cells.wall.WallBaseCell;
+	import cells.wall.WallCell;
+	
+	import server.Messages.CellState;
 	
 	import world.Cell;
 	
@@ -10,17 +18,16 @@ package cells
 		{
 		}
 		
-		public function makeCell (code:int, owner:Owner, position:BoardCoordinates) :Cell
+		public function makeCell (owner:Owner, state:CellState) :Cell
 		{
-			switch (code) {
-				case CellCodes.NONE:
-				case CellCodes.WALL:
-				case CellCodes.WALL_BASE:
-				case CellCodes.OILED_WALL:
-				case CellCodes.LADDER_BASE:
-				case CellCodes.LADDER_MIDDLE:
-				case CellCodes.LADDER_TOP:
-				case CellCodes.FRUIT_MACHINE:
+			switch (state.code) {
+				case CellCodes.WALL: return new WallCell(state.position);
+				case CellCodes.WALL_BASE: return new WallBaseCell(state.position);
+				case CellCodes.OILED_WALL: return new OiledWallCell(state.position);
+				case CellCodes.LADDER_BASE: return new LadderBaseCell(owner, state.position);
+				case CellCodes.LADDER_MIDDLE: return new LadderMiddleCell(owner, state.position);
+				case CellCodes.LADDER_TOP: return new LadderTopCell(owner, state.position);
+				case CellCodes.FRUIT_MACHINE: return new FruitMachineCell(state);
 				case CellCodes.OILED_LADDER_BASE:
 				case CellCodes.OILED_LADDER_MIDDLE:
 				case CellCodes.OILED_LADDER_TOP:
@@ -28,7 +35,7 @@ package cells
 				case CellCodes.DEBUG:
 				case CellCodes.DEBUG_GROUND:
 			}		
-			throw new Error(this + " doesn't know how to construct a cell of type "+code);
+			throw new Error(this + " doesn't know how to construct a cell of type "+state.code);
 		}
 	}
 }

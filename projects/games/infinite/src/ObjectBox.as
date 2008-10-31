@@ -18,6 +18,11 @@ package
 			_item = item;
 		}
 		
+		public function get item () :Item
+		{
+			return _item;
+		}
+		
 		/**
 		 * Give an object to a player.
 		 */
@@ -47,7 +52,6 @@ package
 			}
 		}	
 			
-				
 		protected var _item:Item;
 	}
 }
