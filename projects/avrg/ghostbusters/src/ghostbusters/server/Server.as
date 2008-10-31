@@ -42,7 +42,7 @@ public class Server extends ServerObject
             ;
     }
 
-    public function Server ()
+    Public function Server ()
     {
         log.info("Ghosthunters Server initializing...");
         _ctrl = new AVRServerGameControl(this);
@@ -64,6 +64,10 @@ public class Server extends ServerObject
             if (ctrl == null) {
                 throw new Error("Failed to get RoomSubControlServer [roomId=" + roomId + "]");
             }
+            if (ctrl.getRoomId() != roomId) {
+                throw new Error("New RoomSubControlServer roomId mismatch", "requestedRoomId",
+                                roomId, "controlRoomId", ctrl.getRoomId());
+            }
             room = _rooms[roomId] = new Room(ctrl);
         }
         return room;
@@ -82,7 +86,12 @@ public class Server extends ServerObject
 
         _ctrl.doBatch(function () :void {
             for each (var room :Room in _rooms) {
-                room.tick(frame, second > _lastSecond);
+                try {
+                    room.tick(frame, second > _lastSecond);
+
+                } catch (error :Error) {
+                    log.warning("Error in room.tick()", "roomId", room.roomId, error);
+                }
             }
         });
 
