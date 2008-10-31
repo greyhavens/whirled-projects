@@ -23,7 +23,7 @@ public class Trophies
     public static const HANDICAPPER :String = "Handicapper";
     // get a very high score
     public static const HEAD_OF_THE_CLASS :String = "HeadOfTheClass";
-    public static const HEAD_OF_THE_CLASS_SCORE :int = 150000;
+    public static const HEAD_OF_THE_CLASS_SCORE :int = 250000;
 
     /* single-player trophies */
 

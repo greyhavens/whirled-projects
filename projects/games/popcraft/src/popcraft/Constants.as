@@ -31,7 +31,7 @@ public class Constants
 
     // how many levels are available to players that haven't purchased the full game
     public static const NUM_FREE_SP_LEVELS :int = 7;
-    public static const PREMIUM_SP_LEVEL_PACK_NAME :String = "incident_premium";
+    public static const PREMIUM_SP_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
     public static const PREMIUM_SP_LEVEL_PACK_ID :int = 0; // TODO
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
@@ -48,7 +48,7 @@ public class Constants
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = false;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean = false;
     public static const DEBUG_UNLOCK_PREMIUM_CONTENT :Boolean = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean = false;
