@@ -99,12 +99,6 @@ public class AppContext
     {
         if (gameCtrl.isConnected()) {
             allLevelPacks.init(gameCtrl.game.getLevelPacks());
-        }
-    }
-
-    public static function reloadPlayerLevelPacks () :void
-    {
-        if (gameCtrl.isConnected()) {
             playerLevelPacks.init(gameCtrl.player.getPlayerLevelPacks());
         }
     }

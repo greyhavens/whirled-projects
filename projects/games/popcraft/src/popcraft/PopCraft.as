@@ -4,10 +4,12 @@
 package popcraft {
 
 import com.threerings.util.Log;
+import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.game.GameContentEvent;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
 
@@ -40,7 +42,7 @@ public class PopCraft extends Sprite
 
         SeatingManager.init();
 
-        this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
 
         // draw a black background
         var g :Graphics = this.graphics;
@@ -81,16 +83,26 @@ public class PopCraft extends Sprite
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
             // tiled background behind it
-            AppContext.gameCtrl.local.addEventListener(SizeChangedEvent.SIZE_CHANGED,
-                handleSizeChanged);
-            this.handleSizeChanged();
+            _events.registerListener(AppContext.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
+                handleSizeChanged)
+
+            handleSizeChanged();
 
             // and don't show the "rematch" button - we have a UI for it in-game
             AppContext.gameCtrl.local.setShowReplay(false);
 
             // get level packs
-            AppContext.allLevelPacks.init(AppContext.gameCtrl.game.getLevelPacks());
-            AppContext.playerLevelPacks.init(AppContext.gameCtrl.player.getPlayerLevelPacks());
+            AppContext.reloadLevelPacks();
+
+            // if the player purchases level packs while the game is in progress, update our
+            // level packs
+            _events.registerListener(
+                AppContext.gameCtrl.player,
+                GameContentEvent.PLAYER_CONTENT_ADDED,
+                function (...ignored) :void {
+                    AppContext.reloadLevelPacks();
+                });
+
         }
 
         AppContext.mainLoop.run();
@@ -106,11 +118,7 @@ public class PopCraft extends Sprite
 
     protected function handleUnload (...ignored) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.local.removeEventListener(SizeChangedEvent.SIZE_CHANGED,
-                handleSizeChanged);
-        }
-
+        _events.freeAllHandlers();
         AppContext.mainLoop.shutdown();
     }
 
@@ -129,6 +137,8 @@ public class PopCraft extends Sprite
 
         Resources.loadBaseResources(loadSingleOrMultiplayerResources, errorCallback);
     }
+
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 
 }

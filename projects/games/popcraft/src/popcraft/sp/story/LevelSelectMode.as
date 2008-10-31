@@ -77,8 +77,8 @@ public class LevelSelectMode extends DemoGameMode
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
         _modeLayer.addChild(jackPortrait);
 
-        this.registerListener(AppContext.gameCtrl.player,
-            GameContentEvent.PLAYER_CONTENT_ADDED, onPlayerPurchasedContent);
+        registerListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+            onPlayerPurchasedContent);
 
         _mainUiLayer = SpriteUtil.createSprite(true);
         _levelSelectUiLayer = SpriteUtil.createSprite(true);
@@ -532,7 +532,6 @@ public class LevelSelectMode extends DemoGameMode
             e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
             // recreate the level select mode, which will rebuild the UI and remove the
             // "Unlock now!" buttons
-            AppContext.reloadPlayerLevelPacks();
             LevelSelectMode.create();
         }
     }
