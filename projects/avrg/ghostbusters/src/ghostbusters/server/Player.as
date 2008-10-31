@@ -301,8 +301,7 @@ public class Player
 
     protected function setLevel (level :int, force :Boolean = false) :void
     {
-        // clamp level to [1, 9] for now
-        level = Math.max(1, Math.min(9, level));
+        level = Math.max(1, level);
         if (!force && level == _level) {
             return;
         }
