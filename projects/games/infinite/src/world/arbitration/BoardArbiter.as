@@ -2,11 +2,8 @@ package world.arbitration
 {
 	import arithmetic.*;
 	
-	import paths.ClimbingPath;
 	import paths.Path;
-	import paths.SidewaysPath;
 	
-    import world.arbitration.MoveEvent;
 	import world.Cell;
 	import world.CellPath;
 	import world.Player;
@@ -22,7 +19,7 @@ package world.arbitration
 		public function proposeMove (player:Player, destination:Cell) :void 
 		{
 			if (player.isMoving()) {
-				trace (this+" ignoring proposed move to "+destination+" because "+player+
+				Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
 				    " is already moving");
 				return;
 			}
@@ -50,7 +47,7 @@ package world.arbitration
 				return null;
 			}
 
-			trace ("analysing sideways path from "+player.cell+" to "+destination);
+			Log.debug ("analysing sideways path from "+player.cell+" to "+destination);
 			var path:CellPath = new CellPath(_board, player.cell, destination);
 			path.next(); // discard the start position since that's where the user already is.
 			while (path.hasNext()) {
@@ -65,18 +62,18 @@ package world.arbitration
 				// if the user is asking to traverse a cell that's not grippable - make them
 				// land there so that they fall. 
 				if (!found.grip) {	
-					return new SidewaysPath(player.cell.position, found.position);
+					return Path.sideways(player.cell.position, found.position);
 				}
 			}			
 			
 			// each cell in the path could be entered and was grippable.
 			// so we return the whole path.			
-			return new SidewaysPath(player.cell.position, destination.position);
+			return Path.sideways(player.cell.position, destination.position);
 		}
 		
 		protected function dispatchStart(player:Player, path:Path) :void
 		{
-			trace("dispatching "+path+" to "+player);
+			Log.debug("dispatching "+path+" to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
 		}
 		
@@ -85,7 +82,7 @@ package world.arbitration
 			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;
 			
-			trace("checking for climbing path...");
+			Log.debug("checking for climbing path...");
 			
 			// there is no way to climb horizontally.
 			if (start.x != finish.x) {
@@ -96,26 +93,26 @@ package world.arbitration
 			
 			// is the proposed climb upwards?
 			if (start.y < finish.y) {
-				trace("looking downwards");
+				Log.debug("looking downwards");
 				for (y = start.y + 1; y <= finish.y; y++) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbDownTo ) {
 						return null;
 					}
 				}
-				return new ClimbingPath(player.cell.position, destination.position);
+				return Path.climb(player.cell.position, destination.position);
 			}
 			
 			// is the proposed climb downwards?
 			if (start.y > finish.y) {
-				trace("looking upwards");
+				Log.debug("looking upwards");
 				for (y = start.y - 1; y >= finish.y; y--) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbUpTo ) {
-						trace ("cannot climb up to cell at: "+start.x+", "+y);
+						Log.debug ("cannot climb up to cell at: "+start.x+", "+y);
 						return null;
 					}
 				}
 				// the player can climb up
-				return new ClimbingPath(player.cell.position, destination.position);
+				return Path.climb(player.cell.position, destination.position);
 			}
 			
 			// the selected cell is neither above nor below.

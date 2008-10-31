@@ -51,7 +51,7 @@ package client
 				return;
 			}
 			const item:Item = event.item;
-			trace ("clicked on "+item);
+			Log.debug ("clicked on "+item);
 //			if (_player.canUse(item)) {
 //				_player.makeUseOf(item);
 //				_player.hasUsed(item);

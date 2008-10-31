@@ -71,13 +71,13 @@ package client
 			if (! rect.overlaps(_extent)) {
 				flushBuffer();
 				fillBuffer(rect);
-				trace ("buffed doesn't overlap, so flushing complete buffer");
+				Log.debug ("buffed doesn't overlap, so flushing complete buffer");
 				_extent = _extent.translatedBy(rect.offsetFrom(_extent));
 				return;
 			}
 		
 			const offset:Vector = rect.offsetFrom(_extent);			
-			//trace ("shifting buffer by: "+offset);
+			//Log.debug ("shifting buffer by: "+offset);
 			
 			removeColumns(offset.dx);
 			removeRows(offset.dy);
@@ -117,7 +117,7 @@ package client
 				return;
 			}
 			
-			// trace ("added no rows");
+			// Log.debug ("added no rows");
 		}
 		
 		/**
@@ -133,7 +133,7 @@ package client
 				yStart = _extent.y + offset.dy;
 				yFinish = yStart + _extent.height + 1;
 				
-				// trace ("adding columns to the right: "+offset.dx);
+				// Log.debug ("adding columns to the right: "+offset.dx);
 				
 				for (i = 1; i <= offset.dx; i++) {
 					addColumnRight(_extent.right + i, yStart, yFinish);
@@ -152,12 +152,12 @@ package client
 				return;		
 			}
 			
-			// trace ("added no columns");
+			// Log.debug ("added no columns");
 		}
 		
 		protected function addRowTop (xStart:int, xFinish:int, row:int) :void
 		{
-			// trace ("adding row to the top at: "+row+" from: "+xStart+" to: "+xFinish);			
+			// Log.debug ("adding row to the top at: "+row+" from: "+xStart+" to: "+xFinish);			
 			var x:int, c:Cell;
 			for (x = xStart; x < xFinish; x++) {
 				c = memoryOrBoard(new BoardCoordinates(x, row));
@@ -168,7 +168,7 @@ package client
 		
 		protected function addRowBottom (xStart:int, xFinish:int, row:int) :void
 		{
-			// trace ("adding row to the bottom at: "+row+" from: "+xStart+" to: "+xFinish);
+			// Log.debug ("adding row to the bottom at: "+row+" from: "+xStart+" to: "+xFinish);
 			var x:int, c:Cell;
 			for (x = xStart; x < xFinish; x++) {
 				c = memoryOrBoard(new BoardCoordinates(x, row));
@@ -179,13 +179,13 @@ package client
 
 		protected function addColumnRight(column :int, yStart :int, yFinish :int) :void
 		{
-			// trace ("adding column to the right at: "+column+" from: "+yStart+" to: "+yFinish);
+			// Log.debug ("adding column to the right at: "+column+" from: "+yStart+" to: "+yFinish);
 			_cells.push(createColumn(column, yStart, yFinish));
 		}
 		
 		protected function addColumnLeft(column:int, yStart:int, yFinish:int) :void
 		{
-			// trace ("adding column to the left at: "+column+" from: "+yStart+" to: "+yFinish);
+			// Log.debug ("adding column to the left at: "+column+" from: "+yStart+" to: "+yFinish);
 			_cells.unshift(createColumn(column, yStart, yFinish));
 		}
 				
@@ -225,7 +225,7 @@ package client
 				return;
 			}
 			
-			// trace ("not removing any rows");
+			// Log.debug ("not removing any rows");
 		}
 
 		/**
@@ -245,12 +245,12 @@ package client
 				return;
 			}
 			
-			// trace ("not removing any columns");
+			// Log.debug ("not removing any columns");
 		}
 		
 		protected function removeTop (count :int) :void
 		{
-			// trace ("removing "+count+" rows from the top");
+			// Log.debug ("removing "+count+" rows from the top");
 			var i:int, j:int;
 			for (i = 0; i < count; i++) {
 				for (j = 0; j < _cells.length; j++) {
@@ -261,7 +261,7 @@ package client
 		
 		protected function removeBottom (count:int) :void
 		{
-			// trace ("removing "+count+" rows from the bottom");			
+			// Log.debug ("removing "+count+" rows from the bottom");			
 			var i:int, j:int;
 			for (i = 0; i < count; i++) {
 				for (j = 0; j < _cells.length; j++) {
@@ -275,7 +275,7 @@ package client
 		 */
 		protected function removeLeft (count:int) :void
 		{
-			// trace ("removing "+count+" rows from the left");
+			// Log.debug ("removing "+count+" rows from the left");
 			var i:int;
 			for (i = 0; i < count; i++) {
 				removeFromObjective(_cells.shift());
@@ -287,7 +287,7 @@ package client
 		 */
 		protected function removeRight (count:int) :void
 		{
-			// trace ("removing "+count+" rows from the right");
+			// Log.debug ("removing "+count+" rows from the right");
 			var i:int;
 			for (i = 0; i < count; i++) {
 				removeFromObjective(_cells.pop());
@@ -312,7 +312,7 @@ package client
 		{
 			const found:Cell = _objective.recall(position);
 			if (found != null) {
-				// trace ("recalled "+found);
+				// Log.debug ("recalled "+found);
 				return found;
 			}
 			if (_extent.contains(position)) { 
@@ -326,7 +326,7 @@ package client
 		{
 			const found:Cell = _objective.cellAt(position);
 			if (found != null) {
-				// trace ("recalled "+found);
+				// Log.debug ("recalled "+found);
 				return found;
 			}
 			return _board.cellAt(position);

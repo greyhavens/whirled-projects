@@ -1,6 +1,7 @@
 package client.player
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.VoidBoardRectangle;
 	
 	import client.Client;
 	import client.Objective;
@@ -8,7 +9,8 @@ package client.player
 	import flash.events.EventDispatcher;
 	
 	import paths.Path;
-	import paths.PathFollower;
+	
+	import server.Messages.PlayerPosition;
 	
 	import world.Cell;
 	
@@ -23,7 +25,16 @@ package client.player
 			this.id = id;
 		}
 		
-		public function enterLevel (level:int, position:BoardCoordinates) :void
+		public function updatePosition (position:PlayerPosition) :void
+		{
+			if (position.level != level) {
+				enterLevel(position.level, position.position);
+			} else {
+				_position = position.position;
+			}
+		}
+		
+		protected function enterLevel (level:int, position:BoardCoordinates) :void
 		{
 			this.level = level;
 			_position = position;

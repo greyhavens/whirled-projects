@@ -23,14 +23,14 @@ package actions
 			
 			// The player will fall until they reach a cell that they can grip
 			const search:BoardIterator = new BoardIterator(player.cell.position, Vector.DOWN);
-			trace ("player starting to fall from "+player.cell);
+			Log.debug ("player starting to fall from "+player.cell);
 			do {
 				var test:Cell = objective.cellAt(search.next());
 				if (test.grip) {
 					_targetCell = test;
 				}
 			} while (_targetCell == null);
-			trace ("falling to "+_targetCell);
+			Log.debug ("falling to "+_targetCell);
 			
 			_yStart = _view.positionInCell(_objective, player.cell.position).y;
 			_yDelta = _view.positionInCell(_objective, _targetCell.position).y - _yStart;
@@ -63,9 +63,9 @@ package actions
 	
 		protected function ease(event:FrameEvent) :void
 		{
-			// trace("easing time: "+event.since(_startTime) + ", _ystart: " + _yStart + ", _yDelta: " + _yDelta + ", _duration: " + _duration);
+			// Log.debug("easing time: "+event.since(_startTime) + ", _ystart: " + _yStart + ", _yDelta: " + _yDelta + ", _duration: " + _duration);
 			_view.y = Easing.easeOutBounce(event.since(_startTime), _yStart, _yDelta, _duration);
-			// trace ("_view.y: "+_view.y);
+			// Log.debug ("_view.y: "+_view.y);
 		}
 	
 		protected var _yStart:int;

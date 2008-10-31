@@ -16,6 +16,7 @@ package {
 		public function InfinitePlaytest()
 		{
 			_gameControl = new GameControl(this);
+			Log.setId(_gameControl);
 			
 			const world:ClientWorld =
 			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld();

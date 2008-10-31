@@ -80,7 +80,7 @@ package inventory
 	
 		protected function displayItem (item:Item, position:int) :void
 		{
-			trace ("inventory displaying "+item);
+			Log.debug ("inventory displaying "+item);
 			const view:DisplayObject = _itemViews.viewOf(item);
 			_view.addChild(view);
 			positionItem(view, position);

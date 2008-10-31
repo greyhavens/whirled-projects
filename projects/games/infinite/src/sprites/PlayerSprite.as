@@ -42,7 +42,7 @@ package sprites
         
         public function moveToCell (objective:Objective, cell:Cell) :void
         {
-        	trace ("positioning player sprite in "+cell);
+        	Log.debug ("positioning player sprite in "+cell);
             moveTo(positionInCell(objective, cell.position));
         }
         

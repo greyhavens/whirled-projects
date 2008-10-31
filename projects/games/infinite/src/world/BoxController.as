@@ -21,12 +21,12 @@ package world
 			const direction:Vector = _extent.directionFrom(position);
 			// we've looked at this cell before, so we return immediately
 			if (direction == Vector.IDENTITY) {
-//				trace ("cell has been considered for a box before so not considering again");
+//				Log.debug ("cell has been considered for a box before so not considering again");
 				return _board.cellAt(position);
 			}
 			// we've never looked at the row before, so we can't infer a direction in which to scan
 			if (direction == null) {
-//				trace ("row has never been looked at so we can't infer direction");
+//				Log.debug ("row has never been looked at so we can't infer direction");
 				_extent.expandToInclude(position);
 				return _board.cellAt(position);
 			}
@@ -37,28 +37,28 @@ package world
 		
 		public function simplePossibleBox (position:BoardCoordinates, direction:Vector) :Cell
 		{
-//			trace ("considering adding a box at "+position);
+//			Log.debug ("considering adding a box at "+position);
 			const current:Cell = _board.cellAt(position);	
 			if (! current.canBecomeWindow) {
-//				trace ("cell cannot become a window, so abandoning consideration");
+//				Log.debug ("cell cannot become a window, so abandoning consideration");
 				return current;
 			}
 			if (Math.random() < p) {
 				// if the dice throw wins, then we return a Fruit Machine.
-//				trace ("returning new machine");  
+//				Log.debug ("returning new machine");  
 				return new FruitMachineCell(current.position, FruitMachineCell.ACTIVE, ObjectBox.random());
 			}
 			
-//			trace ("dice rolls failed");
+//			Log.debug ("dice rolls failed");
 			return current;
 		}
 		
 		public function possibleBox (position:BoardCoordinates, direction:Vector) :Cell
 		{
-			trace ("considering adding a box at "+position);
+			Log.debug ("considering adding a box at "+position);
 			const current:Cell = _board.cellAt(position);	
 			if (! current.canBecomeWindow) {
-				trace ("cell cannot become a window, so abandoning consideration");
+				Log.debug ("cell cannot become a window, so abandoning consideration");
 				return current;
 			}
 			var iterator:CellIterator = current.iterator(_board, direction);
@@ -68,7 +68,7 @@ package world
 			var cell:Cell;
 			for (i = 0; i < MIN_DISTANCE; i++) {
 				cell = iterator.next();
-				trace ("checking "+cell);
+				Log.debug ("checking "+cell);
 				if (cell is FruitMachineCell) {
 					return current;
 				}
@@ -78,22 +78,22 @@ package world
 			while (i < MAX_DISTANCE) {
 				i++;
 				cell = iterator.next();				
-				trace ("checking "+cell);
+				Log.debug ("checking "+cell);
 				
 				// stop if we find a cell near enough
 				if (cell is FruitMachineCell) {
 					return current;
 				}
 				
-				trace ("rolling dice p="+p);
+				Log.debug ("rolling dice p="+p);
 				// we roll the dice once for each cell additionally that we have to count
 				if (Math.random() < p) {
 					// if the dice throw wins, then we return a Fruit Machine.
-					trace ("returning new machine");  
+					Log.debug ("returning new machine");  
 					return new FruitMachineCell(cell.position, FruitMachineCell.ACTIVE, ObjectBox.random());
 				}
 			}
-			trace ("dice rolls all failed");
+			Log.debug ("dice rolls all failed");
 			return current;
 		}
 		

@@ -1,15 +1,18 @@
 package world
 {
-	import server.Messages.LevelEntered;
+	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
+	import server.Messages.PlayerPosition;
 	
 	public interface WorldClient
 	{
 		/**
 		 * A player entered a level.
 		 */
-        function levelEntered (detail:LevelEntered) :void;
+        function updatePosition (detail:PlayerPosition) :void;
         
         function startPath (detail:PathStart) :void;	
+        
+        function levelUpdate (detail:LevelUpdate) :void;
 	}
 }

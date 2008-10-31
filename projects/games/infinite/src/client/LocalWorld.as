@@ -4,7 +4,7 @@ package client
 	
 	import flash.events.EventDispatcher;
 	
-	import server.Messages.LevelEntered;
+	import server.Messages.PlayerPosition;
 	import server.Messages.PathStart;
 	
 	import world.ClientWorld;
@@ -43,8 +43,8 @@ package client
          */ 
         public function handleLevelEntered(event:LevelEvent) :void
         {
-            _client.levelEntered(
-                new LevelEntered(event.player.id, event.level.number, event.player.position));
+            _client.updatePosition(
+                new PlayerPosition(event.player.id, event.level.number, event.player.position));
         }     
         
         public function proposeMove (coords:BoardCoordinates) :void

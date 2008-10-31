@@ -16,7 +16,7 @@ package sprites
 		
 		public static function tint (s:Sprite, color:uint, alpha:Number) :void
 		{
-			trace ("tint alpha "+alpha);
+			Log.debug ("tint alpha "+alpha);
 			const overlay:Sprite = new Sprite();
 			const g:Graphics = overlay.graphics;
 			g.beginFill(color, alpha);

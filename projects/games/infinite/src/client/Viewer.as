@@ -61,7 +61,7 @@ package client
 		
 		public function set board (board:Board) :void
 		{			
-			trace("viewer width:"+width);
+			Log.debug("viewer width:"+width);
 			_board = board;
 						
 			// create an objective that we can display
@@ -106,6 +106,10 @@ package client
 		
 		public function removePlayer (player:Player) :void
 		{
+			// if the objective doesn't exist, the player is effectively 'removed' already.
+			if (_objective == null) {
+				return;
+			}
 			_objective.removePlayer(player);
 		}
 				

@@ -22,6 +22,7 @@ package {
 	    public function Server ()
 	    {
 	        _control = new GameControl(this);
+	        Log.setId(_control);
 	        _worldServer = new WorldServer(_control);
 	    }
 	    

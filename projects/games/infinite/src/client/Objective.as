@@ -164,7 +164,7 @@ package client
 		
 		public function displayOwnership (cell:Cell) :void
 		{
-			trace ("showing user that this is "+cell.owner.name+"'s "+cell.objectName);
+			Log.debug ("showing user that this is "+cell.owner.name+"'s "+cell.objectName);
 			const view:CellView = _viewBuffer.find(cell.position);
 			if (view is Labellable) {
 				_label.displayOwnership(view as Labellable);
@@ -173,7 +173,7 @@ package client
 				
 		public function hideOwnership (labellable:Cell) :void
 		{
-			trace ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
+			Log.debug ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
 			_label.hide();
 		}
 				
@@ -194,7 +194,7 @@ package client
 		protected function handleCellClicked(event:CellEvent) :void
 		{
 			_viewer.handleCellClicked(event);
-			trace("clicked on "+event.cell);
+			Log.debug("clicked on "+event.cell);
 		}		
 				
 		/**	

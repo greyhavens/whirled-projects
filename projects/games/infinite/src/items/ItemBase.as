@@ -21,13 +21,13 @@ package items
 		
 		public function isUsableBy (player:ItemPlayer) :Boolean
 		{
-			trace ("checking to see whether "+this+" can apply to the board - default answer: no");
+			Log.debug ("checking to see whether "+this+" can apply to the board - default answer: no");
 			return false;
 		}
 		
 		public function useBy (player:ItemPlayer) :void
 		{
-			trace ("applying "+this+" to board which does nothing");
+			Log.debug ("applying "+this+" to board which does nothing");
 			// do nothing
 		}
 		

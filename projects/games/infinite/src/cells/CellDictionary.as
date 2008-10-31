@@ -17,7 +17,7 @@ package cells
 		
 		public function remember (cell:Cell) :void
 		{
-			// trace ("remembering "+cell+" key: "+cell.position.key);
+			// Log.debug ("remembering "+cell+" key: "+cell.position.key);
 			_dictionary[cell.position.key] = cell;
 		}
 		
@@ -28,6 +28,7 @@ package cells
 					
 		public function recall (position:BoardCoordinates) :Cell
 		{
+			//Log.debug("attempting to recall "+position);
 			return _dictionary[position.key];
 		}
 			

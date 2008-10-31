@@ -67,7 +67,7 @@ package
 		
 		public function actionComplete () :void
 		{
-			trace ("player action complete");
+			Log.debug ("player action complete");
 			_playerAction = null;
 		}
 		
@@ -83,7 +83,7 @@ package
 		public function moveSideways (destination:BoardCoordinates) :void
 		{
 			const newCell:Cell = cellAt(destination);
-			trace("player move sideways from " + _cell + " to " + newCell);
+			Log.debug("player move sideways from " + _cell + " to " + newCell);
 			_playerAction = new MoveSideways(this, _objective, newCell);
 		}
 		
@@ -94,7 +94,7 @@ package
 		public function climb (destination:BoardCoordinates) :void
 		{	
 			const newCell:Cell = cellAt(destination);			
-			trace("player climb from " + _cell + " to: " + newCell);
+			Log.debug("player climb from " + _cell + " to: " + newCell);
 			_playerAction = new Climb(this, _objective, newCell);
 		}		
 		
@@ -125,7 +125,7 @@ package
 		
 		public function receiveItem (item:Item) :void
 		{
-			trace ("player received "+item);
+			Log.debug ("player received "+item);
 			item.addToInventory(_inventory);
 		}
 		
@@ -141,7 +141,7 @@ package
 		
 		public function hasUsed (item:Item) :void
 		{
-			trace ("player has used "+item);
+			Log.debug ("player has used "+item);
 			item.removeFromInventory(_inventory);
 		}
 		

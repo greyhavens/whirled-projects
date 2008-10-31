@@ -12,8 +12,9 @@ package client
 	
 	import inventory.InventoryDisplay;
 	
-	import server.Messages.LevelEntered;
+	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
+	import server.Messages.PlayerPosition;
 	
 	import sprites.SpriteUtil;
 	
@@ -75,14 +76,23 @@ package client
 			//_viewer.player = _player;
 			//_controller = new PlayerController(_frameTimer, _viewer, _player, _inventory);
 			
-			trace("game size at end: "+width+", "+height);
+			Log.debug("game size at end: "+width+", "+height);
+		}
+		
+		public function levelUpdate(update:LevelUpdate) :void
+		{
+			Log.debug("processing level update");
+			for each (var position:PlayerPosition in update.positions) {
+				updatePosition(position);
+			} 
 		}
 		
 		/**
 		 * Receive a message that a player has entered a level.
 		 */
-		public function levelEntered(detail:LevelEntered) :void
+		public function updatePosition(detail:PlayerPosition) :void
 		{
+			Log.debug("handling position update "+detail);
 			// find the player
 			var player:Player = _players.find(detail.userId);
 		     
@@ -96,7 +106,7 @@ package client
             /**
              * Move the player to the appropriate level.
              */ 
-            player.enterLevel(detail.level, detail.position);
+            player.updatePosition(detail);
 		}
 		
 		/**
@@ -107,9 +117,12 @@ package client
 			const player:Player = new Player(this, id);
             if (id == _world.clientId) {
             	_localPlayer = player;
+            	
+            	// we only care about path completed events from the local player
+                player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);            
             }
+            // we care if any player changes level.
 			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);
-			player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);			
 		    return player;
 		}
 		
@@ -142,7 +155,7 @@ package client
 		 */
 		public function selectLevel (level:int) :void
 		{
-			trace(this+" selecting level "+level);
+			Log.debug(this+" selecting level "+level);
 			
 			// if the client is already displaying the requested level, return.
 			if (_level == level) {
@@ -151,13 +164,21 @@ package client
 			
 			// we can start off with the default blank board.
 			_board = new MutableBoard(new BlankBoard);
-            trace(this+" created "+_board);            
+            Log.debug(this+" created "+_board);            
 			
 			// and assign a new board to the view.
 			_viewer.board = _board;
             _controller = new PlayerController(_world, _viewer, _localPlayer, _inventory);
             
 			_level = level;
+			
+			// add the players we know about on this level
+			_viewer.addLocalPlayer(_localPlayer);
+			for each (var player:Player in _players.list) {
+				if (player.level == level) {
+					_viewer.addPlayer(player);
+				}
+			}
 		}
 		
 		public function get mode () :String 
@@ -175,7 +196,7 @@ package client
 		{
 			return "client "+_world.clientId; 
 		}
-		
+				
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
 		protected var _players:PlayerRegister = new PlayerRegister();

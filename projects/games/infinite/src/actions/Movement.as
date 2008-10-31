@@ -21,16 +21,16 @@ package actions
 			_targetCell = targetCell;
 			_destination = _view.positionInCell(_objective, targetCell.position);
 
-            trace("calculating movement from "+Geometry.coordsOf(_view)+" to "+_destination);
+            Log.debug("calculating movement from "+Geometry.coordsOf(_view)+" to "+_destination);
             
 			const move:Vector = Geometry.coordsOf(_view).distanceTo(_destination);
-			trace ("complete movement is: "+move);
+			Log.debug ("complete movement is: "+move);
 			const cells:Number = move.length / Config.cellSize.dy;
-			trace ("which is "+cells+" cells");
+			Log.debug ("which is "+cells+" cells");
 			_duration = durationInMillis(cells);
-			trace ("duration is "+_duration);
+			Log.debug ("duration is "+_duration);
 			_delta = move.divideByScalarF(_duration);
-			trace ("moving by: "+_delta+" per ms");
+			Log.debug ("moving by: "+_delta+" per ms");
 		}
 		
     	protected function durationInMillis(cellsToTraverse:Number) :int

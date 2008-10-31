@@ -8,9 +8,11 @@ package server
 	
 	import flash.events.EventDispatcher;
 	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 	
-	import server.Messages.LevelEntered;
+	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
+	import server.Messages.PlayerPosition;
 	import server.Messages.Serializable;
 	
 	import world.ClientWorld;
@@ -26,6 +28,7 @@ package server
 			_gameControl = gameControl;
 			_net = _gameControl.net; 
 			_net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+			Log.debug("--- SESSION STARTED ---");
 		}		
 
         public function get worldType () :String
@@ -36,16 +39,18 @@ package server
         public function handleMessageReceived (event:MessageReceivedEvent) :void
         {
         	const message:int = int(event.name);
+        	Log.debug("received message "+messageName[message]+" from server ");
             switch (message) {
-                case LEVEL_ENTERED: levelEntered(event);
-                case START_PATH: pathStart(event);
+                case LEVEL_ENTERED: return levelEntered(event);
+                case START_PATH: return pathStart(event);
+                case LEVEL_UPDATE: return levelUpdate(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
         
         public function levelEntered (event:MessageReceivedEvent) :void
         {
-            _client.levelEntered(LevelEntered.readFromArray(event.value as ByteArray));
+            _client.updatePosition(PlayerPosition.readFromArray(event.value as ByteArray));
         }        
         
         public function pathStart (event:MessageReceivedEvent) :void
@@ -53,6 +58,10 @@ package server
         	_client.startPath(PathStart.readFromArray(event.value as ByteArray));
         }
         
+        public function levelUpdate (event:MessageReceivedEvent) :void
+        {
+        	_client.levelUpdate(LevelUpdate.readFromArray(event.value as ByteArray));
+        }        
         
         override public function toString () :String
         {
@@ -84,6 +93,7 @@ package server
          */ 
         protected function signalServer(message:int) :void
         {
+        	Log.debug ("sending signal "+message+" to server");
         	_net.sendMessage(String(message), null, NetSubControl.TO_SERVER_AGENT);
         }
 
@@ -92,7 +102,7 @@ package server
          */ 
         protected function sendToServer(message:int, data:Serializable) :void
         {
-        	trace ("sending to server "+data);
+        	Log.debug ("sending message "+message+" to server with data "+data);
         	_net.sendMessage(String(message), data.writeToArray(new ByteArray()),
         	    NetSubControl.TO_SERVER_AGENT);
         }
@@ -110,6 +120,12 @@ package server
          * Messages that remote clients can receive from the server.
          */ 
         public static const LEVEL_ENTERED:int = 0;
-        public static const START_PATH:int = 1;        
+        public static const START_PATH:int = 1;
+        public static const LEVEL_UPDATE:int = 2;
+        
+        public static const messageName:Dictionary = new Dictionary();
+        messageName[LEVEL_ENTERED] = "level entered";
+        messageName[START_PATH] = "start path";
+        messageName[LEVEL_UPDATE] = "level update";        
 	}
 }

@@ -24,14 +24,14 @@ package items.oilcan
 		 */
 		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
-			trace ("checking whether "+player+" can use oil");
+			Log.debug ("checking whether "+player+" can use oil");
 			return (player.cell is Oilable);
 		}
 		
 		override public function useBy (player:ItemPlayer) :void
 		{			
 			const target:Cell = player.cell;
-			trace ("applying oil to "+target);
+			Log.debug ("applying oil to "+target);
 			
 			// find the bottom of the object
 			var bottom:Cell = player.cell;
@@ -49,7 +49,7 @@ package items.oilcan
 			var cell:Cell = player.cellAt(iterator.next());
 			do {
 				var toReplace:Cell = cell;
-				trace ("replacing "+cell);
+				Log.debug ("replacing "+cell);
 				player.replace((toReplace as Oilable).oiled());
 				cell = player.cellAt(iterator.next());		
 			} while (cell.adjacentPartOf(toReplace));

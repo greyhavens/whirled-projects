@@ -65,6 +65,7 @@ package world
         
         public function moveComplete (coords:BoardCoordinates) :void
         {
+        	Log.debug("completing path "+_path);
             if (_path.finish.equals(coords)) {
             	_path = null;
             }

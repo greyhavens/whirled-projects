@@ -4,6 +4,9 @@ package world.level
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import server.Messages.LevelUpdate;
+	import server.Messages.PlayerPosition;
+	
 	import world.Cell;
 	import world.MutableBoard;
 	import world.Player;
@@ -49,8 +52,9 @@ package world.level
 	        	var cell:Cell;
 	            do {
 	            	cell = iterator.next();
+	            	trace ("considering "+cell+" as starting point for "+player);
 	            } 
-	            while ( !cell.canBeStartingPosition && ! _players.occupying(cell.position))
+	            while ( !cell.canBeStartingPosition || _players.occupying(cell.position))
 	            
 	            player.cell = cell;
             }
@@ -75,6 +79,15 @@ package world.level
         public function get players () :Array
         {
         	return _players.list;
+        }
+        
+        public function makeUpdate () :LevelUpdate
+        {
+        	const update:LevelUpdate = new LevelUpdate();
+        	for each (var player:Player in players) {
+        		update.add(new PlayerPosition(player.id, number, player.position));
+        	} 
+        	return update;
         }
                 
         protected var _arbiter:BoardArbiter;

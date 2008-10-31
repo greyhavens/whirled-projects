@@ -18,15 +18,22 @@ package client
 		
 		public function register (player:Player) :void
 		{
-		     trace(this + " registering " + player);
+		     Log.debug(this + " registering " + player);
 			_dictionary[player.id] = player;
+			_list.push(player);
+		}
+		
+		public function get list () :Array
+		{
+			return _list;
 		}
 		
 		public function toString () :String 
 		{
-			return "client player register";
+			return "player register";
 		}
 
+        protected var _list:Array = new Array();
         protected var _dictionary:Dictionary = new Dictionary();
 	}
 }

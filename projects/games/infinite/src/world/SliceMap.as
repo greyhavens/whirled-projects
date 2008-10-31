@@ -23,10 +23,10 @@ package world
 
 		public function expandToInclude (position:BoardCoordinates) :void
 		{
-			//trace ("expanding slicemap to include :"+position);
+			//Log.debug ("expanding slicemap to include :"+position);
 			const found:Slice = _rows[position.y] as Slice;
 			if (found == null) {
-				//trace ("adding new row to slicemap");
+				//Log.debug ("adding new row to slicemap");
 				_rows[position.y] = new Slice(position.x, position.x);
 			} else {
 				_rows[position.y] = found.expandedToInclude(position.x);

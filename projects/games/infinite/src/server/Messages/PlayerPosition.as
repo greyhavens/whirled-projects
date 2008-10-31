@@ -4,13 +4,16 @@ package server.Messages
 	
 	import flash.utils.ByteArray;
 	
-	public class LevelEntered implements Serializable
+	/**
+	 * An update of a single user's position.
+	 */
+	public class PlayerPosition implements Serializable
 	{
 		public var userId:int;
 		public var level:int;
 		public var position:BoardCoordinates; 
 		
-		public function LevelEntered(userId:int, level:int, position:BoardCoordinates)
+		public function PlayerPosition(userId:int, level:int, position:BoardCoordinates)
 		{
 			this.userId = userId;
 			this.level = level;
@@ -25,13 +28,18 @@ package server.Messages
 			return array;
 		}
 		
-		public static function readFromArray (array:ByteArray) :LevelEntered
+		public static function readFromArray (array:ByteArray) :PlayerPosition
 		{
-			return new LevelEntered(
+			return new PlayerPosition(
 			    array.readInt(),
 			    array.readInt(),
 			    BoardCoordinates.readFromArray(array)
 			);			
+		}
+		
+		public function toString () :String
+		{
+			return "player "+userId+" at "+position+" on level "+level;
 		}
 	}
 }

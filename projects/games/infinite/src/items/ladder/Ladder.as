@@ -44,7 +44,7 @@ package items.ladder
 			while (path.hasNext()) {
 				var c:Cell = player.cellAt(path.next());
 				if (! c.replacable) {
-					trace (c + " is not replacable so can't apply "+this);
+					Log.debug (c + " is not replacable so can't apply "+this);
 					return false;
 				}
 			}

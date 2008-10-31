@@ -143,7 +143,7 @@ package cells.fruitmachine
 		override public function playerHasArrived (player:CellInteractions) :void
 		{
 			_player = player;
-			trace ("the player has arrived within the fruit machine");
+			Log.debug ("the player has arrived within the fruit machine");
 			if (!isActive()) {
 				return;			
 			}
@@ -163,7 +163,7 @@ package cells.fruitmachine
 		 */
 		protected function rollWheel () :void
 		{
-			trace ("rolling fruit machine");
+			Log.debug ("rolling fruit machine");
 			stopTimer();
 			mode = ROLLING;
 			startRollingTimer();
