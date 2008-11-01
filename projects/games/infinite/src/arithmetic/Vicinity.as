@@ -10,7 +10,7 @@ package arithmetic
         
         protected function code (x:int, y:int) :String
         {
-        	return _x + "," + _y;
+        	return x + "," + y;
         }
         
         public function toString () :String

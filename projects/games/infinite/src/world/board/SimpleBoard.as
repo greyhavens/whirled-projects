@@ -81,7 +81,7 @@ package world.board
 				case -11:
 					switch (position.y) {
 						case 0:
-							return FruitMachineCell.withItemAt(position, new Ladder(3));
+							return FruitMachineCell.withItemAt(position, new Ladder({segments:3}));
 					};
 					break;		
 			}

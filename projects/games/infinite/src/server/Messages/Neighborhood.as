@@ -34,6 +34,20 @@ package server.Messages
         	}
         	return hood;
         }
+        
+        public function toString () :String
+        {
+        	var string:String = "neighborhood (";
+        	var i:int;
+        	for (i = 0; i < _vicinities.length ; i++) {
+        		string += _vicinities[i];
+        		if (i < _vicinities.length - 1) {
+        			string += "-";
+        		}
+        	}
+        	string += ")"
+        	return string;
+        }
 
         protected var _vicinities:Array = new Array();
 	}

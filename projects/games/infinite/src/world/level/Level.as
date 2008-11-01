@@ -1,6 +1,7 @@
 package world.level
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.BreadcrumbTrail;
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
@@ -97,6 +98,7 @@ package world.level
         	return _board.neighborhood(hood);
         }
                 
+        protected var _explored:BreadcrumbTrail = new BreadcrumbTrail();
         protected var _arbiter:BoardArbiter;
         protected var _board:NeighborhoodBoard;
 		protected var _height:int;

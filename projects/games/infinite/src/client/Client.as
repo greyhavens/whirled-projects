@@ -134,6 +134,7 @@ package client
 		protected function handlePathComplete (event:PlayerEvent) :void
 		{
 			_world.moveComplete(event.player.path.finish);
+            _viewer.objective.pathComplete(event.player.path);
 			event.player.clearPath();
 		}
 		

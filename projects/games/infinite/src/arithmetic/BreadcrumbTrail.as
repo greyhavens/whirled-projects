@@ -1,16 +1,31 @@
 package arithmetic
 {
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	
 	import server.Messages.Neighborhood;
 	
+	import world.NeighborhoodEvent;
+	
 	/**
 	 * Track whether a particular area has been visited or not.
 	 */
-	public class BreadcrumbTrail
+	public class BreadcrumbTrail extends EventDispatcher
 	{
 		public function BreadcrumbTrail()
 		{
+		}
+		
+		/**
+		 * Request that the area around the given region be mapped.  A Neighborhood event listing
+		 * the unmapped regions is generated if so.
+		 */
+		public function map (coords:BoardCoordinates) :void
+		{
+			const unmapped:Neighborhood = visit(coords);
+			if (! unmapped.isEmpty()) {
+				dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
+			}
 		}
 		
 		/**

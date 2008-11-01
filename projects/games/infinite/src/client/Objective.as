@@ -9,13 +9,14 @@ package client
 	import cells.views.CellView;
 	
 	import client.player.Player;
-	import client.player.PlayerEvent;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
+	
+	import paths.Path;
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
@@ -262,12 +263,11 @@ package client
 	    { 	    	
 	    	const sprite:PlayerSprite = addPlayer(player);
 	    	follow(sprite);
-	    	player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
 	    }
 	    
-	    protected function handlePathCompleted (event:PlayerEvent) :void
+	    public function pathComplete (path:Path) :void
         {
-        	const unmapped:Neighborhood = _breadcrumbs.visit(event.player.path.finish);
+        	const unmapped:Neighborhood = _breadcrumbs.visit(path.finish);
         	if (! unmapped.isEmpty()) {
         		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
         	}

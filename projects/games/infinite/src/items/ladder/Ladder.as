@@ -24,11 +24,11 @@ package items.ladder
 		 * and a top allowing the player to use them to traverse at least one cell boundary
 		 * but ladders may have multiple mid-sections allowing them to rise skywards.
 		 */
-		public function Ladder(definition:Object)
+		public function Ladder(attributes:Object)
 		{
-			_segments = definition.segments;
+			_segments = attributes.segments;
 		}
-		
+				
 		override public function toString () :String
 		{
 			return "a ladder";
