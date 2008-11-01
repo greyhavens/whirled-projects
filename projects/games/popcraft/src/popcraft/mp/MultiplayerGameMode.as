@@ -55,12 +55,28 @@ public class MultiplayerGameMode extends GameMode
         // structures with base locations so that we can put everyone in the correct place.
         var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
         var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
-        var largestTeamSize :int = -1;
-        for each (var teamSize :int in teamSizes) {
-            if (teamSize > largestTeamSize) {
-                largestTeamSize = teamSize;
+        var teamInfos :Array = [];
+        var teamInfo :TeamInfo;
+        var teamId :int;
+        for (teamId = 0; teamId < teamSizes.length; ++teamId) {
+            teamInfo = new TeamInfo();
+            teamInfo.teamId = teamId;
+            teamInfo.teamSize = teamSizes[teamId];
+            teamInfos.push(teamInfo);
+        }
+
+        teamInfos.sort(TeamInfo.teamSizeCompare);
+        var baseLocIndex :int = 0;
+        for (var teamInfoId :int = 0; teamInfoId < teamInfos.length; ++teamInfoId) {
+            teamInfo = teamInfos[teamInfoId];
+            for (var i :int = 0; i < teamInfo.teamSize; ++i) {
+                teamInfo.baseLocs.push(MapSettingsData.getNextBaseLocForTeam(baseLocs, teamInfoId));
             }
         }
+
+        var largestTeamSize :int = TeamInfo(teamInfos[0]).teamSize;
+
+        teamInfos.sort(TeamInfo.teamIdCompare);
 
         // get some information about the players in the game
         var numPlayers :int = SeatingManager.numExpectedPlayers;
@@ -74,14 +90,13 @@ public class MultiplayerGameMode extends GameMode
         // create PlayerInfo structures
         GameContext.playerInfos = [];
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
-
-            var teamId :int = teams[playerIndex];
-            teamSize = teamSizes[teamId];
-            var baseLoc :BaseLocationData = MapSettingsData.getNextBaseLocForTeam(baseLocs, teamId);
+            teamId = teams[playerIndex];
+            teamInfo = teamInfos[teamId];
+            var baseLoc :BaseLocationData = teamInfo.baseLocs.shift();
 
             // calculate the player's handicap
             var handicap :Number = 1;
-            if (teamSize < largestTeamSize) {
+            if (teamInfo.teamSize < largestTeamSize) {
                 handicap = _mpSettings.smallerTeamHandicap;
             }
             if (handicaps[playerIndex]) {
@@ -146,4 +161,36 @@ public class MultiplayerGameMode extends GameMode
     protected var _mpSettings :MultiplayerSettingsData;
 }
 
+}
+
+/** Used by createPlayers() */
+class TeamInfo
+{
+    public var teamId :int;
+    public var teamSize :int;
+    public var baseLocs :Array = [];
+
+    // Used to sort TeamInfos from largest to smallest team size
+    public static function teamSizeCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamSize > b.teamSize) {
+            return -1;
+        } else if (a.teamSize < b.teamSize) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    // Used to sort TeamInfos from smallest to largest teamId
+    public static function teamIdCompare (a :TeamInfo, b :TeamInfo) :int
+    {
+        if (a.teamId < b.teamId) {
+            return -1;
+        } else if (a.teamId > b.teamId) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
