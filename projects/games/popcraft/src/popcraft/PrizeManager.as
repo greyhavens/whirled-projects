@@ -1,6 +1,7 @@
 package popcraft {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 
 import flash.utils.ByteArray;
 
@@ -15,30 +16,42 @@ public class PrizeManager
 
     public function PrizeManager ()
     {
+        _trophyPrizeMap = new HashMap();
+        for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 2) {
+            var trophyName :String = TROPHY_PRIZES[ii];
+            var prizeId :int = TROPHY_PRIZES[ii + 1];
+            _trophyPrizeMap.put(trophyName, prizeId);
+        }
+
         init();
     }
 
     public function checkPrizes () :void
     {
         var prizes :Array = [];
+
         if (AppContext.isPremiumContentUnlocked) {
             prizes.push(LADYFINGERS);
         }
-        if (AppContext.hasTrophy(Trophies.MAGNACUMLAUDE)) {
-            prizes.push(BEHEMOTH);
-        }
-        if (AppContext.hasTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[2])) {
-            prizes.push(JACK);
-        }
-        if (AppContext.hasTrophy(Trophies.HEAD_OF_THE_CLASS)) {
-            prizes.push(RALPH);
-        }
-        if (AppContext.hasTrophy(Trophies.COLLABORATOR)) {
-            prizes.push(IVY);
+
+        for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 2) {
+            var trophyName :String = TROPHY_PRIZES[ii];
+            var prizeId :int = TROPHY_PRIZES[ii + 1];
+            if (AppContext.hasTrophy(trophyName)) {
+                prizes.push(prizeId);
+            }
         }
 
         if (prizes.length > 0) {
             awardPrizes(prizes);
+        }
+    }
+
+    public function awardPrizeForTrophy (trophyName :String) :void
+    {
+        var prizeIdObj :* = _trophyPrizeMap.get(trophyName);
+        if (prizeIdObj !== undefined) {
+            awardPrize(int(prizeIdObj));
         }
     }
 
@@ -109,6 +122,7 @@ public class PrizeManager
     protected var _jackAwarded :Boolean;
     protected var _ralphAwarded :Boolean;
     protected var _ivyAwarded :Boolean;
+    protected var _trophyPrizeMap :HashMap;
 
     protected static const PRIZE_IDENTS :Array = [
         "ladyfingers_avatar",
@@ -116,6 +130,13 @@ public class PrizeManager
         "jack_avatar",
         "ralph_avatar",
         "ivy_avatar",
+    ];
+
+    protected static const TROPHY_PRIZES :Array = [
+        Trophies.MAGNACUMLAUDE,                     BEHEMOTH,
+        Trophies.ENDLESS_COMPLETION_TROPHIES[2],    JACK,
+        Trophies.HEAD_OF_THE_CLASS,                 RALPH,
+        Trophies.COLLABORATOR,                      IVY,
     ];
 }
 

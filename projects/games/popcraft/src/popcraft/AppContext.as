@@ -32,7 +32,7 @@ public class AppContext
     {
         if (AppContext.gameCtrl.isConnected()) {
             if (gameCtrl.player.awardTrophy(trophyName)) {
-                prizeMgr.checkPrizes();
+                prizeMgr.awardPrizeForTrophy(trophyName);
             }
         } else {
             PopCraft.log.info("Trophy awarded: " + trophyName);

@@ -43,14 +43,14 @@ public class Constants
 
     /* Debug options - these should all be false for a release. */
     public static const DEBUG_DRAW_STATS :Boolean                   = false;
-    public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean       = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean       = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean   = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean        = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = false;
-    public static const DEBUG_UNLOCK_PREMIUM_CONTENT :Boolean       = false;
+    public static const DEBUG_UNLOCK_PREMIUM_CONTENT :Boolean       = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = false;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
