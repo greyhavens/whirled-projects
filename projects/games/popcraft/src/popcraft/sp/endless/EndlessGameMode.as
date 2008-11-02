@@ -243,14 +243,14 @@ public class EndlessGameMode extends GameMode
                 AppContext.awardTrophy(Trophies.ABECEDARIAN);
             }
             // get all the way through the levels
-            for (var ii :int = 0; ii <= Trophies.ENDLESS_COMPLETION_TROPHIES.length; ++ii) {
+            for (var ii :int = 0; ii < Trophies.ENDLESS_COMPLETION_TROPHIES.length; ++ii) {
                 if (mapIndex + 1 >= (numLevels * (ii + 1))) {
                     AppContext.awardTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[ii]);
                 }
             }
 
             if (GameContext.isMultiplayerGame && mapIndex >= Trophies.COLLABORATOR_MP_MAP_INDEX) {
-                // complete any MP level
+                // complete MP level 9
                 AppContext.awardTrophy(Trophies.COLLABORATOR);
             }
 
