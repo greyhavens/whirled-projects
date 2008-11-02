@@ -211,7 +211,7 @@ public class Job extends Component
     {
         var aiPlayer :AIPlayer = player as AIPlayer;
         if (aiPlayer == null) {
-            _ctx.log("WTF aiplayer is null in Job.usePowerAI");
+            _ctx.error("aiplayer is null in Job.usePowerAI");
             return;
         }
         
@@ -231,7 +231,6 @@ public class Job extends Component
                 _ctx.state.selectedLaw = aiPlayer.selectLaw();
                 if (_ctx.state.selectedLaw.hasGivesTarget()) {
                     // error if law has a gives target, abort by giving focus back to ai
-                    //_ctx.log("AI tried to use banker's ability on a law with a gives target.");
                     _ctx.state.selectedCards = null;
                     aiPlayer.doneEnactingLaws();
                     return;
@@ -242,7 +241,6 @@ public class Job extends Component
                 
                 if (_ctx.state.activeCard.type == _ctx.state.selectedCard.type) {
                     // if ai would switch GETS with GETS
-                    //_ctx.log("AI tried to use BANKER power to swap GETS with GETS.");
                     _ctx.state.selectedCards = null;
                     _ctx.state.selectedLaw = null;
                     _ctx.state.activeCard = null;
@@ -310,7 +308,6 @@ public class Job extends Component
                     _ctx.state.selectedCard = player.hand.pickRandom(Card.WHEN);
                     if (_ctx.state.selectedCards[0] == null) {
                         // if ai has no when cards
-                        //_ctx.log("AI tried to use doctor's ability with no when cards.");
                         _ctx.state.selectedCards = null;
                         aiPlayer.doneEnactingLaws();
                         return;
@@ -331,7 +328,7 @@ public class Job extends Component
      * Once this is called, power can't be cancelled because player has seen or done something
      * that can't be undone.  May be called a second time for some powers.
      */
-    protected function reachedPointOfNoReturn () :void
+    public function reachedPointOfNoReturn () :void
     {
         _ctx.board.usePowerButton.enabled = false;
     }
@@ -372,7 +369,6 @@ public class Job extends Component
             // pick cards automatically
             if (opponent.hand.cards.length == 0) {
                 // Error if chosen opponent has no cards
-                //_ctx.log("AI tried to steal a card form someone with no cards");
                 AIPlayer(player).doneEnactingLaws();
             }
             _ctx.state.selectedCards = opponent.hand.getRandomCards(1);
@@ -391,7 +387,7 @@ public class Job extends Component
     {
         var opponent :Player = _ctx.state.selectedPlayer;
         if (opponent == null) {
-           _ctx.log("WTF opponent null when theif card selected.");
+           _ctx.error("opponent null when theif card selected.");
            return;
         }
         opponent.giveCardsTo(_ctx.state.selectedCards, player);
@@ -497,7 +493,6 @@ public class Job extends Component
     {
         _ctx.state.cancelMode();
         _ctx.board.usePowerButton.cancelUsingPower();
-        _ctx.log("Power cancelled.");
     }
 
     /**
@@ -521,7 +516,7 @@ public class Job extends Component
             case Job.DOCTOR:
                 return "Doctor";
         }
-        _ctx.log("WTF Unknown job in job get name.");
+        _ctx.error("Unknown job in job get name.");
         return "UNKNOWN";
     }
 
@@ -546,7 +541,7 @@ public class Job extends Component
             case Job.DOCTOR:
                 return "Add a 'when' card to a law or take one from a law";
         }
-        _ctx.log("WTF Unknown job in job get description.");
+        _ctx.error("Unknown job in job get description.");
         return "UNKNOWN";
     }
 
@@ -572,7 +567,7 @@ public class Job extends Component
             case DOCTOR:
                 return new SYMBOL_DOCTOR();
         }
-        _ctx.log("WTF Unknown job in job get symbol.");
+        _ctx.error("Unknown job in job get symbol.");
         return new Sprite();
     }
 

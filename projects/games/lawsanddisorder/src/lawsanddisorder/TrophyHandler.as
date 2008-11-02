@@ -60,7 +60,7 @@ public class TrophyHandler
          
         UserCookie.getCookie(_ctx.control, function (cookie :UserCookie) :void {
                 _cookie = cookie;
-            }, cookieDef, true /* ENABLE DEBUG */);
+            }, cookieDef);
     }
 
     /**
@@ -75,7 +75,6 @@ public class TrophyHandler
         }
         
         var job :Job = _ctx.board.deck.getJob(event.newValue);
-        //_ctx.log("recording that you changed to " + job);
         
         _jobsHeld[job.id] = true;
         
@@ -101,7 +100,6 @@ public class TrophyHandler
             return;
         }
         
-        //_ctx.log("recording that you used a new power");
         _cookie.set(POWERS_USED, 1, player.job.id);
         
         for (var jobId :int = 0; jobId < 6; jobId++) {
@@ -127,7 +125,6 @@ public class TrophyHandler
         var law :Law = new Law(_ctx, -1);
         law.setSerializedCards(_ctx.board.newLaw.getSerializedCards());
         
-        //_ctx.log("recording that you made a law: " + law);
         var newNumLaws :int = (_cookie.get(NUM_LAWS_PLAYED) as int) + 1;
         _cookie.set(NUM_LAWS_PLAYED, newNumLaws);
         
@@ -154,18 +151,10 @@ public class TrophyHandler
      */
     protected function gameEnded (event :Event) :void
     {
-        /*
-        _ctx.log("game ended.  score percentiles are : ");
-        for each (var pl :Player in _ctx.board.players.playerObjects) {
-            _ctx.log(pl + " : " + pl.getWinningPercentile(false));
-        }
-        _ctx.log("yours is " + player + " : " + player.getWinningPercentile(false));
-        */
-            
         if (player.getWinningPercentile(false) < 100) {
             return;
         }
-        _ctx.log("You came in first place!");
+        _ctx.notice("You came in first place!");
         
         if (_ctx.board.players.numHumanPlayers == 1) {
             awardTrophy("winnerVsBots");
@@ -190,7 +179,6 @@ public class TrophyHandler
     /** Helper for giving trophies */
     protected function awardTrophy (trophy :String) :void
     {
-        _ctx.log("You got a trophy: " + trophy);
         _ctx.control.player.awardTrophy(trophy);
     }
     

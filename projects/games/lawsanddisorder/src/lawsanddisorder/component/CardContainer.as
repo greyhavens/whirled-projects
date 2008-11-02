@@ -153,7 +153,7 @@ public class CardContainer extends Component
         distributeData :Boolean = false) :void
     {
         if (serializedCards == null) {
-            _ctx.log("WTF serializedCards is null in CardContainer.setSerializedCards");
+            _ctx.error("serializedCards is null in CardContainer.setSerializedCards");
             return;
         }
         
@@ -173,7 +173,6 @@ public class CardContainer extends Component
         updateDisplay();
         
         if (distributeData) {
-            _ctx.log("setSerializedCards distributing cardcontaer data.");
             setDistributedData();
         }
     }
@@ -184,7 +183,7 @@ public class CardContainer extends Component
     public function getCardAtPosition (index :int) :Card
     {
         if (index >= cards.length) {
-            _ctx.log("WTF tried to get card by id when length " + cards.length + " >= index " + index);
+            _ctx.error("tried to get card by id when length " + cards.length + " >= index " + index);
             return null;
         }
         return cards[index];

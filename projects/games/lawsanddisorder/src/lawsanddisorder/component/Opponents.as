@@ -1,8 +1,8 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
 import flash.events.MouseEvent;
+import flash.text.TextField;
 
 import lawsanddisorder.*;
 
@@ -30,16 +30,26 @@ public class Opponents extends Component
     }
 
     /**
-     * Remove an opponent and rearrange the rest.
+     * Replace a human opponent with an ai opponent
      */
-    public function removeOpponent (opponent :Opponent) :void
+    public function replaceOpponent (opponent :Opponent, aiPlayer :AIPlayer) :void
+    {
+        var index :int = opponents.indexOf(opponent);
+        opponents[index] = aiPlayer;
+        //opponents.splice(index, 1);
+        addChildAt(aiPlayer, getChildIndex(opponent));
+        removeChild(opponent);
+        updateDisplay();
+    }
+    
+    /* public function removeOpponent (opponent :Opponent) :void
     {
         var index :int = opponents.indexOf(opponent);
         opponents.splice(index, 1);
         removeChild(opponent);
         updateDisplay();
-    }
-
+    } */
+    
     /**
      * Rearrange opponents when one is added or removed.
      */

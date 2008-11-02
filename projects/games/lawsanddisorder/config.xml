@@ -1,0 +1,8 @@
+<!-- a config file used when doing standalone testing -->
+<game>
+  <params>
+    <choice ident="AI Players" choices="none,1,2,3,4,fill to 6 seats" start="3"/>
+    <choice ident="AI Level" choices="S-M-R-T,dumber,dumbest" start="S-M-R-T"/>
+    <choice ident="AI Speed" choices="slow,normal,lightspeed" start="lightspeed"/>
+  </params>
+</game>

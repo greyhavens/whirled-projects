@@ -48,10 +48,10 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        //_ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
         
         // For AIs, the TURN_CHANGED event will come as a MessageReceivedEvent from the server
-        addMessageListener(TURN_CHANGED, turnChanged);
+        //addMessageListener(TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -85,7 +85,7 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _ctx.control.game.removeEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        //_ctx.control.game.removeEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -181,7 +181,6 @@ public class EventHandler extends EventDispatcher
             }
         }
         // remove key entirely if that was the only listener
-        // TODO is this necessary?  might be less efficient?
         if (listeners.length == 0) {
             _dataListeners.remove(key);
         }
@@ -307,7 +306,7 @@ public class EventHandler extends EventDispatcher
     /**
      * Dispatch an internal turn changed event because the turn has changed.
      */
-    protected function turnChanged (event :Event) :void
+    /* protected function turnChanged (event :Event) :void
     {
         // during rematches this is sent by the server before GAME_STARTED; ignore it
         if (!_ctx.gameStarted) {
@@ -326,7 +325,7 @@ public class EventHandler extends EventDispatcher
             }
         }
         dispatchEvent(new Event(TURN_CHANGED));
-    }
+    } */
     
     /** Context */
     protected var _ctx :Context;

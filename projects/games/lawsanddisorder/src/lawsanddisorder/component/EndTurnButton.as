@@ -21,8 +21,8 @@ public class EndTurnButton extends Button
     public function EndTurnButton (ctx :Context, board :Board)
     {
         super(ctx);
-        _ctx.eventHandler.addEventListener(EventHandler.TURN_CHANGED, turnChanged);
-        _ctx.eventHandler.addMessageListener(EventHandler.END_GAME_PLAYER, endGamePlayerSet);
+        //_ctx.eventHandler.addEventListener(EventHandler.TURN_CHANGED, turnChanged);
+        _ctx.eventHandler.addMessageListener(EventHandler.TURN_CHANGED, turnChanged);
         addEventListener(MouseEvent.CLICK, endTurnButtonClicked);
         enabled = false;
         text = "end turn";
@@ -52,34 +52,13 @@ public class EndTurnButton extends Button
     }
 
     /**
-     * The deck is empty; start the last round.  When the current player's turn starts again, 
-     * that will signal the end of the game.
+     * The last card in the deck was just drawn, this is now the last turn of the game.
      */
-    public function startLastRound () :void
+    public function lastTurn () :void
     {
-        // last round has already started, quit
-        if (endGamePlayer != null) {
-            _ctx.log("WTF _endGamePlayer is already set to " + endGamePlayer);
-            return;
-        }
-        _ctx.sendMessage(EventHandler.END_GAME_PLAYER, _ctx.board.players.turnHolder.id);
-    }
-    
-    /**
-     * Someone started the last round and broadcast which player will end the game when their
-     * turn starts again.
-     */
-    protected function endGamePlayerSet (event :MessageEvent) :void
-    {
-        endGamePlayer = _ctx.board.players.getPlayer(event.value as int);
-        if (endGamePlayer == _ctx.player) {
-            _ctx.notice("The deck is empty, so this is the last round.  This is " +
-                "your last turn.");  
-        } else {          
-            _ctx.notice("The deck is empty, so this is the last round.  This is " +
-                _ctx.board.players.turnHolder.name + "'s last turn.");
-        }
-        
+        _ctx.broadcast("The deck is empty - the game will end when " 
+            + _ctx.board.players.turnHolder.name + "'s turn is over.", null, true);
+        isLastTurn = true;
     }
     
     /**
@@ -130,45 +109,57 @@ public class EndTurnButton extends Button
      */
     protected function discardDownComplete () :void
     {
-        var nextPlayer :Player = _ctx.board.players.nextPlayer;
+        //var nextPlayer :Player = _ctx.board.players.nextPlayer;
         
-        // If the next player already had their last turn, end the game
-        if (nextPlayer == endGamePlayer) {
-            endGamePlayer = null;
+        // If this was the last turn of the game, end the game now.
+        if (isLastTurn) {
+            isLastTurn = false;
             _ctx.eventHandler.endGame();
-            
-        // If it is an AI's turn to go next, tell everyone instead of using game.startNextTurn
-        } else if (nextPlayer as AIPlayer) {
-            // Pretend to be a server turn changed event
-            _ctx.sendMessage(EventHandler.TURN_CHANGED);
-            
-        } else {
-            _ctx.control.game.startNextTurn();
+            return;
         }
-    }
 
+        // If it is an AI's turn to go next, tell everyone instead of using game.startNextTurn
+        //if (nextPlayer as AIPlayer) {
+            // Pretend to be a server turn changed event
+            
+            // tell everyone the turn changed
+        _ctx.sendMessage(EventHandler.TURN_CHANGED);
+            
+        //} else {
+        //    _ctx.control.game.startNextTurn();
+        //}
+    }
+    
     /**
-     * Turn changed.  May be the start of a real player or AI turn.
+     * Someone ended the turn with a TURN_CHANGED message event.  Next up may be a real 
+     * player or an AI.
      */
     protected function turnChanged (event :Event) :void
     {
+        //_ctx.log("turn changed.  game started?: "+ _ctx.gameStarted);
+        // during rematches this is sent by the server before GAME_STARTED; ignore it
+        if (!_ctx.gameStarted) {
+            return;
+        }
+        
+        _ctx.board.players.advanceTurnHolder();
+
         if (_ctx.board.players.turnHolder == _ctx.player) {
-            if (booted) {
-                // after 3 afk turns, skip the remainder of the player's turns
-                _ctx.broadcast("Skipping " + _ctx.player.playerName + "'s turn after 3 strikes.");
-                endTurn(null, true);
-                return;
-            }
             startTurn();
             
         } else {
-            if (_ctx.board.players.amControllingAI()) {
-                //_ctx.log("starting ai players turn.");
+            _ctx.notice("\nIt's " + _ctx.board.players.turnHolder.name + "'s turn.");
+            // controller plays the AI turns
+            if (_ctx.board.players.turnHolder as AIPlayer && _ctx.player.isController) {
+                
+            //if (_ctx.board.players.amControllingAI()) {
                 AIPlayer(_ctx.board.players.turnHolder).startTurn();
             }
-            _ctx.notice("\nIt's " + _ctx.board.players.turnHolder.name + "'s turn.");
         }
         updateDisplay();
+        
+        // dispatch the TURN_CHANGED event to other components
+        _ctx.eventHandler.dispatchEvent(new Event(EventHandler.TURN_CHANGED));
     }
 
     /**
@@ -177,6 +168,16 @@ public class EndTurnButton extends Button
      */
     protected function startTurn () :void
     {
+        // tell the server that the turn changed as well, but shouldn't need to do this
+        //_ctx.control.game.startNextTurn();
+        
+        // after 3 afk turns, skip the remainder of the player's turns
+        if (booted) {
+            _ctx.broadcast("Skipping " + _ctx.player.playerName + "'s turn after 3 strikes.");
+            endTurn(null, true);
+            return;
+        }
+        
         enabled = true;
         _ctx.notice("\nIt's your turn.");
         _ctx.board.newLaw.enabled = true;
@@ -316,10 +317,10 @@ public class EndTurnButton extends Button
     /** After you skip 2 turns, on the third turn you're booted. */
     protected var afkTurnsSkipped :int = 0;
     
-    /** Game will end when this player's turn starts again */
-    protected var endGamePlayer :Player = null;
-    
     /** To remember to clear the notice if player moves */
     protected var displayingAFKNotice :Boolean = false;
+    
+    /** True if this player or an AI they control is taking the last turn of the game */
+    protected var isLastTurn :Boolean = false;
 }
 }

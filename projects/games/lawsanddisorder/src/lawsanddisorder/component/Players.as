@@ -34,16 +34,14 @@ public class Players extends Component
             isWatcher = true;
         }
 
-        /*
         // for testing, pretend as a watcher
-        numHumanPlayers = playerServerIds.length - 1;
+        /* numHumanPlayers = playerServerIds.length - 1;
         playerServerIds.length = numHumanPlayers;
         playerNames.length = numHumanPlayers;
         if (myPosition == numHumanPlayers) {
             isWatcher = true;
             myPosition = -1;
-        }
-        */
+        } */
 
         // watchers don't get a job, hand, etc.
         if (isWatcher) {
@@ -73,9 +71,9 @@ public class Players extends Component
             opponents.addOpponent(aiPlayer);
             playerObjects[playerId] = aiPlayer;
             // last player controls all ais that are added after them
-            if (player.id == numHumanPlayers - 1) {
-                aiPlayer.isController = true;
-            }
+            //if (player.id == numHumanPlayers - 1) {
+            //    aiPlayer.isController = true;
+            //}
             
             playerId++;
         }
@@ -125,35 +123,53 @@ public class Players extends Component
     public function getPlayer (playerId :int) :Player
     {
         if (playerId < 0 || playerId > playerObjects.length) {
-            _ctx.log("WTF playerId is " + playerId + " in getPlayer");
+            _ctx.error("playerId is " + playerId + " in getPlayer");
             return null;
         }
         return playerObjects[playerId];
     }
     
     /**
-     * Called as soon as turn starts before the TURN_STARTED message goes out.  If a player is
-     * provided, use that player as the new turn holder
+     * Called as soon as turn starts before the TURN_STARTED message goes out.
      */
-    public function calculateTurnHolder (player :Player = null) :void
+    public function advanceTurnHolder () :void
     {
-        if (player != null) {
-            turnHolder = player;
-            return;
+        if (turnHolder != null) {
+            turnHolder = nextPlayer;
+        } else {
+            turnHolder = playerObjects[0];
+            // first turn of the game, fetch the turn holder from the server
+            /* var serverId :int = _ctx.control.game.getTurnHolderId();
+            _ctx.log("turn holder server id " + serverId + " , playerobjects: " + playerObjects.length);
+            for (var i :int = 0; i < playerObjects.length; i++) {
+                var player :Player = playerObjects[i];
+                _ctx.log("player serverid " + player.serverId);
+                if (player.serverId == serverId) {
+                    turnHolder = player;
+                }
+            }
+            _ctx.log("resulting turnholder: " + turnHolder); */
         }
-        var serverId :int = _ctx.control.game.getTurnHolderId();
-        for (var i :int = 0; i < playerObjects.length; i++) {
-            var player :Player = playerObjects[i];
-            if (player.serverId == serverId) {
-                turnHolder = player;
+        
+        
+        // calculate the next turnHolder
+/*         if (_ctx.board.players.turnHolder == null) {
+            _ctx.board.players.calculateTurnHolder();
+        } else {
+            var nextPlayer :Player = _ctx.board.players.nextPlayer;
+            
+            if (nextPlayer as AIPlayer) {
+                _ctx.board.players.calculateTurnHolder(nextPlayer);
+            } else {
+                _ctx.board.players.calculateTurnHolder();
             }
         }
         
-        if (turnHolder == null) {
-            _ctx.log("TURN HOLDER NULL... serverId: " + serverId);
-            _ctx.log("playerObjects[0]:" + playerObjects[0]);
-            turnHolder = playerObjects[0];
-        }
+        if (player != null) {
+            turnHolder = player;
+            return;
+        } */
+
     }
 
     /**
@@ -171,26 +187,26 @@ public class Players extends Component
     /**
      * Return true if it is currently an AI's turn and this player is controlling that AI.
      */
-    public function amControllingAI () :Boolean
+    /* public function amControllingAI () :Boolean
     {
         if (turnHolder is AIPlayer && AIPlayer(turnHolder).isController) {
             return true;
         }
         return false;
-    }
+    } */
 
     /**
      * Return the player whose turn it is next, including AI players
      */
-    public function get nextPlayer () :Player
+    protected function get nextPlayer () :Player
     {
         if (playerObjects == null) {
-            _ctx.log("WTF playerOjbects null in Players.nextPlayer");
+            _ctx.error("playerOjbects null in Players.nextPlayer");
             return null;
         }
         if (turnHolder == null) {
-            _ctx.log("WTF turnHolder null in Players.nextPlayer");
-            calculateTurnHolder();
+            _ctx.error("turnHolder null in Players.nextPlayer");
+            advanceTurnHolder();
         }
         return playerObjects[((turnHolder.id+1) % playerObjects.length)];
     }
@@ -202,40 +218,56 @@ public class Players extends Component
      */
     public function playerLeft (playerServerId :int) :void
     {
-        if (playerServerId == player.serverId) {
-            _ctx.log("WTF I'm the player who left?");
-            return;
+        // if we were controlling an ai player, halt that player's turn
+        if (turnHolder as AIPlayer && player.isController) {
+            _ctx.log("Halting AI Player's turn.");
+            AIPlayer(turnHolder).canPlay = false;
         }
-
-        // find and unload the opponent object
+        
+        // if anything was happening with any player, stop it now
+        //_ctx.notice("Cancelling all events and actions because a player left.");
+        _ctx.state.cancelMode();
+        _ctx.board.laws.cancelTriggering();
+        
+        // find the opponent who left and determine the new controller player
         var opponent :Opponent;
         for each (var tempPlayer :Player in playerObjects) {
             if (tempPlayer.serverId == playerServerId) {
                 opponent = tempPlayer as Opponent;
-                break;
+            } else if (_ctx.control.game.getControllerId() == tempPlayer.serverId) {
+                tempPlayer.isController = true;
             }
         }
-
-        // return the player's job to the pile
-        if (_ctx.control.game.amInControl()) {
-            _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
+        
+        if (opponent == null) {
+            _ctx.error("Could not find player who left.");
+            _ctx.sendMessage(EventHandler.TURN_CHANGED);
+            return;
         }
+        
+        // return the player's job to the pile
+        //if (_ctx.control.game.amInControl()) {
+        //    _ctx.eventHandler.setData(Deck.JOBS_DATA, -1, opponent.id);
+        //}
 
-        // if anything was happening with any player, stop it now
-        // TODO only stop things that were waiting on the player who left
-        _ctx.notice("Cancelling all events and actions because a player left.");
-        _ctx.state.cancelMode();
-        _ctx.board.laws.cancelTriggering();
-
-        // remove the player object
-        opponents.removeOpponent(opponent);
-        var index :int = playerObjects.indexOf(opponent);
-        playerObjects.splice(index, 1);
+        // replace the player who left with a new AI player
+        //opponents.removeOpponent(opponent);
+        //var index :int = playerObjects.indexOf(opponent);
+        //playerObjects.splice(index, 1);
+        
+        var aiPlayer :AIPlayer = new AIPlayer(_ctx, opponent.id, opponent);
+        _ctx.notice("Replacing " + opponent + " with an AI Player: " + aiPlayer);
+        opponents.replaceOpponent(opponent, aiPlayer);
+        playerObjects[opponent.id] = aiPlayer;
 
         // control player may be unset, so have the player in seating position 0 control for now
-        if (turnHolder == null && playerObjects.indexOf(player) == 0) {
+        //if (turnHolder == null && playerObjects.indexOf(player) == 0) {
+        if (_ctx.player.isController && (
+            turnHolder == null || turnHolder == opponent || turnHolder as AIPlayer)) {
             _ctx.broadcast("Moving on to next player's turn.");
-            _ctx.control.game.startNextTurn();
+            _ctx.sendMessage(EventHandler.TURN_CHANGED);
+            //_ctx.board.endTurnButton.turnChanged();
+            //_ctx.control.game.startNextTurn();
         }
 
         // unload the opponent object

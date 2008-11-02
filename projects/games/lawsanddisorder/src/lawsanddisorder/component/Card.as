@@ -48,9 +48,9 @@ public class Card extends Component
     {
         if (group == Card.SUBJECT) {
             if (type == _ctx.player.job.id) {
-                lawText.textColor = 0x990000;
+                lawText.textColor = 0x0053a5;//0x990000;
             } else {
-                lawText.textColor = 0x000000;      
+                lawText.textColor = getTextColor();//0x000000;      
             }
         }
     }
@@ -115,13 +115,13 @@ public class Card extends Component
             cardSprite.addChild(symbol);
         }
 
-        var lawText :TextField = Content.defaultTextField();
-        lawText.text = text;
-        lawText.width = 50;
-        lawText.height = 60;
-        lawText.y = 5;
-        lawText.x = 0;
-        cardSprite.addChild(lawText);
+        var cardText :TextField = Content.defaultTextField();
+        cardText.text = text;
+        cardText.width = 50;
+        cardText.height = 60;
+        cardText.y = 5;
+        cardText.x = 0;
+        cardSprite.addChild(cardText);
 
         return cardSprite;
     }
@@ -133,6 +133,7 @@ public class Card extends Component
     {
         var lawSprite :Sprite = new Sprite();
         lawText = Content.defaultTextField(1.2, "left");
+        lawText.textColor = getTextColor();
         lawText.autoSize = "left";
         lawText.wordWrap = false;
         lawText.text = text;
@@ -165,6 +166,31 @@ public class Card extends Component
             }
             buttonMode = true;
         }
+    }
+
+    /**
+     * Return the rgb hex color (eg 0xFF0000) for the law text for this card type
+     */
+    protected function getTextColor () :uint
+    {
+        if (group == WHEN) {
+            return 0x660066;
+        }
+        return 0x000000;
+        /*
+        if (_group == SUBJECT) {
+            return 0x093663;
+        }
+        else if (_group == VERB) {
+            return 0xc01d1d;
+        }
+        else if (_group == OBJECT) {
+            return 0xbe9813;
+        }
+        else {
+            return 0x720e72;
+        }
+        */
     }
 
     /**
@@ -390,7 +416,7 @@ public class Card extends Component
             }
         } else {
             if (_cardContainer is Law) {
-                lawText.textColor = 0x000000;
+                lawText.textColor = getTextColor();//0x000000;
                 highlightJob();
             } else {
                 if (contains(highlightSprite)) {

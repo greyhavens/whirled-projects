@@ -1,10 +1,10 @@
 ﻿package lawsanddisorder.component {
 
 import flash.display.Sprite;
-import flash.text.TextField;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.text.TextField;
 import flash.utils.Dictionary;
 
 import lawsanddisorder.*;
@@ -96,7 +96,13 @@ public class Laws extends Component
     public function cancelTriggering () :void
     {
         _ctx.eventHandler.removeMessageListener(ENACT_LAW_DONE, triggeringWhen);
-        _ctx.state.doneEnactingLaws();
+
+        // action complete; return focus to the player or to the ai player
+        if (_ctx.board.players.turnHolder as AIPlayer) {
+            AIPlayer(_ctx.board.players.turnHolder).doneEnactingLaws();
+        } else {
+            _ctx.state.doneEnactingLaws();
+        }
     }
 
     /**
@@ -104,7 +110,9 @@ public class Laws extends Component
      */
     public function getRandomLaw () :Law
     {
-        var randomIndex :int = Math.round(Math.random() * (laws.length-1));
+        var numLaws :int = Math.min(laws.length,MAX_LAWS);
+        var randomIndex :int = Math.round(Math.random() * (numLaws - 1)) + oldestLawId;
+        //var randomIndex :int = Math.round(Math.random() * (laws.length-1));
         return laws[randomIndex];
     }
     
@@ -116,7 +124,7 @@ public class Laws extends Component
         var lawId :int = event.value as int;
         var law :Law = laws[lawId];
         if (law == null) {
-            _ctx.log("WTF law is null when enacting: " + lawId);
+            _ctx.error("law is null when enacting: " + lawId);
             return;
         }
         law.setHighlighted(true);
@@ -151,7 +159,7 @@ public class Laws extends Component
     protected function updateLawData (lawId :int, cards :Object) :void
     {
         if (cards == null) {
-            _ctx.log("WTF, null cards in Laws.updateLawData");
+            _ctx.error("null cards in Laws.updateLawData");
             cards = _ctx.eventHandler.getData(LAWS_DATA, lawId);
         }
         // add a new law
@@ -174,23 +182,27 @@ public class Laws extends Component
                 toPoint = localToGlobal(new Point(0, (MAX_LAWS - 1) * LAW_SPACING_Y));
             }
             else {
-                toPoint = localToGlobal(new Point(0, laws.length * LAW_SPACING_Y));
+                toPoint = localToGlobal(new Point(0, (laws.length-1) * LAW_SPACING_Y));
             }
             // when animation completes, add the new law sprite and trigger it
-            _ctx.board.animateMove(law, fromPoint, toPoint, 
-                function () :void { addLaw(law); triggerNewLaw(law); });
-            
+            law.animateMove(fromPoint, toPoint, 
+                function () :void { 
+                    addLaw(law); 
+                    triggerNewLaw(law); 
+                });
+
         // update an existing law
         } else if (laws.length > lawId) {
             var existingLaw :Law = laws[lawId];
             if (existingLaw == null) {
-                _ctx.log("WTF existing law " + lawId + " null when updating data. laws.length:" + laws.length);
+                _ctx.error("existing law " + lawId + " null when updating data. laws.length:" 
+                    + laws.length);
                 return;
             }
             existingLaw.setSerializedCards(cards);
         }
         else {
-            _ctx.log("WTF it's a TOO new law. laws.length:" + laws.length + " , lawId:" + lawId);
+            _ctx.error("it's a TOO new law. laws.length:" + laws.length + " , lawId:" + lawId);
         }
     }
 
@@ -235,7 +247,9 @@ public class Laws extends Component
      */
     protected function triggerNewLaw (law :Law) :void
     {
-        if (_ctx.board.players.isMyTurn() || _ctx.board.players.amControllingAI() ) {
+        //if (_ctx.board.players.isMyTurn() || _ctx.board.players.amControllingAI() ) {
+        if (_ctx.board.players.isMyTurn() || 
+            (_ctx.board.players.turnHolder as AIPlayer && _ctx.player.isController)) {
             if (law.when == -1) {
                 // to avoid multiple laws enacting at once, wait until this one is done before
                 // searching for laws that trigger on CREATE_LAW.
@@ -289,7 +303,6 @@ public class Laws extends Component
         }
 
         // action complete; return focus to the player or to the ai player
-        //_ctx.log("returning focus to player " + _ctx.board.players.turnHolder);
         if (_ctx.board.players.turnHolder as AIPlayer) {
             AIPlayer(_ctx.board.players.turnHolder).doneEnactingLaws();
         } else {

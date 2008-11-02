@@ -15,7 +15,7 @@ public class AIPlayer extends Opponent
      * @param id Identifier for this player according to their position on the board
      * @param serverId Identifier from the game server (should be -1)
      */
-    public function AIPlayer (ctx :Context, id :int)
+    public function AIPlayer (ctx :Context, id :int, player :Player = null)
     {
         var aiName :String = aiNames[id];
         super(ctx, id, -1, aiName);
@@ -24,11 +24,20 @@ public class AIPlayer extends Opponent
         // they make during their turn.
         this.dumbnessFactor = _ctx.aiDumbnessFactor;
         //dumbnessFactor = (Math.round(Math.random() * 100));
+        
+        // if player is provided, make this AIPlayer a clone of that player
+        if (player != null) {
+            this._hand = player.hand;
+            this._monies = player.monies;
+            this._job = player.job;
+            this.job.player = this;
+            this.updateDisplay();
+        }
     }
     
     public function startTurn() :void
     {
-        //_ctx.notice("\nI, " + name + " am starting my turn!");
+        canPlay = true;
         hand.drawCard(Deck.CARDS_AT_START_OF_TURN);
         
         createdLaw = false;
@@ -92,6 +101,11 @@ public class AIPlayer extends Opponent
      */
     protected function play (timerEvent :Object = null) :void
     {
+        if (!canPlay) {
+            _ctx.log("AIPlayer has been told to halt, stopping.");
+            return;
+        }
+        
         playOptions = new Array();
         playOptionWeights = new Array();
         
@@ -129,7 +143,7 @@ public class AIPlayer extends Opponent
                 return;
             } 
         }
-        _ctx.log("WTF finished looking but didn't find randomWeightIndex");
+        _ctx.error("Finished looking but didn't find randomWeightIndex");
     }
     
     /**
@@ -215,7 +229,7 @@ public class AIPlayer extends Opponent
             }
             
             if (!_ctx.board.newLaw.isValidLaw(cardList)) {
-                _ctx.log("WTF AIplayer tried to make an invalid law: " + cardList);
+                _ctx.error("AIplayer tried to make an invalid law: " + cardList);
                 return;
             }
             
@@ -326,9 +340,12 @@ public class AIPlayer extends Opponent
         return false;
     }
     
-    /** True if this is the instance that controls this AI's behavior.  Control instance will
-     * be on the human player whose turn precedes this AI's turn. */
-    public var isController :Boolean = false;
+    ///** True if this is the instance that controls this AI's behavior.  Control instance will
+    // * be on the human player whose turn precedes this AI's turn. */
+    //public var isController :Boolean = false;
+    
+    /** May be set to false if something disastrous happens like a player leaving */
+    public var canPlay :Boolean;
     
     /** Ordered list of play functions that may be called */
     protected var playOptions :Array;

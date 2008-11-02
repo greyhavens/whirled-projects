@@ -95,7 +95,7 @@ public class Board extends Sprite
         
         // version
         var version :TextField = new TextField();
-        version.text = "v 0.513"
+        version.text = "v 0.516"
         version.height = 20;
         version.y = 485;
         addChild(version);
@@ -135,7 +135,6 @@ public class Board extends Sprite
     {
         if (!contains(helpScreen)) {
            addChild(helpScreen);
-           //_ctx.notice("Displaying help.  Click on the board to continue.")
         }
     }
 
@@ -164,51 +163,7 @@ public class Board extends Sprite
     }
 
     /**
-     * Move a sprite across the board from one point to another.
-     */
-    public function animateMove (sprite :Sprite, fromPoint :Point, toPoint :Point, 
-        doneListener :Function = null) :void
-    {
-        fromPoint = this.globalToLocal(fromPoint);
-        toPoint = this.globalToLocal(toPoint);
-        var xIncrement :Number = (toPoint.x - fromPoint.x) / 15;
-        var yIncrement :Number = (toPoint.y - fromPoint.y) / 15;
-        //_ctx.log("from " + fromPoint.x + ","+ fromPoint.y + " to " + toPoint.x + "," + toPoint.y);
-        //_ctx.log("increments: " + xIncrement + " ," + yIncrement);
-        sprite.x = fromPoint.x;
-        sprite.y = fromPoint.y;
-        addChild(sprite);
-        var moveTimer :Timer = new Timer(5, 50);
-        moveTimer.addEventListener(TimerEvent.TIMER, 
-            function (event :TimerEvent): void { 
-                animateMoveFired(sprite, xIncrement, yIncrement, toPoint, moveTimer, doneListener); 
-            });
-        moveTimer.start();
-    }
-    
-    /**
-     * Move a sprite one step across the board.
-     */
-    protected function animateMoveFired (sprite :Sprite, xIncrement :Number, 
-        yIncrement :Number, toPoint :Point, moveTimer :Timer, doneListener :Function) :void
-    {
-        var xDone :Boolean = xIncrement >= 0 ? sprite.x >= toPoint.x : sprite.x <= toPoint.x;
-        var yDone :Boolean = yIncrement >= 0 ? sprite.y >= toPoint.y : sprite.y <= toPoint.y;
-        if (xDone || yDone) {
-            removeChild(sprite);
-            moveTimer.stop();
-            moveTimer = null;
-            if (doneListener != null) {
-                doneListener();
-            }
-            return;
-        }
-        sprite.x += xIncrement;
-        sprite.y += yIncrement;
-    }
-
-    /**
-     * TIndicate that it is now the player's turn
+     * Indicate that it is now the player's turn
      */
     protected function myTurnStarted (event :Event) :void
     {

@@ -32,7 +32,7 @@ public class MouseEventHandler
 
         if (mode == State.MODE_SELECT_HAND_CARDS) {
             if (selectedCards.length >= selectedGoal) {
-                _ctx.log("WTF already selected enough cards");
+                _ctx.error("already selected enough cards");
                 return;
             }
             if (card.cardContainer != selectCardsTargetPlayer.hand) {
@@ -62,13 +62,16 @@ public class MouseEventHandler
                 _ctx.notice("That card isn't a when card.");
                 return;
             }
+            
+            // reached the point of no return, Doctor's power has now been used.
+            _ctx.board.deck.getJob(Job.DOCTOR).reachedPointOfNoReturn();
 
             // select card and law so listener function knows what happened
+            setMouseOverCard(null);
             selectedCards = new Array(card);
             selectedLaw = Law(card.cardContainer);
             card.cardContainer.removeCards(selectedCards);
             _ctx.player.hand.addCards(selectedCards);
-            setMouseOverCard(null);
             doneMode();
         }
     }
@@ -198,7 +201,7 @@ public class MouseEventHandler
                 return;
             }
             // don't rearrange new law if it isn't your turn
-            if (!_ctx.control.game.isMyTurn() && targetContainer == _ctx.board.newLaw) {
+            if (!_ctx.player.isMyTurn && targetContainer == _ctx.board.newLaw) {
                 return;
             }
 
@@ -214,11 +217,11 @@ public class MouseEventHandler
             var targetSubjectCard :Card = Card(getParent(card.dropTarget, Card));
             if (targetSubjectCard == null || !(targetSubjectCard.cardContainer is Law)
                 || targetSubjectCard.group != Card.SUBJECT) {
-                setMouseOverCard(null);
+                setMouseOverLaw(null);
                 return;
             }
             // if it's a verb/subject in a law, highlight it
-            setMouseOverCard(targetSubjectCard);
+            setMouseOverLaw(targetSubjectCard.cardContainer as Law);
         }
 
         else if (mode == State.MODE_EXCHANGE_VERB) {
@@ -226,18 +229,17 @@ public class MouseEventHandler
             var targetVerbCard :Card = Card(getParent(card.dropTarget, Card));
             if (targetVerbCard == null || !(targetVerbCard.cardContainer is Law)
                 || targetVerbCard.group != Card.VERB) {
-                setMouseOverCard(null);
+                setMouseOverLaw(null);
                 return;
             }
             // can't switch a gives with a target to a loses/gets
-            var targetLaw :Law = Law(getParent(card.dropTarget, Law));
-            if (targetLaw.hasGivesTarget()) {
-                setMouseOverCard(null);
+            if ((targetVerbCard.cardContainer as Law).hasGivesTarget()) {
+                setMouseOverLaw(null);
                 return;
             }
 
             // if it's a verb/subject in a law, highlight it
-            setMouseOverCard(targetVerbCard);
+            setMouseOverLaw(targetVerbCard.cardContainer as Law);
         }
 
         else if (mode == State.MODE_MOVE_WHEN) {
@@ -296,7 +298,7 @@ public class MouseEventHandler
                 if (!_ctx.board.contains(_ctx.board.newLaw)) {
                     return;
                 }
-                if (!_ctx.control.game.isMyTurn()) {
+                if (!_ctx.player.isMyTurn) {
                     _ctx.notice("It's not your turn.");
                     returnCard(card);
                     return;
@@ -360,7 +362,7 @@ public class MouseEventHandler
             var targetCard :Card = Card(getParent(card.dropTarget, Card));
 
             // stop highlighting the card we're over
-            setMouseOverCard(null);
+            setMouseOverLaw(null);
 
             if (targetCard == null || !(targetCard.cardContainer is Law) ||
                 (mode == State.MODE_EXCHANGE_VERB && targetCard.group != Card.VERB) ||
@@ -380,7 +382,7 @@ public class MouseEventHandler
             // get the law containing that card
             var targetIndex :int = targetLaw.indexOfCard(targetCard);
             if (targetIndex == -1) {
-                _ctx.log("WTF target index is -1 when exchanging cards");
+                _ctx.error("target index is -1 when exchanging cards");
             }
             _ctx.board.removeCard(card);
             targetLaw.removeCards(new Array(targetCard), false);
@@ -406,6 +408,10 @@ public class MouseEventHandler
                 returnCard(card);
                 return;
             }
+            
+            // reached the point of no return, Doctor's power has now been used.
+            _ctx.board.deck.getJob(Job.DOCTOR).reachedPointOfNoReturn();
+            
             // add when to the end of the law
             _ctx.board.removeCard(card);
             card.cardContainer.removeCards(new Array(card));
@@ -424,7 +430,7 @@ public class MouseEventHandler
     protected function returnCard (card :Card) :void
     {
         if (card.cardContainer == null) {
-            _ctx.log("WTF null parent when returning card - going to hand instead.");
+            _ctx.error("null parent when returning card - going to hand instead.");
             card.cardContainer = _ctx.player.hand;
         }
         _ctx.board.removeCard(card);

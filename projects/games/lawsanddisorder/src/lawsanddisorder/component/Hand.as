@@ -56,45 +56,14 @@ public class Hand extends CardContainer
      */
     public function drawCard (numCards :int = 1) :void
     {
-    /*
-        // draw cards a few miliseconds apart so they will animate seperately
-        var drawTimer :Timer = new Timer(20, numCards);
-        drawTimer.addEventListener(TimerEvent.TIMER, 
-            function (event :TimerEvent): void { 
-                //_ctx.log("drawing card.");
-                var card :Card = _ctx.board.deck.drawCard(player);
-                if (card != null) {
-                    // no more cards in the deck!
-                    addCards(new Array(card));
-                }
-            });
-        drawTimer.start();
-        */
-        
         // draw cards a few miliseconds apart so they will animate seperately
         EventHandler.startTimer(20, 
-            function (): void { 
-                //_ctx.log("drawing card.");
+            function () :void {
                 var card :Card = _ctx.board.deck.drawCard(player);
                 if (card != null) {
-                    // no more cards in the deck!
                     addCards(new Array(card));
                 }
             }, numCards);
-        
-        /*
-        var cardArray :Array = new Array();
-        
-        for (var i :int = 1; i <= numCards; i++) {
-            var card :Card = _ctx.board.deck.drawCard(this.player);
-            if (card == null) {
-                // no more cards in the deck!
-                break;
-            }
-            cardArray.push(card);
-        }
-        addCards(cardArray);
-        */
     }
 
     /**
@@ -198,7 +167,6 @@ public class Hand extends CardContainer
      */
     protected function handChanged (event :DataChangedEvent) :void
     {
-        //_ctx.log("hand data changed: " + this);
         setSerializedCards(event.newValue);
     }
 
@@ -235,9 +203,6 @@ public class Hand extends CardContainer
         player.loseCards(_ctx.state.selectedCards);
         _ctx.state.deselectCards();
         _ctx.notice("");
-        if (discardDownListener == null) {
-            _ctx.log("WTF discardDownListener is null in Hand.discardDownCardsSelected");
-        }
         discardDownListener();
     }
 

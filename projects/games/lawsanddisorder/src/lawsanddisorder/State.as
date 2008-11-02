@@ -43,7 +43,7 @@ public class State
     public function selectOpponent (listener :Function) :void
     {
         if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF mode is not default when selecting opponent.  Continuing...");
+            _ctx.error("mode is not default when selecting opponent.  Continuing...");
         }
 
         var message :String = "Please select an opponent.";
@@ -68,7 +68,7 @@ public class State
         message :String = null) :void
     {
         if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF mode is not default when selecting cards.  Continuing...");
+            _ctx.error("mode is not default when selecting cards.  Continuing...");
         }
 
         // default to the current player
@@ -122,7 +122,7 @@ public class State
     public function selectLaw (listener :Function) :void
     {
         if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF mode is not default when selecting law.  Continuing...");
+            _ctx.error("mode is not default when selecting law.  Continuing...");
         }
         var message :String = "Please select a law.";
         modeListener = listener;
@@ -171,7 +171,7 @@ public class State
     public function startEnactingLaws () :void
     {
         if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF mode was " + mode + " in startEnactingLaws.");
+            _ctx.error("mode was " + mode + " in startEnactingLaws.");
         }
         enactingLaws = true;
     }
@@ -182,7 +182,7 @@ public class State
     public function doneEnactingLaws () :void
     {
         if (mode != MODE_DEFAULT) {
-            _ctx.log("WTF done triggering laws in mode " + mode);
+            _ctx.error("done triggering laws in mode " + mode);
         }
         enactingLaws = false;
         waitingForOpponent = null;
@@ -233,7 +233,8 @@ public class State
      */
     public function hasFocus (displayNotices :Boolean = true) :Boolean
     {
-        if (mode == MODE_DEFAULT && _ctx.board.players.isMyTurn() && !enactingLaws) {
+        //if (mode == MODE_DEFAULT && _ctx.board.players.isMyTurn() && !enactingLaws) {
+        if (mode == MODE_DEFAULT && _ctx.player.isMyTurn && !enactingLaws) {
             return true;
         }
         if (enactingLaws && waitingForOpponent != null) {
@@ -246,15 +247,13 @@ public class State
                _ctx.notice("Busy performing another action.");
             }
         }
-        else if (!_ctx.control.game.isMyTurn()) {
+        else if (!_ctx.player.isMyTurn) {
             if (displayNotices) {
                _ctx.notice("Not your turn.");
             }
         }
-        else {
-            if (displayNotices) {
-               _ctx.notice("WTF The game is waiting for you.");
-            }
+        else if (displayNotices) {
+            // could be pressing end turn right after creating a law, don't say anything.
         }
         return false;
     }
@@ -326,7 +325,7 @@ public class State
             _ctx.notice(message);
             reminderText = "We're waiting for you.  ";
             if (modeReminderTimer != null) {
-                _ctx.log("WTF mode reminder timer is not null - continuing");
+                _ctx.error("mode reminder timer is not null - continuing");
                 modeReminderTimer.stop();
             }
         }
@@ -376,15 +375,15 @@ public class State
     {
         _ctx.notice("Selecting " + selectedGoal + " random card(s) for you.");
         if (selectCardsTargetPlayer == null)  {
-            _ctx.log("WTF select cards target player is null when selecting random cards.");
+            _ctx.error("select cards target player is null when selecting random cards.");
             return;
         }
         if (selectCardsTargetPlayer.hand.numCards < selectedGoal) {
-            _ctx.log("WTF not enough cards in hand to select.");
+            _ctx.error("not enough cards in hand to select.");
             return;
         }
         if (selectedCards == null) {
-            _ctx.log("WTF selected cards is null when selecting random cards");
+            _ctx.error("selected cards is null when selecting random cards");
             return;
         }
 

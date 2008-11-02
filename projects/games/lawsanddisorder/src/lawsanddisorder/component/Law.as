@@ -82,7 +82,8 @@ public class Law extends CardContainer
 
         // keep going only if we are the law subject, or are controlling an ai player subject
         var fromAIPlayer :AIPlayer = (fromPlayer as AIPlayer);
-        if (fromPlayer != _ctx.player && (fromAIPlayer == null || !fromAIPlayer.isController)) {
+        //if (fromPlayer != _ctx.player && (fromAIPlayer == null || !fromAIPlayer.isController)) {
+        if (fromPlayer != _ctx.player && (fromAIPlayer == null || !_ctx.player.isController)) {
             _ctx.state.waitingForOpponent = fromPlayer;
             return;
         }
@@ -140,7 +141,6 @@ public class Law extends CardContainer
             }
             else {
                 if (_ctx.board.deck.numCards < amount) {
-                    amount = _ctx.board.deck.numCards;
                     message = " would have got " + Content.cardCount(amount) + ", but there ";
                     if (amount == 1) {
                         message += "was only 1 left!";
@@ -149,6 +149,7 @@ public class Law extends CardContainer
                     } else {
                         message += "were only " + amount + " left!";
                     }
+                    amount = _ctx.board.deck.numCards;
                 } else {
                     message = " got " + Content.cardCount(amount);
                 }
@@ -232,7 +233,7 @@ public class Law extends CardContainer
     public function get when () :int
     {
         if (cards == null || cards.length == 0) {
-            _ctx.log("WTF cards empty when getting law.when");
+            _ctx.error("cards empty when getting law.when");
             return -1;
         }
         var lastCard :Card = cards[cards.length-1];
@@ -248,7 +249,7 @@ public class Law extends CardContainer
     public function get subject () :int
     {
         if (cards == null || cards.length == 0) {
-            _ctx.log("WTF cards empty when getting law.subject");
+            _ctx.error("cards empty when getting law.subject");
             return -1;
         }
         var firstCard :Card = cards[0];
@@ -272,13 +273,8 @@ public class Law extends CardContainer
         super.setSerializedCards(serializedCards, distributeData);
         
         if (cards == null || cards.length < 3) {
-            _ctx.log("WTF no or not enough cards duing law.setSerializedCards");
+            _ctx.error("no or not enough cards duing law.setSerializedCards");
             return;
-        }
-        
-        // highlight cards with the player's job
-        for each (var card :Card in cards) {
-            card.highlightJob();
         }
             
         if (cards[1].type == Card.GIVES && cards[2].group == Card.SUBJECT) {
@@ -314,26 +310,6 @@ public class Law extends CardContainer
     public function get highlighted () :Boolean {
         return _highlighted;
     }
-
-    /*
-     * Change whether the law appears selected, by highlighting
-     * all the cards in it.
-     *
-    public function set highlighted (value :Boolean) :void {
-        _highlighted = value;
-        if (!_highlighted) {
-            // perform de-highliting after a short delay
-            EventHandler.invokeLater(1, function () :void {
-                for each (var litCard :Card in cards) {
-                    litCard.highlighted = false;
-                }
-            });
-        } else {
-            for each (var unlitCard :Card in cards) {
-                unlitCard.highlighted = true;
-            }
-        }
-    }*/
     
     /**
      * Change whether the law appears selected, by highlighting

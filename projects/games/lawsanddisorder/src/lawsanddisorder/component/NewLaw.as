@@ -32,7 +32,7 @@ public class NewLaw extends CardContainer
         }
         
         if (cardList == null) {
-            _ctx.log("WTF cardList are null in isValidLaw");
+            _ctx.error("cardList are null in isValidLaw");
             return false;
         }
 
@@ -84,7 +84,7 @@ public class NewLaw extends CardContainer
     public function isGoodFor (cardList :Array = null) :Player
     {
         if (!isValidLaw(cardList)) {
-            _ctx.log("WTF law is invalid in NewLaw.isGoodFor");
+            _ctx.error("law is invalid in NewLaw.isGoodFor");
             return null;
         }
         
@@ -108,7 +108,7 @@ public class NewLaw extends CardContainer
     public function isBadFor (cardList :Array = null) :Player
     {
         if (!isValidLaw(cardList)) {
-            _ctx.log("WTF law is invalid in NewLaw.isBadFor");
+            _ctx.error("law is invalid in NewLaw.isBadFor");
             return null;
         }
 
@@ -228,7 +228,7 @@ public class NewLaw extends CardContainer
     protected function makeLawButtonClicked (event :MouseEvent) :void
     {
         if (!_enabled) {
-            _ctx.log("WTF tried to create a law while disabled");
+            _ctx.error("tried to create a law while disabled");
             return;
         }
         if (!isValidLaw()) {

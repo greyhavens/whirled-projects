@@ -32,6 +32,14 @@ public class Context
     }
 
     /**
+     * Log this debugging message
+     */
+    public function error (message :String) :void
+    {
+        log("ERROR: " + message);
+    }
+
+    /**
      * Display an in-game notice message to the player
      */
     public function notice (notice :String, alsoLog :Boolean = true) :void
@@ -125,11 +133,10 @@ public class Context
                 numAIPlayers = Math.min(maxAIPlayers, 6);
                 break;
             default:
-                log("WTF unknown value for 'AI Players': " + aiCountString);
+                error("unknown value for 'AI Players': " + aiCountString);
+                numAIPlayers = Math.min(maxAIPlayers, 6);
                 break;
         }
-        //log("Number of AI Players: " + numAIPlayers);
-        //log("Total players: " + (numHumanPlayers + numAIPlayers));
         numPlayers = numHumanPlayers + numAIPlayers;
         
         // multiplier for random ai behavior from 0 (smartest) to 100 (dumbest)
@@ -145,7 +152,8 @@ public class Context
                 aiDumbnessFactor = 100;
                 break;
             default:
-                log("WTF unknown value for 'AI Level': " + aiLevelString);
+                error("unknown value for 'AI Level': " + aiLevelString);
+                aiDumbnessFactor = 0;
                 break;
         }
         
@@ -162,7 +170,8 @@ public class Context
                 aiDelaySeconds = 1;
                 break;
             default:
-                log("WTF unknown value for 'AI Speed': " + aiSpeedString);
+                error("unknown value for 'AI Speed': " + aiSpeedString);
+                aiDelaySeconds = 1;
                 break;
         }
     }

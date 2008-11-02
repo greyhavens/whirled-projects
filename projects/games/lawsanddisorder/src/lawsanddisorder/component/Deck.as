@@ -103,6 +103,38 @@ public class Deck extends Component
             }
         
         } else {
+            
+            // Change the size of the deck based on the number of players
+            for (var i :int = 0; i < 2; i++) {
+                // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
+                addNewCards(2, Card.SUBJECT, Job.JUDGE);
+                addNewCards(2, Card.SUBJECT, Job.THIEF);
+                addNewCards(2, Card.SUBJECT, Job.BANKER);
+                addNewCards(2, Card.SUBJECT, Job.TRADER);
+                addNewCards(2, Card.SUBJECT, Job.PRIEST);
+                addNewCards(2, Card.SUBJECT, Job.DOCTOR);
+                // take out gives for 2 player games
+                if (_ctx.numPlayers == 2) {
+                    addNewCards(4, Card.VERB, Card.LOSES);
+                    addNewCards(3, Card.VERB, Card.GETS);
+                }
+                else {
+                    addNewCards(2, Card.VERB, Card.GIVES);
+                    addNewCards(3, Card.VERB, Card.LOSES);
+                    addNewCards(2, Card.VERB, Card.GETS);
+                }
+    
+                addNewCards(2, Card.OBJECT, Card.CARD, 1);
+                addNewCards(1, Card.OBJECT, Card.CARD, 2);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 1);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 2);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 3);
+                addNewCards(1, Card.OBJECT, Card.MONIE, 4);
+                addNewCards(1, Card.WHEN, Card.START_TURN);
+                addNewCards(1, Card.WHEN, Card.USE_ABILITY);
+                addNewCards(1, Card.WHEN, Card.CREATE_LAW);
+            }
+        /*
     
             // custom deck for testing
             for (var j :int = 0; j < 1; j++) {
@@ -112,14 +144,14 @@ public class Deck extends Component
                 //addNewCards(6, Card.SUBJECT, Job.BANKER);
                /// addNewCards(6, Card.SUBJECT, Job.TRADER);
                // addNewCards(6, Card.SUBJECT, Job.PRIEST);
-                addNewCards(10, Card.SUBJECT, Job.DOCTOR);
+                addNewCards(20, Card.SUBJECT, Job.DOCTOR);
                 // take out gives for 2 player games
     //            if (playerCount == 2) {
       //              addNewCards(4, Card.VERB, Card.LOSES);
         //            addNewCards(3, Card.VERB, Card.GETS);
           //      }
             //    else {
-                    addNewCards(7, Card.VERB, Card.GIVES);
+                    addNewCards(10, Card.VERB, Card.GIVES);
         //            addNewCards(3, Card.VERB, Card.LOSES);
           //          addNewCards(2, Card.VERB, Card.GETS);
               //  }
@@ -129,11 +161,12 @@ public class Deck extends Component
     //            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
       //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
         //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
-                addNewCards(6, Card.OBJECT, Card.MONIE, 4);
+                addNewCards(10, Card.OBJECT, Card.MONIE, 4);
                 //addNewCards(6, Card.WHEN, Card.START_TURN);
-                addNewCards(3, Card.WHEN, Card.USE_ABILITY);
+                addNewCards(10, Card.WHEN, Card.USE_ABILITY);
                 //addNewCards(3, Card.WHEN, Card.CREATE_LAW);
             }
+        */
         }
     }
     
@@ -182,19 +215,18 @@ public class Deck extends Component
 
         // warn that the game will be ending soon
         if (cards.length == 5) {
-            _ctx.broadcast("Only 5 cards left in the deck!", null, true);
+            _ctx.broadcast("Only 5 cards left in the deck, the game will end soon!", null, true);
         }
 
         // if the deck is ever empty after drawing from it, game ends
         if (numCards == 0) {
-            _ctx.board.endTurnButton.startLastRound();
+            _ctx.board.endTurnButton.lastTurn();
         }
         
         var card :Card = cardObjects[cardIndex];
         
         // tell all players to animate the card drawing
         _ctx.sendMessage(CARD_MOVED, new Array(card.id, DECK_ID, player.id));
-        //_ctx.sendMessage(CARD_DRAWN, player.id);
         
         return card;
     }
@@ -205,7 +237,6 @@ public class Deck extends Component
      */
     protected function cardMoved (event :MessageEvent) :void
     {
-        //_ctx.log("got card moved." + event.value);
         var card :Card = getCard((event.value as Array)[0] as int);
         var fromId :int = (event.value as Array)[1] as int;
         var toId :int = (event.value as Array)[2] as int;
@@ -218,7 +249,6 @@ public class Deck extends Component
             if (fromPlayer as Opponent) {
                 fromPoint = Opponent(fromPlayer).getGlobalHandLocation();
             } else {
-                // TODO don't animate here? but animate actual card face at move time?
                 fromPoint = fromPlayer.hand.localToGlobal(new Point(300,0));
             }
         }
@@ -231,12 +261,14 @@ public class Deck extends Component
             if (toPlayer as Opponent) {
                 toPoint = Opponent(toPlayer).getGlobalHandLocation();
             } else {
-                // TODO don't animate here? but animate actual card face at move time?
                 toPoint = toPlayer.hand.localToGlobal(new Point(300,0));
             }
         }
         
-        _ctx.board.animateMove(new Content.CARD_BACK(), fromPoint, toPoint);
+        //_ctx.board.animateMove(new Content.CARD_BACK(), fromPoint, toPoint);
+        var cardBack :Component = new Component(_ctx);
+        cardBack.addChild(new Content.CARD_BACK());
+        cardBack.animateMove(fromPoint, toPoint);
     }
     
     /**
@@ -365,18 +397,14 @@ public class Deck extends Component
             var job :Job = getJob(event.newValue);
             
             if (job == null) {
-                _ctx.log("WTF null job in Deck.jobsChanged for id " + event.newValue);
+                _ctx.error("null job in Deck.jobsChanged for id " + event.newValue);
                 return;
             }
-            if (player == job.player) {
-                // this may happen during setup
-                return;
-            }
-            var oldPlayer :Player = job.player;
             job.player = player;
+            player.job = job;
         
-            // highlight cards with the player's job
-            if (player == _ctx.player || oldPlayer == _ctx.player) {
+            // highlight all cards with the player's new job
+            if (player == _ctx.player) {
                 for each (var card :Card in cardObjects) {
                     card.highlightJob();
                 }
@@ -441,7 +469,7 @@ public class Deck extends Component
     public function switchJobs (job :Job, player :Player, duringSetup :Boolean = false) :void
     {
         if (job == null || player == null) {
-            _ctx.log("WTF null job or player? " + job + ", " + player);
+            _ctx.error("null job or player? " + job + ", " + player);
             return;
         }
 
@@ -450,14 +478,14 @@ public class Deck extends Component
         var oldPlayer :Player = getPlayerByJob(job);
 
         if (oldJob == null && oldPlayer != null) {
-            _ctx.log("WTF Trying to steal a player's job with no existing job!");
+            _ctx.error("Trying to steal a player's job with no existing job!");
             return;
         }
 
         // assign new job to player
         playerJobs = _ctx.eventHandler.getData(JOBS_DATA) as Array;
         if (playerJobs == null) {
-            _ctx.log("WTF playerjobs is null when swapping jobs?");
+            _ctx.error("playerjobs is null when swapping jobs?");
             return;
         }
         playerJobs[player.id] = job.id;
@@ -522,7 +550,7 @@ public class Deck extends Component
     public function getPlayerByJob (job :Job) :Player
     {
         if (job == null) {
-            _ctx.log("WTF null job in getPlayerByJob");
+            _ctx.error("null job in getPlayerByJob");
             return null;
         }
         var playerId :int = playerJobs.indexOf(job.id);

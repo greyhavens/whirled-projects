@@ -17,13 +17,10 @@ import lawsanddisorder.component.*;
  * Main game class handles game setup and players joining/leaving.
  * 
  * TODO logic & bugs:
- * make number of (including ai) players a variable set by players from game lobby
- * replace players with ai when they leave mid-game
- * test and finish implementing trophies
+ * move config options from the game lobby to inside the game for single player
  * improve ai handling of job powers
- * rematch super buggy deck issues
+ * flash errors after you quit and close the game
  * 
- *
  * TODO interface:
  * opponent hands go under buttons
  * make splash screen a 3 screen click through
@@ -31,6 +28,7 @@ import lawsanddisorder.component.*;
  * better explanation of each ability (in help?  tooltips?  with pictures?)
  * handling long names / special characters in names
  * twinkle on opponents when they use an ability
+ * cards appearing after the draw animation (may not fix, it's a pain)
  * 
  */
 [SWF(width="1000", height="550")]
@@ -38,9 +36,6 @@ public class LawsAndDisorder extends Sprite
 {
     /** Message that game is ending */
     public static const GAME_ENDING :String = "gameEnding";
-    
-    ///** The number of players in the game (2-6) */
-    //public static const NUM_PLAYERS :int = 3;
 
     /**
      * Constructor.  Set up game control, context, and board.  Add listeners for game events, and
@@ -112,66 +107,8 @@ public class LawsAndDisorder extends Sprite
 
         _ctx.notice("Welcome to Laws & Disorder!");
         _ctx.gameStarted = true;
+        //_ctx.log("in l&d, turn holder: " + _ctx.control.game.getTurnHolderId());
     }
-    
-    /*
-     * Fetch configuration settings and create a new board with them.
-     *
-    protected function createBoard () :Board
-    {
-        var numHumanPlayers = _ctx.control.game.seating.getPlayerIds().length;
-        var maxAIPlayers :int = 6 - numHumanPlayers;
-        
-        // how many ais will be added to a maximum of 6 total players
-        var config :Object = _ctx.control.game.getConfig();
-        var aiCountString :String = config["AI Players"];
-        var aiCount :int = maxAIPlayers;
-        switch (aiCountString) {
-            case "none":
-                aiCount = 0;
-                break;
-            case "1":
-                aiCount = Math.min(maxAIPlayers, 1);
-                break;
-            case "2":
-                aiCount = Math.min(maxAIPlayers, 2);
-                break;
-            case "3":
-                aiCount = Math.min(maxAIPlayers, 3);
-                break;
-            case "4":
-                aiCount = Math.min(maxAIPlayers, 4);
-                break;
-            case "fill to 6 seats":
-                aiCount = Math.min(maxAIPlayers, 6);
-                break;
-            default:
-                _ctx.log("WTF unknown value for 'AI Players': " + aiCountString);
-                break;
-        }
-        _ctx.log("Number of AI Players: " + aiCount);
-        
-        var aiLevelString :String = config["AI Level"];
-        var aiDumbnessFactor :int = 50;
-        switch (aiLevelString) {
-            case "dumb":
-                aiDumbnessFactor = 0;
-                break;
-            case "dumber":
-                aiDumbnessFactor = 50;
-                break;
-            case "dumbest":
-                aiDumbnessFactor = 100;
-                break;
-            default:
-                _ctx.log("WTF unknown value for 'AI Level': " + aiLevelString);
-                break;
-        }
-        _ctx.log("AI Dumbness Factor: " + aiDumbnessFactor);
-        
-        return new Board(_ctx);
-    }
-    */
 
     /**
      * Have the control player set the distributed data objects to blank arrays.
@@ -182,6 +119,7 @@ public class LawsAndDisorder extends Sprite
     protected function beginInit () :void
     {
         if (_ctx.control.game.amInControl()) {
+            _ctx.log("I am the controller");
             _ctx.control.net.addEventListener(
                 PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
             var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;
@@ -226,7 +164,10 @@ public class LawsAndDisorder extends Sprite
                     _ctx.board.setup();
                     // control player starts the first turn
                     if (_ctx.control.game.amInControl()) {
-                        _ctx.control.game.startNextTurn();
+                        //_ctx.control.game.startNextTurn();
+                        if (_ctx.player.isController) {
+                            _ctx.sendMessage(EventHandler.TURN_CHANGED);
+                        }
                     }
                 });
         }
@@ -239,27 +180,25 @@ public class LawsAndDisorder extends Sprite
     protected function occupantEntered (event :OccupantChangedEvent) :void
     {
         if (event.player && _ctx != null && _ctx.gameStarted) {
-            _ctx.log("WTF player joined the game partway through - impossible!");
+            _ctx.error("player joined the game partway through - impossible!");
         }
     }
 
     /**
      * Handler for dealing with players / watchers leaving
-     * TODO what if we're waiting for that player?
      */
     protected function occupantLeft (event :OccupantChangedEvent) :void
     {
         // player left before game started; start game over and hope that works
-        // TODO it won't though, because player objects are already created.
-        if (!_ctx.gameStarted && event.player) {
+        /*if (!_ctx.gameStarted && event.player) {
             if (_ctx != null) {
                 _ctx.notice("Player left before the game started.  Attempting to start over.");
             }
             if (_ctx.control.game.amInControl()) {
-                beginInit();
+                gameStarted();
             }
         }
-        else if (event.player) {
+        else */if (event.player) {
             _ctx.board.players.playerLeft(event.occupantId);
         }
     }

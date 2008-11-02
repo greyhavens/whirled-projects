@@ -29,6 +29,11 @@ public class Player extends Component
             isWatcher = true;
         }
         this.serverId = serverId;
+        
+        // controller plays for AI players and performs data init
+        if (ctx.control.game.getControllerId() == serverId) {
+            this.isController = true;
+        }
 
         // truncate player names for display on the opponent area, 10 chars maximum
         if (name == null) {
@@ -93,7 +98,7 @@ public class Player extends Component
     public function set job (job :Job) :void
     {
         if (job == null) {
-            _ctx.log("WTF null job in player.set job?");
+            // this seems to happen sometimes during init, ignore
             return;
         }
         // remove existing job
@@ -164,7 +169,7 @@ public class Player extends Component
         // fetch the job instance and make it our own
         var tmpJob :Job = _ctx.board.deck.getJob(jobId);
         if (tmpJob == null) {
-            _ctx.log("WTF job null in property change. JOB ID is: " + jobId);
+            _ctx.error("job null in property change. JOB ID is: " + jobId);
             return;
         }
         job = tmpJob;
@@ -192,7 +197,8 @@ public class Player extends Component
      */
     override public function toString () :String
     {
-        return "Player " + id + ": " + _name;
+        return name;
+        //return "Player " + id + ": " + _name;
     }
 
     /**
@@ -201,7 +207,7 @@ public class Player extends Component
     public function getMonies (moniesNum :int) :void
     {
         if (monies + moniesNum < 0) {
-            _ctx.log("WTF Player " + this + " would end up with negative monies!");
+            _ctx.error("Player " + this + " would end up with negative monies!");
             moniesNum = 0;
         }
         _ctx.eventHandler.setData(MONIES_DATA, monies + moniesNum, id);
@@ -276,11 +282,11 @@ public class Player extends Component
     public function giveCardsTo (cardsToGive :Array, toPlayer :Player) :void
     {
         if (cardsToGive == null) {
-            _ctx.log("WTF cardsToGive null in Player.giveCardsTo");
+            _ctx.error("cardsToGive null in Player.giveCardsTo");
             return;
         }
         if (toPlayer == null) {
-            _ctx.log("WTF toPlayer null in Player.giveCardsTo");
+            _ctx.error("toPlayer null in Player.giveCardsTo");
             return;
         }
         
@@ -367,6 +373,11 @@ public class Player extends Component
     public function get monies () :int {
         return _monies;
     }
+    
+    /** Return true if it is this player's turn */
+    public function get isMyTurn () :Boolean {
+        return _ctx.board.players.turnHolder == this;
+    }
 
     /** Is the player a real player or are they just watching? */
     public var isWatcher :Boolean = false;
@@ -376,6 +387,9 @@ public class Player extends Component
 
     /** Id assigned by the server; differs from their place at the table */
     public var serverId :int;
+    
+    /** True if this is the player who performs inits and controls AI players */
+    public var isController :Boolean;
 
     /** Can the player change jobs right now? */
     protected var _jobEnabled :Boolean;
