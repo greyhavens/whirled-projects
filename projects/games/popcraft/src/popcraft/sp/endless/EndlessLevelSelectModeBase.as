@@ -21,11 +21,9 @@ import popcraft.util.SpriteUtil;
 
 public class EndlessLevelSelectModeBase extends AppMode
 {
-    public function EndlessLevelSelectModeBase (mode :int, roundScores :Array = null,
-        multiplierStartLoc :Vector2 = null)
+    public function EndlessLevelSelectModeBase (mode :int,  multiplierStartLoc :Vector2 = null)
     {
         _mode = mode;
-        _roundScores = roundScores;
         _multiplierStartLoc = multiplierStartLoc;
     }
 
@@ -178,7 +176,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
         var showRoundScores :Array;
         if (_mode == INTERSTITIAL_MODE && mapIndex == EndlessGameContext.mapIndex) {
-            showRoundScores = _roundScores;
+            showRoundScores = this.scores;
         }
 
         var showScoreAndResources :Boolean = (_mode != INTERSTITIAL_MODE);
@@ -307,8 +305,12 @@ public class EndlessLevelSelectModeBase extends AppMode
         return true;
     }
 
+    protected function get scores () :Array
+    {
+        return null;
+    }
+
     protected var _mode :int;
-    protected var _roundScores :Array; // Array<PlayerScore>
     protected var _multiplierStartLoc :Vector2;
     protected var _saveViewLayer :Sprite;
     protected var _helpLayer :Sprite;
@@ -543,9 +545,9 @@ class SaveView extends SceneObject
                     var playerInfo :PlayerInfo = GameContext.playerInfos[score.playerIndex];
                     portrait.addChild(playerInfo.headshot);
                     scorePanel.visible = true;
-                    levelScoreText.text = "Resource score: " + score.resourceScore + "\n" +
-                        "Damage score: " + score.damageScore + "\n" +
-                        "Total score: " + score.totalScore;
+                    levelScoreText.text = "Resource score: " + score.resourceScoreThisRound + "\n" +
+                        "Damage score: " + score.damageScoreThisRound + "\n" +
+                        "Total score: " + score.totalScoreThisRound;
                 }
             }
 

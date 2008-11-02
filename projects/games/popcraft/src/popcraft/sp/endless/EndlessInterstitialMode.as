@@ -1,6 +1,7 @@
 package popcraft.sp.endless {
 
 import com.threerings.flash.Vector2;
+import com.whirled.game.GameSubControl;
 
 import popcraft.*;
 
@@ -8,20 +9,14 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
 {
     public function EndlessInterstitialMode (multiplierStartLoc :Vector2)
     {
-        var scores :Array;
-        if (GameContext.isSinglePlayerGame) {
-            scores = [
-                PlayerScore.create(GameContext.localPlayerIndex,
-                    EndlessGameContext.resourceScoreThisRound,
-                    EndlessGameContext.damageScoreThisRound)
-                ];
+        super(INTERSTITIAL_MODE, multiplierStartLoc);
+    }
 
-        } else {
-            scores = EndlessGameContext.playerMonitor.getScoresForRound(EndlessGameContext.roundId);
-        }
+    override protected function setup () :void
+    {
+        super.setup();
 
-        super(INTERSTITIAL_MODE, scores, multiplierStartLoc);
-
+        EndlessGameContext.endGameAndSendScores();
         onLevelLoaded(EndlessGameContext.level);
     }
 
@@ -48,6 +43,18 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
                 savedPlayerData.spells));
 
         return saves;
+    }
+
+    override protected function get scores () :Array
+    {
+        return (GameContext.isSinglePlayerGame ?
+            [ PlayerScore.create(GameContext.localPlayerIndex,
+                EndlessGameContext.resourceScore,
+                EndlessGameContext.damageScore,
+                EndlessGameContext.resourceScoreThisRound,
+                EndlessGameContext.damageScoreThisRound)
+            ] :
+            EndlessGameContext.playerMonitor.getScoresForRound(EndlessGameContext.roundId));
     }
 
     override protected function get enableNextPrevPlayButtons () :Boolean

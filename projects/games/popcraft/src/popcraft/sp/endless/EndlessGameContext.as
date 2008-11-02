@@ -1,5 +1,7 @@
 package popcraft.sp.endless {
 
+import com.whirled.game.GameSubControl;
+
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
 
@@ -17,7 +19,6 @@ public class EndlessGameContext
     public static var scoreMultiplier :Number;
     public static var mapIndex :int;
     public static var savedHumanPlayers :Array;
-    public static var gameStarted :Boolean;
     public static var roundId :int;
 
     public static function get totalScore () :int
@@ -30,9 +31,26 @@ public class EndlessGameContext
         return resourceScoreThisRound + damageScoreThisRound;
     }
 
-    public static function get isNewGame () :Boolean
+    public static function endGameAndSendScores () :void
     {
-        return !gameStarted;
+        if (GameContext.isSinglePlayerGame && AppContext.gameCtrl.isConnected()) {
+            AppContext.gameCtrl.game.endGameWithScore(
+                EndlessGameContext.totalScore,
+                Constants.SCORE_MODE_ENDLESS);
+
+        } else if (GameContext.isMultiplayerGame && SeatingManager.isLocalPlayerInControl) {
+            // convert PlayerScore objects to ints for reporting to the server
+            var finalScoreValues :Array = EndlessGameContext.playerMonitor.curRoundScores.map(
+                function (score :PlayerScore, index :int, arr :Array) :int {
+                    return (score != null ? score.totalScore : 0);
+                });
+
+            AppContext.gameCtrl.game.endGameWithScores(
+                SeatingManager.getPlayerIds(),
+                finalScoreValues,
+                GameSubControl.TO_EACH_THEIR_OWN,
+                Constants.SCORE_MODE_ENDLESS);
+        }
     }
 
     public static function resetGameData () :void
@@ -54,7 +72,6 @@ public class EndlessGameContext
             playerMonitor = new PlayerMonitor(SeatingManager.numPlayers);
         }
 
-        gameStarted = false;
         roundId = 0;
     }
 

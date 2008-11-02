@@ -8,10 +8,9 @@ import popcraft.sp.story.LevelSelectMode;
 
 public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 {
-    public function SpEndlessLevelSelectModeBase (mode :int, roundScores :Array = null,
-        multiplierStartLoc :Vector2 = null)
+    public function SpEndlessLevelSelectModeBase (mode :int,  multiplierStartLoc :Vector2 = null)
     {
-        super(mode, roundScores, multiplierStartLoc);
+        super(mode, multiplierStartLoc);
     }
 
     override protected function setup () :void

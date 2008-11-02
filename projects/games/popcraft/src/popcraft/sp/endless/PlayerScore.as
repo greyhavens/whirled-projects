@@ -2,11 +2,15 @@ package popcraft.sp.endless {
 
 import flash.utils.ByteArray;
 
+import popcraft.GameContext;
+
 public class PlayerScore
 {
     public var playerIndex :int;
     public var resourceScore :int;
     public var damageScore :int;
+    public var resourceScoreThisRound :int;
+    public var damageScoreThisRound :int;
     public var roundId :int;
 
     public function get totalScore () :int
@@ -14,13 +18,20 @@ public class PlayerScore
         return resourceScore + damageScore;
     }
 
+    public function get totalScoreThisRound () :int
+    {
+        return resourceScoreThisRound + damageScoreThisRound;
+    }
+
     public static function create (playerIndex :int, resourceScore :int, damageScore :int,
-        roundId :int = -1) :PlayerScore
+        resourceScoreThisRound :int, damageScoreThisRound :int, roundId :int = -1) :PlayerScore
     {
         var ps :PlayerScore = new PlayerScore();
         ps.playerIndex = playerIndex;
         ps.resourceScore = resourceScore;
         ps.damageScore = damageScore;
+        ps.resourceScoreThisRound = resourceScoreThisRound;
+        ps.damageScoreThisRound = damageScoreThisRound;
         ps.roundId = roundId;
         return ps;
     }
@@ -31,6 +42,8 @@ public class PlayerScore
         ba.writeByte(playerIndex);
         ba.writeInt(resourceScore);
         ba.writeInt(damageScore);
+        ba.writeInt(resourceScoreThisRound);
+        ba.writeInt(damageScoreThisRound);
         ba.writeShort(roundId);
         return ba;
     }
@@ -40,6 +53,8 @@ public class PlayerScore
         playerIndex = ba.readByte();
         resourceScore = ba.readInt();
         damageScore = ba.readInt();
+        resourceScoreThisRound = ba.readInt();
+        damageScoreThisRound = ba.readInt();
         roundId = ba.readShort();
     }
 
@@ -48,7 +63,18 @@ public class PlayerScore
         return "playerIndex=" + playerIndex +
             " resourceScore=" + resourceScore +
             " damageScore=" + damageScore +
+            " resourceScoreThisRound=" + resourceScoreThisRound +
+            " damageScoreThisRound=" + damageScoreThisRound +
             " roundId=" + roundId;
+    }
+
+    public function get isValid () :Boolean
+    {
+        return (playerIndex >= 0 &&
+            playerIndex < GameContext.numPlayers &&
+            totalScore >= 0 &&
+            totalScoreThisRound >= 0 &&
+            roundId >= 0);
     }
 }
 

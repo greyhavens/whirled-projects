@@ -68,7 +68,7 @@ public class EndlessGameMode extends GameMode
         }
 
         var scoreView :ScoreView = new ScoreView();
-        this.addObject(scoreView, GameContext.overlayLayer);
+        addObject(scoreView, GameContext.overlayLayer);
     }
 
     override protected function enter () :void
@@ -89,20 +89,19 @@ public class EndlessGameMode extends GameMode
         }
 
         if (!AppContext.gameCtrl.isConnected()) {
-            // if we're in standalone mode, start the game immediately
-            this.startGame();
-        } else if (GameContext.isSinglePlayerGame) {
-            // if this is a singleplayer game, start the game immediately,
-            // and tell the server we're playing the game so that coins can be awarded
-            this.startGame();
-            if (EndlessGameContext.isNewGame) {
-                AppContext.gameCtrl.game.playerReady();
-            }
+            // we're in standalone mode; start the game immediately
+            startGame();
 
-        } else if (EndlessGameContext.isNewGame) {
-            // if this is a new multiplayer game, start the game when the GAME_STARTED event
+        } else if (GameContext.isSinglePlayerGame) {
+            // this is a singleplayer game; start the game immediately,
+            // and tell the server we're playing the game so that coins can be awarded
+            AppContext.gameCtrl.game.playerReady();
+            startGame();
+
+        } else {
+            // this is a multiplayer game; start the game when the GAME_STARTED event
             // is received
-            this.registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+            registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
                 function (...ignored) :void {
                     startGame();
                 });
@@ -110,24 +109,9 @@ public class EndlessGameMode extends GameMode
             // we're ready!
             AppContext.gameCtrl.game.playerReady();
 
-        } else {
-            // If we've moved to the next map in an existing multiplayer game, start the game
-            // when all the players have arrived. Use the PlayerReadyMonitor for this purpose -
-            // this is functionally the same thing as waiting for the GAME_STARTED event, as above,
-            // but doesn't require us to end the current game
-            EndlessGameContext.playerMonitor.waitForAllPlayersReadyForCurRound(startGame);
-
-            // we're ready
-            EndlessGameContext.playerMonitor.reportLocalPlayerReadyForCurRound();
         }
 
         _readyToStart = true;
-    }
-
-    override protected function startGame () :void
-    {
-        EndlessGameContext.gameStarted = true;
-        super.startGame();
     }
 
     override protected function updateNetworkedObjects () :void
@@ -208,32 +192,19 @@ public class EndlessGameMode extends GameMode
     override protected function handleGameOver () :void
     {
         var audioFadeOutTime :Number = 0;
+        var nextMode :AppMode;
 
         // if we're switching maps, don't show the game-over screen, just switch to a new
         // endless game mode
         if (_switchingMaps) {
-            audioFadeOutTime = SWITCH_MAP_AUDIO_FADE_TIME;
-
             if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
                 AppContext.mainLoop.unwindToMode(
                     new EndlessGameMode(EndlessGameContext.level, null, false));
-            } else {
-                if (GameContext.isSinglePlayerGame) {
-                    //AppContext.mainLoop.pushMode(new EndlessInterstitialMode(_lastLiveComputerLoc));
-                    AppContext.mainLoop.pushMode(
-                        new EndlessInterstitialMode(_lastLiveComputerLoc));
-                } else {
-                    // This is a multiplayer game. Report our scores for this round to everybody,
-                    // so that the interstitial screen can display them, and wait for all scores
-                    // to be received before showing the interstitial.
-                    EndlessGameContext.playerMonitor.reportLocalPlayerRoundScore();
-                    EndlessGameContext.playerMonitor.waitForRoundScoresForCurRound(
-                        function () :void {
-                            AppContext.mainLoop.pushMode(new EndlessInterstitialMode(
-                                _lastLiveComputerLoc));
-                        });
-                }
+                return;
             }
+
+            audioFadeOutTime = SWITCH_MAP_AUDIO_FADE_TIME;
+            nextMode = new EndlessInterstitialMode(_lastLiveComputerLoc);
 
             // end-of-level trophies
             var mapIndex :int = EndlessGameContext.mapIndex;
@@ -258,20 +229,28 @@ public class EndlessGameMode extends GameMode
             audioFadeOutTime = GAME_OVER_AUDIO_FADE_TIME;
 
             if (GameContext.isSinglePlayerGame) {
-                AppContext.mainLoop.pushMode(new SpEndlessGameOverMode());
+                nextMode = new SpEndlessGameOverMode();
             } else {
                 // send our new saved games to everyone, in case the game is restarted.
                 EndlessMultiplayerConfig.setPlayerSavedGames(
                     SeatingManager.localPlayerSeat, AppContext.endlessLevelMgr.savedMpGames);
 
-                // Wait for everyone to report their scores so that the GameOverMode
-                // can call endGameWithScores
-                EndlessGameContext.playerMonitor.reportLocalPlayerFinalScore();
-                EndlessGameContext.playerMonitor.waitForFinalScores(
-                    function () :void {
-                        AppContext.mainLoop.pushMode(new MpEndlessGameOverMode());
-                    });
+                nextMode = new MpEndlessGameOverMode();
             }
+        }
+
+        if (GameContext.isMultiplayerGame) {
+            // In a multiplayer game, wait for everyone to report their scores so that the next mode
+            // can call endGameWithScores
+            EndlessGameContext.playerMonitor.reportLocalPlayerScore();
+            EndlessGameContext.playerMonitor.waitForScoresForCurRound(
+                function () :void {
+                    AppContext.mainLoop.pushMode(nextMode);
+                });
+
+        } else {
+            // otherwise, just move to the next mode immediately
+            AppContext.mainLoop.pushMode(nextMode);
         }
 
         GameContext.musicControls.fadeOut(audioFadeOutTime);
