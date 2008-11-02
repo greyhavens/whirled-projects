@@ -21,7 +21,6 @@ public class EndTurnButton extends Button
     public function EndTurnButton (ctx :Context, board :Board)
     {
         super(ctx);
-        //_ctx.eventHandler.addEventListener(EventHandler.TURN_CHANGED, turnChanged);
         _ctx.eventHandler.addMessageListener(EventHandler.TURN_CHANGED, turnChanged);
         addEventListener(MouseEvent.CLICK, endTurnButtonClicked);
         enabled = false;
@@ -109,25 +108,13 @@ public class EndTurnButton extends Button
      */
     protected function discardDownComplete () :void
     {
-        //var nextPlayer :Player = _ctx.board.players.nextPlayer;
-        
         // If this was the last turn of the game, end the game now.
         if (isLastTurn) {
             isLastTurn = false;
             _ctx.eventHandler.endGame();
             return;
         }
-
-        // If it is an AI's turn to go next, tell everyone instead of using game.startNextTurn
-        //if (nextPlayer as AIPlayer) {
-            // Pretend to be a server turn changed event
-            
-            // tell everyone the turn changed
         _ctx.sendMessage(EventHandler.TURN_CHANGED);
-            
-        //} else {
-        //    _ctx.control.game.startNextTurn();
-        //}
     }
     
     /**
@@ -136,7 +123,6 @@ public class EndTurnButton extends Button
      */
     protected function turnChanged (event :Event) :void
     {
-        //_ctx.log("turn changed.  game started?: "+ _ctx.gameStarted);
         // during rematches this is sent by the server before GAME_STARTED; ignore it
         if (!_ctx.gameStarted) {
             return;
@@ -151,8 +137,6 @@ public class EndTurnButton extends Button
             _ctx.notice("\nIt's " + _ctx.board.players.turnHolder.name + "'s turn.");
             // controller plays the AI turns
             if (_ctx.board.players.turnHolder as AIPlayer && _ctx.player.isController) {
-                
-            //if (_ctx.board.players.amControllingAI()) {
                 AIPlayer(_ctx.board.players.turnHolder).startTurn();
             }
         }
@@ -168,9 +152,6 @@ public class EndTurnButton extends Button
      */
     protected function startTurn () :void
     {
-        // tell the server that the turn changed as well, but shouldn't need to do this
-        //_ctx.control.game.startNextTurn();
-        
         // after 3 afk turns, skip the remainder of the player's turns
         if (booted) {
             _ctx.broadcast("Skipping " + _ctx.player.playerName + "'s turn after 3 strikes.");

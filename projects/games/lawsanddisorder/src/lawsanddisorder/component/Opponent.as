@@ -57,10 +57,6 @@ public class Opponent extends Player
      */
     override protected function initDisplay () :void
     {
-        // position hand for theif stealing events but do not display it
-        _hand.x = -550;
-        _hand.y = 0;
-
         var background :Sprite = new OPPONENT_BACKGROUND();
         addChild(background);
 
@@ -133,11 +129,15 @@ public class Opponent extends Player
      */
     public function set showHand (value :Boolean) :void
     {
-        if (value && !contains(hand)) {
-            addChild(hand);
+        if (value && !_ctx.board.contains(hand)) {
+            var handLocation :Point = new Point(-550, 0);
+            handLocation = _ctx.board.globalToLocal(this.localToGlobal(handLocation));
+            _hand.x = handLocation.x;
+            _hand.y = handLocation.y;
+            _ctx.board.addChild(hand);
         }
-        else if (!value && contains(hand)) {
-            removeChild(hand);
+        else if (!value && _ctx.board.contains(hand)) {
+            _ctx.board.removeChild(hand);
         }
     }
     

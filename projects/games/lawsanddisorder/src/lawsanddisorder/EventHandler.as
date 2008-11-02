@@ -48,21 +48,6 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        //_ctx.control.game.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
-        
-        // For AIs, the TURN_CHANGED event will come as a MessageReceivedEvent from the server
-        //addMessageListener(TURN_CHANGED, turnChanged);
-    }
-
-    /**
-     * Invoke the given function in delay seconds.
-     * TODO: replace with startTimer
-     */
-    public static function invokeLater (delaySeconds :int, func :Function) :void
-    {
-        var timer :Timer = new Timer(delaySeconds*1000, 1);
-        timer.addEventListener(TimerEvent.TIMER, func);
-        timer.start();
     }
 
     /**
@@ -85,65 +70,8 @@ public class EventHandler extends EventDispatcher
         _ctx.control.net.removeEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _ctx.control.net.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
         _ctx.control.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        //_ctx.control.game.removeEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
     }
-
-    /**
-     * Called when our distributed game state changes.
-     */
-    protected function propertyChanged (event :PropertyChangedEvent) :void
-    {
-        var key :String = event.name + "::" + "-1";
-        var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, -1);
-        dispatchDataEvent(key, dataEvent);
-    }
-
-    /**
-     * Called when an element of a distributed array changes.  Call each listener.
-     */
-    protected function elementChanged (event :ElementChangedEvent) :void
-    {
-        var key :String = event.name + "::" + event.index;
-        var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, event.index);
-        dispatchDataEvent(key, dataEvent);
-
-        // also send event to listeners who are inerested in a change to any or all elements
-        var allKey :String = event.name + "::" + "-1";
-        dispatchDataEvent(allKey, dataEvent);
-    }
-
-    /**
-     * Dispatch the given data changed event to listeners registered with the given key.
-     */
-    protected function dispatchDataEvent (key :String, event :DataChangedEvent) :void
-    {
-        var listeners :Array = _dataListeners.get(key);
-        if (listeners != null) {
-            // iterate through and perform each listener
-            for (var i :int = 0; i < listeners.length; i++) {
-                var listener :Function = listeners[i];
-                listener(event);
-            }
-        }
-    }
-
-    /**
-     * Called when a message comes in.  Call each listener function in order.
-     */
-    protected function messageReceived (event :MessageReceivedEvent) :void
-    {
-        // convert from Whirled event to our own to reduce dependencies
-        var messageEvent :MessageEvent = new MessageEvent(event.name, event.value);
-        var listeners :Array = _messageListeners.get(messageEvent.name);
-        if (listeners != null) {
-            // iterate through and perform each listener
-            for (var i :int = 0; i < listeners.length; i++) {
-                var listener :Function = listeners[i];
-                listener(messageEvent);
-            }
-        }
-    }
-
+    
     /**
      * Registers a function to be called when a distributed property is changed.
      */
@@ -251,6 +179,10 @@ public class EventHandler extends EventDispatcher
      */
     public function setData (propName :String, value :Object, index :int = -1, isDictionary :Boolean = false) :void
     {
+        if (!_ctx.control.isConnected()) {
+            return;
+        }
+        
         if (index > -1 && isDictionary) {
             _ctx.control.net.setIn(propName, index, value);
         }
@@ -302,31 +234,63 @@ public class EventHandler extends EventDispatcher
     {
         _ctx.notice("\nGame over - thanks for playing!");
     }
+    
+    /**
+     * Called when our distributed game state changes.
+     */
+    protected function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        var key :String = event.name + "::" + "-1";
+        var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, -1);
+        dispatchDataEvent(key, dataEvent);
+    }
 
     /**
-     * Dispatch an internal turn changed event because the turn has changed.
+     * Called when an element of a distributed array changes.  Call each listener.
      */
-    /* protected function turnChanged (event :Event) :void
+    protected function elementChanged (event :ElementChangedEvent) :void
     {
-        // during rematches this is sent by the server before GAME_STARTED; ignore it
-        if (!_ctx.gameStarted) {
-            return;
-        }
-        
-        // set the turnHolder before sending out the word to other components
-        if (_ctx.board.players.turnHolder == null) {
-            _ctx.board.players.calculateTurnHolder();
-        } else {
-            var nextPlayer :Player = _ctx.board.players.nextPlayer;
-            if (nextPlayer as AIPlayer) {
-                _ctx.board.players.calculateTurnHolder(nextPlayer);
-            } else {
-                _ctx.board.players.calculateTurnHolder();
+        var key :String = event.name + "::" + event.index;
+        var dataEvent :DataChangedEvent = new DataChangedEvent(event.name, event.oldValue, event.newValue, event.index);
+        dispatchDataEvent(key, dataEvent);
+
+        // also send event to listeners who are inerested in a change to any or all elements
+        var allKey :String = event.name + "::" + "-1";
+        dispatchDataEvent(allKey, dataEvent);
+    }
+
+    /**
+     * Dispatch the given data changed event to listeners registered with the given key.
+     */
+    protected function dispatchDataEvent (key :String, event :DataChangedEvent) :void
+    {
+        var listeners :Array = _dataListeners.get(key);
+        if (listeners != null) {
+            // iterate through and perform each listener
+            for (var i :int = 0; i < listeners.length; i++) {
+                var listener :Function = listeners[i];
+                listener(event);
             }
         }
-        dispatchEvent(new Event(TURN_CHANGED));
-    } */
-    
+    }
+
+    /**
+     * Called when a message comes in.  Call each listener function in order.
+     */
+    protected function messageReceived (event :MessageReceivedEvent) :void
+    {
+        // convert from Whirled event to our own to reduce dependencies
+        var messageEvent :MessageEvent = new MessageEvent(event.name, event.value);
+        var listeners :Array = _messageListeners.get(messageEvent.name);
+        if (listeners != null) {
+            // iterate through and perform each listener
+            for (var i :int = 0; i < listeners.length; i++) {
+                var listener :Function = listeners[i];
+                listener(messageEvent);
+            }
+        }
+    }
+
     /** Context */
     protected var _ctx :Context;
 

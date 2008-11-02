@@ -95,7 +95,7 @@ public class Board extends Sprite
         
         // version
         var version :TextField = new TextField();
-        version.text = "v 0.516"
+        version.text = "v " + LawsAndDisorder.VERSION;
         version.height = 20;
         version.y = 485;
         addChild(version);

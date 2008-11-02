@@ -208,7 +208,7 @@ public class MouseEventHandler
             // arrange cards to make room for the new card
             var mousePosition :Point = new Point(event.stageX, event.stageY);
             targetContainer.arrangeCards(mousePosition);
-            EventHandler.invokeLater(3, function () :void {targetContainer.arrangeCards();});
+            EventHandler.startTimer(3000, targetContainer.arrangeCards);
             return;
         }
 

@@ -28,6 +28,10 @@ public class Context
      */
     public function log (message :String) :void
     {
+        if (!control.isConnected()) {
+            return;
+        }
+        
         control.local.feedback(message + "\n");
     }
 
@@ -55,6 +59,10 @@ public class Context
     public function broadcast (message :String, player :Player = null, 
         displayInNotice :Boolean = false) :void
     {
+        if (!control.isConnected()) {
+            return;
+        }
+        
         var messageName :String = Notices.BROADCAST;
         if (displayInNotice) {
             messageName = Notices.BROADCAST_NOTICE;
@@ -74,6 +82,10 @@ public class Context
     public function broadcastOthers (message :String, notPlayer :Player = null, 
         displayInNotice :Boolean = false) :void
     {
+        if (!control.isConnected()) {
+            return;
+        }
+        
         if (notPlayer == null) {
             notPlayer = player;
         }
@@ -93,6 +105,10 @@ public class Context
      */
     public function sendMessage (type :String, value :* = "") :void
     {
+        if (!control.isConnected()) {
+            return;
+        }
+        
         control.net.sendMessage(type, value);
     }
     

@@ -319,8 +319,8 @@ public class Law extends CardContainer
     {
         _highlighted = value;
         if (delay) {
-            // perform de-highliting after a short delay
-            EventHandler.invokeLater(2, function () :void {
+            // perform de-highliting after a 2 second delay
+            EventHandler.startTimer(2000, function () :void {
                 for each (var litCard :Card in cards) {
                     litCard.highlighted = _highlighted;
                 }

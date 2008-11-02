@@ -10,6 +10,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import lawsanddisorder.component.*;
 
@@ -19,10 +20,8 @@ import lawsanddisorder.component.*;
  * TODO logic & bugs:
  * move config options from the game lobby to inside the game for single player
  * improve ai handling of job powers
- * flash errors after you quit and close the game
  * 
  * TODO interface:
- * opponent hands go under buttons
  * make splash screen a 3 screen click through
  * card mouseover tooltips, esp job powers?
  * better explanation of each ability (in help?  tooltips?  with pictures?)
@@ -36,6 +35,9 @@ public class LawsAndDisorder extends Sprite
 {
     /** Message that game is ending */
     public static const GAME_ENDING :String = "gameEnding";
+    
+    /** Game version for testing/debugging purposes */
+    public static const VERSION :String = "0.516";
 
     /**
      * Constructor.  Set up game control, context, and board.  Add listeners for game events, and
@@ -46,6 +48,17 @@ public class LawsAndDisorder extends Sprite
         // create context and game controller
         var control :GameControl = new GameControl(this, false);
         if (!control.isConnected()) {
+            var version :TextField = new TextField();
+            var format :TextFormat = new TextFormat();
+            format.size = 1000;
+            version.defaultTextFormat = format;
+            version.width = 600;
+            version.height = 150;
+            version.text = "v " + VERSION;
+            version.textColor = 0xFFFFFF;
+            version.x = 20;
+            version.y = 20;
+            addChild(version);
             return;
         }
         _ctx = new Context(control);

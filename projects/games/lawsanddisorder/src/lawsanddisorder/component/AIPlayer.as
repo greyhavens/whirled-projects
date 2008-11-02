@@ -90,7 +90,7 @@ public class AIPlayer extends Opponent
     public function doneEnactingLaws () :void
     {
         //_ctx.log(name + " has focus again, returning to play");
-        EventHandler.invokeLater(_ctx.aiDelaySeconds, play);
+        EventHandler.startTimer(_ctx.aiDelaySeconds * 1000, play);
     }
     
     /**
@@ -99,7 +99,7 @@ public class AIPlayer extends Opponent
      * the selected action.  This function will be called again once the action is complete,
      * until no other options are available or the AI decides to end their turn.
      */
-    protected function play (timerEvent :Object = null) :void
+    protected function play () :void
     {
         if (!canPlay) {
             _ctx.log("AIPlayer has been told to halt, stopping.");
@@ -306,7 +306,7 @@ public class AIPlayer extends Opponent
         hand.removeCards(new Array(card));
         var newJob :Job = _ctx.board.deck.getJob(card.type);
         _ctx.board.deck.switchJobs(newJob, this);
-        EventHandler.invokeLater(_ctx.aiDelaySeconds, play);
+        EventHandler.startTimer(_ctx.aiDelaySeconds * 1000, play);
     }
     
     /**
