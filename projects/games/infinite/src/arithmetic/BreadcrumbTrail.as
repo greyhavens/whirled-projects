@@ -35,11 +35,12 @@ package arithmetic
 		public function visit (coords:BoardCoordinates) :Neighborhood 
 		{
 			const unmapped:Neighborhood = new Neighborhood();
-			for each (var hood:String in coords.vicinity.neighborhood)
+			for each (var hood:Vicinity in coords.vicinity.neighborhood)
 			{
-				if (_visited[hood] == null) {
+				var key:String = hood.key();
+				if (_visited[key] == null) {
 					unmapped.add(hood);
-					_visited[hood] = true;
+					_visited[key] = true;
 				}
 			}
 			return unmapped;

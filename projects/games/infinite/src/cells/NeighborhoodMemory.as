@@ -1,6 +1,7 @@
 package cells
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.Vicinity;
 	
 	import flash.utils.Dictionary;
 	
@@ -15,13 +16,13 @@ package cells
         public function remember (cell:Cell) :void
         {
         	_cells[cell.position.key] = cell;
-        	findStore(cell.position.vicinity.key()).remember(cell);
+        	findStore(cell.position.vicinity).remember(cell);
         }
         
         public function forget (cell:Cell) :void
         {
         	delete _cells[cell.position.key]
-        	findStore(cell.position.vicinity.key()).forget(cell);
+        	findStore(cell.position.vicinity).forget(cell);
         }
         
         public function recall (position:BoardCoordinates) :Cell
@@ -29,17 +30,18 @@ package cells
         	return _cells[position.key] as Cell;
         }
         
-        public function inVicinity (vicinity:String) :Array
+        public function inVicinity (vicinity:Vicinity) :Array
         {
         	return findStore(vicinity).array;
         }
         
-        protected function findStore (vicinity:String) :Store
+        protected function findStore (vicinity:Vicinity) :Store
         {
-        	var store:Store = _vicinities[vicinity] as Store;
+        	const key:String = vicinity.key();
+        	var store:Store = _vicinities[key] as Store;
         	if (store == null) {
         		store = new Store();
-        		_vicinities[vicinity] = store;
+        		_vicinities[key] = store;
         	}
         	return store;
         }

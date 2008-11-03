@@ -1,6 +1,7 @@
 package world
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.Vicinity;
 	
 	import cells.NeighborhoodMemory;
 	
@@ -40,7 +41,7 @@ package world
 		public function neighborhood (hood:Neighborhood) :CellUpdate
 		{
 			const update:CellUpdate = new CellUpdate();
-			for each (var vicinity:String in hood) {
+			for each (var vicinity:Vicinity in hood) {
 				update.addCells(_changed.inVicinity(vicinity));
 			}
 			return update;

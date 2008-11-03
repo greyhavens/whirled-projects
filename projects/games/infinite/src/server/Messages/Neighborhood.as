@@ -1,5 +1,7 @@
 package server.Messages
 {
+	import arithmetic.Vicinity;
+	
 	import flash.utils.ByteArray;
 	
 	public class Neighborhood implements Serializable
@@ -13,15 +15,15 @@ package server.Messages
         	return _vicinities.length <= 0;
         }
 
-        public function add(vicinity:String) :void
+        public function add(vicinity:Vicinity) :void
         {
         	_vicinities.push(vicinity);
         }
         
         public function writeToArray (array:ByteArray) :ByteArray
         {
-            for each (var vicinity:String in _vicinities) {
-            	array.writeUTF(vicinity);
+            for each (var vicinity:Vicinity in _vicinities) {
+            	vicinity.writeToArray(array);
             }
             return array;
         }
@@ -30,7 +32,7 @@ package server.Messages
         {
         	const hood:Neighborhood = new Neighborhood();
         	while (array.bytesAvailable) {
-        		hood.add(array.readUTF());
+        		hood.add(Vicinity.readFromArray(array));
         	}
         	return hood;
         }

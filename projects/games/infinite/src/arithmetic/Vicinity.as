@@ -1,12 +1,38 @@
 package arithmetic
 {
-	public class Vicinity
+	import flash.utils.ByteArray;
+	
+	import server.Messages.Serializable;
+	
+	public class Vicinity implements Serializable
 	{
-		public function Vicinity(coords:BoardCoordinates)
+		public function Vicinity(x:int, y:int)
 		{
-            _x = coords.x >> SCALE;
-            _y = coords.y >> SCALE;
+			_x = x;
+			_y = y;
 		}
+        
+        public static function fromCoordinates(coords:BoardCoordinates) :Vicinity
+        {
+        	return new Vicinity(coords.x >> SCALE, coords.y >> SCALE);        	
+        }
+        
+        /**
+        * Return the origin of the region that this vicinity defines (i.e. the top
+        * left corner of the square, in board coordinates);
+        */
+        public function get origin () :BoardCoordinates
+        {
+        	return new BoardCoordinates(_x << SCALE, _y << SCALE);
+        }
+        
+        public function translate(v:Vector) :Vicinity
+        {
+        	return new Vicinity(
+        	   _x + v.dx,
+        	   _y + v.dy
+        	);
+        }
         
         protected function code (x:int, y:int) :String
         {
@@ -29,17 +55,30 @@ package arithmetic
         		return neighbors;
         	}
         	
-            neighbors = new Array();            
-            neighbors.push(code(_x-1, _y-1));
-            neighbors.push(code(_x,_y-1));
-            neighbors.push(code(_x+1, _y-1));
-            neighbors.push(code(_x-1, _y));
-            neighbors.push(code(_x,_y));
-            neighbors.push(code(_x+1, _y));
-            neighbors.push(code(_x-1, _y+1));
-            neighbors.push(code(_x,_y+1));
-            neighbors.push(code(_x+1, _y+1));
+            neighbors = new Array();
+            neighbors.push(translate(Vector.NE));
+            neighbors.push(translate(Vector.N));
+            neighbors.push(translate(Vector.NW));
+            neighbors.push(translate(Vector.E));
+            neighbors.push(this);
+            neighbors.push(translate(Vector.W));
+            neighbors.push(translate(Vector.SE));
+            neighbors.push(translate(Vector.S));
+            neighbors.push(translate(Vector.SW));
+            
             return neighbors;
+        }
+ 
+        public function writeToArray (array:ByteArray) :ByteArray
+        {
+        	array.writeInt(_x);
+        	array.writeInt(_y);
+        	return array;
+        }
+        
+        public static function readFromArray (array:ByteArray) :Vicinity
+        {
+        	return new Vicinity(array.readInt(), array.readInt());
         }
                 
         protected var _x:int;

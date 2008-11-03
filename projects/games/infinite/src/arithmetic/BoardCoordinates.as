@@ -65,7 +65,7 @@ package arithmetic
 		
 		public function get vicinity () :Vicinity 
 		{
-			return new Vicinity(this);
+			return Vicinity.fromCoordinates(this);
 		}
 		
 		public function writeToArray(array:ByteArray) :ByteArray
