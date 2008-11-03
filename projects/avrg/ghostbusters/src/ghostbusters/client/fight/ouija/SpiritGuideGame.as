@@ -41,7 +41,12 @@ public class SpiritGuideGame extends MicrogameMode
 
     override public function get isDone () :Boolean
     {
-        return (_done && !WinLoseNotification.isPlaying);
+        return _done;
+    }
+
+    override public function get isNotifying () :Boolean
+    {
+        return WinLoseNotification.isPlaying;
     }
 
     override public function get gameResult () :MicrogameResult

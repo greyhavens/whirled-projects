@@ -65,6 +65,11 @@ public class MicrogameMode extends AppMode
         throw new Error("isDone() is not implemented!");
     }
 
+    public function get isNotifying () :Boolean
+    {
+        throw new Error("isNotifying() is not implemented!");
+    }
+
     protected var _difficulty :int;
     protected var _context :MicrogameContext;
 
