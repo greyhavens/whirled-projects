@@ -72,6 +72,18 @@ public class GameContext
 
     public static var winningTeamId :int;
 
+    public static function getTeamSize (teamId :int) :int
+    {
+        var size :int;
+        for each (var playerInfo :PlayerInfo in playerInfos) {
+            if (playerInfo.teamId == teamId) {
+                size += 1;
+            }
+        }
+
+        return size;
+    }
+
     public static function get canResurrect () :Boolean
     {
         return (gameType == GAME_TYPE_ENDLESS_MP);
