@@ -10,7 +10,6 @@ import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.*;
 import com.whirled.game.OccupantChangedEvent;
-import com.whirled.game.StateChangedEvent;
 
 import flash.display.DisplayObjectContainer;
 import flash.geom.Point;
@@ -210,7 +209,13 @@ public class GameMode extends TransitionMode
         // subclasses create the players in this function
         this.createPlayers();
 
-        this.updateTargetEnemyBadgeLocation(GameContext.localPlayerInfo.targetedEnemy.playerIndex);
+        // create the TargetWorkshopBadges for all players on the local player's team
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            if (playerInfo.teamId == GameContext.localPlayerInfo.teamId) {
+                // the badge will attach itself to the correct workshop
+                addObject(new TargetWorkshopBadge(playerInfo));
+            }
+        }
     }
 
     protected function setupBattle () :void
@@ -585,20 +590,6 @@ public class GameMode extends TransitionMode
         var enemyInfo :PlayerInfo = GameContext.playerInfos[targetEnemyId];
 
         playerInfo.targetedEnemy = enemyInfo;
-
-        if (playerIndex == GameContext.localPlayerIndex) {
-            this.updateTargetEnemyBadgeLocation(targetEnemyId);
-        }
-    }
-
-    protected function updateTargetEnemyBadgeLocation (targetEnemyId :int) :void
-    {
-        // move the "target enemy" badge to the correct base
-        var baseViews :Array = WorkshopView.getAll();
-        for each (var baseView :WorkshopView in baseViews) {
-            baseView.targetEnemyBadgeVisible =
-                (baseView.workshop.owningPlayerIndex == targetEnemyId);
-        }
     }
 
     public function workshopClicked (workshopView :WorkshopView) :void
@@ -610,10 +601,6 @@ public class GameMode extends TransitionMode
 
         if (localPlayerInfo.teamId != targetInfo.teamId &&
             localPlayerInfo.targetedEnemy.playerIndex != targetId) {
-            // update the "target enemy badge" location immediately, even though
-            // the change won't be reflected in the game logic until the message round-trips
-            this.updateTargetEnemyBadgeLocation(targetId);
-
             // send a message to everyone
             this.sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
         }

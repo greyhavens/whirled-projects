@@ -1,5 +1,6 @@
 package popcraft.battle.view {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
@@ -47,11 +48,7 @@ public class WorkshopView extends BattlefieldSprite
             this.recolorWorkshop(_workshop);
         }
 
-        // remove the "target" badge - we'll re-add it when necessary
-        _targetBadge = _movie["target"];
-        _targetBadgeIndex = _movie.getChildIndex(_targetBadge);
-        _targetBadgeVisible = false;
-        _movie.removeChild(_targetBadge);
+        _targetAttach = _movie["target_attach"];
 
         _sprite.addChild(_movie);
 
@@ -95,9 +92,43 @@ public class WorkshopView extends BattlefieldSprite
                 GameContext.gameMode.workshopClicked(thisObj);
             });
 
-        this.targetEnemyBadgeVisible = false;
-
         this.updateWorkshopLocation();
+    }
+
+    public function addTargetWorkshopBadge (badge :TargetWorkshopBadge) :void
+    {
+        _targetBadges.push(badge);
+        updateTargetWorkshopBadges();
+    }
+
+    public function removeTargetWorkshopBadge (badge :TargetWorkshopBadge) :void
+    {
+        ArrayUtil.removeFirst(_targetBadges, badge);
+        updateTargetWorkshopBadges();
+    }
+
+    protected function updateTargetWorkshopBadges () :void
+    {
+        if (_targetBadgeParent != null) {
+            _targetAttach.removeChild(_targetBadgeParent);
+            _targetBadgeParent = null;
+        }
+
+        if (_targetBadges.length > 0) {
+            _targetBadgeParent = SpriteUtil.createSprite();
+            var xOffset :Number = TARGET_BADGE_X_OFFSET;
+            for each (var badge :TargetWorkshopBadge in _targetBadges) {
+                badge.x = xOffset;
+                _targetBadgeParent.addChild(badge.displayObject);
+                xOffset += TARGET_BADGE_X_OFFSET;
+            }
+
+            var width :Number = (_targetBadges.length * TARGET_BADGE_WIDTH) -
+                ((_targetBadges.length - 1) * TARGET_BADGE_X_OFFSET);
+
+            _targetBadgeParent.x = -width * 0.5;
+            _targetAttach.addChild(_targetBadgeParent);
+        }
     }
 
     protected function setBurning () :void
@@ -301,17 +332,6 @@ public class WorkshopView extends BattlefieldSprite
         GameContext.playGameSound(soundName);
     }
 
-    public function set targetEnemyBadgeVisible (val :Boolean) :void
-    {
-        if (val && !_targetBadgeVisible) {
-            _movie.addChildAt(_targetBadge, _targetBadgeIndex);
-        } else if (!val && _targetBadgeVisible) {
-            _movie.removeChild(_targetBadge);
-        }
-
-        _targetBadgeVisible = val;
-    }
-
     override public function getObjectGroup (groupNum :int) :String
     {
         switch (groupNum) {
@@ -329,9 +349,9 @@ public class WorkshopView extends BattlefieldSprite
     protected var _clickableSprite :Sprite = SpriteUtil.createSprite(true, true);
     protected var _movie :MovieClip;
     protected var _workshop :MovieClip;
-    protected var _targetBadge :MovieClip;
-    protected var _targetBadgeIndex :int;
-    protected var _targetBadgeVisible :Boolean;
+    protected var _targetAttach :MovieClip;
+    protected var _targetBadgeParent :Sprite;
+    protected var _targetBadges :Array = [];
     protected var _unit :WorkshopUnit;
 
     protected var _lastHealth :Number;
@@ -360,6 +380,8 @@ public class WorkshopView extends BattlefieldSprite
     protected static const DEBRIS_INTERVAL_MIN :Number = 0.5;
     protected static const NAME_PREFIX :String = "WorkshopView_";
 
+    protected static const TARGET_BADGE_WIDTH :Number = 25;
+    protected static const TARGET_BADGE_X_OFFSET :Number = 12;
 }
 
 }
