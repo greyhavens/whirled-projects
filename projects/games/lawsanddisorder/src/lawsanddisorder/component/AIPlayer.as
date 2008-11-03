@@ -37,6 +37,7 @@ public class AIPlayer extends Opponent
     
     public function startTurn() :void
     {
+        //_ctx.log("AIPlayer.startTurn: " + this);
         canPlay = true;
         hand.drawCard(Deck.CARDS_AT_START_OF_TURN);
         

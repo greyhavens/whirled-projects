@@ -44,18 +44,13 @@ public class Hand extends CardContainer
     }
 
     /**
-     * Rearrange hand when cards are added or subtracted
-     */
-    override protected function updateDisplay () :void
-    {
-        arrangeCards();
-    }
-
-    /**
      * Draw a card (or X cards, if numCards is provided) from the deck.
      */
     public function drawCard (numCards :int = 1) :void
     {
+        if (numCards < 1) {
+            return;
+        }
         // draw cards a few miliseconds apart so they will animate seperately
         EventHandler.startTimer(20, 
             function () :void {
@@ -81,16 +76,7 @@ public class Hand extends CardContainer
     }
 
     /**
-     * Called whenever distributed card data needs updating
-     */
-    override protected function setDistributedData () :void
-    {
-        _ctx.eventHandler.setData(HAND_DATA, getSerializedCards(), player.id);
-    }
-
-    /**
      * Public function to allow setting distributed hand data
-     * TODO make setDistributedData public or find another solution
      */
     public function setDistributedHandData () :void
     {
@@ -121,7 +107,6 @@ public class Hand extends CardContainer
 
     /**
      * Shift cards out of the way as another card is being dragged over them.
-     * TODO move this to CardContainer for both Hand and NewLaw
      */
     override public function arrangeCards (point :Point = null) :void
     {
@@ -162,15 +147,6 @@ public class Hand extends CardContainer
     }
 
     /**
-     * Handler for changes to distributed hand data.  If it's data for this hand,
-     * update the hand display.
-     */
-    protected function handChanged (event :DataChangedEvent) :void
-    {
-        setSerializedCards(event.newValue);
-    }
-
-    /**
      * If player has more than the maximum allowed number of cards in their hand, force them to
      * select and discard the excess number of cards.  When finished, call the listener function.
      */
@@ -181,6 +157,7 @@ public class Hand extends CardContainer
             return;
         }
         var numCards :int = cards.length - MAX_HAND_SIZE;
+        discardDownListener = listener;
         
         if (autoDiscard) {
             _ctx.notice("You had too many cards, and lost " + Content.cardCount(numCards) + 
@@ -190,20 +167,8 @@ public class Hand extends CardContainer
         } else {
             var message :String = "You have too many cards, please pick " + numCards + 
                 " to lose.";
-            discardDownListener = listener;
             _ctx.state.selectCards(numCards, discardDownCardsSelected, null, message);
         }
-    }
-
-    /**
-     * Called when the player has selected cards to be discarded.
-     */
-    protected function discardDownCardsSelected () :void
-    {
-        player.loseCards(_ctx.state.selectedCards);
-        _ctx.state.deselectCards();
-        _ctx.notice("");
-        discardDownListener();
     }
 
     /**
@@ -242,6 +207,44 @@ public class Hand extends CardContainer
         return randomCards;
     }
 
+    /**
+     * Rearrange hand when cards are added or subtracted
+     */
+    override protected function updateDisplay () :void
+    {
+        arrangeCards();
+    }
+
+    /**
+     * Called whenever distributed card data needs updating
+     */
+    override protected function setDistributedData () :void
+    {
+        _ctx.eventHandler.setData(HAND_DATA, getSerializedCards(), player.id);
+    }
+
+    /**
+     * Handler for changes to distributed hand data.  If it's data for this hand,
+     * update the hand display.
+     */
+    protected function handChanged (event :DataChangedEvent) :void
+    {
+        setSerializedCards(event.newValue);
+    }
+
+    /**
+     * Called when the player has selected cards to be discarded.
+     */
+    protected function discardDownCardsSelected () :void
+    {
+        player.loseCards(_ctx.state.selectedCards);
+        _ctx.state.deselectCards();
+        _ctx.notice("");
+        if (discardDownListener != null) {
+            discardDownListener();
+        }
+    }
+    
     /** Record the listener function while selecting cards to discard. */
     protected var discardDownListener :Function;
 

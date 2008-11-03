@@ -239,7 +239,6 @@ public class Player extends Component
 
     /**
      * Draw X cards from the deck and add them to the player's hand
-     * TODO pick a better name like getsCards or giveCards or recieveCards and rename getMonies too
      */
     public function getCards (cardsNum :int) :void
     {
@@ -256,15 +255,13 @@ public class Player extends Component
         }
         hand.removeCards(cardsToLose);
 
-        // TODO add delay
         for each (var card :Card in cardsToLose) {
             _ctx.sendMessage(Deck.CARD_MOVED, new Array(card.id, this.id, Deck.DECK_ID));
-        } 
+        }
     }
 
     /**
      * Remove X cards from the player's hand
-     * TODO delete
      */
     public function loseCards (cardsToLose :Array) :void
     {
@@ -273,7 +270,6 @@ public class Player extends Component
         }
         // will set display and distributed data
         hand.removeCards(cardsToLose);
-        //_ctx.sendMessage(Deck.CARD_DISCARDED, id);
     }
 
     /**
@@ -297,7 +293,6 @@ public class Player extends Component
         hand.removeCards(cardsToGive);
         toPlayer.hand.addCards(cardsToGive);
 
-        // TODO add delay
         for each (var card :Card in cardsToGive) {
             _ctx.sendMessage(Deck.CARD_MOVED, new Array(card.id, this.id, toPlayer.id));
         } 

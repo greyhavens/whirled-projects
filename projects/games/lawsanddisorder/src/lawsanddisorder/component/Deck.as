@@ -36,6 +36,7 @@ public class Deck extends Component
      */
     public function Deck (ctx :Context)
     {
+        ctx.log("Deck created.");
         super(ctx);
 
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
@@ -190,6 +191,7 @@ public class Deck extends Component
      */
     public function setup () :void
     {
+        //_ctx.log("Deck.setup");
         // populate the deck
         cards = new Array();
         for each (var card :Card in cardObjects) {
@@ -205,6 +207,7 @@ public class Deck extends Component
      */
     public function drawCard (player :Player) :Card
     {
+        //_ctx.log("Deck.drawCard");
         // no cards in deck to draw
         if (numCards == 0) {
             return null;
@@ -240,6 +243,7 @@ public class Deck extends Component
         var card :Card = getCard((event.value as Array)[0] as int);
         var fromId :int = (event.value as Array)[1] as int;
         var toId :int = (event.value as Array)[2] as int;
+        //_ctx.log("Deck.cardMoved from " + fromId + " to " + toId);
         
         var fromPoint :Point;
         if (fromId == DECK_ID) {
@@ -277,6 +281,7 @@ public class Deck extends Component
      */
     public function drawStartingHand (numCards :int) :Array
     {
+        //_ctx.log("Deck.drawStartingHand");
         var numSubjects :int = 0;
         var numObjects :int = 0;
         var numVerbs :int = 0;

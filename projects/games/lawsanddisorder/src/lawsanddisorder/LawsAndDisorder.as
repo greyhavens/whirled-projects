@@ -37,7 +37,7 @@ public class LawsAndDisorder extends Sprite
     public static const GAME_ENDING :String = "gameEnding";
     
     /** Game version for testing/debugging purposes */
-    public static const VERSION :String = "0.516";
+    public static const VERSION :String = "0.517";
 
     /**
      * Constructor.  Set up game control, context, and board.  Add listeners for game events, and
@@ -132,7 +132,7 @@ public class LawsAndDisorder extends Sprite
     protected function beginInit () :void
     {
         if (_ctx.control.game.amInControl()) {
-            _ctx.log("I am the controller");
+            //_ctx.log("I am the controller");
             _ctx.control.net.addEventListener(
                 PropertyChangedEvent.PROPERTY_CHANGED, initPropertyChanged);
             var playerCount :int = _ctx.control.game.seating.getPlayerIds().length;

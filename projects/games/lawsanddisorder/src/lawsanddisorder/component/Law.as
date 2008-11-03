@@ -142,18 +142,20 @@ public class Law extends CardContainer
             else {
                 if (_ctx.board.deck.numCards < amount) {
                     message = " would have got " + Content.cardCount(amount) + ", but there ";
-                    if (amount == 1) {
+                    if (_ctx.board.deck.numCards == 1) {
                         message += "was only 1 left!";
-                    } else if (amount == 0) {
+                    } else if (_ctx.board.deck.numCards == 0) {
                         message += "were none left!";
                     } else {
-                        message += "were only " + amount + " left!";
+                        message += "were only " + _ctx.board.deck.numCards + " left!";
                     }
                     amount = _ctx.board.deck.numCards;
                 } else {
                     message = " got " + Content.cardCount(amount);
                 }
-                fromPlayer.getCards(amount);
+                if (amount > 0) {
+                    fromPlayer.getCards(amount);
+                }
             }
         }
 

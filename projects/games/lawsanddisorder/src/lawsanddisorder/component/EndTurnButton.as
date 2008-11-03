@@ -98,7 +98,13 @@ public class EndTurnButton extends Button
         enabled = false;
         _ctx.eventHandler.dispatchEvent(new Event(EventHandler.MY_TURN_ENDED));
         _ctx.player.jobEnabled = false;
-        _ctx.player.hand.discardDown(discardDownComplete, autoDiscard);
+        
+        if (isLastTurn) {
+            // skip to the punch
+            discardDownComplete();
+        } else {
+            _ctx.player.hand.discardDown(discardDownComplete, autoDiscard);
+        }
     }
 
     /**
@@ -123,6 +129,7 @@ public class EndTurnButton extends Button
      */
     protected function turnChanged (event :Event) :void
     {
+        //_ctx.log("EndTurnButton.turnChanged");
         // during rematches this is sent by the server before GAME_STARTED; ignore it
         if (!_ctx.gameStarted) {
             return;
@@ -152,6 +159,7 @@ public class EndTurnButton extends Button
      */
     protected function startTurn () :void
     {
+        //_ctx.log("EndTurnButton.startTurn");
         // after 3 afk turns, skip the remainder of the player's turns
         if (booted) {
             _ctx.broadcast("Skipping " + _ctx.player.playerName + "'s turn after 3 strikes.");

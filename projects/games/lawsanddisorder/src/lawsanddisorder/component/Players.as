@@ -138,38 +138,7 @@ public class Players extends Component
             turnHolder = nextPlayer;
         } else {
             turnHolder = playerObjects[0];
-            // first turn of the game, fetch the turn holder from the server
-            /* var serverId :int = _ctx.control.game.getTurnHolderId();
-            _ctx.log("turn holder server id " + serverId + " , playerobjects: " + playerObjects.length);
-            for (var i :int = 0; i < playerObjects.length; i++) {
-                var player :Player = playerObjects[i];
-                _ctx.log("player serverid " + player.serverId);
-                if (player.serverId == serverId) {
-                    turnHolder = player;
-                }
-            }
-            _ctx.log("resulting turnholder: " + turnHolder); */
         }
-        
-        
-        // calculate the next turnHolder
-/*         if (_ctx.board.players.turnHolder == null) {
-            _ctx.board.players.calculateTurnHolder();
-        } else {
-            var nextPlayer :Player = _ctx.board.players.nextPlayer;
-            
-            if (nextPlayer as AIPlayer) {
-                _ctx.board.players.calculateTurnHolder(nextPlayer);
-            } else {
-                _ctx.board.players.calculateTurnHolder();
-            }
-        }
-        
-        if (player != null) {
-            turnHolder = player;
-            return;
-        } */
-
     }
 
     /**
@@ -183,18 +152,7 @@ public class Players extends Component
             return false;
         }
     }
-
-    /**
-     * Return true if it is currently an AI's turn and this player is controlling that AI.
-     */
-    /* public function amControllingAI () :Boolean
-    {
-        if (turnHolder is AIPlayer && AIPlayer(turnHolder).isController) {
-            return true;
-        }
-        return false;
-    } */
-
+    
     /**
      * Return the player whose turn it is next, including AI players
      */
@@ -220,12 +178,11 @@ public class Players extends Component
     {
         // if we were controlling an ai player, halt that player's turn
         if (turnHolder as AIPlayer && player.isController) {
-            _ctx.log("Halting AI Player's turn.");
+            //_ctx.log("Halting AI Player's turn.");
             AIPlayer(turnHolder).canPlay = false;
         }
         
         // if anything was happening with any player, stop it now
-        //_ctx.notice("Cancelling all events and actions because a player left.");
         _ctx.state.cancelMode();
         _ctx.board.laws.cancelTriggering();
         
