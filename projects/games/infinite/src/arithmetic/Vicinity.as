@@ -23,7 +23,16 @@ package arithmetic
         */
         public function get origin () :BoardCoordinates
         {
-        	return new BoardCoordinates(_x << SCALE, _y << SCALE);
+        	const scaled:BoardCoordinates = new BoardCoordinates(_x << SCALE, _y << SCALE);
+        	if (_y < 0) {
+        		if (_x < 0) {
+        			return scaled.translatedBy(NE);        			
+        		} else {
+        			return scaled.translatedBy(N);
+        		}
+        	} else {
+        		return scaled.translatedBy(W);
+        	}
         }
         
         public function translate(v:Vector) :Vicinity
@@ -86,6 +95,13 @@ package arithmetic
         
         protected var neighbors:Array;      
                        
-        protected static const SCALE:int = 4;; 
+        protected static const SCALE:int = 4;
+        protected static const SQUARE:int = 1 << SCALE;
+        
+        // Constant vectors used to translate to the top left of the square in different
+        // quadrants
+        protected static const N:Vector = Vector.N.multiplyByScalar(SQUARE);
+        protected static const NE:Vector = Vector.NE.multiplyByScalar(SQUARE);
+        protected static const W:Vector = Vector.W.multiplyByScalar(SQUARE);
  	}
 }
