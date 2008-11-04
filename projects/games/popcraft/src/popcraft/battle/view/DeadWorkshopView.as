@@ -27,10 +27,6 @@ public class DeadWorkshopView extends BattlefieldSprite
         var nameText :TextField = _movie["player_name"];
         nameText.text = owningPlayer.displayName;
 
-        // remove the "target" badge
-        var targetBadge :MovieClip = _movie["target"];
-        _movie.removeChild(targetBadge);
-
         // swap in the rubble movie for the workshop
         var workshop :MovieClip = _movie["workshop"];
         var rubble :MovieClip = SwfResource.instantiateMovieClip("workshop", "workshop_rubble", true);
