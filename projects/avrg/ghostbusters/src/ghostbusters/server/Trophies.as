@@ -66,7 +66,7 @@ public class Trophies
         for (ii = 0; ii < fullTeam.length; ii ++) {
             player = Player(fullTeam[ii]);
 
-            var minigames :Dictionary = room.getMinigameStats(player.playerId);
+            var minigames :Dictionary = room.getMinigameStats(player);
             if (minigames != null &&
                 minigames[Codes.WPN_LANTERN] && minigames[Codes.WPN_BLASTER] &&
                 minigames[Codes.WPN_OUIJA] && minigames[Codes.WPN_POTIONS]) {

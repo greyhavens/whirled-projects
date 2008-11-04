@@ -7,6 +7,10 @@ import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.ClassUtil;
+import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
+import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
@@ -19,6 +23,7 @@ import ghostbusters.data.GhostDefinition;
 import ghostbusters.server.util.Formulae;
 
 public class Room
+    implements Hashable
 {
     public static var log :Log = Log.getLog(Room);
 
@@ -52,31 +57,47 @@ public class Room
         return _errorCount > 5;
     }
 
-    public function getMinigameStats (playerId :int) :Dictionary
+    // from Equalable
+    public function equals (other :Object) :Boolean
     {
-        return _minigames[playerId];
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !ClassUtil.isSameClass(this, other)) {
+            return false;
+        }
+        return Room(other).roomId == this.roomId;
+    }
+
+    // from Hashable
+    public function hashCode () :int
+    {
+        return this.roomId;
+    }
+
+    public function getMinigameStats (player :Player) :Dictionary
+    {
+        return _minigames.get(player);
     }
 
     public function getTeam (excludeDead :Boolean = false) :Array
     {
         var team :Array = new Array();
-
-        for (var p :* in _players) {
-            var player :Player = Player(p);
-
-            if (!player.playing) {
-                continue;
+        _players.forEach(function (player :Player) :void {
+            if (player.playing && (!excludeDead || !player.isDead())) {
+                team.unshift(player);
             }
-            if (excludeDead && player.isDead()) {
-                continue;
-            }
-            team.unshift(player);
-        }
+        });
         return team;
     }
 
     public function playerEntered (player :Player) :void
     {
+        if (!_players.add(player)) {
+            log.warning("Arriving player already existed in room", "roomId", this.roomId,
+                        "playerId", player.playerId);
+        }
+
 //        log.debug("Copying player dictionary into room", "payerId", player.playerId,
 //                  "roomId", this.roomId, "health", player.health, "maxHealth", player.maxHealth,
 //                  "level", player.level);
@@ -97,18 +118,19 @@ public class Room
         maybeSpawnGhost();
 
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
-
-        _players[player] = true;
     }
 
     public function playerLeft (player :Player) :void
     {
+        if (!_players.remove(player)) {
+            log.warning("Departing player did not exist in room", "roomId", this.roomId,
+                        "playerId", player.playerId);
+        }
+
         // erase the departing player's data from the room properties
 //        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
 //                  "roomId", this.roomId);
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
-
-        delete _players[player];
     }
 
     public function checkState (... expected) :Boolean
@@ -125,7 +147,7 @@ public class Room
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
             var timer :int = getTimer();
             if (timer < _nextZap) {
-                log.debug("Ignored too-early zap request", "playerId", who.playerId);
+//                log.debug("Ignored too-early zap request", "playerId", who.playerId);
                 return;
             }
             // accept up to two zaps a second
@@ -143,18 +165,8 @@ public class Room
 
     public function tick (frame :int, newSecond :Boolean) :void
     {
-        // if we're shut down due to excessive errors, do nothing
-        if (isShutdown) {
-            return;
-        }
-
-        // if there are no players in this room, we cannot assume it's loaded, so do nothing
-        // TODO: this is insane, use a HashMap instead
-        var playersHere :Boolean = false;
-        for (var p :* in _players) {
-            playersHere = true;
-        }
-        if (!playersHere) {
+        // if we're shut down due to excessive errors, or there's nobody here, do nothing
+        if (isShutdown || _players.size() == 0) {
             return;
         }
 
@@ -180,15 +192,15 @@ public class Room
 //                  damageDone, "healing", healingDone);
 
         // award 3 points for a win, 1 for a lose
-        _stats[player.playerId] = int(_stats[player.playerId]) + (win ? 3 : 1);
+        _stats.put(player, int(_stats[player.playerId]) + (win ? 3 : 1));
 
         // record which minigame was used
-        var dict :Dictionary = _minigames[player.playerId];
+        var dict :Dictionary = _minigames.get(player);
         if (dict == null) {
             dict = new Dictionary();
         }
         dict[weapon] = int(dict[weapon]) + 1;
-        _minigames[player.playerId] = dict;
+        _minigames.put(player, dict);
 
         try {
             Trophies.handleMinigameCompletion(player, weapon, win);
@@ -212,7 +224,7 @@ public class Room
 
     internal function updateLanternPos (playerId :int, pos :Array) :void
     {
-        _lanterns[playerId] = pos;
+        _lanterns.put(playerId, pos);
         _lanternsDirty = true;
     }
 
@@ -239,8 +251,8 @@ public class Room
     {
         healTeam();
         terminateGhost(false);
-        _stats = new Dictionary();
-        _minigames = new Dictionary();
+        _stats.clear();
+        _minigames.clear();
         setState(Codes.STATE_SEEKING);
     }
 
@@ -250,9 +262,9 @@ public class Room
 
         _ctrl.props.set(Codes.PROP_STATE, state, true);
 
-        for (var p :* in _players) {
-            Player(p).roomStateChanged();
-        }
+        _players.forEach(function (player :Player) :void {
+            player.roomStateChanged();
+        });
 //        log.debug("Room state set", "roomId", this.roomId, "state", state);
     }
 
@@ -281,8 +293,9 @@ public class Room
 
     internal function checkTeam (dead :Boolean) :Boolean
     {
-        for (var p :* in _players) {
-            if (dead != Player(p).isDead()) {
+        var team :Array = getTeam();
+        for (var ii :int = 0; ii < team.length; ii ++) {
+            if (team[ii].isDead != dead) {
                 return false;
             }
         }
@@ -374,6 +387,9 @@ public class Room
                 log.warning("Error in handleGhostDefeat", "roomId", this.roomId, e);
             }
 
+            log.info("Ghost defeated", "ghostLevel", ghost.level, "players",
+                     StringUtil.toString(getTeam()));
+
             setState(Codes.STATE_GHOST_DEFEAT);
             // schedule a transition
             _transitionFrame = frame + _ghost.definition.defeatFrames;
@@ -402,7 +418,7 @@ public class Room
             setState(Codes.STATE_FIGHTING);
 
             // when we start fighting, delete the lantern data
-            _lanterns = new Dictionary();
+            _lanterns.clear();
             _lanternsDirty = true;
         }
     }
@@ -426,8 +442,8 @@ public class Room
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
-            _stats = new Dictionary();
-            _minigames = new Dictionary();
+            _stats.clear();
+            _minigames.clear();
 
             // and go back to seek state
             setState(Codes.STATE_SEEKING);
@@ -485,21 +501,14 @@ public class Room
         var pointsArr :Array = new Array();
         var totPoints :int = 0;
 
-        for (var p :* in _stats) {
-            var playerId :int = int(p);
-
-            var player :Player = Server.getPlayer(playerId);
-            if (player == null || player.room == null || player.room.roomId != this.roomId) {
-                // for the time being, you only get credit if you're present when the ghost dies
-                continue;
-            }
-
-            var points :int = int(_stats[playerId]);
-            playerArr.unshift(player);
-            pointsArr.unshift(points);
-            totPoints += points;
+        _stats.forEach(function (player :Player, points :int) :void {
+            if (player.room != null && player.room.roomId == this.roomId) {
+                playerArr.unshift(player);
+                pointsArr.unshift(points);
+                totPoints += points;
 //            log.debug("Player accrual", "playerId", playerId, "points", points);
-        }
+            }
+        });
 
         if (totPoints == 0) {
             return;
@@ -509,7 +518,7 @@ public class Room
         var baseFactor :Number = 0.5 * Math.sqrt((playerArr.length+1) / 2) / totPoints;
 
         for (var ii :int = 0; ii < playerArr.length; ii ++) {
-            player = playerArr[ii];
+            var player :Player = playerArr[ii];
 
             // clamp the level difference to [-3, -3]
             var levelDiff :int = Math.max(-6, Math.min(6, _ghost.level - player.level));
@@ -538,11 +547,10 @@ public class Room
 
     protected function sendLanterns () :void
     {
-        for (var p :* in _lanterns) {
-            var playerId :int = int(p);
-            _ctrl.props.setIn(Codes.DICT_LANTERNS, int(p), _lanterns[p]);
-        }
-        _lanterns = new Dictionary();
+        _lanterns.forEach(function (playerId :int, pos :Array) :void {
+            _ctrl.props.setIn(Codes.DICT_LANTERNS, playerId, pos);
+        });
+        _lanterns.clear();
         _lanternsDirty = false;
         _lanternUpdate = getTimer();
     }
@@ -602,9 +610,9 @@ public class Room
     protected var _ctrl :RoomSubControlServer;
 
     protected var _state :String;
-    protected var _players :Dictionary = new Dictionary();
+    protected var _players :HashSet = new HashSet();
 
-    protected var _lanterns :Dictionary = new Dictionary();
+    protected var _lanterns :HashMap = new HashMap();
     protected var _lanternsDirty :Boolean;
     protected var _lanternUpdate :int;
 
@@ -616,11 +624,11 @@ public class Room
 
     protected var _errorCount :int = 0;
 
-    // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
-    protected var _stats :Dictionary = new Dictionary();
+    // each player's contribution to a ghost's eventual defeat is accumulated here, by player
+    protected var _stats :HashMap = new HashMap();
 
     // a dictionary of dictionaries of number of times each minigame was used by each player
-    protected var _minigames :Dictionary = new Dictionary();
+    protected var _minigames :HashMap = new HashMap();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
     protected static const GHOST_RESPAWN_MINUTES :int = 1;

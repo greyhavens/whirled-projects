@@ -3,6 +3,8 @@
 
 package ghostbusters.server {
 
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 
 import com.whirled.net.MessageReceivedEvent;
@@ -14,6 +16,7 @@ import ghostbusters.data.Codes;
 import ghostbusters.server.util.Formulae;
 
 public class Player
+    implements Hashable
 {
     // avatar states
     public static const ST_PLAYER_DEFAULT :String = "Default";
@@ -112,6 +115,24 @@ public class Player
     public function get level () :int
     {
         return _level;
+    }
+
+    // from Equalable
+    public function equals (other :Object) :Boolean
+    {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !ClassUtil.isSameClass(this, other)) {
+            return false;
+        }
+        return Player(other).playerId == _playerId;
+    }
+
+    // from Hashable
+    public function hashCode () :int
+    {
+        return _playerId;
     }
 
     public function isDead () :Boolean
@@ -305,6 +326,8 @@ public class Player
         if (!force && level == _level) {
             return;
         }
+
+        log.info("Level changed!", "playerId", playerId, "oldLevel", _level, "newLevel", level);
 
         _level = level;
         _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
