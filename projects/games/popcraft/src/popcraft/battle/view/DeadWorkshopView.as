@@ -32,6 +32,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         _rubble = SwfResource.instantiateMovieClip(
             "workshop",
             "workshop_rubble",
+            true,
             true);
 
         var index :int = _movie.getChildIndex(workshop);
