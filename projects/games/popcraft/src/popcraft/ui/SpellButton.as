@@ -21,7 +21,7 @@ public class SpellButton extends SceneObject
 
         var spellData :SpellData = GameContext.gameData.spells[spellType];
 
-        _movie = SwfResource.instantiateMovieClip("dashboard", spellData.iconName);
+        _movie = SwfResource.instantiateMovieClip("dashboard", spellData.iconName, false, true);
         _movie.scaleX = BUTTON_SCALE;
         _movie.scaleY = BUTTON_SCALE;
         _movie.cacheAsBitmap = true;
@@ -37,10 +37,17 @@ public class SpellButton extends SceneObject
             this.addTask(new SerialTask(
                 LocationTask.CreateEaseOut(xLoc, Y_BOUNCE, 0.3),
                 LocationTask.CreateEaseIn(xLoc, Y_END, 0.1)));
+
         } else {
             _movie.x = xLoc;
             _movie.y = Y_END;
         }
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
+        super.destroyed();
     }
 
     override public function get displayObject () :DisplayObject

@@ -29,20 +29,30 @@ public class DeadWorkshopView extends BattlefieldSprite
 
         // swap in the rubble movie for the workshop
         var workshop :MovieClip = _movie["workshop"];
-        var rubble :MovieClip = SwfResource.instantiateMovieClip("workshop", "workshop_rubble", true);
+        _rubble = SwfResource.instantiateMovieClip(
+            "workshop",
+            "workshop_rubble",
+            true);
+
         var index :int = _movie.getChildIndex(workshop);
         _movie.removeChildAt(index);
-        _movie.addChildAt(rubble, index);
+        _movie.addChildAt(_rubble, index);
 
         // mirror horizontally if we're on the left side of the battlefield
-        rubble.scaleX = (unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
+        _rubble.scaleX = (unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
 
         // recolor
         var playerColor :uint = unit.owningPlayerInfo.color;
-        var recolor :MovieClip = rubble["recolor"];
+        var recolor :MovieClip = _rubble["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
         this.updateLoc(unit.x, unit.y);
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_rubble);
+        super.destroyed();
     }
 
     override public function get objectName () :String
@@ -56,6 +66,7 @@ public class DeadWorkshopView extends BattlefieldSprite
     }
 
     protected var _movie :MovieClip;
+    protected var _rubble :MovieClip;
     protected var _owningPlayerIndex :int;
 
     protected static const NAME_PREFIX :String = "DeadWorkshopView_";

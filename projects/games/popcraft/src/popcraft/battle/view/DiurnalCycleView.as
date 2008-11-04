@@ -18,13 +18,21 @@ public class DiurnalCycleView extends SceneObject
     {
         _sprite = SpriteUtil.createSprite();
 
-        _sun = SwfResource.instantiateMovieClip("dashboard", "sun");
-        _moon = SwfResource.instantiateMovieClip("dashboard", "moon");
-        _eclipse = SwfResource.instantiateMovieClip("dashboard", "eclipse");
+        _sun = SwfResource.instantiateMovieClip("dashboard", "sun", true, true);
+        _moon = SwfResource.instantiateMovieClip("dashboard", "moon", true, true);
+        _eclipse = SwfResource.instantiateMovieClip("dashboard", "eclipse", true, true);
 
         _moon.cacheAsBitmap = true;
 
         this.dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_sun);
+        SwfResource.releaseMovieClip(_moon);
+        SwfResource.releaseMovieClip(_eclipse);
+        super.destroyed();
     }
 
     override protected function update (dt :Number) :void

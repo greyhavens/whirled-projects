@@ -15,13 +15,19 @@ public class TargetWorkshopBadge extends SceneObject
     public function TargetWorkshopBadge (owningPlayer :PlayerInfo)
     {
         _owningPlayerInfo = owningPlayer;
-        _movie = SwfResource.instantiateMovieClip("workshop", "target_bounce");
+        _movie = SwfResource.instantiateMovieClip("workshop", "target_bounce", false, true);
 
         // recolor, if this player has other players on his team
         if (GameContext.getTeamSize(owningPlayer.teamId) > 1) {
             _movie.filters =
                 [ ColorMatrix.create().colorize(_owningPlayerInfo.color).createFilter() ];
         }
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
+        super.destroyed();
     }
 
     override public function get displayObject () :DisplayObject

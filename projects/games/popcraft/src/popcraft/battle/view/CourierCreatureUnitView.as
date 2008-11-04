@@ -21,8 +21,11 @@ public class CourierCreatureUnitView extends CreatureUnitView
         // if the Courier is carrying a spell, display it
         var carriedSpell :CarriedSpellObject = _courier.carriedSpell;
         if (null != carriedSpell && null == _carriedSpellIcon) {
-            _carriedSpellIcon =
-                SwfResource.instantiateMovieClip("infusions", carriedSpell.spellData.iconName, true);
+            _carriedSpellIcon = SwfResource.instantiateMovieClip(
+                "infusions",
+                carriedSpell.spellData.iconName,
+                true);
+
             _carriedSpellIcon.cacheAsBitmap = true;
             _sprite.addChild(_carriedSpellIcon);
         } else if (null == carriedSpell && null != _carriedSpellIcon) {

@@ -18,12 +18,18 @@ public class SpellDropView extends BattlefieldSprite
         _spellObjRef = spellDrop.ref;
 
         var spellData :SpellData = spellDrop.spellData;
-        _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName, true);
+        _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName, true, true);
 
         // pulse animation, to draw players' attention
         this.addTask(new RepeatingTask(
             ScaleTask.CreateEaseIn(1.3, 1.3, 0.3),
             ScaleTask.CreateEaseOut(1, 1, 0.3)));
+    }
+
+    override protected function destroyed () :void
+    {
+        SwfResource.releaseMovieClip(_movie);
+        super.destroyed();
     }
 
     override public function get displayObject () :DisplayObject
