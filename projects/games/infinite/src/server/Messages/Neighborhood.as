@@ -42,13 +42,18 @@ package server.Messages
         	var string:String = "neighborhood (";
         	var i:int;
         	for (i = 0; i < _vicinities.length ; i++) {
-        		string += _vicinities[i];
+        		string += (_vicinities[i] as Vicinity).key();
         		if (i < _vicinities.length - 1) {
         			string += "-";
         		}
         	}
         	string += ")"
         	return string;
+        }
+        
+        public function get vicinities () :Array
+        {
+        	return _vicinities;
         }
 
         protected var _vicinities:Array = new Array();

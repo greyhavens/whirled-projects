@@ -1,5 +1,7 @@
 package arithmetic
 {
+	import world.board.Board;
+	
 	public class BoardRectangle
 	{
 		public var x:int;
@@ -19,6 +21,11 @@ package arithmetic
 			this.height = height;
 		}
 		
+		public function randomLocation () :BoardCoordinates
+		{
+			return new BoardCoordinates(x + (Math.random() * width), y + (Math.random() * height));
+		}
+		
 		public function toString () :String
 		{
 			return "Board Rectangle at: "+x+", "+y+" width: "+width+" height: "+height;
@@ -33,6 +40,7 @@ package arithmetic
 				height
 			);
 		}
+		
 		/**
 		 * Two rectangles are equal if they have the same origin and the same dimensions
 		 */

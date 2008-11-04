@@ -151,7 +151,7 @@ package client
 			const v:CellView = _viewFactory.viewOf(c);
 			v.addToObjective(this);
 			_viewBuffer.store(c.position, v);	
-			v.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);				
+			v.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);
 		}
 		
 		/**
@@ -171,7 +171,7 @@ package client
 				_label.displayOwnership(view as Labellable);
 			}
 		}
-				
+
 		public function hideOwnership (labellable:Cell) :void
 		{
 			Log.debug ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
@@ -340,8 +340,10 @@ package client
         
         public function updateCells (update:CellUpdate) :void
         {
+        	Log.debug("updating cell state: "+update);
         	for each (var state:CellState in update.states) {
-        		state.update(_board);
+        		Log.debug("updating state: "+state);
+        		state.update(this);
         	}
         }
                 

@@ -27,6 +27,7 @@ package world.level
 			_height = height;
 			_board = new NeighborhoodBoard(starting);
 			_arbiter = new BoardArbiter(_board);
+			_mapMaker = new MapMaker(_board, _explored);
 		}
 
 		public function get height () :int
@@ -49,7 +50,7 @@ package world.level
             	player.cell = _board.cellAt(_board.startingPosition);
             } else {            
             	// otherwise iterate from there until we find a suitable cell
-	        	var iterator:CellIterator= 
+	        	var iterator:CellIterator =
 	        	   _board.cellAt(_board.startingPosition).iterator(_board, Vector.LEFT);
 	        	   
 	        	var cell:Cell;
@@ -57,12 +58,13 @@ package world.level
 	            	cell = iterator.next();
 	            	trace ("considering "+cell+" as starting point for "+player);
 	            } 
-	            while ( !cell.canBeStartingPosition || _players.occupying(cell.position))
+	            while (!cell.canBeStartingPosition || _players.occupying(cell.position))
 	            
 	            player.cell = cell;
             }
             
             // now that we've established the starting position, track the player.
+             map(player.cell.position);
             _players.trackPlayer(player);        	   
         }
                 
@@ -97,8 +99,17 @@ package world.level
         {
         	return _board.neighborhood(hood);
         }
+        
+        /**
+         * Make sure that we have a map for the given coordinates.
+         */ 
+        public function map (coords:BoardCoordinates) :void
+        {
+        	_explored.map(coords);
+        }
                 
         protected var _explored:BreadcrumbTrail = new BreadcrumbTrail();
+        protected var _mapMaker:MapMaker;
         protected var _arbiter:BoardArbiter;
         protected var _board:NeighborhoodBoard;
 		protected var _height:int;

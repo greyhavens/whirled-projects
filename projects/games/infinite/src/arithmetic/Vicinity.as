@@ -17,6 +17,11 @@ package arithmetic
         	return new Vicinity(coords.x >> SCALE, coords.y >> SCALE);        	
         }
         
+        public function get region () :BoardRectangle
+        {
+        	return new BoardRectangle(origin.x, origin.y, SQUARE, SQUARE);
+        }
+        
         /**
         * Return the origin of the region that this vicinity defines (i.e. the top
         * left corner of the square, in board coordinates);
@@ -96,7 +101,7 @@ package arithmetic
         protected var neighbors:Array;      
                        
         protected static const SCALE:int = 4;
-        protected static const SQUARE:int = 1 << SCALE;
+        public static const SQUARE:int = 1 << SCALE;
         
         // Constant vectors used to translate to the top left of the square in different
         // quadrants

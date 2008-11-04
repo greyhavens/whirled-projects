@@ -67,6 +67,7 @@ package world
         {
         	Log.debug("completing path "+_path);
             if (_path.finish.equals(coords)) {
+            	_level.map(_path.finish);
             	_path = null;
             }
         }

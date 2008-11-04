@@ -42,13 +42,13 @@ package
 			switch (choice) {
 				case 0: return new Teleporter();
 				case 1: return new OilCan();
-				case 2: return new Ladder(1);
-				case 3: return new Ladder(1);
-				case 4: return new Ladder(3);
-				case 5: return new Ladder(5);
+				case 2: return new Ladder({segments:1});
+				case 3: return new Ladder({segments:1});
+				case 4: return new Ladder({segments:3});
+				case 5: return new Ladder({segments:5});
 				case 6: return new Spring();
 				case 7: return new OilCan();
-				default : return new Ladder(0); 
+				default : return new Ladder({segments:0}); 
 			}
 		}	
 			

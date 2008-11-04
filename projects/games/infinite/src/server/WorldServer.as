@@ -68,7 +68,8 @@ package server
 			}
 			
 			const message:int = int(event.name);
-            Log.debug (this+" received a "+messageName[message]+ " message from client "+event.senderId);            
+            Log.debug(this+" received a "+messageName[message]+" message from client "+event.senderId);
+
 			switch (message) {
 				case CLIENT_ENTERS: return clientEnters(event);
 				case MOVE_PROPOSED: return moveProposed(event);

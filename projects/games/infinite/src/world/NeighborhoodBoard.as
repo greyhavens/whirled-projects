@@ -35,13 +35,16 @@ package world
 		
 		public function replace (cell:Cell) :void
 		{
+			Log.debug("new cell: "+cell);
 			_changed.remember(cell);
 		}
 		
 		public function neighborhood (hood:Neighborhood) :CellUpdate
 		{
+			Log.debug("creating cell update for "+hood);
 			const update:CellUpdate = new CellUpdate();
-			for each (var vicinity:Vicinity in hood) {
+			for each (var vicinity:Vicinity in hood.vicinities) {
+				Log.debug("checking vicinity "+vicinity);
 				update.addCells(_changed.inVicinity(vicinity));
 			}
 			return update;
