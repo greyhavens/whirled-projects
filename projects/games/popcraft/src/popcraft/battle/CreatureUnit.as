@@ -193,7 +193,7 @@ public class CreatureUnit extends Unit
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
             return enemyPlayerInfo.workshopRef;
         } else {
-            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo.playerIndex);
+            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo);
             if (null != newEnemy) {
                 return newEnemy.workshopRef;
             }

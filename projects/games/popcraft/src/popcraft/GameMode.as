@@ -462,6 +462,14 @@ public class GameMode extends TransitionMode
         // Network timeslices are always the same distance apart)
         GameContext.netObjects.update(TICK_INTERVAL_S);
 
+        // update players' targeted enemies
+        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+            var targetedEnemy :PlayerInfo = playerInfo.targetedEnemy;
+            if (null == targetedEnemy || !targetedEnemy.isAlive) {
+                playerInfo.targetedEnemy = GameContext.findEnemyForPlayer(playerInfo);
+            }
+        }
+
         this.updateTeamLiveStatuses();
         this.checkForGameOver();
 

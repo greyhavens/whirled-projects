@@ -117,15 +117,15 @@ public class GameContext
             PlayerInfo(playerInfos[otherPlayerIndex]).teamId;
     }
 
-    public static function findEnemyForPlayer (playerIndex :int) :PlayerInfo
+    public static function findEnemyForPlayer (playerInfo :PlayerInfo) :PlayerInfo
     {
-        var thisPlayer :PlayerInfo = playerInfos[playerIndex];
+        var playerIndex :int = playerInfo.playerIndex;
 
         // find the first player after this one that is on an opposing team
         for (var i :int = 0; i < playerInfos.length - 1; ++i) {
             var otherPlayerIndex :int = (playerIndex + i + 1) % playerInfos.length;
             var otherPlayer :PlayerInfo = playerInfos[otherPlayerIndex];
-            if (otherPlayer.teamId != thisPlayer.teamId && otherPlayer.isAlive &&
+            if (otherPlayer.teamId != playerInfo.teamId && otherPlayer.isAlive &&
                 !otherPlayer.isInvincible) {
                 return otherPlayer;
             }

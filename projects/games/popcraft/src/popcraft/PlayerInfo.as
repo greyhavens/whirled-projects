@@ -264,20 +264,11 @@ public class PlayerInfo extends EventDispatcher
     public function get targetedEnemy () :PlayerInfo
     {
         if (_targetedEnemy == null) {
-            _targetedEnemy = GameContext.findEnemyForPlayer(_playerIndex);
+            _targetedEnemy = GameContext.findEnemyForPlayer(this);
         }
 
         return _targetedEnemy;
     }
-
-    /*public function get targetedEnemyId () :int
-    {
-        if (_targetedEnemy == null || !_targetedEnemy.isAlive) {
-            _targetedEnemy = GameContext.findEnemyForPlayer(_playerIndex);
-        }
-
-        return _targetedEnemyId;
-    }*/
 
     public function set targetedEnemy (playerInfo :PlayerInfo) :void
     {
