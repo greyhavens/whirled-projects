@@ -1,0 +1,33 @@
+
+10 * all 6 jobs held in one game  -  allJobsInOneGame -   Habeas Corpus
+11 * all 6 job powers used cumulative   -  allPowersCumulative -   Quid Pro Quo
+
+2 * won a single player game - winnerVsBots - Ben Stone
+3 * won a multiplayer game - winnerVsHumans - Adam Schiff 
+4 * won a multiplayer game with five human opponents - winnerVsFiveHumans -   Lennie Briscoe
+5 * won a game with at twice the coins as the runner-up  - twiceTheMonies -  Jack McCoy
+
+6 * 5 laws in one game - 5LawsOneGame   - Stare Decisis
+7 * 10 laws ever cumulative - 10LawsCumulative  - Decem Tabulae
+8 * 50 laws ever cumulative - 50LawsCumulative - Quinquaginta Tabulae
+9 * 100 laws ever cumulative   - 100LawsCumulative - Centum Tabulae
+1 * 5 card law   -  fiveCardLaw -  Jus Cogens
+
+
+
+
+Faccia a Faccia
+Criminal Intent
+Double or Nothing
+Justice is Served
+
+Anita Van Buren
+Ed Green
+
+Yahtzee
+
+Corpus Delicti
+Bona Fide
+Pacta Sunt Servanda
+Tabula Rasa
+Mos Maiorum
