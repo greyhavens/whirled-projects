@@ -17,11 +17,16 @@ public interface Microgame
     function get timeRemainingMS () :Number;
     
     /**
-     * Returns true when the game has completed, which could be some
-     * short time after timeRemainingMS returns 0 if there are
-     * game over animations that play.
+     * Returns true when the game has completed, which could be some short time after
+     * timeRemainingMS returns 0 if there are game over animations that play.
      */
     function get isDone () :Boolean;
+    
+    /**
+     * Returns true when the game has completed and we're showing the win/lose notification.
+     * When the notification finishes, isDone will still be true, but isNotifying will be false.
+     */
+    function get isNotifying () :Boolean;
     
     /** Returns the result of a completed microgame. */
     function get gameResult () :MicrogameResult;

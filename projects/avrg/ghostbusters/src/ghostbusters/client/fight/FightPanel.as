@@ -105,6 +105,10 @@ public class FightPanel extends FrameSprite
             return;
         }
         if (_player.currentGame != null) {
+            if (_player.currentGame.isNotifying) {
+                // if we're in the cooldown phase we don't cancel
+                return;
+            }
             log.debug("Cancelling current game...");
             _player.cancelCurrentGame();
         }
@@ -138,6 +142,11 @@ public class FightPanel extends FrameSprite
             Game.panel.frameContent(_player);
         }
 
+        doStartMinigame();
+    }
+
+    protected function doStartMinigame () :void
+    {
         _selectedWeapon = Game.panel.hud.getWeaponType();
 
         switch(_selectedWeapon) {
@@ -146,7 +155,7 @@ public class FightPanel extends FrameSprite
             break;
 
         case Codes.WPN_BLASTER:
-            _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 2);
+            _player.weaponType = new WeaponType(WeaponType.NAME_PLASMA, 1);
             break;
 
         case Codes.WPN_OUIJA:
@@ -161,6 +170,7 @@ public class FightPanel extends FrameSprite
             return;
         }
 
+        _dispatched = false;
         _player.beginNextGame();
     }
 
@@ -201,15 +211,28 @@ public class FightPanel extends FrameSprite
         if (_player != null && _player.root != null) {
             if (_player.currentGame == null) {
                 // if we've no current game, start a new one
-                _player.beginNextGame();
+                doStartMinigame();
 
             } else if (_player.currentGame.isDone) {
-                // else if we finished a game, announce it to the world & start the next one
-                CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
-                                      [ _selectedWeapon, _player.currentGame.gameResult ]);
-                if (_player != null) {
-                    _player.beginNextGame();
+                log.debug("game is DONE");
+                if (_player.currentGame.isNotifying) {
+                    log.debug("game is NOTIFYING");
+                    if (!_dispatched) {
+                        log.debug("Woot! Dispatching!", "weapon", _selectedWeapon,
+                                  "success", _player.currentGame.gameResult.success,
+                                  "damageOutput", _player.currentGame.gameResult.damageOutput,
+                                  "healthOutput", _player.currentGame.gameResult.healthOutput);
+
+                        // if we finished a game and we haven't told the server yet, do so
+                        CommandEvent.dispatch(this, GameController.GHOST_ATTACKED,
+                                              [ _selectedWeapon, _player.currentGame.gameResult ]);
+                        _dispatched = true;
+                    }
+                    return;
                 }
+                log.debug("game is NOT notifying, so restart");
+                // if we finished the game and the win/lose notification is no longer showing, next!
+                doStartMinigame();
             }
         }
     }
@@ -317,6 +340,8 @@ public class FightPanel extends FrameSprite
     protected var _spotlights :Dictionary = new Dictionary();
 
     protected var _player: MicrogamePlayer;
+
+    protected var _dispatched :Boolean;
 
     protected var _selectedWeapon :int;
 
