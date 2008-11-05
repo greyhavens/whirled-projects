@@ -8,7 +8,7 @@ public class InventoryBag extends Sprite
     {
         // Bordered background
         graphics.lineStyle(2, 0x0000ff);
-        graphics.drawRect(0, 0, 32, 32);
+        graphics.drawRect(0, 0, Doll.SIZE, Doll.SIZE);
         graphics.endFill();
     }
 

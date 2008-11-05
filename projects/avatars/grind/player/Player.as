@@ -21,12 +21,8 @@ public class Player extends Sprite
 
         _doll = new Doll();
         _doll.layer([200]);
-        _doll.scaleX = 2;
-        _doll.scaleY = 2;
 
         _quest = new QuestSprite(_ctrl, _doll);
-        _quest.bounciness = 20;
-        _quest.bounceFreq = 200;
         addChild(_quest);
 
         _ctrl.registerPropertyProvider(propertyProvider);
@@ -35,8 +31,26 @@ public class Player extends Sprite
         _ctrl.registerActions("Inventory", "Cheat");
 
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
+        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
 
         _inventory = new Inventory(_ctrl, _doll);
+        _ghost = Bitmap(new GHOST());
+        _ghost.smoothing = true;
+
+        handleMemory();
+    }
+
+    public function handleMemory (... _) :void
+    {
+        if (_quest.getHealth() == 0) {
+            _quest.bounciness = 10;
+            _quest.bounceFreq = 1000;
+            _quest.setActor(_ghost);
+        } else {
+            _quest.bounciness = 20;
+            _quest.bounceFreq = 200;
+            _quest.setActor(_doll);
+        }
     }
 
     public function handleAction (event :ControlEvent) :void
@@ -46,7 +60,7 @@ public class Player extends Sprite
                 _ctrl.showPopup("Inventory", _inventory, _inventory.width, _inventory.height, 0, 0.8);
                 break;
             case "Cheat":
-                _ctrl.setMemory("xp", Number(_ctrl.getMemory("xp")) + 100);
+                _svc.awardXP(110);
                 _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
                 break;
         }
@@ -66,6 +80,10 @@ public class Player extends Sprite
     protected var _quest :QuestSprite;
 
     protected var _doll :Doll;
+
+    [Embed(source="ghost.png")]
+    protected static const GHOST :Class;
+    protected var _ghost :Bitmap;
 
     protected var _inventory :Inventory;
 
@@ -87,8 +105,15 @@ public class Player extends Sprite
             return 0;
         },
 
-        damage: function (amount :Number, cause :String = null) :void {
-            _quest.damage(amount, cause);
+        awardRandomItem: function (level :int) :void {
+        },
+
+        awardXP: function (amount :int) :void {
+            _ctrl.setMemory("xp", int(_ctrl.getMemory("xp")) + amount);
+        },
+
+        damage: function (source :Object, amount :Number, cause :String = null) :void {
+            _quest.damage(source, amount, cause);
         }
     };
 }

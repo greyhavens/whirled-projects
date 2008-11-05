@@ -8,6 +8,8 @@ import flash.geom.Point;
 
 public class Doll extends Bitmap
 {
+    public static const SIZE :int = 32; // Pixel dimensions of each sprite
+
     function Doll ()
     {
         _sheet = (new SHEET() as Bitmap).bitmapData;
@@ -15,7 +17,7 @@ public class Doll extends Bitmap
 
     public function layer (sprites :Array) :void
     {
-        bitmapData = new BitmapData(32, 32, true, 0);
+        bitmapData = new BitmapData(SIZE, SIZE, true, 0);
 
         var w :int = _sheet.width/SIZE;
         var h :int = _sheet.height/SIZE;
@@ -23,14 +25,12 @@ public class Doll extends Bitmap
         for each (var sprite :int in sprites) {
             bitmapData.copyPixels(_sheet,
                 new Rectangle(
-                    SIZE*(sprite%w), SIZE*(int(sprite/h)), 32, 32),
+                    SIZE*(sprite%w), SIZE*(int(sprite/h)), SIZE, SIZE),
                 new Point(0, 0), null, null, true);
         }
 
         smoothing = true;
     }
-
-    protected static const SIZE :int = 32; // Pixel dimensions of each sprite
 
     [Embed(source="sheet.png")]
     protected static const SHEET :Class;

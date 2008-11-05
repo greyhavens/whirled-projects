@@ -20,13 +20,14 @@ public class Inventory extends Sprite
         _bags = new Array(MAX_BAGS);
         for (var i :int = 0; i < MAX_BAGS; ++i) {
             var bag :InventoryBag = new InventoryBag();
-            bag.x = 32*(i%10);
-            bag.y = 32*int(i/10);
+            bag.x = Doll.SIZE*(i%10);
+            bag.y = Doll.SIZE*int(i/10);
             Command.bind(bag, MouseEvent.CLICK, equip, i);
             _bags[i] = bag;
             addChild(bag);
         }
 
+        updateBags();
         updateDoll();
     }
 
@@ -79,6 +80,16 @@ public class Inventory extends Sprite
             _bags[bag].setItem(item, equipped);
 
             updateDoll();
+        }
+    }
+
+    protected function updateBags () :void
+    {
+        for (var i :int = 0; i < MAX_BAGS; ++i) {
+            var memory :Array = _ctrl.getMemory("#"+i) as Array;
+            if (memory != null) {
+                _bags[i].setItem(memory[0], memory[2]);
+            }
         }
     }
 

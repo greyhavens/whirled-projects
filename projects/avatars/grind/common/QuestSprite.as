@@ -31,8 +31,14 @@ public class QuestSprite extends Sprite
     {
         _ctrl = ctrl;
 
-        _actor = actor;
-        addChild(_actor);
+        _container = new Sprite();
+        _container.width = 32;
+        _container.height = 32;
+        _container.scaleX = 2;
+        _container.scaleY = 2;
+
+        addChild(_container);
+        setActor(actor);
 
         _xpField.y = MAX_HEIGHT/2;
         addChild(_xpField);
@@ -58,9 +64,19 @@ public class QuestSprite extends Sprite
 //        });*/
 //        timer.start();
 
-        _ctrl.requestControl();
         setupVisual();
         handleMemory();
+    }
+
+    public function setActor (actor :DisplayObject) :void
+    {
+        if (actor != _actor) {
+            if (_actor != null) {
+                _container.removeChild(_actor);
+            }
+            _actor = actor;
+            _container.addChild(_actor);
+        }
     }
 
     protected function tick (event :TimerEvent) :void
@@ -70,10 +86,10 @@ public class QuestSprite extends Sprite
                 attack();
                 break;
             case QuestConstants.STATE_HEAL:
-                damage(-0.2*getMaxHealth(), "Heal");
+                QuestUtil.self(_ctrl).damage(null, -0.2*getMaxHealth(), "Heal");
                 break;
             case QuestConstants.STATE_COUNTER:
-                damage(0.1*getMaxHealth(), "Concentrate...");
+                QuestUtil.self(_ctrl).damage(null, 0.1*getMaxHealth(), "Concentrate...");
                 break;
         }
     }
@@ -85,19 +101,22 @@ public class QuestSprite extends Sprite
         var self :Object = QuestUtil.self(_ctrl);
         var amount :Number = self.getPower();
 
+        // TODO: Fix
         for each (var svc :Object in QuestUtil.fetch(_ctrl, 666, 200)) {
             if (svc.getState() == QuestConstants.STATE_COUNTER) {
-                damage(svc.getPower(), "Countered!");
-                svc.damage(amount*0.25);
+                self.damage(svc, svc.getPower(), "Countered!");
+                svc.damage(self, amount*0.25);
             } else {
-                svc.damage(amount);
+                svc.damage(self, amount);
             }
         }
     }
 
-    public function damage (amount :Number, cause :String) :void
+    public function damage (source :Object, amount :Number, cause :String) :void
     {
-        if (_ctrl.getMemory("health") == 0) {
+        trace(QuestUtil.self(_ctrl).getType() + ": I am damaged");
+        var health :Number = getHealth();
+        if (health == 0) {
             return; // Don't revive
         }
 
@@ -111,9 +130,11 @@ public class QuestSprite extends Sprite
             echo(String(amount));
         }
 
-        var health :Number = _ctrl.getMemory("health") as Number;
         if (health <= amount) {
             _ctrl.setMemory("health", 0);
+            if (source != null) {
+                source.awardXP(666);
+            }
             echo("DEAD"); // TODO
         } else {
             _ctrl.setMemory("health", Math.min(health-amount, getMaxHealth()));
@@ -122,14 +143,8 @@ public class QuestSprite extends Sprite
 
     protected function handleMemory (... _) :void
     {
-        //_xpField.text = String(_ctrl.getMemory("xp", 666));
-
-        //echo("Memory " + event.name + ": " + event.value);
-//        switch (event.name) {
-//            case "health":
-                _healthBar.percent = Number(_ctrl.getMemory("health"))/getMaxHealth();
-//                break;
-//        }
+        _xpField.text = "Level " + getLevel() + " (" + getXP() + " xp)";
+        _healthBar.percent = getHealth()/getMaxHealth();
     }
 
     public function getXP () :Number
@@ -140,6 +155,11 @@ public class QuestSprite extends Sprite
     public function getLevel () :Number
     {
         return getXP()/100 + 1;
+    }
+
+    public function getHealth () :Number
+    {
+        return _ctrl.getMemory("health", getMaxHealth()) as Number;
     }
 
     public function getMaxHealth () :Number
@@ -189,12 +209,12 @@ public class QuestSprite extends Sprite
         // (We discard nearly all the orientation information and only care if we're
         // facing left or right.)
         if (right == (orient > 180)) {
-            _actor.x = _actor.width;
-            _actor.scaleX = -2;
+            _container.x = _container.width;
+            _container.scaleX = -2;
 
         } else {
-            _actor.x = 0;
-            _actor.scaleX = 2;
+            _container.x = 0;
+            _container.scaleX = 2;
         }
 
         // if we're moving, make us bounce.
@@ -220,18 +240,18 @@ public class QuestSprite extends Sprite
         }
 
         var val :Number = elapsed * Math.PI / bounceFreq;
-        _actor.y = MAX_HEIGHT - _actor.height - (Math.sin(val) * bounciness);
-        //_actor.y = bounciness - (Math.sin(val) * bounciness);
+        _container.y = MAX_HEIGHT - _container.height - (Math.sin(val) * bounciness);
     }
 
     protected function stopBouncing (... ignored) :void
     {
         removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-        _actor.y = MAX_HEIGHT - _actor.height;
+        _container.y = MAX_HEIGHT - _container.height;
     }
 
     protected var _ctrl :ActorControl;
 
+    protected var _container :Sprite;
     protected var _actor :DisplayObject;
 
 //    protected var _ticker :Ticker;
