@@ -257,7 +257,14 @@ public class Player
         Server.control.doBatch(function () :void {
             _room.playerLeft(thisPlayer);
         });
-        _room = null;
+        if (_room != null) {
+            if (_room.roomId == evt.value) {
+                _room = null;
+            } else {
+                log.warning("The room we're supposedly leaving is not the one we think we're in",
+                            "ourRoomId", _room.roomId, "eventRoomId", evt.value);
+            }
+        }
     }
 
     protected function handleDebugRequest (request :String) :void
