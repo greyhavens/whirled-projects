@@ -15,7 +15,7 @@ public class TargetWorkshopBadge extends SceneObject
     public function TargetWorkshopBadge (owningPlayer :PlayerInfo)
     {
         _owningPlayerInfo = owningPlayer;
-        _movie = SwfResource.instantiateMovieClip("workshop", "target_bounce", false, true);
+        _movie = SwfResource.instantiateMovieClip("workshop", "target_bounce", true, true);
 
         // recolor, if this player has other players on his team
         if (GameContext.getTeamSize(owningPlayer.teamId) > 1) {

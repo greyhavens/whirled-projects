@@ -49,14 +49,20 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<BaseLocation x="600" y="265" team="1"/>
 				<RepeatingDays>
 					<Day repeatWaves="true">
-						<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="grunt" count="8"/></Wave>
 						<Wave absoluteDelay="15"><Unit type="grunt" count="3"/></Wave>
-						<Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="30"><Unit type="grunt" count="3"/></Wave>
-						<Wave absoluteDelay="40"><Unit type="grunt" count="2"/></Wave>
-						<Wave absoluteDelay="50"><Unit type="grunt" count="2"/></Wave>
-						<Wave absoluteDelay="60"><Unit type="grunt" count="3"/></Wave>
-						<Wave absoluteDelay="75"/>
+						<Wave absoluteDelay="25"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="40"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="50"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="55"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="65"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="75"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="80"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="90"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="100"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="105"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="120"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -72,7 +78,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="230" y="300"/>
+			<MultiplierDropLocation x="240" y="300"/>
 			
 			<!-- Intro Horace: Wealthy, good looking, total snob. Sends decent attacks, but then leaves himself open for attack -->
 			<Computer
@@ -90,11 +96,17 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
 						
-						<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
-						<Wave absoluteDelay="25"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="50"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="80"><Unit type="grunt" count="3"/></Wave>
-						<Wave absoluteDelay="119"></Wave>
+						<Wave absoluteDelay="1"><Unit type="heavy" count="4" max="16"/></Wave>
+						<Wave absoluteDelay="2"><Unit type="heavy" count="4" max="16"/></Wave>
+						<Wave absoluteDelay="3"><Unit type="heavy" count="4" max="16"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="heavy" count="4" max="16"/></Wave>
+						
+						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="60"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="110"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="130"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="170"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="210"><Unit type="colossus" count="1"/></Wave>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -114,7 +126,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			</HumanPlayers>
 			<MultiplierDropLocation x="250" y="105"/>
 			
-				<!-- Iris and Ivy, the clever twins -->
 			<Computer
 				playerName="Iris"
 				baseStartHealth="100"
@@ -129,12 +140,23 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						noticeSpellDropAfterMax="5"
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
+						
+						<Wave absoluteDelay="4"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="14"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="40"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="53"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="58"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="63"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="68"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="90"/>
 
+						<!--
 						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="50" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="70" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="90" spellCastChance="1"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="120"/>
+					-->
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -153,13 +175,25 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						noticeSpellDropAfterMax="7"
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
-
+						
+						<Wave absoluteDelay="2"><Unit type="heavy" count="3" max="3"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="15"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="25"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="41"><Unit type="grunt" count="3"/></Wave>
+						<Wave absoluteDelay="55"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="60"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="65"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="70"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="90"/>
+						<!--
 						<Wave absoluteDelay="2"><Unit type="heavy" count="3" max="3"/></Wave>
 						<Wave absoluteDelay="42"><Unit type="sapper" count="2"/></Wave>
 						<Wave absoluteDelay="45"><Unit type="heavy" count="3" max="3"/></Wave>
 						<Wave absoluteDelay="80"><Unit type="sapper" count="2"/></Wave>
 						<Wave absoluteDelay="90"><Unit type="heavy" count="3" max="3"/></Wave>
 						<Wave absoluteDelay="120"><Unit type="heavy" count="4" max="4"/></Wave>
+					-->
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -199,9 +233,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						
 						<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="9"><Unit type="sapper" count="2"/></Wave>
-						<Wave absoluteDelay="12"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="12"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="18"><Unit type="sapper" count="5"/></Wave>
 						
-						<Wave absoluteDelay="25"/>
+						<Wave absoluteDelay="40"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -210,7 +245,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 5 : On the Offensive (Ralph, Ballfield) ****** -->
 		<Map displayName="On the Offensive" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+	            <SpellDropLocation x="350" y="210"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -231,23 +266,27 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<BaseLocation x="620" y="270" team="1"/>
 				<RepeatingDays>
 					<Day repeatWaves="true"
-						noticeSpellDropAfterMin="4"
-						noticeSpellDropAfterMax="5"
-						spellDropCourierGroupSizeMin="2"
+						noticeSpellDropAfterMin="6"
+						noticeSpellDropAfterMax="7"
+						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="2">
 
-						<Wave absoluteDelay="4"><Unit type="heavy" count="4" max="5"/></Wave>
+						<Wave absoluteDelay="0"><Unit type="heavy" count="3" max="6"/></Wave>
 						
 						<Wave absoluteDelay="5"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="6"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="9"><Unit type="sapper" count="1"/></Wave>
+
+						<Wave absoluteDelay="30"><Unit type="heavy" count="2" max="6"/></Wave>
 						
 						<Wave absoluteDelay="35"><Unit type="grunt" count="2"/></Wave>
 						<Wave absoluteDelay="36"><Unit type="sapper" count="1"/></Wave>
-						<Wave absoluteDelay="39"><Unit type="sapper" count="1"/></Wave>
 						
-						<Wave absoluteDelay="69"><Unit type="heavy" count="4" max="5"/></Wave>
-						<Wave absoluteDelay="70" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="60" spellCastChance="0.5"><Unit type="colossus" count="1"/></Wave>
+
+						<Wave absoluteDelay="55"><Unit type="heavy" count="2" max="6"/></Wave>
+						
+						<Wave absoluteDelay="80"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -255,9 +294,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 
 		<!-- ****** LEVEL 6 : Grave Concerns (Dante, Graveyard) ****** -->
 		<Map displayName="Grave Concerns" isSavePoint="true">
-			<MapSettings backgroundName="graveyard">
-	            <SpellDropLocation x="360" y="150"/>
-			</MapSettings>
+			<MapSettings backgroundName="graveyard"/>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
 					<BaseLocation x="80" y="195" team="0"/>
@@ -281,17 +318,18 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						noticeSpellDropAfterMin="8"
 						noticeSpellDropAfterMax="8"
 						spellDropCourierGroupSizeMin="1"
-						spellDropCourierGroupSizeMax="2">
+						spellDropCourierGroupSizeMax="1">
 						
-						<Wave absoluteDelay="2"><Unit type="heavy" count="2" max="2"/></Wave>
+						<Wave absoluteDelay="2"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="5"><Unit type="sapper" count="1"/></Wave>
 						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="15"><Unit type="heavy" count="2" max="2"/></Wave>
-						<Wave absoluteDelay="50"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="41"><Unit type="heavy" count="2" max="2"/></Wave>
-						<Wave absoluteDelay="90"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="71"><Unit type="heavy" count="2" max="2"/></Wave>
-						<Wave absoluteDelay="130"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="160"/>
+						<Wave absoluteDelay="15"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="41"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="65"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="80"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="81"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="100"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="120"><Unit type="sapper" count="1"/></Wave>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -300,7 +338,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley, Graveyard) ****** -->
 		<Map displayName="Bullied" isSavePoint="true">
 			<MapSettings backgroundName="graveyard">
-	            <SpellDropLocation x="360" y="130"/>
+	            <SpellDropLocation x="360" y="140"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -309,13 +347,13 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					<AvailableSpells all="true"/>
 				</HumanPlayer>
 			</HumanPlayers>
-			<MultiplierDropLocation x="360" y="120"/>
+			<MultiplierDropLocation x="360" y="140"/>
 			
 			<Computer
 				playerName="Jack"
-				baseStartHealth="150"
-				baseHealth="150"
-				baseHealthIncrement="50"
+				baseStartHealth="120"
+				baseHealth="120"
+				baseHealthIncrement="40"
 				waveDelayScale="0.9"
 				team="1">
 				<BaseLocation x="600" y="140" team="1"/>
@@ -326,10 +364,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						spellDropCourierGroupSizeMin="1"
 						spellDropCourierGroupSizeMax="1">
 						
-						<Wave absoluteDelay="10"><Unit type="sapper" count="1"/></Wave>
-						<Wave absoluteDelay="20"><Unit type="heavy" count="3" max="3"/></Wave>
-						<Wave absoluteDelay="30"><Unit type="sapper" count="1"/></Wave>
-						<Wave absoluteDelay="50" spellCastChance="1"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="3"><Unit type="heavy" count="3" max="3"/></Wave>
+						<Wave absoluteDelay="15"><Unit type="grunt" count="2"/></Wave>
+						<Wave absoluteDelay="50" spellCastChance="0.5"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="75"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
@@ -344,9 +382,11 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				<BaseLocation x="80" y="140" team="1"/>
 				<RepeatingDays>
 					<Day repeatWaves="true">
-						<Wave absoluteDelay="0"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="12"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="24"/>
+						<Wave absoluteDelay="5"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="16"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="20"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="22"><Unit type="heavy" count="2" max="2"/></Wave>
+						<Wave absoluteDelay="25"/>
 					</Day>
 				</RepeatingDays>
 			</Computer>
