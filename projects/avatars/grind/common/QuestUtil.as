@@ -8,7 +8,7 @@ public class QuestUtil
     {
         var arr :Array = [];
         for each (var id :String in ctrl.getEntityIds()) {
-            var svc :Object = ctrl.getEntityProperty(QuestConstants.SERVICE, id);
+            var svc :Object = getService(ctrl, id);
             if (svc != null && (filter == null || filter(id, svc))) {
                 arr.push(svc);
             }
@@ -16,16 +16,49 @@ public class QuestUtil
         return arr;
     }
 
-    public static function fetch (ctrl :EntityControl, angle :Number, range :Number) :Array
+    public static function getService (ctrl :EntityControl, otherId :String) :Object
+    {
+        return ctrl.getEntityProperty(QuestConstants.SERVICE, otherId);
+    }
+
+    public static function squareDistanceTo (ctrl :EntityControl, otherId :String) :Number
+    {
+        var me :Array = ctrl.getPixelLocation();
+        var other :Array = ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, otherId) as Array;
+        var d2 :Number = (me[0]-other[0])*(me[0]-other[0]) + (me[2]-other[2])*(me[2]-other[2]);
+        return d2;
+    }
+
+    public static function fetchClosest (ctrl :EntityControl, filter :Function = null) :String
+    {
+        var min2 :Number = Number.MAX_VALUE;
+        var candidate :String = null;
+        var me :Array = ctrl.getPixelLocation();
+
+        var arr :Array = [];
+        for each (var id :String in ctrl.getEntityIds()) {
+            if (id != ctrl.getMyEntityId()) {
+                var svc :Object = getService(ctrl, id);
+                if (svc != null && (filter == null || filter(id, svc))) {
+                    var d2 :Number = squareDistanceTo(ctrl, id)
+                    if (d2 < min2 && (filter == null || filter(id, svc))) {
+                        min2 = d2;
+                        candidate = id;
+                    }
+                }
+            }
+        }
+
+        return candidate;
+    }
+
+    public static function fetchAll (ctrl :EntityControl, range :Number) :Array
     {
         var range2 :Number = range*range;
         var me :Array = ctrl.getPixelLocation();
 
         return query(ctrl, function (id :String, svc :Object) :Boolean {
-            if (id == ctrl.getMyEntityId()) {
-                return false;
-            }
-            var other :Array = ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, id);
+            var other :Array = ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, id) as Array;
             var d2 :Number = (me[0]-other[0])*(me[0]-other[0]) + (me[2]-other[2])*(me[2]-other[2]);
             return d2 <= range2;
         });

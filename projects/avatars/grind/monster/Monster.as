@@ -87,6 +87,10 @@ public class Monster extends Sprite
             return 0;
         },
 
+        getRange: function () :Number {
+            return 400;
+        },
+
         awardRandomItem: function (level :int) :void {
         },
 
@@ -95,7 +99,11 @@ public class Monster extends Sprite
             _ctrl.setMemory("xp", int(_ctrl.getMemory("xp")) + amount);
         },
 
-        damage: function (source :Object, amount :Number, cause :String = null) :void {
+        revive: function () :void {
+            // Nah
+        },
+
+        damage: function (source :Object, amount :int, cause :String = null) :void {
             _quest.damage(source, amount, cause);
         }
     };

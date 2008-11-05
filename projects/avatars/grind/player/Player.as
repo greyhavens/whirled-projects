@@ -61,7 +61,9 @@ public class Player extends Sprite
                 break;
             case "Cheat":
                 _svc.awardXP(110);
-                _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
+                for (var i:int = 0;i<5;++i) {
+                    _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
+                }
                 break;
         }
     }
@@ -90,7 +92,7 @@ public class Player extends Sprite
     // Bye bye type checking
     protected const _svc :Object = {
         getState: function () :String {
-            return _ctrl.getState();
+            return (_quest.getHealth() == 0) ? QuestConstants.STATE_DEAD : _ctrl.getState();
         },
 
         getType: function () :String {
@@ -98,11 +100,15 @@ public class Player extends Sprite
         },
 
         getPower: function () :Number {
-            return 0.2;
+            return _inventory.getPower();
         },
 
         getDefence: function () :Number {
-            return 0;
+            return 0; // TODO
+        },
+
+        getRange: function () :Number {
+            return _inventory.getRange(); // Use the range of the equipped weapon
         },
 
         awardRandomItem: function (level :int) :void {
@@ -112,7 +118,11 @@ public class Player extends Sprite
             _ctrl.setMemory("xp", int(_ctrl.getMemory("xp")) + amount);
         },
 
-        damage: function (source :Object, amount :Number, cause :String = null) :void {
+        revive: function () :void {
+            _ctrl.setMemory("health", int(_quest.getMaxHealth() / 2));
+        },
+
+        damage: function (source :Object, amount :int, cause :String = null) :void {
             _quest.damage(source, amount, cause);
         }
     };

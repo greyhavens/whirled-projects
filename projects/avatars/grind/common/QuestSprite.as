@@ -10,9 +10,12 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import flash.utils.getTimer; // function import
 import flash.utils.Timer;
+
+import com.threerings.flash.TextFieldUtil;
 
 import com.whirled.ActorControl;
 import com.whirled.ControlEvent;
@@ -96,25 +99,26 @@ public class QuestSprite extends Sprite
 
     protected function attack () :void
     {
-        trace("I see " + QuestUtil.query(_ctrl).length + " players");
-
         var self :Object = QuestUtil.self(_ctrl);
         var amount :Number = self.getPower();
+        var id :String = QuestUtil.fetchClosest(_ctrl);
+        var d2 :Number = QuestUtil.squareDistanceTo(_ctrl, id);
 
-        // TODO: Fix
-        for each (var svc :Object in QuestUtil.fetch(_ctrl, 666, 200)) {
-            if (svc.getState() == QuestConstants.STATE_COUNTER) {
-                self.damage(svc, svc.getPower(), "Countered!");
-                svc.damage(self, amount*0.25);
+        if (id != null && d2 <= self.getRange()*self.getRange()) {
+            var target :Object = QuestUtil.getService(_ctrl, id);
+            if (target.getState() == QuestConstants.STATE_COUNTER &&
+                d2 <= target.getRange()*target.getRange()) {
+
+                self.damage(target, target.getPower(), "Countered!");
+                target.damage(self, amount*0.25);
             } else {
-                svc.damage(self, amount);
+                target.damage(self, amount);
             }
         }
     }
 
     public function damage (source :Object, amount :Number, cause :String) :void
     {
-        trace(QuestUtil.self(_ctrl).getType() + ": I am damaged");
         var health :Number = getHealth();
         if (health == 0) {
             return; // Don't revive
@@ -125,7 +129,7 @@ public class QuestSprite extends Sprite
         }
 
         if (cause != null) {
-            echo(amount + " (" + cause + ")");
+            echo((amount < 0 ? "+"+(-amount) : "-"+amount) + " (" + cause + ")");
         } else {
             echo(String(amount));
         }
@@ -133,7 +137,9 @@ public class QuestSprite extends Sprite
         if (health <= amount) {
             _ctrl.setMemory("health", 0);
             if (source != null) {
+                // Goodies
                 source.awardXP(666);
+                source.awardRandomItem(getLevel());
             }
             echo("DEAD"); // TODO
         } else {
@@ -169,14 +175,18 @@ public class QuestSprite extends Sprite
 
     public function echo (text :String) :void
     {
-        var field :TextField = new TextField();
+        var field :TextField = TextFieldUtil.createField(name,
+            { textColor: 0xFF4400, selectable: false, autoSize: TextFieldAutoSize.LEFT,
+                outlineColor: 0x00000 },
+            { font: "_sans", size: 12, bold: true });
+
         field.text = text;
-        field.y = MAX_HEIGHT - 10;
+        field.y = MAX_HEIGHT - 50;
 
         var complete :Function = function () :void {
             removeChild(this);
         };
-        Tweener.addTween(field, {y: 50, time:1, onComplete:complete, transition:"linear"});
+        Tweener.addTween(field, {y: 50, time:2, onComplete:complete, transition:"linear"});
 
         addChild(field);
     }

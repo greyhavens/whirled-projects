@@ -95,21 +95,36 @@ public class Inventory extends Sprite
 
     protected function updateDoll () :void
     {
-        var layers :Array = [ 59 ]; // TODO: Configure this properly
+        var base :Array = [ 59, 263 ]; // TODO: Configure this properly
 
+        var sprites :Array = [];
+        _equipment = [];
         for (var i :int = 0; i < MAX_BAGS; ++i) {
             var memory :Array = _ctrl.getMemory("#"+i) as Array;
             if (memory != null && memory[2] == true) {
                 var item :Array = Items.TABLE[memory[0]];
-                layers[item[2]] = item[0];
+
+                sprites[item[2]] = item[0];
+                _equipment[item[2]] = item;
             }
         }
 
-        _doll.layer(layers);
+        _doll.layer(base.concat(sprites));
+    }
+
+    public function getRange () :Number
+    {
+        return (Items.HAND in _equipment) ? _equipment[Items.HAND][4] : 100;
+    }
+
+    public function getPower () :Number
+    {
+        return (Items.HAND in _equipment) ? _equipment[Items.HAND][3] : 100;
     }
 
     protected var _bags :Array;
     protected var _doll :Doll;
+    protected var _equipment :Array = []; // Maps slots to Items.TABLE rows
     protected var _ctrl :EntityControl;
 }
 
