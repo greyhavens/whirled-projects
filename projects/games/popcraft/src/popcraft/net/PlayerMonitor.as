@@ -1,4 +1,4 @@
-package popcraft.sp.endless {
+package popcraft.net {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
@@ -32,22 +32,25 @@ public class PlayerMonitor
             onPlayerLeft);
     }
 
-    public function reportLocalPlayerScore () :void
+    public function getScores (roundId :int) :Array
     {
-        AppContext.gameCtrl.net.sendMessage(
-            SCORE_MSG,
-            PlayerScore.create(
-                GameContext.localPlayerIndex,
-                EndlessGameContext.resourceScore,
-                EndlessGameContext.damageScore,
-                EndlessGameContext.resourceScoreThisRound,
-                EndlessGameContext.damageScoreThisRound,
-                EndlessGameContext.roundId).toBytes());
+        var thisRoundScores :Array = _scores.get(roundId);
+        if (thisRoundScores == null) {
+            thisRoundScores = ArrayUtil.create(SeatingManager.numExpectedPlayers, null);
+            _scores.put(roundId, thisRoundScores);
+        }
+
+        return thisRoundScores;
     }
 
-    public function waitForScoresForCurRound (callback :Function) :void
+    public function reportScore (scoreMsg :PlayerScoreMsg) :void
     {
-        _waitingForScoresForRoundId = EndlessGameContext.roundId;
+        AppContext.gameCtrl.net.sendMessage(SCORE_MSG, scoreMsg.toBytes());
+    }
+
+    public function waitForScores (callback :Function, roundId :int) :void
+    {
+        _waitingForScoresForRoundId = roundId;
         _gotScoresCallback = callback;
         checkScores();
     }
@@ -77,22 +80,6 @@ public class PlayerMonitor
         }
     }
 
-    public function getScoresForRound (roundId :int) :Array
-    {
-        var thisRoundScores :Array = _scores.get(roundId);
-        if (thisRoundScores == null) {
-            thisRoundScores = ArrayUtil.create(SeatingManager.numExpectedPlayers, null);
-            _scores.put(roundId, thisRoundScores);
-        }
-
-        return thisRoundScores;
-    }
-
-    public function get curRoundScores () :Array
-    {
-        return getScoresForRound(EndlessGameContext.roundId);
-    }
-
     protected function onPlayerLeft (e :OccupantChangedEvent) :void
     {
         if (_gotScoresCallback != null) {
@@ -103,7 +90,7 @@ public class PlayerMonitor
     protected function onMessageReceived (e :MessageReceivedEvent) :void
     {
         if (e.name == SCORE_MSG) {
-            var ps :PlayerScore = new PlayerScore();
+            var ps :PlayerScoreMsg = new PlayerScoreMsg();
             try {
                 ps.fromBytes(ByteArray(e.value));
             } catch (err :Error) {
@@ -116,7 +103,7 @@ public class PlayerMonitor
                 return;
             }
 
-            var thisRoundScores :Array = getScoresForRound(ps.roundId);
+            var thisRoundScores :Array = getScores(ps.roundId);
             thisRoundScores[ps.playerIndex] = ps;
             checkScores();
         }

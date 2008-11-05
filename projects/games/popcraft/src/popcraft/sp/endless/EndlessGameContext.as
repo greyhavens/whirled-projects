@@ -4,6 +4,8 @@ import com.whirled.game.GameSubControl;
 
 import popcraft.*;
 import popcraft.data.EndlessLevelData;
+import popcraft.net.PlayerMonitor;
+import popcraft.net.PlayerScoreMsg;
 
 public class EndlessGameContext
 {
@@ -40,8 +42,11 @@ public class EndlessGameContext
 
         } else if (GameContext.isMultiplayerGame && SeatingManager.isLocalPlayerInControl) {
             // convert PlayerScore objects to ints for reporting to the server
-            var finalScoreValues :Array = EndlessGameContext.playerMonitor.curRoundScores.map(
-                function (score :PlayerScore, index :int, arr :Array) :int {
+            var finalScores :Array =
+                EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId);
+
+            var finalScoreValues :Array = finalScores.map(
+                function (score :PlayerScoreMsg, index :int, arr :Array) :int {
                     return (score != null ? score.totalScore : 0);
                 });
 

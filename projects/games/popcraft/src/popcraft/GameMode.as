@@ -167,10 +167,10 @@ public class GameMode extends TransitionMode
 
         // set up the message manager
         _messageMgr = createMessageManager();
-        _messageMgr.addMessageType(CreateUnitMessage);
-        _messageMgr.addMessageType(SelectTargetEnemyMessage);
-        _messageMgr.addMessageType(CastCreatureSpellMessage);
-        _messageMgr.addMessageType(ResurrectPlayerMessage);
+        _messageMgr.addMessageType(CreateUnitMsg);
+        _messageMgr.addMessageType(SelectTargetEnemyMsg);
+        _messageMgr.addMessageType(CastCreatureSpellMsg);
+        _messageMgr.addMessageType(ResurrectPlayerMsg);
     }
 
     protected function shutdownNetwork () :void
@@ -538,8 +538,8 @@ public class GameMode extends TransitionMode
         var playerIndex :int;
         var playerInfo :PlayerInfo;
 
-        if (msg is CreateUnitMessage) {
-            var createUnitMsg :CreateUnitMessage = (msg as CreateUnitMessage);
+        if (msg is CreateUnitMsg) {
+            var createUnitMsg :CreateUnitMsg = (msg as CreateUnitMsg);
             playerIndex = createUnitMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 GameContext.unitFactory.createCreature(createUnitMsg.unitType, playerIndex);
@@ -549,15 +549,15 @@ public class GameMode extends TransitionMode
                 }
             }
 
-        } else if (msg is SelectTargetEnemyMessage) {
-            var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
+        } else if (msg is SelectTargetEnemyMsg) {
+            var selectTargetEnemyMsg :SelectTargetEnemyMsg = msg as SelectTargetEnemyMsg;
             playerIndex = selectTargetEnemyMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             }
 
-        } else if (msg is CastCreatureSpellMessage) {
-            var castSpellMsg :CastCreatureSpellMessage = msg as CastCreatureSpellMessage;
+        } else if (msg is CastCreatureSpellMsg) {
+            var castSpellMsg :CastCreatureSpellMsg = msg as CastCreatureSpellMsg;
             playerIndex = castSpellMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
                 var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(playerIndex);
@@ -566,8 +566,8 @@ public class GameMode extends TransitionMode
                 GameContext.playGameSound("sfx_" + spell.name);
             }
 
-        } else if (msg is ResurrectPlayerMessage) {
-            var resurrectMsg :ResurrectPlayerMessage = msg as ResurrectPlayerMessage;
+        } else if (msg is ResurrectPlayerMsg) {
+            var resurrectMsg :ResurrectPlayerMsg = msg as ResurrectPlayerMsg;
             resurrectPlayer(resurrectMsg.playerIndex);
         }
     }
@@ -666,7 +666,7 @@ public class GameMode extends TransitionMode
             playerInfo.deductCreatureCost(unitType);
         }
 
-        sendMessage(CreateUnitMessage.create(playerIndex, unitType), isAiMsg);
+        sendMessage(CreateUnitMsg.create(playerIndex, unitType), isAiMsg);
 
         if (playerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesCreated[unitType] += 1;
@@ -686,7 +686,7 @@ public class GameMode extends TransitionMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            sendMessage(CastCreatureSpellMessage.create(playerIndex, spellType), isAiMsg);
+            sendMessage(CastCreatureSpellMsg.create(playerIndex, spellType), isAiMsg);
 
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
@@ -698,12 +698,12 @@ public class GameMode extends TransitionMode
 
     public function sendTargetEnemyMsg (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
-        sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
+        sendMessage(SelectTargetEnemyMsg.create(playerIndex, enemyId), isAiMsg);
     }
 
     public function sendResurrectPlayerMsg () :void
     {
-        sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
+        sendMessage(ResurrectPlayerMsg.create(GameContext.localPlayerIndex), false);
     }
 
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void

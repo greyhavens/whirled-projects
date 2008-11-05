@@ -1,10 +1,10 @@
-package popcraft.sp.endless {
+package popcraft.net {
 
 import flash.utils.ByteArray;
 
 import popcraft.GameContext;
 
-public class PlayerScore
+public class PlayerScoreMsg
 {
     public var playerIndex :int;
     public var resourceScore :int;
@@ -24,9 +24,9 @@ public class PlayerScore
     }
 
     public static function create (playerIndex :int, resourceScore :int, damageScore :int,
-        resourceScoreThisRound :int, damageScoreThisRound :int, roundId :int = -1) :PlayerScore
+        resourceScoreThisRound :int, damageScoreThisRound :int, roundId :int = -1) :PlayerScoreMsg
     {
-        var ps :PlayerScore = new PlayerScore();
+        var ps :PlayerScoreMsg = new PlayerScoreMsg();
         ps.playerIndex = playerIndex;
         ps.resourceScore = resourceScore;
         ps.damageScore = damageScore;

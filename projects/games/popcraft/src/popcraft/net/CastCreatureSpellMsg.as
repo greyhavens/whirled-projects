@@ -4,38 +4,39 @@ import com.whirled.contrib.simplegame.net.*;
 
 import flash.utils.ByteArray;
 
-public class SelectTargetEnemyMessage
+public class CastCreatureSpellMsg
     implements Message
 {
     public var playerIndex :int;
-    public var targetPlayerIndex :int;
+    public var spellType :int;
 
-    public static function create (playerIndex :int, targetPlayerIndex :int) :SelectTargetEnemyMessage
+    public static function create (playerIndex :int, spellType :int) :CastCreatureSpellMsg
     {
-        var msg :SelectTargetEnemyMessage = new SelectTargetEnemyMessage();
+        var msg :CastCreatureSpellMsg = new CastCreatureSpellMsg();
         msg.playerIndex = playerIndex;
-        msg.targetPlayerIndex = targetPlayerIndex;
+        msg.spellType = spellType;
         return msg;
     }
 
     public function fromBytes (ba :ByteArray) :void
     {
         playerIndex = ba.readByte();
-        targetPlayerIndex = ba.readByte();
+        spellType = ba.readByte();
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray
     {
         ba = (ba != null ? ba : new ByteArray());
         ba.writeByte(playerIndex);
-        ba.writeByte(targetPlayerIndex);
+        ba.writeByte(spellType);
         return ba;
     }
 
     public function get name () :String
     {
-        return "SelectTargetEnemy";
+        return "CastCreatureSpell";
     }
 }
 
 }
+

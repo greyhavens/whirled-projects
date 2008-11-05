@@ -14,6 +14,7 @@ import popcraft.battle.*;
 import popcraft.battle.view.SpellDropView;
 import popcraft.data.*;
 import popcraft.mp.*;
+import popcraft.net.PlayerScoreMsg;
 import popcraft.sp.*;
 
 public class EndlessGameMode extends GameMode
@@ -242,11 +243,19 @@ public class EndlessGameMode extends GameMode
         if (GameContext.isMultiplayerGame) {
             // In a multiplayer game, wait for everyone to report their scores so that the next mode
             // can call endGameWithScores
-            EndlessGameContext.playerMonitor.reportLocalPlayerScore();
-            EndlessGameContext.playerMonitor.waitForScoresForCurRound(
+            EndlessGameContext.playerMonitor.reportScore(PlayerScoreMsg.create(
+                    GameContext.localPlayerIndex,
+                    EndlessGameContext.resourceScore,
+                    EndlessGameContext.damageScore,
+                    EndlessGameContext.resourceScoreThisRound,
+                    EndlessGameContext.damageScoreThisRound,
+                    EndlessGameContext.roundId));
+
+            EndlessGameContext.playerMonitor.waitForScores(
                 function () :void {
                     AppContext.mainLoop.pushMode(nextMode);
-                });
+                },
+                EndlessGameContext.roundId);
 
         } else {
             // otherwise, just move to the next mode immediately

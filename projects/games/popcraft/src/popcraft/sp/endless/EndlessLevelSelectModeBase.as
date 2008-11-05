@@ -370,6 +370,7 @@ import popcraft.util.MyStringUtil;
 import com.threerings.flash.DisplayUtil;
 import flash.events.MouseEvent;
 import com.threerings.util.Integer;
+import popcraft.net.PlayerScoreMsg;
 
 class HelpView extends SceneObject
 {
@@ -521,7 +522,7 @@ class SaveView extends SceneObject
             // we're going to modify the array, so make a copy
             roundScores = roundScores.slice();
             roundScores.sort(
-                function (a :PlayerScore, b :PlayerScore) :int {
+                function (a :PlayerScoreMsg, b :PlayerScoreMsg) :int {
                     // bigger scores come first
                     return Integer.compare(b.totalScore, a.totalScore);
                 });
@@ -532,7 +533,7 @@ class SaveView extends SceneObject
                     (playerRank < roundScores.length ? roundScores[playerRank] : null));
             }
 
-            function showPlayerScores (playerRank :int, score :PlayerScore) :void {
+            function showPlayerScores (playerRank :int, score :PlayerScoreMsg) :void {
                 playerRank += 1;
                 var scorePanel :MovieClip = statPanel["player_" + playerRank + "_marker"];
                 var portrait :MovieClip = statPanel["player_" + playerRank + "_portrait"];
