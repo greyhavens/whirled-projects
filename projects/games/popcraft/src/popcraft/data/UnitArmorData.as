@@ -13,7 +13,7 @@ public class UnitArmorData
 
     public function getWeaponDamage (weapon :UnitWeaponData) :Number
     {
-        return this.getDamage(weapon.damageType, weapon.damageRange.next());
+        return getDamage(weapon.damageType, weapon.damageRange.next());
     }
 
     public function getDamage (damageType :int, baseDamage :Number) :Number

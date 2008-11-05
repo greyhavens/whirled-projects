@@ -18,16 +18,16 @@ public class CreatureSpellSet extends SimObject
     {
         var taskName :String = getExpireTaskName(spell.type);
 
-        if (this.isSpellActive(spell.type)) {
+        if (isSpellActive(spell.type)) {
             // the spell is already active - just reset its timer
-            this.removeNamedTasks(taskName);
+            removeNamedTasks(taskName);
         } else {
             _spells.push(spell);
-            this.updateSpellAggregate();
+            updateSpellAggregate();
         }
 
         // expire the spell in a little while
-        this.addNamedTask(taskName,
+        addNamedTask(taskName,
             After(spell.expireTime,
                 new FunctionTask(function () :void { spellExpired(spell.type); })));
     }
@@ -40,7 +40,7 @@ public class CreatureSpellSet extends SimObject
         Assert.isTrue(i >= 0);
         _spells.splice(i, 1);
 
-        this.updateSpellAggregate();
+        updateSpellAggregate();
 
         // @TODO - move this to a view class
         GameContext.playGameSound("sfx_spellexpire");
@@ -63,7 +63,7 @@ public class CreatureSpellSet extends SimObject
             }
         }
 
-        this.dispatchEvent(new Event(SET_MODIFIED));
+        dispatchEvent(new Event(SET_MODIFIED));
     }
 
     public function get speedScaleOffset () :Number

@@ -15,19 +15,19 @@ public class EndlessLevelManager
 {
     public function EndlessLevelManager ()
     {
-        this.resetSavedData();
+        resetSavedData();
     }
 
     public function playSpLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
         :void
     {
-        this.playLevel(SP_LEVEL, levelReadyCallback, forceReload);
+        playLevel(SP_LEVEL, levelReadyCallback, forceReload);
     }
 
     public function playMpLevel (levelReadyCallback :Function = null, forceReload :Boolean = false)
         :void
     {
-        this.playLevel(MP_LEVEL, levelReadyCallback, forceReload);
+        playLevel(MP_LEVEL, levelReadyCallback, forceReload);
     }
 
     public function createDummySpSaves () :void
@@ -82,7 +82,7 @@ public class EndlessLevelManager
 
     public function readCookieData (version :int, cookie :ByteArray) :void
     {
-        this.resetSavedData();
+        resetSavedData();
 
         _savedSpGames.fromBytes(cookie);
         _savedMpGames.fromBytes(cookie);
@@ -95,7 +95,7 @@ public class EndlessLevelManager
 
     public function cookieReadFailed () :Boolean
     {
-        this.resetSavedData();
+        resetSavedData();
         return true;
     }
 
@@ -131,7 +131,7 @@ public class EndlessLevelManager
         _loadedLevelType = levelType;
 
         if (null != _loadedLevel) {
-            this.startGame();
+            startGame();
 
         } else {
             // load the level
@@ -165,7 +165,7 @@ public class EndlessLevelManager
                     onLoadError);
 
             } else {
-                this.loadLevel(loadParams);
+                loadLevel(loadParams);
             }
         }
     }
@@ -182,7 +182,7 @@ public class EndlessLevelManager
     {
         _loadedLevel =
             EndlessLevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
-        this.startGame();
+        startGame();
     }
 
     protected function onLoadError (err :String) :void

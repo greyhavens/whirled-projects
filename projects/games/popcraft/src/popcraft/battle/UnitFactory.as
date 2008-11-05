@@ -69,7 +69,7 @@ public class UnitFactory extends EventDispatcher
         // play a sound
         GameContext.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
 
-        this.dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
+        dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
     }
 
     public function createWorkshop (owningPlayerInfo :PlayerInfo) :WorkshopView
@@ -80,7 +80,7 @@ public class UnitFactory extends EventDispatcher
         var workshopView :WorkshopView = new WorkshopView(workshop);
         GameContext.gameMode.addObject(workshopView, GameContext.battleBoardView.unitViewParent);
 
-        this.dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP,
+        dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP,
             owningPlayerInfo.playerIndex));
 
         return workshopView;

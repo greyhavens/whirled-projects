@@ -21,7 +21,7 @@ public class MultiplayerGameMode extends GameMode
         super.setup();
 
         // start the game when the GAME_STARTED event is received
-        this.registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+        registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
                 startGame();
             });

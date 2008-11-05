@@ -43,7 +43,7 @@ public class CourierCreatureUnit extends CreatureUnit
         if (null != _carriedSpell) {
             // don't play the "new spell" sound when the Courier drops a spell
             SpellDropFactory.createSpellDrop(_carriedSpell.spellType, this.unitLoc, false);
-            this.destroyCarriedSpell();
+            destroyCarriedSpell();
         }
     }
 
@@ -54,12 +54,12 @@ public class CourierCreatureUnit extends CreatureUnit
         GameContext.gameMode.spellDeliveredToPlayer(_owningPlayerInfo.playerIndex,
             _carriedSpell.spellType);
 
-        this.destroyCarriedSpell();
+        destroyCarriedSpell();
 
         // the courier is destroyed when he delivers the spell
         // (but we don't want to play her death animation when this happens)
         _preventDeathAnimation = true;
-        this.die();
+        die();
     }
 
     public function get carriedSpell () :CarriedSpellObject
@@ -70,12 +70,12 @@ public class CourierCreatureUnit extends CreatureUnit
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        this.updateSpeedup();
+        updateSpeedup();
     }
 
     override protected function removedFromDB () :void
     {
-        this.destroyCarriedSpell();
+        destroyCarriedSpell();
         super.removedFromDB();
     }
 
@@ -90,7 +90,7 @@ public class CourierCreatureUnit extends CreatureUnit
     override public function die () :void
     {
         // drop the currently carried spell on the ground when we die.
-        this.dropCarriedSpell();
+        dropCarriedSpell();
         super.die();
     }
 
@@ -109,7 +109,7 @@ public class CourierCreatureUnit extends CreatureUnit
 
     override protected function update (dt :Number) :void
     {
-        this.updateSpeedup();
+        updateSpeedup();
         super.update(dt);
     }
 
@@ -189,7 +189,7 @@ class CourierAI extends AITaskTree
     public function CourierAI (unit :CourierCreatureUnit)
     {
         _unit = unit;
-        this.addSubtask(new ScanForSpellPickupsTask(_unit));
+        addSubtask(new ScanForSpellPickupsTask(_unit));
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -197,13 +197,13 @@ class CourierAI extends AITaskTree
         if (messageName == ScanForSpellPickupsTask.MSG_DETECTEDSPELL) {
             var spell :SpellDropObject = data as SpellDropObject;
             //log.info("detected spell - attempting pickup");
-            this.clearSubtasks();
-            this.addSubtask(new PickupSpellTask(_unit, spell));
+            clearSubtasks();
+            addSubtask(new PickupSpellTask(_unit, spell));
         } else if (messageName == PickupSpellTask.MSG_SPELL_GONE) {
             // we were trying to get to a spell, but somebody else got to it first.
             // resume wandering
-            this.clearSubtasks();
-            this.addSubtask(new ScanForSpellPickupsTask(_unit));
+            clearSubtasks();
+            addSubtask(new ScanForSpellPickupsTask(_unit));
         } else if (messageName == PickupSpellTask.MSG_SPELL_RETRIEVED) {
             // we picked up a spell!
             //log.info("retrieved spell");
@@ -211,7 +211,7 @@ class CourierAI extends AITaskTree
             // let's try to go home and deliver it
             var base :WorkshopUnit = _unit.owningPlayerInfo.workshop;
             if (null != base) {
-                this.addSubtask(new CourierMoveTask(_unit, base.unitLoc));
+                addSubtask(new CourierMoveTask(_unit, base.unitLoc));
             }
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
             // we've arrived at the base. deliver the goods
@@ -225,8 +225,8 @@ class CourierAI extends AITaskTree
 
         // when the owning player dies, just wander forever - never pickup an infusion
         if (!_ownerIsDead && !_unit.owningPlayerInfo.isAlive) {
-            this.clearSubtasks();
-            this.addSubtask(new WanderTask(_unit));
+            clearSubtasks();
+            addSubtask(new WanderTask(_unit));
             _ownerIsDead = true;
         }
 
@@ -254,7 +254,7 @@ class CourierMoveTask extends AITaskTree
         _unit = unit;
         _loc = loc;
 
-        this.moveToNextLoc();
+        moveToNextLoc();
     }
 
     protected function moveToNextLoc () :void
@@ -274,7 +274,7 @@ class CourierMoveTask extends AITaskTree
             nextLoc = d;
         }
 
-        this.addSubtask(new MoveToLocationTask(MOVE_SUBTASK_NAME, nextLoc, CourierSettings.MOVE_FUDGE_FACTOR));
+        addSubtask(new MoveToLocationTask(MOVE_SUBTASK_NAME, nextLoc, CourierSettings.MOVE_FUDGE_FACTOR));
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
@@ -287,11 +287,11 @@ class CourierMoveTask extends AITaskTree
                 } else {
                     // pause for a moment
                     var pauseTime :Number = CourierSettings.BASE_PAUSE_TIME / _unit.speedup;
-                    this.addSubtask(new AITimerTask(pauseTime, PAUSE_SUBTASK_NAME));
+                    addSubtask(new AITimerTask(pauseTime, PAUSE_SUBTASK_NAME));
                 }
             } else if (subtask.name == PAUSE_SUBTASK_NAME) {
                 // start moving again
-                this.moveToNextLoc();
+                moveToNextLoc();
             }
         }
     }
@@ -330,7 +330,7 @@ class PickupSpellTask extends AITaskTree
         _unit = unit;
         _spellRef = spell.ref;
 
-        this.addSubtask(new CourierMoveTask(_unit, new Vector2(spell.x, spell.y)));
+        addSubtask(new CourierMoveTask(_unit, new Vector2(spell.x, spell.y)));
     }
 
     override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
@@ -338,7 +338,7 @@ class PickupSpellTask extends AITaskTree
         if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == CourierMoveTask.NAME) {
             if (!_spellRef.isNull) {
                 var spell :SpellDropObject = _spellRef.object as SpellDropObject;
-                this.sendParentMessage(MSG_SPELL_RETRIEVED, spell);
+                sendParentMessage(MSG_SPELL_RETRIEVED, spell);
                 _retrieved = true;
             }
         }
@@ -349,7 +349,7 @@ class PickupSpellTask extends AITaskTree
         // does the spell object still exist?
         if (_spellRef.isNull) {
             if (!_retrieved) {
-                this.sendParentMessage(MSG_SPELL_GONE);
+                sendParentMessage(MSG_SPELL_GONE);
             }
             return AITaskStatus.COMPLETE;
         } else {
@@ -368,14 +368,14 @@ class WanderTask extends AITaskTree
     public function WanderTask (unit :CourierCreatureUnit)
     {
         _unit = unit;
-        this.wander();
+        wander();
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
     {
         if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == CourierMoveTask.NAME) {
             // wander again
-            this.wander();
+            wander();
         }
     }
 
@@ -408,7 +408,7 @@ class WanderTask extends AITaskTree
             GameContext.gameMode.battlefieldHeight - CourierSettings.WANDER_BOUNDS_BORDER);
 
         // commence wandering!
-        this.addSubtask(new CourierMoveTask(_unit, wanderLoc));
+        addSubtask(new CourierMoveTask(_unit, wanderLoc));
     }
 
     protected var _unit :CourierCreatureUnit;
@@ -428,7 +428,7 @@ class ScanForSpellPickupsTask extends WanderTask
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DetectSpellDropAction());
         scanSequence.addSequencedTask(new AITimerTask(0.5));
-        this.addSubtask(scanSequence);
+        addSubtask(scanSequence);
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -438,7 +438,7 @@ class ScanForSpellPickupsTask extends WanderTask
             var spells :Array = msg.data as Array;
             // choose a spell at random
             var spell :SpellDropObject = Rand.nextElement(spells, Rand.STREAM_GAME);
-            this.sendParentMessage(MSG_DETECTEDSPELL, spell);
+            sendParentMessage(MSG_DETECTEDSPELL, spell);
         } else {
             super.receiveSubtaskMessage(task, messageName, data);
         }

@@ -51,7 +51,7 @@ public class GameMode extends TransitionMode
         log.info("Starting game with seed: " + randSeed);
 
         // allow subclasses to do some post-RNG-seeding early setup
-        this.rngSeeded();
+        rngSeeded();
 
         // cache some frequently-used values in GameContext
         GameContext.mapScaleXInv = 1 / GameContext.gameMode.mapSettings.mapScaleX;
@@ -66,11 +66,11 @@ public class GameMode extends TransitionMode
         _modeLayer.addChild(GameContext.dashboardLayer);
         _modeLayer.addChild(GameContext.overlayLayer);
 
-        this.setupAudio();
-        this.setupNetwork();
-        this.setupBattle();
-        this.setupPlayers();
-        this.setupDashboard();
+        setupAudio();
+        setupNetwork();
+        setupBattle();
+        setupPlayers();
+        setupDashboard();
 
         // create the spell drop timer after setting up players; available
         // spells may not be known until this point
@@ -80,15 +80,15 @@ public class GameMode extends TransitionMode
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
-            this.addObject(_debugDataView, GameContext.overlayLayer);
+            addObject(_debugDataView, GameContext.overlayLayer);
             _debugDataView.visible = true;
         }
     }
 
     override protected function destroy () :void
     {
-        this.shutdownNetwork();
-        this.shutdownAudio();
+        shutdownNetwork();
+        shutdownAudio();
 
         Profiler.displayStats();
     }
@@ -166,7 +166,7 @@ public class GameMode extends TransitionMode
         GameContext.netObjects = new NetObjectDB();
 
         // set up the message manager
-        _messageMgr = this.createMessageManager();
+        _messageMgr = createMessageManager();
         _messageMgr.addMessageType(CreateUnitMessage);
         _messageMgr.addMessageType(SelectTargetEnemyMessage);
         _messageMgr.addMessageType(CastCreatureSpellMessage);
@@ -183,7 +183,7 @@ public class GameMode extends TransitionMode
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = DASHBOARD_LOC.x;
         dashboard.y = DASHBOARD_LOC.y;
-        this.addObject(dashboard, GameContext.dashboardLayer);
+        addObject(dashboard, GameContext.dashboardLayer);
 
         GameContext.dashboard = dashboard;
 
@@ -193,7 +193,7 @@ public class GameMode extends TransitionMode
         puzzleBoard.displayObject.y = PUZZLE_BOARD_LOC.y;
 
         DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
-        this.addObject(puzzleBoard);
+        addObject(puzzleBoard);
 
         GameContext.puzzleBoard = puzzleBoard;
     }
@@ -203,11 +203,11 @@ public class GameMode extends TransitionMode
         GameContext.playerInfos = [];
 
         // we want to know when a player leaves
-        this.registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             handleOccupantLeft);
 
         // subclasses create the players in this function
-        this.createPlayers();
+        createPlayers();
 
         // create the TargetWorkshopBadges for all players on the local player's team
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -228,7 +228,7 @@ public class GameMode extends TransitionMode
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(BATTLE_WIDTH, BATTLE_HEIGHT);
-        this.addObject(battleBoardView, GameContext.battleLayer);
+        addObject(battleBoardView, GameContext.battleLayer);
 
         GameContext.battleBoardView = battleBoardView;
 
@@ -240,7 +240,7 @@ public class GameMode extends TransitionMode
             var diurnalMeter :DiurnalCycleView = new DiurnalCycleView();
             diurnalMeter.x = DIURNAL_METER_LOC.x;
             diurnalMeter.y = DIURNAL_METER_LOC.y;
-            this.addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
+            addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
         }
     }
 
@@ -262,28 +262,28 @@ public class GameMode extends TransitionMode
 
         switch (keyCode) {
         case KeyboardCodes.A:
-            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
+            localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
             break;
 
         case KeyboardCodes.S:
-            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_COURIER);
+            localPlayerPurchasedCreature(Constants.UNIT_TYPE_COURIER);
             break;
 
         case KeyboardCodes.D:
-            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_SAPPER);
+            localPlayerPurchasedCreature(Constants.UNIT_TYPE_SAPPER);
             break;
 
         case KeyboardCodes.F:
-            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_HEAVY);
+            localPlayerPurchasedCreature(Constants.UNIT_TYPE_HEAVY);
             break;
 
         case KeyboardCodes.G:
-            this.localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
+            localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
             break;
 
         case KeyboardCodes.ESCAPE:
             if (this.canPause) {
-                this.pause();
+                pause();
             }
             break;
 
@@ -295,7 +295,7 @@ public class GameMode extends TransitionMode
 
         default:
             if (Constants.DEBUG_ALLOW_CHEATS) {
-                this.applyCheatCode(keyCode);
+                applyCheatCode(keyCode);
             }
             break;
         }
@@ -318,18 +318,15 @@ public class GameMode extends TransitionMode
             break;
 
         case KeyboardCodes.B:
-            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
-                Constants.SPELL_TYPE_BLOODLUST);
+            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_BLOODLUST);
             break;
 
         case KeyboardCodes.R:
-            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
-                Constants.SPELL_TYPE_RIGORMORTIS);
+            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_RIGORMORTIS);
             break;
 
         case KeyboardCodes.P:
-            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
-                Constants.SPELL_TYPE_PUZZLERESET);
+            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_PUZZLERESET);
             break;
 
         case KeyboardCodes.N:
@@ -403,7 +400,7 @@ public class GameMode extends TransitionMode
         while (_messageMgr.unprocessedTickCount > 0 && !_gameOver) {
             // update all networked objects - that is, all objects involved in the actual
             // game simulation
-            this.updateNetworkedObjects();
+            updateNetworkedObjects();
 
             // if the network simulation is updated, we'll need to depth-sort
             // the battlefield display objects
@@ -412,7 +409,7 @@ public class GameMode extends TransitionMode
 
         if (!_handlingGameOver && _gameOver) {
             _handlingGameOver = true;
-            this.handleGameOver();
+            handleGameOver();
         }
 
         // update all non-net objects
@@ -445,14 +442,14 @@ public class GameMode extends TransitionMode
         // process all messages from this tick
         var messageArray: Array = _messageMgr.getNextTick();
         for each (var msg :Message in messageArray) {
-            this.handleMessage(msg);
+            handleMessage(msg);
         }
 
         // AI messages are identical to other messages, but are kept in a separate Array so
         // that we don't generate unnecessary network traffic when playing a multiplayer game with
         // computer AIs
         for each (msg in _aiPlayerMessages) {
-            this.handleMessage(msg);
+            handleMessage(msg);
         }
 
         _aiPlayerMessages = [];
@@ -470,8 +467,8 @@ public class GameMode extends TransitionMode
             }
         }
 
-        this.updateTeamLiveStatuses();
-        this.checkForGameOver();
+        updateTeamLiveStatuses();
+        checkForGameOver();
 
         ++_gameTickCount;
         _gameTime += TICK_INTERVAL_S;
@@ -556,7 +553,7 @@ public class GameMode extends TransitionMode
             var selectTargetEnemyMsg :SelectTargetEnemyMessage = msg as SelectTargetEnemyMessage;
             playerIndex = selectTargetEnemyMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
-                this.setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
+                setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             }
 
         } else if (msg is CastCreatureSpellMessage) {
@@ -571,7 +568,7 @@ public class GameMode extends TransitionMode
 
         } else if (msg is ResurrectPlayerMessage) {
             var resurrectMsg :ResurrectPlayerMessage = msg as ResurrectPlayerMessage;
-            this.resurrectPlayer(resurrectMsg.playerIndex);
+            resurrectPlayer(resurrectMsg.playerIndex);
         }
     }
 
@@ -610,7 +607,7 @@ public class GameMode extends TransitionMode
         if (localPlayerInfo.teamId != targetInfo.teamId &&
             localPlayerInfo.targetedEnemy.playerIndex != targetId) {
             // send a message to everyone
-            this.sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
+            sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
         }
     }
 
@@ -642,16 +639,16 @@ public class GameMode extends TransitionMode
 
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
-        if (!this.isAvailableUnit(unitType) ||
+        if (!isAvailableUnit(unitType) ||
             !GameContext.localPlayerInfo.canAffordCreature(unitType)) {
             return;
         }
 
-        this.sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, false, false);
+        sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, false, false);
 
         // when the sun is eclipsed, it's buy-one-get-one-free time!
         if (GameContext.diurnalCycle.isEclipse) {
-            this.sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, true, false);
+            sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, true, false);
         }
     }
 
@@ -669,7 +666,7 @@ public class GameMode extends TransitionMode
             playerInfo.deductCreatureCost(unitType);
         }
 
-        this.sendMessage(CreateUnitMessage.create(playerIndex, unitType), isAiMsg);
+        sendMessage(CreateUnitMessage.create(playerIndex, unitType), isAiMsg);
 
         if (playerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesCreated[unitType] += 1;
@@ -689,7 +686,7 @@ public class GameMode extends TransitionMode
         playerInfo.spellCast(spellType);
 
         if (isCreatureSpell) {
-            this.sendMessage(CastCreatureSpellMessage.create(playerIndex, spellType), isAiMsg);
+            sendMessage(CastCreatureSpellMessage.create(playerIndex, spellType), isAiMsg);
 
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
@@ -701,12 +698,12 @@ public class GameMode extends TransitionMode
 
     public function sendTargetEnemyMsg (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
     {
-        this.sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
+        sendMessage(SelectTargetEnemyMessage.create(playerIndex, enemyId), isAiMsg);
     }
 
     public function sendResurrectPlayerMsg () :void
     {
-        this.sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
+        sendMessage(ResurrectPlayerMessage.create(GameContext.localPlayerIndex), false);
     }
 
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void

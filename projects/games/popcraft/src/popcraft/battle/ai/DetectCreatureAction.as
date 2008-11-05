@@ -28,15 +28,16 @@ public class DetectCreatureAction extends AITask
             }
         }
 
-        this.handleDetectedCreature(unit, detectedCreature);
+        handleDetectedCreature(unit, detectedCreature);
 
         return AITaskStatus.COMPLETE;
     }
 
-    protected function handleDetectedCreature (thisCreature :CreatureUnit, detectedCreature :CreatureUnit) :void
+    protected function handleDetectedCreature (thisCreature :CreatureUnit,
+        detectedCreature :CreatureUnit) :void
     {
         if (null != detectedCreature) {
-            this.sendParentMessage(MSG_CREATUREDETECTED, detectedCreature);
+            sendParentMessage(MSG_CREATUREDETECTED, detectedCreature);
         }
     }
 

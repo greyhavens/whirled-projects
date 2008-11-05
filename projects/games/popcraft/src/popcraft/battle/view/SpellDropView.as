@@ -21,7 +21,7 @@ public class SpellDropView extends BattlefieldSprite
         _movie = SwfResource.instantiateMovieClip("infusions", spellData.iconName, true, true);
 
         // pulse animation, to draw players' attention
-        this.addTask(new RepeatingTask(
+        addTask(new RepeatingTask(
             ScaleTask.CreateEaseIn(1.3, 1.3, 0.3),
             ScaleTask.CreateEaseOut(1, 1, 0.3)));
     }
@@ -42,7 +42,7 @@ public class SpellDropView extends BattlefieldSprite
         super.update(dt);
 
         if (_spellObjRef.isNull) {
-            this.destroySelf();
+            destroySelf();
         }
     }
 

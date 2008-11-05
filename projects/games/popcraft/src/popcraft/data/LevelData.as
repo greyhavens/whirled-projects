@@ -78,8 +78,8 @@ public class LevelData
         }
 
         // parse the available units and spells
-        level.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
-        level.availableSpells = DataUtils.parseCastableSpellTypes(xml.AvailableSpells[0]);
+        level.availableUnits = DataUtil.parseCreatureTypes(xml.AvailableUnits[0]);
+        level.availableSpells = DataUtil.parseCastableSpellTypes(xml.AvailableSpells[0]);
 
         // parse the computer players
         for each (var computerData :XML in xml.Computer) {

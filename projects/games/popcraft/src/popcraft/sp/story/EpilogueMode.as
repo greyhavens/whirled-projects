@@ -38,7 +38,7 @@ public class EpilogueMode extends TransitionMode
         movieTask.addTask(new WaitForFrameTask("end"));
         movieTask.addTask(new FunctionTask(endEpilogue));
         movieObj.addTask(movieTask);
-        this.addObject(movieObj, _modeLayer);
+        addObject(movieObj, _modeLayer);
 
         // skip button, to end the sequence
         _skipButton = UIBits.createButton("Skip", 1.2);
@@ -47,7 +47,7 @@ public class EpilogueMode extends TransitionMode
 
         _modeLayer.addChild(_skipButton);
 
-        this.registerOneShotCallback(_skipButton, MouseEvent.CLICK, onSkipClicked);
+        registerOneShotCallback(_skipButton, MouseEvent.CLICK, onSkipClicked);
     }
 
     override protected function enter () :void
@@ -64,7 +64,7 @@ public class EpilogueMode extends TransitionMode
 
     protected function onSkipClicked (...ignored) :void
     {
-        this.endEpilogue();
+        endEpilogue();
     }
 
     protected function endEpilogue () :void
@@ -75,11 +75,11 @@ public class EpilogueMode extends TransitionMode
         // fade out and pop mode
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT:
-            this.fadeOut(LevelSelectMode.create);
+            fadeOut(LevelSelectMode.create);
             break;
 
         case TRANSITION_LEVELOUTRO:
-            this.fadeOutToMode(new LevelOutroMode(_level));
+            fadeOutToMode(new LevelOutroMode(_level));
             break;
         }
     }

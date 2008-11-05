@@ -34,7 +34,7 @@ public class SpellButton extends SceneObject
             _movie.x = xLoc;
             _movie.y = Y_START;
 
-            this.addTask(new SerialTask(
+            addTask(new SerialTask(
                 LocationTask.CreateEaseOut(xLoc, Y_BOUNCE, 0.3),
                 LocationTask.CreateEaseIn(xLoc, Y_END, 0.1)));
 
@@ -85,7 +85,7 @@ public class SpellButton extends SceneObject
         }
         jiggleTask.addTask(LocationTask.CreateSmooth(x, y, 0.1));
 
-        this.addNamedTask(JIGGLE_TASK_NAME, jiggleTask, true);
+        addNamedTask(JIGGLE_TASK_NAME, jiggleTask, true);
     }
 
     public function get clickableObject () :InteractiveObject

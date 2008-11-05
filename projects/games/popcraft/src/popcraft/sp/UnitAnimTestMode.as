@@ -36,7 +36,7 @@ public class UnitAnimTestMode extends AppMode
         var xLoc :Number = 10;
         var yLoc :Number = 380;
         for (var unitType :int = 0; unitType < Constants.UNIT_NAMES.length; ++unitType) {
-            var button :SimpleButton = this.createUnitButton(unitType);
+            var button :SimpleButton = createUnitButton(unitType);
             button.x = xLoc;
             button.y = yLoc;
             xLoc += button.width + 3;
@@ -47,7 +47,7 @@ public class UnitAnimTestMode extends AppMode
         xLoc = 10;
         yLoc = 420;
         for each (playerDisplayData in playerDisplayDatas.values()) {
-            button = this.createPlayerColorButton(playerDisplayData);
+            button = createPlayerColorButton(playerDisplayData);
             button.x = xLoc;
             button.y = yLoc;
             xLoc += button.width + 3;
@@ -56,7 +56,7 @@ public class UnitAnimTestMode extends AppMode
 
         // back button
         button = UIBits.createButton("Back");
-        this.registerOneShotCallback(button, MouseEvent.CLICK,
+        registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.popMode();
             });
@@ -64,7 +64,7 @@ public class UnitAnimTestMode extends AppMode
         button.y = 460;
         this.modeSprite.addChild(button);
 
-        this.updateView();
+        updateView();
     }
 
     protected function createUnitButton (unitType :int) :SimpleButton
@@ -73,7 +73,7 @@ public class UnitAnimTestMode extends AppMode
 
         var unitData :UnitData = AppContext.defaultGameData.units[unitType];
         var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
-        this.registerListener(unitButton, MouseEvent.CLICK,
+        registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.unitType = unitType;
             });
@@ -86,7 +86,7 @@ public class UnitAnimTestMode extends AppMode
         var thisObject :UnitAnimTestMode = this;
 
         var unitButton :SimpleButton = UIBits.createButton(playerDisplayData.displayName);
-        this.registerListener(unitButton, MouseEvent.CLICK,
+        registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 thisObject.recolor = playerDisplayData.color;
             });
@@ -97,13 +97,13 @@ public class UnitAnimTestMode extends AppMode
     protected function set unitType (val :int) :void
     {
         _unitType = val;
-        this.updateView();
+        updateView();
     }
 
     protected function set recolor (val :int) :void
     {
         _recolor = val;
-        this.updateView();
+        updateView();
     }
 
     protected function updateView () :void
@@ -119,17 +119,17 @@ public class UnitAnimTestMode extends AppMode
         _yLoc = 90;
 
         if (_unitType == Constants.UNIT_TYPE_WORKSHOP) {
-            this.createWorkshopAnimations();
+            createWorkshopAnimations();
 
         } else {
             for each (var animPrefix :String in ANIM_PREFIX_STRINGS) {
                 for each (var facingString :String in FACING_STRINGS) {
                     var animName :String = animPrefix + facingString;
-                    this.createCreatureAnimations(animName);
+                    createCreatureAnimations(animName);
                 }
             }
 
-            this.createCreatureAnimations("die");
+            createCreatureAnimations("die");
         }
     }
 
@@ -139,7 +139,7 @@ public class UnitAnimTestMode extends AppMode
         var workshop :MovieClip = anim["workshop"];
         var recolorMovie :MovieClip = workshop["recolor"];
         recolorMovie.filters = [ ColorMatrix.create().colorize(_recolor).createFilter() ];
-        this.addAnimToWindow(anim);
+        addAnimToWindow(anim);
     }
 
     protected function createCreatureAnimations (animName :String) :void
@@ -147,14 +147,14 @@ public class UnitAnimTestMode extends AppMode
         var anim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(_unitType, _recolor,
             animName);
         if (null != anim) {
-            this.addAnimToWindow(anim);
+            addAnimToWindow(anim);
         }
 
         var bmAnim :BitmapAnim = CreatureAnimFactory.getBitmapAnim(_unitType, _recolor, animName);
         if (null != bmAnim) {
             var bmaView :BitmapAnimView = new BitmapAnimView(bmAnim);
-            this.addObject(bmaView);
-            this.addAnimToWindow(bmaView.displayObject);
+            addObject(bmaView);
+            addAnimToWindow(bmaView.displayObject);
         }
     }
 

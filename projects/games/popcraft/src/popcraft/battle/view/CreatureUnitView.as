@@ -35,7 +35,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         var playerColor :uint = _unit.owningPlayerInfo.color;
 
-        this.setupAnimations(playerColor);
+        setupAnimations(playerColor);
 
         // health meter
         _healthMeter = HealthMeters.createCreatureMeter(playerColor, _unit.maxHealth, _unit.health);
@@ -57,12 +57,12 @@ public class CreatureUnitView extends BattlefieldSprite
             _sprite.graphics.drawCircle(0, 0, _unit.unitData.collisionRadius);
         }
 
-        this.registerListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
+        registerListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
 
         var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
-        this.registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
+        registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
-        this.updateUnitSpellIcons();
+        updateUnitSpellIcons();
 
         super.addedToDB();
     }
@@ -78,7 +78,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected function handleSpellSetModified (...ignored) :void
     {
-        this.updateUnitSpellIcons();
+        updateUnitSpellIcons();
     }
 
     protected function updateUnitSpellIcons () :void
@@ -274,7 +274,7 @@ public class CreatureUnitView extends BattlefieldSprite
                 initialFrame = oldAnim.currentFrame;
             }
 
-            this.setNewAnimation(animArray, animIndex, newViewState);
+            setNewAnimation(animArray, animIndex, newViewState);
         }
     }
 
@@ -321,7 +321,7 @@ public class CreatureUnitView extends BattlefieldSprite
     {
         if (_unit.isDead) {
             // when the unit gets destroyed, its view does too
-            this.destroySelf();
+            destroySelf();
 
             // show a death animation (will self-destruct when animation is complete)
             if (!_unit.preventDeathAnimation) {
@@ -342,7 +342,7 @@ public class CreatureUnitView extends BattlefieldSprite
                 _unitUpdateTimeDelta = 0;
             }
 
-            this.updateAnimations();
+            updateAnimations();
 
             var x :Number;
             var y :Number;
@@ -350,11 +350,10 @@ public class CreatureUnitView extends BattlefieldSprite
             if (!_unit.isMoving || Constants.DEBUG_DISABLE_MOVEMENT_SMOOTHING) {
                 x = _unit.x;
                 y = _unit.y;
-            } else {
 
+            } else {
                 // estimate a new location for the CreatureUnit,
                 // based on its last location and its velocity
-
                 var distanceDelta :Number = Math.min(_unit.movementSpeed * _unitUpdateTimeDelta, _unit.distanceToDestination);
                 var movementDelta :Vector2 = _unit.movementDirection.scale(distanceDelta);
 
@@ -362,7 +361,7 @@ public class CreatureUnitView extends BattlefieldSprite
                 y = _unit.y + movementDelta.y;
             }
 
-            this.updateLoc(x, y);
+            updateLoc(x, y);
 
             if (null != _healthMeter) {
                 _healthMeter.value = _unit.health;

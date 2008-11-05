@@ -19,7 +19,7 @@ public class PlayerStats
 
     public function PlayerStats ()
     {
-        this.initStats();
+        initStats();
     }
 
     public function get totalGamesPlayed () :int
@@ -78,7 +78,7 @@ public class PlayerStats
 
     public function readCookieData (version :int, cookie :ByteArray) :void
     {
-        this.initStats();
+        initStats();
 
         readIntsFromCookie(mpGamesPlayed, cookie);
         readIntsFromCookie(mpGamesWon, cookie);
@@ -99,7 +99,7 @@ public class PlayerStats
 
     public function cookieReadFailed () :Boolean
     {
-        this.initStats();
+        initStats();
         return true;
     }
 

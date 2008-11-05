@@ -174,7 +174,7 @@ class HeavyAI extends AITaskTree
     {
         _unit = unit;
 
-        this.moveToDefenseLocation();
+        moveToDefenseLocation();
     }
 
     override public function get name () :String
@@ -185,8 +185,8 @@ class HeavyAI extends AITaskTree
     protected function moveToDefenseLocation () :void
     {
         // find a place to stand near the base
-        var loc :Vector2 = this.findDefenseLocation();
-        this.addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR));
+        var loc :Vector2 = findDefenseLocation();
+        addSubtask(new MoveToLocationTask(MOVE_TO_DEFENSIVE_LOC_TASK_NAME, loc, MOVE_TO_FUDGE_FACTOR));
 
         //log.info("moving to defensive location: " + loc);
     }
@@ -210,7 +210,7 @@ class HeavyAI extends AITaskTree
     {
         if (messageName == MSG_SUBTASKCOMPLETED && task.name == MOVE_TO_DEFENSIVE_LOC_TASK_NAME) {
             // start firing upon approaching enemies
-            this.addSubtask(new AttackApproachingEnemiesTask());
+            addSubtask(new AttackApproachingEnemiesTask());
         }
     }
 

@@ -40,7 +40,7 @@ public class ColossusCreatureUnit extends CreatureUnit
         }
 
         if (attackerExpired) {
-            this.updateSpeedScale();
+            updateSpeedScale();
         }
 
         super.update(dt);
@@ -72,7 +72,7 @@ public class ColossusCreatureUnit extends CreatureUnit
         _attackers.sort(AttackRecord.compare);
 
         if (numAttackers != _attackers.length) {
-            this.updateSpeedScale();
+            updateSpeedScale();
         }
 
         return super.receiveAttack(attack, maxDamage);

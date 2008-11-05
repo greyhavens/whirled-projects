@@ -77,13 +77,13 @@ public class DashboardView extends SceneObject
         }
 
         // setup PlayerStatusViews
-        this.updatePlayerStatusViews();
+        updatePlayerStatusViews();
 
         // pause button only visible in single-player games
         var pauseButton :SimpleButton = _movie["pause"];
         if (GameContext.gameMode.canPause) {
             pauseButton.visible = true;
-            this.registerListener(pauseButton, MouseEvent.CLICK,
+            registerListener(pauseButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     GameContext.gameMode.pause();
                 });
@@ -100,10 +100,10 @@ public class DashboardView extends SceneObject
         }
 
         // we need to know when the player gets a spell
-        this.registerListener(GameContext.localPlayerInfo, GotSpellEvent.GOT_SPELL,
+        registerListener(GameContext.localPlayerInfo, GotSpellEvent.GOT_SPELL,
             onGotSpell);
 
-        this.updateResourceMeters();
+        updateResourceMeters();
     }
 
     public function updatePlayerStatusViews () :void
@@ -180,7 +180,7 @@ public class DashboardView extends SceneObject
         for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT; ++spellType) {
             var count :int = GameContext.localPlayerInfo.getSpellCount(spellType);
             for (var i :int = 0; i < count; ++i) {
-                this.createSpellButton(spellType, false);
+                createSpellButton(spellType, false);
             }
         }
     }
@@ -191,7 +191,7 @@ public class DashboardView extends SceneObject
         // Dashboard, and then reset the puzzle
         _shuffleMovie.gotoAndPlay("go");
 
-        this.addNamedTask(
+        addNamedTask(
             PUZZLE_SHUFFLE_TASK,
             new SerialTask(
                 new WaitForFrameTask("swap", _shuffleMovie),
@@ -203,7 +203,7 @@ public class DashboardView extends SceneObject
 
     protected function onGotSpell (e :GotSpellEvent) :void
     {
-        this.createSpellButton(e.spellType, true);
+        createSpellButton(e.spellType, true);
     }
 
     protected function createSpellButton (spellType :int, animateIn :Boolean) :void
@@ -230,7 +230,7 @@ public class DashboardView extends SceneObject
 
         // create a new icon
         var spellButton :SpellButton = new SpellButton(spellType, slot, animateIn);
-        this.registerListener(spellButton.clickableObject, MouseEvent.CLICK,
+        registerListener(spellButton.clickableObject, MouseEvent.CLICK,
             function (...ignored) :void {
                 onSpellButtonClicked(spellButton);
             });
@@ -268,7 +268,7 @@ public class DashboardView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        this.updateResourceMeters();
+        updateResourceMeters();
 
         // when the player dies, show the death panel
         var playerDead :Boolean = !GameContext.localPlayerInfo.isAlive;
@@ -292,7 +292,7 @@ public class DashboardView extends SceneObject
             _resurrectButton.y = RESURRECT_BUTTON_LOC.y - (_resurrectButton.height * 0.5);
             GameContext.dashboardLayer.addChild(_resurrectButton);
 
-            this.registerListener(_resurrectButton, MouseEvent.CLICK,
+            registerListener(_resurrectButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     GameContext.gameMode.sendResurrectPlayerMsg();
                 });
@@ -314,7 +314,7 @@ public class DashboardView extends SceneObject
     protected function updateResourceMeters () :void
     {
         for (var resType :int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            this.updateResourceMeter(resType);
+            updateResourceMeter(resType);
         }
     }
 
@@ -438,12 +438,12 @@ class InfoPanel extends SceneObject
     {
         _infoText.text = text;
 
-        if (!this.hasTasksNamed(SHOW_TASK_NAME)) {
+        if (!hasTasksNamed(SHOW_TASK_NAME)) {
             // we're not already being shown
 
-            if (this.hasTasksNamed(HIDE_TASK_NAME)) {
+            if (hasTasksNamed(HIDE_TASK_NAME)) {
                 // the panel is in the process of being hidden
-                this.removeNamedTasks(HIDE_TASK_NAME);
+                removeNamedTasks(HIDE_TASK_NAME);
                 _infoTextParent.y = VISIBLE_Y;
                 this.visible = true;
 
@@ -455,19 +455,19 @@ class InfoPanel extends SceneObject
                 showTask.addTask(new TimedTask(SHOW_DELAY));
                 showTask.addTask(new VisibleTask(true));
                 showTask.addTask(LocationTask.CreateSmooth(_infoTextParent.x, VISIBLE_Y, SLIDE_TIME));
-                this.addNamedTask(SHOW_TASK_NAME, showTask);
+                addNamedTask(SHOW_TASK_NAME, showTask);
             }
         }
     }
 
     public function hide () :void
     {
-        if (!this.hasTasksNamed(HIDE_TASK_NAME)) {
+        if (!hasTasksNamed(HIDE_TASK_NAME)) {
             // we're not already being hidden
 
-            if (this.hasTasksNamed(SHOW_TASK_NAME)) {
+            if (hasTasksNamed(SHOW_TASK_NAME)) {
                 // the panel is in the process of being shown
-                this.removeNamedTasks(SHOW_TASK_NAME);
+                removeNamedTasks(SHOW_TASK_NAME);
                 this.visible = false;
 
             } else if (this.visible) {
@@ -475,7 +475,7 @@ class InfoPanel extends SceneObject
                 var hideTask :SerialTask = new SerialTask();
                 hideTask.addTask(LocationTask.CreateSmooth(_infoTextParent.x, HIDDEN_Y, SLIDE_TIME));
                 hideTask.addTask(new VisibleTask(false));
-                this.addNamedTask(HIDE_TASK_NAME, hideTask);
+                addNamedTask(HIDE_TASK_NAME, hideTask);
             }
         }
     }

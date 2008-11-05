@@ -58,9 +58,8 @@ class BossAI extends ColossusAI
             rechargeSequence.addSequencedTask(new MoveToLocationTask("ReturnToBase", _homeLoc.clone()));
             rechargeSequence.addSequencedTask(new RegenerateTask(_boss.maxHealth / REGENERATE_TIME));
 
-            this.clearSubtasks();
-            this.addSubtask(rechargeSequence);
-
+            clearSubtasks();
+            addSubtask(rechargeSequence);
         }
 
         return super.update(dt, creature);
@@ -73,7 +72,7 @@ class BossAI extends ColossusAI
             if (subtask.name == RegenerateTask.NAME) {
                 // we finished regenerating. go back out and fight!
                 _boss.isInvincible = false;
-                this.restartAI();
+                restartAI();
                 return;
             }
         }

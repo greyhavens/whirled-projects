@@ -15,12 +15,12 @@ public class DiurnalCycle extends SimObject
 
     public function DiurnalCycle ()
     {
-        this.resetPhase(GameContext.gameData.initialDayPhase);
+        resetPhase(GameContext.gameData.initialDayPhase);
     }
 
     public function resetPhase (newPhase :int) :void
     {
-        this.removeAllTasks();
+        removeAllTasks();
 
         if (DiurnalCycle.isDisabled) {
             _phaseOfDay = Constants.PHASE_NIGHT;
@@ -28,17 +28,17 @@ public class DiurnalCycle extends SimObject
         } else {
             var phaseTask :RepeatingTask = new RepeatingTask();
             if (GameContext.gameData.enableEclipse) {
-                this.createPhaseTasks(phaseTask, Constants.PHASE_ECLIPSE);
+                createPhaseTasks(phaseTask, Constants.PHASE_ECLIPSE);
             } else {
                 var dayPhase :int = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
                 var phase1 :int = newPhase;
                 var phase2 :int = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
 
-                this.createPhaseTasks(phaseTask, phase1);
-                this.createPhaseTasks(phaseTask, phase2);
+                createPhaseTasks(phaseTask, phase1);
+                createPhaseTasks(phaseTask, phase2);
             }
 
-            this.addTask(phaseTask);
+            addTask(phaseTask);
 
             // set initial values
             _phaseOfDay = newPhase;
@@ -58,27 +58,27 @@ public class DiurnalCycle extends SimObject
     protected function setNextPhase () :void
     {
         var nextPhase :int;
-        var incrementDayCount :Boolean;
+        var shouldIncrementDayCount :Boolean;
         switch (_phaseOfDay) {
         case Constants.PHASE_DAY:
             nextPhase = Constants.PHASE_NIGHT;
             break;
 
         case Constants.PHASE_NIGHT:
-            incrementDayCount = true;
+            shouldIncrementDayCount = true;
             nextPhase = Constants.PHASE_DAY;
             break;
 
         case Constants.PHASE_ECLIPSE:
-            incrementDayCount = true;
+            shouldIncrementDayCount = true;
             nextPhase = Constants.PHASE_ECLIPSE;
             break;
         }
 
         _phaseOfDay = nextPhase;
 
-        if (incrementDayCount) {
-            this.incrementDayCount();
+        if (shouldIncrementDayCount) {
+            incrementDayCount();
         }
     }
 

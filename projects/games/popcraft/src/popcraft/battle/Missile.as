@@ -16,7 +16,7 @@ public class Missile extends SimObject
         missileTask.addTask(new FunctionTask(deliverPayload));
         missileTask.addTask(new SelfDestructTask());
 
-        this.addTask(missileTask);
+        addTask(missileTask);
     }
 
     protected function deliverPayload () :void

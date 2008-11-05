@@ -33,7 +33,7 @@ public class SapperCreatureUnit extends CreatureUnit
             damage = super.sendAttack(targetUnitOrLoc, weapon);
             _hasAttacked = true;
             if (_hasAttacked) {
-                this.die();
+                die();
             }
 
             if (damage > 0 && this.owningPlayerIndex == GameContext.localPlayerIndex &&
@@ -54,7 +54,7 @@ public class SapperCreatureUnit extends CreatureUnit
 
             // when the sapper is killed, he explodes
             if (!_hasAttacked) {
-                this.sendAttack(this.unitLoc, _unitData.weapon);
+                sendAttack(this.unitLoc, _unitData.weapon);
             }
 
             super.die();
@@ -86,19 +86,19 @@ class SapperAI extends AITaskTree
     public function SapperAI (unit :SapperCreatureUnit)
     {
         _unit = unit;
-        this.attackBaseAndScanForEnemyGroups();
+        attackBaseAndScanForEnemyGroups();
     }
 
     protected function attackBaseAndScanForEnemyGroups () :void
     {
-        this.clearSubtasks();
+        clearSubtasks();
 
         if (_targetBaseRef.isNull) {
             _targetBaseRef = _unit.getEnemyBaseToAttack();
         }
 
         if (!_targetBaseRef.isNull) {
-            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+            addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
         }
 
         var sapperBlastRadius :Number = _unit.unitData.weapon.aoeRadius;
@@ -111,7 +111,7 @@ class SapperAI extends AITaskTree
             AIPredicates.createIsGroupedEnemyPred(sapperBlastRadius - 15))); // this number is sort of fudged
         scanSequence.addSequencedTask(new AITimerTask(SCAN_FOR_ENEMIES_DELAY));
 
-        this.addSubtask(scanSequence);
+        addSubtask(scanSequence);
     }
 
     protected static function isSapperEnemyCreaturePred (thisCreature :CreatureUnit, thatCreature :CreatureUnit) :Boolean
@@ -130,11 +130,11 @@ class SapperAI extends AITaskTree
 
             // try to attack the first enemy
             var enemy :CreatureUnit = group[0];
-            this.clearSubtasks();
-            this.addSubtask(new AttackUnitTask(enemy.ref, true, -1, DISABLE_COLLISIONS_AFTER, DISABLE_COLLISIONS_FOR));
+            clearSubtasks();
+            addSubtask(new AttackUnitTask(enemy.ref, true, -1, DISABLE_COLLISIONS_AFTER, DISABLE_COLLISIONS_FOR));
         } else if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && subtask.name == AttackUnitTask.NAME) {
             // the unit we were going after died before we got to them
-            this.attackBaseAndScanForEnemyGroups();
+            attackBaseAndScanForEnemyGroups();
         }
     }
 

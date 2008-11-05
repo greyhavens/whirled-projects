@@ -52,12 +52,12 @@ public class PuzzleBoard extends SceneObject
             (_rows * tileSize) - (_rows - 1));
         _sprite.graphics.endFill();
 
-        this.registerListener(_sprite, MouseEvent.CLICK, handleClicked);
+        registerListener(_sprite, MouseEvent.CLICK, handleClicked);
     }
 
     override protected function addedToDB () :void
     {
-        this.puzzleReset(true);
+        puzzleReset(true);
     }
 
     // from SceneObject
@@ -77,7 +77,7 @@ public class PuzzleBoard extends SceneObject
         var mouseIndexY :int = (e.localY / (_tileSize - 1));
 
         if (mouseIndexX >= 0 && mouseIndexX < _cols && mouseIndexY >= 0 && mouseIndexY < _rows) {
-            this.clearPieceGroup(mouseIndexX, mouseIndexY);
+            clearPieceGroup(mouseIndexX, mouseIndexY);
         }
     }
 
@@ -106,7 +106,7 @@ public class PuzzleBoard extends SceneObject
     protected function puzzleReset (animate :Boolean) :void
     {
         // cancel any existing animations
-        this.removeAllTasks();
+        removeAllTasks();
         _resolvingClears = false;
 
         // clear the existing board
@@ -138,7 +138,7 @@ public class PuzzleBoard extends SceneObject
     public function puzzleShuffle () :void
     {
         // cancel any existing animations
-        this.removeAllTasks();
+        removeAllTasks();
         _resolvingClears = false;
 
         // clear the existing board
@@ -156,7 +156,7 @@ public class PuzzleBoard extends SceneObject
             for (var x :int = 0; x < _cols; ++x) {
                 var index :int = (y * _cols) + x;
                 if (_board[index] == null) {
-                    this.createResourceChunk(x, y);
+                    createResourceChunk(x, y);
                 }
             }
         }
@@ -265,14 +265,14 @@ public class PuzzleBoard extends SceneObject
 
         // when the pieces are done clearing,
         // drop the pieces above them.
-        this.addTask(new SerialTask(
+        addTask(new SerialTask(
             new TimedTask(PIECE_SCALE_DOWN_TIME),
             new FunctionTask(function () :void { dropPieces(animate); } )));
 
         // show the "resources earned" animation
         var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
         animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
-        this.showResourceValueAnimation(animLoc, resourceType, resourceValue);
+        showResourceValueAnimation(animLoc, resourceType, resourceValue);
 
         // play a sound
         GameContext.playGameSound(resourceValue >= 0 ?
@@ -303,14 +303,14 @@ public class PuzzleBoard extends SceneObject
             for (var row :int = _rows - 1; row > 0; --row) {
 
                 // have we found a hole in this row?
-                if (null == this.getPieceAt(col, row)) {
+                if (null == getPieceAt(col, row)) {
 
                     // drop pieces into the hole
                     var dstRow :int = row;
 
                     // find the first piece to drop
                     var srcRow :int = dstRow - 1;
-                    while (srcRow >= 0 && null == this.getPieceAt(col, srcRow)) {
+                    while (srcRow >= 0 && null == getPieceAt(col, srcRow)) {
                         --srcRow;
                     }
 
@@ -319,7 +319,7 @@ public class PuzzleBoard extends SceneObject
                     // drop the pieces, starting from this piece
                     // and continuing all the way to the top of the column
                     while (srcRow >= 0) {
-                        if (null != this.getPieceAt(col, srcRow)) {
+                        if (null != getPieceAt(col, srcRow)) {
                             var timeUntilThisDropCompletes :Number = drop1Piece(
                                 col,
                                 srcRow,

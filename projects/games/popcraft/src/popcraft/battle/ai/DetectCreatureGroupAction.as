@@ -34,9 +34,9 @@ public class DetectCreatureGroupAction extends AITask
             var creature :CreatureUnit = ref.object as CreatureUnit;
 
             if (null != creature && thisCreature != creature && _creaturePred(thisCreature, creature)) {
-                var creatureGroup :Array = this.findCreatureGroup(creatureRefs, creature, thisCreature);
+                var creatureGroup :Array = findCreatureGroup(creatureRefs, creature, thisCreature);
                 if (null != creatureGroup) {
-                    this.sendParentMessage(MSG_GROUPDETECTED, creatureGroup);
+                    sendParentMessage(MSG_GROUPDETECTED, creatureGroup);
                     break;
                 }
             }

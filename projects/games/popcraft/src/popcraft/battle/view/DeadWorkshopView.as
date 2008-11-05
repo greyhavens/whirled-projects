@@ -47,7 +47,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         var recolor :MovieClip = _rubble["recolor"];
         recolor.filters = [ ColorMatrix.create().colorize(playerColor).createFilter() ];
 
-        this.updateLoc(unit.x, unit.y);
+        updateLoc(unit.x, unit.y);
     }
 
     override protected function destroyed () :void

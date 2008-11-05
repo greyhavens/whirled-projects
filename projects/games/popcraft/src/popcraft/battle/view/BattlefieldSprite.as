@@ -18,7 +18,7 @@ public class BattlefieldSprite extends SceneObject
     override protected function addedToDB () :void
     {
         if (GameContext.scaleSprites) {
-            this.scaleSprites();
+            scaleSprites();
         }
     }
 

@@ -53,7 +53,7 @@ public class TransitionMode extends AppMode
 
     protected function fadeOutToMode (nextMode :AppMode, time :Number = DEFAULT_FADE_TIME) :void
     {
-        this.fadeOut(function () :void { AppContext.mainLoop.unwindToMode(nextMode); }, time);
+        fadeOut(function () :void { AppContext.mainLoop.unwindToMode(nextMode); }, time);
     }
 
     protected function get darkness () :SceneObject
@@ -66,7 +66,7 @@ public class TransitionMode extends AppMode
             g.endFill();
 
             _darkness = new SimpleSceneObject(shape);
-            this.addObject(_darkness, _fadeLayer);
+            addObject(_darkness, _fadeLayer);
         }
 
         return _darkness;

@@ -24,7 +24,7 @@ public class ForceParticleContainer
         }
 
         // remove from current bucket
-        this.removeParticle(p);
+        removeParticle(p);
 
         // and add to the new one
         var oldHead :ForceParticle = _buckets[index];

@@ -31,7 +31,7 @@ public class MultiplayerFailureMode extends MultiplayerDialog
         _button.y = tf.y + tf.height + 30;
         this.modeSprite.addChild(_button);
 
-        this.registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
+        registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
     }
 
     protected function handleButtonClicked (...ignored) :void

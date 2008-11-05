@@ -19,7 +19,7 @@ public class UserCookieManager
     public function needsUpdate () :void
     {
         // update immediately. is this wise?
-        this.writeCookie();
+        writeCookie();
     }
 
     public function get isLoadingCookie () :Boolean

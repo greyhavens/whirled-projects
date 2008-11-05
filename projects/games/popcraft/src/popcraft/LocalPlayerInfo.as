@@ -91,14 +91,14 @@ public class LocalPlayerInfo extends PlayerInfo
 
     public function offsetResourceAmount (resourceType :int, offset :int) :void
     {
-        this.setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
+        setResourceAmount(resourceType, getResourceAmount(resourceType) + offset);
     }
 
     public function earnedResources (resourceType :int, offset :int, numClearPieces :int) :int
     {
-        var initialResources :int = this.getResourceAmount(resourceType);
-        this.setResourceAmount(resourceType, initialResources + offset);
-        var newResources :int = this.getResourceAmount(resourceType);
+        var initialResources :int = getResourceAmount(resourceType);
+        setResourceAmount(resourceType, initialResources + offset);
+        var newResources :int = getResourceAmount(resourceType);
         var resourcesEarned :int = newResources - initialResources;
 
         // For player stats, keep track of all resources earned
@@ -143,7 +143,7 @@ public class LocalPlayerInfo extends PlayerInfo
         var n :int = creatureCosts.length;
         for (var resourceType :int = 0; resourceType < n; ++resourceType) {
             var cost :int = creatureCosts[resourceType];
-            if (cost > 0 && cost > this.getResourceAmount(resourceType)) {
+            if (cost > 0 && cost > getResourceAmount(resourceType)) {
                 return false;
             }
         }
@@ -157,31 +157,31 @@ public class LocalPlayerInfo extends PlayerInfo
         var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType:int = 0; resourceType < n; ++resourceType) {
-            this.offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
+            offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
         }
     }
 
     override public function addSpell (spellType :int, count :int = 1) :void
     {
-        var curSpellCount :int = this.getSpellCount(spellType);
+        var curSpellCount :int = getSpellCount(spellType);
         count = Math.min(count, GameContext.gameData.maxSpellsPerType - curSpellCount);
         if (count > 0) {
             _heldSpells[spellType] = curSpellCount + count;
-            this.dispatchEvent(new GotSpellEvent(spellType));
+            dispatchEvent(new GotSpellEvent(spellType));
         }
     }
 
     override public function spellCast (spellType :int) :void
     {
         // remove spell from holdings
-        var spellCount :int = this.getSpellCount(spellType);
+        var spellCount :int = getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
         _heldSpells[spellType] = spellCount - 1;
     }
 
     override public function canCastSpell (spellType :int) :Boolean
     {
-        return (this.getSpellCount(spellType) > 0);
+        return (getSpellCount(spellType) > 0);
     }
 
     public function getSpellCount (spellType :int) :int

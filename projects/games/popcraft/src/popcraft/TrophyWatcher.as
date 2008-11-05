@@ -26,7 +26,7 @@ public class TrophyWatcher
 
     protected function onSpellSetModified (...ignored) :void
     {
-        this.checkDoomsdayTrophy();
+        checkDoomsdayTrophy();
     }
 
     protected function onUnitCreated (e :UnitCreatedEvent) :void
@@ -34,9 +34,9 @@ public class TrophyWatcher
         if (e.owningPlayerIndex == GameContext.localPlayerIndex) {
             var unitType :int = e.unitType;
             if (unitType == Constants.UNIT_TYPE_COLOSSUS) {
-                this.checkDoomsdayTrophy();
+                checkDoomsdayTrophy();
             } else if (unitType == Constants.UNIT_TYPE_SAPPER) {
-                this.checkCryHavocTrophy();
+                checkCryHavocTrophy();
             }
         }
     }

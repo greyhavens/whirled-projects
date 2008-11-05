@@ -50,19 +50,19 @@ class GruntAI extends AITaskTree
     public function GruntAI (unit :GruntCreatureUnit)
     {
         _unit = unit;
-        this.beginAttackBase();
+        beginAttackBase();
     }
 
     protected function beginAttackBase () :void
     {
-        this.clearSubtasks();
+        clearSubtasks();
 
         if (_targetBaseRef.isNull) {
             _targetBaseRef = _unit.getEnemyBaseToAttack();
         }
 
         if (!_targetBaseRef.isNull) {
-            this.addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
+            addSubtask(new AttackUnitTask(_targetBaseRef, true, -1));
         }
 
         // scan for non-sappers once/second
@@ -70,7 +70,7 @@ class GruntAI extends AITaskTree
         var scanSequence :AITaskSequence = new AITaskSequence(true);
         scanSequence.addSequencedTask(new DetectCreatureAction(detectPredicate));
         scanSequence.addSequencedTask(new AITimerTask(1));
-        this.addSubtask(scanSequence);
+        addSubtask(scanSequence);
     }
 
     override protected function receiveSubtaskMessage (task :AITask, messageName :String, data :Object) :void
@@ -81,7 +81,7 @@ class GruntAI extends AITaskTree
             case AttackUnitTask.NAME:
                 // resume attacking base
                 //log.info("resuming attack on base");
-                this.beginAttackBase();
+                beginAttackBase();
                 break;
             }
 
@@ -91,8 +91,8 @@ class GruntAI extends AITaskTree
 
             // we detected an enemy - attack it
             //log.info("detected enemy - attacking");
-            this.clearSubtasks();
-            this.addSubtask(new AttackUnitTask(enemyUnit.ref, true, _unit.unitData.loseInterestRadius));
+            clearSubtasks();
+            addSubtask(new AttackUnitTask(enemyUnit.ref, true, _unit.unitData.loseInterestRadius));
 
         }
     }

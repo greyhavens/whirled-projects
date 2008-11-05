@@ -22,8 +22,7 @@ public class AITaskTree extends AITask
                 if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
                     _subtasks[i] = null;
                     _freeIndices.push(i);
-
-                    this.subtaskCompleted(task);
+                    subtaskCompleted(task);
                 }
 
                 // if _stopProcessingSubtasks is true,
@@ -138,12 +137,12 @@ public class AITaskTree extends AITask
 
     internal function receiveSubtaskMessageInternal (subtask :AITask, messageName :String, data :Object) :void
     {
-        this.receiveSubtaskMessage(subtask, messageName, data);
+        receiveSubtaskMessage(subtask, messageName, data);
     }
 
     protected function subtaskCompleted (subtask :AITask) :void
     {
-        this.receiveSubtaskMessage(subtask, MSG_SUBTASKCOMPLETED, null);
+        receiveSubtaskMessage(subtask, MSG_SUBTASKCOMPLETED, null);
     }
 
     protected var _subtasks :Array = new Array();

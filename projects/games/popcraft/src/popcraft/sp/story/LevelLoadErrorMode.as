@@ -39,7 +39,7 @@ public class LevelLoadErrorMode extends AppMode
         this.modeSprite.addChild(tf);
 
         var button :SimpleButton = UIBits.createButton("Back");
-        this.registerOneShotCallback(button, MouseEvent.CLICK,
+        registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 LevelSelectMode.create();
             });
@@ -48,7 +48,7 @@ public class LevelLoadErrorMode extends AppMode
         this.modeSprite.addChild(button);
 
         button = UIBits.createButton("Retry");
-        this.registerOneShotCallback(button, MouseEvent.CLICK,
+        registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.levelMgr.playLevel(null, true);
             });

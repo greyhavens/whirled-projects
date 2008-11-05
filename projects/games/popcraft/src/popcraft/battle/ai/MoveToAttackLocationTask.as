@@ -40,9 +40,9 @@ public class MoveToAttackLocationTask extends MoveToLocationTask
             // we're in position
             return AITaskStatus.COMPLETE;
 
-        } else if (_followTarget && !this.shouldLoseInterest(unit, enemy)) {
+        } else if (_followTarget && !shouldLoseInterest(unit, enemy)) {
             // get closer to the enemy (via MoveToLocationTask, our super class)
-            this.moveToLoc = unit.findNearestAttackLocation(enemy, weapon);
+            moveToLoc = unit.findNearestAttackLocation(enemy, weapon);
             super.update(dt, unit);
             return AITaskStatus.ACTIVE;
 

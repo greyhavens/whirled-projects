@@ -42,7 +42,7 @@ public class MultiplayerLobbyMode extends AppMode
 
         // handle clicks on the team boxes
         if (SeatingManager.numExpectedPlayers == 2) {
-            this.createTeamBoxMouseListener(_bg, ENDLESS_TEAM_ID);
+            createTeamBoxMouseListener(_bg, ENDLESS_TEAM_ID);
         } else {
             _endlessWarnText = UIBits.createText(
                 "Team Survival is accessible in 2-player games only", 1.2, 0, 0x444444);
@@ -52,7 +52,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         for (var teamId :int = UNASSIGNED_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
-            this.createTeamBoxMouseListener(_bg, teamId);
+            createTeamBoxMouseListener(_bg, teamId);
         }
 
         _statusText = _bg["instructions"];
@@ -140,7 +140,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         var teamBox :MovieClip = _bg[boxName];
-        this.registerListener(teamBox, MouseEvent.CLICK,
+        registerListener(teamBox, MouseEvent.CLICK,
             function (...ignored) :void {
                 onTeamSelected(teamId);
         });
@@ -176,27 +176,27 @@ public class MultiplayerLobbyMode extends AppMode
     {
         if (e.name == MultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
             if (!_initedLocalPlayerData) {
-                this.initLocalPlayerData();
+                initLocalPlayerData();
             }
 
-            this.updateTeamsDisplay();
-            this.updateHandicapsDisplay();
+            updateTeamsDisplay();
+            updateHandicapsDisplay();
 
         } else if (e.name == MultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
-            this.startGame();
+            startGame();
         }
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
         if (e.name == MultiplayerConfig.PROP_TEAMS) {
-            this.updateTeamsDisplay();
-            this.stopOrResetTimer();
+            updateTeamsDisplay();
+            stopOrResetTimer();
         } else if (e.name == MultiplayerConfig.PROP_HANDICAPS) {
-            this.updateHandicapsDisplay();
-            this.stopOrResetTimer();
+            updateHandicapsDisplay();
+            stopOrResetTimer();
         } else if (e.name == MultiplayerConfig.PROP_HASPREMIUMCONTENT) {
-            this.updatePremiumContentDisplay();
+            updatePremiumContentDisplay();
         }
     }
 
@@ -223,8 +223,8 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function onOccupantLeft (...ignored) :void
     {
-        this.stopOrResetTimer();
-        this.updateTeamsDisplay();
+        stopOrResetTimer();
+        updateTeamsDisplay();
     }
 
     protected function onHandicapBoxClicked (...ignored) :void
@@ -234,7 +234,7 @@ public class MultiplayerLobbyMode extends AppMode
             this.handicapOn = !this.handicapOn;
             if (this.handicapOn != playerHandicaps[SeatingManager.localPlayerSeat]) {
                 MultiplayerConfig.setPlayerHandicap(SeatingManager.localPlayerSeat, this.handicapOn);
-                this.updateHandicapsDisplay();
+                updateHandicapsDisplay();
             }
         }
     }
@@ -272,7 +272,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         // don't allow team selection on teams that are full
-        var teamSizes :Array = this.computeTeamSizes();
+        var teamSizes :Array = computeTeamSizes();
         if (teamSizes[teamId] >= MAX_TEAM_SIZE) {
             return;
         }
@@ -280,8 +280,8 @@ public class MultiplayerLobbyMode extends AppMode
         var teams :Array = MultiplayerConfig.teams;
         if (null != teams && teams[SeatingManager.localPlayerSeat] != teamId) {
             MultiplayerConfig.setPlayerTeam(SeatingManager.localPlayerSeat, teamId);
-            this.updateTeamsDisplay();
-            this.stopOrResetTimer();
+            updateTeamsDisplay();
+            stopOrResetTimer();
         }
     }
 
@@ -365,7 +365,7 @@ public class MultiplayerLobbyMode extends AppMode
             if (_endlessWarnText != null) {
                 _endlessWarnText.visible = false;
             }
-            this.registerListener(unlockButton, MouseEvent.CLICK,
+            registerListener(unlockButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.showGameShop();
                 });
@@ -375,10 +375,10 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function stopOrResetTimer () :void
     {
-        this.destroyObject(_gameStartTimer);
+        destroyObject(_gameStartTimer);
 
         if (this.canStartCountdown) {
-            _gameStartTimer = this.addObject(
+            _gameStartTimer = addObject(
                 new SimpleTimer(
                     GAME_START_COUNTDOWN,
                     function () :void {
@@ -424,7 +424,7 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         // does one team have all the players?
-        var teamSizes :Array = this.computeTeamSizes();
+        var teamSizes :Array = computeTeamSizes();
         for each (var teamSize :int in teamSizes) {
             if (teamSize == SeatingManager.numPlayers) {
                 return false;
@@ -547,7 +547,7 @@ class PlayerHeadshot extends Sprite
     public function PlayerHeadshot (playerSeat :int)
     {
         var headshotParent :Sprite = SpriteUtil.createSprite();
-        this.addChild(headshotParent);
+        addChild(headshotParent);
 
         // add the headshot image
         var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerSeat);
@@ -571,7 +571,7 @@ class PlayerHeadshot extends Sprite
         TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
         tfName.x = NAME_OFFSET;
         tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
-        this.addChild(tfName);
+        addChild(tfName);
 
         _handicapObj = SwfResource.instantiateMovieClip("multiplayer_lobby", "handicapped");
         _handicapObj.scaleX = 1.5;
@@ -579,7 +579,7 @@ class PlayerHeadshot extends Sprite
         _handicapObj.x = (_handicapObj.width * 0.5) + 1;
         _handicapObj.y = (_handicapObj.height * 0.5) + 1;
         _handicapObj.visible = false;
-        this.addChild(_handicapObj);
+        addChild(_handicapObj);
     }
 
     public function set handicap (val :Boolean) :void

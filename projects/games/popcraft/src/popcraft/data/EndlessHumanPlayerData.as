@@ -17,8 +17,8 @@ public class EndlessHumanPlayerData
         data.baseLoc = BaseLocationData.fromXml(XmlReader.getSingleChild(xml, "BaseLocation"));
 
         // parse the available units and spells
-        data.availableUnits = DataUtils.parseCreatureTypes(xml.AvailableUnits[0]);
-        data.availableSpells = DataUtils.parseCastableSpellTypes(xml.AvailableSpells[0]);
+        data.availableUnits = DataUtil.parseCreatureTypes(xml.AvailableUnits[0]);
+        data.availableSpells = DataUtil.parseCastableSpellTypes(xml.AvailableSpells[0]);
 
         return data;
     }

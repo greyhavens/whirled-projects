@@ -20,7 +20,7 @@ public class ScoreView extends SceneObject
         _scoreText = _movie["score"];
         _multiplierText = _movie["score_multiplier"];
 
-        this.updateText();
+        updateText();
     }
 
     override public function get displayObject () :DisplayObject
@@ -34,7 +34,7 @@ public class ScoreView extends SceneObject
 
         if (_lastScore != EndlessGameContext.totalScoreThisLevel ||
             _lastMultiplier != EndlessGameContext.scoreMultiplier) {
-            this.updateText();
+            updateText();
         }
     }
 

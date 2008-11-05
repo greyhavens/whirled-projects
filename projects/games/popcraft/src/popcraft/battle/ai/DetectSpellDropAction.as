@@ -15,7 +15,7 @@ public class DetectSpellDropAction extends AITask
     {
         var spells :Array = GameContext.netObjects.getObjectsInGroup(SpellDropObject.GROUP_NAME);
         if (spells.length > 0) {
-            this.sendParentMessage(MSG_SPELLDETECTED, spells);
+            sendParentMessage(MSG_SPELLDETECTED, spells);
         }
 
         return AITaskStatus.COMPLETE;

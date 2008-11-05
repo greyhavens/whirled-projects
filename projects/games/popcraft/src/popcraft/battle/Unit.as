@@ -65,7 +65,7 @@ public class Unit extends SimObject
 
     public function get inAttackCooldown () :Boolean
     {
-        return this.hasTasksNamed(PREVENT_ATTACK_TASK_NAME);
+        return hasTasksNamed(PREVENT_ATTACK_TASK_NAME);
     }
 
     public function get attackTarget () :Unit
@@ -77,7 +77,7 @@ public class Unit extends SimObject
     {
         // we can attack the unit if we're not already attacking, and if the unit
         // is within range of the attack
-        return (this.isUnitInRange(targetUnit, weapon.maxAttackDistance));
+        return (isUnitInRange(targetUnit, weapon.maxAttackDistance));
     }
 
     public function findNearestAttackLocation (targetUnit :Unit, weapon :UnitWeaponData) :Vector2
@@ -86,7 +86,7 @@ public class Unit extends SimObject
         // that an attack on the given target can be launched from
         var myLoc :Vector2 = this.unitLoc;
 
-        if (this.isUnitInRange(targetUnit, weapon.maxAttackDistance)) {
+        if (isUnitInRange(targetUnit, weapon.maxAttackDistance)) {
             return myLoc; // we don't need to move
         } else {
             // create a vector that points from the target to us
@@ -114,13 +114,13 @@ public class Unit extends SimObject
 
         // some weapons require an initial warmup period before they can be used
         if (_needsAttackWarmup && weapon.initialWarmup > 0) {
-            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new TimedTask(weapon.initialWarmup));
+            addNamedTask(PREVENT_ATTACK_TASK_NAME, new TimedTask(weapon.initialWarmup));
             _needsAttackWarmup = false;
             return 0;
         }
 
         // don't attack if we're out of range
-        if (null != targetUnit && !this.canAttackWithWeapon(targetUnit, weapon)) {
+        if (null != targetUnit && !canAttackWithWeapon(targetUnit, weapon)) {
             return 0;
         }
 
@@ -136,7 +136,7 @@ public class Unit extends SimObject
             }
 
             if (null != targetLoc) {
-                damage = this.sendAOEAttack(targetLoc, attack);
+                damage = sendAOEAttack(targetLoc, attack);
             }
         } else if (null != targetUnit) {
             damage = targetUnit.receiveAttack(attack);
@@ -144,7 +144,7 @@ public class Unit extends SimObject
 
         // install a cooldown timer
         if (weapon.cooldown > 0) {
-            this.addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
+            addNamedTask(PREVENT_ATTACK_TASK_NAME, new UnitAttackCooldownTask(weapon.cooldown));
         }
 
         return damage;
@@ -172,7 +172,7 @@ public class Unit extends SimObject
             }
 
             // should we be damaging friendlies?
-            if (!attack.weapon.aoeDamageFriendlies && !this.isEnemyUnit(unit)) {
+            if (!attack.weapon.aoeDamageFriendlies && !isEnemyUnit(unit)) {
                 continue;
             }
 
@@ -216,7 +216,7 @@ public class Unit extends SimObject
     public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
         var damage :Number = (GameContext.gameMode.isGameOver ? 0 :
-            Math.min(this.getAttackDamage(attack), maxDamage));
+            Math.min(getAttackDamage(attack), maxDamage));
 
         // if we have a damage shield, it will absorb the damage from this attack
         // (currently, this only applies to Workshops in endless mode)
@@ -234,7 +234,7 @@ public class Unit extends SimObject
             this.health -= damage;
         }
 
-        this.dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
+        dispatchEvent(new UnitEvent(UnitEvent.ATTACKED, attack));
 
         return damage;
     }
@@ -254,7 +254,7 @@ public class Unit extends SimObject
         _health = Math.min(val, _maxHealth);
         _health = Math.max(val, _minHealth);
         if (_health <= 0) {
-            this.die();
+            die();
         }
     }
 
@@ -299,7 +299,7 @@ public class Unit extends SimObject
     {
         _isDead = true;
         _health = 0;
-        this.destroySelf();
+        destroySelf();
     }
 
     public function isEnemyUnit (unit :Unit) :Boolean

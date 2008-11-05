@@ -45,9 +45,9 @@ public class CreaturePurchaseButton extends SimObject
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.localPlayerInfo.activeSpells;
-        this.registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
+        registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
-        this.registerListener(_button, MouseEvent.CLICK, onClicked);
+        registerListener(_button, MouseEvent.CLICK, onClicked);
 
         _unitData = GameContext.gameData.units[unitType];
         var playerColor :uint = GameContext.localPlayerInfo.color;
@@ -102,7 +102,7 @@ public class CreaturePurchaseButton extends SimObject
         cost2Text.textColor = _resource2Data.color;
         cost2Text.text = String(_resource2Cost);
 
-        this.createPurchaseMeters();
+        createPurchaseMeters();
     }
 
     override protected function addedToDB () :void
@@ -115,7 +115,7 @@ public class CreaturePurchaseButton extends SimObject
             _animView.y = 30;
         }
 
-        this.updateDisplayState();
+        updateDisplayState();
     }
 
     override protected function removedFromDB () :void
@@ -162,7 +162,7 @@ public class CreaturePurchaseButton extends SimObject
 
             GameContext.gameMode.localPlayerPurchasedCreature(_unitType);
 
-            this.addNamedTask(
+            addNamedTask(
                 DEPLOY_ANIM_TASK_NAME,
                 After(DEPLOY_ANIM_LENGTH,
                     new FunctionTask(playSwitchHiliteAnimation)),
@@ -201,7 +201,7 @@ public class CreaturePurchaseButton extends SimObject
         // if we're playing the deploy animation, these animations
         // will get played automatically when it has completed
         if (!this.playingDeployAnimation) {
-            this.playSwitchHiliteAnimation();
+            playSwitchHiliteAnimation();
         }
     }
 
@@ -216,7 +216,7 @@ public class CreaturePurchaseButton extends SimObject
         if (available != _available || enabled != _enabled) {
             _available = available;
             _enabled = enabled;
-            this.updateDisplayState();
+            updateDisplayState();
         }
 
         if (res1Amount == _lastResource1Amount && res2Amount == _lastResource2Amount) {
@@ -314,7 +314,7 @@ public class CreaturePurchaseButton extends SimObject
 
     protected function get playingDeployAnimation () :Boolean
     {
-        return this.hasTasksNamed(DEPLOY_ANIM_TASK_NAME);
+        return hasTasksNamed(DEPLOY_ANIM_TASK_NAME);
     }
 
     protected var _unitType :int;
@@ -381,7 +381,7 @@ class ResourceMeter extends Shape
 
         _totalHeight = (_maxValue / MAX_MAX_VALUE) * MAX_HEIGHT;
 
-        this.update(value);
+        update(value);
     }
 
     public function update (newValue :int) :void

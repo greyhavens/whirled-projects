@@ -44,7 +44,7 @@ public class MissileView extends BattlefieldSprite
 
         if (null == targetUnit) {
             // our target's gone. die.
-            this.destroySelf();
+            destroySelf();
             return;
         }
 
@@ -61,10 +61,10 @@ public class MissileView extends BattlefieldSprite
         var arc :Number = ((elapsedPercentage * 2) - 1) * ARC_HEIGHT_SQRT;
         arc = ARC_HEIGHT - (arc * arc);
 
-        this.updateLoc(loc.x, loc.y - arc);
+        updateLoc(loc.x, loc.y - arc);
 
         if (_elapsedTime == _travelTime) {
-            this.destroySelf();
+            destroySelf();
         }
 
     }

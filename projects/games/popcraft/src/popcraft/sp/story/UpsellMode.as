@@ -35,16 +35,16 @@ public class UpsellMode extends AppMode
         _manualObj = new SimpleSceneObject(movie);
         _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
         _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
-        this.addObject(_manualObj, this.modeSprite);
+        addObject(_manualObj, this.modeSprite);
 
         var okButton :SimpleButton = rightPage["ok"];
-        this.registerOneShotCallback(okButton, MouseEvent.CLICK,
+        registerOneShotCallback(okButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 closeMode();
             });
 
         var unlockButton :SimpleButton = rightUpsell["unlock_button"];
-        this.registerOneShotCallback(unlockButton, MouseEvent.CLICK,
+        registerOneShotCallback(unlockButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 closeMode();
                 AppContext.showGameShop();

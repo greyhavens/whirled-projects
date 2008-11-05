@@ -12,7 +12,7 @@ public class SpellDropTimer extends SimObject
 {
     override protected function addedToDB () :void
     {
-        this.scheduleNextSpellDrop();
+        scheduleNextSpellDrop();
     }
 
     protected function scheduleNextSpellDrop () :void
@@ -122,7 +122,7 @@ public class SpellDropTimer extends SimObject
             SpellDropFactory.createSpellDrop(spellType, spellLoc, true);
 
             // schedule the next drop
-            this.scheduleNextSpellDrop();
+            scheduleNextSpellDrop();
         }
     }
 
@@ -132,7 +132,7 @@ public class SpellDropTimer extends SimObject
         if (GameContext.diurnalCycle.isDay && !_timerRef.isNull) {
             GameContext.netObjects.destroyObject(_timerRef);
         } else if (GameContext.diurnalCycle.isNight && _timerRef.isNull) {
-            this.scheduleNextSpellDrop();
+            scheduleNextSpellDrop();
         }
     }
 

@@ -86,10 +86,10 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(_mainUiLayer);
         _modeLayer.addChild(_levelSelectUiLayer);
 
-        this.createDefaultLayout();
+        createDefaultLayout();
 
         if (_shouldFadeIn) {
-            this.fadeIn();
+            fadeIn();
         }
     }
 
@@ -109,9 +109,9 @@ public class LevelSelectMode extends DemoGameMode
         var playButton :SimpleButton = SwfResource.instantiateButton("splashUi", playButtonName);
         playButton.x = STORY_BUTTON_LOC.x;
         playButton.y = STORY_BUTTON_LOC.y;
-        this.registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
+        registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
         _playButtonObj = new SimpleSceneObject(playButton);
-        this.addObject(_playButtonObj, _mainUiLayer);
+        addObject(_playButtonObj, _mainUiLayer);
 
         if (playerStartedGame) {
             if (AppContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
@@ -173,7 +173,7 @@ public class LevelSelectMode extends DemoGameMode
 
         if (!AppContext.isPremiumContentUnlocked) {
             var buyGameButton :SimpleButton = UIBits.createButton("Unlock Full Version!", 1.2);
-            this.registerListener(buyGameButton, MouseEvent.CLICK,
+            registerListener(buyGameButton, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.mainLoop.pushMode(new UpsellMode());
                 });
@@ -183,7 +183,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
-            this.createDebugLayout();
+            createDebugLayout();
         }
     }
 
@@ -209,7 +209,7 @@ public class LevelSelectMode extends DemoGameMode
         _puzzleIntro.x = 470;
         _puzzleIntro.y = 395;
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
-        this.addObject(_puzzleIntro, _mainUiLayer);
+        addObject(_puzzleIntro, _mainUiLayer);
 
         var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "unit_intro");
@@ -218,7 +218,7 @@ public class LevelSelectMode extends DemoGameMode
         _unitIntro.x = 9;
         _unitIntro.y = 385;
         createHelpTextAnimTask(_unitIntro, 9, 4);
-        this.addObject(_unitIntro, _mainUiLayer);
+        addObject(_unitIntro, _mainUiLayer);
 
         var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
             "resource_intro");
@@ -227,10 +227,10 @@ public class LevelSelectMode extends DemoGameMode
         _resourceIntro.x = 9;
         _resourceIntro.y = 385;
         createHelpTextAnimTask(_resourceIntro, 9, 4);
-        this.addObject(_resourceIntro, _mainUiLayer);
+        addObject(_resourceIntro, _mainUiLayer);
 
         _showingTutorial = true;
-        this.updateTutorial();
+        updateTutorial();
     }
 
     protected function createDebugLayout () :void
@@ -238,7 +238,7 @@ public class LevelSelectMode extends DemoGameMode
         var buttonY :Number = 45;
 
         var unlockLevelsButton :SimpleButton = UIBits.createButton("Unlock levels", 1.2);
-        this.registerOneShotCallback(unlockLevelsButton, MouseEvent.CLICK,
+        registerOneShotCallback(unlockLevelsButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 unlockLevels();
             });
@@ -248,7 +248,7 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(unlockLevelsButton);
 
         var lockLevelsButton :SimpleButton = UIBits.createButton("Lock levels", 1.2);
-        this.registerOneShotCallback(lockLevelsButton, MouseEvent.CLICK,
+        registerOneShotCallback(lockLevelsButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 lockLevels();
             });
@@ -258,7 +258,7 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(lockLevelsButton);
 
         var testLevelButton :SimpleButton = UIBits.createButton("Test level", 1.2);
-        this.registerOneShotCallback(testLevelButton, MouseEvent.CLICK,
+        registerOneShotCallback(testLevelButton, MouseEvent.CLICK,
             function (...ignored) : void {
                 levelSelected(LevelManager.TEST_LEVEL);
             });
@@ -268,7 +268,7 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(testLevelButton);
 
         var testAnimButton :SimpleButton = UIBits.createButton("Anim test", 1.2);
-        this.registerListener(testAnimButton, MouseEvent.CLICK,
+        registerListener(testAnimButton, MouseEvent.CLICK,
             function (...ignored) : void {
                 AppContext.mainLoop.pushMode(new UnitAnimTestMode());
             });
@@ -278,7 +278,7 @@ public class LevelSelectMode extends DemoGameMode
         _modeLayer.addChild(testAnimButton);
 
         var upsellButton :SimpleButton = UIBits.createButton("Upsell", 1.2);
-        this.registerListener(upsellButton, MouseEvent.CLICK,
+        registerListener(upsellButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 AppContext.mainLoop.pushMode(new UpsellMode());
             });
@@ -327,7 +327,7 @@ public class LevelSelectMode extends DemoGameMode
         super.update(dt);
 
         if (_showingTutorial) {
-            this.updateTutorial();
+            updateTutorial();
         }
     }
 
@@ -402,7 +402,7 @@ public class LevelSelectMode extends DemoGameMode
                 levelName += " *";
             }
 
-            button = this.createLevelSelectButton(i, levelName);
+            button = createLevelSelectButton(i, levelName);
             button.x = columnLoc.x - (button.width * 0.5);
             button.y = yLoc;
             buttonSprite.addChild(button);
@@ -492,7 +492,7 @@ public class LevelSelectMode extends DemoGameMode
     protected function createLevelSelectButton (levelNum :int, levelName :String) :SimpleButton
     {
         var button :SimpleButton = UIBits.createButton(levelName, 1.1, LEVEL_SELECT_BUTTON_WIDTH);
-        this.registerOneShotCallback(button, MouseEvent.CLICK,
+        registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 levelSelected(levelNum);
             });
@@ -502,7 +502,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function playNextLevel () :void
     {
-        this.levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
+        levelSelected(AppContext.levelMgr.highestUnlockedLevelIndex);
     }
 
     protected function levelSelected (levelNum :int) :void
@@ -522,7 +522,7 @@ public class LevelSelectMode extends DemoGameMode
                 new PrologueMode(PrologueMode.TRANSITION_GAME, loadedLevel));
 
         } else {
-            this.fadeOutToMode(new StoryGameMode(loadedLevel));
+            fadeOutToMode(new StoryGameMode(loadedLevel));
         }
     }
 

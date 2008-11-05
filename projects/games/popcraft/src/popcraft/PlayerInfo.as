@@ -133,8 +133,8 @@ public class PlayerInfo extends EventDispatcher
 
     public function resurrect (newHealth :Number) :void
     {
-        this.destroy();
-        this.init();
+        destroy();
+        init();
         this.workshop.damageShields = [];
         this.workshop.health = newHealth;
     }

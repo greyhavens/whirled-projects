@@ -34,7 +34,7 @@ public class EndlessMapData
         }
 
         var multiplierDropXml :XML = XmlReader.getSingleChild(xml, "MultiplierDropLocation");
-        mapData.multiplierDropLoc = DataUtils.parseVector2(multiplierDropXml);
+        mapData.multiplierDropLoc = DataUtil.parseVector2(multiplierDropXml);
 
         for each (var computerXml :XML in xml.Computer) {
             mapData.computers.push(EndlessComputerPlayerData.fromXml(computerXml));

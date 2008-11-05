@@ -24,7 +24,7 @@ public class DiurnalCycleView extends SceneObject
 
         _moon.cacheAsBitmap = true;
 
-        this.dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
+        dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
     }
 
     override protected function destroyed () :void
@@ -40,7 +40,7 @@ public class DiurnalCycleView extends SceneObject
         var diurnalCycle :DiurnalCycle = GameContext.diurnalCycle;
         var newPhase :int = diurnalCycle.phaseOfDay;
         if (newPhase != _lastPhase) {
-            this.dayPhaseChanged(newPhase, true);
+            dayPhaseChanged(newPhase, true);
         }
 
         if (!_playedDawnSound && diurnalCycle.isNight && diurnalCycle.timeTillNextPhase <= GameContext.gameData.dawnWarning) {

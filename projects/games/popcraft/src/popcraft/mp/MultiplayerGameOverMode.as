@@ -19,8 +19,8 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
     {
         super.setup();
 
-        this.updateStats();
-        this.awardTrophies();
+        updateStats();
+        awardTrophies();
 
         var winningPlayerNames :Array = [];
         for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -62,7 +62,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         _button.x = (Constants.SCREEN_SIZE.x - _button.width) * 0.5;
         _button.y = text.y + text.height + 30;
         this.modeSprite.addChild(_button);
-        this.registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
+        registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
 
         // report scores
         if (SeatingManager.isLocalPlayerInControl) {

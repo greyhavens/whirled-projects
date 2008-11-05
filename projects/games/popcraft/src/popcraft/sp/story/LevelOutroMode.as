@@ -26,7 +26,7 @@ public class LevelOutroMode extends AppMode
 
     override protected function setup () :void
     {
-        this.saveProgress();
+        saveProgress();
 
         var bgSprite :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
 
@@ -92,7 +92,7 @@ public class LevelOutroMode extends AppMode
         if (_success && !AppContext.levelMgr.isLastLevel) {
             button = UIBits.createButton("Next Level", 1.5, 150);
             var localThis :LevelOutroMode = this;
-            this.registerOneShotCallback(button, MouseEvent.CLICK,
+            registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (localThis.showUpsellScreen) {
                         AppContext.mainLoop.pushMode(new UpsellMode());
@@ -104,7 +104,7 @@ public class LevelOutroMode extends AppMode
 
         } else if (!_success) {
             button = UIBits.createButton("Retry", 1.5, 150);
-            this.registerOneShotCallback(button, MouseEvent.CLICK,
+            registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     AppContext.levelMgr.playLevel();
                 });
@@ -117,7 +117,7 @@ public class LevelOutroMode extends AppMode
         }
 
         button = UIBits.createButton("Main Menu", 1.5, 150);
-        this.registerOneShotCallback(button, MouseEvent.CLICK,
+        registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
                 LevelSelectMode.create();
             });

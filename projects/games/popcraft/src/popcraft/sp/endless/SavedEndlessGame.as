@@ -44,7 +44,7 @@ public class SavedEndlessGame
             damageScore == rhs.damageScore &&
             multiplier == rhs.multiplier &&
             health == rhs.health &&
-            this.spellsEqual(rhs));
+            spellsEqual(rhs));
     }
 
     protected function spellsEqual (rhs :SavedEndlessGame) :Boolean

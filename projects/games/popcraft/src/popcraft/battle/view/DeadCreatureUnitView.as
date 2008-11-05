@@ -43,7 +43,7 @@ public class DeadCreatureUnitView extends BattlefieldSprite
             GameContext.gameMode.addObject(_bitmapAnimView, _sprite);
 
             // wait 2 seconds, then self destruct
-            this.addTask(After(2, new SelfDestructTask()));
+            addTask(After(2, new SelfDestructTask()));
 
         } else {
             var movie :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
@@ -56,12 +56,12 @@ public class DeadCreatureUnitView extends BattlefieldSprite
             _sprite.addChild(movie);
 
             // when the movie gets to the end, self-destruct
-            this.addTask(new SerialTask(
+            addTask(new SerialTask(
                 new WaitForFrameTask("end", movie),
                 new SelfDestructTask()));
         }
 
-        this.updateLoc(creature.x, creature.y);
+        updateLoc(creature.x, creature.y);
 
         GameContext.playGameSound("sfx_death_" + creature.unitData.name);
     }

@@ -19,13 +19,13 @@ public class ColossusAI extends AITaskTree
 
     public function init () :void
     {
-        this.restartAI();
+        restartAI();
     }
 
     protected function restartAI () :void
     {
-        this.beginAttackEnemyBase();
-        this.addSubtask(this.createScanForUnitTask());
+        beginAttackEnemyBase();
+        addSubtask(createScanForUnitTask());
     }
 
     protected function createScanForUnitTask () :AITask
@@ -45,8 +45,9 @@ public class ColossusAI extends AITaskTree
             return;
         }
 
-        this.addSubtask(new MoveToAttackLocationTask(_targetBaseRef, true, -1));
-        this.addSubtask(new AIDelayUntilTask(TARGET_BASE_DIED, AIDelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
+        addSubtask(new MoveToAttackLocationTask(_targetBaseRef, true, -1));
+        addSubtask(new AIDelayUntilTask(TARGET_BASE_DIED,
+            AIDelayUntilTask.createUnitDiedPredicate(_targetBaseRef)));
     }
 
     override public function get name () :String
@@ -58,7 +59,7 @@ public class ColossusAI extends AITaskTree
     {
         if (messageName == AITaskTree.MSG_SUBTASKCOMPLETED && task.name == TARGET_BASE_DIED) {
             // find a new base to attack
-            this.beginAttackEnemyBase();
+            beginAttackEnemyBase();
         } else if (messageName == AITaskSequence.MSG_SEQUENCEDTASKMESSAGE) {
             var msg :SequencedTaskMessage = data as SequencedTaskMessage;
             if (msg.messageName == DetectColossusTargetAction.DETECTED_TARGET_MSG) {
@@ -111,7 +112,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
         }
 
         if (null != detectedUnit) {
-            this.sendParentMessage(DETECTED_TARGET_MSG, detectedUnit);
+            sendParentMessage(DETECTED_TARGET_MSG, detectedUnit);
         }
     }
 

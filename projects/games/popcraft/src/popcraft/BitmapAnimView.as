@@ -22,7 +22,7 @@ public class BitmapAnimView extends SceneObject
         _anim = newAnim;
         if (_anim != null) {
             _elapsedTime = 0;
-            this.setFrame(0);
+            setFrame(0);
         }
     }
 
@@ -53,7 +53,7 @@ public class BitmapAnimView extends SceneObject
                     frameIndex % totalFrames : totalFrames - 1);
             }
 
-            this.setFrame(frameIndex);
+            setFrame(frameIndex);
         }
     }
 

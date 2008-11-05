@@ -51,20 +51,20 @@ public class CreatureUnit extends Unit
 
     override protected function addedToDB () :void
     {
-        this.createForceParticle();
+        createForceParticle();
     }
 
     override protected function removedFromDB () :void
     {
-        this.destroyForceParticle();
+        destroyForceParticle();
     }
 
     public function disableCollisionAvoidance (enableAfter :Number) :void
     {
-        this.destroyForceParticle();
+        destroyForceParticle();
 
         if (enableAfter >= 0) {
-            this.addNamedTask(ENABLE_COLLISIONS_TASK,
+            addNamedTask(ENABLE_COLLISIONS_TASK,
                 After(enableAfter, new FunctionTask(createForceParticle)),
                 true);
         }
@@ -96,7 +96,7 @@ public class CreatureUnit extends Unit
 
     public function isAtLocation (loc :Vector2) :Boolean
     {
-        return this.isNearLocation(loc, MOVEMENT_EPSILON);
+        return isNearLocation(loc, MOVEMENT_EPSILON);
     }
 
     public function isNearLocation (loc :Vector2, withinDistance :Number) :Boolean
@@ -144,8 +144,8 @@ public class CreatureUnit extends Unit
         _movedThisFrame = false;
 
         if (this.isMoving) {
-            if (this.isAtLocation(_destination)) {
-                this.stopMoving();
+            if (isAtLocation(_destination)) {
+                stopMoving();
 
             } else {
                 // the unit is attracted to its destination
@@ -247,8 +247,8 @@ public class CreatureUnit extends Unit
 
     override protected function update (dt :Number) :void
     {
-        if (this.shouldDieFromDiurnalCycle()) {
-            this.die();
+        if (shouldDieFromDiurnalCycle()) {
+            die();
             if (this.owningPlayerIndex == GameContext.localPlayerIndex) {
                 GameContext.playerStats.creaturesLostToDaytime[_unitType] += 1;
             }
@@ -258,14 +258,14 @@ public class CreatureUnit extends Unit
 
         _lastUpdateTimestamp += dt;
 
-        this.stopMoving();
+        stopMoving();
 
         var aiRoot :AITask = this.aiRoot;
         if (null != aiRoot) {
             aiRoot.update(dt, this);
         }
 
-        this.handleMove(dt);
+        handleMove(dt);
 
         super.update(dt);
     }

@@ -29,7 +29,7 @@ public class ComputerPlayerInfo extends PlayerInfo
     override public function init () :void
     {
         super.init();
-        _aiRef = GameContext.netObjects.addObject(this.createAi());
+        _aiRef = GameContext.netObjects.addObject(createAi());
     }
 
     override public function destroy () :void
@@ -50,21 +50,21 @@ public class ComputerPlayerInfo extends PlayerInfo
     {
         // computer players only care about creature spells. they never use the puzzle reset spell.
         if (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
-            _heldSpells[spellType] = this.getSpellCount(spellType) + count;
+            _heldSpells[spellType] = getSpellCount(spellType) + count;
         }
     }
 
     override public function spellCast (spellType :int) :void
     {
         // remove spell from holdings
-        var spellCount :int = this.getSpellCount(spellType);
+        var spellCount :int = getSpellCount(spellType);
         Assert.isTrue(spellCount > 0);
         _heldSpells[spellType] = spellCount - 1;
     }
 
     override public function canCastSpell (spellType :int) :Boolean
     {
-        return (this.getSpellCount(spellType) > 0);
+        return (getSpellCount(spellType) > 0);
     }
 
     public function getSpellCount (spellType :int) :int

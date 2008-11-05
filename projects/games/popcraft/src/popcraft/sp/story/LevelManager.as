@@ -17,7 +17,7 @@ public class LevelManager
 
     public function LevelManager ()
     {
-        this.resetLevelData();
+        resetLevelData();
     }
 
     protected function resetLevelData () :void
@@ -39,7 +39,7 @@ public class LevelManager
                 _levelRecords.push(LevelRecord.fromByteArray(cookie));
             }
         } catch (e :Error) {
-            this.resetLevelData();
+            resetLevelData();
             throw e;
         }
     }
@@ -58,7 +58,7 @@ public class LevelManager
 
     public function cookieReadFailed () :Boolean
     {
-        this.resetLevelData();
+        resetLevelData();
         return true;
     }
 
@@ -128,7 +128,7 @@ public class LevelManager
         }
 
         if (null != _loadedLevel) {
-            this.startGame();
+            startGame();
 
         } else {
             // load the level
@@ -171,7 +171,7 @@ public class LevelManager
                         onLoadError);
 
                 } else {
-                    this.loadLevel(loadParams);
+                    loadLevel(loadParams);
                 }
             }
         }
@@ -242,7 +242,7 @@ public class LevelManager
     protected function onLevelLoaded () :void
     {
         _loadedLevel = LevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
-        this.startGame();
+        startGame();
     }
 
     protected function onLoadError (err :String) :void

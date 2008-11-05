@@ -81,7 +81,7 @@ public class BattleBoardView extends SceneObject
     {
         var newDayPhase :int = GameContext.diurnalCycle.phaseOfDay;
         if (newDayPhase != _lastDayPhase) {
-            this.animateDayPhaseChange(newDayPhase);
+            animateDayPhaseChange(newDayPhase);
             _lastDayPhase = newDayPhase;
         }
     }

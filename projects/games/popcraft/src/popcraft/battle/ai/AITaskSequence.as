@@ -21,14 +21,14 @@ public class AITaskSequence extends AITaskTree
         _pendingTasks.push(task);
 
         if (!this.hasSubtasks) {
-            this.beginNextTask();
+            beginNextTask();
         }
     }
 
     protected function beginNextTask () :void
     {
         Assert.isTrue(_pendingTasks.length > 0);
-        this.addSubtask(_pendingTasks[0]);
+        addSubtask(_pendingTasks[0]);
     }
 
     override public function update (dt :Number, unit :CreatureUnit) :int
@@ -37,11 +37,11 @@ public class AITaskSequence extends AITaskTree
 
         // do we need to repeat?
         if (_repeating && _pendingTasks.length == 0) {
-            _pendingTasks = this.cloneSubtasks();
+            _pendingTasks = cloneSubtasks();
             _completedTasks = [];
 
             if (_pendingTasks.length > 0) {
-                this.beginNextTask();
+                beginNextTask();
             }
         }
 
@@ -56,7 +56,7 @@ public class AITaskSequence extends AITaskTree
     override public function clone () :AITask
     {
         var clone :AITaskSequence = new AITaskSequence(_repeating, _name);
-        clone._pendingTasks = this.cloneSubtasks();
+        clone._pendingTasks = cloneSubtasks();
 
         return clone;
     }
@@ -68,15 +68,17 @@ public class AITaskSequence extends AITaskTree
         _completedTasks.push(task);
 
         if (_pendingTasks.length > 0) {
-            this.beginNextTask();
+            beginNextTask();
         }
 
-        this.sendParentMessage(MSG_SEQUENCEDTASKCOMPLETED, task);
+        sendParentMessage(MSG_SEQUENCEDTASKCOMPLETED, task);
     }
 
-    override protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
+    override protected function receiveSubtaskMessage (subtask :AITask, messageName :String,
+        data :Object) :void
     {
-        this.sendParentMessage(MSG_SEQUENCEDTASKMESSAGE, new SequencedTaskMessage(subtask, messageName, data));
+        sendParentMessage(MSG_SEQUENCEDTASKMESSAGE,
+            new SequencedTaskMessage(subtask, messageName, data));
     }
 
     protected function cloneSubtasks () :Array

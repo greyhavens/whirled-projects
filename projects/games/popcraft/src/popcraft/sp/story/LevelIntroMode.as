@@ -65,7 +65,7 @@ public class LevelIntroMode extends AppMode
 
         manualFrontObj.addTask(manualFrontTask);
 
-        this.addObject(manualFrontObj, this.modeSprite);
+        addObject(manualFrontObj, this.modeSprite);
 
         this.modeSprite.visible = false;
     }
@@ -93,9 +93,9 @@ public class LevelIntroMode extends AppMode
         _manualObj = new SimpleSceneObject(manual);
         _manualObj.x = Constants.SCREEN_SIZE.x * 0.5;
         _manualObj.y = Constants.SCREEN_SIZE.y * 0.5;
-        this.addObject(_manualObj, this.modeSprite);
+        addObject(_manualObj, this.modeSprite);
 
-        this.doNextPhase();
+        doNextPhase();
     }
 
     protected function hasPhase (phaseNum :int) :Boolean
@@ -111,7 +111,7 @@ public class LevelIntroMode extends AppMode
 
     protected function getNextPhase (phaseNum :int) :int
     {
-        while (++phaseNum < PHASE__LIMIT && !this.hasPhase(phaseNum)) {
+        while (++phaseNum < PHASE__LIMIT && !hasPhase(phaseNum)) {
             // cycle phases until we get to one we have or run out
         }
 
@@ -120,7 +120,7 @@ public class LevelIntroMode extends AppMode
 
     protected function doNextPhase () :Boolean
     {
-       _phase = this.getNextPhase(_phase);
+       _phase = getNextPhase(_phase);
 
         switch (_phase) {
         case PHASE_CREATUREINTRO:
@@ -132,7 +132,7 @@ public class LevelIntroMode extends AppMode
                 creatureAnim = CreatureAnimFactory.instantiateUnitAnimation(
                     newCreatureType, GameContext.localPlayerInfo.color, "stand_SW");
             }
-            this.showPage(
+            showPage(
                 TYPE_PAGE,
                 "",
                 "The " + creatureData.displayName,
@@ -146,7 +146,7 @@ public class LevelIntroMode extends AppMode
             var spellData :SpellData = GameContext.gameData.spells[newSpellType];
             var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard",
                 spellData.iconName);
-            this.showPage(
+            showPage(
                 TYPE_PAGE,
                 "",
                 "Infusion: " + spellData.displayName,
@@ -165,7 +165,7 @@ public class LevelIntroMode extends AppMode
                 (expertCompletionDays == 1 ? " day" : " days") +
                 " for an expert score.)";
 
-            this.showPage(
+            showPage(
                 TYPE_NOTE,
                 "Chapter " + String(AppContext.levelMgr.curLevelIndex + 1),
                 AppContext.levelMgr.curLevelName,
@@ -215,7 +215,7 @@ public class LevelIntroMode extends AppMode
 
         // ok button
         _okButton = rightPage["ok"];
-        this.registerListener(_okButton, MouseEvent.CLICK, okClicked);
+        registerListener(_okButton, MouseEvent.CLICK, okClicked);
 
         // page number
         _pageNum = Rand.nextIntRange(_pageNum + 10, _pageNum + 1000, Rand.STREAM_COSMETIC);
@@ -253,7 +253,7 @@ public class LevelIntroMode extends AppMode
     protected function okClicked (...ignored) :void
     {
         var movieTask :SerialTask = new SerialTask();
-        if (this.getNextPhase(_phase) < PHASE__LIMIT) {
+        if (getNextPhase(_phase) < PHASE__LIMIT) {
             // animate the page turn
             movieTask.addTask(new PlaySoundTask("sfx_pageturn"));
             movieTask.addTask(new GoToFrameTask("turn"));

@@ -38,13 +38,13 @@ public class PrologueMode extends TransitionMode
         movieTask.addTask(new WaitForFrameTask("end"));
         movieTask.addTask(new FunctionTask(endPrologue));
         movieObj.addTask(movieTask);
-        this.addObject(movieObj, _modeLayer);
+        addObject(movieObj, _modeLayer);
 
         // skip button, to end the sequence
         _skipButton = UIBits.createButton("Skip", 1.2);
         _skipButton.x = Constants.SCREEN_SIZE.x - _skipButton.width - 15;
         _skipButton.y = Constants.SCREEN_SIZE.y - _skipButton.height - 15;
-        this.registerOneShotCallback(_skipButton, MouseEvent.CLICK, onSkipClicked);
+        registerOneShotCallback(_skipButton, MouseEvent.CLICK, onSkipClicked);
 
         _modeLayer.addChild(_skipButton);
     }
@@ -63,7 +63,7 @@ public class PrologueMode extends TransitionMode
 
     protected function onSkipClicked (...ignored) :void
     {
-        this.endPrologue();
+        endPrologue();
     }
 
     protected function endPrologue () :void
@@ -74,10 +74,10 @@ public class PrologueMode extends TransitionMode
         // fade out and pop mode
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT:
-            this.fadeOut(LevelSelectMode.create);
+            fadeOut(LevelSelectMode.create);
             break;
         case TRANSITION_GAME:
-            this.fadeOutToMode(new StoryGameMode(_level));
+            fadeOutToMode(new StoryGameMode(_level));
             break;
         }
     }

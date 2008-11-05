@@ -43,9 +43,9 @@ public class WorkshopView extends BattlefieldSprite
         _workshop = _movie["workshop"];
         // is the workshop already burning?
         if (_unit.health / _unit.maxHealth <= BURNING_HEALTH_PERCENT) {
-            this.setBurning();
+            setBurning();
         } else {
-            this.recolorWorkshop(_workshop);
+            recolorWorkshop(_workshop);
         }
 
         _targetAttach = _movie["target_attach"];
@@ -69,7 +69,7 @@ public class WorkshopView extends BattlefieldSprite
         _shieldMeterParent = SpriteUtil.createSprite();
         _shieldMeterParent.y = -_sprite.height + SHIELD_METER_Y_LOC;
         _sprite.addChild(_shieldMeterParent);
-        this.updateShieldMeters(false);
+        updateShieldMeters(false);
 
         // player name
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
@@ -87,12 +87,12 @@ public class WorkshopView extends BattlefieldSprite
 
         GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
         var thisObj :WorkshopView = this;
-        this.registerListener(_clickableSprite, MouseEvent.CLICK,
+        registerListener(_clickableSprite, MouseEvent.CLICK,
             function (...ignored) :void {
                 GameContext.gameMode.workshopClicked(thisObj);
             });
 
-        this.updateWorkshopLocation();
+        updateWorkshopLocation();
     }
 
     public function addTargetWorkshopBadge (badge :TargetWorkshopBadge) :void
@@ -133,18 +133,18 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function setBurning () :void
     {
-        this.setWorkshopMovie(SwfResource.instantiateMovieClip("workshop", "workshop_fire"));
+        setWorkshopMovie(SwfResource.instantiateMovieClip("workshop", "workshop_fire"));
     }
 
     protected function setWorkshopMovie (workshop :MovieClip) :void
     {
-        this.recolorWorkshop(workshop);
+        recolorWorkshop(workshop);
         var index :int = _movie.getChildIndex(_workshop);
         _movie.removeChildAt(index);
         _movie.addChildAt(workshop, index);
         _workshop = workshop;
 
-        this.updateWorkshopLocation();
+        updateWorkshopLocation();
     }
 
     protected function recolorWorkshop (workshop :MovieClip) :void
@@ -167,7 +167,7 @@ public class WorkshopView extends BattlefieldSprite
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        this.registerListener(_unit, UnitEvent.ATTACKED, handleAttacked);
+        registerListener(_unit, UnitEvent.ATTACKED, handleAttacked);
     }
 
     override protected function removedFromDB () :void
@@ -195,7 +195,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function updateWorkshopLocation () :void
     {
-        this.updateLoc(_unit.x, _unit.y);
+        updateLoc(_unit.x, _unit.y);
 
         // flip the movie if we're on the left side of the board
         _workshop.scaleX = (_unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
@@ -210,7 +210,7 @@ public class WorkshopView extends BattlefieldSprite
         if (health != _lastHealth) {
             if (health <= 0) {
                 GameContext.playGameSound("sfx_death_base");
-                this.destroySelf();
+                destroySelf();
 
                 // create the rubble sprite
                 GameContext.gameMode.addObject(
@@ -232,7 +232,7 @@ public class WorkshopView extends BattlefieldSprite
                 // swap in the burning workshop
                 if ((health / _unit.maxHealth) <= BURNING_HEALTH_PERCENT &&
                     (_lastHealth / _unit.maxHealth) > BURNING_HEALTH_PERCENT) {
-                    this.setBurning();
+                    setBurning();
                 }
             }
 
@@ -242,7 +242,7 @@ public class WorkshopView extends BattlefieldSprite
         // update damage shields
         var shieldModCount :int = _unit.damageShieldModCount;
         if (shieldModCount != _lastShieldsModCount) {
-            this.updateShieldMeters(true);
+            updateShieldMeters(true);
         }
     }
 

@@ -5,7 +5,7 @@ import com.threerings.flash.Vector2;
 import popcraft.*;
 import popcraft.util.XmlReader;
 
-public class DataUtils
+public class DataUtil
 {
     public static function parseVector2 (xml :XML) :Vector2
     {

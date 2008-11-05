@@ -22,7 +22,7 @@ public class StoryGameMode extends GameMode
         super.setup();
 
         // start the game immediately
-        this.startGame();
+        startGame();
 
         // let the server know we're starting the game, so that coins can be awarded when
         // the game ends
@@ -31,7 +31,7 @@ public class StoryGameMode extends GameMode
         }
 
         if (!Constants.DEBUG_SKIP_LEVEL_INTRO) {
-            this.showIntro();
+            showIntro();
         }
     }
 

@@ -10,7 +10,7 @@ public class ForceParticle
     public function ForceParticle (container :ForceParticleContainer, x :Number, y :Number) :void
     {
         _container = container;
-        this.setLoc(x, y);
+        setLoc(x, y);
     }
 
     public function destroy () :void
@@ -32,15 +32,15 @@ public class ForceParticle
 
         var force :Vector2 = new Vector2();
 
-        this.getForceFromBucket(_container.getBucket(_col - 1, _row - 1), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col,     _row - 1), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col + 1, _row - 1), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col - 1, _row    ), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col,     _row    ), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col + 1, _row    ), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col - 1, _row + 1), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col,     _row + 1), force, forceQueryRadius);
-        this.getForceFromBucket(_container.getBucket(_col + 1, _row + 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col - 1, _row - 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col,     _row - 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col + 1, _row - 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col - 1, _row    ), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col,     _row    ), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col + 1, _row    ), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col - 1, _row + 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col,     _row + 1), force, forceQueryRadius);
+        getForceFromBucket(_container.getBucket(_col + 1, _row + 1), force, forceQueryRadius);
 
         return force;
     }

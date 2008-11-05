@@ -60,7 +60,7 @@ public class EndlessGameMode extends GameMode
 
         // if this is not the first level, create a new multiplier drop object
         if (EndlessGameContext.mapIndex != 0) {
-            var multiplierView :SpellDropView = this.createMultiplierDrop(false);
+            var multiplierView :SpellDropView = createMultiplierDrop(false);
             // hide the multiplier until the mode is entered for the first time,
             // to allow the interstitial movie to play
             multiplierView.visible = false;
@@ -124,7 +124,7 @@ public class EndlessGameMode extends GameMode
             (localPlayerWorkshop != null ? localPlayerWorkshop.damageShields.length + 1 : 1);
         EndlessGameContext.scoreMultiplier = multiplier;
 
-        this.checkForComputerDeath();
+        checkForComputerDeath();
     }
 
     override protected function checkForGameOver () :void
@@ -150,7 +150,7 @@ public class EndlessGameMode extends GameMode
             }
 
             if (_liveComputers.length == 0) {
-                this.switchMaps();
+                switchMaps();
             }
         }
     }
@@ -261,7 +261,7 @@ public class EndlessGameMode extends GameMode
     {
         switch (keyCode) {
         case KeyboardCodes.M:
-            this.spellDeliveredToPlayer(GameContext.localPlayerIndex,
+            spellDeliveredToPlayer(GameContext.localPlayerIndex,
                 Constants.SPELL_TYPE_MULTIPLIER);
             break;
 
@@ -272,7 +272,7 @@ public class EndlessGameMode extends GameMode
             break;
 
         case KeyboardCodes.O:
-            this.switchMaps();
+            switchMaps();
             break;
 
         default:
@@ -433,7 +433,7 @@ public class EndlessGameMode extends GameMode
             }
         }
 
-        _liveComputers = this.createComputerPlayers();
+        _liveComputers = createComputerPlayers();
 
         var playerInfo :PlayerInfo;
 

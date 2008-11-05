@@ -51,8 +51,8 @@ public class ComputerPlayerAI extends SimObject
 
             if (_nextWave != null) {
                 ++_waveIndex;
-                this.addNamedTask(SEND_WAVE_TASK,
-                    After(this.getWaveDelay(_nextWave), new FunctionTask(sendNextWave)));
+                addNamedTask(SEND_WAVE_TASK,
+                    After(getWaveDelay(_nextWave), new FunctionTask(sendNextWave)));
             }
         }
     }
@@ -107,11 +107,11 @@ public class ComputerPlayerAI extends SimObject
                 }
 
                 for (var j :int = 0; j < count; ++j) {
-                    this.buildUnit(unitType);
+                    buildUnit(unitType);
                 }
             }
 
-            this.queueNextWave();
+            queueNextWave();
         }
     }
 
@@ -123,7 +123,7 @@ public class ComputerPlayerAI extends SimObject
     override protected function update (dt :Number) :void
     {
         if (!_playerInfo.isAlive) {
-            this.destroySelf();
+            destroySelf();
             return;
         }
 
@@ -131,11 +131,11 @@ public class ComputerPlayerAI extends SimObject
         var diurnalCycle :DiurnalCycle = GameContext.diurnalCycle;
         var dayIndex :int = (diurnalCycle.dayCount - 1);
         if (dayIndex != _lastDayIndex) {
-            _curDay = this.getDayData(dayIndex);
+            _curDay = getDayData(dayIndex);
             _waveIndex = 0;
             _nextWave = null;
-            this.removeNamedTasks(SEND_WAVE_TASK);
-            this.removeNamedTasks(SPELL_DROP_SPOTTED_TASK);
+            removeNamedTasks(SEND_WAVE_TASK);
+            removeNamedTasks(SPELL_DROP_SPOTTED_TASK);
 
             _lastDayIndex = dayIndex;
         }
@@ -148,11 +148,11 @@ public class ComputerPlayerAI extends SimObject
             // send out creatures and look for spell drops at night
 
             if (_nextWave == null) {
-                this.queueNextWave();
+                queueNextWave();
             }
 
             if (_curDay.lookForSpellDrops && !this.spellDropSpotted && this.spellDropOnBoard) {
-                this.addNamedTask(
+                addNamedTask(
                     SPELL_DROP_SPOTTED_TASK,
                     After(_curDay.noticeSpellDropAfter.next(),
                         new FunctionTask(sendCouriersForSpellDrop)));
@@ -166,14 +166,14 @@ public class ComputerPlayerAI extends SimObject
             var numCouriers :int = _curDay.spellDropCourierGroupSize.next() -
                 this.numCouriersOnBoard;
             for (var i :int = 0; i < numCouriers; ++i) {
-                this.buildUnit(Constants.UNIT_TYPE_COURIER);
+                buildUnit(Constants.UNIT_TYPE_COURIER);
             }
         }
     }
 
     protected function get spellDropSpotted () :Boolean
     {
-        return this.hasTasksNamed(SPELL_DROP_SPOTTED_TASK);
+        return hasTasksNamed(SPELL_DROP_SPOTTED_TASK);
     }
 
     protected function get spellDropOnBoard () :Boolean

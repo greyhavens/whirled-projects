@@ -36,7 +36,7 @@ public class DebugDataView extends SceneObject
 
         _text.y = 335;
 
-        this.updateText();
+        updateText();
     }
 
     override public function get objectName () :String
@@ -52,7 +52,7 @@ public class DebugDataView extends SceneObject
     override protected function update (dt :Number) :void
     {
         if (this.visible) {
-            this.updateText();
+            updateText();
         }
     }
 
