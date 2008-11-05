@@ -8,6 +8,7 @@ import flash.display.MovieClip;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.WorkshopUnit;
 
 public class DeadWorkshopView extends BattlefieldSprite

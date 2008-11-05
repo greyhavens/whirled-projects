@@ -2,7 +2,7 @@ package popcraft.battle {
 
 import com.whirled.contrib.simplegame.SimObject;
 
-import popcraft.*;
+import popcraft.game.*;
 import popcraft.data.SpellData;
 
 public class CarriedSpellObject extends SimObject

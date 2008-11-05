@@ -7,6 +7,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.CreatureUnit;
 import popcraft.util.PerfMonitor;
 import popcraft.util.SpriteUtil;

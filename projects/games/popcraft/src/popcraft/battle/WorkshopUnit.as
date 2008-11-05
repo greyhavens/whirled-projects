@@ -3,6 +3,7 @@ package popcraft.battle {
 import com.threerings.flash.Vector2;
 
 import popcraft.*;
+import popcraft.game.*;
 
 public class WorkshopUnit extends Unit
 {

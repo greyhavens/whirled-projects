@@ -7,7 +7,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.events.Event;
 
-import popcraft.GameContext;
+import popcraft.game.*;
 import popcraft.data.*;
 
 public class CreatureSpellSet extends SimObject

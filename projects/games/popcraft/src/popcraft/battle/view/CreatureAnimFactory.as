@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.resource.*;
 import flash.display.MovieClip;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 

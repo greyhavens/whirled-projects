@@ -9,6 +9,7 @@ import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.util.SpriteUtil;
 

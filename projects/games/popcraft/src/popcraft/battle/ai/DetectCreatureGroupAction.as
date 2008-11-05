@@ -4,6 +4,7 @@ package popcraft.battle.ai
 import com.whirled.contrib.simplegame.SimObjectRef;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.CreatureUnit;
 
 public class DetectCreatureGroupAction extends AITask

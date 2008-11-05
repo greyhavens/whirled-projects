@@ -13,7 +13,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
-import popcraft.*;
+import popcraft.game.*;
 import popcraft.util.SpriteUtil;
 
 public class PlayerStatusView extends SceneObject

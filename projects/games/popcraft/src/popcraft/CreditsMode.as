@@ -16,7 +16,7 @@ import flash.events.MouseEvent;
 
 import popcraft.battle.view.CreatureAnimFactory;
 import popcraft.battle.view.TeslaSoundPlayer;
-import popcraft.sp.story.LevelSelectMode;
+import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 

@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.audio.*;
 import flash.events.EventDispatcher;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.view.*;
 
 public class UnitFactory extends EventDispatcher

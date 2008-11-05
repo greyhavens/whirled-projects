@@ -9,6 +9,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
 import popcraft.*;
+import popcraft.game.*;
 
 public class TargetWorkshopBadge extends SceneObject
 {

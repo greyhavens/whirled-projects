@@ -2,7 +2,7 @@ package popcraft.net {
 
 import flash.utils.ByteArray;
 
-import popcraft.GameContext;
+import popcraft.game.*;
 
 public class PlayerScoreMsg
 {

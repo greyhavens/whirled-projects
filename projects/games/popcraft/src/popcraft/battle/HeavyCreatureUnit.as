@@ -47,6 +47,7 @@ import com.whirled.contrib.simplegame.util.*;
 import flash.geom.Point;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
 import com.threerings.util.Log;

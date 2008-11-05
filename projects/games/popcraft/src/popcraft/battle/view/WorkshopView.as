@@ -18,6 +18,7 @@ import flash.geom.Rectangle;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;

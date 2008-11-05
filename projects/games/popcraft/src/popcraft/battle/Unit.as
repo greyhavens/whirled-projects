@@ -13,6 +13,7 @@ import flash.display.Graphics;
 import flash.display.Shape;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.geom.*;
 import popcraft.data.*;
 import popcraft.util.*;

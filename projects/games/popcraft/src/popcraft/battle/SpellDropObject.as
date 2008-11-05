@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.data.SpellData;
 
 public class SpellDropObject extends SimObject

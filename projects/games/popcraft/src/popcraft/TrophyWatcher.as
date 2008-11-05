@@ -1,6 +1,7 @@
 package popcraft {
 
 import popcraft.battle.*;
+import popcraft.game.*;
 
 /**
  * Keeps track of several trophies that are awarded through in-game events:

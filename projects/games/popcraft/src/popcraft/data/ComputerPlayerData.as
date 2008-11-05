@@ -5,7 +5,7 @@ import com.whirled.contrib.simplegame.resource.ImageResource;
 import flash.display.DisplayObject;
 
 import popcraft.*;
-import popcraft.sp.ComputerPlayerAI;
+import popcraft.game.ComputerPlayerAI;
 import popcraft.util.*;
 
 public class ComputerPlayerData

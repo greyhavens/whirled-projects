@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import popcraft.*;
+import popcraft.game.*;
 
 public class SpellDropTimer extends SimObject
 {

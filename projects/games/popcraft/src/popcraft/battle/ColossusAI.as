@@ -83,6 +83,7 @@ public class ColossusAI extends AITaskTree
 import com.whirled.contrib.simplegame.SimObjectRef;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.battle.ai.*;
 

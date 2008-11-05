@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.ai.*;
 import popcraft.battle.geom.*;
 import popcraft.util.*;

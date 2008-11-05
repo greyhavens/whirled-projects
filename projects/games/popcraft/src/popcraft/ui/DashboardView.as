@@ -17,6 +17,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.data.ResourceData;
 import popcraft.util.SpriteUtil;
 

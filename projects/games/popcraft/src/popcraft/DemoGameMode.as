@@ -3,8 +3,8 @@ package popcraft {
 import com.whirled.contrib.simplegame.audio.*;
 
 import popcraft.data.LevelData;
-import popcraft.sp.story.LevelManager;
-import popcraft.sp.story.StoryGameMode;
+import popcraft.game.story.LevelManager;
+import popcraft.game.story.StoryGameMode;
 
 public class DemoGameMode extends StoryGameMode
 {

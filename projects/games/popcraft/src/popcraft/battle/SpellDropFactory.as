@@ -4,6 +4,7 @@ import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.audio.*;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.view.SpellDropView;
 
 public class SpellDropFactory

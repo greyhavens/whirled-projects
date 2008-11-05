@@ -3,6 +3,7 @@ package popcraft.battle {
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.ai.*;
 import popcraft.data.*;
 

@@ -11,6 +11,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import popcraft.*;
+import popcraft.game.*;
 
 public class DebugDataView extends SceneObject
 {

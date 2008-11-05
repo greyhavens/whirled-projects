@@ -20,10 +20,10 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import popcraft.data.*;
-import popcraft.mp.*;
+import popcraft.game.mpbattle.*;
 import popcraft.net.*;
-import popcraft.sp.*;
-import popcraft.sp.story.*;
+import popcraft.game.*;
+import popcraft.game.story.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -144,14 +144,15 @@ public class PopCraft extends Sprite
 }
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.ui.GenericLoadingMode;
 
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
-import popcraft.sp.story.LevelSelectMode;
-import popcraft.mp.MultiplayerLobbyMode;
+import popcraft.game.story.LevelSelectMode;
+import popcraft.game.mpbattle.MultiplayerLobbyMode;
 import com.whirled.contrib.simplegame.util.Rand;
-import popcraft.sp.endless.SavedEndlessGame;
+import popcraft.game.endless.SavedEndlessGame;
 
 class LoadingMode extends GenericLoadingMode
 {

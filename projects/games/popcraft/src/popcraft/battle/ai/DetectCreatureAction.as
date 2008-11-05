@@ -3,6 +3,7 @@ package popcraft.battle.ai {
 import com.whirled.contrib.simplegame.*;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 
 public class DetectCreatureAction extends AITask

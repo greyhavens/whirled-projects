@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.DisplayObject;
 
 import popcraft.*;
+import popcraft.game.*;
 
 public class BattlefieldSprite extends SceneObject
 {

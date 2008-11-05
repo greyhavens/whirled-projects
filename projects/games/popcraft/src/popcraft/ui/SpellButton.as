@@ -9,6 +9,7 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.CreatureSpellSet;
 import popcraft.data.SpellData;
 

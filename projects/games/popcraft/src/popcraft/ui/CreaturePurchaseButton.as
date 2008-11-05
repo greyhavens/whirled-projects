@@ -18,6 +18,7 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.battle.view.*;
 import popcraft.data.*;

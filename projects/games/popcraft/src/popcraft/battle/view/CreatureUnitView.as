@@ -15,6 +15,7 @@ import flash.display.Sprite;
 import flash.geom.Rectangle;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.*;
 import popcraft.data.*;
 import popcraft.ui.HealthMeters;

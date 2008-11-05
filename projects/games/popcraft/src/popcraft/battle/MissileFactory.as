@@ -3,6 +3,7 @@ package popcraft.battle {
 import com.threerings.flash.Vector2;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.view.MissileView;
 
 public class MissileFactory

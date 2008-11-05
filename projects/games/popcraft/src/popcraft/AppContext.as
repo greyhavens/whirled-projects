@@ -9,8 +9,8 @@ import com.whirled.game.GameControl;
 import flash.display.Sprite;
 
 import popcraft.data.*;
-import popcraft.sp.endless.EndlessLevelManager;
-import popcraft.sp.story.LevelManager;
+import popcraft.game.endless.EndlessLevelManager;
+import popcraft.game.story.LevelManager;
 
 public class AppContext
 {
