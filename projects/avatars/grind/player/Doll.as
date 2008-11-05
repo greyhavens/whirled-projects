@@ -26,6 +26,8 @@ public class Doll extends Bitmap
                     SIZE*(sprite%w), SIZE*(int(sprite/h)), 32, 32),
                 new Point(0, 0), null, null, true);
         }
+
+        smoothing = true;
     }
 
     protected static const SIZE :int = 32; // Pixel dimensions of each sprite

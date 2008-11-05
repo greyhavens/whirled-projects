@@ -12,6 +12,7 @@ import flash.display.Sprite;
 import flash.text.TextField;
 
 import flash.utils.getTimer; // function import
+import flash.utils.Timer;
 
 import com.whirled.ActorControl;
 import com.whirled.ControlEvent;
@@ -46,9 +47,18 @@ public class QuestSprite extends Sprite
         addEventListener(Event.UNLOAD, stopBouncing);
         stopBouncing();
 
+        //_ticker = new Ticker(_ctrl, 4000, tick);
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(4000);
 
+//        var timer :Timer = new Timer(4000);
+//        timer.addEventListener(TimerEvent.TIMER, tick);
+//        /*root.loaderInfo.addEventListener(Event.UNLOAD, function (..._) :void {
+//            timer.stop();
+//        });*/
+//        timer.start();
+
+        _ctrl.requestControl();
         setupVisual();
         handleMemory();
     }
@@ -60,7 +70,10 @@ public class QuestSprite extends Sprite
                 attack();
                 break;
             case QuestConstants.STATE_HEAL:
-                heal();
+                damage(-0.2*getMaxHealth(), "Heal");
+                break;
+            case QuestConstants.STATE_COUNTER:
+                damage(0.1*getMaxHealth(), "Concentrate...");
                 break;
         }
     }
@@ -69,27 +82,29 @@ public class QuestSprite extends Sprite
     {
         trace("I see " + QuestUtil.query(_ctrl).length + " players");
 
-        var amount :Number = 0.2;
+        var self :Object = QuestUtil.self(_ctrl);
+        var amount :Number = self.getPower();
 
-        for each (var svc :Object in QuestUtil.fetch(_ctrl, 666, 0.3)) {
+        for each (var svc :Object in QuestUtil.fetch(_ctrl, 666, 200)) {
             if (svc.getState() == QuestConstants.STATE_COUNTER) {
-                QuestUtil.self(_ctrl).damage(amount, "&^$%#$!");
+                damage(svc.getPower(), "Countered!");
+                svc.damage(amount*0.25);
             } else {
-                svc.damage(amount, "Take this!");
+                svc.damage(amount);
             }
         }
     }
 
-    protected function heal () :void
-    {
-        damage(-0.4, "Heal");
-    }
-
     public function damage (amount :Number, cause :String) :void
     {
+        if (_ctrl.getMemory("health") == 0) {
+            return; // Don't revive
+        }
+
         if (amount > 0 && QuestUtil.self(_ctrl).getState() == QuestConstants.STATE_HEAL) {
             amount *= 2;
         }
+
         if (cause != null) {
             echo(amount + " (" + cause + ")");
         } else {
@@ -98,23 +113,38 @@ public class QuestSprite extends Sprite
 
         var health :Number = _ctrl.getMemory("health") as Number;
         if (health <= amount) {
+            _ctrl.setMemory("health", 0);
             echo("DEAD"); // TODO
         } else {
-            _ctrl.setMemory("health", Math.min(health-amount, 1));
+            _ctrl.setMemory("health", Math.min(health-amount, getMaxHealth()));
         }
     }
-
-    /*public static function getLevel (xp :Number) :int
-    {
-        return xp / 100;
-    }*/
 
     protected function handleMemory (... _) :void
     {
         //_xpField.text = String(_ctrl.getMemory("xp", 666));
 
         //echo("Memory " + event.name + ": " + event.value);
-        _healthBar.percent = Number(_ctrl.getMemory("health"));
+//        switch (event.name) {
+//            case "health":
+                _healthBar.percent = Number(_ctrl.getMemory("health"))/getMaxHealth();
+//                break;
+//        }
+    }
+
+    public function getXP () :Number
+    {
+        return _ctrl.getMemory("xp") as Number;
+    }
+
+    public function getLevel () :Number
+    {
+        return getXP()/100 + 1;
+    }
+
+    public function getMaxHealth () :Number
+    {
+        return getLevel()*10;
     }
 
     public function echo (text :String) :void
@@ -200,10 +230,11 @@ public class QuestSprite extends Sprite
         _actor.y = MAX_HEIGHT - _actor.height;
     }
 
-    /** How we communicate with whirled. */
     protected var _ctrl :ActorControl;
 
     protected var _actor :DisplayObject;
+
+//    protected var _ticker :Ticker;
 
     /** Are we currently bouncing? */
     protected var _bouncing :Boolean = false;

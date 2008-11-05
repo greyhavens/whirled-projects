@@ -20,10 +20,9 @@ public class Player extends Sprite
         _ctrl = new AvatarControl(this);
 
         _doll = new Doll();
-        _doll.layer([52, 123, 245, 463, 349]);
+        _doll.layer([200]);
         _doll.scaleX = 2;
         _doll.scaleY = 2;
-        _doll.smoothing = true;
 
         _quest = new QuestSprite(_ctrl, _doll);
         _quest.bounciness = 20;
@@ -33,11 +32,24 @@ public class Player extends Sprite
         _ctrl.registerPropertyProvider(propertyProvider);
 
         _ctrl.registerStates(QuestConstants.STATE_ATTACK, QuestConstants.STATE_COUNTER, QuestConstants.STATE_HEAL);
-        _ctrl.registerActions("Inventory");
+        _ctrl.registerActions("Inventory", "Cheat");
 
-        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, function (..._) {
-            _ctrl.setMemory("health", Math.random());
-        });
+        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
+
+        _inventory = new Inventory(_ctrl, _doll);
+    }
+
+    public function handleAction (event :ControlEvent) :void
+    {
+        switch (event.name) {
+            case "Inventory":
+                _ctrl.showPopup("Inventory", _inventory, _inventory.width, _inventory.height, 0, 0.8);
+                break;
+            case "Cheat":
+                _ctrl.setMemory("xp", Number(_ctrl.getMemory("xp")) + 100);
+                _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
+                break;
+        }
     }
 
     public function propertyProvider (key :String) :Object
@@ -55,6 +67,8 @@ public class Player extends Sprite
 
     protected var _doll :Doll;
 
+    protected var _inventory :Inventory;
+
     // Bye bye type checking
     protected const _svc :Object = {
         getState: function () :String {
@@ -63,6 +77,14 @@ public class Player extends Sprite
 
         getType: function () :String {
             return QuestConstants.TYPE_PLAYER;
+        },
+
+        getPower: function () :Number {
+            return 0.2;
+        },
+
+        getDefence: function () :Number {
+            return 0;
         },
 
         damage: function (amount :Number, cause :String = null) :void {
