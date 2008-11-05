@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import popcraft.*;
+import popcraft.game.*;
 import popcraft.battle.ai.*;
 
 /**

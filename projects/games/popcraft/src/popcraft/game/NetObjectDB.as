@@ -1,10 +1,6 @@
-package popcraft {
+package popcraft.game {
 
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.components.*;
-import com.whirled.contrib.simplegame.objects.*;
-
-import popcraft.battle.*;
 
 public class NetObjectDB extends ObjectDB
 {

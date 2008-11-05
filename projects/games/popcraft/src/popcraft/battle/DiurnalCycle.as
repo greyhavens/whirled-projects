@@ -14,9 +14,9 @@ public class DiurnalCycle extends SimObject
         return GameContext.gameData.disableDiurnalCycle;
     }
 
-    public function DiurnalCycle ()
+    public function DiurnalCycle (initialPhase :int)
     {
-        resetPhase(GameContext.gameData.initialDayPhase);
+        resetPhase(initialPhase);
     }
 
     public function resetPhase (newPhase :int) :void
@@ -28,15 +28,13 @@ public class DiurnalCycle extends SimObject
 
         } else {
             var phaseTask :RepeatingTask = new RepeatingTask();
-            if (GameContext.gameData.enableEclipse) {
-                createPhaseTasks(phaseTask, Constants.PHASE_ECLIPSE);
-            } else {
-                var dayPhase :int = (GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
-                var phase1 :int = newPhase;
-                var phase2 :int = (newPhase == dayPhase ? Constants.PHASE_NIGHT : dayPhase);
+            createPhaseTasks(phaseTask, newPhase);
 
-                createPhaseTasks(phaseTask, phase1);
-                createPhaseTasks(phaseTask, phase2);
+            // day changes to night and vice-versa
+            if (newPhase == Constants.PHASE_DAY) {
+                createPhaseTasks(phaseTask, Constants.PHASE_NIGHT);
+            } else if (newPhase == Constants.PHASE_NIGHT) {
+                createPhaseTasks(phaseTask, Constants.PHASE_DAY);
             }
 
             addTask(phaseTask);

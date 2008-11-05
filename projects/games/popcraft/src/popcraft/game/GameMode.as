@@ -234,7 +234,7 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // Day/night cycle
-        GameContext.diurnalCycle = new DiurnalCycle();
+        GameContext.diurnalCycle = new DiurnalCycle(GameContext.gameData.initialDayPhase);
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
         if (!DiurnalCycle.isDisabled) {

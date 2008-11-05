@@ -17,8 +17,8 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.data.ResourceData;
+import popcraft.game.*;
 import popcraft.util.*;
 
 public class PuzzleBoard extends SceneObject
@@ -199,34 +199,6 @@ public class PuzzleBoard extends SceneObject
         }
     }
 
-    protected function showResourceValueAnimation (loc :Point, resType :int, amount :int) :void
-    {
-        var movieName :String = (amount >= 0 ?
-            POS_CLEAR_FEEDBACK_ANIM_NAMES[resType] :
-            NEG_CLEAR_FEEDBACK_ANIM_NAMES[resType]);
-
-        var movie :MovieClip = SwfResource.instantiateMovieClip("dashboard", movieName, true);
-
-        // fill in the text
-        var textField :TextField = movie["feedback"];
-        textField.text = String(amount);
-
-        var anim :SimpleSceneObject = new SimpleSceneObject(movie);
-        anim.x = loc.x;
-        anim.y = loc.y;
-
-        // move up, fade out, and self-destruct
-        var animTask :SerialTask = new SerialTask();
-        animTask.addTask(new ParallelTask(
-            LocationTask.CreateEaseIn(loc.x, loc.y - 35, 0.6),
-            After(0.45, new AlphaTask(0, 0.15))));
-        animTask.addTask(new SelfDestructTask());
-
-        anim.addTask(animTask);
-
-        GameContext.gameMode.addObject(anim, GameContext.overlayLayer);
-    }
-
     public function clearPieceGroup (x :int, y :int) :void
     {
         Assert.isFalse(_resolvingClears);
@@ -270,10 +242,12 @@ public class PuzzleBoard extends SceneObject
             new TimedTask(PIECE_SCALE_DOWN_TIME),
             new FunctionTask(function () :void { dropPieces(animate); } )));
 
-        // show the "resources earned" animation
+        // Show the "resources earned" animation. It will clean up after itself.
         var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
         animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
-        showResourceValueAnimation(animLoc, resourceType, resourceValue);
+        GameContext.gameMode.addObject(
+            new ResourceValueAnim(animLoc, resourceType, resourceValue),
+            GameContext.overlayLayer);
 
         // play a sound
         GameContext.playGameSound(resourceValue >= 0 ?
@@ -552,11 +526,6 @@ public class PuzzleBoard extends SceneObject
     protected static const PIECE_SCALE_DOWN_TIME :Number = 0.2;
 
     protected static const RESOURCE_CHUNK_SIZE_MAX :int = 4;
-
-    protected static const POS_CLEAR_FEEDBACK_ANIM_NAMES :Array = [
-        "feedback_A", "feedback_B", "feedback_C", "feedback_D" ];
-    protected static const NEG_CLEAR_FEEDBACK_ANIM_NAMES :Array = [
-        "feedback_A_negative", "feedback_B_negative", "feedback_C_negative", "feedback_D_negative" ];
 }
 
 }
