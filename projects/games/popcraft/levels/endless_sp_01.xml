@@ -125,35 +125,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 				</HumanPlayer>
 			</HumanPlayers>
 			<MultiplierDropLocation x="250" y="105"/>
-			
-			<Computer
-				playerName="Iris"
-				baseStartHealth="100"
-				baseHealth="100"
-				baseHealthIncrement="33"
-				waveDelayScale="0.9"
-				team="1">
-				<BaseLocation x="620" y="155" team="1"/>
-				<RepeatingDays>
-					<Day repeatWaves="true"
-						noticeSpellDropAfterMin="4"
-						noticeSpellDropAfterMax="5"
-						spellDropCourierGroupSizeMin="1"
-						spellDropCourierGroupSizeMax="1">
-						
-						<Wave absoluteDelay="1"><Unit type="heavy" count="3" max="3"/></Wave>
-						<Wave absoluteDelay="4"><Unit type="sapper" count="2"/></Wave>
-						<Wave absoluteDelay="14"><Unit type="sapper" count="1"/></Wave>
-						<Wave absoluteDelay="50"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="63"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="68"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="73"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="78"><Unit type="grunt" count="1"/></Wave>
-						<Wave absoluteDelay="100"/>
-					-->
-					</Day>
-				</RepeatingDays>
-			</Computer>
 
 			<Computer
 				playerName="Ivy"
@@ -183,6 +154,35 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 					</Day>
 				</RepeatingDays>
 			</Computer>
+			
+			<Computer
+				playerName="Iris"
+				baseStartHealth="100"
+				baseHealth="100"
+				baseHealthIncrement="33"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="620" y="155" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true"
+						noticeSpellDropAfterMin="4"
+						noticeSpellDropAfterMax="5"
+						spellDropCourierGroupSizeMin="1"
+						spellDropCourierGroupSizeMax="1">
+						
+						<Wave absoluteDelay="1"><Unit type="heavy" count="3" max="3"/></Wave>
+						<Wave absoluteDelay="4"><Unit type="sapper" count="2"/></Wave>
+						<Wave absoluteDelay="14"><Unit type="sapper" count="1"/></Wave>
+						<Wave absoluteDelay="50"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="63"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="68"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="73"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="78"><Unit type="grunt" count="1"/></Wave>
+						<Wave absoluteDelay="100"/>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+			
 		</Map>
 		
 		<!-- ****** LEVEL 4 : Athletic Ability (Ursula, Ballfield) ****** -->

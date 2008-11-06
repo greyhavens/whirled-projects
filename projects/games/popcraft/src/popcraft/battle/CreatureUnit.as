@@ -47,7 +47,7 @@ public class CreatureUnit extends Unit
         _unitSpells = owningPlayer.activeSpells;
 
         _lastDayCount = GameContext.diurnalCycle.dayCount;
-        _eclipseEnabled = GameContext.gameData.enableEclipse;
+        _eclipseEnabled = (GameContext.diurnalCycle.phaseOfDay == Constants.PHASE_ECLIPSE);
     }
 
     override protected function addedToDB () :void

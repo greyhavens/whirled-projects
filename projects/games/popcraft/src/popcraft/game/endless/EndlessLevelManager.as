@@ -7,8 +7,8 @@ import com.whirled.contrib.simplegame.util.Rand;
 import flash.utils.ByteArray;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.data.*;
+import popcraft.game.*;
 import popcraft.util.*;
 
 public class EndlessLevelManager
@@ -33,18 +33,18 @@ public class EndlessLevelManager
 
     public function createDummySpSaves () :void
     {
-        _savedSpGames = createDummySaves();
+        _savedSpGames = createDummySaves(9, 9);
     }
 
     public function createDummyMpSaves () :void
     {
-        _savedMpGames = createDummySaves();
+        _savedMpGames = createDummySaves(9, 14);
     }
 
-    protected function createDummySaves () :SavedEndlessGameList
+    protected function createDummySaves (min :int, max :int) :SavedEndlessGameList
     {
         var dummySaves :SavedEndlessGameList = new SavedEndlessGameList();
-        var numSaves :int = Rand.nextIntRange(9, 15, Rand.STREAM_COSMETIC);
+        var numSaves :int = Rand.nextIntRange(min, max + 1, Rand.STREAM_COSMETIC);
         for (var mapIndex :int = 1; mapIndex < numSaves; ++mapIndex) {
             dummySaves.addSave(SavedEndlessGame.create(mapIndex, 0, 0, 1, 150));
         }

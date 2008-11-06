@@ -335,9 +335,7 @@ public class GameMode extends TransitionMode
 
         case KeyboardCodes.Y:
             GameContext.diurnalCycle.incrementDayCount();
-            GameContext.diurnalCycle.resetPhase(
-                GameContext.gameData.enableEclipse ? Constants.PHASE_ECLIPSE :
-                Constants.PHASE_DAY);
+            GameContext.diurnalCycle.resetPhase(this.initialDayPhase);
             break;
 
         case KeyboardCodes.K:
