@@ -46,18 +46,20 @@ public class AppContext
 
     public static function get isEndlessModeUnlocked () :Boolean
     {
-        return AppContext.isPremiumContentUnlocked;
+        return (Constants.DEBUG_UNLOCK_ENDLESS_MODE ||
+            AppContext.isPremiumContentUnlocked);
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
-        return (AppContext.isPremiumContentUnlocked || savedPlayerBits.hasFreeStoryMode);
+        return (Constants.DEBUG_UNLOCK_STORY_MODE ||
+            AppContext.isPremiumContentUnlocked ||
+            savedPlayerBits.hasFreeStoryMode);
     }
 
     public static function get isPremiumContentUnlocked () :Boolean
     {
-        return (Constants.DEBUG_UNLOCK_PREMIUM_CONTENT ||
-            playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
+        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
     }
 
     public static function get isMultiplayer () :Boolean

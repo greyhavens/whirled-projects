@@ -14,12 +14,13 @@ import flash.display.InteractiveObject;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.battle.*;
+import popcraft.game.*;
 import popcraft.ui.HealthMeters;
 import popcraft.ui.RectMeterView;
 import popcraft.util.*;
@@ -52,6 +53,12 @@ public class WorkshopView extends BattlefieldSprite
         _targetAttach = _movie["target_attach"];
 
         _sprite.addChild(_movie);
+
+        // create "Shout View"
+        _shoutView = new ShoutView();
+        _shoutView.x = SHOUT_VIEW_LOC.x;
+        _shoutView.y = SHOUT_VIEW_LOC.y;
+        GameContext.gameMode.addObject(_shoutView, _sprite);
 
         // create health meters
         _healthMeters = HealthMeters.createWorkshopMeters(
@@ -94,6 +101,11 @@ public class WorkshopView extends BattlefieldSprite
             });
 
         updateWorkshopLocation();
+    }
+
+    public function showShout (shoutType :int) :void
+    {
+        _shoutView.showShout(shoutType);
     }
 
     public function addTargetWorkshopBadge (badge :TargetWorkshopBadge) :void
@@ -174,6 +186,7 @@ public class WorkshopView extends BattlefieldSprite
     override protected function removedFromDB () :void
     {
         _clickableSprite.parent.removeChild(_clickableSprite);
+        _shoutView.destroySelf();
         super.removedFromDB();
     }
 
@@ -354,6 +367,7 @@ public class WorkshopView extends BattlefieldSprite
     protected var _targetBadgeParent :Sprite;
     protected var _targetBadges :Array = [];
     protected var _unit :WorkshopUnit;
+    protected var _shoutView :ShoutView;
 
     protected var _lastHealth :Number;
     protected var _healthMeters :Array = [];
@@ -366,6 +380,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected static var g_debrisClass :Class;
 
+    protected static const SHOUT_VIEW_LOC :Point = new Point(0, -60);
     protected static const SHIELD_METER_HEIGHT :Number = 7;
     protected static const SHIELD_METER_Y_LOC :Number = 6;
     protected static const SHIELD_METER_WIDTH_PER_HEALTH :Number = 50 / 75;

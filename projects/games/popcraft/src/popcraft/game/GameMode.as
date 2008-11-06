@@ -171,6 +171,7 @@ public class GameMode extends TransitionMode
         _messageMgr.addMessageType(SelectTargetEnemyMsg);
         _messageMgr.addMessageType(CastCreatureSpellMsg);
         _messageMgr.addMessageType(ResurrectPlayerMsg);
+        _messageMgr.addMessageType(TeamShoutMsg);
     }
 
     protected function shutdownNetwork () :void
@@ -261,6 +262,16 @@ public class GameMode extends TransitionMode
         }
 
         switch (keyCode) {
+        case KeyboardCodes.NUMBER_1:
+        case KeyboardCodes.NUMBER_2:
+        case KeyboardCodes.NUMBER_3:
+        case KeyboardCodes.NUMBER_4:
+            sendTeamShoutMsg(
+                GameContext.localPlayerIndex,
+                (keyCode - KeyboardCodes.NUMBER_1),
+                false);
+            break;
+
         case KeyboardCodes.A:
             localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
             break;
@@ -569,6 +580,17 @@ public class GameMode extends TransitionMode
         } else if (msg is ResurrectPlayerMsg) {
             var resurrectMsg :ResurrectPlayerMsg = msg as ResurrectPlayerMsg;
             resurrectPlayer(resurrectMsg.playerIndex);
+
+        } else if (msg is TeamShoutMsg) {
+            var teamShoutMsg :TeamShoutMsg = msg as TeamShoutMsg;
+            playerInfo = GameContext.playerInfos[teamShoutMsg.playerIndex];
+            if (playerInfo.teamId == GameContext.localPlayerInfo.teamId) {
+                var workshopView :WorkshopView = WorkshopView.getForPlayer(teamShoutMsg.playerIndex);
+                if (workshopView != null) {
+                    workshopView.showShout(teamShoutMsg.shoutType);
+                }
+            }
+
         }
     }
 
@@ -691,6 +713,11 @@ public class GameMode extends TransitionMode
         sendMessage(ResurrectPlayerMsg.create(GameContext.localPlayerIndex), false);
     }
 
+    public function sendTeamShoutMsg (playerIndex :int, shoutType :int, isAiMsg :Boolean) :void
+    {
+        sendMessage(TeamShoutMsg.create(playerIndex, shoutType), isAiMsg);
+    }
+
     protected function sendMessage (msg :Message, isAiMsg :Boolean) :void
     {
         if (isAiMsg) {
@@ -703,6 +730,13 @@ public class GameMode extends TransitionMode
     public function playerEarnedResources (resourceType :int, offset :int, numClearPieces :int) :int
     {
         return GameContext.localPlayerInfo.earnedResources(resourceType, offset, numClearPieces);
+    }
+
+    public function get allowTeamShouts () :Boolean
+    {
+        /*return (GameContext.isMultiplayerGame &&
+            GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1);*/
+        return true;
     }
 
     public function get playAudio () :Boolean

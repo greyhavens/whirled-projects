@@ -11,7 +11,7 @@ import popcraft.util.*;
 public class Constants
 {
     public static const MIN_RESURRECT_HEALTH :Number = 10;
-    public static const UNLOCK_ENDLESS_AFTER_LEVEL :int = 6;
+    public static const UNLOCK_ENDLESS_AFTER_LEVEL :int = 0;
 
     /* Increment this whenever any cookie data changes. */
     public static const USER_COOKIE_VERSION :int = 1;
@@ -42,15 +42,17 @@ public class Constants
     public static const HANDICAPPED_MULTIPLIER :Number = 0.65;
 
     /* Debug options - these should all be false for a release. */
-    public static const DEBUG_DRAW_STATS :Boolean                   = false;
-    public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
     public static const DEBUG_DRAW_UNIT_DATA_CIRCLES :Boolean       = false;
     public static const DEBUG_DRAW_AOE_ATTACK_RADIUS :Boolean       = false;
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean   = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean        = false;
-    public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
+
+    public static const DEBUG_DRAW_STATS :Boolean                   = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = false;
-    public static const DEBUG_UNLOCK_PREMIUM_CONTENT :Boolean       = true;
+    public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = false;
+    public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = false;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
@@ -142,6 +144,14 @@ public class Constants
     public static const FACING_NE :int = 5;
 
     public static const FACING_STRINGS :Array = [ "N", "NW", "SW", "S", "SE", "NE" ];
+
+    /* "Team Shouts" */
+    public static const SHOUT_ATTACK :int = 0;
+    public static const SHOUT_HELP :int = 1;
+    public static const SHOUT_YES :int = 2;
+    public static const SHOUT_NO :int = 3;
+
+    public static const SHOUT_STRINGS :Array = [ "Attack!", "Help!", "Yes!", "No!" ];
 
     /* Performance stuff */
     public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [
