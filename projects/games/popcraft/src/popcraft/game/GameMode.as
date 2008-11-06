@@ -265,7 +265,6 @@ public class GameMode extends TransitionMode
         case KeyboardCodes.NUMBER_1:
         case KeyboardCodes.NUMBER_2:
         case KeyboardCodes.NUMBER_3:
-        case KeyboardCodes.NUMBER_4:
             sendTeamShoutMsg(
                 GameContext.localPlayerIndex,
                 (keyCode - KeyboardCodes.NUMBER_1),

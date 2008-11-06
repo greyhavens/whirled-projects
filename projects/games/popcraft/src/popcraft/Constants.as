@@ -151,7 +151,7 @@ public class Constants
     public static const SHOUT_YES :int = 2;
     public static const SHOUT_NO :int = 3;
 
-    public static const SHOUT_STRINGS :Array = [ "Attack!", "Help!", "Yes!", "No!" ];
+    public static const SHOUT_STRINGS :Array = [ "Attack!", "Help!", "Wait!" ];
 
     /* Performance stuff */
     public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [
