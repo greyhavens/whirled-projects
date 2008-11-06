@@ -25,7 +25,7 @@ public class Doll extends Bitmap
         for each (var sprite :int in sprites) {
             bitmapData.copyPixels(_sheet,
                 new Rectangle(
-                    SIZE*(sprite%w), SIZE*(int(sprite/h)), SIZE, SIZE),
+                    SIZE*(sprite%w), SIZE*(Math.floor(sprite/w)), SIZE, SIZE),
                 new Point(0, 0), null, null, true);
         }
 

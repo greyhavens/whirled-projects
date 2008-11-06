@@ -104,12 +104,17 @@ public class Inventory extends Sprite
             if (memory != null && memory[2] == true) {
                 var item :Array = Items.TABLE[memory[0]];
 
-                sprites[item[2]] = item[0];
                 _equipment[item[2]] = item;
+
+                if (item[2] == Items.BACK) {
+                    base.unshift(item[0]);
+                } else {
+                    sprites[item[2]] = item[0];
+                }
             }
         }
 
-        _doll.layer(base.concat(sprites));
+        _doll.layer(base.concat(sprites.splice(1)));
     }
 
     public function getRange () :Number

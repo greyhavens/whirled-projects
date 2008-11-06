@@ -119,7 +119,8 @@ public class Player extends Sprite
         },
 
         revive: function () :void {
-            _ctrl.setMemory("health", int(_quest.getMaxHealth() / 2));
+            _quest.echo("Revived!");
+            _ctrl.setMemory("health", int(_quest.getMaxHealth()/2));
         },
 
         damage: function (source :Object, amount :int, cause :String = null) :void {
