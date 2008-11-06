@@ -64,6 +64,9 @@ public class Player extends Sprite
                 for (var i:int = 0;i<5;++i) {
                     _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
                 }
+                if (_svc.getState() == QuestConstants.STATE_DEAD) {
+                    _svc.revive();
+                }
                 break;
         }
     }

@@ -4,6 +4,7 @@
 package {
 
 import flash.events.Event;
+import flash.events.TimerEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -22,6 +23,7 @@ public class Monster extends Sprite
         _ctrl.registerPropertyProvider(propertyProvider);
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleMovement);
 
         _ghost = Bitmap(new GHOST());
         _ghost.smoothing = true;
@@ -32,7 +34,37 @@ public class Monster extends Sprite
         _quest = new QuestSprite(_ctrl, _image);
         addChild(_quest);
 
+        _ctrl.addEventListener(TimerEvent.TIMER, tick);
+        _ctrl.setTickInterval(9000);
+
+        _ctrl.requestControl();
+
         handleMemory();
+    }
+
+    public function tick (event :TimerEvent) :void
+    {
+        var targets :Array = QuestUtil.query(_ctrl, function (id :String, svc :Object) {
+            return svc.getType() == QuestConstants.TYPE_PLAYER &&
+                QuestUtil.squareDistanceTo(_ctrl, id) < 1000*1000;
+        });
+
+        _hunting = targets[int(Math.random()*targets.length)];
+
+        if (_quest.getHealth()/_quest.getMaxHealth() < 0.25) {
+            _ctrl.setState(QuestConstants.STATE_HEAL);
+        } else {
+            _ctrl.setState([QuestConstants.STATE_ATTACK, QuestConstants.STATE_COUNTER]
+                    [int(Math.random()*2)]);
+        }
+
+        _ctrl.setLogicalLocation(Math.random(), 0, Math.random(), 0);
+    }
+
+    public function handleMovement (event :ControlEvent) :void
+    {
+        if (event.name == _hunting) {
+        }
     }
 
     public function handleMemory (... _) :void
@@ -69,10 +101,13 @@ public class Monster extends Sprite
     protected static const IMAGE :Class;
     protected var _image :Bitmap;
 
+    // Who I'm hunting. WARNING: This isn't preserved
+    protected var _hunting :String;
+
     // Bye bye type checking
     protected const _svc :Object = {
         getState: function () :String {
-            return QuestConstants.STATE_ATTACK;//_ctrl.getState();
+            return (_quest.getHealth() == 0) ? QuestConstants.STATE_DEAD : _ctrl.getState();
         },
 
         getType: function () :String {
@@ -80,7 +115,7 @@ public class Monster extends Sprite
         },
 
         getPower: function () :Number {
-            return 0.2;
+            return _quest.getLevel()*5;
         },
 
         getDefence: function () :Number {
@@ -100,7 +135,7 @@ public class Monster extends Sprite
         },
 
         revive: function () :void {
-            // Nah
+            _ctrl.setMemory("health", _quest.getMaxHealth());
         },
 
         damage: function (source :Object, amount :int, cause :String = null) :void {

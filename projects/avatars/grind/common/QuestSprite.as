@@ -52,6 +52,7 @@ public class QuestSprite extends Sprite
 
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
         addEventListener(Event.UNLOAD, stopBouncing);
         stopBouncing();
@@ -153,42 +154,50 @@ public class QuestSprite extends Sprite
         _healthBar.percent = getHealth()/getMaxHealth();
     }
 
-    public function getXP () :Number
+    public function getXP () :int
     {
         return _ctrl.getMemory("xp") as Number;
     }
 
-    public function getLevel () :Number
+    public function getLevel () :int
     {
         return getXP()/100 + 1;
     }
 
-    public function getHealth () :Number
+    public function getHealth () :int
     {
-        return _ctrl.getMemory("health", getMaxHealth()) as Number;
+        return _ctrl.getMemory("health", 1) as int;
     }
 
-    public function getMaxHealth () :Number
+    public function getMaxHealth () :int
     {
         return getLevel()*10;
     }
 
+    public function handleMessage (event :ControlEvent) :void
+    {
+        if (event.name == "echo") {
+            var field :TextField = TextFieldUtil.createField(name,
+                { textColor: 0xFF4400, selectable: false, autoSize: TextFieldAutoSize.LEFT,
+                    outlineColor: 0x00000 },
+                { font: "_sans", size: 12, bold: true });
+
+            field.text = event.value as String;
+            field.y = MAX_HEIGHT - 50;
+
+            var complete :Function = function () :void {
+                removeChild(this);
+            };
+            Tweener.addTween(field, {y: 50, time:2, onComplete:complete, transition:"linear"});
+
+            addChild(field);
+        }
+    }
+
     public function echo (text :String) :void
     {
-        var field :TextField = TextFieldUtil.createField(name,
-            { textColor: 0xFF4400, selectable: false, autoSize: TextFieldAutoSize.LEFT,
-                outlineColor: 0x00000 },
-            { font: "_sans", size: 12, bold: true });
-
-        field.text = text;
-        field.y = MAX_HEIGHT - 50;
-
-        var complete :Function = function () :void {
-            removeChild(this);
-        };
-        Tweener.addTween(field, {y: 50, time:2, onComplete:complete, transition:"linear"});
-
-        addChild(field);
+        // TODO: Handle sound and other effects somehow
+        _ctrl.sendMessage("echo", text);
     }
 
 //    protected function gotImage (disp :DisplayObject) :void
