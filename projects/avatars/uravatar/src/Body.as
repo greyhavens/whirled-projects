@@ -156,14 +156,18 @@ public class Body
      */
     public function switchToState (state :String) :void
     {
-        log.info("I'm transitioning to '" + state + "'.");
+        const stateScene :SceneList = getScene("state_" + state);
+        if (stateScene == null) {
+            return; // ignore it
+        }
 
+        log.info("I'm transitioning to '" + state + "'.");
         // transtion from our current state to the new state
         queueTransitions(_state, state);
         // update our internal state variable
         _state = state;
         // queue our new standing animation
-        queueScene(getScene("state_" + _state));
+        queueScene(stateScene);
     }
 
     /**
@@ -171,12 +175,16 @@ public class Body
      */
     public function triggerAction (action :String) :void
     {
-        log.info("I'm triggering action '" + action + "'.");
+        const actionScene :SceneList = getScene("action_" + action);
+        if (actionScene == null) {
+            return; // ignore it
+        }
 
+        log.info("I'm triggering action '" + action + "'.");
         // transition from our current state to the action
         queueTransitions(_state, action);
         // play the action animation
-        queueScene(getScene("action_" + action));
+        queueScene(actionScene);
         // then transition back to our current state
         queueTransitions(action, _state);
         // and queue our standing animation
@@ -323,22 +331,22 @@ public class Body
         }
     }
 
-    /**
-     * Locates a scene that will perform the desired action potentially selecting from a list of
-     * alternatives or falling back to a generic version of the action if a specific one is not
-     * available for our current state.
-     */
-    protected function findStateScene (action :String) :SceneList
-    {
-        var scene :SceneList = getScene("state_" + _state + "_" + action);
-        if (scene == null) {
-            scene = getScene("state_default_" + action);
-        }
-        if (scene == null) {
-            log.warning("Unable to find scene [state=" + _state + ", action=" + action + "].");
-        }
-        return scene;
-    }
+//    /**
+//     * Locates a scene that will perform the desired action potentially selecting from a list of
+//     * alternatives or falling back to a generic version of the action if a specific one is not
+//     * available for our current state.
+//     */
+//    protected function findStateScene (action :String) :SceneList
+//    {
+//        var scene :SceneList = getScene("state_" + _state + "_" + action);
+//        if (scene == null) {
+//            scene = getScene("state_default_" + action);
+//        }
+//        if (scene == null) {
+//            log.warning("Unable to find scene [state=" + _state + ", action=" + action + "].");
+//        }
+//        return scene;
+//    }
 
     protected function getScene (key :String) :SceneList
     {
