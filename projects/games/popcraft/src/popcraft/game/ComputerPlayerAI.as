@@ -106,18 +106,16 @@ public class ComputerPlayerAI extends SimObject
                         max - CreatureUnit.getNumPlayerCreatures(_playerInfo.playerIndex, unitType));
                 }
 
-                for (var j :int = 0; j < count; ++j) {
-                    buildUnit(unitType);
-                }
+                createCreature(unitType, count);
             }
 
             queueNextWave();
         }
     }
 
-    protected function buildUnit (unitType :int) :void
+    protected function createCreature (unitType :int, count :int) :void
     {
-        GameContext.gameMode.sendBuildCreatureMsg(_playerInfo.playerIndex, unitType, false, true);
+        GameContext.gameMode.sendCreateCreatureMsg(_playerInfo.playerIndex, unitType, count, true);
     }
 
     override protected function update (dt :Number) :void
@@ -165,9 +163,7 @@ public class ComputerPlayerAI extends SimObject
         if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight && this.spellDropOnBoard) {
             var numCouriers :int = _curDay.spellDropCourierGroupSize.next() -
                 this.numCouriersOnBoard;
-            for (var i :int = 0; i < numCouriers; ++i) {
-                buildUnit(Constants.UNIT_TYPE_COURIER);
-            }
+            createCreature(Constants.UNIT_TYPE_COURIER, numCouriers);
         }
     }
 

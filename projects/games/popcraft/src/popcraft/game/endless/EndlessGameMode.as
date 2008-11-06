@@ -520,6 +520,11 @@ public class EndlessGameMode extends GameMode
         }
     }
 
+    override protected function get initialDayPhase () :int
+    {
+        return (_curMapData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+    }
+
     protected var _curMapData :EndlessMapData;
     protected var _localHumanPlayerData :EndlessHumanPlayerData;
     protected var _needsReset :Boolean;

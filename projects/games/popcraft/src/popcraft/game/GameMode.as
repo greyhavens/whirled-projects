@@ -20,10 +20,9 @@ import popcraft.battle.geom.ForceParticleContainer;
 import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.game.mpbattle.*;
+import popcraft.game.story.*;
 import popcraft.net.*;
 import popcraft.puzzle.*;
-import popcraft.game.*;
-import popcraft.game.story.*;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -168,7 +167,7 @@ public class GameMode extends TransitionMode
 
         // set up the message manager
         _messageMgr = createMessageManager();
-        _messageMgr.addMessageType(CreateUnitMsg);
+        _messageMgr.addMessageType(CreateCreatureMsg);
         _messageMgr.addMessageType(SelectTargetEnemyMsg);
         _messageMgr.addMessageType(CastCreatureSpellMsg);
         _messageMgr.addMessageType(ResurrectPlayerMsg);
@@ -234,7 +233,7 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // Day/night cycle
-        GameContext.diurnalCycle = new DiurnalCycle(GameContext.gameData.initialDayPhase);
+        GameContext.diurnalCycle = new DiurnalCycle(this.initialDayPhase);
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
         if (!DiurnalCycle.isDisabled) {
@@ -539,11 +538,13 @@ public class GameMode extends TransitionMode
         var playerIndex :int;
         var playerInfo :PlayerInfo;
 
-        if (msg is CreateUnitMsg) {
-            var createUnitMsg :CreateUnitMsg = (msg as CreateUnitMsg);
+        if (msg is CreateCreatureMsg) {
+            var createUnitMsg :CreateCreatureMsg = (msg as CreateCreatureMsg);
             playerIndex = createUnitMsg.playerIndex;
             if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
-                GameContext.unitFactory.createCreature(createUnitMsg.unitType, playerIndex);
+                for (var ii :int = 0; ii < createUnitMsg.count; ++ii) {
+                    GameContext.unitFactory.createCreature(createUnitMsg.creatureType, playerIndex);
+                }
                 var baseView :WorkshopView = WorkshopView.getForPlayer(playerIndex);
                 if (null != baseView) {
                     baseView.unitCreated();
@@ -641,37 +642,22 @@ public class GameMode extends TransitionMode
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
         if (!isAvailableUnit(unitType) ||
-            !GameContext.localPlayerInfo.canAffordCreature(unitType)) {
+            !GameContext.localPlayerInfo.canAffordCreature(unitType) ||
+            GameContext.diurnalCycle.isDay) {
             return;
         }
 
-        sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, false, false);
-
-        // when the sun is eclipsed, it's buy-one-get-one-free time!
-        if (GameContext.diurnalCycle.isEclipse) {
-            sendBuildCreatureMsg(GameContext.localPlayerIndex, unitType, true, false);
-        }
+        // when the sun is eclipsed, you get two creatures for the price of one
+        var creatureCount :int = (GameContext.diurnalCycle.isEclipse ? 2 : 1);
+        sendCreateCreatureMsg(GameContext.localPlayerIndex, unitType, creatureCount, false);
+        GameContext.localPlayerInfo.deductCreatureCost(unitType);
+        GameContext.playerStats.creaturesCreated[unitType] += creatureCount;
     }
 
-    public function sendBuildCreatureMsg (playerIndex :int, unitType :int, noCost :Boolean,
+    public function sendCreateCreatureMsg (playerIndex :int, unitType :int, count :int,
         isAiMsg :Boolean) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-
-        if (!playerInfo.isAlive || GameContext.diurnalCycle.isDay ||
-            (!noCost && !playerInfo.canAffordCreature(unitType))) {
-            return;
-        }
-
-        if (!noCost) {
-            playerInfo.deductCreatureCost(unitType);
-        }
-
-        sendMessage(CreateUnitMsg.create(playerIndex, unitType), isAiMsg);
-
-        if (playerIndex == GameContext.localPlayerIndex) {
-            GameContext.playerStats.creaturesCreated[unitType] += 1;
-        }
+        sendMessage(CreateCreatureMsg.create(playerIndex, unitType, count), isAiMsg);
     }
 
     public function sendCastSpellMsg (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
@@ -780,6 +766,11 @@ public class GameMode extends TransitionMode
     protected function createMessageManager () :TickedMessageManager
     {
         throw new Error("abstract");
+    }
+
+    protected function get initialDayPhase () :int
+    {
+        return GameContext.gameData.initialDayPhase;
     }
 
     protected var _gameIsRunning :Boolean;

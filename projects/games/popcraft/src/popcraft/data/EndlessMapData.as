@@ -12,6 +12,7 @@ public class EndlessMapData
 
     public var displayName :String;
     public var isSavePoint :Boolean;
+    public var enableEclipse :Boolean;
 
     public var multiplierDropLoc :Vector2 = new Vector2();
 
@@ -26,6 +27,7 @@ public class EndlessMapData
 
         mapData.displayName = XmlReader.getStringAttr(xml, "displayName");
         mapData.isSavePoint = XmlReader.getBooleanAttr(xml, "isSavePoint");
+        mapData.enableEclipse = XmlReader.getBooleanAttr(xml, "enableEclipse", false);
 
         for each (var humanXml :XML in xml.HumanPlayers.HumanPlayer) {
             var playerName :String = XmlReader.getStringAttr(humanXml, "playerName");

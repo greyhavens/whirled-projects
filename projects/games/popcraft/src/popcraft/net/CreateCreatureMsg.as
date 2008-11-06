@@ -4,37 +4,41 @@ import com.whirled.contrib.simplegame.net.*;
 
 import flash.utils.ByteArray;
 
-public class CreateUnitMsg
+public class CreateCreatureMsg
     implements Message
 {
     public var playerIndex :int;
-    public var unitType :int;
+    public var creatureType :int;
+    public var count :int;
 
-    public static function create (playerIndex :int, unitType :int) :CreateUnitMsg
+    public static function create (playerIndex :int, unitType :int, count :int) :CreateCreatureMsg
     {
-        var msg :CreateUnitMsg = new CreateUnitMsg();
+        var msg :CreateCreatureMsg = new CreateCreatureMsg();
         msg.playerIndex = playerIndex;
-        msg.unitType = unitType;
+        msg.creatureType = unitType;
+        msg.count = count;
         return msg;
     }
 
     public function fromBytes (ba :ByteArray) :void
     {
         playerIndex = ba.readByte();
-        unitType = ba.readByte();
+        creatureType = ba.readByte();
+        count = ba.readByte();
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray
     {
         ba = (ba != null ? ba : new ByteArray());
         ba.writeByte(playerIndex);
-        ba.writeByte(unitType);
+        ba.writeByte(creatureType);
+        ba.writeByte(count);
         return ba;
     }
 
     public function get name () :String
     {
-        return "CreateUnit";
+        return "CreateCreature";
     }
 }
 
