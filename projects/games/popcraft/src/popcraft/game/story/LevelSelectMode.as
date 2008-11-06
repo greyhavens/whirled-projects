@@ -450,7 +450,7 @@ public class LevelSelectMode extends DemoGameMode
         _levelSelectLayoutCreated = true;
     }
 
-    protected function onEpilogueSelected (e :MouseEvent) :void
+    protected function onEpilogueSelected (...ignored) :void
     {
         fadeOut(function () :void {
             Resources.loadLevelPackResourcesAndSwitchModes(
