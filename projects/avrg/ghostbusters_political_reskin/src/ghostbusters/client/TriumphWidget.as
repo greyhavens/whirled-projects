@@ -36,8 +36,8 @@ public class TriumphWidget extends ClipHandler
         var text :DisplayObject = DisplayUtil.findInHierarchy(this, "payout");
         if (text != null && text != _text) {
             _text = TextField(text);
-//            _text.text = "You've gained " + _coins + " coins for your efforts.\n Proceed to another room to continue the campaign!";
-            _text.text = "Go to another room for more!";
+            _text.text = "You've gained " + _coins + " coins for your efforts.\n Proceed to another room to continue the campaign!";
+//            _text.text = "Go to another room for more!";
         }
     }
 

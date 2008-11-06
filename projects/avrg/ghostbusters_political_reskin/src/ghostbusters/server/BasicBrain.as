@@ -13,9 +13,9 @@ public class BasicBrain
         _room = room;
     }
 
-    public function tick (seconds :int) :void
+    public function tick (frames :int) :void//actuall frames, but ticked every second
     {
-        if (seconds - _lastAttack < 5) {
+        if (frames - _lastAttack < 5 * Server.FRAMES_PER_SECOND ) {
             // all attacks have a 5 second cooldown, basically to make sure the animation finished
             return;
         }
@@ -50,7 +50,7 @@ public class BasicBrain
         }
 
         // remember when the attack happened
-        _lastAttack = seconds;
+        _lastAttack = frames;
     }
 
     protected var _room :Room;

@@ -3,13 +3,16 @@
 
 package ghostbusters.server {
 
+import flash.utils.Dictionary;
+import flash.utils.getTimer;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
-import com.whirled.avrg.RoomSubControlServer;
+import com.threerings.util.StringUtil;
 
-import flash.utils.Dictionary;
-import flash.utils.getTimer;
+import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.avrg.RoomSubControlServer;
 
 import ghostbusters.data.Codes;
 import ghostbusters.data.GhostDefinition;
@@ -49,6 +52,11 @@ public class Room
     {
         return _state;
     }
+    
+    public function get isShutdown () :Boolean
+    {
+        return _errorCount > 20;
+    }
 
     public function getMinigameStats (playerId :int) :Dictionary
     {
@@ -61,6 +69,22 @@ public class Room
 
         for (var p :* in _players) {
             var player :Player = Player(p);
+
+            /* TODO: BEGIN SANITY CHECK */
+            var subctrl :PlayerSubControlServer = Server.control.getPlayer(player.playerId);
+            if (subctrl == null || subctrl.getRoomId() != roomId) {
+                if (subctrl == null) {
+                    log.warning("Removing unknown player in getTeam()", "teamRoomId", roomId,
+                                "playerId", player.playerId);
+                } else {
+                    log.warning("Removing misfiled player in getTeam()", "teamRoomId", roomId,
+                                "playerId", player.playerId, "playerRoomId", subctrl.getRoomId);
+                }
+                delete _players[player];
+                continue;
+            }
+            /* TODO: END SANITY CHECK */
+
             if (!player.playing) {
                 continue;
             }
@@ -131,47 +155,68 @@ public class Room
 
     public function tick (frame :int, newSecond :Boolean) :void
     {
-        
-        
-        // if there are no players in this room, we cannot assume it's loaded, so do nothing
-        if (_ctrl.getPlayerIds().length == 0) {
+        // if we're shut down due to excessive errors, do nothing
+        if (isShutdown) {
             return;
         }
 
-        switch(_state) {
-        case Codes.STATE_SEEKING:
-            if( !isEverybodyDead()) {
-                seekTick(frame, newSecond);
-            }
-            break;
+        // if there are no players in this room, we cannot assume it's loaded, so do nothing
+//        if (_ctrl.getPlayerIds().length == 0) {
+//            return;
+//        }
 
-        case Codes.STATE_APPEARING:
-            // let's add a 2-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
-                if (_transitionFrame == 0) {
-                    log.warning("In APPEAR without transitionFrame", "id", roomId);
-                }
-                ghostFullyAppeared();
-                _transitionFrame = 0;
+    	try {
+    	    // if there are no players in this room, we cannot assume it's loaded, so do nothing
+            if (_ctrl.getPlayerIds().length == 0) {
+                return;
             }
-            break;
+        
+            _tick(frame, newSecond);
 
-        case Codes.STATE_FIGHTING:
-            fightTick(frame, newSecond);
-            break;
+        } catch (e :Error) {
+            log.error("Tick error", e);
 
-        case Codes.STATE_GHOST_TRIUMPH:
-        case Codes.STATE_GHOST_DEFEAT:
-            // let's add a 2-second grace period on the transition
-            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
-                if (_transitionFrame == 0) {
-                    log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
-                }
-                ghostFullyGone();
-                _transitionFrame = 0;
+            _errorCount ++;
+            if (isShutdown) {
+                log.info("Giving up on room tick() due to error overflow", "roomId", roomId);
+                return;
             }
-            break;
         }
+	
+//        switch(_state) {
+//        case Codes.STATE_SEEKING:
+//            if( !isEverybodyDead()) {
+//                seekTick(frame, newSecond);
+//            }
+//            break;
+//
+//        case Codes.STATE_APPEARING:
+//            // let's add a 2-second grace period on the transition
+//            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
+//                if (_transitionFrame == 0) {
+//                    log.warning("In APPEAR without transitionFrame", "id", roomId);
+//                }
+//                ghostFullyAppeared();
+//                _transitionFrame = 0;
+//            }
+//            break;
+//
+//        case Codes.STATE_FIGHTING:
+//            fightTick(frame, newSecond);
+//            break;
+//
+//        case Codes.STATE_GHOST_TRIUMPH:
+//        case Codes.STATE_GHOST_DEFEAT:
+//            // let's add a 2-second grace period on the transition
+//            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND * 2) {
+//                if (_transitionFrame == 0) {
+//                    log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
+//                }
+//                ghostFullyGone();
+//                _transitionFrame = 0;
+//            }
+//            break;
+//        }
 
     }
 
@@ -193,7 +238,12 @@ public class Room
         dict[weapon] = int(dict[weapon]) + 1;
         _minigames[player.playerId] = dict;
 
-        Trophies.handleMinigameCompletion(player, weapon, win);
+        try {
+            Trophies.handleMinigameCompletion(player, weapon, win);
+        } catch (e :Error) {
+            log.warning("Error in handleMinigameCompletion", "roomId", roomId, "playerId",
+                        player.playerId, e);
+        }
 
         // tweak damageDone and healingDone by the player's level
         var tweak :Number = Formulae.quadRamp(player.level);
@@ -236,7 +286,7 @@ public class Room
     internal function reset () :void
     {
         healTeam();
-        terminateGhost();
+        terminateGhost(false);
         _stats = new Dictionary();
         _minigames = new Dictionary();
         setState(Codes.STATE_SEEKING);
@@ -244,6 +294,7 @@ public class Room
 
     internal function setState (state :String) :void
     {
+        log.debug("setState( " + state + ")");
         _state = state;
 
         _ctrl.props.set(Codes.PROP_STATE, state, true);
@@ -287,6 +338,42 @@ public class Room
         return true;
     }
 
+    protected function _tick (frame :int, newSecond :Boolean) :void
+    {
+        switch(_state) {
+        case Codes.STATE_SEEKING:
+            seekTick(frame, newSecond);
+            break;
+
+        case Codes.STATE_APPEARING:
+            if (_transitionFrame == 0) {
+                log.warning("In APPEAR without transitionFrame", "id", roomId);
+            }
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
+                ghostFullyAppeared();
+                _transitionFrame = 0;
+            }
+            break;
+
+        case Codes.STATE_FIGHTING:
+            fightTick(frame, newSecond);
+            break;
+
+        case Codes.STATE_GHOST_TRIUMPH:
+        case Codes.STATE_GHOST_DEFEAT:
+            if (_transitionFrame == 0) {
+                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", roomId);
+            }
+            // let's add a 1-second grace period on the transition
+            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
+                ghostFullyGone();
+                _transitionFrame = 0;
+            }
+            break;
+        }
+    }
+    
     protected function seekTick (frame :int, newSecond :Boolean) :void
     {
         //SKIN moved up.  zest is always zero.
@@ -330,7 +417,7 @@ public class Room
         _ghost.setPosition(x, y);
 
         // do a ghost tick
-        _ghost.tick(frame / Server.FRAMES_PER_SECOND);
+        //_ghost.tick(frame / Server.FRAMES_PER_SECOND);//SKIN
     }
 
     protected function fightTick (frame :int, newSecond :Boolean) :void
@@ -343,7 +430,12 @@ public class Room
 
         // if the ghost died, leave fight state and show the ghost's death throes
         if (_ghost.isDead()) {
-            Trophies.handleGhostDefeat(this);
+            try {
+                Trophies.handleGhostDefeat(this);
+            } catch (e :Error) {
+                log.warning("Error in handleGhostDefeat", "roomId", roomId, e);
+            }
+	    
             setState(Codes.STATE_GHOST_DEFEAT);
             // schedule a transition
             _transitionFrame = frame + _ghost.definition.defeatFrames;
@@ -363,7 +455,8 @@ public class Room
         }
 
         // if ghost is alive and at least one player is still up, do a ghost tick
-        _ghost.tick(frame / Server.FRAMES_PER_SECOND);
+        //_ghost.tick(frame / Server.FRAMES_PER_SECOND);
+	   _ghost.tick(frame);
 
     }
 
@@ -394,7 +487,7 @@ public class Room
                 // delete ghost
                 payout();
                 healTeam();
-                terminateGhost();
+                terminateGhost(false);
             }
 
             // whether the ghost died or the players wiped, clear accumulated fight stats
@@ -424,7 +517,12 @@ public class Room
             var player :Player = Player(team[ii]);
             var amount :int = (totHeal * playerDmg[ii]) / totDmg;
             player.heal(amount);
-            Trophies.handleHeal(healer, player, amount);
+            try {
+                Trophies.handleHeal(healer, player, amount);
+            } catch (e :Error) {
+                log.warning("Error in handleHeal", "roomId", roomId, "targetId",
+                            player.playerId, "healerId", healer.playerId, e);
+            }
         }
     }
 
@@ -515,7 +613,6 @@ public class Room
         _lanternUpdate = getTimer();
     }
 
-
     protected function loadOrSpawnGhost () :void
     {
         var data :Dictionary = Dictionary(_ctrl.props.get(Codes.DICT_GHOST));
@@ -558,12 +655,12 @@ public class Room
             var rnd :Number = roomRandom.nextNumber();
 
             // the base is in [1, 5] and low level ghosts are more common than high level ones
-            var levelBase :int = int(1 + 5*rnd*rnd);
+            var levelBase :int = int(1 + 9*rnd*rnd);
             
             //If it's a boss, make it tougher
-            if( ix == ghosts.length - 1) {
-                levelBase++;
-            }
+//            if( ix == ghosts.length - 1) {
+//                levelBase++;
+//            }
 
             // the actual level is the base plus a random stretch of 0 or 1
             var level :int = levelBase + Server.random.nextInt(2);
@@ -583,26 +680,16 @@ public class Room
         _nextGhost = 0;
     }
 
-    protected function terminateGhost () :void
+    protected function terminateGhost (immediateRespawn :Boolean) :void
     {
         _ctrl.props.set(Codes.DICT_GHOST, null, true);
         _ghost = null;
+        if (immediateRespawn) {
+            _nextGhost = 0;
+        } else {
         _nextGhost = getTimer() + 1000 * GHOST_RESPAWN_SECONDS;
-        
-        
-        //SKIN
-//        if( !_nextGhostIsBoss && isOnePlayerOneBossAwayFromLevelUp() ) {
-//            _nextGhost = getTimer();
-//            _nextGhostIsBoss = true;
-//        }
-//        else {
-//            _nextGhostIsBoss = false;
-//            
-//        }
-    }
-    
-    
-    
+	}
+    }    
 
     protected var _ctrl :RoomSubControlServer;
 
@@ -618,6 +705,8 @@ public class Room
 
     protected var _nextZap :int = 0;
     protected var _transitionFrame :int = 0;
+    
+    protected var _errorCount :int = 0;
 
     // each player's contribution to a ghost's eventual defeat is accumulated here, by playerId
     protected var _stats :Dictionary = new Dictionary();
@@ -626,7 +715,7 @@ public class Room
     protected var _minigames :Dictionary = new Dictionary();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_SECONDS :int = 60 * 1;
+    public static const GHOST_RESPAWN_SECONDS :int = 30 * 1;
     
 //    protected var _nextGhostIsBoss :Boolean = false;
 }

@@ -346,10 +346,10 @@ public class SpiritShellGame extends MicrogameMode
         
         new SpiritShellSettings(
             6,      // gameTime
-            25,     // ectoplasmCount
-            30,      // ghostSpeed
-            new NumRange(15, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+            15,     // ectoplasmCount
+            10,      // ghostSpeed
+            new NumRange(20, 30, Rand.STREAM_COSMETIC),   // ghostWanderDist
+            new NumRange(0.8, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
@@ -370,10 +370,10 @@ public class SpiritShellGame extends MicrogameMode
 
         new SpiritShellSettings(
             6,      // gameTime
-            30,     // ectoplasmCount
-            90,//30,      // ghostSpeed
-            new NumRange(50, 100, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+            18,     // ectoplasmCount
+            30,//30,      // ghostSpeed
+            new NumRange(30, 100, Rand.STREAM_COSMETIC),   // ghostWanderDist
+            new NumRange(0.5, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             false,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay
@@ -382,10 +382,10 @@ public class SpiritShellGame extends MicrogameMode
 
         new SpiritShellSettings(
             8,      // gameTime
-            40,     // ectoplasmCount
-            140,//40,      // ghostSpeed
-            new NumRange(130, 150, Rand.STREAM_COSMETIC),   // ghostWanderDist
-            new NumRange(0, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
+            25,     // ectoplasmCount
+            50,//40,      // ghostSpeed
+            new NumRange(50, 150, Rand.STREAM_COSMETIC),   // ghostWanderDist
+            new NumRange(0.2, 0, Rand.STREAM_COSMETIC),   // ghostWanderDelay
             true,  // ghostBlink
             150,    // plasmaSpeed
             0.1,     // plasmaFireDelay

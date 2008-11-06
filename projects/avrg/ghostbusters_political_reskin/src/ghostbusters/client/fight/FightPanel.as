@@ -26,11 +26,12 @@ public class FightPanel extends FrameSprite
     public function FightPanel (ghost :Ghost)
     {
         
-//        if(Game.state == Codes.STATE_GHOST_DEFEAT) {
-//            trace(" new FightPanel, but empty, since ghost was defetaed.");
-//            return;
-//        }
+        if(Game.state == Codes.STATE_GHOST_DEFEAT || Game.state == Codes.STATE_GHOST_TRIUMPH) {
+            trace(" new FightPanel, but empty, since ghost was defetaed or triumphed.");
+            return;
+        }
         
+
         graphics.clear();
         
         _ghost = ghost;
@@ -307,6 +308,7 @@ public class FightPanel extends FrameSprite
 
     protected function roomPropertyChanged (evt :PropertyChangedEvent) :void
     {
+        trace("roomPropertyChanged() " + evt.oldValue + " -> " + evt.newValue);
         if (evt.name == Codes.PROP_STATE) {
             checkForSpecialStates();
         }

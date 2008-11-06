@@ -3,6 +3,8 @@
 
 package ghostbusters.server {
 
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 
 import com.whirled.net.MessageReceivedEvent;
@@ -13,7 +15,8 @@ import com.whirled.avrg.PlayerSubControlServer;
 import ghostbusters.data.Codes;
 import ghostbusters.server.util.Formulae;
 
-public class Player
+public class Player 
+    implements Hashable
 {
     // avatar states
     public static const ST_PLAYER_DEFAULT :String = "Default";
@@ -113,7 +116,25 @@ public class Player
     {
         return _level;
     }
+    
+    // from Equalable
+    public function equals (other :Object) :Boolean
+    {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || !ClassUtil.isSameClass(this, other)) {
+            return false;
+        }
+        return Player(other).playerId == _playerId;
+    }
 
+    // from Hashable
+    public function hashCode () :int
+    {
+        return _playerId;
+    }
+    
     public function isDead () :Boolean
     {
         return _health == 0;
@@ -132,7 +153,7 @@ public class Player
         // let the clients in the room know of the attack
         _room.ctrl.sendMessage(Codes.SMSG_PLAYER_ATTACKED, _playerId);
         // play the reel animation for ourselves!
-        _ctrl.playAvatarAction("Reel");
+        //_ctrl.playAvatarAction("Reel");
 
         setHealth(health - damage); // note: setHealth clamps this to [0, maxHealth]
     }
@@ -172,24 +193,24 @@ public class Player
             return;
 
         case Codes.CMSG_CHOOSE_AVATAR:
-            if (_ctrl.props.get(Codes.PROP_AVATAR_TYPE) != null) {
-                log.warning("Saw CHOOSE_AVATAR, but already chosen", "playerId", _playerId);
-                return;
-            }
-            var prize :String;
-            if (value == Codes.AVT_MALE) {
-                prize = Codes.PRIZE_AVATAR_MALE;
-            } else if (value == Codes.AVT_FEMALE) {
-                prize = Codes.PRIZE_AVATAR_FEMALE;
-            } else {
-                log.warning("Saw CHOOSE_AVATAR with unexpected value", "playerId", playerId,
-                            "value", value);
-                return;
-            }
-            // remember the choice
-            _ctrl.props.set(Codes.PROP_AVATAR_TYPE, value, true);
-            // then award the avatar
-            _ctrl.awardPrize(prize);
+           //if (_ctrl.props.get(Codes.PROP_AVATAR_TYPE) != null) {
+           //    log.warning("Saw CHOOSE_AVATAR, but already chosen", "playerId", _playerId);
+           //    return;
+           //}
+           //var prize :String;
+           //if (value == Codes.AVT_MALE) {
+           //    prize = Codes.PRIZE_AVATAR_MALE;
+           //} else if (value == Codes.AVT_FEMALE) {
+           //    prize = Codes.PRIZE_AVATAR_FEMALE;
+           //} else {
+           //    log.warning("Saw CHOOSE_AVATAR with unexpected value", "playerId", playerId,
+           //                "value", value);
+           //    return;
+           //}
+           //// remember the choice
+           //_ctrl.props.set(Codes.PROP_AVATAR_TYPE, value, true);
+           //// then award the avatar
+           //_ctrl.awardPrize(prize);
             return;
         }
 
@@ -237,7 +258,14 @@ public class Player
         Server.control.doBatch(function () :void {
             _room.playerLeft(thisPlayer);
         });
-        _room = null;
+        if (_room != null) {
+            if (_room.roomId == evt.value) {
+                _room = null;
+            } else {
+                log.warning("The room we're supposedly leaving is not the one we think we're in",
+                            "ourRoomId", _room.roomId, "eventRoomId", evt.value);
+            }
+        }
     }
 
     protected function handleDebugRequest (request :String) :void
@@ -271,6 +299,9 @@ public class Player
                 }
             }
             break;
+        case Codes.DBG_REBOOT_WARNING:
+            Server.control.game.sendMessage(Codes.SMSG_REBOOT_WARNING);
+            break;	    
         default:
             log.warning("Unknown debug request", "request", request);
             return;
@@ -296,11 +327,13 @@ public class Player
     protected function setLevel (level :int, force :Boolean = false) :void
     {
         // clamp level to [1, 9] for now
-        level = Math.max(1, Math.min(9, level));
+        level = Math.max(1, level);
         if (!force && level == _level) {
             return;
         }
 
+	log.info("Level changed!", "playerId", playerId, "oldLevel", _level, "newLevel", level);
+	
         _level = level;
         _ctrl.props.set(Codes.PROP_MY_LEVEL, _level, true);
 
@@ -337,13 +370,15 @@ public class Player
         _health = health;
 
         // persist it, too
-        
         _ctrl.props.set(Codes.PROP_MY_HEALTH, _health, true);
 
         // if we just died, update our state
         if (_health == 0) {
-//            _ctrl.setAvatarState(ST_PLAYER_DEFEAT);
-            Trophies.handlePlayerDied(this);
+            try {
+                Trophies.handlePlayerDied(this);
+            } catch (e :Error) {
+                log.warning("Error in handlePlayerDied", "playerId", _playerId, e);
+            }
         }
 
         // and if we're in a room, update the room properties
@@ -382,8 +417,5 @@ public class Player
     protected var _maxHealth :int;
     protected var _points :int;
     protected var _level :int;
-    
-    //SKIN HACK!!!
-//    public var killedGhosts :int = 0;
 }
 }

@@ -148,6 +148,7 @@ public class Ghost
     public function calculateSplashAttack () :int
     {
         // a level 1 ghost does 2-3 points of splash damage to everyone in a group
+//        return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.5);
         return Formulae.rndStretch(5 * Formulae.quadRamp(_level), 1.5);
     }
 

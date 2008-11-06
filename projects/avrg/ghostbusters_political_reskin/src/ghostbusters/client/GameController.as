@@ -13,6 +13,7 @@ import ghostbusters.client.fight.FightPanel;
 import ghostbusters.client.fight.MicrogameResult;
 import ghostbusters.client.util.PlayerModel;
 import ghostbusters.data.Codes;
+import ghostbusters.server.Room;
 
 public class GameController extends Controller
 {
@@ -138,7 +139,7 @@ public class GameController extends Controller
             ]);
 
         if (result.success == MicrogameResult.SUCCESS) {
-            Game.control.player.playAvatarAction("Retaliate");
+            //Game.control.player.playAvatarAction("Retaliate");
         }
     }
 
@@ -152,7 +153,7 @@ public class GameController extends Controller
         trace(Game.ourPlayerId + " handleRevive()");
         if (PlayerModel.isDead(Game.ourPlayerId) ) {//&& Game.state != Codes.STATE_FIGHTING) {//SKIN shouldn't we be in STATE_FIGHTING??
             if( _reviveTimer == null) {
-                _reviveTimer = new Timer( 10000, 1);
+                _reviveTimer = new Timer( Room.GHOST_RESPAWN_SECONDS * 0.5 * 1000, 1);
                 _reviveTimer.addEventListener( TimerEvent.TIMER, function ( e :TimerEvent ) :void {
                     Game.control.agent.sendMessage(Codes.CMSG_PLAYER_REVIVE);
                     trace(Game.ourPlayerId + " sent revive message to server");

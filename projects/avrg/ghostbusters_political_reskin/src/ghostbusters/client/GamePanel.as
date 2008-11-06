@@ -3,6 +3,7 @@
 
 package ghostbusters.client {
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -365,7 +366,7 @@ public class GamePanel extends Sprite
         }
         if (pClass != null) {
             if( _ghost != null) {
-                trace("updateState, creating new " + _panel + "for state=" + Game.state);
+                trace("updateState, creating new " + ClassUtil.shortClassName(pClass) + " for state=" + Game.state);
                 _panel = new pClass(_ghost);
                 this.addChildAt(_panel, 0);
             }

@@ -24,7 +24,7 @@ public class SeekPanel extends FrameSprite
     public function SeekPanel (ghost :Ghost)
     {
         _ghost = ghost;
-
+        _ghost.visible = false;
         _dimness = new Dimness(0.9, true);
 //        this.addChild(_dimness);
 
@@ -285,6 +285,7 @@ public class SeekPanel extends FrameSprite
         }
         _lanterns = null;
         if( _ghost != null ){
+            
             _ghost.appear();
     
             _ghost.newTarget(new Point(600, 100));

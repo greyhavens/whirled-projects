@@ -54,6 +54,7 @@ public class Ghost extends Sprite
 
     public function appear () :int
     {
+        this.visible = true;
         return handler.gotoScene(GamePanel.ST_GHOST_APPEAR, function () :String {
             handler.clip.visible = true;
             // stay in FIGHT state for the brief period until the entire SeekPanel disappears
@@ -104,7 +105,7 @@ public class Ghost extends Sprite
     public function triumph (callback :Function = null) :void
     {
 //        log.debug("Ghost triumphant", "next", _next);
-//        _next = ST_FIGHT;
+        _next = ST_FIGHT;
         handler.gotoScene(GamePanel.ST_GHOST_TRIUMPH, callback);
     }
 

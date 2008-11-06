@@ -1,6 +1,5 @@
 package ghostbusters.client.fight.lantern {
 
-import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -353,7 +352,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             120,     // lantern beam radius
             20,     // heart radius
             1.5,     // ghost scale
-            7      // damage output
+            testing ? 500 : 7      // damage output
         ),
         
         new HeartOfDarknessSettings(
@@ -362,7 +361,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             120,     // lantern beam radius
             20,     // heart radius
             1.7,     // ghost scale
-            12      // damage output
+            testing ? 500 : 12      // damage output
         ),
         
         new HeartOfDarknessSettings(
@@ -371,7 +370,7 @@ public class HeartOfDarknessGame extends MicrogameMode
             120,     // lantern beam radius
             20,     // heart radius
             2.0,     // ghost scale
-            20      // damage output
+            testing ? 500 : 20      // damage output
         )
 
         
@@ -379,6 +378,7 @@ public class HeartOfDarknessGame extends MicrogameMode
     ];
 
     protected static const LIGHT_SOURCE :Vector2 = new Vector2(MicrogameConstants.GAME_WIDTH / 2, MicrogameConstants.GAME_HEIGHT - 10);
+    private static const testing :Boolean = false;
 
 }
 

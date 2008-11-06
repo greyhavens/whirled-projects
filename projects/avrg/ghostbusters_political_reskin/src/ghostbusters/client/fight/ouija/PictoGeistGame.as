@@ -281,7 +281,7 @@ public class PictoGeistGame extends MicrogameMode
 
     protected static const DIFFICULTY_SETTINGS :Array = [
 
-        new PictoGeistSettings(7, 4),
+        new PictoGeistSettings(9, 8),
 
     ];
 

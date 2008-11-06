@@ -157,9 +157,9 @@ public class SpiritGuideGame extends MicrogameMode
 
     protected static const DIFFICULTY_SETTINGS :Array = [
         new SpiritGuideSettings(8, 0, 10),
-        new SpiritGuideSettings(6, 1, 15),
-        new SpiritGuideSettings(6, 2, 20),
-        new SpiritGuideSettings(4, 2, 25),
+        new SpiritGuideSettings(8, 1, 15),
+        new SpiritGuideSettings(8, 2, 20),
+        new SpiritGuideSettings(8, 2, 25),
     ];
 
     protected static const WIN_STRINGS :Array = [

@@ -3,14 +3,16 @@
 
 package ghostbusters.server {
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.whirled.ServerObject;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
@@ -58,20 +60,27 @@ public class Server extends ServerObject
 
     public static function getRoom (roomId :int) :Room
     {
-        var room :Room = _rooms[roomId];
+        if (roomId == 0) {
+            throw new Error("Bad argument to getRoom [roomId=0]");
+        }
+        var room :Room = _rooms.get(roomId);
         if (room == null) {
             var ctrl :RoomSubControlServer = _ctrl.getRoom(roomId);
             if (ctrl == null) {
                 throw new Error("Failed to get RoomSubControlServer [roomId=" + roomId + "]");
             }
-            room = _rooms[roomId] = new Room(ctrl);
+            if (ctrl.getRoomId() != roomId) {
+                throw new Error("New RoomSubControlServer roomId mismatch [requestedRoomId=" +
+                                roomId + ", controlRoomId=" + ctrl.getRoomId() + "]");
+            }
+            _rooms.put(roomId, room = new Room(ctrl));
         }
         return room;
     }
 
     public static function getPlayer (playerId :int) :Player
     {
-        return _players[playerId];
+        return Player(_players.get(playerId));
     }
 
     protected function tick () :void
@@ -81,9 +90,14 @@ public class Server extends ServerObject
         var second :int = dT / 1000;
 
         _ctrl.doBatch(function () :void {
-            for each (var room :Room in _rooms) {
-                room.tick(frame, second > _lastSecond);
-            }
+            _rooms.forEach(function (roomId :int, room :Room) :void {
+                try {
+                    room.tick(frame, second > _lastSecond);
+
+                } catch (error :Error) {
+                    log.warning("Error in room.tick()", "roomId", roomId, error);
+                }
+            });
         });
 
         _lastSecond = second;
@@ -106,18 +120,21 @@ public class Server extends ServerObject
     protected function playerJoinedGame (evt :AVRGameControlEvent) :void
     {
         var playerId :int = int(evt.value);
-
+        if (_players.containsKey(playerId)) {
+            log.warning("Joining player already known", "playerId", playerId);
+            return;
+        }
+	
         var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
         if (pctrl == null) {
             throw new Error("Could not get PlayerSubControlServer for player!");
         }
 
-        if (_players[playerId] != null) {
-            log.warning("Eek, player joined twice [id=" + playerId + "]");
-        }
         _ctrl.doBatch(function () :void {
-            _players[playerId] = new Player(pctrl);
+            _players.put(playerId, new Player(pctrl));
         });
+
+        log.info("Player joined the game", "playerId", playerId);
     }
 
     // when they leave, clean up
@@ -125,23 +142,24 @@ public class Server extends ServerObject
     {
         var playerId :int = int(evt.value);
 
-        var player :Player = _players[playerId];
-        if (player != null) {
-            _ctrl.doBatch(function () :void {
-                player.shutdown();
-            });
-            delete _players[playerId];
+        var player :Player = _players.remove(playerId);
+        if (player == null) {
+            log.warning("Quitting player not known", "playerId", playerId);
+            return;
         }
+        _ctrl.doBatch(function () :void {
+            player.shutdown();
+        });
+
+        log.info("Player quit the game", "playerId", playerId);
     }
 
     protected var _startTime :int;
     protected var _lastSecond :int;
 
     protected static var _ctrl :AVRServerGameControl;
-    protected static var _rooms :Dictionary = new Dictionary();
-    protected static var _players :Dictionary = new Dictionary();
-    
-    
+    protected static var _rooms :HashMap = new HashMap();
+    protected static var _players :HashMap = new HashMap();
 }
 }
 

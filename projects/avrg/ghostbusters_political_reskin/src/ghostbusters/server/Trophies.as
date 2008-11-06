@@ -211,6 +211,8 @@ public class Trophies
 
     protected static function doAward (player :Player, trophy :String) :Boolean
     {
+        
+	    trace("doAward for trophy=" + trophy);
         if (!player.ctrl.holdsTrophy(trophy)) {
             player.ctrl.awardTrophy(trophy);
             return true;//SKIN
