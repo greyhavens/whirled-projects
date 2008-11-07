@@ -19,7 +19,8 @@ package
         
         public function JoinGame()
         {
-            Log.setLevel("", Log.INFO);
+//            Log.setLevel("", Log.INFO);
+//            Log.setLevel("", Log.OFF);
 //            Log.setLevel(ClassUtil.getClassName(JoinGameBoardsView), Log.DEBUG);
 //            Log.setLevel(ClassUtil.getClassName(SinglePlayerServerPlugin), Log.DEBUG);
 //            Log.setLevel(ClassUtil.getClassName(JoingameServer), Log.DEBUG);
