@@ -1338,6 +1338,27 @@ package joingame.model
             return false;
         }
         
+        public function isVerticalJoinPossible( col :int, color :int) :int
+        {
+            var highestConsecutiveColoredPieces :int = 0;
+            var rowWithhighestConsecutiveColoredPieces :int = -1; 
+            var consecutiveColoredPieces :int = 0;
+            for( var j :int = 0; j < _rows; j++) {
+                if( _boardPieceTypes[ coordsToIdx( col, j) ] == Constants.PIECE_TYPE_NORMAL) {
+                    if( _boardPieceColors[ coordsToIdx( col, j) ] == color) {
+                      consecutiveColoredPieces++;
+                      if( consecutiveColoredPieces > highestConsecutiveColoredPieces) {
+                        highestConsecutiveColoredPieces = Math.max( consecutiveColoredPieces, highestConsecutiveColoredPieces);
+                        rowWithhighestConsecutiveColoredPieces = j;
+                      }
+                    }
+                }
+                else {
+                    consecutiveColoredPieces = 0;
+                }
+            }
+            return highestConsecutiveColoredPieces >= 4 ? rowWithhighestConsecutiveColoredPieces : -1;
+        }
         public function getHorizontallyClosestPieceIndexWithColor( xLoc :int, yLoc :int, color :int) :int
         {
             var index :int;
