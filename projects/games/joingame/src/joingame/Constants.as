@@ -24,8 +24,8 @@ package joingame
         
 //        public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
         
-//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
+//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -111,11 +111,11 @@ package joingame
         
         
         
-        public static const LOCAL_MODE :Boolean = false;
+        public static const LOCAL_MODE :Boolean = true;
         
         /*Single player */
         public static const SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE :int = 6;
-        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 3000;
+        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 4000;
         public static const SINGLE_PLAYER_AI_TIME_INCREMENT_IN_MILLISECS :int = 200;
         public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 3;
         
