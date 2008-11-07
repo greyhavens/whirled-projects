@@ -97,14 +97,19 @@ package joingame.modes
             replayButton.y = -300;
 //            modeSprite.addChild( replayButton);
             _replayButton = new SimpleSceneObject( replayButton );
-            addObject( _replayButton, modeSprite);
+            
             
             var singlePlayerMainMenuButton :SimpleTextButton = new SimpleTextButton("Main Menu");
             singlePlayerMainMenuButton.addEventListener(MouseEvent.CLICK, doMainMenuButtonClicked);
-            singlePlayerMainMenuButton.x = 300;
-            singlePlayerMainMenuButton.y = -300;
+            singlePlayerMainMenuButton.x = 30;
+            singlePlayerMainMenuButton.y = 30;
             _singlePlayerMainMenuButton = new SimpleSceneObject( singlePlayerMainMenuButton );
-            addObject( _singlePlayerMainMenuButton, modeSprite);
+            
+            
+            if(AppContext.isSinglePlayer ) {
+                addObject( _replayButton, modeSprite);
+                addObject( _singlePlayerMainMenuButton, modeSprite);
+            }
             
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
@@ -393,7 +398,7 @@ package joingame.modes
                     _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                     
                     _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
-                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
+//                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
                     modeSprite.setChildIndex( _replayButton.displayObject, modeSprite.numChildren - 1);
                     modeSprite.setChildIndex( _singlePlayerMainMenuButton.displayObject, modeSprite.numChildren - 1);
                 }
