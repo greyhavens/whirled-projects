@@ -1,6 +1,8 @@
 package 
 {
+    import com.threerings.util.Log;
     import com.whirled.ServerObject;
+    import com.whirled.contrib.simplegame.util.Rand;
     import com.whirled.game.GameControl;
     
     import joingame.AppContext;
@@ -12,6 +14,10 @@ package
     {
         public function Server(gameControl: GameControl = null)
         {
+            Log.setLevel("", Log.INFO);
+            
+            Rand.setup();
+            AppContext.useServerAgent = true;
             AppContext.gameCtrl = new GameControl(this);
             AppContext.isConnected = AppContext.gameCtrl.isConnected();
             AppContext.messageManager = new JoinMessageManager( AppContext.gameCtrl );

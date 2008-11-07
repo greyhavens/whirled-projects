@@ -1,5 +1,6 @@
 package joingame
 {
+    
     public class Constants
     {
         public static const NORMAL_COLOR:Number = 0xff9933;
@@ -18,9 +19,6 @@ package joingame
         public static const PUZZLE_TILE_SIZE_WHEN_DEAD :int = 10;
         
         public static const CONNECTION_MINIMUM :int = 4; 
-
-        
-        
         
         public static const HEALING_ALLOWED :Boolean = false;
         
@@ -113,7 +111,16 @@ package joingame
         
         
         
-        public static const LOCAL_MODE :Boolean = true;
+        public static const LOCAL_MODE :Boolean = false;
+        
+        /*Single player */
+        public static const SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE :int = 6;
+        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 3000;
+        public static const SINGLE_PLAYER_AI_TIME_INCREMENT_IN_MILLISECS :int = 200;
+        public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 3;
+        
+        public static const SINGLE_PLAYER_GAME_TYPE_WAVES :String = "Game Type: Waves";
+        public static const SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS :String = "Game Type: Choose Level";
     }
 }
  

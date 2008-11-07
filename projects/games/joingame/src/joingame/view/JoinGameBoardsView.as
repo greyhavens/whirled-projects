@@ -60,6 +60,7 @@ package joingame.view
             _gameModel.addEventListener(InternalJoinGameEvent.RESET_VIEW_FROM_MODEL, resetViewFromModel);
             _gameModel.addEventListener(InternalJoinGameEvent.DONE_COMPLETE_DELTA, doFinishAnimations);
             _gameModel.addEventListener(InternalJoinGameEvent.PLAYER_ADDED, doPlayerAdded);
+            _gameModel.addEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
             
 //            _destroyBottomRowButton  = new SimpleTextButton("Destroy Bottom Row");
 //            _destroyBottomRowButton.addEventListener( REMOVE_BOTTOM_ROW_BUTTON, requestBottomRowRemoval);
@@ -81,10 +82,16 @@ package joingame.view
 //        }
         
         
+        protected function handleGameOver( e :InternalJoinGameEvent) :void
+        {
+//            trace( ClassUtil.shortClassName(this) + " handleGameOver()");
+            dispatchEvent( new InternalJoinGameEvent( -1, InternalJoinGameEvent.GAME_OVER));
+        }
+        
         protected function doFinishAnimations( e :InternalJoinGameEvent) :void
         {
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-            if( board != null && !board._boardRepresentation._isGettingKnockedOut ) {
+            if( board != null && board._boardRepresentation._state > JoinGameBoardRepresentation.STATE_ACTIVE ) {
                 board.updating = false;
             }
         }
@@ -92,7 +99,7 @@ package joingame.view
         protected function startNewBoardAnimations( e :InternalJoinGameEvent) :void
         {
             var board :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-            if( board != null && !board._boardRepresentation._isGettingKnockedOut && board.isMovingPieces()) {
+            if( board != null && board._boardRepresentation._state == JoinGameBoardRepresentation.STATE_ACTIVE && board.isMovingPieces()) {
                 board.removePieceTasksAndSetCorrectLocations();
                 board.updating = true;
             }
@@ -357,9 +364,12 @@ package joingame.view
             var xToStartFromAfterWrapping :int;
             var xToShootBeforeWrappingAround :int;
 
+            var pieceToHJoinTime :Number = Constants.VERTICAL_JOIN_ANIMATION_TIME * 0.6;
+            var serialTask :SerialTask;
+            var timeToStartJoin :Number;
             
-            
-            
+            log.debug("doHorizontalAttack(), source=" + (sourceboard != null ? sourceboard._boardRepresentation.playerID : "null ( " + e.boardPlayerID + ")") + " , attacked=" 
+                + (boardAttacked != null ? boardAttacked._boardRepresentation.playerID : "null ( " + e.boardAttacked + ")"));
             if( boardAttacked != null && sourceboard != null) {
                 var rowIndex :int = boardAttacked._rows - 1 - join.attackRow;
                 var alreadyDamagedOffset :int = 0;
@@ -386,7 +396,7 @@ package joingame.view
                 var yBounce :int;
                 var bounceMoveTask :ObjectTask;
                 var bounceRotationTask :ObjectTask;
-                var pieceToHJoinTime :Number = Constants.VERTICAL_JOIN_ANIMATION_TIME * 0.6;
+                
                 
                 
                 var joinSprite :Sprite = new Sprite();
@@ -400,12 +410,12 @@ package joingame.view
                 db.addObject( joinSceneObject, sourceboard._sprite);
                 for( k = 0; k < join._piecesX.length; k++) {
                     
-                    var timeToStartJoin :Number = pieceToHJoinTime * ((Math.abs(join._piecesX[k] - join._lastSwappedX) as Number) / (join._widthInPieces - 1));
+                    timeToStartJoin = pieceToHJoinTime * ((Math.abs(join._piecesX[k] - join._lastSwappedX) as Number) / (join._widthInPieces - 1));
                     piece = sourceboard.getPieceAt( join._piecesX[k], sourceboard.convertFromBottomYToFromTopY(join._piecesYFromBottom[k]));
                     if(piece != null){/* If it's part of another join, it may already be removed */
                         sourceboard._boardPieces[ piece.boardIndex ] = null;
 
-                        var serialTask :SerialTask = new SerialTask();
+                        serialTask = new SerialTask();
                         serialTask.addTask( new TimedTask( join._delay  ) );
                         serialTask.addTask( new SelfDestructTask() );
                         piece.addTask( serialTask );
@@ -463,8 +473,28 @@ package joingame.view
                 boardAttacked._animationsToDestroyWhenIDie.push( joinSceneObject );
                 
             }
+            else if( sourceboard != null){
+                log.debug("boardAttacked == null, sourceboard id=" + e.boardPlayerID);
+                
+                for( k = 0; k < join._piecesX.length; k++) {
+                    
+                    timeToStartJoin = pieceToHJoinTime * ((Math.abs(join._piecesX[k] - join._lastSwappedX) as Number) / (join._widthInPieces - 1));
+                    
+                    piece = sourceboard.getPieceAt( join._piecesX[k], sourceboard.convertFromBottomYToFromTopY(join._piecesYFromBottom[k]));
+                    if(piece != null){/* If it's part of another join, it may already be removed */
+                        sourceboard._boardPieces[ piece.boardIndex ] = null;
+
+                        serialTask = new SerialTask();
+                        serialTask.addTask( new TimedTask( join._delay  ) );
+                        serialTask.addTask( new SelfDestructTask() );
+                        piece.addTask( serialTask );
+                    }
+                }
+                return;
+            }
             else {
-                log.debug("boardAttacked == null");
+                log.error("Major error in doHorizontalAttack().  Source board is null. WTF?????");
+                return;
             }
             
             
@@ -475,7 +505,7 @@ package joingame.view
             var coverPiece :JoinGamePiece;
             var coverAnimTask :SerialTask;
             
-            var localRowIndex :int = ((_gameModel.getBoardForPlayerID(e.boardAttacked) as JoinGameBoardRepresentation)._rows - 1) - e.row;
+            var localRowIndex :int = (boardAttacked._boardRepresentation._rows - 1) - e.row;
             var piecesDestroyed :Array = new Array();
             
             if( boardAttacked != null){
@@ -604,7 +634,7 @@ package joingame.view
             var startPositionTask :LocationTask;
             
             if( board != null) {
-            log.debug("view doVerticalJoins(), delay=" + e.delay + " model: " + board._boardRepresentation + "\nview:" + board );    
+//            log.debug("view doVerticalJoins(), delay=" + e.delay + " model: " + board._boardRepresentation.playerID + "\nview:" + board );    
 //                board.updating = true;
                /* The join shoots up, pushing the pieces above until either the pushed pieces
                 or the join are one piece above the column height, at which point the join
@@ -1201,6 +1231,11 @@ package joingame.view
         protected function updateBoardDisplaysFor3BoardViews(movementDelay :int = 0) :void 
         {
             log.debug("updateBoardDisplaysFor3BoardViews()");
+            if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, AppContext.playerId))
+            {
+                log.debug("Humans are dead, not updating the boardview");
+                return;
+            }
 //            Check if any board are acive but shouldn't
 
 
@@ -1245,19 +1280,19 @@ package joingame.view
 
             var leftPlayerId :int =  _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId);
             var rightPlayerId :int =  _gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId);
-
+            log.debug("     leftPlayerId=" + leftPlayerId + ", rightPlayerId=" + rightPlayerId);
             if(_leftBoardDisplay != null && _leftBoardDisplay.board.playerID != _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId))
             {
-//                log.debug("removing player on left, as " + _leftBoardDisplay.board.playerID + "!=" + _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId) );
+                log.debug("     removing player on left, as " + _leftBoardDisplay.board.playerID + "!=" + _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId) );
                 if(_leftBoardDisplay.isLiveObject) {
                     _leftBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
 //                    _leftBoardDisplay.destroySelf();
                 }
                 _leftBoardDisplay = null;
             }
-            if(_leftBoardDisplay == null && _gameModel.currentSeatingOrder.length > 1 && !_gameModel.getBoardForPlayerID( leftPlayerId )._isGettingKnockedOut)
+            if(_leftBoardDisplay == null && _gameModel.currentSeatingOrder.length > 1 && _gameModel.getBoardForPlayerID( leftPlayerId )._state == JoinGameBoardRepresentation.STATE_ACTIVE)
             {
-//                log.debug("adding board to my left");
+                log.debug("     adding board to my left");
                 _leftBoardDisplay = new JoinGameBoardGameArea( _gameControl );
 //                _sprite.addChild(_leftBoardDisplay);
                 
@@ -1267,10 +1302,19 @@ package joingame.view
 
 //                    log.debug("me==" + AppContext.gameCtrl.game.getMyId() + ", leftPlayerId=" + leftPlayerId );
                     _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( leftPlayerId );
-                    if(!_leftBoardDisplay._boardRepresentation._isGettingKnockedOut) {
-                        trace("left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
+                    if(_leftBoardDisplay._boardRepresentation._state == JoinGameBoardRepresentation.STATE_ACTIVE) {
+                        log.debug("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
                         _leftBoardDisplay.doBoardEnterFromSideAnimation(Constants.LEFT);
                     }
+            }
+            else{
+                log.error("Should be adding board to my left but for some reason cannot:");
+                log.error("  _gameModel.currentSeatingOrder.length=" + _gameModel.currentSeatingOrder.length);
+                log.error("  _gameModel.getBoardForPlayerID( leftPlayerId=" + leftPlayerId + " ) == null " + (_leftBoardDisplay == null));
+                if( _gameModel.getBoardForPlayerID( leftPlayerId ) != null) {
+                    log.error("  _gameModel.getBoardForPlayerID( leftPlayerId )._state=" + _gameModel.getBoardForPlayerID( leftPlayerId )._state);    
+                }
+                
             }
             
             if(_leftBoardDisplay != null) {
@@ -1343,7 +1387,10 @@ package joingame.view
                       
             for each ( id in _gameModel.currentSeatingOrder) {
                 
-                if( !_id2Board.containsKey( id) && !_gameModel.getBoardForPlayerID( id )._isGettingKnockedOut) {//Create the board
+                if( _gameModel.getBoardForPlayerID( id ) == null) {
+                    throw new Error("updateBoardDisplaysForObserver(), but id is in currentSeatingOrder=" + _gameModel.currentSeatingOrder + ", but no board");
+                }
+                if( !_id2Board.containsKey( id) && _gameModel.getBoardForPlayerID( id )._state == JoinGameBoardRepresentation.STATE_ACTIVE) {//Create the board
                     board = new JoinGameBoardGameArea(null);
                     this.db.addObject(board, _sprite);
                     board.board = _gameModel.getBoardForPlayerID( id );
@@ -1398,6 +1445,7 @@ package joingame.view
         /** Respond to messages from other clients. */
         protected function playerDestroyed (e :InternalJoinGameEvent) :void
         {
+            log.debug("playerDestroyed( boardId=" + e.boardPlayerID + ")");
 //            _gameControl.local.feedback("BoardsView.playerKnockedOut(" + e.boardPlayerID + ")");
             //Play a board distruction animation
             if( getBoardView( e.boardPlayerID ) != null)
@@ -1405,15 +1453,38 @@ package joingame.view
                 /* Don't do board destruction animation if the winning player leaves. */
                 if( _gameModel.activePlayers > 1) {
                     var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-                    boardview._boardRepresentation._isGettingKnockedOut = true;
+                    boardview._boardRepresentation._state = JoinGameBoardRepresentation.STATE_GETTING_KNOCKED_OUT;
                     boardview.doBoardDistructionAnimation();
                 }
 //                log.debug("view deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
+            }
+            else {
+                log.debug("    boardview is null");
             }
             dispatchEvent( new InternalJoinGameEvent( e.boardPlayerID, InternalJoinGameEvent.PLAYER_DESTROYED));
 //            updateBoardDisplays();
         }
         
+        override protected function update( dt:Number) :void
+        {
+            //Check if we have any 'floating' boards.
+            for each ( var board :JoinGameBoardGameArea in _id2Board.values()) {
+                if( board != null) {
+                    if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, board._boardRepresentation.playerID)) {
+                        //Ok the board should not be visible
+                        if( board._boardRepresentation._state == JoinGameBoardRepresentation.STATE_REMOVED ) {
+                            if( board.isLiveObject) {
+                                board.destroySelf();
+                                if( board.displayObject.parent != null) {
+                                    board.displayObject.parent.removeChild( board.displayObject);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            super.update(dt);
+        }
         
         
         /** Respond to messages from other clients. */
@@ -1421,11 +1492,11 @@ package joingame.view
         {
 //            _gameControl.local.feedback("BoardsView.playerKnockedOut(" + e.boardPlayerID + ")");
             //Play a board distruction animation
-            if( getBoardView( e.boardPlayerID ) != null)
-            {
-                var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
-//                log.debug("view deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
-            }
+//            if( getBoardView( e.boardPlayerID ) != null)
+//            {
+//                var boardview :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
+////                log.debug("view deltaConfirm() model " + e.boardPlayerID + "==view: " + boardview.isModelAndViewSame());
+//            }
             
             dispatchEvent( new InternalJoinGameEvent( e.boardPlayerID, InternalJoinGameEvent.PLAYER_REMOVED));
             updateBoardDisplays();
@@ -1510,11 +1581,10 @@ package joingame.view
         
         override public function destroySelf():void
         {
-            super.destroySelf();
+            _gameModel.removeEventListener(InternalJoinGameEvent.START_NEW_ANIMATIONS, startNewBoardAnimations);
             _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_DESTROYED, playerDestroyed);
             _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
             _gameModel.removeEventListener(InternalJoinGameEvent.RECEIVED_BOARDS_FROM_SERVER, updateBoardDisplays);
-//            _gameModel.removeEventListener(JoinGameEvent.DO_JOIN_VISUALIZATIONS, doJoinVisualizations);
             _gameModel.removeEventListener(InternalJoinGameEvent.DELTA_CONFIRM, deltaConfirm);
             _gameModel.removeEventListener(InternalJoinGameEvent.DO_PIECES_FALL, doPiecesFall);
             _gameModel.removeEventListener(InternalJoinGameEvent.ADD_NEW_PIECES, doAddNewPieces);
@@ -1524,7 +1594,11 @@ package joingame.view
             _gameModel.removeEventListener(InternalJoinGameEvent.DO_DEAD_PIECES, doDeadPieces);
             _gameModel.removeEventListener(InternalJoinGameEvent.REMOVE_ROW_PIECES, doRemoveRowPieces);
             _gameModel.removeEventListener(InternalJoinGameEvent.REMOVE_BOTTOM_ROW_AND_DROP_PIECES, removeBottomRowAndDropPieces);
+            _gameModel.removeEventListener(InternalJoinGameEvent.RESET_VIEW_FROM_MODEL, resetViewFromModel);
+            _gameModel.removeEventListener(InternalJoinGameEvent.DONE_COMPLETE_DELTA, doFinishAnimations);
             _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_ADDED, doPlayerAdded);
+            _gameModel.removeEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
+            super.destroySelf();
         }
         
         

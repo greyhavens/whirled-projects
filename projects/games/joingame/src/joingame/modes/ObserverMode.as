@@ -1,5 +1,6 @@
 package joingame.modes
 {
+    import com.threerings.flash.SimpleTextButton;
     import com.threerings.util.*;
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.audio.*;
@@ -29,18 +30,15 @@ package joingame.modes
     
     public class ObserverMode extends AppMode
     {
-        protected static var log :Log = AppContext.log;
+        private static const log :Log = Log.getLog(ObserverMode);
         
         override protected function setup () :void
         {
-            log.debug("Player " + AppContext.myid + ",PlayPuzzleMode...");
-            if(!AppContext.gameCtrl.isConnected()) {
-                return;
-            }
-//            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            log.debug("Player " + AppContext.playerId + ",PlayPuzzleMode...");
             
-            AppContext.messageManager.addEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
-            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            
+//            AppContext.messageManager.addEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
+//            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             
             _modeSprite.mouseEnabled = false;
             
@@ -62,10 +60,6 @@ package joingame.modes
             
             _out_placer = MovieClip(swfRoot["out_placer"]);
             _marquee_placer = MovieClip(swfRoot["marquee_placer"]);
-            
-            
-            
-            
             
             var swf :SwfResource = (ResourceManager.instance.getResource("UI") as SwfResource);
             _marqueeClass = swf.getClass("marquee");
@@ -95,10 +89,22 @@ package joingame.modes
             _startButton = new SimpleSceneObject( startButtonMovieClip );
             _startButton.x = AppContext.gameWidth/2;
             _startButton.y = -100;
-            
-            
-            
             addObject( _startButton, modeSprite);
+            
+            var replayButton :SimpleTextButton = new SimpleTextButton("Replay");
+            replayButton.addEventListener(MouseEvent.CLICK, doReplayButtonClicked);
+            replayButton.x = 300;
+            replayButton.y = -300;
+//            modeSprite.addChild( replayButton);
+            _replayButton = new SimpleSceneObject( replayButton );
+            addObject( _replayButton, modeSprite);
+            
+            var singlePlayerMainMenuButton :SimpleTextButton = new SimpleTextButton("Main Menu");
+            singlePlayerMainMenuButton.addEventListener(MouseEvent.CLICK, doMainMenuButtonClicked);
+            singlePlayerMainMenuButton.x = 300;
+            singlePlayerMainMenuButton.y = -300;
+            _singlePlayerMainMenuButton = new SimpleSceneObject( singlePlayerMainMenuButton );
+            addObject( _singlePlayerMainMenuButton, modeSprite);
             
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
@@ -119,9 +125,32 @@ package joingame.modes
             _totalTimeElapsedSinceNewGameTimerStarted = 0;
         
         
-            initGameData();
+//            initGameData();
         }
         
+        
+        protected function doReplayButtonClicked (event :MouseEvent) :void
+        {
+            log.debug("sending " + ReplayRequestMessage.NAME );
+            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId));
+        }
+        
+        protected function doMainMenuButtonClicked (event :MouseEvent) :void
+        {
+            GameContext.mainLoop.unwindToMode( new SinglePlayerIntroMode());
+        }
+        
+        
+        /** Respond to messages from other clients. */
+        protected function messageReceived (event :MessageReceivedEvent) :void
+        {
+            if (event.value is ReplayRequestMessage) {
+                handleReplayRequest( ReplayRequestMessage(event.value) );
+            }
+            else if (event.value is ReplayConfirmMessage) {
+                handleReplayConfirm( ReplayConfirmMessage(event.value) );
+            }
+        }
         protected function gameTimer(  e :TimerEvent) :void
         {
             _totalTimeElapsedSinceNewGameTimerStarted++;
@@ -159,11 +188,17 @@ package joingame.modes
             initGameData();
         }
         
+        override protected function enter () :void
+        {
+            trace("Observer mode");
+            AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            initGameData();
+        }
         override protected function exit () :void
         {
-//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            AppContext.messageManager.removeEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
-            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            AppContext.messageManager.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.messageManager.removeEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
+//            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
 //            _gameRestartTimer.removeEventListener(TimerEvent.TIMER, gameTimer);
 //            _gameRestartTimer.stop();
             if(_startButton != null) {
@@ -186,8 +221,6 @@ package joingame.modes
         
         protected function initGameData() :void 
         {
-            
-            
             if(_boardsView != null) {
                 _boardsView.destroySelf();
             }
@@ -203,7 +236,7 @@ package joingame.modes
             
             _id2HeadshotSceneObject = new HashMap();
             _id2MarqueeSceneObject = new HashMap();
-            
+            trace("initGameData(), _gameModel._initialSeatedPlayerIds=" + _gameModel._initialSeatedPlayerIds);
             for each (var id :int in _gameModel._initialSeatedPlayerIds) {
                 var marquee :MovieClip = new _marqueeClass();
                 var so2 :SimpleSceneObject = new SimpleSceneObject(marquee);
@@ -229,8 +262,8 @@ package joingame.modes
             
             animateHeadshotsToLocation(null, 0);
             
-            trace("Player " + AppContext.myid + ", ObserverMode, initGameData(), _gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
-            if(_gameModel.currentSeatingOrder.length == 1) {
+            trace("Player " + AppContext.playerId + ", ObserverMode, initGameData(), _gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
+            if(_gameModel.currentSeatingOrder.length <= 1) {
                 
                 gameOver();
             }
@@ -264,15 +297,23 @@ package joingame.modes
                     headshot.displayObject.filters = [];
                 }
             }
-
-            if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.gameCtrl.game.getMyId())) {  
-                AppContext.beginToShowInstructionsTime = getTimer();
-                GameContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
+            
+            if( AppContext.isSinglePlayer ) {
+                log.debug("handleReplayConfirm()");
+                GameContext.gameModel.setModelMemento( event.modelMemento );
+                log.debug("  players=" + GameContext.gameModel.currentSeatingOrder);
+                GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());
             }
             else {
-                AppContext.isObserver = true;//Now a permenent observer
-                GameContext.gameModel.setModelMemento( event.modelMemento);
-                reset();
+                if( ArrayUtil.contains( playerIdsAcceptedForNextGame, AppContext.playerId)) {  
+                    AppContext.beginToShowInstructionsTime = getTimer();
+                    GameContext.mainLoop.unwindToMode(new ShowMultiPlayerInstructionsMode());
+                }
+                else {
+                    AppContext.isObserver = true;//Now a permenent observer
+                    GameContext.gameModel.setModelMemento( event.modelMemento);
+                    reset();
+                }
             }
             
         }
@@ -347,12 +388,22 @@ package joingame.modes
             modeSprite.setChildIndex( _winnerClip.displayObject, modeSprite.numChildren - 1);
             AudioManager.instance.playSoundNamed("final_applause");
             
-            if(!AppContext.isObserver && AppContext.gameCtrl.isConnected() && GameContext.gameModel.potentialPlayerIds.length > 1) {
-                _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
-                modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
-                
-//                _gameRestartTimer.reset();
-//                _gameRestartTimer.start(); 
+            if( !AppContext.isObserver ) {//Lower the menu for replay or main menu
+                if( AppContext.isSinglePlayer ) {
+                    _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
+                    
+                    _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
+                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
+                    modeSprite.setChildIndex( _replayButton.displayObject, modeSprite.numChildren - 1);
+                    modeSprite.setChildIndex( _singlePlayerMainMenuButton.displayObject, modeSprite.numChildren - 1);
+                }
+                else {//if( GameContext.gameModel.potentialPlayerIds.length > 1) {
+                    _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
+                    modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
+                    
+    //                _gameRestartTimer.reset();
+    //                _gameRestartTimer.start(); 
+                }
             }
         }
         
@@ -382,6 +433,10 @@ package joingame.modes
                 
                 marquee = _id2MarqueeSceneObject.get(id) as SceneObject;
                 
+                if( marquee == null ) {
+                    log.error("No marquee for id=" + id);
+                    continue;
+                }
                 marquee.scaleX = 1.0;
                 marquee.scaleY = 1.0;
                 var marqueeScale :Number = actualBoardWidth / marquee.width as Number;
@@ -444,7 +499,12 @@ package joingame.modes
                 scaleTask = new ScaleTask(headshotScale, headshotScale, animationDuration);
                 moveTask = LocationTask.CreateEaseOut(toX, toY, animationDuration);
                 parallelTask = new ParallelTask( scaleTask, moveTask);
-                headshot.addTask( parallelTask );
+                if( headshot != null) {
+                    headshot.addTask( parallelTask );
+                }
+                else {
+                    log.error("   animateHeadshotsToLocation() headshot null for id=" + id);
+                }
                 
                 currentXPosition +=  actualHeadshotWidth + Constants.GUI_OBSERVER_VIEW_GAP_BETWEEN_HEADSHOTS;
             }
@@ -474,6 +534,9 @@ package joingame.modes
         protected var _restartTimeTextField :TextField;
         protected var _gameRestartTimer :Timer;
         protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
+        
+        protected var _replayButton :SceneObject;
+        protected var _singlePlayerMainMenuButton :SceneObject;
         
     }
 }

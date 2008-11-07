@@ -19,17 +19,28 @@ package
         
         public function JoinGame()
         {
+            Log.setLevel("", Log.INFO);
+//            Log.setLevel(ClassUtil.getClassName(JoinGameBoardsView), Log.DEBUG);
+//            Log.setLevel(ClassUtil.getClassName(SinglePlayerServerPlugin), Log.DEBUG);
+//            Log.setLevel(ClassUtil.getClassName(JoingameServer), Log.DEBUG);
+
+//            Log.setLevel(ClassUtil.getClassName(JoinGameBoardRepresentation), Log.DEBUG);
+//            Log.setLevel(ClassUtil.getClassName(JoinGameBoardGameArea), Log.DEBUG);
+//            Log.setLevel(ClassUtil.getClassName(JoinGameBoardsView), Log.DEBUG);
+            
             GameContext.mainSprite = this;
 
             // setup GameControl
             AppContext.gameCtrl = new GameControl(this, true);
-            AppContext.messageManager = new JoinMessageManagerClient( AppContext.gameCtrl );
+            
             AppContext.isConnected = AppContext.gameCtrl.isConnected();
             
             graphics.clear();
             graphics.beginFill(0);
             graphics.drawRect(0, 0, 700, 500);
             graphics.endFill();
+            
+            
             
             if(!AppContext.isConnected && !Constants.LOCAL_MODE) {
                 log.error("No connection, and it's not local, so poop, I'm leaving");
@@ -38,11 +49,11 @@ package
             
             this.addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
             
-            
-            
             if( Constants.LOCAL_MODE ) { 
                 
-                AppContext.playerId = 1;
+                AppContext.messageManager = new JoinMessageManagerClient();
+                AppContext.useServerAgent = false;
+                AppContext.playerId = 100;
                 
                 AppContext.localServer = new JoingameServer(AppContext.gameCtrl);//AppContext.gameCtrl
                 
@@ -66,12 +77,20 @@ package
                 GameContext.mainLoop.setup();
         
                 AppContext.isMultiplayer = AppContext.gameCtrl.game.seating.getPlayerIds().length > 1;
+                AppContext.useServerAgent = AppContext.isMultiplayer;
+                AppContext.messageManager = new JoinMessageManagerClient( (AppContext.useServerAgent ? AppContext.gameCtrl : null) );
+                
+                if( !AppContext.useServerAgent ) {
+                    AppContext.localServer = new JoingameServer(AppContext.gameCtrl);
+                }
+                
                 AppContext.isObserver = !ArrayUtil.contains(AppContext.gameCtrl.game.seating.getPlayerIds(), AppContext.gameCtrl.game.getMyId());
                 
                 if(AppContext.isObserver) {
                     GameContext.mainLoop.pushMode(new WaitingForPlayerDataModeAsObserver());
                 }
                 else if(AppContext.isMultiplayer) {
+                    GameContext.mainLoop.pushMode(new ShowMultiPlayerInstructionsMode());
                     GameContext.mainLoop.pushMode(new RegisterPlayerMode());
                 }
                 else {
@@ -112,6 +131,7 @@ package
         {
             // stop any sounds, clean up any resources that need it
             GameContext.mainLoop.shutdown();
+            this.removeEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
         }
         
         public static const log :Log = Log.getLog(JoinGame);

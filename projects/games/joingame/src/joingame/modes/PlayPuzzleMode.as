@@ -16,6 +16,7 @@ package joingame.modes
     import com.whirled.contrib.simplegame.tasks.SerialTask;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
+    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
@@ -23,7 +24,10 @@ package joingame.modes
     import joingame.*;
     import joingame.model.*;
     import joingame.net.AddPlayerMessage;
+    import joingame.net.GameOverMessage;
+    import joingame.net.GoToObserverModeMessage;
     import joingame.net.InternalJoinGameEvent;
+    import joingame.net.JoinGameMessage;
     import joingame.view.*;
     
     public class PlayPuzzleMode extends AppMode
@@ -34,34 +38,19 @@ package joingame.modes
          * has already been downloaded to all clients/players.
          * 
          */
-        override protected function setup () :void
+        override protected function enter () :void
         {
             log.debug("PlayPuzzleMode...");
+            /*Start counting progress for coins again */
+            if(AppContext.isConnected) {
+                AppContext.gameCtrl.game.playerReady();
+            }
             
-//            if(!AppContext.isConnected) {
-//                return;
-//            }
+            AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
             var rm :ResourceManager = ResourceManager.instance;
 
-            init();
-        }
-        
-        
-        /** Called when a key is pressed while this mode is active */
-        override public function onKeyDown (keyCode :uint) :void
-        {
-            if( keyCode == KeyboardCodes.A) {
-                trace("Client sending addPlayer message");
-                AppContext.messageManager.sendMessage( new AddPlayerMessage(0, false));
-            }
-            
-        }
-        
-        protected function init() :void
-        {
-            
-//            log.debug("init");
+            //            log.debug("init");
 //            /*Disable the "Request Rematch" button*/
 //            AppContext.gameCtrl.local.setShowReplay(false);
             
@@ -116,35 +105,109 @@ package joingame.modes
                 so.y = 100;
                 addObject( so, modeSprite);
             }
-            placeHeadshotsToStartLocation();
-            animateHeadshotsToLocation();
+//            placeHeadshotsToStartLocation();
+//            animateHeadshotsToLocation();
             
             _modeSprite.mouseEnabled = true;
             
             
             _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl);
-            
             addObject( _boardsView, _modeSprite);
-            _boardsView.updateBoardDisplays();
-            _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
             
             _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
             _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_ADDED, playerAdded);
+            _boardsView.addEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
+            
+            
+            animateHeadshotsToLocation();
+            _boardsView.updateBoardDisplays();
+            _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
+            
             
         }
         
-        /** Called when the mode becomes active on the mode stack */
-        override protected function enter () :void
+        
+        /** Called when a key is pressed while this mode is active */
+        override public function onKeyDown (keyCode :uint) :void
         {
-            /*Start counting progress for coins again */
-            if(AppContext.isConnected) {
-                AppContext.gameCtrl.game.playerReady();
+            if( keyCode == KeyboardCodes.A) {
+                trace("Client sending addPlayer message");
+                AppContext.messageManager.sendMessage( new AddPlayerMessage(0, false, false));
+            }
+            
+        }
+        
+        protected function messageReceived (event :MessageReceivedEvent) :void
+        {
+            log.debug(event.name + " " + JoinGameMessage(event.value).name);
+            if (event.value is GoToObserverModeMessage) {
+                handleGoToObserverMode( GoToObserverModeMessage(event.value) );
             }
         }
         
+        protected function handleGoToObserverMode( event :GoToObserverModeMessage ) :void
+        {
+            if( event.playerId == AppContext.playerId ) {
+                GameContext.mainLoop.unwindToMode(new ObserverMode());
+            }    
+        }
+        
+        protected function handleGameOverFromServerDirect( event :GameOverMessage ) :void
+        {
+            log.error("handleGameOverFromServerDirect() Deprecated!!!!");
+//            trace( ClassUtil.shortClassName(this) + " " + event);
+//            if( AppContext.isSinglePlayer ) {
+//                log.debug("Single Player: Game Over");
+//                if( true || event.toObserverState ) {
+//                    GameContext.mainLoop.unwindToMode(new ObserverMode());    
+//                }
+//                else {
+//                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+//                }
+//            }
+//            else {
+//                log.debug("Multi Player: Game Over");
+//                GameContext.mainLoop.unwindToMode(new ObserverMode());
+//            }
+        }
+        
+        
+        
+        protected function handleGameOver( e :InternalJoinGameEvent ) :void
+        {
+//            trace( ClassUtil.shortClassName(this) + " handleGameOver()");
+            if( AppContext.isSinglePlayer ) {
+                log.debug("Single Player: Game Over");
+                if( GameContext.gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS ) {
+                    GameContext.mainLoop.unwindToMode(new ObserverMode());    
+                }
+                else if(GameContext.gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES) {
+                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+                }
+                else {
+                    log.error("handleGameOver(), but unknown single player game type=" + GameContext.gameModel._singlePlayerGameType);
+                }
+                
+            }
+            else {
+                log.debug("Multi Player: Game Over");
+                GameContext.mainLoop.unwindToMode(new ObserverMode());
+            }
+        }
         protected function playerRemoved( e :InternalJoinGameEvent ) :void
         {
-            if (e.boardPlayerID == AppContext.playerId || _gameModel.currentSeatingOrder.length <= 1) {
+            if( AppContext.isSinglePlayer ) {
+                if( e.boardPlayerID == AppContext.playerId ) {
+                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+                }
+                else {
+                    if( GameContext.gameModel.currentSeatingOrder.length <= 1) {
+                        GameContext.mainLoop.pushMode(new SinglePlayerWaveDefeatedMode());
+//                        GameContext.mainLoop.unwindToMode(new SinglePlayerWaveDefeatedMode());
+                    }
+                }
+            }
+            else if (e.boardPlayerID == AppContext.playerId || _gameModel.currentSeatingOrder.length <= 1) {
 
                     var sim  :SimObject = new SimObject();
                     addObject(sim);
@@ -153,9 +216,8 @@ package joingame.modes
                     
                     sim.addTask( serialTask);
             }
-            else {
-                animateHeadshotsToLocation();
-            }
+            
+            animateHeadshotsToLocation();
         }
         
         protected function playerAdded( e :InternalJoinGameEvent ) :void
@@ -174,13 +236,17 @@ package joingame.modes
         
         override protected function exit() :void 
         {
+            AppContext.messageManager.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            
             log.debug("exiting " + ClassUtil.shortClassName(PlayPuzzleMode));
             if(_boardsView != null) {
                 _boardsView.removeEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
                 _boardsView.removeEventListener(InternalJoinGameEvent.PLAYER_ADDED, playerAdded);
+                _boardsView.removeEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
                 _boardsView.destroySelf();
                 _boardsView = null;
             }
+            //while(modeSprite.numChildren > 0) {modeSprite.removeChildAt(0);}
             super.exit();
         }
         
@@ -188,6 +254,7 @@ package joingame.modes
         
         protected function placeHeadshotsToStartLocation() :void
         {
+            return;
             var headshotIdsAlreadyPlaced :Array = new Array();
             
             var myid :int = AppContext.playerId;
@@ -274,14 +341,43 @@ package joingame.modes
             
             
             
-        }     
+        }
+        
+        protected function checkHeadShotArray() :void
+        {
+            var so :SimpleSceneObject;
+            
+            if( _id2HeadshotSceneObject == null ) {
+                _id2HeadshotSceneObject = new HashMap();
+            }
+            var ids :Array = _gameModel.currentSeatingOrder;
+            for each ( var idWithHeadshot :int in _id2HeadshotSceneObject.keys()) {
+                so = _id2HeadshotSceneObject.get(idWithHeadshot) as SimpleSceneObject;
+                if( !ArrayUtil.contains( ids, idWithHeadshot) && so != null && so.isLiveObject) {
+                    so.destroySelf();
+                }
+            }
+            
+            
+            for each (var id :int in ids) {
+                if( !_id2HeadshotSceneObject.containsKey( id) ) {
+                    var headshot :DisplayObject = GameContext.getHeadshot(id);
+                    so = new SimpleSceneObject(headshot);
+                    _id2HeadshotSceneObject.put(id, so);
+                    so.x = 100;
+                    so.y = 100;
+                    addObject( so, modeSprite);
+                }
+                
+            }
+        } 
         
         protected function animateHeadshotsToLocation() :void
         {
-            
+            checkHeadShotArray();
             var myid :int = AppContext.playerId;
             if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, myid)) {
-                trace("animating headshots but should be in observer mode");
+                log.warning("animating headshots but should be in observer mode");
                 return;
             }
             
@@ -292,6 +388,9 @@ package joingame.modes
             var toY :int;
             /* Animate the centre piece */
             var headshot :SceneObject = _id2HeadshotSceneObject.get( myid ) as SceneObject;
+//            if(headshot == null) {
+//                return;
+//            }
             var scaleTask :ScaleTask = new ScaleTask(1.0, 1.0, Constants.HEADSHOT_MOVEMENT_TIME);
             var moveTask :LocationTask = LocationTask.CreateEaseOut(_playerPlacerMain.x - 40, _playerPlacerMain.y - 30, Constants.HEADSHOT_MOVEMENT_TIME);
             var parallelTask :ParallelTask = new ParallelTask( scaleTask, moveTask);
@@ -448,7 +547,6 @@ package joingame.modes
                 }
             }
             
-            trace("finished animating headshots");   
         }
         
         protected function handleResourceLoadErr (err :String) :void
@@ -482,6 +580,11 @@ package joingame.modes
         {
             GameContext.mainLoop.unwindToMode(new ObserverMode());
         }
+        
+//        protected function startSinglePlayerGameOverMode() :void
+//        {
+//            GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+//        }
         
         protected var allOpponentsView :AllOpponentsView;
         protected var _boardsView :JoinGameBoardsView;

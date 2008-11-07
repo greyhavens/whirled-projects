@@ -60,6 +60,8 @@ package joingame.net
         
         public var alternativeVerticalJion :Boolean;
         
+//        public var goToObserverState :Boolean;
+        
         /**
         * Measures the delay for animating the join, 
         * as succesive searches and joins found should
@@ -111,6 +113,8 @@ package joingame.net
         public static const START_NEW_ANIMATIONS :String = "JoinGame Event: Start New Animations";
         
         public static const DONE_COMPLETE_DELTA :String = "JoinGame Event: Done Complete Delta";
+        
+        public static const START_SINGLE_PLAYER_WAVE :String = "JoinGame Event: Start New Single Player Wave";
         
     }
 }

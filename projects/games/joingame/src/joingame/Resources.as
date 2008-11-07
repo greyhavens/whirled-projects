@@ -49,6 +49,8 @@ package joingame
         public static const BOARD_FREEZING :Class;
         
         
+        [Embed(source="../../rsrc/icon.png", mimeType="application/octet-stream")]
+        public static const IMG_ICON :Class;
         
         
         

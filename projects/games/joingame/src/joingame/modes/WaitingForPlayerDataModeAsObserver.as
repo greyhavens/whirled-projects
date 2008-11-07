@@ -24,15 +24,11 @@ package joingame.modes
      */
     public class WaitingForPlayerDataModeAsObserver extends AppMode
     {
-        protected static var log :Log = AppContext.log;
+        protected static var log :Log = Log.getLog(WaitingForPlayerDataModeAsObserver);
         
         override protected function setup ():void
         {
             log.debug("WaitingForPlayerDataModeAsObserver...");
-            
-//            if( !AppContext.gameCtrl.isConnected() ) {
-//                return;
-//            }
             
             _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             

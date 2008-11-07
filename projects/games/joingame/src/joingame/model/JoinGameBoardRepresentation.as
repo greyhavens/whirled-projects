@@ -1,6 +1,7 @@
 package joingame.model
 {
     import com.threerings.util.ArrayUtil;
+    import com.threerings.util.ClassUtil;
     import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
@@ -27,6 +28,8 @@ package joingame.model
     {
         public function JoinGameBoardRepresentation( playerid :int = -1, ctrl :GameControl = null )//rows:int, cols:int,
         {
+            Log.setLevel(ClassUtil.getClassName(JoinGameBoardRepresentation), Log.WARNING);
+            
             _playerID = playerid;
             
             if(ctrl != null) {
@@ -43,7 +46,8 @@ package joingame.model
             _bottomRowTimer = new Timer(Constants.TIME_UNTIL_DEAD_BOTTOM_ROW_REMOVAL, 1);
             _bottomRowTimer.addEventListener(TimerEvent.TIMER_COMPLETE, timerEnd);
             _lastSwap = [0,0,0,0];
-            _isGettingKnockedOut = false;
+            _state = STATE_ACTIVE;
+//            _isGettingKnockedOut = false;
             
         }
 
@@ -99,6 +103,7 @@ package joingame.model
         {
             _bottomRowTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerEnd);
             _bottomRowTimer.stop();
+            
         }
         
         public function removeRow( row :int ) :void
@@ -209,7 +214,7 @@ package joingame.model
          */
         public function getBoardAsCompactRepresentation(): Array
         {
-            return [_playerID, _rows, _cols, _boardPieceColors.slice(), _boardPieceTypes.slice(), _seed, _numberOfCallsToRandom, _isGettingKnockedOut ? 1 : 0, _isComputerPlayer ? 1 : 0];
+            return [_playerID, _rows, _cols, _boardPieceColors.slice(), _boardPieceTypes.slice(), _seed, _numberOfCallsToRandom, _state, _isComputerPlayer ? 1 : 0, _computerPlayerLevel];
         }
         
 
@@ -584,31 +589,71 @@ package joingame.model
         }    
         
         /**
-        * Returns an array of:
-        * [position index, color] 
+        * This method is too complicated.
         */
         public function getBestJoinLengthAndColorForEachRow() :Array
         {
             var joinLengths :Array = new Array();
-            var joinColors :Array = new Array();
+            var joinColors :Array = new Array(); 
+//            var joinStartAndStopCol :Array = new Array(); 
             
             var row :int;
             var col :int;
+            var color :int;
 //            var col2AvailableColors :HashMap = new HashMap();
             var color2CurrentLongestLength :HashMap = new HashMap();
+            var color2CurrentLength :HashMap = new HashMap();
+            var color2CurrentStart :HashMap = new HashMap();
+            var color2LongestJoinStart :HashMap = new HashMap();
+            var color2CurrentStop :HashMap = new HashMap();
+            var color2LongestStop :HashMap = new HashMap();
+            var bestlength :int;
+            var bestcolor :int;
+            var bestStartCol :int;
+            var bestStopCol :int;
             
-            var currentLongestLength :int;
+//            var currentLongestLength :int;
             for ( row = 0; row < _rows; row++) {
-                color2CurrentLongestLength.clear();
                 
                 for( col = 0; col < _cols; col++) {
                     color2CurrentLongestLength.put( col, 0);
+                    color2CurrentLength.put( col, 0)
                 }
                 
                 for( col = 0; col < _cols; col++) {
                     var colorsAvailable :Array = getAvailableColorsFromLocation(col, row);
-                    
+                    for ( color = 0; color < Constants.PIECE_COLORS_ARRAY.length; color++) {
+                        if( ArrayUtil.contains( colorsAvailable, color)) {
+                            color2CurrentLength.put( color, int(color2CurrentLength.get(color))+1);
+                            color2CurrentLongestLength.put( color, 
+                                Math.max( 
+                                            int(color2CurrentLength.get(color)), 
+                                            int(color2CurrentLongestLength.get(color)) 
+                                        )
+                                );
+                                
+                                               
+                        }
+                        else {
+                            color2CurrentLength.put( color, 0);
+                        }
+                    }
                 }
+                
+                //Now we have the longest possible join for each color in the row.
+                //Just take the first/best color
+                bestcolor = 0;
+                bestlength = int(color2CurrentLongestLength.get( bestcolor ));
+                
+                for( color = 1; color < Constants.PIECE_COLORS_ARRAY.length; color++) {
+                    if( int(color2CurrentLongestLength.get( color )) > bestlength) {
+                        bestcolor = color;
+                        bestlength = int(color2CurrentLongestLength.get( color ));
+                    }
+                }
+                
+                joinColors.push( bestcolor );
+                joinLengths.push( bestlength );
             }
             
             
@@ -1070,14 +1115,15 @@ package joingame.model
             ctrl.net.set(_playerID + DIMENSION_STRING, new Array( _rows, _cols));
             ctrl.net.set(_playerID + SEED_STRING, _seed);
             ctrl.net.set(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING, _numberOfCallsToRandom);
-            ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
-            ctrl.net.set(_playerID + IS_COMPUTER_PLAYER, _isComputerPlayer);
+            ctrl.net.set(_playerID + STATE, _state);
+            ctrl.net.set(_playerID + IS_ROBOT, _isComputerPlayer);
+            ctrl.net.set(_playerID + ROBOT_PLAYER_LEVEL, _computerPlayerLevel);
         }
         
         public function setIntoPropertySpacesWhereDifferent( ctrl :GameControl) :void
         {
             if( !AppContext.isConnected ) {
-                log.error("setIntoPropertySpacesWhereDifferent(), we are not connected.");
+                log.info("setIntoPropertySpacesWhereDifferent(), we are not connected.");
                 return;
             }
             
@@ -1118,14 +1164,19 @@ package joingame.model
                 ctrl.net.set(_playerID + NUMBER_OF_CALLS_TO_RANDOM_STRING, _numberOfCallsToRandom);
             }
             
-            var destroyed :Boolean = ctrl.net.get(_playerID + IS_BEING_DESTROYED) as Boolean;
-            if( destroyed != _isGettingKnockedOut) {
-                ctrl.net.set(_playerID + IS_BEING_DESTROYED, _isGettingKnockedOut);
+            var state :int = ctrl.net.get(_playerID + STATE) as int;
+            if( state != _state) {
+                ctrl.net.set(_playerID + STATE, _state);
             }
             
-            var computerPlayer :Boolean = ctrl.net.get(_playerID + IS_COMPUTER_PLAYER) as Boolean;
+            var computerPlayer :Boolean = ctrl.net.get(_playerID + IS_ROBOT) as Boolean;
             if( computerPlayer != _isComputerPlayer) {
-                ctrl.net.set(_playerID + IS_COMPUTER_PLAYER, _isComputerPlayer);
+                ctrl.net.set(_playerID + IS_ROBOT, _isComputerPlayer);
+            }
+            
+            var robotLevel :int = ctrl.net.get(_playerID + ROBOT_PLAYER_LEVEL) as int;
+            if( robotLevel != _computerPlayerLevel) {
+                ctrl.net.set(_playerID + ROBOT_PLAYER_LEVEL, _computerPlayerLevel);
             }
             
         }
@@ -1150,8 +1201,9 @@ package joingame.model
             _boardPieceTypes = (rep[4] as Array).slice();
             this.randomSeed = int(rep[5]);
             _numberOfCallsToRandom = int(rep[6]);
-            _isGettingKnockedOut = int(rep[7]) == 1;
+            _state = int(rep[7]);
             _isComputerPlayer = int(rep[8]) == 1;
+            _computerPlayerLevel = int(rep[9]);
             
             for(var k:int = 0; k < _numberOfCallsToRandom; k++)
             {
@@ -1176,12 +1228,247 @@ package joingame.model
             {
                 generateRandomPieceColor();
             }
-            _isGettingKnockedOut = ctrl.net.get(_playerID + IS_BEING_DESTROYED) as Boolean;
-            _isComputerPlayer = ctrl.net.get(_playerID + IS_COMPUTER_PLAYER) as Boolean;
+            _state = ctrl.net.get(_playerID + STATE) as int;
+            _isComputerPlayer = ctrl.net.get(_playerID + IS_ROBOT) as Boolean;
+            _computerPlayerLevel = ctrl.net.get(_playerID + ROBOT_PLAYER_LEVEL) as int;
             
             this.dispatchEvent(new InternalJoinGameEvent(_playerID, InternalJoinGameEvent.BOARD_UPDATED));
         }
         
+        public function getActiveRows() :Array
+        {
+            var activeRows :Array = new Array();
+            for( var row :int = 0; row < _rows; row++ ) {
+                if( isRowActive(row) ) {
+                    activeRows.push( row);
+                }
+            }
+            return activeRows;
+        }
+        
+        public function isRowActive( row :int ) :Boolean
+        {
+            for(var col :int = 0; col < _cols; col++) {
+                if( _boardPieceTypes[ coordsToIdx(col, row) ] == Constants.PIECE_TYPE_NORMAL ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public function getDamageForRow( row :int ) :int
+        {
+            var damage :int = 0;
+            for(var col :int = 0; col < _cols; col++) {
+                if( _boardPieceTypes[ coordsToIdx(col, row) ] == Constants.PIECE_TYPE_DEAD ) {
+                    damage++;
+                }
+            }
+            return damage;
+        }
+        
+        /**
+        * Rows are counted from the ground up. (This reverses the interal measure, as these results
+        * are used in between boards, so an objective measure is needed.
+        */
+        public function getRowsAndDamage() :HashMap
+        {
+            var rowsAndDamage :HashMap = new HashMap();
+            
+            for( var row :int = 0; row < _rows; row++ ) {
+                var damage :int = getDamageForRow( row );
+                rowsAndDamage.put( row, damage );
+            }
+//            rowsAndDamage.sort( damageSort );
+//            
+//            function damageSort(a :Array, b :Array) :int 
+//            {
+//                if( int(a[1]) > int(b[1]) ) {
+//                    return -1;
+//                }
+//                else if( int(a[1]) < int(b[1]) ) {
+//                    return 1;
+//                }
+//                else {
+//                    return 0
+//                }
+//            }
+            
+            
+            return rowsAndDamage;
+        }
+        
+        
+        /**
+         * This is the main role of the server: checking the validity of moves
+         * to prevent cheating.  Only valid moves are returned approved.
+         */
+        public function isLegalMove( fromIndex:int, toIndex:int): Boolean
+        {
+            if( _state > STATE_ACTIVE ) {
+                return false;
+            }
+            //Make sure the pieces are in the same column
+            var i:int = idxToX(fromIndex);
+            if(i < 0 || i != idxToX(toIndex) )
+            {
+                log.debug("  isLegalMove(), pieces not in same column");
+                return false;
+            }
+            
+            //And finally check that both pieces are valid, and all the inbetween pieces.
+            for(var j:int =  Math.min( idxToY( fromIndex), idxToY(toIndex)); j <=  Math.max( idxToY(fromIndex), idxToY(toIndex)); j++)
+            {
+                if( _boardPieceTypes[ coordsToIdx( i, j)] != Constants.PIECE_TYPE_NORMAL)
+                {
+                    return false;    
+                }
+            }
+            return true;
+        }
+        
+        
+        public function isColumnContainsColor( col :int, color :int) :Boolean
+        {
+            for( var j :int = 0; j < _rows; j++) {
+                if( _boardPieceTypes[ coordsToIdx( col, j) ] == Constants.PIECE_TYPE_NORMAL &&
+                    _boardPieceColors[ coordsToIdx( col, j) ] == color) {
+                        return true;
+                }
+            }
+            return false;
+        }
+        
+        public function getHorizontallyClosestPieceIndexWithColor( xLoc :int, yLoc :int, color :int) :int
+        {
+            var index :int;
+            var j :int;
+             
+            for( j = yLoc + 1; j < _rows; j++) {
+                index = coordsToIdx( xLoc, j);
+                if( index > -1) {
+                    if( _boardPieceTypes[ index ] != Constants.PIECE_TYPE_NORMAL) {
+                        break;
+                    }
+                    if( _boardPieceColors[ index ] == color) {
+                            return index;
+                    }
+                }
+            }
+            
+            for( j = yLoc - 1; j >= 0; j--) {
+                index = coordsToIdx( xLoc, j);
+                if( index > -1) {
+                    if( _boardPieceTypes[ index ] != Constants.PIECE_TYPE_NORMAL) {
+                        break;
+                    }
+                    if( _boardPieceColors[ index ] == color) {
+                            return index;
+                    }
+                }
+            }
+            
+            return -1;
+            
+//            
+//            var closestRow :int = -1;
+////            var j :int;
+//            var index :int;
+//            
+//            //Look up
+//            for( j = yLoc - 1; j >= 0; j--) {
+//                index = coordsToIdx( xLoc, j);
+//                if( _boardPieceTypes[ index ] == Constants.PIECE_TYPE_NORMAL) {
+//                    if( _boardPieceColors[ index ] == color) {
+//                        closestRow = j;
+//                        break;
+//                    }
+//                }
+//                else {
+//                    break;
+//                }
+//            }
+//            
+//            //Look up
+//            for( j = yLoc + 1; j < _rows; j++) {
+//                index = coordsToIdx( xLoc, j);
+//                if( _boardPieceTypes[ index ] == Constants.PIECE_TYPE_NORMAL) {
+//                    if( _boardPieceColors[ index ] == color) {
+//                        closestRow = j;
+//                        break;
+//                    }
+//                }
+//                else {
+//                    break;
+//                }
+//            }
+//            
+//            return -1;
+//            
+//            
+//            
+//            var up :Boolean = true;
+//            
+//            var currentRow :int;
+//            
+//            
+//            
+//            var canGoUp :Boolean = true;
+//            var canGoDown :Boolean = true;
+//            
+//            
+//            
+//            
+//            
+//            
+//            for( var modifier :int = 0; modifier < _rows; modifier++) {
+//                
+//                //Up
+//                if( canGoUp ) {
+//                    currentRow = yLoc - modifier;
+//                    if( currentRow >= 0 && currentRow < _rows) {
+//                        index = coordsToIdx( xLoc, yLoc - modifier);
+//                        if( _boardPieceTypes[ index ] == Constants.PIECE_TYPE_NORMAL) {
+//                            if( _boardPieceColors[ index ] == color) {
+//                                return index;
+//                            }
+//                        }
+//                        else {
+//                            canGoUp = false;
+//                        }
+//                    }
+//                }
+//                else if(canGoDown) {
+//                    currentRow = yLoc + modifier;
+//                    if( currentRow >= 0 && currentRow < _rows) {
+//                        index = coordsToIdx( xLoc, yLoc + modifier);
+//                        if( _boardPieceTypes[ index ] == Constants.PIECE_TYPE_NORMAL) {
+//                            if( _boardPieceColors[ index ] == color) {
+//                                return index;
+//                            }
+//                        }
+//                        else {
+//                            canGoDown = false;
+//                        }
+//                    }
+//                }
+//                
+//            }
+//            
+//            return -1;
+        }
+        public function getRowWithTheMostDamage() :int
+        {
+            var mostDamagedRow :int = -1;
+            var mostDamage :int = 0;
+            for( var row :int = 0; row < _rows; row++ ) {
+                var damage :int = getDamageForRow( row );
+                if( damage > mostDamage ) {
+                    mostDamage = damage;
+                    mostDamagedRow = row;
+                }
+            }
+            return mostDamagedRow;
+        }
         
         
         public static const COLORS_STRING: String = "Colors";
@@ -1189,8 +1476,9 @@ package joingame.model
         public static const DIMENSION_STRING: String = "Dimension";
         public static const SEED_STRING: String = "Seed";
         public static const NUMBER_OF_CALLS_TO_RANDOM_STRING: String = "CallsToRandom";
-        public static const IS_BEING_DESTROYED: String = "IsDestroyed";
-        public static const IS_COMPUTER_PLAYER: String = "IsComputer";
+        public static const STATE: String = "State";
+        public static const IS_ROBOT: String = "IsRobot";
+        public static const ROBOT_PLAYER_LEVEL: String = "RobotLevel";
         
             
         public var _boardPieceColors :Array;
@@ -1210,10 +1498,23 @@ package joingame.model
         public var _numberOfCallsToRandom: int;
         
         public var _isComputerPlayer: Boolean;
+        public var _computerPlayerLevel: int;
+        
+        /** This counts from the bottom (0) up*/
+        public var currentPotentialJoinRowCountingFromBottom: int;
+        public var currentPotentialJoinColor: int;
+        public var currentPotentialJoinLength: int;
+        public var changeCurrentPotentialJoin: Boolean = true;
+        
         
         
         /** There is a slight delay between being destroyed and the next player replacement */  
-        public var _isGettingKnockedOut :Boolean;
+//        public var _isGettingKnockedOut :Boolean;
+        public var _state :int;
+        
+        public static const STATE_ACTIVE :int = 0;
+        public static const STATE_GETTING_KNOCKED_OUT :int = 1;
+        public static const STATE_REMOVED :int = 2;
         
         private static const log :Log = Log.getLog(JoinGameBoardRepresentation);
 

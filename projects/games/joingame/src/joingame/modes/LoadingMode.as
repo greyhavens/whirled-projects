@@ -17,7 +17,7 @@ package joingame.modes
 public class LoadingMode extends AppMode
 {
     
-    protected static var log :Log = AppContext.log;
+    private static const log :Log = Log.getLog(LoadingMode);
     
     override protected function setup () :void
     {
@@ -63,6 +63,7 @@ public class LoadingMode extends AppMode
         rm.queueResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
         rm.queueResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
         rm.queueResourceLoad("image", "INSTRUCTIONS",  { embeddedClass: Resources.IMG_INSTRUCTIONS_WHILE_LOADING });
+        rm.queueResourceLoad("image", "ICON",  { embeddedClass: Resources.IMG_ICON });
         
         // sfx
         rm.queueResourceLoad("sound", "piece_move", { embeddedClass: Resources.BLOCK_MOVE, volume: 0.5, priority: 10 });

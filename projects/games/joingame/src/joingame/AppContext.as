@@ -28,9 +28,16 @@ public class AppContext
     
     public static var isConnected :Boolean;
     
+    public static var useServerAgent :Boolean;
+    
     public static var isMultiplayer :Boolean;
     
-    public static var log :Log = Log.getLog(AppContext);
+    public static function get isSinglePlayer() :Boolean
+    {
+        return !isMultiplayer;
+    }
+    
+//    public static var log :Log = Log.getLog(AppContext);
     
     
 //    public static var globalPlayerStats :PlayerStats;
@@ -78,10 +85,10 @@ public class AppContext
     /**
     * Convenience function, saves typing.
     */
-    public static function get myid() :int 
-    {
-        return gameCtrl.game.getMyId();
-    }
+//    public static function get myid() :int 
+//    {
+//        return gameCtrl.game.getMyId();
+//    }
     
     public static var isObserver :Boolean;
     

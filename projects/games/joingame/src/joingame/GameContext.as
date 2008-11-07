@@ -6,7 +6,9 @@ import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.text.TextField;
@@ -106,7 +108,7 @@ public class GameContext
             return _headshots.get(playerid) as DisplayObject;
         }
         else {
-            var headshot :DisplayObject = AppContext.isConnected ? 
+            var headshot :DisplayObject = AppContext.isConnected && playerid > 0 ? 
                                     AppContext.gameCtrl.local.getHeadShot( playerid) :
                                     null;
             if(headshot != null) {
@@ -115,21 +117,40 @@ public class GameContext
             }
             else {
                 var dummyHeadShot :Sprite = new Sprite();
-                dummyHeadShot.graphics.beginFill(0xffffff);
-                dummyHeadShot.graphics.drawRect(0,0,80,60);
-                dummyHeadShot.graphics.endFill();
-                dummyHeadShot.graphics.lineStyle(2, 0x000000);
-                dummyHeadShot.graphics.drawRect(0,0,78,58);
-                
+                var icon :Bitmap = ImageResource.instantiateBitmap("ICON");
                 var txt:TextField = new TextField();
-                txt.width = 30;
-                txt.height = 20;
-                txt.scaleX = 3;
-                txt.scaleY = 3;
-                txt.text = "" + playerid;
-                txt.x = 40 - Math.round(txt.width/2);
-                txt.y = 30 - Math.round(txt.height/2);
                 
+                if(playerid < 0) {
+                    dummyHeadShot.addChild(icon);
+                    txt.textColor = 0xffffff;
+    //                txt.backgroundColor = 0xffffff;
+    //                txt.background = true;
+                    txt.width = 30;
+                    txt.height = 20;
+                    txt.scaleX = 5;
+                    txt.scaleY = 5;
+    //                txt.text = "" + Math.abs(playerid) +" " + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
+//                    txt.text = "" + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
+                    txt.text = "" + playerid;
+    //                txt.text = "" + 12;
+                    if( txt.text.length == 1) {
+                        txt.text = " " + txt.text;
+                    }
+                    else { 
+                           txt.text = "" + txt.text;
+                    }
+    //                txt.x = 40 - Math.round(txt.width/2);
+    //                txt.y = 30 //- Math.round(txt.height/2);
+                }
+                else {
+                    txt.textColor = 0xffffff;
+                    txt.width = 60;
+                    txt.height = 20;
+                    txt.scaleX = 2;
+                    txt.scaleY = 2;
+    //                txt.text = "" + Math.abs(playerid) +" " + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
+                    txt.text = "Player";
+                }
                 dummyHeadShot.addChild(txt);
                 
                 _headshots.put(playerid, dummyHeadShot);
@@ -165,21 +186,6 @@ public class GameContext
     public static function playGameMusic (musicName :String) :AudioChannel
     {
         return (playAudio ? AudioManager.instance.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER) : new AudioChannel());
-    }
-    
-    
-    public static function LOG(s: String): void
-    {
-        if(AppContext.gameCtrl != null && AppContext.gameCtrl.local != null && AppContext.gameCtrl.net.isConnected())
-        {
-//            AppContext.gameCtrl.local.feedback(s);
-            AppContext.gameCtrl.game.systemMessage(s);
-        }
-        else
-        {
-            trace(s);
-        
-        }
     }
 }
 

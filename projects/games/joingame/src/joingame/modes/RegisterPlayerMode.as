@@ -17,6 +17,7 @@ package joingame.modes
     
     import joingame.*;
     import joingame.model.*;
+    import joingame.net.JoinGameMessage;
     import joingame.net.RegisterPlayerMessage;
     import joingame.net.ReplayConfirmMessage;
     import joingame.view.*;
@@ -28,15 +29,11 @@ package joingame.modes
      */
     public class RegisterPlayerMode extends AppMode
     {
-        protected static var log :Log = AppContext.log;
+        protected static var log :Log = Log.getLog(RegisterPlayerMode);
         
-        override protected function setup ():void
+        override protected function enter ():void
         {
             log.debug("RegisterPlayerMode...");
-            
-            if( !AppContext.isConnected ) {
-                return;
-            }
             
             _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             if(_bg != null) {
@@ -57,7 +54,8 @@ package joingame.modes
             _text.text = "Saying hello\nto the JoingameServer...";
     
             this.modeSprite.addChild(_text);
-            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+//            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             
             AppContext.beginToShowInstructionsTime = getTimer();
             
@@ -71,19 +69,40 @@ package joingame.modes
         
         protected function tryAgain( e :TimerEvent ) :void
         {
-            if( AppContext.gameCtrl.isConnected()) {
+//            if( AppContext.gameCtrl.isConnected()) {
                 AppContext.messageManager.sendMessage(new RegisterPlayerMessage(AppContext.playerId));
+//            }
+//            else {
+//                //quit game
+//            }
+        }
+        
+        /** Respond to messages from other clients. */
+        public function messageReceived (event :MessageReceivedEvent) :void
+        {
+            log.debug(event.name + " " + JoinGameMessage(event.value).name);
+            if (event.value is ReplayConfirmMessage) {
+                handleReplayConfirm( ReplayConfirmMessage(event.value) );
             }
-            else {
-                //quit game
-            }
+//            if (event.value is StartPlayMessage) {
+//                handleReplayConfirm( StartPlayMessage(event.value) );
+//            }
+            
         }
         
         /** Respond to messages from other clients. */
         public function handleReplayConfirm (event :ReplayConfirmMessage) :void
         {
-            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
-            GameContext.mainLoop.unwindToMode(new WaitingForPlayerDataModeAsPlayer());
+            if( GameContext.gameModel != null ) {
+                GameContext.gameModel.destroy();
+            }
+            GameContext.gameModel = new JoinGameModel(AppContext.gameCtrl);
+            GameContext.gameModel.setModelMemento( event.modelMemento );
+            
+//            GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());
+//            AppContext.messageManager.sendMessage( new PlayerReceivedGameStateMessage( AppContext.playerId));
+//            AppContext.messageManager.removeEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
+            GameContext.mainLoop.popMode();
         }
         
         

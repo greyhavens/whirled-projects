@@ -160,6 +160,7 @@ package joingame.view
         
         public function doBoardDistructionAnimation() :void
         {
+            log.debug("doBoardDistructionAnimation()");
             var piece :JoinGamePiece;
             var k :int;
             _updating = true;
@@ -301,6 +302,12 @@ package joingame.view
             this.addTask( serialAnimation );
         }
         
+        
+        override protected function update(dt:Number):void
+        {
+            super.update(dt);
+//            trace("board " + _boardRepresentation.playerID + " updated, currentSeatingOrder=" + GameContext.gameModel.currentSeatingOrder);
+        }
         override public function destroySelf():void
         {
 //            _updateTimer.removeEventListener(TimerEvent.TIMER, checkAndUpdateBoardState);
@@ -326,6 +333,7 @@ package joingame.view
             _updateTimer.stop();
             
             super.destroySelf();
+            removeAllTasks();
         }
         
         public function doBoardEnterFromSideAnimation( fromDirection :int) :void
@@ -407,7 +415,7 @@ package joingame.view
 //                }
 //            }
 //            if(isDeadBottomRow) {
-//                AppContext.log.debug("animating bottom wobble");
+//                log.debug("animating bottom wobble");
 //                for(i = 0; i < _cols; i++) {
 //                    piece = getPieceAt( i, _rows - 1);
 //                    if(piece != null && piece.type != Constants.PIECE_TYPE_INACTIVE) {
@@ -434,7 +442,7 @@ package joingame.view
         /** Respond to messages from other clients. */
         protected function boardChanged (event :InternalJoinGameEvent) :void
         {
-            AppContext.log.debug("DEPRECATED, should not be called, BoardUpdateEvent: Board updated, so updating display");
+            log.debug("DEPRECATED, should not be called, BoardUpdateEvent: Board updated, so updating display");
             updatePieceDimensionsAndCoordinatesAndAddPiecesIfNecessaryOLD();            
         }
         
@@ -448,11 +456,11 @@ package joingame.view
         public function getPieceYLoc (yCoord :int) :int
         {
             var gapBetweenTopOfPuzzleAndTopOfBoardSprite :int = Constants.MAX_PUZZLE_HEIGHT - (_rows * Constants.PUZZLE_TILE_SIZE);
-//            AppContext.log.debug("_sprite.height="+_sprite.height);
-//            AppContext.log.debug("_rows="+_rows);
-//            AppContext.log.debug("_tileSize="+_tileSize);
-//            AppContext.log.debug("gapBetweenTopOfPuzzleAndTopOfBoardSprite="+gapBetweenTopOfPuzzleAndTopOfBoardSprite);
-//            AppContext.log.debug("for yCoord="+yCoord+", Yloc="+ (yCoord * _tileSize + gapBetweenTopOfPuzzleAndTopOfBoardSprite) );
+//            log.debug("_sprite.height="+_sprite.height);
+//            log.debug("_rows="+_rows);
+//            log.debug("_tileSize="+_tileSize);
+//            log.debug("gapBetweenTopOfPuzzleAndTopOfBoardSprite="+gapBetweenTopOfPuzzleAndTopOfBoardSprite);
+//            log.debug("for yCoord="+yCoord+", Yloc="+ (yCoord * _tileSize + gapBetweenTopOfPuzzleAndTopOfBoardSprite) );
             return yCoord * Constants.PUZZLE_TILE_SIZE + gapBetweenTopOfPuzzleAndTopOfBoardSprite ;// + Constants.PUZZLE_TILE_SIZE * 0.5;
             
 //            return yCoord * _tileSize;
@@ -477,7 +485,7 @@ package joingame.view
         
         public function updatePieceDimensionsAndCoordinatesAndAddPiecesIfNecessaryOLD(): void
         {
-//            AppContext.log.debug("\nupdatePieceDimensionsAndCoordinatesAndAddPiecesIfNecessary()\n ");
+//            log.debug("\nupdatePieceDimensionsAndCoordinatesAndAddPiecesIfNecessary()\n ");
 //            removeAllBoardComponents();
             
             if(_boardRepresentation == null)
@@ -517,7 +525,7 @@ package joingame.view
                 
                 piece.x = getPieceXLoc(  _boardRepresentation.idxToX(k));
                 piece.y = getPieceYLoc(  _boardRepresentation.idxToY(k));
-//                AppContext.log.debug(" piece color="+piece.color + ", x="+piece.x + ", piece.y="+piece.x + ", size="+piece.size);
+//                log.debug(" piece color="+piece.color + ", x="+piece.x + ", piece.y="+piece.x + ", size="+piece.size);
             }
             
 //            
@@ -532,11 +540,11 @@ package joingame.view
         
         public function updateNumberOfPieceBackgrounds(newPiecesVisible :Boolean = true) :void
         {
-            AppContext.log.debug("updatePieceBackgrounds");
+            log.debug("updatePieceBackgrounds");
             var backgroundMovie :MovieClip;
             var backgroundSprite :Sprite;
             
-            if( _boardRepresentation.playerID <= 0) {
+            if( _boardRepresentation.playerID == 0) {
                 return;
             }
             
@@ -695,7 +703,7 @@ package joingame.view
 ////                    
 ////                    }
 ////                    else {
-////                        AppContext.log.debug(" no db for adding the piece");
+////                        log.debug(" no db for adding the piece");
 ////                    }
 //                    
 //                }
@@ -723,9 +731,9 @@ package joingame.view
                 
         protected function mouseClicked (e :MouseEvent) :void
         {
-//            AppContext.log.debug("\nmouseClicked");
+//            log.debug("\nmouseClicked");
 //            AppContext.gameCtrl.game.systemMessage
-//            AppContext.log.debug("mouseclicked, width, height=" + this.width + ", " + this.height);
+//            log.debug("mouseclicked, width, height=" + this.width + ", " + this.height);
             
 //            _boardRepresentation.playerID = _control.game.getMyId();
 //            AppContext.gameCtrl.net.sendMessageToAgent(JoingameServer.BOARD_UPDATE_REQUEST,  {});
@@ -756,8 +764,8 @@ package joingame.view
 //                AppContext.gameCtrl.game.systemMessage("mouse clicked raw mouse (" + e.localX + ", " + e.localY + ")\nadjusted mouse (" + mouseIndexX + ", " + mouseIndexY + ")");
             
 //                        
-//                AppContext.log.debug("mouseclicked, coords=" + mouseIndexX + ", " + mouseIndexY);
-//                AppContext.log.debug("_selectedPiece = (" + _selectedPiece.x + ", " + _selectedPiece.y + ")");
+//                log.debug("mouseclicked, coords=" + mouseIndexX + ", " + mouseIndexY);
+//                log.debug("_selectedPiece = (" + _selectedPiece.x + ", " + _selectedPiece.y + ")");
                 var row:int = _boardRepresentation.idxToX( _selectedPiece.boardIndex);
                 var pieceToSwap:JoinGamePiece = getPieceAt(row, mouseIndexY);
                 
@@ -767,30 +775,30 @@ package joingame.view
                 var highestY :int = getPieceYLoc( idxToY(lowestPiece.boardIndex)) ;
                 var barHeight :int = highestY - lowestY;
                 
-//                AppContext.log.debug("_selectedPiece=" + _selectedPiece);
-//                AppContext.log.debug("before check: pieceToSwap=" + pieceToSwap);
+//                log.debug("_selectedPiece=" + _selectedPiece);
+//                log.debug("before check: pieceToSwap=" + pieceToSwap);
 //                
-//                AppContext.log.debug("before check: highestPiece=" + highestPiece);
-//                AppContext.log.debug("before check: lowestY=" + lowestY);
-//                AppContext.log.debug("before check: lowestPiece=" + lowestPiece);
-//                AppContext.log.debug("before check: highestY=" + highestY);
+//                log.debug("before check: highestPiece=" + highestPiece);
+//                log.debug("before check: lowestY=" + lowestY);
+//                log.debug("before check: lowestPiece=" + lowestPiece);
+//                log.debug("before check: highestY=" + highestY);
                 
                 if( _selectedPiece.y <= lowestY){
                     _selectedPiece.y = lowestY;
                     pieceToSwap = highestPiece;
-//                    AppContext.log.debug("swapping swap and highest");
+//                    log.debug("swapping swap and highest");
                 }
                 else if( _selectedPiece.y >= highestY){
                     _selectedPiece.y = highestY;
                     pieceToSwap = lowestPiece;
-//                    AppContext.log.debug("swapping swap and lowest");
+//                    log.debug("swapping swap and lowest");
                 }
                 
-//                AppContext.log.debug("after check: highestPiece=" + highestPiece);
-//                AppContext.log.debug("after check: lowestPiece=" + lowestPiece);
+//                log.debug("after check: highestPiece=" + highestPiece);
+//                log.debug("after check: lowestPiece=" + lowestPiece);
 //                   
 //                   
-//                AppContext.log.debug("after check: pieceToSwap=" + pieceToSwap);
+//                log.debug("after check: pieceToSwap=" + pieceToSwap);
                  
                 /* For improved speed perception, the piece is swapped even though it may not be 
                 legal */
@@ -806,7 +814,7 @@ package joingame.view
             }
             else
             {
-//                AppContext.log.debug("selected piece is null");
+//                log.debug("selected piece is null");
             }
         }
         
@@ -837,7 +845,7 @@ package joingame.view
                     _boardRepresentation.idxToY(target.boardIndex)
                 ));
 //                _control.net.agent.sendMessage(JoingameServer.BOARD_DELTA_REQUEST, msg);
-//                AppContext.log.debug("client requesting move " + from + " -> " + target );
+//                log.debug("client requesting move " + from + " -> " + target );
             }
             else
             {
@@ -885,8 +893,8 @@ package joingame.view
                     return;
                 }
             }
-//            AppContext.log.debug("resetPositionOfPiecesNotMoving( timer)");
-//            AppContext.log.debug("****Updating piece positions");
+//            log.debug("resetPositionOfPiecesNotMoving( timer)");
+//            log.debug("****Updating piece positions");
             var selectedPieceCol :int = -1;
             if(_selectedPiece != null) {
                 selectedPieceCol = idxToX( _selectedPiece.boardIndex);
@@ -912,7 +920,7 @@ package joingame.view
         
         public function resetPositionOfPieces() :void
         {
-//            AppContext.log.debug("resetPositionOfPieces()");
+//            log.debug("resetPositionOfPieces()");
             for each (var piece :JoinGamePiece in _boardPieces) {
                 if(piece != null) {
 //                    piece.removeAllTasks();
@@ -936,15 +944,15 @@ package joingame.view
             var mouseIndexX :int = ((e.localX) / (_tileSize));
 //            var mouseIndexY :int = ((e.localY) / (_tileSize ));
             var mouseIndexY :int = getYRelativeToPuzzleArea(e.localY);
-//            AppContext.log.debug("raw mouse (" + e.localX + ", " + e.localY + ")");
+//            log.debug("raw mouse (" + e.localX + ", " + e.localY + ")");
             /* Adjust mouse for difference between board sprite and puzzle height */
 //            var gapBetweenTopOfPuzzleAndTopOfBoardSprite :int = _sprite.height - (_rows * _tileSize);
 //            mouseIndexY = (e.localY - gapBetweenTopOfPuzzleAndTopOfBoardSprite) / _tileSize;
                 
-//            AppContext.log.debug("adjusted mouse (" + mouseIndexX + ", " + mouseIndexY + ")");
+//            log.debug("adjusted mouse (" + mouseIndexX + ", " + mouseIndexY + ")");
 //            AppContext.gameCtrl.game.systemMessage("raw mouse (" + e.localX + ", " + e.localY + ")\nadjusted mouse (" + mouseIndexX + ", " + mouseIndexY + ")");
             var row :int;
-//            AppContext.log.debug(" mouse move " + mouseIndexX + ", " + mouseIndexY);
+//            log.debug(" mouse move " + mouseIndexX + ", " + mouseIndexY);
 //            AppContext.gameCtrl.game.systemMessage(" mouseMove local=(" + e.localX + ", " + e.localY + "), " + mouseIndexX + ", " + mouseIndexY);
             
                 if(_selectedPiece != null)
@@ -999,7 +1007,7 @@ package joingame.view
                         
                         if(_mostRecentSwappedPiece == pieceToSwap)
                         {
-//                            AppContext.log.debug("We have already swapped that piece. WTF is this doing");
+//                            log.debug("We have already swapped that piece. WTF is this doing");
                             return;
                         }
                         addTask(new PlaySoundTask("piece_move"));
@@ -1013,7 +1021,7 @@ package joingame.view
 //                        var wasSwaps:Boolean = false;
                         var currentSelectedPieceY :int = _selectedPiece.y;
                         movePieceToLocationAndShufflePieces(idxToX(_selectedPiece.boardIndex), idxToY(_selectedPiece.boardIndex), idxToX(pieceToSwap.boardIndex), idxToY(pieceToSwap.boardIndex), false);
-//                        AppContext.log.debug("view after move and shuffle " + toString() );
+//                        log.debug("view after move and shuffle " + toString() );
                         _selectedPiece.y = currentSelectedPieceY;
                         
                         
@@ -1203,7 +1211,7 @@ package joingame.view
          */
         protected function shufflePieceToLocation(pieceX :int, pieceY :int, locX :int, locY :int) :void
         {
-            AppContext.log.debug("Function deprecated, shufflePieceToLocation()!!!!!");
+            log.debug("Function deprecated, shufflePieceToLocation()!!!!!");
 //            if( pieceX == locX || pieceY == locY)
 //            {
 //                return;
@@ -1227,7 +1235,7 @@ package joingame.view
         
 //        public function movePieceToLocationAndShufflePiecesOLDDELETE(index1 :int, index2 :int) :void
 //        {
-//            AppContext.log.debug("Function deprecated, movePieceToLocationAndShufflePiecesOLDDELETE()!!!!!");
+//            log.debug("Function deprecated, movePieceToLocationAndShufflePiecesOLDDELETE()!!!!!");
 //            
 ////            var px1 :int = idxToX(index1);
 ////            var py1 :int = idxToY(index1);
@@ -1260,10 +1268,10 @@ package joingame.view
         public function movePieceToLocationAndShufflePieces(px1 :int, py1 :int, px2 :int, py2 :int, changeIndex :Boolean = true) :void
         {
             if( px1 != px2){
-                AppContext.log.debug("movePieceToLocationAndShufflePieces, pieces in idfferent rows, doing nothing");
+                log.debug("movePieceToLocationAndShufflePieces, pieces in idfferent rows, doing nothing");
                 return;
             }
-//            AppContext.log.debug("movePieceToLocationAndShufflePieces( " + index1 + ", " + index2 + ")");
+//            log.debug("movePieceToLocationAndShufflePieces( " + index1 + ", " + index2 + ")");
 //            var px1 :int = idxToX(index1);
 //            var py1 :int = idxToY(index1);
 //            var py2 :int = idxToY(index2);
@@ -1271,7 +1279,7 @@ package joingame.view
             var j :int;
             if(py1 == py2)
             {
-                AppContext.log.debug("movePieceToLocationAndShufflePieces, y coords same, doing nothing");
+                log.debug("movePieceToLocationAndShufflePieces, y coords same, doing nothing");
                 return;    
             }
             
@@ -1286,10 +1294,10 @@ package joingame.view
 //            setChildIndex( (_boardPieces[index1] as JoinGamePiece).displayObject, numChildren - 1);
             
             
-//            AppContext.log.debug("Before moving, Selected piece.y="+(_boardPieces[index1] as JoinGamePiece).y);
+//            log.debug("Before moving, Selected piece.y="+(_boardPieces[index1] as JoinGamePiece).y);
             if( _boardPieces[coordsToIdx(px1, py1)] != null) {
                 (_boardPieces[coordsToIdx(px1, py1)] as JoinGamePiece).y = getPieceYLoc( idxToY(coordsToIdx(px1, py2)));
-    //            AppContext.log.debug("Setting selected piece.y="+(_boardPieces[index1] as JoinGamePiece).y);
+    //            log.debug("Setting selected piece.y="+(_boardPieces[index1] as JoinGamePiece).y);
                 if(changeIndex){
                     (_boardPieces[coordsToIdx(px1, py1)] as JoinGamePiece).boardIndex = coordsToIdx(px2, py2);
                 }
@@ -1301,7 +1309,7 @@ package joingame.view
             var increment:int = py1 < py2 ? 1 : -1;
             //Swap up or down, depending on the relative position of the pieces.
             for( j = py1 + increment; py1 > py2 ? j >= py2 : j <= py2 ; j+= increment) {
-//                AppContext.log.debug("changing piece (" + px1 + ", " + j + "), index=" + getPieceAt(px1, j).boardIndex);
+//                log.debug("changing piece (" + px1 + ", " + j + "), index=" + getPieceAt(px1, j).boardIndex);
                 if( getPieceAt(px1, j) != null){
                     getPieceAt(px1, j).y = getPieceYLoc( idxToY( coordsToIdx(px1, j - increment)));
                     
@@ -1309,7 +1317,7 @@ package joingame.view
                         getPieceAt(px1, j).boardIndex = coordsToIdx(px1, j - increment);
                     }
                 }
-//                AppContext.log.debug("setting y=" + getPieceAt(px1, j).y);
+//                log.debug("setting y=" + getPieceAt(px1, j).y);
 //                piece.y = getPieceYLoc(  _boardRepresentation.idxToY(k));
             }
             
@@ -1407,7 +1415,7 @@ package joingame.view
             }
             else {//How does this happen
                 
-                AppContext.log.debug("\nNot sure about this, mouse down, but we already have a selected piece.  Resetting positions just to be sure.");
+                log.debug("\nNot sure about this, mouse down, but we already have a selected piece.  Resetting positions just to be sure.");
                 
                 col = idxToX( _selectedPiece.boardIndex);
                 for( j  = 0; j < _rows; j++){
@@ -1528,7 +1536,7 @@ package joingame.view
         public function addPieceAtPosition(i :int, j :int, type :int, color :int) :JoinGamePiece
         {
             if( getPieceAt(i, j) != null){
-                AppContext.log.debug("adding a piece to (" + i + ", " + j + "), but a piece already exists="+getPieceAt(i, j) );
+                log.debug("adding a piece to (" + i + ", " + j + "), but a piece already exists="+getPieceAt(i, j) );
                 _boardPieces[ coordsToIdx(i, j) ] = null;
             }
             
@@ -1550,7 +1558,7 @@ package joingame.view
                 _sprite.setChildIndex( piece.displayObject, 1);
             }
             else {
-                AppContext.log.debug(" no db for adding the piece");
+                log.debug(" no db for adding the piece");
             }
             
             
@@ -1596,7 +1604,7 @@ package joingame.view
                     if(piece.type != _boardRepresentation._boardPieceTypes[k] || piece.color != _boardRepresentation._boardPieceColors[k]){
                         
                         
-                        AppContext.log.debug("view != model: " + _boardRepresentation + this);
+                        log.debug("view != model: " + _boardRepresentation + this);
                         
                         return false;
                     }
@@ -1709,7 +1717,7 @@ package joingame.view
         
         public function removePieceTasksAndSetCorrectLocations() :void
         {
-            AppContext.log.debug("removePieceTasksAndSetCorrectLocations()");
+            log.debug("removePieceTasksAndSetCorrectLocations()");
             var selectedPieceCol :int = -1;
             
             for each (var piece :JoinGamePiece in _boardPieces) {

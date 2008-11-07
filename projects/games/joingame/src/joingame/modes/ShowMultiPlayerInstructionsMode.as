@@ -7,6 +7,7 @@ package joingame.modes
     import com.whirled.contrib.simplegame.resource.*;
     import com.whirled.contrib.simplegame.util.*;
     import com.whirled.game.*;
+    import com.whirled.net.MessageReceivedEvent;
     
     import flash.display.DisplayObject;
     import flash.events.TimerEvent;
@@ -17,6 +18,7 @@ package joingame.modes
     import joingame.*;
     import joingame.model.*;
     import joingame.net.AllPlayersReadyMessage;
+    import joingame.net.JoinGameMessage;
     import joingame.net.PlayerReceivedGameStateMessage;
     import joingame.net.StartPlayMessage;
     import joingame.view.*;
@@ -26,17 +28,13 @@ package joingame.modes
      * can contain some simple instructions.  In addition, the game downloads the player states 
      * here, and does not go to the next mode until are is downloaded.
      */
-    public class WaitingForPlayerDataModeAsPlayer extends AppMode
+    public class ShowMultiPlayerInstructionsMode extends AppMode
     {
-        protected static var log :Log = AppContext.log;
+        private static const log :Log = Log.getLog(ShowMultiPlayerInstructionsMode);
         
-        override protected function setup ():void
+        override protected function enter ():void
         {
-            log.debug("WaitingForPlayerDataModeAsPlayer...");
-            
-            if( !AppContext.gameCtrl.isConnected() ) {
-                return;
-            }
+            log.debug(ClassUtil.shortClassName(ShowMultiPlayerInstructionsMode) + " enter()");
             
             _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             
@@ -55,25 +53,20 @@ package joingame.modes
             _text.text = "Waiting for other\nplayers to check in...";
     
             this.modeSprite.addChild(_text);
-//            AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-            
-            AppContext.messageManager.addEventListener(AllPlayersReadyMessage.NAME, messageReceivedAllPlayersReady);
-            AppContext.messageManager.addEventListener(StartPlayMessage.NAME, messageReceivedStartPlay);
-            
-            
+            AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
             /* Double check that we are a player, and not a player theat became an observer */
 //            AppContext.messageManager.sendMessageToServer(JoingameServer.PLAYER_READY, {});
             
-            _readyToStart = false;
+            _readyToStart = true;
             _startTimer = new Timer(1000, 0);
             _startTimer.addEventListener(TimerEvent.TIMER, timerEvent);
             _startTimer.start();
         }
         
-        public function timerEvent (event :TimerEvent) :void
+        protected function timerEvent (event :TimerEvent) :void
         {
-            if(_readyToStart && (getTimer() - AppContext.beginToShowInstructionsTime) >= Constants.TIME_TO_SHOW_INSTRUCTIONS) {
+            if(true || _readyToStart && (getTimer() - AppContext.beginToShowInstructionsTime) >= Constants.TIME_TO_SHOW_INSTRUCTIONS) {
                 _startTimer.removeEventListener(TimerEvent.TIMER, timerEvent);
                 _startTimer.stop();
                 GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());    
@@ -83,7 +76,7 @@ package joingame.modes
         
         
         /** Respond to messages from other clients. */
-        public function messageReceivedAllPlayersReady (event :AllPlayersReadyMessage) :void
+        protected function handleAllPlayersReady (event :AllPlayersReadyMessage) :void
         {
         
             trace("WaitingForReadyPlayersMode JoingameServer.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
@@ -95,7 +88,7 @@ package joingame.modes
         }
         
         /** Respond to messages from other clients. */
-        public function messageReceivedStartPlay (event :StartPlayMessage) :void
+        protected function handleStartPlay (event :StartPlayMessage) :void
         {
             _readyToStart = true;
             timerEvent(null);
@@ -104,33 +97,22 @@ package joingame.modes
         
         
         
-//        /** Respond to messages from other clients. */
-//        public function messageReceived (event :MessageReceivedEvent) :void
-//        {
-//            
-//            if (event.name == JoingameServer.ALL_PLAYERS_READY)
-//            {
-//                trace("WaitingForReadyPlayersMode JoingameServer.ALL_PLAYERS_READY for player " + AppContext.gameCtrl.game.getMyId());
-//                GameContext.gameModel = new JoinGameModel( AppContext.gameCtrl);
-//                GameContext.gameModel.setModelMemento( event.value[0] as Array );
-//                
-//                AppContext.messageManager.sendMessageToServer(JoingameServer.PLAYER_RECEIVED_START_GAME_STATE, {});
-//                
-//            }
-//            else if (event.name == JoingameServer.START_PLAY)
-//            {
-//                _readyToStart = true;
-//                timerEvent(null);
-//            }
-//        }
+        /** Respond to messages from other clients. */
+        protected function messageReceived (event :MessageReceivedEvent) :void
+        {
+            log.debug(event.name + " " + JoinGameMessage(event.value).name);
+            if (event.value is AllPlayersReadyMessage) {
+                handleAllPlayersReady( AllPlayersReadyMessage(event.value) );
+            }
+            else if (event.value is StartPlayMessage) {
+                handleStartPlay( StartPlayMessage(event.value) );
+            }
+        }
         
         
         override protected function exit () :void
         {
-            AppContext.messageManager.removeEventListener(AllPlayersReadyMessage.NAME, messageReceivedAllPlayersReady);
-            AppContext.messageManager.removeEventListener(StartPlayMessage.NAME, messageReceivedStartPlay);
-            
-//            AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
+            AppContext.messageManager.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             super.exit();
         }
         
