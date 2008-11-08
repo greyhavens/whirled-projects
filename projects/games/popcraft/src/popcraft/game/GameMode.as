@@ -255,18 +255,6 @@ public class GameMode extends TransitionMode
         _messageMgr.run();
     }
 
-    protected function getTeamShoutForKey (keyCode :uint) :int
-    {
-        var numShouts :int = Constants.TEAM_SHOUTS.length;
-        if (keyCode >= KeyboardCodes.NUMBER_1 && keyCode <= KeyboardCodes.NUMBER_1 + numShouts) {
-            return (keyCode - KeyboardCodes.NUMBER_1);
-        } else if (keyCode >= KeyboardCodes.NUMPAD_1 && keyCode <= KeyboardCodes.NUMPAD_1 + numShouts) {
-            return (keyCode - KeyboardCodes.NUMPAD_1);
-        } else {
-            return -1;
-        }
-    }
-
     override public function onKeyDown (keyCode :uint) :void
     {
         if (_gameOver) {
