@@ -26,13 +26,11 @@ public class ShoutView extends SceneObject
 
     public function showShout (val :int) :void
     {
-        if (val >= 0) {
-            if (val == _shoutType) {
-                _emphasis += 1;
-            } else {
-                _shoutType = val;
-                _emphasis = 0;
-            }
+        if (val == _shoutType && val >= 0 && val < Constants.TEAM_SHOUTS.length) {
+            _emphasis += 1;
+        } else {
+            _shoutType = val;
+            _emphasis = 0;
         }
 
         resetDisplay();
@@ -48,7 +46,7 @@ public class ShoutView extends SceneObject
         removeAllTasks();
 
         if (_shoutType >= 0) {
-            var shoutText :String = Constants.SHOUT_STRINGS[_shoutType];
+            var shoutText :String = Constants.TEAM_SHOUTS[_shoutType];
             if (_emphasis >= 1) {
                 shoutText = shoutText.toUpperCase();
             }
@@ -87,7 +85,7 @@ public class ShoutView extends SceneObject
                 new AlphaTask(0, FADE_TIME),
                 new FunctionTask(
                     function () :void {
-                        _emphasis = 0;
+                        showShout(-1);
                     })));
         }
     }
@@ -97,12 +95,12 @@ public class ShoutView extends SceneObject
     protected var _shoutType :int = -1;
     protected var _emphasis :int;
 
-    protected static const SCREEN_TIME :Number = 1;
+    protected static const SCREEN_TIME :Number = 20;
     protected static const FADE_TIME :Number = 0.25;
     protected static const DEFAULT_TEXT_SIZE :Number = 1.2;
     protected static const EMPHASIS_TEXT_INCREASE :Number = 0.4;
-    protected static const MAX_TEXT_SIZE :Number = 2.0;
-    protected static const MAX_EXCLAMATIONS :int = 2;
+    protected static const MAX_TEXT_SIZE :Number = 2;
+    protected static const MAX_EXCLAMATIONS :int = 1;
 
     protected static const TEXT_H_MARGIN :Number = 5;
     protected static const TEXT_V_MARGIN :Number = 4;

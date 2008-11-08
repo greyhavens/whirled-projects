@@ -255,22 +255,40 @@ public class GameMode extends TransitionMode
         _messageMgr.run();
     }
 
+    protected function getTeamShoutForKey (keyCode :uint) :int
+    {
+        var numShouts :int = Constants.TEAM_SHOUTS.length;
+        if (keyCode >= KeyboardCodes.NUMBER_1 && keyCode <= KeyboardCodes.NUMBER_1 + numShouts) {
+            return (keyCode - KeyboardCodes.NUMBER_1);
+        } else if (keyCode >= KeyboardCodes.NUMPAD_1 && keyCode <= KeyboardCodes.NUMPAD_1 + numShouts) {
+            return (keyCode - KeyboardCodes.NUMPAD_1);
+        } else {
+            return -1;
+        }
+    }
+
     override public function onKeyDown (keyCode :uint) :void
     {
         if (_gameOver) {
             return;
         }
 
-        switch (keyCode) {
-        case KeyboardCodes.NUMBER_1:
-        case KeyboardCodes.NUMBER_2:
-        case KeyboardCodes.NUMBER_3:
-            sendTeamShoutMsg(
-                GameContext.localPlayerIndex,
-                (keyCode - KeyboardCodes.NUMBER_1),
-                false);
-            break;
+        var teamShout :int;
+        var numShouts :int = Constants.TEAM_SHOUTS.length;
+        if (keyCode >= KeyboardCodes.NUMBER_1 && keyCode < KeyboardCodes.NUMBER_1 + numShouts) {
+            teamShout = (keyCode - KeyboardCodes.NUMBER_1);
+        } else if (keyCode >= KeyboardCodes.NUMPAD_1 && keyCode < KeyboardCodes.NUMPAD_1 + numShouts) {
+            teamShout = (keyCode - KeyboardCodes.NUMPAD_1);
+        } else {
+            teamShout = -1;
+        }
 
+        if (teamShout >= 0 && this.allowTeamShouts) {
+            sendTeamShoutMsg(GameContext.localPlayerIndex, teamShout, false);
+            return;
+        }
+
+        switch (keyCode) {
         case KeyboardCodes.A:
             localPlayerPurchasedCreature(Constants.UNIT_TYPE_COLOSSUS);
             break;
@@ -733,9 +751,8 @@ public class GameMode extends TransitionMode
 
     public function get allowTeamShouts () :Boolean
     {
-        /*return (GameContext.isMultiplayerGame &&
+        return true;/*return (GameContext.isMultiplayerGame &&
             GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1);*/
-        return true;
     }
 
     public function get playAudio () :Boolean

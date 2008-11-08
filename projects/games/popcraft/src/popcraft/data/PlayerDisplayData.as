@@ -12,6 +12,7 @@ public class PlayerDisplayData
     public var displayName :String;
     public var headshotName :String;
     public var color :uint;
+    public var excludeFromMpBattle :Boolean;
 
     public function get headshot () :DisplayObject
     {
@@ -24,6 +25,7 @@ public class PlayerDisplayData
         theClone.playerName = playerName;
         theClone.displayName = displayName;
         theClone.headshotName = headshotName;
+        theClone.excludeFromMpBattle = excludeFromMpBattle;
         theClone.color = color;
 
         return theClone;
@@ -41,6 +43,8 @@ public class PlayerDisplayData
             (null != inheritFrom ? inheritFrom.headshotName : undefined));
         data.color = XmlReader.getUintAttr(xml, "color",
             (null != inheritFrom ? inheritFrom.color : undefined));
+        data.excludeFromMpBattle = XmlReader.getBooleanAttr(xml, "excludeFromMpBattle",
+            (null != inheritFrom ? inheritFrom.excludeFromMpBattle : false));
 
         return data;
     }
