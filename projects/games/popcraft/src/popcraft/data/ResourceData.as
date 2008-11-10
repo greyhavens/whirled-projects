@@ -19,22 +19,21 @@ public class ResourceData
         return theClone;
     }
 
-    public static function fromXml (xml :XML, inheritFrom :ResourceData = null) :ResourceData
+    public static function fromXml (xml :XML, defaults :ResourceData = null) :ResourceData
     {
-        var useDefaults :Boolean = (null != inheritFrom);
+        var useDefaults :Boolean = (null != defaults);
+        var data :ResourceData = (useDefaults ? defaults : new ResourceData());
 
-        var resource :ResourceData = (useDefaults ? inheritFrom : new ResourceData());
+        data.displayName = XmlReader.getStringAttr(xml, "displayName",
+            (useDefaults ? defaults.displayName : undefined));
+        data.color = XmlReader.getUintAttr(xml, "color",
+            (useDefaults ? defaults.color : undefined));
+        data.hiliteColor = XmlReader.getUintAttr(xml, "hiliteColor",
+            (useDefaults ? defaults.hiliteColor : undefined));
+        data.rarity = XmlReader.getNumberAttr(xml, "rarity",
+            (useDefaults ? defaults.rarity : undefined));
 
-        resource.displayName = XmlReader.getStringAttr(xml, "displayName",
-            (useDefaults ? inheritFrom.displayName : undefined));
-        resource.color = XmlReader.getUintAttr(xml, "color",
-            (useDefaults ? inheritFrom.color : undefined));
-        resource.hiliteColor = XmlReader.getUintAttr(xml, "hiliteColor",
-            (useDefaults ? inheritFrom.hiliteColor : undefined));
-        resource.rarity = XmlReader.getNumberAttr(xml, "rarity",
-            (useDefaults ? inheritFrom.rarity : undefined));
-
-        return resource;
+        return data;
     }
 }
 

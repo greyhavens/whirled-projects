@@ -60,65 +60,64 @@ public class UnitData
         return theClone;
     }
 
-    public static function fromXml (xml :XML, inheritFrom :UnitData = null) :UnitData
+    public static function fromXml (xml :XML, defaults :UnitData = null) :UnitData
     {
-        var useDefaults :Boolean = (null != inheritFrom);
+        var useDefaults :Boolean = (null != defaults);
+        var data :UnitData = (useDefaults ? defaults : new UnitData());
 
-        var unitData :UnitData = (useDefaults ? inheritFrom : new UnitData());
-
-        unitData.name = XmlReader.getStringAttr(xml, "type",
-            (useDefaults ? inheritFrom.name : undefined));
-        unitData.displayName = XmlReader.getStringAttr(xml, "displayName",
-            (useDefaults ? inheritFrom.displayName : undefined));
-        unitData.description = XmlReader.getStringAttr(xml, "description",
-            (useDefaults ? inheritFrom.description : undefined));
-        unitData.introText = XmlReader.getStringAttr(xml, "introText",
-            (useDefaults ? inheritFrom.introText : undefined));
-        unitData.introText2 = XmlReader.getStringAttr(xml, "introText2",
-            (useDefaults ? inheritFrom.introText2 : undefined));
+        data.name = XmlReader.getStringAttr(xml, "type",
+            (useDefaults ? defaults.name : undefined));
+        data.displayName = XmlReader.getStringAttr(xml, "displayName",
+            (useDefaults ? defaults.displayName : undefined));
+        data.description = XmlReader.getStringAttr(xml, "description",
+            (useDefaults ? defaults.description : undefined));
+        data.introText = XmlReader.getStringAttr(xml, "introText",
+            (useDefaults ? defaults.introText : undefined));
+        data.introText2 = XmlReader.getStringAttr(xml, "introText2",
+            (useDefaults ? defaults.introText2 : undefined));
 
         var resourceCostsNode :XML = xml.ResourceCosts[0];
         if (null != resourceCostsNode) {
             // don't inherit resource costs
-            unitData.resourceCosts = [ 0, 0, 0, 0 ];
+            data.resourceCosts = [ 0, 0, 0, 0 ];
             for each (var resourceNode :XML in resourceCostsNode.Resource) {
                 var resourceType :int = XmlReader.getEnumAttr(resourceNode, "type",
                     Constants.RESOURCE_NAMES);
                 var cost :int = XmlReader.getUintAttr(resourceNode, "amount");
-                unitData.resourceCosts[resourceType] = cost;
+                data.resourceCosts[resourceType] = cost;
             }
         }
 
-        unitData.baseMoveSpeed = XmlReader.getNumberAttr(xml, "baseMoveSpeed",
-            (useDefaults ? inheritFrom.baseMoveSpeed : undefined));
-        unitData.hasRepulseForce = XmlReader.getBooleanAttr(xml, "hasRepulseForce",
-            (useDefaults ? inheritFrom.hasRepulseForce : undefined));
-        unitData.survivesDaytime = XmlReader.getBooleanAttr(xml, "survivesDaytime",
-            (useDefaults ? inheritFrom.survivesDaytime : false));
-        unitData.minHealth = XmlReader.getUintAttr(xml, "minHealth",
-            (useDefaults ? inheritFrom.minHealth : 0));
-        unitData.maxHealth = XmlReader.getUintAttr(xml, "maxHealth",
-            (useDefaults ? inheritFrom.maxHealth : undefined));
+        data.baseMoveSpeed = XmlReader.getNumberAttr(xml, "baseMoveSpeed",
+            (useDefaults ? defaults.baseMoveSpeed : undefined));
+        data.hasRepulseForce = XmlReader.getBooleanAttr(xml, "hasRepulseForce",
+            (useDefaults ? defaults.hasRepulseForce : undefined));
+        data.survivesDaytime = XmlReader.getBooleanAttr(xml, "survivesDaytime",
+            (useDefaults ? defaults.survivesDaytime : false));
+        data.minHealth = XmlReader.getUintAttr(xml, "minHealth",
+            (useDefaults ? defaults.minHealth : 0));
+        data.maxHealth = XmlReader.getUintAttr(xml, "maxHealth",
+            (useDefaults ? defaults.maxHealth : undefined));
 
         var armorNode :XML = xml.Armor[0];
         if (null != armorNode) {
-            unitData.armor = UnitArmorData.fromXml(armorNode);
+            data.armor = UnitArmorData.fromXml(armorNode);
         }
 
         var weaponNode :XML = xml.Weapon[0];
         if (null != weaponNode) {
-            unitData.weapon = UnitWeaponData.fromXml(weaponNode,
-                (useDefaults ? inheritFrom.weapon : null));
+            data.weapon = UnitWeaponData.fromXml(weaponNode,
+                (useDefaults ? defaults.weapon : null));
         }
 
-        unitData.collisionRadius = XmlReader.getNumberAttr(xml, "collisionRadius",
-            (useDefaults ? inheritFrom.collisionRadius : undefined));
-        unitData.detectRadius = XmlReader.getNumberAttr(xml, "detectRadius",
-            (useDefaults ? inheritFrom.detectRadius : undefined));
-        unitData.loseInterestRadius = XmlReader.getNumberAttr(xml, "loseInterestRadius",
-            (useDefaults ? inheritFrom.loseInterestRadius : undefined));
+        data.collisionRadius = XmlReader.getNumberAttr(xml, "collisionRadius",
+            (useDefaults ? defaults.collisionRadius : undefined));
+        data.detectRadius = XmlReader.getNumberAttr(xml, "detectRadius",
+            (useDefaults ? defaults.detectRadius : undefined));
+        data.loseInterestRadius = XmlReader.getNumberAttr(xml, "loseInterestRadius",
+            (useDefaults ? defaults.loseInterestRadius : undefined));
 
-        return unitData;
+        return data;
     }
 }
 

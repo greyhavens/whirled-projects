@@ -31,20 +31,21 @@ public class PlayerDisplayData
         return theClone;
     }
 
-    public static function fromXml (xml :XML, inheritFrom :PlayerDisplayData = null)
+    public static function fromXml (xml :XML, defaults :PlayerDisplayData = null)
         :PlayerDisplayData
     {
-        var data :PlayerDisplayData = new PlayerDisplayData();
+        var useDefaults :Boolean = (defaults != null);
+        var data :PlayerDisplayData = (useDefaults ? defaults : new PlayerDisplayData());
 
         data.playerName = XmlReader.getStringAttr(xml, "name");
         data.displayName = XmlReader.getStringAttr(xml, "displayName",
-            (null != inheritFrom ? inheritFrom.displayName : undefined));
+            (useDefaults ? defaults.displayName : undefined));
         data.headshotName = XmlReader.getStringAttr(xml, "headshotName",
-            (null != inheritFrom ? inheritFrom.headshotName : undefined));
+            (useDefaults ? defaults.headshotName : undefined));
         data.color = XmlReader.getUintAttr(xml, "color",
-            (null != inheritFrom ? inheritFrom.color : undefined));
+            (useDefaults ? defaults.color : undefined));
         data.excludeFromMpBattle = XmlReader.getBooleanAttr(xml, "excludeFromMpBattle",
-            (null != inheritFrom ? inheritFrom.excludeFromMpBattle : false));
+            (useDefaults ? defaults.excludeFromMpBattle : false));
 
         return data;
     }
