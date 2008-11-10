@@ -7,6 +7,7 @@ package world.level
 	
 	import cells.fruitmachine.FruitMachineCell;
 	
+	import world.Cell;
 	import world.NeighborhoodEvent;
 	import world.board.BoardInteractions;
 	
@@ -32,7 +33,12 @@ package world.level
 			// create boxes for the equivalent of one row of squares, only at random positions
 			// in the square.
 			for (var i:int = 0; i < Vicinity.SQUARE << 1; i++) {
-				_board.replace(FruitMachineCell.withItemAt(region.randomLocation(), ObjectBox.random().item));	
+				var location:BoardCoordinates = region.randomLocation();
+                var candidate:Cell = _board.cellAt(location);
+                if (candidate.replacable) {
+                	_board.replace(FruitMachineCell.withItemAt(region.randomLocation(), 
+                        ObjectBox.random().item));
+                }	
 			}			
 		}
     
