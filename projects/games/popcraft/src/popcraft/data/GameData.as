@@ -1,6 +1,5 @@
 package popcraft.data {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.SortedHashMap;
 import com.whirled.contrib.simplegame.util.*;
 
@@ -9,8 +8,6 @@ import popcraft.util.*;
 
 public class GameData
 {
-    public var resourceClearValueTable :IntValueTable;
-
     public var pointsPerResource :int;
 
     public var dayLength :Number;
@@ -30,7 +27,8 @@ public class GameData
     public var maxResourceAmount :int;
     public var maxSpellsPerType :int;
 
-    public var resources :Array = [];
+    public var puzzleData :PuzzleData;
+
     public var units :Array = [];
     public var spells :Array = [];
 
@@ -47,8 +45,6 @@ public class GameData
     {
         var theClone :GameData = new GameData();
 
-        theClone.resourceClearValueTable = resourceClearValueTable.clone();
-
         theClone.pointsPerResource = pointsPerResource;
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
@@ -64,10 +60,7 @@ public class GameData
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
         theClone.maxSpellsPerType = maxSpellsPerType;
-
-        for each (var resData :ResourceData in resources) {
-            theClone.resources.push(resData.clone());
-        }
+        theClone.puzzleData = puzzleData.clone();
 
         for each (var unitData :UnitData in units) {
             theClone.units.push(unitData.clone());
@@ -89,11 +82,6 @@ public class GameData
         var useDefaults :Boolean = (null != defaults);
 
         var data :GameData = (useDefaults ? defaults : new GameData());
-
-        if (!useDefaults || XmlReader.hasChild(xml, "PuzzleClearValueTable")) {
-            data.resourceClearValueTable = IntValueTable.fromXml(
-                XmlReader.getSingleChild(xml, "PuzzleClearValueTable"));
-        }
 
         data.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource",
             (useDefaults ? defaults.pointsPerResource : undefined));
@@ -145,20 +133,17 @@ public class GameData
         data.maxSpellsPerType = XmlReader.getIntAttr(xml, "maxSpellsPerType",
             (useDefaults ? defaults.maxSpellsPerType : undefined));
 
-        // init the resource data
-        for (var i :int = data.resources.length; i < Constants.RESOURCE_NAMES.length; ++i) {
-            data.resources.push(null);
+        var puzzleDataXml :XML = XmlReader.getSingleChild(xml, "PuzzleSettings",
+            (useDefaults ? null : undefined));
+        if (puzzleDataXml != null) {
+            data.puzzleData = PuzzleData.fromXml(puzzleDataXml,
+                (useDefaults ? defaults.puzzleData : null));
         }
 
-        for each (var resourceNode :XML in xml.Resources.Resource) {
-            var type :int = XmlReader.getEnumAttr(resourceNode, "type",
-                Constants.RESOURCE_NAMES);
-            data.resources[type] = ResourceData.fromXml(resourceNode,
-                (useDefaults ? defaults.resources[type] : null));
-        }
-
+        var ii :int;
+        var type :int;
         // init the unit data
-        for (i = data.units.length; i < Constants.UNIT_NAMES.length; ++i) {
+        for (ii = data.units.length; ii < Constants.UNIT_NAMES.length; ++ii) {
             data.units.push(null);
         }
 
@@ -169,7 +154,7 @@ public class GameData
         }
 
         // init the spell data
-        for (i = data.spells.length; i < Constants.SPELL_TYPE__LIMIT; ++i) {
+        for (ii = data.spells.length; ii < Constants.SPELL_TYPE__LIMIT; ++ii) {
             data.spells.push(null);
         }
 

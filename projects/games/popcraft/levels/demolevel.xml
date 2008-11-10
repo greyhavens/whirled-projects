@@ -25,12 +25,12 @@
                     </Armor>
                 </Unit>
             </Units>
-            <Resources>
-                <Resource type="white" rarity="1"/>
-                <Resource type="red" rarity="0.8"/>
-                <Resource type="blue" rarity="0.5"/>
-                <Resource type="yellow" rarity="0.3"/>
-            </Resources>
+            <PuzzleSettings>
+                <Resource type="white" frequency="1"/>
+                <Resource type="red" frequency="0.8"/>
+                <Resource type="blue" frequency="0.5"/>
+                <Resource type="yellow" frequency="0.3"/>
+            </PuzzleSettings>
         </GameDataOverride>
 
         <MapSettings backgroundName="school">

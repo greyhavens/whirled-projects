@@ -71,11 +71,11 @@ public class CreaturePurchaseButton extends SimObject
                 if (_resource1Cost == 0) {
                     _resource1Type = resType;
                     _resource1Cost = resCost;
-                    _resource1Data = GameContext.gameData.resources[resType];
+                    _resource1Data = GameContext.gameData.puzzleData.resources[resType];
                 } else {
                     _resource2Type = resType;
                     _resource2Cost = resCost;
-                    _resource2Data = GameContext.gameData.resources[resType];
+                    _resource2Data = GameContext.gameData.puzzleData.resources[resType];
                 }
             }
         }

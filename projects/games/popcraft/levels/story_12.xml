@@ -22,12 +22,12 @@ Ralph goads his foe,
         </Hints>
 
         <GameDataOverride>
-            <Resources>
-                <Resource type="white" rarity="0.5"/>
-                <Resource type="red" rarity="0.5"/>
-                <Resource type="blue" rarity="1"/>
-                <Resource type="yellow" rarity="1"/>
-            </Resources>
+            <PuzzleSettings useSpecialPuzzleFrame="true">
+                <Resource type="white" frequency="0.5"/>
+                <Resource type="red" frequency="0.5"/>
+                <Resource type="blue" frequency="1"/>
+                <Resource type="yellow" frequency="1"/>
+            </PuzzleSettings>
         </GameDataOverride>
 
         <MapSettings backgroundName="city">

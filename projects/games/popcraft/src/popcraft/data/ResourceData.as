@@ -7,7 +7,7 @@ public class ResourceData
     public var displayName :String = "";
     public var color :uint;
     public var hiliteColor :uint;
-    public var rarity :Number = 0;
+    public var frequency :Number = 0;
 
     public function clone () :ResourceData
     {
@@ -15,7 +15,7 @@ public class ResourceData
         theClone.displayName = displayName;
         theClone.color = color;
         theClone.hiliteColor = hiliteColor;
-        theClone.rarity = rarity;
+        theClone.frequency = frequency;
         return theClone;
     }
 
@@ -30,8 +30,8 @@ public class ResourceData
             (useDefaults ? defaults.color : undefined));
         data.hiliteColor = XmlReader.getUintAttr(xml, "hiliteColor",
             (useDefaults ? defaults.hiliteColor : undefined));
-        data.rarity = XmlReader.getNumberAttr(xml, "rarity",
-            (useDefaults ? defaults.rarity : undefined));
+        data.frequency = XmlReader.getNumberAttr(xml, "frequency",
+            (useDefaults ? defaults.frequency : undefined));
 
         return data;
     }

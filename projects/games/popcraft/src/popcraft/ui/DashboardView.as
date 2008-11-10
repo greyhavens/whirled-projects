@@ -17,8 +17,8 @@ import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.data.ResourceData;
+import popcraft.game.*;
 import popcraft.util.SpriteUtil;
 
 public class DashboardView extends SceneObject
@@ -34,6 +34,14 @@ public class DashboardView extends SceneObject
         puzzleFrame.cacheAsBitmap = true;
 
         _deathPanel = _movie["death"];
+
+        // If "useSpecialPuzzleFrame" is set, our resource rarities are inverted, and we need to
+        // draw a special overlay on the puzzle frame.
+        if (GameContext.gameData.puzzleData.useSpecialPuzzleFrame) {
+            var overlay :MovieClip = SwfResource.instantiateMovieClip("dashboard", "resourced", true);
+            var overlayParent :MovieClip = puzzleFrame["resourced_placer"];
+            overlayParent.addChild(overlay);
+        }
 
         // the info panel is no longer used
         var infoPanel :MovieClip = _movie["info"];
@@ -348,7 +356,7 @@ public class DashboardView extends SceneObject
         g.clear();
 
         if (resAmount > 0) {
-            var color :uint = ResourceData(GameContext.gameData.resources[resType]).color;
+            var color :uint = ResourceData(GameContext.gameData.puzzleData.resources[resType]).color;
             var meterLoc :Point = RESOURCE_METER_LOCS[resType];
 
             g.lineStyle(1, 0);

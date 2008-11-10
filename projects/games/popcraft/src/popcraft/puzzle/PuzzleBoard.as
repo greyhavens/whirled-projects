@@ -36,9 +36,9 @@ public class PuzzleBoard extends SceneObject
         // create the resource generator
         var table :Array = new Array();
         for (var resType: int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resourceData :ResourceData = GameContext.gameData.resources[resType];
+            var resourceData :ResourceData = GameContext.gameData.puzzleData.resources[resType];
             table.push(resType);
-            table.push(resourceData.rarity);
+            table.push(resourceData.frequency);
         }
 
         _resourceGenerator = new WeightedTable(table, AppContext.randStreamPuzzle);
@@ -210,7 +210,7 @@ public class PuzzleBoard extends SceneObject
         // update the player's resource count
         var resourceType :int = Piece(clearPieces[0]).resourceType;
         var resourceValue :int =
-            GameContext.gameData.resourceClearValueTable.getValueAt(clearPieces.length - 1);
+            GameContext.gameData.puzzleData.clearValues.getValueAt(clearPieces.length - 1);
         resourceValue *= GameContext.localPlayerInfo.handicap;
         GameContext.gameMode.playerEarnedResources(resourceType, resourceValue, clearPieces.length);
 
