@@ -262,7 +262,7 @@ public class GameMode extends TransitionMode
         }
 
         var teamShout :int;
-        var numShouts :int = Constants.TEAM_SHOUTS.length;
+        var numShouts :int = Constants.SHOUT__LIMIT;
         if (keyCode >= KeyboardCodes.NUMBER_1 && keyCode < KeyboardCodes.NUMBER_1 + numShouts) {
             teamShout = (keyCode - KeyboardCodes.NUMBER_1);
         } else if (keyCode >= KeyboardCodes.NUMPAD_1 && keyCode < KeyboardCodes.NUMPAD_1 + numShouts) {

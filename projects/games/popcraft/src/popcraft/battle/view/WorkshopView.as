@@ -54,12 +54,6 @@ public class WorkshopView extends BattlefieldSprite
 
         _sprite.addChild(_movie);
 
-        // create "Shout View"
-        _shoutView = new ShoutView();
-        _shoutView.x = SHOUT_VIEW_LOC.x;
-        _shoutView.y = SHOUT_VIEW_LOC.y;
-        GameContext.gameMode.addObject(_shoutView, _sprite);
-
         // create health meters
         _healthMeters = HealthMeters.createWorkshopMeters(
             _unit.owningPlayerInfo.color,
@@ -83,6 +77,12 @@ public class WorkshopView extends BattlefieldSprite
         var owningPlayer :PlayerInfo = _unit.owningPlayerInfo;
         var nameText :TextField = _movie["player_name"];
         nameText.text = owningPlayer.displayName;
+
+        // create "Shout View"
+        _shoutView = new ShoutView();
+        _shoutView.x = SHOUT_VIEW_LOC.x;
+        _shoutView.y = SHOUT_VIEW_LOC.y;
+        GameContext.gameMode.addObject(_shoutView, _sprite);
 
         // clickable sprite
         _clickableSprite.graphics.beginFill(0, 0);
@@ -380,7 +380,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected static var g_debrisClass :Class;
 
-    protected static const SHOUT_VIEW_LOC :Point = new Point(0, -60);
+    protected static const SHOUT_VIEW_LOC :Point = new Point(0, -75);
     protected static const SHIELD_METER_HEIGHT :Number = 7;
     protected static const SHIELD_METER_Y_LOC :Number = 6;
     protected static const SHIELD_METER_WIDTH_PER_HEALTH :Number = 50 / 75;
