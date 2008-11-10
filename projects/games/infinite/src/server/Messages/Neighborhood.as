@@ -44,7 +44,7 @@ package server.Messages
         	for (i = 0; i < _vicinities.length ; i++) {
         		string += (_vicinities[i] as Vicinity).key();
         		if (i < _vicinities.length - 1) {
-        			string += "-";
+        			string += "|";
         		}
         	}
         	string += ")"

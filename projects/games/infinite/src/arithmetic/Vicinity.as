@@ -28,16 +28,7 @@ package arithmetic
         */
         public function get origin () :BoardCoordinates
         {
-        	const scaled:BoardCoordinates = new BoardCoordinates(_x << SCALE, _y << SCALE);
-        	if (_y < 0) {
-        		if (_x < 0) {
-        			return scaled.translatedBy(NE);        			
-        		} else {
-        			return scaled.translatedBy(N);
-        		}
-        	} else {
-        		return scaled.translatedBy(W);
-        	}
+        	return new BoardCoordinates(_x << SCALE, _y << SCALE);
         }
         
         public function translate(v:Vector) :Vicinity
