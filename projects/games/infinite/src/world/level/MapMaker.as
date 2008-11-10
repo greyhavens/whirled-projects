@@ -36,7 +36,7 @@ package world.level
 				var location:BoardCoordinates = region.randomLocation();
                 var candidate:Cell = _board.cellAt(location);
                 if (candidate.replacable) {
-                	_board.replace(FruitMachineCell.withItemAt(region.randomLocation(), 
+                	_board.replace(FruitMachineCell.withItemAt(location, 
                         ObjectBox.random().item));
                 }	
 			}			
