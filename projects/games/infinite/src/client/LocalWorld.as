@@ -64,8 +64,8 @@ package client
         }
         
         public function requestCellUpdate (hood:Neighborhood) :void
-        {
-        	_world.cellState (ID, hood);
+        {        
+        	_client.updatedCells(_world.cellState(ID, hood));        	
         }
                 	
         protected var _client:WorldClient;	
