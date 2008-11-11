@@ -12,6 +12,7 @@ package server
 	
 	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
+	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -47,6 +48,7 @@ package server
                 case START_PATH: return pathStart(event);
                 case LEVEL_UPDATE: return levelUpdate(event);
                 case UPDATED_CELLS: return updatedCells(event);
+                case TIME_SYNC: return timeSync(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -71,6 +73,15 @@ package server
         	_client.updatedCells(CellUpdate.readFromArray(event.value as ByteArray));
         }
         
+        /**
+         * Deal with a time sync message from the server.  The 'value' associate with a time
+         * sync is just a number representing the current server time.
+         */ 
+        public function timeSync (event:MessageReceivedEvent) :void
+        {
+        	_client.timeSync(event.value as Number);
+        }
+        
         override public function toString () :String
         {
             return "world client for "+_gameControl.player;
@@ -88,7 +99,7 @@ package server
         
         public function proposeMove (coords:BoardCoordinates) :void
         {
-        	sendToServer(WorldServer.MOVE_PROPOSED, coords);
+        	sendToServer(WorldServer.MOVE_PROPOSED, new MoveProposal(_client.serverTime, coords));
         }
 
         public function moveComplete (coords:BoardCoordinates) :void
@@ -136,11 +147,13 @@ package server
         public static const START_PATH:int = 1;
         public static const LEVEL_UPDATE:int = 2;
         public static const UPDATED_CELLS:int = 3;
+        public static const TIME_SYNC:int = 4;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
         messageName[START_PATH] = "start path";
         messageName[LEVEL_UPDATE] = "level update";
-        messageName[UPDATED_CELLS] = "updated cells";        
+        messageName[UPDATED_CELLS] = "updated cells";
+        messageName[TIME_SYNC] = "time sync";        
 	}
 }

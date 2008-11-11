@@ -5,6 +5,7 @@ package world
 	import flash.events.EventDispatcher;
 	
 	import server.Messages.CellUpdate;
+	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	
 	import world.arbitration.MoveEvent;
@@ -44,13 +45,13 @@ package world
 		/**
 		 * A proposal is made for a player to move.
 		 */
-		public function moveProposed (id:int, coords:BoardCoordinates) :void
+		public function moveProposed (id:int, proposal:MoveProposal) :void
 		{
 			var player:Player = _players.find(id);
 			if (player == null) {
-				throw new Error("move to "+coords+" proposed for unknown player "+id); 
+				throw new Error("move to "+proposal.coordinates+" proposed for unknown player "+id); 
 			}
-			player.proposeMove(coords);
+			player.proposeMove(proposal.coordinates);
 		}
 		
 		public function moveCompleted (id:int, coords:BoardCoordinates) :void

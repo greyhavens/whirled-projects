@@ -168,9 +168,8 @@ package cells
 		
 		public function updateState (board:BoardInteractions, state:CellState) :void
 		{
-			Log.debug("updating "+this+" with "+state);			
 		    if (state.code != code) {
-		    	Log.debug("replacing cell");
+		    	Log.debug("replacing "+this);
 		        board.replace(state.newCell(this));
 		    }
 		}

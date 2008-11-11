@@ -4,6 +4,7 @@ package client
 	
 	import flash.events.EventDispatcher;
 	
+	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -51,7 +52,7 @@ package client
         
         public function proposeMove (coords:BoardCoordinates) :void
         {
-            _world.moveProposed(ID, coords);
+            _world.moveProposed(ID, new MoveProposal(_client.serverTime, coords));
         }
 
         public function handlePathStart (event:MoveEvent) :void

@@ -9,6 +9,7 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -89,12 +90,13 @@ package server
 		 */
 		protected function clientEnters (event:MessageReceivedEvent) :void
 		{
-	       _world.playerEnters(event.senderId);
+		    sendTime(event.senderId);			
+	        _world.playerEnters(event.senderId);
 		}
 		
 		protected function moveProposed (event:MessageReceivedEvent) :void
 		{
-			_world.moveProposed(event.senderId, BoardCoordinates.readFromArray(event.value as ByteArray));
+			_world.moveProposed(event.senderId, MoveProposal.readFromArray(event.value as ByteArray));
 		}
 		
 		protected function moveCompleted (event:MessageReceivedEvent) :void
@@ -106,6 +108,14 @@ package server
 		{
 			send(event.senderId, RemoteWorld.UPDATED_CELLS, 
 			   _world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray)));			
+		}
+		
+		/**
+		 * Send a time sync message to a single client.
+		 */
+		protected function sendTime(id:int) :void
+		{
+			_net.sendMessage(REMOTE_TIME_SYNC, (new Date()).getTime(), id);
 		}
 		
 		/**
@@ -147,6 +157,9 @@ package server
 	    public static const MOVE_PROPOSED:int = 1;
 	    public static const MOVE_COMPLETED:int = 2;
         public static const REQUEST_CELLS:int = 3;
+        
+        // No point in stringifying this every time we want to synchronize the clock.
+        public static const REMOTE_TIME_SYNC:String = String(RemoteWorld.TIME_SYNC);
 
 	    public static const messageName:Dictionary = new Dictionary();
 	    messageName[CLIENT_ENTERS] = "client enters";

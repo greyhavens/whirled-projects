@@ -17,5 +17,9 @@ package world
         function levelUpdate (detail:LevelUpdate) :void;
         
         function updatedCells (detail:CellUpdate) :void;
+        
+        function timeSync (serverTime:Number) :void;
+        
+        function get serverTime () :Number;
 	}
 }

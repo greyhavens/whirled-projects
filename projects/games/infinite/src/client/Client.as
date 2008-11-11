@@ -202,6 +202,27 @@ package client
 			return "client "+_world.clientId; 
 		}
 				
+		/**
+		 * Return our best estimate of the time on the server.
+		 */
+		public function get serverTime () :Number
+		{
+			const current:Date = new Date();
+			return current.getTime() + _serverOffset;
+		}
+			
+		/**
+		 * Update our view of the time on the server based on an 'up-to-date' reading of the 
+		 * server clock (network lag permitting).
+		 */	
+		public function timeSync (serverTime:Number) :void
+		{
+			const current:Date = new Date();
+			_serverOffset = serverTime - current.getTime();
+		}
+				
+		protected var _serverOffset:Number = 0;
+		
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
 		protected var _players:PlayerRegister = new PlayerRegister();
