@@ -9,6 +9,8 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
 
+import flash.media.Sound;
+
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
@@ -22,16 +24,17 @@ public class Player extends Sprite
         _doll = new Doll();
         _doll.layer([200]);
 
-        _quest = new QuestSprite(_ctrl, _doll);
+        _quest = new QuestSprite(_ctrl);
         addChild(_quest);
 
         _ctrl.registerPropertyProvider(propertyProvider);
 
         _ctrl.registerStates(QuestConstants.STATE_ATTACK, QuestConstants.STATE_COUNTER, QuestConstants.STATE_HEAL);
-        _ctrl.registerActions("Inventory", "Cheat");
+        _ctrl.registerActions("Special", "Inventory", "Cheat");
 
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
         _inventory = new Inventory(_ctrl, _doll);
         _ghost = Bitmap(new GHOST());
@@ -46,28 +49,61 @@ public class Player extends Sprite
             _quest.bounciness = 10;
             _quest.bounceFreq = 1000;
             _quest.setActor(_ghost);
+            _ctrl.setMoveSpeed(200);
         } else {
             _quest.bounciness = 20;
             _quest.bounceFreq = 200;
             _quest.setActor(_doll);
+            _ctrl.setMoveSpeed(500);
+        }
+    }
+
+    public function handleMessage (event :ControlEvent) :void
+    {
+        if (event.name == "effect") {
+            var effect :Object = event.value;
+
+            if ("event" in effect) {
+                switch (effect.event) {
+                    case QuestConstants.EVENT_ATTACK:
+                        _sound.play();
+                        break;
+
+                    case QuestConstants.EVENT_COUNTER:
+                        break;
+
+                    case QuestConstants.EVENT_HEAL:
+                        break;
+
+                    case QuestConstants.EVENT_DIE:
+                        break;
+                }
+            }
         }
     }
 
     public function handleAction (event :ControlEvent) :void
     {
-        switch (event.name) {
-            case "Inventory":
-                _ctrl.showPopup("Inventory", _inventory, _inventory.width, _inventory.height, 0, 0.8);
-                break;
-            case "Cheat":
-                _svc.awardXP(110);
-                for (var i:int = 0;i<5;++i) {
-                    _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
-                }
-                if (_svc.getState() == QuestConstants.STATE_DEAD) {
-                    _svc.revive();
-                }
-                break;
+        if (_ctrl.hasControl()) {
+            switch (event.name) {
+                case "Special":
+                    // TODO
+                    break;
+
+                case "Inventory":
+                    _ctrl.showPopup("Inventory", _inventory, _inventory.width, _inventory.height, 0, 0.8);
+                    break;
+
+                case "Cheat":
+                    _svc.awardXP(110);
+                    for (var i:int = 0;i<5;++i) {
+                        _inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
+                    }
+                    if (_svc.getState() == QuestConstants.STATE_DEAD) {
+                        _svc.revive();
+                    }
+                    break;
+            }
         }
     }
 
@@ -89,6 +125,10 @@ public class Player extends Sprite
     [Embed(source="ghost.png")]
     protected static const GHOST :Class;
     protected var _ghost :Bitmap;
+
+    [Embed(source="test.mp3")]
+    protected static const SOUND :Class;
+    protected var _sound = new SOUND() as Sound;
 
     protected var _inventory :Inventory;
 
@@ -126,7 +166,7 @@ public class Player extends Sprite
             _ctrl.setMemory("health", int(_quest.getMaxHealth()/2));
         },
 
-        damage: function (source :Object, amount :int, cause :String = null) :void {
+        damage: function (source :Object, amount :int, cause :Object = null) :void {
             _quest.damage(source, amount, cause);
         }
     };

@@ -30,7 +30,7 @@ public class QuestSprite extends Sprite
     public var bounceFreq :Number = 1;
     public var right :Boolean = false;
 
-    public function QuestSprite (ctrl :ActorControl, actor :DisplayObject)
+    public function QuestSprite (ctrl :ActorControl)
     {
         _ctrl = ctrl;
 
@@ -41,34 +41,35 @@ public class QuestSprite extends Sprite
         _container.scaleY = 2;
 
         addChild(_container);
-        setActor(actor);
 
+        _xpField = TextFieldUtil.createField(name,
+            { textColor: 0xffffff, selectable: false,
+                autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
+            { font: "_sans", size: 10, bold: true });
         _xpField.y = MAX_HEIGHT/2;
         addChild(_xpField);
 
-//        _healthBar.width = 32;//_actor.width;
-//        _healthBar.height = 8;
+        _healthBar = new HealthBar();
+//        _healthBar.width = 32;
+//        _healthBar.height = 4;
         addChild(_healthBar);
 
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
+        _ctrl.setTickInterval(4000);
+        _ctrl.addEventListener(TimerEvent.TIMER, tick);
+
         addEventListener(Event.UNLOAD, stopBouncing);
-        stopBouncing();
 
         //_ticker = new Ticker(_ctrl, 4000, tick);
-        _ctrl.addEventListener(TimerEvent.TIMER, tick);
-        _ctrl.setTickInterval(4000);
-
 //        var timer :Timer = new Timer(4000);
-//        timer.addEventListener(TimerEvent.TIMER, tick);
 //        /*root.loaderInfo.addEventListener(Event.UNLOAD, function (..._) :void {
 //            timer.stop();
 //        });*/
 //        timer.start();
 
-        setupVisual();
         handleMemory();
     }
 
@@ -80,6 +81,9 @@ public class QuestSprite extends Sprite
             }
             _actor = actor;
             _container.addChild(_actor);
+
+            stopBouncing();
+            setupVisual();
         }
     }
 
@@ -90,10 +94,16 @@ public class QuestSprite extends Sprite
                 attack();
                 break;
             case QuestConstants.STATE_HEAL:
-                QuestUtil.self(_ctrl).damage(null, -0.2*getMaxHealth(), "Heal");
+                QuestUtil.self(_ctrl).damage(null, -0.2*getMaxHealth(), {
+                    text: "Heal",
+                    event: QuestConstants.EVENT_HEAL
+                });
                 break;
             case QuestConstants.STATE_COUNTER:
-                QuestUtil.self(_ctrl).damage(null, 0.1*getMaxHealth(), "Concentrate...");
+                QuestUtil.self(_ctrl).damage(null, 0.1*getMaxHealth(), {
+                    text: "Concentrate...",
+                    event: QuestConstants.EVENT_COUNTER
+                });
                 break;
         }
     }
@@ -110,15 +120,18 @@ public class QuestSprite extends Sprite
             if (target.getState() == QuestConstants.STATE_COUNTER &&
                 d2 <= target.getRange()*target.getRange()) {
 
-                self.damage(target, target.getPower(), "Countered!");
+                self.damage(target, target.getPower(), {text:"Countered!"});
                 target.damage(self, amount*0.25);
+
             } else {
                 target.damage(self, amount);
             }
+
+            effect({text:"Rawr", event:QuestConstants.EVENT_ATTACK});
         }
     }
 
-    public function damage (source :Object, amount :Number, cause :String) :void
+    public function damage (source :Object, amount :Number, fx :Object) :void
     {
         var health :Number = getHealth();
         if (health == 0) {
@@ -129,11 +142,24 @@ public class QuestSprite extends Sprite
             amount *= 2;
         }
 
-        if (cause != null) {
-            echo((amount < 0 ? "+"+(-amount) : "-"+amount) + " (" + cause + ")");
+        var hit :String = (amount < 0) ? "+"+(-amount) : "-"+amount;
+        if (fx != null) {
+            if ("text" in fx) {
+                // Add the damage string to it
+                fx.text = hit + " (" + fx.text + ")";
+            } else {
+                fx.text = hit;
+            }
+            // If the color isn't specified and it's a heal
+            if (!("color" in fx) && amount < 0) {
+                // Make it green
+                fx.color = 0x00ff00;
+            }
         } else {
-            echo(String(amount));
+            fx = {text: hit};
         }
+
+        effect(fx);
 
         if (health <= amount) {
             _ctrl.setMemory("health", 0);
@@ -142,7 +168,7 @@ public class QuestSprite extends Sprite
                 source.awardXP(666);
                 source.awardRandomItem(getLevel());
             }
-            echo("DEAD"); // TODO
+            effect({text:"Death", event:QuestConstants.EVENT_DIE});
         } else {
             _ctrl.setMemory("health", Math.min(health-amount, getMaxHealth()));
         }
@@ -152,6 +178,50 @@ public class QuestSprite extends Sprite
     {
         _xpField.text = "Level " + getLevel() + " (" + getXP() + " xp)";
         _healthBar.percent = getHealth()/getMaxHealth();
+    }
+
+    protected function handleMessage (event :ControlEvent) :void
+    {
+        if (event.name == "effect") {
+            var effect :Object = event.value;
+
+            // Show floaty text as part of this effect
+            if ("text" in effect) {
+                var field :TextField = TextFieldUtil.createField(name,
+                    { textColor: ("color" in effect) ? effect.color : 0xFF4400, selectable: false,
+                        autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
+                    { font: "_sans", size: 12, bold: true });
+
+                field.text = effect.text as String;
+                field.y = MAX_HEIGHT - 50;
+
+                var complete :Function = function () :void {
+                    removeChild(this);
+                };
+                Tweener.addTween(field, {y: 50, time:2, onComplete:complete, transition:"linear"});
+
+                addChild(field);
+            }
+
+            if ("event" in effect && effect.event == QuestConstants.EVENT_ATTACK) {
+                if (_actor != null) {
+                    _actor.x = 0;
+                    _actor.y = 0;
+                    Tweener.addTween(_actor, {
+                        time: 0.1,
+                        x: -10,
+                        y: -4,
+                        onComplete: function () :void {
+                            Tweener.addTween(_actor, {
+                                time: 0.5,
+                                x: 0,
+                                y: 0
+                            });
+                        }
+                    });
+                }
+            }
+        }
     }
 
     public function getXP () :int
@@ -174,50 +244,15 @@ public class QuestSprite extends Sprite
         return getLevel()*10;
     }
 
-    public function handleMessage (event :ControlEvent) :void
+    public function effect (data :Object) :void
     {
-        if (event.name == "echo") {
-            var field :TextField = TextFieldUtil.createField(name,
-                { textColor: 0xFF4400, selectable: false, autoSize: TextFieldAutoSize.LEFT,
-                    outlineColor: 0x00000 },
-                { font: "_sans", size: 12, bold: true });
-
-            field.text = event.value as String;
-            field.y = MAX_HEIGHT - 50;
-
-            var complete :Function = function () :void {
-                removeChild(this);
-            };
-            Tweener.addTween(field, {y: 50, time:2, onComplete:complete, transition:"linear"});
-
-            addChild(field);
-        }
+        _ctrl.sendMessage("effect", data);
     }
 
-    public function echo (text :String) :void
+    public function echo (text :String, color :int = -1) :void
     {
-        // TODO: Handle sound and other effects somehow
-        _ctrl.sendMessage("echo", text);
+        effect({text: text});
     }
-
-//    protected function gotImage (disp :DisplayObject) :void
-//    {
-//        _image = disp;
-//        _image.y = MAX_HEIGHT - _image.height;
-//        addChild(_image);
-//        _ctrl.setHotSpot(MAX_WIDTH / 2, MAX_HEIGHT, _image.height);
-//
-//        // adjust bounciness by the room for bouncing
-//        bounciness *= (MAX_HEIGHT - _image.height);
-//
-//        // now that everything's loaded, we're ready to hear appearance changed events
-//        _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
-//
-//        // very important! We can't just assume we're standing when we first start up.
-//        // We could be the instance of our avatar on someone else's screen, so the person
-//        // wearing the avatar could already be moving or facing any direction, etc.
-//        setupVisual();
-//    }
 
     protected function setupVisual (... ignored) :void
     {
@@ -271,6 +306,7 @@ public class QuestSprite extends Sprite
     protected var _ctrl :ActorControl;
 
     protected var _container :Sprite;
+
     protected var _actor :DisplayObject;
 
 //    protected var _ticker :Ticker;
@@ -281,8 +317,8 @@ public class QuestSprite extends Sprite
     /** The time at which the current bounce started. */
     protected var _bounceBase :Number;
 
-    protected var _xpField :TextField = new TextField();
+    protected var _xpField :TextField;
 
-    protected var _healthBar :HealthBar = new HealthBar();
+    protected var _healthBar :HealthBar;
 }
 }

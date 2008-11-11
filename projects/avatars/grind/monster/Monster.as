@@ -31,7 +31,7 @@ public class Monster extends Sprite
         _image = Bitmap(new IMAGE());
         _image.smoothing = true;
 
-        _quest = new QuestSprite(_ctrl, _image);
+        _quest = new QuestSprite(_ctrl);
         addChild(_quest);
 
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
@@ -69,15 +69,11 @@ public class Monster extends Sprite
 
     public function handleMemory (... _) :void
     {
-//        if (_quest.getHealth() == 0) {
-//            _quest.bounciness = 10;
-//            _quest.bounceFreq = 1000;
-//            _quest.setActor(_ghost);
-//        } else {
-//            _quest.bounciness = 20;
-//            _quest.bounceFreq = 200;
-//            _quest.setActor(_doll);
-//        }
+        if (_quest.getHealth() == 0) {
+            _quest.setActor(_ghost);
+        } else {
+            _quest.setActor(_image);
+        }
     }
 
     public function propertyProvider (key :String) :Object
@@ -138,7 +134,7 @@ public class Monster extends Sprite
             _ctrl.setMemory("health", _quest.getMaxHealth());
         },
 
-        damage: function (source :Object, amount :int, cause :String = null) :void {
+        damage: function (source :Object, amount :int, cause :Object = null) :void {
             _quest.damage(source, amount, cause);
         }
     };

@@ -12,17 +12,13 @@ public class QuestConstants
     public static const STATE_HEAL :String = "heal";
     public static const STATE_DEAD :String = "dead";
 
-//    public static const CLOAK :int = 0;
-//    public static const BODY :int = 0;
-//    public static const CLOAK :int = 0;
-//    public static const CLOAK :int = 0;
-//    public static const CLOAK :int = 0;
-//
-//    public static const ITEMS :Array = [
-//        [ "Robe", TORSO, 0 ],
-//        [ "Black Robe", TORSO, 2],
-//        [ "Green shirt", TORSO,-1]
-//    ]
+    // "Events" piggybacked on effects messages
+    // Eventually maybe QuestSprite could listen for these and dispatch an AS3 Event, but for
+    // now, just have listeners scoop the effects messages directly
+    public static const EVENT_ATTACK :int = 0;
+    public static const EVENT_COUNTER :int = 1;
+    public static const EVENT_HEAL :int = 2;
+    public static const EVENT_DIE :int = 3;
 }
 
 }
