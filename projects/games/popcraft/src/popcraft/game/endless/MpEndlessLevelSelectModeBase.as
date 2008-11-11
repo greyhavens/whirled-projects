@@ -138,8 +138,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             // already exist
             var save :SavedEndlessGame = saveList.getSave(mapIdx);
             if (save == null) {
-                save = SavedEndlessGame.create(mapIdx, 0, 0, 1,
-                                               _level.getWorkshopMaxHealth(save.mapIndex));
+                save = SavedEndlessGame.create(mapIdx, 0, 0, 1, _level.getWorkshopMaxHealth(0));
             }
             saves.push(save);
         }
