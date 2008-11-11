@@ -77,15 +77,17 @@ package joingame
             log.info("Hello world! I'm your Politik server!");
             
             _ai = new SinglePlayerServerPlugin( _gameModel, this);
+            
         }
         
         protected function handleStartSinglePlayerWave ( event :StartSinglePlayerWaveMessage) :void
         {
             trace("handleStartSinglePlayerWave()");
-            _ai.createNewSinglePlayerModel( _gameModel.humanPlayerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, -1);
+            _ai.createNewSinglePlayerModel( _gameModel.humanPlayerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, event.userCookieData);
             _gameModel.gameOver = false;
             if(AppContext.isConnected) {
-                _gameModel.singlePlayerLevel = Trophies.getPlayerLevelBasedOnTrophies(  _gameModel.humanPlayerId, _gameModel);
+//                _gameModel.singlePlayerLevel = Trophies.getPlayerLevelBasedOnTrophies(  _gameModel.humanPlayerId, _gameModel, event.userCookieData);
+//                _gameModel.singlePlayerLevel = event.userCookieData.highestRobotLevelDefeated;
             }
             
             _ai.startAI();
@@ -116,7 +118,8 @@ package joingame
             if( _ai == null) {
                 _ai = new SinglePlayerServerPlugin( _gameModel, this);
             }
-            _ai.createNewSinglePlayerModel(event.playerId, event.gameType, event.level);
+            
+            _ai.createNewSinglePlayerModel(event.playerId, event.gameType, event.userCookieData);
             log.debug("Server sending singlepplayer" + AllPlayersReadyMessage.NAME );
             
             AppContext.messageManager.sendMessage( new AllPlayersReadyMessage( _gameModel.getModelMemento()) );
@@ -274,7 +277,7 @@ package joingame
                 }
             }
             else {
-                _ai.handleReplayRequest(event.playerId);
+                _ai.handleReplayRequest(event.playerId, event.userCookieData);
             }
         }
                 
@@ -608,6 +611,8 @@ package joingame
             _gameModel._initialSeatedPlayerIds = _currentActivePlayers.slice();
             _gameModel.currentSeatingOrder = _currentActivePlayers.slice();
             _gameModel.setModelIntoPropertySpaces();
+            
+            AppContext.database.clearAll();
         }
         
 //        protected function createNewSinglePlayerModel() :void
