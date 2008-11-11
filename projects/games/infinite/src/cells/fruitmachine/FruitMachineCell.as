@@ -23,12 +23,8 @@ package cells.fruitmachine
 		{
 			super(state.position);
 			_box = new ObjectBox(item(state.attributes.item));
-			mode = state.attributes.mode;
-			
-			// we don't need to remove these listeners because the cell itself is the dispatcher.
-			addEventListener(CellEvent.ADDED_TO_OBJECTIVE, handleAdded);
-			addEventListener(CellEvent.REMOVED_FROM_OBJECTIVE, handleRemoved);			
-		    
+			_mode = state.attributes.mode;
+			_inception = state.attributes.inception; 
 		}
 
         override public function get state () :CellState
@@ -36,7 +32,8 @@ package cells.fruitmachine
         	const created:CellState = super.state;
         	created.attributes = {
         		mode: mode,
-        		item: _box.item.attributes
+        		item: _box.item.attributes,
+        		inception: _inception
         	}
         	return created;
         }
@@ -54,34 +51,6 @@ package cells.fruitmachine
 		override public function get type () :String
 		{
 			return "fruit machine";
-		}
-
-		/**
-		 * When a fruit machine is added to the objective, it starts a timer to control its state.
-		 */
-		protected function handleAdded (event:CellEvent) :void
-		{
-			if (_mode == ACTIVE || _mode == INACTIVE) {
-				startActivationTimer();
-			}
-		}
-		
-		/**
-		 * When a fruit machine is removed from the objective, its timer is stopped and removed.
-		 */
-		protected function handleRemoved (event:CellEvent) :void
-		{
-			stopTimer();
-		}
-
-		/**
-		 * Start a new repeating timer which determines when the machine opens and closes.
-		 */
-		protected function startActivationTimer () :void
-		{
-			_timer = new Timer(ACTIVATION_DELAY, 0);
-			_timer.addEventListener(TimerEvent.TIMER, switchActivation);
-			_timer.start();
 		}
 		
 		/**
@@ -105,18 +74,6 @@ package cells.fruitmachine
 			}
 		}
 		
-		/**
-		 * Handle a timer going off by activating or deactivating the machine. 
-		 */
-		protected function switchActivation (event:TimerEvent) :void
-		{
-			if (isActive()) {
-				deactivate();
-			} else {
-				activate();
-			}
-		}
-
 		public function isActive () :Boolean
 		{
 			return _mode == ACTIVE;	
@@ -198,15 +155,12 @@ package cells.fruitmachine
 			_box.giveObjectTo(_player);
 		}
 
-		public function set mode (mode:int) :void
+		protected function set mode (mode:int) :void
 		{
-			if (mode != _mode) {
-				_mode = mode;
-				dispatchEvent(new FruitMachineEvent(FruitMachineEvent.STATE_CHANGED, this));
-			}
+			_mode = mode;
 		}
 		
-		public function get mode () :int 
+		protected function get mode () :int 
 		{
 			return _mode;
 		}
@@ -216,10 +170,30 @@ package cells.fruitmachine
             const state:CellState = new CellState(CellCodes.FRUIT_MACHINE, position);
             state.attributes = {
                 mode: FruitMachineCell.ACTIVE,
-                item: item.attributes
+                item: item.attributes,
+                inception: (new Date().getTime()) - (Math.random() * 10000)
             };
             return new FruitMachineCell(state);
         }
+        
+        /**
+         * Return the fruit machine state at a given time.
+         */ 
+        public function stateAt(time:Number) :int
+        {
+        	// if the mode attribute has been set to one of the static values, we return that.
+        	if (_mode == ROLLING || _mode == DEFUNCT) {
+        		return _mode;
+        	}
+        
+            if ( (((time - _inception) / ACTIVATION_DELAY) % 2) == 1 ) {
+            	return ACTIVE;
+            } else {
+            	return INACTIVE;
+            }        	
+        }
+
+        protected var _inception: Number;
 
         protected var _box:ObjectBox;
 
@@ -231,10 +205,11 @@ package cells.fruitmachine
 	
 	    protected static const _factory:ItemFactory = new ItemFactory(); 
 	
-		public static const INACTIVE:int = 0;
-		public static const ACTIVE:int = 1;
-		public static const ROLLING:int = 2;
-		public static const DEFUNCT:int = 3;
+	    public static const DYNAMIC:int = 0;
+		public static const INACTIVE:int = 1;
+		public static const ACTIVE:int = 2;
+		public static const ROLLING:int = 3;
+		public static const DEFUNCT:int = 4;
 		
 		public static const ACTIVATION_DELAY:int = 10000; // 10 seconds between state changes
 		public static const ROLL_PERIOD:int = 3000; // the machine rolls for 5 seconds			

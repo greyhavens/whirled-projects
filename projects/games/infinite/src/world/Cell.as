@@ -16,7 +16,7 @@ package world
 	/**
 	 * Interface providing the details of a cell within the game board.
 	 */
-	public interface Cell extends IEventDispatcher, CellAffordances, PlayerInteractions
+	public interface Cell extends CellAffordances, PlayerInteractions
 	{		
 		/**
 		 * Return the position on the board of this cell

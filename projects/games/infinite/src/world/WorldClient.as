@@ -5,7 +5,7 @@ package world
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	
-	public interface WorldClient
+	public interface WorldClient extends Chronometer
 	{
 		/**
 		 * A player entered a level.
@@ -18,8 +18,6 @@ package world
         
         function updatedCells (detail:CellUpdate) :void;
         
-        function timeSync (serverTime:Number) :void;
-        
-        function get serverTime () :Number;
-	}
+        function timeSync (serverTime:Number) :void;      
+ 	}
 }

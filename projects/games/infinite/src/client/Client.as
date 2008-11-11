@@ -37,7 +37,7 @@ package client
 			this.x = 0;
 			this.y = 0;			
 			
-			_viewer = new Viewer(680, 420);
+			_viewer = new Viewer(this, 680, 420);
 			_viewer.addEventListener(NeighborhoodEvent.UNMAPPED, handleUnmappedNeighborhood);
 			
 			_viewer.x = 10;

@@ -2,8 +2,6 @@ package client
 {
 	import arithmetic.*;
 	
-	import cells.CellDictionary;
-	import cells.CellMemory;
 	import cells.CellObjective;
 	import cells.ViewFactory;
 	import cells.views.CellView;
@@ -27,6 +25,7 @@ package client
 	
 	import world.BoxController;
 	import world.Cell;
+	import world.Chronometer;
 	import world.NeighborhoodEvent;
 	import world.board.*;
     
@@ -38,8 +37,10 @@ package client
 	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram
 	{
 		public function Objective(
-			viewer:Viewer, board:BoardInteractions, startingPosition:BoardCoordinates)
+			clock:Chronometer, viewer:Viewer, board:BoardInteractions, 
+			startingPosition:BoardCoordinates)
 		{
+			_clock = clock;
 			_viewer = viewer;
 			
 			// make a copy of the viewer size, because otherwise the objective
@@ -148,7 +149,7 @@ package client
 		 */
 		public function showCell (c:Cell) :void 
 		{
-			const v:CellView = _viewFactory.viewOf(c);
+			const v:CellView = _viewFactory.viewOf(c, _clock.serverTime);
 			v.addToObjective(this);
 			_viewBuffer.store(c.position, v);	
 			v.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);
@@ -336,6 +337,8 @@ package client
         {
         	return _board.startingPosition;
         }
+        
+        protected var _clock:Chronometer;
         
         protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
         

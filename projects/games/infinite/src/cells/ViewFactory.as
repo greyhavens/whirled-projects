@@ -19,14 +19,14 @@ package cells
 		{
 		}
 		
-		public function viewOf(cell:Cell) :CellView 
+		public function viewOf(cell:Cell, time:Number) :CellView 
 		{
 			switch (cell.code) {
 				case CellCodes.WALL: return new WallView(cell);
 				case CellCodes.LADDER_BASE: return new LadderBaseView(cell);
 				case CellCodes.LADDER_MIDDLE: return new LadderMiddleView(cell);
 				case CellCodes.LADDER_TOP: return new LadderTopView(cell);
-				case CellCodes.FRUIT_MACHINE: return new FruitMachineView(cell);
+				case CellCodes.FRUIT_MACHINE: return new FruitMachineView(cell, time);
 				case CellCodes.OILED_LADDER_BASE: return new OiledLadderBaseView(cell);
 				case CellCodes.OILED_LADDER_MIDDLE: return new LadderMiddleView(cell);
 				case CellCodes.OILED_LADDER_TOP: return new LadderTopView(cell);

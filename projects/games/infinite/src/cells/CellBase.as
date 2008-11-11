@@ -11,7 +11,7 @@ package cells
 	import world.Cell;
 	import world.board.*;
 	
-	public class CellBase extends EventDispatcher implements Cell
+	public class CellBase implements Cell
 	{
 		public function CellBase(position:BoardCoordinates) :void 
 		{
@@ -33,7 +33,7 @@ package cells
 			return "cell that needs debugging";
 		}
 		
-		override public function toString () :String
+		public function toString () :String
 		{
 			return type+" cell at "+position;
 		}
@@ -45,7 +45,6 @@ package cells
 		{
 			_objective = objective;
 			showView(objective);
-			dispatchEvent(new CellEvent(CellEvent.ADDED_TO_OBJECTIVE, this));
 		}
 
 		/**
@@ -65,7 +64,6 @@ package cells
 				hideView(_objective);
 				_objective = null;
 			}
-			dispatchEvent(new CellEvent(CellEvent.REMOVED_FROM_OBJECTIVE, this));
 		}
 		
 		/**

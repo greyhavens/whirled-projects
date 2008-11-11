@@ -12,6 +12,7 @@ package client
 	
 	import sprites.*;
 	
+	import world.Chronometer;
 	import world.NeighborhoodEvent;
 	import world.board.*;
 	
@@ -20,14 +21,16 @@ package client
 	    // the position of the viewpoint in graphics coordinates
 		public var viewPoint:Rectangle;
 		
-		public function Viewer(width:int, height:int)
+		public function Viewer(clock:Chronometer, width:int, height:int)
 		{
+			_clock = clock;
+			
 			SpriteUtil.addBackground(this, width, height, SpriteUtil.LIGHT_GREY);
 			
 			// set the position that will be used as a viewpoint
 			viewPoint = new Rectangle(
 				(width / 2) - (CellBase.UNIT.dx / 2),  	// center horizontally
-				height - (CellBase.UNIT.dy * 2),			// two cells up vertically
+				height - (CellBase.UNIT.dy * 2),        // two cells up vertically
 				CellBase.UNIT.dx, 
 				CellBase.UNIT.dy);
 		}
@@ -72,7 +75,7 @@ package client
 				removeChild(_objective);
 				_objective = null;				
 			}
-			_objective = new Objective(this, board, board.startingPosition);
+			_objective = new Objective(_clock, this, board, board.startingPosition);
 			
 			_objective.addEventListener(NeighborhoodEvent.UNMAPPED, dispatchEvent);
 			
@@ -123,6 +126,8 @@ package client
 			}
 			_objective.removePlayer(player);
 		}
+			
+		protected var _clock:Chronometer;
 				
 		protected var _playerController:PlayerController;
 		
