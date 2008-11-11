@@ -1,6 +1,5 @@
 package popcraft.game.mpbattle {
 
-import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -87,10 +86,9 @@ public class MultiplayerGameMode extends GameMode
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
-        var playerDisplayDatas :Array = GameContext.gameData.playerDisplayDatas.values();
-        ArrayUtil.removeAllIf(playerDisplayDatas,
-            function (pdd :PlayerDisplayData) :Boolean {
-                return pdd.excludeFromMpBattle;
+        var playerDisplayDatas :Array = GameContext.gameData.playerDisplayDatas.values().filter(
+            function (pdd :PlayerDisplayData, index :int, arr :Array) :Boolean {
+                return !pdd.excludeFromMpBattle;
             });
 
         // create PlayerInfo structures
