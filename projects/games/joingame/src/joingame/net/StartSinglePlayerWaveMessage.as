@@ -2,11 +2,13 @@ package joingame.net
 {
     import flash.utils.ByteArray;
     
-    public class StartSinglePlayerWaveMessage extends JoinGameMessage
+    import joingame.UserCookieDataSourcePlayer;
+    
+    public class StartSinglePlayerWaveMessage extends UserCookieContainingMessage
     {
-        public function StartSinglePlayerWaveMessage(playerId:int = -1, client :Boolean = false)
+        public function StartSinglePlayerWaveMessage(playerId:int = -1, client :Boolean = false, cookie :UserCookieDataSourcePlayer = null)
         {
-            super(playerId);
+            super(playerId, cookie);
             _client = client;
         }
         

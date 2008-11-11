@@ -1,10 +1,12 @@
 package joingame.net
 {
-    public class ReplayRequestMessage extends JoinGameMessage
+    import joingame.UserCookieDataSourcePlayer;
+    
+    public class ReplayRequestMessage extends UserCookieContainingMessage
     {
-        public function ReplayRequestMessage(playerId:int = -1)
+        public function ReplayRequestMessage(playerId:int = -1, usercookieData :UserCookieDataSourcePlayer = null)
         {
-            super( playerId);
+            super( playerId, usercookieData);
         }
         
         override public function get name () :String

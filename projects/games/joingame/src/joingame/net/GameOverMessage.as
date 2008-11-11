@@ -2,46 +2,48 @@ package joingame.net
 {
     import flash.utils.ByteArray;
     
+    import joingame.UserCookieDataSourcePlayer;
+    
     public class GameOverMessage extends JoinGameMessage
     {
-        public function GameOverMessage()//toObserverState :Boolean = true)
+        public function GameOverMessage( usercookieData :UserCookieDataSourcePlayer = null)//toObserverState :Boolean = true)
         {
             super(-1);
-//            _gotoObserverState = toObserverState;
+            if( usercookieData == null) {
+                _userCookieData = new UserCookieDataSourcePlayer();
+            }   
+            else {
+                _userCookieData = usercookieData;
+            }   
         }
         
         
-//        override public function fromBytes (bytes :ByteArray) :void
-//        {
-//            super.fromBytes(bytes);
-//            _gotoObserverState = bytes.readBoolean();
-//        }
-//        
-//        override public function toBytes (bytes :ByteArray = null) :ByteArray
-//        {
-//            var bytes :ByteArray = super.toBytes(bytes);
-//            bytes.writeBoolean( _gotoObserverState);
-//            return bytes;
-//        }
+        override public function fromBytes (bytes :ByteArray) :void
+        {
+            super.fromBytes(bytes);
+            _userCookieData = new UserCookieDataSourcePlayer();
+            _userCookieData.readCookieData(1, bytes);
+        }
         
-//        public function get toObserverState () :Boolean
-//        {
-//           return _gotoObserverState;     
-//        }
-//        
-//        public function get level () :int
-//        {
-//           return _level;     
-//        }
+        override public function toBytes (bytes :ByteArray = null) :ByteArray
+        {
+            var bytes :ByteArray = super.toBytes(bytes);
+            _userCookieData.writeCookieData(bytes);
+            return bytes;
+        }
+        public function get userCookieData () :UserCookieDataSourcePlayer
+        {
+           return _userCookieData;     
+        }
 
 
         override public function get name () :String
         {
-           return NAME;// + " toObserver=" + _gotoObserverState;     
+           return NAME;     
         }
         
         
-//        protected var _gotoObserverState :Boolean;
+        protected var _userCookieData :UserCookieDataSourcePlayer;
 
         public static const NAME :String = "Server:Game Over";   
     }

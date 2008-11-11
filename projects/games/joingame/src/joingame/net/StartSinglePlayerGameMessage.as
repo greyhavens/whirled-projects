@@ -2,13 +2,14 @@ package joingame.net
 {
     import flash.utils.ByteArray;
     
-    public class StartSinglePlayerGameMessage extends JoinGameMessage
+    import joingame.UserCookieDataSourcePlayer;
+    
+    public class StartSinglePlayerGameMessage extends UserCookieContainingMessage
     {
-        public function StartSinglePlayerGameMessage(playerId:int = -1, gameType :String = "", level :int = 0)
+        public function StartSinglePlayerGameMessage(playerId:int = -1, gameType :String = "", usercookieData :UserCookieDataSourcePlayer = null)
         {
-            super(playerId);
+            super(playerId, usercookieData);
             _gameType = gameType;
-            _level = level;
         }
         
         override public function get name () :String
@@ -19,14 +20,12 @@ package joingame.net
         override public function fromBytes (bytes :ByteArray) :void
         {
             super.fromBytes(bytes);
-            _level = bytes.readInt();
             _gameType = bytes.readUTF();
         }
         
         override public function toBytes (bytes :ByteArray = null) :ByteArray
         {
             var bytes :ByteArray = super.toBytes(bytes);
-            bytes.writeInt( _level);
             bytes.writeUTF( _gameType);
             return bytes;
         }
@@ -36,16 +35,11 @@ package joingame.net
            return _gameType;     
         }
         
-        public function get level () :int
-        {
-           return _level;     
-        }
-
         public function toString() :String
         {
-            return NAME + ", gametype=" + _gameType + ", level=" + _level; 
+            return NAME + ", gametype=" + _gameType ;
         }
-        protected var _level :int;
+        
         protected var _gameType :String;
         public static const NAME :String = "Server:Start Single Player Game";
         

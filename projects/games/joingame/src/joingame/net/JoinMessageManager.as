@@ -19,7 +19,7 @@ import joingame.AppContext;
  */
 public class JoinMessageManager extends EventDispatcher
 {
-    private static const log :Log = Log.getLog(JoinMessageManager);
+    internal static const log :Log = Log.getLog(JoinMessageManager);
     
     public function JoinMessageManager (gameCtrl :GameControl = null)
     {
@@ -55,6 +55,7 @@ public class JoinMessageManager extends EventDispatcher
         addMessageType( StartPlayMessage );
         addMessageType( StartSinglePlayerGameMessage );
         addMessageType( StartSinglePlayerWaveMessage );
+        addMessageType( WaveDefeatedMessage );
         
     }
 
