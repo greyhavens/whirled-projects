@@ -60,7 +60,7 @@ package joingame.view
             _gameModel.addEventListener(InternalJoinGameEvent.RESET_VIEW_FROM_MODEL, resetViewFromModel);
             _gameModel.addEventListener(InternalJoinGameEvent.DONE_COMPLETE_DELTA, doFinishAnimations);
             _gameModel.addEventListener(InternalJoinGameEvent.PLAYER_ADDED, doPlayerAdded);
-            _gameModel.addEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
+            _gameModel.addEventListener(InternalJoinGameEvent.GAME_OVER, doGameOver);
             
 //            _destroyBottomRowButton  = new SimpleTextButton("Destroy Bottom Row");
 //            _destroyBottomRowButton.addEventListener( REMOVE_BOTTOM_ROW_BUTTON, requestBottomRowRemoval);
@@ -82,7 +82,7 @@ package joingame.view
 //        }
         
         
-        protected function handleGameOver( e :InternalJoinGameEvent) :void
+        protected function doGameOver( e :InternalJoinGameEvent) :void
         {
 //            trace( ClassUtil.shortClassName(this) + " handleGameOver()");
             dispatchEvent( new InternalJoinGameEvent( -1, InternalJoinGameEvent.GAME_OVER));
@@ -353,6 +353,11 @@ package joingame.view
             var boardAttacked :JoinGameBoardGameArea = getBoardView( e.boardAttacked );
             var sourceboard :JoinGameBoardGameArea = getBoardView( e.boardPlayerID );
             
+            if( boardAttacked == null && sourceboard == null) {
+                //The boards are not visible, so don't animate anything.
+                return;
+            }
+            
             var i :int;
             var k :int;
             var piece :JoinGamePiece;
@@ -493,7 +498,16 @@ package joingame.view
                 return;
             }
             else {
-                log.error("Major error in doHorizontalAttack().  Source board is null. WTF?????");
+//                log.error("Major error in doHorizontalAttack().  Source board is null. WTF?????");
+//                trace("e.boardAttacked=" + e.boardAttacked);
+//                trace("e.boardPlayerID=" + e.boardPlayerID);
+//                trace("getBoardView( e.boardAttacked ) == null: " + (getBoardView( e.boardAttacked ) == null));
+//                trace("getBoardView( e.boardPlayerID ) == null: " + (getBoardView( e.boardPlayerID ) == null));
+//                
+//                trace("board map:");
+//                for each ( k in _id2Board.keys()) {
+//                    trace("key=" + k);
+//                }
                 return;
             }
             
@@ -508,7 +522,7 @@ package joingame.view
             var localRowIndex :int = (boardAttacked._boardRepresentation._rows - 1) - e.row;
             var piecesDestroyed :Array = new Array();
             
-            if( boardAttacked != null){
+            if( boardAttacked != null && boardAttacked.isLiveObject){
                 /* This means FROM the the left */
                 if( e.side == Constants.LEFT || e.side == Constants.ATTACK_BOTH){
                     
@@ -1228,14 +1242,159 @@ package joingame.view
             }
         }
         
+        
         protected function updateBoardDisplaysFor3BoardViews(movementDelay :int = 0) :void 
         {
             log.debug("updateBoardDisplaysFor3BoardViews()");
             if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, AppContext.playerId))
             {
-                log.debug("Humans are dead, not updating the boardview");
+                log.warning("Humans are dead, not updating the boardview");
                 return;
             }
+            
+            //This is too complex to debug, rewriting.
+//            Check if any board are acive but shouldn't
+
+
+//            if( !_sprite.contains( _destroyBottomRowButton)) {
+//                _sprite.addChild( _destroyBottomRowButton);
+//            }
+            
+            if(_myBoardDisplay != null && _myBoardDisplay.board.playerID != AppContext.playerId)
+            {
+                if(_myBoardDisplay.isLiveObject) {
+                    _myBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+                }
+                _myBoardDisplay.board = null;
+            }
+                
+            if(_myBoardDisplay == null)
+            {
+                _myBoardDisplay = new JoinGameBoardGameArea( _gameControl, true);
+                this.db.addObject(_myBoardDisplay, _sprite);
+                /* The board must be added AFTER the display is added to the db, so all the pieces
+                are added to the db also. */
+                _myBoardDisplay.board = _gameModel.getBoardForPlayerID( AppContext.playerId );
+                adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
+//                _sprite.addChild(_myBoardDisplay);
+                _myBoardDisplay.doBoardEnterFromBottomAnimation( Constants.GUI_MIDDLE_BOARD_CENTER );
+                
+                // add the BoardView to the mode, as a child of the board sprite
+            }
+            
+            if(_myBoardDisplay != null) {
+//                _myBoardDisplay.updatePieceBackgrounds();
+                _myBoardDisplay.updateYBasedOnBoardHeight();
+                if(_sprite.contains( _myBoardDisplay.displayObject)) {
+                    _sprite.setChildIndex( _myBoardDisplay.displayObject, _sprite.numChildren - 1);
+                }
+                
+                
+            }
+
+            var leftPlayerId :int =  _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId);
+            var rightPlayerId :int =  _gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId);
+            log.debug("     leftPlayerId=" + leftPlayerId + ", rightPlayerId=" + rightPlayerId);
+            if(_leftBoardDisplay != null && _leftBoardDisplay.board.playerID != _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId))
+            {
+                log.debug("     removing player on left, as " + _leftBoardDisplay.board.playerID + "!=" + _gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId) );
+                if(_leftBoardDisplay.isLiveObject) {
+                    _leftBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+//                    _leftBoardDisplay.destroySelf();
+                }
+                _leftBoardDisplay = null;
+            }
+            if(_leftBoardDisplay == null && _gameModel.currentSeatingOrder.length > 1 && _gameModel.getBoardForPlayerID( leftPlayerId )._state == JoinGameBoardRepresentation.STATE_ACTIVE)
+            {
+                log.debug("     adding board to my left");
+                _leftBoardDisplay = new JoinGameBoardGameArea( _gameControl );
+//                _sprite.addChild(_leftBoardDisplay);
+                
+                // add the BoardView to the mode, as a child of the board sprite
+                this.db.addObject(_leftBoardDisplay, _sprite);
+//                if( leftPlayerId != rightPlayerId ) {
+
+//                    log.debug("me==" + AppContext.gameCtrl.game.getMyId() + ", leftPlayerId=" + leftPlayerId );
+                    _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( leftPlayerId );
+                    if(_leftBoardDisplay._boardRepresentation._state == JoinGameBoardRepresentation.STATE_ACTIVE) {
+                        log.debug("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
+                        trace("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
+                        _leftBoardDisplay.doBoardEnterFromSideAnimation(Constants.LEFT);
+                    }
+                    else {
+                        trace("Adding board to left, but not animating because it's not active");
+                    }
+            }
+            else{
+                log.error("Should be adding board to my left but for some reason cannot:");
+                log.error("  _gameModel.currentSeatingOrder.length=" + _gameModel.currentSeatingOrder.length);
+                log.error("  _gameModel.getBoardForPlayerID( leftPlayerId=" + leftPlayerId + " ) == null " + (_leftBoardDisplay == null));
+                if( _gameModel.getBoardForPlayerID( leftPlayerId ) != null) {
+                    log.error("  _gameModel.getBoardForPlayerID( leftPlayerId )._state=" + _gameModel.getBoardForPlayerID( leftPlayerId )._state);    
+                }
+                
+            }
+            
+            if(_leftBoardDisplay != null) {
+//                _leftBoardDisplay.updatePieceBackgrounds();
+                _leftBoardDisplay.updateYBasedOnBoardHeight();
+                if( _sprite.contains( _leftBoardDisplay.displayObject )) {
+                    _sprite.setChildIndex( _leftBoardDisplay.displayObject, 1);
+                }
+                
+            }
+            
+            
+            if( _rightBoardDisplay != null && _leftBoardDisplay != null && _leftBoardDisplay.board.playerID == _gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId)) {
+                _rightBoardDisplay.addTask( new SerialTask( LocationTask.CreateEaseOut( 2000, _rightBoardDisplay.y, 0.5), new SelfDestructTask() ));
+                _rightBoardDisplay = null;
+            }
+            
+            if(_rightBoardDisplay != null && _rightBoardDisplay.board.playerID != _gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId))
+            {
+                if(_rightBoardDisplay.isLiveObject) {
+                    _rightBoardDisplay.addTask( new SerialTask( new TimedTask( Constants.BOARD_DISTRUCTION_TIME), new SelfDestructTask()));
+//                    _rightBoardDisplay.destroySelf();
+                }
+                _rightBoardDisplay = null;
+            }
+            if(_rightBoardDisplay == null)
+            {
+                _rightBoardDisplay = new JoinGameBoardGameArea(_gameControl);
+                this.db.addObject(_rightBoardDisplay, _sprite);
+                if( leftPlayerId != rightPlayerId) {
+                    _rightBoardDisplay.board = _gameModel.getBoardForPlayerID( rightPlayerId );
+                }
+                else {
+                    _rightBoardDisplay.board = _gameModel.getBoardForPlayerID( -1 );
+                }
+                
+//                _rightBoardDisplay.board = _gameModel.getBoardForPlayerID( _gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId));
+                _rightBoardDisplay.doBoardEnterFromSideAnimation(Constants.RIGHT);
+            }
+            
+            if(_rightBoardDisplay != null) {
+//                _rightBoardDisplay.updatePieceBackgrounds();
+                _rightBoardDisplay.updateYBasedOnBoardHeight();
+                if( _sprite.contains( _rightBoardDisplay.displayObject )) {
+                    _sprite.setChildIndex( _rightBoardDisplay.displayObject, 1);
+                }
+                
+            }
+            adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
+//            log.debug("\nWhen id="+AppContext.playerId+" starts, left="+_gameModel.getPlayerIDToLeftOfPlayer(AppContext.playerId )+ ", right="+_gameModel.getPlayerIDToRightOfPlayer(AppContext.playerId ));
+//            updateGameField();
+        }
+        protected function updateBoardDisplaysFor3BoardViewsOLD(movementDelay :int = 0) :void 
+        {
+            log.debug("updateBoardDisplaysFor3BoardViews()");
+            if( !ArrayUtil.contains( _gameModel.currentSeatingOrder, AppContext.playerId))
+            {
+                log.warning("Humans are dead, not updating the boardview");
+                return;
+            }
+            
+            //This is too complex to debug, rewriting.
 //            Check if any board are acive but shouldn't
 
 
@@ -1597,7 +1756,7 @@ package joingame.view
             _gameModel.removeEventListener(InternalJoinGameEvent.RESET_VIEW_FROM_MODEL, resetViewFromModel);
             _gameModel.removeEventListener(InternalJoinGameEvent.DONE_COMPLETE_DELTA, doFinishAnimations);
             _gameModel.removeEventListener(InternalJoinGameEvent.PLAYER_ADDED, doPlayerAdded);
-            _gameModel.removeEventListener(InternalJoinGameEvent.GAME_OVER, handleGameOver);
+            _gameModel.removeEventListener(InternalJoinGameEvent.GAME_OVER, doGameOver);
             super.destroySelf();
         }
         

@@ -78,27 +78,6 @@ package joingame.view
             _opaqueCover.graphics.drawRect( 0 , 0 , _size, _size );
             _opaqueCover.graphics.endFill();
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             updateImage();
             
         }

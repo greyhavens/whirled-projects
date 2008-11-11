@@ -1718,6 +1718,7 @@ package joingame.view
         public function removePieceTasksAndSetCorrectLocations() :void
         {
             log.debug("removePieceTasksAndSetCorrectLocations()");
+            trace("removePieceTasksAndSetCorrectLocations()");
             var selectedPieceCol :int = -1;
             
             for each (var piece :JoinGamePiece in _boardPieces) {
