@@ -47,13 +47,14 @@ public class Trophies
         return level;
     }
     
-    public static function handleWaveDefeated (model :JoinGameModel) :void
+    public static function handleWaveDefeated (model :JoinGameModel, cookie :UserCookieDataSourcePlayer) :void
     {
         if( AppContext.isMultiplayer ) {
             log.error("handleWave(), but not a single player game.");
             return;
         }
-        var playersLevel :int = model.singlePlayerLevel;
+//        var playersLevel :int = model.singlePlayerLevel;
+        var playersLevel :int = cookie.highestRobotLevelDefeated;
         
         for( var k :int = 0; k < playersLevel && k < WAVE_TROPHIES.length; k++) {
             doAward( model.humanPlayerId, WAVE_TROPHIES[k]);

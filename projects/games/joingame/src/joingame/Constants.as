@@ -1,12 +1,14 @@
 package joingame
 {
+    import flash.geom.Point;
+    
     
     public class Constants
     {
         public static const NORMAL_COLOR:Number = 0xff9933;
         public static const MOUSE_OVER_COLOR:Number = 0x1add25;
         
-
+        public static const SCREEN_SIZE :Point = new Point(700, 500);
         
         public static const MAX_PUZZLE_HEIGHT :int = 3000;
         
@@ -22,10 +24,8 @@ package joingame
         
         public static const HEALING_ALLOWED :Boolean = false;
         
-//        public static const ENCLOSED_UNCONNECTABLE_REGIONS_BECOME_DEAD :Boolean = true;
-        
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
-//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
+//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -90,23 +90,14 @@ package joingame
         public static const PIECE_SCALE_DOWN_TIME :Number = 0.4;
         public static const PIECE_JOIN_BOUNCE_DISTANCE :int = 70;
         
-        public static const BOARD_ENTER_DELAY :Number = 0.1;//1.0;
-        public static const HEADSHOT_MOVEMENT_TIME :Number = 0.1;//1.0;
-        
+        public static const BOARD_ENTER_DELAY :Number = 1.0;//1.0;
+        public static const HEADSHOT_MOVEMENT_TIME :Number = 1.0;//1.0;
         public static const BOARD_DISTRUCTION_TIME :Number = 5.0;
-        
-
-
-//        public static const JOIN_ANIMATION_TIME: Number = 0.5;
-
         
         /* Game admin*/
         public static const GAME_RESTART_TIME :int = 10;
-        
         public static const PLAYER_ID_TO_LOG :int = 2;
-        
         public static const TESTING_NEW_MECHANIC :Boolean = true;
-        
         public static const TIME_TO_SHOW_INSTRUCTIONS :int = 6000; 
         
         
@@ -114,10 +105,11 @@ package joingame
         public static const LOCAL_MODE :Boolean = true;
         
         /*Single player */
-        public static const SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE :int = 6;
-        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 4000;
-        public static const SINGLE_PLAYER_AI_TIME_INCREMENT_IN_MILLISECS :int = 200;
-        public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 3;
+        public static const SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE :int = 1;
+        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 5000;
+        public static const SINGLE_PLAYER_MAX_ROBOT_LEVELS :int = 100;
+        
+        public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 1;
         
         public static const SINGLE_PLAYER_GAME_TYPE_WAVES :String = "Game Type: Waves";
         public static const SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS :String = "Game Type: Choose Level";

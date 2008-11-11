@@ -17,6 +17,7 @@ import joingame.model.*;
 import joingame.modes.*;
 import joingame.view.*;
 
+
 public class GameContext
 {
     
@@ -30,6 +31,9 @@ public class GameContext
     public static var puzzleBoardRight :JoinGameBoardGameArea;
         
     public static var gameModel: JoinGameModel;
+    
+    public static var cookieManager :UserCookieManager = new UserCookieManager(1);
+    public static var playerCookieData :UserCookieDataSourcePlayer = new UserCookieDataSourcePlayer();
         
 //    public static const GAME_TYPE_MULTIPLAYER :int = 0;
 //    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
@@ -127,11 +131,12 @@ public class GameContext
     //                txt.background = true;
                     txt.width = 30;
                     txt.height = 20;
-                    txt.scaleX = 5;
-                    txt.scaleY = 5;
+                    txt.scaleX = 3;
+                    txt.scaleY = 3;
     //                txt.text = "" + Math.abs(playerid) +" " + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
 //                    txt.text = "" + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
-                    txt.text = "" + playerid;
+                    txt.text = "" + SinglePlayerServerPlugin.getLevelForComputerId(playerid);
+//                    txt.text = "" + Math.abs(playerid);
     //                txt.text = "" + 12;
                     if( txt.text.length == 1) {
                         txt.text = " " + txt.text;
