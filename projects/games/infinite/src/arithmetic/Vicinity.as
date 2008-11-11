@@ -2,6 +2,7 @@ package arithmetic
 {
 	import flash.utils.ByteArray;
 	
+	import server.Messages.Neighborhood;
 	import server.Messages.Serializable;
 	
 	public class Vicinity implements Serializable
@@ -54,7 +55,16 @@ package arithmetic
         	return code(_x, _y);
         }
         
-        public function get neighborhood () :Array
+        public function get neighborhood () :Neighborhood
+        {
+        	var hood:Neighborhood = new Neighborhood();
+        	for each (var nearby:Vicinity in vicinitiesNearby) {
+        		hood.add(nearby);
+        	}
+        	return hood;
+        }
+        
+        public function get vicinitiesNearby () :Array
         {
         	if (neighbors!= null) {
         		return neighbors;

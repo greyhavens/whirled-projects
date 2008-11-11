@@ -118,8 +118,7 @@ package client
 			// if it's the local player, then switch level to the player's new
 			// level.
 			if (event.player == _localPlayer) {
-    			selectLevel (event.player.level);
-    			_viewer.addLocalPlayer(event.player);
+    			selectLevel (event.player);
             } else {
             	// otherwise, if the player has entered the level that the local
             	// player is on, then 
@@ -146,30 +145,37 @@ package client
 		/**
 		 * Cause the client to start displaying a new level.
 		 */
-		public function selectLevel (level:int) :void
+		public function selectLevel (player:Player) :void
 		{
-			Log.debug(this+" selecting level "+level);
+			Log.debug(this+" selecting level "+player.level);
 			
 			// if the client is already displaying the requested level, return.
-			if (_level == level) {
+			if (_level == player.level) {
 				return;
 			}
 			
 			// we can start off with the default blank board.
 			_board = new MutableBoard(new BlankBoard);
-            Log.debug(this+" created "+_board);            
-			
+            Log.debug(this+" created "+_board);       
+            
+                 
 			// and assign a new board to the view.
 			_viewer.board = _board;
+
+            // update cells - this is bad encapsulation since the order of these operations
+            // relies on knowing the fact that assigning the board to the viewer causes the
+            // objective to be created which is a precondition for handing a cell update
+            _world.requestCellUpdate(player.position.vicinity.neighborhood);
+
             _controller = new PlayerController(_world, _viewer, _localPlayer, _inventory);
             
-			_level = level;
+			_level = player.level;
 			
 			// add the players we know about on this level
 			_viewer.addLocalPlayer(_localPlayer);
-			for each (var player:Player in _players.list) {
-				if (player.level == level) {
-					_viewer.addPlayer(player);
+			for each (var p:Player in _players.list) {
+				if (p.level == player.level) {
+					_viewer.addPlayer(p);
 				}
 			}
 		}
@@ -187,6 +193,7 @@ package client
 		
 		public function updatedCells (detail:CellUpdate) :void
 		{
+			Log.debug("client processing "+detail);
 			_viewer.updatedCells(detail);
 		}
 		

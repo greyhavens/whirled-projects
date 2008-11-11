@@ -35,7 +35,7 @@ package world
 		
 		public function replace (cell:Cell) :void
 		{
-			Log.debug("new cell: "+cell);
+			//Log.debug("new cell: "+cell);
 			_changed.remember(cell);
 		}
 		

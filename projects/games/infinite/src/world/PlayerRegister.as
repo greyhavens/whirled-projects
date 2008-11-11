@@ -18,8 +18,14 @@ package world
 		
 		public function register (player:Player) :void
 		{
+			Log.debug(this + "registering "+player);
 			_dictionary[player.id] = player;
 		}		
+
+        public function toString () :String
+        {
+        	return "server player register";
+        }
 
         protected var _dictionary:Dictionary = new Dictionary();
 	}

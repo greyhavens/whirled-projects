@@ -14,7 +14,7 @@ package server.Messages
         {
         	Log.debug("adding cells");
         	for each (var cell:Cell in array) {
-        		Log.debug("adding cell state: "+cell);
+        		//Log.debug("adding cell state: "+cell);
         		_states.push(cell.state);
         	}
         }

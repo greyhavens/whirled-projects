@@ -10,27 +10,27 @@ package client
 		public function PlayerRegister()
 		{
 		}
-		
+
 		public function find (id:int) :Player
 		{
 			return _dictionary[id] as Player;
 		}
-		
+
 		public function register (player:Player) :void
 		{
-		     Log.debug(this + " registering " + player);
+		    Log.debug(this + " registering " + player);
 			_dictionary[player.id] = player;
 			_list.push(player);
 		}
-		
+
 		public function get list () :Array
 		{
 			return _list;
 		}
-		
-		public function toString () :String 
+
+		public function toString () :String
 		{
-			return "player register";
+			return "client player register";
 		}
 
         protected var _list:Array = new Array();

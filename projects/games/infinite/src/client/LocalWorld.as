@@ -35,6 +35,7 @@ package client
         
         public function enter (client:WorldClient) :void
         {
+        	Log.debug("player entering world");
             _client = client;
             _world.playerEnters(ID);
         }

@@ -36,7 +36,7 @@ package arithmetic
 		public function visit (coords:BoardCoordinates) :Neighborhood 
 		{
 			const unmapped:Neighborhood = new Neighborhood();
-			for each (var hood:Vicinity in coords.vicinity.neighborhood)
+			for each (var hood:Vicinity in coords.vicinity.vicinitiesNearby)
 			{
 				var key:String = hood.key();
 				if (_visited[key] == null) {
