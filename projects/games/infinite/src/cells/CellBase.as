@@ -80,14 +80,6 @@ package cells
 		{
 			return new CellIterator(this, board, direction);
 		} 
-
-		/**
-		 * Remember the state of this cell when it's scrolled out of view.
-		 */
-		public function rememberOffBoard() :void
-		{
-			_objective.remember(this);
-		}
 								
 		/**	
 		 * Cell affordances.

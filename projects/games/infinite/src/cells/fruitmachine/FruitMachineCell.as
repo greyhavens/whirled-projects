@@ -19,7 +19,7 @@ package cells.fruitmachine
 	
 	public class FruitMachineCell extends BackgroundCell
 	{
-		public function FruitMachineCell(state:CellState)
+		public function FruitMachineCell (state:CellState)
 		{
 			super(state.position);
 			_box = new ObjectBox(item(state.attributes.item));
@@ -61,7 +61,6 @@ package cells.fruitmachine
 		 */
 		protected function handleAdded (event:CellEvent) :void
 		{
-			rememberOffBoard();
 			if (_mode == ACTIVE || _mode == INACTIVE) {
 				startActivationTimer();
 			}

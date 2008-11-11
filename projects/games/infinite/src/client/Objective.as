@@ -35,7 +35,7 @@ package client
 	 * the playfield into a single instance.  The objective may also contain off-screen objects that
 	 * are prepared for later display.
 	 */
-	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram, CellMemory
+	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram
 	{
 		public function Objective(
 			viewer:Viewer, board:BoardInteractions, startingPosition:BoardCoordinates)
@@ -222,26 +222,7 @@ package client
 		{
 			return _cells.cellAt (position);
 		}
-		
-		public function remember (cell:Cell) :void
-		{
-			_memory.remember(cell);
-		}
-
-		/**
-		 * Recall the cell associated with the supplied position from the memory.  Does not refer
-		 * to the board or other sources.
-		 */
-		public function recall (position:BoardCoordinates) :Cell
-		{
-			return _memory.recall(position);
-		}
-	
-		public function forget (cell:Cell) :void
-		{
-			_memory.forget(cell);
-		}
-		
+				
 		/**
 		 * Replace a cell at a given position with the new cell that is supplied.
 		 * TODO: REPLACE THIS WITH REAL PERSISTENCE TO THE BOARD
@@ -249,7 +230,6 @@ package client
 		public function replace (newCell:Cell) :void
 		{
 			cellAt(newCell.position).removeFromObjective();
-			remember(newCell);
 			newCell.addToObjective(this);
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
@@ -374,10 +354,7 @@ package client
 			
 		// a representation of the player character 
 		protected var _player:Player;
-		
-		// memory for cell state that should be kept off the board.
-		protected var _memory:CellMemory = new CellDictionary();
-				
+						
 		// memory associating views with cells.
 		protected var _viewBuffer:ViewBuffer = new ViewBuffer();
 				

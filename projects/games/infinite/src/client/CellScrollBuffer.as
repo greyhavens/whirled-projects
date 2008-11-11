@@ -310,11 +310,6 @@ package client
 		 */
 		public function cellAt (position:BoardCoordinates) :Cell 
 		{
-			const found:Cell = _objective.recall(position);
-			if (found != null) {
-				// Log.debug ("recalled "+found);
-				return found;
-			}
 			if (_extent.contains(position)) { 
 				const v:Vector = _extent.relativePosition(position);
 				return _cells[v.dx][v.dy] as Cell;		
