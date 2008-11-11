@@ -11,7 +11,7 @@ package joingame.modes
     
     import joingame.*;
     
-    public class GameOverMode extends AppMode
+    public class GameOverMode extends JoinGameMode
     {
         protected static var log :Log = AppContext.log;
         

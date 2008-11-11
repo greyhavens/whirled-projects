@@ -24,14 +24,22 @@ package joingame.modes
     import joingame.*;
     import joingame.model.*;
     import joingame.net.AddPlayerMessage;
-    import joingame.net.GameOverMessage;
     import joingame.net.GoToObserverModeMessage;
     import joingame.net.InternalJoinGameEvent;
     import joingame.net.JoinGameMessage;
+    import joingame.net.WaveDefeatedMessage;
     import joingame.view.*;
     
-    public class PlayPuzzleMode extends AppMode
+    public class PlayPuzzleMode extends JoinGameMode
     {
+        override protected function setup () :void
+        {
+            super.setup();
+            _shouldFadeIn = true;
+            
+        }
+        
+        
         
         /**
          * When this method is called, it assumes that the game starting data
@@ -40,6 +48,7 @@ package joingame.modes
          */
         override protected function enter () :void
         {
+            super.enter();
             log.debug("PlayPuzzleMode...");
             /*Start counting progress for coins again */
             if(AppContext.isConnected) {
@@ -55,13 +64,13 @@ package joingame.modes
 //            AppContext.gameCtrl.local.setShowReplay(false);
             
             
-            modeSprite.graphics.beginFill(0xffffff);
-            modeSprite.graphics.drawCircle(50, 50, 30);
-            modeSprite.graphics.endFill();
+            _modeLayer.graphics.beginFill(0xffffff);
+            _modeLayer.graphics.drawCircle(50, 50, 30);
+            _modeLayer.graphics.endFill();
             
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
-            modeSprite.addChild(swfRoot);
-            modeSprite.mouseEnabled = false;
+            _modeLayer.addChild(swfRoot);
+            _modeLayer.mouseEnabled = false;
             swfRoot.mouseEnabled = false;
             
             _playerPlacerMain = MovieClip(swfRoot["player_placer_main"]);
@@ -87,7 +96,7 @@ package joingame.modes
             _bg = ImageResource.instantiateBitmap("BG");
             
             if(_bg != null) {
-                _modeSprite.addChild(_bg);
+                _modeLayer.addChild(_bg);
                 AppContext.gameWidth = _bg.width;
                 AppContext.gameHeight = _bg.height;
             }
@@ -103,16 +112,16 @@ package joingame.modes
                 _id2HeadshotSceneObject.put(id, so);
                 so.x = 100;
                 so.y = 100;
-                addObject( so, modeSprite);
+                addObject( so, _modeLayer);
             }
 //            placeHeadshotsToStartLocation();
 //            animateHeadshotsToLocation();
             
-            _modeSprite.mouseEnabled = true;
+            _modeLayer.mouseEnabled = true;
             
             
             _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl);
-            addObject( _boardsView, _modeSprite);
+            addObject( _boardsView, _modeLayer);
             
             _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_REMOVED, playerRemoved);
             _boardsView.addEventListener(InternalJoinGameEvent.PLAYER_ADDED, playerAdded);
@@ -123,6 +132,9 @@ package joingame.modes
             _boardsView.updateBoardDisplays();
             _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
             
+            if (_shouldFadeIn) {
+                fadeIn();
+            }
             
         }
         
@@ -143,35 +155,28 @@ package joingame.modes
             if (event.value is GoToObserverModeMessage) {
                 handleGoToObserverMode( GoToObserverModeMessage(event.value) );
             }
+            else if (event.value is WaveDefeatedMessage) {
+                handleWaveDefeated( WaveDefeatedMessage(event.value) );
+            }
+        }
+        
+        protected function handleWaveDefeated( event :WaveDefeatedMessage ) :void
+        {
+            GameContext.gameModel._tempNewPlayerCookie = event.userCookieData;
+            
+//            GameContext.mainLoop.unwindToMode(new SinglePlayerWaveDefeatedMode());
+//            GameContext.mainLoop.unwindToMode(new FadeOutMode(_modeLayer, SinglePlayerWaveDefeatedMode));
+            fadeOutToMode( new SinglePlayerWaveDefeatedMode());
+            
         }
         
         protected function handleGoToObserverMode( event :GoToObserverModeMessage ) :void
         {
             if( event.playerId == AppContext.playerId ) {
-                GameContext.mainLoop.unwindToMode(new ObserverMode());
+//                GameContext.mainLoop.unwindToMode(new ObserverMode());
+                fadeOutToMode( new ObserverMode() );
             }    
         }
-        
-        protected function handleGameOverFromServerDirect( event :GameOverMessage ) :void
-        {
-            log.error("handleGameOverFromServerDirect() Deprecated!!!!");
-//            trace( ClassUtil.shortClassName(this) + " " + event);
-//            if( AppContext.isSinglePlayer ) {
-//                log.debug("Single Player: Game Over");
-//                if( true || event.toObserverState ) {
-//                    GameContext.mainLoop.unwindToMode(new ObserverMode());    
-//                }
-//                else {
-//                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
-//                }
-//            }
-//            else {
-//                log.debug("Multi Player: Game Over");
-//                GameContext.mainLoop.unwindToMode(new ObserverMode());
-//            }
-        }
-        
-        
         
         protected function handleGameOver( e :InternalJoinGameEvent ) :void
         {
@@ -179,10 +184,12 @@ package joingame.modes
             if( AppContext.isSinglePlayer ) {
                 log.debug("Single Player: Game Over");
                 if( GameContext.gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS ) {
-                    GameContext.mainLoop.unwindToMode(new ObserverMode());    
+                    fadeOutToMode( new ObserverMode() );
+//                    GameContext.mainLoop.unwindToMode(new ObserverMode());    
                 }
                 else if(GameContext.gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES) {
-                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+//                    GameContext.mainLoop.unwindToMode(new SinglePlayerGameOverMode());
+                    fadeOutToMode( new SinglePlayerGameOverMode() );
                 }
                 else {
                     log.error("handleGameOver(), but unknown single player game type=" + GameContext.gameModel._singlePlayerGameType);
@@ -191,7 +198,8 @@ package joingame.modes
             }
             else {
                 log.debug("Multi Player: Game Over");
-                GameContext.mainLoop.unwindToMode(new ObserverMode());
+                fadeOutToMode( new ObserverMode() );
+//                GameContext.mainLoop.unwindToMode(new ObserverMode());
             }
         }
         protected function playerRemoved( e :InternalJoinGameEvent ) :void
@@ -202,7 +210,7 @@ package joingame.modes
                 }
                 else {
                     if( GameContext.gameModel.currentSeatingOrder.length <= 1) {
-                        GameContext.mainLoop.pushMode(new SinglePlayerWaveDefeatedMode());
+//                        GameContext.mainLoop.pushMode(new SinglePlayerWaveDefeatedMode());
 //                        GameContext.mainLoop.unwindToMode(new SinglePlayerWaveDefeatedMode());
                     }
                 }
@@ -228,7 +236,7 @@ package joingame.modes
             _id2HeadshotSceneObject.put(id, so);
             so.x = -100;
             so.y = 100;
-            addObject( so, modeSprite);
+            addObject( so, _modeLayer);
             
             log.debug("playerAdded( " + e.boardPlayerID + "), animating headshots");
             animateHeadshotsToLocation();
@@ -246,7 +254,8 @@ package joingame.modes
                 _boardsView.destroySelf();
                 _boardsView = null;
             }
-            //while(modeSprite.numChildren > 0) {modeSprite.removeChildAt(0);}
+//            while(_modeLayer.numChildren > 0) {_modeLayer.removeChildAt(0);}
+            
             super.exit();
         }
         
@@ -281,7 +290,7 @@ package joingame.modes
             if( _gameModel.getPlayerIDToLeftOfPlayer(myid) != id){
                 headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                 if( headshot != null ) {
-                    headshot.x = modeSprite.width + 80;
+                    headshot.x = _modeLayer.width + 80;
                     headshot.y = _playerPlacerEast.y - 30;
                     headshotIdsAlreadyPlaced.push(id);
                 }
@@ -318,7 +327,7 @@ package joingame.modes
                 if(id != 0) {
                     
                     var distanceFromSideAnchor :int = (isLeft ? -(leftPlayerIds.length+1) : rightPlayerIds.length) * 80 * headshotScaleToFit;
-                    var toX :int = (isLeft ? -80 - spaceForEachHeadshot: modeSprite.width + 80) + distanceFromSideAnchor;
+                    var toX :int = (isLeft ? -80 - spaceForEachHeadshot: _modeLayer.width + 80) + distanceFromSideAnchor;
                     var toY :int = _extraPlacerWest.y;
                     headshot = _id2HeadshotSceneObject.get( id ) as SceneObject;
                     
@@ -366,7 +375,7 @@ package joingame.modes
                     _id2HeadshotSceneObject.put(id, so);
                     so.x = 100;
                     so.y = 100;
-                    addObject( so, modeSprite);
+                    addObject( so, _modeLayer);
                 }
                 
             }
@@ -408,7 +417,7 @@ package joingame.modes
                     
                     serialTask = new SerialTask();
                     if( headshot.x > toX) {
-                        serialTask.addTask( LocationTask.CreateEaseOut( AppContext.gameWidth - modeSprite.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
+                        serialTask.addTask( LocationTask.CreateEaseOut( AppContext.gameWidth - _modeLayer.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
                         serialTask.addTask( LocationTask.CreateLinear( 0, headshot.y, 0  ));
                         scaleTask = new ScaleTask(1.0, 1.0, Constants.HEADSHOT_MOVEMENT_TIME/2);
                         moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME/2);
@@ -437,7 +446,7 @@ package joingame.modes
                     serialTask = new SerialTask();
                     if( headshot.x < toX) {
                         serialTask.addTask( LocationTask.CreateEaseOut( 0 - 80, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
-                        serialTask.addTask( LocationTask.CreateLinear( modeSprite.width, headshot.y, 0  ));
+                        serialTask.addTask( LocationTask.CreateLinear( _modeLayer.width, headshot.y, 0  ));
                         scaleTask = new ScaleTask(1.0, 1.0, Constants.HEADSHOT_MOVEMENT_TIME/2);
                         moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME/2);
                         parallelTask = new ParallelTask( scaleTask, moveTask);
@@ -493,7 +502,7 @@ package joingame.modes
                         serialTask = new SerialTask();
                         if(isLeft) {
                             if( headshot.x > toX) {
-                                serialTask.addTask( LocationTask.CreateEaseOut( modeSprite.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
+                                serialTask.addTask( LocationTask.CreateEaseOut( _modeLayer.width, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
                                 serialTask.addTask( LocationTask.CreateLinear( 0 - 80, headshot.y, 0  ));
                                 scaleTask = new ScaleTask(headshotScaleToFit, headshotScaleToFit, Constants.HEADSHOT_MOVEMENT_TIME/2);
                                 moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME/2);
@@ -512,7 +521,7 @@ package joingame.modes
                             
                             if( headshot.x < toX) {
                                 serialTask.addTask( LocationTask.CreateEaseOut( 0 - 80, headshot.y, Constants.HEADSHOT_MOVEMENT_TIME/2  ));
-                                serialTask.addTask( LocationTask.CreateLinear( modeSprite.width, headshot.y, 0  ));
+                                serialTask.addTask( LocationTask.CreateLinear( _modeLayer.width, headshot.y, 0  ));
                                 scaleTask = new ScaleTask(headshotScaleToFit, headshotScaleToFit, Constants.HEADSHOT_MOVEMENT_TIME/2);
                                 moveTask = LocationTask.CreateEaseOut(toX, toY, Constants.HEADSHOT_MOVEMENT_TIME/2);
                                 parallelTask = new ParallelTask( scaleTask, moveTask);

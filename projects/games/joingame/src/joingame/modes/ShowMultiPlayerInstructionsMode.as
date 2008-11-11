@@ -28,7 +28,7 @@ package joingame.modes
      * can contain some simple instructions.  In addition, the game downloads the player states 
      * here, and does not go to the next mode until are is downloaded.
      */
-    public class ShowMultiPlayerInstructionsMode extends AppMode
+    public class ShowMultiPlayerInstructionsMode extends JoinGameMode
     {
         private static const log :Log = Log.getLog(ShowMultiPlayerInstructionsMode);
         
@@ -69,7 +69,8 @@ package joingame.modes
             if(true || _readyToStart && (getTimer() - AppContext.beginToShowInstructionsTime) >= Constants.TIME_TO_SHOW_INSTRUCTIONS) {
                 _startTimer.removeEventListener(TimerEvent.TIMER, timerEvent);
                 _startTimer.stop();
-                GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());    
+                fadeOutToMode( new PlayPuzzleMode() );
+//                GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());    
             }
             
         }

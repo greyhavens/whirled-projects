@@ -22,7 +22,7 @@ package joingame.modes
     /**
      * As an observer we need the current game state.
      */
-    public class WaitingForPlayerDataModeAsObserver extends AppMode
+    public class WaitingForPlayerDataModeAsObserver extends JoinGameMode
     {
         protected static var log :Log = Log.getLog(WaitingForPlayerDataModeAsObserver);
         

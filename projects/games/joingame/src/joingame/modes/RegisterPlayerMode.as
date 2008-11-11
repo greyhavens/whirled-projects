@@ -27,7 +27,7 @@ package joingame.modes
      * can contain some simple instructions.  In addition, the game downloads the player states 
      * here, and does not go to the next mode until are is downloaded.
      */
-    public class RegisterPlayerMode extends AppMode
+    public class RegisterPlayerMode extends JoinGameMode
     {
         protected static var log :Log = Log.getLog(RegisterPlayerMode);
         
@@ -37,7 +37,7 @@ package joingame.modes
             
             _bg = ImageResource.instantiateBitmap("INSTRUCTIONS");
             if(_bg != null) {
-                _modeSprite.addChild(_bg);
+                _modeLayer.addChild(_bg);
             }
             else {
                 trace("!!!!!Background is null!!!");
@@ -53,7 +53,7 @@ package joingame.modes
             _text.y = 400;
             _text.text = "Saying hello\nto the JoingameServer...";
     
-            this.modeSprite.addChild(_text);
+            this._modeLayer.addChild(_text);
             AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
 //            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             

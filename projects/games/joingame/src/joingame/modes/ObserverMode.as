@@ -28,26 +28,18 @@ package joingame.modes
     import joingame.net.ReplayRequestMessage;
     import joingame.view.*;
     
-    public class ObserverMode extends AppMode
+    public class ObserverMode extends JoinGameMode
     {
         private static const log :Log = Log.getLog(ObserverMode);
         
         override protected function setup () :void
         {
             log.debug("Player " + AppContext.playerId + ",PlayPuzzleMode...");
-            
-            
-//            AppContext.messageManager.addEventListener(ReplayRequestMessage.NAME, handleReplayRequest);
-//            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
-            
-            _modeSprite.mouseEnabled = false;
-            
-            
-            
+            _modeLayer.mouseEnabled = false;
             
             _bg = ImageResource.instantiateBitmap("BG_watcher");
             if(_bg != null) {
-                _modeSprite.addChild(_bg);
+                _modeLayer.addChild(_bg);
                 AppContext.gameWidth = _bg.width;
                 AppContext.gameHeight = _bg.height;
             }
@@ -56,7 +48,7 @@ package joingame.modes
             }
             
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
-            modeSprite.addChild(swfRoot);
+            _modeLayer.addChild(swfRoot);
             
             _out_placer = MovieClip(swfRoot["out_placer"]);
             _marquee_placer = MovieClip(swfRoot["marquee_placer"]);
@@ -72,7 +64,7 @@ package joingame.modes
             var _winnerClipMovieClip :MovieClip = new winnerClass();
             
             _winnerClip = new SimpleSceneObject( _winnerClipMovieClip );
-            addObject( _winnerClip, modeSprite);
+            addObject( _winnerClip, _modeLayer);
             _winnerClip.x = AppContext.gameWidth/2;
             _winnerClip.y = -100;
             
@@ -89,13 +81,13 @@ package joingame.modes
             _startButton = new SimpleSceneObject( startButtonMovieClip );
             _startButton.x = AppContext.gameWidth/2;
             _startButton.y = -100;
-            addObject( _startButton, modeSprite);
+            addObject( _startButton, _modeLayer);
             
             var replayButton :SimpleTextButton = new SimpleTextButton("Replay");
             replayButton.addEventListener(MouseEvent.CLICK, doReplayButtonClicked);
             replayButton.x = 300;
             replayButton.y = -300;
-//            modeSprite.addChild( replayButton);
+//            _modeLayer.addChild( replayButton);
             _replayButton = new SimpleSceneObject( replayButton );
             
             
@@ -107,8 +99,8 @@ package joingame.modes
             
             
             if(AppContext.isSinglePlayer ) {
-                addObject( _replayButton, modeSprite);
-                addObject( _singlePlayerMainMenuButton, modeSprite);
+                addObject( _replayButton, _modeLayer);
+                addObject( _singlePlayerMainMenuButton, _modeLayer);
             }
             
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
@@ -123,12 +115,13 @@ package joingame.modes
             _restartTimeTextField.y = 258;
             _restartTimeTextField.text = "";
             _restartTimeTextField.visible = false;
-            this.modeSprite.addChild( _restartTimeTextField );
+            this._modeLayer.addChild( _restartTimeTextField );
             
             _gameRestartTimer = new Timer(1000, 0);
             _gameRestartTimer.addEventListener(TimerEvent.TIMER, gameTimer);
             _totalTimeElapsedSinceNewGameTimerStarted = 0;
         
+            fadeIn();
         
 //            initGameData();
         }
@@ -137,7 +130,7 @@ package joingame.modes
         protected function doReplayButtonClicked (event :MouseEvent) :void
         {
             log.debug("sending " + ReplayRequestMessage.NAME );
-            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId));
+            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId, GameContext.playerCookieData));
         }
         
         protected function doMainMenuButtonClicked (event :MouseEvent) :void
@@ -161,7 +154,7 @@ package joingame.modes
             _totalTimeElapsedSinceNewGameTimerStarted++;
             _restartTimeTextField.text = "" + ( Constants.GAME_RESTART_TIME - _totalTimeElapsedSinceNewGameTimerStarted) ;
             _restartTimeTextField.visible = true;
-            modeSprite.setChildIndex( _restartTimeTextField, modeSprite.numChildren - 1);
+            _modeLayer.setChildIndex( _restartTimeTextField, _modeLayer.numChildren - 1);
             if( _totalTimeElapsedSinceNewGameTimerStarted >  Constants.GAME_RESTART_TIME) {
                 _restartTimeTextField.visible = false;
                 _gameRestartTimer.stop();
@@ -246,7 +239,7 @@ package joingame.modes
                 var marquee :MovieClip = new _marqueeClass();
                 var so2 :SimpleSceneObject = new SimpleSceneObject(marquee);
                 _id2MarqueeSceneObject.put( id, so2);
-                addObject( so2, modeSprite);
+                addObject( so2, _modeLayer);
             }
             
             for each ( id in _gameModel._initialSeatedPlayerIds) {
@@ -255,12 +248,12 @@ package joingame.modes
                 _id2HeadshotSceneObject.put(id, so);
                 so.x = 10;
                 so.y = 10;
-                addObject( so, modeSprite);
+                addObject( so, _modeLayer);
             }
             
             
             _boardsView = new JoinGameBoardsView(GameContext.gameModel, AppContext.gameCtrl, true);
-            addObject( _boardsView, _modeSprite);
+            addObject( _boardsView, _modeLayer);
             _boardsView.updateBoardDisplays();
             _gameModel.addEventListener(InternalJoinGameEvent.PLAYER_REMOVED, animateHeadshotsToLocation);
             _gameModel.addEventListener(InternalJoinGameEvent.GAME_OVER, gameOver);
@@ -390,7 +383,7 @@ package joingame.modes
         protected function gameOver( e :InternalJoinGameEvent = null) :void
         {
             _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
-            modeSprite.setChildIndex( _winnerClip.displayObject, modeSprite.numChildren - 1);
+            _modeLayer.setChildIndex( _winnerClip.displayObject, _modeLayer.numChildren - 1);
             AudioManager.instance.playSoundNamed("final_applause");
             
             if( !AppContext.isObserver ) {//Lower the menu for replay or main menu
@@ -399,12 +392,20 @@ package joingame.modes
                     
                     _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
 //                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
-                    modeSprite.setChildIndex( _replayButton.displayObject, modeSprite.numChildren - 1);
-                    modeSprite.setChildIndex( _singlePlayerMainMenuButton.displayObject, modeSprite.numChildren - 1);
+                    _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
+                    _modeLayer.setChildIndex( _singlePlayerMainMenuButton.displayObject, _modeLayer.numChildren - 1);
+                    
+                    _modeLayer.addChild( new GameStatsSinglePlayerSprite(GameContext.playerCookieData.clone(), GameContext.gameModel._tempNewPlayerCookie.clone()));
+                    GameContext.playerCookieData.setFrom( GameContext.gameModel._tempNewPlayerCookie );
+                    if( AppContext.isConnected ) {
+                        log.info("gameOver(), Writing new single player cookie");
+                        GameContext.cookieManager.needsUpdate();
+                    }
+                    
                 }
                 else {//if( GameContext.gameModel.potentialPlayerIds.length > 1) {
                     _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
-                    modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
+                    _modeLayer.setChildIndex( _startButton.displayObject, _modeLayer.numChildren - 1);
                     
     //                _gameRestartTimer.reset();
     //                _gameRestartTimer.start(); 
@@ -462,7 +463,7 @@ package joingame.modes
                 
                 moveTask = LocationTask.CreateEaseOut(toX, toY, animationDuration);
                 headshot.addTask( moveTask );
-                modeSprite.setChildIndex( headshot.displayObject, modeSprite.numChildren - 1); 
+                _modeLayer.setChildIndex( headshot.displayObject, _modeLayer.numChildren - 1); 
                 
                 toX = toX + headshot.width/2;
                 toY = toY + headshot.height/2;

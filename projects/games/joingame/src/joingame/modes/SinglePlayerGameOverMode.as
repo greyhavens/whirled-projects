@@ -24,7 +24,7 @@ package joingame.modes
     import joingame.net.ReplayConfirmMessage;
     import joingame.net.ReplayRequestMessage;
 
-    public class SinglePlayerGameOverMode extends AppMode
+    public class SinglePlayerGameOverMode extends JoinGameMode
     {
         protected static var log :Log = Log.getLog(SinglePlayerGameOverMode);
         protected var _bg :DisplayObject;
@@ -42,6 +42,12 @@ package joingame.modes
         
         protected var _winnerClip :SceneObject;
         
+        override protected function setup() :void
+        {
+            super.setup();
+            fadeIn();
+        }
+        
         
         override protected function enter() :void
         {
@@ -51,7 +57,7 @@ package joingame.modes
             
             _bg = ImageResource.instantiateBitmap("BG_watcher");
             if(_bg != null) {
-                _modeSprite.addChild(_bg);
+                _modeLayer.addChild(_bg);
                 AppContext.gameWidth = _bg.width;
                 AppContext.gameHeight = _bg.height;
             }
@@ -60,7 +66,7 @@ package joingame.modes
             }
             
             var swfRoot :MovieClip = MovieClip(SwfResource.getSwfDisplayRoot("UI"));
-            modeSprite.addChild(swfRoot);
+            _modeLayer.addChild(swfRoot);
             
             _out_placer = MovieClip(swfRoot["out_placer"]);
             _marquee_placer = MovieClip(swfRoot["marquee_placer"]);
@@ -73,7 +79,7 @@ package joingame.modes
             var _winnerClipMovieClip :MovieClip = new winnerClass();
             
             _winnerClip = new SimpleSceneObject( _winnerClipMovieClip );
-            addObject( _winnerClip, modeSprite);
+            addObject( _winnerClip, _modeLayer);
             _winnerClip.x = AppContext.gameWidth/2;
             _winnerClip.y = -100;
             
@@ -96,11 +102,11 @@ package joingame.modes
             mainMenuButton.x = 50;
             mainMenuButton.y = 50;
             mainMenuButton.addEventListener(MouseEvent.CLICK, doMainMenuButtonClick);
-            modeSprite.addChild( mainMenuButton );
+            _modeLayer.addChild( mainMenuButton );
          
             
             
-            addObject( _startButton, modeSprite);
+            addObject( _startButton, _modeLayer);
             
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
@@ -113,7 +119,8 @@ package joingame.modes
         
         protected function doMainMenuButtonClick (event :MouseEvent) :void
         {
-            GameContext.mainLoop.unwindToMode( new SinglePlayerIntroMode());
+            fadeOutToMode( new SinglePlayerIntroMode() );
+//            GameContext.mainLoop.unwindToMode( new SinglePlayerIntroMode());
         }
         
         protected function messageReceived (event :MessageReceivedEvent) :void
@@ -127,11 +134,11 @@ package joingame.modes
         protected function gameOver( e :InternalJoinGameEvent = null) :void
         {
 //            _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
-//            modeSprite.setChildIndex( _winnerClip.displayObject, modeSprite.numChildren - 1);
+//            _modeLayer.setChildIndex( _winnerClip.displayObject, _modeLayer.numChildren - 1);
 //            AudioManager.instance.playSoundNamed("final_applause");
             
             _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
-            modeSprite.setChildIndex( _startButton.displayObject, modeSprite.numChildren - 1);
+            _modeLayer.setChildIndex( _startButton.displayObject, _modeLayer.numChildren - 1);
                 
         }
         
@@ -169,7 +176,8 @@ package joingame.modes
             log.debug("handleReplayConfirm()");
             GameContext.gameModel.setModelMemento( event.modelMemento );
             log.debug("  players=" + GameContext.gameModel.currentSeatingOrder);
-            GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());
+            fadeOutToMode( new PlayPuzzleMode() );
+//            GameContext.mainLoop.unwindToMode(new PlayPuzzleMode());
         }
     }
 }

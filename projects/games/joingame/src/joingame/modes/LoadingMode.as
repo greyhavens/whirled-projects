@@ -14,7 +14,7 @@ package joingame.modes
     
     import mx.states.AddChild;
 
-public class LoadingMode extends AppMode
+public class LoadingMode extends JoinGameMode
 {
     
     private static const log :Log = Log.getLog(LoadingMode);
