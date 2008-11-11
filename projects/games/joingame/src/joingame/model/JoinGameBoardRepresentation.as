@@ -1092,13 +1092,13 @@ package joingame.model
             var i :int;
             var j :int;
             var s :String = "player id=" + _playerID + "\n";
-//            for( var j :int = 0; j < _rows; j++){
-//                for( var i :int = 0; i < _cols; i++){
-//                       s += "\t" + _boardPieceTypes[ coordsToIdx(i,j)];
-//                }
-//                s += "\n";
-//            }
-//            s += "\n";
+            for( j = 0; j < _rows; j++){
+                for( i = 0; i < _cols; i++){
+                       s += "\t" + _boardPieceTypes[ coordsToIdx(i,j)];
+                }
+                s += "\n";
+            }
+            s += "\n";
             for( j = 0; j < _rows; j++){
                 for( i = 0; i < _cols; i++){
                     s += "\t" + _boardPieceColors[ coordsToIdx(i,j)]
@@ -1267,8 +1267,7 @@ package joingame.model
         }
         
         /**
-        * Rows are counted from the ground up. (This reverses the interal measure, as these results
-        * are used in between boards, so an objective measure is needed.
+
         */
         public function getRowsAndDamage() :HashMap
         {
@@ -1346,15 +1345,27 @@ package joingame.model
             for( var j :int = 0; j < _rows; j++) {
                 if( _boardPieceTypes[ coordsToIdx( col, j) ] == Constants.PIECE_TYPE_NORMAL) {
                     if( _boardPieceColors[ coordsToIdx( col, j) ] == color) {
-                      consecutiveColoredPieces++;
-                      if( consecutiveColoredPieces > highestConsecutiveColoredPieces) {
-                        highestConsecutiveColoredPieces = Math.max( consecutiveColoredPieces, highestConsecutiveColoredPieces);
-                        rowWithhighestConsecutiveColoredPieces = j;
+                        consecutiveColoredPieces++;
+                        if( consecutiveColoredPieces > highestConsecutiveColoredPieces) {
+                            highestConsecutiveColoredPieces = consecutiveColoredPieces;
+                            rowWithhighestConsecutiveColoredPieces = j;
                       }
                     }
                 }
                 else {
                     consecutiveColoredPieces = 0;
+                }
+            }
+            
+//            trace("isVerticalJoinPossible(col=" + col + ", color=" + color + ")");
+//            trace("    highestConsecutiveColoredPieces=" + highestConsecutiveColoredPieces);
+//            trace("    rowWithhighestConsecutiveColoredPieces=" + rowWithhighestConsecutiveColoredPieces);
+
+            if( highestConsecutiveColoredPieces >= 4) {
+                if( _boardPieceTypes[ coordsToIdx( col, rowWithhighestConsecutiveColoredPieces) ] != Constants.PIECE_TYPE_NORMAL) {
+                    trace("WTF, saying isVerticalJoinPossible at(" + col + ", " + rowWithhighestConsecutiveColoredPieces + ")");
+                    trace(" but whatever, that piece is not live");
+                    trace("board:" + this.toString());
                 }
             }
             return highestConsecutiveColoredPieces >= 4 ? rowWithhighestConsecutiveColoredPieces : -1;
@@ -1519,6 +1530,7 @@ package joingame.model
         public var _numberOfCallsToRandom: int;
         
         public var _isComputerPlayer: Boolean;
+        
         public var _computerPlayerLevel: int;
         
         /** This counts from the bottom (0) up*/
