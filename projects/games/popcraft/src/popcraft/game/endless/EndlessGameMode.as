@@ -13,20 +13,22 @@ import popcraft.*;
 import popcraft.battle.*;
 import popcraft.battle.view.SpellDropView;
 import popcraft.data.*;
+import popcraft.game.*;
 import popcraft.game.mpbattle.*;
 import popcraft.net.PlayerScoreMsg;
-import popcraft.game.*;
 
 public class EndlessGameMode extends GameMode
 {
     public static const HUMAN_TEAM_ID :int = 0;
     public static const FIRST_COMPUTER_TEAM_ID :int = 1;
 
-    public function EndlessGameMode (level :EndlessLevelData, saves :Array, isNewGame :Boolean)
+    public function EndlessGameMode (isMultiplayer :Boolean, level :EndlessLevelData, saves :Array,
+        isNewGame :Boolean)
     {
         EndlessGameContext.level = level;
         _playerSaves = saves;
         _needsReset = isNewGame;
+        _isMultiplayer = isMultiplayer;
     }
 
     override protected function setup () :void
@@ -200,7 +202,7 @@ public class EndlessGameMode extends GameMode
         if (_switchingMaps) {
             if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
                 AppContext.mainLoop.unwindToMode(
-                    new EndlessGameMode(EndlessGameContext.level, null, false));
+                    new EndlessGameMode(_isMultiplayer, EndlessGameContext.level, null, false));
                 return;
             }
 
@@ -520,14 +522,22 @@ public class EndlessGameMode extends GameMode
         }
     }
 
-    override protected function get initialDayPhase () :int
+    override protected function get gameType () :int
     {
-        return (_curMapData.enableEclipse ? Constants.PHASE_ECLIPSE : Constants.PHASE_DAY);
+        return (_isMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
+                GameContext.GAME_TYPE_ENDLESS_SP);
+    }
+
+    override protected function get gameData () :GameData
+    {
+        return (_curMapData.gameDataOverride != null ? _curMapData.gameDataOverride :
+                AppContext.defaultGameData);
     }
 
     protected var _curMapData :EndlessMapData;
     protected var _localHumanPlayerData :EndlessHumanPlayerData;
     protected var _needsReset :Boolean;
+    protected var _isMultiplayer :Boolean;
     protected var _switchingMaps :Boolean;
     protected var _playerSaves :Array;
     protected var _liveComputers :Array;

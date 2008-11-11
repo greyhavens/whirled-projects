@@ -27,8 +27,7 @@ public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void
     {
-        GameContext.gameType = GameContext.GAME_TYPE_ENDLESS_SP;
-        animateToMode(new EndlessGameMode(_level, [ save ] , true));
+        animateToMode(new EndlessGameMode(false, _level, [ save ] , true));
     }
 
     override protected function onQuitClicked (...ignored) :void

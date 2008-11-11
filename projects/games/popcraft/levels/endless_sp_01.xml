@@ -115,7 +115,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 3 : Double-Teamed (Iris & Ivy, Ballfield) ****** -->
 		<Map displayName="Double-Teamed" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+				<SpellDropLocation x="270" y="125"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -187,8 +187,16 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		
 		<!-- ****** LEVEL 4 : Athletic Ability (Ursula, Ballfield) ****** -->
 		<Map displayName="Athletic Ability" isSavePoint="true">
+			<GameDataOverride>
+				<PuzzleSettings useSpecialPuzzleFrame="true">
+					<Resource type="white" frequency="0.5"/>
+					<Resource type="red" frequency="0.5"/>
+					<Resource type="blue" frequency="1"/>
+					<Resource type="yellow" frequency="1"/>
+				</PuzzleSettings>
+			</GameDataOverride>
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="270" y="125"/>
+				<SpellDropLocation x="270" y="125"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -231,7 +239,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 5 : On the Offensive (Ralph, Ballfield) ****** -->
 		<Map displayName="On the Offensive" isSavePoint="true">
 			<MapSettings backgroundName="ballfield">
-	            <SpellDropLocation x="350" y="210"/>
+				<SpellDropLocation x="350" y="210"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -324,7 +332,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 7 : Bullied (Jack & Pigsley, Graveyard) ****** -->
 		<Map displayName="Bullied" isSavePoint="true">
 			<MapSettings backgroundName="graveyard">
-	            <SpellDropLocation x="360" y="140"/>
+				<SpellDropLocation x="360" y="140"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -381,7 +389,7 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		<!-- ****** LEVEL 8 : Animal Welfare (Ursula & Ralph, Tesla) ****** -->
 		<Map displayName="Animal Welfare" isSavePoint="true">
 			<MapSettings backgroundName="tesla">
-	            <SpellDropLocation x="305" y="120"/>
+				<SpellDropLocation x="305" y="120"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">
@@ -454,9 +462,10 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 		</Map>
 		
 		<!-- ****** LEVEL 9 : Strange Bedfellows (Jack & Dante, Tesla) ****** -->
-		<Map displayName="Strange Bedfellows" isSavePoint="true" enableEclipse="true">
+		<Map displayName="Strange Bedfellows" isSavePoint="true">
+			<GameDataOverride enableEclipse="true" initialDayPhase="eclipse"/>
 			<MapSettings backgroundName="tesla">
-	            <SpellDropLocation x="340" y="165"/>
+				<SpellDropLocation x="340" y="165"/>
 			</MapSettings>
 			<HumanPlayers>
 				<HumanPlayer playerName="Eloise">

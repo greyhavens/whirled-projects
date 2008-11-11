@@ -203,11 +203,6 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function startGame () :void
     {
-        // @TODO - change this when we have real game variants
-        var variants :Array = AppContext.gameVariants;
-        var variant :GameVariantData = variants[0];
-        GameContext.gameData = variant.gameDataOverride;
-
         // turn the inited flag off before the game starts
         // so that future game lobbies don't start immediately
         if (SeatingManager.isLocalPlayerInControl) {
@@ -217,7 +212,6 @@ public class MultiplayerLobbyMode extends AppMode
         if (this.isEndlessModeSelected) {
             AppContext.mainLoop.pushMode(new MpEndlessLevelSelectMode());
         } else {
-            GameContext.gameType = GameContext.GAME_TYPE_BATTLE_MP;
             AppContext.mainLoop.unwindToMode(new MultiplayerGameMode());
         }
     }

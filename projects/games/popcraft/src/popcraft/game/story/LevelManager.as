@@ -253,11 +253,6 @@ public class LevelManager
 
     protected function startGame () :void
     {
-        GameContext.gameType = GameContext.GAME_TYPE_STORY;
-        var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
-        GameContext.gameData =
-            (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
-
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {

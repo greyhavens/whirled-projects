@@ -133,13 +133,13 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         // get the proper saved games
         var saves :Array = [];
         var mapIdx :int = EndlessMultiplayerConfig.selectedMapIdx;
-        var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
         for each (var saveList :SavedEndlessGameList in EndlessMultiplayerConfig.savedGames) {
             // get the correct save for this player, or create a new one if it doesn't
             // already exist
             var save :SavedEndlessGame = saveList.getSave(mapIdx);
             if (save == null) {
-                save = SavedEndlessGame.create(mapIdx, 0, 0, 1, workshopData.maxHealth);
+                save = SavedEndlessGame.create(mapIdx, 0, 0, 1,
+                                               _level.getWorkshopMaxHealth(save.mapIndex));
             }
             saves.push(save);
         }
@@ -148,8 +148,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             _helpView.visible = false;
         }
 
-        GameContext.gameType = GameContext.GAME_TYPE_ENDLESS_MP;
-        animateToMode(new EndlessGameMode(_level, saves, true));
+        animateToMode(new EndlessGameMode(true, _level, saves, true));
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void

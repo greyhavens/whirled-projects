@@ -154,6 +154,16 @@ public class MultiplayerGameMode extends GameMode
              SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
     }
 
+    override protected function get gameType () :int
+    {
+        return GameContext.GAME_TYPE_BATTLE_MP;
+    }
+
+    override protected function get gameData () :GameData
+    {
+        return AppContext.defaultGameData;
+    }
+
     override protected function handleGameOver () :void
     {
         fadeOutToMode(new MultiplayerGameOverMode(), FADE_OUT_TIME);

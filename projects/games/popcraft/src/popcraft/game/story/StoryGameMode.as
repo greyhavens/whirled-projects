@@ -88,6 +88,17 @@ public class StoryGameMode extends GameMode
         return _level.mapSettings;
     }
 
+    override protected function get gameType () :int
+    {
+        return GameContext.GAME_TYPE_STORY;
+    }
+
+    override protected function get gameData () :GameData
+    {
+        return (_level.gameDataOverride != null ? _level.gameDataOverride :
+                AppContext.defaultGameData);
+    }
+
     override protected function createPlayers () :void
     {
         GameContext.localPlayerIndex = 0;

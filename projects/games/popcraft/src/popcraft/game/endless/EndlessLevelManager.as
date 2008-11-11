@@ -193,17 +193,11 @@ public class EndlessLevelManager
 
     protected function startGame () :void
     {
-        GameContext.gameType = (_loadedLevelType == MP_LEVEL ? GameContext.GAME_TYPE_ENDLESS_MP :
-            GameContext.GAME_TYPE_ENDLESS_SP);
-
-        var gameDataOverride :GameData = _loadedLevel.gameDataOverride;
-        GameContext.gameData =
-            (null != gameDataOverride ? gameDataOverride : AppContext.defaultGameData);
-
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevel, null, true));
+            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevelType == MP_LEVEL,
+                                                                 _loadedLevel, null, true));
         }
     }
 

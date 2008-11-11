@@ -15,8 +15,8 @@ import flash.geom.Point;
 import mx.effects.easing.*;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.data.*;
+import popcraft.game.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 
@@ -52,8 +52,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         }
 
         // create a dummy Level 1 save, so that players can start new games
-        var workshopData :UnitData = _level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
-        _level1 = SavedEndlessGame.create(0, 0, 0, 1, workshopData.maxHealth);
+        _level1 = SavedEndlessGame.create(0, 0, 0, 1, level.getWorkshopMaxHealth(0));
 
         var initialMapIndex :int;
         switch (_mode) {
@@ -82,7 +81,8 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new TimedTask(2),
                 new FunctionTask(
                     function () :void {
-                        animateToMode(new EndlessGameMode(EndlessGameContext.level, null, false));
+                        animateToMode(new EndlessGameMode(GameContext.isMultiplayerGame,
+                                      EndlessGameContext.level, null, false));
                     })));
             addObject(interstitialAnimObj);
 
@@ -654,10 +654,9 @@ class SaveView extends SceneObject
 
         // health/shield meters
         var healthSprite :Sprite = SpriteUtil.createSprite();
-        var workshopData :UnitData = level.gameDataOverride.units[Constants.UNIT_TYPE_WORKSHOP];
         var healthMeter :RectMeterView = new RectMeterView();
         healthMeter.minValue = 0;
-        healthMeter.maxValue = workshopData.maxHealth;
+        healthMeter.maxValue = level.getWorkshopMaxHealth(save.mapIndex);
         healthMeter.value = save.health;
         healthMeter.foregroundColor = 0xFF0000;
         healthMeter.backgroundColor = 0x888888;

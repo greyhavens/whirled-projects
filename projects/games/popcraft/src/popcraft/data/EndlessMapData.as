@@ -8,11 +8,11 @@ import popcraft.util.XmlReader;
 
 public class EndlessMapData
 {
+    public var gameDataOverride :GameData;
     public var mapSettings :MapSettingsData;
 
     public var displayName :String;
     public var isSavePoint :Boolean;
-    public var enableEclipse :Boolean;
 
     public var multiplierDropLoc :Vector2 = new Vector2();
 
@@ -21,28 +21,34 @@ public class EndlessMapData
 
     public static function fromXml (xml :XML) :EndlessMapData
     {
-        var mapData :EndlessMapData = new EndlessMapData();
+        var data :EndlessMapData = new EndlessMapData();
 
-        mapData.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+        // does the level override game data?
+        var gameDataOverrideNode :XML = xml.GameDataOverride[0];
+        if (null != gameDataOverrideNode) {
+            data.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
+                                                        AppContext.defaultGameData.clone());
+        }
 
-        mapData.displayName = XmlReader.getStringAttr(xml, "displayName");
-        mapData.isSavePoint = XmlReader.getBooleanAttr(xml, "isSavePoint");
-        mapData.enableEclipse = XmlReader.getBooleanAttr(xml, "enableEclipse", false);
+        data.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));
+
+        data.displayName = XmlReader.getStringAttr(xml, "displayName");
+        data.isSavePoint = XmlReader.getBooleanAttr(xml, "isSavePoint");
 
         for each (var humanXml :XML in xml.HumanPlayers.HumanPlayer) {
             var playerName :String = XmlReader.getStringAttr(humanXml, "playerName");
             var humanPlayerData :EndlessHumanPlayerData = EndlessHumanPlayerData.fromXml(humanXml);
-            mapData.humans.put(playerName, humanPlayerData);
+            data.humans.put(playerName, humanPlayerData);
         }
 
         var multiplierDropXml :XML = XmlReader.getSingleChild(xml, "MultiplierDropLocation");
-        mapData.multiplierDropLoc = DataUtil.parseVector2(multiplierDropXml);
+        data.multiplierDropLoc = DataUtil.parseVector2(multiplierDropXml);
 
         for each (var computerXml :XML in xml.Computer) {
-            mapData.computers.push(EndlessComputerPlayerData.fromXml(computerXml));
+            data.computers.push(EndlessComputerPlayerData.fromXml(computerXml));
         }
 
-        return mapData;
+        return data;
     }
 }
 

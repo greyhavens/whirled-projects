@@ -17,9 +17,15 @@ public class EndlessLevelData
     public var pointsPerOpponentKill :int;
     public var pointsPerCreatureKill :Array; // score for each unit type
 
-    public var gameDataOverride :GameData;
-
     public var mapSequence :Array = []; // array of EndlessMapDatas
+
+    public function getWorkshopMaxHealth (mapIndex :int) :Number
+    {
+        var mapData :EndlessMapData = getMapData(mapIndex);
+        var gameData :GameData = (mapData.gameDataOverride != null ?
+            mapData.gameDataOverride : AppContext.defaultGameData);
+        return UnitData(gameData.units[Constants.UNIT_TYPE_WORKSHOP]).maxHealth;
+    }
 
     public function getMapData (mapIndex :int) :EndlessMapData
     {
@@ -39,13 +45,6 @@ public class EndlessLevelData
     public static function fromXml (xml :XML) :EndlessLevelData
     {
         var level :EndlessLevelData = new EndlessLevelData();
-
-        // does the level override game data?
-        var gameDataOverrideNode :XML = xml.GameDataOverride[0];
-        if (null != gameDataOverrideNode) {
-            level.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
-                AppContext.defaultGameData.clone());
-        }
 
         for each (var nameXml :XML in xml.HumanPlayers.Player) {
             level.humanPlayerNames.push(XmlReader.getStringAttr(nameXml, "name"));

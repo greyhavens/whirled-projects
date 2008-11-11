@@ -41,6 +41,8 @@ public class GameMode extends TransitionMode
     {
         Profiler.reset();
 
+        GameContext.gameType = this.gameType;
+        GameContext.gameData = this.gameData;
         GameContext.gameMode = this;
         GameContext.playerStats = new PlayerStats();
 
@@ -234,7 +236,7 @@ public class GameMode extends TransitionMode
         GameContext.battleBoardView = battleBoardView;
 
         // Day/night cycle
-        GameContext.diurnalCycle = new DiurnalCycle(this.initialDayPhase);
+        GameContext.diurnalCycle = new DiurnalCycle(GameContext.gameData.initialDayPhase);
         GameContext.netObjects.addObject(GameContext.diurnalCycle);
 
         if (!DiurnalCycle.isDisabled) {
@@ -351,7 +353,7 @@ public class GameMode extends TransitionMode
 
         case KeyboardCodes.Y:
             GameContext.diurnalCycle.incrementDayCount();
-            GameContext.diurnalCycle.resetPhase(this.initialDayPhase);
+            GameContext.diurnalCycle.resetPhase(GameContext.gameData.initialDayPhase);
             break;
 
         case KeyboardCodes.K:
@@ -804,9 +806,14 @@ public class GameMode extends TransitionMode
         throw new Error("abstract");
     }
 
-    protected function get initialDayPhase () :int
+    protected function get gameType () :int
     {
-        return GameContext.gameData.initialDayPhase;
+        throw new Error("abstract");
+    }
+
+    protected function get gameData () :GameData
+    {
+        throw new Error("abstract");
     }
 
     protected var _gameIsRunning :Boolean;
