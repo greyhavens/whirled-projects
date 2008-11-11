@@ -10,19 +10,23 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
 
+import flash.media.Sound;
+
 import com.whirled.PetControl;
 import com.whirled.ControlEvent;
 
 [SWF(width="128", height="250")]
-public class Monster extends Sprite
+public class Monster_@MONSTER_NAME@ extends Sprite
 {
-    public function Monster ()
+    public function Monster_@MONSTER_NAME@ ()
     {
+        trace("@MONSTER_NAME@ : I am level " + @MONSTER_LEVEL@);
         _ctrl = new PetControl(this);
 
         _ctrl.registerPropertyProvider(propertyProvider);
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleMovement);
 
         _ghost = Bitmap(new GHOST());
@@ -44,7 +48,7 @@ public class Monster extends Sprite
 
     public function tick (event :TimerEvent) :void
     {
-        var targets :Array = QuestUtil.query(_ctrl, function (id :String, svc :Object) {
+        var targets :Array = QuestUtil.query(_ctrl, function (id :String, svc :Object) :Boolean {
             return svc.getType() == QuestConstants.TYPE_PLAYER &&
                 QuestUtil.squareDistanceTo(_ctrl, id) < 1000*1000;
         });
@@ -67,12 +71,39 @@ public class Monster extends Sprite
         }
     }
 
-    public function handleMemory (... _) :void
+    protected function handleMemory (... _) :void
     {
         if (_quest.getHealth() == 0) {
             _quest.setActor(_ghost);
         } else {
             _quest.setActor(_image);
+        }
+    }
+
+    protected function handleMessage (event :ControlEvent) :void
+    {
+        if (event.name == "effect") {
+            var effect :Object = event.value;
+
+            if ("event" in effect) {
+                switch (effect.event) {
+                    case QuestConstants.EVENT_ATTACK:
+                        _soundAttack.play();
+                        break;
+
+                    case QuestConstants.EVENT_COUNTER:
+                        //_soundCounter.play();
+                        break;
+
+                    case QuestConstants.EVENT_HEAL:
+                        //_soundHeal.play();
+                        break;
+
+                    case QuestConstants.EVENT_DIE:
+                        _soundDeath.play();
+                        break;
+                }
+            }
         }
     }
 
@@ -93,9 +124,17 @@ public class Monster extends Sprite
     protected static const GHOST :Class;
     protected var _ghost :Bitmap;
 
-    [Embed(source="monster.png")]
+    [Embed(source="rsrc/@MONSTER_NAME@.png")]
     protected static const IMAGE :Class;
     protected var _image :Bitmap;
+
+    [Embed(source="rsrc/@SOUND_ATTACK@")]
+    protected static const SOUND_ATTACK :Class;
+    protected var _soundAttack :Sound = new SOUND_ATTACK() as Sound;
+
+    [Embed(source="rsrc/@SOUND_DEATH@")]
+    protected static const SOUND_DEATH :Class;
+    protected var _soundDeath :Sound = new SOUND_DEATH() as Sound;
 
     // Who I'm hunting. WARNING: This isn't preserved
     protected var _hunting :String;
