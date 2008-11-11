@@ -23,7 +23,6 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.data.GameVariantData;
 import popcraft.game.endless.MpEndlessLevelSelectMode;
 import popcraft.ui.UIBits;
 
@@ -318,8 +317,8 @@ public class MultiplayerLobbyMode extends AppMode
                 break;
             }
 
-            var xLoc :Number = boxLoc.x;
-            var yLoc :Number = boxLoc.y;
+            var xLoc :Number = boxLoc.x + INITIAL_HEADSHOT_OFFSET.x;
+            var yLoc :Number = boxLoc.y + INITIAL_HEADSHOT_OFFSET.y;
 
             for (var playerSeat :int = 0; playerSeat < SeatingManager.numExpectedPlayers; ++playerSeat) {
                 if (teams[playerSeat] == teamId) {
@@ -491,13 +490,14 @@ public class MultiplayerLobbyMode extends AppMode
     protected static var log :Log = Log.getLog(MultiplayerLobbyMode);
 
     protected static const TEAM_BOX_LOCS :Array = [
-        new Point(240, 115),
-        new Point(468, 115),
-        new Point(240, 255),
-        new Point(468, 255) ];
+        new Point(236, 113),
+        new Point(466, 113),
+        new Point(236, 249),
+        new Point(466, 249)
+    ];
 
-    protected static const UNASSIGNED_BOX_LOC :Point = new Point(30, 132);
-    protected static const ENDLESS_BOX_LOC :Point = new Point(240, 435);
+    protected static const UNASSIGNED_BOX_LOC :Point = new Point(26, 113);
+    protected static const ENDLESS_BOX_LOC :Point = new Point(240, 431);
 
     protected static const ENDLESS_MODE_WARN_LOC :Point = new Point(455, 454);
 
@@ -505,6 +505,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected static const UNASSIGNED_BOX_NAME :String = "unassigned_box";
     protected static const ENDLESS_BOX_NAME :String = "survival_box";
 
+    protected static const INITIAL_HEADSHOT_OFFSET :Point = new Point(2, 2);
     protected static const HEADSHOT_OFFSET :Number = 40;
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
@@ -591,6 +592,6 @@ class PlayerHeadshot extends Sprite
     protected var _handicapObj :DisplayObject;
 
     protected static const HEADSHOT_SIZE :Point = new Point(38, 38);
-    protected static const NAME_OFFSET :Number = HEADSHOT_SIZE.x + 3;
-    protected static const NAME_MAX_WIDTH :Number = 120;
+    protected static const NAME_OFFSET :Number = HEADSHOT_SIZE.x + 2;
+    protected static const NAME_MAX_WIDTH :Number = 140;
 }
