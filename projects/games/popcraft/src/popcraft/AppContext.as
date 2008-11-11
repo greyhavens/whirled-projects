@@ -82,12 +82,12 @@ public class AppContext
         return gameDataResource.multiplayerSettings;
     }
 
-    public static function get gameVariants () :Array
+    /*public static function get gameVariants () :Array
     {
         var variantResource :GameVariantsResource =
             GameVariantsResource(ResourceManager.instance.getResource(Constants.RSRC_GAMEVARIANTS));
         return variantResource.variants;
-    }
+    }*/
 
     public static function showGameShop () :void
     {

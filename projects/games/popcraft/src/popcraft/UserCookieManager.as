@@ -56,7 +56,7 @@ public class UserCookieManager
                 success = AppContext.gameCtrl.player.setCookie(ba);
                 if (!success) {
                     errString = "PlayerSubControl.setCookie() failed (" + ba.length +
-                        "-byte cookie too large?)";
+                                "-byte cookie too large?)";
                 }
 
             } catch (e :Error) {
@@ -87,7 +87,7 @@ public class UserCookieManager
                 var version :int = ba.readShort();
                 if (version > _cookieVersion) {
                     errString = "bad cookie version (expected <=" + _cookieVersion + ", got " +
-                        version + ")";
+                                version + ")";
 
                 } else {
                     log.info("Loading cookie version=" + version + " (our version=" +
@@ -103,7 +103,7 @@ public class UserCookieManager
                         var totalSize :uint = ba.length;
                         var expectedSize :uint = ba.position;
                         errString = "did not read entire cookie (expected " + expectedSize + "b, got " +
-                            totalSize + "b)";
+                                    totalSize + "b)";
 
                     } else {
                         success = true;
@@ -116,6 +116,7 @@ public class UserCookieManager
 
         if (success) {
             log.info("successfully loaded user cookie");
+
         } else {
             log.warning("failed to load user cookie: " + errString);
             var resave :Boolean;

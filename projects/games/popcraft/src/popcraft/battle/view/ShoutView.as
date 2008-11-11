@@ -33,8 +33,8 @@ public class ShoutView extends SceneObject
             if (_emphasis == MAX_EMPHASIS) {
                 return;
             }
-
             _emphasis += 1;
+
         } else {
             _shoutType = val;
             _emphasis = 0;
@@ -49,7 +49,7 @@ public class ShoutView extends SceneObject
         removeAllTasks();
 
         if (_shoutType >= 0) {
-            _movie.gotoAndStop(_shoutType + 1);
+            _movie.gotoAndStop((_shoutType * 3) + _emphasis + 1);
 
             var targetScale :Number = (_emphasis == 0 ? 0.8 : 1 + (_emphasis * 0.4));
             var startScale :Number = targetScale * 0.5;
@@ -76,7 +76,7 @@ public class ShoutView extends SceneObject
     protected var _shoutType :int = -1;
     protected var _emphasis :int;
 
-    protected static const MAX_EMPHASIS :int = 1;
+    protected static const MAX_EMPHASIS :int = 2;
 
     protected static const SCREEN_TIME :Number = 2;
     protected static const FADE_TIME :Number = 0.25;

@@ -49,8 +49,8 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
-    public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
-    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
+    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = false;
     public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = true;
     public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = true;
@@ -149,7 +149,8 @@ public class Constants
     public static const SHOUT_HELP :int = 0;
     public static const SHOUT_WAIT :int = 1;
     public static const SHOUT_ATTACK :int = 2;
-    public static const SHOUT__LIMIT :int = 3;
+    public static const SHOUT_MINE :int = 3;
+    public static const SHOUT__LIMIT :int = 4;
 
     /* Performance stuff */
     public static const BITMAP_LIVE_ANIM_THRESHOLDS :Array = [

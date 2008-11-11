@@ -329,7 +329,7 @@ public class GameMode extends TransitionMode
     protected function applyCheatCode (keyCode :uint) :void
     {
         switch (keyCode) {
-        case KeyboardCodes.NUMBER_4:
+        case KeyboardCodes.NUMBER_0:
             for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
                 GameContext.localPlayerInfo.offsetResourceAmount(i, 500);
             }
@@ -741,8 +741,8 @@ public class GameMode extends TransitionMode
 
     public function get allowTeamShouts () :Boolean
     {
-        return (GameContext.isMultiplayerGame &&
-                GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1);
+        return true;/*(GameContext.isMultiplayerGame &&
+                GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1);*/
     }
 
     public function get playAudio () :Boolean
