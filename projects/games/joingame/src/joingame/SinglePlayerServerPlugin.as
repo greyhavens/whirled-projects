@@ -1,6 +1,7 @@
 package joingame
 {
     import com.threerings.util.ArrayUtil;
+    import com.threerings.util.ClassUtil;
     import com.threerings.util.HashMap;
     import com.threerings.util.Log;
     import com.whirled.contrib.simplegame.util.Rand;
@@ -19,6 +20,7 @@ package joingame
     import joingame.net.PlayerDestroyedMessage;
     import joingame.net.PlayerRemovedMessage;
     import joingame.net.ReplayConfirmMessage;
+    import joingame.net.WaveDefeatedMessage;
     
     /**
     * Game state info and methods (including AI) for all single player logic.
@@ -32,8 +34,12 @@ package joingame
         protected var _AITimer :Timer;
         protected var _timeRemaining :HashMap;
 //        protected var _gameType :String;
-        protected var _robotLevel :int;
+//        protected var _robotLevel :int;
+        protected var _userCookie :UserCookieDataSourcePlayer;
         
+        /**
+        * The robot update timer.
+        */
         protected static const UPDATE_TIME :int = 100;                
 //        public var playerLevel :int = 1;
         
@@ -49,16 +55,16 @@ package joingame
             _server = server;
             _AITimer = new Timer(UPDATE_TIME, 0);
             _AITimer.addEventListener(TimerEvent.TIMER, aiTimer);
-            currentLowestComputerId = -Constants.SINGLE_PLAYER_STARTING_ROBOT_LEVEL;
+            currentLowestComputerId = Constants.SINGLE_PLAYER_STARTING_ROBOT_LEVEL;
             
             _timeRemaining = new HashMap();
             robotId2Level = new HashMap();
         }
         
-        internal function handleReplayRequest( playerId :int) :void
+        internal function handleReplayRequest( playerId :int, cookie :UserCookieDataSourcePlayer) :void
         {
             trace("SinglePlayerServerPlugin handleReplayRequest for player=" + playerId);
-            createNewSinglePlayerModel( playerId , _gameModel._singlePlayerGameType, _robotLevel);
+            createNewSinglePlayerModel( playerId , _gameModel._singlePlayerGameType, cookie);
             log.debug("sending singleplayer" + ReplayConfirmMessage.NAME);
             startAI();
             AppContext.messageManager.sendMessage( new ReplayConfirmMessage( _gameModel.currentSeatingOrder, _gameModel.getModelMemento()) );
@@ -165,7 +171,7 @@ package joingame
                             log.error("Looking for best rows to attack, but nobody next to me");
                             continue;
                         }
-                        rowsToAttack = findBestRowsToAttack(idToAttack);    
+                        rowsToAttack = findBestRowsToAttack(idToAttack);//Row indices counting from bottom
                     } 
                     
                     
@@ -191,7 +197,7 @@ package joingame
                         
                         if( row2lengthAndColor.containsKey(row) && (row2lengthAndColor.get( row ) as Array)[0] > 3) {
                             //We can (and will) attack from this row, using this color
-                            board.currentPotentialJoinRowCountingFromBottom = board.convertFromBottomYToFromTopY( row);
+                            board.currentPotentialJoinRowCountingFromBottom = row;//board.convertFromBottomYToFromTopY( row);
                             board.currentPotentialJoinColor = (row2lengthAndColor.get( row ) as Array)[1]
                             board.changeCurrentPotentialJoin = false;
 //                            foundRowForJoin = true;
@@ -216,6 +222,7 @@ package joingame
                         for( var color :int = 0; color < Constants.PIECE_COLORS_ARRAY.length; color++) {
                             var verticalJoinRow :int = board.isVerticalJoinPossible( col, color);
                             if( verticalJoinRow > -1) {
+                                
                                 makeDeltaForVerticalJoin(board, col, row, color);
                                 foundVerticalJoin = true;
                                 break;
@@ -232,6 +239,8 @@ package joingame
         //This is really crude.  Just move the colored piece down as far as it will go.
         protected function makeDeltaForVerticalJoin( board :JoinGameBoardRepresentation, targetCol :int, targetRow :int, color :int) :void
         {
+            Log.setLevel(ClassUtil.getClassName(SinglePlayerServerPlugin), Log.DEBUG);
+            log.debug(" makeDeltaForVerticalJoin( boardid=" + board.playerID + ", col=" + targetCol + ", row=" + targetRow + ", color=" + color + ")");
             var lowestRowAvailableForJoin :int;
             var row :int;
             var col :int;
@@ -249,7 +258,7 @@ package joingame
             }
             
             //Then find the highest valid piece
-            var highestRowWithColoredPiece :int = board._rows;
+            var highestRowWithColoredPiece :int = lowestRowAvailableForJoin;//board._rows;
             for( row = lowestRowAvailableForJoin; row >= 0; row--) {
                 if( board._boardPieceTypes[ board.coordsToIdx(targetCol, row) ] != Constants.PIECE_TYPE_NORMAL) {
                     break;
@@ -267,11 +276,20 @@ package joingame
                     lowestRowAvailableForJoin
                     );
                     log.debug("      Attempting vertical join " + msg);
-                    _server.handleDeltaRequest( msg);
+                    
+                    if( highestRowWithColoredPiece != lowestRowAvailableForJoin) {
+                        _server.handleDeltaRequest( msg);
+                    }
+                    else {
+                        log.warning("Error in makeDeltaForVerticalJoin( boardid=" + board.playerID + ", col=" + targetCol + ", row=" + targetRow + ", color=" + color + ")");
+                        log.warning("   rows swapped are the same.");
+                        trace("  baord:" + board);
+                    }
             }
             else {
                 log.debug("No vertical join found.");
             }
+            Log.setLevel(ClassUtil.getClassName(SinglePlayerServerPlugin), Log.ERROR);
         }
         
         public function checkStateAfterActualPlayerRemoval() :void
@@ -293,9 +311,14 @@ package joingame
                 else if( _gameModel.currentSeatingOrder.length <= 1 ) {
                     log.debug("Stopping AI, " + Constants.SINGLE_PLAYER_GAME_TYPE_WAVES + ", and only one board");
                     stopAI();
-                    _gameModel.singlePlayerLevel++;
-                    log.debug("After wave defeated, player level=" + _gameModel.singlePlayerLevel);
-                    Trophies.handleWaveDefeated( _gameModel );    
+//                    _gameModel.singlePlayerLevel++;
+                    log.debug("After wave defeated, player level=" + _userCookie.highestRobotLevelDefeated++);
+                    Trophies.handleWaveDefeated( _gameModel, _userCookie );
+                    
+                    if( _userCookie == null) {
+                        log.error("checkStateAfterActualPlayerRemoval(), sending WaveDefeatedMessage, but cookie null");
+                    }
+                    AppContext.messageManager.sendMessage( new WaveDefeatedMessage(_userCookie.clone()));  
                 }
                 
             }
@@ -548,10 +571,11 @@ package joingame
         protected function addNewWave() :void 
         {
             var left :Boolean = true;
-            for( var currentLevel :int = _gameModel.singlePlayerLevel - Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE / 2;
-                     currentLevel < _gameModel.singlePlayerLevel + Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE/2; 
-                   currentLevel++) {
-                addNewComputerPlayer(Math.max(1, currentLevel), left);
+//            for( var currentLevel :int = _userCookie.highestRobotLevelDefeated - Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE / 2;
+//                     currentLevel < _userCookie.highestRobotLevelDefeated + Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE/2; 
+//                   currentLevel++) {
+            for( var k :int = 0; k < Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE; k++) {
+                addNewComputerPlayer(_userCookie.highestRobotLevelDefeated + 1, left);
                 left = !left;
             }
         }
@@ -561,28 +585,39 @@ package joingame
         */
         protected function addRobots( number :int, highestLevel :int) :void 
         {
-            //create the array of levels
+//            //create the array of levels
             var levels :Array = new Array();
-            for( var level :int = 1; level <= highestLevel; level++) {
-                levels.push( level );
-            }            
+            for( var k :int = 0; k < number; k++) {
+                levels.push( Rand.nextIntRange( Math.max( 1, highestLevel - 5), highestLevel, 0) );
+            }  
             
+            //Make sure we have at least two robots of sufficient difficulty.
+            levels[0] = highestLevel;
+            levels[ levels.length - 1] = highestLevel;
+                      
+//            
             function shuffle(a :int,b :int) :int {
                 return Rand.nextIntRange(0, 2, 0);
             }
             levels.sort(shuffle); 
-            log.debug("add robot levels=" + levels);
-
+//            
             var left :Boolean = true;
-            for( var k :int = 0; k < levels.length; k++) {
+            for( k = 0; k < number; k++) {
+//                var level :int = 1;
+//                if( highestLevel > 1) {
+//                    level = Rand.nextIntRange( Math.max( 1, highestLevel - 5), highestLevel, 0);
+//                }
+//                addNewComputerPlayer(level, left);
                 addNewComputerPlayer(levels[k], left);
                 left = !left;
             }
         }
         
-        protected function getAIDelay( level :int ) :int
+        protected static function getAIDelay( level :int ) :int
         {
-            var results :int = Constants.SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS - (Math.abs(level) * Constants.SINGLE_PLAYER_AI_TIME_INCREMENT_IN_MILLISECS);
+            var increment :int = Constants.SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS / Constants.SINGLE_PLAYER_MAX_ROBOT_LEVELS;
+            var results :int = Constants.SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS - (Math.abs(level - 1) * increment);
+            
             if( results <= UPDATE_TIME) {
                 results = UPDATE_TIME;
             } 
@@ -592,7 +627,9 @@ package joingame
         {
             
             //_singlePlayerData.currentLowestComputerId--;
-            var board :JoinGameBoardRepresentation = _server.createNewRandomBoard(--currentLowestComputerId);
+            //The weird stuff for the player id argument is a hack.  It allowes me to get the level
+            //even when the board is removed.
+            var board :JoinGameBoardRepresentation = _server.createNewRandomBoard( getNewComputerId(level) );
             board._isComputerPlayer = true;
             board._computerPlayerLevel = level;
             log.debug("adding robot player id=" + board.playerID + ", level=" + board._computerPlayerLevel + ", delay=" + getAIDelay(board._computerPlayerLevel));
@@ -603,38 +640,52 @@ package joingame
             AppContext.messageManager.sendMessage( new AddPlayerMessage( board.playerID, true, addToLeft, board.getBoardAsCompactRepresentation()));
         }
         
-        public function createNewSinglePlayerModel( playerId :int, gameType :String, level :int = 0) :void
+        public function createNewSinglePlayerModel( playerId :int, gameType :String, userCookie :UserCookieDataSourcePlayer) :void
         {
+            AppContext.database.clearAll();
+            
+            _userCookie = userCookie.clone();
+            if( _userCookie == null) {
+                log.warning("createNewSinglePlayerModel(" + gameType + "), usercookie is null!!");
+            }
+            
             robotId2Level.clear();
             
             trace("attempting to create single player model");
-            function batch () :void {
+//            function batch () :void {
                 log.debug("createNewSinglePlayerModel( " + playerId + ")" );
                 _gameModel.removeAllPlayers();
                 _gameModel.addPlayer(playerId, _server.createNewRandomBoard(playerId), true);
                 _gameModel.humanPlayerId = playerId;
                 _gameModel._singlePlayerGameType = gameType;
-                _robotLevel = level;
+//                _robotLevel = _userCookie.highestRobotLevelDefeated;
                 if( gameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES ) {
                     addNewWave();
                 }
                 else if(gameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS) {
-                    if( level == 0) {
-                        log.error("createNewSinglePlayerModel(), selected " + Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS + ", but no level given");
-                    }
-                    else {
-                        addRobots(level,level);
-                    }
+                    
+                    if(_userCookie.highestRobotLevelDefeated <= 0) {
+                        _userCookie.highestRobotLevelDefeated = 1;
+                    } 
+                    log.debug("addRobots( 6, " + (_userCookie.highestRobotLevelDefeated+1) + ")" );
+                    addRobots(1, _userCookie.highestRobotLevelDefeated + 1);
+//                    if( userCookie.highestRobotLevelDefeated == 0) {
+//                        log.error("createNewSinglePlayerModel(), selected " + Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS + ", but no level given");
+//                    }
+//                    else {
+//                        
+//                    }
                 }
+                
                 _gameModel.setModelIntoPropertySpaces();
-            }
-            
-            if( AppContext.useServerAgent) {
-                AppContext.gameCtrl.net.doBatch( batch );
-            }
-            else {
-                batch();
-            }
+//            }
+//            
+//            if( AppContext.useServerAgent) {
+//                AppContext.gameCtrl.net.doBatch( batch );
+//            }
+//            else {
+//                batch();
+//            }
             
             
         }
@@ -646,60 +697,91 @@ package joingame
             while those knocked out early get very little. The winner gets half the pot, followed
             by 2nd place getting a quarter, 3rd gets 1/8 and so on.*/
             
-//            var totalScore :int = 1000*_gameModel._initialSeatedPlayerIds.length;
+            var k :int;
+            var i :int;
             var playerIds :Array = new Array();
             var scores :Array = new Array();
+            var points :Array = new Array();
             var playerIdsInOrderOfLoss :Array = _gameModel._playerIdsInOrderOfLoss.slice();
             playerIdsInOrderOfLoss.push( _gameModel.currentSeatingOrder[0]);
             
-            for( var k :int = 0; k < playerIdsInOrderOfLoss.length; k++) {
+            for( k = 0; k < playerIdsInOrderOfLoss.length; k++) {
                 playerIds.push( playerIdsInOrderOfLoss[k] );
+                
+                if(  playerIdsInOrderOfLoss[k] < 0) {
+                    points.push(  getLevelForComputerId(playerIdsInOrderOfLoss[k]) * 50);
+                }
+                else {
+                    points.push( 0 );
+                }
+            }
+            trace("points=" + points);
+            scores.push( 25 );
+            for( k = 0; k < playerIds.length; k++) {
+                
+                var score :int = 0;
+                for( i = 0; i < k; i++) {
+                    score += points[i];
+                }
+                scores.push( score);
+                
+                //The higher the computer level, the more points it's worth
+//                points.push( board._computerPlayerLevel * 50); 
 //                scores.push( scoreFunction(k+1) );
-                scores.push( (k+1) * 100 );
+//                scores.push( (k+1) * 100 );
             }
             
             /* Changed the score due losers in two player games not getting anything. */
-            trace("Single player game:\nAwarding scores:\nPlayer\t\t|\tScore\n");
-            for(var i :int = playerIds.length - 1; i >= 0; i--) {
+            trace("Single player game:\nAwarding scores:\nPlayer\t\t|\tScore\t\t|\tValue\n");
+            for( i = playerIds.length - 1; i >= 0; i--) {
                 if( int(playerIds[i]) < 0) {
-                    trace("Robot " + Math.abs(int(playerIds[i])) + "  \t|\t" + scores[i] );    
+                    trace("Robot " + Math.abs(int(playerIds[i])) + "  \t|\t" + scores[i] + "  \t|\t" + points[i]);    
                 }
                 else { 
                     trace("Player " + playerIds[i] + "  \t|\t" + scores[i] );
                 }
             }
             
-            playerIds = new Array();
-            scores = new Array();
-            for( k  = 0; k < playerIdsInOrderOfLoss.length; k++) {
-                if( playerIdsInOrderOfLoss[k] > 0) {
-                    playerIds.push( playerIdsInOrderOfLoss[k] );
+            var submittedPlayerIds : Array = new Array();
+            var submittedScores : Array = new Array();
+            for( k  = 0; k < playerIds.length; k++) {
+                if( playerIds[k] > 0) {
+                    submittedPlayerIds.push( playerIds[k] );
     //                scores.push( scoreFunction(k+1) );
-                    scores.push( (k+1) * 100 );
+                    submittedScores.push( scores[k] );
                 }
             }
             
+            trace("endGameWithScores( " + submittedPlayerIds + ", " + submittedScores + ")");
             if( AppContext.gameCtrl.isConnected()) {
-                AppContext.gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
+                AppContext.gameCtrl.game.endGameWithScores(submittedPlayerIds, submittedScores, GameSubControl.TO_EACH_THEIR_OWN);
+                
             }
             
-            AppContext.messageManager.sendMessage( new GameOverMessage());
+            //If the player wins, check if they go up a level
+            if( playerIds[ playerIds.length - 1 ] > 0) {
+                var highestLevelDefeated :int = 0;
+                for( k = 0; k < playerIds.length - 1; k++) {
+                    var level :int = getLevelForComputerId(playerIds[k]);
+                    if( level > _userCookie.highestRobotLevelDefeated) {
+                        _userCookie.highestRobotLevelDefeated = level;
+                    }
+                }
+            }
             
-//            if( _gameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES) {
-//                    
-//            }
-//            else if( _gameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS) {
-//                log.debug("Server sending GameOverMessage, go to observer ")
-//                AppContext.messageManager.sendMessage( new GameOverMessage(true));    
-//            }
             
             
+            AppContext.messageManager.sendMessage( new GameOverMessage(_userCookie));
             
-//            var msg :Object = new Object;
-//            msg[0] = playerIds;
-//            msg[1] = scores;
-//            _gameCtrl.net.sendMessage( GAME_OVER, msg);
-//            _gameRestartTimer.start();
+        }
+        
+        protected function getNewComputerId( level :int ) :int
+        {
+            return (-1000 * level) - (++currentLowestComputerId);
+        }
+        public static function getLevelForComputerId( id :int ) :int
+        {
+            return int(id /-1000);
         }
 
     }
