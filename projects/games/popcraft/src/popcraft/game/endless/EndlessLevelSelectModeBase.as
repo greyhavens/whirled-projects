@@ -137,7 +137,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                     function () :void {
                         AppContext.mainLoop.removeMode(-2);
                     }),
-               LocationTask.CreateEaseIn(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
+               LocationTask.CreateLinear(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
             break;
 
         case ANIMATE_NEXT:
@@ -326,12 +326,12 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _helpView :HelpView;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
-    protected static const OVERSHOOT_TIME :Number = 0.4;
+    protected static const OVERSHOOT_TIME :Number = 0.2;
     protected static const ANIMATE_UP_TIME :Number = 1.3;
     protected static const ANIMATE_NEXTPREV_TIME :Number = 0.5;
     protected static const UP_LOC :Point = new Point(350, -328);
     protected static const DOWN_LOC :Point = new Point(350, 264);
-    protected static const OVERSHOOT_LOC :Point = new Point(350, 274);
+    protected static const OVERSHOOT_LOC :Point = new Point(350, 269);
     protected static const NEXT_LOC :Point = new Point(1050, 264);
     protected static const PREV_LOC :Point = new Point(-450, 264);
 
