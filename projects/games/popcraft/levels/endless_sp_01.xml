@@ -479,6 +479,26 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 			<MultiplierDropLocation x="320" y="165"/>
 			
 			<Computer
+				playerName="Dante"
+				baseStartHealth="150"
+				baseHealth="150"
+				baseHealthIncrement="50"
+				waveDelayScale="0.9"
+				team="1">
+				<BaseLocation x="600" y="285" team="1"/>
+				<RepeatingDays>
+					<Day repeatWaves="true">
+						<Wave absoluteDelay="2"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="15"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="41"><Unit type="heavy" count="2" max="3"/></Wave>
+						<Wave absoluteDelay="65"><Unit type="colossus" count="1"/></Wave>
+						<Wave absoluteDelay="75"><Unit type="heavy" count="2" max="3"/></Wave>
+					</Day>
+				</RepeatingDays>
+			</Computer>
+			
+			<Computer
 				playerName="Jack"
 				baseStartHealth="150"
 				baseHealth="150"
@@ -499,26 +519,6 @@ waveDelayScale: applied to each wave's delayBefore each time the player's repeat
 						<Wave absoluteDelay="35"><Unit type="sapper" count="2"/></Wave>
 						<Wave absoluteDelay="50" spellCastChance="0.5"><Unit type="colossus" count="1"/></Wave>
 						<Wave absoluteDelay="75"/>
-					</Day>
-				</RepeatingDays>
-			</Computer>
-			
-			<Computer
-				playerName="Dante"
-				baseStartHealth="150"
-				baseHealth="150"
-				baseHealthIncrement="50"
-				waveDelayScale="0.9"
-				team="1">
-				<BaseLocation x="600" y="285" team="1"/>
-				<RepeatingDays>
-					<Day repeatWaves="true">
-						<Wave absoluteDelay="2"><Unit type="heavy" count="2" max="3"/></Wave>
-						<Wave absoluteDelay="10"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="15"><Unit type="heavy" count="2" max="3"/></Wave>
-						<Wave absoluteDelay="41"><Unit type="heavy" count="2" max="3"/></Wave>
-						<Wave absoluteDelay="65"><Unit type="colossus" count="1"/></Wave>
-						<Wave absoluteDelay="75"><Unit type="heavy" count="2" max="3"/></Wave>
 					</Day>
 				</RepeatingDays>
 			</Computer>
