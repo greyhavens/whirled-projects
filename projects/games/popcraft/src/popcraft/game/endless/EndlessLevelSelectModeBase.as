@@ -559,13 +559,17 @@ class SaveView extends SceneObject
                     scorePanel.visible = false;
                     portrait.visible = false;
                     levelScoreText.visible = false;
+
                 } else {
                     var playerInfo :PlayerInfo = GameContext.playerInfos[score.playerIndex];
                     portrait.addChild(playerInfo.headshot);
                     scorePanel.visible = true;
-                    levelScoreText.text = "Resource score: " + score.resourceScoreThisRound + "\n" +
-                        "Damage score: " + score.damageScoreThisRound + "\n" +
-                        "Total score: " + score.totalScoreThisRound;
+                    levelScoreText.text = "Resource score: " +
+                        StringUtil.formatNumber(score.resourceScoreThisRound) + "\n" +
+                        "Damage score: " +
+                        StringUtil.formatNumber(score.damageScoreThisRound) + "\n" +
+                        "Total score: " +
+                        StringUtil.formatNumber(score.totalScoreThisRound);
                 }
             }
 
