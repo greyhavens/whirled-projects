@@ -126,7 +126,7 @@ public class Player extends Sprite
     protected static const GHOST :Class;
     protected var _ghost :Bitmap;
 
-    [Embed(source="test.mp3")]
+    [Embed(source="dagger.mp3")]
     protected static const SOUND :Class;
     protected var _sound = new SOUND() as Sound;
 
@@ -147,7 +147,7 @@ public class Player extends Sprite
         },
 
         getDefence: function () :Number {
-            return 0; // TODO
+            return _inventory.getDefence();
         },
 
         getRange: function () :Number {
@@ -166,8 +166,9 @@ public class Player extends Sprite
             _ctrl.setMemory("health", int(_quest.getMaxHealth()/2));
         },
 
-        damage: function (source :Object, amount :int, cause :Object = null) :void {
-            _quest.damage(source, amount, cause);
+        damage: function (
+            source :Object, amount :int, cause :Object = null, ignoreArmor :Boolean = false) :void {
+            _quest.damage(source, amount, cause, ignoreArmor);
         }
     };
 }

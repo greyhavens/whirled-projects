@@ -53,7 +53,7 @@ public class Inventory extends Sprite
                 delete memory[2];
 
             } else {
-                // Unequip other items in this slots
+                // Unequip other items in this slot
                 var mySlot = Items.TABLE[memory[0]][2];
                 for (var i :int = 0; i < MAX_BAGS; ++i) {
                     var other :Array = _ctrl.getMemory("#"+i) as Array;
@@ -119,12 +119,24 @@ public class Inventory extends Sprite
 
     public function getRange () :Number
     {
-        return (Items.HAND in _equipment) ? _equipment[Items.HAND][4] : 100;
+        return (Items.HAND in _equipment) ? _equipment[Items.HAND][5] : 100;
     }
 
     public function getPower () :Number
     {
-        return (Items.HAND in _equipment) ? _equipment[Items.HAND][3] : 100;
+        return (Items.HAND in _equipment) ? _equipment[Items.HAND][4] : 100;
+    }
+
+    public function getDefence () :Number
+    {
+        var defence :int = 0;
+        for each (var item :Array in _equipment) {
+            // If it's not a weapon
+            if (item[2] != Items.HAND) {
+                defence += item[3];
+            }
+        }
+        return defence;
     }
 
     protected var _bags :Array;

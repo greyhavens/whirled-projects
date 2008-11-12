@@ -97,13 +97,13 @@ public class QuestSprite extends Sprite
                 QuestUtil.self(_ctrl).damage(null, -0.2*getMaxHealth(), {
                     text: "Heal",
                     event: QuestConstants.EVENT_HEAL
-                });
+                }, true);
                 break;
             case QuestConstants.STATE_COUNTER:
                 QuestUtil.self(_ctrl).damage(null, 0.1*getMaxHealth(), {
                     text: "Concentrate...",
                     event: QuestConstants.EVENT_COUNTER
-                });
+                }, true);
                 break;
         }
     }
@@ -131,11 +131,16 @@ public class QuestSprite extends Sprite
         }
     }
 
-    public function damage (source :Object, amount :Number, fx :Object) :void
+    public function damage (source :Object, amount :Number, fx :Object, ignoreArmor :Boolean) :void
     {
         var health :Number = getHealth();
         if (health == 0) {
             return; // Don't revive
+        }
+
+        if (!ignoreArmor) {
+            var defence :int = QuestUtil.self(_ctrl).getDefence();
+            amount *= Math.max(0, (10 - defence)/10); // TODO: Tweak
         }
 
         if (amount > 0 && QuestUtil.self(_ctrl).getState() == QuestConstants.STATE_HEAL) {
