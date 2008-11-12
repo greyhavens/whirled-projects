@@ -38,16 +38,16 @@ public class ResetSavedGamesDialog extends AppMode
         AppContext.mainLoop.popMode();
     }
 
-    protected static const TEXT :String = "The Survival Challenge levels have been significantly " +
-                                          "changed based on player feedback, and we recommend " +
-                                          "resetting your saved games and beginning again. " +
-                                          "Doing this will not affect any trophies or avatars " +
-                                          "you've already earned, and won't erase the progress " +
-                                          "you've made in 'The Incident at Weard Academy.'\n\n" +
-                                          "(If you're not sure you want to reset your saved " +
-                                          "games right now, you can do it later by pressing the " +
-                                          "Reset button, which is visible while playing the " +
-                                          "single-player Survival Challenge.)";
+    protected static const TEXT :String = "" +
+        "The Survival Challenge levels have been significantly " +
+        "changed based on player feedback, and we recommend " +
+        "resetting your saved games and beginning the Challenge " +
+        "again. Doing this will not affect any trophies or avatars " +
+        "you've already earned, and won't erase the progress " +
+        "you've made in 'The Incident at Weard Academy.'\n\n" +
+        "(If you're not sure you want to reset your saved " +
+        "games right now, you can do it later by pressing the " +
+        "Reset button in the single-player Survival Challenge level select screen.)";
 }
 
 }

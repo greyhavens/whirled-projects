@@ -15,9 +15,10 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.battle.view.WorkshopView;
 import popcraft.data.LevelData;
+import popcraft.game.*;
+import popcraft.game.endless.ResetSavedGamesDialog;
 import popcraft.game.endless.SpEndlessLevelSelectMode;
 import popcraft.ui.PlayerStatusView;
 import popcraft.ui.UIBits;
@@ -90,6 +91,10 @@ public class LevelSelectMode extends DemoGameMode
 
         if (_shouldFadeIn) {
             fadeIn();
+        }
+
+        if (ResetSavedGamesDialog.shouldShow) {
+            AppContext.mainLoop.pushMode(new ResetSavedGamesDialog());
         }
     }
 

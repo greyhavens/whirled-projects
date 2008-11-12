@@ -23,7 +23,7 @@ import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.game.endless.MpEndlessLevelSelectMode;
+import popcraft.game.endless.*;
 import popcraft.ui.UIBits;
 
 public class MultiplayerLobbyMode extends AppMode
@@ -83,6 +83,10 @@ public class MultiplayerLobbyMode extends AppMode
 
         registerListener(AppContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
             onPlayerPurchasedContent);
+
+        if (ResetSavedGamesDialog.shouldShow) {
+            AppContext.mainLoop.pushMode(new ResetSavedGamesDialog());
+        }
     }
 
     override protected function enter () :void
