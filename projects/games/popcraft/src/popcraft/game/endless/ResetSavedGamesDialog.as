@@ -39,10 +39,11 @@ public class ResetSavedGamesDialog extends AppMode
     }
 
     protected static const TEXT :String = "" +
-        "The Survival Challenge levels have been significantly " +
-        "changed based on player feedback, and we recommend " +
+        "Hello, fellow reanimator!\n\n" +
+        "We've recently made significant changes to the Survival Challenge " +
+        "levels, based on player feedback, and we recommend " +
         "resetting your saved games and beginning the Challenge " +
-        "again. Doing this will not affect any trophies or avatars " +
+        "again. Don't worry: this will NOT affect any trophies or avatars " +
         "you've already earned, and won't erase the progress " +
         "you've made in 'The Incident at Weard Academy.'\n\n" +
         "(If you're not sure you want to reset your saved " +

@@ -33,6 +33,7 @@ public class UserCookieManager
             if (AppContext.gameCtrl.isConnected()) {
                 AppContext.gameCtrl.player.getCookie(completeLoadData);
                 _loadingCookie = true;
+
             } else {
                 completeLoadData(null);
             }
@@ -81,6 +82,7 @@ public class UserCookieManager
         var ba :ByteArray = cookie as ByteArray;
         if (null == ba) {
             errString = "cookie does not exist";
+
         } else {
             try {
                 ba.uncompress();
@@ -90,7 +92,7 @@ public class UserCookieManager
                                 version + ")";
 
                 } else {
-                    log.info("Loading cookie version=" + version + " (our version=" +
+                    log.info("Loading cookie version=" + version + " (current version=" +
                         _cookieVersion + ")");
 
                     for each (var dataSource :UserCookieDataSource in _dataSources) {
