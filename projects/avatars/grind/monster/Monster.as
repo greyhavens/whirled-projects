@@ -62,7 +62,12 @@ public class Monster_@MONSTER_NAME@ extends Sprite
                     [int(Math.random()*2)]);
         }
 
-        _ctrl.setLogicalLocation(Math.random(), 0, Math.random(), 0);
+        var here :Array = _ctrl.getLogicalLocation();
+        var move :Array = [Math.random(), 0, Math.random()];
+        var angle :Number = Math.atan2(move[2]-here[2], move[0]-here[0]); // Radians
+        angle = (360 + 90 + Math.round(180/Math.PI * angle)) % 360; // Convert to our degree system
+
+        _ctrl.setLogicalLocation(move[0], move[1], move[2], angle);
     }
 
     public function handleMovement (event :ControlEvent) :void

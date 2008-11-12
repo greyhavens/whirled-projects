@@ -26,8 +26,8 @@ public class QuestSprite extends Sprite
 {
     public static const MAX_HEIGHT :int = 250;
 
-    public var bounciness :Number = 1;
-    public var bounceFreq :Number = 1;
+    public var bounciness :Number = 20;
+    public var bounceFreq :Number = 200;
     public var right :Boolean = false;
 
     public function QuestSprite (ctrl :ActorControl)
