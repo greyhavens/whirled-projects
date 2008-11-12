@@ -14,7 +14,7 @@ public class Constants
     public static const UNLOCK_ENDLESS_AFTER_LEVEL :int = 0;
 
     /* Increment this whenever any cookie data changes. */
-    public static const USER_COOKIE_VERSION :int = 1;
+    public static const USER_COOKIE_VERSION :int = 2;
 
     /* Scoring game modes */
     public static const SCORE_MODE_STORY :int = 0;
@@ -53,7 +53,7 @@ public class Constants
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = false;
     public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = true;
     public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
-    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = true;
+    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = false;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 

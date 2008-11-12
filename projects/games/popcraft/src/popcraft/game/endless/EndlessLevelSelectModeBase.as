@@ -191,7 +191,8 @@ public class EndlessLevelSelectModeBase extends AppMode
             showRoundScores,
             this.enableNextPrevPlayButtons,
             this.enableQuitButton,
-            this.enableHelpButton);
+            this.enableHelpButton,
+            this.enableResetButton);
 
         _saveView.x = newStartLoc.x;
         _saveView.y = newStartLoc.y;
@@ -306,6 +307,11 @@ public class EndlessLevelSelectModeBase extends AppMode
         return true;
     }
 
+    protected function get enableResetButton () :Boolean
+    {
+        return false;
+    }
+
     protected function get scores () :Array
     {
         return null;
@@ -351,27 +357,28 @@ public class EndlessLevelSelectModeBase extends AppMode
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.threerings.util.StringUtil;
+import com.threerings.flash.DisplayUtil;
+import com.threerings.util.Integer;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
-import flash.text.TextField;
+import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.geom.Point;
 import flash.display.Bitmap;
+import flash.text.TextField;
+import flash.text.TextFormatAlign;
+import flash.geom.Point;
+import flash.events.MouseEvent;
 
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.util.SpriteUtil;
 import popcraft.data.*;
 import popcraft.game.endless.*;
-import popcraft.ui.UIBits;
-import popcraft.ui.RectMeterView;
-import popcraft.ui.HealthMeters;
+import popcraft.ui.*;
 import popcraft.util.MyStringUtil;
-import com.threerings.flash.DisplayUtil;
-import flash.events.MouseEvent;
-import com.threerings.util.Integer;
 import popcraft.net.PlayerScoreMsg;
 
 class HelpView extends SceneObject
@@ -446,7 +453,8 @@ class SaveView extends SceneObject
         roundScores :Array,
         createNextPrevPlayButtons :Boolean,
         createQuitButton :Boolean,
-        createHelpButton :Boolean)
+        createHelpButton :Boolean,
+        createResetButton :Boolean)
     {
         var mapData :EndlessMapData = level.getMapData(localSave.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(localSave.mapIndex);
@@ -474,6 +482,13 @@ class SaveView extends SceneObject
 
         // buttons
         var buttonSprite :Sprite = SpriteUtil.createSprite(true);
+
+        if (createResetButton) {
+            _resetButton = UIBits.createButton("Reset", 1.5);
+            _resetButton.x = RESET_BUTTON_LOC.x;
+            _resetButton.y = RESET_BUTTON_LOC.y;
+            _movie.addChild(_resetButton);
+        }
 
         if (createQuitButton) {
             _quitButton = UIBits.createButton("Quit", 1.5);
@@ -765,15 +780,22 @@ class SaveView extends SceneObject
         return _helpButton;
     }
 
+    public function get resetButton () :SimpleButton
+    {
+        return _resetButton;
+    }
+
     protected var _mode :int;
     protected var _movie :MovieClip;
     protected var _playButton :SimpleButton;
     protected var _quitButton :SimpleButton;
     protected var _helpButton :SimpleButton;
+    protected var _resetButton :SimpleButton;
 
     protected static const LOCAL_HEADSHOT_LOC :Point = new Point(-232, -63);
     protected static const REMOTE_HEADSHOT_LOC :Point = new Point(-232, -23);
     protected static const MAX_HEADSHOT_HEIGHT :int = 30;
+    protected static const RESET_BUTTON_LOC :Point = new Point(270, -250);
     protected static const BUTTONS_CTR_LOC :Point = new Point(0, 190);
     protected static const BUTTON_X_OFFSET :Number = 15;
     protected static const THUMBNAIL_LOC :Point = new Point(0, 80);

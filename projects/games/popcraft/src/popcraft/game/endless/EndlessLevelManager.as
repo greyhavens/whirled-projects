@@ -110,10 +110,15 @@ public class EndlessLevelManager
         return _savedMpGames;
     }
 
-    protected function resetSavedData () :void
+    public function resetSavedGames () :void
     {
         _savedSpGames = new SavedEndlessGameList();
         _savedMpGames = new SavedEndlessGameList();
+    }
+
+    protected function resetSavedData () :void
+    {
+        resetSavedGames();
     }
 
     protected function playLevel (levelType :int, levelReadyCallback :Function, forceReload :Boolean)

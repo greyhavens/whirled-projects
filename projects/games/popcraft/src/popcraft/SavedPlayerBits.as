@@ -8,14 +8,13 @@ import flash.utils.ByteArray;
 public class SavedPlayerBits
     implements UserCookieDataSource
 {
-    public function get hasFreeStoryMode () :Boolean
-    {
-        return _hasFreeStoryMode;
-    }
+    public var hasFreeStoryMode :Boolean;
+    public var hasAskedToResetEndlessLevels :Boolean;
 
     public function writeCookieData (cookie :ByteArray) :void
     {
-        cookie.writeBoolean(_hasFreeStoryMode);
+        cookie.writeBoolean(hasFreeStoryMode);
+        cookie.writeBoolean(hasAskedToResetEndlessLevels);
     }
 
     public function readCookieData (version :int, cookie :ByteArray) :void
@@ -25,10 +24,21 @@ public class SavedPlayerBits
             // this player was playing the game before we started charging for the second half
             // of the game. If the player has gotten past level 7, we let them continue to play
             // the story mode for free (though they still have to pay to unlock Endless Mode).
-            _hasFreeStoryMode =
+            hasFreeStoryMode =
                 (AppContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+
         } else {
-            _hasFreeStoryMode = cookie.readBoolean();
+            hasFreeStoryMode = cookie.readBoolean();
+        }
+
+        if (version >= 2) {
+            hasAskedToResetEndlessLevels = cookie.readBoolean();
+        } else {
+            // if the cookie version is < 2, and the player doesn't have any saved games,
+            // we'll never need to ask them to reset.
+            hasAskedToResetEndlessLevels =
+                (AppContext.endlessLevelMgr.savedMpGames.numSaves == 0 &&
+                 AppContext.endlessLevelMgr.savedSpGames.numSaves == 0);
         }
     }
 
@@ -45,10 +55,9 @@ public class SavedPlayerBits
 
     public function init () :void
     {
-        _hasFreeStoryMode = false;
+        hasFreeStoryMode = false;
+        hasAskedToResetEndlessLevels = false;
     }
-
-    protected var _hasFreeStoryMode :Boolean;
 }
 
 }
