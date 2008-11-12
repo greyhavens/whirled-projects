@@ -741,8 +741,9 @@ public class GameMode extends TransitionMode
 
     public function get allowTeamShouts () :Boolean
     {
-        return true;/*(GameContext.isMultiplayerGame &&
-                GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1);*/
+        return (Constants.DEBUG_ALLOW_CHEATS ||
+                (GameContext.isMultiplayerGame &&
+                GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1));
     }
 
     public function get playAudio () :Boolean
