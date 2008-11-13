@@ -1,14 +1,17 @@
 package cells.fruitmachine
 {
-	import sprites.CellSprite;
-	
-	import world.Cell;
+    import client.ChronometerEvent;
+    import client.PhaseShiftTimer;
+    
+    import sprites.CellSprite;
+    
+    import world.Cell;
 
 	public class FruitMachineView extends CellSprite
 	{
 		public function FruitMachineView(cell:Cell, time:Number)
 		{
-			super(cell, imageForTime (cell as FruitMachineCell, time));
+			super(cell, imageForTime(cell as FruitMachineCell, time));
 		}
 						
 		protected function imageForTime (cell:FruitMachineCell, time:Number) :Class
@@ -22,6 +25,37 @@ package cells.fruitmachine
 			}		
 			throw new Error("don't understand fruit machine mode: "+state);
 		} 
+
+        /**
+         * set up timers
+         */
+        override protected function startAnimation () :void
+        {
+        	const machine:FruitMachineCell = cell as FruitMachineCell;
+            _timer = new PhaseShiftTimer(_objective, machine.inception, machine.period);
+            _timer.addEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);
+            _timer.start();
+        }
+
+        /**
+         * When the timer goes off, update the current image from the cell.
+         */
+        protected function handleChronometerEvent (event:ChronometerEvent) :void
+        {
+            asset = imageForTime(cell as FruitMachineCell, event.serverTime);
+        }
+        
+        /**
+         *
+         */ 
+        override protected function stopAnimation () :void
+        {
+            if (_timer != null) {
+                _timer.stop();
+            }
+        }
+
+        protected var _timer:PhaseShiftTimer;
 
 		[Embed(source="../../../rsrc/png/fruit-machine-inactive.png")]
 		protected static const fruitMachineInactive:Class;

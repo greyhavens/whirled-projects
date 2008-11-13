@@ -1,9 +1,9 @@
 package cells
 {
-	import arithmetic.VoidBoardRectangle;
-    import world.Cell;
+	import world.Cell;
+	import world.Chronometer;
 	
-	public interface CellObjective
+	public interface CellObjective extends Chronometer
 	{
 		/**
 		 * Show the cell on the objective.  Once the cell is shown, it may be interacted with.

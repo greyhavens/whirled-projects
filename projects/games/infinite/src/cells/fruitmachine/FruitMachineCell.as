@@ -193,6 +193,17 @@ package cells.fruitmachine
             }        	
         }
 
+        public function get period () :Number
+        {
+            return ACTIVATION_DELAY;
+        }
+
+        public function get inception () :Number
+        {
+            return _inception;
+        }
+    
+
         protected var _inception: Number;
 
         protected var _box:ObjectBox;

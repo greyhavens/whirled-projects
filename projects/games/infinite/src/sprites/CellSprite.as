@@ -80,13 +80,25 @@ package sprites
 		{
 			_objective = objective;
 			objective.addChildAt(this, 0);
-			Geometry.position(this, objective.cellCoordinates(_cell.position));			
+			Geometry.position(this, objective.cellCoordinates(_cell.position));
+			startAnimation();
 		}
 		
 		public function removeFromObjective (objective:Objective) :void
 		{
+		    stopAnimation();
 			objective.removeChild(this);
 			_objective = null;
+		}
+
+		protected function startAnimation () :void
+		{
+		    // does nothing - overridden by subclasses to register timer events etc.
+		}
+		
+		protected function stopAnimation () :void
+		{
+		    // does nothing - overridden by subclasses to unregister for timer events etc.
 		}
 		
 		/**

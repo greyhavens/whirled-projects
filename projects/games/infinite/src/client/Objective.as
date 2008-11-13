@@ -338,6 +338,11 @@ package client
         	return _board.startingPosition;
         }
         
+        public function get serverTime () :Number 
+        {
+        	return _clock.serverTime;
+        }
+        
         protected var _clock:Chronometer;
         
         protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
