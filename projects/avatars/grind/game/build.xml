@@ -1,0 +1,11 @@
+<!-- build configuration -->
+<project default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="Game"/>
+  <property name="app.enable-server-agent" value="true"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../../etc/project-include.xml"/>
+
+</project>
