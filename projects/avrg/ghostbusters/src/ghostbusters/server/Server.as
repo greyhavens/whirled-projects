@@ -10,10 +10,12 @@ import com.whirled.ServerObject;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
 
+import flash.events.Event;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
@@ -64,15 +66,7 @@ public class Server extends ServerObject
         }
         var room :Room = _rooms.get(roomId);
         if (room == null) {
-            var ctrl :RoomSubControlServer = _ctrl.getRoom(roomId);
-            if (ctrl == null) {
-                throw new Error("Failed to get RoomSubControlServer [roomId=" + roomId + "]");
-            }
-            if (ctrl.getRoomId() != roomId) {
-                throw new Error("New RoomSubControlServer roomId mismatch [requestedRoomId=" +
-                                roomId + ", controlRoomId=" + ctrl.getRoomId() + "]");
-            }
-            _rooms.put(roomId, room = new Room(ctrl));
+            _rooms.put(roomId, room = new Room(roomId));
         }
         return room;
     }

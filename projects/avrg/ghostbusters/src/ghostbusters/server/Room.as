@@ -3,6 +3,7 @@
 
 package ghostbusters.server {
 
+import flash.events.Event;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
@@ -15,6 +16,7 @@ import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
 
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.avrg.RoomSubControlServer;
 
@@ -27,18 +29,23 @@ public class Room
 {
     public static var log :Log = Log.getLog(Room);
 
-    public function Room (ctrl :RoomSubControlServer)
+    public function Room (roomId :int)
     {
-        _ctrl = ctrl;
+        _roomId = roomId;
+
+        maybeLoadControl();
     }
 
     public function get roomId () :int
     {
-        return _ctrl.getRoomId();
+        return _roomId;
     }
 
     public function get ctrl () :RoomSubControlServer
     {
+        if (_ctrl == null) {
+            throw new Error("Aii, no control to hand out in room: " + _roomId);
+        }
         return _ctrl;
     }
 
@@ -98,9 +105,7 @@ public class Room
                         "playerId", player.playerId);
         }
 
-//        log.debug("Copying player dictionary into room", "payerId", player.playerId,
-//                  "roomId", this.roomId, "health", player.health, "maxHealth", player.maxHealth,
-//                  "level", player.level);
+        maybeLoadControl();
 
         // broadcast the arriving player's data using room properties
         var dict :Dictionary = new Dictionary();
@@ -127,9 +132,12 @@ public class Room
                         "playerId", player.playerId);
         }
 
-        // erase the departing player's data from the room properties
-//        log.debug("Erasing player dictionary from room", "playerId", player.playerId,
-//                  "roomId", this.roomId);
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "player departing",
+                        "playerId", player.playerId);
+            return;
+        }
+
         _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
     }
 
@@ -145,6 +153,12 @@ public class Room
     public function ghostZap (who :Player) :void
     {
         if (_ghost != null && checkState(Codes.STATE_SEEKING)) {
+            if (_ctrl == null) {
+                log.warning("Null room control", "action", "ghost zap",
+                            "playerId", who.playerId);
+                return;
+            }
+
             var timer :int = getTimer();
             if (timer < _nextZap) {
 //                log.debug("Ignored too-early zap request", "playerId", who.playerId);
@@ -165,8 +179,8 @@ public class Room
 
     public function tick (frame :int, newSecond :Boolean) :void
     {
-        // if we're shut down due to excessive errors, or there's nobody here, do nothing
-        if (isShutdown || _players.size() == 0) {
+        // if we're shut down due to excessive errors, or the room is unloaded, do nothing
+        if (isShutdown || _ctrl == null) {
             return;
         }
 
@@ -188,6 +202,12 @@ public class Room
     public function minigameCompletion (
         player :Player, weapon :int, win :Boolean, damageDone :int, healingDone :int) :void
     {
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "minigame completion",
+                        "playerId", player.playerId);
+            return;
+        }
+
 //        log.debug("Minigame completion", "playerId", player.playerId, "weapon", weapon, "damage",
 //                  damageDone, "healing", healingDone);
 
@@ -230,6 +250,12 @@ public class Room
 
     internal function playerUpdated (player :Player) :void
     {
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "player update",
+                        "playerId", player.playerId);
+            return;
+        }
+
         var key :String = Codes.DICT_PFX_PLAYER + player.playerId;
         var dict :Dictionary = _ctrl.props.get(key) as Dictionary;
         if (dict == null) {
@@ -249,6 +275,11 @@ public class Room
 
     internal function reset () :void
     {
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "reset");
+            return;
+        }
+
         healTeam();
         terminateGhost(false);
         _stats.clear();
@@ -258,6 +289,11 @@ public class Room
 
     internal function setState (state :String) :void
     {
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "state set", "state", state);
+            return;
+        }
+
         _state = state;
 
         _ctrl.props.set(Codes.PROP_STATE, state, true);
@@ -271,6 +307,11 @@ public class Room
     // server-specific parts of the model moved here
     internal function damageGhost (damage :int) :Boolean
     {
+        if (_ctrl == null) {
+            log.warning("Null room control", "action", "ghost damage");
+            return false;
+        }
+
         var health :int = _ghost.health;
 //        log.debug("Damaging ghost", "roomId", this.roomId, "damage", damage, "health", health);
         if (damage >= health) {
@@ -607,6 +648,26 @@ public class Room
         }
     }
 
+    protected function maybeLoadControl () :void
+    {
+        if (_ctrl == null) {
+            _ctrl = Server.control.getRoom(_roomId);
+
+            _ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, function (evt :Event) :void {
+                _ctrl = null;
+                
+                if (_players.size() != 0) {
+                    log.warning("Eek! Room unloading with players still here!",
+                                "players", _players.toArray());
+                } else {
+                    log.debug("Unloaded room", "roomId", roomId);
+                }
+            });
+        }
+    }
+
+
+    protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
 
     protected var _state :String;
@@ -631,6 +692,6 @@ public class Room
     protected var _minigames :HashMap = new HashMap();
 
     // new ghost every 10 minutes -- force players to actually hunt for ghosts, not slaughter them
-    protected static const GHOST_RESPAWN_MINUTES :int = 1;
+    protected static const GHOST_RESPAWN_MINUTES :int = 10;
 }
 }
