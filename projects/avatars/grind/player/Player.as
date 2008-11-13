@@ -66,7 +66,7 @@ public class Player extends Sprite
             if ("event" in effect) {
                 switch (effect.event) {
                     case QuestConstants.EVENT_ATTACK:
-                        _sound.play();
+                        _inventory.getAttackSound().play();
                         break;
 
                     case QuestConstants.EVENT_COUNTER:
@@ -102,6 +102,7 @@ public class Player extends Sprite
                     if (_svc.getState() == QuestConstants.STATE_DEAD) {
                         _svc.revive();
                     }
+                    _inventory.getAttackSound().play();
                     break;
             }
         }
@@ -125,10 +126,6 @@ public class Player extends Sprite
     [Embed(source="ghost.png")]
     protected static const GHOST :Class;
     protected var _ghost :Bitmap;
-
-    [Embed(source="dagger.mp3")]
-    protected static const SOUND :Class;
-    protected var _sound = new SOUND() as Sound;
 
     protected var _inventory :Inventory;
 

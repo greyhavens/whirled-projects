@@ -2,6 +2,8 @@ package {
 
 import flash.events.*;
 import flash.display.*;
+import flash.media.*;
+
 import com.whirled.*;
 
 import com.threerings.util.Command;
@@ -26,6 +28,15 @@ public class Inventory extends Sprite
             _bags[i] = bag;
             addChild(bag);
         }
+
+        _attackSounds = [];
+        _attackSounds[Items.BOW] = Sound(new SOUND_BOW());
+        _attackSounds[Items.CLUB] = Sound(new SOUND_CLUB());
+        _attackSounds[Items.AXE] = Sound(new SOUND_AXE());
+        _attackSounds[Items.SWORD] = Sound(new SOUND_SWORD());
+        _attackSounds[Items.SPEAR] = Sound(new SOUND_SPEAR());
+        _attackSounds[Items.MAGIC] = Sound(new SOUND_MAGIC());
+        _attackSounds[Items.DAGGER] = Sound(new SOUND_DAGGER());
 
         updateBags();
         updateDoll();
@@ -138,6 +149,34 @@ public class Inventory extends Sprite
         }
         return defence;
     }
+
+    public function getAttackSound () :Sound
+    {
+        return (Items.HAND in _equipment) ?
+            _attackSounds[_equipment[Items.HAND][3]] : _attackSoundDefault;
+    }
+
+    [Embed(source="rsrc/fist.mp3")]
+    protected static const SOUND_FIST :Class;
+    [Embed(source="rsrc/bow.mp3")]
+    protected static const SOUND_BOW :Class;
+    [Embed(source="rsrc/club.mp3")]
+    protected static const SOUND_CLUB :Class;
+    [Embed(source="rsrc/axe.mp3")]
+    protected static const SOUND_AXE :Class;
+    [Embed(source="rsrc/sword.mp3")]
+    protected static const SOUND_SWORD :Class;
+    [Embed(source="rsrc/spear.mp3")]
+    protected static const SOUND_SPEAR :Class;
+    [Embed(source="rsrc/magic.mp3")]
+    protected static const SOUND_MAGIC :Class;
+    [Embed(source="rsrc/dagger.mp3")]
+    protected static const SOUND_DAGGER :Class;
+
+    /** Maps item category to Sounds. */
+    protected var _attackSounds :Array;
+
+    protected var _attackSoundDefault :Sound = Sound(new SOUND_FIST());
 
     protected var _bags :Array;
     protected var _doll :Doll;

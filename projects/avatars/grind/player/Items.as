@@ -18,7 +18,8 @@ public class Items
     public static const AXE :int = 5;
     public static const SWORD :int = 6;
     public static const SPEAR :int = 7;
-    public static const MAGIC :int = 7;
+    public static const MAGIC :int = 8;
+    public static const DAGGER :int = 9;
 
     public static const TABLE :Array = [
         // [ sprite, name, slot, bonus, (range) ]
