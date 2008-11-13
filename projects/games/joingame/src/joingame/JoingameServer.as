@@ -83,7 +83,7 @@ package joingame
         protected function handleStartSinglePlayerWave ( event :StartSinglePlayerWaveMessage) :void
         {
             trace("handleStartSinglePlayerWave()");
-            _ai.createNewSinglePlayerModel( _gameModel.humanPlayerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, event.userCookieData);
+            _ai.createNewSinglePlayerModel( _gameModel.humanPlayerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, event.userCookieData, -1);
             _gameModel.gameOver = false;
             if(AppContext.isConnected) {
 //                _gameModel.singlePlayerLevel = Trophies.getPlayerLevelBasedOnTrophies(  _gameModel.humanPlayerId, _gameModel, event.userCookieData);
@@ -119,7 +119,7 @@ package joingame
                 _ai = new SinglePlayerServerPlugin( _gameModel, this);
             }
             
-            _ai.createNewSinglePlayerModel(event.playerId, event.gameType, event.userCookieData);
+            _ai.createNewSinglePlayerModel(event.playerId, event.gameType, event.userCookieData, event.requestedLevel);
             log.debug("Server sending singlepplayer" + AllPlayersReadyMessage.NAME );
             
             AppContext.messageManager.sendMessage( new AllPlayersReadyMessage( _gameModel.getModelMemento()) );
@@ -277,7 +277,7 @@ package joingame
                 }
             }
             else {
-                _ai.handleReplayRequest(event.playerId, event.userCookieData);
+                _ai.handleReplayRequest(event.playerId, event.userCookieData, event.requestedLevel);
             }
         }
                 

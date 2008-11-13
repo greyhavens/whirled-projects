@@ -61,10 +61,10 @@ package joingame
             robotId2Level = new HashMap();
         }
         
-        internal function handleReplayRequest( playerId :int, cookie :UserCookieDataSourcePlayer) :void
+        internal function handleReplayRequest( playerId :int, cookie :UserCookieDataSourcePlayer, requestedLevel :int) :void
         {
             trace("SinglePlayerServerPlugin handleReplayRequest for player=" + playerId);
-            createNewSinglePlayerModel( playerId , _gameModel._singlePlayerGameType, cookie);
+            createNewSinglePlayerModel( playerId , _gameModel._singlePlayerGameType, cookie, requestedLevel);
             log.debug("sending singleplayer" + ReplayConfirmMessage.NAME);
             startAI();
             AppContext.messageManager.sendMessage( new ReplayConfirmMessage( _gameModel.currentSeatingOrder, _gameModel.getModelMemento()) );
@@ -568,14 +568,14 @@ package joingame
         /**
         * Creates a number of robot opponents, half above the players current level, half below.
         */
-        protected function addNewWave() :void 
+        protected function addNewWave(requestedLevel :int) :void 
         {
             var left :Boolean = true;
 //            for( var currentLevel :int = _userCookie.highestRobotLevelDefeated - Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE / 2;
 //                     currentLevel < _userCookie.highestRobotLevelDefeated + Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE/2; 
 //                   currentLevel++) {
-            for( var k :int = 0; k < Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE; k++) {
-                addNewComputerPlayer(_userCookie.highestRobotLevelDefeated + 1, left);
+            for( var k :int = 0; k < Constants.SINGLE_PLAYER_ROBOTS_PER_WAVE; k++) {
+                addNewComputerPlayer(requestedLevel, left);
                 left = !left;
             }
         }
@@ -640,7 +640,7 @@ package joingame
             AppContext.messageManager.sendMessage( new AddPlayerMessage( board.playerID, true, addToLeft, board.getBoardAsCompactRepresentation()));
         }
         
-        public function createNewSinglePlayerModel( playerId :int, gameType :String, userCookie :UserCookieDataSourcePlayer) :void
+        public function createNewSinglePlayerModel( playerId :int, gameType :String, userCookie :UserCookieDataSourcePlayer, requestedLevel :int) :void
         {
             AppContext.database.clearAll();
             
@@ -660,7 +660,12 @@ package joingame
                 _gameModel._singlePlayerGameType = gameType;
 //                _robotLevel = _userCookie.highestRobotLevelDefeated;
                 if( gameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES ) {
-                    addNewWave();
+                    if( requestedLevel > 0 && requestedLevel < _userCookie.highestRobotLevelDefeated) {
+                        addNewWave(requestedLevel);
+                    }
+                    else {
+                        addNewWave(_userCookie.highestRobotLevelDefeated + 1);
+                    }
                 }
                 else if(gameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS) {
                     
@@ -668,7 +673,14 @@ package joingame
                         _userCookie.highestRobotLevelDefeated = 1;
                     } 
                     log.debug("addRobots( 6, " + (_userCookie.highestRobotLevelDefeated+1) + ")" );
-                    addRobots(1, _userCookie.highestRobotLevelDefeated + 1);
+                     
+                    if( requestedLevel > 0 && requestedLevel < _userCookie.highestRobotLevelDefeated) {
+                        addRobots(Constants.SINGLE_PLAYER_ROBOTS_TOURNAMENT, requestedLevel);
+                    }
+                    else {
+                    
+                        addRobots(Constants.SINGLE_PLAYER_ROBOTS_TOURNAMENT, _userCookie.highestRobotLevelDefeated + 1);
+                    }
 //                    if( userCookie.highestRobotLevelDefeated == 0) {
 //                        log.error("createNewSinglePlayerModel(), selected " + Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS + ", but no level given");
 //                    }
