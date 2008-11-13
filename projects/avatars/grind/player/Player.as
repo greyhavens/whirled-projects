@@ -110,7 +110,7 @@ public class Player extends Sprite
 
     public function propertyProvider (key :String) :Object
     {
-        if (key == QuestConstants.SERVICE) {
+        if (key == QuestConstants.SERVICE_KEY) {
             return _svc;
         } else {
             return null;
@@ -153,6 +153,10 @@ public class Player extends Sprite
 
         getRange: function () :Number {
             return _inventory.getRange(); // Use the range of the equipped weapon
+        },
+
+        getLevel: function () :int {
+            return _quest.getLevel();
         },
 
         awardRandomItem: function (level :int) :void {

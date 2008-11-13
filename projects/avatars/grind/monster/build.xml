@@ -20,6 +20,12 @@
   <!-- include the standard build script -->
   <import file="../../../../etc/project-include.xml"/>
 
+  <target name="test-monster" depends="build-all">
+    <antcall target="test-only">
+      <param name="app.name" value="Monster_${monster.name}" />
+    </antcall>
+  </target>
+
   <target name="build-monster">
     <echo message="Building ${monster.name} (Level ${monster.level})" />
 

@@ -48,9 +48,9 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
     public function tick (event :TimerEvent) :void
     {
-        var targets :Array = QuestUtil.query(_ctrl, function (id :String, svc :Object) :Boolean {
+        var targets :Array = QuestUtil.query(_ctrl, function (svc :Object) :Boolean {
             return svc.getType() == QuestConstants.TYPE_PLAYER &&
-                QuestUtil.squareDistanceTo(_ctrl, id) < 1000*1000;
+                QuestUtil.squareDistanceTo(_ctrl, svc.getIdent()) < 1000*1000;
         });
 
         _hunting = targets[int(Math.random()*targets.length)];
@@ -114,7 +114,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
     public function propertyProvider (key :String) :Object
     {
-        if (key == QuestConstants.SERVICE) {
+        if (key == QuestConstants.SERVICE_KEY) {
             return _svc;
         } else {
             return null;
@@ -168,6 +168,10 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
         getRange: function () :Number {
             return 400;
+        },
+
+        getLevel: function () :int {
+            return _quest.getLevel();
         },
 
         awardRandomItem: function (level :int) :void {

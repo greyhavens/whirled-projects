@@ -2,7 +2,9 @@ package {
 
 public class QuestConstants
 {
-    public static const SERVICE :String = "quest:svc";
+    public static const SERVICE_KEY :String = "quest:svc";
+    public static const TOTEM_KEY :String = "quest:totem";
+    public static const KILL_SIGNAL :String = "quest:kill";
 
     public static const TYPE_PLAYER :String = "player";
     public static const TYPE_MONSTER :String = "monster";

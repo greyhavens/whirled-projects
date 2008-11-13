@@ -18,7 +18,7 @@ public class QuestUtil
 
     public static function getService (ctrl :EntityControl, otherId :String) :Object
     {
-        return ctrl.getEntityProperty(QuestConstants.SERVICE, otherId);
+        return ctrl.getEntityProperty(QuestConstants.SERVICE_KEY, otherId);
     }
 
     public static function squareDistanceTo (ctrl :EntityControl, otherId :String) :Number
@@ -66,7 +66,18 @@ public class QuestUtil
 
     public static function self (ctrl :EntityControl) :Object
     {
-        return ctrl.getEntityProperty(QuestConstants.SERVICE);
+        return ctrl.getEntityProperty(QuestConstants.SERVICE_KEY);
+    }
+
+    public static function getTotem (ctrl :EntityControl) :int
+    {
+        for each (var id :String in ctrl.getEntityIds(EntityControl.TYPE_FURNI)) {
+            var influence :int = int(ctrl.getEntityProperty(QuestConstants.TOTEM_KEY, id));
+            if (influence != 0) {
+                return Math.abs(influence);
+            }
+        }
+        return 0;
     }
 }
 

@@ -113,24 +113,32 @@ public class QuestSprite extends Sprite
     {
         var self :Object = QuestUtil.self(_ctrl);
         var amount :Number = self.getPower();
+        var influence :int = QuestUtil.getTotem(_ctrl);
+
         var id :String = QuestUtil.fetchClosest(_ctrl, function (svc :Object) :Boolean {
+            if (svc.getType() == self.getType()) {
+                return influence != 0 && influence >= Math.abs(self.getLevel() - svc.getLevel());
+            }
             return svc.getState() != QuestConstants.STATE_DEAD;
         });
-        var d2 :Number = QuestUtil.squareDistanceTo(_ctrl, id);
 
-        if (id != null && d2 <= self.getRange()*self.getRange()) {
-            var target :Object = QuestUtil.getService(_ctrl, id);
-            if (target.getState() == QuestConstants.STATE_COUNTER &&
-                d2 <= target.getRange()*target.getRange()) {
+        if (id != null) {
+            var d2 :Number = QuestUtil.squareDistanceTo(_ctrl, id);
 
-                self.damage(target, target.getPower(), {text:"Countered!"});
-                target.damage(self, amount*0.25);
+            if (d2 <= self.getRange()*self.getRange()) {
+                var target :Object = QuestUtil.getService(_ctrl, id);
+                if (target.getState() == QuestConstants.STATE_COUNTER &&
+                    d2 <= target.getRange()*target.getRange()) {
 
-            } else {
-                target.damage(self, amount);
+                    self.damage(target, target.getPower(), {text:"Countered!"});
+                    target.damage(self, amount*0.25);
+
+                } else {
+                    target.damage(self, amount);
+                }
+
+                effect({text:"Rawr", event:QuestConstants.EVENT_ATTACK});
             }
-
-            effect({text:"Rawr", event:QuestConstants.EVENT_ATTACK});
         }
     }
 
