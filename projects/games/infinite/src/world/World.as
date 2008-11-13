@@ -2,8 +2,11 @@ package world
 {
 	import arithmetic.BoardCoordinates;
 	
+	import cells.CellWorld;
+	
 	import flash.events.EventDispatcher;
 	
+	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -16,12 +19,12 @@ package world
 	 * This is the actual implementation of the game world.  It is instantiated on the server if
 	 * the game is running in multi-player mode, or on the client if it's running in standalone mode.
 	 */
-	public class World extends EventDispatcher
+	public class World extends EventDispatcher implements CellWorld
 	{
 		public function World()
 		{
 			_players = new PlayerRegister();
-			_levels = new LevelRegister();
+			_levels = new LevelRegister(this);
 		}
 		
 		public function addListener (listener:WorldListener) :void
@@ -86,6 +89,14 @@ package world
 		{
 			const player:Player = _players.find(id);
 			return player.level.cellState(hood);
+		}
+			
+		/**	
+		 * Distribute the state of a single cell to everyone who needs to know about it.
+		 */
+		public function distributeState (state:CellState) :void
+		{
+			// 
 		}
 				
 		protected var _levels:LevelRegister;

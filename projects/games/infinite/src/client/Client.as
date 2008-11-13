@@ -3,6 +3,8 @@ package client
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
 	
+	import cells.CellWorld;
+	
 	import client.player.Player;
 	import client.player.PlayerEvent;
 	
@@ -12,6 +14,7 @@ package client
 	
 	import inventory.InventoryDisplay;
 	
+	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
@@ -26,7 +29,7 @@ package client
 	import world.board.*;
 	import world.level.*;
 	
-	public class Client extends Sprite implements WorldClient
+	public class Client extends Sprite implements WorldClient, CellWorld
 	{
 		public function Client(world:ClientWorld)
 		{
@@ -155,7 +158,7 @@ package client
 			}
 			
 			// we can start off with the default blank board.
-			_board = new MutableBoard(new BlankBoard);
+			_board = new MutableBoard(new BlankBoard(this));
             Log.debug(this+" created "+_board);       
             
                  
@@ -195,6 +198,11 @@ package client
 		{
 			Log.debug("client processing "+detail);
 			_viewer.updatedCells(detail);
+		}
+		
+		public function distributeState (state:CellState) :void
+		{
+			Log.warning("unexpected attempt by "+this+" to distribute state "+state);
 		}
 		
 		override public function toString () :String

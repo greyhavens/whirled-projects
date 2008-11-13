@@ -2,6 +2,7 @@ package world.board
 {
 	import arithmetic.BoardCoordinates;
 	
+	import cells.CellWorld;
 	import cells.ground.GroundCell;
 	import cells.wall.WallBaseCell;
 	import cells.wall.WallCell;
@@ -11,11 +12,19 @@ package world.board
 	
 	public class BlankBoard implements Board
 	{
-		public function BlankBoard() 
+		public function BlankBoard(world:CellWorld) 
 		{
+			_world = world;
 		}
 		
-        public function cellAt (position:BoardCoordinates) :Cell
+		public function cellAt (position:BoardCoordinates) :Cell
+		{
+			const created:Cell = makeCell(position);
+			created.addToWorld(_world);
+			return created;
+		}
+		
+        public function makeCell (position:BoardCoordinates) :Cell
         {
             switch (position.y) {
                 case 1: return new GroundCell(position);                               
@@ -33,5 +42,7 @@ package world.board
         {
         	return "a blank board";
         }
+        
+        protected var _world:CellWorld;
 	}
 }

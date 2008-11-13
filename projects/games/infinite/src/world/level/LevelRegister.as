@@ -1,11 +1,14 @@
 package world.level
 {
+	import cells.CellWorld;
+	
 	import world.Player;
 	
 	public class LevelRegister
 	{
-		public function LevelRegister()
+		public function LevelRegister(world:CellWorld)
 		{
+			_factory = new LevelFactory(world);
 			_levels[FIRST_LEVEL] = _factory.makeLevel(FIRST_LEVEL);
 		}
         
@@ -27,8 +30,8 @@ package world.level
         	return found;
         }
  
-        public static const FIRST_LEVEL:int = 1; 
+        public static const FIRST_LEVEL:int = 1;
         protected const _levels:Array = new Array();
-        protected const _factory:LevelFactory = new LevelFactory();
+        protected var _factory:LevelFactory;
 	}
 }
