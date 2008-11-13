@@ -27,11 +27,10 @@ public class DashboardView extends SceneObject
     {
         _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
         _shuffleMovie = _movie["shuffle"];
-
-        var puzzleFrame :MovieClip = this.puzzleFrame;
+        _puzzleFrame = _movie["frame_puzzle"];
 
         _movie.cacheAsBitmap = true;
-        puzzleFrame.cacheAsBitmap = true;
+        _puzzleFrame.cacheAsBitmap = true;
 
         _deathPanel = _movie["death"];
 
@@ -39,7 +38,7 @@ public class DashboardView extends SceneObject
         // draw a special overlay on the puzzle frame.
         if (GameContext.gameData.puzzleData.useSpecialPuzzleFrame) {
             var overlay :MovieClip = SwfResource.instantiateMovieClip("dashboard", "resourced", true);
-            var overlayParent :MovieClip = puzzleFrame["resourced_placer"];
+            var overlayParent :MovieClip = _puzzleFrame["resourced_placer"];
             overlayParent.addChild(overlay);
         }
 
@@ -52,7 +51,7 @@ public class DashboardView extends SceneObject
         // setup resources
         for (var resType :int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
-            var resourceText :TextField = puzzleFrame[resourceTextName];
+            var resourceText :TextField = _puzzleFrame[resourceTextName];
             var resourceTextObj :SimpleSceneObject = new SimpleSceneObject(resourceText);
             GameContext.gameMode.addObject(resourceTextObj);
             _resourceTextObjs.push(resourceTextObj);
@@ -265,11 +264,6 @@ public class DashboardView extends SceneObject
         }
     }
 
-    public function get puzzleFrame () :MovieClip
-    {
-        return _movie["frame_puzzle"];
-    }
-
     override public function get displayObject () :DisplayObject
     {
         return _movie;
@@ -343,16 +337,15 @@ public class DashboardView extends SceneObject
         var textField :TextField = TextField(textObj.displayObject);
         textField.text = String(resAmount);
 
-        var puzzleFrame :MovieClip = this.puzzleFrame;
-        var resourceBarParent :Sprite = _resourceBars[resType];
+        var resourceBar :Sprite = _resourceBars[resType];
 
-        if (null == resourceBarParent) {
-            resourceBarParent = SpriteUtil.createSprite();
-            _resourceBars[resType] = resourceBarParent;
-            puzzleFrame.addChildAt(resourceBarParent, 1);
+        if (null == resourceBar) {
+            resourceBar = SpriteUtil.createSprite();
+            _resourceBars[resType] = resourceBar;
+            _puzzleFrame.addChildAt(resourceBar, RESOURCE_METER_PARENT_INDEX);
         }
 
-        var g :Graphics = resourceBarParent.graphics;
+        var g :Graphics = resourceBar.graphics;
         g.clear();
 
         if (resAmount > 0) {
@@ -372,6 +365,7 @@ public class DashboardView extends SceneObject
         if (resAmount != 0 && oldResAmount == 0) {
             textObj.visible = true;
             textObj.removeAllTasks();
+
         } else if(resAmount == 0 && oldResAmount != 0) {
             var blinkTask :RepeatingTask = new RepeatingTask();
             blinkTask.addTask(new VisibleTask(false));
@@ -383,6 +377,7 @@ public class DashboardView extends SceneObject
     }
 
     protected var _movie :MovieClip;
+    protected var _puzzleFrame :MovieClip;
     protected var _deathPanel :MovieClip;
     protected var _shuffleMovie :MovieClip;
     protected var _resourceTextObjs :Array = [];
@@ -402,6 +397,8 @@ public class DashboardView extends SceneObject
 
     protected static const RESOURCE_METER_WIDTH :Number = 63;
     protected static const RESOURCE_METER_HEIGHT :Number = 20;
+
+    protected static const RESOURCE_METER_PARENT_INDEX :int = 3;
 
     protected static const PLAYER_STATUS_VIEW_LOCS :Array = [
         [ new Point(40, 47), new Point(105, 47) ],                                          // 2 players
