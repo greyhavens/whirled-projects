@@ -7,6 +7,8 @@ public class HealthBar extends Sprite
 {
     public function set percent (p :Number) :void
     {
+        p = Math.min(Math.max(0, p), 1);
+
         graphics.beginFill(0x00ff00);
         graphics.drawRect(0, 0, 32*p, 4);
         graphics.endFill();
