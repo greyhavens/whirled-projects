@@ -235,9 +235,7 @@ package client
 		
 		protected const GAME_WIDTH:int = 700;
 		protected const GAME_HEIGHT:int = 500;
-		
-		protected const LEVEL1:Level = new Level(1, 50, new SimpleBoard());
-		
+				
 		protected static const NO_LEVEL:int = -1;
 	}	
 }

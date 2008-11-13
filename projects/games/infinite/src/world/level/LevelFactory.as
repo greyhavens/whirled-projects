@@ -9,12 +9,7 @@ package world.level
 		}
 		
 		public function makeLevel(level:int) :Level
-		{
-			switch(level) {
-				case LevelRegister.FIRST_LEVEL:
-				    return new Level(level, Level.DEFAULT_HEIGHT, new SimpleBoard());				
-			}				
-					
+		{					
 			return new Level(level, Level.DEFAULT_HEIGHT, new BlankBoard());			
 		}
 	}
