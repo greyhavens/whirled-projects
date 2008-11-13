@@ -34,6 +34,8 @@ public class GameContext
     
     public static var cookieManager :UserCookieManager = new UserCookieManager(1);
     public static var playerCookieData :UserCookieDataSourcePlayer = new UserCookieDataSourcePlayer();
+    
+    public static var requestedSinglePlayerLevel :int;
         
 //    public static const GAME_TYPE_MULTIPLAYER :int = 0;
 //    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
