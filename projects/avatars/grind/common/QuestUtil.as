@@ -9,7 +9,7 @@ public class QuestUtil
         var arr :Array = [];
         for each (var id :String in ctrl.getEntityIds()) {
             var svc :Object = getService(ctrl, id);
-            if (svc != null && (filter == null || filter(id, svc))) {
+            if (svc != null && (filter == null || filter(svc))) {
                 arr.push(svc);
             }
         }
@@ -39,9 +39,9 @@ public class QuestUtil
         for each (var id :String in ctrl.getEntityIds()) {
             if (id != ctrl.getMyEntityId()) {
                 var svc :Object = getService(ctrl, id);
-                if (svc != null && (filter == null || filter(id, svc))) {
+                if (svc != null && (filter == null || filter(svc))) {
                     var d2 :Number = squareDistanceTo(ctrl, id)
-                    if (d2 < min2 && (filter == null || filter(id, svc))) {
+                    if (d2 < min2 && (filter == null || filter(svc))) {
                         min2 = d2;
                         candidate = id;
                     }

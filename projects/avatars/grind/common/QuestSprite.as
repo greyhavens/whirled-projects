@@ -113,7 +113,9 @@ public class QuestSprite extends Sprite
     {
         var self :Object = QuestUtil.self(_ctrl);
         var amount :Number = self.getPower();
-        var id :String = QuestUtil.fetchClosest(_ctrl);
+        var id :String = QuestUtil.fetchClosest(_ctrl, function (svc :Object) :Boolean {
+            return svc.getState() != QuestConstants.STATE_DEAD;
+        });
         var d2 :Number = QuestUtil.squareDistanceTo(_ctrl, id);
 
         if (id != null && d2 <= self.getRange()*self.getRange()) {
