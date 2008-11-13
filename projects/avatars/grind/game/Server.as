@@ -69,10 +69,13 @@ public class Server extends ServerObject
 
             try {
                 if (playerId != 0) {
-                    trace("Payout!");
-                    _ctrl.getPlayer(playerId).completeTask("death", level/10); // TODO: Tweak
+                    var player :PlayerSubControlServer = _ctrl.getPlayer(playerId);
+                    player.completeTask("death", level/10); // TODO: Tweak
+                    player.props.set("kills", int(player.props.get("kills"))+1);
                 }
-            } catch (error :Error) { }
+            } catch (error :Error) {
+                // It's reasonably possible that they're hacking away while not in the AVRG
+            }
             trace("We get signal: " + event.name + ", " + event.value);
         }
     }
