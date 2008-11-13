@@ -52,18 +52,18 @@ public class PlayerStatusView extends SceneObject
         var headshot :DisplayObject = _playerInfo.headshot;
         headshot.scaleX = 1;
         headshot.scaleY = 1;
-        var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width, HEADSHOT_SIZE.y / headshot.height);
-        headshot.width *= scale;
-        headshot.height *= scale;
-        DisplayUtil.positionBounds(headshot,
-            (HEADSHOT_SIZE.x - headshot.width) * 0.5,
-            (HEADSHOT_SIZE.y - headshot.height) * 0.5);
+        var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width,
+                                     HEADSHOT_SIZE.y / headshot.height);
+        headshot.scaleX = scale;
+        headshot.scaleY = scale;
+        headshot.x = (HEADSHOT_SIZE.x - headshot.width) * 0.5;
+        headshot.y = (HEADSHOT_SIZE.y - headshot.height) * 0.5;
         headshotParent.addChild(headshot);
 
         // mask the headshot
         var headshotMask :Shape = new Shape();
         var g :Graphics = headshotMask.graphics;
-        g.beginFill(1);
+        g.beginFill(0);
         g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
         g.endFill();
         headshotParent.addChild(headshotMask);
