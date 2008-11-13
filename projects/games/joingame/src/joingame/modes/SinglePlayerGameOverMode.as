@@ -2,7 +2,6 @@ package joingame.modes
 {
     import com.threerings.flash.SimpleTextButton;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.AppMode;
     import com.whirled.contrib.simplegame.objects.SceneObject;
     import com.whirled.contrib.simplegame.objects.SimpleSceneObject;
     import com.whirled.contrib.simplegame.resource.ImageResource;
@@ -151,7 +150,7 @@ package joingame.modes
         {
             _startButton.y -= 4;
             log.debug("sending " + ReplayRequestMessage.NAME );
-            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId));
+            AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId, GameContext.playerCookieData, GameContext.requestedSinglePlayerLevel));
         }
         
         private function mouseOver( event:MouseEvent ) :void
