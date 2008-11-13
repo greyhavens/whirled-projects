@@ -229,9 +229,10 @@ package client
 		 * TODO: REPLACE THIS WITH REAL PERSISTENCE TO THE BOARD
 		 */
 		public function replace (newCell:Cell) :void
-		{
-			cellAt(newCell.position).removeFromObjective();
-			newCell.addToObjective(this);
+		{			
+			// the cell scroll buffer knows what cells are in view - so the replacement is delegated to it
+			// and it can determine whether the view needs to be replaced
+			_cells.replace(newCell);
 			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
 		}
 		
@@ -323,7 +324,6 @@ package client
         {
         	Log.debug("updating cell state: "+update);
         	for each (var state:CellState in update.states) {
-        		Log.debug("updating state: "+state);
         		state.update(this);
         	}
         }

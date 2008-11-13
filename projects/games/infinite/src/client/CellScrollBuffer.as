@@ -1,12 +1,13 @@
 package client
 {
 	import arithmetic.*;
+	
 	import world.Cell;
 	import world.board.*;
 	
 	public class CellScrollBuffer implements BoardAccess
 	{
-		public function CellScrollBuffer(objective:Objective, board:BoardAccess)
+		public function CellScrollBuffer(objective:Objective, board:BoardInteractions)
 		{
 			_objective = objective;
 			_board = board;
@@ -316,6 +317,18 @@ package client
 			}
 			return _board.cellAt(position);
 		}
+		
+		public function replace (cell:Cell) :void
+		{
+			if (_extent.contains(cell.position)) {
+				const v:Vector = _extent.relativePosition(cell.position);
+				const old:Cell = _cells[v.dx][v.dy] as Cell;
+				old.removeFromObjective();
+				_cells[v.dx][v.dy] = cell;
+				cell.addToObjective(_objective);
+			}
+			_board.replace(cell);
+		}
 
 		public function memoryOrBoard (position:BoardCoordinates) :Cell 
 		{
@@ -332,7 +345,7 @@ package client
 		
 		// the buffer mediates between the objective and the board
 		protected var _objective:Objective;
-		protected var _board:BoardAccess;
+		protected var _board:BoardInteractions;
 
 		// the position and extent of the buffer
 		protected var _extent:BoardRectangle = new VoidBoardRectangle();

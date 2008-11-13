@@ -159,7 +159,6 @@ package cells
 		public function updateState (board:BoardInteractions, state:CellState) :void
 		{
 		    if (state.code != code) {
-		    	Log.debug("replacing "+this);
 		        board.replace(state.newCell(this));
 		    }
 		}

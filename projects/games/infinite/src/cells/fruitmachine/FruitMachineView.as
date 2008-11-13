@@ -31,6 +31,7 @@ package cells.fruitmachine
          */
         override protected function startAnimation () :void
         {
+            Log.debug(this + " starting animation")
         	const machine:FruitMachineCell = cell as FruitMachineCell;
             _timer = new PhaseShiftTimer(_objective, machine.inception, machine.period);
             _timer.addEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);
@@ -50,9 +51,15 @@ package cells.fruitmachine
          */ 
         override protected function stopAnimation () :void
         {
+        	Log.debug(this + " stopping animation");
             if (_timer != null) {
                 _timer.stop();
             }
+        }
+        
+        override public function toString () :String
+        {
+        	return "view of "+cell;
         }
 
         protected var _timer:PhaseShiftTimer;
