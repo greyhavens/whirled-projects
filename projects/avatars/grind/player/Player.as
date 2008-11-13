@@ -135,6 +135,10 @@ public class Player extends Sprite
             return (_quest.getHealth() == 0) ? QuestConstants.STATE_DEAD : _ctrl.getState();
         },
 
+        getIdent: function () :String {
+            return _ctrl.getMyEntityId();
+        },
+
         getType: function () :String {
             return QuestConstants.TYPE_PLAYER;
         },

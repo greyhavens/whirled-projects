@@ -17,6 +17,7 @@ import flash.utils.Timer;
 
 import com.threerings.flash.TextFieldUtil;
 
+import com.whirled.EntityControl;
 import com.whirled.ActorControl;
 import com.whirled.ControlEvent;
 
@@ -173,6 +174,12 @@ public class QuestSprite extends Sprite
                 source.awardXP(666);
                 source.awardRandomItem(getLevel());
             }
+
+            // Send the event out to the AVRG and anything else that cares
+            _ctrl.sendSignal("grind:death", [
+                _ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, source.getIdent()),
+                getLevel() ]);
+
             effect({text:"Death", event:QuestConstants.EVENT_DIE});
         } else {
             _ctrl.setMemory("health", Math.min(health-amount, getMaxHealth()));

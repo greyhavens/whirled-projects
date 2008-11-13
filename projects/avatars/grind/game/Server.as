@@ -62,7 +62,19 @@ public class Server extends ServerObject
 
     protected function handleSignal (event :AVRGameRoomEvent) :void
     {
-        trace("We get signal: " + event.name + ", " + event.value);
+        if (event.name == "grind:death") {
+            var data :Array = event.value as Array;
+            var playerId :int = data[0];
+            var level :int = data[1];
+
+            try {
+                if (playerId != 0) {
+                    trace("Payout!");
+                    _ctrl.getPlayer(playerId).completeTask("death", level/10); // TODO: Tweak
+                }
+            } catch (error :Error) { }
+            trace("We get signal: " + event.name + ", " + event.value);
+        }
     }
 
     /** Maps player ID to scene ID. */

@@ -22,7 +22,7 @@ public class Items
     public static const DAGGER :int = 9;
 
     public static const TABLE :Array = [
-        // [ sprite, name, slot, bonus, (range) ]
+        // [ sprite, name, slot, category, power, (range) ]
         [ 94, "Loincloth", TORSO, NONE, 0 ],
         [ 95, "Fancy Tunic", TORSO, NONE, 1 ],
         [ 98, "Uber Armor", TORSO, HEAVY, 6 ],
