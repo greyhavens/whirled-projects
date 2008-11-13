@@ -6,9 +6,20 @@ package
 	{
         public static var id:String = "unknown";
         
-		public static function debug(message:String) :void
+        /**
+         * Log a debug message indicating the id of the client.
+         */
+		public static function debug (message:String) :void
 		{
 			trace (id + ": "+message);
+		}
+
+		/**
+		 * Log a warning message that stands out from the debug messages.
+		 */
+		public static function warning (message:String) :void
+		{
+			trace (id + ": WARNING - "+message);
 		}
 		
         public static function setId (control:GameControl) :void

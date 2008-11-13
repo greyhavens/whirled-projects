@@ -2,18 +2,23 @@ package world
 {
 	import arithmetic.BoardCoordinates;
 	
+	import cells.CellInteractions;
+	
 	import flash.events.EventDispatcher;
+	
+	import items.Item;
 	
 	import paths.Path;
 	
 	import world.arbitration.MoveEvent;
 	import world.level.*;
 	
-	public class Player extends EventDispatcher 
+	public class Player extends EventDispatcher implements CellInteractions
 	{
 		public function Player(id:int)
 		{
 			_id = id;
+			_inventory = new Inventory();
 			addEventListener(MoveEvent.PATH_START, handlePathStart);			
 		}
 
@@ -69,7 +74,12 @@ package world
             if (_path.finish.equals(coords)) {
             	_level.map(_path.finish);
             	_path = null;
+            	
+            	
+            	// now check whether there are consequences of landing on this cell
+            	_level.arriveAt(this, coords);
             }
+            Log.warning("move to " + _path.finish + " completed with unexpected endpoint "+_path.finish); 
         }
         
         public function isMoving () :Boolean
@@ -82,9 +92,20 @@ package world
         	return "world player "+_id;
         }
         
+        public function canReceiveItem () :Boolean
+        {
+        	return (! _inventory.full);
+        }
+        
+        public function receiveItem (item:Item) :void
+        {
+        	_inventory.add(item);
+        }
+        
         protected var _path:Path;
         protected var _cell:Cell;
         protected var _level:Level;
         protected var _id:int;
+        protected var _inventory:Inventory;
 	}
 }

@@ -178,7 +178,8 @@ package cells.fruitmachine
         
         /**
          * Return the fruit machine state at a given time.
-         */         public function stateAt(time:Number) :int
+         */         
+        public function stateAt(time:Number) :int
         {
         	// if the mode attribute has been set to one of the static values, we return that.
         	if (_mode == ROLLING || _mode == DEFUNCT) {
@@ -201,7 +202,6 @@ package cells.fruitmachine
         {
             return _inception;
         }
-    
 
         protected var _inception: Number;
 

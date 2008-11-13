@@ -95,6 +95,9 @@ package world.level
         	return update;
         }
         
+        /** 
+         * Return a list of changes from the starting board for cells in the supplied neighborhood.
+         */ 
         public function cellState (hood:Neighborhood) :CellUpdate
         {
         	return _board.neighborhood(hood);
@@ -107,7 +110,15 @@ package world.level
         {
         	_explored.map(coords);
         }
-                
+        
+        /**
+         * Compute the consequences of a player arriving at a particular position in a level.
+		 */
+		public function arriveAt (player:Player, coords:BoardCoordinates) :void
+		{
+			_board.cellAt(coords).playerHasArrived(player);
+		}
+         
         protected var _explored:BreadcrumbTrail = new BreadcrumbTrail();
         protected var _mapMaker:MapMaker;
         protected var _arbiter:BoardArbiter;
