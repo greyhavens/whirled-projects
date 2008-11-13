@@ -143,6 +143,7 @@ package cells.fruitmachine
 			Log.debug ("rolling fruit machine");
 			stopTimer();
 			mode = ROLLING;
+			distributeState();
 			startRollingTimer();
 		}
 		
@@ -152,6 +153,7 @@ package cells.fruitmachine
 		protected function rollComplete (event:TimerEvent) :void
 		{
 			mode = DEFUNCT;
+			distributeState();
 			_box.giveObjectTo(_player);
 		}
 

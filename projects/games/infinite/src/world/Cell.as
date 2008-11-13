@@ -6,8 +6,7 @@ package world
 	
 	import cells.CellAffordances;
 	import cells.CellObjective;
-	
-	import flash.events.IEventDispatcher;
+	import cells.CellWorld;
 	
 	import server.Messages.CellState;
 	
@@ -34,6 +33,11 @@ package world
 		 * nothing of the cell is already removed.
 		 */
 		function removeFromObjective() :void		
+
+		/**
+		 * Called to cause the cell to be added to the persistent world.
+		 */
+		function addToWorld (world:CellWorld) :void		
 
 		/**
 		 * Return an iterator for iterating though cells on the supplied board in the specified

@@ -2,10 +2,6 @@ package cells
 {
 	import arithmetic.*;
 	
-	import client.CellEvent;
-	
-	import flash.events.EventDispatcher;
-	
 	import server.Messages.CellState;
 	
 	import world.Cell;
@@ -41,12 +37,17 @@ package cells
 		/**
 		 * Add this cell to the objective.
 		 */
-		public final function addToObjective(objective:CellObjective) :void
+		public final function addToObjective (objective:CellObjective) :void
 		{
 			_objective = objective;
 			showView(objective);
 		}
 
+		public final function addToWorld (world:CellWorld) :void
+		{
+			_world = world;
+		}
+		
 		/**
 		 * Show all of the display objects associated with this cell.
 		 */
@@ -159,13 +160,25 @@ package cells
 		public function updateState (board:BoardInteractions, state:CellState) :void
 		{
 		    if (state.code != code) {
-		        board.replace(state.newCell(this));
+		    	const replacement:Cell = state.newCell(this);
+		    	replacement.addToWorld(_world);
+		        board.replace(replacement);
 		    }
+		}
+		
+		/**
+		 * Cause the current state of the cell to be distributed to relevant clients.
+		 */
+		protected function distributeState () :void
+		{
+			_world.distributeState(state); 
 		}
 		
 		protected var _position:BoardCoordinates;
 		
 		protected var _objective:CellObjective;
+
+		protected var _world:CellWorld;
 				
 		public static const UNIT:Vector = Config.cellSize;		
 	}
