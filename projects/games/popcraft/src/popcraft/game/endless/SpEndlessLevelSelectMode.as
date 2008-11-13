@@ -46,9 +46,10 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
         return true;
     }
 
-    protected static const TEXT :String = "Do you want to reset your saved games?\n\n" +
-                                          "You'll lose  all progress in the Survival Challenge " +
-                                          "(but no other data will be affected).";
+    protected static const TEXT :String = "" +
+        "Do you want to reset your saved games?\n\n" +
+        "You'll lose all progress in the Initiation Challenge " +
+        "(but no other data will be affected).";
 }
 
 }
