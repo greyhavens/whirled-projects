@@ -18,7 +18,7 @@ package world
 		public function Player(id:int)
 		{
 			_id = id;
-			_inventory = new Inventory();
+			_inventory = new Inventory(this);
 			addEventListener(MoveEvent.PATH_START, handlePathStart);			
 		}
 
@@ -99,7 +99,8 @@ package world
         
         public function receiveItem (item:Item) :void
         {
-        	_inventory.add(item);
+        	const position:int = _inventory.add(item);
+        	dispatchEvent(new InventoryEvent(InventoryEvent.RECEIVED, this, item, position));
         }
         
         protected var _path:Path;

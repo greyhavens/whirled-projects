@@ -17,6 +17,6 @@ package items
 		
 		function useBy (player:ItemPlayer) :void;
 		
-		function get attributes () :Object;
+		function get attributes () :Object;		
 	}
 }

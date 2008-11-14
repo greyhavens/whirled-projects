@@ -39,9 +39,9 @@ package cells.fruitmachine
         	return created;
         }
 
-        protected function item (itemAttributes:Object) :Item
+        protected function item (attributes:Object) :Item
         {
-        	return _factory.makeItem(itemAttributes);
+        	return _factory.makeItem(attributes);
         }
 				
 		override public function get code () :int

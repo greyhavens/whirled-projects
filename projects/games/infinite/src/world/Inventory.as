@@ -4,19 +4,28 @@ package world
 	
 	public class Inventory
 	{
-		public function Inventory()
+		public function Inventory(player:Player)
 		{
+			_player = player;
 		}
 
-		public function add(item:Item) :void
+		public function add(item:Item) :int
 		{
-			_items.push(item);
+			Log.debug(this+ " received "+item);
+			return _items.push(item) -1 ;
 		}
 		
 		public function get full () :Boolean
 		{
 			return _items.length >= MAX_SIZE;	
 		}
+		
+		public function toString () :String
+		{
+			return "inventory";
+		}
+		
+		protected var _player:Player;
 		
 		protected var _items:Array = new Array();
 		

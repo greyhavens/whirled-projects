@@ -2,7 +2,6 @@ package client
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
-	import arithmetic.VoidBoardRectangle;
 	
 	import client.player.Player;
 	import client.player.PlayerEvent;
@@ -13,15 +12,17 @@ package client
 	
 	import inventory.InventoryDisplay;
 	
+	import items.ItemFactory;
+	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	
 	import sprites.SpriteUtil;
 	
-	import world.Cell;
 	import world.ClientWorld;
 	import world.MutableBoard;
 	import world.NeighborhoodEvent;
@@ -204,10 +205,10 @@ package client
 			_viewer.updateCell(detail);
 		}
 		
-		public function distributeState (cell:Cell) :void
+		public function receiveItem(detail:InventoryUpdate) :void
 		{
-			Log.warning("unexpected attempt by "+this+" to distribute state of "+cell);
-		}
+			_inventory.addItem (_itemFactory.makeItem(detail.attributes));
+		}     
 		
 		override public function toString () :String
 		{
@@ -244,6 +245,8 @@ package client
 		protected var _board:BoardInteractions;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
+		
+		protected var _itemFactory:ItemFactory = new ItemFactory();
 		
 		protected const GAME_WIDTH:int = 700;
 		protected const GAME_HEIGHT:int = 500;

@@ -77,6 +77,7 @@ package world
 		    player.addEventListener(LevelEvent.LEVEL_ENTERED, dispatchEvent);
 		    player.addEventListener(PlayerEvent.MOVE_COMPLETED, dispatchEvent);
 		    player.addEventListener(MoveEvent.PATH_START, dispatchEvent);
+		    player.addEventListener(InventoryEvent.RECEIVED, dispatchEvent);
             		    		    
 		    // register the player and place them on the first level.
             _players.register(player);

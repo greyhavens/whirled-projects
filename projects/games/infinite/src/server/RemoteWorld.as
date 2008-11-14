@@ -156,6 +156,7 @@ package server
         public static const UPDATED_CELLS:int = 3;
         public static const TIME_SYNC:int = 4;
         public static const UPDATED_CELL:int = 5;
+        public static const ITEM_RECEIVED:int = 6;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
@@ -163,6 +164,7 @@ package server
         messageName[LEVEL_UPDATE] = "level update";
         messageName[UPDATED_CELLS] = "updated cells";
         messageName[TIME_SYNC] = "time sync";
-        messageName[UPDATED_CELL] = "updated cell";        
+        messageName[UPDATED_CELL] = "updated cell";
+        messageName[ITEM_RECEIVED] = "item received";        
 	}
 }

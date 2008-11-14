@@ -2,6 +2,7 @@ package world
 {
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -36,6 +37,11 @@ package world
         /**
          * The client should update the state of a single cell.
          */ 
-        function updateCell (detail:CellState) :void;      
+        function updateCell (detail:CellState) :void;
+        
+        /**
+         * The client's player has received an item and this should be displayed in the inventory.
+         */
+        function receiveItem(detail:InventoryUpdate) :void;         
  	}
 }

@@ -10,6 +10,7 @@ package server
 	import flash.utils.Dictionary;
 	
 	import server.Messages.CellState;
+	import server.Messages.InventoryUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
@@ -17,6 +18,7 @@ package server
 	import server.Messages.Serializable;
 	
 	import world.CellStateEvent;
+	import world.InventoryEvent;
 	import world.Player;
 	import world.World;
 	import world.WorldListener;
@@ -151,6 +153,11 @@ package server
 				_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), player.id);
 			}
 		}
+			
+		public function handleItemReceived (event:InventoryEvent) :void
+		{
+			send(event.player.id, RemoteWorld.ITEM_RECEIVED, new InventoryUpdate(event.position, event.item.attributes));
+		}		
 			
 		protected function get id () :int
 		{

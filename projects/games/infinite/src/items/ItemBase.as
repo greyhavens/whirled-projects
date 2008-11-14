@@ -37,9 +37,7 @@ package items
 		
 		public function get attributes () :Object
 		{
-			return {
-				code: code
-			}
+			return { code: code };
 		}		
 	}
 }

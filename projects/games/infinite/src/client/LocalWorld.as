@@ -4,6 +4,7 @@ package client
 	
 	import flash.events.EventDispatcher;
 	
+	import server.Messages.InventoryUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
@@ -11,6 +12,7 @@ package client
 	
 	import world.CellStateEvent;
 	import world.ClientWorld;
+	import world.InventoryEvent;
 	import world.World;
 	import world.WorldClient;
 	import world.WorldListener;
@@ -75,6 +77,11 @@ package client
         {
         	_client.updateCell(event.cell.state);
         }
+            
+        public function handleItemReceived (event:InventoryEvent) :void
+        {
+        	_client.receiveItem(new InventoryUpdate(event.position, event.item.attributes));
+        }        
                 	
         protected var _client:WorldClient;	
 		protected var _world:World;
