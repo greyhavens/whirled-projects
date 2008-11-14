@@ -20,7 +20,7 @@ package server.Messages
 			return array;
 		}
 				
-		public function readFromArray (array:ByteArray) :InventoryUpdate
+		public static function readFromArray (array:ByteArray) :InventoryUpdate
 		{
 			return new InventoryUpdate(
 				array.readInt(),

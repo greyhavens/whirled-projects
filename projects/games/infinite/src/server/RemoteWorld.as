@@ -12,6 +12,7 @@ package server
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -51,6 +52,7 @@ package server
                 case UPDATED_CELLS: return updatedCells(event);
                 case TIME_SYNC: return timeSync(event);
                 case UPDATED_CELL: return updateCell(event);
+                case ITEM_RECEIVED: return itemReceived(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -78,6 +80,11 @@ package server
         public function updateCell (event:MessageReceivedEvent) :void
         {
         	_client.updateCell(CellState.readFromArray(event.value as ByteArray));
+        }
+        
+        public function itemReceived (event:MessageReceivedEvent) :void
+        {
+        	_client.receiveItem(InventoryUpdate.readFromArray(event.value as ByteArray));
         }
         
         /**
