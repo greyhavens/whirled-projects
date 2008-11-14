@@ -76,8 +76,8 @@ package inventory
 			Log.debug ("inventory displaying "+item);
 			const sprite:ItemSprite = _itemViews.viewOf(item);
 			sprite.position = position;
-			_view.addChild(view);
-			positionItem(view, position);
+			_view.addChild(sprite);
+			positionItem(sprite, position);
 		}
 		
 		protected function positionItem (object:DisplayObject, position:int) :void
