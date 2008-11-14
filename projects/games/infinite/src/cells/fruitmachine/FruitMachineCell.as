@@ -77,7 +77,8 @@ package cells.fruitmachine
 		
 		public function isActive () :Boolean
 		{
-			return _mode == ACTIVE;	
+			// this should only be used on the server for obvious reasons.
+			return stateAt((new Date()).getTime()) == ACTIVE;		
 		}
 
 		/**
