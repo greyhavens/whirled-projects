@@ -6,8 +6,6 @@ package cells.fruitmachine
 	import cells.CellCodes;
 	import cells.CellInteractions;
 	
-	import client.CellEvent;
-	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
@@ -193,6 +191,15 @@ package cells.fruitmachine
             } else {
             	return INACTIVE;
             }        	
+        }
+        
+        /**
+         * handle an in-situ state change sent from the server.
+         */
+        override protected function changeState (state:CellState) :void
+        {
+        	// we only care about the mode.  The item can't be changed, nor can the inception time.
+        	_mode = state.attributes.mode;        	
         }
 
         public function get period () :Number

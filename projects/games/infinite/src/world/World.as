@@ -28,7 +28,8 @@ package world
 		public function addListener (listener:WorldListener) :void
 		{
             addEventListener(LevelEvent.LEVEL_ENTERED, listener.handleLevelEntered);
-            addEventListener(MoveEvent.PATH_START, listener.handlePathStart);		
+            addEventListener(MoveEvent.PATH_START, listener.handlePathStart);
+            addEventListener(CellStateEvent.STATE_CHANGED, listener.handleCellStateChange);		
 		}
 		
 		/**

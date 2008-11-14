@@ -164,7 +164,17 @@ package cells
 		    	const replacement:Cell = state.newCell(this);
 		    	replacement.addToLevel(_level);
 		        board.replace(replacement);
+		    } else {
+		    	changeState(state);
 		    }
+		}
+		
+		/**
+		 * This can be overridden for objects that change their state based on messages from the server.
+		 */
+		protected function changeState(state:CellState) :void
+		{
+			// do nothing
 		}
 		
 		/**
