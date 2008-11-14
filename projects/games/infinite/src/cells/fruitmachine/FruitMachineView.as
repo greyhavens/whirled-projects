@@ -56,6 +56,7 @@ package cells.fruitmachine
             if (_timer != null) {
                 _timer.stop();
             }
+			cell.removeEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);
         }
         
         override public function toString () :String
@@ -75,5 +76,6 @@ package cells.fruitmachine
 		protected static const fruitMachineRolling:Class;
 		
 		[Embed(source="../../../rsrc/png/fruit-machine-defunct.png")]
-		protected static const fruitMachineDefunct:Class;		}
+		protected static const fruitMachineDefunct:Class;		
+	}
 }
