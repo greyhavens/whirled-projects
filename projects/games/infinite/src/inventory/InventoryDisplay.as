@@ -4,20 +4,23 @@ package inventory
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
 	
+	import client.Client;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
 	
 	import items.Item;
-	import items.ItemInventory;
 	import items.ItemViewFactory;
 	
 	import sprites.*;
 	
 	public class InventoryDisplay extends EventDispatcher
 	{
-		public function InventoryDisplay(width:int, height:int)
+		public function InventoryDisplay(client:Client, width:int, height:int)
 		{
+			_client = client;
 			_width = width;
 			_height = height;
 		}
@@ -76,8 +79,14 @@ package inventory
 			Log.debug ("inventory displaying "+item);
 			const sprite:ItemSprite = _itemViews.viewOf(item);
 			sprite.position = position;
+			sprite.addEventListener(MouseEvent.CLICK, handleItemClicked);
 			_view.addChild(sprite);
 			positionItem(sprite, position);
+		}
+		
+		protected function handleItemClicked (event:MouseEvent) :void
+		{
+			_client.itemClicked((event.target as ItemSprite).position);
 		}
 		
 		protected function positionItem (object:DisplayObject, position:int) :void
@@ -97,6 +106,7 @@ package inventory
 		protected var _width:int;
 		protected var _height:int;				
 		protected var _view:Sprite;
+		protected var _client:Client;
 		
 		/**
 		 * The number of items that can be stored in the inventory.

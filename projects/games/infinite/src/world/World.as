@@ -66,6 +66,15 @@ package world
 			player.moveComplete(coords);
 		}
 		
+		public function useItem (id:int, position:int) :void
+		{
+			var player:Player = _players.find(id);
+			if (player == null) {
+				throw new Error("use item "+position+" requested for unknown player "+id);				
+			}
+			player.useItem(position);
+		}
+		
 		/**
 		 * Create a new player.
 		 */
@@ -91,12 +100,12 @@ package world
 			const player:Player = _players.find(id);
 			return player.level.cellState(hood);
 		}
-		
+				
 		public function distributeState (level:Level, cell:Cell) :void
 		{
 			dispatchEvent(new CellStateEvent(CellStateEvent.STATE_CHANGED, level, cell));
 		}
-				
+						
 		protected var _levels:LevelRegister;
 		protected var _players:PlayerRegister;
 	}

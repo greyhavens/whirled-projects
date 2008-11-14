@@ -7,13 +7,14 @@ package world
 	import flash.events.EventDispatcher;
 	
 	import items.Item;
+	import items.ItemPlayer;
 	
 	import paths.Path;
 	
 	import world.arbitration.MoveEvent;
 	import world.level.*;
 	
-	public class Player extends EventDispatcher implements CellInteractions
+	public class Player extends EventDispatcher implements CellInteractions, ItemPlayer
 	{
 		public function Player(id:int)
 		{
@@ -101,6 +102,42 @@ package world
         {
         	const position:int = _inventory.add(item);
         	dispatchEvent(new InventoryEvent(InventoryEvent.RECEIVED, this, item, position));
+        }
+        
+        public function useItem (position:int) :void
+        {
+        	var found:Item = _inventory.item(position);
+        	if (found != null) {
+        		if (found.isUsableBy(this)) {
+        			found.useBy(this);
+        			_inventory.removeItem(position);
+        		}
+        	}
+        }
+        
+        public function cellAt (coords:BoardCoordinates) :Cell
+        {
+        	return _level.cellAt(coords);
+        }
+        
+        public function get startingPosition () :BoardCoordinates
+        {
+        	return _level.startingPosition;
+        }
+        
+        public function replace (cell:Cell) :void
+        {
+        	_level.replace(cell);
+        }
+        
+        public function get name () :String
+        {
+        	return "player "+_id;
+        }
+        
+        public function teleport () :void
+        {
+        	throw new Error("teleport not implemented yet");
         }
         
         protected var _path:Path;

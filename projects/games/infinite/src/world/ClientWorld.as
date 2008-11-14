@@ -39,10 +39,14 @@ package world
 		 */
 		function moveComplete (coords:BoardCoordinates) :void
 		
-		
 		/**
 		 * Request that a region of cells be updated soon.
 		 */
 		function requestCellUpdate (hood:Neighborhood) :void
+		
+		/**
+		 * Request to use the item at the given inventory position.
+		 */
+		function useItem (position:int) :void
 	}
 }

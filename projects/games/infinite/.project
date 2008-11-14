@@ -31,14 +31,14 @@
 			<location>/export/whirled/libraries/narya/src/as</location>
 		</link>
 		<link>
-			<name>[source path] export-whirled-src-as</name>
-			<type>2</type>
-			<location>/export/whirled/src/as</location>
-		</link>
-		<link>
 			<name>[source path] libraries-nenya-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/nenya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] export-whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/src/as</location>
 		</link>
 		<link>
 			<name>[source path] sdk-whirled-src-as</name>

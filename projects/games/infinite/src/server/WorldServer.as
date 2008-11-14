@@ -86,6 +86,7 @@ package server
 				case MOVE_PROPOSED: return moveProposed(event);
 				case MOVE_COMPLETED: return moveCompleted(event); 
 				case REQUEST_CELLS: return requestCells(event);
+				case USE_ITEM: return useItem(event);
 			}			
 			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
 		}
@@ -118,6 +119,11 @@ package server
 		{
 			send(event.senderId, RemoteWorld.UPDATED_CELLS, 
 			   _world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray)));			
+		}
+		
+		protected function useItem (event:MessageReceivedEvent) :void
+		{
+			_world.useItem(event.senderId, event.value as int);
 		}
 		
 		/**
@@ -172,6 +178,7 @@ package server
 	    public static const MOVE_PROPOSED:int = 1;
 	    public static const MOVE_COMPLETED:int = 2;
         public static const REQUEST_CELLS:int = 3;
+        public static const USE_ITEM:int = 4;
         
         // No point in stringifying this every time we want to synchronize the clock.
         public static const REMOTE_TIME_SYNC:String = String(RemoteWorld.TIME_SYNC);
@@ -181,5 +188,6 @@ package server
 	    messageName[MOVE_PROPOSED] = "move proposed";
 	    messageName[MOVE_COMPLETED] = "move completed";
 	    messageName[REQUEST_CELLS] = "request cells";
+	    messageName[USE_ITEM] = "use item";
 	}
 }

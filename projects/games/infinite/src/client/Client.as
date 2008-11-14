@@ -2,6 +2,7 @@ package client
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
+	import arithmetic.VoidBoardRectangle;
 	
 	import client.player.Player;
 	import client.player.PlayerEvent;
@@ -48,7 +49,7 @@ package client
 			_viewer.y = 10;
 			addChild(_viewer);		
 			
-			_inventory = new InventoryDisplay(680, 50);
+			_inventory = new InventoryDisplay(this, 680, 50);
 			const invView:DisplayObject = _inventory.view;
 			invView.x = 10;
 			invView.y = 440;			
@@ -210,6 +211,11 @@ package client
 			Log.debug("client received item");
 			_inventory.addItemAt (detail.position, _itemFactory.makeItem(detail.attributes));
 		}     
+		
+		public function itemClicked (position:int) :void
+		{
+			_world.useItem(position);
+		}
 		
 		override public function toString () :String
 		{

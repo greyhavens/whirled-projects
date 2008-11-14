@@ -111,6 +111,11 @@ package server
         	signalServer(WorldServer.CLIENT_ENTERS);        
         }
         
+        public function useItem (position:int) :void
+        {
+        	_net.sendMessage(String(WorldServer.USE_ITEM), position, NetSubControl.TO_SERVER_AGENT);
+        }
+        
         public function proposeMove (coords:BoardCoordinates) :void
         {
         	sendToServer(WorldServer.MOVE_PROPOSED, new MoveProposal(_client.serverTime, coords));
