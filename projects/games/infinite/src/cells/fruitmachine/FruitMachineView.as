@@ -12,6 +12,7 @@ package cells.fruitmachine
 		public function FruitMachineView(cell:Cell, time:Number)
 		{
 			super(cell, imageForTime(cell as FruitMachineCell, time));
+			cell.addEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);
 		}
 						
 		protected function imageForTime (cell:FruitMachineCell, time:Number) :Class
@@ -45,9 +46,9 @@ package cells.fruitmachine
         {
             asset = imageForTime(cell as FruitMachineCell, event.serverTime);
         }
-        
+                
         /**
-         *
+         * Stop the animation if any is running.
          */ 
         override protected function stopAnimation () :void
         {

@@ -6,6 +6,8 @@ package cells.fruitmachine
 	import cells.CellCodes;
 	import cells.CellInteractions;
 	
+	import client.ChronometerEvent;
+	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
@@ -14,6 +16,7 @@ package cells.fruitmachine
 	import server.Messages.CellState;
 	
 	import world.Cell;
+	import world.Chronometer;
 	
 	public class FruitMachineCell extends BackgroundCell
 	{
@@ -196,10 +199,11 @@ package cells.fruitmachine
         /**
          * handle an in-situ state change sent from the server.
          */
-        override protected function changeState (state:CellState) :void
+        override protected function changeState (clock:Chronometer, state:CellState) :void
         {
         	// we only care about the mode.  The item can't be changed, nor can the inception time.
-        	_mode = state.attributes.mode;        	
+        	_mode = state.attributes.mode;
+        	dispatchEvent(new ChronometerEvent(clock.serverTime));        	
         }
 
         public function get period () :Number

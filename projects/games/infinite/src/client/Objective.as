@@ -324,13 +324,13 @@ package client
         {
         	Log.debug("updating cell state: "+update);
         	for each (var state:CellState in update.states) {
-        		state.update(this);
+        		state.update(this, this);
         	}
         }
         
         public function updateCell (state:CellState) :void
         {
-        	state.update(this);
+        	state.update(this, this);
         }
                 
         public function get frameTimer () :FrameTimer

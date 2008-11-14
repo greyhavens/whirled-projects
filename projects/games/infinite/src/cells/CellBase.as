@@ -2,13 +2,16 @@ package cells
 {
 	import arithmetic.*;
 	
+	import flash.events.EventDispatcher;
+	
 	import server.Messages.CellState;
 	
 	import world.Cell;
+	import world.Chronometer;
 	import world.board.*;
 	import world.level.Level;
 	
-	public class CellBase implements Cell
+	public class CellBase extends EventDispatcher implements Cell
 	{
 		public function CellBase(position:BoardCoordinates) :void 
 		{
@@ -30,7 +33,7 @@ package cells
 			return "cell that needs debugging";
 		}
 		
-		public function toString () :String
+		override public function toString () :String
 		{
 			return type+" cell at "+position;
 		}
@@ -158,21 +161,21 @@ package cells
 			return new CellState(code, position);
 		}
 		
-		public function updateState (board:BoardInteractions, state:CellState) :void
+		public function updateState (clock:Chronometer, board:BoardInteractions, state:CellState) :void
 		{
 		    if (state.code != code) {
 		    	const replacement:Cell = state.newCell(this);
 		    	replacement.addToLevel(_level);
 		        board.replace(replacement);
 		    } else {
-		    	changeState(state);
+		    	changeState(clock, state);		    	
 		    }
 		}
 		
 		/**
 		 * This can be overridden for objects that change their state based on messages from the server.
 		 */
-		protected function changeState(state:CellState) :void
+		protected function changeState(clock:Chronometer, state:CellState) :void
 		{
 			// do nothing
 		}

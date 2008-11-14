@@ -3,7 +3,6 @@ package client
 	import flash.events.Event;
 	
 	import world.Cell;
-	import world.level.Level;
 	
 	public class CellEvent extends Event
 	{
@@ -19,5 +18,6 @@ package client
 		public static const CELL_REPLACED:String = "cell_replaced";
 		public static const ADDED_TO_OBJECTIVE:String = "added_to_objective";
 		public static const REMOVED_FROM_OBJECTIVE:String = "removed_from_objective";
+		public static const STATE_CHANGED:String = "state_changed";
 	}
 }

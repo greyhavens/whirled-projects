@@ -7,6 +7,7 @@ package server.Messages
 	import flash.utils.ByteArray;
 	
 	import world.Cell;
+	import world.Chronometer;
 	import world.board.BoardInteractions;
 	
 	public class CellState extends CellFactory implements Serializable
@@ -20,10 +21,10 @@ package server.Messages
         /**
          * Apply this state to the board.
          */
-        public function update(board:BoardInteractions) :void
+        public function update(clock:Chronometer, board:BoardInteractions) :void
         {
         	const current:Cell = board.cellAt(_position);
-        	current.updateState(board, this);
+        	current.updateState(clock, board, this);
         }
 
         public function writeToArray (array:ByteArray) :ByteArray

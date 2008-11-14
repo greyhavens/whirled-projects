@@ -7,6 +7,8 @@ package world
 	import cells.CellAffordances;
 	import cells.CellObjective;
 	
+	import flash.events.IEventDispatcher;
+	
 	import server.Messages.CellState;
 	
 	import world.board.*;
@@ -15,7 +17,7 @@ package world
 	/**
 	 * Interface providing the details of a cell within the game board.
 	 */
-	public interface Cell extends CellAffordances, PlayerInteractions
+	public interface Cell extends CellAffordances, PlayerInteractions, IEventDispatcher
 	{		
 		/**
 		 * Return the position on the board of this cell
@@ -83,6 +85,6 @@ package world
         /**
          * Update the state of a given cell.
          */ 
-        function updateState (board:BoardInteractions, state:CellState) :void
+        function updateState (clock:Chronometer, board:BoardInteractions, state:CellState) :void
 	}
 }
