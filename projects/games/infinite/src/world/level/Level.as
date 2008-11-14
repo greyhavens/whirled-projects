@@ -119,7 +119,8 @@ package world.level
 		 */
 		public function arriveAt (player:Player, coords:BoardCoordinates) :void
 		{
-			_board.cellAt(coords).playerHasArrived(player);
+			player.cell = _board.cellAt(coords);
+			player.cell.playerHasArrived(player);
 		}
 		
 		public function distributeState (cell:Cell) :void

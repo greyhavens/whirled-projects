@@ -24,7 +24,8 @@ package world
         
         public function handleMoveCompleted (event:PlayerEvent) :void
         {
-        	if (playerAt(event.player.position) != null) {
+        	const found:Player = playerAt(event.player.position);
+        	if (found != null && found != event.player) {
         		throw new Error(event.player + " moved to cell occupied by "+
         		  playerAt(event.player.position));        		
         	}

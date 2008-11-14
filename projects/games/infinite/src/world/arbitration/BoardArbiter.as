@@ -24,7 +24,7 @@ package world.arbitration
 				return;
 			}
 			
-			if (! player.cell.leave) {
+			if (!player.cell.leave) {
 				Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
 				return;
 			}
