@@ -9,12 +9,14 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import server.Messages.CellState;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	import server.Messages.Serializable;
 	
+	import world.CellStateEvent;
 	import world.Player;
 	import world.World;
 	import world.WorldListener;
@@ -55,6 +57,12 @@ package server
 			     
 			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, 
 			     message);
+		}
+		
+		public function handleCellStateChange (event:CellStateEvent) :void
+		{
+			const message:CellState = event.cell.state;			
+			sendToGroup(event.level.players, RemoteWorld.UPDATED_CELLS, message);
 		}
 		
 		/**

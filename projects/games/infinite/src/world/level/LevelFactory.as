@@ -1,21 +1,20 @@
 package world.level
 {	
-	import cells.CellWorld;
-	
+	import world.World;
 	import world.board.*;
 	
 	public class LevelFactory
 	{
-		public function LevelFactory(world:CellWorld)
+		public function LevelFactory(world:World)
 		{
 			_world = world;
 		}
 		
 		public function makeLevel(level:int) :Level
 		{					
-			return new Level(level, Level.DEFAULT_HEIGHT, new BlankBoard(_world));			
+			return new Level(_world, level, Level.DEFAULT_HEIGHT, new BlankBoard());			
 		}
 		
-		protected var _world:CellWorld;
+		protected var _world:World;
 	}
 }

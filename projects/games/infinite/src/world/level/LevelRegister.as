@@ -1,12 +1,11 @@
 package world.level
 {
-	import cells.CellWorld;
-	
 	import world.Player;
+	import world.World;
 	
 	public class LevelRegister
 	{
-		public function LevelRegister(world:CellWorld)
+		public function LevelRegister(world:World)
 		{
 			_factory = new LevelFactory(world);
 			_levels[FIRST_LEVEL] = _factory.makeLevel(FIRST_LEVEL);

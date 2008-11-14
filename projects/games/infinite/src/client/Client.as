@@ -2,8 +2,7 @@ package client
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
-	
-	import cells.CellWorld;
+	import arithmetic.VoidBoardRectangle;
 	
 	import client.player.Player;
 	import client.player.PlayerEvent;
@@ -22,6 +21,7 @@ package client
 	
 	import sprites.SpriteUtil;
 	
+	import world.Cell;
 	import world.ClientWorld;
 	import world.MutableBoard;
 	import world.NeighborhoodEvent;
@@ -29,7 +29,7 @@ package client
 	import world.board.*;
 	import world.level.*;
 	
-	public class Client extends Sprite implements WorldClient, CellWorld
+	public class Client extends Sprite implements WorldClient
 	{
 		public function Client(world:ClientWorld)
 		{
@@ -157,10 +157,9 @@ package client
 				return;
 			}
 			
-			// we can start off with the default blank board.
-			_board = new MutableBoard(new BlankBoard(this));
-            Log.debug(this+" created "+_board);       
-            
+			// we can start off with the default blank board.			
+			_board = new MutableBoard(new BlankBoard());
+            Log.debug(this+" created "+_board);
                  
 			// and assign a new board to the view.
 			_viewer.board = _board;
@@ -200,9 +199,14 @@ package client
 			_viewer.updatedCells(detail);
 		}
 		
-		public function distributeState (state:CellState) :void
+		public function updateCell (detail:CellState) :void
 		{
-			Log.warning("unexpected attempt by "+this+" to distribute state "+state);
+			_viewer.updateCell(detail);
+		}
+		
+		public function distributeState (cell:Cell) :void
+		{
+			Log.warning("unexpected attempt by "+this+" to distribute state of "+cell);
 		}
 		
 		override public function toString () :String

@@ -327,6 +327,11 @@ package client
         		state.update(this);
         	}
         }
+        
+        public function updateCell (state:CellState) :void
+        {
+        	state.update(this);
+        }
                 
         public function get frameTimer () :FrameTimer
         {

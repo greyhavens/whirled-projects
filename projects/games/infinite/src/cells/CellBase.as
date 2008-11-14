@@ -6,6 +6,7 @@ package cells
 	
 	import world.Cell;
 	import world.board.*;
+	import world.level.Level;
 	
 	public class CellBase implements Cell
 	{
@@ -43,9 +44,9 @@ package cells
 			showView(objective);
 		}
 
-		public final function addToWorld (world:CellWorld) :void
+		public function addToLevel (level:Level) :void
 		{
-			_world = world;
+			_level = level;
 		}
 		
 		/**
@@ -161,7 +162,7 @@ package cells
 		{
 		    if (state.code != code) {
 		    	const replacement:Cell = state.newCell(this);
-		    	replacement.addToWorld(_world);
+		    	replacement.addToLevel(_level);
 		        board.replace(replacement);
 		    }
 		}
@@ -171,14 +172,14 @@ package cells
 		 */
 		protected function distributeState () :void
 		{
-			_world.distributeState(state); 
+			_level.distributeState(this); 
 		}
 		
 		protected var _position:BoardCoordinates;
 		
 		protected var _objective:CellObjective;
 
-		protected var _world:CellWorld;
+		protected var _level:Level;
 				
 		public static const UNIT:Vector = Config.cellSize;		
 	}

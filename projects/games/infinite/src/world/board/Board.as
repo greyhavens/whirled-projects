@@ -2,6 +2,8 @@ package world.board
 {
 	import arithmetic.BoardCoordinates;
 	
+	import world.level.Level;
+	
 	public interface Board extends BoardAccess
 	{		
 		/**

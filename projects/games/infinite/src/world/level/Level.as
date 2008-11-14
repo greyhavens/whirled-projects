@@ -14,20 +14,23 @@ package world.level
 	import world.NeighborhoodBoard;
 	import world.Player;
 	import world.PlayerMap;
+	import world.World;
 	import world.arbitration.BoardArbiter;
 	import world.board.Board;
+	import world.board.BoardInteractions;
 	
-	public class Level
+	public class Level implements BoardInteractions
 	{
 		public var number:int;
 		
-		public function Level(number:int, height:int, starting:Board)		
+		public function Level(world:World,  number:int, height:int, starting:Board) 
 		{
 			this.number = number;
+			_world = world;
 			_height = height;
 			_board = new NeighborhoodBoard(starting);
 			_arbiter = new BoardArbiter(_board);
-			_mapMaker = new MapMaker(_board, _explored);
+			_mapMaker = new MapMaker(this, _explored);
 		}
 
 		public function get height () :int
@@ -118,7 +121,29 @@ package world.level
 		{
 			_board.cellAt(coords).playerHasArrived(player);
 		}
+		
+		public function distributeState (cell:Cell) :void
+		{
+			_world.distributeState(this, cell);
+		}
          
+        public function cellAt (coords:BoardCoordinates) :Cell
+        {
+        	return _board.cellAt(coords);
+        }
+        
+        public function get startingPosition () :BoardCoordinates
+        {
+        	return _board.startingPosition;
+        }
+        
+        public function replace (newCell:Cell)  :void
+        {
+        	newCell.addToLevel(this);
+        	_board.replace(newCell);
+        }
+          
+        protected var _world:World;
         protected var _explored:BreadcrumbTrail = new BreadcrumbTrail();
         protected var _mapMaker:MapMaker;
         protected var _arbiter:BoardArbiter;

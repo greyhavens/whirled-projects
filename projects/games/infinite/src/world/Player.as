@@ -74,12 +74,12 @@ package world
             if (_path.finish.equals(coords)) {
             	_level.map(_path.finish);
             	_path = null;
-            	
-            	
+            		
             	// now check whether there are consequences of landing on this cell
             	_level.arriveAt(this, coords);
-            }
-            Log.warning("move to " + _path.finish + " completed with unexpected endpoint "+_path.finish); 
+            } else {
+	            Log.warning("move to " + _path.finish + " completed with unexpected endpoint "+coords);
+	        } 
         }
         
         public function isMoving () :Boolean

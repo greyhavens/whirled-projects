@@ -8,6 +8,7 @@ package client
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
+	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	
 	import sprites.*;
@@ -91,6 +92,11 @@ package client
 		public function updatedCells (update:CellUpdate) :void
 		{
 			_objective.updateCells(update);
+		}
+
+		public function updateCell (state:CellState) :void
+		{
+			_objective.updateCell(state);
 		}
 
 		public function get objective () :Objective 

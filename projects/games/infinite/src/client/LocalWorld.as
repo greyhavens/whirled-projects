@@ -9,6 +9,7 @@ package client
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	
+	import world.CellStateEvent;
 	import world.ClientWorld;
 	import world.World;
 	import world.WorldClient;
@@ -68,6 +69,11 @@ package client
         public function requestCellUpdate (hood:Neighborhood) :void
         {        
         	_client.updatedCells(_world.cellState(ID, hood));        	
+        }
+        
+        public function handleCellStateChange (event:CellStateEvent) :void
+        {
+        	_client.updateCell(event.cell.state);
         }
                 	
         protected var _client:WorldClient;	

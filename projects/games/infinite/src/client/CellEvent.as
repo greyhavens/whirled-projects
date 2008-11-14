@@ -1,7 +1,9 @@
 package client
 {
 	import flash.events.Event;
-    import world.Cell;
+	
+	import world.Cell;
+	import world.level.Level;
 	
 	public class CellEvent extends Event
 	{

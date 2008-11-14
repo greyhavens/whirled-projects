@@ -6,11 +6,11 @@ package world
 	
 	import cells.CellAffordances;
 	import cells.CellObjective;
-	import cells.CellWorld;
 	
 	import server.Messages.CellState;
 	
 	import world.board.*;
+	import world.level.Level;
 		
 	/**
 	 * Interface providing the details of a cell within the game board.
@@ -35,9 +35,9 @@ package world
 		function removeFromObjective() :void		
 
 		/**
-		 * Called to cause the cell to be added to the persistent world.
+		 * Called to cause the cell to be added to a level.
 		 */
-		function addToWorld (world:CellWorld) :void		
+		function addToLevel (level:Level) :void		
 
 		/**
 		 * Return an iterator for iterating though cells on the supplied board in the specified

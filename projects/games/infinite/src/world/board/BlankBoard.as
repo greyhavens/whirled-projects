@@ -1,26 +1,26 @@
 package world.board
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.VoidBoardRectangle;
 	
-	import cells.CellWorld;
 	import cells.ground.GroundCell;
 	import cells.wall.WallBaseCell;
 	import cells.wall.WallCell;
 	
 	import world.Cell;
+	import world.level.Level;
 	
 	
 	public class BlankBoard implements Board
 	{
-		public function BlankBoard(world:CellWorld) 
+		public function BlankBoard() 
 		{
-			_world = world;
 		}
 		
 		public function cellAt (position:BoardCoordinates) :Cell
 		{
 			const created:Cell = makeCell(position);
-			created.addToWorld(_world);
+			created.addToLevel(_level);
 			return created;
 		}
 		
@@ -43,6 +43,11 @@ package world.board
         	return "a blank board";
         }
         
-        protected var _world:CellWorld;
+        protected function set level (level:Level) :void
+        {
+        	_level = level;
+        }
+        
+        protected var _level:Level;
 	}
 }

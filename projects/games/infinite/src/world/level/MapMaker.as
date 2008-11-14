@@ -39,7 +39,7 @@ package world.level
                 	_board.replace(FruitMachineCell.withItemAt(location, 
                         ObjectBox.random().item));
                 }	
-			}			
+			}
 		}
     
         protected var _board:BoardInteractions;        
