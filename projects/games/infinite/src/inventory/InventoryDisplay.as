@@ -9,13 +9,12 @@ package inventory
 	import flash.events.EventDispatcher;
 	
 	import items.Item;
-	import items.ItemEvent;
 	import items.ItemInventory;
 	import items.ItemViewFactory;
 	
 	import sprites.*;
 	
-	public class InventoryDisplay extends EventDispatcher implements ItemInventory
+	public class InventoryDisplay extends EventDispatcher
 	{
 		public function InventoryDisplay(width:int, height:int)
 		{
@@ -42,12 +41,11 @@ package inventory
 		{
 			return _items.length >= capacity;
 		}
-	
-		public function addItem (item:Item) :void
+			
+		public function addItemAt (position:int, item:Item) :void
 		{
-			_items.push(item);
-			displayItem(item, _items.length - 1);
-			item.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
+			_items[position] = item;
+			displayItem(item, position);
 		}
 		
 		/**
@@ -72,16 +70,12 @@ package inventory
 				}
 			}
 		}
-		
-		public function handleItemClicked (event:ItemEvent) :void
-		{
-			dispatchEvent(new ItemEvent(event.type, event.item));
-		}       	
-	
+			
 		protected function displayItem (item:Item, position:int) :void
 		{
 			Log.debug ("inventory displaying "+item);
-			const view:DisplayObject = _itemViews.viewOf(item);
+			const sprite:ItemSprite = _itemViews.viewOf(item);
+			sprite.position = position;
 			_view.addChild(view);
 			positionItem(view, position);
 		}

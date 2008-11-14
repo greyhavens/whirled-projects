@@ -5,7 +5,6 @@ package client
 	import inventory.InventoryDisplay;
 	
 	import items.Item;
-	import items.ItemEvent;
 	
 	import world.ClientWorld;
 	import world.arbitration.BoardArbiter;
@@ -21,9 +20,7 @@ package client
 			_arbiter = new BoardArbiter(_board);
 			_viewer = viewer;
 			_player = player;
-			_viewer.playerController = this;
-			
-			inventoryDisplay.addEventListener(ItemEvent.ITEM_CLICKED, handleItemClicked);
+			_viewer.playerController = this;			
 		}
 
 		public function handleCellClicked (event:CellEvent) :void
@@ -39,23 +36,6 @@ package client
 			} 
 			
 			_world.proposeMove(event.cell.position);
-		}
-
-        /**
-         * When an item is clicked, we forward the message to the 
-         */ 
-		public function handleItemClicked (event:ItemEvent) :void
-		{
-			// can't use items while the player is moving.
-			if (_player.isMoving()) {
-				return;
-			}
-			const item:Item = event.item;
-			Log.debug ("clicked on "+item);
-//			if (_player.canUse(item)) {
-//				_player.makeUseOf(item);
-//				_player.hasUsed(item);
-//			}
 		}
 
         protected var _world:ClientWorld;

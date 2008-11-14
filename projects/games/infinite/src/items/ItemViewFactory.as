@@ -1,12 +1,11 @@
 package items
 {
 	import items.ladder.LadderView;
-	
-	import flash.display.DisplayObject;
-	
 	import items.oilcan.OilcanView;
 	import items.spring.SpringView;
 	import items.teleporter.TeleporterView;
+	
+	import sprites.ItemSprite;
 	
 	public class ItemViewFactory
 	{
@@ -14,7 +13,7 @@ package items
 		{
 		}
 
-        public function viewOf (item:Item) :DisplayObject
+        public function viewOf (item:Item) :ItemSprite
         {
         	switch (item.code) {
         		case ItemCodes.OIL_CAN: return new OilcanView(item);

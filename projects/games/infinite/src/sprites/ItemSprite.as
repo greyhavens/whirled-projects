@@ -4,6 +4,8 @@ package sprites
 
 	public class ItemSprite extends AssetSprite
 	{
+		public var position:int;
+
 		public function ItemSprite(asset:Class)
 		{
 			super(asset, UNIT.dx, UNIT.dy);
