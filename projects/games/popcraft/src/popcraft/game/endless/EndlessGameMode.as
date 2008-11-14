@@ -309,7 +309,7 @@ public class EndlessGameMode extends GameMode
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
         EndlessGameContext.incrementResourceScore(
-            actualResourcesEarned * EndlessGameContext.level.pointsPerResource);
+            actualResourcesEarned * GameContext.gameData.scoreData.pointsPerResource);
 
         return actualResourcesEarned;
     }
@@ -320,7 +320,7 @@ public class EndlessGameMode extends GameMode
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
             EndlessGameContext.incrementDamageScore(
-                EndlessGameContext.level.pointsPerCreatureKill[creature.unitType]);
+                GameContext.gameData.scoreData.pointsPerCreatureKill[creature.unitType]);
         }
     }
 
@@ -329,7 +329,8 @@ public class EndlessGameMode extends GameMode
         super.workshopKilled(workshop, killingPlayerIndex);
 
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
-            EndlessGameContext.incrementDamageScore(EndlessGameContext.level.pointsPerOpponentKill);
+            EndlessGameContext.incrementDamageScore(
+                GameContext.gameData.scoreData.pointsPerOpponentKill);
 
             // award the Handicapper trophy if the local player killed an opponent who stole
             // a multiplier from the battlefield
@@ -348,9 +349,9 @@ public class EndlessGameMode extends GameMode
         if (spellType == Constants.SPELL_TYPE_MULTIPLIER) {
             var workshop :WorkshopUnit = PlayerInfo(GameContext.playerInfos[playerIndex]).workshop;
             if (workshop != null &&
-                workshop.damageShields.length < EndlessGameContext.level.maxMultiplier) {
+                workshop.damageShields.length < GameContext.gameData.maxMultiplier) {
 
-                workshop.addDamageShield(EndlessGameContext.level.multiplierDamageSoak);
+                workshop.addDamageShield(GameContext.gameData.multiplierDamageSoak);
             }
 
             if (playerIndex == GameContext.localPlayerIndex) {
@@ -448,7 +449,7 @@ public class EndlessGameMode extends GameMode
 
         var playerInfo :PlayerInfo;
 
-        var damageShieldHealth :Number = EndlessGameContext.level.multiplierDamageSoak;
+        var damageShieldHealth :Number = GameContext.gameData.multiplierDamageSoak;
 
         // restore data that was saved from the previous map (must be done after playerInfos
         // are init()'d)

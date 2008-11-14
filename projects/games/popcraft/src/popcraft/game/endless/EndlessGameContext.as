@@ -122,10 +122,11 @@ public class EndlessGameContext
 
     public static function incrementMultiplier () :void
     {
-        if (scoreMultiplier < level.maxMultiplier) {
+        if (scoreMultiplier < GameContext.gameData.maxMultiplier) {
             ++scoreMultiplier;
         } else {
-            EndlessGameContext.incrementResourceScore(level.pointsPerExtraMultiplier);
+            EndlessGameContext.incrementResourceScore(
+                GameContext.gameData.scoreData.pointsPerExtraMultiplier);
         }
     }
 

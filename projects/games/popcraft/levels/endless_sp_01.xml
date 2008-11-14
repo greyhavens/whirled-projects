@@ -1,25 +1,9 @@
 <root>
-<EndlessLevel
-	maxMultiplier="4"
-	multiplierDamageSoak="18.75"
-	pointsPerExtraMultiplier="500"
-	pointsPerResource="1"
-	pointsPerOpponentKill="500">
-
-	<GameDataOverride>
-	</GameDataOverride>
+<EndlessLevel>
 
 	<HumanPlayers>
 		<Player name="Eloise"/>
 	</HumanPlayers>
-
-	<PointsPerCreatureKill>
-		<Unit type="grunt" points="10"/>
-		<Unit type="heavy" points="10"/>
-		<Unit type="sapper" points="10"/>
-		<Unit type="courier" points="5"/>
-		<Unit type="colossus" points="25"/>
-	</PointsPerCreatureKill>	
 <!--
 baseHealthIncrement: applied each time the computer player is cycled back through
 waveDelayScale: applied to each wave's delayBefore each time the player's repeating days are cycled through

@@ -220,7 +220,7 @@ public class LevelOutroMode extends AppMode
     protected function get resourcesScore () :int
     {
         var score :int = Math.max(StoryGameMode(GameContext.gameMode).totalResourcesEarned, 0) *
-            GameContext.gameData.pointsPerResource;
+            GameContext.gameData.scoreData.pointsPerResource;
         if (_level.maxResourcesScore >= 0) {
             score = Math.min(score, _level.maxResourcesScore);
         }

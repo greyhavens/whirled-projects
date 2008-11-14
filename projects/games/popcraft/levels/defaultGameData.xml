@@ -1,6 +1,5 @@
 <root>
     <GameData
-        pointsPerResource="1"
         dayLength="30"
         nightLength="120"
         dawnWarning="12"
@@ -17,7 +16,22 @@
         maxLosingPlayerSpellDropShift="0.4"
         minResourceAmount="0"
         maxResourceAmount="1000"
-        maxSpellsPerType="3">
+        maxSpellsPerType="3"
+        maxMultiplier="4"
+        multiplierDamageSoak="18.75">
+
+        <ScoreValues
+            pointsPerExtraMultiplier="500"
+            pointsPerResource="1"
+            pointsPerOpponentKill="500">
+            <PointsPerCreatureKill>
+                <Unit type="grunt" points="10"/>
+                <Unit type="heavy" points="10"/>
+                <Unit type="sapper" points="10"/>
+                <Unit type="courier" points="5"/>
+                <Unit type="colossus" points="25"/>
+            </PointsPerCreatureKill>
+        </ScoreValues>
 
         <PlayerDisplayDatas>
             <PlayerDisplay name="demo" displayName="demo" headshotName="" color="0xFFFFFF"/>

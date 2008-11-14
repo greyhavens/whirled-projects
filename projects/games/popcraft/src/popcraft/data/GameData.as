@@ -8,8 +8,6 @@ import popcraft.util.*;
 
 public class GameData
 {
-    public var pointsPerResource :int;
-
     public var dayLength :Number;
     public var nightLength :Number;
     public var dawnWarning :Number;
@@ -27,7 +25,12 @@ public class GameData
     public var maxResourceAmount :int;
     public var maxSpellsPerType :int;
 
+    public var maxMultiplier :int;
+    public var multiplierDamageSoak :Number;
+
     public var puzzleData :PuzzleData;
+
+    public var scoreData :ScoreData;
 
     public var units :Array = [];
     public var spells :Array = [];
@@ -45,7 +48,6 @@ public class GameData
     {
         var theClone :GameData = new GameData();
 
-        theClone.pointsPerResource = pointsPerResource;
         theClone.dayLength = dayLength;
         theClone.nightLength = nightLength;
         theClone.dawnWarning = dawnWarning;
@@ -60,7 +62,10 @@ public class GameData
         theClone.minResourceAmount = minResourceAmount;
         theClone.maxResourceAmount = maxResourceAmount;
         theClone.maxSpellsPerType = maxSpellsPerType;
+        theClone.maxMultiplier = maxMultiplier;
+        theClone.multiplierDamageSoak = multiplierDamageSoak;
         theClone.puzzleData = puzzleData.clone();
+        theClone.scoreData = scoreData.clone();
 
         for each (var unitData :UnitData in units) {
             theClone.units.push(unitData.clone());
@@ -82,9 +87,6 @@ public class GameData
         var useDefaults :Boolean = (null != defaults);
 
         var data :GameData = (useDefaults ? defaults : new GameData());
-
-        data.pointsPerResource = XmlReader.getIntAttr(xml, "pointsPerResource",
-            (useDefaults ? defaults.pointsPerResource : undefined));
 
         data.dayLength = XmlReader.getNumberAttr(xml, "dayLength",
             (useDefaults ? defaults.dayLength : undefined));
@@ -133,11 +135,23 @@ public class GameData
         data.maxSpellsPerType = XmlReader.getIntAttr(xml, "maxSpellsPerType",
             (useDefaults ? defaults.maxSpellsPerType : undefined));
 
+        data.maxMultiplier = XmlReader.getUintAttr(xml, "maxMultiplier",
+            (useDefaults ? defaults.maxMultiplier : undefined));
+        data.multiplierDamageSoak = XmlReader.getNumberAttr(xml, "multiplierDamageSoak",
+            (useDefaults ? defaults.multiplierDamageSoak : undefined));
+
         var puzzleDataXml :XML = XmlReader.getSingleChild(xml, "PuzzleSettings",
             (useDefaults ? null : undefined));
         if (puzzleDataXml != null) {
             data.puzzleData = PuzzleData.fromXml(puzzleDataXml,
                 (useDefaults ? defaults.puzzleData : null));
+        }
+
+        var pointsDataXml :XML = XmlReader.getSingleChild(xml, "ScoreValues",
+            (useDefaults ? null : undefined));
+        if (pointsDataXml != null) {
+            data.scoreData = ScoreData.fromXml(pointsDataXml,
+                (useDefaults ? defaults.scoreData : null));
         }
 
         var ii :int;

@@ -49,11 +49,11 @@ public class Constants
 
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
-    public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
-    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
+    public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
     public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = true;
     public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
-    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = false;
+    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = true;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 
