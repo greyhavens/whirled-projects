@@ -10,6 +10,7 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.MoveProposal;
@@ -49,6 +50,7 @@ package server
                 case LEVEL_UPDATE: return levelUpdate(event);
                 case UPDATED_CELLS: return updatedCells(event);
                 case TIME_SYNC: return timeSync(event);
+                case UPDATED_CELL: return updateCell(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -71,6 +73,11 @@ package server
         public function updatedCells (event:MessageReceivedEvent) :void
         {
         	_client.updatedCells(CellUpdate.readFromArray(event.value as ByteArray));
+        }
+        
+        public function updateCell (event:MessageReceivedEvent) :void
+        {
+        	_client.updateCell(CellState.readFromArray(event.value as ByteArray));
         }
         
         /**
@@ -148,12 +155,14 @@ package server
         public static const LEVEL_UPDATE:int = 2;
         public static const UPDATED_CELLS:int = 3;
         public static const TIME_SYNC:int = 4;
+        public static const UPDATED_CELL:int = 5;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
         messageName[START_PATH] = "start path";
         messageName[LEVEL_UPDATE] = "level update";
         messageName[UPDATED_CELLS] = "updated cells";
-        messageName[TIME_SYNC] = "time sync";        
+        messageName[TIME_SYNC] = "time sync";
+        messageName[UPDATED_CELL] = "updated cell";        
 	}
 }

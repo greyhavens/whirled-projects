@@ -62,7 +62,7 @@ package server
 		public function handleCellStateChange (event:CellStateEvent) :void
 		{
 			const message:CellState = event.cell.state;			
-			sendToGroup(event.level.players, RemoteWorld.UPDATED_CELLS, message);
+			sendToGroup(event.level.players, RemoteWorld.UPDATED_CELL, message);
 		}
 		
 		/**
