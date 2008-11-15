@@ -71,6 +71,14 @@ package items.ladder
         	return ItemCodes.LADDER;
         }
 				
+		override public function get attributes () :Object
+		{
+			return {
+				code: code,
+				segments: _segments
+			}
+		}
+				
 		protected var _segments:int;		
 	}
 }
