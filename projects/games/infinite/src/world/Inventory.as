@@ -12,7 +12,7 @@ package world
 		public function add(item:Item) :int
 		{
 			Log.debug(this+ " received "+item);
-			return _items.push(item) -1 ;
+			return _items.push(item) -1;
 		}
 		
 		public function get full () :Boolean
@@ -23,6 +23,17 @@ package world
 		public function toString () :String
 		{
 			return "inventory";
+		}
+		
+		public function get contents () :String
+		{
+			var c:String = "";
+			for (var i:int = 0; i < _items.length; i++) {
+				c += i+":";
+				c += _items[i];
+				c += " ";
+			}
+			return c;
 		}
 		
 		public function item (position:int) :Item
@@ -36,13 +47,16 @@ package world
 				// delete the item
 				delete _items[position];
 				
-				// shunt the other items to the left
-				for (var i:int = position + 1; i < _items.length; i++) {
-					_items[i - 1] = _items[i];
+				// if it wasn't the last item, move the others over
+				if (position < _items.length - 1) {
+					// shunt the other items to the left
+					for (var i:int = position + 1; i < _items.length; i++) {
+						_items[i - 1] = _items[i];
+					}
+					
+					// delete the duplicate item from the end
+					_items.pop();
 				}
-				
-				// delete the duplicate item from the end
-				_items.pop();
 			}
 		}
 		

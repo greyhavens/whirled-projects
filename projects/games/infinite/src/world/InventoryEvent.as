@@ -23,6 +23,7 @@ package world
 			return new InventoryEvent(type, player, item, position);
 		}
 
-		public static const RECEIVED:String = "item_received";			
+		public static const RECEIVED:String = "item_received";
+		public static const USED:String = "item_used";			
 	}
 }

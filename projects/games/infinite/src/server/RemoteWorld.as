@@ -53,6 +53,7 @@ package server
                 case TIME_SYNC: return timeSync(event);
                 case UPDATED_CELL: return updateCell(event);
                 case ITEM_RECEIVED: return itemReceived(event);
+                case ITEM_USED: return itemUsed(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -85,6 +86,11 @@ package server
         public function itemReceived (event:MessageReceivedEvent) :void
         {
         	_client.receiveItem(InventoryUpdate.readFromArray(event.value as ByteArray));
+        }
+        
+        public function itemUsed (event:MessageReceivedEvent) :void
+        {
+        	_client.itemUsed(event.value as int);
         }
         
         /**
@@ -169,6 +175,7 @@ package server
         public static const TIME_SYNC:int = 4;
         public static const UPDATED_CELL:int = 5;
         public static const ITEM_RECEIVED:int = 6;
+        public static const ITEM_USED:int = 7;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
@@ -177,6 +184,7 @@ package server
         messageName[UPDATED_CELLS] = "updated cells";
         messageName[TIME_SYNC] = "time sync";
         messageName[UPDATED_CELL] = "updated cell";
-        messageName[ITEM_RECEIVED] = "item received";        
+        messageName[ITEM_RECEIVED] = "item received";
+        messageName[ITEM_USED] = "item used";        
 	}
 }

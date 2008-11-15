@@ -1,6 +1,7 @@
 package server
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.VoidBoardRectangle;
 	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
@@ -164,6 +165,11 @@ package server
 		{
 			send(event.player.id, RemoteWorld.ITEM_RECEIVED, new InventoryUpdate(event.position, event.item.attributes));
 		}		
+			
+		public function handleItemUsed (event:InventoryEvent) :void
+		{
+			_net.sendMessage(String(RemoteWorld.ITEM_USED), event.position, event.player.id);
+		}
 			
 		protected function get id () :int
 		{

@@ -51,6 +51,29 @@ package inventory
 			displayItem(item, position);
 		}
 		
+		public function removeItemAt (position:int) :void
+		{
+			var toRemove:Item = _items[position];
+			if (toRemove != null) {
+				// remove the selected item
+				_view.removeChild(_viewBuffer.take(toRemove));
+				delete _items[position];
+			
+			    // if it wasn't the last item, we need to adjust the set.
+			    if (position < _items.length - 1) {
+					// shunt the others over
+					for (var i:int = position; i < _items.length - 1; i++) {
+						var shiftLeft:Item = _items[i+1];
+	                    _items[i] = shiftLeft
+	                    positionItem(_viewBuffer.find(shiftLeft), i);
+	                }
+	                
+	                // remove the duplicated one at the end
+	    			_items.pop();
+	    		}
+            }
+		}
+		
 		/**
 		 * Remove an item from the inventory and shunt the other items over to the left.
 		 */
@@ -82,6 +105,7 @@ package inventory
 			sprite.addEventListener(MouseEvent.CLICK, handleItemClicked);
 			_view.addChild(sprite);
 			positionItem(sprite, position);
+			_viewBuffer.store(item, sprite);
 		}
 		
 		protected function handleItemClicked (event:MouseEvent) :void

@@ -2,7 +2,6 @@ package client
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
-	import arithmetic.VoidBoardRectangle;
 	
 	import client.player.Player;
 	import client.player.PlayerEvent;
@@ -52,7 +51,7 @@ package client
 			_inventory = new InventoryDisplay(this, 680, 50);
 			const invView:DisplayObject = _inventory.view;
 			invView.x = 10;
-			invView.y = 440;			
+			invView.y = 440;		
 			addChild(invView);
 			
 			var frame:GraphicRectangle = GraphicRectangle.fromDisplayObject(this);
@@ -216,7 +215,12 @@ package client
 		{
 			_world.useItem(position);
 		}
-		
+
+		public function itemUsed (position:int) :void
+		{
+			_inventory.removeItemAt(position);
+		}
+						
 		override public function toString () :String
 		{
 			return "client "+_world.clientId; 
@@ -240,7 +244,7 @@ package client
 			const current:Date = new Date();
 			_serverOffset = serverTime - current.getTime();
 		}
-				
+		
 		protected var _serverOffset:Number = 0;
 		
 		protected var _localPlayer:Player;

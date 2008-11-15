@@ -102,6 +102,7 @@ package world
         {
         	const position:int = _inventory.add(item);
         	dispatchEvent(new InventoryEvent(InventoryEvent.RECEIVED, this, item, position));
+        	Log.debug(this+" now holds "+_inventory.contents);
         }
         
         public function useItem (position:int) :void
@@ -112,6 +113,7 @@ package world
         			Log.debug("attempting to use "+found);
         			found.useBy(this);
         			_inventory.removeItem(position);
+        			dispatchEvent(new InventoryEvent(InventoryEvent.USED, this, found, position));
         		} else {
         			Log.debug("item is not usable");
         		}

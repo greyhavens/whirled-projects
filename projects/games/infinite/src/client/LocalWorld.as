@@ -1,7 +1,6 @@
 package client
 {
 	import arithmetic.BoardCoordinates;
-	import arithmetic.VoidBoardRectangle;
 	
 	import flash.events.EventDispatcher;
 	
@@ -88,6 +87,11 @@ package client
         {
         	_world.useItem(ID, position);
         }
+                	
+  		public function handleItemUsed (event:InventoryEvent) :void
+  		{
+  			_client.itemUsed(event.position);
+  		}
                 	
         protected var _client:WorldClient;	
 		protected var _world:World;

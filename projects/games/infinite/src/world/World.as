@@ -31,6 +31,7 @@ package world
             addEventListener(MoveEvent.PATH_START, listener.handlePathStart);
             addEventListener(CellStateEvent.STATE_CHANGED, listener.handleCellStateChange);		
             addEventListener(InventoryEvent.RECEIVED, listener.handleItemReceived);
+            addEventListener(InventoryEvent.USED, listener.handleItemUsed);
 		}
 		
 		/**
@@ -88,6 +89,7 @@ package world
 		    player.addEventListener(PlayerEvent.MOVE_COMPLETED, dispatchEvent);
 		    player.addEventListener(MoveEvent.PATH_START, dispatchEvent);
 		    player.addEventListener(InventoryEvent.RECEIVED, dispatchEvent);
+            player.addEventListener(InventoryEvent.USED, dispatchEvent);
             		    		    
 		    // register the player and place them on the first level.
             _players.register(player);
