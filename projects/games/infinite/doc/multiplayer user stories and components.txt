@@ -1,24 +1,15 @@
-Improved slice-map can be used to generate area explored.
+Multiplayer user stories:
 
-Bug 1: the user can't apply the oil to the base of the ladder they just placed.
-Bug
+(yes these are weirdly pedantic and mickey mouse-ish - they're tests to make sure I haven't missed anything obvious given that the action is fairly complex.)
 
-2. Oil Story:
+Player 1 enacts the fruit machine story multiple times to obtain ladders and oil cans.
 
-	1. The player enacts the fruit machine story.
-	2. The player goes to another fruit machine.
-	3. The player receives an oil can.
-	4. The player can apply the oil can to a ladder.
-	5. The player can no longer climb the ladder.
-	6. If the player climbs sideways onto the oiled ladder, the player falls to the base of the
-		Ladder.
+Player 1 uses and climbs up a series of ladders, making sure to place at least 2 ladders side by 
+	side at some point.
 
-	[X] Oil-Can Graphic
-	[X] Oil-Can Item Object
-	[X] Oiled Ladder State {ladder state? or different piece altogether}?
-	[X] Falling! 
-	[ ] Oiled Ladder animated cell.
-	[ ] Mutable board.
+Player 1 enacts the oil story on one of the two side by side ladders.
+
+Player 2 enacts the 'second player oil story'.
 
 1. Fruit Machine Story:
 
@@ -30,20 +21,30 @@ Bug
 	6. The player can deploy the ladder on the board.
 	7. The player can climb the ladder.
 
-	[X] window graphic
-    [X] ladder icon
-    [X] ladder graphics
-    [X] climbing logic
-    [X] Fruit Machine Logic
-    [X] Inventory Logic
-    [X] Object Deployment Logic
+2. Oil Story:
 
-Fruit machine story detail: [DONE]
+	1. The player enacts the fruit machine story.
+	2. The player goes to another fruit machine.
+	3. The player receives an oil can.
+	4. The player can apply the oil can to a ladder.
+	5. The player can no longer climb the ladder.
+
+3. Second player oil story.
+
+	1. The player climbs up a series of ladders left by the other player.
+	2. The player climbs up the non-oiled one of a pair of ladders that are side-by side.
+	3. The player moves onto the oiled ladder.
+	4. The player falls to the bottom of the oiled ladder.
+	5. The player can't climb up the ladder.
+
+Fruit machine story detail:
     
 	The window opens and closes periodically.
 	The player walks up to the window.
 	If the window is closed, then nothing happens.
+	If the window opens while the player is standing there, the fruit machine turns.
 	If the window is open, then the fruit machine turns.
 	When the fruit machine finishes turning, the player is given an object.
 	The object appears in the player's inventory as an icon.
     
+
