@@ -73,30 +73,7 @@ package inventory
 	    		}
             }
 		}
-		
-		/**
-		 * Remove an item from the inventory and shunt the other items over to the left.
-		 */
-		public function removeItem (item:Item) :void
-		{			
-			var i:int;
-			for (i = 0; i < _items.length; i++)
-			{
-				if (_items[i] == item) {
-					_view.removeChild(_viewBuffer.take(item));					
-					var last:int = _items.length - 1;
-					var j:int;
-					for (j = i; j < last; j++) {
-						var shiftLeft:Item = _items[j+1];
-						_items[j] = shiftLeft;
-						positionItem(_viewBuffer.find(shiftLeft), j);
-					}
-					_items.pop();
-					break;
-				}
-			}
-		}
-			
+				
 		protected function displayItem (item:Item, position:int) :void
 		{
 			Log.debug ("inventory displaying "+item);
