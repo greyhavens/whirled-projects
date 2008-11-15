@@ -13,5 +13,10 @@ package paths
 		 * Climb up or down to the given cell.
 		 */
 		function climb (newCell:BoardCoordinates) :void
+		
+		/**
+		 * Fall down to the given cell.
+		 */
+		function fall (newCell:BoardCoordinates) :void
 	}
 }

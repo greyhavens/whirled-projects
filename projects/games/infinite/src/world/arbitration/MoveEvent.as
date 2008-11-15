@@ -8,7 +8,8 @@ package world.arbitration
 
 	public class MoveEvent extends Event
 	{
-		public static const PATH_START:String = "move_start"; 
+		public static const PATH_START:String = "move_start";
+		public static const FALL_START:String = "fall_start"; 
     
         public var player:Player;
 

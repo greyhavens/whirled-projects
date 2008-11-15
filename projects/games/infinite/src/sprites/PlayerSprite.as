@@ -1,8 +1,8 @@
 package sprites
 {
 	import actions.Climb;
+	import actions.Fall;
 	import actions.MoveSideways;
-	import actions.Movement;
 	
 	import arithmetic.BoardCoordinates;
 	import arithmetic.GraphicCoordinates;
@@ -80,17 +80,22 @@ package sprites
             startMovement(new Climb(_player, this, _objective, _objective.cellAt(newCell)));
         }
         
-        protected function startMovement(movement:Movement) :void
+        public function fall (newCell:BoardCoordinates) :void
         {
-        	_movement = movement;
-        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _movement.handleFrameEvent);
+        	startMovement(new Fall(_player, this, _objective, newCell));
+        }
+        
+        protected function startMovement(action:PlayerAction) :void
+        {
+        	_action = action;
+        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);
         	
         }
         
         public function moveComplete () :void
         {
-        	_objective.frameTimer.removeEventListener(FrameEvent.FRAME_START, _movement.handleFrameEvent);
-        	_movement = null;
+        	_objective.frameTimer.removeEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);
+        	_action = null;
         	_player.pathComplete();
         }
          
@@ -107,8 +112,18 @@ package sprites
         	y = coords.y;
             dispatchEvent(new ViewEvent(ViewEvent.MOVED, this));        	
         }
+         
+        /**        
+         * Change the y coordinate of this sprite and dispatch a movement event.
+         */  
+        public function moveVertical (y:int) :void
+        {
+        	this.y = y;
+            dispatchEvent(new ViewEvent(ViewEvent.MOVED, this));            
+        }
+        
                  
-        protected var _movement:Movement;
+        protected var _action:PlayerAction;
         protected var _objective:Objective;
         protected var _player:Player;
 

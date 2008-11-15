@@ -14,7 +14,7 @@ package
 		public static const boardDebug:Boolean = false;
 		
 		// Display a debug overlay on cells.
-		public static const cellDebug:Boolean = true;
+		public static const cellDebug:Boolean = false;
 		
 		// Set the unit size of a cell.
 		public static const cellSize:Vector = new Vector(100, 100);		

@@ -1,36 +1,29 @@
 package actions
 {
-	import arithmetic.BoardIterator;
+	import arithmetic.BoardCoordinates;
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
+	
+	import client.FrameEvent;
+	import client.Objective;
+	import client.player.Player;
 	
 	import contrib.Easing;
 	
 	import sprites.PlayerSprite;
-	import client.Objective;	
-    import client.FrameEvent;
-    
-    import world.Cell;
+	
+	import world.Cell;
     
     	
 	public class Fall implements PlayerAction
 	{
-		public function Fall(player:PlayerCharacter, objective:Objective)
+		public function Fall(player:Player, sprite:PlayerSprite, objective:Objective, target:BoardCoordinates)
 		{
 			_player = player;
-			_view = objective.playerView;
+			_view = sprite;
 			_objective = objective;
-			
-			// The player will fall until they reach a cell that they can grip
-			const search:BoardIterator = new BoardIterator(player.cell.position, Vector.DOWN);
-			Log.debug ("player starting to fall from "+player.cell);
-			do {
-				var test:Cell = objective.cellAt(search.next());
-				if (test.grip) {
-					_targetCell = test;
-				}
-			} while (_targetCell == null);
-			Log.debug ("falling to "+_targetCell);
+		
+		    _targetCell = objective.cellAt(target);	
 			
 			_yStart = _view.positionInCell(_objective, player.cell.position).y;
 			_yDelta = _view.positionInCell(_objective, _targetCell.position).y - _yStart;
@@ -38,7 +31,7 @@ package actions
 			_destination = _view.positionInCell(_objective, _targetCell.position);
 			_duration = (_yDelta * 250 / Config.cellSize.multiplyByVector(new Vector(0,1)).length) 
 		}
-
+        
 		public function handleFrameEvent(event:FrameEvent):void
 		{
 			// is this the first event?
@@ -52,19 +45,18 @@ package actions
 			if (event.currentTime.time - _startTime.time > _duration) {
 				// setting the player's position to the target cell sets their graphics position
 				// automatically.
-				_player.actionComplete();				
-				_player.arriveInCell(_targetCell);
-				_objective.scrollViewPointToPlayer();
+                _view.moveToCell(_objective, _targetCell);
+                _view.moveComplete();               
+
 			} else {
 				ease(event);
-                _objective.scrollViewPointToPlayer();
 			}
 		}
 	
 		protected function ease(event:FrameEvent) :void
 		{
 			// Log.debug("easing time: "+event.since(_startTime) + ", _ystart: " + _yStart + ", _yDelta: " + _yDelta + ", _duration: " + _duration);
-			_view.y = Easing.easeOutBounce(event.since(_startTime), _yStart, _yDelta, _duration);
+			_view.moveVertical(Easing.easeOutBounce(event.since(_startTime), _yStart, _yDelta, _duration));
 			// Log.debug ("_view.y: "+_view.y);
 		}
 	
@@ -76,7 +68,7 @@ package actions
 		protected var _view:PlayerSprite;
 		protected var _startTime:Date;
 		protected var _destination:GraphicCoordinates;
-		protected var _player:PlayerCharacter; 
+		protected var _player:Player; 
 		protected var _objective:Objective;		
 		
 		protected static const RATE:int = 3;

@@ -63,6 +63,7 @@ package client.player
         
         public function follow (path:Path) :void
         {
+        	Log.debug(this+" setting path to "+path);
         	_path = path;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_STARTED, this));
         }
@@ -79,6 +80,7 @@ package client.player
 
         public function clearPath () :void
         {
+        	Log.debug(this+" clearing path (was "+path+")");
         	_path = null;
         }
         

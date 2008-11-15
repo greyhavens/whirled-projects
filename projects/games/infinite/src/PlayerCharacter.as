@@ -106,6 +106,7 @@ package
 			_playerAction = new Fall(this, _objective);
 		}
 		
+		
 		public function teleport () :void
 		{
 			_playerAction = new Teleport(this, _objective);

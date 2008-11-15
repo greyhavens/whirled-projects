@@ -321,11 +321,14 @@ package client
 		public function replace (cell:Cell) :void
 		{
 			if (_extent.contains(cell.position)) {
+				Log.debug("replacing cell in view");
 				const v:Vector = _extent.relativePosition(cell.position);
 				const old:Cell = _cells[v.dx][v.dy] as Cell;
 				old.removeFromObjective();
 				_cells[v.dx][v.dy] = cell;
 				cell.addToObjective(_objective);
+			} else {
+				Log.debug("cell is not in view");
 			}
 			_board.replace(cell);
 		}

@@ -247,9 +247,11 @@ package client
 	    	follow(sprite);
 	    }
 	    
-	    public function pathComplete (path:Path) :void
+	    public function pathComplete (player:Player) :void
         {
-        	const unmapped:Neighborhood = _breadcrumbs.visit(path.finish);
+        	player.cell = cellAt(player.path.finish);
+        	Log.debug("checking that we've visited this vicinity");
+        	const unmapped:Neighborhood = _breadcrumbs.visit(player.path.finish);
         	if (! unmapped.isEmpty()) {
         		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
         	}
@@ -322,7 +324,7 @@ package client
         
         public function updateCells (update:CellUpdate) :void
         {
-        	Log.debug("updating cell state: "+update);
+        	Log.debug("updating cell state of "+update.states.length+" cells");
         	for each (var state:CellState in update.states) {
         		state.update(this, this);
         	}

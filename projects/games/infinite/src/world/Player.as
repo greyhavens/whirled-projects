@@ -1,6 +1,8 @@
 package world
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.BoardIterator;
+	import arithmetic.Vector;
 	
 	import cells.CellInteractions;
 	
@@ -78,9 +80,41 @@ package world
             		
             	// now check whether there are consequences of landing on this cell
             	_level.arriveAt(this, coords);
+            	
+            	// now check whether the player needs to fall
+            	if (! cell.grip) {
+            		fall();
+            	} 
             } else {
 	            Log.warning("move to " + _path.finish + " completed with unexpected endpoint "+coords);
-	        } 
+	        }
+        }
+        
+        /**
+         * Start the player off falling.
+         */
+        protected function fall () :void
+        {
+        	const bottom:Cell = findBottom();
+        	const path:Path = new Path(Path.FALL, cell.position, bottom.position);
+            dispatchEvent(new MoveEvent(MoveEvent.PATH_START, this, path));
+        }
+        
+        protected function findBottom () :Cell
+        {
+            var target:Cell;
+            // The player will fall until they reach a cell that they can grip
+            const search:BoardIterator = new BoardIterator(cell.position, Vector.DOWN);
+            Log.debug ("player starting to fall from "+cell);
+            do {
+                var test:Cell = cellAt(search.next());
+                if (test.grip) {
+                    target = test;
+                }
+            } while (target == null);
+            Log.debug ("falling to "+target);
+            
+            return target;  
         }
         
         public function isMoving () :Boolean

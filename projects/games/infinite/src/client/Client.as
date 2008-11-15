@@ -1,5 +1,6 @@
 package client
 {
+	import arithmetic.BoardCoordinates;
 	import arithmetic.Geometry;
 	import arithmetic.GraphicRectangle;
 	
@@ -136,13 +137,16 @@ package client
 		
 		protected function handlePathComplete (event:PlayerEvent) :void
 		{
-			_world.moveComplete(event.player.path.finish);
-            _viewer.objective.pathComplete(event.player.path);
+			Log.debug("handling path complete");
+            _viewer.objective.pathComplete(event.player);
+            const finish:BoardCoordinates = event.player.path.finish;            
 			event.player.clearPath();
+            _world.moveComplete(finish);
 		}
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
 		{
+			Log.debug("handling unmapped neighborhood "+event.hood);
 			_world.requestCellUpdate(event.hood);
 		}
 		

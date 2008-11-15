@@ -24,6 +24,7 @@ package paths
 			switch (type) {
 				case CLIMB: return movable.climb(finish);
 				case SIDEWAYS: return movable.moveSideways(finish);
+				case FALL: return movable.fall(finish);
 			}
 			throw new Error("unknown movement type "+type);
 		}
@@ -58,5 +59,6 @@ package paths
 		
 		public static const SIDEWAYS:int = 0;
 		public static const CLIMB:int = 1;
+		public static const FALL:int = 2;
 	}
 }
