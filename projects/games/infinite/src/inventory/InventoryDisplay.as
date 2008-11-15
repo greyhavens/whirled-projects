@@ -57,7 +57,6 @@ package inventory
 			if (toRemove != null) {
 				// remove the selected item
 				_view.removeChild(_viewBuffer.take(toRemove));
-				delete _items[position];
 			
 			    // if it wasn't the last item, we need to adjust the set.
 			    if (position < _items.length - 1) {
@@ -66,17 +65,15 @@ package inventory
 						var shiftLeft:Item = _items[i+1];
 	                    _items[i] = shiftLeft
 	                    positionItem(_viewBuffer.find(shiftLeft), i);
-	                }
-	                
-	                // remove the duplicated one at the end
-	    			_items.pop();
+	                }                
 	    		}
+                // remove either the duplicated one at the end
+                _items.pop();
             }
 		}
 				
 		protected function displayItem (item:Item, position:int) :void
 		{
-			Log.debug ("inventory displaying "+item);
 			const sprite:ItemSprite = _itemViews.viewOf(item);
 			sprite.position = position;
 			sprite.addEventListener(MouseEvent.CLICK, handleItemClicked);

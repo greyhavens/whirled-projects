@@ -32,7 +32,6 @@ package cells.fruitmachine
          */
         override protected function startAnimation () :void
         {
-            Log.debug(this + " starting animation")
         	const machine:FruitMachineCell = cell as FruitMachineCell;
             _timer = new PhaseShiftTimer(_objective, machine.inception, machine.period);
             _timer.addEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);

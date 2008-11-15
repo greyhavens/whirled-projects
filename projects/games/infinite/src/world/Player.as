@@ -110,7 +110,7 @@ package world
         	var found:Item = _inventory.item(position);
         	if (found != null) {
         		if (found.isUsableBy(this)) {
-        			Log.debug("attempting to use "+found);
+        			Log.debug("attempting to use "+found+" at position "+position);
         			found.useBy(this);
         			_inventory.removeItem(position);
         			dispatchEvent(new InventoryEvent(InventoryEvent.USED, this, found, position));

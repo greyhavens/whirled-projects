@@ -202,6 +202,7 @@ package client
 		
 		public function updateCell (detail:CellState) :void
 		{
+			//Log.debug(this+" updating cell with "+detail);
 			_viewer.updateCell(detail);
 		}
 		
@@ -213,6 +214,7 @@ package client
 		
 		public function itemClicked (position:int) :void
 		{
+			Log.debug(this+" clicked item at "+position);
 			_world.useItem(position);
 		}
 

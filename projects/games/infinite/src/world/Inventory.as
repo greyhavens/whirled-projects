@@ -33,6 +33,7 @@ package world
 				c += _items[i];
 				c += " ";
 			}
+			c += "(" + _items.length + " items)";
 			return c;
 		}
 		
@@ -44,8 +45,6 @@ package world
 		public function removeItem (position:int) :void
 		{
 			if (_items[position] != null) {
-				// delete the item
-				delete _items[position];
 				
 				// if it wasn't the last item, move the others over
 				if (position < _items.length - 1) {
@@ -54,9 +53,10 @@ package world
 						_items[i - 1] = _items[i];
 					}
 					
-					// delete the duplicate item from the end
-					_items.pop();
 				}
+                // delete the item from the end - if it's the last one this deletes the item, otherwise it deletes
+                // the duplicate created during shunting
+                _items.pop();
 			}
 		}
 		
