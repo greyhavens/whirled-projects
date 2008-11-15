@@ -64,7 +64,9 @@ package inventory
 					for (var i:int = position; i < _items.length - 1; i++) {
 						var shiftLeft:Item = _items[i+1];
 	                    _items[i] = shiftLeft
-	                    positionItem(_viewBuffer.find(shiftLeft), i);
+	                    var sprite:ItemSprite = _viewBuffer.find(shiftLeft);
+	                    sprite.position = i;
+	                    positionItem(sprite, i);
 	                }                
 	    		}
                 // remove either the duplicated one at the end

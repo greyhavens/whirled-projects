@@ -5,20 +5,22 @@ package inventory
 	
 	import items.Item;
 	
+	import sprites.ItemSprite;
+	
 	public class ItemViewBuffer
 	{
 		public function ItemViewBuffer()
 		{
 		}
 
-        public function store (item:Item, view:DisplayObject) :void
+        public function store (item:Item, view:ItemSprite) :void
         {
         	_views[item] = view;
         }
         
-        public function find (item:Item) :DisplayObject
+        public function find (item:Item) :ItemSprite
         {
-            const found:DisplayObject = _views[item];
+            const found:ItemSprite = _views[item];
             if (found == null) throw new Error("view buffer doesn't contain a view for "+item);
             return found;
         }
