@@ -183,7 +183,7 @@ package cells
 		/**
 		 * Cause the current state of the cell to be distributed to relevant clients.
 		 */
-		protected function distributeState () :void
+		public function distributeState () :void
 		{
 			_level.distributeState(this); 
 		}

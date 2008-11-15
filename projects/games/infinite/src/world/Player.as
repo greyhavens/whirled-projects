@@ -109,8 +109,11 @@ package world
         	var found:Item = _inventory.item(position);
         	if (found != null) {
         		if (found.isUsableBy(this)) {
+        			Log.debug("attempting to use "+found);
         			found.useBy(this);
         			_inventory.removeItem(position);
+        		} else {
+        			Log.debug("item is not usable");
         		}
         	}
         }
@@ -125,9 +128,13 @@ package world
         	return _level.startingPosition;
         }
         
+        /**
+         * Replace a cell on behalf of this player, and distribute the change to all interested parties.
+         */ 
         public function replace (cell:Cell) :void
         {
         	_level.replace(cell);
+        	cell.distributeState();
         }
         
         public function get name () :String
