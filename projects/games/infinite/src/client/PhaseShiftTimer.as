@@ -13,13 +13,16 @@ package client
          * may be shorter or longer than a normal period in order to allow it to synchronize
          * with where it would have been if it had really started at 'inception'.  The inception
          * time is expected to be given in the same timebase as the supplied chronometer.
+         * 
+         * By default the timer is repeating, but this can be overridden by setting the singleShot parameter to true.
          */
-        public function PhaseShiftTimer (clock:Chronometer, inception:Number, period:Number) 
+        public function PhaseShiftTimer (clock:Chronometer, inception:Number, period:Number, singleShot:Boolean = false) 
         {
             // set the initial delay to the computed phase shift and run for one repeat
             super(period - ((clock.serverTime - inception) % period), 1);
             _period = period;
             _clock = clock;
+            _singleShot = singleShot;
 			addEventListener(TimerEvent.TIMER, handlePhaseShift);
 		}
 				
@@ -31,10 +34,12 @@ package client
 		protected function handlePhaseShift(event:TimerEvent) :void
 		{
 		    removeEventListener(TimerEvent.TIMER, handlePhaseShift);
-		    addEventListener(TimerEvent.TIMER, handleTimerEvent)
-		    delay = _period;
-		    repeatCount = 0;
-		    start();
+		    if (! _singleShot) {
+			    addEventListener(TimerEvent.TIMER, handleTimerEvent)
+			    delay = _period;
+			    repeatCount = 0;
+			    start();
+			}
 		    handleTimerEvent(event);
         }
 
@@ -43,6 +48,7 @@ package client
 		    dispatchEvent(new ChronometerEvent(_clock.serverTime));
         }
  
+        protected var _singleShot:Boolean;
         protected var _clock:Chronometer;
         protected var _period:Number;
     }

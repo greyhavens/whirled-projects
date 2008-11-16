@@ -102,7 +102,7 @@ package cells
 		/**
 		 * Cell interactions
 		 */
-		public function playerHasArrived (player:CellInteractions) :void
+		public function playerHasArrived (clock:Chronometer, player:CellInteractions) :void
 		{
 			//debug cells don't care whether the player has arrived or not
 		}		 				

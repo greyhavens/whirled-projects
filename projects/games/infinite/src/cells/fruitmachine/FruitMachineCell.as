@@ -7,6 +7,7 @@ package cells.fruitmachine
 	import cells.CellInteractions;
 	
 	import client.ChronometerEvent;
+	import client.PhaseShiftTimer;
 	
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -65,6 +66,27 @@ package cells.fruitmachine
 		}
 		
 		/**
+		 * Start a new single shot timer which determines when the machine will next open.
+		 */
+		protected function startActivationTimer (clock:Chronometer) :void
+		{
+			_timer = new PhaseShiftTimer(clock, _inception, ACTIVATION_DELAY, true);
+			_timer.addEventListener(ChronometerEvent.INSTANT, activationTime);
+			_timer.start();
+		}		
+		
+		/**
+		 * If we learn that it's activation time, and there's a player present, roll the wheel.
+		 */
+		protected function activationTime (event:ChronometerEvent) :void
+		{			
+			stopTimer();
+			if (_player != null && stateAt(event.serverTime) == ACTIVE) {
+       			rollWheel();
+		    }
+		}
+		
+		/**
 		 * Stop and discard the associated timer.
 		 */
 		protected function stopTimer () :void
@@ -80,27 +102,7 @@ package cells.fruitmachine
 			// this should only be used on the server for obvious reasons.
 			return stateAt((new Date()).getTime()) == ACTIVE;		
 		}
-
-		/**
-		 * Activate the fruit machine so that it can hand out objects.
-		 */
-		public function activate () :void
-		{
-			if (_player == null ||  !_player.canReceiveItem()) {
-				mode = ACTIVE;
-			} else {
-				rollWheel();
-			} 						
-		}
-		
-		/**
-		 * Deactivate the fruit machine so that it will no longer hand out objects. 
-		 */
-		public function deactivate () :void
-		{
-			mode = INACTIVE;
-		}
-
+	
 		override public function get climbRightTo () :Boolean
 		{
 			return true;			
@@ -119,12 +121,19 @@ package cells.fruitmachine
 			return (_mode != ROLLING);
 		}
 
-		override public function playerHasArrived (player:CellInteractions) :void
+		override public function playerHasArrived (clock:Chronometer, player:CellInteractions) :void
 		{
 			_player = player;
 			Log.debug ("the player has arrived within the fruit machine");
-			if (!isActive()) {
-				return;			
+			const mode:int = stateAt((new Date()).getTime());
+			
+			if (mode == DEFUNCT) {
+				return;
+			}
+			
+			if (mode == INACTIVE) {
+				startActivationTimer(clock);
+				return;
 			}
 			
 			if (_player.canReceiveItem()) {
@@ -134,6 +143,7 @@ package cells.fruitmachine
 		
 		override public function playerBeginsToDepart ():void
 		{
+            stopTimer();
 			_player = null;
 		}
 		

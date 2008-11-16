@@ -11,6 +11,7 @@ package world.level
 	import server.Messages.PlayerPosition;
 	
 	import world.Cell;
+	import world.Chronometer;
 	import world.NeighborhoodBoard;
 	import world.Player;
 	import world.PlayerMap;
@@ -19,7 +20,7 @@ package world.level
 	import world.board.Board;
 	import world.board.BoardInteractions;
 	
-	public class Level implements BoardInteractions
+	public class Level implements BoardInteractions, Chronometer
 	{
 		public var number:int;
 		
@@ -120,7 +121,7 @@ package world.level
 		public function arriveAt (player:Player, coords:BoardCoordinates) :void
 		{
 			player.cell = _board.cellAt(coords);
-			player.cell.playerHasArrived(player);
+			player.cell.playerHasArrived(this, player);
 		}
 		
 		public function distributeState (cell:Cell) :void
@@ -142,6 +143,11 @@ package world.level
         {
         	newCell.addToLevel(this);
         	_board.replace(newCell);
+        }
+          
+        public function get serverTime () :Number
+        {
+        	return (new Date()).getTime();
         }
           
         protected var _world:World;

@@ -70,6 +70,7 @@ package world
         public function handlePathStart (event:MoveEvent) :void
         {
         	_path = event.path;
+            cell.playerBeginsToDepart();
         }
         
         public function moveComplete (coords:BoardCoordinates) :void
