@@ -12,7 +12,7 @@ package server.Messages
 
         public function addCells (array:Array) :void
         {
-        	Log.debug("adding cells");
+        	//Log.debug("adding cells");
         	for each (var cell:Cell in array) {
         		//Log.debug("adding cell state: "+cell);
         		_states.push(cell.state);

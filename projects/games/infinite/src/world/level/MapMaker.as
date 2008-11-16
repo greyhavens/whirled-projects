@@ -21,7 +21,7 @@ package world.level
 		
 		protected function handleUnmappedNeighborhood(event:NeighborhoodEvent) :void
 		{
-			Log.debug("received neigborhood unmapped event for "+event.hood);
+			//Log.debug("received neigborhood unmapped event for "+event.hood);
 			for each (var vicinity:Vicinity in event.hood.vicinities) {
 				createMap(vicinity.region);
 			}

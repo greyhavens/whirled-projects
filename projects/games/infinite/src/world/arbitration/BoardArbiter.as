@@ -52,7 +52,7 @@ package world.arbitration
 				return null;
 			}
 
-			Log.debug ("analysing sideways path from "+player.cell+" to "+destination);
+			//Log.debug ("analysing sideways path from "+player.cell+" to "+destination);
 			var path:CellPath = new CellPath(_board, player.cell, destination);
 			path.next(); // discard the start position since that's where the user already is.
 			while (path.hasNext()) {
@@ -87,7 +87,7 @@ package world.arbitration
 			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;
 			
-			Log.debug("checking for climbing path...");
+			//Log.debug("checking for climbing path...");
 			
 			// there is no way to climb horizontally.
 			if (start.x != finish.x) {
@@ -98,7 +98,7 @@ package world.arbitration
 			
 			// is the proposed climb upwards?
 			if (start.y < finish.y) {
-				Log.debug("looking downwards");
+				//Log.debug("looking downwards");
 				for (y = start.y + 1; y <= finish.y; y++) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbDownTo ) {
 						return null;
@@ -109,7 +109,7 @@ package world.arbitration
 			
 			// is the proposed climb downwards?
 			if (start.y > finish.y) {
-				Log.debug("looking upwards");
+				//Log.debug("looking upwards");
 				for (y = start.y - 1; y >= finish.y; y--) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbUpTo ) {
 						Log.debug ("cannot climb up to cell at: "+start.x+", "+y);

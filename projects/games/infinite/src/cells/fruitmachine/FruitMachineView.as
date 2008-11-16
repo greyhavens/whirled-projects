@@ -51,7 +51,7 @@ package cells.fruitmachine
          */ 
         override protected function stopAnimation () :void
         {
-        	Log.debug(this + " stopping animation");
+        	//Log.debug(this + " stopping animation");
             if (_timer != null) {
                 _timer.stop();
             }
