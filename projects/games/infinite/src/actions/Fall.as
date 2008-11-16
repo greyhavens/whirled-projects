@@ -25,8 +25,8 @@ package actions
 		
 		    _targetCell = objective.cellAt(target);	
 			
-			_yStart = _view.positionInCell(_objective, player.cell.position).y;
-			_yDelta = _view.positionInCell(_objective, _targetCell.position).y - _yStart;
+			_yStart = _view.positionInCell(_objective, player.position).y;
+			_yDelta = _view.positionInCell(_objective, target).y - _yStart;
 			
 			_destination = _view.positionInCell(_objective, _targetCell.position);
 			_duration = (_yDelta * 250 / Config.cellSize.multiplyByVector(new Vector(0,1)).length) 
@@ -38,7 +38,6 @@ package actions
 			if (_startTime == null) {
 				_startTime = event.previousTime;
 				_duration -= event.duration / 2;
-				_player.cell.playerBeginsToDepart();
 			}
 
 			// if we're close enough to the end time finish up

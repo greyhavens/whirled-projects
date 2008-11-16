@@ -57,7 +57,7 @@ package server
 		{
 			const message:PathStart =
 			     new PathStart(event.player.id, event.path);
-			     
+		  
 			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, 
 			     message);
 		}
