@@ -19,6 +19,11 @@ package paths
 			this.finish = finish;
 		}
 		
+		public function toString () :String
+		{
+			return "path from "+start+" to "+finish;
+		}
+		
 		public function applyTo(movable:PathFollower) :void
 		{
 			switch (type) {

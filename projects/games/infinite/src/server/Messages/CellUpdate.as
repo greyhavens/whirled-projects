@@ -9,6 +9,11 @@ package server.Messages
 		public function CellUpdate()
 		{
 		}
+		
+		public function toString () :String
+		{
+			return "updates for "+_states.length+" cell(s)";
+		}
 
         public function addCells (array:Array) :void
         {

@@ -211,7 +211,6 @@ package client
 		
 		public function receiveItem(detail:InventoryUpdate) :void
 		{
-			Log.debug("client received item");
 			_inventory.addItemAt (detail.position, _itemFactory.makeItem(detail.attributes));
 		}     
 		

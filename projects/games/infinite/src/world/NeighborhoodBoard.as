@@ -44,7 +44,7 @@ package world
 			Log.debug("creating cell update for "+hood);
 			const update:CellUpdate = new CellUpdate();
 			for each (var vicinity:Vicinity in hood.vicinities) {
-				Log.debug("checking vicinity "+vicinity);
+				//Log.debug("checking vicinity "+vicinity);
 				update.addCells(_changed.inVicinity(vicinity));
 			}
 			return update;

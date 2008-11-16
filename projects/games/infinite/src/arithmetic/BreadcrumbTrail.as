@@ -24,7 +24,7 @@ package arithmetic
 		{
 			const unmapped:Neighborhood = visit(coords);
 			if (! unmapped.isEmpty()) {
-				Log.debug("dispatching Neighborhood unmapped event");
+				//Log.debug("dispatching Neighborhood unmapped event");
 				dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
 			}
 		}

@@ -250,7 +250,7 @@ package client
 	    public function pathComplete (player:Player) :void
         {
         	player.cell = cellAt(player.path.finish);
-        	Log.debug("checking that we've visited this vicinity");
+        	//Log.debug("checking that we've visited this vicinity");
         	const unmapped:Neighborhood = _breadcrumbs.visit(player.path.finish);
         	if (! unmapped.isEmpty()) {
         		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
@@ -324,7 +324,7 @@ package client
         
         public function updateCells (update:CellUpdate) :void
         {
-        	Log.debug("updating cell state of "+update.states.length+" cells");
+//        	Log.debug("updating cell state of "+update.states.length+" cells");
         	for each (var state:CellState in update.states) {
         		state.update(this, this);
         	}

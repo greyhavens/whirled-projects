@@ -136,7 +136,7 @@ package world
         {
         	const position:int = _inventory.add(item);
         	dispatchEvent(new InventoryEvent(InventoryEvent.RECEIVED, this, item, position));
-        	Log.debug(this+" now holds "+_inventory.contents);
+        	//Log.debug(this+" now holds "+_inventory.contents);
         }
         
         public function useItem (position:int) :void
