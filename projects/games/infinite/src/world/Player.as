@@ -45,6 +45,7 @@ package world
         public function set cell (cell:Cell) :void
         {
         	_cell = cell;
+        	Log.debug(this+" dispatching move complete - position "+_cell.position);
         	dispatchEvent(new PlayerEvent(PlayerEvent.MOVE_COMPLETED, this));
         }
         

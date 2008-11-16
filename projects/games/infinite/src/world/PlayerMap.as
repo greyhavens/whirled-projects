@@ -15,11 +15,24 @@ package world
         	if (playerAt(player.position) != null) {
         		throw new Error("already tracking a player at "+player.position);
         	}
-        	_positions[player.position.key] = player;
+        	const record:PositionRecord = new PositionRecord(player);
+        	_byPosition[player.position.key] = record;
+        	_byPlayer[player] = record;
             _ids[player.id] = player;
             _list.push(player);
             
             player.addEventListener(PlayerEvent.MOVE_COMPLETED, handleMoveCompleted);
+        }
+
+        /**
+         * Update a position record for a player, assuming that we're already tracking the player.
+         */ 
+        protected function updateRecord (player:Player) :void
+        {
+            delete _byPosition[(_byPlayer[player] as PositionRecord).coords.key];
+            const record:PositionRecord = new PositionRecord(player);
+            _byPosition[player.position.key] = record;
+            _byPlayer[player] = record;
         }
         
         public function handleMoveCompleted (event:PlayerEvent) :void
@@ -29,17 +42,21 @@ package world
         		throw new Error(event.player + " moved to cell occupied by "+
         		  playerAt(event.player.position));        		
         	}
-        	_positions[event.player.position.key] = event.player;
+        	updateRecord(event.player);
         }
 
         public function occupying (position:BoardCoordinates) :Boolean
         {
-        	return _positions[position.key] != null;
+        	return _byPosition[position.key] != null;
         }
 
         public function playerAt (position:BoardCoordinates) :Player
         {
-        	return _positions[position.key] as Player;
+        	const found:PositionRecord = (_byPosition[position.key] as PositionRecord);
+        	if (found == null) {
+        		return null;
+        	}
+        	return found.player;
         }
 
         public function find (id:int) :Player
@@ -56,7 +73,24 @@ package world
         }
         
         protected var _ids:Dictionary = new Dictionary();
-        protected var _positions:Dictionary = new Dictionary();
+        protected var _byPosition:Dictionary = new Dictionary();
+        protected var _byPlayer:Dictionary = new Dictionary();
         protected var _list:Array = new Array();
+	}
+}
+
+import world.Player;
+import arithmetic.BoardCoordinates;
+	
+
+class PositionRecord {
+	
+	public var player:Player;
+	public var coords:BoardCoordinates;
+	
+	public function PositionRecord (player:Player) 
+	{
+	   this.player = player;
+	   this.coords = player.position;
 	}
 }
