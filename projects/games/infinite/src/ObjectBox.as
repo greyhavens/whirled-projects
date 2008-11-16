@@ -38,7 +38,7 @@ package
 
 		protected static function randomItem () :Item
 		{
-			const choice:int = Math.round(Math.random() * 6) 	
+			const choice:int = Math.round(Math.random() * 7) 	
 			switch (choice) {
 				case 0: return new Teleporter();
 				case 1: return new OilCan();
@@ -46,7 +46,7 @@ package
 				case 3: return new Ladder({segments:1});
 				case 4: return new Ladder({segments:3});
 				case 5: return new Ladder({segments:5});
-				case 6: return new Spring();
+				case 6: return new OilCan();
 				case 7: return new OilCan();
 				default : return new Ladder({segments:0}); 
 			}

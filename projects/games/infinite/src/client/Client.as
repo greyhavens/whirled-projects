@@ -138,10 +138,9 @@ package client
 		protected function handlePathComplete (event:PlayerEvent) :void
 		{
 			Log.debug("handling path complete");
-            _viewer.objective.pathComplete(event.player);
-            const finish:BoardCoordinates = event.player.path.finish;            
-			event.player.clearPath();
+            const finish:BoardCoordinates = event.player.path.finish; 
             _world.moveComplete(finish);
+            _viewer.objective.pathComplete(event.player);
 		}
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void

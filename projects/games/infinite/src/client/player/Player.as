@@ -77,12 +77,6 @@ package client.player
         {
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
         }
-
-        public function clearPath () :void
-        {
-        	Log.debug(this+" clearing path (was "+path+")");
-        	_path = null;
-        }
         
         override public function toString () :String
         {
