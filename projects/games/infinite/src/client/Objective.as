@@ -23,7 +23,6 @@ package client
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
-	import world.BoxController;
 	import world.Cell;
 	import world.Chronometer;
 	import world.NeighborhoodEvent;
@@ -379,11 +378,7 @@ package client
 		// the coordinates within the origin sprite at which the cell at the top left
 		// of the cell buffer is drawn
 		protected var _origin:GraphicCoordinates;
-				
-		// The box controller is responsible for placing boxes onto the board when there are not
-		// enough to keep the action going.
-		protected var _boxController:BoxController;		
-				
+								
 		protected var _board:BoardInteractions;		
 		
 		// width and height in board cells computed by dividing the pixel size by the tile size
