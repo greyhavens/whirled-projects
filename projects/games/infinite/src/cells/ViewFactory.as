@@ -7,6 +7,7 @@ package cells
 	import cells.ladder.*;
 	import cells.views.*;
 	import cells.wall.*;
+	
 	import world.Cell;
 	
 	/**
@@ -23,6 +24,7 @@ package cells
 		{
 			switch (cell.code) {
 				case CellCodes.WALL: return new WallView(cell);
+				case CellCodes.OILED_WALL: return new OiledWallView(cell);
 				case CellCodes.LADDER_BASE: return new LadderBaseView(cell);
 				case CellCodes.LADDER_MIDDLE: return new LadderMiddleView(cell);
 				case CellCodes.LADDER_TOP: return new LadderTopView(cell);
