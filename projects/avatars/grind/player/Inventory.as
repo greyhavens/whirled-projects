@@ -144,7 +144,7 @@ public class Inventory extends Sprite
         for each (var item :Array in _equipment) {
             // If it's not a weapon
             if (item[2] != Items.HAND) {
-                defence += item[3];
+                defence += item[4];
             }
         }
         return defence;

@@ -1,5 +1,7 @@
 package {
 
+import com.threerings.util.RandomUtil;
+
 public class Items
 {
     // Item slots, each of which can wear one item
@@ -21,6 +23,7 @@ public class Items
     public static const MAGIC :int = 8;
     public static const DAGGER :int = 9;
 
+    /** The big kahuna. */
     public static const TABLE :Array = [
         // [ sprite, name, slot, category, power, (range) ]
         [ 94, "Loincloth", TORSO, NONE, 0 ],
@@ -42,7 +45,60 @@ public class Items
         [ 209, "Scale mail", TORSO, LIGHT, 3 ],
         [ 210, "Chain mail", TORSO, LIGHT, 3 ],
         [ 211, "Yet another armor", TORSO, HEAVY, 2 ],
+
+        [ 300, "Test dagger", HAND, DAGGER, 5, 200 ],
+        [ 365, "Test axe", HAND, AXE, 5, 200 ],
+        [ 290, "Test club", HAND, CLUB, 5, 200 ],
+        [ 443, "Test magic", HAND, MAGIC, 5, 800 ],
+        [ 421, "Test spear", HAND, SPEAR, 6666, 200 ],
     ];
+
+    /** A list of item IDs sorted ascending by power. */
+    public static var SORTED_GOODIES :Array = TABLE.sortOn(
+        "4", Array.NUMERIC | Array.RETURNINDEXEDARRAY);
+
+    /** Returns a random item with around this power. */
+    protected static function randomItem (power :int) :int
+    {
+        function search (low :int, high :int) :int {
+            var mid :int = (low+high)/2;
+            var value :int = TABLE[SORTED_GOODIES[mid]][4];
+
+            if (high == low) {
+                if (value > power) {
+                    return Math.max(0, high-1);
+                } else {
+                    return Math.min(high+1, SORTED_GOODIES.length-1);
+                }
+            }
+
+            if (value > power) {
+                return search(low, mid);
+            } else if (value < power) {
+                return search(mid+1, high);
+            } else {
+                trace("Found it: " + mid); 
+                return mid;
+            }
+        }
+
+        var found :int = search(0, SORTED_GOODIES.length-1);
+        var power :int = TABLE[SORTED_GOODIES[found]][4];
+
+        return RandomUtil.pickRandom(SORTED_GOODIES.filter(function (item :int, ..._) {
+            return TABLE[item][4] == power;
+        })) as int;
+    }
+
+    public static function randomLoot (base :Number, spread :Number) :int
+    {
+        var r :Number = (2*Math.random()-1);
+        var power :Number =  spread*r*r*r + base;
+
+        trace("Random power: " + power + "(r="+r+")");
+
+        return randomItem(Math.round(power));
+    }
 }
 
 }

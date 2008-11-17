@@ -137,12 +137,12 @@ public class QuestSprite extends Sprite
                     target.damage(self, amount);
                 }
 
-                effect({text:"Rawr", event:QuestConstants.EVENT_ATTACK});
+                effect({event:QuestConstants.EVENT_ATTACK});
             }
         }
     }
 
-    public function damage (source :Object, amount :Number, fx :Object, ignoreArmor :Boolean) :void
+    public function damage (source :Object, amount :int, fx :Object, ignoreArmor :Boolean) :void
     {
         var health :Number = getHealth();
         if (health == 0) {
@@ -152,6 +152,7 @@ public class QuestSprite extends Sprite
         if (!ignoreArmor) {
             var defence :int = QuestUtil.self(_ctrl).getDefence();
             amount *= Math.max(0, (10 - defence)/10); // TODO: Tweak
+            trace("Attacking for " + amount + ", " + defence + " def");
         }
 
         if (amount > 0 && QuestUtil.self(_ctrl).getState() == QuestConstants.STATE_HEAL) {

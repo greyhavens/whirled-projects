@@ -3,6 +3,7 @@ package {
 import flash.utils.Dictionary;
 
 import com.whirled.avrg.*;
+import com.whirled.net.*;
 import com.whirled.*;
 
 public class Server extends ServerObject
@@ -62,7 +63,7 @@ public class Server extends ServerObject
 
     protected function handleSignal (event :AVRGameRoomEvent) :void
     {
-        if (event.name == "grind:death") {
+        if (event.name == QuestConstants.KILL_SIGNAL) {
             var data :Array = event.value as Array;
             var playerId :int = data[0];
             var level :int = data[1];
@@ -70,8 +71,10 @@ public class Server extends ServerObject
             try {
                 if (playerId != 0) {
                     var player :PlayerSubControlServer = _ctrl.getPlayer(playerId);
-                    player.completeTask("death", level/10); // TODO: Tweak
-                    player.props.set("kills", int(player.props.get("kills"))+1);
+                    var kills :String = NetConstants.makePersistent("kills");
+
+                    player.completeTask("slay", level/10); // TODO: Tweak
+                    player.props.set(kills, int(player.props.get(kills))+1);
                 }
             } catch (error :Error) {
                 // It's reasonably possible that they're hacking away while not in the AVRG

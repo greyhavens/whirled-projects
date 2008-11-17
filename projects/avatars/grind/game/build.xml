@@ -5,6 +5,8 @@
   <property name="app.name" value="Game"/>
   <property name="app.enable-server-agent" value="true"/>
 
+  <property name="app.source-extras" value="../common"/>
+
   <!-- include the standard build script -->
   <import file="../../../../etc/project-include.xml"/>
 
