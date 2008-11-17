@@ -1,450 +1,450 @@
 <root>
-    <GameData
-        dayLength="30"
-        nightLength="120"
-        dawnWarning="12"
-        initialDayPhase="day"
-        disableDiurnalCycle="false"
-        enableEclipse="false"
-        eclipseLength="120"
-        spellDropTimeMin="30"
-        spellDropTimeMax="70"
-        spellDropScatterMin="0"
-        spellDropScatterMax="20"
-        spellDropCenterOffsetMin="60"
-        spellDropCenterOffsetMax="150"
-        maxLosingPlayerSpellDropShift="0.4"
-        minResourceAmount="0"
-        maxResourceAmount="1000"
-        maxSpellsPerType="3"
-        maxMultiplier="4"
-        multiplierDamageSoak="18.75">
+	<GameData
+		dayLength="30"
+		nightLength="120"
+		dawnWarning="12"
+		initialDayPhase="day"
+		disableDiurnalCycle="false"
+		enableEclipse="false"
+		eclipseLength="120"
+		spellDropTimeMin="30"
+		spellDropTimeMax="70"
+		spellDropScatterMin="0"
+		spellDropScatterMax="20"
+		spellDropCenterOffsetMin="60"
+		spellDropCenterOffsetMax="150"
+		maxLosingPlayerSpellDropShift="0.4"
+		minResourceAmount="0"
+		maxResourceAmount="1000"
+		maxSpellsPerType="3"
+		maxMultiplier="4"
+		multiplierDamageSoak="18.75">
 
-        <ScoreValues
-            pointsPerExtraMultiplier="500"
-            pointsPerResource="1"
-            pointsPerOpponentKill="500">
-            <PointsPerCreatureKill>
-                <Unit type="grunt" points="10"/>
-                <Unit type="heavy" points="10"/>
-                <Unit type="sapper" points="10"/>
-                <Unit type="courier" points="5"/>
-                <Unit type="colossus" points="25"/>
-            </PointsPerCreatureKill>
-        </ScoreValues>
+		<ScoreValues
+			pointsPerExtraMultiplier="500"
+			pointsPerResource="1"
+			pointsPerOpponentKill="500">
+			<PointsPerCreatureKill>
+				<Unit type="grunt" points="10"/>
+				<Unit type="heavy" points="10"/>
+				<Unit type="sapper" points="10"/>
+				<Unit type="courier" points="5"/>
+				<Unit type="colossus" points="25"/>
+			</PointsPerCreatureKill>
+		</ScoreValues>
 
-        <PlayerDisplayDatas>
-            <PlayerDisplay name="demo" displayName="demo" headshotName="" color="0xFFFFFF"/>
-            <PlayerDisplay name="Jack" displayName="Jack" headshotName="portrait_jack" color="0x9FBCFF"/>
-            <PlayerDisplay name="Ralph" displayName="Ralph" headshotName="portrait_ralph" color="0xFF0000"/>
-            <PlayerDisplay name="Iris" displayName="Iris" headshotName="portrait_iris" color="0x9C78E4"/>
-            <PlayerDisplay name="Ivy" displayName="Ivy" headshotName="portrait_ivy" color="0x47880A"/>
-            <PlayerDisplay name="Pigsley" displayName="Pigsley" headshotName="portrait_pigsley" color="0x996633"/>
-            <PlayerDisplay name="Weardd" displayName="Prof. Weardd" headshotName="portrait_weardd" color="0x666666" excludeFromMpBattle="true"/>
-            <PlayerDisplay name="Eloise" displayName="Eloise" headshotName="portrait_eloise" color="0xFF8000"/>
-            <PlayerDisplay name="Horace" displayName="Horace" headshotName="portrait_horace" color="0x0000BB"/>
-            <PlayerDisplay name="Ursula" displayName="Ursula" headshotName="portrait_ursula" color="0xFF6FCF"/>
-            <PlayerDisplay name="Dante" displayName="Dante" headshotName="portrait_dante" color="0x333333"/>
-            <PlayerDisplay name="EndlessMp1" displayName="EndlessMp1" headshotName="" color="0xFFE75F" excludeFromMpBattle="true"/>
-            <PlayerDisplay name="EndlessMp2" displayName="EndlessMp2" headshotName="" color="0xFF8000" excludeFromMpBattle="true"/>
-        </PlayerDisplayDatas>
+		<PlayerDisplayDatas>
+			<PlayerDisplay name="demo" displayName="demo" headshotName="" color="0xFFFFFF"/>
+			<PlayerDisplay name="Jack" displayName="Jack" headshotName="portrait_jack" color="0x9FBCFF"/>
+			<PlayerDisplay name="Ralph" displayName="Ralph" headshotName="portrait_ralph" color="0xFF0000"/>
+			<PlayerDisplay name="Iris" displayName="Iris" headshotName="portrait_iris" color="0x9C78E4"/>
+			<PlayerDisplay name="Ivy" displayName="Ivy" headshotName="portrait_ivy" color="0x47880A"/>
+			<PlayerDisplay name="Pigsley" displayName="Pigsley" headshotName="portrait_pigsley" color="0x996633"/>
+			<PlayerDisplay name="Weardd" displayName="Prof. Weardd" headshotName="portrait_weardd" color="0x666666" excludeFromMpBattle="true"/>
+			<PlayerDisplay name="Eloise" displayName="Eloise" headshotName="portrait_eloise" color="0xFF8000"/>
+			<PlayerDisplay name="Horace" displayName="Horace" headshotName="portrait_horace" color="0x0000BB"/>
+			<PlayerDisplay name="Ursula" displayName="Ursula" headshotName="portrait_ursula" color="0xFF6FCF"/>
+			<PlayerDisplay name="Dante" displayName="Dante" headshotName="portrait_dante" color="0x333333"/>
+			<PlayerDisplay name="EndlessMp1" displayName="EndlessMp1" headshotName="" color="0xFFE75F" excludeFromMpBattle="true"/>
+			<PlayerDisplay name="EndlessMp2" displayName="EndlessMp2" headshotName="" color="0xFF8000" excludeFromMpBattle="true"/>
+		</PlayerDisplayDatas>
 
-        <PuzzleSettings useSpecialPuzzleFrame="false">
-            <Resource type="white" displayName="Flesh" color="0xE8E7E5" hiliteColor="0x5E5E5E" frequency="1"/>
-            <Resource type="red" displayName="Blood" color="0xCC0000" hiliteColor="0x4B0101" frequency="1"/>
-            <Resource type="blue" displayName="Energy" color="0x3D7078" hiliteColor="0x1F3636" frequency="0.5"/>
-            <Resource type="yellow" displayName="Scrap" color="0xFFD858" hiliteColor="0x6D4D01" frequency="0.5"/>
+		<PuzzleSettings useSpecialPuzzleFrame="false">
+			<Resource type="white" displayName="Flesh" color="0xE8E7E5" hiliteColor="0x5E5E5E" frequency="1"/>
+			<Resource type="red" displayName="Blood" color="0xCC0000" hiliteColor="0x4B0101" frequency="1"/>
+			<Resource type="blue" displayName="Energy" color="0x3D7078" hiliteColor="0x1F3636" frequency="0.5"/>
+			<Resource type="yellow" displayName="Scrap" color="0xFFD858" hiliteColor="0x6D4D01" frequency="0.5"/>
 
-            <ClearValues>
-                <Index value="-20"/>
-                <Index value="-10"/>
-                <Index value="10"/>
-                <Index value="20"/>
-                <Index value="30"/>
-                <Index value="40"/>
-                <Index value="45"/>
-                <Index value="48"/>
-                <OutOfBoundsScale value="2"/>
-            </ClearValues>
-        </PuzzleSettings>
+			<ClearValues>
+				<Index value="-20"/>
+				<Index value="-10"/>
+				<Index value="10"/>
+				<Index value="20"/>
+				<Index value="30"/>
+				<Index value="40"/>
+				<Index value="45"/>
+				<Index value="48"/>
+				<OutOfBoundsScale value="2"/>
+			</ClearValues>
+		</PuzzleSettings>
 
-        <Units>
-            <Unit
-                type="grunt"
-                displayName="Street-Walker"
-                description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Delivery Boy."
-                introText=
+		<Units>
+			<Unit
+				type="grunt"
+				displayName="Street-Walker"
+				description="STREET-WALKER: Melee unit. Strong against the Handy Man. Susceptible to attacks from the Delivery Boy."
+				introText=
 "A reformed practitioner of the world's oldest profession, the Street-Walker is especially popular with busy parents who have neither the time nor the energy to cater to their needy newborn’s constant demands for food and attention. The relentless rocking of these liberated libertines makes them excellent nursemaids, able to soothe the cries of the most vivacious child.
 
 Students are advised to exercise caution around a Street-Walker's long, razor-sharp claws. They make excellent letter openers, but a moment's carelessness may drastically limit one's participation in the next reanimation."
-                introText2=
+				introText2=
 "-Reliable melee creature.
 - Reasonably strong and durable.
 -Able to slowly topple an opponent's workshop."
-                baseMoveSpeed="35"
-                hasRepulseForce="true"
-                maxHealth="100"
-                collisionRadius="15"
-                detectRadius="60"
-                loseInterestRadius="180">
-                <ResourceCosts>
-                    <Resource type="white" amount="40"/>
-                    <Resource type="blue" amount="15"/>
-                </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="8" damageMax="12" initialWarmup="0.87" cooldown="1" maxAttackDistance="35"/>
-                <Armor>
-                    <Damage type="crushing"     scale="0.7"/>
-                    <Damage type="piercing"     scale="0.3"/>
-                    <Damage type="explosion"    scale="1"/>
-                    <Damage type="colossus"     scale="0.7"/>
-                </Armor>
-            </Unit>
+				baseMoveSpeed="35"
+				hasRepulseForce="true"
+				maxHealth="100"
+				collisionRadius="15"
+				detectRadius="60"
+				loseInterestRadius="180">
+				<ResourceCosts>
+					<Resource type="white" amount="40"/>
+					<Resource type="blue" amount="15"/>
+				</ResourceCosts>
+				<Weapon damageType="crushing" damageMin="8" damageMax="12" initialWarmup="0.87" cooldown="1" maxAttackDistance="35"/>
+				<Armor>
+					<Damage type="crushing"		scale="0.7"/>
+					<Damage type="piercing"		scale="0.3"/>
+					<Damage type="explosion"	scale="1"/>
+					<Damage type="colossus"		scale="0.7"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="heavy"
-                displayName="Handy Man"
-                description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
-                introText=
+			<Unit
+				type="heavy"
+				displayName="Handy Man"
+				description="HANDY MAN: Ranged tower unit. Useful for deflecting incoming Delivery Boys. Watch out for Street-Walkers."
+				introText=
 "The Handy Man is the modern homeowner's solution to any mechanical, electric, or home security problem!
 
 Malfunctioning water closets and phonographs are no match for the Handy Man's ability to slowly but tirelessly operate a multitude of tools simultaneously.
 
 Moreover, Handy Men stationed outside a home are ideal for warding off the shiftless malcontents that tend to accumulate around unattended doorways, as they are able to detach their massive hands and heave them great distances. A well-constructed Handy Man will quickly regrow hands removed in such fashion."
-                introText2=
+				introText2=
 "- Construct multiple Handy Men for a solid defense.
 - Able to detonate explosive Delivery Boys before they get close enough to cause damage.
 - Street-Walkers will quickly kill unprotected Handy Men."
-                baseMoveSpeed="50"
-                hasRepulseForce="true"
-                maxHealth="100"
-                collisionRadius="15"
-                detectRadius="200"
-                loseInterestRadius="200">
-                <ResourceCosts>
-                    <Resource type="red" amount="50"/>
-                    <Resource type="yellow" amount="15"/>
-                </ResourceCosts>
-                <Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="12" damageMax="25" initialWarmup="0.8" cooldown="1.84" maxAttackDistance="200"/>
-                <Armor>
-                    <Damage type="crushing"     scale="1"/>
-                    <Damage type="piercing"     scale="1"/>
-                    <Damage type="explosion"    scale="1"/>
-                    <Damage type="colossus"     scale="1"/>
-                </Armor>
-            </Unit>
+				baseMoveSpeed="50"
+				hasRepulseForce="true"
+				maxHealth="100"
+				collisionRadius="15"
+				detectRadius="200"
+				loseInterestRadius="200">
+				<ResourceCosts>
+					<Resource type="red" amount="50"/>
+					<Resource type="yellow" amount="15"/>
+				</ResourceCosts>
+				<Weapon isRanged="true" missileSpeed="300" damageType="piercing" damageMin="12" damageMax="25" initialWarmup="0.8" cooldown="1.84" maxAttackDistance="200"/>
+				<Armor>
+					<Damage type="crushing"		scale="1"/>
+					<Damage type="piercing"		scale="1"/>
+					<Damage type="explosion"	scale="1"/>
+					<Damage type="colossus"		scale="1"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="sapper"
-                displayName="Delivery Boy"
-                description="DELIVERY BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
-                introText=
+			<Unit
+				type="sapper"
+				displayName="Delivery Boy"
+				description="DELIVERY BOY: Explosive unit. Self-destructs to deal heavy damage to units in its vicinity. Useful for storming the enemy's base, but watch out for Handy Men!"
+				introText=
 "Unclean drinking water has dramatically driven up child mortality rates in recent years. Reanimators are encouraged to take advantage of this windfall by building Delivery Boys, which are increasingly popular with businesses requiring swift delivery of letters and parcels.
 
 A combination of noxious gases inside the Delivery Boy’s belly gives this poor fellow explosive indigestion. Take care not to shake your Delivery Boy, or allow him to approach other reanimated creatures; his innards may combust without warning, resulting in spectacular explosions that will render the Delivery Boy, and anything in his immediate vicinity, quite unable to perform any function at all."
-                introText2=
+				introText2=
 "- Able to explode at will, damaging nearby enemies.
 - Will pursue nearby groups of enemies, but leaves solitary creatures alone.
 - Send Street-Walkers ahead of the Delivery Boy to protect him."
-                baseMoveSpeed="35"
-                hasRepulseForce="true"
-                maxHealth="70"
-                collisionRadius="15"
-                detectRadius="200"
-                loseInterestRadius="200">
-                <ResourceCosts>
-                    <Resource type="blue" amount="25"/>
-                    <Resource type="yellow" amount="25"/>
-                </ResourceCosts>
-                <Weapon isAOE="true" maxAttackDistance="15" aoeRadius="75" aoeDamageFriendlies="false" aoeMaxDamage="210" damageType="explosion" damageMin="70" damageMax="70"/>
-                <Armor>
-                    <Damage type="crushing"     scale="1"/>
-                    <Damage type="piercing"     scale="1"/>
-                    <Damage type="explosion"    scale="1"/>
-                    <Damage type="colossus"     scale="1"/>
-                </Armor>
-            </Unit>
+				baseMoveSpeed="35"
+				hasRepulseForce="true"
+				maxHealth="70"
+				collisionRadius="15"
+				detectRadius="200"
+				loseInterestRadius="200">
+				<ResourceCosts>
+					<Resource type="blue" amount="25"/>
+					<Resource type="yellow" amount="25"/>
+				</ResourceCosts>
+				<Weapon isAOE="true" maxAttackDistance="15" aoeRadius="75" aoeDamageFriendlies="false" aoeMaxDamage="210" damageType="explosion" damageMin="70" damageMax="70"/>
+				<Armor>
+					<Damage type="crushing"		scale="1"/>
+					<Damage type="piercing"		scale="1"/>
+					<Damage type="explosion"	scale="1"/>
+					<Damage type="colossus"		scale="1"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="colossus"
-                displayName="Flesh Behemoth"
-                description="FLESH BEHEMOTH: A massive pile of discarded flesh. The Behemoth's powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
-                introText=
+			<Unit
+				type="colossus"
+				displayName="Flesh Behemoth"
+				description="FLESH BEHEMOTH: A massive pile of discarded flesh. The Behemoth's powerful attack is dangerous to everybody, but it will slow down when swarmed by enemies."
+				introText=
 "The result of a delinquent student’s slap-dash attempt to complete a simple Reanimation 101 homework assignment, the Flesh Behemoth is an unfortunate example of the craft gone horribly awry. This sad, pathetic creature knows only pain and rage, and will lash out at anything in its immediate vicinity, with devastating results.
 
 Students are advised that the Weardd Academy for Responsible Reanimation will not look kindly on the reanimation of anything resembling a Flesh Behemoth. Anyone caught in the creation or possession of such a monster will face a disciplinary hearing from the Academy Ethics Committee, followed by possible expulsion from the school."
-                introText2=
+				introText2=
 "- Massively strong and durable.
 - Does not pursue other creatures, but will attack any that get too close.
 - Moves and attacks more slowly when when assaulted by multiple creatures simultaneously."
-                baseMoveSpeed="25"
-                hasRepulseForce="true"
-                maxHealth="100"
-                collisionRadius="30"
-                detectRadius="50"
-                loseInterestRadius="50">
-                <ResourceCosts>
-                    <Resource type="white" amount="250"/>
-                    <Resource type="red" amount="350"/>
-                </ResourceCosts>
-                <Weapon damageType="colossus" damageMin="70" damageMax="90" cooldown="1" maxAttackDistance="50"/>
-                <Armor>
-                    <Damage type="crushing"     scale="0.1"/>
-                    <Damage type="piercing"     scale="0.07"/>
-                    <Damage type="explosion"    scale="0.1"/>
-                    <Damage type="colossus"     scale="0.1"/>
-                </Armor>
-            </Unit>
+				baseMoveSpeed="25"
+				hasRepulseForce="true"
+				maxHealth="100"
+				collisionRadius="30"
+				detectRadius="50"
+				loseInterestRadius="50">
+				<ResourceCosts>
+					<Resource type="white" amount="250"/>
+					<Resource type="red" amount="350"/>
+				</ResourceCosts>
+				<Weapon damageType="colossus" damageMin="70" damageMax="90" cooldown="1" maxAttackDistance="50"/>
+				<Armor>
+					<Damage type="crushing"		scale="0.1"/>
+					<Damage type="piercing"		scale="0.07"/>
+					<Damage type="explosion"	scale="0.1"/>
+					<Damage type="colossus"		scale="0.1"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="boss"
-                displayName="Weardd" description="" introText="" introText2=""
-                baseMoveSpeed="30"
-                hasRepulseForce="true"
-                survivesDaytime="true"
-                minHealth="1"
-                maxHealth="150"
-                collisionRadius="30"
-                detectRadius="50"
-                loseInterestRadius="50">
-                <ResourceCosts/>
-                <Weapon damageType="colossus" damageMin="100" damageMax="120" cooldown="1" maxAttackDistance="50"/>
-                <Armor>
-                    <Damage type="crushing"     scale="0.1"/>
-                    <Damage type="piercing"     scale="0.07"/>
-                    <Damage type="explosion"    scale="0.1"/>
-                    <Damage type="colossus"     scale="0.1"/>
-                </Armor>
-            </Unit>
+			<Unit
+				type="boss"
+				displayName="Weardd" description="" introText="" introText2=""
+				baseMoveSpeed="30"
+				hasRepulseForce="true"
+				survivesDaytime="true"
+				minHealth="1"
+				maxHealth="150"
+				collisionRadius="30"
+				detectRadius="50"
+				loseInterestRadius="50">
+				<ResourceCosts/>
+				<Weapon damageType="colossus" damageMin="100" damageMax="120" cooldown="1" maxAttackDistance="50"/>
+				<Armor>
+					<Damage type="crushing"		scale="0.1"/>
+					<Damage type="piercing"		scale="0.07"/>
+					<Damage type="explosion"	scale="0.1"/>
+					<Damage type="colossus"		scale="0.1"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="courier"
-                displayName="Ladyfingers"
-                description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
-                introText=
+			<Unit
+				type="courier"
+				displayName="Ladyfingers"
+				description="LADYFINGERS: Retrieves spell pick-ups from the battlefield. The more Ladyfingers you have in play, the faster each will move. Ladyfingers do not attack other creatures."
+				introText=
 "The diminutive Ladyfingers possesses a Magpie's instinct for collecting and hoarding shiny treasures. She is particularly adept at retrieving coins lost in the nether regions of the living room sofa.
 
 Ladyfingers are social creatures, and thrive in groups. When near other friendly specimens, they will perform tasks with increased vigor and speed.
 
 Be warned: the Ladyfingers’ delicate frame and small size render her quite fragile. Take care not to step on your Ladyfingers, or allow careless classmates to play with her."
-                introText2=
+				introText2=
 "- Retrieves Infusions from the battlefield and returns them to your workshop.
 - Moves more quickly when other friendly Ladyfingers are nearby.
 - Weak defense; does not attack."
-                baseMoveSpeed="65"
-                hasRepulseForce="false"
-                maxHealth="40"
-                collisionRadius="30"
-                detectRadius="0"
-                loseInterestRadius="0">
-                <ResourceCosts>
-                    <Resource type="white" amount="30"/>
-                    <Resource type="yellow" amount="20"/>
-                </ResourceCosts>
-                <Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
-                <Armor>
-                    <Damage type="crushing"     scale="1"/>
-                    <Damage type="piercing"     scale="1"/>
-                    <Damage type="explosion"    scale="1"/>
-                    <Damage type="colossus"     scale="1"/>
-                </Armor>
-            </Unit>
+				baseMoveSpeed="65"
+				hasRepulseForce="false"
+				maxHealth="40"
+				collisionRadius="30"
+				detectRadius="0"
+				loseInterestRadius="0">
+				<ResourceCosts>
+					<Resource type="white" amount="30"/>
+					<Resource type="yellow" amount="20"/>
+				</ResourceCosts>
+				<Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
+				<Armor>
+					<Damage type="crushing"		scale="1"/>
+					<Damage type="piercing"		scale="1"/>
+					<Damage type="explosion"	scale="1"/>
+					<Damage type="colossus"		scale="1"/>
+				</Armor>
+			</Unit>
 
-            <Unit
-                type="workshop"
-                displayName="Workshop" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
-                maxHealth="150"
-                collisionRadius="20">
-                <ResourceCosts/>
-                <Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
-                <Armor>
-                    <Damage type="crushing"     scale="0.05"/>
-                    <Damage type="piercing"     scale="0.1"/>
-                    <Damage type="explosion"    scale="0.1"/>
-                    <Damage type="colossus"     scale="0.025"/>
-                </Armor>
-            </Unit>
-        </Units>
+			<Unit
+				type="workshop"
+				displayName="Workshop" description="" introText="" introText2="" baseMoveSpeed="0" hasRepulseForce="false" detectRadius="0" loseInterestRadius="0"
+				maxHealth="150"
+				collisionRadius="20">
+				<ResourceCosts/>
+				<Weapon damageType="crushing" damageMin="0" damageMax="0" cooldown="0" maxAttackDistance="0"/>
+				<Armor>
+					<Damage type="crushing"		scale="0.05"/>
+					<Damage type="piercing"		scale="0.1"/>
+					<Damage type="explosion"	scale="0.1"/>
+					<Damage type="colossus"		scale="0.025"/>
+				</Armor>
+			</Unit>
+		</Units>
 
-        <Spells>
-            <Spell
-                type="bloodlust"
-                displayName="Bloodlust"
-                introText=
+		<Spells>
+			<Spell
+				type="bloodlust"
+				displayName="Bloodlust"
+				introText=
 "Enrages your creatures! They will move and attack faster, but will be slightly more vulnerable to attack.
 
 Lasts for 25 seconds."
-                expireTime="25"
-                speedScaleOffset="0.5"
-                damageScaleOffset="0.3"/>
+				expireTime="25"
+				speedScaleOffset="0.5"
+				damageScaleOffset="0.3"/>
 
-            <Spell
-                type="rigormortis"
-                displayName="Rigor Mortis"
-                introText=
+			<Spell
+				type="rigormortis"
+				displayName="Rigor Mortis"
+				introText=
 "Toughens the skin of your creatures. They will be able to absorb much more damage.
 
 Lasts for 30 seconds."
-                expireTime="30"
-                damageScaleOffset="-0.4"/>
+				expireTime="30"
+				damageScaleOffset="-0.4"/>
 
-            <Spell
-                type="shuffle"
-                displayName="Shuffle"
-                introText="Flushes your resource console and refills it with large groups of Flesh, Blood, Energy, and Scrap."
-                />
+			<Spell
+				type="shuffle"
+				displayName="Shuffle"
+				introText="Flushes your resource console and refills it with large groups of Flesh, Blood, Energy, and Scrap."
+				/>
 
-            <Spell
-                type="multiplier"
-                displayName="multiplier"
-                introText=""
-                />
-        </Spells>
+			<Spell
+				type="multiplier"
+				displayName="multiplier"
+				introText=""
+				/>
+		</Spells>
 
-    </GameData>
+	</GameData>
 
-    <LevelProgression>
-        <Level name="Enter the Fray"/>
-        <Level name="The Handy Man"/>
-        <Level name="The Sun Rises"/>
-        <Level name="A Boy's Best Friend"/>
-        <Level name="Street-Walker Swarm"/>
-        <Level name="Special Delivery"/>
-        <Level name="Abomination"/>
-        <Level name="Flesh and Blood"/>
-        <Level name="Fire Hazard"/>
-        <Level name="Center of Attention"/>
-        <Level name="Sidekick"/>
-        <Level name="Limited Resources"/>
-        <Level name="Infusion Infusion"/>
-        <Level name="Wherein All is Revealed..."/>
-    </LevelProgression>
+	<LevelProgression>
+		<Level name="Enter the Fray"/>
+		<Level name="The Handy Man"/>
+		<Level name="The Sun Rises"/>
+		<Level name="A Boy's Best Friend"/>
+		<Level name="Street-Walker Swarm"/>
+		<Level name="Special Delivery"/>
+		<Level name="Abomination"/>
+		<Level name="Flesh and Blood"/>
+		<Level name="Fire Hazard"/>
+		<Level name="Center of Attention"/>
+		<Level name="Sidekick"/>
+		<Level name="Limited Resources"/>
+		<Level name="Infusion Infusion"/>
+		<Level name="Wherein All is Revealed..."/>
+	</LevelProgression>
 
-    <Multiplayer>
-        <!-- 1v1 settings -->
-        <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="city">
-                <BaseLocation x="75" y="145" team="0"/>
-                <BaseLocation x="632" y="265" team="1"/>
-            </MapSettings>
-        </MultiplayerSettings>
+	<Multiplayer>
+		<!-- 1v1 settings -->
+		<MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="city">
+				<BaseLocation x="75" y="145" team="0"/>
+				<BaseLocation x="632" y="265" team="1"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="school">
-                <BaseLocation x="75" y="305" team="0"/>
-                <BaseLocation x="622" y="265" team="1"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="school">
+				<BaseLocation x="75" y="305" team="0"/>
+				<BaseLocation x="622" y="265" team="1"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="wharf">
-                <BaseLocation x="60" y="205" team="0"/>
-                <BaseLocation x="642" y="175" team="1"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="wharf">
+				<BaseLocation x="60" y="205" team="0"/>
+				<BaseLocation x="642" y="175" team="1"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 2v1 settings -->
-        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
-            <MapSettings backgroundName="city">
-                <BaseLocation x="622" y="115" team="0"/>
-                <BaseLocation x="622" y="295" team="0"/>
-                <BaseLocation x="85" y="205" team="1"/>
-                <SpellDropLocation x="320" y="205"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 2v1 settings -->
+		<MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
+			<MapSettings backgroundName="city">
+				<BaseLocation x="622" y="115" team="0"/>
+				<BaseLocation x="622" y="295" team="0"/>
+				<BaseLocation x="85" y="205" team="1"/>
+				<SpellDropLocation x="320" y="205"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
-            <MapSettings backgroundName="wharf">
-                <BaseLocation x="85" y="125" team="0"/>
-                <BaseLocation x="85" y="305" team="0"/>
-                <BaseLocation x="622" y="215" team="1"/>
-                <SpellDropLocation x="386" y="205"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="2v1" smallerTeamHandicap="1.8">
+			<MapSettings backgroundName="wharf">
+				<BaseLocation x="85" y="125" team="0"/>
+				<BaseLocation x="85" y="305" team="0"/>
+				<BaseLocation x="622" y="215" team="1"/>
+				<SpellDropLocation x="386" y="205"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 1v1v1 settings -->
-        <MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="city" mapScaleY="1.88">
-                <BaseLocation x="125" y="595" team="0"/>
-                <BaseLocation x="575" y="595" team="1"/>
-                <BaseLocation x="350" y="205" team="2"/>
-                <SpellDropLocation x="350" y="400"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 1v1v1 settings -->
+		<MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="city" mapScaleY="1.88">
+				<BaseLocation x="125" y="595" team="0"/>
+				<BaseLocation x="575" y="595" team="1"/>
+				<BaseLocation x="350" y="205" team="2"/>
+				<SpellDropLocation x="350" y="400"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="wharf" mapScaleY="1.88">
-                <BaseLocation x="125" y="205" team="0"/>
-                <BaseLocation x="575" y="205" team="1"/>
-                <BaseLocation x="350" y="595" team="2"/>
-                <SpellDropLocation x="350" y="400"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="1v1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="wharf" mapScaleY="1.88">
+				<BaseLocation x="125" y="205" team="0"/>
+				<BaseLocation x="575" y="205" team="1"/>
+				<BaseLocation x="350" y="595" team="2"/>
+				<SpellDropLocation x="350" y="400"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 2v1v1 settings -->
-        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
-            <MapSettings backgroundName="city">
-                <BaseLocation x="632" y="155" team="0"/>
-                <BaseLocation x="632" y="255" team="0"/>
-                <BaseLocation x="95" y="110" team="1"/>
-                <BaseLocation x="95" y="325" team="2"/>
-                <SpellDropLocation x="340" y="217"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 2v1v1 settings -->
+		<MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
+			<MapSettings backgroundName="city">
+				<BaseLocation x="632" y="155" team="0"/>
+				<BaseLocation x="632" y="255" team="0"/>
+				<BaseLocation x="95" y="110" team="1"/>
+				<BaseLocation x="95" y="325" team="2"/>
+				<SpellDropLocation x="340" y="217"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
-            <MapSettings backgroundName="wharf">
-                <BaseLocation x="90" y="155" team="0"/>
-                <BaseLocation x="90" y="255" team="0"/>
-                <BaseLocation x="627" y="110" team="1"/>
-                <BaseLocation x="627" y="305" team="2"/>
-                <SpellDropLocation x="378" y="217"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="2v1v1" smallerTeamHandicap="1.4">
+			<MapSettings backgroundName="wharf">
+				<BaseLocation x="90" y="155" team="0"/>
+				<BaseLocation x="90" y="255" team="0"/>
+				<BaseLocation x="627" y="110" team="1"/>
+				<BaseLocation x="627" y="305" team="2"/>
+				<SpellDropLocation x="378" y="217"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 3v1 settings -->
-        <MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="2.8">
-            <MapSettings backgroundName="wharf">
-                <BaseLocation x="642" y="185" team="0"/>
-                <BaseLocation x="590" y="115" team="0"/>
-                <BaseLocation x="590" y="335" team="0"/>
-                <BaseLocation x="70" y="185" team="1"/>
-                <SpellDropLocation x="250" y="160"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 3v1 settings -->
+		<MultiplayerSettings arrangeType="3v1" smallerTeamHandicap="2.8">
+			<MapSettings backgroundName="wharf">
+				<BaseLocation x="642" y="185" team="0"/>
+				<BaseLocation x="590" y="115" team="0"/>
+				<BaseLocation x="590" y="335" team="0"/>
+				<BaseLocation x="70" y="185" team="1"/>
+				<SpellDropLocation x="250" y="160"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 2v2 settings -->
-        <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
-            <MapSettings backgroundName="wharf">
-                <BaseLocation x="85" y="115" team="0"/>
-                <BaseLocation x="85" y="325" team="0"/>
-                <BaseLocation x="627" y="115" team="1"/>
-                <BaseLocation x="627" y="325" team="1"/>
-                <SpellDropLocation x="356" y="220"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 2v2 settings -->
+		<MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
+			<MapSettings backgroundName="wharf">
+				<BaseLocation x="85" y="115" team="0"/>
+				<BaseLocation x="85" y="325" team="0"/>
+				<BaseLocation x="627" y="115" team="1"/>
+				<BaseLocation x="627" y="325" team="1"/>
+				<SpellDropLocation x="356" y="220"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
 
-        <MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
-            <MapSettings backgroundName="city">
-                <BaseLocation x="627" y="155" team="0"/>
-                <BaseLocation x="627" y="265" team="0"/>
-                <BaseLocation x="85" y="155" team="1"/>
-                <BaseLocation x="85" y="265" team="1"/>
-                <SpellDropLocation x="356" y="210"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<MultiplayerSettings arrangeType="2v2" smallerTeamHandicap="1">
+			<MapSettings backgroundName="city">
+				<BaseLocation x="627" y="155" team="0"/>
+				<BaseLocation x="627" y="265" team="0"/>
+				<BaseLocation x="85" y="155" team="1"/>
+				<BaseLocation x="85" y="265" team="1"/>
+				<SpellDropLocation x="356" y="210"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-        <!-- 1v1v1v1 settings -->
-        <MultiplayerSettings arrangeType="1v1v1v1" smallerTeamHandicap="1">
-            <MapSettings backgroundName="city" mapScaleY="1.88" scaleSprites="false">
-                <BaseLocation x="155" y="205" team="0"/>
-                <BaseLocation x="155" y="595" team="1"/>
-                <BaseLocation x="545" y="205" team="2"/>
-                <BaseLocation x="545" y="595" team="3"/>
-                <SpellDropLocation x="350" y="400"/>
-            </MapSettings>
-        </MultiplayerSettings>
+		<!-- 1v1v1v1 settings -->
+		<MultiplayerSettings arrangeType="1v1v1v1" smallerTeamHandicap="1">
+			<MapSettings backgroundName="city" mapScaleY="1.88" scaleSprites="false">
+				<BaseLocation x="155" y="205" team="0"/>
+				<BaseLocation x="155" y="595" team="1"/>
+				<BaseLocation x="545" y="205" team="2"/>
+				<BaseLocation x="545" y="595" team="3"/>
+				<SpellDropLocation x="350" y="400"/>
+			</MapSettings>
+		</MultiplayerSettings>
 
-    </Multiplayer>
+	</Multiplayer>
 
 </root>
