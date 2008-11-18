@@ -14,12 +14,11 @@ package client
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
 	
-	import paths.Path;
-	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.Neighborhood;
 	
+	import sprites.CellSprite;
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
@@ -177,6 +176,16 @@ package client
 			Log.debug ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
 			_label.hide();
 		}
+				
+	    public function checkFootprints (cell:Cell, sprite:CellSprite) :void
+	    {
+	       Log.debug("working out whether to display footprints for cell "+cell);
+	    }			
+	
+	    public function clearFootprints (cell:Cell, sprite:CellSprite) :void
+	    {
+	    	Log.debug("clearing footprints for cell "+cell);
+	    }
 				
 		/**
 		 * Compute a rectangle in board coordinates that will mean the viewpoint square can be

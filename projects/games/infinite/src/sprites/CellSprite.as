@@ -3,7 +3,7 @@ package sprites
 	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
-		
+	
 	import cells.CellObjective;
 	import cells.views.CellView;
 	
@@ -35,7 +35,19 @@ package sprites
 		 */
 		protected function registerEventHandlers (source:EventDispatcher) :void
 		{
-			source.addEventListener(MouseEvent.MOUSE_DOWN, handleCellClicked);			
+			source.addEventListener(MouseEvent.MOUSE_DOWN, handleCellClicked);
+            source.addEventListener(MouseEvent.ROLL_OVER, checkFootprints);
+            source.addEventListener(MouseEvent.ROLL_OUT, clearFootprints);   
+		}
+		
+		protected function checkFootprints(event:MouseEvent) :void
+		{
+			_objective.checkFootprints(_cell, this);	
+		}
+		
+		protected function clearFootprints(event:MouseEvent) :void
+		{
+			_objective.clearFootprints(_cell, this);
 		}
 
 		protected function handleCellClicked (event:MouseEvent) :void
