@@ -1,11 +1,15 @@
 package redrover.game {
 
 import com.threerings.util.ArrayUtil;
+import com.whirled.contrib.simplegame.SimObject;
 
-public class Board
+import redrover.*;
+
+public class Board extends SimObject
 {
-    public function Board (cols :int, rows :int)
+    public function Board (teamId :int, cols :int, rows :int)
     {
+        _teamId = teamId;
         _cols = cols;
         _rows = rows;
 
@@ -14,6 +18,33 @@ public class Board
         for (var ii :int = 0; ii < size; ++ii) {
             _cells[ii] = BoardCell.create(getX(ii), getY(ii));
         }
+    }
+
+    public function countGems () :int
+    {
+        var numGems :int;
+        for each (var cell :BoardCell in _cells) {
+            if (cell.hasGem) {
+                numGems++;
+            }
+        }
+
+        return numGems;
+    }
+
+    public function get teamId () :int
+    {
+        return _teamId;
+    }
+
+    public function get pixelWidth () :int
+    {
+        return _cols * Constants.BOARD_CELL_SIZE;
+    }
+
+    public function get pixelHeight () :int
+    {
+        return _rows * Constants.BOARD_CELL_SIZE;
     }
 
     public function get cols () :int
@@ -46,6 +77,7 @@ public class Board
         return (index / _cols);
     }
 
+    protected var _teamId :int;
     protected var _cols :int;
     protected var _rows :int;
     protected var _cells :Array;
