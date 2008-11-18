@@ -102,11 +102,13 @@ public class Player extends SimObject
             clampLoc();
         }
 
-        // is there a gem in the space we're standing in?
-        var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
-        if (cell.hasGem) {
-            cell.hasGem = false;
-            _numGems += 1;
+        // If we're on the other team's board, pickup gems when we enter their cells
+        if (_curBoardId != _teamId) {
+            var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
+            if (cell.hasGem) {
+                cell.hasGem = false;
+                _numGems += 1;
+            }
         }
     }
 
