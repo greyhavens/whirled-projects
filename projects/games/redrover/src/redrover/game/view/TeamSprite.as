@@ -7,18 +7,15 @@ import redrover.util.SpriteUtil;
 public class TeamSprite extends Sprite
 {
     public var boardLayer :Sprite;
-    public var gemLayer :Sprite;
-    public var playerLayer :Sprite;
+    public var objectLayer :Sprite;
 
     public function TeamSprite ()
     {
         boardLayer = SpriteUtil.createSprite(true);
-        gemLayer = SpriteUtil.createSprite();
-        playerLayer = SpriteUtil.createSprite();
+        objectLayer = SpriteUtil.createSprite();
 
         addChild(boardLayer);
-        addChild(gemLayer);
-        addChild(playerLayer);
+        addChild(objectLayer);
     }
 
 }

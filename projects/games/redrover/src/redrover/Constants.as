@@ -10,8 +10,6 @@ public class Constants
 {
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
 
-    public static const NUM_TEAMS :int = 2;
-
     public static const BOARD_CELL_SIZE :int = 50;
     public static const BOARD_COLS :int = SCREEN_SIZE.x / BOARD_CELL_SIZE;
     public static const BOARD_ROWS :int = SCREEN_SIZE.y / BOARD_CELL_SIZE;
@@ -28,6 +26,25 @@ public class Constants
 
     public static const TEAM_RED :int = 0;
     public static const TEAM_BLUE :int = 1;
+    public static const NUM_TEAMS :int = 2;
+
+    public static function getOtherTeam (teamId :int) :int
+    {
+        return (teamId == TEAM_RED ? TEAM_BLUE : TEAM_RED);
+    }
+
+    public static const PLAYER_COLORS :Array = [
+        0xFFFFFF,
+        0x9FBCFF,
+        0xFF0000,
+        0x9C78E4,
+        0x47880A,
+        0x996633,
+        0xFF8000,
+        0x0000BB,
+        0xFF6FCF,
+        0x333333,
+    ];
 }
 
 }
