@@ -22,6 +22,7 @@ public class PlayerView extends SceneObject
         _sprite = SpriteUtil.createSprite();
         _playerMovies = ArrayUtil.create(Constants.NUM_TEAMS, null);
         setTeam(_player.teamId);
+        setBoard(_player.curBoardId);
     }
 
     override protected function destroyed () :void
@@ -48,8 +49,13 @@ public class PlayerView extends SceneObject
         super.update(dt);
 
         // Have we switched teams?
-        if (_curTeamId != _player.teamId) {
+        if (_lastTeamId != _player.teamId) {
             setTeam(_player.teamId);
+        }
+
+        // Have we switched boards?
+        if (_lastBoardId != _player.curBoardId) {
+            setBoard(_player.curBoardId);
         }
 
         // Update animation based on facing direction
@@ -95,6 +101,12 @@ public class PlayerView extends SceneObject
         _lastGems = newGems;
     }
 
+    protected function setBoard (boardId :int) :void
+    {
+        GameContext.gameMode.getTeamSprite(boardId).objectLayer.addChild(_sprite);
+        _lastBoardId = boardId;
+    }
+
     protected function setTeam (teamId :int) :void
     {
         var movies :Array = _playerMovies[teamId];
@@ -134,9 +146,7 @@ public class PlayerView extends SceneObject
             _playerMovies[teamId] = movies;
         }
 
-        GameContext.gameMode.getTeamSprite(teamId).objectLayer.addChild(_sprite);
-
-        _curTeamId = teamId;
+        _lastTeamId = teamId;
         _lastFacing = -1;
         _lastLoc = new Vector2();
     }
@@ -158,10 +168,11 @@ public class PlayerView extends SceneObject
     protected var _player :Player;
     protected var _sprite :Sprite;
     protected var _playerMovies :Array; // Array<Array<MovieClip>>
-    protected var _curTeamId :int = -1;
+    protected var _lastTeamId :int = -1;
     protected var _lastFacing :int = -1;
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastGems :int;
+    protected var _lastBoardId :int;
 
     protected static const FACING_N :int = 0;
     protected static const FACING_W :int = 1;

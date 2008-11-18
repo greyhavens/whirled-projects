@@ -2,17 +2,39 @@ package redrover.game{
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import redrover.*;
 
 public class Player extends SimObject
 {
-    public function Player (playerId :int, teamId :int, color :uint)
+    public static const STATE_NORMAL :int = 0;
+    public static const STATE_SWITCHINGBOARDS :int = 1;
+
+    public function Player (playerId :int, teamId :int, gridX :int, gridY :int, color :uint)
     {
         _playerId = playerId;
         _teamId = teamId;
         _curBoardId = teamId;
         _color = color;
+        _state = STATE_NORMAL;
+
+        _loc.x = (gridX + 0.5) * Constants.BOARD_CELL_SIZE;
+        _loc.y = (gridY + 0.5) * Constants.BOARD_CELL_SIZE;
+        clampLoc();
+    }
+
+    public function beginSwitchBoards () :void
+    {
+        if (_state == STATE_SWITCHINGBOARDS) {
+            return;
+        }
+
+        _state = STATE_SWITCHINGBOARDS;
+        addNamedTask(SWITCH_BOARDS_TASK_NAME,
+            After(Constants.SWITCH_BOARDS_TIME,
+                new FunctionTask(switchBoards)));
     }
 
     public function moveLeft () :void
@@ -64,6 +86,11 @@ public class Player extends SimObject
         return _loc;
     }
 
+    public function get state () :int
+    {
+        return _state;
+    }
+
     public function get numGems () :int
     {
         return _numGems;
@@ -93,23 +120,31 @@ public class Player extends SimObject
     {
         super.update(dt);
 
-        var offset :Vector2 = _moveDirection.clone();
-        var moveSpeed :Number = this.moveSpeed;
-        if (moveSpeed > 0 && (offset.x != 0 || offset.y != 0)) {
-            offset.length = moveSpeed * dt;
-            _loc.x += offset.x;
-            _loc.y += offset.y;
-            clampLoc();
-        }
+        if (_state != STATE_SWITCHINGBOARDS) {
+            var offset :Vector2 = _moveDirection.clone();
+            var moveSpeed :Number = this.moveSpeed;
+            if (moveSpeed > 0 && (offset.x != 0 || offset.y != 0)) {
+                offset.length = moveSpeed * dt;
+                _loc.x += offset.x;
+                _loc.y += offset.y;
+                clampLoc();
+            }
 
-        // If we're on the other team's board, pickup gems when we enter their cells
-        if (_curBoardId != _teamId) {
-            var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
-            if (cell.hasGem) {
-                cell.hasGem = false;
-                _numGems += 1;
+            // If we're on the other team's board, pickup gems when we enter their cells
+            if (_curBoardId != _teamId) {
+                var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
+                if (cell.hasGem) {
+                    cell.hasGem = false;
+                    _numGems += 1;
+                }
             }
         }
+    }
+
+    protected function switchBoards () :void
+    {
+        _state = STATE_NORMAL;
+        _curBoardId = Constants.getOtherTeam(_curBoardId);
     }
 
     protected function clampLoc () :void
@@ -129,7 +164,10 @@ public class Player extends SimObject
     protected var _score :int;
     protected var _moveDirection :Vector2 = new Vector2();
     protected var _loc :Vector2 = new Vector2();
+    protected var _state :int;
     protected var _color :uint;
+
+    protected static const SWITCH_BOARDS_TASK_NAME :String = "SwitchBoards";
 }
 
 }

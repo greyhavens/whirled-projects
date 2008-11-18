@@ -22,6 +22,7 @@ public class Constants
 
     public static const GEM_VALUE :IntValueTable = new IntValueTable([1, 2, 3, 4], 5);
 
+    public static const SWITCH_BOARDS_TIME :Number = 1;
     public static const RETURN_HOME_COST :int = 4;
 
     public static const TEAM_RED :int = 0;

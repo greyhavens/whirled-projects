@@ -94,7 +94,9 @@ public class GameMode extends AppMode
         // create players
         var playerColors :Array = Constants.PLAYER_COLORS.slice();
         Rand.shuffleArray(playerColors, Rand.STREAM_GAME);
-        var player :Player = new Player(0, 0, playerColors.pop());
+        var gridX :int = Rand.nextIntRange(0, Constants.BOARD_COLS, Rand.STREAM_GAME);
+        var gridY :int = Rand.nextIntRange(0, Constants.BOARD_ROWS, Rand.STREAM_GAME);
+        var player :Player = new Player(0, 0, gridX, gridY, playerColors.pop());
         GameContext.players.push(player);
         GameContext.localPlayerIndex = 0;
         addObject(player);
@@ -143,6 +145,10 @@ public class GameMode extends AppMode
     override public function onKeyDown (keyCode :uint) :void
     {
         switch (keyCode) {
+        case KeyboardCodes.SPACE:
+            GameContext.localPlayer.beginSwitchBoards();
+            break;
+
         case KeyboardCodes.LEFT:
             GameContext.localPlayer.moveLeft();
             break;
