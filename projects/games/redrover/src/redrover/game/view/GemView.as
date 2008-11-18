@@ -1,10 +1,7 @@
 package redrover.game.view {
 
-import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.ImageResource;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
@@ -18,12 +15,12 @@ public class GemView extends SceneObject
     {
         _boardCell = boardCell;
 
+        var gem :DisplayObject = GemFactory.createGem(teamId);
+        gem.x = -gem.width * 0.5;
+        gem.y = -gem.height;
+
         _sprite = SpriteUtil.createSprite();
-        var bm :Bitmap = ImageResource.instantiateBitmap("gem");
-        bm.filters = [ new ColorMatrix().colorize(TEAM_COLORS[teamId]).createFilter() ];
-        bm.x = -bm.width * 0.5;
-        bm.y = -bm.height;
-        _sprite.addChild(bm);
+        _sprite.addChild(gem);
 
         // center the GemView in its cell
         this.x = (_boardCell.gridX + 0.5) * Constants.BOARD_CELL_SIZE;
@@ -44,8 +41,6 @@ public class GemView extends SceneObject
 
     protected var _boardCell :BoardCell;
     protected var _sprite :Sprite;
-
-    protected static const TEAM_COLORS :Array = [ 0x78bdff, 0xff9898 ];
 }
 
 }

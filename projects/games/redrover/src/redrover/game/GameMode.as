@@ -61,6 +61,7 @@ public class GameMode extends AppMode
         }
 
         addObject(new Camera(), _modeSprite);
+        addObject(new HUDView(), _modeSprite);
     }
 
     override public function update (dt :Number) :void
