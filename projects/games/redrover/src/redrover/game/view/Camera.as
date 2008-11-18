@@ -25,7 +25,7 @@ public class Camera extends SceneObject
     {
         super.update(dt);
 
-        var showTeamId :int = GameContext.localPlayer.curBoardTeamId;
+        var showTeamId :int = GameContext.localPlayer.curBoardId;
         if (_showingTeamId != showTeamId) {
             if (_sprite.numChildren > 0) {
                 _sprite.removeChildAt(0);

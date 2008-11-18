@@ -24,7 +24,7 @@ public class GemView extends SceneObject
 
         // center the GemView in its cell
         this.x = (_boardCell.gridX + 0.5) * Constants.BOARD_CELL_SIZE;
-        this.y = (_boardCell.gridY + 0.5) * Constants.BOARD_CELL_SIZE;
+        this.y = (_boardCell.gridY + 0.75) * Constants.BOARD_CELL_SIZE;
     }
 
     override public function get displayObject () :DisplayObject

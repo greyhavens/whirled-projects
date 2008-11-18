@@ -1,13 +1,11 @@
 package redrover.game {
 
 import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.Vector2;
 import com.threerings.util.KeyboardCodes;
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.VariableTimedTask;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
@@ -24,11 +22,66 @@ public class GameMode extends AppMode
         GameContext.init();
         GameContext.gameMode = this;
 
-        createLogicObjects();
-        createViewObjects();
+        setupAudio();
+
+        setupLogicObjects();
+        setupViewObjects();
     }
 
-    protected function createLogicObjects () :void
+    override protected function destroy () :void
+    {
+        shutdownAudio();
+        super.destroy();
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+
+        GameContext.sfxControls.pause(false);
+        GameContext.musicControls.pause(false);
+        GameContext.musicControls.volumeTo(1, 0.3);
+    }
+
+    override protected function exit () :void
+    {
+        if (GameContext.sfxControls != null) {
+            GameContext.sfxControls.pause(true);
+        }
+
+        if (GameContext.musicControls != null) {
+            GameContext.musicControls.volumeTo(0.2, 0.3);
+        }
+
+        super.exit();
+    }
+
+    protected function setupAudio () :void
+    {
+        GameContext.playAudio = true;
+
+        GameContext.sfxControls = new AudioControls(
+            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+        GameContext.musicControls = new AudioControls(
+            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_MUSIC));
+
+        GameContext.sfxControls.retain();
+        GameContext.musicControls.retain();
+
+        GameContext.sfxControls.pause(true);
+        GameContext.musicControls.pause(true);
+    }
+
+    protected function shutdownAudio () :void
+    {
+        GameContext.sfxControls.stop(true);
+        GameContext.musicControls.stop(true);
+
+        GameContext.sfxControls.release();
+        GameContext.musicControls.release();
+    }
+
+    protected function setupLogicObjects () :void
     {
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
             var board :Board = new Board(teamId, Constants.BOARD_COLS, Constants.BOARD_ROWS);
@@ -47,7 +100,7 @@ public class GameMode extends AppMode
         addObject(player);
     }
 
-    protected function createViewObjects () :void
+    protected function setupViewObjects () :void
     {
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
             var teamSprite :TeamSprite = new TeamSprite();
@@ -69,7 +122,7 @@ public class GameMode extends AppMode
         super.update(dt);
 
         // sort the board objects in the currently-visible TeamSprite
-        var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardTeamId];
+        var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardId];
         DisplayUtil.sortDisplayChildren(curTeamSprite.objectLayer, displayObjectYSort);
     }
 
@@ -91,48 +144,51 @@ public class GameMode extends AppMode
     {
         switch (keyCode) {
         case KeyboardCodes.LEFT:
-            GameContext.localPlayer.moveDirection = new Vector2(-1, 0);
+            GameContext.localPlayer.moveLeft();
             break;
 
         case KeyboardCodes.RIGHT:
-            GameContext.localPlayer.moveDirection = new Vector2(1, 0);
+            GameContext.localPlayer.moveRight();
             break;
 
         case KeyboardCodes.UP:
-            GameContext.localPlayer.moveDirection = new Vector2(0, -1);
+            GameContext.localPlayer.moveUp();
             break;
 
         case KeyboardCodes.DOWN:
-            GameContext.localPlayer.moveDirection = new Vector2(0, 1);
+            GameContext.localPlayer.moveDown();
             break;
         }
     }
 
-    public function createGem (teamId :int) :void
+    public function createGem (boardId :int) :void
     {
-        var board :Board = getBoard(teamId);
+        var board :Board = getBoard(boardId);
         if (board.countGems() >= Constants.MAX_BOARD_GEMS) {
             return;
         }
 
         // find a random unoccupied BoardCell
         var cell :BoardCell;
-        for (;;) {
+        for (var ii :int = 0; ii < 20; ++ii) {
             var x :int = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
             var y :int = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
-            cell = board.getCell(x, y);
-            if (!cell.hasGem) {
+            var thisCell :BoardCell = board.getCell(x, y);
+            if (!thisCell.hasGem && GameContext.getPlayerAt(boardId, x, y) == null) {
+                cell = thisCell;
                 break;
             }
         }
 
-        cell.hasGem = true;
-        addObject(new GemView(teamId, cell), getTeamSprite(teamId).objectLayer);
+        if (cell != null) {
+            cell.hasGem = true;
+            addObject(new GemView(boardId, cell), getTeamSprite(boardId).objectLayer);
+        }
     }
 
-    public function getBoard (teamId :int) :Board
+    public function getBoard (boardId :int) :Board
     {
-        return _boards[teamId];
+        return _boards[boardId];
     }
 
     public function getTeamSprite (teamId :int) :TeamSprite

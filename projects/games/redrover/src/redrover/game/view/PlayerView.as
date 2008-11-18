@@ -21,7 +21,7 @@ public class PlayerView extends SceneObject
         _player = player;
         _sprite = SpriteUtil.createSprite();
         _playerMovies = ArrayUtil.create(Constants.NUM_TEAMS, null);
-        setTeam(player.teamId);
+        setTeam(_player.teamId);
     }
 
     override protected function destroyed () :void
@@ -47,10 +47,12 @@ public class PlayerView extends SceneObject
     {
         super.update(dt);
 
+        // Have we switched teams?
         if (_curTeamId != _player.teamId) {
             setTeam(_player.teamId);
         }
 
+        // Update animation based on facing direction
         var newLoc :Vector2 = _player.loc.clone();
         var newFacing :int;
         if (newLoc.x > _lastLoc.x) {
@@ -76,14 +78,21 @@ public class PlayerView extends SceneObject
 
             var movies :Array = _playerMovies[_player.teamId];
             _sprite.addChildAt(movies[newFacing], 0);
-
-            _lastFacing = newFacing;
         }
 
+        // update location
         this.x = newLoc.x;
         this.y = newLoc.y;
 
+        // Did we pick up a gem?
+        var newGems :int = _player.numGems;
+        if (newGems > _lastGems) {
+            GameContext.playGameSound("sfx_gem" + Math.min(newGems, NUM_GEM_SOUNDS));
+        }
+
+        _lastFacing = newFacing;
         _lastLoc = newLoc;
+        _lastGems = newGems;
     }
 
     protected function setTeam (teamId :int) :void
@@ -152,6 +161,7 @@ public class PlayerView extends SceneObject
     protected var _curTeamId :int = -1;
     protected var _lastFacing :int = -1;
     protected var _lastLoc :Vector2 = new Vector2();
+    protected var _lastGems :int;
 
     protected static const FACING_N :int = 0;
     protected static const FACING_W :int = 1;
@@ -164,6 +174,8 @@ public class PlayerView extends SceneObject
         [ "stand_N", "stand_SW", "stand_S", "stand_SW" ],
         [ "walk_N", "walk_SW", "walk_S", "walk_SW" ]
     ];
+
+    protected static const NUM_GEM_SOUNDS :int = 7;
 }
 
 }
