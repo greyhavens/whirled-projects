@@ -200,15 +200,20 @@ package client
 			Log.debug("clicked on "+event.cell);
 		}		
 		
-        public function checkFootprints (cell:Cell, sprite:CellSprite) :void
+        public function checkFootprints (sprite:CellSprite) :void
         {
-        	_footsteps.checkFootprints(cell, sprite);
+        	_footsteps.checkFootprints(sprite);
         }
         
         public function clearFootprints (event:MouseEvent) :void
         {
-        	_footsteps.clearFootprints(event);
+        	_footsteps.moveoffFootprint(event);
         }				
+		
+		public function moveOutSprite (sprite:CellSprite) :void
+		{
+			_footsteps.moveOutSprite(sprite);
+		}				
 				
 		/**	
 		 * Initialize the bugger, positioning the specificed point at the viewpoint.
@@ -267,6 +272,7 @@ package client
         	if (! unmapped.isEmpty()) {
         		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
         	}
+        	_footsteps.handlePathComplete();
 	    }
 	
 	    /**

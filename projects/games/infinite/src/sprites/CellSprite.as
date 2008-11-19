@@ -40,14 +40,14 @@ package sprites
 		
 		protected function checkFootprints(event:MouseEvent) :void
 		{
-			_objective.checkFootprints(_cell, this);	
+			_objective.checkFootprints(this);
 		}
 		
 		protected function clearFootprints(event:MouseEvent) :void
 		{
-			_objective.clearFootprints(event);
+			_objective.moveOutSprite(this);
 		}
-			
+
 		/**
 		 * Return the graphic center of the cell base.
 		 */

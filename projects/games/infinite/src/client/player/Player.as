@@ -83,8 +83,8 @@ package client.player
                 
         public function pathComplete () :void
         {
-            dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
             _moving = false;
+            dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
         }
         
         override public function toString () :String

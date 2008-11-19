@@ -33,11 +33,11 @@ package cells
 		 * Check to see whether the player can move to this cell, and indicate that fact using 'footprints'
 		 * on the display.
 		 */
-		function checkFootprints (cell:Cell, sprite:CellSprite) :void
+		function checkFootprints (sprite:CellSprite) :void
 		
 		/**
-		 * Clear the footprints display if there currently is one.
-		 */
-		function clearFootprints (event:MouseEvent) :void				
+		 * Indicate that the mouse has moved off the given sprite.
+		 */		
+		function moveOutSprite(sprite:CellSprite) :void;				
 	}
 }
