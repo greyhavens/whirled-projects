@@ -1,7 +1,6 @@
 package server
 {
 	import arithmetic.BoardCoordinates;
-	import arithmetic.VoidBoardRectangle;
 	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
@@ -24,6 +23,7 @@ package server
 	import world.World;
 	import world.WorldListener;
 	import world.arbitration.MoveEvent;
+	import world.level.Level;
 	import world.level.LevelEvent;
 	
 	public class WorldServer implements WorldListener
@@ -58,8 +58,9 @@ package server
 			const message:PathStart =
 			     new PathStart(event.player.id, event.path);
 		  
-			sendToGroup(event.player.level.players, RemoteWorld.START_PATH, 
-			     message);
+		    const level:Level = _world.findLevel(event.player.levelNumber);		 
+		  
+			sendToGroup(level.players, RemoteWorld.START_PATH, message);
 		}
 		
 		public function handleCellStateChange (event:CellStateEvent) :void
@@ -108,6 +109,7 @@ package server
 		
 		protected function moveProposed (event:MessageReceivedEvent) :void
 		{
+			Log.debug("move proposed");
 			_world.moveProposed(event.senderId, MoveProposal.readFromArray(event.value as ByteArray));
 		}
 		

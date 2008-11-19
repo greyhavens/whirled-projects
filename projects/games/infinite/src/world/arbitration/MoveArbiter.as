@@ -5,6 +5,6 @@ package world.arbitration
 	
 	public interface MoveArbiter
 	{
-		function proposeMove (player:Player, destination:Cell) :void 		
+		function proposeMove (player:MovablePlayer, destination:Cell) :void 		
 	}
 }

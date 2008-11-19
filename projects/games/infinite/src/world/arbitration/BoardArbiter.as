@@ -6,7 +6,6 @@ package world.arbitration
 	
 	import world.Cell;
 	import world.CellPath;
-	import world.Player;
 	import world.board.*;
 	
 	public class BoardArbiter implements MoveArbiter
@@ -16,7 +15,7 @@ package world.arbitration
 			_board = board;
 		}
 	
-		public function proposeMove (player:Player, destination:Cell) :void 
+		public function proposeMove (player:MovablePlayer, destination:Cell) :void 
 		{
 			if (player.isMoving()) {
 				Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
@@ -29,23 +28,33 @@ package world.arbitration
 				return;
 			}
 			
-			var path:Path;		
-			path = sidewaysPath(player, destination);
-			
-			if (path == null)
-			{
-				path = climbingPath(player, destination);
-			}
-			
+			var path:Path = findPath(player, destination);
 			if (path != null) {
 				dispatchStart(player, path);
 			}
 		}
 		
 		/**
+		 * Find a path between the player's location and the given destination.  Return null if no path can be found, otherwise
+		 * return the path.
+		 */
+		public function findPath (player:MovablePlayer, destination:Cell) :Path
+		{
+            var path:Path;      
+            path = sidewaysPath(player, destination);
+            
+            if (path == null)
+            {
+                path = climbingPath(player, destination);
+            }
+
+            return path;			
+		}
+		
+		/**
 		 * Determine whether there is a clear path between two different positions on the board.
 		 */
-		public function sidewaysPath (player:Player, destination:Cell) :Path
+		public function sidewaysPath (player:MovablePlayer, destination:Cell) :Path
 		{			
 			// for now, there is no path between two positions that are not on the same level.
 			if (! player.cell.sameRowAs(destination)) {				
@@ -76,13 +85,13 @@ package world.arbitration
 			return Path.sideways(player.cell.position, destination.position);
 		}
 		
-		protected function dispatchStart(player:Player, path:Path) :void
+		protected function dispatchStart(player:MovablePlayer, path:Path) :void
 		{
 			Log.debug("dispatching "+path+" to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
 		}
 		
-		public function climbingPath (player:Player, destination:Cell) :Path
+		public function climbingPath (player:MovablePlayer, destination:Cell) :Path
 		{
 			const start:BoardCoordinates = player.cell.position;
 			const finish:BoardCoordinates = destination.position;

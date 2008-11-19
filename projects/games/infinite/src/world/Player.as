@@ -13,10 +13,11 @@ package world
 	
 	import paths.Path;
 	
+	import world.arbitration.MovablePlayer;
 	import world.arbitration.MoveEvent;
 	import world.level.*;
 	
-	public class Player extends EventDispatcher implements CellInteractions, ItemPlayer
+	public class Player extends EventDispatcher implements CellInteractions, ItemPlayer, MovablePlayer
 	{
 		public function Player(id:int)
 		{
@@ -183,6 +184,11 @@ package world
         public function teleport () :void
         {
         	throw new Error("teleport not implemented yet");
+        }
+        
+        public function get levelNumber () :int
+        {
+        	return _level.number;
         }
         
         protected var _path:Path;

@@ -20,7 +20,7 @@ package world.level
         	player.enterLevel(level);
         }
         
-        protected function find(level:int) :Level
+        public function find(level:int) :Level
         {
         	const found:Level = _levels[level];
         	if (found == null) {

@@ -24,7 +24,9 @@ package client
 		}
 
 		public function handleCellClicked (event:CellEvent) :void
-		{			
+		{	
+			Log.debug("player controller handling click");		
+			
 			// check whether the player is in a cell they can't leave
 			if (_player.cell != null && !_player.cell.leave) {
 				return;

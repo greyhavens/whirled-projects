@@ -107,6 +107,11 @@ package world
 		{
 			dispatchEvent(new CellStateEvent(CellStateEvent.STATE_CHANGED, level, cell));
 		}
+		
+		public function findLevel (level:int) : Level
+		{
+			return _levels.find(level);
+		}
 						
 		protected var _levels:LevelRegister;
 		protected var _players:PlayerRegister;
