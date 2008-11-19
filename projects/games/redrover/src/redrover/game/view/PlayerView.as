@@ -62,13 +62,13 @@ public class PlayerView extends SceneObject
         var newLoc :Vector2 = _player.loc.clone();
         var newFacing :int;
         if (newLoc.x > _lastLoc.x) {
-            newFacing = FACING_E;
+            newFacing = Constants.DIR_EAST;
         } else if (newLoc.x < _lastLoc.x) {
-            newFacing = FACING_W;
+            newFacing = Constants.DIR_WEST;
         } else if (newLoc.y > _lastLoc.y) {
-            newFacing = FACING_S;
+            newFacing = Constants.DIR_SOUTH;
         } else if (newLoc.y < _lastLoc.y) {
-            newFacing = FACING_N;
+            newFacing = Constants.DIR_NORTH;
         } else {
             newFacing = _lastFacing;
         }
@@ -135,7 +135,7 @@ public class PlayerView extends SceneObject
 
                 // for east-facing animations, instantiate the west-facing anim and mirror
                 // horizontally
-                if (facing == FACING_E) {
+                if (facing == Constants.DIR_EAST) {
                     movie.scaleX *= -1;
                 }
 
@@ -173,11 +173,6 @@ public class PlayerView extends SceneObject
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastGems :int;
     protected var _lastBoardId :int;
-
-    protected static const FACING_N :int = 0;
-    protected static const FACING_W :int = 1;
-    protected static const FACING_S :int = 2;
-    protected static const FACING_E :int = 3;
 
     protected static const MOVIE_SCALES :Array = [ 1.2, 1.5 ];
     protected static const SWF_NAMES :Array = [ "grunt", "sapper" ];

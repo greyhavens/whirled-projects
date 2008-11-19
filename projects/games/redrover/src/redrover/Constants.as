@@ -17,13 +17,13 @@ public class Constants
     public static const MAX_BOARD_GEMS :int = 16;
     public static const GEM_SPAWN_TIME :NumRange = new NumRange(1, 1, Rand.STREAM_GAME);
 
-    public static const BASE_MOVE_SPEED :Number = 50;
+    public static const BASE_MOVE_SPEED :Number = 70;
     public static const MOVE_SPEED_GEM_OFFSET :Number = -5;
 
     public static const GEM_VALUE :IntValueTable = new IntValueTable([1, 2, 3, 4], 5);
 
     public static const SWITCH_BOARDS_TIME :Number = 1;
-    public static const RETURN_HOME_COST :int = 4;
+    public static const RETURN_HOME_COST :int = 2;
 
     public static const TEAM_RED :int = 0;
     public static const TEAM_BLUE :int = 1;
@@ -49,6 +49,11 @@ public class Constants
 
     public static const OWN_BOARD_ZOOM :Number = 1.5;
     public static const OTHER_BOARD_ZOOM :Number = 1;
+
+    public static const DIR_NORTH :int = 0;
+    public static const DIR_WEST :int = 1;
+    public static const DIR_SOUTH :int = 2;
+    public static const DIR_EAST :int = 3;
 }
 
 }

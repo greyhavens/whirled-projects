@@ -150,19 +150,19 @@ public class GameMode extends AppMode
             break;
 
         case KeyboardCodes.LEFT:
-            GameContext.localPlayer.moveLeft();
+            GameContext.localPlayer.move(Constants.DIR_WEST);
             break;
 
         case KeyboardCodes.RIGHT:
-            GameContext.localPlayer.moveRight();
+            GameContext.localPlayer.move(Constants.DIR_EAST);
             break;
 
         case KeyboardCodes.UP:
-            GameContext.localPlayer.moveUp();
+            GameContext.localPlayer.move(Constants.DIR_NORTH);
             break;
 
         case KeyboardCodes.DOWN:
-            GameContext.localPlayer.moveDown();
+            GameContext.localPlayer.move(Constants.DIR_SOUTH);
             break;
         }
     }

@@ -2,7 +2,6 @@ package redrover.game{
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import redrover.*;
@@ -27,7 +26,7 @@ public class Player extends SimObject
 
     public function beginSwitchBoards () :void
     {
-        if (_state == STATE_SWITCHINGBOARDS) {
+        if (!this.canSwitchBoards) {
             return;
         }
 
@@ -37,28 +36,40 @@ public class Player extends SimObject
                 new FunctionTask(switchBoards)));
     }
 
-    public function moveLeft () :void
+    public function moveTo (gridX :int, gridY :int) :void
     {
-        _moveDirection.x = -1;
-        _moveDirection.y = 0;
+        _moveTarget = new Vector2(gridX, gridY);
     }
 
-    public function moveRight () :void
+    public function move (direction :int) :void
     {
-        _moveDirection.x = 1;
-        _moveDirection.y = 0;
-    }
+        _moveTarget = null;
 
-    public function moveUp () :void
-    {
         _moveDirection.x = 0;
-        _moveDirection.y = -1;
+        _moveDirection.y = 0;
+        switch (direction) {
+        case Constants.DIR_EAST:
+            _moveDirection.x = 1;
+            break;
+
+        case Constants.DIR_WEST:
+            _moveDirection.x = -1;
+            break;
+
+        case Constants.DIR_NORTH:
+            _moveDirection.y = -1;
+            break;
+
+        case Constants.DIR_SOUTH:
+            _moveDirection.y = 1;
+            break;
+        }
     }
 
-    public function moveDown () :void
+    public function get canSwitchBoards () :Boolean
     {
-        _moveDirection.x = 0;
-        _moveDirection.y = 1;
+        return (_state != STATE_SWITCHINGBOARDS &&
+                (_teamId == _curBoardId || _numGems >= Constants.RETURN_HOME_COST));
     }
 
     public function get playerId () :int
@@ -121,14 +132,36 @@ public class Player extends SimObject
         super.update(dt);
 
         if (_state != STATE_SWITCHINGBOARDS) {
-            var offset :Vector2 = _moveDirection.clone();
-            var moveSpeed :Number = this.moveSpeed;
-            if (moveSpeed > 0 && (offset.x != 0 || offset.y != 0)) {
-                offset.length = moveSpeed * dt;
-                _loc.x += offset.x;
-                _loc.y += offset.y;
-                clampLoc();
+            var moveDist :Number = this.moveSpeed * dt;
+            if (_moveTarget != null) {
+                var xDist :Number = ((_moveTarget.x + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.x;
+                var yDist :Number = ((_moveTarget.y + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.y;
+                var xDistAbs :Number = Math.abs(xDist);
+                var yDistAbs :Number = Math.abs(yDist);
+                var xOffset :Number = 0;
+                var yOffset :Number = 0;
+
+                // Move along the axis we have a shorter distance to go
+                if (yDist == 0 || (xDist != 0 && xDistAbs < yDistAbs)) {
+                    xOffset = Math.min(moveDist, xDistAbs) * (xDist < 0 ? -1 : 1);
+                    moveDist = Math.max(moveDist - Math.abs(xOffset), 0);
+                    yOffset = Math.min(moveDist, yDistAbs) * (yDist < 0 ? -1 : 1);
+
+                } else if (yDist != 0) {
+                    yOffset = Math.min(moveDist, yDistAbs) * (yDist < 0 ? -1 : 1);
+                    moveDist = Math.max(moveDist - Math.abs(yOffset), 0);
+                    xOffset = Math.min(moveDist, xDistAbs) * (xDist < 0 ? -1 : 1);
+                }
+
+            } else {
+                // Move direction is always length=1
+                xOffset = _moveDirection.x * moveDist;
+                yOffset = _moveDirection.y * moveDist;
             }
+
+            _loc.x += xOffset;
+            _loc.y += yOffset;
+            clampLoc();
 
             // If we're on the other team's board, pickup gems when we enter their cells
             if (_curBoardId != _teamId) {
@@ -144,6 +177,7 @@ public class Player extends SimObject
     protected function switchBoards () :void
     {
         _state = STATE_NORMAL;
+        _moveTarget = null;
         _curBoardId = Constants.getOtherTeam(_curBoardId);
     }
 
@@ -163,6 +197,7 @@ public class Player extends SimObject
     protected var _numGems :int;
     protected var _score :int;
     protected var _moveDirection :Vector2 = new Vector2();
+    protected var _moveTarget :Vector2;
     protected var _loc :Vector2 = new Vector2();
     protected var _state :int;
     protected var _color :uint;
