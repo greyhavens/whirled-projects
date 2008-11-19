@@ -1,6 +1,7 @@
 package paths
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.Vector;
 	
 	import flash.utils.ByteArray;
 	
@@ -22,6 +23,11 @@ package paths
 		public function toString () :String
 		{
 			return "path from "+start+" to "+finish;
+		}
+		
+		public function get direction () :Vector
+		{
+			return start.distanceTo(finish).normalize();
 		}
 		
 		public function applyTo(movable:PathFollower) :void

@@ -9,22 +9,27 @@ package client
 	import client.player.Player;
 	
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
+	
+	import paths.Path;
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.Neighborhood;
 	
 	import sprites.CellSprite;
+	import sprites.FootstepSprite;
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
 	import world.Cell;
 	import world.Chronometer;
 	import world.NeighborhoodEvent;
+	import world.arbitration.BoardArbiter;
 	import world.board.*;
     
 	/**
@@ -46,6 +51,7 @@ package client
 			pixelWidth = _viewer.width;
 			pixelHeight = _viewer.height;
 			
+			_arbiter = new BoardArbiter(this);
 			_board = board;			
 			
     		_cells = new CellScrollBuffer(this, _board);
@@ -62,6 +68,10 @@ package client
 			addChild(_label);
 			
 			_viewFactory = new ViewFactory(); 
+			
+			_footsteps = new FootstepSprite(Vector.UP);
+			_footsteps.addEventListener(MouseEvent.MOUSE_OUT, clearFootprints);
+			_footsteps.addEventListener(MouseEvent.MOUSE_DOWN, clickFootprints);
 			
 			initializeViewpoint(startingPosition);
 			_frameTimer.start();
@@ -180,12 +190,30 @@ package client
 	    public function checkFootprints (cell:Cell, sprite:CellSprite) :void
 	    {
 	       Log.debug("working out whether to display footprints for cell "+cell);
+	       const path:Path = _arbiter.findPath(_player, cell);
+	       if (path == null) {
+	           return;
+	       }
+	       
+	       _footsteps.direction = path.direction;
+	       _footsteps.cell = cell;
+	       _footsteps.x = sprite.x;
+	       _footsteps.y = sprite.y;    
+	       addChild(_footsteps);
 	    }			
 	
-	    public function clearFootprints (cell:Cell, sprite:CellSprite) :void
+	    public function clearFootprints (event:MouseEvent) :void
 	    {
-	    	Log.debug("clearing footprints for cell "+cell);
+	    	if (contains(_footsteps)) {
+    	       removeChild(_footsteps);
+    	    }	    	
 	    }
+	    
+	    protected function clickFootprints (event:MouseEvent) :void
+	    {
+	    	clearFootprints(event);
+	    	_viewer.handleCellClicked(new CellEvent(CellEvent.CELL_CLICKED, _footsteps.cell));
+	    }	    
 				
 		/**
 		 * Compute a rectangle in board coordinates that will mean the viewpoint square can be
@@ -250,7 +278,8 @@ package client
 	     * player from that point forward.
 	     */
 	    public function addLocalPlayer (player:Player) :void
-	    { 	    	
+	    { 	
+	    	_player = player;
 	    	const sprite:PlayerSprite = addPlayer(player);
 	    	follow(sprite);
 	    }
@@ -358,6 +387,15 @@ package client
         	return _clock.serverTime;
         }
         
+        protected var _footsteps:FootstepSprite;
+        
+        /**
+         * A reference to the local player.
+         */
+        protected var _player:Player;
+        
+        protected var _arbiter:BoardArbiter;
+        
         protected var _clock:Chronometer;
         
         protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
@@ -374,10 +412,7 @@ package client
 	
 		// the viewer
 		protected var _viewer:Viewer;
-			
-		// a representation of the player character 
-		protected var _player:Player;
-						
+									
 		// memory associating views with cells.
 		protected var _viewBuffer:ViewBuffer = new ViewBuffer();
 				

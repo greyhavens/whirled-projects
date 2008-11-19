@@ -132,6 +132,8 @@ package client
 			}
 			_objective.removePlayer(player);
 		}
+		
+		
 			
 		protected var _clock:Chronometer;
 				

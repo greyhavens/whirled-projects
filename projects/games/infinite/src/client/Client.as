@@ -98,7 +98,7 @@ package client
             /**
              * Move the player to the appropriate level.
              */ 
-            player.updatePosition(detail);
+            player.updatePosition(_board, detail);
 		}
 		
 		/**
@@ -127,7 +127,7 @@ package client
             } else {
             	// otherwise, if the player has entered the level that the local
             	// player is on, then 
-            	if (event.player.level == _level) {
+            	if (event.player.levelNumber == _level) {
             		_viewer.addPlayer(event.player);
             	} else {
             		_viewer.removePlayer(event.player);
@@ -154,10 +154,10 @@ package client
 		 */
 		public function selectLevel (player:Player) :void
 		{
-			Log.debug(this+" selecting level "+player.level);
+			Log.debug(this+" selecting level "+player.levelNumber);
 			
 			// if the client is already displaying the requested level, return.
-			if (_level == player.level) {
+			if (_level == player.levelNumber) {
 				return;
 			}
 			
@@ -168,6 +168,9 @@ package client
 			// and assign a new board to the view.
 			_viewer.board = _board;
 
+            // we need to notify the player that we've just moved them onto another board.
+            player.moveToBoard(_board);
+
             // update cells - this is bad encapsulation since the order of these operations
             // relies on knowing the fact that assigning the board to the viewer causes the
             // objective to be created which is a precondition for handing a cell update
@@ -175,12 +178,12 @@ package client
 
             _controller = new PlayerController(_world, _viewer, _localPlayer, _inventory);
             
-			_level = player.level;
+			_level = player.levelNumber;
 			
 			// add the players we know about on this level
 			_viewer.addLocalPlayer(_localPlayer);
 			for each (var p:Player in _players.list) {
-				if (p.level == player.level) {
+				if (p.levelNumber == player.levelNumber) {
 					_viewer.addPlayer(p);
 				}
 			}

@@ -35,9 +35,7 @@ package sprites
 		 */
 		protected function registerEventHandlers (source:EventDispatcher) :void
 		{
-			source.addEventListener(MouseEvent.MOUSE_DOWN, handleCellClicked);
             source.addEventListener(MouseEvent.ROLL_OVER, checkFootprints);
-            source.addEventListener(MouseEvent.ROLL_OUT, clearFootprints);   
 		}
 		
 		protected function checkFootprints(event:MouseEvent) :void
@@ -47,13 +45,8 @@ package sprites
 		
 		protected function clearFootprints(event:MouseEvent) :void
 		{
-			_objective.clearFootprints(_cell, this);
+			_objective.clearFootprints(event);
 		}
-
-		protected function handleCellClicked (event:MouseEvent) :void
-		{
-			dispatchEvent(new CellEvent(CellEvent.CELL_CLICKED, _cell));			
-		}	
 			
 		/**
 		 * Return the graphic center of the cell base.

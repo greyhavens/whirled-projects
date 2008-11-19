@@ -1,5 +1,7 @@
 package cells
 {
+	import flash.events.MouseEvent;
+	
 	import sprites.CellSprite;
 	
 	import world.Cell;
@@ -36,6 +38,6 @@ package cells
 		/**
 		 * Clear the footprints display if there currently is one.
 		 */
-		function clearFootprints (cell:Cell, sprite:CellSprite) :void				
+		function clearFootprints (event:MouseEvent) :void				
 	}
 }

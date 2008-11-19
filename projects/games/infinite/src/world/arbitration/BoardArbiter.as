@@ -16,18 +16,7 @@ package world.arbitration
 		}
 	
 		public function proposeMove (player:MovablePlayer, destination:Cell) :void 
-		{
-			if (player.isMoving()) {
-				Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
-				    " is already moving");
-				return;
-			}
-			
-			if (!player.cell.leave) {
-				Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
-				return;
-			}
-			
+		{			
 			var path:Path = findPath(player, destination);
 			if (path != null) {
 				dispatchStart(player, path);
@@ -40,7 +29,19 @@ package world.arbitration
 		 */
 		public function findPath (player:MovablePlayer, destination:Cell) :Path
 		{
-            var path:Path;      
+            var path:Path;
+
+            if (player.isMoving()) {
+                Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
+                    " is already moving");
+                return null;
+            }
+            
+            if (!player.cell.leave) {
+                Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
+                return null;
+            }
+                  
             path = sidewaysPath(player, destination);
             
             if (path == null)
