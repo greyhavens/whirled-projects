@@ -212,7 +212,7 @@ public class Room
 //                  damageDone, "healing", healingDone);
 
         // award 3 points for a win, 1 for a lose
-        _stats.put(player, int(_stats[player.playerId]) + (win ? 3 : 1));
+        _stats.put(player, int(_stats.get(player.playerId)) + (win ? 3 : 1));
 
         // record which minigame was used
         var dict :Dictionary = _minigames.get(player);
