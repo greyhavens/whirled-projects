@@ -4,7 +4,7 @@ package cells.wall
 	
 	import cells.CellCodes;
 
-	public class OiledWallCell extends WallCell
+	public class OiledWallCell extends WallBaseCell
 	{
 		public function OiledWallCell(position:BoardCoordinates)
 		{

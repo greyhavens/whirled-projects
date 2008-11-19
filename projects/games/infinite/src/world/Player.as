@@ -172,6 +172,7 @@ package world
          */ 
         public function replace (cell:Cell) :void
         {
+        	_cell = cell;
         	_level.replace(cell);
         	cell.distributeState();
         }
