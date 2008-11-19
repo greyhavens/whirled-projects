@@ -10,6 +10,7 @@ package server
 	import flash.utils.Dictionary;
 	
 	import server.Messages.CellState;
+	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -44,8 +45,9 @@ package server
 		public function handleLevelEntered (event:LevelEvent) :void
 		{
 			// create the message
-            const message:PlayerPosition = 
-                new PlayerPosition(event.player.id, event.level.number, event.player.position);
+            const message:EnterLevel =
+                new EnterLevel(event.level.number, event.level.height, 
+                    new PlayerPosition(event.player.id, event.level.number, event.player.position));
                 
             // who do we send the message to?
             sendToAll(RemoteWorld.LEVEL_ENTERED, message);

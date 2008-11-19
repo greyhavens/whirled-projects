@@ -12,12 +12,12 @@ package server
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
-	import server.Messages.PlayerPosition;
 	import server.Messages.Serializable;
 	
 	import world.ClientWorld;
@@ -61,7 +61,7 @@ package server
         
         public function levelEntered (event:MessageReceivedEvent) :void
         {
-            _client.updatePosition(PlayerPosition.readFromArray(event.value as ByteArray));
+            _client.updatePosition(EnterLevel.readFromArray(event.value as ByteArray).position);
         }        
         
         public function pathStart (event:MessageReceivedEvent) :void
