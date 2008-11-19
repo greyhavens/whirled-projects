@@ -17,13 +17,14 @@ public class Constants
     public static const MAX_BOARD_GEMS :int = 16;
     public static const GEM_SPAWN_TIME :NumRange = new NumRange(1, 1, Rand.STREAM_GAME);
 
-    public static const BASE_MOVE_SPEED :Number = 70;
+    public static const BASE_MOVE_SPEED :Number = 80;
     public static const MOVE_SPEED_GEM_OFFSET :Number = -5;
+    public static const MAX_PLAYER_GEMS :int = 10;
 
     public static const GEM_VALUE :IntValueTable = new IntValueTable([1, 2, 3, 4], 5);
 
     public static const SWITCH_BOARDS_TIME :Number = 1;
-    public static const RETURN_HOME_COST :int = 2;
+    public static const RETURN_HOME_GEMS_MIN :int = 3;
 
     public static const TEAM_RED :int = 0;
     public static const TEAM_BLUE :int = 1;

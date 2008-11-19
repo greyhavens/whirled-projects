@@ -1,4 +1,4 @@
-package redrover.game{
+package redrover.game {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObject;
@@ -69,7 +69,7 @@ public class Player extends SimObject
     public function get canSwitchBoards () :Boolean
     {
         return (_state != STATE_SWITCHINGBOARDS &&
-                (_teamId == _curBoardId || _numGems >= Constants.RETURN_HOME_COST));
+                (_teamId == _curBoardId || _numGems >= Constants.RETURN_HOME_GEMS_MIN));
     }
 
     public function get playerId () :int
@@ -133,13 +133,13 @@ public class Player extends SimObject
 
         if (_state != STATE_SWITCHINGBOARDS) {
             var moveDist :Number = this.moveSpeed * dt;
+            var xOffset :Number = 0;
+            var yOffset :Number = 0;
             if (_moveTarget != null) {
                 var xDist :Number = ((_moveTarget.x + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.x;
                 var yDist :Number = ((_moveTarget.y + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.y;
                 var xDistAbs :Number = Math.abs(xDist);
                 var yDistAbs :Number = Math.abs(yDist);
-                var xOffset :Number = 0;
-                var yOffset :Number = 0;
 
                 // Move along the axis we have a shorter distance to go
                 if (yDist == 0 || (xDist != 0 && xDistAbs < yDistAbs)) {
@@ -164,7 +164,7 @@ public class Player extends SimObject
             clampLoc();
 
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (_curBoardId != _teamId) {
+            if (_curBoardId != _teamId && _numGems < Constants.MAX_PLAYER_GEMS) {
                 var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
                 if (cell.hasGem) {
                     cell.hasGem = false;

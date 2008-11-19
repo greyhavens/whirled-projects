@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import redrover.*;
@@ -20,14 +21,14 @@ public class PlayerView extends SceneObject
     {
         _player = player;
         _sprite = SpriteUtil.createSprite();
-        _playerMovies = ArrayUtil.create(Constants.NUM_TEAMS, null);
+        _playerAnims = ArrayUtil.create(Constants.NUM_TEAMS, null);
         setTeam(_player.teamId);
         setBoard(_player.curBoardId);
     }
 
     override protected function destroyed () :void
     {
-        for each (var movies :Array in _playerMovies) {
+        for each (var movies :Array in _playerAnims) {
             if (movies == null) {
                 continue;
             }
@@ -74,16 +75,17 @@ public class PlayerView extends SceneObject
         }
 
         if (newFacing != _lastFacing || newFacing == -1) {
-            if (_sprite.numChildren > 0) {
-                _sprite.removeChildAt(0);
+            if (_curAnim != null) {
+                _sprite.removeChild(_curAnim);
             }
 
             if (newFacing == -1) {
                 newFacing = 0;
             }
 
-            var movies :Array = _playerMovies[_player.teamId];
-            _sprite.addChildAt(movies[newFacing], 0);
+            var anims :Array = _playerAnims[_player.teamId];
+            _curAnim = anims[newFacing];
+            _sprite.addChild(_curAnim);
         }
 
         // update location
@@ -109,7 +111,7 @@ public class PlayerView extends SceneObject
 
     protected function setTeam (teamId :int) :void
     {
-        var movies :Array = _playerMovies[teamId];
+        var movies :Array = _playerAnims[teamId];
         if (movies == null) {
             movies = [];
             var swfName :String = SWF_NAMES[teamId];
@@ -143,7 +145,7 @@ public class PlayerView extends SceneObject
                 facing++;
             }
 
-            _playerMovies[teamId] = movies;
+            _playerAnims[teamId] = movies;
         }
 
         _lastTeamId = teamId;
@@ -167,12 +169,15 @@ public class PlayerView extends SceneObject
 
     protected var _player :Player;
     protected var _sprite :Sprite;
-    protected var _playerMovies :Array; // Array<Array<MovieClip>>
+    protected var _curAnim :MovieClip;
+    protected var _playerAnims :Array; // Array<Array<MovieClip>>
     protected var _lastTeamId :int = -1;
     protected var _lastFacing :int = -1;
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastGems :int;
     protected var _lastBoardId :int;
+
+    protected var _mask :Shape;
 
     protected static const MOVIE_SCALES :Array = [ 1.2, 1.5 ];
     protected static const SWF_NAMES :Array = [ "grunt", "sapper" ];
