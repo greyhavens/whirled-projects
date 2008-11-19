@@ -31,6 +31,8 @@ public class BoardView extends SceneObject
             g.moveTo(0, yy * Constants.BOARD_CELL_SIZE);
             g.lineTo(_board.pixelWidth, yy * Constants.BOARD_CELL_SIZE);
         }
+
+        _sprite.cacheAsBitmap = true;
     }
 
     override public function get displayObject () :DisplayObject

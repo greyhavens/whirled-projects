@@ -115,7 +115,7 @@ public class GameMode extends AppMode
             addObject(new PlayerView(player));
         }
 
-        addObject(new Camera(), _modeSprite);
+        addObject(new Camera(Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y), _modeSprite);
         addObject(new HUDView(), _modeSprite);
     }
 

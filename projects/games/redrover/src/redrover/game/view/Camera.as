@@ -1,6 +1,8 @@
 package redrover.game.view {
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.ScaleTask;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -11,8 +13,10 @@ import redrover.util.SpriteUtil;
 
 public class Camera extends SceneObject
 {
-    public function Camera ()
+    public function Camera (width :Number, height :Number)
     {
+        _width = width;
+        _height = height;
         _sprite = SpriteUtil.createSprite(true);
     }
 
@@ -25,19 +29,51 @@ public class Camera extends SceneObject
     {
         super.update(dt);
 
-        var showTeamId :int = GameContext.localPlayer.curBoardId;
-        if (_showingTeamId != showTeamId) {
-            if (_sprite.numChildren > 0) {
-                _sprite.removeChildAt(0);
+        // When the local player switches boards, update the camera
+        var newBoardId :int = GameContext.localPlayer.curBoardId;
+        if (_lastBoardId != newBoardId) {
+            if (_curTeamSprite != null) {
+                _sprite.removeChild(_curTeamSprite);
             }
 
-            _sprite.addChild(GameContext.gameMode.getTeamSprite(showTeamId));
-            _showingTeamId = showTeamId;
+            var newTeamSprite :TeamSprite = GameContext.gameMode.getTeamSprite(newBoardId);
+            _sprite.addChild(newTeamSprite);
+
+            var targetScale :Number = (newBoardId == GameContext.localPlayer.teamId ?
+                Constants.OWN_BOARD_ZOOM : Constants.OTHER_BOARD_ZOOM);
+            addNamedTask(ZOOM_TASK_NAME,
+                         ScaleTask.CreateSmooth(targetScale, targetScale, ZOOM_TIME),
+                         true);
+
+            _lastBoardId = newBoardId;
+            _curTeamSprite = newTeamSprite;
         }
+
+        // Keep the player centered in the view as much as possible
+        var playerLoc :Vector2 = GameContext.localPlayer.loc;
+        var scale :Number = _sprite.scaleX;
+        var board :Board = GameContext.gameMode.getBoard(_lastBoardId);
+
+        var camX :Number = (-_width * 0.5 / scale) + (playerLoc.x);
+        var camY :Number = (-_height * 0.5 / scale) + (playerLoc.y);
+
+        camX = Math.min(camX, board.pixelWidth - (_width / scale));
+        camX = Math.max(camX, 0);
+        camY = Math.min(camY, board.pixelHeight - (_height / scale));
+        camY = Math.max(camY, 0);
+
+        _curTeamSprite.x = -camX;
+        _curTeamSprite.y = -camY;
     }
 
+    protected var _width :Number;
+    protected var _height :Number;
     protected var _sprite :Sprite;
-    protected var _showingTeamId :int = -1;
+    protected var _lastBoardId :int = -1;
+    protected var _curTeamSprite :TeamSprite;
+
+    protected static const ZOOM_TIME :Number = 0.75;
+    protected static const ZOOM_TASK_NAME :String = "Zoom";
 }
 
 }

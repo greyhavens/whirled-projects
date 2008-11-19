@@ -46,6 +46,9 @@ public class Constants
         0xFF6FCF,
         0x333333,
     ];
+
+    public static const OWN_BOARD_ZOOM :Number = 1.5;
+    public static const OTHER_BOARD_ZOOM :Number = 1;
 }
 
 }

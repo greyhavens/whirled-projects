@@ -152,9 +152,9 @@ public class Player extends SimObject
         var board :Board = GameContext.gameMode.getBoard(_teamId);
 
         _loc.x = Math.max(_loc.x, Constants.BOARD_CELL_SIZE * 0.5);
-        _loc.x = Math.min(_loc.x, (board.cols + 0.5) * Constants.BOARD_CELL_SIZE);
+        _loc.x = Math.min(_loc.x, (board.cols - 0.5) * Constants.BOARD_CELL_SIZE);
         _loc.y = Math.max(_loc.y, Constants.BOARD_CELL_SIZE * 0.5);
-        _loc.y = Math.min(_loc.y, (board.rows + 0.5) * Constants.BOARD_CELL_SIZE);
+        _loc.y = Math.min(_loc.y, (board.rows - 0.5) * Constants.BOARD_CELL_SIZE);
     }
 
     protected var _playerId :int;
