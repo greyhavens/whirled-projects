@@ -5,9 +5,7 @@ package sprites
 	import world.Cell;
 	
 	public class FootstepSprite extends AssetSprite
-	{
-		public var cell:Cell;
-		
+	{		
         public function FootstepSprite(direction:Vector)
         {
             super(assetForDirection(direction), Config.cellSize.dx, Config.cellSize.dy);

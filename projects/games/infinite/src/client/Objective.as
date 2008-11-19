@@ -15,21 +15,17 @@ package client
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
 	
-	import paths.Path;
-	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	import server.Messages.Neighborhood;
 	
 	import sprites.CellSprite;
-	import sprites.FootstepSprite;
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
 	import world.Cell;
 	import world.Chronometer;
 	import world.NeighborhoodEvent;
-	import world.arbitration.BoardArbiter;
 	import world.board.*;
     
 	/**
@@ -51,7 +47,6 @@ package client
 			pixelWidth = _viewer.width;
 			pixelHeight = _viewer.height;
 			
-			_arbiter = new BoardArbiter(this);
 			_board = board;			
 			
     		_cells = new CellScrollBuffer(this, _board);
@@ -69,9 +64,7 @@ package client
 			
 			_viewFactory = new ViewFactory(); 
 			
-			_footsteps = new FootstepSprite(Vector.UP);
-			_footsteps.addEventListener(MouseEvent.MOUSE_OUT, clearFootprints);
-			_footsteps.addEventListener(MouseEvent.MOUSE_DOWN, clickFootprints);
+			_footsteps = new FootstepControl(this);
 			
 			initializeViewpoint(startingPosition);
 			_frameTimer.start();
@@ -186,35 +179,7 @@ package client
 			Log.debug ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
 			_label.hide();
 		}
-				
-	    public function checkFootprints (cell:Cell, sprite:CellSprite) :void
-	    {
-	       Log.debug("working out whether to display footprints for cell "+cell);
-	       const path:Path = _arbiter.findPath(_player, cell);
-	       if (path == null) {
-	           return;
-	       }
-	       
-	       _footsteps.direction = path.direction;
-	       _footsteps.cell = cell;
-	       _footsteps.x = sprite.x;
-	       _footsteps.y = sprite.y;    
-	       addChild(_footsteps);
-	    }			
-	
-	    public function clearFootprints (event:MouseEvent) :void
-	    {
-	    	if (contains(_footsteps)) {
-    	       removeChild(_footsteps);
-    	    }	    	
-	    }
-	    
-	    protected function clickFootprints (event:MouseEvent) :void
-	    {
-	    	clearFootprints(event);
-	    	_viewer.handleCellClicked(new CellEvent(CellEvent.CELL_CLICKED, _footsteps.cell));
-	    }	    
-				
+					    				  
 		/**
 		 * Compute a rectangle in board coordinates that will mean the viewpoint square can be
 		 * scrolled to and the rest of the viewer will be fully tiled.
@@ -229,11 +194,21 @@ package client
 			);
 		}
 		
-		protected function handleCellClicked(event:CellEvent) :void
+		public function handleCellClicked(event:CellEvent) :void
 		{
 			_viewer.handleCellClicked(event);
 			Log.debug("clicked on "+event.cell);
 		}		
+		
+        public function checkFootprints (cell:Cell, sprite:CellSprite) :void
+        {
+        	_footsteps.checkFootprints(cell, sprite);
+        }
+        
+        public function clearFootprints (event:MouseEvent) :void
+        {
+        	_footsteps.clearFootprints(event);
+        }				
 				
 		/**	
 		 * Initialize the bugger, positioning the specificed point at the viewpoint.
@@ -387,15 +362,18 @@ package client
         	return _clock.serverTime;
         }
         
-        protected var _footsteps:FootstepSprite;
+        public function get player () :Player
+        {
+        	return _player;
+        }
+        
+        protected var _footsteps:FootstepControl;
         
         /**
          * A reference to the local player.
          */
         protected var _player:Player;
-        
-        protected var _arbiter:BoardArbiter;
-        
+                
         protected var _clock:Chronometer;
         
         protected var _breadcrumbs:BreadcrumbTrail = new BreadcrumbTrail();
