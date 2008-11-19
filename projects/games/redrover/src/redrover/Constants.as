@@ -8,8 +8,15 @@ import redrover.util.IntValueTable;
 
 public class Constants
 {
+    /* Debug options */
+    public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
+
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
 
+    /* ResourceManager stuff */
+    public static const RESTYPE_LEVEL :String = "level";
+
+    /* Game settings */
     public static const BOARD_CELL_SIZE :int = 50;
     public static const BOARD_COLS :int = SCREEN_SIZE.x / BOARD_CELL_SIZE;
     public static const BOARD_ROWS :int = SCREEN_SIZE.y / BOARD_CELL_SIZE;
@@ -59,6 +66,12 @@ public class Constants
     public static const GEM_GREEN :int = 0;
     public static const GEM_PURPLE :int = 1;
     public static const GEM__LIMIT :int = 2;
+
+    public static const TERRAIN_NORMAL :int = 0;
+    public static const TERRAIN_OBSTACLE :int = 1;
+    public static const TERRAIN_SLOW :int = 2;
+
+    public static const TERRAIN_SYMBOLS :Array = [ ".", "#", "*" ];
 }
 
 }

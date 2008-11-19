@@ -12,6 +12,8 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import redrover.data.*;
+
 [SWF(width="700", height="500", frameRate="30")]
 public class RedRover extends Sprite
 {
@@ -38,6 +40,10 @@ public class RedRover extends Sprite
         AppContext.mainLoop = new MainLoop(this,
             (isConnected ? AppContext.gameCtrl.local : this.stage));
         AppContext.mainLoop.setup();
+
+        // custom resource factories
+        var rm :ResourceManager = ResourceManager.instance;
+        rm.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
 
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
@@ -86,7 +92,7 @@ class LoadingMode extends GenericLoadingMode
     {
         super.update(dt);
         if (!_loadingResources) {
-            AppContext.mainLoop.unwindToMode(new GameMode());
+            AppContext.levelMgr.playLevel(0);
         }
     }
 
