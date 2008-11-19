@@ -64,7 +64,6 @@ package client
          */ 
         public function handlePathComplete() :void
         {
-        	Log.debug("footstep control handling path complete"); 
         	if (_cellSprite != null) {
         		checkFootprints(_cellSprite);
         	}

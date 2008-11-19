@@ -32,13 +32,13 @@ package world.arbitration
             var path:Path;
 
             if (player.isMoving()) {
-                Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
-                    " is already moving");
+//                Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
+//                    " is already moving");
                 return null;
             }
             
             if (!player.cell.leave) {
-                Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
+//                Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
                 return null;
             }
                   
@@ -122,7 +122,7 @@ package world.arbitration
 				//Log.debug("looking upwards");
 				for (y = start.y - 1; y >= finish.y; y--) {
 					if (! _board.cellAt(new BoardCoordinates(start.x, y)).climbUpTo ) {
-						Log.debug ("cannot climb up to cell at: "+start.x+", "+y);
+//						Log.debug ("cannot climb up to cell at: "+start.x+", "+y);
 						return null;
 					}
 				}
