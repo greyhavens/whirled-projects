@@ -34,12 +34,26 @@ package sprites
 		
 		public function darken (amount:Number) :void
 		{
-			SpriteUtil.tint(this, SpriteUtil.GREY, amount * 0.2);
+			if (_overlay == null) {
+    			_overlay = SpriteUtil.tint(_width * 2, _height * 2, SpriteUtil.GREY, amount);
+    			_overlay.x = 0;
+    			_overlay.y = 0;
+    			addChild(_overlay);
+			}
 		}
+		
+		public function clearOverlay () :void
+		{
+			if (_overlay != null) {
+    			removeChild(_overlay);
+    			_overlay = null;
+            }
+		}		
 		
 		protected var _instance:DisplayObject;
 		protected var _asset:Class;
 		protected var _width:int;
 		protected var _height:int;
+		protected var _overlay:DisplayObject;
 	}
 }

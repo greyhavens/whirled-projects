@@ -31,7 +31,7 @@ package inventory
        		delete _views[item];
        		return found;
         }
-        
+         
         protected var _views:Dictionary = new Dictionary();
 	}
 }

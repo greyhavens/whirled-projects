@@ -252,6 +252,12 @@ package client
 			_serverOffset = serverTime - current.getTime();
 		}
 		
+		public function get player () :Player
+		{
+			return _localPlayer;
+		}
+		
+		
 		protected var _serverOffset:Number = 0;
 		
 		protected var _localPlayer:Player;

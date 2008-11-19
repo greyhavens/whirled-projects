@@ -117,7 +117,7 @@ package sprites
         }
 		
 		protected var _cell:Cell;
-		protected var _objective:CellObjective;
+		protected var _objective:Objective;
 
         public static const DEBUG:Boolean = Config.cellDebug;       
 	}

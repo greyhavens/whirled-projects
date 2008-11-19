@@ -23,12 +23,12 @@ package cells
 		
 		protected function handleRollOver (event:MouseEvent) :void
 		{
-			_objective.displayOwnership(_cell);
+			//_objective.displayOwnership(_cell);
 		}
 		
 		protected function handleRollOut (event:MouseEvent) :void
 		{
-			_objective.hideOwnership(_cell);
+			//_objective.hideOwnership(_cell);
 		}
 	}
 }

@@ -29,9 +29,39 @@ package inventory
 		{
 			const s:Sprite = new Sprite();
 			SpriteUtil.addBackground(s, _width, _height, SpriteUtil.GREY);
+			s.addEventListener(MouseEvent.ROLL_OVER, handleRollOver);
+			s.addEventListener(MouseEvent.ROLL_OUT, handleRollOut);
 			return s;
 		}
+						
+		protected function handleRollOut (event:MouseEvent) :void
+		{
+	        Log.debug("roll out of the inventory");
+	        ungreyItems(); 
+		} 
 		
+		protected function handleRollOver (event:MouseEvent) :void
+		{
+			Log.debug("roll into the inventory");
+			greyOutUnusableItems();
+		}
+						
+		protected function greyOutUnusableItems() :void
+		{
+			for each (var item:Item in _items) {
+                if (!item.isUsableBy(_client.player)) {
+                	_viewBuffer.find(item).greyOut();                	
+                }
+			}
+		}
+		
+		protected function ungreyItems() :void
+		{
+			for each (var item:Item in _items) {
+				_viewBuffer.find(item).ungrey();
+			}
+		}
+						
 		public function get view () :DisplayObject
 		{
 			if (_view == null) {
@@ -49,8 +79,8 @@ package inventory
 		{
 			_items[position] = item;
 			displayItem(item, position);
-		}
-		
+		}	
+						
 		public function removeItemAt (position:int) :void
 		{
 			var toRemove:Item = _items[position];
@@ -86,7 +116,9 @@ package inventory
 		
 		protected function handleItemClicked (event:MouseEvent) :void
 		{
-			_client.itemClicked((event.target as ItemSprite).position);
+			if (event.target is ItemSprite) {
+    			_client.itemClicked((event.target as ItemSprite).position);
+            }
 		}
 		
 		protected function positionItem (object:DisplayObject, position:int) :void

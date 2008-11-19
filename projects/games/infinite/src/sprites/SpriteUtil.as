@@ -1,5 +1,6 @@
 package sprites
 {	
+	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	
@@ -14,15 +15,16 @@ package sprites
 			}
 		}
 		
-		public static function tint (s:Sprite, color:uint, alpha:Number) :void
+		public static function tint (width:int, height:int, color:uint, alpha:Number) :DisplayObject
 		{
-			Log.debug ("tint alpha "+alpha);
+			Log.debug ("tint alpha "+alpha+" overlay width = "+width+" height= "+height);
+			
 			const overlay:Sprite = new Sprite();
 			const g:Graphics = overlay.graphics;
 			g.beginFill(color, alpha);
-			g.drawRect(0,0, s.width, s.height);
+			g.drawRect(0,0, width, height);
 			g.endFill();
-			s.addChild(overlay);
+			return overlay;
 		}
 		
 		public static const LIGHT_GREY:uint = 0xA0A0A0;

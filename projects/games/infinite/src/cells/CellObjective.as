@@ -28,16 +28,6 @@ package cells
 		 * Stop displaying ownership information about the cell to the user.
 		 */
 		function hideOwnership (cell:Cell) :void
-		
-		/**
-		 * Check to see whether the player can move to this cell, and indicate that fact using 'footprints'
-		 * on the display.
-		 */
-		function checkFootprints (sprite:CellSprite) :void
-		
-		/**
-		 * Indicate that the mouse has moved off the given sprite.
-		 */		
-		function moveOutSprite(sprite:CellSprite) :void;				
+				
 	}
 }

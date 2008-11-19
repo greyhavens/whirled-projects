@@ -7,6 +7,8 @@ package client.player
 	
 	import flash.events.EventDispatcher;
 	
+	import items.ItemPlayer;
+	
 	import paths.Path;
 	
 	import server.Messages.PlayerPosition;
@@ -14,8 +16,9 @@ package client.player
 	import world.Cell;
 	import world.arbitration.MovablePlayer;
 	import world.board.BoardAccess;
+	import world.board.BoardInteractions;
 	
-	public class Player extends EventDispatcher implements MovablePlayer
+	public class Player extends EventDispatcher implements MovablePlayer, ItemPlayer
 	{		
 		public function Player (client:Client, id:int)
 		{			
@@ -43,8 +46,9 @@ package client.player
 		/**
 		 * Move this player to the same coordinates on another board.
 		 */
-		public function moveToBoard (board:BoardAccess) :void
+		public function moveToBoard (board:BoardInteractions) :void
 		{
+			_board = board;
 			_cell = board.cellAt(_position);			
 		}
 		
@@ -101,7 +105,33 @@ package client.player
         {
         	return _levelNumber;
         }
+        
+        public function cellAt (coords:BoardCoordinates) :Cell
+        {
+        	return _board.cellAt(coords);
+        }
+        
+        public function get name () :String
+        {
+        	throw new Error("client player names are not known");
+        }
+        
+        public function get startingPosition () :BoardCoordinates
+        {
+        	return _board.startingPosition;
+        }                
+        
+        public function replace (cell:Cell) :void
+        {
+            throw new Error("cells cannot be replaced on the client");        	
+        }
+        
+        public function teleport () :void
+        {
+        	throw new Error("teleport (or any other action) cannot be carried out on the server");
+        }
                 
+        protected var _board:BoardInteractions;
         protected var _moving:Boolean = false;
         protected var _levelNumber:int;
         protected var _id:int;

@@ -10,6 +10,16 @@ package sprites
 		{
 			super(asset, UNIT.dx, UNIT.dy);
 		}
+        
+        public function greyOut() :void
+        {
+        	darken(0.75);
+        }
+        
+        public function ungrey() :void
+        {
+        	clearOverlay();
+        }
 
 		public static const UNIT:Vector = new Vector(50,50);
 	}
