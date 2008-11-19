@@ -69,7 +69,7 @@ public class Player extends SimObject
     public function get canSwitchBoards () :Boolean
     {
         return (_state != STATE_SWITCHINGBOARDS &&
-                (_teamId == _curBoardId || _numGems >= Constants.RETURN_HOME_GEMS_MIN));
+                (_teamId == _curBoardId || this.numGems >= Constants.RETURN_HOME_GEMS_MIN));
     }
 
     public function get playerId () :int
@@ -87,6 +87,11 @@ public class Player extends SimObject
         return _curBoardId;
     }
 
+    public function get isOnOwnBoard () :Boolean
+    {
+        return _teamId == _curBoardId;
+    }
+
     public function get color () :uint
     {
         return _color;
@@ -102,11 +107,6 @@ public class Player extends SimObject
         return _state;
     }
 
-    public function get numGems () :int
-    {
-        return _numGems;
-    }
-
     public function get score () :int
     {
         return _score;
@@ -114,7 +114,7 @@ public class Player extends SimObject
 
     public function get moveSpeed () :Number
     {
-        return Constants.BASE_MOVE_SPEED + (_numGems * Constants.MOVE_SPEED_GEM_OFFSET);
+        return Constants.BASE_MOVE_SPEED + (this.numGems * Constants.MOVE_SPEED_GEM_OFFSET);
     }
 
     public function get gridX () :int
@@ -125,6 +125,16 @@ public class Player extends SimObject
     public function get gridY () :int
     {
         return _loc.y / Constants.BOARD_CELL_SIZE;
+    }
+
+    public function get numGems () :int
+    {
+        return _gems.length;
+    }
+
+    public function get gems () :Array
+    {
+        return _gems;
     }
 
     override protected function update (dt :Number) :void
@@ -164,11 +174,10 @@ public class Player extends SimObject
             clampLoc();
 
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (_curBoardId != _teamId && _numGems < Constants.MAX_PLAYER_GEMS) {
+            if (_curBoardId != _teamId && this.numGems < Constants.MAX_PLAYER_GEMS) {
                 var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
                 if (cell.hasGem) {
-                    cell.hasGem = false;
-                    _numGems += 1;
+                    _gems.push(cell.takeGem());
                 }
             }
         }
@@ -194,7 +203,7 @@ public class Player extends SimObject
     protected var _playerId :int;
     protected var _teamId :int;
     protected var _curBoardId :int;
-    protected var _numGems :int;
+    protected var _gems :Array = [];
     protected var _score :int;
     protected var _moveDirection :Vector2 = new Vector2();
     protected var _moveTarget :Vector2;

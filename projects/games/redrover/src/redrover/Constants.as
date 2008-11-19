@@ -55,6 +55,10 @@ public class Constants
     public static const DIR_WEST :int = 1;
     public static const DIR_SOUTH :int = 2;
     public static const DIR_EAST :int = 3;
+
+    public static const GEM_GREEN :int = 0;
+    public static const GEM_PURPLE :int = 1;
+    public static const GEM__LIMIT :int = 2;
 }
 
 }

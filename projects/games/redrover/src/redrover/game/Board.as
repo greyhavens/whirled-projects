@@ -16,7 +16,7 @@ public class Board extends SimObject
         var size :int = _cols * _rows;
         _cells = ArrayUtil.create(size);
         for (var ii :int = 0; ii < size; ++ii) {
-            _cells[ii] = BoardCell.create(getX(ii), getY(ii));
+            _cells[ii] = new BoardCell(getX(ii), getY(ii));
         }
     }
 

@@ -11,11 +11,11 @@ import redrover.util.SpriteUtil;
 
 public class GemView extends SceneObject
 {
-    public function GemView (teamId :int, boardCell :BoardCell)
+    public function GemView (gemType :int, boardCell :BoardCell)
     {
         _boardCell = boardCell;
 
-        var gem :DisplayObject = GemFactory.createGem(teamId);
+        var gem :DisplayObject = GemViewFactory.createGem(gemType);
         gem.x = -gem.width * 0.5;
         gem.y = -gem.height;
 

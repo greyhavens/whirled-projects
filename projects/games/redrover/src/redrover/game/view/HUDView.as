@@ -7,7 +7,6 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.text.TextField;
-import flash.text.TextFormatAlign;
 
 import redrover.*;
 import redrover.game.*;
@@ -44,8 +43,8 @@ public class HUDView extends SceneObject
         var newScore :int = GameContext.localPlayer.score;
 
         var gemSprite :Sprite = SpriteUtil.createSprite();
-        for (var ii :int = 0; ii < newGems; ++ii) {
-            var gem :DisplayObject = GemFactory.createGem();
+        for each (var gemType :int in GameContext.localPlayer.gems) {
+            var gem :DisplayObject = GemViewFactory.createGem(gemType);
             gem.scaleX = 0.5;
             gem.scaleY = 0.5;
             gem.x = gemSprite.width;

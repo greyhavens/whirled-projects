@@ -4,28 +4,57 @@ import redrover.*;
 
 public class BoardCell
 {
-    public var gridX :int;
-    public var gridY :int;
-    public var hasGem :Boolean;
+    public function BoardCell (gridX :int, gridY :int) :void
+    {
+        _gridX = gridX;
+        _gridY = gridY;
+    }
+
+    public function takeGem () :int
+    {
+        var gemType :int = _gemType;
+        _gemType = -1;
+        return gemType;
+    }
+
+    public function addGem (type :int) :void
+    {
+        _gemType = type;
+    }
+
+    public function get hasGem () :Boolean
+    {
+        return _gemType >= 0;
+    }
+
+    public function get gemType () :int
+    {
+        return _gemType;
+    }
+
+    public function get gridX () :int
+    {
+        return _gridX;
+    }
+
+    public function get gridY () :int
+    {
+        return _gridY;
+    }
 
     public function get pixelX () :int
     {
-        return gridX * Constants.BOARD_CELL_SIZE;
+        return _gridX * Constants.BOARD_CELL_SIZE;
     }
 
     public function get pixelY () :int
     {
-        return gridY * Constants.BOARD_CELL_SIZE;
+        return _gridY * Constants.BOARD_CELL_SIZE;
     }
 
-    public static function create (gridX :int, gridY :int) :BoardCell
-    {
-        var cell :BoardCell = new BoardCell();
-        cell.gridX = gridX;
-        cell.gridY = gridY;
-        return cell;
-    }
-
+    public var _gridX :int;
+    public var _gridY :int;
+    public var _gemType :int = -1;
 }
 
 }

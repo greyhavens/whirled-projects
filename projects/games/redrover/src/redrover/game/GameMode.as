@@ -117,6 +117,7 @@ public class GameMode extends AppMode
 
         addObject(new Camera(Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y), _modeSprite);
         addObject(new HUDView(), _modeSprite);
+        addObject(new MusicPlayer());
     }
 
     override public function update (dt :Number) :void
@@ -187,8 +188,9 @@ public class GameMode extends AppMode
         }
 
         if (cell != null) {
-            cell.hasGem = true;
-            addObject(new GemView(boardId, cell), getTeamSprite(boardId).objectLayer);
+            var gemType :int = Rand.nextIntRange(0, Constants.GEM__LIMIT, Rand.STREAM_GAME)
+            cell.addGem(gemType);
+            addObject(new GemView(gemType, cell), getTeamSprite(boardId).objectLayer);
         }
     }
 
