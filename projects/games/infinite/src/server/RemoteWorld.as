@@ -54,6 +54,7 @@ package server
                 case UPDATED_CELL: return updateCell(event);
                 case ITEM_RECEIVED: return itemReceived(event);
                 case ITEM_USED: return itemUsed(event);
+                case PATH_UNAVAILABLE: return pathUnavailable(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -91,6 +92,11 @@ package server
         public function itemUsed (event:MessageReceivedEvent) :void
         {
         	_client.itemUsed(event.value as int);
+        }
+        
+        public function pathUnavailable (event:MessageReceivedEvent) :void
+        {
+        	_client.pathUnavailable();
         }
         
         /**
@@ -176,6 +182,7 @@ package server
         public static const UPDATED_CELL:int = 5;
         public static const ITEM_RECEIVED:int = 6;
         public static const ITEM_USED:int = 7;
+        public static const PATH_UNAVAILABLE:int = 8;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
@@ -185,6 +192,7 @@ package server
         messageName[TIME_SYNC] = "time sync";
         messageName[UPDATED_CELL] = "updated cell";
         messageName[ITEM_RECEIVED] = "item received";
-        messageName[ITEM_USED] = "item used";        
+        messageName[ITEM_USED] = "item used";
+        messageName[PATH_UNAVAILABLE] = "path unavailable";        
 	}
 }

@@ -71,13 +71,20 @@ package client.player
         {
         	return _moving;
         }
+
+        /**
+         * Called when a move starts.  This is in anticipation of receiving a path back from the board. 
+         */
+        public function startMove () :void
+        {
+        	_moving = true;
+        }
         
         public function follow (path:Path) :void
         {
         	Log.debug(this+" setting path to "+path);
         	_path = path;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_STARTED, this));
-            _moving = true;
         }
                 
         public function get path () :Path
@@ -129,6 +136,15 @@ package client.player
         public function teleport () :void
         {
         	throw new Error("teleport (or any other action) cannot be carried out on the server");
+        }
+        
+        /**
+         * Handle the situation that a requested path is not available.
+         */
+        public function noPath () :void
+        {
+        	_moving = false;
+        	_path = null;
         }
                 
         protected var _board:BoardInteractions;

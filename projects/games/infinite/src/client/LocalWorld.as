@@ -92,6 +92,11 @@ package client
   		{
   			_client.itemUsed(event.position);
   		}
+         
+        public function handleNoPath (event:MoveEvent) :void
+        {
+        	_client.pathUnavailable();
+        }
                 	
         protected var _client:WorldClient;	
 		protected var _world:World;

@@ -29,6 +29,7 @@ package world
 		{
             addEventListener(LevelEvent.LEVEL_ENTERED, listener.handleLevelEntered);
             addEventListener(MoveEvent.PATH_START, listener.handlePathStart);
+            addEventListener(MoveEvent.PATH_UNAVAILABLE, listener.handleNoPath);
             addEventListener(CellStateEvent.STATE_CHANGED, listener.handleCellStateChange);		
             addEventListener(InventoryEvent.RECEIVED, listener.handleItemReceived);
             addEventListener(InventoryEvent.USED, listener.handleItemUsed);

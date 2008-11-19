@@ -8,6 +8,7 @@ package world.arbitration
 	{
 		public static const PATH_START:String = "move_start";
 		public static const FALL_START:String = "fall_start"; 
+		public static const PATH_UNAVAILABLE:String = "path_unavailable";
     
         public var player:MovablePlayer;
 

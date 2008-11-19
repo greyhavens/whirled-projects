@@ -257,6 +257,10 @@ package client
 			return _localPlayer;
 		}
 		
+		public function pathUnavailable () :void
+		{
+			_localPlayer.noPath();
+		}
 		
 		protected var _serverOffset:Number = 0;
 		

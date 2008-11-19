@@ -20,6 +20,8 @@ package world.arbitration
 			var path:Path = findPath(player, destination);
 			if (path != null) {
 				dispatchStart(player, path);
+			} else {
+				dispatchPathUnavailable(player);
 			}
 		}
 		
@@ -90,6 +92,12 @@ package world.arbitration
 		{
 			Log.debug("dispatching "+path+" to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
+		}
+		
+		protected function dispatchPathUnavailable(player:MovablePlayer) :void
+		{
+			Log.debug("dispatching 'no path' to "+player);
+			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_UNAVAILABLE, player, null));
 		}
 		
 		public function climbingPath (player:MovablePlayer, destination:Cell) :Path

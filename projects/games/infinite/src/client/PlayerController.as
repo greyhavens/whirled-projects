@@ -37,6 +37,8 @@ package client
 				return;
 			} 
 			
+			// tell the player a move is starting. The player will either receive back a path, or a path unavailable.
+			_player.startMove();
 			_world.proposeMove(event.cell.position);
 		}
 

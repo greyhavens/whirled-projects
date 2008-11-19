@@ -42,11 +42,16 @@ package world
         /**
          * The client's player has received an item and this should be displayed in the inventory.
          */
-        function receiveItem(detail:InventoryUpdate) :void;
+        function receiveItem (detail:InventoryUpdate) :void;
         
         /**
          * The item at the given position in the inventory has been used and should be removed from play.
          */ 
-        function itemUsed(position:int) :void;         
+        function itemUsed (position:int) :void;
+        
+        /**
+         * The requested path was not available.
+         */ 
+        function pathUnavailable () :void         
  	}
 }

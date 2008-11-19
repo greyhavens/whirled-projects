@@ -63,6 +63,11 @@ package server
 			sendToGroup(level.players, RemoteWorld.START_PATH, message);
 		}
 		
+		public function handleNoPath (event:MoveEvent) :void
+		{
+			signalClient(event.player.id, RemoteWorld.PATH_UNAVAILABLE);
+		}
+		
 		public function handleCellStateChange (event:CellStateEvent) :void
 		{
 			const message:CellState = event.cell.state;			
@@ -135,6 +140,11 @@ package server
 		protected function sendTime(id:int) :void
 		{
 			_net.sendMessage(REMOTE_TIME_SYNC, (new Date()).getTime(), id);
+		}
+		
+		protected function signalClient(id:int, message:int) :void
+		{
+			_net.sendMessage(String(message), null, id);
 		}
 		
 		/**
