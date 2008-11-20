@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
+import flash.display.Shape;
 import flash.display.Sprite;
 import flash.text.TextField;
 
@@ -71,6 +72,16 @@ public class GemsRedeemedAnim extends SceneObject
 
         var tf :TextField = UIBits.createText(scoreText + "\n" + flavorText,
                                               1.5, 0, TEXT_COLORS[_player.teamId]);
+
+        var shape :Shape = new Shape();
+        shape.graphics.beginFill(0);
+        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
+        shape.graphics.endFill();
+
+        shape.x = -shape.width * 0.5;
+        shape.y = -shape.height * 0.5;
+        _sprite.addChild(shape);
+
         tf.x = -tf.width * 0.5;
         tf.y = -tf.height * 0.5;
         _sprite.addChild(tf);
@@ -112,7 +123,7 @@ public class GemsRedeemedAnim extends SceneObject
 
     protected var _sprite :Sprite;
 
-    protected static const TEXT_COLORS :Array = [ 0x0057aa, 0xde2424 ];
+    protected static const TEXT_COLORS :Array = [ 0x6ae8ff, 0xff6a6a ];
     protected static const LEADER_NAMES :Array = [ "King", "Queen" ];
     protected static const HAPPINESS :Array = [
         "", "pleased.", "pleased.", "pleased.", "overjoyed!", "ECSTATIC!"
