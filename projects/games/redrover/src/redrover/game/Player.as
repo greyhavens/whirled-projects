@@ -194,8 +194,9 @@ public class Player extends SimObject
 
             // If we're on the other team's board, pickup gems when we enter their cells
             if (_curBoardId != _teamId && this.numGems < Constants.MAX_PLAYER_GEMS) {
+                var lastGemType :int = (_gems.length == 0 ? -1 : _gems[_gems.length - 1]);
                 var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
-                if (cell.hasGem) {
+                if (cell.hasGem && cell.gemType != lastGemType) {
                     _gems.push(cell.takeGem());
                 }
             }
