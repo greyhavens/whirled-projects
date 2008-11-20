@@ -11,10 +11,16 @@ import com.whirled.contrib.simplegame.util.Rand;
 import flash.display.DisplayObject;
 
 import redrover.*;
+import redrover.data.*;
 import redrover.game.view.*;
 
 public class GameMode extends AppMode
 {
+    public function GameMode (levelData :LevelData)
+    {
+        _levelData = levelData;
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -84,7 +90,8 @@ public class GameMode extends AppMode
     protected function setupLogicObjects () :void
     {
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
-            var board :Board = new Board(teamId, Constants.BOARD_COLS, Constants.BOARD_ROWS);
+            var board :Board = new Board(teamId, Constants.BOARD_COLS, Constants.BOARD_ROWS,
+                                         _levelData.terrain);
             _boards.push(board);
             addObject(board);
 
@@ -204,6 +211,7 @@ public class GameMode extends AppMode
         return _teamSprites[teamId];
     }
 
+    protected var _levelData :LevelData;
     protected var _teamSprites :Array = []; // Array<Sprite>, one for each team
     protected var _boards :Array = []; // Array<Board>, one for each team
 }

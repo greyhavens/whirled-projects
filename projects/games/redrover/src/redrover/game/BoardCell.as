@@ -4,10 +4,12 @@ import redrover.*;
 
 public class BoardCell
 {
-    public function BoardCell (gridX :int, gridY :int) :void
+    public function BoardCell (gridX :int, gridY :int, isObstacle :Boolean, moveSpeed :Number) :void
     {
         _gridX = gridX;
         _gridY = gridY;
+        _isObstacle = isObstacle;
+        _moveSpeed = moveSpeed;
     }
 
     public function takeGem () :int
@@ -52,9 +54,21 @@ public class BoardCell
         return _gridY * Constants.BOARD_CELL_SIZE;
     }
 
-    public var _gridX :int;
-    public var _gridY :int;
-    public var _gemType :int = -1;
+    public function get isObstacle () :Boolean
+    {
+        return _isObstacle;
+    }
+
+    public function get moveSpeed () :Number
+    {
+        return _moveSpeed;
+    }
+
+    protected var _gridX :int;
+    protected var _gridY :int;
+    protected var _isObstacle :Boolean;
+    protected var _moveSpeed :Number;
+    protected var _gemType :int = -1;
 }
 
 }

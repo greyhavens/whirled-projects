@@ -67,6 +67,8 @@ public class Constants
     public static const GEM_PURPLE :int = 1;
     public static const GEM__LIMIT :int = 2;
 
+    public static const SLOW_TERRAIN_SPEED :Number = 0.5;
+
     public static const TERRAIN_NORMAL :int = 0;
     public static const TERRAIN_OBSTACLE :int = 1;
     public static const TERRAIN_SLOW :int = 2;

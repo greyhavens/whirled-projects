@@ -72,7 +72,7 @@ public class LevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new GameMode());
+            AppContext.mainLoop.unwindToMode(new GameMode(_loadedLevel));
         }
     }
 

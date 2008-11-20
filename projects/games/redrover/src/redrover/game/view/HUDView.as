@@ -44,9 +44,7 @@ public class HUDView extends SceneObject
 
         var gemSprite :Sprite = SpriteUtil.createSprite();
         for each (var gemType :int in GameContext.localPlayer.gems) {
-            var gem :DisplayObject = GemViewFactory.createGem(gemType);
-            gem.scaleX = 0.5;
-            gem.scaleY = 0.5;
+            var gem :DisplayObject = GemViewFactory.createGem(15, gemType);
             gem.x = gemSprite.width;
             gemSprite.addChild(gem);
         }

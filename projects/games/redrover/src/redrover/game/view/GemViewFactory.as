@@ -8,12 +8,16 @@ import flash.display.DisplayObject;
 
 public class GemViewFactory
 {
-    public static function createGem (gemType :int = -1) :DisplayObject
+    public static function createGem (width :Number, gemType :int) :DisplayObject
     {
         var bm :Bitmap = ImageResource.instantiateBitmap("gem");
         if (gemType >= 0) {
             bm.filters = [ new ColorMatrix().colorize(GEM_COLORS[gemType]).createFilter() ];
         }
+
+        var scale :Number = width / bm.width;
+        bm.scaleX = scale;
+        bm.scaleY = scale;
 
         return bm;
     }

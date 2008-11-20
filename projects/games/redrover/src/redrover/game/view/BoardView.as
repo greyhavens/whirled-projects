@@ -1,11 +1,15 @@
 package redrover.game.view {
 
+import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Matrix;
 
 import redrover.*;
 import redrover.game.*;
@@ -18,22 +22,36 @@ public class BoardView extends SceneObject
         _board = board;
         _sprite = SpriteUtil.createSprite(false, true);
 
-        var g :Graphics = _sprite.graphics;
-        g.beginFill(TEAM_COLORS[board.teamId]);
-        g.drawRect(0, 0, _board.pixelWidth, _board.pixelHeight);
-        g.endFill();
+        var bd :BitmapData = new BitmapData(_board.pixelWidth, _board.pixelHeight, false,
+                                            TEAM_COLORS[_board.teamId]);
+        var grass :Bitmap = getGrass();
+        var rock :Bitmap = getRock();
+        var mat :Matrix = new Matrix();
+        var grassScale :Number = Constants.BOARD_CELL_SIZE / grass.width;
+        var rockScale :Number = (Constants.BOARD_CELL_SIZE - 3) / rock.width;
 
-        g.lineStyle(2, 0);
-        for (var xx :int = 1; xx < _board.cols; ++xx) {
-            g.moveTo(xx * Constants.BOARD_CELL_SIZE, 0);
-            g.lineTo(xx * Constants.BOARD_CELL_SIZE, _board.pixelHeight);
-        }
-        for (var yy :int = 1; yy < _board.rows; ++yy) {
-            g.moveTo(0, yy * Constants.BOARD_CELL_SIZE);
-            g.lineTo(_board.pixelWidth, yy * Constants.BOARD_CELL_SIZE);
+        for (var yy :int = 0; yy < _board.rows; ++yy) {
+            for (var xx :int = 0; xx < _board.cols; ++xx) {
+                var px :Number = xx * Constants.BOARD_CELL_SIZE;
+                var py :Number = yy * Constants.BOARD_CELL_SIZE;
+
+                mat.identity();
+                mat.scale(grassScale, grassScale);
+                mat.translate(px, py - 5);
+                bd.draw(grass, mat, null, null, null, true);
+
+                var cell :BoardCell = _board.getCell(xx, yy);
+                if (cell.isObstacle) {
+                    mat.identity();
+                    mat.scale(rockScale, rockScale);
+                    mat.translate(px, py);
+                    bd.draw(rock, mat, null, null, null, true);
+                }
+            }
         }
 
-        _sprite.cacheAsBitmap = true;
+        var bg :Bitmap = new Bitmap(bd);
+        _sprite.addChild(bg);
 
         registerListener(_sprite, MouseEvent.CLICK, onMouseDown);
     }
@@ -52,10 +70,33 @@ public class BoardView extends SceneObject
         }
     }
 
+    protected function getGrass () :Bitmap
+    {
+        if (_grass == null) {
+            _grass = ImageResource.instantiateBitmap("grass");
+        }
+
+        _grass.filters = [ new ColorMatrix().colorize(TEAM_COLORS[_board.teamId]).createFilter() ];
+
+        return _grass;
+    }
+
+    protected function getRock () :Bitmap
+    {
+        if (_rock == null) {
+            _rock = ImageResource.instantiateBitmap("rock");
+        }
+
+        return _rock;
+    }
+
     protected var _board :Board;
     protected var _sprite :Sprite;
 
-    protected static const TEAM_COLORS :Array = [ 0xFF0000, 0x0000FF ];
+    protected static var _grass :Bitmap;
+    protected static var _rock :Bitmap;
+
+    protected static const TEAM_COLORS :Array = [ 0xff6c77, 0x88c5ff ];
 }
 
 }

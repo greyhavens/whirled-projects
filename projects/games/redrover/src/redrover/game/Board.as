@@ -7,7 +7,7 @@ import redrover.*;
 
 public class Board extends SimObject
 {
-    public function Board (teamId :int, cols :int, rows :int)
+    public function Board (teamId :int, cols :int, rows :int, terrain :Array)
     {
         _teamId = teamId;
         _cols = cols;
@@ -16,7 +16,11 @@ public class Board extends SimObject
         var size :int = _cols * _rows;
         _cells = ArrayUtil.create(size);
         for (var ii :int = 0; ii < size; ++ii) {
-            _cells[ii] = new BoardCell(getX(ii), getY(ii));
+            var terrainType :int = terrain[ii];
+            var isObstacle :Boolean = (terrainType == Constants.TERRAIN_OBSTACLE);
+            var moveSpeed :Number =
+                (terrainType == Constants.TERRAIN_SLOW ? Constants.SLOW_TERRAIN_SPEED : 1);
+            _cells[ii] = new BoardCell(getX(ii), getY(ii), isObstacle, moveSpeed);
         }
     }
 

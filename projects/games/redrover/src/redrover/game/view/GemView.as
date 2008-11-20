@@ -15,16 +15,16 @@ public class GemView extends SceneObject
     {
         _boardCell = boardCell;
 
-        var gem :DisplayObject = GemViewFactory.createGem(gemType);
+        var gem :DisplayObject = GemViewFactory.createGem(Constants.BOARD_CELL_SIZE - 12, gemType);
         gem.x = -gem.width * 0.5;
-        gem.y = -gem.height;
+        gem.y = -gem.height * 0.5;
 
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(gem);
 
         // center the GemView in its cell
         this.x = (_boardCell.gridX + 0.5) * Constants.BOARD_CELL_SIZE;
-        this.y = (_boardCell.gridY + 0.75) * Constants.BOARD_CELL_SIZE;
+        this.y = (_boardCell.gridY + 0.5) * Constants.BOARD_CELL_SIZE;
     }
 
     override public function get displayObject () :DisplayObject
