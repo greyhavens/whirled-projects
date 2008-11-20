@@ -12,7 +12,7 @@ public class Board extends SimObject
         _teamId = teamId;
         _cols = cols;
         _rows = rows;
-        _cellSize = Constants.BOARD_CELL_SIZE;
+        _cellSize = GameContext.levelData.cellSize;
         _cellSizeInv = 1 / _cellSize;
 
         var size :int = _cols * _rows;

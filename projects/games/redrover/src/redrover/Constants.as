@@ -18,8 +18,6 @@ public class Constants
     public static const RESTYPE_LEVEL :String = "level";
 
     /* Game settings */
-    public static const BOARD_CELL_SIZE :int = 50;
-
     public static const GEM_SPAWN_MIN :Number = 3;
     public static const GEM_SPAWN_MAX :Number = 3;
 

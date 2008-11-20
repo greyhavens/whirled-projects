@@ -28,15 +28,16 @@ public class BoardView extends SceneObject
         var rock :Bitmap = getRock();
         var gemRedemption :Bitmap = getGemRedemption();
 
-        var grassScale :Number = Constants.BOARD_CELL_SIZE / grass.width;
-        var rockScale :Number = (Constants.BOARD_CELL_SIZE - 3) / rock.width;
-        var grScale :Number = Constants.BOARD_CELL_SIZE / gemRedemption.width;
+        var cellSize :int = GameContext.levelData.cellSize;
+        var grassScale :Number = cellSize / grass.width;
+        var rockScale :Number = (cellSize - 3) / rock.width;
+        var grScale :Number = cellSize / gemRedemption.width;
 
         var mat :Matrix = new Matrix();
         for (var yy :int = 0; yy < _board.rows; ++yy) {
             for (var xx :int = 0; xx < _board.cols; ++xx) {
-                var px :Number = xx * Constants.BOARD_CELL_SIZE;
-                var py :Number = yy * Constants.BOARD_CELL_SIZE;
+                var px :Number = xx * cellSize;
+                var py :Number = yy * cellSize;
 
                 mat.identity();
                 mat.scale(grassScale, grassScale);
@@ -73,8 +74,9 @@ public class BoardView extends SceneObject
 
     protected function onMouseDown (e :MouseEvent) :void
     {
-        var gridX :int = e.localX / Constants.BOARD_CELL_SIZE;
-        var gridY :int = e.localY / Constants.BOARD_CELL_SIZE;
+        var cellSize :int = GameContext.levelData.cellSize;
+        var gridX :int = e.localX / cellSize;
+        var gridY :int = e.localY / cellSize;
         if (gridX >= 0 && gridX < _board.cols && gridY >= 0 && gridY < _board.rows) {
             GameContext.localPlayer.moveTo(gridX, gridY);
         }

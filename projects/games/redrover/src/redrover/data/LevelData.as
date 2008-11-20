@@ -4,9 +4,11 @@ import com.threerings.util.StringUtil;
 
 import redrover.*;
 import redrover.util.XmlReadError;
+import redrover.util.XmlReader;
 
 public class LevelData
 {
+    public var cellSize :int;
     public var terrain :Array = [];
     public var objects :Array = [];
     public var cols :int;
@@ -15,8 +17,11 @@ public class LevelData
     public static function fromXml (xml :XML) :LevelData
     {
         var data :LevelData = new LevelData();
+
+        data.cellSize = XmlReader.getUintAttr(xml, "cellSize");
         parseTerrainString(xml.Terrain, data);
         parseObjectString(xml.Objects, data);
+
         return data;
     }
 

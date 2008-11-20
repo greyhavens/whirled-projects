@@ -3,10 +3,12 @@ package redrover.game {
 import com.whirled.contrib.simplegame.audio.*;
 
 import redrover.*;
+import redrover.data.LevelData;
 
 public class GameContext
 {
     public static var gameMode :GameMode;
+    public static var levelData :LevelData;
 
     public static var players :Array = [];
     public static var localPlayerIndex :int = -1;
@@ -23,6 +25,7 @@ public class GameContext
     public static function init () :void
     {
         gameMode = null;
+        levelData = null;
         players = [];
         localPlayerIndex = -1;
         playAudio = false;

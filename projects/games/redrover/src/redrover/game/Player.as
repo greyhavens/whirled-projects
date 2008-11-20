@@ -19,8 +19,11 @@ public class Player extends SimObject
         _color = color;
         _state = STATE_NORMAL;
 
-        _loc.x = (gridX + 0.5) * Constants.BOARD_CELL_SIZE;
-        _loc.y = (gridY + 0.5) * Constants.BOARD_CELL_SIZE;
+        _cellSize = GameContext.levelData.cellSize;
+
+        var cell :BoardCell = GameContext.gameMode.getBoard(teamId).getCell(gridX, gridY);
+        _loc.x = cell.ctrPixelX;
+        _loc.y = cell.ctrPixelY;
         clampLoc();
     }
 
@@ -119,12 +122,12 @@ public class Player extends SimObject
 
     public function get gridX () :int
     {
-        return _loc.x / Constants.BOARD_CELL_SIZE;
+        return _loc.x / _cellSize;
     }
 
     public function get gridY () :int
     {
-        return _loc.y / Constants.BOARD_CELL_SIZE;
+        return _loc.y / _cellSize;
     }
 
     public function get curBoardCell () :BoardCell
@@ -151,8 +154,8 @@ public class Player extends SimObject
             var xOffset :Number = 0;
             var yOffset :Number = 0;
             if (_moveTarget != null) {
-                var xDist :Number = ((_moveTarget.x + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.x;
-                var yDist :Number = ((_moveTarget.y + 0.5) * Constants.BOARD_CELL_SIZE) - _loc.y;
+                var xDist :Number = ((_moveTarget.x + 0.5) * _cellSize) - _loc.x;
+                var yDist :Number = ((_moveTarget.y + 0.5) * _cellSize) - _loc.y;
                 var xDistAbs :Number = Math.abs(xDist);
                 var yDistAbs :Number = Math.abs(yDist);
 
@@ -236,10 +239,10 @@ public class Player extends SimObject
     {
         var board :Board = GameContext.gameMode.getBoard(_teamId);
 
-        _loc.x = Math.max(_loc.x, Constants.BOARD_CELL_SIZE * 0.5);
-        _loc.x = Math.min(_loc.x, (board.cols - 0.5) * Constants.BOARD_CELL_SIZE);
-        _loc.y = Math.max(_loc.y, Constants.BOARD_CELL_SIZE * 0.5);
-        _loc.y = Math.min(_loc.y, (board.rows - 0.5) * Constants.BOARD_CELL_SIZE);
+        _loc.x = Math.max(_loc.x, _cellSize * 0.5);
+        _loc.x = Math.min(_loc.x, (board.cols - 0.5) * _cellSize);
+        _loc.y = Math.max(_loc.y, _cellSize * 0.5);
+        _loc.y = Math.min(_loc.y, (board.rows - 0.5) * _cellSize);
     }
 
     protected var _playerIndex :int;
@@ -252,6 +255,8 @@ public class Player extends SimObject
     protected var _loc :Vector2 = new Vector2();
     protected var _state :int;
     protected var _color :uint;
+
+    protected var _cellSize :int; // we access this value all the time
 
     protected static const SWITCH_BOARDS_TASK_NAME :String = "SwitchBoards";
 }

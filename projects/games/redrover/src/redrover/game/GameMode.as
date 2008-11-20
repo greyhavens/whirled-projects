@@ -27,6 +27,7 @@ public class GameMode extends AppMode
 
         GameContext.init();
         GameContext.gameMode = this;
+        GameContext.levelData = _levelData;
 
         setupAudio();
 

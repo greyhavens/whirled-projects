@@ -1,5 +1,5 @@
 <root>
-<Level>
+<Level cellSize="40">
 	<Terrain>
 		# # # # # # # # # # # # # # # # #
 		# . . . . . . . . . . . . . . . #

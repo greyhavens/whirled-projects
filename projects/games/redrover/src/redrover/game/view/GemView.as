@@ -6,7 +6,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import redrover.*;
-import redrover.game.BoardCell;
+import redrover.game.*;
 import redrover.util.SpriteUtil;
 
 public class GemView extends SceneObject
@@ -15,7 +15,8 @@ public class GemView extends SceneObject
     {
         _boardCell = boardCell;
 
-        var gem :DisplayObject = GemViewFactory.createGem(Constants.BOARD_CELL_SIZE - 12, gemType);
+        var gem :DisplayObject = GemViewFactory.createGem(GameContext.levelData.cellSize - 12,
+                                                          gemType);
         gem.x = -gem.width * 0.5;
         gem.y = -gem.height * 0.5;
 
@@ -23,8 +24,8 @@ public class GemView extends SceneObject
         _sprite.addChild(gem);
 
         // center the GemView in its cell
-        this.x = (_boardCell.gridX + 0.5) * Constants.BOARD_CELL_SIZE;
-        this.y = (_boardCell.gridY + 0.5) * Constants.BOARD_CELL_SIZE;
+        this.x = _boardCell.ctrPixelX;
+        this.y = _boardCell.ctrPixelY;
     }
 
     override public function get displayObject () :DisplayObject
