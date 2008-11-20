@@ -38,6 +38,8 @@ public class FaceHugger extends Sprite
                     _victimId = null;
                 }
         });
+
+        _ctrl.requestControl();
     }
 
     protected function handleMovement (event :ControlEvent) :void
@@ -55,19 +57,32 @@ public class FaceHugger extends Sprite
         }
 
         if (entityId == _victimId) {
-            var target :Array = remote.getPixelLocation();
 
-            target[1] += remote.getDimensions()[1] / 2;
-            target[2] -= 1;
+            var logical :Array = event.value as Array;
+            if (logical == null) {
+                return; // Face huggers only care when its victim STARTS moving
+            }
 
+            var pixel :Array = _ctrl.getRoomBounds();
+            for (var i :int = 0; i < logical.length; ++i) {
+                pixel[i] *= logical[i];
+            }
+
+            pixel[1] += remote.getDimensions()[1] / 2;
+            pixel[2] -= 10;
+
+            // Match their speed and heading
+            _ctrl.setMoveSpeed(remote.getMoveSpeed());
+            _ctrl.setPixelLocation(pixel[0], pixel[1], pixel[2],
+                    pixel[0] < _ctrl.getPixelLocation()[0] ? 270 : 90);
+
+            // Say something
             var speech :Array = [
                 "Squeeee!!", "Hssss!!", "Skreeeee!!", "OMG WTF?!",
                 "*squelch squelch*", "I luvs you, " + remote.getName() + "!"
             ];
             _ctrl.sendChat(RandomUtil.pickRandom(speech) as String);
 
-            _ctrl.setPixelLocation(target[0], target[1], target[2],
-                    target[0] < _ctrl.getPixelLocation()[0] ? 270 : 90);
         }
     }
 
