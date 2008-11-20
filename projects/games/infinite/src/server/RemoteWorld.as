@@ -61,7 +61,7 @@ package server
         
         public function levelEntered (event:MessageReceivedEvent) :void
         {
-            _client.updatePosition(EnterLevel.readFromArray(event.value as ByteArray).position);
+            _client.enterLevel(EnterLevel.readFromArray(event.value as ByteArray));
         }        
         
         public function pathStart (event:MessageReceivedEvent) :void

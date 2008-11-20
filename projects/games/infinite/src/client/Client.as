@@ -17,6 +17,7 @@ package client
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
@@ -29,7 +30,6 @@ package client
 	import world.NeighborhoodEvent;
 	import world.WorldClient;
 	import world.board.*;
-	import world.level.*;
 	
 	public class Client extends Sprite implements WorldClient
 	{
@@ -77,6 +77,12 @@ package client
 			for each (var position:PlayerPosition in update.positions) {
 				updatePosition(position);
 			} 
+		}
+		
+		public function enterLevel(detail:EnterLevel) :void
+		{
+			level(detail.level).height = detail.height;
+			updatePosition(detail.position);
 		}
 		
 		/**
@@ -261,6 +267,18 @@ package client
 		{
 			_localPlayer.noPath();
 		}
+		
+		public function level (number:int) :Level
+		{
+			var found:Level = _levels[number] as Level;
+			if (found == null) {
+				found = new Level(number, 0);
+				_levels[number] = found;
+			}
+            return found;			
+		}
+		
+		protected var _levels:Array = new Array();
 		
 		protected var _serverOffset:Number = 0;
 		

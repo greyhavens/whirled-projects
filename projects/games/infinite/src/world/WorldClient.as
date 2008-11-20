@@ -2,17 +2,17 @@ package world
 {
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
-	import server.Messages.PlayerPosition;
 	
 	public interface WorldClient extends Chronometer
 	{
 		/**
 		 * A player entered a level.
 		 */
-        function updatePosition (detail:PlayerPosition) :void;
+        function enterLevel (detail:EnterLevel) :void;
         
         /**
          * The client should start a player moving along a path.

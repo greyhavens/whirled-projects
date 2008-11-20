@@ -4,6 +4,7 @@ package client
 	
 	import flash.events.EventDispatcher;
 	
+	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -49,8 +50,8 @@ package client
          */ 
         public function handleLevelEntered(event:LevelEvent) :void
         {
-            _client.updatePosition(
-                new PlayerPosition(event.player.id, event.level.number, event.player.position));
+            _client.enterLevel(new EnterLevel(event.player.level.number, event.player.level.height,                
+                new PlayerPosition(event.player.id, event.level.number, event.player.position)));
         }     
         
         public function proposeMove (coords:BoardCoordinates) :void
