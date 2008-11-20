@@ -20,9 +20,10 @@ public class Board extends SimObject
         for (var ii :int = 0; ii < size; ++ii) {
             var terrainType :int = terrain[ii];
             var isObstacle :Boolean = (terrainType == Constants.TERRAIN_OBSTACLE);
+            var isGemRedemption :Boolean = (terrainType == Constants.TERRAIN_GEMREDEMPTION);
             var moveSpeed :Number =
                 (terrainType == Constants.TERRAIN_SLOW ? Constants.SLOW_TERRAIN_SPEED : 1);
-            _cells[ii] = new BoardCell(getX(ii), getY(ii), isObstacle, moveSpeed);
+            _cells[ii] = new BoardCell(getX(ii), getY(ii), isObstacle, isGemRedemption, moveSpeed);
         }
     }
 

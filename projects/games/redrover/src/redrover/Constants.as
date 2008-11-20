@@ -1,8 +1,6 @@
 package redrover {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.util.NumRange;
-import com.whirled.contrib.simplegame.util.Rand;
 
 import redrover.util.IntValueTable;
 
@@ -70,7 +68,8 @@ public class Constants
     public static const TERRAIN_NORMAL :int = 0;
     public static const TERRAIN_OBSTACLE :int = 1;
     public static const TERRAIN_SLOW :int = 2;
-    public static const TERRAIN_SYMBOLS :Array = [ ".", "#", "*" ];
+    public static const TERRAIN_GEMREDEMPTION :int = 3;
+    public static const TERRAIN_SYMBOLS :Array = [ ".", "#", "*", "!" ];
 
     public static const OBJ_GREENSPAWNER :int = 0;
     public static const OBJ_PURPLESPAWNER :int = 1;

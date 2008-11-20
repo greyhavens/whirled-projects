@@ -26,10 +26,13 @@ public class BoardView extends SceneObject
                                             TEAM_COLORS[_board.teamId]);
         var grass :Bitmap = getGrass();
         var rock :Bitmap = getRock();
-        var mat :Matrix = new Matrix();
+        var gemRedemption :Bitmap = getGemRedemption();
+
         var grassScale :Number = Constants.BOARD_CELL_SIZE / grass.width;
         var rockScale :Number = (Constants.BOARD_CELL_SIZE - 3) / rock.width;
+        var grScale :Number = Constants.BOARD_CELL_SIZE / gemRedemption.width;
 
+        var mat :Matrix = new Matrix();
         for (var yy :int = 0; yy < _board.rows; ++yy) {
             for (var xx :int = 0; xx < _board.cols; ++xx) {
                 var px :Number = xx * Constants.BOARD_CELL_SIZE;
@@ -46,6 +49,13 @@ public class BoardView extends SceneObject
                     mat.scale(rockScale, rockScale);
                     mat.translate(px, py);
                     bd.draw(rock, mat, null, null, null, true);
+                }
+
+                if (cell.isGemRedemption) {
+                    mat.identity();
+                    mat.scale(grScale, grScale);
+                    mat.translate(px, py - 40);
+                    bd.draw(gemRedemption, mat, null, null, null, true);
                 }
             }
         }
@@ -90,11 +100,21 @@ public class BoardView extends SceneObject
         return _rock;
     }
 
+    protected function getGemRedemption () :Bitmap
+    {
+        if (_gemRedemption == null) {
+            _gemRedemption = ImageResource.instantiateBitmap("gem_redemption");
+        }
+
+        return _gemRedemption;
+    }
+
     protected var _board :Board;
     protected var _sprite :Sprite;
 
     protected static var _grass :Bitmap;
     protected static var _rock :Bitmap;
+    protected static var _gemRedemption :Bitmap;
 
     protected static const TEAM_COLORS :Array = [ 0xff6c77, 0x88c5ff ];
 }
