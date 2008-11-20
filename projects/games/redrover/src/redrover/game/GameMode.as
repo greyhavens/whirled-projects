@@ -96,7 +96,18 @@ public class GameMode extends AppMode
             _boards.push(board);
             addObject(board);
 
-            addObject(new GemTimer(teamId));
+            // create board objects
+            for each (var obj :LevelObjData in _levelData.objects) {
+                switch (obj.objType) {
+                case Constants.OBJ_GREENSPAWNER:
+                    addObject(new GemSpawner(board, Constants.GEM_GREEN, obj.gridX, obj.gridY));
+                    break;
+
+                case Constants.OBJ_PURPLESPAWNER:
+                    addObject(new GemSpawner(board, Constants.GEM_PURPLE, obj.gridX, obj.gridY));
+                    break;
+                }
+            }
         }
 
         // create players
@@ -186,27 +197,10 @@ public class GameMode extends AppMode
         }
     }
 
-    public function createGem (boardId :int) :void
+    public function createGem (boardId :int, gridX :int, gridY :int, gemType :int) :void
     {
-        var board :Board = getBoard(boardId);
-        if (board.countGems() >= Constants.MAX_BOARD_GEMS) {
-            return;
-        }
-
-        // find a random unoccupied BoardCell
-        var cell :BoardCell;
-        for (var ii :int = 0; ii < 20; ++ii) {
-            var x :int = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
-            var y :int = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
-            var thisCell :BoardCell = board.getCell(x, y);
-            if (!thisCell.hasGem && GameContext.getPlayerAt(boardId, x, y) == null) {
-                cell = thisCell;
-                break;
-            }
-        }
-
+        var cell :BoardCell = getBoard(boardId).getCell(gridX, gridY);
         if (cell != null) {
-            var gemType :int = Rand.nextIntRange(0, Constants.GEM__LIMIT, Rand.STREAM_GAME)
             cell.addGem(gemType);
             addObject(new GemView(gemType, cell), getTeamSprite(boardId).objectLayer);
         }
@@ -227,29 +221,4 @@ public class GameMode extends AppMode
     protected var _boards :Array = []; // Array<Board>, one for each team
 }
 
-}
-
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.tasks.RepeatingTask;
-import com.whirled.contrib.simplegame.tasks.VariableTimedTask;
-import com.whirled.contrib.simplegame.util.Rand;
-
-import redrover.*;
-import redrover.game.*;
-import com.whirled.contrib.simplegame.tasks.FunctionTask;
-
-class GemTimer extends SimObject
-{
-    public function GemTimer (teamId :int)
-    {
-        addTask(new RepeatingTask(
-            new VariableTimedTask(Constants.GEM_SPAWN_TIME.min,
-                                  Constants.GEM_SPAWN_TIME.max,
-                                  Rand.STREAM_GAME),
-            new FunctionTask(
-                function () :void {
-                    GameContext.gameMode.createGem(teamId);
-                })));
-
-    }
 }

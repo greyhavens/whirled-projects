@@ -19,8 +19,8 @@ public class Constants
     /* Game settings */
     public static const BOARD_CELL_SIZE :int = 50;
 
-    public static const MAX_BOARD_GEMS :int = 16;
-    public static const GEM_SPAWN_TIME :NumRange = new NumRange(1, 1, Rand.STREAM_GAME);
+    public static const GEM_SPAWN_MIN :Number = 3;
+    public static const GEM_SPAWN_MAX :Number = 3;
 
     public static const BASE_MOVE_SPEED :Number = 80;
     public static const MOVE_SPEED_GEM_OFFSET :Number = -5;
@@ -70,8 +70,11 @@ public class Constants
     public static const TERRAIN_NORMAL :int = 0;
     public static const TERRAIN_OBSTACLE :int = 1;
     public static const TERRAIN_SLOW :int = 2;
-
     public static const TERRAIN_SYMBOLS :Array = [ ".", "#", "*" ];
+
+    public static const OBJ_GREENSPAWNER :int = 0;
+    public static const OBJ_PURPLESPAWNER :int = 1;
+    public static const OBJ_SYMBOLS :Array = [ "G", "P" ];
 }
 
 }
