@@ -2,6 +2,7 @@ package redrover {
 
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 import com.whirled.game.SizeChangedEvent;
@@ -44,6 +45,10 @@ public class RedRover extends Sprite
         // custom resource factories
         var rm :ResourceManager = ResourceManager.instance;
         rm.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
+
+        // sound volume
+        AudioManager.instance.masterControls.volume(
+            Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         if (AppContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty

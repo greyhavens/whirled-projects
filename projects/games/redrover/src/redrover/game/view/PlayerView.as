@@ -24,6 +24,10 @@ public class PlayerView extends SceneObject
         _playerAnims = ArrayUtil.create(Constants.NUM_TEAMS, null);
         setTeam(_player.teamId);
         setBoard(_player.curBoardId);
+
+        if (player.playerIndex == GameContext.localPlayerIndex) {
+            registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
+        }
     }
 
     override protected function destroyed () :void
@@ -43,6 +47,16 @@ public class PlayerView extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    protected function onGemsRedeemed (e :GameEvent) :void
+    {
+        var data :Object = e.data;
+        var gems :Array = data.gems;
+        var boardCell :BoardCell = data.boardCell;
+        GameContext.gameMode.addObject(
+            new GemsRedeemedAnim(_player, gems, boardCell),
+            GameContext.gameMode.getTeamSprite(_player.teamId));
     }
 
     override protected function update (dt :Number) :void

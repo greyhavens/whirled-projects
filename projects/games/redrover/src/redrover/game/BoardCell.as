@@ -56,6 +56,16 @@ public class BoardCell
         return _gridY * Constants.BOARD_CELL_SIZE;
     }
 
+    public function get ctrPixelX() :int
+    {
+        return (_gridX + 0.5) * Constants.BOARD_CELL_SIZE;
+    }
+
+    public function get ctrPixelY () :int
+    {
+        return (_gridY + 0.5) * Constants.BOARD_CELL_SIZE;
+    }
+
     public function get isObstacle () :Boolean
     {
         return _isObstacle;

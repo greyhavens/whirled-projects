@@ -194,6 +194,29 @@ public class GameMode extends AppMode
         case KeyboardCodes.DOWN:
             GameContext.localPlayer.move(Constants.DIR_SOUTH);
             break;
+
+        default:
+            if (Constants.DEBUG_ALLOW_CHEATS) {
+                handleCheat(keyCode);
+            }
+            break;
+        }
+    }
+
+    protected function handleCheat (keyCode :uint) :void
+    {
+        var localPlayer :Player = GameContext.localPlayer;
+
+        switch (keyCode) {
+        case KeyboardCodes.G:
+            if (localPlayer.numGems < Constants.MAX_PLAYER_GEMS) {
+                var lastGemType :int =
+                    (localPlayer.numGems > 0 ? localPlayer.gems[localPlayer.gems.length - 1] : 0);
+                var nextGemType :int = (lastGemType == Constants.GEM_PURPLE ?
+                                        Constants.GEM_GREEN : Constants.GEM_PURPLE);
+                localPlayer.addGem(nextGemType);
+            }
+            break;
         }
     }
 

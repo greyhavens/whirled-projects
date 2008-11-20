@@ -8,14 +8,17 @@ public class TeamSprite extends Sprite
 {
     public var boardLayer :Sprite;
     public var objectLayer :Sprite;
+    public var effectLayer :Sprite;
 
     public function TeamSprite ()
     {
         boardLayer = SpriteUtil.createSprite(true);
         objectLayer = SpriteUtil.createSprite();
+        effectLayer = SpriteUtil.createSprite();
 
         addChild(boardLayer);
         addChild(objectLayer);
+        addChild(effectLayer);
     }
 
 }

@@ -6,6 +6,13 @@ public class GameEvent extends Event
 {
     public static const GEMS_REDEEMED :String = "GemsRedeemed";
 
+    public static function createGemsRedeemed (playerIndex :int, gems :Array, boardCell :BoardCell)
+        :GameEvent
+    {
+        return new GameEvent(GEMS_REDEEMED,
+            { playerIndex: playerIndex, gems: gems, boardCell: boardCell });
+    }
+
     public function GameEvent (type :String, data :Object)
     {
         super(type, false, false);
@@ -18,7 +25,6 @@ public class GameEvent extends Event
     }
 
     protected var _data :Object;
-
 }
 
 }

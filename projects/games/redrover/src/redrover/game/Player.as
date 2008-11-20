@@ -11,9 +11,9 @@ public class Player extends SimObject
     public static const STATE_NORMAL :int = 0;
     public static const STATE_SWITCHINGBOARDS :int = 1;
 
-    public function Player (playerId :int, teamId :int, gridX :int, gridY :int, color :uint)
+    public function Player (playerIndex :int, teamId :int, gridX :int, gridY :int, color :uint)
     {
-        _playerId = playerId;
+        _playerIndex = playerIndex;
         _teamId = teamId;
         _curBoardId = teamId;
         _color = color;
@@ -72,9 +72,9 @@ public class Player extends SimObject
                 (_teamId == _curBoardId || this.numGems >= Constants.RETURN_HOME_GEMS_MIN));
     }
 
-    public function get playerId () :int
+    public function get playerIndex () :int
     {
-        return _playerId;
+        return _playerIndex;
     }
 
     public function get teamId () :int
@@ -125,6 +125,11 @@ public class Player extends SimObject
     public function get gridY () :int
     {
         return _loc.y / Constants.BOARD_CELL_SIZE;
+    }
+
+    public function get curBoardCell () :BoardCell
+    {
+        return GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
     }
 
     public function get numGems () :int
@@ -192,15 +197,32 @@ public class Player extends SimObject
             _loc.y = yNew;
             clampLoc();
 
+            var cell :BoardCell = this.curBoardCell;
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (_curBoardId != _teamId && this.numGems < Constants.MAX_PLAYER_GEMS) {
+            if (!this.isOnOwnBoard && this.numGems < Constants.MAX_PLAYER_GEMS) {
                 var lastGemType :int = (_gems.length == 0 ? -1 : _gems[_gems.length - 1]);
-                var cell :BoardCell = GameContext.getCellAt(_curBoardId, this.gridX, this.gridY);
                 if (cell.hasGem && cell.gemType != lastGemType) {
-                    _gems.push(cell.takeGem());
+                    addGem(cell.takeGem());
                 }
             }
+
+            // If we're on our board, redeem our gems when we touch a gem redemption tile
+            if (this.isOnOwnBoard && this.numGems > 0 && cell.isGemRedemption) {
+                redeemGems(cell);
+            }
         }
+    }
+
+    public function addGem (gemType :int) :void
+    {
+        _gems.push(gemType);
+    }
+
+    protected function redeemGems (cell :BoardCell) :void
+    {
+        _score += Constants.GEM_VALUE.getValueAt(this.numGems);
+        dispatchEvent(GameEvent.createGemsRedeemed(_playerIndex, _gems, cell));
+        _gems = [];
     }
 
     protected function switchBoards () :void
@@ -220,7 +242,7 @@ public class Player extends SimObject
         _loc.y = Math.min(_loc.y, (board.rows - 0.5) * Constants.BOARD_CELL_SIZE);
     }
 
-    protected var _playerId :int;
+    protected var _playerIndex :int;
     protected var _teamId :int;
     protected var _curBoardId :int;
     protected var _gems :Array = [];

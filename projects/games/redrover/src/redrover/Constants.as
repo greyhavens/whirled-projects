@@ -8,8 +8,11 @@ public class Constants
 {
     /* Debug options */
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean = true;
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
+    public static const SOUND_MASTER_VOLUME :Number = 1.0;
 
     /* ResourceManager stuff */
     public static const RESTYPE_LEVEL :String = "level";
@@ -24,7 +27,7 @@ public class Constants
     public static const MOVE_SPEED_GEM_OFFSET :Number = -5;
     public static const MAX_PLAYER_GEMS :int = 10;
 
-    public static const GEM_VALUE :IntValueTable = new IntValueTable([1, 2, 3, 4], 5);
+    public static const GEM_VALUE :IntValueTable = new IntValueTable([0, 10, 20, 30, 50, 80], 40);
 
     public static const SWITCH_BOARDS_TIME :Number = 1;
     public static const RETURN_HOME_GEMS_MIN :int = 3;
