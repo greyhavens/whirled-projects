@@ -1,7 +1,5 @@
 package client
 {
-	import arithmetic.Geometry;
-	
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	
@@ -17,11 +15,8 @@ package client
 			_top = 0;
 			_current = 0;
 			_textField = new TextField();
-			addChild(_textField);
-						
-			Log.debug("height indicator size: "+width+", "+height);
+			addChild(_textField);						
 			refresh(); 
-            Log.debug("after refresh height indicator size: "+width+", "+height);
 		}
 		
 		public function set top (top:int) :void
@@ -32,7 +27,6 @@ package client
 		
 		public function set current (current:int) :void
 		{
-			Log.debug("setting height indicator height to: "+current);
 			_current = -current;
 			refresh();
 		}
@@ -40,10 +34,7 @@ package client
 		protected function refresh () :void
 		{
 			const value:int = _top - _current;
-            Log.debug("height indicator update to "+value);
-			_textField.text = String(value);
-			// center the text field in the box
-			//Geometry.centerTextIn(this, _textField);
+			_textField.htmlText = "<p align='center'><font face='Helvetica, Arial, _sans' size='50'>"+String(value)+"</font></p>";
 		}
 		
 		protected var _current:int;
