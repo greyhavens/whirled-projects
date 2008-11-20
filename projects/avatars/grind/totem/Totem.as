@@ -9,8 +9,13 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Bitmap;
 
+import flash.text.TextFieldAutoSize;
+
+import com.threerings.flash.TextFieldUtil;
+
 import com.whirled.ToyControl;
 import com.whirled.ControlEvent;
+import com.whirled.DataPack;
 
 [SWF(width="186", height="124")]
 public class Totem extends Sprite
@@ -22,6 +27,24 @@ public class Totem extends Sprite
 
         _image = Bitmap(new IMAGE());
         addChild(_image);
+
+        DataPack.load(_ctrl.getDefaultDataPack(), handlePack);
+    }
+
+    public function handlePack (pack :DataPack) :void
+    {
+        _influence = pack.getNumber("Influence");
+
+        addChild(TextFieldUtil.createField(""+_influence, {
+                autoSize: TextFieldAutoSize.LEFT,
+                outlineColor: 0xFFFFFF
+            }, {
+                bold: true,
+                color: 0xFF0000,
+                font: "sans",
+                size: 36
+            }));
+
     }
 
     public function propertyProvider (key :String) :Object

@@ -1,0 +1,5 @@
+<datapack>
+    <data name="Influence" type="Number" value="20" min="0" max="60" info="The maximum level difference allowed between 2 players for PvP." />
+
+    <file name="_CONTENT" type="Blob" value="Totem.swf" />
+</datapack>

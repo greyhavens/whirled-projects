@@ -4,6 +4,7 @@
   <!-- defines our project name and type -->
   <property name="app.name" value="Totem"/>
   <property name="app.type" value="toy"/>
+  <property name="app.data-dir" value="data"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
   <!--<property name="app.source-dir" value="src"/>-->
