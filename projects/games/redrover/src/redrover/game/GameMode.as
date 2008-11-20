@@ -89,9 +89,10 @@ public class GameMode extends AppMode
 
     protected function setupLogicObjects () :void
     {
+        var board :Board;
+
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
-            var board :Board = new Board(teamId, Constants.BOARD_COLS, Constants.BOARD_ROWS,
-                                         _levelData.terrain);
+            board = new Board(teamId, _levelData.cols, _levelData.rows, _levelData.terrain);
             _boards.push(board);
             addObject(board);
 
@@ -101,9 +102,19 @@ public class GameMode extends AppMode
         // create players
         var playerColors :Array = Constants.PLAYER_COLORS.slice();
         Rand.shuffleArray(playerColors, Rand.STREAM_GAME);
-        var gridX :int = Rand.nextIntRange(0, Constants.BOARD_COLS, Rand.STREAM_GAME);
-        var gridY :int = Rand.nextIntRange(0, Constants.BOARD_ROWS, Rand.STREAM_GAME);
-        var player :Player = new Player(0, 0, gridX, gridY, playerColors.pop());
+
+        board = getBoard(0);
+        var startX :int;
+        var startY :int;
+        for (;;) {
+            startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
+            startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
+            if (!board.getCell(startX, startY).isObstacle) {
+                break;
+            }
+        }
+
+        var player :Player = new Player(0, 0, startX, startY, playerColors.pop());
         GameContext.players.push(player);
         GameContext.localPlayerIndex = 0;
         addObject(player);

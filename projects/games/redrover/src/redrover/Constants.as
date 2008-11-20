@@ -18,8 +18,6 @@ public class Constants
 
     /* Game settings */
     public static const BOARD_CELL_SIZE :int = 50;
-    public static const BOARD_COLS :int = SCREEN_SIZE.x / BOARD_CELL_SIZE;
-    public static const BOARD_ROWS :int = SCREEN_SIZE.y / BOARD_CELL_SIZE;
 
     public static const MAX_BOARD_GEMS :int = 16;
     public static const GEM_SPAWN_TIME :NumRange = new NumRange(1, 1, Rand.STREAM_GAME);

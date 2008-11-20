@@ -169,8 +169,27 @@ public class Player extends SimObject
                 yOffset = _moveDirection.y * moveDist;
             }
 
-            _loc.x += xOffset;
-            _loc.y += yOffset;
+            var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+
+            var xNew :Number = _loc.x + xOffset;
+            var yNew :Number = _loc.y + yOffset;
+            var newCell :BoardCell = board.getCellAtPixel(xNew, yNew);
+            if (newCell.isObstacle) {
+                if (xOffset > 0) {
+                    xNew = newCell.pixelX - 1;
+                } else if (xOffset < 0) {
+                    xNew = newCell.pixelX + board.cellSize + 1;
+                }
+
+                if (yOffset > 0) {
+                    yNew = newCell.pixelY - 1;
+                } else if (yOffset < 0) {
+                    yNew = newCell.pixelY + board.cellSize + 1;
+                }
+            }
+
+            _loc.x = xNew;
+            _loc.y = yNew;
             clampLoc();
 
             // If we're on the other team's board, pickup gems when we enter their cells

@@ -12,6 +12,8 @@ public class Board extends SimObject
         _teamId = teamId;
         _cols = cols;
         _rows = rows;
+        _cellSize = Constants.BOARD_CELL_SIZE;
+        _cellSizeInv = 1 / _cellSize;
 
         var size :int = _cols * _rows;
         _cells = ArrayUtil.create(size);
@@ -41,14 +43,19 @@ public class Board extends SimObject
         return _teamId;
     }
 
+    public function get cellSize () :Number
+    {
+        return _cellSize;
+    }
+
     public function get pixelWidth () :int
     {
-        return _cols * Constants.BOARD_CELL_SIZE;
+        return _cols * _cellSize;
     }
 
     public function get pixelHeight () :int
     {
-        return _rows * Constants.BOARD_CELL_SIZE;
+        return _rows * _cellSize;
     }
 
     public function get cols () :int
@@ -61,9 +68,14 @@ public class Board extends SimObject
         return _rows;
     }
 
-    public function getCell (x :int, y :int) :BoardCell
+    public function getCell (gridX :int, gridY :int) :BoardCell
     {
-        return _cells[getIndex(x, y)];
+        return _cells[getIndex(gridX, gridY)];
+    }
+
+    public function getCellAtPixel (x :Number, y :Number) :BoardCell
+    {
+        return getCell(x * _cellSizeInv, y * _cellSizeInv);
     }
 
     protected function getIndex (x :int, y :int) :int
@@ -85,6 +97,9 @@ public class Board extends SimObject
     protected var _cols :int;
     protected var _rows :int;
     protected var _cells :Array;
+
+    protected var _cellSize :Number;
+    protected var _cellSizeInv :Number;
 }
 
 }
