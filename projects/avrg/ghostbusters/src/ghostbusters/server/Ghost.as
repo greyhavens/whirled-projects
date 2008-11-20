@@ -84,6 +84,15 @@ public class Ghost
         return _health == 0;
     }
 
+    public function reExport () :void
+    {
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_ID, _id);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_NAME, _name);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_LEVEL, _level);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_ZEST, _zest);
+        _room.ctrl.props.setIn(Codes.DICT_GHOST, Codes.IX_GHOST_CUR_HEALTH, health);
+    }
+
     public function setZest (zest :int) :void
     {
         zest = Math.max(0, Math.min(_maxZest, zest));

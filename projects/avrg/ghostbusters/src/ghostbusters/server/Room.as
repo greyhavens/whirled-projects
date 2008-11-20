@@ -32,6 +32,7 @@ public class Room
     public function Room (roomId :int)
     {
         _roomId = roomId;
+        _state = Codes.STATE_SEEKING;
 
         maybeLoadControl();
     }
@@ -112,17 +113,12 @@ public class Room
         dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
         dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
         dict[Codes.IX_PLAYER_LEVEL] = player.level;
-
-        // if the non-persistent room properties are not set (first visit or room unloaded) do so
-        if (_ctrl.props.get(Codes.PROP_STATE) == null) {
-            // no matter how the room shut down, we cold-start it in seek mode
-            setState(Codes.STATE_SEEKING);
-        }
+        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
 
         // see if there's an undefeated ghost here, else make a new one
         maybeSpawnGhost();
 
-        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
+        log.debug("Testing: " + new Error("harmless").getStackTrace());
     }
 
     public function playerLeft (player :Player) :void
@@ -301,7 +297,7 @@ public class Room
         _players.forEach(function (player :Player) :void {
             player.roomStateChanged();
         });
-//        log.debug("Room state set", "roomId", this.roomId, "state", state);
+        log.debug("Room state set", "roomId", this.roomId, "state", state);
     }
 
     // server-specific parts of the model moved here
@@ -653,19 +649,32 @@ public class Room
         if (_ctrl == null) {
             _ctrl = Server.control.getRoom(_roomId);
 
-            _ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, function (evt :Event) :void {
+            log.debug("Export my state to new control", "state", _state);
+
+            // export the room state to room properties
+            _ctrl.props.set(Codes.PROP_STATE, _state, true);
+
+            // if there's a ghost in here, re-export it too
+            if (_ghost != null) {
+                _ghost.reExport();
+            }
+
+            var handleUnload :Function;
+            handleUnload = function (evt :Event) :void {
+                _ctrl.removeEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
                 _ctrl = null;
-                
+
                 if (_players.size() != 0) {
                     log.warning("Eek! Room unloading with players still here!",
                                 "players", _players.toArray());
                 } else {
                     log.debug("Unloaded room", "roomId", roomId);
                 }
-            });
+            };
+
+            _ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
         }
     }
-
 
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
