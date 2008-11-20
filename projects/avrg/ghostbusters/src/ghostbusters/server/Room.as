@@ -117,8 +117,6 @@ public class Room
 
         // see if there's an undefeated ghost here, else make a new one
         maybeSpawnGhost();
-
-        log.debug("Testing: " + new Error("harmless").getStackTrace());
     }
 
     public function playerLeft (player :Player) :void
