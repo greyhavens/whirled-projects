@@ -49,11 +49,17 @@ package client
 			_viewer.y = 10;
 			addChild(_viewer);		
 			
-			_inventory = new InventoryDisplay(this, 680, 50);
+			_inventory = new InventoryDisplay(this, 580, 50);
 			const invView:DisplayObject = _inventory.view;
 			invView.x = 10;
 			invView.y = 440;		
 			addChild(invView);
+			
+			// position the height indicator beside the inventory
+			_heightIndicator = new HeightIndicator();
+			_heightIndicator.x = 590;
+			_heightIndicator.y = 440;
+			addChild(_heightIndicator);
 			
 			var frame:GraphicRectangle = GraphicRectangle.fromDisplayObject(this);
 			
@@ -147,6 +153,7 @@ package client
             const finish:BoardCoordinates = event.player.path.finish; 
             _world.moveComplete(finish);
             _viewer.objective.pathComplete(event.player);
+            _heightIndicator.current = event.player.position.y;
 		}
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
@@ -193,6 +200,8 @@ package client
 					_viewer.addPlayer(p);
 				}
 			}
+			
+			_heightIndicator.top = level(_level).height;
 		}
 		
 		public function get mode () :String 
@@ -291,6 +300,7 @@ package client
 		protected var _board:BoardInteractions;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
+		protected var _heightIndicator:HeightIndicator;
 		
 		protected var _itemFactory:ItemFactory = new ItemFactory();
 		

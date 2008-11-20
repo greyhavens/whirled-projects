@@ -65,6 +65,7 @@ package client.player
         public function set cell (cell:Cell) :void
         {
         	_cell = cell;
+        	_position = _cell.position;
         }
         		
         public function isMoving () :Boolean

@@ -8,7 +8,7 @@ package sprites
 
 		public function ItemSprite(asset:Class)
 		{
-			super(asset, UNIT.dx, UNIT.dy);
+			super(asset, Config.itemSize.dx, Config.itemSize.dy);
 		}
         
         public function greyOut() :void
@@ -20,7 +20,5 @@ package sprites
         {
         	clearOverlay();
         }
-
-		public static const UNIT:Vector = new Vector(50,50);
 	}
 }

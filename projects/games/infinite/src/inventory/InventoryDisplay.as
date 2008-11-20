@@ -130,7 +130,7 @@ package inventory
 		protected var _viewBuffer:ItemViewBuffer = new ItemViewBuffer();	
 	    protected var _itemViews:ItemViewFactory = new ItemViewFactory();
 	
-		protected var positioningUnit:Vector = ItemSprite.UNIT.add(new Vector(10 ,0));
+		protected var positioningUnit:Vector = Config.itemSize.add(new Vector(10 ,0));
 	
 		// The actual items stored in the inventory.
 		protected var _items:Array = new Array();
