@@ -5,6 +5,10 @@ package cells
 	import cells.fruitmachine.*;
 	import cells.ground.GroundView;
 	import cells.ladder.*;
+	import cells.roof.BlackSkyView;
+	import cells.roof.FlatRoofBaseView;
+	import cells.roof.FlatRoofView;
+	import cells.roof.NarrowRoofView;
 	import cells.views.*;
 	import cells.wall.*;
 	
@@ -36,6 +40,10 @@ package cells
 				case CellCodes.GROUND: return new GroundView(cell);
 				case CellCodes.DEBUG: return new DebugView(cell);
 				case CellCodes.DEBUG_GROUND: return new DebugGroundView(cell);
+				case CellCodes.NARROW_ROOF: return new NarrowRoofView(cell);
+				case CellCodes.BLACK_SKY: return new BlackSkyView(cell);
+				case CellCodes.FLAT_ROOF_BASE: return new FlatRoofBaseView(cell);
+				case CellCodes.FLAT_ROOF: return new FlatRoofView(cell);				
 			}
 			throw new Error("the viewfactory doesn't know how to construct a view for "+cell);
 		}		

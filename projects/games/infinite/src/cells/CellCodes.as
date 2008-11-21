@@ -16,5 +16,9 @@ package cells
 		public static const GROUND:int = 11;
 		public static const DEBUG:int = 12;
 		public static const DEBUG_GROUND:int = 13;
+		public static const NARROW_ROOF:int = 14;
+		public static const BLACK_SKY:int = 15;
+		public static const FLAT_ROOF_BASE:int = 16;
+		public static const FLAT_ROOF:int = 17;
 	}
 }

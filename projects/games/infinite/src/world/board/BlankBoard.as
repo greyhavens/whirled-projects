@@ -3,6 +3,8 @@ package world.board
 	import arithmetic.BoardCoordinates;
 	
 	import cells.ground.GroundCell;
+	import cells.roof.BlackSkyCell;
+	import cells.roof.NarrowRoofCell;
 	import cells.wall.WallBaseCell;
 	import cells.wall.WallCell;
 	
@@ -26,7 +28,12 @@ package world.board
 		
         public function makeCell (position:BoardCoordinates) :Cell
         {
+            if (position.y < -_height) {
+                return new BlackSkyCell(position);   
+            } 
+            
             switch (position.y) {
+                case -_height: return new NarrowRoofCell(position);
                 case 1: return new GroundCell(position);                               
                 case 0: return new WallBaseCell(position);                                             
                 default: return new WallCell(position);          
