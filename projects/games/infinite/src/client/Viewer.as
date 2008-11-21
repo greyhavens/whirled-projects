@@ -8,7 +8,6 @@ package client
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import flash.text.TextField;
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
@@ -17,7 +16,7 @@ package client
 	
 	import world.NeighborhoodEvent;
 	import world.board.*;
-	
+		
 	public class Viewer extends Sprite
 	{
 	    // the position of the viewpoint in graphics coordinates
@@ -58,20 +57,16 @@ package client
 		
 		public function showLevelComplete(levelNumber:int) :void
 		{
-		    Log.debug(this + "show level complete");
-		    _levelComplete = new TextField();
-		    _levelComplete.htmlText = 
-		          "<p align='center'><font color='#ffffff' size='50' face='Helvetica, Arial, _sans'>Yay! Level "+levelNumber+" complete.</font></p>"+
-		          "<p align='center'><font color='#ffffff' size='30' face='Helvetica, Arial, _sans'>Click for more fun on level "+(levelNumber+1)+"</font></p>";		          
+		    _levelComplete = new LevelEndReward(levelNumber);		    
 		    addChild(_levelComplete);
-		    _levelComplete.width = this.width;
-		    _levelComplete.height = this.height;
-		    this.addEventListener(MouseEvent.CLICK, handleNextLevel);
-		    Log.debug("text field added");
+		    _levelComplete.y = 50;
+		    _levelComplete.x = (width / 2) - (_levelComplete.width / 2);
+            this.addEventListener(MouseEvent.CLICK, handleNextLevel);
 		}
 		
 		protected function handleNextLevel (event:MouseEvent) :void
 		{
+		    Log.debug("handling next level click");
 		    this.removeEventListener(MouseEvent.CLICK, handleNextLevel);
 		    if (contains(_levelComplete)) {
                 removeChild(_levelComplete);
@@ -157,7 +152,7 @@ package client
 			_objective.removePlayer(player);
 		}
 		
-		protected var _levelComplete:TextField;
+		protected var _levelComplete:LevelEndReward;
 			
 		protected var _client:Client;
 				
