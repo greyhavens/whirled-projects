@@ -1,6 +1,7 @@
 package 
 {
 
+import flash.events.MouseEvent;
 import flash.display.DisplayObject;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -11,8 +12,6 @@ import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.Assert;
-
-
 
 /**
  * Letter is a graphical element that sits on the board. Note that the 'letter'
@@ -38,6 +37,12 @@ public class Letter extends Sprite
 
         // Load resources
         makeFilters();
+
+        addEventListener(MouseEvent.ROLL_OVER, function (... _) :void {
+            if (isLetterEnabled) {
+                Audio.hover.play();
+            }
+        });
     }
 
     /** Set the letter on this label. We set its position based on text height. */

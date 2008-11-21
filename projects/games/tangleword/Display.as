@@ -80,7 +80,7 @@ public class Display extends Sprite
         removeEventListener(MouseEvent.MOUSE_MOVE, mouseHandler);
         removeEventListener(KeyboardEvent.KEY_DOWN, typingHandler);
 
-        Audio.stopMusic();
+        Audio.stopAll();
     }
 
     /** Called when the round starts - enables display. */
@@ -95,7 +95,7 @@ public class Display extends Sprite
         logRoundStarted();
         setEnableState(true);
 
-        Audio.playMusic(Audio.theme, 1);
+        Audio.playMusic(Audio.theme);
     }
 
     /** Called when the round ends - disables display. */
@@ -115,7 +115,7 @@ public class Display extends Sprite
         // Disabled for now -- Bruno
         //_stats.show(model, board);
 
-        Audio.stopMusic();
+        Audio.playMusic(Audio.bubbles);
     }
 
     /** If this board letter is already selected as part of the word, returns true.  */
@@ -212,7 +212,7 @@ public class Display extends Sprite
     public function logBonus (bonus :Number) :void
     {
         _logger.log();
-        _logger.log("Domination Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
+        _logger.log("First-found Bonus: +" + bonus + " pts", Logger.SUMMARY_H2);
     }
 
     protected static function pulsate (tf :TextField, from :uint, to :uint, duration :Number) :void
@@ -252,12 +252,14 @@ public class Display extends Sprite
     public function logAlreadyClaimed (word :String) :void
     {
         _logger.logListItem(word, Logger.DUPLICATE_WORD);
+        Audio.error.play();
     }
 
     /** Updates the log with an invalid word message */
     public function logInvalidWord (word :String) :void
     {
         _logger.logListItem(word, Logger.INVALID_WORD);
+        Audio.error.play();
     }
 
     /** Adds a "please wait" message */
@@ -587,7 +589,6 @@ public class Display extends Sprite
             _lastCursor = location;
         }
     }
-
 
     /** Helper function: converts screen coordinate to a board square position.
         If the screen coordinate falls outside the board, returns /null/. */
