@@ -1,5 +1,7 @@
 package cells.fruitmachine
 {
+    import cells.views.Poolable;
+    
     import client.ChronometerEvent;
     import client.PhaseShiftTimer;
     
@@ -7,12 +9,18 @@ package cells.fruitmachine
     
     import world.Cell;
 
-	public class FruitMachineView extends CellSprite
+	public class FruitMachineView extends CellSprite implements Poolable
 	{
 		public function FruitMachineView(cell:Cell, time:Number)
 		{
 			super(cell, imageForTime(cell as FruitMachineCell, time));
 			cell.addEventListener(ChronometerEvent.INSTANT, handleChronometerEvent);
+		}
+		
+		override public function unpool (cell:Cell, time:Number) :void
+		{
+		    super.unpool(cell, time);
+		    asset = imageForTime(cell as FruitMachineCell, time);
 		}
 						
 		protected function imageForTime (cell:FruitMachineCell, time:Number) :Class

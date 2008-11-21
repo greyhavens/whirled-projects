@@ -1,12 +1,16 @@
 package cells.views
 {   
     import client.Objective;
-	import flash.events.IEventDispatcher;
+    
+    import flash.events.IEventDispatcher;
+    
     import world.Cell;
 	
 	public interface CellView extends Labellable, IEventDispatcher
 	{
 		function get cell () :Cell;
+		
+		function get code () :int;
 		
 		function addToObjective (objective:Objective) :void
 

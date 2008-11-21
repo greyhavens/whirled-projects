@@ -4,10 +4,8 @@ package sprites
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
 	
-	import cells.CellObjective;
 	import cells.views.CellView;
 	
-	import client.CellEvent;
 	import client.Objective;
 	
 	import flash.display.DisplayObjectContainer;
@@ -22,11 +20,34 @@ package sprites
 		public function CellSprite(cell:Cell, asset:Class)
 		{
 			_cell = cell;
+			_code = cell.code;
 			super(asset, Config.cellSize.dx, Config.cellSize.dy);
 			registerEventHandlers(this);
 			if (Config.cellDebug) {
 				labelPosition(this);
 			}
+		}
+		
+		public function get code () :int 
+		{
+		    return _code;
+		}
+		
+		/**
+		 * Prepare this cell for adding to a pool.
+		 */
+		public function prepareForPool() :void {
+		    if (_objective != null) {
+		        throw new Error("cannot pool "+this+" while it's still on the objective");
+		    }
+		    _cell = null;
+		    unregisterEventHandlers(this);
+		}
+		
+		public function unpool(cell:Cell, time:Number) :void
+		{
+            _cell = cell;
+            registerEventHandlers(this);
 		}
 		
 		/**
@@ -36,6 +57,11 @@ package sprites
 		protected function registerEventHandlers (source:EventDispatcher) :void
 		{
             source.addEventListener(MouseEvent.ROLL_OVER, checkFootprints);
+		}
+		
+		protected function unregisterEventHandlers (source:EventDispatcher) :void
+		{
+		    source.removeEventListener(MouseEvent.ROLL_OVER, checkFootprints);
 		}
 		
 		protected function checkFootprints(event:MouseEvent) :void
@@ -94,7 +120,7 @@ package sprites
 		{
 		    stopAnimation();
 			objective.removeChild(this);
-			_objective = null;
+            _objective = null;
 		}
 
 		protected function startAnimation () :void
@@ -117,6 +143,7 @@ package sprites
             s.addChild(l);      
         }
 		
+		protected var _code:int;
 		protected var _cell:Cell;
 		protected var _objective:Objective;
 

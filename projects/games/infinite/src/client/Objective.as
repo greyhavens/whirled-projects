@@ -5,6 +5,7 @@ package client
 	import cells.CellObjective;
 	import cells.ViewFactory;
 	import cells.views.CellView;
+	import cells.views.Poolable;
 	
 	import client.player.Player;
 	
@@ -154,6 +155,11 @@ package client
 			v.addToObjective(this);
 			_viewBuffer.store(c.position, v);	
 			v.addEventListener(CellEvent.CELL_CLICKED, handleCellClicked);
+		}
+		
+		public function pool (sprite:Poolable) :void
+		{
+		    _viewFactory.addToPool(sprite);
 		}
 		
 		/**
