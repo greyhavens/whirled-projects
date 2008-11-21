@@ -16,7 +16,7 @@
       <arg value="-use-network=false"/>
       <arg value="-compiler.source-path=${app.source-dir}"/>
       <arg value="-file-specs"/>
-      <arg value="${app.source-dir}/Furniture.as"/>
+      <arg value="${app.source-dir}/${app.package-dir}/Furniture.as"/>
       <arg value="-output"/>
       <arg value="Furniture.swf"/>
     </java>
