@@ -12,7 +12,7 @@ package world.level
 		
 		public function makeLevel(level:int) :Level
 		{					
-			return new Level(_world, level, Level.DEFAULT_HEIGHT, new BlankBoard());			
+			return new Level(_world, level, Level.DEFAULT_HEIGHT, new BlankBoard(Level.DEFAULT_HEIGHT));			
 		}
 		
 		protected var _world:World;

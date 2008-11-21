@@ -1,7 +1,6 @@
 package world.board
 {
 	import arithmetic.BoardCoordinates;
-	import arithmetic.VoidBoardRectangle;
 	
 	import cells.ground.GroundCell;
 	import cells.wall.WallBaseCell;
@@ -13,8 +12,9 @@ package world.board
 	
 	public class BlankBoard implements Board
 	{
-		public function BlankBoard() 
+		public function BlankBoard(height:int) 
 		{
+		    _height = height;
 		}
 		
 		public function cellAt (position:BoardCoordinates) :Cell
@@ -40,7 +40,7 @@ package world.board
         
         public function toString () :String
         {
-        	return "a blank board";
+        	return "a blank board "+_height+" cells high for level "+_level;
         }
         
         protected function set level (level:Level) :void
@@ -49,5 +49,6 @@ package world.board
         }
         
         protected var _level:Level;
+        protected var _height:int;
 	}
 }

@@ -174,8 +174,10 @@ package client
 				return;
 			}
 			
+			const height:int = level(player.levelNumber).height
+			
 			// we can start off with the default blank board.			
-			_board = new MutableBoard(new BlankBoard());
+			_board = new MutableBoard(new BlankBoard(height));
             Log.debug(this+" created "+_board);
                  
 			// and assign a new board to the view.
@@ -201,7 +203,7 @@ package client
 				}
 			}
 			
-			_heightIndicator.top = level(_level).height;
+			_heightIndicator.top = height;
 		}
 		
 		public function get mode () :String 
