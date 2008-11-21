@@ -58,17 +58,24 @@ package client
 		
 		public function showLevelComplete(levelNumber:int) :void
 		{
+		    Log.debug(this + "show level complete");
 		    _levelComplete = new TextField();
 		    _levelComplete.htmlText = 
-		          "<p align='center'><font size='200' face='Helvetica, Arial, _sans'>Level "+levelNumber+" complete.</font></p>"+
-		          "<p align='center'><font size='30' face='Helvetica, Arial, _sans'>Click for more fun on level "+(levelNumber+1)+"</font></p>";		          
+		          "<p align='center'><font color='#ffffff' size='50' face='Helvetica, Arial, _sans'>Yay! Level "+levelNumber+" complete.</font></p>"+
+		          "<p align='center'><font color='#ffffff' size='30' face='Helvetica, Arial, _sans'>Click for more fun on level "+(levelNumber+1)+"</font></p>";		          
 		    addChild(_levelComplete);
-		    _levelComplete.addEventListener(MouseEvent.CLICK, handleNextLevel);
+		    _levelComplete.width = this.width;
+		    _levelComplete.height = this.height;
+		    this.addEventListener(MouseEvent.CLICK, handleNextLevel);
+		    Log.debug("text field added");
 		}
 		
 		protected function handleNextLevel (event:MouseEvent) :void
 		{
-            removeChild(_levelComplete);
+		    this.removeEventListener(MouseEvent.CLICK, handleNextLevel);
+		    if (contains(_levelComplete)) {
+                removeChild(_levelComplete);
+            }
             _client.nextLevel();
 		}
 		

@@ -154,10 +154,11 @@ package client
             _world.moveComplete(finish);
             const player:Player = event.player;
             _viewer.objective.pathComplete(player);
-            const height:int = player.position.x;
+            const height:int = player.position.y;
             _heightIndicator.current = height;
             
             if (player == _localPlayer) {
+                Log.debug("height = "+height+" top = "+level(player.levelNumber).top);
                 if (height == level(player.levelNumber).top) {
                     levelComplete();
                 } 
@@ -169,6 +170,7 @@ package client
 		 */
 		protected function levelComplete () :void
 		{
+		    Log.debug(this+" level complete");
 		    _viewer.showLevelComplete(_localPlayer.levelNumber);
 		}
 		

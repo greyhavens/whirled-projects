@@ -166,6 +166,6 @@ package world.level
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		
-		public static const DEFAULT_HEIGHT:int = 15;
+		public static const DEFAULT_HEIGHT:int = 6;
 	}
 }
