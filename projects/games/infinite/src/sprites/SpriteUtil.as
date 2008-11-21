@@ -6,10 +6,10 @@ package sprites
 	
 	public class SpriteUtil
 	{
-		public static function addBackground(s:Sprite, width:int, height:int, color:uint) :void
+		public static function addBackground(s:Sprite, width:int, height:int, color:uint, alpha:Number = 1.0) :void
 		{
 			with(s.graphics) {
-				beginFill(color, 1.0);
+				beginFill(color, alpha);
 				drawRect(0,0, width, height);
 				endFill();	
 			}

@@ -43,6 +43,8 @@ package world.arbitration
 //                Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
                 return null;
             }
+            
+//            Log.debug(this + " evaluating path from "+player.cell.position+ " to "+ destination.position);
                   
             path = sidewaysPath(player, destination);
             
@@ -90,13 +92,11 @@ package world.arbitration
 		
 		protected function dispatchStart(player:MovablePlayer, path:Path) :void
 		{
-			Log.debug("dispatching "+path+" to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_START, player, path));
 		}
 		
 		protected function dispatchPathUnavailable(player:MovablePlayer) :void
 		{
-			Log.debug("dispatching 'no path' to "+player);
 			player.dispatchEvent(new MoveEvent(MoveEvent.PATH_UNAVAILABLE, player, null));
 		}
 		

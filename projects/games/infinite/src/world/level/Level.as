@@ -129,6 +129,7 @@ package world.level
 		public function arriveAt (player:Player, coords:BoardCoordinates) :void
 		{
 			player.cell = _board.cellAt(coords);
+			Log.debug(this + " setting player position to "+coords+" which is "+player.cell);
 			player.cell.playerHasArrived(this, player);
 		}
 		
@@ -166,6 +167,6 @@ package world.level
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		
-		public static const DEFAULT_HEIGHT:int = 6;
+		public static const DEFAULT_HEIGHT:int = 10;
 	}
 }

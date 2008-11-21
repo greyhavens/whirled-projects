@@ -78,12 +78,13 @@ package client.player
          */
         public function startMove () :void
         {
+            Log.debug(this + " marking player as moving")
         	_moving = true;
         }
         
         public function follow (path:Path) :void
         {
-        	Log.debug(this+" setting path to "+path);
+            Log.debug(this + " starting to follow " + path);
         	_path = path;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_STARTED, this));
         }
@@ -95,6 +96,7 @@ package client.player
                 
         public function pathComplete () :void
         {
+            Log.debug(" completed move, clearing movement flag and dispatching event");
             _moving = false;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
         }
@@ -144,6 +146,7 @@ package client.player
          */
         public function noPath () :void
         {
+            Log.debug(this + " received message that proposed path is unavailable.  Clearing movement and path");
         	_moving = false;
         	_path = null;
         }

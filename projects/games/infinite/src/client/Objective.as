@@ -203,7 +203,7 @@ package client
 		public function handleCellClicked(event:CellEvent) :void
 		{
 			_viewer.handleCellClicked(event);
-			Log.debug("clicked on "+event.cell);
+			//Log.debug("clicked on "+event.cell);
 		}		
 		
         public function checkFootprints (sprite:CellSprite) :void

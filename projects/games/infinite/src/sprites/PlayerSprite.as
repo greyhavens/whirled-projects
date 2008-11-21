@@ -86,16 +86,18 @@ package sprites
         }
         
         protected function startMovement(action:PlayerAction) :void
-        {
+        {   
+            Log.debug(this+" starting to move");
+            
         	_action = action;
-        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);
-        	
+        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);        	
         }
         
         public function moveComplete () :void
         {
         	_objective.frameTimer.removeEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);
         	_action = null;
+        	Log.debug(this+" completed movement.  Notifying player");
         	_player.pathComplete();
         }
          

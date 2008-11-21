@@ -69,6 +69,7 @@ package world
 		
 		public function moveCompleted (id:int, coords:BoardCoordinates) :void
 		{
+		    Log.debug(this + " received move complete");
 			var player:Player = _players.find(id);
 			if (player == null) {
 				throw new Error("move to " +coords+" proposed for unknown player "+id);

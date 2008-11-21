@@ -36,13 +36,13 @@ package client
            _sprite.direction = path.direction;
            _sprite.x = sprite.x;
            _sprite.y = sprite.y;
-           Log.debug("adding footprint sprite");    
+           //Log.debug("adding footprint sprite");    
            _objective.addChild(_sprite);
         }           
     
         protected function clickFootprints (event:MouseEvent) :void
         {
-        	Log.debug("footprints clicked - hiding");
+        	//Log.debug("footprints clicked - hiding");
         	hideFootprint();
             _objective.handleCellClicked(new CellEvent(CellEvent.CELL_CLICKED, cell));
         }       
@@ -75,7 +75,7 @@ package client
         protected function hideFootprint() :void
         {
         	if (_objective.contains(_sprite)) {
-        		Log.debug("removing footprint sprite");
+        		//Log.debug("removing footprint sprite");
                _objective.removeChild(_sprite);
             } else {
             	Log.debug("footprint sprite not found in objective");

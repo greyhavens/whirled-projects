@@ -66,7 +66,7 @@ package sprites
 		
 		protected function checkFootprints(event:MouseEvent) :void
 		{
-			Log.debug(this+"checking footprints because of mouse event "+event.type);
+			//Log.debug(this+" checking footprints because of mouse event "+event.type);
 			_objective.checkFootprints(this);
 		}
 		

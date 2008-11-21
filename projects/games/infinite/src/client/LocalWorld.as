@@ -61,11 +61,13 @@ package client
         
         public function proposeMove (coords:BoardCoordinates) :void
         {
+            Log.debug(this + " proposing move to "+coords);
             _world.moveProposed(ID, new MoveProposal(_client.serverTime, coords));
         }
 
         public function handlePathStart (event:MoveEvent) :void
         {
+            Log.debug("world dispatched path start "+event.path);
         	_client.startPath(new PathStart(event.player.id, event.path));
         }        
                 	
@@ -101,6 +103,7 @@ package client
          
         public function handleNoPath (event:MoveEvent) :void
         {
+            Log.debug("world dispatched 'no path'");
         	_client.pathUnavailable();
         }
                 	

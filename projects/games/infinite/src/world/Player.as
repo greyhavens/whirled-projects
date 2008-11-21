@@ -76,7 +76,7 @@ package world
         
         public function moveComplete (coords:BoardCoordinates) :void
         {
-        	Log.debug("completing path "+_path);
+        	Log.debug(this + " completing path "+_path);
             if (_path.finish.equals(coords)) {
             	_level.map(_path.finish);
             	_path = null;
@@ -186,14 +186,16 @@ package world
          */ 
         public function replace (cell:Cell) :void
         {
-        	_cell = cell;
+            if (cell.position == _cell.position) {
+            	_cell = cell;
+            }
         	_level.replace(cell);
         	cell.distributeState();
         }
         
         public function get name () :String
         {
-        	return "player "+_id;
+        	return "server player "+_id;
         }
         
         public function teleport () :void

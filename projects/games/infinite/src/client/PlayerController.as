@@ -25,7 +25,7 @@ package client
 
 		public function handleCellClicked (event:CellEvent) :void
 		{	
-			Log.debug("player controller handling click");		
+			//Log.debug("player controller handling click");		
 			
 			// check whether the player is in a cell they can't leave
 			if (_player.cell != null && !_player.cell.leave) {
@@ -38,7 +38,7 @@ package client
 			} 
 			
 			// tell the player a move is starting. The player will either receive back a path, or a path unavailable.
-			_player.startMove();
+			_player.startMove();	
 			_world.proposeMove(event.cell.position);
 		}
 

@@ -124,7 +124,7 @@ package cells.fruitmachine
 		override public function playerHasArrived (clock:Chronometer, player:CellInteractions) :void
 		{
 			_player = player;
-			Log.debug ("the player has arrived within the fruit machine");
+			//Log.debug ("the player has arrived within the fruit machine");
 			const mode:int = stateAt((new Date()).getTime());
 			
 			if (mode == DEFUNCT) {
@@ -152,7 +152,7 @@ package cells.fruitmachine
 		 */
 		protected function rollWheel () :void
 		{
-			Log.debug ("rolling fruit machine");
+			//Log.debug ("rolling fruit machine");
 			stopTimer();
 			mode = ROLLING;
 			distributeState();

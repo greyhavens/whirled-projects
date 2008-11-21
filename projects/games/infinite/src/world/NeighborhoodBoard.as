@@ -41,7 +41,7 @@ package world
 		
 		public function neighborhood (hood:Neighborhood) :CellUpdate
 		{
-			Log.debug("creating cell update for "+hood);
+			//Log.debug("creating cell update for "+hood);
 			const update:CellUpdate = new CellUpdate();
 			for each (var vicinity:Vicinity in hood.vicinities) {
 				//Log.debug("checking vicinity "+vicinity);

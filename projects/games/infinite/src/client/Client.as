@@ -79,7 +79,7 @@ package client
 										
 		public function levelUpdate(update:LevelUpdate) :void
 		{
-			Log.debug("processing level update");
+			//Log.debug("processing level update");
 			for each (var position:PlayerPosition in update.positions) {
 				updatePosition(position);
 			} 
@@ -149,7 +149,7 @@ package client
 		
 		protected function handlePathComplete (event:PlayerEvent) :void
 		{
-			Log.debug("handling path complete");
+			Log.debug(this+" handling path complete");
             const finish:BoardCoordinates = event.player.path.finish; 
             _world.moveComplete(finish);
             const player:Player = event.player;
@@ -158,7 +158,6 @@ package client
             _heightIndicator.current = height;
             
             if (player == _localPlayer) {
-                Log.debug("height = "+height+" top = "+level(player.levelNumber).top);
                 if (height == level(player.levelNumber).top) {
                     levelComplete();
                 } 
@@ -184,7 +183,7 @@ package client
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
 		{
-			Log.debug("handling unmapped neighborhood "+event.hood);
+			//Log.debug("handling unmapped neighborhood "+event.hood);
 			_world.requestCellUpdate(event.hood);
 		}
 		
@@ -245,7 +244,7 @@ package client
 		
 		public function updatedCells (detail:CellUpdate) :void
 		{
-			Log.debug("client processing "+detail);
+			//Log.debug("client processing "+detail);
 			_viewer.updatedCells(detail);
 		}
 		
