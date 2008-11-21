@@ -99,6 +99,7 @@ package world
 		    player.addEventListener(MoveEvent.PATH_START, dispatchEvent);
 		    player.addEventListener(InventoryEvent.RECEIVED, dispatchEvent);
             player.addEventListener(InventoryEvent.USED, dispatchEvent);
+            player.addEventListener(MoveEvent.PATH_UNAVAILABLE, dispatchEvent);
             		    		    
 		    // register the player and place them on the first level.
             _players.register(player);
