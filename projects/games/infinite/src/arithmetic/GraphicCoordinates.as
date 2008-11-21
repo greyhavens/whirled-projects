@@ -3,26 +3,30 @@ package arithmetic
 	
 	import flash.display.DisplayObject;
 	
-	public class GraphicCoordinates extends Coordinates
+	public class GraphicCoordinates
 	{
+	    public var x:int;
+	    public var y:int;
+	    
 		public function GraphicCoordinates(x:int, y:int)
 		{
-			super(x, y);
+		    this.x = x;
+		    this.y = y;
 		}
 		
 		public function translatedBy (v:Vector) :GraphicCoordinates
 		{
 			return new GraphicCoordinates (
-				_x + v.dx,
-				_y + v.dy
+				x + v.dx,
+				y + v.dy
 			);
 		}
 		
 		public function distanceTo (other:GraphicCoordinates) :Vector
 		{
 			return new Vector(
-				other._x - _x,
-				other._y - _y
+				other.x - x,
+				other.y - y
 			);
 		}
 				
@@ -50,9 +54,9 @@ package arithmetic
 			return system.toLocal(this);
 		}
 		
-		override public function toString () :String
+		public function toString () :String
 		{
-			return "graphic "+super.toString();
+			return "graphic ("+x+", "+y+")";
 		}
 		
 		public static const ORIGIN:GraphicCoordinates = new GraphicCoordinates(0, 0);	

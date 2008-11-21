@@ -4,31 +4,37 @@ package arithmetic
 	
 	import server.Messages.Serializable;
 			
-	public class BoardCoordinates extends Coordinates implements Serializable
+	public class BoardCoordinates implements Serializable
 	{
-		public function BoardCoordinates(x:int, y:int)
+	    public var x:int;
+	    public var y:int;
+	    public var key:String;
+	    
+		public function BoardCoordinates(x:int, y:int)		
 		{ 
-			super(x, y);
+		    this.x = x;
+		    this.y = y;
+		    this.key = x + ","+ y;
 		}
 		
-		public override function toString () :String
+		public function toString () :String
 		{
-			return "board "+super.toString();
+			return "board position ("+x+", "+y+")";
 		}
 		
 		public function distanceTo (other:BoardCoordinates) :Vector
 		{
 			return new Vector(
-				other._x - _x,
-				other._y - _y
+				other.x - x,
+				other.y - y
 			);
 		}
 
 		public function translatedBy (v:Vector) :BoardCoordinates
 		{
 			return new BoardCoordinates(
-				_x + v.dx,
-				_y + v.dy
+				x + v.dx,
+				y + v.dy
 			)
 		}
 		
@@ -40,27 +46,27 @@ package arithmetic
 		
 		public function above (other:BoardCoordinates) :Boolean
 		{
-			return this._x == other._x && this._y == other._y - 1; 
+			return this.x == other.x && this.y == other.y - 1; 
 		}
 
 		public function below (other:BoardCoordinates) :Boolean
 		{
-			return this._x == other._x && this._y == other._y + 1; 
+			return this.x == other.x && this.y == other.y + 1; 
 		}
 		
 		public function onLeftOf (other:BoardCoordinates) :Boolean
 		{
-			return this._y == other._y && this._x == other._x - 1; 
+			return this.y == other.y && this.x == other.x - 1; 
 		}
 			
 		public function onRightOf (other:BoardCoordinates) :Boolean
 		{
-			return this._y == other._y && this._x == other._x + 1; 
+			return this.y == other.y && this.x == other.x + 1; 
 		}
 		
 		public function equals (other:BoardCoordinates) :Boolean
 		{
-			return this._x == other._x && this._y == other._y;
+			return this.x == other.x && this.y == other.y;
 		} 
 		
 		public function get vicinity () :Vicinity 
