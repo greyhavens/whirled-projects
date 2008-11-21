@@ -24,7 +24,6 @@ public class Player extends SimObject
         var cell :BoardCell = GameContext.gameMode.getBoard(teamId).getCell(gridX, gridY);
         _loc.x = cell.ctrPixelX;
         _loc.y = cell.ctrPixelY;
-        clampLoc();
     }
 
     public function beginSwitchBoards () :void
@@ -47,26 +46,12 @@ public class Player extends SimObject
     public function move (direction :int) :void
     {
         _moveTarget = null;
+        _moveRequest = direction;
+    }
 
-        _moveDirection.x = 0;
-        _moveDirection.y = 0;
-        switch (direction) {
-        case Constants.DIR_EAST:
-            _moveDirection.x = 1;
-            break;
-
-        case Constants.DIR_WEST:
-            _moveDirection.x = -1;
-            break;
-
-        case Constants.DIR_NORTH:
-            _moveDirection.y = -1;
-            break;
-
-        case Constants.DIR_SOUTH:
-            _moveDirection.y = 1;
-            break;
-        }
+    public function addGem (gemType :int) :void
+    {
+        _gems.push(gemType);
     }
 
     public function get canSwitchBoards () :Boolean
@@ -145,60 +130,89 @@ public class Player extends SimObject
         return _gems;
     }
 
+    public function get moveDirection () :int
+    {
+        return _moveDirection;
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
 
         if (_state != STATE_SWITCHINGBOARDS) {
             var moveDist :Number = this.moveSpeed * dt;
-            var xOffset :Number = 0;
-            var yOffset :Number = 0;
-            if (_moveTarget != null) {
+
+            /*if (_moveTarget != null) {
                 var xDist :Number = ((_moveTarget.x + 0.5) * _cellSize) - _loc.x;
                 var yDist :Number = ((_moveTarget.y + 0.5) * _cellSize) - _loc.y;
                 var xDistAbs :Number = Math.abs(xDist);
                 var yDistAbs :Number = Math.abs(yDist);
 
-                // Move along the axis we have a shorter distance to go
-                if (yDist == 0 || (xDist != 0 && xDistAbs < yDistAbs)) {
-                    xOffset = Math.min(moveDist, xDistAbs) * (xDist < 0 ? -1 : 1);
-                    moveDist = Math.max(moveDist - Math.abs(xOffset), 0);
-                    yOffset = Math.min(moveDist, yDistAbs) * (yDist < 0 ? -1 : 1);
-
+                if (xDistAbs != 0 && xDistAbs < yDistAbs) {
+                    _moveRequest = Constants.getDirection(xDist, 0);
                 } else if (yDist != 0) {
-                    yOffset = Math.min(moveDist, yDistAbs) * (yDist < 0 ? -1 : 1);
-                    moveDist = Math.max(moveDist - Math.abs(yOffset), 0);
-                    xOffset = Math.min(moveDist, xDistAbs) * (xDist < 0 ? -1 : 1);
+                    _moveRequest = Constants.getDirection(0, yDist);
+                } else {
+                    _moveTarget = null;
+                    _moveRequest = -1;
                 }
+            }*/
 
-            } else {
-                // Move direction is always length=1
-                xOffset = _moveDirection.x * moveDist;
-                yOffset = _moveDirection.y * moveDist;
+            // Are we changing direction?
+            if (_moveRequest != _moveDirection && _moveRequest != -1) {
+                if (_moveDirection == -1 || Constants.isParallel(_moveDirection, _moveRequest)) {
+                    // Can always move parallel to the direction we're already moving
+                    _moveDirection = _moveRequest;
+                    _moveRequest = -1;
+
+                } else {
+                    // If we're trying to turn, wait until we're at the center of a cell
+                    var dir :Vector2 = Constants.DIRECTION_VECTORS[_moveDirection];
+                    var nextIsec :Number = getNextCellIntersection(_moveDirection);
+                    var oldLoc :Number;
+                    var didTurn :Boolean;
+                    if (dir.x > 0) {
+                        if (_loc.x + moveDist > nextIsec) {
+                            oldLoc = _loc.x;
+                            tryMoveTo(nextIsec, _loc.y);
+                            moveDist -= Math.abs(_loc.x - oldLoc);
+                            didTurn = true;
+                        }
+                    } else if (dir.x < 0) {
+                        if (_loc.x - moveDist < nextIsec) {
+                            oldLoc = _loc.x;
+                            tryMoveTo(nextIsec, _loc.y);
+                            moveDist -= Math.abs(_loc.x - oldLoc);
+                            didTurn = true;
+                        }
+                    } else if (dir.y > 0) {
+                        if (_loc.y + moveDist > nextIsec) {
+                            oldLoc = _loc.y;
+                            tryMoveTo(_loc.x, nextIsec);
+                            moveDist -= Math.abs(_loc.y - oldLoc);
+                            didTurn = true;
+                        }
+                    } else if (dir.y < 0) {
+                        if (_loc.y - moveDist < nextIsec) {
+                            oldLoc = _loc.y;
+                            tryMoveTo(_loc.x, nextIsec);
+                            moveDist -= Math.abs(_loc.y - oldLoc);
+                            didTurn = true;
+                        }
+                    }
+
+                    if (didTurn) {
+                        _moveDirection = _moveRequest;
+                        _moveRequest = -1;
+                    }
+                }
             }
 
-            var board :Board = GameContext.gameMode.getBoard(_curBoardId);
-
-            var xNew :Number = _loc.x + xOffset;
-            var yNew :Number = _loc.y + yOffset;
-            var newCell :BoardCell = board.getCellAtPixel(xNew, yNew);
-            if (newCell.isObstacle) {
-                if (xOffset > 0) {
-                    xNew = newCell.pixelX - 1;
-                } else if (xOffset < 0) {
-                    xNew = newCell.pixelX + board.cellSize + 1;
-                }
-
-                if (yOffset > 0) {
-                    yNew = newCell.pixelY - 1;
-                } else if (yOffset < 0) {
-                    yNew = newCell.pixelY + board.cellSize + 1;
-                }
+            if (_moveDirection != -1) {
+                // Move, and handle collisions
+                dir = Constants.DIRECTION_VECTORS[_moveDirection];
+                tryMoveTo(_loc.x + (dir.x * moveDist), _loc.y + (dir.y * moveDist));
             }
-
-            _loc.x = xNew;
-            _loc.y = yNew;
-            clampLoc();
 
             var cell :BoardCell = this.curBoardCell;
             // If we're on the other team's board, pickup gems when we enter their cells
@@ -216,9 +230,60 @@ public class Player extends SimObject
         }
     }
 
-    public function addGem (gemType :int) :void
+    protected function getNextCellIntersection (moveDirection :int) :Number
     {
-        _gems.push(gemType);
+        var halfCell :int = _cellSize * 0.5;
+        var dir :Vector2 = Constants.DIRECTION_VECTORS[moveDirection];
+        if (dir.x > 0) {
+            return (Math.floor((_loc.x + halfCell) / _cellSize) * _cellSize) + halfCell;
+        } else if (dir.x < 0) {
+            return (Math.floor((_loc.x - halfCell) / _cellSize) * _cellSize) + halfCell;
+        } else if (dir.y > 0) {
+            return (Math.floor((_loc.y + halfCell) / _cellSize) * _cellSize) + halfCell;
+        } else {
+            return (Math.floor((_loc.y - halfCell) / _cellSize) * _cellSize) + halfCell;
+        }
+    }
+
+    protected function tryMoveTo (xNew :Number, yNew :Number) :void
+    {
+        // Tries to move the player to the new location. Clamps the move if a collision occurs.
+        // Don't collide into tiles
+        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+        var nextCell :BoardCell;
+        var xOffset :Number = xNew - _loc.x;
+        var yOffset :Number = yNew - _loc.y;
+        var halfCell :int = _cellSize * 0.5;
+        if (xOffset > 0) {
+            nextCell = board.getCellAtPixel(_loc.x + xOffset + halfCell, _loc.y);
+            if (nextCell.isObstacle) {
+                xNew = nextCell.ctrPixelX - _cellSize - 1;
+            }
+        } else if (xOffset < 0) {
+            nextCell = board.getCellAtPixel(_loc.x + xOffset - halfCell, _loc.y);
+            if (nextCell.isObstacle) {
+                xNew = nextCell.ctrPixelX + _cellSize;
+            }
+        } else if (yOffset > 0) {
+            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset + halfCell);
+            if (nextCell.isObstacle) {
+                yNew = nextCell.ctrPixelY - _cellSize - 1;
+            }
+        } else if (yOffset < 0) {
+            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset - halfCell);
+            if (nextCell.isObstacle) {
+                yNew = nextCell.ctrPixelY + _cellSize;
+            }
+        }
+
+        // clamp to the edges of the board
+        xNew = Math.max(xNew, _cellSize * 0.5);
+        xNew = Math.min(xNew, (board.cols - 0.5) * _cellSize);
+        yNew = Math.max(yNew, _cellSize * 0.5);
+        yNew = Math.min(yNew, (board.rows - 0.5) * _cellSize);
+
+        _loc.x = xNew;
+        _loc.y = yNew;
     }
 
     protected function redeemGems (cell :BoardCell) :void
@@ -235,22 +300,13 @@ public class Player extends SimObject
         _curBoardId = Constants.getOtherTeam(_curBoardId);
     }
 
-    protected function clampLoc () :void
-    {
-        var board :Board = GameContext.gameMode.getBoard(_teamId);
-
-        _loc.x = Math.max(_loc.x, _cellSize * 0.5);
-        _loc.x = Math.min(_loc.x, (board.cols - 0.5) * _cellSize);
-        _loc.y = Math.max(_loc.y, _cellSize * 0.5);
-        _loc.y = Math.min(_loc.y, (board.rows - 0.5) * _cellSize);
-    }
-
     protected var _playerIndex :int;
     protected var _teamId :int;
     protected var _curBoardId :int;
     protected var _gems :Array = [];
     protected var _score :int;
-    protected var _moveDirection :Vector2 = new Vector2();
+    protected var _moveDirection :int = -1;
+    protected var _moveRequest :int = -1;
     protected var _moveTarget :Vector2;
     protected var _loc :Vector2 = new Vector2();
     protected var _state :int;

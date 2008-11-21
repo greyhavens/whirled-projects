@@ -59,6 +59,35 @@ public class Constants
     public static const DIR_WEST :int = 1;
     public static const DIR_SOUTH :int = 2;
     public static const DIR_EAST :int = 3;
+    public static const DIRECTION_VECTORS :Array = [
+        new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 0)
+    ];
+
+    public static function getDirection (xOffset :int, yOffset :int) :int
+    {
+        if (xOffset > 0) {
+            return DIR_EAST;
+        } else if (xOffset < 0) {
+            return DIR_WEST;
+        } else if (yOffset > 0) {
+            return DIR_SOUTH;
+        } else if (yOffset < 0) {
+            return DIR_NORTH;
+        }
+
+        return -1;
+    }
+
+    public static function isParallel (dirA :int, dirB :int) :Boolean
+    {
+        var d :int = Math.abs(dirB - dirA);
+        return (d == 0 || d == 2);
+    }
+
+    public static function isPerp (dirA :int, dirB :int) :Boolean
+    {
+        return !isParallel(dirA, dirB);
+    }
 
     public static const GEM_GREEN :int = 0;
     public static const GEM_PURPLE :int = 1;

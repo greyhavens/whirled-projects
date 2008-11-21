@@ -25,9 +25,7 @@ public class PlayerView extends SceneObject
         setTeam(_player.teamId);
         setBoard(_player.curBoardId);
 
-        if (player.playerIndex == GameContext.localPlayerIndex) {
-            registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
-        }
+        registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
     }
 
     override protected function destroyed () :void
@@ -74,37 +72,24 @@ public class PlayerView extends SceneObject
         }
 
         // Update animation based on facing direction
-        var newLoc :Vector2 = _player.loc.clone();
-        var newFacing :int;
-        if (newLoc.x > _lastLoc.x) {
-            newFacing = Constants.DIR_EAST;
-        } else if (newLoc.x < _lastLoc.x) {
-            newFacing = Constants.DIR_WEST;
-        } else if (newLoc.y > _lastLoc.y) {
-            newFacing = Constants.DIR_SOUTH;
-        } else if (newLoc.y < _lastLoc.y) {
-            newFacing = Constants.DIR_NORTH;
-        } else {
-            newFacing = _lastFacing;
-        }
-
-        if (newFacing != _lastFacing || newFacing == -1) {
+        var newDirection :int = _player.moveDirection;
+        if (_curAnim == null || (newDirection != _lastFacing && newDirection != -1)) {
             if (_curAnim != null) {
                 _sprite.removeChild(_curAnim);
             }
 
-            if (newFacing == -1) {
-                newFacing = 0;
+            if (newDirection == -1) {
+                newDirection = 0;
             }
 
             var anims :Array = _playerAnims[_player.teamId];
-            _curAnim = anims[newFacing];
+            _curAnim = anims[newDirection];
             _sprite.addChild(_curAnim);
         }
 
         // update location
-        this.x = newLoc.x;
-        this.y = newLoc.y;
+        this.x = _player.loc.x;
+        this.y = _player.loc.y;
 
         // Did we pick up a gem?
         var newGems :int = _player.numGems;
@@ -112,8 +97,7 @@ public class PlayerView extends SceneObject
             GameContext.playGameSound("sfx_gem" + Math.min(newGems, NUM_GEM_SOUNDS));
         }
 
-        _lastFacing = newFacing;
-        _lastLoc = newLoc;
+        _lastFacing = newDirection;
         _lastGems = newGems;
     }
 
