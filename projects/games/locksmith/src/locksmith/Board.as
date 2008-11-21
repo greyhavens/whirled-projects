@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
@@ -277,27 +278,27 @@ public class Board extends Sprite
 
     private static const log :Log = Log.getLog(Board);
 
-    [Embed(source="../rsrc/locksmith_art.swf#background")]
+    [Embed(source="../../rsrc/locksmith_art.swf#background")]
     protected static const BACKGROUND :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#dome")]
+    [Embed(source="../../rsrc/locksmith_art.swf#dome")]
     protected static const GOAL_DOME :Class;
 
-    [Embed(source="../rsrc/locksmith_art.swf#turn_to_moon")]
+    [Embed(source="../../rsrc/locksmith_art.swf#turn_to_moon")]
     protected static const TURN_TO_MOON :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#turn_to_sun")]
+    [Embed(source="../../rsrc/locksmith_art.swf#turn_to_sun")]
     protected static const TURN_TO_SUN :Class;
 
-    [Embed(source="../rsrc/locksmith_art.swf#gate_moon_upper")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_moon_upper")]
     protected static const GATE_MOON_UP :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#gate_moon")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_moon")]
     protected static const GATE_MOON_MID :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#gate_moon_lower")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_moon_lower")]
     protected static const GATE_MOON_LOW :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#gate_sun_upper")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_sun_upper")]
     protected static const GATE_SUN_UP :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#gate_sun")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_sun")]
     protected static const GATE_SUN_MID :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#gate_sun_lower")]
+    [Embed(source="../../rsrc/locksmith_art.swf#gate_sun_lower")]
     protected static const GATE_SUN_LOW :Class;
 
     // rings sit under the turn indicator, scoring dome, clock hands, marble layer and launchers
@@ -326,14 +327,13 @@ public class Board extends Sprite
 
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
 
 import com.threerings.util.Log;
 
 import com.whirled.contrib.EventHandlers;
 
-import Marble;
+import locksmith.Marble;
 
 class LaunchAnimation
 {

@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -237,13 +238,13 @@ public class ScoreBoard extends Sprite
 
     private static const log :Log = Log.getLog(ScoreBoard);
 
-    [Embed(source="../rsrc/locksmith_art.swf#trough_overlay")]
+    [Embed(source="../../rsrc/locksmith_art.swf#trough_overlay")]
     protected static const TROUGH_OVERLAY :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#player_frame")]
+    [Embed(source="../../rsrc/locksmith_art.swf#player_frame")]
     protected static const PLAYER_FRAME :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#winner_resolve_moon")]
+    [Embed(source="../../rsrc/locksmith_art.swf#winner_resolve_moon")]
     protected static const WINNER_MOON :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#winner_resolve_sun")]
+    [Embed(source="../../rsrc/locksmith_art.swf#winner_resolve_sun")]
     protected static const WINNER_SUN :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
@@ -278,7 +279,7 @@ import com.threerings.util.Log;
 
 import com.whirled.contrib.EventHandlers;
 
-import MarbleMovie;
+import locksmith.MarbleMovie;
 
 class RampAnimation
 {
@@ -401,6 +402,8 @@ class RampAnimation
     private static const log :Log = Log.getLog(RampAnimation);
 }
 
+import locksmith.Locksmith;
+
 class CoinsDisplay extends Sprite
 {
     public function CoinsDisplay (coins :int, digits :int) 
@@ -469,7 +472,7 @@ class CoinsDigit extends Sprite
 
     private static const log :Log = Log.getLog(CoinsDigit);
 
-    [Embed(source="../rsrc/locksmith_art.swf#digit")]
+    [Embed(source="../../rsrc/locksmith_art.swf#digit")]
     protected const FLOW_DIGIT :Class;
 
     protected var _digit :MovieClip; 

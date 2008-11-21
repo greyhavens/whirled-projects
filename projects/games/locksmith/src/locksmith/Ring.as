@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.Sprite;
 
@@ -255,21 +256,21 @@ public class Ring extends Sprite
     private static const log :Log = Log.getLog(Ring);
 
     /** Ring movies - There is no movie for Ring 3 */
-    [Embed(source="../rsrc/locksmith_art.swf#ring_1")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_1")]
     protected static const RING_1 :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ring_2")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_2")]
     protected static const RING_2 :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ring_4")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_4")]
     protected static const RING_4 :Class;
 
     /** Channel movies */
-    [Embed(source="../rsrc/locksmith_art.swf#ring_1_channel")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_1_channel")]
     protected static const CHANNEL_1 :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ring_2_channel")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_2_channel")]
     protected static const CHANNEL_2 :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ring_3_channel")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_3_channel")]
     protected static const CHANNEL_3 :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ring_4_channel")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ring_4_channel")]
     protected static const CHANNEL_4 :Class;
 
     protected var _ringNumber :int;
@@ -291,6 +292,8 @@ public class Ring extends Sprite
 }
 
 import mx.core.MovieClipAsset;
+
+import locksmith.Locksmith;
 
 class Channel
 {

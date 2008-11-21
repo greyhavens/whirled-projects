@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -60,16 +61,16 @@ public class MarbleMovie extends Sprite
         _movie.stop();
     }
 
-    [Embed(source="../rsrc/locksmith_art.swf#ball_sun")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ball_sun")]
     protected static const SUN_BALL :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ball_shine_sun")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ball_shine_sun")]
     protected static const BALL_SHINE_SUN :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ball_moon")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ball_moon")]
     protected static const MOON_BALL :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#ball_shine_moon")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ball_shine_moon")]
     protected static const BALL_SHINE_MOON :Class;
 
-    [Embed(source="../rsrc/locksmith_art.swf#ball_shadow")]
+    [Embed(source="../../rsrc/locksmith_art.swf#ball_shadow")]
     protected static const BALL_SHADOW :Class;
 
     protected var _movie :MovieClipAsset;

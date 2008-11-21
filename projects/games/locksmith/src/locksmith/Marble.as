@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.Sprite;
 

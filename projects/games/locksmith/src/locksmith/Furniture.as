@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.Sprite;
 
@@ -33,7 +34,7 @@ public class Furniture extends Sprite
         _clock["hand_minute"].rotation = date.minutes * 6;
     }
 
-    [Embed(source="../rsrc/furniture.swf#clock")]
+    [Embed(source="../../rsrc/furniture.swf#clock")]
     protected static const CLOCK :Class;
 
     protected var _clock :Sprite;

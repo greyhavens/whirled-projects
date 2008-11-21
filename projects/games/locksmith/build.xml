@@ -4,6 +4,7 @@
   <!-- define some basic project parameters -->
   <property name="app.name" value="Locksmith"/>
   <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="locksmith"/>
   <property name="app.type" value="game"/>
 
   <import file="../../../etc/project-include.xml"/>

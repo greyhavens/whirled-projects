@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.Sprite;
 
@@ -299,7 +300,7 @@ public class Locksmith extends Sprite
 
     private static const log :Log = Log.getLog(Locksmith);
 
-    [Embed(source="../rsrc/fill_image.png",
+    [Embed(source="../../rsrc/fill_image.png",
         scaleGridTop="28", scaleGridBottom="470", scaleGridLeft="28", scaleGridRight="285")]
     protected static const BACKGROUND :Class;
 

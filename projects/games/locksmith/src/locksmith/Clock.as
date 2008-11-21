@@ -1,6 +1,7 @@
+//
 // $Id$
 
-package {
+package locksmith {
 
 import flash.display.Sprite;
 
@@ -101,11 +102,11 @@ public class Clock extends Sprite
 
     private static const log :Log = Log.getLog(Clock);
 
-    [Embed(source="../rsrc/locksmith_art.swf#hand_minute")]
+    [Embed(source="../../rsrc/locksmith_art.swf#hand_minute")]
     protected static const MINUTE :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#hand_hour")]
+    [Embed(source="../../rsrc/locksmith_art.swf#hand_hour")]
     protected static const HOUR :Class;
-    [Embed(source="../rsrc/locksmith_art.swf#selector")]
+    [Embed(source="../../rsrc/locksmith_art.swf#selector")]
     protected static const SELECTOR :Class;
 
     protected var _minute :Sprite;
