@@ -33,7 +33,7 @@ package client
 		public function take (position:BoardCoordinates) :CellView
 		{
 			const found:CellView = find(position);
-            delete _dictionary[position];
+            delete _dictionary[position.key];
 			return found;
 		}
 		
