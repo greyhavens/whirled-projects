@@ -199,6 +199,7 @@ package server
 	    public static const MOVE_COMPLETED:int = 2;
         public static const REQUEST_CELLS:int = 3;
         public static const USE_ITEM:int = 4;
+        public static const NEXT_LEVEL:int = 5;
         
         // No point in stringifying this every time we want to synchronize the clock.
         public static const REMOTE_TIME_SYNC:String = String(RemoteWorld.TIME_SYNC);
@@ -209,5 +210,6 @@ package server
 	    messageName[MOVE_COMPLETED] = "move completed";
 	    messageName[REQUEST_CELLS] = "request cells";
 	    messageName[USE_ITEM] = "use item";
+	    messageName[NEXT_LEVEL] = "next level";
 	}
 }

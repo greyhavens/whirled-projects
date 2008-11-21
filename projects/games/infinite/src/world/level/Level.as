@@ -40,6 +40,14 @@ package world.level
 		}
 
         /**
+         * Return the row that the player must land on to finish a level.
+         */ 
+        public function get exitRow () :int
+        {
+            return (-_height) +1;
+        }
+
+        /**
          * A player enters this level.
          */
         public function playerEnters (player:Player) :void
@@ -158,6 +166,6 @@ package world.level
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		
-		public static const DEFAULT_HEIGHT:int = 40;
+		public static const DEFAULT_HEIGHT:int = 15;
 	}
 }

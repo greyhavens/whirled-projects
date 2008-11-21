@@ -47,6 +47,14 @@ package world
             }
 		}
 		
+		public function nextLevel (id:int) :void
+		{
+		    var player:Player = _players.find(id);
+		    if (player != null) {
+		        _levels.nextLevel(player);
+		    }
+		}
+		
 		/**
 		 * A proposal is made for a player to move.
 		 */

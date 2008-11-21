@@ -152,8 +152,32 @@ package client
 			Log.debug("handling path complete");
             const finish:BoardCoordinates = event.player.path.finish; 
             _world.moveComplete(finish);
-            _viewer.objective.pathComplete(event.player);
-            _heightIndicator.current = event.player.position.y;
+            const player:Player = event.player;
+            _viewer.objective.pathComplete(player);
+            const height:int = player.position.x;
+            _heightIndicator.current = height;
+            
+            if (player == _localPlayer) {
+                if (height == level(player.levelNumber).top) {
+                    levelComplete();
+                } 
+            }
+		}
+		
+		/** 
+		 * The local player has just completed a level. 
+		 */
+		protected function levelComplete () :void
+		{
+		    _viewer.showLevelComplete(_localPlayer.levelNumber);
+		}
+		
+		/**
+		 * Called to cause the player to move to the next level (results from clicking on the next level indicator)
+		 */
+		public function nextLevel() :void
+		{
+		    
 		}
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void

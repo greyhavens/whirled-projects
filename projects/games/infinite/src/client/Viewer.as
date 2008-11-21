@@ -6,14 +6,15 @@ package client
 	
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
+	import flash.text.TextField;
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
 	
 	import sprites.*;
 	
-	import world.Chronometer;
 	import world.NeighborhoodEvent;
 	import world.board.*;
 	
@@ -22,9 +23,9 @@ package client
 	    // the position of the viewpoint in graphics coordinates
 		public var viewPoint:Rectangle;
 		
-		public function Viewer(clock:Chronometer, width:int, height:int)
+		public function Viewer(client:Client, width:int, height:int)
 		{
-			_clock = clock;
+			_client = client;
 			
 			SpriteUtil.addBackground(this, width, height, SpriteUtil.LIGHT_GREY);
 			
@@ -55,6 +56,22 @@ package client
 			}
 		}
 		
+		public function showLevelComplete(levelNumber:int) :void
+		{
+		    _levelComplete = new TextField();
+		    _levelComplete.htmlText = 
+		          "<p align='center'><font size='200' face='Helvetica, Arial, _sans'>Level "+levelNumber+" complete.</font></p>"+
+		          "<p align='center'><font size='30' face='Helvetica, Arial, _sans'>Click for more fun on level "+(levelNumber+1)+"</font></p>";		          
+		    addChild(_levelComplete);
+		    _levelComplete.addEventListener(MouseEvent.CLICK, handleNextLevel);
+		}
+		
+		protected function handleNextLevel (event:MouseEvent) :void
+		{
+            removeChild(_levelComplete);
+            _client.nextLevel();
+		}
+		
 		/**
 		 * Hide the viewPoint shape
 		 */
@@ -76,7 +93,7 @@ package client
 				removeChild(_objective);
 				_objective = null;				
 			}
-			_objective = new Objective(_clock, this, board, board.startingPosition);
+			_objective = new Objective(_client, this, board, board.startingPosition);
 			
 			_objective.addEventListener(NeighborhoodEvent.UNMAPPED, dispatchEvent);
 			
@@ -133,9 +150,9 @@ package client
 			_objective.removePlayer(player);
 		}
 		
-		
+		protected var _levelComplete:TextField;
 			
-		protected var _clock:Chronometer;
+		protected var _client:Client;
 				
 		protected var _playerController:PlayerController;
 		

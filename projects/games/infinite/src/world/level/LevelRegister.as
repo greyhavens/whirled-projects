@@ -10,7 +10,7 @@ package world.level
 			_factory = new LevelFactory(world);
 			_levels[FIRST_LEVEL] = _factory.makeLevel(FIRST_LEVEL);
 		}
-        
+
         /**
          * A player enters the system.
          */
@@ -18,6 +18,12 @@ package world.level
         {
         	const level:Level = find(FIRST_LEVEL);
         	player.enterLevel(level);
+        }
+
+        public function nextLevel(player:Player) :void
+        {
+            const level:Level = find(player.level.number + 1);
+            player.enterLevel(level);
         }
         
         public function find(level:int) :Level

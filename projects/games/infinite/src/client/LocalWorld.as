@@ -45,6 +45,11 @@ package client
             _world.playerEnters(ID);
         }
         
+        public function nextLevel () :void
+        {
+            _world.nextLevel(ID);
+        }
+        
         /**
          * Inform the client that a player has entered a level.
          */ 

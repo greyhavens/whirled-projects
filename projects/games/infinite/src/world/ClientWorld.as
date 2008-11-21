@@ -48,5 +48,10 @@ package world
 		 * Request to use the item at the given inventory position.
 		 */
 		function useItem (position:int) :void
+		
+		/**
+		 * Request to move to the next level.
+		 */
+		function nextLevel () :void
 	}
 }

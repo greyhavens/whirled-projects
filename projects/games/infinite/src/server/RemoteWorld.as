@@ -123,6 +123,11 @@ package server
         	signalServer(WorldServer.CLIENT_ENTERS);        
         }
         
+        public function nextLevel () :void
+        {
+            signalServer(WorldServer.NEXT_LEVEL);
+        }
+        
         public function useItem (position:int) :void
         {
         	_net.sendMessage(String(WorldServer.USE_ITEM), position, NetSubControl.TO_SERVER_AGENT);

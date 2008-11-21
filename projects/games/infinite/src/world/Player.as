@@ -84,6 +84,10 @@ package world
             	// now check whether there are consequences of landing on this cell
             	_level.arriveAt(this, coords);
             	
+            	if (position.y == _level.exitRow) {
+            	    exit();
+            	} 
+            	
             	// now check whether the player needs to fall
             	if (! cell.grip) {
             		fall();
@@ -91,6 +95,16 @@ package world
             } else {
 	            Log.warning("move to " + _path.finish + " completed with unexpected endpoint "+coords);
 	        }
+        }
+        
+        /**
+         * The player has reached the exit row.  The exit move should now begin.
+         */ 
+        protected function exit () :void
+        {
+           // the player moves one cell up.
+           const path:Path = new Path(Path.CLIMB, cell.position, cell.position.translatedBy(Vector.UP));
+           dispatchEvent(new MoveEvent(MoveEvent.PATH_START, this, path));
         }
         
         /**
