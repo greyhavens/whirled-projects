@@ -16,7 +16,7 @@ package items.teleporter
 		 */
 		override public function isUsableBy (player:ItemPlayer) :Boolean
 		{
-			return true;
+			return false;
 		}
 		
 		override public function useBy (player:ItemPlayer) :void
