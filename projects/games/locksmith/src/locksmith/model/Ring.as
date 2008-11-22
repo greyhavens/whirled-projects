@@ -3,6 +3,8 @@
 
 package locksmith.model {
 
+import com.threerings.util.ArrayUtil;
+
 public class Ring
 {
     public function Ring (id :int, holes :Array) :void
@@ -10,6 +12,8 @@ public class Ring
         _id = id;
         _holes = holes;
         _position = 0;
+
+        _marbles = ArrayUtil.create(RingManager.RING_POSITIONS, null);
     }
 
     public function get id () :int
@@ -52,29 +56,40 @@ public class Ring
         return _outer != null ? _outer.largest : this;
     }
     
-    public function hasHole (hole :int) :Boolean
+    /**
+     * Returns true if the position exists as a valid hole on this Ring, and there is not currently
+     * A Marble in it.  Not the exact inverse of positionContainsMarble().  For a position that is
+     * not valid on this Ring, both functions will return false.
+     */
+    public function positionOpen (position :int) :void
     {
-        return _holes.indexOf(hole) >= 0;
+        var localPosition :int = globalToLocal(position);
+        return _holes.indexOf(localPosition) >= 0 && _marbles[localPosition] == null;
     }
 
-    public function addMarble (marble :Marble) :void
+    /**
+     * Returns true of the position contains a marble.  Not the exact inverse of positionOpen().
+     * For a position that is not valid on this Ring, both functions will return false.
+     */
+    public function positionContainsMarble (position :int) :void
+    {
+        var localPosition :int = globalToLocal(position);
+        return _marbles[localPosition] == null;
+    }
+
+    public function addMarble (position :int, marble :Marble) :void
     {
         if (_marbles.indexOf(marble) >= 0) {
             throw new Error("Attempted to add a marble this Ring already contains [" + marble + 
                 ", " + this + "]");
         }
 
-        _marbles.push(marble);
-    }
-    
-    public function removeMarble (marble :Marble) :void
-    {
-        var idx :int = _marbles.indexOf(marble);
-        if (idx < 0) {
-            throw new Error("Attempted to remove a marble that this Ring does not contain [" + 
-                marble + ", " + this + "]");
+        if (!positionOpen(position)) {
+            throw new Error("Attemted to add a marble to a position that is not open [" + 
+                marble + ", " + position + ", " + this + "]");
         }
-        _marbles.splice(idx, 1);
+
+        _marbles[globalToLocal(position)] = marble;
     }
 
     public function toString () :String
@@ -82,9 +97,14 @@ public class Ring
         return "Ring [id=" + id + "]");
     }
 
+    protected function globalToLocal (position :int) :int
+    {
+        return (position + _position) % RingManager.RING_POSITIONS;
+    }
+
     protected var _id :int;
     protected var _holes :Array;
-    protected var _marbles :Array = [];
+    protected var _marbles :Array;
     protected var _inner :Ring;
     protected var _outer :Ring;
     protected var _position :int;
