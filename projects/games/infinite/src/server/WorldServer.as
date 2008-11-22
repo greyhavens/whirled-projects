@@ -103,6 +103,7 @@ package server
 				case MOVE_COMPLETED: return moveCompleted(event); 
 				case REQUEST_CELLS: return requestCells(event);
 				case USE_ITEM: return useItem(event);
+				case NEXT_LEVEL: return nextLevel(event);
 			}			
 			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
 		}
@@ -120,6 +121,11 @@ package server
 		    sendTime(event.senderId);			
 	        _world.playerEnters(event.senderId);
 		}
+
+        protected function nextLevel (event:MessageReceivedEvent) :void
+        {
+            _world.nextLevel(event.senderId);
+        }
 		
 		protected function moveProposed (event:MessageReceivedEvent) :void
 		{
@@ -142,6 +148,7 @@ package server
 		{
 			_world.useItem(event.senderId, event.value as int);
 		}
+		
 		
 		/**
 		 * Send a time sync message to a single client.

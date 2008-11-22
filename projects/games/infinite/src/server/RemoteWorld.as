@@ -48,6 +48,7 @@ package server
         	Log.debug("received message "+messageName[message]+" from server ");
             switch (message) {
                 case LEVEL_ENTERED: return levelEntered(event);
+                case LEVEL_COMPLETE: return levelComplete(event);
                 case START_PATH: return pathStart(event);
                 case LEVEL_UPDATE: return levelUpdate(event);
                 case UPDATED_CELLS: return updatedCells(event);
@@ -63,7 +64,7 @@ package server
         public function levelEntered (event:MessageReceivedEvent) :void
         {
             _client.enterLevel(EnterLevel.readFromArray(event.value as ByteArray));
-        }        
+        }               
         
         public function pathStart (event:MessageReceivedEvent) :void
         {

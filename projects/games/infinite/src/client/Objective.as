@@ -75,7 +75,9 @@ package client
 		{
 		    for each(var player:Player in players.list) {
 		        var view:PlayerSprite = _playerViews.take(player);
-		        view.destroy();
+		        if (view != null) {
+    		        view.destroy();
+    		    }
 		    }
 		}
 				
