@@ -83,7 +83,8 @@ package server
         
         public function levelComplete (event:MessageReceivedEvent) :void
         {
-            _client.levelComplete(LevelComplete.readFromArray(event.value as ByteArray));
+            const detail:LevelComplete = LevelComplete.readFromArray(event.value as ByteArray) 
+            _client.levelComplete(detail);
         }
         
         public function updatedCells (event:MessageReceivedEvent) :void

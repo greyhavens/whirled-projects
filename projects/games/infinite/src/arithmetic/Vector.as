@@ -192,6 +192,6 @@ package arithmetic
 		public static const SW:Vector = new Vector(-1, 1);
 		
 		// The vector identity goes nowhere.
-		public static const IDENTITY:Vector = new Vector(0, 0);	
+		public static const IDENTITY:Vector = new Vector(0, 0);		
 	}
 }

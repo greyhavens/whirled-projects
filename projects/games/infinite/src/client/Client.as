@@ -69,6 +69,8 @@ package client
 			var rect:GraphicRectangle = GraphicRectangle.fromText(modeView).paddedBy(10).alignBottomRightTo(frame);		
 			Geometry.position(modeView, rect.origin);
 			addChild(modeView);
+			
+			_radar = new Radar(7, 4);
 				
 			enterWorld();			
 		}
@@ -124,10 +126,15 @@ package client
             	_localPlayer = player;
             	
             	// we only care about path completed events from the local player
-                player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);            
+                player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);
             }
+
+            player.addEventListener(PlayerEvent.PATH_COMPLETED, _radar.handlePathComplete);
+                        
             // we care if any player changes level.
 			player.addEventListener(PlayerEvent.CHANGED_LEVEL, handleChangedLevel);
+			player.addEventListener(PlayerEvent.CHANGED_LEVEL, _radar.handleChangedLevel);
+						
 		    return player;
 		}
 		
@@ -330,6 +337,7 @@ package client
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
 		protected var _heightIndicator:HeightIndicator;
+		protected var _radar:Radar;
 		
 		protected var _itemFactory:ItemFactory = new ItemFactory();
 		
