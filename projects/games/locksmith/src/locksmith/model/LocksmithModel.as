@@ -13,6 +13,7 @@ public class LocksmithModel
         _eventMgr  = eventMgr;
 
         _ringMgr = new RingManager(gameCtrl, _eventMgr);
+        _turnMgr = new TurnManager(gameCtrl, _eventMgr);
     }
 
     public function get ringMgr () :RingManager
@@ -20,8 +21,13 @@ public class LocksmithModel
         return _ringMgr;
     }
 
-    protected var _stateMgr :GameStateManager;
-    protected var _ringMgr :RingManager;
+    public function get turnMgr () :TurnManager
+    {
+        return _turnMgr;
+    }
+
     protected var _eventMgr :EventHandlerManager;
+    protected var _ringMgr :RingManager;
+    protected var _turnMgr :TurnManager;
 }
 }
