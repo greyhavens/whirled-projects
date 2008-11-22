@@ -6,6 +6,8 @@ package world
 	public interface WorldListener
 	{
         function handleLevelEntered (event:LevelEvent) :void;
+ 
+        function handleLevelComplete (event:LevelEvent) :void;
         
         function handlePathStart (event:MoveEvent) :void;
         

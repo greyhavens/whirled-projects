@@ -22,5 +22,6 @@ package world.level
 		}
 		
 		public static const LEVEL_ENTERED:String = "level_entered";
+        public static const LEVEL_COMPLETE:String = "level_complete";
 	}
 }

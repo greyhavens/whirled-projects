@@ -4,6 +4,7 @@ package world
 	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
+	import server.Messages.LevelComplete;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	
@@ -13,6 +14,11 @@ package world
 		 * A player entered a level.
 		 */
         function enterLevel (detail:EnterLevel) :void;
+        
+        /**
+         * The level is complete.
+         */        
+        function levelComplete (detail:LevelComplete) :void;
         
         /**
          * The client should start a player moving along a path.
@@ -48,7 +54,7 @@ package world
          * The item at the given position in the inventory has been used and should be removed from play.
          */ 
         function itemUsed (position:int) :void;
-        
+                        
         /**
          * The requested path was not available.
          */ 

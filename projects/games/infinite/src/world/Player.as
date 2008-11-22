@@ -88,6 +88,10 @@ package world
             	    exit();
             	} 
             	
+            	if (position.y < _level.exitRow) {            	    
+            	    finishLevel();
+            	}
+            	
             	// now check whether the player needs to fall
             	if (! cell.grip) {
             		fall();
@@ -106,6 +110,13 @@ package world
            const path:Path = new Path(Path.CLIMB, cell.position, cell.position.translatedBy(Vector.UP));
            dispatchEvent(new MoveEvent(MoveEvent.PATH_START, this, path));
         }
+        
+        protected function finishLevel () :void
+        {
+            Log.debug("dispatching finish level");
+            dispatchEvent(new LevelEvent(LevelEvent.LEVEL_COMPLETE, _level, this));
+        }
+        
         
         /**
          * Start the player off falling.

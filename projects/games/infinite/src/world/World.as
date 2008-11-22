@@ -28,6 +28,7 @@ package world
 		public function addListener (listener:WorldListener) :void
 		{
             addEventListener(LevelEvent.LEVEL_ENTERED, listener.handleLevelEntered);
+            addEventListener(LevelEvent.LEVEL_COMPLETE, listener.handleLevelComplete);
             addEventListener(MoveEvent.PATH_START, listener.handlePathStart);
             addEventListener(MoveEvent.PATH_UNAVAILABLE, listener.handleNoPath);
             addEventListener(CellStateEvent.STATE_CHANGED, listener.handleCellStateChange);		
@@ -96,6 +97,7 @@ package world
 			
 			// redispatch events from players
 		    player.addEventListener(LevelEvent.LEVEL_ENTERED, dispatchEvent);
+		    player.addEventListener(LevelEvent.LEVEL_COMPLETE, dispatchEvent);
 		    player.addEventListener(PlayerEvent.MOVE_COMPLETED, dispatchEvent);
 		    player.addEventListener(MoveEvent.PATH_START, dispatchEvent);
 		    player.addEventListener(InventoryEvent.RECEIVED, dispatchEvent);

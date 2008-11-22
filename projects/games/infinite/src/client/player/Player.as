@@ -157,7 +157,6 @@ package client.player
         protected var _id:int;
         protected var _path:Path;		
         protected var _cell:Cell;
-        protected var _objective:Objective;
         protected var _position:BoardCoordinates;
         protected var _client:Client;
 	}

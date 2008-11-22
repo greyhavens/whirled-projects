@@ -6,6 +6,7 @@ package client
 	
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
+	import server.Messages.LevelComplete;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
@@ -105,6 +106,11 @@ package client
         {
             Log.debug("world dispatched 'no path'");
         	_client.pathUnavailable();
+        }
+                	
+        public function handleLevelComplete (event:LevelEvent) :void
+        {
+            _client.levelComplete(new LevelComplete(event.player.id, event.level.number));
         }
                 	
         protected var _client:WorldClient;	

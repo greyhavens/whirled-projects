@@ -14,6 +14,7 @@ package server
 	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
+	import server.Messages.LevelComplete;
 	import server.Messages.LevelUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -73,6 +74,11 @@ package server
         {
         	_client.levelUpdate(LevelUpdate.readFromArray(event.value as ByteArray));
         }        
+        
+        public function levelComplete (event:MessageReceivedEvent) :void
+        {
+            _client.levelComplete(LevelComplete.readFromArray(event.value as ByteArray));
+        }
         
         public function updatedCells (event:MessageReceivedEvent) :void
         {
@@ -188,6 +194,7 @@ package server
         public static const ITEM_RECEIVED:int = 6;
         public static const ITEM_USED:int = 7;
         public static const PATH_UNAVAILABLE:int = 8;
+        public static const LEVEL_COMPLETE:int = 9;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
@@ -198,6 +205,7 @@ package server
         messageName[UPDATED_CELL] = "updated cell";
         messageName[ITEM_RECEIVED] = "item received";
         messageName[ITEM_USED] = "item used";
-        messageName[PATH_UNAVAILABLE] = "path unavailable";        
+        messageName[PATH_UNAVAILABLE] = "path unavailable";
+        messageName[LEVEL_COMPLETE] = "level compete";        
 	}
 }

@@ -19,6 +19,7 @@ package client
 	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
+	import server.Messages.LevelComplete;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
@@ -156,21 +157,17 @@ package client
             _viewer.objective.pathComplete(player);
             const height:int = player.position.y;
             _heightIndicator.current = height;
-            
-            if (player == _localPlayer) {
-                if (height == level(player.levelNumber).top) {
-                    levelComplete();
-                } 
-            }
 		}
 		
 		/** 
 		 * The local player has just completed a level. 
 		 */
-		protected function levelComplete () :void
+		public function levelComplete (detail:LevelComplete) :void
 		{
-		    Log.debug(this+" level complete");
-		    _viewer.showLevelComplete(_localPlayer.levelNumber);
+		    if (detail.player == _localPlayer.id) {
+    		    Log.debug(this+" level complete");
+	       	    _viewer.showLevelComplete(_localPlayer.levelNumber);
+	        }
 		}
 		
 		/**
@@ -178,7 +175,7 @@ package client
 		 */
 		public function nextLevel() :void
 		{
-		    
+		    _world.nextLevel();
 		}
 		
 		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
@@ -312,6 +309,11 @@ package client
 				_levels[number] = found;
 			}
             return found;			
+		}
+		
+		public function get players () :PlayerRegister
+		{
+		    return _players;
 		}
 		
 		protected var _levels:Array = new Array();

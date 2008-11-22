@@ -71,11 +71,14 @@ package client
 			_frameTimer.start();
 		}		
 		
-//		public function scrollViewPointToPlayer () :void
-//		{
-//			scrollViewPointTo(_playerView.cellBoundary());
-//		}
-		
+		public function destroy(players:PlayerRegister) :void 
+		{
+		    for each(var player:Player in players.list) {
+		        var view:PlayerSprite = _playerViews.take(player);
+		        view.destroy();
+		    }
+		}
+				
 		/**
 		 * Scroll the objective so that the viewpoint is at the provided coordinates which
 		 * are relative to the origin of the objective.
@@ -168,7 +171,12 @@ package client
 		 */
 		public function hideCell (c:Cell) :void
 		{
-			_viewBuffer.take(c.position).removeFromObjective(this);
+		    const view:CellView = _viewBuffer.take(c.position);
+		    if (view != null) {
+                view.removeFromObjective(this);
+            } else {
+                Log.warning("didn't find view for "+c.position);
+            }
 		}
 		
 		public function displayOwnership (cell:Cell) :void

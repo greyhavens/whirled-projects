@@ -28,9 +28,10 @@ package world.level
         
         public function find(level:int) :Level
         {
-        	const found:Level = _levels[level];
+        	var found:Level = _levels[level];
         	if (found == null) {
-        		throw new Error("level "+level+" does not exist");
+        	    found = _factory.makeLevel(level);
+        	    _levels[level] = found;
         	}
         	return found;
         }

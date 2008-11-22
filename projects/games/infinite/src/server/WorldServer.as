@@ -12,6 +12,7 @@ package server
 	import server.Messages.CellState;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
+	import server.Messages.LevelComplete;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
@@ -53,6 +54,12 @@ package server
             sendToAll(RemoteWorld.LEVEL_ENTERED, message);
             send(event.player.id, RemoteWorld.LEVEL_UPDATE, event.level.makeUpdate());
             
+		}
+		
+		public function handleLevelComplete (event:LevelEvent) :void
+		{
+		    const message:LevelComplete = new LevelComplete(event.player.id, event.level.number);
+		    sendToGroup(event.level.players, RemoteWorld.LEVEL_COMPLETE, message);
 		}
 		
 		public function handlePathStart (event:MoveEvent) :void

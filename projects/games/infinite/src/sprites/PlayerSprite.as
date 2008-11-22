@@ -27,6 +27,12 @@ package sprites
 			_player.addEventListener(PlayerEvent.PATH_STARTED, handlePathStarted);
 		}
 
+        public function destroy () :void
+        {
+            Log.debug(this + " being destroyed"); 
+            _player.removeEventListener(PlayerEvent.PATH_STARTED, handlePathStarted);
+        }
+
         /**
          * Return the graphics coordinates that puts the player at their resting position within
          * the cell.
@@ -87,10 +93,14 @@ package sprites
         
         protected function startMovement(action:PlayerAction) :void
         {   
-            Log.debug(this+" starting to move");
-            
-        	_action = action;
-        	_objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);        	
+            if (_action == null) {
+                Log.debug(this+" starting to move");
+                
+        	   _action = action;
+        	   _objective.frameTimer.addEventListener(FrameEvent.FRAME_START, _action.handleFrameEvent);
+            } else {
+                Log.debug("action in progress - ignoring new movement");
+            }
         }
         
         public function moveComplete () :void

@@ -23,7 +23,7 @@ package client
 		public function find (position:BoardCoordinates) :CellView
 		{
 		  const found:CellView = _dictionary[position.key] as CellView;
-          if (found == null) throw new Error("the viewbuffer doesn't contain a view for "+position);          
+          //if (found == null) throw new Error("the viewbuffer doesn't contain a view for "+position);          
           return found;
 		}
 		

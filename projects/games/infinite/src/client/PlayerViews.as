@@ -25,7 +25,7 @@ package client
         	}
         	return found;
         }
-        
+                
         public function find(player:Player) :PlayerSprite
         {
         	return _views[player] as PlayerSprite;        	

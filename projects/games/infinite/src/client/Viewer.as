@@ -57,19 +57,24 @@ package client
 		
 		public function showLevelComplete(levelNumber:int) :void
 		{
-		    _levelComplete = new LevelEndReward(levelNumber);		    
-		    addChild(_levelComplete);
-		    _levelComplete.y = 50;
-		    _levelComplete.x = (width / 2) - (_levelComplete.width / 2);
-            this.addEventListener(MouseEvent.CLICK, handleNextLevel);
+		    if (_levelComplete == null) {
+    		    _levelComplete = new LevelEndReward(levelNumber);		    
+	   	        addChild(_levelComplete);
+		        _levelComplete.y = 50;
+		        _levelComplete.x = (width / 2) - (_levelComplete.width / 2);
+                this.addEventListener(MouseEvent.CLICK, handleNextLevel);
+            }
 		}
 		
 		protected function handleNextLevel (event:MouseEvent) :void
 		{
 		    Log.debug("handling next level click");
 		    this.removeEventListener(MouseEvent.CLICK, handleNextLevel);
-		    if (contains(_levelComplete)) {
-                removeChild(_levelComplete);
+		    if (_levelComplete != null) {
+    		    if (contains(_levelComplete)) {
+                    removeChild(_levelComplete);
+                }
+                _levelComplete = null;
             }
             _client.nextLevel();
 		}
@@ -92,6 +97,7 @@ package client
 						
 			// create an objective that we can display
 			if (_objective != null) {
+			    _objective.destroy(_client.players);
 				removeChild(_objective);
 				_objective = null;				
 			}

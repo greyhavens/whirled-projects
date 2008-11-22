@@ -46,6 +46,11 @@ package world.level
         {
             return (-_height) +1;
         }
+        
+        public function get finish () :int
+        {
+            return -_height;
+        }
 
         /**
          * A player enters this level.
@@ -167,6 +172,6 @@ package world.level
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		
-		public static const DEFAULT_HEIGHT:int = 10;
+		public static const MIN_HEIGHT:int = 8;
 	}
 }
