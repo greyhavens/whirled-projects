@@ -29,6 +29,11 @@ package world
 		function get clientId () :int
 		
 		/**
+		 * Return a string name for the given player id.
+		 */
+		function nameForPlayer (id:int) :String		
+		
+		/**
 		 * Propose to the world that the player be moved to the coordinates supplied.
 		 */
 		function proposeMove (coords:BoardCoordinates) :void		

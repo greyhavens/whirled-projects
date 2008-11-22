@@ -20,10 +20,11 @@ package client.player
 	
 	public class Player extends EventDispatcher implements MovablePlayer, ItemPlayer
 	{		
-		public function Player (client:Client, id:int)
+		public function Player (client:Client, id:int, name:String)
 		{			
 			_client = client;
 			_id = id;
+			_name = name;
 		}
 		
 		public function updatePosition (board:BoardAccess, position:PlayerPosition) :void
@@ -159,5 +160,6 @@ package client.player
         protected var _cell:Cell;
         protected var _position:BoardCoordinates;
         protected var _client:Client;
+        protected var _name:String;
 	}
 }

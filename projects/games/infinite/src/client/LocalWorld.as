@@ -39,6 +39,11 @@ package client
             return ID;
         }
         
+        public function nameForPlayer (id:int) :String
+        {
+            return "you";
+        }
+        
         public function enter (client:WorldClient) :void
         {
         	Log.debug("player entering world");

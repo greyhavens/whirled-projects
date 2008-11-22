@@ -104,7 +104,7 @@ package client
             // if we don't already know about the player, create a new one.
             if (player == null)
             {
-            	player = newPlayer(detail.userId);
+            	player = newPlayer(detail.userId, _world.nameForPlayer(detail.userId));
             	_players.register(player);
             }
             
@@ -117,9 +117,9 @@ package client
 		/**
 		 * Create a new player.
 		 */
-		protected function newPlayer(id:int) :Player
+		protected function newPlayer(id:int, name:String) :Player
 		{
-			const player:Player = new Player(this, id);
+			const player:Player = new Player(this, id, name);
             if (id == _world.clientId) {
             	_localPlayer = player;
             	

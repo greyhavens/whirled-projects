@@ -41,6 +41,11 @@ package server
         {
         	return "shared";
         }
+     
+        public function nameForPlayer (id:int) :String
+        {
+            return _gameControl.game.getOccupantName(id);
+        }
         
         public function handleMessageReceived (event:MessageReceivedEvent) :void
         {
