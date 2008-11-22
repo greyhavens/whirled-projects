@@ -17,8 +17,6 @@ package sprites
 		
 		public static function tint (width:int, height:int, color:uint, alpha:Number) :DisplayObject
 		{
-			Log.debug ("tint alpha "+alpha+" overlay width = "+width+" height= "+height);
-			
 			const overlay:Sprite = new Sprite();
 			const g:Graphics = overlay.graphics;
 			g.beginFill(color, alpha);
