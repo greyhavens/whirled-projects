@@ -6,6 +6,7 @@ package client
 	
 	import client.player.Player;
 	import client.player.PlayerEvent;
+	import client.radar.Radar;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
