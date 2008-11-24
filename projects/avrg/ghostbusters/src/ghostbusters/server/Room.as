@@ -83,6 +83,11 @@ public class Room
         return this.roomId;
     }
 
+    public function toString () :String
+    {
+        return "Room [roomId=" + _roomId + "]";
+    }
+
     public function getMinigameStats (player :Player) :Dictionary
     {
         return _minigames.get(player);
@@ -206,7 +211,7 @@ public class Room
 //                  damageDone, "healing", healingDone);
 
         // award 3 points for a win, 1 for a lose
-        _stats.put(player, int(_stats.get(player.playerId)) + (win ? 3 : 1));
+        _stats.put(player, int(_stats.get(player)) + (win ? 3 : 1));
 
         // record which minigame was used
         var dict :Dictionary = _minigames.get(player);
@@ -537,11 +542,10 @@ public class Room
         var totPoints :int = 0;
 
         _stats.forEach(function (player :Player, points :int) :void {
-            if (player.room != null && player.room.roomId == this.roomId) {
+            if (player.room != null && player.room.roomId == _roomId) {
                 playerArr.unshift(player);
                 pointsArr.unshift(points);
                 totPoints += points;
-//            log.debug("Player accrual", "playerId", playerId, "points", points);
             }
         });
 

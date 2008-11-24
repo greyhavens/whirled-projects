@@ -135,6 +135,12 @@ public class Player
         return _playerId;
     }
 
+    public function toString () :String
+    {
+        return "Player [playerId=" + _playerId + ", roomId=" +
+            (room != null ? room.roomId : "null") + "]";
+    }
+
     public function isDead () :Boolean
     {
         return _health == 0;
