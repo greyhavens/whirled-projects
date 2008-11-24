@@ -148,18 +148,9 @@ package client
 		}
 		
 		public function addLocalPlayer (player:Player) :void
-		{
-		    Log.debug("n: "+Vector.N+" = "+Vector.N.rotation);
-		    Log.debug("ne: "+Vector.NE+" = "+Vector.NE.rotation);
-            Log.debug("e: "+Vector.E+" = "+Vector.E.rotation);
-            Log.debug("se: "+Vector.SE+" = "+Vector.SE.rotation);
-		    Log.debug("s: "+Vector.S+" = "+Vector.S.rotation);
-		    Log.debug("sw: "+Vector.SW+" = "+Vector.SW.rotation);
-		    Log.debug("w: "+Vector.W+" = "+Vector.W.rotation);
-		    Log.debug("nw: "+Vector.NW+" = "+Vector.NW.rotation);
-		    
+		{		    
 		    // hack to test the direction arrow by putting up a fixed direction line on the display at the top right
-		    const line:RadarLine = new RadarLine(player, Vector.W);
+		    const line:RadarLine = new RadarLine(player, Vector.SW);
 		    addChild(line);
 		    line.x = 50; //width - (line.width + 50);
 		    line.y = 50;		    
