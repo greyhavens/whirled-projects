@@ -41,8 +41,6 @@ public class Monster_@MONSTER_NAME@ extends Sprite
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(9000);
 
-        _ctrl.requestControl();
-
         handleMemory();
     }
 

@@ -38,8 +38,6 @@ public class FaceHugger extends Sprite
                     _victimId = null;
                 }
         });
-
-        _ctrl.requestControl();
     }
 
     protected function handleMovement (event :ControlEvent) :void

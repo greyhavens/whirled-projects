@@ -170,11 +170,7 @@ public class PhotoBox extends Sprite
         // configure our 'stopped' status
         updateStopped();
 
-        // request control, or pretend we're it
-        if (_furni.isConnected()) {
-            _furni.requestControl();
-
-        } else {
+        if (!_furni.isConnected()) {
             // fake that we got control
             handleGotControl(null);
         }

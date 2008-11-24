@@ -59,7 +59,6 @@ public class Camvatar extends Sprite
             initSending();
         } else {
             _ctrl.addEventListener(ControlEvent.CONTROL_ACQUIRED, initSending);
-            _ctrl.requestControl();
         }
     }
 

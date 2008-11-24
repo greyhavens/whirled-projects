@@ -81,7 +81,6 @@ public class Fairy extends FrameSprite
         if (_ctrl.isConnected()) {
             _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
             _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
-            _ctrl.requestControl();
 
             _ctrl.registerStates(DEFAULT_STATE, SWIRL_STATE, MOTION_STATE);
         }

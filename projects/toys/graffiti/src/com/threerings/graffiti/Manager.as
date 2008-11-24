@@ -48,7 +48,6 @@ public class Manager
         _timer = new Timer(MEMORY_UPDATE_TIMING);
         _timer.addEventListener(TimerEvent.TIMER, tick);
         _timer.start();
-        _throttle.control.requestControl();
         _throttle.control.addEventListener(Event.UNLOAD, unload);
         _throttle.control.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
     }
