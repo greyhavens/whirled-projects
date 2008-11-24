@@ -39,5 +39,6 @@ package sprites
 		public static const GREY:uint = 0x606060;
 		public static const WHITE:uint = 0xFFFFFF;
 		public static const RED:uint = 0xFF0000;
+		public static const YELLOW:uint = 0xFFFF00;
 	}
 }

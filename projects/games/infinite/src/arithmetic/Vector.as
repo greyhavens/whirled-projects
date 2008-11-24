@@ -132,13 +132,22 @@ package arithmetic
 		{
 			return new Vector(-dx, -dy);
 		}
-//		
-//		public function moveDisplayObject (object:DisplayObject) :void
-//		{
-//			object.x += dx;
-//			object.y += dy;
-//		}
-//		
+
+        /**
+         * Return the rotation from north that the direction of this vector represents in degrees. 
+         * Compatible with the 'rotation' property of display objects.
+         */  
+        public function get rotation () :Number
+        {
+            const radians:Number = Math.atan2(-dy, dx);
+            const degrees:Number = 90 - ((radians * 180) / Math.PI);
+            if (degrees < 0) {
+                return 360 + (degrees % 360); 
+            } else {
+                return degrees % 360;
+            }
+        }
+        
 		/**
 		 * Return the compass diagonal associated with this vector.
 		 */
@@ -183,8 +192,8 @@ package arithmetic
 
 		public static const N:Vector = UP;
 		public static const S:Vector = DOWN;
-		public static const E:Vector = LEFT;
-		public static const W:Vector = RIGHT;  
+		public static const E:Vector = RIGHT;
+		public static const W:Vector = LEFT;  
 				
 		public static const NW:Vector = new Vector(-1, -1);
 		public static const NE:Vector = new Vector(1, -1);

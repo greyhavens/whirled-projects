@@ -2,6 +2,8 @@ package graphics
 {
 	import arithmetic.Vector;
 	
+	import flash.geom.Matrix;
+	
 	import sprites.AssetSprite;
 	
 	public class DirectionArrow extends AssetSprite
@@ -9,12 +11,17 @@ package graphics
 		public function DirectionArrow(direction:Vector)
 		{
 			super(_arrow, 25, 25);
-			_direction = direction
+			this.direction = direction;
 		}
-
-        protected var _direction:Vector
+     
+        public function set direction (v:Vector) :void
+        {
+            var rotation:Matrix = new Matrix();
+            rotation.rotate(v.rotation);
+            transform.matrix = rotation;            
+        }
         
-        [Embed(source="../../../rsrc/png/fruit-machine-inactive.png")]
+        [Embed(source="../../rsrc/png/arrow.png")]
         protected static const _arrow:Class;
 	}
 }

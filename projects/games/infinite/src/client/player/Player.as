@@ -124,7 +124,7 @@ package client.player
         
         public function get name () :String
         {
-        	throw new Error("client player names are not known");
+            return _name;
         }
         
         public function get startingPosition () :BoardCoordinates
