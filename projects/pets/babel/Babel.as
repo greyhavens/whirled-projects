@@ -20,9 +20,8 @@ public class Babel extends Sprite
         _svc.addEventListener(Translator.TRANSLATE, onTranslate);
 
         _ctrl = new PetControl(this);
-        _ctrl.addEventListener(ControlEvent.RECEIVED_CHAT, onChat);
+        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, onChat);
 
-        // Possible bug, if this isn't here, the pet won't get RECEIVED_CHAT events!
         _ctrl.sendChat("Usage: \"" + _ctrl.getEntityProperty(EntityControl.PROP_NAME) + ", <language>\"");
     }
 

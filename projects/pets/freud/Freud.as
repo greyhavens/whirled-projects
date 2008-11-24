@@ -22,7 +22,7 @@ public class Freud extends Sprite
         scaleX = scaleY = 0.5
         
         _ctrl = new PetControl(this);
-        _ctrl.addEventListener(ControlEvent.RECEIVED_CHAT, gotChat);
+        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, gotChat);
         _ctrl.setTickInterval(1000);
 
         _matcher = new PatternMatcher();

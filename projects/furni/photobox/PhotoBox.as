@@ -51,7 +51,7 @@ public class PhotoBox extends Sprite
         _furni = new FurniControl(this);
         _furni.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessageReceived);
         _furni.addEventListener(ControlEvent.ACTION_TRIGGERED, handleActionTriggered);
-        _furni.addEventListener(ControlEvent.GOT_CONTROL, handleGotControl);
+        _furni.addEventListener(ControlEvent.CONTROL_ACQUIRED, handleGotControl);
 
         // Set up the flickr service
         // This is my (Ray Greenwell)'s personal Flickr key!!

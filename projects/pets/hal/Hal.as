@@ -22,7 +22,7 @@ public class Hal extends Sprite
         _ctrl = new PetControl(this);
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, appearanceChanged);
-        _ctrl.addEventListener(ControlEvent.RECEIVED_CHAT, gotChat);
+        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, gotChat);
         _ctrl.setTickInterval(5000);
     }
 

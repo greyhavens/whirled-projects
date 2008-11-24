@@ -34,7 +34,7 @@ public class LOLpet extends Sprite
         // instantiate and wire up our control
         _ctrl = new PetControl(this);
         _ctrl.addEventListener(Event.UNLOAD, handleUnload);
-        _ctrl.addEventListener(ControlEvent.RECEIVED_CHAT, handleChatReceived);
+        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, handleChatReceived);
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
 
         _lolField = TextFieldUtil.createField("", 
