@@ -35,6 +35,6 @@ package cells.ladder
 		
 		// The ladder is this percentage of the way down the cell.
 		public static const FIRSTRUNG:Vector = 
-			Vector.DOWN.multiplyByVector(Config.cellSize).multiplyByScalar(0.1);
+			Vector.DOWN.multiplyByVector(Config.cellSize).by(0.1);
 	}
 }

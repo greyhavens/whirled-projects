@@ -106,8 +106,8 @@ package arithmetic
         
         // Constant vectors used to translate to the top left of the square in different
         // quadrants
-        protected static const N:Vector = Vector.N.multiplyByScalar(SQUARE);
-        protected static const NE:Vector = Vector.NE.multiplyByScalar(SQUARE);
-        protected static const W:Vector = Vector.W.multiplyByScalar(SQUARE);
+        protected static const N:Vector = Vector.N.by(SQUARE);
+        protected static const NE:Vector = Vector.NE.by(SQUARE);
+        protected static const W:Vector = Vector.W.by(SQUARE);
  	}
 }

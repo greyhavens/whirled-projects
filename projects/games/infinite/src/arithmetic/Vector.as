@@ -30,7 +30,7 @@ package arithmetic
 			);
 		}
 		
-		public function multiplyByScalar(scalar:Number) :Vector
+		public function by(scalar:Number) :Vector
 		{
 			return new Vector(
 				dx * scalar,
