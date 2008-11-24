@@ -335,7 +335,7 @@ public class Room
     {
         var team :Array = getTeam();
         for (var ii :int = 0; ii < team.length; ii ++) {
-            if (team[ii].isDead != dead) {
+            if (team[ii].isDead() != dead) {
                 return false;
             }
         }
