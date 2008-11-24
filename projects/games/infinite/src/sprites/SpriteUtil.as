@@ -15,6 +15,15 @@ package sprites
 			}
 		}
 		
+		public static function addBorder(s:Sprite, width:int, height:int, thickness:Number = 2, 
+		  color:uint = 0x000000, alpha:Number = 1.0) :void
+		{
+			with(s.graphics) {
+				lineStyle(thickness, color, alpha);
+				drawRect(0,0, width,height);
+			}
+		}
+		
 		public static function tint (width:int, height:int, color:uint, alpha:Number) :DisplayObject
 		{
 			const overlay:Sprite = new Sprite();
@@ -25,6 +34,7 @@ package sprites
 			return overlay;
 		}
 		
+		public static const BLACK:uint = 0x000000;
 		public static const LIGHT_GREY:uint = 0xA0A0A0;
 		public static const GREY:uint = 0x606060;
 		public static const WHITE:uint = 0xFFFFFF;
