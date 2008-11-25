@@ -53,6 +53,8 @@ public class ImageFlipper extends Sprite
 
         // now that everything's loaded, we're ready to hear appearance changed events
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
+        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
+        _ctrl.registerStates("Default", "Dancing");
 
         // very important! We can't just assume we're standing when we first start up.
         // We could be the instance of our avatar on someone else's screen, so the person
@@ -62,13 +64,35 @@ public class ImageFlipper extends Sprite
 
     protected function setupVisual (... ignored) :void
     {
+        if (_dancing) {
+            return; // ignore
+        }
+
         var orient :Number = _ctrl.getOrientation();
         var isMoving :Boolean = _ctrl.isMoving();
 
+        var isRight :Boolean = (orient > 180);
+
+        setFacing((orient > 180));
+
+        // if we're moving, make us bounce.
+        if (_bounciness > 0 && _bouncing != isMoving) {
+            _bouncing = isMoving;
+            if (_bouncing) {
+                startBouncing();
+
+            } else {
+                _endBounce = true;
+            }
+        }
+    }
+
+    protected function setFacing (right :Boolean) :void
+    {
         // make sure we're oriented correctly
         // (We discard nearly all the orientation information and only care if we're
         // facing left or right.)
-        if (_right == (orient > 180)) {
+        if (_right == right) {
             _image.x = (MAX_WIDTH + _image.width) / 2;
             _image.scaleX = -1;
 
@@ -76,18 +100,26 @@ public class ImageFlipper extends Sprite
             _image.x = (MAX_WIDTH - _image.width) / 2;
             _image.scaleX = 1;
         }
+        _facingRight = right;
+    }
 
-        // if we're moving, make us bounce.
-        if (_bounciness > 0 && _bouncing != isMoving) {
-            _bouncing = isMoving;
-            if (_bouncing) {
-                _endBounce = false;
-                _bounceBase = getTimer(); // note that time at which we start bouncing
-                addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+    protected function startBouncing () :void
+    {
+        _endBounce = false;
+        _bounceBase = getTimer(); // note that time at which we start bouncing
+        addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+    }
 
-            } else {
-                _endBounce = true;
-            }
+    protected function handleStateChanged (event :ControlEvent) :void
+    {
+        _dancing = (event.name == "Dancing");
+        if (_dancing) {
+            _bounceCounter = 0;
+            startBouncing();
+
+        } else {
+            setupVisual();
+            _endBounce = true;
         }
     }
 
@@ -103,6 +135,11 @@ public class ImageFlipper extends Sprite
             }
             elapsed -= _bounceFreq;
             _bounceBase += _bounceFreq; // give us less math to do next time..
+            if (_dancing) {
+                if (++_bounceCounter % 2 == 0) {
+                    setFacing(!_facingRight);
+                }
+            }
         }
 
         var val :Number = elapsed * Math.PI / _bounceFreq;
@@ -129,6 +166,12 @@ public class ImageFlipper extends Sprite
 
     /** Whether we should end the bounce next chance we get. */
     protected var _endBounce :Boolean;
+
+    protected var _dancing :Boolean;
+
+    protected var _facingRight :Boolean;
+
+    protected var _bounceCounter :int;
 
     /** Are we currently bouncing? */
     protected var _bouncing :Boolean = false;
