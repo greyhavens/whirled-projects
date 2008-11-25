@@ -33,6 +33,7 @@ package client.player
 				enterLevel(board, position.level, position.position);
 			} else {
 				_position = position.position;
+                Log.debug("updated position of "+this+" to "+_position);
                 _cell = board.cellAt(position.position);
 			}
 		}
@@ -41,6 +42,7 @@ package client.player
 		{
 			_levelNumber = level;
 			_position = position;
+			Log.debug("updated position of "+this+" to "+_position);			
 			dispatchEvent(new PlayerEvent(PlayerEvent.CHANGED_LEVEL, this));
 		}
 		
@@ -50,7 +52,7 @@ package client.player
 		public function moveToBoard (board:BoardInteractions) :void
 		{
 			_board = board;
-			_cell = board.cellAt(_position);			
+			cell = board.cellAt(_position);			
 		}
 		
         public function get position () :BoardCoordinates
@@ -67,6 +69,7 @@ package client.player
         {
         	_cell = cell;
         	_position = _cell.position;
+            Log.debug("updated position of "+this+" to "+_position);
         }
         		
         public function isMoving () :Boolean

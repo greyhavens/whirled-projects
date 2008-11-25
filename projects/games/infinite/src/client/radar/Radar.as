@@ -57,11 +57,11 @@ package client.radar
             
             Log.debug("current="+current+" found="+found);
             
-            if (!current.equals(found)) {
+//            if (!current.equals(found)) {
                 Log.debug("directions differ triggering event");
                 _directions[event.player] = current;
                 directionChanged(event.player, current);
-            }
+//            }
         }
         
         protected function directionChanged (player:Player, direction:Vector) :void

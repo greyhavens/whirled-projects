@@ -112,7 +112,7 @@ package client
 			_objective.addEventListener(NeighborhoodEvent.UNMAPPED, dispatchEvent);
 			
 			// add the objective 
-			addChild(_objective);
+			addChildAt(_objective, 0);
 
 			// the viewpoint can be marked transparently for debugging
 			if (Config.showViewPoint) {
@@ -151,8 +151,9 @@ package client
 		}
 						
 		public function addLocalPlayer (player:Player) :void
-		{		    		    
+		{					    		    
 			_objective.addLocalPlayer(player);
+			_radarView.localPlayer = player;
 		}
 		
 		public function removePlayer (player:Player) :void

@@ -282,13 +282,16 @@ package client
 	    
 	    public function pathComplete (player:Player) :void
         {
+        	Log.debug(this+" updating player cell position");
         	player.cell = cellAt(player.path.finish);
         	//Log.debug("checking that we've visited this vicinity");
-        	const unmapped:Neighborhood = _breadcrumbs.visit(player.path.finish);
-        	if (! unmapped.isEmpty()) {
-        		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
-        	}
-        	_footsteps.handlePathComplete();
+            if (player == _player) {
+	        	const unmapped:Neighborhood = _breadcrumbs.visit(player.path.finish);
+	        	if (! unmapped.isEmpty()) {
+	        		dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
+	        	}
+	        	_footsteps.handlePathComplete();
+            }
 	    }
 	
 	    /**

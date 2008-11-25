@@ -20,6 +20,8 @@ package client.radar
 		public function RadarLine(player:Player, localPlayer:Player)
 		{			
 			super();
+			_player = player;
+			_localPlayer = localPlayer;
 			
 			// white background
 			SpriteUtil.addBackground(this, 200, 25, SpriteUtil.YELLOW, 0.8);
@@ -54,7 +56,15 @@ package client.radar
         
         protected function handlePathCompleted (event:PlayerEvent) :void
         {
-            _arrow.rotation = _localPlayer.position.distanceTo(_player.position).rotation;
+        	Log.debug("local player "+_localPlayer+" other player "+_player+" event player: "+event.player);
+        	Log.debug("local player position: "+_localPlayer.position+" other player position: "
+        	   +_player.position);
+        	   
+            const angle:Number = 
+                _localPlayer.position.distanceTo(event.player.position).rotation;
+                
+            Log.debug("radar view altering rotation to: "+angle);
+            _arrow.rotation = angle;
         }        
         
         public function get player () :Player
