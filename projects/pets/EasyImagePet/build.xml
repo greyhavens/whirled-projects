@@ -19,6 +19,6 @@
   <!--<property name="app.lib-extras" value="../../../lib/fl-components.swc,../../../lib/tweener.swc"/>-->
 
   <!-- include the standard build script -->
-  <import file="../etc/project-include.xml"/>
+  <import file="../../../etc/project-include.xml"/>
 
 </project>

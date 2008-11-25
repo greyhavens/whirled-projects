@@ -63,16 +63,12 @@ public class EasyImagePet extends Sprite
         setupVisual();
     }
 
-
-   protected function tick (event :TimerEvent) :void
+    protected function tick (event :TimerEvent) :void
     {
-	trace("tick callback "); 
         var oxpos :Number = _ctrl.getLogicalLocation()[0];
         var nxpos :Number = Math.random();
         _ctrl.setLogicalLocation(nxpos, 0, Math.random(), (nxpos < oxpos) ? 270 : 90);
     }
-
-
 
     protected function setupVisual (... ignored) :void
     {
@@ -95,13 +91,12 @@ public class EasyImagePet extends Sprite
         if (_bounciness > 0 && _bouncing != isMoving) {
             _bouncing = isMoving;
             if (_bouncing) {
+                _endBounce = false;
                 _bounceBase = getTimer(); // note that time at which we start bouncing
                 addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
             } else {
-                removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-                // stop bouncing: put us back on the ground
-                _image.y = MAX_HEIGHT - _image.height;
+                _endBounce = true;
             }
         }
     }
@@ -111,6 +106,12 @@ public class EasyImagePet extends Sprite
         var now :Number = getTimer();
         var elapsed :Number = now - _bounceBase;
         while (elapsed > _bounceFreq) {
+            if (_endBounce) {
+                removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+                // stop bouncing: put us back on the ground
+                _image.y = MAX_HEIGHT - _image.height;
+                return;
+            }
             elapsed -= _bounceFreq;
             _bounceBase += _bounceFreq; // give us less math to do next time..
         }
@@ -119,25 +120,25 @@ public class EasyImagePet extends Sprite
         _image.y = MAX_HEIGHT - _image.height - (Math.sin(val) * _bounciness);
     }
 
-
-
-    /**
-     * This is called when an action event is triggered.
-     */
-    protected function handleActionTriggered (event :ControlEvent) :void
-    {
-        trace("action triggered: " + event.name + ", value: " + event.value);
-    }
-
-    /**
-     * This is called when your Pet's memory is updated.
-     */
-    protected function handleMemoryChanged (event :ControlEvent) :void
-    {
-        trace("memory changed: " + event.name + " -> " + event.value);
-    }
-
-
+//
+//
+//    /**
+//     * This is called when an action event is triggered.
+//     */
+//    protected function handleActionTriggered (event :ControlEvent) :void
+//    {
+//        trace("action triggered: " + event.name + ", value: " + event.value);
+//    }
+//
+//    /**
+//     * This is called when your Pet's memory is updated.
+//     */
+//    protected function handleMemoryChanged (event :ControlEvent) :void
+//    {
+//        trace("memory changed: " + event.name + " -> " + event.value);
+//    }
+//
+//
 
     protected function handleUnload (event :Event) :void
     {
@@ -156,6 +157,8 @@ public class EasyImagePet extends Sprite
     protected var _bounciness :Number;
 
     protected var _right :Boolean;
+
+    protected var _endBounce :Boolean;
 
     /** Are we currently bouncing? */
     protected var _bouncing :Boolean = false;
