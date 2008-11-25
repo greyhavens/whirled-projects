@@ -85,7 +85,7 @@ public class Items
         var found :int = search(0, SORTED_GOODIES.length-1);
         var power :int = TABLE[SORTED_GOODIES[found]][4];
 
-        return RandomUtil.pickRandom(SORTED_GOODIES.filter(function (item :int, ..._) {
+        return RandomUtil.pickRandom(SORTED_GOODIES.filter(function (item :int, ..._) :Boolean {
             return TABLE[item][4] == power;
         })) as int;
     }

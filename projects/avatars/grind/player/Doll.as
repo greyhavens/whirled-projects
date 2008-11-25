@@ -10,11 +10,6 @@ public class Doll extends Bitmap
 {
     public static const SIZE :int = 32; // Pixel dimensions of each sprite
 
-    function Doll ()
-    {
-        _sheet = (new SHEET() as Bitmap).bitmapData;
-    }
-
     public function layer (sprites :Array) :void
     {
         bitmapData = new BitmapData(SIZE, SIZE, true, 0);
@@ -35,7 +30,7 @@ public class Doll extends Bitmap
     [Embed(source="rsrc/sheet.png")]
     protected static const SHEET :Class;
 
-    protected var _sheet :BitmapData;
+    protected static var _sheet :BitmapData = (new SHEET() as Bitmap).bitmapData;
 }
 
 }

@@ -3,10 +3,12 @@ package {
 import flash.events.*;
 import flash.display.*;
 import flash.media.*;
+import flash.text.*;
 
 import com.whirled.*;
 
 import com.threerings.util.Command;
+import com.threerings.flash.TextFieldUtil;
 
 public class Inventory extends Sprite
 {
@@ -19,12 +21,20 @@ public class Inventory extends Sprite
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
 
+        addChild(_itemPreview);
+        _itemText.x = (Doll.SIZE+8);
+        addChild(_itemText);
+
         _bags = new Array(MAX_BAGS);
         for (var i :int = 0; i < MAX_BAGS; ++i) {
             var bag :InventoryBag = new InventoryBag();
             bag.x = Doll.SIZE*(i%10);
-            bag.y = Doll.SIZE*int(i/10);
+            bag.y = Doll.SIZE*int(i/10) + (Doll.SIZE+8);
+
             Command.bind(bag, MouseEvent.CLICK, equip, i);
+            Command.bind(bag, MouseEvent.ROLL_OVER, preview, i);
+            Command.bind(bag, MouseEvent.ROLL_OUT, clearPreview);
+
             _bags[i] = bag;
             addChild(bag);
         }
@@ -65,7 +75,7 @@ public class Inventory extends Sprite
 
             } else {
                 // Unequip other items in this slot
-                var mySlot = Items.TABLE[memory[0]][2];
+                var mySlot :int = Items.TABLE[memory[0]][2];
                 for (var i :int = 0; i < MAX_BAGS; ++i) {
                     var other :Array = _ctrl.getMemory("#"+i) as Array;
                     if (other != null && Items.TABLE[other[0]][2] == mySlot && other[2] == true) {
@@ -77,6 +87,22 @@ public class Inventory extends Sprite
             }
             _ctrl.setMemory("#" + bag, memory);
         }
+    }
+
+    protected function preview (bag :int) :void
+    {
+        var memory :Array = _ctrl.getMemory("#" + bag) as Array;
+        if (memory != null) {
+            var item :Array = Items.TABLE[memory[0]];
+            _itemPreview.layer([ item[0] ]);
+            _itemText.text = "It's a " + item[1];
+        }
+    }
+
+    protected function clearPreview () :void
+    {
+        _itemPreview.layer([]);
+        _itemText.text = "Level ??";
     }
 
     protected function handleMemory (event :ControlEvent) :void
@@ -172,6 +198,12 @@ public class Inventory extends Sprite
     protected static const SOUND_MAGIC :Class;
     [Embed(source="rsrc/dagger.mp3")]
     protected static const SOUND_DAGGER :Class;
+
+    protected var _itemPreview :Doll = new Doll();;
+    protected var _itemText :TextField = TextFieldUtil.createField("",
+        { textColor: 0xffffff, selectable: false,
+            autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
+        { font: "_sans", size: 12, bold: true });
 
     /** Maps item category to Sounds. */
     protected var _attackSounds :Array;
