@@ -36,19 +36,15 @@ package client.radar
         
         public function handlePathComplete(event:PlayerEvent) :void
         {
-            Log.debug("radar handling path complete");            
             if (_player == null) {
-                Log.debug("radar player not set");
                 return;
             }
             
             if (event.player == _player) {
-                Log.debug("radar event is for local player");
                 return;
             }
             
             if (event.player.levelNumber != _player.levelNumber) {
-                Log.debug("radar event is for player on another level");
                 return;
             }
             
@@ -57,11 +53,11 @@ package client.radar
             
             Log.debug("current="+current+" found="+found);
             
-//            if (!current.equals(found)) {
+            if (!current.equals(found)) {
                 Log.debug("directions differ triggering event");
                 _directions[event.player] = current;
                 directionChanged(event.player, current);
-//            }
+            }
         }
         
         protected function directionChanged (player:Player, direction:Vector) :void

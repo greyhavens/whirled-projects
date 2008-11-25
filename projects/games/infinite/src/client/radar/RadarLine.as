@@ -55,15 +55,10 @@ package client.radar
         }
         
         protected function handlePathCompleted (event:PlayerEvent) :void
-        {
-        	Log.debug("local player "+_localPlayer+" other player "+_player+" event player: "+event.player);
-        	Log.debug("local player position: "+_localPlayer.position+" other player position: "
-        	   +_player.position);
-        	   
+        {        	   
             const angle:Number = 
                 _localPlayer.position.distanceTo(event.player.position).rotation;
-                
-            Log.debug("radar view altering rotation to: "+angle);
+
             _arrow.rotation = angle;
         }        
         

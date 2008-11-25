@@ -111,7 +111,6 @@ package client
 			
 			_objective.addEventListener(NeighborhoodEvent.UNMAPPED, dispatchEvent);
 			
-			// add the objective 
 			addChildAt(_objective, 0);
 
 			// the viewpoint can be marked transparently for debugging

@@ -33,7 +33,6 @@ package client.player
 				enterLevel(board, position.level, position.position);
 			} else {
 				_position = position.position;
-                Log.debug("updated position of "+this+" to "+_position);
                 _cell = board.cellAt(position.position);
 			}
 		}
@@ -42,7 +41,6 @@ package client.player
 		{
 			_levelNumber = level;
 			_position = position;
-			Log.debug("updated position of "+this+" to "+_position);			
 			dispatchEvent(new PlayerEvent(PlayerEvent.CHANGED_LEVEL, this));
 		}
 		
@@ -82,13 +80,11 @@ package client.player
          */
         public function startMove () :void
         {
-            Log.debug(this + " marking player as moving")
         	_moving = true;
         }
         
         public function follow (path:Path) :void
         {
-            Log.debug(this + " starting to follow " + path);
         	_path = path;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_STARTED, this));
         }
@@ -100,7 +96,6 @@ package client.player
                 
         public function pathComplete () :void
         {
-            Log.debug(" completed move, clearing movement flag and dispatching event");
             _moving = false;
             dispatchEvent(new PlayerEvent(PlayerEvent.PATH_COMPLETED, this));
         }

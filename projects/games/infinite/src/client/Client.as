@@ -157,21 +157,16 @@ package client
 		
 		protected function handlePathComplete (event:PlayerEvent) :void
 		{
-			Log.debug(this+" handling path complete");
-			
 			var player:Player = event.player;
 			
 			// if the completion is for the local player, then we need to inform the server			
 			if (event.player == _localPlayer) {
-				Log.debug("path complete is for local player so communicating with server");
 	            const finish:BoardCoordinates = event.player.path.finish; 
 	            _world.moveComplete(finish);
 	            _viewer.objective.pathComplete(player);
 	            const height:int = player.position.y;
 	            _heightIndicator.current = height;
 	        } else {
-	        	// otherwise we just need to update the local record
-	        	Log.debug("path complete is for remote player, so just updating records");
                 _viewer.objective.pathComplete(player);	        	
 	        }
 		}
