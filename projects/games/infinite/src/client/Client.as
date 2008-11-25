@@ -38,7 +38,9 @@ package client
 		public function Client(world:ClientWorld)
 		{
 			_world = world;
-			
+	
+	        _radar = new Radar(7, 4);
+	        		
 			// set the overall size of the game
 			SpriteUtil.addBackground(this, GAME_WIDTH, GAME_HEIGHT, SpriteUtil.GREY);
 			this.x = 0;
@@ -70,9 +72,7 @@ package client
 			var rect:GraphicRectangle = GraphicRectangle.fromText(modeView).paddedBy(10).alignBottomRightTo(frame);		
 			Geometry.position(modeView, rect.origin);
 			addChild(modeView);
-			
-			_radar = new Radar(7, 4);
-				
+							
 			enterWorld();			
 		}
 						
@@ -125,7 +125,7 @@ package client
 			const player:Player = new Player(this, id, name);
             if (id == _world.clientId) {
             	_localPlayer = player;
-            	
+            	_radar.player = player;
             	// we only care about path completed events from the local player
                 player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathComplete);
             }
@@ -322,6 +322,11 @@ package client
 		public function get players () :PlayerRegister
 		{
 		    return _players;
+		}
+		
+		public function get radar () :Radar
+		{
+		    return _radar;
 		}
 		
 		protected var _levels:Array = new Array();

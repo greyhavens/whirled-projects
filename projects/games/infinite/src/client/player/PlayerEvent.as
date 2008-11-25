@@ -14,6 +14,7 @@ package client.player
 		
 		public static const CHANGED_LEVEL:String = "changed_level";		
         public static const PATH_STARTED:String = "path_started";     
-        public static const PATH_COMPLETED:String = "path_completed";     
+        public static const PATH_COMPLETED:String = "path_completed";
+        public static const RADAR_UPDATE:String = "radar_update";     
 	}
 }

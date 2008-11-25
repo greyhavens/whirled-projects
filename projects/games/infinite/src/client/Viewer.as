@@ -1,11 +1,9 @@
 package client
 {
-	import arithmetic.Vector;
-	
 	import cells.CellBase;
 	
 	import client.player.Player;
-	import client.radar.RadarLine;
+	import client.radar.RadarView;
 	
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -37,6 +35,11 @@ package client
 				height - (CellBase.UNIT.dy * 2),        // two cells up vertically
 				CellBase.UNIT.dx, 
 				CellBase.UNIT.dy);
+
+            _radarView = new RadarView(_client.radar);
+            addChild(_radarView);
+            _radarView.x = 475;
+            _radarView.y = 5;         
 		}
 		
 		/**
@@ -146,15 +149,9 @@ package client
 		{
 			_objective.addPlayer(player);
 		}
-		
+						
 		public function addLocalPlayer (player:Player) :void
-		{		    
-		    // hack to test the direction arrow by putting up a fixed direction line on the display at the top right
-		    const line:RadarLine = new RadarLine(player, Vector.SW);
-		    addChild(line);
-		    line.x = 50; //width - (line.width + 50);
-		    line.y = 50;		    
-		    
+		{		    		    
 			_objective.addLocalPlayer(player);
 		}
 		
@@ -166,6 +163,8 @@ package client
 			}
 			_objective.removePlayer(player);
 		}
+				
+		protected var _radarView:RadarView;
 		
 		protected var _levelComplete:LevelEndReward;
 			

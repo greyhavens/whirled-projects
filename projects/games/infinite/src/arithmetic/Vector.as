@@ -176,6 +176,9 @@ package arithmetic
 		
 		public function equals (other:Vector) :Boolean
 		{
+		    if (other == null) {
+		        return false;
+		    }
 			return (dx == other.dx && dy == other.dy);
 		}
 		

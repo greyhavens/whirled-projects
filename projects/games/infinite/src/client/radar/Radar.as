@@ -5,9 +5,10 @@ package client.radar
     import client.player.Player;
     import client.player.PlayerEvent;
     
+    import flash.events.EventDispatcher;
     import flash.utils.Dictionary;
     
-    public class Radar
+    public class Radar extends EventDispatcher
     {
         /**
          * Construct a new radar.  The width and height are the widths and height of the central zone.  
@@ -35,21 +36,29 @@ package client.radar
         
         public function handlePathComplete(event:PlayerEvent) :void
         {
+            Log.debug("radar handling path complete");            
             if (_player == null) {
+                Log.debug("radar player not set");
                 return;
             }
             
             if (event.player == _player) {
+                Log.debug("radar event is for local player");
                 return;
             }
             
             if (event.player.levelNumber != _player.levelNumber) {
+                Log.debug("radar event is for player on another level");
                 return;
             }
             
             const found:Vector = _directions[event.player];
             const current:Vector = directionTo(event.player);
+            
+            Log.debug("current="+current+" found="+found);
+            
             if (!current.equals(found)) {
+                Log.debug("directions differ triggering event");
                 _directions[event.player] = current;
                 directionChanged(event.player, current);
             }
@@ -58,6 +67,7 @@ package client.radar
         protected function directionChanged (player:Player, direction:Vector) :void
         {
             announce("direction of "+player.name+" changed to "+direction);
+            dispatchEvent(new PlayerEvent(PlayerEvent.RADAR_UPDATE, player));
         } 
         
         protected function announce (message:String) :void
