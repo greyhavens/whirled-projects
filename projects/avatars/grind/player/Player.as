@@ -97,7 +97,8 @@ public class Player extends Sprite
                 case "Cheat":
                     _svc.awardXP(110);
                     //_inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
-                    _inventory.deposit(int(Math.random()*6+16), 0);
+                    //_inventory.deposit(int(Math.random()*6+16), 0);
+                    _svc.awardRandomItem(3);
                     if (_svc.getState() == QuestConstants.STATE_DEAD) {
                         _svc.revive();
                     }
@@ -159,7 +160,9 @@ public class Player extends Sprite
         },
 
         awardRandomItem: function (level :int) :void {
-            _inventory.deposit(Items.randomLoot(level, 5), Math.random()*7-3);
+            var item :int = Items.randomLoot(level, 5);
+            _inventory.deposit(item, Math.random()*7-3);
+            _quest.effect({text: Items.TABLE[item][1], color: 0xffcc00});
         },
 
         awardXP: function (amount :int) :void {

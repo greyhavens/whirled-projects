@@ -41,14 +41,16 @@ public class Monster_@MONSTER_NAME@ extends Sprite
         _ctrl.addEventListener(TimerEvent.TIMER, tick);
         _ctrl.setTickInterval(9000);
 
+        _ctrl.sendChat("requestControl() // TODO remove");
+
         handleMemory();
     }
 
     public function tick (event :TimerEvent) :void
     {
-        var targets :Array = QuestUtil.query(_ctrl, function (svc :Object) :Boolean {
+        var targets :Array = QuestUtil.query(_ctrl, function (svc :Object, id :String) :Boolean {
             return svc.getType() == QuestConstants.TYPE_PLAYER &&
-                QuestUtil.squareDistanceTo(_ctrl, svc.getIdent()) < 1000*1000;
+                QuestUtil.squareDistanceTo(_ctrl, id) < 1000*1000;
         });
 
         _hunting = targets[int(Math.random()*targets.length)];

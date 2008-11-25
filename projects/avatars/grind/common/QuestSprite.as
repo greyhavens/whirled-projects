@@ -114,8 +114,18 @@ public class QuestSprite extends Sprite
         var self :Object = QuestUtil.self(_ctrl);
         var amount :Number = self.getPower();
         var influence :int = QuestUtil.getTotem(_ctrl);
+        var here :Array = _ctrl.getLogicalLocation() as Array;
+        var orient :Number = _ctrl.getOrientation() as Number;
 
-        var id :String = QuestUtil.fetchClosest(_ctrl, function (svc :Object) :Boolean {
+        var id :String = QuestUtil.fetchClosest(_ctrl, function (svc :Object, id :String) :Boolean {
+            var there :Array =
+                _ctrl.getEntityProperty(EntityControl.PROP_LOCATION_LOGICAL, id) as Array;
+            var bearing :Number = Math.atan2(there[2]-here[2], there[0]-here[0]); // Radians
+            bearing = (360 + 90 + Math.round(180/Math.PI * bearing)) % 360; // Whirled degrees
+
+            if (Math.abs(bearing-orient) > 45) {
+                return false;
+            }
             if (svc.getType() == self.getType()) {
                 return influence != 0 && influence >= Math.abs(self.getLevel() - svc.getLevel());
             }
