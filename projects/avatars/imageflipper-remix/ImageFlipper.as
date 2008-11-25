@@ -81,13 +81,12 @@ public class ImageFlipper extends Sprite
         if (_bounciness > 0 && _bouncing != isMoving) {
             _bouncing = isMoving;
             if (_bouncing) {
+                _endBounce = false;
                 _bounceBase = getTimer(); // note that time at which we start bouncing
                 addEventListener(Event.ENTER_FRAME, handleEnterFrame);
 
             } else {
-                removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
-                // stop bouncing: put us back on the ground
-                _image.y = MAX_HEIGHT - _image.height;
+                _endBounce = true;
             }
         }
     }
@@ -96,7 +95,12 @@ public class ImageFlipper extends Sprite
     {
         var now :Number = getTimer();
         var elapsed :Number = now - _bounceBase;
-        while (elapsed > _bounceFreq) {
+        while (elapsed >= _bounceFreq) {
+            if (_endBounce) {
+                _image.y = MAX_HEIGHT - _image.height;
+                removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+                return;
+            }
             elapsed -= _bounceFreq;
             _bounceBase += _bounceFreq; // give us less math to do next time..
         }
@@ -122,6 +126,9 @@ public class ImageFlipper extends Sprite
     protected var _bounciness :Number;
 
     protected var _right :Boolean;
+
+    /** Whether we should end the bounce next chance we get. */
+    protected var _endBounce :Boolean;
 
     /** Are we currently bouncing? */
     protected var _bouncing :Boolean = false;
