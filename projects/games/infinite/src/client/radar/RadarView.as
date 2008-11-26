@@ -22,6 +22,8 @@ package client.radar
                 return;
             }
             
+            // The view is already tracking one of the players but not the one to whom the event
+            // refers, so we shut down the existing tracking line.  
             if (_tracking != null && _tracking.player != event.player) {
             	Log.debug("shutting down existing view");
                 _tracking.stopTracking();
@@ -29,6 +31,7 @@ package client.radar
                 _tracking = null;
             }
             
+            // Add the tracking line for the player referred to by the event.
             if (_tracking == null) {
             	Log.debug("radar view tracking player "+event.player);
                 _tracking = new RadarLine(event.player, _localPlayer);

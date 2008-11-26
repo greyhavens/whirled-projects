@@ -47,17 +47,23 @@ package client.radar
         public function startTracking () :void
         {
             _player.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
+            _localPlayer.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
         }
         
         public function stopTracking () :void
         {
-            _player.removeEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
+        	_localPlayer.addEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);
+            _player.removeEventListener(PlayerEvent.PATH_COMPLETED, handlePathCompleted);            
         }
         
+        /**
+         * Handle an update to either the local player, or the player this line is pointing
+         * at by adjusting the angle of the arrow.
+         */
         protected function handlePathCompleted (event:PlayerEvent) :void
         {        	   
             const angle:Number = 
-                _localPlayer.position.distanceTo(event.player.position).rotation;
+                _localPlayer.position.distanceTo(_player.position).rotation;
 
             _arrow.rotation = angle;
         }        

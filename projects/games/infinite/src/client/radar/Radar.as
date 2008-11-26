@@ -8,6 +8,13 @@ package client.radar
     import flash.events.EventDispatcher;
     import flash.utils.Dictionary;
     
+    /**
+     * The radar is essentially a controller.  Currently it's function is to determine which player
+     * the radar should be tracking.  The algorithm is to track the player who most recently
+     * switched compass position relative to the local player.  The idea is that it shouldn't change
+     * too rapidly, and that if you don't see an update in the radar for a given player, that player
+     * is still in the same direction you think they are.
+     */ 
     public class Radar extends EventDispatcher
     {
         /**
@@ -39,7 +46,7 @@ package client.radar
             if (_player == null) {
                 return;
             }
-            
+                        
             if (event.player == _player) {
                 return;
             }
@@ -56,13 +63,12 @@ package client.radar
             if (!current.equals(found)) {
                 Log.debug("directions differ triggering event");
                 _directions[event.player] = current;
-                directionChanged(event.player, current);
+                directionChanged(event.player);
             }
         }
         
-        protected function directionChanged (player:Player, direction:Vector) :void
+        protected function directionChanged (player:Player) :void
         {
-            announce("direction of "+player.name+" changed to "+direction);
             dispatchEvent(new PlayerEvent(PlayerEvent.RADAR_UPDATE, player));
         } 
         
