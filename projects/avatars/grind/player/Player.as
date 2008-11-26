@@ -24,7 +24,7 @@ public class Player extends Sprite
         _doll = new Doll();
         _doll.layer([200]);
 
-        _quest = new QuestSprite(_ctrl);
+        _quest = new PlayerSprite(_ctrl);
         addChild(_quest);
 
         _ctrl.registerPropertyProvider(propertyProvider);
@@ -87,7 +87,11 @@ public class Player extends Sprite
         if (_ctrl.hasControl()) {
             switch (event.name) {
                 case "Special":
-                    // TODO
+                    var mana :Number = _quest.getMana();
+                    if (mana >= 0.4) {
+                        _ctrl.setMemory("mana", mana-0.4);
+                        _quest.effect({text: "BOOM"});
+                    }
                     break;
 
                 case "Inventory":

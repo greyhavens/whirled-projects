@@ -16,6 +16,7 @@ import flash.utils.getTimer; // function import
 import flash.utils.Timer;
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.Command;
 
 import com.whirled.EntityControl;
 import com.whirled.ActorControl;
@@ -50,19 +51,20 @@ public class QuestSprite extends Sprite
         _xpField.y = MAX_HEIGHT/2;
         addChild(_xpField);
 
-        _healthBar = new HealthBar();
 //        _healthBar.width = 32;
 //        _healthBar.height = 4;
         addChild(_healthBar);
 
-        _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
-        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        Command.bind(_ctrl, ControlEvent.APPEARANCE_CHANGED, setupVisual);
+        Command.bind(_ctrl, ControlEvent.MEMORY_CHANGED, handleMemory);
+
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
         _ctrl.setTickInterval(4000);
-        _ctrl.addEventListener(TimerEvent.TIMER, tick);
+        Command.bind(_ctrl, TimerEvent.TIMER, _ctrl.doBatch, tick);
 
-        addEventListener(Event.UNLOAD, stopBouncing);
+        // TODO: Add this to _ctrl, or loaderinfo or what?
+        Command.bind(this, Event.UNLOAD, stopBouncing);
 
         //_ticker = new Ticker(_ctrl, 4000, tick);
 //        var timer :Timer = new Timer(4000);
@@ -88,7 +90,7 @@ public class QuestSprite extends Sprite
         }
     }
 
-    protected function tick (event :TimerEvent) :void
+    protected function tick () :void
     {
         switch (QuestUtil.self(_ctrl).getState()) {
             case QuestConstants.STATE_ATTACK:
@@ -207,7 +209,7 @@ public class QuestSprite extends Sprite
         }
     }
 
-    protected function handleMemory (... _) :void
+    protected function handleMemory () :void
     {
         _xpField.text = "Level " + getLevel() + " (" + getXP() + " xp)";
         _healthBar.percent = getHealth()/getMaxHealth();
@@ -287,7 +289,7 @@ public class QuestSprite extends Sprite
         effect({text: text});
     }
 
-    protected function setupVisual (... ignored) :void
+    protected function setupVisual () :void
     {
         var orient :Number = _ctrl.getOrientation();
         var isMoving :Boolean = _ctrl.isMoving();
@@ -330,7 +332,7 @@ public class QuestSprite extends Sprite
         _container.y = MAX_HEIGHT - _container.height - (Math.sin(val) * bounciness);
     }
 
-    protected function stopBouncing (... ignored) :void
+    protected function stopBouncing () :void
     {
         removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
         _container.y = MAX_HEIGHT - _container.height;
@@ -352,6 +354,6 @@ public class QuestSprite extends Sprite
 
     protected var _xpField :TextField;
 
-    protected var _healthBar :HealthBar;
+    protected var _healthBar :ProgressBar = new ProgressBar(0x00ff00, 0xff0000);
 }
 }
