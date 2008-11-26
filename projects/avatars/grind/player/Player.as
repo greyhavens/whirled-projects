@@ -11,13 +11,18 @@ import flash.display.Bitmap;
 
 import flash.media.Sound;
 
+import com.threerings.util.Command;
+
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 
+import klass.Klass;
+import klass.@KLASS@
+
 [SWF(width="64", height="250")]
-public class Player extends Sprite
+public class Player_@KLASS@ extends Sprite
 {
-    public function Player ()
+    public function Player_@KLASS@ ()
     {
         _ctrl = new AvatarControl(this);
 
@@ -33,17 +38,17 @@ public class Player extends Sprite
         _ctrl.registerActions("Special", "Inventory", "Cheat");
 
         _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
-        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
+        Command.bind(_ctrl, ControlEvent.MEMORY_CHANGED, handleMemory);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
 
-        _inventory = new Inventory(_ctrl, _doll);
+        _inventory = new Inventory(_ctrl, _klass, _doll);
         _ghost = Bitmap(new GHOST());
         _ghost.smoothing = true;
 
         handleMemory();
     }
 
-    public function handleMemory (... _) :void
+    public function handleMemory () :void
     {
         if (_quest.getHealth() == 0) {
             _quest.bounciness = 10;
@@ -87,11 +92,7 @@ public class Player extends Sprite
         if (_ctrl.hasControl()) {
             switch (event.name) {
                 case "Special":
-                    var mana :Number = _quest.getMana();
-                    if (mana >= 0.4) {
-                        _ctrl.setMemory("mana", mana-0.4);
-                        _quest.effect({text: "BOOM"});
-                    }
+                    _klass.handleSpecial(_ctrl, _quest);
                     break;
 
                 case "Inventory":
@@ -123,7 +124,7 @@ public class Player extends Sprite
 
     protected var _ctrl :AvatarControl;
 
-    protected var _quest :QuestSprite;
+    protected var _quest :PlayerSprite;
 
     protected var _doll :Doll;
 
@@ -132,6 +133,8 @@ public class Player extends Sprite
     protected var _ghost :Bitmap;
 
     protected var _inventory :Inventory;
+
+    protected var _klass :Klass = new @KLASS@();
 
     // Bye bye type checking
     protected const _svc :Object = {
@@ -145,6 +148,10 @@ public class Player extends Sprite
 
         getType: function () :String {
             return QuestConstants.TYPE_PLAYER;
+        },
+
+        hasTrait: function (trait :int) :Boolean {
+            return _klass.getTraits().indexOf(trait) != -1;
         },
 
         getPower: function () :Number {

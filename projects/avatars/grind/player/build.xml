@@ -1,8 +1,7 @@
 <!-- build configuration -->
-<project name="Player" default="test" basedir=".">
+<project default="build-all" basedir=".">
 
   <!-- defines our project name and type -->
-  <property name="app.name" value="Player"/>
   <property name="app.type" value="avatar"/>
 
   <!-- if you wish to put your source in a subdirectory, uncomment this line -->
@@ -20,4 +19,28 @@
   <!-- include the standard build script -->
   <import file="../../../../etc/project-include.xml"/>
 
+  <target name="build-klass">
+    <echo message="Building ${klass.name}" />
+
+    <filter token="KLASS" value="${klass.name}" />
+    <copy file="Player.as" tofile="Player_${klass.name}.as" filtering="true" />
+    <antcall target="build">
+      <param name="app.name" value="Player_${klass.name}" />
+    </antcall>
+    <delete file="Player_${klass.name}.as" />
+  </target>
+
+  <target name="build-all">
+    <!-- Move ant-contrib.jar to your ant lib dir. -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <property file="config.properties" />
+    <for list="${klasses.list}" param="klass">
+    <sequential>
+      <antcall target="build-klass">
+        <param name="klass.name" value="@{klass}" />
+      </antcall>
+    </sequential>
+    </for>
+  </target>
 </project>

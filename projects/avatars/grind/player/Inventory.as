@@ -10,13 +10,16 @@ import com.whirled.*;
 import com.threerings.util.Command;
 import com.threerings.flash.TextFieldUtil;
 
+import klass.Klass;
+
 public class Inventory extends Sprite
 {
     public static const MAX_BAGS :int = 100;
 
-    public function Inventory (ctrl :EntityControl, doll :Doll)
+    public function Inventory (ctrl :EntityControl, klass :Klass, doll :Doll)
     {
         _ctrl = ctrl;
+        _klass = klass;
         _doll = doll;
 
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
@@ -132,7 +135,7 @@ public class Inventory extends Sprite
 
     protected function updateDoll () :void
     {
-        var base :Array = [ 59, 263 ]; // TODO: Configure this properly
+        var base :Array = _klass.getBaseSprites();
 
         var sprites :Array = [];
         _equipment = [];
@@ -211,9 +214,11 @@ public class Inventory extends Sprite
     protected var _attackSoundDefault :Sound = Sound(new SOUND_FIST());
 
     protected var _bags :Array;
-    protected var _doll :Doll;
     protected var _equipment :Array = []; // Maps slots to Items.TABLE rows
+
     protected var _ctrl :EntityControl;
+    protected var _klass :Klass;
+    protected var _doll :Doll;
 }
 
 }

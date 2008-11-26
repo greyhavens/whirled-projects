@@ -92,19 +92,23 @@ public class QuestSprite extends Sprite
 
     protected function tick () :void
     {
+        var self :Object = QuestUtil.self(_ctrl);
+
         switch (QuestUtil.self(_ctrl).getState()) {
             case QuestConstants.STATE_ATTACK:
                 attack();
                 break;
             case QuestConstants.STATE_HEAL:
-                QuestUtil.self(_ctrl).damage(null, -0.2*getMaxHealth(), {
+                var heal :Number = self.hasTrait(QuestConstants.TRAIT_PLUS_HEALING) ? 0.2 : 0.15;
+                self.damage(null, -heal*getMaxHealth(), {
                     text: "Heal",
                     event: QuestConstants.EVENT_HEAL
                 }, true);
                 break;
             case QuestConstants.STATE_COUNTER:
-                QuestUtil.self(_ctrl).damage(null, 0.1*getMaxHealth(), {
-                    text: "Concentrate...",
+                var focus :Number = self.hasTrait(QuestConstants.TRAIT_PLUS_COUNTER) ? 0.05 : 0.1;
+                self.damage(null, focus*getMaxHealth(), {
+                    text: "Focus",
                     event: QuestConstants.EVENT_COUNTER
                 }, true);
                 break;

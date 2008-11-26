@@ -228,6 +228,10 @@ public class Monster_@MONSTER_NAME@ extends Sprite
             _ctrl.setMemory("health", _quest.getMaxHealth());
         },
 
+        hasTrait: function () :Boolean {
+            return false; // TODO?
+        },
+
         damage: function (
             source :Object, amount :int, cause :Object = null, ignoreArmor :Boolean = false) :void {
             _quest.damage(source, amount, cause, ignoreArmor);

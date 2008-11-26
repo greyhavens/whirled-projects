@@ -14,6 +14,10 @@ public class QuestConstants
     public static const STATE_HEAL :String = "heal";
     public static const STATE_DEAD :String = "dead";
 
+    public static const TRAIT_BACKSTAB :int = 0;
+    public static const TRAIT_PLUS_HEALING :int = 1;
+    public static const TRAIT_PLUS_COUNTER :int = 2;
+
     // "Events" piggybacked on effects messages
     // Eventually maybe QuestSprite could listen for these and dispatch an AS3 Event, but for
     // now, just have listeners scoop the effects messages directly
