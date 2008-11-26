@@ -53,13 +53,13 @@ public class ImageFlipper extends Sprite
 
         // now that everything's loaded, we're ready to hear appearance changed events
         _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
-        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChanged);
+        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, checkState);
         _ctrl.registerStates("Default", "Dancing");
 
         // very important! We can't just assume we're standing when we first start up.
         // We could be the instance of our avatar on someone else's screen, so the person
         // wearing the avatar could already be moving or facing any direction, etc.
-        setupVisual();
+        checkState();
     }
 
     protected function setupVisual (... ignored) :void
@@ -110,9 +110,10 @@ public class ImageFlipper extends Sprite
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
 
-    protected function handleStateChanged (event :ControlEvent) :void
+    protected function checkState (... ignored) :void
     {
-        _dancing = (event.name == "Dancing");
+        _dancing = (_ctrl.getState() == "Dancing");
+
         if (_dancing) {
             _bounceCounter = 0;
             startBouncing();
