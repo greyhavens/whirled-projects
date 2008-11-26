@@ -27,6 +27,10 @@ public class Hospital extends Sprite
 
     public function handleMovement (event :ControlEvent) :void
     {
+        if (event.value != null) {
+            return; // Haven't arrived yet
+        }
+
         var target :Object = QuestUtil.getService(_ctrl, event.name);
         if (target != null && target.getState() == QuestConstants.STATE_DEAD) {
             //if (QuestUtil.squareDistanceTo(_ctrl, event.name) < 200*200) {
