@@ -123,7 +123,7 @@ public class QuestSprite extends Sprite
             var bearing :Number = Math.atan2(there[2]-here[2], there[0]-here[0]); // Radians
             bearing = (360 + 90 + Math.round(180/Math.PI * bearing)) % 360; // Whirled degrees
 
-            if (Math.abs(bearing-orient) > 45) {
+            if (Math.abs(bearing-orient) > 90) {
                 return false;
             }
             if (svc.getType() == self.getType()) {
