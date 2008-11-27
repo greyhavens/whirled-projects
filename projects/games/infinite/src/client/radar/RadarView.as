@@ -21,8 +21,16 @@ package client.radar
          */
         protected function handleLevelChanged (event:PlayerEvent) :void
         {
-        	// do nothing if we're not tracking a local player
-        	if (_localPlayer == null) {
+        	// do nothing if we don't know about a local player, or we aren't tracking anyone
+        	// yet.
+        	if (_localPlayer == null || _tracking == null) {
+        		return;
+        	}        
+        	
+        	// if the player who changed level is the local player, then
+        	// we should stop tracking them
+        	if (event.player == _localPlayer) {
+        		stopTracking();
         		return;
         	}
         	
