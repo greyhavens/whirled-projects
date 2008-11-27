@@ -12,6 +12,26 @@ package client.radar
             super();
             _radar = radar;
             _radar.addEventListener(PlayerEvent.RADAR_UPDATE, handleRadarUpdate);
+            _radar.addEventListener(PlayerEvent.CHANGED_LEVEL, handleLevelChanged);
+        }
+ 
+        /**
+         * A player has changed level.  Check whether we're tracking that player and stop if they
+         * have moved off the level of the local player.
+         */
+        protected function handleLevelChanged (event:PlayerEvent) :void
+        {
+        	// do nothing if we're not tracking a local player
+        	if (_localPlayer == null) {
+        		return;
+        	}
+        	
+        	// if the player we are tracking has changed level to a different level from the local
+        	// player, then stop tracking them.
+        	if (_tracking != null && _tracking.player == event.player 
+        	       && event.player.levelNumber != _localPlayer.levelNumber) {
+        		stopTracking();
+        	}
         }
  
         protected function handleRadarUpdate (event:PlayerEvent) :void
@@ -25,10 +45,7 @@ package client.radar
             // The view is already tracking one of the players but not the one to whom the event
             // refers, so we shut down the existing tracking line.  
             if (_tracking != null && _tracking.player != event.player) {
-            	Log.debug("shutting down existing view");
-                _tracking.stopTracking();
-                removeChild(_tracking);
-                _tracking = null;
+            	stopTracking();
             }
             
             // Add the tracking line for the player referred to by the event.
@@ -46,6 +63,14 @@ package client.radar
             } else {
             	Log.debug("radar is already tracking player +"+event.player);
             }
+        }
+        
+        protected function stopTracking () :void
+        {
+            Log.debug("shutting down existing view");
+            _tracking.stopTracking();
+            removeChild(_tracking);
+            _tracking = null;        	
         }
         
         public function set localPlayer (player:Player) :void

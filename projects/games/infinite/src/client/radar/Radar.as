@@ -34,11 +34,13 @@ package client.radar
 
         public function handleChangedLevel(event:PlayerEvent) :void
         {
+        	// if we're not tracking a local player, then do nothing
             if (_player == null) {
                 return;
             }
-            
-            announce("player "+event.player.name+" has moved to level "+event.player.levelNumber);
+
+            // otherwise redispatch the event so the view can respond            
+            dispatchEvent(event);
         }
         
         public function handlePathComplete(event:PlayerEvent) :void

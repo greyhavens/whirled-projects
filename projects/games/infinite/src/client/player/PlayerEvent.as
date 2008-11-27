@@ -12,6 +12,11 @@ package client.player
 			super(type);			
 		}
 		
+		override public function clone () :Event
+		{
+			return new PlayerEvent(type, player);
+		}
+		
 		public static const CHANGED_LEVEL:String = "changed_level";		
         public static const PATH_STARTED:String = "path_started";     
         public static const PATH_COMPLETED:String = "path_completed";
