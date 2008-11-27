@@ -12,6 +12,8 @@ import flash.display.Bitmap;
 
 import flash.media.Sound;
 
+import com.threerings.util.Command;
+
 import com.whirled.EntityControl;
 import com.whirled.PetControl;
 import com.whirled.ControlEvent;
@@ -19,6 +21,8 @@ import com.whirled.ControlEvent;
 [SWF(width="128", height="250")]
 public class Monster_@MONSTER_NAME@ extends Sprite
 {
+    public static const RESPAWN_TIME :int = 2*60*1000;
+
     public function Monster_@MONSTER_NAME@ ()
     {
         trace("@MONSTER_NAME@ : I am level " + @MONSTER_LEVEL@);
@@ -26,9 +30,10 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
         _ctrl.registerPropertyProvider(propertyProvider);
 
-        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemory);
         _ctrl.addEventListener(ControlEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleMovement);
+        Command.bind(_ctrl, ControlEvent.CONTROL_ACQUIRED, checkRespawn);
+        Command.bind(_ctrl, ControlEvent.MEMORY_CHANGED, handleMemory);
 
         _ghost = Bitmap(new GHOST());
         _ghost.smoothing = true;
@@ -45,8 +50,20 @@ public class Monster_@MONSTER_NAME@ extends Sprite
         handleMemory();
     }
 
+    protected function checkRespawn () :void
+    {
+        if (_svc.getState() == QuestConstants.STATE_DEAD) {
+            var now :Number = new Date().time;
+            if (now - (_ctrl.getMemory("timeOfDeath", now) as Number) > RESPAWN_TIME) {
+                _svc.revive();
+            }
+        }
+    }
+
     protected function tick (event :TimerEvent) :void
     {
+        checkRespawn();
+
         if (_quest.getHealth()/_quest.getMaxHealth() < 0.25) {
             _hunting = null;
             _ctrl.setState(QuestConstants.STATE_HEAL);
@@ -67,9 +84,10 @@ public class Monster_@MONSTER_NAME@ extends Sprite
                 QuestUtil.squareDistanceTo(_ctrl, id) < 1000*1000;
         });
 
-        _hunting = targets[int(Math.random()*targets.length)].getIdent();
-
-        stalkTo(_ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, _hunting) as Array);
+        if (targets.length > 0) {
+            _hunting = targets[int(Math.random()*targets.length)].getIdent();
+            stalkTo(_ctrl.getEntityProperty(EntityControl.PROP_LOCATION_PIXEL, _hunting) as Array);
+        }
     }
 
 
@@ -148,6 +166,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
                     case QuestConstants.EVENT_DIE:
                         _hunting = null;
                         _soundDeath.play();
+                        _ctrl.setMemory("timeOfDeath", new Date().time);
                         break;
                 }
             }
