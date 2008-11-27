@@ -19,9 +19,10 @@ package world
 	
 	public class Player extends EventDispatcher implements CellInteractions, ItemPlayer, MovablePlayer
 	{
-		public function Player(id:int)
+		public function Player(id:int, name:String)
 		{
 			_id = id;
+			_name = name;
 			_inventory = new Inventory(this);
 			addEventListener(MoveEvent.PATH_START, handlePathStart);			
 		}
@@ -206,7 +207,7 @@ package world
         
         public function get name () :String
         {
-        	return "server player "+_id;
+        	return _name;
         }
         
         public function teleport () :void
@@ -219,6 +220,7 @@ package world
         	return _level.number;
         }
         
+        protected var _name:String;
         protected var _path:Path;
         protected var _cell:Cell;
         protected var _level:Level;

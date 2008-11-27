@@ -53,7 +53,11 @@ package server
             // who do we send the message to?
             sendToAll(RemoteWorld.LEVEL_ENTERED, message);
             send(event.player.id, RemoteWorld.LEVEL_UPDATE, event.level.makeUpdate());
-            
+            if (event.level.number > 1) {
+            	const text:String = event.player.name + 
+                    " just reached level "+event.level.number+"!";
+                _control.game.systemMessage(text);
+            }
 		}
 		
 		public function handleLevelComplete (event:LevelEvent) :void
@@ -119,7 +123,7 @@ package server
 		protected function clientEnters (event:MessageReceivedEvent) :void
 		{
 		    sendTime(event.senderId);			
-	        _world.playerEnters(event.senderId);
+	        _world.playerEnters(event.senderId, _control.game.getOccupantName(event.senderId));
 		}
 
         protected function nextLevel (event:MessageReceivedEvent) :void

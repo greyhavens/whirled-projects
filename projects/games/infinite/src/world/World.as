@@ -39,12 +39,12 @@ package world
 		/**
 		 * A player enters the world.
 		 */
-		public function playerEnters (id:int) :void
+		public function playerEnters (id:int, name:String) :void
 		{
 	       // when a player enters, we need to decide whether they are already in the game.
             var player:Player = _players.find(id);
             if (player == null) {
-            	player = newPlayer(id);
+            	player = newPlayer(id, name);
             }
 		}
 		
@@ -90,10 +90,10 @@ package world
 		/**
 		 * Create a new player.
 		 */
-		public function newPlayer (id:int) :Player
+		public function newPlayer (id:int, name:String) :Player
 		{
 			// construct the player object.
-			const player:Player = new Player(id);
+			const player:Player = new Player(id, name);
 			
 			// redispatch events from players
 		    player.addEventListener(LevelEvent.LEVEL_ENTERED, dispatchEvent);

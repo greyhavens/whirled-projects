@@ -48,7 +48,7 @@ package client
         {
         	Log.debug("player entering world");
             _client = client;
-            _world.playerEnters(ID);
+            _world.playerEnters(ID, "you");
         }
         
         public function nextLevel () :void
