@@ -36,6 +36,8 @@ import fl.skins.DefaultSliderSkins;
 
 import com.threerings.util.StringUtil;
 
+import com.threerings.flash.TextFieldUtil;
+
 import com.whirled.FurniControl;
 import com.whirled.ControlEvent;
 
@@ -109,23 +111,11 @@ public class Text extends Sprite
     {
         var s :Sprite = new Sprite();
 
-        var tf :TextField = new TextField();
-        tf.background = true;
-        tf.backgroundColor = 0xFFFFFF;
-        tf.border = true;
-        tf.borderColor = 0x000000;
-        tf.multiline = true;
-        tf.type = TextFieldType.INPUT;
-        tf.wordWrap = true;
-        tf.width = 250;
-        tf.height = 122;
-        tf.text = getMem(TEXT) as String;
+        var tf :TextField = TextFieldUtil.createField(getMem(TEXT) as String,
+            { background: true, backgroundColor: 0xFFFFFF, border: true, borderColor: 0x000000,
+                multiline: true, type: TextFieldType.INPUT, wordWrap: true,
+                width: 250, height: 122 });
         s.addChild(tf);
-
-        // focus handling for flash 10 and above??
-        tf.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
-            tf.stage.focus = tf;
-        });
 
         var yy :int = 125;
         addLabel(s, "Font face", yy);
