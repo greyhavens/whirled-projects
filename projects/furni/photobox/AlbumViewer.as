@@ -546,6 +546,7 @@ import flash.text.TextFormat;
 
 import flash.ui.Keyboard;
 
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.SimpleTextButton;
 
 class ConfigPanel extends Sprite
@@ -570,6 +571,7 @@ class ConfigPanel extends Sprite
         _pasteEntry.text = "";
         _pasteEntry.width = WIDTH - (okBtn.width + 5);
         _pasteEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyEntry);
+        TextFieldUtil.setFocusable(_pasteEntry);
 
         // add a skin for the text entry area
         var entrySkin :DisplayObject = DisplayObject(new ENTRY_SKIN());
