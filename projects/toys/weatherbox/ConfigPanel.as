@@ -21,6 +21,8 @@ import fl.data.DataProvider;
 
 import com.threerings.util.StringUtil;
 
+import com.threerings.flash.TextFieldUtil;
+
 import com.bogocorp.weather.NOAAWeatherService;
 
 public class ConfigPanel extends Sprite
@@ -57,6 +59,7 @@ public class ConfigPanel extends Sprite
             addChild(altPrompt);
 
             _altLocation.type = TextFieldType.INPUT;
+            TextFieldUtil.setFocusable(_altLocation);
             _altLocation.y = 100;
             _altLocation.x = altPrompt.width + 10;
             _altLocation.height = 22;
