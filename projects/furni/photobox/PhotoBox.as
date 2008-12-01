@@ -36,6 +36,8 @@ import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
+import com.threerings.flash.TextFieldUtil;
+
 import com.whirled.ControlEvent;
 import com.whirled.FurniControl;
 
@@ -126,6 +128,7 @@ public class PhotoBox extends Sprite
         _tagEntry.x = _width - PAD - tagWidths;
         _tagEntry.y = logo.y;
         _tagEntry.width = tagWidths;
+        TextFieldUtil.setFocusable(_tagEntry);
 
         _tagDisplay = new TextField();
         _tagDisplay.defaultTextFormat = format;
