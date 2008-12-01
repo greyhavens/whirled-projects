@@ -56,6 +56,7 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.TextFieldUtil;
 
 import com.whirled.game.*;
 
@@ -207,6 +208,7 @@ public class LOL extends Sprite
         _skipBox.label = "              "; // so that it's more easily clickable
 
         _input = find("text_input") as TextField;
+        TextFieldUtil.setFocusable(_input);
         _input.height = 200;
 
         _clock = find("clock") as TextField;
@@ -300,7 +302,7 @@ public class LOL extends Sprite
 
         case SILENT_THEME:
             // make a grayscale filter for the image
-            const T :Number = 1 / 3;
+            var T :Number = 1 / 3;
             _image.filters = [ new ColorMatrixFilter([
                 T, T, T, 0, 0,
                 T, T, T, 0, 0,
