@@ -6,6 +6,7 @@ import flash.display.Sprite;
 import flash.filters.GlowFilter;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
 import flash.geom.Matrix;
@@ -120,6 +121,11 @@ public class Text extends Sprite
         tf.height = 122;
         tf.text = getMem(TEXT) as String;
         s.addChild(tf);
+
+        // focus handling for flash 10 and above??
+        tf.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+            tf.stage.focus = tf;
+        });
 
         var yy :int = 125;
         addLabel(s, "Font face", yy);
