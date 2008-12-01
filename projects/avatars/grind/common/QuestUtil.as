@@ -79,6 +79,25 @@ public class QuestUtil
         }
         return 0;
     }
+
+    public static function deltaText (bonus :int) :String
+    {
+        if (bonus < 0) {
+            return String(bonus);
+        } else {
+            return "+"+bonus;
+        }
+    }
+
+    public static function getLevel (xp :int) :int
+    {
+        return xp / 100;
+    }
+
+    public static function getXp (level :int) :int
+    {
+        return level * 100;
+    }
 }
 
 }

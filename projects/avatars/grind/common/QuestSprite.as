@@ -48,7 +48,7 @@ public class QuestSprite extends Sprite
             { textColor: 0xffffff, selectable: false,
                 autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
             { font: "_sans", size: 10, bold: true });
-        _xpField.y = MAX_HEIGHT/2;
+        _xpField.y = MAX_HEIGHT;
         addChild(_xpField);
 
 //        _healthBar.width = 32;
@@ -175,7 +175,7 @@ public class QuestSprite extends Sprite
             amount *= 2;
         }
 
-        var hit :String = (amount < 0) ? "+"+(-amount) : "-"+amount;
+        var hit :String = QuestUtil.deltaText(-amount);
         if (fx != null) {
             if ("text" in fx) {
                 // Add the damage string to it
@@ -215,7 +215,7 @@ public class QuestSprite extends Sprite
 
     protected function handleMemory () :void
     {
-        _xpField.text = "Level " + getLevel() + " (" + getXP() + " xp)";
+        _xpField.text = "Level " + getLevel();
         _healthBar.percent = getHealth()/getMaxHealth();
     }
 

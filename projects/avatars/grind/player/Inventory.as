@@ -14,7 +14,7 @@ import klass.Klass;
 
 public class Inventory extends Sprite
 {
-    public static const MAX_BAGS :int = 100;
+    public static const MAX_BAGS :int = 50;
 
     public function Inventory (ctrl :EntityControl, klass :Klass, doll :Doll)
     {
@@ -28,19 +28,24 @@ public class Inventory extends Sprite
         _itemText.x = (Doll.SIZE+8);
         addChild(_itemText);
 
+        addChild(_statusText);
+
         _bags = new Array(MAX_BAGS);
         for (var i :int = 0; i < MAX_BAGS; ++i) {
-            var bag :InventoryBag = new InventoryBag();
+            var bag :InventoryBag = new InventoryBag(i);
             bag.x = Doll.SIZE*(i%10);
             bag.y = Doll.SIZE*int(i/10) + (Doll.SIZE+8);
 
-            Command.bind(bag, MouseEvent.CLICK, equip, i);
+            bag.addEventListener(MouseEvent.CLICK, handleClick);
             Command.bind(bag, MouseEvent.ROLL_OVER, preview, i);
             Command.bind(bag, MouseEvent.ROLL_OUT, clearPreview);
 
             _bags[i] = bag;
             addChild(bag);
         }
+
+        _helpText.y = _bags[MAX_BAGS-1].y + Doll.SIZE + 8;
+        addChild(_helpText);
 
         _attackSounds = [];
         _attackSounds[Items.BOW] = Sound(new SOUND_BOW());
@@ -67,6 +72,24 @@ public class Inventory extends Sprite
 
         trace("I'm full!");
         return false;
+    }
+
+    protected function handleClick (event :MouseEvent) :void
+    {
+        var bag :int = InventoryBag(event.currentTarget).bag;
+        if (event.ctrlKey) {
+            destroy(bag);
+        } else {
+            equip(bag);
+        }
+    }
+
+    protected function destroy (bag :int) :void
+    {
+//        var memory :Array = _ctrl.getMemory("#" + bag) as Array;
+//        if (memory != null) {
+//        }
+        _ctrl.setMemory("#" + bag, null);
     }
 
     protected function equip (bag :int) :void
@@ -98,29 +121,50 @@ public class Inventory extends Sprite
         if (memory != null) {
             var item :Array = Items.TABLE[memory[0]];
             _itemPreview.layer([ item[0] ]);
-            _itemText.text = "It's a " + item[1];
+            _itemText.text = item[1] + " [" + item[4] + "]";
+            if (memory[1] != 0) {
+                _itemText.appendText(" " + QuestUtil.deltaText(memory[1]));
+            }
+
+            _itemText.visible = true;
+            _statusText.visible = false;
         }
     }
 
     protected function clearPreview () :void
     {
         _itemPreview.layer([]);
-        _itemText.text = "Level ??";
+        _itemText.visible = false;
+        _statusText.visible = true;
     }
 
     protected function handleMemory (event :ControlEvent) :void
     {
+        // These are only relevant to the avatar wearer
+        if ( ! _ctrl.hasControl()) {
+            return;
+        }
+
         if (event.name.charAt(0) == "#") {
             var bag :int = int(event.name.substr(1));
-            var item :int = event.value[0] as int;
-            var bonus :int = event.value[1] as int;
-            var equipped :Boolean = event.value[2] as Boolean;
+            if (event.value != null) {
+                var item :int = event.value[0] as int;
+                var bonus :int = event.value[1] as int;
+                var equipped :Boolean = event.value[2] as Boolean;
 
-            // Update the inventory bag
-            _bags[bag].setItem(item, equipped);
+                // Update the inventory bag
+                _bags[bag].setItem(item, equipped);
+            } else {
+                _bags[bag].reset();
+            }
 
             updateDoll();
         }
+
+        var xp :int = _ctrl.getMemory("xp") as int;
+        var level :int = QuestUtil.getLevel(xp);
+        _statusText.text = "Attack: " + getPower() + ", Defence: " + getDefence() + "\n" +
+            "Level " + level + " (" + int(100*(xp / QuestUtil.getXp(level+1))) + "% to next)";
     }
 
     protected function updateBags () :void
@@ -144,7 +188,8 @@ public class Inventory extends Sprite
             if (memory != null && memory[2] == true) {
                 var item :Array = Items.TABLE[memory[0]];
 
-                _equipment[item[2]] = item;
+                //_equipment[item[2]] = item;
+                _equipment[item[2]] = memory;
 
                 if (item[2] == Items.BACK) {
                     base.unshift(item[0]);
@@ -159,22 +204,32 @@ public class Inventory extends Sprite
 
     public function getRange () :Number
     {
-        return (Items.HAND in _equipment) ? _equipment[Items.HAND][5] : 100;
+        //return (Items.HAND in _equipment) ? _equipment[Items.HAND][5] : 100;
+        if (Items.HAND in _equipment) {
+            switch (Items.TABLE[_equipment[Items.HAND][0]][3]) {
+                case Items.BOW: return 800;
+                case Items.MAGIC: return 400;
+            }
+        }
+        return 200;
     }
 
     public function getPower () :Number
     {
-        return (Items.HAND in _equipment) ? _equipment[Items.HAND][4] : 100;
+        return (Items.HAND in _equipment) ?
+            Items.TABLE[_equipment[Items.HAND][0]][4] + _equipment[Items.HAND][1] :
+            100;
     }
 
     public function getDefence () :Number
     {
         var defence :int = 0;
-        for each (var item :Array in _equipment) {
+        for each (var memory :Array in _equipment) {
             // If it's not a weapon
-            if (item[2] != Items.HAND) {
-                defence += item[4];
+            if (Items.TABLE[memory[0]][2] != Items.HAND) {
+                defence += Items.TABLE[memory[0]][4] + memory[1];
             }
+                trace(Items.TABLE[memory[0]][1] + ": " + memory[1]);
         }
         return defence;
     }
@@ -182,7 +237,8 @@ public class Inventory extends Sprite
     public function getAttackSound () :Sound
     {
         return (Items.HAND in _equipment) ?
-            _attackSounds[_equipment[Items.HAND][3]] : _attackSoundDefault;
+            _attackSounds[Items.TABLE[_equipment[Items.HAND][0]][3]] :
+            _attackSoundDefault;
     }
 
     [Embed(source="rsrc/fist.mp3")]
@@ -208,13 +264,26 @@ public class Inventory extends Sprite
             autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
         { font: "_sans", size: 12, bold: true });
 
+    protected var _statusText :TextField = TextFieldUtil.createField("",
+        { textColor: 0xffffff, selectable: false,
+            autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
+        { font: "_sans", size: 12, bold: true });
+
+    protected var _helpText :TextField = TextFieldUtil.createField(
+        "Click to wear an item, ctrl+click to permanently delete it.", {
+            textColor: 0xc0c0c0, selectable: false,
+            autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
+        { font: "_sans", size: 8 });
+
+    protected var _statusLine :String;
+
     /** Maps item category to Sounds. */
     protected var _attackSounds :Array;
 
     protected var _attackSoundDefault :Sound = Sound(new SOUND_FIST());
 
     protected var _bags :Array;
-    protected var _equipment :Array = []; // Maps slots to Items.TABLE rows
+    protected var _equipment :Array = []; // Maps slots to memory bags
 
     protected var _ctrl :EntityControl;
     protected var _klass :Klass;

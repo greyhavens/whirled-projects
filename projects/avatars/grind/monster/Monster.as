@@ -25,7 +25,6 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
     public function Monster_@MONSTER_NAME@ ()
     {
-        trace("@MONSTER_NAME@ : I am level " + @MONSTER_LEVEL@);
         _ctrl = new PetControl(this);
 
         _ctrl.registerPropertyProvider(propertyProvider);
@@ -35,8 +34,8 @@ public class Monster_@MONSTER_NAME@ extends Sprite
         Command.bind(_ctrl, ControlEvent.CONTROL_ACQUIRED, checkRespawn);
         Command.bind(_ctrl, ControlEvent.MEMORY_CHANGED, handleMemory);
 
-        _ghost = Bitmap(new GHOST());
-        _ghost.smoothing = true;
+        _grave = Bitmap(new GRAVE());
+        _grave.smoothing = true;
 
         _image = Bitmap(new IMAGE());
         _image.smoothing = true;
@@ -63,6 +62,10 @@ public class Monster_@MONSTER_NAME@ extends Sprite
     protected function tick (event :TimerEvent) :void
     {
         checkRespawn();
+
+        if (_svc.getState() == STATE_DEAD) {
+            return;
+        }
 
         if (_quest.getHealth()/_quest.getMaxHealth() < 0.25) {
             _hunting = null;
@@ -138,7 +141,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
     protected function handleMemory (... _) :void
     {
         if (_quest.getHealth() == 0) {
-            _quest.setActor(_ghost);
+            _quest.setActor(_grave);
         } else {
             _quest.setActor(_image);
         }
@@ -186,9 +189,9 @@ public class Monster_@MONSTER_NAME@ extends Sprite
 
     protected var _quest :QuestSprite;
 
-    [Embed(source="ghost.png")]
-    protected static const GHOST :Class;
-    protected var _ghost :Bitmap;
+    [Embed(source="grave.png")]
+    protected static const GRAVE :Class;
+    protected var _grave :Bitmap;
 
     [Embed(source="rsrc/@MONSTER_NAME@.png")]
     protected static const IMAGE :Class;

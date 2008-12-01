@@ -73,13 +73,12 @@ public class Server extends ServerObject
                     var player :PlayerSubControlServer = _ctrl.getPlayer(playerId);
                     var kills :String = NetConstants.makePersistent("kills");
 
-                    player.completeTask("slay", level/10); // TODO: Tweak
+                    player.completeTask("slay", level/150); // TODO: Tweak
                     player.props.set(kills, int(player.props.get(kills))+1);
                 }
             } catch (error :Error) {
                 // It's reasonably possible that they're hacking away while not in the AVRG
             }
-            trace("We get signal: " + event.name + ", " + event.value);
         }
     }
 

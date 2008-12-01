@@ -4,8 +4,12 @@ import flash.display.*;
 
 public class InventoryBag extends Sprite
 {
-    public function InventoryBag ()
+    public var bag :int;
+
+    public function InventoryBag (bag :int)
     {
+        this.bag = bag;
+
         // Bordered background
         graphics.lineStyle(2, 0x0000ff);
         graphics.drawRect(0, 0, Doll.SIZE, Doll.SIZE);
@@ -32,6 +36,14 @@ public class InventoryBag extends Sprite
         _container.addChild(doll);
 
         addChild(_container);
+    }
+
+    public function reset () :void
+    {
+        if (_container != null) {
+            removeChild(_container);
+        }
+        _container = null;
     }
 
     protected var _container :Sprite;

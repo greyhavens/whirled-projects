@@ -75,12 +75,15 @@ public class Player_@KLASS@ extends Sprite
                         break;
 
                     case QuestConstants.EVENT_COUNTER:
+                        _soundCounter.play();
                         break;
 
                     case QuestConstants.EVENT_HEAL:
+                        _soundHeal.play();
                         break;
 
                     case QuestConstants.EVENT_DIE:
+                        //_soundDeath.play();
                         break;
                 }
             }
@@ -103,7 +106,7 @@ public class Player_@KLASS@ extends Sprite
                     _svc.awardXP(110);
                     //_inventory.deposit(int(Math.random()*Items.TABLE.length), 0);
                     //_inventory.deposit(int(Math.random()*6+16), 0);
-                    _svc.awardRandomItem(3);
+                    _svc.awardRandomItem(1);
                     if (_svc.getState() == QuestConstants.STATE_DEAD) {
                         _svc.revive();
                     }
@@ -133,6 +136,14 @@ public class Player_@KLASS@ extends Sprite
     protected var _ghost :Bitmap;
 
     protected var _inventory :Inventory;
+
+    [Embed(source="rsrc/@KLASS@Counter.mp3")]
+    protected static const SOUND_COUNTER :Class;
+    protected var _soundCounter :Sound = new SOUND_COUNTER as Sound;
+
+    [Embed(source="rsrc/@KLASS@Heal.mp3")]
+    protected static const SOUND_HEAL :Class;
+    protected var _soundHeal :Sound = new SOUND_HEAL as Sound;
 
     protected var _klass :Klass = new @KLASS@();
 
