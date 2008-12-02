@@ -40,10 +40,20 @@ public class Ring
     {
         return _outer;
     }
+
+    public function set outer (value :Ring) :void
+    {
+        _outer = value;
+    }
     
     public function get inner () :Ring
     {
         return _inner;
+    }
+
+    public function set inner (value :Ring) :void
+    {
+        _inner = value;
     }
 
     public function get smallest () :Ring
@@ -90,6 +100,19 @@ public class Ring
         }
 
         _marbles[globalToLocal(position)] = marble;
+    }
+
+    public function removeMarbleIn (position :int) :Marble
+    {
+        if (!positionContainsMarble)) {
+            throw new Error("Asked to remove a marble from an empty position [" + position + ", " +
+                this + "]");
+        }
+
+        var localPosition :int = globalToLocal(position);
+        var marble :Marble = _marble[localPosition] as Marble;
+        _marble[localPosition] = null;
+        return marble;
     }
 
     public function toString () :String
