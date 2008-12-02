@@ -42,7 +42,7 @@ package server
 			_net = control.net;
 	        _net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
 	        
-	        _scoreKeeper = new ScoreKeeper();
+	        _scoreKeeper = new ScoreKeeper(_control.game);
 	        
 	        _control.game.addEventListener(StateChangedEvent.GAME_STARTED, reportEvent);
             _control.game.addEventListener(StateChangedEvent.GAME_ENDED, reportEvent);
@@ -54,7 +54,7 @@ package server
 		protected function handleOccupantLeft (event:OccupantChangedEvent) :void
 		{
 			if (_control.game.getOccupantIds().length < 1) {
-				_scoreKeeper.endGame(_control.game);
+				_scoreKeeper.endGame();
 			}
 		}
 		

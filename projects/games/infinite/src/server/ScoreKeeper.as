@@ -15,15 +15,17 @@ package server
 	 */
 	public class ScoreKeeper
 	{
-		public function ScoreKeeper()
+		public function ScoreKeeper(control:GameSubControl)
 		{
+			_control = control;
+			_target = 5;
 		}
 
         public function levelComplete (id:int, level:int) :void
         {
-        	var status:int = levels[level];
+        	var status:int = _levels[level];
         	if (status == INCOMPLETE) {
-        		levels[level] = RECENTLY_COMPLETE;
+        		_levels[level] = RECENTLY_COMPLETE;
         		startTimeout(level);
         		addPoints(id, 3);
         	} else if (status == RECENTLY_COMPLETE) {
@@ -41,7 +43,7 @@ package server
         protected function startTimeout (level:int) :void
         {        	
         	const timer:Timer = new Timer(EXIT_DELAY, 1);
-        	timers[timer] = level;
+        	_timers[timer] = level;
         	timer.addEventListener(TimerEvent.TIMER, handleTimeout);
         }
         
@@ -51,36 +53,49 @@ package server
          */
         protected function handleTimeout (event:TimerEvent) :void
         {
-        	const level:int = timers[event.target];
-        	levels[level] = COMPLETED;
+        	const level:int = _timers[event.target];
+        	_levels[level] = COMPLETED;
         }
         
         public function score (id:int) :int 
         {
-        	var score:int = scores[id] as int;
+        	var score:int = _scores[id] as int;
         	return score;
         }
         
         public function addPoints (id:int, points:int) :void
         {
-        	if (scores[id] == null) {
-        		players.push(id);
-        	}        
-        	scores[id] = score(id) + points;
+        	if (_scores[id] == null) {
+        		_players.push(id);
+        	}
+        	const added:int = score(id) + points;        
+        	_scores[id] = added;
+        	
+            if (added >= _target) {
+            	endGame();
+            }
         }
         
-        public function endGame(control:GameSubControl) :void
+        public function endGame() :void
         {
         	const playerIds:Array = new Array();
         	const scores:Array = new Array();
         	
-        	for each (var id:int in players) {
+        	for each (var id:int in _players) {
         		playerIds.push(id);
         		scores.push(score(id));
         	}
         	
         	Log.debug(this + " ending game with scores");
-        	control.endGameWithScores(playerIds, scores, GameSubControl.CASCADING_PAYOUT, MODE); 
+        	_control.endGameWithScores(playerIds, scores, GameSubControl.CASCADING_PAYOUT, MODE);
+        	reset();
+        }
+        
+        public function reset () :void
+        {
+        	_players = new Array();
+        	_scores = new Dictionary();
+        	_timers = new Dictionary();
         }
         
         protected static const EXIT_DELAY:int = 5000;
@@ -92,10 +107,20 @@ package server
         // Mode 0 is used for this simple scoring system.
         protected const MODE:int = 0;
         
-        protected var players:Array = new Array();
-        protected var scores:Dictionary = new Dictionary();
-        protected var levels:Array = new Array();
-        protected var timers:Dictionary = new Dictionary();
+        // The score target before we 'end the game' and payout
+        protected var _target:int;
+        protected var _control:GameSubControl;
         
+        // list of players who have scores
+        protected var _players:Array = new Array();
+        
+        // scores 
+        protected var _scores:Dictionary = new Dictionary();
+        
+        // the status of each level
+        protected var _levels:Array = new Array();
+        
+        // to determine the ways 
+        protected var _timers:Dictionary = new Dictionary();
 	}
 }
