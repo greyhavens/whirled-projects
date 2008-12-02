@@ -83,14 +83,14 @@ public class AlbumViewer extends Sprite
 
         var showConfig :Boolean;
         if (_furni.isConnected()) {
-            showConfig = _furni.canEditRoom();
+            showConfig = _furni.canManageRoom();
 
         } else {
             showConfig = true;
         }
 
         // show the config button in contexts where the user may configure it
-        if (!_furni.isConnected() || _furni.canEditRoom()) {
+        if (!_furni.isConnected() || _furni.canManageRoom()) {
             _configBtn = new SimpleTextButton("config");
             _configBtn.x = WIDTH - _configBtn.width;
             _configBtn.y = HEIGHT - _configBtn.height;
@@ -134,7 +134,7 @@ public class AlbumViewer extends Sprite
         _setId = setId;
         _nextPage = 1;
 
-        if (_furni.isConnected() && _furni.canEditRoom()) {
+        if (_furni.isConnected() && _furni.canManageRoom()) {
             if (userId != _furni.getMemory("userId", null)) {
                 _furni.setMemory("userId", userId);
             }

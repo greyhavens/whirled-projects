@@ -43,7 +43,7 @@ public class Embedder extends Sprite
         _ctrl.registerCustomConfig(createConfigPanel);
 
 //        // add a little area for room editors to be able to click
-//        if (_ctrl.canEditRoom()) {
+//        if (_ctrl.canManageRoom()) {
 //            graphics.beginFill(0x00FF00, .3);
 //            graphics.drawRect(0, 0, 32, 18);
 //            graphics.endFill();

@@ -181,7 +181,7 @@ public class Sign extends Sprite
         text.y = BORDER + title.height;
 
         // if they have editing access, add an edit button at the bottom
-        if (_ctrl.canEditRoom()) {
+        if (_ctrl.canManageRoom()) {
             var edit :TextField = createLabel("Edit", null, TIP_SIZE, true);
             sign.addChild(edit);
             edit.x = BORDER;

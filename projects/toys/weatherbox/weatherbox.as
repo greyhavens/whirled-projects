@@ -85,7 +85,7 @@ public class WeatherBox extends Sprite
         _statusLabel = addTextField(0, 75);
 
         // if we're in-whirled, only show the config button to room editors
-        var showConfigButton :Boolean = !_control.isConnected() || _control.canEditRoom();
+        var showConfigButton :Boolean = !_control.isConnected() || _control.canManageRoom();
         if (showConfigButton) {
             _configButton = new Button();
             _configButton.label = "Config";

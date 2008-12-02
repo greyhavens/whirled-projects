@@ -243,7 +243,7 @@ public class Fifteen extends Sprite
         _sourceBox.x = 220;
         _controls.addChild(_sourceBox);
 
-        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+        if (!_ctrl.isConnected() || _ctrl.canManageRoom()) {
             var reset :Button = createButton("Reset");
             reset.y = 25;
             reset.x = 220;
@@ -266,7 +266,7 @@ public class Fifteen extends Sprite
         // then, actually open it
         Tweener.addTween(_palette, {time: 1, transition: TRANS, x: -220});
 
-        if (!_ctrl.isConnected() || _ctrl.canEditRoom()) {
+        if (!_ctrl.isConnected() || _ctrl.canManageRoom()) {
             Tweener.addTween(_content, {time: 1, transition: TRANS, y: 25});
         }
     }
@@ -310,7 +310,7 @@ public class Fifteen extends Sprite
             _controls.addChild(url);
 
             Tweener.addTween(_palette, {time: .5, transition: TRANS, y: 50});
-            var newContentY :Number = (!_ctrl.isConnected() || _ctrl.canEditRoom()) ? 75 : 50;
+            var newContentY :Number = (!_ctrl.isConnected() || _ctrl.canManageRoom()) ? 75 : 50;
             Tweener.addTween(_content, {time: .5, transition: TRANS, y: newContentY}); 
 
         } else {
@@ -338,7 +338,7 @@ public class Fifteen extends Sprite
 
         setLabel(""); // clear any old error?
         updateTileProvider();
-        if (_ctrl.isConnected() && _ctrl.canEditRoom()) {
+        if (_ctrl.isConnected() && _ctrl.canManageRoom()) {
             _ctrl.setMemory("skin", _skinData);
         }
     }

@@ -203,7 +203,7 @@ public class Graffiti extends Sprite
 
     protected function canEdit () :Boolean
     {
-       return _control.isConnected() && (_allCanEdit || _control.canEditRoom());
+       return _control.isConnected() && (_allCanEdit || _control.canManageRoom());
     }
 
     private static const log :Log = Log.getLog(Graffiti);
