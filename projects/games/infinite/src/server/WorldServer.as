@@ -4,8 +4,11 @@ package server
 	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
+	import com.whirled.game.OccupantChangedEvent;
+	import com.whirled.game.StateChangedEvent;
 	import com.whirled.net.MessageReceivedEvent;
 	
+	import flash.events.Event;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
@@ -37,7 +40,27 @@ package server
                         
 			_control = control;
 			_net = control.net;
-	        _net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);		
+	        _net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+	        
+	        _scoreKeeper = new ScoreKeeper();
+	        
+	        _control.game.addEventListener(StateChangedEvent.GAME_STARTED, reportEvent);
+            _control.game.addEventListener(StateChangedEvent.GAME_ENDED, reportEvent);
+            _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED, reportEvent);
+            _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, reportEvent);
+            _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, handleOccupantLeft);
+		}
+		
+		protected function handleOccupantLeft (event:OccupantChangedEvent) :void
+		{
+			if (_control.game.getOccupantIds().length < 1) {
+				_scoreKeeper.endGame(_control.game);
+			}
+		}
+		
+		protected function reportEvent(event:Event) :void
+		{
+			Log.debug("EVENT RECEIVED: "+event.type);
 		}
 		
 		/** 
@@ -64,6 +87,7 @@ package server
 		{
 		    const message:LevelComplete = new LevelComplete(event.player.id, event.level.number);
 		    sendToGroup(event.level.players, RemoteWorld.LEVEL_COMPLETE, message);
+		    _scoreKeeper.levelComplete(event.player.id, event.level.number);
 		}
 		
 		public function handlePathStart (event:MoveEvent) :void
@@ -209,6 +233,7 @@ package server
 		}
 			
 		protected var _world:World;
+		protected var _scoreKeeper:ScoreKeeper;
 		protected var _net:NetSubControl;
 		protected var _control:GameControl;
 		
