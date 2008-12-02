@@ -104,7 +104,7 @@ public class Ring
 
     public function removeMarbleIn (position :int) :Marble
     {
-        if (!positionContainsMarble)) {
+        if (!positionContainsMarble(position))) {
             throw new Error("Asked to remove a marble from an empty position [" + position + ", " +
                 this + "]");
         }
