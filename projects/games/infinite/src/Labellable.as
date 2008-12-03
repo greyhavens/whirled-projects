@@ -1,6 +1,7 @@
 package
 {
 	import arithmetic.GraphicCoordinates;
+	import arithmetic.GraphicRectangle;
 	import arithmetic.Vector;
 	
 	public interface Labellable 
@@ -21,6 +22,8 @@ package
 		 */
 		function anchorPoint (v:Vector) :GraphicCoordinates;
 		
-		function get graphicCenter () :GraphicCoordinates;		 
+		function get graphicCenter () :GraphicCoordinates;
+		
+		function get bounds () :GraphicRectangle;		
 	}
 }

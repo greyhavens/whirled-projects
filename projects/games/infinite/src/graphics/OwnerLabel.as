@@ -21,6 +21,36 @@ package graphics
 			addChild(_text);
 		}
 
+        protected function positionText (target:Labellable) :void
+        {
+            _text.htmlText = "<font size='10' face='Helvetica, Arial, _sans'>"+ labelText(target) +"</font>"
+            
+            // decide whether the label should be to the left or right of the target.
+            // if there is space to put the label on the left of the target then we always do
+            // otherwise it goes on the right.            
+            const visible:GraphicRectangle = _objective.visibleArea;
+            const bounds:GraphicRectangle = target.bounds;
+            
+            if (bounds.left - (SPACING*2) - _text.textWidth < visible.x) {
+                // the label goes on the right
+                _text.x = bounds.right + SPACING;                 
+            } else {
+                // the label goes on the left
+                _text.x = bounds.right + SPACING + _text.textWidth;
+            }
+            
+            // decide whether the label should be above or below the target
+            // in order to avoid impinging on the player, the label will be placed above the target if
+            // there is space for it, otherwise it will be below.
+            if (bounds.top - (SPACING*2) - _text.textHeight < visible.y) {
+                // the label goes on the bottom
+                _text.y = bounds.bottom + SPACING;
+            } else {
+                // the label goes on the top
+                _text.y = bounds.top - SPACING - _text.textHeight;
+            }            
+        }
+
 		public function displayOwnership (target:Labellable) :void
 		{
 			const center:GraphicCoordinates = _objective.centerOfView;
@@ -52,6 +82,8 @@ package graphics
 			visible = true;	
 		}
 		
+		
+		
 		/**
 		 * Compute the position of rectangle that is drawn behind the text, and the position of the
 		 * arrowhead.
@@ -72,6 +104,8 @@ package graphics
 
 			Log.debug ("arrowhead position is "+_arrowHead);
 		}
+
+        
 		
 		protected function redrawBackground() :void 
 		{
@@ -117,5 +151,8 @@ package graphics
 		protected var _arrowHead:GraphicCoordinates;
 		protected var _text:TextField;		
 		protected var _objective:Diagram;
+		
+		// The ideal distance maximum between the label and either the side walls, or the object it's pointing at.
+		protected static const SPACING:int = 25;
 	}
 }

@@ -2,6 +2,7 @@ package sprites
 {
 	import arithmetic.Geometry;
 	import arithmetic.GraphicCoordinates;
+	import arithmetic.GraphicRectangle;
 	import arithmetic.Vector;
 	
 	import cells.views.CellView;
@@ -83,6 +84,11 @@ package sprites
 			return Geometry.coordsOf(this).translatedBy(
 				Config.cellSize.divideByScalar(2));
 		}
+			
+		public function get bounds () :GraphicRectangle
+   		{
+            return GraphicRectangle.fromDisplayObject(this);
+		}		
 			
 		/**
 		 * Return an anchor point for a pointer attaching to this object in the specified direction.

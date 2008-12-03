@@ -54,9 +54,19 @@ package arithmetic
 			return new Vector(width, height);
 		}		
 		
+		public function get left () :int
+		{
+		    return x;
+		}
+		
 		public function get right () :int
 		{
 			return x + width;
+		}
+		
+		public function get top () :int
+		{
+		    return y;
 		}
 		
 		public function get bottom () :int
