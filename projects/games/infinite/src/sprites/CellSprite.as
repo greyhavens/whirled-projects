@@ -71,11 +71,6 @@ package sprites
 			_objective.rolloverCell(this);
 		}
 		
-		protected function clearFootprints(event:MouseEvent) :void
-		{
-			_objective.moveOutSprite(this);
-		}
-
 		/**
 		 * Return the graphic center of the cell base.
 		 */

@@ -216,17 +216,6 @@ package client
                 }
             }
         }
-        
-        public function clearFootprints (event:MouseEvent) :void
-        {
-            hideOwnership();
-        	_footsteps.moveoffFootprint(event);
-        }				
-		
-		public function moveOutSprite (sprite:CellSprite) :void
-		{
-			_footsteps.moveOutSprite(sprite);
-		}				
 				
 		/**	
 		 * Initialize the buffer, positioning the specificed point at the viewpoint.

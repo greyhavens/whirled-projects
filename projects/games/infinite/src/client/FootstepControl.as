@@ -80,6 +80,7 @@ package client
             } else {
             	Log.debug("footprint sprite not found in objective");
             }
+            _objective.hideOwnership();
         }
         
         protected function get cell () :Cell
