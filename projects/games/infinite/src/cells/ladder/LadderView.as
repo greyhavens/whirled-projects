@@ -13,14 +13,7 @@ package cells.ladder
 		{
 			super(cell, asset);
 		}
-		
-		/** 
-		 * When labelling the base, we want to point at the base of the ladder, not the side
-		 * of the cell.
-		 */
-		override public function anchorPoint (direction:Vector) :GraphicCoordinates
-		{			
-			return super.anchorPoint(direction);
-		}
+				
+		override public function get showLabel () :Boolean { return true; }
 	}
 }

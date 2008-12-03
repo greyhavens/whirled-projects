@@ -180,19 +180,9 @@ package client
                 Log.warning("didn't find view for "+c.position);
             }
 		}
-		
-		public function displayOwnership (cell:Cell) :void
-		{
-			Log.debug ("showing user that this is "+cell.owner.name+"'s "+cell.objectName);
-			const view:CellView = _viewBuffer.find(cell.position);
-			if (view is Labellable) {
-				_label.displayOwnership(view as Labellable);
-			}
-		}
 
-		public function hideOwnership (labellable:Cell) :void
+		public function hideOwnership () :void
 		{
-			Log.debug ("hiding from user that this is "+labellable.owner.name+"'s "+labellable.objectName);			
 			_label.hide();
 		}
 					    				  
@@ -219,13 +209,17 @@ package client
         public function rolloverCell (sprite:CellSprite) :void
         {
         	_footsteps.checkFootprints(sprite);
-        	if (sprite is Labellable) {
-        	    _label.displayOwnership(sprite as Labellable);        	    
-        	}
+            const toLabel:Labellable = sprite as Labellable;
+            if (toLabel != null) {
+                if (toLabel.showLabel) {
+                    _label.displayOwnership(toLabel);
+                }
+            }
         }
         
         public function clearFootprints (event:MouseEvent) :void
         {
+            hideOwnership();
         	_footsteps.moveoffFootprint(event);
         }				
 		

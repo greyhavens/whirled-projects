@@ -18,16 +18,6 @@ package cells
 		 * Hide the cell from the objective.  Once hidden, interaction is no longer possible.
 		 */
 		function hideCell (c:Cell) :void
-				
-		/**
-		 * Display ownership information about the cell to the user.
-		 */
-		function displayOwnership (cell:Cell) :void
-		
-		/**
-		 * Stop displaying ownership information about the cell to the user.
-		 */
-		function hideOwnership (cell:Cell) :void
-				
+			
 	}
 }

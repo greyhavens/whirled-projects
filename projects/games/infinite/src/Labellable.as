@@ -24,6 +24,8 @@ package
 		
 		function get graphicCenter () :GraphicCoordinates;
 		
-		function get bounds () :GraphicRectangle;		
+		function get bounds () :GraphicRectangle;
+		
+		function get showLabel () :Boolean;		
 	}
 }

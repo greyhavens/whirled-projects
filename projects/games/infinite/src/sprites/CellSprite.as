@@ -87,7 +87,7 @@ package sprites
 			
 		public function get bounds () :GraphicRectangle
    		{
-            return GraphicRectangle.fromDisplayObject(this);
+   		    return new GraphicRectangle(x,y, width, height);
 		}		
 			
 		/**
@@ -98,8 +98,7 @@ package sprites
 		 */
 		public function anchorPoint (direction:Vector) :GraphicCoordinates
 		{
-			return graphicCenter.translatedBy(
-				Config.cellSize.divideByScalar(2).multiplyByVector(direction.reversed).xComponent());
+		    return graphicCenter.translatedBy(direction.reversed.normalizeF().multiplyByScalar(width/2).toVector());
 		}		
 		
 		public function get cell () :Cell {
@@ -112,6 +111,13 @@ package sprites
 		
 		public function get owner () :Owner {
 			return _cell.owner;
+		}
+		
+		/**
+		 * By default, we don't label every cell.
+		 */
+		public function get showLabel () :Boolean {
+		    return false;
 		}
 		
 		public function addToObjective (objective:Objective) :void

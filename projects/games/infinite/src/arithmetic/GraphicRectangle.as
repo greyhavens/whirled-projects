@@ -100,6 +100,9 @@ package arithmetic
 			return new GraphicRectangle(field.x, field.y, field.textWidth, field.textHeight);
 		}
 		
+		/**
+		 * Return a rectangle representing the area but not the position of the supplied display object.
+		 */
 		public static function fromDisplayObject (object:DisplayObject) :GraphicRectangle
 		{
 			return new GraphicRectangle(0,0, object.width, object.height);

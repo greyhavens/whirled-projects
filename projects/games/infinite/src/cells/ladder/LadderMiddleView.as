@@ -4,7 +4,7 @@ package cells.ladder
     import world.Cell;
     import world.Cell;
 
-	public class LadderMiddleView extends CellSprite
+	public class LadderMiddleView extends LadderView
 	{
 		public function LadderMiddleView(cell:Cell)
 		{

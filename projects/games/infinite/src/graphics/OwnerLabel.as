@@ -21,7 +21,7 @@ package graphics
 			addChild(_text);
 		}
 
-        protected function positionText (target:Labellable) :void
+        protected function updateText (target:Labellable) :void
         {
             _text.htmlText = "<font size='10' face='Helvetica, Arial, _sans'>"+ labelText(target) +"</font>"
             
@@ -30,13 +30,16 @@ package graphics
             // otherwise it goes on the right.            
             const visible:GraphicRectangle = _objective.visibleArea;
             const bounds:GraphicRectangle = target.bounds;
+                        
+            var x:int;
+            var y:int;
             
             if (bounds.left - (SPACING*2) - _text.textWidth < visible.x) {
                 // the label goes on the right
-                _text.x = bounds.right + SPACING;                 
+                x = bounds.right + SPACING;                 
             } else {
                 // the label goes on the left
-                _text.x = bounds.right + SPACING + _text.textWidth;
+                x = bounds.left - SPACING - _text.textWidth;
             }
             
             // decide whether the label should be above or below the target
@@ -44,11 +47,15 @@ package graphics
             // there is space for it, otherwise it will be below.
             if (bounds.top - (SPACING*2) - _text.textHeight < visible.y) {
                 // the label goes on the bottom
-                _text.y = bounds.bottom + SPACING;
+                y = bounds.bottom + SPACING;
             } else {
                 // the label goes on the top
-                _text.y = bounds.top - SPACING - _text.textHeight;
-            }            
+                y = bounds.top - SPACING - _text.textHeight;
+            }   
+            
+            // map the position back to the coordinate system of this sprite and apply it to the text field.
+            const textPosition:GraphicCoordinates = new GraphicCoordinates(x, y);
+            Geometry.position(_text, _objectiveCoordinates.toLocal(textPosition));
         }
 
 		public function displayOwnership (target:Labellable) :void
@@ -57,21 +64,11 @@ package graphics
 			Geometry.position(this, center);			
 			_objectiveCoordinates = GraphicCoordinates.ORIGIN.correspondsTo(center);
 			
-			Log.debug (" label position is: "+x+", "+y);			
-			// update the text label
-			_text.text = labelText(target);
-			
-			Log.debug("unnormalized direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView));
-			Log.debug("normalized direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView).normalizeF());
-			Log.debug("compass direction is: " + target.graphicCenter.distanceTo(_objective.centerOfView).asCompassDiagonal());
-			
-//			const labelCenter:GraphicCoordinates = target.graphicCenter.translatedBy(target.graphicCenter.distanceTo(_objective.centerOfView).asCompassDiagonal().multiplyByScalar(Config.cellSize.dx)).from(_objectiveCoordinates);
-//			const textRectangle:GraphicRectangle = GraphicRectangle.fromText(_text);
-//			labelCenter.translatedBy(textRectangle.size.half).applyTo(_text);
-			
-			const direction:Vector = target.graphicCenter.distanceTo(_objective.centerOfView).xComponent().normalize();
-			Geometry.position(_text, _objective.visibleArea.half(Vector.UP).half(direction).center.from(_objectiveCoordinates));			
-			
+			// update the text label and position
+
+            updateText(target);                			
+            Log.debug (" label position is: "+x+", "+y);            
+
 			const rect:GraphicRectangle = new GraphicRectangle(_text.x, _text.y, _text.textWidth, _text.textHeight).paddedBy(10); 
 			computeBackground(rect, target);
 			
@@ -95,7 +92,7 @@ package graphics
 			_rectangle = text;
 						
 			const direction:Vector = 
-				_rectangle.center.distanceTo(target.graphicCenter.from(_objectiveCoordinates)).xComponent().normalize();
+				_rectangle.center.distanceTo(target.graphicCenter.from(_objectiveCoordinates));
 
 			Log.debug ("direction = "+direction);
 
