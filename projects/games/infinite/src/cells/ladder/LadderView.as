@@ -3,10 +3,11 @@ package cells.ladder
 	import arithmetic.GraphicCoordinates;
 	import arithmetic.Vector;
 	
-	import cells.PlayerCellSprite;
-    import world.Cell;
+	import sprites.CellSprite;
 	
-	public class LadderView extends PlayerCellSprite
+	import world.Cell;
+	
+	public class LadderView extends CellSprite
 	{
 		public function LadderView (cell:Cell, asset:Class)
 		{

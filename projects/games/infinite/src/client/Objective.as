@@ -216,9 +216,12 @@ package client
 			//Log.debug("clicked on "+event.cell);
 		}		
 		
-        public function checkFootprints (sprite:CellSprite) :void
+        public function rolloverCell (sprite:CellSprite) :void
         {
         	_footsteps.checkFootprints(sprite);
+        	if (sprite is Labellable) {
+        	    _label.displayOwnership(sprite as Labellable);        	    
+        	}
         }
         
         public function clearFootprints (event:MouseEvent) :void
@@ -232,7 +235,7 @@ package client
 		}				
 				
 		/**	
-		 * Initialize the bugger, positioning the specificed point at the viewpoint.
+		 * Initialize the buffer, positioning the specificed point at the viewpoint.
 		 */
 		protected function initializeViewpoint (viewPoint:BoardCoordinates) :void
 		{
