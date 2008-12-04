@@ -112,7 +112,7 @@ public class GameMode extends AppMode
         }
 
         // create players
-        var playerColors :Array = Constants.PLAYER_COLORS.slice();
+        var playerColors :Array = GameContext.levelData.playerColors.slice();
         Rand.shuffleArray(playerColors, Rand.STREAM_GAME);
 
         board = getBoard(0);
@@ -210,7 +210,7 @@ public class GameMode extends AppMode
 
         switch (keyCode) {
         case KeyboardCodes.G:
-            if (localPlayer.numGems < Constants.MAX_PLAYER_GEMS) {
+            if (localPlayer.numGems < GameContext.levelData.maxCarriedGems) {
                 var lastGemType :int =
                     (localPlayer.numGems > 0 ? localPlayer.gems[localPlayer.gems.length - 1] : 0);
                 var nextGemType :int = (lastGemType == Constants.GEM_PURPLE ?

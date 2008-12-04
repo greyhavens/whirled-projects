@@ -1,14 +1,30 @@
 package redrover.data {
 
 import com.threerings.util.StringUtil;
+import com.whirled.contrib.simplegame.util.NumRange;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import redrover.*;
+import redrover.util.IntValueTable;
 import redrover.util.XmlReadError;
 import redrover.util.XmlReader;
 
 public class LevelData
 {
     public var cellSize :int;
+    public var ownBoardZoom :Number;
+    public var otherBoardZoom :Number;
+    public var gemSpawnTime :NumRange = new NumRange(0, 0, Rand.STREAM_GAME);
+    public var speedBase :Number;
+    public var speedOffsetPerGem :Number;
+    public var slowTerrainSpeedMultiplier :Number;
+    public var maxCarriedGems :int;
+    public var switchBoardsTime :Number;
+    public var returnHomeGemsMin :int;
+
+    public var gemValues :IntValueTable;
+    public var playerColors :Array = [];
+
     public var terrain :Array = [];
     public var objects :Array = [];
     public var cols :int;
@@ -19,6 +35,23 @@ public class LevelData
         var data :LevelData = new LevelData();
 
         data.cellSize = XmlReader.getUintAttr(xml, "cellSize");
+        data.ownBoardZoom = XmlReader.getNumberAttr(xml, "ownBoardZoom");
+        data.otherBoardZoom = XmlReader.getNumberAttr(xml, "otherBoardZoom");
+        data.gemSpawnTime.min = XmlReader.getUintAttr(xml, "gemSpawnTimeMin");
+        data.gemSpawnTime.max = XmlReader.getUintAttr(xml, "gemSpawnTimeMax");
+        data.speedBase = XmlReader.getNumberAttr(xml, "speedBase");
+        data.speedOffsetPerGem = XmlReader.getNumberAttr(xml, "speedOffsetPerGem");
+        data.slowTerrainSpeedMultiplier = XmlReader.getNumberAttr(xml, "slowTerrainSpeedMultiplier");
+        data.maxCarriedGems = XmlReader.getUintAttr(xml, "maxCarriedGems");
+        data.switchBoardsTime = XmlReader.getNumberAttr(xml, "switchBoardsTime");
+        data.returnHomeGemsMin = XmlReader.getUintAttr(xml, "returnHomeGemsMin");
+
+        data.gemValues = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "GemValues"));
+
+        for each (var colorXml :XML in xml.PlayerColors.Color) {
+            data.playerColors.push(XmlReader.getUintAttr(colorXml, "value"));
+        }
+
         parseTerrainString(xml.Terrain, data);
         parseObjectString(xml.Objects, data);
 

@@ -30,9 +30,8 @@ public class GemSpawner extends SimObject
     protected function scheduleGem () :void
     {
         removeAllTasks();
-        var spawnTime :Number = Rand.nextNumberRange(Constants.GEM_SPAWN_MIN,
-                                                     Constants.GEM_SPAWN_MAX,
-                                                     Rand.STREAM_GAME);
+
+        var spawnTime :Number = GameContext.levelData.gemSpawnTime.next();
         addTask(After(spawnTime, new FunctionTask(
             function () :void {
                 createGem();

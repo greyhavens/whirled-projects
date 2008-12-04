@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import redrover.*;
+import redrover.data.LevelData;
 
 public class Player extends SimObject
 {
@@ -34,7 +35,7 @@ public class Player extends SimObject
 
         _state = STATE_SWITCHINGBOARDS;
         addNamedTask(SWITCH_BOARDS_TASK_NAME,
-            After(Constants.SWITCH_BOARDS_TIME,
+            After(GameContext.levelData.switchBoardsTime,
                 new FunctionTask(switchBoards)));
     }
 
@@ -57,7 +58,7 @@ public class Player extends SimObject
     public function get canSwitchBoards () :Boolean
     {
         return (_state != STATE_SWITCHINGBOARDS &&
-                (_teamId == _curBoardId || this.numGems >= Constants.RETURN_HOME_GEMS_MIN));
+                (_teamId == _curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
     }
 
     public function get playerIndex () :int
@@ -102,7 +103,8 @@ public class Player extends SimObject
 
     public function get moveSpeed () :Number
     {
-        return Constants.BASE_MOVE_SPEED + (this.numGems * Constants.MOVE_SPEED_GEM_OFFSET);
+        var data :LevelData = GameContext.levelData;
+        return data.speedBase + (this.numGems * data.speedOffsetPerGem);
     }
 
     public function get gridX () :int
@@ -142,7 +144,7 @@ public class Player extends SimObject
         if (_state != STATE_SWITCHINGBOARDS) {
             var moveDist :Number = this.moveSpeed * dt;
 
-            /*if (_moveTarget != null) {
+            if (_moveTarget != null) {
                 var xDist :Number = ((_moveTarget.x + 0.5) * _cellSize) - _loc.x;
                 var yDist :Number = ((_moveTarget.y + 0.5) * _cellSize) - _loc.y;
                 var xDistAbs :Number = Math.abs(xDist);
@@ -156,7 +158,7 @@ public class Player extends SimObject
                     _moveTarget = null;
                     _moveRequest = -1;
                 }
-            }*/
+            }
 
             // Are we changing direction?
             if (_moveRequest != _moveDirection && _moveRequest != -1) {
@@ -216,7 +218,7 @@ public class Player extends SimObject
 
             var cell :BoardCell = this.curBoardCell;
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (!this.isOnOwnBoard && this.numGems < Constants.MAX_PLAYER_GEMS) {
+            if (!this.isOnOwnBoard && this.numGems < GameContext.levelData.maxCarriedGems) {
                 var lastGemType :int = (_gems.length == 0 ? -1 : _gems[_gems.length - 1]);
                 if (cell.hasGem && cell.gemType != lastGemType) {
                     addGem(cell.takeGem());
@@ -243,6 +245,11 @@ public class Player extends SimObject
         } else {
             return (Math.floor((_loc.y - halfCell) / _cellSize) * _cellSize) + halfCell;
         }
+    }
+
+    protected function isObstacleAt (x :int, y :int) :void
+    {
+        GameContext.gameMode.getBoard(_curBoardId).getCellAtPixel(x, y).isObstacle;
     }
 
     protected function tryMoveTo (xNew :Number, yNew :Number) :void
@@ -288,7 +295,7 @@ public class Player extends SimObject
 
     protected function redeemGems (cell :BoardCell) :void
     {
-        _score += Constants.GEM_VALUE.getValueAt(this.numGems);
+        _score += GameContext.levelData.gemValues.getValueAt(this.numGems);
         dispatchEvent(GameEvent.createGemsRedeemed(_playerIndex, _gems, cell));
         _gems = [];
     }

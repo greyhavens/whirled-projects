@@ -1,5 +1,39 @@
 <root>
-<Level cellSize="40">
+<Level	cellSize="40"
+		ownBoardZoom="1"
+		otherBoardZoom="1.5"
+		gemSpawnTimeMin="3"
+		gemSpawnTimeMax="3"
+		speedBase="80"
+		speedOffsetPerGem="-5"
+		slowTerrainSpeedMultiplier="0.5"
+		maxCarriedGems="10"
+		switchBoardsTime="1"
+		returnHomeGemsMin="3">
+		
+	<GemValues>
+		<Index num="0" value="0"/>
+		<Index num="1" value="10"/>
+		<Index num="2" value="20"/>
+		<Index num="3" value="30"/>
+		<Index num="4" value="50"/>
+		<Index num="5" value="80"/>
+		<OutOfBoundsScale value="40"/>
+	</GemValues>
+	
+	<PlayerColors>
+		<Color value="0xFFFFFF"/>
+		<Color value="0x9FBCFF"/>
+		<Color value="0xFF0000"/>
+		<Color value="0x9C78E4"/>
+		<Color value="0x47880A"/>
+		<Color value="0x996633"/>
+		<Color value="0xFF8000"/>
+		<Color value="0x0000BB"/>
+		<Color value="0xFF6FCF"/>
+		<Color value="0x333333"/>
+	</PlayerColors>
+		
 	<Terrain>
 		# # # # # # # # # # # # # # # # #
 		# . . . . . . . . . . . . . . . #

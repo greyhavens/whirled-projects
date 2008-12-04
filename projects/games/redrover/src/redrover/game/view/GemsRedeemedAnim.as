@@ -67,7 +67,7 @@ public class GemsRedeemedAnim extends SceneObject
         removeDisplayChildren();
 
         var scoreText :String =
-            "Gems x" + _numGems + ": +" + Constants.GEM_VALUE.getValueAt(_numGems);
+            "Gems x" + _numGems + ": +" + GameContext.levelData.gemValues.getValueAt(_numGems);
 
         var happyText :String =
             HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];

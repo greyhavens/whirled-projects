@@ -8,6 +8,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import redrover.*;
+import redrover.data.LevelData;
 import redrover.game.*;
 import redrover.util.SpriteUtil;
 
@@ -29,6 +30,8 @@ public class Camera extends SceneObject
     {
         super.update(dt);
 
+        var data :LevelData = GameContext.levelData;
+
         // When the local player switches boards, update the camera
         var newBoardId :int = GameContext.localPlayer.curBoardId;
         if (_lastBoardId != newBoardId) {
@@ -40,7 +43,7 @@ public class Camera extends SceneObject
             _sprite.addChild(newTeamSprite);
 
             var targetScale :Number = (newBoardId == GameContext.localPlayer.teamId ?
-                Constants.OWN_BOARD_ZOOM : Constants.OTHER_BOARD_ZOOM);
+                data.ownBoardZoom : data.otherBoardZoom);
             addNamedTask(ZOOM_TASK_NAME,
                          ScaleTask.CreateSmooth(targetScale, targetScale, ZOOM_TIME),
                          true);
