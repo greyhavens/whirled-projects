@@ -30,8 +30,8 @@ public class Sparkler extends FrameSprite
         _ctrl = new FurniControl(this);
         _ctrl.registerCustomConfig(createConfigPanel);
         _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, handleMemoryChanged);
-        _lifetime = _ctrl.lookupMemory("lifetime", 2000) as int;
-        _color = _ctrl.lookupMemory("color", 0xFFFFFF) as uint;
+        _lifetime = _ctrl.getMemory("lifetime", 2000) as int;
+        _color = _ctrl.getMemory("color", 0xFFFFFF) as uint;
 
         //addChild(createConfigPanel());
     }
@@ -119,13 +119,13 @@ public class Sparkler extends FrameSprite
     protected function handleColorPicked (event :ColorPickerEvent) :void
     {
         _color = event.color;
-        _ctrl.updateMemory("color", _color);
+        _ctrl.setMemory("color", _color);
     }
 
     protected function handleLifetimePicked (event :Event) :void
     {
         _lifetime = (event.target as ComboBox).selectedItem.data as int;
-        _ctrl.updateMemory("lifetime", _lifetime);
+        _ctrl.setMemory("lifetime", _lifetime);
     }
 
     protected var _ctrl :FurniControl;
