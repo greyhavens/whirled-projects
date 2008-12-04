@@ -84,7 +84,7 @@ public class Ring
      * A Marble in it.  Not the exact inverse of positionContainsMarble().  For a position that is
      * not valid on this Ring, both functions will return false.
      */
-    public function positionOpen (position :int) :void
+    public function positionOpen (position :int) :Boolean
     {
         var localPosition :int = globalToLocal(position);
         return _holes.indexOf(localPosition) >= 0 && _marbles[localPosition] == null;
@@ -94,7 +94,7 @@ public class Ring
      * Returns true of the position contains a marble.  Not the exact inverse of positionOpen().
      * For a position that is not valid on this Ring, both functions will return false.
      */
-    public function positionContainsMarble (position :int) :void
+    public function positionContainsMarble (position :int) :Boolean
     {
         var localPosition :int = globalToLocal(position);
         return _marbles[localPosition] == null;
@@ -117,20 +117,20 @@ public class Ring
 
     public function removeMarbleIn (position :int) :Marble
     {
-        if (!positionContainsMarble(position))) {
+        if (!positionContainsMarble(position)) {
             throw new Error("Asked to remove a marble from an empty position [" + position + ", " +
                 this + "]");
         }
 
         var localPosition :int = globalToLocal(position);
-        var marble :Marble = _marble[localPosition] as Marble;
-        _marble[localPosition] = null;
+        var marble :Marble = _marbles[localPosition] as Marble;
+        _marbles[localPosition] = null;
         return marble;
     }
 
     public function toString () :String
     {
-        return "Ring [id=" + id + "]");
+        return "Ring [id=" + id + "]";
     }
 
     protected function globalToLocal (position :int) :int

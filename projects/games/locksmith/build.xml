@@ -6,6 +6,8 @@
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="locksmith"/>
   <property name="app.type" value="game"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent-package-dir" value="locksmith/server"/>
 
   <import file="../../../etc/project-include.xml"/>
 

@@ -4,6 +4,7 @@
 package locksmith.model {
 
 import com.threerings.util.Log;
+import com.threerings.util.HashMap;
 import com.threerings.util.ValueEvent;
 
 import com.whirled.game.GameControl;
@@ -58,7 +59,7 @@ public class RingManager extends ModelManager
                 holes.push(pos);
             }
             setIn(RING_HOLES, ring - 1, holes);
-            setIn(RING_POSITIONS, ring - 1, 0);
+            setIn(RING_POSITION, ring - 1, 0);
         }
         commitBatch();
     }
@@ -72,7 +73,7 @@ public class RingManager extends ModelManager
     public function rotateRing (id :int, direction :RotationDirection) :void
     {
         requireServer();
-        if (direction == RingDirection.NO_ROTATION) {
+        if (direction == RotationDirection.NO_ROTATION) {
             // nothin' doin'
             return;
         }
@@ -96,7 +97,7 @@ public class RingManager extends ModelManager
                 var outerRing :Ring = ring;
                 while (outerRing.outer != null && outerRing.outer.positionContainsMarble(ii) &&
                     outerRing.positionOpen(ii)) {
-                    var marble :Marble = outerRing.outer.removeMarble(ii);
+                    marble = outerRing.outer.removeMarbleIn(ii);
                     if (phase == 4) {
                         innerId = innerRingPath(outerRing, ii);
                         if (innerId != GOAL_RING_ID) {
@@ -138,12 +139,12 @@ public class RingManager extends ModelManager
 
         } else if (prop == RING_POSITION && onClient()) {
             var ring :Ring = _rings[key] as Ring;
-            var direction :RotationDirection = ring.setPosition(newValue);
+            var direction :RotationDirection = ring.setPosition(newValue as int);
             dispatchEvent(new RingPositionEvent(ring, direction));
 
         } else if (prop == MARBLE_POSITION && onClient()) {
             var ringId :int = newValue.ring;
-            var ring :Ring = ringId == GOAL_RING_ID || ringId == LAUNCHER_RING_ID ? 
+            ring = ringId == GOAL_RING_ID || ringId == LAUNCHER_RING_ID ? 
                 null : _rings[ringId] as Ring;
             var position :int = newValue.pos;
             var marble :Marble = _marbles.get(key) as Marble;
@@ -155,7 +156,7 @@ public class RingManager extends ModelManager
 
         } else if (prop == EXISTING_MARBLES && onClient()) {
             if (oldValue == null) {
-                var marble :Marble = new Marble(key, Player.valueOf(newValue as String));
+                marble = new Marble(key, Player.valueOf(newValue as String));
                 _marbles.put(key, marble);
             } else {
                 _marbles.remove(key);
@@ -168,7 +169,7 @@ public class RingManager extends ModelManager
         requireServer();
         startBatch();
         var sunLaunchers :Array = Player.SUN.launchers;
-        var moonLaunchers :Array = PLayer.MOON.launchers;
+        var moonLaunchers :Array = Player.MOON.launchers;
         for (var ii :int = 0; ii < sunLaunchers.length; ii++) {
             var sunMarble :Marble = new Marble(_nextMarbleId++, Player.SUN);
             _marbles.put(sunMarble.id, sunMarble);
@@ -189,15 +190,15 @@ public class RingManager extends ModelManager
 
     protected function innerRingPath (ring :Ring, position :int) :int
     {
-        if (ring.inner != null && ring.inner.positionOpen(ii)) {
+        if (ring.inner != null && ring.inner.positionOpen(position)) {
             return innerRingPath(ring.inner, position);
 
         } else if (ring.inner != null) {
             return ring.id;
 
         } else {
-            var player :Player = Player.MOON.goals.indexOf(ii) >= 0 ? Player.MOON :
-                (Player.SUN.goals.indexOf(ii) >= 0) ? Player.SUN : null);
+            var player :Player = Player.MOON.goals.indexOf(position) >= 0 ? Player.MOON :
+                (Player.SUN.goals.indexOf(position) >= 0 ? Player.SUN : null);
             if (player != null) {
                 dispatchEvent(new ValueEvent(POINT_SCORED, player));
                 return GOAL_RING_ID;

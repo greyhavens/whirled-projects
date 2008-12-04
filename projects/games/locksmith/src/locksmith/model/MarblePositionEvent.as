@@ -5,7 +5,7 @@ package locksmith.model {
 
 import flash.events.Event;
 
-public class MarblePositionEvent extends Event;
+public class MarblePositionEvent extends Event
 {
     public function MarblePositionEvent (ring :Ring, marble :Marble, position :int)
     {

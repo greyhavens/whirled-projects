@@ -13,8 +13,10 @@ import com.threerings.util.ValueEvent;
 import com.whirled.game.StateChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 
+import locksmith.LocksmithController;
 import locksmith.model.Player;
 import locksmith.model.RingManager;
+import locksmith.model.RotationDirection;
 import locksmith.model.TurnManager;
 
 public class ServerLocksmithController extends LocksmithController
@@ -27,7 +29,7 @@ public class ServerLocksmithController extends LocksmithController
             _gameCtrl.game, StateChangedEvent.GAME_STARTED, gameStarted);
         _eventMgr.registerListener(
             _gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
-        _eventMgr.registerListener(_model.ringManager, RingManager.POINT_SCORED, ringPointScored);
+        _eventMgr.registerListener(_model.ringMgr, RingManager.POINT_SCORED, ringPointScored);
 
         // TODO: listen for turn changed and enforce the maximum turn time.
     }
@@ -50,7 +52,7 @@ public class ServerLocksmithController extends LocksmithController
         if (event.name == RingManager.RING_ROTATION) {
             if (event.senderId != _model.turnMgr.turnHolderId) {
                 log.warning("Received ring rotation request from non-turn holder!", "sender", 
-                    senderId, "turnHolder", _model.turnMgr.turnHolderId);
+                    event.senderId, "turnHolder", _model.turnMgr.turnHolderId);
                 return;
             }
 
@@ -68,7 +70,7 @@ public class ServerLocksmithController extends LocksmithController
     {
         // this is coming from a source we trust - we just need to send it along to the appropriate
         // manager
-        _eventMgr.scoreMgr.playerScoredPoint(event.value as Player);
+        _model.scoreMgr.playerScoredPoint(event.value as Player);
     }
 
     private static const log :Log = Log.getLog(ServerLocksmithController);

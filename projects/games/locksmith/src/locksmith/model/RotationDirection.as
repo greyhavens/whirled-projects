@@ -5,7 +5,7 @@ package locksmith.model {
 
 import com.threerings.util.Enum;
 
-public final class RotationDirection 
+public final class RotationDirection extends Enum
 {
     public static const CLOCKWISE :RotationDirection = 
         new RotationDirection("CLOCKWISE", -1);
@@ -13,7 +13,7 @@ public final class RotationDirection
         new RotationDirection("COUNTER_CLOCKWISE", 1);
     public static const NO_ROTATION :RotationDirection = 
         new RotationDirection("NO_ROTATION", 0);
-    finishedEnumerating();
+    finishedEnumerating(RotationDirection);
 
     public static function values () :Array
     {

@@ -141,8 +141,10 @@ public /* abstract */ class ModelManager extends EventDispatcher
         }
     }
 
+    protected var _gameCtrl :GameControl;
     protected var _eventMgr :EventHandlerManager;
     protected var _properties :Array = [];
     protected var _batching :Boolean = false;
     protected var _batched :Array = [];
+}
 }

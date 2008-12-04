@@ -3,15 +3,15 @@
 
 package locksmith.model {
 
+import com.whirled.game.GameControl;
+
 import com.whirled.contrib.EventHandlerManager;
 
 public class LocksmithModel
 {
     public function LocksmithModel (gameCtrl :GameControl, eventMgr :EventHandlerManager)
     {
-        _gameCtrl = gameCtrl;
         _eventMgr  = eventMgr;
-
         _ringMgr = new RingManager(gameCtrl, _eventMgr);
         _scoreMgr = new ScoreManager(gameCtrl, _eventMgr);
         _turnMgr = new TurnManager(gameCtrl, _eventMgr);
@@ -35,6 +35,6 @@ public class LocksmithModel
     protected var _eventMgr :EventHandlerManager;
     protected var _ringMgr :RingManager;
     protected var _turnMgr :TurnManager;
-    protected var _scoreMr :ScoreManager;
+    protected var _scoreMgr :ScoreManager;
 }
 }

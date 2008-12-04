@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package drift.model {
+package locksmith.model {
 
 import com.threerings.util.Enum;
 

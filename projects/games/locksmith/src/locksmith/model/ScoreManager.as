@@ -28,7 +28,7 @@ public class ScoreManager extends ModelManager
 
     public function getScore (player :Player) :int
     {
-        return get(PLAYER_SCORE)[player.oridinal()] as int;
+        return getIn(PLAYER_SCORE, player.ordinal()) as int;
     }
 
     public function playerScoredPoint (player :Player) :void

@@ -8,9 +8,13 @@ import flash.display.DisplayObject;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
+import com.whirled.game.GameControl;
+
 import com.whirled.contrib.EventHandlerManager;
 
 import locksmith.events.EventManagerFactory;
+import locksmith.model.LocksmithModel;
+import locksmith.model.ScoreManager;
 
 public class LocksmithController 
     implements EventManagerFactory

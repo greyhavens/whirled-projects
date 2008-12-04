@@ -3,7 +3,7 @@
 
 package locksmith.model {
 
-import flash.events.event;
+import flash.events.Event;
 
 public class RingPositionEvent extends Event 
 {

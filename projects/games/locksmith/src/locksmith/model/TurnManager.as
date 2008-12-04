@@ -40,7 +40,7 @@ public class TurnManager extends ModelManager
     public function advanceTurn () :void
     {
         requireServer();
-        startNextTurn();
+        _gameCtrl.game.startNextTurn();
     }
 
     public function assignPlayers () :void
