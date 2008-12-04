@@ -10,7 +10,10 @@ import com.threerings.util.ValueEvent;
 
 import com.whirled.contrib.EventHandlerManager;
 
+import locksmith.events.EventManagerFactory;
+
 public class LocksmithController 
+    implements EventManagerFactory
 {
     public function LocksmithController (display :DisplayObject) 
     {

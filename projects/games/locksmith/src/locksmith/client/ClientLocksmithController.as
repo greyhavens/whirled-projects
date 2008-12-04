@@ -25,7 +25,7 @@ public class ClientLocksmithController extends LocksmithController
             _gameCtrl.local.setShowReplay(false);
         }
 
-        _view = new LocksmithView(_model);
+        _view = new LocksmithView(_model, this);
         sprite.addChild(_view);
 
         _eventMgr.registerListener(
