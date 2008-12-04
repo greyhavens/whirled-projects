@@ -25,6 +25,11 @@ public final class RotationDirection
         return Enum.valueOf(RotationDirection, name) as RotationDirection;
     }
 
+    public static function determineDirection (rotation :int) :RotationDirection
+    {
+        return rotation < 0 ? CLOCKWISE : (rotation > 0 ? COUNTER_CLOCKWISE : NO_ROTATION);
+    }
+
     public function get direction () :int
     {
         return _direction;

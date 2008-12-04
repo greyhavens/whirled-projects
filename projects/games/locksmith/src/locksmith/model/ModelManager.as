@@ -52,6 +52,14 @@ public /* abstract */ class ModelManager extends EventDispatcher
         throw new Error("Abstract");
     }
 
+    protected function dispatchClientRequest (name :String, value :Object) :void
+    {
+        requireClient();
+        doNetwork(function () :void {
+            _gameCtrl.net.agent.sendMessage(name, value);
+        });
+    }
+
     protected function startBatch () :void
     {
         requireServer();
@@ -82,12 +90,22 @@ public /* abstract */ class ModelManager extends EventDispatcher
     {
         requireServer();
         if (_properties.indexOf(property) < 0) {
-            throw new Error("That property is not managed by this manager! [" + property + "]");
+            throw new ArgumentError(
+                "That property is not managed by this manager! [" + property + "]");
         }
 
         doNetwork(function () :void {
             _gameCtrl.net.setIn(property, key, value, immediate);
         });
+    }
+
+    protected function getIn (property :String, key :int) :Object
+    {
+        if (_properties.indexOf(property) < 0) {
+            throw new ArgumentError(
+                "That property is not managed by this manager! [" + property + "]");
+        }
+        return _gameCtrl.net.get(property)[key];
     }
 
     protected function doNetwork (func :Function) :void
@@ -99,16 +117,26 @@ public /* abstract */ class ModelManager extends EventDispatcher
         }
     }
 
+    protected function onServer () :Boolean 
+    {
+        return _gameCtrl.game.amServerAgent();
+    }
+
+    protected function onClient () :Boolean
+    {
+        return !_gameCtrl.game.amServerAgent();
+    }
+
     protected function requireServer () :void
     {
-        if (!_gameCtrl.game.amServerAgent()) {
+        if (!onServer()) {
             throw new Error("Only a server agent may perform that operation!");
         }
     }
 
     protected function requireClient () :void
     {
-        if (_gameCtrl.game.amServerAgent()) {
+        if (!onClient()) {
             throw new Error("Only a client may perform that operation!");
         }
     }

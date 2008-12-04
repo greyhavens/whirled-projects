@@ -11,21 +11,36 @@ import com.whirled.game.GameControl;
 import com.whirled.contrib.EventHandlerManager;
 
 [Event(name="pointScored", type="com.threerings.util.ValueEvent")]
+[Event(name="ringsCreated", type="com.threerings.util.ValueEvent")]
+[Event(name="ringPositionSet", type="locksmith.model.RingPositionEvent")]
+[Event(name="marblePositionSet", type="locksmith.model.MarblePositionEvent")]
+[Event(name="marbleAdded", type="lockmsith.model.MarbleAddedEvent")]
 
 public class RingManager extends ModelManager
 {
     public static const RING_HOLES :String = "RingManagerRingHoles";
+    public static const EXISTING_MARBLES :String = "RingManagerExistingMarbles";
     public static const RING_POSITION :String = "RingManagerRingPosition";
     public static const MARBLE_POSITION :String = "RingManagerMarblePosition";
 
     public static const RING_POSITIONS :int = 16;
 
+    // server-side events
     public static const POINT_SCORED :String = "pointScored";
+
+    // client-side events
+    public static const RINGS_CREATED :String = "ringsCreated";
+    public static const RING_POSITION_SET :String = "ringPositionSet";
+    public static const MARBLE_POSITION_SET :String = "marblePositionSet";
+    public static const MARBLE_ADDED :String = "marbleAdded";
+
+    // message sent from clients to request ring rotation on their turn
+    public static const RING_ROTATION :String = "RingManagerRingRotation";
 
     public function RingManager (gameCtrl :GameControl, eventMgr :EventHandlerManager)
     {
         super(gameCtrl, eventMgr);
-        manageProperties(RING_HOLES, RING_POSITION, MARBLE_POSITION);
+        manageProperties(RING_HOLES, EXISTING_MARBLES, RING_POSITION, MARBLE_POSITION);
     }
 
     public function createRings () :void
@@ -46,6 +61,12 @@ public class RingManager extends ModelManager
             setIn(RING_POSITIONS, ring - 1, 0);
         }
         commitBatch();
+    }
+
+    public function requestRingRotation (ring :Ring, direction :RotationDirection) :void
+    {
+        requireClient();
+        dispatchClientRequest(RING_ROTATION, {ring: ring.id, direction: direction.name()});
     }
 
     public function rotateRing (id :int, direction :RotationDirection) :void
@@ -110,7 +131,60 @@ public class RingManager extends ModelManager
                 outer.inner = inner;
             }
             _rings.push(outer);
+            if (key == NUM_RINGS - 1) {
+                // pass out the smallest ring, the listener can get the rest from it.
+                dispatchEvent(new ValueEvent(RINGS_CREATED, _rings[0]));
+            }
+
+        } else if (prop == RING_POSITION && onClient()) {
+            var ring :Ring = _rings[key] as Ring;
+            var direction :RotationDirection = ring.setPosition(newValue);
+            dispatchEvent(new RingPositionEvent(ring, direction));
+
+        } else if (prop == MARBLE_POSITION && onClient()) {
+            var ringId :int = newValue.ring;
+            var ring :Ring = ringId == GOAL_RING_ID || ringId == LAUNCHER_RING_ID ? 
+                null : _rings[ringId] as Ring;
+            var position :int = newValue.pos;
+            var marble :Marble = _marbles.get(key) as Marble;
+            if (ringId == LAUNCHER_RING_ID) {
+                dispatchEvent(new MarbleAddedEvent(marble, position));
+            } else {
+                dispatchEvent(new MarblePositionEvent(ring, marble, position));
+            }
+
+        } else if (prop == EXISTING_MARBLES && onClient()) {
+            if (oldValue == null) {
+                var marble :Marble = new Marble(key, Player.valueOf(newValue as String));
+                _marbles.put(key, marble);
+            } else {
+                _marbles.remove(key);
+            }
         }
+    }
+
+    public function loadLaunchers () :void
+    {
+        requireServer();
+        startBatch();
+        var sunLaunchers :Array = Player.SUN.launchers;
+        var moonLaunchers :Array = PLayer.MOON.launchers;
+        for (var ii :int = 0; ii < sunLaunchers.length; ii++) {
+            var sunMarble :Marble = new Marble(_nextMarbleId++, Player.SUN);
+            _marbles.put(sunMarble.id, sunMarble);
+            // EXISTING_MARBLES is around so we don't have to keep the player of each marble 
+            // persisted in the MARBLE_POSITION property dictionary.
+            setIn(EXISTING_MARBLES, sunMarble.id, Player.SUN.name());
+            setIn(MARBLE_POSITION, sunMarble.id, 
+                {ring: LAUNCHER_RING_ID, pos: Player.SUN.launchers[ii]});
+
+            var moonMarble :Marble = new Marble(_nextMarbleId++, Player.MOON);
+            _marbles.put(moonMarble.id, moonMarble);
+            setIn(EXISTING_MARBLES, moonMarble.id, Player.MOON.name());
+            setIn(MARBLE_POSITION, moonMarble.id,
+                {ring: LAUNCHER_RING_ID, pos: Player.MOON.launchers[ii]});
+        }
+        commitBatch();
     }
 
     protected function innerRingPath (ring :Ring, position :int) :int
@@ -134,11 +208,14 @@ public class RingManager extends ModelManager
     }
 
     protected var _rings :Array = [];
+    protected var _marbles :HashMap = new HashMap();
+    protected var _nextMarbleId :int = 0; // only used on the server.
 
     protected static const NUM_RINGS :int = 4;
     protected static const RING_HOLE_NUM :Array = [ 2, 4, 8, 6 ];
     protected static const RING_HOLE_MOD :Array = [ 4, 8, 16, 8 ];
     protected static const GOAL_RING_ID :int = -10;
+    protected static const LAUNCHER_RING_ID :int = -11;
 
     private static const log :Log = Log.getLog(RingManager);
 }

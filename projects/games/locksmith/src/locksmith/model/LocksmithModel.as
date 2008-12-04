@@ -13,6 +13,7 @@ public class LocksmithModel
         _eventMgr  = eventMgr;
 
         _ringMgr = new RingManager(gameCtrl, _eventMgr);
+        _scoreMgr = new ScoreManager(gameCtrl, _eventMgr);
         _turnMgr = new TurnManager(gameCtrl, _eventMgr);
     }
 
@@ -26,8 +27,14 @@ public class LocksmithModel
         return _turnMgr;
     }
 
+    public function get scoreMgr () :ScoreManager
+    {
+        return _scoreMgr;
+    }
+
     protected var _eventMgr :EventHandlerManager;
     protected var _ringMgr :RingManager;
     protected var _turnMgr :TurnManager;
+    protected var _scoreMr :ScoreManager;
 }
 }

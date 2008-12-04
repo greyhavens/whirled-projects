@@ -31,9 +31,22 @@ public class Ring
         return _position;
     }
 
-    public function modifyPosition (direction :Direction) :int
+    public function modifyPosition (direction :RotationDirection) :int
     {
-        return (_position = (_position + direciton.direction) % RingManager.RING_POSITIONS);
+        return (_position = (_position + direction.direction) % RingManager.RING_POSITIONS);
+    }
+
+    public function setPosition (position :int) :RotationDirection
+    {
+        if (Math.abs(_position - position) != 1) {
+            throw new ArgumentError("The new position must be 1 off from current position " +
+                "[current=" + _position + ", new=" + position + "]");
+        }
+
+        var direction :RotationDirection = 
+            RotationDirection.determineDirection(position - _position);
+        _position = position;
+        return direction;
     }
 
     public function get outer () :Ring

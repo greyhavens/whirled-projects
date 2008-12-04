@@ -3,6 +3,8 @@
 
 package locksmith.model {
 
+import com.threerings.util.ArrayUtil;
+
 import com.whirled.game.GameControl;
 
 import com.whirled.contrib.EventHandlerManager;
@@ -11,32 +13,50 @@ public class TurnManager extends ModelManager
 {
     public static const PLAYER :String = "TurnManagerPlayer";
 
+    public static const TURN_ANIMATION_TIME :int = 3000; // in ms
+
     public function TurnManager (gameCtrl :GameControl, eventMgr :EventHandlerManager)
     {
         super(gameCtrl, eventMgr);
-        managerProperties(PLAYER);
+        manageProperties(PLAYER);
     }
 
     public function get turnHolder () :Player
     {
-        // TODO: find Player that currently holds the turn
+        return Player.valueOf(getIn(PLAYER, turnHolderId) as String);
     }
 
     public function get turnHolderId () :int
     {
-        // TODO: return the whirled player id of the current turn holder
+        return _gameCtrl.game.getTurnHolderId();
+    }
+
+    public function get isMyTurn () :Boolean
+    {
+        requireClient();
+        return _gameCtrl.game.isMyTurn();
+    }
+
+    public function advanceTurn () :void
+    {
+        requireServer();
+        startNextTurn();
     }
 
     public function assignPlayers () :void
     {
         requireServer();
-        // TODO: assign a Player to both positions.
+        var players :Array = Player.values();
+        ArrayUtil.shuffle(players);
+        for (var ii :int = 0; ii < players.length; ii++) {
+            setIn(PLAYER, ii, players[ii].name());
+        }
     }
 
     override protected function managedPropertyUpdated (prop :String, oldValue :Object, 
         newValue :Object, key :int = -1) :void
     {
-        // TODO
+        // NOOP we have to override this method or the super class will throw an error
     }
 }
 }
