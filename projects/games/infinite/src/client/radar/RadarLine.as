@@ -8,6 +8,7 @@ package client.radar
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	
+	import graphics.AnnotationShadow;
 	import graphics.DirectionArrow;
 	
 	import sprites.SpriteUtil;
@@ -41,7 +42,9 @@ package client.radar
 
             _text.y = 2;
             _text.width = 175;
-            _text.htmlText = "<font face='Helvetica, Arial, _sans' size='18'>&nbsp;"+player.name+"</font>";			
+            _text.htmlText = "<font face='Helvetica, Arial, _sans' size='18'>&nbsp;"+player.name+"</font>";
+            
+            AnnotationShadow.applyTo(this);			
 		}
 
         public function startTracking () :void

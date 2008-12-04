@@ -9,6 +9,7 @@ package graphics
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	
 	import sprites.SpriteUtil;
 	
@@ -18,12 +19,21 @@ package graphics
 		{
 			_objective = objective;
 			_text = new TextField();
+			_text.autoSize = TextFieldAutoSize.LEFT;
+			_text.condenseWhite = true;
+			_text.multiline = true;
+			_text.background = true;
+			_text.backgroundColor = SpriteUtil.PURPLE_DESATURATED;
+		    _text.border = false;
+		    _text.borderColor = SpriteUtil.BLACK;
 			addChild(_text);
-		}
+            AnnotationShadow.applyTo(this);
+ 		}
 
         protected function updateText (target:Labellable) :void
         {
-            _text.htmlText = "<font size='10' face='Helvetica, Arial, _sans'>"+ labelText(target) +"</font>"
+            _text.htmlText = "<textformat leftmargin='4' rightmargin='4'><font size='17' color='#FFFFFF' face='Helvetica, Arial, _sans'>"+
+                labelText(target) +"</font></textformat>"
             
             // decide whether the label should be to the left or right of the target.
             // if there is space to put the label on the left of the target then we always do
@@ -52,7 +62,7 @@ package graphics
                 // the label goes on the top
                 y = bounds.top - SPACING - _text.textHeight;
             }   
-            
+                                                
             // map the position back to the coordinate system of this sprite and apply it to the text field.
             const textPosition:GraphicCoordinates = new GraphicCoordinates(x, y);
             Geometry.position(_text, _objectiveCoordinates.toLocal(textPosition));
@@ -70,17 +80,18 @@ package graphics
             Log.debug (" label position is: "+x+", "+y);            
 
 			const rect:GraphicRectangle = new GraphicRectangle(_text.x, _text.y, _text.textWidth, _text.textHeight).paddedBy(10); 
+//            const rect:GraphicRectangle = new GraphicRectangle(_text.x, _text.y, _text.width, _text.height).paddedBy(10); 
 			computeBackground(rect, target);
 			
 			// redraw the background shape
-			redrawBackground();
+			//redrawBackground();
+			
+			simpleArrowHead(_arrowHead);
 						
 			Log.debug ("owner label at "+Geometry.coordsOf(this));			
 			visible = true;	
 		}
-		
-		
-		
+				
 		/**
 		 * Compute the position of rectangle that is drawn behind the text, and the position of the
 		 * arrowhead.
@@ -97,42 +108,32 @@ package graphics
 			Log.debug ("direction = "+direction);
 
 			_arrowHead = _objectiveCoordinates.toLocal(target.anchorPoint(direction));
-//			_arrowHead = new GraphicCoordinates(0, 0);
 
 			Log.debug ("arrowhead position is "+_arrowHead);
 		}
 
-        
-		
-		protected function redrawBackground() :void 
-		{
-			const g:Graphics = this.graphics;
-			g.clear();
-			g.beginFill(SpriteUtil.RED);
-			const arrowLeft:Boolean = 
-				_rectangle.origin.distanceTo(_arrowHead).xComponent().normalize().equals(Vector.LEFT);
-			
-			// draw the top
-			g.moveTo(_rectangle.x, _rectangle.y);
-			g.lineTo(_rectangle.right, _rectangle.y);
-			
-			// if the arrow head is on the right, go there
-			if (! arrowLeft) {
-				g.lineTo(_arrowHead.x, _arrowHead.y);
-			} 
-			g.lineTo(_rectangle.right, _rectangle.bottom);			
-			
-			// draw the bottom
-			g.lineTo(_rectangle.x, _rectangle.bottom);
-			
-			// if the arrow head is on the left, go there
-			if (arrowLeft) {
-				g.lineTo(_arrowHead.x, _arrowHead.y);
-			}
-			g.lineTo(_rectangle.x, _rectangle.y);			
-			Log.debug ("after drawing, arrowhead position is "+_arrowHead);
-		}
-		
+        protected function simpleArrowHead(target:GraphicCoordinates) :void
+        {
+            // set up the graphics context
+            const g:Graphics = this.graphics;
+            g.clear();
+            g.beginFill(SpriteUtil.PURPLE_DESATURATED);
+            
+            if (target.x > _text.x) {
+                // the arrow is pointing to the right
+                g.moveTo(_text.x + _text.width, _text.y);
+                g.lineTo(target.x, target.y);
+                g.lineTo(_text.x + _text.width, _text.y + _text.height);
+            } else {
+                // the arrow is pointing to the left
+                g.moveTo(_text.x, _text.y);
+                g.lineTo(target.x, target.y);
+                g.lineTo(_text.x, _text.y + _text.height);
+            }
+            
+            g.endFill();
+        }
+				
 		protected function labelText (target:Labellable) :String
 		{
 			return target.owner.name + "'s " + target.objectName;

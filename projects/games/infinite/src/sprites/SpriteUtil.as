@@ -40,5 +40,7 @@ package sprites
 		public static const WHITE:uint = 0xFFFFFF;
 		public static const RED:uint = 0xFF0000;
 		public static const YELLOW:uint = 0xFFFF00;
+		public static const PURPLE:uint = 0x7F0CCE;
+		public static const PURPLE_DESATURATED:uint = 0x694283;
 	}
 }
