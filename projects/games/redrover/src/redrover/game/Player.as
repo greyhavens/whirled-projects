@@ -58,7 +58,7 @@ public class Player extends SimObject
     public function get canSwitchBoards () :Boolean
     {
         return (_state != STATE_SWITCHINGBOARDS &&
-                (_teamId == _curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
+            (_teamId == _curBoardId || this.numGems >= GameContext.levelData.returnHomeGemsMin));
     }
 
     public function get playerIndex () :int

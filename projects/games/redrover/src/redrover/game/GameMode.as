@@ -148,6 +148,11 @@ public class GameMode extends AppMode
         addObject(new Camera(Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y), _modeSprite);
         addObject(new HUDView(), _modeSprite);
         addObject(new MusicPlayer());
+
+        var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
+        switchBoardsButton.x = Constants.SCREEN_SIZE.x * 0.5;
+        switchBoardsButton.y = Constants.SCREEN_SIZE.y - 20;
+        addObject(switchBoardsButton, _modeSprite);
     }
 
     override public function update (dt :Number) :void
