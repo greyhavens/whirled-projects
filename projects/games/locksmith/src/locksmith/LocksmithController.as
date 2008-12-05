@@ -15,6 +15,7 @@ import com.whirled.contrib.EventHandlerManager;
 import locksmith.events.EventManagerFactory;
 import locksmith.model.LocksmithModel;
 import locksmith.model.ScoreManager;
+import locksmith.model.TurnManager;
 
 public class LocksmithController 
     implements EventManagerFactory
@@ -26,6 +27,7 @@ public class LocksmithController
         _model = new LocksmithModel(_gameCtrl, _eventMgr);
 
         _eventMgr.registerListener(_model.scoreMgr, ScoreManager.PLAYER_SCORED, playerScoredPoint);
+        _eventMgr.registerListener(_model.turnMgr, TurnManager.TURN_CHANGED, turnChanged);
     }
 
     public function createEventManager () :EventHandlerManager
@@ -38,6 +40,11 @@ public class LocksmithController
     protected function playerScoredPoint (event :ValueEvent) :void
     {
         log.info("Player scored point", "player", event.value);
+    }
+
+    protected function turnChanged (event :ValueEvent) :void
+    {
+        log.info("Turn changed", "turnHolder", event.value);
     }
 
     protected var _gameCtrl :GameControl;

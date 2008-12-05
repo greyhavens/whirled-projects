@@ -73,7 +73,7 @@ public /* abstract */ class ModelManager extends EventDispatcher
         _batching = false;
         _gameCtrl.net.doBatch(function () :void {
             while (_batched.length > 0) {
-                (_batched.unshift() as Function)();
+                (_batched.shift() as Function)();
             }
         });
     }

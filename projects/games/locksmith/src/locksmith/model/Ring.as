@@ -38,7 +38,7 @@ public class Ring
 
     public function setPosition (position :int) :RotationDirection
     {
-        if (Math.abs(_position - position) != 1) {
+        if (Math.abs(_position - position) > 1) {
             throw new ArgumentError("The new position must be 1 off from current position " +
                 "[current=" + _position + ", new=" + position + "]");
         }
