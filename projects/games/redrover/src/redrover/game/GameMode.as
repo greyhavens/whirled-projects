@@ -151,7 +151,7 @@ public class GameMode extends AppMode
 
         var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
         switchBoardsButton.x = Constants.SCREEN_SIZE.x * 0.5;
-        switchBoardsButton.y = Constants.SCREEN_SIZE.y - 20;
+        switchBoardsButton.y = Constants.SCREEN_SIZE.y - 25;
         addObject(switchBoardsButton, _modeSprite);
     }
 

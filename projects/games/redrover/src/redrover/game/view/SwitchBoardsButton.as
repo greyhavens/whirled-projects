@@ -18,8 +18,8 @@ public class SwitchBoardsButton extends SceneObject
         _sprite = SpriteUtil.createSprite(true);
         _activeState = UIBits.createButton("Break on Through!", 1.5);
         _needGemsState = UIBits.createTextPanel(
-            "" + GameContext.levelData.returnHomeGemsMin +  " gems are required\n" +
-            "to return home.", 1.2, 0, 0x888888);
+            "" + GameContext.levelData.returnHomeGemsMin +  " gems are required" +
+            " to return home.", 1.2, 0, 0x888888);
         _switchingState = UIBits.createTextPanel("Break on Through!", 1.5, 0, 0x888888);
 
         registerListener(_activeState, MouseEvent.CLICK, onClicked);
