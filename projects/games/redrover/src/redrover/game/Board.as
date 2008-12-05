@@ -71,7 +71,8 @@ public class Board extends SimObject
 
     public function getCell (gridX :int, gridY :int) :BoardCell
     {
-        return _cells[getIndex(gridX, gridY)];
+        return (gridX >= 0 && gridX < _cols && gridY >= 0 && gridY < _rows ?
+            _cells[getIndex(gridX, gridY)] : null);
     }
 
     public function getCellAtPixel (x :Number, y :Number) :BoardCell

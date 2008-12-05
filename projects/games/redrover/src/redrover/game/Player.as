@@ -143,6 +143,7 @@ public class Player extends SimObject
 
         if (_state != STATE_SWITCHINGBOARDS) {
             var moveDist :Number = this.moveSpeed * dt;
+            var moveDir :Vector2;
 
             if (_moveTarget != null) {
                 var xDist :Number = ((_moveTarget.x + 0.5) * _cellSize) - _loc.x;
@@ -169,51 +170,74 @@ public class Player extends SimObject
 
                 } else {
                     // If we're trying to turn, wait until we're at the center of a cell
-                    var dir :Vector2 = Constants.DIRECTION_VECTORS[_moveDirection];
+                    moveDir = Constants.DIRECTION_VECTORS[_moveDirection];
                     var nextIsec :Number = getNextCellIntersection(_moveDirection);
                     var oldLoc :Number;
-                    var didTurn :Boolean;
-                    if (dir.x > 0) {
+                    var tryToTurn :Boolean;
+                    if (moveDir.x > 0) {
                         if (_loc.x + moveDist > nextIsec) {
                             oldLoc = _loc.x;
                             tryMoveTo(nextIsec, _loc.y);
                             moveDist -= Math.abs(_loc.x - oldLoc);
-                            didTurn = true;
+                            tryToTurn = true;
                         }
-                    } else if (dir.x < 0) {
+                    } else if (moveDir.x < 0) {
                         if (_loc.x - moveDist < nextIsec) {
                             oldLoc = _loc.x;
                             tryMoveTo(nextIsec, _loc.y);
                             moveDist -= Math.abs(_loc.x - oldLoc);
-                            didTurn = true;
+                            tryToTurn = true;
                         }
-                    } else if (dir.y > 0) {
+                    } else if (moveDir.y > 0) {
                         if (_loc.y + moveDist > nextIsec) {
                             oldLoc = _loc.y;
                             tryMoveTo(_loc.x, nextIsec);
                             moveDist -= Math.abs(_loc.y - oldLoc);
-                            didTurn = true;
+                            tryToTurn = true;
                         }
-                    } else if (dir.y < 0) {
+                    } else if (moveDir.y < 0) {
                         if (_loc.y - moveDist < nextIsec) {
                             oldLoc = _loc.y;
                             tryMoveTo(_loc.x, nextIsec);
                             moveDist -= Math.abs(_loc.y - oldLoc);
-                            didTurn = true;
+                            tryToTurn = true;
                         }
                     }
 
-                    if (didTurn) {
-                        _moveDirection = _moveRequest;
-                        _moveRequest = -1;
+                    if (tryToTurn) {
+                        // only turn if doing so wouldn't put us into an obstacle
+                        var turnToCell :BoardCell;
+                        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+                        switch (_moveRequest) {
+                        case Constants.DIR_EAST:
+                            turnToCell = board.getCell(this.gridX + 1, this.gridY);
+                            break;
+
+                        case Constants.DIR_WEST:
+                            turnToCell = board.getCell(this.gridX - 1, this.gridY);
+                            break;
+
+                        case Constants.DIR_NORTH:
+                            turnToCell = board.getCell(this.gridX, this.gridY - 1);
+                            break;
+
+                        case Constants.DIR_SOUTH:
+                            turnToCell = board.getCell(this.gridX, this.gridY + 1);
+                            break;
+                        }
+
+                        if (turnToCell != null && !turnToCell.isObstacle) {
+                            _moveDirection = _moveRequest;
+                            _moveRequest = -1;
+                        }
                     }
                 }
             }
 
             if (_moveDirection != -1) {
                 // Move, and handle collisions
-                dir = Constants.DIRECTION_VECTORS[_moveDirection];
-                tryMoveTo(_loc.x + (dir.x * moveDist), _loc.y + (dir.y * moveDist));
+                moveDir = Constants.DIRECTION_VECTORS[_moveDirection];
+                tryMoveTo(_loc.x + (moveDir.x * moveDist), _loc.y + (moveDir.y * moveDist));
             }
 
             var cell :BoardCell = this.curBoardCell;
