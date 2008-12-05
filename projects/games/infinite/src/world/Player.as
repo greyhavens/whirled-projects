@@ -8,6 +8,9 @@ package world
 	
 	import flash.events.EventDispatcher;
 	
+	import interactions.Sabotage;
+	import interactions.SabotageEvent;
+	
 	import items.Item;
 	import items.ItemPlayer;
 	
@@ -95,6 +98,10 @@ package world
             	
             	// now check whether the player needs to fall
             	if (! cell.grip) {
+            	    const sabotaged:Sabotage = cell as Sabotage;
+            	    if (sabotaged != null) {
+            	        dispatchEvent(new SabotageEvent(SabotageEvent.TRIGGERED, sabotaged));
+            	    }
             		fall();
             	} 
             } else {
