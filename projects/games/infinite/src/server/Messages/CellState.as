@@ -4,8 +4,6 @@ package server.Messages
 	
 	import cells.CellFactory;
 	
-	import client.ClientPlayers;
-	
 	import flash.utils.ByteArray;
 	
 	import world.Cell;
@@ -51,11 +49,16 @@ package server.Messages
         }
         
         /**
-         * Return an array of ints that can be used by a particular cell type to encode its own
-         * state.
+         * Return an attributes object that can be used by a cell to encode the specifics of its state.
          */  
         public function get attributes () :Object
         {
+            // return a blank attributes object rather than a null
+            // this also means that this method can be used to set the 
+            // attributes, which is permissible.
+            if (_attributes == null) {
+                _attributes = new Object();
+            }
         	return _attributes;
         }
 

@@ -100,7 +100,7 @@ package world
             	if (! cell.grip) {
             	    const sabotaged:Sabotage = cell as Sabotage;
             	    if (sabotaged != null) {
-            	        dispatchEvent(new SabotageEvent(SabotageEvent.TRIGGERED, sabotaged));
+            	        dispatchEvent(new SabotageEvent(SabotageEvent.TRIGGERED, sabotaged, id));
             	    }
             		fall();
             	} 

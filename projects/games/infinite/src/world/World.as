@@ -4,6 +4,8 @@ package world
 	
 	import flash.events.EventDispatcher;
 	
+	import interactions.SabotageEvent;
+	
 	import server.Messages.CellUpdate;
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
@@ -34,6 +36,7 @@ package world
             addEventListener(CellStateEvent.STATE_CHANGED, listener.handleCellStateChange);		
             addEventListener(InventoryEvent.RECEIVED, listener.handleItemReceived);
             addEventListener(InventoryEvent.USED, listener.handleItemUsed);
+            addEventListener(SabotageEvent.TRIGGERED, listener.handleSabotageTriggered);
 		}
 		
 		/**
@@ -103,6 +106,7 @@ package world
 		    player.addEventListener(InventoryEvent.RECEIVED, dispatchEvent);
             player.addEventListener(InventoryEvent.USED, dispatchEvent);
             player.addEventListener(MoveEvent.PATH_UNAVAILABLE, dispatchEvent);
+            player.addEventListener(SabotageEvent.TRIGGERED, dispatchEvent);
             		    		    
 		    // register the player and place them on the first level.
             _players.register(player);
@@ -124,6 +128,11 @@ package world
 		public function findLevel (level:int) : Level
 		{
 			return _levels.find(level);
+		}
+						
+		public function findPlayer (player:int) :Player
+		{
+		    return _players.find(player);
 		}
 						
 		protected var _levels:LevelRegister;

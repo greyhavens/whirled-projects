@@ -1,5 +1,7 @@
 package world
 {	
+	import interactions.SabotageEvent;
+	
 	import world.arbitration.MoveEvent;
 	import world.level.LevelEvent;
 	
@@ -18,5 +20,7 @@ package world
         function handleItemReceived (event:InventoryEvent) :void;
         
         function handleItemUsed (event:InventoryEvent) :void;
+        
+        function handleSabotageTriggered (event:SabotageEvent) :void;
 	}
 }

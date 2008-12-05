@@ -12,6 +12,8 @@ package server
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
+	import interactions.SabotageEvent;
+	
 	import server.Messages.CellState;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
@@ -79,7 +81,7 @@ package server
             if (event.level.number > 1) {
             	const text:String = event.player.name + 
                     " just reached level "+event.level.number+"!";
-                _control.game.systemMessage(text);
+                systemMessage(text);
             }
 		}
 		
@@ -175,8 +177,7 @@ package server
 		protected function useItem (event:MessageReceivedEvent) :void
 		{
 			_world.useItem(event.senderId, event.value as int);
-		}
-		
+		}		
 		
 		/**
 		 * Send a time sync message to a single client.
@@ -226,11 +227,24 @@ package server
 		{
 			_net.sendMessage(String(RemoteWorld.ITEM_USED), event.position, event.player.id);
 		}
+		
+		public function handleSabotageTriggered (event:SabotageEvent) :void
+		{
+		    const victim:Player = _world.findPlayer(event.victimId);
+		    const saboteur:Player = _world.findPlayer(event.sabotage.saboteurId);
+		    
+		    systemMessage(victim.name +" "+ event.sabotage.sabotageType + " by "+saboteur.name); 
+		}		
 			
 		protected function get id () :int
 		{
 			return _control.game.getMyId();
 		}
+		
+		protected function systemMessage (text:String) :void
+	    {
+	        _control.game.systemMessage(text);
+	    }
 			
 		protected var _world:World;
 		protected var _scoreKeeper:ScoreKeeper;
