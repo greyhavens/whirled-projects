@@ -18,6 +18,7 @@ public class LevelData
     public var speedBase :Number;
     public var speedOffsetPerGem :Number;
     public var slowTerrainSpeedMultiplier :Number;
+    public var maxTurnOvershoot :Number;
     public var maxCarriedGems :int;
     public var switchBoardsTime :Number;
     public var returnHomeGemsMin :int;
@@ -42,6 +43,7 @@ public class LevelData
         data.speedBase = XmlReader.getNumberAttr(xml, "speedBase");
         data.speedOffsetPerGem = XmlReader.getNumberAttr(xml, "speedOffsetPerGem");
         data.slowTerrainSpeedMultiplier = XmlReader.getNumberAttr(xml, "slowTerrainSpeedMultiplier");
+        data.maxTurnOvershoot = XmlReader.getNumberAttr(xml, "maxTurnOvershoot");
         data.maxCarriedGems = XmlReader.getUintAttr(xml, "maxCarriedGems");
         data.switchBoardsTime = XmlReader.getNumberAttr(xml, "switchBoardsTime");
         data.returnHomeGemsMin = XmlReader.getUintAttr(xml, "returnHomeGemsMin");

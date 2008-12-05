@@ -74,12 +74,12 @@ public class BoardView extends SceneObject
 
     protected function onMouseDown (e :MouseEvent) :void
     {
-        var cellSize :int = GameContext.levelData.cellSize;
+        /*var cellSize :int = GameContext.levelData.cellSize;
         var gridX :int = e.localX / cellSize;
         var gridY :int = e.localY / cellSize;
         if (gridX >= 0 && gridX < _board.cols && gridY >= 0 && gridY < _board.rows) {
             GameContext.localPlayer.moveTo(gridX, gridY);
-        }
+        }*/
     }
 
     protected function getGrass () :Bitmap

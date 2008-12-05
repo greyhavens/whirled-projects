@@ -39,14 +39,8 @@ public class Player extends SimObject
                 new FunctionTask(switchBoards)));
     }
 
-    public function moveTo (gridX :int, gridY :int) :void
-    {
-        _moveTarget = new Vector2(gridX, gridY);
-    }
-
     public function move (direction :int) :void
     {
-        _moveTarget = null;
         _moveRequest = direction;
     }
 
@@ -145,22 +139,6 @@ public class Player extends SimObject
             var moveDist :Number = this.moveSpeed * dt;
             var moveDir :Vector2;
 
-            if (_moveTarget != null) {
-                var xDist :Number = ((_moveTarget.x + 0.5) * _cellSize) - _loc.x;
-                var yDist :Number = ((_moveTarget.y + 0.5) * _cellSize) - _loc.y;
-                var xDistAbs :Number = Math.abs(xDist);
-                var yDistAbs :Number = Math.abs(yDist);
-
-                if (xDistAbs != 0 && xDistAbs < yDistAbs) {
-                    _moveRequest = Constants.getDirection(xDist, 0);
-                } else if (yDist != 0) {
-                    _moveRequest = Constants.getDirection(0, yDist);
-                } else {
-                    _moveTarget = null;
-                    _moveRequest = -1;
-                }
-            }
-
             // Are we changing direction?
             if (_moveRequest != _moveDirection && _moveRequest != -1) {
                 if (_moveDirection == -1 || Constants.isParallel(_moveDirection, _moveRequest)) {
@@ -169,67 +147,55 @@ public class Player extends SimObject
                     _moveRequest = -1;
 
                 } else {
-                    // If we're trying to turn, wait until we're at the center of a cell
                     moveDir = Constants.DIRECTION_VECTORS[_moveDirection];
-                    var nextIsec :Number = getNextCellIntersection(_moveDirection);
                     var oldLoc :Number;
-                    var tryToTurn :Boolean;
-                    if (moveDir.x > 0) {
-                        if (_loc.x + moveDist > nextIsec) {
-                            oldLoc = _loc.x;
-                            tryMoveTo(nextIsec, _loc.y);
-                            moveDist -= Math.abs(_loc.x - oldLoc);
-                            tryToTurn = true;
-                        }
-                    } else if (moveDir.x < 0) {
-                        if (_loc.x - moveDist < nextIsec) {
-                            oldLoc = _loc.x;
-                            tryMoveTo(nextIsec, _loc.y);
-                            moveDist -= Math.abs(_loc.x - oldLoc);
-                            tryToTurn = true;
-                        }
-                    } else if (moveDir.y > 0) {
-                        if (_loc.y + moveDist > nextIsec) {
-                            oldLoc = _loc.y;
-                            tryMoveTo(_loc.x, nextIsec);
-                            moveDist -= Math.abs(_loc.y - oldLoc);
-                            tryToTurn = true;
-                        }
-                    } else if (moveDir.y < 0) {
-                        if (_loc.y - moveDist < nextIsec) {
-                            oldLoc = _loc.y;
-                            tryMoveTo(_loc.x, nextIsec);
-                            moveDist -= Math.abs(_loc.y - oldLoc);
-                            tryToTurn = true;
+                    var turned :Boolean;
+
+                    // If we've just overshot our turn, and we're allowed to enter the cell
+                    // we'd like to turn towards, allow the turn anyway
+                    var prevIsec :Number = getPrevCellIntersection(_moveDirection);
+                    var maxTurnOvershoot :Number = GameContext.levelData.maxTurnOvershoot;
+                    if (moveDir.x != 0 &&
+                        Math.abs(prevIsec - _loc.x) <= maxTurnOvershoot &&
+                        canMoveTowards(prevIsec, _loc.y, _moveRequest)) {
+
+                        moveDist -= Math.min(moveDist, Math.abs(prevIsec - _loc.x));
+                        _loc.x = prevIsec;
+                        turned = true;
+
+                    } else if (moveDir.y != 0 &&
+                               Math.abs(prevIsec - _loc.y) <= maxTurnOvershoot &&
+                               canMoveTowards(_loc.x, prevIsec, _moveRequest)) {
+
+                        moveDist -= Math.min(moveDist, Math.abs(prevIsec - _loc.y));
+                        _loc.y = prevIsec;
+                        turned = true;
+
+                    } else {
+                        // Otherwise, allow the turn once we reach our next intersection (the
+                        // center of the next cell)
+                        var nextIsec :Number = getNextCellIntersection(_moveDirection);
+                        if (moveDir.x != 0 &&
+                            Math.abs(nextIsec - _loc.x) <= moveDist &&
+                            canMoveTowards(nextIsec, _loc.y, _moveRequest)) {
+
+                            moveDist -= Math.abs(nextIsec - _loc.x);
+                            _loc.x = nextIsec;
+                            turned = true;
+
+                        } else if (moveDir.y != 0 &&
+                                   Math.abs(nextIsec - _loc.y) <= moveDist &&
+                                   canMoveTowards(_loc.x, nextIsec, _moveRequest)) {
+
+                           moveDist -= Math.abs(nextIsec - _loc.y);
+                           _loc.y = nextIsec;
+                           turned = true;
                         }
                     }
 
-                    if (tryToTurn) {
-                        // only turn if doing so wouldn't put us into an obstacle
-                        var turnToCell :BoardCell;
-                        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
-                        switch (_moveRequest) {
-                        case Constants.DIR_EAST:
-                            turnToCell = board.getCell(this.gridX + 1, this.gridY);
-                            break;
-
-                        case Constants.DIR_WEST:
-                            turnToCell = board.getCell(this.gridX - 1, this.gridY);
-                            break;
-
-                        case Constants.DIR_NORTH:
-                            turnToCell = board.getCell(this.gridX, this.gridY - 1);
-                            break;
-
-                        case Constants.DIR_SOUTH:
-                            turnToCell = board.getCell(this.gridX, this.gridY + 1);
-                            break;
-                        }
-
-                        if (turnToCell != null && !turnToCell.isObstacle) {
-                            _moveDirection = _moveRequest;
-                            _moveRequest = -1;
-                        }
+                    if (turned) {
+                        _moveDirection = _moveRequest;
+                        _moveRequest = -1;
                     }
                 }
             }
@@ -271,9 +237,46 @@ public class Player extends SimObject
         }
     }
 
+    protected function getPrevCellIntersection (moveDirection :int) :Number
+    {
+        switch (moveDirection) {
+        case Constants.DIR_EAST: return getNextCellIntersection(Constants.DIR_WEST);
+        case Constants.DIR_WEST: return getNextCellIntersection(Constants.DIR_EAST);
+        case Constants.DIR_NORTH: return getNextCellIntersection(Constants.DIR_SOUTH);
+        case Constants.DIR_SOUTH: return getNextCellIntersection(Constants.DIR_NORTH);
+        default: throw new Error("Unrecognized direction: " + moveDirection);
+        }
+    }
+
     protected function isObstacleAt (x :int, y :int) :void
     {
         GameContext.gameMode.getBoard(_curBoardId).getCellAtPixel(x, y).isObstacle;
+    }
+
+    protected function canMoveTowards (fromX :Number, fromY :Number, moveDirection :int) :Boolean
+    {
+        var nextCell :BoardCell;
+        var board :Board = GameContext.gameMode.getBoard(_curBoardId);
+        var cellSize :Number = board.cellSize;
+        switch (_moveRequest) {
+        case Constants.DIR_EAST:
+            nextCell = board.getCellAtPixel(fromX + cellSize, fromY);
+            break;
+
+        case Constants.DIR_WEST:
+            nextCell = board.getCellAtPixel(fromX - cellSize, fromY);
+            break;
+
+        case Constants.DIR_NORTH:
+            nextCell = board.getCellAtPixel(fromX, fromY - cellSize);
+            break;
+
+        case Constants.DIR_SOUTH:
+            nextCell = board.getCellAtPixel(fromX, fromY + cellSize);
+            break;
+        }
+
+        return (nextCell != null && !nextCell.isObstacle);
     }
 
     protected function tryMoveTo (xNew :Number, yNew :Number) :void
@@ -286,7 +289,7 @@ public class Player extends SimObject
         var yOffset :Number = yNew - _loc.y;
         var halfCell :int = _cellSize * 0.5;
         if (xOffset > 0) {
-            nextCell = board.getCellAtPixel(_loc.x + xOffset + halfCell, _loc.y);
+            nextCell = board.getCellAtPixel(_loc.x + xOffset + halfCell + 1, _loc.y);
             if (nextCell.isObstacle) {
                 xNew = nextCell.ctrPixelX - _cellSize - 1;
             }
@@ -296,7 +299,7 @@ public class Player extends SimObject
                 xNew = nextCell.ctrPixelX + _cellSize;
             }
         } else if (yOffset > 0) {
-            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset + halfCell);
+            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset + halfCell + 1);
             if (nextCell.isObstacle) {
                 yNew = nextCell.ctrPixelY - _cellSize - 1;
             }
@@ -327,7 +330,6 @@ public class Player extends SimObject
     protected function switchBoards () :void
     {
         _state = STATE_NORMAL;
-        _moveTarget = null;
         _curBoardId = Constants.getOtherTeam(_curBoardId);
     }
 
@@ -338,7 +340,6 @@ public class Player extends SimObject
     protected var _score :int;
     protected var _moveDirection :int = -1;
     protected var _moveRequest :int = -1;
-    protected var _moveTarget :Vector2;
     protected var _loc :Vector2 = new Vector2();
     protected var _state :int;
     protected var _color :uint;
