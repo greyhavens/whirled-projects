@@ -48,9 +48,8 @@ public class RingManager extends ModelManager
     {
         requireServer();
         startBatch();
-        var holes :Array;
-        for (var ring :int = 1; ring <= NUM_RINGS; ring++) {
-            holes = [];
+        for (var ring :int = 0; ring < NUM_RINGS; ring++) {
+            var holes :Array = [];
             for (var hole :int = 0; hole < RING_HOLE_NUM[ring]; hole++) {
                 var pos :int;
                 do {
@@ -58,8 +57,8 @@ public class RingManager extends ModelManager
                 } while (pos % RING_HOLE_MOD[ring] != 0 || holes.indexOf(pos) >= 0);
                 holes.push(pos);
             }
-            setIn(RING_HOLES, ring - 1, holes);
-            setIn(RING_POSITION, ring - 1, 0);
+            setIn(RING_HOLES, ring, holes);
+            setIn(RING_POSITION, ring, 0);
         }
         commitBatch();
     }
@@ -214,7 +213,7 @@ public class RingManager extends ModelManager
 
     protected static const NUM_RINGS :int = 4;
     protected static const RING_HOLE_NUM :Array = [ 2, 4, 8, 6 ];
-    protected static const RING_HOLE_MOD :Array = [ 4, 8, 16, 8 ];
+    protected static const RING_HOLE_MOD :Array = [ 4, 2, 1, 2 ];
     protected static const GOAL_RING_ID :int = -10;
     protected static const LAUNCHER_RING_ID :int = -11;
 
