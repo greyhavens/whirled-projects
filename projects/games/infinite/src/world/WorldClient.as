@@ -7,6 +7,7 @@ package world
 	import server.Messages.LevelComplete;
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
+	import server.Messages.SabotageTriggered;
 	
 	public interface WorldClient extends Chronometer
 	{
@@ -58,6 +59,11 @@ package world
         /**
          * The requested path was not available.
          */ 
-        function pathUnavailable () :void         
+        function pathUnavailable () :void
+        
+        /**
+         * Sabotage was triggered.
+         */
+        function sabotageTriggered (detail:SabotageTriggered) :void         
  	}
 }

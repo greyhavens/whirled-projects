@@ -37,10 +37,12 @@ package sprites
 		public static const BLACK:uint = 0x000000;
 		public static const LIGHT_GREY:uint = 0xA0A0A0;
 		public static const GREY:uint = 0x606060;
+		public static const DARK_GREY:uint = 0x303030;
 		public static const WHITE:uint = 0xFFFFFF;
 		public static const RED:uint = 0xFF0000;
 		public static const YELLOW:uint = 0xFFFF00;
 		public static const PURPLE:uint = 0x7F0CCE;
 		public static const PURPLE_DESATURATED:uint = 0x694283;
+		public static const GREEN:uint = 0x00FF00;
 	}
 }

@@ -19,6 +19,7 @@ package server
 	import server.Messages.MoveProposal;
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
+	import server.Messages.SabotageTriggered;
 	import server.Messages.Serializable;
 	
 	import world.ClientWorld;
@@ -62,6 +63,7 @@ package server
                 case ITEM_RECEIVED: return itemReceived(event);
                 case ITEM_USED: return itemUsed(event);
                 case PATH_UNAVAILABLE: return pathUnavailable(event);
+                case SABOTAGE_TRIGGERED: return sabotageTriggered(event);
             }       
             throw new Error(this+"doesn't understand message "+event.name+" from client "+event.senderId);            
         }
@@ -110,6 +112,11 @@ package server
         public function pathUnavailable (event:MessageReceivedEvent) :void
         {
         	_client.pathUnavailable();
+        }
+        
+        public function sabotageTriggered (event:MessageReceivedEvent) :void
+        {
+            _client.sabotageTriggered(SabotageTriggered.readFromArray(event.value as ByteArray));
         }
         
         /**
@@ -202,6 +209,7 @@ package server
         public static const ITEM_USED:int = 7;
         public static const PATH_UNAVAILABLE:int = 8;
         public static const LEVEL_COMPLETE:int = 9;
+        public static const SABOTAGE_TRIGGERED:int = 10;
         
         public static const messageName:Dictionary = new Dictionary();
         messageName[LEVEL_ENTERED] = "level entered";
@@ -213,6 +221,7 @@ package server
         messageName[ITEM_RECEIVED] = "item received";
         messageName[ITEM_USED] = "item used";
         messageName[PATH_UNAVAILABLE] = "path unavailable";
-        messageName[LEVEL_COMPLETE] = "level compete";        
+        messageName[LEVEL_COMPLETE] = "level compete";
+        messageName[SABOTAGE_TRIGGERED] = "sabotage triggered";        
 	}
 }

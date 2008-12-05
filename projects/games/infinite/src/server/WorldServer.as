@@ -22,6 +22,7 @@ package server
 	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
+	import server.Messages.SabotageTriggered;
 	import server.Messages.Serializable;
 	
 	import world.CellStateEvent;
@@ -233,7 +234,11 @@ package server
 		    const victim:Player = _world.findPlayer(event.victimId);
 		    const saboteur:Player = _world.findPlayer(event.sabotage.saboteurId);
 		    
-		    systemMessage(victim.name +" "+ event.sabotage.sabotageType + " by "+saboteur.name); 
+		    const detail:SabotageTriggered = new SabotageTriggered(event.victimId, event.sabotage.saboteurId, event.sabotage.sabotageType);
+		    send(event.victimId, RemoteWorld.SABOTAGE_TRIGGERED, detail);
+		    send(event.sabotage.saboteurId, RemoteWorld.SABOTAGE_TRIGGERED, detail);		    
+		    
+		    systemMessage(victim.name +" was "+ event.sabotage.sabotageType + " by "+saboteur.name); 
 		}		
 			
 		protected function get id () :int

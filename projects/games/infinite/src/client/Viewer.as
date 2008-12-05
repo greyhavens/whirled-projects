@@ -12,6 +12,7 @@ package client
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
+	import server.Messages.SabotageTriggered;
 	
 	import sprites.*;
 	
@@ -163,7 +164,7 @@ package client
 			}
 			_objective.removePlayer(player);
 		}
-				
+						
 		protected var _radarView:RadarView;
 		
 		protected var _levelComplete:LevelEndReward;

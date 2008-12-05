@@ -24,6 +24,7 @@ package client
 	import server.Messages.LevelUpdate;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
+	import server.Messages.SabotageTriggered;
 	
 	import sprites.SpriteUtil;
 	
@@ -73,6 +74,11 @@ package client
 			Geometry.position(modeView, rect.origin);
 			addChild(modeView);
 							
+			_announcement = new Announcement(this);
+			_announcement.y = GAME_HEIGHT-130;
+			_announcement.x = 0;
+			_announcement.width = GAME_WIDTH;
+			 
 			enterWorld();			
 		}
 						
@@ -333,10 +339,25 @@ package client
 		    return _radar;
 		}
 		
-		protected var _levels:Array = new Array();
-		
+		public function sabotageTriggered (detail:SabotageTriggered) :void
+		{
+		    if (detail.victimId == _localPlayer.id) {
+                _announcement.positive();		        
+		        _announcement.announcement = "Drat! " + _world.nameForPlayer(detail.saboteurId)+  " " + detail.type + " you!";
+		        _announcement.show();
+		    }
+		    
+		    if (detail.saboteurId == _localPlayer.id) {
+		        _announcement.negative();
+		        _announcement.announcement = "Cool! You " + detail.type + " " + _world.nameForPlayer(detail.victimId) + "!";
+		        _announcement.show();
+		    }
+		}
+				
+		protected var _levels:Array = new Array();		
 		protected var _serverOffset:Number = 0;
 		
+		protected var _announcement:Announcement;		
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
 		protected var _players:ClientPlayers = new ClientPlayers();
