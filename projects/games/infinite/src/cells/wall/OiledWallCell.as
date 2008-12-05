@@ -1,14 +1,18 @@
 package cells.wall
 {
-	import arithmetic.BoardCoordinates;
-	
 	import cells.CellCodes;
+	
+	import interactions.Sabotage;
+	import interactions.SabotageType;
+	
+	import server.Messages.CellState;
 
-	public class OiledWallCell extends WallBaseCell
+	public class OiledWallCell extends WallBaseCell implements Sabotage
 	{
-		public function OiledWallCell(position:BoardCoordinates)
+		public function OiledWallCell(state:CellState)
 		{
-			super(position);
+			super(state.position);
+			_saboteurId = state.attributes.saboteurId;
 		}
 		
 		override public function get code () :int
@@ -21,6 +25,18 @@ package cells.wall
 			return false;
 		}		
 		
-		override public function get type () :String { return "oiled wall"; }			
+		override public function get type () :String { return "oiled wall"; }
+
+        public function get saboteurId () :int
+        {
+            return _saboteurId;
+        }
+
+        public function get sabotageType () :String
+        {
+            return SabotageType.OILED;
+        }
+		
+		protected var _saboteurId:int;			
 	}
 }

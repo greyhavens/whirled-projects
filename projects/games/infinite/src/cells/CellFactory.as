@@ -26,7 +26,7 @@ package cells
 			switch (state.code) {
 				case CellCodes.WALL: return new WallCell(state.position);
 				case CellCodes.WALL_BASE: return new WallBaseCell(state.position);
-				case CellCodes.OILED_WALL: return new OiledWallCell(state.position);
+				case CellCodes.OILED_WALL: return new OiledWallCell(state);
 				case CellCodes.LADDER_BASE: return new LadderBaseCell(owner, state.position);
 				case CellCodes.LADDER_MIDDLE: return new LadderMiddleCell(owner, state.position);
 				case CellCodes.LADDER_TOP: return new LadderTopCell(owner, state.position);

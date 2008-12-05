@@ -3,9 +3,11 @@ package cells.wall
 	import arithmetic.*;
 	
 	import cells.CellCodes;
+	import cells.CellUtil;
 	
 	import interactions.Oilable;
-    import world.Cell;
+	
+	import world.Cell;
 	
 	public class WallCell extends WallBaseCell implements Oilable
 	{
@@ -14,9 +16,9 @@ package cells.wall
 			super(position);
 		}
 	
-		public function oiledBy (owner:Owner) :Cell
+		public function oiledBy (saboteur:Owner) :Cell
 		{
-			return new OiledWallCell(_position);
+			return new OiledWallCell(CellUtil.sabotagedState(this, saboteur));
 		}
 	
 		override public function get code () :int

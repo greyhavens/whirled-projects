@@ -4,6 +4,7 @@ package cells.ladder
 	
 	import cells.CellCodes;
 	import cells.PlayerCell;
+	import cells.CellUtil;
 	
 	import interactions.Oilable;
     import world.Cell;
@@ -23,7 +24,7 @@ package cells.ladder
 		
 		public function oiledBy (saboteur:Owner) :Cell
 		{
-			return new OiledLadderTopCell(_owner, state);
+			return new OiledLadderTopCell(_owner, CellUtil.sabotagedState(this, saboteur));
 		}
 								
 		override public function get climbLeftTo():Boolean { return true; }
