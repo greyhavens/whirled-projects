@@ -14,7 +14,7 @@ package cells.wall
 			super(position);
 		}
 	
-		public function oiled () :Cell
+		public function oiledBy (owner:Owner) :Cell
 		{
 			return new OiledWallCell(_position);
 		}

@@ -1,8 +1,8 @@
 package cells.ladder
 {
-	import arithmetic.BoardCoordinates;
-	
 	import cells.CellCodes;
+	
+	import server.Messages.CellState;
 	
 	/** 
 	 * An oiled ladder cell looks similar to a regular ladder, except that it causes the player to 
@@ -10,9 +10,9 @@ package cells.ladder
 	 */
 	public class OiledLadderBaseCell extends LadderBaseCell
 	{
-		public function OiledLadderBaseCell(owner:Owner, position:BoardCoordinates) :void
+		public function OiledLadderBaseCell(owner:Owner, state:CellState) :void
 		{
-			super(owner, position);
+			super(owner, state.position);
 		}
 		
 		override public function get code () :int

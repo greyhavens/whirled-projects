@@ -20,9 +20,9 @@ package cells.ladder
 			return CellCodes.LADDER_MIDDLE;
 		}
 		
-		public function oiled () :Cell
+		public function oiledBy (owner:Owner) :Cell
 		{
-			return new OiledLadderMiddleCell(_owner, _position);
+			return new OiledLadderMiddleCell(_owner, state);
 		}
 
 		override public function get climbLeftTo():Boolean { return true; }

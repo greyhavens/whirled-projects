@@ -21,9 +21,9 @@ package cells.ladder
 			return CellCodes.LADDER_TOP;
 		}
 		
-		public function oiled () :Cell
+		public function oiledBy (saboteur:Owner) :Cell
 		{
-			return new OiledLadderTopCell(_owner, _position);
+			return new OiledLadderTopCell(_owner, state);
 		}
 								
 		override public function get climbLeftTo():Boolean { return true; }

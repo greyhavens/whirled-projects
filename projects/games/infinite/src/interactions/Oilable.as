@@ -4,6 +4,6 @@ package interactions
 	
 	public interface Oilable
 	{
-		function oiled () :Cell		
+		function oiledBy (owner:Owner) :Cell		
 	}
 }
