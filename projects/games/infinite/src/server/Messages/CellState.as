@@ -4,6 +4,8 @@ package server.Messages
 	
 	import cells.CellFactory;
 	
+	import client.ClientPlayers;
+	
 	import flash.utils.ByteArray;
 	
 	import world.Cell;
@@ -12,8 +14,9 @@ package server.Messages
 	
 	public class CellState extends CellFactory implements Serializable
 	{
-		public function CellState(code:int, position:BoardCoordinates)
+		public function CellState(ownerId:int, code:int, position:BoardCoordinates)
 		{
+		    _ownerId = ownerId;
 			_code = code;
 			_position = position;
 		}
@@ -21,14 +24,15 @@ package server.Messages
         /**
          * Apply this state to the board.
          */
-        public function update(clock:Chronometer, board:BoardInteractions) :void
+        public function update(owners:Owners, clock:Chronometer, board:BoardInteractions) :void
         {
         	const current:Cell = board.cellAt(_position);
-        	current.updateState(clock, board, this);
+        	current.updateState(owners, clock, board, this);
         }
 
         public function writeToArray (array:ByteArray) :ByteArray
         {
+            array.writeInt(_ownerId);
         	array.writeInt(_code);
         	_position.writeToArray(array);
         	array.writeObject(attributes);
@@ -38,6 +42,7 @@ package server.Messages
         public static function readFromArray (array:ByteArray) :CellState
         {
         	const read:CellState = new CellState(
+        	   array.readInt(),
         	   array.readInt(),
         	   BoardCoordinates.readFromArray(array)
         	)
@@ -59,9 +64,9 @@ package server.Messages
         	_attributes = object;
         }        
         
-        public function newCell (old:Cell) :Cell
+        public function newCell (owners:Owners, old:Cell) :Cell
         {
-        	return makeCell(old.owner, this);
+        	return makeCell(owners.findOwner(_ownerId), this);
         }
         
         public function get code () :int
@@ -74,6 +79,7 @@ package server.Messages
         	return _position;
         }
 
+        protected var _ownerId:int;
         protected var _code:int;
         protected var _position:BoardCoordinates;
         protected var _attributes:Object

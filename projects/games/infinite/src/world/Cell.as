@@ -85,7 +85,7 @@ package world
         /**
          * Update the state of a given cell.
          */ 
-        function updateState (clock:Chronometer, board:BoardInteractions, state:CellState) :void
+        function updateState (owners:Owners, clock:Chronometer, board:BoardInteractions, state:CellState) :void
         
         /**
          * Cause this cell to distribute its state to all interested parties.

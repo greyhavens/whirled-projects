@@ -158,13 +158,13 @@ package cells
 		
 		public function get state () :CellState
 		{
-			return new CellState(code, position);
+			return new CellState(owner.id, code, position);
 		}
 		
-		public function updateState (clock:Chronometer, board:BoardInteractions, state:CellState) :void
+		public function updateState (owners:Owners, clock:Chronometer, board:BoardInteractions, state:CellState) :void
 		{
 		    if (state.code != code) {
-		    	const replacement:Cell = state.newCell(this);
+		    	const replacement:Cell = state.newCell(owners, this);
 		    	replacement.addToLevel(_level);
 		        board.replace(replacement);
 		    } else {

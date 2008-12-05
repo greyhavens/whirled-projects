@@ -14,8 +14,14 @@ package
 			return _name;
 		}
 		
+		public function get id () :int 
+		{
+		    return ID;
+		}
+		
 		protected var _name:String;
 		
 		public static const NOBODY:Nobody = new Nobody("nobody");
+		public static const ID:int = 0;
 	}
 }

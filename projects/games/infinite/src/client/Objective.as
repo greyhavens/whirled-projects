@@ -10,7 +10,6 @@ package client
 	import client.player.Player;
 	
 	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	import graphics.Diagram;
@@ -71,7 +70,7 @@ package client
 			_frameTimer.start();
 		}		
 		
-		public function destroy(players:PlayerRegister) :void 
+		public function destroy(players:ClientPlayers) :void 
 		{
 		    for each(var player:Player in players.list) {
 		        var view:PlayerSprite = _playerViews.take(player);
@@ -344,17 +343,17 @@ package client
         	}
         }
         
-        public function updateCells (update:CellUpdate) :void
+        public function updateCells (register:ClientPlayers, update:CellUpdate) :void
         {
 //        	Log.debug("updating cell state of "+update.states.length+" cells");
         	for each (var state:CellState in update.states) {
-        		state.update(this, this);
+        		state.update(register, this, this);
         	}
         }
         
-        public function updateCell (state:CellState) :void
+        public function updateCell (register:ClientPlayers, state:CellState) :void
         {
-        	state.update(this, this);
+        	state.update(register, this, this);
         }
                 
         public function get frameTimer () :FrameTimer

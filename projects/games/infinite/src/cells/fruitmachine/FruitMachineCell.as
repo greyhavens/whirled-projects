@@ -181,7 +181,7 @@ package cells.fruitmachine
 
         public static function withItemAt (position:BoardCoordinates, item:Item) :Cell
         {
-            const state:CellState = new CellState(CellCodes.FRUIT_MACHINE, position);
+            const state:CellState = new CellState(Nobody.NOBODY.id, CellCodes.FRUIT_MACHINE, position);
             state.attributes = {
                 mode: FruitMachineCell.ACTIVE,
                 item: item.attributes,

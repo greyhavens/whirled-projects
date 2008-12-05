@@ -254,13 +254,13 @@ package client
 		public function updatedCells (detail:CellUpdate) :void
 		{
 			//Log.debug("client processing "+detail);
-			_viewer.updatedCells(detail);
+			_viewer.updatedCells(players, detail);
 		}
 		
 		public function updateCell (detail:CellState) :void
 		{
 			//Log.debug(this+" updating cell with "+detail);
-			_viewer.updateCell(detail);
+			_viewer.updateCell(players, detail);
 		}
 		
 		public function receiveItem(detail:InventoryUpdate) :void
@@ -323,7 +323,7 @@ package client
             return found;			
 		}
 		
-		public function get players () :PlayerRegister
+		public function get players () :ClientPlayers
 		{
 		    return _players;
 		}
@@ -339,7 +339,7 @@ package client
 		
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
-		protected var _players:PlayerRegister = new PlayerRegister();
+		protected var _players:ClientPlayers = new ClientPlayers();
 		protected var _level:int = NO_LEVEL;
 		
 		protected var _controller:PlayerController;

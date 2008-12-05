@@ -119,14 +119,14 @@ package client
 			}
 		}
 		
-		public function updatedCells (update:CellUpdate) :void
+		public function updatedCells (register:ClientPlayers, update:CellUpdate) :void
 		{
-			_objective.updateCells(update);
+			_objective.updateCells(register, update);
 		}
 
-		public function updateCell (state:CellState) :void
+		public function updateCell (register:ClientPlayers, state:CellState) :void
 		{
-			_objective.updateCell(state);
+			_objective.updateCell(register, state);
 		}
 
 		public function get objective () :Objective 

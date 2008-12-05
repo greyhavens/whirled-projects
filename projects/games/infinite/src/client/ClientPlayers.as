@@ -5,9 +5,9 @@ package client
 	import flash.utils.Dictionary;
 	
 	
-	public class PlayerRegister
+	public class ClientPlayers implements Owners
 	{
-		public function PlayerRegister()
+		public function ClientPlayers()
 		{
 		}
 
@@ -15,6 +15,15 @@ package client
 		{
 			return _dictionary[id] as Player;
 		}
+
+        public function findOwner (id:int) :Owner
+        {
+            const found:Player = find(id);
+            if (found != null) {
+                return found;
+            }
+            return Nobody.NOBODY;
+        }
 
 		public function register (player:Player) :void
 		{
