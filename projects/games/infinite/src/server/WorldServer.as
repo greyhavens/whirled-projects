@@ -231,6 +231,11 @@ package server
 		
 		public function handleSabotageTriggered (event:SabotageEvent) :void
 		{
+		    // do nothing if you are using your own trap.
+		    if (event.victimId == event.sabotage.saboteurId) {
+		        return;
+		    }
+		    
 		    const victim:Player = _world.findPlayer(event.victimId);
 		    const saboteur:Player = _world.findPlayer(event.sabotage.saboteurId);
 		    
