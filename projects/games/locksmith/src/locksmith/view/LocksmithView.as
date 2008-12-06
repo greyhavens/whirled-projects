@@ -30,9 +30,10 @@ public class LocksmithView extends LocksmithSprite
     public function updateSize (viewSize :Point) :void
     {
         _leftBackground.width = _rightBackground.width = 
-            Math.max(0, viewSize.x - DISPLAY_WIDTH / 2) + 1;
+            Math.max(0, (viewSize.x - DISPLAY_WIDTH) / 2) + 1;
         _rightBackground.x = viewSize.x - _rightBackground.width;
         _board.x = DISPLAY_WIDTH / 2 + _leftBackground.width - 0.5;
+        _board.y = DISPLAY_HEIGHT/ 2;
     }
 
     protected function ringsCreated () :void
