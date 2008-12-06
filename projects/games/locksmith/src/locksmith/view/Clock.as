@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package locksmith {
+package locksmith.view {
 
 import flash.display.Sprite;
 
@@ -58,7 +58,7 @@ public class Clock extends Sprite
         if (_ringIndicator.parent != _minute) { 
             _minute.addChild(_ringIndicator);
         }
-        _ringIndicator.y = -(ringNum + 0.5) * Ring.SIZE_PER_RING;
+        _ringIndicator.y = -(ringNum + 0.5) * RingSprite.SIZE_PER_RING;
     }
 
     public function setRotationAngle (angle :Number, finished :Boolean = false) :void
@@ -102,11 +102,11 @@ public class Clock extends Sprite
 
     private static const log :Log = Log.getLog(Clock);
 
-    [Embed(source="../../rsrc/locksmith_art.swf#hand_minute")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#hand_minute")]
     protected static const MINUTE :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#hand_hour")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#hand_hour")]
     protected static const HOUR :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#selector")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#selector")]
     protected static const SELECTOR :Class;
 
     protected var _minute :Sprite;

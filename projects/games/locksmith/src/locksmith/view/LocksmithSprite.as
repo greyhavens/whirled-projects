@@ -1,8 +1,9 @@
 //
 // $Id$
+package locksmith.view {
 
 import flash.display.Sprite;
-import flash.display.IEventDispatcher;
+import flash.events.IEventDispatcher;
 
 import com.whirled.contrib.EventHandlerManager;
 
@@ -13,7 +14,7 @@ public class LocksmithSprite extends Sprite
         _eventMgr = eventMgr;
     }
 
-    public function registerListener (event :String, listener :Function
+    public function registerListener (event :String, listener :Function,
         dispatcher :IEventDispatcher = null) :void
     {
         _eventMgr.registerListener(getDispatcher(dispatcher), event, listener);
@@ -48,5 +49,6 @@ public class LocksmithSprite extends Sprite
         return dispatcher != null ? dispatcher : this;
     }
 
-    protected var _eventMgr = eventMgr;
+    protected var _eventMgr :EventHandlerManager;
+}
 }

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package locksmith {
+package locksmith.view {
 
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
@@ -89,19 +89,19 @@ public class ScoreBoard extends Sprite
 
     public function scorePoint (player :int) :void
     {
-        if (player == MOON_PLAYER) {
-            scorePointAnimation(player, ++_moonScore);
-            if (_moonScore == Locksmith.WIN_SCORE) {
-                gameOver();
-            }
-        } else if (player == SUN_PLAYER) {
-            scorePointAnimation(player, ++_sunScore);
-            if (_sunScore == Locksmith.WIN_SCORE) {
-                gameOver();
-            }
-        } else {
-            log.debug("Asked to score point for unknown player [" + player + "]");
-        }
+//        if (player == MOON_PLAYER) {
+//            scorePointAnimation(player, ++_moonScore);
+//            if (_moonScore == Locksmith.WIN_SCORE) {
+//                gameOver();
+//            }
+//        } else if (player == SUN_PLAYER) {
+//            scorePointAnimation(player, ++_sunScore);
+//            if (_sunScore == Locksmith.WIN_SCORE) {
+//                gameOver();
+//            }
+//        } else {
+//            log.debug("Asked to score point for unknown player [" + player + "]");
+//        }
     }
 
     public function displayVictory (player :int) :void
@@ -217,34 +217,34 @@ public class ScoreBoard extends Sprite
 
     protected function scorePointAnimation (player :int, point :int) :void
     {
-        if (player == MOON_PLAYER) {
-            var marble :MarbleMovie = new MarbleMovie(Marble.MOON);
-            marble.x = MOON_RAMP_BEGIN.x + 22;
-            marble.y = MOON_RAMP_BEGIN.y - 10;
-            marble.rotation = 90;
-            marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
-            _marbleLayer.addChild(marble);
-            new RampAnimation(marble, MOON_RAMP_BEGIN.clone(), MOON_RAMP_END.clone(), point);
-        } else {
-            marble = new MarbleMovie(Marble.SUN);
-            marble.x = SUN_RAMP_BEGIN.x - 22;
-            marble.y = SUN_RAMP_BEGIN.y - 10;
-            marble.rotation = -90;
-            marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
-            _marbleLayer.addChild(marble);
-            new RampAnimation(marble, SUN_RAMP_BEGIN.clone(), SUN_RAMP_END.clone(), point);
-        }
+//        if (player == MOON_PLAYER) {
+//            var marble :MarbleMovie = new MarbleMovie(Marble.MOON);
+//            marble.x = MOON_RAMP_BEGIN.x + 22;
+//            marble.y = MOON_RAMP_BEGIN.y - 10;
+//            marble.rotation = 90;
+//            marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
+//            _marbleLayer.addChild(marble);
+//            new RampAnimation(marble, MOON_RAMP_BEGIN.clone(), MOON_RAMP_END.clone(), point);
+//        } else {
+//            marble = new MarbleMovie(Marble.SUN);
+//            marble.x = SUN_RAMP_BEGIN.x - 22;
+//            marble.y = SUN_RAMP_BEGIN.y - 10;
+//            marble.rotation = -90;
+//            marble.gotoAndPlay((Math.random() * marble.totalFrames) + 1);
+//            _marbleLayer.addChild(marble);
+//            new RampAnimation(marble, SUN_RAMP_BEGIN.clone(), SUN_RAMP_END.clone(), point);
+//        }
     }
 
     private static const log :Log = Log.getLog(ScoreBoard);
 
-    [Embed(source="../../rsrc/locksmith_art.swf#trough_overlay")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#trough_overlay")]
     protected static const TROUGH_OVERLAY :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#player_frame")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#player_frame")]
     protected static const PLAYER_FRAME :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#winner_resolve_moon")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#winner_resolve_moon")]
     protected static const WINNER_MOON :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#winner_resolve_sun")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#winner_resolve_sun")]
     protected static const WINNER_SUN :Class;
 
     protected static const SUN_RAMP_BEGIN :Point = new Point(256, 38);
@@ -269,9 +269,7 @@ import flash.display.BlendMode;
 import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
 
@@ -279,7 +277,7 @@ import com.threerings.util.Log;
 
 import com.whirled.contrib.EventHandlers;
 
-import locksmith.MarbleMovie;
+import locksmith.view.MarbleMovie;
 
 class RampAnimation
 {
@@ -363,18 +361,18 @@ class RampAnimation
 
     protected function moveDownRamp () :void
     {
-        var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
-        percent = Math.pow(percent, 2);
-        if (percent >= (1 - (_myScore - 1) / Locksmith.WIN_SCORE)) {
-            EventHandlers.unregisterListener(_marble, Event.ENTER_FRAME, enterFrame);
-            _marble.stop();
-            percent = 1 - (_myScore - 1) / Locksmith.WIN_SCORE;
-        } 
-        var factorX :Number = Math.pow(percent, 1.8);
-        _marble.x = factorX * (_rampBottom.x - _rampTop.x) + _rampTop.x;
-        var factorY :Number = 1 - Math.pow(1 - percent, 1.5);
-        _marble.y = factorY * (_rampBottom.y - _rampTop.y) + _rampTop.y;
-        _marble.scaleX = _marble.scaleY = ((factorX + factorY) / 2) * (FINAL_SCALE - 1) + 1;
+//        var percent :Number = ++_phaseTime / ROLL_DOWN_TIME;
+//        percent = Math.pow(percent, 2);
+//        if (percent >= (1 - (_myScore - 1) / Locksmith.WIN_SCORE)) {
+//            EventHandlers.unregisterListener(_marble, Event.ENTER_FRAME, enterFrame);
+//            _marble.stop();
+//            percent = 1 - (_myScore - 1) / Locksmith.WIN_SCORE;
+//        } 
+//        var factorX :Number = Math.pow(percent, 1.8);
+//        _marble.x = factorX * (_rampBottom.x - _rampTop.x) + _rampTop.x;
+//        var factorY :Number = 1 - Math.pow(1 - percent, 1.5);
+//        _marble.y = factorY * (_rampBottom.y - _rampTop.y) + _rampTop.y;
+//        _marble.scaleX = _marble.scaleY = ((factorX + factorY) / 2) * (FINAL_SCALE - 1) + 1;
     }
 
     protected static const PHASE_DELAY :int = 1;
@@ -401,8 +399,6 @@ class RampAnimation
 
     private static const log :Log = Log.getLog(RampAnimation);
 }
-
-import locksmith.Locksmith;
 
 class CoinsDisplay extends Sprite
 {
@@ -472,7 +468,7 @@ class CoinsDigit extends Sprite
 
     private static const log :Log = Log.getLog(CoinsDigit);
 
-    [Embed(source="../../rsrc/locksmith_art.swf#digit")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#digit")]
     protected const FLOW_DIGIT :Class;
 
     protected var _digit :MovieClip; 

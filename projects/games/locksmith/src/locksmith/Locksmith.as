@@ -12,7 +12,7 @@ public class Locksmith extends Sprite
 {
     public function Locksmith ()
     {
-        _control = new LocksmithController(this);
+        _control = new ClientLocksmithController(this);
     }
 
     protected var _control :LocksmithController;

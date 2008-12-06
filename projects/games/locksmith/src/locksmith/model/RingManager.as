@@ -25,6 +25,7 @@ public class RingManager extends ModelManager
     public static const MARBLE_POSITION :String = "RingManagerMarblePosition";
 
     public static const RING_POSITIONS :int = 16;
+    public static const NUM_RINGS :int = 4;
 
     // server-side events
     public static const POINT_SCORED :String = "pointScored";
@@ -42,6 +43,11 @@ public class RingManager extends ModelManager
     {
         super(gameCtrl, eventMgr);
         manageProperties(RING_HOLES, EXISTING_MARBLES, RING_POSITION, MARBLE_POSITION);
+    }
+
+    public function get smallestRing () :Ring
+    {
+        return _rings[0] as Ring;
     }
 
     public function createRings () :void
@@ -211,7 +217,6 @@ public class RingManager extends ModelManager
     protected var _marbles :HashMap = new HashMap();
     protected var _nextMarbleId :int = 0; // only used on the server.
 
-    protected static const NUM_RINGS :int = 4;
     protected static const RING_HOLE_NUM :Array = [ 2, 4, 8, 6 ];
     protected static const RING_HOLE_MOD :Array = [ 4, 2, 1, 2 ];
     protected static const GOAL_RING_ID :int = -10;

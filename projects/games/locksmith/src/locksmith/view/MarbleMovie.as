@@ -1,12 +1,11 @@
 //
 // $Id$
 
-package locksmith {
+package locksmith.view {
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
-
-import mx.core.MovieClipAsset;
 
 /**
  * A sprite class that exposes some of the methods to its underlying movie, and handles rotation
@@ -17,13 +16,13 @@ public class MarbleMovie extends Sprite
     public function MarbleMovie (type :int)
     {
         addChild(new BALL_SHADOW() as DisplayObject);
-        addChild(_movie = new (type == Marble.MOON ? MOON_BALL : SUN_BALL)() as MovieClipAsset);
-        _movie.cacheAsBitmap = true;
-        var shine :DisplayObject = 
-            new (type == Marble.MOON ? BALL_SHINE_MOON : BALL_SHINE_SUN)() as DisplayObject;
-        shine.cacheAsBitmap = true;
-        addChild(shine);
-        cacheAsBitmap = true;
+//        addChild(_movie = new (type == Marble.MOON ? MOON_BALL : SUN_BALL)() as MovieClip);
+//        _movie.cacheAsBitmap = true;
+//        var shine :DisplayObject = 
+//            new (type == Marble.MOON ? BALL_SHINE_MOON : BALL_SHINE_SUN)() as DisplayObject;
+//        shine.cacheAsBitmap = true;
+//        addChild(shine);
+//        cacheAsBitmap = true;
     }
 
     public override function get rotation () :Number
@@ -61,18 +60,18 @@ public class MarbleMovie extends Sprite
         _movie.stop();
     }
 
-    [Embed(source="../../rsrc/locksmith_art.swf#ball_sun")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#ball_sun")]
     protected static const SUN_BALL :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#ball_shine_sun")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#ball_shine_sun")]
     protected static const BALL_SHINE_SUN :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#ball_moon")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#ball_moon")]
     protected static const MOON_BALL :Class;
-    [Embed(source="../../rsrc/locksmith_art.swf#ball_shine_moon")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#ball_shine_moon")]
     protected static const BALL_SHINE_MOON :Class;
 
-    [Embed(source="../../rsrc/locksmith_art.swf#ball_shadow")]
+    [Embed(source="../../../rsrc/locksmith_art.swf#ball_shadow")]
     protected static const BALL_SHADOW :Class;
 
-    protected var _movie :MovieClipAsset;
+    protected var _movie :MovieClip;
 }
 }

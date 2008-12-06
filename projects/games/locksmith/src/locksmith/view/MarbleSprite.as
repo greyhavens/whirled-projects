@@ -1,22 +1,19 @@
 //
 // $Id$
 
-package locksmith {
+package locksmith.view {
 
 import flash.display.Sprite;
-
 import flash.events.Event;
-
 import flash.geom.Matrix;
 import flash.geom.Point;
-
 import flash.utils.getTimer;
 
 import com.threerings.util.Log;
 
 import com.whirled.contrib.EventHandlers;
 
-public class Marble extends Sprite
+public class MarbleSprite extends Sprite
 {
     public static const MOON :int = ScoreBoard.MOON_PLAYER;
     public static const SUN :int = ScoreBoard.SUN_PLAYER;
@@ -26,7 +23,7 @@ public class Marble extends Sprite
 
     public static const RING_MULTIPLIER :int = 20;
 
-    public function Marble (board :Board, ring :Ring, pos :int, type :int, 
+    public function MarbleSprite (board :Board, ring :RingSprite, pos :int, type :int, 
         positionTransform :Matrix) 
     {
         _board = board;
@@ -132,75 +129,73 @@ public class Marble extends Sprite
 
     protected function enterFrame (evt :Event) :void 
     {
-        updateRotation();
-        if (_moving) {
-            var percent :Number = (getTimer() - _moveStart) / ROLL_TIME;
-            if (percent < 1) {
-                var loc :Point = Point.interpolate(_destination, _origin, percent);
-                x = loc.x;
-                y = loc.y;
-                return;
-            }
-
-            x = _destination.x;
-            y = _destination.y;
-
-            // check if we're in the middle and should be removed from the board.
-            if (_destination.equals(new Point(0, 0))) {
-                EventHandlers.unregisterListener(this, Event.ENTER_FRAME, enterFrame);
-                _board.removeChild(this);
-                _board.marbleIsRoaming(this, false);
-                return;
-            }
-
-            // if the target ring is rotating, we don't try to fall any further at the moment
-            if (_nextRing.isRotating()) {
-                setMoving(false);
-                _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
-                _board.marbleIsRoaming(this, false);
-
-            // otherwise we try to fall as far as we can.
-            } else if (_nextRing.inner != null) {
-                // if the next ring down the line has an empty hole at our position, and nothing
-                // else is moving to it, start going there immediately
-                var hole :int = _nextRing.inner.getHoleAt(_pos);
-                if (hole != -1 && _nextRing.inner.holeIsEmpty(hole) &&
-                    _board.getMarbleGoingToHole(_nextRing.inner.num, hole) == null) {
-                    _origin = _destination;
-                    _destination = _nextRing.inner.getHoleTargetLocation(hole);
-                    _moveStart = getTimer();
-
-                // otherwise, just sit where we are
-                } else {
-                    setMoving(false);
-                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
-                    _board.marbleIsRoaming(this, false);
-                }
-
-            // finally, if the ring we're on isn't rotating, and has no inner ring, then we're a
-            // goal candidate
-            } else {
-                setMoving(false);
-                if (_pos <= 2 || _pos >= 14) {
-                    scorePoint(MOON);
-                } else if (_pos >= 6 && _pos <= 10) {
-                    scorePoint(SUN);
-                } else {
-                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
-                    _board.marbleIsRoaming(this, false);
-                }
-            }
-
-            _nextRing = _nextRing != null ? _nextRing.inner : null;
-        }
+//        updateRotation();
+//        if (_moving) {
+//            var percent :Number = (getTimer() - _moveStart) / ROLL_TIME;
+//            if (percent < 1) {
+//                var loc :Point = Point.interpolate(_destination, _origin, percent);
+//                x = loc.x;
+//                y = loc.y;
+//                return;
+//            }
+//
+//            x = _destination.x;
+//            y = _destination.y;
+//
+//            // check if we're in the middle and should be removed from the board.
+//            if (_destination.equals(new Point(0, 0))) {
+//                EventHandlers.unregisterListener(this, Event.ENTER_FRAME, enterFrame);
+//                _board.removeChild(this);
+//                _board.marbleIsRoaming(this, false);
+//                return;
+//            }
+//
+//            // if the target ring is rotating, we don't try to fall any further at the moment
+//            if (_nextRing.isRotating()) {
+//                setMoving(false);
+//                _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
+//                _board.marbleIsRoaming(this, false);
+//
+//            // otherwise we try to fall as far as we can.
+//            } else if (_nextRing.inner != null) {
+//                // if the next ring down the line has an empty hole at our position, and nothing
+//                // else is moving to it, start going there immediately
+//                var hole :int = _nextRing.inner.getHoleAt(_pos);
+//                if (hole != -1 && _nextRing.inner.holeIsEmpty(hole) &&
+//                    _board.getMarbleGoingToHole(_nextRing.inner.num, hole) == null) {
+//                    _origin = _destination;
+//                    _destination = _nextRing.inner.getHoleTargetLocation(hole);
+//                    _moveStart = getTimer();
+//
+//                // otherwise, just sit where we are
+//                } else {
+//                    setMoving(false);
+//                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
+//                    _board.marbleIsRoaming(this, false);
+//                }
+//
+//            // finally, if the ring we're on isn't rotating, and has no inner ring, then we're a
+//            // goal candidate
+//            } else {
+//                setMoving(false);
+//                if (_pos <= 2 || _pos >= 14) {
+//                    scorePoint(MOON);
+//                } else if (_pos >= 6 && _pos <= 10) {
+//                    scorePoint(SUN);
+//                } else {
+//                    _nextRing.putMarbleInHole(this, _nextRing.getHoleAt(_pos));
+//                    _board.marbleIsRoaming(this, false);
+//                }
+//            }
+//
+//            _nextRing = _nextRing != null ? _nextRing.inner : null;
+//        }
     }
-
-    private static const log :Log = Log.getLog(Marble);
 
     protected static const ROLL_TIME :int = ROLL_FRAMES * 20; // in ms
 
     protected var _board :Board;
-    protected var _nextRing :Ring;
+    protected var _nextRing :RingSprite;
     protected var _pos :int;
     protected var _destination :Point;
     protected var _origin :Point;
@@ -208,5 +203,7 @@ public class Marble extends Sprite
     protected var _moving :Boolean = false;
     protected var _type :int;
     protected var _movie :MarbleMovie;
+
+    private static const log :Log = Log.getLog(MarbleSprite);
 }
 }
