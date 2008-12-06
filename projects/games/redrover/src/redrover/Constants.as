@@ -2,8 +2,6 @@ package redrover {
 
 import com.threerings.flash.Vector2;
 
-import redrover.util.IntValueTable;
-
 public class Constants
 {
     /* Debug options */
@@ -59,6 +57,16 @@ public class Constants
     public static function isPerp (dirA :int, dirB :int) :Boolean
     {
         return !isParallel(dirA, dirB);
+    }
+
+    public static function isHoriz (direction :int) :Boolean
+    {
+        return (direction == DIR_EAST || direction == DIR_WEST);
+    }
+
+    public static function isVert (direction :int) :Boolean
+    {
+        return (direction == DIR_NORTH || direction == DIR_SOUTH);
     }
 
     public static const GEM_GREEN :int = 0;

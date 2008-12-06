@@ -157,6 +157,7 @@ public class GameMode extends AppMode
 
     override public function update (dt :Number) :void
     {
+        dt = 1 / 30; // TODO - remove this!
         super.update(dt);
 
         // sort the board objects in the currently-visible TeamSprite
