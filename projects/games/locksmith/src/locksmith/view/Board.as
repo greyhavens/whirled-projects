@@ -17,6 +17,7 @@ import com.whirled.game.GameControl
 import com.whirled.contrib.EventHandlers;
 
 import locksmith.model.Marble;
+import locksmith.model.Player;
 import locksmith.model.Ring;
 
 public class Board extends Sprite
@@ -29,34 +30,12 @@ public class Board extends Sprite
         var goalDome :DisplayObject = new GOAL_DOME() as DisplayObject;
         goalDome.cacheAsBitmap = true;
         addChild(goalDome);
+        addChild(_ringLayer = new Sprite());
         addChild(_marbleLayer = new Sprite());
         addChild(_clock = new Clock(turnTimeout));
         var launcherLayer :Sprite = new Sprite();
         addChild(launcherLayer);
-//        var launcherSymbols :Array = [ "UP", "MID", "LOW" ];
-//        for (var ii :int = 0; ii < 3; ii++) {
-//            var trans :Matrix = new Matrix();
-//            trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
-//            trans.rotate(-LAUNCHER_ANGLES[ii].moon * Math.PI / 180);
-//            var moonLauncher :MovieClip = 
-//                new Board["GATE_MOON_" + launcherSymbols[ii]]() as MovieClip;
-//            moonLauncher.transform.matrix = trans;
-//            moonLauncher.scaleX = moonLauncher.scaleY = -1;
-//            launcherLayer.addChild(moonLauncher);
-//            _launchers[ScoreBoard.MOON_PLAYER][ii] = new LaunchAnimation(this, moonLauncher);
-//
-//            trans = new Matrix();
-//            trans.translate(Ring.SIZE_PER_RING * 5.5, 0);
-//            trans.rotate(-LAUNCHER_ANGLES[ii].sun * Math.PI / 180);
-//            var sunLauncher :MovieClip = 
-//                new Board["GATE_SUN_" + launcherSymbols[ii]]() as MovieClip;
-//            sunLauncher.transform.matrix = trans;
-//            sunLauncher.scaleX = -1;
-//            launcherLayer.addChild(sunLauncher);
-//            _launchers[ScoreBoard.SUN_PLAYER][ii] = new LaunchAnimation(this, sunLauncher);
-//        }
-
-//        _loadedLauncher = -1;
+        initLaunchers(launcherLayer);
 
         EventHandlers.registerListener(this, Event.ENTER_FRAME, enterFrame);
     }
@@ -238,6 +217,31 @@ public class Board extends Sprite
 //        }
     }
 
+    protected function initLaunchers (launcherLayer :Sprite) :void
+    {
+        for each (var launcher :Launcher in Launcher.values()) {
+            var trans :Matrix = new Matrix();
+            trans.translate(RingSprite.SIZE_PER_RING * 5.5, 0);
+            trans.rotate(-launcher.getAngle(Player.MOON) * Math.PI / 180);
+            var moonLauncher :MovieClip = new Board["GATE_MOON_" + launcher.name()]() as MovieClip;
+            moonLauncher.transform.matrix = trans;
+            moonLauncher.scaleX = moonLauncher.scaleY = -1;
+            launcherLayer.addChild(moonLauncher);
+            // TODO:
+            //_launchers[ScoreBoard.MOON_PLAYER][ii] = new LaunchAnimation(this, moonLauncher);
+
+            trans = new Matrix();
+            trans.translate(RingSprite.SIZE_PER_RING * 5.5, 0);
+            trans.rotate(-launcher.getAngle(Player.SUN) * Math.PI / 180);
+            var sunLauncher :MovieClip = new Board["GATE_SUN_" + launcher.name()]() as MovieClip;
+            sunLauncher.transform.matrix = trans;
+            sunLauncher.scaleX = -1;
+            launcherLayer.addChild(sunLauncher);
+            // TODO:
+            //_launchers[ScoreBoard.SUN_PLAYER][ii] = new LaunchAnimation(this, sunLauncher);
+        }
+    }
+
     protected function enterFrame (evt :Event) :void
     {
         _marbles.sort(function (obj1 :DisplayObject, obj2 :DisplayObject) :int {
@@ -282,14 +286,10 @@ public class Board extends Sprite
     [Embed(source="../../../rsrc/locksmith_art.swf#gate_sun_lower")]
     protected static const GATE_SUN_LOW :Class;
 
-    // rings sit under the turn indicator, scoring dome, clock hands, marble layer and launchers
-    protected static const RING_LAYER :int = 5;
-
     protected var _loadedLauncher :int;
     protected var _ring :Ring;
     protected var _scoreBoard :ScoreBoard;
-    /** This is where all the marbles get deposited.  Then on each frame, they are reordered 
-     * according to position so that their drop shadows don't look wonky. */
+    protected var _ringLayer :Sprite;
     protected var _marbleLayer :Sprite;
     protected var _marbles :Array = [];
     protected var _turnIndicator :MovieClip;
