@@ -135,27 +135,27 @@ public class Board extends Sprite
 
     override public function addChild (child :DisplayObject) :DisplayObject
     {
-//        if (child is Marble) {
-//            _marbles.push(child);
-//            return _marbleLayer.addChild(child);
-//        } else {
+        if (child is MarbleSprite) {
+            _marbles.push(child);
+            return _marbleLayer.addChild(child);
+        } else {
             return super.addChild(child);
-//        }
+        }
     }
 
     override public function removeChild (child :DisplayObject) :DisplayObject
     {
-//        if (child is Marble) {
-//            var index :int = _marbles.indexOf(child);
-//            if (index == -1) {
-//                return child.parent.removeChild(child);
-//            } else {
-//                _marbles.splice(index, 1);
-//                return _marbleLayer.removeChild(child);
-//            }
-//        } else {
+        if (child is MarbleSprite) {
+            var index :int = _marbles.indexOf(child);
+            if (index == -1) {
+                return child.parent.removeChild(child);
+            } else {
+                _marbles.splice(index, 1);
+                return _marbleLayer.removeChild(child);
+            }
+        } else {
             return super.removeChild(child);
-//        }
+        }
     }
 
     public function set scoreBoard (scoreBoard :ScoreBoard) :void 
@@ -219,7 +219,10 @@ public class Board extends Sprite
 
     protected function initLaunchers (launcherLayer :Sprite) :void
     {
-        for each (var launcher :Launcher in Launcher.values()) {
+        _launchers[Player.MOON] = [];
+        _launchers[Player.SUN] = [];
+        var launchers :Array = Launcher.values();
+        for each (var launcher :Launcher in launchers) {
             var trans :Matrix = new Matrix();
             trans.translate(RingSprite.SIZE_PER_RING * 5.5, 0);
             trans.rotate(-launcher.getAngle(Player.MOON) * Math.PI / 180);
@@ -227,8 +230,8 @@ public class Board extends Sprite
             moonLauncher.transform.matrix = trans;
             moonLauncher.scaleX = moonLauncher.scaleY = -1;
             launcherLayer.addChild(moonLauncher);
-            // TODO:
-            //_launchers[ScoreBoard.MOON_PLAYER][ii] = new LaunchAnimation(this, moonLauncher);
+            _launchers[Player.MOON][launchers.indexOf(launcher)] = 
+                new LaunchAnimation(this, moonLauncher);
 
             trans = new Matrix();
             trans.translate(RingSprite.SIZE_PER_RING * 5.5, 0);
@@ -237,8 +240,8 @@ public class Board extends Sprite
             sunLauncher.transform.matrix = trans;
             sunLauncher.scaleX = -1;
             launcherLayer.addChild(sunLauncher);
-            // TODO:
-            //_launchers[ScoreBoard.SUN_PLAYER][ii] = new LaunchAnimation(this, sunLauncher);
+            _launchers[Player.SUN][launchers.indexOf(launcher)] = 
+                new LaunchAnimation(this, sunLauncher);
         }
     }
 
@@ -296,69 +299,69 @@ public class Board extends Sprite
     protected var _clock :Clock;
     protected var _roamingMarbles :Array = [];
     protected var _clearRings :Boolean = false;
-    protected var _launchers :Array = [[],[]];
+    protected var _launchers :Object = {};
 }
 }
-//
-//import flash.display.MovieClip;
-//import flash.display.Sprite;
-//import flash.events.Event;
-//
-//import com.threerings.util.Log;
-//
-//import com.whirled.contrib.EventHandlers;
-//
-//import locksmith.Marble;
-//
-//class LaunchAnimation
-//{
-//    public function LaunchAnimation (board :Sprite, launcherMovie :MovieClip)
-//    {
-//        _board = board;
-//        _movie = launcherMovie;
-//        _movie.gotoAndStop(_movie.totalFrames);
-//    }
-//
-//    public function load (marble :Marble) :void
-//    {
-//        _marble = marble;
-//        EventHandlers.registerListener(_movie, Event.ENTER_FRAME, 
-//            function (event :Event) :void {
-//                _movie.gotoAndStop(_movie.currentFrame - 1);
-//                if (_movie.currentFrame == MARBLE_FRAME) {
-//                    _board.addChild(marble);
-//                } else if (_movie.currentFrame == 1) {
-//                    EventHandlers.unregisterListener(
-//                        _movie, Event.ENTER_FRAME, arguments.callee);
-//                }
-//            });
-//    }
-//
-//    public function launch () :void
-//    {
-//        if (_marble == null) {
-//            log.warning("asked to launch null marble");
-//            return;
-//        }
-//
-//        EventHandlers.registerListener(_movie, Event.ENTER_FRAME,
-//            function (event :Event) :void {
-//                _movie.gotoAndStop(_movie.currentFrame + 1);
-//                if (_movie.currentFrame == MARBLE_FRAME) {
-//                    _marble.launch();
-//                    _marble == null;
-//                } else if (_movie.currentFrame == _movie.totalFrames) {
-//                    EventHandlers.unregisterListener(
-//                        _movie, Event.ENTER_FRAME, arguments.callee);
-//                }
-//            });
-//    }
-//
-//    private static const log :Log = Log.getLog(LaunchAnimation);
-//
-//    protected static const MARBLE_FRAME :int = 6;
-//
-//    protected var _movie :MovieClip;
-//    protected var _marble :Marble;
-//    protected var _board :Sprite;
-//}
+
+import flash.display.MovieClip;
+import flash.display.Sprite;
+import flash.events.Event;
+
+import com.threerings.util.Log;
+
+import com.whirled.contrib.EventHandlers;
+
+import locksmith.view.MarbleSprite;
+
+class LaunchAnimation
+{
+    public function LaunchAnimation (board :Sprite, launcherMovie :MovieClip)
+    {
+        _board = board;
+        _movie = launcherMovie;
+        _movie.gotoAndStop(_movie.totalFrames);
+    }
+
+    public function load (marble :MarbleSprite) :void
+    {
+        _marble = marble;
+        EventHandlers.registerListener(_movie, Event.ENTER_FRAME, 
+            function (event :Event) :void {
+                _movie.gotoAndStop(_movie.currentFrame - 1);
+                if (_movie.currentFrame == MARBLE_FRAME) {
+                    _board.addChild(marble);
+                } else if (_movie.currentFrame == 1) {
+                    EventHandlers.unregisterListener(
+                        _movie, Event.ENTER_FRAME, arguments.callee);
+                }
+            });
+    }
+
+    public function launch () :void
+    {
+        if (_marble == null) {
+            log.warning("asked to launch null marble");
+            return;
+        }
+
+        EventHandlers.registerListener(_movie, Event.ENTER_FRAME,
+            function (event :Event) :void {
+                _movie.gotoAndStop(_movie.currentFrame + 1);
+                if (_movie.currentFrame == MARBLE_FRAME) {
+                    _marble.launch();
+                    _marble == null;
+                } else if (_movie.currentFrame == _movie.totalFrames) {
+                    EventHandlers.unregisterListener(
+                        _movie, Event.ENTER_FRAME, arguments.callee);
+                }
+            });
+    }
+
+    private static const log :Log = Log.getLog(LaunchAnimation);
+
+    protected static const MARBLE_FRAME :int = 6;
+
+    protected var _movie :MovieClip;
+    protected var _marble :MarbleSprite;
+    protected var _board :Sprite;
+}
