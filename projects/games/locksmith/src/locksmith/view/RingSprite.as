@@ -17,6 +17,7 @@ import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlers;
 
 import locksmith.model.Marble;
+import locksmith.model.Ring;
 
 public class RingSprite extends Sprite 
 {
@@ -27,15 +28,13 @@ public class RingSprite extends Sprite
     public static const CLOCKWISE :int = -1;
     public static const COUNTER_CLOCKWISE :int = 1;
 
-    public function RingSprite (ringNumber :int, holes :Array, clock :Clock = null) 
+    public function RingSprite (ring :Ring, clock :Clock = null) 
     {
-        _ringNumber = ringNumber;
-        _holes = holes;
+        _ring = ring;
         _clock = clock;
         _marbles = new HashMap();
 
-        _ringMovie = 
-            _ringNumber == 3 ? null : new RingSprite["RING_" + _ringNumber]() as MovieClip;
+        _ringMovie = _ring.id == 2 ? null : new RingSprite["RING_" + _ring.id]() as MovieClip;
         if (_ringMovie != null) {
             _ringMovie.gotoAndStop(1);
             _ringMovie.cacheAsBitmap = true;
@@ -43,8 +42,8 @@ public class RingSprite extends Sprite
         }
 
         var channelMovie :MovieClip;
-        for each (var hole :int in holes) {
-            addChild(channelMovie = new RingSprite["CHANNEL_" + _ringNumber]() as MovieClip);
+        for each (var hole :int in _ring.holes) {
+            addChild(channelMovie = new RingSprite["CHANNEL_" + _ring.id]() as MovieClip);
             channelMovie.cacheAsBitmap = true;
             _channels.push(new Channel(channelMovie, hole));
         }
@@ -77,7 +76,7 @@ public class RingSprite extends Sprite
 //                    }
 //                    // check if any marbles in the ring above need to move in
 //                    if (_outer != null) {
-//                        for each (hole in _holes) {
+//                        for each (hole in _ring.holes) {
 //                            var offset :int = (_baseRotation / 360) * 16 +
 //                                DoLater.getPercent(currentStage) * 4 * _rotationDirection;
 //                            var pos :int = (hole + offset + 16) % 16;
@@ -109,13 +108,13 @@ public class RingSprite extends Sprite
 //            (_baseRotation / 360) * 16 + DoLater.getPercent() * 4 * _rotationDirection;
 //        var hole :int = (pos - offset + 16) % 16;
 //
-//        return ArrayUtil.contains(_holes, hole) ? hole : -1;
+//        return ArrayUtil.contains(_ring.holes, hole) ? hole : -1;
         return 0;
     }
 
     public function holeIsEmpty (hole :int) :Boolean
     {
-        return ArrayUtil.contains(_holes, hole) && _marbles.get(hole) == null;
+        return ArrayUtil.contains(_ring.holes, hole) && _marbles.get(hole) == null;
     }
 
     public function putMarbleInHole (marble :Marble, hole :int) :void
@@ -134,7 +133,7 @@ public class RingSprite extends Sprite
         }
         var angle :Number = ((hole / 16) * 360 + _baseRotation + rotationAngle) * Math.PI / 180;
         var trans :Matrix = new Matrix();
-        trans.translate((_ringNumber + 0.5) * SIZE_PER_RING, 0);
+        trans.translate((_ring.id + 0.5) * SIZE_PER_RING, 0);
         trans.rotate(-angle);
         return trans.transformPoint(new Point(0, 0));
     }
@@ -156,7 +155,7 @@ public class RingSprite extends Sprite
 
     public function get num () :int
     {
-        return _ringNumber;
+        return _ring.id;
     }
 
     /** 
@@ -196,7 +195,7 @@ public class RingSprite extends Sprite
     // For debugging
     public override function toString () :String
     {
-        return "[RingSprite num=" + _ringNumber + ", baseRotation=" + _baseRotation + 
+        return "[RingSprite num=" + _ring.id + ", baseRotation=" + _baseRotation + 
             ", rotationAngle=" + _rotationAngle + "]";
     }
 
@@ -207,7 +206,7 @@ public class RingSprite extends Sprite
 //        if (marble != null) {
 //            if (marble.launch()) {
 //                _marbles.remove(hole);
-//                if (_outer != null && ArrayUtil.contains(_holes, hole)) {
+//                if (_outer != null && ArrayUtil.contains(_ring.holes, hole)) {
 //                    _outer.launchFrom(pos);
 //                }
 //            }
@@ -255,26 +254,24 @@ public class RingSprite extends Sprite
 
     /** RingSprite movies - There is no movie for RingSprite 3 */
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_1")]
-    protected static const RING_1 :Class;
+    protected static const RING_0 :Class;
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_2")]
-    protected static const RING_2 :Class;
+    protected static const RING_1 :Class;
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_4")]
-    protected static const RING_4 :Class;
+    protected static const RING_3 :Class;
 
     /** Channel movies */
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_1_channel")]
-    protected static const CHANNEL_1 :Class;
+    protected static const CHANNEL_0 :Class;
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_2_channel")]
-    protected static const CHANNEL_2 :Class;
+    protected static const CHANNEL_1 :Class;
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_3_channel")]
-    protected static const CHANNEL_3 :Class;
+    protected static const CHANNEL_2 :Class;
     [Embed(source="../../../rsrc/locksmith_art.swf#ring_4_channel")]
-    protected static const CHANNEL_4 :Class;
+    protected static const CHANNEL_3 :Class;
 
-    protected var _ringNumber :int;
-    protected var _position :int = 0;
+    protected var _ring :Ring;
     protected var _marbles :HashMap;
-    protected var _holes :Array;
     protected var _holeSprites :Sprite;
     protected var _baseRotation :int = 0;
     protected var _rotationAngle :int = 0;

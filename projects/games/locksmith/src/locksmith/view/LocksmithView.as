@@ -38,6 +38,7 @@ public class LocksmithView extends LocksmithSprite
 
     protected function ringsCreated () :void
     {
+        _board.addRings(_model.ringMgr.smallestRing);
     }
 
     [Embed(source="../../../rsrc/fill_image.png",

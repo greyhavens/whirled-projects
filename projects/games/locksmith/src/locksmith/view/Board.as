@@ -11,6 +11,7 @@ import flash.events.Event;
 import flash.geom.Matrix;
 
 import com.threerings.util.Log;
+import com.threerings.util.HashMap;
 
 import com.whirled.game.GameControl
 
@@ -45,21 +46,13 @@ public class Board extends Sprite
         return _clock;
     }
 
-    public function addRing (ring :Ring) :void
+    public function addRings (ring :Ring) :void
     {
-//        if (_clearRings) {
-//            _ring = _ring.smallest;
-//            while (_ring != null) {
-//                removeChild(_ring);
-//                _ring = _ring.outer;
-//            }
-//            _clearRings = false;
-//        }
-//        var insertIndex :int = numChildren - RING_LAYER;
-//        if (_turnIndicator == null) {
-//            insertIndex++;
-//        }
-//        addChildAt(_ring = ring, insertIndex);
+        for (; ring.outer != null; ring = ring.outer) {
+            var ringSprite :RingSprite = new RingSprite(ring);
+            _rings.put(ring, ringSprite);
+            _ringLayer.addChild(ringSprite);
+        }
     }
 
     public function setActiveRing (ringNum :int) :void
@@ -290,7 +283,7 @@ public class Board extends Sprite
     protected static const GATE_SUN_LOW :Class;
 
     protected var _loadedLauncher :int;
-    protected var _ring :Ring;
+    protected var _rings :HashMap = new HashMap();
     protected var _scoreBoard :ScoreBoard;
     protected var _ringLayer :Sprite;
     protected var _marbleLayer :Sprite;

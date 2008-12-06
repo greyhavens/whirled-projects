@@ -23,7 +23,7 @@ public class Ring
 
     public function get holes () :Array
     {
-        return _holes;
+        return _holes.concat();
     }
 
     public function get position () :int
