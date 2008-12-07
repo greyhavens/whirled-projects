@@ -286,9 +286,7 @@ public class Player extends SimObject
             canTurn = true;
 
         } else {
-            // Otherwise, allow the turn once we reach our next intersection (the
-            // center of the next cell)
-            var nextIsec :Number = getNextCellIntersection(_moveDirection);
+            // Otherwise, allow the turn once we reach our next intersection
             if (moveDir.x != 0 &&
                 Math.abs(nextIsec - _loc.x) <= moveDist &&
                 canMoveTowards(nextIsec, _loc.y, turnDirection)) {
@@ -388,7 +386,7 @@ public class Player extends SimObject
         if (xOffset > 0) {
             nextCell = board.getCellAtPixel(_loc.x + xOffset + halfCell + 1, _loc.y);
             if (nextCell.isObstacle) {
-                xNew = nextCell.ctrPixelX - _cellSize - 1;
+                xNew = nextCell.ctrPixelX - _cellSize;
             }
         } else if (xOffset < 0) {
             nextCell = board.getCellAtPixel(_loc.x + xOffset - halfCell, _loc.y);
@@ -398,7 +396,7 @@ public class Player extends SimObject
         } else if (yOffset > 0) {
             nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset + halfCell + 1);
             if (nextCell.isObstacle) {
-                yNew = nextCell.ctrPixelY - _cellSize - 1;
+                yNew = nextCell.ctrPixelY - _cellSize;
             }
         } else if (yOffset < 0) {
             nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset - halfCell);
