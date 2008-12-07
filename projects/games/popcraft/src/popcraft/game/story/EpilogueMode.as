@@ -75,7 +75,9 @@ public class EpilogueMode extends TransitionMode
         // fade out and pop mode
         switch (_nextTransition) {
         case TRANSITION_LEVELSELECT:
-            fadeOut(LevelSelectMode.create);
+            fadeOut(function () :void {
+                LevelSelectMode.create();
+            });
             break;
 
         case TRANSITION_LEVELOUTRO:
