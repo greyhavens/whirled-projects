@@ -10,6 +10,7 @@
 		maxTurnOvershoot="9"
 		maxCarriedGems="10"
 		switchBoardsTime="1"
+		gotEatenTime="2"
 		returnHomeGemsMin="3">
 		
 	<GemValues>

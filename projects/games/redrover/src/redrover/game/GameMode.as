@@ -157,9 +157,35 @@ public class GameMode extends AppMode
         dt = 1 / 30; // TODO - remove this!
         super.update(dt);
 
+        handlePlayerCollisions();
+
         // sort the board objects in the currently-visible TeamSprite
         var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardId];
         DisplayUtil.sortDisplayChildren(curTeamSprite.objectLayer, displayObjectYSort);
+    }
+
+    protected function handlePlayerCollisions () :void
+    {
+        // collide the players
+        for (var ii :int = 0; ii < GameContext.players.length; ++ii) {
+            var playerA :Player = GameContext.players[ii];
+            for (var jj :int = ii + 1; jj < GameContext.players.length; ++jj) {
+                var playerB :Player = GameContext.players[jj];
+                if (playerA.curBoardId == playerB.curBoardId &&
+                    playerA.teamId != playerB.teamId &&
+                    playerA.gridX == playerB.gridX &&
+                    playerA.gridY == playerB.gridY &&
+                    playerA.state != Player.STATE_EATEN &&
+                    playerA.state != Player.STATE_EATEN) {
+
+                    if (playerA.curBoardId == playerA.teamId) {
+                        playerA.eatPlayer(playerB);
+                    } else {
+                        playerB.eatPlayer(playerA);
+                    }
+                }
+            }
+        }
     }
 
     protected static function displayObjectYSort (a :DisplayObject, b :DisplayObject) :int

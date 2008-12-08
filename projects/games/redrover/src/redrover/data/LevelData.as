@@ -21,6 +21,7 @@ public class LevelData
     public var maxTurnOvershoot :Number;
     public var maxCarriedGems :int;
     public var switchBoardsTime :Number;
+    public var gotEatenTime :Number;
     public var returnHomeGemsMin :int;
 
     public var gemValues :IntValueTable;
@@ -46,6 +47,7 @@ public class LevelData
         data.maxTurnOvershoot = XmlReader.getNumberAttr(xml, "maxTurnOvershoot");
         data.maxCarriedGems = XmlReader.getUintAttr(xml, "maxCarriedGems");
         data.switchBoardsTime = XmlReader.getNumberAttr(xml, "switchBoardsTime");
+        data.gotEatenTime = XmlReader.getNumberAttr(xml, "gotEatenTime");
         data.returnHomeGemsMin = XmlReader.getUintAttr(xml, "returnHomeGemsMin");
 
         data.gemValues = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "GemValues"));

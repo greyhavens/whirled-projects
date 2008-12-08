@@ -11,6 +11,7 @@ public class Player extends SimObject
 {
     public static const STATE_NORMAL :int = 0;
     public static const STATE_SWITCHINGBOARDS :int = 1;
+    public static const STATE_EATEN :int = 2;
 
     public function Player (playerIndex :int, teamId :int, gridX :int, gridY :int, color :uint)
     {
@@ -25,6 +26,74 @@ public class Player extends SimObject
         var cell :BoardCell = GameContext.gameMode.getBoard(teamId).getCell(gridX, gridY);
         _loc.x = cell.ctrPixelX;
         _loc.y = cell.ctrPixelY;
+    }
+
+    public function eatPlayer (player :Player) :void
+    {
+        // we get the other player's gems
+        addGems(player._gems);
+        player._gems = [];
+        player.beginGetEaten(this);
+    }
+
+    protected function beginGetEaten (byPlayer :Player) :void
+    {
+        // if we were trying to switch boards, stop
+        removeNamedTasks(SWITCH_BOARDS_TASK_NAME);
+
+        _teamId = byPlayer.teamId; // switch teams
+
+        // we get spat out behind the other player, if possible
+        var spitLocations :Array;
+        var gridX :int = byPlayer.gridX;
+        var gridY :int = byPlayer.gridY;
+        var north :Vector2 = new Vector2(gridX, gridY - 1);
+        var south :Vector2 = new Vector2(gridX, gridY + 1);
+        var east :Vector2 = new Vector2(gridX + 1, gridY);
+        var west :Vector2 = new Vector2(gridX - 1, gridY);
+        switch (_moveDirection) {
+        case Constants.DIR_NORTH:
+            spitLocations = [ south, east, west, north ];
+            break;
+
+        case Constants.DIR_SOUTH:
+            spitLocations = [ north, west, east, south ];
+            break;
+
+        case Constants.DIR_EAST:
+            spitLocations = [ west, south, north, east ];
+            break;
+
+        case Constants.DIR_WEST:
+        default:
+            spitLocations = [ east, north, south, west ];
+            break;
+        }
+
+        var board :Board = byPlayer.curBoard;
+        var newLoc :Vector2;
+        for each (var loc :Vector2 in spitLocations) {
+            var cell :BoardCell = board.getCell(loc.x, loc.y);
+            if (cell != null && !cell.isObstacle) {
+                newLoc = loc;
+                break;
+            }
+        }
+
+        if (newLoc == null) {
+            newLoc = new Vector2(gridX, gridY);
+        }
+
+        _loc.x = (newLoc.x + 0.5) * GameContext.levelData.cellSize;
+        _loc.y = (newLoc.y + 0.5) * GameContext.levelData.cellSize;
+
+        // we're dazed for a little while
+        _state = STATE_EATEN;
+        addNamedTask(GOT_EATEN_TASK_NAME,
+            After(GameContext.levelData.gotEatenTime,
+                new FunctionTask(function () :void {
+                    _state = STATE_NORMAL;
+                })));
     }
 
     public function beginSwitchBoards () :void
@@ -82,6 +151,11 @@ public class Player extends SimObject
     public function addGem (gemType :int) :void
     {
         _gems.push(gemType);
+    }
+
+    public function addGems (gems :Array) :void
+    {
+        _gems = _gems.concat(gems);
     }
 
     public function get canSwitchBoards () :Boolean
@@ -183,7 +257,7 @@ public class Player extends SimObject
         var startX :Number = _loc.x;
         var startY :Number = _loc.y;
 
-        if (_state != STATE_SWITCHINGBOARDS) {
+        if (_state == STATE_NORMAL) {
             handleNextMove(this.moveSpeed * dt);
 
             var cell :BoardCell = this.curBoardCell;
@@ -448,6 +522,7 @@ public class Player extends SimObject
     protected var _cellSize :int; // we access this value all the time
 
     protected static const SWITCH_BOARDS_TASK_NAME :String = "SwitchBoards";
+    protected static const GOT_EATEN_TASK_NAME :String = "GotEaten";
 }
 
 }
