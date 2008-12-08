@@ -6,6 +6,10 @@ public class QuestConstants
     public static const TOTEM_KEY :String = "quest:totem";
     public static const KILL_SIGNAL :String = "quest:kill";
 
+    public static const PLAYER_KILLED_MONSTER :int = 0;
+    public static const PLAYER_KILLED_PLAYER :int = 1;
+    public static const MONSTER_KILLED_PLAYER :int = 2;
+
     public static const TYPE_PLAYER :String = "player";
     public static const TYPE_MONSTER :String = "monster";
 

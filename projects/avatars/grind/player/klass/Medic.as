@@ -2,6 +2,7 @@ package klass {
 
 import com.whirled.AvatarControl;
 
+// Not ready for prime time
 public class Medic
     implements Klass
 {
@@ -20,13 +21,10 @@ public class Medic
         return 0;
     }
 
-    public function handleSpecial (ctrl :AvatarControl, sprite :PlayerSprite) :void
+    public function handleSpecial (ctrl :AvatarControl, sprite :PlayerSprite) :Boolean
     {
-        var mana :Number = sprite.getMana();
-        if (mana >= 0.4) {
-            ctrl.setMemory("mana", mana-0.4);
-            sprite.effect({text: "TODO"});
-        }
+        sprite.effect({text: "TODO"});
+        return false;
     }
 }
 

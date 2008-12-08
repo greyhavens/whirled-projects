@@ -2,7 +2,7 @@ package klass {
 
 import com.whirled.AvatarControl;
 
-public class Thug
+public class Mage
     implements Klass
 {
     public function getBaseSprites () :Array
@@ -18,10 +18,10 @@ public class Thug
     public function getMultiplier (itemType :int) :Number
     {
         switch (itemType) {
-            case Items.HEAVY: return 1.5;
-            case Items.CLUB: case Items.AXE: case Items.SWORD: case Items.SPEAR: return 1.5;
-            case Items.LIGHT: case Items.BOW: return 1.2;
-            case Items.ARCANE: case Items.MAGIC: return 0.8;
+            case Items.ARCANE: return 1.5;
+            case Items.MAGIC: case Items.DAGGER: return 1.5;
+            case Items.SWORD: case Items.SPEAR: return 1.2;
+            case Items.HEAVY: return 0.8;
         }
         return 1;
     }

@@ -15,14 +15,18 @@ public class Server extends ServerObject
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, handlePlayerQuit);
     }
 
+    public function echo (player :PlayerSubControlServer, text :String) :void
+    {
+        player.sendMessage("echo", text);
+        trace("Echo: " + text);
+    }
+
     public function handlePlayerJoin (event :AVRGameControlEvent) :void
     {
-        var playerId :int = event.value as int;
+        var player :PlayerSubControlServer = _ctrl.getPlayer(event.value as int);
 
-        _ctrl.getPlayer(playerId).addEventListener(
-            AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
-        _ctrl.getPlayer(playerId).addEventListener(
-            AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
+        player.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, handleRoomEntry);
+        player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, handleRoomExit);
     }
 
     public function handlePlayerQuit (event :AVRGameControlEvent) :void
@@ -42,7 +46,6 @@ public class Server extends ServerObject
 
         delete _playerToRoom[playerId];
         _roomToPopulation[roomId] = int(_roomToPopulation[roomId]) + 1;
-        trace("Player entered room, occupant count is now " + _roomToPopulation[roomId]);
         if (_roomToPopulation[roomId] == 1) {
             _ctrl.getRoom(roomId).addEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
         }
@@ -55,7 +58,6 @@ public class Server extends ServerObject
 
         _playerToRoom[playerId] = roomId;
         _roomToPopulation[roomId] = int(_roomToPopulation[roomId]) - 1;
-        trace("Player left room, occupant count is now " + _roomToPopulation[roomId]);
         if (_roomToPopulation[roomId] == 0) {
             _ctrl.getRoom(roomId).removeEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignal);
         }
@@ -65,19 +67,49 @@ public class Server extends ServerObject
     {
         if (event.name == QuestConstants.KILL_SIGNAL) {
             var data :Array = event.value as Array;
-            var playerId :int = data[0];
-            var level :int = data[1];
+            var killerId :int = data[0];
+            var victimId :int = data[1];
+            var level :int = data[2];
+            var mode :int = data[3];
 
-            try {
-                if (playerId != 0) {
-                    var player :PlayerSubControlServer = _ctrl.getPlayer(playerId);
-                    var kills :String = NetConstants.makePersistent("kills");
+            // TODO: Enable
+            //if (killerId != victimId) { // Can't earn credit in your own dungeon
+            if (true) {
+                try {
+                    // A hero should be awarded
+                    if (mode == QuestConstants.PLAYER_KILLED_MONSTER ||
+                        mode == QuestConstants.PLAYER_KILLED_PLAYER) {
+                        var player :PlayerSubControlServer = _ctrl.getPlayer(killerId);
+                        var heroStat :String = Codes.HERO+mode;
 
-                    player.completeTask("slay", level/150); // TODO: Tweak
-                    player.props.set(kills, int(player.props.get(kills))+1);
+                        player.completeTask("hero"+mode, level/150); // TODO: Tweak
+                        player.props.set(heroStat, int(player.props.get(heroStat))+1);
+                        echo(player, "Well done, " + heroStat + " = " + player.props.get(heroStat));
+                    }
+
+                    // Award the dungeon keeper
+                    if (mode == QuestConstants.PLAYER_KILLED_MONSTER ||
+                        mode == QuestConstants.MONSTER_KILLED_PLAYER) {
+                        var keeperId :int =
+                            (mode == QuestConstants.PLAYER_KILLED_MONSTER) ? victimId : killerId;
+                        var keeperStat :String = Codes.KEEPER+mode;
+
+                        _ctrl.loadOfflinePlayer(keeperId,
+                            function (props :OfflinePlayerPropertyControl) :void {
+                                props.set(Codes.CREDITS, int(props.get(Codes.CREDITS))+level);
+                                props.set(keeperStat, int(props.get(keeperStat))+1);
+                                trace("Keepstat " + keeperStat + " = " + props.get(keeperStat));
+                                trace("credit = " + props.get(Codes.CREDITS));
+                            },
+                            function (... _) :void {
+                                trace("This should hardly ever happen");
+                            }
+                        );
+                    }
+                } catch (error :Error) {
+                    trace("Someone is playing outside the AVRG!");
+                    // It's possible that they're hacking away while not in the AVRG
                 }
-            } catch (error :Error) {
-                // It's reasonably possible that they're hacking away while not in the AVRG
             }
         }
     }

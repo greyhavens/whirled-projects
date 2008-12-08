@@ -63,7 +63,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
     {
         checkRespawn();
 
-        if (_svc.getState() == STATE_DEAD) {
+        if (_svc.getState() == QuestConstants.STATE_DEAD) {
             return;
         }
 
@@ -159,6 +159,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
                         break;
 
                     case QuestConstants.EVENT_COUNTER:
+                        _soundAttack.play();
                         //_soundCounter.play();
                         break;
 

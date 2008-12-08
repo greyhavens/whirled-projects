@@ -118,7 +118,7 @@ public class QuestSprite extends Sprite
     protected function attack () :void
     {
         var self :Object = QuestUtil.self(_ctrl);
-        var amount :Number = self.getPower();
+        var amount :Number = getAttackDamage(self);
         var influence :int = QuestUtil.getTotem(_ctrl);
         var here :Array = _ctrl.getLogicalLocation() as Array;
         var orient :Number = _ctrl.getOrientation() as Number;
@@ -146,7 +146,7 @@ public class QuestSprite extends Sprite
                 if (target.getState() == QuestConstants.STATE_COUNTER &&
                     d2 <= target.getRange()*target.getRange()) {
 
-                    self.damage(target, target.getPower(), {text:"Countered!"});
+                    self.damage(target, getAttackDamage(target), {text:"Countered!"});
                     target.damage(self, amount*0.25);
 
                 } else {
@@ -158,6 +158,11 @@ public class QuestSprite extends Sprite
         }
     }
 
+    public static function getAttackDamage (source :Object) :Number
+    {
+        return source.getPower() * (0.75+source.getLevel()*0.005);
+    }
+
     public function damage (source :Object, amount :int, fx :Object, ignoreArmor :Boolean) :void
     {
         var health :Number = getHealth();
@@ -166,8 +171,9 @@ public class QuestSprite extends Sprite
         }
 
         if (!ignoreArmor) {
+            var level :int = getLevel();
             var defence :int = QuestUtil.self(_ctrl).getDefence();
-            amount *= Math.max(0, (10 - defence)/10); // TODO: Tweak
+            amount *= Math.max(0.1, 1 - (0.75+level*0.005)*defence/100); // TODO: Tweak
             trace("Attacking for " + amount + ", " + defence + " def");
         }
 
@@ -202,10 +208,23 @@ public class QuestSprite extends Sprite
                 source.awardRandomItem(getLevel());
             }
 
-            // Send the event out to the AVRG and anything else that cares
-            _ctrl.sendSignal("grind:death", [
+            var us :String = QuestUtil.self(_ctrl).getType();
+            var them :String = source.getType();
+            var mode :int = -1;
+            if (them == QuestConstants.TYPE_PLAYER && us == QuestConstants.TYPE_MONSTER) {
+                mode = QuestConstants.PLAYER_KILLED_MONSTER;
+            } else if (them == QuestConstants.TYPE_PLAYER && us == QuestConstants.TYPE_PLAYER) {
+                mode = QuestConstants.PLAYER_KILLED_PLAYER;
+            } else if (them == QuestConstants.TYPE_MONSTER && us == QuestConstants.TYPE_PLAYER) {
+                mode = QuestConstants.MONSTER_KILLED_PLAYER;
+            }
+
+            _ctrl.sendSignal(QuestConstants.KILL_SIGNAL, [
                 _ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID, source.getIdent()),
-                getLevel() ]);
+                _ctrl.getEntityProperty(EntityControl.PROP_MEMBER_ID),
+                getLevel(),
+                mode
+            ]);
 
             effect({text:"Death", event:QuestConstants.EVENT_DIE});
         } else {

@@ -9,9 +9,9 @@ public interface Klass
 
     function getTraits () :Array;
 
-    function getBonus (itemType :int) :int;
+    function getMultiplier (itemType :int) :Number;
 
-    function handleSpecial (ctrl :AvatarControl, sprite :PlayerSprite) :void;
+    function handleSpecial (ctrl :AvatarControl, sprite :PlayerSprite) :Boolean;
 }
 
 }

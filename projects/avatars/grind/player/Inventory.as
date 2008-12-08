@@ -216,9 +216,12 @@ public class Inventory extends Sprite
 
     public function getPower () :Number
     {
-        return (Items.HAND in _equipment) ?
-            Items.TABLE[_equipment[Items.HAND][0]][4] + _equipment[Items.HAND][1] :
-            100;
+        if (Items.HAND in _equipment) {
+            return (Items.TABLE[_equipment[Items.HAND][0]][4] + _equipment[Items.HAND][1]) *
+                _klass.getMultiplier(Items.TABLE[_equipment[Items.HAND][0]][3]);
+        } else {
+            return 0;
+        }
     }
 
     public function getDefence () :Number
@@ -227,9 +230,9 @@ public class Inventory extends Sprite
         for each (var memory :Array in _equipment) {
             // If it's not a weapon
             if (Items.TABLE[memory[0]][2] != Items.HAND) {
-                defence += Items.TABLE[memory[0]][4] + memory[1];
+                defence += (Items.TABLE[memory[0]][4] + memory[1]) *
+                    _klass.getMultiplier(Items.TABLE[memory[0]][3]);
             }
-                trace(Items.TABLE[memory[0]][1] + ": " + memory[1]);
         }
         return defence;
     }
