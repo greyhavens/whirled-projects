@@ -48,7 +48,7 @@ public class Board extends Sprite
 
     public function addRings (ring :Ring) :void
     {
-        for (; ring.outer != null; ring = ring.outer) {
+        for (; ring != null; ring = ring.outer) {
             var ringSprite :RingSprite = new RingSprite(ring);
             _rings.put(ring, ringSprite);
             _ringLayer.addChild(ringSprite);

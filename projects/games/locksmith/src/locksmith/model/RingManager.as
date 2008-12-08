@@ -121,8 +121,8 @@ public class RingManager extends ModelManager
         commitBatch();
     }
 
-    override protected function managedPropertyUpdated (prop :String, newValue :Object, 
-        oldValue :Object, key :int = -1) :void
+    override protected function managedPropertyUpdated (prop :String, oldValue :Object, 
+        newValue :Object, key :int = -1) :void
     {
         if (prop == RING_HOLES) {
             if (key != _rings.length) {
@@ -131,7 +131,6 @@ public class RingManager extends ModelManager
                 return;
             }
             var inner :Ring = _rings.length == 0 ? null : _rings[_rings.length - 1] as Ring;
-            // TODO: newValue is null!?
             log.debug("creating ring", "holes", newValue);
             var outer :Ring = new Ring(key, newValue as Array);
             if (inner != null) {

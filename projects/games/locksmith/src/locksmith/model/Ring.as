@@ -4,8 +4,10 @@
 package locksmith.model {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Hashable;
 
 public class Ring
+    implements Hashable
 {
     public function Ring (id :int, holes :Array) :void
     {
@@ -126,6 +128,17 @@ public class Ring
         var marble :Marble = _marbles[localPosition] as Marble;
         _marbles[localPosition] = null;
         return marble;
+    }
+
+    public function hashCode () :int
+    {
+        return _id;
+    }
+
+    public function equals (other :Object) :Boolean
+    {
+        // not necessarily true, but good enough for my purposes
+        return (other is Ring && other.id == _id);
     }
 
     public function toString () :String
