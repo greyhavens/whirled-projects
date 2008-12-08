@@ -105,6 +105,11 @@ public class Player extends SimObject
         return _curBoardId;
     }
 
+    public function get curBoard () :Board
+    {
+        return GameContext.gameMode.getBoard(_curBoardId);
+    }
+
     public function get isOnOwnBoard () :Boolean
     {
         return _teamId == _curBoardId;

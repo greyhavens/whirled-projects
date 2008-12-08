@@ -33,6 +33,7 @@ public class GameMode extends AppMode
 
         setupLogicObjects();
         setupViewObjects();
+        setupPlayers();
     }
 
     override protected function destroy () :void
@@ -90,10 +91,9 @@ public class GameMode extends AppMode
 
     protected function setupLogicObjects () :void
     {
-        var board :Board;
-
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
-            board = new Board(teamId, _levelData.cols, _levelData.rows, _levelData.terrain);
+            var board :Board =
+                new Board(teamId, _levelData.cols, _levelData.rows, _levelData.terrain);
             _boards.push(board);
             addObject(board);
 
@@ -110,26 +110,6 @@ public class GameMode extends AppMode
                 }
             }
         }
-
-        // create players
-        var playerColors :Array = GameContext.levelData.playerColors.slice();
-        Rand.shuffleArray(playerColors, Rand.STREAM_GAME);
-
-        board = getBoard(0);
-        var startX :int;
-        var startY :int;
-        for (;;) {
-            startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
-            startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
-            if (!board.getCell(startX, startY).isObstacle) {
-                break;
-            }
-        }
-
-        var player :Player = new Player(0, 0, startX, startY, playerColors.pop());
-        GameContext.players.push(player);
-        GameContext.localPlayerIndex = 0;
-        addObject(player);
     }
 
     protected function setupViewObjects () :void
@@ -141,10 +121,6 @@ public class GameMode extends AppMode
             addObject(new BoardView(_boards[teamId]), teamSprite.boardLayer);
         }
 
-        for each (var player :Player in GameContext.players) {
-            addObject(new PlayerView(player));
-        }
-
         addObject(new Camera(Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y), _modeSprite);
         addObject(new HUDView(), _modeSprite);
         addObject(new MusicPlayer());
@@ -153,6 +129,27 @@ public class GameMode extends AppMode
         switchBoardsButton.x = Constants.SCREEN_SIZE.x * 0.5;
         switchBoardsButton.y = Constants.SCREEN_SIZE.y - 25;
         addObject(switchBoardsButton, _modeSprite);
+    }
+
+    protected function setupPlayers () :void
+    {
+        // create local player
+        var board :Board = getBoard(0);
+        var startX :int;
+        var startY :int;
+        for (;;) {
+            startX = Rand.nextIntRange(0, board.cols, Rand.STREAM_GAME);
+            startY = Rand.nextIntRange(0, board.rows, Rand.STREAM_GAME);
+            if (!GameContext.isCellOccupied(0, startX, startY)) {
+                break;
+            }
+        }
+
+        PlayerFactory.initPlayer(new Player(0, 0, startX, startY, GameContext.nextPlayerColor()));
+        GameContext.localPlayerIndex = 0;
+
+        // create ai players
+        PlayerFactory.createRobot(PlayerFactory.DUMB_ROBOT, 1);
     }
 
     override public function update (dt :Number) :void

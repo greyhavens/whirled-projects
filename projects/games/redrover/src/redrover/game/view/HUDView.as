@@ -18,7 +18,6 @@ public class HUDView extends SceneObject
     public function HUDView ()
     {
         _sprite = SpriteUtil.createSprite();
-        updateDisplay();
     }
 
     override public function get displayObject () :DisplayObject
@@ -77,8 +76,8 @@ public class HUDView extends SceneObject
     }
 
     protected var _sprite :Sprite;
-    protected var _lastGems :int;
-    protected var _lastScore :int;
+    protected var _lastGems :int = -1;
+    protected var _lastScore :int = -1;
 }
 
 }
