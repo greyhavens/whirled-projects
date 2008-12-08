@@ -7,15 +7,13 @@ public class AITimerTask extends AITask
     public function AITimerTask (time :Number, taskName :String = DEFAULT_NAME)
     {
         _totalTime = time;
-
         _name = taskName;
     }
 
-    override public function update (dt :Number) :int
+    override public function update (dt :Number) :Boolean
     {
         _elapsedTime += dt;
-
-        return (_elapsedTime >= _totalTime ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
+        return (_elapsedTime >= _totalTime);
     }
 
     override public function get name () :String

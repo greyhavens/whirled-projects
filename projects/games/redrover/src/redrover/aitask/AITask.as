@@ -16,12 +16,12 @@ public class AITask
 
     /**
      * Advances the logic of the AITask.
-     * Returns the status of the AITask (see AITaskStatus).
+     * @return true if the task is complete
      * Subclasses should override this to do something interesting.
      */
-    public function update (dt :Number) :int
+    public function update (dt :Number) :Boolean
     {
-        return AITaskStatus.ACTIVE;
+        return false;
     }
 
     /**

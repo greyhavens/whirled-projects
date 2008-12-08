@@ -8,9 +8,9 @@ public class AIDelayUntilTask extends AITask
         _pred = pred;
     }
 
-    override public function update (dt :Number) :int
+    override public function update (dt :Number) :Boolean
     {
-        return (_pred() ? AITaskStatus.COMPLETE : AITaskStatus.ACTIVE);
+        return _pred();
     }
 
     override public function get name () :String

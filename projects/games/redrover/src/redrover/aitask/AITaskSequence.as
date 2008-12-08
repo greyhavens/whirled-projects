@@ -30,7 +30,7 @@ public class AITaskSequence extends AITaskTree
         addSubtask(_pendingTasks[0]);
     }
 
-    override public function update (dt :Number) :int
+    override public function update (dt :Number) :Boolean
     {
         super.update(dt);
 
@@ -44,7 +44,7 @@ public class AITaskSequence extends AITaskTree
             }
         }
 
-        return (_pendingTasks.length > 0 ? AITaskStatus.ACTIVE : AITaskStatus.COMPLETE);
+        return (_pendingTasks.length == 0);
     }
 
     override public function get name () :String

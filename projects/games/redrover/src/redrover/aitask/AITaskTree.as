@@ -7,7 +7,7 @@ public class AITaskTree extends AITask
 {
     public static const MSG_SUBTASKCOMPLETED :String = "SubtaskCompleted";
 
-    override public function update (dt :Number) :int
+    override public function update (dt :Number) :Boolean
     {
         _stopProcessingSubtasks = false;
 
@@ -15,9 +15,9 @@ public class AITaskTree extends AITask
         for each (var task :AITask in _subtasks) {
             // we can have holes in the array
             if (null != task) {
-                var status :int = task.update(dt);
+                var isComplete :Boolean = task.update(dt);
 
-                if (!_stopProcessingSubtasks && AITaskStatus.COMPLETE == status) {
+                if (!_stopProcessingSubtasks && isComplete) {
                     _subtasks[i] = null;
                     _freeIndices.push(i);
                     subtaskCompleted(task);
@@ -34,7 +34,7 @@ public class AITaskTree extends AITask
             ++i;
         }
 
-        return AITaskStatus.ACTIVE;
+        return false;
     }
 
     public function addSubtask (task :AITask) :void
@@ -129,11 +129,13 @@ public class AITaskTree extends AITask
      * Subtasks use this function to communicate with their parent tasks.
      * Subclasses can override this to do something interesting.
      */
-    protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object) :void
+    protected function receiveSubtaskMessage (subtask :AITask, messageName :String, data :Object)
+        :void
     {
     }
 
-    internal function receiveSubtaskMessageInternal (subtask :AITask, messageName :String, data :Object) :void
+    internal function receiveSubtaskMessageInternal (subtask :AITask, messageName :String,
+        data :Object) :void
     {
         receiveSubtaskMessage(subtask, messageName, data);
     }

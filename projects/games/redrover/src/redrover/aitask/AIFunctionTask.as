@@ -12,10 +12,10 @@ public class AIFunctionTask extends AITask
         return new AIFunctionTask(_func);
     }
 
-    override public function update (dt :Number) :int
+    override public function update (dt :Number) :Boolean
     {
         _func();
-        return AITaskStatus.COMPLETE;
+        return true;
     }
 
     protected var _func :Function;
