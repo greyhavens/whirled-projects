@@ -158,8 +158,11 @@ public class GameMode extends AppMode
         GameContext.localPlayerIndex = 0;
 
         // create ai players
-        //PlayerFactory.createRobot(PlayerFactory.DUMB_ROBOT, 1);
-        PlayerFactory.createRobot(PlayerFactory.GEM_HOG_ROBOT, 1);
+        for (var ii :int = 0; ii < 8; ++ii) {
+            var robotType :int = (ii % 2 ? PlayerFactory.DUMB_ROBOT : PlayerFactory.GEM_HOG_ROBOT);
+            var teamId :int = (ii < 4 ? 0 : 1);
+            PlayerFactory.createRobot(robotType, teamId);
+        }
     }
 
     override public function update (dt :Number) :void

@@ -53,7 +53,7 @@ public class Camera extends SceneObject
                          ScaleTask.CreateSmooth(targetScale, targetScale, ZOOM_TIME),
                          true);
 
-             _wasOnOwnBoard = isOnOwnBoard;
+            _wasOnOwnBoard = isOnOwnBoard;
         }
 
         // Keep the player centered in the view as much as possible
