@@ -7,12 +7,18 @@ public class AITaskSequence extends AITaskTree
     public static const MSG_SEQUENCEDTASKCOMPLETED :String = "SequencedTaskCompleted";
     public static const MSG_SEQUENCEDTASKMESSAGE :String = "SequencedTaskMessage";
 
-    public function AITaskSequence (repeating :Boolean = false, name :String = null)
+    public function AITaskSequence (repeating :Boolean = false, name :String = null, ...tasks)
     {
         _name = name;
         _repeating = repeating;
         _pendingTasks = [];
         _completedTasks = [];
+
+        if (tasks != null) {
+            for each (var task :AITask in tasks) {
+                addSequencedTask(task);
+            }
+        }
     }
 
     public function addSequencedTask (task :AITask) :void
