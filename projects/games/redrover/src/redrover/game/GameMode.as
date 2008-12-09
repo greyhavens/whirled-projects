@@ -12,6 +12,7 @@ import flash.display.DisplayObject;
 
 import redrover.*;
 import redrover.data.*;
+import redrover.game.robot.*;
 import redrover.game.view.*;
 
 public class GameMode extends AppMode
@@ -109,6 +110,14 @@ public class GameMode extends AppMode
                     break;
                 }
             }
+
+            // create gem distance maps
+            for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
+                _gemDistanceMaps.push(DataMap.createGemMap(board, gemType));
+            }
+
+            // create redemption distance map
+            _redemptionDistanceMaps.push(DataMap.createGemRedemptionMap(board));
         }
     }
 
@@ -149,7 +158,8 @@ public class GameMode extends AppMode
         GameContext.localPlayerIndex = 0;
 
         // create ai players
-        PlayerFactory.createRobot(PlayerFactory.DUMB_ROBOT, 1);
+        //PlayerFactory.createRobot(PlayerFactory.DUMB_ROBOT, 1);
+        PlayerFactory.createRobot(PlayerFactory.GEM_HOG_ROBOT, 1);
     }
 
     override public function update (dt :Number) :void
@@ -269,9 +279,21 @@ public class GameMode extends AppMode
         return _teamSprites[teamId];
     }
 
+    public function getGemMap (boardId :int, gemType :int) :DataMap
+    {
+        return _gemDistanceMaps[(Constants.GEM__LIMIT * boardId) + gemType];
+    }
+
+    public function getRedemptionMap (boardId :int) :DataMap
+    {
+        return _redemptionDistanceMaps[boardId];
+    }
+
     protected var _levelData :LevelData;
     protected var _teamSprites :Array = []; // Array<Sprite>, one for each team
     protected var _boards :Array = []; // Array<Board>, one for each team
+    protected var _gemDistanceMaps :Array = []; // Array<DataMap>, one for each board/gemType combination
+    protected var _redemptionDistanceMaps :Array = []; // Array<DataMap>, one for each board
 }
 
 }

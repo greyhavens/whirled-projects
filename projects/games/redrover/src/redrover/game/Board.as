@@ -69,6 +69,11 @@ public class Board extends SimObject
         return _rows;
     }
 
+    public function get cells () :Array
+    {
+        return _cells;
+    }
+
     public function getCell (gridX :int, gridY :int) :BoardCell
     {
         return (gridX >= 0 && gridX < _cols && gridY >= 0 && gridY < _rows ?

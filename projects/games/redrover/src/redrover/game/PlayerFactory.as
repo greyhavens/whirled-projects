@@ -9,6 +9,7 @@ import redrover.game.view.PlayerView;
 public class PlayerFactory
 {
     public static const DUMB_ROBOT :int = 0;
+    public static const GEM_HOG_ROBOT :int = 1;
 
     public static function initPlayer (player :Player) :PlayerView
     {
@@ -46,6 +47,10 @@ public class PlayerFactory
         switch (type) {
         case DUMB_ROBOT:
             ai = new DumbAI(player);
+            break;
+
+        case GEM_HOG_ROBOT:
+            ai = new GemHogAI(player);
             break;
         }
 

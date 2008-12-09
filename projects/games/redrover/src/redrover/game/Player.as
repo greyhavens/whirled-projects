@@ -250,6 +250,11 @@ public class Player extends SimObject
         return _isMoving;
     }
 
+    public function get canMove () :Boolean
+    {
+        return _state != STATE_SWITCHINGBOARDS && _state != STATE_EATEN;
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
@@ -257,7 +262,7 @@ public class Player extends SimObject
         var startX :Number = _loc.x;
         var startY :Number = _loc.y;
 
-        if (_state == STATE_NORMAL) {
+        if (this.canMove) {
             handleNextMove(this.moveSpeed * dt);
 
             var cell :BoardCell = this.curBoardCell;
