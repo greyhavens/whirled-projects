@@ -32,6 +32,8 @@ public class Player extends SimObject
 
     public function eatPlayer (player :Player) :void
     {
+        dispatchEvent(GameEvent.createAtePlayer(this, player));
+
         // we get the other player's gems
         addGems(player._gems);
         player._gems = [];
@@ -53,7 +55,7 @@ public class Player extends SimObject
         var south :Vector2 = new Vector2(gridX, gridY + 1);
         var east :Vector2 = new Vector2(gridX + 1, gridY);
         var west :Vector2 = new Vector2(gridX - 1, gridY);
-        switch (_moveDirection) {
+        switch (byPlayer.moveDirection) {
         case Constants.DIR_NORTH:
             spitLocations = [ south, east, west, north ];
             break;
@@ -96,6 +98,8 @@ public class Player extends SimObject
                 new FunctionTask(function () :void {
                     _state = STATE_NORMAL;
                 })));
+
+        dispatchEvent(GameEvent.createWasEaten(byPlayer, this));
     }
 
     public function beginSwitchBoards () :void
@@ -509,7 +513,7 @@ public class Player extends SimObject
     protected function redeemGems (cell :BoardCell) :void
     {
         _score += GameContext.levelData.gemValues.getValueAt(this.numGems);
-        dispatchEvent(GameEvent.createGemsRedeemed(_playerIndex, _gems, cell));
+        dispatchEvent(GameEvent.createGemsRedeemed(this, _gems, cell));
         _gems = [];
     }
 

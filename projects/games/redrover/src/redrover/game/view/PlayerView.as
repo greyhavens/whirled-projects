@@ -53,6 +53,10 @@ public class PlayerView extends SceneObject
         setBoard(_player.curBoardId);
 
         registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
+        if (_player == GameContext.localPlayer) {
+            registerListener(player, GameEvent.WAS_EATEN, onWasEaten);
+            registerListener(player, GameEvent.ATE_PLAYER, onAtePlayer);
+        }
     }
 
     override protected function addedToDB () :void
@@ -96,6 +100,29 @@ public class PlayerView extends SceneObject
         GameContext.gameMode.addObject(
             new GemsRedeemedAnim(_player, gems, boardCell),
             GameContext.gameMode.getTeamSprite(_player.teamId));
+    }
+
+    protected function onWasEaten (e :GameEvent) :void
+    {
+        var data :Object = e.data;
+        var eatingPlayer :Player = data.eatingPlayer;
+
+        UIBits.createNotification(_player.teamId,
+            eatingPlayer.playerName + " captured you!\n" +
+            "You now serve the " + Constants.TEAM_LEADER_NAMES[_player.teamId] + ".",
+            new Vector2(_player.loc.x, _player.loc.y - 80));
+    }
+
+    protected function onAtePlayer (e :GameEvent) :void
+    {
+        var data :Object = e.data;
+        var eatenPlayer :Player = data.eatenPlayer;
+
+        var text :String = "You captured " + eatenPlayer.playerName +
+            (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!");
+
+        UIBits.createNotification(_player.teamId, text,
+            new Vector2(_player.loc.x, _player.loc.y - 80));
     }
 
     override protected function update (dt :Number) :void

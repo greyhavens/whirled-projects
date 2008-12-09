@@ -1,8 +1,11 @@
 package redrover.ui {
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.ColorMatrix;
+import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -16,12 +19,46 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
 import redrover.*;
+import redrover.game.*;
 import redrover.util.SpriteUtil;
 
 public class UIBits
 {
     public static const PANEL_TEXT_H_MARGIN :Number = 14;
     public static const PANEL_TEXT_V_MARGIN :Number = 6;
+
+    public static function createNotification (teamId :int, text :String, loc :Vector2) :void
+    {
+        var sprite :Sprite = SpriteUtil.createSprite();
+
+        var tf :TextField = UIBits.createText(text, 1.4, 0, TEAM_TEXT_COLORS[teamId]);
+
+        var shape :Shape = new Shape();
+        shape.graphics.beginFill(0);
+        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
+        shape.graphics.endFill();
+
+        shape.x = -shape.width * 0.5;
+        shape.y = -shape.height * 0.5;
+        sprite.addChild(shape);
+
+        tf.x = -tf.width * 0.5;
+        tf.y = -tf.height * 0.5;
+        sprite.addChild(tf);
+
+        var obj :SimpleSceneObject = new SimpleSceneObject(sprite);
+        obj.x = loc.x;
+        obj.y = loc.y;
+
+        obj.addTask(new SerialTask(
+            new TimedTask(1),
+            new ParallelTask(
+                LocationTask.CreateEaseIn(loc.x, loc.y - 140, 1),
+                After(1, new AlphaTask(0, 0.25))),
+            new SelfDestructTask()));
+
+        GameContext.gameMode.addObject(obj, GameContext.gameMode.getTeamSprite(teamId));
+    }
 
     public static function createFrame (width :Number, height :Number) :Sprite
     {
@@ -214,6 +251,8 @@ public class UIBits
 
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
+
+    protected static const TEAM_TEXT_COLORS :Array = [ 0x6ae8ff, 0xff6a6a ];
 }
 
 }

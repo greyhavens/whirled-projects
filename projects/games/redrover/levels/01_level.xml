@@ -7,7 +7,7 @@
 		speedBase="80"
 		speedOffsetPerGem="-5"
 		slowTerrainSpeedMultiplier="0.5"
-		maxTurnOvershoot="9"
+		maxTurnOvershoot="8"
 		maxCarriedGems="10"
 		switchBoardsTime="1"
 		gotEatenTime="2"

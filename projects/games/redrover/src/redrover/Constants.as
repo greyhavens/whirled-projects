@@ -25,6 +25,8 @@ public class Constants
         return (teamId == TEAM_RED ? TEAM_BLUE : TEAM_RED);
     }
 
+    public static const TEAM_LEADER_NAMES :Array = [ "King", "Queen" ];
+
     public static const DIR_NORTH :int = 0;
     public static const DIR_WEST :int = 1;
     public static const DIR_SOUTH :int = 2;

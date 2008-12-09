@@ -1,5 +1,6 @@
 package redrover.game.view {
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -64,40 +65,18 @@ public class GemsRedeemedAnim extends SceneObject
 
     protected function showScoreAnim () :void
     {
-        removeDisplayChildren();
-
         var scoreText :String =
             "Gems x" + _numGems + ": +" + GameContext.levelData.gemValues.getValueAt(_numGems);
 
-        var happyText :String =
-            HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
-        var flavorText :String = "The " + LEADER_NAMES[_player.teamId] + " is " + happyText;
+        var flavorText :String = "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is "
+            + HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
 
-        var tf :TextField = UIBits.createText(scoreText + "\n" + flavorText,
-                                              1.5, 0, TEXT_COLORS[_player.teamId]);
+        UIBits.createNotification(
+            _player.teamId,
+            scoreText + "\n" + flavorText,
+            new Vector2(_player.loc.x, _player.loc.y - 80));
 
-        var shape :Shape = new Shape();
-        shape.graphics.beginFill(0);
-        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
-        shape.graphics.endFill();
-
-        shape.x = -shape.width * 0.5;
-        shape.y = -shape.height * 0.5;
-        _sprite.addChild(shape);
-
-        tf.x = -tf.width * 0.5;
-        tf.y = -tf.height * 0.5;
-        _sprite.addChild(tf);
-
-        this.x = _player.loc.x;
-        this.y = _player.loc.y - 80;
-
-        addTask(new SerialTask(
-            new TimedTask(0.75),
-            new ParallelTask(
-                LocationTask.CreateEaseIn(_player.loc.x, _player.loc.y - 140, 1),
-                After(0.75, new AlphaTask(0, 0.25))),
-            new SelfDestructTask()));
+        destroySelf();
     }
 
     protected function removeDisplayChildren () :void
@@ -126,8 +105,6 @@ public class GemsRedeemedAnim extends SceneObject
 
     protected var _sprite :Sprite;
 
-    protected static const TEXT_COLORS :Array = [ 0x6ae8ff, 0xff6a6a ];
-    protected static const LEADER_NAMES :Array = [ "King", "Queen" ];
     protected static const HAPPINESS :Array = [
         "", "pleased.", "pleased.", "pleased.", "overjoyed!", "ECSTATIC!"
     ];
