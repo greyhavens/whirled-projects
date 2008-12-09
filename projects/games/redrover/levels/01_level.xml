@@ -1,7 +1,7 @@
 <root>
 <Level	cellSize="40"
-		ownBoardZoom="1"
-		otherBoardZoom="1.5"
+		ownBoardZoom="1.6"
+		otherBoardZoom="1"
 		gemSpawnTimeMin="3"
 		gemSpawnTimeMax="3"
 		speedBase="80"
@@ -35,6 +35,21 @@
 		<Color value="0xFF6FCF"/>
 		<Color value="0x333333"/>
 	</PlayerColors>
+	
+	<RobotNames>
+	   <Name value="Archibald"/>
+       <Name value="Balthazar"/>
+       <Name value="Clement"/>
+       <Name value="Dagobert"/>
+       <Name value="Eustatius"/>
+       <Name value="Franz Joseph"/>
+       <Name value="Guillaume"/>
+       <Name value="Humbert"/>
+       <Name value="Juan Carlos"/>
+       <Name value="Leopold"/>
+       <Name value="Thomas Frans"/>
+       <Name value="Victor Amadeus"/>
+	</RobotNames>
 		
 	<Terrain>
 		# # # # # # # # # # # # # # # # #

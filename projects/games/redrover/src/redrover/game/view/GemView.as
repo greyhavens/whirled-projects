@@ -11,9 +11,10 @@ import redrover.util.SpriteUtil;
 
 public class GemView extends SceneObject
 {
-    public function GemView (gemType :int, boardCell :BoardCell)
+    public function GemView (gemType :int, teamId :int, boardCell :BoardCell)
     {
         _boardCell = boardCell;
+        _teamId = teamId;
 
         var gem :DisplayObject = GemViewFactory.createGem(GameContext.levelData.cellSize - 12,
                                                           gemType);
@@ -26,6 +27,8 @@ public class GemView extends SceneObject
         // center the GemView in its cell
         this.x = _boardCell.ctrPixelX;
         this.y = _boardCell.ctrPixelY;
+
+        updateView();
     }
 
     override public function get displayObject () :DisplayObject
@@ -33,14 +36,22 @@ public class GemView extends SceneObject
         return _sprite;
     }
 
+    protected function updateView () :void
+    {
+        _sprite.alpha = (_teamId == GameContext.localPlayer.teamId ? 0.25 : 1);
+    }
+
     override protected function update (dt :Number) :void
     {
         if (!_boardCell.hasGem) {
             destroySelf();
+        } else {
+            updateView();
         }
     }
 
     protected var _boardCell :BoardCell;
+    protected var _teamId :int;
     protected var _sprite :Sprite;
 }
 

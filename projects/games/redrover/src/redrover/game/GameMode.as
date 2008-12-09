@@ -154,8 +154,9 @@ public class GameMode extends AppMode
             }
         }
 
-        PlayerFactory.initPlayer(new Player(0, 0, startX, startY, GameContext.nextPlayerColor()));
         GameContext.localPlayerIndex = 0;
+        PlayerFactory.initPlayer(
+            new Player(0, "You", 0, startX, startY, GameContext.nextPlayerColor()));
 
         // create ai players
         for (var ii :int = 0; ii < 8; ++ii) {
@@ -268,7 +269,7 @@ public class GameMode extends AppMode
         var cell :BoardCell = getBoard(boardId).getCell(gridX, gridY);
         if (cell != null) {
             cell.addGem(gemType);
-            addObject(new GemView(gemType, cell), getTeamSprite(boardId).objectLayer);
+            addObject(new GemView(gemType, boardId, cell), getTeamSprite(boardId).objectLayer);
         }
     }
 

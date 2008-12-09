@@ -3,16 +3,21 @@ package redrover.game.view {
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.ColorMatrix;
-import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.text.TextField;
 
 import redrover.*;
 import redrover.game.*;
+import redrover.ui.UIBits;
 import redrover.util.SpriteUtil;
 
 public class PlayerView extends SceneObject
@@ -22,10 +27,46 @@ public class PlayerView extends SceneObject
         _player = player;
         _sprite = SpriteUtil.createSprite();
         _playerAnims = ArrayUtil.create(Constants.NUM_TEAMS, null);
+
+        if (_player == GameContext.localPlayer) {
+            var arrow :Bitmap = ImageResource.instantiateBitmap("player_arrow");
+            arrow.x = -arrow.width * 0.5;
+            arrow.y = -arrow.height;
+            var arrowSprite :Sprite = SpriteUtil.createSprite();
+            arrowSprite.addChild(arrow);
+            _arrowObj = new SimpleSceneObject(arrowSprite);
+            _arrowObj.addTask(new RepeatingTask(
+                LocationTask.CreateEaseOut(0, -8, 0.35),
+                LocationTask.CreateEaseIn(0, 0, 0.35)));
+
+            _arrowParent = SpriteUtil.createSprite();
+            _sprite.addChild(_arrowParent);
+
+            _arrowParent.addChild(_arrowObj.displayObject);
+
+        } else {
+            _nameText = UIBits.createText(_player.playerName, 1.1);
+            _sprite.addChild(_nameText);
+        }
+
         setTeam(_player.teamId);
         setBoard(_player.curBoardId);
 
         registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
+    }
+
+    override protected function addedToDB () :void
+    {
+        if (_arrowObj != null) {
+            this.db.addObject(_arrowObj);
+        }
+    }
+
+    override protected function removedFromDB () :void
+    {
+        if (_arrowObj != null) {
+            _arrowObj.destroySelf();
+        }
     }
 
     override protected function destroyed () :void
@@ -62,8 +103,10 @@ public class PlayerView extends SceneObject
         super.update(dt);
 
         // Have we switched teams?
+        var teamChanged :Boolean;
         if (_lastTeamId != _player.teamId) {
             setTeam(_player.teamId);
+            teamChanged = true;
         }
 
         // Have we switched boards?
@@ -73,7 +116,7 @@ public class PlayerView extends SceneObject
 
         // Update animation based on facing direction
         var newDirection :int = _player.moveDirection;
-        if (_curAnim == null || (newDirection != _lastFacing && newDirection != -1)) {
+        if (teamChanged || _curAnim == null || (newDirection != _lastFacing && newDirection != -1)) {
             if (_curAnim != null) {
                 _sprite.removeChild(_curAnim);
             }
@@ -146,6 +189,17 @@ public class PlayerView extends SceneObject
             _playerAnims[teamId] = movies;
         }
 
+        if (_nameText != null) {
+            _nameText.textColor = NAME_COLORS[teamId];
+            _nameText.x = -(_nameText.width * 0.5);
+            _nameText.y = -(DisplayObject(movies[0]).height) - _nameText.height;
+        }
+
+        if (_arrowParent != null) {
+            _arrowParent.x = -1;
+            _arrowParent.y = -(DisplayObject(movies[0]).height) - 1;
+        }
+
         _lastTeamId = teamId;
         _lastFacing = -1;
         _lastLoc = new Vector2();
@@ -167,6 +221,9 @@ public class PlayerView extends SceneObject
 
     protected var _player :Player;
     protected var _sprite :Sprite;
+    protected var _nameText :TextField;
+    protected var _arrowObj :SimpleSceneObject;
+    protected var _arrowParent :Sprite;
     protected var _curAnim :MovieClip;
     protected var _playerAnims :Array; // Array<Array<MovieClip>>
     protected var _lastTeamId :int = -1;
@@ -177,12 +234,13 @@ public class PlayerView extends SceneObject
 
     protected var _mask :Shape;
 
-    protected static const MOVIE_SCALES :Array = [ 1.2, 1.5 ];
+    protected static const MOVIE_SCALES :Array = [ 1.1, 1.5 ];
     protected static const SWF_NAMES :Array = [ "grunt", "sapper" ];
     protected static const MOVIE_NAMES :Array = [
         [ "stand_N", "stand_SW", "stand_S", "stand_SW" ],
         [ "walk_N", "walk_SW", "walk_S", "walk_SW" ]
     ];
+    protected static const NAME_COLORS :Array = [ 0x0000ff, 0xff0000 ];
 
     protected static const NUM_GEM_SOUNDS :int = 7;
 }

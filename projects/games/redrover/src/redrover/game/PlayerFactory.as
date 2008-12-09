@@ -37,6 +37,7 @@ public class PlayerFactory
 
         var player :Player = new Player(
             GameContext.nextPlayerIndex(),
+            GameContext.nextRobotName(),
             initialTeam,
             startX, startY,
             GameContext.nextPlayerColor());

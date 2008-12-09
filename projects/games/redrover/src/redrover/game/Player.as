@@ -13,9 +13,11 @@ public class Player extends SimObject
     public static const STATE_SWITCHINGBOARDS :int = 1;
     public static const STATE_EATEN :int = 2;
 
-    public function Player (playerIndex :int, teamId :int, gridX :int, gridY :int, color :uint)
+    public function Player (playerIndex :int, playerName :String, teamId :int, gridX :int,
+        gridY :int, color :uint)
     {
         _playerIndex = playerIndex;
+        _playerName = playerName;
         _teamId = teamId;
         _curBoardId = teamId;
         _color = color;
@@ -167,6 +169,11 @@ public class Player extends SimObject
     public function get playerIndex () :int
     {
         return _playerIndex;
+    }
+
+    public function get playerName () :String
+    {
+        return _playerName;
     }
 
     public function get teamId () :int
@@ -513,6 +520,7 @@ public class Player extends SimObject
     }
 
     protected var _playerIndex :int;
+    protected var _playerName :String;
     protected var _teamId :int;
     protected var _curBoardId :int;
     protected var _gems :Array = [];
