@@ -42,14 +42,18 @@ public class Camera extends SceneObject
             var newTeamSprite :TeamSprite = GameContext.gameMode.getTeamSprite(newBoardId);
             _sprite.addChild(newTeamSprite);
 
-            var targetScale :Number = (newBoardId == GameContext.localPlayer.teamId ?
-                data.ownBoardZoom : data.otherBoardZoom);
+            _lastBoardId = newBoardId;
+            _curTeamSprite = newTeamSprite;
+        }
+
+        var isOnOwnBoard :Boolean = GameContext.localPlayer.isOnOwnBoard;
+        if (_wasOnOwnBoard != isOnOwnBoard) {
+            var targetScale :Number = (isOnOwnBoard ? data.ownBoardZoom : data.otherBoardZoom);
             addNamedTask(ZOOM_TASK_NAME,
                          ScaleTask.CreateSmooth(targetScale, targetScale, ZOOM_TIME),
                          true);
 
-            _lastBoardId = newBoardId;
-            _curTeamSprite = newTeamSprite;
+             _wasOnOwnBoard = isOnOwnBoard;
         }
 
         // Keep the player centered in the view as much as possible
@@ -73,6 +77,7 @@ public class Camera extends SceneObject
     protected var _height :Number;
     protected var _sprite :Sprite;
     protected var _lastBoardId :int = -1;
+    protected var _wasOnOwnBoard :Boolean;
     protected var _curTeamSprite :TeamSprite;
 
     protected static const ZOOM_TIME :Number = 0.75;
