@@ -9,10 +9,21 @@ public class GemHogAI extends AITaskTree
     public function GemHogAI (player :Player)
     {
         _player = player;
-        updateState();
+        selectNextState();
     }
 
-    protected function updateState () :void
+    override public function update (dt :Number) :Boolean
+    {
+        super.update(dt);
+
+        if (!this.hasSubtasks) {
+            selectNextState();
+        }
+
+        return false;
+    }
+
+    protected function selectNextState () :void
     {
         if (!_player.canMove) {
             return;
@@ -63,7 +74,7 @@ public class GemHogAI extends AITaskTree
             }
         }
 
-        addSubtask(new AITaskSequence(false, null, nextTask, new AIFunctionTask(updateState)));
+        addSubtask(nextTask);
     }
 
     protected var _player :Player;
