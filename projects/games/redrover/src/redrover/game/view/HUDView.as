@@ -25,12 +25,12 @@ public class HUDView extends SceneObject
         g.endFill();
 
         _gemSprite = SpriteUtil.createSprite();
-        _gemSprite.x = 150;
+        _gemSprite.x = GEM_X;
         _gemSprite.y = size.y * 0.5;
         _sprite.addChild(_gemSprite);
 
         var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
-        switchBoardsButton.x = size.x - 10;
+        switchBoardsButton.x = BUTTON_X;
         switchBoardsButton.y = (size.y - switchBoardsButton.height) * 0.5;
         GameContext.gameMode.addObject(switchBoardsButton, _sprite);
     }
@@ -52,7 +52,7 @@ public class HUDView extends SceneObject
 
             _scoreText = UIBits.createText("Score: " + StringUtil.formatNumber(newScore),
                 1.5, 0, 0xFFFFFF);
-            _scoreText.x = 10;
+            _scoreText.x = SCORE_X;
             _scoreText.y = (_sprite.height - _scoreText.height) * 0.5;
             _sprite.addChild(_scoreText);
             _lastScore = newScore;
@@ -65,13 +65,33 @@ public class HUDView extends SceneObject
             }
 
             for each (var gemType :int in GameContext.localPlayer.gems) {
-                var gem :DisplayObject = GemViewFactory.createGem(30, gemType);
+                var gem :DisplayObject = GemViewFactory.createGem(25, gemType);
                 gem.x = _gemSprite.width;
                 gem.y = -gem.height * 0.5;
                 _gemSprite.addChild(gem);
             }
 
             _lastGems = newGems;
+        }
+
+        for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
+            var teamSize :int = GameContext.getTeamSize(teamId);
+            if (teamSize != _lastTeamSizes[teamId]) {
+                var oldTeamText :TextField = _teamTexts[teamId];
+                if (oldTeamText != null) {
+                    oldTeamText.parent.removeChild(oldTeamText);
+                }
+                var teamText :TextField = UIBits.createText(
+                    Constants.TEAM_LEADER_NAMES[teamId] + " team size: " + teamSize, 1.1, 0,
+                    TEAM_COLORS[teamId]);
+                var loc :Point = TEAM_SIZE_LOCS[teamId];
+                teamText.x = loc.x;
+                teamText.y = loc.y;
+                _sprite.addChild(teamText);
+
+                _teamTexts[teamId] = teamText;
+                _lastTeamSizes[teamId] = teamSize;
+            }
         }
     }
 
@@ -82,6 +102,12 @@ public class HUDView extends SceneObject
     protected var _lastGems :int = -1;
     protected var _lastScore :int = -1;
     protected var _lastTeamSizes :Array = [ -1, -1 ];
+
+    protected static const SCORE_X :Number = 5;
+    protected static const GEM_X :Number = 250;
+    protected static const BUTTON_X :Number = 695;
+    protected static const TEAM_COLORS :Array = [ 0xff6c77, 0x88c5ff ];
+    protected static const TEAM_SIZE_LOCS :Array = [ new Point(115, 8), new Point(115, 27) ];
 }
 
 }

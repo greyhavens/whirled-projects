@@ -70,6 +70,18 @@ public class GameContext
         return players.length;
     }
 
+    public static function getTeamSize (teamId :int) :int
+    {
+        var size :int = 0;
+        for each (var player :Player in players) {
+            if (player.teamId == teamId) {
+                size++;
+            }
+        }
+
+        return size;
+    }
+
     public static function get localPlayer () :Player
     {
         return players[GameContext.localPlayerIndex];
