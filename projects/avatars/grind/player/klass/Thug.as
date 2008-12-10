@@ -7,7 +7,12 @@ public class Thug
 {
     public function getBaseSprites () :Array
     {
-        return [ 83, 259 ];
+        return [ 84 ];
+    }
+
+    public function getHairSprites () :Array
+    {
+        return [ 85 ];
     }
 
     public function getTraits () :Array

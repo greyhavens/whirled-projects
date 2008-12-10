@@ -9,6 +9,7 @@ public class PlayerSprite extends QuestSprite
         super(ctrl);
 
         _manaBar.y = 8;
+        _manaBar.x = center(32);
         addChild(_manaBar);
     }
 

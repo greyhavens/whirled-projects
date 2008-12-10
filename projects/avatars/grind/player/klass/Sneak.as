@@ -7,7 +7,12 @@ public class Sneak
 {
     public function getBaseSprites () :Array
     {
-        return [ 83, 259 ];
+        return [ 59 ];
+    }
+
+    public function getHairSprites () :Array
+    {
+        return [ 264 ];
     }
 
     public function getTraits () :Array

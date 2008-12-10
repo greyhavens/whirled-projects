@@ -7,7 +7,12 @@ public class Mage
 {
     public function getBaseSprites () :Array
     {
-        return [ 83, 259 ];
+        return [ 58 ];
+    }
+
+    public function getHairSprites () :Array
+    {
+        return [ 275 ];
     }
 
     public function getTraits () :Array

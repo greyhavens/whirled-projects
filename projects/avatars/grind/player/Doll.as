@@ -17,11 +17,14 @@ public class Doll extends Bitmap
         var w :int = _sheet.width/SIZE;
         var h :int = _sheet.height/SIZE;
 
-        for each (var sprite :int in sprites) {
-            bitmapData.copyPixels(_sheet,
-                new Rectangle(
-                    SIZE*(sprite%w), SIZE*(Math.floor(sprite/w)), SIZE, SIZE),
-                new Point(0, 0), null, null, true);
+        for each (var s :Object in sprites) {
+            if (s != null) {
+                var sprite :int = int(s);
+                bitmapData.copyPixels(_sheet,
+                    new Rectangle(
+                        SIZE*(sprite%w), SIZE*(Math.floor(sprite/w)), SIZE, SIZE),
+                    new Point(0, 0), null, null, true);
+            }
         }
 
         smoothing = true;

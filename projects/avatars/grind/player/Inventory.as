@@ -16,6 +16,12 @@ public class Inventory extends Sprite
 {
     public static const MAX_BAGS :int = 50;
 
+    public static const ARMOR_LABELS :Array = [
+        "Arcane",
+        "Light",
+        "Heavy",
+    ]
+
     public function Inventory (ctrl :EntityControl, klass :Klass, doll :Doll)
     {
         _ctrl = ctrl;
@@ -125,6 +131,10 @@ public class Inventory extends Sprite
             if (memory[1] != 0) {
                 _itemText.appendText(" " + QuestUtil.deltaText(memory[1]));
             }
+            // If not a weapon and not typeless
+            if (item[2] != Items.HAND && item[3] != -1) {
+                _itemText.appendText("\n(" + ARMOR_LABELS[item[3]] + ")");
+            }
 
             _itemText.visible = true;
             _statusText.visible = false;
@@ -199,7 +209,11 @@ public class Inventory extends Sprite
             }
         }
 
-        _doll.layer(base.concat(sprites.splice(1)));
+        if ( ! (Items.HEAD in _equipment)) {
+            sprites.splice(Items.HAND, 0, _klass.getHairSprites());
+        }
+
+        _doll.layer(base.concat(sprites));
     }
 
     public function getRange () :Number
@@ -207,11 +221,11 @@ public class Inventory extends Sprite
         //return (Items.HAND in _equipment) ? _equipment[Items.HAND][5] : 100;
         if (Items.HAND in _equipment) {
             switch (Items.TABLE[_equipment[Items.HAND][0]][3]) {
-                case Items.BOW: return 800;
-                case Items.MAGIC: return 400;
+                case Items.BOW: return 1600;
+                case Items.MAGIC: return 800;
             }
         }
-        return 200;
+        return 400;
     }
 
     public function getPower () :Number

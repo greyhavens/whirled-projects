@@ -19,7 +19,7 @@ import com.whirled.ControlEvent;
 import klass.Klass;
 import klass.@KLASS@
 
-[SWF(width="64", height="250")]
+[SWF(width="600", height="250")]
 public class Player_@KLASS@ extends Sprite
 {
     public function Player_@KLASS@ ()
@@ -83,7 +83,7 @@ public class Player_@KLASS@ extends Sprite
                         break;
 
                     case QuestConstants.EVENT_DIE:
-                        //_soundDeath.play();
+                        _soundDie.play();
                         break;
                 }
             }
@@ -110,7 +110,8 @@ public class Player_@KLASS@ extends Sprite
                     if (_svc.getState() == QuestConstants.STATE_DEAD) {
                         _svc.revive();
                     }
-                    _inventory.getAttackSound().play();
+                    //_inventory.getAttackSound().play();
+                    _soundDie.play();
                     break;
             }
         }
@@ -144,6 +145,10 @@ public class Player_@KLASS@ extends Sprite
     [Embed(source="rsrc/@KLASS@Heal.mp3")]
     protected static const SOUND_HEAL :Class;
     protected var _soundHeal :Sound = new SOUND_HEAL as Sound;
+
+    [Embed(source="rsrc/@KLASS@Die.mp3")]
+    protected static const SOUND_DIE :Class;
+    protected var _soundDie :Sound = new SOUND_DIE as Sound;
 
     protected var _klass :Klass = new @KLASS@();
 
@@ -183,8 +188,11 @@ public class Player_@KLASS@ extends Sprite
 
         awardRandomItem: function (level :int) :void {
             var item :int = Items.randomLoot(level, 5);
-            _inventory.deposit(item, Math.random()*7-3);
-            _quest.effect({text: Items.TABLE[item][1], color: 0xffcc00});
+            if (_inventory.deposit(item, Math.random()*7-3)) {
+                _quest.effect({text: Items.TABLE[item][1], color: 0xffcc00});
+            } else {
+                _quest.effect({text: "Inventory FULL!"});
+            }
         },
 
         awardXP: function (amount :int) :void {

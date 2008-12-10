@@ -18,7 +18,7 @@ import com.whirled.EntityControl;
 import com.whirled.PetControl;
 import com.whirled.ControlEvent;
 
-[SWF(width="128", height="250")]
+[SWF(width="600", height="250")]
 public class Monster_@MONSTER_NAME@ extends Sprite
 {
     public static const RESPAWN_TIME :int = 2*60*1000;
@@ -98,7 +98,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
     protected function stalkTo (pixel :Array, distance :Number = NaN) :void
     {
         if (isNaN(distance)) {
-            distance = _svc.getRange();
+            distance = _svc.getRange()/2-1;
         }
 
         var here :Array = _ctrl.getPixelLocation() as Array;
@@ -232,7 +232,7 @@ public class Monster_@MONSTER_NAME@ extends Sprite
         },
 
         getRange: function () :Number {
-            return 100;
+            return 400;
         },
 
         getLevel: function () :int {

@@ -27,6 +27,7 @@ import caurina.transitions.Tweener;
 public class QuestSprite extends Sprite
 {
     public static const MAX_HEIGHT :int = 250;
+    public static const MAX_WIDTH :int = 600;
 
     public var bounciness :Number = 20;
     public var bounceFreq :Number = 200;
@@ -37,14 +38,14 @@ public class QuestSprite extends Sprite
         _ctrl = ctrl;
 
         _container = new Sprite();
-        _container.width = 32;
-        _container.height = 32;
-        _container.scaleX = 2;
-        _container.scaleY = 2;
+        //_container.width = 32;
+        //_container.height = 32;
+        //_container.scaleX = 2;
+        //_container.scaleY = 2;
 
         addChild(_container);
 
-        _xpField = TextFieldUtil.createField(name,
+        _xpField = TextFieldUtil.createField("",
             { textColor: 0xffffff, selectable: false,
                 autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
             { font: "_sans", size: 10, bold: true });
@@ -53,6 +54,7 @@ public class QuestSprite extends Sprite
 
 //        _healthBar.width = 32;
 //        _healthBar.height = 4;
+        _healthBar.x = center(32);
         addChild(_healthBar);
 
         Command.bind(_ctrl, ControlEvent.APPEARANCE_CHANGED, setupVisual);
@@ -85,9 +87,20 @@ public class QuestSprite extends Sprite
             _actor = actor;
             _container.addChild(_actor);
 
+            // Center horizontally
+            _container.scaleX = 4;
+            _container.scaleY = 4;
+            _container.x = center(_container.width);
+
             stopBouncing();
             setupVisual();
         }
+    }
+
+    // Handy func for centering a sprite
+    protected static function center (width :Number) :Number
+    {
+        return MAX_WIDTH/2 - width/2;
     }
 
     protected function tick () :void
@@ -98,6 +111,7 @@ public class QuestSprite extends Sprite
             case QuestConstants.STATE_ATTACK:
                 attack();
                 break;
+
             case QuestConstants.STATE_HEAL:
                 var heal :Number = self.hasTrait(QuestConstants.TRAIT_PLUS_HEALING) ? 0.2 : 0.15;
                 self.damage(null, -heal*getMaxHealth(), {
@@ -105,6 +119,7 @@ public class QuestSprite extends Sprite
                     event: QuestConstants.EVENT_HEAL
                 }, true);
                 break;
+
             case QuestConstants.STATE_COUNTER:
                 var focus :Number = self.hasTrait(QuestConstants.TRAIT_PLUS_COUNTER) ? 0.05 : 0.1;
                 self.damage(null, focus*getMaxHealth(), {
@@ -235,6 +250,7 @@ public class QuestSprite extends Sprite
     protected function handleMemory () :void
     {
         _xpField.text = "Level " + getLevel();
+        _xpField.x = center(_xpField.width);
         _healthBar.percent = getHealth()/getMaxHealth();
     }
 
@@ -245,13 +261,13 @@ public class QuestSprite extends Sprite
 
             // Show floaty text as part of this effect
             if ("text" in effect) {
-                var field :TextField = TextFieldUtil.createField(name,
+                var field :TextField = TextFieldUtil.createField(effect.text,
                     { textColor: ("color" in effect) ? effect.color : 0xFF4400, selectable: false,
                         autoSize: TextFieldAutoSize.LEFT, outlineColor: 0x00000 },
                     { font: "_sans", size: 12, bold: true });
 
-                field.text = effect.text as String;
-                field.y = MAX_HEIGHT - 50;
+                field.x = center(field.textWidth);
+                field.y = MAX_HEIGHT - _container.scaleY*_actor.height/2;
 
                 var complete :Function = function () :void {
                     removeChild(this);
@@ -263,16 +279,15 @@ public class QuestSprite extends Sprite
 
             if ("event" in effect && effect.event == QuestConstants.EVENT_ATTACK) {
                 if (_actor != null) {
-                    _actor.x = 0;
-                    _actor.y = 0;
+                    var originalX :Number = _actor.x;
                     Tweener.addTween(_actor, {
                         time: 0.1,
-                        x: -10,
+                        x: _actor.x - _actor.scaleX*10,
                         y: -4,
                         onComplete: function () :void {
                             Tweener.addTween(_actor, {
                                 time: 0.5,
-                                x: 0,
+                                x: originalX,
                                 y: 0
                             });
                         }
@@ -321,12 +336,12 @@ public class QuestSprite extends Sprite
         // (We discard nearly all the orientation information and only care if we're
         // facing left or right.)
         if (right == (orient > 180)) {
-            _container.x = _container.width;
-            _container.scaleX = -2;
+            _actor.x = _actor.width;
+            _actor.scaleX = -1;
 
         } else {
-            _container.x = 0;
-            _container.scaleX = 2;
+            _actor.x = 0;
+            _actor.scaleX = 1;
         }
 
         // if we're moving, make us bounce.
