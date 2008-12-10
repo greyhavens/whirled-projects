@@ -51,8 +51,7 @@ public class RedRover extends Sprite
             Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         if (AppContext.gameCtrl.isConnected()) {
-            // if we're connected to Whirled, keep the game centered and draw a pretty
-            // tiled background behind it
+            // if we're connected to Whirled, keep the game centered
             _events.registerListener(AppContext.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
                 handleSizeChanged)
 

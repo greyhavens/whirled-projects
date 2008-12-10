@@ -16,13 +16,23 @@ public class SwitchBoardsButton extends SceneObject
     public function SwitchBoardsButton ()
     {
         _sprite = SpriteUtil.createSprite(true);
-        _activeState = UIBits.createButton("Break on Through!", 1.5);
-        _needGemsState = UIBits.createTextPanel(
-            "" + GameContext.levelData.returnHomeGemsMin +  " gems are required" +
-            " to return home.", 1.2, 0, 0x888888);
-        _switchingState = UIBits.createTextPanel("Break on Through!", 1.5, 0, 0x888888);
 
-        registerListener(_activeState, MouseEvent.CLICK, onClicked);
+        _ownBoardStates = [
+            UIBits.createButton("Break on Through!", 1.5),
+            null,
+            UIBits.createTextPanel("Break on Through!", 1.5, 0, 0x888888)
+        ];
+
+        _otherBoardStates = [
+            UIBits.createButton("Return Home!", 1.5),
+            UIBits.createTextPanel(
+                "" + GameContext.levelData.returnHomeGemsMin +  " gems are required" +
+                " to return home.", 1.2, 0, 0x888888),
+            UIBits.createTextPanel("Return Home!", 1.5, 0, 0x888888)
+        ];
+
+        registerListener(_ownBoardStates[ACTIVE], MouseEvent.CLICK, onClicked);
+        registerListener(_otherBoardStates[ACTIVE], MouseEvent.CLICK, onClicked);
     }
 
     override public function get displayObject () :DisplayObject
@@ -40,17 +50,16 @@ public class SwitchBoardsButton extends SceneObject
     override protected function update (dt :Number) :void
     {
         // discover which state we should be in
-        var curButton :DisplayObject;
         var player :Player = GameContext.localPlayer;
+        var buttonStates :Array = (player.isOnOwnBoard ? _ownBoardStates : _otherBoardStates);
+        var curState :DisplayObject;
         if (player.state == Player.STATE_SWITCHINGBOARDS) {
-            curButton = _switchingState;
-        } else if (!player.isOnOwnBoard && player.numGems < GameContext.levelData.returnHomeGemsMin) {
-            curButton = _needGemsState;
+            curState = buttonStates[SWITCHING];
         } else {
-            curButton = _activeState;
+            curState = buttonStates[player.canSwitchBoards ? ACTIVE : INACTIVE];
         }
 
-        setDisplayState(curButton);
+        setDisplayState(curState);
     }
 
     protected function setDisplayState (newState :DisplayObject) :void
@@ -61,7 +70,7 @@ public class SwitchBoardsButton extends SceneObject
             }
 
             _curState = newState;
-            _curState.x = -_curState.width * 0.5;
+            _curState.x = -_curState.width;
             _curState.y = -_curState.height * 0.5;
             _sprite.addChild(_curState);
         }
@@ -70,9 +79,12 @@ public class SwitchBoardsButton extends SceneObject
     protected var _sprite :Sprite;
 
     protected var _curState :DisplayObject;
-    protected var _activeState :SimpleButton;
-    protected var _needGemsState :DisplayObject;
-    protected var _switchingState :DisplayObject;
+    protected var _ownBoardStates :Array;
+    protected var _otherBoardStates :Array;
+
+    protected static const ACTIVE :int = 0;
+    protected static const INACTIVE :int = 1;
+    protected static const SWITCHING :int = 2;
 }
 
 }

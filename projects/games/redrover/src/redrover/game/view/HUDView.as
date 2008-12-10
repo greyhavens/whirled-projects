@@ -8,7 +8,6 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
-import flash.text.TextFormatAlign;
 
 import redrover.*;
 import redrover.game.*;
@@ -31,7 +30,7 @@ public class HUDView extends SceneObject
         _sprite.addChild(_gemSprite);
 
         var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
-        switchBoardsButton.x = size.x - (switchBoardsButton.width * 1.5) - 130;
+        switchBoardsButton.x = size.x - 10;
         switchBoardsButton.y = (size.y - switchBoardsButton.height) * 0.5;
         GameContext.gameMode.addObject(switchBoardsButton, _sprite);
     }
@@ -66,7 +65,7 @@ public class HUDView extends SceneObject
             }
 
             for each (var gemType :int in GameContext.localPlayer.gems) {
-                var gem :DisplayObject = GemViewFactory.createGem(20, gemType);
+                var gem :DisplayObject = GemViewFactory.createGem(30, gemType);
                 gem.x = _gemSprite.width;
                 gem.y = -gem.height * 0.5;
                 _gemSprite.addChild(gem);
@@ -78,9 +77,11 @@ public class HUDView extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _scoreText :TextField;
+    protected var _teamTexts :Array = [ null, null ];
     protected var _gemSprite :Sprite;
     protected var _lastGems :int = -1;
     protected var _lastScore :int = -1;
+    protected var _lastTeamSizes :Array = [ -1, -1 ];
 }
 
 }
