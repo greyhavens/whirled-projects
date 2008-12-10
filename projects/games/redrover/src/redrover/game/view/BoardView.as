@@ -55,7 +55,7 @@ public class BoardView extends SceneObject
                 if (cell.isGemRedemption) {
                     mat.identity();
                     mat.scale(grScale, grScale);
-                    mat.translate(px, py - 40);
+                    mat.translate(px, py + ((grass.height - 30 - gemRedemption.height) * grScale));
                     bd.draw(gemRedemption, mat, null, null, null, true);
                 }
             }

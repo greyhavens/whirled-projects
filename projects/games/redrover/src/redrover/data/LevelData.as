@@ -124,7 +124,7 @@ public class LevelData
                     continue;
                 }
 
-                if (char != ".") {
+                if (char != "." && char != '#') {
                     var objType :int = getObjectType(char);
                     if (objType < 0) {
                         throw new XmlReadError("Unrecognized object type: " + char);

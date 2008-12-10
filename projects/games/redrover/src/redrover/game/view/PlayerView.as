@@ -261,7 +261,7 @@ public class PlayerView extends SceneObject
 
     protected var _mask :Shape;
 
-    protected static const MOVIE_SCALES :Array = [ 1.1, 1.5 ];
+    protected static const MOVIE_SCALES :Array = [ 0.8, 1.2 ];
     protected static const SWF_NAMES :Array = [ "grunt", "sapper" ];
     protected static const MOVIE_NAMES :Array = [
         [ "stand_N", "stand_SW", "stand_S", "stand_SW" ],
