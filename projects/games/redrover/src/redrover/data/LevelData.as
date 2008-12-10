@@ -26,7 +26,8 @@ public class LevelData
 
     public var gemValues :IntValueTable;
     public var playerColors :Array = [];
-    public var robotNames :Array = [];
+    public var maleRobotNames :Array = [];
+    public var femaleRobotNames :Array = [];
 
     public var terrain :Array = [];
     public var objects :Array = [];
@@ -57,8 +58,12 @@ public class LevelData
             data.playerColors.push(XmlReader.getUintAttr(colorXml, "value"));
         }
 
-        for each (var nameXml :XML in xml.RobotNames.Name) {
-            data.robotNames.push(XmlReader.getStringAttr(nameXml, "value"));
+        for each (var nameXml :XML in xml.MaleRobotNames.Name) {
+            data.maleRobotNames.push(XmlReader.getStringAttr(nameXml, "value"));
+        }
+
+        for each (nameXml in xml.FemaleRobotNames.Name) {
+            data.femaleRobotNames.push(XmlReader.getStringAttr(nameXml, "value"));
         }
 
         parseTerrainString(xml.Terrain, data);

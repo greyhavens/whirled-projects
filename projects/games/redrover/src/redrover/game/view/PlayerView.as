@@ -267,11 +267,11 @@ public class PlayerView extends SceneObject
 
     protected var _mask :Shape;
 
-    protected static const MOVIE_SCALES :Array = [ 0.8, 1.2 ];
-    protected static const SWF_NAMES :Array = [ "grunt", "sapper" ];
+    protected static const MOVIE_SCALES :Array = [ 1.2, 0.8 ];
+    protected static const SWF_NAMES :Array = [ "sapper", "grunt" ];
     protected static const MOVIE_NAMES :Array = [
-        [ "stand_N", "stand_SW", "stand_S", "stand_SW" ],
-        [ "walk_N", "walk_SW", "walk_S", "walk_SW" ]
+        [ "walk_N", "walk_SW", "walk_S", "walk_SW" ],
+        [ "stand_N", "stand_SW", "stand_S", "stand_SW" ]
     ];
     protected static const NAME_COLORS :Array = [ 0xff0000, 0x0000ff  ];
 

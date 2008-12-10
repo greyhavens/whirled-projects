@@ -14,7 +14,8 @@ public class GameContext
     public static var players :Array = [];
     public static var localPlayerIndex :int = -1;
     public static var playerColors :Array;
-    public static var robotNames :Array;
+    public static var maleRobotNames :Array;
+    public static var femaleRobotNames :Array;
 
     public static var playAudio :Boolean;
     public static var musicControls :AudioControls;
@@ -27,7 +28,8 @@ public class GameContext
         players = [];
         localPlayerIndex = -1;
         playerColors = null;
-        robotNames = null;
+        maleRobotNames = null;
+        femaleRobotNames = null;
         playAudio = false;
         musicControls = null;
         sfxControls = null;
@@ -43,14 +45,24 @@ public class GameContext
         return playerColors.pop();
     }
 
-    public static function nextRobotName () :String
+    public static function nextMaleRobotName () :String
     {
-        if (robotNames == null || robotNames.length == 0) {
-            robotNames = levelData.robotNames.slice();
-            Rand.shuffleArray(robotNames, Rand.STREAM_GAME);
+        if (maleRobotNames == null || maleRobotNames.length == 0) {
+            maleRobotNames = levelData.maleRobotNames.slice();
+            Rand.shuffleArray(maleRobotNames, Rand.STREAM_GAME);
         }
 
-        return robotNames.pop();
+        return maleRobotNames.pop();
+    }
+
+    public static function nextFemaleRobotName () :String
+    {
+        if (femaleRobotNames == null || femaleRobotNames.length == 0) {
+            femaleRobotNames = levelData.femaleRobotNames.slice();
+            Rand.shuffleArray(femaleRobotNames, Rand.STREAM_GAME);
+        }
+
+        return femaleRobotNames.pop();
     }
 
     public static function nextPlayerIndex () :int

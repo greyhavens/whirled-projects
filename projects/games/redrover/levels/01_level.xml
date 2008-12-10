@@ -36,7 +36,7 @@
 		<Color value="0x333333"/>
 	</PlayerColors>
 	
-	<RobotNames>
+	<MaleRobotNames>
 	   <Name value="Archibald"/>
 	   <Name value="Balthazar"/>
 	   <Name value="Clement"/>
@@ -49,7 +49,20 @@
 	   <Name value="Leopold"/>
 	   <Name value="Thomas Frans"/>
 	   <Name value="Victor Amadeus"/>
-	</RobotNames>
+	</MaleRobotNames>
+	<FemaleRobotNames>
+		<Name value="Antoinette"/>
+		<Name value="Benedita"/>
+		<Name value="Clothilde"/>
+		<Name value="Ermentrude"/>
+		<Name value="Henriëtte Agnes"/>
+		<Name value="Hildegard"/>
+		<Name value="Leopoldina"/>
+		<Name value="Margaretha Désirée"/>
+		<Name value="Ninette"/>
+		<Name value="Petronilla"/>
+		<Name value="Tatiana Maria"/>
+	</FemaleRobotNames>
 	
 	<Terrain>
 		############################

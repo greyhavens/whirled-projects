@@ -32,23 +32,31 @@ public class PlayerShadowView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        super.update(dt);
-
         if (!_player.isLiveObject) {
             destroySelf();
             return;
         }
 
-        var curBoardId :int = _player.curBoardId;
-        if (curBoardId != _lastBoardId) {
-            var teamSprite :TeamSprite =
-                GameContext.gameMode.getTeamSprite(Constants.getOtherTeam(curBoardId));
-            teamSprite.shadowLayer.addChild(_sprite);
-            _lastBoardId = curBoardId;
-        }
+        super.update(dt);
 
-        this.x = _player.loc.x;
-        this.y = _player.loc.y;
+        // only show enemy team shadows
+        if (_player.teamId == GameContext.localPlayer.teamId) {
+            this.visible = false;
+
+        } else {
+            this.visible = true;
+
+            var curBoardId :int = _player.curBoardId;
+            if (curBoardId != _lastBoardId) {
+                var teamSprite :TeamSprite =
+                    GameContext.gameMode.getTeamSprite(Constants.getOtherTeam(curBoardId));
+                teamSprite.shadowLayer.addChild(_sprite);
+                _lastBoardId = curBoardId;
+            }
+
+            this.x = _player.loc.x;
+            this.y = _player.loc.y;
+        }
     }
 
     override public function get displayObject () :DisplayObject

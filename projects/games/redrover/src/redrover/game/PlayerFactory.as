@@ -2,10 +2,10 @@ package redrover.game {
 
 import com.whirled.contrib.simplegame.util.Rand;
 
+import redrover.*;
 import redrover.aitask.AITask;
 import redrover.game.robot.*;
-import redrover.game.view.PlayerShadowView;
-import redrover.game.view.PlayerView;
+import redrover.game.view.*;
 
 public class PlayerFactory
 {
@@ -40,7 +40,8 @@ public class PlayerFactory
 
         var player :Player = new Player(
             GameContext.nextPlayerIndex(),
-            GameContext.nextRobotName(),
+            (initialTeam == Constants.TEAM_RED ?
+                GameContext.nextMaleRobotName() : GameContext.nextFemaleRobotName()),
             initialTeam,
             startX, startY,
             GameContext.nextPlayerColor());
