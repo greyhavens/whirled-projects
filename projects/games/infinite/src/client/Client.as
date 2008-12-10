@@ -231,7 +231,7 @@ package client
             // objective to be created which is a precondition for handing a cell update
             _world.requestCellUpdate(player.position.vicinity.neighborhood);
 
-            _controller = new PlayerController(_world, _viewer, _localPlayer, _inventory);
+            _controller = new PlayerController(_world, _viewer, _players, _localPlayer, _inventory);
             
 			_level = player.levelNumber;
 			

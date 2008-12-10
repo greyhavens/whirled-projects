@@ -20,6 +20,9 @@ package
 		public static const cellSize:Vector = new Vector(100, 100);
 		
 		// set the unit size of an item
-		public static const itemSize:Vector = new Vector(50, 50);		
+		public static const itemSize:Vector = new Vector(50, 50);
+		
+		// if there are no other players within this distance of a player, then that player is considered to be alone.
+		public static const aloneRadius:int = 6;		
 	}
 }
