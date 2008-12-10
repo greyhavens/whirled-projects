@@ -163,7 +163,7 @@ public class PlayerView extends SceneObject
 
         // Did we pick up a gem?
         var newGems :int = _player.numGems;
-        if (newGems > _lastGems) {
+        if (_player.isLocalPlayer && newGems > _lastGems) {
             GameContext.playGameSound("sfx_gem" + Math.min(newGems, NUM_GEM_SOUNDS));
         }
 

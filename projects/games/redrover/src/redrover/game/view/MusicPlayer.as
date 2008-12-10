@@ -7,31 +7,54 @@ import redrover.game.*;
 
 public class MusicPlayer extends SimObject
 {
+    public function MusicPlayer ()
+    {
+        // start our music in the paused state
+        _myTeamControls = new AudioControls(GameContext.musicControls).pause(true);
+        _otherTeamControls = new AudioControls(GameContext.musicControls).pause(true);
+
+        _myTeamControls.retain();
+        _otherTeamControls.retain();
+
+        AudioManager.instance.playSoundNamed("mus_lsd", _myTeamControls, AudioManager.LOOP_FOREVER);
+        AudioManager.instance.playSoundNamed("mus_breakonthrough", _otherTeamControls,
+            AudioManager.LOOP_FOREVER);
+    }
+
+    override protected function destroyed () :void
+    {
+        _myTeamControls.stop(true);
+        _otherTeamControls.stop(true);
+
+        _myTeamControls.release();
+        _otherTeamControls.release();
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
 
-        var musicName :String =
-            (GameContext.localPlayer.isOnOwnBoard ? "mus_lsd" : "mus_breakonthrough");
+        var newControls :AudioControls = (GameContext.localPlayer.isOnOwnBoard ?
+            _myTeamControls : _otherTeamControls);
 
-        if (_curMusicName != musicName) {
-            // fade the old music out
-            if (_musicChannel != null) {
-                _musicChannel.audioControls.fadeOut(1).stopAfter(1);
-                _musicChannel = null;
+        if (newControls != _curControls) {
+            if (_curControls != null) {
+                _curControls.fadeOut(1).pauseAfter(1);
+                newControls.pause(false).volume(0).fadeIn(1);
+            } else {
+                newControls.pause(false).volume(1);
             }
 
-            // and the new music in
-            _musicChannel = GameContext.playGameMusic(musicName);
-            _musicChannel.audioControls.volume(0).fadeIn(0.5);
-
-            _curMusicName = musicName;
+            _curControls = newControls;
         }
-
     }
 
     protected var _curMusicName :String;
     protected var _musicChannel :AudioChannel;
+
+    protected var _myTeamControls :AudioControls;
+    protected var _otherTeamControls :AudioControls;
+    protected var _curControls :AudioControls;
 
 }
 

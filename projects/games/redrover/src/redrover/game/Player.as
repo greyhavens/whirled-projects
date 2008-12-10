@@ -175,6 +175,11 @@ public class Player extends SimObject
         return _playerIndex;
     }
 
+    public function get isLocalPlayer () :Boolean
+    {
+        return _playerIndex == GameContext.localPlayerIndex;
+    }
+
     public function get playerName () :String
     {
         return _playerName;
