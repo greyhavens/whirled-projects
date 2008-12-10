@@ -1,12 +1,14 @@
 package redrover.game.view {
 
+import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.text.TextField;
+import flash.text.TextFormatAlign;
 
 import redrover.*;
 import redrover.game.*;
@@ -15,9 +17,23 @@ import redrover.util.SpriteUtil;
 
 public class HUDView extends SceneObject
 {
-    public function HUDView ()
+    public function HUDView (size :Point)
     {
-        _sprite = SpriteUtil.createSprite();
+        _sprite = SpriteUtil.createSprite(true);
+        var g :Graphics = _sprite.graphics;
+        g.beginFill(0);
+        g.drawRect(0, 0, size.x, size.y);
+        g.endFill();
+
+        _gemSprite = SpriteUtil.createSprite();
+        _gemSprite.x = 150;
+        _gemSprite.y = size.y * 0.5;
+        _sprite.addChild(_gemSprite);
+
+        var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
+        switchBoardsButton.x = size.x - (switchBoardsButton.width * 1.5) - 130;
+        switchBoardsButton.y = (size.y - switchBoardsButton.height) * 0.5;
+        GameContext.gameMode.addObject(switchBoardsButton, _sprite);
     }
 
     override public function get displayObject () :DisplayObject
@@ -29,53 +45,40 @@ public class HUDView extends SceneObject
     {
         super.update(dt);
 
-        var newGems :int = GameContext.localPlayer.numGems;
         var newScore :int = GameContext.localPlayer.score;
-        if (newGems != _lastGems || newScore != _lastScore) {
-            updateDisplay();
-        }
-    }
+        if (newScore != _lastScore) {
+            if (_scoreText != null) {
+                _scoreText.parent.removeChild(_scoreText);
+            }
 
-    protected function updateDisplay () :void
-    {
+            _scoreText = UIBits.createText("Score: " + StringUtil.formatNumber(newScore),
+                1.5, 0, 0xFFFFFF);
+            _scoreText.x = 10;
+            _scoreText.y = (_sprite.height - _scoreText.height) * 0.5;
+            _sprite.addChild(_scoreText);
+            _lastScore = newScore;
+        }
+
         var newGems :int = GameContext.localPlayer.numGems;
-        var newScore :int = GameContext.localPlayer.score;
+        if (newGems != _lastGems) {
+            while (_gemSprite.numChildren > 0) {
+                _gemSprite.removeChildAt(_gemSprite.numChildren - 1);
+            }
 
-        var gemSprite :Sprite = SpriteUtil.createSprite();
-        for each (var gemType :int in GameContext.localPlayer.gems) {
-            var gem :DisplayObject = GemViewFactory.createGem(15, gemType);
-            gem.x = gemSprite.width;
-            gemSprite.addChild(gem);
+            for each (var gemType :int in GameContext.localPlayer.gems) {
+                var gem :DisplayObject = GemViewFactory.createGem(20, gemType);
+                gem.x = _gemSprite.width;
+                gem.y = -gem.height * 0.5;
+                _gemSprite.addChild(gem);
+            }
+
+            _lastGems = newGems;
         }
-
-        var tf :TextField = UIBits.createText("Score: " + newScore, 1.5, 0, 0xFFFFFF);
-
-        // remove old display objects
-        while (_sprite.numChildren > 0) {
-            _sprite.removeChildAt(_sprite.numChildren - 1);
-        }
-
-        // add new display objects
-        var bg :Shape = new Shape();
-        var g :Graphics = bg.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, Math.max(gemSprite.width, tf.width) + 10, gemSprite.height + tf.height + 6);
-        g.endFill();
-        _sprite.addChild(bg);
-
-        gemSprite.x = 5;
-        gemSprite.y = 3;
-        _sprite.addChild(gemSprite);
-
-        tf.x = 5;
-        tf.y = gemSprite.y + gemSprite.height;
-        _sprite.addChild(tf);
-
-        _lastGems = newGems;
-        _lastScore = newScore;
     }
 
     protected var _sprite :Sprite;
+    protected var _scoreText :TextField;
+    protected var _gemSprite :Sprite;
     protected var _lastGems :int = -1;
     protected var _lastScore :int = -1;
 }

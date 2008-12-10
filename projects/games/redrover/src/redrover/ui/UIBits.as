@@ -252,7 +252,7 @@ public class UIBits
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
 
-    protected static const TEAM_TEXT_COLORS :Array = [ 0x6ae8ff, 0xff6a6a ];
+    protected static const TEAM_TEXT_COLORS :Array = [ 0xff6a6a, 0x6ae8ff ];
 }
 
 }

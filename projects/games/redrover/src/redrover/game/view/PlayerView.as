@@ -225,6 +225,7 @@ public class PlayerView extends SceneObject
         if (_arrowParent != null) {
             _arrowParent.x = -1;
             _arrowParent.y = -(DisplayObject(movies[0]).height) - 1;
+            _arrowObj.displayObject.filters = [ new ColorMatrix().tint(NAME_COLORS[teamId], 0.7).createFilter() ];
         }
 
         _lastTeamId = teamId;
@@ -267,7 +268,7 @@ public class PlayerView extends SceneObject
         [ "stand_N", "stand_SW", "stand_S", "stand_SW" ],
         [ "walk_N", "walk_SW", "walk_S", "walk_SW" ]
     ];
-    protected static const NAME_COLORS :Array = [ 0x0000ff, 0xff0000 ];
+    protected static const NAME_COLORS :Array = [ 0xff0000, 0x0000ff  ];
 
     protected static const NUM_GEM_SOUNDS :int = 7;
 }

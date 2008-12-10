@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.tasks.ScaleTask;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import redrover.*;
 import redrover.data.LevelData;
@@ -14,10 +15,10 @@ import redrover.util.SpriteUtil;
 
 public class Camera extends SceneObject
 {
-    public function Camera (width :Number, height :Number)
+    public function Camera (size :Point)
     {
-        _width = width;
-        _height = height;
+        _width = size.x;
+        _height = size.y;
         _sprite = SpriteUtil.createSprite(true);
     }
 

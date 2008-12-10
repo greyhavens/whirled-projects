@@ -7,10 +7,6 @@ import redrover.game.*;
 
 public class MusicPlayer extends SimObject
 {
-    public function MusicPlayer ()
-    {
-    }
-
     override protected function update (dt :Number) :void
     {
         super.update(dt);

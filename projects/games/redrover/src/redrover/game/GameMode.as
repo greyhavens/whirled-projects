@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
+import flash.geom.Point;
 
 import redrover.*;
 import redrover.data.*;
@@ -130,14 +131,17 @@ public class GameMode extends AppMode
             addObject(new BoardView(_boards[teamId]), teamSprite.boardLayer);
         }
 
-        addObject(new Camera(Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y), _modeSprite);
-        addObject(new HUDView(), _modeSprite);
-        addObject(new MusicPlayer());
+        var cam :Camera = new Camera(CAM_SIZE);
+        cam.x = CAM_LOC.x;
+        cam.y = CAM_LOC.y;
+        addObject(cam, _modeSprite);
 
-        var switchBoardsButton :SwitchBoardsButton = new SwitchBoardsButton();
-        switchBoardsButton.x = Constants.SCREEN_SIZE.x * 0.5;
-        switchBoardsButton.y = Constants.SCREEN_SIZE.y - 25;
-        addObject(switchBoardsButton, _modeSprite);
+        var hud :HUDView = new HUDView(HUD_SIZE);
+        hud.x = HUD_LOC.x;
+        hud.y = HUD_LOC.y;
+        addObject(hud, _modeSprite);
+
+        addObject(new MusicPlayer());
     }
 
     protected function setupPlayers () :void
@@ -298,6 +302,11 @@ public class GameMode extends AppMode
     protected var _boards :Array = []; // Array<Board>, one for each team
     protected var _gemDistanceMaps :Array = []; // Array<DataMap>, one for each board/gemType combination
     protected var _redemptionDistanceMaps :Array = []; // Array<DataMap>, one for each board
+
+    protected static const CAM_LOC :Point = new Point(0, 0);
+    protected static const CAM_SIZE :Point = new Point(700, 450);
+    protected static const HUD_LOC :Point = new Point(0, 450);
+    protected static const HUD_SIZE :Point = new Point(700, 50);
 }
 
 }

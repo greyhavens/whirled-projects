@@ -30,7 +30,7 @@ public class GemView extends SceneObject
         this.y = _boardCell.ctrPixelY;
 
         addTask(new RepeatingTask(
-            ScaleTask.CreateEaseIn(1.8, 1.8, 0.4),
+            ScaleTask.CreateEaseIn(2.2, 2.2, 0.4),
             ScaleTask.CreateEaseOut(1.2, 1.2, 0.4)));
 
         updateView();
@@ -43,7 +43,7 @@ public class GemView extends SceneObject
 
     protected function updateView () :void
     {
-        //_sprite.alpha = (_teamId == GameContext.localPlayer.teamId ? 0.25 : 1);
+        _sprite.alpha = (_teamId == GameContext.localPlayer.teamId ? 0.5 : 1);
     }
 
     override protected function update (dt :Number) :void
