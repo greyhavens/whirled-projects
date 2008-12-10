@@ -55,13 +55,8 @@ public class GameMode extends AppMode
 
     override protected function exit () :void
     {
-        if (GameContext.sfxControls != null) {
-            GameContext.sfxControls.pause(true);
-        }
-
-        if (GameContext.musicControls != null) {
-            GameContext.musicControls.volumeTo(0.2, 0.3);
-        }
+        GameContext.sfxControls.pause(true);
+        GameContext.musicControls.volumeTo(0.2, 0.3);
 
         super.exit();
     }
@@ -99,21 +94,19 @@ public class GameMode extends AppMode
             _boards.push(board);
             addObject(board);
 
+            var gemType :int;
+
             // create board objects
             for each (var obj :LevelObjData in _levelData.objects) {
-                switch (obj.objType) {
-                case Constants.OBJ_GREENSPAWNER:
-                    addObject(new GemSpawner(board, Constants.GEM_GREEN, obj.gridX, obj.gridY));
-                    break;
-
-                case Constants.OBJ_PURPLESPAWNER:
-                    addObject(new GemSpawner(board, Constants.GEM_PURPLE, obj.gridX, obj.gridY));
-                    break;
+                if (obj.objType >= Constants.OBJ_GEMSPAWNER__FIRST &&
+                    obj.objType < Constants.OBJ_GEMSPAWNER__LIMIT) {
+                    gemType = obj.objType - Constants.OBJ_GEMSPAWNER__FIRST;
+                    addObject(new GemSpawner(board, gemType, obj.gridX, obj.gridY));
                 }
             }
 
             // create gem distance maps
-            for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
+            for (gemType = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
                 _gemDistanceMaps.push(DataMap.createGemMap(board, gemType));
             }
 
@@ -258,11 +251,12 @@ public class GameMode extends AppMode
         switch (keyCode) {
         case KeyboardCodes.G:
             if (localPlayer.numGems < GameContext.levelData.maxCarriedGems) {
-                var lastGemType :int =
-                    (localPlayer.numGems > 0 ? localPlayer.gems[localPlayer.gems.length - 1] : 0);
-                var nextGemType :int = (lastGemType == Constants.GEM_PURPLE ?
-                                        Constants.GEM_GREEN : Constants.GEM_PURPLE);
-                localPlayer.addGem(nextGemType);
+                for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
+                    if (localPlayer.isGemValidForPickup(gemType)) {
+                        localPlayer.addGem(gemType);
+                        break;
+                    }
+                }
             }
             break;
         }

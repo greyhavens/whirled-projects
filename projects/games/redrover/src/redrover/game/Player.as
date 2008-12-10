@@ -1,6 +1,7 @@
 package redrover.game {
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -33,11 +34,11 @@ public class Player extends SimObject
     public function eatPlayer (player :Player) :void
     {
         dispatchEvent(GameEvent.createAtePlayer(this, player));
+        player.beginGetEaten(this);
 
         // we get the other player's gems
         addGems(player._gems);
-        player._gems = [];
-        player.beginGetEaten(this);
+        player.clearGems();
     }
 
     protected function beginGetEaten (byPlayer :Player) :void
@@ -157,11 +158,22 @@ public class Player extends SimObject
     public function addGem (gemType :int) :void
     {
         _gems.push(gemType);
+        _gemCounts[gemType] += 1;
     }
 
     public function addGems (gems :Array) :void
     {
-        _gems = _gems.concat(gems);
+        for each (var gemType :int in gems) {
+            addGem(gemType);
+        }
+    }
+
+    public function clearGems () :void
+    {
+        _gems = [];
+        for (var ii :int = 0; ii < _gemCounts.length; ++ii) {
+            _gemCounts[ii] = 0;
+        }
     }
 
     public function get canSwitchBoards () :Boolean
@@ -273,6 +285,29 @@ public class Player extends SimObject
         return _state != STATE_SWITCHINGBOARDS && _state != STATE_EATEN;
     }
 
+    public function isGemValidForPickup (gemType :int) :Boolean
+    {
+        if (this.numGems == 0) {
+            return true;
+        }
+
+        // Can't pick up the same gem twice in a row
+        var lastGem :int = _gems[_gems.length - 1];
+        if (lastGem == gemType) {
+            return false;
+        }
+
+        // Can't have 2 more gems of any type than you have gems of the other types
+        var thisGemCount :int = _gemCounts[gemType];
+        for (var otherGemType :int = 0; otherGemType < _gemCounts.length; ++otherGemType) {
+            if (gemType != otherGemType && thisGemCount > _gemCounts[otherGemType]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
@@ -285,11 +320,9 @@ public class Player extends SimObject
 
             var cell :BoardCell = this.curBoardCell;
             // If we're on the other team's board, pickup gems when we enter their cells
-            if (!this.isOnOwnBoard && this.numGems < GameContext.levelData.maxCarriedGems) {
-                var lastGemType :int = (_gems.length == 0 ? -1 : _gems[_gems.length - 1]);
-                if (cell.hasGem && cell.gemType != lastGemType) {
-                    addGem(cell.takeGem());
-                }
+            if (!this.isOnOwnBoard && this.numGems < GameContext.levelData.maxCarriedGems &&
+                cell.hasGem && isGemValidForPickup(cell.gemType)) {
+                addGem(cell.takeGem());
             }
 
             // If we're on our board, redeem our gems when we touch a gem redemption tile
@@ -446,11 +479,6 @@ public class Player extends SimObject
         }
     }
 
-    protected function isObstacleAt (x :int, y :int) :void
-    {
-        GameContext.gameMode.getBoard(_curBoardId).getCellAtPixel(x, y).isObstacle;
-    }
-
     protected function canMoveTowards (fromX :Number, fromY :Number, moveDirection :int) :Boolean
     {
         var nextCell :BoardCell;
@@ -485,33 +513,40 @@ public class Player extends SimObject
         var xOffset :Number = xNew - _loc.x;
         var yOffset :Number = yNew - _loc.y;
         var halfCell :int = _cellSize * 0.5;
+        var gx :int;
+        var gy :int;
         if (xOffset > 0) {
-            nextCell = board.getCellAtPixel(_loc.x + xOffset + halfCell + 1, _loc.y);
-            if (nextCell.isObstacle) {
-                xNew = nextCell.ctrPixelX - _cellSize;
+            gx = board.pixelToGrid(_loc.x + xOffset + halfCell + 1);
+            gy = board.pixelToGrid(_loc.y);
+            nextCell = board.getCell(gx, gy);
+            if (nextCell == null || nextCell.isObstacle) {
+                xNew = ((gx - 1) * _cellSize) + halfCell;
             }
+
         } else if (xOffset < 0) {
-            nextCell = board.getCellAtPixel(_loc.x + xOffset - halfCell, _loc.y);
-            if (nextCell.isObstacle) {
-                xNew = nextCell.ctrPixelX + _cellSize;
+            gx = board.pixelToGrid(_loc.x + xOffset - halfCell);
+            gy = board.pixelToGrid(_loc.y);
+            nextCell = board.getCell(gx, gy);
+            if (nextCell == null || nextCell.isObstacle) {
+                xNew = ((gx + 1) * _cellSize) + halfCell;
             }
+
         } else if (yOffset > 0) {
-            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset + halfCell + 1);
-            if (nextCell.isObstacle) {
-                yNew = nextCell.ctrPixelY - _cellSize;
+            gx = board.pixelToGrid(_loc.x);
+            gy = board.pixelToGrid(_loc.y + yOffset + halfCell + 1);
+            nextCell = board.getCell(gx, gy);
+            if (nextCell == null || nextCell.isObstacle) {
+                yNew = ((gy - 1) * _cellSize) + halfCell;
             }
+
         } else if (yOffset < 0) {
-            nextCell = board.getCellAtPixel(_loc.x, _loc.y + yOffset - halfCell);
-            if (nextCell.isObstacle) {
-                yNew = nextCell.ctrPixelY + _cellSize;
+            gx = board.pixelToGrid(_loc.x);
+            gy = board.pixelToGrid(_loc.y + yOffset - halfCell);
+            nextCell = board.getCell(gx, gy);
+            if (nextCell == null || nextCell.isObstacle) {
+                yNew = ((gy + 1) * _cellSize) + halfCell;
             }
         }
-
-        // clamp to the edges of the board
-        xNew = Math.max(xNew, _cellSize * 0.5);
-        xNew = Math.min(xNew, (board.cols - 0.5) * _cellSize);
-        yNew = Math.max(yNew, _cellSize * 0.5);
-        yNew = Math.min(yNew, (board.rows - 0.5) * _cellSize);
 
         _loc.x = xNew;
         _loc.y = yNew;
@@ -521,7 +556,7 @@ public class Player extends SimObject
     {
         _score += GameContext.levelData.gemValues.getValueAt(this.numGems);
         dispatchEvent(GameEvent.createGemsRedeemed(this, _gems, cell));
-        _gems = [];
+        clearGems();
     }
 
     protected function switchBoards () :void
@@ -535,6 +570,7 @@ public class Player extends SimObject
     protected var _teamId :int;
     protected var _curBoardId :int;
     protected var _gems :Array = [];
+    protected var _gemCounts :Array = ArrayUtil.create(Constants.GEM__LIMIT, 0);
     protected var _score :int;
     protected var _moveDirection :int = -1;
     protected var _scheduledTurns :Array = [];

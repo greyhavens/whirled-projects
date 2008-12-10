@@ -85,6 +85,16 @@ public class Board extends SimObject
         return getCell(x * _cellSizeInv, y * _cellSizeInv);
     }
 
+    public function pixelToGrid (pixVal :Number) :int
+    {
+        return (pixVal * _cellSizeInv);
+    }
+
+    public function gridToPixel (gridVal :int) :Number
+    {
+        return (gridVal * _cellSize);
+    }
+
     protected function getIndex (x :int, y :int) :int
     {
         return (y * _cols) + x;

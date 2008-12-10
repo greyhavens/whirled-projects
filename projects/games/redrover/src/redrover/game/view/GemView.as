@@ -1,5 +1,7 @@
 package redrover.game.view {
 
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -28,12 +30,6 @@ public class GemView extends SceneObject
         // center the GemView in its cell
         this.x = _boardCell.ctrPixelX;
         this.y = _boardCell.ctrPixelY;
-
-        addTask(new RepeatingTask(
-            ScaleTask.CreateEaseIn(2.2, 2.2, 0.4),
-            ScaleTask.CreateEaseOut(1.2, 1.2, 0.4)));
-
-        updateView();
     }
 
     override public function get displayObject () :DisplayObject
@@ -44,6 +40,19 @@ public class GemView extends SceneObject
     protected function updateView () :void
     {
         _sprite.alpha = (_teamId == GameContext.localPlayer.teamId ? 0.5 : 1);
+
+        // all gems scale simultaneously
+        if (_gemPulser.isNull) {
+            var gemPulserObj :SimObject = new SceneObject();
+            gemPulserObj.addTask(new RepeatingTask(
+                AnimateValueTask.CreateEaseIn(_gemScale, SCALE_HI, 0.4),
+                AnimateValueTask.CreateEaseOut(_gemScale, SCALE_LO, 0.4)));
+            _gemPulser = this.db.addObject(gemPulserObj);
+        }
+
+        var scale :Number = _gemScale.value;
+        _sprite.scaleX = scale;
+        _sprite.scaleY = scale;
     }
 
     override protected function update (dt :Number) :void
@@ -58,6 +67,12 @@ public class GemView extends SceneObject
     protected var _boardCell :BoardCell;
     protected var _teamId :int;
     protected var _sprite :Sprite;
+
+    protected static var _gemScale :Object = { value: SCALE_LO };
+    protected static var _gemPulser :SimObjectRef = SimObjectRef.Null();
+
+    protected static const SCALE_LO :Number = 1.2;
+    protected static const SCALE_HI :Number = 2.2;
 }
 
 }

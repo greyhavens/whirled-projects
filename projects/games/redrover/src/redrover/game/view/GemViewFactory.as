@@ -22,7 +22,7 @@ public class GemViewFactory
         return bm;
     }
 
-    protected static const GEM_COLORS :Array = [ 0x00FF00, 0xFF00FF ];
+    protected static const GEM_COLORS :Array = [ 0x00FF00, 0xFF00FF, 0xFFFF00 ];
 }
 
 }

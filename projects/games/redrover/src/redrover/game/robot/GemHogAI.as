@@ -1,5 +1,7 @@
 package redrover.game.robot {
 
+import com.whirled.contrib.simplegame.util.Rand;
+
 import redrover.*;
 import redrover.aitask.*;
 import redrover.game.*;
@@ -55,22 +57,20 @@ public class GemHogAI extends AITaskTree
                 });
 
             } else {
-                var greenMap :DataMap =
-                    GameContext.gameMode.getGemMap(_player.curBoardId, Constants.GEM_GREEN);
-                var purpleMap :DataMap =
-                    GameContext.gameMode.getGemMap(_player.curBoardId, Constants.GEM_PURPLE);
-                var gemMap :DataMap;
-
-                if (_player.numGems == 0) {
-                    var dGreen :Number = greenMap.getValue(_player.gridX, _player.gridY);
-                    var dPurple :Number = purpleMap.getValue(_player.gridX, _player.gridY);
-                    gemMap = (dGreen < dPurple ? greenMap : purpleMap);
-                } else {
-                    gemMap = (_player.gems[_player.gems.length - 1] == Constants.GEM_GREEN ?
-                        purpleMap : greenMap);
+                var potentialGemMaps :Array = [];
+                for (var gemType :int = 0; gemType < Constants.GEM__LIMIT; ++gemType) {
+                    if (_player.isGemValidForPickup(gemType)) {
+                        potentialGemMaps.push(
+                            GameContext.gameMode.getGemMap(_player.curBoardId, gemType));
+                    }
                 }
 
-                nextTask = new MoveToDistanceMapDestTask(_player, gemMap);
+                if (potentialGemMaps.length == 0) {
+                    return; // this shouldn't happen
+                }
+
+                nextTask = new MoveToDistanceMapDestTask(_player,
+                    DataMap(Rand.nextElement(potentialGemMaps, Rand.STREAM_GAME)));
             }
         }
 
