@@ -28,6 +28,11 @@ package client
         {
            _cellSprite = sprite;
 
+           // no move is valid if we're already moving
+           if (_objective.player.isMoving()) {
+               return;
+           }
+           
            const path:Path = _arbiter.findPath(_objective.player, sprite.cell);
            if (path == null) {
                return;

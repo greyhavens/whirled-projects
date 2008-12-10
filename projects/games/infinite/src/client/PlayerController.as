@@ -45,10 +45,11 @@ package client
 			
 			// at this point, if the player is alone, start the move anyway.
 			Log.debug("checking whether player alone");
-			if (_players.playerAlone(_player)) {			    
+			if (_players.playerAlone(_player)) {
+			    Log.debug("player is alone, so checking for path");			    
                 const path:Path = _arbiter.findPath(_player, event.cell);
                 if (path != null) {
-                    Log.debug("player is alone so starting path before server responds");
+                    Log.debug("starting path before server responds");
                     _player.follow(path);
                 }
             }

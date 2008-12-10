@@ -17,6 +17,11 @@ package world.arbitration
 	
 		public function proposeMove (player:MovablePlayer, destination:Cell) :void 
 		{			
+		    if (player.isMoving()) {
+		      dispatchPathUnavailable(player);
+		      return;    
+		    }
+		    
 			var path:Path = findPath(player, destination);
 			if (path != null) {
 				dispatchStart(player, path);
@@ -33,11 +38,11 @@ package world.arbitration
 		{
             var path:Path;
 
-            if (player.isMoving()) {
+//            if (player.isMoving()) {
 //                Log.debug (this+" ignoring proposed move to "+destination+" because "+player+
 //                    " is already moving");
-                return null;
-            }
+//              return null;
+//            }
             
             if (!player.cell.leave) {
 //                Log.debug (this+" ignoring proposed move to "+destination+" because cell will not allow the player to leave");
