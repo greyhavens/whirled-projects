@@ -224,7 +224,7 @@ package world
         
         public function get levelNumber () :int
         {
-        	return _level.number;
+        	return _level.levelNumber;
         }
         
         protected var _name:String;

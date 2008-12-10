@@ -66,8 +66,8 @@ package client
          */ 
         public function handleLevelEntered(event:LevelEvent) :void
         {
-            _client.enterLevel(new EnterLevel(event.player.level.number, event.player.level.height,                
-                new PlayerPosition(event.player.id, event.level.number, event.player.position)));
+            _client.enterLevel(new EnterLevel(event.player.level.levelNumber, event.player.level.height,                
+                new PlayerPosition(event.player.id, event.level.levelNumber, event.player.position)));
         }     
         
         public function proposeMove (coords:BoardCoordinates) :void
@@ -120,7 +120,7 @@ package client
                 	
         public function handleLevelComplete (event:LevelEvent) :void
         {
-            _client.levelComplete(new LevelComplete(event.player.id, event.level.number));
+            _client.levelComplete(new LevelComplete(event.player.id, event.level.levelNumber));
         }
         
         public function handleSabotageTriggered (event:SabotageEvent) :void

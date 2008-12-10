@@ -10,5 +10,7 @@ package world.board
 		 * Get a suggested starting position for a new user entering this board. 
 		 */
 		function get startingPosition () :BoardCoordinates
+		
+		function get levelNumber () :int
 	}
 }

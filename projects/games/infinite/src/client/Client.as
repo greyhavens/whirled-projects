@@ -217,7 +217,7 @@ package client
 			const height:int = level(player.levelNumber).height
 			
 			// we can start off with the default blank board.			
-			_board = new MutableBoard(new BlankBoard(height));
+			_board = new MutableBoard(new BlankBoard(player.levelNumber, height));
             Log.debug(this+" created "+_board);
                  
 			// and assign a new board to the view.
@@ -254,7 +254,9 @@ package client
 		public function startPath (detail:PathStart) :void
 		{
             const player:Player = _players.find(detail.userId);
-            player.follow(detail.path);
+            if (player.levelNumber == _localPlayer.levelNumber) {
+                player.follow(detail.path);
+            }
 		}
 		
 		public function updatedCells (detail:CellUpdate) :void

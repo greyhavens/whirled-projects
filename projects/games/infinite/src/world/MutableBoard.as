@@ -35,6 +35,11 @@ package world
         	_changed.remember(newCell);
         }
         
+        public function get levelNumber () :int
+        {
+        	return _starting.levelNumber;
+        }
+        
         public function toString () :String
         {
         	return "mutable board starting as "+_starting;

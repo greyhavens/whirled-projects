@@ -21,12 +21,9 @@ package world.level
 	import world.board.BoardInteractions;
 	
 	public class Level implements BoardInteractions, Chronometer
-	{
-		public var number:int;
-		
-		public function Level(world:World,  number:int, height:int, starting:Board) 
+	{		
+		public function Level(world:World, height:int, starting:Board) 
 		{
-			this.number = number;
 			_world = world;
 			_height = height;
 			_board = new NeighborhoodBoard(starting);
@@ -92,7 +89,7 @@ package world.level
                 
         public function toString () :String
         {
-        	return "level "+number;
+        	return "level "+levelNumber;
         }
         
         /**
@@ -107,7 +104,7 @@ package world.level
         {
         	const update:LevelUpdate = new LevelUpdate();
         	for each (var player:Player in players) {
-        		update.add(new PlayerPosition(player.id, number, player.position));
+        		update.add(new PlayerPosition(player.id, levelNumber, player.position));
         	} 
         	return update;
         }
@@ -162,6 +159,11 @@ package world.level
         public function get serverTime () :Number
         {
         	return (new Date()).getTime();
+        }
+        
+        public function get levelNumber () :int
+        {
+        	return _board.levelNumber;
         }
           
         protected var _world:World;

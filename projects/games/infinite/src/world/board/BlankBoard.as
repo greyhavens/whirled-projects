@@ -14,8 +14,9 @@ package world.board
 	
 	public class BlankBoard implements Board
 	{
-		public function BlankBoard(height:int) 
+		public function BlankBoard(number:int, height:int) 
 		{
+			_number = number;
 		    _height = height;
 		}
 		
@@ -55,6 +56,12 @@ package world.board
         	_level = level;
         }
         
+        public function get levelNumber () :int
+        {
+        	return _number;
+        }
+        
+        protected var _number:int
         protected var _level:Level;
         protected var _height:int;
 	}

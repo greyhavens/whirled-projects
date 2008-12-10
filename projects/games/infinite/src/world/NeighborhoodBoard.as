@@ -42,12 +42,17 @@ package world
 		public function neighborhood (hood:Neighborhood) :CellUpdate
 		{
 			//Log.debug("creating cell update for "+hood);
-			const update:CellUpdate = new CellUpdate();
+			const update:CellUpdate = new CellUpdate(levelNumber);
 			for each (var vicinity:Vicinity in hood.vicinities) {
 				//Log.debug("checking vicinity "+vicinity);
 				update.addCells(_changed.inVicinity(vicinity));
 			}
 			return update;
+		}
+		
+		public function get levelNumber () :int
+		{
+			return _starting.levelNumber;
 		}
 		
 		protected var _starting:Board;

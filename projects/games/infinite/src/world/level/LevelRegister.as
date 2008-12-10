@@ -22,7 +22,7 @@ package world.level
 
         public function nextLevel(player:Player) :void
         {
-            const level:Level = find(player.level.number + 1);
+            const level:Level = find(player.level.levelNumber + 1);
             player.enterLevel(level);
         }
         

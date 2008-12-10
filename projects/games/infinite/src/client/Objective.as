@@ -376,6 +376,11 @@ package client
         	return _player;
         }
         
+        public function get levelNumber () :int
+        {
+        	return _board.levelNumber;
+        }
+        
         protected var _footsteps:FootstepControl;
         
         /**

@@ -10,10 +10,10 @@ package world.level
 			_world = world;
 		}
 		
-		public function makeLevel(level:int) :Level
+		public function makeLevel(number:int) :Level
 		{					
-		    const height:int = Level.MIN_HEIGHT + Math.pow(2, level);
-			return new Level(_world, level, height, new BlankBoard(height));			
+		    const height:int = Level.MIN_HEIGHT + Math.pow(2, number);
+			return new Level(_world, height, new BlankBoard(number, height));			
 		}
 		
 		protected var _world:World;
