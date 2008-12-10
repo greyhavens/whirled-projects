@@ -15,7 +15,8 @@ public class LevelData
     public var ownBoardZoom :Number;
     public var otherBoardZoom :Number;
     public var gemSpawnTime :NumRange = new NumRange(0, 0, Rand.STREAM_GAME);
-    public var speedBase :Number;
+    public var ownBoardSpeedBase :Number;
+    public var otherBoardSpeedBase :Number;
     public var speedOffsetPerGem :Number;
     public var slowTerrainSpeedMultiplier :Number;
     public var maxTurnOvershoot :Number;
@@ -43,7 +44,8 @@ public class LevelData
         data.otherBoardZoom = XmlReader.getNumberAttr(xml, "otherBoardZoom");
         data.gemSpawnTime.min = XmlReader.getUintAttr(xml, "gemSpawnTimeMin");
         data.gemSpawnTime.max = XmlReader.getUintAttr(xml, "gemSpawnTimeMax");
-        data.speedBase = XmlReader.getNumberAttr(xml, "speedBase");
+        data.ownBoardSpeedBase = XmlReader.getNumberAttr(xml, "ownBoardSpeedBase");
+        data.otherBoardSpeedBase = XmlReader.getNumberAttr(xml, "otherBoardSpeedBase");
         data.speedOffsetPerGem = XmlReader.getNumberAttr(xml, "speedOffsetPerGem");
         data.slowTerrainSpeedMultiplier = XmlReader.getNumberAttr(xml, "slowTerrainSpeedMultiplier");
         data.maxTurnOvershoot = XmlReader.getNumberAttr(xml, "maxTurnOvershoot");

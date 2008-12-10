@@ -228,7 +228,9 @@ public class Player extends SimObject
     public function get moveSpeed () :Number
     {
         var data :LevelData = GameContext.levelData;
-        return data.speedBase + (this.numGems * data.speedOffsetPerGem);
+        var speedBase :Number =
+            (this.isOnOwnBoard ? data.ownBoardSpeedBase : data.otherBoardSpeedBase);
+        return speedBase + (this.numGems * data.speedOffsetPerGem);
     }
 
     public function get gridX () :int
