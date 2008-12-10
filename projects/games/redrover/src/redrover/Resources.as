@@ -17,6 +17,7 @@ public class Resources
         rm.queueResourceLoad("image", "rock", { embeddedClass: IMG_ROCK });
         rm.queueResourceLoad("image", "gem_redemption", { embeddedClass: IMG_GEMREDEMPTION });
         rm.queueResourceLoad("image", "player_arrow", { embeddedClass: IMG_PLAYERARROW });
+        rm.queueResourceLoad("image", "player_shadow", { embeddedClass: IMG_PLAYERSHADOW });
 
         // music
         rm.queueResourceLoad("sound", "mus_breakonthrough",
@@ -52,6 +53,8 @@ public class Resources
     protected static const IMG_GEMREDEMPTION :Class;
     [Embed(source="../../rsrc/player_arrow.png", mimeType="application/octet-stream")]
     protected static const IMG_PLAYERARROW :Class;
+    [Embed(source="../../rsrc/player_shadow.png", mimeType="application/octet-stream")]
+    protected static const IMG_PLAYERSHADOW :Class;
 
     [Embed(source="../../rsrc/music/lsd_low.mp3")]
     protected static const MUSIC_LSD :Class;

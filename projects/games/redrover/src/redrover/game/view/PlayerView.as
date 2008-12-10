@@ -129,6 +129,11 @@ public class PlayerView extends SceneObject
     {
         super.update(dt);
 
+        if (!_player.isLiveObject) {
+            destroySelf();
+            return;
+        }
+
         // Have we switched teams?
         var teamChanged :Boolean;
         if (_lastTeamId != _player.teamId) {
@@ -173,7 +178,7 @@ public class PlayerView extends SceneObject
 
     protected function setBoard (boardId :int) :void
     {
-        GameContext.gameMode.getTeamSprite(boardId).objectLayer.addChild(_sprite);
+        GameContext.gameMode.getTeamSprite(boardId).playerLayer.addChild(_sprite);
         _lastBoardId = boardId;
     }
 

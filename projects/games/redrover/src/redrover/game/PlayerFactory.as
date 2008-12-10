@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.util.Rand;
 
 import redrover.aitask.AITask;
 import redrover.game.robot.*;
+import redrover.game.view.PlayerShadowView;
 import redrover.game.view.PlayerView;
 
 public class PlayerFactory
@@ -18,6 +19,8 @@ public class PlayerFactory
 
         var view :PlayerView = new PlayerView(player);
         GameContext.gameMode.addObject(view); // will add itself to the proper display parent
+
+        GameContext.gameMode.addObject(new PlayerShadowView(player)); // ditto
 
         return view;
     }

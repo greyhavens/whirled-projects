@@ -179,7 +179,7 @@ public class GameMode extends AppMode
 
         // sort the board objects in the currently-visible TeamSprite
         var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardId];
-        DisplayUtil.sortDisplayChildren(curTeamSprite.objectLayer, displayObjectYSort);
+        DisplayUtil.sortDisplayChildren(curTeamSprite.playerLayer, displayObjectYSort);
     }
 
     protected function handlePlayerCollisions () :void
