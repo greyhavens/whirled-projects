@@ -10,11 +10,11 @@
 		slowTerrainSpeedMultiplier="0.5"
 		maxTurnOvershoot="8"
 		maxCarriedGems="10"
-		switchBoardsTime="1"
+		switchBoardsTime="2"
+		switchedBoardsInvincibleTime="3"
 		gotEatenTime="2"
 		returnHomeGemsMin="3"
-		eatPlayerPoints="15"
-		switchedBoardsInvincibleTime="2">
+		eatPlayerPoints="15">
 		
 	<GemValues>
 		<Index num="0" value="0"/>

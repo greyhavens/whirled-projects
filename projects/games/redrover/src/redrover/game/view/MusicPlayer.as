@@ -16,8 +16,9 @@ public class MusicPlayer extends SimObject
         _myTeamControls.retain();
         _otherTeamControls.retain();
 
-        AudioManager.instance.playSoundNamed("mus_lsd", _myTeamControls, AudioManager.LOOP_FOREVER);
-        AudioManager.instance.playSoundNamed("mus_breakonthrough", _otherTeamControls,
+        AudioManager.instance.playSoundNamed("mus_pepperland", _myTeamControls,
+            AudioManager.LOOP_FOREVER);
+        AudioManager.instance.playSoundNamed("mus_motm", _otherTeamControls,
             AudioManager.LOOP_FOREVER);
     }
 
@@ -55,7 +56,6 @@ public class MusicPlayer extends SimObject
     protected var _myTeamControls :AudioControls;
     protected var _otherTeamControls :AudioControls;
     protected var _curControls :AudioControls;
-
 }
 
 }

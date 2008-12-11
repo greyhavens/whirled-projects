@@ -20,10 +20,10 @@ public class Resources
         rm.queueResourceLoad("image", "player_shadow", { embeddedClass: IMG_PLAYERSHADOW });
 
         // music
-        rm.queueResourceLoad("sound", "mus_breakonthrough",
-            { embeddedClass: MUSIC_BREAKONTHROUGH, type: "music", priority: 10 });
-        rm.queueResourceLoad("sound", "mus_lsd",
-            { embeddedClass: MUSIC_LSD, type: "music", priority: 10 });
+        rm.queueResourceLoad("sound", "mus_motm",
+            { embeddedClass: MUSIC_MOTM, type: "music", priority: 10 });
+        rm.queueResourceLoad("sound", "mus_pepperland",
+            { embeddedClass: MUSIC_PEPPERLAND, type: "music", priority: 10 });
 
         // sfx
         rm.queueResourceLoad("sound", "sfx_gem1", { embeddedClass: SOUND_GEM1 });
@@ -56,10 +56,10 @@ public class Resources
     [Embed(source="../../rsrc/player_shadow.png", mimeType="application/octet-stream")]
     protected static const IMG_PLAYERSHADOW :Class;
 
-    [Embed(source="../../rsrc/music/lsd_low.mp3")]
-    protected static const MUSIC_LSD :Class;
-    [Embed(source="../../rsrc/music/break_on_through_low.mp3")]
-    protected static const MUSIC_BREAKONTHROUGH :Class;
+    [Embed(source="../../rsrc/music/pepperland.mp3")]
+    protected static const MUSIC_PEPPERLAND :Class;
+    [Embed(source="../../rsrc/music/motm.mp3")]
+    protected static const MUSIC_MOTM :Class;
 
     [Embed(source="../../rsrc/sfx/steelstring.c3.mp3")]
     protected static const SOUND_GEM1 :Class;
