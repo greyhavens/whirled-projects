@@ -1,5 +1,6 @@
 package redrover.game.view {
 
+import com.threerings.util.Integer;
 import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -52,8 +53,8 @@ public class HUDView extends SceneObject
 
             _scoreText = UIBits.createText("Score: " + StringUtil.formatNumber(newScore),
                 1.5, 0, 0xFFFFFF);
-            _scoreText.x = SCORE_X;
-            _scoreText.y = (_sprite.height - _scoreText.height) * 0.5;
+            _scoreText.x = SCORE_LOC.x;
+            _scoreText.y = SCORE_LOC.y;
             _sprite.addChild(_scoreText);
             _lastScore = newScore;
         }
@@ -93,21 +94,63 @@ public class HUDView extends SceneObject
                 _lastTeamSizes[teamId] = teamSize;
             }
         }
+
+        var winningPlayers :Array = GameContext.players.slice();
+        winningPlayers.sort(scoreSort);
+        var firstPlace :Player = winningPlayers[0];
+        var secondPlace :Player = (winningPlayers.length > 1 ? winningPlayers[1] : null);
+
+        var highScoreStr :String;
+        var isInLead :Boolean = (firstPlace.score == GameContext.localPlayer.score);
+        if (isInLead) {
+            if (firstPlace.score > secondPlace.score) {
+                highScoreStr = "Winning! (+" +
+                    (firstPlace.score - secondPlace.score) + ")";
+            } else {
+                highScoreStr = "Tied!";
+            }
+
+        } else {
+            highScoreStr = "Losing! (-" +
+                (firstPlace.score - GameContext.localPlayer.score) + ")";
+        }
+
+        if (_highScoreText == null || _highScoreText.text != highScoreStr) {
+            if (_highScoreText != null) {
+                _highScoreText.parent.removeChild(_highScoreText);
+            }
+
+            _highScoreText = UIBits.createText(highScoreStr, 1.1, 0,
+                (isInLead ? WINNING_HIGH_SCORE_COLOR : LOSING_HIGH_SCORE_COLOR));
+            _highScoreText.x = HIGH_SCORE_LOC.x;
+            _highScoreText.y = HIGH_SCORE_LOC.y;
+            _sprite.addChild(_highScoreText);
+        }
+    }
+
+    protected static function scoreSort (a :Player, b :Player) :int
+    {
+        // higher scores come before lower ones
+        return Integer.compare(b.score, a.score);
     }
 
     protected var _sprite :Sprite;
     protected var _scoreText :TextField;
+    protected var _highScoreText :TextField;
     protected var _teamTexts :Array = [ null, null ];
     protected var _gemSprite :Sprite;
     protected var _lastGems :int = -1;
     protected var _lastScore :int = -1;
     protected var _lastTeamSizes :Array = [ -1, -1 ];
 
-    protected static const SCORE_X :Number = 5;
+    protected static const SCORE_LOC :Point = new Point(5, 5);
+    protected static const HIGH_SCORE_LOC :Point = new Point(6, 28);
     protected static const GEM_X :Number = 250;
     protected static const BUTTON_X :Number = 695;
     protected static const TEAM_COLORS :Array = [ 0xff6c77, 0x88c5ff ];
     protected static const TEAM_SIZE_LOCS :Array = [ new Point(115, 8), new Point(115, 27) ];
+    protected static const WINNING_HIGH_SCORE_COLOR :uint = 0xFFFF00;
+    protected static const LOSING_HIGH_SCORE_COLOR :uint = 0xCCCCCC;
 }
 
 }
