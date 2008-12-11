@@ -44,6 +44,8 @@ package server
 			_control = control;
 			_net = control.net;
 	        _net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessageReceived);
+	        _batcher = new MessageBatcher(_net);
+	        _batcher.start();
 	        
 	        _scoreKeeper = new ScoreKeeper(_control.game);
 	        
@@ -263,6 +265,7 @@ package server
 		protected var _scoreKeeper:ScoreKeeper;
 		protected var _net:NetSubControl;
 		protected var _control:GameControl;
+		protected var _batcher:MessageBatcher;
 		
 	    public static const CLIENT_ENTERS:int = 0;
 	    public static const MOVE_PROPOSED:int = 1;
@@ -275,6 +278,7 @@ package server
         public static const REMOTE_TIME_SYNC:String = String(RemoteWorld.TIME_SYNC);
 
 	    public static const messageName:Dictionary = new Dictionary();
+	    
 	    messageName[CLIENT_ENTERS] = "client enters";
 	    messageName[MOVE_PROPOSED] = "move proposed";
 	    messageName[MOVE_COMPLETED] = "move completed";
