@@ -1,7 +1,6 @@
 package redrover.ui {
 
 import com.threerings.flash.DisplayUtil;
-import com.threerings.flash.Vector2;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -13,6 +12,7 @@ import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -27,11 +27,11 @@ public class UIBits
     public static const PANEL_TEXT_H_MARGIN :Number = 14;
     public static const PANEL_TEXT_V_MARGIN :Number = 6;
 
-    public static function createNotification (teamId :int, text :String, loc :Vector2) :void
+    public static function createNotification (teamId :int, text :String, worldLoc :Point) :void
     {
-        var sprite :Sprite = SpriteUtil.createSprite();
+        var noteSprite :Sprite = SpriteUtil.createSprite();
 
-        var tf :TextField = UIBits.createText(text, 1.4, 0, TEAM_TEXT_COLORS[teamId]);
+        var tf :TextField = UIBits.createText(text, 1.6, 0, TEAM_TEXT_COLORS[teamId]);
 
         var shape :Shape = new Shape();
         shape.graphics.beginFill(0);
@@ -40,24 +40,44 @@ public class UIBits
 
         shape.x = -shape.width * 0.5;
         shape.y = -shape.height * 0.5;
-        sprite.addChild(shape);
+        noteSprite.addChild(shape);
 
         tf.x = -tf.width * 0.5;
         tf.y = -tf.height * 0.5;
-        sprite.addChild(tf);
+        noteSprite.addChild(tf);
 
-        var obj :SimpleSceneObject = new SimpleSceneObject(sprite);
-        obj.x = loc.x;
-        obj.y = loc.y;
+        const MARGIN :Number = 5;
+        const MOVE_DIST :Number = 140;
+        const PAUSE_TIME :Number = 1;
+        const MOVE_TIME :Number = 1;
+        const FADE_TIME :Number = 0.25;
+
+        // convert world loc to screen loc
+        var teamSprite :Sprite = GameContext.gameMode.getTeamSprite(teamId);
+        var overlay :Sprite = GameContext.gameMode.overlayLayer;
+        var screenLoc :Point = overlay.globalToLocal(teamSprite.localToGlobal(worldLoc));
+
+        // clamp
+        screenLoc.x = Math.max(MARGIN + (noteSprite.width * 0.5), screenLoc.x);
+        screenLoc.x = Math.min(Constants.SCREEN_SIZE.x - MARGIN - (noteSprite.width * 0.5),
+            screenLoc.x);
+        screenLoc.y = Math.max(MOVE_DIST + MARGIN + (noteSprite.height * 0.5), screenLoc.y);
+        screenLoc.y = Math.min(Constants.SCREEN_SIZE.y - MARGIN - (noteSprite.height * 0.5),
+            screenLoc.y);
+
+        // show the notification
+        var obj :SimpleSceneObject = new SimpleSceneObject(noteSprite);
+        obj.x = screenLoc.x;
+        obj.y = screenLoc.y;
 
         obj.addTask(new SerialTask(
-            new TimedTask(1),
+            new TimedTask(PAUSE_TIME),
             new ParallelTask(
-                LocationTask.CreateEaseIn(loc.x, loc.y - 140, 1),
-                After(1, new AlphaTask(0, 0.25))),
+                LocationTask.CreateEaseIn(screenLoc.x, screenLoc.y - MOVE_DIST, MOVE_TIME),
+                After(MOVE_TIME - FADE_TIME, new AlphaTask(0, FADE_TIME))),
             new SelfDestructTask()));
 
-        GameContext.gameMode.addObject(obj, GameContext.gameMode.getTeamSprite(teamId));
+        GameContext.gameMode.addObject(obj, overlay);
     }
 
     public static function createFrame (width :Number, height :Number) :Sprite

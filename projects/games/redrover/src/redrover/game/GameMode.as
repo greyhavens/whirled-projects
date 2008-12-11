@@ -9,12 +9,14 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.geom.Point;
 
 import redrover.*;
 import redrover.data.*;
 import redrover.game.robot.*;
 import redrover.game.view.*;
+import redrover.util.SpriteUtil;
 
 public class GameMode extends AppMode
 {
@@ -129,10 +131,13 @@ public class GameMode extends AppMode
         cam.y = CAM_LOC.y;
         addObject(cam, _modeSprite);
 
+        _overlayLayer = SpriteUtil.createSprite(true);
+        _modeSprite.addChild(_overlayLayer);
+
         var hud :HUDView = new HUDView(HUD_SIZE);
         hud.x = HUD_LOC.x;
         hud.y = HUD_LOC.y;
-        addObject(hud, _modeSprite);
+        addObject(hud, _overlayLayer);
 
         addObject(new MusicPlayer());
     }
@@ -291,8 +296,14 @@ public class GameMode extends AppMode
         return _redemptionDistanceMaps[boardId];
     }
 
+    public function get overlayLayer () :Sprite
+    {
+        return _overlayLayer;
+    }
+
     protected var _levelData :LevelData;
     protected var _teamSprites :Array = []; // Array<Sprite>, one for each team
+    protected var _overlayLayer :Sprite;
     protected var _boards :Array = []; // Array<Board>, one for each team
     protected var _gemDistanceMaps :Array = []; // Array<DataMap>, one for each board/gemType combination
     protected var _redemptionDistanceMaps :Array = []; // Array<DataMap>, one for each board

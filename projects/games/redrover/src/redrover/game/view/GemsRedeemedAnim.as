@@ -1,13 +1,11 @@
 package redrover.game.view {
 
-import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
-import flash.display.Shape;
 import flash.display.Sprite;
-import flash.text.TextField;
+import flash.geom.Point;
 
 import mx.effects.easing.*;
 
@@ -74,7 +72,7 @@ public class GemsRedeemedAnim extends SceneObject
         UIBits.createNotification(
             _player.teamId,
             scoreText + "\n" + flavorText,
-            new Vector2(_player.loc.x, _player.loc.y - 80));
+            new Point(_player.loc.x, _player.loc.y - 80));
 
         destroySelf();
     }

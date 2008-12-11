@@ -13,6 +13,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.text.TextField;
 
 import mx.effects.easing.Linear;
@@ -112,7 +113,7 @@ public class PlayerView extends SceneObject
         UIBits.createNotification(_player.teamId,
             eatingPlayer.playerName + " captured you!\n" +
             "You now serve the " + Constants.TEAM_LEADER_NAMES[_player.teamId] + ".",
-            new Vector2(_player.loc.x, _player.loc.y - 80));
+            new Point(_player.loc.x, _player.loc.y - 80));
     }
 
     protected function onAtePlayer (e :GameEvent) :void
@@ -125,7 +126,7 @@ public class PlayerView extends SceneObject
             " (+" + GameContext.levelData.eatPlayerPoints + ")";
 
         UIBits.createNotification(_player.teamId, text,
-            new Vector2(_player.loc.x, _player.loc.y - 80));
+            new Point(_player.loc.x, _player.loc.y - 80));
     }
 
     override protected function update (dt :Number) :void
