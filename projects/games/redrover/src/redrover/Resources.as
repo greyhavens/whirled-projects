@@ -34,6 +34,8 @@ public class Resources
         rm.queueResourceLoad("sound", "sfx_gem6", { embeddedClass: SOUND_GEM6 });
         rm.queueResourceLoad("sound", "sfx_gem7", { embeddedClass: SOUND_GEM7 });
 
+        rm.queueResourceLoad("sound", "sfx_gems_redeemed", { embeddedClass: SOUND_GEMSREDEEMED });
+
         rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
     }
 
@@ -75,6 +77,8 @@ public class Resources
     protected static const SOUND_GEM6 :Class;
     [Embed(source="../../rsrc/sfx/steelstring.b3.mp3")]
     protected static const SOUND_GEM7 :Class;
+    [Embed(source="../../rsrc/sfx/Cash_Register.mp3")]
+    protected static const SOUND_GEMSREDEEMED :Class;
 }
 
 }

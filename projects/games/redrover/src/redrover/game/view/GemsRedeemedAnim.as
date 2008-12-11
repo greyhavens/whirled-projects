@@ -26,15 +26,19 @@ public class GemsRedeemedAnim extends SceneObject
         _sprite = SpriteUtil.createSprite();
 
         showNextAnim();
+
+        if (player.isLocalPlayer) {
+            GameContext.playGameSound("sfx_gems_redeemed");
+        }
     }
 
     protected function showNextAnim () :void
     {
         if (_gems.length > 0) {
             showNextGemAnim();
-        } else if (_player.playerIndex == GameContext.localPlayerIndex) {
+        /*} else if (_player.playerIndex == GameContext.localPlayerIndex) {
             // only show the score animation for the local player
-            showScoreAnim();
+            showScoreAnim();*/
         } else {
             destroySelf();
         }
@@ -69,10 +73,11 @@ public class GemsRedeemedAnim extends SceneObject
         var flavorText :String = "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is "
             + HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
 
-        UIBits.createNotification(
+        GameContext.notificationMgr.showNotification(
             _player.teamId,
             scoreText + "\n" + flavorText,
-            new Point(_player.loc.x, _player.loc.y - 80));
+            new Point(_player.loc.x, _player.loc.y - 80),
+            NotificationMgr.MAJOR);
 
         destroySelf();
     }

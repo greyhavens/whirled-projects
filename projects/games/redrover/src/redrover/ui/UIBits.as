@@ -27,59 +27,6 @@ public class UIBits
     public static const PANEL_TEXT_H_MARGIN :Number = 14;
     public static const PANEL_TEXT_V_MARGIN :Number = 6;
 
-    public static function createNotification (teamId :int, text :String, worldLoc :Point) :void
-    {
-        var noteSprite :Sprite = SpriteUtil.createSprite();
-
-        var tf :TextField = UIBits.createText(text, 1.6, 0, TEAM_TEXT_COLORS[teamId]);
-
-        var shape :Shape = new Shape();
-        shape.graphics.beginFill(0);
-        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
-        shape.graphics.endFill();
-
-        shape.x = -shape.width * 0.5;
-        shape.y = -shape.height * 0.5;
-        noteSprite.addChild(shape);
-
-        tf.x = -tf.width * 0.5;
-        tf.y = -tf.height * 0.5;
-        noteSprite.addChild(tf);
-
-        const MARGIN :Number = 5;
-        const MOVE_DIST :Number = 140;
-        const PAUSE_TIME :Number = 1;
-        const MOVE_TIME :Number = 1;
-        const FADE_TIME :Number = 0.25;
-
-        // convert world loc to screen loc
-        var teamSprite :Sprite = GameContext.gameMode.getTeamSprite(teamId);
-        var overlay :Sprite = GameContext.gameMode.overlayLayer;
-        var screenLoc :Point = overlay.globalToLocal(teamSprite.localToGlobal(worldLoc));
-
-        // clamp
-        screenLoc.x = Math.max(MARGIN + (noteSprite.width * 0.5), screenLoc.x);
-        screenLoc.x = Math.min(Constants.SCREEN_SIZE.x - MARGIN - (noteSprite.width * 0.5),
-            screenLoc.x);
-        screenLoc.y = Math.max(MOVE_DIST + MARGIN + (noteSprite.height * 0.5), screenLoc.y);
-        screenLoc.y = Math.min(Constants.SCREEN_SIZE.y - MARGIN - (noteSprite.height * 0.5),
-            screenLoc.y);
-
-        // show the notification
-        var obj :SimpleSceneObject = new SimpleSceneObject(noteSprite);
-        obj.x = screenLoc.x;
-        obj.y = screenLoc.y;
-
-        obj.addTask(new SerialTask(
-            new TimedTask(PAUSE_TIME),
-            new ParallelTask(
-                LocationTask.CreateEaseIn(screenLoc.x, screenLoc.y - MOVE_DIST, MOVE_TIME),
-                After(MOVE_TIME - FADE_TIME, new AlphaTask(0, FADE_TIME))),
-            new SelfDestructTask()));
-
-        GameContext.gameMode.addObject(obj, overlay);
-    }
-
     public static function createFrame (width :Number, height :Number) :Sprite
     {
         var frame :MovieClip = SwfResource.instantiateMovieClip("uiBits", "frame_UI", true);
@@ -271,8 +218,6 @@ public class UIBits
 
     protected static const TEXT_WIDTH_PAD :int = 5;
     protected static const TEXT_HEIGHT_PAD :int = 4;
-
-    protected static const TEAM_TEXT_COLORS :Array = [ 0xff6a6a, 0x6ae8ff ];
 }
 
 }

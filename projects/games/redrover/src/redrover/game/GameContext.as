@@ -1,10 +1,12 @@
 package redrover.game {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import redrover.*;
 import redrover.data.LevelData;
+import redrover.game.view.NotificationMgr;
 
 public class GameContext
 {
@@ -12,6 +14,7 @@ public class GameContext
     public static var levelData :LevelData;
 
     public static var players :Array = [];
+    public static var teamSizes :Array = ArrayUtil.create(Constants.NUM_TEAMS, 0);
     public static var localPlayerIndex :int = -1;
     public static var playerColors :Array;
     public static var maleRobotNames :Array;
@@ -21,11 +24,14 @@ public class GameContext
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;
 
+    public static var notificationMgr :NotificationMgr;
+
     public static function init () :void
     {
         gameMode = null;
         levelData = null;
         players = [];
+        teamSizes = ArrayUtil.create(Constants.NUM_TEAMS, 0);
         localPlayerIndex = -1;
         playerColors = null;
         maleRobotNames = null;
@@ -33,6 +39,7 @@ public class GameContext
         playAudio = false;
         musicControls = null;
         sfxControls = null;
+        notificationMgr = null;
     }
 
     public static function nextPlayerColor () :uint
@@ -72,14 +79,12 @@ public class GameContext
 
     public static function getTeamSize (teamId :int) :int
     {
-        var size :int = 0;
-        for each (var player :Player in players) {
-            if (player.teamId == teamId) {
-                size++;
-            }
-        }
+        return teamSizes[teamId];
+    }
 
-        return size;
+    public static function getScoreMultiplier (teamId :int) :Number
+    {
+        return teamSizes[Constants.getOtherTeam(teamId)] / teamSizes[teamId];
     }
 
     public static function get localPlayer () :Player

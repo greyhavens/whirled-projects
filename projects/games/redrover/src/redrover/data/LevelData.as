@@ -26,6 +26,7 @@ public class LevelData
     public var returnHomeGemsMin :int;
     public var eatPlayerPoints :int;
     public var switchedBoardsInvincibleTime :Number;
+    public var teammateScoreMultiplier :Number;
 
     public var gemValues :IntValueTable;
     public var playerColors :Array = [];
@@ -58,6 +59,7 @@ public class LevelData
         data.eatPlayerPoints = XmlReader.getIntAttr(xml, "eatPlayerPoints");
         data.switchedBoardsInvincibleTime = XmlReader.getNumberAttr(xml,
             "switchedBoardsInvincibleTime");
+        data.teammateScoreMultiplier = XmlReader.getNumberAttr(xml, "teammateScoreMultiplier");
 
         data.gemValues = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "GemValues"));
 

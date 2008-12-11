@@ -41,7 +41,7 @@ public class Player extends SimObject
         player.clearGems();
 
         // our score increases
-        _score += GameContext.levelData.eatPlayerPoints;
+        earnPoints(GameContext.levelData.eatPlayerPoints);
     }
 
     protected function beginGetEaten (byPlayer :Player) :void
@@ -328,6 +328,23 @@ public class Player extends SimObject
         return true;
     }
 
+    public function earnPoints (points :int) :void
+    {
+        var multiplier :Number = GameContext.getScoreMultiplier(_teamId);
+        points *= multiplier;
+        _score += points;
+
+        // give a small fraction of points to everyone else on the team
+        var teammatePoints :int = points * GameContext.levelData.teammateScoreMultiplier;
+        if (teammatePoints != 0) {
+            for each (var player :Player in GameContext.players) {
+                if (player != this && player.teamId == _teamId) {
+                    player._score += teammatePoints;
+                }
+            }
+        }
+    }
+
     override protected function update (dt :Number) :void
     {
         super.update(dt);
@@ -574,7 +591,7 @@ public class Player extends SimObject
 
     protected function redeemGems (cell :BoardCell) :void
     {
-        _score += GameContext.levelData.gemValues.getValueAt(this.numGems);
+        earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
         dispatchEvent(GameEvent.createGemsRedeemed(this, _gems, cell));
         clearGems();
     }

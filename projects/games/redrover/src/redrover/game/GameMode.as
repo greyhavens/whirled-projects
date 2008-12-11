@@ -140,6 +140,10 @@ public class GameMode extends AppMode
         addObject(hud, _overlayLayer);
 
         addObject(new MusicPlayer());
+
+        var notificationMgr :NotificationMgr = new NotificationMgr();
+        addObject(notificationMgr);
+        GameContext.notificationMgr = notificationMgr;
     }
 
     protected function setupPlayers () :void
@@ -170,6 +174,15 @@ public class GameMode extends AppMode
 
     override public function update (dt :Number) :void
     {
+        // update team sizes
+        for (var ii :int = 0; ii < GameContext.teamSizes.length; ++ii) {
+            GameContext.teamSizes[ii] = 0;
+        }
+
+        for each (var player :Player in GameContext.players) {
+            GameContext.teamSizes[player.teamId] += 1;
+        }
+
         dt = 1 / 30; // TODO - remove this!
         super.update(dt);
 
