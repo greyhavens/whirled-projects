@@ -288,6 +288,21 @@ public class Player extends SimObject
         return _state != STATE_SWITCHINGBOARDS && _state != STATE_EATEN;
     }
 
+    public function get isSwitchingBoards () :Boolean
+    {
+        return _state == STATE_SWITCHINGBOARDS;
+    }
+
+    public function get isInvincible () :Boolean
+    {
+        return this.invincibleTime > 0;
+    }
+
+    public function get invincibleTime () :Number
+    {
+        return Number(_invincibleTime.value);
+    }
+
     public function isGemValidForPickup (gemType :int) :Boolean
     {
         if (this.numGems == 0) {
@@ -566,6 +581,16 @@ public class Player extends SimObject
     {
         _state = STATE_NORMAL;
         _curBoardId = Constants.getOtherTeam(_curBoardId);
+        becomeInvincible(GameContext.levelData.switchedBoardsInvincibleTime);
+    }
+
+    protected function becomeInvincible (time :Number) :void
+    {
+        if (time > 0) {
+            _invincibleTime.value = time;
+            addNamedTask(INVINCIBLE_TASK_NAME,
+                new AnimateValueTask(_invincibleTime, 0, time), true);
+        }
     }
 
     protected var _playerIndex :int;
@@ -581,11 +606,13 @@ public class Player extends SimObject
     protected var _state :int;
     protected var _color :uint;
     protected var _isMoving :Boolean;
+    protected var _invincibleTime :Object = { value: 0 };
 
     protected var _cellSize :int; // we access this value all the time
 
     protected static const SWITCH_BOARDS_TASK_NAME :String = "SwitchBoards";
     protected static const GOT_EATEN_TASK_NAME :String = "GotEaten";
+    protected static const INVINCIBLE_TASK_NAME :String = "Invincible";
 }
 
 }

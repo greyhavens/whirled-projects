@@ -15,6 +15,8 @@ import flash.display.Shape;
 import flash.display.Sprite;
 import flash.text.TextField;
 
+import mx.effects.easing.Linear;
+
 import redrover.*;
 import redrover.game.*;
 import redrover.ui.UIBits;
@@ -133,6 +135,36 @@ public class PlayerView extends SceneObject
         if (!_player.isLiveObject) {
             destroySelf();
             return;
+        }
+
+        // don't bother updating views for players on another board
+        if (_player.curBoardId != GameContext.localPlayer.curBoardId) {
+            return;
+        }
+
+        // Are we switching boards?
+        if (_player.isSwitchingBoards) {
+            if (!hasTasksNamed(SWITCH_BOARDS_ANIM_TASK_NAME)) {
+                addNamedTask(SWITCH_BOARDS_ANIM_TASK_NAME,
+                    new AlphaTask(0, GameContext.levelData.switchBoardsTime),
+                    true);
+            }
+
+        } else {
+            this.alpha = 1;
+        }
+
+        // Show a little effect if we're invincible
+        if (_player.isInvincible) {
+            if (!hasTasksNamed(INVINCIBLE_ANIM_TASK_NAME)) {
+                addNamedTask(INVINCIBLE_ANIM_TASK_NAME,
+                    new TintTask(0xFFFFFF, 1, 0xFFFFFF, 0, _player.invincibleTime,
+                        mx.effects.easing.Linear.easeNone),
+                    true);
+            }
+
+        } else if (this.displayObject.filters.length > 0) {
+            this.displayObject.filters = [];
         }
 
         // Have we switched teams?
@@ -275,6 +307,9 @@ public class PlayerView extends SceneObject
         [ "stand_N", "stand_SW", "stand_S", "stand_SW" ]
     ];
     protected static const NAME_COLORS :Array = [ 0xff0000, 0x0000ff  ];
+
+    protected static const SWITCH_BOARDS_ANIM_TASK_NAME :String = "SwitchBoardsAnim";
+    protected static const INVINCIBLE_ANIM_TASK_NAME :String = "InvincibleAnim";
 
     protected static const NUM_GEM_SOUNDS :int = 7;
 }

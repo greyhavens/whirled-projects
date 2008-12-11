@@ -25,6 +25,7 @@ public class LevelData
     public var gotEatenTime :Number;
     public var returnHomeGemsMin :int;
     public var eatPlayerPoints :int;
+    public var switchedBoardsInvincibleTime :Number;
 
     public var gemValues :IntValueTable;
     public var playerColors :Array = [];
@@ -55,6 +56,8 @@ public class LevelData
         data.gotEatenTime = XmlReader.getNumberAttr(xml, "gotEatenTime");
         data.returnHomeGemsMin = XmlReader.getUintAttr(xml, "returnHomeGemsMin");
         data.eatPlayerPoints = XmlReader.getIntAttr(xml, "eatPlayerPoints");
+        data.switchedBoardsInvincibleTime = XmlReader.getNumberAttr(xml,
+            "switchedBoardsInvincibleTime");
 
         data.gemValues = IntValueTable.fromXml(XmlReader.getSingleChild(xml, "GemValues"));
 
