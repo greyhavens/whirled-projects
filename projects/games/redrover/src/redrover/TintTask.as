@@ -33,12 +33,12 @@ public class TintTask
                 _scratchColor = new ComponentColor();
             }
 
-            decomposeColor(_rgbStart, _scratchColor);
+            ComponentColor.decomposeColor(_rgbStart, _scratchColor);
             _r0 = _scratchColor.r;
             _g0 = _scratchColor.g;
             _b0 = _scratchColor.b;
 
-            decomposeColor(_rgbTarget, _scratchColor);
+            ComponentColor.decomposeColor(_rgbTarget, _scratchColor);
             _r1 = _scratchColor.r;
             _g1 = _scratchColor.g;
             _b1 = _scratchColor.b;
@@ -55,8 +55,9 @@ public class TintTask
         var amount :Number = _interp(elapsedMs, _amountStart, (_amountTarget - _amountStart),
             totalMs);
 
-        sceneObj.displayObject.filters =
-            [ new ColorMatrix().tint(composeColor(_scratchColor), amount).createFilter() ];
+        var cm :ColorMatrix =
+            new ColorMatrix().tint(ComponentColor.composeColor(_scratchColor), amount);
+        sceneObj.displayObject.filters = [ cm.createFilter() ];
 
         return (_elapsedTime >= _time);
     }
@@ -69,20 +70,6 @@ public class TintTask
     public function receiveMessage (msg :ObjectMessage) :Boolean
     {
         return false;
-    }
-
-    protected static function decomposeColor (rgbColor :uint, color :ComponentColor) :void
-    {
-        color.r = (rgbColor & 0xFF) / 255;
-        color.g = ((rgbColor & 0xFF00) >> 8) / 255;
-        color.b = ((rgbColor & 0xFF0000) >> 16) / 255;
-    }
-
-    protected static function composeColor (color :ComponentColor) :uint
-    {
-        return uint((color.r * 255) & 0xFF) |
-               uint(((color.g * 255) << 8) & 0xFF00) |
-               uint(((color.b * 255) << 16) & 0xFF0000);
     }
 
     protected var _rgbStart :uint, _rgbTarget :uint;
@@ -106,11 +93,11 @@ class ComponentColor
     public var g :Number;
     public var b :Number;
 
-    public static function decomposeColor (rgbColor :uint, color :ComponentColor) :void
+    public static function decomposeColor (inRgbColor :uint, outColor :ComponentColor) :void
     {
-        color.r = (rgbColor & 0xFF) / 255;
-        color.g = ((rgbColor & 0xFF00) >> 8) / 255;
-        color.b = ((rgbColor & 0xFF0000) >> 16) / 255;
+        outColor.r = (inRgbColor & 0xFF) / 255;
+        outColor.g = ((inRgbColor & 0xFF00) >> 8) / 255;
+        outColor.b = ((inRgbColor & 0xFF0000) >> 16) / 255;
     }
 
     public static function composeColor (color :ComponentColor) :uint
