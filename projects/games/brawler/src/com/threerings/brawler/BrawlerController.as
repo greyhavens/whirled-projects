@@ -22,8 +22,9 @@ import com.threerings.util.StringUtil;
 import com.whirled.game.GameControl;
 import com.whirled.game.GameSubControl;
 import com.whirled.game.CoinsAwardedEvent;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.game.OccupantChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.game.StateChangedEvent;
 
@@ -262,8 +263,8 @@ public class BrawlerController extends Controller
 		// show the game results
 		_view.showResults();
 
-		//Set up Exit key.
-		_view.results.exit_btn.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown_exit);
+		// hide exit key
+		_view.results.exit_btn.visible = false;
 
 		//Listen to coin award.
 		control.player.addEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
@@ -282,14 +283,6 @@ public class BrawlerController extends Controller
 		control.local.feedback("[DEBUG] Performance Rate: "+event.percentile+"%");
 		control.player.removeEventListener(CoinsAwardedEvent.COINS_AWARDED, coinsAwarded);
 		_control.game.playerReady();
-	}
-
-	/**
-     * The button to exit the game has been hit.
-     */
-    public function mouseDown_exit (event:MouseEvent):void
-    {
-		control.local.backToWhirled(false);
 	}
 
     /**
@@ -483,6 +476,7 @@ public class BrawlerController extends Controller
         for each (var name :String in names) {
 			createActor(name, _control.net.get(name));
 		}
+		_control.net.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, propertyChanged);
 		_control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
         _control.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
         _control.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT, occupantLeft);
