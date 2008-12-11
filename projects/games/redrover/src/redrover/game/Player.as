@@ -39,6 +39,9 @@ public class Player extends SimObject
         // we get the other player's gems
         addGems(player._gems);
         player.clearGems();
+
+        // our score increases
+        _score += GameContext.levelData.eatPlayerPoints;
     }
 
     protected function beginGetEaten (byPlayer :Player) :void

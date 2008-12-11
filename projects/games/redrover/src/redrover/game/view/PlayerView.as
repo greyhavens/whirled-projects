@@ -119,7 +119,8 @@ public class PlayerView extends SceneObject
         var eatenPlayer :Player = data.eatenPlayer;
 
         var text :String = "You captured " + eatenPlayer.playerName +
-            (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!");
+            (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!") +
+            " (+" + GameContext.levelData.eatPlayerPoints + ")";
 
         UIBits.createNotification(_player.teamId, text,
             new Vector2(_player.loc.x, _player.loc.y - 80));
