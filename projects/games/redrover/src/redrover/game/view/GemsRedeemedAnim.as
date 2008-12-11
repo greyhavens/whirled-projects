@@ -74,9 +74,9 @@ public class GemsRedeemedAnim extends SceneObject
             + HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
 
         GameContext.notificationMgr.showNotification(
-            _player.teamId,
+            _player,
             scoreText + "\n" + flavorText,
-            new Point(_player.loc.x, _player.loc.y - 80),
+            new Point(0, -80),
             NotificationMgr.MAJOR);
 
         destroySelf();

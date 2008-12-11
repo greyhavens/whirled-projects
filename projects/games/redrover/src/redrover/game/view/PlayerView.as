@@ -7,7 +7,6 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -58,6 +57,7 @@ public class PlayerView extends SceneObject
 
         registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
         if (_player == GameContext.localPlayer) {
+            registerListener(player, GameEvent.GEM_GRABBED, onGemGrabbed);
             registerListener(player, GameEvent.WAS_EATEN, onWasEaten);
             registerListener(player, GameEvent.ATE_PLAYER, onAtePlayer);
         }
@@ -106,16 +106,21 @@ public class PlayerView extends SceneObject
             GameContext.gameMode.getTeamSprite(_player.teamId));
     }
 
+    protected function onGemGrabbed (e :GameEvent) :void
+    {
+        GameContext.playGameSound("sfx_gem" + Math.min(_player.numGems, NUM_GEM_SOUNDS));
+    }
+
     protected function onWasEaten (e :GameEvent) :void
     {
         var data :Object = e.data;
         var eatingPlayer :Player = data.eatingPlayer;
 
         GameContext.notificationMgr.showNotification(
-            _player.teamId,
+            _player,
             eatingPlayer.playerName + " captured you!\n" +
             "You now serve the " + Constants.TEAM_LEADER_NAMES[_player.teamId] + ".",
-            new Point(_player.loc.x, _player.loc.y - 80),
+            new Point(0, -80),
             NotificationMgr.MAJOR);
     }
 
@@ -128,10 +133,12 @@ public class PlayerView extends SceneObject
             (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!");
 
         GameContext.notificationMgr.showNotification(
-            _player.teamId,
+            _player,
             text,
-            new Point(_player.loc.x, _player.loc.y - 80),
+            new Point(0, -80),
             NotificationMgr.MAJOR);
+
+        GameContext.playGameSound("sfx_eat_player");
     }
 
     override protected function update (dt :Number) :void
@@ -208,28 +215,20 @@ public class PlayerView extends SceneObject
         this.x = _player.loc.x;
         this.y = _player.loc.y;
 
-        // Did we pick up a gem?
-        var newGems :int = _player.numGems;
-        if (_player.isLocalPlayer && newGems > _lastGems) {
-            GameContext.playGameSound("sfx_gem" + Math.min(newGems, NUM_GEM_SOUNDS));
-        }
-
         // Did our score change?
         if (_player.isLocalPlayer) {
             var newScore :int = _player.score;
             if (newScore != _lastScore) {
                 var offset :int = newScore - _lastScore;
                 var str :String = (offset > 0 ? "+" : "-") + offset;
-                var loc :Point = new Point(_player.loc.x, _player.loc.y - 40);
                 GameContext.notificationMgr.showNotification(
-                    _player.teamId, str, loc, NotificationMgr.MINOR);
+                    _player, str, new Point(0, -40), NotificationMgr.MINOR);
             }
 
             _lastScore = newScore;
         }
 
         _lastFacing = newDirection;
-        _lastGems = newGems;
     }
 
     protected function setBoard (boardId :int) :void
@@ -318,7 +317,6 @@ public class PlayerView extends SceneObject
     protected var _lastTeamId :int = -1;
     protected var _lastFacing :int = -1;
     protected var _lastLoc :Vector2 = new Vector2();
-    protected var _lastGems :int;
     protected var _lastBoardId :int;
     protected var _lastScore :int;
 

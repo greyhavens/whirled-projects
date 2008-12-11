@@ -33,15 +33,16 @@ public class Player extends SimObject
 
     public function eatPlayer (player :Player) :void
     {
-        dispatchEvent(GameEvent.createAtePlayer(this, player));
+        // our score increases (*before* the other player gets
+        // eaten, so that they don't get a share of the points)
+        earnPoints(GameContext.levelData.eatPlayerPoints);
+
+        dispatchEvent(GameEvent.createAtePlayer(player));
         player.beginGetEaten(this);
 
         // we get the other player's gems
         addGems(player._gems);
         player.clearGems();
-
-        // our score increases
-        earnPoints(GameContext.levelData.eatPlayerPoints);
     }
 
     protected function beginGetEaten (byPlayer :Player) :void
@@ -103,7 +104,7 @@ public class Player extends SimObject
                     _state = STATE_NORMAL;
                 })));
 
-        dispatchEvent(GameEvent.createWasEaten(byPlayer, this));
+        dispatchEvent(GameEvent.createWasEaten(byPlayer));
     }
 
     public function beginSwitchBoards () :void
@@ -360,6 +361,7 @@ public class Player extends SimObject
             if (!this.isOnOwnBoard && this.numGems < GameContext.levelData.maxCarriedGems &&
                 cell.hasGem && isGemValidForPickup(cell.gemType)) {
                 addGem(cell.takeGem());
+                dispatchEvent(GameEvent.createGemGrabbed());
             }
 
             // If we're on our board, redeem our gems when we touch a gem redemption tile
@@ -592,7 +594,7 @@ public class Player extends SimObject
     protected function redeemGems (cell :BoardCell) :void
     {
         earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
-        dispatchEvent(GameEvent.createGemsRedeemed(this, _gems, cell));
+        dispatchEvent(GameEvent.createGemsRedeemed(_gems, cell));
         clearGems();
     }
 
