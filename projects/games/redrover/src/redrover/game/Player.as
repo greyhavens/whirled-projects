@@ -160,8 +160,10 @@ public class Player extends SimObject
 
     public function addGem (gemType :int) :void
     {
-        _gems.push(gemType);
-        _gemCounts[gemType] += 1;
+        if (_gems.length < GameContext.levelData.maxCarriedGems) {
+            _gems.push(gemType);
+            _gemCounts[gemType] += 1;
+        }
     }
 
     public function addGems (gems :Array) :void

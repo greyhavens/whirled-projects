@@ -167,21 +167,24 @@ public class PlayerView extends SceneObject
             this.displayObject.filters = [];
         }
 
+        var forceAnimUpdate :Boolean;
         // Have we switched teams?
-        var teamChanged :Boolean;
         if (_lastTeamId != _player.teamId) {
             setTeam(_player.teamId);
-            teamChanged = true;
+            forceAnimUpdate = true;
         }
 
         // Have we switched boards?
         if (_lastBoardId != _player.curBoardId) {
             setBoard(_player.curBoardId);
+            forceAnimUpdate = true;
         }
 
         // Update animation based on facing direction
         var newDirection :int = _player.moveDirection;
-        if (teamChanged || _curAnim == null || (newDirection != _lastFacing && newDirection != -1)) {
+        if (forceAnimUpdate || _curAnim == null ||
+            (newDirection != _lastFacing && newDirection != -1)) {
+
             if (_curAnim != null) {
                 _sprite.removeChild(_curAnim);
             }
