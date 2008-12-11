@@ -1,7 +1,5 @@
 package
 {
-    import arithmetic.VoidBoardRectangle;
-    
     import com.whirled.game.NetSubControl;
     
     import flash.events.TimerEvent;
@@ -31,7 +29,7 @@ package
             sendAsBatch();
         }
         
-        public function sendMessage (messageName:String, value:Object, playerId:int) :void
+        public function sendMessage (messageName:String, value:Object, playerId:int = NetSubControl.TO_ALL) :void
         {
             enQueue(messageName, value, playerId);
         }
@@ -42,11 +40,7 @@ package
                 _queue = new Array();
             }
             
-            _queue.push({
-               messageName: messageName,
-               value: value,
-               playerId: playerId 
-            });
+            _queue.push(new QueueEntry(messageName, value, playerId));
         }
     
         protected function sendAsBatch () :void
@@ -60,8 +54,8 @@ package
         {
             if (_queue != null) {
                 Log.debug("sending batch of "+_queue.length+" messages");
-                for each (var message:Object in _queue) {
-                    _control.sendMessage(message.name, message.value, message.playerId);
+                for each (var message:QueueEntry in _queue) {
+                    _control.sendMessage(message.messageName, message.value, message.playerId);
                 }
             }
             _queue = null;
@@ -72,5 +66,23 @@ package
         protected var _control:NetSubControl;
         
         protected static const DELAY:int = 100;
+    }
+}
+
+class QueueEntry {
+    public var messageName:String;
+    public var value:Object;
+    public var playerId:int;
+    
+    public function QueueEntry (messageName:String, value:Object, playerId:int) :void
+    {
+        this.messageName = messageName;
+        this.value = value;
+        this.playerId = playerId;
+    }   
+    
+    public function toString () :String
+    {
+        return "messageName: "+messageName+" value: "+value+" playerId: "+playerId;
     }
 }

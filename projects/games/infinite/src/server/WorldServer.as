@@ -189,13 +189,14 @@ package server
 		 * Send a time sync message to a single client.
 		 */
 		protected function sendTime(id:int) :void
-		{
+		{		    
 			_net.sendMessage(REMOTE_TIME_SYNC, (new Date()).getTime(), id);
 		}
 		
 		protected function signalClient(id:int, message:int) :void
 		{
-			_net.sendMessage(String(message), null, id);
+            _batcher.sendMessage(String(message), null, id);
+			//_net.sendMessage(String(message), null, id);
 		}
 		
 		/**
@@ -203,7 +204,8 @@ package server
 		 */
 		protected function send(id:int, message:int, payload:Serializable) :void
 		{
-			_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
+            _batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
+			//_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
 		}
 		
 		/**
@@ -211,7 +213,8 @@ package server
 		 */
 		protected function sendToAll (message:int, payload:Serializable) :void
 		{
-			_net.sendMessage(String(message), payload.writeToArray(new ByteArray()));
+            _batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()));
+			//_net.sendMessage(String(message), payload.writeToArray(new ByteArray()));
 		}
 		
 //		/**
