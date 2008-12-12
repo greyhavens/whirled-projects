@@ -254,6 +254,12 @@ public class GameMode extends AppMode
             GameContext.localPlayer.move(Constants.DIR_SOUTH);
             break;
 
+        case KeyboardCodes.ESCAPE:
+            if (this.canPause) {
+                AppContext.mainLoop.pushMode(new PauseMode());
+            }
+            break;
+
         default:
             if (Constants.DEBUG_ALLOW_CHEATS) {
                 handleCheat(keyCode);
@@ -312,6 +318,11 @@ public class GameMode extends AppMode
     public function get overlayLayer () :Sprite
     {
         return _overlayLayer;
+    }
+
+    protected function get canPause () :Boolean
+    {
+        return true;
     }
 
     protected var _levelData :LevelData;
