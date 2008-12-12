@@ -1,9 +1,11 @@
 package redrover.game {
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.util.Integer;
 import com.threerings.util.KeyboardCodes;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -115,6 +117,11 @@ public class GameMode extends AppMode
             // create redemption distance map
             _redemptionDistanceMaps.push(DataMap.createGemRedemptionMap(board));
         }
+
+        if (_levelData.endCondition == Constants.END_CONDITION_TIMED) {
+            GameContext.gameClock = new SimpleTimer(_levelData.endValue);
+            addObject(GameContext.gameClock);
+        }
     }
 
     protected function setupViewObjects () :void
@@ -188,9 +195,40 @@ public class GameMode extends AppMode
 
         handlePlayerCollisions();
 
+        // update winners
+        GameContext.winningPlayers.sort(scoreSort);
+
+        // handle game over
+        if(checkGameOver()) {
+            AppContext.mainLoop.pushMode(new GameOverMode());
+        }
+
         // sort the board objects in the currently-visible TeamSprite
         var curTeamSprite :TeamSprite = _teamSprites[GameContext.localPlayer.curBoardId];
         DisplayUtil.sortDisplayChildren(curTeamSprite.playerLayer, displayObjectYSort);
+    }
+
+    protected static function scoreSort (a :Player, b :Player) :int
+    {
+        // higher scores come before lower ones
+        return Integer.compare(b.score, a.score);
+    }
+
+    protected function checkGameOver () :Boolean
+    {
+        switch (_levelData.endCondition) {
+        case Constants.END_CONDITION_TIMED:
+            _gameOver = GameContext.gameClock.timeLeft <= 0;
+            break;
+
+        case Constants.END_CONDITION_POINTS:
+            var hiScore :int;
+            var winningPlayer :Player = GameContext.winningPlayers[0];
+            _gameOver = winningPlayer.score >= GameContext.levelData.endValue;
+            break;
+        }
+
+        return _gameOver;
     }
 
     protected function handlePlayerCollisions () :void
@@ -331,6 +369,7 @@ public class GameMode extends AppMode
     protected var _boards :Array = []; // Array<Board>, one for each team
     protected var _gemDistanceMaps :Array = []; // Array<DataMap>, one for each board/gemType combination
     protected var _redemptionDistanceMaps :Array = []; // Array<DataMap>, one for each board
+    protected var _gameOver :Boolean;
 
     protected static const CAM_LOC :Point = new Point(0, 0);
     protected static const CAM_SIZE :Point = new Point(700, 450);

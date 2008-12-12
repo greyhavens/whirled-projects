@@ -11,6 +11,8 @@ import redrover.util.XmlReader;
 
 public class LevelData
 {
+    public var endCondition :int;
+    public var endValue :int;
     public var cellSize :int;
     public var ownBoardZoom :Number;
     public var otherBoardZoom :Number;
@@ -42,6 +44,9 @@ public class LevelData
     {
         var data :LevelData = new LevelData();
 
+        data.endCondition = XmlReader.getEnumAttr(xml, "endCondition",
+            Constants.END_CONDITION_NAMES);
+        data.endValue = XmlReader.getNumberAttr(xml, "endValue");
         data.cellSize = XmlReader.getUintAttr(xml, "cellSize");
         data.ownBoardZoom = XmlReader.getNumberAttr(xml, "ownBoardZoom");
         data.otherBoardZoom = XmlReader.getNumberAttr(xml, "otherBoardZoom");

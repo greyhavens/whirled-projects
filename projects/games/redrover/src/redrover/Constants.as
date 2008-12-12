@@ -7,7 +7,7 @@ public class Constants
     /* Debug options */
     public static const DEBUG_LOAD_LEVELS_FROM_DISK :Boolean    = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean             = true;
-    public static const DEBUG_DISABLE_AUDIO :Boolean            = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean            = true;
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 1.0;
@@ -85,6 +85,10 @@ public class Constants
     public static const OBJ_GEMSPAWNER__FIRST :int = 0;
     public static const OBJ_GEMSPAWNER__LIMIT :int = 3;
     public static const OBJ_SYMBOLS :Array = [ "G", "P", "Y" ];
+
+    public static const END_CONDITION_TIMED :int = 0;
+    public static const END_CONDITION_POINTS :int = 1;
+    public static const END_CONDITION_NAMES :Array = [ "timed", "points" ];
 }
 
 }

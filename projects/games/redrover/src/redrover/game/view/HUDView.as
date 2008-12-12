@@ -95,15 +95,14 @@ public class HUDView extends SceneObject
             }
         }
 
-        var winningPlayers :Array = GameContext.players.slice();
-        winningPlayers.sort(scoreSort);
-        var firstPlace :Player = winningPlayers[0];
-        var secondPlace :Player = (winningPlayers.length > 1 ? winningPlayers[1] : null);
+        var firstPlace :Player = GameContext.winningPlayers[0];
+        var secondPlace :Player = (GameContext.winningPlayers.length > 1 ?
+            GameContext.winningPlayers[1] : null);
 
         var highScoreStr :String;
         var isInLead :Boolean = (firstPlace.score == GameContext.localPlayer.score);
         if (isInLead) {
-            if (firstPlace.score > secondPlace.score) {
+            if (secondPlace == null || firstPlace.score > secondPlace.score) {
                 highScoreStr = "Winning! (+" +
                     (firstPlace.score - secondPlace.score) + ")";
             } else {
@@ -126,12 +125,6 @@ public class HUDView extends SceneObject
             _highScoreText.y = HIGH_SCORE_LOC.y;
             _sprite.addChild(_highScoreText);
         }
-    }
-
-    protected static function scoreSort (a :Player, b :Player) :int
-    {
-        // higher scores come before lower ones
-        return Integer.compare(b.score, a.score);
     }
 
     protected var _sprite :Sprite;

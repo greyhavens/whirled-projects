@@ -15,6 +15,7 @@ public class PlayerFactory
     public static function initPlayer (player :Player) :PlayerView
     {
         GameContext.players.push(player);
+        GameContext.winningPlayers.push(player);
         GameContext.gameMode.addObject(player);
 
         var view :PlayerView = new PlayerView(player);

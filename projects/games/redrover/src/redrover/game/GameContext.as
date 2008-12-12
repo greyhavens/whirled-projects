@@ -2,6 +2,7 @@ package redrover.game {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import redrover.*;
@@ -19,6 +20,8 @@ public class GameContext
     public static var playerColors :Array;
     public static var maleRobotNames :Array;
     public static var femaleRobotNames :Array;
+    public static var gameClock :SimpleTimer;
+    public static var winningPlayers :Array = [];
 
     public static var playAudio :Boolean;
     public static var musicControls :AudioControls;
@@ -36,6 +39,8 @@ public class GameContext
         playerColors = null;
         maleRobotNames = null;
         femaleRobotNames = null;
+        gameClock = null;
+        winningPlayers = [];
         playAudio = false;
         musicControls = null;
         sfxControls = null;

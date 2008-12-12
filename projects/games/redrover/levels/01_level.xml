@@ -1,5 +1,7 @@
 <root>
-<Level	cellSize="25"
+<Level	endCondition="timed"
+		endValue="120"
+		cellSize="25"
 		ownBoardZoom="2"
 		otherBoardZoom="1"
 		gemSpawnTimeMin="3"
