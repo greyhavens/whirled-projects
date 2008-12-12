@@ -46,6 +46,7 @@ package world
 			for each (var vicinity:Vicinity in hood.vicinities) {
 				//Log.debug("checking vicinity "+vicinity);
 				update.addCells(_changed.inVicinity(vicinity));
+				update.addVicinity(vicinity.key());
 			}
 			return update;
 		}

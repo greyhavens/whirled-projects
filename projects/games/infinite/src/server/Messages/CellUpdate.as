@@ -24,6 +24,16 @@ package server.Messages
         	}
         }
 
+        public function addVicinity (vicinity:String) :void
+        {
+            _vicinities.push(vicinity);
+        }
+
+        public function get vicinities () :Array
+        {
+            return _vicinities;
+        }
+
         protected function addState (state:CellState) :void
         {
         	_states.push(state);
@@ -37,8 +47,13 @@ package server.Messages
         public function writeToArray (array:ByteArray) :ByteArray
         {
         	array.writeInt(_level);
+        	array.writeInt(_states.length);
         	for each (var state:CellState in _states) {
         		state.writeToArray(array);
+        	}
+        	array.writeInt(_vicinities.length);
+        	for each (var vicinity:String in _vicinities) {
+        	    array.writeUTF(vicinity);
         	}
         	return array;
         }
@@ -46,13 +61,19 @@ package server.Messages
         public static function readFromArray (array:ByteArray) :CellUpdate
         {        	
         	const update:CellUpdate = new CellUpdate(array.readInt());
-        	while (array.bytesAvailable) {
+        	const states:int = array.readInt();
+        	for (var i:int = 0; i < states; i++) {
         		update.addState(CellState.readFromArray(array));
+        	}
+        	const vicinities:int = array.readInt();
+        	for (var j:int = 0; j < vicinities; j++) {
+        	    update.addVicinity(array.readUTF());
         	}
         	return update;
         } 
         
         protected var _level:int;
-        protected var _states:Array = new Array(); 
+        protected var _states:Array = new Array();
+        protected var _vicinities:Array = new Array(); 
 	}
 }

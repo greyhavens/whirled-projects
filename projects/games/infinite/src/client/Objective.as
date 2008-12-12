@@ -349,6 +349,7 @@ package client
         	for each (var state:CellState in update.states) {
         		state.update(register, this, this);
         	}
+        	_breadcrumbs.markAsMapped(update.vicinities);
         }
         
         public function updateCell (register:ClientPlayers, state:CellState) :void
