@@ -1,6 +1,6 @@
 <root>
 <Level	endCondition="timed"
-		endValue="120"
+		endValue="360"
 		cellSize="25"
 		ownBoardZoom="2"
 		otherBoardZoom="1"

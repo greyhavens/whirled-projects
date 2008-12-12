@@ -1,6 +1,5 @@
 package redrover.game.view {
 
-import com.threerings.util.Integer;
 import com.threerings.util.StringUtil;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -45,6 +44,7 @@ public class HUDView extends SceneObject
     {
         super.update(dt);
 
+        // Score
         var newScore :int = GameContext.localPlayer.score;
         if (newScore != _lastScore) {
             if (_scoreText != null) {
@@ -52,13 +52,14 @@ public class HUDView extends SceneObject
             }
 
             _scoreText = UIBits.createText("Score: " + StringUtil.formatNumber(newScore),
-                1.5, 0, 0xFFFFFF);
+                1.1, 0, 0xFFFFFF);
             _scoreText.x = SCORE_LOC.x;
             _scoreText.y = SCORE_LOC.y;
             _sprite.addChild(_scoreText);
             _lastScore = newScore;
         }
 
+        // Gem lineup
         var newGems :int = GameContext.localPlayer.numGems;
         if (newGems != _lastGems) {
             while (_gemSprite.numChildren > 0) {
@@ -75,6 +76,7 @@ public class HUDView extends SceneObject
             _lastGems = newGems;
         }
 
+        // Team sizes
         for (var teamId :int = 0; teamId < Constants.NUM_TEAMS; ++teamId) {
             var teamSize :int = GameContext.getTeamSize(teamId);
             if (teamSize != _lastTeamSizes[teamId]) {
@@ -95,6 +97,7 @@ public class HUDView extends SceneObject
             }
         }
 
+        // High score
         var firstPlace :Player = GameContext.winningPlayers[0];
         var secondPlace :Player = (GameContext.winningPlayers.length > 1 ?
             GameContext.winningPlayers[1] : null);
@@ -125,19 +128,54 @@ public class HUDView extends SceneObject
             _highScoreText.y = HIGH_SCORE_LOC.y;
             _sprite.addChild(_highScoreText);
         }
+
+        // Game end condition
+        var endConditionText :String;
+        switch (GameContext.levelData.endCondition) {
+        case Constants.END_CONDITION_TIMED:
+            var secondsLeft :int = Math.round(GameContext.gameClock.timeLeft);
+            var min :String = String(Math.floor(secondsLeft / 60));
+            var sec :String = String(Math.floor(secondsLeft % 60));
+            if (sec.length < 2) {
+                sec = "0" + sec;
+            }
+            endConditionText = min + ":" + sec;
+            break;
+
+        case Constants.END_CONDITION_POINTS:
+            endConditionText = "" + firstPlace.score + "/" + int(GameContext.levelData.endValue);
+            break;
+        }
+
+        if (_endConditionText == null || _endConditionText.text != endConditionText) {
+            if (_endConditionText != null) {
+                _endConditionText.parent.removeChild(_endConditionText);
+            }
+
+            _endConditionText = UIBits.createText(endConditionText, 1.1, 0, 0x00ff00);
+            _endConditionText.x = END_CONDITION_LOC.x;
+            _endConditionText.y = END_CONDITION_LOC.y;
+            _sprite.addChild(_endConditionText);
+        }
     }
 
     protected var _sprite :Sprite;
+
     protected var _scoreText :TextField;
-    protected var _highScoreText :TextField;
-    protected var _teamTexts :Array = [ null, null ];
-    protected var _gemSprite :Sprite;
-    protected var _lastGems :int = -1;
     protected var _lastScore :int = -1;
+    protected var _highScoreText :TextField;
+
+    protected var _teamTexts :Array = [ null, null ];
     protected var _lastTeamSizes :Array = [ -1, -1 ];
 
-    protected static const SCORE_LOC :Point = new Point(5, 5);
-    protected static const HIGH_SCORE_LOC :Point = new Point(6, 28);
+    protected var _gemSprite :Sprite;
+    protected var _lastGems :int = -1;
+
+    protected var _endConditionText :TextField;
+
+    protected static const SCORE_LOC :Point = new Point(5, 4);
+    protected static const HIGH_SCORE_LOC :Point = new Point(6, 20);
+    protected static const END_CONDITION_LOC :Point = new Point(6, 36);
     protected static const GEM_X :Number = 250;
     protected static const BUTTON_X :Number = 695;
     protected static const TEAM_COLORS :Array = [ 0xff6c77, 0x88c5ff ];

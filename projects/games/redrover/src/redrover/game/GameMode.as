@@ -372,9 +372,9 @@ public class GameMode extends AppMode
     protected var _gameOver :Boolean;
 
     protected static const CAM_LOC :Point = new Point(0, 0);
-    protected static const CAM_SIZE :Point = new Point(700, 450);
-    protected static const HUD_LOC :Point = new Point(0, 450);
-    protected static const HUD_SIZE :Point = new Point(700, 50);
+    protected static const CAM_SIZE :Point = new Point(700, 445);
+    protected static const HUD_LOC :Point = new Point(0, 445);
+    protected static const HUD_SIZE :Point = new Point(700, 55);
 }
 
 }
