@@ -1,10 +1,12 @@
 package server
-{
+{	
 	import com.whirled.game.GameSubControl;
 	
 	import flash.events.TimerEvent;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	
+	import world.Player;
 	
 	/**
 	 * Simple scorekeeper.
@@ -15,8 +17,9 @@ package server
 	 */
 	public class ScoreKeeper
 	{
-		public function ScoreKeeper(control:GameSubControl)
+		public function ScoreKeeper(server:WorldServer, control:GameSubControl)
 		{
+			_server = server;
 			_control = control;
 			_target = 5;
 		}
@@ -63,17 +66,53 @@ package server
         	return score;
         }
         
+        /**
+         * Attempt to move points from one player to another, assuming that the losing player
+         * has the desired number of points to move.  Return ths number of points moved.
+         */
+        public function movePoints(winner:int, loser:int, points:int) :int
+        {
+        	const removed:int = removePoints(loser, points);
+        	if (removed > 0) {
+        		report(loser, removed, "loses");
+            	addPoints(winner, removed);
+            	report(winner, removed, "gains");
+            }
+        	return removed;
+        }
+        
+        public function report(id:int, points:int, verb:String) :void
+        {
+        	const player:Player = _server.findPlayer(id);
+        	if (player != null) {
+            	_server.systemMessage(player.name + " " + verb + " " + points 
+            	   + " " + (points==1?"point":"points")+" and now has " + score(id));
+            }
+        }
+                
+        /**
+         * Attempt to remove a number of points from a player, but do not leave the player with
+         * fewer than zero points.  Return the number of points that were actually removed.
+         */
+        public function removePoints (id:int, points:int) :int
+        {
+        	const current:int = score(id);
+            const remaining:int = current - points;
+            if (remaining < 0) {
+            	_scores[id] = 0;
+            	return points + remaining;
+            }
+            _scores[id] = remaining;
+            return points;
+        }
+        
         public function addPoints (id:int, points:int) :void
         {
         	if (_scores[id] == null) {
         		_players.push(id);
         	}
         	const added:int = score(id) + points;        
-        	_scores[id] = added;
-        	
-            if (added >= _target) {
-            	endGame();
-            }
+        	_scores[id] = added;        	
         }
         
         public function endGame() :void
@@ -122,5 +161,7 @@ package server
         
         // to determine the ways 
         protected var _timers:Dictionary = new Dictionary();
+        
+        protected var _server:WorldServer;
 	}
 }

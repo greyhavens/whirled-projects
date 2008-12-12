@@ -47,7 +47,7 @@ package server
 	        _batcher = new MessageBatcher(_net);
 	        _batcher.start();
 	        
-	        _scoreKeeper = new ScoreKeeper(_control.game);
+	        _scoreKeeper = new ScoreKeeper(this, _control.game);
 	        
 	        _control.game.addEventListener(StateChangedEvent.GAME_STARTED, reportEvent);
             _control.game.addEventListener(StateChangedEvent.GAME_ENDED, reportEvent);
@@ -253,15 +253,21 @@ package server
 		    send(event.victimId, RemoteWorld.SABOTAGE_TRIGGERED, detail);
 		    send(event.sabotage.saboteurId, RemoteWorld.SABOTAGE_TRIGGERED, detail);		    
 		    
-		    systemMessage(victim.name +" was "+ event.sabotage.sabotageType + " by "+saboteur.name); 
+		    systemMessage(victim.name +" was "+ event.sabotage.sabotageType + " by "+saboteur.name);
+		    _scoreKeeper.movePoints(event.sabotage.saboteurId, event.victimId, 1); 
 		}		
+		
+		public function findPlayer(id:int) :Player
+		{
+			return _world.findPlayer(id);
+		}
 			
 		protected function get id () :int
 		{
 			return _control.game.getMyId();
 		}
 		
-		protected function systemMessage (text:String) :void
+		public function systemMessage (text:String) :void
 	    {
 	        _control.game.systemMessage(text);
 	    }
