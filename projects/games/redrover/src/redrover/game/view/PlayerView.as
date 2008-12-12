@@ -222,7 +222,8 @@ public class PlayerView extends SceneObject
                 var offset :int = newScore - _lastScore;
                 var str :String = (offset > 0 ? "+" : "-") + offset;
                 GameContext.notificationMgr.showNotification(
-                    _player, str, new Point(0, -40), NotificationMgr.MINOR);
+                    _player, str, new Point(0, -40), NotificationMgr.MINOR,
+                    "sfx_got_points");
             }
 
             _lastScore = newScore;

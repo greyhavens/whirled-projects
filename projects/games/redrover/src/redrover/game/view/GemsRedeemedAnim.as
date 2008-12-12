@@ -26,19 +26,15 @@ public class GemsRedeemedAnim extends SceneObject
         _sprite = SpriteUtil.createSprite();
 
         showNextAnim();
-
-        if (player.isLocalPlayer) {
-            GameContext.playGameSound("sfx_gems_redeemed");
-        }
     }
 
     protected function showNextAnim () :void
     {
         if (_gems.length > 0) {
             showNextGemAnim();
-        /*} else if (_player.playerIndex == GameContext.localPlayerIndex) {
+        } else if (_player.playerIndex == GameContext.localPlayerIndex) {
             // only show the score animation for the local player
-            showScoreAnim();*/
+            showScoreAnim();
         } else {
             destroySelf();
         }
@@ -67,16 +63,14 @@ public class GemsRedeemedAnim extends SceneObject
 
     protected function showScoreAnim () :void
     {
-        var scoreText :String =
-            "Gems x" + _numGems + ": +" + GameContext.levelData.gemValues.getValueAt(_numGems);
-
-        var flavorText :String = "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is "
+        var text :String = "You redeemed " + _numGems + " gems.\n" +
+            "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is "
             + HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
 
         GameContext.notificationMgr.showNotification(
             _player,
-            scoreText + "\n" + flavorText,
-            new Point(0, -80),
+            text,
+            new Point(0, -100),
             NotificationMgr.MAJOR);
 
         destroySelf();
@@ -109,7 +103,8 @@ public class GemsRedeemedAnim extends SceneObject
     protected var _sprite :Sprite;
 
     protected static const HAPPINESS :Array = [
-        "", "pleased.", "pleased.", "pleased.", "overjoyed!", "ECSTATIC!"
+        "", "pleased.", "pleased.", "pleased.", "very happy.", "delighted!",
+        "jubilant!", "overjoyed!", "elated!", "ECSTATIC!", "EUPHORIC!",
     ];
 }
 

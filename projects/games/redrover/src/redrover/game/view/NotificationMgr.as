@@ -13,9 +13,11 @@ public class NotificationMgr extends SimObject
     public static const MAJOR :int = 0;
     public static const MINOR :int = 1;
 
-    public function showNotification (player :Player, text :String, offset :Point, type :int) :void
+    public function showNotification (player :Player, text :String, offset :Point, type :int,
+        soundName :String = null) :void
     {
-        var notification :Notification = new Notification(this, player, text, offset, type);
+        var notification :Notification = new Notification(this, player, text, offset, type,
+            soundName);
         if (this.canPlayNotification) {
             notification.play();
         } else {
@@ -80,12 +82,14 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 class Notification extends SceneObject
 {
     public function Notification (mgr :NotificationMgr, player :Player, text :String,
-        offset :Point, type :int)
+        offset :Point, type :int, soundName :String)
     {
         _mgr = mgr;
         _playerRef = player.ref;
         _offset = offset;
         _type = type;
+        _soundName = soundName;
+
         _sprite = SpriteUtil.createSprite();
 
         var tf :TextField = UIBits.createText(text, 1.6, 0, TEAM_TEXT_COLORS[player.teamId]);
@@ -118,11 +122,13 @@ class Notification extends SceneObject
             return;
         }
 
-        var worldLoc :Point = new Point(player.loc.x + _offset.x, player.loc.y + _offset.y);
+        var worldLoc :Point = new Point(player.loc.x, player.loc.y);
         // convert world loc to screen loc
         var teamSprite :Sprite = GameContext.gameMode.getTeamSprite(player.curBoardId);
         var overlay :Sprite = GameContext.gameMode.overlayLayer;
         var screenLoc :Point = overlay.globalToLocal(teamSprite.localToGlobal(worldLoc));
+        screenLoc.x += _offset.x;
+        screenLoc.y += _offset.y;
 
         var animParams :Array = ANIM_PARAMS[_type];
         var moveDist :Number = animParams[MOVE_DIST_IDX];
@@ -140,6 +146,10 @@ class Notification extends SceneObject
 
         _sprite.x = screenLoc.x;
         _sprite.y = screenLoc.y;
+
+        if (_soundName != null) {
+            GameContext.playGameSound(_soundName);
+        }
 
         addTask(new SerialTask(
             new TimedTask(pauseTime),
@@ -170,6 +180,7 @@ class Notification extends SceneObject
     protected var _playerRef :SimObjectRef;
     protected var _type :int;
     protected var _offset :Point;
+    protected var _soundName :String;
     protected var _sprite :Sprite;
 
     protected static const MARGIN :Number = 5;
@@ -180,7 +191,7 @@ class Notification extends SceneObject
     protected static const FADE_TIME_IDX :int = 3;
 
     protected static const ANIM_PARAMS :Array = [
-        [ 140, 1, 1, 0.25 ],        // Major
+        [ 100, 1, 1, 0.25 ],        // Major
         [ 40, 0.1, 0.4, 0.15 ],     // Minor
     ];
 
