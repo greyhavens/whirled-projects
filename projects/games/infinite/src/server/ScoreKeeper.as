@@ -27,15 +27,18 @@ package server
         public function levelComplete (id:int, level:int) :void
         {
         	var status:int = _levels[level];
+        	var points:int;
         	if (status == INCOMPLETE) {
         		_levels[level] = RECENTLY_COMPLETE;
         		startTimeout(level);
-        		addPoints(id, 3);
+        		points = 3;
         	} else if (status == RECENTLY_COMPLETE) {
-        		addPoints(id, 2);
+        		points = 2;
         	} else {
-        		addPoints(id, 1);
+        		points = 1;
         	}
+        	addPoints(id, points);
+        	report(id, points, "gains");
         }
         
         /**
