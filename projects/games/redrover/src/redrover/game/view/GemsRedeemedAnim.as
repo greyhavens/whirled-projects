@@ -11,17 +11,18 @@ import mx.effects.easing.*;
 
 import redrover.*;
 import redrover.game.*;
-import redrover.ui.UIBits;
 import redrover.util.SpriteUtil;
 
 public class GemsRedeemedAnim extends SceneObject
 {
-    public function GemsRedeemedAnim (player :Player, gems :Array, boardCell :BoardCell)
+    public function GemsRedeemedAnim (player :Player, gems :Array, boardCell :BoardCell,
+        earnedPoints :int)
     {
         _player = player;
         _gems = gems.slice();
         _numGems = gems.length;
         _cell = boardCell;
+        _earnedPoints = earnedPoints;
 
         _sprite = SpriteUtil.createSprite();
 
@@ -64,14 +65,16 @@ public class GemsRedeemedAnim extends SceneObject
     protected function showScoreAnim () :void
     {
         var text :String = "You redeemed " + _numGems + " gems.\n" +
-            "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is "
-            + HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1];
+            "The " + Constants.TEAM_LEADER_NAMES[_player.teamId] + " is " +
+            HAPPINESS[_numGems < HAPPINESS.length ? _numGems : HAPPINESS.length - 1] +
+            " (" + (_earnedPoints >= 0 ? "+" : "") + _earnedPoints + ")";
 
         GameContext.notificationMgr.showNotification(
             _player,
             text,
             new Point(0, -100),
-            NotificationMgr.MAJOR);
+            NotificationMgr.MAJOR,
+            "sfx_got_points");
 
         destroySelf();
     }
@@ -98,6 +101,7 @@ public class GemsRedeemedAnim extends SceneObject
     protected var _player :Player;
     protected var _gems :Array;
     protected var _cell :BoardCell;
+    protected var _earnedPoints :int;
     protected var _numGems :int;
 
     protected var _sprite :Sprite;

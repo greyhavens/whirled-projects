@@ -57,6 +57,7 @@ public class PlayerView extends SceneObject
 
         registerListener(player, GameEvent.GEMS_REDEEMED, onGemsRedeemed);
         if (_player == GameContext.localPlayer) {
+            registerListener(player, GameEvent.GOT_TEAMMATE_POINTS, onGotTeammatePoints);
             registerListener(player, GameEvent.GEM_GRABBED, onGemGrabbed);
             registerListener(player, GameEvent.WAS_EATEN, onWasEaten);
             registerListener(player, GameEvent.ATE_PLAYER, onAtePlayer);
@@ -98,12 +99,32 @@ public class PlayerView extends SceneObject
 
     protected function onGemsRedeemed (e :GameEvent) :void
     {
+        // Don't show the animation if it's not on the board we're watching
+        if (_player.curBoardId != GameContext.localPlayer.curBoardId) {
+            return;
+        }
+
         var data :Object = e.data;
         var gems :Array = data.gems;
+        var points :int = data.points;
         var boardCell :BoardCell = data.boardCell;
         GameContext.gameMode.addObject(
-            new GemsRedeemedAnim(_player, gems, boardCell),
+            new GemsRedeemedAnim(_player, gems, boardCell, points),
             GameContext.gameMode.getTeamSprite(_player.teamId));
+    }
+
+    protected function onGotTeammatePoints (e :GameEvent) :void
+    {
+        var data :Object = e.data;
+        var points :int = data.points;
+        var fromTeammate :Player = data.fromTeammate;
+
+        GameContext.notificationMgr.showNotification(
+            _player,
+            (points >= 0 ? "+" : "") + points + " from " + fromTeammate.playerName,
+            new Point(0, -80),
+            NotificationMgr.MINOR,
+            "sfx_got_points");
     }
 
     protected function onGemGrabbed (e :GameEvent) :void
@@ -128,9 +149,11 @@ public class PlayerView extends SceneObject
     {
         var data :Object = e.data;
         var eatenPlayer :Player = data.eatenPlayer;
+        var points :int = data.points;
 
         var text :String = "You captured " + eatenPlayer.playerName +
-            (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!");
+            (eatenPlayer.numGems > 0 ? "\nand took " + eatenPlayer.numGems + " gems!" : "!") +
+            " (" + (points >= 0 ? "+" : "") + points + ")";
 
         GameContext.notificationMgr.showNotification(
             _player,
@@ -214,20 +237,6 @@ public class PlayerView extends SceneObject
         // update location
         this.x = _player.loc.x;
         this.y = _player.loc.y;
-
-        // Did our score change?
-        if (_player.isLocalPlayer) {
-            var newScore :int = _player.score;
-            if (newScore != _lastScore) {
-                var offset :int = newScore - _lastScore;
-                var str :String = (offset > 0 ? "+" : "-") + offset;
-                GameContext.notificationMgr.showNotification(
-                    _player, str, new Point(0, -40), NotificationMgr.MINOR,
-                    "sfx_got_points");
-            }
-
-            _lastScore = newScore;
-        }
 
         _lastFacing = newDirection;
     }
@@ -319,7 +328,6 @@ public class PlayerView extends SceneObject
     protected var _lastFacing :int = -1;
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastBoardId :int;
-    protected var _lastScore :int;
 
     protected var _mask :Shape;
 

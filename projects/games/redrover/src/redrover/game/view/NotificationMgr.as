@@ -86,26 +86,12 @@ class Notification extends SceneObject
     {
         _mgr = mgr;
         _playerRef = player.ref;
+        _text = text;
         _offset = offset;
         _type = type;
         _soundName = soundName;
 
         _sprite = SpriteUtil.createSprite();
-
-        var tf :TextField = UIBits.createText(text, 1.6, 0, TEAM_TEXT_COLORS[player.teamId]);
-
-        var shape :Shape = new Shape();
-        shape.graphics.beginFill(0);
-        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
-        shape.graphics.endFill();
-
-        shape.x = -shape.width * 0.5;
-        shape.y = -shape.height * 0.5;
-        _sprite.addChild(shape);
-
-        tf.x = -tf.width * 0.5;
-        tf.y = -tf.height * 0.5;
-        _sprite.addChild(tf);
     }
 
     public function play () :void
@@ -122,6 +108,28 @@ class Notification extends SceneObject
             return;
         }
 
+        var animParams :Array = ANIM_PARAMS[_type];
+        var moveDist :Number = animParams[MOVE_DIST_IDX];
+        var pauseTime :Number = animParams[PAUSE_TIME_IDX];
+        var moveTime :Number = animParams[MOVE_TIME_IDX];
+        var fadeTime :Number = animParams[FADE_TIME_IDX];
+        var textSize :Number = animParams[TEXT_SIZE_IDX];
+
+        var tf :TextField = UIBits.createText(_text, textSize, 0, TEAM_TEXT_COLORS[player.teamId]);
+
+        var shape :Shape = new Shape();
+        shape.graphics.beginFill(0);
+        shape.graphics.drawRoundRect(0, 0, tf.width + 10, tf.height + 6, 60, 40);
+        shape.graphics.endFill();
+
+        shape.x = -shape.width * 0.5;
+        shape.y = -shape.height * 0.5;
+        _sprite.addChild(shape);
+
+        tf.x = -tf.width * 0.5;
+        tf.y = -tf.height * 0.5;
+        _sprite.addChild(tf);
+
         var worldLoc :Point = new Point(player.loc.x, player.loc.y);
         // convert world loc to screen loc
         var teamSprite :Sprite = GameContext.gameMode.getTeamSprite(player.curBoardId);
@@ -129,12 +137,6 @@ class Notification extends SceneObject
         var screenLoc :Point = overlay.globalToLocal(teamSprite.localToGlobal(worldLoc));
         screenLoc.x += _offset.x;
         screenLoc.y += _offset.y;
-
-        var animParams :Array = ANIM_PARAMS[_type];
-        var moveDist :Number = animParams[MOVE_DIST_IDX];
-        var pauseTime :Number = animParams[PAUSE_TIME_IDX];
-        var moveTime :Number = animParams[MOVE_TIME_IDX];
-        var fadeTime :Number = animParams[FADE_TIME_IDX];
 
         // clamp
         screenLoc.x = Math.max(MARGIN + (_sprite.width * 0.5), screenLoc.x);
@@ -178,6 +180,7 @@ class Notification extends SceneObject
 
     protected var _mgr :NotificationMgr;
     protected var _playerRef :SimObjectRef;
+    protected var _text :String;
     protected var _type :int;
     protected var _offset :Point;
     protected var _soundName :String;
@@ -189,10 +192,11 @@ class Notification extends SceneObject
     protected static const PAUSE_TIME_IDX :int = 1;
     protected static const MOVE_TIME_IDX :int = 2;
     protected static const FADE_TIME_IDX :int = 3;
+    protected static const TEXT_SIZE_IDX :int = 4;
 
     protected static const ANIM_PARAMS :Array = [
-        [ 100, 1, 1, 0.25 ],        // Major
-        [ 40, 0.1, 0.4, 0.15 ],     // Minor
+        [ 100, 1, 1, 0.25, 1.6 ],        // Major
+        [ 40, 0.6, 0.4, 0.15, 1.3 ],     // Minor
     ];
 
     protected static const TEAM_TEXT_COLORS :Array = [ 0xff6a6a, 0x6ae8ff ];

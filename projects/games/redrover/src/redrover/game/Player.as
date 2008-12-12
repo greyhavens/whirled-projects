@@ -35,9 +35,9 @@ public class Player extends SimObject
     {
         // our score increases (*before* the other player gets
         // eaten, so that they don't get a share of the points)
-        earnPoints(GameContext.levelData.eatPlayerPoints);
+        var points :int = earnPoints(GameContext.levelData.eatPlayerPoints);
 
-        dispatchEvent(GameEvent.createAtePlayer(player));
+        dispatchEvent(GameEvent.createAtePlayer(player, points));
         player.beginGetEaten(this);
 
         // we get the other player's gems
@@ -329,21 +329,29 @@ public class Player extends SimObject
         return true;
     }
 
-    public function earnPoints (points :int) :void
+    public function earnPoints (basePoints :int) :int
     {
         var multiplier :Number = GameContext.getScoreMultiplier(_teamId);
-        points *= multiplier;
-        _score += points;
+        var actualPoints :int = basePoints * multiplier;
+        _score += actualPoints;
 
         // give a small fraction of points to everyone else on the team
-        var teammatePoints :int = points * GameContext.levelData.teammateScoreMultiplier;
+        var teammatePoints :int = actualPoints * GameContext.levelData.teammateScoreMultiplier;
         if (teammatePoints != 0) {
             for each (var player :Player in GameContext.players) {
                 if (player != this && player.teamId == _teamId) {
-                    player._score += teammatePoints;
+                    player.earnTeammatePoints(teammatePoints, this);
                 }
             }
         }
+
+        return actualPoints;
+    }
+
+    protected function earnTeammatePoints (points :int, fromTeammate :Player) :void
+    {
+        _score += points;
+        dispatchEvent(GameEvent.createGotTeammatePoints(points, fromTeammate));
     }
 
     override protected function update (dt :Number) :void
@@ -593,8 +601,8 @@ public class Player extends SimObject
 
     protected function redeemGems (cell :BoardCell) :void
     {
-        earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
-        dispatchEvent(GameEvent.createGemsRedeemed(_gems, cell));
+        var points :int = earnPoints(GameContext.levelData.gemValues.getValueAt(this.numGems));
+        dispatchEvent(GameEvent.createGemsRedeemed(_gems, cell, points));
         clearGems();
     }
 
