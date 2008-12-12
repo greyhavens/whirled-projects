@@ -31,7 +31,14 @@ package
         
         public function sendMessage (messageName:String, value:Object, playerId:int = NetSubControl.TO_ALL) :void
         {
-            enQueue(messageName, value, playerId);
+            if (((new Date()).getTime() - _lastSend) < DELAY)
+            {
+                enQueue(messageName, value, playerId);
+            } else {
+                Log.debug("sending message directly");
+                _control.sendMessage(messageName, value, playerId);
+                _lastSend = (new Date()).getTime();                
+            }
         }
 
         protected function enQueue (messageName:String, value:Object, playerId:int) :void
@@ -59,8 +66,10 @@ package
                 }
             }
             _queue = null;
+            _lastSend = (new Date()).getTime();
         }
 
+        protected var _lastSend:Number
         protected var _timer:Timer;
         protected var _queue:Array;
         protected var _control:NetSubControl;
