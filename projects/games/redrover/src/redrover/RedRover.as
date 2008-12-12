@@ -83,6 +83,7 @@ public class RedRover extends Sprite
 import redrover.*;
 import redrover.ui.*;
 import redrover.game.GameMode;
+import redrover.data.LevelData;
 
 class LoadingMode extends GenericLoadingMode
 {
@@ -96,7 +97,13 @@ class LoadingMode extends GenericLoadingMode
     {
         super.update(dt);
         if (!_loadingResources) {
-            AppContext.levelMgr.playLevel(0);
+            AppContext.levelMgr.playLevel(0,
+                function (loadedLevel :LevelData) :void {
+                    AppContext.mainLoop.changeMode(new GameMode(loadedLevel));
+                    if (!Constants.DEBUG_SKIP_INSTRUCTIONS) {
+                        AppContext.mainLoop.pushMode(new InstructionsMode());
+                    }
+                });
         }
     }
 

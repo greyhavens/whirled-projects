@@ -18,6 +18,9 @@ public class Resources
         rm.queueResourceLoad("image", "gem_redemption", { embeddedClass: IMG_GEMREDEMPTION });
         rm.queueResourceLoad("image", "player_arrow", { embeddedClass: IMG_PLAYERARROW });
         rm.queueResourceLoad("image", "player_shadow", { embeddedClass: IMG_PLAYERSHADOW });
+        rm.queueResourceLoad("image", "instructions_1", { embeddedClass: IMG_INSTRUCTIONS1 });
+        rm.queueResourceLoad("image", "instructions_2", { embeddedClass: IMG_INSTRUCTIONS2 });
+        rm.queueResourceLoad("image", "instructions_3", { embeddedClass: IMG_INSTRUCTIONS3 });
 
         // music
         rm.queueResourceLoad("sound", "mus_motm",
@@ -58,6 +61,13 @@ public class Resources
     protected static const IMG_PLAYERARROW :Class;
     [Embed(source="../../rsrc/player_shadow.png", mimeType="application/octet-stream")]
     protected static const IMG_PLAYERSHADOW :Class;
+
+    [Embed(source="../../rsrc/instructions_1.png", mimeType="application/octet-stream")]
+    protected static const IMG_INSTRUCTIONS1 :Class;
+    [Embed(source="../../rsrc/instructions_2.png", mimeType="application/octet-stream")]
+    protected static const IMG_INSTRUCTIONS2 :Class;
+    [Embed(source="../../rsrc/instructions_3.png", mimeType="application/octet-stream")]
+    protected static const IMG_INSTRUCTIONS3 :Class;
 
     [Embed(source="../../rsrc/music/pepperland.mp3")]
     protected static const MUSIC_PEPPERLAND :Class;
