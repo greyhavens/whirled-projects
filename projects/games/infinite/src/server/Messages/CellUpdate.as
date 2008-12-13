@@ -6,8 +6,11 @@ package server.Messages
 	
 	public class CellUpdate implements Serializable
 	{
+	    public var level:int;		
+		
 		public function CellUpdate(level:int)
 		{
+			this.level = level;
 		}
 		
 		public function toString () :String
@@ -34,7 +37,7 @@ package server.Messages
             return _vicinities;
         }
 
-        protected function addState (state:CellState) :void
+        public function addState (state:CellState) :void
         {
         	_states.push(state);
         }
@@ -46,7 +49,7 @@ package server.Messages
 
         public function writeToArray (array:ByteArray) :ByteArray
         {
-        	array.writeInt(_level);
+        	array.writeInt(level);
         	array.writeInt(_states.length);
         	for each (var state:CellState in _states) {
         		state.writeToArray(array);
@@ -72,7 +75,6 @@ package server.Messages
         	return update;
         } 
         
-        protected var _level:int;
         protected var _states:Array = new Array();
         protected var _vicinities:Array = new Array(); 
 	}

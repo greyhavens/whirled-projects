@@ -345,13 +345,15 @@ package client
 		{
 		    if (detail.victimId == _localPlayer.id) {
                 _announcement.positive();		        
-		        _announcement.announcement = "Drat! " + _world.nameForPlayer(detail.saboteurId)+  " " + detail.type + " you!";
+		        _announcement.announcement = "Drat! " + _world.nameForPlayer(detail.saboteurId) 
+		          + " " + detail.type + " you!";
 		        _announcement.show();
 		    }
 		    
 		    if (detail.saboteurId == _localPlayer.id) {
 		        _announcement.negative();
-		        _announcement.announcement = "Cool! You " + detail.type + " " + _world.nameForPlayer(detail.victimId) + "!";
+		        _announcement.announcement = "Cool! You " + detail.type + " " 
+		          + _world.nameForPlayer(detail.victimId) + "!";
 		        _announcement.show();
 		    }
 		}

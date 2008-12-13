@@ -345,11 +345,15 @@ package client
         
         public function updateCells (register:ClientPlayers, update:CellUpdate) :void
         {
-//        	Log.debug("updating cell state of "+update.states.length+" cells");
-        	for each (var state:CellState in update.states) {
-        		state.update(register, this, this);
-        	}
-        	_breadcrumbs.markAsMapped(update.vicinities);
+	        if (update.level == _player.levelNumber) {
+	        	for each (var state:CellState in update.states) {
+	        		state.update(register, this, this);
+	        	}
+	        	_breadcrumbs.markAsMapped(update.vicinities);
+	        } else {
+	        	Log.debug("dropping update meant for level: "+update.level+" because local player"
+	        	  + "is on level "+_player.levelNumber);
+	        }
         }
         
         public function updateCell (register:ClientPlayers, state:CellState) :void

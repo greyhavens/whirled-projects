@@ -15,6 +15,7 @@ package server
 	import interactions.SabotageEvent;
 	
 	import server.Messages.CellState;
+	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelComplete;
@@ -104,7 +105,6 @@ package server
 		    const level:Level = _world.findLevel(event.player.levelNumber);		 
 		  
 		    sendToAll(RemoteWorld.START_PATH, message);
-//			sendToGroup(level.players, RemoteWorld.START_PATH, message);
 		}
 		
 		public function handleNoPath (event:MoveEvent) :void
@@ -115,8 +115,9 @@ package server
 		public function handleCellStateChange (event:CellStateEvent) :void
 		{
 			const message:CellState = event.cell.state;	
-			sendToAll(RemoteWorld.UPDATED_CELL, message);					
-			//sendToGroup(event.level.players, RemoteWorld.UPDATED_CELL, message);
+			const update:CellUpdate = new CellUpdate(event.level.levelNumber);
+			update.addState(event.cell.state);
+			sendToAll(RemoteWorld.UPDATED_CELLS, update);					
 		}
 		
 		/**
