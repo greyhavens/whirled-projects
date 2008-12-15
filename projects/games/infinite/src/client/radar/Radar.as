@@ -25,11 +25,13 @@ package client.radar
         {
             _width = width / 2;
             _height = height / 2;
+            _pixelRadar = new PixelRadar();
         }
         
         public function set player (player:Player) :void
         {
             _player = player;
+            _pixelRadar.player = player;
         }
 
         public function handleChangedLevel(event:PlayerEvent) :void
@@ -45,6 +47,8 @@ package client.radar
         
         public function handlePathComplete(event:PlayerEvent) :void
         {
+        	_pixelRadar.handlePathComplete(event);
+        	
             if (_player == null) {
                 return;
             }
@@ -102,6 +106,8 @@ package client.radar
  
         protected var _directions:Dictionary = new Dictionary();
         
-        protected var _player:Player; 
+        protected var _player:Player;
+        
+        protected var _pixelRadar:PixelRadar; 
     }
 }
