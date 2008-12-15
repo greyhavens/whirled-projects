@@ -1,6 +1,6 @@
 package arithmetic
 {
-	import world.board.Board;
+	import flash.geom.Rectangle;
 	
 	public class BoardRectangle
 	{
@@ -112,6 +112,63 @@ package arithmetic
 				point.x - x,
 				point.y - y
 			)
+		}
+		
+		/**
+		 * Pad this rectangle by a percentage, and return it.  If a minimum is 
+		 * provided, pad by a minimum of that amount.  The aspect ratio isn't really
+		 * something we care about.
+		 */
+		public function percentPad (percent:int, minimum:int = 0) :BoardRectangle
+		{
+			var newWidth:int = (width * percent) / 100;
+			var newHeight:int = (height * percent) / 100;			
+			var hBorder:int = (width - newWidth) /2;
+			var vBorder:int = (height - newHeight) /2;
+
+            if (hBorder < minimum) {
+            	newWidth = width + (minimum * 2);
+            	hBorder = minimum;
+            }			
+			
+			if (vBorder < minimum) {
+				newHeight = height + (minimum * 2);
+				vBorder = minimum;
+			}
+			
+			return new BoardRectangle(x - hBorder, y - vBorder, newWidth, newHeight);
+		}
+		
+		public function get left () :int
+		{
+			return x;
+		}
+		
+		public function get top () :int
+		{
+			return y;
+		}
+		
+		/**
+		 * Return true if this rectangle contains the one that has been passed in.
+		 */
+		public function containsRectangle (other:BoardRectangle) :Boolean
+		{
+			return left <= other.left && top <= other.top && right >= other.right &&
+			    bottom >= other.bottom;
+		}
+		
+		/**
+		 * Return the smallest rectangle that contains both this rectangle and the one
+		 * supplied.
+		 */
+		public function union (other:BoardRectangle) :BoardRectangle
+		{
+			var tlX:int = x < other.x ? x : other.x;
+			var tlY:int = y < other.y ? y : other.y;
+			var brX:int = right > other.right ? right : other.right;
+			var btY:int = bottom > other.bottom ? bottom : other.bottom;
+			return new BoardRectangle(tlX, tlY, brX - tlX, btY - tlY);
 		}
 	}
 }
