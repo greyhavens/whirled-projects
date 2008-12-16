@@ -25,13 +25,16 @@ package client.radar
         {
             _width = width / 2;
             _height = height / 2;
-            _pixelRadar = new PixelRadar();
         }
         
         public function set player (player:Player) :void
         {
             _player = player;
-            _pixelRadar.player = player;
+        }
+
+        public function get player () :Player
+        {
+        	return _player;
         }
 
         public function handleChangedLevel(event:PlayerEvent) :void
@@ -47,8 +50,9 @@ package client.radar
         
         public function handlePathComplete(event:PlayerEvent) :void
         {
-        	_pixelRadar.handlePathComplete(event);
-        	
+            // dispatch the event for views that might be interested
+            dispatchEvent(event);
+
             if (_player == null) {
                 return;
             }
@@ -70,7 +74,7 @@ package client.radar
                 Log.debug("directions differ triggering event");
                 _directions[event.player] = current;
                 directionChanged(event.player);
-            }
+            }            
         }
         
         protected function directionChanged (player:Player) :void
@@ -107,7 +111,5 @@ package client.radar
         protected var _directions:Dictionary = new Dictionary();
         
         protected var _player:Player;
-        
-        protected var _pixelRadar:PixelRadar; 
     }
 }

@@ -11,8 +11,15 @@ package client.radar
         {         
             super();
             _radar = radar;
+            _pixelRadar = new PixelRadar(radar, 200, 100);
+            _pixelRadar.x = 0;
+            _pixelRadar.y = 0;
+            addChild(_pixelRadar);
+            
+            _radar.addEventListener(PlayerEvent.PATH_COMPLETED, _pixelRadar.handlePathComplete);
             _radar.addEventListener(PlayerEvent.RADAR_UPDATE, handleRadarUpdate);
             _radar.addEventListener(PlayerEvent.CHANGED_LEVEL, handleLevelChanged);
+            _radar.addEventListener(PlayerEvent.CHANGED_LEVEL, _pixelRadar.handleChangedLevel);
         }
  
         /**
@@ -64,7 +71,7 @@ package client.radar
                 
                 addChild(_tracking);
                 _tracking.x = 0;
-                _tracking.y = 0;
+                _tracking.y = 100;
                 
                 Log.debug("adding the tracking line: "+_tracking+" at "+_tracking.x+", "+_tracking.y);
                 
@@ -88,6 +95,7 @@ package client.radar
         
         protected var _localPlayer:Player; 
         protected var _radar:Radar;
+        protected var _pixelRadar:PixelRadar;
         protected var _tracking:RadarLine;        
     }
 }

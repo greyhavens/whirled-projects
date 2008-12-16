@@ -170,5 +170,10 @@ package arithmetic
 			var btY:int = bottom > other.bottom ? bottom : other.bottom;
 			return new BoardRectangle(tlX, tlY, brX - tlX, btY - tlY);
 		}
+		
+		public function get aspectRatio () :Number
+		{
+			return Number(width) / Number(height);
+		}
 	}
 }
