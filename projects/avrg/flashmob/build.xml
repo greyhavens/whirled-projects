@@ -1,0 +1,15 @@
+<!-- build configuration -->
+<project name="bingo" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name" value="FlashMobClient"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="flashmob/client"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent" value="FlashMobServer"/>
+  <property name="app.server-agent-package-dir" value="flashmob/server"/>
+
+  <!-- include the standard build script -->
+  <import file="../../../etc/project-include.xml"/>
+
+</project>

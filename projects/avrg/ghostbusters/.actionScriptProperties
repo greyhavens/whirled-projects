@@ -31,7 +31,9 @@
 <sourceAttachmentPathEntry kind="3" linkType="1" path="/export/whirled/dist/lib/whirledlib.swc" sourcepath="/export/whirled/src/as" useDefaultLinkType="false"/>
 </sourceAttachmentPath>
 </compiler>
-<applications/>
+<applications>
+<application path="ghostbusters/client/fight/MicrogameTestApp.as"/>
+</applications>
 <modules/>
 <buildCSSFiles/>
 </actionScriptProperties>
