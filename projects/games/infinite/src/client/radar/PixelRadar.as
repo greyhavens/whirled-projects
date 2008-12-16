@@ -102,14 +102,12 @@ package client.radar
             const minimal:BoardRectangle = minimalBounds();
             
             _bounds = minimal.percentPad(120, 5);
-            Log.debug("bounds: "+_bounds);
             return;
             
             // if we have no bounds set, then just make them the minimal bounds
             // padded by 20%
             if (_bounds == null) {
             	_bounds = minimal.percentPad(120, 5);
-            	Log.debug("initial bounds: "+_bounds);
             	return;            	 
             }
             
@@ -142,9 +140,6 @@ package client.radar
             var xoffset:int;
             var yoffset:int;
             
-            Log.debug("spriteRatio: "+spriteRatio);
-            Log.debug("boundsRatio: "+boundsRatio);
-            
             if (spriteRatio > boundsRatio) {
             	// the sprite is proportionally wider than the bounds so the bounds will be
             	// centered horizontally and the scaling is based on the height difference
@@ -161,17 +156,12 @@ package client.radar
             	yoffset = _height -  (_bounds.height * scale);
             }
             
-            Log.debug("scale: "+scale);
-            Log.debug("xoffset: "+xoffset);
-            Log.debug("yoffset: "+yoffset);
-         
             for each (var pos:BoardCoordinates in _positions) {
                 var x:int = ((pos.x - _bounds.left) * scale) + xoffset;
                 var y:int = ((pos.y - _bounds.top) * scale) + yoffset;
                 g.beginFill(SpriteUtil.WHITE, 1);
                 g.drawCircle(x,y, 2);
                 g.endFill();
-                Log.debug("plotting: "+x+", "+y);
             }               
             
             x = ((player.position.x - _bounds.left) * scale) + xoffset;
@@ -180,7 +170,6 @@ package client.radar
             g.beginFill(SpriteUtil.RED, 1);
             g.drawCircle(x,y, 2);
             g.endFill();
-            Log.debug("local player at: "+x+", "+y);
         }
         
         public function reset () :void
