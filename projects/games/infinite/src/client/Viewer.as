@@ -122,7 +122,9 @@ package client
 		
 		public function updatedCells (register:ClientPlayers, update:CellUpdate) :void
 		{
-			_objective.updateCells(register, update);
+			if (_objective != null) {
+    			_objective.updateCells(register, update);
+            }
 		}
 
 		public function updateCell (register:ClientPlayers, state:CellState) :void
@@ -153,7 +155,6 @@ package client
 		public function addLocalPlayer (player:Player) :void
 		{					    		    
 			_objective.addLocalPlayer(player);
-			_radarView.localPlayer = player;
 		}
 		
 		public function removePlayer (player:Player) :void

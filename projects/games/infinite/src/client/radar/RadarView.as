@@ -30,13 +30,13 @@ package client.radar
         {
         	// do nothing if we don't know about a local player, or we aren't tracking anyone
         	// yet.
-        	if (_localPlayer == null || _tracking == null) {
+        	if (player == null || _tracking == null) {
         		return;
         	}        
         	
         	// if the player who changed level is the local player, then
         	// we should stop tracking them
-        	if (event.player == _localPlayer) {
+        	if (event.player == player) {
         		stopTracking();
         		return;
         	}
@@ -44,7 +44,7 @@ package client.radar
         	// if the player we are tracking has changed level to a different level from the local
         	// player, then stop tracking them.
         	if (_tracking != null && _tracking.player == event.player 
-        	       && event.player.levelNumber != _localPlayer.levelNumber) {
+        	       && event.player.levelNumber != player.levelNumber) {
         		stopTracking();
         	}
         }
@@ -52,7 +52,7 @@ package client.radar
         protected function handleRadarUpdate (event:PlayerEvent) :void
         {
         	Log.debug("radar view received update");        	
-            if (_localPlayer == null) {
+            if (player == null) {
             	Log.debug("radar view local player not set");
                 return;
             }
@@ -66,7 +66,7 @@ package client.radar
             // Add the tracking line for the player referred to by the event.
             if (_tracking == null) {
             	Log.debug("radar view tracking player "+event.player);
-                _tracking = new RadarLine(event.player, _localPlayer);
+                _tracking = new RadarLine(event.player, player);
                 _tracking.startTracking();
                 
                 addChild(_tracking);
@@ -87,13 +87,12 @@ package client.radar
             removeChild(_tracking);
             _tracking = null;        	
         }
-        
-        public function set localPlayer (player:Player) :void
+                
+        public function get player () :Player
         {
-            _localPlayer = player;
-        }
+        	return _radar.player;
+        }        
         
-        protected var _localPlayer:Player; 
         protected var _radar:Radar;
         protected var _pixelRadar:PixelRadar;
         protected var _tracking:RadarLine;        

@@ -169,7 +169,7 @@ package client.radar
                 var x:int = ((pos.x - _bounds.left) * scale) + xoffset;
                 var y:int = ((pos.y - _bounds.top) * scale) + yoffset;
                 g.beginFill(SpriteUtil.WHITE, 1);
-                g.drawCircle(x,y, 1);
+                g.drawCircle(x,y, 2);
                 g.endFill();
                 Log.debug("plotting: "+x+", "+y);
             }               
@@ -178,7 +178,7 @@ package client.radar
             y = ((player.position.y - _bounds.top) * scale) + yoffset;
             
             g.beginFill(SpriteUtil.RED, 1);
-            g.drawCircle(x,y, 1);
+            g.drawCircle(x,y, 2);
             g.endFill();
             Log.debug("local player at: "+x+", "+y);
         }
