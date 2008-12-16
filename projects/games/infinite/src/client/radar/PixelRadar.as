@@ -183,6 +183,14 @@ package client.radar
             Log.debug("local player at: "+x+", "+y);
         }
         
+        public function reset () :void
+        {
+        	_positions = new Array();
+            var g:Graphics = this.graphics;
+            g.clear();
+            SpriteUtil.addBackground(this, _width, _height, SpriteUtil.DARK_GREY, 0.6);
+        }
+        
         protected var _width:int;        
         protected var _height:int
         protected var _bounds:BoardRectangle;        

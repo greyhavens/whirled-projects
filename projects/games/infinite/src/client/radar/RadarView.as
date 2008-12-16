@@ -93,6 +93,11 @@ package client.radar
         	return _radar.player;
         }        
         
+        public function reset () :void
+        {
+        	_pixelRadar.reset();
+        }
+        
         protected var _radar:Radar;
         protected var _pixelRadar:PixelRadar;
         protected var _tracking:RadarLine;        

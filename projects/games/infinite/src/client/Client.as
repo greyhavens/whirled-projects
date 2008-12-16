@@ -234,7 +234,7 @@ package client
             _controller = new PlayerController(_world, _viewer, _players, _localPlayer, _inventory);
             
 			_level = player.levelNumber;
-			
+						
 			// add the players we know about on this level
 			_viewer.addLocalPlayer(_localPlayer);
 			for each (var p:Player in _players.list) {

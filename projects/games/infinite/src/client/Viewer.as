@@ -118,6 +118,8 @@ package client
 			if (Config.showViewPoint) {
 				showViewPoint();
 			}
+			
+			_radarView.reset();
 		}
 		
 		public function updatedCells (register:ClientPlayers, update:CellUpdate) :void
