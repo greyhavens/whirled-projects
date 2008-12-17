@@ -1,5 +1,5 @@
 <!-- build configuration -->
-<project name="bingo" default="compile" basedir=".">
+<project name="flashmob" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name" value="FlashMobClient"/>
@@ -9,7 +9,16 @@
   <property name="app.server-agent" value="FlashMobServer"/>
   <property name="app.server-agent-package-dir" value="flashmob/server"/>
 
+  <property name="local.msoy-pages-dir" value="/export/msoy/pages/media"/>
+  <property name="local.client-name" value="50754dd61217428b5a7627401bf9fc0b6541907d.swf"/>
+  <property name="local.server-name" value="09eea9dc1a7f5368ac245f50c67dc7c29da3e007.abc"/>
+
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
+
+  <target name="copylocal" depends="compile">
+	<copy overwrite="true" file="${app.name}.swf" toFile="${local.msoy-pages-dir}/${local.client-name}"/>
+	<copy overwrite="true" file="${app.server-agent}.abc" toFile="${local.msoy-pages-dir}/${local.server-name}"/>
+  </target>
 
 </project>

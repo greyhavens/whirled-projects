@@ -1,4 +1,4 @@
-package flashmob.client {
+package flashmob.client.view {
 
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
@@ -15,7 +15,7 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
-import popcraft.util.SpriteUtil;
+import flashmob.util.SpriteUtil;
 
 public class UIBits
 {
