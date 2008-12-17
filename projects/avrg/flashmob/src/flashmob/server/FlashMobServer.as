@@ -1,16 +1,13 @@
 package flashmob.server {
 
-import com.threerings.util.Log;
-import com.whirled.contrib.avrg.oneroom.OneRoomGameServer;
-import com.whirled.net.MessageReceivedEvent;
+import com.whirled.ServerObject;
+import com.whirled.avrg.AVRServerGameControl;
 
-public class Server extends OneRoomGameServer
+public class FlashMobServer extends ServerObject
 {
-    public function Server ()
+    public function FlashMobServer ()
     {
-        // tell OneRoomGameServer to instantiate our GameController class when a new
-        // Bingo room is created
-        //OneRoomGameServer.roomType = GameController;
+        ServerContext.gameCtrl = new AVRServerGameControl(this);
     }
 }
 
