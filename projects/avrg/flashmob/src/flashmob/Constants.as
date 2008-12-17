@@ -11,6 +11,9 @@ public class Constants
         [ 2, 6 ],       // Small
         [ 7, 999 ],     // Large
     ];
+
+    public static const MIN_SPECTACLE_PATTERNS :int = 2;
+    public static const MAX_SPECTACLE_PATTERNS :int = 10;
 }
 
 }
