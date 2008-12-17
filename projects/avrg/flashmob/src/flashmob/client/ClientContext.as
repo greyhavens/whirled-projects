@@ -9,6 +9,11 @@ public class ClientContext
     public static var gameCtrl :AVRGameControl;
     public static var localPlayerId :int;
 
+    public static function get partyId () :int
+    {
+        return (gameCtrl.isConnected() ? gameCtrl.game.getPlayerInfo(localPlayerId).partyId : 0);
+    }
+
     public static function get isLocalPlayerPartyLeader () :Boolean
     {
         return true;

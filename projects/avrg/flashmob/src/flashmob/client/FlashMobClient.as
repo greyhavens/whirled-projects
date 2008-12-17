@@ -5,14 +5,17 @@ package flashmob.client {
 
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
 
 import flashmob.*;
 import flashmob.client.view.BasicErrorMode;
+import flashmob.party.PartyPropGetControl;
 
 [SWF(width="700", height="500")]
 public class FlashMobClient extends Sprite
@@ -42,14 +45,48 @@ public class FlashMobClient extends Sprite
         AppContext.init();
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
 
-        addEventListener(Event.ADDED_TO_STAGE, handleAdded);
-        addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
+        _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
+
+        _gameStateCtrl =
+            new PartyPropGetControl(ClientContext.partyId, ClientContext.gameCtrl.game.props);
     }
 
     protected function tryStartGame () :void
     {
         if (!_addedToStage || !_resourcesLoaded) {
             return;
+        }
+
+        // We need to know when the game state changes
+        _events.registerListener(_gameStateCtrl, PropertyChangedEvent.PROPERTY_CHANGED,
+            function (e :PropertyChangedEvent) :void {
+                if (e.name == Constants.PROP_GAMESTATE) {
+                    gameStateChanged(e.newValue as int);
+                }
+            });
+
+        gameStateChanged(_gameStateCtrl.get(Constants.PROP_GAMESTATE) as int);
+    }
+
+    protected function gameStateChanged (newState :int) :void
+    {
+        if (newState == _curGameState) {
+            return;
+        }
+
+        _curGameState = newState;
+
+        switch (newState) {
+        case Constants.STATE_SPECTACLE_CHOOSER:
+            break;
+
+        case Constants.STATE_SPECTACLE_CREATOR:
+            ClientContext.mainLoop.unwindToMode(new SpectacleCreatorMode());
+            break;
+
+        case Constants.STATE_SPECTACLE_PLAY:
+            break;
         }
     }
 
@@ -77,9 +114,15 @@ public class FlashMobClient extends Sprite
         log.info("Removed from stage - Unloading...");
 
         ClientContext.mainLoop.shutdown();
+        _gameStateCtrl.shutdown();
+        _events.freeAllHandlers();
     }
+
+    protected var _curGameState :int = -1;
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
+    protected var _gameStateCtrl :PartyPropGetControl;
+    protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 }
