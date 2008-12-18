@@ -6,9 +6,9 @@ import flash.events.EventDispatcher;
 
 import flashmob.party.NameUtil;
 
-public class PartyMessageAdapter extends EventDispatcher
+public class PartyMsgReceiver extends EventDispatcher
 {
-    public function PartyMessageAdapter (partyId :int, msgDispatcher :EventDispatcher)
+    public function PartyMsgReceiver (partyId :int, msgDispatcher :EventDispatcher)
     {
         _partyId = partyId;
         _nameUtil = new NameUtil(_partyId);
@@ -24,7 +24,7 @@ public class PartyMessageAdapter extends EventDispatcher
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
         dispatchEvent(new MessageReceivedEvent(
-            _nameUtil.encodeName(e.name),
+            _nameUtil.decodeName(e.name),
             e.value,
             e.senderId));
     }

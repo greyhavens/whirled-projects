@@ -2,14 +2,13 @@ package flashmob.party {
 
 import com.whirled.net.MessageSubControl;
 
-import mx.utils.NameUtil;
-
-public class PartyMessageControl
+public class PartyMsgSender
     implements MessageSubControl
 {
-    public function PartyMessageControl (partyId :int, msgCtrl :MessageSubControl)
+    public function PartyMsgSender (partyId :int, msgCtrl :MessageSubControl)
     {
         _partyId = partyId;
+        _nameUtil = new NameUtil(_partyId);
         _msgCtrl = msgCtrl;
     }
 
