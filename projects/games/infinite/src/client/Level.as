@@ -1,5 +1,7 @@
 package client
 {
+    import world.DistributedBoard;
+    
 	public class Level
 	{
 		public var number:int;
@@ -18,5 +20,7 @@ package client
 		{
 		    return -height;
 		}
+		
+		protected var _board:DistributedBoard;
 	}
 }
