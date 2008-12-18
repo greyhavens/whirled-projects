@@ -1,6 +1,5 @@
 package flashmob.client {
 
-import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Graphics;
@@ -35,28 +34,44 @@ public class SpectacleCreatorMode extends GameDataMode
 
         setText("Everybody! Arrange yourselves.");
         updateButtons();
-
-        _timeCounter = new TimeCounter();
-        addObject(_timeCounter);
     }
 
     override public function onMsgReceived (e :MessageReceivedEvent) :void
     {
+        if (e.name == Constants.MSG_SNAPSHOTACK) {
+            _waitingForSnapshotResponse = false;
+            _numSnapshots++;
+            updateButtons();
 
+        } else if (e.name == Constants.MSG_SNAPSHOTERR) {
+            _waitingForSnapshotResponse = false;
+            updateButtons();
+        }
+    }
+
+    protected function get canSnapshot () :Boolean
+    {
+        if (_numSnapshots >= Constants.MAX_SPECTACLE_PATTERNS) {
+            return false;
+        } else if (_waitingForSnapshotResponse) {
+            return false;
+        } else if (_numSnapshots > 0 &&
+                   ClientContext.timeNow - _lastSnapshotTime < Constants.MIN_SNAPSHOT_TIME) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function get canFinish () :Boolean
+    {
+        return _numSnapshots >= Constants.MIN_SPECTACLE_PATTERNS;
     }
 
     protected function onSnapshotClicked (...ignored) :void
     {
         ClientContext.sendAgentMsg(Constants.MSG_SNAPSHOT);
-        // capture the locations of all the players
-        var pattern :Pattern = new Pattern();
-        for each (var playerId :int in ClientContext.playerIds) {
-            var info :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo(playerId);
-            pattern.locs.push(new PatternLoc(info.x, info.y, info.z));
-        }
-        pattern.timeLimit = _timeCounter.time;
-        _spectacle.patterns.push(pattern);
-
+        _waitingForSnapshotResponse = true;
         updateButtons();
     }
 
@@ -67,8 +82,8 @@ public class SpectacleCreatorMode extends GameDataMode
 
     protected function updateButtons () :void
     {
-        _doneButton.visible = _spectacle.numPatterns >= Constants.MIN_SPECTACLE_PATTERNS;
-        _snapshotButton.visible = _spectacle.numPatterns < Constants.MAX_SPECTACLE_PATTERNS;
+        _doneButton.visible = this.canFinish;
+        _snapshotButton.visible = this.canSnapshot;
     }
 
     protected function setText (text :String) :void
@@ -92,50 +107,17 @@ public class SpectacleCreatorMode extends GameDataMode
         }
     }
 
-    protected var _spectacle :Spectacle = new Spectacle();
     protected var _startButton :SimpleButton;
     protected var _snapshotButton :SimpleButton;
     protected var _doneButton :SimpleButton;
     protected var _tf :TextField;
-    protected var _timeCounter :TimeCounter;
+
+    protected var _numSnapshots :int;
+    protected var _waitingForSnapshotResponse :Boolean;
+    protected var _lastSnapshotTime :Number = 0;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;
 }
 
-}
-
-import com.whirled.contrib.simplegame.SimObject;
-
-class TimeCounter extends SimObject
-{
-    public function reset () :void
-    {
-        _time = 0;
-    }
-
-    public function start () :void
-    {
-        _running = true;
-    }
-
-    public function stop () :void
-    {
-        _running = false;
-    }
-
-    public function get time () :Number
-    {
-        return _time;
-    }
-
-    override protected function update (dt :Number) :void
-    {
-        if (_running) {
-            _time += dt;
-        }
-    }
-
-    protected var _time :Number = 0;
-    protected var _running :Boolean;
 }

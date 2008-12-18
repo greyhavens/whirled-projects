@@ -14,9 +14,11 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.utils.ByteArray;
 
 import flashmob.*;
 import flashmob.client.view.BasicErrorMode;
+import flashmob.data.Spectacle;
 import flashmob.party.*;
 import flashmob.server.*;
 
@@ -65,7 +67,6 @@ public class FlashMobClient extends Sprite
         }
 
         // Load resources
-        AppContext.init();
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
@@ -100,28 +101,51 @@ public class FlashMobClient extends Sprite
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == Constants.MSG_RESETGAME) {
+        switch (e.name) {
+        case Constants.MSG_RESETGAME:
             log.info("A player left the game. Resetting.");
-        } else if (this.curDataListener != null) {
-            this.curDataListener.onMsgReceived(e);
+            break;
+
+        default:
+            if (this.curDataListener != null) {
+                this.curDataListener.onMsgReceived(e);
+            }
+            break;
         }
     }
 
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == Constants.PROP_GAMESTATE) {
+        switch (e.name) {
+        case Constants.PROP_GAMESTATE:
             gameStateChanged(e.newValue as int);
-        } else if (e.name == Constants.PROP_PLAYERS) {
+            break;
+
+        case Constants.PROP_PLAYERS:
             playersChanged(e.newValue as Array);
-        } else if (this.curDataListener != null) {
-            this.curDataListener.onPropChanged(e);
+            break;
+
+        case Constants.PROP_SPECTACLE:
+            var bytes :ByteArray = e.newValue as ByteArray;
+            ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
+            break;
+
+        default:
+            if (this.curDataListener != null) {
+                this.curDataListener.onPropChanged(e);
+            }
+            break;
         }
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (this.curDataListener != null) {
-            this.curDataListener.onElemChanged(e);
+        switch (e.name) {
+        default:
+            if (this.curDataListener != null) {
+                this.curDataListener.onElemChanged(e);
+            }
+            break;
         }
     }
 

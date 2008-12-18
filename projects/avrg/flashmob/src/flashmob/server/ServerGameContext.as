@@ -3,11 +3,12 @@ package flashmob.server {
 import com.threerings.util.Log;
 
 import flashmob.*;
+import flashmob.data.Spectacle;
 import flashmob.party.*;
 
 public class ServerGameContext
 {
-    public var modeStack :ServerModeStack;
+    public var game :ServerGame;
     public var partyId :int;
     public var players :Array = [];
     public var props :PartyPropControl;
@@ -17,6 +18,17 @@ public class ServerGameContext
     public function get numPlayers () :int
     {
         return players.length;
+    }
+
+    public function set spectacle (val :Spectacle) :void
+    {
+        _spectacle = val;
+        props.set(Constants.PROP_SPECTACLE, val.toBytes());
+    }
+
+    public function get spectacle () :Spectacle
+    {
+        return _spectacle;
     }
 
     public function set waitingForPlayers (val :Boolean) :void
@@ -34,6 +46,8 @@ public class ServerGameContext
     {
         return FlashMobServer.log;
     }
+
+    protected var _spectacle :Spectacle;
 }
 
 }

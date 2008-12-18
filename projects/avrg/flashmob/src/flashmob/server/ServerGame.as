@@ -17,7 +17,7 @@ public class ServerGame extends ServerModeStack
 {
     public function ServerGame (partyId :int)
     {
-        _ctx.modeStack = this;
+        _ctx.game = this;
         _ctx.partyId = partyId;
         _ctx.props = new PartyPropControl(_ctx.partyId, ServerContext.gameCtrl.game.props);
         _ctx.inMsg = new PartyMsgReceiver(_ctx.partyId, ServerContext.gameCtrl.game);
@@ -94,6 +94,23 @@ public class ServerGame extends ServerModeStack
         return _ctx.numPlayers == 0;
     }
 
+    public function set gameState (val :int) :void
+    {
+        log.info("Changing game state", "partyId", _ctx.partyId, "state", val);
+        _ctx.props.set(Constants.PROP_GAMESTATE, val, true);
+
+        switch (val) {
+        case Constants.STATE_SPECTACLE_CREATOR:
+            unwindToMode(new ServerSpectacleCreatorMode(_ctx));
+            break;
+        }
+    }
+
+    public function get gameState () :int
+    {
+        return _ctx.props.get(Constants.PROP_GAMESTATE) as int;
+    }
+
     protected function updatePlayers (...ignored) :void
     {
         // check to see if all players are in the same room
@@ -116,23 +133,6 @@ public class ServerGame extends ServerModeStack
         _ctx.waitingForPlayers = !everyoneInRoom;
 
         _ctx.props.set(Constants.PROP_PLAYERS, _ctx.players);
-    }
-
-    protected function set gameState (val :int) :void
-    {
-        log.info("Changing game state", "partyId", _ctx.partyId, "state", val);
-        _ctx.props.set(Constants.PROP_GAMESTATE, val, true);
-
-        switch (val) {
-        case Constants.STATE_SPECTACLE_CREATOR:
-            unwindToMode(new ServerSpectacleCreatorMode(_ctx));
-            break;
-        }
-    }
-
-    protected function get gameState () :int
-    {
-        return _ctx.props.get(Constants.PROP_GAMESTATE) as int;
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void

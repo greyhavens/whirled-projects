@@ -25,8 +25,6 @@ import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.events.Event;
-import flash.events.TimerEvent;
-import flash.utils.Timer;
 
 public class ServerModeStack
 {
@@ -64,38 +62,8 @@ public class ServerModeStack
      */
     public function shutdown () :void
     {
-        stop();
-
         popAllModes();
         handleModeTransitions();
-    }
-
-    /**
-     * Kicks off the MainLoop. Game updates will start happening after this
-     * function is called.
-     */
-    public function run () :void
-    {
-        if (_running) {
-            return;
-        }
-
-        // ensure that proper setup has completed
-        setup();
-
-        _running = true;
-        _timer.addEventListener(TimerEvent.TIMER, update);
-        _timer.reset();
-        _timer.start();
-    }
-
-    public function stop () :void
-    {
-        if (_running) {
-            _timer.removeEventListener(TimerEvent.TIMER, update);
-            _timer.stop();
-            _running = false;
-        }
     }
 
     /**
@@ -194,13 +162,17 @@ public class ServerModeStack
         transition.type = transitionType;
         transition.index = index;
         _pendingModeTransitionQueue.push(transition);
+
+        handleModeTransitions();
     }
 
     protected function handleModeTransitions () :void
     {
-        if (_pendingModeTransitionQueue.length <= 0) {
+        if (_processingTransitions || _pendingModeTransitionQueue.length <= 0) {
             return;
         }
+
+        _processingTransitions = true;
 
         var initialTopMode :ServerMode = this.topMode;
 
@@ -305,20 +277,21 @@ public class ServerModeStack
                 topMode.enterInternal();
             }
         }*/
+
+        _processingTransitions = false;
+        if (_pendingModeTransitionQueue.length > 0) {
+            handleModeTransitions();
+        }
+
     }
 
-    protected function update (e :Event) :void
-    {
-        handleModeTransitions();
-    }
-
-    protected var _timer :Timer = new Timer(1000 / 20, 0);
     protected var _hasSetup :Boolean = false;
     protected var _running :Boolean = false;
     protected var _lastTime :Number;
     protected var _modeStack :Array = [];
     protected var _pendingModeTransitionQueue :Array = [];
     protected var _updatables :Array = [];
+    protected var _processingTransitions :Boolean;
 
     protected var _fps :Number = 0;
 
