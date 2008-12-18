@@ -7,7 +7,7 @@ import flash.utils.ByteArray;
 public class Pattern
 {
     public var timeLimit :int;  // number of seconds
-    public var locs :Array = [];
+    public var locs :Array = []; // Array<PatternLoc>
 
     public function toBytes (ba :ByteArray = null) :ByteArray
     {

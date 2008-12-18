@@ -17,6 +17,7 @@ import flash.events.Event;
 import flashmob.*;
 import flashmob.client.view.BasicErrorMode;
 import flashmob.party.PartyMsgReceiver;
+import flashmob.party.PartyMsgSender;
 import flashmob.party.PartyPropGetControl;
 import flashmob.server.*;
 
@@ -40,8 +41,15 @@ public class FlashMobClient extends Sprite
         log.info("Starting game");
 
         ClientContext.gameCtrl = new AVRGameControl(this);
-        ClientContext.localPlayerId = (ClientContext.gameCtrl.isConnected() ?
-            ClientContext.gameCtrl.player.getPlayerId() : 0);
+        ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
+        ClientContext.partyId =
+            ClientContext.gameCtrl.game.getPlayerInfo(ClientContext.localPlayerId).partyId;
+        ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
+            ClientContext.gameCtrl.agent);
+        ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,
+            ClientContext.gameCtrl.game);
+        ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
+            ClientContext.gameCtrl.game.props);
 
         // Init simplegame
         ClientContext.mainLoop = new MainLoop(this,
@@ -63,10 +71,6 @@ public class FlashMobClient extends Sprite
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
-
-        _propCtrl =
-            new PartyPropGetControl(ClientContext.partyId, ClientContext.gameCtrl.game.props);
-        _inMsg = new PartyMsgReceiver(ClientContext.partyId, ClientContext.gameCtrl.game);
     }
 
     protected function tryStartGame () :void
@@ -76,10 +80,11 @@ public class FlashMobClient extends Sprite
         }
 
         // We need to pay attention to certain game messages
-        _events.registerListener(_inMsg, MessageReceivedEvent.MESSAGE_RECEIVED, onMsgReceived);
+        _events.registerListener(ClientContext.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMsgReceived);
 
         // We need to know when a few things change
-        _events.registerListener(_propCtrl, PropertyChangedEvent.PROPERTY_CHANGED,
+        _events.registerListener(ClientContext.props, PropertyChangedEvent.PROPERTY_CHANGED,
             function (e :PropertyChangedEvent) :void {
                 if (e.name == Constants.PROP_GAMESTATE) {
                     gameStateChanged(e.newValue as int);
@@ -88,8 +93,8 @@ public class FlashMobClient extends Sprite
                 }
             });
 
-        gameStateChanged(_propCtrl.get(Constants.PROP_GAMESTATE) as int);
-        playersChanged(_propCtrl.get(Constants.PROP_PLAYERS) as Array);
+        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE) as int);
+        playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as Array);
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -155,8 +160,9 @@ public class FlashMobClient extends Sprite
         log.info("Removed from stage - Unloading...");
 
         ClientContext.mainLoop.shutdown();
-        _propCtrl.shutdown();
-        _inMsg.shutdown();
+        ClientContext.inMsg.shutdown();
+        ClientContext.props.shutdown();
+
         _events.freeAllHandlers();
     }
 
@@ -164,8 +170,6 @@ public class FlashMobClient extends Sprite
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
-    protected var _propCtrl :PartyPropGetControl;
-    protected var _inMsg :PartyMsgReceiver;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 }

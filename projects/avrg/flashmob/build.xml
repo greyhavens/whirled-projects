@@ -16,7 +16,7 @@
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
 
-  <target name="copylocal" depends="compile">
+  <target name="copylocal">
 	<copy overwrite="true" file="${app.name}.swf" toFile="${local.msoy-pages-dir}/${local.client-name}"/>
 	<copy overwrite="true" file="${app.server-agent}.abc" toFile="${local.msoy-pages-dir}/${local.server-name}"/>
   </target>

@@ -1,5 +1,7 @@
 package flashmob.data {
 
+import com.threerings.util.StringUtil;
+
 import flash.utils.ByteArray;
 
 public class PatternLoc
@@ -35,6 +37,10 @@ public class PatternLoc
         return this;
     }
 
+    public function toString () :String
+    {
+        return StringUtil.simpleToString(this);
+    }
 }
 
 }

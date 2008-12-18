@@ -21,9 +21,11 @@ public class SpectacleCreatorMode extends AppMode
         _modeSprite.addChild(_tf);
 
         if (ClientContext.isLocalPlayerPartyLeader) {
+            _startButton = UIBits.createButton("Start!", 1.2);
             _snapshotButton = UIBits.createButton("Snapshot!", 1.2);
             _doneButton = UIBits.createButton("Done!", 1.2);
 
+            registerListener(_startButton, MouseEvent.CLICK, onSnapshotClicked);
             registerListener(_snapshotButton, MouseEvent.CLICK, onSnapshotClicked);
             registerListener(_doneButton, MouseEvent.CLICK, onDoneClicked);
 
@@ -33,17 +35,21 @@ public class SpectacleCreatorMode extends AppMode
 
         setText("Everybody! Arrange yourselves.");
         updateButtons();
+
+        _timeCounter = new TimeCounter();
+        addObject(_timeCounter);
     }
 
     protected function onSnapshotClicked (...ignored) :void
     {
+        
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
         for each (var playerId :int in ClientContext.playerIds) {
             var info :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo(playerId);
             pattern.locs.push(new PatternLoc(info.x, info.y, info.z));
         }
-
+        pattern.timeLimit = _timeCounter.time;
         _spectacle.patterns.push(pattern);
 
         updateButtons();
@@ -82,12 +88,49 @@ public class SpectacleCreatorMode extends AppMode
     }
 
     protected var _spectacle :Spectacle = new Spectacle();
+    protected var _startButton :SimpleButton;
     protected var _snapshotButton :SimpleButton;
     protected var _doneButton :SimpleButton;
     protected var _tf :TextField;
+    protected var _timeCounter :TimeCounter;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;
 }
 
+}
+
+import com.whirled.contrib.simplegame.SimObject;
+
+class TimeCounter extends SimObject
+{
+    public function reset () :void
+    {
+        _time = 0;
+    }
+
+    public function start () :void
+    {
+        _running = true;
+    }
+
+    public function stop () :void
+    {
+        _running = false;
+    }
+
+    public function get time () :Number
+    {
+        return _time;
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        if (_running) {
+            _time += dt;
+        }
+    }
+
+    protected var _time :Number = 0;
+    protected var _running :Boolean;
 }

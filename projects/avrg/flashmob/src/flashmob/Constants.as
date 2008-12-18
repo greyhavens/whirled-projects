@@ -24,9 +24,11 @@ public class Constants
     // Properties
     public static const PROP_GAMESTATE :String = "gs";
     public static const PROP_PLAYERS :String = "pl";
+    public static const PROP_WAITINGFORPLAYERS :String = "wp";
 
     // Messages
     public static const MSG_RESETGAME :String = "rg";
+    public static const MSG_SNAPSHOT :String = "ss";
 }
 
 }
