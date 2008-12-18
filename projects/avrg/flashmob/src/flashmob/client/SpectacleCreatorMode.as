@@ -1,7 +1,7 @@
 package flashmob.client {
 
 import com.whirled.avrg.AVRGameAvatar;
-import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;
@@ -13,7 +13,7 @@ import flashmob.*;
 import flashmob.client.view.*;
 import flashmob.data.*;
 
-public class SpectacleCreatorMode extends AppMode
+public class SpectacleCreatorMode extends GameDataMode
 {
     override protected function setup () :void
     {
@@ -40,9 +40,14 @@ public class SpectacleCreatorMode extends AppMode
         addObject(_timeCounter);
     }
 
+    override public function onMsgReceived (e :MessageReceivedEvent) :void
+    {
+
+    }
+
     protected function onSnapshotClicked (...ignored) :void
     {
-        
+        ClientContext.sendAgentMsg(Constants.MSG_SNAPSHOT);
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
         for each (var playerId :int in ClientContext.playerIds) {

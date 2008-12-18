@@ -8,6 +8,7 @@ import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
@@ -16,9 +17,7 @@ import flash.events.Event;
 
 import flashmob.*;
 import flashmob.client.view.BasicErrorMode;
-import flashmob.party.PartyMsgReceiver;
-import flashmob.party.PartyMsgSender;
-import flashmob.party.PartyPropGetControl;
+import flashmob.party.*;
 import flashmob.server.*;
 
 [SWF(width="700", height="500")]
@@ -29,7 +28,7 @@ public class FlashMobClient extends Sprite
     protected static function DEBUG_REMOVE_ME () :void
     {
         var c :Class;
-        c = FlashMobGame;
+        c = ServerGame;
         c = FlashMobServer;
         c = ServerContext;
     }
@@ -79,28 +78,50 @@ public class FlashMobClient extends Sprite
             return;
         }
 
-        // We need to pay attention to certain game messages
+        // We handle certain messages and property changes here at the top-level.
+        // Those that don't get handled get sent to the top-most AppMode, if that mode
+        // implements GameDataListener.
         _events.registerListener(ClientContext.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
-
-        // We need to know when a few things change
         _events.registerListener(ClientContext.props, PropertyChangedEvent.PROPERTY_CHANGED,
-            function (e :PropertyChangedEvent) :void {
-                if (e.name == Constants.PROP_GAMESTATE) {
-                    gameStateChanged(e.newValue as int);
-                } else if (e.name == Constants.PROP_PLAYERS) {
-                    playersChanged(e.newValue as Array);
-                }
-            });
+            onPropChanged);
+        _events.registerListener(ClientContext.props, ElementChangedEvent.ELEMENT_CHANGED,
+            onElemChanged);
 
-        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE) as int);
         playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as Array);
+        // This will put the initial AppMode into the MainLoop
+        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE) as int);
+    }
+
+    protected function get curDataListener () :GameDataListener
+    {
+        return ClientContext.mainLoop.topMode as GameDataListener;
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
         if (e.name == Constants.MSG_RESETGAME) {
             log.info("A player left the game. Resetting.");
+        } else if (this.curDataListener != null) {
+            this.curDataListener.onMsgReceived(e);
+        }
+    }
+
+    protected function onPropChanged (e :PropertyChangedEvent) :void
+    {
+        if (e.name == Constants.PROP_GAMESTATE) {
+            gameStateChanged(e.newValue as int);
+        } else if (e.name == Constants.PROP_PLAYERS) {
+            playersChanged(e.newValue as Array);
+        } else if (this.curDataListener != null) {
+            this.curDataListener.onPropChanged(e);
+        }
+    }
+
+    protected function onElemChanged (e :ElementChangedEvent) :void
+    {
+        if (this.curDataListener != null) {
+            this.curDataListener.onElemChanged(e);
         }
     }
 

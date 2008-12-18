@@ -18,6 +18,11 @@ public class ClientContext
     public static var outMsg :PartyMsgSender;
     public static var props :PartyPropGetControl;
 
+    public static function sendAgentMsg (name :String, value :Object = null) :void
+    {
+        outMsg.sendMessage(name, value);
+    }
+
     public static function get isLocalPlayerPartyLeader () :Boolean
     {
         return (playerIds.length > 0 && playerIds[0] == localPlayerId);
