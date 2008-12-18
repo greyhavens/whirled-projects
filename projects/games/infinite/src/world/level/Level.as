@@ -12,6 +12,7 @@ package world.level
 	
 	import world.Cell;
 	import world.Chronometer;
+	import world.MasterBoard;
 	import world.NeighborhoodBoard;
 	import world.Player;
 	import world.PlayerMap;
@@ -173,6 +174,7 @@ package world.level
         protected var _board:NeighborhoodBoard;
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
+		protected var _masterBoard:MasterBoard;
 		
 		public static const MIN_HEIGHT:int = 8;
 	}

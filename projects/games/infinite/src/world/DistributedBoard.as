@@ -13,12 +13,18 @@ package world
     import world.board.Board;
     import world.board.BoardInteractions;
     
+    /**
+     * 'read only' board implementation based on the distributed set.
+     */ 
     public class DistributedBoard implements BoardInteractions
     {
-        public function DistributedBoard(startingBoard:Board, control:NetSubControl)
+        public function DistributedBoard(height:int, owners:Owners, clock:Chronometer, startingBoard:Board, control:NetSubControl)
         {
+            _height = height;
+            _owners = owners;
+            _clock = clock; 
             _startingBoard = startingBoard;
-            _slotName = "level-" + levelNumber;
+            _slotName = MasterBoard.slotName(startingBoard.levelNumber);
             _control = control;
             _control.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);            
         }
@@ -30,22 +36,10 @@ package world
         public function handleElementChanged (event:ElementChangedEvent) :void
         {
             if (event.name == _slotName) {
-                delete _cache[intToPosition(event.key).key];
+                delete _cache[MasterBoard.intToPosition(_height, event.key).key];
             }            
         }
-        
-        protected function positionToInt (coords:BoardCoordinates) :int
-        {
-            return (coords.x * _height) + coords.y;
-        }
-        
-        protected function intToPosition (pos:int) :BoardCoordinates
-        {
-            const y:int = pos % _height;
-            const x:int = (pos - y) / _height;
-            return new BoardCoordinates(x, y);
-        }
-                
+                        
         public function cellAt(coords:BoardCoordinates) :Cell
         {
             const cached:Cell = _cache[coords.key] as Cell
