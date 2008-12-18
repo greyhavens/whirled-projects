@@ -38,7 +38,7 @@ public class FlashMobServer extends ServerObject
                 "partyId", partyId);
         }
 
-        var game :FlashMobGame = getGame(partyId);
+        var game :ServerGame = getGame(partyId);
 
         // There's no game in session for this party. Start a new one.
         if (game == null) {
@@ -66,7 +66,7 @@ public class FlashMobServer extends ServerObject
 
         log.info("Player left", "playerId", playerId, "partyId", partyId);
 
-        var game :FlashMobGame = getGame(partyId);
+        var game :ServerGame = getGame(partyId);
         if (game == null) {
             log.warning("Received PLAYER_QUIT_GAME message for a player not attached to a game",
                 "playerId", playerId,
@@ -76,18 +76,18 @@ public class FlashMobServer extends ServerObject
 
         // If the game has no more players, shut it down.
         game.removePlayer(playerId);
-        if (game.numPlayers == 0) {
+        if (game.isEmpty) {
             log.info("Shutting down empty game", "partyId", partyId);
             _games.remove(partyId);
             game.shutdown();
         }
     }
 
-    protected function startGame (partyId :int) :FlashMobGame
+    protected function startGame (partyId :int) :ServerGame
     {
         log.info("Starting new game", "partyId", partyId);
 
-        var game :FlashMobGame = new FlashMobGame(partyId);
+        var game :ServerGame = new ServerGame(partyId);
         if (_games.put(partyId, game) !== undefined) {
             log.warning("Started multiple games with the same partyId (" + partyId + ")");
         }
@@ -95,7 +95,7 @@ public class FlashMobServer extends ServerObject
         return game;
     }
 
-    protected function getGame (partyId :int) :FlashMobGame
+    protected function getGame (partyId :int) :ServerGame
     {
         return _games.get(partyId);
     }
