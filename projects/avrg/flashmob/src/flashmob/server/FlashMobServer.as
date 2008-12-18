@@ -10,9 +10,12 @@ import com.whirled.avrg.PlayerInfo;
 public class FlashMobServer extends ServerObject
 {
     public static var log :Log = Log.getLog(FlashMobServer);
+    public static const VERSION :int = 0;
 
     public function FlashMobServer ()
     {
+        log.info("Starting server", "version", VERSION);
+
         ServerContext.gameCtrl = new AVRServerGameControl(this);
         ServerContext.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME,
             onPlayerJoined);
@@ -56,6 +59,8 @@ public class FlashMobServer extends ServerObject
                 "playerId", playerId);
             return;
         }
+
+        _playerPartyMap.remove(playerId);
 
         var partyId :int = partyIdObj as int;
 

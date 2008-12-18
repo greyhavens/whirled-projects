@@ -16,13 +16,17 @@ public class Constants
     public static const MAX_SPECTACLE_PATTERNS :int = 10;
 
     // Game states
-    public static const STATE_INIT :int = 0;
+    public static const STATE_INVALID :int = 0;
     public static const STATE_SPECTACLE_CHOOSER :int = 1;
     public static const STATE_SPECTACLE_CREATOR :int = 2;
     public static const STATE_SPECTACLE_PLAY :int = 3;
 
-    // Prop names
+    // Properties
     public static const PROP_GAMESTATE :String = "gs";
+    public static const PROP_PLAYERS :String = "pl";
+
+    // Messages
+    public static const MSG_RESETGAME :String = "rg";
 }
 
 }

@@ -8,6 +8,7 @@ public class ClientContext
     public static var mainLoop :MainLoop;
     public static var gameCtrl :AVRGameControl;
     public static var localPlayerId :int;
+    public static var playerIds :Array = [];
 
     public static function get partyId () :int
     {
