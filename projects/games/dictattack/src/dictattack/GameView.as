@@ -16,6 +16,8 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
+import com.threerings.flash.TextFieldUtil;
+
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.game.GameControl;
 import com.whirled.net.MessageReceivedEvent;
@@ -39,14 +41,16 @@ public class GameView extends Sprite
         y = 5;
 
         // create the text field via which we'll accept player input
-        _input = new TextField();
-        _input.background = true;
-        _input.backgroundColor = uint(0xFFFFFF);
-        _input.defaultTextFormat = _ctx.content.makeInputFormat(uint(0x000000), true);
-        _input.type = TextFieldType.INPUT;
-        _input.width = _ctx.content.inputRect.width;
-        _input.height = _ctx.content.inputRect.height;
-        _input.restrict = "[A-Za-z]"; // only allow letters to be typed; TODO: i18n?
+        _input = TextFieldUtil.createField("",
+            {
+                background: true,
+                backgroundColor: 0xFFFFFF,
+                defaultTextFormat: _ctx.content.makeInputFormat(uint(0x000000), true),
+                type: TextFieldType.INPUT,
+                restrict: "[A-Za-z]", // only allow letters to be typed; TODO: i18n?
+                width: _ctx.content.inputRect.width,
+                height: _ctx.content.inputRect.height
+            });
 
         // listen for property changed and message events
         _ctx.control.net.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propertyChanged);
