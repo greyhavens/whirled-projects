@@ -17,18 +17,57 @@ public class SpectaclePlayerMode extends GameDataMode
 {
     override protected function setup () :void
     {
+        _spectacle = ClientContext.spectacle;
+
         _tf = new TextField();
         _modeSprite.addChild(_tf);
 
-        if (ClientContext.isLocalPlayerPartyLeader) {
+        if (ClientContext.isPartyLeader) {
             _startButton = UIBits.createButton("Start!", 1.2);
             registerListener(_startButton, MouseEvent.CLICK, onStartClicked);
 
             _modeSprite.addChild(_startButton);
         }
 
-        setText("Get ready to pose!");
+        if (ClientContext.isPartyLeader) {
+            setText("Place the spectacle!");
+            _patternView = new PatternView(_spectacle.patterns[0]);
+            addObject(_patternView, _modeSprite);
+
+        } else {
+            setText("Waiting for the party leader to place the spectacle");
+        }
     }
+
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+
+        if (ClientContext.isPartyLeader && !_placedInitialPattern) {
+            _patternView.x = _modeSprite.mouseX - (_patternView.width * 0.5);
+            _patternView.y = _modeSprite.mouseY - (_patternView.height * 0.5);
+        }
+    }
+
+    /*protected function get playersInPosition () :Boolean
+    {
+        var pattern :Pattern = this.curPattern;
+        if (pattern == null) {
+            return false;
+        }
+
+        var locs :Array = pattern.locs.slice();
+        var playerLocs :Array = ClientContext.playerIds.map(
+            function (playerId :int, ...ignored) :Point {
+                return ClientContext.getPlayerRoomLoc(playerId);
+            });
+
+        for each (var playerLoc :Point in playerLocs) {
+            var closestLoc :PatternLoc =
+        }
+
+        return true;
+    }*/
 
     override public function onMsgReceived (e :MessageReceivedEvent) :void
     {
@@ -49,10 +88,10 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected function startNextPattern () :void
     {
-        removePatternView();
+        ++_patternIndex;
 
-        var pattern :Pattern = ClientContext.spectacle.patterns[++_patternIndex];
-        _patternView = new PatternView(pattern);
+        removePatternView();
+        _patternView = new PatternView(this.curPattern);
         addObject(_patternView, _modeSprite);
     }
 
@@ -86,11 +125,19 @@ public class SpectaclePlayerMode extends GameDataMode
         }
     }
 
+    protected function get curPattern () :Pattern
+    {
+        return (_patternIndex >= 0 && _patternIndex < _spectacle.numPatterns ?
+            _spectacle.patterns[_patternIndex] : null);
+    }
+
+    protected var _spectacle :Spectacle;
     protected var _startButton :SimpleButton;
     protected var _tf :TextField;
     protected var _patternIndex :int = -1;
 
     protected var _patternView :SceneObject;
+    protected var _placedInitialPattern :Boolean;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

@@ -27,6 +27,12 @@ public class ClientContext
         return props.get(Constants.PROP_WAITINGFORPLAYERS) as Boolean;
     }
 
+    public static function getPlayerRoomLoc (playerId :int) :Point
+    {
+        var avatar :AVRGameAvatar = getAvatarInfo(playerId);
+        return (avatar != null ? locToRoom(avatar.x, avatar.y, avatar.z) : null);
+    }
+
     public static function locToRoom (x :Number, y :Number, z :Number) :Point
     {
         return gameCtrl.local.locationToRoom(x, y, z);
@@ -47,14 +53,14 @@ public class ClientContext
         return gameCtrl.room.getAvatarInfo(playerId);
     }
 
-    public static function get isLocalPlayerPartyLeader () :Boolean
+    public static function get isPartyLeader () :Boolean
     {
         return true;
         //return (playerIds.length > 0 && playerIds[0] == localPlayerId);
         // TODO - fix this when party support is added
     }
 
-    public static function get isLocalPlayerPartied () :Boolean
+    public static function get isPartied () :Boolean
     {
         return true;
         // TODO - fix this when party support is added

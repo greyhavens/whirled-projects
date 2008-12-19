@@ -21,7 +21,7 @@ public class SpectacleCreatorMode extends GameDataMode
         _tf = new TextField();
         _modeSprite.addChild(_tf);
 
-        if (ClientContext.isLocalPlayerPartyLeader) {
+        if (ClientContext.isPartyLeader) {
             _startButton = UIBits.createButton("Start!", 1.2);
             _snapshotButton = UIBits.createButton("Snapshot!", 1.2);
             _doneButton = UIBits.createButton("Done!", 1.2);
@@ -72,8 +72,6 @@ public class SpectacleCreatorMode extends GameDataMode
             return;
         }
 
-        ClientContext.sendAgentMsg(Constants.MSG_SNAPSHOT);
-
         var now :Number = ClientContext.timeNow;
         var dt :Number = now - _lastSnapshotTime;
 
@@ -81,8 +79,7 @@ public class SpectacleCreatorMode extends GameDataMode
         var pattern :Pattern = new Pattern();
         pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
         for each (var playerId :int in ClientContext.playerIds) {
-            var info :AVRGameAvatar = ClientContext.getAvatarInfo(playerId);
-            var roomLoc :Point = ClientContext.locToRoom(info.x, info.y, info.z);
+            var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
             pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
         }
 

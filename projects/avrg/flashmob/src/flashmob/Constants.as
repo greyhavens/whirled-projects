@@ -18,6 +18,8 @@ public class Constants
     // Time that has to elapse between multiple snapshots
     public static const MIN_SNAPSHOT_TIME :Number = 1;
 
+    public static const LOC_EPSILON :Number = 5;
+
     /* Game states */
     public static const STATE_INVALID :int = 0;
     public static const STATE_SPECTACLE_CHOOSER :int = 1;
@@ -25,23 +27,24 @@ public class Constants
     public static const STATE_SPECTACLE_PLAY :int = 3;
 
     /* Properties */
-    public static const PROP_GAMESTATE :String          = "a";
-    public static const PROP_PLAYERS :String            = "b";
-    public static const PROP_WAITINGFORPLAYERS :String  = "c";
-    public static const PROP_SPECTACLE :String          = "d";
+    public static const PROP_GAMESTATE :String          = "gameState";
+    public static const PROP_PLAYERS :String            = "players";
+    public static const PROP_WAITINGFORPLAYERS :String  = "waitingForPlayers";
+    public static const PROP_SPECTACLE :String          = "spectacle";
+    public static const PROP_SPECTACLE_INITIAL_OFFSET :String   = "specOffset"
 
     /* Messages */
-    public static const MSG_RESETGAME :String           = "e";
+    public static const MSG_RESETGAME :String           = "resetGame";
     // SnapshotCreator
-    public static const MSG_SNAPSHOT :String            = "f";
-    public static const MSG_SNAPSHOTACK :String         = "g";
-    public static const MSG_SNAPSHOTERR :String         = "h";
-    public static const MSG_DONECREATING :String        = "i"; // value=Spectacle bytes
+    //public static const MSG_SNAPSHOT :String            = "snapshot";
+    //public static const MSG_SNAPSHOTACK :String         = "snapshotAck";
+    //public static const MSG_SNAPSHOTERR :String         = "snapshotErr";
+    public static const MSG_DONECREATING :String        = "doneCreating"; // value=Spectacle bytes
     // SnapshotPlayer
-    public static const MSG_STARTPLAYING :String        = "j";
-    public static const MSG_PLAYNEXTPATTERN :String     = "k";
-    public static const MSG_PLAYFAIL :String            = "l";
-    public static const MSG_PLAYSUCCESS :String         = "m";
+    public static const MSG_STARTPLAYING :String        = "startPlaying";
+    public static const MSG_PLAYNEXTPATTERN :String     = "playNextPattern";
+    public static const MSG_PLAYFAIL :String            = "playFail";
+    public static const MSG_PLAYSUCCESS :String         = "playSuccess";
 }
 
 }

@@ -49,7 +49,7 @@ public class FlashMobClient extends Sprite
         ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
             ClientContext.gameCtrl.game.props);
 
-        log.info("Starting game",
+        log.info("Starting client",
             "localPlayerId", ClientContext.localPlayerId,
             "partyId", ClientContext.partyId,
             "roomId", ClientContext.gameCtrl.player.getRoomId());
@@ -61,7 +61,7 @@ public class FlashMobClient extends Sprite
         ClientContext.mainLoop.run();
 
         // Make sure we're partied
-        if (!ClientContext.isLocalPlayerPartied) {
+        if (!ClientContext.isPartied) {
             log.info("You must be in a party to play this game");
             ClientContext.mainLoop.unwindToMode(
                 new BasicErrorMode("You must be in a party to play this game"));
@@ -80,6 +80,8 @@ public class FlashMobClient extends Sprite
         if (!_addedToStage || !_resourcesLoaded) {
             return;
         }
+
+        log.info("Starting game");
 
         // We handle certain messages and property changes here at the top-level.
         // Those that don't get handled get sent to the top-most AppMode, if that mode
@@ -155,12 +157,6 @@ public class FlashMobClient extends Sprite
     protected function playersChanged (newPlayers :Array) :void
     {
         ClientContext.playerIds = (newPlayers != null ? newPlayers : []);
-
-        var playersText :String = "Players: ";
-        for each (var playerId :int in ClientContext.playerIds) {
-            playersText += String(playerId) + " ";
-        }
-        log.info(playersText);
     }
 
     protected function gameStateChanged (newState :int) :void
@@ -168,6 +164,8 @@ public class FlashMobClient extends Sprite
         if (newState == _curGameState) {
             return;
         }
+
+        log.info("gameStateChanged", "newState", newState);
 
         _curGameState = newState;
 
