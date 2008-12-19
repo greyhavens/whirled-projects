@@ -506,7 +506,7 @@ public class Player extends Pawn
      */
     public function get special () :Boolean
     {
-        return _plate.name_plate.text == "Jes";
+        return false; // _plate.name_plate.text == "Jes";
     }
 
     /**
