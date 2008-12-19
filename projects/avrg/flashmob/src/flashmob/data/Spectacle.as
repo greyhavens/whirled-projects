@@ -15,6 +15,11 @@ public class Spectacle
     public var avatarId :int;
     public var patterns :Array = [];
 
+    public static function fromBytes (ba :ByteArray) :Spectacle
+    {
+        return (ba != null ? new Spectacle().fromBytes(ba) : null);
+    }
+
     public function get numPatterns () :int
     {
         return (patterns != null ? patterns.length : 0);

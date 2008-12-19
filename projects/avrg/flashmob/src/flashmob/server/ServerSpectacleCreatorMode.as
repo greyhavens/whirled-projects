@@ -13,13 +13,8 @@ public class ServerSpectacleCreatorMode extends ServerMode
     public function ServerSpectacleCreatorMode (ctx :ServerGameContext)
     {
         _ctx = ctx;
-    }
 
-    override public function onMsgReceived (e :MessageReceivedEvent) :void
-    {
-        if (e.name == Constants.MSG_DONECREATING) {
-            handleDone(new Spectacle().fromBytes(e.value as ByteArray));
-        }
+        _dataBindings.bindMessage(Constants.MSG_DONECREATING, handleDone, Spectacle.fromBytes);
     }
 
     protected function handleDone (spectacle :Spectacle) :void

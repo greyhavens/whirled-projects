@@ -1,7 +1,7 @@
 package flashmob.client {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;
@@ -30,13 +30,19 @@ public class SpectaclePlayerMode extends GameDataMode
         }
 
         if (ClientContext.isPartyLeader) {
-            setText("Place the spectacle!");
+            setText("Drag the spectacle to its starting location, then press start!");
             _patternView = new PatternView(_spectacle.patterns[0]);
             addObject(_patternView, _modeSprite);
 
         } else {
-            setText("Waiting for the party leader to place the spectacle");
+            setText("Waiting for the party leader to start the spectacle!");
         }
+
+        // init data bindings
+        _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, startNextPattern);
+        _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
+            PatternLoc.fromBytes);
+        _dataBindings.processAllProperties(ClientContext.props);
     }
 
     override public function update (dt :Number) :void
@@ -46,6 +52,16 @@ public class SpectaclePlayerMode extends GameDataMode
         if (ClientContext.isPartyLeader && !_placedInitialPattern) {
             _patternView.x = _modeSprite.mouseX - (_patternView.width * 0.5);
             _patternView.y = _modeSprite.mouseY - (_patternView.height * 0.5);
+        }
+    }
+
+    protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
+    {
+        log.info("handleNewSpectacleOffset", "newOffset", newOffset);
+        _spectacleOffset = newOffset;
+
+        if (!ClientContext.isPartyLeader) {
+
         }
     }
 
@@ -69,15 +85,6 @@ public class SpectaclePlayerMode extends GameDataMode
         return true;
     }*/
 
-    override public function onMsgReceived (e :MessageReceivedEvent) :void
-    {
-        switch (e.name) {
-        case Constants.MSG_PLAYNEXTPATTERN:
-            startNextPattern();
-            break;
-        }
-    }
-
     protected function removePatternView () :void
     {
         if (_patternView != null) {
@@ -88,6 +95,8 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected function startNextPattern () :void
     {
+        _startedPlaying = true;
+
         ++_patternIndex;
 
         removePatternView();
@@ -131,13 +140,20 @@ public class SpectaclePlayerMode extends GameDataMode
             _spectacle.patterns[_patternIndex] : null);
     }
 
+    protected static function get log () :Log
+    {
+        return FlashMobClient.log;
+    }
+
     protected var _spectacle :Spectacle;
     protected var _startButton :SimpleButton;
     protected var _tf :TextField;
     protected var _patternIndex :int = -1;
 
+    protected var _startedPlaying :Boolean;
     protected var _patternView :SceneObject;
     protected var _placedInitialPattern :Boolean;
+    protected var _spectacleOffset :PatternLoc;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

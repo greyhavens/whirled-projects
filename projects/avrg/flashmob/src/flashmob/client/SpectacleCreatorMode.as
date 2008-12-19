@@ -38,10 +38,6 @@ public class SpectacleCreatorMode extends GameDataMode
         updateButtons();
     }
 
-    override public function onMsgReceived (e :MessageReceivedEvent) :void
-    {
-    }
-
     override public function update (dt :Number) :void
     {
         updateButtons();

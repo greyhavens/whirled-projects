@@ -10,6 +10,11 @@ public class PatternLoc
     public var y :Number;
     public var z :Number;
 
+    public static function fromBytes (ba :ByteArray) :PatternLoc
+    {
+        return (ba != null ? new PatternLoc().fromBytes(ba) : null);
+    }
+
     public function PatternLoc (x :Number = 0, y :Number = 0, z :Number = 0)
     {
         this.x = x;
@@ -35,6 +40,11 @@ public class PatternLoc
         z = ba.readFloat();
 
         return this;
+    }
+
+    public function isEqual (rhs :PatternLoc) :Boolean
+    {
+        return (x == rhs.x && y == rhs.y && z == rhs.z);
     }
 
     public function toString () :String

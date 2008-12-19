@@ -7,6 +7,7 @@ import com.whirled.net.PropertyChangedEvent;
 
 import flash.events.IEventDispatcher;
 
+import flashmob.DataBindings;
 import flashmob.GameDataListener;
 
 public class ServerMode
@@ -15,9 +16,20 @@ public class ServerMode
     public function setup () :void {}
     public function destroy () :void {}
 
-    public function onMsgReceived (e :MessageReceivedEvent) :void {}
-    public function onPropChanged (e :PropertyChangedEvent) :void {}
-    public function onElemChanged (e :ElementChangedEvent) :void {}
+    public function onMsgReceived (e :MessageReceivedEvent) :Boolean
+    {
+        return _dataBindings.onMsgReceived(e);
+    }
+
+    public function onPropChanged (e :PropertyChangedEvent) :Boolean
+    {
+        return _dataBindings.onPropChanged(e);
+    }
+
+    public function onElemChanged (e :ElementChangedEvent) :Boolean
+    {
+        return _dataBindings.onElemChanged(e);
+    }
 
     /**
      * Adds the specified listener to the specified dispatcher for the specified event.
@@ -64,6 +76,7 @@ public class ServerMode
     }
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _dataBindings :DataBindings = new DataBindings();
 }
 
 }
