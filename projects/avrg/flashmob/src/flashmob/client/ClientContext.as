@@ -3,12 +3,12 @@ package flashmob.client {
 import com.whirled.avrg.*;
 import com.whirled.contrib.simplegame.MainLoop;
 
+import flash.geom.Point;
 import flash.utils.getTimer;
 
-import flashmob.data.Spectacle;
-import flashmob.party.PartyMsgReceiver;
-import flashmob.party.PartyMsgSender;
-import flashmob.party.PartyPropGetControl;
+import flashmob.*;
+import flashmob.data.*;
+import flashmob.party.*;
 
 public class ClientContext
 {
@@ -22,6 +22,16 @@ public class ClientContext
     public static var props :PartyPropGetControl;
     public static var spectacle :Spectacle;
 
+    public static function get waitingForPlayers () :Boolean
+    {
+        return props.get(Constants.PROP_WAITINGFORPLAYERS) as Boolean;
+    }
+
+    public static function locToRoom (x :Number, y :Number, z :Number) :Point
+    {
+        return gameCtrl.local.locationToRoom(x, y, z);
+    }
+
     public static function sendAgentMsg (name :String, value :Object = null) :void
     {
         outMsg.sendMessage(name, value);
@@ -30,6 +40,11 @@ public class ClientContext
     public static function get timeNow () :Number
     {
         return flash.utils.getTimer() / 1000;
+    }
+
+    public static function getAvatarInfo (playerId :int) :AVRGameAvatar
+    {
+        return gameCtrl.room.getAvatarInfo(playerId);
     }
 
     public static function get isLocalPlayerPartyLeader () :Boolean

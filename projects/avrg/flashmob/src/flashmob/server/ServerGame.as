@@ -46,14 +46,14 @@ public class ServerGame extends ServerModeStack
 
     public function addPlayer (playerId :int) :void
     {
-        if (ArrayUtil.contains(_ctx.players, playerId)) {
+        if (ArrayUtil.contains(_ctx.playerIds, playerId)) {
             log.warning("Tried to add a player to a game they were already in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
             return;
         }
 
-        _ctx.players.push(playerId);
+        _ctx.playerIds.push(playerId);
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
@@ -64,7 +64,7 @@ public class ServerGame extends ServerModeStack
 
     public function removePlayer (playerId :int) :void
     {
-        if(!ArrayUtil.removeFirst(_ctx.players, playerId)) {
+        if(!ArrayUtil.removeFirst(_ctx.playerIds, playerId)) {
             log.warning("Tried to remove player from a game they weren't in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
@@ -115,14 +115,14 @@ public class ServerGame extends ServerModeStack
     {
         // check to see if all players are in the same room
         var everyoneInRoom :Boolean;
-        if (_ctx.players.length == 0) {
+        if (_ctx.playerIds.length == 0) {
             everyoneInRoom = true;
 
         } else {
             everyoneInRoom = true;
-            var roomId :int = ServerContext.getPlayerRoom(_ctx.players[0]);
-            for (var ii :int = 1; ii < _ctx.players.length; ++ii) {
-                var thisRoomId :int = ServerContext.getPlayerRoom(_ctx.players[ii]);
+            var roomId :int = ServerContext.getPlayerRoom(_ctx.playerIds[0]);
+            for (var ii :int = 1; ii < _ctx.playerIds.length; ++ii) {
+                var thisRoomId :int = ServerContext.getPlayerRoom(_ctx.playerIds[ii]);
                 if (thisRoomId != roomId) {
                     everyoneInRoom = false;
                     break;
@@ -132,7 +132,7 @@ public class ServerGame extends ServerModeStack
 
         _ctx.waitingForPlayers = !everyoneInRoom;
 
-        _ctx.props.set(Constants.PROP_PLAYERS, _ctx.players);
+        _ctx.props.set(Constants.PROP_PLAYERS, _ctx.playerIds);
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void

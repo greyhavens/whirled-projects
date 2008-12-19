@@ -1,10 +1,12 @@
 package flashmob.client {
 
+import com.whirled.avrg.*;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
@@ -38,24 +40,20 @@ public class SpectacleCreatorMode extends GameDataMode
 
     override public function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        if (e.name == Constants.MSG_SNAPSHOTACK) {
-            _waitingForSnapshotResponse = false;
-            _numSnapshots++;
-            updateButtons();
+    }
 
-        } else if (e.name == Constants.MSG_SNAPSHOTERR) {
-            _waitingForSnapshotResponse = false;
-            updateButtons();
-        }
+    override public function update (dt :Number) :void
+    {
+        updateButtons();
     }
 
     protected function get canSnapshot () :Boolean
     {
-        if (_numSnapshots >= Constants.MAX_SPECTACLE_PATTERNS) {
+        if (ClientContext.waitingForPlayers) {
             return false;
-        } else if (_waitingForSnapshotResponse) {
+        } else if (_spectacle.numPatterns >= Constants.MAX_SPECTACLE_PATTERNS) {
             return false;
-        } else if (_numSnapshots > 0 &&
+        } else if (_spectacle.numPatterns > 0 &&
                    ClientContext.timeNow - _lastSnapshotTime < Constants.MIN_SNAPSHOT_TIME) {
             return false;
         }
@@ -65,19 +63,43 @@ public class SpectacleCreatorMode extends GameDataMode
 
     protected function get canFinish () :Boolean
     {
-        return (!_done && _numSnapshots >= Constants.MIN_SPECTACLE_PATTERNS);
+        return (!_done && _spectacle.numPatterns >= Constants.MIN_SPECTACLE_PATTERNS);
     }
 
     protected function onSnapshotClicked (...ignored) :void
     {
+        if (!this.canSnapshot) {
+            return;
+        }
+
         ClientContext.sendAgentMsg(Constants.MSG_SNAPSHOT);
-        _waitingForSnapshotResponse = true;
+
+        var now :Number = ClientContext.timeNow;
+        var dt :Number = now - _lastSnapshotTime;
+
+        // capture the locations of all the players
+        var pattern :Pattern = new Pattern();
+        pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
+        for each (var playerId :int in ClientContext.playerIds) {
+            var info :AVRGameAvatar = ClientContext.getAvatarInfo(playerId);
+            var roomLoc :Point = ClientContext.locToRoom(info.x, info.y, info.z);
+            pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
+        }
+
+        _spectacle.patterns.push(pattern);
+        _lastSnapshotTime = now;
+
         updateButtons();
     }
 
     protected function onDoneClicked (...ignored) :void
     {
-        ClientContext.sendAgentMsg(Constants.MSG_DONECREATING, "A Spectacle!");
+        if (!this.canFinish) {
+            return;
+        }
+
+        _spectacle.name = "A Spectacle!";
+        ClientContext.sendAgentMsg(Constants.MSG_DONECREATING, _spectacle.toBytes());
         _done = true;
         updateButtons();
     }
@@ -114,8 +136,7 @@ public class SpectacleCreatorMode extends GameDataMode
     protected var _doneButton :SimpleButton;
     protected var _tf :TextField;
 
-    protected var _numSnapshots :int;
-    protected var _waitingForSnapshotResponse :Boolean;
+    protected var _spectacle :Spectacle = new Spectacle();
     protected var _lastSnapshotTime :Number = 0;
 
     protected var _done :Boolean;

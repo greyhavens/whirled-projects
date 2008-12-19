@@ -10,14 +10,14 @@ public class ServerGameContext
 {
     public var game :ServerGame;
     public var partyId :int;
-    public var players :Array = [];
+    public var playerIds :Array = [];
     public var props :PartyPropControl;
     public var inMsg :PartyMsgReceiver;
     public var outMsg :PartyMsgSender;
 
     public function get numPlayers () :int
     {
-        return players.length;
+        return playerIds.length;
     }
 
     public function set spectacle (val :Spectacle) :void

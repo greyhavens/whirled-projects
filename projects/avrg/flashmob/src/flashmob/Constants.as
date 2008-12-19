@@ -36,7 +36,7 @@ public class Constants
     public static const MSG_SNAPSHOT :String            = "f";
     public static const MSG_SNAPSHOTACK :String         = "g";
     public static const MSG_SNAPSHOTERR :String         = "h";
-    public static const MSG_DONECREATING :String        = "i"; // value=name of spectacle
+    public static const MSG_DONECREATING :String        = "i"; // value=Spectacle bytes
     // SnapshotPlayer
     public static const MSG_STARTPLAYING :String        = "j";
     public static const MSG_PLAYNEXTPATTERN :String     = "k";
