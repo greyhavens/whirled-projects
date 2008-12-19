@@ -1,7 +1,6 @@
 package flashmob.client {
 
 import com.whirled.avrg.*;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;
@@ -107,10 +106,13 @@ public class SpectacleCreatorMode extends GameDataMode
     {
         UIBits.initTextField(_tf, text, 1.2, WIDTH - 10, 0xFFFFFF, TextFormatAlign.LEFT);
 
+        var height :Number =
+            _tf.height + 10 + (_snapshotButton != null ? _snapshotButton.height : 0);
+
         var g :Graphics = _modeSprite.graphics;
         g.clear();
         g.beginFill(0);
-        g.drawRect(0, 0, WIDTH, Math.max(_tf.height + _snapshotButton.height + 10, MIN_HEIGHT));
+        g.drawRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT));
         g.endFill();
 
         _tf.x = (_modeSprite.width - _tf.width) * 0.5;

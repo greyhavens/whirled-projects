@@ -2,10 +2,12 @@ package flashmob.client {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
@@ -31,12 +33,17 @@ public class SpectaclePlayerMode extends GameDataMode
 
         if (ClientContext.isPartyLeader) {
             setText("Drag the spectacle to its starting location, then press start!");
-            _patternView = new PatternView(_spectacle.patterns[0]);
-            addObject(_patternView, _modeSprite);
+            _patternView = new PatternView(_spectacle.patterns[0], onSpectacleDragged);
+
+            _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_SET_SPECTACLE_OFFSET);
+            addObject(_spectacleOffsetThrottler);
 
         } else {
+            _patternView = new PatternView(_spectacle.patterns[0]);
             setText("Waiting for the party leader to start the spectacle!");
         }
+
+        addObject(_patternView, _modeSprite);
 
         // init data bindings
         _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, startNextPattern);
@@ -45,23 +52,26 @@ public class SpectaclePlayerMode extends GameDataMode
         _dataBindings.processAllProperties(ClientContext.props);
     }
 
-    override public function update (dt :Number) :void
+    protected function onSpectacleDragged (newX :Number, newY :Number) :void
     {
-        super.update(dt);
+        var roomLoc :Point =
+            ClientContext.gameCtrl.local.paintableToRoom(new Point(newX, newY));
 
-        if (ClientContext.isPartyLeader && !_placedInitialPattern) {
-            _patternView.x = _modeSprite.mouseX - (_patternView.width * 0.5);
-            _patternView.y = _modeSprite.mouseY - (_patternView.height * 0.5);
-        }
+        _spectacleOffsetThrottler.value = (new PatternLoc(roomLoc.x, roomLoc.y).toBytes());
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
     {
-        log.info("handleNewSpectacleOffset", "newOffset", newOffset);
-        _spectacleOffset = newOffset;
-
         if (!ClientContext.isPartyLeader) {
+            log.info("handleNewSpectacleOffset", "newOffset", newOffset);
+            _spectacleOffset = newOffset;
 
+            var screenLoc :Point = ClientContext.gameCtrl.local.roomToPaintable(
+                new Point(newOffset.x, newOffset.y));
+
+            // smoothly animate to the new location
+            _patternView.removeAllTasks();
+            _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 1));
         }
     }
 
@@ -95,7 +105,14 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected function startNextPattern () :void
     {
-        _startedPlaying = true;
+        if (!_startedPlaying) {
+            if (_spectacleOffsetThrottler != null) {
+                _spectacleOffsetThrottler.destroySelf();
+                _spectacleOffsetThrottler = null;
+            }
+
+            _startedPlaying = true;
+        }
 
         ++_patternIndex;
 
@@ -152,11 +169,63 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected var _startedPlaying :Boolean;
     protected var _patternView :SceneObject;
-    protected var _placedInitialPattern :Boolean;
     protected var _spectacleOffset :PatternLoc;
+    protected var _spectacleOffsetThrottler :MessageThrottler;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;
 }
 
+}
+
+import com.whirled.contrib.simplegame.SimObject;
+import flashmob.client.ClientContext;
+
+// Throttles an individual type of message
+class MessageThrottler extends SimObject
+{
+    public function MessageThrottler (msgName :String, minUpdateTime :Number = 1)
+    {
+        _msgName = msgName;
+        _minUpdateTime = minUpdateTime;
+    }
+
+    public function set value (newValue :*) :void
+    {
+        _value = newValue;
+        _messagePending = true;
+        if (_timeTillNextMessage <= 0) {
+            sendMessage();
+        }
+    }
+
+    public function forcePendingMessage () :void
+    {
+        if (_messagePending) {
+            sendMessage();
+        }
+    }
+
+    protected function sendMessage () :void
+    {
+        ClientContext.outMsg.sendMessage(_msgName, _value);
+        _messagePending = false;
+        _timeTillNextMessage = _minUpdateTime;
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        _timeTillNextMessage = Math.max(0, _timeTillNextMessage - dt);
+        if (_messagePending && _timeTillNextMessage <= 0) {
+            sendMessage();
+        }
+    }
+
+    protected var _msgName :String;
+    protected var _minUpdateTime :Number;
+
+    protected var _value :*;
+    protected var _messagePending :Boolean;
+
+    protected var _timeTillNextMessage :Number = 0;
 }
