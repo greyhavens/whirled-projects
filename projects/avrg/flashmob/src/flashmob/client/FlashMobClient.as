@@ -130,7 +130,7 @@ public class FlashMobClient extends Sprite
         case Constants.PROP_SPECTACLE:
             var bytes :ByteArray = e.newValue as ByteArray;
             ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
-            log.info("New spectacle received", "spectacle", ClientContext.spectacle);
+            log.info("New spectacle received", "Spectacle", ClientContext.spectacle);
             break;
 
         default:

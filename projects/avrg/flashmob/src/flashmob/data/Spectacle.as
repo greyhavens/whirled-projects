@@ -54,6 +54,14 @@ public class Spectacle
         return this;
     }
 
+    public function toString () :String
+    {
+        return "[name=" + name +
+            " players=" + numPlayers +
+            " numPatterns=" + numPatterns +
+            "]";
+    }
+
 }
 
 }

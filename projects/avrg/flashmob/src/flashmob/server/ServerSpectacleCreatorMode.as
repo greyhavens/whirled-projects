@@ -45,6 +45,8 @@ public class ServerSpectacleCreatorMode extends ServerMode
             pattern.locs.push(new PatternLoc(info.x, info.y, info.z));
         }
 
+        _spectacle.patterns.push(pattern);
+
         _lastSnapshotTime = now;
         _ctx.outMsg.sendMessage(Constants.MSG_SNAPSHOTACK);
         log.info("Snapshot captured");

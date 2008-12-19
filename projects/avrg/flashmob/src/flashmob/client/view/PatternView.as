@@ -29,7 +29,7 @@ public class PatternView extends SceneObject
             for each (var loc :PatternLoc in _pattern.locs) {
                 g.lineStyle(2, 0);
                 g.beginFill(0xFFFFFF);
-                g.drawCircle(loc.x + xOff, loc.y + yOff, 30);
+                g.drawCircle(loc.x + xOff, loc.y + yOff, 15);
                 g.endFill();
             }
 
