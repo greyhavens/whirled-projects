@@ -5,11 +5,10 @@ import com.threerings.util.Log;
 import com.whirled.ServerObject;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
-import com.whirled.avrg.PlayerInfo;
 
 public class FlashMobServer extends ServerObject
 {
-    public static var log :Log = Log.getLog(FlashMobServer);
+    public static var log :Log = Log.getLog("FlashMobServer");
     public static const VERSION :int = 0;
 
     public function FlashMobServer ()
@@ -26,8 +25,7 @@ public class FlashMobServer extends ServerObject
     protected function onPlayerJoined (e :AVRGameControlEvent) :void
     {
         var playerId :int = e.value as int;
-        var playerInfo :PlayerInfo = ServerContext.gameCtrl.game.getPlayerInfo(playerId);
-        var partyId :int = playerInfo.partyId;
+        var partyId :int = ServerContext.getPlayerParty(playerId);
 
         log.info("Player joined", "playerId", playerId, "partyId", partyId);
 

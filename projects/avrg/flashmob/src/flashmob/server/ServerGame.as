@@ -2,13 +2,9 @@ package flashmob.server {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.PlayerInfo;
-import com.whirled.avrg.PlayerSubControlServer;
+import com.whirled.avrg.*;
 import com.whirled.contrib.EventHandlerManager;
-import com.whirled.net.ElementChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
-import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.*;
 
 import flashmob.*;
 import flashmob.party.*;
@@ -102,6 +98,10 @@ public class ServerGame extends ServerModeStack
         switch (val) {
         case Constants.STATE_SPECTACLE_CREATOR:
             unwindToMode(new ServerSpectacleCreatorMode(_ctx));
+            break;
+
+        case Constants.STATE_SPECTACLE_PLAY:
+            unwindToMode(new ServerSpectaclePlayerMode(_ctx));
             break;
         }
     }

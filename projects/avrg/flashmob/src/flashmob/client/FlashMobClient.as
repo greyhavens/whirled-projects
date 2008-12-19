@@ -25,7 +25,7 @@ import flashmob.server.*;
 [SWF(width="700", height="500")]
 public class FlashMobClient extends Sprite
 {
-    public static var log :Log = Log.getLog(FlashMobClient);
+    public static var log :Log = Log.getLog("FlashMobClient");
 
     protected static function DEBUG_REMOVE_ME () :void
     {
@@ -39,18 +39,20 @@ public class FlashMobClient extends Sprite
     {
         DEBUG_REMOVE_ME();
 
-        log.info("Starting game");
-
         ClientContext.gameCtrl = new AVRGameControl(this);
         ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
-        ClientContext.partyId =
-            ClientContext.gameCtrl.game.getPlayerInfo(ClientContext.localPlayerId).partyId;
+        ClientContext.partyId = ClientContext.gameCtrl.player.getPartyId();
         ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
             ClientContext.gameCtrl.agent);
         ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,
             ClientContext.gameCtrl.game);
         ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
             ClientContext.gameCtrl.game.props);
+
+        log.info("Starting game",
+            "localPlayerId", ClientContext.localPlayerId,
+            "partyId", ClientContext.partyId,
+            "roomId", ClientContext.gameCtrl.player.getRoomId());
 
         // Init simplegame
         ClientContext.mainLoop = new MainLoop(this,
@@ -128,6 +130,7 @@ public class FlashMobClient extends Sprite
         case Constants.PROP_SPECTACLE:
             var bytes :ByteArray = e.newValue as ByteArray;
             ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
+            log.info("New spectacle received", "spectacle", ClientContext.spectacle);
             break;
 
         default:
@@ -177,6 +180,7 @@ public class FlashMobClient extends Sprite
             break;
 
         case Constants.STATE_SPECTACLE_PLAY:
+            ClientContext.mainLoop.unwindToMode(new SpectaclePlayerMode());
             break;
         }
     }

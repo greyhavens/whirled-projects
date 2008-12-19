@@ -65,7 +65,7 @@ public class SpectacleCreatorMode extends GameDataMode
 
     protected function get canFinish () :Boolean
     {
-        return _numSnapshots >= Constants.MIN_SPECTACLE_PATTERNS;
+        return (!_done && _numSnapshots >= Constants.MIN_SPECTACLE_PATTERNS);
     }
 
     protected function onSnapshotClicked (...ignored) :void
@@ -77,7 +77,9 @@ public class SpectacleCreatorMode extends GameDataMode
 
     protected function onDoneClicked (...ignored) :void
     {
-
+        ClientContext.sendAgentMsg(Constants.MSG_DONECREATING, "A Spectacle!");
+        _done = true;
+        updateButtons();
     }
 
     protected function updateButtons () :void
@@ -115,6 +117,8 @@ public class SpectacleCreatorMode extends GameDataMode
     protected var _numSnapshots :int;
     protected var _waitingForSnapshotResponse :Boolean;
     protected var _lastSnapshotTime :Number = 0;
+
+    protected var _done :Boolean;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

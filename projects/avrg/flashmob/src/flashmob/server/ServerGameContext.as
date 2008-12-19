@@ -24,6 +24,7 @@ public class ServerGameContext
     {
         _spectacle = val;
         props.set(Constants.PROP_SPECTACLE, val.toBytes());
+        log.info("Spectacle updated");
     }
 
     public function get spectacle () :Spectacle

@@ -1,6 +1,6 @@
 package flashmob.client {
 
-import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.*;
 import com.whirled.contrib.simplegame.MainLoop;
 
 import flash.utils.getTimer;

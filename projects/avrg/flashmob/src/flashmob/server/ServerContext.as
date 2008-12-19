@@ -8,16 +8,16 @@ public class ServerContext
 {
     public static var gameCtrl :AVRServerGameControl;
 
-    public static function getPlayerRoom (playerId :int) :int
+    public static function getPlayerParty (playerId :int) :int
     {
-        var ctrl :PlayerSubControlServer = gameCtrl.getPlayer(playerId);
-        return (ctrl != null ? ctrl.getRoomId() : 0);
+        var ctrl :PlayerSubControlBase = gameCtrl.getPlayer(playerId);
+        return (ctrl != null ? ctrl.getPartyId() : 0);
     }
 
-    public static function getPlayerInfo (playerId :int) :PlayerInfo
+    public static function getPlayerRoom (playerId :int) :int
     {
-        var ctrl :PlayerSubControlServer = gameCtrl.getPlayer(playerId);
-        return (ctrl != null ? ctrl.getPlayerInfo() : null);
+        var ctrl :PlayerSubControlBase = gameCtrl.getPlayer(playerId);
+        return (ctrl != null ? ctrl.getRoomId() : 0);
     }
 
     public static function getAvatarInfo (playerId :int) :AVRGameAvatar
