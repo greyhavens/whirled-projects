@@ -164,6 +164,17 @@ public class SpectaclePlayerMode extends GameDataMode
         setText(_patternIndex == 0 ?
             "The game will start when everyone is in the correct position!" :
             "Assemble into the next position!");
+
+        if (_patternIndex > 0) {
+            if (_timer == null) {
+                _timer = new TimerView();
+                _timer.x = 300;
+                _timer.y = 20;
+                addObject(_timer, _modeSprite);
+            }
+
+            _timer.time = this.curPattern.timeLimit;
+        }
     }
 
     protected function handleSuccess () :void
@@ -171,6 +182,11 @@ public class SpectaclePlayerMode extends GameDataMode
         log.info("Success!");
         setText("Success!");
         _completed = true;
+
+        if (_timer != null) {
+            _timer.destroySelf();
+            _timer = null;
+        }
     }
 
     protected function onStartClicked (...ignored) :void
@@ -253,6 +269,7 @@ public class SpectaclePlayerMode extends GameDataMode
     protected var _patternView :SceneObject;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;
+    protected var _timer :TimerView;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;
