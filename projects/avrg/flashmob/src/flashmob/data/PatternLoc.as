@@ -8,18 +8,16 @@ public class PatternLoc
 {
     public var x :Number;
     public var y :Number;
-    public var z :Number;
 
     public static function fromBytes (ba :ByteArray) :PatternLoc
     {
         return (ba != null ? new PatternLoc().fromBytes(ba) : null);
     }
 
-    public function PatternLoc (x :Number = 0, y :Number = 0, z :Number = 0)
+    public function PatternLoc (x :Number = 0, y :Number = 0)
     {
         this.x = x;
         this.y = y;
-        this.z = z;
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray
@@ -28,7 +26,6 @@ public class PatternLoc
 
         ba.writeFloat(x);
         ba.writeFloat(y);
-        ba.writeFloat(z);
 
         return ba;
     }
@@ -37,14 +34,13 @@ public class PatternLoc
     {
         x = ba.readFloat();
         y = ba.readFloat();
-        z = ba.readFloat();
 
         return this;
     }
 
     public function isEqual (rhs :PatternLoc) :Boolean
     {
-        return (x == rhs.x && y == rhs.y && z == rhs.z);
+        return (x == rhs.x && y == rhs.y);
     }
 
     public function toString () :String

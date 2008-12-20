@@ -27,20 +27,14 @@ public class PatternView extends SceneObject
         if (_pattern.locs.length > 0) {
             var shape :Shape = new Shape();
             var g :Graphics = shape.graphics;
-            var firstLoc :PatternLoc = _pattern.locs[0];
-            var xOff :Number = -firstLoc.x;
-            var yOff :Number = -firstLoc.y;
 
             for each (var loc :PatternLoc in _pattern.locs) {
                 g.lineStyle(2, 0);
                 g.beginFill(0xFFFFFF);
-                g.drawCircle(loc.x + xOff, loc.y + yOff, 15);
+                g.drawCircle(loc.x, loc.y, 12);
                 g.endFill();
-
-                log.info("Adding dot: ", "loc", loc);
             }
 
-            DisplayUtil.positionBounds(shape, 0, 0);
             _sprite.addChild(shape);
         }
 
@@ -51,25 +45,26 @@ public class PatternView extends SceneObject
 
     protected function startDrag (...ignored) :void
     {
-        _dragOffsetX = -_sprite.mouseX;
-        _dragOffsetY = -_sprite.mouseY;
-        _dragging = true;
+        if (!_dragging) {
+            _dragOffsetX = -_sprite.mouseX;
+            _dragOffsetY = -_sprite.mouseY;
+            _dragging = true;
 
-        registerListener(_sprite, MouseEvent.MOUSE_UP, finishDrag);
+            registerListener(_sprite, MouseEvent.MOUSE_UP, endDrag);
+        }
     }
 
-    protected function finishDrag (...ignored) :void
+    protected function endDrag (...ignored) :void
     {
-        unregisterListener(_sprite, MouseEvent.MOUSE_UP, finishDrag);
+        unregisterListener(_sprite, MouseEvent.MOUSE_UP, endDrag);
+        updateDraggedLocation();
 
         _dragging = false;
     }
 
-    override protected function update (dt :Number) :void
+    protected function updateDraggedLocation () :void
     {
-        super.update(dt);
-
-        if (_dragging && _sprite.parent != null) {
+        if (_sprite.parent != null) {
             var newX :Number = _sprite.parent.mouseX + _dragOffsetX;
             var newY :Number = _sprite.parent.mouseY + _dragOffsetY;
             if (newX != this.x || newY != this.y) {
@@ -77,6 +72,15 @@ public class PatternView extends SceneObject
                 this.y = newY;
                 _draggedCallback(newX, newY);
             }
+        }
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        super.update(dt);
+
+        if (_dragging) {
+            updateDraggedLocation();
         }
     }
 

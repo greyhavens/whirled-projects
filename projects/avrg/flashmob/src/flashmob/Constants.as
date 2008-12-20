@@ -18,7 +18,7 @@ public class Constants
     // Time that has to elapse between multiple snapshots
     public static const MIN_SNAPSHOT_TIME :Number = 1;
 
-    public static const LOC_EPSILON :Number = 5;
+    public static const PATTERN_LOC_EPSILON :Number = 30;
 
     /* Game states */
     public static const STATE_INVALID :int = 0;
@@ -31,6 +31,7 @@ public class Constants
     public static const PROP_PLAYERS :String            = "players";
     public static const PROP_WAITINGFORPLAYERS :String  = "waitingForPlayers";
     public static const PROP_SPECTACLE :String          = "spectacle";
+    // SnapshotPlayer
     public static const PROP_SPECTACLE_OFFSET :String   = "specOffset"  // value=PatternLoc
 
     /* Messages */
@@ -39,6 +40,7 @@ public class Constants
     public static const MSG_DONECREATING :String        = "doneCreating"; // value=Spectacle bytes
     // SnapshotPlayer
     public static const MSG_STARTPLAYING :String        = "startPlaying";
+    public static const MSG_PATTERNCOMPLETE :String     = "patternComplete";
     public static const MSG_PLAYNEXTPATTERN :String     = "playNextPattern";
     public static const MSG_PLAYFAIL :String            = "playFail";
     public static const MSG_PLAYSUCCESS :String         = "playSuccess";

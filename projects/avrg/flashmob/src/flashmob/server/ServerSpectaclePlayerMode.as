@@ -1,9 +1,6 @@
 package flashmob.server {
 
 import com.threerings.util.Log;
-import com.whirled.net.MessageReceivedEvent;
-
-import flash.utils.ByteArray;
 
 import flashmob.*;
 import flashmob.data.*;
@@ -15,6 +12,7 @@ public class ServerSpectaclePlayerMode extends ServerMode
         _ctx = ctx;
 
         _dataBindings.bindMessage(Constants.MSG_STARTPLAYING, handleStartPlaying);
+        _dataBindings.bindMessage(Constants.MSG_PATTERNCOMPLETE, handlePatternComplete);
         _dataBindings.bindMessage(Constants.MSG_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
     }
@@ -31,15 +29,33 @@ public class ServerSpectaclePlayerMode extends ServerMode
             return;
         }
 
-        // tell the clients to start playing
+        // echo the message back to everyone
         _started = true;
+        _patternIndex = 0;
         _ctx.outMsg.sendMessage(Constants.MSG_PLAYNEXTPATTERN);
+    }
+
+    protected function handlePatternComplete () :void
+    {
+        if (!_started || _completed) {
+            log.warning("Received bad PATTERN COMPLETE message");
+            return;
+        }
+
+        ++_patternIndex;
+        if (_patternIndex < _ctx.spectacle.numPatterns) {
+            _ctx.outMsg.sendMessage(Constants.MSG_PLAYNEXTPATTERN);
+
+        } else {
+            _ctx.outMsg.sendMessage(Constants.MSG_PLAYSUCCESS);
+            _completed = true;
+        }
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
     {
         if (_started) {
-            log.warning("Can't set the spectacle offset after the spectacle has started");
+            log.warning("Received SPECTACLE OFFSET message after START PLAYING");
             return;
         }
 
@@ -61,7 +77,9 @@ public class ServerSpectaclePlayerMode extends ServerMode
 
     protected var _ctx :ServerGameContext;
     protected var _started :Boolean;
+    protected var _completed :Boolean;
     protected var _spectacleOffset :PatternLoc;
+    protected var _patternIndex :int;
 }
 
 }

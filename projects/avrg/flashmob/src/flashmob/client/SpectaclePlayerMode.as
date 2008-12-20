@@ -1,10 +1,13 @@
 package flashmob.client {
 
+import com.threerings.flash.Vector2;
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -46,7 +49,8 @@ public class SpectaclePlayerMode extends GameDataMode
         addObject(_patternView, _modeSprite);
 
         // init data bindings
-        _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, startNextPattern);
+        _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, handleNextPattern);
+        _dataBindings.bindMessage(Constants.MSG_PLAYSUCCESS, handleSuccess);
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
         _dataBindings.processAllProperties(ClientContext.props);
@@ -57,43 +61,76 @@ public class SpectaclePlayerMode extends GameDataMode
         var roomLoc :Point =
             ClientContext.gameCtrl.local.paintableToRoom(new Point(newX, newY));
 
+        _patternView.x = newX;
+        _patternView.y = newY;
         _spectacleOffsetThrottler.value = (new PatternLoc(roomLoc.x, roomLoc.y).toBytes());
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
     {
+        _spectacleOffset = newOffset;
+
         if (!ClientContext.isPartyLeader) {
-            log.info("handleNewSpectacleOffset", "newOffset", newOffset);
-            _spectacleOffset = newOffset;
-
-            var screenLoc :Point = ClientContext.gameCtrl.local.roomToPaintable(
-                new Point(newOffset.x, newOffset.y));
-
-            // smoothly animate to the new location
-            _patternView.removeAllTasks();
-            _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 1));
+            updatePatternViewLoc(true);
         }
     }
 
-    /*protected function get playersInPosition () :Boolean
+    protected function updatePatternViewLoc (animate :Boolean = false) :void
+    {
+        var screenLoc :Point = ClientContext.gameCtrl.local.roomToPaintable(
+                new Point(_spectacleOffset.x, _spectacleOffset.y));
+
+        _patternView.removeAllTasks();
+        if (animate) {
+            _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 0.5));
+
+        } else {
+            _patternView.x = screenLoc.x;
+            _patternView.y = screenLoc.y;
+        }
+    }
+
+    protected function checkPlayerPositions () :Boolean
     {
         var pattern :Pattern = this.curPattern;
         if (pattern == null) {
             return false;
         }
 
-        var locs :Array = pattern.locs.slice();
-        var playerLocs :Array = ClientContext.playerIds.map(
-            function (playerId :int, ...ignored) :Point {
-                return ClientContext.getPlayerRoomLoc(playerId);
+        var patternLocs :Array = pattern.locs.map(
+            function (loc :PatternLoc, ...ignored) :Vector2 {
+                return new Vector2(loc.x + _spectacleOffset.x, loc.y + _spectacleOffset.y);
             });
 
-        for each (var playerLoc :Point in playerLocs) {
-            var closestLoc :PatternLoc =
+        var playerLocs :Array = ClientContext.playerIds.map(
+            function (playerId :int, ...ignored) :Vector2 {
+                return Vector2.fromPoint(ClientContext.getPlayerRoomLoc(playerId));
+            });
+
+        var epsilonSqr :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
+        for each (var playerLoc :Vector2 in playerLocs) {
+            var closestLoc :Vector2;
+            var closestDistSqr :Number = Number.MAX_VALUE;
+            for each (var patternLoc :Vector2 in patternLocs) {
+                var distSqr :Number = patternLoc.subtract(playerLoc).lengthSquared;
+                if (distSqr < closestDistSqr || closestLoc == null) {
+                    closestDistSqr = distSqr;
+                    closestLoc = patternLoc;
+                }
+            }
+
+            if (closestDistSqr > epsilonSqr) {
+                /*log.info("Not in position",
+                    "closestDist", Math.sqrt(closestDistSqr),
+                    "e", Constants.PATTERN_LOC_EPSILON);*/
+                return false;
+            }
+
+            ArrayUtil.removeFirst(patternLocs, closestLoc);
         }
 
         return true;
-    }*/
+    }
 
     protected function removePatternView () :void
     {
@@ -103,8 +140,10 @@ public class SpectaclePlayerMode extends GameDataMode
         }
     }
 
-    protected function startNextPattern () :void
+    protected function handleNextPattern () :void
     {
+        log.info(_startButton ? "next pattern" : "first pattern");
+
         if (!_startedPlaying) {
             if (_spectacleOffsetThrottler != null) {
                 _spectacleOffsetThrottler.destroySelf();
@@ -115,14 +154,33 @@ public class SpectaclePlayerMode extends GameDataMode
         }
 
         ++_patternIndex;
+        _patternRecognized = false;
 
         removePatternView();
         _patternView = new PatternView(this.curPattern);
         addObject(_patternView, _modeSprite);
+        updatePatternViewLoc();
+
+        setText(_patternIndex == 0 ?
+            "The game will start when everyone is in the correct position!" :
+            "Assemble into the next position!");
+    }
+
+    protected function handleSuccess () :void
+    {
+        log.info("Success!");
+        setText("Success!");
+        _completed = true;
     }
 
     protected function onStartClicked (...ignored) :void
     {
+        if (_spectacleOffsetThrottler != null) {
+            _spectacleOffsetThrottler.forcePendingMessage();
+            _spectacleOffsetThrottler.destroySelf();
+            _spectacleOffsetThrottler = null;
+        }
+
         ClientContext.sendAgentMsg(Constants.MSG_STARTPLAYING);
         _startButton.visible = false;
     }
@@ -135,19 +193,40 @@ public class SpectaclePlayerMode extends GameDataMode
     {
         UIBits.initTextField(_tf, text, 1.2, WIDTH - 10, 0xFFFFFF, TextFormatAlign.LEFT);
 
+        if (_bg != null) {
+            _bg.parent.removeChild(_bg);
+        }
+
+        _bg = new Shape();
+        _modeSprite.addChildAt(_bg, 0);
+
         var height :Number = _tf.height + 10 + (_startButton != null ? _startButton.height : 0);
-        var g :Graphics = _modeSprite.graphics;
+        var g :Graphics = _bg.graphics;
         g.clear();
         g.beginFill(0);
         g.drawRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT));
         g.endFill();
 
-        _tf.x = (_modeSprite.width - _tf.width) * 0.5;
-        _tf.y = (_modeSprite.height - _tf.height) * 0.5;
+        _tf.x = (_bg.width - _tf.width) * 0.5;
+        _tf.y = (_bg.height - _tf.height) * 0.5;
 
         if (_startButton != null) {
-            _startButton.x = _modeSprite.width - _startButton.width - 10;
-            _startButton.y = _modeSprite.height - _startButton.height - 10;
+            _startButton.x = _bg.width - _startButton.width - 10;
+            _startButton.y = _bg.height - _startButton.height - 10;
+        }
+    }
+
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+
+        if (_startedPlaying && !_completed && !_patternRecognized && ClientContext.isPartyLeader) {
+            if (checkPlayerPositions()) {
+                // Tell the server we were successful
+                log.info("patternRecognized");
+                _patternRecognized = true;
+                ClientContext.outMsg.sendMessage(Constants.MSG_PATTERNCOMPLETE);
+            }
         }
     }
 
@@ -165,9 +244,12 @@ public class SpectaclePlayerMode extends GameDataMode
     protected var _spectacle :Spectacle;
     protected var _startButton :SimpleButton;
     protected var _tf :TextField;
-    protected var _patternIndex :int = -1;
+    protected var _bg :Shape;
 
+    protected var _patternIndex :int = -1;
+    protected var _patternRecognized :Boolean;
     protected var _startedPlaying :Boolean;
+    protected var _completed :Boolean;
     protected var _patternView :SceneObject;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;

@@ -91,6 +91,7 @@ public class SpectacleCreatorMode extends GameDataMode
         }
 
         _spectacle.name = "A Spectacle!";
+        _spectacle.normalize();
         ClientContext.sendAgentMsg(Constants.MSG_DONECREATING, _spectacle.toBytes());
         _done = true;
         updateButtons();
@@ -98,8 +99,13 @@ public class SpectacleCreatorMode extends GameDataMode
 
     protected function updateButtons () :void
     {
-        _doneButton.visible = this.canFinish;
-        _snapshotButton.visible = this.canSnapshot;
+        if (_doneButton != null) {
+            _doneButton.visible = this.canFinish;
+        }
+
+        if (_snapshotButton != null) {
+            _snapshotButton.visible = this.canSnapshot;
+        }
     }
 
     protected function setText (text :String) :void

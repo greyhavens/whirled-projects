@@ -55,7 +55,7 @@ public class ClientContext
 
     public static function get isPartyLeader () :Boolean
     {
-        return (playerIds.length > 0 && playerIds[0] == localPlayerId);
+        return (playerIds.length == 0 || playerIds[0] == localPlayerId);
         // TODO - fix this when party support is added
     }
 
