@@ -1,5 +1,11 @@
 == Creating Pookah Avatar ==
 
+=== Use ===
+
+Feel free to use this base to make your own pookahs.  Just credit us in 
+in the item description and be sure to mention the SVN so that everyone 
+can try it out!
+
 === Non-Flipping Body ===
 
 Pookahs use a tweaked body.as file that never flips the avatar when it 
