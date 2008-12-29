@@ -7,7 +7,7 @@ package client
 	
 	public class CellScrollBuffer implements BoardAccess
 	{
-		public function CellScrollBuffer(objective:Objective, board:BoardInteractions)
+		public function CellScrollBuffer(objective:Objective, board:Board)
 		{
 			_objective = objective;
 			_board = board;
@@ -317,19 +317,6 @@ package client
 			}
 			return _board.cellAt(position);
 		}
-		
-		public function replace (cell:Cell) :void
-		{
-			if (_extent.contains(cell.position)) {
-				//Log.debug("replacing cell in view");
-				const v:Vector = _extent.relativePosition(cell.position);
-				const old:Cell = _cells[v.dx][v.dy] as Cell;
-				old.removeFromObjective();
-				_cells[v.dx][v.dy] = cell;
-				cell.addToObjective(_objective);
-			}
-			_board.replace(cell);
-		}
 
 		public function memoryOrBoard (position:BoardCoordinates) :Cell 
 		{
@@ -346,7 +333,7 @@ package client
 		
 		// the buffer mediates between the objective and the board
 		protected var _objective:Objective;
-		protected var _board:BoardInteractions;
+		protected var _board:Board;
 
 		// the position and extent of the buffer
 		protected var _extent:BoardRectangle = new VoidBoardRectangle();

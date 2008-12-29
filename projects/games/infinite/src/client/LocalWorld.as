@@ -86,16 +86,6 @@ package client
         {
         	_world.moveCompleted(ID, coords);
         }
-        
-        public function requestCellUpdate (hood:Neighborhood) :void
-        {        
-        	_client.updatedCells(_world.cellState(ID, hood));        	
-        }
-        
-        public function handleCellStateChange (event:CellStateEvent) :void
-        {
-        	_client.updateCell(event.cell.state);
-        }
             
         public function handleItemReceived (event:InventoryEvent) :void
         {

@@ -32,19 +32,9 @@ package world
         function levelUpdate (detail:LevelUpdate) :void;
         
         /**
-         * The client should handle a series of updated cells.
-         */ 
-        function updatedCells (detail:CellUpdate) :void;
-        
-        /**
          * The client should synchronize its clock to the given instance of the server time.
          */ 
         function timeSync (serverTime:Number) :void;
-        
-        /**
-         * The client should update the state of a single cell.
-         */ 
-        function updateCell (detail:CellState) :void;
         
         /**
          * The client's player has received an item and this should be displayed in the inventory.

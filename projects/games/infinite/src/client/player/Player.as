@@ -3,7 +3,6 @@ package client.player
 	import arithmetic.BoardCoordinates;
 	
 	import client.Client;
-	import client.Objective;
 	
 	import flash.events.EventDispatcher;
 	
@@ -15,8 +14,8 @@ package client.player
 	
 	import world.Cell;
 	import world.arbitration.MovablePlayer;
+	import world.board.Board;
 	import world.board.BoardAccess;
-	import world.board.BoardInteractions;
 	
 	public class Player extends EventDispatcher implements MovablePlayer, ItemPlayer
 	{		
@@ -47,7 +46,7 @@ package client.player
 		/**
 		 * Move this player to the same coordinates on another board.
 		 */
-		public function moveToBoard (board:BoardInteractions) :void
+		public function moveToBoard (board:Board) :void
 		{
 			_board = board;
 			cell = board.cellAt(_position);			
@@ -150,7 +149,7 @@ package client.player
         	_path = null;
         }
                 
-        protected var _board:BoardInteractions;
+        protected var _board:Board;
         protected var _moving:Boolean = false;
         protected var _levelNumber:int;
         protected var _id:int;

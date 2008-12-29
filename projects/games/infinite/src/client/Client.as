@@ -30,7 +30,6 @@ package client
 	
 	import world.ClientWorld;
 	import world.MutableBoard;
-	import world.NeighborhoodEvent;
 	import world.WorldClient;
 	import world.board.*;
 	
@@ -246,19 +245,7 @@ package client
                 player.follow(detail.path);
             }
 		}
-		
-		public function updatedCells (detail:CellUpdate) :void
-		{
-			//Log.debug("client processing "+detail);
-			_viewer.updatedCells(players, detail);
-		}
-		
-		public function updateCell (detail:CellState) :void
-		{
-			//Log.debug(this+" updating cell with "+detail);
-			_viewer.updateCell(players, detail);
-		}
-		
+						
 		public function receiveItem(detail:InventoryUpdate) :void
 		{
 			_inventory.addItemAt (detail.position, _itemFactory.makeItem(detail.attributes));
@@ -356,7 +343,7 @@ package client
 		protected var _level:int = NO_LEVEL;
 		
 		protected var _controller:PlayerController;
-		protected var _board:BoardInteractions;
+		protected var _board:Board;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
 		protected var _heightIndicator:HeightIndicator;

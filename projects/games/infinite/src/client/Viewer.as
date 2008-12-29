@@ -12,7 +12,6 @@ package client
 	
 	import server.Messages.CellState;
 	import server.Messages.CellUpdate;
-	import server.Messages.SabotageTriggered;
 	
 	import sprites.*;
 	
@@ -97,7 +96,7 @@ package client
 			}
 		}
 		
-		public function set board (board:BoardInteractions) :void
+		public function set board (board:Board) :void
 		{			
 			Log.debug("viewer width:"+width);
 			_board = board;
@@ -120,18 +119,6 @@ package client
 			}
 			
 			_radarView.reset();
-		}
-		
-		public function updatedCells (register:ClientPlayers, update:CellUpdate) :void
-		{
-			if (_objective != null) {
-    			_objective.updateCells(register, update);
-            }
-		}
-
-		public function updateCell (register:ClientPlayers, state:CellState) :void
-		{
-			_objective.updateCell(register, state);
 		}
 
 		public function get objective () :Objective 
@@ -180,7 +167,7 @@ package client
 		protected var _viewPointShape:Shape; 
 
 		// the board data
-		protected var _board:BoardInteractions;
+		protected var _board:Board;
 		
 		// the part of reality that we can interact with
 		protected var _objective:Objective;

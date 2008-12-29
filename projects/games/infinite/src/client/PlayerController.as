@@ -58,7 +58,7 @@ package client
         protected var _players:ClientPlayers;
         protected var _world:ClientWorld;
 		protected var _arbiter:BoardArbiter;
-		protected var _board:BoardInteractions	
+		protected var _board:Board	
 		protected var _viewer:Viewer;
 		protected var _player:Player;
 	}

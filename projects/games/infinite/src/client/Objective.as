@@ -33,10 +33,10 @@ package client
 	 * the playfield into a single instance.  The objective may also contain off-screen objects that
 	 * are prepared for later display.
 	 */
-	public class Objective extends Sprite implements BoardInteractions, CellObjective, Diagram
+	public class Objective extends Sprite implements Board, CellObjective, Diagram
 	{
 		public function Objective(
-			clock:Chronometer, viewer:Viewer, board:BoardInteractions, 
+			clock:Chronometer, viewer:Viewer, board:Board, 
 			startingPosition:BoardCoordinates)
 		{
 			_clock = clock;
@@ -47,8 +47,7 @@ package client
 			pixelWidth = _viewer.width;
 			pixelHeight = _viewer.height;
 			
-			_board = board;			
-			
+			_board = board;						
     		_cells = new CellScrollBuffer(this, _board);
 
 			CELL_MARGINS = computeMarginWidths();						
@@ -240,19 +239,7 @@ package client
 		{
 			return _cells.cellAt (position);
 		}
-				
-		/**
-		 * Replace a cell at a given position with the new cell that is supplied.
-		 * TODO: REPLACE THIS WITH REAL PERSISTENCE TO THE BOARD
-		 */
-		public function replace (newCell:Cell) :void
-		{			
-			// the cell scroll buffer knows what cells are in view - so the replacement is delegated to it
-			// and it can determine whether the view needs to be replaced
-			_cells.replace(newCell);
-			dispatchEvent(new CellEvent(CellEvent.CELL_REPLACED, newCell));
-		}
-		
+						
 	    /**
 	     * Add a local player to the level that this objective is currently associated with, displaying
 	     * the player at the focus of the camera immediately.  The camera will normally track this
@@ -342,26 +329,6 @@ package client
         		removeChild(sprite);
         	}
         }
-        
-        public function updateCells (register:ClientPlayers, update:CellUpdate) :void
-        {
-        	if (_player != null) {
-		        if (update.level == _player.levelNumber) {
-		        	for each (var state:CellState in update.states) {
-		        		state.update(register, this, this);
-		        	}
-		        	_breadcrumbs.markAsMapped(update.vicinities);
-		        } else {
-		        	Log.debug("dropping update meant for level: "+update.level+" because local player"
-		        	  + "is on level "+_player.levelNumber);
-		        }
-        	}
-        }
-        
-        public function updateCell (register:ClientPlayers, state:CellState) :void
-        {
-        	state.update(register, this, this);
-        }
                 
         public function get frameTimer () :FrameTimer
         {
@@ -422,7 +389,7 @@ package client
 		// of the cell buffer is drawn
 		protected var _origin:GraphicCoordinates;
 								
-		protected var _board:BoardInteractions;		
+		protected var _board:Board;		
 		
 		// width and height in board cells computed by dividing the pixel size by the tile size
 		// and assuming whole cells with no bleed.
