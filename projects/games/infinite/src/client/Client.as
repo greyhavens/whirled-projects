@@ -48,7 +48,6 @@ package client
 			this.y = 0;			
 			
 			_viewer = new Viewer(this, 680, 420);
-			_viewer.addEventListener(NeighborhoodEvent.UNMAPPED, handleUnmappedNeighborhood);
 			
 			_viewer.x = 10;
 			_viewer.y = 10;
@@ -195,13 +194,7 @@ package client
 		{
 		    _world.nextLevel();
 		}
-		
-		protected function handleUnmappedNeighborhood (event:NeighborhoodEvent) :void
-		{
-			//Log.debug("handling unmapped neighborhood "+event.hood);
-			_world.requestCellUpdate(event.hood);
-		}
-		
+				
 		/**
 		 * Cause the client to start displaying a new level.
 		 */
@@ -225,11 +218,6 @@ package client
 
             // we need to notify the player that we've just moved them onto another board.
             player.moveToBoard(_board);
-
-            // update cells - this is bad encapsulation since the order of these operations
-            // relies on knowing the fact that assigning the board to the viewer causes the
-            // objective to be created which is a precondition for handing a cell update
-            _world.requestCellUpdate(player.position.vicinity.neighborhood);
 
             _controller = new PlayerController(_world, _viewer, _players, _localPlayer, _inventory);
             

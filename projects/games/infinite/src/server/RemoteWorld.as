@@ -57,9 +57,7 @@ package server
                 case LEVEL_COMPLETE: return levelComplete(event);
                 case START_PATH: return pathStart(event);
                 case LEVEL_UPDATE: return levelUpdate(event);
-                case UPDATED_CELLS: return updatedCells(event);
                 case TIME_SYNC: return timeSync(event);
-                case UPDATED_CELL: return updateCell(event);
                 case ITEM_RECEIVED: return itemReceived(event);
                 case ITEM_USED: return itemUsed(event);
                 case PATH_UNAVAILABLE: return pathUnavailable(event);
@@ -88,17 +86,7 @@ package server
             const detail:LevelComplete = LevelComplete.readFromArray(event.value as ByteArray) 
             _client.levelComplete(detail);
         }
-        
-        public function updatedCells (event:MessageReceivedEvent) :void
-        {
-        	_client.updatedCells(CellUpdate.readFromArray(event.value as ByteArray));
-        }
-        
-        public function updateCell (event:MessageReceivedEvent) :void
-        {
-        	_client.updateCell(CellState.readFromArray(event.value as ByteArray));
-        }
-        
+                
         public function itemReceived (event:MessageReceivedEvent) :void
         {
         	_client.receiveItem(InventoryUpdate.readFromArray(event.value as ByteArray));
@@ -163,11 +151,6 @@ package server
         	sendToServer(WorldServer.MOVE_COMPLETED, coords);
         }
 
-        public function requestCellUpdate (hood:Neighborhood) :void
-        {
-        	sendToServer(WorldServer.REQUEST_CELLS, hood);
-        }
-
         /**
          * Send a simple 'signal' to the server.  This is numbered message with no data payload.
          */ 
@@ -202,9 +185,7 @@ package server
         public static const LEVEL_ENTERED:int = 0;
         public static const START_PATH:int = 1;
         public static const LEVEL_UPDATE:int = 2;
-        public static const UPDATED_CELLS:int = 3;
         public static const TIME_SYNC:int = 4;
-        public static const UPDATED_CELL:int = 5;
         public static const ITEM_RECEIVED:int = 6;
         public static const ITEM_USED:int = 7;
         public static const PATH_UNAVAILABLE:int = 8;
@@ -215,9 +196,7 @@ package server
         messageName[LEVEL_ENTERED] = "level entered";
         messageName[START_PATH] = "start path";
         messageName[LEVEL_UPDATE] = "level update";
-        messageName[UPDATED_CELLS] = "updated cells";
         messageName[TIME_SYNC] = "time sync";
-        messageName[UPDATED_CELL] = "updated cell";
         messageName[ITEM_RECEIVED] = "item received";
         messageName[ITEM_USED] = "item used";
         messageName[PATH_UNAVAILABLE] = "path unavailable";

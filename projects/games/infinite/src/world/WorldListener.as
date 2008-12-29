@@ -14,9 +14,7 @@ package world
         function handlePathStart (event:MoveEvent) :void;
         
         function handleNoPath (event:MoveEvent) :void;
-        
-        function handleCellStateChange (event:CellStateEvent) :void;
-        
+                
         function handleItemReceived (event:InventoryEvent) :void;
         
         function handleItemUsed (event:InventoryEvent) :void;

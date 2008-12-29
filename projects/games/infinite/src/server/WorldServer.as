@@ -111,15 +111,7 @@ package server
 		{
 			signalClient(event.player.id, RemoteWorld.PATH_UNAVAILABLE);
 		}
-		
-		public function handleCellStateChange (event:CellStateEvent) :void
-		{
-			const message:CellState = event.cell.state;	
-			const update:CellUpdate = new CellUpdate(event.level.levelNumber);
-			update.addState(event.cell.state);
-			sendToAll(RemoteWorld.UPDATED_CELLS, update);					
-		}
-		
+				
 		/**
 		 * We received a message from one of the clients.  Identify it and initiate the appropriate
 		 * action in the model.
@@ -138,7 +130,6 @@ package server
 				case CLIENT_ENTERS: return clientEnters(event);
 				case MOVE_PROPOSED: return moveProposed(event);
 				case MOVE_COMPLETED: return moveCompleted(event); 
-				case REQUEST_CELLS: return requestCells(event);
 				case USE_ITEM: return useItem(event);
 				case NEXT_LEVEL: return nextLevel(event);
 			}			
@@ -174,15 +165,7 @@ package server
 		{
 			_world.moveCompleted(event.senderId, BoardCoordinates.readFromArray(event.value as ByteArray));
 		}
-		
-		protected function requestCells (event:MessageReceivedEvent) :void
-		{
-            sendToAll(RemoteWorld.UPDATED_CELLS, 
-               _world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray)));         
-//			send(event.senderId, RemoteWorld.UPDATED_CELLS, 
-//			   _world.cellState(event.senderId, Neighborhood.readFromArray(event.value as ByteArray)));			
-		}
-		
+				
 		protected function useItem (event:MessageReceivedEvent) :void
 		{
 			_world.useItem(event.senderId, event.value as int);
@@ -282,7 +265,6 @@ package server
 	    public static const CLIENT_ENTERS:int = 0;
 	    public static const MOVE_PROPOSED:int = 1;
 	    public static const MOVE_COMPLETED:int = 2;
-        public static const REQUEST_CELLS:int = 3;
         public static const USE_ITEM:int = 4;
         public static const NEXT_LEVEL:int = 5;
         
@@ -294,7 +276,6 @@ package server
 	    messageName[CLIENT_ENTERS] = "client enters";
 	    messageName[MOVE_PROPOSED] = "move proposed";
 	    messageName[MOVE_COMPLETED] = "move completed";
-	    messageName[REQUEST_CELLS] = "request cells";
 	    messageName[USE_ITEM] = "use item";
 	    messageName[NEXT_LEVEL] = "next level";
 	}
