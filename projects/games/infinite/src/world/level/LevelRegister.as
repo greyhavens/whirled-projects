@@ -1,13 +1,15 @@
 package world.level
 {
+	import com.whirled.game.NetSubControl;
+	
 	import world.Player;
 	import world.World;
 	
 	public class LevelRegister
 	{
-		public function LevelRegister(world:World)
+		public function LevelRegister(world:World, control:NetSubControl)
 		{
-			_factory = new LevelFactory(world);
+			_factory = new LevelFactory(world, control);
 			_levels[FIRST_LEVEL] = _factory.makeLevel(FIRST_LEVEL);
 		}
 

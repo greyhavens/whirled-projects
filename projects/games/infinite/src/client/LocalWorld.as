@@ -2,7 +2,7 @@ package client
 {
 	import arithmetic.BoardCoordinates;
 	
-	import com.whirled.game.GameControl;
+	import com.whirled.game.NetSubControl;
 	
 	import flash.events.EventDispatcher;
 	
@@ -12,11 +12,9 @@ package client
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelComplete;
 	import server.Messages.MoveProposal;
-	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	
-	import world.CellStateEvent;
 	import world.ClientWorld;
 	import world.InventoryEvent;
 	import world.Player;
@@ -28,9 +26,9 @@ package client
 	
 	public class LocalWorld extends EventDispatcher implements ClientWorld, WorldListener
 	{
-		public function LocalWorld()
+		public function LocalWorld(control:NetSubControl)
 		{
-			_world = new World();
+			_world = new World(control);
 			_world.addListener(this);
 		}
 		

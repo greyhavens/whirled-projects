@@ -2,13 +2,13 @@ package world
 {
 	import arithmetic.BoardCoordinates;
 	
+	import com.whirled.game.NetSubControl;
+	
 	import flash.events.EventDispatcher;
 	
 	import interactions.SabotageEvent;
 	
-	import server.Messages.CellUpdate;
 	import server.Messages.MoveProposal;
-	import server.Messages.Neighborhood;
 	
 	import world.arbitration.MoveEvent;
 	import world.level.Level;
@@ -21,10 +21,10 @@ package world
 	 */
 	public class World extends EventDispatcher 
 	{
-		public function World()
+		public function World(control:NetSubControl)
 		{
 			_players = new PlayerRegister();
-			_levels = new LevelRegister(this);
+			_levels = new LevelRegister(this, control);
 		}
 		
 		public function addListener (listener:WorldListener) :void
@@ -112,13 +112,7 @@ package world
             _levels.playerEnters(player);
             return player;
 		}		
-		
-		public function cellState (id:int, hood:Neighborhood) :CellUpdate
-		{
-			const player:Player = _players.find(id);
-			return player.level.cellState(hood);
-		}
-				
+						
 		public function distributeState (level:Level, cell:Cell) :void
 		{
 			dispatchEvent(new CellStateEvent(CellStateEvent.STATE_CHANGED, level, cell));

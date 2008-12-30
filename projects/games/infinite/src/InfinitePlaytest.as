@@ -19,7 +19,7 @@ package {
 			Log.setId(_gameControl);
 			
 			const world:ClientWorld =
-			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld();
+			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld(_gameControl.net);
 			
 			addChild(new Client(_gameControl.net, world));
 		}

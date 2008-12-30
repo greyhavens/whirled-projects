@@ -5,9 +5,9 @@ package world.level
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
-	import server.Messages.CellUpdate;
+	import com.whirled.game.NetSubControl;
+	
 	import server.Messages.LevelUpdate;
-	import server.Messages.Neighborhood;
 	import server.Messages.PlayerPosition;
 	
 	import world.Cell;
@@ -23,11 +23,11 @@ package world.level
 	
 	public class Level implements BoardInteractions, Chronometer
 	{		
-		public function Level(world:World, height:int, starting:Board) 
+		public function Level(world:World, height:int, starting:Board, control:NetSubControl) 
 		{
 			_world = world;
 			_height = height;
-			_board = new NeighborhoodBoard(starting);
+			_board = new MasterBoard(starting.levelNumber, height, starting, control);
 			_arbiter = new BoardArbiter(_board);
 			_mapMaker = new MapMaker(this, _explored);
 		}
@@ -109,15 +109,7 @@ package world.level
         	} 
         	return update;
         }
-        
-        /** 
-         * Return a list of changes from the starting board for cells in the supplied neighborhood.
-         */ 
-        public function cellState (hood:Neighborhood) :CellUpdate
-        {
-        	return _board.neighborhood(hood);
-        }
-        
+                
         /**
          * Make sure that we have a map for the given coordinates.
          */ 
@@ -171,10 +163,9 @@ package world.level
         protected var _explored:BreadcrumbTrail = new BreadcrumbTrail();
         protected var _mapMaker:MapMaker;
         protected var _arbiter:BoardArbiter;
-        protected var _board:NeighborhoodBoard;
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
-		protected var _masterBoard:MasterBoard;
+		protected var _board:MasterBoard;
 		
 		public static const MIN_HEIGHT:int = 8;
 	}

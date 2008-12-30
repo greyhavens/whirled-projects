@@ -39,7 +39,7 @@ package server
 	{
 		public function WorldServer(control:GameControl)
 		{
-            _world = new World();
+            _world = new World(control.net);
             _world.addListener(this);
                         
 			_control = control;
