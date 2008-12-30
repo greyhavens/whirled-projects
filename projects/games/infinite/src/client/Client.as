@@ -8,6 +8,8 @@ package client
 	import client.player.PlayerEvent;
 	import client.radar.Radar;
 	
+	import com.whirled.game.NetSubControl;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.text.TextField;
@@ -16,8 +18,6 @@ package client
 	
 	import items.ItemFactory;
 	
-	import server.Messages.CellState;
-	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelComplete;
@@ -29,14 +29,15 @@ package client
 	import sprites.SpriteUtil;
 	
 	import world.ClientWorld;
-	import world.MutableBoard;
+	import world.DistributedBoard;
 	import world.WorldClient;
 	import world.board.*;
 	
 	public class Client extends Sprite implements WorldClient
 	{
-		public function Client(world:ClientWorld)
+		public function Client(control:NetSubControl, world:ClientWorld)
 		{
+			_control = control;
 			_world = world;
 	
 	        _radar = new Radar(7, 4);
@@ -208,8 +209,8 @@ package client
 			
 			const height:int = level(player.levelNumber).height
 			
-			// we can start off with the default blank board.			
-			_board = new MutableBoard(new BlankBoard(player.levelNumber, height));
+			// we can start off with the default blank board.
+			_board = new DistributedBoard(height, _players, this, new BlankBoard(player.levelNumber, height), _control);	
             Log.debug(this+" created "+_board);
                  
 			// and assign a new board to the view.
@@ -332,7 +333,8 @@ package client
 		        _announcement.show();
 		    }
 		}
-				
+		
+		protected var _control:NetSubControl;				
 		protected var _levels:Array = new Array();		
 		protected var _serverOffset:Number = 0;
 		

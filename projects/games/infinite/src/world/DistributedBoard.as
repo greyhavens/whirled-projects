@@ -42,17 +42,23 @@ package world
                         
         public function cellAt(coords:BoardCoordinates) :Cell
         {
-            const cached:Cell = _cache[coords.key] as Cell
-            if (cached != null) {
-                return cached;
+        	// return the cached cell if there is one
+            const cached:Object = _cache[coords.key]
+            if (cached is Cell) {
+            	return cached as Cell;
             }
+            // otherwise see if there is a distributed state for the cell
             const state:CellState = state(coords);
             if (state == null) {
-                 return _startingBoard.cellAt(coords);
+            	// if there is no state, then return the default for this board
+            	Log.debug("returning cell from starting board for "+coords);
+                return _startingBoard.cellAt(coords);
             }
+            // if there is a state, then apply it to the default, cache the result and return it
             const original:Cell = _startingBoard.cellAt(coords);
             original.updateState(_owners, _clock, this, state);
-            return cached  
+            replace(original);
+            return original;  
         }
         
         public function replace (cell:Cell) :void
@@ -62,11 +68,15 @@ package world
 
         protected function state(coords:BoardCoordinates) :CellState
         {            
-            const array:ByteArray = (_control.get(_slotName) as Dictionary)[coords.key] as ByteArray;
-            if (array != null) {
-                return CellState.readFromArray(array);
-            }
-            return null;  
+        	const slot:Object = _control.get(_slotName);
+        	if (slot is Dictionary)
+        	{
+	        	const found:Object = (slot as Dictionary)[coords.key]
+	        	if (found is ByteArray) {
+	        		return CellState.readFromArray(found as ByteArray);
+	        	}
+	        }
+        	return null;
         }
         
         public function get levelNumber () :int
@@ -85,6 +95,6 @@ package world
         protected var _startingBoard:Board;
         protected var _control:NetSubControl;
         protected var _slotName:String;
-        protected var _cache:Dictionary;
+        protected var _cache:Dictionary = new Dictionary();
     }
 }

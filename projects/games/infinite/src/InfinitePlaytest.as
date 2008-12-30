@@ -21,8 +21,8 @@ package {
 			const world:ClientWorld =
 			     _gameControl.isConnected() ? new RemoteWorld(_gameControl) : new LocalWorld();
 			
-			addChild(new Client(world));
-		}				
+			addChild(new Client(_gameControl.net, world));
+		}
 
 		/**
 		 * The compiler in flexbuilder starts from this class and compiles all of the reachable code.
