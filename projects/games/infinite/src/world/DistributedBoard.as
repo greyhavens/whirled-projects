@@ -57,12 +57,12 @@ package world
             // if there is a state, then apply it to the default, cache the result and return it
             const original:Cell = _startingBoard.cellAt(coords);
             original.updateState(_owners, _clock, this, state);
-            replace(original);
             return original;  
         }
         
         public function replace (cell:Cell) :void
         {
+        	Log.debug("caching: "+cell);
             _cache[cell.position.key] = cell;
         }
 
@@ -71,9 +71,12 @@ package world
         	const slot:Object = _control.get(_slotName);
         	if (slot is Dictionary)
         	{
-	        	const found:Object = (slot as Dictionary)[coords.key]
+	        	const found:Object = 
+	        	  (slot as Dictionary)[MasterBoard.positionToInt(_height, coords)]
 	        	if (found is ByteArray) {
-	        		return CellState.readFromArray(found as ByteArray);
+	        		const array:ByteArray = found as ByteArray;
+                    array.position = 0;
+	        		return CellState.readFromArray(array);
 	        	}
 	        }
         	return null;

@@ -22,9 +22,10 @@ package arithmetic
 		 */
 		public function map (coords:BoardCoordinates) :void
 		{
+			Log.debug("breadcrumb trail mapping "+coords);
 			const unmapped:Neighborhood = visit(coords);
 			if (! unmapped.isEmpty()) {
-				//Log.debug("dispatching Neighborhood unmapped event");
+				Log.debug("dispatching Neighborhood unmapped event");
 				dispatchEvent(new NeighborhoodEvent(NeighborhoodEvent.UNMAPPED, unmapped));
 			}
 		}

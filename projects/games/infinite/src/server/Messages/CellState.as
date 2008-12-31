@@ -5,6 +5,7 @@ package server.Messages
 	import cells.CellFactory;
 	
 	import flash.utils.ByteArray;
+	import flash.utils.Endian;
 	
 	import world.Cell;
 	import world.Chronometer;
@@ -30,6 +31,7 @@ package server.Messages
 
         public function writeToArray (array:ByteArray) :ByteArray
         {
+        	array.endian = Endian.BIG_ENDIAN;
             array.writeInt(_ownerId);
         	array.writeInt(_code);
         	_position.writeToArray(array);
@@ -39,6 +41,7 @@ package server.Messages
         
         public static function readFromArray (array:ByteArray) :CellState
         {
+        	array.endian = Endian.BIG_ENDIAN;
         	const read:CellState = new CellState(
         	   array.readInt(),
         	   array.readInt(),

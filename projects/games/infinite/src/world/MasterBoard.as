@@ -69,6 +69,31 @@ package world
             return _startingBoard.startingPosition;
         }
  
+        public static function arrayToString(array:ByteArray) :String
+        {
+        	var text:String = "";
+        	var hex:String = "";
+        	for (var i:int = 0; i < array.length; i++ ) {
+        		var c:int = array[i];
+        		hex += d2h(c) + " ";
+        		if (c > 32 && c < 127) {
+            		text += String.fromCharCode(c);
+                } else {
+            		text += ".";
+            	}
+            }
+            return "[ "+hex+": " + text+" ]";
+        }
+ 
+		protected static function d2h (d:int) : String {
+		    var c:Array = [ '0', '1', '2', '3', '4', '5', '6', '7', '8',
+		            '9', 'A', 'B', 'C', 'D', 'E', 'F' ];
+		    if( d > 255 ) d = 255;
+		    var l:int = d / 16;
+		    var r:int = d % 16;
+		    return c[l]+c[r];
+		}
+		 
         public var _levelNumber:int;
         public var _slotName:String
         public var _height:int;       
