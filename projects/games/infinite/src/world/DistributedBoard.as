@@ -5,6 +5,7 @@ package world
     import com.whirled.game.NetSubControl;
     import com.whirled.net.ElementChangedEvent;
     
+    import flash.events.EventDispatcher;
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     
@@ -16,7 +17,7 @@ package world
     /**
      * 'read only' board implementation based on the distributed set.
      */ 
-    public class DistributedBoard implements BoardInteractions
+    public class DistributedBoard extends EventDispatcher implements BoardInteractions
     {
         public function DistributedBoard(height:int, owners:Owners, clock:Chronometer, startingBoard:Board, control:NetSubControl)
         {
@@ -30,33 +31,50 @@ package world
         }
         
         /**
-         * Handle an element being changed by simply deleting the cached object.  
-         * If the object is needed again later it will be deserialized and cached then. 
+         * Handle an element being changed by marking the cell as changed.
+         * Next time the object is read from the board, the state update can be applied.
          */
         public function handleElementChanged (event:ElementChangedEvent) :void
         {
             if (event.name == _slotName) {
-                delete _cache[MasterBoard.intToPosition(_height, event.key).key];
-            }            
+                _updated[event.key] = true;
+            }
+            dispatchEvent(new BoardEvent(BoardEvent.CELL_UPDATED, 
+                MasterBoard.intToPosition(_height, event.key)));
         }
-                        
+        
         public function cellAt(coords:BoardCoordinates) :Cell
         {
         	// return the cached cell if there is one
             const cached:Object = _cache[coords.key]
+            var original:Cell;
             if (cached is Cell) {
-            	return cached as Cell;
+            	// if there's a cached cell, start with it
+                const cell:Cell = cached as Cell;
+                const pos:int = MasterBoard.positionToInt(_height, cell.position);
+                if (_updated[pos] == null) {
+                	// if the cached cell hasn't been updated, return it
+                    return cached as Cell;
+                }
+                // the cell has been updated so we're going to start with it an apply any changes                
+                original = cell;                
+                // clear the update mark
+                delete _updated[pos];
+            } else {
+            	// otherwise start with the starting board from the cell
+            	original = _startingBoard.cellAt(coords);
             }
-            // otherwise see if there is a distributed state for the cell
+            
+            // see if there is a distributed state for the cell
             const state:CellState = state(coords);
             if (state == null) {
-            	// if there is no state, then return the default for this board
-            	Log.debug("returning cell from starting board for "+coords);
-                return _startingBoard.cellAt(coords);
+            	// if there is no state, then return what we found in the cache or from the 
+            	// starting board.
+                return original;
             }
+            
             // if there is a state, then apply it to the default, cache the result and return it
-            const original:Cell = _startingBoard.cellAt(coords);
-            // cache anyway - sincet he update may be just a state change
+            // cache anyway - since the update may be just a state change
             _cache[coords.key] = original;
             original.updateState(_owners, _clock, this, state);
             // read out of the cache since the original cell may have replaced itself
@@ -101,5 +119,6 @@ package world
         protected var _control:NetSubControl;
         protected var _slotName:String;
         protected var _cache:Dictionary = new Dictionary();
+        protected var _updated:Dictionary = new Dictionary();        
     }
 }
