@@ -154,6 +154,7 @@ package client
 		 */
 		public function showCell (c:Cell) :void 
 		{
+			Log.debug("OBJECTIVE SHOWING CELL: "+c);
 			const v:CellView = _viewFactory.viewOf(c, _clock.serverTime);
 			v.addToObjective(this);
 			_viewBuffer.store(c.position, v);	
@@ -222,7 +223,9 @@ package client
 		{
 			const rect:BoardRectangle = boardSurround(viewPoint);
 			_origin = new GraphicCoordinates(0,0);
+			Log.debug("INITIALIZING CELL BUFFER")
 			_cells.initializeWith(rect);
+			Log.debug("DONE INITIALIZING CELL BUFFER");
 		}
 		
 		public function cellCoordinates (position:BoardCoordinates) :GraphicCoordinates

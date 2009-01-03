@@ -25,24 +25,54 @@ package world
             _control = control;
         }
 
-        public static function positionToInt (height:int, coords:BoardCoordinates) :int
+        /**
+         * Convert a positive or negative integer into a magnitude only value without
+         * losing information, but interleaving negatives numbers as odds, and positives
+         * as evens.
+         */ 
+        public static function mag (i:int) :int
         {
-            return (coords.x * height) + coords.y;
+        	if (i < 0) {
+        		return (i * -2) + 1
+        	} else {
+        		return (i * 2)
+        	}
         }
         
-        public static function intToPosition (height:int, pos:int) :BoardCoordinates
+        /**
+         * Recover an integer from a magnitude only value but de-interleaving odds into
+         * negatives, and evens into positives.
+         */ 
+        public static function rec (i:int) :int
         {
-            const y:int = pos % height;
-            const x:int = (pos - y) / height;
-            return new BoardCoordinates(x, y);
+        	if (i % 2 == 1) {
+        		return (i-1) / -2
+        	} else {
+        		return i / 2
+        	}
+        }
+        
+        public static function positionToInt (height:int, coords:BoardCoordinates) :int
+        {
+            const h:int = height * 8; // factors - 3 for overplotting, 2 for negatives, 2 for safety
+            const i:int = (mag(coords.x) * h) + mag(coords.y);
+            return i;
+        }
+        
+        public static function intToPosition (height:int, i:int) :BoardCoordinates
+        {
+        	const h:int = height * 8;
+        	const magY:int = i % h;
+        	const magX:int = (i - magY) / h
+            return new BoardCoordinates(rec(magX), rec(magY));
         }
 
         public function replace (cell:Cell) :void
         {
             _cache[cell.position.key] = cell;
             const array:ByteArray = new ByteArray();
-            cell.state.writeToArray(array);
-            _control.setIn(_slotName, positionToInt(_height, cell.position), array);  
+            cell.state.writeToArray(array);            
+            _control.setIn(_slotName, positionToInt(_height, cell.position), array);
         }
         
         public function cellAt (position:BoardCoordinates) :Cell

@@ -56,13 +56,15 @@ package world
             }
             // if there is a state, then apply it to the default, cache the result and return it
             const original:Cell = _startingBoard.cellAt(coords);
+            // cache anyway - sincet he update may be just a state change
+            _cache[coords.key] = original;
             original.updateState(_owners, _clock, this, state);
-            return original;  
+            // read out of the cache since the original cell may have replaced itself
+            return _cache[coords.key] as Cell;  
         }
         
         public function replace (cell:Cell) :void
         {
-        	Log.debug("caching: "+cell);
             _cache[cell.position.key] = cell;
         }
 
