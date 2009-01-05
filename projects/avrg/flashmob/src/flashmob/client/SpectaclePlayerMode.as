@@ -3,7 +3,6 @@ package flashmob.client {
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
@@ -98,8 +97,10 @@ public class SpectaclePlayerMode extends GameDataMode
         }
 
         var patternLocs :Array = pattern.locs.map(
-            function (loc :PatternLoc, ...ignored) :Vector2 {
-                return new Vector2(loc.x + _spectacleOffset.x, loc.y + _spectacleOffset.y);
+            function (loc :PatternLoc, index :int, ...ignored) :LocInfo {
+                return new LocInfo(
+                    new Vector2(loc.x + _spectacleOffset.x, loc.y + _spectacleOffset.y),
+                    index);
             });
 
         var playerLocs :Array = ClientContext.playerIds.map(
@@ -108,28 +109,32 @@ public class SpectaclePlayerMode extends GameDataMode
             });
 
         var epsilonSqr :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
+        var inPositionFlags :Array = ArrayUtil.create(patternLocs.length, false);
+        var allInPosition :Boolean = true;
         for each (var playerLoc :Vector2 in playerLocs) {
-            var closestLoc :Vector2;
+            var closestLoc :LocInfo;
             var closestDistSqr :Number = Number.MAX_VALUE;
-            for each (var patternLoc :Vector2 in patternLocs) {
-                var distSqr :Number = patternLoc.subtract(playerLoc).lengthSquared;
+
+            for each (var patternLoc :LocInfo in patternLocs) {
+                var distSqr :Number = patternLoc.loc.subtract(playerLoc).lengthSquared;
                 if (distSqr < closestDistSqr || closestLoc == null) {
                     closestDistSqr = distSqr;
                     closestLoc = patternLoc;
                 }
             }
 
-            if (closestDistSqr > epsilonSqr) {
-                /*log.info("Not in position",
-                    "closestDist", Math.sqrt(closestDistSqr),
-                    "e", Constants.PATTERN_LOC_EPSILON);*/
-                return false;
-            }
+            var inPosition :Boolean = (closestDistSqr <= epsilonSqr);
+            allInPosition &&= inPosition;
+            inPositionFlags[closestLoc.index] = inPosition;
 
             ArrayUtil.removeFirst(patternLocs, closestLoc);
         }
 
-        return true;
+        if (_patternView != null) {
+            _patternView.showInPositionIndicators(inPositionFlags);
+        }
+
+        return allInPosition;
     }
 
     protected function removePatternView () :void
@@ -236,8 +241,12 @@ public class SpectaclePlayerMode extends GameDataMode
     {
         super.update(dt);
 
-        if (_startedPlaying && !_completed && !_patternRecognized && ClientContext.isPartyLeader) {
-            if (checkPlayerPositions()) {
+        if (_startedPlaying && !_completed && !_patternRecognized) {
+            // checkPlayerPositions checks to see which positions still need to be filled, and
+            // updates the PatternView with this information so that players can keep track.
+            var patternRecognized :Boolean = checkPlayerPositions();
+
+            if (patternRecognized && ClientContext.isPartyLeader) {
                 // Tell the server we were successful
                 log.info("patternRecognized");
                 _patternRecognized = true;
@@ -266,7 +275,7 @@ public class SpectaclePlayerMode extends GameDataMode
     protected var _patternRecognized :Boolean;
     protected var _startedPlaying :Boolean;
     protected var _completed :Boolean;
-    protected var _patternView :SceneObject;
+    protected var _patternView :PatternView;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;
     protected var _timer :TimerView;
@@ -279,6 +288,8 @@ public class SpectaclePlayerMode extends GameDataMode
 
 import com.whirled.contrib.simplegame.SimObject;
 import flashmob.client.ClientContext;
+import flashmob.data.PatternLoc;
+import com.threerings.flash.Vector2;
 
 // Throttles an individual type of message
 class MessageThrottler extends SimObject
@@ -327,4 +338,16 @@ class MessageThrottler extends SimObject
     protected var _messagePending :Boolean;
 
     protected var _timeTillNextMessage :Number = 0;
+}
+
+class LocInfo
+{
+    public var loc :Vector2;
+    public var index :int;
+
+    public function LocInfo (loc :Vector2, index :int)
+    {
+        this.loc = loc;
+        this.index = index;
+    }
 }

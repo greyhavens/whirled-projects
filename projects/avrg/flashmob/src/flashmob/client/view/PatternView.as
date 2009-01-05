@@ -21,23 +21,33 @@ public class PatternView extends SceneObject
         _draggedCallback = draggedCallback;
 
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
+        _shape = new Shape();
+        _sprite.addChild(_shape);
 
-        if (_pattern.locs.length > 0) {
-            var shape :Shape = new Shape();
-            var g :Graphics = shape.graphics;
-
-            for each (var loc :PatternLoc in _pattern.locs) {
-                g.lineStyle(2, 0);
-                g.beginFill(0xFFFFFF);
-                g.drawCircle(loc.x, loc.y, 12);
-                g.endFill();
-            }
-
-            _sprite.addChild(shape);
-        }
+        updateView();
 
         if (this.isDraggable) {
             registerListener(_sprite, MouseEvent.MOUSE_DOWN, startDrag);
+        }
+    }
+
+    public function showInPositionIndicators (inPositionFlags :Array) :void
+    {
+        updateView(inPositionFlags);
+    }
+
+    protected function updateView (inPositionFlags :Array = null) :void
+    {
+        var g :Graphics = _shape.graphics;
+        g.clear();
+        g.lineStyle(2, 0);
+
+        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
+            var loc :PatternLoc = _pattern.locs[ii];
+            var inPosition :Boolean = (inPositionFlags != null ? inPositionFlags[ii] : false);
+            g.beginFill(inPosition ? 0x00FF00 : 0xFFFFFF);
+            g.drawCircle(loc.x, loc.y, 12);
+            g.endFill();
         }
     }
 
@@ -116,6 +126,7 @@ public class PatternView extends SceneObject
     protected var _draggedCallback :Function;
 
     protected var _sprite :Sprite;
+    protected var _shape :Shape;
 
     protected var _dragOffsetX :Number;
     protected var _dragOffsetY :Number;
