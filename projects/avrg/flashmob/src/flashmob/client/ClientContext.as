@@ -7,6 +7,7 @@ import flash.geom.Point;
 import flash.utils.getTimer;
 
 import flashmob.*;
+import flashmob.client.view.HitTester;
 import flashmob.data.*;
 import flashmob.party.*;
 
@@ -21,6 +22,7 @@ public class ClientContext
     public static var outMsg :PartyMsgSender;
     public static var props :PartyPropGetControl;
     public static var spectacle :Spectacle;
+    public static var hitTester :HitTester;
 
     public static function get waitingForPlayers () :Boolean
     {

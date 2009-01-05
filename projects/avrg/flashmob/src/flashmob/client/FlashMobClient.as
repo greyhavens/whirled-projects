@@ -18,6 +18,7 @@ import flash.utils.ByteArray;
 
 import flashmob.*;
 import flashmob.client.view.BasicErrorMode;
+import flashmob.client.view.HitTester;
 import flashmob.data.Spectacle;
 import flashmob.party.*;
 import flashmob.server.*;
@@ -48,6 +49,9 @@ public class FlashMobClient extends Sprite
             ClientContext.gameCtrl.game);
         ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
             ClientContext.gameCtrl.game.props);
+
+        ClientContext.hitTester = new HitTester();
+        ClientContext.hitTester.setup();
 
         log.info("Starting client",
             "localPlayerId", ClientContext.localPlayerId,

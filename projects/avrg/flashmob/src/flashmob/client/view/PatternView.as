@@ -1,6 +1,5 @@
 package flashmob.client.view {
 
-import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
@@ -21,8 +20,7 @@ public class PatternView extends SceneObject
         _pattern = pattern;
         _draggedCallback = draggedCallback;
 
-        var draggable :Boolean = (draggedCallback != null);
-        _sprite = SpriteUtil.createSprite(false, draggable);
+        _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
         if (_pattern.locs.length > 0) {
             var shape :Shape = new Shape();
@@ -38,8 +36,23 @@ public class PatternView extends SceneObject
             _sprite.addChild(shape);
         }
 
-        if (draggable) {
+        if (this.isDraggable) {
             registerListener(_sprite, MouseEvent.MOUSE_DOWN, startDrag);
+        }
+    }
+
+    override protected function addedToDB () :void
+    {
+        // If we're not draggable, we don't want to intercept mouse clicks
+        if (!this.isDraggable) {
+            ClientContext.hitTester.addExcludedObj(this.displayObject);
+        }
+    }
+
+    override protected function destroyed () :void
+    {
+        if (!this.isDraggable) {
+            ClientContext.hitTester.removeExcludedObj(this.displayObject);
         }
     }
 
@@ -87,6 +100,11 @@ public class PatternView extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    protected function get isDraggable () :Boolean
+    {
+        return (_draggedCallback != null);
     }
 
     protected static function get log () :Log
