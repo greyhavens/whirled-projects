@@ -1,8 +1,10 @@
 package flashmob.client {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
@@ -10,6 +12,7 @@ import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
@@ -35,17 +38,25 @@ public class SpectaclePlayerMode extends GameDataMode
 
         if (ClientContext.isPartyLeader) {
             setText("Drag the spectacle to its starting location, then press start!");
-            _patternView = new PatternView(_spectacle.patterns[0], onSpectacleDragged);
+            _spectaclePlacer = new SpectaclePlacer(_spectacle, onSpectacleDragged);
 
             _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_SET_SPECTACLE_OFFSET);
             addObject(_spectacleOffsetThrottler);
 
+            // position the SpectaclePlacer in the middle of the screen
+            var bounds :Rectangle = ClientContext.gameCtrl.local.getPaintableArea(true);
+            DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
+                bounds.left + ((bounds.width - _spectaclePlacer.width) * 0.5),
+                bounds.top + ((bounds.height - _spectaclePlacer.height) * 0.5));
+            onSpectacleDragged(_spectaclePlacer.x, _spectaclePlacer.y);
+
         } else {
-            _patternView = new PatternView(_spectacle.patterns[0]);
+            _spectaclePlacer = new SpectaclePlacer(_spectacle);
+            _spectaclePlacer.visible = false; // will become visible on first location update
             setText("Waiting for the party leader to start the spectacle!");
         }
 
-        addObject(_patternView, _modeSprite);
+        addObject(_spectaclePlacer, _modeSprite);
 
         // init data bindings
         _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, handleNextPattern);
@@ -53,6 +64,11 @@ public class SpectaclePlayerMode extends GameDataMode
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
         _dataBindings.processAllProperties(ClientContext.props);
+
+        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+            function (...ignored) :void {
+                updatePatternViewLoc(false);
+            });
     }
 
     protected function onSpectacleDragged (newX :Number, newY :Number) :void
@@ -60,8 +76,8 @@ public class SpectaclePlayerMode extends GameDataMode
         var roomLoc :Point =
             ClientContext.gameCtrl.local.paintableToRoom(new Point(newX, newY));
 
-        _patternView.x = newX;
-        _patternView.y = newY;
+        _spectaclePlacer.x = newX;
+        _spectaclePlacer.y = newY;
         _spectacleOffsetThrottler.value = (new PatternLoc(roomLoc.x, roomLoc.y).toBytes());
     }
 
@@ -79,13 +95,30 @@ public class SpectaclePlayerMode extends GameDataMode
         var screenLoc :Point = ClientContext.gameCtrl.local.roomToPaintable(
                 new Point(_spectacleOffset.x, _spectacleOffset.y));
 
-        _patternView.removeAllTasks();
-        if (animate) {
-            _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 0.5));
+        if (_spectaclePlacer != null) {
+            _spectaclePlacer.removeAllTasks();
+            if (animate) {
+                _spectaclePlacer.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 0.5));
 
-        } else {
-            _patternView.x = screenLoc.x;
-            _patternView.y = screenLoc.y;
+            } else {
+                _spectaclePlacer.x = screenLoc.x;
+                _spectaclePlacer.y = screenLoc.y;
+            }
+
+            _spectaclePlacer.visible = true;
+        }
+
+        if (_patternView != null) {
+            _patternView.removeAllTasks();
+            if (animate) {
+                _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 0.5));
+
+            } else {
+                _patternView.x = screenLoc.x;
+                _patternView.y = screenLoc.y;
+            }
+
+            _patternView.visible = true;
         }
     }
 
@@ -154,6 +187,9 @@ public class SpectaclePlayerMode extends GameDataMode
                 _spectacleOffsetThrottler.destroySelf();
                 _spectacleOffsetThrottler = null;
             }
+
+            _spectaclePlacer.destroySelf();
+            _spectaclePlacer = null;
 
             _startedPlaying = true;
         }
@@ -275,6 +311,7 @@ public class SpectaclePlayerMode extends GameDataMode
     protected var _patternRecognized :Boolean;
     protected var _startedPlaying :Boolean;
     protected var _completed :Boolean;
+    protected var _spectaclePlacer :SpectaclePlacer;
     protected var _patternView :PatternView;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;

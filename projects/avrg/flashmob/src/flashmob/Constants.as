@@ -20,6 +20,8 @@ public class Constants
 
     public static const PATTERN_LOC_EPSILON :Number = 30;
 
+    public static const PATTERN_DOT_SIZE :Number = 12;
+
     /* Game states */
     public static const STATE_INVALID :int = 0;
     public static const STATE_SPECTACLE_CHOOSER :int = 1;
