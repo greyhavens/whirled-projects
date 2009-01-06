@@ -4,6 +4,7 @@ package world
     
     import com.whirled.game.NetSubControl;
     
+    import flash.events.EventDispatcher;
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     
@@ -14,7 +15,7 @@ package world
      * Server side board implementation for a single level that utilizes the distributed set to send out its state.
      * Writing changes to this implementation will distribute them out to the clients.
      */ 
-    public class MasterBoard implements BoardInteractions
+    public class MasterBoard extends EventDispatcher implements BoardInteractions 
     {
         public function MasterBoard (levelNumber:int, height:int, startingBoard:Board, control:NetSubControl)
         {
@@ -71,7 +72,8 @@ package world
         {
             _cache[cell.position.key] = cell;
             const array:ByteArray = new ByteArray();
-            cell.state.writeToArray(array);            
+            cell.state.writeToArray(array);          
+            Log.debug("MASTER BOARD - replacing cell: "+cell);  
             _control.setIn(_slotName, positionToInt(_height, cell.position), array);
         }
         

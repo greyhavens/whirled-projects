@@ -15,14 +15,13 @@ package client
 	import graphics.Diagram;
 	import graphics.OwnerLabel;
 	
-	import server.Messages.CellState;
-	import server.Messages.CellUpdate;
 	import server.Messages.Neighborhood;
 	
 	import sprites.CellSprite;
 	import sprites.PlayerSprite;
 	import sprites.ViewEvent;
 	
+	import world.BoardEvent;
 	import world.Cell;
 	import world.Chronometer;
 	import world.NeighborhoodEvent;
@@ -47,7 +46,8 @@ package client
 			pixelWidth = _viewer.width;
 			pixelHeight = _viewer.height;
 			
-			_board = board;						
+			_board = board;
+			_board.addEventListener(BoardEvent.CELL_REPLACED, handleCellReplaced);						
     		_cells = new CellScrollBuffer(this, _board);
 
 			CELL_MARGINS = computeMarginWidths();						
@@ -68,6 +68,12 @@ package client
 			initializeViewpoint(startingPosition);
 			_frameTimer.start();
 		}		
+		
+		public function handleCellReplaced(event:BoardEvent) :void
+		{
+		    Log.debug("Objective redispatching Cell replaced event");
+		    dispatchEvent(event);
+		}
 		
 		public function destroy(players:ClientPlayers) :void 
 		{

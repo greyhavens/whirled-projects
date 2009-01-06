@@ -15,7 +15,8 @@ package world
     import world.board.BoardInteractions;
     
     /**
-     * 'read only' board implementation based on the distributed set.
+     * 'read only' board implementation based on the distributed set. 'replace' is only used by local objects to
+     * cache the appropriate state.
      */ 
     public class DistributedBoard extends EventDispatcher implements BoardInteractions
     {
@@ -36,34 +37,33 @@ package world
          */
         public function handleElementChanged (event:ElementChangedEvent) :void
         {
-            if (event.name == _slotName) {
-                _updated[event.key] = true;
+            Log.debug("DISTRIBUTED BOARD - handling state changed.");
+            // find out whether the changed element was cached
+            const coords:BoardCoordinates = MasterBoard.intToPosition(_height, event.key);
+            const cached:Object = _cache[coords.key]
+            if (cached is Cell) {
+                Log.debug("STATE IS CACHED");
+                // if we have a cached cell, then it may be in use and we update the state of the cell immediately
+                const cell:Cell = cached as Cell;
+                const state:CellState = state(coords);
+                cell.updateState(_owners, _clock, this, state);
+                // an event will be generated if the update causes the cell to be replaced.
+            } else {
+                Log.debug("STATE IS NOT CACHED");
             }
-            dispatchEvent(new BoardEvent(BoardEvent.CELL_UPDATED, 
-                MasterBoard.intToPosition(_height, event.key)));
         }
         
         public function cellAt(coords:BoardCoordinates) :Cell
         {
         	// return the cached cell if there is one
             const cached:Object = _cache[coords.key]
-            var original:Cell;
             if (cached is Cell) {
-            	// if there's a cached cell, start with it
-                const cell:Cell = cached as Cell;
-                const pos:int = MasterBoard.positionToInt(_height, cell.position);
-                if (_updated[pos] == null) {
-                	// if the cached cell hasn't been updated, return it
-                    return cached as Cell;
-                }
-                // the cell has been updated so we're going to start with it an apply any changes                
-                original = cell;                
-                // clear the update mark
-                delete _updated[pos];
-            } else {
-            	// otherwise start with the starting board from the cell
-            	original = _startingBoard.cellAt(coords);
+                return cached as Cell;
             }
+            
+            // cache the result from the starting board
+            const original:Cell = _startingBoard.cellAt(coords);
+            _cache[coords.key] = original;
             
             // see if there is a distributed state for the cell
             const state:CellState = state(coords);
@@ -73,9 +73,7 @@ package world
                 return original;
             }
             
-            // if there is a state, then apply it to the default, cache the result and return it
-            // cache anyway - since the update may be just a state change
-            _cache[coords.key] = original;
+            // apply the state
             original.updateState(_owners, _clock, this, state);
             // read out of the cache since the original cell may have replaced itself
             return _cache[coords.key] as Cell;  
@@ -84,6 +82,8 @@ package world
         public function replace (cell:Cell) :void
         {
             _cache[cell.position.key] = cell;
+            Log.debug("CELL REPLACED - GENERATING EVENT");                        
+            dispatchEvent(new BoardEvent(BoardEvent.CELL_REPLACED, cell.position));
         }
 
         protected function state(coords:BoardCoordinates) :CellState
@@ -119,6 +119,5 @@ package world
         protected var _control:NetSubControl;
         protected var _slotName:String;
         protected var _cache:Dictionary = new Dictionary();
-        protected var _updated:Dictionary = new Dictionary();        
     }
 }

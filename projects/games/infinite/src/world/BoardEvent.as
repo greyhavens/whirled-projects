@@ -13,7 +13,12 @@ package world
 			super(type);
 			this.position = position;
 		}
+	
+	    override public function clone () :Event
+	    {
+	        return new BoardEvent(type, position);
+	    }
 		
-        public static const CELL_UPDATED:String = "cell_updated";       		
+        public static const CELL_REPLACED:String = "cell_replaced";       		
 	}
 }

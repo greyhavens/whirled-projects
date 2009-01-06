@@ -7,13 +7,14 @@ package world.level
 	
 	import com.whirled.game.NetSubControl;
 	
+	import flash.events.EventDispatcher;
+	
 	import server.Messages.LevelUpdate;
 	import server.Messages.PlayerPosition;
 	
 	import world.Cell;
 	import world.Chronometer;
 	import world.MasterBoard;
-	import world.NeighborhoodBoard;
 	import world.Player;
 	import world.PlayerMap;
 	import world.World;
@@ -21,7 +22,7 @@ package world.level
 	import world.board.Board;
 	import world.board.BoardInteractions;
 	
-	public class Level implements BoardInteractions, Chronometer
+	public class Level extends EventDispatcher implements BoardInteractions, Chronometer
 	{		
 		public function Level(world:World, height:int, starting:Board, control:NetSubControl) 
 		{
@@ -88,7 +89,7 @@ package world.level
         	_arbiter.proposeMove(player, _board.cellAt(coords));
         }
                 
-        public function toString () :String
+        public override function toString () :String
         {
         	return "level "+levelNumber;
         }

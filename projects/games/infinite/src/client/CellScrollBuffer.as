@@ -2,6 +2,7 @@ package client
 {
 	import arithmetic.*;
 	
+	import world.BoardEvent;
 	import world.Cell;
 	import world.board.*;
 	
@@ -11,6 +12,7 @@ package client
 		{
 			_objective = objective;
 			_board = board;
+			_board.addEventListener(BoardEvent.CELL_REPLACED, handleCellReplaced);
 		}
 
 		public function get origin () :BoardCoordinates
@@ -19,7 +21,7 @@ package client
 		}
 
 		/**
-		 * Buffer a region of the board.  An cells already in the buffer are cleared without
+		 * Buffer a region of the board.  Any cells already in the buffer are cleared without
 		 * notice.
 		 */
 		public function initializeWith (rect:BoardRectangle) :void
@@ -316,6 +318,20 @@ package client
 				return _cells[v.dx][v.dy] as Cell;		
 			}
 			return _board.cellAt(position);
+		}
+		
+		public function handleCellReplaced(event:BoardEvent) :void
+		{
+           if (_extent.contains(event.position)) {
+               const v:Vector = _extent.relativePosition(event.position);
+               const old:Cell = _cells[v.dx][v.dy] as Cell;
+               if (old != null) { 
+                  old.removeFromObjective(); 
+                  const cell:Cell = _board.cellAt(event.position);
+                  _cells[v.dx][v.dy] = cell;
+                  cell.addToObjective(_objective);
+               }
+           }
 		}
 
 		public function memoryOrBoard (position:BoardCoordinates) :Cell 

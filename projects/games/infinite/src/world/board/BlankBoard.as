@@ -8,11 +8,13 @@ package world.board
 	import cells.wall.WallBaseCell;
 	import cells.wall.WallCell;
 	
+	import flash.events.EventDispatcher;
+	
 	import world.Cell;
 	import world.level.Level;
 	
 	
-	public class BlankBoard implements Board
+	public class BlankBoard extends EventDispatcher implements Board
 	{
 		public function BlankBoard(number:int, height:int) 
 		{
@@ -46,7 +48,7 @@ package world.board
             return new BoardCoordinates(0,0);
         }       
         
-        public function toString () :String
+        override public function toString () :String
         {
         	return "a blank board "+_height+" cells high for level "+_level;
         }
