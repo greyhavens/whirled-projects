@@ -99,10 +99,18 @@ public class GameView extends Sprite
             help.y = 50;
             addChild(help);
 
+            var trophies :SimpleButton = _ctx.content.makeButton("Trophies");
+            trophies.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                _ctx.control.local.showTrophies();
+            });
+            trophies.x = xpos;
+            trophies.y = help.y + help.height + 10;
+            addChild(trophies);
+
             _hiscores = new TextField();
             _hiscores.defaultTextFormat = _ctx.content.makeInputFormat(uint(0xFFFFFF));
             _hiscores.x = xpos;
-            _hiscores.y = help.y + help.height + 10;
+            _hiscores.y = trophies.y + trophies.height + 10;
             _hiscores.autoSize = TextFieldAutoSize.LEFT;
             _hiscores.width = 150;
             addChild(_hiscores);
