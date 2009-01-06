@@ -78,11 +78,11 @@ public class DraggableObject extends SceneObject
     protected function updateDraggedLocation () :void
     {
         if (this.draggableObject.parent != null) {
-            var newX :Number = this.draggableObject.parent.mouseX + _dragOffsetX;
-            var newY :Number = this.draggableObject.parent.mouseY + _dragOffsetY;
-            if (newX != this.draggableObject.x || newY != this.draggableObject.y) {
-                this.draggableObject.x = newX;
-                this.draggableObject.y = newY;
+            var newX :Number = this.displayObject.parent.mouseX + _dragOffsetX;
+            var newY :Number = this.displayObject.parent.mouseY + _dragOffsetY;
+            if (newX != this.displayObject.x || newY != this.displayObject.y) {
+                this.displayObject.x = newX;
+                this.displayObject.y = newY;
 
                 if (_draggedCallback != null) {
                     _draggedCallback(newX, newY);

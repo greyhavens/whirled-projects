@@ -8,6 +8,7 @@ import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
@@ -41,6 +42,7 @@ public class SpectacleCreatorMode extends GameDataMode
 
     override public function update (dt :Number) :void
     {
+        super.update(dt);
         updateButtons();
     }
 
@@ -101,11 +103,26 @@ public class SpectacleCreatorMode extends GameDataMode
             return;
         }
 
-        _spectacle.name = "A Spectacle!";
-        _spectacle.normalize();
-        ClientContext.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
-        _done = true;
-        updateButtons();
+        _doneButton.parent.removeChild(_doneButton);
+        _doneButton = null;
+
+        _snapshotButton.parent.removeChild(_snapshotButton);
+        _snapshotButton = null;
+
+        var namer :SpectacleNamer = new SpectacleNamer(onSpectacleNamed);
+        var bounds :Rectangle = ClientContext.gameCtrl.local.getPaintableArea(false);
+        namer.x = (bounds.width - namer.width) * 0.5;
+        namer.y = (bounds.height - namer.height) * 0.5;
+        addObject(namer, _modeSprite);
+
+        function onSpectacleNamed (name :String) :void {
+            namer.destroySelf();
+            _spectacle.name = name;
+            _spectacle.normalize();
+            ClientContext.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
+            _done = true;
+            updateButtons();
+        }
     }
 
     protected function updateButtons () :void
