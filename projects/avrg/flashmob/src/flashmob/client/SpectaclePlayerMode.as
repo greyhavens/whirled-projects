@@ -292,8 +292,9 @@ public class SpectaclePlayerMode extends GameDataMode
         var height :Number = _tf.height + 10 + (_startButton != null ? _startButton.height : 0);
         var g :Graphics = _bg.graphics;
         g.clear();
-        g.beginFill(0);
-        g.drawRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT));
+        g.lineStyle(2, 0);
+        g.beginFill(0, 0.7);
+        g.drawRoundRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT), 15, 15);
         g.endFill();
 
         _tf.x = (_bg.width - _tf.width) * 0.5;

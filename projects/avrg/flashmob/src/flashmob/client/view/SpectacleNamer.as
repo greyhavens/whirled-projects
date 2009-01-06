@@ -61,7 +61,7 @@ public class SpectacleNamer extends DraggableObject
 
         var g :Graphics = _draggableObj.graphics;
         g.lineStyle(2, 0);
-        g.beginFill(0, 0.8);
+        g.beginFill(0, 0.7);
         g.drawRoundRect(0, 0, _sprite.width + (MARGIN * 2), HEIGHT, 15, 15);
         g.endFill();
     }

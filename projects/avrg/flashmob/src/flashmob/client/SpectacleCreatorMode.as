@@ -152,8 +152,9 @@ public class SpectacleCreatorMode extends GameDataMode
 
         var g :Graphics = _bg.graphics;
         g.clear();
-        g.beginFill(0);
-        g.drawRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT));
+        g.lineStyle(2, 0);
+        g.beginFill(0, 0.7);
+        g.drawRoundRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT), 15, 15);
         g.endFill();
 
         _tf.x = (_bg.width - _tf.width) * 0.5;
