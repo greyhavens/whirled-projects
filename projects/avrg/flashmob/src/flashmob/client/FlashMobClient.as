@@ -110,7 +110,7 @@ public class FlashMobClient extends Sprite
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
         switch (e.name) {
-        case Constants.MSG_RESETGAME:
+        case Constants.MSG_S_RESETGAME:
             log.info("A player left the game. Resetting.");
             break;
 

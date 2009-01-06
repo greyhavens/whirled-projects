@@ -40,7 +40,7 @@ public class SpectaclePlayerMode extends GameDataMode
             setText("Drag the spectacle to its starting location, then press start!");
             _spectaclePlacer = new SpectaclePlacer(_spectacle, onSpectacleDragged);
 
-            _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_SET_SPECTACLE_OFFSET);
+            _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_CS_SET_SPECTACLE_OFFSET);
             addObject(_spectacleOffsetThrottler);
 
             // position the SpectaclePlacer in the middle of the screen
@@ -59,8 +59,9 @@ public class SpectaclePlayerMode extends GameDataMode
         addObject(_spectaclePlacer, _modeSprite);
 
         // init data bindings
-        _dataBindings.bindMessage(Constants.MSG_PLAYNEXTPATTERN, handleNextPattern);
-        _dataBindings.bindMessage(Constants.MSG_PLAYSUCCESS, handleSuccess);
+        _dataBindings.bindMessage(Constants.MSG_S_PLAYNEXTPATTERN, handleNextPattern);
+        _dataBindings.bindMessage(Constants.MSG_S_PLAYSUCCESS, handleSuccess);
+        _dataBindings.bindMessage(Constants.MSG_S_PLAYFAIL, handleFailure);
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
         _dataBindings.processAllProperties(ClientContext.props);
@@ -180,7 +181,7 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected function handleNextPattern () :void
     {
-        log.info(_startButton ? "next pattern" : "first pattern");
+        log.info(_startedPlaying ? "next pattern" : "first pattern");
 
         if (!_startedPlaying) {
             if (_spectacleOffsetThrottler != null) {
@@ -207,14 +208,14 @@ public class SpectaclePlayerMode extends GameDataMode
             "Assemble into the next position!");
 
         if (_patternIndex > 0) {
-            if (_timer == null) {
-                _timer = new TimerView();
-                _timer.x = 300;
-                _timer.y = 20;
-                addObject(_timer, _modeSprite);
+            if (_timerView == null) {
+                _timerView = new TimerView();
+                _timerView.x = 300;
+                _timerView.y = 20;
+                addObject(_timerView, _modeSprite);
             }
 
-            _timer.time = this.curPattern.timeLimit;
+            _timerView.time = this.curPattern.timeLimit;
         }
     }
 
@@ -222,11 +223,36 @@ public class SpectaclePlayerMode extends GameDataMode
     {
         log.info("Success!");
         setText("Success!");
+        handleCompleted();
+    }
+
+    protected function handleFailure () :void
+    {
+        log.info("Failed!");
+        setText("Out of time!");
+        handleCompleted();
+    }
+
+    protected function handleCompleted () :void
+    {
         _completed = true;
 
-        if (_timer != null) {
-            _timer.destroySelf();
-            _timer = null;
+        if (_timerView != null) {
+            _timerView.destroySelf();
+            _timerView = null;
+        }
+
+        removePatternView();
+
+        if (ClientContext.isPartyLeader) {
+            _againButton = UIBits.createButton("Again?", 1.5);
+            _modeSprite.addChild(_againButton);
+            registerOneShotCallback(_againButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PLAYAGAIN);
+                });
+
+            updateButtons();
         }
     }
 
@@ -238,12 +264,18 @@ public class SpectaclePlayerMode extends GameDataMode
             _spectacleOffsetThrottler = null;
         }
 
-        ClientContext.sendAgentMsg(Constants.MSG_STARTPLAYING);
-        _startButton.visible = false;
+        ClientContext.sendAgentMsg(Constants.MSG_C_STARTPLAYING);
+        _startButton.parent.removeChild(_startButton);
+        _startButton = null;
     }
 
     protected function updateButtons () :void
     {
+        var button :SimpleButton = (_startButton != null ? _startButton : _againButton);
+        if (button != null) {
+            button.x = _bg.width - button.width - 10;
+            button.y = _bg.height - button.height - 10;
+        }
     }
 
     protected function setText (text :String) :void
@@ -267,10 +299,7 @@ public class SpectaclePlayerMode extends GameDataMode
         _tf.x = (_bg.width - _tf.width) * 0.5;
         _tf.y = (_bg.height - _tf.height) * 0.5;
 
-        if (_startButton != null) {
-            _startButton.x = _bg.width - _startButton.width - 10;
-            _startButton.y = _bg.height - _startButton.height - 10;
-        }
+        updateButtons();
     }
 
     override public function update (dt :Number) :void
@@ -278,15 +307,23 @@ public class SpectaclePlayerMode extends GameDataMode
         super.update(dt);
 
         if (_startedPlaying && !_completed && !_patternRecognized) {
+
             // checkPlayerPositions checks to see which positions still need to be filled, and
             // updates the PatternView with this information so that players can keep track.
             var patternRecognized :Boolean = checkPlayerPositions();
 
-            if (patternRecognized && ClientContext.isPartyLeader) {
-                // Tell the server we were successful
-                log.info("patternRecognized");
-                _patternRecognized = true;
-                ClientContext.outMsg.sendMessage(Constants.MSG_PATTERNCOMPLETE);
+            if (ClientContext.isPartyLeader) {
+                if (patternRecognized) {
+                    // Tell the server we were successful
+                    log.info("patternRecognized");
+                    _patternRecognized = true;
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE);
+
+                } else if (_timerView != null && _timerView.time <= 0) {
+                    log.info("Out of time!");
+                    _completed = true;
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_OUTOFTIME);
+                }
             }
         }
     }
@@ -304,6 +341,7 @@ public class SpectaclePlayerMode extends GameDataMode
 
     protected var _spectacle :Spectacle;
     protected var _startButton :SimpleButton;
+    protected var _againButton :SimpleButton;
     protected var _tf :TextField;
     protected var _bg :Shape;
 
@@ -315,7 +353,7 @@ public class SpectaclePlayerMode extends GameDataMode
     protected var _patternView :PatternView;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;
-    protected var _timer :TimerView;
+    protected var _timerView :TimerView;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

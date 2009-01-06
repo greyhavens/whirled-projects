@@ -10,9 +10,10 @@ import flashmob.util.SpriteUtil;
 
 public class TimerView extends SceneObject
 {
-    public function TimerView (time :Number = 0)
+    public function TimerView (time :Number = 0, countUp :Boolean = false)
     {
         _time = time;
+        _countUp = countUp;
 
         _sprite = SpriteUtil.createSprite();
         _tf = new TextField();
@@ -29,6 +30,16 @@ public class TimerView extends SceneObject
         return _time;
     }
 
+    public function set paused (val :Boolean) :void
+    {
+        _paused = val;
+    }
+
+    public function get paused () :Boolean
+    {
+        return _paused;
+    }
+
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
@@ -36,17 +47,25 @@ public class TimerView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        _time = Math.max(_time - dt, 0);
+        if (!_paused) {
+            if (_countUp) {
+                _time += dt;
+            } else {
+                _time = Math.max(_time - dt, 0);
+            }
+        }
+
         updateView();
     }
 
     protected function updateView () :void
     {
-        if (Math.abs(_lastUpdate - _time) < 1) {
+        var time :int = Math.floor(_time);
+        if (time == _lastUpdate) {
             return;
         }
+        _lastUpdate = time;
 
-        var time :int = Math.floor(_time);
         var mins :int = time / 60;
         var secs :int = time % 60;
         var minStr :String = String(mins);
@@ -66,6 +85,8 @@ public class TimerView extends SceneObject
     protected var _sprite :Sprite;
     protected var _tf :TextField;
     protected var _time :Number;
+    protected var _countUp :Boolean;
+    protected var _paused :Boolean;
 
     protected var _lastUpdate :Number = Number.MIN_VALUE;
 }

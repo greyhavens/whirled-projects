@@ -11,9 +11,11 @@ public class ServerSpectaclePlayerMode extends ServerMode
     {
         _ctx = ctx;
 
-        _dataBindings.bindMessage(Constants.MSG_STARTPLAYING, handleStartPlaying);
-        _dataBindings.bindMessage(Constants.MSG_PATTERNCOMPLETE, handlePatternComplete);
-        _dataBindings.bindMessage(Constants.MSG_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
+        _dataBindings.bindMessage(Constants.MSG_C_STARTPLAYING, handleStartPlaying);
+        _dataBindings.bindMessage(Constants.MSG_C_PATTERNCOMPLETE, handlePatternComplete);
+        _dataBindings.bindMessage(Constants.MSG_C_OUTOFTIME, handleOutOfTime);
+        _dataBindings.bindMessage(Constants.MSG_C_PLAYAGAIN, handlePlayAgain);
+        _dataBindings.bindMessage(Constants.MSG_CS_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
     }
 
@@ -32,7 +34,7 @@ public class ServerSpectaclePlayerMode extends ServerMode
         // echo the message back to everyone
         _started = true;
         _patternIndex = 0;
-        _ctx.outMsg.sendMessage(Constants.MSG_PLAYNEXTPATTERN);
+        _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYNEXTPATTERN);
     }
 
     protected function handlePatternComplete () :void
@@ -44,12 +46,28 @@ public class ServerSpectaclePlayerMode extends ServerMode
 
         ++_patternIndex;
         if (_patternIndex < _ctx.spectacle.numPatterns) {
-            _ctx.outMsg.sendMessage(Constants.MSG_PLAYNEXTPATTERN);
+            _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYNEXTPATTERN);
 
         } else {
-            _ctx.outMsg.sendMessage(Constants.MSG_PLAYSUCCESS);
+            _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYSUCCESS);
             _completed = true;
         }
+    }
+
+    protected function handleOutOfTime () :void
+    {
+        if (!_started || _completed) {
+            log.warning("Received bad OUT OF TIME message");
+            return;
+        }
+
+        _completed = true;
+        _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYFAIL);
+    }
+
+    protected function handlePlayAgain () :void
+    {
+        _ctx.game.gameState = Constants.STATE_SPECTACLE_CREATOR;
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void

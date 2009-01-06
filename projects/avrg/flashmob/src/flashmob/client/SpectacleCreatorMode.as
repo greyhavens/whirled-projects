@@ -1,8 +1,10 @@
 package flashmob.client {
 
+import com.threerings.util.Log;
 import com.whirled.avrg.*;
 
 import flash.display.Graphics;
+import flash.display.Shape;
 import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -67,6 +69,15 @@ public class SpectacleCreatorMode extends GameDataMode
             return;
         }
 
+        if (_timerView == null) {
+            _timerView = new TimerView(0, true);
+            _timerView.x = 300;
+            _timerView.y = 20;
+            addObject(_timerView, _modeSprite);
+        }
+
+        _timerView.time = 0;
+
         var now :Number = ClientContext.timeNow;
         var dt :Number = now - _lastSnapshotTime;
 
@@ -92,7 +103,7 @@ public class SpectacleCreatorMode extends GameDataMode
 
         _spectacle.name = "A Spectacle!";
         _spectacle.normalize();
-        ClientContext.sendAgentMsg(Constants.MSG_DONECREATING, _spectacle.toBytes());
+        ClientContext.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
         _done = true;
         updateButtons();
     }
@@ -115,27 +126,41 @@ public class SpectacleCreatorMode extends GameDataMode
         var height :Number =
             _tf.height + 10 + (_snapshotButton != null ? _snapshotButton.height : 0);
 
-        var g :Graphics = _modeSprite.graphics;
+        if (_bg != null) {
+            _bg.parent.removeChild(_bg);
+        }
+
+        _bg = new Shape();
+        _modeSprite.addChildAt(_bg, 0);
+
+        var g :Graphics = _bg.graphics;
         g.clear();
         g.beginFill(0);
         g.drawRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT));
         g.endFill();
 
-        _tf.x = (_modeSprite.width - _tf.width) * 0.5;
-        _tf.y = (_modeSprite.height - _tf.height) * 0.5;
+        _tf.x = (_bg.width - _tf.width) * 0.5;
+        _tf.y = (_bg.height - _tf.height) * 0.5;
 
         if (_snapshotButton != null && _doneButton != null) {
-            _snapshotButton.x = _modeSprite.width - _snapshotButton.width - 10;
-            _snapshotButton.y = _modeSprite.height - _snapshotButton.height - 10;
+            _snapshotButton.x = _bg.width - _snapshotButton.width - 10;
+            _snapshotButton.y = _bg.height - _snapshotButton.height - 10;
             _doneButton.x = _snapshotButton.x - _doneButton.width - 5;
-            _doneButton.y = _modeSprite.height - _doneButton.height - 10;
+            _doneButton.y = _bg.height - _doneButton.height - 10;
         }
     }
 
+    protected function get log () :Log
+    {
+        return FlashMobClient.log;
+    }
+
+    protected var _bg :Shape;
     protected var _startButton :SimpleButton;
     protected var _snapshotButton :SimpleButton;
     protected var _doneButton :SimpleButton;
     protected var _tf :TextField;
+    protected var _timerView :TimerView;
 
     protected var _spectacle :Spectacle = new Spectacle();
     protected var _lastSnapshotTime :Number = 0;

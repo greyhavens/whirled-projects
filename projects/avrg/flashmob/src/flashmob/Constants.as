@@ -36,17 +36,21 @@ public class Constants
     // SnapshotPlayer
     public static const PROP_SPECTACLE_OFFSET :String   = "specOffset"  // value=PatternLoc
 
-    /* Messages */
-    public static const MSG_RESETGAME :String           = "resetGame";
+    /* Messages. S=sent by server, C=sent by client, CS=sent by both */
+    public static const MSG_S_RESETGAME :String           = "resetGame";
     // SnapshotCreator
-    public static const MSG_DONECREATING :String        = "doneCreating"; // value=Spectacle bytes
+    public static const MSG_C_DONECREATING :String        = "doneCreating"; // value=Spectacle bytes
     // SnapshotPlayer
-    public static const MSG_STARTPLAYING :String        = "startPlaying";
-    public static const MSG_PATTERNCOMPLETE :String     = "patternComplete";
-    public static const MSG_PLAYNEXTPATTERN :String     = "playNextPattern";
-    public static const MSG_PLAYFAIL :String            = "playFail";
-    public static const MSG_PLAYSUCCESS :String         = "playSuccess";
-    public static const MSG_SET_SPECTACLE_OFFSET :String = "setSpecOffset"; // value=PatternLoc
+    public static const MSG_C_STARTPLAYING :String       = "startPlaying";
+    public static const MSG_C_PATTERNCOMPLETE :String    = "patternComplete";
+    public static const MSG_C_OUTOFTIME :String           = "outOfTime";
+    public static const MSG_C_PLAYAGAIN :String           = "playAgain";
+
+    public static const MSG_S_PLAYNEXTPATTERN :String     = "playNextPattern";
+    public static const MSG_S_PLAYSUCCESS :String         = "playSuccess";
+    public static const MSG_S_PLAYFAIL :String            = "playFail";
+
+    public static const MSG_CS_SET_SPECTACLE_OFFSET :String  = "setSpecOffset"; // value=PatternLoc
 }
 
 }

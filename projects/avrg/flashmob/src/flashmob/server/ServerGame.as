@@ -80,7 +80,7 @@ public class ServerGame extends ServerModeStack
         // If we still have players in the game, tell them that we need to reset
         // the game.
         if (_ctx.numPlayers > 0 && this.gameState != Constants.STATE_SPECTACLE_CHOOSER) {
-            _ctx.outMsg.sendMessage(Constants.MSG_RESETGAME);
+            _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
             init(); // updatePlayers() will be called here
         }
     }

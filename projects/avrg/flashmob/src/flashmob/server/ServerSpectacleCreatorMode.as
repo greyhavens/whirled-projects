@@ -14,7 +14,7 @@ public class ServerSpectacleCreatorMode extends ServerMode
     {
         _ctx = ctx;
 
-        _dataBindings.bindMessage(Constants.MSG_DONECREATING, handleDone, Spectacle.fromBytes);
+        _dataBindings.bindMessage(Constants.MSG_C_DONECREATING, handleDone, Spectacle.fromBytes);
     }
 
     protected function handleDone (spectacle :Spectacle) :void
