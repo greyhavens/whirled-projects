@@ -20,9 +20,8 @@ package world
      */ 
     public class DistributedBoard extends EventDispatcher implements BoardInteractions
     {
-        public function DistributedBoard(height:int, owners:Owners, clock:Chronometer, startingBoard:Board, control:NetSubControl)
+        public function DistributedBoard(owners:Owners, clock:Chronometer, startingBoard:Board, control:NetSubControl)
         {
-            _height = height;
             _owners = owners;
             _clock = clock; 
             _startingBoard = startingBoard;
@@ -37,15 +36,18 @@ package world
          */
         public function handleElementChanged (event:ElementChangedEvent) :void
         {
-            Log.debug("DISTRIBUTED BOARD - handling state changed.");
+            Log.debug("DISTRIBUTED BOARD - handling state changed. height: "+height);
             // find out whether the changed element was cached
-            const coords:BoardCoordinates = MasterBoard.intToPosition(_height, event.key);
+            const coords:BoardCoordinates = MasterBoard.intToPosition(height, event.key);
             const cached:Object = _cache[coords.key]
             if (cached is Cell) {
-                Log.debug("STATE IS CACHED");
+                Log.debug("STATE IS CACHED  - key: "+event.key+" coords: "+coords);
                 // if we have a cached cell, then it may be in use and we update the state of the cell immediately
                 const cell:Cell = cached as Cell;
                 const state:CellState = state(coords);
+                if (state == null) {
+                    Log.debug("STATE IS NULL");
+                }
                 cell.updateState(_owners, _clock, this, state);
                 // an event will be generated if the update causes the cell to be replaced.
             } else {
@@ -92,7 +94,7 @@ package world
         	if (slot is Dictionary)
         	{
 	        	const found:Object = 
-	        	  (slot as Dictionary)[MasterBoard.positionToInt(_height, coords)]
+	        	  (slot as Dictionary)[MasterBoard.positionToInt(height, coords)]
 	        	if (found is ByteArray) {
 	        		const array:ByteArray = found as ByteArray;
                     array.position = 0;
@@ -112,7 +114,11 @@ package world
             return _startingBoard.startingPosition;
         } 
 
-        protected var _height:int;
+        public function get height () :int 
+        {
+            return (_control.get(_slotName+"-height") as Dictionary)[_startingBoard.levelNumber]            
+        }
+
         protected var _owners:Owners;
         protected var _clock:Chronometer;
         protected var _startingBoard:Board;

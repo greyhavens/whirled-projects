@@ -1,6 +1,7 @@
 package world
 {
     import arithmetic.BoardCoordinates;
+    import arithmetic.VoidBoardRectangle;
     
     import com.whirled.game.NetSubControl;
     
@@ -19,12 +20,12 @@ package world
     {
         public function MasterBoard (levelNumber:int, height:int, startingBoard:Board, control:NetSubControl)
         {
+            _control = control;
             _slotName = slotName(levelNumber);
             _levelNumber = levelNumber;
-            _height = height;
+            this.height = height;
             _startingBoard = startingBoard;
-            _control = control;
-        }
+        }        
 
         /**
          * Convert a positive or negative integer into a magnitude only value without
@@ -73,8 +74,14 @@ package world
             _cache[cell.position.key] = cell;
             const array:ByteArray = new ByteArray();
             cell.state.writeToArray(array);          
-            Log.debug("MASTER BOARD - replacing cell: "+cell);  
+            Log.debug("MASTER BOARD - replacing cell: "+cell+" code: "+positionToInt(_height, cell.position));  
             _control.setIn(_slotName, positionToInt(_height, cell.position), array);
+        }
+        
+        public function set height (val:int) :void
+        {
+            _control.setIn(_slotName+"-height", _levelNumber, val);
+            _height = val;            
         }
         
         public function cellAt (position:BoardCoordinates) :Cell

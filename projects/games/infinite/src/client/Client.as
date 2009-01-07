@@ -97,6 +97,7 @@ package client
 		public function enterLevel(detail:EnterLevel) :void
 		{
 			level(detail.level).height = detail.height;
+			Log.debug("SETTING HEIGHT OF LEVEL: "+detail.level+" to "+detail.height);
 			updatePosition(detail.position);
 		}
 		
@@ -206,11 +207,11 @@ package client
 			if (_level == player.levelNumber) {
 				return;
 			}
-			
-			const height:int = level(player.levelNumber).height
-			
+						
 			// we can start off with the default blank board.
-			_board = new DistributedBoard(height, _players, this, new BlankBoard(player.levelNumber, height), _control);	
+			_board = new DistributedBoard(_players, this, new BlankBoard(player.levelNumber, height), _control);	
+            _heightIndicator.top = _board.height;
+            
             Log.debug(this+" created "+_board);
                  
 			// and assign a new board to the view.
@@ -230,8 +231,6 @@ package client
 					_viewer.addPlayer(p);
 				}
 			}
-			
-			_heightIndicator.top = height;
 		}
 		
 		public function get mode () :String 
@@ -345,7 +344,7 @@ package client
 		protected var _level:int = NO_LEVEL;
 		
 		protected var _controller:PlayerController;
-		protected var _board:Board;
+		protected var _board:DistributedBoard;
 		protected var _viewer:Viewer;
 		protected var _inventory:InventoryDisplay;
 		protected var _heightIndicator:HeightIndicator;
