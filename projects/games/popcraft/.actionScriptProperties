@@ -9,6 +9,7 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/toybox/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/vilya/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="${PROJECT_FRAMEWORKS}/projects/framework/src"/>
+<compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/narya/src/player"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">
 <libraryPathEntry kind="4" path="">

@@ -1,6 +1,6 @@
 package popcraft.battle.view {
-    import popcraft.BitmapAnim;
 
+import popcraft.BitmapAnim;
 
 public class CreatureBitmapAnimDesc
 {

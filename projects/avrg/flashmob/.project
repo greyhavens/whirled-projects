@@ -23,7 +23,7 @@
 		<link>
 			<name>[source path] src</name>
 			<type>2</type>
-			<location>/Applications/Adobe Flex Builder 3/sdks/3.0.0/frameworks/projects/framework/src</location>
+			<location>/Applications/Adobe Flex Builder 3/sdks/3.1.0/frameworks/projects/framework/src</location>
 		</link>
 		<link>
 			<name>[source path] whirled-src-as</name>
@@ -46,19 +46,24 @@
 			<location>/export/whirled/contrib/src/as</location>
 		</link>
 		<link>
-			<name>[source path] nenya-src-as</name>
-			<type>2</type>
-			<location>/export/whirled/libraries/nenya/src/as</location>
-		</link>
-		<link>
 			<name>[source path] toybox-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/toybox/src/as</location>
 		</link>
 		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/nenya/src/as</location>
+		</link>
+		<link>
 			<name>[source path] vilya-src-as</name>
 			<type>2</type>
 			<location>/export/whirled/libraries/vilya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] player</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/narya/src/player</location>
 		</link>
 	</linkedResources>
 </projectDescription>
