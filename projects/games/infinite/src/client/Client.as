@@ -296,14 +296,9 @@ package client
 			_localPlayer.noPath();
 		}
 		
-		public function level (number:int) :Level
+		public function level (number:int) :ClientLevel
 		{
-			var found:Level = _levels[number] as Level;
-			if (found == null) {
-				found = new Level(number, 0);
-				_levels[number] = found;
-			}
-            return found;			
+		    return new ClientLevel(_control, number);
 		}
 		
 		public function get players () :ClientPlayers
