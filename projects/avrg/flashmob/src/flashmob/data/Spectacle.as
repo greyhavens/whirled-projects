@@ -95,6 +95,8 @@ public class Spectacle
         return "[name=" + name +
             " players=" + numPlayers +
             " numPatterns=" + numPatterns +
+            " creatingPartyId=" + creatingPartyId +
+            " avatarId=" + avatarId +
             "]";
     }
 

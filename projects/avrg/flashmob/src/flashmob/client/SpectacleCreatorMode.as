@@ -34,6 +34,11 @@ public class SpectacleCreatorMode extends GameDataMode
 
             _modeSprite.addChild(_snapshotButton);
             _modeSprite.addChild(_doneButton);
+
+            _spectacle = new Spectacle();
+            _spectacle.numPlayers = ClientContext.playerIds.length;
+            _spectacle.creatingPartyId = ClientContext.partyId;
+            _spectacle.avatarId = ClientContext.gameCtrl.player.getAvatarMasterItemId();
         }
 
         setText("Everybody! Arrange yourselves.");
@@ -180,7 +185,7 @@ public class SpectacleCreatorMode extends GameDataMode
     protected var _tf :TextField;
     protected var _timerView :TimerView;
 
-    protected var _spectacle :Spectacle = new Spectacle();
+    protected var _spectacle :Spectacle;
     protected var _lastSnapshotTime :Number = 0;
 
     protected var _done :Boolean;

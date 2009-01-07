@@ -41,7 +41,7 @@ public class SpectaclePlacer extends DraggableObject
             Constants.PATTERN_DOT_SIZE + 3);
         g.endFill();
 
-        for (var ii :int = _spectacle.patterns.length - 1; ii >=0; --ii) {
+        /*for (var ii :int = _spectacle.patterns.length - 1; ii >=0; --ii) {
             var pattern :Pattern = _spectacle.patterns[ii];
             var isFirstPattern :Boolean = (ii == 0);
             for each (var loc :PatternLoc in pattern.locs) {
@@ -55,7 +55,7 @@ public class SpectaclePlacer extends DraggableObject
                     g.endFill();
                 }
             }
-        }
+        }*/
     }
 
     override public function get displayObject () :DisplayObject
