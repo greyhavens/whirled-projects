@@ -1,7 +1,5 @@
 package client
-{
-    import world.DistributedBoard;
-    
+{    
 	public class Level
 	{
 		public var number:int;
@@ -19,8 +17,6 @@ package client
 		public function get top () :int
 		{
 		    return -height;
-		}
-		
-		protected var _board:DistributedBoard;
+		}		
 	}
 }
