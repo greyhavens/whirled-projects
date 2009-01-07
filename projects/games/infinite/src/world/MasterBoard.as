@@ -35,9 +35,9 @@ package world
         public static function mag (i:int) :int
         {
         	if (i < 0) {
-        		return (i * -2) + 1
+        		return (i * -2) + 1;
         	} else {
-        		return (i * 2)
+        		return (i * 2);
         	}
         }
         
@@ -48,9 +48,9 @@ package world
         public static function rec (i:int) :int
         {
         	if (i % 2 == 1) {
-        		return (i-1) / -2
+        		return (i-1) / -2;
         	} else {
-        		return i / 2
+        		return i / 2;
         	}
         }
         
