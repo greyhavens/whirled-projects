@@ -30,11 +30,11 @@ package world.level
 		{
 			_world = world;
 			_height = height;
+            _clientLevel = new ClientLevel(control, starting.levelNumber);
+            _clientLevel.height = height;
 			_board = new MasterBoard(starting.levelNumber, height, starting, control);
 			_arbiter = new BoardArbiter(_board);
 			_mapMaker = new MapMaker(this, _explored);
-            _clientLevel = new ClientLevel(control, starting.levelNumber);
-            _clientLevel.height = height;
 		}
 
 		public function get height () :int

@@ -1,6 +1,7 @@
 package server
 {
 	import arithmetic.BoardCoordinates;
+	import arithmetic.VoidBoardRectangle;
 	
 	import com.whirled.game.GameControl;
 	import com.whirled.game.NetSubControl;
@@ -14,19 +15,15 @@ package server
 	
 	import interactions.SabotageEvent;
 	
-	import server.Messages.CellState;
-	import server.Messages.CellUpdate;
 	import server.Messages.EnterLevel;
 	import server.Messages.InventoryUpdate;
 	import server.Messages.LevelComplete;
 	import server.Messages.MoveProposal;
-	import server.Messages.Neighborhood;
 	import server.Messages.PathStart;
 	import server.Messages.PlayerPosition;
 	import server.Messages.SabotageTriggered;
 	import server.Messages.Serializable;
 	
-	import world.CellStateEvent;
 	import world.InventoryEvent;
 	import world.Player;
 	import world.World;
@@ -126,15 +123,22 @@ package server
 			const message:int = int(event.name);
             Log.debug(this+" received a "+messageName[message]+" message from client "+event.senderId);
 
-			switch (message) {
-				case CLIENT_ENTERS: return clientEnters(event);
-				case MOVE_PROPOSED: return moveProposed(event);
-				case MOVE_COMPLETED: return moveCompleted(event); 
-				case USE_ITEM: return useItem(event);
-				case NEXT_LEVEL: return nextLevel(event);
-			}			
-			throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);
+            _control.doBatch(function () :void {
+               processMessageAsBatch(message, event); 
+            });
 		}
+		
+	    protected function processMessageAsBatch(message:int, event:MessageReceivedEvent) :void
+	    {
+            switch (message) {
+                case CLIENT_ENTERS: return clientEnters(event);
+                case MOVE_PROPOSED: return moveProposed(event);
+                case MOVE_COMPLETED: return moveCompleted(event); 
+                case USE_ITEM: return useItem(event);
+                case NEXT_LEVEL: return nextLevel(event);
+            }           
+            throw new Error(this+"don't understand message "+event.name+" from client "+event.senderId);	    	
+	    }
 		
 		public function toString () :String
 		{
@@ -181,8 +185,8 @@ package server
 		
 		protected function signalClient(id:int, message:int) :void
 		{
-            _batcher.sendMessage(String(message), null, id);
-			//_net.sendMessage(String(message), null, id);
+            //_batcher.sendMessage(String(message), null, id);
+			_net.sendMessage(String(message), null, id);
 		}
 		
 		/**
@@ -190,8 +194,8 @@ package server
 		 */
 		protected function send(id:int, message:int, payload:Serializable) :void
 		{
-            _batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
-			//_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
+            //_batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
+			_net.sendMessage(String(message), payload.writeToArray(new ByteArray()), id);
 		}
 		
 		/**
@@ -199,8 +203,8 @@ package server
 		 */
 		protected function sendToAll (message:int, payload:Serializable) :void
 		{
-            _batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()));
-			//_net.sendMessage(String(message), payload.writeToArray(new ByteArray()));
+            //_batcher.sendMessage(String(message), payload.writeToArray(new ByteArray()));
+			_net.sendMessage(String(message), payload.writeToArray(new ByteArray()));
 		}
 		
 //		/**

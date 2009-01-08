@@ -9,17 +9,20 @@ package client
 		public function ClientLevel(control:NetSubControl, number:int)
 		{
 		    super (control, "level", String(number));
-			this.number = number;
+			this.number = number;			
 		}
 
         public function set height (value:int) :void
         {
             writeInt(HEIGHT, value);
+            Log.debug("SET HEIGHT OF LEVEL: "+number+" to "+value);
         }
         
         public function get height () :int
         {
-            return readInt(HEIGHT);
+            const value:int = readInt(HEIGHT);
+            Log.debug("READ HEIGHT OF LEVEL: "+number+" as "+value);
+            return value;
         }
 		
 		/**

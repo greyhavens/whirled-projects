@@ -71,7 +71,6 @@ package client
 		
 		public function handleCellReplaced(event:BoardEvent) :void
 		{
-		    Log.debug("Objective redispatching Cell replaced event");
 		    dispatchEvent(event);
 		}
 		
@@ -160,7 +159,6 @@ package client
 		 */
 		public function showCell (c:Cell) :void 
 		{
-			Log.debug("OBJECTIVE SHOWING CELL: "+c);
 			const v:CellView = _viewFactory.viewOf(c, _clock.serverTime);
 			v.addToObjective(this);
 			_viewBuffer.store(c.position, v);	

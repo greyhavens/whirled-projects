@@ -36,7 +36,11 @@ package world
          */
         public function handleElementChanged (event:ElementChangedEvent) :void
         {
-            Log.debug("DISTRIBUTED BOARD - handling state changed. height: "+height);
+        	if (event.name != _slotName) {
+        		return;
+        	}
+        	
+            Log.debug("DISTRIBUTED BOARD - handling state changed. height: "+height+" name: "+event.name);
             // find out whether the changed element was cached
             const coords:BoardCoordinates = MasterBoard.intToPosition(height, event.key);
             const cached:Object = _cache[coords.key]
