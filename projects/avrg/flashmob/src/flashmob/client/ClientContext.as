@@ -8,6 +8,7 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer;
 
 import flashmob.*;
+import flashmob.client.view.BasicYesNoMode;
 import flashmob.client.view.HitTester;
 import flashmob.data.*;
 import flashmob.party.*;
@@ -79,12 +80,20 @@ public class ClientContext
         //return (gameCtrl.isConnected() && gameCtrl.game.getPlayerInfo(localPlayerId).partyId != 0);
     }
 
+    public static function confirmQuit () :void
+    {
+        mainLoop.pushMode(new BasicYesNoMode(QUIT_TEXT, quit, mainLoop.popMode));
+    }
+
     public static function quit () :void
     {
         if (gameCtrl.isConnected()) {
             gameCtrl.player.deactivateGame();
         }
     }
+
+    protected static const QUIT_TEXT :String = "If you leave now, you'll cancel the spectacle " +
+        "for the entire party! Are you sure?"
 }
 
 }

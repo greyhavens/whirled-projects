@@ -12,12 +12,13 @@ import flash.text.TextField;
 
 import flashmob.client.*;
 
-public class BasicErrorMode extends AppMode
+public class BasicYesNoMode extends AppMode
 {
-    public function BasicErrorMode (err :String, okHandler :Function = null)
+    public function BasicYesNoMode (text :String, yesHandler :Function, noHandler :Function)
     {
-        _err = err;
-        _okHandler = (okHandler != null ? okHandler : ClientContext.mainLoop.popMode);
+        _text = text;
+        _yesHandler = yesHandler;
+        _noHandler = noHandler;
     }
 
     override protected function setup () :void
@@ -28,20 +29,24 @@ public class BasicErrorMode extends AppMode
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
         g.endFill();
 
-        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
+        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "leavingparty");
         window.x = bounds.width * 0.5;
         window.y = bounds.height * 0.5;
         _modeSprite.addChild(window);
 
         var tf :TextField = window["text"];
-        tf.text = _err;
+        tf.text = _text;
 
-        var okButton :SimpleButton = window["ok"];
-        registerOneShotCallback(okButton, MouseEvent.CLICK, _okHandler);
+        var yesButton :SimpleButton = window["yes_button"];
+        registerOneShotCallback(yesButton, MouseEvent.CLICK, _yesHandler);
+
+        var noButton :SimpleButton = window["no_button"];
+        registerOneShotCallback(noButton, MouseEvent.CLICK, _noHandler);
     }
 
-    protected var _err :String;
-    protected var _okHandler :Function;
+    protected var _text :String;
+    protected var _yesHandler :Function;
+    protected var _noHandler :Function;
 }
 
 }

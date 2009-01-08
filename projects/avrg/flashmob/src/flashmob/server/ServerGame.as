@@ -174,7 +174,7 @@ public class ServerGame extends ServerModeStack
     protected var _ctx :ServerGameContext = new ServerGameContext();
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
-    protected static const INITIAL_GAME_STATE :int = Constants.STATE_CREATOR;
+    protected static const INITIAL_GAME_STATE :int = Constants.STATE_CHOOSER;
 }
 
 }
