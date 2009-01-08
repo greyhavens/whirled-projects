@@ -3,7 +3,6 @@ package flashmob.client.view {
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.InteractiveObject;
-import flash.events.MouseEvent;
 
 public class DraggableObject extends SceneObject
 {
@@ -14,90 +13,33 @@ public class DraggableObject extends SceneObject
         _droppedCallback = droppedCallback;
     }
 
-    public function set draggable (val :Boolean) :void
+    public function set isDraggable (val :Boolean) :void
     {
-        _draggable = val;
-        updateDraggability();
+        _isDraggable = val;
+        if (_dragger != null) {
+            _dragger.isDraggable = _isDraggable;
+        }
     }
 
-    public function get draggable () :Boolean
+    public function get isDraggable () :Boolean
     {
-        return _draggable;
-    }
-
-    protected function updateDraggability () :void
-    {
-        // Don't updateDraggability until we've been added to the db; this.displayObject
-        // may not have been set yet
-        if (this.db == null) {
-            return;
-        }
-
-        if (_draggable && !_isDragRegistered) {
-            registerListener(this.draggableObject, MouseEvent.MOUSE_DOWN, startDrag);
-            _isDragRegistered = true;
-
-        } else if (!_draggable && _isDragRegistered) {
-            unregisterListener(this.draggableObject, MouseEvent.MOUSE_DOWN, startDrag);
-            _isDragRegistered = false;
-            if (_dragging) {
-                endDrag();
-            }
-        }
+        return _isDraggable;
     }
 
     override protected function addedToDB () :void
     {
         super.addedToDB();
-        updateDraggability();
+        _dragger = new Dragger(this.draggableObject, this.displayObject, _draggedCallback,
+            _droppedCallback);
+        this.db.addObject(_dragger);
+
+        _dragger.isDraggable = _isDraggable;
     }
 
-    protected function startDrag (...ignored) :void
+    override protected function removedFromDB () :void
     {
-        if (!_dragging) {
-            _dragOffsetX = -this.displayObject.mouseX;
-            _dragOffsetY = -this.displayObject.mouseY;
-            _dragging = true;
-
-            registerListener(this.draggableObject, MouseEvent.MOUSE_UP, endDrag);
-        }
-    }
-
-    protected function endDrag (...ignored) :void
-    {
-        unregisterListener(this.draggableObject, MouseEvent.MOUSE_UP, endDrag);
-        updateDraggedLocation();
-
-        if (_droppedCallback != null) {
-            _droppedCallback(this.draggableObject.x, this.draggableObject.y);
-        }
-
-        _dragging = false;
-    }
-
-    protected function updateDraggedLocation () :void
-    {
-        if (this.draggableObject.parent != null) {
-            var newX :Number = this.displayObject.parent.mouseX + _dragOffsetX;
-            var newY :Number = this.displayObject.parent.mouseY + _dragOffsetY;
-            if (newX != this.displayObject.x || newY != this.displayObject.y) {
-                this.displayObject.x = newX;
-                this.displayObject.y = newY;
-
-                if (_draggedCallback != null) {
-                    _draggedCallback(newX, newY);
-                }
-            }
-        }
-    }
-
-    override protected function update (dt :Number) :void
-    {
-        super.update(dt);
-
-        if (_dragging) {
-            updateDraggedLocation();
-        }
+        super.removedFromDB();
+        _dragger.destroySelf();
     }
 
     protected function get draggableObject () :InteractiveObject
@@ -105,14 +47,11 @@ public class DraggableObject extends SceneObject
         return this.displayObject as InteractiveObject;
     }
 
-    protected var _draggable :Boolean = true;
-    protected var _isDragRegistered :Boolean;
     protected var _draggedCallback :Function;
     protected var _droppedCallback :Function;
 
-    protected var _dragOffsetX :Number;
-    protected var _dragOffsetY :Number;
-    protected var _dragging :Boolean;
+    protected var _dragger :Dragger;
+    protected var _isDraggable :Boolean;
 }
 
 }

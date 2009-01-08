@@ -20,8 +20,8 @@ public class SpectaclePlacer extends DraggableObject
 
         _spectacle = spectacle;
 
-        this.draggable = (droppedCallback != null);
-        _sprite = SpriteUtil.createSprite(false, this.draggable);
+        this.isDraggable = (droppedCallback != null);
+        _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
         // Create the view
         var shape :Shape = new Shape();
@@ -68,7 +68,7 @@ public class SpectaclePlacer extends DraggableObject
         super.addedToDB();
 
         // If we're not draggable, we don't want to intercept mouse clicks
-        if (!this.draggable) {
+        if (!this.isDraggable) {
             ClientContext.hitTester.addExcludedObj(this.displayObject);
         }
     }
@@ -77,7 +77,7 @@ public class SpectaclePlacer extends DraggableObject
     {
         super.destroyed();
 
-        if (!this.draggable) {
+        if (!this.isDraggable) {
             ClientContext.hitTester.removeExcludedObj(this.displayObject);
         }
     }

@@ -4,8 +4,8 @@ import com.threerings.util.Log;
 import com.whirled.avrg.*;
 
 import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.SimpleButton;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -15,13 +15,21 @@ import flash.text.TextFormatAlign;
 import flashmob.*;
 import flashmob.client.view.*;
 import flashmob.data.*;
+import flashmob.util.SpriteUtil;
 
 public class SpectacleCreatorMode extends GameDataMode
 {
     override protected function setup () :void
     {
+        _sprite = SpriteUtil.createSprite(true);
+        _modeSprite.addChild(_sprite);
+
+        _bg = SpriteUtil.createSprite(false, true);
+        _sprite.addChild(_bg);
+        addObject(new Dragger(_bg, _sprite));
+
         _tf = new TextField();
-        _modeSprite.addChild(_tf);
+        _sprite.addChild(_tf);
 
         if (ClientContext.isPartyLeader) {
             _startButton = UIBits.createButton("Start!", 1.2);
@@ -32,8 +40,8 @@ public class SpectacleCreatorMode extends GameDataMode
             registerListener(_snapshotButton, MouseEvent.CLICK, onSnapshotClicked);
             registerListener(_doneButton, MouseEvent.CLICK, onDoneClicked);
 
-            _modeSprite.addChild(_snapshotButton);
-            _modeSprite.addChild(_doneButton);
+            _sprite.addChild(_snapshotButton);
+            _sprite.addChild(_doneButton);
 
             _spectacle = new Spectacle();
             _spectacle.numPlayers = ClientContext.playerIds.length;
@@ -148,13 +156,6 @@ public class SpectacleCreatorMode extends GameDataMode
         var height :Number =
             _tf.height + 10 + (_snapshotButton != null ? _snapshotButton.height : 0);
 
-        if (_bg != null) {
-            _bg.parent.removeChild(_bg);
-        }
-
-        _bg = new Shape();
-        _modeSprite.addChildAt(_bg, 0);
-
         var g :Graphics = _bg.graphics;
         g.clear();
         g.lineStyle(2, 0);
@@ -178,7 +179,8 @@ public class SpectacleCreatorMode extends GameDataMode
         return FlashMobClient.log;
     }
 
-    protected var _bg :Shape;
+    protected var _sprite :Sprite;
+    protected var _bg :Sprite;
     protected var _startButton :SimpleButton;
     protected var _snapshotButton :SimpleButton;
     protected var _doneButton :SimpleButton;
