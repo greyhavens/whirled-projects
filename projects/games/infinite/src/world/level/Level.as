@@ -5,6 +5,8 @@ package world.level
 	import arithmetic.CellIterator;
 	import arithmetic.Vector;
 	
+	import client.ClientLevel;
+	
 	import com.whirled.game.NetSubControl;
 	
 	import flash.events.EventDispatcher;
@@ -31,6 +33,8 @@ package world.level
 			_board = new MasterBoard(starting.levelNumber, height, starting, control);
 			_arbiter = new BoardArbiter(_board);
 			_mapMaker = new MapMaker(this, _explored);
+            _clientLevel = new ClientLevel(control, starting.levelNumber);
+            _clientLevel.height = height;
 		}
 
 		public function get height () :int
@@ -167,6 +171,7 @@ package world.level
 		protected var _height:int;
 		protected var _players:PlayerMap = new PlayerMap();
 		protected var _board:MasterBoard;
+		protected var _clientLevel:ClientLevel;
 		
 		public static const MIN_HEIGHT:int = 8;
 	}

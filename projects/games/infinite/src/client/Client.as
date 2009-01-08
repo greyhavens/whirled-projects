@@ -153,7 +153,7 @@ package client
             } else {
             	// otherwise, if the player has entered the level that the local
             	// player is on, then 
-            	if (event.player.levelNumber == _level) {
+            	if (_level != null && event.player.levelNumber == _level.number) {
             		_viewer.addPlayer(event.player);
             	} else {
             		_viewer.removePlayer(event.player);
@@ -204,12 +204,17 @@ package client
 			Log.debug(this+" selecting level "+player.levelNumber);
 			
 			// if the client is already displaying the requested level, return.
-			if (_level == player.levelNumber) {
+			if (_level !=null && _level.number == player.levelNumber) {
 				return;
 			}
+			
+            _level = new ClientLevel(_control, player.levelNumber);
+            
 						
 			// we can start off with the default blank board.
-			_board = new DistributedBoard(_players, this, new BlankBoard(player.levelNumber, height), _control);	
+			_board = new DistributedBoard(_players, this, 
+			     new BlankBoard(player.levelNumber, _level.height), _control);
+			     	
             _heightIndicator.top = _board.height;
             
             Log.debug(this+" created "+_board);
@@ -222,7 +227,6 @@ package client
 
             _controller = new PlayerController(_world, _viewer, _players, _localPlayer, _inventory);
             
-			_level = player.levelNumber;
 						
 			// add the players we know about on this level
 			_viewer.addLocalPlayer(_localPlayer);
@@ -336,7 +340,7 @@ package client
 		protected var _localPlayer:Player;
 		protected var _world:ClientWorld;
 		protected var _players:ClientPlayers = new ClientPlayers();
-		protected var _level:int = NO_LEVEL;
+		protected var _level:ClientLevel;
 		
 		protected var _controller:PlayerController;
 		protected var _board:DistributedBoard;

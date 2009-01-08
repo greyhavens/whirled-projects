@@ -5,7 +5,8 @@ package
     import flash.utils.Dictionary;
     
     /**
-     * Simple veneer to make it easier to construct things that look more like objects on top of the dSet.
+     * Simple veneer to make it easier to construct things that look more like objects on top of the
+     * dSet.
      */ 
     public class SlotObject
     {
@@ -16,7 +17,7 @@ package
         }
 
         protected function readValue (key:int) :Object {
-            const dict = _control.get(_slotname) as Dictionary;
+            const dict:Dictionary = _control.get(_slotName) as Dictionary;
             if (dict != null) {
                 return dict[key];
             }
@@ -27,12 +28,13 @@ package
             _control.setIn(_slotName, key, value)
         }
 
-        protected function readString (key:String) :String
+        protected function readString (key:int) :String
         {
             return readValue(key) as String;
         }
 
-        protected function writeInt (key:int, value:String) {
+        protected function writeInt (key:int, value:int) :void 
+        {
             writeValue(key, value);
         }
 
@@ -41,10 +43,12 @@ package
             return readValue(key) as int;
         }
         
-        protected function writeString (key:int, value:String) {
+        protected function writeString (key:int, value:String) :void
+        {
             writeValue(key, value);
         }
         
-        private var _control:NetSubcontrol;
+        protected var _slotName:String;
+        protected var _control:NetSubControl;
     }
 }
