@@ -57,9 +57,11 @@ public class Dragger extends SceneObject
 
     protected function startDrag (...ignored) :void
     {
-        if (!_dragging) {
-            _dragOffsetX = -_displayObj.mouseX;
-            _dragOffsetY = -_displayObj.mouseY;
+        if (!_dragging && _displayObj.parent != null) {
+            _startX = _displayObj.x;
+            _startY = _displayObj.y;
+            _parentMouseX = _displayObj.parent.mouseX;
+            _parentMouseY = _displayObj.parent.mouseY;
             _dragging = true;
 
             registerListener(_draggableObj, MouseEvent.MOUSE_UP, endDrag);
@@ -72,7 +74,7 @@ public class Dragger extends SceneObject
         updateDraggedLocation();
 
         if (_droppedCallback != null) {
-            _droppedCallback(_draggableObj.x, _draggableObj.y);
+            _droppedCallback(_displayObj.x, _displayObj.y);
         }
 
         _dragging = false;
@@ -80,9 +82,9 @@ public class Dragger extends SceneObject
 
     protected function updateDraggedLocation () :void
     {
-        if (_draggableObj.parent != null) {
-            var newX :Number = _displayObj.parent.mouseX + _dragOffsetX;
-            var newY :Number = _displayObj.parent.mouseY + _dragOffsetY;
+        if (_displayObj.parent != null) {
+            var newX :Number = _startX + (_displayObj.parent.mouseX - _parentMouseX);
+            var newY :Number = _startY + (_displayObj.parent.mouseY - _parentMouseY);
             if (newX != _displayObj.x || newY != _displayObj.y) {
                 _displayObj.x = newX;
                 _displayObj.y = newY;
@@ -111,8 +113,10 @@ public class Dragger extends SceneObject
     protected var _draggedCallback :Function;
     protected var _droppedCallback :Function;
 
-    protected var _dragOffsetX :Number;
-    protected var _dragOffsetY :Number;
+    protected var _startX :Number;
+    protected var _startY :Number;
+    protected var _parentMouseX :Number;
+    protected var _parentMouseY :Number;
     protected var _dragging :Boolean;
 }
 
