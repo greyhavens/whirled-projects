@@ -4,6 +4,7 @@ import com.whirled.avrg.*;
 import com.whirled.contrib.simplegame.MainLoop;
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.utils.getTimer;
 
 import flashmob.*;
@@ -23,6 +24,16 @@ public class ClientContext
     public static var props :PartyPropGetControl;
     public static var spectacle :Spectacle;
     public static var hitTester :HitTester;
+
+    public static function get fullDisplayBounds () :Rectangle
+    {
+        return gameCtrl.local.getPaintableArea(true);
+    }
+
+    public static function get roomDisplayBounds () :Rectangle
+    {
+        return gameCtrl.local.getPaintableArea(false);
+    }
 
     public static function get waitingForPlayers () :Boolean
     {

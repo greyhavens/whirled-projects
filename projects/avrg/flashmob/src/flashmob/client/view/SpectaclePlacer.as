@@ -1,10 +1,12 @@
 package flashmob.client.view {
 
+import com.threerings.flash.DisplayUtil;
+import com.whirled.contrib.simplegame.resource.SwfResource;
+
 import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.Shape;
+import flash.display.MovieClip;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
 import flashmob.*;
@@ -23,25 +25,18 @@ public class SpectaclePlacer extends DraggableObject
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
-        // Create the view
-        var shape :Shape = new Shape();
-        _sprite.addChild(shape);
-        var g :Graphics = shape.graphics;
-
         var bounds :Rectangle = _spectacle.getBounds();
-        var borderSize :Number = Constants.PATTERN_DOT_SIZE + 3;
-        g.lineStyle(2, 0);
-        g.beginFill(0x0000FF, 0.4);
-        g.drawRoundRect(
-            bounds.left - borderSize,
-            bounds.top - borderSize,
-            bounds.width + (borderSize * 2),
-            bounds.height + (borderSize * 2),
-            Constants.PATTERN_DOT_SIZE + 3,
-            Constants.PATTERN_DOT_SIZE + 3);
-        g.endFill();
+        var borderSize :Number = 2 * (Constants.PATTERN_DOT_SIZE + 3);
 
-        /*for (var ii :int = _spectacle.patterns.length - 1; ii >=0; --ii) {
+        _movie = SwfResource.instantiateMovieClip("Spectacle_UI", "placer");
+        _movie.width = bounds.width + (borderSize * 2);
+        _movie.height = bounds.height + (borderSize * 2);
+        _movie.x = bounds.left - borderSize;
+        _movie.y = bounds.top - borderSize;
+        _sprite.addChild(_movie);
+
+        /*var g :Graphics = _sprite.graphics;
+        for (var ii :int = _spectacle.patterns.length - 1; ii >=0; --ii) {
             var pattern :Pattern = _spectacle.patterns[ii];
             var isFirstPattern :Boolean = (ii == 0);
             for each (var loc :PatternLoc in pattern.locs) {
@@ -82,6 +77,7 @@ public class SpectaclePlacer extends DraggableObject
         }
     }
 
+    protected var _movie :MovieClip;
     protected var _sprite :Sprite;
     protected var _spectacle :Spectacle;
 }

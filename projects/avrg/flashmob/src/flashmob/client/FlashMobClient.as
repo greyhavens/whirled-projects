@@ -87,6 +87,13 @@ public class FlashMobClient extends Sprite
 
         log.info("Starting game");
 
+        // If we're not partied, error out.
+        if (!ClientContext.isPartied) {
+            ClientContext.mainLoop.pushMode(new BasicErrorMode("This is a party game. " +
+                "Please join a party and try again!", ClientContext.quit));
+            return;
+        }
+
         // We handle certain messages and property changes here at the top-level.
         // Those that don't get handled get sent to the top-most AppMode, if that mode
         // implements GameDataListener.

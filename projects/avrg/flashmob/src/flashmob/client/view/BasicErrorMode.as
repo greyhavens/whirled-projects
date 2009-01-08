@@ -1,34 +1,41 @@
 package flashmob.client.view {
 
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
-import flash.display.Graphics;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
+import flash.events.MouseEvent;
+import flash.geom.Rectangle;
 import flash.text.TextField;
-import flash.text.TextFormatAlign;
+
+import flashmob.client.*;
 
 public class BasicErrorMode extends AppMode
 {
-    public function BasicErrorMode (err :String)
+    public function BasicErrorMode (err :String, okHandler :Function = null)
     {
         _err = err;
+        _okHandler = (okHandler != null ? okHandler : ClientContext.mainLoop.popMode);
     }
 
     override protected function setup () :void
     {
-        var tf :TextField = new TextField();
-        UIBits.initTextField(tf, _err, 1.2, WIDTH - 10, 0xFFFFFF, TextFormatAlign.LEFT);
+        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
+        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        window.x = bounds.width * 0.5;
+        window.y = bounds.height * 0.5;
+        _modeSprite.addChild(window);
 
-        var g :Graphics = _modeSprite.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, WIDTH, Math.max(tf.height + 10, MIN_HEIGHT));
-        g.endFill();
+        var tf :TextField = window["text"];
+        tf.text = _err;
 
-        tf.x = (_modeSprite.width - tf.width) * 0.5;
-        tf.y = (_modeSprite.height - tf.height) * 0.5;
-        _modeSprite.addChild(tf);
+        var okButton :SimpleButton = window["ok"];
+        registerOneShotCallback(okButton, MouseEvent.CLICK, _okHandler);
     }
 
     protected var _err :String;
+    protected var _okHandler :Function;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;
