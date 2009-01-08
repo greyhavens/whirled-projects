@@ -8,9 +8,9 @@ import flash.utils.ByteArray;
 import flashmob.*;
 import flashmob.data.*;
 
-public class ServerSpectacleCreatorMode extends ServerMode
+public class ServerCreatorMode extends ServerMode
 {
-    public function ServerSpectacleCreatorMode (ctx :ServerGameContext)
+    public function ServerCreatorMode (ctx :ServerGameContext)
     {
         _ctx = ctx;
 
@@ -20,7 +20,7 @@ public class ServerSpectacleCreatorMode extends ServerMode
     protected function handleDone (spectacle :Spectacle) :void
     {
         _ctx.spectacle = spectacle;
-        _ctx.game.gameState = Constants.STATE_SPECTACLE_PLAY;
+        _ctx.game.gameState = Constants.STATE_PLAYER;
         log.info("Snapshot completed");
     }
 

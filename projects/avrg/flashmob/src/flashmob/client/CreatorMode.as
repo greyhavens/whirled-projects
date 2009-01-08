@@ -17,7 +17,7 @@ import flashmob.client.view.*;
 import flashmob.data.*;
 import flashmob.util.SpriteUtil;
 
-public class SpectacleCreatorMode extends GameDataMode
+public class CreatorMode extends GameDataMode
 {
     override protected function setup () :void
     {

@@ -20,7 +20,7 @@ import flashmob.*;
 import flashmob.client.view.*;
 import flashmob.data.*;
 
-public class SpectaclePlayerMode extends GameDataMode
+public class PlayerMode extends GameDataMode
 {
     override protected function setup () :void
     {

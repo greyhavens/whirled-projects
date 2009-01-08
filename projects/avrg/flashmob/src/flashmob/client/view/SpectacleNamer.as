@@ -20,7 +20,7 @@ public class SpectacleNamer extends DraggableObject
     public function SpectacleNamer (namedCallback :Function)
     {
         _sprite = SpriteUtil.createSprite(true, true);
-        _draggableObj = SpriteUtil.createSprite(false, true);
+        _draggableObj = SpriteUtil.createSprite(true, true);
         _sprite.addChild(_draggableObj);
 
         var tf :TextField = new TextField();

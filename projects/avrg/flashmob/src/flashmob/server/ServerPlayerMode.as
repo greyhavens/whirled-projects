@@ -5,9 +5,9 @@ import com.threerings.util.Log;
 import flashmob.*;
 import flashmob.data.*;
 
-public class ServerSpectaclePlayerMode extends ServerMode
+public class ServerPlayerMode extends ServerMode
 {
-    public function ServerSpectaclePlayerMode (ctx :ServerGameContext)
+    public function ServerPlayerMode (ctx :ServerGameContext)
     {
         _ctx = ctx;
 
@@ -67,7 +67,7 @@ public class ServerSpectaclePlayerMode extends ServerMode
 
     protected function handlePlayAgain () :void
     {
-        _ctx.game.gameState = Constants.STATE_SPECTACLE_CREATOR;
+        _ctx.game.gameState = Constants.STATE_CREATOR;
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void

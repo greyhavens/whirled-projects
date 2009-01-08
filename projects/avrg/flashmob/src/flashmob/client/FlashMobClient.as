@@ -174,15 +174,16 @@ public class FlashMobClient extends Sprite
         _curGameState = newState;
 
         switch (newState) {
-        case Constants.STATE_SPECTACLE_CHOOSER:
+        case Constants.STATE_CHOOSER:
+            ClientContext.mainLoop.unwindToMode(new MainMenuMode());
             break;
 
-        case Constants.STATE_SPECTACLE_CREATOR:
-            ClientContext.mainLoop.unwindToMode(new SpectacleCreatorMode());
+        case Constants.STATE_CREATOR:
+            ClientContext.mainLoop.unwindToMode(new CreatorMode());
             break;
 
-        case Constants.STATE_SPECTACLE_PLAY:
-            ClientContext.mainLoop.unwindToMode(new SpectaclePlayerMode());
+        case Constants.STATE_PLAYER:
+            ClientContext.mainLoop.unwindToMode(new PlayerMode());
             break;
         }
     }

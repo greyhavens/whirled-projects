@@ -24,9 +24,9 @@ public class Constants
 
     /* Game states */
     public static const STATE_INVALID :int = 0;
-    public static const STATE_SPECTACLE_CHOOSER :int = 1;
-    public static const STATE_SPECTACLE_CREATOR :int = 2;
-    public static const STATE_SPECTACLE_PLAY :int = 3;
+    public static const STATE_CHOOSER :int = 1;
+    public static const STATE_CREATOR :int = 2;
+    public static const STATE_PLAYER :int = 3;
 
     /* Properties */
     public static const PROP_GAMESTATE :String          = "gameState";

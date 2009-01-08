@@ -79,7 +79,7 @@ public class ServerGame extends ServerModeStack
 
         // If we still have players in the game, tell them that we need to reset
         // the game.
-        if (_ctx.numPlayers > 0 && this.gameState != Constants.STATE_SPECTACLE_CHOOSER) {
+        if (_ctx.numPlayers > 0 && this.gameState != Constants.STATE_CHOOSER) {
             _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
             init(); // updatePlayers() will be called here
         }
@@ -96,12 +96,12 @@ public class ServerGame extends ServerModeStack
         _ctx.props.set(Constants.PROP_GAMESTATE, val, true);
 
         switch (val) {
-        case Constants.STATE_SPECTACLE_CREATOR:
-            unwindToMode(new ServerSpectacleCreatorMode(_ctx));
+        case Constants.STATE_CREATOR:
+            unwindToMode(new ServerCreatorMode(_ctx));
             break;
 
-        case Constants.STATE_SPECTACLE_PLAY:
-            unwindToMode(new ServerSpectaclePlayerMode(_ctx));
+        case Constants.STATE_PLAYER:
+            unwindToMode(new ServerPlayerMode(_ctx));
             break;
         }
     }
@@ -158,7 +158,7 @@ public class ServerGame extends ServerModeStack
 
     protected function handleSnapshot (e :MessageReceivedEvent) :void
     {
-        if (this.gameState != Constants.STATE_SPECTACLE_CREATOR || _ctx.waitingForPlayers) {
+        if (this.gameState != Constants.STATE_CREATOR || _ctx.waitingForPlayers) {
             log.warning("Received snapshot message while not in STATE_SPECTACLE_CREATOR",
                 "senderId", e.senderId, "gameState", this.gameState,
                 "waitingForPlayers", _ctx.waitingForPlayers);
@@ -174,7 +174,7 @@ public class ServerGame extends ServerModeStack
     protected var _ctx :ServerGameContext = new ServerGameContext();
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
-    protected static const INITIAL_GAME_STATE :int = Constants.STATE_SPECTACLE_CREATOR;
+    protected static const INITIAL_GAME_STATE :int = Constants.STATE_CHOOSER;
 }
 
 }
