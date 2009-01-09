@@ -20,6 +20,12 @@ public class FlashMobServer extends ServerObject
             onPlayerJoined);
         ServerContext.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME,
             onPlayerQuit);
+        ServerContext.spectacleDb.load();
+    }
+
+    protected function mightShutdown () :void
+    {
+        ServerContext.spectacleDb.save();
     }
 
     protected function onPlayerJoined (e :AVRGameControlEvent) :void
@@ -79,6 +85,12 @@ public class FlashMobServer extends ServerObject
             _games.remove(partyId);
             game.shutdown();
         }
+
+        // If there are no players left, persist our data to properties,
+        // as we may be about to shut down
+        if (this.numPlayers == 0) {
+            mightShutdown();
+        }
     }
 
     protected function startGame (partyId :int) :ServerGame
@@ -96,6 +108,11 @@ public class FlashMobServer extends ServerObject
     protected function getGame (partyId :int) :ServerGame
     {
         return _games.get(partyId);
+    }
+
+    protected function get numPlayers () :int
+    {
+        return _playerPartyMap.size();
     }
 
     protected var _games :HashMap = new HashMap();  // Map<partyId, MobGameController>

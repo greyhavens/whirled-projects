@@ -7,6 +7,7 @@ import flash.utils.getTimer;
 public class ServerContext
 {
     public static var gameCtrl :AVRServerGameControl;
+    public static var spectacleDb :SpectacleDb = new SpectacleDb();
 
     public static function getPlayerParty (playerId :int) :int
     {

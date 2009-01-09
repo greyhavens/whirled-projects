@@ -10,6 +10,7 @@ public class Spectacle
     public static const VERSION :int = 0;
 
     public var version :int = VERSION;
+    public var id :int = -1;
     public var name :String;
     public var numPlayers :int;
     public var creatingPartyId :int;
@@ -61,6 +62,7 @@ public class Spectacle
         ba = (ba != null ? ba : new ByteArray());
 
         ba.writeByte(version);
+        ba.writeInt(id);
         ba.writeUTF(name);
         ba.writeShort(numPlayers);
         ba.writeInt(creatingPartyId);
@@ -76,6 +78,7 @@ public class Spectacle
     public function fromBytes (ba :ByteArray) :Spectacle
     {
         version = ba.readByte();
+        id = ba.readInt();
         name = ba.readUTF();
         numPlayers = ba.readShort();
         creatingPartyId = ba.readInt();
