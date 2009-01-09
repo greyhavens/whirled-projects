@@ -2,9 +2,11 @@ package flashmob.client.view {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.MovieClip;
 import flash.display.Shape;
 import flash.display.Sprite;
 
@@ -18,17 +20,19 @@ public class PatternView extends SceneObject
     public function PatternView (pattern :Pattern)
     {
         _pattern = pattern;
-
         _sprite = SpriteUtil.createSprite();
-        _shape = new Shape();
-        _sprite.addChild(_shape);
+        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
+            var loc :PatternLoc = _pattern.locs[ii];
+            var star :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "star", true,
+                true);
+            star.x = loc.x;
+            star.y = loc.y;
+            _sprite.addChild(star);
+            _stars.push(star);
+            _wasInPosition.push(false);
+        }
 
         updateView();
-    }
-
-    public function showInPositionIndicators (inPositionFlags :Array) :void
-    {
-        updateView(inPositionFlags);
     }
 
     override protected function addedToDB () :void
@@ -39,21 +43,27 @@ public class PatternView extends SceneObject
 
     override protected function destroyed () :void
     {
+        for each (var star :MovieClip in _stars) {
+            SwfResource.releaseMovieClip(star);
+        }
+
         ClientContext.hitTester.removeExcludedObj(this.displayObject);
+    }
+
+    public function showInPositionIndicators (inPositionFlags :Array) :void
+    {
+        updateView(inPositionFlags);
     }
 
     protected function updateView (inPositionFlags :Array = null) :void
     {
-        var g :Graphics = _shape.graphics;
-        g.clear();
-        g.lineStyle(2, 0);
-
-        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
-            var loc :PatternLoc = _pattern.locs[ii];
+        for (var ii :int = 0; ii < _stars.length; ++ii) {
+            var star :MovieClip = _stars[ii];
             var inPosition :Boolean = (inPositionFlags != null ? inPositionFlags[ii] : false);
-            g.beginFill(inPosition ? 0x00FF00 : 0xFFFFFF);
-            g.drawCircle(loc.x, loc.y, Constants.PATTERN_DOT_SIZE);
-            g.endFill();
+            if (inPosition != _wasInPosition[ii]) {
+                star.gotoAndPlay(inPosition ? "gotstar" : "seekstar");
+                _wasInPosition[ii] = inPosition;
+            }
         }
     }
 
@@ -68,9 +78,10 @@ public class PatternView extends SceneObject
     }
 
     protected var _pattern :Pattern;
+    protected var _stars :Array = [];
+    protected var _wasInPosition :Array = [];
 
     protected var _sprite :Sprite;
-    protected var _shape :Shape;
 }
 
 }

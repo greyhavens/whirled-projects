@@ -6,6 +6,8 @@ import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 import com.whirled.net.PropertyGetSubControl;
 
+import flash.utils.ByteArray;
+
 public class DataBindings
     implements GameDataListener
 {
@@ -93,6 +95,10 @@ public class DataBindings
     protected function dataChanged (binding :DataBinding, value :*, key :int = 0,
         useKey :Boolean = false) :void
     {
+        if (value is ByteArray) {
+            ByteArray(value).position = 0;
+        }
+
         if (binding.dataTranslator != null) {
             value = binding.dataTranslator(value);
         }
