@@ -1,6 +1,9 @@
 package
 {
+    import arithmetic.VoidBoardRectangle;
+    
     import com.whirled.game.NetSubControl;
+    import com.whirled.net.ElementChangedEvent;
     
     import flash.utils.Dictionary;
     
@@ -14,6 +17,28 @@ package
         {
             _control = control;
             _slotName = type + "-" + instance;
+        }
+        
+        protected function listenForChanges () :void
+        {
+        	_control.addEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);
+        }
+        
+        protected function stopListening () :void
+        {
+        	_control.removeEventListener(ElementChangedEvent.ELEMENT_CHANGED, handleElementChanged);        	
+        }
+        
+        protected function handleElementChanged (event:ElementChangedEvent) :void
+        {
+            if (event.name == _slotName) {
+                handleValueChanged(event.key);
+            }
+        } 
+        
+        protected function handleValueChanged (value:int) :void
+        {
+        	// do nothing - override this if you need to
         }
 
         protected function readValue (key:int) :Object {

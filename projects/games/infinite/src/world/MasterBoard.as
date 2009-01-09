@@ -74,7 +74,6 @@ package world
             _cache[cell.position.key] = cell;
             const array:ByteArray = new ByteArray();
             cell.state.writeToArray(array);          
-            Log.debug("MASTER BOARD - replacing cell: "+cell+" code: "+positionToInt(_height, cell.position));  
             _control.setIn(_slotName, positionToInt(_height, cell.position), array);
         }
         

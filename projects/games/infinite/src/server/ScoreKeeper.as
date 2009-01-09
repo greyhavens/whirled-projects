@@ -164,7 +164,7 @@ package server
         
         // to determine the ways 
         protected var _timers:Dictionary = new Dictionary();
-        
+       
         protected var _server:WorldServer;
 	}
 }
