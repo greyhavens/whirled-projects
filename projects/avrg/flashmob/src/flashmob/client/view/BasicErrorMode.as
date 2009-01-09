@@ -22,7 +22,7 @@ public class BasicErrorMode extends AppMode
 
     override protected function setup () :void
     {
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var bounds :Rectangle = ClientContext.fullDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);

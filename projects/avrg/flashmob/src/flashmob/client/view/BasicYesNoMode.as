@@ -23,7 +23,7 @@ public class BasicYesNoMode extends AppMode
 
     override protected function setup () :void
     {
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var bounds :Rectangle = ClientContext.fullDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
@@ -33,6 +33,13 @@ public class BasicYesNoMode extends AppMode
         window.x = bounds.width * 0.5;
         window.y = bounds.height * 0.5;
         _modeSprite.addChild(window);
+
+        // make it draggable
+        addObject(new Dragger(window["dragleaveparty"], window));
+
+        // we don't need the close button
+        var closeButton :SimpleButton = window["close"];
+        closeButton.visible = false;
 
         var tf :TextField = window["text"];
         tf.text = _text;

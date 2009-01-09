@@ -26,7 +26,7 @@ public class MainMenuMode extends GameDataMode
 
         var bounds :Rectangle = ClientContext.roomDisplayBounds;
         _ui.x = bounds.left - 120 + (bounds.width * 0.5);
-        _ui.y = bounds.top + (bounds.width * 0.5);
+        _ui.y = bounds.top - 150 + (bounds.width * 0.5);
 
         _ui.scaleX = _ui.scaleY = 0.8;
 

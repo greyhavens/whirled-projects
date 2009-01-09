@@ -9,6 +9,7 @@ import flash.utils.getTimer;
 
 import flashmob.*;
 import flashmob.client.view.BasicYesNoMode;
+import flashmob.client.view.GameUIView;
 import flashmob.client.view.HitTester;
 import flashmob.data.*;
 import flashmob.party.*;
@@ -25,6 +26,7 @@ public class ClientContext
     public static var props :PartyPropGetControl;
     public static var spectacle :Spectacle;
     public static var hitTester :HitTester;
+    public static var gameUIView :GameUIView;
 
     public static function get fullDisplayBounds () :Rectangle
     {
