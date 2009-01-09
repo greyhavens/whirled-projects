@@ -8,8 +8,9 @@ import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
-import flashmob.client.view.BasicYesNoMode;
-import flashmob.client.view.Dragger;
+import flashmob.*;
+import flashmob.client.*;
+import flashmob.client.view.*;
 
 public class MainMenuMode extends GameDataMode
 {
@@ -30,10 +31,14 @@ public class MainMenuMode extends GameDataMode
 
         // wire up buttons
         var creatorModeButton :SimpleButton = _ui["makeyourown"];
-        registerOneShotCallback(creatorModeButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                log.info("Make Your Own!");
-            });
+        if (ClientContext.isPartyLeader) {
+            registerOneShotCallback(creatorModeButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_CREATE_SPEC);
+                });
+        } else {
+            creatorModeButton.visible = false;
+        }
 
         var quitButton :SimpleButton = _ui["close"];
         registerListener(quitButton, MouseEvent.CLICK,

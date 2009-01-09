@@ -6,7 +6,7 @@ import com.whirled.net.NetConstants;
 
 import flash.utils.ByteArray;
 
-import flashmob.data.Spectacle;
+import flashmob.data.*;
 
 public class SpectacleDb
 {
@@ -97,12 +97,14 @@ public class SpectacleDb
         _dirty = true;
     }
 
-    public function getSpectacles (partySize :int) :Array
+    public function getAvailSpectacles (partySize :int) :SpectacleSet
     {
-        return _spectacles.values().filter(
+        var specSet :SpectacleSet = new SpectacleSet();
+        specSet.spectacles = _spectacles.values().filter(
             function (spectacle :Spectacle, ...ignored) :Boolean {
                 return spectacle.numPlayers == partySize;
             });
+        return specSet;
     }
 
     protected function get log () :Log

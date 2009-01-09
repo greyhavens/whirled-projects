@@ -96,6 +96,10 @@ public class ServerGame extends ServerModeStack
         _ctx.props.set(Constants.PROP_GAMESTATE, val, true);
 
         switch (val) {
+        case Constants.STATE_CHOOSER:
+            unwindToMode(new ServerChooserMode(_ctx));
+            break;
+
         case Constants.STATE_CREATOR:
             unwindToMode(new ServerCreatorMode(_ctx));
             break;
