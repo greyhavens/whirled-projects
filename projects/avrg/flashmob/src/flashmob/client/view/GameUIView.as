@@ -17,8 +17,8 @@ public class GameUIView extends Sprite
         _movie = SwfResource.instantiateMovieClip("Spectacle_UI", "gameUI");
         addChild(_movie);
 
-        var clock :MovieClip = _movie["clock"];
-        _timerText = clock["clock_text"];
+        _clock = _movie["clock"];
+        _clockText = _clock["clock_text"];
 
         _directionsText = _movie["directions"];
     }
@@ -46,14 +46,19 @@ public class GameUIView extends Sprite
         _elements = [];
     }
 
-    public function set rightButton (button :SimpleButton) :void
+    public function set rightButton (button :DisplayObject) :void
     {
         setButton(button, RIGHT_BUTTON);
     }
 
-    public function set leftButton (button :SimpleButton) :void
+    public function set leftButton (button :DisplayObject) :void
     {
         setButton(button, LEFT_BUTTON);
+    }
+
+    public function set centerButton (button :DisplayObject) :void
+    {
+        setButton(button, CENTER_BUTTON);
     }
 
     public function clearButtons () :void
@@ -68,19 +73,19 @@ public class GameUIView extends Sprite
         _directionsText.text = text;
     }
 
-    public function set timerText (text :String) :void
+    public function set clockText (text :String) :void
     {
-        _timerText.text = text;
+        _clockText.text = text;
     }
 
-    public function set timerVisible (val :Boolean) :void
+    public function set clockVisible (val :Boolean) :void
     {
-        _timerText.visible = val;
+        _clock.visible = val;
     }
 
-    public function get timerVisible () :Boolean
+    public function get clockVisible () :Boolean
     {
-        return _timerText.visible;
+        return _clock.visible;
     }
 
     public function get closeButton () :SimpleButton
@@ -93,9 +98,9 @@ public class GameUIView extends Sprite
         return _movie["gameUIclick"];
     }
 
-    protected function setButton (button :SimpleButton, index :int) :void
+    protected function setButton (button :DisplayObject, index :int) :void
     {
-        var oldButton :SimpleButton = _buttons[index];
+        var oldButton :DisplayObject = _buttons[index];
         if (oldButton != null && oldButton.parent != null) {
             oldButton.parent.removeChild(oldButton);
         }
@@ -113,16 +118,20 @@ public class GameUIView extends Sprite
     }
 
     protected var _movie :MovieClip;
-    protected var _timerText :TextField;
+    protected var _clock :MovieClip;
+    protected var _clockText :TextField;
     protected var _directionsText :TextField;
 
     protected var _elements :Array = [];
-    protected var _buttons :Array = [ null, null ];
+    protected var _buttons :Array = [ null, null, null ];
 
     protected static const RIGHT_BUTTON :int = 0;
     protected static const LEFT_BUTTON :int = 1;
+    protected static const CENTER_BUTTON :int = 2;
 
-    protected static const BUTTON_LOCS :Array = [ new Point(99, 25), new Point(-99, 25) ];
+    protected static const BUTTON_LOCS :Array = [
+        new Point(99, 25), new Point(-99, 25), new Point(0, 25)
+    ];
     protected static const BUTTON_SIZE :Point = new Point(83, 27);
 }
 

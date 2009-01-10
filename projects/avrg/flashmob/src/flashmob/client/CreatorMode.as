@@ -28,8 +28,10 @@ public class CreatorMode extends GameDataMode
         }
 
         _modeSprite.addChild(ClientContext.gameUIView);
-
         ClientContext.gameUIView.reset();
+
+        // Make the UI draggable
+        addObject(new Dragger(ClientContext.gameUIView.draggableObject, ClientContext.gameUIView));
 
         // Setup buttons
         registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
@@ -38,17 +40,19 @@ public class CreatorMode extends GameDataMode
             });
 
         if (ClientContext.isPartyLeader) {
-            _poseButton = SwfResource.instantiateButton("Spectacle_UI", "firstpose");
-            registerListener(_poseButton, MouseEvent.CLICK, onPoseClicked);
+            _poseButton = new GameButton("firstpose");
+            registerListener(_poseButton.button, MouseEvent.CLICK, onPoseClicked);
 
-            _doneButton = SwfResource.instantiateButton("Spectacle_UI", "done");
-            registerListener(_doneButton, MouseEvent.CLICK, onDoneClicked);
+            _doneButton = new GameButton("done");
+            registerListener(_doneButton.button, MouseEvent.CLICK, onDoneClicked);
+
+            _doneButton.enabled = false;
 
             ClientContext.gameUIView.rightButton = _poseButton;
             ClientContext.gameUIView.leftButton = _doneButton;
 
-            ClientContext.gameUIView.directionsText = "Wait for everybody to get into " +
-                "position and press First Pose!";
+            ClientContext.gameUIView.directionsText =
+                "Get everyone into position and press First Pose!";
 
             _spectacle = new Spectacle();
             _spectacle.numPlayers = ClientContext.playerIds.length;
@@ -61,10 +65,7 @@ public class CreatorMode extends GameDataMode
             ClientContext.gameUIView.directionsText = "Everybody! Arrange yourselves.";
         }
 
-        ClientContext.gameUIView.timerVisible = false;
-
-        // Make the UI draggable
-        addObject(new Dragger(ClientContext.gameUIView.draggableObject, ClientContext.gameUIView));
+        ClientContext.gameUIView.clockVisible = false;
     }
 
     override public function update (dt :Number) :void
@@ -101,13 +102,13 @@ public class CreatorMode extends GameDataMode
         if (_gameTimer == null) {
             _gameTimer = new GameTimer(0, true,
                 function (timerText :String) :void {
-                    ClientContext.gameUIView.timerText = timerText;
+                    ClientContext.gameUIView.clockText = timerText;
                 });
 
             addObject(_gameTimer);
         }
 
-        ClientContext.gameUIView.timerVisible = true;
+        ClientContext.gameUIView.clockVisible = true;
         _gameTimer.time = 0;
 
         var now :Number = ClientContext.timeNow;
@@ -126,14 +127,12 @@ public class CreatorMode extends GameDataMode
 
         if (_spectacle.patterns.length == 1) {
             // We just captured our first pose. Swap in the "Next Pose" button.
-            _poseButton = SwfResource.instantiateButton("Spectacle_UI", "nextpose");
-            registerListener(_poseButton, MouseEvent.CLICK, onPoseClicked);
+            _poseButton = new GameButton("nextpose");
+            registerListener(_poseButton.button, MouseEvent.CLICK, onPoseClicked);
             ClientContext.gameUIView.rightButton = _poseButton;
         }
 
-        ClientContext.gameUIView.directionsText = (this.canFinish ?
-            "Press Next Pose when everyone's in position, or Done if the Spectacle is complete!" :
-            "Press Next Pose when everyone's in position!");
+        ClientContext.gameUIView.directionsText = "Press Next Pose when everyone's in position!";
 
         updateButtons();
     }
@@ -145,19 +144,22 @@ public class CreatorMode extends GameDataMode
         }
 
         ClientContext.gameUIView.clearButtons();
-        ClientContext.gameUIView.timerVisible = false;
+        ClientContext.gameUIView.clockVisible = false;
 
         ClientContext.gameUIView.directionsText = "Name your Spectacle!";
         var textBox :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "inputspecname");
         textBox.x = 0;
         textBox.y = 0;
-        ClientContext.gameUIView.addChild(textBox);
+        ClientContext.gameUIView.addDisplayElement(textBox);
 
         var inputText :TextField = textBox["input_text"];
+        inputText.setSelection(0, inputText.text.length - 1);
         TextFieldUtil.setFocusable(inputText);
 
-        var okButton :SimpleButton = SwfResource.instantiateButton("Spectacle_UI", "ok_button");
-        registerOneShotCallback(okButton, MouseEvent.CLICK,
+        ClientContext.gameUIView.clearButtons();
+        var okButton :GameButton = new GameButton("ok_button");
+        ClientContext.gameUIView.rightButton = okButton;
+        registerOneShotCallback(okButton.button, MouseEvent.CLICK,
             function (...ignored) :void {
                 _spectacle.name = inputText.text;
                 _spectacle.normalize();
@@ -165,19 +167,16 @@ public class CreatorMode extends GameDataMode
                 _done = true;
                 ClientContext.gameUIView.clearButtons();
             });
-
-        ClientContext.gameUIView.clearButtons();
-        ClientContext.gameUIView.rightButton = okButton;
     }
 
     protected function updateButtons () :void
     {
         if (_doneButton != null) {
-            _doneButton.visible = this.canFinish;
+            _doneButton.enabled = this.canFinish;
         }
 
         if (_poseButton != null) {
-            _poseButton.visible = this.canCapturePose;
+            _poseButton.enabled = this.canCapturePose;
         }
     }
 
@@ -186,8 +185,8 @@ public class CreatorMode extends GameDataMode
         return FlashMobClient.log;
     }
 
-    protected var _poseButton :SimpleButton;
-    protected var _doneButton :SimpleButton;
+    protected var _poseButton :GameButton;
+    protected var _doneButton :GameButton;
 
     protected var _spectacle :Spectacle;
     protected var _lastSnapshotTime :Number = 0;

@@ -28,8 +28,6 @@ public class MainMenuMode extends GameDataMode
         _ui.x = bounds.left - 120 + (bounds.width * 0.5);
         _ui.y = bounds.top - 150 + (bounds.width * 0.5);
 
-        _ui.scaleX = _ui.scaleY = 0.8;
-
         // wire up buttons
         var creatorModeButton :SimpleButton = _ui["makeyourown"];
         if (ClientContext.isPartyLeader) {

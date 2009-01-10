@@ -7,14 +7,9 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.tasks.*;
 
-import flash.display.Graphics;
-import flash.display.Shape;
-import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.text.TextField;
-import flash.text.TextFormatAlign;
 
 import flashmob.*;
 import flashmob.client.view.*;
@@ -26,42 +21,67 @@ public class PlayerMode extends GameDataMode
     {
         _spectacle = ClientContext.spectacle;
 
-        _tf = new TextField();
-        _modeSprite.addChild(_tf);
+        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
 
-        if (ClientContext.isPartyLeader) {
-            _startButton = UIBits.createButton("Start!", 1.2);
-            registerListener(_startButton, MouseEvent.CLICK, onStartClicked);
-
-            _modeSprite.addChild(_startButton);
+        if (ClientContext.gameUIView == null) {
+            ClientContext.gameUIView = new GameUIView();
+            ClientContext.gameUIView.x = roomBounds.width * 0.5;
+            ClientContext.gameUIView.y = roomBounds.height * 0.5;
         }
 
+        _modeSprite.addChild(ClientContext.gameUIView);
+        ClientContext.gameUIView.clockVisible = false;
+        ClientContext.gameUIView.reset();
+
+        // Make the UI draggable
+        addObject(new Dragger(ClientContext.gameUIView.draggableObject, ClientContext.gameUIView));
+
+        // Create the SpectaclePlacer
+        _spectaclePlacer = new SpectaclePlacer(_spectacle,
+            (ClientContext.isPartyLeader ? onSpectacleDragged : null));
+        _spectaclePlacer.visible = ClientContext.isPartyLeader;
+        DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
+            roomBounds.left + ((roomBounds.width - _spectaclePlacer.width) * 0.5),
+            roomBounds.top + ((roomBounds.height - _spectaclePlacer.height) * 0.5));
+        addObject(_spectaclePlacer, _modeSprite);
+
+        // Setup buttons
+        registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientContext.confirmQuit();
+            });
+
         if (ClientContext.isPartyLeader) {
-            setText("Drag the spectacle to its starting location, then press start!");
-            _spectaclePlacer = new SpectaclePlacer(_spectacle, onSpectacleDragged);
+            _startButton = new GameButton("start_button");
+            registerListener(_startButton.button, MouseEvent.CLICK, onStartClicked);
+
+            _againButton = new GameButton("tryagain");
+            registerListener(_againButton.button, MouseEvent.CLICK, onTryAgainClicked);
+
+            _resetButton = new GameButton("reset");
+            registerOneShotCallback(_resetButton.button, MouseEvent.CLICK, onTryAgainClicked);
+
+            _mainMenuButton = new GameButton("mainmenu");
+            registerOneShotCallback(_mainMenuButton.button, MouseEvent.CLICK, onMainMenuClicked);
+
+            ClientContext.gameUIView.centerButton = _startButton;
+            ClientContext.gameUIView.directionsText = "Place the Spectacle and press Start!";
 
             _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_CS_SET_SPECTACLE_OFFSET);
             addObject(_spectacleOffsetThrottler);
 
-            // position the SpectaclePlacer in the middle of the screen
-            var bounds :Rectangle = ClientContext.gameCtrl.local.getPaintableArea(true);
-            DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
-                bounds.left + ((bounds.width - _spectaclePlacer.width) * 0.5),
-                bounds.top + ((bounds.height - _spectaclePlacer.height) * 0.5));
             onSpectacleDragged(_spectaclePlacer.x, _spectaclePlacer.y);
 
         } else {
-            _spectaclePlacer = new SpectaclePlacer(_spectacle);
-            _spectaclePlacer.visible = false; // will become visible on first location update
-            setText("Waiting for the party leader to start the spectacle!");
+            ClientContext.gameUIView.directionsText =
+                "Waiting for the party leader to start the Spectacle!";
         }
-
-        addObject(_spectaclePlacer, _modeSprite);
 
         // init data bindings
         _dataBindings.bindMessage(Constants.MSG_S_PLAYNEXTPATTERN, handleNextPattern);
         _dataBindings.bindMessage(Constants.MSG_S_PLAYSUCCESS, handleSuccess);
         _dataBindings.bindMessage(Constants.MSG_S_PLAYFAIL, handleFailure);
+        _dataBindings.bindMessage(Constants.MSG_S_PLAYAGAIN, handlePlayAgain);
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
         _dataBindings.processAllProperties(ClientContext.props);
@@ -203,57 +223,70 @@ public class PlayerMode extends GameDataMode
         addObject(_patternView, _modeSprite);
         updatePatternViewLoc();
 
-        setText(_patternIndex == 0 ?
-            "The game will start when everyone is in the correct position!" :
-            "Assemble into the next position!");
+        ClientContext.gameUIView.directionsText = (_patternIndex == 0 ?
+            "First pose!" :
+            "Next pose!");
 
         if (_patternIndex > 0) {
-            if (_timerView == null) {
-                _timerView = new TimerView();
-                _timerView.x = 300;
-                _timerView.y = 20;
-                addObject(_timerView, _modeSprite);
+            if (_gameTimer == null) {
+                _gameTimer = new GameTimer(0, false,
+                    function (timerText :String) :void {
+                        ClientContext.gameUIView.clockText = timerText;
+                    });
+                addObject(_gameTimer);
             }
 
-            _timerView.time = this.curPattern.timeLimit;
+            _gameTimer.time = this.curPattern.timeLimit;
+            ClientContext.gameUIView.clockVisible = true;
         }
     }
 
     protected function handleSuccess () :void
     {
         log.info("Success!");
-        setText("Success!");
+        ClientContext.gameUIView.directionsText = "Miraculous! Stupendous! SPECTACULAR!";
         handleCompleted();
     }
 
     protected function handleFailure () :void
     {
         log.info("Failed!");
-        setText("Out of time!");
+        ClientContext.gameUIView.directionsText = "Out of time!";
         handleCompleted();
+    }
+
+    protected function handlePlayAgain () :void
+    {
+        ClientContext.mainLoop.changeMode(new PlayerMode());
     }
 
     protected function handleCompleted () :void
     {
         _completed = true;
 
-        if (_timerView != null) {
-            _timerView.destroySelf();
-            _timerView = null;
+        if (_gameTimer != null) {
+            _gameTimer.destroySelf();
+            _gameTimer = null;
         }
 
         removePatternView();
 
         if (ClientContext.isPartyLeader) {
-            _againButton = UIBits.createButton("Again?", 1.5);
-            _modeSprite.addChild(_againButton);
-            registerOneShotCallback(_againButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PLAYAGAIN);
-                });
-
-            updateButtons();
+            ClientContext.gameUIView.rightButton = _againButton;
+            ClientContext.gameUIView.leftButton = _mainMenuButton;
         }
+
+        ClientContext.gameUIView.clockVisible = false;
+    }
+
+    protected function onTryAgainClicked (...ignored) :void
+    {
+        ClientContext.outMsg.sendMessage(Constants.MSG_C_PLAYAGAIN);
+    }
+
+    protected function onMainMenuClicked (...ignored) :void
+    {
+        ClientContext.outMsg.sendMessage(Constants.MSG_C_RESETGAME);
     }
 
     protected function onStartClicked (...ignored) :void
@@ -265,42 +298,7 @@ public class PlayerMode extends GameDataMode
         }
 
         ClientContext.sendAgentMsg(Constants.MSG_C_STARTPLAYING);
-        _startButton.parent.removeChild(_startButton);
-        _startButton = null;
-    }
-
-    protected function updateButtons () :void
-    {
-        var button :SimpleButton = (_startButton != null ? _startButton : _againButton);
-        if (button != null) {
-            button.x = _bg.width - button.width - 10;
-            button.y = _bg.height - button.height - 10;
-        }
-    }
-
-    protected function setText (text :String) :void
-    {
-        UIBits.initTextField(_tf, text, 1.2, WIDTH - 10, 0xFFFFFF, TextFormatAlign.LEFT);
-
-        if (_bg != null) {
-            _bg.parent.removeChild(_bg);
-        }
-
-        _bg = new Shape();
-        _modeSprite.addChildAt(_bg, 0);
-
-        var height :Number = _tf.height + 10 + (_startButton != null ? _startButton.height : 0);
-        var g :Graphics = _bg.graphics;
-        g.clear();
-        g.lineStyle(2, 0);
-        g.beginFill(0, 0.7);
-        g.drawRoundRect(0, 0, WIDTH, Math.max(height, MIN_HEIGHT), 15, 15);
-        g.endFill();
-
-        _tf.x = (_bg.width - _tf.width) * 0.5;
-        _tf.y = (_bg.height - _tf.height) * 0.5;
-
-        updateButtons();
+        ClientContext.gameUIView.clearButtons();
     }
 
     override public function update (dt :Number) :void
@@ -320,7 +318,7 @@ public class PlayerMode extends GameDataMode
                     _patternRecognized = true;
                     ClientContext.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE);
 
-                } else if (_timerView != null && _timerView.time <= 0) {
+                } else if (_gameTimer != null && _gameTimer.time <= 0) {
                     log.info("Out of time!");
                     _completed = true;
                     ClientContext.outMsg.sendMessage(Constants.MSG_C_OUTOFTIME);
@@ -341,10 +339,10 @@ public class PlayerMode extends GameDataMode
     }
 
     protected var _spectacle :Spectacle;
-    protected var _startButton :SimpleButton;
-    protected var _againButton :SimpleButton;
-    protected var _tf :TextField;
-    protected var _bg :Shape;
+    protected var _startButton :GameButton;
+    protected var _againButton :GameButton;
+    protected var _resetButton :GameButton;
+    protected var _mainMenuButton :GameButton;
 
     protected var _patternIndex :int = -1;
     protected var _patternRecognized :Boolean;
@@ -354,7 +352,7 @@ public class PlayerMode extends GameDataMode
     protected var _patternView :PatternView;
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;
-    protected var _timerView :TimerView;
+    protected var _gameTimer :GameTimer;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

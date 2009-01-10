@@ -15,6 +15,7 @@ public class ServerPlayerMode extends ServerMode
         _dataBindings.bindMessage(Constants.MSG_C_PATTERNCOMPLETE, handlePatternComplete);
         _dataBindings.bindMessage(Constants.MSG_C_OUTOFTIME, handleOutOfTime);
         _dataBindings.bindMessage(Constants.MSG_C_PLAYAGAIN, handlePlayAgain);
+        _dataBindings.bindMessage(Constants.MSG_C_RESETGAME, handleResetGame);
         _dataBindings.bindMessage(Constants.MSG_CS_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
     }
@@ -67,7 +68,12 @@ public class ServerPlayerMode extends ServerMode
 
     protected function handlePlayAgain () :void
     {
-        _ctx.game.gameState = Constants.STATE_CREATOR;
+        _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYAGAIN);
+    }
+
+    protected function handleResetGame () :void
+    {
+        _ctx.game.gameState = Constants.STATE_CHOOSER;
     }
 
     protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
