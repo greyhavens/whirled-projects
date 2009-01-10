@@ -38,11 +38,16 @@ public class ServerPlayerMode extends ServerMode
         _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYNEXTPATTERN);
     }
 
-    protected function handlePatternComplete () :void
+    protected function handlePatternComplete (patternTime :Number) :void
     {
-        if (!_started || _completed) {
-            log.warning("Received bad PATTERN COMPLETE message");
+        if (!_started || _completed || patternTime < 0) {
+            log.warning("Received bad PATTERN COMPLETE message", "_started", _started,
+                "_completed", _completed, "patternTime", patternTime);
             return;
+        }
+
+        if (_patternIndex > 0) {
+            _patternTimes.push(patternTime);
         }
 
         ++_patternIndex;
@@ -52,6 +57,15 @@ public class ServerPlayerMode extends ServerMode
         } else {
             _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYSUCCESS);
             _completed = true;
+
+            // update the spectacle
+            for (var ii :int = 1; ii < _ctx.spectacle.numPatterns; ++ii) {
+                var time :Number = _patternTimes[ii-1];
+                Pattern(_ctx.spectacle.patterns[ii]).timeLimit = time;
+            }
+
+            _ctx.spectacle.highScoringPartyId = _ctx.partyId;
+            ServerContext.spectacleDb.updateSpectacle(_ctx.spectacle);
         }
     }
 
@@ -69,9 +83,7 @@ public class ServerPlayerMode extends ServerMode
     protected function handlePlayAgain () :void
     {
         _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYAGAIN);
-        _started = false;
-        _completed = false;
-        _patternIndex = 0;
+        init();
     }
 
     protected function handleResetGame () :void
@@ -97,6 +109,15 @@ public class ServerPlayerMode extends ServerMode
         }
     }
 
+    protected function init () :void
+    {
+        _started = false;
+        _completed = false;
+        _spectacleOffset = null;
+        _patternIndex = 0;
+        _patternTimes = [];
+    }
+
     protected static function get log () :Log
     {
         return FlashMobServer.log;
@@ -107,6 +128,7 @@ public class ServerPlayerMode extends ServerMode
     protected var _completed :Boolean;
     protected var _spectacleOffset :PatternLoc;
     protected var _patternIndex :int;
+    protected var _patternTimes :Array = [];
 }
 
 }

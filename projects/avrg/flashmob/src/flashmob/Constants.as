@@ -50,7 +50,7 @@ public class Constants
     public static const MSG_C_DONECREATING :String      = "cDoneCreating"; // value=Spectacle bytes
     // STATE_PLAYER
     public static const MSG_C_STARTPLAYING :String      = "cStartPlaying";
-    public static const MSG_C_PATTERNCOMPLETE :String   = "cPatternComplete";
+    public static const MSG_C_PATTERNCOMPLETE :String   = "cPatternComplete"; // value=pattern time
     public static const MSG_C_OUTOFTIME :String         = "cOutOfTime";
     public static const MSG_C_PLAYAGAIN :String         = "cPlayAgain";
 

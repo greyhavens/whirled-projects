@@ -13,6 +13,7 @@ public class Spectacle
     public var id :int = -1;
     public var name :String;
     public var numPlayers :int;
+    public var highScoringPartyId :int;
     public var creatingPartyId :int;
     public var avatarId :int;
     public var patterns :Array = [];
@@ -65,6 +66,7 @@ public class Spectacle
         ba.writeInt(id);
         ba.writeUTF(name);
         ba.writeShort(numPlayers);
+        ba.writeInt(highScoringPartyId);
         ba.writeInt(creatingPartyId);
         ba.writeInt(avatarId);
         ba.writeByte(patterns.length);
@@ -81,6 +83,7 @@ public class Spectacle
         id = ba.readInt();
         name = ba.readUTF();
         numPlayers = ba.readShort();
+        highScoringPartyId = ba.readInt();
         creatingPartyId = ba.readInt();
         avatarId = ba.readInt();
 
@@ -98,6 +101,7 @@ public class Spectacle
         return "[name=" + name +
             " players=" + numPlayers +
             " numPatterns=" + numPatterns +
+            " highScoringPartyId=" + highScoringPartyId +
             " creatingPartyId=" + creatingPartyId +
             " avatarId=" + avatarId +
             "]";

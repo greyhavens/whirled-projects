@@ -316,7 +316,11 @@ public class PlayerMode extends GameDataMode
                     // Tell the server we were successful
                     log.info("patternRecognized");
                     _patternRecognized = true;
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE);
+                    var patternTime :Number = (_patternIndex > 0 ?
+                        this.curPattern.timeLimit - _gameTimer.time :
+                        0);
+
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE, patternTime);
 
                 } else if (_gameTimer != null && _gameTimer.time <= 0) {
                     log.info("Out of time!");

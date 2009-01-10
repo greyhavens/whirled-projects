@@ -11,17 +11,6 @@ public class ServerChooserMode extends ServerMode
     {
         _ctx = ctx;
         _availSpectacles = ServerContext.spectacleDb.getAvailSpectacles(_ctx.numPlayers);
-
-        // TEMP - create some dummy data
-        _availSpectacles.spectacles = [];
-        for (var ii :int = 0; ii < 10; ++ii) {
-            var spec :Spectacle = new Spectacle();
-            spec.id = ii;
-            spec.name = "Dummy " + String(ii + 1);
-            spec.numPlayers = _ctx.numPlayers;
-            _availSpectacles.spectacles.push(spec);
-        }
-
         _ctx.props.set(Constants.PROP_AVAIL_SPECTACLES, _availSpectacles.toBytes());
 
         _dataBindings.bindMessage(Constants.MSG_C_SELECTED_SPEC, onSelectedSpec);
