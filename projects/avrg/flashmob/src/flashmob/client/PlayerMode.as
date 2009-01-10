@@ -74,7 +74,7 @@ public class PlayerMode extends GameDataMode
 
         } else {
             ClientContext.gameUIView.directionsText =
-                "Waiting for the party leader to start the Spectacle!";
+                "The party leader is preparing the Spectacle!";
         }
 
         // init data bindings
@@ -237,7 +237,7 @@ public class PlayerMode extends GameDataMode
             }
 
             _gameTimer.time = this.curPattern.timeLimit;
-            ClientContext.gameUIView.clockVisible = true;
+            ClientContext.gameUIView.animateShowClock(true);
         }
     }
 
@@ -276,7 +276,7 @@ public class PlayerMode extends GameDataMode
             ClientContext.gameUIView.leftButton = _mainMenuButton;
         }
 
-        ClientContext.gameUIView.clockVisible = false;
+        ClientContext.gameUIView.animateShowClock(false);
     }
 
     protected function onTryAgainClicked (...ignored) :void

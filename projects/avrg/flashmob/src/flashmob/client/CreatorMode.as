@@ -6,7 +6,7 @@ import com.whirled.avrg.*;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.MovieClip;
-import flash.display.SimpleButton;
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -108,7 +108,7 @@ public class CreatorMode extends GameDataMode
             addObject(_gameTimer);
         }
 
-        ClientContext.gameUIView.clockVisible = true;
+        ClientContext.gameUIView.animateShowClock(true);
         _gameTimer.time = 0;
 
         var now :Number = ClientContext.timeNow;
@@ -144,21 +144,22 @@ public class CreatorMode extends GameDataMode
         }
 
         ClientContext.gameUIView.clearButtons();
-        ClientContext.gameUIView.clockVisible = false;
+        ClientContext.gameUIView.animateShowClock(false);
 
         ClientContext.gameUIView.directionsText = "Name your Spectacle!";
         var textBox :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "inputspecname");
         textBox.x = 0;
-        textBox.y = 0;
+        textBox.y = -5;
         ClientContext.gameUIView.addDisplayElement(textBox);
 
         var inputText :TextField = textBox["input_text"];
-        inputText.setSelection(0, inputText.text.length - 1);
+        inputText.setSelection(0, inputText.text.length);
+        inputText.maxChars = Constants.MAX_SPEC_NAME_LENGTH;
         TextFieldUtil.setFocusable(inputText);
 
         ClientContext.gameUIView.clearButtons();
         var okButton :GameButton = new GameButton("ok_button");
-        ClientContext.gameUIView.rightButton = okButton;
+        ClientContext.gameUIView.centerButton = okButton;
         registerOneShotCallback(okButton.button, MouseEvent.CLICK,
             function (...ignored) :void {
                 _spectacle.name = inputText.text;
@@ -167,6 +168,16 @@ public class CreatorMode extends GameDataMode
                 _done = true;
                 ClientContext.gameUIView.clearButtons();
             });
+
+        okButton.enabled = isTextOk();
+        registerListener(inputText, Event.CHANGE,
+            function () :void {
+                okButton.enabled = isTextOk();
+            });
+
+        function isTextOk () :Boolean {
+            return inputText.text.length > 0;
+        }
     }
 
     protected function updateButtons () :void

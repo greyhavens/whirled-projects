@@ -62,9 +62,9 @@ public class GameTimer extends SimObject
         var secs :int = time % 60;
         var minStr :String = String(mins);
         var secStr :String = String(secs);
-        if (minStr.length < 2) {
+        /*if (minStr.length < 2) {
             minStr = "0" + minStr;
-        }
+        }*/
         if (secStr.length < 2) {
             secStr = "0" + secStr;
         }

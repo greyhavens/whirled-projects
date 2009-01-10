@@ -18,7 +18,7 @@ public class GameUIView extends Sprite
         addChild(_movie);
 
         _clock = _movie["clock"];
-        _clockText = _clock["clock_text"];
+        _clockText = (_clock["clock"])["clock_text"];
 
         _directionsText = _movie["directions"];
     }
@@ -80,12 +80,16 @@ public class GameUIView extends Sprite
 
     public function set clockVisible (val :Boolean) :void
     {
-        _clock.visible = val;
+        _clock.gotoAndStop(val ? "clockpresent" : "clockgone");
+        _clockVisible = val;
     }
 
-    public function get clockVisible () :Boolean
+    public function animateShowClock (show :Boolean) :void
     {
-        return _clock.visible;
+        if (show != _clockVisible) {
+            _clockVisible = show;
+            _clock.gotoAndPlay(show ? "clockappear" : "clockdissappear");
+        }
     }
 
     public function get closeButton () :SimpleButton
@@ -121,6 +125,7 @@ public class GameUIView extends Sprite
     protected var _clock :MovieClip;
     protected var _clockText :TextField;
     protected var _directionsText :TextField;
+    protected var _clockVisible :Boolean;
 
     protected var _elements :Array = [];
     protected var _buttons :Array = [ null, null, null ];
@@ -130,7 +135,7 @@ public class GameUIView extends Sprite
     protected static const CENTER_BUTTON :int = 2;
 
     protected static const BUTTON_LOCS :Array = [
-        new Point(99, 25), new Point(-99, 25), new Point(0, 25)
+        new Point(99, 26), new Point(-99, 26), new Point(0, 26)
     ];
     protected static const BUTTON_SIZE :Point = new Point(83, 27);
 }

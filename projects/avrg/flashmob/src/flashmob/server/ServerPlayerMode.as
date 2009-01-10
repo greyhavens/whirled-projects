@@ -69,6 +69,9 @@ public class ServerPlayerMode extends ServerMode
     protected function handlePlayAgain () :void
     {
         _ctx.outMsg.sendMessage(Constants.MSG_S_PLAYAGAIN);
+        _started = false;
+        _completed = false;
+        _patternIndex = 0;
     }
 
     protected function handleResetGame () :void
