@@ -32,9 +32,18 @@ public class Laws extends Component
         ctx.eventHandler.addDataListener(LAWS_DATA, lawsChanged);
         ctx.eventHandler.addMessageListener(ENACT_LAW, enactLaw);
         ctx.eventHandler.addMessageListener(ENACT_LAW_DONE, enactLawDone);
+        ctx.eventHandler.addMessageListener(Job.SOME_POWER_USED, somePowerUsed);
 
         ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, turnStarted);
-        ctx.eventHandler.addEventListener(Job.POWER_USED, powerUsed);
+        ctx.eventHandler.addEventListener(Job.MY_POWER_USED, powerUsed);
+    }
+    
+    /**
+     * Play a sound when any player uses their power
+     */
+    protected function somePowerUsed (...ignored) :void
+    {
+        Content.playSound(Content.SFX_POWER_USED);
     }
     
     /**
@@ -184,6 +193,7 @@ public class Laws extends Component
             else {
                 toPoint = localToGlobal(new Point(0, (laws.length-1) * LAW_SPACING_Y));
             }
+            Content.playSound(Content.SFX_LAW_CREATED);
             // when animation completes, add the new law sprite and trigger it
             law.animateMove(fromPoint, toPoint, 
                 function () :void { 

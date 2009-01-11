@@ -117,6 +117,8 @@ public class LawsAndDisorder extends Sprite
         if (_ctx.control.game.amInControl()) {
             beginInit();
         }
+        
+        Content.playMusic(Content.THEME_MUSIC);
 
         _ctx.notice("Welcome to Laws & Disorder!");
         _ctx.gameStarted = true;

@@ -162,7 +162,7 @@ public class AIPlayer extends Opponent
             return;
         }
 
-        // pick 3 options for changing jobs and add them to the options list
+        // pick up to 3 options for changing jobs and add them to the options list
         for (var i :int = 0; i < 3 && i < cardOptions.length; i++) {
             var randomIndex :int = Math.round(Math.random() * (cardOptions.length-1));
             var selectedCard :Card = cardOptions[randomIndex];
@@ -175,18 +175,21 @@ public class AIPlayer extends Opponent
                 }
             }
             
-            playOptions.push(function (): void { changeJobs(selectedCard); });
             // weight is increased if the player with this job is doing well, or if the ai
-            // has other cards of the same SUBJECT.  From 0 to 75+, avg ~30
+            // has other cards of the same SUBJECT.  From 0 to 20+ with avg ~8
             var playerWeight :int = 20;
             if (playerWithJob != null) {
                 playerWeight = playerWithJob.getWinningPercentile();
             }
-            var weight :int = (playerWeight/2 + (cardCount -1) * 25)/2;
-            playOptionWeights.push(weight);
-            //_ctx.log("weight for job " + selectedCard + " is " + weight);
-            //_ctx.log("cardCount is " + cardCount);
-            //_ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
+            var weight :int = (playerWeight + (cardCount -1) * 25)/10;
+            
+            _ctx.log("\nweight for " + selectedCard + " is " + weight + " #" + cardCount);
+            _ctx.log("player with job.getWinningPercentile() is " + playerWithJob.getWinningPercentile());
+            
+            if (weight > 0) {
+                playOptions.push(function (): void { changeJobs(selectedCard); });
+                playOptionWeights.push(weight);
+            }
         }
     }
     
@@ -229,11 +232,6 @@ public class AIPlayer extends Opponent
                 cardList.push(when);
             }
             
-            if (!_ctx.board.newLaw.isValidLaw(cardList)) {
-                _ctx.error("AIplayer tried to make an invalid law: " + cardList);
-                return;
-            }
-            
             var gainingPlayer :Player = _ctx.board.newLaw.isGoodFor(cardList);
             var losingPlayer :Player = _ctx.board.newLaw.isBadFor(cardList);
             
@@ -244,13 +242,14 @@ public class AIPlayer extends Opponent
             
             var weight :int = 25;
             if (gainingPlayer == this && losingPlayer != null) {
-                weight = 150;
+                weight = 175;
             } else if (gainingPlayer == this) {
-                weight = 125;
+                weight = 140;
             } else if (gainingPlayer != null && losingPlayer != null) {
                 weight = ((100 - gainingPlayer.getWinningPercentile()) + (losingPlayer.getWinningPercentile())) / 2;
             } else if (gainingPlayer != null) {
-                weight = Math.max(0, 50 - gainingPlayer.getWinningPercentile());
+                // sometimes make laws that help players who are in the bottom 20%
+                weight = Math.max(0, 20 - gainingPlayer.getWinningPercentile());
             } else if (losingPlayer != null) {
                 weight = losingPlayer.getWinningPercentile();
             }
@@ -261,23 +260,27 @@ public class AIPlayer extends Opponent
                 powerMultiplier *= 2;
             }
             if (when != null) {
-                powerMultiplier += 3;
+                powerMultiplier += 2;
             }
-            weight *= powerMultiplier/4 + 10;
+            // after multiplier, weight range is 0 - 262 with avg ~80
+            weight *= (powerMultiplier + 9)/10;
 
-/*
-            _ctx.log("weight for " + cardList + " is " + weight);
-            _ctx.log("power multiplier is " + powerMultiplier);
-            
+            _ctx.log("\nweight for " + cardList + " is " + weight + " with mult " + ((powerMultiplier + 9)/10));
             if (gainingPlayer != null) {
-                _ctx.log("gaining player.winning: " + gainingPlayer.getWinningPercentile());
+                if (gainingPlayer == this) {
+                    _ctx.log("gaining player is me.");
+                } else {
+                    _ctx.log("gaining player.winning: " + gainingPlayer.getWinningPercentile());
+                }
             } 
             if (losingPlayer != null) {
                 _ctx.log("losingPlayer.winning: " + losingPlayer.getWinningPercentile());
             } 
-            */
-            playOptions.push(function (): void { createLaw(cardList); });
-            playOptionWeights.push(weight);
+            
+            if (weight > 0) {
+                playOptions.push(function (): void { createLaw(cardList); });
+                playOptionWeights.push(weight);
+            }
         }
     }
     
@@ -287,14 +290,87 @@ public class AIPlayer extends Opponent
     protected function addUsePowerOptions () :void
     {
         if (job.getUsePowerError()) {
-            //_ctx.log("can't use power because: " + job.getUsePowerError()); 
+            _ctx.log("\ncan't use power because: " + job.getUsePowerError()); 
             return;
         }
         
-        // TODO queue up decisions (which law, which card) here and check weird conditions
-        // eg there is only one law and it already has a when for DOCTOR.
-        playOptions.push(function (): void { usePower(); });
-        playOptionWeights.push(50);
+        for (var i :int = 0; i < 3; i++) {
+            var targetLaw :Law;
+            var targetCard :Card;
+            var targetPlayer :Player;
+            var weight :int = 0;
+            
+            switch (job.id) {
+            case Job.JUDGE:
+                targetLaw = selectLaw();
+                weight = 50;
+                break;
+
+            case Job.THIEF:
+                targetPlayer = selectOpponent();
+                targetCard = targetPlayer.hand.getRandomCards(1)[0];
+                weight = 50;
+                break;
+
+            case Job.BANKER:
+                targetLaw = selectLaw();
+                if (targetLaw.hasGivesTarget()) {
+                    // can't change DOCTOR gives PRIEST 1 card
+                    break;
+                }
+                targetCard = hand.pickRandom(Card.VERB);
+                var verbInLaw :Card = targetLaw.cards[1];
+                _ctx.log("verbInLaw: " + verbInLaw + ", targetCard: " + targetCard);
+                if (verbInLaw.type == targetCard.type) {
+                    _ctx.log("can't swap gets wth gets.");
+                    // can't swap GETS with GETS
+                    break;
+                }
+                weight = 50;
+                break;
+
+            case Job.TRADER:
+                // base weight on how many cards you already have?
+                weight = 50;
+                break;
+
+            case Job.PRIEST:
+                targetLaw = selectLaw();
+                targetCard = hand.pickRandom(Card.SUBJECT);
+                _ctx.log("PRIEST targetcard: " + targetCard);
+                // ai players only ever switch the first SUBJECT in a law
+                var subjectInLaw :Card = targetLaw.cards[0];
+                if (subjectInLaw.type == targetCard.type) {
+                    _ctx.log("can't swap doctor with doctor.");
+                    // can't swap DOCTOR with DOCTOR
+                    break;
+                }
+                weight = 50;
+
+            case Job.DOCTOR:
+                targetLaw = selectLaw();
+                if (targetLaw.when != -1) {
+                    // law already has a when, so take that.
+                    weight = 50;
+                    break;
+                }
+
+                // add a when from hand to the end of the law
+                targetCard = hand.pickRandom(Card.WHEN);
+                if (targetCard == null) {
+                    // ai has no when cards
+                    break;
+                }
+            }
+        
+            _ctx.log("\nweight for " + job + " ability with " + targetLaw + ", " 
+                + targetCard + ", " + targetPlayer + " is " + weight);
+            if (weight > 0) {
+                playOptions.push(function (): void { 
+                    usePower(targetLaw, targetCard, targetPlayer); });
+                playOptionWeights.push(50);
+            }
+        }
     }
         
     /**
@@ -323,10 +399,10 @@ public class AIPlayer extends Opponent
     /**
      * Use your power
      */
-    protected function usePower () :void
+    protected function usePower (targetLaw :Law, targetCard :Card, targetPlayer :Player) :void
     {
         usedPower = true;
-        job.usePowerAI();
+        job.usePowerAI(targetLaw, targetCard, targetPlayer);
     }
     
     /**
@@ -340,10 +416,6 @@ public class AIPlayer extends Opponent
         }
         return false;
     }
-    
-    ///** True if this is the instance that controls this AI's behavior.  Control instance will
-    // * be on the human player whose turn precedes this AI's turn. */
-    //public var isController :Boolean = false;
     
     /** May be set to false if something disastrous happens like a player leaving */
     public var canPlay :Boolean;

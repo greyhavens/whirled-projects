@@ -24,6 +24,9 @@ public class Deck extends Component
      * DECK_ID, value[2] is destination player.id or DECK_ID */
     public static const CARD_MOVED :String = "cardMoved";
     
+    /** Event indicating the deck is down to 5 cards and the game will end soon. */
+    public static const DECK_NEAR_EMPTY :String = "deckNearEmpty";
+    
     /** Indicator that the person/thing giving or receiving a card is the deck not a player */
     public static const DECK_ID :int = -5;
     
@@ -42,6 +45,7 @@ public class Deck extends Component
         _ctx.eventHandler.addDataListener(DECK_DATA, deckChanged);
         _ctx.eventHandler.addDataListener(JOBS_DATA, jobsChanged);
         _ctx.eventHandler.addMessageListener(CARD_MOVED, cardMoved);
+        _ctx.eventHandler.addMessageListener(DECK_NEAR_EMPTY, deckNearEmpty);
 
         // create the job objects
         createJob(Job.JUDGE);
@@ -69,8 +73,8 @@ public class Deck extends Component
             numDecks = 4;
         }
         
-        // set to false for a test deck
-        if (true) { 
+        // set to false for a smaller test deck
+        if (false) { 
     
             // Change the size of the deck based on the number of players
             for (var i :int = 0; i < numDecks; i++) {
@@ -135,39 +139,6 @@ public class Deck extends Component
                 addNewCards(1, Card.WHEN, Card.USE_ABILITY);
                 addNewCards(1, Card.WHEN, Card.CREATE_LAW);
             }
-        /*
-    
-            // custom deck for testing
-            for (var j :int = 0; j < 1; j++) {
-                // 12 subjects, 7 verbs, 7 objects, 3 whens = 29
-                //addNewCards(24, Card.SUBJECT, Job.JUDGE);
-                //addNewCards(6, Card.SUBJECT, Job.THIEF);
-                //addNewCards(6, Card.SUBJECT, Job.BANKER);
-               /// addNewCards(6, Card.SUBJECT, Job.TRADER);
-               // addNewCards(6, Card.SUBJECT, Job.PRIEST);
-                addNewCards(20, Card.SUBJECT, Job.DOCTOR);
-                // take out gives for 2 player games
-    //            if (playerCount == 2) {
-      //              addNewCards(4, Card.VERB, Card.LOSES);
-        //            addNewCards(3, Card.VERB, Card.GETS);
-          //      }
-            //    else {
-                    addNewCards(10, Card.VERB, Card.GIVES);
-        //            addNewCards(3, Card.VERB, Card.LOSES);
-          //          addNewCards(2, Card.VERB, Card.GETS);
-              //  }
-    
-                //addNewCards(4, Card.OBJECT, Card.CARD, 1);
-         //       addNewCards(4, Card.OBJECT, Card.CARD, 2);
-    //            addNewCards(1, Card.OBJECT, Card.MONIE, 1);
-      //          addNewCards(1, Card.OBJECT, Card.MONIE, 2);
-        //        addNewCards(1, Card.OBJECT, Card.MONIE, 3);
-                addNewCards(10, Card.OBJECT, Card.MONIE, 4);
-                //addNewCards(6, Card.WHEN, Card.START_TURN);
-                addNewCards(10, Card.WHEN, Card.USE_ABILITY);
-                //addNewCards(3, Card.WHEN, Card.CREATE_LAW);
-            }
-        */
         }
     }
     
@@ -218,7 +189,8 @@ public class Deck extends Component
 
         // warn that the game will be ending soon
         if (cards.length == 5) {
-            _ctx.broadcast("Only 5 cards left in the deck, the game will end soon!", null, true);
+            _ctx.sendMessage(DECK_NEAR_EMPTY);
+            //_ctx.broadcast("Only 5 cards left in the deck, the game will end soon!", null, true);
         }
 
         // if the deck is ever empty after drawing from it, game ends
@@ -232,6 +204,12 @@ public class Deck extends Component
         _ctx.sendMessage(CARD_MOVED, new Array(card.id, DECK_ID, player.id));
         
         return card;
+    }
+    
+    protected function deckNearEmpty (...ignored) :void
+    {
+        Content.playSound(Content.SFX_GAME_OVER);
+        _ctx.notice("Only 5 cards left in the deck, the game will end soon!");
     }
 
     /**

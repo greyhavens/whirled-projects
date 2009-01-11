@@ -168,6 +168,7 @@ public class EndTurnButton extends Button
         }
         
         enabled = true;
+        Content.playSound(Content.SFX_FOCUS_DING);
         _ctx.notice("\nIt's your turn.");
         _ctx.board.newLaw.enabled = true;
         _ctx.player.jobEnabled = true;

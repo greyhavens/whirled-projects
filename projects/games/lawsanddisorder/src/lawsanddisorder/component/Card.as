@@ -2,9 +2,7 @@
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
-import flash.filters.ColorMatrixFilter;
 import flash.geom.ColorTransform;
-import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
@@ -94,7 +92,7 @@ public class Card extends Component
 
         var background :Sprite = new CARD_BACKGROUND();
         background.mouseEnabled = false;
-        var resultColorTransform:ColorTransform = new ColorTransform();
+        var resultColorTransform :ColorTransform = new ColorTransform();
         resultColorTransform.redOffset = red;
         resultColorTransform.greenOffset = green;
         resultColorTransform.blueOffset = blue;

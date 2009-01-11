@@ -97,13 +97,13 @@ public class Player extends Component
      */
     public function set job (job :Job) :void
     {
-        if (job == null) {
-            // this seems to happen sometimes during init, ignore
-            return;
-        }
         // remove existing job
         if (_job != null && contains(_job)) {
            removeChild(_job);
+        }
+        if (job == null) {
+            // this seems to happen sometimes during init, ignore
+            return;
         }
 
         _job = job;

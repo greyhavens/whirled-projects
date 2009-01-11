@@ -22,7 +22,7 @@ public class UsePowerButton extends Button
         addEventListener(MouseEvent.CLICK, usePowerButtonClicked);
         _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_ENDED, turnEnded);
         _ctx.eventHandler.addEventListener(EventHandler.MY_TURN_STARTED, turnStarted);
-        _ctx.eventHandler.addEventListener(Job.POWER_USED, doneUsingPower);
+        _ctx.eventHandler.addEventListener(Job.MY_POWER_USED, doneUsingPower);
         enabled = false;
     }
 

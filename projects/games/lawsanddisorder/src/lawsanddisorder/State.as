@@ -312,6 +312,11 @@ public class State
             return;
         }
         
+        // play a reminder noise when not your turn, even in single player mode.
+        if (!_ctx.board.players.isMyTurn()) {
+            Content.playSound(Content.SFX_FOCUS_DING);
+        }
+                        
         // in single player mode, don't display reminders.
         if (_ctx.board.players.numHumanPlayers == 1) {
             _ctx.notice(message);

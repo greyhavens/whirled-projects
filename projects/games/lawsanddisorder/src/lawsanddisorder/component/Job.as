@@ -15,7 +15,10 @@ import lawsanddisorder.*;
 public class Job extends Component
 {
     /** Event fired when this player is finished using their power. */
-    public static const POWER_USED :String = "powerUsed";
+    public static const MY_POWER_USED :String = "myPowerUsed";
+    
+    /** Event fired when any player is finished using their power. */
+    public static const SOME_POWER_USED :String = "somePowerUsed";
     
     /**
      * Constructor
@@ -201,12 +204,108 @@ public class Job extends Component
     }
 
     /**
+     * Called when an AI player decides to use their power.
+     * Hijacks the state selectedLaw, etc to more easily integrate with human player actions. 
+     */
+    public function usePowerAI (targetLaw :Law, targetCard :Card, targetPlayer :Player) :void
+    {
+        var aiPlayer :AIPlayer = player as AIPlayer;
+        if (aiPlayer == null) {
+            _ctx.error("aiplayer is null in Job.usePowerAI");
+            return;
+        }
+        
+        switch (id) {
+            case JUDGE:
+                _ctx.state.selectedLaw = targetLaw;
+                judgeLawSelected();
+                return;
+
+            case THIEF:
+                _ctx.state.selectedPlayer = targetPlayer;
+                // perform card select here instead of in theifOpponentSelected
+                reachedPointOfNoReturn();
+                player.loseMonies(2);
+                _ctx.state.selectedCards = new Array(targetCard);
+                thiefCardSelected();
+                return;
+
+            case BANKER:
+                // select a verb to exchange and a law to exchange it with
+                _ctx.state.selectedLaw = targetLaw;
+                _ctx.state.selectedCard = targetCard;
+                _ctx.state.activeCard = _ctx.state.selectedLaw.cards[1];
+                
+                _ctx.log("banker card in law: " + _ctx.state.activeCard + ", card in hand: " + _ctx.state.selectedCard);
+                
+                // perform the actual swap here - propagate data change info only when adding
+                player.hand.removeCards(_ctx.state.selectedCards, false);
+                _ctx.state.selectedLaw.removeCards(new Array(_ctx.state.activeCard), false);
+                _ctx.state.selectedLaw.addCards(_ctx.state.selectedCards, true, 1);
+                player.hand.addCards(new Array(_ctx.state.activeCard), true);
+            
+                // continue and notify other players
+                bankerVerbExchanged();
+                return;
+
+            case TRADER:
+                // the trader's ability happens immediately
+                player.loseMonies(2);
+                player.hand.drawCard(2);
+                announcePowerUsed("used Trader's power to draw two cards");
+                doneUsingPower();
+                return;
+
+            case PRIEST:
+                // select a subject to exchange and a law to exchange it with
+                _ctx.state.selectedLaw = targetLaw;
+                _ctx.state.selectedCard = targetCard;
+                // ai players only ever switch the first SUBJECT in a law
+                _ctx.state.activeCard = _ctx.state.selectedLaw.cards[0];
+                
+                // perform the actual swap here - propagate data change info only when adding
+                player.hand.removeCards(_ctx.state.selectedCards, false);
+                _ctx.state.selectedLaw.removeCards(new Array(_ctx.state.activeCard), false);
+                _ctx.state.selectedLaw.addCards(_ctx.state.selectedCards, true, 0);
+                player.hand.addCards(new Array(_ctx.state.activeCard), true);
+            
+                // continue and notify other players
+                priestSubjectExchanged();
+                return;
+
+            case DOCTOR:
+                // select a when to add and a law to add it to
+                _ctx.state.selectedLaw = targetLaw;
+                if (_ctx.state.selectedLaw.when != -1) {
+                    // if the law already has a when, take it
+                    _ctx.state.activeCard = 
+                        _ctx.state.selectedLaw.cards[_ctx.state.selectedLaw.cards.length - 1];
+                    _ctx.state.selectedCard = _ctx.state.activeCard;
+                    _ctx.state.selectedLaw.removeCards(new Array(_ctx.state.activeCard), true);
+                    player.hand.addCards(new Array(_ctx.state.activeCard), true);
+                    
+                } else {
+                    // add a when from hand to the end of the law
+                    _ctx.state.selectedCard = targetCard;
+                    _ctx.state.activeCard = _ctx.state.selectedCard;
+                    player.hand.removeCards(_ctx.state.selectedCards, true);
+                    _ctx.state.selectedLaw.addCards(_ctx.state.selectedCards, true, 
+                        _ctx.state.selectedLaw.cards.length);
+                }
+                
+                // continue and notify other players
+                doctorWhenMoved();
+                return;
+        }
+    }
+    
+    /*
      * Called when an AI player decides to use their power.  Assume it's already valid to do so.
      * Hijacks the state selectedLaw, etc to more easily integrate with human player actions. 
      * TODO make AI smarter by deciding which law or card to affect before deciding to use power.
      * TODO ai should not reach this point if they cannot take an action, and should take an
      * action if they reach this point.  See BANKER swapping GETS with GETS, etc.
-     */
+     *
     public function usePowerAI () :void
     {
         var aiPlayer :AIPlayer = player as AIPlayer;
@@ -323,6 +422,7 @@ public class Job extends Component
                 return;
         }
     }
+    */
 
     /**
      * Once this is called, power can't be cancelled because player has seen or done something
@@ -365,19 +465,9 @@ public class Job extends Component
         player.loseMonies(2);
         var opponent :Player = _ctx.state.selectedPlayer;
         
-        if (player as AIPlayer) {
-            // pick cards automatically
-            if (opponent.hand.cards.length == 0) {
-                // Error if chosen opponent has no cards
-                AIPlayer(player).doneEnactingLaws();
-            }
-            _ctx.state.selectedCards = opponent.hand.getRandomCards(1);
-            thiefCardSelected();
-        } else {
-            // display opponent's hand then select a card from it
-           Opponent(opponent).showHand = true;
-            _ctx.state.selectCards(1, thiefCardSelected, opponent);
-        }
+        // display opponent's hand then select a card from it
+        Opponent(opponent).showHand = true;
+        _ctx.state.selectCards(1, thiefCardSelected, opponent);
     }
 
     /**
@@ -481,7 +571,8 @@ public class Job extends Component
     {
         // this may have already been called for some powers
         reachedPointOfNoReturn();
-        _ctx.eventHandler.dispatchEvent(new Event(POWER_USED));
+        _ctx.eventHandler.dispatchEvent(new Event(MY_POWER_USED));
+        _ctx.sendMessage(SOME_POWER_USED);
     }
 
     /**

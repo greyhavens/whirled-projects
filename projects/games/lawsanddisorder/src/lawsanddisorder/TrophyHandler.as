@@ -39,7 +39,7 @@ public class TrophyHandler
         _ctx = ctx;
         _ctx.eventHandler.addDataListener(Deck.JOBS_DATA, jobsChanged);
         _ctx.eventHandler.addEventListener(Laws.NEW_LAW, lawCreated);
-        _ctx.eventHandler.addEventListener(Job.POWER_USED, powerUsed);
+        _ctx.eventHandler.addEventListener(Job.MY_POWER_USED, powerUsed);
         _ctx.eventHandler.addEventListener(EventHandler.GAME_ENDED, gameEnded);
         
         // set up counters for this game
