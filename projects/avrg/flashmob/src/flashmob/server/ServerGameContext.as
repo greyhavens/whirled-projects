@@ -1,5 +1,6 @@
 package flashmob.server {
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
 import flashmob.*;
@@ -10,14 +11,38 @@ public class ServerGameContext
 {
     public var game :ServerGame;
     public var partyId :int;
-    public var playerIds :Array = [];
+    public var players :HashMap = new HashMap(); // Map<playerId, PlayerInfo>
     public var props :PartyPropControl;
     public var inMsg :PartyMsgReceiver;
     public var outMsg :PartyMsgSender;
 
+    public function get allSameAvatar () :Boolean
+    {
+        // return true if everyone in the game is wearing the same avatar
+
+        if (players.size() == 0) {
+            return true;
+        }
+
+        var playerInfos :Array = players.values();
+        var avatarId :int = PlayerInfo(playerInfos[0]).avatarId;
+        for (var ii :int = 1; ii < playerInfos.length; ++ii) {
+            if (PlayerInfo(playerInfos[ii]).avatarId != avatarId) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getPlayer (playerId :int) :PlayerInfo
+    {
+        return players.get(playerId);
+    }
+
     public function get numPlayers () :int
     {
-        return playerIds.length;
+        return players.size();
     }
 
     public function set spectacle (val :Spectacle) :void

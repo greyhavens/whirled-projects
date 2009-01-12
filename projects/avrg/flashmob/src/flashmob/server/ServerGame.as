@@ -1,6 +1,5 @@
 package flashmob.server {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.*;
 import com.whirled.contrib.EventHandlerManager;
@@ -44,14 +43,14 @@ public class ServerGame extends ServerModeStack
 
     public function addPlayer (playerId :int) :void
     {
-        if (ArrayUtil.contains(_ctx.playerIds, playerId)) {
+        if (_ctx.players.containsKey(playerId)) {
             log.warning("Tried to add a player to a game they were already in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
             return;
         }
 
-        _ctx.playerIds.push(playerId);
+        _ctx.players.put(playerId, new PlayerInfo(playerId));
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
@@ -62,7 +61,7 @@ public class ServerGame extends ServerModeStack
 
     public function removePlayer (playerId :int) :void
     {
-        if(!ArrayUtil.removeFirst(_ctx.playerIds, playerId)) {
+        if (!_ctx.players.remove(playerId)) {
             log.warning("Tried to remove player from a game they weren't in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
@@ -116,15 +115,16 @@ public class ServerGame extends ServerModeStack
     protected function updatePlayers (...ignored) :void
     {
         // check to see if all players are in the same room
+        var playerIds :Array = _ctx.players.keys();
         var everyoneInRoom :Boolean;
-        if (_ctx.playerIds.length == 0) {
+        if (playerIds.length == 0) {
             everyoneInRoom = true;
 
         } else {
             everyoneInRoom = true;
-            var roomId :int = ServerContext.getPlayerRoom(_ctx.playerIds[0]);
-            for (var ii :int = 1; ii < _ctx.playerIds.length; ++ii) {
-                var thisRoomId :int = ServerContext.getPlayerRoom(_ctx.playerIds[ii]);
+            var roomId :int = ServerContext.getPlayerRoom(playerIds[0]);
+            for (var ii :int = 1; ii < playerIds.length; ++ii) {
+                var thisRoomId :int = ServerContext.getPlayerRoom(playerIds[ii]);
                 if (thisRoomId != roomId) {
                     everyoneInRoom = false;
                     break;
@@ -134,11 +134,26 @@ public class ServerGame extends ServerModeStack
 
         _ctx.waitingForPlayers = !everyoneInRoom;
 
-        _ctx.props.set(Constants.PROP_PLAYERS, _ctx.playerIds);
+        _ctx.props.set(Constants.PROP_PLAYERS, playerIds);
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
+        // Keep track of avatar changes
+        if (e.name == Constants.MSG_C_AVATARCHANGED) {
+            var playerId :int = e.senderId;
+            var player :PlayerInfo = _ctx.getPlayer(playerId);
+            if (player == null) {
+                log.warning("Received AVATARCHANGED message for non-existent player",
+                    "playerId", playerId);
+                return;
+            }
+
+            var avatarId :int = e.value as int;
+            log.info("Avatar changed", "playerId", playerId, "avatarId", avatarId);
+            player.avatarId = avatarId;
+        }
+
         if (this.topMode != null) {
             this.topMode.onMsgReceived(e);
         }

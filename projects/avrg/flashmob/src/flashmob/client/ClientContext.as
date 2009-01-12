@@ -27,6 +27,7 @@ public class ClientContext
     public static var spectacle :Spectacle;
     public static var hitTester :HitTester;
     public static var gameUIView :GameUIView;
+    public static var avatarMonitor :AvatarMonitor;
 
     public static function get fullDisplayBounds () :Rectangle
     {

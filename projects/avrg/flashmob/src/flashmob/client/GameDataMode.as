@@ -26,6 +26,11 @@ public class GameDataMode extends AppMode
         return _dataBindings.onElemChanged(e);
     }
 
+    public function onAvatarChanged (newId :int) :void
+    {
+        // do nothing by default
+    }
+
     protected var _dataBindings :DataBindings = new DataBindings();
 }
 

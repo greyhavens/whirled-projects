@@ -353,7 +353,6 @@ public class PlayerMode extends GameDataMode
     protected function get roomMask () :Shape
     {
         if (_roomMask == null) {
-            // show the Can-Can dancers
             var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
             _roomMask = new Shape();
             var g :Graphics = _roomMask.graphics;

@@ -41,6 +41,7 @@ public class Constants
     /* Messages. S=sent by server, C=sent by client, CS=sent by both */
     public static const MSG_S_RESETGAME :String         = "sResetGame";
     public static const MSG_C_RESETGAME :String         = "cResetGame";
+    public static const MSG_C_AVATARCHANGED :String     = "cAvatarChanged"; // val=new avatar id
     // STATE_CHOOSER (MainMenu)
     public static const MSG_C_SELECTED_SPEC :String     = "cSelectedSpectacle";  // val=spec id
     public static const MSG_C_CREATE_SPEC :String       = "cCreateSpectacle";

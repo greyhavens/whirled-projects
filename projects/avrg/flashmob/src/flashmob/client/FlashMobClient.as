@@ -64,13 +64,11 @@ public class FlashMobClient extends Sprite
         ClientContext.mainLoop.setup();
         ClientContext.mainLoop.run();
 
-        // Make sure we're partied
-        if (!ClientContext.isPartied) {
-            log.info("You must be in a party to play this game");
-            ClientContext.mainLoop.unwindToMode(
-                new BasicErrorMode("You must be in a party to play this game"));
-            return;
-        }
+        // Init AvatarMonitor
+        ClientContext.avatarMonitor = new AvatarMonitor();
+        ClientContext.mainLoop.addUpdatable(ClientContext.avatarMonitor);
+        _events.registerListener(ClientContext.avatarMonitor, GameEvent.AVATAR_CHANGED,
+            onAvatarChanged);
 
         // Load resources
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
@@ -103,6 +101,10 @@ public class FlashMobClient extends Sprite
             onPropChanged);
         _events.registerListener(ClientContext.props, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
+
+        // Tell the server what our avatar is
+        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
+            ClientContext.avatarMonitor.curAvatarId);
 
         playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as Array);
         // This will put the initial AppMode into the MainLoop
@@ -163,6 +165,18 @@ public class FlashMobClient extends Sprite
             }
             break;
         }
+    }
+
+    protected function onAvatarChanged (e :GameEvent) :void
+    {
+        var newId :int = e.data as int;
+
+        var gameDataMode :GameDataMode = ClientContext.mainLoop.topMode as GameDataMode;
+        if (gameDataMode != null) {
+            gameDataMode.onAvatarChanged(newId);
+        }
+
+        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, newId);
     }
 
     protected function playersChanged (newPlayers :Array) :void
