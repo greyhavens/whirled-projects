@@ -7,6 +7,8 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.Graphics;
+import flash.display.Shape;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -246,6 +248,17 @@ public class PlayerMode extends GameDataMode
         log.info("Success!");
         ClientContext.gameUIView.directionsText = "Miraculous! Stupendous! SPECTACULAR!";
         handleCompleted();
+
+        // show the Can-Can dancers
+        var dancers :CanCanDancers = new CanCanDancers();
+        dancers.displayObject.mask = this.roomMask;
+        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+        dancers.x = roomBounds.left - dancers.width;
+        dancers.y = roomBounds.top + ((roomBounds.height - dancers.height) * 0.5);
+        dancers.addTask(new SerialTask(
+            LocationTask.CreateLinear(roomBounds.right, dancers.y, Constants.SUCCESS_ANIM_TIME),
+            new SelfDestructTask()));
+        addObject(dancers, _modeSprite);
     }
 
     protected function handleFailure () :void
@@ -337,6 +350,22 @@ public class PlayerMode extends GameDataMode
             _spectacle.patterns[_patternIndex] : null);
     }
 
+    protected function get roomMask () :Shape
+    {
+        if (_roomMask == null) {
+            // show the Can-Can dancers
+            var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+            _roomMask = new Shape();
+            var g :Graphics = _roomMask.graphics;
+            g.beginFill(1, 0);
+            g.drawRect(0, 0, roomBounds.width, roomBounds.height);
+            g.endFill();
+            _modeSprite.addChild(_roomMask);
+        }
+
+        return _roomMask;
+    }
+
     protected static function get log () :Log
     {
         return FlashMobClient.log;
@@ -347,6 +376,7 @@ public class PlayerMode extends GameDataMode
     protected var _againButton :GameButton;
     protected var _resetButton :GameButton;
     protected var _mainMenuButton :GameButton;
+    protected var _roomMask :Shape;
 
     protected var _patternIndex :int = -1;
     protected var _patternRecognized :Boolean;

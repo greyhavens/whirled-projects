@@ -11,6 +11,7 @@ public class Resources
 
         rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("swf", "Spectacle_UI",  { embeddedClass: SWF_SPECTACLE_UI });
+        rm.queueResourceLoad("swf", "can_can",  { embeddedClass: SWF_CAN_CAN });
 
         rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
     }
@@ -19,6 +20,8 @@ public class Resources
     protected static const SWF_UIBITS :Class;
     [Embed(source="../../../rsrc/Spectacle_UI.swf", mimeType="application/octet-stream")]
     protected static const SWF_SPECTACLE_UI :Class;
+    [Embed(source="../../../rsrc/can_can.swf", mimeType="application/octet-stream")]
+    protected static const SWF_CAN_CAN :Class;
 }
 
 }

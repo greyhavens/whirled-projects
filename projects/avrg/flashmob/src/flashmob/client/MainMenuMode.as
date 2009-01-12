@@ -65,6 +65,8 @@ public class MainMenuMode extends GameDataMode
 
     protected function handleAvailSpectacles (specSet :SpectacleSet) :void
     {
+        log.info("Spectacles available: " + (specSet != null ? specSet.spectacles.length : 0));
+
         _availSpectacles = specSet;
         showSpectacleThumbs(0);
     }
