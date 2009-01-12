@@ -43,14 +43,19 @@ public class FlashMobServer extends ServerObject
         }
 
         var game :ServerGame = getGame(partyId);
-
-        // There's no game in session for this party. Start a new one.
-        if (game == null) {
-            game = startGame(partyId);
+        var isNewGame :Boolean = (game == null);
+        if (isNewGame) {
+            // There's no game in session for this party. Start a new one.
+            game = createGame(partyId);
         }
 
         // Add the player to the game
         game.addPlayer(playerId);
+
+        if (isNewGame) {
+            // If this is a new game, start it *after* adding the first player.
+            game.resetGame();
+        }
     }
 
     protected function onPlayerQuit (e :AVRGameControlEvent) :void
@@ -93,13 +98,13 @@ public class FlashMobServer extends ServerObject
         }
     }
 
-    protected function startGame (partyId :int) :ServerGame
+    protected function createGame (partyId :int) :ServerGame
     {
-        log.info("Starting new game", "partyId", partyId);
+        log.info("Creating new game", "partyId", partyId);
 
         var game :ServerGame = new ServerGame(partyId);
         if (_games.put(partyId, game) !== undefined) {
-            log.warning("Started multiple games with the same partyId (" + partyId + ")");
+            log.warning("Created multiple games with the same partyId (" + partyId + ")");
         }
 
         return game;

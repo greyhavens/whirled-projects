@@ -22,11 +22,9 @@ public class ServerGame extends ServerModeStack
         _events.registerListener(_ctx.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED, onMsgReceived);
         _events.registerListener(_ctx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         _events.registerListener(_ctx.props, ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
-
-        init();
     }
 
-    public function init () :void
+    public function resetGame () :void
     {
         this.gameState = INITIAL_GAME_STATE;
         updatePlayers();
@@ -81,7 +79,7 @@ public class ServerGame extends ServerModeStack
         // the game.
         if (_ctx.numPlayers > 0 && this.gameState != Constants.STATE_CHOOSER) {
             _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
-            init(); // updatePlayers() will be called here
+            resetGame(); // updatePlayers() will be called here
         }
     }
 
