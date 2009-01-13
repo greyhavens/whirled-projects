@@ -46,7 +46,7 @@ public class PlayerMode extends GameDataMode
         _spectaclePlacer.visible = ClientContext.isPartyLeader;
         DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
             roomBounds.left + ((roomBounds.width - _spectaclePlacer.width) * 0.5),
-            roomBounds.top + ((roomBounds.height - _spectaclePlacer.height) * 0.5));
+            roomBounds.bottom - _spectaclePlacer.height - 20);
         addObject(_spectaclePlacer, _modeSprite);
 
         // Setup buttons

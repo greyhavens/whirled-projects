@@ -49,8 +49,6 @@ public class SpectaclePlacer extends DraggableObject
         tent.x = bounds.left;
         tent.y = bounds.top;
         _sprite.addChild(tent);
-
-        FlashMobClient.log.info("Tent", "width", tent.width, "height", tent.height);
     }
 
     override public function get displayObject () :DisplayObject
