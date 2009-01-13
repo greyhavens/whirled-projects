@@ -86,12 +86,32 @@ public class PlayerMode extends GameDataMode
         _dataBindings.bindMessage(Constants.MSG_S_PLAYAGAIN, handlePlayAgain);
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
             PatternLoc.fromBytes);
+        _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
         _dataBindings.processAllProperties(ClientContext.props);
 
         registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             function (...ignored) :void {
                 updatePatternViewLoc(false);
             });
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+        _modeSprite.visible = true;
+    }
+
+    override protected function exit () :void
+    {
+        super.exit();
+        _modeSprite.visible = false;
+    }
+
+    protected function handlePlayersChanged () :void
+    {
+        if (!ClientContext.players.allWearingAvatar(_spectacle.avatarId)) {
+            ClientContext.mainLoop.pushMode(new AvatarErrorMode(_spectacle.avatarId));
+        }
     }
 
     protected function onSpectacleDragged (newX :Number, newY :Number) :void
