@@ -1,12 +1,11 @@
 package flashmob.client.view {
 
-import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flashmob.*;
@@ -26,31 +25,32 @@ public class SpectaclePlacer extends DraggableObject
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
         var bounds :Rectangle = _spectacle.getBounds();
-        var borderSize :Number = 2 * (Constants.PATTERN_DOT_SIZE + 3);
+        if (bounds.width < MIN_TENT_SIZE.x) {
+            var dx :Number = MIN_TENT_SIZE.x - bounds.width;
+            bounds.x -= dx / 2;
+            bounds.width = MIN_TENT_SIZE.x;
+        }
+        if (bounds.height < MIN_TENT_SIZE.y) {
+            var dy :Number = MIN_TENT_SIZE.y - bounds.height;
+            bounds.y -= dy / 2;
+            bounds.height = MIN_TENT_SIZE.y;
+        }
 
         _movie = SwfResource.instantiateMovieClip("Spectacle_UI", "placer");
-        _movie.width = bounds.width + (borderSize * 2);
-        _movie.height = bounds.height + (borderSize * 2);
-        _movie.x = bounds.left - borderSize;
-        _movie.y = bounds.top - borderSize;
+        _movie.width = bounds.width + (BORDER_SIZE.x * 2);
+        _movie.height = bounds.height + (BORDER_SIZE.y * 2);
+        _movie.x = bounds.left - BORDER_SIZE.x;
+        _movie.y = bounds.top - BORDER_SIZE.y;
         _sprite.addChild(_movie);
 
-        /*var g :Graphics = _sprite.graphics;
-        for (var ii :int = _spectacle.patterns.length - 1; ii >=0; --ii) {
-            var pattern :Pattern = _spectacle.patterns[ii];
-            var isFirstPattern :Boolean = (ii == 0);
-            for each (var loc :PatternLoc in pattern.locs) {
-                g.beginFill(0xFFFFFF, (isFirstPattern ? 1 : 0.3));
-                g.drawCircle(loc.x, loc.y, Constants.PATTERN_DOT_SIZE);
-                g.endFill();
+        var tent :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "tent");
+        tent.width = bounds.width;
+        tent.height = bounds.height;
+        tent.x = bounds.left;
+        tent.y = bounds.top;
+        _sprite.addChild(tent);
 
-                if (isFirstPattern) {
-                    g.beginFill(0xFF0000);
-                    g.drawCircle(loc.x, loc.y, Constants.PATTERN_DOT_SIZE / 4);
-                    g.endFill();
-                }
-            }
-        }*/
+        FlashMobClient.log.info("Tent", "width", tent.width, "height", tent.height);
     }
 
     override public function get displayObject () :DisplayObject
@@ -80,6 +80,9 @@ public class SpectaclePlacer extends DraggableObject
     protected var _movie :MovieClip;
     protected var _sprite :Sprite;
     protected var _spectacle :Spectacle;
+
+    protected static const MIN_TENT_SIZE :Point = new Point(100, 75);
+    protected static const BORDER_SIZE :Point = new Point(30, 30);
 }
 
 }
