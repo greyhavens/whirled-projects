@@ -20,7 +20,7 @@ public class Constants
     public static const MAX_SPEC_NAME_LENGTH :int = 40;
     public static const PATTERN_LOC_EPSILON :Number = 30;
     public static const PATTERN_DOT_SIZE :Number = 12;
-    public static const SUCCESS_ANIM_TIME :Number = 5;
+    public static const SUCCESS_ANIM_TIME :Number = 8;
 
     /* Game states */
     public static const STATE_INVALID :int = 0;
