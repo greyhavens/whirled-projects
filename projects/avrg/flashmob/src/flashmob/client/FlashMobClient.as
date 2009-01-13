@@ -122,12 +122,10 @@ public class FlashMobClient extends Sprite
         case Constants.MSG_S_RESETGAME:
             log.info("A player left the game. Resetting.");
             break;
+        }
 
-        default:
-            if (this.curDataListener != null) {
-                this.curDataListener.onMsgReceived(e);
-            }
-            break;
+        if (this.curDataListener != null) {
+            this.curDataListener.onMsgReceived(e);
         }
     }
 
@@ -147,36 +145,23 @@ public class FlashMobClient extends Sprite
             ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
             log.info("New spectacle received", "Spectacle", ClientContext.spectacle);
             break;
+        }
 
-        default:
-            if (this.curDataListener != null) {
-                this.curDataListener.onPropChanged(e);
-            }
-            break;
+        if (this.curDataListener != null) {
+            this.curDataListener.onPropChanged(e);
         }
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        switch (e.name) {
-        default:
-            if (this.curDataListener != null) {
-                this.curDataListener.onElemChanged(e);
-            }
-            break;
+        if (this.curDataListener != null) {
+            this.curDataListener.onElemChanged(e);
         }
     }
 
     protected function onAvatarChanged (e :GameEvent) :void
     {
-        var newId :int = e.data as int;
-
-        var gameDataMode :GameDataMode = ClientContext.mainLoop.topMode as GameDataMode;
-        if (gameDataMode != null) {
-            gameDataMode.onAvatarChanged(newId);
-        }
-
-        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, newId);
+        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, e.data as int);
     }
 
     protected function playersChanged (newPlayers :ByteArray) :void

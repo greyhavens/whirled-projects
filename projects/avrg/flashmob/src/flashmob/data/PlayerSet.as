@@ -1,5 +1,6 @@
 package flashmob.data {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 
 import flash.utils.ByteArray;
@@ -13,23 +14,13 @@ public class PlayerSet
         return players.size();
     }
 
-    public function get allSameAvatar () :Boolean
+    public function allWearingAvatar (avatarId :int) :Boolean
     {
         // return true if everyone in the game is wearing the same avatar
-
-        if (players.size() == 0) {
-            return true;
-        }
-
-        var playerInfos :Array = players.values();
-        var avatarId :int = PlayerInfo(playerInfos[0]).avatarId;
-        for (var ii :int = 1; ii < playerInfos.length; ++ii) {
-            if (PlayerInfo(playerInfos[ii]).avatarId != avatarId) {
-                return false;
-            }
-        }
-
-        return true;
+        return (ArrayUtil.findIf(players.values(),
+            function (player :PlayerInfo) :Boolean {
+                return player.avatarId != avatarId;
+            }) === undefined);
     }
 
     public function addPlayer (playerInfo :PlayerInfo) :*

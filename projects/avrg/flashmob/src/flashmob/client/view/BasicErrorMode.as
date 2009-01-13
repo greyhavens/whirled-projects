@@ -22,6 +22,8 @@ public class BasicErrorMode extends AppMode
 
     override protected function setup () :void
     {
+        super.setup();
+
         var bounds :Rectangle = ClientContext.fullDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
@@ -33,10 +35,16 @@ public class BasicErrorMode extends AppMode
         window.y = bounds.height * 0.5;
         _modeSprite.addChild(window);
 
+        // make the UI draggable
+        addObject(new Dragger(window["dragger"], window));
+
         var tf :TextField = window["text"];
         tf.text = _err;
 
-        var okButton :SimpleButton = window["ok"];
+        var okButton :GameButton = new GameButton("ok_button");
+        okButton.x = 0;
+        okButton.y = 47;
+        window.addChild(okButton);
         registerOneShotCallback(okButton, MouseEvent.CLICK, _okHandler);
     }
 

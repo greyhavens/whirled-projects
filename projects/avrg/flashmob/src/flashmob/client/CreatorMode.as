@@ -40,6 +40,51 @@ public class CreatorMode extends GameDataMode
             });
 
         if (ClientContext.isPartyLeader) {
+            var chooseAvatarButton :GameButton = new GameButton("ok_button");
+            registerListener(chooseAvatarButton.button, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientContext.outMsg.sendMessage(Constants.MSG_C_CHOSEAVATAR,
+                        ClientContext.avatarMonitor.curAvatarId);
+                });
+            ClientContext.gameUIView.centerButton = chooseAvatarButton;
+
+            ClientContext.gameUIView.directionsText =
+                "Wear the Avatar you will perform this Spectacle with, and press OK!";
+
+        } else {
+            ClientContext.gameUIView.directionsText =
+                "The party leader is choosing an Avatar for the Spectacle!";
+        }
+
+        ClientContext.gameUIView.clockVisible = false;
+
+        _dataBindings.bindMessage(Constants.MSG_S_STARTCREATING, handleStartCreating);
+        _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+        _modeSprite.visible = true;
+    }
+
+    override protected function exit () :void
+    {
+        super.exit();
+        _modeSprite.visible = false;
+    }
+
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+        updateButtons();
+    }
+
+    protected function handleStartCreating (chosenAvatarId :int) :void
+    {
+        if (ClientContext.isPartyLeader) {
+            ClientContext.gameUIView.clearButtons();
+
             _poseButton = new GameButton("firstpose");
             registerListener(_poseButton.button, MouseEvent.CLICK, onPoseClicked);
 
@@ -48,8 +93,8 @@ public class CreatorMode extends GameDataMode
 
             _doneButton.enabled = false;
 
-            ClientContext.gameUIView.rightButton = _poseButton;
             ClientContext.gameUIView.leftButton = _doneButton;
+            ClientContext.gameUIView.rightButton = _poseButton;
 
             ClientContext.gameUIView.directionsText =
                 "Get everyone into position and press First Pose!";
@@ -65,13 +110,16 @@ public class CreatorMode extends GameDataMode
             ClientContext.gameUIView.directionsText = "Everybody! Arrange yourselves.";
         }
 
-        ClientContext.gameUIView.clockVisible = false;
+        _startedCreating = true;
+        _chosenAvatarId = chosenAvatarId;
+        handlePlayersChanged();
     }
 
-    override public function update (dt :Number) :void
+    protected function handlePlayersChanged () :void
     {
-        super.update(dt);
-        updateButtons();
+        if (_startedCreating && !ClientContext.players.allWearingAvatar(_chosenAvatarId)) {
+            ClientContext.mainLoop.pushMode(new AvatarErrorMode(_chosenAvatarId));
+        }
     }
 
     protected function get canCapturePose () :Boolean
@@ -201,8 +249,10 @@ public class CreatorMode extends GameDataMode
     protected var _doneButton :GameButton;
 
     protected var _spectacle :Spectacle;
+    protected var _startedCreating :Boolean;
     protected var _lastSnapshotTime :Number = 0;
     protected var _gameTimer :GameTimer;
+    protected var _chosenAvatarId :int;
 
     protected var _done :Boolean;
 

@@ -155,6 +155,7 @@ public class ServerGame extends ServerModeStack
             var avatarId :int = e.value as int;
             log.info("Avatar changed", "playerId", playerId, "avatarId", avatarId);
             player.avatarId = avatarId;
+            updatePlayers();
         }
 
         if (this.topMode != null) {

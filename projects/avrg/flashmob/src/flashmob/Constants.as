@@ -47,6 +47,7 @@ public class Constants
     public static const MSG_C_CREATE_SPEC :String       = "cCreateSpectacle";
     // STATE_CREATOR
     public static const MSG_C_CHOSEAVATAR :String       = "cChoseAvatar"; // value=avatar id
+    public static const MSG_S_STARTCREATING :String     = "sStartPosing"; // value=chosen avatar id
     public static const MSG_C_DONECREATING :String      = "cDoneCreating"; // value=Spectacle bytes
     // STATE_PLAYER
     public static const MSG_C_STARTPLAYING :String      = "cStartPlaying";
