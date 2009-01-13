@@ -42,7 +42,6 @@ public class FlashMobClient extends Sprite
         ClientContext.gameCtrl = new AVRGameControl(this);
         ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
         ClientContext.partyId = ClientContext.gameCtrl.player.getPartyId();
-        ClientContext.partyLeaderId = ClientContext.localPlayerId; // TODO - remove this
         ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
             ClientContext.gameCtrl.agent);
         ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,

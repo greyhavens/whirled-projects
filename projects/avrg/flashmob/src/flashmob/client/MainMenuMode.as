@@ -19,6 +19,8 @@ public class MainMenuMode extends GameDataMode
     {
         super.setup();
 
+        _wasPartyLeader = ClientContext.isPartyLeader;
+
         // create the main UI and make it draggable
         _ui = SwfResource.instantiateMovieClip("Spectacle_UI", "mainUI");
         addObject(new Dragger(_ui["dragmain"], _ui));
@@ -58,17 +60,31 @@ public class MainMenuMode extends GameDataMode
                 showSpectacleThumbs(_firstVisibleSpecIndex + SPECTACLE_THUMB_ANCHORS.length);
             });
 
-        _dataBindings.bindProp(Constants.PROP_AVAIL_SPECTACLES, handleAvailSpectacles,
+        _dataBindings.bindMessage(Constants.MSG_S_RESETGAME, handleResetGame);
+        _dataBindings.bindProp(Constants.PROP_AVAIL_SPECTACLES, handleSpectaclesUpdated,
             SpectacleSet.fromBytes);
+        _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersUpdated);
         _dataBindings.processAllProperties(ClientContext.props);
     }
 
-    protected function handleAvailSpectacles (specSet :SpectacleSet) :void
+    protected function handleResetGame () :void
+    {
+        ClientContext.mainLoop.changeMode(new MainMenuMode());
+    }
+
+    protected function handleSpectaclesUpdated (specSet :SpectacleSet) :void
     {
         log.info("Spectacles available: " + (specSet != null ? specSet.spectacles.length : 0));
 
         _availSpectacles = specSet;
         showSpectacleThumbs(0);
+    }
+
+    protected function handlePlayersUpdated () :void
+    {
+        if (_wasPartyLeader != ClientContext.isPartyLeader) {
+            ClientContext.mainLoop.changeMode(new MainMenuMode());
+        }
     }
 
     protected function showSpectacleThumbs (fromIndex :int) :void
@@ -120,6 +136,7 @@ public class MainMenuMode extends GameDataMode
     protected var _ui :MovieClip;
     protected var _prevButton :SimpleButton;
     protected var _nextButton :SimpleButton;
+    protected var _wasPartyLeader :Boolean;
 
     protected var _availSpectacles :SpectacleSet;
     protected var _spectacleSelected :Boolean;

@@ -20,7 +20,6 @@ public class ClientContext
     public static var gameCtrl :AVRGameControl;
     public static var partyId :int;
     public static var localPlayerId :int;
-    public static var partyLeaderId :int;
     public static var players :PlayerSet;
     public static var inMsg :PartyMsgReceiver;
     public static var outMsg :PartyMsgSender;
@@ -73,7 +72,7 @@ public class ClientContext
 
     public static function get isPartyLeader () :Boolean
     {
-        return (localPlayerId == partyLeaderId);
+        return (players != null && players.partyLeaderId == localPlayerId);
     }
 
     public static function get isPartied () :Boolean

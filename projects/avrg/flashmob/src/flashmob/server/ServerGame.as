@@ -51,15 +51,22 @@ public class ServerGame extends ServerModeStack
             return;
         }
 
+        log.info("Adding player", playerId + " to game", _ctx.partyId);
+
         var player :PlayerInfo = new PlayerInfo();
         player.id = playerId;
         _ctx.players.addPlayer(player);
+
+        if (_ctx.players.numPlayers == 1) {
+            // TEMP - make the first player the party leader
+            _ctx.players.partyLeaderId = playerId;
+        }
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.LEFT_ROOM, updatePlayers);
 
-        updatePlayers();
+        playerCountChanged();
     }
 
     public function removePlayer (playerId :int) :void
@@ -71,15 +78,25 @@ public class ServerGame extends ServerModeStack
             return;
         }
 
+        if (_ctx.players.partyLeaderId == playerId && _ctx.players.numPlayers > 0) {
+            // TEMP - if the party leader left, make somebody else the leader
+            _ctx.players.partyLeaderId = PlayerInfo(_ctx.players.players.values()[0]).id;
+        }
+
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         if (playerCtrl != null) {
             _events.unregisterListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
             _events.unregisterListener(playerCtrl, AVRGamePlayerEvent.LEFT_ROOM, updatePlayers);
         }
 
+        playerCountChanged();
+    }
+
+    protected function playerCountChanged () :void
+    {
         // If we still have players in the game, tell them that we need to reset
         // the game.
-        if (_ctx.players.numPlayers > 0 && this.gameState != Constants.STATE_CHOOSER) {
+        if (_ctx.players.numPlayers > 0) {
             _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
             resetGame(); // updatePlayers() will be called here
         }
