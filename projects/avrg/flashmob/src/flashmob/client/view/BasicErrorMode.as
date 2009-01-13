@@ -1,11 +1,11 @@
 package flashmob.client.view {
 
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.SimpleButton;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.text.TextField;
@@ -48,8 +48,18 @@ public class BasicErrorMode extends AppMode
         registerOneShotCallback(okButton, MouseEvent.CLICK, _okHandler);
     }
 
+    override protected function enter () :void
+    {
+        super.enter();
+        if (!_playedSound) {
+            AudioManager.instance.playSoundNamed("clown_horn");
+            _playedSound = true;
+        }
+    }
+
     protected var _err :String;
     protected var _okHandler :Function;
+    protected var _playedSound :Boolean;
 }
 
 }

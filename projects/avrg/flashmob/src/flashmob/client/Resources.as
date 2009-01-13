@@ -13,6 +13,13 @@ public class Resources
         rm.queueResourceLoad("swf", "Spectacle_UI",  { embeddedClass: SWF_SPECTACLE_UI });
         rm.queueResourceLoad("swf", "can_can",  { embeddedClass: SWF_CAN_CAN });
 
+        rm.queueResourceLoad("sound", "countdown",  { embeddedClass: SOUND_COUNTDOWN });
+        rm.queueResourceLoad("sound", "snare_roll",  { embeddedClass: SOUND_SNARE_ROLL });
+        rm.queueResourceLoad("sound", "cymbal_hit",  { embeddedClass: SOUND_CYMBAL_HIT });
+        rm.queueResourceLoad("sound", "clown_horn",  { embeddedClass: SOUND_CLOWN_HORN });
+        rm.queueResourceLoad("sound", "ding",  { embeddedClass: SOUND_DING });
+        rm.queueResourceLoad("sound", "main_theme",  { embeddedClass: SOUND_SPECTACULAR_UI });
+
         rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
     }
 
@@ -22,6 +29,19 @@ public class Resources
     protected static const SWF_SPECTACLE_UI :Class;
     [Embed(source="../../../rsrc/can_can.swf", mimeType="application/octet-stream")]
     protected static const SWF_CAN_CAN :Class;
+
+    [Embed(source="../../../rsrc/audio/countdown.mp3")]
+    protected static const SOUND_COUNTDOWN :Class;
+    [Embed(source="../../../rsrc/audio/snare_roll.mp3")]
+    protected static const SOUND_SNARE_ROLL :Class;
+    [Embed(source="../../../rsrc/audio/cymbal_hit.mp3")]
+    protected static const SOUND_CYMBAL_HIT :Class;
+    [Embed(source="../../../rsrc/audio/clown_horn.mp3")]
+    protected static const SOUND_CLOWN_HORN :Class;
+    [Embed(source="../../../rsrc/audio/ding.mp3")]
+    protected static const SOUND_DING :Class;
+    [Embed(source="../../../rsrc/audio/spectacular_UI.mp3")]
+    protected static const SOUND_SPECTACULAR_UI :Class;
 }
 
 }

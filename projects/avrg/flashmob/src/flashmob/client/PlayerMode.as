@@ -5,6 +5,8 @@ import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControlEvent;
+import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
@@ -93,6 +95,16 @@ public class PlayerMode extends GameDataMode
             function (...ignored) :void {
                 updatePatternViewLoc(false);
             });
+
+        // setup sounds
+        _soundControls = new AudioControls(
+            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+        _soundControls.retain();
+    }
+
+    override protected function destroy () :void
+    {
+        _soundControls.release();
     }
 
     override protected function enter () :void
@@ -105,6 +117,22 @@ public class PlayerMode extends GameDataMode
     {
         super.exit();
         _modeSprite.visible = false;
+    }
+
+    protected function playSound (name :String, loopCount :int = 0) :AudioChannel
+    {
+        return AudioManager.instance.playSoundNamed(name, _soundControls, loopCount);
+    }
+
+    protected function playSnareRoll (play :Boolean) :void
+    {
+        if (play && _snareRoll == null) {
+            _snareRoll = playSound("snare_roll", AudioManager.LOOP_FOREVER);
+
+        } else if (!play && _snareRoll != null) {
+            _snareRoll.audioControls.fadeOut(0.5).stopAfter(0.5);
+            _snareRoll = null;
+        }
     }
 
     protected function handlePlayersChanged () :void
@@ -250,7 +278,10 @@ public class PlayerMode extends GameDataMode
             "First pose!" :
             "Next pose!");
 
-        if (_patternIndex > 0) {
+        if (_patternIndex == 0) {
+            playSnareRoll(true);
+
+        } else {
             if (_gameTimer == null) {
                 _gameTimer = new GameTimer(0, false,
                     function (timerText :String) :void {
@@ -261,6 +292,8 @@ public class PlayerMode extends GameDataMode
 
             _gameTimer.time = this.curPattern.timeLimit;
             ClientContext.gameUIView.animateShowClock(true);
+
+            playSound("cymbal_hit");
         }
     }
 
@@ -280,6 +313,10 @@ public class PlayerMode extends GameDataMode
             LocationTask.CreateLinear(roomBounds.right, dancers.y, Constants.SUCCESS_ANIM_TIME),
             new SelfDestructTask()));
         addObject(dancers, _modeSprite);
+
+        // audio
+        playSnareRoll(false);
+        playSound("cymbal_hit");
     }
 
     protected function handleFailure () :void
@@ -287,6 +324,10 @@ public class PlayerMode extends GameDataMode
         log.info("Failed!");
         ClientContext.gameUIView.directionsText = "Out of time!";
         handleCompleted();
+
+        // audio
+        playSnareRoll(false);
+        playSound("clown_horn");
     }
 
     protected function handlePlayAgain () :void
@@ -407,6 +448,9 @@ public class PlayerMode extends GameDataMode
     protected var _spectacleOffset :PatternLoc;
     protected var _spectacleOffsetThrottler :MessageThrottler;
     protected var _gameTimer :GameTimer;
+
+    protected var _soundControls :AudioControls;
+    protected var _snareRoll :AudioChannel;
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

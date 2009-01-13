@@ -1,9 +1,9 @@
 package flashmob.client.view {
 
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.MovieClip;
-import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
@@ -41,7 +41,17 @@ public class AvatarErrorMode extends GameDataMode
             });
     }
 
+    override protected function enter () :void
+    {
+        super.enter();
+        if (!_playedSound) {
+            AudioManager.instance.playSoundNamed("clown_horn");
+            _playedSound = true;
+        }
+    }
+
     protected var _requiredAvatarId :int;
+    protected var _playedSound :Boolean;
 }
 
 }
