@@ -1,9 +1,12 @@
 package {
 
+import flash.events.Event;
+
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.avrg.probe.Button;
 import com.whirled.contrib.avrg.probe.ButtonEvent;
 import com.whirled.contrib.avrg.probe.ClientPanel;
+import com.whirled.contrib.avrg.probe.ServerStub;
 
 public class Probe extends ClientPanel
 {
@@ -30,8 +33,21 @@ public class Probe extends ClientPanel
         shift.addEventListener(ButtonEvent.CLICK, handleShift);
         addChild(shift);
 
+        var activate :Button = new Button("On/Off");
+        activate.x = 260;
+        activate.y = 2;
+        activate.addEventListener(ButtonEvent.CLICK, function (...args) :void {
+            _ctrl.agent.sendMessage(_active ? ServerStub.DEACTIVATE : ServerStub.ACTIVATE);
+            _active = !_active;
+        });
+        addChild(activate);
+
         x = (_ctrl.local.getPaintableArea().width - width) / 2;
         y = 10;
+
+        addEventListener(Event.REMOVED_FROM_STAGE, function (...args) :void {
+            trace("Removed from stage: " + (new Error()).getStackTrace());
+        });
     }
 
     protected function handleClose (event :ButtonEvent) :void
@@ -61,6 +77,8 @@ public class Probe extends ClientPanel
         idx = (idx + dir + positions.length) % positions.length;
         x = xpos(positions[idx]);
     }
+
+    protected var _active :Boolean;
 }
 
 }
