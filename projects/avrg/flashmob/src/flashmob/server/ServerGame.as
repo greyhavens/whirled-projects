@@ -6,6 +6,7 @@ import com.whirled.contrib.EventHandlerManager;
 import com.whirled.net.*;
 
 import flashmob.*;
+import flashmob.data.*;
 import flashmob.party.*;
 
 public class ServerGame extends ServerModeStack
@@ -43,14 +44,16 @@ public class ServerGame extends ServerModeStack
 
     public function addPlayer (playerId :int) :void
     {
-        if (_ctx.players.containsKey(playerId)) {
+        if (_ctx.players.containsPlayer(playerId)) {
             log.warning("Tried to add a player to a game they were already in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
             return;
         }
 
-        _ctx.players.put(playerId, new PlayerInfo(playerId));
+        var player :PlayerInfo = new PlayerInfo();
+        player.id = playerId;
+        _ctx.players.addPlayer(player);
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
@@ -61,7 +64,7 @@ public class ServerGame extends ServerModeStack
 
     public function removePlayer (playerId :int) :void
     {
-        if (!_ctx.players.remove(playerId)) {
+        if (!_ctx.players.removePlayer(playerId)) {
             log.warning("Tried to remove player from a game they weren't in",
                 "playerId", playerId,
                 "partyId", _ctx.partyId);
@@ -76,7 +79,7 @@ public class ServerGame extends ServerModeStack
 
         // If we still have players in the game, tell them that we need to reset
         // the game.
-        if (_ctx.numPlayers > 0 && this.gameState != Constants.STATE_CHOOSER) {
+        if (_ctx.players.numPlayers > 0 && this.gameState != Constants.STATE_CHOOSER) {
             _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
             resetGame(); // updatePlayers() will be called here
         }
@@ -84,7 +87,7 @@ public class ServerGame extends ServerModeStack
 
     public function get isEmpty () :Boolean
     {
-        return _ctx.numPlayers == 0;
+        return _ctx.players.numPlayers == 0;
     }
 
     public function set gameState (val :int) :void
@@ -115,7 +118,7 @@ public class ServerGame extends ServerModeStack
     protected function updatePlayers (...ignored) :void
     {
         // check to see if all players are in the same room
-        var playerIds :Array = _ctx.players.keys();
+        var playerIds :Array = _ctx.players.players.keys();
         var everyoneInRoom :Boolean;
         if (playerIds.length == 0) {
             everyoneInRoom = true;
@@ -134,7 +137,7 @@ public class ServerGame extends ServerModeStack
 
         _ctx.waitingForPlayers = !everyoneInRoom;
 
-        _ctx.props.set(Constants.PROP_PLAYERS, playerIds);
+        _ctx.props.set(Constants.PROP_PLAYERS, _ctx.players.toBytes());
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -142,7 +145,7 @@ public class ServerGame extends ServerModeStack
         // Keep track of avatar changes
         if (e.name == Constants.MSG_C_AVATARCHANGED) {
             var playerId :int = e.senderId;
-            var player :PlayerInfo = _ctx.getPlayer(playerId);
+            var player :PlayerInfo = _ctx.players.getPlayer(playerId);
             if (player == null) {
                 log.warning("Received AVATARCHANGED message for non-existent player",
                     "playerId", playerId);

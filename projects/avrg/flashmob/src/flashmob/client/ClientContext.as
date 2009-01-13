@@ -20,7 +20,8 @@ public class ClientContext
     public static var gameCtrl :AVRGameControl;
     public static var partyId :int;
     public static var localPlayerId :int;
-    public static var playerIds :Array = [];
+    public static var partyLeaderId :int;
+    public static var players :PlayerSet;
     public static var inMsg :PartyMsgReceiver;
     public static var outMsg :PartyMsgSender;
     public static var props :PartyPropGetControl;
@@ -72,8 +73,7 @@ public class ClientContext
 
     public static function get isPartyLeader () :Boolean
     {
-        return (playerIds.length == 0 || playerIds[0] == localPlayerId);
-        // TODO - fix this when party support is added
+        return (localPlayerId == partyLeaderId);
     }
 
     public static function get isPartied () :Boolean

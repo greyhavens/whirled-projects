@@ -55,7 +55,7 @@ public class CreatorMode extends GameDataMode
                 "Get everyone into position and press First Pose!";
 
             _spectacle = new Spectacle();
-            _spectacle.numPlayers = ClientContext.playerIds.length;
+            _spectacle.numPlayers = ClientContext.players.numPlayers
             _spectacle.creatingPartyId = ClientContext.partyId;
             _spectacle.avatarId = ClientContext.gameCtrl.player.getAvatarMasterItemId();
 
@@ -117,10 +117,11 @@ public class CreatorMode extends GameDataMode
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
         pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
-        for each (var playerId :int in ClientContext.playerIds) {
-            var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
-            pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
-        }
+        ClientContext.players.players.forEach(
+            function (playerId :int, playerInfo :PlayerInfo) :void {
+                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
+                pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
+            });
 
         _spectacle.patterns.push(pattern);
         _lastSnapshotTime = now;

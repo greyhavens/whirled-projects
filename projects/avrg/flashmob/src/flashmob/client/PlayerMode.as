@@ -159,9 +159,10 @@ public class PlayerMode extends GameDataMode
                     index);
             });
 
-        var playerLocs :Array = ClientContext.playerIds.map(
-            function (playerId :int, ...ignored) :Vector2 {
-                return Vector2.fromPoint(ClientContext.getPlayerRoomLoc(playerId));
+        var playerLocs :Array = [];
+        ClientContext.players.players.forEach(
+            function (playerId :int, playerInfo :PlayerInfo) :void {
+                playerLocs.push(Vector2.fromPoint(ClientContext.getPlayerRoomLoc(playerId)));
             });
 
         var epsilonSqr :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;

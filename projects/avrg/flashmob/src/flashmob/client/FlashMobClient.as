@@ -17,9 +17,8 @@ import flash.events.Event;
 import flash.utils.ByteArray;
 
 import flashmob.*;
-import flashmob.client.view.BasicErrorMode;
-import flashmob.client.view.HitTester;
-import flashmob.data.Spectacle;
+import flashmob.client.view.*;
+import flashmob.data.*;
 import flashmob.party.*;
 import flashmob.server.*;
 
@@ -43,6 +42,7 @@ public class FlashMobClient extends Sprite
         ClientContext.gameCtrl = new AVRGameControl(this);
         ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
         ClientContext.partyId = ClientContext.gameCtrl.player.getPartyId();
+        ClientContext.partyLeaderId = ClientContext.localPlayerId; // TODO - remove this
         ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
             ClientContext.gameCtrl.agent);
         ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,
@@ -106,7 +106,7 @@ public class FlashMobClient extends Sprite
         ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
             ClientContext.avatarMonitor.curAvatarId);
 
-        playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as Array);
+        playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as ByteArray);
         // This will put the initial AppMode into the MainLoop
         gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE) as int);
     }
@@ -139,7 +139,7 @@ public class FlashMobClient extends Sprite
             break;
 
         case Constants.PROP_PLAYERS:
-            playersChanged(e.newValue as Array);
+            playersChanged(e.newValue as ByteArray);
             break;
 
         case Constants.PROP_SPECTACLE:
@@ -179,9 +179,12 @@ public class FlashMobClient extends Sprite
         ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, newId);
     }
 
-    protected function playersChanged (newPlayers :Array) :void
+    protected function playersChanged (newPlayers :ByteArray) :void
     {
-        ClientContext.playerIds = (newPlayers != null ? newPlayers : []);
+        ClientContext.players = new PlayerSet();
+        if (newPlayers != null) {
+            ClientContext.players.fromBytes(newPlayers);
+        }
     }
 
     protected function gameStateChanged (newState :int) :void

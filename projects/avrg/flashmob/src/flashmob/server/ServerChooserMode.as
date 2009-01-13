@@ -10,10 +10,10 @@ public class ServerChooserMode extends ServerMode
     public function ServerChooserMode (ctx :ServerGameContext)
     {
         _ctx = ctx;
-        _availSpectacles = ServerContext.spectacleDb.getAvailSpectacles(_ctx.numPlayers);
+        _availSpectacles = ServerContext.spectacleDb.getAvailSpectacles(_ctx.players.numPlayers);
         _ctx.props.set(Constants.PROP_AVAIL_SPECTACLES, _availSpectacles.toBytes());
         log.info("Spectacles available=" + _availSpectacles.spectacles.length +
-            " numPlayers=" + _ctx.numPlayers);
+            " numPlayers=" + _ctx.players.numPlayers);
 
         _dataBindings.bindMessage(Constants.MSG_C_SELECTED_SPEC, onSelectedSpec);
         _dataBindings.bindMessage(Constants.MSG_C_CREATE_SPEC, onCreateSpec);
