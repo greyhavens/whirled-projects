@@ -51,7 +51,7 @@ public class PatternView extends SceneObject
             var starLoc :Point =
                 ClientContext.gameCtrl.local.roomToPaintable(new Point(loc.x, loc.y));
             star.x = starLoc.x;
-            star.y = starLoc.y - 33;
+            star.y = starLoc.y + Constants.ROOM_TO_PAINTABLE_Y_MAGIC;
         }
     }
 

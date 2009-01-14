@@ -22,6 +22,9 @@ public class Constants
     public static const PATTERN_DOT_SIZE :Number = 12;
     public static const SUCCESS_ANIM_TIME :Number = 8;
 
+    // What is going on here???
+    public static const ROOM_TO_PAINTABLE_Y_MAGIC :Number = -33;
+
     /* Game states */
     public static const STATE_INVALID :int = 0;
     public static const STATE_CHOOSER :int = 1;

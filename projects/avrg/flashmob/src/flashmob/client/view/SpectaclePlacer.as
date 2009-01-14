@@ -35,6 +35,7 @@ public class SpectaclePlacer extends DraggableObject
     {
         var bounds :Rectangle =
             ClientContext.roomBoundsMonitor.roomToPaintable(_spectacle.getBounds());
+        bounds.y += Constants.ROOM_TO_PAINTABLE_Y_MAGIC;
 
         if (bounds.width < MIN_TENT_SIZE.x) {
             var dx :Number = MIN_TENT_SIZE.x - bounds.width;
