@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Graphics;
 import flash.display.Shape;
+import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -18,11 +19,17 @@ import flash.geom.Rectangle;
 import flashmob.*;
 import flashmob.client.view.*;
 import flashmob.data.*;
+import flashmob.util.SpriteUtil;
 
 public class PlayerMode extends GameDataMode
 {
     override protected function setup () :void
     {
+        _dancersLayer = SpriteUtil.createSprite();
+        _uiLayer = SpriteUtil.createSprite(true);
+        _modeSprite.addChild(_dancersLayer);
+        _modeSprite.addChild(_uiLayer);
+
         _spectacle = ClientContext.spectacle;
 
         var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
@@ -33,7 +40,7 @@ public class PlayerMode extends GameDataMode
             ClientContext.gameUIView.y = roomBounds.height * 0.5;
         }
 
-        _modeSprite.addChild(ClientContext.gameUIView);
+        _uiLayer.addChild(ClientContext.gameUIView);
         ClientContext.gameUIView.clockVisible = false;
         ClientContext.gameUIView.reset();
 
@@ -47,7 +54,7 @@ public class PlayerMode extends GameDataMode
         DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
             roomBounds.left + ((roomBounds.width - _spectaclePlacer.width) * 0.5),
             roomBounds.bottom - _spectaclePlacer.height - 20);
-        addObject(_spectaclePlacer, _modeSprite);
+        addObject(_spectaclePlacer, _uiLayer);
 
         // Setup buttons
         registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
@@ -107,6 +114,7 @@ public class PlayerMode extends GameDataMode
 
     override protected function destroy () :void
     {
+        super.destroy();
         _soundControls.release();
     }
 
@@ -229,24 +237,20 @@ public class PlayerMode extends GameDataMode
         var inPositionFlags :Array = ArrayUtil.create(patternLocs.length, false);
         var allInPosition :Boolean = true;
         for each (var playerLoc :Vector2 in playerLocs) {
-            var closestLoc :LocInfo;
-            var closestDistSqr :Number = Number.MAX_VALUE;
 
-            for each (var patternLoc :LocInfo in patternLocs) {
+            var inPosition :Boolean = false;
+            for (var ii :int = 0; ii < patternLocs.length; ++ii) {
+                var patternLoc :LocInfo = patternLocs[ii];
                 var distSqr :Number = patternLoc.loc.subtract(playerLoc).lengthSquared;
-                if (distSqr < closestDistSqr || closestLoc == null) {
-                    closestDistSqr = distSqr;
-                    closestLoc = patternLoc;
+                if (distSqr <= epsilonSqr) {
+                    inPosition = true;
+                    patternLocs.splice(ii, 1);
+                    inPositionFlags[patternLoc.index] = true;
+                    break;
                 }
             }
 
-            var inPosition :Boolean = (closestDistSqr <= epsilonSqr);
             allInPosition &&= inPosition;
-            inPositionFlags[closestLoc.index] = inPosition;
-
-            if (inPosition) {
-                ArrayUtil.removeFirst(patternLocs, closestLoc);
-            }
         }
 
         if (_patternView != null) {
@@ -285,7 +289,7 @@ public class PlayerMode extends GameDataMode
 
         removePatternView();
         _patternView = new PatternView(this.curPattern);
-        addObject(_patternView, _modeSprite);
+        addObject(_patternView, _uiLayer);
         updatePatternViewLoc();
 
         ClientContext.gameUIView.directionsText = (_patternIndex == 0 ?
@@ -326,7 +330,7 @@ public class PlayerMode extends GameDataMode
         dancers.addTask(new SerialTask(
             LocationTask.CreateLinear(roomBounds.right, dancers.y, Constants.SUCCESS_ANIM_TIME),
             new SelfDestructTask()));
-        addObject(dancers, _modeSprite);
+        addObject(dancers, _dancersLayer);
 
         // audio
         playSnareRoll(false);
@@ -445,6 +449,9 @@ public class PlayerMode extends GameDataMode
     {
         return FlashMobClient.log;
     }
+
+    protected var _uiLayer :Sprite;
+    protected var _dancersLayer :Sprite;
 
     protected var _spectacle :Spectacle;
     protected var _startButton :GameButton;
