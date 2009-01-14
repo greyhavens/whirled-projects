@@ -244,7 +244,9 @@ public class PlayerMode extends GameDataMode
             allInPosition &&= inPosition;
             inPositionFlags[closestLoc.index] = inPosition;
 
-            ArrayUtil.removeFirst(patternLocs, closestLoc);
+            if (inPosition) {
+                ArrayUtil.removeFirst(patternLocs, closestLoc);
+            }
         }
 
         if (_patternView != null) {
