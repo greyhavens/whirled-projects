@@ -5,10 +5,9 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 import flashmob.*;
 import flashmob.client.*;
@@ -25,13 +24,12 @@ public class PatternView extends SceneObject
             var loc :PatternLoc = _pattern.locs[ii];
             var star :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "star", true,
                 true);
-            star.x = loc.x;
-            star.y = loc.y;
             _sprite.addChild(star);
             _stars.push(star);
             _wasInPosition.push(false);
         }
 
+        updateStarLocs();
         updateView();
     }
 
@@ -39,6 +37,22 @@ public class PatternView extends SceneObject
     {
         // Don't intercept mouse clicks
         ClientContext.hitTester.addExcludedObj(this.displayObject);
+
+        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+            updateStarLocs);
+    }
+
+    protected function updateStarLocs (...ignored) :void
+    {
+        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
+            var loc :PatternLoc = _pattern.locs[ii];
+            var star :MovieClip = _stars[ii];
+
+            var starLoc :Point =
+                ClientContext.gameCtrl.local.roomToPaintable(new Point(loc.x, loc.y));
+            star.x = starLoc.x;
+            star.y = starLoc.y;
+        }
     }
 
     override protected function destroyed () :void

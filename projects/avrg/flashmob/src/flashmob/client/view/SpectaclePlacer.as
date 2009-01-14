@@ -24,31 +24,39 @@ public class SpectaclePlacer extends DraggableObject
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
-        var bounds :Rectangle = _spectacle.getBounds();
+        _frame = SwfResource.instantiateMovieClip("Spectacle_UI", "placer");
+        _sprite.addChild(_frame);
+
+        _tent = SwfResource.instantiateMovieClip("Spectacle_UI", "tent");
+        _sprite.addChild(_tent);
+    }
+
+    protected function updateBounds (...ignored) :void
+    {
+        var bounds :Rectangle =
+            ClientContext.roomBoundsMonitor.roomToPaintable(_spectacle.getBounds());
+
         if (bounds.width < MIN_TENT_SIZE.x) {
             var dx :Number = MIN_TENT_SIZE.x - bounds.width;
             bounds.x -= dx / 2;
             bounds.width = MIN_TENT_SIZE.x;
         }
+
         if (bounds.height < MIN_TENT_SIZE.y) {
             var dy :Number = MIN_TENT_SIZE.y - bounds.height;
             bounds.y -= dy / 2;
             bounds.height = MIN_TENT_SIZE.y;
         }
 
-        _movie = SwfResource.instantiateMovieClip("Spectacle_UI", "placer");
-        _movie.width = bounds.width + (BORDER_SIZE.x * 2);
-        _movie.height = bounds.height + (BORDER_SIZE.y * 2);
-        _movie.x = bounds.left - BORDER_SIZE.x;
-        _movie.y = bounds.top - BORDER_SIZE.y;
-        _sprite.addChild(_movie);
+        _frame.width = bounds.width + (BORDER_SIZE.x * 2);
+        _frame.height = bounds.height + (BORDER_SIZE.y * 2);
+        _frame.x = bounds.left - BORDER_SIZE.x;
+        _frame.y = bounds.top - BORDER_SIZE.y;
 
-        var tent :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "tent");
-        tent.width = bounds.width;
-        tent.height = bounds.height;
-        tent.x = bounds.left;
-        tent.y = bounds.top;
-        _sprite.addChild(tent);
+        _tent.width = bounds.width;
+        _tent.height = bounds.height;
+        _tent.x = bounds.left;
+        _tent.y = bounds.top;
     }
 
     override public function get displayObject () :DisplayObject
@@ -64,6 +72,10 @@ public class SpectaclePlacer extends DraggableObject
         if (!this.isDraggable) {
             ClientContext.hitTester.addExcludedObj(this.displayObject);
         }
+
+        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+            updateBounds);
+        updateBounds();
     }
 
     override protected function destroyed () :void
@@ -75,7 +87,8 @@ public class SpectaclePlacer extends DraggableObject
         }
     }
 
-    protected var _movie :MovieClip;
+    protected var _frame :MovieClip;
+    protected var _tent :MovieClip;
     protected var _sprite :Sprite;
     protected var _spectacle :Spectacle;
 

@@ -69,6 +69,10 @@ public class FlashMobClient extends Sprite
         _events.registerListener(ClientContext.avatarMonitor, GameEvent.AVATAR_CHANGED,
             onAvatarChanged);
 
+        // Init RoomBoundsMonitor
+        ClientContext.roomBoundsMonitor = new RoomBoundsMonitor();
+        ClientContext.mainLoop.addUpdatable(ClientContext.roomBoundsMonitor);
+
         // Load resources
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
 

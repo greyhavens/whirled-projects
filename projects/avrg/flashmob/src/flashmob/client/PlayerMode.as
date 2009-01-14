@@ -100,6 +100,9 @@ public class PlayerMode extends GameDataMode
         _soundControls = new AudioControls(
             AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
         _soundControls.retain();
+
+        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+            onRoomBoundsChanged);
     }
 
     override protected function destroy () :void
@@ -117,6 +120,11 @@ public class PlayerMode extends GameDataMode
     {
         super.exit();
         _modeSprite.visible = false;
+    }
+
+    protected function onRoomBoundsChanged (...ignored) :void
+    {
+        updatePatternViewLoc();
     }
 
     protected function playSound (name :String, loopCount :int = 0) :AudioChannel
@@ -210,7 +218,11 @@ public class PlayerMode extends GameDataMode
         var playerLocs :Array = [];
         ClientContext.players.players.forEach(
             function (playerId :int, playerInfo :PlayerInfo) :void {
-                playerLocs.push(Vector2.fromPoint(ClientContext.getPlayerRoomLoc(playerId)));
+                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
+                // roomLoc could be null if a player just left the game but we haven't
+                // be notified about it yet
+                playerLocs.push(roomLoc != null ? Vector2.fromPoint(roomLoc)
+                    : new Vector2(Number.MIN_VALUE, Number.MIN_VALUE));
             });
 
         var epsilonSqr :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
