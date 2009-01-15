@@ -15,9 +15,10 @@ import flashmob.client.*;
 
 public class BasicErrorMode extends AppMode
 {
-    public function BasicErrorMode (err :String, okHandler :Function = null)
+    public function BasicErrorMode (err :String, playSound :Boolean, okHandler :Function = null)
     {
         _err = err;
+        _playSound = playSound;
         _okHandler = (okHandler != null ? okHandler : ClientContext.mainLoop.popMode);
     }
 
@@ -54,13 +55,14 @@ public class BasicErrorMode extends AppMode
     override protected function enter () :void
     {
         super.enter();
-        if (!_playedSound) {
-            AudioManager.instance.playSoundNamed("clown_horn");
+        if (!_playedSound && _playSound) {
+            AudioManager.instance.playSoundNamed("fail");
             _playedSound = true;
         }
     }
 
     protected var _err :String;
+    protected var _playSound :Boolean;
     protected var _okHandler :Function;
     protected var _playedSound :Boolean;
 

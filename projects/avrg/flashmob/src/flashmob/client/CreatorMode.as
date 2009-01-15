@@ -165,7 +165,7 @@ public class CreatorMode extends GameDataMode
         if (_spectacle.patterns.length > 0 &&
             pattern.isSimilar(_spectacle.patterns[_spectacle.patterns.length - 1])) {
             ClientContext.mainLoop.pushMode(new BasicErrorMode("This pose is too similar to " +
-                "the last one!"));
+                "the last one!", true));
             return;
         }
 

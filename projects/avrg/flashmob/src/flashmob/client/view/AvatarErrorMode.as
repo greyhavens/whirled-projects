@@ -45,7 +45,7 @@ public class AvatarErrorMode extends GameDataMode
     {
         super.enter();
         if (!_playedSound) {
-            AudioManager.instance.playSoundNamed("clown_horn");
+            AudioManager.instance.playSoundNamed("fail");
             _playedSound = true;
         }
     }

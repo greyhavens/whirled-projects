@@ -345,7 +345,7 @@ public class PlayerMode extends GameDataMode
 
         // audio
         playSnareRoll(false);
-        playSound("clown_horn");
+        playSound("fail");
     }
 
     protected function handlePlayAgain () :void

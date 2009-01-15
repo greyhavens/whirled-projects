@@ -60,7 +60,7 @@ public class FlashMobClient extends Sprite
         if (partyInfo == null) {
             ClientContext.isPartied = false;
             ClientContext.mainLoop.unwindToMode(new BasicErrorMode("This is a party game. " +
-                "Please join a party and try again!", ClientContext.quit));
+                "Please join a party and try again!", true, ClientContext.quit));
             return;
         }
 
@@ -236,7 +236,7 @@ public class FlashMobClient extends Sprite
 
     protected function onResourceLoadErr (err :String) :void
     {
-        ClientContext.mainLoop.unwindToMode(new BasicErrorMode("Error loading game:\n" + err));
+        ClientContext.mainLoop.unwindToMode(new BasicErrorMode("Error loading game:\n" + err, true));
     }
 
     protected function handleAdded (event :Event) :void

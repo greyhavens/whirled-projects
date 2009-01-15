@@ -56,7 +56,7 @@ public class BasicYesNoMode extends AppMode
     {
         super.enter();
         if (!_playedSound) {
-            AudioManager.instance.playSoundNamed("clown_horn");
+            AudioManager.instance.playSoundNamed("fail");
             _playedSound = true;
         }
     }
