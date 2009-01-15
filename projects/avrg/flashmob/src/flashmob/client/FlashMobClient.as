@@ -40,8 +40,56 @@ public class FlashMobClient extends Sprite
         DEBUG_REMOVE_ME();
 
         ClientContext.gameCtrl = new AVRGameControl(this);
+
+        // Init simplegame
+        ClientContext.mainLoop = new MainLoop(this,
+            (ClientContext.gameCtrl.isConnected() ? ClientContext.gameCtrl.local : this.stage));
+        ClientContext.mainLoop.setup();
+        ClientContext.mainLoop.run();
+
+        // Load resources
+        Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
+
+        _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
+    }
+
+    protected function onPartyInfoChanged (...ignored) :void
+    {
+        var partyInfo :Object = ClientContext.gameCtrl.local.getPartyInfo();
+        if (partyInfo == null) {
+            ClientContext.isPartied = false;
+            ClientContext.mainLoop.unwindToMode(new BasicErrorMode("This is a party game. " +
+                "Please join a party and try again!", ClientContext.quit));
+            return;
+        }
+
+        var partyId :int = partyInfo.id;
+        var partyName :String = partyInfo.name;
+        var leaderId :int = partyInfo.leaderId;
+        var players :Array = partyInfo.players;
+        log.info("Party Info", "id", partyId, "name", partyName, "leaderId", leaderId,
+            "players", players);
+
+        ClientContext.isPartied = true;
+        ClientContext.partyId = partyInfo.id;
+        ClientContext.players.partyLeaderId = partyInfo.leaderId;
+    }
+
+    protected function tryStartGame () :void
+    {
+        if (!_addedToStage || !_resourcesLoaded) {
+            return;
+        }
+
+        // Get party info; ensure we're in a party
+        _events.registerListener(ClientContext.gameCtrl.local, "partyChanged", onPartyInfoChanged);
+        onPartyInfoChanged();
+        if (!ClientContext.isPartied) {
+            return;
+        }
+
         ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
-        ClientContext.partyId = ClientContext.gameCtrl.player.getPartyId();
         ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
             ClientContext.gameCtrl.agent);
         ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,
@@ -49,19 +97,9 @@ public class FlashMobClient extends Sprite
         ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
             ClientContext.gameCtrl.game.props);
 
+        // Init HitTester
         ClientContext.hitTester = new HitTester();
         ClientContext.hitTester.setup();
-
-        log.info("Starting client",
-            "localPlayerId", ClientContext.localPlayerId,
-            "partyId", ClientContext.partyId,
-            "roomId", ClientContext.gameCtrl.player.getRoomId());
-
-        // Init simplegame
-        ClientContext.mainLoop = new MainLoop(this,
-            (ClientContext.gameCtrl.isConnected() ? ClientContext.gameCtrl.local : this.stage));
-        ClientContext.mainLoop.setup();
-        ClientContext.mainLoop.run();
 
         // Init AvatarMonitor
         ClientContext.avatarMonitor = new AvatarMonitor();
@@ -73,27 +111,10 @@ public class FlashMobClient extends Sprite
         ClientContext.roomBoundsMonitor = new RoomBoundsMonitor();
         ClientContext.mainLoop.addUpdatable(ClientContext.roomBoundsMonitor);
 
-        // Load resources
-        Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
-
-        _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
-    }
-
-    protected function tryStartGame () :void
-    {
-        if (!_addedToStage || !_resourcesLoaded) {
-            return;
-        }
-
-        log.info("Starting game");
-
-        // If we're not partied, error out.
-        if (!ClientContext.isPartied) {
-            ClientContext.mainLoop.pushMode(new BasicErrorMode("This is a party game. " +
-                "Please join a party and try again!", ClientContext.quit));
-            return;
-        }
+        log.info("Starting client",
+            "localPlayerId", ClientContext.localPlayerId,
+            "partyId", ClientContext.partyId,
+            "roomId", ClientContext.gameCtrl.player.getRoomId());
 
         // We handle certain messages and property changes here at the top-level.
         // Those that don't get handled get sent to the top-most AppMode, if that mode
@@ -223,9 +244,20 @@ public class FlashMobClient extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
-        ClientContext.mainLoop.shutdown();
-        ClientContext.inMsg.shutdown();
-        ClientContext.props.shutdown();
+        if (ClientContext.mainLoop != null) {
+            ClientContext.mainLoop.shutdown();
+            ClientContext.mainLoop = null;
+        }
+
+        if (ClientContext.inMsg != null) {
+            ClientContext.inMsg.shutdown();
+            ClientContext.inMsg = null;
+        }
+
+        if (ClientContext.props != null) {
+            ClientContext.props.shutdown();
+            ClientContext.props = null;
+        }
 
         _events.freeAllHandlers();
     }

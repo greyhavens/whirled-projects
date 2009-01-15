@@ -18,6 +18,7 @@ public class ClientContext
 {
     public static var mainLoop :MainLoop;
     public static var gameCtrl :AVRGameControl;
+    public static var isPartied :Boolean;
     public static var partyId :int;
     public static var localPlayerId :int;
     public static var players :PlayerSet;
@@ -74,13 +75,6 @@ public class ClientContext
     public static function get isPartyLeader () :Boolean
     {
         return (players != null && players.partyLeaderId == localPlayerId);
-    }
-
-    public static function get isPartied () :Boolean
-    {
-        return true;
-        // TODO - fix this when party support is added
-        //return (gameCtrl.isConnected() && gameCtrl.game.getPlayerInfo(localPlayerId).partyId != 0);
     }
 
     public static function confirmQuit () :void

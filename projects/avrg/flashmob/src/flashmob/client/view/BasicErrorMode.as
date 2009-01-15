@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 
@@ -24,7 +25,7 @@ public class BasicErrorMode extends AppMode
     {
         super.setup();
 
-        var bounds :Rectangle = ClientContext.fullDisplayBounds;
+        var bounds :Rectangle = ClientContext.roomDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
@@ -42,8 +43,10 @@ public class BasicErrorMode extends AppMode
         tf.text = _err;
 
         var okButton :GameButton = new GameButton("ok_button");
-        okButton.x = 0;
-        okButton.y = 47;
+        okButton.width = BUTTON_SIZE.x;
+        okButton.height = BUTTON_SIZE.y;
+        okButton.x = BUTTON_LOC.x;
+        okButton.y = BUTTON_LOC.y;
         window.addChild(okButton);
         registerOneShotCallback(okButton, MouseEvent.CLICK, _okHandler);
     }
@@ -60,6 +63,9 @@ public class BasicErrorMode extends AppMode
     protected var _err :String;
     protected var _okHandler :Function;
     protected var _playedSound :Boolean;
+
+    protected static const BUTTON_LOC :Point = new Point(0, 47);
+    protected static const BUTTON_SIZE :Point = new Point(83, 27);
 }
 
 }
