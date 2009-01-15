@@ -1,14 +1,41 @@
 package flashmob.data {
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Log;
 
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
+
+import flashmob.*;
 
 public class Pattern
 {
     public var timeLimit :int;  // number of seconds
     public var locs :Array = []; // Array<PatternLoc>
+
+    public function isSimilar (other :Pattern) :Boolean
+    {
+        if (locs.length != other.locs.length) {
+            return false;
+        }
+
+        var loc :PatternLoc;
+
+        var xsum :Number = 0;
+        var ysum :Number = 0;
+        for each (loc in locs) {
+            xsum += loc.x;
+            ysum += loc.y;
+        }
+
+        for each (loc in other.locs) {
+            xsum -= loc.x;
+            ysum -= loc.y;
+        }
+
+        return Math.abs(xsum) < Constants.MIN_PATTERN_DIFF &&
+               Math.abs(ysum) < Constants.MIN_PATTERN_DIFF;
+    }
 
     public function getBounds () :Rectangle
     {
@@ -60,6 +87,8 @@ public class Pattern
 
         return this;
     }
+
+    protected static var log :Log = Log.getLog(Pattern);
 
 }
 

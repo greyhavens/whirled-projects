@@ -16,11 +16,12 @@ public class Constants
     public static const MAX_SPECTACLE_PATTERNS :int = 10;
 
     // Time that has to elapse between multiple snapshots
-    public static const MIN_SNAPSHOT_TIME :Number = 1;
+    public static const MIN_SNAPSHOT_TIME :Number = 0;
     public static const MAX_SPEC_NAME_LENGTH :int = 40;
     public static const PATTERN_LOC_EPSILON :Number = 10;
     public static const PATTERN_DOT_SIZE :Number = 12;
     public static const SUCCESS_ANIM_TIME :Number = 8;
+    public static const MIN_PATTERN_DIFF :Number = 10;
 
     // What is going on here???
     public static const ROOM_TO_PAINTABLE_Y_MAGIC :Number = -33;

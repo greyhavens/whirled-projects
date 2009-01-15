@@ -68,7 +68,7 @@ public class CreatorMode extends GameDataMode
         _modeSprite.visible = true;
     }
 
-    override protected function exit () :void
+    /*override protected function exit () :void
     {
         super.exit();
         _modeSprite.visible = false;
@@ -78,7 +78,7 @@ public class CreatorMode extends GameDataMode
     {
         super.update(dt);
         updateButtons();
-    }
+    }*/
 
     protected function handleStartCreating (chosenAvatarId :int) :void
     {
@@ -154,20 +154,27 @@ public class CreatorMode extends GameDataMode
             addObject(_gameTimer);
         }
 
-        ClientContext.gameUIView.animateShowClock(true);
-        _gameTimer.time = 0;
-
-        var now :Number = ClientContext.timeNow;
-        var dt :Number = now - _lastSnapshotTime;
-
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
-        pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
         ClientContext.players.players.forEach(
             function (playerId :int, playerInfo :PlayerInfo) :void {
                 var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
                 pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
             });
+
+        if (_spectacle.patterns.length > 0 &&
+            pattern.isSimilar(_spectacle.patterns[_spectacle.patterns.length - 1])) {
+            ClientContext.mainLoop.pushMode(new BasicErrorMode("This pose is too similar to " +
+                "the last one!"));
+            return;
+        }
+
+        ClientContext.gameUIView.animateShowClock(true);
+        _gameTimer.time = 0;
+
+        var now :Number = ClientContext.timeNow;
+        var dt :Number = now - _lastSnapshotTime;
+        pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
 
         _spectacle.patterns.push(pattern);
         _lastSnapshotTime = now;

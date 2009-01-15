@@ -6,9 +6,10 @@ public class GameTimer extends SimObject
 {
     public function GameTimer (time :Number, countUp :Boolean, onTimeUpdated :Function = null)
     {
-        _time = time;
         _countUp = countUp;
         _onTimeUpdated = onTimeUpdated;
+
+        this.time = time;
     }
 
     public function get timerText () :String
@@ -18,13 +19,14 @@ public class GameTimer extends SimObject
 
     public function set time (val :Number) :void
     {
-        _time = val;
+        _clockTime = val;
+        _lastTime = ClientContext.timeNow;
         updateText();
     }
 
     public function get time () :Number
     {
-        return _time;
+        return _clockTime;
     }
 
     public function set paused (val :Boolean) :void
@@ -39,11 +41,16 @@ public class GameTimer extends SimObject
 
     override protected function update (dt :Number) :void
     {
+        // GameTimer is running even when its mode is not topmost
         if (!_paused) {
+            var now :Number = ClientContext.timeNow;
+            dt = now - _lastTime;
+            _lastTime = now;
+
             if (_countUp) {
-                _time += dt;
+                _clockTime += dt;
             } else {
-                _time = Math.max(_time - dt, 0);
+                _clockTime = Math.max(_clockTime - dt, 0);
             }
         }
 
@@ -52,7 +59,7 @@ public class GameTimer extends SimObject
 
     protected function updateText () :void
     {
-        var time :int = Math.floor(_time);
+        var time :int = Math.floor(_clockTime);
         if (time == _lastUpdate) {
             return;
         }
@@ -76,7 +83,8 @@ public class GameTimer extends SimObject
         }
     }
 
-    protected var _time :Number;
+    protected var _clockTime :Number;
+    protected var _lastTime :Number;
     protected var _countUp :Boolean;
     protected var _paused :Boolean;
     protected var _onTimeUpdated :Function;

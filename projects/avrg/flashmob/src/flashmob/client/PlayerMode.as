@@ -118,7 +118,7 @@ public class PlayerMode extends GameDataMode
         _soundControls.release();
     }
 
-    override protected function enter () :void
+    /*override protected function enter () :void
     {
         super.enter();
         _modeSprite.visible = true;
@@ -128,7 +128,7 @@ public class PlayerMode extends GameDataMode
     {
         super.exit();
         _modeSprite.visible = false;
-    }
+    }*/
 
     protected function onRoomBoundsChanged (...ignored) :void
     {
