@@ -5,9 +5,9 @@ import com.threerings.util.Log;
 import flashmob.*;
 import flashmob.data.*;
 
-public class ServerChooserMode extends ServerMode
+public class ServerWaitingMode extends ServerMode
 {
-    public function ServerChooserMode (ctx :ServerGameContext)
+    public function ServerWaitingMode (ctx :ServerGameContext)
     {
         _ctx = ctx;
         _availSpectacles = ServerContext.spectacleDb.getAvailSpectacles(_ctx.players.numPlayers);
@@ -41,7 +41,7 @@ public class ServerChooserMode extends ServerMode
 
     protected var _lastSnapshotTime :Number = 0;
 
-    protected static var log :Log = Log.getLog(ServerChooserMode);
+    protected static var log :Log = Log.getLog(ServerWaitingMode);
 }
 
 }

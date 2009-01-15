@@ -8,7 +8,6 @@ import flash.utils.ByteArray;
 public class PlayerSet
 {
     public var players :HashMap = new HashMap(); // Map<playerId, PlayerInfo>
-    public var partyLeaderId :int;
 
     public function get numPlayers () :int
     {
@@ -48,8 +47,6 @@ public class PlayerSet
     {
         ba = (ba != null ? ba : new ByteArray());
 
-        ba.writeInt(partyLeaderId);
-
         var values :Array = players.values();
         ba.writeInt(values.length);
         for each (var player :PlayerInfo in values) {
@@ -62,8 +59,6 @@ public class PlayerSet
     public function fromBytes (ba :ByteArray) :PlayerSet
     {
         players = new HashMap();
-
-        partyLeaderId = ba.readInt();
 
         var numPlayers :int = ba.readInt();
         for (var ii :int = 0; ii < numPlayers; ++ii) {

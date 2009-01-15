@@ -107,11 +107,6 @@ public class SpectacleDb
         return specSet;
     }
 
-    protected function get log () :Log
-    {
-        return FlashMobServer.log;
-    }
-
     protected function init () :void
     {
         _nextId = 0;
@@ -122,6 +117,8 @@ public class SpectacleDb
     protected var _nextId :int;
     protected var _spectacles :HashMap;
     protected var _dirty :Boolean;
+
+    protected static var log :Log = Log.getLog(SpectacleDb);
 
     protected static const PROP_NAME :String = NetConstants.makePersistent("All_Spectacles");
 }

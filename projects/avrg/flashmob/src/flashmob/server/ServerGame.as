@@ -11,17 +11,19 @@ import flashmob.party.*;
 
 public class ServerGame extends ServerModeStack
 {
-    public function ServerGame (partyId :int)
+    public function ServerGame (partyInfo :PartyInfo)
     {
         _ctx.game = this;
-        _ctx.partyId = partyId;
-        _ctx.props = new PartyPropControl(_ctx.partyId, ServerContext.gameCtrl.game.props);
-        _ctx.inMsg = new PartyMsgReceiver(_ctx.partyId, ServerContext.gameCtrl.game);
-        _ctx.outMsg = new PartyMsgSender(_ctx.partyId, ServerContext.gameCtrl.game);
+        _ctx.partyInfo = partyInfo;
+        _ctx.props = new PartyPropControl(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game.props);
+        _ctx.inMsg = new PartyMsgReceiver(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game);
+        _ctx.outMsg = new PartyMsgSender(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game);
 
         _events.registerListener(_ctx.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED, onMsgReceived);
         _events.registerListener(_ctx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
         _events.registerListener(_ctx.props, ElementChangedEvent.ELEMENT_CHANGED, onElemChanged);
+
+        this.gameState = INITIAL_GAME_STATE;
     }
 
     public function resetGame () :void
@@ -47,26 +49,30 @@ public class ServerGame extends ServerModeStack
         if (_ctx.players.containsPlayer(playerId)) {
             log.warning("Tried to add a player to a game they were already in",
                 "playerId", playerId,
-                "partyId", _ctx.partyId);
+                "partyId", _ctx.partyInfo.partyId);
             return;
         }
-
-        log.info("Adding player", playerId + " to game", _ctx.partyId);
 
         var player :PlayerInfo = new PlayerInfo();
         player.id = playerId;
         _ctx.players.addPlayer(player);
 
-        if (_ctx.players.numPlayers == 1) {
-            // TEMP - make the first player the party leader
-            _ctx.players.partyLeaderId = playerId;
-        }
+        log.info("Adding player", "playerId", playerId, "game", _ctx.partyInfo.partyId,
+            "numAbsentPlayers", _ctx.numAbsentPlayers);
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.LEFT_ROOM, updatePlayers);
 
-        playerCountChanged();
+        if (this.gameState == Constants.STATE_WAITING_FOR_PLAYERS) {
+            updatePlayers();
+            if (_ctx.allPlayersPresent) {
+                log.info("All players present! Starting the game.");
+                this.gameState = Constants.STATE_CHOOSER;
+            }
+        } else {
+            playerCountChanged(); // will call updatePlayers()
+        }
     }
 
     public function removePlayer (playerId :int) :void
@@ -74,13 +80,8 @@ public class ServerGame extends ServerModeStack
         if (!_ctx.players.removePlayer(playerId)) {
             log.warning("Tried to remove player from a game they weren't in",
                 "playerId", playerId,
-                "partyId", _ctx.partyId);
+                "partyId", _ctx.partyInfo.partyId);
             return;
-        }
-
-        if (_ctx.players.partyLeaderId == playerId && _ctx.players.numPlayers > 0) {
-            // TEMP - if the party leader left, make somebody else the leader
-            _ctx.players.partyLeaderId = PlayerInfo(_ctx.players.players.values()[0]).id;
         }
 
         var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
@@ -94,8 +95,7 @@ public class ServerGame extends ServerModeStack
 
     protected function playerCountChanged () :void
     {
-        // If we still have players in the game, tell them that we need to reset
-        // the game.
+        // If we still have players in the game, tell them that we need to reset the game.
         if (_ctx.players.numPlayers > 0) {
             _ctx.outMsg.sendMessage(Constants.MSG_S_RESETGAME);
             resetGame(); // updatePlayers() will be called here
@@ -109,10 +109,16 @@ public class ServerGame extends ServerModeStack
 
     public function set gameState (val :int) :void
     {
-        log.info("Changing game state", "partyId", _ctx.partyId, "state", val);
+        log.info("Changing game state", "partyId", _ctx.partyInfo.partyId,
+            "state", Constants.STATE_NAMES[val]);
+
         _ctx.props.set(Constants.PROP_GAMESTATE, val, true);
 
         switch (val) {
+        case Constants.STATE_WAITING_FOR_PLAYERS:
+            unwindToMode(new ServerWaitingMode(_ctx));
+            break;
+
         case Constants.STATE_CHOOSER:
             unwindToMode(new ServerChooserMode(_ctx));
             break;
@@ -134,26 +140,6 @@ public class ServerGame extends ServerModeStack
 
     protected function updatePlayers (...ignored) :void
     {
-        // check to see if all players are in the same room
-        var playerIds :Array = _ctx.players.players.keys();
-        var everyoneInRoom :Boolean;
-        if (playerIds.length == 0) {
-            everyoneInRoom = true;
-
-        } else {
-            everyoneInRoom = true;
-            var roomId :int = ServerContext.getPlayerRoom(playerIds[0]);
-            for (var ii :int = 1; ii < playerIds.length; ++ii) {
-                var thisRoomId :int = ServerContext.getPlayerRoom(playerIds[ii]);
-                if (thisRoomId != roomId) {
-                    everyoneInRoom = false;
-                    break;
-                }
-            }
-        }
-
-        _ctx.waitingForPlayers = !everyoneInRoom;
-
         _ctx.props.set(Constants.PROP_PLAYERS, _ctx.players.toBytes());
     }
 
@@ -194,25 +180,12 @@ public class ServerGame extends ServerModeStack
         }
     }
 
-    protected function handleSnapshot (e :MessageReceivedEvent) :void
-    {
-        if (this.gameState != Constants.STATE_CREATOR || _ctx.waitingForPlayers) {
-            log.warning("Received snapshot message while not in STATE_SPECTACLE_CREATOR",
-                "senderId", e.senderId, "gameState", this.gameState,
-                "waitingForPlayers", _ctx.waitingForPlayers);
-            return;
-        }
-    }
-
-    protected static function get log () :Log
-    {
-        return FlashMobServer.log;
-    }
-
     protected var _ctx :ServerGameContext = new ServerGameContext();
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
-    protected static const INITIAL_GAME_STATE :int = Constants.STATE_CHOOSER;
+    protected static var log :Log = Log.getLog(ServerGame);
+
+    protected static const INITIAL_GAME_STATE :int = Constants.STATE_WAITING_FOR_PLAYERS;
 }
 
 }

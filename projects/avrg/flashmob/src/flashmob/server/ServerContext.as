@@ -9,12 +9,6 @@ public class ServerContext
     public static var gameCtrl :AVRServerGameControl;
     public static var spectacleDb :SpectacleDb = new SpectacleDb();
 
-    public static function getPlayerParty (playerId :int) :int
-    {
-        var ctrl :PlayerSubControlBase = gameCtrl.getPlayer(playerId);
-        return (ctrl != null ? ctrl.getPartyId() : 0);
-    }
-
     public static function getPlayerRoom (playerId :int) :int
     {
         var ctrl :PlayerSubControlBase = gameCtrl.getPlayer(playerId);

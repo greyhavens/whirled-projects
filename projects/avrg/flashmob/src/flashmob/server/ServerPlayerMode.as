@@ -64,7 +64,7 @@ public class ServerPlayerMode extends ServerMode
                 Pattern(_ctx.spectacle.patterns[ii]).timeLimit = time;
             }
 
-            _ctx.spectacle.highScoringPartyId = _ctx.partyId;
+            _ctx.spectacle.highScoringPartyId = _ctx.partyInfo.partyId;
             ServerContext.spectacleDb.updateSpectacle(_ctx.spectacle);
         }
     }
@@ -118,17 +118,14 @@ public class ServerPlayerMode extends ServerMode
         _patternTimes = [];
     }
 
-    protected static function get log () :Log
-    {
-        return FlashMobServer.log;
-    }
-
     protected var _ctx :ServerGameContext;
     protected var _started :Boolean;
     protected var _completed :Boolean;
     protected var _spectacleOffset :PatternLoc;
     protected var _patternIndex :int;
     protected var _patternTimes :Array = [];
+
+    protected static var log :Log = Log.getLog(ServerPlayerMode);
 }
 
 }

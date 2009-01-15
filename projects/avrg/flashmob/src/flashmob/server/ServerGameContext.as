@@ -1,6 +1,5 @@
 package flashmob.server {
 
-import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 
 import flashmob.*;
@@ -10,11 +9,34 @@ import flashmob.party.*;
 public class ServerGameContext
 {
     public var game :ServerGame;
-    public var partyId :int;
+    public var partyInfo :PartyInfo;
     public var players :PlayerSet = new PlayerSet();
     public var props :PartyPropControl;
     public var inMsg :PartyMsgReceiver;
     public var outMsg :PartyMsgSender;
+
+    public function get allPlayersPresent () :Boolean
+    {
+        for each (var playerId :int in partyInfo.playerIds) {
+            if (!players.containsPlayer(playerId)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function get numAbsentPlayers () :int
+    {
+        var count :int;
+        for each (var playerId :int in partyInfo.playerIds) {
+            if (!players.containsPlayer(playerId)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 
     public function set spectacle (val :Spectacle) :void
     {
@@ -26,17 +48,6 @@ public class ServerGameContext
     public function get spectacle () :Spectacle
     {
         return _spectacle;
-    }
-
-    public function set waitingForPlayers (val :Boolean) :void
-    {
-        log.info("Waiting for players: " + val);
-        props.set(Constants.PROP_WAITINGFORPLAYERS, val, true);
-    }
-
-    public function get waitingForPlayers () :Boolean
-    {
-        return props.get(Constants.PROP_WAITINGFORPLAYERS) as Boolean;
     }
 
     protected static function get log () :Log

@@ -1,10 +1,17 @@
 package flashmob.server {
 
 import com.threerings.util.HashMap;
+import com.threerings.util.HashSet;
 import com.threerings.util.Log;
 import com.whirled.ServerObject;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRServerGameControl;
+import com.whirled.net.MessageReceivedEvent;
+
+import flash.utils.ByteArray;
+
+import flashmob.*;
+import flashmob.data.PartyInfo;
 
 public class FlashMobServer extends ServerObject
 {
@@ -20,6 +27,9 @@ public class FlashMobServer extends ServerObject
             onPlayerJoined);
         ServerContext.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME,
             onPlayerQuit);
+        ServerContext.gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMessageReceived);
+
         ServerContext.spectacleDb.load();
     }
 
@@ -31,80 +41,108 @@ public class FlashMobServer extends ServerObject
     protected function onPlayerJoined (e :AVRGameControlEvent) :void
     {
         var playerId :int = e.value as int;
-        var partyId :int = ServerContext.getPlayerParty(playerId);
-
-        log.info("Player joined", "playerId", playerId, "partyId", partyId);
-
-        // Remember this player's party
-        if (_playerPartyMap.put(playerId, partyId) !== undefined) {
-            log.warning("Received duplicate PLAYER_JOINED_GAME messages",
-                "playerId", playerId,
-                "partyId", partyId);
+        if (!_unassignedPlayers.add(playerId)) {
+            log.warning("Received multiple playerJoined messages for the same player",
+                "playerId", playerId);
         }
+    }
 
-        var game :ServerGame = getGame(partyId);
-        var isNewGame :Boolean = (game == null);
-        if (isNewGame) {
-            // There's no game in session for this party. Start a new one.
-            game = createGame(partyId);
-        }
+    protected function onMessageReceived (e :MessageReceivedEvent) :void
+    {
+        if (e.name == Constants.MSG_C_CLIENT_INIT) {
+            var playerId :int = e.senderId;
+            if (!_unassignedPlayers.contains(playerId)) {
+                log.warning("Received CLIENT_INIT message from an unexpected player",
+                    "playerId", playerId);
+                return;
+            }
 
-        // Add the player to the game
-        game.addPlayer(playerId);
+            _unassignedPlayers.remove(playerId);
 
-        if (isNewGame) {
-            // If this is a new game, start it *after* adding the first player.
-            game.resetGame();
+            var partyInfo :PartyInfo;
+            try {
+                partyInfo = new PartyInfo().fromBytes(ByteArray(e.value));
+            } catch (e :Error) {
+                log.warning("Received bad PartyInfo", e);
+                return;
+            }
+
+            // Remember this player's party
+            if (_playerPartyMap.put(playerId, partyInfo.partyId) !== undefined) {
+                log.warning("Received duplicate CLIENT_INIT messages",
+                    "playerId", playerId,
+                    "partyId", partyInfo.partyId);
+                return;
+            }
+
+            log.info("Received CLIENT_INIT message", "playerId", playerId,
+                "partyInfo", partyInfo);
+
+            var game :ServerGame = getGame(partyInfo.partyId);
+            var isNewGame :Boolean = (game == null);
+            if (isNewGame) {
+                // There's no game in session for this party. Start a new one.
+                game = createGame(partyInfo);
+            }
+
+            // Add the player to the game
+            game.addPlayer(playerId);
         }
     }
 
     protected function onPlayerQuit (e :AVRGameControlEvent) :void
     {
         var playerId :int = e.value as int;
+        // Was the player in a game yet?
+        if (_unassignedPlayers.contains(playerId)) {
+            log.info("Removing unassigned player from game", "playerId", playerId);
+            _unassignedPlayers.remove(playerId);
 
-        var partyIdObj :* = _playerPartyMap.get(playerId);
-        if (partyIdObj === undefined) {
-            log.warning("Received PLAYER_QUIT_GAME message for a player not in the game",
-                "playerId", playerId);
-            return;
-        }
+        } else {
+            var partyIdObj :* = _playerPartyMap.get(playerId);
+            if (partyIdObj === undefined) {
+                log.warning("Received PLAYER_QUIT_GAME message for a player not in the game",
+                    "playerId", playerId);
+                return;
+            }
 
-        _playerPartyMap.remove(playerId);
+            _playerPartyMap.remove(playerId);
 
-        var partyId :int = partyIdObj as int;
+            var partyId :int = partyIdObj as int;
 
-        log.info("Player left", "playerId", playerId, "partyId", partyId);
+            log.info("Player left", "playerId", playerId, "partyId", partyId);
 
-        var game :ServerGame = getGame(partyId);
-        if (game == null) {
-            log.warning("Received PLAYER_QUIT_GAME message for a player not attached to a game",
-                "playerId", playerId,
-                "partyId", partyId);
-            return;
-        }
+            var game :ServerGame = getGame(partyId);
+            if (game == null) {
+                log.warning("Received PLAYER_QUIT_GAME message for a player not attached to a game",
+                    "playerId", playerId,
+                    "partyId", partyId);
+                return;
+            }
 
-        // If the game has no more players, shut it down.
-        game.removePlayer(playerId);
-        if (game.isEmpty) {
-            log.info("Shutting down empty game", "partyId", partyId);
-            _games.remove(partyId);
-            game.shutdown();
-        }
+            // If the game has no more players, shut it down.
+            game.removePlayer(playerId);
+            if (game.isEmpty) {
+                log.info("Shutting down empty game", "partyId", partyId);
+                _games.remove(partyId);
+                game.shutdown();
+            }
 
-        // If there are no players left, persist our data to properties,
-        // as we may be about to shut down
-        if (this.numPlayers == 0) {
-            mightShutdown();
+            // If there are no players left, persist our data to properties,
+            // as we may be about to shut down
+            if (this.numPlayers == 0) {
+                mightShutdown();
+            }
         }
     }
 
-    protected function createGame (partyId :int) :ServerGame
+    protected function createGame (partyInfo :PartyInfo) :ServerGame
     {
-        log.info("Creating new game", "partyId", partyId);
+        log.info("Creating new game", "partyInfo", partyInfo);
 
-        var game :ServerGame = new ServerGame(partyId);
-        if (_games.put(partyId, game) !== undefined) {
-            log.warning("Created multiple games with the same partyId (" + partyId + ")");
+        var game :ServerGame = new ServerGame(partyInfo);
+        if (_games.put(partyInfo.partyId, game) !== undefined) {
+            log.warning("Created multiple games with the same partyId (" + partyInfo.partyId + ")");
         }
 
         return game;
@@ -122,6 +160,7 @@ public class FlashMobServer extends ServerObject
 
     protected var _games :HashMap = new HashMap();  // Map<partyId, MobGameController>
     protected var _playerPartyMap :HashMap = new HashMap(); // Map<playerId, partyId>
+    protected var _unassignedPlayers :HashSet = new HashSet(); // Set<playerId>
 }
 
 }

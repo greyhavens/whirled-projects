@@ -445,11 +445,6 @@ public class PlayerMode extends GameDataMode
         return _roomMask;
     }
 
-    protected static function get log () :Log
-    {
-        return FlashMobClient.log;
-    }
-
     protected var _uiLayer :Sprite;
     protected var _dancersLayer :Sprite;
 
@@ -472,6 +467,8 @@ public class PlayerMode extends GameDataMode
 
     protected var _soundControls :AudioControls;
     protected var _snareRoll :AudioChannel;
+
+    protected static var log :Log = Log.getLog(PlayerMode);
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

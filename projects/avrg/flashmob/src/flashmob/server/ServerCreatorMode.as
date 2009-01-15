@@ -57,11 +57,6 @@ public class ServerCreatorMode extends ServerMode
         }
     }
 
-    protected static function get log () :Log
-    {
-        return FlashMobServer.log;
-    }
-
     protected var _spectacle :Spectacle = new Spectacle();
     protected var _ctx :ServerGameContext;
     protected var _chosenAvatar :Boolean;
@@ -69,6 +64,8 @@ public class ServerCreatorMode extends ServerMode
     protected var _waitingForAllSameAvatar :Boolean;
 
     protected var _lastSnapshotTime :Number = 0;
+
+    protected static var log :Log = Log.getLog(ServerCreatorMode);
 }
 
 }

@@ -64,16 +64,13 @@ public class FlashMobClient extends Sprite
             return;
         }
 
-        var partyId :int = partyInfo.id;
-        var partyName :String = partyInfo.name;
-        var leaderId :int = partyInfo.leaderId;
-        var players :Array = partyInfo.players;
-        log.info("Party Info", "id", partyId, "name", partyName, "leaderId", leaderId,
-            "players", players);
-
         ClientContext.isPartied = true;
-        ClientContext.partyId = partyInfo.id;
-        ClientContext.players.partyLeaderId = partyInfo.leaderId;
+        ClientContext.partyInfo.partyId = partyInfo.partyId;
+        ClientContext.partyInfo.leaderId = partyInfo.leaderId;
+        ClientContext.partyInfo.playerIds = partyInfo.players;
+
+        log.info("New Party Info", "id", partyInfo.id, "name", partyInfo.name,
+            "leaderId", partyInfo.leaderId, "players", partyInfo.players);
     }
 
     protected function tryStartGame () :void
@@ -90,11 +87,11 @@ public class FlashMobClient extends Sprite
         }
 
         ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
-        ClientContext.outMsg = new PartyMsgSender(ClientContext.partyId,
+        ClientContext.outMsg = new PartyMsgSender(ClientContext.partyInfo.partyId,
             ClientContext.gameCtrl.agent);
-        ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyId,
+        ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyInfo.partyId,
             ClientContext.gameCtrl.game);
-        ClientContext.props = new PartyPropGetControl(ClientContext.partyId,
+        ClientContext.props = new PartyPropGetControl(ClientContext.partyInfo.partyId,
             ClientContext.gameCtrl.game.props);
 
         // Init HitTester
@@ -113,7 +110,7 @@ public class FlashMobClient extends Sprite
 
         log.info("Starting client",
             "localPlayerId", ClientContext.localPlayerId,
-            "partyId", ClientContext.partyId,
+            "partyId", ClientContext.partyInfo.partyId,
             "roomId", ClientContext.gameCtrl.player.getRoomId());
 
         // We handle certain messages and property changes here at the top-level.
@@ -126,13 +123,17 @@ public class FlashMobClient extends Sprite
         _events.registerListener(ClientContext.props, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
 
-        // Tell the server what our avatar is
-        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
-            ClientContext.avatarMonitor.curAvatarId);
-
         playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as ByteArray);
+
+        // Tell the server about our party, and tell it what our avatar is
+        ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_C_CLIENT_INIT,
+            ClientContext.partyInfo.toBytes());
+
         // This will put the initial AppMode into the MainLoop
-        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE) as int);
+        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE));
+
+        /*ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
+            ClientContext.avatarMonitor.curAvatarId);*/
     }
 
     protected function get curDataListener () :GameDataListener
@@ -157,7 +158,7 @@ public class FlashMobClient extends Sprite
     {
         switch (e.name) {
         case Constants.PROP_GAMESTATE:
-            gameStateChanged(e.newValue as int);
+            gameStateChanged(e.newValue);
             break;
 
         case Constants.PROP_PLAYERS:
@@ -196,17 +197,23 @@ public class FlashMobClient extends Sprite
         }
     }
 
-    protected function gameStateChanged (newState :int) :void
+    protected function gameStateChanged (newState :Object) :void
     {
-        if (newState == _curGameState) {
+        var newStateId :int =
+            (newState != null ? newState as int : Constants.STATE_WAITING_FOR_PLAYERS);
+        if (newStateId == _curGameState) {
             return;
         }
 
-        log.info("gameStateChanged", "newState", newState);
+        log.info("gameStateChanged", "newState", Constants.STATE_NAMES[newStateId]);
 
-        _curGameState = newState;
+        _curGameState = newStateId;
 
-        switch (newState) {
+        switch (newStateId) {
+        case Constants.STATE_WAITING_FOR_PLAYERS:
+            ClientContext.mainLoop.unwindToMode(new WaitingMode());
+            break;
+
         case Constants.STATE_CHOOSER:
             ClientContext.mainLoop.unwindToMode(new MainMenuMode());
             break;

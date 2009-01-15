@@ -101,7 +101,7 @@ public class CreatorMode extends GameDataMode
 
             _spectacle = new Spectacle();
             _spectacle.numPlayers = ClientContext.players.numPlayers
-            _spectacle.creatingPartyId = ClientContext.partyId;
+            _spectacle.creatingPartyId = ClientContext.partyInfo.partyId;
             _spectacle.avatarId = ClientContext.gameCtrl.player.getAvatarMasterItemId();
 
             updateButtons();
@@ -124,9 +124,7 @@ public class CreatorMode extends GameDataMode
 
     protected function get canCapturePose () :Boolean
     {
-        if (ClientContext.waitingForPlayers) {
-            return false;
-        } else if (_spectacle.numPatterns >= Constants.MAX_SPECTACLE_PATTERNS) {
+        if (_spectacle.numPatterns >= Constants.MAX_SPECTACLE_PATTERNS) {
             return false;
         } else if (_spectacle.numPatterns > 0 &&
                    ClientContext.timeNow - _lastSnapshotTime < Constants.MIN_SNAPSHOT_TIME) {
@@ -240,11 +238,6 @@ public class CreatorMode extends GameDataMode
         }
     }
 
-    protected function get log () :Log
-    {
-        return FlashMobClient.log;
-    }
-
     protected var _poseButton :GameButton;
     protected var _doneButton :GameButton;
 
@@ -255,6 +248,8 @@ public class CreatorMode extends GameDataMode
     protected var _chosenAvatarId :int;
 
     protected var _done :Boolean;
+
+    protected static var log :Log = Log.getLog(CreatorMode);
 
     protected static const WIDTH :Number = 400;
     protected static const MIN_HEIGHT :Number = 200;

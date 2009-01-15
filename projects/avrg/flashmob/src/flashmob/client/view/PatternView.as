@@ -86,11 +86,6 @@ public class PatternView extends SceneObject
         return _sprite;
     }
 
-    protected static function get log () :Log
-    {
-        return FlashMobClient.log;
-    }
-
     protected var _pattern :Pattern;
     protected var _stars :Array = [];
     protected var _wasInPosition :Array = [];

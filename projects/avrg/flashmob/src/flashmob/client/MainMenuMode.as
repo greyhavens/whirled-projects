@@ -128,11 +128,6 @@ public class MainMenuMode extends GameDataMode
         }
     }
 
-    protected function get log () :Log
-    {
-        return FlashMobClient.log;
-    }
-
     protected var _ui :MovieClip;
     protected var _prevButton :SimpleButton;
     protected var _nextButton :SimpleButton;
@@ -141,6 +136,8 @@ public class MainMenuMode extends GameDataMode
     protected var _availSpectacles :SpectacleSet;
     protected var _spectacleSelected :Boolean;
     protected var _firstVisibleSpecIndex :int;
+
+    protected static var log :Log = Log.getLog(MainMenuMode);
 
     protected static const SPECTACLE_THUMB_ANCHORS :Array = [
         "locator1",

@@ -56,13 +56,10 @@ public class RoomBoundsMonitor extends EventDispatcher
         return r;
     }
 
-    protected function get log () :Log
-    {
-        return FlashMobClient.log;
-    }
-
     protected var _local :LocalSubControl;
     protected var _paintableBounds :Rectangle = new Rectangle();
+
+    protected static var log :Log = Log.getLog(RoomBoundsMonitor);
 }
 
 }

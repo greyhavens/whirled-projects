@@ -27,14 +27,17 @@ public class Constants
 
     /* Game states */
     public static const STATE_INVALID :int = 0;
-    public static const STATE_CHOOSER :int = 1;
-    public static const STATE_CREATOR :int = 2;
-    public static const STATE_PLAYER :int = 3;
+    public static const STATE_WAITING_FOR_PLAYERS :int = 1;
+    public static const STATE_CHOOSER :int = 2;
+    public static const STATE_CREATOR :int = 3;
+    public static const STATE_PLAYER :int = 4;
+    public static const STATE_NAMES :Array = [
+        "INVALID", "WAITING_FOR_PLAYERS", "CHOOSER", "CREATOR", "PLAYER"
+    ];
 
     /* Properties */
     public static const PROP_GAMESTATE :String          = "gameState";
     public static const PROP_PLAYERS :String            = "players"; // value = PlayerSet
-    public static const PROP_WAITINGFORPLAYERS :String  = "waitingForPlayers";
     public static const PROP_SPECTACLE :String          = "spectacle";
     // STATE_CHOOSER (MainMenu)
     public static const PROP_AVAIL_SPECTACLES :String   = "availableSpectacles";
@@ -44,6 +47,7 @@ public class Constants
     /* Messages. S=sent by server, C=sent by client, CS=sent by both */
     public static const MSG_S_RESETGAME :String         = "sResetGame";
     public static const MSG_C_RESETGAME :String         = "cResetGame";
+    public static const MSG_C_CLIENT_INIT :String       = "cClientInit"; // val=PartyInfo
     public static const MSG_C_AVATARCHANGED :String     = "cAvatarChanged"; // val=new avatar id
     // STATE_CHOOSER (MainMenu)
     public static const MSG_C_SELECTED_SPEC :String     = "cSelectedSpectacle";  // val=spec id
