@@ -18,7 +18,7 @@ public class WaitingMode extends GameDataMode
     {
         super.setup();
 
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var bounds :Rectangle = SpaceUtil.roomDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);

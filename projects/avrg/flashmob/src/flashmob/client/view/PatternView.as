@@ -76,8 +76,7 @@ public class PatternView extends SceneObject
             var loc :Vec3D = _pattern.locs[ii];
             var star :MovieClip = _stars[ii];
 
-            var starLoc :Point =
-                ClientContext.gameCtrl.local.locationToPaintable(loc.x, loc.y, loc.z);
+            var starLoc :Point = SpaceUtil.logicalToPaintable(loc);
             star.x = starLoc.x;
             star.y = starLoc.y;
         }

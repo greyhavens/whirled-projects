@@ -22,7 +22,7 @@ public class CreatorMode extends GameDataMode
     {
         if (ClientContext.gameUIView == null) {
             ClientContext.gameUIView = new GameUIView();
-            var bounds :Rectangle = ClientContext.roomDisplayBounds;
+            var bounds :Rectangle = SpaceUtil.roomDisplayBounds;
             ClientContext.gameUIView.x = bounds.width * 0.5;
             ClientContext.gameUIView.y = bounds.height * 0.5;
         }
@@ -158,8 +158,7 @@ public class CreatorMode extends GameDataMode
         var pattern :Pattern = new Pattern();
         ClientContext.players.players.forEach(
             function (playerInfo :PlayerInfo, ...ignored) :void {
-                var avInfo :AVRGameAvatar = ClientContext.getAvatarInfo(playerInfo.id);
-                pattern.locs.push(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
+                pattern.locs.push(SpaceUtil.getAvatarLogicalLoc(playerInfo.id));
             });
 
         if (_spectacle.patterns.length > 0 &&

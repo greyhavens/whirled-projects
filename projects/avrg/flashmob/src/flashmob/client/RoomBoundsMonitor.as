@@ -18,7 +18,7 @@ public class RoomBoundsMonitor extends EventDispatcher
 
     public function update (dt :Number) :void
     {
-        var newBounds :Rectangle = paintableToRoom(_local.getPaintableArea(false));
+        var newBounds :Rectangle = SpaceUtil.paintableToRoomRect(_local.getPaintableArea(false));
         if (newBounds.x != _paintableBounds.x || newBounds.y != _paintableBounds.y ||
             newBounds.width != _paintableBounds.width ||
             newBounds.height != _paintableBounds.height) {
@@ -26,34 +26,6 @@ public class RoomBoundsMonitor extends EventDispatcher
             log.info("Room bounds changed", _paintableBounds);
             dispatchEvent(new GameEvent(GameEvent.ROOM_BOUNDS_CHANGED));
         }
-    }
-
-    public function paintableToRoom (r :Rectangle) :Rectangle
-    {
-        var topLeft :Point = _local.paintableToRoom(r.topLeft);
-        var bottomRight :Point = _local.paintableToRoom(r.bottomRight);
-        var width :Number = bottomRight.x - topLeft.x;
-        var height :Number = bottomRight.y - topLeft.y;
-        r.x = topLeft.x;
-        r.y = topLeft.y;
-        r.width = width;
-        r.height = height;
-
-        return r;
-    }
-
-    public function roomToPaintable (r :Rectangle) :Rectangle
-    {
-        var topLeft :Point = _local.roomToPaintable(r.topLeft);
-        var bottomRight :Point = _local.roomToPaintable(r.bottomRight);
-        var width :Number = bottomRight.x - topLeft.x;
-        var height :Number = bottomRight.y - topLeft.y;
-        r.x = topLeft.x;
-        r.y = topLeft.y;
-        r.width = width;
-        r.height = height;
-
-        return r;
     }
 
     protected var _local :LocalSubControl;

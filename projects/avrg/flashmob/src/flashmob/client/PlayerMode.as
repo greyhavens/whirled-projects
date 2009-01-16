@@ -33,7 +33,7 @@ public class PlayerMode extends GameDataMode
 
         _spectacle = ClientContext.spectacle;
 
-        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+        var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
 
         if (ClientContext.gameUIView == null) {
             ClientContext.gameUIView = new GameUIView();
@@ -161,12 +161,11 @@ public class PlayerMode extends GameDataMode
 
     protected function onSpectacleDragged (newX :Number, newY :Number) :void
     {
-        var roomLoc :Point =
-            ClientContext.gameCtrl.local.paintableToRoom(new Point(newX, newY));
-
         _spectaclePlacer.x = newX;
         _spectaclePlacer.y = newY;
-        _spectacleOffsetThrottler.value = (new Vec3D(roomLoc.x, roomLoc.y).toBytes());
+
+        _spectacleOffsetThrottler.value =
+            SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 1);
     }
 
     protected function handleNewSpectacleOffset (newOffset :Vec3D) :void
@@ -180,8 +179,7 @@ public class PlayerMode extends GameDataMode
 
     protected function updatePatternViewLoc (animate :Boolean = false) :void
     {
-        var screenLoc :Point = ClientContext.gameCtrl.local.roomToPaintable(
-                new Point(_spectacleOffset.x, _spectacleOffset.y));
+        var screenLoc :Point = SpaceUtil.logicalToPaintable(_spectacleOffset);
 
         if (_spectaclePlacer != null) {
             _spectaclePlacer.removeAllTasks();
@@ -227,7 +225,7 @@ public class PlayerMode extends GameDataMode
         var playerLocs :Array = [];
         ClientContext.players.players.forEach(
             function (playerInfo :PlayerInfo, ...ignored) :void {
-                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerInfo.id);
+                var roomLoc :Point = SpaceUtil.getAvatarRoomLoc(playerInfo.id);
                 // roomLoc could be null if a player just left the game but we haven't
                 // be notified about it yet
                 playerLocs.push(roomLoc != null ? Vector2.fromPoint(roomLoc)
@@ -294,9 +292,9 @@ public class PlayerMode extends GameDataMode
                 var avInfo :AVRGameAvatar =
                     ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
                 log.info("Avatar loc", "x", avInfo.x, "y", avInfo.y, "z", avInfo.z);
-                var roomLoc :Point = ClientContext.gameCtrl.local.locationToRoom(avInfo.x, avInfo.y, avInfo.z);
+                var roomLoc :Point = SpaceUtil.logicalToRoom(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
                 log.info("Room loc", "x", roomLoc.x, "y", roomLoc.y);
-                var avLoc :Array = ClientContext.gameCtrl.local.roomToLocationAtDepth(roomLoc, avInfo.z);
+                var avLoc :Array = SpaceUtil.roomToLogicalAtDepth(roomLoc, avInfo.z);
                 log.info("Avatar loc2", "x", avLoc[0], "y", avLoc[1], "z", avLoc[2]);
                 log.info("Diff", "x", avLoc[0] - avInfo.x, "y", avLoc[1] - avInfo.y, "z", avLoc[2] - avInfo.z);
                 ClientContext.gameCtrl.player.setAvatarLocation(avLoc[0], avLoc[1], avLoc[2], avInfo.orientation);
@@ -343,7 +341,7 @@ public class PlayerMode extends GameDataMode
         // show the Can-Can dancers
         var dancers :CanCanDancers = new CanCanDancers();
         dancers.displayObject.mask = this.roomMask;
-        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+        var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
         dancers.x = roomBounds.left - dancers.width;
         dancers.y = roomBounds.top + ((roomBounds.height - dancers.height) * 0.5);
         dancers.addTask(new SerialTask(
@@ -452,7 +450,7 @@ public class PlayerMode extends GameDataMode
     protected function get roomMask () :Shape
     {
         if (_roomMask == null) {
-            var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+            var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
             _roomMask = new Shape();
             var g :Graphics = _roomMask.graphics;
             g.beginFill(1, 0);

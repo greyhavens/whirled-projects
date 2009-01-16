@@ -26,13 +26,13 @@ public class BasicErrorMode extends AppMode
     {
         super.setup();
 
-        var screenBounds :Rectangle = ClientContext.roomDisplayBounds;
+        var screenBounds :Rectangle = SpaceUtil.roomDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
         g.drawRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height);
         g.endFill();
 
-        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+        var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
         var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
         window.x = roomBounds.width * 0.5;
         window.y = roomBounds.height * 0.5;

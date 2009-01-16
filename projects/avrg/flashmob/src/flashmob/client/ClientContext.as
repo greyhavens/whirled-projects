@@ -31,16 +31,6 @@ public class ClientContext
     public static var avatarMonitor :AvatarMonitor;
     public static var roomBoundsMonitor :RoomBoundsMonitor;
 
-    public static function get fullDisplayBounds () :Rectangle
-    {
-        return gameCtrl.local.getPaintableArea(true);
-    }
-
-    public static function get roomDisplayBounds () :Rectangle
-    {
-        return gameCtrl.local.getPaintableArea(false);
-    }
-
     public static function get localPlayerIndex () :int
     {
         for (var ii :int = 0; ii < players.players.length; ++ii) {
@@ -51,17 +41,6 @@ public class ClientContext
         }
 
         return -1;
-    }
-
-    public static function getPlayerRoomLoc (playerId :int) :Point
-    {
-        var avatar :AVRGameAvatar = getAvatarInfo(playerId);
-        return (avatar != null ? locToRoom(avatar.x, avatar.y, avatar.z) : null);
-    }
-
-    public static function locToRoom (x :Number, y :Number, z :Number) :Point
-    {
-        return gameCtrl.local.locationToRoom(x, y, z);
     }
 
     public static function sendAgentMsg (name :String, value :Object = null) :void

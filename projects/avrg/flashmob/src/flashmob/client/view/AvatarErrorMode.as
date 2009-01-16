@@ -21,7 +21,7 @@ public class AvatarErrorMode extends GameDataMode
     {
         super.setup();
 
-        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
+        var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
         var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
         window.x = roomBounds.width * 0.5;
         window.y = roomBounds.height * 0.5;

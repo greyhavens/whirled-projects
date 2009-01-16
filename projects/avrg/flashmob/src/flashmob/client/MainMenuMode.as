@@ -26,7 +26,7 @@ public class MainMenuMode extends GameDataMode
         addObject(new Dragger(_ui["dragmain"], _ui));
         _modeSprite.addChild(_ui);
 
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var bounds :Rectangle = SpaceUtil.roomDisplayBounds;
         _ui.x = bounds.left - 120 + (bounds.width * 0.5);
         _ui.y = bounds.top - 150 + (bounds.width * 0.5);
 
