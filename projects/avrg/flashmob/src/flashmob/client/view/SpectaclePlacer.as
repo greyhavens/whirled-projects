@@ -20,6 +20,7 @@ public class SpectaclePlacer extends DraggableObject
         super(null, droppedCallback);
 
         _spectacle = spectacle;
+        _spectacleBounds = spectacle.getBounds();
 
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
@@ -31,9 +32,32 @@ public class SpectaclePlacer extends DraggableObject
         _sprite.addChild(_tent);
     }
 
+    override protected function addedToDB () :void
+    {
+        super.addedToDB();
+
+        // If we're not draggable, we don't want to intercept mouse clicks
+        if (!this.isDraggable) {
+            ClientContext.hitTester.addExcludedObj(this.displayObject);
+        }
+
+        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+            updateBounds);
+        updateBounds();
+    }
+
+    override protected function destroyed () :void
+    {
+        super.destroyed();
+
+        if (!this.isDraggable) {
+            ClientContext.hitTester.removeExcludedObj(this.displayObject);
+        }
+    }
+
     protected function updateBounds (...ignored) :void
     {
-        var bounds :Rectangle = SpaceUtil.logicalToPaintableRect(_spectacle.getBounds());
+        var bounds :Rectangle = SpaceUtil.logicalToPaintableRect(_spectacleBounds);
         if (bounds.width < MIN_TENT_SIZE.x) {
             var dx :Number = MIN_TENT_SIZE.x - bounds.width;
             bounds.x -= dx / 2;
@@ -62,33 +86,11 @@ public class SpectaclePlacer extends DraggableObject
         return _sprite;
     }
 
-    override protected function addedToDB () :void
-    {
-        super.addedToDB();
-
-        // If we're not draggable, we don't want to intercept mouse clicks
-        if (!this.isDraggable) {
-            ClientContext.hitTester.addExcludedObj(this.displayObject);
-        }
-
-        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
-            updateBounds);
-        updateBounds();
-    }
-
-    override protected function destroyed () :void
-    {
-        super.destroyed();
-
-        if (!this.isDraggable) {
-            ClientContext.hitTester.removeExcludedObj(this.displayObject);
-        }
-    }
-
     protected var _frame :MovieClip;
     protected var _tent :MovieClip;
     protected var _sprite :Sprite;
     protected var _spectacle :Spectacle;
+    protected var _spectacleBounds :Rect3D;
 
     protected static const MIN_TENT_SIZE :Point = new Point(100, 75);
     protected static const BORDER_SIZE :Point = new Point(30, 30);

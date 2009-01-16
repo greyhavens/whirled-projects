@@ -10,6 +10,11 @@ import flashmob.data.*;
 
 public class SpectacleDb
 {
+    public function SpectacleDb ()
+    {
+        init();
+    }
+
     public function load () :void
     {
         init();

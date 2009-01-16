@@ -30,7 +30,9 @@ public class FlashMobServer extends ServerObject
         ServerContext.gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
 
-        ServerContext.spectacleDb.load();
+        if (!Constants.DEBUG_CLEAR_SAVED_DATA) {
+            ServerContext.spectacleDb.load();
+        }
     }
 
     protected function mightShutdown () :void

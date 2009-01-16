@@ -30,9 +30,7 @@ public class FlashMobClient extends Sprite
     protected static function DEBUG_REMOVE_ME () :void
     {
         var c :Class;
-        c = ServerGame;
         c = FlashMobServer;
-        c = ServerContext;
     }
 
     public function FlashMobClient ()
