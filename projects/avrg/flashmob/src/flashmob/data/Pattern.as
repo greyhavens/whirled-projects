@@ -3,7 +3,6 @@ package flashmob.data {
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 
-import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
 import flashmob.*;
@@ -19,46 +18,55 @@ public class Pattern
             return false;
         }
 
-        var loc :PatternLoc;
+        var loc :Vec3D;
 
         var xsum :Number = 0;
         var ysum :Number = 0;
+        var zsum :Number = 0;
         for each (loc in locs) {
             xsum += loc.x;
             ysum += loc.y;
+            zsum += loc.z;
         }
 
         for each (loc in other.locs) {
             xsum -= loc.x;
             ysum -= loc.y;
+            zsum -= loc.z;
         }
 
         return Math.abs(xsum) < Constants.MIN_PATTERN_DIFF &&
-               Math.abs(ysum) < Constants.MIN_PATTERN_DIFF;
+               Math.abs(ysum) < Constants.MIN_PATTERN_DIFF &&
+               Math.abs(zsum) < Constants.MIN_PATTERN_DIFF;
     }
 
-    public function getBounds () :Rectangle
+    public function getBounds () :Rect3D
     {
         var minX :Number = Number.MAX_VALUE;
         var maxX :Number = Number.MIN_VALUE;
         var minY :Number = Number.MAX_VALUE;
         var maxY :Number = Number.MIN_VALUE;
+        var minZ :Number = Number.MAX_VALUE;
+        var maxZ :Number = Number.MIN_VALUE;
 
-        for each (var loc :PatternLoc in locs) {
+        for each (var loc :Vec3D in locs) {
             minX = Math.min(minX, loc.x);
             maxX = Math.max(maxX, loc.x);
             minY = Math.min(minY, loc.y);
             maxY = Math.max(maxY, loc.y);
+            minZ = Math.min(minZ, loc.z);
+            maxZ = Math.max(maxZ, loc.z);
         }
 
-        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+        return new Rect3D(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
     }
 
-    public function offsetLocs (xOffset :Number, yOffset :Number) :void
+    public function offsetLocs (xOffset :Number, yOffset :Number, zOffset :Number) :void
     {
-        for each (var loc :PatternLoc in locs) {
+        for each (var loc :Vec3D in locs) {
             loc.x += xOffset;
             loc.y += yOffset;
+            loc.z += zOffset;
         }
     }
 
@@ -68,7 +76,7 @@ public class Pattern
 
         ba.writeInt(timeLimit);
         ba.writeInt(locs.length);
-        for each (var loc :PatternLoc in locs) {
+        for each (var loc :Vec3D in locs) {
             loc.toBytes(ba);
         }
 
@@ -82,7 +90,7 @@ public class Pattern
         var numLocs :int = ba.readInt();
         locs = ArrayUtil.create(numLocs);
         for (var ii :int = 0; ii < numLocs; ++ii) {
-            locs[ii] = new PatternLoc().fromBytes(ba);
+            locs[ii] = new Vec3D().fromBytes(ba);
         }
 
         return this;

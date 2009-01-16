@@ -21,10 +21,7 @@ public class Constants
     public static const PATTERN_LOC_EPSILON :Number = 10;
     public static const PATTERN_DOT_SIZE :Number = 12;
     public static const SUCCESS_ANIM_TIME :Number = 8;
-    public static const MIN_PATTERN_DIFF :Number = 10;
-
-    // What is going on here???
-    public static const ROOM_TO_PAINTABLE_Y_MAGIC :Number = -33;
+    public static const MIN_PATTERN_DIFF :Number = 0.01;
 
     /* Game states */
     public static const STATE_INVALID :int = 0;
@@ -49,6 +46,7 @@ public class Constants
     public static const MSG_S_RESETGAME :String         = "sResetGame";
     public static const MSG_C_RESETGAME :String         = "cResetGame";
     public static const MSG_C_CLIENT_INIT :String       = "cClientInit"; // val=PartyInfo
+    public static const MSG_C_NEW_PARTY_INFO :String    = "cNewPartyInfo"; // val=PartyInfo
     public static const MSG_C_AVATARCHANGED :String     = "cAvatarChanged"; // val=new avatar id
     // STATE_CHOOSER (MainMenu)
     public static const MSG_C_SELECTED_SPEC :String     = "cSelectedSpectacle";  // val=spec id

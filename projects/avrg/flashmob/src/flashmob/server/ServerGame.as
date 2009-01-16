@@ -44,6 +44,18 @@ public class ServerGame extends ServerModeStack
         super.shutdown();
     }
 
+    public function partyInfoChanged (newInfo :PartyInfo) :void
+    {
+        // verify that this is actually new
+        if (_ctx.partyInfo.isEqual(newInfo)) {
+            return;
+        }
+
+        _ctx.partyInfo = newInfo;
+        this.gameState = (_ctx.allPlayersPresent ? Constants.STATE_CHOOSER :
+            Constants.STATE_WAITING_FOR_PLAYERS);
+    }
+
     public function addPlayer (playerId :int) :void
     {
         if (_ctx.players.containsPlayer(playerId)) {

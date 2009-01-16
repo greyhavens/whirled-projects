@@ -1,12 +1,14 @@
 package flashmob.client.view {
 
-import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.MovieClip;
+import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import flashmob.*;
@@ -16,43 +18,47 @@ import flashmob.util.SpriteUtil;
 
 public class PatternView extends SceneObject
 {
-    public function PatternView (pattern :Pattern)
+    public function PatternView (pattern :Pattern, locClickedCallback :Function = null)
     {
         _pattern = pattern;
-        _sprite = SpriteUtil.createSprite();
+        _onLocClicked = locClickedCallback;
+
+        _sprite = SpriteUtil.createSprite(_onLocClicked != null, false);
+
+        var localPlayerIndex :int = ClientContext.localPlayerIndex;
         for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
-            var loc :PatternLoc = _pattern.locs[ii];
-            var star :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "star", true,
+            var loc :Vec3D = _pattern.locs[ii];
+            var star :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "star", false,
                 true);
+
             _sprite.addChild(star);
             _stars.push(star);
             _wasInPosition.push(false);
+            star.scaleX = star.scaleY = (ii == localPlayerIndex ? 1.5 : 0.8);
+
+            if (_onLocClicked != null) {
+                registerListener(star, MouseEvent.CLICK, createStarClickListener(loc));
+            }
         }
 
         updateStarLocs();
         updateView();
     }
 
+    protected function createStarClickListener (loc :Vec3D) :Function
+    {
+        return function (...ignored) :void {
+            _onLocClicked(loc);
+        }
+    }
+
     override protected function addedToDB () :void
     {
         // Don't intercept mouse clicks
-        ClientContext.hitTester.addExcludedObj(this.displayObject);
+        //ClientContext.hitTester.addExcludedObj(this.displayObject);
 
         registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
             updateStarLocs);
-    }
-
-    protected function updateStarLocs (...ignored) :void
-    {
-        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
-            var loc :PatternLoc = _pattern.locs[ii];
-            var star :MovieClip = _stars[ii];
-
-            var starLoc :Point =
-                ClientContext.gameCtrl.local.roomToPaintable(new Point(loc.x, loc.y));
-            star.x = starLoc.x;
-            star.y = starLoc.y + Constants.ROOM_TO_PAINTABLE_Y_MAGIC;
-        }
     }
 
     override protected function destroyed () :void
@@ -61,7 +67,20 @@ public class PatternView extends SceneObject
             SwfResource.releaseMovieClip(star);
         }
 
-        ClientContext.hitTester.removeExcludedObj(this.displayObject);
+        //ClientContext.hitTester.removeExcludedObj(this.displayObject);
+    }
+
+    protected function updateStarLocs (...ignored) :void
+    {
+        for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
+            var loc :Vec3D = _pattern.locs[ii];
+            var star :MovieClip = _stars[ii];
+
+            var starLoc :Point =
+                ClientContext.gameCtrl.local.locationToPaintable(loc.x, loc.y, loc.z);
+            star.x = starLoc.x;
+            star.y = starLoc.y;
+        }
     }
 
     public function showInPositionIndicators (inPositionFlags :Array) :void
@@ -89,6 +108,7 @@ public class PatternView extends SceneObject
     protected var _pattern :Pattern;
     protected var _stars :Array = [];
     protected var _wasInPosition :Array = [];
+    protected var _onLocClicked :Function;
 
     protected var _sprite :Sprite;
 }

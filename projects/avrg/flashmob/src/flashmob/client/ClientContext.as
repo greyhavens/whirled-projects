@@ -41,6 +41,18 @@ public class ClientContext
         return gameCtrl.local.getPaintableArea(false);
     }
 
+    public static function get localPlayerIndex () :int
+    {
+        for (var ii :int = 0; ii < players.players.length; ++ii) {
+            var playerInfo :PlayerInfo = players.players[ii];
+            if (playerInfo.id == localPlayerId) {
+                return ii;
+            }
+        }
+
+        return -1;
+    }
+
     public static function getPlayerRoomLoc (playerId :int) :Point
     {
         var avatar :AVRGameAvatar = getAvatarInfo(playerId);

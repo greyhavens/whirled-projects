@@ -17,12 +17,12 @@ public class ServerPlayerMode extends ServerMode
         _dataBindings.bindMessage(Constants.MSG_C_PLAYAGAIN, handlePlayAgain);
         _dataBindings.bindMessage(Constants.MSG_C_RESETGAME, handleResetGame);
         _dataBindings.bindMessage(Constants.MSG_CS_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
-            PatternLoc.fromBytes);
+            Vec3D.fromBytes);
     }
 
     override public function setup () :void
     {
-        updateSpectacleOffset(new PatternLoc());
+        updateSpectacleOffset(new Vec3D());
     }
 
     protected function handleStartPlaying () :void
@@ -91,7 +91,7 @@ public class ServerPlayerMode extends ServerMode
         _ctx.game.gameState = Constants.STATE_CHOOSER;
     }
 
-    protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
+    protected function handleNewSpectacleOffset (newOffset :Vec3D) :void
     {
         if (_started) {
             log.warning("Received SPECTACLE OFFSET message after START PLAYING");
@@ -101,7 +101,7 @@ public class ServerPlayerMode extends ServerMode
         updateSpectacleOffset(newOffset);
     }
 
-    protected function updateSpectacleOffset (newOffset :PatternLoc) :void
+    protected function updateSpectacleOffset (newOffset :Vec3D) :void
     {
         if (_spectacleOffset == null || !newOffset.isEqual(_spectacleOffset)) {
             _spectacleOffset = newOffset;
@@ -121,7 +121,7 @@ public class ServerPlayerMode extends ServerMode
     protected var _ctx :ServerGameContext;
     protected var _started :Boolean;
     protected var _completed :Boolean;
-    protected var _spectacleOffset :PatternLoc;
+    protected var _spectacleOffset :Vec3D;
     protected var _patternIndex :int;
     protected var _patternTimes :Array = [];
 

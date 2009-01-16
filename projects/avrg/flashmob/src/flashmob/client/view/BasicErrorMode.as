@@ -26,15 +26,16 @@ public class BasicErrorMode extends AppMode
     {
         super.setup();
 
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var screenBounds :Rectangle = ClientContext.roomDisplayBounds;
         var g :Graphics = _modeSprite.graphics;
         g.beginFill(0, 0.5);
-        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+        g.drawRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height);
         g.endFill();
 
+        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
         var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
-        window.x = bounds.width * 0.5;
-        window.y = bounds.height * 0.5;
+        window.x = roomBounds.width * 0.5;
+        window.y = roomBounds.height * 0.5;
         _modeSprite.addChild(window);
 
         // make the UI draggable

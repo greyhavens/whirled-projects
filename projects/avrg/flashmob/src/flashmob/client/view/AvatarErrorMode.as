@@ -21,10 +21,10 @@ public class AvatarErrorMode extends GameDataMode
     {
         super.setup();
 
-        var bounds :Rectangle = ClientContext.roomDisplayBounds;
+        var roomBounds :Rectangle = ClientContext.roomDisplayBounds;
         var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
-        window.x = bounds.width * 0.5;
-        window.y = bounds.height * 0.5;
+        window.x = roomBounds.width * 0.5;
+        window.y = roomBounds.height * 0.5;
         _modeSprite.addChild(window);
 
         // make the UI draggable

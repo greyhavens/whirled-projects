@@ -5,6 +5,8 @@ import com.threerings.util.ArrayUtil;
 import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
+import flashmob.Rect3D;
+
 public class Spectacle
 {
     public static const VERSION :int = 0;
@@ -28,29 +30,33 @@ public class Spectacle
         // offsets each location in each pattern so that the first pattern's top-left
         // location is at (0, 0)
         if (patterns.length > 0) {
-            var bounds :Rectangle = Pattern(patterns[0]).getBounds();
+            var bounds :Rect3D = Pattern(patterns[0]).getBounds();
             for each (var pattern :Pattern in patterns) {
-                pattern.offsetLocs(-bounds.x, -bounds.y);
+                pattern.offsetLocs(-bounds.x, -bounds.y, -bounds.z);
             }
         }
     }
 
-    public function getBounds () :Rectangle
+    public function getBounds () :Rect3D
     {
         var minX :Number = Number.MAX_VALUE;
         var maxX :Number = Number.MIN_VALUE;
         var minY :Number = Number.MAX_VALUE;
         var maxY :Number = Number.MIN_VALUE;
+        var minZ :Number = Number.MAX_VALUE;
+        var maxZ :Number = Number.MIN_VALUE;
 
         for each (var pattern :Pattern in patterns) {
-            var bounds :Rectangle = pattern.getBounds();
-            minX = Math.min(minX, bounds.left);
-            maxX = Math.max(maxX, bounds.right);
-            minY = Math.min(minY, bounds.top);
-            maxY = Math.max(maxY, bounds.bottom);
+            var bounds :Rect3D = pattern.getBounds();
+            minX = Math.min(minX, bounds.x);
+            maxX = Math.max(maxX, bounds.x + bounds.width);
+            minY = Math.min(minY, bounds.y);
+            maxY = Math.max(maxY, bounds.y + bounds.height);
+            minZ = Math.min(minZ, bounds.z);
+            maxZ = Math.max(maxZ, bounds.z + bounds.depth);
         }
 
-        return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+        return new Rect3D(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
     }
 
     public function get numPatterns () :int

@@ -4,6 +4,7 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -94,7 +95,7 @@ public class PlayerMode extends GameDataMode
         _dataBindings.bindMessage(Constants.MSG_S_PLAYFAIL, handleFailure);
         _dataBindings.bindMessage(Constants.MSG_S_PLAYAGAIN, handlePlayAgain);
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
-            PatternLoc.fromBytes);
+            Vec3D.fromBytes);
         _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
         _dataBindings.processAllProperties(ClientContext.props);
 
@@ -165,10 +166,10 @@ public class PlayerMode extends GameDataMode
 
         _spectaclePlacer.x = newX;
         _spectaclePlacer.y = newY;
-        _spectacleOffsetThrottler.value = (new PatternLoc(roomLoc.x, roomLoc.y).toBytes());
+        _spectacleOffsetThrottler.value = (new Vec3D(roomLoc.x, roomLoc.y).toBytes());
     }
 
-    protected function handleNewSpectacleOffset (newOffset :PatternLoc) :void
+    protected function handleNewSpectacleOffset (newOffset :Vec3D) :void
     {
         _spectacleOffset = newOffset;
 
@@ -217,7 +218,7 @@ public class PlayerMode extends GameDataMode
         }
 
         var patternLocs :Array = pattern.locs.map(
-            function (loc :PatternLoc, index :int, ...ignored) :LocInfo {
+            function (loc :Vec3D, index :int, ...ignored) :LocInfo {
                 return new LocInfo(
                     new Vector2(loc.x + _spectacleOffset.x, loc.y + _spectacleOffset.y),
                     index);
@@ -225,15 +226,15 @@ public class PlayerMode extends GameDataMode
 
         var playerLocs :Array = [];
         ClientContext.players.players.forEach(
-            function (playerId :int, playerInfo :PlayerInfo) :void {
-                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
+            function (playerInfo :PlayerInfo, ...ignored) :void {
+                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerInfo.id);
                 // roomLoc could be null if a player just left the game but we haven't
                 // be notified about it yet
                 playerLocs.push(roomLoc != null ? Vector2.fromPoint(roomLoc)
                     : new Vector2(Number.MIN_VALUE, Number.MIN_VALUE));
             });
 
-        var epsilonSqr :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
+        var epsilon2 :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
         var inPositionFlags :Array = ArrayUtil.create(patternLocs.length, false);
         var allInPosition :Boolean = true;
         for each (var playerLoc :Vector2 in playerLocs) {
@@ -242,7 +243,7 @@ public class PlayerMode extends GameDataMode
             for (var ii :int = 0; ii < patternLocs.length; ++ii) {
                 var patternLoc :LocInfo = patternLocs[ii];
                 var distSqr :Number = patternLoc.loc.subtract(playerLoc).lengthSquared;
-                if (distSqr <= epsilonSqr) {
+                if (distSqr <= epsilon2) {
                     inPosition = true;
                     patternLocs.splice(ii, 1);
                     inPositionFlags[patternLoc.index] = true;
@@ -288,7 +289,25 @@ public class PlayerMode extends GameDataMode
         _patternRecognized = false;
 
         removePatternView();
-        _patternView = new PatternView(this.curPattern);
+        _patternView = new PatternView(this.curPattern,
+            function (patternLoc :Vec3D) :void {
+                var avInfo :AVRGameAvatar =
+                    ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
+                log.info("Avatar loc", "x", avInfo.x, "y", avInfo.y, "z", avInfo.z);
+                var roomLoc :Point = ClientContext.gameCtrl.local.locationToRoom(avInfo.x, avInfo.y, avInfo.z);
+                log.info("Room loc", "x", roomLoc.x, "y", roomLoc.y);
+                var avLoc :Array = ClientContext.gameCtrl.local.roomToLocationAtDepth(roomLoc, avInfo.z);
+                log.info("Avatar loc2", "x", avLoc[0], "y", avLoc[1], "z", avLoc[2]);
+                log.info("Diff", "x", avLoc[0] - avInfo.x, "y", avLoc[1] - avInfo.y, "z", avLoc[2] - avInfo.z);
+                ClientContext.gameCtrl.player.setAvatarLocation(avLoc[0], avLoc[1], avLoc[2], avInfo.orientation);
+                /*var x :Number = patternLoc.x + _spectacleOffset.x;
+                var y :Number = patternLoc.y + _spectacleOffset.y;
+                var z :Number = avInfo.z;
+                log.info("roomLoc", "x", x, "y", y);
+                var logicalLoc :Array = ClientContext.gameCtrl.local.roomToLocationAtDepth(new Point(x, y), z);
+                log.info("logicalLoc", "x", logicalLoc[0], "y", logicalLoc[1], "z", logicalLoc[2]);
+                ClientContext.gameCtrl.player.setAvatarLocation(logicalLoc[0], logicalLoc[1], logicalLoc[2], avInfo.orientation);*/
+            });
         addObject(_patternView, _uiLayer);
         updatePatternViewLoc();
 
@@ -461,7 +480,7 @@ public class PlayerMode extends GameDataMode
     protected var _completed :Boolean;
     protected var _spectaclePlacer :SpectaclePlacer;
     protected var _patternView :PatternView;
-    protected var _spectacleOffset :PatternLoc;
+    protected var _spectacleOffset :Vec3D;
     protected var _spectacleOffsetThrottler :MessageThrottler;
     protected var _gameTimer :GameTimer;
 
@@ -478,7 +497,7 @@ public class PlayerMode extends GameDataMode
 
 import com.whirled.contrib.simplegame.SimObject;
 import flashmob.client.ClientContext;
-import flashmob.data.PatternLoc;
+import flashmob.data.Vec3D;
 import com.threerings.flash.Vector2;
 
 // Throttles an individual type of message

@@ -49,8 +49,11 @@ public class FlashMobServer extends ServerObject
 
     protected function onMessageReceived (e :MessageReceivedEvent) :void
     {
+        var playerId :int;
+        var game :ServerGame;
+
         if (e.name == Constants.MSG_C_CLIENT_INIT) {
-            var playerId :int = e.senderId;
+            playerId = e.senderId;
             if (!_unassignedPlayers.contains(playerId)) {
                 log.warning("Received CLIENT_INIT message from an unexpected player",
                     "playerId", playerId);
@@ -78,15 +81,27 @@ public class FlashMobServer extends ServerObject
             log.info("Received CLIENT_INIT message", "playerId", playerId,
                 "partyInfo", partyInfo);
 
-            var game :ServerGame = getGame(partyInfo.partyId);
+            game = getGame(partyInfo.partyId);
             var isNewGame :Boolean = (game == null);
             if (isNewGame) {
                 // There's no game in session for this party. Start a new one.
                 game = createGame(partyInfo);
+            } else {
+                game.partyInfoChanged(partyInfo);
             }
 
             // Add the player to the game
             game.addPlayer(playerId);
+
+        } else if (e.name == Constants.MSG_C_NEW_PARTY_INFO) {
+            playerId = e.senderId;
+            var partyId :int = _playerPartyMap.get(playerId);
+            game = getGame(partyId);
+            if (game == null) {
+                log.warning("Received bad NEW_PARTY_INFO message", "playerId", playerId,
+                    "partyId", partyId);
+            }
+            game.partyInfoChanged(partyInfo);
         }
     }
 

@@ -157,9 +157,9 @@ public class CreatorMode extends GameDataMode
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
         ClientContext.players.players.forEach(
-            function (playerId :int, playerInfo :PlayerInfo) :void {
-                var roomLoc :Point = ClientContext.getPlayerRoomLoc(playerId);
-                pattern.locs.push(new PatternLoc(roomLoc.x, roomLoc.y));
+            function (playerInfo :PlayerInfo, ...ignored) :void {
+                var avInfo :AVRGameAvatar = ClientContext.getAvatarInfo(playerInfo.id);
+                pattern.locs.push(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
             });
 
         if (_spectacle.patterns.length > 0 &&

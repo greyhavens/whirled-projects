@@ -33,9 +33,17 @@ public class SpectaclePlacer extends DraggableObject
 
     protected function updateBounds (...ignored) :void
     {
-        var bounds :Rectangle =
-            ClientContext.roomBoundsMonitor.roomToPaintable(_spectacle.getBounds());
-        bounds.y += Constants.ROOM_TO_PAINTABLE_Y_MAGIC;
+        var specBounds :Rect3D = _spectacle.getBounds();
+
+        var topLeft :Point = ClientContext.gameCtrl.local.locationToPaintable(
+            specBounds.x, specBounds.y, specBounds.z);
+
+        var bottomRight :Point = ClientContext.gameCtrl.local.locationToPaintable(
+            specBounds.x + specBounds.width, specBounds.y + specBounds.height,
+            specBounds.z + specBounds.depth);
+
+        var bounds :Rectangle = new Rectangle(topLeft.x, topLeft.y,
+            bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
 
         if (bounds.width < MIN_TENT_SIZE.x) {
             var dx :Number = MIN_TENT_SIZE.x - bounds.width;

@@ -7,17 +7,17 @@ import flash.utils.ByteArray;
 
 public class PlayerSet
 {
-    public var players :HashMap = new HashMap(); // Map<playerId, PlayerInfo>
+    public var players :Array = []; // Array<PlayerInfo>
 
     public function get numPlayers () :int
     {
-        return players.size();
+        return players.length;
     }
 
     public function allWearingAvatar (avatarId :int) :Boolean
     {
         // return true if everyone in the game is wearing the same avatar
-        return (ArrayUtil.findIf(players.values(),
+        return (ArrayUtil.findIf(players,
             function (player :PlayerInfo) :Boolean {
                 return player.avatarId != avatarId;
             }) === undefined);
@@ -25,17 +25,23 @@ public class PlayerSet
 
     public function addPlayer (playerInfo :PlayerInfo) :*
     {
-        return players.put(playerInfo.id, playerInfo);
+        return players.push(playerInfo);
     }
 
-    public function removePlayer (playerId :int) :*
+    public function removePlayer (playerId :int) :void
     {
-        return players.remove(playerId);
+        ArrayUtil.removeFirstIf(players,
+            function (playerInfo :PlayerInfo) :Boolean {
+                return playerInfo.id == playerId;
+            });
     }
 
     public function getPlayer (playerId :int) :PlayerInfo
     {
-        return players.get(playerId);
+        return ArrayUtil.findIf(players,
+            function (player :PlayerInfo) :Boolean {
+                return player.id == playerId;
+            });
     }
 
     public function containsPlayer (playerId :int) :Boolean
@@ -47,9 +53,8 @@ public class PlayerSet
     {
         ba = (ba != null ? ba : new ByteArray());
 
-        var values :Array = players.values();
-        ba.writeInt(values.length);
-        for each (var player :PlayerInfo in values) {
+        ba.writeInt(players.length);
+        for each (var player :PlayerInfo in players) {
             player.toBytes(ba);
         }
 
@@ -58,12 +63,12 @@ public class PlayerSet
 
     public function fromBytes (ba :ByteArray) :PlayerSet
     {
-        players = new HashMap();
+        players = []
 
         var numPlayers :int = ba.readInt();
         for (var ii :int = 0; ii < numPlayers; ++ii) {
             var player :PlayerInfo = new PlayerInfo().fromBytes(ba);
-            players.put(player.id, player);
+            players.push(player);
         }
 
         return this;
