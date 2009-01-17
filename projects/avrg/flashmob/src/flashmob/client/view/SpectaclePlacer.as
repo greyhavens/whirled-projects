@@ -1,5 +1,6 @@
 package flashmob.client.view {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
@@ -20,7 +21,21 @@ public class SpectaclePlacer extends DraggableObject
         super(null, droppedCallback);
 
         _spectacle = spectacle;
-        _spectacleBounds = spectacle.getBounds();
+        // calculate the two-dimensional spectacle bounds
+        var minX :Number = Number.POSITIVE_INFINITY;
+        var maxX :Number = Number.NEGATIVE_INFINITY;
+        var minY :Number = Number.POSITIVE_INFINITY;
+        var maxY :Number = Number.NEGATIVE_INFINITY;
+        for each (var pattern :Pattern in _spectacle.patterns) {
+            for each (var loc :Vec3D in pattern.locs) {
+                var p :Point = SpaceUtil.logicalToRoom(loc);
+                minX = Math.min(minX, p.x);
+                maxX = Math.max(maxX, p.x);
+                minY = Math.min(minY, p.y);
+                maxY = Math.max(maxY, p.y);
+            }
+        }
+        _spectacleBounds2D = new Rectangle(minX, minY, maxX - minX, maxY - minY);
 
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
@@ -57,7 +72,7 @@ public class SpectaclePlacer extends DraggableObject
 
     protected function updateBounds (...ignored) :void
     {
-        var bounds :Rectangle = SpaceUtil.logicalToPaintableRect(_spectacleBounds);
+        var bounds :Rectangle = SpaceUtil.roomToPaintableRect(_spectacleBounds2D);
         if (bounds.width < MIN_TENT_SIZE.x) {
             var dx :Number = MIN_TENT_SIZE.x - bounds.width;
             bounds.x -= dx / 2;
@@ -90,7 +105,9 @@ public class SpectaclePlacer extends DraggableObject
     protected var _tent :MovieClip;
     protected var _sprite :Sprite;
     protected var _spectacle :Spectacle;
-    protected var _spectacleBounds :Rect3D;
+    protected var _spectacleBounds2D :Rectangle;
+
+    protected static var log :Log = Log.getLog(SpectaclePlacer);
 
     protected static const MIN_TENT_SIZE :Point = new Point(100, 75);
     protected static const BORDER_SIZE :Point = new Point(30, 30);

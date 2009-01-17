@@ -5,8 +5,9 @@ import com.whirled.avrg.AVRGameAvatar;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import flashmob.Rect3D;
-import flashmob.data.Vec3D;
+import flashmob.*;
+import flashmob.client.*;
+import flashmob.data.*;
 
 public class SpaceUtil
 {
@@ -92,7 +93,7 @@ public class SpaceUtil
         return r;
     }
 
-    public static function logicalToPaintableRect (r :Rect3D) :Rectangle
+    /*public static function logicalToPaintableRect (r :Rect3D) :Rectangle
     {
         // get top-left and bottom-right coords
         var tl :Point = ClientContext.gameCtrl.local.locationToPaintable(r.x, r.y, r.z);
@@ -101,7 +102,7 @@ public class SpaceUtil
 
         return (tl != null && br != null ? new Rectangle(tl.x, tl.y, br.x - tl.x, br.y - tl.y) :
                 null);
-    }
+    }*/
 }
 
 }

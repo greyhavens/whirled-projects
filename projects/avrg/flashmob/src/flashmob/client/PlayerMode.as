@@ -32,6 +32,7 @@ public class PlayerMode extends GameDataMode
         _modeSprite.addChild(_uiLayer);
 
         _spectacle = ClientContext.spectacle;
+        _spectacleBounds = _spectacle.getBounds();
 
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
 
@@ -52,10 +53,12 @@ public class PlayerMode extends GameDataMode
         _spectaclePlacer = new SpectaclePlacer(_spectacle,
             (ClientContext.isPartyLeader ? onSpectacleDragged : null));
         _spectaclePlacer.visible = ClientContext.isPartyLeader;
-        DisplayUtil.positionBounds(_spectaclePlacer.displayObject,
-            roomBounds.left + ((roomBounds.width - _spectaclePlacer.width) * 0.5),
-            roomBounds.bottom - _spectaclePlacer.height - 20);
         addObject(_spectaclePlacer, _uiLayer);
+        DisplayUtil.positionBoundsRelative(_spectaclePlacer.displayObject, _uiLayer,
+            (roomBounds.width - _spectaclePlacer.width) * 0.5,
+            roomBounds.bottom - _spectaclePlacer.height - 20);
+
+        log.info("SpectaclePlacer", "bounds", _spectaclePlacer.displayObject.getBounds(_uiLayer));
 
         // Setup buttons
         registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
@@ -164,13 +167,16 @@ public class PlayerMode extends GameDataMode
         _spectaclePlacer.x = newX;
         _spectaclePlacer.y = newY;
 
+        log.info("Spectacle dragged", "x", newX, "y", newY);
+
         _spectacleOffsetThrottler.value =
-            SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 1);
+            SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 0.5).toBytes();
     }
 
     protected function handleNewSpectacleOffset (newOffset :Vec3D) :void
     {
         _spectacleOffset = newOffset;
+        log.info("Spectacle offset", "val", newOffset);
 
         if (!ClientContext.isPartyLeader) {
             updatePatternViewLoc(true);
@@ -227,7 +233,7 @@ public class PlayerMode extends GameDataMode
             function (playerInfo :PlayerInfo, ...ignored) :void {
                 var roomLoc :Point = SpaceUtil.getAvatarRoomLoc(playerInfo.id);
                 // roomLoc could be null if a player just left the game but we haven't
-                // be notified about it yet
+                // been notified about it yet
                 playerLocs.push(roomLoc != null ? Vector2.fromPoint(roomLoc)
                     : new Vector2(Number.MIN_VALUE, Number.MIN_VALUE));
             });
@@ -287,25 +293,7 @@ public class PlayerMode extends GameDataMode
         _patternRecognized = false;
 
         removePatternView();
-        _patternView = new PatternView(this.curPattern,
-            function (patternLoc :Vec3D) :void {
-                var avInfo :AVRGameAvatar =
-                    ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
-                log.info("Avatar loc", "x", avInfo.x, "y", avInfo.y, "z", avInfo.z);
-                var roomLoc :Point = SpaceUtil.logicalToRoom(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
-                log.info("Room loc", "x", roomLoc.x, "y", roomLoc.y);
-                var avLoc :Array = SpaceUtil.roomToLogicalAtDepth(roomLoc, avInfo.z);
-                log.info("Avatar loc2", "x", avLoc[0], "y", avLoc[1], "z", avLoc[2]);
-                log.info("Diff", "x", avLoc[0] - avInfo.x, "y", avLoc[1] - avInfo.y, "z", avLoc[2] - avInfo.z);
-                ClientContext.gameCtrl.player.setAvatarLocation(avLoc[0], avLoc[1], avLoc[2], avInfo.orientation);
-                /*var x :Number = patternLoc.x + _spectacleOffset.x;
-                var y :Number = patternLoc.y + _spectacleOffset.y;
-                var z :Number = avInfo.z;
-                log.info("roomLoc", "x", x, "y", y);
-                var logicalLoc :Array = ClientContext.gameCtrl.local.roomToLocationAtDepth(new Point(x, y), z);
-                log.info("logicalLoc", "x", logicalLoc[0], "y", logicalLoc[1], "z", logicalLoc[2]);
-                ClientContext.gameCtrl.player.setAvatarLocation(logicalLoc[0], logicalLoc[1], logicalLoc[2], avInfo.orientation);*/
-            });
+        _patternView = new PatternView(this.curPattern, onPatternLocClicked);
         addObject(_patternView, _uiLayer);
         updatePatternViewLoc();
 
@@ -330,6 +318,39 @@ public class PlayerMode extends GameDataMode
 
             playSound("cymbal_hit");
         }
+    }
+
+    protected function onPatternLocClicked (patternLoc :Vec3D) :void
+    {
+        var avInfo :AVRGameAvatar =
+            ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
+
+        /*log.info("Avatar loc", "x", avInfo.x, "y", avInfo.y, "z", avInfo.z);
+        var roomLoc :Point =
+            SpaceUtil.logicalToRoom(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
+        log.info("Room", "loc", roomLoc);
+        var avLoc :Vec3D = SpaceUtil.roomToLogicalAtDepth(roomLoc, avInfo.z);
+        log.info("Avatar", "loc2", avLoc);
+        log.info("Diff", "x", avLoc.x - avInfo.x, "y", avLoc.y - avInfo.y,
+            "z", avLoc.z - avInfo.z);
+        ClientContext.gameCtrl.player.setAvatarLocation(avLoc.x, avLoc.y, avLoc.z,
+            avInfo.orientation);*/
+
+        log.info("Moving from",
+            "x", avInfo.x,
+            "y", avInfo.y,
+            "z", avInfo.z);
+
+        log.info("Moving to",
+            "x", patternLoc.x + _spectacleOffset.x,
+            "y", patternLoc.y + _spectacleOffset.y,
+            "z", patternLoc.z + _spectacleOffset.z);
+
+        ClientContext.gameCtrl.player.setAvatarLocation(
+            patternLoc.x + _spectacleOffset.x,
+            patternLoc.y + _spectacleOffset.y,
+            patternLoc.z + _spectacleOffset.z,
+            avInfo.orientation);
     }
 
     protected function handleSuccess () :void
@@ -466,6 +487,7 @@ public class PlayerMode extends GameDataMode
     protected var _dancersLayer :Sprite;
 
     protected var _spectacle :Spectacle;
+    protected var _spectacleBounds :Rect3D;
     protected var _startButton :GameButton;
     protected var _againButton :GameButton;
     protected var _resetButton :GameButton;

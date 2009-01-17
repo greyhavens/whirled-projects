@@ -161,7 +161,8 @@ public class CreatorMode extends GameDataMode
                 pattern.locs.push(SpaceUtil.getAvatarLogicalLoc(playerInfo.id));
             });
 
-        if (_spectacle.patterns.length > 0 &&
+        if (!Constants.DEBUG_ALLOW_DUPLICATE_POSES &&
+            _spectacle.patterns.length > 0 &&
             pattern.isSimilar(_spectacle.patterns[_spectacle.patterns.length - 1])) {
             ClientContext.mainLoop.pushMode(new BasicErrorMode("This pose is too similar to " +
                 "the last one!", true));

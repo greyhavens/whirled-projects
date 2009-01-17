@@ -7,6 +7,7 @@ import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.MessageReceivedEvent;
@@ -44,6 +45,7 @@ public class FlashMobClient extends Sprite
             (ClientContext.gameCtrl.isConnected() ? ClientContext.gameCtrl.local : this.stage));
         ClientContext.mainLoop.setup();
         ClientContext.mainLoop.run();
+        AudioManager.instance.masterControls.volume(Constants.DEBUG_DISABLE_AUDIO ? 0 : 1);
 
         // Load resources
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);

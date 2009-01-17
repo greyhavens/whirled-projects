@@ -2,7 +2,9 @@ package flashmob {
 
 public class Constants
 {
-    public static const DEBUG_CLEAR_SAVED_DATA :Boolean     = true;
+    public static const DEBUG_DISABLE_AUDIO :Boolean            = true;
+    public static const DEBUG_CLEAR_SAVED_DATA :Boolean         = true;
+    public static const DEBUG_ALLOW_DUPLICATE_POSES :Boolean    = true;
 
     public static const MIN_SPECTACLE_PATTERNS :int = 2;
     public static const MAX_SPECTACLE_PATTERNS :int = 10;
