@@ -39,7 +39,7 @@ public class Vec3D
 
     public function add (v :Vec3D) :Vec3D
     {
-        return new Vec3D(x + v.x, y - v.y, z - v.z);
+        return new Vec3D(x + v.x, y + v.y, z + v.z);
     }
 
     public function toBytes (ba :ByteArray = null) :ByteArray
@@ -69,7 +69,7 @@ public class Vec3D
 
     public function toString () :String
     {
-        return StringUtil.simpleToString(this);
+        return "[x=" + x + " y=" + y + " z=" + z + "]";
     }
 }
 
