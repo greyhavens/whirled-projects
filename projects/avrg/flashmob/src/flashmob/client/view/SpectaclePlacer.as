@@ -35,7 +35,7 @@ public class SpectaclePlacer extends DraggableObject
                 maxY = Math.max(maxY, p.y);
             }
         }
-        _spectacleBounds2D = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+        _spectacleBounds2D = new Rectangle(0, 0, maxX - minX, maxY - minY);
 
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
@@ -87,13 +87,13 @@ public class SpectaclePlacer extends DraggableObject
 
         _frame.width = bounds.width + (BORDER_SIZE.x * 2);
         _frame.height = bounds.height + (BORDER_SIZE.y * 2);
-        _frame.x = bounds.left - BORDER_SIZE.x;
-        _frame.y = bounds.top - BORDER_SIZE.y;
+        _frame.x = -_frame.width * 0.5;
+        _frame.y = -_frame.height * 0.5;
 
         _tent.width = bounds.width;
         _tent.height = bounds.height;
-        _tent.x = bounds.left;
-        _tent.y = bounds.top;
+        _tent.x = -_tent.width * 0.5;
+        _tent.y = -_tent.height * 0.5;
     }
 
     override public function get displayObject () :DisplayObject
@@ -109,7 +109,7 @@ public class SpectaclePlacer extends DraggableObject
 
     protected static var log :Log = Log.getLog(SpectaclePlacer);
 
-    protected static const MIN_TENT_SIZE :Point = new Point(100, 75);
+    protected static const MIN_TENT_SIZE :Point = new Point(50, 50);
     protected static const BORDER_SIZE :Point = new Point(30, 30);
 }
 

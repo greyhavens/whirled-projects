@@ -69,7 +69,7 @@ public class Vec3D
 
     public function toString () :String
     {
-        return "[x=" + x + " y=" + y + " z=" + z + "]";
+        return StringUtil.simpleToString(this, [ "x", "y", "z" ]);
     }
 }
 

@@ -61,12 +61,12 @@ public class Pattern
         return new Rect3D(minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
     }
 
-    public function offsetLocs (xOffset :Number, yOffset :Number, zOffset :Number) :void
+    public function offset (offset :Vec3D) :void
     {
         for each (var loc :Vec3D in locs) {
-            loc.x += xOffset;
-            loc.y += yOffset;
-            loc.z += zOffset;
+            loc.x += offset.x;
+            loc.y += offset.y;
+            loc.z += offset.z;
         }
     }
 
@@ -94,6 +94,20 @@ public class Pattern
         }
 
         return this;
+    }
+
+    public function toString () :String
+    {
+        var theString :String = "[";
+        for (var ii :int = 0; ii < locs.length; ++ii) {
+            var loc :Vec3D = locs[ii];
+            theString += loc.toString();
+            if (ii < locs.length - 1) {
+                theString += "\n";
+            }
+        }
+
+        return theString;
     }
 
     protected static var log :Log = Log.getLog(Pattern);

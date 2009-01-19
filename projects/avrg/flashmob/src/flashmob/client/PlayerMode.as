@@ -51,14 +51,15 @@ public class PlayerMode extends GameDataMode
 
         // Create the SpectaclePlacer
         _spectaclePlacer = new SpectaclePlacer(_spectacle,
-            (ClientContext.isPartyLeader ? onSpectacleDragged : null));
+            (ClientContext.isPartyLeader ? onPlacerDragged : null));
         _spectaclePlacer.visible = ClientContext.isPartyLeader;
         addObject(_spectaclePlacer, _uiLayer);
         DisplayUtil.positionBoundsRelative(_spectaclePlacer.displayObject, _uiLayer,
             (roomBounds.width - _spectaclePlacer.width) * 0.5,
             roomBounds.bottom - _spectaclePlacer.height - 20);
 
-        log.info("SpectaclePlacer", "bounds", _spectaclePlacer.displayObject.getBounds(_uiLayer));
+        log.info("SpectaclePlacer", "bounds", _spectaclePlacer.displayObject.getBounds(_uiLayer),
+            "x", _spectaclePlacer.x, "y", _spectaclePlacer.y);
 
         // Setup buttons
         registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
@@ -82,10 +83,11 @@ public class PlayerMode extends GameDataMode
             ClientContext.gameUIView.centerButton = _startButton;
             ClientContext.gameUIView.directionsText = "Place the Spectacle and press Start!";
 
-            _spectacleOffsetThrottler = new MessageThrottler(Constants.MSG_CS_SET_SPECTACLE_OFFSET);
-            addObject(_spectacleOffsetThrottler);
+            _specCenterThrottler = new MessageThrottler(Constants.MSG_C_SET_SPEC_CENTER);
+            addObject(_specCenterThrottler);
 
-            onSpectacleDragged(_spectaclePlacer.x, _spectaclePlacer.y);
+            onPlacerDragged(_spectaclePlacer.x, _spectaclePlacer.y);
+            //_spectacleOffsetThrottler.value = new Vec3D(0, 0, 0).toBytes();
 
         } else {
             ClientContext.gameUIView.directionsText =
@@ -97,14 +99,14 @@ public class PlayerMode extends GameDataMode
         _dataBindings.bindMessage(Constants.MSG_S_PLAYSUCCESS, handleSuccess);
         _dataBindings.bindMessage(Constants.MSG_S_PLAYFAIL, handleFailure);
         _dataBindings.bindMessage(Constants.MSG_S_PLAYAGAIN, handlePlayAgain);
-        _dataBindings.bindProp(Constants.PROP_SPECTACLE_OFFSET, handleNewSpectacleOffset,
+        _dataBindings.bindProp(Constants.PROP_SPECTACLE_CENTER, handleNewSpectacleCenter,
             Vec3D.fromBytes);
         _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
         _dataBindings.processAllProperties(ClientContext.props);
 
         registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             function (...ignored) :void {
-                updatePatternViewLoc(false);
+                updateSpectaclePlacerLoc(false);
             });
 
         // setup sounds
@@ -136,7 +138,7 @@ public class PlayerMode extends GameDataMode
 
     protected function onRoomBoundsChanged (...ignored) :void
     {
-        updatePatternViewLoc();
+        updateSpectaclePlacerLoc();
     }
 
     protected function playSound (name :String, loopCount :int = 0) :AudioChannel
@@ -162,31 +164,30 @@ public class PlayerMode extends GameDataMode
         }
     }
 
-    protected function onSpectacleDragged (newX :Number, newY :Number) :void
+    protected function onPlacerDragged (newX :Number, newY :Number) :void
     {
         _spectaclePlacer.x = newX;
         _spectaclePlacer.y = newY;
 
         log.info("Spectacle dragged", "x", newX, "y", newY);
 
-        _spectacleOffsetThrottler.value =
-            SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 0.5).toBytes();
+        _specCenterThrottler.value =
+            SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 0).toBytes();
     }
 
-    protected function handleNewSpectacleOffset (newOffset :Vec3D) :void
+    protected function handleNewSpectacleCenter (newCenter :Vec3D) :void
     {
-        _spectacleOffset = newOffset;
-        log.info("Spectacle offset", "val", newOffset);
+        _specCenter = newCenter;
+        log.info("Spectacle center", "val", newCenter);
 
         if (!ClientContext.isPartyLeader) {
-            updatePatternViewLoc(true);
+            updateSpectaclePlacerLoc(true);
         }
     }
 
-    protected function updatePatternViewLoc (animate :Boolean = false) :void
+    protected function updateSpectaclePlacerLoc (animate :Boolean = false) :void
     {
-        var screenLoc :Point = SpaceUtil.logicalToPaintable(_spectacleOffset);
-
+        var screenLoc :Point = SpaceUtil.logicalToPaintable(_specCenter);
         if (_spectaclePlacer != null) {
             _spectaclePlacer.removeAllTasks();
             if (animate) {
@@ -199,19 +200,6 @@ public class PlayerMode extends GameDataMode
 
             _spectaclePlacer.visible = true;
         }
-
-        if (_patternView != null) {
-            _patternView.removeAllTasks();
-            if (animate) {
-                _patternView.addTask(LocationTask.CreateSmooth(screenLoc.x, screenLoc.y, 0.5));
-
-            } else {
-                _patternView.x = screenLoc.x;
-                _patternView.y = screenLoc.y;
-            }
-
-            _patternView.visible = true;
-        }
     }
 
     protected function checkPlayerPositions () :Boolean
@@ -223,31 +211,28 @@ public class PlayerMode extends GameDataMode
 
         var patternLocs :Array = pattern.locs.map(
             function (loc :Vec3D, index :int, ...ignored) :LocInfo {
-                return new LocInfo(
-                    new Vector2(loc.x + _spectacleOffset.x, loc.y + _spectacleOffset.y),
-                    index);
+                return new LocInfo(loc, index);
             });
 
         var playerLocs :Array = [];
         ClientContext.players.players.forEach(
             function (playerInfo :PlayerInfo, ...ignored) :void {
-                var roomLoc :Point = SpaceUtil.getAvatarRoomLoc(playerInfo.id);
+                var loc :Vec3D = SpaceUtil.getAvatarLogicalLoc(playerInfo.id);
                 // roomLoc could be null if a player just left the game but we haven't
                 // been notified about it yet
-                playerLocs.push(roomLoc != null ? Vector2.fromPoint(roomLoc)
-                    : new Vector2(Number.MIN_VALUE, Number.MIN_VALUE));
+                playerLocs.push(loc != null ? loc : new Vec3D());
             });
 
         var epsilon2 :Number = Constants.PATTERN_LOC_EPSILON * Constants.PATTERN_LOC_EPSILON;
         var inPositionFlags :Array = ArrayUtil.create(patternLocs.length, false);
         var allInPosition :Boolean = true;
-        for each (var playerLoc :Vector2 in playerLocs) {
+        for each (var playerLoc :Vec3D in playerLocs) {
 
             var inPosition :Boolean = false;
             for (var ii :int = 0; ii < patternLocs.length; ++ii) {
                 var patternLoc :LocInfo = patternLocs[ii];
-                var distSqr :Number = patternLoc.loc.subtract(playerLoc).lengthSquared;
-                if (distSqr <= epsilon2) {
+                var dist2 :Number = patternLoc.loc.subtract(playerLoc).length2;
+                if (dist2 <= epsilon2) {
                     inPosition = true;
                     patternLocs.splice(ii, 1);
                     inPositionFlags[patternLoc.index] = true;
@@ -278,13 +263,15 @@ public class PlayerMode extends GameDataMode
         log.info(_startedPlaying ? "next pattern" : "first pattern");
 
         if (!_startedPlaying) {
-            if (_spectacleOffsetThrottler != null) {
-                _spectacleOffsetThrottler.destroySelf();
-                _spectacleOffsetThrottler = null;
+            if (_specCenterThrottler != null) {
+                _specCenterThrottler.destroySelf();
+                _specCenterThrottler = null;
             }
 
             _spectaclePlacer.destroySelf();
             _spectaclePlacer = null;
+
+            _spectacle.setCenter(_specCenter);
 
             _startedPlaying = true;
         }
@@ -295,7 +282,7 @@ public class PlayerMode extends GameDataMode
         removePatternView();
         _patternView = new PatternView(this.curPattern, onPatternLocClicked);
         addObject(_patternView, _uiLayer);
-        updatePatternViewLoc();
+        updateSpectaclePlacerLoc();
 
         ClientContext.gameUIView.directionsText = (_patternIndex == 0 ?
             "First pose!" :
@@ -325,31 +312,11 @@ public class PlayerMode extends GameDataMode
         var avInfo :AVRGameAvatar =
             ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
 
-        /*log.info("Avatar loc", "x", avInfo.x, "y", avInfo.y, "z", avInfo.z);
-        var roomLoc :Point =
-            SpaceUtil.logicalToRoom(new Vec3D(avInfo.x, avInfo.y, avInfo.z));
-        log.info("Room", "loc", roomLoc);
-        var avLoc :Vec3D = SpaceUtil.roomToLogicalAtDepth(roomLoc, avInfo.z);
-        log.info("Avatar", "loc2", avLoc);
-        log.info("Diff", "x", avLoc.x - avInfo.x, "y", avLoc.y - avInfo.y,
-            "z", avLoc.z - avInfo.z);
-        ClientContext.gameCtrl.player.setAvatarLocation(avLoc.x, avLoc.y, avLoc.z,
-            avInfo.orientation);*/
-
-        log.info("Moving from",
-            "x", avInfo.x,
-            "y", avInfo.y,
-            "z", avInfo.z);
-
-        log.info("Moving to",
-            "x", patternLoc.x + _spectacleOffset.x,
-            "y", patternLoc.y + _spectacleOffset.y,
-            "z", patternLoc.z + _spectacleOffset.z);
-
+        log.info("Moving", "from", new Vec3D(avInfo.x, avInfo.y, avInfo.z), "to", patternLoc);
         ClientContext.gameCtrl.player.setAvatarLocation(
-            patternLoc.x + _spectacleOffset.x,
-            patternLoc.y + _spectacleOffset.y,
-            patternLoc.z + _spectacleOffset.z,
+            patternLoc.x,
+            patternLoc.y,
+            patternLoc.z,
             avInfo.orientation);
     }
 
@@ -422,10 +389,10 @@ public class PlayerMode extends GameDataMode
 
     protected function onStartClicked (...ignored) :void
     {
-        if (_spectacleOffsetThrottler != null) {
-            _spectacleOffsetThrottler.forcePendingMessage();
-            _spectacleOffsetThrottler.destroySelf();
-            _spectacleOffsetThrottler = null;
+        if (_specCenterThrottler != null) {
+            _specCenterThrottler.forcePendingMessage();
+            _specCenterThrottler.destroySelf();
+            _specCenterThrottler = null;
         }
 
         ClientContext.sendAgentMsg(Constants.MSG_C_STARTPLAYING);
@@ -500,8 +467,8 @@ public class PlayerMode extends GameDataMode
     protected var _completed :Boolean;
     protected var _spectaclePlacer :SpectaclePlacer;
     protected var _patternView :PatternView;
-    protected var _spectacleOffset :Vec3D;
-    protected var _spectacleOffsetThrottler :MessageThrottler;
+    protected var _specCenter :Vec3D;
+    protected var _specCenterThrottler :MessageThrottler;
     protected var _gameTimer :GameTimer;
 
     protected var _soundControls :AudioControls;
@@ -571,10 +538,10 @@ class MessageThrottler extends SimObject
 
 class LocInfo
 {
-    public var loc :Vector2;
+    public var loc :Vec3D;
     public var index :int;
 
-    public function LocInfo (loc :Vector2, index :int)
+    public function LocInfo (loc :Vec3D, index :int)
     {
         this.loc = loc;
         this.index = index;

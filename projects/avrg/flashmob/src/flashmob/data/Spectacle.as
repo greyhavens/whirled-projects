@@ -2,7 +2,6 @@ package flashmob.data {
 
 import com.threerings.util.ArrayUtil;
 
-import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
 import flashmob.Rect3D;
@@ -25,17 +24,38 @@ public class Spectacle
         return (ba != null ? new Spectacle().fromBytes(ba) : null);
     }
 
-    public function normalize () :void
+    public function getCenter () :Vec3D
+    {
+        var bounds :Rect3D = getBounds();
+        return new Vec3D(
+            bounds.x + (bounds.width * 0.5),
+            bounds.y + (bounds.height * 0.5),
+            bounds.z + (bounds.depth * 0.5));
+    }
+
+    public function setCenter (center :Vec3D) :void
+    {
+        // offsets each location in each pattern so that the center of the spectacle
+        // is at the given point
+        if (patterns.length > 0) {
+            var offset :Vec3D = center.subtract(getCenter());
+            for each (var pattern :Pattern in patterns) {
+                pattern.offset(offset);
+            }
+        }
+    }
+
+    /*public function normalize () :void
     {
         // offsets each location in each pattern so that the first pattern's top-left
         // location is at (0, 0)
         if (patterns.length > 0) {
             var bounds :Rect3D = Pattern(patterns[0]).getBounds();
             for each (var pattern :Pattern in patterns) {
-                pattern.offsetLocs(-bounds.x, -bounds.y, -bounds.z);
+                pattern.offset(new Vec3D(-bounds.x, -bounds.y, -bounds.z));
             }
         }
-    }
+    }*/
 
     public function getBounds () :Rect3D
     {

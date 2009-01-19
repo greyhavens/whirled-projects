@@ -161,6 +161,8 @@ public class CreatorMode extends GameDataMode
                 pattern.locs.push(SpaceUtil.getAvatarLogicalLoc(playerInfo.id));
             });
 
+        log.info("Pose", "pattern", pattern);
+
         if (!Constants.DEBUG_ALLOW_DUPLICATE_POSES &&
             _spectacle.patterns.length > 0 &&
             pattern.isSimilar(_spectacle.patterns[_spectacle.patterns.length - 1])) {
@@ -217,7 +219,7 @@ public class CreatorMode extends GameDataMode
         registerOneShotCallback(okButton.button, MouseEvent.CLICK,
             function (...ignored) :void {
                 _spectacle.name = inputText.text;
-                _spectacle.normalize();
+                //_spectacle.normalize();
                 ClientContext.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
                 _done = true;
                 ClientContext.gameUIView.clearButtons();

@@ -1,12 +1,11 @@
 package flashmob.client.view {
 
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -79,6 +78,7 @@ public class PatternView extends SceneObject
             var starLoc :Point = SpaceUtil.logicalToPaintable(loc);
             star.x = starLoc.x;
             star.y = starLoc.y;
+            log.info("Star " + ii, "logical", loc, "paintable", starLoc);
         }
     }
 
@@ -110,6 +110,8 @@ public class PatternView extends SceneObject
     protected var _onLocClicked :Function;
 
     protected var _sprite :Sprite;
+
+    protected static var log :Log = Log.getLog(PatternView);
 }
 
 }

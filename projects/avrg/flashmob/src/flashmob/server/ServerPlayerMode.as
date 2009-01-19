@@ -16,7 +16,7 @@ public class ServerPlayerMode extends ServerMode
         _dataBindings.bindMessage(Constants.MSG_C_OUTOFTIME, handleOutOfTime);
         _dataBindings.bindMessage(Constants.MSG_C_PLAYAGAIN, handlePlayAgain);
         _dataBindings.bindMessage(Constants.MSG_C_RESETGAME, handleResetGame);
-        _dataBindings.bindMessage(Constants.MSG_CS_SET_SPECTACLE_OFFSET, handleNewSpectacleOffset,
+        _dataBindings.bindMessage(Constants.MSG_C_SET_SPEC_CENTER, handleNewSpectacleOffset,
             Vec3D.fromBytes);
     }
 
@@ -105,7 +105,7 @@ public class ServerPlayerMode extends ServerMode
     {
         if (_spectacleOffset == null || !newOffset.isEqual(_spectacleOffset)) {
             _spectacleOffset = newOffset;
-            _ctx.props.set(Constants.PROP_SPECTACLE_OFFSET, newOffset.toBytes(), true);
+            _ctx.props.set(Constants.PROP_SPECTACLE_CENTER, newOffset.toBytes(), true);
         }
     }
 
