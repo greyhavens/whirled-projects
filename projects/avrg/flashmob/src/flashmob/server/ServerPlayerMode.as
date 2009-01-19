@@ -59,10 +59,11 @@ public class ServerPlayerMode extends ServerMode
             _completed = true;
 
             // update the spectacle
-            for (var ii :int = 1; ii < _ctx.spectacle.numPatterns; ++ii) {
+            // Don't store the new pattern completion times in the Spectacle.
+            /*for (var ii :int = 1; ii < _ctx.spectacle.numPatterns; ++ii) {
                 var time :Number = _patternTimes[ii-1];
                 Pattern(_ctx.spectacle.patterns[ii]).timeLimit = time;
-            }
+            }*/
 
             _ctx.spectacle.highScoringPartyId = _ctx.partyInfo.partyId;
             ServerContext.spectacleDb.updateSpectacle(_ctx.spectacle);
