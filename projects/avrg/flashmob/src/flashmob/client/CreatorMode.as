@@ -161,7 +161,7 @@ public class CreatorMode extends GameDataMode
                 pattern.locs.push(SpaceUtil.getAvatarLogicalLoc(playerInfo.id));
             });
 
-        log.info("Pose", "pattern", pattern);
+        //log.info("Pose", "pattern", pattern);
 
         if (!Constants.DEBUG_ALLOW_DUPLICATE_POSES &&
             _spectacle.patterns.length > 0 &&

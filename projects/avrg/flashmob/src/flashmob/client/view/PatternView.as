@@ -78,7 +78,7 @@ public class PatternView extends SceneObject
             var starLoc :Point = SpaceUtil.logicalToPaintable(loc);
             star.x = starLoc.x;
             star.y = starLoc.y;
-            log.info("Star " + ii, "logical", loc, "paintable", starLoc);
+            //log.info("Star " + ii, "logical", loc, "paintable", starLoc);
         }
     }
 

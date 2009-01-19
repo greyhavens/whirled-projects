@@ -58,9 +58,6 @@ public class PlayerMode extends GameDataMode
             (roomBounds.width - _spectaclePlacer.width) * 0.5,
             roomBounds.bottom - _spectaclePlacer.height - 20);
 
-        log.info("SpectaclePlacer", "bounds", _spectaclePlacer.displayObject.getBounds(_uiLayer),
-            "x", _spectaclePlacer.x, "y", _spectaclePlacer.y);
-
         // Setup buttons
         registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
             function (...ignored) :void {
@@ -169,8 +166,6 @@ public class PlayerMode extends GameDataMode
         _spectaclePlacer.x = newX;
         _spectaclePlacer.y = newY;
 
-        log.info("Spectacle dragged", "x", newX, "y", newY);
-
         _specCenterThrottler.value =
             SpaceUtil.paintableToLogicalAtDepth(new Point(newX, newY), 0).toBytes();
     }
@@ -178,7 +173,6 @@ public class PlayerMode extends GameDataMode
     protected function handleNewSpectacleCenter (newCenter :Vec3D) :void
     {
         _specCenter = newCenter;
-        log.info("Spectacle center", "val", newCenter);
 
         if (!ClientContext.isPartyLeader) {
             updateSpectaclePlacerLoc(true);
@@ -312,7 +306,7 @@ public class PlayerMode extends GameDataMode
         var avInfo :AVRGameAvatar =
             ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
 
-        log.info("Moving", "from", new Vec3D(avInfo.x, avInfo.y, avInfo.z), "to", patternLoc);
+        //log.info("Moving", "from", new Vec3D(avInfo.x, avInfo.y, avInfo.z), "to", patternLoc);
         ClientContext.gameCtrl.player.setAvatarLocation(
             patternLoc.x,
             patternLoc.y,
