@@ -67,6 +67,10 @@ public class SpaceUtil
 
     public static function paintableToRoomRect (r :Rectangle) :Rectangle
     {
+        if (r == null) {
+            return null;
+        }
+
         var topLeft :Point = ClientContext.gameCtrl.local.paintableToRoom(r.topLeft);
         var bottomRight :Point = ClientContext.gameCtrl.local.paintableToRoom(r.bottomRight);
         var width :Number = bottomRight.x - topLeft.x;
@@ -81,6 +85,10 @@ public class SpaceUtil
 
     public static function roomToPaintableRect (r :Rectangle) :Rectangle
     {
+        if (r == null) {
+            return null;
+        }
+
         var topLeft :Point = ClientContext.gameCtrl.local.roomToPaintable(r.topLeft);
         var bottomRight :Point = ClientContext.gameCtrl.local.roomToPaintable(r.bottomRight);
         var width :Number = bottomRight.x - topLeft.x;

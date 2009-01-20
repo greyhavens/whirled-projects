@@ -16,6 +16,7 @@ public class Constants
     public static const PATTERN_DOT_SIZE :Number = 12;
     public static const SUCCESS_ANIM_TIME :Number = 8;
     public static const MIN_PATTERN_DIFF :Number = 0.01;
+    public static const SPEC_CENTER_Y_FUDGE :Number = 22;
 
     /* Game states */
     public static const STATE_INVALID :int = 0;

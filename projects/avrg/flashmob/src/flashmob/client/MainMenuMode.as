@@ -1,5 +1,6 @@
 package flashmob.client {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
@@ -23,12 +24,13 @@ public class MainMenuMode extends GameDataMode
 
         // create the main UI and make it draggable
         _ui = SwfResource.instantiateMovieClip("Spectacle_UI", "mainUI");
-        addObject(new Dragger(_ui["dragmain"], _ui));
         _modeSprite.addChild(_ui);
+        var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
+        DisplayUtil.positionBoundsRelative(_ui, _modeSprite,
+            (roomBounds.width - _ui.width) * 0.5,
+            (roomBounds.height - _ui.height) * 0.5);
 
-        var bounds :Rectangle = SpaceUtil.roomDisplayBounds;
-        _ui.x = bounds.left - 120 + (bounds.width * 0.5);
-        _ui.y = bounds.top - 150 + (bounds.width * 0.5);
+        addObject(new Dragger(_ui["dragmain"], _ui));
 
         // wire up buttons
         var creatorModeButton :SimpleButton = _ui["makeyourown"];

@@ -84,7 +84,6 @@ public class PlayerMode extends GameDataMode
             addObject(_specCenterThrottler);
 
             onPlacerDragged(_spectaclePlacer.x, _spectaclePlacer.y);
-            //_spectacleOffsetThrottler.value = new Vec3D(0, 0, 0).toBytes();
 
         } else {
             ClientContext.gameUIView.directionsText =
@@ -99,12 +98,6 @@ public class PlayerMode extends GameDataMode
         _dataBindings.bindProp(Constants.PROP_SPECTACLE_CENTER, handleNewSpectacleCenter,
             Vec3D.fromBytes);
         _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
-        _dataBindings.processAllProperties(ClientContext.props);
-
-        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
-            function (...ignored) :void {
-                updateSpectaclePlacerLoc(false);
-            });
 
         // setup sounds
         _soundControls = new AudioControls(
@@ -182,6 +175,7 @@ public class PlayerMode extends GameDataMode
     protected function updateSpectaclePlacerLoc (animate :Boolean = false) :void
     {
         var screenLoc :Point = SpaceUtil.logicalToPaintable(_specCenter);
+        screenLoc.y += Constants.SPEC_CENTER_Y_FUDGE;
         if (_spectaclePlacer != null) {
             _spectaclePlacer.removeAllTasks();
             if (animate) {
@@ -265,6 +259,8 @@ public class PlayerMode extends GameDataMode
             _spectaclePlacer.destroySelf();
             _spectaclePlacer = null;
 
+            var oldCenter :Vec3D = _spectacle.getCenter();
+            _specCenter.z = oldCenter.z;
             _spectacle.setCenter(_specCenter);
 
             _startedPlaying = true;

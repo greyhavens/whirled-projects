@@ -39,6 +39,10 @@ public class FlashMobClient extends Sprite
         DEBUG_REMOVE_ME();
 
         ClientContext.gameCtrl = new AVRGameControl(this);
+        if (!ClientContext.gameCtrl.isConnected()) {
+            // We can't run in standalone mode
+            return;
+        }
 
         // Init simplegame
         ClientContext.mainLoop = new MainLoop(this,
@@ -124,6 +128,7 @@ public class FlashMobClient extends Sprite
             onElemChanged);
 
         playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as ByteArray);
+        spectacleChanged(ClientContext.props.get(Constants.PROP_SPECTACLE) as ByteArray);
 
         // Tell the server about our party, and tell it what our avatar is
         ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_C_CLIENT_INIT,
@@ -166,9 +171,7 @@ public class FlashMobClient extends Sprite
             break;
 
         case Constants.PROP_SPECTACLE:
-            var bytes :ByteArray = e.newValue as ByteArray;
-            ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
-            log.info("New spectacle received", "Spectacle", ClientContext.spectacle);
+            spectacleChanged(e.newValue as ByteArray);
             break;
         }
 
@@ -195,6 +198,12 @@ public class FlashMobClient extends Sprite
         if (newPlayers != null) {
             ClientContext.players.fromBytes(newPlayers);
         }
+    }
+
+    protected function spectacleChanged (bytes :ByteArray) :void
+    {
+        ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
+        log.info("New spectacle received", "Spectacle", ClientContext.spectacle);
     }
 
     protected function gameStateChanged (newState :Object) :void
