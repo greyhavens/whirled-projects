@@ -1318,20 +1318,20 @@ package joingame.view
                     _leftBoardDisplay.board = _gameModel.getBoardForPlayerID( leftPlayerId );
                     if(_leftBoardDisplay._boardRepresentation._state == JoinGameBoardRepresentation.STATE_ACTIVE) {
                         log.debug("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
-                        trace("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
+//                        trace("     left board from player " + _leftBoardDisplay.board.playerID + " entering from the side");
                         _leftBoardDisplay.doBoardEnterFromSideAnimation(Constants.LEFT);
                     }
                     else {
-                        trace("Adding board to left, but not animating because it's not active");
+//                        trace("Adding board to left, but not animating because it's not active");
                     }
             }
             else{
-                log.error("Should be adding board to my left but for some reason cannot:");
-                log.error("  _gameModel.currentSeatingOrder.length=" + _gameModel.currentSeatingOrder.length);
-                log.error("  _gameModel.getBoardForPlayerID( leftPlayerId=" + leftPlayerId + " ) == null " + (_leftBoardDisplay == null));
-                if( _gameModel.getBoardForPlayerID( leftPlayerId ) != null) {
-                    log.error("  _gameModel.getBoardForPlayerID( leftPlayerId )._state=" + _gameModel.getBoardForPlayerID( leftPlayerId )._state);    
-                }
+//                log.error("Should be adding board to my left but for some reason cannot:");
+//                log.error("  _gameModel.currentSeatingOrder.length=" + _gameModel.currentSeatingOrder.length);
+//                log.error("  _gameModel.getBoardForPlayerID( leftPlayerId=" + leftPlayerId + " ) == null " + (_leftBoardDisplay == null));
+//                if( _gameModel.getBoardForPlayerID( leftPlayerId ) != null) {
+//                    log.error("  _gameModel.getBoardForPlayerID( leftPlayerId )._state=" + _gameModel.getBoardForPlayerID( leftPlayerId )._state);    
+//                }
                 
             }
             

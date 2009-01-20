@@ -82,7 +82,7 @@ package joingame
         
         protected function handleStartSinglePlayerWave ( event :StartSinglePlayerWaveMessage) :void
         {
-            trace("handleStartSinglePlayerWave()");
+            log.debug("handleStartSinglePlayerWave()");
             _ai.createNewSinglePlayerModel( _gameModel.humanPlayerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, event.userCookieData, -1);
             _gameModel.gameOver = false;
             if(AppContext.isConnected) {
@@ -104,7 +104,7 @@ package joingame
         protected function handleAddPlayer( event :AddPlayerMessage ) :void
         {
             if( !event.fromServer ) {
-                trace("Server adding player NOT");
+                log.debug("Server adding player NOT");
 //                _ai.addNewComputerPlayer();
 
 //                AppContext.messageManager.sendMessage( new AddPlayerMessage( 100, true));
@@ -206,15 +206,15 @@ package joingame
             log.debug(event);
             
             
-//            trace("testing");
-//            trace("server board: " + _gameModel.getBoardForPlayerID( event.playerId ));
-//            trace("client board: " + GameContext.gameModel.getBoardForPlayerID( event.playerId ));
+//            log.debug("testing");
+//            log.debug("server board: " + _gameModel.getBoardForPlayerID( event.playerId ));
+//            log.debug("client board: " + GameContext.gameModel.getBoardForPlayerID( event.playerId ));
 //            
-//            trace("change");
+//            log.debug("change");
 //            (_gameModel.getBoardForPlayerID( event.playerId ) as JoinGameBoardRepresentation)._boardPieceColors[0] = 8;
 //            
-//            trace("server board: " + _gameModel.getBoardForPlayerID( event.playerId ));
-//            trace("client board: " + GameContext.gameModel.getBoardForPlayerID( event.playerId ));
+//            log.debug("server board: " + _gameModel.getBoardForPlayerID( event.playerId ));
+//            log.debug("client board: " + GameContext.gameModel.getBoardForPlayerID( event.playerId ));
             
             
             deltaRequest(event.playerId, event.fromX, event.fromY, event.toX, event.toY);
@@ -261,7 +261,7 @@ package joingame
         
         protected function handleReplayRequest( event :ReplayRequestMessage ) :void
         {
-            trace("server handleReplayRequest");
+            log.debug("server handleReplayRequest");
             var id :int = event.playerId;
             if( AppContext.isMultiplayer ) {
                 log.debug("id=" + id + ", _playersThatWantToPlayAgain=" + _playersThatWantToPlayAgain + ", _currentActivePlayers="+_currentActivePlayers);
@@ -302,6 +302,7 @@ package joingame
     
         internal function handleGameOver( e: InternalJoinGameEvent) :void
         {
+            trace("handleGameOver");
             if( _gameModel.gameOver ) {
                 log.warning("gameOver(), but game is already over");
 //                return;
@@ -347,7 +348,7 @@ package joingame
                 if( AppContext.gameCtrl.isConnected()) {
                     _gameCtrl.game.endGameWithScores(playerIds, scores, GameSubControl.TO_EACH_THEIR_OWN);
                 }
-//                trace("Stopping AI because of game over");
+//                log.debug("Stopping AI because of game over");
 //                _ai.stopAI();
                 
                 AppContext.messageManager.sendMessage( new GameOverMessage());
@@ -395,7 +396,15 @@ package joingame
             }
             else if (event.value is StartSinglePlayerGameMessage) {
                 handleStartSinglePlayerGame( StartSinglePlayerGameMessage(event.value) );
-            } 
+            }
+            else if (event.value is GameOverMessage) {
+                if( AppContext.isSinglePlayer) {
+                    _ai.handleGameOver();
+                }
+            }
+            else {
+                log.info("Message recieved but not handled: " + event.value );
+            }
             
             //            AppContext.messageManager.addEventListener( DeltaRequestMessage.NAME, handleDeltaRequest);
 //            AppContext.messageManager.addEventListener( BoardUpdateRequestMessage.NAME, handleBoardUpdateRequest);
@@ -814,6 +823,8 @@ package joingame
                 
                 
                 //Send updates to players 
+                
+                
                             }
             else{
                 log.warning("Illegal move, sending board reset to player " + playerID);

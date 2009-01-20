@@ -21,7 +21,6 @@ public class TransitionMode extends AppMode
 
     protected function fadeIn (callback :Function = null, time :Number = DEFAULT_FADE_TIME) :void
     {
-        trace("fading in///");
         var darkness :SceneObject = this.darkness;
 
         darkness.removeAllTasks();

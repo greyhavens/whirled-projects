@@ -11,12 +11,9 @@ package joingame
     {
         protected static const log :Log = Log.getLog( Database );
         /* All the following hashmaps are indexed by the player.  Think all are _player2...*/
-        public var _deltas :HashMap;
-        public var _horizontal4Joins :HashMap;
-        public var _horizontal5Joins :HashMap;
-        public var _horizontal6Joins :HashMap;
-        public var _horizontal7Joins :HashMap;
-        public var _verticalJoins :HashMap;
+        protected var _deltas :HashMap;
+        protected var _horizontalJoins :HashMap;//player -> array indexed by the join length
+        protected var _verticalJoins :HashMap;//player -> array indexed by the join length
         protected var _killList :HashMap;
         protected var _totalDamageRecieved :HashMap;
         protected var _damageInflictedOnPlayer :HashMap;
@@ -24,10 +21,7 @@ package joingame
         public function Database()
         {
             _deltas = new HashMap();
-            _horizontal4Joins = new HashMap();
-            _horizontal5Joins = new HashMap();
-            _horizontal6Joins = new HashMap();
-            _horizontal7Joins = new HashMap();
+            _horizontalJoins = new HashMap();
             _verticalJoins = new HashMap();
             _killList = new HashMap();
             _totalDamageRecieved = new HashMap();
@@ -37,14 +31,71 @@ package joingame
         public function clearAll() :void
         {
             _deltas.clear();
-            _horizontal4Joins.clear();
-            _horizontal5Joins.clear();
-            _horizontal6Joins.clear();
-            _horizontal7Joins.clear();
+            _horizontalJoins.clear();
             _verticalJoins.clear();
             _killList.clear();
             _totalDamageRecieved.clear();
             _damageInflictedOnPlayer.clear();
+        }
+        
+        
+        public function addJoin( playerId :int, joinLength :int, isHorizontal :Boolean ) :void
+        {
+            var joinMap :HashMap = isHorizontal ? _horizontalJoins : _verticalJoins;
+            if( !joinMap.containsKey( playerId) ) {
+                joinMap.put( playerId, []);
+            }
+            else {
+                var joins :Array = joinMap.get( playerId ) as Array; 
+                if( joins.length < joinLength - 1) {
+                    joins[ joinLength ] = 1;
+                }
+                else {
+                    joins[ joinLength ] += 1;
+                }
+            }
+            
+        }
+        
+        public function getJoins( playerId :int, isHorizontal :Boolean ) :int
+        {
+            var joinMap :HashMap = isHorizontal ? _horizontalJoins : _verticalJoins;
+            var joins :Array = joinMap.get( playerId ) as Array;
+            var total :int = 0; 
+            for( var k :int = 0; k < joins.length; k++) {
+                total += (joins[k] != undefined ? joins[k] : 0);
+            }
+            return total;
+        }
+        
+        public function getAllVJoins( playerId :int ) :int
+        {
+            return getJoins(playerId, false);
+        }
+        public function getAllHJoins( playerId :int ) :int
+        {
+            return getJoins(playerId, true);
+        }
+        
+        public function getAllJoins( playerId :int ) :int
+        {
+            return getJoins(playerId, false) + getJoins(playerId, true);
+        }
+        
+        public function getTotalJoinLength( playerId :int, isHorizontal :Boolean) :int
+        {
+            var joinMap :HashMap = isHorizontal ? _horizontalJoins : _verticalJoins;
+            var joins :Array = joinMap.get( playerId ) as Array;
+            var total :int = 0; 
+            for( var k :int = 0; k < joins.length; k++) {
+                total += (joins[k] != undefined ? joins[k] : 0) * (k + 1);
+            }
+            return total;
+        }
+        
+        public function getPlayersKilledByPlayer( playerId :int ) :Array
+        {
+            return _killList.get( playerId ) as Array;
         }
         
         public function addDelta( playerId :int ) :void
@@ -55,7 +106,6 @@ package joingame
             else {
                 _deltas.put( playerId, _deltas.get( playerId ) + 1);
             }
-            
         }
         
         public function addPlayerKilledPlayer( playerId :int, killPlayerId :int ) :void
@@ -67,7 +117,7 @@ package joingame
                 (_killList.get( playerId) as Array).push( killPlayerId);
             }
             else {
-                log.error( "addPlayerKilledPlayer( " + playerId + ", " + killPlayerId + "), killed player already present!");
+                log.warning( "addPlayerKilledPlayer( " + playerId + ", " + killPlayerId + "), killed player already present!");
             }
             
         }
@@ -97,11 +147,11 @@ package joingame
         public function getMeanKillsPerDelta( playerId :int ) :Number
         {
             if( !_deltas.containsKey( playerId ) ) {
-                log.error( "getMeanDeltasPerKill(" + playerId + "), _deltas does not contain player");
+                log.warning( "getMeanDeltasPerKill(" + playerId + "), _deltas does not contain player");
                 return 0;
             }
             var kills :Number = _killList.containsKey(playerId) ? (_killList.get(playerId) as Array).length : 0;
-            var deltas :Number = _deltas.containsKey(playerId) ? _killList.get(playerId)  : 0;
+            var deltas :Number = _deltas.containsKey(playerId) ? _deltas.get(playerId)  : 0;
             if( deltas == 0) {
                 return 0;
             }

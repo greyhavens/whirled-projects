@@ -49,9 +49,12 @@ package joingame
         }
         
         
-        public var highestRobotLevelDefeated :int;
-        public var humansDefeated :int;
-        public var bestKillsPerDeltaRatio :Number;   
+        public var highestRobotLevelDefeated :int = 0;
+        public var humansDefeated :int = 0;
+        public var bestKillsPerDeltaRatio :Number = 0;
+        
+        public var currentDeltas :int = 0;
+        public var currentKills :int = 0;   
         
     }
 }

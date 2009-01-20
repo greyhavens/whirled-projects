@@ -90,7 +90,7 @@ package joingame.model
                 return [ getPlayerIDToLeftOfPlayer( humanId), getPlayerIDToRightOfPlayer( humanId) ];
             }
             
-            log.warning("getComputerIdsAdjacentToHumanPlayer(), humanId=" + humanId + ", returning []");
+            log.info("getComputerIdsAdjacentToHumanPlayer(), humanId=" + humanId + ", returning []");
             return [];
         }
         
@@ -878,7 +878,7 @@ package joingame.model
                     }
                     else
                     {
-                        log.error("removePlayer " + playerID + " but no player exists in currentSeatingOrder");
+                        log.info("removePlayer " + playerID + " but no player exists in currentSeatingOrder");
                         return;
                     }
 //                }
@@ -925,8 +925,16 @@ package joingame.model
         public function deltaConfirm(boardId :int, fromIndex :int, toIndex :int) :void
         {
             log.debug( ClassUtil.shortClassName( JoinGameModel) + (_isServerModel ? " Server " : " Client ") + "deltaConfirm()"); 
-            AppContext.database.addDelta( boardId );
+//            AppContext.database.addDelta( boardId );
             
+            //Update the player cookie
+            if( AppContext.isSinglePlayer && boardId > 0) {
+                AppContext.singlePlayerCookie.currentDeltas++;
+            }
+            
+            if( _isServerModel ) {
+                AppContext.database.addDelta( boardId );
+            }
             
             var time :int = getTimer();
             
@@ -1012,6 +1020,11 @@ package joingame.model
                         wasHorizontalJoin = true;
                         join._delay = Math.max(0, joinSearchInteration*(Constants.VERTICAL_JOIN_ANIMATION_TIME + Constants.PIECE_DROP_TIME + Constants.PIECE_BOUNCE_TIME) - (getTimer() - startlooptime)/1000.0);
                         doHorizontalJoinEffects(board, join, true, Constants.HEALING_ALLOWED);
+                        
+                        if( _isServerModel ) {
+                            AppContext.database.addJoin(boardId, join._widthInPieces, true);
+                            
+                        }
                     }
                 }
                 /* Send the event for vertical joins */
@@ -1093,6 +1106,10 @@ package joingame.model
                         var event :InternalJoinGameEvent = new InternalJoinGameEvent( playerid, InternalJoinGameEvent.PLAYER_REMOVED)
                         dispatchEvent( event);
                         AppContext.database.addPlayerKilledPlayer( currentDeltaPlayerId, board.playerID);
+                        //Update the player cookie
+//                        if( AppContext.isSinglePlayer && currentDeltaPlayerId > 0) {
+//                            AppContext.singlePlayerCookie.currentKills++;
+//                        }
                     }
                 }
             }

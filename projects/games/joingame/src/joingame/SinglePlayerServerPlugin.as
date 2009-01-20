@@ -35,7 +35,7 @@ package joingame
         protected var _timeRemaining :HashMap;
 //        protected var _gameType :String;
 //        protected var _robotLevel :int;
-        protected var _userCookie :UserCookieDataSourcePlayer;
+//        public var AppContext.singlePlayerCookie :UserCookieDataSourcePlayer;
         
         /**
         * The robot update timer.
@@ -63,7 +63,7 @@ package joingame
         
         internal function handleReplayRequest( playerId :int, cookie :UserCookieDataSourcePlayer, requestedLevel :int) :void
         {
-            trace("SinglePlayerServerPlugin handleReplayRequest for player=" + playerId);
+            log.debug("SinglePlayerServerPlugin handleReplayRequest for player=" + playerId);
             createNewSinglePlayerModel( playerId , _gameModel._singlePlayerGameType, cookie, requestedLevel);
             log.debug("sending singleplayer" + ReplayConfirmMessage.NAME);
             startAI();
@@ -93,8 +93,9 @@ package joingame
         protected function aiTimer( event :TimerEvent ) :void
         {
             if( _gameModel.gameOver ) {
-                trace("stopping game over in aiTimer due to game over");
+                log.debug("stopping game over in aiTimer due to game over");
                 stopAI();
+                return;
             }
             
             var board :JoinGameBoardRepresentation;
@@ -283,7 +284,7 @@ package joingame
                     else {
                         log.warning("Error in makeDeltaForVerticalJoin( boardid=" + board.playerID + ", col=" + targetCol + ", row=" + targetRow + ", color=" + color + ")");
                         log.warning("   rows swapped are the same.");
-                        trace("  baord:" + board);
+                        log.debug("  baord:" + board);
                     }
             }
             else {
@@ -304,21 +305,28 @@ package joingame
             else if( _gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES) {
                 /*If there is no human player, will we watch the end*/
                 if( !ArrayUtil.contains(_gameModel.currentSeatingOrder, _gameModel.humanPlayerId)) {
-                    log.debug("Stopping AI, " + Constants.SINGLE_PLAYER_GAME_TYPE_WAVES + ", human defeated");
+                    trace("Stopping AI, " + Constants.SINGLE_PLAYER_GAME_TYPE_WAVES + ", human defeated");
                     stopAI();
                     handleGameOver();
                 }
                 else if( _gameModel.currentSeatingOrder.length <= 1 ) {
-                    log.debug("Stopping AI, " + Constants.SINGLE_PLAYER_GAME_TYPE_WAVES + ", and only one board");
+                    trace("Stopping AI, " + Constants.SINGLE_PLAYER_GAME_TYPE_WAVES + ", and only one board");
                     stopAI();
-//                    _gameModel.singlePlayerLevel++;
-                    log.debug("After wave defeated, player level=" + _userCookie.highestRobotLevelDefeated++);
-                    Trophies.handleWaveDefeated( _gameModel, _userCookie );
+                    handleGameOver();
+//                    AppContext.singlePlayerCookie.highestRobotLevelDefeated++;
+
                     
-                    if( _userCookie == null) {
+                    
+                    AppContext.singlePlayerCookie.bestKillsPerDeltaRatio = AppContext.database.getMeanKillsPerDelta(_gameModel.humanPlayerId); 
+                    log.debug("AppContext.singlePlayerCookie.bestKillsPerDeltaRatio=" + AppContext.singlePlayerCookie.bestKillsPerDeltaRatio);
+                    
+                    log.debug("After wave defeated, player level=" + AppContext.singlePlayerCookie.highestRobotLevelDefeated++);
+                    Trophies.handleWaveDefeated( _gameModel, AppContext.singlePlayerCookie );
+                    
+                    if( AppContext.singlePlayerCookie == null) {
                         log.error("checkStateAfterActualPlayerRemoval(), sending WaveDefeatedMessage, but cookie null");
                     }
-                    AppContext.messageManager.sendMessage( new WaveDefeatedMessage(_userCookie.clone()));  
+                    AppContext.messageManager.sendMessage( new WaveDefeatedMessage(AppContext.singlePlayerCookie.clone()));  
                 }
                 
             }
@@ -571,8 +579,8 @@ package joingame
         protected function addNewWave(requestedLevel :int) :void 
         {
             var left :Boolean = true;
-//            for( var currentLevel :int = _userCookie.highestRobotLevelDefeated - Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE / 2;
-//                     currentLevel < _userCookie.highestRobotLevelDefeated + Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE/2; 
+//            for( var currentLevel :int = AppContext.singlePlayerCookie.highestRobotLevelDefeated - Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE / 2;
+//                     currentLevel < AppContext.singlePlayerCookie.highestRobotLevelDefeated + Constants.SINGLE_PLAYER_NUMBER_OF_OPPONENTS_PER_WAVE/2; 
 //                   currentLevel++) {
             for( var k :int = 0; k < Constants.SINGLE_PLAYER_ROBOTS_PER_WAVE; k++) {
                 addNewComputerPlayer(requestedLevel, left);
@@ -644,42 +652,45 @@ package joingame
         {
             AppContext.database.clearAll();
             
-            _userCookie = userCookie.clone();
-            if( _userCookie == null) {
+            AppContext.singlePlayerCookie = userCookie.clone();
+            if( AppContext.singlePlayerCookie == null) {
                 log.warning("createNewSinglePlayerModel(" + gameType + "), usercookie is null!!");
             }
             
+            AppContext.singlePlayerCookie.currentDeltas = 0;
+            AppContext.singlePlayerCookie.currentKills = 0;
+            
             robotId2Level.clear();
             
-            trace("attempting to create single player model");
+            log.debug("attempting to create single player model");
 //            function batch () :void {
                 log.debug("createNewSinglePlayerModel( " + playerId + ")" );
                 _gameModel.removeAllPlayers();
                 _gameModel.addPlayer(playerId, _server.createNewRandomBoard(playerId), true);
                 _gameModel.humanPlayerId = playerId;
                 _gameModel._singlePlayerGameType = gameType;
-//                _robotLevel = _userCookie.highestRobotLevelDefeated;
+//                _robotLevel = AppContext.singlePlayerCookie.highestRobotLevelDefeated;
                 if( gameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES ) {
-                    if( requestedLevel > 0 && requestedLevel < _userCookie.highestRobotLevelDefeated) {
+                    if( requestedLevel > 0 && requestedLevel < AppContext.singlePlayerCookie.highestRobotLevelDefeated) {
                         addNewWave(requestedLevel);
                     }
                     else {
-                        addNewWave(_userCookie.highestRobotLevelDefeated + 1);
+                        addNewWave(AppContext.singlePlayerCookie.highestRobotLevelDefeated + 1);
                     }
                 }
                 else if(gameType == Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS) {
                     
-                    if(_userCookie.highestRobotLevelDefeated <= 0) {
-                        _userCookie.highestRobotLevelDefeated = 1;
+                    if(AppContext.singlePlayerCookie.highestRobotLevelDefeated <= 0) {
+                        AppContext.singlePlayerCookie.highestRobotLevelDefeated = 1;
                     } 
-                    log.debug("addRobots( 6, " + (_userCookie.highestRobotLevelDefeated+1) + ")" );
+                    log.debug("addRobots( 6, " + (AppContext.singlePlayerCookie.highestRobotLevelDefeated+1) + ")" );
                      
-                    if( requestedLevel > 0 && requestedLevel < _userCookie.highestRobotLevelDefeated) {
+                    if( requestedLevel > 0 && requestedLevel < AppContext.singlePlayerCookie.highestRobotLevelDefeated) {
                         addRobots(Constants.SINGLE_PLAYER_ROBOTS_TOURNAMENT, requestedLevel);
                     }
                     else {
                     
-                        addRobots(Constants.SINGLE_PLAYER_ROBOTS_TOURNAMENT, _userCookie.highestRobotLevelDefeated + 1);
+                        addRobots(Constants.SINGLE_PLAYER_ROBOTS_TOURNAMENT, AppContext.singlePlayerCookie.highestRobotLevelDefeated + 1);
                     }
 //                    if( userCookie.highestRobotLevelDefeated == 0) {
 //                        log.error("createNewSinglePlayerModel(), selected " + Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS + ", but no level given");
@@ -703,6 +714,10 @@ package joingame
         }
         internal function handleGameOver() :void
         {
+            if( _gameModel.gameOver && !_AITimer.running) {
+                return;
+            }
+            trace("Stopping single player game...");
             stopAI();
             _gameModel.gameOver = true;
             /* We assign scores according to an exponential scale, so the winner gets a big pot,
@@ -716,7 +731,7 @@ package joingame
             var points :Array = new Array();
             var playerIdsInOrderOfLoss :Array = _gameModel._playerIdsInOrderOfLoss.slice();
             playerIdsInOrderOfLoss.push( _gameModel.currentSeatingOrder[0]);
-            
+//            trace("playerIdsInOrderOfLoss=" + playerIdsInOrderOfLoss);
             for( k = 0; k < playerIdsInOrderOfLoss.length; k++) {
                 playerIds.push( playerIdsInOrderOfLoss[k] );
                 
@@ -727,8 +742,8 @@ package joingame
                     points.push( 0 );
                 }
             }
-            trace("points=" + points);
-            scores.push( 25 );
+//            trace("points=" + points);
+//            scores.push( 25 );
             for( k = 0; k < playerIds.length; k++) {
                 
                 var score :int = 0;
@@ -742,6 +757,7 @@ package joingame
 //                scores.push( scoreFunction(k+1) );
 //                scores.push( (k+1) * 100 );
             }
+//            trace("scores=" + scores);
             
             /* Changed the score due losers in two player games not getting anything. */
             trace("Single player game:\nAwarding scores:\nPlayer\t\t|\tScore\t\t|\tValue\n");
@@ -750,7 +766,7 @@ package joingame
                     trace("Robot " + Math.abs(int(playerIds[i])) + "  \t|\t" + scores[i] + "  \t|\t" + points[i]);    
                 }
                 else { 
-                    trace("Player " + playerIds[i] + "  \t|\t" + scores[i] );
+                    trace("Player " + playerIds[i] + "  \t|\t" + scores[i] + "  \t|\t" + points[i]);
                 }
             }
             
@@ -764,26 +780,34 @@ package joingame
                 }
             }
             
-            trace("endGameWithScores( " + submittedPlayerIds + ", " + submittedScores + ")");
+//            trace("endGameWithScores( " + submittedPlayerIds + ", " + submittedScores + ")");
             if( AppContext.gameCtrl.isConnected()) {
                 AppContext.gameCtrl.game.endGameWithScores(submittedPlayerIds, submittedScores, GameSubControl.TO_EACH_THEIR_OWN);
                 
             }
             
-            //If the player wins, check if they go up a level
-            if( playerIds[ playerIds.length - 1 ] > 0) {
-                var highestLevelDefeated :int = 0;
-                for( k = 0; k < playerIds.length - 1; k++) {
-                    var level :int = getLevelForComputerId(playerIds[k]);
-                    if( level > _userCookie.highestRobotLevelDefeated) {
-                        _userCookie.highestRobotLevelDefeated = level;
+            //If the player wins, and playing the campaign, check if they go up a level
+            if( _gameModel._singlePlayerGameType == Constants.SINGLE_PLAYER_GAME_TYPE_WAVES) {
+                
+                if( playerIds[ playerIds.length - 1 ] > 0) {
+                    //Find the highest robot level, and set the cookie to it
+                    var highestLevelDefeated :int = 0;
+                    for( k = 0; k < playerIds.length - 1; k++) {
+                        var level :int = getLevelForComputerId(playerIds[k]);
+                        if( level >= AppContext.singlePlayerCookie.highestRobotLevelDefeated) {
+                            AppContext.singlePlayerCookie.highestRobotLevelDefeated = level;
+                        }
                     }
+                    //Also count the delta kill ratio
+                    
                 }
+                
             }
             
-            
-            
-            AppContext.messageManager.sendMessage( new GameOverMessage(_userCookie));
+            log.debug("AppContext.singlePlayerCookie.bestKillsPerDeltaRatio=" + AppContext.singlePlayerCookie.bestKillsPerDeltaRatio);
+            AppContext.singlePlayerCookie.bestKillsPerDeltaRatio = AppContext.database.getMeanKillsPerDelta(_gameModel.humanPlayerId); 
+            trace("sending " + AppContext.singlePlayerCookie);
+            AppContext.messageManager.sendMessage( new GameOverMessage(AppContext.singlePlayerCookie));
             
         }
         

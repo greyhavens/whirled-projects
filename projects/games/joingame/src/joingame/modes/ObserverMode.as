@@ -81,14 +81,14 @@ package joingame.modes
             _startButton = new SimpleSceneObject( startButtonMovieClip );
             _startButton.x = AppContext.gameWidth/2;
             _startButton.y = -100;
-            addObject( _startButton, _modeLayer);
+//            addObject( _startButton, _modeLayer);
             
             var replayButton :SimpleTextButton = new SimpleTextButton("Replay");
             replayButton.addEventListener(MouseEvent.CLICK, doReplayButtonClicked);
             replayButton.x = 300;
             replayButton.y = -300;
 //            _modeLayer.addChild( replayButton);
-            _replayButton = new SimpleSceneObject( replayButton );
+//            _replayButton = new SimpleSceneObject( replayButton );
             
             
             var singlePlayerMainMenuButton :SimpleTextButton = new SimpleTextButton("Main Menu");
@@ -99,7 +99,7 @@ package joingame.modes
             
             
             if(AppContext.isSinglePlayer ) {
-                addObject( _replayButton, _modeLayer);
+//                addObject( _replayButton, _modeLayer);
                 addObject( _singlePlayerMainMenuButton, _modeLayer);
             }
             
@@ -188,7 +188,7 @@ package joingame.modes
         
         override protected function enter () :void
         {
-            trace("Observer mode");
+//            trace("Observer mode");
             AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             initGameData();
         }
@@ -234,7 +234,7 @@ package joingame.modes
             
             _id2HeadshotSceneObject = new HashMap();
             _id2MarqueeSceneObject = new HashMap();
-            trace("initGameData(), _gameModel._initialSeatedPlayerIds=" + _gameModel._initialSeatedPlayerIds);
+//            trace("initGameData(), _gameModel._initialSeatedPlayerIds=" + _gameModel._initialSeatedPlayerIds);
             for each (var id :int in _gameModel._initialSeatedPlayerIds) {
                 var marquee :MovieClip = new _marqueeClass();
                 var so2 :SimpleSceneObject = new SimpleSceneObject(marquee);
@@ -260,9 +260,8 @@ package joingame.modes
             
             animateHeadshotsToLocation(null, 0);
             
-            trace("Player " + AppContext.playerId + ", ObserverMode, initGameData(), _gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
+//            trace("Player " + AppContext.playerId + ", ObserverMode, initGameData(), _gameModel.currentSeatingOrder=" + _gameModel.currentSeatingOrder);
             if(_gameModel.currentSeatingOrder.length <= 1) {
-                
                 gameOver();
             }
         }
@@ -382,7 +381,9 @@ package joingame.modes
         
         protected function gameOver( e :InternalJoinGameEvent = null) :void
         {
-            _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
+            if( ArrayUtil.contains( GameContext.gameModel.currentSeatingOrder, AppContext.playerId)) {
+                _winnerClip.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 200, 1.0));
+            }
             _modeLayer.setChildIndex( _winnerClip.displayObject, _modeLayer.numChildren - 1);
             AudioManager.instance.playSoundNamed("final_applause");
             
@@ -390,12 +391,12 @@ package joingame.modes
                 if( AppContext.isSinglePlayer ) {
                     _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                     
-                    _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
+//                    _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
 //                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
-                    _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
+//                    _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
                     _modeLayer.setChildIndex( _singlePlayerMainMenuButton.displayObject, _modeLayer.numChildren - 1);
                     
-                    _modeLayer.addChild( new GameStatsSinglePlayerSprite(GameContext.playerCookieData.clone(), GameContext.gameModel._tempNewPlayerCookie.clone()));
+//                    _modeLayer.addChild( new GameStatsSinglePlayerSprite(GameContext.playerCookieData.clone(), GameContext.gameModel._tempNewPlayerCookie.clone()));
                     GameContext.playerCookieData.setFrom( GameContext.gameModel._tempNewPlayerCookie );
                     if( AppContext.isConnected ) {
                         log.info("gameOver(), Writing new single player cookie");
@@ -541,7 +542,7 @@ package joingame.modes
         protected var _gameRestartTimer :Timer;
         protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
         
-        protected var _replayButton :SceneObject;
+//        protected var _replayButton :SceneObject;
         protected var _singlePlayerMainMenuButton :SceneObject;
         
     }

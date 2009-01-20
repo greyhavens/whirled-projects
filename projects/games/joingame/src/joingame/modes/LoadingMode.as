@@ -3,21 +3,27 @@ package joingame.modes
     import com.threerings.util.Log;
     import com.whirled.contrib.simplegame.*;
     import com.whirled.contrib.simplegame.resource.ResourceManager;
-    import com.whirled.contrib.simplegame.resource.SwfResource;
     
     import flash.display.Graphics;
-    import flash.display.MovieClip;
     import flash.text.TextField;
     import flash.text.TextFieldAutoSize;
     
     import joingame.*;
-    
-    import mx.states.AddChild;
 
 public class LoadingMode extends JoinGameMode
 {
     
     private static const log :Log = Log.getLog(LoadingMode);
+    
+    public function LoadingMode( callback :Function = null)
+    {
+        if( callback != null) {
+            _callBack = callback;
+        }
+        else {
+            _callBack = handleResourcesLoaded;
+        }
+    }
     
     override protected function setup () :void
     {
@@ -54,7 +60,7 @@ public class LoadingMode extends JoinGameMode
         }
     }
 
-    protected function load () :void
+    public function load () :void
     {
         var rm :ResourceManager = ResourceManager.instance;
         // gfx
@@ -62,6 +68,8 @@ public class LoadingMode extends JoinGameMode
         rm.queueResourceLoad("image", "BG_watcher",  { embeddedClass: Resources.IMG_BG_WATCHER });
         rm.queueResourceLoad("swf", "UI", { embeddedClass: Resources.UI_DATA });
         rm.queueResourceLoad("image", "BG",  { embeddedClass: Resources.IMG_BG });
+        rm.queueResourceLoad("image", "AI1",  { embeddedClass: Resources.IMG_AI1 });
+        rm.queueResourceLoad("image", "AI2",  { embeddedClass: Resources.IMG_AI2 });
         rm.queueResourceLoad("image", "INSTRUCTIONS",  { embeddedClass: Resources.IMG_INSTRUCTIONS_WHILE_LOADING });
         rm.queueResourceLoad("image", "ICON",  { embeddedClass: Resources.IMG_ICON });
         
@@ -78,7 +86,7 @@ public class LoadingMode extends JoinGameMode
         
         
         
-        rm.loadQueuedResources(handleResourcesLoaded, handleResourceLoadErr);
+        rm.loadQueuedResources(_callBack, handleResourceLoadErr);
         _loading = true;
     }
 
@@ -106,6 +114,7 @@ public class LoadingMode extends JoinGameMode
 
     protected var _text :TextField;
     protected var _loading :Boolean;
+    protected var _callBack :Function;
 }
 
 }

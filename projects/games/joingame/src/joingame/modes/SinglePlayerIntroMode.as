@@ -60,7 +60,7 @@ package joingame.modes
             _intro_panel = new SimpleSceneObject( new _intro_panel_Class() );
             addObject( _intro_panel, _modeLayer);
             
-            var controller :IntroController = new IntroController( modeSprite);
+//            var controller :GameController = new GameController( modeSprite);
             
             //Add the previous level buttons, if any
             var buttonNames :Array = ["levela", "levelb", "levelc", "leveld"];
@@ -70,10 +70,10 @@ package joingame.modes
                     var selectPreviousLevelButton :MovieClip = MovieClip(_intro_panel.displayObject[buttonNames[ levelBelowMine - 1]]);
                     selectPreviousLevelButton.level_name.text = "Level " + selectedLevel;
                     selectPreviousLevelButton.level_name.   selectable = false;
-                    Command.bind(selectPreviousLevelButton, MouseEvent.CLICK, IntroController.START_WAVES, [selectedLevel, selectPreviousLevelButton]);
-                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_OVER, IntroController.MOUSE_OVER, selectPreviousLevelButton);
-                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_OUT, IntroController.MOUSE_OUT, selectPreviousLevelButton);
-                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_DOWN, IntroController.MOUSE_DOWN, selectPreviousLevelButton);
+                    Command.bind(selectPreviousLevelButton, MouseEvent.CLICK, GameController.START_WAVES, [selectedLevel, selectPreviousLevelButton]);
+                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_OVER, GameController.MOUSE_OVER, selectPreviousLevelButton);
+                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_OUT, GameController.MOUSE_OUT, selectPreviousLevelButton);
+                    Command.bind(selectPreviousLevelButton, MouseEvent.MOUSE_DOWN, GameController.MOUSE_DOWN, selectPreviousLevelButton);
                 }
             
             }
@@ -81,18 +81,18 @@ package joingame.modes
             
             _startWavesButton = MovieClip(_intro_panel.displayObject["start"]);
             _startWavesButton.mouseEnabled = true;
-            Command.bind(_startWavesButton, MouseEvent.MOUSE_OVER, IntroController.MOUSE_OVER, _startWavesButton);
-            Command.bind(_startWavesButton, MouseEvent.MOUSE_OUT, IntroController.MOUSE_OUT, _startWavesButton);
-            Command.bind(_startWavesButton, MouseEvent.MOUSE_DOWN, IntroController.MOUSE_DOWN, _startWavesButton);
-            Command.bind(_startWavesButton, MouseEvent.CLICK, IntroController.START_WAVES, [GameContext.playerCookieData.highestRobotLevelDefeated, _startWavesButton]);
+            Command.bind(_startWavesButton, MouseEvent.MOUSE_OVER, GameController.MOUSE_OVER, _startWavesButton);
+            Command.bind(_startWavesButton, MouseEvent.MOUSE_OUT, GameController.MOUSE_OUT, _startWavesButton);
+            Command.bind(_startWavesButton, MouseEvent.MOUSE_DOWN, GameController.MOUSE_DOWN, _startWavesButton);
+            Command.bind(_startWavesButton, MouseEvent.CLICK, GameController.START_WAVES, [GameContext.playerCookieData.highestRobotLevelDefeated, _startWavesButton]);
             _modeLayer.addChild(_startWavesButton);
             
             var startTournmamentButton :MovieClip = MovieClip(_intro_panel.displayObject["tournament"]);
             startTournmamentButton.mouseEnabled = true;
-            Command.bind(startTournmamentButton, MouseEvent.MOUSE_OVER, IntroController.MOUSE_OVER, startTournmamentButton);
-            Command.bind(startTournmamentButton, MouseEvent.MOUSE_OUT, IntroController.MOUSE_OUT, startTournmamentButton);
-            Command.bind(startTournmamentButton, MouseEvent.MOUSE_DOWN, IntroController.MOUSE_DOWN, startTournmamentButton);
-            Command.bind(startTournmamentButton, MouseEvent.CLICK, IntroController.START_CAMPAIGN_LEVEL, [GameContext.playerCookieData.highestRobotLevelDefeated, startTournmamentButton]);
+            Command.bind(startTournmamentButton, MouseEvent.MOUSE_OVER, GameController.MOUSE_OVER, startTournmamentButton);
+            Command.bind(startTournmamentButton, MouseEvent.MOUSE_OUT, GameController.MOUSE_OUT, startTournmamentButton);
+            Command.bind(startTournmamentButton, MouseEvent.MOUSE_DOWN, GameController.MOUSE_DOWN, startTournmamentButton);
+            Command.bind(startTournmamentButton, MouseEvent.CLICK, GameController.START_CAMPAIGN_LEVEL, [GameContext.playerCookieData.highestRobotLevelDefeated, startTournmamentButton]);
 //            _modeLayer.addChild(startTournmamentButton);
             
             
@@ -200,63 +200,63 @@ package joingame.modes
     }
 }
 
-import com.threerings.util.Controller;
-import flash.events.IEventDispatcher;
-import joingame.net.StartSinglePlayerGameMessage;
-import joingame.AppContext;
-import joingame.Constants;
-import joingame.GameContext;
-import flash.display.DisplayObject;
-import flash.filters.ColorMatrixFilter;
-    
-
-class IntroController extends Controller
-{
-    public static const START_CAMPAIGN_LEVEL :String = "StartCampainLevel";
-    public static const START_WAVES :String = "StartWaves";
-    public static const MOUSE_DOWN :String = "MouseDown";
-    public static const MOUSE_OVER :String = "MouseOver";
-    public static const MOUSE_OUT :String = "MouseOut";
-    
-    /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */                         
-    protected var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
-    protected var _myColorMatrix_filter :ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
-    
-    public function IntroController(controlledPanel :IEventDispatcher)
-    {
-        setControlledPanel(controlledPanel);
-    }
-    
-    public function handleStartCampainLevel( level :int, button :DisplayObject ) :void
-    {
-        button.y -= 4;
-        var msg :StartSinglePlayerGameMessage = new StartSinglePlayerGameMessage( AppContext.playerId, Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS, GameContext.playerCookieData.clone(), level);
-        GameContext.requestedSinglePlayerLevel = level;
-        AppContext.messageManager.sendMessage(msg);
-    }
-    
-    public function handleStartWaves( level :int, button :DisplayObject ) :void
-    {
-        button.y -= 4;
-        var msg :StartSinglePlayerGameMessage = new StartSinglePlayerGameMessage( AppContext.playerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, GameContext.playerCookieData.clone(), level);
-        GameContext.requestedSinglePlayerLevel = level;
-        AppContext.messageManager.sendMessage(msg);
-    }
-    
-    public function handleMouseDown( button :DisplayObject ) :void 
-    {
-        button.y += 4;
-    }
-    
-    
-    public function handleMouseOver( button :DisplayObject ) :void
-    {
-        button.filters = [_myColorMatrix_filter];
-    }
-    
-    public function handleMouseOut( button :DisplayObject ) :void 
-    {
-        button.filters = [];
-    }
-    
-}
+//import com.threerings.util.Controller;
+//import flash.events.IEventDispatcher;
+//import joingame.net.StartSinglePlayerGameMessage;
+//import joingame.AppContext;
+//import joingame.Constants;
+//import joingame.GameContext;
+//import flash.display.DisplayObject;
+//import flash.filters.ColorMatrixFilter;
+//    
+//
+//class GameController extends Controller
+//{
+//    public static const START_CAMPAIGN_LEVEL :String = "StartCampainLevel";
+//    public static const START_WAVES :String = "StartWaves";
+//    public static const MOUSE_DOWN :String = "MouseDown";
+//    public static const MOUSE_OVER :String = "MouseOver";
+//    public static const MOUSE_OUT :String = "MouseOut";
+//    
+//    /* See http://www.adobetutorialz.com/articles/1987/1/Color-Matrix */                         
+//    protected var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
+//    protected var _myColorMatrix_filter :ColorMatrixFilter = new ColorMatrixFilter(myElements_array);
+//    
+//    public function GameController(controlledPanel :IEventDispatcher)
+//    {
+//        setControlledPanel(controlledPanel);
+//    }
+//    
+//    public function handleStartCampainLevel( level :int, button :DisplayObject ) :void
+//    {
+//        button.y -= 4;
+//        var msg :StartSinglePlayerGameMessage = new StartSinglePlayerGameMessage( AppContext.playerId, Constants.SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS, GameContext.playerCookieData.clone(), level);
+//        GameContext.requestedSinglePlayerLevel = level;
+//        AppContext.messageManager.sendMessage(msg);
+//    }
+//    
+//    public function handleStartWaves( level :int, button :DisplayObject ) :void
+//    {
+//        button.y -= 4;
+//        var msg :StartSinglePlayerGameMessage = new StartSinglePlayerGameMessage( AppContext.playerId, Constants.SINGLE_PLAYER_GAME_TYPE_WAVES, GameContext.playerCookieData.clone(), level);
+//        GameContext.requestedSinglePlayerLevel = level;
+//        AppContext.messageManager.sendMessage(msg);
+//    }
+//    
+//    public function handleMouseDown( button :DisplayObject ) :void 
+//    {
+//        button.y += 4;
+//    }
+//    
+//    
+//    public function handleMouseOver( button :DisplayObject ) :void
+//    {
+//        button.filters = [_myColorMatrix_filter];
+//    }
+//    
+//    public function handleMouseOut( button :DisplayObject ) :void 
+//    {
+//        button.filters = [];
+//    }
+//    
+//}

@@ -24,8 +24,8 @@ package joingame
         
         public static const HEALING_ALLOWED :Boolean = false;
         
-//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
-        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
+        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = 5 * PUZZLE_STARTING_COLS;// * PUZZLE_STARTING_ROWS;
+//        public static const MINIMUM_PIECES_TO_STAY_ALIVE :int = PUZZLE_STARTING_COLS * (PUZZLE_STARTING_ROWS - 0) - 1;
         
         public static const MAXIMUM_BOARD_SIZE :int = 500;
         
@@ -102,7 +102,7 @@ package joingame
         
         
         
-        public static const LOCAL_MODE :Boolean = true;
+        public static const LOCAL_MODE :Boolean = false;
         
         /*Single player */
         public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 5000;
@@ -110,8 +110,8 @@ package joingame
         
         public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 1;
         
-        public static const SINGLE_PLAYER_ROBOTS_PER_WAVE:int = 8;
-        public static const SINGLE_PLAYER_ROBOTS_TOURNAMENT:int = 10;
+        public static const SINGLE_PLAYER_ROBOTS_PER_WAVE:int = 8;//;8;
+        public static const SINGLE_PLAYER_ROBOTS_TOURNAMENT:int = 6;
         
         public static const SINGLE_PLAYER_GAME_TYPE_WAVES :String = "Game Type: Waves";
         public static const SINGLE_PLAYER_GAME_TYPE_CHOOSE_OPPONENTS :String = "Game Type: Choose Level";

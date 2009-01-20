@@ -3,12 +3,14 @@ package joingame.modes
     import com.threerings.flash.SimpleTextButton;
     import com.threerings.util.ClassUtil;
     import com.threerings.util.Log;
-    import com.whirled.contrib.simplegame.AppMode;
+    import com.whirled.contrib.simplegame.resource.ImageResource;
     import com.whirled.net.MessageReceivedEvent;
     
+    import flash.display.DisplayObject;
     import flash.events.MouseEvent;
     
     import joingame.AppContext;
+    import joingame.Constants;
     import joingame.GameContext;
     import joingame.net.ReplayConfirmMessage;
     import joingame.net.StartSinglePlayerWaveMessage;
@@ -19,12 +21,25 @@ package joingame.modes
         private static const log :Log = Log.getLog(SinglePlayerWaveDefeatedMode);
         
         protected var _nextWaveButton :SimpleTextButton;
+        protected var _bg :DisplayObject;
         
         override protected function setup () :void
         {
             super.setup();
+            
+            _bg = ImageResource.instantiateBitmap("BG_watcher");
+            if(_bg != null) {
+                _modeLayer.addChild(_bg);
+                AppContext.gameWidth = _bg.width;
+                AppContext.gameHeight = _bg.height;
+            }
+            else {
+                trace("!!!!!Background is null!!!");
+            }
+            
+            
             log.debug("SinglePlayerWaveDefeatedMode...");
-            trace("SinglePlayerWaveDefeatedMode...");
+//            trace("SinglePlayerWaveDefeatedMode...");
             _nextWaveButton  = new SimpleTextButton("Next wave");
             _nextWaveButton.x = 50;
             _nextWaveButton.y = 200;
@@ -37,6 +52,10 @@ package joingame.modes
             _modeLayer.addChild( mainMenuButton );
     
             fadeIn();
+            
+            modeSprite.graphics.beginFill(0xffffff);
+            modeSprite.graphics.drawRect(0,0,Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
+            modeSprite.graphics.endFill();
         }
         
         protected function doMainMenuButtonClick (event :MouseEvent) :void

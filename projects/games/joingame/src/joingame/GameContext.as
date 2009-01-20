@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.audio.AudioControls;
 import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.ImageResource;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -35,66 +36,18 @@ public class GameContext
     public static var cookieManager :UserCookieManager = new UserCookieManager(1);
     public static var playerCookieData :UserCookieDataSourcePlayer = new UserCookieDataSourcePlayer();
     
+    public static var controller :GameController;
+    
     public static var requestedSinglePlayerLevel :int;
         
-//    public static const GAME_TYPE_MULTIPLAYER :int = 0;
-//    public static const GAME_TYPE_SINGLEPLAYER :int = 1;
-
-    /* Frequently-used values that are cached here for performance reasons */
-//    public static var mapScaleXInv :Number;
-//    public static var mapScaleYInv :Number;
-//    public static var scaleSprites :Boolean;
-
-//    public static var gameType :int;
-//    public static var gameData :GameData;
-//    public static var spLevel :LevelData;
-//    public static var mpSettings :MultiplayerSettingsData;
-//    public static var playerStats :PlayerStats;
-//    public static function get isSinglePlayer () :Boolean { return gameType == GAME_TYPE_SINGLEPLAYER; }
-//    public static function get isMultiplayer () :Boolean { return gameType == GAME_TYPE_MULTIPLAYER; }
-
     public static var gameMode :PlayPuzzleMode;
-//    public static var netObjects :NetObjectDB;
-//    public static var battleBoardView :BattleBoardView;
-//    public static var diurnalCycle :DiurnalCycle;
-//    public static var dashboard :DashboardView;
-    
-    
-    
-//    public static var forceParticleContainer :ForceParticleContainer;
-//    public static var unitFactory :UnitFactory;
-
-//    public static var overlayLayer :Sprite;
-//    public static var dashboardLayer :Sprite;
-//    public static var battleLayer :Sprite;
 
     public static var playAudio :Boolean;
     public static var musicControls :AudioControls;
     public static var sfxControls :AudioControls;
 
     public static var playerInfos :Array;
-//    public static var playerCreatureSpellSets :Array;
-//    public static var localPlayerIndex :int;
-
-//    public static var winningTeamId :int;
-
-//    public static function get localPlayerInfo () :LocalPlayerInfo { return playerInfos[localPlayerIndex]; }
     public static function get numPlayers () :int { return playerInfos.length; }
-
-//    public static function get mapSettings () :MapSettingsData
-//    {
-//        return (isSinglePlayer ? spLevel.mapSettings : mpSettings.mapSettings);
-//    }
-
-//    public static function get battlefieldWidth () :Number
-//    {
-//        return (Constants.BATTLE_WIDTH * mapSettings.mapScaleX);
-//    }
-//
-//    public static function get battlefieldHeight () :Number
-//    {
-//        return (Constants.BATTLE_HEIGHT * mapSettings.mapScaleY);
-//    }
 
     public static function getPlayerByName (playerName :String) :PlayerInfo
     {
@@ -123,18 +76,22 @@ public class GameContext
             }
             else {
                 var dummyHeadShot :Sprite = new Sprite();
-                var icon :Bitmap = ImageResource.instantiateBitmap("ICON");
+                var icon :Bitmap = Rand.nextBoolean(0) ? ImageResource.instantiateBitmap("AI1") : ImageResource.instantiateBitmap("AI2");
+                
                 var txt:TextField = new TextField();
                 
                 if(playerid < 0) {
                     dummyHeadShot.addChild(icon);
-                    txt.textColor = 0xffffff;
+//                    txt.textColor = 0xffffff;
+                    txt.textColor = 0x000000;
     //                txt.backgroundColor = 0xffffff;
     //                txt.background = true;
                     txt.width = 30;
                     txt.height = 20;
-                    txt.scaleX = 3;
-                    txt.scaleY = 3;
+                    txt.scaleX = 1;
+                    txt.scaleY = txt.scaleX;
+                    txt.x = 60;
+                    txt.y = 45;
     //                txt.text = "" + Math.abs(playerid) +" " + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
 //                    txt.text = "" + gameModel.getBoardForPlayerID(playerid)._computerPlayerLevel;
                     txt.text = "" + SinglePlayerServerPlugin.getLevelForComputerId(playerid);

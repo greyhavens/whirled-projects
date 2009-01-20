@@ -20,6 +20,7 @@ package joingame.modes
     
     import flash.display.DisplayObject;
     import flash.display.MovieClip;
+    import flash.events.MouseEvent;
     
     import joingame.*;
     import joingame.model.*;
@@ -54,6 +55,7 @@ package joingame.modes
             if(AppContext.isConnected) {
                 AppContext.gameCtrl.game.playerReady();
             }
+            
             
             AppContext.messageManager.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, messageReceived);
             
@@ -90,6 +92,20 @@ package joingame.modes
             
             _extraPlacerWest = MovieClip(swfRoot["extra_placer_west"]);
             _extraPlacerWest.mouseEnabled = false;
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             _gameModel = GameContext.gameModel; //new JoinGameModel(AppContext.gameCtrl);
             
@@ -132,6 +148,26 @@ package joingame.modes
             _boardsView.updateBoardDisplays();
             _boardsView.adjustZoomOfPlayAreaBasedOnCurrentPlayersBoard();
             
+            
+            if( AppContext.isSinglePlayer ) {
+                var swf :SwfResource = (ResourceManager.instance.getResource("UI") as SwfResource);
+                var _intro_panel_Class :Class = swf.getClass("intro_panel");
+                var _intro_panel :MovieClip = new _intro_panel_Class();
+                var mainMenuButton :MovieClip = MovieClip(_intro_panel["levela"]);
+                mainMenuButton.level_name.text = "Menu";
+                mainMenuButton.level_name.selectable = false;
+                Command.bind(mainMenuButton, MouseEvent.CLICK, GameController.MAIN_MENU);
+                Command.bind(mainMenuButton, MouseEvent.MOUSE_OVER, GameController.MOUSE_OVER, mainMenuButton);
+                Command.bind(mainMenuButton, MouseEvent.MOUSE_OUT, GameController.MOUSE_OUT, mainMenuButton);
+                Command.bind(mainMenuButton, MouseEvent.MOUSE_DOWN, GameController.MOUSE_DOWN, mainMenuButton);
+                modeSprite.addChild( mainMenuButton );
+                mainMenuButton.scaleX = 0.5;
+                mainMenuButton.scaleY = mainMenuButton.scaleX;
+                mainMenuButton.x = mainMenuButton.width;
+                mainMenuButton.y = mainMenuButton.height;
+            }
+            
+            
             if (_shouldFadeIn) {
                 fadeIn();
             }
@@ -143,7 +179,6 @@ package joingame.modes
         override public function onKeyDown (keyCode :uint) :void
         {
             if( keyCode == KeyboardCodes.A) {
-                trace("Client sending addPlayer message");
                 AppContext.messageManager.sendMessage( new AddPlayerMessage(0, false, false));
             }
             

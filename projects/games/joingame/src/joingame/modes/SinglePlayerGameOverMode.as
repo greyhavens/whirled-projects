@@ -37,7 +37,7 @@ package joingame.modes
         protected var _marqueeClass :Class;
         
         protected var _myColorMatrix_filter :ColorMatrixFilter;
-        protected var _startButton :SimpleSceneObject;
+        protected var _replayButton :SimpleSceneObject;
         
         protected var _winnerClip :SceneObject;
         
@@ -85,16 +85,16 @@ package joingame.modes
             
             var replayButtonClass :Class = swf.getClass("replay_button");
             
-            var startButtonMovieClip :MovieClip = new replayButtonClass();
-            startButtonMovieClip.mouseEnabled = true;
-            startButtonMovieClip.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-            startButtonMovieClip.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-            startButtonMovieClip.addEventListener(MouseEvent.CLICK, mouseClicked);
-            startButtonMovieClip.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+            var replayButtonMovieClip :MovieClip = new replayButtonClass();
+            replayButtonMovieClip.mouseEnabled = true;
+            replayButtonMovieClip.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+            replayButtonMovieClip.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            replayButtonMovieClip.addEventListener(MouseEvent.CLICK, mouseClicked);
+            replayButtonMovieClip.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
             
-            _startButton = new SimpleSceneObject( startButtonMovieClip );
-            _startButton.x = AppContext.gameWidth/2;
-            _startButton.y = -100;
+            _replayButton = new SimpleSceneObject( replayButtonMovieClip );
+            _replayButton.x = AppContext.gameWidth/2;
+            _replayButton.y = -100;
             
             
             var mainMenuButton :SimpleTextButton = new SimpleTextButton("Main Menu");
@@ -105,7 +105,7 @@ package joingame.modes
          
             
             
-            addObject( _startButton, _modeLayer);
+//            addObject( _startButton, _modeLayer);
             
             var myElements_array:Array = [2,0,0,0,-13.5,0,2,0,0,-13.5,0,0,2,0,-13.5,0,0,0,1,0];
             _myColorMatrix_filter = new ColorMatrixFilter(myElements_array);
@@ -136,8 +136,8 @@ package joingame.modes
 //            _modeLayer.setChildIndex( _winnerClip.displayObject, _modeLayer.numChildren - 1);
 //            AudioManager.instance.playSoundNamed("final_applause");
             
-            _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
-            _modeLayer.setChildIndex( _startButton.displayObject, _modeLayer.numChildren - 1);
+            _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
+//            _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
                 
         }
         
@@ -148,24 +148,24 @@ package joingame.modes
         
         private function mouseClicked( event:MouseEvent ) :void
         {
-            _startButton.y -= 4;
+            _replayButton.y -= 4;
             log.debug("sending " + ReplayRequestMessage.NAME );
             AppContext.messageManager.sendMessage(new ReplayRequestMessage(AppContext.playerId, GameContext.playerCookieData, GameContext.requestedSinglePlayerLevel));
         }
         
         private function mouseOver( event:MouseEvent ) :void
         {
-            _startButton.displayObject.filters = [_myColorMatrix_filter];
+            _replayButton.displayObject.filters = [_myColorMatrix_filter];
         }
         
         private function mouseOut( event:MouseEvent ) :void 
         {
-            _startButton.displayObject.filters = [];
+            _replayButton.displayObject.filters = [];
         }
         
         private function mouseDown( event:MouseEvent ) :void 
         {
-            _startButton.y += 4;
+            _replayButton.y += 4;
         }
         
         

@@ -8,6 +8,12 @@ package joingame
         [Embed(source="../../rsrc/BG.png", mimeType="application/octet-stream")]
         public static const IMG_BG :Class;
         
+        [Embed(source="../../rsrc/ai_01.png", mimeType="application/octet-stream")]
+        public static const IMG_AI1 :Class;
+        
+        [Embed(source="../../rsrc/ai_02.png", mimeType="application/octet-stream")]
+        public static const IMG_AI2 :Class;
+        
         [Embed(source="../../rsrc/BG_watcher.png", mimeType="application/octet-stream")]
         public static const IMG_BG_WATCHER :Class;
         
@@ -52,7 +58,9 @@ package joingame
         [Embed(source="../../rsrc/icon.png", mimeType="application/octet-stream")]
         public static const IMG_ICON :Class;
         
-        
+        //// fonts
+        [Embed(source="../../rsrc/CooperBlackStd.otf", fontName="CooperBlackStd")]
+        public static const FONT_SUNNYSIDE :Class;
         
 //        [Embed(source="../../rsrc/Click_windup.mp3")]
 //        public static const PIECE_CONVERTS_TO_VERTICAL_JOIN :Class;

@@ -34,6 +34,8 @@ public class AppContext
     public static var gameWidth :int = 700;
     public static var beginToShowInstructionsTime :int = 0;
     public static var database :Database = new Database();
+    
+    public static var singlePlayerCookie :UserCookieDataSourcePlayer;
 }
 
 }
