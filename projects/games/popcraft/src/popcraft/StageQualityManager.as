@@ -6,24 +6,24 @@ public class StageQualityManager
 {
     public static function get stageQuality () :String
     {
-        if (AppContext.gameCtrl.isConnected()) {
+        if (ClientContext.gameCtrl.isConnected()) {
             if (null == _stageQuality) {
                 _stageQuality = StageQuality.MEDIUM;
             }
 
             return _stageQuality;
         } else {
-            return AppContext.mainSprite.stage.quality;
+            return ClientContext.mainSprite.stage.quality;
         }
     }
 
     public static function set stageQuality (quality :String) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.local.setStageQuality(quality);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.local.setStageQuality(quality);
             _stageQuality = quality;
         } else {
-            AppContext.mainSprite.stage.quality = quality;
+            ClientContext.mainSprite.stage.quality = quality;
         }
     }
 

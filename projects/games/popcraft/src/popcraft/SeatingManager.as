@@ -1,148 +1,117 @@
 package popcraft {
 
 import com.threerings.util.ArrayUtil;
+import com.whirled.game.GameControl;
 import com.whirled.game.OccupantChangedEvent;
-
-import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.Shape;
 
 public class SeatingManager
 {
-    public static function init () :void
+    public function init (gameCtrl :GameControl) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            _numExpectedPlayers = AppContext.gameCtrl.game.seating.getPlayerIds().length;
-            _headshots = ArrayUtil.create(_numExpectedPlayers, null);
+        _gameCtrl = gameCtrl;
+
+        if (_gameCtrl.isConnected()) {
+            _numExpectedPlayers = _gameCtrl.game.seating.getPlayerIds().length;
             _playersPresent = ArrayUtil.create(_numExpectedPlayers, false);
-            _localPlayerSeat = AppContext.gameCtrl.game.seating.getMyPosition();
+            _localPlayerSeat = _gameCtrl.game.seating.getMyPosition();
             updatePlayers();
 
             // Use a high priority for these event handlers. We want to process them before
             // anyone else does.
-            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED,
+            _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED,
                                                       updatePlayers, false, int.MAX_VALUE);
-            AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+            _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
                                                       updatePlayers, false, int.MAX_VALUE);
 
         } else {
             _numExpectedPlayers = 1;
-            _headshots = [ null ];
             _numPlayers = 1;
             _localPlayerSeat = 0;
             _lowestOccupiedSeat = 0;
         }
     }
 
-    public static function get numExpectedPlayers () :int
+    public function get numExpectedPlayers () :int
     {
         return _numExpectedPlayers;
     }
 
-    public static function get numPlayers () :int
+    public function get numPlayers () :int
     {
         return _numPlayers;
     }
 
-    public static function get allPlayersPresent () :Boolean
+    public function get allPlayersPresent () :Boolean
     {
         return _numExpectedPlayers == _numPlayers;
     }
 
-    public static function get localPlayerSeat () :int
+    public function get localPlayerSeat () :int
     {
         return _localPlayerSeat;
     }
 
-    public static function get localPlayerOccupantId () :int
+    public function get localPlayerOccupantId () :int
     {
         return getPlayerOccupantId(_localPlayerSeat);
     }
 
-    public static function get isLocalPlayerGuest () :Boolean
+    public function get isLocalPlayerGuest () :Boolean
     {
         // NB: this won't return true until Whirled games are given memberIds
         return (localPlayerOccupantId < 0);
     }
 
-    public static function isPlayerPresent (playerSeat :int) :Boolean
+    public function isPlayerPresent (playerSeat :int) :Boolean
     {
         return _playersPresent[playerSeat];
     }
 
-    public static function getPlayerName (playerSeat :int) :String
+    public function getPlayerName (playerSeat :int) :String
     {
         var playerName :String;
-        if (AppContext.gameCtrl.isConnected() && playerSeat < _numExpectedPlayers) {
-            playerName = AppContext.gameCtrl.game.seating.getPlayerNames()[playerSeat];
+        if (_gameCtrl.isConnected() && playerSeat < _numExpectedPlayers) {
+            playerName = _gameCtrl.game.seating.getPlayerNames()[playerSeat];
         }
 
         return (null != playerName ? playerName : "[Unknown Player: " + playerSeat + "]");
     }
 
-    public static function getPlayerOccupantId (playerSeat :int) :int
+    public function getPlayerOccupantId (playerSeat :int) :int
     {
-        if (AppContext.gameCtrl.isConnected() && playerSeat < _numExpectedPlayers) {
-            return AppContext.gameCtrl.game.seating.getPlayerIds()[playerSeat];
+        if (_gameCtrl.isConnected() && playerSeat < _numExpectedPlayers) {
+            return _gameCtrl.game.seating.getPlayerIds()[playerSeat];
         } else {
             return 0;
         }
     }
 
-    public static function getPlayerSeat (playerId :int) :int
+    public function getPlayerSeat (playerId :int) :int
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            return AppContext.gameCtrl.game.seating.getPlayerPosition(playerId);
+        if (_gameCtrl.isConnected()) {
+            return _gameCtrl.game.seating.getPlayerPosition(playerId);
         } else {
             return 0;
         }
     }
 
-    public static function getPlayerIds () :Array
+    public function getPlayerIds () :Array
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            return AppContext.gameCtrl.game.seating.getPlayerIds();
+        if (_gameCtrl.isConnected()) {
+            return _gameCtrl.game.seating.getPlayerIds();
         } else {
             return [ 0 ];
         }
     }
 
-    public static function getPlayerHeadshot (playerSeat :int) :DisplayObject
-    {
-        var headshot :DisplayObject;
-
-        if (playerSeat < _numExpectedPlayers) {
-            headshot = _headshots[playerSeat];
-        }
-
-        if (null == headshot) {
-            // construct a default headshot (box with an X through it)
-            var shape :Shape = new Shape();
-            var g :Graphics = shape.graphics;
-            g.lineStyle(2, 0);
-            g.beginFill(0);
-            g.drawRect(0, 0, 80, 60);
-            g.endFill();
-            g.lineStyle(2, 0xFF0000);
-            g.moveTo(2, 2);
-            g.lineTo(78, 58);
-            g.moveTo(78, 2);
-            g.lineTo(2, 58);
-
-            headshot = shape;
-        }
-
-        return headshot;
-    }
-
-    public static function get isLocalPlayerInControl () :Boolean
+    public function get isLocalPlayerInControl () :Boolean
     {
         return _localPlayerSeat == _lowestOccupiedSeat;
     }
 
-    protected static function updatePlayers (...ignored) :void
+    protected function updatePlayers (...ignored) :void
     {
-        var playerIds :Array = AppContext.gameCtrl.game.seating.getPlayerIds();
+        var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
         _numPlayers = 0;
         _lowestOccupiedSeat = -1;
         for (var seatIndex :int = 0; seatIndex < playerIds.length; ++seatIndex) {
@@ -154,22 +123,18 @@ public class SeatingManager
                 if (_lowestOccupiedSeat < 0) {
                     _lowestOccupiedSeat = seatIndex;
                 }
-
-                if (null == _headshots[seatIndex]) {
-                    _headshots[seatIndex] = AppContext.gameCtrl.local.getHeadShot(playerId);
-                }
             }
 
             _playersPresent[seatIndex] = playerPresent;
         }
     }
 
-    protected static var _playersPresent :Array;
-    protected static var _numExpectedPlayers :int;  // the number of players who initially joined the game
-    protected static var _numPlayers :int;          // the number of players in the game right now
-    protected static var _lowestOccupiedSeat :int;
-    protected static var _localPlayerSeat :int;
-    protected static var _headshots :Array;
+    protected var _gameCtrl :GameControl;
+    protected var _playersPresent :Array;
+    protected var _numExpectedPlayers :int;  // the number of players who initially joined the game
+    protected var _numPlayers :int;          // the number of players in the game right now
+    protected var _lowestOccupiedSeat :int;
+    protected var _localPlayerSeat :int;
 }
 
 }

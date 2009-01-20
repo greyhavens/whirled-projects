@@ -25,8 +25,8 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         super.update(dt);
 
-        if (!SeatingManager.allPlayersPresent) {
-            AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        if (!ClientContext.seatingMgr.allPlayersPresent) {
+            ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
     }
 
@@ -46,7 +46,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         _waitScreen.addChild(waitText);*/
         _modeSprite.addChild(_waitScreen);
 
-        if (SeatingManager.isLocalPlayerInControl) {
+        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.init(2);
         }
 
@@ -55,12 +55,12 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             initLocalPlayerData();
         }
 
-        registerListener(AppContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+        registerListener(ClientContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
-        registerListener(AppContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+        registerListener(ClientContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
 
-        AppContext.endlessLevelMgr.playMpLevel(onLevelLoaded);
+        ClientContext.endlessLevelMgr.playMpLevel(onLevelLoaded);
 
         tryCreateUi();
     }
@@ -69,7 +69,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         super.selectMap(mapIndex, animationType);
 
-        if (SeatingManager.isLocalPlayerInControl) {
+        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.selectedMapIdx = mapIndex;
         }
     }
@@ -99,8 +99,8 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     protected function initLocalPlayerData () :void
     {
         if (!_initedLocalPlayerData) {
-            EndlessMultiplayerConfig.setPlayerSavedGames(SeatingManager.localPlayerSeat,
-                AppContext.endlessLevelMgr.savedMpGames);
+            EndlessMultiplayerConfig.setPlayerSavedGames(ClientContext.seatingMgr.localPlayerSeat,
+                ClientContext.endlessLevelMgr.savedMpGames);
             _initedLocalPlayerData = true;
         }
     }
@@ -157,14 +157,14 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function getLocalSavedGames () :SavedEndlessGameList
     {
-        return AppContext.endlessLevelMgr.savedMpGames;
+        return ClientContext.endlessLevelMgr.savedMpGames;
     }
 
     override protected function getRemoteSavedGames () :SavedEndlessGameList
     {
         var saves :Array = EndlessMultiplayerConfig.savedGames;
         for (var ii :int = 0; ii < saves.length; ++ii) {
-            if (ii != SeatingManager.localPlayerSeat) {
+            if (ii != ClientContext.seatingMgr.localPlayerSeat) {
                 return saves[ii];
             }
         }
@@ -174,7 +174,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void
     {
-        if (SeatingManager.isLocalPlayerInControl) {
+        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
             // let everyone know the game is starting
             EndlessMultiplayerConfig.gameStarting = true;
             // set inited to false for the next time this screen is visited
@@ -190,7 +190,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     override protected function get enableNextPrevPlayButtons () :Boolean
     {
         // only the player in control gets to change levels or start the game
-        return SeatingManager.isLocalPlayerInControl;
+        return ClientContext.seatingMgr.isLocalPlayerInControl;
     }
 
     override protected function get enableQuitButton () :Boolean

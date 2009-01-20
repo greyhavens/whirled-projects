@@ -188,7 +188,7 @@ public class LevelManager
 
     public function get curLevelName () :String
     {
-        var levelNames :Array = AppContext.levelProgression.levelNames;
+        var levelNames :Array = ClientContext.levelProgression.levelNames;
         if (_curLevelIndex >= 0 && _curLevelIndex < levelNames.length) {
             return levelNames[_curLevelIndex];
         }
@@ -248,7 +248,7 @@ public class LevelManager
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.pushMode(new LevelLoadErrorMode(err));
+        ClientContext.mainLoop.pushMode(new LevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -256,7 +256,7 @@ public class LevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new StoryGameMode(_loadedLevel));
+            ClientContext.mainLoop.unwindToMode(new StoryGameMode(_loadedLevel));
         }
     }
 

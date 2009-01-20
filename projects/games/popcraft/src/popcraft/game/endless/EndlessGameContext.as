@@ -36,12 +36,12 @@ public class EndlessGameContext
 
     public static function endGameAndSendScores () :void
     {
-        if (GameContext.isSinglePlayerGame && AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.endGameWithScore(
+        if (GameContext.isSinglePlayerGame && ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.game.endGameWithScore(
                 EndlessGameContext.totalScore,
                 Constants.SCORE_MODE_ENDLESS);
 
-        } else if (GameContext.isMultiplayerGame && SeatingManager.isLocalPlayerInControl) {
+        } else if (GameContext.isMultiplayerGame && ClientContext.seatingMgr.isLocalPlayerInControl) {
             // convert PlayerScore objects to ints for reporting to the server
             var finalScores :Array =
                 EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId);
@@ -51,8 +51,8 @@ public class EndlessGameContext
                     return (score != null ? score.totalScore : 0);
                 });
 
-            AppContext.gameCtrl.game.endGameWithScores(
-                SeatingManager.getPlayerIds(),
+            ClientContext.gameCtrl.game.endGameWithScores(
+                ClientContext.seatingMgr.getPlayerIds(),
                 finalScoreValues,
                 GameSubControl.TO_EACH_THEIR_OWN,
                 Constants.SCORE_MODE_ENDLESS);
@@ -75,7 +75,7 @@ public class EndlessGameContext
         }
 
         if (GameContext.isMultiplayerGame) {
-            playerMonitor = new PlayerMonitor(SeatingManager.numPlayers);
+            playerMonitor = new PlayerMonitor(ClientContext.seatingMgr.numPlayers);
         }
 
         roundId = 0;
@@ -116,7 +116,7 @@ public class EndlessGameContext
     protected static function checkHeadOfTheClassTrophy () :void
     {
         if (EndlessGameContext.totalScore >= Trophies.HEAD_OF_THE_CLASS_SCORE) {
-            AppContext.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
+            ClientContext.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
         }
     }
 

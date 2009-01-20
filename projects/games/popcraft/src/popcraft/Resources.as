@@ -14,7 +14,7 @@ public class Resources
     {
         loadLevelPackResources(
             resourceNames,
-            function () :void { AppContext.mainLoop.changeMode(nextMode); }
+            function () :void { ClientContext.mainLoop.changeMode(nextMode); }
         );
     }
 
@@ -33,7 +33,7 @@ public class Resources
         var rm :ResourceManager = ResourceManager.instance;
         for each (var name :String in resourceNames) {
             if (rm.getResource(name) == null) {
-                var mediaUrl :String = AppContext.allLevelPacks.getMediaURL(name);
+                var mediaUrl :String = ClientContext.allLevelPacks.getMediaURL(name);
                 if (mediaUrl == null) {
                     throw new Error("unrecognized resource: '" + name + "'");
                 }
@@ -190,7 +190,7 @@ public class Resources
             rm.queueResourceLoad(
                 "sound",
                 musicName,
-                {   url: AppContext.allLevelPacks.getMediaURL(musicName),
+                {   url: ClientContext.allLevelPacks.getMediaURL(musicName),
                     completeImmediately: true,
                     type: "music",
                     volume: 0.7,
@@ -401,11 +401,11 @@ class LevelPackLoadingMode extends GenericLoadingMode
     {
         ResourceManager.instance.loadQueuedResources(
             function () :void {
-                AppContext.mainLoop.popMode();
+                ClientContext.mainLoop.popMode();
                 callback();
             },
             function (err :String) :void {
-                AppContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
+                ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
             }
         );
     }

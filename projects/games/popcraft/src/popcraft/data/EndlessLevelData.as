@@ -14,7 +14,7 @@ public class EndlessLevelData
     {
         var mapData :EndlessMapData = getMapData(mapIndex);
         var gameData :GameData = (mapData.gameDataOverride != null ?
-            mapData.gameDataOverride : AppContext.defaultGameData);
+            mapData.gameDataOverride : ClientContext.defaultGameData);
         return UnitData(gameData.units[Constants.UNIT_TYPE_WORKSHOP]).maxHealth;
     }
 

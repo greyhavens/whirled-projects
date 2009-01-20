@@ -27,7 +27,7 @@ public class EndlessMapData
         var gameDataOverrideNode :XML = xml.GameDataOverride[0];
         if (null != gameDataOverrideNode) {
             data.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
-                                                        AppContext.defaultGameData.clone());
+                                                        ClientContext.defaultGameData.clone());
         }
 
         data.mapSettings = MapSettingsData.fromXml(XmlReader.getSingleChild(xml, "MapSettings"));

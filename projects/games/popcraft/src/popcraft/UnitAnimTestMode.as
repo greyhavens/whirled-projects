@@ -22,7 +22,7 @@ public class UnitAnimTestMode extends AppMode
 {
     override protected function setup () :void
     {
-        var playerDisplayDatas :HashMap = AppContext.defaultGameData.playerDisplayDatas;
+        var playerDisplayDatas :HashMap = ClientContext.defaultGameData.playerDisplayDatas;
         var playerDisplayData :PlayerDisplayData = playerDisplayDatas.values()[0];
         _recolor = playerDisplayData.color;
 
@@ -58,7 +58,7 @@ public class UnitAnimTestMode extends AppMode
         button = UIBits.createButton("Back");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                AppContext.mainLoop.popMode();
+                ClientContext.mainLoop.popMode();
             });
         button.x = 10;
         button.y = 460;
@@ -71,7 +71,7 @@ public class UnitAnimTestMode extends AppMode
     {
         var thisObject :UnitAnimTestMode = this;
 
-        var unitData :UnitData = AppContext.defaultGameData.units[unitType];
+        var unitData :UnitData = ClientContext.defaultGameData.units[unitType];
         var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
         registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {

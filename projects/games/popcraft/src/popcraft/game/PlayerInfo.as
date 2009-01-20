@@ -41,13 +41,13 @@ public class PlayerInfo extends EventDispatcher
         if (null != displayName) {
             _displayName = displayName;
         } else {
-            _displayName = SeatingManager.getPlayerName(_playerIndex);
+            _displayName = ClientContext.seatingMgr.getPlayerName(_playerIndex);
         }
 
         if (null != headshot) {
             _headshot = headshot;
         } else {
-            _headshot = SeatingManager.getPlayerHeadshot(_playerIndex);
+            _headshot = ClientContext.seatingMgr.getPlayerHeadshot(_playerIndex);
         }
     }
 
@@ -168,7 +168,7 @@ public class PlayerInfo extends EventDispatcher
 
     public function get whirledId () :int
     {
-        return SeatingManager.getPlayerOccupantId(_playerIndex);
+        return ClientContext.seatingMgr.getPlayerOccupantId(_playerIndex);
     }
 
     public function get displayName () :String

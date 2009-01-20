@@ -71,7 +71,7 @@ public class EndlessLevelManager
 
         if (saveList.addSave(newSave)) {
             // save the new data
-            AppContext.userCookieMgr.needsUpdate();
+            ClientContext.userCookieMgr.needsUpdate();
         }
     }
 
@@ -193,7 +193,7 @@ public class EndlessLevelManager
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.pushMode(new EndlessLevelLoadErrorMode(err));
+        ClientContext.mainLoop.pushMode(new EndlessLevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -201,7 +201,7 @@ public class EndlessLevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            AppContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevelType == MP_LEVEL,
+            ClientContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevelType == MP_LEVEL,
                                                                  _loadedLevel, null, true));
         }
     }

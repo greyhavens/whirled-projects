@@ -48,7 +48,7 @@ public class GameMode extends TransitionMode
 
         // init RNGs
         var randSeed :uint = createRandSeed();
-        Rand.seedStream(AppContext.randStreamPuzzle, randSeed);
+        Rand.seedStream(ClientContext.randStreamPuzzle, randSeed);
         Rand.seedStream(Rand.STREAM_GAME, randSeed);
         log.info("Starting game with seed: " + randSeed);
 
@@ -206,7 +206,7 @@ public class GameMode extends TransitionMode
         GameContext.playerInfos = [];
 
         // we want to know when a player leaves
-        registerListener(AppContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        registerListener(ClientContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             handleOccupantLeft);
 
         // subclasses create the players in this function
@@ -322,7 +322,7 @@ public class GameMode extends TransitionMode
     public function pause () :void
     {
         if (!_gameOver && this.canPause) {
-            AppContext.mainLoop.pushMode(new PauseMode());
+            ClientContext.mainLoop.pushMode(new PauseMode());
         }
     }
 
@@ -392,10 +392,10 @@ public class GameMode extends TransitionMode
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
                 _gameIsRunning = true;
-            } else if (!SeatingManager.allPlayersPresent) {
+            } else if (!ClientContext.seatingMgr.allPlayersPresent) {
                 // If a player leaves before the game starts, the messageMgr will never
                 // be ready.
-                AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+                ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
                 return;
             } else {
                 return;
@@ -645,10 +645,10 @@ public class GameMode extends TransitionMode
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesKilled[creature.unitType] += 1;
 
-            if (!AppContext.hasTrophy(Trophies.WHATAMESS) &&
-                (AppContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
+            if (!ClientContext.hasTrophy(Trophies.WHATAMESS) &&
+                (ClientContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
                 // awarded for killing 2500 creatures total
-                AppContext.awardTrophy(Trophies.WHATAMESS);
+                ClientContext.awardTrophy(Trophies.WHATAMESS);
             }
         }
     }

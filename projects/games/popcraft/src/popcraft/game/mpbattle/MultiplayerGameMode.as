@@ -22,13 +22,13 @@ public class MultiplayerGameMode extends GameMode
         super.setup();
 
         // start the game when the GAME_STARTED event is received
-        registerListener(AppContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+        registerListener(ClientContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
                 startGame();
             });
 
         // we're ready!
-        AppContext.gameCtrl.game.playerReady();
+        ClientContext.gameCtrl.game.playerReady();
     }
 
     override protected function rngSeeded () :void
@@ -37,7 +37,7 @@ public class MultiplayerGameMode extends GameMode
         // MultiplayerSettingsData that fits that arrangement.
 
         var multiplayerArrangement :int = MultiplayerConfig.computeTeamArrangement();
-        var potentialSettings :Array = AppContext.multiplayerSettings;
+        var potentialSettings :Array = ClientContext.multiplayerSettings;
         potentialSettings = potentialSettings.filter(
             function (mpSettings :MultiplayerSettingsData, index :int, array :Array) :Boolean {
                 return (mpSettings.arrangeType == multiplayerArrangement);
@@ -80,8 +80,8 @@ public class MultiplayerGameMode extends GameMode
         teamInfos.sort(TeamInfo.teamIdCompare);
 
         // get some information about the players in the game
-        var numPlayers :int = SeatingManager.numExpectedPlayers;
-        GameContext.localPlayerIndex = SeatingManager.localPlayerSeat;
+        var numPlayers :int = ClientContext.seatingMgr.numExpectedPlayers;
+        GameContext.localPlayerIndex = ClientContext.seatingMgr.localPlayerSeat;
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
@@ -150,8 +150,8 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createMessageManager () :TickedMessageManager
     {
-        return new OnlineTickedMessageManager(AppContext.gameCtrl,
-             SeatingManager.isLocalPlayerInControl, TICK_INTERVAL_MS);
+        return new OnlineTickedMessageManager(ClientContext.gameCtrl,
+             ClientContext.seatingMgr.isLocalPlayerInControl, TICK_INTERVAL_MS);
     }
 
     override protected function get gameType () :int
@@ -161,7 +161,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function get gameData () :GameData
     {
-        return AppContext.defaultGameData;
+        return ClientContext.defaultGameData;
     }
 
     override protected function handleGameOver () :void

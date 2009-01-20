@@ -57,7 +57,7 @@ public class LevelIntroMode extends AppMode
         manualFrontTask.addTask(LocationTask.CreateEaseOut(
             Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
         manualFrontTask.addTask(new TimedTask(
-            AppContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
+            ClientContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
         manualFrontTask.addTask(new GoToFrameTask("turn"));
         manualFrontTask.addTask(new WaitForFrameTask("edge"));
         manualFrontTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
@@ -168,8 +168,8 @@ public class LevelIntroMode extends AppMode
 
             showPage(
                 TYPE_NOTE,
-                "Chapter " + String(AppContext.levelMgr.curLevelIndex + 1),
-                AppContext.levelMgr.curLevelName,
+                "Chapter " + String(ClientContext.levelMgr.curLevelIndex + 1),
+                ClientContext.levelMgr.curLevelName,
                 _level.introText,
                 levelDescription,
                 null);
@@ -268,7 +268,7 @@ public class LevelIntroMode extends AppMode
             movieTask.addTask(new WaitForFrameTask("closed"));
             movieTask.addTask(LocationTask.CreateEaseIn(
                 Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
-            movieTask.addTask(new FunctionTask(AppContext.mainLoop.popMode));
+            movieTask.addTask(new FunctionTask(ClientContext.mainLoop.popMode));
         }
 
         _manualObj.removeAllTasks();

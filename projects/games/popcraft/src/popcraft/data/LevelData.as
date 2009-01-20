@@ -52,7 +52,7 @@ public class LevelData
         var gameDataOverrideNode :XML = xml.GameDataOverride[0];
         if (null != gameDataOverrideNode) {
             level.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
-                AppContext.defaultGameData.clone());
+                ClientContext.defaultGameData.clone());
         }
 
         level.levelCompletionBonus = XmlReader.getIntAttr(xml, "levelCompletionBonus");

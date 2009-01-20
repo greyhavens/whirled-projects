@@ -41,7 +41,7 @@ public class SapperCreatureUnit extends CreatureUnit
                 GameContext.diurnalCycle.isDay) {
                 // awarded for Delivery Boy damaging a base at sunrise
                 // (if it's daytime, the only damage we can have done is to a base)
-                AppContext.awardTrophy(Trophies.RUSHDELIVERY);
+                ClientContext.awardTrophy(Trophies.RUSHDELIVERY);
             }
         }
 

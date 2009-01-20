@@ -115,12 +115,12 @@ public class LocalPlayerInfo extends PlayerInfo
                 var runLength :int = Trophies.PIECE_CLEAR_RUN_TROPHIES[i+1];
                 if (_fourPlusPieceClearRunLength == runLength) {
                     var trophyName :String = Trophies.PIECE_CLEAR_RUN_TROPHIES[i];
-                    AppContext.awardTrophy(trophyName);
+                    ClientContext.awardTrophy(trophyName);
                 }
             }
         }
 
-        if (!AppContext.hasTrophy(Trophies.MAXEDOUT)) {
+        if (!ClientContext.hasTrophy(Trophies.MAXEDOUT)) {
             var isMaxedOut :Boolean = true;
             for each (var resAmount :int in _resources) {
                 if (resAmount < _maxResourceAmount) {
@@ -130,7 +130,7 @@ public class LocalPlayerInfo extends PlayerInfo
             }
 
             if (isMaxedOut) {
-                AppContext.awardTrophy(Trophies.MAXEDOUT);
+                ClientContext.awardTrophy(Trophies.MAXEDOUT);
             }
         }
 

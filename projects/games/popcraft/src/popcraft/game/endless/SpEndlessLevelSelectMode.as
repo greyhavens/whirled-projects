@@ -12,8 +12,8 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
 
         // create some dummy saved games for testing purposes
         if (Constants.DEBUG_CREATE_ENDLESS_SAVES &&
-            AppContext.endlessLevelMgr.savedSpGames.numSaves == 0) {
-            AppContext.endlessLevelMgr.createDummySpSaves();
+            ClientContext.endlessLevelMgr.savedSpGames.numSaves == 0) {
+            ClientContext.endlessLevelMgr.createDummySpSaves();
         }
     }
 
@@ -30,9 +30,9 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
     {
         var resetView :ResetSavedGamesView = new ResetSavedGamesView(TEXT,
             function () :void {
-                AppContext.endlessLevelMgr.resetSavedGames();
-                AppContext.userCookieMgr.needsUpdate();
-                AppContext.mainLoop.pushMode(new SpEndlessLevelSelectMode());
+                ClientContext.endlessLevelMgr.resetSavedGames();
+                ClientContext.userCookieMgr.needsUpdate();
+                ClientContext.mainLoop.pushMode(new SpEndlessLevelSelectMode());
             },
             function () :void {
                 resetView.destroySelf();

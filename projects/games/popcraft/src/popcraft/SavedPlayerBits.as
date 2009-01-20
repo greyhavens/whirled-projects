@@ -25,7 +25,7 @@ public class SavedPlayerBits
             // of the game. If the player has gotten past level 7, we let them continue to play
             // the story mode for free (though they still have to pay to unlock Endless Mode).
             hasFreeStoryMode =
-                (AppContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
+                (ClientContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS);
 
         } else {
             hasFreeStoryMode = cookie.readBoolean();
@@ -37,8 +37,8 @@ public class SavedPlayerBits
             // if the cookie version is < 2, and the player doesn't have any saved games,
             // we'll never need to ask them to reset.
             hasAskedToResetEndlessLevels =
-                (AppContext.endlessLevelMgr.savedMpGames.numSaves == 0 &&
-                 AppContext.endlessLevelMgr.savedSpGames.numSaves == 0);
+                (ClientContext.endlessLevelMgr.savedMpGames.numSaves == 0 &&
+                 ClientContext.endlessLevelMgr.savedSpGames.numSaves == 0);
         }
     }
 

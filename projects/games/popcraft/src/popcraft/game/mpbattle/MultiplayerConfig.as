@@ -16,8 +16,8 @@ public class MultiplayerConfig
 
     public static function init (numTeams :int, numPlayers :int) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.doBatch(function () :void {
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.doBatch(function () :void {
                 MultiplayerConfig.gameStarting = false;
                 MultiplayerConfig.teams = ArrayUtil.create(numTeams, -1);
                 MultiplayerConfig.handicaps = ArrayUtil.create(numPlayers, false);
@@ -31,22 +31,22 @@ public class MultiplayerConfig
 
     public static function set teams (val :Array) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_TEAMS, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_TEAMS, val);
         }
     }
 
     public static function setPlayerTeam (playerSeat :int, teamId :int) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_TEAMS, playerSeat, teamId, true);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.setAt(PROP_TEAMS, playerSeat, teamId, true);
         }
     }
 
     public static function get teams () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_TEAMS) as Array : []);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_TEAMS) as Array : []);
     }
 
     public static function computeTeamSizes () :Array
@@ -92,101 +92,101 @@ public class MultiplayerConfig
 
     public static function set handicaps (val :Array) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_HANDICAPS, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_HANDICAPS, val);
         }
     }
 
     public static function setPlayerHandicap (playerSeat :int, handicap :Boolean) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_HANDICAPS, playerSeat, handicap, true);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.setAt(PROP_HANDICAPS, playerSeat, handicap, true);
         }
     }
 
     public static function get handicaps () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_HANDICAPS) as Array : []);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_HANDICAPS) as Array : []);
     }
 
     public static function set randSeed (val :uint) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_RANDSEED, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_RANDSEED, val);
         }
     }
 
     public static function get randSeed () :uint
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_RANDSEED) as uint : 0);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_RANDSEED) as uint : 0);
     }
 
     public static function set inited (val :Boolean) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_INITED, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_INITED, val);
         }
     }
 
     public static function get inited () :Boolean
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_INITED) as Boolean : 0);
     }
 
     public static function set gameStarting (val :Boolean) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_GAMESTARTING, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_GAMESTARTING, val);
         }
     }
 
     public static function get gameStarting () :Boolean
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean : 0);
     }
 
     public static function set morbidInfections (val :Array) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_HASMORBIDINFECTION, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_HASMORBIDINFECTION, val);
         }
     }
 
     public static function setPlayerHasMorbidInfection (playerSeat :int) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_HASMORBIDINFECTION, playerSeat, true, true);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.setAt(PROP_HASMORBIDINFECTION, playerSeat, true, true);
         }
     }
 
     public static function get morbidInfections () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array : []);
     }
 
     public static function set premiumContents (val :Array) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.set(PROP_HASPREMIUMCONTENT, val);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.set(PROP_HASPREMIUMCONTENT, val);
         }
     }
 
     public static function setPlayerHasPremiumContent (playerSeat :int) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.net.setAt(PROP_HASPREMIUMCONTENT, playerSeat, true, true);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.net.setAt(PROP_HASPREMIUMCONTENT, playerSeat, true, true);
         }
     }
 
     public static function get premiumContents () :Array
     {
-        return (AppContext.gameCtrl.isConnected() ?
-            AppContext.gameCtrl.net.get(PROP_HASPREMIUMCONTENT) as Array : []);
+        return (ClientContext.gameCtrl.isConnected() ?
+            ClientContext.gameCtrl.net.get(PROP_HASPREMIUMCONTENT) as Array : []);
     }
 
     public static function get someoneHasPremiumContent () :Boolean

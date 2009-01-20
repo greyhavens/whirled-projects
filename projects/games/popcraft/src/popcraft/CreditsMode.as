@@ -180,7 +180,7 @@ class WanderingCreature extends SceneObject
     public function WanderingCreature (unitType :int, color :uint)
     {
         _unitType = unitType;
-        _unitData = AppContext.defaultGameData.units[unitType];
+        _unitData = ClientContext.defaultGameData.units[unitType];
         _sprite = SpriteUtil.createSprite();
 
         setupAnimations(color);

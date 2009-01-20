@@ -66,7 +66,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
 
         // report scores
-        if (SeatingManager.isLocalPlayerInControl) {
+        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
             var winners :Array = [];
             var losers :Array = [];
             for each (playerInfo in GameContext.playerInfos) {
@@ -77,7 +77,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
                 }
             }
 
-            AppContext.gameCtrl.game.endGameWithWinners(winners, losers,
+            ClientContext.gameCtrl.game.endGameWithWinners(winners, losers,
                 GameSubControl.CASCADING_PAYOUT);
         }
     }
@@ -105,47 +105,47 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
 
         // combine local stats into global, and save
-        AppContext.globalPlayerStats.combineWith(GameContext.playerStats);
-        AppContext.userCookieMgr.needsUpdate();
+        ClientContext.globalPlayerStats.combineWith(GameContext.playerStats);
+        ClientContext.userCookieMgr.needsUpdate();
     }
 
     protected function awardTrophies () :void
     {
         // award trophies for playing lots of multiplayer games
-        var totalGamesPlayed :int = AppContext.globalPlayerStats.totalGamesPlayed;
+        var totalGamesPlayed :int = ClientContext.globalPlayerStats.totalGamesPlayed;
         if (totalGamesPlayed >= Trophies.RALPH_NUMGAMES) {
-            AppContext.awardTrophy(Trophies.RALPH);
+            ClientContext.awardTrophy(Trophies.RALPH);
         }
         if (totalGamesPlayed >= Trophies.JACK_NUMGAMES) {
-            AppContext.awardTrophy(Trophies.JACK);
+            ClientContext.awardTrophy(Trophies.JACK);
         }
         if (totalGamesPlayed >= Trophies.WEARDD_NUMGAMES) {
-            AppContext.awardTrophy(Trophies.WEARDD);
+            ClientContext.awardTrophy(Trophies.WEARDD);
         }
 
-        if (AppContext.globalPlayerStats.hasMorbidInfection) {
+        if (ClientContext.globalPlayerStats.hasMorbidInfection) {
             // awarded for playing a game with another player who has the Morbid Infection trophy
-            AppContext.awardTrophy(Trophies.MORBIDINFECTION);
+            ClientContext.awardTrophy(Trophies.MORBIDINFECTION);
         }
 
-        if (!AppContext.hasTrophy(Trophies.LIBERALARTS)) {
-            if (ArrayUtil.indexIf(AppContext.globalPlayerStats.mpGamesPlayed,
+        if (!ClientContext.hasTrophy(Trophies.LIBERALARTS)) {
+            if (ArrayUtil.indexIf(ClientContext.globalPlayerStats.mpGamesPlayed,
                   function (gamesPlayed :int) :Boolean { return gamesPlayed < 1; }) < 0) {
                 // awarded for playing one of each multiplayer game arrangement
-                AppContext.awardTrophy(Trophies.LIBERALARTS);
+                ClientContext.awardTrophy(Trophies.LIBERALARTS);
             }
         }
 
         if (this.playerWon) {
             // awarded for winning a multiplayer game
-            AppContext.awardTrophy(Trophies.BULLY);
+            ClientContext.awardTrophy(Trophies.BULLY);
 
             if (GameContext.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
-                AppContext.awardTrophy(Trophies.FLAWLESS);
+                ClientContext.awardTrophy(Trophies.FLAWLESS);
             } else if (GameContext.localPlayerInfo.healthPercent <= Trophies.CHEATDEATH_HEALTH_PERCENT) {
                 // awarded for winning a multiplayer game with very low health
-                AppContext.awardTrophy(Trophies.CHEATDEATH);
+                ClientContext.awardTrophy(Trophies.CHEATDEATH);
             }
 
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -153,13 +153,13 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
                     playerInfo.displayName == Trophies.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose
                     // Whirled name is "Professor Weardd"
-                    AppContext.awardTrophy(Trophies.MALEDICTORIAN);
+                    ClientContext.awardTrophy(Trophies.MALEDICTORIAN);
                 }
             }
 
             if (MoonCalculation.isFullMoonToday) {
                 // awarded for winning a multiplayer game on a full moon
-                AppContext.awardTrophy(Trophies.BADMOON);
+                ClientContext.awardTrophy(Trophies.BADMOON);
             }
         }
     }
@@ -174,10 +174,10 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
         // we can only restart the game lobby if nobody has left the game
         // @TODO - change this if Whirled allows seated games that are missing players to
         // be restarted
-        if (SeatingManager.allPlayersPresent) {
-            AppContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
+        if (ClientContext.seatingMgr.allPlayersPresent) {
+            ClientContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
-            AppContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+            ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
     }
 

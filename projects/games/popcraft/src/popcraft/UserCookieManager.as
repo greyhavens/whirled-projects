@@ -30,8 +30,8 @@ public class UserCookieManager
     public function readCookie () :void
     {
         if (!_loadingCookie) {
-            if (AppContext.gameCtrl.isConnected()) {
-                AppContext.gameCtrl.player.getCookie(completeLoadData);
+            if (ClientContext.gameCtrl.isConnected()) {
+                ClientContext.gameCtrl.player.getCookie(completeLoadData);
                 _loadingCookie = true;
 
             } else {
@@ -42,7 +42,7 @@ public class UserCookieManager
 
     protected function writeCookie () :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
+        if (ClientContext.gameCtrl.isConnected()) {
             var ba :ByteArray = new ByteArray();
             var success :Boolean;
             var errString :String;
@@ -54,7 +54,7 @@ public class UserCookieManager
                 }
                 ba.compress();
 
-                success = AppContext.gameCtrl.player.setCookie(ba);
+                success = ClientContext.gameCtrl.player.setCookie(ba);
                 if (!success) {
                     errString = "PlayerSubControl.setCookie() failed (" + ba.length +
                                 "-byte cookie too large?)";

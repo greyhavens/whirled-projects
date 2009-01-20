@@ -12,7 +12,7 @@ public class MpEndlessLevelSelectMode extends MpEndlessLevelSelectModeBase
 
         // create some dummy saved games for testing purposes
         if (Constants.DEBUG_CREATE_ENDLESS_SAVES) {// && AppContext.endlessLevelMgr.savedMpGames.numSaves == 0) {
-            AppContext.endlessLevelMgr.createDummyMpSaves();
+            ClientContext.endlessLevelMgr.createDummyMpSaves();
         }
     }
 

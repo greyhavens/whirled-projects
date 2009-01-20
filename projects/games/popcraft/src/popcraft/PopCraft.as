@@ -34,13 +34,13 @@ public class PopCraft extends Sprite
 
     public function PopCraft ()
     {
-        AppContext.mainSprite = this;
+        ClientContext.mainSprite = this;
 
         // setup GameControl
-        AppContext.gameCtrl = new GameControl(this, false);
-        var isConnected :Boolean = AppContext.gameCtrl.isConnected();
+        ClientContext.gameCtrl = new GameControl(this, false);
+        var isConnected :Boolean = ClientContext.gameCtrl.isConnected();
 
-        SeatingManager.init();
+        ClientContext.seatingMgr.init(ClientContext.gameCtrl);
 
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
 
@@ -54,9 +54,9 @@ public class PopCraft extends Sprite
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
         // setup main loop
-        AppContext.mainLoop = new MainLoop(this,
-            (isConnected ? AppContext.gameCtrl.local : this.stage));
-        AppContext.mainLoop.setup();
+        ClientContext.mainLoop = new MainLoop(this,
+            (isConnected ? ClientContext.gameCtrl.local : this.stage));
+        ClientContext.mainLoop.setup();
 
         // custom resource factories
         var rm :ResourceManager = ResourceManager.instance;
@@ -70,62 +70,62 @@ public class PopCraft extends Sprite
             Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         // create a new random stream for the puzzle
-        AppContext.randStreamPuzzle = Rand.addStream();
+        ClientContext.randStreamPuzzle = Rand.addStream();
 
         // init the cookie manager
-        AppContext.userCookieMgr = new UserCookieManager(Constants.USER_COOKIE_VERSION);
-        AppContext.userCookieMgr.addDataSource(AppContext.levelMgr);
-        AppContext.userCookieMgr.addDataSource(AppContext.globalPlayerStats);
-        AppContext.userCookieMgr.addDataSource(AppContext.endlessLevelMgr);
-        AppContext.userCookieMgr.addDataSource(AppContext.prizeMgr);
-        AppContext.userCookieMgr.addDataSource(AppContext.savedPlayerBits);
+        ClientContext.userCookieMgr = new UserCookieManager(Constants.USER_COOKIE_VERSION);
+        ClientContext.userCookieMgr.addDataSource(ClientContext.levelMgr);
+        ClientContext.userCookieMgr.addDataSource(ClientContext.globalPlayerStats);
+        ClientContext.userCookieMgr.addDataSource(ClientContext.endlessLevelMgr);
+        ClientContext.userCookieMgr.addDataSource(ClientContext.prizeMgr);
+        ClientContext.userCookieMgr.addDataSource(ClientContext.savedPlayerBits);
 
-        if (AppContext.gameCtrl.isConnected()) {
+        if (ClientContext.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
             // tiled background behind it
-            _events.registerListener(AppContext.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
+            _events.registerListener(ClientContext.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
                 handleSizeChanged)
 
             handleSizeChanged();
 
             // and don't show the "rematch" button - we have a UI for it in-game
-            AppContext.gameCtrl.local.setShowReplay(false);
+            ClientContext.gameCtrl.local.setShowReplay(false);
 
             // get level packs
-            AppContext.reloadLevelPacks();
+            ClientContext.reloadLevelPacks();
 
             // if the player purchases level packs while the game is in progress, update our
             // level packs
             _events.registerListener(
-                AppContext.gameCtrl.player,
+                ClientContext.gameCtrl.player,
                 GameContentEvent.PLAYER_CONTENT_ADDED,
                 function (...ignored) :void {
-                    AppContext.reloadLevelPacks();
+                    ClientContext.reloadLevelPacks();
                 });
 
         }
 
-        AppContext.mainLoop.run();
-        AppContext.mainLoop.pushMode(new LoadingMode(this));
+        ClientContext.mainLoop.run();
+        ClientContext.mainLoop.pushMode(new LoadingMode(this));
     }
 
     protected function handleSizeChanged (...ignored) :void
     {
-        var size :Point = AppContext.gameCtrl.local.getSize();
-        AppContext.mainSprite.x = (size.x * 0.5) - (Constants.SCREEN_SIZE.x * 0.5);
-        AppContext.mainSprite.y = (size.y * 0.5) - (Constants.SCREEN_SIZE.y * 0.5);
+        var size :Point = ClientContext.gameCtrl.local.getSize();
+        ClientContext.mainSprite.x = (size.x * 0.5) - (Constants.SCREEN_SIZE.x * 0.5);
+        ClientContext.mainSprite.y = (size.y * 0.5) - (Constants.SCREEN_SIZE.y * 0.5);
     }
 
     protected function handleUnload (...ignored) :void
     {
         _events.freeAllHandlers();
-        AppContext.mainLoop.shutdown();
+        ClientContext.mainLoop.shutdown();
     }
 
     public function loadResources (completeCallback :Function, errorCallback :Function) :void
     {
         function loadSingleOrMultiplayerResources () :void {
-            if (Resources.queueLevelPackResources(AppContext.isMultiplayer ?
+            if (Resources.queueLevelPackResources(ClientContext.isMultiplayer ?
                 Resources.MP_LEVEL_PACK_RESOURCES :
                 Resources.SP_LEVEL_PACK_RESOURCES)) {
                 ResourceManager.instance.loadQueuedResources(completeCallback, errorCallback);
@@ -164,15 +164,15 @@ class LoadingMode extends GenericLoadingMode
     override protected function setup () :void
     {
         _loadingResources = true;
-        AppContext.userCookieMgr.readCookie();
+        ClientContext.userCookieMgr.readCookie();
         _mainSprite.loadResources(resourceLoadComplete, onLoadError);
     }
 
     override public function update (dt :Number) :void
     {
         super.update(dt);
-        if (!_loadingResources && !AppContext.userCookieMgr.isLoadingCookie) {
-            if (SeatingManager.allPlayersPresent) {
+        if (!_loadingResources && !ClientContext.userCookieMgr.isLoadingCookie) {
+            if (ClientContext.seatingMgr.allPlayersPresent) {
                 startGame();
             } else {
                 this.loadingText = "Waiting for players";
@@ -182,14 +182,14 @@ class LoadingMode extends GenericLoadingMode
 
     protected function startGame () :void
     {
-        if (AppContext.isMultiplayer) {
-            AppContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
+        if (ClientContext.isMultiplayer) {
+            ClientContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
             LevelSelectMode.create();
         }
 
         // award the player any prizes they haven't gotten yet
-        AppContext.prizeMgr.checkPrizes();
+        ClientContext.prizeMgr.checkPrizes();
     }
 
     protected function resourceLoadComplete () :void
@@ -199,7 +199,7 @@ class LoadingMode extends GenericLoadingMode
 
     protected function onLoadError (err :String) :void
     {
-        AppContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
+        ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
     }
 
     protected var _mainSprite :PopCraft;

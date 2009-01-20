@@ -61,12 +61,12 @@ public class LevelOutroMode extends AppMode
             bgSprite.addChild(tfScore);
 
             // if it's not the last level, display a "Continue playing?" text
-            if (!AppContext.levelMgr.isLastLevel) {
+            if (!ClientContext.levelMgr.isLastLevel) {
                 var message :String;
-                if (AppContext.levelMgr.curLevelIndex == Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
+                if (ClientContext.levelMgr.curLevelIndex == Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
                     message = "Initiation Challenge has been unlocked in the Main Menu!";
                 } else {
-                    message = (SeatingManager.isLocalPlayerGuest ?
+                    message = (ClientContext.seatingMgr.isLocalPlayerGuest ?
                         "Create an account on Whirled to save your progress!" :
                         "Your progress has been saved.") + "\nContinue playing?"
                 }
@@ -90,16 +90,16 @@ public class LevelOutroMode extends AppMode
         // buttons
         var button :SimpleButton;
 
-        if (_success && !AppContext.levelMgr.isLastLevel) {
+        if (_success && !ClientContext.levelMgr.isLastLevel) {
             button = UIBits.createButton("Next Level", 1.5, 150);
             var localThis :LevelOutroMode = this;
             registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (localThis.showUpsellScreen) {
-                        AppContext.mainLoop.pushMode(new UpsellMode());
+                        ClientContext.mainLoop.pushMode(new UpsellMode());
                     } else {
-                        AppContext.levelMgr.incrementCurLevelIndex();
-                        AppContext.levelMgr.playLevel();
+                        ClientContext.levelMgr.incrementCurLevelIndex();
+                        ClientContext.levelMgr.playLevel();
                     }
                 });
 
@@ -107,7 +107,7 @@ public class LevelOutroMode extends AppMode
             button = UIBits.createButton("Retry", 1.5, 150);
             registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    AppContext.levelMgr.playLevel();
+                    ClientContext.levelMgr.playLevel();
                 });
         }
 
@@ -138,15 +138,15 @@ public class LevelOutroMode extends AppMode
         }
 
         if (!_showedUpsellMode && this.showUpsellScreen) {
-            AppContext.mainLoop.pushMode(new UpsellMode());
+            ClientContext.mainLoop.pushMode(new UpsellMode());
             _showedUpsellMode = true;
         }
     }
 
     protected function get showUpsellScreen () :Boolean
     {
-        return (AppContext.levelMgr.curLevelIndex >= Constants.NUM_FREE_SP_LEVELS - 1 &&
-            !AppContext.isStoryModeUnlocked);
+        return (ClientContext.levelMgr.curLevelIndex >= Constants.NUM_FREE_SP_LEVELS - 1 &&
+            !ClientContext.isStoryModeUnlocked);
     }
 
     protected function saveProgress () :void
@@ -154,8 +154,8 @@ public class LevelOutroMode extends AppMode
         // if the player lost the level, give them points for the resources they gathered
         var awardedScore :int = (_success ? this.totalScore : this.resourcesScore);
 
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.endGameWithScore(awardedScore, Constants.SCORE_MODE_STORY);
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.game.endGameWithScore(awardedScore, Constants.SCORE_MODE_STORY);
 
         } else {
             log.info("Level score: " + awardedScore);
@@ -170,21 +170,21 @@ public class LevelOutroMode extends AppMode
             newLevelRecord.expert = this.expertCompletion;
             newLevelRecord.score = this.totalScore;
 
-            var thisLevelIndex :int = AppContext.levelMgr.curLevelIndex;
-            var curLevelRecord :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex);
+            var thisLevelIndex :int = ClientContext.levelMgr.curLevelIndex;
+            var curLevelRecord :LevelRecord = ClientContext.levelMgr.getLevelRecord(thisLevelIndex);
             if (null != curLevelRecord && newLevelRecord.isBetterThan(curLevelRecord)) {
                 curLevelRecord.assign(newLevelRecord);
                 dataChanged = true;
             }
 
-            var nextLevel :LevelRecord = AppContext.levelMgr.getLevelRecord(thisLevelIndex + 1);
+            var nextLevel :LevelRecord = ClientContext.levelMgr.getLevelRecord(thisLevelIndex + 1);
             if (null != nextLevel && !nextLevel.unlocked) {
                 nextLevel.unlocked = true;
                 dataChanged = true;
             }
 
             if (dataChanged) {
-                AppContext.userCookieMgr.needsUpdate();
+                ClientContext.userCookieMgr.needsUpdate();
             }
 
             // trophies
@@ -198,11 +198,11 @@ public class LevelOutroMode extends AppMode
             }
 
             if (null != levelTrophy) {
-                AppContext.awardTrophy(levelTrophy);
+                ClientContext.awardTrophy(levelTrophy);
             }
 
-            if (AppContext.levelMgr.playerBeatGameWithExpertScore) {
-                AppContext.awardTrophy(Trophies.MAGNACUMLAUDE);
+            if (ClientContext.levelMgr.playerBeatGameWithExpertScore) {
+                ClientContext.awardTrophy(Trophies.MAGNACUMLAUDE);
             }
         }
     }

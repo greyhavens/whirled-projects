@@ -15,7 +15,7 @@ public class EndlessMultiplayerConfig
 
     public static function init (numPlayers :int) :void
     {
-        AppContext.gameCtrl.net.doBatch(function () :void {
+        ClientContext.gameCtrl.net.doBatch(function () :void {
             EndlessMultiplayerConfig.gameStarting = false;
             EndlessMultiplayerConfig.selectedMapIdx = 0;
             EndlessMultiplayerConfig.savedGames = ArrayUtil.create(2, null);
@@ -25,42 +25,42 @@ public class EndlessMultiplayerConfig
 
     public static function set inited (val :Boolean) :void
     {
-        AppContext.gameCtrl.net.set(PROP_INITED, val);
+        ClientContext.gameCtrl.net.set(PROP_INITED, val);
     }
 
     public static function get inited () :Boolean
     {
-        return AppContext.gameCtrl.net.get(PROP_INITED) as Boolean;
+        return ClientContext.gameCtrl.net.get(PROP_INITED) as Boolean;
     }
 
     public static function set gameStarting (val :Boolean) :void
     {
-        AppContext.gameCtrl.net.set(PROP_GAMESTARTING, val);
+        ClientContext.gameCtrl.net.set(PROP_GAMESTARTING, val);
     }
 
     public static function get gameStarting () :Boolean
     {
-        return AppContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean;
+        return ClientContext.gameCtrl.net.get(PROP_GAMESTARTING) as Boolean;
     }
 
     public static function set selectedMapIdx (val :int) :void
     {
-        AppContext.gameCtrl.net.set(PROP_SELECTEDMAPIDX, val);
+        ClientContext.gameCtrl.net.set(PROP_SELECTEDMAPIDX, val);
     }
 
     public static function get selectedMapIdx () :int
     {
-        return AppContext.gameCtrl.net.get(PROP_SELECTEDMAPIDX) as int;
+        return ClientContext.gameCtrl.net.get(PROP_SELECTEDMAPIDX) as int;
     }
 
     public static function set savedGames (val :Array) :void
     {
-        AppContext.gameCtrl.net.set(PROP_SAVEDGAMES, val);
+        ClientContext.gameCtrl.net.set(PROP_SAVEDGAMES, val);
     }
 
     public static function get savedGames () :Array
     {
-        var saves :Array = AppContext.gameCtrl.net.get(PROP_SAVEDGAMES) as Array;
+        var saves :Array = ClientContext.gameCtrl.net.get(PROP_SAVEDGAMES) as Array;
         if (saves == null) {
             return null;
         }
@@ -96,7 +96,7 @@ public class EndlessMultiplayerConfig
 
     public static function setPlayerSavedGames (playerSeat :int, val :SavedEndlessGameList) :void
     {
-        AppContext.gameCtrl.net.setAt(PROP_SAVEDGAMES, playerSeat, val.toBytes());
+        ClientContext.gameCtrl.net.setAt(PROP_SAVEDGAMES, playerSeat, val.toBytes());
     }
 
 }

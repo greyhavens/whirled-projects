@@ -12,7 +12,7 @@ import popcraft.data.*;
 import popcraft.game.endless.EndlessLevelManager;
 import popcraft.game.story.LevelManager;
 
-public class AppContext
+public class ClientContext
 {
     public static var mainSprite :Sprite;
     public static var mainLoop :MainLoop;
@@ -25,12 +25,13 @@ public class AppContext
     public static var playerLevelPacks :LevelPackManager = new LevelPackManager();
     public static var prizeMgr :PrizeManager = new PrizeManager();
     public static var savedPlayerBits :SavedPlayerBits = new SavedPlayerBits();
+    public static var seatingMgr :ClientSeatingManager = new ClientSeatingManager();
 
     public static var userCookieMgr :UserCookieManager;
 
     public static function awardTrophy (trophyName :String) :void
     {
-        if (AppContext.gameCtrl.isConnected()) {
+        if (ClientContext.gameCtrl.isConnected()) {
             if (gameCtrl.player.awardTrophy(trophyName)) {
                 prizeMgr.awardPrizeForTrophy(trophyName);
             }
@@ -47,13 +48,13 @@ public class AppContext
     public static function get isEndlessModeUnlocked () :Boolean
     {
         return (Constants.DEBUG_UNLOCK_ENDLESS_MODE ||
-            AppContext.isPremiumContentUnlocked);
+            ClientContext.isPremiumContentUnlocked);
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
         return (Constants.DEBUG_UNLOCK_STORY_MODE ||
-            AppContext.isPremiumContentUnlocked ||
+            ClientContext.isPremiumContentUnlocked ||
             savedPlayerBits.hasFreeStoryMode);
     }
 

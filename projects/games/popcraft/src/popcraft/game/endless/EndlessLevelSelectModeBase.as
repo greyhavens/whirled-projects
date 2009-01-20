@@ -135,7 +135,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new PlaySoundTask("sfx_gatedrop"),
                 new FunctionTask(
                     function () :void {
-                        AppContext.mainLoop.removeMode(-2);
+                        ClientContext.mainLoop.removeMode(-2);
                     }),
                LocationTask.CreateLinear(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
             break;
@@ -249,7 +249,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
     protected function animateToMode (nextMode :AppMode) :void
     {
-        AppContext.mainLoop.insertMode(nextMode, -1);
+        ClientContext.mainLoop.insertMode(nextMode, -1);
 
         _saveView.removeAllTasks();
         _saveView.x = DOWN_LOC.x;
@@ -257,7 +257,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         _saveView.addTask(new SerialTask(
             new PlaySoundTask("sfx_gateopen"),
             LocationTask.CreateSmooth(UP_LOC.x, UP_LOC.y, ANIMATE_UP_TIME),
-            new FunctionTask(AppContext.mainLoop.popMode)));
+            new FunctionTask(ClientContext.mainLoop.popMode)));
     }
 
     protected function onHelpClicked (...ignored) :void
@@ -627,9 +627,9 @@ class SaveView extends SceneObject
                 // save panels
                 if (remoteSave != null) {
                     // player headshots
-                    for (playerIndex = 0; playerIndex < SeatingManager.numExpectedPlayers; ++playerIndex) {
-                        var headshot :DisplayObject = SeatingManager.getPlayerHeadshot(playerIndex);
-                        var hsLoc :Point = (playerIndex == SeatingManager.localPlayerSeat ?
+                    for (playerIndex = 0; playerIndex < ClientContext.seatingMgr.numExpectedPlayers; ++playerIndex) {
+                        var headshot :DisplayObject = ClientContext.seatingMgr.getPlayerHeadshot(playerIndex);
+                        var hsLoc :Point = (playerIndex == ClientContext.seatingMgr.localPlayerSeat ?
                             LOCAL_HEADSHOT_LOC :
                             REMOTE_HEADSHOT_LOC);
 

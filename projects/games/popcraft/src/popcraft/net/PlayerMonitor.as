@@ -14,10 +14,10 @@ public class PlayerMonitor
 {
     public function PlayerMonitor (numPlayers :int)
     {
-        AppContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+        ClientContext.gameCtrl.net.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
 
-        AppContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+        ClientContext.gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
             onPlayerLeft);
 
         _scores = new HashMap();
@@ -25,10 +25,10 @@ public class PlayerMonitor
 
     public function shutdown () :void
     {
-        AppContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+        ClientContext.gameCtrl.net.removeEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
 
-        AppContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
+        ClientContext.gameCtrl.game.removeEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
             onPlayerLeft);
     }
 
@@ -36,7 +36,7 @@ public class PlayerMonitor
     {
         var thisRoundScores :Array = _scores.get(roundId);
         if (thisRoundScores == null) {
-            thisRoundScores = ArrayUtil.create(SeatingManager.numExpectedPlayers, null);
+            thisRoundScores = ArrayUtil.create(ClientContext.seatingMgr.numExpectedPlayers, null);
             _scores.put(roundId, thisRoundScores);
         }
 
@@ -45,7 +45,7 @@ public class PlayerMonitor
 
     public function reportScore (scoreMsg :PlayerScoreMsg) :void
     {
-        AppContext.gameCtrl.net.sendMessage(SCORE_MSG, scoreMsg.toBytes());
+        ClientContext.gameCtrl.net.sendMessage(SCORE_MSG, scoreMsg.toBytes());
     }
 
     public function waitForScores (callback :Function, roundId :int) :void
@@ -63,7 +63,7 @@ public class PlayerMonitor
         }
 
         for (var playerSeat :int = 0; playerSeat < thisRoundScores.length; ++playerSeat) {
-            if (SeatingManager.isPlayerPresent(playerSeat) && thisRoundScores[playerSeat] == null) {
+            if (ClientContext.seatingMgr.isPlayerPresent(playerSeat) && thisRoundScores[playerSeat] == null) {
                 return false;
             }
         }

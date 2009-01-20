@@ -317,7 +317,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function handleAttacked (...ignored) :void
     {
-        var timeNow :Number = AppContext.mainLoop.elapsedSeconds;
+        var timeNow :Number = ClientContext.mainLoop.elapsedSeconds;
         if (timeNow - _lastDebrisTime >= DEBRIS_INTERVAL_MIN) {
             // show a "debris" effect
             if (null == g_debrisClass) {

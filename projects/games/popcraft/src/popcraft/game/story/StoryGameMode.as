@@ -26,8 +26,8 @@ public class StoryGameMode extends GameMode
 
         // let the server know we're starting the game, so that coins can be awarded when
         // the game ends
-        if (AppContext.gameCtrl.isConnected()) {
-            AppContext.gameCtrl.game.playerReady();
+        if (ClientContext.gameCtrl.isConnected()) {
+            ClientContext.gameCtrl.game.playerReady();
         }
 
         if (!Constants.DEBUG_SKIP_LEVEL_INTRO) {
@@ -37,7 +37,7 @@ public class StoryGameMode extends GameMode
 
     protected function showIntro () :void
     {
-        AppContext.mainLoop.pushMode(new LevelIntroMode(_level));
+        ClientContext.mainLoop.pushMode(new LevelIntroMode(_level));
     }
 
     override protected function applyCheatCode (keyCode :uint) :void
@@ -45,7 +45,7 @@ public class StoryGameMode extends GameMode
         if (keyCode == KeyboardCodes.SLASH) {
             // restart the level
             // playLevel(true) forces the current level to reload
-            AppContext.levelMgr.playLevel(null, true);
+            ClientContext.levelMgr.playLevel(null, true);
 
         } else {
             super.applyCheatCode(keyCode);
@@ -96,7 +96,7 @@ public class StoryGameMode extends GameMode
     override protected function get gameData () :GameData
     {
         return (_level.gameDataOverride != null ? _level.gameDataOverride :
-                AppContext.defaultGameData);
+                ClientContext.defaultGameData);
     }
 
     override protected function createPlayers () :void
@@ -154,7 +154,7 @@ public class StoryGameMode extends GameMode
 
     override protected function createMessageManager () :TickedMessageManager
     {
-        return new OfflineTickedMessageManager(AppContext.gameCtrl, TICK_INTERVAL_MS);
+        return new OfflineTickedMessageManager(ClientContext.gameCtrl, TICK_INTERVAL_MS);
     }
 
     override protected function handleGameOver () :void
@@ -162,7 +162,7 @@ public class StoryGameMode extends GameMode
         // show the appropriate outro screen
         var nextMode :AppMode;
         var levelPackResources :Array = [];
-        if (AppContext.levelMgr.isLastLevel &&
+        if (ClientContext.levelMgr.isLastLevel &&
             GameContext.winningTeamId == GameContext.localPlayerInfo.teamId) {
 
             nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO, _level);

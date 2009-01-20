@@ -8,9 +8,9 @@ public class ResetSavedGamesDialog extends AppMode
 {
     public static function get shouldShow () :Boolean
     {
-        return (!AppContext.savedPlayerBits.hasAskedToResetEndlessLevels &&
-                (AppContext.endlessLevelMgr.savedMpGames.numSaves > 0 ||
-                 AppContext.endlessLevelMgr.savedSpGames.numSaves > 0));
+        return (!ClientContext.savedPlayerBits.hasAskedToResetEndlessLevels &&
+                (ClientContext.endlessLevelMgr.savedMpGames.numSaves > 0 ||
+                 ClientContext.endlessLevelMgr.savedSpGames.numSaves > 0));
     }
 
     override protected function setup () :void
@@ -30,12 +30,12 @@ public class ResetSavedGamesDialog extends AppMode
     protected function close (resetSavedGames :Boolean) :void
     {
         if (resetSavedGames) {
-            AppContext.endlessLevelMgr.resetSavedGames();
+            ClientContext.endlessLevelMgr.resetSavedGames();
         }
-        AppContext.savedPlayerBits.hasAskedToResetEndlessLevels = true;
-        AppContext.userCookieMgr.needsUpdate();
+        ClientContext.savedPlayerBits.hasAskedToResetEndlessLevels = true;
+        ClientContext.userCookieMgr.needsUpdate();
 
-        AppContext.mainLoop.popMode();
+        ClientContext.mainLoop.popMode();
     }
 
     protected static const TEXT :String = "" +

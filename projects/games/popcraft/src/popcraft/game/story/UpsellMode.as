@@ -47,7 +47,7 @@ public class UpsellMode extends AppMode
         registerOneShotCallback(unlockButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 closeMode();
-                AppContext.showGameShop();
+                ClientContext.showGameShop();
             });
     }
 
@@ -60,7 +60,7 @@ public class UpsellMode extends AppMode
             new WaitForFrameTask("closed"),
             LocationTask.CreateEaseIn(
                 Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7),
-            new FunctionTask(AppContext.mainLoop.popMode)));
+            new FunctionTask(ClientContext.mainLoop.popMode)));
     }
 
     protected var _manualObj :SimpleSceneObject;
