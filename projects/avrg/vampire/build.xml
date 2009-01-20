@@ -1,0 +1,26 @@
+<!-- build configuration -->
+<project name="vampire" default="compile" basedir=".">
+  
+
+  <property name="app.name" value="VampireMain"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="vampire/client"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent" value="Server"/>
+  <property name="app.server-agent-package-dir" value="vampire/server"/> 
+  
+  <!-- define some basic project parameters -->
+<!--  <property name="app.name" value="Vampire"/>
+  <property name="app.source-dir" value="src"/>
+  <property name="app.package-dir" value="vampire"/>
+
+  <property name="app.server-agent" value="server/Server"/>
+  <property name="app.enable-server-agent" value="true"/>-->
+
+  <!-- if you need to include extra source files, uncomment and edit this line -->
+  <property name="app.source-extras" value="/export/whirled/contrib/src/as"/>
+	
+  <!-- include the standard build script -->
+  <import file="/export/whirled/etc/project-include.xml"/>
+
+</project>
