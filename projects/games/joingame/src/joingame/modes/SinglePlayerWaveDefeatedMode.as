@@ -85,6 +85,9 @@ package joingame.modes
 //            AppContext.messageManager.addEventListener(ReplayConfirmMessage.NAME, handleReplayConfirm);
             _nextWaveButton.addEventListener(MouseEvent.CLICK, doNextWave);
             
+            trace("old cookie=" + GameContext.playerCookieData);
+            trace("new cookie=" + GameContext.gameModel._tempNewPlayerCookie);
+            
             _modeLayer.addChild( new GameStatsSinglePlayerSprite(GameContext.playerCookieData.clone(), GameContext.gameModel._tempNewPlayerCookie.clone()));
             GameContext.playerCookieData.setFrom( GameContext.gameModel._tempNewPlayerCookie );
             if( AppContext.isConnected ) {
