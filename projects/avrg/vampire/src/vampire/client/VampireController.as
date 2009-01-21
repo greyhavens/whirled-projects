@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.MainLoop;
 import flash.display.Sprite;
 
 import vampire.client.modes.NothingMode;
+import vampire.net.messages.RequestActionChangeMessage;
 
 
 /**
@@ -29,15 +30,10 @@ public class VampireController extends Controller
         
     public function handleSwitchMode( loop :MainLoop, mode :String ) :void
     {
-        var classSting :String = "vampire.client.modes." + mode + "Mode";
-        var modeClass :Class = ClassUtil.getClassByName(classSting);
-        if( modeClass == null) {
-            log.error("no mode class found");
-        }
-        else {
-            loop.changeMode( new modeClass() as AppMode );
-        }
+        ClientContext.gameCtrl.agent.sendMessage( RequestActionChangeMessage.NAME, new RequestActionChangeMessage( ClientContext.ourPlayerId, mode).toBytes() );
     }
+    
+
     
     public function handleCloseMode( loop :MainLoop) :void
     {

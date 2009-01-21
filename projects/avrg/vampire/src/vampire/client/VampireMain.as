@@ -1,10 +1,13 @@
 package vampire.client {
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.MainLoop;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.net.registerClassAlias;
 
 import vampire.client.modes.BloodBondMode;
@@ -81,6 +84,7 @@ public class VampireMain extends Sprite
             
             MainLoop.instance.pushMode( new NothingMode() );
         
+//            setupAvatarInfoCapture();
         
 //            ClientContext.gameCtrl = new AVRGameControl(this);
 //            ClientContext.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
@@ -124,6 +128,9 @@ public class VampireMain extends Sprite
 //        ClientContext.model.destroy();
 
         MainLoop.instance.shutdown();
+        
+        removeEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
+        EventHandlers.freeAllHandlers();
     }
 
     protected function leftRoom (e :Event) :void
@@ -131,6 +138,28 @@ public class VampireMain extends Sprite
         log.debug("leftRoom");
 //        ClientContext.quit();
     }
+    
+    protected function setupAvatarInfoCapture() :void
+    {
+        graphics.clear();
+        graphics.beginFill(0, 0);
+        graphics.drawRect(0, 0, 700, 500);
+        graphics.endFill();
+        
+        addEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
+    }
+    
+    protected function mouseMove( e :MouseEvent ) :void
+    {
+        for each (var playerId :int in ClientContext.gameCtrl.room.getPlayerIds()) {
+            var avatar :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo( playerId );
+            if( avatar.bounds.contains( e.localX, e.localY ) ) {
+                trace("mouse over avatar=" + playerId );
+                return; 
+            }
+        }
+    }
+    
 
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
