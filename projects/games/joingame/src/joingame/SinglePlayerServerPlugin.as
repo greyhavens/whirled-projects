@@ -320,7 +320,7 @@ package joingame
                     AppContext.singlePlayerCookie.bestKillsPerDeltaRatio = AppContext.database.getMeanKillsPerDelta(_gameModel.humanPlayerId); 
                     log.debug("AppContext.singlePlayerCookie.bestKillsPerDeltaRatio=" + AppContext.singlePlayerCookie.bestKillsPerDeltaRatio);
                     
-                    log.debug("After wave defeated, player level=" + AppContext.singlePlayerCookie.highestRobotLevelDefeated++);
+//                    log.debug("After wave defeated, player level=" + AppContext.singlePlayerCookie.highestRobotLevelDefeated++);
                     Trophies.handleWaveDefeated( _gameModel, AppContext.singlePlayerCookie );
                     
                     if( AppContext.singlePlayerCookie == null) {
@@ -791,7 +791,8 @@ package joingame
                 
                 if( playerIds[ playerIds.length - 1 ] > 0) {
                     //Find the highest robot level, and set the cookie to it
-                    var highestLevelDefeated :int = 0;
+//                    var highestLevelDefeated :int = 1;
+                    AppContext.singlePlayerCookie.highestRobotLevelDefeated = Math.max(1, AppContext.singlePlayerCookie.highestRobotLevelDefeated);
                     for( k = 0; k < playerIds.length - 1; k++) {
                         var level :int = getLevelForComputerId(playerIds[k]);
                         if( level >= AppContext.singlePlayerCookie.highestRobotLevelDefeated) {

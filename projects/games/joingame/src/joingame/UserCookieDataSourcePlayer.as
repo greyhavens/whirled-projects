@@ -6,6 +6,7 @@ package joingame
     {
         public function UserCookieDataSourcePlayer()
         {
+            highestRobotLevelDefeated = 1;
         }
 
         public function writeCookieData(cookie:ByteArray):void
@@ -17,7 +18,7 @@ package joingame
         
         public function readCookieData(version:int, cookie:ByteArray):void
         {
-            highestRobotLevelDefeated = cookie.readInt();
+            highestRobotLevelDefeated = Math.max(1, cookie.readInt() );
             humansDefeated = cookie.readInt();
             bestKillsPerDeltaRatio = cookie.readFloat();
         }
@@ -43,13 +44,18 @@ package joingame
         
         public function setFrom( newCookie :UserCookieDataSourcePlayer ) :void
         {
-            this.highestRobotLevelDefeated = newCookie.highestRobotLevelDefeated;
+            this.highestRobotLevelDefeated = Math.max(1, newCookie.highestRobotLevelDefeated);
             this.humansDefeated = newCookie.humansDefeated;
             this.bestKillsPerDeltaRatio = newCookie.bestKillsPerDeltaRatio;
         }
         
+        public function toString() :String
+        {
+            return "UserCookieDataSourcePlayer: highestRobotLevelDefeated=" + highestRobotLevelDefeated; 
+        }
         
-        public var highestRobotLevelDefeated :int = 0;
+        
+        public var highestRobotLevelDefeated :int = 1;
         public var humansDefeated :int = 0;
         public var bestKillsPerDeltaRatio :Number = 0;
         
