@@ -11,6 +11,8 @@ import com.whirled.avrg.PlayerSubControlServer;
 
 import vampire.data.Constants;
 import vampire.data.SharedPlayerStateServer;
+import vampire.net.IGameMessage;
+import vampire.net.messages.RequestActionChangeMessage;
 
 
 public class Player
@@ -145,6 +147,16 @@ public class Player
         return _sharedState.level;
 //        return _level;
     }
+    
+    public function get action () :String
+    {
+        return _sharedState.action;
+    }
+    
+    public function get bloodbonded () :Array
+    {
+        return _sharedState.bloodbonded;
+    }
 
 
     protected function XXXsetLevel (level :int, force :Boolean = false) :void
@@ -256,6 +268,22 @@ public class Player
             _room.playerUpdated(this);
         }
     }
+    
+    protected function setAction (action :String, force :Boolean = false) :void
+    {
+        if (!force && action == this.action) {
+            return;
+        }
+        _sharedState.setAction( action );
+        
+        // always update our avatar state
+        updateAvatarState();
+
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
+    }
 
     public function roomStateChanged () :void
     {
@@ -266,13 +294,33 @@ public class Player
     public function handleMessage (name :String, value :Object) :void
     {
         // handle messages that make (at least some) sense even if we're between rooms
-        log.debug("handleMessage() ", "name", name);
+        log.debug("handleMessage() ", "name", name, "value", value);
         if( name == Constants.NAMED_EVENT_BLOOD_UP ) {
             setBlood( blood + 10 );
         }
         else if( name == Constants.NAMED_EVENT_BLOOD_DOWN ) {
             setBlood( blood - 10 );
-        } 
+        }
+        
+        else if( value is IGameMessage) {
+            
+            if( value is RequestActionChangeMessage) {
+                handleRequestActionChange( RequestActionChangeMessage(value) );
+            }
+            else {
+                log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
+            }
+        }
+        
+    }
+    
+    /**
+    * Here we check if we are allowed to change action.
+    * ATM we just allow it.
+    */
+    protected function handleRequestActionChange( e :RequestActionChangeMessage) :void
+    {
+        setAction( e.action );
     }
 
 
