@@ -100,7 +100,7 @@ public class LobbyConfig
         // does one team have all the players?
         var teamSizes :Array = computeTeamSizes();
         for each (var teamSize :int in teamSizes) {
-            if (teamSize == ClientContext.seatingMgr.numPlayers) {
+            if (teamSize == _seatingMgr.numPlayers) {
                 return false;
             }
         }
@@ -122,7 +122,7 @@ public class LobbyConfig
 
     public function get isEndlessModeSelected () :Boolean
     {
-        if (ClientContext.seatingMgr.numExpectedPlayers != 2) {
+        if (_seatingMgr.numExpectedPlayers != 2) {
             return false;
         }
 
