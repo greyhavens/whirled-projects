@@ -101,16 +101,15 @@ package joingame
         public static const TIME_TO_SHOW_INSTRUCTIONS :int = 6000; 
         
         
-        
         public static const LOCAL_MODE :Boolean = false;
         
         /*Single player */
-        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 5000;
-        public static const SINGLE_PLAYER_MAX_ROBOT_LEVELS :int = 50;
+        public static const SINGLE_PLAYER_BASE_AI_TIME_IN_MILLISECS :int = 3000;
+        public static const SINGLE_PLAYER_MAX_ROBOT_LEVELS :int = 30;
         
         public static const SINGLE_PLAYER_STARTING_ROBOT_LEVEL :int = 1;
         
-        public static const SINGLE_PLAYER_ROBOTS_PER_WAVE:int = 8;//;8;
+        public static const SINGLE_PLAYER_ROBOTS_PER_WAVE:int = 6;//;8;
         public static const SINGLE_PLAYER_ROBOTS_TOURNAMENT:int = 6;
         
         public static const SINGLE_PLAYER_GAME_TYPE_WAVES :String = "Game Type: Waves";
