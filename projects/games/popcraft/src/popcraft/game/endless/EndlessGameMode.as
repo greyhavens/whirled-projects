@@ -509,7 +509,7 @@ public class EndlessGameMode extends GameMode
         if (GameContext.isSinglePlayerGame) {
             return uint(Math.random() * uint.MAX_VALUE);
         } else {
-            return MultiplayerConfig.randSeed;
+            return ClientContext.lobbyConfig.randSeed;
         }
     }
 

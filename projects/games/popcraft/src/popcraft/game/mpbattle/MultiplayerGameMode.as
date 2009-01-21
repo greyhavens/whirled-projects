@@ -36,7 +36,7 @@ public class MultiplayerGameMode extends GameMode
         // Determine what the game's team arrangement is, and randomly choose an appropriate
         // MultiplayerSettingsData that fits that arrangement.
 
-        var multiplayerArrangement :int = MultiplayerConfig.computeTeamArrangement();
+        var multiplayerArrangement :int = ClientContext.lobbyConfig.computeTeamArrangement();
         var potentialSettings :Array = ClientContext.multiplayerSettings;
         potentialSettings = potentialSettings.filter(
             function (mpSettings :MultiplayerSettingsData, index :int, array :Array) :Boolean {
@@ -48,14 +48,14 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        var teams :Array = MultiplayerConfig.teams;
-        var handicaps :Array = MultiplayerConfig.handicaps;
+        var teams :Array = ClientContext.lobbyConfig.teams;
+        var handicaps :Array = ClientContext.lobbyConfig.handicaps;
 
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
         // structures with base locations so that we can put everyone in the correct place.
         var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
-        var teamSizes :Array = MultiplayerConfig.computeTeamSizes();
+        var teamSizes :Array = ClientContext.lobbyConfig.computeTeamSizes();
         var teamInfos :Array = [];
         var teamInfo :TeamInfo;
         var teamId :int;
@@ -145,7 +145,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createRandSeed () :uint
     {
-        return MultiplayerConfig.randSeed;
+        return ClientContext.lobbyConfig.randSeed;
     }
 
     override protected function createMessageManager () :TickedMessageManager

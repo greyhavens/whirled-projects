@@ -20,10 +20,11 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import popcraft.data.*;
-import popcraft.game.mpbattle.*;
-import popcraft.net.*;
 import popcraft.game.*;
+import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;
+import popcraft.net.*;
+import popcraft.server.Server;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -32,8 +33,15 @@ public class PopCraft extends Sprite
 {
     public static var log :Log = Log.getLog(PopCraft);
 
+    protected static function DEBUG_REMOVE_ME () :void
+    {
+        var c :Class = Server;
+    }
+
     public function PopCraft ()
     {
+        DEBUG_REMOVE_ME(); //
+
         ClientContext.mainSprite = this;
 
         // setup GameControl
@@ -41,6 +49,7 @@ public class PopCraft extends Sprite
         var isConnected :Boolean = ClientContext.gameCtrl.isConnected();
 
         ClientContext.seatingMgr.init(ClientContext.gameCtrl);
+        ClientContext.lobbyConfig.init(ClientContext.gameCtrl, ClientContext.seatingMgr);
 
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
 

@@ -26,6 +26,7 @@ public class ClientContext
     public static var prizeMgr :PrizeManager = new PrizeManager();
     public static var savedPlayerBits :SavedPlayerBits = new SavedPlayerBits();
     public static var seatingMgr :ClientSeatingManager = new ClientSeatingManager();
+    public static var lobbyConfig :LobbyConfig = new LobbyConfig();
 
     public static var userCookieMgr :UserCookieManager;
 

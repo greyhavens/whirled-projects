@@ -1,14 +1,15 @@
 package popcraft.game.mpbattle {
 
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.GameContentEvent;
+import com.whirled.game.NetSubControl;
 import com.whirled.game.OccupantChangedEvent;
 import com.whirled.net.ElementChangedEvent;
+import com.whirled.net.MessageReceivedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
@@ -42,7 +43,7 @@ public class MultiplayerLobbyMode extends AppMode
 
         // handle clicks on the team boxes
         if (ClientContext.seatingMgr.numExpectedPlayers == 2) {
-            createTeamBoxMouseListener(_bg, ENDLESS_TEAM_ID);
+            createTeamBoxMouseListener(_bg, LobbyConfig.ENDLESS_TEAM_ID);
         } else {
             _endlessWarnText = UIBits.createText(
                 "Team Survival is accessible in 2-player games only", 1.2, 0, 0x444444);
@@ -51,12 +52,15 @@ public class MultiplayerLobbyMode extends AppMode
             _bg.addChild(_endlessWarnText);
         }
 
-        for (var teamId :int = UNASSIGNED_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
+        for (var teamId :int = LobbyConfig.UNASSIGNED_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS;
+             ++teamId) {
             createTeamBoxMouseListener(_bg, teamId);
         }
 
         _statusText = _bg["instructions"];
 
+        registerListener(ClientContext.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
+            onMsgReceived);
         registerListener(ClientContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
         registerListener(ClientContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
@@ -64,12 +68,7 @@ public class MultiplayerLobbyMode extends AppMode
         registerListener(ClientContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             onOccupantLeft);
 
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
-            // initialize everything if we're the first player
-            MultiplayerConfig.init(NUM_TEAMS, ClientContext.seatingMgr.numExpectedPlayers);
-        }
-
-        if (MultiplayerConfig.inited) {
+        if (ClientContext.lobbyConfig.inited) {
             initLocalPlayerData();
         }
 
@@ -105,7 +104,8 @@ public class MultiplayerLobbyMode extends AppMode
     {
         if (e.contentType == GameContentEvent.LEVEL_PACK &&
             e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
-            MultiplayerConfig.setPlayerHasPremiumContent(ClientContext.seatingMgr.localPlayerSeat);
+
+            sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
         }
     }
 
@@ -116,11 +116,11 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         if (ClientContext.globalPlayerStats.hasMorbidInfection) {
-            MultiplayerConfig.setPlayerHasMorbidInfection(ClientContext.seatingMgr.localPlayerSeat);
+            sendServerMsg(LobbyConfig.MSG_SET_MORBID_INFECTION, true);
         }
 
         if (ClientContext.isEndlessModeUnlocked) {
-            MultiplayerConfig.setPlayerHasPremiumContent(ClientContext.seatingMgr.localPlayerSeat);
+            sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
         }
 
         _initedLocalPlayerData = true;
@@ -130,11 +130,11 @@ public class MultiplayerLobbyMode extends AppMode
     {
         var boxName :String;
         switch (teamId) {
-        case UNASSIGNED_TEAM_ID:
+        case LobbyConfig.UNASSIGNED_TEAM_ID:
             boxName = UNASSIGNED_BOX_NAME;
             break;
 
-        case ENDLESS_TEAM_ID:
+        case LobbyConfig.ENDLESS_TEAM_ID:
             boxName = ENDLESS_BOX_NAME;
             break;
 
@@ -164,21 +164,30 @@ public class MultiplayerLobbyMode extends AppMode
 
         var statusText :String = "";
 
-        if (!this.allPlayersDecided) {
+        if (!ClientContext.lobbyConfig.isEveryoneTeamed) {
             statusText = "Divide into teams!";
-        } else if (!this.teamsDividedProperly) {
+        } else if (!ClientContext.lobbyConfig.teamsDividedProperly) {
             statusText = "At least two teams are required to start the game."
         } else if (!_gameStartTimer.isNull) {
             var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
-            statusText = "Starting in " + Math.ceil(timer.timeLeft) + "...";
+            var timeLeft :Number = Math.ceil(timer.timeLeft);
+            statusText =
+                (timeLeft > 0 ? "Starting in " + Math.ceil(timer.timeLeft) + "..." : "Starting...");
         }
 
         _statusText.text = statusText;
     }
 
+    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    {
+        if (e.name == LobbyConfig.MSG_START_GAME) {
+            startGame();
+        }
+    }
+
     protected function onPropChanged (e :PropertyChangedEvent) :void
     {
-        if (e.name == MultiplayerConfig.PROP_INITED && Boolean(e.newValue)) {
+        if (e.name == LobbyConfig.PROP_INITED && Boolean(e.newValue)) {
             if (!_initedLocalPlayerData) {
                 initLocalPlayerData();
             }
@@ -186,33 +195,30 @@ public class MultiplayerLobbyMode extends AppMode
             updateTeamsDisplay();
             updateHandicapsDisplay();
 
-        } else if (e.name == MultiplayerConfig.PROP_GAMESTARTING && Boolean(e.newValue)) {
-            startGame();
+        } else if (e.name == LobbyConfig.PROP_GAMESTARTCOUNTDOWN) {
+            var showCountdown :Boolean = e.newValue as Boolean;
+            if (e.newValue as Boolean) {
+                _gameStartTimer = addObject(new SimpleTimer(LobbyConfig.COUNTDOWN_TIME));
+            } else {
+                destroyObject(_gameStartTimer);
+            }
         }
     }
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (e.name == MultiplayerConfig.PROP_TEAMS) {
+        if (e.name == LobbyConfig.PROP_TEAMS) {
             updateTeamsDisplay();
-            stopOrResetTimer();
-        } else if (e.name == MultiplayerConfig.PROP_HANDICAPS) {
+        } else if (e.name == LobbyConfig.PROP_HANDICAPS) {
             updateHandicapsDisplay();
-            stopOrResetTimer();
-        } else if (e.name == MultiplayerConfig.PROP_HASPREMIUMCONTENT) {
+        } else if (e.name == LobbyConfig.PROP_HASPREMIUMCONTENT) {
             updatePremiumContentDisplay();
         }
     }
 
     protected function startGame () :void
     {
-        // turn the inited flag off before the game starts
-        // so that future game lobbies don't start immediately
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
-            MultiplayerConfig.inited = false;
-        }
-
-        if (this.isEndlessModeSelected) {
+        if (ClientContext.lobbyConfig.isEndlessModeSelected) {
             ClientContext.mainLoop.pushMode(new MpEndlessLevelSelectMode());
         } else {
             ClientContext.mainLoop.unwindToMode(new MultiplayerGameMode());
@@ -221,17 +227,16 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function onOccupantLeft (...ignored) :void
     {
-        stopOrResetTimer();
         updateTeamsDisplay();
     }
 
     protected function onHandicapBoxClicked (...ignored) :void
     {
-        var playerHandicaps :Array = MultiplayerConfig.handicaps;
+        var playerHandicaps :Array = ClientContext.lobbyConfig.handicaps;
         if (null != playerHandicaps) {
             this.handicapOn = !this.handicapOn;
             if (this.handicapOn != playerHandicaps[ClientContext.seatingMgr.localPlayerSeat]) {
-                MultiplayerConfig.setPlayerHandicap(ClientContext.seatingMgr.localPlayerSeat, this.handicapOn);
+                sendServerMsg(LobbyConfig.MSG_SET_HANDICAP, this.handicapOn);
                 updateHandicapsDisplay();
             }
         }
@@ -250,14 +255,15 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function onTeamSelected (teamId :int) :void
     {
-        if (!MultiplayerConfig.inited) {
+        if (!ClientContext.lobbyConfig.inited) {
             return;
         }
 
         // don't allow selection of the endless team unless there are 2 players
         // and somebody has unlocked the premium content
-        if (teamId == ENDLESS_TEAM_ID &&  (ClientContext.seatingMgr.numExpectedPlayers != 2 ||
-            !MultiplayerConfig.someoneHasPremiumContent)) {
+        if (teamId == LobbyConfig.ENDLESS_TEAM_ID &&
+            (ClientContext.seatingMgr.numExpectedPlayers != 2 ||
+             !ClientContext.lobbyConfig.someoneHasPremiumContent)) {
             return;
         }
 
@@ -270,22 +276,20 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         // don't allow team selection on teams that are full
-        var teamSizes :Array = computeTeamSizes();
-        if (teamSizes[teamId] >= MAX_TEAM_SIZE) {
+        if (ClientContext.lobbyConfig.isTeamFull(teamId)) {
             return;
         }
 
-        var teams :Array = MultiplayerConfig.teams;
+        var teams :Array = ClientContext.lobbyConfig.teams;
         if (null != teams && teams[ClientContext.seatingMgr.localPlayerSeat] != teamId) {
-            MultiplayerConfig.setPlayerTeam(ClientContext.seatingMgr.localPlayerSeat, teamId);
+            sendServerMsg(LobbyConfig.MSG_SET_TEAM, teamId);
             updateTeamsDisplay();
-            stopOrResetTimer();
         }
     }
 
     protected function updateHandicapsDisplay () :void
     {
-        var handicaps :Array = MultiplayerConfig.handicaps;
+        var handicaps :Array = ClientContext.lobbyConfig.handicaps;
         if (null != handicaps) {
             for (var playerSeat :int = 0; playerSeat < ClientContext.seatingMgr.numExpectedPlayers; ++playerSeat) {
                 var headshot :PlayerHeadshot = _headshots[playerSeat];
@@ -296,23 +300,22 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function updateTeamsDisplay () :void
     {
-        // "inited" will be set to true when the multiplayer configuration has
-        // been reset by the player in control.
-        if (!MultiplayerConfig.inited || null == MultiplayerConfig.teams) {
+        // "inited" will be set to true when the multiplayer configuration is valid
+        if (!ClientContext.lobbyConfig.inited || null == ClientContext.lobbyConfig.teams) {
             return;
         }
 
-        var teams :Array = MultiplayerConfig.teams;
-        var handicaps :Array = MultiplayerConfig.handicaps;
+        var teams :Array = ClientContext.lobbyConfig.teams;
+        var handicaps :Array = ClientContext.lobbyConfig.handicaps;
 
-        for (var teamId :int = ENDLESS_TEAM_ID; teamId < NUM_TEAMS; ++teamId) {
+        for (var teamId :int = LobbyConfig.ENDLESS_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS; ++teamId) {
             var boxLoc :Point;
             switch (teamId) {
-            case UNASSIGNED_TEAM_ID:
+            case LobbyConfig.UNASSIGNED_TEAM_ID:
                 boxLoc = UNASSIGNED_BOX_LOC;
                 break;
 
-            case ENDLESS_TEAM_ID:
+            case LobbyConfig.ENDLESS_TEAM_ID:
                 boxLoc = ENDLESS_BOX_LOC;
                 break;
 
@@ -334,7 +337,7 @@ public class MultiplayerLobbyMode extends AppMode
                         this.modeSprite.addChild(headshot);
                     }
 
-                    if (teamId == ENDLESS_TEAM_ID) {
+                    if (teamId == LobbyConfig.ENDLESS_TEAM_ID) {
                         xLoc += headshot.width;
                     } else {
                         yLoc += HEADSHOT_OFFSET;
@@ -347,7 +350,8 @@ public class MultiplayerLobbyMode extends AppMode
     protected function updatePremiumContentDisplay () :void
     {
         var someoneHasPremiumContent :Boolean =
-            (ClientContext.isEndlessModeUnlocked || MultiplayerConfig.someoneHasPremiumContent);
+            (ClientContext.isEndlessModeUnlocked ||
+             ClientContext.lobbyConfig.someoneHasPremiumContent);
 
         var unlockButton :SimpleButton = _bg["unlock_button"];
 
@@ -371,114 +375,9 @@ public class MultiplayerLobbyMode extends AppMode
         }
     }
 
-    protected function stopOrResetTimer () :void
+    protected function sendServerMsg (name :String, val :Object = null) :void
     {
-        destroyObject(_gameStartTimer);
-
-        if (this.canStartCountdown) {
-            _gameStartTimer = addObject(
-                new SimpleTimer(
-                    GAME_START_COUNTDOWN,
-                    function () :void {
-                        log.info("Seat " + ClientContext.seatingMgr.localPlayerSeat + " timer expired");
-                        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
-                            log.info("Seat " + ClientContext.seatingMgr.localPlayerSeat + " starting game");
-                            // let everyone know to start the game
-                            MultiplayerConfig.gameStarting = true;
-                        }
-                    }));
-        }
-    }
-
-    protected function get allPlayersDecided () :Boolean
-    {
-        var teams :Array = MultiplayerConfig.teams;
-
-        if (null == teams) {
-            return false;
-        }
-
-        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
-            if (ClientContext.seatingMgr.isPlayerPresent(playerSeat)) {
-                var teamId :int = teams[playerSeat];
-                if (teamId == UNASSIGNED_TEAM_ID) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    protected function get teamsDividedProperly () :Boolean
-    {
-        // if this is a two player game, and both players have chosen endless mode,
-        // we can start the game
-        if (this.isEndlessModeSelected) {
-            return true;
-        } else if (this.isSomeoneInEndlessMode) {
-            // unless everyone has selected endless mode, nobody can select it
-            return false;
-        }
-
-        // does one team have all the players?
-        var teamSizes :Array = computeTeamSizes();
-        for each (var teamSize :int in teamSizes) {
-            if (teamSize == ClientContext.seatingMgr.numPlayers) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function get isSomeoneInEndlessMode () :Boolean
-    {
-        var teams :Array = MultiplayerConfig.teams;
-        for (var playerSeat :int = 0; playerSeat < ClientContext.seatingMgr.numExpectedPlayers; ++playerSeat) {
-            if (ClientContext.seatingMgr.isPlayerPresent(playerSeat) && teams[playerSeat] == ENDLESS_TEAM_ID) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function get isEndlessModeSelected () :Boolean
-    {
-        if (ClientContext.seatingMgr.numExpectedPlayers != 2) {
-            return false;
-        }
-
-        var teams :Array = MultiplayerConfig.teams;
-        for (var playerSeat :int = 0; playerSeat < ClientContext.seatingMgr.numExpectedPlayers; ++playerSeat) {
-            if (!ClientContext.seatingMgr.isPlayerPresent(playerSeat) || teams[playerSeat] != ENDLESS_TEAM_ID) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function get canStartCountdown () :Boolean
-    {
-        return this.allPlayersDecided && this.teamsDividedProperly;
-    }
-
-    protected function computeTeamSizes () :Array
-    {
-        var teams :Array = MultiplayerConfig.teams;
-        var teamSizes :Array = ArrayUtil.create(NUM_TEAMS, 0);
-        for (var playerSeat :int = 0; playerSeat < teams.length; ++playerSeat) {
-            if (ClientContext.seatingMgr.isPlayerPresent(playerSeat)) {
-                var teamId :int = teams[playerSeat];
-                if (teamId >= 0) {
-                    teamSizes[teamId] += 1;
-                }
-            }
-        }
-
-        return teamSizes;
+        ClientContext.gameCtrl.net.sendMessage(name, val, NetSubControl.TO_SERVER_AGENT);
     }
 
     protected var _bg :MovieClip;
@@ -487,7 +386,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _handicapCheckbox :MovieClip;
     protected var _handicapOn :Boolean;
     protected var _initedLocalPlayerData :Boolean;
-    protected var _gameStartTimer :SimObjectRef = new SimObjectRef();
+    protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();
     protected var _showingPremiumContent :Boolean;
     protected var _endlessWarnText :TextField;
 
@@ -513,12 +412,6 @@ public class MultiplayerLobbyMode extends AppMode
     protected static const HEADSHOT_OFFSET :Number = 40;
 
     protected static const STATUS_TEXT_LOC :Point = new Point(350, 470);
-    protected static const GAME_START_COUNTDOWN :Number = 5;
-    protected static const NUM_TEAMS :int = 4;
-    protected static const MAX_TEAM_SIZE :int = 3;
-
-    protected static const UNASSIGNED_TEAM_ID :int = -1;
-    protected static const ENDLESS_TEAM_ID :int = -2;
 }
 
 }

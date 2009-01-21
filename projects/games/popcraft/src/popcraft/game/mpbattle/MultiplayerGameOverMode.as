@@ -93,7 +93,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
     }
     protected function updateStats () :void
     {
-        var gameArrangement :int = MultiplayerConfig.computeTeamArrangement();
+        var gameArrangement :int = ClientContext.lobbyConfig.computeTeamArrangement();
         GameContext.playerStats.mpGamesPlayed[gameArrangement] += 1;
         if (this.playerWon) {
             GameContext.playerStats.mpGamesWon[gameArrangement] += 1;
@@ -101,7 +101,7 @@ public class MultiplayerGameOverMode extends MultiplayerDialog
 
         // viral trophy
         var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(
-            MultiplayerConfig.morbidInfections, true);
+            ClientContext.lobbyConfig.morbidInfections, true);
         GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
 
         // combine local stats into global, and save
