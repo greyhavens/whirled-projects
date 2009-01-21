@@ -81,14 +81,14 @@ package joingame.modes
             _startButton = new SimpleSceneObject( startButtonMovieClip );
             _startButton.x = AppContext.gameWidth/2;
             _startButton.y = -100;
-//            addObject( _startButton, _modeLayer);
+            addObject( _startButton, _modeLayer);
             
             var replayButton :SimpleTextButton = new SimpleTextButton("Replay");
             replayButton.addEventListener(MouseEvent.CLICK, doReplayButtonClicked);
             replayButton.x = 300;
             replayButton.y = -300;
-//            _modeLayer.addChild( replayButton);
-//            _replayButton = new SimpleSceneObject( replayButton );
+            _modeLayer.addChild( replayButton);
+            _replayButton = new SimpleSceneObject( replayButton );
             
             
             var singlePlayerMainMenuButton :SimpleTextButton = new SimpleTextButton("Main Menu");
@@ -391,9 +391,9 @@ package joingame.modes
                 if( AppContext.isSinglePlayer ) {
                     _startButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242, 1.0));
                     
-//                    _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
+                    _replayButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 50, 1.0));
 //                    _singlePlayerMainMenuButton.addTask( LocationTask.CreateEaseOut( _winnerClip.x, 242 + 100, 1.0));
-//                    _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
+                    _modeLayer.setChildIndex( _replayButton.displayObject, _modeLayer.numChildren - 1);
                     _modeLayer.setChildIndex( _singlePlayerMainMenuButton.displayObject, _modeLayer.numChildren - 1);
                     
 //                    _modeLayer.addChild( new GameStatsSinglePlayerSprite(GameContext.playerCookieData.clone(), GameContext.gameModel._tempNewPlayerCookie.clone()));
@@ -542,7 +542,7 @@ package joingame.modes
         protected var _gameRestartTimer :Timer;
         protected var _totalTimeElapsedSinceNewGameTimerStarted :int;
         
-//        protected var _replayButton :SceneObject;
+        protected var _replayButton :SceneObject;
         protected var _singlePlayerMainMenuButton :SceneObject;
         
     }
