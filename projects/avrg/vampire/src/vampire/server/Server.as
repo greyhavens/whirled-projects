@@ -7,18 +7,15 @@ import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.Random;
 import com.whirled.ServerObject;
-import com.whirled.net.MessageReceivedEvent;
 import com.whirled.avrg.AVRGameControlEvent;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.AVRServerGameControl;
 import com.whirled.avrg.PlayerSubControlServer;
-import com.whirled.avrg.RoomSubControlServer;
+import com.whirled.net.MessageReceivedEvent;
 
-import flash.events.Event;
-import flash.utils.Dictionary;
 import flash.utils.getTimer;
-import flash.utils.setInterval;
+
+import vampire.net.MessageManager;
+import vampire.net.messages.RequestActionChangeMessage;
 
 public class Server extends ServerObject
 {
@@ -54,15 +51,22 @@ public class Server extends ServerObject
         log.info("Vampire Server initializing...");
         _ctrl = new AVRServerGameControl(this);
 
-        _ctrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
+//        _ctrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
 
+
+        ServerContext.msg = new MessageManager( _ctrl );
+        ServerContext.msg.addEventListener( MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage );
+        
+        
 //        _startTime = getTimer();
-//
 //        setInterval(tick, 20);
     }
 
+
+    
+    
     public static function getRoom (roomId :int) :Room
     {
         if (roomId == 0) {
