@@ -19,6 +19,9 @@ public class ClientSeatingManager extends SeatingManager
             _headshots = [ null ];
         }
 
+        _inited = true;
+        updatePlayers();
+
     }
     public function getPlayerHeadshot (playerSeat :int) :DisplayObject
     {
@@ -50,6 +53,10 @@ public class ClientSeatingManager extends SeatingManager
 
     override protected function updatePlayers (...ignored) :void
     {
+        if (!_inited) {
+            return;
+        }
+
         super.updatePlayers();
         var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
         for (var seatIndex :int = 0; seatIndex < playerIds.length; ++seatIndex) {
@@ -62,6 +69,7 @@ public class ClientSeatingManager extends SeatingManager
     }
 
     protected var _headshots :Array;
+    protected var _inited :Boolean;
 }
 
 }

@@ -1,5 +1,6 @@
 package popcraft.server {
 
+import com.threerings.util.Log;
 import com.whirled.ServerObject;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
@@ -13,9 +14,12 @@ public class Server extends ServerObject
         ServerContext.lobbyConfig.init(ServerContext.gameCtrl, ServerContext.seatingMgr);
 
         // We don't have anything to do in single-player games
-        if (ServerContext.seatingMgr.numPlayers < 2) {
+        if (ServerContext.seatingMgr.numExpectedPlayers < 2) {
+            log.info("Singleplayer game. Not starting server.");
             return;
         }
+
+        log.info("Starting server");
 
         // We want to shutdown the lobby when the game starts, and start it up
         // when the game ends.
@@ -47,6 +51,8 @@ public class Server extends ServerObject
 
     protected var _gameStarted :Boolean;
     protected var _curLobby :ServerLobby;
+
+    protected var log :Log = Log.getLog(Server);
 }
 
 }

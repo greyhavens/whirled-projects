@@ -19,9 +19,9 @@ public class SeatingManager
             // Use a high priority for these event handlers. We want to process them before
             // anyone else does.
             _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_ENTERED,
-                                                      updatePlayers, false, int.MAX_VALUE);
+                                                      updatePlayers);//, false, int.MAX_VALUE);
             _gameCtrl.game.addEventListener(OccupantChangedEvent.OCCUPANT_LEFT,
-                                                      updatePlayers, false, int.MAX_VALUE);
+                                                      updatePlayers);//, false, int.MAX_VALUE);
 
         } else {
             _numExpectedPlayers = 1;

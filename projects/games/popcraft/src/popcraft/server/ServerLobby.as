@@ -97,8 +97,9 @@ public class ServerLobby
 
     protected function get shouldStartCountdown () :Boolean
     {
-        return (!this.hasStartedCountdown && !_gameStarted &&
-                ServerContext.lobbyConfig.isEveryoneTeamed);
+        return (!_gameStarted &&
+                ServerContext.lobbyConfig.isEveryoneTeamed &&
+                ServerContext.lobbyConfig.teamsDividedProperly);
     }
 
     protected function restartCountdown () :void
@@ -106,11 +107,15 @@ public class ServerLobby
         stopCountdown();
         _countdownTimer = _timers.createTimer(LobbyConfig.COUNTDOWN_TIME * 1000, 1,
             function (...ignored) :void {
+                log.info("Starting game");
                 stopCountdown();
                 sendMessage(LobbyConfig.MSG_START_GAME);
                 _gameStarted = true;
             });
+        _countdownTimer.start();
         setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, true);
+
+        log.info("Started countdown");
     }
 
     protected function stopCountdown () :void
@@ -119,6 +124,7 @@ public class ServerLobby
             _countdownTimer.cancel();
             _countdownTimer = null;
             setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, false);
+            log.info("Stopped countdown");
         }
     }
 

@@ -197,7 +197,7 @@ public class MultiplayerLobbyMode extends AppMode
 
         } else if (e.name == LobbyConfig.PROP_GAMESTARTCOUNTDOWN) {
             var showCountdown :Boolean = e.newValue as Boolean;
-            if (e.newValue as Boolean) {
+            if (showCountdown) {
                 _gameStartTimer = addObject(new SimpleTimer(LobbyConfig.COUNTDOWN_TIME));
             } else {
                 destroyObject(_gameStartTimer);

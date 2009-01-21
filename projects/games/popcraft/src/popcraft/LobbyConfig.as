@@ -6,7 +6,7 @@ import com.whirled.game.GameControl;
 public class LobbyConfig
 {
     public static const PROP_INITED :String             = "lc_Inited"; // Boolean
-    public static const PROP_GAMESTARTCOUNTDOWN :String = "lc_Starting"; // Boolean
+    public static const PROP_GAMESTARTCOUNTDOWN :String = "lc_countdown"; // Boolean
     public static const PROP_RANDSEED :String           = "lc_RandSeed"; // uint
     public static const PROP_TEAMS :String              = "lc_Teams";    // Array<teamId>
     public static const PROP_HANDICAPS :String          = "lc_Handicaps"; // Array<Boolean>
