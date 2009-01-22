@@ -3,8 +3,10 @@ package popcraft.game.story {
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
@@ -13,8 +15,8 @@ import flash.text.TextField;
 import flash.text.TextFormatAlign;
 
 import popcraft.*;
-import popcraft.game.*;
 import popcraft.data.LevelData;
+import popcraft.game.*;
 import popcraft.ui.UIBits;
 
 public class LevelOutroMode extends AppMode
@@ -28,6 +30,8 @@ public class LevelOutroMode extends AppMode
     override protected function setup () :void
     {
         saveProgress();
+
+        _modeSprite.addChild(ImageResource.instantiateBitmap("zombieBg"));
 
         var bgSprite :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
 

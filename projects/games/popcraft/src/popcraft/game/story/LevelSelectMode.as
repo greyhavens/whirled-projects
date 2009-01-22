@@ -176,6 +176,7 @@ public class LevelSelectMode extends DemoGameMode
             createTutorialLayout();
         }
 
+        /* 2009-1-22: We're not going to push this in peoples' faces so much.
         if (!ClientContext.isPremiumContentUnlocked) {
             var buyGameButton :SimpleButton = UIBits.createButton("Unlock Full Version!", 1.2);
             registerListener(buyGameButton, MouseEvent.CLICK,
@@ -185,7 +186,7 @@ public class LevelSelectMode extends DemoGameMode
             buyGameButton.x = Constants.SCREEN_SIZE.x - buyGameButton.width - 10;
             buyGameButton.y = 10;
             _mainUiLayer.addChild(buyGameButton);
-        }
+        }*/
 
         if (Constants.DEBUG_ALLOW_CHEATS) {
             createDebugLayout();
@@ -429,6 +430,7 @@ public class LevelSelectMode extends DemoGameMode
 
         _levelSelectUiLayer.addChild(buttonSprite);
 
+        /* 2009-1-22: We're not going to shove this in peoples' faces so much.
         // "Unlock Full Version!" button
         if (!ClientContext.isStoryModeUnlocked) {
             button = UIBits.createButton("Unlock Full Version To Play The Rest Of The Story!", 1.4,
@@ -440,7 +442,7 @@ public class LevelSelectMode extends DemoGameMode
                     ClientContext.showGameShop();
                 });
             _levelSelectUiLayer.addChild(button);
-        }
+        }*/
 
         // Back button
         var backButton :SimpleButton = UIBits.createButton("Back", 1.5);
