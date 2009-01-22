@@ -6,15 +6,13 @@ import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
-import flash.display.Sprite;
-
 import popcraft.data.*;
 import popcraft.game.endless.EndlessLevelManager;
 import popcraft.game.story.LevelManager;
 
 public class ClientContext
 {
-    public static var mainSprite :Sprite;
+    public static var mainSprite :PopCraft;
     public static var mainLoop :MainLoop;
     public static var gameCtrl :GameControl;
     public static var randStreamPuzzle :uint;

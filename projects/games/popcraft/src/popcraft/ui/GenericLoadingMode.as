@@ -1,7 +1,9 @@
 package popcraft.ui {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
+import flash.display.Bitmap;
 import flash.display.Graphics;
 import flash.text.TextField;
 
@@ -11,15 +13,24 @@ public class GenericLoadingMode extends AppMode
 {
     public function GenericLoadingMode ()
     {
-        var g :Graphics = this.modeSprite.graphics;
-        g.beginFill(0, 1);
-        g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-        g.endFill();
+        // If we've loaded the zombieBg, use it as a background. Otherwise, use black.
+        var zombieBg :Bitmap = ImageResource.instantiateBitmap("zombieBg");
+        if (zombieBg != null) {
+            _modeSprite.addChild(zombieBg);
+            _tf = UIBits.createText("");
 
-        _tf = new TextField();
-        this.modeSprite.addChild(_tf);
+        } else {
+            var g :Graphics = _modeSprite.graphics;
+            g.beginFill(0, 1);
+            g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
+            g.endFill();
 
-        loadingText = "Loading";
+            _tf = new TextField();
+        }
+
+        _modeSprite.addChild(_tf);
+
+        this.loadingText = "Loading";
     }
 
     protected function set loadingText (text :String) :void
@@ -51,7 +62,7 @@ public class GenericLoadingMode extends AppMode
             text += ".";
         }
 
-        UIBits.initTextField(_tf, text, 2, Constants.SCREEN_SIZE.x - 30, 0xFFFFFF);
+        UIBits.initTextField(_tf, text, 3, Constants.SCREEN_SIZE.x - 30, 0xFFFFFF);
         _tf.x = (Constants.SCREEN_SIZE.x - _tf.width) * 0.5;
         _tf.y = (Constants.SCREEN_SIZE.y - _tf.height) * 0.5;
     }

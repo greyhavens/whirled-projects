@@ -25,7 +25,6 @@ public class PopCraft_Standalone extends PopCraft
         var rm :ResourceManager = ResourceManager.instance;
 
         rm.queueResourceLoad("swf", "multiplayer_lobby", { embeddedClass: SWF_MULTIPLAYER_LOBBY });
-        rm.queueResourceLoad("image", "zombieBg", { embeddedClass: IMG_ZOMBIE_BG });
 
         rm.queueResourceLoad("swf", "prologue", { embeddedClass: SWF_PROLOGUE });
         rm.queueResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
@@ -37,8 +36,6 @@ public class PopCraft_Standalone extends PopCraft
 
     [Embed(source="../../rsrc/mp/multiplayer.swf", mimeType="application/octet-stream")]
     protected static const SWF_MULTIPLAYER_LOBBY :Class;
-    [Embed(source="../../rsrc/mp/zombie_BG.jpg", mimeType="application/octet-stream")]
-    protected static const IMG_ZOMBIE_BG :Class;
 
     [Embed(source="../../rsrc/sp/prologue.swf", mimeType="application/octet-stream")]
     protected static const SWF_PROLOGUE :Class;

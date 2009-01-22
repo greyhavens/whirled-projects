@@ -5,6 +5,9 @@
   <property name="app.name" value="PopCraft"/>
   <property name="app.source-dir" value="src"/>
   <property name="app.package-dir" value="popcraft"/>
+  <property name="app.enable-server-agent" value="true"/>
+  <property name="app.server-agent" value="Server"/>
+  <property name="app.server-agent-package-dir" value="popcraft/server"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
@@ -37,11 +40,5 @@
   </target>
 
   <target name="testpacks" depends="compile, copydata, test"/>
-
-  <target name="copylocalserver">
-	<copy file="PopCraft.swf" toFile="/export/msoy/pages/media/ddf95853289fa70cf2c6ab8a417372dced7657b9.swf" overwrite="true"/>
-  </target>
-
-  <target name="testlocalserver" depends="compile, copylocalserver"/>
 
 </project>

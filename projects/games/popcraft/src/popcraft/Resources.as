@@ -1,7 +1,6 @@
 package popcraft {
 
 import com.threerings.util.FileUtil;
-import com.whirled.contrib.LevelPacks;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.*;
 
@@ -66,6 +65,15 @@ public class Resources
         return needsLoad;
     }
 
+    public static function loadInitialResources (loadCompleteCallback :Function = null,
+        loadErrorCallback :Function = null) :void
+    {
+        var rm :ResourceManager = ResourceManager.instance;
+        rm.queueResourceLoad("image", "zombieBg", { embeddedClass: IMG_ZOMBIEBG });
+        rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
+        rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
+    }
+
     public static function loadBaseResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
@@ -99,7 +107,6 @@ public class Resources
         rm.queueResourceLoad("image", "portrait_ursula", { embeddedClass: IMG_PORTRAIT_URSULA });
 
         rm.queueResourceLoad("swf", "splashUi", { embeddedClass: SWF_SPLASH_UI });
-        rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
         rm.queueResourceLoad("swf", "grunt", { embeddedClass: SWF_GRUNT });
@@ -206,7 +213,6 @@ public class Resources
 
     public static const MP_LEVEL_PACK_RESOURCES :Array = [
         "multiplayer_lobby",
-        "zombieBg",
     ];
 
     public static const SP_LEVEL_PACK_RESOURCES :Array = [
@@ -225,6 +231,9 @@ public class Resources
     // gfx - all
     [Embed(source="../../rsrc/all/manual.swf", mimeType="application/octet-stream")]
     protected static const SWF_MANUAL :Class;
+
+    [Embed(source="../../rsrc/all/zombie_BG.jpg", mimeType="application/octet-stream")]
+    protected static const IMG_ZOMBIEBG :Class;
 
     [Embed(source="../../rsrc/all/iris.png", mimeType="application/octet-stream")]
     protected static const IMG_PORTRAIT_IRIS :Class;

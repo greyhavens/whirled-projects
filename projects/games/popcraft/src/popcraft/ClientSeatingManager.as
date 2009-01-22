@@ -53,7 +53,7 @@ public class ClientSeatingManager extends SeatingManager
 
     override protected function updatePlayers (...ignored) :void
     {
-        if (!_inited) {
+        if (!_inited || !_gameCtrl.isConnected()) {
             return;
         }
 

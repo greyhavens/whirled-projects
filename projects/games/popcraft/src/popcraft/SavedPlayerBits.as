@@ -8,17 +8,30 @@ import flash.utils.ByteArray;
 public class SavedPlayerBits
     implements UserCookieDataSource
 {
+    // Cookie > 0
     public var hasFreeStoryMode :Boolean;
+    // Cookie >= 2
     public var hasAskedToResetEndlessLevels :Boolean;
+    // Cookie >= 3
+    public var hasFavoriteColor :Boolean;
+    public var favoriteColor :uint;
+    public var hasFavoritePortrait :Boolean;
+    public var favoritePortrait :int;
 
     public function writeCookieData (cookie :ByteArray) :void
     {
         cookie.writeBoolean(hasFreeStoryMode);
         cookie.writeBoolean(hasAskedToResetEndlessLevels);
+        cookie.writeBoolean(hasFavoriteColor);
+        cookie.writeUnsignedInt(favoriteColor);
+        cookie.writeBoolean(hasFavoritePortrait);
+        cookie.writeInt(favoritePortrait);
     }
 
     public function readCookieData (version :int, cookie :ByteArray) :void
     {
+        init();
+
         if (version == 0) {
             // If the cookie version is 0, we're upgrading an original-version cookie, which means
             // this player was playing the game before we started charging for the second half
@@ -40,6 +53,13 @@ public class SavedPlayerBits
                 (ClientContext.endlessLevelMgr.savedMpGames.numSaves == 0 &&
                  ClientContext.endlessLevelMgr.savedSpGames.numSaves == 0);
         }
+
+        if (version >= 3) {
+            hasFavoriteColor = cookie.readBoolean();
+            favoriteColor = cookie.readUnsignedInt();
+            hasFavoritePortrait = cookie.readBoolean();
+            favoritePortrait = cookie.readInt();
+        }
     }
 
     public function get minCookieVersion () :int
@@ -57,6 +77,10 @@ public class SavedPlayerBits
     {
         hasFreeStoryMode = false;
         hasAskedToResetEndlessLevels = false;
+        hasFavoriteColor = false;
+        favoriteColor = 0;
+        hasFavoritePortrait = false;
+        favoritePortrait = 0;
     }
 }
 

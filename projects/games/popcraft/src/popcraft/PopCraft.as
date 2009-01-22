@@ -115,7 +115,16 @@ public class PopCraft extends Sprite
         }
 
         ClientContext.mainLoop.run();
-        ClientContext.mainLoop.pushMode(new LoadingMode(this));
+
+        // Before we kick off our loading mode, we need to load an initial set of resources
+        // required to actually show the loading screen.
+        Resources.loadInitialResources(
+            function () :void {
+                ClientContext.mainLoop.unwindToMode(new LoadingMode());
+            },
+            function (loadErr :String) :void {
+                ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(loadErr));
+            });
     }
 
     protected function handleSizeChanged (...ignored) :void
@@ -165,21 +174,22 @@ import popcraft.game.endless.SavedEndlessGame;
 
 class LoadingMode extends GenericLoadingMode
 {
-    public function LoadingMode (mainSprite :PopCraft)
-    {
-        _mainSprite = mainSprite;
-    }
-
     override protected function setup () :void
     {
         _loadingResources = true;
         ClientContext.userCookieMgr.readCookie();
-        _mainSprite.loadResources(resourceLoadComplete, onLoadError);
+        ClientContext.mainSprite.loadResources(resourceLoadComplete, onLoadError);
     }
 
     override public function update (dt :Number) :void
     {
         super.update(dt);
+
+        _elapsedTime += dt;
+        if (Constants.DEBUG_EXTEND_LOAD_SEQUENCE && _elapsedTime < EXTENDED_LOADING_TIME) {
+            return;
+        }
+
         if (!_loadingResources && !ClientContext.userCookieMgr.isLoadingCookie) {
             if (ClientContext.seatingMgr.allPlayersPresent) {
                 startGame();
@@ -211,6 +221,8 @@ class LoadingMode extends GenericLoadingMode
         ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
     }
 
-    protected var _mainSprite :PopCraft;
     protected var _loadingResources :Boolean;
+    protected var _elapsedTime :Number = 0;
+
+    protected static const EXTENDED_LOADING_TIME :Number = 4;
 }

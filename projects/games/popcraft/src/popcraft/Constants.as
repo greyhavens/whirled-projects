@@ -14,7 +14,7 @@ public class Constants
     public static const UNLOCK_ENDLESS_AFTER_LEVEL :int = 0;
 
     /* Increment this whenever any cookie data changes. */
-    public static const USER_COOKIE_VERSION :int = 2;
+    public static const USER_COOKIE_VERSION :int = 3;
 
     /* Scoring game modes */
     public static const SCORE_MODE_STORY :int = 0;
@@ -47,6 +47,7 @@ public class Constants
     public static const DEBUG_DISABLE_MOVEMENT_SMOOTHING :Boolean   = false;
     public static const DEBUG_GIVE_MORBID_INFECTION :Boolean        = false;
 
+    public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = true;
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
@@ -168,6 +169,20 @@ public class Constants
         19,  // courier
         19,  // colossus
         19,  // boss
+    ];
+
+    /* Player portraits */
+    public static const PLAYER_PORTRAIT_NAMES :Array = [
+        "portrait_iris",
+        "portrait_ivy",
+        "portrait_jack",
+        "portrait_pigsley",
+        "portrait_ralph",
+        "portrait_weardd",
+        "portrait_dante",
+        "portrait_eloise",
+        "portrait_horace",
+        "portrait_ursula",
     ];
 }
 

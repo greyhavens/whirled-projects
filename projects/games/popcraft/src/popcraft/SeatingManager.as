@@ -111,6 +111,10 @@ public class SeatingManager
 
     protected function updatePlayers (...ignored) :void
     {
+        if (!_gameCtrl.isConnected()) {
+            return;
+        }
+
         var playerIds :Array = _gameCtrl.game.seating.getPlayerIds();
         _numPlayers = 0;
         _lowestOccupiedSeat = -1;
