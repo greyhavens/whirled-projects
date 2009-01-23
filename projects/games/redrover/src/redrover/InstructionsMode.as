@@ -62,7 +62,8 @@ public class InstructionsMode extends AppMode
         _index = val;
 
         if (_bitmaps[_index] == null) {
-            _bitmaps[_index] = ImageResource.instantiateBitmap(IMAGE_NAMES[_index]);
+            _bitmaps[_index] =
+                ImageResource.instantiateBitmap(AppContext.rsrcs, IMAGE_NAMES[_index]);
         }
 
         if (_curPage != null) {

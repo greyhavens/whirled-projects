@@ -17,7 +17,7 @@ public class PlayerShadowView extends SceneObject
     {
         _player = player;
 
-        var shadow :Bitmap = ImageResource.instantiateBitmap("player_shadow");
+        var shadow :Bitmap = ImageResource.instantiateBitmap(AppContext.rsrcs, "player_shadow");
         var targetSize :Number = GameContext.levelData.cellSize * 0.8;
         var scale :Number = Math.min(targetSize / shadow.width, targetSize / shadow.height);
         shadow.scaleX = scale;

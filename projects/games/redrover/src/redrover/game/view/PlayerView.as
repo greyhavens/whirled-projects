@@ -32,7 +32,7 @@ public class PlayerView extends SceneObject
         _playerAnims = ArrayUtil.create(Constants.NUM_TEAMS, null);
 
         if (_player == GameContext.localPlayer) {
-            var arrow :Bitmap = ImageResource.instantiateBitmap("player_arrow");
+            var arrow :Bitmap = ImageResource.instantiateBitmap(AppContext.rsrcs, "player_arrow");
             arrow.x = -arrow.width * 0.5;
             arrow.y = -arrow.height;
             var arrowSprite :Sprite = SpriteUtil.createSprite();
@@ -260,7 +260,7 @@ public class PlayerView extends SceneObject
             var facing :int = 0;
             for each (var movieName :String in movieNames) {
                 var movie :MovieClip =
-                    SwfResource.instantiateMovieClip(swfName, movieName, true, true);
+                    SwfResource.instantiateMovieClip(AppContext.rsrcs, swfName, movieName, true, true);
 
                 // colorize
                 var ii :int = 1;

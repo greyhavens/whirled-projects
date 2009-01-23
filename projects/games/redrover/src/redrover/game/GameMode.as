@@ -70,9 +70,9 @@ public class GameMode extends AppMode
         GameContext.playAudio = true;
 
         GameContext.sfxControls = new AudioControls(
-            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+            AppContext.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
         GameContext.musicControls = new AudioControls(
-            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_MUSIC));
+            AppContext.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
 
         GameContext.sfxControls.retain();
         GameContext.musicControls.retain();

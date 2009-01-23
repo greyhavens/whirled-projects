@@ -37,17 +37,20 @@ public class RedRover extends Sprite
         // set a clip rect
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
-        // setup main loop
-        AppContext.mainLoop = new MainLoop(this,
-            (isConnected ? AppContext.gameCtrl.local : this.stage));
-        AppContext.mainLoop.setup();
+        // setup simplegame
+        var config :Config = new Config();
+        config.hostSprite = this;
+        config.keyDispatcher = (isConnected ? AppContext.gameCtrl.local : this.stage);
+        _sg = new SimpleGame(config);
+        AppContext.mainLoop = _sg.ctx.mainLoop;
+        AppContext.rsrcs = _sg.ctx.rsrcs;
+        AppContext.audio = _sg.ctx.audio;
 
         // custom resource factories
-        var rm :ResourceManager = ResourceManager.instance;
-        rm.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
+        AppContext.rsrcs.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
 
         // sound volume
-        AudioManager.instance.masterControls.volume(
+        AppContext.audio.masterControls.volume(
             Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         if (AppContext.gameCtrl.isConnected()) {
@@ -58,7 +61,7 @@ public class RedRover extends Sprite
             handleSizeChanged();
         }
 
-        AppContext.mainLoop.run();
+        _sg.run();
         AppContext.mainLoop.pushMode(new LoadingMode());
     }
 
@@ -72,9 +75,10 @@ public class RedRover extends Sprite
     protected function handleUnload (...ignored) :void
     {
         _events.freeAllHandlers();
-        AppContext.mainLoop.shutdown();
+        _sg.shutdown();
     }
 
+    protected var _sg :SimpleGame;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 

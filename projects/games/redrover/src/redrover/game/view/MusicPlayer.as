@@ -3,6 +3,7 @@ package redrover.game.view {
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.audio.*;
 
+import redrover.*;
 import redrover.game.*;
 
 public class MusicPlayer extends SimObject
@@ -16,9 +17,9 @@ public class MusicPlayer extends SimObject
         _myTeamControls.retain();
         _otherTeamControls.retain();
 
-        AudioManager.instance.playSoundNamed("mus_pepperland", _myTeamControls,
+        AppContext.audio.playSoundNamed("mus_pepperland", _myTeamControls,
             AudioManager.LOOP_FOREVER);
-        AudioManager.instance.playSoundNamed("mus_motm", _otherTeamControls,
+        AppContext.audio..playSoundNamed("mus_motm", _otherTeamControls,
             AudioManager.LOOP_FOREVER);
     }
 

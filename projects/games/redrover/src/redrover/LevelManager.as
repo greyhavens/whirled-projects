@@ -44,10 +44,10 @@ public class LevelManager
 
     protected function loadLevel (loadParams :Object) :void
     {
-        ResourceManager.instance.unload(RSRC_CURLEVEL);
-        ResourceManager.instance.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
+        AppContext.rsrcs.unload(RSRC_CURLEVEL);
+        AppContext.rsrcs.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
             loadParams);
-        ResourceManager.instance.loadQueuedResources(onLevelLoaded, onLoadError);
+        AppContext.rsrcs.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
     public function get numLevels () :int
@@ -57,7 +57,7 @@ public class LevelManager
 
     protected function onLevelLoaded () :void
     {
-        _loadedLevel = LevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
+        _loadedLevel = LevelResource(AppContext.rsrcs.getResource(RSRC_CURLEVEL)).levelData;
         startGame();
     }
 

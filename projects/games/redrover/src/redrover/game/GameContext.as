@@ -135,16 +135,14 @@ public class GameContext
 
     public static function playGameSound (soundName :String) :AudioChannel
     {
-        return (playAudio ? AudioManager.instance.playSoundNamed(soundName, sfxControls) :
-            new AudioChannel());
+        return (playAudio ? AppContext.audio.playSoundNamed(soundName, sfxControls) :
+                            new AudioChannel());
     }
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
         return (playAudio ?
-            AudioManager.instance.playSoundNamed(musicName,
-                                                 musicControls,
-                                                 AudioManager.LOOP_FOREVER) :
+            AppContext.audio.playSoundNamed(musicName, musicControls, AudioManager.LOOP_FOREVER) :
             new AudioChannel());
     }
 }
