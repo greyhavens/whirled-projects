@@ -41,11 +41,11 @@ public class LevelOutroMode extends AppMode
         this.modeSprite.addChild(bgSprite);
 
         // win/lose text
-        var tfName :TextField = UIBits.createTitleText(_success ? "Victory!" : "Defeated");
-        tfName.x = (WIDTH * 0.5) - (tfName.width * 0.5);
-        tfName.y = 20;
+        var tfOutcome :TextField = UIBits.createTitleText(_success ? "Victory!" : "Defeated");
+        tfOutcome.x = (WIDTH * 0.5) - (tfOutcome.width * 0.5);
+        tfOutcome.y = 20;
 
-        bgSprite.addChild(tfName);
+        bgSprite.addChild(tfOutcome);
 
         if (_success) {
             // if the player won, show their score
@@ -61,7 +61,7 @@ public class LevelOutroMode extends AppMode
 
             var tfScore :DisplayObject = UIBits.createTextPanel(scoreMessage, 1, WIDTH - 30, 0, TextFormatAlign.LEFT);
             tfScore.x = (WIDTH * 0.5) - (tfScore.width * 0.5);
-            tfScore.y = tfName.y + tfName.height + 10;
+            tfScore.y = tfOutcome.y + tfOutcome.height + 10;
             bgSprite.addChild(tfScore);
 
             // if it's not the last level, display a "Continue playing?" text
@@ -87,7 +87,7 @@ public class LevelOutroMode extends AppMode
             var tfHint :DisplayObject = UIBits.createTextPanel(
                 Rand.nextElement(hints, Rand.STREAM_COSMETIC), 1, WIDTH - 50, 0, TextFormatAlign.LEFT);
             tfHint.x = (WIDTH * 0.5) - (tfHint.width * 0.5);
-            tfHint.y = tfName.y + tfName.height + 10;
+            tfHint.y = tfOutcome.y + tfOutcome.height + 10;
             bgSprite.addChild(tfHint);
         }
 
