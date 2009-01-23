@@ -8,6 +8,8 @@ import flash.geom.Rectangle;
 
 public class BitmapAnimFrame
 {
+    public static const EMPTY :BitmapAnimFrame = new BitmapAnimFrame(new BitmapData(1, 1, true, 0));
+
     public var bitmapData :BitmapData;
     public var offset :Point;
 

@@ -157,10 +157,10 @@ public class CreatureAnimFactory
         },
 
         // Delivery Boy
-        { die_N: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
-          die_NW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
-          die_S: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
-          die_SW: new CreatureBitmapAnimDesc([ 4, 7, 13, 20 ], 21/30, BitmapAnim.STOP),
+        { die_N: new CreatureBitmapAnimDesc([ 4, 7, 13, -1 ], 21/30, BitmapAnim.STOP),
+          die_NW: new CreatureBitmapAnimDesc([ 4, 7, 13, -1 ], 21/30, BitmapAnim.STOP),
+          die_S: new CreatureBitmapAnimDesc([ 4, 7, 13, -1 ], 21/30, BitmapAnim.STOP),
+          die_SW: new CreatureBitmapAnimDesc([ 4, 7, 13, -1 ], 21/30, BitmapAnim.STOP),
 
           stand_N: new CreatureBitmapAnimDesc([ 1 ], 1),
           stand_NW: new CreatureBitmapAnimDesc([ 1 ], 1),

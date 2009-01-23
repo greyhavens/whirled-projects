@@ -1,5 +1,6 @@
 package popcraft {
 
+import flash.display.BitmapData;
 import flash.display.MovieClip;
 
 public class BitmapAnim
@@ -31,13 +32,18 @@ public class BitmapAnim
             var existingFrameIndex :int = instantiatedFrameIndexes.indexOf(frameIndex);
             if (existingFrameIndex >= 0) {
                 frame = frames[existingFrameIndex];
-            } else {
+            } else if (frameIndex >= 0) {
                 movie.gotoAndPlay(frameIndex);
                 frame = BitmapAnimFrame.fromDisplayObject(movie);
+            } else {
+                // if frameIndex < 0, use an empty BitmapAnimFrame for the frame
+                frame = BitmapAnimFrame.EMPTY;
             }
 
             frames.push(frame);
-            instantiatedFrameIndexes.push(frameIndex);
+            if (frameIndex > 0) {
+                instantiatedFrameIndexes.push(frameIndex);
+            }
         }
 
         var frameRate :Number = frameIndexes.length / totalTime;
