@@ -3,6 +3,7 @@ package popcraft.game.mpbattle {
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.GameContentEvent;
@@ -92,6 +93,11 @@ public class MultiplayerLobbyMode extends AppMode
     {
         super.enter();
         StageQualityManager.pushStageQuality(StageQuality.HIGH);
+
+        if (!_playedSound) {
+            AudioManager.instance.playSoundNamed("sfx_day");
+            _playedSound = true;
+        }
     }
 
     override protected function exit () :void
@@ -389,6 +395,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();
     protected var _showingPremiumContent :Boolean;
     protected var _endlessWarnText :TextField;
+    protected var _playedSound :Boolean;
 
     protected static var log :Log = Log.getLog(MultiplayerLobbyMode);
 
