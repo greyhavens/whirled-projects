@@ -12,7 +12,7 @@ public class IntroMode extends AppMode
 {
     override protected function setup () :void
     {
-        _movie = SwfResource.instantiateMovieClip("intro", "Bingo_intro_symbol");
+        _movie = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "intro", "Bingo_intro_symbol");
 
         // center on screen
         var screenBounds :Rectangle = ClientContext.getScreenBounds();
@@ -34,7 +34,7 @@ public class IntroMode extends AppMode
 
     protected function handlePlayClicked (...ignored) :void
     {
-        MainLoop.instance.changeMode(new GameMode());
+        ClientContext.mainLoop.changeMode(new GameMode());
     }
 
     protected function handleQuitClicked (...ignored) :void
@@ -44,7 +44,7 @@ public class IntroMode extends AppMode
 
     protected function handleHelpClicked (...ignored) :void
     {
-        MainLoop.instance.pushMode(new HelpMode());
+        ClientContext.mainLoop.pushMode(new HelpMode());
     }
 
     protected var _movie :MovieClip;

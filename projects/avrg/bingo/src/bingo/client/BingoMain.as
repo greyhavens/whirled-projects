@@ -22,17 +22,21 @@ public class BingoMain extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
-        // instantiate MainLoop singleton
-        new MainLoop(this);
-        MainLoop.instance.setup();
+        // setup simplegame
+        var config :Config = new Config();
+        config.hostSprite = this;
+        _sg = new SimpleGame(config);
+        ClientContext.mainLoop = _sg.ctx.mainLoop;
+        ClientContext.rsrcs = _sg.ctx.rsrcs;
+        ClientContext.audio = _sg.ctx.audio;
 
         // load resources
-        ResourceManager.instance.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
-        ResourceManager.instance.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
-        ResourceManager.instance.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
-        ResourceManager.instance.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
+        ClientContext.rsrcs.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
+        ClientContext.rsrcs.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
+        ClientContext.rsrcs.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
+        ClientContext.rsrcs.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
 
-        ResourceManager.instance.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
+        ClientContext.rsrcs.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
     }
 
     protected function maybeShowIntro () :void
@@ -49,8 +53,8 @@ public class BingoMain extends Sprite
             ClientContext.model = new Model();
             ClientContext.model.setup();
 
-            MainLoop.instance.pushMode(new IntroMode());
-            MainLoop.instance.run();
+            _sg.run();
+            ClientContext.mainLoop.pushMode(new IntroMode());
         }
     }
 
@@ -79,7 +83,7 @@ public class BingoMain extends Sprite
 
         ClientContext.model.destroy();
 
-        MainLoop.instance.shutdown();
+        ClientContext.mainLoop.shutdown();
     }
 
     protected function leftRoom (e :Event) :void
@@ -88,6 +92,7 @@ public class BingoMain extends Sprite
         ClientContext.quit();
     }
 
+    protected var _sg :SimpleGame;
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
 

@@ -26,7 +26,7 @@ public class HUDView extends SceneObject
 
     public function HUDView ()
     {
-        _hud = SwfResource.instantiateMovieClip("ui", "HUD");
+        _hud = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "ui", "HUD");
 
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?

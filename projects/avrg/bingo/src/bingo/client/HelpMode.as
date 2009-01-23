@@ -12,7 +12,7 @@ public class HelpMode extends AppMode
 {
     override protected function setup () :void
     {
-        _screen = SwfResource.instantiateMovieClip("help", "help_screen");
+        _screen = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "help", "help_screen");
 
         // center the help screen
         var screenBounds :Rectangle = ClientContext.getScreenBounds();
@@ -28,7 +28,7 @@ public class HelpMode extends AppMode
 
     protected function handleExitButtonClick (...ignored) :void
     {
-        MainLoop.instance.popMode();
+        ClientContext.mainLoop.popMode();
     }
 
     protected var _screen :MovieClip;

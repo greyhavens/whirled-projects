@@ -4,11 +4,17 @@ import bingo.BingoItemManager;
 
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.simplegame.MainLoop;
+import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
 
 import flash.geom.Rectangle;
 
 public class ClientContext
 {
+    public static var mainLoop :MainLoop;
+    public static var rsrcs :ResourceManager
+    public static var audio :AudioManager;
     public static var gameMode :GameMode;
     public static var gameCtrl :AVRGameControl;
     public static var items :BingoItemManager;
