@@ -5,19 +5,19 @@ import com.threerings.util.ArrayUtil;
 import flash.display.DisplayObject;
 import flash.geom.Point;
 
-import flashmob.client.ClientContext;
+import flashmob.client.ClientCtx;
 
 public class HitTester
 {
     public function setup () :void
     {
-        _oldHitTester = ClientContext.gameCtrl.local.hitPointTester;
-        ClientContext.gameCtrl.local.setHitPointTester(hitTest);
+        _oldHitTester = ClientCtx.gameCtrl.local.hitPointTester;
+        ClientCtx.gameCtrl.local.setHitPointTester(hitTest);
     }
 
     public function shutdown () :void
     {
-        ClientContext.gameCtrl.local.setHitPointTester(_oldHitTester);
+        ClientCtx.gameCtrl.local.setHitPointTester(_oldHitTester);
         _oldHitTester = null;
     }
 

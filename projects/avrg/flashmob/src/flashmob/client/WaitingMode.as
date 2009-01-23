@@ -24,7 +24,7 @@ public class WaitingMode extends GameDataMode
         g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
         g.endFill();
 
-        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
+        var window :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "errorWindow");
         window.x = bounds.width * 0.5;
         window.y = bounds.height * 0.5;
         _modeSprite.addChild(window);

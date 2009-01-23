@@ -6,12 +6,14 @@ import flash.display.DisplayObject;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 
+import flashmob.client.*;
+
 public class GameButton extends Sprite
 {
     public function GameButton (name :String)
     {
-        _enabledState = SwfResource.instantiateButton("Spectacle_UI", name);
-        _disabledState = SwfResource.instantiateMovieClip("Spectacle_UI", name + "_disabled");
+        _enabledState = SwfResource.instantiateButton(ClientCtx.rsrcs, "Spectacle_UI", name);
+        _disabledState = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", name + "_disabled");
         this.enabled = true;
     }
 

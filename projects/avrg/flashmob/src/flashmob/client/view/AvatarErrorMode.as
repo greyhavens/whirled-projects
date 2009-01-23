@@ -22,7 +22,7 @@ public class AvatarErrorMode extends GameDataMode
         super.setup();
 
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
-        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
+        var window :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "errorWindow");
         window.x = roomBounds.width * 0.5;
         window.y = roomBounds.height * 0.5;
         _modeSprite.addChild(window);
@@ -35,8 +35,8 @@ public class AvatarErrorMode extends GameDataMode
 
         _dataBindings.bindProp(Constants.PROP_PLAYERS,
             function () :void {
-                if (ClientContext.players.allWearingAvatar(_requiredAvatarId)) {
-                    ClientContext.mainLoop.popMode();
+                if (ClientCtx.players.allWearingAvatar(_requiredAvatarId)) {
+                    ClientCtx.mainLoop.popMode();
                 }
             });
     }
@@ -45,7 +45,7 @@ public class AvatarErrorMode extends GameDataMode
     {
         super.enter();
         if (!_playedSound) {
-            AudioManager.instance.playSoundNamed("fail");
+            ClientCtx.audio.playSoundNamed("fail");
             _playedSound = true;
         }
     }

@@ -13,55 +13,55 @@ public class SpaceUtil
 {
     public static function get fullDisplayBounds () :Rectangle
     {
-        return ClientContext.gameCtrl.local.getPaintableArea(true);
+        return ClientCtx.gameCtrl.local.getPaintableArea(true);
     }
 
     public static function get roomDisplayBounds () :Rectangle
     {
-        return ClientContext.gameCtrl.local.getPaintableArea(false);
+        return ClientCtx.gameCtrl.local.getPaintableArea(false);
     }
 
     public static function getAvatarLogicalLoc (playerId :int) :Vec3D
     {
-        var avInfo :AVRGameAvatar = ClientContext.gameCtrl.room.getAvatarInfo(playerId);
+        var avInfo :AVRGameAvatar = ClientCtx.gameCtrl.room.getAvatarInfo(playerId);
         return (avInfo != null ? new Vec3D(avInfo.x, avInfo.y, avInfo.z) : null);
     }
 
     public static function getAvatarRoomLoc (playerId :int) :Point
     {
         var v :Vec3D = getAvatarLogicalLoc(playerId);
-        return (v != null ? ClientContext.gameCtrl.local.locationToRoom(v.x, v.y, v.z) : null);
+        return (v != null ? ClientCtx.gameCtrl.local.locationToRoom(v.x, v.y, v.z) : null);
     }
 
     public static function logicalToPaintable (v :Vec3D) :Point
     {
-        return ClientContext.gameCtrl.local.locationToPaintable(v.x, v.y, v.z);
+        return ClientCtx.gameCtrl.local.locationToPaintable(v.x, v.y, v.z);
     }
 
     public static function logicalToRoom (v :Vec3D) :Point
     {
-        return ClientContext.gameCtrl.local.locationToRoom(v.x, v.y, v.z);
+        return ClientCtx.gameCtrl.local.locationToRoom(v.x, v.y, v.z);
     }
 
     public static function roomToLogicalAtDepth (p :Point, depth :Number) :Vec3D
     {
-        var loc :Array = ClientContext.gameCtrl.local.roomToLocationAtDepth(p, depth);
+        var loc :Array = ClientCtx.gameCtrl.local.roomToLocationAtDepth(p, depth);
         return (loc != null ? new Vec3D(loc[0], loc[1], loc[2]) : null);
     }
 
     public static function roomToPaintable (p :Point) :Point
     {
-        return ClientContext.gameCtrl.local.roomToPaintable(p);
+        return ClientCtx.gameCtrl.local.roomToPaintable(p);
     }
 
     public static function paintableToRoom (p :Point) :Point
     {
-        return ClientContext.gameCtrl.local.paintableToRoom(p);
+        return ClientCtx.gameCtrl.local.paintableToRoom(p);
     }
 
     public static function paintableToLogicalAtDepth (p :Point, depth :Number) :Vec3D
     {
-        p = ClientContext.gameCtrl.local.paintableToRoom(p);
+        p = ClientCtx.gameCtrl.local.paintableToRoom(p);
         return (p != null ? roomToLogicalAtDepth(p, depth) : null);
     }
 
@@ -71,8 +71,8 @@ public class SpaceUtil
             return null;
         }
 
-        var topLeft :Point = ClientContext.gameCtrl.local.paintableToRoom(r.topLeft);
-        var bottomRight :Point = ClientContext.gameCtrl.local.paintableToRoom(r.bottomRight);
+        var topLeft :Point = ClientCtx.gameCtrl.local.paintableToRoom(r.topLeft);
+        var bottomRight :Point = ClientCtx.gameCtrl.local.paintableToRoom(r.bottomRight);
         var width :Number = bottomRight.x - topLeft.x;
         var height :Number = bottomRight.y - topLeft.y;
         r.x = topLeft.x;
@@ -89,8 +89,8 @@ public class SpaceUtil
             return null;
         }
 
-        var topLeft :Point = ClientContext.gameCtrl.local.roomToPaintable(r.topLeft);
-        var bottomRight :Point = ClientContext.gameCtrl.local.roomToPaintable(r.bottomRight);
+        var topLeft :Point = ClientCtx.gameCtrl.local.roomToPaintable(r.topLeft);
+        var bottomRight :Point = ClientCtx.gameCtrl.local.roomToPaintable(r.bottomRight);
         var width :Number = bottomRight.x - topLeft.x;
         var height :Number = bottomRight.y - topLeft.y;
         r.x = topLeft.x;

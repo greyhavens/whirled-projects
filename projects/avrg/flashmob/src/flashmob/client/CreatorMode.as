@@ -20,43 +20,43 @@ public class CreatorMode extends GameDataMode
 {
     override protected function setup () :void
     {
-        if (ClientContext.gameUIView == null) {
-            ClientContext.gameUIView = new GameUIView();
+        if (ClientCtx.gameUIView == null) {
+            ClientCtx.gameUIView = new GameUIView();
             var bounds :Rectangle = SpaceUtil.roomDisplayBounds;
-            ClientContext.gameUIView.x = bounds.width * 0.5;
-            ClientContext.gameUIView.y = bounds.height * 0.5;
+            ClientCtx.gameUIView.x = bounds.width * 0.5;
+            ClientCtx.gameUIView.y = bounds.height * 0.5;
         }
 
-        _modeSprite.addChild(ClientContext.gameUIView);
-        ClientContext.gameUIView.reset();
+        _modeSprite.addChild(ClientCtx.gameUIView);
+        ClientCtx.gameUIView.reset();
 
         // Make the UI draggable
-        addObject(new Dragger(ClientContext.gameUIView.draggableObject, ClientContext.gameUIView));
+        addObject(new Dragger(ClientCtx.gameUIView.draggableObject, ClientCtx.gameUIView));
 
         // Setup buttons
-        registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
+        registerListener(ClientCtx.gameUIView.closeButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.confirmQuit();
+                ClientCtx.confirmQuit();
             });
 
-        if (ClientContext.isPartyLeader) {
+        if (ClientCtx.isPartyLeader) {
             var chooseAvatarButton :GameButton = new GameButton("ok_button");
             registerListener(chooseAvatarButton.button, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_CHOSEAVATAR,
-                        ClientContext.avatarMonitor.curAvatarId);
+                    ClientCtx.outMsg.sendMessage(Constants.MSG_C_CHOSEAVATAR,
+                        ClientCtx.avatarMonitor.curAvatarId);
                 });
-            ClientContext.gameUIView.centerButton = chooseAvatarButton;
+            ClientCtx.gameUIView.centerButton = chooseAvatarButton;
 
-            ClientContext.gameUIView.directionsText =
+            ClientCtx.gameUIView.directionsText =
                 "Wear the Avatar you will perform this Spectacle with, and press OK!";
 
         } else {
-            ClientContext.gameUIView.directionsText =
+            ClientCtx.gameUIView.directionsText =
                 "The party leader is choosing an Avatar for the Spectacle!";
         }
 
-        ClientContext.gameUIView.clockVisible = false;
+        ClientCtx.gameUIView.clockVisible = false;
 
         _dataBindings.bindMessage(Constants.MSG_S_STARTCREATING, handleStartCreating);
         _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersChanged);
@@ -82,8 +82,8 @@ public class CreatorMode extends GameDataMode
 
     protected function handleStartCreating (chosenAvatarId :int) :void
     {
-        if (ClientContext.isPartyLeader) {
-            ClientContext.gameUIView.clearButtons();
+        if (ClientCtx.isPartyLeader) {
+            ClientCtx.gameUIView.clearButtons();
 
             _poseButton = new GameButton("firstpose");
             registerListener(_poseButton.button, MouseEvent.CLICK, onPoseClicked);
@@ -93,21 +93,21 @@ public class CreatorMode extends GameDataMode
 
             _doneButton.enabled = false;
 
-            ClientContext.gameUIView.leftButton = _doneButton;
-            ClientContext.gameUIView.rightButton = _poseButton;
+            ClientCtx.gameUIView.leftButton = _doneButton;
+            ClientCtx.gameUIView.rightButton = _poseButton;
 
-            ClientContext.gameUIView.directionsText =
+            ClientCtx.gameUIView.directionsText =
                 "Get everyone into position and press First Pose!";
 
             _spectacle = new Spectacle();
-            _spectacle.numPlayers = ClientContext.players.numPlayers
-            _spectacle.creatingPartyId = ClientContext.partyInfo.partyId;
-            _spectacle.avatarId = ClientContext.gameCtrl.player.getAvatarMasterItemId();
+            _spectacle.numPlayers = ClientCtx.players.numPlayers
+            _spectacle.creatingPartyId = ClientCtx.partyInfo.partyId;
+            _spectacle.avatarId = ClientCtx.gameCtrl.player.getAvatarMasterItemId();
 
             updateButtons();
 
         } else {
-            ClientContext.gameUIView.directionsText = "Everybody! Arrange yourselves.";
+            ClientCtx.gameUIView.directionsText = "Everybody! Arrange yourselves.";
         }
 
         _startedCreating = true;
@@ -117,8 +117,8 @@ public class CreatorMode extends GameDataMode
 
     protected function handlePlayersChanged () :void
     {
-        if (_startedCreating && !ClientContext.players.allWearingAvatar(_chosenAvatarId)) {
-            ClientContext.mainLoop.pushMode(new AvatarErrorMode(_chosenAvatarId));
+        if (_startedCreating && !ClientCtx.players.allWearingAvatar(_chosenAvatarId)) {
+            ClientCtx.mainLoop.pushMode(new AvatarErrorMode(_chosenAvatarId));
         }
     }
 
@@ -127,7 +127,7 @@ public class CreatorMode extends GameDataMode
         if (_spectacle.numPatterns >= Constants.MAX_SPECTACLE_PATTERNS) {
             return false;
         } else if (_spectacle.numPatterns > 0 &&
-                   ClientContext.timeNow - _lastSnapshotTime < Constants.MIN_SNAPSHOT_TIME) {
+                   ClientCtx.timeNow - _lastSnapshotTime < Constants.MIN_SNAPSHOT_TIME) {
             return false;
         }
 
@@ -148,7 +148,7 @@ public class CreatorMode extends GameDataMode
         if (_gameTimer == null) {
             _gameTimer = new GameTimer(0, true,
                 function (timerText :String) :void {
-                    ClientContext.gameUIView.clockText = timerText;
+                    ClientCtx.gameUIView.clockText = timerText;
                 });
 
             addObject(_gameTimer);
@@ -156,7 +156,7 @@ public class CreatorMode extends GameDataMode
 
         // capture the locations of all the players
         var pattern :Pattern = new Pattern();
-        ClientContext.players.players.forEach(
+        ClientCtx.players.players.forEach(
             function (playerInfo :PlayerInfo, ...ignored) :void {
                 pattern.locs.push(SpaceUtil.getAvatarLogicalLoc(playerInfo.id));
             });
@@ -166,15 +166,15 @@ public class CreatorMode extends GameDataMode
         if (!Constants.DEBUG_ALLOW_DUPLICATE_POSES &&
             _spectacle.patterns.length > 0 &&
             pattern.isSimilar(_spectacle.patterns[_spectacle.patterns.length - 1])) {
-            ClientContext.mainLoop.pushMode(new BasicErrorMode("This pose is too similar to " +
+            ClientCtx.mainLoop.pushMode(new BasicErrorMode("This pose is too similar to " +
                 "the last one!", true));
             return;
         }
 
-        ClientContext.gameUIView.animateShowClock(true);
+        ClientCtx.gameUIView.animateShowClock(true);
         _gameTimer.time = 0;
 
-        var now :Number = ClientContext.timeNow;
+        var now :Number = ClientCtx.timeNow;
         var dt :Number = now - _lastSnapshotTime;
         pattern.timeLimit = (_spectacle.numPatterns == 0 ? 0 : Math.ceil(dt));
 
@@ -185,10 +185,10 @@ public class CreatorMode extends GameDataMode
             // We just captured our first pose. Swap in the "Next Pose" button.
             _poseButton = new GameButton("nextpose");
             registerListener(_poseButton.button, MouseEvent.CLICK, onPoseClicked);
-            ClientContext.gameUIView.rightButton = _poseButton;
+            ClientCtx.gameUIView.rightButton = _poseButton;
         }
 
-        ClientContext.gameUIView.directionsText = "Press Next Pose when everyone's in position!";
+        ClientCtx.gameUIView.directionsText = "Press Next Pose when everyone's in position!";
 
         updateButtons();
     }
@@ -199,30 +199,30 @@ public class CreatorMode extends GameDataMode
             return;
         }
 
-        ClientContext.gameUIView.clearButtons();
-        ClientContext.gameUIView.animateShowClock(false);
+        ClientCtx.gameUIView.clearButtons();
+        ClientCtx.gameUIView.animateShowClock(false);
 
-        ClientContext.gameUIView.directionsText = "Name your Spectacle!";
-        var textBox :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "inputspecname");
+        ClientCtx.gameUIView.directionsText = "Name your Spectacle!";
+        var textBox :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "inputspecname");
         textBox.x = 0;
         textBox.y = -5;
-        ClientContext.gameUIView.addDisplayElement(textBox);
+        ClientCtx.gameUIView.addDisplayElement(textBox);
 
         var inputText :TextField = textBox["input_text"];
         inputText.setSelection(0, inputText.text.length);
         inputText.maxChars = Constants.MAX_SPEC_NAME_LENGTH;
         TextFieldUtil.setFocusable(inputText);
 
-        ClientContext.gameUIView.clearButtons();
+        ClientCtx.gameUIView.clearButtons();
         var okButton :GameButton = new GameButton("ok_button");
-        ClientContext.gameUIView.centerButton = okButton;
+        ClientCtx.gameUIView.centerButton = okButton;
         registerOneShotCallback(okButton.button, MouseEvent.CLICK,
             function (...ignored) :void {
                 _spectacle.name = inputText.text;
                 //_spectacle.normalize();
-                ClientContext.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
+                ClientCtx.sendAgentMsg(Constants.MSG_C_DONECREATING, _spectacle.toBytes());
                 _done = true;
-                ClientContext.gameUIView.clearButtons();
+                ClientCtx.gameUIView.clearButtons();
             });
 
         okButton.enabled = isTextOk();

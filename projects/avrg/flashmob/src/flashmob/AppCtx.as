@@ -2,7 +2,7 @@ package flashmob {
 
 import flashmob.net.*;
 
-public class AppContext
+public class AppCtx
 {
 }
 

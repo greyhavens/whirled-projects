@@ -31,7 +31,7 @@ public class BasicYesNoMode extends AppMode
         g.endFill();
 
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
-        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "leavingparty");
+        var window :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "leavingparty");
         window.x = roomBounds.width * 0.5;
         window.y = roomBounds.height * 0.5;
         _modeSprite.addChild(window);
@@ -57,7 +57,7 @@ public class BasicYesNoMode extends AppMode
     {
         super.enter();
         if (!_playedSound) {
-            AudioManager.instance.playSoundNamed("fail");
+            ClientCtx.audio.playSoundNamed("fail");
             _playedSound = true;
         }
     }

@@ -12,7 +12,7 @@ public class CanCanDancers extends SceneObject
 {
     public function CanCanDancers ()
     {
-        _movie = SwfResource.instantiateMovieClip("can_can", "multiplecancans", true, true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "can_can", "multiplecancans", true, true);
     }
 
     override protected function destroyed () :void

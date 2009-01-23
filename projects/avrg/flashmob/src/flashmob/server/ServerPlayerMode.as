@@ -66,7 +66,7 @@ public class ServerPlayerMode extends ServerMode
             }*/
 
             _ctx.spectacle.highScoringPartyId = _ctx.partyInfo.partyId;
-            ServerContext.spectacleDb.updateSpectacle(_ctx.spectacle);
+            ServerCtx.spectacleDb.updateSpectacle(_ctx.spectacle);
         }
     }
 

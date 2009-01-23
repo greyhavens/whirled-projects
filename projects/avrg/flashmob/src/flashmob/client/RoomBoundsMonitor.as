@@ -5,6 +5,7 @@ import com.whirled.avrg.LocalSubControl;
 import com.whirled.contrib.simplegame.Updatable;
 
 import flash.events.EventDispatcher;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 public class RoomBoundsMonitor extends EventDispatcher
@@ -12,7 +13,7 @@ public class RoomBoundsMonitor extends EventDispatcher
 {
     public function RoomBoundsMonitor ()
     {
-        _local = ClientContext.gameCtrl.local;
+        _local = ClientCtx.gameCtrl.local;
     }
 
     public function update (dt :Number) :void
@@ -25,6 +26,8 @@ public class RoomBoundsMonitor extends EventDispatcher
             log.info("Room bounds changed", "bounds", visibleRoomBounds);
             dispatchEvent(new GameEvent(GameEvent.ROOM_BOUNDS_CHANGED));
         }
+
+        log.info("RBM", "stageToRoom", SpaceUtil.paintableToRoom(new Point(0, 0)));
     }
 
     protected var _local :LocalSubControl;

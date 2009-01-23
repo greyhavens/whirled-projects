@@ -31,40 +31,40 @@ public class PlayerMode extends GameDataMode
         _modeSprite.addChild(_dancersLayer);
         _modeSprite.addChild(_uiLayer);
 
-        _spectacle = ClientContext.spectacle;
+        _spectacle = ClientCtx.spectacle;
         _spectacleBounds = _spectacle.getBounds();
 
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
 
-        if (ClientContext.gameUIView == null) {
-            ClientContext.gameUIView = new GameUIView();
-            ClientContext.gameUIView.x = roomBounds.width * 0.5;
-            ClientContext.gameUIView.y = roomBounds.height * 0.5;
+        if (ClientCtx.gameUIView == null) {
+            ClientCtx.gameUIView = new GameUIView();
+            ClientCtx.gameUIView.x = roomBounds.width * 0.5;
+            ClientCtx.gameUIView.y = roomBounds.height * 0.5;
         }
 
-        _uiLayer.addChild(ClientContext.gameUIView);
-        ClientContext.gameUIView.clockVisible = false;
-        ClientContext.gameUIView.reset();
+        _uiLayer.addChild(ClientCtx.gameUIView);
+        ClientCtx.gameUIView.clockVisible = false;
+        ClientCtx.gameUIView.reset();
 
         // Make the UI draggable
-        addObject(new Dragger(ClientContext.gameUIView.draggableObject, ClientContext.gameUIView));
+        addObject(new Dragger(ClientCtx.gameUIView.draggableObject, ClientCtx.gameUIView));
 
         // Create the SpectaclePlacer
         _spectaclePlacer = new SpectaclePlacer(_spectacle,
-            (ClientContext.isPartyLeader ? onPlacerDragged : null));
-        _spectaclePlacer.visible = ClientContext.isPartyLeader;
+            (ClientCtx.isPartyLeader ? onPlacerDragged : null));
+        _spectaclePlacer.visible = ClientCtx.isPartyLeader;
         addObject(_spectaclePlacer, _uiLayer);
         DisplayUtil.positionBoundsRelative(_spectaclePlacer.displayObject, _uiLayer,
             (roomBounds.width - _spectaclePlacer.width) * 0.5,
             roomBounds.bottom - _spectaclePlacer.height - 20);
 
         // Setup buttons
-        registerListener(ClientContext.gameUIView.closeButton, MouseEvent.CLICK,
+        registerListener(ClientCtx.gameUIView.closeButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.confirmQuit();
+                ClientCtx.confirmQuit();
             });
 
-        if (ClientContext.isPartyLeader) {
+        if (ClientCtx.isPartyLeader) {
             _startButton = new GameButton("start_button");
             registerListener(_startButton.button, MouseEvent.CLICK, onStartClicked);
 
@@ -77,8 +77,8 @@ public class PlayerMode extends GameDataMode
             _mainMenuButton = new GameButton("mainmenu");
             registerOneShotCallback(_mainMenuButton.button, MouseEvent.CLICK, onMainMenuClicked);
 
-            ClientContext.gameUIView.centerButton = _startButton;
-            ClientContext.gameUIView.directionsText = "Place the Spectacle and press Start!";
+            ClientCtx.gameUIView.centerButton = _startButton;
+            ClientCtx.gameUIView.directionsText = "Place the Spectacle and press Start!";
 
             _specCenterThrottler = new MessageThrottler(Constants.MSG_C_SET_SPEC_CENTER);
             addObject(_specCenterThrottler);
@@ -86,7 +86,7 @@ public class PlayerMode extends GameDataMode
             onPlacerDragged(_spectaclePlacer.x, _spectaclePlacer.y);
 
         } else {
-            ClientContext.gameUIView.directionsText =
+            ClientCtx.gameUIView.directionsText =
                 "The party leader is preparing the Spectacle!";
         }
 
@@ -101,10 +101,10 @@ public class PlayerMode extends GameDataMode
 
         // setup sounds
         _soundControls = new AudioControls(
-            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+            ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
         _soundControls.retain();
 
-        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+        registerListener(ClientCtx.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
             onRoomBoundsChanged);
     }
 
@@ -133,7 +133,7 @@ public class PlayerMode extends GameDataMode
 
     protected function playSound (name :String, loopCount :int = 0) :AudioChannel
     {
-        return AudioManager.instance.playSoundNamed(name, _soundControls, loopCount);
+        return ClientCtx.audio.playSoundNamed(name, _soundControls, loopCount);
     }
 
     protected function playSnareRoll (play :Boolean) :void
@@ -149,8 +149,8 @@ public class PlayerMode extends GameDataMode
 
     protected function handlePlayersChanged () :void
     {
-        if (!ClientContext.players.allWearingAvatar(_spectacle.avatarId)) {
-            ClientContext.mainLoop.pushMode(new AvatarErrorMode(_spectacle.avatarId));
+        if (!ClientCtx.players.allWearingAvatar(_spectacle.avatarId)) {
+            ClientCtx.mainLoop.pushMode(new AvatarErrorMode(_spectacle.avatarId));
         }
     }
 
@@ -167,7 +167,7 @@ public class PlayerMode extends GameDataMode
     {
         _specCenter = newCenter;
 
-        if (!ClientContext.isPartyLeader) {
+        if (!ClientCtx.isPartyLeader) {
             updateSpectaclePlacerLoc(true);
         }
     }
@@ -203,7 +203,7 @@ public class PlayerMode extends GameDataMode
             });
 
         var playerLocs :Array = [];
-        ClientContext.players.players.forEach(
+        ClientCtx.players.players.forEach(
             function (playerInfo :PlayerInfo, ...ignored) :void {
                 var loc :Vec3D = SpaceUtil.getAvatarLogicalLoc(playerInfo.id);
                 // roomLoc could be null if a player just left the game but we haven't
@@ -274,7 +274,7 @@ public class PlayerMode extends GameDataMode
         addObject(_patternView, _uiLayer);
         updateSpectaclePlacerLoc();
 
-        ClientContext.gameUIView.directionsText = (_patternIndex == 0 ?
+        ClientCtx.gameUIView.directionsText = (_patternIndex == 0 ?
             "First pose!" :
             "Next pose!");
 
@@ -285,13 +285,13 @@ public class PlayerMode extends GameDataMode
             if (_gameTimer == null) {
                 _gameTimer = new GameTimer(0, false,
                     function (timerText :String) :void {
-                        ClientContext.gameUIView.clockText = timerText;
+                        ClientCtx.gameUIView.clockText = timerText;
                     });
                 addObject(_gameTimer);
             }
 
             _gameTimer.time = this.curPattern.timeLimit;
-            ClientContext.gameUIView.animateShowClock(true);
+            ClientCtx.gameUIView.animateShowClock(true);
 
             playSound("cymbal_hit");
         }
@@ -300,10 +300,10 @@ public class PlayerMode extends GameDataMode
     protected function onPatternLocClicked (patternLoc :Vec3D) :void
     {
         var avInfo :AVRGameAvatar =
-            ClientContext.gameCtrl.room.getAvatarInfo(ClientContext.localPlayerId);
+            ClientCtx.gameCtrl.room.getAvatarInfo(ClientCtx.localPlayerId);
 
         //log.info("Moving", "from", new Vec3D(avInfo.x, avInfo.y, avInfo.z), "to", patternLoc);
-        ClientContext.gameCtrl.player.setAvatarLocation(
+        ClientCtx.gameCtrl.player.setAvatarLocation(
             patternLoc.x,
             patternLoc.y,
             patternLoc.z,
@@ -313,7 +313,7 @@ public class PlayerMode extends GameDataMode
     protected function handleSuccess () :void
     {
         log.info("Success!");
-        ClientContext.gameUIView.directionsText = "Miraculous! Stupendous! SPECTACULAR!";
+        ClientCtx.gameUIView.directionsText = "Miraculous! Stupendous! SPECTACULAR!";
         handleCompleted();
 
         // show the Can-Can dancers
@@ -335,7 +335,7 @@ public class PlayerMode extends GameDataMode
     protected function handleFailure () :void
     {
         log.info("Failed!");
-        ClientContext.gameUIView.directionsText = "Out of time!";
+        ClientCtx.gameUIView.directionsText = "Out of time!";
         handleCompleted();
 
         // audio
@@ -345,7 +345,7 @@ public class PlayerMode extends GameDataMode
 
     protected function handlePlayAgain () :void
     {
-        ClientContext.mainLoop.changeMode(new PlayerMode());
+        ClientCtx.mainLoop.changeMode(new PlayerMode());
     }
 
     protected function handleCompleted () :void
@@ -359,22 +359,22 @@ public class PlayerMode extends GameDataMode
 
         removePatternView();
 
-        if (ClientContext.isPartyLeader) {
-            ClientContext.gameUIView.rightButton = _againButton;
-            ClientContext.gameUIView.leftButton = _mainMenuButton;
+        if (ClientCtx.isPartyLeader) {
+            ClientCtx.gameUIView.rightButton = _againButton;
+            ClientCtx.gameUIView.leftButton = _mainMenuButton;
         }
 
-        ClientContext.gameUIView.animateShowClock(false);
+        ClientCtx.gameUIView.animateShowClock(false);
     }
 
     protected function onTryAgainClicked (...ignored) :void
     {
-        ClientContext.outMsg.sendMessage(Constants.MSG_C_PLAYAGAIN);
+        ClientCtx.outMsg.sendMessage(Constants.MSG_C_PLAYAGAIN);
     }
 
     protected function onMainMenuClicked (...ignored) :void
     {
-        ClientContext.outMsg.sendMessage(Constants.MSG_C_RESETGAME);
+        ClientCtx.outMsg.sendMessage(Constants.MSG_C_RESETGAME);
     }
 
     protected function onStartClicked (...ignored) :void
@@ -385,8 +385,8 @@ public class PlayerMode extends GameDataMode
             _specCenterThrottler = null;
         }
 
-        ClientContext.sendAgentMsg(Constants.MSG_C_STARTPLAYING);
-        ClientContext.gameUIView.clearButtons();
+        ClientCtx.sendAgentMsg(Constants.MSG_C_STARTPLAYING);
+        ClientCtx.gameUIView.clearButtons();
     }
 
     override public function update (dt :Number) :void
@@ -399,7 +399,7 @@ public class PlayerMode extends GameDataMode
             // updates the PatternView with this information so that players can keep track.
             var patternRecognized :Boolean = checkPlayerPositions();
 
-            if (ClientContext.isPartyLeader) {
+            if (ClientCtx.isPartyLeader) {
                 if (patternRecognized) {
                     // Tell the server we were successful
                     log.info("patternRecognized");
@@ -408,12 +408,12 @@ public class PlayerMode extends GameDataMode
                         this.curPattern.timeLimit - _gameTimer.time :
                         0);
 
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE, patternTime);
+                    ClientCtx.outMsg.sendMessage(Constants.MSG_C_PATTERNCOMPLETE, patternTime);
 
                 } else if (_gameTimer != null && _gameTimer.time <= 0) {
                     log.info("Out of time!");
                     _completed = true;
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_OUTOFTIME);
+                    ClientCtx.outMsg.sendMessage(Constants.MSG_C_OUTOFTIME);
                 }
             }
         }
@@ -473,7 +473,7 @@ public class PlayerMode extends GameDataMode
 }
 
 import com.whirled.contrib.simplegame.SimObject;
-import flashmob.client.ClientContext;
+import flashmob.client.ClientCtx;
 import flashmob.data.Vec3D;
 import com.threerings.flash.Vector2;
 
@@ -504,7 +504,7 @@ class MessageThrottler extends SimObject
 
     protected function sendMessage () :void
     {
-        ClientContext.outMsg.sendMessage(_msgName, _value);
+        ClientCtx.outMsg.sendMessage(_msgName, _value);
         _messagePending = false;
         _timeTillNextMessage = _minUpdateTime;
     }

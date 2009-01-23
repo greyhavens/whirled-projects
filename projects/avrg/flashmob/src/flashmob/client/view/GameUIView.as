@@ -10,11 +10,13 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import flashmob.client.*;
+
 public class GameUIView extends Sprite
 {
     public function GameUIView ()
     {
-        _movie = SwfResource.instantiateMovieClip("Spectacle_UI", "gameUI");
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "gameUI");
         addChild(_movie);
 
         _clock = _movie["clock"];

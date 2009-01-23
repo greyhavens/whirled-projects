@@ -22,7 +22,7 @@ public class SpectacleDb
         log.info("Loading spectacles");
 
         // load spectacles from cold storage
-        var bytes :ByteArray = ServerContext.gameCtrl.game.props.get(PROP_NAME) as ByteArray;
+        var bytes :ByteArray = ServerCtx.gameCtrl.game.props.get(PROP_NAME) as ByteArray;
         if (bytes != null) {
             try {
                 bytes.position = 0;
@@ -63,7 +63,7 @@ public class SpectacleDb
                     spectacle.toBytes(bytes);
                 });
 
-            ServerContext.gameCtrl.game.props.set(PROP_NAME, bytes, true);
+            ServerCtx.gameCtrl.game.props.set(PROP_NAME, bytes, true);
 
         } catch (e :Error) {
             log.error("Error saving spectacles!", e);

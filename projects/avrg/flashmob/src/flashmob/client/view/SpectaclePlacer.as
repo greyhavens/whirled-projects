@@ -40,10 +40,10 @@ public class SpectaclePlacer extends DraggableObject
         this.isDraggable = (droppedCallback != null);
         _sprite = SpriteUtil.createSprite(false, this.isDraggable);
 
-        _frame = SwfResource.instantiateMovieClip("Spectacle_UI", "placer");
+        _frame = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "placer");
         _sprite.addChild(_frame);
 
-        _tent = SwfResource.instantiateMovieClip("Spectacle_UI", "tent");
+        _tent = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "tent");
         _sprite.addChild(_tent);
     }
 
@@ -53,10 +53,10 @@ public class SpectaclePlacer extends DraggableObject
 
         // If we're not draggable, we don't want to intercept mouse clicks
         if (!this.isDraggable) {
-            ClientContext.hitTester.addExcludedObj(this.displayObject);
+            ClientCtx.hitTester.addExcludedObj(this.displayObject);
         }
 
-        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+        registerListener(ClientCtx.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
             updateBounds);
         updateBounds();
     }
@@ -66,7 +66,7 @@ public class SpectaclePlacer extends DraggableObject
         super.destroyed();
 
         if (!this.isDraggable) {
-            ClientContext.hitTester.removeExcludedObj(this.displayObject);
+            ClientCtx.hitTester.removeExcludedObj(this.displayObject);
         }
     }
 

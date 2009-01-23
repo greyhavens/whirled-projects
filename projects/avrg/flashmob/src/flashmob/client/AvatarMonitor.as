@@ -14,7 +14,7 @@ public class AvatarMonitor extends EventDispatcher
 
     public function get curAvatarId () :int
     {
-        return ClientContext.gameCtrl.player.getAvatarMasterItemId();
+        return ClientCtx.gameCtrl.player.getAvatarMasterItemId();
     }
 
     public function update (dt :Number) :void

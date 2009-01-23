@@ -20,7 +20,7 @@ public class GameTimer extends SimObject
     public function set time (val :Number) :void
     {
         _clockTime = val;
-        _lastTime = ClientContext.timeNow;
+        _lastTime = ClientCtx.timeNow;
         updateText();
     }
 
@@ -43,7 +43,7 @@ public class GameTimer extends SimObject
     {
         // GameTimer is running even when its mode is not topmost
         if (!_paused) {
-            var now :Number = ClientContext.timeNow;
+            var now :Number = ClientCtx.timeNow;
             dt = now - _lastTime;
             _lastTime = now;
 

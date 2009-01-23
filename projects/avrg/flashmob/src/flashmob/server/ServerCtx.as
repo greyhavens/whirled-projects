@@ -4,7 +4,7 @@ import com.whirled.avrg.*;
 
 import flash.utils.getTimer;
 
-public class ServerContext
+public class ServerCtx
 {
     public static var gameCtrl :AVRServerGameControl;
     public static var spectacleDb :SpectacleDb = new SpectacleDb();

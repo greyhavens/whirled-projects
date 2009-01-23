@@ -19,7 +19,7 @@ public class BasicErrorMode extends AppMode
     {
         _err = err;
         _playSound = playSound;
-        _okHandler = (okHandler != null ? okHandler : ClientContext.mainLoop.popMode);
+        _okHandler = (okHandler != null ? okHandler : ClientCtx.mainLoop.popMode);
     }
 
     override protected function setup () :void
@@ -33,7 +33,7 @@ public class BasicErrorMode extends AppMode
         g.endFill();
 
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
-        var window :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "errorWindow");
+        var window :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "errorWindow");
         window.x = roomBounds.width * 0.5;
         window.y = roomBounds.height * 0.5;
         _modeSprite.addChild(window);
@@ -57,7 +57,7 @@ public class BasicErrorMode extends AppMode
     {
         super.enter();
         if (!_playedSound && _playSound) {
-            AudioManager.instance.playSoundNamed("fail");
+            ClientCtx.audio.playSoundNamed("fail");
             _playedSound = true;
         }
     }

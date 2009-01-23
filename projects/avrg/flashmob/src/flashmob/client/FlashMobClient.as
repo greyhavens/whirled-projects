@@ -38,40 +38,47 @@ public class FlashMobClient extends Sprite
     {
         DEBUG_REMOVE_ME();
 
-        ClientContext.gameCtrl = new AVRGameControl(this);
-        if (!ClientContext.gameCtrl.isConnected()) {
+        ClientCtx.gameCtrl = new AVRGameControl(this);
+        if (!ClientCtx.gameCtrl.isConnected()) {
             // We can't run in standalone mode
             return;
         }
 
         // Init simplegame
-        ClientContext.mainLoop = new MainLoop(this,
-            (ClientContext.gameCtrl.isConnected() ? ClientContext.gameCtrl.local : this.stage));
-        ClientContext.mainLoop.setup();
-        ClientContext.mainLoop.run();
-        AudioManager.instance.masterControls.volume(Constants.DEBUG_DISABLE_AUDIO ? 0 : 1);
+        var config :Config = new Config();
+        config.hostSprite = this;
+        config.keyDispatcher =
+            (ClientCtx.gameCtrl.isConnected() ? ClientCtx.gameCtrl.local : this.stage);
+        _sg = new SimpleGame(config);
+        ClientCtx.mainLoop = _sg.ctx.mainLoop;
+        ClientCtx.rsrcs = _sg.ctx.rsrcs;
+        ClientCtx.audio = _sg.ctx.audio;
+
+        _sg.run();
+
+        ClientCtx.audio.masterControls.volume(Constants.DEBUG_DISABLE_AUDIO ? 0 : 1);
 
         // Load resources
         Resources.loadResources(onResourcesLoaded, onResourceLoadErr);
 
-        _events.registerListener(this, Event.ADDED_TO_STAGE, handleAdded);
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
+        _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
     }
 
     protected function onPartyInfoChanged (...ignored) :void
     {
-        var partyInfo :Object = ClientContext.gameCtrl.local.getPartyInfo();
+        var partyInfo :Object = ClientCtx.gameCtrl.local.getPartyInfo();
         if (partyInfo == null) {
-            ClientContext.isPartied = false;
-            ClientContext.mainLoop.unwindToMode(new BasicErrorMode("This is a party game. " +
-                "Please join a party and try again!", true, ClientContext.quit));
+            ClientCtx.isPartied = false;
+            ClientCtx.mainLoop.unwindToMode(new BasicErrorMode("This is a party game. " +
+                "Please join a party and try again!", true, ClientCtx.quit));
             return;
         }
 
-        ClientContext.isPartied = true;
-        ClientContext.partyInfo.partyId = partyInfo.partyId;
-        ClientContext.partyInfo.leaderId = partyInfo.leaderId;
-        ClientContext.partyInfo.playerIds = partyInfo.players;
+        ClientCtx.isPartied = true;
+        ClientCtx.partyInfo.partyId = partyInfo.partyId;
+        ClientCtx.partyInfo.leaderId = partyInfo.leaderId;
+        ClientCtx.partyInfo.playerIds = partyInfo.players;
 
         log.info("New Party Info", "id", partyInfo.id, "name", partyInfo.name,
             "leaderId", partyInfo.leaderId, "players", partyInfo.players);
@@ -84,58 +91,58 @@ public class FlashMobClient extends Sprite
         }
 
         // Get party info; ensure we're in a party
-        _events.registerListener(ClientContext.gameCtrl.local, "partyChanged", onPartyInfoChanged);
+        _events.registerListener(ClientCtx.gameCtrl.local, "partyChanged", onPartyInfoChanged);
         onPartyInfoChanged();
-        if (!ClientContext.isPartied) {
+        if (!ClientCtx.isPartied) {
             return;
         }
 
-        ClientContext.localPlayerId = ClientContext.gameCtrl.player.getPlayerId();
-        ClientContext.outMsg = new PartyMsgSender(ClientContext.partyInfo.partyId,
-            ClientContext.gameCtrl.agent);
-        ClientContext.inMsg = new PartyMsgReceiver(ClientContext.partyInfo.partyId,
-            ClientContext.gameCtrl.game);
-        ClientContext.props = new PartyPropGetControl(ClientContext.partyInfo.partyId,
-            ClientContext.gameCtrl.game.props);
+        ClientCtx.localPlayerId = ClientCtx.gameCtrl.player.getPlayerId();
+        ClientCtx.outMsg = new PartyMsgSender(ClientCtx.partyInfo.partyId,
+            ClientCtx.gameCtrl.agent);
+        ClientCtx.inMsg = new PartyMsgReceiver(ClientCtx.partyInfo.partyId,
+            ClientCtx.gameCtrl.game);
+        ClientCtx.props = new PartyPropGetControl(ClientCtx.partyInfo.partyId,
+            ClientCtx.gameCtrl.game.props);
 
         // Init HitTester
-        ClientContext.hitTester = new HitTester();
-        ClientContext.hitTester.setup();
+        ClientCtx.hitTester = new HitTester();
+        ClientCtx.hitTester.setup();
 
         // Init AvatarMonitor
-        ClientContext.avatarMonitor = new AvatarMonitor();
-        ClientContext.mainLoop.addUpdatable(ClientContext.avatarMonitor);
-        _events.registerListener(ClientContext.avatarMonitor, GameEvent.AVATAR_CHANGED,
+        ClientCtx.avatarMonitor = new AvatarMonitor();
+        ClientCtx.mainLoop.addUpdatable(ClientCtx.avatarMonitor);
+        _events.registerListener(ClientCtx.avatarMonitor, GameEvent.AVATAR_CHANGED,
             onAvatarChanged);
 
         // Init RoomBoundsMonitor
-        ClientContext.roomBoundsMonitor = new RoomBoundsMonitor();
-        ClientContext.mainLoop.addUpdatable(ClientContext.roomBoundsMonitor);
+        ClientCtx.roomBoundsMonitor = new RoomBoundsMonitor();
+        ClientCtx.mainLoop.addUpdatable(ClientCtx.roomBoundsMonitor);
 
         log.info("Starting client",
-            "localPlayerId", ClientContext.localPlayerId,
-            "partyId", ClientContext.partyInfo.partyId,
-            "roomId", ClientContext.gameCtrl.player.getRoomId());
+            "localPlayerId", ClientCtx.localPlayerId,
+            "partyId", ClientCtx.partyInfo.partyId,
+            "roomId", ClientCtx.gameCtrl.player.getRoomId());
 
         // We handle certain messages and property changes here at the top-level.
         // Those that don't get handled get sent to the top-most AppMode, if that mode
         // implements GameDataListener.
-        _events.registerListener(ClientContext.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED,
+        _events.registerListener(ClientCtx.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
-        _events.registerListener(ClientContext.props, PropertyChangedEvent.PROPERTY_CHANGED,
+        _events.registerListener(ClientCtx.props, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
-        _events.registerListener(ClientContext.props, ElementChangedEvent.ELEMENT_CHANGED,
+        _events.registerListener(ClientCtx.props, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
 
-        playersChanged(ClientContext.props.get(Constants.PROP_PLAYERS) as ByteArray);
-        spectacleChanged(ClientContext.props.get(Constants.PROP_SPECTACLE) as ByteArray);
+        playersChanged(ClientCtx.props.get(Constants.PROP_PLAYERS) as ByteArray);
+        spectacleChanged(ClientCtx.props.get(Constants.PROP_SPECTACLE) as ByteArray);
 
         // Tell the server about our party, and tell it what our avatar is
-        ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_C_CLIENT_INIT,
-            ClientContext.partyInfo.toBytes());
+        ClientCtx.gameCtrl.agent.sendMessage(Constants.MSG_C_CLIENT_INIT,
+            ClientCtx.partyInfo.toBytes());
 
         // This will put the initial AppMode into the MainLoop
-        gameStateChanged(ClientContext.props.get(Constants.PROP_GAMESTATE));
+        gameStateChanged(ClientCtx.props.get(Constants.PROP_GAMESTATE));
 
         /*ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
             ClientContext.avatarMonitor.curAvatarId);*/
@@ -143,7 +150,7 @@ public class FlashMobClient extends Sprite
 
     protected function get curDataListener () :GameDataListener
     {
-        return ClientContext.mainLoop.topMode as GameDataListener;
+        return ClientCtx.mainLoop.topMode as GameDataListener;
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -189,21 +196,21 @@ public class FlashMobClient extends Sprite
 
     protected function onAvatarChanged (e :GameEvent) :void
     {
-        ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, e.data as int);
+        ClientCtx.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED, e.data as int);
     }
 
     protected function playersChanged (newPlayers :ByteArray) :void
     {
-        ClientContext.players = new PlayerSet();
+        ClientCtx.players = new PlayerSet();
         if (newPlayers != null) {
-            ClientContext.players.fromBytes(newPlayers);
+            ClientCtx.players.fromBytes(newPlayers);
         }
     }
 
     protected function spectacleChanged (bytes :ByteArray) :void
     {
-        ClientContext.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
-        log.info("New spectacle received", "Spectacle", ClientContext.spectacle);
+        ClientCtx.spectacle = (bytes != null ? new Spectacle().fromBytes(bytes) : null);
+        log.info("New spectacle received", "Spectacle", ClientCtx.spectacle);
     }
 
     protected function gameStateChanged (newState :Object) :void
@@ -220,19 +227,19 @@ public class FlashMobClient extends Sprite
 
         switch (newStateId) {
         case Constants.STATE_WAITING_FOR_PLAYERS:
-            ClientContext.mainLoop.unwindToMode(new WaitingMode());
+            ClientCtx.mainLoop.unwindToMode(new WaitingMode());
             break;
 
         case Constants.STATE_CHOOSER:
-            ClientContext.mainLoop.unwindToMode(new MainMenuMode());
+            ClientCtx.mainLoop.unwindToMode(new MainMenuMode());
             break;
 
         case Constants.STATE_CREATOR:
-            ClientContext.mainLoop.unwindToMode(new CreatorMode());
+            ClientCtx.mainLoop.unwindToMode(new CreatorMode());
             break;
 
         case Constants.STATE_PLAYER:
-            ClientContext.mainLoop.unwindToMode(new PlayerMode());
+            ClientCtx.mainLoop.unwindToMode(new PlayerMode());
             break;
         }
     }
@@ -245,10 +252,10 @@ public class FlashMobClient extends Sprite
 
     protected function onResourceLoadErr (err :String) :void
     {
-        ClientContext.mainLoop.unwindToMode(new BasicErrorMode("Error loading game:\n" + err, true));
+        ClientCtx.mainLoop.unwindToMode(new BasicErrorMode("Error loading game:\n" + err, true));
     }
 
-    protected function handleAdded (event :Event) :void
+    protected function onAddedToStage (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
 
@@ -256,27 +263,26 @@ public class FlashMobClient extends Sprite
         tryStartGame();
     }
 
-    protected function handleUnload (event :Event) :void
+    protected function onQuit (event :Event) :void
     {
         log.info("Removed from stage - Unloading...");
 
-        if (ClientContext.mainLoop != null) {
-            ClientContext.mainLoop.shutdown();
-            ClientContext.mainLoop = null;
+        _sg.shutdown();
+
+        if (ClientCtx.inMsg != null) {
+            ClientCtx.inMsg.shutdown();
+            ClientCtx.inMsg = null;
         }
 
-        if (ClientContext.inMsg != null) {
-            ClientContext.inMsg.shutdown();
-            ClientContext.inMsg = null;
-        }
-
-        if (ClientContext.props != null) {
-            ClientContext.props.shutdown();
-            ClientContext.props = null;
+        if (ClientCtx.props != null) {
+            ClientCtx.props.shutdown();
+            ClientCtx.props = null;
         }
 
         _events.freeAllHandlers();
     }
+
+    protected var _sg :SimpleGame;
 
     protected var _curGameState :int = -1;
 

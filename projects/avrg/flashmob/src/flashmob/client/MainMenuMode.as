@@ -20,10 +20,10 @@ public class MainMenuMode extends GameDataMode
     {
         super.setup();
 
-        _wasPartyLeader = ClientContext.isPartyLeader;
+        _wasPartyLeader = ClientCtx.isPartyLeader;
 
         // create the main UI and make it draggable
-        _ui = SwfResource.instantiateMovieClip("Spectacle_UI", "mainUI");
+        _ui = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "mainUI");
         _modeSprite.addChild(_ui);
         var roomBounds :Rectangle = SpaceUtil.roomDisplayBounds;
         DisplayUtil.positionBoundsRelative(_ui, _modeSprite,
@@ -34,10 +34,10 @@ public class MainMenuMode extends GameDataMode
 
         // wire up buttons
         var creatorModeButton :SimpleButton = _ui["makeyourown"];
-        if (ClientContext.isPartyLeader) {
+        if (ClientCtx.isPartyLeader) {
             registerOneShotCallback(creatorModeButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    ClientContext.outMsg.sendMessage(Constants.MSG_C_CREATE_SPEC);
+                    ClientCtx.outMsg.sendMessage(Constants.MSG_C_CREATE_SPEC);
                 });
 
         } else {
@@ -47,7 +47,7 @@ public class MainMenuMode extends GameDataMode
         var quitButton :SimpleButton = _ui["close"];
         registerListener(quitButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.confirmQuit();
+                ClientCtx.confirmQuit();
             });
 
         _prevButton = _ui["prev"];
@@ -66,12 +66,12 @@ public class MainMenuMode extends GameDataMode
         _dataBindings.bindProp(Constants.PROP_AVAIL_SPECTACLES, handleSpectaclesUpdated,
             SpectacleSet.fromBytes);
         _dataBindings.bindProp(Constants.PROP_PLAYERS, handlePlayersUpdated);
-        _dataBindings.processAllProperties(ClientContext.props);
+        _dataBindings.processAllProperties(ClientCtx.props);
     }
 
     protected function handleResetGame () :void
     {
-        ClientContext.mainLoop.changeMode(new MainMenuMode());
+        ClientCtx.mainLoop.changeMode(new MainMenuMode());
     }
 
     protected function handleSpectaclesUpdated (specSet :SpectacleSet) :void
@@ -84,8 +84,8 @@ public class MainMenuMode extends GameDataMode
 
     protected function handlePlayersUpdated () :void
     {
-        if (_wasPartyLeader != ClientContext.isPartyLeader) {
-            ClientContext.mainLoop.changeMode(new MainMenuMode());
+        if (_wasPartyLeader != ClientCtx.isPartyLeader) {
+            ClientCtx.mainLoop.changeMode(new MainMenuMode());
         }
     }
 
@@ -99,14 +99,14 @@ public class MainMenuMode extends GameDataMode
 
             if (_availSpectacles != null && fromIndex + ii < _availSpectacles.spectacles.length) {
                 var spec :Spectacle = _availSpectacles.spectacles[fromIndex + ii];
-                var specThumb :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI",
+                var specThumb :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI",
                     "spectacleThumb");
                 var nameTf :TextField = specThumb["specname"];
                 nameTf.text = spec.name;
 
                 anchor.addChild(specThumb);
 
-                if (ClientContext.isPartyLeader) {
+                if (ClientCtx.isPartyLeader) {
                     registerOneShotCallback(specThumb, MouseEvent.CLICK,
                         createSpectacleSelectedHandler(spec));
                 }
@@ -124,7 +124,7 @@ public class MainMenuMode extends GameDataMode
     {
         return function (...ignored) :void {
             if (!_spectacleSelected) {
-                ClientContext.outMsg.sendMessage(Constants.MSG_C_SELECTED_SPEC, spectacle.id);
+                ClientCtx.outMsg.sendMessage(Constants.MSG_C_SELECTED_SPEC, spectacle.id);
                 _spectacleSelected = true;
             }
         }

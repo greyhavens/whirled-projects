@@ -22,22 +22,22 @@ public class FlashMobServer extends ServerObject
     {
         log.info("Starting server", "version", VERSION);
 
-        ServerContext.gameCtrl = new AVRServerGameControl(this);
-        ServerContext.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME,
+        ServerCtx.gameCtrl = new AVRServerGameControl(this);
+        ServerCtx.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME,
             onPlayerJoined);
-        ServerContext.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME,
+        ServerCtx.gameCtrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME,
             onPlayerQuit);
-        ServerContext.gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
+        ServerCtx.gameCtrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED,
             onMessageReceived);
 
         if (!Constants.DEBUG_CLEAR_SAVED_DATA) {
-            ServerContext.spectacleDb.load();
+            ServerCtx.spectacleDb.load();
         }
     }
 
     protected function mightShutdown () :void
     {
-        ServerContext.spectacleDb.save();
+        ServerCtx.spectacleDb.save();
     }
 
     protected function onPlayerJoined (e :AVRGameControlEvent) :void

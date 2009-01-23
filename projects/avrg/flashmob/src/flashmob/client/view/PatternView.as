@@ -24,10 +24,10 @@ public class PatternView extends SceneObject
 
         _sprite = SpriteUtil.createSprite(_onLocClicked != null, false);
 
-        var localPlayerIndex :int = ClientContext.localPlayerIndex;
+        var localPlayerIndex :int = ClientCtx.localPlayerIndex;
         for (var ii :int = 0; ii < _pattern.locs.length; ++ii) {
             var loc :Vec3D = _pattern.locs[ii];
-            var star :MovieClip = SwfResource.instantiateMovieClip("Spectacle_UI", "star", false,
+            var star :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "Spectacle_UI", "star", false,
                 true);
 
             _sprite.addChild(star);
@@ -56,7 +56,7 @@ public class PatternView extends SceneObject
         // Don't intercept mouse clicks
         //ClientContext.hitTester.addExcludedObj(this.displayObject);
 
-        registerListener(ClientContext.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
+        registerListener(ClientCtx.roomBoundsMonitor, GameEvent.ROOM_BOUNDS_CHANGED,
             updateStarLocs);
     }
 

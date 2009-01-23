@@ -15,9 +15,9 @@ public class ServerGame extends ServerModeStack
     {
         _ctx.game = this;
         _ctx.partyInfo = partyInfo;
-        _ctx.props = new PartyPropControl(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game.props);
-        _ctx.inMsg = new PartyMsgReceiver(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game);
-        _ctx.outMsg = new PartyMsgSender(_ctx.partyInfo.partyId, ServerContext.gameCtrl.game);
+        _ctx.props = new PartyPropControl(_ctx.partyInfo.partyId, ServerCtx.gameCtrl.game.props);
+        _ctx.inMsg = new PartyMsgReceiver(_ctx.partyInfo.partyId, ServerCtx.gameCtrl.game);
+        _ctx.outMsg = new PartyMsgSender(_ctx.partyInfo.partyId, ServerCtx.gameCtrl.game);
 
         _events.registerListener(_ctx.inMsg, MessageReceivedEvent.MESSAGE_RECEIVED, onMsgReceived);
         _events.registerListener(_ctx.props, PropertyChangedEvent.PROPERTY_CHANGED, onPropChanged);
@@ -72,7 +72,7 @@ public class ServerGame extends ServerModeStack
         log.info("Adding player", "playerId", playerId, "game", _ctx.partyInfo.partyId,
             "numAbsentPlayers", _ctx.numAbsentPlayers);
 
-        var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
+        var playerCtrl :PlayerSubControlServer = ServerCtx.gameCtrl.getPlayer(playerId);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
         _events.registerListener(playerCtrl, AVRGamePlayerEvent.LEFT_ROOM, updatePlayers);
 
@@ -96,7 +96,7 @@ public class ServerGame extends ServerModeStack
             return;
         }
 
-        var playerCtrl :PlayerSubControlServer = ServerContext.gameCtrl.getPlayer(playerId);
+        var playerCtrl :PlayerSubControlServer = ServerCtx.gameCtrl.getPlayer(playerId);
         if (playerCtrl != null) {
             _events.unregisterListener(playerCtrl, AVRGamePlayerEvent.ENTERED_ROOM, updatePlayers);
             _events.unregisterListener(playerCtrl, AVRGamePlayerEvent.LEFT_ROOM, updatePlayers);

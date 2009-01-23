@@ -2,9 +2,9 @@ package flashmob.client {
 
 import com.whirled.avrg.*;
 import com.whirled.contrib.simplegame.MainLoop;
+import com.whirled.contrib.simplegame.audio.AudioManager;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
 
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import flash.utils.getTimer;
 
 import flashmob.*;
@@ -14,9 +14,11 @@ import flashmob.client.view.HitTester;
 import flashmob.data.*;
 import flashmob.party.*;
 
-public class ClientContext
+public class ClientCtx
 {
     public static var mainLoop :MainLoop;
+    public static var rsrcs :ResourceManager;
+    public static var audio :AudioManager;
     public static var gameCtrl :AVRGameControl;
     public static var localPlayerId :int;
     public static var isPartied :Boolean;
