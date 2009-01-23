@@ -6,7 +6,6 @@ package popcraft {
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.GameContentEvent;
@@ -42,16 +41,16 @@ public class PopCraft extends Sprite
     {
         DEBUG_REMOVE_ME(); //
 
-        ClientContext.mainSprite = this;
+        ClientCtx.mainSprite = this;
 
         // setup GameControl
-        ClientContext.gameCtrl = new GameControl(this, false);
-        var isConnected :Boolean = ClientContext.gameCtrl.isConnected();
+        ClientCtx.gameCtrl = new GameControl(this, false);
+        var isConnected :Boolean = ClientCtx.gameCtrl.isConnected();
 
-        ClientContext.seatingMgr.init(ClientContext.gameCtrl);
-        ClientContext.lobbyConfig.init(ClientContext.gameCtrl, ClientContext.seatingMgr);
+        ClientCtx.seatingMgr.init(ClientCtx.gameCtrl);
+        ClientCtx.lobbyConfig.init(ClientCtx.gameCtrl, ClientCtx.seatingMgr);
 
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, handleUnload);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
         // draw a black background
         var g :Graphics = this.graphics;
@@ -62,91 +61,95 @@ public class PopCraft extends Sprite
         // set a clip rect
         this.scrollRect = new Rectangle(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
 
-        // setup main loop
-        ClientContext.mainLoop = new MainLoop(this,
-            (isConnected ? ClientContext.gameCtrl.local : this.stage));
-        ClientContext.mainLoop.setup();
+        // setup simplegame
+        var config :Config = new Config();
+        config.hostSprite = this;
+        config.keyDispatcher = (isConnected ? ClientCtx.gameCtrl.local : this.stage);
+        _sg = new SimpleGame(config);
+
+        ClientCtx.mainLoop = _sg.ctx.mainLoop;
+        ClientCtx.rsrcs = _sg.ctx.rsrcs;
+        ClientCtx.audio = _sg.ctx.audio;
 
         // custom resource factories
-        var rm :ResourceManager = ResourceManager.instance;
-        rm.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
-        rm.registerResourceType(Constants.RESTYPE_ENDLESS, EndlessLevelResource);
-        rm.registerResourceType(Constants.RESTYPE_GAMEDATA, GameDataResource);
-        rm.registerResourceType(Constants.RESTYPE_GAMEVARIANTS, GameVariantsResource);
+        ClientCtx.rsrcs.registerResourceType(Constants.RESTYPE_LEVEL, LevelResource);
+        ClientCtx.rsrcs.registerResourceType(Constants.RESTYPE_ENDLESS, EndlessLevelResource);
+        ClientCtx.rsrcs.registerResourceType(Constants.RESTYPE_GAMEDATA, GameDataResource);
+        ClientCtx.rsrcs.registerResourceType(Constants.RESTYPE_GAMEVARIANTS, GameVariantsResource);
 
         // sound volume
-        AudioManager.instance.masterControls.volume(
+        ClientCtx.audio.masterControls.volume(
             Constants.DEBUG_DISABLE_AUDIO ? 0 : Constants.SOUND_MASTER_VOLUME);
 
         // create a new random stream for the puzzle
-        ClientContext.randStreamPuzzle = Rand.addStream();
+        ClientCtx.randStreamPuzzle = Rand.addStream();
 
         // init the cookie manager
-        ClientContext.userCookieMgr = new UserCookieManager(Constants.USER_COOKIE_VERSION);
-        ClientContext.userCookieMgr.addDataSource(ClientContext.levelMgr);
-        ClientContext.userCookieMgr.addDataSource(ClientContext.globalPlayerStats);
-        ClientContext.userCookieMgr.addDataSource(ClientContext.endlessLevelMgr);
-        ClientContext.userCookieMgr.addDataSource(ClientContext.prizeMgr);
-        ClientContext.userCookieMgr.addDataSource(ClientContext.savedPlayerBits);
+        ClientCtx.userCookieMgr = new UserCookieManager(Constants.USER_COOKIE_VERSION);
+        ClientCtx.userCookieMgr.addDataSource(ClientCtx.levelMgr);
+        ClientCtx.userCookieMgr.addDataSource(ClientCtx.globalPlayerStats);
+        ClientCtx.userCookieMgr.addDataSource(ClientCtx.endlessLevelMgr);
+        ClientCtx.userCookieMgr.addDataSource(ClientCtx.prizeMgr);
+        ClientCtx.userCookieMgr.addDataSource(ClientCtx.savedPlayerBits);
 
-        if (ClientContext.gameCtrl.isConnected()) {
+        if (ClientCtx.gameCtrl.isConnected()) {
             // if we're connected to Whirled, keep the game centered and draw a pretty
             // tiled background behind it
-            _events.registerListener(ClientContext.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
+            _events.registerListener(ClientCtx.gameCtrl.local, SizeChangedEvent.SIZE_CHANGED,
                 handleSizeChanged)
 
             handleSizeChanged();
 
             // and don't show the "rematch" button - we have a UI for it in-game
-            ClientContext.gameCtrl.local.setShowReplay(false);
+            ClientCtx.gameCtrl.local.setShowReplay(false);
 
             // get level packs
-            ClientContext.reloadLevelPacks();
+            ClientCtx.reloadLevelPacks();
 
             // if the player purchases level packs while the game is in progress, update our
             // level packs
             _events.registerListener(
-                ClientContext.gameCtrl.player,
+                ClientCtx.gameCtrl.player,
                 GameContentEvent.PLAYER_CONTENT_ADDED,
                 function (...ignored) :void {
-                    ClientContext.reloadLevelPacks();
+                    ClientCtx.reloadLevelPacks();
                 });
 
         }
 
-        ClientContext.mainLoop.run();
+        _sg.run();
 
         // Before we kick off our loading mode, we need to load an initial set of resources
         // required to actually show the loading screen.
         Resources.loadInitialResources(
             function () :void {
-                ClientContext.mainLoop.unwindToMode(new LoadingMode());
+                ClientCtx.mainLoop.unwindToMode(new LoadingMode());
             },
             function (loadErr :String) :void {
-                ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(loadErr));
+                ClientCtx.mainLoop.unwindToMode(new GenericLoadErrorMode(loadErr));
             });
     }
 
     protected function handleSizeChanged (...ignored) :void
     {
-        var size :Point = ClientContext.gameCtrl.local.getSize();
-        ClientContext.mainSprite.x = (size.x * 0.5) - (Constants.SCREEN_SIZE.x * 0.5);
-        ClientContext.mainSprite.y = (size.y * 0.5) - (Constants.SCREEN_SIZE.y * 0.5);
+        var size :Point = ClientCtx.gameCtrl.local.getSize();
+        ClientCtx.mainSprite.x = (size.x * 0.5) - (Constants.SCREEN_SIZE.x * 0.5);
+        ClientCtx.mainSprite.y = (size.y * 0.5) - (Constants.SCREEN_SIZE.y * 0.5);
     }
 
-    protected function handleUnload (...ignored) :void
+    protected function onQuit (...ignored) :void
     {
         _events.freeAllHandlers();
-        ClientContext.mainLoop.shutdown();
+        _sg.shutdown();
     }
 
     public function loadResources (completeCallback :Function, errorCallback :Function) :void
     {
         function loadSingleOrMultiplayerResources () :void {
-            if (Resources.queueLevelPackResources(ClientContext.isMultiplayer ?
+            if (Resources.queueLevelPackResources(ClientCtx.isMultiplayer ?
                 Resources.MP_LEVEL_PACK_RESOURCES :
                 Resources.SP_LEVEL_PACK_RESOURCES)) {
-                ResourceManager.instance.loadQueuedResources(completeCallback, errorCallback);
+                ClientCtx.rsrcs.loadQueuedResources(completeCallback, errorCallback);
 
             } else {
                 completeCallback();
@@ -157,6 +160,7 @@ public class PopCraft extends Sprite
     }
 
     protected var _events :EventHandlerManager = new EventHandlerManager();
+    protected var _sg :SimpleGame;
 }
 
 }
@@ -177,8 +181,8 @@ class LoadingMode extends GenericLoadingMode
     override protected function setup () :void
     {
         _loadingResources = true;
-        ClientContext.userCookieMgr.readCookie();
-        ClientContext.mainSprite.loadResources(resourceLoadComplete, onLoadError);
+        ClientCtx.userCookieMgr.readCookie();
+        ClientCtx.mainSprite.loadResources(resourceLoadComplete, onLoadError);
     }
 
     override public function update (dt :Number) :void
@@ -190,8 +194,8 @@ class LoadingMode extends GenericLoadingMode
             return;
         }
 
-        if (!_loadingResources && !ClientContext.userCookieMgr.isLoadingCookie) {
-            if (ClientContext.seatingMgr.allPlayersPresent) {
+        if (!_loadingResources && !ClientCtx.userCookieMgr.isLoadingCookie) {
+            if (ClientCtx.seatingMgr.allPlayersPresent) {
                 startGame();
             } else {
                 this.loadingText = "Waiting for players";
@@ -201,14 +205,14 @@ class LoadingMode extends GenericLoadingMode
 
     protected function startGame () :void
     {
-        if (ClientContext.isMultiplayer) {
-            ClientContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
+        if (ClientCtx.isMultiplayer) {
+            ClientCtx.mainLoop.unwindToMode(new MultiplayerLobbyMode());
         } else {
             LevelSelectMode.create();
         }
 
         // award the player any prizes they haven't gotten yet
-        ClientContext.prizeMgr.checkPrizes();
+        ClientCtx.prizeMgr.checkPrizes();
     }
 
     protected function resourceLoadComplete () :void
@@ -218,7 +222,7 @@ class LoadingMode extends GenericLoadingMode
 
     protected function onLoadError (err :String) :void
     {
-        ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
+        ClientCtx.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
     }
 
     protected var _loadingResources :Boolean;

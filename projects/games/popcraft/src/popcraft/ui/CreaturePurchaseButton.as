@@ -41,8 +41,8 @@ public class CreaturePurchaseButton extends SimObject
 
         // instaniate some alternate highlight movies, for spells
         _defaultHilite = _hilite;
-        _bloodHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_bloodlust", true);
-        _rigorHilite = SwfResource.instantiateMovieClip("dashboard", "unit_highlight_rigormortis", true);
+        _bloodHilite = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "unit_highlight_bloodlust", true);
+        _rigorHilite = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "unit_highlight_rigormortis", true);
 
         // we want to know when the player casts a spell
         var spellSet :CreatureSpellSet = GameContext.localPlayerInfo.activeSpells;
@@ -82,9 +82,9 @@ public class CreaturePurchaseButton extends SimObject
 
         // put some colored rectangles behind the cost texts
         var resource1Tile :MovieClip =
-            SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource1Type], true);
+            SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", RESOURCE_COST_TILES[_resource1Type], true);
         var resource2Tile :MovieClip =
-            SwfResource.instantiateMovieClip("dashboard", RESOURCE_COST_TILES[_resource2Type], true);
+            SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", RESOURCE_COST_TILES[_resource2Type], true);
         resource1Tile.x = -(resource1Tile.width * 0.5);
         resource1Tile.y = -2;
         resource2Tile.x = 18 - (resource2Tile.width * 0.5);
@@ -255,8 +255,8 @@ public class CreaturePurchaseButton extends SimObject
 
     protected function createPurchaseMeters () :void
     {
-        var resource1Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
-        var resource2Bitmap :BitmapData = SwfResource.getBitmapData("dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
+        var resource1Bitmap :BitmapData = SwfResource.getBitmapData(ClientCtx.rsrcs, "dashboard", RESOURCE_BITMAP_NAMES[_resource1Type], 18, 18);
+        var resource2Bitmap :BitmapData = SwfResource.getBitmapData(ClientCtx.rsrcs, "dashboard", RESOURCE_BITMAP_NAMES[_resource2Type], 18, 18);
 
         var resource1BgColor :uint = _resource1Data.hiliteColor;
         var resource2BgColor :uint = _resource2Data.hiliteColor;

@@ -19,9 +19,9 @@ public class DiurnalCycleView extends SceneObject
     {
         _sprite = SpriteUtil.createSprite();
 
-        _sun = SwfResource.instantiateMovieClip("dashboard", "sun", true, true);
-        _moon = SwfResource.instantiateMovieClip("dashboard", "moon", true, true);
-        _eclipse = SwfResource.instantiateMovieClip("dashboard", "eclipse", true, true);
+        _sun = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "sun", true, true);
+        _moon = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "moon", true, true);
+        _eclipse = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "eclipse", true, true);
 
         _moon.cacheAsBitmap = true;
 

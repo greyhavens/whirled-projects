@@ -41,7 +41,7 @@ public class PuzzleBoard extends SceneObject
             table.push(resourceData.frequency);
         }
 
-        _resourceGenerator = new WeightedTable(table, ClientContext.randStreamPuzzle);
+        _resourceGenerator = new WeightedTable(table, ClientCtx.randStreamPuzzle);
 
         // create the visual representation of the board
         _sprite = SpriteUtil.createSprite(false, true);
@@ -165,7 +165,7 @@ public class PuzzleBoard extends SceneObject
 
     protected function createResourceChunk (x :int, y :int) :void
     {
-        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1, ClientContext.randStreamPuzzle);
+        var chunkSize :int = Rand.nextIntRange(1, RESOURCE_CHUNK_SIZE_MAX + 1, ClientCtx.randStreamPuzzle);
         var resType :int = _resourceGenerator.nextEntry();
 
         for (var i :int = 0; i < chunkSize; ++i) {
@@ -193,7 +193,7 @@ public class PuzzleBoard extends SceneObject
                 break;
             }
 
-            var nextSpace :Point = Rand.nextElement(freeAdjacentSpaces, ClientContext.randStreamPuzzle);
+            var nextSpace :Point = Rand.nextElement(freeAdjacentSpaces, ClientCtx.randStreamPuzzle);
             x = nextSpace.x;
             y = nextSpace.y;
         }
@@ -256,7 +256,7 @@ public class PuzzleBoard extends SceneObject
 
         // award trophy
         if (clearPieces.length >= Trophies.RESOURCE_CLEAR_TILE_COUNT) {
-            ClientContext.awardTrophy(Trophies.RESOURCE_CLEAR_TROPHIES[resourceType]);
+            ClientCtx.awardTrophy(Trophies.RESOURCE_CLEAR_TROPHIES[resourceType]);
         }
     }
 

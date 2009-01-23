@@ -63,7 +63,7 @@ public class ClientSeatingManager extends SeatingManager
             var playerId :int = playerIds[seatIndex];
             var playerPresent :Boolean = (playerId != 0);
             if (playerPresent && null == _headshots[seatIndex]) {
-                _headshots[seatIndex] = ClientContext.gameCtrl.local.getHeadShot(playerId);
+                _headshots[seatIndex] = ClientCtx.gameCtrl.local.getHeadShot(playerId);
             }
         }
     }

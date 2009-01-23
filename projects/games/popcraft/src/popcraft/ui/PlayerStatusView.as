@@ -13,6 +13,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import popcraft.*;
 import popcraft.game.*;
 import popcraft.util.SpriteUtil;
 
@@ -29,7 +30,7 @@ public class PlayerStatusView extends SceneObject
     {
         _playerInfo = GameContext.playerInfos[playerIndex];
 
-        _movie = SwfResource.instantiateMovieClip("dashboard", "player_slot", true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "player_slot", true);
         _movie.cacheAsBitmap = true;
 
         _deathMovie = _movie["dead"];

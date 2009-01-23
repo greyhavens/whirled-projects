@@ -74,8 +74,8 @@ public class CreatureAnimFactory
 
         var unitData :UnitData = GameContext.gameData.units[unitType];
 
-        var anim :MovieClip =
-                SwfResource.instantiateMovieClip(unitData.name, animName, true, USE_CACHE);
+        var anim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs,
+            unitData.name, animName, true, USE_CACHE);
         if (null != anim) {
             // colorize the animation's recolor1, recolor2, etc children
             var i :int = 1;

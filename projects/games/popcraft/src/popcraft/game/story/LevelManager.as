@@ -159,13 +159,13 @@ public class LevelManager
                 if (forceReload) {
                     // reload the default game data first, then load the level when it's complete
                     // (level requires that default game data already be loaded)
-                    ResourceManager.instance.unload(Constants.RSRC_DEFAULTGAMEDATA);
-                    ResourceManager.instance.queueResourceLoad(
+                    ClientCtx.rsrcs.unload(Constants.RSRC_DEFAULTGAMEDATA);
+                    ClientCtx.rsrcs.queueResourceLoad(
                         Constants.RESTYPE_GAMEDATA,
                         Constants.RSRC_DEFAULTGAMEDATA,
                         { url: LEVELS_DIR + "/defaultGameData.xml" });
 
-                    ResourceManager.instance.loadQueuedResources(
+                    ClientCtx.rsrcs.loadQueuedResources(
                         function () :void {
                             loadLevel(loadParams)
                         },
@@ -180,15 +180,15 @@ public class LevelManager
 
     protected function loadLevel (loadParams :Object) :void
     {
-        ResourceManager.instance.unload(RSRC_CURLEVEL);
-        ResourceManager.instance.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
+        ClientCtx.rsrcs.unload(RSRC_CURLEVEL);
+        ClientCtx.rsrcs.queueResourceLoad(Constants.RESTYPE_LEVEL, RSRC_CURLEVEL,
             loadParams);
-        ResourceManager.instance.loadQueuedResources(onLevelLoaded, onLoadError);
+        ClientCtx.rsrcs.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
     public function get curLevelName () :String
     {
-        var levelNames :Array = ClientContext.levelProgression.levelNames;
+        var levelNames :Array = ClientCtx.levelProgression.levelNames;
         if (_curLevelIndex >= 0 && _curLevelIndex < levelNames.length) {
             return levelNames[_curLevelIndex];
         }
@@ -242,13 +242,13 @@ public class LevelManager
 
     protected function onLevelLoaded () :void
     {
-        _loadedLevel = LevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
+        _loadedLevel = LevelResource(ClientCtx.rsrcs.getResource(RSRC_CURLEVEL)).levelData;
         startGame();
     }
 
     protected function onLoadError (err :String) :void
     {
-        ClientContext.mainLoop.pushMode(new LevelLoadErrorMode(err));
+        ClientCtx.mainLoop.pushMode(new LevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -256,7 +256,7 @@ public class LevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            ClientContext.mainLoop.unwindToMode(new StoryGameMode(_loadedLevel));
+            ClientCtx.mainLoop.unwindToMode(new StoryGameMode(_loadedLevel));
         }
     }
 

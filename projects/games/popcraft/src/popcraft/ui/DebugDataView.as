@@ -17,7 +17,7 @@ public class DebugDataView extends SceneObject
 {
     public static function get instance () :DebugDataView
     {
-        return MainLoop.instance.topMode.getObjectNamed(NAME) as DebugDataView;
+        return ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as DebugDataView;
     }
 
     public function DebugDataView ()
@@ -59,7 +59,7 @@ public class DebugDataView extends SceneObject
 
     protected function updateText () :void
     {
-        var thisFps :Number = MainLoop.instance.fps;
+        var thisFps :Number = ClientCtx.mainLoop.fps;
 
         // calculate fps average
 

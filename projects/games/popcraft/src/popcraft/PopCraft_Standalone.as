@@ -22,7 +22,7 @@ public class PopCraft_Standalone extends PopCraft
      */
     protected function queueLevelPackResources () :void
     {
-        var rm :ResourceManager = ResourceManager.instance;
+        var rm :ResourceManager = ClientCtx.rsrcs;
 
         rm.queueResourceLoad("swf", "multiplayer_lobby", { embeddedClass: SWF_MULTIPLAYER_LOBBY });
 

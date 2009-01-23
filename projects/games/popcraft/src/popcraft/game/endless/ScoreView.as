@@ -14,7 +14,7 @@ public class ScoreView extends SceneObject
 {
     public function ScoreView ()
     {
-        _movie = SwfResource.instantiateMovieClip("dashboard", "scoreboard", true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "scoreboard", true);
         _movie.x = 350;
         _movie.y = 2;
         _scoreText = _movie["score"];

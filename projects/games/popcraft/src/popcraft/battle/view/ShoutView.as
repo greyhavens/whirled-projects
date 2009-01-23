@@ -13,7 +13,7 @@ public class ShoutView extends SceneObject
 {
     public function ShoutView ()
     {
-        _movie = SwfResource.instantiateMovieClip("workshop", "bubble", true, true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "bubble", true, true);
         showShout(-1);
     }
 

@@ -50,7 +50,7 @@ public class LevelLoadErrorMode extends AppMode
         button = UIBits.createButton("Retry");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.levelMgr.playLevel(null, true);
+                ClientCtx.levelMgr.playLevel(null, true);
             });
         button.x = 50;
         button.y = 450;

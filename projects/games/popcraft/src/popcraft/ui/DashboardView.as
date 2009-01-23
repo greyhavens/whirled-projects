@@ -25,7 +25,7 @@ public class DashboardView extends SceneObject
 {
     public function DashboardView ()
     {
-        _movie = SwfResource.instantiateMovieClip("dashboard", "dashboard_sym");
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "dashboard_sym");
         _shuffleMovie = _movie["shuffle"];
         _puzzleFrame = _movie["frame_puzzle"];
 
@@ -37,7 +37,7 @@ public class DashboardView extends SceneObject
         // If "useSpecialPuzzleFrame" is set, our resource rarities are inverted, and we need to
         // draw a special overlay on the puzzle frame.
         if (GameContext.gameData.puzzleData.useSpecialPuzzleFrame) {
-            var overlay :MovieClip = SwfResource.instantiateMovieClip("dashboard", "resourced", true);
+            var overlay :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "resourced", true);
             var overlayParent :MovieClip = _puzzleFrame["resourced_placer"];
             overlayParent.addChild(overlay);
         }

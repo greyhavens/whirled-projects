@@ -25,8 +25,8 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         super.update(dt);
 
-        if (!ClientContext.seatingMgr.allPlayersPresent) {
-            ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+        if (!ClientCtx.seatingMgr.allPlayersPresent) {
+            ClientCtx.mainLoop.unwindToMode(new MultiplayerFailureMode());
         }
     }
 
@@ -46,7 +46,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
         _waitScreen.addChild(waitText);*/
         _modeSprite.addChild(_waitScreen);
 
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
+        if (ClientCtx.seatingMgr.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.init(2);
         }
 
@@ -55,12 +55,12 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
             initLocalPlayerData();
         }
 
-        registerListener(ClientContext.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+        registerListener(ClientCtx.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
             onPropChanged);
-        registerListener(ClientContext.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+        registerListener(ClientCtx.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
             onElemChanged);
 
-        ClientContext.endlessLevelMgr.playMpLevel(onLevelLoaded);
+        ClientCtx.endlessLevelMgr.playMpLevel(onLevelLoaded);
 
         tryCreateUi();
     }
@@ -69,7 +69,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     {
         super.selectMap(mapIndex, animationType);
 
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
+        if (ClientCtx.seatingMgr.isLocalPlayerInControl) {
             EndlessMultiplayerConfig.selectedMapIdx = mapIndex;
         }
     }
@@ -99,8 +99,8 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     protected function initLocalPlayerData () :void
     {
         if (!_initedLocalPlayerData) {
-            EndlessMultiplayerConfig.setPlayerSavedGames(ClientContext.seatingMgr.localPlayerSeat,
-                ClientContext.endlessLevelMgr.savedMpGames);
+            EndlessMultiplayerConfig.setPlayerSavedGames(ClientCtx.seatingMgr.localPlayerSeat,
+                ClientCtx.endlessLevelMgr.savedMpGames);
             _initedLocalPlayerData = true;
         }
     }
@@ -157,14 +157,14 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function getLocalSavedGames () :SavedEndlessGameList
     {
-        return ClientContext.endlessLevelMgr.savedMpGames;
+        return ClientCtx.endlessLevelMgr.savedMpGames;
     }
 
     override protected function getRemoteSavedGames () :SavedEndlessGameList
     {
         var saves :Array = EndlessMultiplayerConfig.savedGames;
         for (var ii :int = 0; ii < saves.length; ++ii) {
-            if (ii != ClientContext.seatingMgr.localPlayerSeat) {
+            if (ii != ClientCtx.seatingMgr.localPlayerSeat) {
                 return saves[ii];
             }
         }
@@ -174,7 +174,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void
     {
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
+        if (ClientCtx.seatingMgr.isLocalPlayerInControl) {
             // let everyone know the game is starting
             EndlessMultiplayerConfig.gameStarting = true;
             // set inited to false for the next time this screen is visited
@@ -190,7 +190,7 @@ public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     override protected function get enableNextPrevPlayButtons () :Boolean
     {
         // only the player in control gets to change levels or start the game
-        return ClientContext.seatingMgr.isLocalPlayerInControl;
+        return ClientCtx.seatingMgr.isLocalPlayerInControl;
     }
 
     override protected function get enableQuitButton () :Boolean

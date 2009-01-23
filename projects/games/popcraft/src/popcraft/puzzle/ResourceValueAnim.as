@@ -9,6 +9,8 @@ import flash.display.MovieClip;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import popcraft.*;
+
 public class ResourceValueAnim extends SceneObject
 {
     public function ResourceValueAnim (loc :Point, resourceType :int, amount :int)
@@ -17,7 +19,7 @@ public class ResourceValueAnim extends SceneObject
             POS_CLEAR_FEEDBACK_ANIM_NAMES[resourceType] :
             NEG_CLEAR_FEEDBACK_ANIM_NAMES[resourceType]);
 
-        _movie = SwfResource.instantiateMovieClip("dashboard", movieName, true, true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", movieName, true, true);
         _movie.cacheAsBitmap = true;
 
         // fill in the text

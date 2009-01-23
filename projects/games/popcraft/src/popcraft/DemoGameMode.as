@@ -16,7 +16,7 @@ public class DemoGameMode extends StoryGameMode
     override protected function setup () :void
     {
         super.setup();
-        _soundChannel = AudioManager.instance.playSoundNamed("sfx_introscreen", null, -1);
+        _soundChannel = ClientCtx.audio.playSoundNamed("sfx_introscreen", null, -1);
     }
 
     override protected function destroy () :void

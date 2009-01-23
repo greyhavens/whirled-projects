@@ -104,7 +104,7 @@ public class CreatureUnitView extends BattlefieldSprite
         var yOffset :Number = -_sprite.height - _healthMeter.height;
         for each (var spell :SpellData in spellSet.spells) {
             var icon :MovieClip =
-                SwfResource.instantiateMovieClip("infusions", "unit_" + spell.name);
+                SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "infusions", "unit_" + spell.name);
             icon.x = 0;
             icon.y = yOffset;
             icon.cacheAsBitmap = true;
@@ -116,12 +116,12 @@ public class CreatureUnitView extends BattlefieldSprite
 
     protected function handleUnitAttacked (...ignored) :void
     {
-        var timeNow :Number = ClientContext.mainLoop.elapsedSeconds;
+        var timeNow :Number = ClientCtx.mainLoop.elapsedSeconds;
         if (timeNow - _lastBloodTime >= BLOOD_INTERVAL_MIN) {
             // show a blood splatter
             if (null == g_bloodClass) {
                 var swf :SwfResource =
-                    SwfResource(ResourceManager.instance.getResource("splatter"));
+                    SwfResource(ClientCtx.rsrcs.getResource("splatter"));
                 g_bloodClass = swf.getClass("blood");
             }
 

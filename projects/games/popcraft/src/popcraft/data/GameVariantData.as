@@ -18,7 +18,7 @@ public class GameVariantData
 
         var gameDataOverrideNode :XML = XmlReader.getSingleChild(xml, "GameDataOverride");
         variant.gameDataOverride = GameData.fromXml(gameDataOverrideNode,
-            ClientContext.defaultGameData.clone());
+            ClientCtx.defaultGameData.clone());
 
         return variant;
     }

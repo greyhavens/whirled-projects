@@ -17,12 +17,12 @@ public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
     override protected function setup () :void
     {
         super.setup();
-        ClientContext.endlessLevelMgr.playSpLevel(onLevelLoaded);
+        ClientCtx.endlessLevelMgr.playSpLevel(onLevelLoaded);
     }
 
     override protected function getLocalSavedGames () :SavedEndlessGameList
     {
-        return ClientContext.endlessLevelMgr.savedSpGames;
+        return ClientCtx.endlessLevelMgr.savedSpGames;
     }
 
     override protected function onPlayClicked (save :SavedEndlessGame) :void

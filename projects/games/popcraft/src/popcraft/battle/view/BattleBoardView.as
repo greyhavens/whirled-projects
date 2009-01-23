@@ -25,7 +25,7 @@ public class BattleBoardView extends SceneObject
 
         _bgName = GameContext.gameMode.mapSettings.backgroundName;
 
-        _bg = SwfResource.instantiateMovieClip("bg", _bgName, true, true);
+        _bg = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "bg", _bgName, true, true);
         _bg.x = Constants.SCREEN_SIZE.x * 0.5;
         _bg.y = Constants.SCREEN_SIZE.y * 0.5;
         _bg.mouseEnabled = false;

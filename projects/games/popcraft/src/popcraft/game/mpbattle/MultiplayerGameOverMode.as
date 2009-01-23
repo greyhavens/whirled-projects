@@ -28,7 +28,7 @@ public class MultiplayerGameOverMode extends AppMode
         awardTrophies();
 
         // report scores
-        if (ClientContext.seatingMgr.isLocalPlayerInControl) {
+        if (ClientCtx.seatingMgr.isLocalPlayerInControl) {
             var winners :Array = [];
             var losers :Array = [];
             for each (playerInfo in GameContext.playerInfos) {
@@ -39,12 +39,12 @@ public class MultiplayerGameOverMode extends AppMode
                 }
             }
 
-            ClientContext.gameCtrl.game.endGameWithWinners(winners, losers,
+            ClientCtx.gameCtrl.game.endGameWithWinners(winners, losers,
                 GameSubControl.CASCADING_PAYOUT);
         }
 
         // background
-        _modeSprite.addChild(ImageResource.instantiateBitmap("zombieBg"));
+        _modeSprite.addChild(ImageResource.instantiateBitmap(ClientCtx.rsrcs, "zombieBg"));
 
         var windowElements :Sprite = new Sprite();
 
@@ -98,10 +98,10 @@ public class MultiplayerGameOverMode extends AppMode
                 // we can only restart the game lobby if nobody has left the game
                 // @TODO - change this if Whirled allows seated games that are missing players to
                 // be restarted
-                if (ClientContext.seatingMgr.allPlayersPresent) {
-                    ClientContext.mainLoop.unwindToMode(new MultiplayerLobbyMode());
+                if (ClientCtx.seatingMgr.allPlayersPresent) {
+                    ClientCtx.mainLoop.unwindToMode(new MultiplayerLobbyMode());
                 } else {
-                    ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+                    ClientCtx.mainLoop.unwindToMode(new MultiplayerFailureMode());
                 }
             });
 
@@ -120,13 +120,13 @@ public class MultiplayerGameOverMode extends AppMode
         super.enter();
 
         if (!_playedSound) {
-            AudioManager.instance.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
+            ClientCtx.audio.playSoundNamed(this.playerWon ? "sfx_wingame" : "sfx_losegame");
             _playedSound = true;
         }
     }
     protected function updateStats () :void
     {
-        var gameArrangement :int = ClientContext.lobbyConfig.computeTeamArrangement();
+        var gameArrangement :int = ClientCtx.lobbyConfig.computeTeamArrangement();
         GameContext.playerStats.mpGamesPlayed[gameArrangement] += 1;
         if (this.playerWon) {
             GameContext.playerStats.mpGamesWon[gameArrangement] += 1;
@@ -134,51 +134,51 @@ public class MultiplayerGameOverMode extends AppMode
 
         // viral trophy
         var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(
-            ClientContext.lobbyConfig.morbidInfections, true);
+            ClientCtx.lobbyConfig.morbidInfections, true);
         GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
 
         // combine local stats into global, and save
-        ClientContext.globalPlayerStats.combineWith(GameContext.playerStats);
-        ClientContext.userCookieMgr.needsUpdate();
+        ClientCtx.globalPlayerStats.combineWith(GameContext.playerStats);
+        ClientCtx.userCookieMgr.needsUpdate();
     }
 
     protected function awardTrophies () :void
     {
         // award trophies for playing lots of multiplayer games
-        var totalGamesPlayed :int = ClientContext.globalPlayerStats.totalGamesPlayed;
+        var totalGamesPlayed :int = ClientCtx.globalPlayerStats.totalGamesPlayed;
         if (totalGamesPlayed >= Trophies.RALPH_NUMGAMES) {
-            ClientContext.awardTrophy(Trophies.RALPH);
+            ClientCtx.awardTrophy(Trophies.RALPH);
         }
         if (totalGamesPlayed >= Trophies.JACK_NUMGAMES) {
-            ClientContext.awardTrophy(Trophies.JACK);
+            ClientCtx.awardTrophy(Trophies.JACK);
         }
         if (totalGamesPlayed >= Trophies.WEARDD_NUMGAMES) {
-            ClientContext.awardTrophy(Trophies.WEARDD);
+            ClientCtx.awardTrophy(Trophies.WEARDD);
         }
 
-        if (ClientContext.globalPlayerStats.hasMorbidInfection) {
+        if (ClientCtx.globalPlayerStats.hasMorbidInfection) {
             // awarded for playing a game with another player who has the Morbid Infection trophy
-            ClientContext.awardTrophy(Trophies.MORBIDINFECTION);
+            ClientCtx.awardTrophy(Trophies.MORBIDINFECTION);
         }
 
-        if (!ClientContext.hasTrophy(Trophies.LIBERALARTS)) {
-            if (ArrayUtil.indexIf(ClientContext.globalPlayerStats.mpGamesPlayed,
+        if (!ClientCtx.hasTrophy(Trophies.LIBERALARTS)) {
+            if (ArrayUtil.indexIf(ClientCtx.globalPlayerStats.mpGamesPlayed,
                   function (gamesPlayed :int) :Boolean { return gamesPlayed < 1; }) < 0) {
                 // awarded for playing one of each multiplayer game arrangement
-                ClientContext.awardTrophy(Trophies.LIBERALARTS);
+                ClientCtx.awardTrophy(Trophies.LIBERALARTS);
             }
         }
 
         if (this.playerWon) {
             // awarded for winning a multiplayer game
-            ClientContext.awardTrophy(Trophies.BULLY);
+            ClientCtx.awardTrophy(Trophies.BULLY);
 
             if (GameContext.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
-                ClientContext.awardTrophy(Trophies.FLAWLESS);
+                ClientCtx.awardTrophy(Trophies.FLAWLESS);
             } else if (GameContext.localPlayerInfo.healthPercent <= Trophies.CHEATDEATH_HEALTH_PERCENT) {
                 // awarded for winning a multiplayer game with very low health
-                ClientContext.awardTrophy(Trophies.CHEATDEATH);
+                ClientCtx.awardTrophy(Trophies.CHEATDEATH);
             }
 
             for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
@@ -186,13 +186,13 @@ public class MultiplayerGameOverMode extends AppMode
                     playerInfo.displayName == Trophies.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose
                     // Whirled name is "Professor Weardd"
-                    ClientContext.awardTrophy(Trophies.MALEDICTORIAN);
+                    ClientCtx.awardTrophy(Trophies.MALEDICTORIAN);
                 }
             }
 
             if (MoonCalculation.isFullMoonToday) {
                 // awarded for winning a multiplayer game on a full moon
-                ClientContext.awardTrophy(Trophies.BADMOON);
+                ClientCtx.awardTrophy(Trophies.BADMOON);
             }
         }
     }

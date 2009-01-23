@@ -49,7 +49,7 @@ public class GameMode extends TransitionMode
 
         // init RNGs
         var randSeed :uint = createRandSeed();
-        Rand.seedStream(ClientContext.randStreamPuzzle, randSeed);
+        Rand.seedStream(ClientCtx.randStreamPuzzle, randSeed);
         Rand.seedStream(Rand.STREAM_GAME, randSeed);
         log.info("Starting game with seed: " + randSeed);
 
@@ -128,9 +128,9 @@ public class GameMode extends TransitionMode
         GameContext.playAudio = this.playAudio;
 
         GameContext.sfxControls = new AudioControls(
-            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_SFX));
+            ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
         GameContext.musicControls = new AudioControls(
-            AudioManager.instance.getControlsForSoundType(SoundResource.TYPE_MUSIC));
+            ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
 
         GameContext.sfxControls.retain();
         GameContext.musicControls.retain();
@@ -207,7 +207,7 @@ public class GameMode extends TransitionMode
         GameContext.playerInfos = [];
 
         // we want to know when a player leaves
-        registerListener(ClientContext.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
+        registerListener(ClientCtx.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
             handleOccupantLeft);
 
         // subclasses create the players in this function
@@ -323,7 +323,7 @@ public class GameMode extends TransitionMode
     public function pause () :void
     {
         if (!_gameOver && this.canPause) {
-            ClientContext.mainLoop.pushMode(new PauseMode());
+            ClientCtx.mainLoop.pushMode(new PauseMode());
         }
     }
 
@@ -393,10 +393,10 @@ public class GameMode extends TransitionMode
             // don't start doing anything until the messageMgr is ready
             if (_messageMgr.isReady) {
                 _gameIsRunning = true;
-            } else if (!ClientContext.seatingMgr.allPlayersPresent) {
+            } else if (!ClientCtx.seatingMgr.allPlayersPresent) {
                 // If a player leaves before the game starts, the messageMgr will never
                 // be ready.
-                ClientContext.mainLoop.unwindToMode(new MultiplayerFailureMode());
+                ClientCtx.mainLoop.unwindToMode(new MultiplayerFailureMode());
                 return;
             } else {
                 return;
@@ -647,10 +647,10 @@ public class GameMode extends TransitionMode
         if (killingPlayerIndex == GameContext.localPlayerIndex) {
             GameContext.playerStats.creaturesKilled[creature.unitType] += 1;
 
-            if (!ClientContext.hasTrophy(Trophies.WHATAMESS) &&
-                (ClientContext.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
+            if (!ClientCtx.hasTrophy(Trophies.WHATAMESS) &&
+                (ClientCtx.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
                 // awarded for killing 2500 creatures total
-                ClientContext.awardTrophy(Trophies.WHATAMESS);
+                ClientCtx.awardTrophy(Trophies.WHATAMESS);
             }
         }
     }

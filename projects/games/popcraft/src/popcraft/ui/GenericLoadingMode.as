@@ -14,7 +14,7 @@ public class GenericLoadingMode extends AppMode
     public function GenericLoadingMode ()
     {
         // If we've loaded the zombieBg, use it as a background. Otherwise, use black.
-        var zombieBg :Bitmap = ImageResource.instantiateBitmap("zombieBg");
+        var zombieBg :Bitmap = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "zombieBg");
         if (zombieBg != null) {
             _modeSprite.addChild(zombieBg);
             _tf = UIBits.createText("");

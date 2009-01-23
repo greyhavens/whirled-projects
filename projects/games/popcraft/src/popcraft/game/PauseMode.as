@@ -39,7 +39,7 @@ public class PauseMode extends AppMode
         button = UIBits.createButton("Resume", 1.5, 150);
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
             });
 
         button.x = (bgSprite.width * 0.5) - (button.width * 0.5);

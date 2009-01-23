@@ -14,7 +14,7 @@ public class PerfMonitor
         var timeNow :Number = getTimer() * TO_SECONDS;
         if (_lastQueryTime < 0 || _lastQueryTime + timeNow >= minQueryTime) {
             _lastQueryTime = timeNow;
-            _lastFramerate = ClientContext.mainLoop.fps;
+            _lastFramerate = ClientCtx.mainLoop.fps;
         }
 
         return _lastFramerate;

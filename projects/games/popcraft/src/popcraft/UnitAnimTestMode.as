@@ -22,7 +22,7 @@ public class UnitAnimTestMode extends AppMode
 {
     override protected function setup () :void
     {
-        var playerDisplayDatas :HashMap = ClientContext.defaultGameData.playerDisplayDatas;
+        var playerDisplayDatas :HashMap = ClientCtx.defaultGameData.playerDisplayDatas;
         var playerDisplayData :PlayerDisplayData = playerDisplayDatas.values()[0];
         _recolor = playerDisplayData.color;
 
@@ -58,7 +58,7 @@ public class UnitAnimTestMode extends AppMode
         button = UIBits.createButton("Back");
         registerOneShotCallback(button, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
             });
         button.x = 10;
         button.y = 460;
@@ -71,7 +71,7 @@ public class UnitAnimTestMode extends AppMode
     {
         var thisObject :UnitAnimTestMode = this;
 
-        var unitData :UnitData = ClientContext.defaultGameData.units[unitType];
+        var unitData :UnitData = ClientCtx.defaultGameData.units[unitType];
         var unitButton :SimpleButton = UIBits.createButton(unitData.displayName);
         registerListener(unitButton, MouseEvent.CLICK,
             function (...ignored) :void {
@@ -135,7 +135,7 @@ public class UnitAnimTestMode extends AppMode
 
     protected function createWorkshopAnimations () :void
     {
-        var anim :MovieClip = SwfResource.instantiateMovieClip("workshop", "base");
+        var anim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "base");
         var workshop :MovieClip = anim["workshop"];
         var recolorMovie :MovieClip = workshop["recolor"];
         recolorMovie.filters = [ ColorMatrix.create().colorize(_recolor).createFilter() ];

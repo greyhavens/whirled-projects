@@ -91,26 +91,26 @@ public class EndlessGameMode extends GameMode
             return;
         }
 
-        if (!ClientContext.gameCtrl.isConnected()) {
+        if (!ClientCtx.gameCtrl.isConnected()) {
             // we're in standalone mode; start the game immediately
             startGame();
 
         } else if (GameContext.isSinglePlayerGame) {
             // this is a singleplayer game; start the game immediately,
             // and tell the server we're playing the game so that coins can be awarded
-            ClientContext.gameCtrl.game.playerReady();
+            ClientCtx.gameCtrl.game.playerReady();
             startGame();
 
         } else {
             // this is a multiplayer game; start the game when the GAME_STARTED event
             // is received
-            registerListener(ClientContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+            registerListener(ClientCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
                 function (...ignored) :void {
                     startGame();
                 });
 
             // we're ready!
-            ClientContext.gameCtrl.game.playerReady();
+            ClientCtx.gameCtrl.game.playerReady();
 
         }
 
@@ -184,7 +184,7 @@ public class EndlessGameMode extends GameMode
 
         // save the game (must be done after the human players are saved, above)
         if (_curMapData.isSavePoint) {
-            ClientContext.endlessLevelMgr.saveCurrentGame();
+            ClientCtx.endlessLevelMgr.saveCurrentGame();
         }
 
         // move to the next map (see handleGameOver())
@@ -201,7 +201,7 @@ public class EndlessGameMode extends GameMode
         // endless game mode
         if (_switchingMaps) {
             if (Constants.DEBUG_SKIP_LEVEL_INTRO) {
-                ClientContext.mainLoop.unwindToMode(
+                ClientCtx.mainLoop.unwindToMode(
                     new EndlessGameMode(_isMultiplayer, EndlessGameContext.level, null, false));
                 return;
             }
@@ -214,18 +214,18 @@ public class EndlessGameMode extends GameMode
             var numLevels :int = EndlessGameContext.level.mapSequence.length;
             // get halfway through the levels
             if (mapIndex >= Trophies.ABECEDARIAN_MAP_INDEX) {
-                ClientContext.awardTrophy(Trophies.ABECEDARIAN);
+                ClientCtx.awardTrophy(Trophies.ABECEDARIAN);
             }
             // get all the way through the levels
             for (var ii :int = 0; ii < Trophies.ENDLESS_COMPLETION_TROPHIES.length; ++ii) {
                 if (mapIndex + 1 >= (numLevels * (ii + 1))) {
-                    ClientContext.awardTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[ii]);
+                    ClientCtx.awardTrophy(Trophies.ENDLESS_COMPLETION_TROPHIES[ii]);
                 }
             }
 
             if (GameContext.isMultiplayerGame && mapIndex >= Trophies.COLLABORATOR_MP_MAP_INDEX) {
                 // complete MP level 9
-                ClientContext.awardTrophy(Trophies.COLLABORATOR);
+                ClientCtx.awardTrophy(Trophies.COLLABORATOR);
             }
 
         } else {
@@ -236,7 +236,7 @@ public class EndlessGameMode extends GameMode
             } else {
                 // send our new saved games to everyone, in case the game is restarted.
                 EndlessMultiplayerConfig.setPlayerSavedGames(
-                    ClientContext.seatingMgr.localPlayerSeat, ClientContext.endlessLevelMgr.savedMpGames);
+                    ClientCtx.seatingMgr.localPlayerSeat, ClientCtx.endlessLevelMgr.savedMpGames);
 
                 nextMode = new MpEndlessGameOverMode();
             }
@@ -255,13 +255,13 @@ public class EndlessGameMode extends GameMode
 
             EndlessGameContext.playerMonitor.waitForScores(
                 function () :void {
-                    ClientContext.mainLoop.pushMode(nextMode);
+                    ClientCtx.mainLoop.pushMode(nextMode);
                 },
                 EndlessGameContext.roundId);
 
         } else {
             // otherwise, just move to the next mode immediately
-            ClientContext.mainLoop.pushMode(nextMode);
+            ClientCtx.mainLoop.pushMode(nextMode);
         }
 
         GameContext.musicControls.fadeOut(audioFadeOutTime);
@@ -278,7 +278,7 @@ public class EndlessGameMode extends GameMode
 
         case KeyboardCodes.SLASH:
             if (GameContext.isSinglePlayerGame) {
-                ClientContext.endlessLevelMgr.playSpLevel(null, true);
+                ClientCtx.endlessLevelMgr.playSpLevel(null, true);
             }
             break;
 
@@ -296,7 +296,7 @@ public class EndlessGameMode extends GameMode
     {
         var resurrectingPlayerIndex :int = super.resurrectPlayer(deadPlayerIndex);
         if (resurrectingPlayerIndex == GameContext.localPlayerIndex) {
-            ClientContext.awardTrophy(Trophies.REANIMATOR);
+            ClientCtx.awardTrophy(Trophies.REANIMATOR);
         }
 
         return resurrectingPlayerIndex;
@@ -335,7 +335,7 @@ public class EndlessGameMode extends GameMode
             // award the Handicapper trophy if the local player killed an opponent who stole
             // a multiplier from the battlefield
             if (_playerGotMultiplier[workshop.owningPlayerIndex]) {
-                ClientContext.awardTrophy(Trophies.HANDICAPPER);
+                ClientCtx.awardTrophy(Trophies.HANDICAPPER);
             }
         }
     }
@@ -357,7 +357,7 @@ public class EndlessGameMode extends GameMode
             if (playerIndex == GameContext.localPlayerIndex) {
                 EndlessGameContext.incrementMultiplier();
                 if (EndlessGameContext.scoreMultiplier >= 5) {
-                    ClientContext.awardTrophy(Trophies.MAX_X);
+                    ClientCtx.awardTrophy(Trophies.MAX_X);
                 }
             }
 
@@ -389,7 +389,7 @@ public class EndlessGameMode extends GameMode
     override protected function createPlayers () :void
     {
         GameContext.localPlayerIndex =
-            (GameContext.isMultiplayerGame ? ClientContext.seatingMgr.localPlayerSeat : 0);
+            (GameContext.isMultiplayerGame ? ClientCtx.seatingMgr.localPlayerSeat : 0);
         GameContext.playerInfos = [];
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
@@ -501,7 +501,7 @@ public class EndlessGameMode extends GameMode
 
     protected function get numHumanPlayers () :int
     {
-        return (GameContext.isMultiplayerGame ? ClientContext.seatingMgr.numExpectedPlayers : 1);
+        return (GameContext.isMultiplayerGame ? ClientCtx.seatingMgr.numExpectedPlayers : 1);
     }
 
     override protected function createRandSeed () :uint
@@ -509,17 +509,17 @@ public class EndlessGameMode extends GameMode
         if (GameContext.isSinglePlayerGame) {
             return uint(Math.random() * uint.MAX_VALUE);
         } else {
-            return ClientContext.lobbyConfig.randSeed;
+            return ClientCtx.lobbyConfig.randSeed;
         }
     }
 
     override protected function createMessageManager () :TickedMessageManager
     {
         if (GameContext.isSinglePlayerGame) {
-            return new OfflineTickedMessageManager(ClientContext.gameCtrl, TICK_INTERVAL_MS);
+            return new OfflineTickedMessageManager(ClientCtx.gameCtrl, TICK_INTERVAL_MS);
         } else {
-            return new OnlineTickedMessageManager(ClientContext.gameCtrl,
-                ClientContext.seatingMgr.isLocalPlayerInControl, TICK_INTERVAL_MS);
+            return new OnlineTickedMessageManager(ClientCtx.gameCtrl,
+                ClientCtx.seatingMgr.isLocalPlayerInControl, TICK_INTERVAL_MS);
         }
     }
 
@@ -532,7 +532,7 @@ public class EndlessGameMode extends GameMode
     override protected function get gameData () :GameData
     {
         return (_curMapData.gameDataOverride != null ? _curMapData.gameDataOverride :
-                ClientContext.defaultGameData);
+                ClientCtx.defaultGameData);
     }
 
     protected var _curMapData :EndlessMapData;

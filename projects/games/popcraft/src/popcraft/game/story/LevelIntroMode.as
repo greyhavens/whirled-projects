@@ -41,7 +41,7 @@ public class LevelIntroMode extends AppMode
         this.modeSprite.addChild(dimness);
 
         // create "manual_front"
-        var manualFront :MovieClip = SwfResource.instantiateMovieClip("manual", "manual_front");
+        var manualFront :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual_front");
         var manualFrontObj :SimpleSceneObject = new SimpleSceneObject(manualFront);
         manualFrontObj.x = Constants.SCREEN_SIZE.x * 0.5;
         manualFrontObj.y = Constants.SCREEN_SIZE.y * 1.5;
@@ -57,7 +57,7 @@ public class LevelIntroMode extends AppMode
         manualFrontTask.addTask(LocationTask.CreateEaseOut(
             Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 0.5, 0.7));
         manualFrontTask.addTask(new TimedTask(
-            ClientContext.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
+            ClientCtx.levelMgr.curLevelIndex == 0 ? LEVEL_1_TURN_PAUSE : DEFAULT_TURN_PAUSE));
         manualFrontTask.addTask(new GoToFrameTask("turn"));
         manualFrontTask.addTask(new WaitForFrameTask("edge"));
         manualFrontTask.addTask(new PlaySoundTask("sfx_bookopenclose"));
@@ -88,7 +88,7 @@ public class LevelIntroMode extends AppMode
     protected function swapInManual () :void
     {
         // animate the book open
-        var manual :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
+        var manual :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual");
         manual.gotoAndPlay("open");
 
         _manualObj = new SimpleSceneObject(manual);
@@ -145,7 +145,7 @@ public class LevelIntroMode extends AppMode
         case PHASE_SPELLINTRO:
             var newSpellType :int = _level.newSpellType;
             var spellData :SpellData = GameContext.gameData.spells[newSpellType];
-            var spellAnim :MovieClip = SwfResource.instantiateMovieClip("dashboard",
+            var spellAnim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard",
                 spellData.iconName);
             showPage(
                 TYPE_PAGE,
@@ -168,8 +168,8 @@ public class LevelIntroMode extends AppMode
 
             showPage(
                 TYPE_NOTE,
-                "Chapter " + String(ClientContext.levelMgr.curLevelIndex + 1),
-                ClientContext.levelMgr.curLevelName,
+                "Chapter " + String(ClientCtx.levelMgr.curLevelIndex + 1),
+                ClientCtx.levelMgr.curLevelName,
                 _level.introText,
                 levelDescription,
                 null);
@@ -268,7 +268,7 @@ public class LevelIntroMode extends AppMode
             movieTask.addTask(new WaitForFrameTask("closed"));
             movieTask.addTask(LocationTask.CreateEaseIn(
                 Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7));
-            movieTask.addTask(new FunctionTask(ClientContext.mainLoop.popMode));
+            movieTask.addTask(new FunctionTask(ClientCtx.mainLoop.popMode));
         }
 
         _manualObj.removeAllTasks();

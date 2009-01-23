@@ -32,7 +32,7 @@ public class CreditsMode extends AppMode
         g.endFill();
 
         // show a bit of the Tesla level
-        var bg :MovieClip = SwfResource.instantiateMovieClip("bg", "tesla");
+        var bg :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "bg", "tesla");
         bg.x = 152;
         bg.y = 245;
         _modeSprite.addChild(bg);
@@ -44,9 +44,9 @@ public class CreditsMode extends AppMode
         attach.addChild(_unitParent);
 
         // play the zap sound for the Tesla animation
-        addObject(new TeslaSoundPlayer(bg, AudioManager.instance.playSoundNamed));
+        addObject(new TeslaSoundPlayer(bg, ClientCtx.audio.playSoundNamed));
 
-        var creditsMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "credits");
+        var creditsMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi", "credits");
         creditsMovie.x = 350;
         creditsMovie.y = 250;
         _modeSprite.addChild(creditsMovie);
@@ -180,7 +180,7 @@ class WanderingCreature extends SceneObject
     public function WanderingCreature (unitType :int, color :uint)
     {
         _unitType = unitType;
-        _unitData = ClientContext.defaultGameData.units[unitType];
+        _unitData = ClientCtx.defaultGameData.units[unitType];
         _sprite = SpriteUtil.createSprite();
 
         setupAnimations(color);

@@ -36,12 +36,12 @@ public class EndlessGameContext
 
     public static function endGameAndSendScores () :void
     {
-        if (GameContext.isSinglePlayerGame && ClientContext.gameCtrl.isConnected()) {
-            ClientContext.gameCtrl.game.endGameWithScore(
+        if (GameContext.isSinglePlayerGame && ClientCtx.gameCtrl.isConnected()) {
+            ClientCtx.gameCtrl.game.endGameWithScore(
                 EndlessGameContext.totalScore,
                 Constants.SCORE_MODE_ENDLESS);
 
-        } else if (GameContext.isMultiplayerGame && ClientContext.seatingMgr.isLocalPlayerInControl) {
+        } else if (GameContext.isMultiplayerGame && ClientCtx.seatingMgr.isLocalPlayerInControl) {
             // convert PlayerScore objects to ints for reporting to the server
             var finalScores :Array =
                 EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId);
@@ -51,8 +51,8 @@ public class EndlessGameContext
                     return (score != null ? score.totalScore : 0);
                 });
 
-            ClientContext.gameCtrl.game.endGameWithScores(
-                ClientContext.seatingMgr.getPlayerIds(),
+            ClientCtx.gameCtrl.game.endGameWithScores(
+                ClientCtx.seatingMgr.getPlayerIds(),
                 finalScoreValues,
                 GameSubControl.TO_EACH_THEIR_OWN,
                 Constants.SCORE_MODE_ENDLESS);
@@ -75,7 +75,7 @@ public class EndlessGameContext
         }
 
         if (GameContext.isMultiplayerGame) {
-            playerMonitor = new PlayerMonitor(ClientContext.seatingMgr.numPlayers);
+            playerMonitor = new PlayerMonitor(ClientCtx.seatingMgr.numPlayers);
         }
 
         roundId = 0;
@@ -116,7 +116,7 @@ public class EndlessGameContext
     protected static function checkHeadOfTheClassTrophy () :void
     {
         if (EndlessGameContext.totalScore >= Trophies.HEAD_OF_THE_CLASS_SCORE) {
-            ClientContext.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
+            ClientCtx.awardTrophy(Trophies.HEAD_OF_THE_CLASS);
         }
     }
 

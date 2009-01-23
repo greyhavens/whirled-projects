@@ -30,14 +30,14 @@ public class PrizeManager
     {
         var prizes :Array = [];
 
-        if (ClientContext.isPremiumContentUnlocked) {
+        if (ClientCtx.isPremiumContentUnlocked) {
             prizes.push(LADYFINGERS);
         }
 
         for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 2) {
             var trophyName :String = TROPHY_PRIZES[ii];
             var prizeId :int = TROPHY_PRIZES[ii + 1];
-            if (ClientContext.hasTrophy(trophyName)) {
+            if (ClientCtx.hasTrophy(trophyName)) {
                 prizes.push(prizeId);
             }
         }
@@ -62,21 +62,21 @@ public class PrizeManager
 
     public function awardPrizes (prizeIds :Array) :void
     {
-        if (!ClientContext.isPremiumContentUnlocked || !ClientContext.gameCtrl.isConnected()) {
+        if (!ClientCtx.isPremiumContentUnlocked || !ClientCtx.gameCtrl.isConnected()) {
             return;
         }
 
         var prizeAwarded :Boolean;
         for each (var prizeId :int in prizeIds) {
             if (!_prizesAwarded[prizeId]) {
-                ClientContext.gameCtrl.player.awardPrize(PRIZE_IDENTS[prizeId])
+                ClientCtx.gameCtrl.player.awardPrize(PRIZE_IDENTS[prizeId])
                 _prizesAwarded[prizeId] = true;
                 prizeAwarded = true;
             }
         }
 
         if (prizeAwarded) {
-            ClientContext.userCookieMgr.needsUpdate();
+            ClientCtx.userCookieMgr.needsUpdate();
         }
     }
 

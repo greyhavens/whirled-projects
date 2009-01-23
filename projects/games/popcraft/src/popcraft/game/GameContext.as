@@ -149,14 +149,14 @@ public class GameContext
 
     public static function playGameSound (soundName :String) :AudioChannel
     {
-        return (playAudio ? AudioManager.instance.playSoundNamed(soundName, sfxControls) :
+        return (playAudio ? ClientCtx.audio.playSoundNamed(soundName, sfxControls) :
             new AudioChannel());
     }
 
     public static function playGameMusic (musicName :String) :AudioChannel
     {
         return (playAudio ?
-            AudioManager.instance.playSound(Resources.getMusic(musicName), musicControls, AudioManager.LOOP_FOREVER) :
+            ClientCtx.audio.playSound(Resources.getMusic(musicName), musicControls, AudioManager.LOOP_FOREVER) :
             new AudioChannel());
     }
 }

@@ -71,7 +71,7 @@ public class EndlessLevelManager
 
         if (saveList.addSave(newSave)) {
             // save the new data
-            ClientContext.userCookieMgr.needsUpdate();
+            ClientCtx.userCookieMgr.needsUpdate();
         }
     }
 
@@ -158,13 +158,13 @@ public class EndlessLevelManager
             if (forceReload) {
                 // reload the default game data first, then load the level when it's complete
                 // (level requires that default game data already be loaded)
-                ResourceManager.instance.unload(Constants.RSRC_DEFAULTGAMEDATA);
-                ResourceManager.instance.queueResourceLoad(
+                ClientCtx.rsrcs.unload(Constants.RSRC_DEFAULTGAMEDATA);
+                ClientCtx.rsrcs.queueResourceLoad(
                     Constants.RESTYPE_GAMEDATA,
                     Constants.RSRC_DEFAULTGAMEDATA,
                     { url: LEVELS_DIR + "/defaultGameData.xml" });
 
-                ResourceManager.instance.loadQueuedResources(
+                ClientCtx.rsrcs.loadQueuedResources(
                     function () :void {
                         loadLevel(loadParams)
                     },
@@ -178,22 +178,22 @@ public class EndlessLevelManager
 
     protected function loadLevel (loadParams :Object) :void
     {
-        ResourceManager.instance.unload(RSRC_CURLEVEL);
-        ResourceManager.instance.queueResourceLoad(Constants.RESTYPE_ENDLESS, RSRC_CURLEVEL,
+        ClientCtx.rsrcs.unload(RSRC_CURLEVEL);
+        ClientCtx.rsrcs.queueResourceLoad(Constants.RESTYPE_ENDLESS, RSRC_CURLEVEL,
             loadParams);
-        ResourceManager.instance.loadQueuedResources(onLevelLoaded, onLoadError);
+        ClientCtx.rsrcs.loadQueuedResources(onLevelLoaded, onLoadError);
     }
 
     protected function onLevelLoaded () :void
     {
         _loadedLevel =
-            EndlessLevelResource(ResourceManager.instance.getResource(RSRC_CURLEVEL)).levelData;
+            EndlessLevelResource(ClientCtx.rsrcs.getResource(RSRC_CURLEVEL)).levelData;
         startGame();
     }
 
     protected function onLoadError (err :String) :void
     {
-        ClientContext.mainLoop.pushMode(new EndlessLevelLoadErrorMode(err));
+        ClientCtx.mainLoop.pushMode(new EndlessLevelLoadErrorMode(err));
     }
 
     protected function startGame () :void
@@ -201,7 +201,7 @@ public class EndlessLevelManager
         if (null != _levelReadyCallback) {
             _levelReadyCallback(_loadedLevel);
         } else {
-            ClientContext.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevelType == MP_LEVEL,
+            ClientCtx.mainLoop.unwindToMode(new EndlessGameMode(_loadedLevelType == MP_LEVEL,
                                                                  _loadedLevel, null, true));
         }
     }

@@ -15,7 +15,7 @@ public class UpsellMode extends AppMode
 {
     override protected function setup () :void
     {
-        var movie :MovieClip = SwfResource.instantiateMovieClip("manual", "manual");
+        var movie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual");
         movie.gotoAndPlay("open");
 
         var leftPage :MovieClip = movie["pageL"];
@@ -47,7 +47,7 @@ public class UpsellMode extends AppMode
         registerOneShotCallback(unlockButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 closeMode();
-                ClientContext.showGameShop();
+                ClientCtx.showGameShop();
             });
     }
 
@@ -60,7 +60,7 @@ public class UpsellMode extends AppMode
             new WaitForFrameTask("closed"),
             LocationTask.CreateEaseIn(
                 Constants.SCREEN_SIZE.x * 0.5, Constants.SCREEN_SIZE.y * 1.5, 0.7),
-            new FunctionTask(ClientContext.mainLoop.popMode)));
+            new FunctionTask(ClientCtx.mainLoop.popMode)));
     }
 
     protected var _manualObj :SimpleSceneObject;

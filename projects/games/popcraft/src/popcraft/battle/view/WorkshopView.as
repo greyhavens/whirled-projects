@@ -41,7 +41,7 @@ public class WorkshopView extends BattlefieldSprite
     {
         _unit = unit;
 
-        _movie = SwfResource.instantiateMovieClip("workshop", "base", true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "base", true);
         _workshop = _movie["workshop"];
         // is the workshop already burning?
         if (_unit.health / _unit.maxHealth <= BURNING_HEALTH_PERCENT) {
@@ -146,7 +146,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function setBurning () :void
     {
-        setWorkshopMovie(SwfResource.instantiateMovieClip("workshop", "workshop_fire"));
+        setWorkshopMovie(SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "workshop_fire"));
     }
 
     protected function setWorkshopMovie (workshop :MovieClip) :void
@@ -317,11 +317,11 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function handleAttacked (...ignored) :void
     {
-        var timeNow :Number = ClientContext.mainLoop.elapsedSeconds;
+        var timeNow :Number = ClientCtx.mainLoop.elapsedSeconds;
         if (timeNow - _lastDebrisTime >= DEBRIS_INTERVAL_MIN) {
             // show a "debris" effect
             if (null == g_debrisClass) {
-                var swf :SwfResource = ResourceManager.instance.getResource("splatter") as SwfResource;
+                var swf :SwfResource = ClientCtx.rsrcs.getResource("splatter") as SwfResource;
                 g_debrisClass = swf.getClass("debris");
             }
 

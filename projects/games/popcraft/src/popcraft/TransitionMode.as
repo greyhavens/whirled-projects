@@ -53,7 +53,7 @@ public class TransitionMode extends AppMode
 
     protected function fadeOutToMode (nextMode :AppMode, time :Number = DEFAULT_FADE_TIME) :void
     {
-        fadeOut(function () :void { ClientContext.mainLoop.unwindToMode(nextMode); }, time);
+        fadeOut(function () :void { ClientCtx.mainLoop.unwindToMode(nextMode); }, time);
     }
 
     protected function get darkness () :SceneObject

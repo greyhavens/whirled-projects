@@ -22,13 +22,13 @@ public class MultiplayerGameMode extends GameMode
         super.setup();
 
         // start the game when the GAME_STARTED event is received
-        registerListener(ClientContext.gameCtrl.game, StateChangedEvent.GAME_STARTED,
+        registerListener(ClientCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
                 startGame();
             });
 
         // we're ready!
-        ClientContext.gameCtrl.game.playerReady();
+        ClientCtx.gameCtrl.game.playerReady();
     }
 
     override protected function rngSeeded () :void
@@ -36,8 +36,8 @@ public class MultiplayerGameMode extends GameMode
         // Determine what the game's team arrangement is, and randomly choose an appropriate
         // MultiplayerSettingsData that fits that arrangement.
 
-        var multiplayerArrangement :int = ClientContext.lobbyConfig.computeTeamArrangement();
-        var potentialSettings :Array = ClientContext.multiplayerSettings;
+        var multiplayerArrangement :int = ClientCtx.lobbyConfig.computeTeamArrangement();
+        var potentialSettings :Array = ClientCtx.multiplayerSettings;
         potentialSettings = potentialSettings.filter(
             function (mpSettings :MultiplayerSettingsData, index :int, array :Array) :Boolean {
                 return (mpSettings.arrangeType == multiplayerArrangement);
@@ -48,14 +48,14 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        var teams :Array = ClientContext.lobbyConfig.playerTeams;
-        var handicaps :Array = ClientContext.lobbyConfig.handicaps;
+        var teams :Array = ClientCtx.lobbyConfig.playerTeams;
+        var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
 
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
         // structures with base locations so that we can put everyone in the correct place.
         var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
-        var teamSizes :Array = ClientContext.lobbyConfig.computeTeamSizes();
+        var teamSizes :Array = ClientCtx.lobbyConfig.computeTeamSizes();
         var teamInfos :Array = [];
         var teamInfo :TeamInfo;
         var teamId :int;
@@ -80,8 +80,8 @@ public class MultiplayerGameMode extends GameMode
         teamInfos.sort(TeamInfo.teamIdCompare);
 
         // get some information about the players in the game
-        var numPlayers :int = ClientContext.seatingMgr.numExpectedPlayers;
-        GameContext.localPlayerIndex = ClientContext.seatingMgr.localPlayerSeat;
+        var numPlayers :int = ClientCtx.seatingMgr.numExpectedPlayers;
+        GameContext.localPlayerIndex = ClientCtx.seatingMgr.localPlayerSeat;
 
         var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
@@ -145,13 +145,13 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createRandSeed () :uint
     {
-        return ClientContext.lobbyConfig.randSeed;
+        return ClientCtx.lobbyConfig.randSeed;
     }
 
     override protected function createMessageManager () :TickedMessageManager
     {
-        return new OnlineTickedMessageManager(ClientContext.gameCtrl,
-             ClientContext.seatingMgr.isLocalPlayerInControl, TICK_INTERVAL_MS);
+        return new OnlineTickedMessageManager(ClientCtx.gameCtrl,
+             ClientCtx.seatingMgr.isLocalPlayerInControl, TICK_INTERVAL_MS);
     }
 
     override protected function get gameType () :int
@@ -161,7 +161,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function get gameData () :GameData
     {
-        return ClientContext.defaultGameData;
+        return ClientCtx.defaultGameData;
     }
 
     override protected function handleGameOver () :void

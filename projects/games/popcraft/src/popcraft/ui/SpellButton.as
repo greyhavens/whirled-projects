@@ -22,7 +22,7 @@ public class SpellButton extends SceneObject
 
         var spellData :SpellData = GameContext.gameData.spells[spellType];
 
-        _movie = SwfResource.instantiateMovieClip("dashboard", spellData.iconName, false, true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", spellData.iconName, false, true);
         _movie.scaleX = BUTTON_SCALE;
         _movie.scaleY = BUTTON_SCALE;
         _movie.cacheAsBitmap = true;

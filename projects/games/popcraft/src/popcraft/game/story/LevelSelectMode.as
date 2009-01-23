@@ -28,15 +28,15 @@ public class LevelSelectMode extends DemoGameMode
 {
     public static function create (fadeIn :Boolean = true, callback :Function = null) :void
     {
-        ClientContext.levelMgr.curLevelIndex = LevelManager.DEMO_LEVEL;
-        ClientContext.levelMgr.playLevel(
+        ClientCtx.levelMgr.curLevelIndex = LevelManager.DEMO_LEVEL;
+        ClientCtx.levelMgr.playLevel(
             function (level :LevelData) :void {
                 _demoLevel = level;
                 var mode :LevelSelectMode = new LevelSelectMode(fadeIn);
                 if (callback != null) {
                     callback(mode);
                 } else {
-                    ClientContext.mainLoop.unwindToMode(mode);
+                    ClientCtx.mainLoop.unwindToMode(mode);
                 }
             });
     }
@@ -66,19 +66,19 @@ public class LevelSelectMode extends DemoGameMode
             view.visible = false;
         }
 
-        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "ralph_portrait");
         ralphPortrait.x = RALPH_PORTRAIT_LOC.x;
         ralphPortrait.y = RALPH_PORTRAIT_LOC.y;
         _modeLayer.addChild(ralphPortrait);
 
-        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "jack_portrait");
         jackPortrait.x = JACK_PORTRAIT_LOC.x;
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
         _modeLayer.addChild(jackPortrait);
 
-        registerListener(ClientContext.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+        registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
             onPlayerPurchasedContent);
 
         _mainUiLayer = SpriteUtil.createSprite(true);
@@ -94,16 +94,16 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         if (ResetSavedGamesDialog.shouldShow) {
-            ClientContext.mainLoop.pushMode(new ResetSavedGamesDialog());
+            ClientCtx.mainLoop.pushMode(new ResetSavedGamesDialog());
         }
     }
 
     protected function createDefaultLayout () :void
     {
-        var playerStartedGame :Boolean = ClientContext.levelMgr.playerStartedGame;
-        var playerCompletedGame :Boolean = ClientContext.levelMgr.playerBeatGame;
+        var playerStartedGame :Boolean = ClientCtx.levelMgr.playerStartedGame;
+        var playerCompletedGame :Boolean = ClientCtx.levelMgr.playerBeatGame;
 
-        var storyBanner :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var storyBanner :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "story_banner");
         storyBanner.x = STORY_BANNER_LOC.x;
         storyBanner.y = STORY_BANNER_LOC.y;
@@ -111,7 +111,7 @@ public class LevelSelectMode extends DemoGameMode
 
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
-        var playButton :SimpleButton = SwfResource.instantiateButton("splashUi", playButtonName);
+        var playButton :SimpleButton = SwfResource.instantiateButton(ClientCtx.rsrcs, "splashUi", playButtonName);
         playButton.x = STORY_BUTTON_LOC.x;
         playButton.y = STORY_BUTTON_LOC.y;
         registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
@@ -119,9 +119,9 @@ public class LevelSelectMode extends DemoGameMode
         addObject(_playButtonObj, _mainUiLayer);
 
         if (playerStartedGame) {
-            if (ClientContext.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
+            if (ClientCtx.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
                 // The player has unlocked endless mode. Show the endless mode button
-                var endlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                var endlessPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
                     "challenge_panel");
                 endlessPanel.x = ENDLESS_PANEL_LOC.x;
                 endlessPanel.y = ENDLESS_PANEL_LOC.y;
@@ -131,7 +131,7 @@ public class LevelSelectMode extends DemoGameMode
 
             } else {
                 // the player has played the game but hasn't unlocked endless mode.
-                var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+                var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
                     "challenge_panel_locked");
                 lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
                 lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
@@ -139,7 +139,7 @@ public class LevelSelectMode extends DemoGameMode
             }
 
             // show the "select panel, which shows the level-select and credits buttons
-            var selectPanel :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+            var selectPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
                 "select_panel");
             selectPanel.x = SELECT_PANEL_LOC.x;
             selectPanel.y = SELECT_PANEL_LOC.y;
@@ -159,7 +159,7 @@ public class LevelSelectMode extends DemoGameMode
             var creditsButton :SimpleButton = UIBits.createButton("About", 1.2);
             registerOneShotCallback(creditsButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    ClientContext.mainLoop.unwindToMode(new CreditsMode());
+                    ClientCtx.mainLoop.unwindToMode(new CreditsMode());
                 });
             DisplayUtil.positionBounds(creditsButton, -creditsButton.width * 0.5,
                 buttonParent.height + 10);
@@ -208,7 +208,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createTutorialLayout () :void
     {
-        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "puzzle_intro");
         puzzleIntroMovie.mouseEnabled = false;
         _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
@@ -217,7 +217,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
         addObject(_puzzleIntro, _mainUiLayer);
 
-        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "unit_intro");
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
@@ -226,7 +226,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_unitIntro, 9, 4);
         addObject(_unitIntro, _mainUiLayer);
 
-        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi",
+        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
             "resource_intro");
         resourceIntroMovie.mouseEnabled = false;
         _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
@@ -276,7 +276,7 @@ public class LevelSelectMode extends DemoGameMode
         var testAnimButton :SimpleButton = UIBits.createButton("Anim test", 1.2);
         registerListener(testAnimButton, MouseEvent.CLICK,
             function (...ignored) : void {
-                ClientContext.mainLoop.pushMode(new UnitAnimTestMode());
+                ClientCtx.mainLoop.pushMode(new UnitAnimTestMode());
             });
         testAnimButton.x = 10;
         testAnimButton.y = buttonY;
@@ -286,7 +286,7 @@ public class LevelSelectMode extends DemoGameMode
         var upsellButton :SimpleButton = UIBits.createButton("Upsell", 1.2);
         registerListener(upsellButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientContext.mainLoop.pushMode(new UpsellMode());
+                ClientCtx.mainLoop.pushMode(new UpsellMode());
             });
         upsellButton.x = 10;
         upsellButton.y = buttonY;
@@ -296,12 +296,12 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function onPlayClicked (...ignored) :void
     {
-        if (!ClientContext.isStoryModeUnlocked &&
-            ClientContext.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
-            ClientContext.mainLoop.pushMode(new UpsellMode());
+        if (!ClientCtx.isStoryModeUnlocked &&
+            ClientCtx.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
+            ClientCtx.mainLoop.pushMode(new UpsellMode());
 
         } else {
-            if (ClientContext.levelMgr.playerBeatGame) {
+            if (ClientCtx.levelMgr.playerBeatGame) {
                 // if the player has beaten the game, the Play button will just take them to the
                 // level select menu
                 createLevelSelectLayout();
@@ -313,10 +313,10 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function onEndlessClicked (...ignored) :void
     {
-        if (!ClientContext.isEndlessModeUnlocked) {
-            ClientContext.mainLoop.pushMode(new UpsellMode());
+        if (!ClientCtx.isEndlessModeUnlocked) {
+            ClientCtx.mainLoop.pushMode(new UpsellMode());
         } else {
-            ClientContext.mainLoop.pushMode(new SpEndlessLevelSelectMode());
+            ClientCtx.mainLoop.pushMode(new SpEndlessLevelSelectMode());
         }
     }
 
@@ -364,7 +364,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // put the "manual" up on the screen
-        var manualFront :MovieClip = SwfResource.instantiateMovieClip("manual", "manual_front");
+        var manualFront :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual_front");
         manualFront.scaleX = 1.3;
         manualFront.scaleY = 1.3;
         manualFront.x = 370;
@@ -377,8 +377,8 @@ public class LevelSelectMode extends DemoGameMode
 
         _levelSelectUiLayer.addChild(manualFront);
 
-        var levelNames :Array = ClientContext.levelProgression.levelNames;
-        var levelRecords :Array = ClientContext.levelMgr.levelRecords;
+        var levelNames :Array = ClientCtx.levelProgression.levelNames;
+        var levelRecords :Array = ClientCtx.levelMgr.levelRecords;
         var numLevels :int = levelRecords.length;
 
         // create a button for each level
@@ -391,7 +391,7 @@ public class LevelSelectMode extends DemoGameMode
         for (var i :int = 0; i < numLevels; ++i) {
             var levelRecord :LevelRecord = levelRecords[i];
             if (!levelRecord.unlocked ||
-                (!ClientContext.isStoryModeUnlocked && i >= Constants.NUM_FREE_SP_LEVELS)) {
+                (!ClientCtx.isStoryModeUnlocked && i >= Constants.NUM_FREE_SP_LEVELS)) {
                 break;
             }
 
@@ -417,7 +417,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // epilogue button
-        if (ClientContext.levelMgr.playerBeatGame && ClientContext.isStoryModeUnlocked) {
+        if (ClientCtx.levelMgr.playerBeatGame && ClientCtx.isStoryModeUnlocked) {
             button = UIBits.createButton("Epilogue", 1.1, LEVEL_SELECT_BUTTON_WIDTH);
             button.x = EPILOGUE_LOC.x - (button.width * 0.5);
             button.y = EPILOGUE_LOC.y;
@@ -468,7 +468,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function lockLevels () :void
     {
-        var levelRecords :Array = ClientContext.levelMgr.levelRecords;
+        var levelRecords :Array = ClientCtx.levelMgr.levelRecords;
         var isFirstLevel :Boolean = true;
         for each (var lr :LevelRecord in levelRecords) {
             lr.unlocked = isFirstLevel;
@@ -476,7 +476,7 @@ public class LevelSelectMode extends DemoGameMode
             isFirstLevel = false;
         }
 
-        ClientContext.userCookieMgr.needsUpdate();
+        ClientCtx.userCookieMgr.needsUpdate();
 
         // reload the mode
         LevelSelectMode.create();
@@ -484,13 +484,13 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function unlockLevels () :void
     {
-        var levelRecords :Array = ClientContext.levelMgr.levelRecords;
+        var levelRecords :Array = ClientCtx.levelMgr.levelRecords;
         for each (var lr :LevelRecord in levelRecords) {
             lr.unlocked = true;
             lr.score = 1;
         }
 
-        ClientContext.userCookieMgr.needsUpdate();
+        ClientCtx.userCookieMgr.needsUpdate();
 
         // reload the mode
         LevelSelectMode.create();
@@ -509,20 +509,20 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function playNextLevel () :void
     {
-        levelSelected(ClientContext.levelMgr.highestUnlockedLevelIndex);
+        levelSelected(ClientCtx.levelMgr.highestUnlockedLevelIndex);
     }
 
     protected function levelSelected (levelNum :int) :void
     {
-        ClientContext.levelMgr.curLevelIndex = levelNum;
-        ClientContext.levelMgr.playLevel(onLevelLoaded);
+        ClientCtx.levelMgr.curLevelIndex = levelNum;
+        ClientCtx.levelMgr.playLevel(onLevelLoaded);
     }
 
     protected function onLevelLoaded (loadedLevel :LevelData) :void
     {
         // called when the level is loaded
 
-        if (ClientContext.levelMgr.curLevelIndex == 0) {
+        if (ClientCtx.levelMgr.curLevelIndex == 0) {
             // show the prologue before the first level
             Resources.loadLevelPackResourcesAndSwitchModes(
                 Resources.PROLOGUE_RESOURCES,

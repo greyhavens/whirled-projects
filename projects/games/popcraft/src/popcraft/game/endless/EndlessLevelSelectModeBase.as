@@ -90,7 +90,7 @@ public class EndlessLevelSelectModeBase extends AppMode
             // and then move to its location in the new level
             var nextMap :EndlessMapData = EndlessGameContext.level.getMapData(initialMapIndex + 1);
             var multiplierMovie :MovieClip =
-                SwfResource.instantiateMovieClip("infusions", "infusion_multiplier");
+                SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "infusions", "infusion_multiplier");
             var multiplierObj :SceneObject = new SimpleSceneObject(multiplierMovie);
             multiplierObj.x = _multiplierStartLoc.x;
             multiplierObj.y = _multiplierStartLoc.y;
@@ -135,7 +135,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new PlaySoundTask("sfx_gatedrop"),
                 new FunctionTask(
                     function () :void {
-                        ClientContext.mainLoop.removeMode(-2);
+                        ClientCtx.mainLoop.removeMode(-2);
                     }),
                LocationTask.CreateLinear(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
             break;
@@ -249,7 +249,7 @@ public class EndlessLevelSelectModeBase extends AppMode
 
     protected function animateToMode (nextMode :AppMode) :void
     {
-        ClientContext.mainLoop.insertMode(nextMode, -1);
+        ClientCtx.mainLoop.insertMode(nextMode, -1);
 
         _saveView.removeAllTasks();
         _saveView.x = DOWN_LOC.x;
@@ -257,7 +257,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         _saveView.addTask(new SerialTask(
             new PlaySoundTask("sfx_gateopen"),
             LocationTask.CreateSmooth(UP_LOC.x, UP_LOC.y, ANIMATE_UP_TIME),
-            new FunctionTask(ClientContext.mainLoop.popMode)));
+            new FunctionTask(ClientCtx.mainLoop.popMode)));
     }
 
     protected function onHelpClicked (...ignored) :void
@@ -385,7 +385,7 @@ class HelpView extends SceneObject
 {
     public function HelpView ()
     {
-        _movie = SwfResource.instantiateMovieClip("splashUi", "help");
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi", "help");
 
         _yearbook = _movie["yearbook"];
         _yearbook.gotoAndStop(1);
@@ -393,12 +393,12 @@ class HelpView extends SceneObject
         // Eloise portrait
         var eloisePage :MovieClip = _yearbook["eloise"];
         var pEloise :MovieClip = eloisePage["pEloise"];
-        pEloise.addChild(ImageResource.instantiateBitmap("portrait_eloise"));
+        pEloise.addChild(ImageResource.instantiateBitmap(ClientCtx.rsrcs, "portrait_eloise"));
 
         // everyone else's portrait
         for each (var name :String in STUDENT_NAMES) {
             var portraitParent :MovieClip = _yearbook["p" + name];
-            var portrait :Bitmap = ImageResource.instantiateBitmap("portrait_" + name.toLowerCase());
+            var portrait :Bitmap = ImageResource.instantiateBitmap(ClientCtx.rsrcs, "portrait_" + name.toLowerCase());
             portraitParent.addChild(portrait);
         }
 
@@ -459,7 +459,7 @@ class SaveView extends SceneObject
         var mapData :EndlessMapData = level.getMapData(localSave.mapIndex);
         var cycleNumber :int = level.getMapCycleNumber(localSave.mapIndex);
 
-        _movie = SwfResource.instantiateMovieClip("splashUi", "grate");
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi", "grate");
         _movie.cacheAsBitmap = true;
 
         // text
@@ -470,7 +470,7 @@ class SaveView extends SceneObject
         if (cycleNumber > 0) {
             var cycleSprite :Sprite = SpriteUtil.createSprite();
             for (var ii :int = 0; ii < cycleNumber; ++ii) {
-                var cycleMovie :MovieClip = SwfResource.instantiateMovieClip("splashUi", "cycle");
+                var cycleMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi", "cycle");
                 cycleMovie.x = cycleSprite.width + (cycleMovie.width * 0.5);
                 cycleSprite.addChild(cycleMovie);
             }
@@ -614,7 +614,7 @@ class SaveView extends SceneObject
             // thumbnail
             var mapNumber :int = localSave.mapIndex % level.mapSequence.length;
             var thumbnail :Bitmap =
-                ImageResource.instantiateBitmap("endlessThumb" + String(mapNumber + 1));
+                ImageResource.instantiateBitmap(ClientCtx.rsrcs, "endlessThumb" + String(mapNumber + 1));
             thumbnail.x = THUMBNAIL_LOC.x - (thumbnail.width * 0.5);
             thumbnail.y = THUMBNAIL_LOC.y - (thumbnail.height * 0.5);
             _movie.addChild(thumbnail);
@@ -627,9 +627,9 @@ class SaveView extends SceneObject
                 // save panels
                 if (remoteSave != null) {
                     // player headshots
-                    for (playerIndex = 0; playerIndex < ClientContext.seatingMgr.numExpectedPlayers; ++playerIndex) {
-                        var headshot :DisplayObject = ClientContext.seatingMgr.getPlayerHeadshot(playerIndex);
-                        var hsLoc :Point = (playerIndex == ClientContext.seatingMgr.localPlayerSeat ?
+                    for (playerIndex = 0; playerIndex < ClientCtx.seatingMgr.numExpectedPlayers; ++playerIndex) {
+                        var headshot :DisplayObject = ClientCtx.seatingMgr.getPlayerHeadshot(playerIndex);
+                        var hsLoc :Point = (playerIndex == ClientCtx.seatingMgr.localPlayerSeat ?
                             LOCAL_HEADSHOT_LOC :
                             REMOTE_HEADSHOT_LOC);
 
@@ -747,7 +747,7 @@ class SaveView extends SceneObject
         xOffset :Number) :void
     {
         for (var ii :int = count - 1; ii >= 0; --ii) {
-            var icon :MovieClip = SwfResource.instantiateMovieClip("splashUi", name);
+            var icon :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi", name);
             icon.x = start.x + (xOffset * ii);
             icon.y = start.y;
             sprite.addChild(icon);

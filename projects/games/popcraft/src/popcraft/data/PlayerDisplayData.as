@@ -4,6 +4,7 @@ import com.whirled.contrib.simplegame.resource.ImageResource;
 
 import flash.display.DisplayObject;
 
+import popcraft.*;
 import popcraft.util.XmlReader;
 
 public class PlayerDisplayData
@@ -16,7 +17,7 @@ public class PlayerDisplayData
 
     public function get headshot () :DisplayObject
     {
-        return ImageResource.instantiateBitmap(headshotName);
+        return ImageResource.instantiateBitmap(ClientCtx.rsrcs, headshotName);
     }
 
     public function clone () :PlayerDisplayData

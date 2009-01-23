@@ -16,7 +16,7 @@ public class TargetWorkshopBadge extends SceneObject
     public function TargetWorkshopBadge (owningPlayer :PlayerInfo)
     {
         _owningPlayerInfo = owningPlayer;
-        _movie = SwfResource.instantiateMovieClip("workshop", "target_bounce", true, true);
+        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "target_bounce", true, true);
 
         // recolor
         _movie.filters = [ ColorMatrix.create().colorize(_owningPlayerInfo.color).createFilter() ];

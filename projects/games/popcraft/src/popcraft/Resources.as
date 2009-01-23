@@ -13,14 +13,14 @@ public class Resources
     {
         loadLevelPackResources(
             resourceNames,
-            function () :void { ClientContext.mainLoop.changeMode(nextMode); }
+            function () :void { ClientCtx.mainLoop.changeMode(nextMode); }
         );
     }
 
     public static function loadLevelPackResources (resourceNames :Array, callback :Function) :void
     {
         if (queueLevelPackResources(resourceNames)) {
-            MainLoop.instance.pushMode(new LevelPackLoadingMode(callback));
+            ClientCtx.mainLoop.pushMode(new LevelPackLoadingMode(callback));
         } else {
             callback();
         }
@@ -29,10 +29,10 @@ public class Resources
     public static function queueLevelPackResources (resourceNames :Array) :Boolean
     {
         var needsLoad :Boolean;
-        var rm :ResourceManager = ResourceManager.instance;
+        var rm :ResourceManager = ClientCtx.rsrcs;
         for each (var name :String in resourceNames) {
             if (rm.getResource(name) == null) {
-                var mediaUrl :String = ClientContext.allLevelPacks.getMediaURL(name);
+                var mediaUrl :String = ClientCtx.allLevelPacks.getMediaURL(name);
                 if (mediaUrl == null) {
                     throw new Error("unrecognized resource: '" + name + "'");
                 }
@@ -68,7 +68,7 @@ public class Resources
     public static function loadInitialResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
-        var rm :ResourceManager = ResourceManager.instance;
+        var rm :ResourceManager = ClientCtx.rsrcs;
         rm.queueResourceLoad("image", "zombieBg", { embeddedClass: IMG_ZOMBIEBG });
         rm.queueResourceLoad("swf", "uiBits",  { embeddedClass: SWF_UIBITS });
         rm.loadQueuedResources(loadCompleteCallback, loadErrorCallback);
@@ -77,7 +77,7 @@ public class Resources
     public static function loadBaseResources (loadCompleteCallback :Function = null,
         loadErrorCallback :Function = null) :void
     {
-        var rm :ResourceManager = ResourceManager.instance;
+        var rm :ResourceManager = ClientCtx.rsrcs;
 
         // data
         rm.queueResourceLoad(Constants.RESTYPE_GAMEDATA, Constants.RSRC_DEFAULTGAMEDATA, { embeddedClass: DEFAULT_GAME_DATA });
@@ -191,13 +191,13 @@ public class Resources
     public static function getMusic (musicName :String) :SoundResource
     {
         // music is loaded out of level packs
-        var rm :ResourceManager = ResourceManager.instance;
+        var rm :ResourceManager = ClientCtx.rsrcs;
         var sound :SoundResource = rm.getResource(musicName) as SoundResource;
         if (sound == null) {
             rm.queueResourceLoad(
                 "sound",
                 musicName,
-                {   url: ClientContext.allLevelPacks.getMediaURL(musicName),
+                {   url: ClientCtx.allLevelPacks.getMediaURL(musicName),
                     completeImmediately: true,
                     type: "music",
                     volume: 0.7,
@@ -408,13 +408,13 @@ class LevelPackLoadingMode extends GenericLoadingMode
 {
     public function LevelPackLoadingMode (callback :Function)
     {
-        ResourceManager.instance.loadQueuedResources(
+        ClientCtx.rsrcs.loadQueuedResources(
             function () :void {
-                ClientContext.mainLoop.popMode();
+                ClientCtx.mainLoop.popMode();
                 callback();
             },
             function (err :String) :void {
-                ClientContext.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
+                ClientCtx.mainLoop.unwindToMode(new GenericLoadErrorMode(err));
             }
         );
     }

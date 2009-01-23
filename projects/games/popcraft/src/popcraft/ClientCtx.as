@@ -10,10 +10,12 @@ import popcraft.data.*;
 import popcraft.game.endless.EndlessLevelManager;
 import popcraft.game.story.LevelManager;
 
-public class ClientContext
+public class ClientCtx
 {
     public static var mainSprite :PopCraft;
     public static var mainLoop :MainLoop;
+    public static var rsrcs :ResourceManager;
+    public static var audio :AudioManager;
     public static var gameCtrl :GameControl;
     public static var randStreamPuzzle :uint;
     public static var levelMgr :LevelManager = new LevelManager();
@@ -30,7 +32,7 @@ public class ClientContext
 
     public static function awardTrophy (trophyName :String) :void
     {
-        if (ClientContext.gameCtrl.isConnected()) {
+        if (ClientCtx.gameCtrl.isConnected()) {
             if (gameCtrl.player.awardTrophy(trophyName)) {
                 prizeMgr.awardPrizeForTrophy(trophyName);
             }
@@ -47,13 +49,13 @@ public class ClientContext
     public static function get isEndlessModeUnlocked () :Boolean
     {
         return (Constants.DEBUG_UNLOCK_ENDLESS_MODE ||
-            ClientContext.isPremiumContentUnlocked);
+            ClientCtx.isPremiumContentUnlocked);
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
         return (Constants.DEBUG_UNLOCK_STORY_MODE ||
-            ClientContext.isPremiumContentUnlocked ||
+            ClientCtx.isPremiumContentUnlocked ||
             savedPlayerBits.hasFreeStoryMode);
     }
 
@@ -85,7 +87,7 @@ public class ClientContext
     /*public static function get gameVariants () :Array
     {
         var variantResource :GameVariantsResource =
-            GameVariantsResource(ResourceManager.instance.getResource(Constants.RSRC_GAMEVARIANTS));
+            GameVariantsResource(ClientContext.rsrcs.getResource(Constants.RSRC_GAMEVARIANTS));
         return variantResource.variants;
     }*/
 
@@ -110,7 +112,7 @@ public class ClientContext
 
     protected static function get gameDataResource () :GameDataResource
     {
-        return GameDataResource(ResourceManager.instance.getResource(Constants.RSRC_DEFAULTGAMEDATA));
+        return GameDataResource(rsrcs.getResource(Constants.RSRC_DEFAULTGAMEDATA));
     }
 }
 
