@@ -24,8 +24,6 @@ public class ComputerPlayerAI extends SimObject
 
         // add starting spells to our playerInfo
         _playerInfo.setSpellCounts(_data.startingCreatureSpells);
-
-        _playerInfo.targetedEnemy = GameContext.playerInfos[0];
     }
 
     protected function getDayData (dayIndex :int) :DaySequenceData

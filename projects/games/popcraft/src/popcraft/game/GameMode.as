@@ -634,7 +634,8 @@ public class GameMode extends TransitionMode
         var targetId :int = targetInfo.playerIndex;
 
         if (localPlayerInfo.teamId != targetInfo.teamId &&
-            localPlayerInfo.targetedEnemy.playerIndex != targetId) {
+            localPlayerInfo.targetedEnemy.playerIndex != targetId &&
+            !targetInfo.isInvincible) {
             // send a message to everyone
             sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
         }
