@@ -3,16 +3,16 @@
 
 package simon.client {
 
-import flash.display.Sprite;
-import flash.events.Event;
-
 import com.threerings.util.Log;
-
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGamePlayerEvent;
-
+import com.whirled.contrib.simplegame.Config;
 import com.whirled.contrib.simplegame.MainLoop;
+import com.whirled.contrib.simplegame.SimpleGame;
+
+import flash.display.Sprite;
+import flash.events.Event;
 
 import simon.data.Constants;
 
@@ -47,8 +47,12 @@ public class SimonMain extends Sprite
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
 
         // instantiate MainLoop singleton
-        new MainLoop(this);
-        MainLoop.instance.setup();
+        var config :Config = new Config();
+        config.hostSprite = this;
+        _sg = new SimpleGame(config);
+        ClientCtx.mainLoop = _sg.ctx.mainLoop;
+        ClientCtx.rsrcs = _sg.ctx.rsrcs;
+        ClientCtx.audio = _sg.ctx.audio;
 
         // load resources
         Resources.load(handleResourcesLoaded, handleResourceLoadError);
@@ -81,8 +85,8 @@ public class SimonMain extends Sprite
 
             control.agent.sendMessage(Constants.MSG_PLAYERREADY);
 
-            MainLoop.instance.pushMode(new GameMode());
-            MainLoop.instance.run();
+            _sg.run();
+            ClientCtx.mainLoop.pushMode(new GameMode());
         }
     }
 
@@ -120,7 +124,7 @@ public class SimonMain extends Sprite
 
         model.destroy();
 
-        MainLoop.instance.shutdown();
+        _sg.shutdown();
     }
 
     protected function enteredRoom (e :AVRGamePlayerEvent) :void
@@ -141,6 +145,7 @@ public class SimonMain extends Sprite
         // TODO: hide ui
     }
 
+    protected var _sg :SimpleGame;
     protected var _addedToStage :Boolean;
     protected var _resourcesLoaded :Boolean;
     protected var _enteredRoom :Boolean;

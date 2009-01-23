@@ -97,7 +97,7 @@ public class AbstractRainbowController extends SceneObject
     {
         this.stopRainbowAnimation();
 
-        _curAnim = SwfResource.instantiateMovieClip("ui", animName);
+        _curAnim = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", animName);
 
         var loc :Point = this.getScreenLocForRainbowAnimation();
         _curAnim.x = loc.x;
@@ -216,7 +216,7 @@ public class AbstractRainbowController extends SceneObject
                 band.play();
 
                 // create and play a sparkle animation
-                var sparkle :MovieClip = SwfResource.instantiateMovieClip("ui", "sparkle");
+                var sparkle :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", "sparkle");
                 sparkle.mouseEnabled = false;
                 sparkle.mouseChildren = false;
                 sparkle.x = clickLoc.x;

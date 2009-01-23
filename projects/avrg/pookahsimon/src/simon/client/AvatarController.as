@@ -12,7 +12,7 @@ public class AvatarController extends SimObject
 
     public static function get instance () :AvatarController
     {
-        return MainLoop.instance.topMode.getObjectNamed(NAME) as AvatarController;
+        return ClientCtx.mainLoop.topMode.getObjectNamed(NAME) as AvatarController;
     }
 
     override public function get objectName () :String

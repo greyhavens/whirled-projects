@@ -17,7 +17,7 @@ public class HelpViewController extends SceneObject
 {
     public function HelpViewController ()
     {
-        _movieClip = SwfResource.instantiateMovieClip("ui", "help_cloud");
+        _movieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", "help_cloud");
     }
 
     override protected function addedToDB () :void

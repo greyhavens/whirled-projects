@@ -23,7 +23,7 @@ public class WinnerCloudController extends SceneObject
     {
         _playerId = playerId;
 
-        _movieClip = SwfResource.instantiateMovieClip("ui", "win_cloud");
+        _movieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", "win_cloud");
 
         var loc :Point = this.screenLoc;
 

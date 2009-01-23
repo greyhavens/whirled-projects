@@ -26,7 +26,7 @@ public class CloudViewController extends SceneObject
 
     public function CloudViewController ()
     {
-        _cloud = SwfResource.instantiateMovieClip("ui", "cloud");
+        _cloud = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", "cloud");
     }
 
     override public function get displayObject () :DisplayObject
