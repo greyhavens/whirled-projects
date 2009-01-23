@@ -31,8 +31,8 @@ public class HeartOfDarknessGame extends MicrogameMode
 
     override public function begin () :void
     {
-        MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
+        FightCtx.mainLoop.pushMode(this);
+        FightCtx.mainLoop.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
 
     override protected function get duration () :Number

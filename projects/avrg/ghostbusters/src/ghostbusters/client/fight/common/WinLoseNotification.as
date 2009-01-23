@@ -11,6 +11,8 @@ import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.text.TextField;
 
+import ghostbusters.client.fight.*;
+
 public class WinLoseNotification extends SceneObject
 {
     public static const TIMER_NAME :String = "WinLoseNotification";
@@ -26,22 +28,22 @@ public class WinLoseNotification extends SceneObject
         notification.x = (MicrogameConstants.GAME_WIDTH * 0.5);
         notification.y = (MicrogameConstants.GAME_HEIGHT * 0.5);
 
-        MainLoop.instance.topMode.addObject(notification, parent);
+        FightCtx.mainLoop.topMode.addObject(notification, parent);
 
         // create a timer object
-        MainLoop.instance.topMode.addObject(new SimpleTimer(1.5, null, false, TIMER_NAME));
+        FightCtx.mainLoop.topMode.addObject(new SimpleTimer(1.5, null, false, TIMER_NAME));
 
     }
 
     public static function get isPlaying () :Boolean
     {
-        return (null != MainLoop.instance.topMode.getObjectNamed(TIMER_NAME));
+        return (null != FightCtx.mainLoop.topMode.getObjectNamed(TIMER_NAME));
     }
 
     public function WinLoseNotification (success :Boolean, text :String)
     {
         // instantiate the screen
-        _movieClip = SwfResource.instantiateMovieClip("outro.screen", (success ? "outro_win" : "outro_lose"));
+        _movieClip = SwfResource.instantiateMovieClip(FightCtx.rsrcs, "outro.screen", (success ? "outro_win" : "outro_lose"));
 
         _movieClip.mouseEnabled = false;
         _movieClip.mouseChildren = false;

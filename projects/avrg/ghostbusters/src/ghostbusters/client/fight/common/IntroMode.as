@@ -8,7 +8,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import flash.display.MovieClip;
 import flash.text.TextField;
 
-import ghostbusters.client.fight.Microgame;
+import ghostbusters.client.fight.*;
 
 public class IntroMode extends AppMode
 {
@@ -20,7 +20,7 @@ public class IntroMode extends AppMode
 
     override protected function setup () :void
     {
-        var movieRoot :MovieClip = SwfResource.getSwfDisplayRoot("intro.screen") as MovieClip;
+        var movieRoot :MovieClip = SwfResource.getSwfDisplayRoot(FightCtx.rsrcs, "intro.screen") as MovieClip;
 
         this.modeSprite.addChild(movieRoot);
 
@@ -40,7 +40,7 @@ public class IntroMode extends AppMode
 
         // dismiss the screen when the timer has expired
         if (!TimerObj.exists) {
-            MainLoop.instance.popMode();
+            FightCtx.mainLoop.popMode();
         }
     }
 
@@ -57,13 +57,15 @@ import com.whirled.contrib.simplegame.tasks.SerialTask;
 import com.whirled.contrib.simplegame.tasks.TimedTask;
 import com.whirled.contrib.simplegame.tasks.SelfDestructTask;
 
+import ghostbusters.client.fight.*;
+
 class TimerObj extends SimObject
 {
     public static const NAME :String = "TimerObj";
 
     public static function get exists () :Boolean
     {
-        return (null != MainLoop.instance.topMode.getObjectNamed(NAME));
+        return (null != FightCtx.mainLoop.topMode.getObjectNamed(NAME));
     }
 
     public function TimerObj (duration :Number)

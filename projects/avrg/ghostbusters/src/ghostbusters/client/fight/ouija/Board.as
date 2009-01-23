@@ -10,13 +10,14 @@ import com.whirled.contrib.simplegame.util.Rand;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import ghostbusters.client.fight.*;
 import ghostbusters.client.fight.common.*;
 
 public class Board extends SceneObject
 {
     public function Board ()
     {
-        _sprite.addChild(SwfResource.getSwfDisplayRoot("ouija.board"));
+        _sprite.addChild(SwfResource.getSwfDisplayRoot(FightCtx.rsrcs, "ouija.board"));
         _sprite.mouseChildren = false;
     }
 

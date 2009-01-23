@@ -53,7 +53,7 @@ public class SplashMode extends AppMode
 
     protected function onMouseDown (e :Event) :void
     {
-        MainLoop.instance.popMode();
+        FightCtx.mainLoop.popMode();
     }
 
     protected var _gameName :String;

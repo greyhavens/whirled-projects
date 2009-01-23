@@ -32,8 +32,8 @@ public class SpiritShellGame extends MicrogameMode
 
     override public function begin () :void
     {
-        MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
+        FightCtx.mainLoop.pushMode(this);
+        FightCtx.mainLoop.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
 
     override protected function get duration () :Number
@@ -79,7 +79,7 @@ public class SpiritShellGame extends MicrogameMode
 
     override protected function setup () :void
     {
-        var swf :SwfResource = ResourceManager.instance.getResource("spiritshell.board") as SwfResource;
+        var swf :SwfResource = FightCtx.rsrcs.getResource("spiritshell.board") as SwfResource;
 
         // draw the background
         var bgClass :Class = swf.getClass("BG");

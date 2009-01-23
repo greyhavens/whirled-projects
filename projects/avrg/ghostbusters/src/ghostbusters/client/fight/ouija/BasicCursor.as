@@ -7,6 +7,7 @@ import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.resource.*;
 
+import ghostbusters.client.fight.*;
 import ghostbusters.client.fight.common.*;
 
 import flash.display.Bitmap;
@@ -28,7 +29,7 @@ public class BasicCursor extends SceneObject
         _board = board;
 
         // add the image, aligned by the center of its viewier
-        _cursorImage = ImageResource.instantiateBitmap("ouija.planchette");
+        _cursorImage = ImageResource.instantiateBitmap(FightCtx.rsrcs, "ouija.planchette");
         _cursorImage.x = -CENTER.x;
         _cursorImage.y = -CENTER.y;
         _sprite.addChild(_cursorImage);

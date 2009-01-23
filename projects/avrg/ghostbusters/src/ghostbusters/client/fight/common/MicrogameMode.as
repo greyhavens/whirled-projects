@@ -6,6 +6,8 @@ import ghostbusters.client.fight.Microgame;
 import ghostbusters.client.fight.MicrogameContext;
 import ghostbusters.client.fight.MicrogameResult;
 
+import ghostbusters.client.fight.*;
+
 public class MicrogameMode extends AppMode
     implements Microgame
 {
@@ -37,12 +39,12 @@ public class MicrogameMode extends AppMode
 
     public function begin () :void
     {
-        MainLoop.instance.pushMode(this);
+        FightCtx.mainLoop.pushMode(this);
     }
 
     public function end () :void
     {
-        MainLoop.instance.popAllModes();
+        FightCtx.mainLoop.popAllModes();
     }
 
     protected function get duration () :Number

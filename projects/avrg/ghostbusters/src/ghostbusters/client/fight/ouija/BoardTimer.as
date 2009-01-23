@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.MovieClip;
 import flash.geom.Point;
 
+import ghostbusters.client.fight.*;
 import ghostbusters.client.fight.common.*;
 
 public class BoardTimer extends SceneObject
@@ -15,7 +16,7 @@ public class BoardTimer extends SceneObject
     {
         _totalTime = totalTime;
 
-        _swf = (SwfResource.getSwfDisplayRoot("ouija.timer") as MovieClip);
+        _swf = (SwfResource.getSwfDisplayRoot(FightCtx.rsrcs, "ouija.timer") as MovieClip);
         _swf.mouseEnabled = false;
         _swf.mouseChildren = false;
         _swf.x = TIMER_LOC.x;

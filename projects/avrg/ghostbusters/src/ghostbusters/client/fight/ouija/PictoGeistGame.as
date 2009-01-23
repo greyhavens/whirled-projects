@@ -29,8 +29,8 @@ public class PictoGeistGame extends MicrogameMode
 
     override public function begin () :void
     {
-        MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
+        FightCtx.mainLoop.pushMode(this);
+        FightCtx.mainLoop.pushMode(new IntroMode(GAME_NAME, GAME_DIRECTIONS));
     }
 
     override protected function get duration () :Number
@@ -61,7 +61,7 @@ public class PictoGeistGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        this.modeSprite.addChild(ImageResource.instantiateBitmap("ouija.pictoboard"));
+        this.modeSprite.addChild(ImageResource.instantiateBitmap(FightCtx.rsrcs, "ouija.pictoboard"));
 
         // draw the picture on the board
         this.modeSprite.addChild(this.createPicture());
@@ -285,7 +285,7 @@ class ImageRecordMode extends AppMode
         }
         trace("],");
 
-        MainLoop.instance.popMode();
+        FightCtx.mainLoop.popMode();
     }
 
     protected var _points :Array = new Array();

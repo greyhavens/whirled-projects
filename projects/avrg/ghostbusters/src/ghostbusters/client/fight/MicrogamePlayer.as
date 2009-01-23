@@ -21,23 +21,24 @@ public class MicrogamePlayer extends Sprite
         _context = context;
 
         // clip games to the bounds of the player
-        this.scrollRect = new Rectangle(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
+        this.scrollRect =
+            new Rectangle(0, 0, MicrogameConstants.GAME_WIDTH, MicrogameConstants.GAME_HEIGHT);
 
-        if (null != MainLoop.instance) {
-            MainLoop.instance.reset(this);
-        } else {
-            new MainLoop(this);
-        }
+        var config :Config = new Config();
+        config.hostSprite = this;
+        _sg = new SimpleGame(config);
+        FightCtx.mainLoop = _sg.ctx.mainLoop;
+        FightCtx.rsrcs = _sg.ctx.rsrcs;
+        FightCtx.audio = _sg.ctx.audio;
 
-        MainLoop.instance.run();
+        _sg.run();
 
         Resources.instance.loadAll(resourcesLoaded);
     }
 
     public function shutdown () :void
     {
-        MainLoop.instance.stop();
-        AudioManager.instance.stopAllSounds();
+        _sg.shutdown();
     }
 
     public function get weaponType () :WeaponType
@@ -108,10 +109,11 @@ public class MicrogamePlayer extends Sprite
 
     public function cancelCurrentGame () :void
     {
-        MainLoop.instance.popAllModes();
+        FightCtx.mainLoop.popAllModes();
         _currentGame = null;
     }
 
+    protected var _sg :SimpleGame;
     protected var _context :MicrogameContext;
     protected var _weaponType :WeaponType;
     protected var _running :Boolean;

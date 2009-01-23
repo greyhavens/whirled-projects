@@ -31,8 +31,8 @@ public class HueAndCryGame extends MicrogameMode
 
     override public function begin () :void
     {
-        MainLoop.instance.pushMode(this);
-        MainLoop.instance.pushMode(new IntroMode(GAME_NAME, "Mix " + Colors.getColorName(_targetColor) + "!"));
+        FightCtx.mainLoop.pushMode(this);
+        FightCtx.mainLoop.pushMode(new IntroMode(GAME_NAME, "Mix " + Colors.getColorName(_targetColor) + "!"));
     }
 
     override protected function get duration () :Number
@@ -77,7 +77,7 @@ public class HueAndCryGame extends MicrogameMode
     override protected function setup () :void
     {
         // draw the board
-        var swfResource :SwfResource = ResourceManager.instance.getResource("potions.board") as SwfResource;
+        var swfResource :SwfResource = FightCtx.rsrcs.getResource("potions.board") as SwfResource;
 
         var displayRoot :MovieClip = swfResource.displayRoot as MovieClip;
         this.modeSprite.addChild(displayRoot);

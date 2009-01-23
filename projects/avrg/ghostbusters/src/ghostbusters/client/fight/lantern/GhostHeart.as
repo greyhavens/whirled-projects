@@ -10,6 +10,8 @@ import flash.display.Sprite;
 
 import ghostbusters.client.fight.common.*;
 
+import ghostbusters.client.fight.*;
+
 public class GhostHeart extends SceneObject
 {
     public function GhostHeart (radius :Number, maxHealth :Number)
@@ -18,7 +20,7 @@ public class GhostHeart extends SceneObject
         _maxHealth = maxHealth;
         _health = maxHealth;
 
-        var heart :DisplayObject = SwfResource.getSwfDisplayRoot("lantern.heart");
+        var heart :DisplayObject = SwfResource.getSwfDisplayRoot(FightCtx.rsrcs, "lantern.heart");
 
         var scale :Number = _radius / HEART_RADIUS_BASE;
         heart.scaleX = scale;
