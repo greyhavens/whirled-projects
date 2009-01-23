@@ -8,7 +8,7 @@ public class LobbyConfig
     public static const PROP_INITED :String             = "lc_Inited"; // Boolean
     public static const PROP_GAMESTARTCOUNTDOWN :String = "lc_countdown"; // Boolean
     public static const PROP_RANDSEED :String           = "lc_RandSeed"; // uint
-    public static const PROP_TEAMS :String              = "lc_Teams";    // Array<teamId>
+    public static const PROP_PLAYER_TEAMS :String              = "lc_Teams";    // Array<teamId>
     public static const PROP_HANDICAPS :String          = "lc_Handicaps"; // Array<Boolean>
     public static const PROP_HASMORBIDINFECTION :String = "lc_HMI"; // Array<Boolean>
     public static const PROP_HASPREMIUMCONTENT :String  = "lc_HasPremium"; // Array<Boolean>
@@ -43,18 +43,18 @@ public class LobbyConfig
                 (teamId >= 0 && teamId < NUM_TEAMS));
     }
 
-    public function get teams () :Array
+    public function get playerTeams () :Array
     {
-        return _gameCtrl.net.get(PROP_TEAMS) as Array;
+        return _gameCtrl.net.get(PROP_PLAYER_TEAMS) as Array;
     }
 
     public function computeTeamSizes () :Array
     {
-        var theTeams :Array = this.teams;
-        var teamSizes :Array = ArrayUtil.create(theTeams.length, 0);
+        var playerTeams :Array = this.playerTeams;
+        var teamSizes :Array = ArrayUtil.create(NUM_TEAMS, 0);
 
-        for (var playerSeat :int = 0; playerSeat < theTeams.length; ++playerSeat) {
-            var teamId :int = theTeams[playerSeat];
+        for (var playerSeat :int = 0; playerSeat < playerTeams.length; ++playerSeat) {
+            var teamId :int = playerTeams[playerSeat];
             if (teamId >= 0) {
                 teamSizes[teamId] += 1;
             }
@@ -76,7 +76,7 @@ public class LobbyConfig
 
     public function get isEveryoneTeamed () :Boolean
     {
-        var teams :Array = this.teams;
+        var teams :Array = this.playerTeams;
         for each (var teamId :int in teams) {
             if (teamId == UNASSIGNED_TEAM_ID) {
                 return false;
@@ -110,7 +110,7 @@ public class LobbyConfig
 
     public function get isSomeoneInEndlessMode () :Boolean
     {
-        var teams :Array = this.teams;
+        var teams :Array = this.playerTeams;
         for each (var teamId :int in teams) {
             if (teamId == ENDLESS_TEAM_ID) {
                 return true;
@@ -126,7 +126,7 @@ public class LobbyConfig
             return false;
         }
 
-        var teams :Array = this.teams;
+        var teams :Array = this.playerTeams;
         for each (var teamId :int in teams) {
             if (teamId != ENDLESS_TEAM_ID) {
                 return false;

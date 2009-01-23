@@ -207,7 +207,7 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function onElemChanged (e :ElementChangedEvent) :void
     {
-        if (e.name == LobbyConfig.PROP_TEAMS) {
+        if (e.name == LobbyConfig.PROP_PLAYER_TEAMS) {
             updateTeamsDisplay();
         } else if (e.name == LobbyConfig.PROP_HANDICAPS) {
             updateHandicapsDisplay();
@@ -280,7 +280,7 @@ public class MultiplayerLobbyMode extends AppMode
             return;
         }
 
-        var teams :Array = ClientContext.lobbyConfig.teams;
+        var teams :Array = ClientContext.lobbyConfig.playerTeams;
         if (null != teams && teams[ClientContext.seatingMgr.localPlayerSeat] != teamId) {
             sendServerMsg(LobbyConfig.MSG_SET_TEAM, teamId);
             updateTeamsDisplay();
@@ -301,11 +301,11 @@ public class MultiplayerLobbyMode extends AppMode
     protected function updateTeamsDisplay () :void
     {
         // "inited" will be set to true when the multiplayer configuration is valid
-        if (!ClientContext.lobbyConfig.inited || null == ClientContext.lobbyConfig.teams) {
+        if (!ClientContext.lobbyConfig.inited || null == ClientContext.lobbyConfig.playerTeams) {
             return;
         }
 
-        var teams :Array = ClientContext.lobbyConfig.teams;
+        var teams :Array = ClientContext.lobbyConfig.playerTeams;
         var handicaps :Array = ClientContext.lobbyConfig.handicaps;
 
         for (var teamId :int = LobbyConfig.ENDLESS_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS; ++teamId) {

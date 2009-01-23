@@ -21,7 +21,7 @@ public class ServerLobby
             setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, false);
             setProp(LobbyConfig.PROP_RANDSEED, uint(Math.random() * uint.MAX_VALUE));
             setProp(LobbyConfig.PROP_HANDICAPS, ArrayUtil.create(numPlayers, false));
-            setProp(LobbyConfig.PROP_TEAMS, ArrayUtil.create(numPlayers,
+            setProp(LobbyConfig.PROP_PLAYER_TEAMS, ArrayUtil.create(numPlayers,
                 LobbyConfig.UNASSIGNED_TEAM_ID));
             setProp(LobbyConfig.PROP_HASMORBIDINFECTION, ArrayUtil.create(numPlayers, false));
             setProp(LobbyConfig.PROP_HASPREMIUMCONTENT, ArrayUtil.create(numPlayers, false));
@@ -59,11 +59,11 @@ public class ServerLobby
         switch (e.name) {
         case LobbyConfig.MSG_SET_TEAM:
             var teamId :int = e.value as int;
-            if (ServerContext.lobbyConfig.teams[playerSeat] != teamId &&
+            if (ServerContext.lobbyConfig.playerTeams[playerSeat] != teamId &&
                 ServerContext.lobbyConfig.isValidTeamId(teamId) &&
                 !ServerContext.lobbyConfig.isTeamFull(teamId)) {
 
-                setPropAt(LobbyConfig.PROP_TEAMS, playerSeat, teamId);
+                setPropAt(LobbyConfig.PROP_PLAYER_TEAMS, playerSeat, teamId);
                 gamePropertyChanged();
             }
             break;

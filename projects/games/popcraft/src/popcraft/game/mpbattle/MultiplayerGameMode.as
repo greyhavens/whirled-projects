@@ -48,7 +48,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        var teams :Array = ClientContext.lobbyConfig.teams;
+        var teams :Array = ClientContext.lobbyConfig.playerTeams;
         var handicaps :Array = ClientContext.lobbyConfig.handicaps;
 
         // In multiplayer games, base locations are arranged in order of team,
