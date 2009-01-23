@@ -168,9 +168,9 @@ import popcraft.ui.GenericLoadingMode;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import popcraft.ui.GenericLoadErrorMode;
 import popcraft.game.story.LevelSelectMode;
-import popcraft.game.mpbattle.MultiplayerLobbyMode;
 import com.whirled.contrib.simplegame.util.Rand;
 import popcraft.game.endless.SavedEndlessGame;
+import popcraft.lobby.MultiplayerLobbyMode;
 
 class LoadingMode extends GenericLoadingMode
 {

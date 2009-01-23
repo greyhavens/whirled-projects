@@ -1,6 +1,8 @@
-package popcraft.game.mpbattle {
+package popcraft.lobby {
 
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.resource.ImageResource;
 
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
@@ -11,11 +13,14 @@ import popcraft.*;
 import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
-public class MultiplayerFailureMode extends MultiplayerDialog
+public class MultiplayerFailureMode extends TransitionMode
 {
     override protected function setup () :void
     {
         super.setup();
+
+        _modeLayer.addChild(ImageResource.instantiateBitmap("zombieBg"));
+        _soundChannel = AudioManager.instance.playSoundNamed("sfx_introscreen", null, -1);
 
         var tf :DisplayObject = UIBits.createTextPanel(
             "Your classmates have fled!\nPlay by yourself instead?",
@@ -31,15 +36,21 @@ public class MultiplayerFailureMode extends MultiplayerDialog
         _button.y = tf.y + tf.height + 30;
         this.modeSprite.addChild(_button);
 
-        registerOneShotCallback(_button, MouseEvent.CLICK, handleButtonClicked);
+        registerOneShotCallback(_button, MouseEvent.CLICK,
+            function (...ignored) :void {
+                Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES,
+                                                 LevelSelectMode.create);
+            });
     }
 
-    protected function handleButtonClicked (...ignored) :void
+    override protected function destroy () :void
     {
-        Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES, LevelSelectMode.create);
+        _soundChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
+        super.destroy();
     }
 
     protected var _button :SimpleButton;
+    protected var _soundChannel :AudioChannel;
 }
 
 }

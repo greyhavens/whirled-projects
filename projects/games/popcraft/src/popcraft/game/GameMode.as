@@ -21,6 +21,7 @@ import popcraft.battle.view.*;
 import popcraft.data.*;
 import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;
+import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.net.*;
 import popcraft.puzzle.*;
 import popcraft.ui.*;

@@ -11,7 +11,7 @@ import popcraft.*;
 import popcraft.game.*;
 import popcraft.data.EndlessLevelData;
 import popcraft.data.UnitData;
-import popcraft.game.mpbattle.MultiplayerFailureMode;
+import popcraft.lobby.MultiplayerFailureMode;
 import popcraft.util.SpriteUtil;
 
 public class MpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase

@@ -16,6 +16,7 @@ import flash.text.TextFormatAlign;
 
 import popcraft.*;
 import popcraft.game.*;
+import popcraft.lobby.*;
 import popcraft.ui.UIBits;
 import popcraft.util.MoonCalculation;
 

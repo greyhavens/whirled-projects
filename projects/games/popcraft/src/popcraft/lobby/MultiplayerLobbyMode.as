@@ -1,4 +1,4 @@
-package popcraft.game.mpbattle {
+package popcraft.lobby {
 
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Log;
@@ -26,6 +26,7 @@ import flash.text.TextField;
 import popcraft.*;
 import popcraft.game.*;
 import popcraft.game.endless.*;
+import popcraft.game.mpbattle.MultiplayerGameMode;
 import popcraft.ui.UIBits;
 
 public class MultiplayerLobbyMode extends AppMode
