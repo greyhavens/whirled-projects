@@ -13,10 +13,10 @@ public class InGameHelpView extends SceneObject
 {
     public function InGameHelpView ()
     {
-        _screen = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "help", "help_screen");
+        _screen = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "help", "help_screen");
 
         // center the help screen
-        var screenBounds :Rectangle = ClientContext.getScreenBounds();
+        var screenBounds :Rectangle = ClientCtx.getScreenBounds();
         _screen.x = (screenBounds.width * 0.5);
         _screen.y = (screenBounds.height * 0.5);
 

@@ -10,7 +10,7 @@ import com.whirled.contrib.simplegame.resource.ResourceManager;
 
 import flash.geom.Rectangle;
 
-public class ClientContext
+public class ClientCtx
 {
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager

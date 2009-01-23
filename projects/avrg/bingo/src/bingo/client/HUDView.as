@@ -26,7 +26,7 @@ public class HUDView extends SceneObject
 
     public function HUDView ()
     {
-        _hud = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "ui", "HUD");
+        _hud = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "ui", "HUD");
 
         // fix the text on the ball
         // @TODO - is TextFieldAutoSize accessible in the FAT? where?
@@ -48,21 +48,21 @@ public class HUDView extends SceneObject
         registerListener(helpButton, MouseEvent.CLICK, handleHelp);
 
         // listen for state events
-        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.NEW_SCORES,
             updateScores);
-        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.NEW_BALL,
             updateBall);
-        registerListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChanged);
-        registerListener(ClientContext.model, LocalStateChangedEvent.CARD_COMPLETED,
+        registerListener(ClientCtx.model, LocalStateChangedEvent.CARD_COMPLETED,
             updateBingoButton);
 
-        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientCtx.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
-        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
+        registerListener(ClientCtx.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED,
             updateScores);
-        registerListener(ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_LEFT,
+        registerListener(ClientCtx.gameCtrl.room, AVRGameRoomEvent.PLAYER_LEFT,
             updateScores);
     }
 
@@ -115,7 +115,7 @@ public class HUDView extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = ClientContext.getScreenBounds();
+        var screenBounds :Rectangle = ClientCtx.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.HUD_SCREEN_EDGE_OFFSET.x,
@@ -124,13 +124,13 @@ public class HUDView extends SceneObject
 
     protected function handleQuit (...ignored) :void
     {
-        ClientContext.quit();
+        ClientCtx.quit();
     }
 
     protected function handleBingo (...ignored) :void
     {
-        if (!_calledBingoThisRound && ClientContext.model.card.isComplete) {
-            ClientContext.model.callBingo();
+        if (!_calledBingoThisRound && ClientCtx.model.card.isComplete) {
+            ClientCtx.model.callBingo();
             _calledBingoThisRound = true;
             this.updateBingoButton();
         }
@@ -143,12 +143,12 @@ public class HUDView extends SceneObject
 
     protected function updateScores (...ignored) :void
     {
-        var scores :ScoreTable = ClientContext.model.curScores;
+        var scores :ScoreTable = ClientCtx.model.curScores;
         var scoreboardView :MovieClip = _hud["scoreboard"];
 
         var dateNow :Date = new Date();
 
-        var namesAndScores :Array = ClientContext.model.getPlayerOids().map(
+        var namesAndScores :Array = ClientCtx.model.getPlayerOids().map(
             function (playerId :int, ...ignored) :Score {
                 var existingScore :Score = scores.getScore(playerId);
                 return (null != existingScore ? existingScore : new Score(playerId, 0, dateNow));
@@ -163,7 +163,7 @@ public class HUDView extends SceneObject
             var nameField :TextField = scoreboardView["player_" + String(i + 1)];
             var scoreField :TextField = scoreboardView["score_" + String(i + 1)];
 
-            nameField.text = (null != score ? ClientContext.getPlayerName(score.playerId) : "");
+            nameField.text = (null != score ? ClientCtx.getPlayerName(score.playerId) : "");
             scoreField.text = (null != score && score.score > 0 ? String(score.score) : "");
         }
     }
@@ -176,7 +176,7 @@ public class HUDView extends SceneObject
 
     protected function showNewBallText (...ignored) :void
     {
-        var newText :String = ClientContext.model.curState.ballInPlay;
+        var newText :String = ClientCtx.model.curState.ballInPlay;
         setBallText(_ballText, newText);
     }
 
@@ -202,9 +202,9 @@ public class HUDView extends SceneObject
         var bingoButton :InteractiveObject = _hud["bingo_button"];
         var enabled :Boolean = (
             !_calledBingoThisRound &&
-            ClientContext.model.roundInPlay &&
-            ClientContext.model.card != null &&
-            ClientContext.model.card.isComplete);
+            ClientCtx.model.roundInPlay &&
+            ClientCtx.model.card != null &&
+            ClientCtx.model.card.isComplete);
 
         bingoButton.visible = enabled;
         bingoButton.mouseEnabled = enabled;
@@ -212,7 +212,7 @@ public class HUDView extends SceneObject
 
     protected function handleGameStateChanged (...ignored) :void
     {
-        switch (ClientContext.model.curState.gameState) {
+        switch (ClientCtx.model.curState.gameState) {
 
         case SharedState.STATE_PLAYING:
             _calledBingoThisRound = false;
@@ -251,8 +251,8 @@ public class HUDView extends SceneObject
         }
 
         // compare names. A comes before Z
-        var aName :String = ClientContext.getPlayerName(a.playerId);
-        var bName :String = ClientContext.getPlayerName(b.playerId);
+        var aName :String = ClientCtx.getPlayerName(a.playerId);
+        var bName :String = ClientCtx.getPlayerName(b.playerId);
 
         return aName.localeCompare(bName);
     }

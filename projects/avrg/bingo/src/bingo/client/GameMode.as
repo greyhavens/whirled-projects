@@ -13,7 +13,7 @@ public class GameMode extends AppMode
 {
     override protected function setup () :void
     {
-        ClientContext.gameMode = this;
+        ClientCtx.gameMode = this;
 
         // setup visuals
         _gameUILayer = new Sprite();
@@ -28,22 +28,22 @@ public class GameMode extends AppMode
         this.hideHelpScreen();
 
         // wire up event handlers with priority 1 to get state updates before UI controllers
-        registerListener(ClientContext.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.GAME_STATE_CHANGED,
             handleGameStateChange, false, 1);
-        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.NEW_BALL,
             handleNewBall, false, 1);
-        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_SCORES,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.NEW_SCORES,
             handleNewScores, false, 1);
 
         // get current game state
-        var curState :SharedState = ClientContext.model.curState;
+        var curState :SharedState = ClientCtx.model.curState;
 
         handleGameStateChange();
     }
 
     protected function handleGameStateChange (...ignored) :void
     {
-        switch (ClientContext.model.curState.gameState) {
+        switch (ClientCtx.model.curState.gameState) {
         case SharedState.STATE_PLAYING:
             this.handleNewRound();
             break;
@@ -60,8 +60,8 @@ public class GameMode extends AppMode
         this.destroyObjectNamed(WinnerAnimationView.NAME);
 
         // create a new card
-        ClientContext.model.createNewCard();
-        this.addObject(new BingoCardView(ClientContext.model.card), _gameUILayer);
+        ClientCtx.model.createNewCard();
+        this.addObject(new BingoCardView(ClientCtx.model.card), _gameUILayer);
 
         this.startNewBallTimer();
 
@@ -75,12 +75,12 @@ public class GameMode extends AppMode
 
     protected function handleRoundOver () :void
     {
-        var card :BingoCard = ClientContext.model.card;
+        var card :BingoCard = ClientCtx.model.card;
         var numFilledSquares :int = (card != null ? card.numFilledSquares : 0);
         var wonRound :Boolean =
-                (ClientContext.model.curState.roundWinnerId == ClientContext.ourPlayerId);
+                (ClientCtx.model.curState.roundWinnerId == ClientCtx.ourPlayerId);
 
-        if (_roundInPlay && ClientContext.model.numPlayers > 1 && numFilledSquares > 0) {
+        if (_roundInPlay && ClientCtx.model.numPlayers > 1 && numFilledSquares > 0) {
 
             // if _roundInPlay is true, we didn't enter the game during the "we have a winner"
             // state, so count the round towards our total
@@ -109,7 +109,7 @@ public class GameMode extends AppMode
                     _roundsWonConsec,
                     trophies);
 
-                for each (var config :Array in ClientContext.model.card.winningConfigurations) {
+                for each (var config :Array in ClientCtx.model.card.winningConfigurations) {
                     Trophies.getBoardTrophies(config, trophies);
                 }
 
@@ -118,13 +118,13 @@ public class GameMode extends AppMode
                 // this round, so that we can get some consolation coins
 
                 if (numFilledSquares > 0) {
-                    ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_CONSOLATIONPRIZE,
+                    ClientCtx.gameCtrl.agent.sendMessage(Constants.MSG_CONSOLATIONPRIZE,
                         numFilledSquares);
                 }
             }
 
             if (numFilledSquares > 0 && trophies.size() > 0) {
-                ClientContext.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
+                ClientCtx.gameCtrl.agent.sendMessage(Constants.MSG_WONTROPHIES,
                     trophies.toArray());
             }
         }
@@ -145,8 +145,8 @@ public class GameMode extends AppMode
         // destroy the bingo card view if it exists
         this.destroyObjectNamed(BingoCardView.NAME);
 
-        var winnerId :int = ClientContext.model.curState.roundWinnerId;
-        var winnerName :String = ClientContext.getPlayerName(winnerId);
+        var winnerId :int = ClientCtx.model.curState.roundWinnerId;
+        var winnerName :String = ClientCtx.getPlayerName(winnerId);
 
         // the WinnerAnimationController will destroy itself when the animation is complete.
         // We check for the presence of the controller in update(), and when it's gone, we

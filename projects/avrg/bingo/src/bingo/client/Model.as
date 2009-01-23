@@ -21,8 +21,8 @@ public class Model extends EventDispatcher
 {
     public function setup () :void
     {
-        _agentCtrl = ClientContext.gameCtrl.agent;
-        _propsCtrl = ClientContext.gameCtrl.room.props;
+        _agentCtrl = ClientCtx.gameCtrl.agent;
+        _propsCtrl = ClientCtx.gameCtrl.room.props;
 
         _propsCtrl.addEventListener(PropertyChangedEvent.PROPERTY_CHANGED, propChanged);
 
@@ -90,14 +90,14 @@ public class Model extends EventDispatcher
 
     public function getPlayerOids () :Array
     {
-        return ClientContext.gameCtrl.room.getPlayerIds();
+        return ClientCtx.gameCtrl.room.getPlayerIds();
     }
 
     public function getPlayerNames () :Array
     {
         return this.getPlayerOids().map(
             function (id :int, ...ignored) :String {
-                return ClientContext.getPlayerName(id);
+                return ClientCtx.getPlayerName(id);
             });
     }
 

@@ -24,7 +24,7 @@ public class BingoCardView extends SceneObject
     {
         _card = card;
 
-        _cardView = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "board", "Bingo_Board");
+        _cardView = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "board", "Bingo_Board");
 
         // draw the items
         for (var row :int = 0; row < card.height; ++row) {
@@ -65,8 +65,8 @@ public class BingoCardView extends SceneObject
 
     override protected function addedToDB () :void
     {
-        registerListener(ClientContext.model, SharedStateChangedEvent.NEW_BALL, handleNewBall);
-        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientCtx.model, SharedStateChangedEvent.NEW_BALL, handleNewBall);
+        registerListener(ClientCtx.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
 
         handleSizeChanged();
@@ -86,7 +86,7 @@ public class BingoCardView extends SceneObject
     {
         // if the round is over, or we've already reached our
         // max-clicks-per-ball limit, don't accept clicks
-        if (!ClientContext.model.roundInPlay ||
+        if (!ClientCtx.model.roundInPlay ||
             (!Constants.ALLOW_CHEATS && _numMatchesThisBall >= Constants.MAX_MATCHES_PER_BALL)) {
             return;
         }
@@ -96,7 +96,7 @@ public class BingoCardView extends SceneObject
             var item :BingoItem = _card.getItemAt(col, row);
 
             if (null != item && (Constants.ALLOW_CHEATS || 
-                item.containsTag(ClientContext.model.curState.ballInPlay))) {
+                item.containsTag(ClientCtx.model.curState.ballInPlay))) {
                 _card.setFilledAt(col, row);
 
                 gridSquare.gotoAndStop(2);
@@ -116,7 +116,7 @@ public class BingoCardView extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = ClientContext.getScreenBounds();
+        var screenBounds :Rectangle = ClientCtx.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,

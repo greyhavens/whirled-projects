@@ -26,35 +26,35 @@ public class BingoMain extends Sprite
         var config :Config = new Config();
         config.hostSprite = this;
         _sg = new SimpleGame(config);
-        ClientContext.mainLoop = _sg.ctx.mainLoop;
-        ClientContext.rsrcs = _sg.ctx.rsrcs;
-        ClientContext.audio = _sg.ctx.audio;
+        ClientCtx.mainLoop = _sg.ctx.mainLoop;
+        ClientCtx.rsrcs = _sg.ctx.rsrcs;
+        ClientCtx.audio = _sg.ctx.audio;
 
         // load resources
-        ClientContext.rsrcs.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
-        ClientContext.rsrcs.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
-        ClientContext.rsrcs.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
-        ClientContext.rsrcs.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
+        ClientCtx.rsrcs.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
+        ClientCtx.rsrcs.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
+        ClientCtx.rsrcs.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
+        ClientCtx.rsrcs.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
 
-        ClientContext.rsrcs.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
+        ClientCtx.rsrcs.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
     }
 
     protected function maybeShowIntro () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            ClientContext.gameCtrl = new AVRGameControl(this);
-            ClientContext.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
+            ClientCtx.gameCtrl = new AVRGameControl(this);
+            ClientCtx.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
 
-            ClientContext.ourPlayerId = (ClientContext.gameCtrl.isConnected()
-                ? ClientContext.gameCtrl.player.getPlayerId() : 666);
+            ClientCtx.ourPlayerId = (ClientCtx.gameCtrl.isConnected()
+                ? ClientCtx.gameCtrl.player.getPlayerId() : 666);
 
-            ClientContext.items = new BingoItemManager(ClientBingoItems.ITEMS);
+            ClientCtx.items = new BingoItemManager(ClientBingoItems.ITEMS);
 
-            ClientContext.model = new Model();
-            ClientContext.model.setup();
+            ClientCtx.model = new Model();
+            ClientCtx.model.setup();
 
             _sg.run();
-            ClientContext.mainLoop.pushMode(new IntroMode());
+            ClientCtx.mainLoop.pushMode(new IntroMode());
         }
     }
 
@@ -81,15 +81,14 @@ public class BingoMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
-        ClientContext.model.destroy();
-
-        ClientContext.mainLoop.shutdown();
+        ClientCtx.model.destroy();
+        _sg.shutdown();
     }
 
     protected function leftRoom (e :Event) :void
     {
         log.debug("leftRoom");
-        ClientContext.quit();
+        ClientCtx.quit();
     }
 
     protected var _sg :SimpleGame;

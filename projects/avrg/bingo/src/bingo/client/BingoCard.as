@@ -26,7 +26,7 @@ public class BingoCard
         } else {
             items = new Array(numItems);
             for (var i :int = 0; i < numItems; ++i) {
-                items[i] = ClientContext.items.getRandomItem();
+                items[i] = ClientCtx.items.getRandomItem();
             }
         }
 
@@ -55,7 +55,7 @@ public class BingoCard
 
         if (!_isComplete) {
             _isComplete = this.checkComplete();
-            ClientContext.model.dispatchEvent(new LocalStateChangedEvent(
+            ClientCtx.model.dispatchEvent(new LocalStateChangedEvent(
                 LocalStateChangedEvent.CARD_COMPLETED));
         }
     }

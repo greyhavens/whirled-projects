@@ -22,7 +22,7 @@ public class WinnerAnimationView extends SceneObject
     public function WinnerAnimationView (playerName :String)
     {
         _animationParent = new Sprite();
-        _winnerAnim = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "board", "bingo_winner_animation");
+        _winnerAnim = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "board", "bingo_winner_animation");
         _animationParent.addChild(_winnerAnim);
 
         // ugh - traverse the MovieClip's crazy display hierarchy
@@ -33,14 +33,14 @@ public class WinnerAnimationView extends SceneObject
 
         playerTextField.text = playerName;
 
-        ClientContext.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
-        ClientContext.gameMode.addObject(new SimpleTimer(
+        ClientCtx.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
+        ClientCtx.gameMode.addObject(new SimpleTimer(
             Constants.NEW_ROUND_DELAY_S, null, false, NEXT_ROUND_TIMER_NAME));
 
         // Listen for the "complete" event. We'll show the countdown timer afterwards.
         registerOneShotCallback(_winnerAnim, Event.COMPLETE, winnerAnimComplete);
 
-        registerListener(ClientContext.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
+        registerListener(ClientCtx.gameCtrl.local, AVRGameControlEvent.SIZE_CHANGED,
             handleSizeChanged);
     }
 
@@ -55,11 +55,11 @@ public class WinnerAnimationView extends SceneObject
         _winnerAnim = null;
 
         // and show the countdown timer
-        var animView :MovieClip = SwfResource.instantiateMovieClip(ClientContext.rsrcs, "board", "board_time_left");
+        var animView :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "board", "board_time_left");
         _animationParent.addChild(animView);
 
         _countdownText = animView["inst_time_left"];
-        updateCountdownText(SimpleTimer.getTimeLeft(ClientContext.mainLoop, NEXT_ROUND_TIMER_NAME));
+        updateCountdownText(SimpleTimer.getTimeLeft(ClientCtx.mainLoop, NEXT_ROUND_TIMER_NAME));
     }
 
     override protected function update (dt :Number) :void
@@ -67,10 +67,10 @@ public class WinnerAnimationView extends SceneObject
         super.update(dt);
 
         if (_countdownText != null) {
-            var timeLeft :Number = SimpleTimer.getTimeLeft(ClientContext.mainLoop, NEXT_ROUND_TIMER_NAME);
+            var timeLeft :Number = SimpleTimer.getTimeLeft(ClientCtx.mainLoop, NEXT_ROUND_TIMER_NAME);
             this.updateCountdownText(timeLeft);
             if (timeLeft <= 0) {
-                ClientContext.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
+                ClientCtx.gameMode.destroyObjectNamed(NEXT_ROUND_TIMER_NAME);
                 this.destroySelf();
             }
         }
@@ -112,7 +112,7 @@ public class WinnerAnimationView extends SceneObject
 
     protected function get properLocation () :Point
     {
-        var screenBounds :Rectangle = ClientContext.getScreenBounds();
+        var screenBounds :Rectangle = ClientCtx.getScreenBounds();
 
         return new Point(
             screenBounds.right + Constants.CARD_SCREEN_EDGE_OFFSET.x,
