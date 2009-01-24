@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>BloodBloom</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>/Applications/Adobe Flex Builder 3/sdks/3.1.0/frameworks/projects/framework/src</location>
+		</link>
+		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/whirled/src/as</location>
+		</link>
+		<link>
+			<name>[source path] narya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/narya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] contrib-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/contrib/src/as</location>
+		</link>
+		<link>
+			<name>[source path] toybox-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/toybox/src/as</location>
+		</link>
+		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/nenya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] vilya-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/vilya/src/as</location>
+		</link>
+		<link>
+			<name>[source path] player</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/narya/src/player</location>
+		</link>
+	</linkedResources>
+</projectDescription>
