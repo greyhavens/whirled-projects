@@ -2,7 +2,6 @@ package popcraft.lobby {
 
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.resource.ImageResource;
 
 import flash.display.DisplayObject;
 import flash.display.SimpleButton;
@@ -23,20 +22,27 @@ public class MultiplayerFailureMode extends TransitionMode
         _soundChannel = ClientCtx.audio.playSoundNamed("sfx_introscreen", null, -1);
 
         var tf :DisplayObject = UIBits.createTextPanel(
-            "Your classmates have fled!\nPlay by yourself instead?",
+            "Your classmates have fled!",
             3, 0, 0, TextFormatAlign.CENTER, 20, 15);
 
         tf.x = (Constants.SCREEN_SIZE.x - tf.width) * 0.5;
         tf.y = 30;
+        _modeLayer.addChild(tf);
 
-        this.modeSprite.addChild(tf);
+        var gatherButton :SimpleButton = UIBits.createButton("Gather Another Game", 3);
+        gatherButton.x = (Constants.SCREEN_SIZE.x - gatherButton.width) * 0.5;
+        gatherButton.y = (Constants.SCREEN_SIZE.y - gatherButton.height) * 0.5;
+        _modeLayer.addChild(gatherButton);
+        registerOneShotCallback(gatherButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.gameCtrl.local.showGameLobby(true);
+            });
 
-        _button = UIBits.createButton("OK", 2);
-        _button.x = (Constants.SCREEN_SIZE.x - _button.width) * 0.5;
-        _button.y = tf.y + tf.height + 30;
-        this.modeSprite.addChild(_button);
-
-        registerOneShotCallback(_button, MouseEvent.CLICK,
+        var singlePlayerButton :SimpleButton = UIBits.createButton("Play Alone", 2);
+        singlePlayerButton.x = (Constants.SCREEN_SIZE.x - singlePlayerButton.width) * 0.5;
+        singlePlayerButton.y = gatherButton.y + gatherButton.height + 10;
+        _modeLayer.addChild(singlePlayerButton);
+        registerOneShotCallback(singlePlayerButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES,
                                                  LevelSelectMode.create);
@@ -49,7 +55,6 @@ public class MultiplayerFailureMode extends TransitionMode
         super.destroy();
     }
 
-    protected var _button :SimpleButton;
     protected var _soundChannel :AudioChannel;
 }
 
