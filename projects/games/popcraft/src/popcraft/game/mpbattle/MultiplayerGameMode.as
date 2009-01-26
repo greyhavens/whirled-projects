@@ -54,7 +54,7 @@ public class MultiplayerGameMode extends GameMode
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
         // structures with base locations so that we can put everyone in the correct place.
-        var baseLocs :Array = GameContext.gameMode.mapSettings.baseLocs.slice();
+        var baseLocs :Array = GameCtx.gameMode.mapSettings.baseLocs.slice();
         var teamSizes :Array = ClientCtx.lobbyConfig.computeTeamSizes();
         var teamInfos :Array = [];
         var teamInfo :TeamInfo;
@@ -81,18 +81,18 @@ public class MultiplayerGameMode extends GameMode
 
         // get some information about the players in the game
         var numPlayers :int = ClientCtx.seatingMgr.numExpectedPlayers;
-        GameContext.localPlayerIndex = ClientCtx.seatingMgr.localPlayerSeat;
+        GameCtx.localPlayerIndex = ClientCtx.seatingMgr.localPlayerSeat;
 
-        var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
+        var workshopData :UnitData = GameCtx.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
-        var playerDisplayDatas :Array = GameContext.gameData.playerDisplayDatas.values().filter(
+        var playerDisplayDatas :Array = GameCtx.gameData.playerDisplayDatas.values().filter(
             function (pdd :PlayerDisplayData, index :int, arr :Array) :Boolean {
                 return !pdd.excludeFromMpBattle;
             });
 
         // create PlayerInfo structures
-        GameContext.playerInfos = [];
+        GameCtx.playerInfos = [];
         for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
             teamId = teams[playerIndex];
             teamInfo = teamInfos[teamId];
@@ -113,7 +113,7 @@ public class MultiplayerGameMode extends GameMode
             playerDisplayDatas.splice(index, 1); // we're operating on a copy of the data
             var playerColor :uint = playerDisplayData.color;
 
-            GameContext.playerInfos.push(GameContext.localPlayerIndex == playerIndex ?
+            GameCtx.playerInfos.push(GameCtx.localPlayerIndex == playerIndex ?
                 new LocalPlayerInfo(
                     playerIndex,
                     teamId,
@@ -138,7 +138,7 @@ public class MultiplayerGameMode extends GameMode
         }
 
         // init players
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
             playerInfo.init();
         }
     }
@@ -156,7 +156,7 @@ public class MultiplayerGameMode extends GameMode
 
     override protected function get gameType () :int
     {
-        return GameContext.GAME_TYPE_BATTLE_MP;
+        return GameCtx.GAME_TYPE_BATTLE_MP;
     }
 
     override protected function get gameData () :GameData
@@ -168,8 +168,8 @@ public class MultiplayerGameMode extends GameMode
     {
         fadeOutToMode(new MultiplayerGameOverMode(), FADE_OUT_TIME);
 
-        GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
-        GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameCtx.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameCtx.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
     protected var _mpSettings :MultiplayerSettingsData;

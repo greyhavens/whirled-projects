@@ -81,7 +81,7 @@ public class EndlessLevelSelectModeBase extends AppMode
                 new TimedTask(2),
                 new FunctionTask(
                     function () :void {
-                        animateToMode(new EndlessGameMode(GameContext.isMultiplayerGame,
+                        animateToMode(new EndlessGameMode(GameCtx.isMultiplayerGame,
                                       EndlessGameContext.level, null, false));
                     })));
             addObject(interstitialAnimObj);
@@ -561,7 +561,7 @@ class SaveView extends SceneObject
                     levelScoreText.visible = false;
 
                 } else {
-                    var playerInfo :PlayerInfo = GameContext.playerInfos[score.playerIndex];
+                    var playerInfo :PlayerInfo = GameCtx.playerInfos[score.playerIndex];
                     portrait.addChild(playerInfo.headshot);
                     scorePanel.visible = true;
                     levelScoreText.text = "Resource score: " +
@@ -584,7 +584,7 @@ class SaveView extends SceneObject
             var opponentNames :Array = [];
             for each (var opponentData :EndlessComputerPlayerData in mapData.computers) {
                 var displayData :PlayerDisplayData =
-                    GameContext.gameData.getPlayerDisplayData(opponentData.playerName);
+                    GameCtx.gameData.getPlayerDisplayData(opponentData.playerName);
                 var opponentPortrait :DisplayObject = displayData.headshot;
                 opponentPortrait.x = xLoc;
                 opponentPortraitSprite.addChild(opponentPortrait);

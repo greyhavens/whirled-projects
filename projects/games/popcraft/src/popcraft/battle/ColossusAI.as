@@ -102,7 +102,7 @@ class DetectColossusTargetAction extends DetectCreatureAction
         var detectedUnit :Unit = detectedCreature;
         if (null == detectedUnit) {
             // are we in range of an enemy base?
-            var baseRefs :Array = GameContext.netObjects.getObjectRefsInGroup(WorkshopUnit.GROUP_NAME);
+            var baseRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(WorkshopUnit.GROUP_NAME);
             for each (var baseRef :SimObjectRef in baseRefs) {
                 var base :WorkshopUnit = baseRef.object as WorkshopUnit;
                 if (null != base && AIPredicates.isAttackableEnemyPredicate(thisCreature, base)) {

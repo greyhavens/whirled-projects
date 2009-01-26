@@ -60,8 +60,8 @@ public class StoryGameMode extends GameMode
 
         // only resources earned while under "par" are counted toward the totalResourcesEarned count
         // for the purposes of player score
-        if (GameContext.isStoryGame &&
-            GameContext.diurnalCycle.dayCount <= _level.expertCompletionDays) {
+        if (GameCtx.isStoryGame &&
+            GameCtx.diurnalCycle.dayCount <= _level.expertCompletionDays) {
             _totalResourcesEarned += actualResourcesEarned;
         }
 
@@ -90,7 +90,7 @@ public class StoryGameMode extends GameMode
 
     override protected function get gameType () :int
     {
-        return GameContext.GAME_TYPE_STORY;
+        return GameCtx.GAME_TYPE_STORY;
     }
 
     override protected function get gameData () :GameData
@@ -101,14 +101,14 @@ public class StoryGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        GameContext.localPlayerIndex = 0;
-        GameContext.playerInfos = [];
+        GameCtx.localPlayerIndex = 0;
+        GameCtx.playerInfos = [];
 
         var baseLocs :Array = _level.mapSettings.baseLocs.slice();
 
         // Create the local player (always playerIndex=0, team=0)
         var playerDisplayData :PlayerDisplayData =
-            GameContext.gameData.getPlayerDisplayData(_level.playerName);
+            GameCtx.gameData.getPlayerDisplayData(_level.playerName);
         var localPlayerInfo :LocalPlayerInfo = new LocalPlayerInfo(
             0, 0,
             MapSettingsData.getNextBaseLocForTeam(baseLocs, 0),
@@ -128,7 +128,7 @@ public class StoryGameMode extends GameMode
             localPlayerInfo.addSpell(spellType, int(initialSpells[spellType]));
         }
 
-        GameContext.playerInfos.push(localPlayerInfo);
+        GameCtx.playerInfos.push(localPlayerInfo);
 
         // create computer players
         var numComputers :int = _level.computers.length;
@@ -138,11 +138,11 @@ public class StoryGameMode extends GameMode
                 cpData.team);
             var computerPlayerInfo :ComputerPlayerInfo = new ComputerPlayerInfo(playerIndex,
                 baseLoc, cpData);
-            GameContext.playerInfos.push(computerPlayerInfo);
+            GameCtx.playerInfos.push(computerPlayerInfo);
         }
 
         // init players
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
             playerInfo.init();
         }
     }
@@ -163,7 +163,7 @@ public class StoryGameMode extends GameMode
         var nextMode :AppMode;
         var levelPackResources :Array = [];
         if (ClientCtx.levelMgr.isLastLevel &&
-            GameContext.winningTeamId == GameContext.localPlayerInfo.teamId) {
+            GameCtx.winningTeamId == GameCtx.localPlayerInfo.teamId) {
 
             nextMode = new EpilogueMode(EpilogueMode.TRANSITION_LEVELOUTRO, _level);
             levelPackResources = Resources.EPILOGUE_RESOURCES;
@@ -176,8 +176,8 @@ public class StoryGameMode extends GameMode
             Resources.loadLevelPackResourcesAndSwitchModes(levelPackResources, nextMode);
         }, FADE_OUT_TIME);
 
-        GameContext.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
-        GameContext.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameCtx.musicControls.fadeOut(FADE_OUT_TIME - 0.25);
+        GameCtx.sfxControls.fadeOut(FADE_OUT_TIME - 0.25);
     }
 
     public function get totalResourcesEarned () :int

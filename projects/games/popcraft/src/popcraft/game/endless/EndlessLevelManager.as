@@ -55,10 +55,10 @@ public class EndlessLevelManager
     public function saveCurrentGame () :void
     {
         var saveList :SavedEndlessGameList =
-            (GameContext.isSinglePlayerGame ? _savedSpGames : _savedMpGames);
+            (GameCtx.isSinglePlayerGame ? _savedSpGames : _savedMpGames);
 
         var savedPlayerData :SavedLocalPlayerInfo =
-            EndlessGameContext.savedHumanPlayers[GameContext.localPlayerIndex];
+            EndlessGameContext.savedHumanPlayers[GameCtx.localPlayerIndex];
 
         // this is called when a level is ending, so we increment mapIndex
         var newSave :SavedEndlessGame = SavedEndlessGame.create(

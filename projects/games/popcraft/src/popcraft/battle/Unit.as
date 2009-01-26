@@ -32,9 +32,9 @@ public class Unit extends SimObject
     public function Unit (owningPlayerIndex :int, unitType :int)
     {
         _unitType = unitType;
-        _owningPlayerInfo = GameContext.playerInfos[owningPlayerIndex];
+        _owningPlayerInfo = GameCtx.playerInfos[owningPlayerIndex];
 
-        _unitData = GameContext.gameData.units[unitType];
+        _unitData = GameCtx.gameData.units[unitType];
         _minHealth = _unitData.minHealth;
         _maxHealth = _unitData.maxHealth;
         _health = _maxHealth;
@@ -165,7 +165,7 @@ public class Unit extends SimObject
         // find all affected units
         var totalDamageRemaining :Number = weapon.aoeMaxDamage;
         var totalDamage :Number = 0;
-        var refs :Array = GameContext.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
+        var refs :Array = GameCtx.netObjects.getObjectRefsInGroup(Unit.GROUP_NAME);
         for each (var ref :SimObjectRef in refs) {
             var unit :Unit = ref.object as Unit;
             if (null == unit) {
@@ -208,7 +208,7 @@ public class Unit extends SimObject
             // fade out and die
             aoeObj.addTask(After(1, new SerialTask(new AlphaTask(0, 0.3), new SelfDestructTask())));
 
-            GameContext.gameMode.addObject(aoeObj, GameContext.battleBoardView.unitViewParent);
+            GameCtx.gameMode.addObject(aoeObj, GameCtx.battleBoardView.unitViewParent);
         }
 
         return totalDamage;
@@ -216,7 +216,7 @@ public class Unit extends SimObject
 
     public function receiveAttack (attack :UnitAttack, maxDamage :Number = Number.MAX_VALUE) :Number
     {
-        var damage :Number = (GameContext.gameMode.isGameOver ? 0 :
+        var damage :Number = (GameCtx.gameMode.isGameOver ? 0 :
             Math.min(getAttackDamage(attack), maxDamage));
 
         // if we have a damage shield, it will absorb the damage from this attack

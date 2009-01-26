@@ -339,8 +339,8 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function updateTutorial () :void
     {
-        _unitIntro.visible = GameContext.localPlayerInfo.canAffordCreature(Constants.UNIT_TYPE_GRUNT);
-        _resourceIntro.visible = !_unitIntro.visible && GameContext.localPlayerInfo.totalResourceAmount > 0;
+        _unitIntro.visible = GameCtx.localPlayerInfo.canAffordCreature(Constants.UNIT_TYPE_GRUNT);
+        _resourceIntro.visible = !_unitIntro.visible && GameCtx.localPlayerInfo.totalResourceAmount > 0;
         _puzzleIntro.visible = !_unitIntro.visible && !_resourceIntro.visible;
     }
 
@@ -349,7 +349,7 @@ public class LevelSelectMode extends DemoGameMode
     {
         super.sendCreateCreatureMsg(playerIndex, unitType, count, isAiMsg);
 
-        if (null != _playButtonObj && playerIndex == GameContext.localPlayerIndex && !_playButtonObj.hasTasks()) {
+        if (null != _playButtonObj && playerIndex == GameCtx.localPlayerIndex && !_playButtonObj.hasTasks()) {
             // the play button starts pulsing when the player creates a creature
             _playButtonObj.addTask(new RepeatingTask(
                 ScaleTask.CreateEaseIn(1.1, 1.1, 0.5),

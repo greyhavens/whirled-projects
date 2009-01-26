@@ -71,7 +71,7 @@ public class PlayerScoreMsg
     public function get isValid () :Boolean
     {
         return (playerIndex >= 0 &&
-            playerIndex < GameContext.numPlayers &&
+            playerIndex < GameCtx.numPlayers &&
             totalScore >= 0 &&
             totalScoreThisRound >= 0 &&
             roundId >= 0);

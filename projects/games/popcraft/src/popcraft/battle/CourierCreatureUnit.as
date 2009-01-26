@@ -18,7 +18,7 @@ public class CourierCreatureUnit extends CreatureUnit
 {
     public static function getNumPlayerCouriersOnBoard (playerIndex :int) :int
     {
-        return GameContext.netObjects.getObjectRefsInGroup(getGroupName(playerIndex)).length;
+        return GameCtx.netObjects.getObjectRefsInGroup(getGroupName(playerIndex)).length;
     }
 
     public function CourierCreatureUnit (owningPlayerIndex :int)
@@ -35,7 +35,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         Assert.isNull(_carriedSpell);
         _carriedSpell = new CarriedSpellObject(spellObject.spellType);
-        GameContext.netObjects.addObject(_carriedSpell);
+        GameCtx.netObjects.addObject(_carriedSpell);
         spellObject.destroySelf();
     }
 
@@ -52,7 +52,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         Assert.isNotNull(_carriedSpell);
 
-        GameContext.gameMode.spellDeliveredToPlayer(_owningPlayerInfo.playerIndex,
+        GameCtx.gameMode.spellDeliveredToPlayer(_owningPlayerInfo.playerIndex,
             _carriedSpell.spellType);
 
         destroyCarriedSpell();
@@ -118,7 +118,7 @@ public class CourierCreatureUnit extends CreatureUnit
     {
         // the Courier pauses for less time when there are other friendly
         // Couriers on the battlefield
-        var numCouriers :int = GameContext.netObjects.getObjectRefsInGroup(_groupName).length;
+        var numCouriers :int = GameCtx.netObjects.getObjectRefsInGroup(_groupName).length;
         _speedup = numCouriers * CourierSettings.SPEEDUP_PER_COURIER;
         _speedup = Math.max(_speedup, 0);
         _speedup = Math.min(_speedup, CourierSettings.MAX_SPEEDUP);
@@ -403,11 +403,11 @@ class WanderTask extends AITaskTree
         // clamp
         wanderLoc.x = Math.max(wanderLoc.x, CourierSettings.WANDER_BOUNDS_BORDER);
         wanderLoc.x = Math.min(wanderLoc.x,
-            GameContext.gameMode.battlefieldWidth - CourierSettings.WANDER_BOUNDS_BORDER);
+            GameCtx.gameMode.battlefieldWidth - CourierSettings.WANDER_BOUNDS_BORDER);
 
         wanderLoc.y = Math.max(wanderLoc.y, CourierSettings.WANDER_BOUNDS_BORDER);
         wanderLoc.y = Math.min(wanderLoc.y,
-            GameContext.gameMode.battlefieldHeight - CourierSettings.WANDER_BOUNDS_BORDER);
+            GameCtx.gameMode.battlefieldHeight - CourierSettings.WANDER_BOUNDS_BORDER);
 
         // commence wandering!
         addSubtask(new CourierMoveTask(_unit, wanderLoc));

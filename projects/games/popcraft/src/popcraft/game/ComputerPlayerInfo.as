@@ -12,7 +12,7 @@ public class ComputerPlayerInfo extends PlayerInfo
         data :ComputerPlayerData)
     {
         var playerDisplayData :PlayerDisplayData =
-            GameContext.gameData.getPlayerDisplayData(data.playerName);
+            GameCtx.gameData.getPlayerDisplayData(data.playerName);
 
         super(playerIndex, data.team, baseLoc, data.baseHealth, data.baseStartHealth,
             data.invincible, 1, playerDisplayData.color, data.playerName,
@@ -29,7 +29,7 @@ public class ComputerPlayerInfo extends PlayerInfo
     override public function init () :void
     {
         super.init();
-        _aiRef = GameContext.netObjects.addObject(createAi());
+        _aiRef = GameCtx.netObjects.addObject(createAi());
     }
 
     override public function destroy () :void

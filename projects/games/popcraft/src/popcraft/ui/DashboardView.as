@@ -36,7 +36,7 @@ public class DashboardView extends SceneObject
 
         // If "useSpecialPuzzleFrame" is set, our resource rarities are inverted, and we need to
         // draw a special overlay on the puzzle frame.
-        if (GameContext.gameData.puzzleData.useSpecialPuzzleFrame) {
+        if (GameCtx.gameData.puzzleData.useSpecialPuzzleFrame) {
             var overlay :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "resourced", true);
             var overlayParent :MovieClip = _puzzleFrame["resourced_placer"];
             overlayParent.addChild(overlay);
@@ -53,7 +53,7 @@ public class DashboardView extends SceneObject
             var resourceTextName :String = RESOURCE_TEXT_NAMES[resType];
             var resourceText :TextField = _puzzleFrame[resourceTextName];
             var resourceTextObj :SimpleSceneObject = new SimpleSceneObject(resourceText);
-            GameContext.gameMode.addObject(resourceTextObj);
+            GameCtx.gameMode.addObject(resourceTextObj);
             _resourceTextObjs.push(resourceTextObj);
             _resourceBars.push(null);
             _oldResourceAmounts.push(-1);
@@ -65,12 +65,12 @@ public class DashboardView extends SceneObject
 
         var buttonNumber :int = 1;
         for (var unitType :int = 0; unitType < Constants.UNIT_TYPE__PLAYER_CREATURE_LIMIT; ++unitType) {
-            if (!GameContext.gameMode.isAvailableUnit(unitType)) {
+            if (!GameCtx.gameMode.isAvailableUnit(unitType)) {
                 // don't create buttons for unavailable units
                 continue;
             }
 
-            GameContext.gameMode.addObject(new CreaturePurchaseButton(unitType, buttonNumber++, unitParent));
+            GameCtx.gameMode.addObject(new CreaturePurchaseButton(unitType, buttonNumber++, unitParent));
         }
 
         // hide the components of all the buttons that aren't being used
@@ -89,11 +89,11 @@ public class DashboardView extends SceneObject
 
         // pause button only visible in single-player games
         var pauseButton :SimpleButton = _movie["pause"];
-        if (GameContext.gameMode.canPause) {
+        if (GameCtx.gameMode.canPause) {
             pauseButton.visible = true;
             registerListener(pauseButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    GameContext.gameMode.pause();
+                    GameCtx.gameMode.pause();
                 });
 
         } else {
@@ -102,13 +102,13 @@ public class DashboardView extends SceneObject
 
         // _spellSlots keeps track of whether the individual spell slots are occupied
         // or empty
-        var numSlots :int = GameContext.gameData.maxSpellsPerType * Constants.CASTABLE_SPELL_TYPE__LIMIT;
+        var numSlots :int = GameCtx.gameData.maxSpellsPerType * Constants.CASTABLE_SPELL_TYPE__LIMIT;
         for (var ii :int = 0; ii < numSlots; ++ii) {
             _spellSlots.push(false);
         }
 
         // we need to know when the player gets a spell
-        registerListener(GameContext.localPlayerInfo, GotSpellEvent.GOT_SPELL,
+        registerListener(GameCtx.localPlayerInfo, GotSpellEvent.GOT_SPELL,
             onGotSpell);
 
         updateResourceMeters();
@@ -131,7 +131,7 @@ public class DashboardView extends SceneObject
         }
 
         // discover which players don't have views created for them
-        for each (playerInfo in GameContext.playerInfos) {
+        for each (playerInfo in GameCtx.playerInfos) {
             if (ArrayUtil.findIf(liveViews,
                 function (view :PlayerStatusView) :Boolean {
                     return (view.playerInfo == playerInfo);
@@ -171,7 +171,7 @@ public class DashboardView extends SceneObject
             if (!liveView.isLiveObject) {
                 liveView.x = loc.x;
                 liveView.y = loc.y + liveView.height;
-                GameContext.gameMode.addObject(liveView, playerFrame);
+                GameCtx.gameMode.addObject(liveView, playerFrame);
             }
 
             // animate the view to its new location
@@ -186,7 +186,7 @@ public class DashboardView extends SceneObject
     {
         // add any spells the player already has to the dashboard
         for (var spellType :int = 0; spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT; ++spellType) {
-            var count :int = GameContext.localPlayerInfo.getSpellCount(spellType);
+            var count :int = GameCtx.localPlayerInfo.getSpellCount(spellType);
             for (var i :int = 0; i < count; ++i) {
                 createSpellButton(spellType, false);
             }
@@ -203,10 +203,10 @@ public class DashboardView extends SceneObject
             PUZZLE_SHUFFLE_TASK,
             new SerialTask(
                 new WaitForFrameTask("swap", _shuffleMovie),
-                new FunctionTask(function () :void { GameContext.puzzleBoard.puzzleShuffle(); })),
+                new FunctionTask(function () :void { GameCtx.puzzleBoard.puzzleShuffle(); })),
             true);
 
-        GameContext.playGameSound("sfx_puzzleshuffle");
+        GameCtx.playGameSound("sfx_puzzleshuffle");
     }
 
     protected function onGotSpell (e :GotSpellEvent) :void
@@ -217,7 +217,7 @@ public class DashboardView extends SceneObject
     protected function createSpellButton (spellType :int, animateIn :Boolean) :void
     {
         // find the first free spell slot to put this spell in
-        var numSlotsForType :int = GameContext.gameData.maxSpellsPerType;
+        var numSlotsForType :int = GameCtx.gameData.maxSpellsPerType;
 
         var slot :int = -1;
         var firstSlot :int = spellType * numSlotsForType;
@@ -256,7 +256,7 @@ public class DashboardView extends SceneObject
         if (!spellButton.isCastable) {
             spellButton.showUncastableJiggle();
         } else {
-            GameContext.gameMode.sendCastSpellMsg(GameContext.localPlayerIndex, spellButton.spellType,
+            GameCtx.gameMode.sendCastSpellMsg(GameCtx.localPlayerIndex, spellButton.spellType,
                 false);
             // un-occupy the slot
             _spellSlots[spellButton.slot] = false;
@@ -274,7 +274,7 @@ public class DashboardView extends SceneObject
         updateResourceMeters();
 
         // when the player dies, show the death panel
-        var playerDead :Boolean = !GameContext.localPlayerInfo.isAlive;
+        var playerDead :Boolean = !GameCtx.localPlayerInfo.isAlive;
         if (!this.showingDeathPanel && playerDead) {
             _deathPanel.y = 6;
             _deathPanel.visible = true;
@@ -293,11 +293,11 @@ public class DashboardView extends SceneObject
             _resurrectButton = UIBits.createButton("Resurrect", 2.5);
             _resurrectButton.x = RESURRECT_BUTTON_LOC.x - (_resurrectButton.width * 0.5);
             _resurrectButton.y = RESURRECT_BUTTON_LOC.y - (_resurrectButton.height * 0.5);
-            GameContext.dashboardLayer.addChild(_resurrectButton);
+            GameCtx.dashboardLayer.addChild(_resurrectButton);
 
             registerListener(_resurrectButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    GameContext.gameMode.sendResurrectPlayerMsg();
+                    GameCtx.gameMode.sendResurrectPlayerMsg();
                 });
         }
     }
@@ -310,8 +310,8 @@ public class DashboardView extends SceneObject
     protected function get showResurrectButton () :Boolean
     {
         return (showingDeathPanel &&
-            GameContext.canResurrect &&
-            GameContext.localPlayerInfo.canResurrect);
+            GameCtx.canResurrect &&
+            GameCtx.localPlayerInfo.canResurrect);
     }
 
     protected function updateResourceMeters () :void
@@ -323,7 +323,7 @@ public class DashboardView extends SceneObject
 
     protected function updateResourceMeter (resType :int) :void
     {
-        var resAmount :int = GameContext.localPlayerInfo.getResourceAmount(resType);
+        var resAmount :int = GameCtx.localPlayerInfo.getResourceAmount(resType);
 
         // only update if the resource amount has changed
         var oldResAmount :int = _oldResourceAmounts[resType];
@@ -349,7 +349,7 @@ public class DashboardView extends SceneObject
         g.clear();
 
         if (resAmount > 0) {
-            var color :uint = ResourceData(GameContext.gameData.puzzleData.resources[resType]).color;
+            var color :uint = ResourceData(GameCtx.gameData.puzzleData.resources[resType]).color;
             var meterLoc :Point = RESOURCE_METER_LOCS[resType];
 
             g.lineStyle(1, 0);
@@ -357,7 +357,7 @@ public class DashboardView extends SceneObject
             g.drawRect(
                 meterLoc.x,
                 meterLoc.y,
-                1 + (RESOURCE_METER_WIDTH * (resAmount / GameContext.localPlayerInfo.maxResourceAmount)),
+                1 + (RESOURCE_METER_WIDTH * (resAmount / GameCtx.localPlayerInfo.maxResourceAmount)),
                 RESOURCE_METER_HEIGHT);
             g.endFill();
         }

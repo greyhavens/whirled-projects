@@ -25,7 +25,7 @@ public class DiurnalCycleView extends SceneObject
 
         _moon.cacheAsBitmap = true;
 
-        dayPhaseChanged(GameContext.gameData.initialDayPhase, true);
+        dayPhaseChanged(GameCtx.gameData.initialDayPhase, true);
     }
 
     override protected function destroyed () :void
@@ -38,14 +38,14 @@ public class DiurnalCycleView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var diurnalCycle :DiurnalCycle = GameContext.diurnalCycle;
+        var diurnalCycle :DiurnalCycle = GameCtx.diurnalCycle;
         var newPhase :int = diurnalCycle.phaseOfDay;
         if (newPhase != _lastPhase) {
             dayPhaseChanged(newPhase, true);
         }
 
-        if (!_playedDawnSound && diurnalCycle.isNight && diurnalCycle.timeTillNextPhase <= GameContext.gameData.dawnWarning) {
-            GameContext.playGameSound("sfx_dawn");
+        if (!_playedDawnSound && diurnalCycle.isNight && diurnalCycle.timeTillNextPhase <= GameCtx.gameData.dawnWarning) {
+            GameCtx.playGameSound("sfx_dawn");
             _playedDawnSound = true;
         } else if (_playedDawnSound && diurnalCycle.isDay) {
             _playedDawnSound = false;
@@ -94,7 +94,7 @@ public class DiurnalCycleView extends SceneObject
         }
 
         if (playSound) {
-            GameContext.playGameSound(soundName);
+            GameCtx.playGameSound(soundName);
         }
 
         if (null != _curVisibleBody) {

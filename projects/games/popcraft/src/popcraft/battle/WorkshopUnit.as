@@ -42,7 +42,7 @@ public class WorkshopUnit extends Unit
         var wasDead :Boolean = _isDead;
         var damageTaken :Number = super.receiveAttack(attack, maxDamage);
         if (!wasDead && _isDead) {
-            GameContext.gameMode.workshopKilled(this, attack.attackingUnitOwningPlayerIndex);
+            GameCtx.gameMode.workshopKilled(this, attack.attackingUnitOwningPlayerIndex);
         }
         return damageTaken;
     }

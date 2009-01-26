@@ -23,12 +23,12 @@ public class PlayerStatusView extends SceneObject
 
     public static function getAll () :Array
     {
-        return GameContext.gameMode.getObjectsInGroup(GROUP_NAME);
+        return GameCtx.gameMode.getObjectsInGroup(GROUP_NAME);
     }
 
     public function PlayerStatusView (playerIndex :int)
     {
-        _playerInfo = GameContext.playerInfos[playerIndex];
+        _playerInfo = GameCtx.playerInfos[playerIndex];
 
         _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "player_slot", true);
         _movie.cacheAsBitmap = true;

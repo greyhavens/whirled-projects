@@ -16,12 +16,12 @@ public class TrophyWatcher
         var hasCryHavoc :Boolean = ClientCtx.hasTrophy(Trophies.CRYHAVOC);
 
         if (!hasDoomsday) {
-            _localPlayerSpellSet = GameContext.getActiveSpellSet(GameContext.localPlayerIndex);
+            _localPlayerSpellSet = GameCtx.getActiveSpellSet(GameCtx.localPlayerIndex);
             _localPlayerSpellSet.addEventListener(CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
         }
 
         if (!hasDoomsday || !hasCryHavoc) {
-            GameContext.unitFactory.addEventListener(UnitCreatedEvent.UNIT_CREATED, onUnitCreated);
+            GameCtx.unitFactory.addEventListener(UnitCreatedEvent.UNIT_CREATED, onUnitCreated);
         }
     }
 
@@ -32,7 +32,7 @@ public class TrophyWatcher
 
     protected function onUnitCreated (e :UnitCreatedEvent) :void
     {
-        if (e.owningPlayerIndex == GameContext.localPlayerIndex) {
+        if (e.owningPlayerIndex == GameCtx.localPlayerIndex) {
             var unitType :int = e.unitType;
             if (unitType == Constants.UNIT_TYPE_COLOSSUS) {
                 checkDoomsdayTrophy();
@@ -50,7 +50,7 @@ public class TrophyWatcher
 
         if (_localPlayerSpellSet.isSpellActive(Constants.SPELL_TYPE_BLOODLUST) &&
             _localPlayerSpellSet.isSpellActive(Constants.SPELL_TYPE_RIGORMORTIS) &&
-            CreatureUnit.getNumPlayerCreatures(GameContext.localPlayerIndex, Constants.UNIT_TYPE_COLOSSUS) >=
+            CreatureUnit.getNumPlayerCreatures(GameCtx.localPlayerIndex, Constants.UNIT_TYPE_COLOSSUS) >=
                 Trophies.DOOMSDAY_BEHEMOTHS) {
             ClientCtx.awardTrophy(Trophies.DOOMSDAY);
         }
@@ -62,7 +62,7 @@ public class TrophyWatcher
             return;
         }
 
-        if (CreatureUnit.getNumPlayerCreatures(GameContext.localPlayerIndex, Constants.UNIT_TYPE_SAPPER) >=
+        if (CreatureUnit.getNumPlayerCreatures(GameCtx.localPlayerIndex, Constants.UNIT_TYPE_SAPPER) >=
              Trophies.CRYHAVOC_SAPPERS) {
             ClientCtx.awardTrophy(Trophies.CRYHAVOC);
         }

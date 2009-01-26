@@ -18,7 +18,7 @@ public class DetectCreatureAction extends AITask
 
     override public function update (dt :Number, unit :CreatureUnit) :int
     {
-        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
+        var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(CreatureUnit.GROUP_NAME);
         var detectedCreature :CreatureUnit;
 
         for each (var ref :SimObjectRef in creatureRefs) {

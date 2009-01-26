@@ -45,13 +45,13 @@ public class CreaturePurchaseButton extends SimObject
         _rigorHilite = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "unit_highlight_rigormortis", true);
 
         // we want to know when the player casts a spell
-        var spellSet :CreatureSpellSet = GameContext.localPlayerInfo.activeSpells;
+        var spellSet :CreatureSpellSet = GameCtx.localPlayerInfo.activeSpells;
         registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, onSpellSetModified);
 
         registerListener(_button, MouseEvent.CLICK, onClicked);
 
-        _unitData = GameContext.gameData.units[unitType];
-        var playerColor :uint = GameContext.localPlayerInfo.color;
+        _unitData = GameCtx.gameData.units[unitType];
+        var playerColor :uint = GameCtx.localPlayerInfo.color;
 
         // try instantiating some animations
         _enabledAnim = CreatureAnimFactory.getBitmapAnim(unitType, playerColor, "attack_SW");
@@ -71,11 +71,11 @@ public class CreaturePurchaseButton extends SimObject
                 if (_resource1Cost == 0) {
                     _resource1Type = resType;
                     _resource1Cost = resCost;
-                    _resource1Data = GameContext.gameData.puzzleData.resources[resType];
+                    _resource1Data = GameCtx.gameData.puzzleData.resources[resType];
                 } else {
                     _resource2Type = resType;
                     _resource2Cost = resCost;
-                    _resource2Data = GameContext.gameData.puzzleData.resources[resType];
+                    _resource2Data = GameCtx.gameData.puzzleData.resources[resType];
                 }
             }
         }
@@ -161,7 +161,7 @@ public class CreaturePurchaseButton extends SimObject
             _hilite.gotoAndPlay("deploy");
             _multiplicity.visible = false;
 
-            GameContext.gameMode.localPlayerPurchasedCreature(_unitType);
+            GameCtx.gameMode.localPlayerPurchasedCreature(_unitType);
 
             addNamedTask(
                 DEPLOY_ANIM_TASK_NAME,
@@ -208,12 +208,12 @@ public class CreaturePurchaseButton extends SimObject
 
     override protected function update (dt :Number) :void
     {
-        var playerInfo :LocalPlayerInfo = GameContext.localPlayerInfo;
+        var playerInfo :LocalPlayerInfo = GameCtx.localPlayerInfo;
         var res1Amount :int = playerInfo.getResourceAmount(_resource1Type);
         var res2Amount :int = playerInfo.getResourceAmount(_resource2Type);
 
         var available :Boolean = (playerInfo.isAlive && res1Amount >= _resource1Cost && res2Amount >= _resource2Cost);
-        var enabled :Boolean = (_available && GameContext.diurnalCycle.isNight);
+        var enabled :Boolean = (_available && GameCtx.diurnalCycle.isNight);
         if (available != _available || enabled != _enabled) {
             _available = available;
             _enabled = enabled;

@@ -32,8 +32,8 @@ public class PlayerInfo extends EventDispatcher
         _color = color;
         _playerName = playerName;
 
-        _minResourceAmount = GameContext.gameData.minResourceAmount;
-        _maxResourceAmount = GameContext.gameData.maxResourceAmount;
+        _minResourceAmount = GameCtx.gameData.minResourceAmount;
+        _maxResourceAmount = GameCtx.gameData.maxResourceAmount;
         if (_handicap > 1) {
             _maxResourceAmount *= _handicap;
         }
@@ -98,10 +98,10 @@ public class PlayerInfo extends EventDispatcher
     {
         // create the creature spell set
         _activeSpells = new CreatureSpellSet();
-        GameContext.netObjects.addObject(_activeSpells);
+        GameCtx.netObjects.addObject(_activeSpells);
 
         // create the workshop
-        var view :WorkshopView = GameContext.unitFactory.createWorkshop(this);
+        var view :WorkshopView = GameCtx.unitFactory.createWorkshop(this);
         _workshopRef = view.workshop.ref;
     }
 
@@ -261,7 +261,7 @@ public class PlayerInfo extends EventDispatcher
     public function get targetedEnemy () :PlayerInfo
     {
         if (_targetedEnemy == null) {
-            _targetedEnemy = GameContext.findEnemyForPlayer(this);
+            _targetedEnemy = GameCtx.findEnemyForPlayer(this);
         }
 
         return _targetedEnemy;
@@ -299,7 +299,7 @@ public class PlayerInfo extends EventDispatcher
 
     public function get canResurrect () :Boolean
     {
-        var teammate :PlayerInfo = GameContext.findPlayerTeammate(_playerIndex);
+        var teammate :PlayerInfo = GameCtx.findPlayerTeammate(_playerIndex);
         return (teammate != null && teammate.isAlive && teammate.health >= Constants.MIN_RESURRECT_HEALTH);
     }
 

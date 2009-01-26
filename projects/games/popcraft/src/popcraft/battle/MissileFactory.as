@@ -17,11 +17,11 @@ public class MissileFactory
 
         // create the logical missile - an attack with a timer on it
         var missile :Missile = new Missile(targetUnit, attack, travelTime);
-        GameContext.netObjects.addObject(missile);
+        GameCtx.netObjects.addObject(missile);
 
         // create the animated missile view
         var missileView :MissileView = new MissileView(srcUnitLoc, targetUnit, travelTime);
-        GameContext.gameMode.addObject(missileView, GameContext.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addObject(missileView, GameCtx.battleBoardView.unitViewParent);
 
         return missile;
     }

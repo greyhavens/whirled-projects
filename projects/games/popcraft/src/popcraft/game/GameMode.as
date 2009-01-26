@@ -42,10 +42,10 @@ public class GameMode extends TransitionMode
     {
         Profiler.reset();
 
-        GameContext.gameType = this.gameType;
-        GameContext.gameData = this.gameData;
-        GameContext.gameMode = this;
-        GameContext.playerStats = new PlayerStats();
+        GameCtx.gameType = this.gameType;
+        GameCtx.gameData = this.gameData;
+        GameCtx.gameMode = this;
+        GameCtx.playerStats = new PlayerStats();
 
         // init RNGs
         var randSeed :uint = createRandSeed();
@@ -57,17 +57,17 @@ public class GameMode extends TransitionMode
         rngSeeded();
 
         // cache some frequently-used values in GameContext
-        GameContext.mapScaleXInv = 1 / GameContext.gameMode.mapSettings.mapScaleX;
-        GameContext.mapScaleYInv = 1 / GameContext.gameMode.mapSettings.mapScaleY;
-        GameContext.scaleSprites = GameContext.gameMode.mapSettings.scaleSprites;
+        GameCtx.mapScaleXInv = 1 / GameCtx.gameMode.mapSettings.mapScaleX;
+        GameCtx.mapScaleYInv = 1 / GameCtx.gameMode.mapSettings.mapScaleY;
+        GameCtx.scaleSprites = GameCtx.gameMode.mapSettings.scaleSprites;
 
         // create some layers
-        GameContext.battleLayer = SpriteUtil.createSprite(true, false);
-        GameContext.dashboardLayer = SpriteUtil.createSprite(true, false);
-        GameContext.overlayLayer = SpriteUtil.createSprite();
-        _modeLayer.addChild(GameContext.battleLayer);
-        _modeLayer.addChild(GameContext.dashboardLayer);
-        _modeLayer.addChild(GameContext.overlayLayer);
+        GameCtx.battleLayer = SpriteUtil.createSprite(true, false);
+        GameCtx.dashboardLayer = SpriteUtil.createSprite(true, false);
+        GameCtx.overlayLayer = SpriteUtil.createSprite();
+        _modeLayer.addChild(GameCtx.battleLayer);
+        _modeLayer.addChild(GameCtx.dashboardLayer);
+        _modeLayer.addChild(GameCtx.overlayLayer);
 
         setupAudio();
         setupNetwork();
@@ -77,13 +77,13 @@ public class GameMode extends TransitionMode
 
         // create the spell drop timer after setting up players; available
         // spells may not be known until this point
-        GameContext.netObjects.addObject(new SpellDropTimer());
+        GameCtx.netObjects.addObject(new SpellDropTimer());
 
         _trophyWatcher = new TrophyWatcher();
 
         if (Constants.DEBUG_DRAW_STATS) {
             _debugDataView = new DebugDataView();
-            addObject(_debugDataView, GameContext.overlayLayer);
+            addObject(_debugDataView, GameCtx.overlayLayer);
             _debugDataView.visible = true;
         }
     }
@@ -101,9 +101,9 @@ public class GameMode extends TransitionMode
         // game audio isn't started until _updateCount hits 1,
         // to allow intro screens to be shown
         if (_updateCount > 0) {
-            GameContext.sfxControls.pause(false);
-            GameContext.musicControls.pause(false);
-            GameContext.musicControls.volumeTo(1, 0.3);
+            GameCtx.sfxControls.pause(false);
+            GameCtx.musicControls.pause(false);
+            GameCtx.musicControls.volumeTo(1, 0.3);
         }
     }
 
@@ -114,45 +114,45 @@ public class GameMode extends TransitionMode
             return;
         }
 
-        if (GameContext.sfxControls != null) {
-            GameContext.sfxControls.pause(true);
+        if (GameCtx.sfxControls != null) {
+            GameCtx.sfxControls.pause(true);
         }
 
-        if (GameContext.musicControls != null) {
-            GameContext.musicControls.volumeTo(0.2, 0.3);
+        if (GameCtx.musicControls != null) {
+            GameCtx.musicControls.volumeTo(0.2, 0.3);
         }
     }
 
     protected function setupAudio () :void
     {
-        GameContext.playAudio = this.playAudio;
+        GameCtx.playAudio = this.playAudio;
 
-        GameContext.sfxControls = new AudioControls(
+        GameCtx.sfxControls = new AudioControls(
             ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_SFX));
-        GameContext.musicControls = new AudioControls(
+        GameCtx.musicControls = new AudioControls(
             ClientCtx.audio.getControlsForSoundType(SoundResource.TYPE_MUSIC));
 
-        GameContext.sfxControls.retain();
-        GameContext.musicControls.retain();
+        GameCtx.sfxControls.retain();
+        GameCtx.musicControls.retain();
 
-        GameContext.sfxControls.pause(true);
-        GameContext.musicControls.pause(true);
+        GameCtx.sfxControls.pause(true);
+        GameCtx.musicControls.pause(true);
     }
 
     protected function shutdownAudio () :void
     {
-        GameContext.sfxControls.stop(true);
-        GameContext.musicControls.stop(true);
+        GameCtx.sfxControls.stop(true);
+        GameCtx.musicControls.stop(true);
 
-        GameContext.sfxControls.release();
-        GameContext.musicControls.release();
+        GameCtx.sfxControls.release();
+        GameCtx.musicControls.release();
     }
 
     protected function handleOccupantLeft (e :OccupantChangedEvent) :void
     {
         if (e.player) {
             // did a player leave?
-            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameContext.playerInfos,
+            var playerInfo :PlayerInfo = ArrayUtil.findIf(GameCtx.playerInfos,
                 function (data :PlayerInfo) :Boolean {
                     return data.whirledId == e.occupantId;
                 });
@@ -166,7 +166,7 @@ public class GameMode extends TransitionMode
     protected function setupNetwork () :void
     {
         // create a special ObjectDB for all objects that are synchronized over the network.
-        GameContext.netObjects = new NetObjectDB();
+        GameCtx.netObjects = new NetObjectDB();
 
         // set up the message manager
         _messageMgr = createMessageManager();
@@ -187,9 +187,9 @@ public class GameMode extends TransitionMode
         var dashboard :DashboardView = new DashboardView();
         dashboard.x = DASHBOARD_LOC.x;
         dashboard.y = DASHBOARD_LOC.y;
-        addObject(dashboard, GameContext.dashboardLayer);
+        addObject(dashboard, GameCtx.dashboardLayer);
 
-        GameContext.dashboard = dashboard;
+        GameCtx.dashboard = dashboard;
 
         var puzzleBoard :PuzzleBoard = new PuzzleBoard(PUZZLE_COLS, PUZZLE_ROWS, PUZZLE_TILE_SIZE);
 
@@ -199,12 +199,12 @@ public class GameMode extends TransitionMode
         DisplayObjectContainer(dashboard.displayObject).addChildAt(puzzleBoard.displayObject, 0);
         addObject(puzzleBoard);
 
-        GameContext.puzzleBoard = puzzleBoard;
+        GameCtx.puzzleBoard = puzzleBoard;
     }
 
     protected function setupPlayers () :void
     {
-        GameContext.playerInfos = [];
+        GameCtx.playerInfos = [];
 
         // we want to know when a player leaves
         registerListener(ClientCtx.gameCtrl.game, OccupantChangedEvent.OCCUPANT_LEFT,
@@ -214,8 +214,8 @@ public class GameMode extends TransitionMode
         createPlayers();
 
         // create the TargetWorkshopBadges for all players on the local player's team
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (playerInfo.teamId == GameContext.localPlayerInfo.teamId) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
+            if (playerInfo.teamId == GameCtx.localPlayerInfo.teamId) {
                 // the badge will attach itself to the correct workshop
                 addObject(new TargetWorkshopBadge(playerInfo));
             }
@@ -224,27 +224,27 @@ public class GameMode extends TransitionMode
 
     protected function setupBattle () :void
     {
-        GameContext.unitFactory = new UnitFactory();
+        GameCtx.unitFactory = new UnitFactory();
 
-        GameContext.forceParticleContainer = new ForceParticleContainer(
-            GameContext.gameMode.battlefieldWidth,
-            GameContext.gameMode.battlefieldHeight);
+        GameCtx.forceParticleContainer = new ForceParticleContainer(
+            GameCtx.gameMode.battlefieldWidth,
+            GameCtx.gameMode.battlefieldHeight);
 
         // Board
         var battleBoardView :BattleBoardView = new BattleBoardView(BATTLE_WIDTH, BATTLE_HEIGHT);
-        addObject(battleBoardView, GameContext.battleLayer);
+        addObject(battleBoardView, GameCtx.battleLayer);
 
-        GameContext.battleBoardView = battleBoardView;
+        GameCtx.battleBoardView = battleBoardView;
 
         // Day/night cycle
-        GameContext.diurnalCycle = new DiurnalCycle(GameContext.gameData.initialDayPhase);
-        GameContext.netObjects.addObject(GameContext.diurnalCycle);
+        GameCtx.diurnalCycle = new DiurnalCycle(GameCtx.gameData.initialDayPhase);
+        GameCtx.netObjects.addObject(GameCtx.diurnalCycle);
 
         if (!DiurnalCycle.isDisabled) {
             var diurnalMeter :DiurnalCycleView = new DiurnalCycleView();
             diurnalMeter.x = DIURNAL_METER_LOC.x;
             diurnalMeter.y = DIURNAL_METER_LOC.y;
-            addObject(diurnalMeter, GameContext.battleBoardView.diurnalMeterParent);
+            addObject(diurnalMeter, GameCtx.battleBoardView.diurnalMeterParent);
         }
     }
 
@@ -275,7 +275,7 @@ public class GameMode extends TransitionMode
         }
 
         if (teamShout >= 0 && this.allowTeamShouts) {
-            sendTeamShoutMsg(GameContext.localPlayerIndex, teamShout, false);
+            sendTeamShoutMsg(GameCtx.localPlayerIndex, teamShout, false);
             return;
         }
 
@@ -336,34 +336,34 @@ public class GameMode extends TransitionMode
         switch (keyCode) {
         case KeyboardCodes.NUMBER_0:
             for (var i :int = 0; i < Constants.RESOURCE__LIMIT; ++i) {
-                GameContext.localPlayerInfo.offsetResourceAmount(i, 500);
+                GameCtx.localPlayerInfo.offsetResourceAmount(i, 500);
             }
             break;
 
         case KeyboardCodes.B:
-            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_BLOODLUST);
+            spellDeliveredToPlayer(GameCtx.localPlayerIndex, Constants.SPELL_TYPE_BLOODLUST);
             break;
 
         case KeyboardCodes.R:
-            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_RIGORMORTIS);
+            spellDeliveredToPlayer(GameCtx.localPlayerIndex, Constants.SPELL_TYPE_RIGORMORTIS);
             break;
 
         case KeyboardCodes.P:
-            spellDeliveredToPlayer(GameContext.localPlayerIndex, Constants.SPELL_TYPE_PUZZLERESET);
+            spellDeliveredToPlayer(GameCtx.localPlayerIndex, Constants.SPELL_TYPE_PUZZLERESET);
             break;
 
         case KeyboardCodes.N:
-            GameContext.diurnalCycle.resetPhase(Constants.PHASE_NIGHT);
+            GameCtx.diurnalCycle.resetPhase(Constants.PHASE_NIGHT);
             break;
 
         case KeyboardCodes.Y:
-            GameContext.diurnalCycle.incrementDayCount();
-            GameContext.diurnalCycle.resetPhase(GameContext.gameData.initialDayPhase);
+            GameCtx.diurnalCycle.incrementDayCount();
+            GameCtx.diurnalCycle.resetPhase(GameCtx.gameData.initialDayPhase);
             break;
 
         case KeyboardCodes.K:
             // destroy the targeted enemy's base
-            var enemyPlayerInfo :PlayerInfo = GameContext.localPlayerInfo.targetedEnemy;
+            var enemyPlayerInfo :PlayerInfo = GameCtx.localPlayerInfo.targetedEnemy;
             if (null != enemyPlayerInfo.workshop) {
                 enemyPlayerInfo.workshop.health = 0;
             }
@@ -371,16 +371,16 @@ public class GameMode extends TransitionMode
 
         case KeyboardCodes.E:
             // destroy the local player's base
-            var localWorkshop :WorkshopUnit = GameContext.localPlayerInfo.workshop;
-            if (null != GameContext.localPlayerInfo.workshop) {
-                GameContext.localPlayerInfo.workshop.health = 0;
+            var localWorkshop :WorkshopUnit = GameCtx.localPlayerInfo.workshop;
+            if (null != GameCtx.localPlayerInfo.workshop) {
+                GameCtx.localPlayerInfo.workshop.health = 0;
             }
             break;
 
         case KeyboardCodes.W:
             // destroy all enemy bases
-            for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-                if (playerInfo.teamId != GameContext.localPlayerInfo.teamId) {
+            for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
+                if (playerInfo.teamId != GameCtx.localPlayerInfo.teamId) {
                     if (null != playerInfo.workshop) {
                         playerInfo.workshop.health = 0;
                     }
@@ -410,8 +410,8 @@ public class GameMode extends TransitionMode
         // start the game audio when _updateCount hits 1, allowing a full update to pass without
         // audio so that intro screens can be shown
         if (_updateCount == 1) {
-            GameContext.musicControls.pause(false);
-            GameContext.sfxControls.pause(false);
+            GameCtx.musicControls.pause(false);
+            GameCtx.sfxControls.pause(false);
         }
 
         // update the network
@@ -437,18 +437,18 @@ public class GameMode extends TransitionMode
         super.update(dt);
 
         if (displayChildrenNeedSort) {
-            GameContext.battleBoardView.sortUnitDisplayChildren();
+            GameCtx.battleBoardView.sortUnitDisplayChildren();
         }
 
         // update the game music, unless we're in "eclipse mode", where we loop
         // the night music forever
-        var dayPhase :int = GameContext.diurnalCycle.phaseOfDay;
-        if (!_startedMusic || (dayPhase != _lastDayPhase && !GameContext.gameData.enableEclipse)) {
+        var dayPhase :int = GameCtx.diurnalCycle.phaseOfDay;
+        if (!_startedMusic || (dayPhase != _lastDayPhase && !GameCtx.gameData.enableEclipse)) {
             if (null != _musicChannel) {
                 _musicChannel.audioControls.fadeOut(0.5).stopAfter(0.5);
             }
 
-            _musicChannel = GameContext.playGameMusic(
+            _musicChannel = GameCtx.playGameMusic(
                 DiurnalCycle.isDay(dayPhase) ? "mus_day" : "mus_night");
 
             _lastDayPhase = dayPhase;
@@ -478,13 +478,13 @@ public class GameMode extends TransitionMode
         // run the simulation the appropriate amount
         // (Our network update time is unrelated to the application's update time.
         // Network timeslices are always the same distance apart)
-        GameContext.netObjects.update(TICK_INTERVAL_S);
+        GameCtx.netObjects.update(TICK_INTERVAL_S);
 
         // update players' targeted enemies
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
             var targetedEnemy :PlayerInfo = playerInfo.targetedEnemy;
             if (null == targetedEnemy || !targetedEnemy.isAlive) {
-                playerInfo.targetedEnemy = GameContext.findEnemyForPlayer(playerInfo);
+                playerInfo.targetedEnemy = GameCtx.findEnemyForPlayer(playerInfo);
             }
         }
 
@@ -501,7 +501,7 @@ public class GameMode extends TransitionMode
 
         if (_teamLiveStatuses == null) {
             _teamLiveStatuses = [];
-            for each (playerInfo in GameContext.playerInfos) {
+            for each (playerInfo in GameCtx.playerInfos) {
                 var teamId :int = playerInfo.teamId;
                 while (_teamLiveStatuses.length < teamId + 1) {
                     _teamLiveStatuses.push(false);
@@ -516,7 +516,7 @@ public class GameMode extends TransitionMode
             _teamLiveStatuses[ii] = false;
         }
 
-        for each (playerInfo in GameContext.playerInfos) {
+        for each (playerInfo in GameCtx.playerInfos) {
             // for the purposes of game-over detection, discount invincible players from the
             // live player count. this is kind of ugly - the last level is the only level
             // in which there's an invincible player (Professor Weardd).
@@ -544,8 +544,8 @@ public class GameMode extends TransitionMode
         }
 
         if (_gameOver) {
-            GameContext.playerStats.totalGameTime = _gameTime;
-            GameContext.winningTeamId = liveTeamId;
+            GameCtx.playerStats.totalGameTime = _gameTime;
+            GameCtx.winningTeamId = liveTeamId;
         }
     }
 
@@ -562,9 +562,9 @@ public class GameMode extends TransitionMode
         if (msg is CreateCreatureMsg) {
             var createUnitMsg :CreateCreatureMsg = (msg as CreateCreatureMsg);
             playerIndex = createUnitMsg.playerIndex;
-            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
+            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
                 for (var ii :int = 0; ii < createUnitMsg.count; ++ii) {
-                    GameContext.unitFactory.createCreature(createUnitMsg.creatureType, playerIndex);
+                    GameCtx.unitFactory.createCreature(createUnitMsg.creatureType, playerIndex);
                 }
                 var baseView :WorkshopView = WorkshopView.getForPlayer(playerIndex);
                 if (null != baseView) {
@@ -575,18 +575,18 @@ public class GameMode extends TransitionMode
         } else if (msg is SelectTargetEnemyMsg) {
             var selectTargetEnemyMsg :SelectTargetEnemyMsg = msg as SelectTargetEnemyMsg;
             playerIndex = selectTargetEnemyMsg.playerIndex;
-            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
+            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
                 setTargetEnemy(playerIndex, selectTargetEnemyMsg.targetPlayerIndex);
             }
 
         } else if (msg is CastCreatureSpellMsg) {
             var castSpellMsg :CastCreatureSpellMsg = msg as CastCreatureSpellMsg;
             playerIndex = castSpellMsg.playerIndex;
-            if (PlayerInfo(GameContext.playerInfos[playerIndex]).isAlive) {
-                var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(playerIndex);
-                var spell :CreatureSpellData = GameContext.gameData.spells[castSpellMsg.spellType];
+            if (PlayerInfo(GameCtx.playerInfos[playerIndex]).isAlive) {
+                var spellSet :CreatureSpellSet = GameCtx.getActiveSpellSet(playerIndex);
+                var spell :CreatureSpellData = GameCtx.gameData.spells[castSpellMsg.spellType];
                 spellSet.addSpell(spell.clone() as CreatureSpellData);
-                GameContext.playGameSound("sfx_" + spell.name);
+                GameCtx.playGameSound("sfx_" + spell.name);
             }
 
         } else if (msg is ResurrectPlayerMsg) {
@@ -595,8 +595,8 @@ public class GameMode extends TransitionMode
 
         } else if (msg is TeamShoutMsg) {
             var teamShoutMsg :TeamShoutMsg = msg as TeamShoutMsg;
-            playerInfo = GameContext.playerInfos[teamShoutMsg.playerIndex];
-            if (playerInfo.teamId == GameContext.localPlayerInfo.teamId) {
+            playerInfo = GameCtx.playerInfos[teamShoutMsg.playerIndex];
+            if (playerInfo.teamId == GameCtx.localPlayerInfo.teamId) {
                 var workshopView :WorkshopView = WorkshopView.getForPlayer(teamShoutMsg.playerIndex);
                 if (workshopView != null) {
                     workshopView.showShout(teamShoutMsg.shoutType);
@@ -608,14 +608,14 @@ public class GameMode extends TransitionMode
 
     protected function resurrectPlayer (deadPlayerIndex :int) :int
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[deadPlayerIndex];
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[deadPlayerIndex];
         if (!playerInfo.isAlive && playerInfo.canResurrect) {
-            var teammate :PlayerInfo = GameContext.findPlayerTeammate(deadPlayerIndex);
+            var teammate :PlayerInfo = GameCtx.findPlayerTeammate(deadPlayerIndex);
             var newHealth :Number = teammate.health * 0.5;
             teammate.workshop.health = newHealth;
             playerInfo.resurrect(newHealth);
 
-            GameContext.playGameSound("sfx_resurrect");
+            GameCtx.playGameSound("sfx_resurrect");
 
             return teammate.playerIndex;
         }
@@ -625,16 +625,16 @@ public class GameMode extends TransitionMode
 
     protected function setTargetEnemy (playerIndex :int, targetEnemyId :int) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
-        var enemyInfo :PlayerInfo = GameContext.playerInfos[targetEnemyId];
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
+        var enemyInfo :PlayerInfo = GameCtx.playerInfos[targetEnemyId];
 
         playerInfo.targetedEnemy = enemyInfo;
     }
 
     protected function cycleLocalPlayerTargetEnemy () :void
     {
-        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
-        var nextTargetInfo :PlayerInfo = GameContext.getNextEnemyForPlayer(localPlayerInfo);
+        var localPlayerInfo :PlayerInfo = GameCtx.localPlayerInfo;
+        var nextTargetInfo :PlayerInfo = GameCtx.getNextEnemyForPlayer(localPlayerInfo);
         if (nextTargetInfo != null && nextTargetInfo != localPlayerInfo.targetedEnemy) {
             sendTargetEnemyMsg(localPlayerInfo.playerIndex, nextTargetInfo.playerIndex, false);
         }
@@ -643,24 +643,24 @@ public class GameMode extends TransitionMode
     public function workshopClicked (workshopView :WorkshopView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
-        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
+        var localPlayerInfo :PlayerInfo = GameCtx.localPlayerInfo;
         var targetInfo :PlayerInfo = workshopView.workshop.owningPlayerInfo;
         var newTargetIdx :int = targetInfo.playerIndex;
 
-        if (GameContext.isTargetableEnemy(localPlayerInfo, targetInfo) &&
+        if (GameCtx.isTargetableEnemy(localPlayerInfo, targetInfo) &&
             localPlayerInfo.targetedEnemy.playerIndex != newTargetIdx) {
             // send a message to everyone
-            sendTargetEnemyMsg(GameContext.localPlayerIndex, newTargetIdx, false);
+            sendTargetEnemyMsg(GameCtx.localPlayerIndex, newTargetIdx, false);
         }
     }
 
     public function creatureKilled (creature :CreatureUnit, killingPlayerIndex :int) :void
     {
-        if (killingPlayerIndex == GameContext.localPlayerIndex) {
-            GameContext.playerStats.creaturesKilled[creature.unitType] += 1;
+        if (killingPlayerIndex == GameCtx.localPlayerIndex) {
+            GameCtx.playerStats.creaturesKilled[creature.unitType] += 1;
 
             if (!ClientCtx.hasTrophy(Trophies.WHATAMESS) &&
-                (ClientCtx.globalPlayerStats.totalCreaturesKilled + GameContext.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
+                (ClientCtx.globalPlayerStats.totalCreaturesKilled + GameCtx.playerStats.totalCreaturesKilled) >= Trophies.WHATAMESS_NUMCREATURES) {
                 // awarded for killing 2500 creatures total
                 ClientCtx.awardTrophy(Trophies.WHATAMESS);
             }
@@ -676,23 +676,23 @@ public class GameMode extends TransitionMode
     {
         // called when a courier delivers a spell back to its workshop
         if (spellType < Constants.CASTABLE_SPELL_TYPE__LIMIT) {
-            PlayerInfo(GameContext.playerInfos[playerIndex]).addSpell(spellType);
+            PlayerInfo(GameCtx.playerInfos[playerIndex]).addSpell(spellType);
         }
     }
 
     public function localPlayerPurchasedCreature (unitType :int) :void
     {
         if (!isAvailableUnit(unitType) ||
-            !GameContext.localPlayerInfo.canAffordCreature(unitType) ||
-            GameContext.diurnalCycle.isDay) {
+            !GameCtx.localPlayerInfo.canAffordCreature(unitType) ||
+            GameCtx.diurnalCycle.isDay) {
             return;
         }
 
         // when the sun is eclipsed, you get two creatures for the price of one
-        var creatureCount :int = (GameContext.diurnalCycle.isEclipse ? 2 : 1);
-        sendCreateCreatureMsg(GameContext.localPlayerIndex, unitType, creatureCount, false);
-        GameContext.localPlayerInfo.deductCreatureCost(unitType);
-        GameContext.playerStats.creaturesCreated[unitType] += creatureCount;
+        var creatureCount :int = (GameCtx.diurnalCycle.isEclipse ? 2 : 1);
+        sendCreateCreatureMsg(GameCtx.localPlayerIndex, unitType, creatureCount, false);
+        GameCtx.localPlayerInfo.deductCreatureCost(unitType);
+        GameCtx.playerStats.creaturesCreated[unitType] += creatureCount;
     }
 
     public function sendCreateCreatureMsg (playerIndex :int, unitType :int, count :int,
@@ -703,10 +703,10 @@ public class GameMode extends TransitionMode
 
     public function sendCastSpellMsg (playerIndex :int, spellType :int, isAiMsg :Boolean) :void
     {
-        var playerInfo :PlayerInfo = GameContext.playerInfos[playerIndex];
+        var playerInfo :PlayerInfo = GameCtx.playerInfos[playerIndex];
         var isCreatureSpell :Boolean = (spellType < Constants.CREATURE_SPELL_TYPE__LIMIT);
 
-        if (!playerInfo.isAlive || (isCreatureSpell && GameContext.diurnalCycle.isDay) ||
+        if (!playerInfo.isAlive || (isCreatureSpell && GameCtx.diurnalCycle.isDay) ||
             !playerInfo.canCastSpell(spellType)) {
             return;
         }
@@ -718,10 +718,10 @@ public class GameMode extends TransitionMode
 
         } else if (spellType == Constants.SPELL_TYPE_PUZZLERESET) {
             // there's only one non-creature spell
-            GameContext.dashboard.puzzleShuffle();
+            GameCtx.dashboard.puzzleShuffle();
         }
 
-        GameContext.playerStats.spellsCast[spellType] += 1;
+        GameCtx.playerStats.spellsCast[spellType] += 1;
     }
 
     public function sendTargetEnemyMsg (playerIndex :int, enemyId :int, isAiMsg :Boolean) :void
@@ -731,7 +731,7 @@ public class GameMode extends TransitionMode
 
     public function sendResurrectPlayerMsg () :void
     {
-        sendMessage(ResurrectPlayerMsg.create(GameContext.localPlayerIndex), false);
+        sendMessage(ResurrectPlayerMsg.create(GameCtx.localPlayerIndex), false);
     }
 
     public function sendTeamShoutMsg (playerIndex :int, shoutType :int, isAiMsg :Boolean) :void
@@ -750,14 +750,14 @@ public class GameMode extends TransitionMode
 
     public function playerEarnedResources (resourceType :int, offset :int, numClearPieces :int) :int
     {
-        return GameContext.localPlayerInfo.earnedResources(resourceType, offset, numClearPieces);
+        return GameCtx.localPlayerInfo.earnedResources(resourceType, offset, numClearPieces);
     }
 
     public function get allowTeamShouts () :Boolean
     {
         return (Constants.DEBUG_ALLOW_CHEATS ||
-                (GameContext.isMultiplayerGame &&
-                GameContext.getTeamSize(GameContext.localPlayerInfo.teamId) > 1));
+                (GameCtx.isMultiplayerGame &&
+                GameCtx.getTeamSize(GameCtx.localPlayerInfo.teamId) > 1));
     }
 
     public function get playAudio () :Boolean

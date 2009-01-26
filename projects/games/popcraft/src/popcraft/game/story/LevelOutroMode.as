@@ -24,7 +24,7 @@ public class LevelOutroMode extends AppMode
     public function LevelOutroMode (level :LevelData)
     {
         _level = level;
-        _success = (GameContext.winningTeamId == GameContext.localPlayerInfo.teamId);
+        _success = (GameCtx.winningTeamId == GameCtx.localPlayerInfo.teamId);
     }
 
     override protected function setup () :void
@@ -213,7 +213,7 @@ public class LevelOutroMode extends AppMode
 
     protected function get expertCompletion () :Boolean
     {
-        return (GameContext.diurnalCycle.dayCount <= _level.expertCompletionDays);
+        return (GameCtx.diurnalCycle.dayCount <= _level.expertCompletionDays);
     }
 
     protected function get expertCompletionScore () :int
@@ -223,8 +223,8 @@ public class LevelOutroMode extends AppMode
 
     protected function get resourcesScore () :int
     {
-        var score :int = Math.max(StoryGameMode(GameContext.gameMode).totalResourcesEarned, 0) *
-            GameContext.gameData.scoreData.pointsPerResource;
+        var score :int = Math.max(StoryGameMode(GameCtx.gameMode).totalResourcesEarned, 0) *
+            GameCtx.gameData.scoreData.pointsPerResource;
         if (_level.maxResourcesScore >= 0) {
             score = Math.min(score, _level.maxResourcesScore);
         }
@@ -234,7 +234,7 @@ public class LevelOutroMode extends AppMode
 
     protected function get completionDays () :int
     {
-        return GameContext.diurnalCycle.dayCount;
+        return GameCtx.diurnalCycle.dayCount;
     }
 
     protected function get completionBonus () :int

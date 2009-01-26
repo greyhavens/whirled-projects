@@ -41,7 +41,7 @@ public class DeadCreatureUnitView extends BattlefieldSprite
             }
 
             _bitmapAnimView = new BitmapAnimView(bitmapAnim);
-            GameContext.gameMode.addObject(_bitmapAnimView, _sprite);
+            GameCtx.gameMode.addObject(_bitmapAnimView, _sprite);
 
             // wait 2 seconds, then self destruct
             addTask(After(2, new SelfDestructTask()));
@@ -64,7 +64,7 @@ public class DeadCreatureUnitView extends BattlefieldSprite
 
         updateLoc(creature.x, creature.y);
 
-        GameContext.playGameSound("sfx_death_" + creature.unitData.name);
+        GameCtx.playGameSound("sfx_death_" + creature.unitData.name);
     }
 
     override protected function addedToDB () :void

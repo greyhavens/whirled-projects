@@ -36,7 +36,7 @@ public class PuzzleBoard extends SceneObject
         // create the resource generator
         var table :Array = new Array();
         for (var resType: int = 0; resType < Constants.RESOURCE__LIMIT; ++resType) {
-            var resourceData :ResourceData = GameContext.gameData.puzzleData.resources[resType];
+            var resourceData :ResourceData = GameCtx.gameData.puzzleData.resources[resType];
             table.push(resType);
             table.push(resourceData.frequency);
         }
@@ -210,9 +210,9 @@ public class PuzzleBoard extends SceneObject
         // update the player's resource count
         var resourceType :int = Piece(clearPieces[0]).resourceType;
         var resourceValue :int =
-            GameContext.gameData.puzzleData.clearValues.getValueAt(clearPieces.length - 1);
-        resourceValue *= GameContext.localPlayerInfo.handicap;
-        GameContext.gameMode.playerEarnedResources(resourceType, resourceValue, clearPieces.length);
+            GameCtx.gameData.puzzleData.clearValues.getValueAt(clearPieces.length - 1);
+        resourceValue *= GameCtx.localPlayerInfo.handicap;
+        GameCtx.gameMode.playerEarnedResources(resourceType, resourceValue, clearPieces.length);
 
         _resolvingClears = true;
 
@@ -244,13 +244,13 @@ public class PuzzleBoard extends SceneObject
 
         // Show the "resources earned" animation. It will clean up after itself.
         var animLoc :Point = _sprite.localToGlobal(new Point(_sprite.mouseX, _sprite.mouseY - 6));
-        animLoc = GameContext.overlayLayer.globalToLocal(animLoc);
-        GameContext.gameMode.addObject(
+        animLoc = GameCtx.overlayLayer.globalToLocal(animLoc);
+        GameCtx.gameMode.addObject(
             new ResourceValueAnim(animLoc, resourceType, resourceValue),
-            GameContext.overlayLayer);
+            GameCtx.overlayLayer);
 
         // play a sound
-        GameContext.playGameSound(resourceValue >= 0 ?
+        GameCtx.playGameSound(resourceValue >= 0 ?
             "sfx_rsrc_" + Constants.RESOURCE_NAMES[resourceType] :
             "sfx_rsrc_lost");
 

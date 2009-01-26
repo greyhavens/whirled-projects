@@ -23,7 +23,7 @@ public class BattleBoardView extends SceneObject
         _width = width;
         _height = height;
 
-        _bgName = GameContext.gameMode.mapSettings.backgroundName;
+        _bgName = GameCtx.gameMode.mapSettings.backgroundName;
 
         _bg = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "bg", _bgName, true, true);
         _bg.x = Constants.SCREEN_SIZE.x * 0.5;
@@ -46,7 +46,7 @@ public class BattleBoardView extends SceneObject
         _unitViewParent.y = -_bg.y;
         attach.addChild(_unitViewParent);
 
-        _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameContext.gameData.initialDayPhase);
+        _lastDayPhase = (DiurnalCycle.isDisabled ? Constants.PHASE_NIGHT : GameCtx.gameData.initialDayPhase);
 
         _bg.gotoAndStop(DiurnalCycle.isNight(_lastDayPhase) ? "night" : "day");
         _bg.cacheAsBitmap = true;
@@ -66,8 +66,8 @@ public class BattleBoardView extends SceneObject
         // if this is the Tesla background, create an object that will play a sound
         // when the Tesla lightning animation plays.
         if (_bgName == "tesla") {
-            _teslaSoundPlayer = new TeslaSoundPlayer(_bg, GameContext.playGameSound);
-            GameContext.gameMode.addObject(_teslaSoundPlayer);
+            _teslaSoundPlayer = new TeslaSoundPlayer(_bg, GameCtx.playGameSound);
+            GameCtx.gameMode.addObject(_teslaSoundPlayer);
         }
     }
 
@@ -80,7 +80,7 @@ public class BattleBoardView extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var newDayPhase :int = GameContext.diurnalCycle.phaseOfDay;
+        var newDayPhase :int = GameCtx.diurnalCycle.phaseOfDay;
         if (newDayPhase != _lastDayPhase) {
             animateDayPhaseChange(newDayPhase);
             _lastDayPhase = newDayPhase;

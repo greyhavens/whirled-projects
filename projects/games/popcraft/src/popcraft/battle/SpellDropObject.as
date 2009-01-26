@@ -25,7 +25,7 @@ public class SpellDropObject extends SimObject
 
     public function get spellData () :SpellData
     {
-        return GameContext.gameData.spells[_spellType];
+        return GameCtx.gameData.spells[_spellType];
     }
 
     public function get x () :Number

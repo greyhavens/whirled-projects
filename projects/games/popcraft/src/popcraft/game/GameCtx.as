@@ -15,7 +15,7 @@ import popcraft.data.*;
 import popcraft.puzzle.*;
 import popcraft.ui.DashboardView;
 
-public class GameContext
+public class GameCtx
 {
     public static const GAME_TYPE_BATTLE_MP :int = 0;
     public static const GAME_TYPE_STORY :int = 1;

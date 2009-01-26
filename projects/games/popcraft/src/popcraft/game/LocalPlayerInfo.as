@@ -103,7 +103,7 @@ public class LocalPlayerInfo extends PlayerInfo
         var resourcesEarned :int = newResources - initialResources;
 
         // For player stats, keep track of all resources earned
-        GameContext.playerStats.resourcesGathered[resourceType] += resourcesEarned;
+        GameCtx.playerStats.resourcesGathered[resourceType] += resourcesEarned;
 
         // keep track of clear runs and award trophies
         if (numClearPieces < 4) {
@@ -139,7 +139,7 @@ public class LocalPlayerInfo extends PlayerInfo
 
     override public function canAffordCreature (unitType :int) :Boolean
     {
-        var unitData :UnitData = GameContext.gameData.units[unitType];
+        var unitData :UnitData = GameCtx.gameData.units[unitType];
         var creatureCosts :Array = unitData.resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType :int = 0; resourceType < n; ++resourceType) {
@@ -155,7 +155,7 @@ public class LocalPlayerInfo extends PlayerInfo
     override public function deductCreatureCost (unitType :int) :void
     {
         // remove purchase cost from holdings
-        var creatureCosts :Array = (GameContext.gameData.units[unitType] as UnitData).resourceCosts;
+        var creatureCosts :Array = (GameCtx.gameData.units[unitType] as UnitData).resourceCosts;
         var n :int = creatureCosts.length;
         for (var resourceType:int = 0; resourceType < n; ++resourceType) {
             offsetResourceAmount(resourceType, -creatureCosts[resourceType]);
@@ -165,7 +165,7 @@ public class LocalPlayerInfo extends PlayerInfo
     override public function addSpell (spellType :int, count :int = 1) :void
     {
         var curSpellCount :int = getSpellCount(spellType);
-        count = Math.min(count, GameContext.gameData.maxSpellsPerType - curSpellCount);
+        count = Math.min(count, GameCtx.gameData.maxSpellsPerType - curSpellCount);
         if (count > 0) {
             _heldSpells[spellType] = curSpellCount + count;
             dispatchEvent(new GotSpellEvent(spellType));

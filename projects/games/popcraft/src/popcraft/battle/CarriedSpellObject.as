@@ -21,7 +21,7 @@ public class CarriedSpellObject extends SimObject
 
     public function get spellData () :SpellData
     {
-        return GameContext.gameData.spells[_spellType];
+        return GameCtx.gameData.spells[_spellType];
     }
 
     override public function getObjectGroup (groupNum :int) :String

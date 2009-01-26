@@ -21,7 +21,7 @@ public class CreatureUnit extends Unit
     public static function getNumPlayerCreatures (owningPlayerIndex :int, unitType :int) :int
     {
         var count :int = 0;
-        var creatureRefs :Array = GameContext.netObjects.getObjectRefsInGroup(GROUP_NAME);
+        var creatureRefs :Array = GameCtx.netObjects.getObjectRefsInGroup(GROUP_NAME);
         for each (var ref :SimObjectRef in creatureRefs) {
             var creature :CreatureUnit = ref.object as CreatureUnit;
             if (null != creature && creature.owningPlayerIndex == owningPlayerIndex && creature.unitType == unitType) {
@@ -43,11 +43,11 @@ public class CreatureUnit extends Unit
 
         // save a reference to our owning player's UnitSpellSet,
         // since we'll be accessing it a lot
-        var owningPlayer :PlayerInfo = GameContext.playerInfos[owningPlayerIndex];
+        var owningPlayer :PlayerInfo = GameCtx.playerInfos[owningPlayerIndex];
         _unitSpells = owningPlayer.activeSpells;
 
-        _lastDayCount = GameContext.diurnalCycle.dayCount;
-        _eclipseEnabled = (GameContext.diurnalCycle.phaseOfDay == Constants.PHASE_ECLIPSE);
+        _lastDayCount = GameCtx.diurnalCycle.dayCount;
+        _eclipseEnabled = (GameCtx.diurnalCycle.phaseOfDay == Constants.PHASE_ECLIPSE);
     }
 
     override protected function addedToDB () :void
@@ -74,7 +74,7 @@ public class CreatureUnit extends Unit
     protected function createForceParticle () :void
     {
         if (_unitData.hasRepulseForce && null == _forceParticle) {
-            _forceParticle = new ForceParticle(GameContext.forceParticleContainer, this.x, this.y);
+            _forceParticle = new ForceParticle(GameCtx.forceParticleContainer, this.x, this.y);
         }
     }
 
@@ -194,7 +194,7 @@ public class CreatureUnit extends Unit
         if (enemyPlayerInfo.isAlive && !enemyPlayerInfo.isInvincible) {
             return enemyPlayerInfo.workshopRef;
         } else {
-            var newEnemy :PlayerInfo = GameContext.findEnemyForPlayer(_owningPlayerInfo);
+            var newEnemy :PlayerInfo = GameCtx.findEnemyForPlayer(_owningPlayerInfo);
             if (null != newEnemy) {
                 return newEnemy.workshopRef;
             }
@@ -215,11 +215,11 @@ public class CreatureUnit extends Unit
 
         // if it just turned from day to night, don't count the attack as damage-dealing; we're
         // dead this frame anyway
-        if (GameContext.diurnalCycle.isNight) {
+        if (GameCtx.diurnalCycle.isNight) {
             var wasDead :Boolean = _isDead;
             damageTaken = super.receiveAttack(attack, maxDamage);
             if (!wasDead && _isDead) {
-                GameContext.gameMode.creatureKilled(this, attack.attackingUnitOwningPlayerIndex);
+                GameCtx.gameMode.creatureKilled(this, attack.attackingUnitOwningPlayerIndex);
             }
         }
 
@@ -240,9 +240,9 @@ public class CreatureUnit extends Unit
         if (_unitData.survivesDaytime) {
             return false;
         } else if (_eclipseEnabled) {
-            return GameContext.diurnalCycle.dayCount > _lastDayCount;
+            return GameCtx.diurnalCycle.dayCount > _lastDayCount;
         } else {
-            return GameContext.diurnalCycle.isDay;
+            return GameCtx.diurnalCycle.isDay;
         }
     }
 
@@ -250,8 +250,8 @@ public class CreatureUnit extends Unit
     {
         if (shouldDieFromDiurnalCycle()) {
             die();
-            if (this.owningPlayerIndex == GameContext.localPlayerIndex) {
-                GameContext.playerStats.creaturesLostToDaytime[_unitType] += 1;
+            if (this.owningPlayerIndex == GameCtx.localPlayerIndex) {
+                GameCtx.playerStats.creaturesLostToDaytime[_unitType] += 1;
             }
 
             return;

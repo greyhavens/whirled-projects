@@ -36,12 +36,12 @@ public class EndlessGameContext
 
     public static function endGameAndSendScores () :void
     {
-        if (GameContext.isSinglePlayerGame && ClientCtx.gameCtrl.isConnected()) {
+        if (GameCtx.isSinglePlayerGame && ClientCtx.gameCtrl.isConnected()) {
             ClientCtx.gameCtrl.game.endGameWithScore(
                 EndlessGameContext.totalScore,
                 Constants.SCORE_MODE_ENDLESS);
 
-        } else if (GameContext.isMultiplayerGame && ClientCtx.seatingMgr.isLocalPlayerInControl) {
+        } else if (GameCtx.isMultiplayerGame && ClientCtx.seatingMgr.isLocalPlayerInControl) {
             // convert PlayerScore objects to ints for reporting to the server
             var finalScores :Array =
                 EndlessGameContext.playerMonitor.getScores(EndlessGameContext.roundId);
@@ -74,7 +74,7 @@ public class EndlessGameContext
             playerMonitor = null;
         }
 
-        if (GameContext.isMultiplayerGame) {
+        if (GameCtx.isMultiplayerGame) {
             playerMonitor = new PlayerMonitor(ClientCtx.seatingMgr.numPlayers);
         }
 
@@ -122,11 +122,11 @@ public class EndlessGameContext
 
     public static function incrementMultiplier () :void
     {
-        if (scoreMultiplier < GameContext.gameData.maxMultiplier) {
+        if (scoreMultiplier < GameCtx.gameData.maxMultiplier) {
             ++scoreMultiplier;
         } else {
             EndlessGameContext.incrementResourceScore(
-                GameContext.gameData.scoreData.pointsPerExtraMultiplier);
+                GameCtx.gameData.scoreData.pointsPerExtraMultiplier);
         }
     }
 

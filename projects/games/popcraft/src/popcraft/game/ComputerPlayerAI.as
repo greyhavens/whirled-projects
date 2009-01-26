@@ -20,7 +20,7 @@ public class ComputerPlayerAI extends SimObject
     {
         super.addedToDB();
 
-        _playerInfo = ComputerPlayerInfo(GameContext.playerInfos[_playerIndex]);
+        _playerInfo = ComputerPlayerInfo(GameCtx.playerInfos[_playerIndex]);
 
         // add starting spells to our playerInfo
         _playerInfo.setSpellCounts(_data.startingCreatureSpells);
@@ -62,7 +62,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function sendNextWave () :void
     {
-        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight) {
+        if (_playerInfo.isAlive && GameCtx.diurnalCycle.isNight) {
 
             // before each wave goes out, there's a chance that the computer
             // player will cast a spell (if it has one available)
@@ -76,17 +76,17 @@ public class ComputerPlayerAI extends SimObject
 
                 if (availableSpells.length > 0) {
                     spellType = Rand.nextElement(availableSpells, Rand.STREAM_GAME);
-                    GameContext.gameMode.sendCastSpellMsg(_playerInfo.playerIndex, spellType, true);
+                    GameCtx.gameMode.sendCastSpellMsg(_playerInfo.playerIndex, spellType, true);
                 }
             }
 
             // should we switch our targeted enemy?
             if (null != _nextWave.targetPlayerName) {
                 var targetPlayer :PlayerInfo =
-                    GameContext.getPlayerByName(_nextWave.targetPlayerName);
+                    GameCtx.getPlayerByName(_nextWave.targetPlayerName);
 
                 if (null != targetPlayer) {
-                    GameContext.gameMode.sendTargetEnemyMsg(_playerInfo.playerIndex,
+                    GameCtx.gameMode.sendTargetEnemyMsg(_playerInfo.playerIndex,
                         targetPlayer.playerIndex, true);
                 }
             }
@@ -113,7 +113,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function createCreature (unitType :int, count :int) :void
     {
-        GameContext.gameMode.sendCreateCreatureMsg(_playerInfo.playerIndex, unitType, count, true);
+        GameCtx.gameMode.sendCreateCreatureMsg(_playerInfo.playerIndex, unitType, count, true);
     }
 
     override protected function update (dt :Number) :void
@@ -124,7 +124,7 @@ public class ComputerPlayerAI extends SimObject
         }
 
         // which day is it?
-        var diurnalCycle :DiurnalCycle = GameContext.diurnalCycle;
+        var diurnalCycle :DiurnalCycle = GameCtx.diurnalCycle;
         var dayIndex :int = (diurnalCycle.dayCount - 1);
         if (dayIndex != _lastDayIndex) {
             _curDay = getDayData(dayIndex);
@@ -140,7 +140,7 @@ public class ComputerPlayerAI extends SimObject
             return;
         }
 
-        if (GameContext.diurnalCycle.isNight) {
+        if (GameCtx.diurnalCycle.isNight) {
             // send out creatures and look for spell drops at night
 
             if (_nextWave == null) {
@@ -158,7 +158,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function sendCouriersForSpellDrop () :void
     {
-        if (_playerInfo.isAlive && GameContext.diurnalCycle.isNight && this.spellDropOnBoard) {
+        if (_playerInfo.isAlive && GameCtx.diurnalCycle.isNight && this.spellDropOnBoard) {
             var numCouriers :int = _curDay.spellDropCourierGroupSize.next() -
                 this.numCouriersOnBoard;
             createCreature(Constants.UNIT_TYPE_COURIER, numCouriers);
@@ -172,7 +172,7 @@ public class ComputerPlayerAI extends SimObject
 
     protected function get spellDropOnBoard () :Boolean
     {
-        return GameContext.netObjects.getObjectRefsInGroup(SpellDropObject.GROUP_NAME).length > 0;
+        return GameCtx.netObjects.getObjectRefsInGroup(SpellDropObject.GROUP_NAME).length > 0;
     }
 
     protected function get numCouriersOnBoard () :int

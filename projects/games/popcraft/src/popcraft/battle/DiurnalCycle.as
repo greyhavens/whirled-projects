@@ -11,7 +11,7 @@ public class DiurnalCycle extends SimObject
 {
     public static function get isDisabled () :Boolean
     {
-        return GameContext.gameData.disableDiurnalCycle;
+        return GameCtx.gameData.disableDiurnalCycle;
     }
 
     public function DiurnalCycle (initialPhase :int)
@@ -83,7 +83,7 @@ public class DiurnalCycle extends SimObject
 
     public static function getPhaseLength (phase :int) :Number
     {
-        var gameData :GameData = GameContext.gameData;
+        var gameData :GameData = GameCtx.gameData;
 
         switch (phase) {
         case Constants.PHASE_DAY: return gameData.dayLength;
@@ -141,7 +141,7 @@ public class DiurnalCycle extends SimObject
 
     public function get curPhaseTotalTime () :Number
     {
-        return (this.isDay ? GameContext.gameData.dayLength : GameContext.gameData.nightLength);
+        return (this.isDay ? GameCtx.gameData.dayLength : GameCtx.gameData.nightLength);
     }
 
     public function get timeTillNextPhase () :Number

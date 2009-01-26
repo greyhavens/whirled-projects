@@ -18,14 +18,14 @@ public class SpellDropTimer extends SimObject
 
     protected function scheduleNextSpellDrop () :void
     {
-        if (GameContext.gameMode.availableSpells.length == 0) {
+        if (GameCtx.gameMode.availableSpells.length == 0) {
             return;
         }
 
-        if (GameContext.diurnalCycle.isNight) {
-            var time :Number = GameContext.gameData.spellDropTime.next();
+        if (GameCtx.diurnalCycle.isNight) {
+            var time :Number = GameCtx.gameData.spellDropTime.next();
             if (time >= 0) {
-                _timerRef = GameContext.netObjects.addObject(
+                _timerRef = GameCtx.netObjects.addObject(
                     new SimpleTimer(time, createNextSpellDrop));
             }
         }
@@ -34,16 +34,16 @@ public class SpellDropTimer extends SimObject
     protected function createNextSpellDrop () :void
     {
         // do we have a custom spell drop location?
-        var spellLoc :Vector2 = GameContext.gameMode.mapSettings.spellDropLoc;
+        var spellLoc :Vector2 = GameCtx.gameMode.mapSettings.spellDropLoc;
 
         if (null == spellLoc) {
             // no - generate one
 
-            if (GameContext.numPlayers == 2) {
+            if (GameCtx.numPlayers == 2) {
                 // in a two-player game, pick a location somewhere along the line
                 // that runs perpendicular to the line that connects the two bases
-                var player1 :PlayerInfo = GameContext.playerInfos[0];
-                var player2 :PlayerInfo = GameContext.playerInfos[1];
+                var player1 :PlayerInfo = GameCtx.playerInfos[0];
+                var player2 :PlayerInfo = GameCtx.playerInfos[1];
                 var base1 :WorkshopUnit = player1.workshop;
                 var base2 :WorkshopUnit = player2.workshop;
                 if (null != base1 && null != base2) {
@@ -63,7 +63,7 @@ public class SpellDropTimer extends SimObject
                     var baseHealth2 :Number = Math.max(base2.health / base2.maxHealth, 0.001);
 
                     var maxSpellDropShift :Number = 1.0 -
-                        GameContext.gameData.maxLosingPlayerSpellDropShift;
+                        GameCtx.gameData.maxLosingPlayerSpellDropShift;
 
                     if (baseHealth1 < baseHealth2) {
                         shiftAmount = Math.max((baseHealth1 / baseHealth2), maxSpellDropShift) *
@@ -80,7 +80,7 @@ public class SpellDropTimer extends SimObject
                     var direction :Number = baseLoc1.subtract(baseLoc2).angle;
                     direction += (Rand.nextBoolean(Rand.STREAM_GAME) ? Math.PI * 0.5 :
                         -Math.PI * 0.5);
-                    var centerDistance :Number = GameContext.gameData.spellDropCenterOffset.next();
+                    var centerDistance :Number = GameCtx.gameData.spellDropCenterOffset.next();
                     spellLoc = spellLoc.addLocal(Vector2.fromAngle(direction, centerDistance));
                 }
 
@@ -89,7 +89,7 @@ public class SpellDropTimer extends SimObject
                 // (average all player base locations together)
                 var numBases :int;
                 var centerLoc :Vector2 = new Vector2();
-                for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+                for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
                     var playerBase :WorkshopUnit = playerInfo.workshop;
                     if (null != playerBase) {
                         centerLoc.addLocal(playerBase.unitLoc);
@@ -108,17 +108,17 @@ public class SpellDropTimer extends SimObject
         if (null != spellLoc) {
             // randomize the location a bit more
             direction = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-            var length :Number = GameContext.gameData.spellDropScatter.next();
+            var length :Number = GameCtx.gameData.spellDropScatter.next();
             spellLoc.addLocal(Vector2.fromAngle(direction, length));
 
             // clamp location
             spellLoc.x = Math.max(spellLoc.x, 75);
-            spellLoc.x = Math.min(spellLoc.x, GameContext.gameMode.battlefieldWidth - 75);
+            spellLoc.x = Math.min(spellLoc.x, GameCtx.gameMode.battlefieldWidth - 75);
             spellLoc.y = Math.max(spellLoc.y, 75);
-            spellLoc.y = Math.min(spellLoc.y, GameContext.gameMode.battlefieldHeight - 75);
+            spellLoc.y = Math.min(spellLoc.y, GameCtx.gameMode.battlefieldHeight - 75);
 
             // pick a spell at random
-            var spellType :int = Rand.nextElement(GameContext.gameMode.availableSpells,
+            var spellType :int = Rand.nextElement(GameCtx.gameMode.availableSpells,
                 Rand.STREAM_GAME);
             SpellDropFactory.createSpellDrop(spellType, spellLoc, true);
 
@@ -130,9 +130,9 @@ public class SpellDropTimer extends SimObject
     override protected function update (dt :Number) :void
     {
         // spells don't get generated during the day
-        if (GameContext.diurnalCycle.isDay && !_timerRef.isNull) {
-            GameContext.netObjects.destroyObject(_timerRef);
-        } else if (GameContext.diurnalCycle.isNight && _timerRef.isNull) {
+        if (GameCtx.diurnalCycle.isDay && !_timerRef.isNull) {
+            GameCtx.netObjects.destroyObject(_timerRef);
+        } else if (GameCtx.diurnalCycle.isNight && _timerRef.isNull) {
             scheduleNextSpellDrop();
         }
     }

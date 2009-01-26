@@ -73,10 +73,10 @@ class HeavyFormationManager extends SimObject
 
     protected static function getManager (owningPlayerIndex :int) :HeavyFormationManager
     {
-        var mgr :SimObject = GameContext.netObjects.getObjectNamed(getObjectName(owningPlayerIndex));
+        var mgr :SimObject = GameCtx.netObjects.getObjectNamed(getObjectName(owningPlayerIndex));
         if (null == mgr) {
             mgr = new HeavyFormationManager(owningPlayerIndex);
-            GameContext.netObjects.addObject(mgr);
+            GameCtx.netObjects.addObject(mgr);
         }
 
         return mgr as HeavyFormationManager;
@@ -200,7 +200,7 @@ class HeavyAI extends AITaskTree
         var enemyBase :WorkshopUnit = _unit.getEnemyBaseToAttack().object as WorkshopUnit;
         var enemyBaseLoc :Vector2 = (null != enemyBase ?
             enemyBase.unitLoc :
-            new Vector2(GameContext.gameMode.battlefieldWidth * 0.5, GameContext.gameMode.battlefieldHeight * 0.5));
+            new Vector2(GameCtx.gameMode.battlefieldWidth * 0.5, GameCtx.gameMode.battlefieldHeight * 0.5));
 
         var target :Vector2 = enemyBaseLoc.subtract(ourBaseLoc);
 

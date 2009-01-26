@@ -37,8 +37,8 @@ public class SapperCreatureUnit extends CreatureUnit
                 die();
             }
 
-            if (damage > 0 && this.owningPlayerIndex == GameContext.localPlayerIndex &&
-                GameContext.diurnalCycle.isDay) {
+            if (damage > 0 && this.owningPlayerIndex == GameCtx.localPlayerIndex &&
+                GameCtx.diurnalCycle.isDay) {
                 // awarded for Delivery Boy damaging a base at sunrise
                 // (if it's daytime, the only damage we can have done is to a base)
                 ClientCtx.awardTrophy(Trophies.RUSHDELIVERY);

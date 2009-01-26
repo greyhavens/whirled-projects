@@ -20,7 +20,7 @@ public class SpellButton extends SceneObject
         _spellType = spellType;
         _slot = slot;
 
-        var spellData :SpellData = GameContext.gameData.spells[spellType];
+        var spellData :SpellData = GameCtx.gameData.spells[spellType];
 
         _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", spellData.iconName, false, true);
         _movie.scaleX = BUTTON_SCALE;
@@ -60,13 +60,13 @@ public class SpellButton extends SceneObject
     {
         if (_spellType < Constants.CREATURE_SPELL_TYPE__LIMIT) {
             // don't cast creature spells during the day
-            if (GameContext.diurnalCycle.isDay) {
+            if (GameCtx.diurnalCycle.isDay) {
                 return false;
             }
 
             // don't allow redundant creature spells
             var playerSpellSet :CreatureSpellSet =
-                GameContext.getActiveSpellSet(GameContext.localPlayerIndex);
+                GameCtx.getActiveSpellSet(GameCtx.localPlayerIndex);
             if (playerSpellSet.isSpellActive(_spellType)) {
                 return false;
             }

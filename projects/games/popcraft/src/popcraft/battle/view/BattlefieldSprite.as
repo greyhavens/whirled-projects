@@ -11,14 +11,14 @@ public class BattlefieldSprite extends SceneObject
 {
     public function BattlefieldSprite ()
     {
-        _mapScaleXInv = GameContext.mapScaleXInv;
-        _mapScaleYInv = GameContext.mapScaleYInv;
+        _mapScaleXInv = GameCtx.mapScaleXInv;
+        _mapScaleYInv = GameCtx.mapScaleYInv;
         _spriteScale = Math.max(_mapScaleXInv, _mapScaleYInv);
     }
 
     override protected function addedToDB () :void
     {
-        if (GameContext.scaleSprites) {
+        if (GameCtx.scaleSprites) {
             scaleSprites();
         }
     }

@@ -27,7 +27,7 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
         var saves :SavedEndlessGameList = new SavedEndlessGameList();
 
         var savedPlayerData :SavedLocalPlayerInfo =
-            EndlessGameContext.savedHumanPlayers[GameContext.localPlayerIndex];
+            EndlessGameContext.savedHumanPlayers[GameCtx.localPlayerIndex];
 
         saves.addSave(SavedEndlessGame.create(EndlessGameContext.mapIndex,
                 EndlessGameContext.resourceScore,
@@ -48,8 +48,8 @@ public class EndlessInterstitialMode extends EndlessLevelSelectModeBase
 
     override protected function get scores () :Array
     {
-        return (GameContext.isSinglePlayerGame ?
-            [ PlayerScoreMsg.create(GameContext.localPlayerIndex,
+        return (GameCtx.isSinglePlayerGame ?
+            [ PlayerScoreMsg.create(GameCtx.localPlayerIndex,
                 EndlessGameContext.resourceScore,
                 EndlessGameContext.damageScore,
                 EndlessGameContext.resourceScoreThisRound,

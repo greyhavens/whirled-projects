@@ -15,7 +15,7 @@ public class DeadWorkshopView extends BattlefieldSprite
 {
     public static function getForPlayer (playerIndex :int) :DeadWorkshopView
     {
-        return GameContext.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as DeadWorkshopView;
+        return GameCtx.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as DeadWorkshopView;
     }
 
     public function DeadWorkshopView (unit :WorkshopUnit)
@@ -42,7 +42,7 @@ public class DeadWorkshopView extends BattlefieldSprite
         _movie.addChildAt(_rubble, index);
 
         // mirror horizontally if we're on the left side of the battlefield
-        _rubble.scaleX = (unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
+        _rubble.scaleX = (unit.x < GameCtx.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
 
         // recolor
         var playerColor :uint = unit.owningPlayerInfo.color;

@@ -14,7 +14,7 @@ public class UnitFactory extends EventDispatcher
     public function createCreature (unitType :int, owningPlayerIndex :int) :void
     {
         // sanity check. dead players create no monsters.
-        if (!PlayerInfo(GameContext.playerInfos[owningPlayerIndex]).isAlive) {
+        if (!PlayerInfo(GameCtx.playerInfos[owningPlayerIndex]).isAlive) {
             return;
         }
 
@@ -52,7 +52,7 @@ public class UnitFactory extends EventDispatcher
 
         // unit views may depend on the unit already having been added to an ObjectDB,
         // so do that before creating a unit view
-        GameContext.netObjects.addObject(creature);
+        GameCtx.netObjects.addObject(creature);
 
         var creatureView :CreatureUnitView;
         switch (unitType) {
@@ -65,10 +65,10 @@ public class UnitFactory extends EventDispatcher
             break;
         }
 
-        GameContext.gameMode.addObject(creatureView, GameContext.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addObject(creatureView, GameCtx.battleBoardView.unitViewParent);
 
         // play a sound
-        GameContext.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
+        GameCtx.playGameSound("sfx_create_" + Constants.CREATURE_UNIT_NAMES[unitType]);
 
         dispatchEvent(new UnitCreatedEvent(unitType, owningPlayerIndex));
     }
@@ -76,10 +76,10 @@ public class UnitFactory extends EventDispatcher
     public function createWorkshop (owningPlayerInfo :PlayerInfo) :WorkshopView
     {
         var workshop :WorkshopUnit = new WorkshopUnit(owningPlayerInfo);
-        GameContext.netObjects.addObject(workshop);
+        GameCtx.netObjects.addObject(workshop);
 
         var workshopView :WorkshopView = new WorkshopView(workshop);
-        GameContext.gameMode.addObject(workshopView, GameContext.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addObject(workshopView, GameCtx.battleBoardView.unitViewParent);
 
         dispatchEvent(new UnitCreatedEvent(Constants.UNIT_TYPE_WORKSHOP,
             owningPlayerInfo.playerIndex));

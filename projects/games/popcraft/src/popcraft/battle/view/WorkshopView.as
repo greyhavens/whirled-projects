@@ -29,12 +29,12 @@ public class WorkshopView extends BattlefieldSprite
 {
     public static function getAll () :Array
     {
-        return GameContext.gameMode.getObjectsInGroup(GROUP_NAME);
+        return GameCtx.gameMode.getObjectsInGroup(GROUP_NAME);
     }
 
     public static function getForPlayer (playerIndex :int) :WorkshopView
     {
-        return GameContext.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as WorkshopView;
+        return GameCtx.gameMode.getObjectNamed(NAME_PREFIX + playerIndex) as WorkshopView;
     }
 
     public function WorkshopView (unit :WorkshopUnit)
@@ -82,7 +82,7 @@ public class WorkshopView extends BattlefieldSprite
         _shoutView = new ShoutView();
         _shoutView.x = SHOUT_VIEW_LOC.x;
         _shoutView.y = SHOUT_VIEW_LOC.y;
-        GameContext.gameMode.addObject(_shoutView, _sprite);
+        GameCtx.gameMode.addObject(_shoutView, _sprite);
 
         // clickable sprite
         _clickableSprite.graphics.beginFill(0, 0);
@@ -93,11 +93,11 @@ public class WorkshopView extends BattlefieldSprite
             CLICKABLE_SPRITE_SIZE.height);
         _clickableSprite.graphics.endFill();
 
-        GameContext.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
+        GameCtx.battleBoardView.clickableObjectParent.addChild(_clickableSprite);
         var thisObj :WorkshopView = this;
         registerListener(_clickableSprite, MouseEvent.CLICK,
             function (...ignored) :void {
-                GameContext.gameMode.workshopClicked(thisObj);
+                GameCtx.gameMode.workshopClicked(thisObj);
             });
 
         updateWorkshopLocation();
@@ -212,7 +212,7 @@ public class WorkshopView extends BattlefieldSprite
         updateLoc(_unit.x, _unit.y);
 
         // flip the movie if we're on the left side of the board
-        _workshop.scaleX = (_unit.x < GameContext.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
+        _workshop.scaleX = (_unit.x < GameCtx.gameMode.battlefieldWidth * 0.5 ? -1 : 1);
 
         _clickableSprite.x = this.x;
         _clickableSprite.y = this.y;
@@ -223,13 +223,13 @@ public class WorkshopView extends BattlefieldSprite
         var health :Number = _unit.health;
         if (health != _lastHealth) {
             if (health <= 0) {
-                GameContext.playGameSound("sfx_death_base");
+                GameCtx.playGameSound("sfx_death_base");
                 destroySelf();
 
                 // create the rubble sprite
-                GameContext.gameMode.addObject(
+                GameCtx.gameMode.addObject(
                     new DeadWorkshopView(_unit),
-                    GameContext.battleBoardView.unitViewParent);
+                    GameCtx.battleBoardView.unitViewParent);
 
             } else {
                 // update all health meters
@@ -290,7 +290,7 @@ public class WorkshopView extends BattlefieldSprite
         }
 
         if (playSounds && soundName != null) {
-            GameContext.playGameSound(soundName);
+            GameCtx.playGameSound(soundName);
         }
 
         // update shields
@@ -343,7 +343,7 @@ public class WorkshopView extends BattlefieldSprite
 
         // play a sound
         var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
-        GameContext.playGameSound(soundName);
+        GameCtx.playGameSound(soundName);
     }
 
     override public function getObjectGroup (groupNum :int) :String

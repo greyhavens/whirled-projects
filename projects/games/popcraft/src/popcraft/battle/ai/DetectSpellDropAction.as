@@ -14,7 +14,7 @@ public class DetectSpellDropAction extends AITask
 
     override public function update (dt :Number, unit :CreatureUnit) :int
     {
-        var spells :Array = GameContext.netObjects.getObjectsInGroup(SpellDropObject.GROUP_NAME);
+        var spells :Array = GameCtx.netObjects.getObjectsInGroup(SpellDropObject.GROUP_NAME);
         if (spells.length > 0) {
             sendParentMessage(MSG_SPELLDETECTED, spells);
         }

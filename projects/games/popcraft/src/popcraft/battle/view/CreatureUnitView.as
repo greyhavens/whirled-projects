@@ -60,7 +60,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         registerListener(_unit, UnitEvent.ATTACKED, handleUnitAttacked);
 
-        var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
+        var spellSet :CreatureSpellSet = GameCtx.getActiveSpellSet(_unit.owningPlayerIndex);
         registerListener(spellSet, CreatureSpellSet.SET_MODIFIED, handleSpellSetModified);
 
         updateUnitSpellIcons();
@@ -90,7 +90,7 @@ public class CreatureUnitView extends BattlefieldSprite
             _unitSpellIconParent = null;
         }
 
-        var spellSet :CreatureSpellSet = GameContext.getActiveSpellSet(_unit.owningPlayerIndex);
+        var spellSet :CreatureSpellSet = GameCtx.getActiveSpellSet(_unit.owningPlayerIndex);
         var spells :Array = spellSet.spells;
         if (spells.length == 0) {
             return;
@@ -142,7 +142,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         // play a sound
         var soundName :String = Rand.nextElement(HIT_SOUND_NAMES, Rand.STREAM_COSMETIC);
-        GameContext.playGameSound(soundName);
+        GameCtx.playGameSound(soundName);
     }
 
     protected function setupAnimations (playerColor :uint) :void
@@ -197,7 +197,7 @@ public class CreatureUnitView extends BattlefieldSprite
 
         if (useBitmapAnims) {
             _bitmapAnimView = new BitmapAnimView(_animStanding[0]);
-            GameContext.gameMode.addObject(_bitmapAnimView);
+            GameCtx.gameMode.addObject(_bitmapAnimView);
             _sprite.addChildAt(_bitmapAnimView.displayObject, 0);
 
         } else {
@@ -326,9 +326,9 @@ public class CreatureUnitView extends BattlefieldSprite
 
             // show a death animation (will self-destruct when animation is complete)
             if (!_unit.preventDeathAnimation) {
-                GameContext.gameMode.addObject(
+                GameCtx.gameMode.addObject(
                     new DeadCreatureUnitView(_unit, _lastViewState.facing),
-                    GameContext.battleBoardView.unitViewParent);
+                    GameCtx.battleBoardView.unitViewParent);
             }
 
         } else {

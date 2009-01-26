@@ -16,17 +16,17 @@ public class SpellDropFactory
         spellDrop.x = loc.x;
         spellDrop.y = loc.y;
 
-        GameContext.netObjects.addObject(spellDrop);
+        GameCtx.netObjects.addObject(spellDrop);
 
         // create the view after adding the spellDrop to the game, so that its
         // SimObjectRef is valid
         var spellDropView :SpellDropView = new SpellDropView(spellDrop);
         spellDropView.x = loc.x;
         spellDropView.y = loc.y;
-        GameContext.gameMode.addObject(spellDropView, GameContext.battleBoardView.unitViewParent);
+        GameCtx.gameMode.addObject(spellDropView, GameCtx.battleBoardView.unitViewParent);
 
         if (playSound) {
-            GameContext.playGameSound("sfx_spelldrop");
+            GameCtx.playGameSound("sfx_spelldrop");
         }
 
         return spellDropView;

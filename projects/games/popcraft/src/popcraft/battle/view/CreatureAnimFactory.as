@@ -72,7 +72,7 @@ public class CreatureAnimFactory
         g_tintMatrix.reset();
         g_tintMatrix.colorize(playerColor);
 
-        var unitData :UnitData = GameContext.gameData.units[unitType];
+        var unitData :UnitData = GameCtx.gameData.units[unitType];
 
         var anim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs,
             unitData.name, animName, true, USE_CACHE);

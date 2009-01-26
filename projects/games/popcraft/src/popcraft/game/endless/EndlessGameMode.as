@@ -71,7 +71,7 @@ public class EndlessGameMode extends GameMode
         }
 
         var scoreView :ScoreView = new ScoreView();
-        addObject(scoreView, GameContext.overlayLayer);
+        addObject(scoreView, GameCtx.overlayLayer);
     }
 
     override protected function enter () :void
@@ -95,7 +95,7 @@ public class EndlessGameMode extends GameMode
             // we're in standalone mode; start the game immediately
             startGame();
 
-        } else if (GameContext.isSinglePlayerGame) {
+        } else if (GameCtx.isSinglePlayerGame) {
             // this is a singleplayer game; start the game immediately,
             // and tell the server we're playing the game so that coins can be awarded
             ClientCtx.gameCtrl.game.playerReady();
@@ -122,7 +122,7 @@ public class EndlessGameMode extends GameMode
         super.updateNetworkedObjects();
 
         // sync the local player's workshop damage shield count to their score multiplier
-        var localPlayerWorkshop :WorkshopUnit = GameContext.localPlayerInfo.workshop;
+        var localPlayerWorkshop :WorkshopUnit = GameCtx.localPlayerInfo.workshop;
         var multiplier :int =
             (localPlayerWorkshop != null ? localPlayerWorkshop.damageShields.length + 1 : 1);
         EndlessGameContext.scoreMultiplier = multiplier;
@@ -160,7 +160,7 @@ public class EndlessGameMode extends GameMode
 
     protected function killAllCreatures () :void
     {
-        for each (var creature :CreatureUnit in GameContext.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME)) {
+        for each (var creature :CreatureUnit in GameCtx.netObjects.getObjectsInGroup(CreatureUnit.GROUP_NAME)) {
             creature.die();
         }
     }
@@ -176,7 +176,7 @@ public class EndlessGameMode extends GameMode
         // save data about our human players so that they can be resurrected
         // when the next round starts
         EndlessGameContext.savedHumanPlayers = [];
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
             if (playerInfo.teamId == HUMAN_TEAM_ID) {
                 EndlessGameContext.savedHumanPlayers.push(playerInfo.saveData());
             }
@@ -223,7 +223,7 @@ public class EndlessGameMode extends GameMode
                 }
             }
 
-            if (GameContext.isMultiplayerGame && mapIndex >= Trophies.COLLABORATOR_MP_MAP_INDEX) {
+            if (GameCtx.isMultiplayerGame && mapIndex >= Trophies.COLLABORATOR_MP_MAP_INDEX) {
                 // complete MP level 9
                 ClientCtx.awardTrophy(Trophies.COLLABORATOR);
             }
@@ -231,7 +231,7 @@ public class EndlessGameMode extends GameMode
         } else {
             audioFadeOutTime = GAME_OVER_AUDIO_FADE_TIME;
 
-            if (GameContext.isSinglePlayerGame) {
+            if (GameCtx.isSinglePlayerGame) {
                 nextMode = new SpEndlessGameOverMode();
             } else {
                 // send our new saved games to everyone, in case the game is restarted.
@@ -242,11 +242,11 @@ public class EndlessGameMode extends GameMode
             }
         }
 
-        if (GameContext.isMultiplayerGame) {
+        if (GameCtx.isMultiplayerGame) {
             // In a multiplayer game, wait for everyone to report their scores so that the next mode
             // can call endGameWithScores
             EndlessGameContext.playerMonitor.reportScore(PlayerScoreMsg.create(
-                    GameContext.localPlayerIndex,
+                    GameCtx.localPlayerIndex,
                     EndlessGameContext.resourceScore,
                     EndlessGameContext.damageScore,
                     EndlessGameContext.resourceScoreThisRound,
@@ -264,20 +264,20 @@ public class EndlessGameMode extends GameMode
             ClientCtx.mainLoop.pushMode(nextMode);
         }
 
-        GameContext.musicControls.fadeOut(audioFadeOutTime);
-        GameContext.sfxControls.fadeOut(audioFadeOutTime);
+        GameCtx.musicControls.fadeOut(audioFadeOutTime);
+        GameCtx.sfxControls.fadeOut(audioFadeOutTime);
     }
 
     override protected function applyCheatCode (keyCode :uint) :void
     {
         switch (keyCode) {
         case KeyboardCodes.M:
-            spellDeliveredToPlayer(GameContext.localPlayerIndex,
+            spellDeliveredToPlayer(GameCtx.localPlayerIndex,
                 Constants.SPELL_TYPE_MULTIPLIER);
             break;
 
         case KeyboardCodes.SLASH:
-            if (GameContext.isSinglePlayerGame) {
+            if (GameCtx.isSinglePlayerGame) {
                 ClientCtx.endlessLevelMgr.playSpLevel(null, true);
             }
             break;
@@ -295,7 +295,7 @@ public class EndlessGameMode extends GameMode
     override protected function resurrectPlayer (deadPlayerIndex :int) :int
     {
         var resurrectingPlayerIndex :int = super.resurrectPlayer(deadPlayerIndex);
-        if (resurrectingPlayerIndex == GameContext.localPlayerIndex) {
+        if (resurrectingPlayerIndex == GameCtx.localPlayerIndex) {
             ClientCtx.awardTrophy(Trophies.REANIMATOR);
         }
 
@@ -309,7 +309,7 @@ public class EndlessGameMode extends GameMode
             super.playerEarnedResources(resourceType, offset, numClearPieces);
 
         EndlessGameContext.incrementResourceScore(
-            actualResourcesEarned * GameContext.gameData.scoreData.pointsPerResource);
+            actualResourcesEarned * GameCtx.gameData.scoreData.pointsPerResource);
 
         return actualResourcesEarned;
     }
@@ -318,9 +318,9 @@ public class EndlessGameMode extends GameMode
     {
         super.creatureKilled(creature, killingPlayerIndex);
 
-        if (killingPlayerIndex == GameContext.localPlayerIndex) {
+        if (killingPlayerIndex == GameCtx.localPlayerIndex) {
             EndlessGameContext.incrementDamageScore(
-                GameContext.gameData.scoreData.pointsPerCreatureKill[creature.unitType]);
+                GameCtx.gameData.scoreData.pointsPerCreatureKill[creature.unitType]);
         }
     }
 
@@ -328,9 +328,9 @@ public class EndlessGameMode extends GameMode
     {
         super.workshopKilled(workshop, killingPlayerIndex);
 
-        if (killingPlayerIndex == GameContext.localPlayerIndex) {
+        if (killingPlayerIndex == GameCtx.localPlayerIndex) {
             EndlessGameContext.incrementDamageScore(
-                GameContext.gameData.scoreData.pointsPerOpponentKill);
+                GameCtx.gameData.scoreData.pointsPerOpponentKill);
 
             // award the Handicapper trophy if the local player killed an opponent who stole
             // a multiplier from the battlefield
@@ -347,14 +347,14 @@ public class EndlessGameMode extends GameMode
         // multiplier spells increase the player's score multiplier, and also add little damage
         // shields to his workshop
         if (spellType == Constants.SPELL_TYPE_MULTIPLIER) {
-            var workshop :WorkshopUnit = PlayerInfo(GameContext.playerInfos[playerIndex]).workshop;
+            var workshop :WorkshopUnit = PlayerInfo(GameCtx.playerInfos[playerIndex]).workshop;
             if (workshop != null &&
-                workshop.damageShields.length < GameContext.gameData.maxMultiplier) {
+                workshop.damageShields.length < GameCtx.gameData.maxMultiplier) {
 
-                workshop.addDamageShield(GameContext.gameData.multiplierDamageSoak);
+                workshop.addDamageShield(GameCtx.gameData.multiplierDamageSoak);
             }
 
-            if (playerIndex == GameContext.localPlayerIndex) {
+            if (playerIndex == GameCtx.localPlayerIndex) {
                 EndlessGameContext.incrementMultiplier();
                 if (EndlessGameContext.scoreMultiplier >= 5) {
                     ClientCtx.awardTrophy(Trophies.MAX_X);
@@ -368,7 +368,7 @@ public class EndlessGameMode extends GameMode
 
     override public function get canPause () :Boolean
     {
-        return GameContext.isSinglePlayerGame;
+        return GameCtx.isSinglePlayerGame;
     }
 
     override public function isAvailableUnit (unitType :int) :Boolean
@@ -388,18 +388,18 @@ public class EndlessGameMode extends GameMode
 
     override protected function createPlayers () :void
     {
-        GameContext.localPlayerIndex =
-            (GameContext.isMultiplayerGame ? ClientCtx.seatingMgr.localPlayerSeat : 0);
-        GameContext.playerInfos = [];
+        GameCtx.localPlayerIndex =
+            (GameCtx.isMultiplayerGame ? ClientCtx.seatingMgr.localPlayerSeat : 0);
+        GameCtx.playerInfos = [];
 
-        var workshopData :UnitData = GameContext.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
+        var workshopData :UnitData = GameCtx.gameData.units[Constants.UNIT_TYPE_WORKSHOP];
         var workshopHealth :Number = workshopData.maxHealth;
 
         // create PlayerInfos for the human players
         for (var playerIndex :int = 0; playerIndex < this.numHumanPlayers; ++playerIndex) {
             var playerName :String = EndlessGameContext.level.humanPlayerNames[playerIndex];
             var playerDisplayData :PlayerDisplayData =
-                GameContext.gameData.getPlayerDisplayData(playerName);
+                GameCtx.gameData.getPlayerDisplayData(playerName);
 
             var humanPlayerData :EndlessHumanPlayerData =
                 _curMapData.humans.get(playerDisplayData.playerName);
@@ -408,13 +408,13 @@ public class EndlessGameMode extends GameMode
             // and headshots, which will cause that data to be pulled from whirled
             var displayName :String = null;
             var headshot :DisplayObject = null
-            if (GameContext.isSinglePlayerGame) {
+            if (GameCtx.isSinglePlayerGame) {
                 displayName = playerDisplayData.displayName;
                 headshot = playerDisplayData.headshot;
             }
 
-            if (playerIndex == GameContext.localPlayerIndex) {
-                GameContext.playerInfos.push(new LocalPlayerInfo(
+            if (playerIndex == GameCtx.localPlayerIndex) {
+                GameCtx.playerInfos.push(new LocalPlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
                     humanPlayerData.baseLoc,
@@ -430,7 +430,7 @@ public class EndlessGameMode extends GameMode
                 _localHumanPlayerData = humanPlayerData;
 
             } else {
-                GameContext.playerInfos.push(new PlayerInfo(
+                GameCtx.playerInfos.push(new PlayerInfo(
                     playerIndex,
                     HUMAN_TEAM_ID,
                     humanPlayerData.baseLoc,
@@ -449,7 +449,7 @@ public class EndlessGameMode extends GameMode
 
         var playerInfo :PlayerInfo;
 
-        var damageShieldHealth :Number = GameContext.gameData.multiplierDamageSoak;
+        var damageShieldHealth :Number = GameCtx.gameData.multiplierDamageSoak;
 
         // restore data that was saved from the previous map (must be done after playerInfos
         // are init()'d)
@@ -457,7 +457,7 @@ public class EndlessGameMode extends GameMode
             ++playerIndex) {
 
             var savedPlayer :SavedPlayerInfo = EndlessGameContext.savedHumanPlayers[playerIndex];
-            playerInfo = GameContext.playerInfos[playerIndex];
+            playerInfo = GameCtx.playerInfos[playerIndex];
             playerInfo.restoreSavedPlayerInfo(savedPlayer, damageShieldHealth);
         }
 
@@ -465,17 +465,17 @@ public class EndlessGameMode extends GameMode
         if (_playerSaves != null) {
             for (playerIndex = 0; playerIndex < _playerSaves.length; ++playerIndex) {
                 var save :SavedEndlessGame = _playerSaves[playerIndex];
-                playerInfo = GameContext.playerInfos[playerIndex];
+                playerInfo = GameCtx.playerInfos[playerIndex];
                 playerInfo.restoreSavedGameData(save, damageShieldHealth);
             }
         }
 
         // init all players (creates Workshop units)
-        for each (playerInfo in GameContext.playerInfos) {
+        for each (playerInfo in GameCtx.playerInfos) {
             playerInfo.init();
         }
 
-        _playerGotMultiplier = ArrayUtil.create(GameContext.numPlayers, false);
+        _playerGotMultiplier = ArrayUtil.create(GameCtx.numPlayers, false);
     }
 
     protected function createComputerPlayers () :Array
@@ -490,7 +490,7 @@ public class EndlessGameMode extends GameMode
             var playerInfo :PlayerInfo = new EndlessComputerPlayerInfo(playerIndex, cpData,
                 mapCycleNumber);
 
-            GameContext.playerInfos.push(playerInfo);
+            GameCtx.playerInfos.push(playerInfo);
             newInfos.push(playerInfo);
 
             ++playerIndex;
@@ -501,12 +501,12 @@ public class EndlessGameMode extends GameMode
 
     protected function get numHumanPlayers () :int
     {
-        return (GameContext.isMultiplayerGame ? ClientCtx.seatingMgr.numExpectedPlayers : 1);
+        return (GameCtx.isMultiplayerGame ? ClientCtx.seatingMgr.numExpectedPlayers : 1);
     }
 
     override protected function createRandSeed () :uint
     {
-        if (GameContext.isSinglePlayerGame) {
+        if (GameCtx.isSinglePlayerGame) {
             return uint(Math.random() * uint.MAX_VALUE);
         } else {
             return ClientCtx.lobbyConfig.randSeed;
@@ -515,7 +515,7 @@ public class EndlessGameMode extends GameMode
 
     override protected function createMessageManager () :TickedMessageManager
     {
-        if (GameContext.isSinglePlayerGame) {
+        if (GameCtx.isSinglePlayerGame) {
             return new OfflineTickedMessageManager(ClientCtx.gameCtrl, TICK_INTERVAL_MS);
         } else {
             return new OnlineTickedMessageManager(ClientCtx.gameCtrl,
@@ -525,8 +525,8 @@ public class EndlessGameMode extends GameMode
 
     override protected function get gameType () :int
     {
-        return (_isMultiplayer ? GameContext.GAME_TYPE_ENDLESS_MP :
-                GameContext.GAME_TYPE_ENDLESS_SP);
+        return (_isMultiplayer ? GameCtx.GAME_TYPE_ENDLESS_MP :
+                GameCtx.GAME_TYPE_ENDLESS_SP);
     }
 
     override protected function get gameData () :GameData

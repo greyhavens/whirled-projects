@@ -126,12 +126,12 @@ public class LevelIntroMode extends AppMode
         switch (_phase) {
         case PHASE_CREATUREINTRO:
             var newCreatureType :int = _level.newCreatureType;
-            var creatureData :UnitData = GameContext.gameData.units[newCreatureType];
+            var creatureData :UnitData = GameCtx.gameData.units[newCreatureType];
             var creatureAnim :MovieClip = CreatureAnimFactory.instantiateUnitAnimation(
-                newCreatureType, GameContext.localPlayerInfo.color, "walk_SW");
+                newCreatureType, GameCtx.localPlayerInfo.color, "walk_SW");
             if (null == creatureAnim) {
                 creatureAnim = CreatureAnimFactory.instantiateUnitAnimation(
-                    newCreatureType, GameContext.localPlayerInfo.color, "stand_SW");
+                    newCreatureType, GameCtx.localPlayerInfo.color, "stand_SW");
             }
             showPage(
                 TYPE_PAGE,
@@ -144,7 +144,7 @@ public class LevelIntroMode extends AppMode
 
         case PHASE_SPELLINTRO:
             var newSpellType :int = _level.newSpellType;
-            var spellData :SpellData = GameContext.gameData.spells[newSpellType];
+            var spellData :SpellData = GameCtx.gameData.spells[newSpellType];
             var spellAnim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard",
                 spellData.iconName);
             showPage(

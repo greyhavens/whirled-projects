@@ -31,8 +31,8 @@ public class MultiplayerGameOverMode extends AppMode
         if (ClientCtx.seatingMgr.isLocalPlayerInControl) {
             var winners :Array = [];
             var losers :Array = [];
-            for each (playerInfo in GameContext.playerInfos) {
-                if (playerInfo.teamId == GameContext.winningTeamId) {
+            for each (playerInfo in GameCtx.playerInfos) {
+                if (playerInfo.teamId == GameCtx.winningTeamId) {
                     winners.push(playerInfo.whirledId);
                 } else {
                     losers.push(playerInfo.whirledId);
@@ -56,8 +56,8 @@ public class MultiplayerGameOverMode extends AppMode
 
         // Winning player names
         var winningPlayerNames :Array = [];
-        for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-            if (!playerInfo.leftGame && playerInfo.teamId == GameContext.winningTeamId) {
+        for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
+            if (!playerInfo.leftGame && playerInfo.teamId == GameCtx.winningTeamId) {
                 winningPlayerNames.push(playerInfo.displayName);
             }
         }
@@ -127,18 +127,18 @@ public class MultiplayerGameOverMode extends AppMode
     protected function updateStats () :void
     {
         var gameArrangement :int = ClientCtx.lobbyConfig.computeTeamArrangement();
-        GameContext.playerStats.mpGamesPlayed[gameArrangement] += 1;
+        GameCtx.playerStats.mpGamesPlayed[gameArrangement] += 1;
         if (this.playerWon) {
-            GameContext.playerStats.mpGamesWon[gameArrangement] += 1;
+            GameCtx.playerStats.mpGamesWon[gameArrangement] += 1;
         }
 
         // viral trophy
         var someoneHasMorbidInfection :Boolean = ArrayUtil.contains(
             ClientCtx.lobbyConfig.morbidInfections, true);
-        GameContext.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
+        GameCtx.playerStats.hasMorbidInfection = someoneHasMorbidInfection;
 
         // combine local stats into global, and save
-        ClientCtx.globalPlayerStats.combineWith(GameContext.playerStats);
+        ClientCtx.globalPlayerStats.combineWith(GameCtx.playerStats);
         ClientCtx.userCookieMgr.needsUpdate();
     }
 
@@ -173,16 +173,16 @@ public class MultiplayerGameOverMode extends AppMode
             // awarded for winning a multiplayer game
             ClientCtx.awardTrophy(Trophies.BULLY);
 
-            if (GameContext.localPlayerInfo.healthPercent == 1) {
+            if (GameCtx.localPlayerInfo.healthPercent == 1) {
                 // awarded for winning a multiplayer game without taking any damage
                 ClientCtx.awardTrophy(Trophies.FLAWLESS);
-            } else if (GameContext.localPlayerInfo.healthPercent <= Trophies.CHEATDEATH_HEALTH_PERCENT) {
+            } else if (GameCtx.localPlayerInfo.healthPercent <= Trophies.CHEATDEATH_HEALTH_PERCENT) {
                 // awarded for winning a multiplayer game with very low health
                 ClientCtx.awardTrophy(Trophies.CHEATDEATH);
             }
 
-            for each (var playerInfo :PlayerInfo in GameContext.playerInfos) {
-                if (playerInfo.teamId != GameContext.localPlayerInfo.teamId &&
+            for each (var playerInfo :PlayerInfo in GameCtx.playerInfos) {
+                if (playerInfo.teamId != GameCtx.localPlayerInfo.teamId &&
                     playerInfo.displayName == Trophies.MALEDICTORIAN_NAME) {
                     // awarded for winning a multiplayer game against another player whose
                     // Whirled name is "Professor Weardd"
@@ -199,7 +199,7 @@ public class MultiplayerGameOverMode extends AppMode
 
     protected function get playerWon () :Boolean
     {
-        return (GameContext.localPlayerInfo.teamId == GameContext.winningTeamId);
+        return (GameCtx.localPlayerInfo.teamId == GameCtx.winningTeamId);
     }
 
     protected var _playedSound :Boolean;

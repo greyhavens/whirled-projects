@@ -43,7 +43,7 @@ public class CreatureSpellSet extends SimObject
         updateSpellAggregate();
 
         // @TODO - move this to a view class
-        GameContext.playGameSound("sfx_spellexpire");
+        GameCtx.playGameSound("sfx_spellexpire");
     }
 
     public function isSpellActive (spellType :int) :Boolean
