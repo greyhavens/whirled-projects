@@ -17,7 +17,7 @@ public class PlayerDisplayData
 
     public function get headshot () :DisplayObject
     {
-        return ImageResource.instantiateBitmap(ClientCtx.rsrcs, headshotName);
+        return ClientCtx.instantiateBitmap(headshotName);
     }
 
     public function clone () :PlayerDisplayData

@@ -20,7 +20,7 @@ public class DeadWorkshopView extends BattlefieldSprite
 
     public function DeadWorkshopView (unit :WorkshopUnit)
     {
-        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "base", true);
+        _movie = ClientCtx.instantiateMovieClip("workshop", "base", true);
         _owningPlayerIndex = unit.owningPlayerIndex;
 
         // player name
@@ -30,8 +30,7 @@ public class DeadWorkshopView extends BattlefieldSprite
 
         // swap in the rubble movie for the workshop
         var workshop :MovieClip = _movie["workshop"];
-        _rubble = SwfResource.instantiateMovieClip(
-            ClientCtx.rsrcs,
+        _rubble = ClientCtx.instantiateMovieClip(
             "workshop",
             "workshop_rubble",
             true,

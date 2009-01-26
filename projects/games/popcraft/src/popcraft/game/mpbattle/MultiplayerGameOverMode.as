@@ -44,7 +44,7 @@ public class MultiplayerGameOverMode extends AppMode
         }
 
         // background
-        _modeSprite.addChild(ImageResource.instantiateBitmap(ClientCtx.rsrcs, "zombieBg"));
+        _modeSprite.addChild(ClientCtx.instantiateBitmap("zombieBg"));
 
         var windowElements :Sprite = new Sprite();
 

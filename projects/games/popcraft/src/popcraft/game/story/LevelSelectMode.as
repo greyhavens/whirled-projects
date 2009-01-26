@@ -66,13 +66,13 @@ public class LevelSelectMode extends DemoGameMode
             view.visible = false;
         }
 
-        var ralphPortrait :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var ralphPortrait :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "ralph_portrait");
         ralphPortrait.x = RALPH_PORTRAIT_LOC.x;
         ralphPortrait.y = RALPH_PORTRAIT_LOC.y;
         _modeLayer.addChild(ralphPortrait);
 
-        var jackPortrait :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var jackPortrait :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "jack_portrait");
         jackPortrait.x = JACK_PORTRAIT_LOC.x;
         jackPortrait.y = JACK_PORTRAIT_LOC.y;
@@ -103,7 +103,7 @@ public class LevelSelectMode extends DemoGameMode
         var playerStartedGame :Boolean = ClientCtx.levelMgr.playerStartedGame;
         var playerCompletedGame :Boolean = ClientCtx.levelMgr.playerBeatGame;
 
-        var storyBanner :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var storyBanner :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "story_banner");
         storyBanner.x = STORY_BANNER_LOC.x;
         storyBanner.y = STORY_BANNER_LOC.y;
@@ -111,7 +111,7 @@ public class LevelSelectMode extends DemoGameMode
 
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
-        var playButton :SimpleButton = SwfResource.instantiateButton(ClientCtx.rsrcs, "splashUi", playButtonName);
+        var playButton :SimpleButton = ClientCtx.instantiateButton("splashUi", playButtonName);
         playButton.x = STORY_BUTTON_LOC.x;
         playButton.y = STORY_BUTTON_LOC.y;
         registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
@@ -121,7 +121,7 @@ public class LevelSelectMode extends DemoGameMode
         if (playerStartedGame) {
             if (ClientCtx.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
                 // The player has unlocked endless mode. Show the endless mode button
-                var endlessPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+                var endlessPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
                     "challenge_panel");
                 endlessPanel.x = ENDLESS_PANEL_LOC.x;
                 endlessPanel.y = ENDLESS_PANEL_LOC.y;
@@ -131,7 +131,7 @@ public class LevelSelectMode extends DemoGameMode
 
             } else {
                 // the player has played the game but hasn't unlocked endless mode.
-                var lockedEndlessPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+                var lockedEndlessPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
                     "challenge_panel_locked");
                 lockedEndlessPanel.x = ENDLESS_PANEL_LOC.x;
                 lockedEndlessPanel.y = ENDLESS_PANEL_LOC.y;
@@ -139,7 +139,7 @@ public class LevelSelectMode extends DemoGameMode
             }
 
             // show the "select panel, which shows the level-select and credits buttons
-            var selectPanel :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+            var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
                 "select_panel");
             selectPanel.x = SELECT_PANEL_LOC.x;
             selectPanel.y = SELECT_PANEL_LOC.y;
@@ -208,7 +208,7 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function createTutorialLayout () :void
     {
-        var puzzleIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var puzzleIntroMovie :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "puzzle_intro");
         puzzleIntroMovie.mouseEnabled = false;
         _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
@@ -217,7 +217,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
         addObject(_puzzleIntro, _mainUiLayer);
 
-        var unitIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var unitIntroMovie :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "unit_intro");
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
@@ -226,7 +226,7 @@ public class LevelSelectMode extends DemoGameMode
         createHelpTextAnimTask(_unitIntro, 9, 4);
         addObject(_unitIntro, _mainUiLayer);
 
-        var resourceIntroMovie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "splashUi",
+        var resourceIntroMovie :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
             "resource_intro");
         resourceIntroMovie.mouseEnabled = false;
         _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
@@ -364,7 +364,7 @@ public class LevelSelectMode extends DemoGameMode
         }
 
         // put the "manual" up on the screen
-        var manualFront :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual_front");
+        var manualFront :MovieClip = ClientCtx.instantiateMovieClip("manual", "manual_front");
         manualFront.scaleX = 1.3;
         manualFront.scaleY = 1.3;
         manualFront.x = 370;

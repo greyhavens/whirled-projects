@@ -104,7 +104,7 @@ public class CreatureUnitView extends BattlefieldSprite
         var yOffset :Number = -_sprite.height - _healthMeter.height;
         for each (var spell :SpellData in spellSet.spells) {
             var icon :MovieClip =
-                SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "infusions", "unit_" + spell.name);
+                ClientCtx.instantiateMovieClip("infusions", "unit_" + spell.name);
             icon.x = 0;
             icon.y = yOffset;
             icon.cacheAsBitmap = true;

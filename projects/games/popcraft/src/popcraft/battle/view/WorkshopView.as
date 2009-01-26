@@ -41,7 +41,7 @@ public class WorkshopView extends BattlefieldSprite
     {
         _unit = unit;
 
-        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "base", true);
+        _movie = ClientCtx.instantiateMovieClip("workshop", "base", true);
         _workshop = _movie["workshop"];
         // is the workshop already burning?
         if (_unit.health / _unit.maxHealth <= BURNING_HEALTH_PERCENT) {
@@ -146,7 +146,7 @@ public class WorkshopView extends BattlefieldSprite
 
     protected function setBurning () :void
     {
-        setWorkshopMovie(SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "workshop_fire"));
+        setWorkshopMovie(ClientCtx.instantiateMovieClip("workshop", "workshop_fire"));
     }
 
     protected function setWorkshopMovie (workshop :MovieClip) :void

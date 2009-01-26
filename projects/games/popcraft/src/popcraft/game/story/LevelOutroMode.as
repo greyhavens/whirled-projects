@@ -31,7 +31,7 @@ public class LevelOutroMode extends AppMode
     {
         saveProgress();
 
-        _modeSprite.addChild(ImageResource.instantiateBitmap(ClientCtx.rsrcs, "zombieBg"));
+        _modeSprite.addChild(ClientCtx.instantiateBitmap("zombieBg"));
 
         var bgSprite :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
 

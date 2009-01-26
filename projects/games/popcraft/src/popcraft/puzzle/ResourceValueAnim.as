@@ -19,7 +19,7 @@ public class ResourceValueAnim extends SceneObject
             POS_CLEAR_FEEDBACK_ANIM_NAMES[resourceType] :
             NEG_CLEAR_FEEDBACK_ANIM_NAMES[resourceType]);
 
-        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", movieName, true, true);
+        _movie = ClientCtx.instantiateMovieClip("dashboard", movieName, true, true);
         _movie.cacheAsBitmap = true;
 
         // fill in the text

@@ -31,7 +31,7 @@ public class EpilogueMode extends TransitionMode
         // play some music
         _musicChannel = ClientCtx.audio.playSound(Resources.getMusic("mus_night"), null, -1);
 
-        var movie :MovieClip = SwfResource.getSwfDisplayRoot(ClientCtx.rsrcs, "epilogue") as MovieClip;
+        var movie :MovieClip = ClientCtx.getSwfDisplayRoot("epilogue") as MovieClip;
         movie.gotoAndPlay(0);
         var movieObj :SimpleSceneObject = new SimpleSceneObject(movie);
         var movieTask :SerialTask = new SerialTask();

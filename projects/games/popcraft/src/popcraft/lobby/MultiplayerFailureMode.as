@@ -19,7 +19,7 @@ public class MultiplayerFailureMode extends TransitionMode
     {
         super.setup();
 
-        _modeLayer.addChild(ImageResource.instantiateBitmap(ClientCtx.rsrcs, "zombieBg"));
+        _modeLayer.addChild(ClientCtx.instantiateBitmap("zombieBg"));
         _soundChannel = ClientCtx.audio.playSoundNamed("sfx_introscreen", null, -1);
 
         var tf :DisplayObject = UIBits.createTextPanel(

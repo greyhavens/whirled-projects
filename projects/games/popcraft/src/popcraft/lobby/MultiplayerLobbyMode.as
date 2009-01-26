@@ -35,7 +35,7 @@ public class MultiplayerLobbyMode extends AppMode
     {
         super.setup();
 
-        _bg = SwfResource.getSwfDisplayRoot(ClientCtx.rsrcs, "multiplayer_lobby") as MovieClip;
+        _bg = ClientCtx.getSwfDisplayRoot("multiplayer_lobby") as MovieClip;
         this.modeSprite.addChild(_bg);
 
         // create headshots
@@ -478,7 +478,7 @@ class PlayerHeadshot extends Sprite
         tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
         addChild(tfName);
 
-        _handicapObj = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "multiplayer_lobby", "handicapped");
+        _handicapObj = ClientCtx.instantiateMovieClip("multiplayer_lobby", "handicapped");
         _handicapObj.scaleX = 1.5;
         _handicapObj.scaleY = 1.5;
         _handicapObj.x = (_handicapObj.width * 0.5) + 1;

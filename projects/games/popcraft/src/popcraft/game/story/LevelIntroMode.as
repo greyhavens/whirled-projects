@@ -41,7 +41,7 @@ public class LevelIntroMode extends AppMode
         this.modeSprite.addChild(dimness);
 
         // create "manual_front"
-        var manualFront :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual_front");
+        var manualFront :MovieClip = ClientCtx.instantiateMovieClip("manual", "manual_front");
         var manualFrontObj :SimpleSceneObject = new SimpleSceneObject(manualFront);
         manualFrontObj.x = Constants.SCREEN_SIZE.x * 0.5;
         manualFrontObj.y = Constants.SCREEN_SIZE.y * 1.5;
@@ -88,7 +88,7 @@ public class LevelIntroMode extends AppMode
     protected function swapInManual () :void
     {
         // animate the book open
-        var manual :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual");
+        var manual :MovieClip = ClientCtx.instantiateMovieClip("manual", "manual");
         manual.gotoAndPlay("open");
 
         _manualObj = new SimpleSceneObject(manual);
@@ -145,7 +145,7 @@ public class LevelIntroMode extends AppMode
         case PHASE_SPELLINTRO:
             var newSpellType :int = _level.newSpellType;
             var spellData :SpellData = GameCtx.gameData.spells[newSpellType];
-            var spellAnim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard",
+            var spellAnim :MovieClip = ClientCtx.instantiateMovieClip("dashboard",
                 spellData.iconName);
             showPage(
                 TYPE_PAGE,

@@ -30,7 +30,7 @@ public class PlayerStatusView extends SceneObject
     {
         _playerInfo = GameCtx.playerInfos[playerIndex];
 
-        _movie = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "dashboard", "player_slot", true);
+        _movie = ClientCtx.instantiateMovieClip("dashboard", "player_slot", true);
         _movie.cacheAsBitmap = true;
 
         _deathMovie = _movie["dead"];

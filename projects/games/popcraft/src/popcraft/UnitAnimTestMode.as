@@ -135,7 +135,7 @@ public class UnitAnimTestMode extends AppMode
 
     protected function createWorkshopAnimations () :void
     {
-        var anim :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "workshop", "base");
+        var anim :MovieClip = ClientCtx.instantiateMovieClip("workshop", "base");
         var workshop :MovieClip = anim["workshop"];
         var recolorMovie :MovieClip = workshop["recolor"];
         recolorMovie.filters = [ ColorMatrix.create().colorize(_recolor).createFilter() ];

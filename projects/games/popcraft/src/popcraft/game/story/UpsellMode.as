@@ -15,7 +15,7 @@ public class UpsellMode extends AppMode
 {
     override protected function setup () :void
     {
-        var movie :MovieClip = SwfResource.instantiateMovieClip(ClientCtx.rsrcs, "manual", "manual");
+        var movie :MovieClip = ClientCtx.instantiateMovieClip("manual", "manual");
         movie.gotoAndPlay("open");
 
         var leftPage :MovieClip = movie["pageL"];
