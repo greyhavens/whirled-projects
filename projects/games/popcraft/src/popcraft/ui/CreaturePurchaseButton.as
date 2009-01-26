@@ -35,8 +35,8 @@ public class CreaturePurchaseButton extends SimObject
         _unitDisplay = parent["unit_" + slotNum]["unit"];
         _progress = parent["progress_" + slotNum];
         _button = parent["button_" + slotNum];
+        _button.tabEnabled = false;
         _multiplicity = parent["multiplicity_" + slotNum]["multiplicity"];
-
         _multiplicity.text = "";
 
         // instaniate some alternate highlight movies, for spells

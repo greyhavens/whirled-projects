@@ -112,6 +112,7 @@ public class LevelSelectMode extends DemoGameMode
         var playButtonName :String =
             (playerStartedGame && !playerCompletedGame ? "continue_button" : "play_button");
         var playButton :SimpleButton = ClientCtx.instantiateButton("splashUi", playButtonName);
+        playButton.tabEnabled = false;
         playButton.x = STORY_BUTTON_LOC.x;
         playButton.y = STORY_BUTTON_LOC.y;
         registerListener(playButton, MouseEvent.CLICK, onPlayClicked);
