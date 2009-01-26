@@ -118,16 +118,41 @@ public class GameContext
             PlayerInfo(playerInfos[otherPlayerIndex]).teamId;
     }
 
+    public static function isTargetableEnemy (player :PlayerInfo, otherPlayer :PlayerInfo) :Boolean
+    {
+        return (player.teamId != otherPlayer.teamId && otherPlayer.isAlive &&
+                !otherPlayer.isInvincible);
+    }
+
     public static function findEnemyForPlayer (playerInfo :PlayerInfo) :PlayerInfo
     {
-        var playerIndex :int = playerInfo.playerIndex;
+        var playerIdx :int = playerInfo.playerIndex;
 
         // find the first player after this one that is on an opposing team
-        for (var i :int = 0; i < playerInfos.length - 1; ++i) {
-            var otherPlayerIndex :int = (playerIndex + i + 1) % playerInfos.length;
-            var otherPlayer :PlayerInfo = playerInfos[otherPlayerIndex];
-            if (otherPlayer.teamId != playerInfo.teamId && otherPlayer.isAlive &&
-                !otherPlayer.isInvincible) {
+        for (var ii :int = 0; ii < playerInfos.length - 1; ++ii) {
+            var otherPlayerIdx :int = (playerIdx + ii + 1) % playerInfos.length;
+            var otherPlayer :PlayerInfo = playerInfos[otherPlayerIdx];
+            if (isTargetableEnemy(playerInfo, otherPlayer)) {
+                return otherPlayer;
+            }
+        }
+
+        return null;
+    }
+
+    public static function getNextEnemyForPlayer (playerInfo :PlayerInfo) :PlayerInfo
+    {
+        var curEnemy :PlayerInfo = playerInfo.targetedEnemy;
+        if (curEnemy == null) {
+            return null;
+        }
+
+        var curEnemyIdx :int = curEnemy.playerIndex;
+
+        for (var ii :int = 0; ii < playerInfos.length - 1; ++ii) {
+            var otherPlayerIdx :int = (curEnemyIdx + ii + 1) % playerInfos.length;
+            var otherPlayer :PlayerInfo = playerInfos[otherPlayerIdx];
+            if (isTargetableEnemy(playerInfo, otherPlayer)) {
                 return otherPlayer;
             }
         }

@@ -300,6 +300,10 @@ public class GameMode extends TransitionMode
             localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
             break;
 
+        case KeyboardCodes.TAB:
+            cycleLocalPlayerTargetEnemy();
+            break;
+
         case KeyboardCodes.ESCAPE:
             if (this.canPause) {
                 pause();
@@ -627,18 +631,26 @@ public class GameMode extends TransitionMode
         playerInfo.targetedEnemy = enemyInfo;
     }
 
+    protected function cycleLocalPlayerTargetEnemy () :void
+    {
+        var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
+        var nextTargetInfo :PlayerInfo = GameContext.getNextEnemyForPlayer(localPlayerInfo);
+        if (nextTargetInfo != null && nextTargetInfo != localPlayerInfo.targetedEnemy) {
+            sendTargetEnemyMsg(localPlayerInfo.playerIndex, nextTargetInfo.playerIndex, false);
+        }
+    }
+
     public function workshopClicked (workshopView :WorkshopView) :void
     {
         // when the player clicks on an enemy base, that enemy becomes the player's target
         var localPlayerInfo :PlayerInfo = GameContext.localPlayerInfo;
         var targetInfo :PlayerInfo = workshopView.workshop.owningPlayerInfo;
-        var targetId :int = targetInfo.playerIndex;
+        var newTargetIdx :int = targetInfo.playerIndex;
 
-        if (localPlayerInfo.teamId != targetInfo.teamId &&
-            localPlayerInfo.targetedEnemy.playerIndex != targetId &&
-            !targetInfo.isInvincible) {
+        if (GameContext.isTargetableEnemy(localPlayerInfo, targetInfo) &&
+            localPlayerInfo.targetedEnemy.playerIndex != newTargetIdx) {
             // send a message to everyone
-            sendTargetEnemyMsg(GameContext.localPlayerIndex, targetId, false);
+            sendTargetEnemyMsg(GameContext.localPlayerIndex, newTargetIdx, false);
         }
     }
 
