@@ -1,0 +1,1 @@
+ant -Dplayers=1 -DremotePlayers=1 testpacks

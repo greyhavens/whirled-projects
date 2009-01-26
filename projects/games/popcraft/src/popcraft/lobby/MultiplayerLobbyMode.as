@@ -3,7 +3,6 @@ package popcraft.lobby {
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.audio.AudioManager;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 import com.whirled.game.GameContentEvent;
@@ -35,8 +34,13 @@ public class MultiplayerLobbyMode extends AppMode
     {
         super.setup();
 
+        _lobbyLayer = new Sprite();
+        _playerOptionsLayer = new Sprite();
+        _modeSprite.addChild(_lobbyLayer);
+        _modeSprite.addChild(_playerOptionsLayer);
+
         _bg = ClientCtx.getSwfDisplayRoot("multiplayer_lobby") as MovieClip;
-        this.modeSprite.addChild(_bg);
+        _lobbyLayer.addChild(_bg);
 
         // create headshots
         for (var seat :int = 0; seat < ClientCtx.seatingMgr.numExpectedPlayers; ++seat) {
@@ -74,8 +78,8 @@ public class MultiplayerLobbyMode extends AppMode
             initLocalPlayerData();
         }
 
-        _handicapCheckbox = _bg["handicap"];
-        registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
+        //_handicapCheckbox = _bg["handicap"];
+        //registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
         this.handicapOn = false;
 
         updateHandicapsDisplay();
@@ -84,6 +88,17 @@ public class MultiplayerLobbyMode extends AppMode
 
         registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
             onPlayerPurchasedContent);
+
+        // TODO: fix when jon updates the swf
+        //var playerOptionsButton :SimpleButton = _bg["player_options"];
+        var playerOptionsButton :SimpleButton = UIBits.createButton("Player Options", 1.2);
+        playerOptionsButton.x = 120;
+        playerOptionsButton.y = 318;
+        _lobbyLayer.addChild(playerOptionsButton);
+        registerListener(playerOptionsButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                PlayerOptionsPopup.show(_playerOptionsLayer);
+            });
 
         if (ResetSavedGamesDialog.shouldShow) {
             ClientCtx.mainLoop.pushMode(new ResetSavedGamesDialog());
@@ -252,7 +267,7 @@ public class MultiplayerLobbyMode extends AppMode
     protected function set handicapOn (val :Boolean) :void
     {
         _handicapOn = val;
-        _handicapCheckbox.gotoAndStop(_handicapOn ? "checked" : "unchecked");
+        //_handicapCheckbox.gotoAndStop(_handicapOn ? "checked" : "unchecked");
     }
 
     protected function get handicapOn () :Boolean
@@ -341,7 +356,7 @@ public class MultiplayerLobbyMode extends AppMode
                     headshot.y = yLoc;
 
                     if (null == headshot.parent) {
-                        this.modeSprite.addChild(headshot);
+                        _lobbyLayer.addChild(headshot);
                     }
 
                     if (teamId == LobbyConfig.ENDLESS_TEAM_ID) {
@@ -387,10 +402,12 @@ public class MultiplayerLobbyMode extends AppMode
         ClientCtx.gameCtrl.net.sendMessage(name, val, NetSubControl.TO_SERVER_AGENT);
     }
 
+    protected var _lobbyLayer :Sprite;
+    protected var _playerOptionsLayer :Sprite;
     protected var _bg :MovieClip;
     protected var _headshots :Array = [];
     protected var _statusText :TextField;
-    protected var _handicapCheckbox :MovieClip;
+    //protected var _handicapCheckbox :MovieClip;
     protected var _handicapOn :Boolean;
     protected var _initedLocalPlayerData :Boolean;
     protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();

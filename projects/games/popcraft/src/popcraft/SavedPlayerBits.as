@@ -16,7 +16,7 @@ public class SavedPlayerBits
     public var hasFavoriteColor :Boolean;
     public var favoriteColor :uint;
     public var hasFavoritePortrait :Boolean;
-    public var favoritePortrait :int;
+    public var favoritePortrait :String;
 
     public function writeCookieData (cookie :ByteArray) :void
     {
@@ -25,7 +25,7 @@ public class SavedPlayerBits
         cookie.writeBoolean(hasFavoriteColor);
         cookie.writeUnsignedInt(favoriteColor);
         cookie.writeBoolean(hasFavoritePortrait);
-        cookie.writeInt(favoritePortrait);
+        cookie.writeUTF(favoritePortrait);
     }
 
     public function readCookieData (version :int, cookie :ByteArray) :void
@@ -58,7 +58,7 @@ public class SavedPlayerBits
             hasFavoriteColor = cookie.readBoolean();
             favoriteColor = cookie.readUnsignedInt();
             hasFavoritePortrait = cookie.readBoolean();
-            favoritePortrait = cookie.readInt();
+            favoritePortrait = cookie.readUTF();
         }
     }
 
@@ -80,7 +80,7 @@ public class SavedPlayerBits
         hasFavoriteColor = false;
         favoriteColor = 0;
         hasFavoritePortrait = false;
-        favoritePortrait = 0;
+        favoritePortrait = "";
     }
 }
 

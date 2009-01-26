@@ -50,7 +50,7 @@ public class Constants
     public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = false;
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
-    public static const DEBUG_DISABLE_AUDIO :Boolean                = false;
+    public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
     public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = true;
     public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
@@ -171,18 +171,31 @@ public class Constants
         19,  // boss
     ];
 
-    /* Player portraits */
+    /* Saved multiplayer options */
     public static const PLAYER_PORTRAIT_NAMES :Array = [
+        "portrait_ralph",
+        "portrait_jack",
         "portrait_iris",
         "portrait_ivy",
-        "portrait_jack",
         "portrait_pigsley",
-        "portrait_ralph",
         "portrait_weardd",
         "portrait_dante",
         "portrait_eloise",
         "portrait_horace",
         "portrait_ursula",
+    ];
+
+    public static const PLAYER_COLORS :Array = [
+        0xffffff,
+        0x9FBCFF,
+        0xFF0000,
+        0x9C78E4,
+        0x47880A,
+        0x996633,
+        0xFF8000,
+        0x0000BB,
+        0xFF6FCF,
+        0x333333
     ];
 }
 
