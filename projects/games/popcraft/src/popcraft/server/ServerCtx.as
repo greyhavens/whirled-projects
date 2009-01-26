@@ -5,7 +5,7 @@ import com.whirled.game.GameControl;
 import popcraft.LobbyConfig;
 import popcraft.SeatingManager;
 
-public class ServerContext
+public class ServerCtx
 {
     public static var gameCtrl :GameControl;
     public static var seatingMgr :SeatingManager = new SeatingManager();

@@ -9,12 +9,12 @@ public class Server extends ServerObject
 {
     public function Server ()
     {
-        ServerContext.gameCtrl = new GameControl(this);
-        ServerContext.seatingMgr.init(ServerContext.gameCtrl);
-        ServerContext.lobbyConfig.init(ServerContext.gameCtrl, ServerContext.seatingMgr);
+        ServerCtx.gameCtrl = new GameControl(this);
+        ServerCtx.seatingMgr.init(ServerCtx.gameCtrl);
+        ServerCtx.lobbyConfig.init(ServerCtx.gameCtrl, ServerCtx.seatingMgr);
 
         // We don't have anything to do in single-player games
-        if (ServerContext.seatingMgr.numExpectedPlayers < 2) {
+        if (ServerCtx.seatingMgr.numExpectedPlayers < 2) {
             log.info("Singleplayer game. Not starting server.");
             return;
         }
@@ -23,12 +23,12 @@ public class Server extends ServerObject
 
         // We want to shutdown the lobby when the game starts, and start it up
         // when the game ends.
-        ServerContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED,
+        ServerCtx.gameCtrl.game.addEventListener(StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
                 stopLobby();
             });
 
-        ServerContext.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED,
+        ServerCtx.gameCtrl.game.addEventListener(StateChangedEvent.GAME_ENDED,
             function (...ignored) :void {
                 startLobby();
             });
