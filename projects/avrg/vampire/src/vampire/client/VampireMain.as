@@ -2,8 +2,12 @@ package vampire.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.EventHandlers;
-import com.whirled.contrib.simplegame.MainLoop;
+import com.whirled.contrib.simplegame.Config;
+import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -14,14 +18,17 @@ import vampire.client.modes.BloodBondMode;
 import vampire.client.modes.FeedMode;
 import vampire.client.modes.FightMode;
 import vampire.client.modes.HierarchyMode;
-import vampire.client.modes.NothingMode;
+import vampire.data.SharedPlayerStateClient;
+import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
 public class VampireMain extends Sprite
 {
     public function VampireMain()
     {
-        Log.setLevel("", Log.DEBUG);
+        
+        
+        Log.setLevel("vampire", Log.DEBUG);
 //        Log.setLevel("vampire", Log.DEBUG);
         
         trace("VampireMain()");
@@ -35,13 +42,8 @@ public class VampireMain extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
         
-        // instantiate MainLoop singleton
-        var gameSprite :Sprite = new Sprite();
-        addChild( gameSprite );
-        var loop :MainLoop = new MainLoop(gameSprite);
-        MainLoop.instance.setup();
         
-        trace("  main loop");
+        
         
         
         // load resources
@@ -70,20 +72,34 @@ public class VampireMain extends Sprite
             var controller :VampireController = new VampireController(this);
             
             ClientContext.model = new Model();
-        
-            var hud :HUD = new HUD();
-            addChild( hud );
-    
+            ClientContext.hud = new HUD(); 
             ClientContext.model.setup();
+            
+            // instantiate MainLoop singleton
+            var gameSprite :Sprite = new Sprite();
+            addChild( gameSprite );
+            var config :Config = new Config();
+            config.hostSprite = gameSprite;
+            ClientContext.game = new SimpleGame( config );
+            ClientContext.game.ctx.mainLoop.pushMode( new IntroMode() );
+            trace("  main loop");
+            
+            
             
             
 //            Command.bind( ClientContext.model, VampireController.PLAYER_STATE_CHANGED, VampireController.PLAYER_STATE_CHANGED, [ClientContext.model, hud]);
             
     
-            MainLoop.instance.run();
+//            MainLoop.instance.run();
+//            
+//            MainLoop.instance.pushMode( new NothingMode() );
             
-            MainLoop.instance.pushMode( new NothingMode() );
+            setupTempEventNotifier();
+            
+//            addChild( new VProbe(ClientContext.gameCtrl) );
         
+        
+            EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
 //            setupAvatarInfoCapture();
         
 //            ClientContext.gameCtrl = new AVRGameControl(this);
@@ -118,6 +134,7 @@ public class VampireMain extends Sprite
         log.info("Added to stage: Initializing...");
 
         _addedToStage = true;
+        
         this.maybeShowIntro();
     }
 
@@ -125,12 +142,12 @@ public class VampireMain extends Sprite
     {
         log.info("Removed from stage - Unloading...");
 
+        EventHandlers.freeAllHandlers();
 //        ClientContext.model.destroy();
 
-        MainLoop.instance.shutdown();
+        ClientContext.game.shutdown();
         
         removeEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
-        EventHandlers.freeAllHandlers();
     }
 
     protected function leftRoom (e :Event) :void
@@ -149,6 +166,21 @@ public class VampireMain extends Sprite
         addEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
     }
     
+    protected function setupTempEventNotifier() :void
+    {
+        EventHandlers.registerListener( ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED, function( e :AVRGameRoomEvent) :void 
+                                { 
+                                    trace("!Room dispatching: " + AVRGameRoomEvent.PLAYER_ENTERED);
+                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( int(e.value)));  
+                                } );
+        EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED , function(...ignored) :void { trace("!Room dispatching: " + MessageReceivedEvent.MESSAGE_RECEIVED );} );
+        EventHandlers.registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM , function( e :AVRGamePlayerEvent) :void 
+                                { 
+                                    trace("!Player dispatching: " + AVRGamePlayerEvent.ENTERED_ROOM );
+                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( e.playerId ));
+                                });
+    }
+    
     protected function mouseMove( e :MouseEvent ) :void
     {
         for each (var playerId :int in ClientContext.gameCtrl.room.getPlayerIds()) {
@@ -157,6 +189,13 @@ public class VampireMain extends Sprite
                 trace("mouse over avatar=" + playerId );
                 return; 
             }
+        }
+    }
+    
+    protected function printServerLogToFlashLog( e :MessageReceivedEvent ) :void
+    {
+        if( e.name == AVRGAgentLogTarget.SERVER_LOG) {
+            trace(e.value);
         }
     }
     
