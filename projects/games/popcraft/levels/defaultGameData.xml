@@ -367,7 +367,7 @@ Lasts for 30 seconds."
 				<BaseLocation x="125" y="595" team="0"/>
 				<BaseLocation x="575" y="595" team="1"/>
 				<BaseLocation x="350" y="205" team="2"/>
-				<SpellDropLocation x="350" y="400"/>
+				<SpellDropLocation x="350" y="465"/>
 			</MapSettings>
 		</MultiplayerSettings>
 
@@ -376,7 +376,7 @@ Lasts for 30 seconds."
 				<BaseLocation x="125" y="205" team="0"/>
 				<BaseLocation x="575" y="205" team="1"/>
 				<BaseLocation x="350" y="595" team="2"/>
-				<SpellDropLocation x="350" y="400"/>
+				<SpellDropLocation x="350" y="335"/>
 			</MapSettings>
 		</MultiplayerSettings>
 
