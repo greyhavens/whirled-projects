@@ -87,7 +87,7 @@ public class Display extends Sprite
     public function roundStarted (duration :int) :void
     {
         if (_wordfield.text == "") {
-            _wordfield.stage.focus = _wordfield;
+            focusWordField();
         }
 
         _logger.clear();
@@ -319,6 +319,15 @@ public class Display extends Sprite
         //    _stats.hide();
         //}
     }
+
+    /**
+     * Focus the word-entry text field.
+     * Used as an event listener also...
+     */
+    protected function focusWordField (... ignored) :void
+    {
+        _wordfield.stage.focus = _wordfield;
+    }
     
     // PRIVATE EVENT HANDLERS
 
@@ -437,6 +446,7 @@ public class Display extends Sprite
         _wordfield.type = TextFieldType.INPUT;
         _wordfield.text = INPUT_HINT;
         _wordfield.restrict = "A-Za-z";
+        _wordfield.addEventListener(MouseEvent.CLICK, focusWordField);
 
         var callback :Function = function (... ignore): void {
             _wordfield.text = "";
