@@ -97,6 +97,13 @@ public class ClientCtx
         return variantResource.variants;
     }*/
 
+    public static function showMultiplayerLobby () :void
+    {
+        if (gameCtrl.isConnected()) {
+            gameCtrl.local.showGameLobby(true);
+        }
+    }
+
     public static function showGameShop () :void
     {
         if (gameCtrl.isConnected()) {

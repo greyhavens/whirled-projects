@@ -29,7 +29,7 @@ public class ClientSeatingManager extends SeatingManager
         var headshot :DisplayObject;
 
         if (playerSeat < _numExpectedPlayers) {
-            headshot = (createNew ?
+            headshot = (createNew && _gameCtrl.isConnected() ?
                 _gameCtrl.local.getHeadShot(getPlayerOccupantId(playerSeat)) :
                 _headshots[playerSeat]);
         }

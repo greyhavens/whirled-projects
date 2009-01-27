@@ -103,8 +103,7 @@ public class LevelSelectMode extends DemoGameMode
         var playerStartedGame :Boolean = ClientCtx.levelMgr.playerStartedGame;
         var playerCompletedGame :Boolean = ClientCtx.levelMgr.playerBeatGame;
 
-        var storyBanner :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
-            "story_banner");
+        var storyBanner :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "story_banner");
         storyBanner.x = STORY_BANNER_LOC.x;
         storyBanner.y = STORY_BANNER_LOC.y;
         _mainUiLayer.addChild(storyBanner);
@@ -139,15 +138,8 @@ public class LevelSelectMode extends DemoGameMode
                 _mainUiLayer.addChild(lockedEndlessPanel);
             }
 
-            // show the "select panel, which shows the level-select and credits buttons
-            var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi",
-                "select_panel");
-            selectPanel.x = SELECT_PANEL_LOC.x;
-            selectPanel.y = SELECT_PANEL_LOC.y;
-            _mainUiLayer.addChild(selectPanel);
-
             // buttons
-            var buttonParent :Sprite = SpriteUtil.createSprite(true);
+            /*var buttonParent :Sprite = SpriteUtil.createSprite(true);
 
             var levelSelectButton :SimpleButton = UIBits.createButton("Select Level", 1.5);
             registerListener(levelSelectButton, MouseEvent.CLICK,
@@ -169,13 +161,49 @@ public class LevelSelectMode extends DemoGameMode
             DisplayUtil.positionBounds(buttonParent,
                 (selectPanel.width - buttonParent.width) * 0.5,
                 (selectPanel.height - buttonParent.height) * 0.5);
-            selectPanel.addChild(buttonParent);
+            selectPanel.addChild(buttonParent);*/
 
 
         } else {
             // it's the player's first time playing: show them the tutorial
             createTutorialLayout();
         }
+
+        // show the select panel, which contains the Multiplayer button
+        var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "select_panel");
+        var multiplayerButton :SimpleButton = selectPanel["multiplayer_button"];
+        registerListener(multiplayerButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.showMultiplayerLobby();
+            });
+        selectPanel.x = SELECT_PANEL_LOC.x;
+        selectPanel.y = SELECT_PANEL_LOC.y;
+        _mainUiLayer.addChild(selectPanel);
+
+        // Level Select and About buttons
+        var levelSelectButton :SimpleButton =
+            ClientCtx.instantiateButton("splashUi", "select_button");
+        registerListener(levelSelectButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                showLevelSelectLayout();
+            });
+        levelSelectButton.x = 350;
+        levelSelectButton.y = 640;
+        DisplayUtil.addChildBelow(_mainUiLayer, levelSelectButton, storyBanner);
+
+        var aboutButton :SimpleButton = ClientCtx.instantiateButton("splashUi", "about_button");
+        registerOneShotCallback(aboutButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.mainLoop.unwindToMode(new CreditsMode());
+            });
+        aboutButton.x = 350;
+        aboutButton.y = 640;
+        DisplayUtil.addChildBelow(_mainUiLayer, aboutButton, storyBanner);
+
+        var manualCover :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "manual_cover");
+        manualCover.x = 350;
+        manualCover.y = 640;
+        DisplayUtil.addChildBelow(_mainUiLayer, manualCover, storyBanner);
 
         /* 2009-1-22: We're not going to push this in peoples' faces so much.
         if (!ClientContext.isPremiumContentUnlocked) {

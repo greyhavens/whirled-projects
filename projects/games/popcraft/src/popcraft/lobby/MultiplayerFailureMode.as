@@ -35,7 +35,7 @@ public class MultiplayerFailureMode extends TransitionMode
         _modeLayer.addChild(gatherButton);
         registerOneShotCallback(gatherButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientCtx.gameCtrl.local.showGameLobby(true);
+                ClientCtx.showMultiplayerLobby();
             });
 
         var singlePlayerButton :SimpleButton = UIBits.createButton("Play Alone", 2);

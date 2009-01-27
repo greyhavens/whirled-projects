@@ -41,39 +41,15 @@ public class PlayerStatusView extends SceneObject
         var namePlate :MovieClip = _movie["name_plate"];
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.color).createFilter() ];
 
-        var headshotParent :HeadshotSprite = new HeadshotSprite(
-            playerIndex, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y, _playerInfo.headshot);
-
-        // display the player headshot
-        /*var headshotParent :Sprite = SpriteUtil.createSprite();
-
-        // add the headshot image
-        var headshot :DisplayObject = _playerInfo.headshot;
-        headshot.scaleX = 1;
-        headshot.scaleY = 1;
-        var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width,
-                                     HEADSHOT_SIZE.y / headshot.height);
-        headshot.scaleX = scale;
-        headshot.scaleY = scale;
-        headshot.x = (HEADSHOT_SIZE.x - headshot.width) * 0.5;
-        headshot.y = (HEADSHOT_SIZE.y - headshot.height) * 0.5;
-        headshotParent.addChild(headshot);
-
-        // mask the headshot
-        var headshotMask :Shape = new Shape();
-        var g :Graphics = headshotMask.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
-        g.endFill();
-        headshotParent.addChild(headshotMask);
-        headshotParent.mask = headshotMask;*/
+        var headshot :HeadshotSprite =
+            new HeadshotSprite(playerIndex, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y, _playerInfo.headshot);
 
         // add to the PlayerStatusView
         var frame :MovieClip = _movie["player_headshot"];
-        DisplayUtil.positionBounds(headshotParent,
-            -headshotParent.width * 0.5,
-            (-headshotParent.height * 0.5) - 2);
-        frame.addChild(headshotParent);
+        DisplayUtil.positionBounds(headshot,
+            -headshot.width * 0.5,
+            (-headshot.height * 0.5) - 2);
+        frame.addChild(headshot);
     }
 
     override public function getObjectGroup (groupNum :int) :String
