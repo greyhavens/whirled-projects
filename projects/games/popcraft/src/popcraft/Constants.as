@@ -172,8 +172,9 @@ public class Constants
     ];
 
     /* Saved multiplayer options */
+    public static const DEFAULT_PORTRAIT :String = "";
     public static const PLAYER_PORTRAIT_NAMES :Array = [
-        null,
+        DEFAULT_PORTRAIT,
         "portrait_ralph",
         "portrait_jack",
         "portrait_iris",

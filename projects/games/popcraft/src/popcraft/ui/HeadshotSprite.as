@@ -1,10 +1,7 @@
 package popcraft.ui {
 
-import com.threerings.flash.DisplayUtil;
-
 import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.InteractiveObject;
 import flash.display.Shape;
 import flash.display.Sprite;
 
@@ -15,27 +12,38 @@ public class HeadshotSprite extends Sprite
     public function HeadshotSprite (playerSeat :int, width :int, height :int,
         image :DisplayObject = null)
     {
+        _playerSeat = playerSeat;
         _width = width;
         _height = height;
-        // If no image is supplied, let's pull the appropriate one out of the Seating Manager
-        _image = (image != null ? image : ClientCtx.seatingMgr.getPlayerHeadshot(playerSeat, true));
-        updateDisplay();
+        setImage(null);
 
         this.mouseEnabled = false;
         this.mouseChildren = false;
     }
 
+    public function useDefaultHeadshotImage () :void
+    {
+        setImage(null);
+    }
+
     public function setImage (image :DisplayObject) :void
     {
-        _image = image;
-        updateDisplay();
+        // If no image is supplied, pull the appropriate one out of the Seating Manager
+        if (image == null) {
+            if (_defaultHeadshot == null) {
+                _defaultHeadshot = ClientCtx.seatingMgr.getPlayerHeadshot(_playerSeat, true);
+            }
+            image = _defaultHeadshot;
+        }
+
+        updateDisplay(image);
     }
 
     public function setSize (width :int, height :int) :void
     {
         _width = width;
         _height = height;
-        updateDisplay();
+        updateDisplay(_image);
     }
 
     override public function set width (value :Number) :void
@@ -48,13 +56,14 @@ public class HeadshotSprite extends Sprite
         setSize(_width, value);
     }
 
-    protected function updateDisplay () :void
+    protected function updateDisplay (newImage :DisplayObject) :void
     {
-        while (this.numChildren > 0) {
-            removeChildAt(0);
+        if (_image != null) {
+            removeChild(_image);
         }
 
-        this.mask = null
+        _image = newImage;
+        this.mask = null;
 
         if (_image == null) {
             return;
@@ -80,6 +89,8 @@ public class HeadshotSprite extends Sprite
         this.mask = headshotMask;
     }
 
+    protected var _playerSeat :int;
+    protected var _defaultHeadshot :DisplayObject;
     protected var _width :int;
     protected var _height :int;
     protected var _image :DisplayObject;

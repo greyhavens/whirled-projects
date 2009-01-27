@@ -56,7 +56,7 @@ public class PlayerOptionsPopup extends SceneObject
 
             var portraitName :String = Constants.PLAYER_PORTRAIT_NAMES[ii];
             var portrait :DisplayObject;
-            if (portraitName != null) {
+            if (portraitName != Constants.DEFAULT_PORTRAIT) {
                 portrait = ClientCtx.instantiateBitmap(portraitName);
                 portrait.width = positioner.width;
                 portrait.height = positioner.height;
@@ -153,29 +153,47 @@ public class PlayerOptionsPopup extends SceneObject
 
     protected function initPlayerOptions () :void
     {
-        updateHandicap(ClientCtx.lobbyConfig.handicaps[ClientCtx.seatingMgr.localPlayerSeat]);
-        updatePortraitSelection(ClientCtx.savedPlayerBits.favoritePortrait);
-        updateColorSelection(ClientCtx.savedPlayerBits.favoriteColor);
+        updateHandicap(this.isHandicapOn);
+        updatePortraitSelection(this.curFavoritePortrait);
+        updateColorSelection(this.curFavoriteColor);
     }
 
     protected function savePlayerOptions () :void
     {
-        ClientCtx.gameCtrl.net.doBatch(function () :void {
-            ClientCtx.gameCtrl.net.sendMessage(
-                LobbyConfig.MSG_SET_HANDICAP,
-                _handicapOn,
-                NetSubControl.TO_SERVER_AGENT);
-            ClientCtx.gameCtrl.net.sendMessage(
-                LobbyConfig.MSG_SET_PORTRAIT,
-                _selectedPortrait,
-                NetSubControl.TO_SERVER_AGENT);
-            ClientCtx.gameCtrl.net.sendMessage(
-                LobbyConfig.MSG_SET_COLOR,
-                _selectedColor,
-                NetSubControl.TO_SERVER_AGENT);
+        var popup :PlayerOptionsPopup = this;
 
-            ClientCtx.savedPlayerBits.favoritePortrait = _selectedPortrait;
-            ClientCtx.savedPlayerBits.favoriteColor = _selectedColor;
+        ClientCtx.gameCtrl.net.doBatch(function () :void {
+            var cookieChanged :Boolean;
+            if (_handicapOn != popup.isHandicapOn) {
+                ClientCtx.gameCtrl.net.sendMessage(
+                    LobbyConfig.MSG_SET_HANDICAP,
+                    _handicapOn,
+                    NetSubControl.TO_SERVER_AGENT);
+            }
+
+            if (_selectedPortrait != popup.curFavoritePortrait) {
+                ClientCtx.gameCtrl.net.sendMessage(
+                    LobbyConfig.MSG_SET_PORTRAIT,
+                    _selectedPortrait,
+                    NetSubControl.TO_SERVER_AGENT);
+
+                ClientCtx.savedPlayerBits.favoritePortrait = _selectedPortrait;
+                cookieChanged = true;
+            }
+
+            if (_selectedColor != popup.curFavoriteColor) {
+                ClientCtx.gameCtrl.net.sendMessage(
+                    LobbyConfig.MSG_SET_COLOR,
+                    _selectedColor,
+                    NetSubControl.TO_SERVER_AGENT);
+
+                ClientCtx.savedPlayerBits.favoriteColor = _selectedColor;
+                cookieChanged = true;
+            }
+
+            if (cookieChanged) {
+                ClientCtx.userCookieMgr.needsUpdate();
+            }
         });
     }
 
@@ -213,6 +231,21 @@ public class PlayerOptionsPopup extends SceneObject
     {
         _handicapOn = on;
         _handicapIcon.visible = on;
+    }
+
+    protected function get isHandicapOn () :Boolean
+    {
+        return ClientCtx.lobbyConfig.handicaps[ClientCtx.seatingMgr.localPlayerSeat];
+    }
+
+    protected function get curFavoritePortrait () :String
+    {
+        return ClientCtx.savedPlayerBits.favoritePortrait;
+    }
+
+    protected function get curFavoriteColor () :uint
+    {
+        return ClientCtx.savedPlayerBits.favoriteColor;
     }
 
     override public function get displayObject () :DisplayObject

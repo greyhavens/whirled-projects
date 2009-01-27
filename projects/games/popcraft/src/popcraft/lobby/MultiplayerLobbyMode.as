@@ -1,6 +1,7 @@
 package popcraft.lobby {
 
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.SimpleTimer;
@@ -42,11 +43,6 @@ public class MultiplayerLobbyMode extends AppMode
         _bg = ClientCtx.getSwfDisplayRoot("multiplayer_lobby") as MovieClip;
         _lobbyLayer.addChild(_bg);
 
-        // create headshots
-        for (var seat :int = 0; seat < ClientCtx.seatingMgr.numExpectedPlayers; ++seat) {
-            _headshots.push(new LobbyHeadshotSprite(seat));
-        }
-
         // handle clicks on the team boxes
         if (ClientCtx.seatingMgr.numExpectedPlayers == 2) {
             createTeamBoxMouseListener(_bg, LobbyConfig.ENDLESS_TEAM_ID);
@@ -78,11 +74,6 @@ public class MultiplayerLobbyMode extends AppMode
             initLocalPlayerData();
         }
 
-        //_handicapCheckbox = _bg["handicap"];
-        //registerListener(_handicapCheckbox, MouseEvent.CLICK, onHandicapBoxClicked);
-        this.handicapOn = false;
-
-        updateHandicapsDisplay();
         updateTeamsDisplay();
         updatePremiumContentDisplay();
 
@@ -137,13 +128,18 @@ public class MultiplayerLobbyMode extends AppMode
             ClientCtx.globalPlayerStats.hasMorbidInfection = true;
         }
 
-        if (ClientCtx.globalPlayerStats.hasMorbidInfection) {
-            sendServerMsg(LobbyConfig.MSG_SET_MORBID_INFECTION, true);
-        }
+        ClientCtx.gameCtrl.net.doBatch(function () :void {
+            if (ClientCtx.globalPlayerStats.hasMorbidInfection) {
+                sendServerMsg(LobbyConfig.MSG_SET_MORBID_INFECTION, true);
+            }
 
-        if (ClientCtx.isEndlessModeUnlocked) {
-            sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
-        }
+            if (ClientCtx.isEndlessModeUnlocked) {
+                sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
+            }
+
+            sendServerMsg(LobbyConfig.MSG_SET_PORTRAIT, ClientCtx.savedPlayerBits.favoritePortrait);
+            sendServerMsg(LobbyConfig.MSG_SET_COLOR, ClientCtx.savedPlayerBits.favoriteColor);
+        });
 
         _initedLocalPlayerData = true;
     }
@@ -215,7 +211,6 @@ public class MultiplayerLobbyMode extends AppMode
             }
 
             updateTeamsDisplay();
-            updateHandicapsDisplay();
 
         } else if (e.name == LobbyConfig.PROP_GAMESTARTCOUNTDOWN) {
             var showCountdown :Boolean = e.newValue as Boolean;
@@ -231,8 +226,6 @@ public class MultiplayerLobbyMode extends AppMode
     {
         if (e.name == LobbyConfig.PROP_PLAYER_TEAMS) {
             updateTeamsDisplay();
-        } else if (e.name == LobbyConfig.PROP_HANDICAPS) {
-            updateHandicapsDisplay();
         } else if (e.name == LobbyConfig.PROP_HASPREMIUMCONTENT) {
             updatePremiumContentDisplay();
         }
@@ -250,29 +243,6 @@ public class MultiplayerLobbyMode extends AppMode
     protected function onOccupantLeft (...ignored) :void
     {
         updateTeamsDisplay();
-    }
-
-    protected function onHandicapBoxClicked (...ignored) :void
-    {
-        var playerHandicaps :Array = ClientCtx.lobbyConfig.handicaps;
-        if (null != playerHandicaps) {
-            this.handicapOn = !this.handicapOn;
-            if (this.handicapOn != playerHandicaps[ClientCtx.seatingMgr.localPlayerSeat]) {
-                sendServerMsg(LobbyConfig.MSG_SET_HANDICAP, this.handicapOn);
-                updateHandicapsDisplay();
-            }
-        }
-    }
-
-    protected function set handicapOn (val :Boolean) :void
-    {
-        _handicapOn = val;
-        //_handicapCheckbox.gotoAndStop(_handicapOn ? "checked" : "unchecked");
-    }
-
-    protected function get handicapOn () :Boolean
-    {
-        return _handicapOn;
     }
 
     protected function onTeamSelected (teamId :int) :void
@@ -309,17 +279,6 @@ public class MultiplayerLobbyMode extends AppMode
         }
     }
 
-    protected function updateHandicapsDisplay () :void
-    {
-        var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
-        if (null != handicaps) {
-            for (var playerSeat :int = 0; playerSeat < ClientCtx.seatingMgr.numExpectedPlayers; ++playerSeat) {
-                var headshot :LobbyHeadshotSprite = _headshots[playerSeat];
-                headshot.handicap = handicaps[playerSeat];
-            }
-        }
-    }
-
     protected function updateTeamsDisplay () :void
     {
         // "inited" will be set to true when the multiplayer configuration is valid
@@ -330,7 +289,8 @@ public class MultiplayerLobbyMode extends AppMode
         var teams :Array = ClientCtx.lobbyConfig.playerTeams;
         var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
 
-        for (var teamId :int = LobbyConfig.ENDLESS_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS; ++teamId) {
+        for (var teamId :int = LobbyConfig.ENDLESS_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS;
+             ++teamId) {
             var boxLoc :Point;
             switch (teamId) {
             case LobbyConfig.UNASSIGNED_TEAM_ID:
@@ -349,15 +309,17 @@ public class MultiplayerLobbyMode extends AppMode
             var xLoc :Number = boxLoc.x + INITIAL_HEADSHOT_OFFSET.x;
             var yLoc :Number = boxLoc.y + INITIAL_HEADSHOT_OFFSET.y;
 
-            for (var playerSeat :int = 0; playerSeat < ClientCtx.seatingMgr.numExpectedPlayers; ++playerSeat) {
-                if (teams[playerSeat] == teamId) {
-                    var headshot :LobbyHeadshotSprite = _headshots[playerSeat];
+            for (var seat :int = 0; seat < ClientCtx.seatingMgr.numExpectedPlayers; ++seat) {
+                if (teams[seat] == teamId) {
+                    var headshot :LobbyHeadshotSprite = _headshots.get(seat);
+                    if (headshot == null) {
+                        headshot = new LobbyHeadshotSprite(seat);
+                        addObject(headshot, _lobbyLayer);
+                        _headshots.put(seat, headshot);
+                    }
+
                     headshot.x = xLoc;
                     headshot.y = yLoc;
-
-                    if (null == headshot.parent) {
-                        _lobbyLayer.addChild(headshot);
-                    }
 
                     if (teamId == LobbyConfig.ENDLESS_TEAM_ID) {
                         xLoc += headshot.width;
@@ -405,10 +367,8 @@ public class MultiplayerLobbyMode extends AppMode
     protected var _lobbyLayer :Sprite;
     protected var _playerOptionsLayer :Sprite;
     protected var _bg :MovieClip;
-    protected var _headshots :Array = [];
+    protected var _headshots :HashMap = new HashMap();
     protected var _statusText :TextField;
-    //protected var _handicapCheckbox :MovieClip;
-    protected var _handicapOn :Boolean;
     protected var _initedLocalPlayerData :Boolean;
     protected var _gameStartTimer :SimObjectRef = SimObjectRef.Null();
     protected var _showingPremiumContent :Boolean;
@@ -460,44 +420,100 @@ import popcraft.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
 import popcraft.ui.HeadshotSprite;
+import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.net.PropertyChangedEvent;
+import com.whirled.net.ElementChangedEvent;
+import flash.display.Bitmap;
 
-class LobbyHeadshotSprite extends Sprite
+class LobbyHeadshotSprite extends SceneObject
 {
     public function LobbyHeadshotSprite (playerSeat :int)
     {
+        _sprite = SpriteUtil.createSprite();
+
+        _playerSeat = playerSeat;
         _headshot = new HeadshotSprite(playerSeat, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
-        addChild(_headshot);
+        _sprite.addChild(_headshot);
 
         // player name
-        var tfName :TextField =
-            UIBits.createText(ClientCtx.seatingMgr.getPlayerName(playerSeat), 1.2);
-        TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
-        tfName.x = NAME_OFFSET;
-        tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
-        addChild(tfName);
+        _tfName = UIBits.createText(ClientCtx.seatingMgr.getPlayerName(playerSeat), 1.2);
+        TextFieldUtil.setMaximumTextWidth(_tfName, NAME_MAX_WIDTH);
+        _tfName.x = NAME_OFFSET;
+        _tfName.y = (HEADSHOT_SIZE.y - _tfName.height) * 0.5;
+        _sprite.addChild(_tfName);
 
-        _handicapObj = ClientCtx.instantiateMovieClip("multiplayer_lobby", "handicapped");
-        _handicapObj.scaleX = 1.5;
-        _handicapObj.scaleY = 1.5;
-        _handicapObj.x = (_handicapObj.width * 0.5) + 1;
-        _handicapObj.y = (_handicapObj.height * 0.5) + 1;
-        _handicapObj.visible = false;
-        addChild(_handicapObj);
+        _handicapIcon = ClientCtx.instantiateMovieClip("multiplayer_lobby", "handicapped");
+        _handicapIcon.scaleX = 1.5;
+        _handicapIcon.scaleY = 1.5;
+        _handicapIcon.x = (_handicapIcon.width * 0.5) + 1;
+        _handicapIcon.y = (_handicapIcon.height * 0.5) + 1;
+        _handicapIcon.visible = false;
+        _sprite.addChild(_handicapIcon);
+
+        registerListener(ClientCtx.gameCtrl.net, PropertyChangedEvent.PROPERTY_CHANGED,
+            function (e :PropertyChangedEvent) :void {
+                onPropChanged(e.name);
+            });
+
+        registerListener(ClientCtx.gameCtrl.net, ElementChangedEvent.ELEMENT_CHANGED,
+            function (e :ElementChangedEvent) :void {
+                onPropChanged(e.name, e.index);
+            });
+
+        updateHandicap();
+        updatePortrait();
+        updateColor();
     }
 
-    public function set handicap (val :Boolean) :void
+    protected function onPropChanged (propName :String, playerIndex :int = -1) :void
     {
-        if (val == _handicapOn) {
-            return;
-        }
+        if (playerIndex == _playerSeat || playerIndex < 0) {
+            switch (propName) {
+            case LobbyConfig.PROP_HANDICAPS:
+                updateHandicap();
+                break;
 
-        _handicapOn = val;
-        _handicapObj.visible = _handicapOn;
+            case LobbyConfig.PROP_PORTRAITS:
+                updatePortrait();
+                break;
+
+            case LobbyConfig.PROP_COLORS:
+                updateColor();
+                break;
+            }
+        }
     }
 
+    protected function updateHandicap () :void
+    {
+        _handicapIcon.visible = ClientCtx.lobbyConfig.handicaps[_playerSeat];
+    }
+
+    protected function updatePortrait () :void
+    {
+        var portraitName :String = ClientCtx.lobbyConfig.portraits[_playerSeat];
+        if (portraitName == Constants.DEFAULT_PORTRAIT) {
+            _headshot.useDefaultHeadshotImage();
+        } else {
+            _headshot.setImage(ClientCtx.instantiateBitmap(portraitName));
+        }
+    }
+
+    protected function updateColor () :void
+    {
+
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    protected var _playerSeat :int;
+    protected var _sprite :Sprite;
     protected var _headshot :HeadshotSprite;
-    protected var _handicapOn :Boolean;
-    protected var _handicapObj :DisplayObject;
+    protected var _tfName :TextField;
+    protected var _handicapIcon :DisplayObject;
 
     protected static const HEADSHOT_SIZE :Point = new Point(38, 38);
     protected static const NAME_OFFSET :Number = HEADSHOT_SIZE.x + 2;

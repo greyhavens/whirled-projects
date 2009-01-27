@@ -13,18 +13,19 @@ public class SavedPlayerBits
     // Cookie >= 2
     public var hasAskedToResetEndlessLevels :Boolean;
     // Cookie >= 3
-    public var hasFavoriteColor :Boolean;
     public var favoriteColor :uint;
-    public var hasFavoritePortrait :Boolean;
     public var favoritePortrait :String;
+
+    public function SavedPlayerBits ()
+    {
+        init();
+    }
 
     public function writeCookieData (cookie :ByteArray) :void
     {
         cookie.writeBoolean(hasFreeStoryMode);
         cookie.writeBoolean(hasAskedToResetEndlessLevels);
-        cookie.writeBoolean(hasFavoriteColor);
         cookie.writeUnsignedInt(favoriteColor);
-        cookie.writeBoolean(hasFavoritePortrait);
         cookie.writeUTF(favoritePortrait);
     }
 
@@ -55,9 +56,7 @@ public class SavedPlayerBits
         }
 
         if (version >= 3) {
-            hasFavoriteColor = cookie.readBoolean();
             favoriteColor = cookie.readUnsignedInt();
-            hasFavoritePortrait = cookie.readBoolean();
             favoritePortrait = cookie.readUTF();
         }
     }
@@ -77,10 +76,8 @@ public class SavedPlayerBits
     {
         hasFreeStoryMode = false;
         hasAskedToResetEndlessLevels = false;
-        hasFavoriteColor = false;
-        favoriteColor = 0;
-        hasFavoritePortrait = false;
-        favoritePortrait = null;
+        favoriteColor = Constants.RANDOM_COLOR;
+        favoritePortrait = Constants.DEFAULT_PORTRAIT;
     }
 }
 
