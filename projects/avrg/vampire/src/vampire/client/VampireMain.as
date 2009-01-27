@@ -12,12 +12,8 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
-import flash.net.registerClassAlias;
 
-import vampire.client.modes.BloodBondMode;
-import vampire.client.modes.FeedMode;
-import vampire.client.modes.FightMode;
-import vampire.client.modes.HierarchyMode;
+import vampire.data.Constants;
 import vampire.data.SharedPlayerStateClient;
 import vampire.server.AVRGAgentLogTarget;
 
@@ -28,31 +24,20 @@ public class VampireMain extends Sprite
     {
         
         
-        Log.setLevel("vampire", Log.DEBUG);
-//        Log.setLevel("vampire", Log.DEBUG);
+        Log.setLevel("com.threerings", Log.OFF);
+        Log.setLevel("vampire.client", Log.ERROR);
         
         trace("VampireMain()");
         /* Register mode classes so that they can be instatiated just by name*/
-        registerClassAlias("vampire.client.modes.BloodBondMode", BloodBondMode);
-        registerClassAlias("vampire.client.modes.FeedMode", FeedMode);
-        registerClassAlias("vampire.client.modes.FightMode", FightMode);
-        registerClassAlias("vampire.client.modes.HierarchyMode", HierarchyMode);
+//        registerClassAlias("vampire.client.modes.BloodBondMode", BloodBondMode);
+//        registerClassAlias("vampire.client.modes.FeedMode", FeedMode);
+//        registerClassAlias("vampire.client.modes.FightMode", FightMode);
+//        registerClassAlias("vampire.client.modes.HierarchyMode", HierarchyMode);
         
-        trace("  registered classes");
+//        trace("  registered classes");
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
         
-        
-        
-        
-        
-        // load resources
-//        ResourceManager.instance.queueResourceLoad("swf", "ui",     { embeddedClass: Resources.SWF_UI });
-//        ResourceManager.instance.queueResourceLoad("swf", "board",  { embeddedClass: Resources.SWF_BOARD });
-//        ResourceManager.instance.queueResourceLoad("swf", "intro",  { embeddedClass: Resources.SWF_INTRO });
-//        ResourceManager.instance.queueResourceLoad("swf", "help",   { embeddedClass: Resources.SWF_HELP });
-        
-//        ResourceManager.instance.loadQueuedResources(handleResourcesLoaded, handleResourceLoadError);
         _resourcesLoaded = true;
     }
     
@@ -61,9 +46,14 @@ public class VampireMain extends Sprite
     {
         if (_addedToStage && _resourcesLoaded) {
             
-            ClientContext.gameCtrl = new AVRGameControl( this );
+//            ClientContext.gameCtrl = new AVRGameControl( this );
+            if( ClientContext.gameCtrl == null) {
+                ClientContext.gameCtrl = new AVRGameControl( this );
+            }
+            
         
-            if( !ClientContext.gameCtrl.isConnected()) {
+            if( !ClientContext.gameCtrl.isConnected() && !Constants.LOCAL_DEBUG_MODE) {
+                trace("Not conected and not test model");
                 return;
             }
             
@@ -71,8 +61,8 @@ public class VampireMain extends Sprite
             
             var controller :VampireController = new VampireController(this);
             
-            ClientContext.model = new Model();
-            ClientContext.hud = new HUD(); 
+            ClientContext.model = new GameModel();
+            
             ClientContext.model.setup();
             
             // instantiate MainLoop singleton
@@ -82,39 +72,15 @@ public class VampireMain extends Sprite
             config.hostSprite = gameSprite;
             ClientContext.game = new SimpleGame( config );
             ClientContext.game.ctx.mainLoop.pushMode( new IntroMode() );
+            ClientContext.game.run();
             trace("  main loop");
             
-            
-            
-            
-//            Command.bind( ClientContext.model, VampireController.PLAYER_STATE_CHANGED, VampireController.PLAYER_STATE_CHANGED, [ClientContext.model, hud]);
-            
-    
-//            MainLoop.instance.run();
-//            
-//            MainLoop.instance.pushMode( new NothingMode() );
-            
-            setupTempEventNotifier();
+//            setupTempEventNotifier();
             
 //            addChild( new VProbe(ClientContext.gameCtrl) );
         
         
             EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED, printServerLogToFlashLog);
-//            setupAvatarInfoCapture();
-        
-//            ClientContext.gameCtrl = new AVRGameControl(this);
-//            ClientContext.gameCtrl.player.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
-//
-//            ClientContext.ourPlayerId = (ClientContext.gameCtrl.isConnected()
-//                ? ClientContext.gameCtrl.player.getPlayerId() : 666);
-//
-//            ClientContext.items = new BingoItemManager(ClientBingoItems.ITEMS);
-//
-//            ClientContext.model = new Model();
-//            ClientContext.model.setup();
-
-//            MainLoop.instance.pushMode(new IntroMode());
-//            MainLoop.instance.run();
         }
     }
 
@@ -144,7 +110,7 @@ public class VampireMain extends Sprite
 
         EventHandlers.freeAllHandlers();
 //        ClientContext.model.destroy();
-
+        ClientContext.model.destroy();
         ClientContext.game.shutdown();
         
         removeEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
