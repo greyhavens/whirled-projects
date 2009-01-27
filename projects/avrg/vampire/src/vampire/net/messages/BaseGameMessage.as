@@ -1,5 +1,7 @@
 package vampire.net.messages
 {
+    import com.threerings.util.ClassUtil;
+    
     import flash.utils.ByteArray;
     
     import vampire.net.IGameMessage;
@@ -37,16 +39,16 @@ package vampire.net.messages
             return _playerId;
         }
         
-        public function set playerId( id :int) :void 
-        {
-            _playerId = id;
-        }
+//        public function set playerId( id :int) :void 
+//        {
+//            _playerId = id;
+//        }
         
         public function toString() :String
         {
-            return " From player " + _playerId + " ";
+            return ClassUtil.tinyClassName( this ) + ": From player " + _playerId + " ";
         }
         
-        public var _playerId :int;  
+        protected var _playerId :int;  
     }
 }

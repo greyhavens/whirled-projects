@@ -1,5 +1,7 @@
 package vampire.net.messages
 {
+    import com.threerings.util.ClassUtil;
+    
     import flash.utils.ByteArray;
     
     public class RequestActionChangeMessage extends BaseGameMessage
@@ -32,6 +34,11 @@ package vampire.net.messages
         override public function get name () :String
         {
            return NAME;     
+        }
+        
+        override public function toString() :String
+        {
+            return ClassUtil.tinyClassName( this ) + ": player=" + _playerId + ", action=" + _action;
         }
         
         protected var _action :String;
