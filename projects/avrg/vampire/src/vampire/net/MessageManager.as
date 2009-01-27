@@ -11,6 +11,8 @@ import com.whirled.net.MessageReceivedEvent;
 import flash.events.EventDispatcher;
 import flash.utils.ByteArray;
 
+import vampire.net.messages.BloodBondRequestMessage;
+import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 
 
@@ -51,6 +53,10 @@ public class MessageManager extends EventDispatcher
         
         //Move this out of here!  But to where???
         addMessageType( RequestActionChangeMessage );
+        addMessageType( BloodBondRequestMessage );
+        addMessageType( FeedRequestMessage );
+        
+        
     }
 
     public function addMessageType (messageClass :Class) :void
