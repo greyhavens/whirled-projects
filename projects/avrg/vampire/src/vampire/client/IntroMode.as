@@ -14,24 +14,18 @@ package vampire.client
             super();
         }
         
-        override protected function enter() :void
+        override protected function setup() :void
         {
-            super.enter();
             modeSprite.graphics.beginFill(0xffffff);
-            modeSprite.graphics.drawRect(200, 200, 300, 300);
+            modeSprite.graphics.drawRect(100, 100, 200, 200);
             modeSprite.graphics.endFill();
             
-            modeSprite.graphics.lineStyle(1, 1);
+            modeSprite.graphics.lineStyle(0x000000, 1);
             
-            var welcometext :TextField = TextFieldUtil.createField("Welcome to Vampire", {selectable:false}); 
+            var welcometext :TextField = TextFieldUtil.createField("Welcome to Vampire, click to remove", {selectable:false, x:120, y:120, width:200}); 
             modeSprite.addChild( welcometext );
             
             Command.bind( modeSprite, MouseEvent.CLICK, VampireController.HIDE_INTRO );
-        }
-        
-        override protected function exit() :void
-        {
-            super.exit();
         }
         
     }
