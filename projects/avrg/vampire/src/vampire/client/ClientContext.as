@@ -1,15 +1,18 @@
 package vampire.client {
 
 
-import vampire.client.modes.BloodBondMode;
-import vampire.client.modes.FeedMode;
-import vampire.client.modes.FightMode;
-import vampire.client.modes.HierarchyMode;
-
+import com.threerings.util.HashMap;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
+import com.whirled.contrib.simplegame.SimpleGame;
 
 import flash.geom.Rectangle;
+
+import vampire.client.actions.bloodbond.BloodBondMode;
+import vampire.client.actions.feed.FeedMode;
+import vampire.client.actions.fight.FightMode;
+import vampire.client.actions.hierarchy.HierarchyMode;
+import vampire.data.Constants;
 
 /**
  * Client specific functions and info.
@@ -17,8 +20,10 @@ import flash.geom.Rectangle;
 public class ClientContext
 {
     public static var gameCtrl :AVRGameControl;
-    public static var model :Model;
+    public static var game :SimpleGame;
+    public static var model :GameModel;
     public static var ourPlayerId :int;
+    public static var currentClosestPlayerId :int;
 
     public static function quit () :void
     {
