@@ -3,21 +3,18 @@
 
 package vampire.client {
 
-import flash.display.Sprite;
-import flash.utils.Dictionary;
-
-import flash.geom.Point;
-import flash.geom.Rectangle;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
-
 import com.threerings.util.Log;
-
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.avrg.AVRGameControlEvent;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.net.NetConstants;
+
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.utils.Dictionary;
 
 public class DraggableSprite extends Sprite
 {
