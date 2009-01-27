@@ -38,6 +38,16 @@ public class HeadshotSprite extends Sprite
         updateDisplay();
     }
 
+    override public function set width (value :Number) :void
+    {
+        setSize(value, _height);
+    }
+
+    override public function set height (value :Number) :void
+    {
+        setSize(_width, value);
+    }
+
     protected function updateDisplay () :void
     {
         while (this.numChildren > 0) {

@@ -1,5 +1,6 @@
 package popcraft.lobby {
 
+import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -13,6 +14,7 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import popcraft.*;
+import popcraft.ui.HeadshotSprite;
 import popcraft.ui.UIBits;
 
 public class PlayerOptionsPopup extends SceneObject
@@ -52,11 +54,15 @@ public class PlayerOptionsPopup extends SceneObject
             positioner.visible = false;
 
             var portraitName :String = Constants.PLAYER_PORTRAIT_NAMES[ii];
-            var portrait :DisplayObject =  (portraitName != null ?
-                ClientCtx.instantiateBitmap(portraitName) :
-                ClientCtx.seatingMgr.getPlayerHeadshot(ClientCtx.seatingMgr.localPlayerSeat, true));
-            portrait.width = positioner.width;
-            portrait.height = positioner.height;
+            var portrait :DisplayObject;
+            if (portraitName != null) {
+                portrait = ClientCtx.instantiateBitmap(portraitName);
+                portrait.width = positioner.width;
+                portrait.height = positioner.height;
+            } else {
+                portrait = new HeadshotSprite(ClientCtx.seatingMgr.localPlayerSeat,
+                    positioner.width, positioner.height);
+            }
 
             var portraitButton :Sprite = new Sprite();
             portraitButton.addChild(portrait);
@@ -70,9 +76,8 @@ public class PlayerOptionsPopup extends SceneObject
 
         _portraitSelectionIndicator = new Shape();
         g = _portraitSelectionIndicator.graphics;
-        g.lineStyle(PORTRAIT_SELECTION_INDICATOR_SIZE, 0);
-        g.drawRect(0, 0, positioner.width + (PORTRAIT_SELECTION_INDICATOR_SIZE * 2),
-            positioner.height + (PORTRAIT_SELECTION_INDICATOR_SIZE * 2));
+        g.lineStyle(PORTRAIT_SELECTION_INDICATOR_SIZE, 0xff0000);
+        g.drawRect(0, 0, positioner.width, positioner.height);
 
         // fill in player colors
         for (ii = 0; ii < Constants.PLAYER_COLORS.length; ++ii) {
@@ -82,6 +87,7 @@ public class PlayerOptionsPopup extends SceneObject
             var color :uint = Constants.PLAYER_COLORS[ii];
             var swatch :Shape = new Shape();
             g = swatch.graphics;
+            g.lineStyle(1, 0);
             g.beginFill(color);
             g.drawRect(0, 0, positioner.width, positioner.height);
             g.endFill();
@@ -98,9 +104,8 @@ public class PlayerOptionsPopup extends SceneObject
 
         _colorSelectionIndicator = new Shape();
         g = _colorSelectionIndicator.graphics;
-        g.lineStyle(COLOR_SELECTION_INDICATOR_SIZE, 0);
-        g.drawRect(0, 0, positioner.width + (COLOR_SELECTION_INDICATOR_SIZE * 2),
-            positioner.height + (COLOR_SELECTION_INDICATOR_SIZE * 2));
+        g.lineStyle(COLOR_SELECTION_INDICATOR_SIZE, 0xff0000);
+        g.drawRect(0, 0, positioner.width, positioner.height);
 
         // Handicap checkbox
         var handicapCheckbox :MovieClip = _movie["handicap"];
@@ -162,8 +167,9 @@ public class PlayerOptionsPopup extends SceneObject
         }
 
         var button :Sprite = _portraitButtons[idx];
-        _portraitSelectionIndicator.x = (button.width - _portraitSelectionIndicator.width) * 0.5;
-        _portraitSelectionIndicator.y = (button.height - _portraitSelectionIndicator.height) * 0.5;
+        DisplayUtil.positionBounds(_portraitSelectionIndicator,
+            (button.width - _portraitSelectionIndicator.width) * 0.5,
+            (button.height - _portraitSelectionIndicator.height) * 0.5);
         button.addChild(_portraitSelectionIndicator);
         _selectedPortrait = portraitName;
     }
@@ -176,8 +182,9 @@ public class PlayerOptionsPopup extends SceneObject
         }
 
         var button :Sprite = _colorButtons[idx];
-        _colorSelectionIndicator.x = (button.width - _colorSelectionIndicator.width) * 0.5;
-        _colorSelectionIndicator.y = (button.height - _colorSelectionIndicator.height) * 0.5;
+        DisplayUtil.positionBounds(_colorSelectionIndicator,
+            (button.width - _colorSelectionIndicator.width) * 0.5,
+            (button.height - _colorSelectionIndicator.height) * 0.5);
         button.addChild(_colorSelectionIndicator);
         _selectedColor = color;
     }
@@ -210,7 +217,7 @@ public class PlayerOptionsPopup extends SceneObject
     protected var _colorSelectionIndicator :Shape;
     protected var _selectedColor :uint;
 
-    protected static const PORTRAIT_SELECTION_INDICATOR_SIZE :Number = 6;
+    protected static const PORTRAIT_SELECTION_INDICATOR_SIZE :Number = 4;
     protected static const COLOR_SELECTION_INDICATOR_SIZE :Number = 4;
     protected static const NAME :String = "PlayerOptionsPopup";
 }
