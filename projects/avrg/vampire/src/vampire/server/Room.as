@@ -3,7 +3,6 @@
 
 package vampire.server {
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Hashable;
@@ -12,8 +11,6 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
 
 import flash.events.Event;
-
-import vampire.data.SharedPlayerStateClient;
 
 public class Room
     implements Hashable
@@ -26,6 +23,8 @@ public class Room
 //        _state = Codes.STATE_SEEKING;
 
         maybeLoadControl();
+        
+//        for each(_ctrl.getPlayerIds()
     }
 
     public function get roomId () :int
@@ -41,10 +40,10 @@ public class Room
         return _ctrl;
     }
 
-    public function get state () :String
-    {
-        return _state;
-    }
+//    public function get state () :String
+//    {
+//        return _state;
+//    }
 
     public function get isShutdown () :Boolean
     {
@@ -81,7 +80,11 @@ public class Room
                         "playerId", player.playerId);
         }
 
-        maybeLoadControl();
+        maybeLoadControl(); 
+        
+        var playername :String = _ctrl.getAvatarInfo( player.playerId) != null ? _ctrl.getAvatarInfo( player.playerId).name : "" + player.playerId;
+        log.info("Setting " + playername + " props into room");
+        player.setIntoRoomProps( this );
 
         // broadcast the arriving player's data using room properties
 //        var dict :Dictionary = new Dictionary();
@@ -109,14 +112,14 @@ public class Room
 //        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
     }
 
-    public function checkState (... expected) :Boolean
-    {
-        if (ArrayUtil.contains(expected, _state)) {
-            return true;
-        }
-        log.debug("State mismatch", "expected", expected, "actual", _state);
-        return false;
-    }
+//    public function checkState (... expected) :Boolean
+//    {
+//        if (ArrayUtil.contains(expected, _state)) {
+//            return true;
+//        }
+//        log.debug("State mismatch", "expected", expected, "actual", _state);
+//        return false;
+//    }
 
 
     public function tick (frame :int, newSecond :Boolean) :void
@@ -199,7 +202,7 @@ public class Room
 //        _ctrl.props.set(key, player.playerState.toBytes()); 
         
         
-        SharedPlayerStateClient.setIntoRoomProps( player, _ctrl );
+        player.setIntoRoomProps( this );
         
 //        _ctrl.props.set("" + player.playerId, player.sharedPlayerState.toBytes()); 
         
@@ -290,12 +293,15 @@ public class Room
     protected function maybeLoadControl () :void
     {
         if (_ctrl == null) {
-            _ctrl = Server.control.getRoom(_roomId);
-
-            log.debug("Export my state to new control", "state", _state);
+            _ctrl = VServer.control.getRoom(_roomId);
+            
+            if( _ctrl == null ) {
+                log.warning("maybeLoadControl(), but RoomSubControl is still null!!!");
+            }
 
             // export the room state to room properties
 //            _ctrl.props.set(Codes.PROP_STATE, _state, true);
+//            log.debug("Export my state to new control", "state", _state);
 
             // if there's a ghost in here, re-export it too
 //            if (_ghost != null) {
@@ -322,7 +328,7 @@ public class Room
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
 
-    protected var _state :String;
+//    protected var _state :String;
     protected var _players :HashSet = new HashSet();
 
     protected var _errorCount :int = 0;
