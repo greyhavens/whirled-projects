@@ -80,7 +80,7 @@ public class SavedPlayerBits
         hasFavoriteColor = false;
         favoriteColor = 0;
         hasFavoritePortrait = false;
-        favoritePortrait = "";
+        favoritePortrait = null;
     }
 }
 

@@ -7,7 +7,7 @@ import com.whirled.contrib.ManagedTimer;
 import com.whirled.contrib.TimerManager;
 import com.whirled.net.MessageReceivedEvent;
 
-import popcraft.LobbyConfig;
+import popcraft.*;
 
 public class ServerLobby
 {
@@ -21,6 +21,8 @@ public class ServerLobby
             setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, false);
             setProp(LobbyConfig.PROP_RANDSEED, uint(Math.random() * uint.MAX_VALUE));
             setProp(LobbyConfig.PROP_HANDICAPS, ArrayUtil.create(numPlayers, false));
+            setProp(LobbyConfig.PROP_PORTRAITS, ArrayUtil.create(numPlayers, null));
+            setProp(LobbyConfig.PROP_COLORS, ArrayUtil.create(numPlayers, Constants.RANDOM_COLOR));
             setProp(LobbyConfig.PROP_PLAYER_TEAMS, ArrayUtil.create(numPlayers,
                 LobbyConfig.UNASSIGNED_TEAM_ID));
             setProp(LobbyConfig.PROP_HASMORBIDINFECTION, ArrayUtil.create(numPlayers, false));
@@ -73,6 +75,20 @@ public class ServerLobby
             if (ServerCtx.lobbyConfig.handicaps[playerSeat] != handicap) {
                 setPropAt(LobbyConfig.PROP_HANDICAPS, playerSeat, handicap);
                 gamePropertyChanged();
+            }
+            break;
+
+        case LobbyConfig.MSG_SET_PORTRAIT:
+            var portrait :String = e.value as String;
+            if (ServerCtx.lobbyConfig.portraits[playerSeat] != portrait) {
+                setPropAt(LobbyConfig.PROP_PORTRAITS, playerSeat, portrait);
+            }
+            break;
+
+        case LobbyConfig.MSG_SET_COLOR:
+            var color :uint = e.value as uint;
+            if (ServerCtx.lobbyConfig.colors[playerSeat] != color) {
+                setPropAt(LobbyConfig.PROP_COLORS, playerSeat, color);
             }
             break;
 

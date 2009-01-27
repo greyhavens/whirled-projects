@@ -185,8 +185,9 @@ public class Constants
         "portrait_ursula",
     ];
 
+    public static const RANDOM_COLOR :uint = 0xff000000;
     public static const PLAYER_COLORS :Array = [
-        0xffffff,
+        RANDOM_COLOR,
         0x9FBCFF,
         0xFF0000,
         0x9C78E4,

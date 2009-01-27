@@ -8,14 +8,17 @@ public class LobbyConfig
     public static const PROP_INITED :String             = "lc_Inited"; // Boolean
     public static const PROP_GAMESTARTCOUNTDOWN :String = "lc_countdown"; // Boolean
     public static const PROP_RANDSEED :String           = "lc_RandSeed"; // uint
-    public static const PROP_PLAYER_TEAMS :String              = "lc_Teams";    // Array<teamId>
+    public static const PROP_PLAYER_TEAMS :String       = "lc_Teams";    // Array<teamId>
     public static const PROP_HANDICAPS :String          = "lc_Handicaps"; // Array<Boolean>
+    public static const PROP_PORTRAITS :String          = "lc_Portraits"; // Array<String>
+    public static const PROP_COLORS :String             = "lc_Colors"; // Array<uint>
     public static const PROP_HASMORBIDINFECTION :String = "lc_HMI"; // Array<Boolean>
     public static const PROP_HASPREMIUMCONTENT :String  = "lc_HasPremium"; // Array<Boolean>
 
     // Client->Server messages
     public static const MSG_SET_HANDICAP :String        = "lc_setHandicap"; // Boolean
     public static const MSG_SET_TEAM :String            = "lc_setTeam"; // int
+    public static const MSG_SET_PORTRAIT :String        = "lc_setPortrait"; // String
     public static const MSG_SET_COLOR :String           = "lc_setColor"; // uint
     public static const MSG_SET_MORBID_INFECTION :String = "lc_setMI"; // Boolean
     public static const MSG_SET_PREMIUM_CONTENT :String = "lc_setPC"; // Boolean
@@ -165,6 +168,16 @@ public class LobbyConfig
     public function get handicaps () :Array
     {
         return _gameCtrl.net.get(PROP_HANDICAPS) as Array;
+    }
+
+    public function get portraits () :Array
+    {
+        return _gameCtrl.net.get(PROP_PORTRAITS) as Array;
+    }
+
+    public function get colors () :Array
+    {
+        return _gameCtrl.net.get(PROP_COLORS) as Array;
     }
 
     public function get randSeed () :uint

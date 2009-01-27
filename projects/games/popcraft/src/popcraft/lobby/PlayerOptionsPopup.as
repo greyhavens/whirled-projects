@@ -4,6 +4,7 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.game.NetSubControl;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -152,11 +153,30 @@ public class PlayerOptionsPopup extends SceneObject
 
     protected function initPlayerOptions () :void
     {
+        updateHandicap(ClientCtx.lobbyConfig.handicaps[ClientCtx.seatingMgr.localPlayerSeat]);
+        updatePortraitSelection(ClientCtx.savedPlayerBits.favoritePortrait);
+        updateColorSelection(ClientCtx.savedPlayerBits.favoriteColor);
     }
 
     protected function savePlayerOptions () :void
     {
+        ClientCtx.gameCtrl.net.doBatch(function () :void {
+            ClientCtx.gameCtrl.net.sendMessage(
+                LobbyConfig.MSG_SET_HANDICAP,
+                _handicapOn,
+                NetSubControl.TO_SERVER_AGENT);
+            ClientCtx.gameCtrl.net.sendMessage(
+                LobbyConfig.MSG_SET_PORTRAIT,
+                _selectedPortrait,
+                NetSubControl.TO_SERVER_AGENT);
+            ClientCtx.gameCtrl.net.sendMessage(
+                LobbyConfig.MSG_SET_COLOR,
+                _selectedColor,
+                NetSubControl.TO_SERVER_AGENT);
 
+            ClientCtx.savedPlayerBits.favoritePortrait = _selectedPortrait;
+            ClientCtx.savedPlayerBits.favoriteColor = _selectedColor;
+        });
     }
 
     protected function updatePortraitSelection (portraitName :String) :void
