@@ -80,11 +80,9 @@ public class MultiplayerLobbyMode extends AppMode
         registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
             onPlayerPurchasedContent);
 
-        // TODO: fix when jon updates the swf
-        //var playerOptionsButton :SimpleButton = _bg["player_options"];
-        var playerOptionsButton :SimpleButton = UIBits.createButton("Player Options", 1.2);
-        playerOptionsButton.x = 120;
-        playerOptionsButton.y = 318;
+        var playerOptionsButton :SimpleButton = UIBits.createButton("Player Options", 1.3, 208);
+        playerOptionsButton.x = 15;
+        playerOptionsButton.y = 290;
         _lobbyLayer.addChild(playerOptionsButton);
         registerListener(playerOptionsButton, MouseEvent.CLICK,
             function (...ignored) :void {

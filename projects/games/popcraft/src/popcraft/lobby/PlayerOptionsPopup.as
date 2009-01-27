@@ -121,10 +121,9 @@ public class PlayerOptionsPopup extends SceneObject
         _movie.addChild(_handicapIcon);
 
         // The OK button just hides the popup.
-        //var okButton :SimpleButton = _movie["OK_button"];
-        var okButton :SimpleButton = UIBits.createButton("OK", 1.2);
-        okButton.x = 169;
-        okButton.y = 122;
+        var okButton :SimpleButton = UIBits.createButton("OK", 1.3, 53);
+        okButton.x = 140;
+        okButton.y = 107;
         _movie.addChild(okButton);
         var thisPopup :PlayerOptionsPopup = this;
         registerListener(okButton, MouseEvent.CLICK,
