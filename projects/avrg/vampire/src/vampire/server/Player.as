@@ -3,6 +3,7 @@
 
 package vampire.server {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
@@ -12,6 +13,8 @@ import com.whirled.avrg.PlayerSubControlServer;
 import vampire.data.Constants;
 import vampire.data.SharedPlayerStateServer;
 import vampire.net.IGameMessage;
+import vampire.net.messages.BloodBondRequestMessage;
+import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 
 
@@ -21,13 +24,31 @@ public class Player
 
     public function Player (ctrl :PlayerSubControlServer)
     {
+        if( ctrl == null ) {
+            log.error("Bad!  Player(null).  What happened to the PlayerSubControlServer?  Expect random failures everywhere.");
+            return;
+        }
+        
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
 
         _ctrl.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
         
-        _sharedState = new SharedPlayerStateServer( ctrl );
+        _sharedState = new SharedPlayerStateServer( ctrl.props );
+        
+        
+        if (level == 0) {
+            log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
+            _sharedState.setLevel(1, true);
+            _sharedState.setBloodBonded([]);
+            _sharedState.setBlood( _sharedState.maxBlood, true );
+            _sharedState.setSire( VServer.getSireFromInvitee( _playerId ) );
+        } 
+        
+        log.debug("In Player, _sharedState=" + _sharedState);
+        
+        setAction( Constants.GAME_MODE_NOTHING );
         //if we're in a room, update the room properties
         if (_room != null) {
             _room.playerUpdated(this);
@@ -35,83 +56,34 @@ public class Player
 //        log.debug("Setting blood at 10%, blood=" + maxBlood * 0.1);
         setBlood( blood, true);
         
-        
-//        var bytes :ByteArray = _ctrl.props.get(Codes.PLAYER_FULL_STATE_KEY) as ByteArray;
-//        
-//        if( bytes == null) {
-//            log.info("Initializing new player", "playerId", playerId);
-//            _level = 1;
-//            _blood = getMaxBloodForLevel(1);
-//            _maxBlood = getMaxBloodForLevel(1);
-////            setPlaying( true );
-////            _playing = true;
-////            setLevel(1, true);
-////            setBlood(getMaxBloodForLevel(1), true);
-//            setPlaying(false, true);
-//            setStateToPlayerProps();
-//        }
-//        else {
-//            var state :SharedPlayerStateServer = SharedPlayerStateServer.fromBytes( bytes );
-//            _level = state.level;
-//            _blood = state.blood;
-//            _maxBlood = state.maxBlood;
-//            _playing = true;
-//            
-//            //if we're in a room, update the room properties
-//            if (_room != null) {
-//                _room.playerUpdated(this);
-//            }
-//        }
-//        
-        
-        
-        
-        
-//        _level = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LEVEL));
-//        if (_level == 0) {
-//            // this person has never played Vampire before
-//            log.info("Initializing new player", "playerId", playerId);
-//            setLevel(1, true);
-//            setBlood(getMaxBloodForLevel(1), true);
-//            setPlaying(false, true);///?
-//
-//        } else {
-//            updateBloodFromStartingNewGame()
-//
-//            var playingValue :Object = _ctrl.props.get(Codes.PROP_IS_PLAYING);
-//            if (playingValue != null) {
-//                _playing = Boolean(playingValue);
-//
-//            } else {
-//                log.debug("Repairing player isPlaying", "playerId", playerId);
-//                setPlaying(false, true);
-//            }
-//
-//            var bloodValue :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD);
-//            if (bloodValue != null) {
-//                _blood = int(bloodValue);
-//
-//            } else {
-//                // blood should always be set if level is set, but let's play it safe
-//                log.debug("Repairing player blood", "playerId", playerId);
-//                setBlood(1, true);
-//            }
-//            
-//            var levelValue :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LEVEL);
-//            if (levelValue != null) {
-//                _level = int(levelValue);
-//
-//            } else {
-//                // blood should always be set if level is set, but let's play it safe
-//                log.debug("Repairing player level", "playerId", playerId);
-//                setLevel(1, true);
-//            }
-//        }
-
+        //If we have previously been awake, reduce our blood proportionally to the time since we last played.
+        if( _sharedState.time != 0) {
+            var date :Date = new Date();
+            var now :Number = date.time;
+            var millisecondsSinceLastAwake :Number = now - _sharedState.time;
+            if( millisecondsSinceLastAwake < 0) {
+                log.error("Computing time since last awake, but < 0, now=" + now + ", _sharedState.time=" + _sharedState.time);
+            }
+            var hoursSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60);
+            log.debug("hoursSinceLastAwake=" + hoursSinceLastAwake);
+            log.debug("secondSinceLastAwake=" + (millisecondsSinceLastAwake/1000));
+            var bloodReduction :Number = Constants.BLOOD_LOSS_HOURLY_RATE * hoursSinceLastAwake;
+            log.debug("bloodReduction=" + bloodReduction);
+            var bloodnow :Number = blood;
+            bloodnow -= bloodReduction;
+            bloodnow = Math.max( Constants.MINMUM_BLOOD_AFTER_SLEEPING, bloodnow);
+            setBlood( bloodnow );
+            
+            log.debug("bloodnow=" + bloodnow, "in props", blood);
+            
+        }
 
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
-                 maxBlood, "level", level);
+                 maxBlood, "level", level, "sire", sire, "minions", minions, "time", new Date(time).toTimeString());
             
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
     }
 
     public function get ctrl () :PlayerSubControlServer
@@ -130,13 +102,13 @@ public class Player
         return true;//_playing;
     }
 
-    public function get blood () :int
+    public function get blood () :Number
     {
         return _sharedState.blood
 //        return _blood;
     }
 
-    public function get maxBlood () :int
+    public function get maxBlood () :Number
     {
         return _sharedState.maxBlood;
 //        return getMaxBloodForLevel( level );
@@ -157,7 +129,21 @@ public class Player
     {
         return _sharedState.bloodbonded;
     }
+    
+    public function get minions () :Array
+    {
+        return _sharedState.minions;
+    }
 
+    public function get sire () :int
+    {
+        return _sharedState.sire;
+    }
+    
+    public function get time () :Number
+    {
+        return _sharedState.time;
+    }
 
     protected function XXXsetLevel (level :int, force :Boolean = false) :void
     {
@@ -203,21 +189,29 @@ public class Player
     public function toString () :String
     {
         return "Player [playerId=" + _playerId + ", roomId=" +
-            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + "]";
+            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded + ", time=" + new Date(time).toTimeString() + "]";
     }
 
     public function isDead () :Boolean
     {
-        return blood == 0;
+        return blood <= 0;
     }
 
     public function shutdown () :void
     {
+        var currentTime :Number = new Date().time;
+        log.info("shutdown()", "currentTime", new Date(currentTime).toTimeString());
+        _sharedState.setTime( currentTime, true );
+        
+        log.info("before player shutdown", "time", new Date(_ctrl.props.get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+//        _sharedState.setAction( Constants.GAME_MODE_NOTHING, true );
+        setIntoRoomProps( room );
         _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
+        log.info("end of player shutdown", "time", new Date(_ctrl.props.get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
     }
 
-    public function damage (damage :int) :void
+    public function damage (damage :Number) :void
     {
 //        log.debug("Damaging player", "playerId", _playerId, "damage", damage, "blood", _blood);
 
@@ -229,14 +223,21 @@ public class Player
         setBlood(blood - damage); // note: setBlood clamps this to [0, maxBlood]
     }
 
-    public function addBlood (amount :int) :void
+    public function addBlood (amount :Number) :void
     {
         if (!isDead()) {
             setBlood(blood + amount); // note: setBlood clamps this to [0, maxBlood]
         }
     }
     
-    protected function setBlood (blood :int, force :Boolean = false) :void
+    public function removeBlood (amount :Number) :void
+    {
+        if (!isDead()) {
+            setBlood(blood - amount); // note: setBlood clamps this to [0, maxBlood]
+        }
+    }
+    
+    protected function setBlood (blood :Number, force :Boolean = false) :void
     {
         // update our runtime state
 //        blood = MathUtil.clamp(blood, 0, maxBlood);
@@ -295,11 +296,15 @@ public class Player
     {
         // handle messages that make (at least some) sense even if we're between rooms
         log.debug("handleMessage() ", "name", name, "value", value);
+        trace("handleMessage() ", "name", name, "value", value);
         if( name == Constants.NAMED_EVENT_BLOOD_UP ) {
             setBlood( blood + 10 );
         }
         else if( name == Constants.NAMED_EVENT_BLOOD_DOWN ) {
             setBlood( blood - 10 );
+        }
+        else if( name == Constants.NAMED_EVENT_FEED ) {
+            feed(int(value));
         }
         
         else if( value is IGameMessage) {
@@ -307,12 +312,173 @@ public class Player
             if( value is RequestActionChangeMessage) {
                 handleRequestActionChange( RequestActionChangeMessage(value) );
             }
+            else if( value is BloodBondRequestMessage) {
+                handleBloodBondRequest( BloodBondRequestMessage(value) );
+            }
+            else if( value is FeedRequestMessage) {
+                handleFeedRequestMessage( FeedRequestMessage(value) );
+            }
             else {
                 log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
+                log.debug("  Classname=" + ClassUtil.getClassName(value) );
             }
         }
         
     }
+    
+    protected function feed(targetPlayerId :int ) :void
+    {
+        var eatenPlayer :Player = VServer.getPlayer( targetPlayerId );
+        if( eatenPlayer == null) {
+            log.warning("feed( " + targetPlayerId + " ), player is null");
+            return;
+        }
+        
+        
+        if( eatenPlayer.action != Constants.GAME_MODE_EAT_ME) {
+            log.warning("feed( " + targetPlayerId + " ), eatee is not in mode=" + Constants.GAME_MODE_EAT_ME);
+            return;
+        }
+        
+        if( eatenPlayer.blood <= 1) {
+            log.warning("feed( " + targetPlayerId + " ), eatee has only blood=" + eatenPlayer.blood);
+            return;
+        }
+        
+        var bloodEaten :Number = 10;
+        if( eatenPlayer.blood <= 10) {
+            bloodEaten = eatenPlayer.blood - 1;
+        }
+        log.debug("Sucessful feed.");
+        addBlood( bloodEaten );
+        eatenPlayer.removeBlood( bloodEaten );
+    }
+    
+    /**
+    * Handle a feed request.
+    */
+    protected function handleFeedRequestMessage( e :FeedRequestMessage) :void
+    {
+        var targetPlayer :Player = VServer.getPlayer( e.targetPlayer );
+        var isTargetVictim :Boolean = e.isTargetPlayerTheVictim;
+        
+        
+    }
+    
+    
+    /**
+    * Here we check if we are allowed to change action.
+    * ATM we just allow it.
+    */
+    protected function handleBloodBondRequest( e :BloodBondRequestMessage) :void
+    {
+        var targetPlayer :Player = VServer.getPlayer( e.targetPlayer );
+        
+        if( targetPlayer == null) {
+            log.debug("Cannot perform blood bond request unless both players are in the same room");
+            return;
+        }
+        
+        if( e.add ) {
+            addBloodBond( e.targetPlayer, e.targetPlayerName, true );
+            if( targetPlayer != null) {
+                targetPlayer.addBloodBond( playerId, ServerContext.getPlayerName(playerId), true );
+            }
+            else {
+                log.error("You can't add a blood bond to an offline player.");
+                
+//                VServer.control.loadOfflinePlayer(e.targetPlayer, 
+//                    function (props :PropertySpaceObject) :void {
+//                        
+//                        var bloodbonds :Array = props.getUserProps().get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
+//                        if( bloodbonds == null) {
+//                            bloodbonds = new Array();
+//                        }
+//                        bloodbonds.push( playerId );
+//                        bloodbonds.push( targetPlayer._ctrl. );
+//                        props.getUserProps().set(SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
+//                    }, 
+//                    function (failureCause :String) :void { 
+//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
+//                    });
+                
+            }
+        }
+        else {
+            removeBloodBond( e.targetPlayer, true );
+            
+            if( targetPlayer != null) {
+                targetPlayer.removeBloodBond( playerId, true );
+            }
+            else {
+                log.error("You can't remove a blood bond to an offline player.");
+//                VServer.control.loadOfflinePlayer(e.targetPlayer, 
+//                    function (props :PropertySpaceObject) :void {
+//                        
+//                        var bloodbonds :Array = props.getUserProps().get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
+//                        if( bloodbonds == null) {
+//                            bloodbonds = new Array();
+//                        }
+//                        if( ArrayUtil.contains( bloodbonds, e.targetPlayer)) {
+//                            bloodbonds.splice( ArrayUtil.indexOf( bloodbonds, e.targetPlayer), 1);
+//                        }
+//                        props.getUserProps().set(SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
+//                    }, 
+//                    function (failureCause :String) :void { 
+//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
+//                    });
+                
+            }
+            
+            
+        }
+    }
+    
+    
+    public function addBloodBond( blondbondedPlayerId :int, playerName :String, force :Boolean = false ) :void
+    {
+        if( !force && ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+            return;
+        }
+        var bloodbonded :Array = this.bloodbonded;
+        if( !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+            bloodbonded.push( blondbondedPlayerId );
+            bloodbonded.push( playerName );
+        }
+        
+        _sharedState.setBloodBonded( bloodbonded );
+        
+        updateAvatarState();
+
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
+    }
+    
+    public function removeBloodBond( blondbondedPlayerId :int, force :Boolean = false ) :void
+    {
+        if( !force && !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+            return;
+        }
+        var bloodbonded :Array = this.bloodbonded;
+        if( ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+            bloodbonded.splice( ArrayUtil.indexOf( bloodbonded, blondbondedPlayerId), 2 );
+        }
+        _sharedState.setBloodBonded( bloodbonded );
+        
+        updateAvatarState();
+
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
+    }
+    
+    
+    
+    
+    
     
     /**
     * Here we check if we are allowed to change action.
@@ -320,6 +486,7 @@ public class Player
     */
     protected function handleRequestActionChange( e :RequestActionChangeMessage) :void
     {
+        log.debug("handleRequestActionChange(..), e.action=" + e.action);
         setAction( e.action );
     }
 
@@ -327,8 +494,8 @@ public class Player
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         var thisPlayer :Player = this;
-        _room = Server.getRoom(int(evt.value));
-        Server.control.doBatch(function () :void {
+        _room = VServer.getRoom(int(evt.value));
+        VServer.control.doBatch(function () :void {
             _room.playerEntered(thisPlayer);
             updateAvatarState();
         });
@@ -338,7 +505,7 @@ public class Player
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
     {
         var thisPlayer :Player = this;
-        Server.control.doBatch(function () :void {
+        VServer.control.doBatch(function () :void {
             _room.playerLeft(thisPlayer);
         });
         if (_room != null) {
@@ -459,6 +626,15 @@ public class Player
 //        return state;
 //    }
     
+    public function setIntoRoomProps( room :Room ) :void
+    {
+        if( room != null) {
+            SharedPlayerStateServer.setIntoRoomProps( this, room.ctrl );
+        }
+        else {
+            log.warning("setIntoRoomProps( room ), but room is null");
+        }
+    }
 
     protected var _room :Room;
     protected var _ctrl :PlayerSubControlServer;
