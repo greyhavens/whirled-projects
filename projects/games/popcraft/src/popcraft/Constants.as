@@ -173,12 +173,12 @@ public class Constants
 
     /* Saved multiplayer options */
     public static const PLAYER_PORTRAIT_NAMES :Array = [
+        null,
         "portrait_ralph",
         "portrait_jack",
         "portrait_iris",
         "portrait_ivy",
         "portrait_pigsley",
-        "portrait_weardd",
         "portrait_dante",
         "portrait_eloise",
         "portrait_horace",

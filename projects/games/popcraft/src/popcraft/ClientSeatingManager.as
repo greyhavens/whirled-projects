@@ -2,6 +2,7 @@ package popcraft {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.game.GameControl;
+import com.whirled.game.LocalSubControl;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -23,12 +24,14 @@ public class ClientSeatingManager extends SeatingManager
         updatePlayers();
 
     }
-    public function getPlayerHeadshot (playerSeat :int) :DisplayObject
+    public function getPlayerHeadshot (playerSeat :int, createNew :Boolean = false) :DisplayObject
     {
         var headshot :DisplayObject;
 
         if (playerSeat < _numExpectedPlayers) {
-            headshot = _headshots[playerSeat];
+            headshot = (createNew ?
+                _gameCtrl.local.getHeadShot(getPlayerOccupantId(playerSeat)) :
+                _headshots[playerSeat]);
         }
 
         if (null == headshot) {
@@ -63,7 +66,7 @@ public class ClientSeatingManager extends SeatingManager
             var playerId :int = playerIds[seatIndex];
             var playerPresent :Boolean = (playerId != 0);
             if (playerPresent && null == _headshots[seatIndex]) {
-                _headshots[seatIndex] = ClientCtx.gameCtrl.local.getHeadShot(playerId);
+                _headshots[seatIndex] = _gameCtrl.local.getHeadShot(playerId);
             }
         }
     }

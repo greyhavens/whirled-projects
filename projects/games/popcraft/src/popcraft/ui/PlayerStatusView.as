@@ -3,19 +3,14 @@ package popcraft.ui {
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.MovieClip;
-import flash.display.Shape;
-import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
 import popcraft.game.*;
-import popcraft.util.SpriteUtil;
 
 public class PlayerStatusView extends SceneObject
 {
@@ -46,8 +41,11 @@ public class PlayerStatusView extends SceneObject
         var namePlate :MovieClip = _movie["name_plate"];
         namePlate.filters = [ ColorMatrix.create().colorize(_playerInfo.color).createFilter() ];
 
+        var headshotParent :HeadshotSprite = new HeadshotSprite(
+            playerIndex, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y, _playerInfo.headshot);
+
         // display the player headshot
-        var headshotParent :Sprite = SpriteUtil.createSprite();
+        /*var headshotParent :Sprite = SpriteUtil.createSprite();
 
         // add the headshot image
         var headshot :DisplayObject = _playerInfo.headshot;
@@ -68,7 +66,7 @@ public class PlayerStatusView extends SceneObject
         g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
         g.endFill();
         headshotParent.addChild(headshotMask);
-        headshotParent.mask = headshotMask;
+        headshotParent.mask = headshotMask;*/
 
         // add to the PlayerStatusView
         var frame :MovieClip = _movie["player_headshot"];

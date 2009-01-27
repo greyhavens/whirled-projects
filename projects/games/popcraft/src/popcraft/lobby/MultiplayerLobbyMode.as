@@ -44,7 +44,7 @@ public class MultiplayerLobbyMode extends AppMode
 
         // create headshots
         for (var seat :int = 0; seat < ClientCtx.seatingMgr.numExpectedPlayers; ++seat) {
-            _headshots.push(new PlayerHeadshot(seat));
+            _headshots.push(new LobbyHeadshotSprite(seat));
         }
 
         // handle clicks on the team boxes
@@ -314,7 +314,7 @@ public class MultiplayerLobbyMode extends AppMode
         var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
         if (null != handicaps) {
             for (var playerSeat :int = 0; playerSeat < ClientCtx.seatingMgr.numExpectedPlayers; ++playerSeat) {
-                var headshot :PlayerHeadshot = _headshots[playerSeat];
+                var headshot :LobbyHeadshotSprite = _headshots[playerSeat];
                 headshot.handicap = handicaps[playerSeat];
             }
         }
@@ -351,7 +351,7 @@ public class MultiplayerLobbyMode extends AppMode
 
             for (var playerSeat :int = 0; playerSeat < ClientCtx.seatingMgr.numExpectedPlayers; ++playerSeat) {
                 if (teams[playerSeat] == teamId) {
-                    var headshot :PlayerHeadshot = _headshots[playerSeat];
+                    var headshot :LobbyHeadshotSprite = _headshots[playerSeat];
                     headshot.x = xLoc;
                     headshot.y = yLoc;
 
@@ -459,37 +459,18 @@ import com.whirled.contrib.simplegame.resource.SwfResource;
 import popcraft.*;
 import popcraft.ui.UIBits;
 import popcraft.util.SpriteUtil;
+import popcraft.ui.HeadshotSprite;
 
-class PlayerHeadshot extends Sprite
+class LobbyHeadshotSprite extends Sprite
 {
-    public function PlayerHeadshot (playerSeat :int)
+    public function LobbyHeadshotSprite (playerSeat :int)
     {
-        var headshotParent :Sprite = SpriteUtil.createSprite();
-        addChild(headshotParent);
-
-        // add the headshot image
-        var headshot :DisplayObject = ClientCtx.seatingMgr.getPlayerHeadshot(playerSeat);
-        headshot.scaleX = 1;
-        headshot.scaleY = 1;
-        var scale :Number = Math.max(HEADSHOT_SIZE.x / headshot.width,
-                                     HEADSHOT_SIZE.y / headshot.height);
-        headshot.scaleX = scale;
-        headshot.scaleY = scale;
-        headshot.x = (HEADSHOT_SIZE.x - headshot.width) * 0.5;
-        headshot.y = (HEADSHOT_SIZE.y - headshot.height) * 0.5;
-        headshotParent.addChild(headshot);
-
-        // mask the headshot
-        var headshotMask :Shape = new Shape();
-        var g :Graphics = headshotMask.graphics;
-        g.beginFill(0);
-        g.drawRect(0, 0, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
-        g.endFill();
-        headshotParent.addChild(headshotMask);
-        headshotParent.mask = headshotMask;
+        _headshot = new HeadshotSprite(playerSeat, HEADSHOT_SIZE.x, HEADSHOT_SIZE.y);
+        addChild(_headshot);
 
         // player name
-        var tfName :TextField = UIBits.createText(ClientCtx.seatingMgr.getPlayerName(playerSeat), 1.2);
+        var tfName :TextField =
+            UIBits.createText(ClientCtx.seatingMgr.getPlayerName(playerSeat), 1.2);
         TextFieldUtil.setMaximumTextWidth(tfName, NAME_MAX_WIDTH);
         tfName.x = NAME_OFFSET;
         tfName.y = (HEADSHOT_SIZE.y - tfName.height) * 0.5;
@@ -514,6 +495,7 @@ class PlayerHeadshot extends Sprite
         _handicapObj.visible = _handicapOn;
     }
 
+    protected var _headshot :HeadshotSprite;
     protected var _handicapOn :Boolean;
     protected var _handicapObj :DisplayObject;
 
