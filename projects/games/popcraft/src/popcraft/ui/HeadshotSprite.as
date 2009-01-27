@@ -15,7 +15,7 @@ public class HeadshotSprite extends Sprite
         _playerSeat = playerSeat;
         _width = width;
         _height = height;
-        setImage(null);
+        setImage(image);
 
         this.mouseEnabled = false;
         this.mouseChildren = false;
