@@ -5,8 +5,6 @@ import com.whirled.contrib.simplegame.ObjectTask;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
-import mx.effects.easing.*;
-
 public class AdvancedLocationTask
     implements ObjectTask
 {
@@ -29,7 +27,8 @@ public class AdvancedLocationTask
         var lc :LocationComponent = (obj as LocationComponent);
 
         if (null == lc) {
-            throw new Error("AdvancedLocationTask can only be applied to SimObjects that implement LocationComponent");
+            throw new Error("AdvancedLocationTask can only be applied to SimObjects that " +
+                            "implement LocationComponent");
         }
 
         if (0 == _elapsedTime) {
