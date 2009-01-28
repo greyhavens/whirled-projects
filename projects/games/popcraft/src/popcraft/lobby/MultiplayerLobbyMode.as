@@ -377,8 +377,8 @@ public class MultiplayerLobbyMode extends AppMode
     protected static const TEAM_BOX_LOCS :Array = [
         new Point(236, 113),
         new Point(466, 113),
-        new Point(236, 249),
-        new Point(466, 249)
+        new Point(236, 250),
+        new Point(466, 250)
     ];
 
     protected static const UNASSIGNED_BOX_LOC :Point = new Point(26, 113);
@@ -498,7 +498,13 @@ class LobbyHeadshotSprite extends SceneObject
 
     protected function updateColor () :void
     {
-
+        var color :uint = ClientCtx.lobbyConfig.getPlayerColor(_playerSeat);
+        if (color == Constants.RANDOM_COLOR) {
+            _tfName.background = false;
+        } else {
+            _tfName.background = true;
+            _tfName.backgroundColor = color;
+        }
     }
 
     override public function get displayObject () :DisplayObject

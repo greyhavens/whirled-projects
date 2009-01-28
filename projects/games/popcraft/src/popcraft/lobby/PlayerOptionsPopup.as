@@ -77,27 +77,32 @@ public class PlayerOptionsPopup extends SceneObject
 
         _portraitSelectionIndicator = new Shape();
         g = _portraitSelectionIndicator.graphics;
-        g.lineStyle(PORTRAIT_SELECTION_INDICATOR_SIZE, 0xff0000);
+        g.lineStyle(PORTRAIT_SELECTION_INDICATOR_SIZE, 0x000000);
         g.drawRect(0, 0, positioner.width, positioner.height);
+        _portraitSelectionIndicator.cacheAsBitmap = true;
 
         // fill in player colors
         for (ii = 0; ii < Constants.PLAYER_COLORS.length; ++ii) {
             positioner = _movie["color" + ii];
-            positioner.visible = false;
-
             var color :uint = Constants.PLAYER_COLORS[ii];
-            var swatch :Shape = new Shape();
-            g = swatch.graphics;
-            g.lineStyle(1, 0);
-            g.beginFill(color);
-            g.drawRect(0, 0, positioner.width, positioner.height);
-            g.endFill();
+            var colorButton :Sprite;
 
-            var colorButton :Sprite = new Sprite();
-            colorButton.addChild(swatch);
-            colorButton.x = positioner.x - (colorButton.width * 0.5);
-            colorButton.y = positioner.y - (colorButton.height * 0.5);
-            _movie.addChild(colorButton);
+            if (color == Constants.RANDOM_COLOR) {
+                colorButton = positioner;
+                colorButton.mouseEnabled = true;
+            } else {
+                var swatch :Shape = new Shape();
+                g = swatch.graphics;
+                g.beginFill(color);
+                g.drawRect(0, 0, positioner.width, positioner.height);
+                g.endFill();
+
+                colorButton = new Sprite();
+                colorButton.addChild(swatch);
+                colorButton.x = positioner.x;
+                colorButton.y = positioner.y;
+                _movie.addChild(colorButton);
+            }
 
             _colorButtons.push(colorButton);
             createColorClickListener(colorButton, color);
@@ -105,8 +110,9 @@ public class PlayerOptionsPopup extends SceneObject
 
         _colorSelectionIndicator = new Shape();
         g = _colorSelectionIndicator.graphics;
-        g.lineStyle(COLOR_SELECTION_INDICATOR_SIZE, 0xff0000);
+        g.lineStyle(COLOR_SELECTION_INDICATOR_SIZE, 0x000000);
         g.drawRect(0, 0, positioner.width, positioner.height);
+        _colorSelectionIndicator.cacheAsBitmap = true;
 
         // Handicap checkbox
         var handicapCheckbox :MovieClip = _movie["handicap"];
@@ -200,13 +206,13 @@ public class PlayerOptionsPopup extends SceneObject
     {
         var idx :int = ArrayUtil.indexOf(Constants.PLAYER_PORTRAIT_NAMES, portraitName);
         if (idx < 0) {
-            return;
+            idx = ArrayUtil.indexOf(Constants.PLAYER_PORTRAIT_NAMES, Constants.DEFAULT_PORTRAIT);
+            if (idx < 0) {
+                return;
+            }
         }
 
         var button :Sprite = _portraitButtons[idx];
-        DisplayUtil.positionBounds(_portraitSelectionIndicator,
-            (button.width - _portraitSelectionIndicator.width) * 0.5,
-            (button.height - _portraitSelectionIndicator.height) * 0.5);
         button.addChild(_portraitSelectionIndicator);
         _selectedPortrait = portraitName;
     }
@@ -215,13 +221,13 @@ public class PlayerOptionsPopup extends SceneObject
     {
         var idx :int = ArrayUtil.indexOf(Constants.PLAYER_COLORS, color);
         if (idx < 0) {
-            return;
+            idx = ArrayUtil.indexOf(Constants.PLAYER_COLORS, Constants.RANDOM_COLOR);
+            if (idx < 0) {
+                return;
+            }
         }
 
         var button :Sprite = _colorButtons[idx];
-        DisplayUtil.positionBounds(_colorSelectionIndicator,
-            (button.width - _colorSelectionIndicator.width) * 0.5,
-            (button.height - _colorSelectionIndicator.height) * 0.5);
         button.addChild(_colorSelectionIndicator);
         _selectedColor = color;
     }
@@ -269,7 +275,7 @@ public class PlayerOptionsPopup extends SceneObject
     protected var _colorSelectionIndicator :Shape;
     protected var _selectedColor :uint;
 
-    protected static const PORTRAIT_SELECTION_INDICATOR_SIZE :Number = 4;
+    protected static const PORTRAIT_SELECTION_INDICATOR_SIZE :Number = 5;
     protected static const COLOR_SELECTION_INDICATOR_SIZE :Number = 4;
     protected static const NAME :String = "PlayerOptionsPopup";
 }
