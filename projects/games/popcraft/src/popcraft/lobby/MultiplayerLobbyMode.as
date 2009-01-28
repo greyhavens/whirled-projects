@@ -181,9 +181,18 @@ public class MultiplayerLobbyMode extends AppMode
         var statusText :String = "";
 
         if (!ClientCtx.lobbyConfig.isEveryoneTeamed) {
-            statusText = "Divide into teams!";
+            if (ClientCtx.seatingMgr.numExpectedPlayers == 2 &&
+                ClientCtx.lobbyConfig.someoneHasPremiumContent) {
+                statusText = "Divide into teams, or select Team Survival!"
+            } else {
+                statusText = "Divide into teams!";
+            }
         } else if (!ClientCtx.lobbyConfig.teamsDividedProperly) {
-            statusText = "At least two teams are required to start the game."
+            if (ClientCtx.lobbyConfig.isSomeoneInEndlessMode) {
+                statusText = "Both players need to select Team Survival to play it."
+            } else {
+                statusText = "At least two teams are required to start the game."
+            }
         } else if (!_gameStartTimer.isNull) {
             var timer :SimpleTimer = _gameStartTimer.object as SimpleTimer;
             var timeLeft :Number = Math.ceil(timer.timeLeft);
@@ -319,7 +328,7 @@ public class MultiplayerLobbyMode extends AppMode
                     headshot.y = yLoc;
 
                     if (teamId == LobbyConfig.ENDLESS_TEAM_ID) {
-                        xLoc += headshot.width;
+                        xLoc += headshot.width + 2;
                     } else {
                         yLoc += HEADSHOT_OFFSET;
                     }
