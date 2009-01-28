@@ -300,7 +300,7 @@ public class GameMode extends TransitionMode
             localPlayerPurchasedCreature(Constants.UNIT_TYPE_GRUNT);
             break;
 
-        case KeyboardCodes.TAB:
+        case KeyboardCodes.SHIFT:
             cycleLocalPlayerTargetEnemy();
             break;
 
