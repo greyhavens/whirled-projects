@@ -434,7 +434,7 @@ public class EndlessGameMode extends GameMode
                     workshopHealth,
                     false,
                     humanPlayerData.resourceHandicap,
-                    playerDisplayData.color,
+                    color,
                     playerName,
                     displayName,
                     headshot));
@@ -450,7 +450,7 @@ public class EndlessGameMode extends GameMode
                     workshopHealth,
                     false,
                     humanPlayerData.resourceHandicap,
-                    playerDisplayData.color,
+                    color,
                     playerName,
                     displayName,
                     headshot));
