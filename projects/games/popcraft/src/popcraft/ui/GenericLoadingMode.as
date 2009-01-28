@@ -16,11 +16,6 @@ public class GenericLoadingMode extends AppMode
         var zombieBg :Bitmap = ClientCtx.instantiateBitmap("zombieBg");
         _modeSprite.addChild(zombieBg);
 
-        var frame :DisplayObject = UIBits.createFrame(FRAME_WIDTH, FRAME_HEIGHT);
-        frame.x = (Constants.SCREEN_SIZE.x - FRAME_WIDTH) * 0.5;
-        frame.y = (Constants.SCREEN_SIZE.y - FRAME_HEIGHT) * 0.5;
-        _modeSprite.addChild(frame);
-
         this.loadingText = "Loading";
     }
 
@@ -61,7 +56,7 @@ public class GenericLoadingMode extends AppMode
         if (_tf == null) {
             _tf = UIBits.createTitleText(text);
             _tf.x = (Constants.SCREEN_SIZE.x - _tf.width) * 0.5;
-            _tf.y = (Constants.SCREEN_SIZE.y - _tf.height) * 0.5;
+            _tf.y = (Constants.SCREEN_SIZE.y - _tf.height - 30);
             _modeSprite.addChild(_tf);
         } else {
             _tf.text = text;
