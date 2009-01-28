@@ -1,9 +1,9 @@
 package popcraft.ui {
 
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.resource.ImageResource;
 
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.text.TextField;
 
@@ -13,28 +13,24 @@ public class GenericLoadingMode extends AppMode
 {
     public function GenericLoadingMode ()
     {
-        // If we've loaded the zombieBg, use it as a background. Otherwise, use black.
         var zombieBg :Bitmap = ClientCtx.instantiateBitmap("zombieBg");
-        if (zombieBg != null) {
-            _modeSprite.addChild(zombieBg);
-            _tf = UIBits.createText("");
+        _modeSprite.addChild(zombieBg);
 
-        } else {
-            var g :Graphics = _modeSprite.graphics;
-            g.beginFill(0, 1);
-            g.drawRect(0, 0, Constants.SCREEN_SIZE.x, Constants.SCREEN_SIZE.y);
-            g.endFill();
-
-            _tf = new TextField();
-        }
-
-        _modeSprite.addChild(_tf);
+        var frame :DisplayObject = UIBits.createFrame(FRAME_WIDTH, FRAME_HEIGHT);
+        frame.x = (Constants.SCREEN_SIZE.x - FRAME_WIDTH) * 0.5;
+        frame.y = (Constants.SCREEN_SIZE.y - FRAME_HEIGHT) * 0.5;
+        _modeSprite.addChild(frame);
 
         this.loadingText = "Loading";
     }
 
     protected function set loadingText (text :String) :void
     {
+        if (_tf != null) {
+            _tf.parent.removeChild(_tf);
+            _tf = null;
+        }
+
         _loadingText = text;
         _numDots = MAX_DOTS;
         _dotCountdown = DOT_TIME;
@@ -62,9 +58,14 @@ public class GenericLoadingMode extends AppMode
             text += ".";
         }
 
-        UIBits.initTextField(_tf, text, 3, Constants.SCREEN_SIZE.x - 30, 0xFFFFFF);
-        _tf.x = (Constants.SCREEN_SIZE.x - _tf.width) * 0.5;
-        _tf.y = (Constants.SCREEN_SIZE.y - _tf.height) * 0.5;
+        if (_tf == null) {
+            _tf = UIBits.createTitleText(text);
+            _tf.x = (Constants.SCREEN_SIZE.x - _tf.width) * 0.5;
+            _tf.y = (Constants.SCREEN_SIZE.y - _tf.height) * 0.5;
+            _modeSprite.addChild(_tf);
+        } else {
+            _tf.text = text;
+        }
     }
 
     protected var _numDots :int;
@@ -74,6 +75,9 @@ public class GenericLoadingMode extends AppMode
 
     protected static const MAX_DOTS :int = 3;
     protected static const DOT_TIME :Number = 0.5;
+
+    protected static const FRAME_WIDTH :int = 370;
+    protected static const FRAME_HEIGHT :int = 60;
 }
 
 }
