@@ -540,12 +540,8 @@ public class LevelSelectMode extends DemoGameMode
 
     protected function onPlayerPurchasedContent (e :GameContentEvent) :void
     {
-        if (e.contentType == GameContentEvent.LEVEL_PACK &&
-            e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
-            // recreate the level select mode, which will rebuild the UI and remove the
-            // "Unlock now!" buttons
-            LevelSelectMode.create();
-        }
+        // recreate the level select mode, in case the player unlocked new content
+        LevelSelectMode.create();
     }
 
     protected var _mainUiLayer :Sprite;

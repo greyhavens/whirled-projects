@@ -29,10 +29,31 @@ public class Constants
     public static const RSRC_DEFAULTGAMEDATA :String = "defaultGameData";
     public static const RSRC_GAMEVARIANTS :String = "defaultGameVariants";
 
-    // how many levels are available to players that haven't purchased the full game
+    /* Premium level pack stuff.
+     *
+     * "Corpse Craft Compleat"
+     * - unlocks the last half of the Incident campaign
+     * - unlocks Survival challenge
+     * - unlocks multiplayer customization options
+     * - Introduced: 2008-10-31
+     * - Discontinued: 2009-1-30
+     *
+     * "The Incident"
+     * - unlocks the last half of the Incident campaign
+     * - Introduced: 2009-1-30
+     *
+     * "Weardd Academy"
+     * - unlocks Survival challenge
+     * - unlocks multiplayer customization options
+     * - Introduced: 2009-1-30
+     */
     public static const NUM_FREE_SP_LEVELS :int = 7;
-    public static const PREMIUM_SP_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
-    public static const PREMIUM_SP_LEVEL_PACK_ID :int = 95;
+    public static const COMPLEAT_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
+    public static const COMPLEAT_LEVEL_PACK_ID :int = 95;
+    public static const INCIDENT_LEVEL_PACK_NAME :String = "TheIncident";
+    public static const INCIDENT_LEVEL_PACK_ID :int = 0; // TODO
+    public static const ACADEMY_LEVEL_PACK_NAME :String = "WearddAcademy";
+    public static const ACADEMY_LEVEL_PACK_ID :int = 0; // TODO
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 0.7;
@@ -52,8 +73,9 @@ public class Constants
     public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
-    public static const DEBUG_UNLOCK_STORY_MODE :Boolean            = true;
-    public static const DEBUG_UNLOCK_ENDLESS_MODE :Boolean          = true;
+    public static const DEBUG_AWARD_COMPLEAT_LEVEL_PACK :Boolean    = true;
+    public static const DEBUG_AWARD_INCIDENT_LEVEL_PACK :Boolean    = true;
+    public static const DEBUG_AWARD_ACADEMY_LEVEL_PACK :Boolean     = true;
     public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = true;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true

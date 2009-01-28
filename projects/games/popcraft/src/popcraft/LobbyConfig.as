@@ -6,14 +6,14 @@ import com.whirled.game.GameControl;
 public class LobbyConfig
 {
     public static const PROP_INITED :String             = "lc_Inited"; // Boolean
-    public static const PROP_GAMESTARTCOUNTDOWN :String = "lc_countdown"; // Boolean
+    public static const PROP_GAME_START_COUNTDOWN :String = "lc_countdown"; // Boolean
     public static const PROP_RANDSEED :String           = "lc_RandSeed"; // uint
     public static const PROP_PLAYER_TEAMS :String       = "lc_Teams";    // Array<teamId>
     public static const PROP_HANDICAPS :String          = "lc_Handicaps"; // Array<Boolean>
     public static const PROP_PORTRAITS :String          = "lc_Portraits"; // Array<String>
     public static const PROP_COLORS :String             = "lc_Colors"; // Array<uint>
-    public static const PROP_HASMORBIDINFECTION :String = "lc_HMI"; // Array<Boolean>
-    public static const PROP_HASPREMIUMCONTENT :String  = "lc_HasPremium"; // Array<Boolean>
+    public static const PROP_HAS_MORBID_INFECTION :String = "lc_HMI"; // Array<Boolean>
+    public static const PROP_HAS_ENDLESS_MODE :String   = "lc_HasEndless"; // Array<Boolean>
 
     // Client->Server messages
     public static const MSG_SET_HANDICAP :String        = "lc_setHandicap"; // Boolean
@@ -21,7 +21,7 @@ public class LobbyConfig
     public static const MSG_SET_PORTRAIT :String        = "lc_setPortrait"; // String
     public static const MSG_SET_COLOR :String           = "lc_setColor"; // uint
     public static const MSG_SET_MORBID_INFECTION :String = "lc_setMI"; // Boolean
-    public static const MSG_SET_PREMIUM_CONTENT :String = "lc_setPC"; // Boolean
+    public static const MSG_SET_ENDLESS_MODE :String    = "lc_setEndless"; // Boolean
 
     // Server->Client messages
     public static const MSG_START_GAME :String          = "lc_startGame";
@@ -207,17 +207,17 @@ public class LobbyConfig
 
     public function get morbidInfections () :Array
     {
-        return _gameCtrl.net.get(PROP_HASMORBIDINFECTION) as Array;
+        return _gameCtrl.net.get(PROP_HAS_MORBID_INFECTION) as Array;
     }
 
-    public function get premiumContents () :Array
+    public function get endlessModeUnlocks () :Array
     {
-        return _gameCtrl.net.get(PROP_HASPREMIUMCONTENT) as Array;
+        return _gameCtrl.net.get(PROP_HAS_ENDLESS_MODE) as Array;
     }
 
-    public function get someoneHasPremiumContent () :Boolean
+    public function get someoneHasUnlockedEndlessMode () :Boolean
     {
-        return ArrayUtil.contains(this.premiumContents, true);
+        return ArrayUtil.contains(this.endlessModeUnlocks, true);
     }
 
     protected var _gameCtrl :GameControl;

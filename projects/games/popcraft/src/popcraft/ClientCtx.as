@@ -52,22 +52,38 @@ public class ClientCtx
         return (gameCtrl.isConnected() && gameCtrl.player.holdsTrophy(trophyName));
     }
 
+    public static function get isMpCustomizationUnlocked () :Boolean
+    {
+        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
+    }
+
     public static function get isEndlessModeUnlocked () :Boolean
     {
-        return (Constants.DEBUG_UNLOCK_ENDLESS_MODE ||
-            ClientCtx.isPremiumContentUnlocked);
+        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack);
     }
 
     public static function get isStoryModeUnlocked () :Boolean
     {
-        return (Constants.DEBUG_UNLOCK_STORY_MODE ||
-            ClientCtx.isPremiumContentUnlocked ||
-            savedPlayerBits.hasFreeStoryMode);
+        return (ClientCtx.hasCompleatLevelPack || ClientCtx.hasIncidentLevelPack ||
+                savedPlayerBits.hasFreeStoryMode);
     }
 
-    public static function get isPremiumContentUnlocked () :Boolean
+    public static function get hasCompleatLevelPack () :Boolean
     {
-        return (playerLevelPacks.getLevelPack(Constants.PREMIUM_SP_LEVEL_PACK_NAME) != null);
+        return (Constants.DEBUG_AWARD_COMPLEAT_LEVEL_PACK ||
+                playerLevelPacks.getLevelPack(Constants.COMPLEAT_LEVEL_PACK_NAME) != null);
+    }
+
+    public static function get hasIncidentLevelPack () :Boolean
+    {
+        return (Constants.DEBUG_AWARD_INCIDENT_LEVEL_PACK ||
+                playerLevelPacks.getLevelPack(Constants.INCIDENT_LEVEL_PACK_NAME) != null);
+    }
+
+    public static function get hasAcademyLevelPack () :Boolean
+    {
+        return (Constants.DEBUG_AWARD_ACADEMY_LEVEL_PACK ||
+                playerLevelPacks.getLevelPack(Constants.ACADEMY_LEVEL_PACK_NAME) != null);
     }
 
     public static function get isMultiplayer () :Boolean
@@ -108,7 +124,7 @@ public class ClientCtx
     {
         if (gameCtrl.isConnected()) {
             gameCtrl.local.showGameShop(GameControl.LEVEL_PACK_SHOP,
-                Constants.PREMIUM_SP_LEVEL_PACK_ID);
+                Constants.COMPLEAT_LEVEL_PACK_ID);
         }
     }
 

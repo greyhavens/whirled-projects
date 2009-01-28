@@ -114,9 +114,9 @@ public class MultiplayerLobbyMode extends AppMode
     protected function onPlayerPurchasedContent (e :GameContentEvent) :void
     {
         if (e.contentType == GameContentEvent.LEVEL_PACK &&
-            e.contentIdent == Constants.PREMIUM_SP_LEVEL_PACK_NAME) {
+            e.contentIdent == Constants.COMPLEAT_LEVEL_PACK_NAME) {
 
-            sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
+            sendServerMsg(LobbyConfig.MSG_SET_ENDLESS_MODE, true);
         }
     }
 
@@ -132,7 +132,7 @@ public class MultiplayerLobbyMode extends AppMode
             }
 
             if (ClientCtx.isEndlessModeUnlocked) {
-                sendServerMsg(LobbyConfig.MSG_SET_PREMIUM_CONTENT, true);
+                sendServerMsg(LobbyConfig.MSG_SET_ENDLESS_MODE, true);
             }
 
             sendServerMsg(LobbyConfig.MSG_SET_PORTRAIT, ClientCtx.savedPlayerBits.favoritePortrait);
@@ -182,7 +182,7 @@ public class MultiplayerLobbyMode extends AppMode
 
         if (!ClientCtx.lobbyConfig.isEveryoneTeamed) {
             if (ClientCtx.seatingMgr.numExpectedPlayers == 2 &&
-                ClientCtx.lobbyConfig.someoneHasPremiumContent) {
+                ClientCtx.lobbyConfig.someoneHasUnlockedEndlessMode) {
                 statusText = "Divide into teams, or select Team Survival!"
             } else {
                 statusText = "Divide into teams!";
@@ -219,7 +219,7 @@ public class MultiplayerLobbyMode extends AppMode
 
             updateTeamsDisplay();
 
-        } else if (e.name == LobbyConfig.PROP_GAMESTARTCOUNTDOWN) {
+        } else if (e.name == LobbyConfig.PROP_GAME_START_COUNTDOWN) {
             var showCountdown :Boolean = e.newValue as Boolean;
             if (showCountdown) {
                 _gameStartTimer = addObject(new SimpleTimer(LobbyConfig.COUNTDOWN_TIME));
@@ -233,7 +233,7 @@ public class MultiplayerLobbyMode extends AppMode
     {
         if (e.name == LobbyConfig.PROP_PLAYER_TEAMS) {
             updateTeamsDisplay();
-        } else if (e.name == LobbyConfig.PROP_HASPREMIUMCONTENT) {
+        } else if (e.name == LobbyConfig.PROP_HAS_ENDLESS_MODE) {
             updatePremiumContentDisplay();
         }
     }
@@ -259,10 +259,10 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         // don't allow selection of the endless team unless there are 2 players
-        // and somebody has unlocked the premium content
+        // and somebody has unlocked it
         if (teamId == LobbyConfig.ENDLESS_TEAM_ID &&
             (ClientCtx.seatingMgr.numExpectedPlayers != 2 ||
-             !ClientCtx.lobbyConfig.someoneHasPremiumContent)) {
+             !ClientCtx.lobbyConfig.someoneHasUnlockedEndlessMode)) {
             return;
         }
 
@@ -341,7 +341,7 @@ public class MultiplayerLobbyMode extends AppMode
     {
         var someoneHasPremiumContent :Boolean =
             (ClientCtx.isEndlessModeUnlocked ||
-             ClientCtx.lobbyConfig.someoneHasPremiumContent);
+             ClientCtx.lobbyConfig.someoneHasUnlockedEndlessMode);
 
         var unlockButton :SimpleButton = _bg["unlock_button"];
 

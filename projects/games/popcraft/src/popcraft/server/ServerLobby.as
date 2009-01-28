@@ -18,15 +18,15 @@ public class ServerLobby
 
         var numPlayers :int = ServerCtx.seatingMgr.numExpectedPlayers;
         ServerCtx.gameCtrl.doBatch(function () :void {
-            setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, false);
+            setProp(LobbyConfig.PROP_GAME_START_COUNTDOWN, false);
             setProp(LobbyConfig.PROP_RANDSEED, uint(Math.random() * uint.MAX_VALUE));
             setProp(LobbyConfig.PROP_HANDICAPS, ArrayUtil.create(numPlayers, false));
             setProp(LobbyConfig.PROP_PORTRAITS, ArrayUtil.create(numPlayers, null));
             setProp(LobbyConfig.PROP_COLORS, ArrayUtil.create(numPlayers, Constants.RANDOM_COLOR));
             setProp(LobbyConfig.PROP_PLAYER_TEAMS, ArrayUtil.create(numPlayers,
                 LobbyConfig.UNASSIGNED_TEAM_ID));
-            setProp(LobbyConfig.PROP_HASMORBIDINFECTION, ArrayUtil.create(numPlayers, false));
-            setProp(LobbyConfig.PROP_HASPREMIUMCONTENT, ArrayUtil.create(numPlayers, false));
+            setProp(LobbyConfig.PROP_HAS_MORBID_INFECTION, ArrayUtil.create(numPlayers, false));
+            setProp(LobbyConfig.PROP_HAS_ENDLESS_MODE, ArrayUtil.create(numPlayers, false));
 
             setProp(LobbyConfig.PROP_INITED, true);
         });
@@ -93,11 +93,11 @@ public class ServerLobby
             break;
 
         case LobbyConfig.MSG_SET_MORBID_INFECTION:
-            setPropAt(LobbyConfig.PROP_HASMORBIDINFECTION, playerSeat, e.value as Boolean);
+            setPropAt(LobbyConfig.PROP_HAS_MORBID_INFECTION, playerSeat, e.value as Boolean);
             break;
 
-        case LobbyConfig.MSG_SET_PREMIUM_CONTENT:
-            setPropAt(LobbyConfig.PROP_HASPREMIUMCONTENT, playerSeat, e.value as Boolean);
+        case LobbyConfig.MSG_SET_ENDLESS_MODE:
+            setPropAt(LobbyConfig.PROP_HAS_ENDLESS_MODE, playerSeat, e.value as Boolean);
             break;
         }
     }
@@ -129,7 +129,7 @@ public class ServerLobby
                 _gameStarted = true;
             });
         _countdownTimer.start();
-        setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, true);
+        setProp(LobbyConfig.PROP_GAME_START_COUNTDOWN, true);
 
         log.info("Started countdown");
     }
@@ -139,7 +139,7 @@ public class ServerLobby
         if (_countdownTimer != null) {
             _countdownTimer.cancel();
             _countdownTimer = null;
-            setProp(LobbyConfig.PROP_GAMESTARTCOUNTDOWN, false);
+            setProp(LobbyConfig.PROP_GAME_START_COUNTDOWN, false);
             log.info("Stopped countdown");
         }
     }

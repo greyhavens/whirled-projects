@@ -30,7 +30,7 @@ public class PrizeManager
     {
         var prizes :Array = [];
 
-        if (ClientCtx.isPremiumContentUnlocked) {
+        if (ClientCtx.hasCompleatLevelPack) {
             prizes.push(LADYFINGERS);
         }
 
@@ -62,7 +62,7 @@ public class PrizeManager
 
     public function awardPrizes (prizeIds :Array) :void
     {
-        if (!ClientCtx.isPremiumContentUnlocked || !ClientCtx.gameCtrl.isConnected()) {
+        if (!ClientCtx.hasCompleatLevelPack || !ClientCtx.gameCtrl.isConnected()) {
             return;
         }
 
