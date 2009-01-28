@@ -19,8 +19,8 @@ public class PlayerInfo extends EventDispatcher
 {
     public function PlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         maxHealth :Number, startHealth :Number, invincible :Boolean,
-        handicap :Number, color :uint, playerName :String, displayName :String = null,
-        headshot :DisplayObject = null)
+        handicap :Number, color :uint, playerName :String, displayName :String,
+        headshot :DisplayObject)
     {
         _playerIndex = playerIndex;
         _teamId = teamId;
@@ -31,23 +31,13 @@ public class PlayerInfo extends EventDispatcher
         _handicap = handicap;
         _color = color;
         _playerName = playerName;
+        _displayName = displayName;
+        _headshot = headshot;
 
         _minResourceAmount = GameCtx.gameData.minResourceAmount;
         _maxResourceAmount = GameCtx.gameData.maxResourceAmount;
         if (_handicap > 1) {
             _maxResourceAmount *= _handicap;
-        }
-
-        if (null != displayName) {
-            _displayName = displayName;
-        } else {
-            _displayName = ClientCtx.seatingMgr.getPlayerName(_playerIndex);
-        }
-
-        if (null != headshot) {
-            _headshot = headshot;
-        } else {
-            _headshot = ClientCtx.seatingMgr.getPlayerHeadshot(_playerIndex);
         }
     }
 

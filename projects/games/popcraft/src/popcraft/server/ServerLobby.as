@@ -72,7 +72,7 @@ public class ServerLobby
 
         case LobbyConfig.MSG_SET_HANDICAP:
             var handicap :Boolean = e.value as Boolean;
-            if (ServerCtx.lobbyConfig.handicaps[playerSeat] != handicap) {
+            if (ServerCtx.lobbyConfig.isPlayerHandicapped(playerSeat) != handicap) {
                 setPropAt(LobbyConfig.PROP_HANDICAPS, playerSeat, handicap);
                 gamePropertyChanged();
             }
@@ -80,14 +80,14 @@ public class ServerLobby
 
         case LobbyConfig.MSG_SET_PORTRAIT:
             var portrait :String = e.value as String;
-            if (ServerCtx.lobbyConfig.portraits[playerSeat] != portrait) {
+            if (ServerCtx.lobbyConfig.getPlayerPortraitName(playerSeat) != portrait) {
                 setPropAt(LobbyConfig.PROP_PORTRAITS, playerSeat, portrait);
             }
             break;
 
         case LobbyConfig.MSG_SET_COLOR:
             var color :uint = e.value as uint;
-            if (ServerCtx.lobbyConfig.colors[playerSeat] != color) {
+            if (ServerCtx.lobbyConfig.getPlayerColor(playerSeat) != color) {
                 setPropAt(LobbyConfig.PROP_COLORS, playerSeat, color);
             }
             break;

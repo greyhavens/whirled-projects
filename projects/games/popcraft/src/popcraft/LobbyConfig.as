@@ -165,19 +165,34 @@ public class LobbyConfig
         return ArrayUtil.indexOf(Constants.TEAM_ARRANGEMENT_NAMES, arrangeString);
     }
 
-    public function get handicaps () :Array
+    public function isPlayerHandicapped (playerIndex :int) :Boolean
     {
-        return _gameCtrl.net.get(PROP_HANDICAPS) as Array;
+        var handicaps :Array = _gameCtrl.net.get(PROP_HANDICAPS) as Array;
+        return (handicaps != null &&
+                playerIndex < handicaps.length &&
+                handicaps[playerIndex] is Boolean ?
+                    handicaps[playerIndex] :
+                    false);
     }
 
-    public function get portraits () :Array
+    public function getPlayerPortraitName (playerIndex :int) :String
     {
-        return _gameCtrl.net.get(PROP_PORTRAITS) as Array;
+        var portraits :Array = _gameCtrl.net.get(PROP_PORTRAITS) as Array;
+        return (portraits != null &&
+                playerIndex < portraits.length &&
+                portraits[playerIndex] is String ?
+                    portraits[playerIndex] :
+                    Constants.DEFAULT_PORTRAIT);
     }
 
-    public function get colors () :Array
+    public function getPlayerColor (playerIndex :int) :uint
     {
-        return _gameCtrl.net.get(PROP_COLORS) as Array;
+        var colors :Array = _gameCtrl.net.get(PROP_COLORS) as Array;
+        return (colors != null &&
+                playerIndex < colors.length &&
+                colors[playerIndex] is uint ?
+                    colors[playerIndex] :
+                    Constants.RANDOM_COLOR);
     }
 
     public function get randSeed () :uint

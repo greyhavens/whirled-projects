@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
 import com.whirled.game.StateChangedEvent;
 
+import flash.display.DisplayObject;
+
 import popcraft.*;
 import popcraft.battle.*;
 import popcraft.data.*;
@@ -49,7 +51,6 @@ public class MultiplayerGameMode extends GameMode
     override protected function createPlayers () :void
     {
         var teams :Array = ClientCtx.lobbyConfig.playerTeams;
-        var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
 
         // In multiplayer games, base locations are arranged in order of team,
         // with larger teams coming before smaller ones. Populate a set of TeamInfo
@@ -103,15 +104,28 @@ public class MultiplayerGameMode extends GameMode
             if (teamInfo.teamSize < largestTeamSize) {
                 handicap = _mpSettings.smallerTeamHandicap;
             }
-            if (handicaps[playerIndex]) {
+            if (ClientCtx.lobbyConfig.isPlayerHandicapped(playerIndex)) {
                 handicap *= Constants.HANDICAPPED_MULTIPLIER;
             }
 
-            // choose a random color for this player
-            var index :int = Rand.nextIntRange(0, playerDisplayDatas.length, Rand.STREAM_GAME);
-            var playerDisplayData :PlayerDisplayData = playerDisplayDatas[index];
-            playerDisplayDatas.splice(index, 1); // we're operating on a copy of the data
-            var playerColor :uint = playerDisplayData.color;
+            var playerColor :uint = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
+            if (playerColor == Constants.RANDOM_COLOR) {
+                // choose a random color for this player
+                var index :int = Rand.nextIntRange(0, playerDisplayDatas.length, Rand.STREAM_GAME);
+                var playerDisplayData :PlayerDisplayData = playerDisplayDatas[index];
+                playerDisplayDatas.splice(index, 1); // we're operating on a copy of the data
+                playerColor = playerDisplayData.color;
+            }
+
+            var displayName :String = ClientCtx.seatingMgr.getPlayerName(playerIndex);
+
+            var headshot :DisplayObject;
+            var headshotName :String = ClientCtx.lobbyConfig.getPlayerPortraitName(playerIndex);
+            if (headshotName == Constants.DEFAULT_PORTRAIT) {
+                headshot = ClientCtx.seatingMgr.getPlayerHeadshot(playerIndex, true);
+            } else {
+                headshot = ClientCtx.instantiateBitmap(headshotName);
+            }
 
             GameCtx.playerInfos.push(GameCtx.localPlayerIndex == playerIndex ?
                 new LocalPlayerInfo(
@@ -123,7 +137,9 @@ public class MultiplayerGameMode extends GameMode
                     false,
                     handicap,
                     playerColor,
-                    "player_" + index) :
+                    "player_" + index,
+                    displayName,
+                    headshot) :
 
                 new PlayerInfo(
                     playerIndex,
@@ -134,7 +150,9 @@ public class MultiplayerGameMode extends GameMode
                     false,
                     handicap,
                     playerColor,
-                    "player_" + index));
+                    "player_" + index,
+                    displayName,
+                    headshot));
         }
 
         // init players

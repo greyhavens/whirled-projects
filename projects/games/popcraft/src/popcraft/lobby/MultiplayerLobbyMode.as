@@ -285,7 +285,6 @@ public class MultiplayerLobbyMode extends AppMode
         }
 
         var teams :Array = ClientCtx.lobbyConfig.playerTeams;
-        var handicaps :Array = ClientCtx.lobbyConfig.handicaps;
 
         for (var teamId :int = LobbyConfig.ENDLESS_TEAM_ID; teamId < LobbyConfig.NUM_TEAMS;
              ++teamId) {
@@ -484,12 +483,12 @@ class LobbyHeadshotSprite extends SceneObject
 
     protected function updateHandicap () :void
     {
-        _handicapIcon.visible = ClientCtx.lobbyConfig.handicaps[_playerSeat];
+        _handicapIcon.visible = ClientCtx.lobbyConfig.isPlayerHandicapped(_playerSeat);
     }
 
     protected function updatePortrait () :void
     {
-        var portraitName :String = ClientCtx.lobbyConfig.portraits[_playerSeat];
+        var portraitName :String = ClientCtx.lobbyConfig.getPlayerPortraitName(_playerSeat);
         if (portraitName == Constants.DEFAULT_PORTRAIT) {
             _headshot.useDefaultHeadshotImage();
         } else {

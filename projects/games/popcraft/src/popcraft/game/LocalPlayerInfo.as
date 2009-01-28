@@ -19,7 +19,7 @@ public class LocalPlayerInfo extends PlayerInfo
 {
     public function LocalPlayerInfo (playerIndex :int, teamId :int, baseLoc :BaseLocationData,
         maxHealth :Number, startHealth :Number, invincible :Boolean, handicap :Number, color :uint,
-        playerName :String, displayName :String = null, headshot :DisplayObject = null)
+        playerName :String, displayName :String, headshot :DisplayObject)
     {
         super(playerIndex, teamId, baseLoc, maxHealth, startHealth, invincible, handicap, color,
             playerName, displayName, headshot);

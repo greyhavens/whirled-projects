@@ -404,13 +404,25 @@ public class EndlessGameMode extends GameMode
             var humanPlayerData :EndlessHumanPlayerData =
                 _curMapData.humans.get(playerDisplayData.playerName);
 
-            // if this is a multiplayer game, pass null for the human player display names
-            // and headshots, which will cause that data to be pulled from whirled
-            var displayName :String = null;
-            var headshot :DisplayObject = null
+            var color :uint;
+            var displayName :String;
+            var headshot :DisplayObject;
             if (GameCtx.isSinglePlayerGame) {
+                color = playerDisplayData.color;
                 displayName = playerDisplayData.displayName;
                 headshot = playerDisplayData.headshot;
+            } else {
+                color = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
+                if (color == Constants.RANDOM_COLOR) {
+                    color = playerDisplayData.color;
+                }
+                displayName = ClientCtx.seatingMgr.getPlayerName(playerIndex);
+                var headshotName :String = ClientCtx.lobbyConfig.getPlayerPortraitName(playerIndex);
+                if (headshotName == Constants.DEFAULT_PORTRAIT) {
+                    headshot = ClientCtx.seatingMgr.getPlayerHeadshot(playerIndex, true);
+                } else {
+                    headshot = ClientCtx.instantiateBitmap(headshotName);
+                }
             }
 
             if (playerIndex == GameCtx.localPlayerIndex) {

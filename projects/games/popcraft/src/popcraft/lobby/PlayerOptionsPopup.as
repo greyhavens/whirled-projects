@@ -234,7 +234,7 @@ public class PlayerOptionsPopup extends SceneObject
 
     protected function get isHandicapOn () :Boolean
     {
-        return ClientCtx.lobbyConfig.handicaps[ClientCtx.seatingMgr.localPlayerSeat];
+        return ClientCtx.lobbyConfig.isPlayerHandicapped(ClientCtx.seatingMgr.localPlayerSeat);
     }
 
     protected function get curFavoritePortrait () :String
