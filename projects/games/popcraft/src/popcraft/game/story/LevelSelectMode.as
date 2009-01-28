@@ -138,32 +138,6 @@ public class LevelSelectMode extends DemoGameMode
                 _mainUiLayer.addChild(lockedEndlessPanel);
             }
 
-            // buttons
-            /*var buttonParent :Sprite = SpriteUtil.createSprite(true);
-
-            var levelSelectButton :SimpleButton = UIBits.createButton("Select Level", 1.5);
-            registerListener(levelSelectButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    showLevelSelectLayout();
-                });
-            DisplayUtil.positionBounds(levelSelectButton, -levelSelectButton.width * 0.5, 0);
-            buttonParent.addChild(levelSelectButton);
-
-            var creditsButton :SimpleButton = UIBits.createButton("About", 1.2);
-            registerOneShotCallback(creditsButton, MouseEvent.CLICK,
-                function (...ignored) :void {
-                    ClientCtx.mainLoop.unwindToMode(new CreditsMode());
-                });
-            DisplayUtil.positionBounds(creditsButton, -creditsButton.width * 0.5,
-                buttonParent.height + 10);
-            buttonParent.addChild(creditsButton);
-
-            DisplayUtil.positionBounds(buttonParent,
-                (selectPanel.width - buttonParent.width) * 0.5,
-                (selectPanel.height - buttonParent.height) * 0.5);
-            selectPanel.addChild(buttonParent);*/
-
-
         } else {
             // it's the player's first time playing: show them the tutorial
             createTutorialLayout();
@@ -181,15 +155,17 @@ public class LevelSelectMode extends DemoGameMode
         _mainUiLayer.addChild(selectPanel);
 
         // Level Select and About buttons
-        var levelSelectButton :SimpleButton =
-            ClientCtx.instantiateButton("splashUi", "select_button");
-        registerListener(levelSelectButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                showLevelSelectLayout();
-            });
-        levelSelectButton.x = 350;
-        levelSelectButton.y = 640;
-        DisplayUtil.addChildBelow(_mainUiLayer, levelSelectButton, storyBanner);
+        if (playerStartedGame) {
+            var levelSelectButton :SimpleButton =
+                ClientCtx.instantiateButton("splashUi", "select_button");
+            registerListener(levelSelectButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    showLevelSelectLayout();
+                });
+            levelSelectButton.x = 350;
+            levelSelectButton.y = 420;
+            DisplayUtil.addChildBelow(_mainUiLayer, levelSelectButton, storyBanner);
+        }
 
         var aboutButton :SimpleButton = ClientCtx.instantiateButton("splashUi", "about_button");
         registerOneShotCallback(aboutButton, MouseEvent.CLICK,
@@ -197,12 +173,12 @@ public class LevelSelectMode extends DemoGameMode
                 ClientCtx.mainLoop.unwindToMode(new CreditsMode());
             });
         aboutButton.x = 350;
-        aboutButton.y = 640;
+        aboutButton.y = 420;
         DisplayUtil.addChildBelow(_mainUiLayer, aboutButton, storyBanner);
 
         var manualCover :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "manual_cover");
         manualCover.x = 350;
-        manualCover.y = 640;
+        manualCover.y = 420;
         DisplayUtil.addChildBelow(_mainUiLayer, manualCover, storyBanner);
 
         /* 2009-1-22: We're not going to push this in peoples' faces so much.
