@@ -3,6 +3,7 @@ package vampire.server
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRServerGameControl;
 
+import vampire.data.MinionHierarchy;
 import vampire.net.MessageManager;
     
 public class ServerContext
