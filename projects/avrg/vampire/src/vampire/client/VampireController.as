@@ -161,11 +161,9 @@ public class VampireController extends Controller
     
     public function handleHierarchyCenterSelected(playerId :int, hierarchyView :HierarchyView) :void
     {
-//        trace("handleHierarchyCenterSelected(" + playerId + ")");
-//        if( hierarchyView._hierarchy == null || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
-//            return;
-//        }
-            
+        if( hierarchyView._hierarchy == null || hierarchyView._hierarchy.getMinionCount( playerId ) == 0) {
+            return;
+        }
         hierarchyView.updateHierarchy( playerId );
     }
     
