@@ -47,7 +47,7 @@ public class UpsellMode extends AppMode
         registerOneShotCallback(unlockButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 closeMode();
-                ClientCtx.showGameShop();
+                ClientCtx.showIncidentGameShop();
             });
     }
 

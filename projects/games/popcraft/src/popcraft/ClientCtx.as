@@ -120,11 +120,19 @@ public class ClientCtx
         }
     }
 
-    public static function showGameShop () :void
+    public static function showIncidentGameShop () :void
     {
         if (gameCtrl.isConnected()) {
             gameCtrl.local.showGameShop(GameControl.LEVEL_PACK_SHOP,
-                Constants.COMPLEAT_LEVEL_PACK_ID);
+                Constants.INCIDENT_LEVEL_PACK_ID);
+        }
+    }
+
+    public static function showAcademyGameShop () :void
+    {
+        if (gameCtrl.isConnected()) {
+            gameCtrl.local.showGameShop(GameControl.LEVEL_PACK_SHOP,
+                Constants.ACADEMY_LEVEL_PACK_ID);
         }
     }
 

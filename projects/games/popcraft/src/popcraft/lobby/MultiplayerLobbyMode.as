@@ -113,9 +113,7 @@ public class MultiplayerLobbyMode extends AppMode
 
     protected function onPlayerPurchasedContent (e :GameContentEvent) :void
     {
-        if (e.contentType == GameContentEvent.LEVEL_PACK &&
-            e.contentIdent == Constants.COMPLEAT_LEVEL_PACK_NAME) {
-
+        if (ClientCtx.isEndlessModeUnlocked) {
             sendServerMsg(LobbyConfig.MSG_SET_ENDLESS_MODE, true);
         }
     }
@@ -359,7 +357,7 @@ public class MultiplayerLobbyMode extends AppMode
             }
             registerListener(unlockButton, MouseEvent.CLICK,
                 function (...ignored) :void {
-                    ClientCtx.showGameShop();
+                    ClientCtx.showAcademyGameShop();
                 });
             _showingPremiumContent = false;
         }

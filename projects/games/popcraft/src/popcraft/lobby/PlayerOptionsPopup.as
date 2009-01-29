@@ -4,9 +4,11 @@ import com.threerings.flash.DisplayUtil;
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.game.GameContentEvent;
 import com.whirled.game.NetSubControl;
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.MovieClip;
 import flash.display.Shape;
@@ -20,13 +22,13 @@ import popcraft.ui.UIBits;
 
 public class PlayerOptionsPopup extends SceneObject
 {
-    public static function show (parentSprite :Sprite) :void
+    public static function show (parent :DisplayObjectContainer) :void
     {
         var topMode :AppMode = ClientCtx.mainLoop.topMode;
         var popup :PlayerOptionsPopup = topMode.getObjectNamed(NAME) as PlayerOptionsPopup;
         if (popup == null) {
             popup = new PlayerOptionsPopup();
-            topMode.addObject(popup, parentSprite);
+            topMode.addObject(popup, parent);
         }
 
         popup.initPlayerOptions();
@@ -45,6 +47,36 @@ public class PlayerOptionsPopup extends SceneObject
         _movie.x = _sprite.width * 0.5;
         _movie.y = _sprite.height * 0.5;
         _sprite.addChild(_movie);
+
+        // This will be used in some callbacks later in the function
+        var thisPopup :PlayerOptionsPopup = this;
+
+        var lockedOverlay :SimpleButton = _movie["lock"];
+        if (ClientCtx.isMpCustomizationUnlocked) {
+            lockedOverlay.visible = false;
+        } else {
+            lockedOverlay.visible = true;
+
+            // Show the game shop if the player clicks the unlock button
+            registerListener(lockedOverlay, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientCtx.showAcademyGameShop();
+                });
+
+            // If the player purchases the proper level pack while this screen is open,
+            // close it and reload
+            registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+                function (...ignored) :void {
+                    if (ClientCtx.isMpCustomizationUnlocked) {
+                        var wasVisible :Boolean = thisPopup.visible;
+                        var parent :DisplayObjectContainer = thisPopup.displayObject.parent;
+                        thisPopup.destroySelf();
+                        if (wasVisible) {
+                            PlayerOptionsPopup.show(parent);
+                        }
+                    }
+                });
+        }
 
         var ii :int;
         var positioner :MovieClip;
@@ -69,10 +101,12 @@ public class PlayerOptionsPopup extends SceneObject
             portraitButton.addChild(portrait);
             portraitButton.x = positioner.x;
             portraitButton.y = positioner.y;
-            _movie.addChild(portraitButton);
+            DisplayUtil.addChildBelow(_movie, portraitButton, lockedOverlay);
 
             _portraitButtons.push(portraitButton);
-            createPortraitClickListener(portraitButton, portraitName);
+            if (ClientCtx.isMpCustomizationUnlocked) {
+                createPortraitClickListener(portraitButton, portraitName);
+            }
         }
 
         _portraitSelectionIndicator = new Shape();
@@ -101,11 +135,14 @@ public class PlayerOptionsPopup extends SceneObject
                 colorButton.addChild(swatch);
                 colorButton.x = positioner.x;
                 colorButton.y = positioner.y;
-                _movie.addChild(colorButton);
+                DisplayUtil.addChildBelow(_movie, colorButton, lockedOverlay);
             }
 
             _colorButtons.push(colorButton);
-            createColorClickListener(colorButton, color);
+
+            if (ClientCtx.isMpCustomizationUnlocked) {
+                createColorClickListener(colorButton, color);
+            }
         }
 
         _colorSelectionIndicator = new Shape();
@@ -131,7 +168,6 @@ public class PlayerOptionsPopup extends SceneObject
         okButton.x = 140;
         okButton.y = 107;
         _movie.addChild(okButton);
-        var thisPopup :PlayerOptionsPopup = this;
         registerListener(okButton, MouseEvent.CLICK,
             function (...ignored) :void {
                 savePlayerOptions();

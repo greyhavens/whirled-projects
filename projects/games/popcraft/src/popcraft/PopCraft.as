@@ -113,8 +113,9 @@ public class PopCraft extends Sprite
                 GameContentEvent.PLAYER_CONTENT_ADDED,
                 function (...ignored) :void {
                     ClientCtx.reloadLevelPacks();
-                });
-
+                },
+                false,
+                int.MAX_VALUE);
         }
 
         _sg.run();

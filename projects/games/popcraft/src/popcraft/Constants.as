@@ -51,9 +51,9 @@ public class Constants
     public static const COMPLEAT_LEVEL_PACK_NAME :String = "CorpseCraftCompleat";
     public static const COMPLEAT_LEVEL_PACK_ID :int = 95;
     public static const INCIDENT_LEVEL_PACK_NAME :String = "TheIncident";
-    public static const INCIDENT_LEVEL_PACK_ID :int = 0; // TODO
+    public static const INCIDENT_LEVEL_PACK_ID :int = 104;
     public static const ACADEMY_LEVEL_PACK_NAME :String = "WearddAcademy";
-    public static const ACADEMY_LEVEL_PACK_ID :int = 0; // TODO
+    public static const ACADEMY_LEVEL_PACK_ID :int = 103;
 
     public static const SCREEN_SIZE :Vector2 = new Vector2(700, 500);
     public static const SOUND_MASTER_VOLUME :Number = 0.7;
@@ -70,13 +70,13 @@ public class Constants
 
     public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = false;
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
-    public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
+    public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
-    public static const DEBUG_AWARD_COMPLEAT_LEVEL_PACK :Boolean    = true;
-    public static const DEBUG_AWARD_INCIDENT_LEVEL_PACK :Boolean    = true;
-    public static const DEBUG_AWARD_ACADEMY_LEVEL_PACK :Boolean     = true;
-    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = true;
+    public static const DEBUG_AWARD_COMPLEAT_LEVEL_PACK :Boolean    = false;
+    public static const DEBUG_AWARD_INCIDENT_LEVEL_PACK :Boolean    = false;
+    public static const DEBUG_AWARD_ACADEMY_LEVEL_PACK :Boolean     = false;
+    public static const DEBUG_CREATE_ENDLESS_SAVES :Boolean         = false;
 
     public static var DEBUG_LOAD_LEVELS_FROM_DISK :Boolean = false; // PopCraft_Standalone sets this to true
 

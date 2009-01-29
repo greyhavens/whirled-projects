@@ -150,8 +150,8 @@ public class LevelSelectMode extends DemoGameMode
             function (...ignored) :void {
                 ClientCtx.showMultiplayerLobby();
             });
-        selectPanel.x = SELECT_PANEL_LOC.x;
-        selectPanel.y = SELECT_PANEL_LOC.y;
+        selectPanel.x = MULTIPLAYER_PANEL_LOC.x;
+        selectPanel.y = MULTIPLAYER_PANEL_LOC.y;
         _mainUiLayer.addChild(selectPanel);
 
         // Level Select and About buttons
@@ -569,8 +569,8 @@ public class LevelSelectMode extends DemoGameMode
     protected static const JACK_PORTRAIT_LOC :Point = new Point(643, 43);
     protected static const STORY_BANNER_LOC :Point = new Point(350, 330);
     protected static const STORY_BUTTON_LOC :Point = new Point(350, 350);
-    protected static const ENDLESS_PANEL_LOC :Point = new Point(488, 391);
-    protected static const SELECT_PANEL_LOC :Point = new Point(0, 391);
+    protected static const ENDLESS_PANEL_LOC :Point = new Point(489, 392);
+    protected static const MULTIPLAYER_PANEL_LOC :Point = new Point(-1, 392);
 }
 
 }
