@@ -8,19 +8,15 @@ import flash.utils.ByteArray;
 public class PrizeManager
     implements UserCookieDataSource
 {
-    public static const LADYFINGERS :int = 0;   // buy the game
-    public static const BEHEMOTH :int = 1;      // get the "Magna Cum Laude" trophy
-    public static const JACK :int = 2;          // get the "Admired" trophy
-    public static const RALPH :int = 3;         // get the "Head of the Class" trophy
-    public static const IVY :int = 4;           // get the "Collaborator" trophy
-
     public function PrizeManager ()
     {
         _trophyPrizeMap = new HashMap();
-        for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 2) {
-            var trophyName :String = TROPHY_PRIZES[ii];
-            var prizeId :int = TROPHY_PRIZES[ii + 1];
-            _trophyPrizeMap.put(trophyName, prizeId);
+        for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 3) {
+            var trophyPrize :TrophyPrize = new TrophyPrize(
+                TROPHY_PRIZES[ii],
+                TROPHY_PRIZES[ii + 1],
+                TROPHY_PRIZES[ii + 2]);
+            _trophyPrizeMap.put(trophyPrize.trophyName, trophyPrize);
         }
 
         init();
@@ -30,8 +26,12 @@ public class PrizeManager
     {
         var prizes :Array = [];
 
-        if (ClientCtx.hasCompleatLevelPack) {
+        if (ClientCtx.hasCompleatLevelPack || ClientCtx.hasAcademyLevelPack) {
             prizes.push(LADYFINGERS);
+        }
+
+        if (ClientCtx.hasCompleatLevelPack) {
+            prizes.push(ACADEMY);
         }
 
         for (var ii :int = 0; ii < TROPHY_PRIZES.length; ii += 2) {
@@ -49,9 +49,9 @@ public class PrizeManager
 
     public function awardPrizeForTrophy (trophyName :String) :void
     {
-        var prizeIdObj :* = _trophyPrizeMap.get(trophyName);
-        if (prizeIdObj !== undefined) {
-            awardPrize(int(prizeIdObj));
+        var trophyPrize :TrophyPrize = _trophyPrizeMap.get(trophyName);
+        if (trophyPrize != null && trophyPrize.playerHasRequiredLevelPack) {
+            awardPrize(trophyPrize.prizeId);
         }
     }
 
@@ -62,7 +62,7 @@ public class PrizeManager
 
     public function awardPrizes (prizeIds :Array) :void
     {
-        if (!ClientCtx.hasCompleatLevelPack || !ClientCtx.gameCtrl.isConnected()) {
+        if (!ClientCtx.gameCtrl.isConnected()) {
             return;
         }
 
@@ -124,20 +124,72 @@ public class PrizeManager
     protected var _ivyAwarded :Boolean;
     protected var _trophyPrizeMap :HashMap;
 
+    // Cookie version >= 1
+    protected static const LADYFINGERS :int = 0;   // buy Compleat or Weardd Academy
+    protected static const BEHEMOTH :int = 1;      // get the "Magna Cum Laude" trophy
+    protected static const JACK :int = 2;          // get the "Admired" trophy
+    protected static const RALPH :int = 3;         // get the "Head of the Class" trophy
+    protected static const IVY :int = 4;           // get the "Collaborator" trophy
+    // Cookie version >= 3
+    protected static const ACADEMY :int = 5;       // buy Compleat
+
     protected static const PRIZE_IDENTS :Array = [
         "ladyfingers_avatar",
         "behemoth_avatar",
         "jack_avatar",
         "ralph_avatar",
         "ivy_avatar",
+        "academy_furni",
     ];
 
     protected static const TROPHY_PRIZES :Array = [
-        Trophies.MAGNACUMLAUDE,                     BEHEMOTH,
-        Trophies.ENDLESS_COMPLETION_TROPHIES[2],    JACK,
-        Trophies.HEAD_OF_THE_CLASS,                 RALPH,
-        Trophies.COLLABORATOR,                      IVY,
+        Trophies.MAGNACUMLAUDE,
+        BEHEMOTH,
+        [ Constants.COMPLEAT_LEVEL_PACK_NAME, Constants.INCIDENT_LEVEL_PACK_NAME ],
+
+        Trophies.ENDLESS_COMPLETION_TROPHIES[2],
+        JACK,
+        [ Constants.COMPLEAT_LEVEL_PACK_NAME, Constants.ACADEMY_LEVEL_PACK_NAME ],
+
+        Trophies.HEAD_OF_THE_CLASS,
+        RALPH,
+        [ Constants.COMPLEAT_LEVEL_PACK_NAME, Constants.ACADEMY_LEVEL_PACK_NAME ],
+
+        Trophies.COLLABORATOR,
+        IVY,
+        [ Constants.COMPLEAT_LEVEL_PACK_NAME, Constants.ACADEMY_LEVEL_PACK_NAME ],
     ];
 }
 
+}
+
+import popcraft.*;
+
+class TrophyPrize
+{
+    public var trophyName :String;
+    public var prizeId :int;
+    public var requiredLevelPacks :Array;
+
+    public function TrophyPrize (trophyName :String, prizeId :int, requiredLevelPacks :Array)
+    {
+        this.trophyName = trophyName;
+        this.prizeId = prizeId;
+        this.requiredLevelPacks = requiredLevelPacks;
+    }
+
+    public function get playerHasRequiredLevelPack () :Boolean
+    {
+        if (requiredLevelPacks == null || requiredLevelPacks.length == 0) {
+            return true;
+        }
+
+        for each (var packName :String in requiredLevelPacks) {
+            if (ClientCtx.playerLevelPacks.isLevelPack(packName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
