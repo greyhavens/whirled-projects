@@ -131,6 +131,7 @@ public class EndlessLevelSelectModeBase extends AppMode
         var oldViewTask :ObjectTask;
         switch (animationType) {
         case ANIMATE_DOWN:
+            oldStartLoc = DOWN_LOC;
             newStartLoc = UP_LOC;
             newViewTask = new SerialTask(
                 LocationTask.CreateEaseIn(OVERSHOOT_LOC.x, OVERSHOOT_LOC.y, ANIMATE_DOWN_TIME),
