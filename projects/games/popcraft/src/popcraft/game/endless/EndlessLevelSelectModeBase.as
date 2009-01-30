@@ -1,16 +1,15 @@
 package popcraft.game.endless {
 
 import com.threerings.flash.Vector2;
-import com.whirled.game.GameContentEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
@@ -131,7 +130,6 @@ public class EndlessLevelSelectModeBase extends AppMode
         var oldViewTask :ObjectTask;
         switch (animationType) {
         case ANIMATE_DOWN:
-            oldStartLoc = DOWN_LOC;
             newStartLoc = UP_LOC;
             newViewTask = new SerialTask(
                 LocationTask.CreateEaseIn(OVERSHOOT_LOC.x, OVERSHOOT_LOC.y, ANIMATE_DOWN_TIME),
@@ -141,6 +139,8 @@ public class EndlessLevelSelectModeBase extends AppMode
                         ClientCtx.mainLoop.removeMode(-2);
                     }),
                LocationTask.CreateLinear(DOWN_LOC.x, DOWN_LOC.y, OVERSHOOT_TIME));
+            oldStartLoc = DOWN_LOC;
+            oldViewTask = new TimedTask(ANIMATE_DOWN_TIME + OVERSHOOT_TIME);
             break;
 
         case ANIMATE_NEXT:

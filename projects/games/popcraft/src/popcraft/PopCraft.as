@@ -3,6 +3,7 @@
 
 package popcraft {
 
+import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
@@ -15,6 +16,7 @@ import com.whirled.game.SizeChangedEvent;
 import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -129,6 +131,37 @@ public class PopCraft extends Sprite
             function (loadErr :String) :void {
                 ClientCtx.mainLoop.unwindToMode(new GenericLoadErrorMode(loadErr));
             });
+
+        _events.registerListener(config.keyDispatcher, KeyboardEvent.KEY_DOWN, onKeyDown);
+    }
+
+    protected function onKeyDown (e :KeyboardEvent) :void
+    {
+        if (Constants.DEBUG_ALLOW_CHEATS) {
+            switch (e.keyCode) {
+            case KeyboardCodes.NUMBER_7:
+                debugGrantLevelPack(Constants.ACADEMY_LEVEL_PACK_NAME);
+                break;
+
+            case KeyboardCodes.NUMBER_8:
+                debugGrantLevelPack(Constants.INCIDENT_LEVEL_PACK_NAME);
+                break;
+            }
+        }
+    }
+
+    protected function debugGrantLevelPack (levelPackName :String) :void
+    {
+        // For debug purposes only. Pretend that the player just bought a premium level pack.
+        var levelPacks :Array = (ClientCtx.gameCtrl.isConnected() ?
+                                 ClientCtx.gameCtrl.player.getPlayerItemPacks().slice() : []);
+        levelPacks.push({ ident:levelPackName, name:levelPackName, mediaURL:"", premium:true });
+        ClientCtx.playerLevelPacks.init(levelPacks);
+        ClientCtx.gameCtrl.player.dispatchEvent(
+            new GameContentEvent(
+                GameContentEvent.PLAYER_CONTENT_ADDED,
+                GameContentEvent.LEVEL_PACK,
+                levelPackName));
     }
 
     protected function handleSizeChanged (...ignored) :void
