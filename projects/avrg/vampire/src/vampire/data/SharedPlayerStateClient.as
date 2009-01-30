@@ -22,7 +22,7 @@ public class SharedPlayerStateClient
     
     public static function getMaxBlood (playerId :int) :Number
     {
-        return Number(playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD));
+        return Constants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
     }
     
     public static function getLevel (playerId :int) :int
@@ -41,7 +41,7 @@ public class SharedPlayerStateClient
             return String(playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION));
         }
         else {
-            return "none";
+            return null;
         }
     }
     
@@ -68,7 +68,10 @@ public class SharedPlayerStateClient
         return (dict != null) ? dict[ix] : undefined;
     }
     
-
+    public static function isVampire(playerId :int) :Boolean
+    {
+        return getLevel(playerId) >= Constants.MINIMUM_VAMPIRE_LEVEL;
+    }
     
     
     public static function isProps( playerId :int ) :Boolean

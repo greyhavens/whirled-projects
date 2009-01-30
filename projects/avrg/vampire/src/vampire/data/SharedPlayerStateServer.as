@@ -22,11 +22,14 @@ public class SharedPlayerStateServer //implements IExternalizable
     
     protected static const log :Log = Log.getLog( SharedPlayerStateServer );
     
+    /** Pplayer name.  Needed even when player is offline*/
+    public static const PLAYER_PROP_PREFIX_NAME:String = NetConstants.makePersistent("playerName");
+    
     /** Current amount of blood*/
     public static const PLAYER_PROP_PREFIX_BLOOD :String = NetConstants.makePersistent("blood");
     
     /** Max blood for the given level.  This could probably just be computed...? Possibly remove later.*/
-    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
+//    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
     
     /** Current level.  This controls the max amount of blood*/
     public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
@@ -34,6 +37,9 @@ public class SharedPlayerStateServer //implements IExternalizable
     /** 
     * Blood slowly drains away, even when you are asleep.  When starting a game, lose an amount
     * of blood proportional to how long you have been asleep. 
+    * 
+    * In addition, new players have a value == 1.  This allows new players to be detected by
+    * the client so e.g. the intro screen can be shown.
     */
     public static const PLAYER_PROP_PREFIX_LAST_TIME_AWAKE :String = NetConstants.makePersistent("time_last_awake");
     
@@ -81,13 +87,14 @@ public class SharedPlayerStateServer //implements IExternalizable
     * 
     */
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD :int = 0;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD :int = 1;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_LEVEL :int = 2;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD :int = 8;
     
     
     
@@ -157,7 +164,10 @@ public class SharedPlayerStateServer //implements IExternalizable
             setMinions([]);
         }
         log.debug("Getting sire");
-        _sire = int(_props.get(PLAYER_PROP_PREFIX_SIRE));   
+        _sire = int(_props.get(PLAYER_PROP_PREFIX_SIRE));
+        if( _sire == 0 ) {
+            _sire = -1;
+        }
     }
 
     public function setAction (action :String, force :Boolean = false) :void
@@ -170,6 +180,18 @@ public class SharedPlayerStateServer //implements IExternalizable
 
         // persist it, too
 //        _props.set(PLAYER_PROP_PREFIX_ACTION, _action, true);
+    }
+    
+    public function setName (name :String, force :Boolean = false) :void
+    {
+        // update our runtime state
+        if (!force && name == _name) {
+            return;
+        }
+        _name = name;
+        log.debug("Persisting name in player props");
+        // persist it, too
+        _props.set(PLAYER_PROP_PREFIX_NAME, _name, true);
     }
 
     public function setBlood (blood :Number, force :Boolean = false) :void
@@ -252,7 +274,9 @@ public class SharedPlayerStateServer //implements IExternalizable
         _sire = sire;
 
         // persist it, too
+        log.debug("setSire", "sire", sire);
         _props.set(PLAYER_PROP_PREFIX_SIRE, _sire, true);
+        log.debug("setSire after ", "sire", _props.get(PLAYER_PROP_PREFIX_SIRE));
     }
     
     public function setMaxBlood (maxBlood :int, force :Boolean = false) :void
@@ -264,7 +288,7 @@ public class SharedPlayerStateServer //implements IExternalizable
         _maxBlood = maxBlood;
 
         // persist it, too
-        _props.set(PLAYER_PROP_PREFIX_MAXBLOOD, _maxBlood, true);
+//        _props.set(PLAYER_PROP_PREFIX_MAXBLOOD, _maxBlood, true);
     }
     
     
@@ -273,12 +297,18 @@ public class SharedPlayerStateServer //implements IExternalizable
     
     public function toString() :String
     {
-        return "SharedPlayerState[ _level=" + level + ", _currentBlood=" + blood + ", _maxBlood=" + maxBlood + ", time=" + time+ "]";
+        var d :Date = new Date(time);
+        return "SharedPlayerState[ " + name + ", _level=" + level + ", blood=" + blood + "/" + maxBlood + ", time=" + d.toLocaleTimeString() + " " + d.toLocaleDateString() + ", sire=" + sire + ", minions=" + minions + ", bloodbonded=" + bloodbonded + "]";
     }
     
     public function get action () :String
     {
         return _action;
+    }
+    
+    public function get name () :String
+    {
+        return _name;
     }
     
     public function get level () :int
@@ -355,13 +385,13 @@ public class SharedPlayerStateServer //implements IExternalizable
             roomctrl.props.setIn(key, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, player.bloodbonded);
         }
         
-        if (!ArrayUtil.equals( dict[ROOM_PROP_PLAYER_DICT_INDEX_MINIONS], player.minions )) {
-            roomctrl.props.setIn(key, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS, player.minions);
-        }
+//        if (!ArrayUtil.equals( dict[ROOM_PROP_PLAYER_DICT_INDEX_MINIONS], player.minions )) {
+//            roomctrl.props.setIn(key, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS, player.minions);
+//        }
         
-        if (dict[ROOM_PROP_PLAYER_DICT_INDEX_SIRE] != player.sire) {
-            roomctrl.props.setIn(key, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_SIRE, player.sire);
-        }
+//        if (dict[ROOM_PROP_PLAYER_DICT_INDEX_SIRE] != player.sire) {
+//            roomctrl.props.setIn(key, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_SIRE, player.sire);
+//        }
         
         if (dict[ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != player.time) {
             log.info("Setting into room props", "time", new Date(player.time).toTimeString());
@@ -372,6 +402,7 @@ public class SharedPlayerStateServer //implements IExternalizable
     
     protected var _props :PropertySubControl
     
+    protected var _name :String;
     protected var _level :int;
     protected var _blood :Number;
     protected var _maxBlood :Number;
