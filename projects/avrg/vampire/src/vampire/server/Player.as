@@ -11,6 +11,7 @@ import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.PlayerSubControlServer;
 
 import vampire.data.Constants;
+import vampire.data.Logic;
 import vampire.data.SharedPlayerStateServer;
 import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
@@ -58,18 +59,6 @@ public class Player
             _sharedState.setTime( 1 );//O means no props loaded, 1 means new player
             
         } 
-        
-//        ServerContext.minionHierarchy.setPlayerSire( playerId, sire );
-//        ServerContext.minionHierarchy._playerId2Name.put( playerId, _sharedState.name );//Can't put this here maybe
-//        var minionsToAddToServerHierarchy :Array = minions;
-//        for each( var minionId :int in minionsToAddToServerHierarchy) {
-//            ServerContext.minionHierarchy.setPlayerSire( minionId, playerId );
-//        }
-        
-        
-//        log.debug( Constants.DEBUG_MINION + " Player object creation, hierarch=" + ServerContext.minionHierarchy);
-//        log.debug("hierarchy=" + ServerContext.minionHierarchy);
-        
         
         setAction( Constants.GAME_MODE_NOTHING );
         //if we're in a room, update the room properties
@@ -416,17 +405,24 @@ public class Player
             log.warning("handleSuccessfulFeedMessage " + e);
             if( victim.isVampire()) {
                 //You can only take blood that they have to give
-                var bloodTakenFromVampire :Number = bloodIncrement;
-                if( victim.blood < bloodIncrement + 1) {
-                    bloodTakenFromVampire = victim.blood - 1;
+                var bloodTakenFromVampire :Number = Logic.bloodLostPerFeed( victim.level);
+                
+                if( victim.blood > bloodTakenFromVampire + 1) {
+                    victim.damage( bloodTakenFromVampire );
+                    
+                    addBlood( Logic.bloodgGainedVampireVampireFeeding( level, victim.level) );
                 }
-                victim.damage( bloodTakenFromVampire );
-                addBlood( bloodTakenFromVampire / 2 );
+                
+//                if( victim.blood < bloodTakenFromVampire + 1) {
+//                    bloodTakenFromVampire = victim.blood - 1;
+//                }
+//                victim.damage( bloodTakenFromVampire );
+//                addBlood( bloodTakenFromVampire / 2 );
             }
             else {//Human thrall.  They get 'blood' too, except it isn't blood.  It's wannabe vampire juice
                 log.warning(" added blood ");
                 log.warning(" added joy ");
-                victim.addBlood( 10 );
+                victim.addBlood( bloodIncrement );
                 addBlood( bloodIncrement );
             }
             
