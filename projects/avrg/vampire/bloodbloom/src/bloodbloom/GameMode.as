@@ -7,8 +7,6 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import flash.geom.Point;
-
 public class GameMode extends AppMode
 {
     override protected function setup () :void
@@ -18,15 +16,15 @@ public class GameMode extends AppMode
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
 
         _heart = new Heart();
-        _heart.x = CTR_LOC.x;
-        _heart.y = CTR_LOC.y;
+        _heart.x = Constants.GAME_CTR.x;
+        _heart.y = Constants.GAME_CTR.y;
         addObject(_heart, _modeSprite);
 
         // setup cells
         for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
             // create initial cells
             for (var ii :int = 0; ii < Constants.INITIAL_CELL_COUNT[type]; ++ii) {
-                spawnCell(type);
+                spawnCell(type, false);
             }
 
             // spawn new cells on a timer
@@ -43,26 +41,26 @@ public class GameMode extends AppMode
     {
         return function () :void {
             if (Cell.getCellCount(type) < Constants.MAX_CELL_COUNT[type]) {
-                spawnCell(type);
+                spawnCell(type, true);
             }
         };
     }
 
-    protected function spawnCell (type :int) :void
+    protected function spawnCell (type :int, fadeIn :Boolean) :void
     {
+        // pick a random location for the cell
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
         var dist :Number = Constants.CELL_SPAWN_RADIUS.next();
-        var loc :Vector2 = Vector2.fromAngle(angle, dist);
-        loc.addLocal(CTR_LOC);
-        var cell :Cell = new Cell(type);
+        var loc :Vector2 = Vector2.fromAngle(angle, dist).add(Constants.GAME_CTR);
+
+        // spawn
+        var cell :Cell = new Cell(type, fadeIn);
         cell.x = loc.x;
         cell.y = loc.y;
         addObject(cell, _modeSprite);
     }
 
     protected var _heart :Heart;
-
-    protected static const CTR_LOC :Vector2 = new Vector2(267, 246);
 }
 
 }

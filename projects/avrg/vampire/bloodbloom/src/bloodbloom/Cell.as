@@ -1,6 +1,8 @@
 package bloodbloom {
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.tasks.AlphaTask;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -13,7 +15,7 @@ public class Cell extends SceneObject
         return ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell_" + type).length;
     }
 
-    public function Cell (type :int)
+    public function Cell (type :int, fadeIn :Boolean)
     {
         _type = type;
 
@@ -23,6 +25,26 @@ public class Cell extends SceneObject
         bitmap.x = -bitmap.width * 0.5;
         bitmap.y = -bitmap.height * 0.5;
         _sprite.addChild(bitmap);
+
+        // fade in
+        if (fadeIn) {
+            this.alpha = 0;
+            addTask(new AlphaTask(1, 0.4));
+        }
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        var loc :Vector2 = new Vector2(this.x, this.y);
+        var ctrImpulse :Vector2 = loc.subtract(Constants.GAME_CTR);
+        ctrImpulse.length = SPEED * dt;
+
+        loc.x += ctrImpulse.x;
+        loc.y += ctrImpulse.y;
+        loc = ClientCtx.clampToGame(loc);
+
+        this.x = loc.x;
+        this.y = loc.y;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -41,6 +63,8 @@ public class Cell extends SceneObject
 
     protected var _type :int;
     protected var _sprite :Sprite;
+
+    protected static const SPEED :Number = 5;
 }
 
 }
