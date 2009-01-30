@@ -24,8 +24,6 @@ public class PopCraft_Standalone extends PopCraft
     {
         var rm :ResourceManager = ClientCtx.rsrcs;
 
-        rm.queueResourceLoad("swf", "multiplayer_lobby", { embeddedClass: SWF_MULTIPLAYER_LOBBY });
-
         rm.queueResourceLoad("swf", "prologue", { embeddedClass: SWF_PROLOGUE });
         rm.queueResourceLoad("swf", "epilogue", { embeddedClass: SWF_EPILOGUE });
         rm.queueResourceLoad("swf", "boss", { embeddedClass: SWF_BOSS });
@@ -33,9 +31,6 @@ public class PopCraft_Standalone extends PopCraft
         rm.queueResourceLoad("sound", "mus_day", { embeddedClass: MUSIC_DAY });
         rm.queueResourceLoad("sound", "mus_night", { embeddedClass: MUSIC_NIGHT });
     }
-
-    [Embed(source="../../rsrc/mp/multiplayer.swf", mimeType="application/octet-stream")]
-    protected static const SWF_MULTIPLAYER_LOBBY :Class;
 
     [Embed(source="../../rsrc/sp/prologue.swf", mimeType="application/octet-stream")]
     protected static const SWF_PROLOGUE :Class;

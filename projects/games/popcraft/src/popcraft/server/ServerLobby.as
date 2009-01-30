@@ -21,7 +21,8 @@ public class ServerLobby
             setProp(LobbyConfig.PROP_GAME_START_COUNTDOWN, false);
             setProp(LobbyConfig.PROP_RANDSEED, uint(Math.random() * uint.MAX_VALUE));
             setProp(LobbyConfig.PROP_HANDICAPS, ArrayUtil.create(numPlayers, false));
-            setProp(LobbyConfig.PROP_PORTRAITS, ArrayUtil.create(numPlayers, null));
+            setProp(LobbyConfig.PROP_PORTRAITS,
+                ArrayUtil.create(numPlayers, Constants.DEFAULT_PORTRAIT));
             setProp(LobbyConfig.PROP_COLORS, ArrayUtil.create(numPlayers, Constants.RANDOM_COLOR));
             setProp(LobbyConfig.PROP_PLAYER_TEAMS, ArrayUtil.create(numPlayers,
                 LobbyConfig.UNASSIGNED_TEAM_ID));

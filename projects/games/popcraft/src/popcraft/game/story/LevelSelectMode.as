@@ -127,7 +127,7 @@ public class LevelSelectMode extends DemoGameMode
                 endlessPanel.y = ENDLESS_PANEL_LOC.y;
                 _mainUiLayer.addChild(endlessPanel);
                 var endlessButton :SimpleButton = endlessPanel["challenge_button"];
-                registerOneShotCallback(endlessButton, MouseEvent.CLICK, onEndlessClicked);
+                registerListener(endlessButton, MouseEvent.CLICK, onEndlessClicked);
 
             } else {
                 // the player has played the game but hasn't unlocked endless mode.

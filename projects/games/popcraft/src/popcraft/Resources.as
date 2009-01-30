@@ -106,6 +106,7 @@ public class Resources
         rm.queueResourceLoad("image", "portrait_horace", { embeddedClass: IMG_PORTRAIT_HORACE });
         rm.queueResourceLoad("image", "portrait_ursula", { embeddedClass: IMG_PORTRAIT_URSULA });
 
+        rm.queueResourceLoad("swf", "multiplayer_lobby", { embeddedClass: SWF_MULTIPLAYER_LOBBY });
         rm.queueResourceLoad("swf", "splashUi", { embeddedClass: SWF_SPLASH_UI });
         rm.queueResourceLoad("swf", "bg",  { embeddedClass: SWF_BG });
 
@@ -212,7 +213,6 @@ public class Resources
     }
 
     public static const MP_LEVEL_PACK_RESOURCES :Array = [
-        "multiplayer_lobby",
     ];
 
     public static const SP_LEVEL_PACK_RESOURCES :Array = [
@@ -275,6 +275,8 @@ public class Resources
     [Embed(source="../../rsrc/all/endless_9_thumb.jpg", mimeType="application/octet-stream")]
     protected static const IMG_ENDLESSTHUMB9 :Class;
 
+    [Embed(source="../../rsrc/all/multiplayer.swf", mimeType="application/octet-stream")]
+    protected static const SWF_MULTIPLAYER_LOBBY :Class;
     [Embed(source="../../rsrc/all/splash_UI.swf", mimeType="application/octet-stream")]
     protected static const SWF_SPLASH_UI :Class;
     [Embed(source="../../rsrc/all/UI_bits.swf", mimeType="application/octet-stream")]
