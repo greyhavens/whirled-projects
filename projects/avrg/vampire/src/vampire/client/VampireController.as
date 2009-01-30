@@ -10,6 +10,7 @@ import vampire.client.actions.BaseVampireMode;
 import vampire.client.actions.hierarchy.HierarchyView;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Constants;
+import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage;
@@ -156,6 +157,11 @@ public class VampireController extends Controller
         if( SharedPlayerStateClient.getCurrentAction( ClientContext.currentClosestPlayerId) == Constants.GAME_MODE_EAT_ME &&
             SharedPlayerStateClient.isVampire( ClientContext.ourPlayerId)) {
             
+            if( SharedPlayerStateClient.isVampire( ClientContext.currentClosestPlayerId ) && 
+                SharedPlayerStateClient.getBlood(ClientContext.currentClosestPlayerId) < 
+                Logic.bloodLostPerFeed( SharedPlayerStateClient.getLevel(ClientContext.currentClosestPlayerId)) + 1 ) {
+                        return;
+                    }
             ClientContext.msg.sendMessage( new SuccessfulFeedMessage( ClientContext.ourPlayerId, ClientContext.currentClosestPlayerId));
 //            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_FEED, ClientContext.currentClosestPlayerId );
         }
