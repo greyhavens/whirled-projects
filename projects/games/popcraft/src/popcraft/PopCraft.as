@@ -15,6 +15,7 @@ import com.whirled.game.SizeChangedEvent;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.geom.Point;
@@ -157,11 +158,17 @@ public class PopCraft extends Sprite
                                  ClientCtx.gameCtrl.player.getPlayerItemPacks().slice() : []);
         levelPacks.push({ ident:levelPackName, name:levelPackName, mediaURL:"", premium:true });
         ClientCtx.playerLevelPacks.init(levelPacks);
-        ClientCtx.gameCtrl.player.dispatchEvent(
-            new GameContentEvent(
-                GameContentEvent.PLAYER_CONTENT_ADDED,
-                GameContentEvent.LEVEL_PACK,
-                levelPackName));
+        try {
+            ClientCtx.gameCtrl.player.dispatchEvent(
+                new GameContentEvent(
+                    GameContentEvent.PLAYER_CONTENT_ADDED,
+                    GameContentEvent.LEVEL_PACK,
+                    levelPackName));
+        } catch (e :IllegalOperationError) {
+            // An unmodified AbstractControl.as will throw an error if anyone else
+            // calls dispatchEvent on it. For this code to work, modify your copy of
+            // AbstractControl and recompile.
+        }
     }
 
     protected function handleSizeChanged (...ignored) :void
