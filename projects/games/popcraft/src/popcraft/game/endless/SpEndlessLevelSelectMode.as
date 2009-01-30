@@ -24,8 +24,8 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
             registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
                 function (...ignored) :void {
                     if (ClientCtx.isEndlessModeUnlocked && _upsell != null) {
-                        removeUpsellScreen();
-                        selectMap(_mapIndex, ANIMATE_DOWN);
+                        // this current mode will be popped after the new mode animates in
+                        ClientCtx.mainLoop.pushMode(new SpEndlessLevelSelectMode());
                     }
                 });
         }
