@@ -33,7 +33,7 @@ public class SuccessfulFeedMessage extends BaseGameMessage
        return _playerId;     
     }
     
-    public function get enten () :int
+    public function get eatenPlayerId () :int
     {
        return _eatenId;     
     }
