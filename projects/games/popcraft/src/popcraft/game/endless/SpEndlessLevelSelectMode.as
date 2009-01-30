@@ -1,5 +1,7 @@
 package popcraft.game.endless {
 
+import com.whirled.game.GameContentEvent;
+
 import flash.events.MouseEvent;
 
 import popcraft.*;
@@ -15,15 +17,29 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
             ClientCtx.endlessLevelMgr.savedSpGames.numSaves == 0) {
             ClientCtx.endlessLevelMgr.createDummySpSaves();
         }
+
+        if (!ClientCtx.isEndlessModeUnlocked) {
+            // If the player purchases the proper level pack while this screen is open,
+            // get rid of the upsell screen
+            registerListener(ClientCtx.gameCtrl.player, GameContentEvent.PLAYER_CONTENT_ADDED,
+                function (...ignored) :void {
+                    if (ClientCtx.isEndlessModeUnlocked && _upsell != null) {
+                        removeUpsellScreen();
+                        selectMap(_mapIndex, ANIMATE_DOWN);
+                    }
+                });
+        }
     }
 
     override protected function selectMap (mapIndex :int, animationType :int) :void
     {
         super.selectMap(mapIndex, animationType);
-        registerListener(_saveView.resetButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-               confirmResetSaves();
-            });
+        if (_saveView.resetButton != null) {
+            registerListener(_saveView.resetButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                   confirmResetSaves();
+                });
+        }
     }
 
     protected function confirmResetSaves () :void
@@ -43,7 +59,27 @@ public class SpEndlessLevelSelectMode extends SpEndlessLevelSelectModeBase
 
     override protected function get enableResetButton () :Boolean
     {
-        return true;
+        return ClientCtx.isEndlessModeUnlocked;
+    }
+
+    override protected function get enableHelpButton () :Boolean
+    {
+        return ClientCtx.isEndlessModeUnlocked;
+    }
+
+    override protected function get enableQuitButton() :Boolean
+    {
+        return ClientCtx.isEndlessModeUnlocked;
+    }
+
+    override protected function get enableNextPrevPlayButtons() :Boolean
+    {
+        return ClientCtx.isEndlessModeUnlocked;
+    }
+
+    override protected function get showUpsell () :Boolean
+    {
+        return !ClientCtx.isEndlessModeUnlocked;
     }
 
     protected static const TEXT :String = "" +

@@ -32,6 +32,11 @@ public class SpEndlessLevelSelectModeBase extends EndlessLevelSelectModeBase
 
     override protected function onQuitClicked (...ignored) :void
     {
+        quitToMainMenu();
+    }
+
+    protected function quitToMainMenu () :void
+    {
         LevelSelectMode.create(false, animateToMode);
     }
 

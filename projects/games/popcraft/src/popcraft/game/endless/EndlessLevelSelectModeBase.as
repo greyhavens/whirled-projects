@@ -1,6 +1,7 @@
 package popcraft.game.endless {
 
 import com.threerings.flash.Vector2;
+import com.whirled.game.GameContentEvent;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.resource.*;
@@ -9,6 +10,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
@@ -245,6 +247,40 @@ public class EndlessLevelSelectModeBase extends AppMode
                     onPlayClicked(mapIndex == 0 ? _level1 : _localSaves.getSave(mapIndex));
                 });
         }
+
+        if (this.showUpsell) {
+            showUpsellScreen(_saveView);
+        }
+    }
+
+    protected function showUpsellScreen (saveView :SaveView) :void
+    {
+        if (_upsell == null) {
+            _upsell = ClientCtx.instantiateMovieClip("splashUi", "survival_upsell");
+            var closeButton :SimpleButton = _upsell["close_button"];
+            registerOneShotCallback(closeButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    onQuitClicked();
+                });
+
+            var unlockButton :SimpleButton = _upsell["unlock_button"];
+            registerListener(unlockButton, MouseEvent.CLICK,
+                function (...ignored) :void {
+                    ClientCtx.showAcademyGameShop();
+                });
+        }
+
+        _upsell.x = 0;
+        _upsell.y = -78;
+        (_saveView.displayObject as DisplayObjectContainer).addChild(_upsell);
+    }
+
+    protected function removeUpsellScreen () :void
+    {
+        if (_upsell != null) {
+            _upsell.parent.removeChild(_upsell);
+            _upsell = null;
+        }
     }
 
     protected function animateToMode (nextMode :AppMode) :void
@@ -312,6 +348,11 @@ public class EndlessLevelSelectModeBase extends AppMode
         return false;
     }
 
+    protected function get showUpsell () :Boolean
+    {
+        return false;
+    }
+
     protected function get scores () :Array
     {
         return null;
@@ -330,6 +371,7 @@ public class EndlessLevelSelectModeBase extends AppMode
     protected var _saveView :SaveView;
     protected var _initedLocalPlayerData :Boolean;
     protected var _helpView :HelpView;
+    protected var _upsell :MovieClip;
 
     protected static const ANIMATE_DOWN_TIME :Number = 0.75;
     protected static const OVERSHOOT_TIME :Number = 0.2;
@@ -795,6 +837,7 @@ class SaveView extends SceneObject
     protected var _quitButton :SimpleButton;
     protected var _helpButton :SimpleButton;
     protected var _resetButton :SimpleButton;
+    protected var _upsell :MovieClip;
 
     protected static const LOCAL_HEADSHOT_LOC :Point = new Point(-232, -63);
     protected static const REMOTE_HEADSHOT_LOC :Point = new Point(-232, -23);

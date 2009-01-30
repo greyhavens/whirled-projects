@@ -70,7 +70,7 @@ public class Constants
 
     public static const DEBUG_EXTEND_LOAD_SEQUENCE :Boolean         = false;
     public static const DEBUG_DRAW_STATS :Boolean                   = true;
-    public static const DEBUG_ALLOW_CHEATS :Boolean                 = false;
+    public static const DEBUG_ALLOW_CHEATS :Boolean                 = true;
     public static const DEBUG_DISABLE_AUDIO :Boolean                = true;
     public static const DEBUG_SKIP_LEVEL_INTRO :Boolean             = true;
     public static const DEBUG_AWARD_COMPLEAT_LEVEL_PACK :Boolean    = false;

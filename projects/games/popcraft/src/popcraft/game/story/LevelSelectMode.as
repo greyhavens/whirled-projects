@@ -127,7 +127,10 @@ public class LevelSelectMode extends DemoGameMode
                 endlessPanel.y = ENDLESS_PANEL_LOC.y;
                 _mainUiLayer.addChild(endlessPanel);
                 var endlessButton :SimpleButton = endlessPanel["challenge_button"];
-                registerListener(endlessButton, MouseEvent.CLICK, onEndlessClicked);
+                registerOneShotCallback(endlessButton, MouseEvent.CLICK,
+                    function (...ignored) :void {
+                        ClientCtx.mainLoop.pushMode(new SpEndlessLevelSelectMode());
+                    });
 
             } else {
                 // the player has played the game but hasn't unlocked endless mode.
@@ -218,7 +221,7 @@ public class LevelSelectMode extends DemoGameMode
         puzzleIntroMovie.mouseEnabled = false;
         _puzzleIntro = new SimpleSceneObject(puzzleIntroMovie);
         _puzzleIntro.x = 470;
-        _puzzleIntro.y = 395;
+        _puzzleIntro.y = 275;
         createHelpTextAnimTask(_puzzleIntro, 470, 475);
         addObject(_puzzleIntro, _mainUiLayer);
 
@@ -227,7 +230,7 @@ public class LevelSelectMode extends DemoGameMode
         unitIntroMovie.mouseEnabled = false;
         _unitIntro = new SimpleSceneObject(unitIntroMovie);
         _unitIntro.x = 9;
-        _unitIntro.y = 385;
+        _unitIntro.y = 265;
         createHelpTextAnimTask(_unitIntro, 9, 4);
         addObject(_unitIntro, _mainUiLayer);
 
@@ -236,7 +239,7 @@ public class LevelSelectMode extends DemoGameMode
         resourceIntroMovie.mouseEnabled = false;
         _resourceIntro = new SimpleSceneObject(resourceIntroMovie);
         _resourceIntro.x = 9;
-        _resourceIntro.y = 385;
+        _resourceIntro.y = 265;
         createHelpTextAnimTask(_resourceIntro, 9, 4);
         addObject(_resourceIntro, _mainUiLayer);
 
@@ -313,15 +316,6 @@ public class LevelSelectMode extends DemoGameMode
             } else {
                 playNextLevel();
             }
-        }
-    }
-
-    protected function onEndlessClicked (...ignored) :void
-    {
-        if (!ClientCtx.isEndlessModeUnlocked) {
-            ClientCtx.mainLoop.pushMode(new UpsellMode());
-        } else {
-            ClientCtx.mainLoop.pushMode(new SpEndlessLevelSelectMode());
         }
     }
 
