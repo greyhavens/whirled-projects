@@ -13,6 +13,7 @@ public class SuccessfulFeedMessage extends BaseGameMessage
     public function SuccessfulFeedMessage(biterId :int = 0, eatenId :int = 0)
     {
         super(playerId);
+        _eatenId = eatenId;
     }
     
     override public function fromBytes (bytes :ByteArray) :void
