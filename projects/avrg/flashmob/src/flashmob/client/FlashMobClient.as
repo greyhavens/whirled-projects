@@ -140,12 +140,11 @@ public class FlashMobClient extends Sprite
         // Tell the server about our party, and tell it what our avatar is
         ClientCtx.gameCtrl.agent.sendMessage(Constants.MSG_C_CLIENT_INIT,
             ClientCtx.partyInfo.toBytes());
+        ClientCtx.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
+            ClientCtx.avatarMonitor.curAvatarId);
 
         // This will put the initial AppMode into the MainLoop
         gameStateChanged(ClientCtx.props.get(Constants.PROP_GAMESTATE));
-
-        /*ClientContext.outMsg.sendMessage(Constants.MSG_C_AVATARCHANGED,
-            ClientContext.avatarMonitor.curAvatarId);*/
     }
 
     protected function get curDataListener () :GameDataListener

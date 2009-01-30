@@ -10,8 +10,8 @@
   <property name="app.server-agent-package-dir" value="flashmob/server"/>
 
   <property name="local.msoy-pages-dir" value="/export/msoy/pages/media"/>
-  <property name="local.client-name" value="e546e9353e0b9c189360850c8136a1a79ee54f1d.swf"/>
-  <property name="local.server-name" value="b6633fb44ba5a613ab4ba2738a80fdf7344b3a0b.abc"/>
+  <property name="local.client-name" value="c3f6b7f7d355a3715560dfaa7f36433fe5e38f3c.swf"/>
+  <property name="local.server-name" value="68ffda1377b586c8edcfcb116d86589ec3ddab53.abc"/>
 
   <!-- include the standard build script -->
   <import file="../../../etc/project-include.xml"/>
