@@ -294,7 +294,7 @@ public class LevelSelectMode extends DemoGameMode
         var upsellButton :SimpleButton = UIBits.createButton("Upsell", 1.2);
         registerListener(upsellButton, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientCtx.mainLoop.pushMode(new UpsellMode());
+                ClientCtx.mainLoop.pushMode(new IncidentUpsellMode());
             });
         upsellButton.x = 10;
         upsellButton.y = buttonY;
@@ -306,7 +306,7 @@ public class LevelSelectMode extends DemoGameMode
     {
         if (!ClientCtx.isStoryModeUnlocked &&
             ClientCtx.levelMgr.highestUnlockedLevelIndex >= Constants.NUM_FREE_SP_LEVELS) {
-            ClientCtx.mainLoop.pushMode(new UpsellMode());
+            ClientCtx.mainLoop.pushMode(new IncidentUpsellMode());
 
         } else {
             if (ClientCtx.levelMgr.playerBeatGame) {

@@ -11,7 +11,7 @@ import flash.events.MouseEvent;
 
 import popcraft.*;
 
-public class UpsellMode extends AppMode
+public class IncidentUpsellMode extends AppMode
 {
     override protected function setup () :void
     {

@@ -100,7 +100,7 @@ public class LevelOutroMode extends AppMode
             registerOneShotCallback(button, MouseEvent.CLICK,
                 function (...ignored) :void {
                     if (localThis.showUpsellScreen) {
-                        ClientCtx.mainLoop.pushMode(new UpsellMode());
+                        ClientCtx.mainLoop.pushMode(new IncidentUpsellMode());
                     } else {
                         ClientCtx.levelMgr.incrementCurLevelIndex();
                         ClientCtx.levelMgr.playLevel();
@@ -142,7 +142,7 @@ public class LevelOutroMode extends AppMode
         }
 
         if (!_showedUpsellMode && this.showUpsellScreen) {
-            ClientCtx.mainLoop.pushMode(new UpsellMode());
+            ClientCtx.mainLoop.pushMode(new IncidentUpsellMode());
             _showedUpsellMode = true;
         }
     }
