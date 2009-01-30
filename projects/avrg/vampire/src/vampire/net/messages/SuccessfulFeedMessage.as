@@ -4,6 +4,10 @@ import com.threerings.util.ClassUtil;
 
 import flash.utils.ByteArray;
 
+/**
+ * When a vampire successfully feeds on something.  This event is fired from the client
+ * every time a blood amount is gained.
+ */
 public class SuccessfulFeedMessage extends BaseGameMessage
 {
     public function SuccessfulFeedMessage(biterId :int = 0, eatenId :int = 0)
