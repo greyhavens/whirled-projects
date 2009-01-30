@@ -1,18 +1,14 @@
 package vampire.client {
 
 
-import com.threerings.util.HashMap;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.SimpleGame;
 
 import flash.geom.Rectangle;
 
-import vampire.client.actions.bloodbond.BloodBondMode;
-import vampire.client.actions.feed.FeedMode;
-import vampire.client.actions.fight.FightMode;
-import vampire.client.actions.hierarchy.HierarchyMode;
 import vampire.data.Constants;
+import vampire.net.MessageManager;
 
 /**
  * Client specific functions and info.
@@ -20,6 +16,7 @@ import vampire.data.Constants;
 public class ClientContext
 {
     public static var gameCtrl :AVRGameControl;
+    public static var msg :MessageManager;
     public static var game :SimpleGame;
     public static var model :GameModel;
     public static var ourPlayerId :int;
@@ -45,7 +42,7 @@ public class ClientContext
 
     public static function getPlayerName (playerId :int) :String
     {
-        if (gameCtrl.isConnected()) {
+        if (gameCtrl != null && gameCtrl.isConnected() && !Constants.LOCAL_DEBUG_MODE) {
             var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
             if (null != avatar) {
                 return avatar.name;
@@ -54,6 +51,12 @@ public class ClientContext
 
         return "player " + playerId.toString();
     }
+    
+    public static function isPlayerProps() :Boolean
+    {
+        return model.time > 0;
+    }
+    
     
 }
 
