@@ -14,6 +14,7 @@ import vampire.data.SharedPlayerStateClient;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
+import vampire.net.messages.SuccessfulFeedMessage;
 
 
 /**
@@ -152,10 +153,11 @@ public class VampireController extends Controller
     
     public function handleFeed() :void
     {
-        if( SharedPlayerStateClient.getCurrentAction( ClientContext.currentClosestPlayerId) == Constants.GAME_MODE_EAT_ME) {
+        if( SharedPlayerStateClient.getCurrentAction( ClientContext.currentClosestPlayerId) == Constants.GAME_MODE_EAT_ME &&
+            SharedPlayerStateClient.isVampire( ClientContext.ourPlayerId)) {
             
-            
-            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_FEED, ClientContext.currentClosestPlayerId );
+            ClientContext.msg.sendMessage( new SuccessfulFeedMessage( ClientContext.ourPlayerId, ClientContext.currentClosestPlayerId));
+//            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_FEED, ClientContext.currentClosestPlayerId );
         }
     }
     
