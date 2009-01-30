@@ -16,6 +16,7 @@ import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
+import vampire.net.messages.SuccessfulFeedMessage;
 
 
 public class Player
@@ -28,6 +29,7 @@ public class Player
             log.error("Bad!  Player(null).  What happened to the PlayerSubControlServer?  Expect random failures everywhere.");
             return;
         }
+        log.info("\nPlayer() {{{");
         
         _ctrl = ctrl;
         _playerId = ctrl.getPlayerId();
@@ -36,17 +38,38 @@ public class Player
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
         
         _sharedState = new SharedPlayerStateServer( ctrl.props );
+        log.debug( Constants.DEBUG_MINION + " Player object creation, already on the database=" + _sharedState.toString());
         
+        //testing
+        if( playerId == 35282) {
+            _sharedState.setLevel( 0, true);
+        }
+        
+        if( !isVampire() ) {//If you are not a vampire, you must be fed upon.
+            _sharedState.setBlood( 0, true );
+        }
         
         if (level == 0) {
             log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
             _sharedState.setLevel(1, true);
             _sharedState.setBloodBonded([]);
-            _sharedState.setBlood( _sharedState.maxBlood, true );
+//            _sharedState.setBlood( _sharedState.maxBlood, true );
             _sharedState.setSire( VServer.getSireFromInvitee( _playerId ) );
+            _sharedState.setTime( 1 );//O means no props loaded, 1 means new player
+            
         } 
         
-        log.debug("In Player, _sharedState=" + _sharedState);
+//        ServerContext.minionHierarchy.setPlayerSire( playerId, sire );
+//        ServerContext.minionHierarchy._playerId2Name.put( playerId, _sharedState.name );//Can't put this here maybe
+//        var minionsToAddToServerHierarchy :Array = minions;
+//        for each( var minionId :int in minionsToAddToServerHierarchy) {
+//            ServerContext.minionHierarchy.setPlayerSire( minionId, playerId );
+//        }
+        
+        
+//        log.debug( Constants.DEBUG_MINION + " Player object creation, hierarch=" + ServerContext.minionHierarchy);
+//        log.debug("hierarchy=" + ServerContext.minionHierarchy);
+        
         
         setAction( Constants.GAME_MODE_NOTHING );
         //if we're in a room, update the room properties
@@ -57,7 +80,7 @@ public class Player
         setBlood( blood, true);
         
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
-        if( _sharedState.time != 0) {
+        if( _sharedState.time > 1) {
             var date :Date = new Date();
             var now :Number = date.time;
             var millisecondsSinceLastAwake :Number = now - _sharedState.time;
@@ -67,15 +90,17 @@ public class Player
             var hoursSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60);
             log.debug("hoursSinceLastAwake=" + hoursSinceLastAwake);
             log.debug("secondSinceLastAwake=" + (millisecondsSinceLastAwake/1000));
-            var bloodReduction :Number = Constants.BLOOD_LOSS_HOURLY_RATE * hoursSinceLastAwake;
+            var bloodReduction :Number = Constants.BLOOD_LOSS_HOURLY_RATE * hoursSinceLastAwake * maxBlood;
             log.debug("bloodReduction=" + bloodReduction);
-            var bloodnow :Number = blood;
-            bloodnow -= bloodReduction;
-            bloodnow = Math.max( Constants.MINMUM_BLOOD_AFTER_SLEEPING, bloodnow);
-            setBlood( bloodnow );
+            bloodReduction = Math.min( bloodReduction, blood - 1);
+            sendChat( "Blood lost during sleep: " + bloodReduction);
+            damage( bloodReduction );
             
-            log.debug("bloodnow=" + bloodnow, "in props", blood);
+//            log.debug("bloodnow=" + bloodnow, "in props", blood);
             
+        }
+        else {
+            log.debug("We have not played before, so not computing blood reduction");
         }
 
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
@@ -84,6 +109,16 @@ public class Player
         if (_room != null) {
             _room.playerUpdated(this);
         }
+        
+        
+        log.debug("end of Player()=" + _sharedState.toString());
+        log.info("end }}}\n");
+    }
+    
+    public function sendChat( msg :String ) :void
+    {
+        log.debug("Sending CHAT: " + msg);
+        _ctrl.sendMessage( Constants.NAMED_EVENT_CHAT, msg); 
     }
 
     public function get ctrl () :PlayerSubControlServer
@@ -125,6 +160,11 @@ public class Player
         return _sharedState.action;
     }
     
+    public function get name () :String
+    {
+        return _sharedState.name;
+    }
+    
     public function get bloodbonded () :Array
     {
         return _sharedState.bloodbonded;
@@ -145,29 +185,6 @@ public class Player
         return _sharedState.time;
     }
 
-    protected function XXXsetLevel (level :int, force :Boolean = false) :void
-    {
-//        level = Math.max(1, level);
-//        if (!force && level == _level) {
-//            return;
-//        }
-//
-//        log.info("Level changed!", "playerId", playerId, "oldLevel", _level, "newLevel", level);
-//
-//        _level = level;
-//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
-//
-//        // update our max blood
-//        _maxBlood = getMaxBloodForLevel( _level );
-
-        // heal us, too
-//        heal(_maxBlood);
-
-        // if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
-    }
     // from Equalable
     public function equals (other :Object) :Boolean
     {
@@ -199,6 +216,12 @@ public class Player
 
     public function shutdown () :void
     {
+        log.debug( Constants.DEBUG_MINION + " Player shutdown, on database=" + (new SharedPlayerStateServer( _ctrl.props ).toString()));
+        
+        log.info("\nPlayer.shutdown() {{{", "player", _sharedState.toString());
+        log.debug("hierarchy=" + ServerContext.minionHierarchy);
+        
+        
         var currentTime :Number = new Date().time;
         log.info("shutdown()", "currentTime", new Date(currentTime).toTimeString());
         _sharedState.setTime( currentTime, true );
@@ -209,6 +232,8 @@ public class Player
         _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
         log.info("end of player shutdown", "time", new Date(_ctrl.props.get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+        log.info("props actually in the database", "props", new SharedPlayerStateServer(_ctrl.props).toString());
+        log.info("}}}");
     }
 
     public function damage (damage :Number) :void
@@ -225,8 +250,23 @@ public class Player
 
     public function addBlood (amount :Number) :void
     {
-        if (!isDead()) {
+//        if (!isDead()) {
             setBlood(blood + amount); // note: setBlood clamps this to [0, maxBlood]
+//        }
+
+        if( blood >= maxBlood) {
+            increaseLevel();
+        }
+    }
+    
+    public function increaseLevel() :void
+    {
+        var newlevel :int = level + 1;
+        log.debug("Increasing level", "oldlevel", level, "newlevel", newlevel);
+        _sharedState.setLevel( newlevel );
+        _sharedState.setBlood( 0.1 * maxBlood );//Also updates the room
+        if (_room != null) {
+            _room.playerUpdated(this);
         }
     }
     
@@ -285,6 +325,18 @@ public class Player
             _room.playerUpdated(this);
         }
     }
+    
+    public function setName (newName :String, force :Boolean = false) :void
+    {
+        
+        if (!force && newName == this.name) {
+            return;
+        }
+        _sharedState.setName( newName, force );
+        
+        // always update our avatar state
+//        updateAvatarState();
+    }
 
     public function roomStateChanged () :void
     {
@@ -296,15 +348,25 @@ public class Player
     {
         // handle messages that make (at least some) sense even if we're between rooms
         log.debug("handleMessage() ", "name", name, "value", value);
-        trace("handleMessage() ", "name", name, "value", value);
         if( name == Constants.NAMED_EVENT_BLOOD_UP ) {
-            setBlood( blood + 10 );
+            addBlood(20 );
         }
         else if( name == Constants.NAMED_EVENT_BLOOD_DOWN ) {
-            setBlood( blood - 10 );
+            damage( 20 );
+//            setBlood( blood - 20 );
         }
         else if( name == Constants.NAMED_EVENT_FEED ) {
             feed(int(value));
+        }
+        else if( name == Constants.NAMED_EVENT_MAKE_SIRE ) {
+            makeSire(int(value));
+        }
+        else if( name == Constants.NAMED_EVENT_MAKE_MINION ) {
+            makeMinion(int(value));
+        }
+        else if( name == Constants.NAMED_EVENT_QUIT ) {
+            var now :Number = new Date().time;
+            _sharedState.setTime( now , true);
         }
         
         else if( value is IGameMessage) {
@@ -318,12 +380,86 @@ public class Player
             else if( value is FeedRequestMessage) {
                 handleFeedRequestMessage( FeedRequestMessage(value) );
             }
+            else if( value is SuccessfulFeedMessage) {
+                handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
+            }
             else {
                 log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
                 log.debug("  Classname=" + ClassUtil.getClassName(value) );
             }
         }
         
+    }
+    
+    protected function handleSuccessfulFeedMessage( e :SuccessfulFeedMessage ) :void
+    {
+        var bloodIncrement :Number = 10;
+        
+        if( !isVampire() || action != Constants.GAME_MODE_FEED || e.eatenPlayerId == 0) {
+            log.error("handleSuccessfulFeedMessage, but not a vampire or feeding, or eaten==0.", "SuccessfulFeedMessage", e);
+            return;
+        }
+        
+        //Different result depending if victim is human (playing the game or not), or vampire.
+        if( e.eatenPlayerId == Constants.PLAYER_ID_NON_PLAYER) {//Vampire feeding from a non-player
+            log.warning("handleSuccessfulFeedMessage " + e);
+            addBlood( bloodIncrement );
+        }
+        else {
+            
+            var victim :Player = VServer.getPlayer( e.eatenPlayerId );
+            if( victim == null ) {
+                log.error("handleSuccessfulFeedMessage,no victim.", "SuccessfulFeedMessage", e);
+                return;
+            }
+            
+            log.warning("handleSuccessfulFeedMessage " + e);
+            if( victim.isVampire()) {
+                //You can only take blood that they have to give
+                var bloodTakenFromVampire :Number = bloodIncrement;
+                if( victim.blood < bloodIncrement + 1) {
+                    bloodTakenFromVampire = victim.blood - 1;
+                }
+                victim.damage( bloodTakenFromVampire );
+                addBlood( bloodTakenFromVampire / 2 );
+            }
+            else {//Human thrall.  They get 'blood' too, except it isn't blood.  It's wannabe vampire juice
+                log.warning(" added blood ");
+                log.warning(" added joy ");
+                victim.addBlood( 10 );
+                addBlood( bloodIncrement );
+            }
+            
+        }
+    }
+    protected function makeSire(targetPlayerId :int ) :void
+    {
+        log.info("makeSire(" + targetPlayerId + ")");
+        ServerContext.minionHierarchy.setPlayerSire( playerId, targetPlayerId);
+        
+        _sharedState.setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
+        _sharedState.setSire( ServerContext.minionHierarchy.getSireId( playerId ) ); 
+//        if( ServerContext.minionHierarchy.getSire( targetPlayerId ) == playerId) {
+//            ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, -1);    
+//        }
+
+        VServer.updateHierarchyInAllRooms();
+//        room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
+//        sendChat( ServerContext.minionHierarchy.toString() );
+        
+    }
+    
+    protected function makeMinion(targetPlayerId :int ) :void
+    {
+        log.info("makeMinion(" + targetPlayerId + ")");
+        ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, playerId);
+        
+        _sharedState.setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
+        _sharedState.setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
+        
+        VServer.updateHierarchyInAllRooms();
+//        room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
+//        sendChat( ServerContext.minionHierarchy.toString() );
     }
     
     protected function feed(targetPlayerId :int ) :void
@@ -351,6 +487,7 @@ public class Player
         }
         log.debug("Sucessful feed.");
         addBlood( bloodEaten );
+        VServer.playerGainedBlood( this, bloodEaten, targetPlayerId);
         eatenPlayer.removeBlood( bloodEaten );
     }
     
@@ -493,13 +630,35 @@ public class Player
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
+        
+        log.info("\nPlayer entered room {{{", "player", _sharedState.toString());
+        log.debug("hierarchy=" + ServerContext.minionHierarchy);
+        
+        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + _sharedState.toString());
+        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
+        
         var thisPlayer :Player = this;
         _room = VServer.getRoom(int(evt.value));
         VServer.control.doBatch(function () :void {
             _room.playerEntered(thisPlayer);
             updateAvatarState();
         });
+
+        ServerContext.minionHierarchy.playerEnteredRoom( this, _room);
+        log.debug("after _room.playerEntered");
+        log.debug("hierarchy=" + ServerContext.minionHierarchy);
+        log.info("player" + _sharedState.toString());
+        log.info("}}}");
         
+        
+
+        
+        
+    }
+    
+    public function isVampire() :Boolean
+    {
+        return level >= Constants.MINIMUM_VAMPIRE_LEVEL;
     }
 
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
