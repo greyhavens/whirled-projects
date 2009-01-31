@@ -118,6 +118,17 @@ public class LevelSelectMode extends DemoGameMode
         _playButtonObj = new SimpleSceneObject(playButton);
         addObject(_playButtonObj, _mainUiLayer);
 
+        // show the select panel, which contains the Multiplayer button
+        var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "select_panel");
+        var multiplayerButton :SimpleButton = selectPanel["multiplayer_button"];
+        registerListener(multiplayerButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.showMultiplayerLobby();
+            });
+        selectPanel.x = MULTIPLAYER_PANEL_LOC.x;
+        selectPanel.y = MULTIPLAYER_PANEL_LOC.y;
+        _mainUiLayer.addChild(selectPanel);
+
         if (playerStartedGame) {
             if (ClientCtx.levelMgr.highestUnlockedLevelIndex > Constants.UNLOCK_ENDLESS_AFTER_LEVEL) {
                 // The player has unlocked endless mode. Show the endless mode button
@@ -145,17 +156,6 @@ public class LevelSelectMode extends DemoGameMode
             // it's the player's first time playing: show them the tutorial
             createTutorialLayout();
         }
-
-        // show the select panel, which contains the Multiplayer button
-        var selectPanel :MovieClip = ClientCtx.instantiateMovieClip("splashUi", "select_panel");
-        var multiplayerButton :SimpleButton = selectPanel["multiplayer_button"];
-        registerListener(multiplayerButton, MouseEvent.CLICK,
-            function (...ignored) :void {
-                ClientCtx.showMultiplayerLobby();
-            });
-        selectPanel.x = MULTIPLAYER_PANEL_LOC.x;
-        selectPanel.y = MULTIPLAYER_PANEL_LOC.y;
-        _mainUiLayer.addChild(selectPanel);
 
         // Level Select and About buttons
         if (playerStartedGame) {

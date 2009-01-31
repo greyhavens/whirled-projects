@@ -1,5 +1,6 @@
 package popcraft.game.mpbattle {
 
+import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.util.Rand;
@@ -92,9 +93,24 @@ public class MultiplayerGameMode extends GameMode
                 return !pdd.excludeFromMpBattle;
             });
 
+        var playerIndex :int;
+        var playerColor :uint;
+        // Some players have fixed player colors. Others have randomized player colors.
+        // Remove all fixed players' colors from the pool of potential colors that
+        // the randomized players pull from
+        for (playerIndex = 0; playerIndex < numPlayers; ++playerIndex) {
+            playerColor = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
+            if (playerColor != Constants.RANDOM_COLOR) {
+                ArrayUtil.removeAllIf(playerDisplayDatas,
+                    function (pdd :PlayerDisplayData) :Boolean {
+                        return pdd.color == playerColor
+                    });
+            }
+        }
+
         // create PlayerInfo structures
         GameCtx.playerInfos = [];
-        for (var playerIndex :int = 0; playerIndex < numPlayers; ++playerIndex) {
+        for (playerIndex = 0; playerIndex < numPlayers; ++playerIndex) {
             teamId = teams[playerIndex];
             teamInfo = teamInfos[teamId];
             var baseLoc :BaseLocationData = teamInfo.baseLocs.shift();
@@ -108,7 +124,7 @@ public class MultiplayerGameMode extends GameMode
                 handicap *= Constants.HANDICAPPED_MULTIPLIER;
             }
 
-            var playerColor :uint = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
+            playerColor = ClientCtx.lobbyConfig.getPlayerColor(playerIndex);
             if (playerColor == Constants.RANDOM_COLOR) {
                 // choose a random color for this player
                 var index :int = Rand.nextIntRange(0, playerDisplayDatas.length, Rand.STREAM_GAME);
