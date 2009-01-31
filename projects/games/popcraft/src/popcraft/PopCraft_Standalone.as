@@ -2,11 +2,19 @@ package popcraft {
 
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 
+import popcraft.server.Server;
+
 [SWF(width="700", height="500", frameRate="30")]
 public class PopCraft_Standalone extends PopCraft
 {
+    protected static function DEBUG_REMOVE_ME () :void
+    {
+        var c :Class = Server;
+    }
+
     public function PopCraft_Standalone ()
     {
+        DEBUG_REMOVE_ME();
         Constants.DEBUG_LOAD_LEVELS_FROM_DISK = true;
     }
 

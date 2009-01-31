@@ -26,7 +26,6 @@ import popcraft.game.*;
 import popcraft.game.mpbattle.*;
 import popcraft.game.story.*;
 import popcraft.net.*;
-import popcraft.server.Server;
 import popcraft.ui.*;
 import popcraft.util.*;
 
@@ -35,15 +34,8 @@ public class PopCraft extends Sprite
 {
     public static var log :Log = Log.getLog(PopCraft);
 
-    protected static function DEBUG_REMOVE_ME () :void
-    {
-        var c :Class = Server;
-    }
-
     public function PopCraft ()
     {
-        DEBUG_REMOVE_ME(); //
-
         ClientCtx.mainSprite = this;
 
         // setup GameControl
