@@ -6,10 +6,10 @@ import com.whirled.contrib.simplegame.audio.*;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.text.TextField;
 
 import popcraft.*;
-import popcraft.game.story.LevelSelectMode;
 import popcraft.ui.UIBits;
 
 public class MultiplayerFailureMode extends TransitionMode
@@ -28,16 +28,16 @@ public class MultiplayerFailureMode extends TransitionMode
         tfOutcome.y = 0;
         windowElements.addChild(tfOutcome);
 
-        var playAgain :SimpleButton = UIBits.createButton("Gather Another Game", 2.5, 300);
+        var playAgain :SimpleButton = UIBits.createButton("Try Again?", 2.5, 300);
         playAgain.x = -(playAgain.width * 0.5);
         playAgain.y = windowElements.height + 20;
         windowElements.addChild(playAgain);
         registerOneShotCallback(playAgain, MouseEvent.CLICK,
             function (...ignored) :void {
-                ClientCtx.showMultiplayerLobby();
+                ClientCtx.showCombinedLobby();
             });
 
-        var singlePlayerButton :SimpleButton = UIBits.createButton("Play Alone", 1.5, 300);
+       /*var singlePlayerButton :SimpleButton = UIBits.createButton("Play Alone", 1.5, 300);
         singlePlayerButton.x = -(singlePlayerButton.width * 0.5);
         singlePlayerButton.y = windowElements.height + 20;
         windowElements.addChild(singlePlayerButton);
@@ -45,15 +45,16 @@ public class MultiplayerFailureMode extends TransitionMode
             function (...ignored) :void {
                 Resources.loadLevelPackResources(Resources.SP_LEVEL_PACK_RESOURCES,
                                                  LevelSelectMode.create);
-            });
+
+            });*/
 
         var frame :Sprite = UIBits.createFrame(WIDTH, HEIGHT);
-        frame.x = (Constants.SCREEN_SIZE.x - WIDTH) * 0.5;
-        frame.y = (Constants.SCREEN_SIZE.y - frame.height) * 0.5;
+        frame.x = WINDOW_CTR.x - (WIDTH * 0.5);
+        frame.y = WINDOW_CTR.y - (HEIGHT * 0.5);
         _modeLayer.addChild(frame);
 
-        windowElements.x = Constants.SCREEN_SIZE.x * 0.5;
-        windowElements.y = (Constants.SCREEN_SIZE.y - windowElements.height) * 0.5;
+        windowElements.x = WINDOW_CTR.x;
+        windowElements.y = WINDOW_CTR.y - (windowElements.height * 0.5);
         _modeLayer.addChild(windowElements);
     }
 
@@ -66,7 +67,9 @@ public class MultiplayerFailureMode extends TransitionMode
     protected var _soundChannel :AudioChannel;
 
     protected static const WIDTH :Number = 370;
-    protected static const HEIGHT :Number = 250;
+    protected static const HEIGHT :Number = 150;
+
+    protected static const WINDOW_CTR :Point = new Point(350, 290);
 }
 
 }

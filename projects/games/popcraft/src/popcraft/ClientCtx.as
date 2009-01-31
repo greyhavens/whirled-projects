@@ -120,6 +120,13 @@ public class ClientCtx
         }
     }
 
+    public static function showCombinedLobby () :void
+    {
+        if (gameCtrl.isConnected()) {
+            gameCtrl.local.showGameLobby(false);
+        }
+    }
+
     public static function showIncidentGameShop () :void
     {
         if (gameCtrl.isConnected()) {
