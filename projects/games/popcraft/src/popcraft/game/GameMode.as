@@ -301,6 +301,7 @@ public class GameMode extends TransitionMode
             break;
 
         case KeyboardCodes.SHIFT:
+        case KeyboardCodes.SPACE:
             cycleLocalPlayerTargetEnemy();
             break;
 
