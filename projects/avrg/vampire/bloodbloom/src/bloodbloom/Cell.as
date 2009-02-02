@@ -3,6 +3,7 @@ package bloodbloom {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.AlphaTask;
+import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -26,6 +27,8 @@ public class Cell extends SceneObject
         bitmap.y = -bitmap.height * 0.5;
         _sprite.addChild(bitmap);
 
+        _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
+
         // fade in
         if (fadeIn) {
             this.alpha = 0;
@@ -37,10 +40,16 @@ public class Cell extends SceneObject
     {
         var loc :Vector2 = new Vector2(this.x, this.y);
         var ctrImpulse :Vector2 = loc.subtract(Constants.GAME_CTR);
-        ctrImpulse.length = SPEED * dt;
+        ctrImpulse.length = 1;
 
-        loc.x += ctrImpulse.x;
-        loc.y += ctrImpulse.y;
+        var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+        perpImpulse.length = 3.5;
+
+        var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+        impulse.length = SPEED * dt;
+
+        loc.x += impulse.x;
+        loc.y += impulse.y;
         loc = ClientCtx.clampToGame(loc);
 
         this.x = loc.x;
@@ -63,6 +72,7 @@ public class Cell extends SceneObject
 
     protected var _type :int;
     protected var _sprite :Sprite;
+    protected var _moveCCW :Boolean;
 
     protected static const SPEED :Number = 5;
 }
