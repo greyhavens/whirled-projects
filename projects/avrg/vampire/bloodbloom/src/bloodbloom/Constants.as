@@ -8,11 +8,16 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const PREY_SPEED_BASE :Number = 45;
-    public static const PREY_SPEED_CELL_OFFSET :Number = -5;
-    public static const PREY_SPEED_MIN :Number = 5;
+    public static const PREY_SPEED_BASE :Number = 65;
+    public static const PREY_SPEED_CELL_OFFSET :Number = -10;
+    public static const PREY_SPEED_MIN :Number = 15;
+
+    public static const CURSOR_RADIUS :Number = 9;
 
     public static const BEAT_TIME :Number = 1;
+
+    public static const ARTERY_TOP :int = 0;
+    public static const ARTERY_BOTTOM :int = 1;
 
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;

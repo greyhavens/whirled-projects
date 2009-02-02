@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.objects.SceneObject;
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 public class PreyCursor extends SceneObject
 {
@@ -24,24 +25,68 @@ public class PreyCursor extends SceneObject
             ClientCtx.gameMode.modeSprite.mouseX,
             ClientCtx.gameMode.modeSprite.mouseY);
 
-        var curLoc :Vector2 = new Vector2(this.x, this.y);
+        var oldLoc :Vector2 = new Vector2(this.x, this.y);
 
-        if (curLoc.similar(targetLoc, 0.5)) {
+        if (oldLoc.similar(targetLoc, 0.5)) {
             return;
         }
 
-        var newLoc :Vector2 = targetLoc.subtract(curLoc);
-        var dist :Number = newLoc.normalizeLocalAndGetLength();
-        newLoc.scale(Math.min(dist, this.speed * dt));
-        newLoc.addLocal(curLoc);
+        var newLoc :Vector2 = targetLoc.subtract(oldLoc);
+        var targetDist :Number = newLoc.normalizeLocalAndGetLength();
+        var moveDist :Number = this.speed * dt;
+        newLoc.scaleLocal(Math.min(targetDist, moveDist));
+        newLoc.addLocal(oldLoc);
         newLoc = ClientCtx.clampLoc(newLoc);
 
         this.x = newLoc.x;
         this.y = newLoc.y;
 
         // rotate the bitmap. 0 degrees == straight up
-        var angle :Number = newLoc.subtract(curLoc).angle * (180 / Math.PI);
+        var angle :Number = newLoc.subtract(oldLoc).angle * (180 / Math.PI);
         this.rotation = angle + 90;
+
+        // collide with cells
+        var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
+        if (cell != null) {
+            var bm :Bitmap = ClientCtx.instantiateBitmap(cell.type == Constants.CELL_RED ?
+                                                         "red_cell" : "white_cell");
+            var loc :Point = this.displayObject.globalToLocal(new Point(cell.x, cell.y));
+            loc.x -= bm.width * 0.5;
+            loc.y -= bm.height * 0.5;
+            bm.x = loc.x;
+            bm.y = loc.y;
+            _sprite.addChild(bm);
+
+            if (cell.type == Constants.CELL_RED) {
+                _redCells.push(bm);
+            } else {
+                _whiteCells.push(bm);
+            }
+
+            cell.destroySelf();
+        }
+
+        // collide with the arteries
+        var crossedCtr :Boolean =
+            (this.x >= Constants.GAME_CTR.x && oldLoc.x < Constants.GAME_CTR.x) ||
+            (this.x <= Constants.GAME_CTR.x && oldLoc.x > Constants.GAME_CTR.x);
+
+        var artery :int = -1;
+        if (crossedCtr) {
+            if (this.y < Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_TOP)) {
+                artery = Constants.ARTERY_TOP;
+            } else if (this.y >= Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_BOTTOM)) {
+                artery = Constants.ARTERY_BOTTOM;
+            }
+
+            if (artery != -1) {
+                collideArtery(artery);
+            } else {
+                // we're prevented from crossing the artery
+                this.x = (this.x >= Constants.GAME_CTR.x ?
+                            Constants.GAME_CTR.x - 1 : Constants.GAME_CTR.x + 1);
+            }
+        }
     }
 
     override public function get displayObject () :DisplayObject
@@ -51,10 +96,39 @@ public class PreyCursor extends SceneObject
 
     protected function get speed () :Number
     {
-        return Constants.PREY_SPEED_BASE;
+        var speed :Number = Math.max(
+            Constants.PREY_SPEED_BASE + (Constants.PREY_SPEED_CELL_OFFSET * _redCells.length),
+            Constants.PREY_SPEED_MIN);
+
+        return speed;
+    }
+
+    protected function collideArtery (arteryType :int) :void
+    {
+        // get rid of cells
+        var cellDisplay :DisplayObject;
+        for each (cellDisplay in _redCells) {
+            cellDisplay.parent.removeChild(cellDisplay);
+        }
+        for each (cellDisplay in _whiteCells) {
+            cellDisplay.parent.removeChild(cellDisplay);
+        }
+        _redCells = [];
+        _whiteCells = [];
+
+        _lastArtery = arteryType;
+    }
+
+    protected function canCollideArtery (arteryType :int) :Boolean
+    {
+        return _lastArtery != arteryType && _whiteCells.length > 0;
     }
 
     protected var _sprite :Sprite;
+    protected var _redCells :Array = [];
+    protected var _whiteCells :Array = [];
+
+    protected var _lastArtery :int = -1;
 }
 
 }

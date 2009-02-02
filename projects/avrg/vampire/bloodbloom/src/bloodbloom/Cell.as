@@ -1,8 +1,10 @@
 package bloodbloom {
 
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.AlphaTask;
+import com.whirled.contrib.simplegame.util.Collision;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
@@ -14,6 +16,22 @@ public class Cell extends SceneObject
     public static function getCellCount (type :int) :int
     {
         return ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell_" + type).length;
+    }
+
+    public static function getCellCollision (loc :Vector2, radius :Number) :Cell
+    {
+        // returns the first cell that collides with the given circle
+        var cells :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell");
+
+        for each (var cellRef :SimObjectRef in cells) {
+            var cell :Cell = cellRef.object as Cell;
+            if (cell != null &&
+                Collision.circlesIntersect(cell._loc, Constants.CELL_RADIUS, loc, radius)) {
+                return cell;
+            }
+        }
+
+        return null;
     }
 
     public function Cell (type :int, fadeIn :Boolean)
@@ -38,8 +56,10 @@ public class Cell extends SceneObject
 
     override protected function update (dt :Number) :void
     {
-        var loc :Vector2 = new Vector2(this.x, this.y);
-        var ctrImpulse :Vector2 = loc.subtract(Constants.GAME_CTR);
+        _loc.x = this.x;
+        _loc.y = this.y;
+
+        var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
         ctrImpulse.length = 1;
 
         var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
@@ -48,20 +68,20 @@ public class Cell extends SceneObject
         var impulse :Vector2 = ctrImpulse.add(perpImpulse);
         impulse.length = SPEED * dt;
 
-        loc.x += impulse.x;
-        loc.y += impulse.y;
-        loc = ClientCtx.clampLoc(loc);
+        _loc.x += impulse.x;
+        _loc.y += impulse.y;
+        _loc = ClientCtx.clampLoc(_loc);
 
-        this.x = loc.x;
-        this.y = loc.y;
+        this.x = _loc.x;
+        this.y = _loc.y;
     }
 
     override public function getObjectGroup (groupNum :int) :String
     {
-        if (groupNum == 0) {
-            return "Cell_" + _type;
-        } else {
-            return super.getObjectGroup(groupNum - 1);
+        switch (groupNum) {
+        case 0:     return "Cell_" + _type;
+        case 1:     return "Cell";
+        default:    return super.getObjectGroup(groupNum - 2);
         }
     }
 
@@ -70,9 +90,15 @@ public class Cell extends SceneObject
         return _sprite;
     }
 
+    public function get type () :int
+    {
+        return _type;
+    }
+
     protected var _type :int;
     protected var _sprite :Sprite;
     protected var _moveCCW :Boolean;
+    protected var _loc :Vector2 = new Vector2();
 
     protected static const SPEED :Number = 5;
 }
