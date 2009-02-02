@@ -7,6 +7,8 @@ import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
+import mx.effects.easing.*;
+
 public class Heart extends SceneObject
 {
     public function Heart ()
@@ -17,16 +19,26 @@ public class Heart extends SceneObject
         heart.x = -heart.width * 0.5;
         heart.y = -heart.height * 0.5;
         _sprite.addChild(heart);
-
-        this.heartbeatTime = BASE_HEARTBEAT;
     }
 
-    public function set heartbeatTime (val :Number) :void
+    override protected function update (dt :Number) :void
     {
-        removeAllTasks();
-        addTask(new RepeatingTask(
-            ScaleTask.CreateEaseIn(SCALE_BIG, SCALE_BIG, val * 0.5),
-            ScaleTask.CreateEaseOut(SCALE_SMALL, SCALE_SMALL, val * 0.5)));
+        // the heart scales with the game beat
+        // get a value between -1 and 1
+        // [-1, 0] -> heart is shrinking
+        // [0, 1] -> heart is growing
+        var beatPhase :Number = (ClientCtx.beat.pctTimeToNextBeat - 0.5) * 2;
+        var easeFn :Function =
+            (beatPhase < 0 ? mx.effects.easing.Cubic.easeIn : mx.effects.easing.Cubic.easeOut);
+
+        var scale :Number = easeFn(
+            Math.abs(beatPhase),        // time
+            SCALE_SMALL,                // initial value
+            (SCALE_BIG - SCALE_SMALL),  // total change
+            1);                         // duration
+
+        this.scaleX = scale;
+        this.scaleY = scale;
     }
 
     override public function get displayObject () :DisplayObject
@@ -36,8 +48,7 @@ public class Heart extends SceneObject
 
     protected var _sprite :Sprite;
 
-    protected static const BASE_HEARTBEAT :Number = 1;
-    protected static const SCALE_BIG :Number = 1.15;
+    protected static const SCALE_BIG :Number = 1.3;
     protected static const SCALE_SMALL :Number = 1;
 }
 

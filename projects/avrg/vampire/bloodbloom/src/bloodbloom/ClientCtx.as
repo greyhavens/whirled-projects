@@ -13,6 +13,9 @@ public class ClientCtx
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
 
+    public static var gameMode :GameMode;
+    public static var beat :Beat;
+
     public static function instantiateBitmap (name :String) :Bitmap
     {
         return ImageResource.instantiateBitmap(rsrcs, name);

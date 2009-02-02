@@ -13,6 +13,10 @@ public class GameMode extends AppMode
     {
         super.setup();
 
+        ClientCtx.gameMode = this;
+        ClientCtx.beat = new Beat();
+        addObject(ClientCtx.beat);
+
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
 
         _heart = new Heart();
@@ -60,7 +64,19 @@ public class GameMode extends AppMode
         addObject(cell, _modeSprite);
     }
 
+    override public function update (dt :Number) :void
+    {
+        super.update(dt);
+        _modeTime += dt;
+    }
+
+    public function get modeTime () :Number
+    {
+        return _modeTime;
+    }
+
     protected var _heart :Heart;
+    protected var _modeTime :Number = 0;
 }
 
 }
