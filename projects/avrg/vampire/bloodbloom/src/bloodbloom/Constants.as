@@ -8,7 +8,7 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const PREY_SPEED_BASE :Number = 30;
+    public static const PREY_SPEED_BASE :Number = 45;
     public static const PREY_SPEED_CELL_OFFSET :Number = -5;
     public static const PREY_SPEED_MIN :Number = 5;
 

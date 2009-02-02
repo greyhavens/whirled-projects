@@ -7,6 +7,8 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
+import flash.display.Sprite;
+
 public class GameMode extends AppMode
 {
     override protected function setup () :void
@@ -17,12 +19,16 @@ public class GameMode extends AppMode
         ClientCtx.beat = new Beat();
         addObject(ClientCtx.beat);
 
+        _cellLayer = new Sprite();
+        _cursorLayer = new Sprite();
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
+        _modeSprite.addChild(_cellLayer);
+        _modeSprite.addChild(_cursorLayer);
 
         _heart = new Heart();
         _heart.x = Constants.GAME_CTR.x;
         _heart.y = Constants.GAME_CTR.y;
-        addObject(_heart, _modeSprite);
+        addObject(_heart, _cellLayer);
 
         // setup cells
         for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
@@ -39,6 +45,8 @@ public class GameMode extends AppMode
                 new FunctionTask(createCellSpawnCallback(type))));
             addObject(spawner);
         }
+
+        addObject(new PreyCursor(), _cursorLayer);
     }
 
     protected function createCellSpawnCallback (type :int) :Function
@@ -61,7 +69,7 @@ public class GameMode extends AppMode
         var cell :Cell = new Cell(type, fadeIn);
         cell.x = loc.x;
         cell.y = loc.y;
-        addObject(cell, _modeSprite);
+        addObject(cell, _cellLayer);
     }
 
     override public function update (dt :Number) :void
@@ -77,6 +85,9 @@ public class GameMode extends AppMode
 
     protected var _heart :Heart;
     protected var _modeTime :Number = 0;
+
+    protected var _cellLayer :Sprite;
+    protected var _cursorLayer :Sprite;
 }
 
 }

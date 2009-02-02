@@ -22,7 +22,7 @@ public class ClientCtx
     }
 
     // Returns a new Vector, clamped within the bounds of the game
-    public static function clampToGame (loc :Vector2) :Vector2
+    public static function clampLoc (loc :Vector2) :Vector2
     {
         var v :Vector2 = loc.subtract(Constants.GAME_CTR);
         if (v.lengthSquared > Constants.GAME_RADIUS2) {

@@ -50,7 +50,7 @@ public class Cell extends SceneObject
 
         loc.x += impulse.x;
         loc.y += impulse.y;
-        loc = ClientCtx.clampToGame(loc);
+        loc = ClientCtx.clampLoc(loc);
 
         this.x = loc.x;
         this.y = loc.y;
