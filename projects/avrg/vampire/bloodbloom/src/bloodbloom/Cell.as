@@ -18,10 +18,11 @@ public class Cell extends SceneObject
         return ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell_" + type).length;
     }
 
-    public static function getCellCollision (loc :Vector2, radius :Number) :Cell
+    public static function getCellCollision (loc :Vector2, radius :Number, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
-        var cells :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell");
+        var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
+        var cells :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup(groupName);
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
@@ -93,6 +94,16 @@ public class Cell extends SceneObject
     public function get type () :int
     {
         return _type;
+    }
+
+    public function get isRedCell () :Boolean
+    {
+        return _type == Constants.CELL_RED;
+    }
+
+    public function get isWhiteCell () :Boolean
+    {
+        return _type == Constants.CELL_WHITE;
     }
 
     protected var _type :int;

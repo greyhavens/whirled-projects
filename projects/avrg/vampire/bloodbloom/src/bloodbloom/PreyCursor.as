@@ -10,8 +10,9 @@ import flash.geom.Point;
 
 public class PreyCursor extends SceneObject
 {
-    public function PreyCursor ()
+    public function PreyCursor (controlledLocally :Boolean)
     {
+        _controlledLocally = controlledLocally;
         _sprite = new Sprite();
         var bitmap :Bitmap = ClientCtx.instantiateBitmap("prey_cursor");
         bitmap.x = -bitmap.width * 0.5;
@@ -20,6 +21,13 @@ public class PreyCursor extends SceneObject
     }
 
     override protected function update (dt :Number) :void
+    {
+        if (_controlledLocally) {
+            updateMovement(dt);
+        }
+    }
+
+    protected function updateMovement (dt :Number) :void
     {
         var targetLoc :Vector2 = new Vector2(
             ClientCtx.gameMode.modeSprite.mouseX,
@@ -127,6 +135,7 @@ public class PreyCursor extends SceneObject
         return _lastArtery != arteryType && _whiteCells.length > 0;
     }
 
+    protected var _controlledLocally :Boolean;
     protected var _sprite :Sprite;
     protected var _redCells :Array = [];
     protected var _whiteCells :Array = [];

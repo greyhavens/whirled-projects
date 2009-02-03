@@ -46,7 +46,8 @@ public class GameMode extends AppMode
             addObject(spawner);
         }
 
-        addObject(new PreyCursor(), _cursorLayer);
+        addObject(new PreyCursor(false), _cursorLayer);
+        addObject(new PredatorCursor(true), _cursorLayer);
     }
 
     protected function createCellSpawnCallback (type :int) :Function
