@@ -17,7 +17,7 @@ public class SharedPlayerStateClient
     
     public static function getBlood (playerId :int) :Number
     {
-        return Number(playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD));
+        return Number(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD));
     }
     
     public static function getMaxBlood (playerId :int) :Number
@@ -27,18 +27,23 @@ public class SharedPlayerStateClient
     
     public static function getLevel (playerId :int) :int
     {
-        return int(playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
+        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
     
     public static function getBloodBonded (playerId :int) :Array
     {
-        return playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) as Array;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) as Array;
+    }
+    
+    public static function getClosestUserData (playerId :int) :Array
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA) as Array;
     }
     
     public static function getCurrentAction (playerId :int) :String
     {
-        if( playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) !== undefined) {
-            return String(playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION));
+        if( playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) !== undefined) {
+            return String(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION));
         }
         else {
             return null;
@@ -47,23 +52,23 @@ public class SharedPlayerStateClient
     
     public static function getSire (playerId :int) :int
     {
-        return playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) as int;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE) as int;
     }
 
     public static function getTime (playerId :int) :Number
     {
-        return playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE);
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE);
     }
     
     public static function getMinions (playerId :int) :Array
     {
-        return playerData(playerId, SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS) as Array;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS) as Array;
     }
     
     protected static function playerData (playerId :int, ix :int) :*
     {
         var dict :Dictionary =
-            ClientContext.gameCtrl.room.props.get(SharedPlayerStateServer.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) as Dictionary;
+            ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) as Dictionary;
 //            log.debug("playerData(), dict=" + dict)
         return (dict != null) ? dict[ix] : undefined;
     }
@@ -76,13 +81,13 @@ public class SharedPlayerStateClient
     
     public static function isProps( playerId :int ) :Boolean
     {
-        return ClientContext.gameCtrl.room.props.get(SharedPlayerStateServer.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) != null;
+        return ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) != null;
     }
     
     public static function parsePlayerIdFromPropertyName (prop :String) :int
     {
-        if (StringUtil.startsWith(prop, SharedPlayerStateServer.ROOM_PROP_PREFIX_PLAYER_DICT)) {
-            var num :Number = parseInt(prop.slice(SharedPlayerStateServer.ROOM_PROP_PREFIX_PLAYER_DICT.length));
+        if (StringUtil.startsWith(prop, Codes.ROOM_PROP_PREFIX_PLAYER_DICT)) {
+            var num :Number = parseInt(prop.slice(Codes.ROOM_PROP_PREFIX_PLAYER_DICT.length));
             if (!isNaN(num)) {
                 return num;
             }
@@ -92,7 +97,8 @@ public class SharedPlayerStateClient
     
     public static function toStringForPlayer( playerId :int ) :String
     {
-        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", time=" + new Date(getTime( playerId )).toTimeString();
+        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", time=" + new Date(getTime( playerId )).toTimeString()
+            + ", closestUserId=" + getClosestUserData( playerId );
     }
 
 }

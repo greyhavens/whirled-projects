@@ -8,8 +8,12 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGamePlayerEvent;
+import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.PlayerSubControlServer;
 
+import flash.utils.Dictionary;
+
+import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.Logic;
 import vampire.data.SharedPlayerStateServer;
@@ -38,50 +42,117 @@ public class Player
         _ctrl.addEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.addEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
         
-        _sharedState = new SharedPlayerStateServer( ctrl.props );
-        log.debug( Constants.DEBUG_MINION + " Player object creation, already on the database=" + _sharedState.toString());
         
-        //testing
+        
+        _action = Constants.GAME_MODE_NOTHING;
+        
+        log.debug("Getting level");
+        _level = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LEVEL));
+
+
+        log.debug("Getting blood");
+        var blood :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD);
+        if (blood != null) {
+            _blood = Number(blood);
+
+        } else {
+            // blood should always be set if level is set, but let's play it safe
+//            log.debug("Repairing player blood", "playerId", ctrl.getPlayerId());
+            log.debug("   setting blood=" + Constants.MAX_BLOOD_FOR_LEVEL( this.level ));
+            setBlood(Constants.MAX_BLOOD_FOR_LEVEL( this.level ), true);
+        }
+        
+        log.debug("Getting bloodbonded");
+        var bloodbonded :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED);
+        if (bloodbonded != null) {
+            _bloodbonded = bloodbonded as Array;
+            if( _bloodbonded == null) {
+                log.error("Despite the bloodbonded key containing something, it's not an array.  Setting bloodbonded=[]");
+                _bloodbonded = [];
+            }
+
+        } else {
+            // bloodbonded should at least be an empty array
+//            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
+            log.debug("   setting bloodbonded=[]");
+            setBloodBonded([]);
+        }
+        
+        log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+        _timePlayerPreviouslyQuit = Number(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+        if( _timePlayerPreviouslyQuit == 0) {
+            log.info("Repairing", "time", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            var time :Number = new Date().time;
+            setTime(time);
+            log.info("  now", "time", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+        }
+        
+        log.debug("Getting minions");
+        var minions :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_MINIONS);
+        if (minions != null) {
+            _minions = minions as Array;
+            if( _minions == null) {
+                log.error("Despite the minions key containing something, it's not an array.  Setting _minions=[]");
+                _minions = [];
+            }
+
+        } else {
+            // bloodbonded should at least be an empty array
+//            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
+            log.debug("   setting _minions=[]");
+            setMinions([]);
+        }
+        log.debug("Getting sire");
+        _sire = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+        if( _sire == 0 ) {
+            _sire = -1;
+        }
+        
+        
+        
+        
+        
+        
+        
+        //For testing purposes testing
         if( playerId == 35282) {
-            _sharedState.setLevel( 0, true);
+            setLevel( 0, true);
         }
         
-        if( !isVampire() ) {//If you are not a vampire, you must be fed upon.
-            _sharedState.setBlood( 0, true );
-        }
+//        if( !isVampire() ) {//If you are not a vampire, you must be fed upon.
+//            setBlood( 0, true );
+//        }
         
         if (level == 0) {
             log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
-            _sharedState.setLevel(1, true);
-            _sharedState.setBloodBonded([]);
-//            _sharedState.setBlood( _sharedState.maxBlood, true );
-            _sharedState.setSire( VServer.getSireFromInvitee( _playerId ) );
-            _sharedState.setTime( 1 );//O means no props loaded, 1 means new player
+            setLevel(1, true);
+            setBloodBonded([]);
+            setBlood( 0 );
+            setSire( VServer.getSireFromInvitee( _playerId ) );
+            setTime( 1 );//O means no props loaded, 1 means new player
             
         } 
         
         setAction( Constants.GAME_MODE_NOTHING );
-        //if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
+        
+
 //        log.debug("Setting blood at 10%, blood=" + maxBlood * 0.1);
-        setBlood( blood, true);
+//        setBlood( blood, true);
         
         //If we have previously been awake, reduce our blood proportionally to the time since we last played.
-        if( _sharedState.time > 1) {
+        if( time > 1) {
             var date :Date = new Date();
             var now :Number = date.time;
-            var millisecondsSinceLastAwake :Number = now - _sharedState.time;
+            var millisecondsSinceLastAwake :Number = now - time;
             if( millisecondsSinceLastAwake < 0) {
-                log.error("Computing time since last awake, but < 0, now=" + now + ", _sharedState.time=" + _sharedState.time);
+                log.error("Computing time since last awake, but < 0, now=" + now + ", time=" + time);
             }
             var hoursSinceLastAwake :Number = millisecondsSinceLastAwake / (1000*60*60);
             log.debug("hoursSinceLastAwake=" + hoursSinceLastAwake);
             log.debug("secondSinceLastAwake=" + (millisecondsSinceLastAwake/1000));
             var bloodReduction :Number = Constants.BLOOD_LOSS_HOURLY_RATE * hoursSinceLastAwake * maxBlood;
             log.debug("bloodReduction=" + bloodReduction);
-            bloodReduction = Math.min( bloodReduction, blood - 1);
+            bloodReduction = Math.min( bloodReduction, this.blood - 1);
             sendChat( "Blood lost during sleep: " + bloodReduction);
             damage( bloodReduction );
             
@@ -100,8 +171,14 @@ public class Player
         }
         
         
-        log.debug("end of Player()=" + _sharedState.toString());
+        log.debug("end of Player()=" + toString());
         log.info("end }}}\n");
+        
+        
+        
+        
+        
+        
     }
     
     public function sendChat( msg :String ) :void
@@ -120,59 +197,6 @@ public class Player
         return _playerId;
     }
 
-
-    public function get playing () :Boolean
-    {
-        return true;//_playing;
-    }
-
-    public function get blood () :Number
-    {
-        return _sharedState.blood
-//        return _blood;
-    }
-
-    public function get maxBlood () :Number
-    {
-        return _sharedState.maxBlood;
-//        return getMaxBloodForLevel( level );
-    }
-
-    public function get level () :int
-    {
-        return _sharedState.level;
-//        return _level;
-    }
-    
-    public function get action () :String
-    {
-        return _sharedState.action;
-    }
-    
-    public function get name () :String
-    {
-        return _sharedState.name;
-    }
-    
-    public function get bloodbonded () :Array
-    {
-        return _sharedState.bloodbonded;
-    }
-    
-    public function get minions () :Array
-    {
-        return _sharedState.minions;
-    }
-
-    public function get sire () :int
-    {
-        return _sharedState.sire;
-    }
-    
-    public function get time () :Number
-    {
-        return _sharedState.time;
-    }
 
     // from Equalable
     public function equals (other :Object) :Boolean
@@ -195,7 +219,10 @@ public class Player
     public function toString () :String
     {
         return "Player [playerId=" + _playerId + ", roomId=" +
-            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded + ", time=" + new Date(time).toTimeString() + "]";
+            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded 
+            + ", time=" + new Date(time).toTimeString() 
+            + ", closestUserData=" + closestUserData
+            + "]";
     }
 
     public function isDead () :Boolean
@@ -207,20 +234,20 @@ public class Player
     {
         log.debug( Constants.DEBUG_MINION + " Player shutdown, on database=" + (new SharedPlayerStateServer( _ctrl.props ).toString()));
         
-        log.info("\nPlayer.shutdown() {{{", "player", _sharedState.toString());
+        log.info("\nshutdown() {{{", "player", toString());
         log.debug("hierarchy=" + ServerContext.minionHierarchy);
         
         
         var currentTime :Number = new Date().time;
         log.info("shutdown()", "currentTime", new Date(currentTime).toTimeString());
-        _sharedState.setTime( currentTime, true );
+        setTime( currentTime, true );
         
-        log.info("before player shutdown", "time", new Date(_ctrl.props.get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-//        _sharedState.setAction( Constants.GAME_MODE_NOTHING, true );
+        log.info("before player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+//        setAction( Constants.GAME_MODE_NOTHING, true );
         setIntoRoomProps( room );
         _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
-        log.info("end of player shutdown", "time", new Date(_ctrl.props.get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+        log.info("end of player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
         log.info("props actually in the database", "props", new SharedPlayerStateServer(_ctrl.props).toString());
         log.info("}}}");
     }
@@ -252,8 +279,13 @@ public class Player
     {
         var newlevel :int = level + 1;
         log.debug("Increasing level", "oldlevel", level, "newlevel", newlevel);
-        _sharedState.setLevel( newlevel );
-        _sharedState.setBlood( 0.1 * maxBlood );//Also updates the room
+        setLevel( newlevel );
+        setBlood( 0.1 * maxBlood );//Also updates the room
+        
+        // always update our avatar state
+        updateAvatarState();
+
+        // and if we're in a room, update the room properties
         if (_room != null) {
             _room.playerUpdated(this);
         }
@@ -274,22 +306,12 @@ public class Player
         if (!force && blood == this.blood) {
             return;
         }
-        _sharedState.setBlood( blood );
         
-//        _blood = blood;
-//        setStateToPlayerProps();
+        _blood = blood;
+        log.debug("Persisting blood in player props");
         // persist it, too
-//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
-
-        // if we just died, let the trophy code know
-//        if (_blood == 0) {
-//            try {
-//                Trophies.handlePlayerDied(this);
-//            } catch (e :Error) {
-//                log.warning("Error in handlePlayerDied", "playerId", _playerId, e);
-//            }
-//        }
-
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
+        
         // always update our avatar state
         updateAvatarState();
 
@@ -301,10 +323,14 @@ public class Player
     
     protected function setAction (action :String, force :Boolean = false) :void
     {
-        if (!force && action == this.action) {
+        // update our runtime state
+        if (!force && action == _action) {
             return;
         }
-        _sharedState.setAction( action );
+        
+        _action = action;
+
+        // Don't bother persisting it
         
         // always update our avatar state
         updateAvatarState();
@@ -315,16 +341,23 @@ public class Player
         }
     }
     
-    public function setName (newName :String, force :Boolean = false) :void
+    public function setName (name :String, force :Boolean = false) :void
     {
-        
-        if (!force && newName == this.name) {
+        // update our runtime state
+        if (!force && name == _name) {
             return;
         }
-        _sharedState.setName( newName, force );
+        _name = name;
         
-        // always update our avatar state
-//        updateAvatarState();
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_NAME, _name, true);
+        
+        updateAvatarState();
+        
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
     }
 
     public function roomStateChanged () :void
@@ -355,7 +388,7 @@ public class Player
         }
         else if( name == Constants.NAMED_EVENT_QUIT ) {
             var now :Number = new Date().time;
-            _sharedState.setTime( now , true);
+            setTime( now , true);
         }
         
         else if( value is IGameMessage) {
@@ -433,8 +466,8 @@ public class Player
         log.info("makeSire(" + targetPlayerId + ")");
         ServerContext.minionHierarchy.setPlayerSire( playerId, targetPlayerId);
         
-        _sharedState.setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
-        _sharedState.setSire( ServerContext.minionHierarchy.getSireId( playerId ) ); 
+        setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
+        setSire( ServerContext.minionHierarchy.getSireId( playerId ) ); 
 //        if( ServerContext.minionHierarchy.getSire( targetPlayerId ) == playerId) {
 //            ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, -1);    
 //        }
@@ -450,8 +483,8 @@ public class Player
         log.info("makeMinion(" + targetPlayerId + ")");
         ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, playerId);
         
-        _sharedState.setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
-        _sharedState.setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
+        setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
+        setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
         
         VServer.updateHierarchyInAllRooms();
 //        room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
@@ -460,31 +493,31 @@ public class Player
     
     protected function feed(targetPlayerId :int ) :void
     {
-        var eatenPlayer :Player = VServer.getPlayer( targetPlayerId );
-        if( eatenPlayer == null) {
+        var eaten :Player = VServer.getPlayer( targetPlayerId );
+        if( eaten == null) {
             log.warning("feed( " + targetPlayerId + " ), player is null");
             return;
         }
         
         
-        if( eatenPlayer.action != Constants.GAME_MODE_EAT_ME) {
+        if( eaten.action != Constants.GAME_MODE_EAT_ME) {
             log.warning("feed( " + targetPlayerId + " ), eatee is not in mode=" + Constants.GAME_MODE_EAT_ME);
             return;
         }
         
-        if( eatenPlayer.blood <= 1) {
-            log.warning("feed( " + targetPlayerId + " ), eatee has only blood=" + eatenPlayer.blood);
+        if( eaten.blood <= 1) {
+            log.warning("feed( " + targetPlayerId + " ), eatee has only blood=" + eaten.blood);
             return;
         }
         
         var bloodEaten :Number = 10;
-        if( eatenPlayer.blood <= 10) {
-            bloodEaten = eatenPlayer.blood - 1;
+        if( eaten.blood <= 10) {
+            bloodEaten = eaten.blood - 1;
         }
         log.debug("Sucessful feed.");
         addBlood( bloodEaten );
         VServer.playerGainedBlood( this, bloodEaten, targetPlayerId);
-        eatenPlayer.removeBlood( bloodEaten );
+        eaten.removeBlood( bloodEaten );
     }
     
     /**
@@ -518,18 +551,18 @@ public class Player
                 targetPlayer.addBloodBond( playerId, ServerContext.getPlayerName(playerId), true );
             }
             else {
-                log.error("You can't add a blood bond to an offline player.");
+                log.error("You can't add a blood bond to an offline ");
                 
 //                VServer.control.loadOfflinePlayer(e.targetPlayer, 
 //                    function (props :PropertySpaceObject) :void {
 //                        
-//                        var bloodbonds :Array = props.getUserProps().get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
+//                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
 //                        if( bloodbonds == null) {
 //                            bloodbonds = new Array();
 //                        }
 //                        bloodbonds.push( playerId );
-//                        bloodbonds.push( targetPlayer._ctrl. );
-//                        props.getUserProps().set(SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
+//                        bloodbonds.push( target_ctrl. );
+//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
 //                    }, 
 //                    function (failureCause :String) :void { 
 //                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
@@ -544,18 +577,18 @@ public class Player
                 targetPlayer.removeBloodBond( playerId, true );
             }
             else {
-                log.error("You can't remove a blood bond to an offline player.");
+                log.error("You can't remove a blood bond to an offline ");
 //                VServer.control.loadOfflinePlayer(e.targetPlayer, 
 //                    function (props :PropertySpaceObject) :void {
 //                        
-//                        var bloodbonds :Array = props.getUserProps().get( SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
+//                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
 //                        if( bloodbonds == null) {
 //                            bloodbonds = new Array();
 //                        }
 //                        if( ArrayUtil.contains( bloodbonds, e.targetPlayer)) {
 //                            bloodbonds.splice( ArrayUtil.indexOf( bloodbonds, e.targetPlayer), 1);
 //                        }
-//                        props.getUserProps().set(SharedPlayerStateServer.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
+//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
 //                    }, 
 //                    function (failureCause :String) :void { 
 //                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
@@ -579,7 +612,7 @@ public class Player
             bloodbonded.push( playerName );
         }
         
-        _sharedState.setBloodBonded( bloodbonded );
+        setBloodBonded( bloodbonded );
         
         updateAvatarState();
 
@@ -598,7 +631,7 @@ public class Player
         if( ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
             bloodbonded.splice( ArrayUtil.indexOf( bloodbonded, blondbondedPlayerId), 2 );
         }
-        _sharedState.setBloodBonded( bloodbonded );
+        setBloodBonded( bloodbonded );
         
         updateAvatarState();
 
@@ -627,10 +660,10 @@ public class Player
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         
-        log.info("\nPlayer entered room {{{", "player", _sharedState.toString());
+        log.info("\nPlayer entered room {{{", "player", toString());
         log.debug("hierarchy=" + ServerContext.minionHierarchy);
         
-        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + _sharedState.toString());
+        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
         log.debug( Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
         
         var thisPlayer :Player = this;
@@ -643,14 +676,31 @@ public class Player
         ServerContext.minionHierarchy.playerEnteredRoom( this, _room);
         log.debug("after _room.playerEntered");
         log.debug("hierarchy=" + ServerContext.minionHierarchy);
-        log.info("player" + _sharedState.toString());
+        log.info("player" + toString());
         log.info("}}}");
         
-        
-
-        
-        
     }
+    
+    public function handleSignalReceived( e :AVRGameRoomEvent ) :void
+    {
+        log.debug("handleSignalReceived() " + e);
+        if( e.name == Constants.SIGNAL_CLOSEST_ENTITY) {
+            var ids :Array = e.value as Array;
+            if( ids != null && ids.length >= 2 && ids[0] == playerId) {
+                log.debug("updating shared player state " + ids.slice(1));
+                setClosestUserData( ids.slice(1) );
+                
+                updateAvatarState();
+
+                // and if we're in a room, update the room properties
+                if (_room != null) {
+                    _room.playerUpdated(this);
+                }
+
+            }
+        }
+    }
+    
     
     public function isVampire() :Boolean
     {
@@ -765,7 +815,7 @@ public class Player
     
     
 //    /**
-//    * The full state of the player. 
+//    * The full state of the  
 //    * Saved to permanent properties, and distributed to the room, but not updated 
 //    * as often as the shared player state.
 //    */
@@ -783,18 +833,314 @@ public class Player
     
     public function setIntoRoomProps( room :Room ) :void
     {
-        if( room != null) {
-            SharedPlayerStateServer.setIntoRoomProps( this, room.ctrl );
+        if( room == null || room.ctrl == null) {
+            log.error("setIntoRoomProps() but ", "room", room);
+            return;
         }
-        else {
-            log.warning("setIntoRoomProps( room ), but room is null");
+            
+        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
+        
+        var dict :Dictionary = room.ctrl.props.get(key) as Dictionary;
+        if (dict == null) {
+            dict = new Dictionary(); 
         }
+
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
+        }
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
+        }
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD] != maxBlood) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD, maxBlood);
+//        }
+        
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
+        }
+        
+        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED], bloodbonded )) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
+        }
+        
+//        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS], minions )) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS, minions);
+//        }
+        
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE] != sire) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE, sire);
+//        }
+        
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time) {
+            log.info("Setting into room props", "time", new Date(time).toTimeString());
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
+        }
+        
+        if (!ArrayUtil.equals(dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA], closestUserData)) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA, closestUserData);
+        }
+            
+            
+            
+            
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    public function setLevel (level :int, force :Boolean = false) :void
+    {
+        // update our runtime state
+        if (!force && level == _level) {
+            return;
+        }
+        _level = level;
+
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
+    }
+    
+    public function setClosestUserData(userData :Array, force :Boolean = false) :void
+    {
+        log.info("setClosestUserData()", "userData", userData);
+        // update our runtime state
+        if (!force && ArrayUtil.equals(userData, _closestUserData)) {
+            return;
+        }
+        _closestUserData = userData;
+
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_CLOSEST_USER_DATA, _closestUserData, true);
+        log.info("afterwards ", "closestUserData", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_CLOSEST_USER_DATA));
+    }
+    
+    public function setTime (time :Number, force :Boolean = false) :void
+    {
+        log.info("setTime()", "time", new Date(time).toTimeString());
+        
+        // update our runtime state
+        if (!force && time == _timePlayerPreviouslyQuit) {
+            return;
+        }
+        _timePlayerPreviouslyQuit = time;
+
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
+        log.info("now ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+    }
+    
+//    public function addBloodBond( blondbondedPlayerId :int ) :void
+//    {
+//        if( ArrayUtil.contains( _bloodbonded, blondbondedPlayerId) ) {
+//            return;
+//        }
+//        _bloodbonded.push( blondbondedPlayerId );
+//        setBloodBonded( _bloodbonded, true );
+//    }
+//    
+//    public function removeBloodBond( blondbondedPlayerId :int ) :void
+//    {
+//        if( !ArrayUtil.contains( _bloodbonded, blondbondedPlayerId) ) {
+//            return;
+//        }
+//        _bloodbonded.splice( ArrayUtil.indexOf( _bloodbonded, blondbondedPlayerId), 1 );
+//        setBloodBonded( _bloodbonded, true );
+//    }
+    
+    public function setBloodBonded (bloodbonded :Array) :void
+    {
+        _bloodbonded = bloodbonded;
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, _bloodbonded, true);
+    }
+    
+    public function setMinions (minions :Array) :void
+    {
+        _minions = minions;
+        // persist it, too
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_MINIONS, _minions, true);
+    }
+    
+    public function setSire (sire :int, force :Boolean = false) :void
+    {
+        // update our runtime state
+        if (!force && sire == _sire) {
+            return;
+        }
+        _sire = sire;
+
+        // persist it, too
+        log.debug("setSire", "sire", sire);
+        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_SIRE, _sire, true);
+        log.debug("setSire after ", "sire", _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+    }
+    
+    public function setMaxBlood (maxBlood :int, force :Boolean = false) :void
+    {
+        // update our runtime state
+        if (!force && maxBlood == _maxBlood) {
+            return;
+        }
+        _maxBlood = maxBlood;
+
+        // persist it, too
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_MAXBLOOD, _maxBlood, true);
+    }
+    
+    
+    public function get action () :String
+    {
+        return _action;
+    }
+    
+    public function get name () :String
+    {
+        return _name;
+    }
+    
+    public function get level () :int
+    {
+        return _level;
+    }
+    
+    public function get blood () :Number
+    {
+        return _blood;
+    }
+    
+    public function get maxBlood () :Number
+    {
+        return Constants.MAX_BLOOD_FOR_LEVEL( level );
+    }
+    
+    public function get bloodbonded () :Array
+    {
+        return _bloodbonded.slice();
+    }
+    
+    public function get minions () :Array
+    {
+        return _minions.slice();
+    }
+    
+    public function get sire () :int
+    {
+        return _sire;
+    }
+    
+    public function get closestUserData () :Array
+    {
+        return _closestUserData;
+    }
+    
+    public function get time () :Number
+    {
+        return _timePlayerPreviouslyQuit;
+    }
+    
+    
+//    /**
+//    * For convenience, only called on the server.
+//    * With this method, no other classes need to reference all the code constants.
+//    * 
+//    */
+//    public static function setIntoRoomProps( room :Room) :void
+//    {
+//        if (room.ctrl == null) {
+//            log.warning("Null room control", "action", "setIntoRoomProps",
+//                        "playerId", playerId);
+//            return;
+//        }
+//
+//        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
+//        
+//        var dict :Dictionary = room.ctrl.props.get(key) as Dictionary;
+//        if (dict == null) {
+//            dict = new Dictionary(); 
+//        }
+//
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
+//        }
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
+//        }
+////        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD] != maxBlood) {
+////            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD, maxBlood);
+////        }
+//        
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
+//        }
+//        
+//        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED], bloodbonded )) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
+//        }
+//        
+////        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS], minions )) {
+////            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS, minions);
+////        }
+//        
+////        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE] != sire) {
+////            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE, sire);
+////        }
+//        
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time) {
+//            log.info("Setting into room props", "time", new Date(time).toTimeString());
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
+//        }
+//        
+//        if (!ArrayUtil.equals(dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA], closestUserData)) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA, closestUserData);
+//        }
+//    }
+    
+    
+//    protected var _ctrl.props :PropertySubControl
+    
+    protected var _name :String;
+    protected var _level :int;
+    protected var _blood :Number;
+    protected var _maxBlood :Number;
+    protected var _action :String;
+    
+    protected var _bloodbonded :Array;
+    
+    protected var _sire :int;
+    protected var _minions :Array;
+    
+    protected var _timePlayerPreviouslyQuit :Number;
+    protected var _closestUserData :Array;
+
+
+
+
+
+
+
+
 
     protected var _room :Room;
     protected var _ctrl :PlayerSubControlServer;
     protected var _playerId :int;
-    protected var _sharedState :SharedPlayerStateServer;
+//    protected var _sharedState :SharedPlayerStateServer;
     
 //    protected var _level :int;
 //    protected var _blood :int;
