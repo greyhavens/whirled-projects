@@ -36,14 +36,9 @@ public class PreyCursor extends SceneObject
         var moveDist :Number = this.speed * dt;
         newLoc.scaleLocal(Math.min(targetDist, moveDist));
         newLoc.addLocal(oldLoc);
+
+        // clamp to game boundaries
         newLoc = ClientCtx.clampLoc(newLoc);
-
-        this.x = newLoc.x;
-        this.y = newLoc.y;
-
-        // rotate the bitmap. 0 degrees == straight up
-        var angle :Number = newLoc.subtract(oldLoc).angle * (180 / Math.PI);
-        this.rotation = angle + 90;
 
         // collide with cells
         var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
@@ -68,14 +63,14 @@ public class PreyCursor extends SceneObject
 
         // collide with the arteries
         var crossedCtr :Boolean =
-            (this.x >= Constants.GAME_CTR.x && oldLoc.x < Constants.GAME_CTR.x) ||
-            (this.x <= Constants.GAME_CTR.x && oldLoc.x > Constants.GAME_CTR.x);
+            (newLoc.x >= Constants.GAME_CTR.x && oldLoc.x < Constants.GAME_CTR.x) ||
+            (newLoc.x <= Constants.GAME_CTR.x && oldLoc.x > Constants.GAME_CTR.x);
 
         var artery :int = -1;
         if (crossedCtr) {
-            if (this.y < Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_TOP)) {
+            if (newLoc.y < Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_TOP)) {
                 artery = Constants.ARTERY_TOP;
-            } else if (this.y >= Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_BOTTOM)) {
+            } else if (newLoc.y >= Constants.GAME_CTR.y && canCollideArtery(Constants.ARTERY_BOTTOM)) {
                 artery = Constants.ARTERY_BOTTOM;
             }
 
@@ -83,10 +78,18 @@ public class PreyCursor extends SceneObject
                 collideArtery(artery);
             } else {
                 // we're prevented from crossing the artery
-                this.x = (this.x >= Constants.GAME_CTR.x ?
+                newLoc.x = (newLoc.x >= Constants.GAME_CTR.x ?
                             Constants.GAME_CTR.x - 1 : Constants.GAME_CTR.x + 1);
             }
         }
+
+        // move!
+        this.x = newLoc.x;
+        this.y = newLoc.y;
+
+        // rotate the bitmap. 0 degrees == straight up
+        var angle :Number = newLoc.subtract(oldLoc).angle * (180 / Math.PI);
+        this.rotation = angle + 90;
     }
 
     override public function get displayObject () :DisplayObject

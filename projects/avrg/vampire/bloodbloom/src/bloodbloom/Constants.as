@@ -13,6 +13,8 @@ public class Constants
     public static const PREY_SPEED_MIN :Number = 15;
 
     public static const CURSOR_RADIUS :Number = 9;
+    public static const HEART_RADIUS :Number = 60;
+    public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
     public static const BEAT_TIME :Number = 1;
 
