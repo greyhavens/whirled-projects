@@ -28,6 +28,11 @@ public class VampireAvatarController
         _ctrl.addEventListener(ControlEvent.ENTITY_LEFT, handleEntityMoved);
         
         _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleEntityMoved);
+        
+        
+        
+        trace("\nVampireAvatarController loaded!\n");
+        
     }
     
     /**
@@ -68,7 +73,7 @@ public class VampireAvatarController
     
     protected function handleEntityMoved( ...ignored ) :void
     {
-        
+        trace("\nVampireAvatarController handleEntityMoved!");
         var closestUserId :int;
         var closestUserDistance :Number = Number.MAX_VALUE;
         var myX :Number = _ctrl.getLogicalLocation()[0] as Number;
@@ -101,6 +106,7 @@ public class VampireAvatarController
 //        trace("Closests userId=" + closestUserId);
 //        trace("Closests user name=" + _ctrl.getViewerName(closestUserId));
         if( closestUserId > 0 && closestUserId != myUserId && closestUserId != _closestUserId) {
+            trace("VampireAvatarController handleEntityMoved, sending closestUserId=" + closestUserId);
             _closestUserId = closestUserId;  
             _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [myUserId, closestUserId, _ctrl.getViewerName(closestUserId)]);
         }  
