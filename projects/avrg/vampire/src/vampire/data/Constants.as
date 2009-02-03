@@ -1,4 +1,4 @@
-package vampire.data
+﻿package vampire.data
 {
 public class Constants
 {
@@ -47,9 +47,9 @@ public class Constants
     }
     
     public static const GAME_MODE_NOTHING :String = "Nothing";
-    public static const GAME_MODE_FEED :String = "Feed";
-    public static const GAME_MODE_EAT_ME :String = "EatMe";
-    public static const GAME_MODE_FIGHT :String = "Fight";
+    public static const GAME_MODE_FEED :String = "Dancing";
+    public static const GAME_MODE_EAT_ME :String = "Sitting";
+    public static const GAME_MODE_FIGHT :String = "Fighting";
     public static const GAME_MODE_BLOODBOND :String = "BloodBond";
     public static const GAME_MODE_HIERARCHY :String = "Hierarchy";
     
