@@ -6,6 +6,7 @@ import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
+import flash.display.MovieClip;
 
 public class ClientCtx
 {
@@ -19,6 +20,17 @@ public class ClientCtx
     public static function instantiateBitmap (name :String) :Bitmap
     {
         return ImageResource.instantiateBitmap(rsrcs, name);
+    }
+
+    public static function instantiateMovieClip (rsrcName :String, className :String,
+        disableMouseInteraction :Boolean = false, fromCache :Boolean = false) :MovieClip
+    {
+        return SwfResource.instantiateMovieClip(
+            rsrcs,
+            rsrcName,
+            className,
+            disableMouseInteraction,
+            fromCache);
     }
 
     // Returns a new Vector, clamped within the bounds of the game

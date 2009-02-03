@@ -79,6 +79,14 @@ public class GameMode extends AppMode
         _modeTime += dt;
     }
 
+    public function gameOver (reason :String) :void
+    {
+        if (!_gameOver) {
+            ClientCtx.mainLoop.changeMode(new GameOverMode(reason));
+            _gameOver = true;
+        }
+    }
+
     public function get modeTime () :Number
     {
         return _modeTime;
@@ -86,6 +94,7 @@ public class GameMode extends AppMode
 
     protected var _heart :Heart;
     protected var _modeTime :Number = 0;
+    protected var _gameOver :Boolean;
 
     protected var _cellLayer :Sprite;
     protected var _cursorLayer :Sprite;

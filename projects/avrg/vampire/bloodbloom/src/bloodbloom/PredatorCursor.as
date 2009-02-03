@@ -56,6 +56,19 @@ public class PredatorCursor extends SceneObject
                 CellBurst.createFromCell(cell);
             } else {
                 // attach the white cell to us
+                var bm :Bitmap = ClientCtx.instantiateBitmap("white_cell");
+                var loc :Point = this.displayObject.globalToLocal(new Point(cell.x, cell.y));
+                loc.x -= bm.width * 0.5;
+                loc.y -= bm.height * 0.5;
+                bm.x = loc.x;
+                bm.y = loc.y;
+                _sprite.addChild(bm);
+                _whiteCells.push(bm);
+                cell.destroySelf();
+
+                if (_whiteCells.length >= Constants.MAX_PREDATOR_WHITE_CELLS) {
+                    ClientCtx.gameMode.gameOver("Predator knocked out!");
+                }
             }
         }
 
@@ -64,8 +77,8 @@ public class PredatorCursor extends SceneObject
         this.y = newLoc.y;
 
         // rotate the bitmap. 0 degrees == straight up
-        var angle :Number = newLoc.subtract(oldLoc).angle * (180 / Math.PI);
-        this.rotation = angle + 90;
+        var angle :Number = (newLoc.subtract(oldLoc).angle * (180 / Math.PI)) + 90;
+        this.rotation = angle;
     }
 
     override public function get displayObject () :DisplayObject
@@ -76,6 +89,11 @@ public class PredatorCursor extends SceneObject
     protected function get speed () :Number
     {
         return Constants.PREDATOR_SPEED_BASE;
+    }
+
+    public function get numWhiteCells () :int
+    {
+        return _whiteCells.length;
     }
 
     protected var _controlledLocally :Boolean;

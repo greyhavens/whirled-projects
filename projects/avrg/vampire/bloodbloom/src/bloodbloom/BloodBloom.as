@@ -34,6 +34,7 @@ public class BloodBloom extends Sprite
     {
         var rm :ResourceManager = ClientCtx.rsrcs;
 
+        rm.queueResourceLoad("swf",   "uiBits",         { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
         rm.queueResourceLoad("image", "heart",          { embeddedClass: IMG_HEART });
         rm.queueResourceLoad("image", "red_cell",       { embeddedClass: IMG_RED_CELL });
@@ -78,6 +79,8 @@ public class BloodBloom extends Sprite
 
     protected static var log :Log = Log.getLog(BloodBloom);
 
+    [Embed(source="../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
+    protected static const SWF_UIBITS :Class;
     [Embed(source="../../rsrc/bg.png", mimeType="application/octet-stream")]
     protected static const IMG_BG :Class;
     [Embed(source="../../rsrc/heart.png", mimeType="application/octet-stream")]
