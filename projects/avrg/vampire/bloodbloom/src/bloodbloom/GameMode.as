@@ -12,6 +12,11 @@ import flash.geom.Point;
 
 public class GameMode extends AppMode
 {
+    public function GameMode (playerType :int)
+    {
+        _playerType = playerType;
+    }
+
     override protected function setup () :void
     {
         super.setup();
@@ -59,9 +64,9 @@ public class GameMode extends AppMode
         }
 
         // cursors
-        ClientCtx.prey = new PreyCursor(false);
+        ClientCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
         addObject(ClientCtx.prey, _cursorLayer);
-        addObject(new PredatorCursor(true), _cursorLayer);
+        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), _cursorLayer);
     }
 
     protected function createCellSpawnCallback (type :int) :Function
@@ -106,6 +111,7 @@ public class GameMode extends AppMode
         return _modeTime;
     }
 
+    protected var _playerType :int;
     protected var _modeTime :Number = 0;
     protected var _gameOver :Boolean;
 

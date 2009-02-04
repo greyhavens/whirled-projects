@@ -67,7 +67,7 @@ public class BloodBloom extends Sprite
     protected function maybeStartGame () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            ClientCtx.mainLoop.pushMode(new GameMode());
+            ClientCtx.mainLoop.pushMode(new SpSplashMode());
         }
     }
 

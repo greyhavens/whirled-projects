@@ -3,7 +3,9 @@ package bloodbloom {
 import com.whirled.contrib.simplegame.AppMode;
 
 import flash.display.Graphics;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 
 public class GameOverMode extends AppMode
@@ -34,6 +36,15 @@ public class GameOverMode extends AppMode
         tfReason.x = (WIDTH - tfReason.width) * 0.5;
         tfReason.y = tfTitle.y + tfTitle.height + 10;
         frame.addChild(tfReason);
+
+        var againButton :SimpleButton = UIBits.createButton("Again", 1.5);
+        againButton.x = (WIDTH - againButton.width) * 0.5;
+        againButton.y = tfReason.y + tfReason.height + 10;
+        frame.addChild(againButton);
+        registerOneShotCallback(againButton, MouseEvent.CLICK,
+            function (...ignored) :void {
+                ClientCtx.mainLoop.unwindToMode(new SpSplashMode());
+            });
     }
 
     protected var _reason :String;
