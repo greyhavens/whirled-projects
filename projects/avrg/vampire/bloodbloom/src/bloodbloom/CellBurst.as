@@ -12,19 +12,32 @@ import flash.display.Sprite;
 
 public class CellBurst extends SceneObject
 {
-    public static function createFromCell (cell :Cell) :CellBurst
+    public static function createFromCell (cell :Cell, sequence :BurstSequence = null) :CellBurst
     {
-        var newBurst :CellBurst = new CellBurst();
-        newBurst.x = cell.x;
-        newBurst.y = cell.y;
+        var newBurst :CellBurst = new CellBurst(cell.x, cell.y, sequence);
         cell.db.addObject(newBurst, cell.displayObject.parent);
         cell.destroySelf();
         return newBurst;
     }
 
-    public function CellBurst ()
+    public function CellBurst (x :Number, y :Number, sequence :BurstSequence = null)
     {
         _sprite = new Sprite();
+
+        _sequence = sequence;
+        if (_sequence == null) {
+            _sequence = new BurstSequence();
+            _sequence.x = x;
+            _sequence.y = y;
+            ClientCtx.gameMode.addObject(_sequence, ClientCtx.effectLayer);
+        }
+
+        this.x = x;
+        this.y = y;
+    }
+
+    override protected function addedToDB () :void
+    {
         beginBurst();
     }
 
@@ -44,14 +57,11 @@ public class CellBurst extends SceneObject
         var targetScale :Number = Constants.BURST_RADIUS_MAX / Constants.BURST_RADIUS_MIN;
         addTask(ScaleTask.CreateEaseOut(targetScale, targetScale, Constants.BURST_EXPAND_TIME));
         addTask(new SerialTask(
-            new TimedTask(Constants.BURST_DIE_TIME - 0.25),
+            new TimedTask(Constants.BURST_COMPLETE_TIME - 0.25),
             new AlphaTask(0, 0.25),
-            new FunctionTask(
-                function () :void {
-                    ClientCtx.bloodMeter.showGatherAnim(thisBurst.x, thisBurst.y);
-                }),
             new SelfDestructTask()));
 
+        _sequence.addCellBurst(this);
         _mode = BURST;
     }
 
@@ -79,6 +89,7 @@ public class CellBurst extends SceneObject
                 }),
             new SelfDestructTask()));
 
+        _sequence.removeCellBurst(this);
         _mode = UNBURST;
     }
 
@@ -92,7 +103,7 @@ public class CellBurst extends SceneObject
             var cell :Cell = Cell.getCellCollision(thisLoc, this.radius);
             if (cell != null) {
                 if (cell.isRedCell) {
-                    CellBurst.createFromCell(cell);
+                    CellBurst.createFromCell(cell, _sequence);
                 } else {
                     beginUnburst();
                 }
@@ -103,7 +114,7 @@ public class CellBurst extends SceneObject
                 ClientCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
-        } else {
+        } else if (_mode == UNBURST) {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
             var otherLoc :Vector2 = new Vector2();
             var bursts :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("CellBurst");
@@ -142,6 +153,7 @@ public class CellBurst extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _mode :int;
+    protected var _sequence :BurstSequence;
 
     protected static const BURST :int = 0;
     protected static const UNBURST :int = 1;

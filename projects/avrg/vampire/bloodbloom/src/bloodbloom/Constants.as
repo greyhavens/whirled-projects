@@ -38,8 +38,8 @@ public class Constants
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 25;
     public static const BURST_EXPAND_TIME :Number = 1.5;
+    public static const BURST_COMPLETE_TIME :Number = 3;
     public static const BURST_CONTRACT_TIME :Number = 1.5;
-    public static const BURST_DIE_TIME :Number = 3;
 
     public static const GAME_RADIUS :Number = 200;
     public static const GAME_CTR :Vector2 = new Vector2(267, 246);

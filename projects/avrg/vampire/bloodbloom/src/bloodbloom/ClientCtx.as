@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 
 public class ClientCtx
 {
@@ -19,6 +20,10 @@ public class ClientCtx
     public static var beat :Beat;
     public static var prey :PreyCursor;
     public static var bloodMeter :PredatorBloodMeter;
+
+    public static var cellLayer :Sprite;
+    public static var cursorLayer :Sprite;
+    public static var effectLayer :Sprite;
 
     public static function createCellBitmap (type :int) :Bitmap
     {

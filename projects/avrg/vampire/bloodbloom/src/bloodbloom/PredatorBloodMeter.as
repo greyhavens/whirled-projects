@@ -31,28 +31,34 @@ public class PredatorBloodMeter extends SceneObject
         }
     }
 
-    public function showGatherAnim (x :Number, y :Number) :void
+    public function addBlood (x :Number, y :Number, count :int) :void
     {
-        var cellSprite :Sprite = SpriteUtil.createSprite();
-        cellSprite.addChild(ClientCtx.createCellBitmap(Constants.CELL_RED));
-        var cellObj :SimpleSceneObject = new SimpleSceneObject(cellSprite);
         var loc :Point = this.displayObject.globalToLocal(new Point(x, y));
-        cellObj.x = loc.x;
-        cellObj.y = loc.y;
-        ClientCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
+        var delay :Number = 0;
+        for (var ii :int = 0; ii < count; ++ii) {
+            var cellSprite :Sprite = SpriteUtil.createSprite();
+            cellSprite.addChild(ClientCtx.createCellBitmap(Constants.CELL_RED));
+            var cellObj :SimpleSceneObject = new SimpleSceneObject(cellSprite);
+            cellObj.x = loc.x;
+            cellObj.y = loc.y;
+            ClientCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
 
-        // fly the cell to the meter, make it disappear, increase the blood count
-        cellObj.addTask(new SerialTask(
-            LocationTask.CreateSmooth(0, 0, 1),
-            new FunctionTask(
-                function () :void {
-                    _displayedBloodCount++;
-                }),
-            new SelfDestructTask()));
+            // fly the cell to the meter, make it disappear, increase the blood count
+            cellObj.addTask(new SerialTask(
+                new TimedTask(delay),
+                LocationTask.CreateSmooth(0, 0, 1),
+                new FunctionTask(
+                    function () :void {
+                        _displayedBloodCount++;
+                    }),
+                new SelfDestructTask()));
 
-        cellObj.addTask(After(0.9, new AlphaTask(0, 0.1)));
+            cellObj.addTask(After(delay + 0.9, new AlphaTask(0, 0.1)));
 
-        _bloodCount++;
+            delay += 0.1;
+        }
+
+        _bloodCount += count;
     }
 
     protected var _sprite :Sprite;

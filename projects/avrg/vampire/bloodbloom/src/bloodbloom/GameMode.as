@@ -26,12 +26,12 @@ public class GameMode extends AppMode
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
 
-        _cellLayer = SpriteUtil.createSprite();
-        _cursorLayer = SpriteUtil.createSprite();
-        _effectLayer = SpriteUtil.createSprite();
-        _modeSprite.addChild(_cellLayer);
-        _modeSprite.addChild(_cursorLayer);
-        _modeSprite.addChild(_effectLayer);
+        ClientCtx.cellLayer = SpriteUtil.createSprite();
+        ClientCtx.cursorLayer = SpriteUtil.createSprite();
+        ClientCtx.effectLayer = SpriteUtil.createSprite();
+        _modeSprite.addChild(ClientCtx.cellLayer);
+        _modeSprite.addChild(ClientCtx.cursorLayer);
+        _modeSprite.addChild(ClientCtx.effectLayer);
 
         // Setup game objects
         ClientCtx.beat = new Beat();
@@ -40,12 +40,12 @@ public class GameMode extends AppMode
         ClientCtx.bloodMeter = new PredatorBloodMeter();
         ClientCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         ClientCtx.bloodMeter.y = BLOOD_METER_LOC.y;
-        addObject(ClientCtx.bloodMeter, _effectLayer);
+        addObject(ClientCtx.bloodMeter, ClientCtx.effectLayer);
 
         var heart :Heart = new Heart();
         heart.x = Constants.GAME_CTR.x;
         heart.y = Constants.GAME_CTR.y;
-        addObject(heart, _cellLayer);
+        addObject(heart, ClientCtx.cellLayer);
 
         // setup cells
         for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
@@ -65,8 +65,8 @@ public class GameMode extends AppMode
 
         // cursors
         ClientCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
-        addObject(ClientCtx.prey, _cursorLayer);
-        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), _cursorLayer);
+        addObject(ClientCtx.prey, ClientCtx.cursorLayer);
+        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), ClientCtx.cursorLayer);
     }
 
     protected function createCellSpawnCallback (type :int) :Function
@@ -89,7 +89,7 @@ public class GameMode extends AppMode
         var cell :Cell = new Cell(type, fadeIn);
         cell.x = loc.x;
         cell.y = loc.y;
-        addObject(cell, _cellLayer);
+        addObject(cell, ClientCtx.cellLayer);
     }
 
     override public function update (dt :Number) :void
@@ -114,10 +114,6 @@ public class GameMode extends AppMode
     protected var _playerType :int;
     protected var _modeTime :Number = 0;
     protected var _gameOver :Boolean;
-
-    protected var _cellLayer :Sprite;
-    protected var _cursorLayer :Sprite;
-    protected var _effectLayer :Sprite;
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }
