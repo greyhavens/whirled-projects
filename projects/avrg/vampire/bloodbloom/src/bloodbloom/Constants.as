@@ -21,7 +21,10 @@ public class Constants
     public static const HEART_RADIUS :Number = 60;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
-    public static const BEAT_TIME :Number = 1;
+    public static const BEAT_TIME_BASE :Number = 4 / 4;
+    public static const BEAT_TIME_MIN :Number = 1 / 4;
+    public static const BEAT_SPEED_UP :Number = 0.1 / 4;
+    public static const BEAT_ARTERY_SLOW_DOWN :Number = 0.5 / 4;
 
     public static const ARTERY_TOP :int = 0;
     public static const ARTERY_BOTTOM :int = 1;
@@ -37,7 +40,7 @@ public class Constants
     public static const CELL_RADIUS :Number = 9;
 
     public static const BURST_RADIUS_MIN :Number = 9;
-    public static const BURST_RADIUS_MAX :Number = 25;
+    public static const BURST_RADIUS_MAX :Number = 30;
     public static const BURST_EXPAND_TIME :Number = 1.5;
     public static const BURST_COMPLETE_TIME :Number = 3;
     public static const BURST_CONTRACT_TIME :Number = 1.5;

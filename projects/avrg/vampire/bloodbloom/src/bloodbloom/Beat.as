@@ -6,7 +6,7 @@ public class Beat extends SimObject
 {
     public function Beat ()
     {
-        _totalBeatTime = Constants.BEAT_TIME;
+        _totalBeatTime = Constants.BEAT_TIME_BASE;
     }
 
     override protected function addedToDB () :void
@@ -16,8 +16,13 @@ public class Beat extends SimObject
 
     override protected function update (dt :Number) :void
     {
-        if (ClientCtx.gameMode.modeTime >= this.nextBeat) {
+        var timeNow :Number = ClientCtx.gameMode.modeTime;
+        while (timeNow >= this.nextBeat) {
             _lastBeat = this.nextBeat;
+            _totalBeatTime -= Constants.BEAT_SPEED_UP;
+            _totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
+
+            // fire an event here
         }
     }
 
