@@ -3,6 +3,7 @@ package bloodbloom {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.components.LocationComponent;
 import com.whirled.contrib.simplegame.resource.*;
 
 import flash.display.Bitmap;
@@ -16,6 +17,15 @@ public class ClientCtx
 
     public static var gameMode :GameMode;
     public static var beat :Beat;
+    public static var bloodMeter :PredatorBloodMeter;
+
+    public static function createCellBitmap (type :int) :Bitmap
+    {
+        var bm :Bitmap = instantiateBitmap(type == Constants.CELL_RED ? "red_cell" : "white_cell");
+        bm.x = -bm.width * 0.5;
+        bm.y = -bm.height * 0.5;
+        return bm;
+    }
 
     public static function instantiateBitmap (name :String) :Bitmap
     {
@@ -50,6 +60,11 @@ public class ClientCtx
         return v.addLocal(Constants.GAME_CTR);
     }
 
+    public static function getHemisphere (obj :LocationComponent) :int
+    {
+        return (obj.x < Constants.GAME_CTR.x ? Constants.HEMISPHERE_WEST :
+            Constants.HEMISPHERE_EAST);
+    }
 
 }
 

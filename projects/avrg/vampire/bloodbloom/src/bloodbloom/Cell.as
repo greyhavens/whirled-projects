@@ -40,11 +40,7 @@ public class Cell extends SceneObject
         _type = type;
 
         _sprite = new Sprite();
-        var bitmap :Bitmap =
-            ClientCtx.instantiateBitmap(_type == Constants.CELL_WHITE ? "white_cell" : "red_cell");
-        bitmap.x = -bitmap.width * 0.5;
-        bitmap.y = -bitmap.height * 0.5;
-        _sprite.addChild(bitmap);
+        _sprite.addChild(ClientCtx.createCellBitmap(type));
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
 
@@ -60,19 +56,50 @@ public class Cell extends SceneObject
         _loc.x = this.x;
         _loc.y = this.y;
 
-        var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
-        ctrImpulse.length = 1;
+        // white cells follow predators who have other white cells attached
+        /*if (this.isWhiteCell) {
+            var cellHemisphere :int = ClientCtx.getHemisphere(this);
 
-        var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-        perpImpulse.length = 3.5;
+            if (this.isFollowing && !canFollow(this.followingPredator)) {
+                // stop following the predator if it's left our hemisphere
+                stopFollowing();
+            }
 
-        var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-        impulse.length = SPEED * dt;
+            if (!this.isFollowing) {
+                // find somebody to follow
+                for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
+                    if (canFollow(predator)) {
+                        follow(predator);
+                        break;
+                    }
+                }
+            }
+        }*/
 
-        _loc.x += impulse.x;
-        _loc.y += impulse.y;
+        // if we're following somebody, move towards them
+        if (this.isFollowing) {
+            var following :PredatorCursor = this.followingPredator;
+            var followImpulse :Vector2 = new Vector2(following.x, following.y).subtractLocal(_loc);
+            followImpulse.length = SPEED_FOLLOW * dt;
+            _loc.x += followImpulse.x;
+            _loc.y += followImpulse.y;
+
+        } else {
+            // otherwise, move away from, and around, the heart
+            var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
+            ctrImpulse.length = 1;
+
+            var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+            perpImpulse.length = 3.5;
+
+            var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+            impulse.length = SPEED_BASE * dt;
+
+            _loc.x += impulse.x;
+            _loc.y += impulse.y;
+        }
+
         _loc = ClientCtx.clampLoc(_loc);
-
         this.x = _loc.x;
         this.y = _loc.y;
     }
@@ -106,12 +133,40 @@ public class Cell extends SceneObject
         return _type == Constants.CELL_WHITE;
     }
 
+    protected function canFollow (predator :PredatorCursor) :Boolean
+    {
+        return (predator.numWhiteCells > 0 &&
+                ClientCtx.getHemisphere(predator) == ClientCtx.getHemisphere(this));
+    }
+
+    protected function follow (predator :PredatorCursor) :void
+    {
+        _followObj = predator.ref;
+    }
+
+    protected function stopFollowing () :void
+    {
+        _followObj = SimObjectRef.Null();
+    }
+
+    protected function get followingPredator () :PredatorCursor
+    {
+        return _followObj.object as PredatorCursor;
+    }
+
+    protected function get isFollowing () :Boolean
+    {
+        return !_followObj.isNull;
+    }
+
     protected var _type :int;
     protected var _sprite :Sprite;
     protected var _moveCCW :Boolean;
     protected var _loc :Vector2 = new Vector2();
+    protected var _followObj :SimObjectRef = SimObjectRef.Null();
 
-    protected static const SPEED :Number = 5;
+    protected static const SPEED_BASE :Number = 5;
+    protected static const SPEED_FOLLOW :Number = 7;
 }
 
 }

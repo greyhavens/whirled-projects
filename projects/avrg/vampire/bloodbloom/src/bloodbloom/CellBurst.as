@@ -8,7 +8,6 @@ import com.whirled.contrib.simplegame.util.Collision;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.Sprite;
 
 public class CellBurst extends SceneObject
@@ -40,11 +39,17 @@ public class CellBurst extends SceneObject
 
         this.alpha = 1;
 
+        var thisBurst :CellBurst = this;
+
         var targetScale :Number = Constants.BURST_RADIUS_MAX / Constants.BURST_RADIUS_MIN;
         addTask(ScaleTask.CreateEaseOut(targetScale, targetScale, Constants.BURST_EXPAND_TIME));
         addTask(new SerialTask(
             new TimedTask(Constants.BURST_DIE_TIME - 0.25),
             new AlphaTask(0, 0.25),
+            new FunctionTask(
+                function () :void {
+                    ClientCtx.bloodMeter.showGatherAnim(thisBurst.x, thisBurst.y);
+                }),
             new SelfDestructTask()));
 
         _mode = BURST;

@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Sprite;
+import flash.geom.Point;
 
 public class GameMode extends AppMode
 {
@@ -16,19 +17,30 @@ public class GameMode extends AppMode
         super.setup();
 
         ClientCtx.gameMode = this;
+
+        // Setup display layers
+        _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
+
+        _cellLayer = SpriteUtil.createSprite();
+        _cursorLayer = SpriteUtil.createSprite();
+        _effectLayer = SpriteUtil.createSprite();
+        _modeSprite.addChild(_cellLayer);
+        _modeSprite.addChild(_cursorLayer);
+        _modeSprite.addChild(_effectLayer);
+
+        // Setup game objects
         ClientCtx.beat = new Beat();
         addObject(ClientCtx.beat);
 
-        _cellLayer = new Sprite();
-        _cursorLayer = new Sprite();
-        _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
-        _modeSprite.addChild(_cellLayer);
-        _modeSprite.addChild(_cursorLayer);
+        ClientCtx.bloodMeter = new PredatorBloodMeter();
+        ClientCtx.bloodMeter.x = BLOOD_METER_LOC.x;
+        ClientCtx.bloodMeter.y = BLOOD_METER_LOC.y;
+        addObject(ClientCtx.bloodMeter, _effectLayer);
 
-        _heart = new Heart();
-        _heart.x = Constants.GAME_CTR.x;
-        _heart.y = Constants.GAME_CTR.y;
-        addObject(_heart, _cellLayer);
+        var heart :Heart = new Heart();
+        heart.x = Constants.GAME_CTR.x;
+        heart.y = Constants.GAME_CTR.y;
+        addObject(heart, _cellLayer);
 
         // setup cells
         for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
@@ -92,12 +104,14 @@ public class GameMode extends AppMode
         return _modeTime;
     }
 
-    protected var _heart :Heart;
     protected var _modeTime :Number = 0;
     protected var _gameOver :Boolean;
 
     protected var _cellLayer :Sprite;
     protected var _cursorLayer :Sprite;
+    protected var _effectLayer :Sprite;
+
+    protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }
 
 }

@@ -10,6 +10,11 @@ import flash.geom.Point;
 
 public class PredatorCursor extends SceneObject
 {
+    public static function getAll () :Array
+    {
+        return ClientCtx.gameMode.getObjectsInGroup("PredatorCursor");
+    }
+
     public function PredatorCursor (controlledLocally :Boolean)
     {
         _controlledLocally = controlledLocally;
@@ -56,7 +61,7 @@ public class PredatorCursor extends SceneObject
                 CellBurst.createFromCell(cell);
             } else {
                 // attach the white cell to us
-                var bm :Bitmap = ClientCtx.instantiateBitmap("white_cell");
+                var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
                 var loc :Point = this.displayObject.globalToLocal(new Point(cell.x, cell.y));
                 loc.x -= bm.width * 0.5;
                 loc.y -= bm.height * 0.5;
@@ -84,6 +89,14 @@ public class PredatorCursor extends SceneObject
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch (groupNum) {
+        case 0:     return "PredatorCursor";
+        default:    return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     protected function get speed () :Number

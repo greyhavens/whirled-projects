@@ -45,6 +45,9 @@ public class Constants
     public static const GAME_CTR :Vector2 = new Vector2(267, 246);
 
     public static const GAME_RADIUS2 :Number = GAME_RADIUS * GAME_RADIUS;
+
+    public static const HEMISPHERE_WEST :int = 0;
+    public static const HEMISPHERE_EAST :int = 1;
 }
 
 }
