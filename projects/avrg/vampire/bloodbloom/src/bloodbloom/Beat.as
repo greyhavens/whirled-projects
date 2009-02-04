@@ -22,8 +22,15 @@ public class Beat extends SimObject
             _totalBeatTime -= Constants.BEAT_SPEED_UP;
             _totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
 
-            // fire an event here
+            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
         }
+    }
+
+    public function deliverWhiteCell () :void
+    {
+        // when white cells are delivered, the beat slows down a bit
+        _totalBeatTime += Constants.BEAT_ARTERY_SLOW_DOWN;
+        _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_BASE);
     }
 
     public function get lastBeat () :Number

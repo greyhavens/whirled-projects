@@ -3,19 +3,18 @@ package bloodbloom {
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.AlphaTask;
-import com.whirled.contrib.simplegame.util.Collision;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.simplegame.tasks.*;
+import com.whirled.contrib.simplegame.util.*;
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 public class Cell extends SceneObject
 {
-    public static function getCellCount (type :int) :int
+    public static function getCellCount (cellType :int = -1) :int
     {
-        return ClientCtx.mainLoop.topMode.getObjectRefsInGroup("Cell_" + type).length;
+        var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
+        return ClientCtx.mainLoop.topMode.getObjectRefsInGroup(groupName).length;
     }
 
     public static function getCellCollision (loc :Vector2, radius :Number, cellType :int = -1) :Cell
@@ -35,7 +34,7 @@ public class Cell extends SceneObject
         return null;
     }
 
-    public function Cell (type :int, fadeIn :Boolean)
+    public function Cell (type :int, beingBorn :Boolean)
     {
         _type = type;
 
@@ -44,10 +43,30 @@ public class Cell extends SceneObject
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
 
-        // fade in
-        if (fadeIn) {
+        if (beingBorn) {
+            // When cells are born, they burst out of the center of the heart
+            _mode = MODE_BIRTH;
+            this.x = Constants.GAME_CTR.x;
+            this.y = Constants.GAME_CTR.y;
+
+            // fire out of the heart in a random direction
+            var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+            var dist :Number = Constants.CELL_BIRTH_DISTANCE.next();
+            var target :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+
+            addTask(new SerialTask(
+                LocationTask.CreateEaseOut(target.x, target.y, Constants.CELL_BIRTH_TIME),
+                new FunctionTask(
+                    function () :void {
+                        _mode = MODE_NORMAL;
+                    })));
+
+            // fade in
             this.alpha = 0;
             addTask(new AlphaTask(1, 0.4));
+
+        } else {
+            _mode = MODE_NORMAL;
         }
     }
 
@@ -76,32 +95,34 @@ public class Cell extends SceneObject
             }
         }*/
 
-        // if we're following somebody, move towards them
-        if (this.isFollowing) {
-            var following :PredatorCursor = this.followingPredator;
-            var followImpulse :Vector2 = new Vector2(following.x, following.y).subtractLocal(_loc);
-            followImpulse.length = SPEED_FOLLOW * dt;
-            _loc.x += followImpulse.x;
-            _loc.y += followImpulse.y;
+        if (_mode == MODE_NORMAL) {
+            // if we're following somebody, move towards them
+            if (this.isFollowing) {
+                var following :PredatorCursor = this.followingPredator;
+                var followImpulse :Vector2 = new Vector2(following.x, following.y).subtractLocal(_loc);
+                followImpulse.length = SPEED_FOLLOW * dt;
+                _loc.x += followImpulse.x;
+                _loc.y += followImpulse.y;
 
-        } else {
-            // otherwise, move away from, and around, the heart
-            var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
-            ctrImpulse.length = 1;
+            } else {
+                // otherwise, move away from, and around, the heart
+                var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
+                ctrImpulse.length = 1;
 
-            var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-            perpImpulse.length = 3.5;
+                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+                perpImpulse.length = 3.5;
 
-            var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-            impulse.length = SPEED_BASE * dt;
+                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+                impulse.length = SPEED_BASE * dt;
 
-            _loc.x += impulse.x;
-            _loc.y += impulse.y;
+                _loc.x += impulse.x;
+                _loc.y += impulse.y;
+            }
+
+            _loc = ClientCtx.clampLoc(_loc);
+            this.x = _loc.x;
+            this.y = _loc.y;
         }
-
-        _loc = ClientCtx.clampLoc(_loc);
-        this.x = _loc.x;
-        this.y = _loc.y;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -160,13 +181,18 @@ public class Cell extends SceneObject
     }
 
     protected var _type :int;
-    protected var _sprite :Sprite;
+    protected var _mode :int;
     protected var _moveCCW :Boolean;
     protected var _loc :Vector2 = new Vector2();
     protected var _followObj :SimObjectRef = SimObjectRef.Null();
 
+    protected var _sprite :Sprite;
+
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;
+
+    protected static const MODE_BIRTH :int = 0;
+    protected static const MODE_NORMAL :int = 1;
 }
 
 }

@@ -1,7 +1,8 @@
 package bloodbloom {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.objects.*;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -132,6 +133,20 @@ public class PreyCursor extends SceneObject
 
         _lastArtery = arteryType;
         updateArteryHilite();
+
+        // Deliver a white cell to the heart, to slow the beat down
+        ClientCtx.beat.deliverWhiteCell();
+
+        // animate the white cell delivery
+        var sprite :Sprite = SpriteUtil.createSprite();
+        sprite.addChild(ClientCtx.createCellBitmap(Constants.CELL_WHITE));
+        var animationObj :SceneObject = new SimpleSceneObject(sprite);
+        animationObj.x = Constants.GAME_CTR.x;
+        animationObj.y = this.y;
+        animationObj.addTask(new SerialTask(
+            LocationTask.CreateEaseIn(Constants.GAME_CTR.x, Constants.GAME_CTR.y, 1),
+            new SelfDestructTask()));
+        ClientCtx.gameMode.addObject(animationObj, ClientCtx.cellLayer);
     }
 
     protected function updateArteryHilite () :void
