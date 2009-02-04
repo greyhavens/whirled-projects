@@ -7,7 +7,8 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.NumRange;
 import com.whirled.contrib.simplegame.util.Rand;
 
-import flash.display.Sprite;
+import flash.display.Bitmap;
+import flash.filters.GlowFilter;
 import flash.geom.Point;
 
 public class GameMode extends AppMode
@@ -25,6 +26,16 @@ public class GameMode extends AppMode
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
+
+        _arteryBottom = ClientCtx.instantiateBitmap("artery_blue");
+        _arteryBottom.x = Constants.GAME_CTR.x - (_arteryBottom.width * 0.5);
+        _arteryBottom.y = 290;
+        _modeSprite.addChild(_arteryBottom);
+
+        _arteryTop = ClientCtx.instantiateBitmap("artery_red");
+        _arteryTop.x = Constants.GAME_CTR.x - (_arteryTop.width * 0.5);
+        _arteryTop.y = 30;
+        _modeSprite.addChild(_arteryTop);
 
         ClientCtx.cellLayer = SpriteUtil.createSprite();
         ClientCtx.cursorLayer = SpriteUtil.createSprite();
@@ -48,10 +59,11 @@ public class GameMode extends AppMode
         addObject(heart, ClientCtx.cellLayer);
 
         // setup cells
+        var cellSpawnRadius :NumRange = new NumRange(50, 170, Rand.STREAM_GAME);
         for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
             // create initial cells
             for (var ii :int = 0; ii < Constants.INITIAL_CELL_COUNT[type]; ++ii) {
-                spawnCell(type, false);
+                spawnCell(type, cellSpawnRadius.next(), false);
             }
 
             // spawn new cells on a timer
@@ -73,16 +85,15 @@ public class GameMode extends AppMode
     {
         return function () :void {
             if (Cell.getCellCount(type) < Constants.MAX_CELL_COUNT[type]) {
-                spawnCell(type, true);
+                spawnCell(type, Constants.HEART_RADIUS, true);
             }
         };
     }
 
-    protected function spawnCell (type :int, fadeIn :Boolean) :void
+    protected function spawnCell (type :int, dist :Number, fadeIn :Boolean) :void
     {
         // pick a random location for the cell
         var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-        var dist :Number = Constants.CELL_SPAWN_RADIUS.next();
         var loc :Vector2 = Vector2.fromAngle(angle, dist).add(Constants.GAME_CTR);
 
         // spawn
@@ -111,9 +122,17 @@ public class GameMode extends AppMode
         return _modeTime;
     }
 
+    public function hiliteArteries (hiliteTop :Boolean, hiliteBottom :Boolean) :void
+    {
+        _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
+        _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
+    }
+
     protected var _playerType :int;
     protected var _modeTime :Number = 0;
     protected var _gameOver :Boolean;
+    protected var _arteryTop :Bitmap;
+    protected var _arteryBottom :Bitmap;
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }

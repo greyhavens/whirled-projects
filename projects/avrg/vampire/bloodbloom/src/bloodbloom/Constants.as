@@ -8,6 +8,8 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
+    public static const PREDATOR_BLOOD_TARGET :int = 80;
+
     public static const PREDATOR_SPEED_BASE :Number = 65;
     public static const MAX_PREDATOR_WHITE_CELLS :int = 3;
 
@@ -30,9 +32,8 @@ public class Constants
     public static const INITIAL_CELL_COUNT :Array = [ 30, 10 ];
     public static const MAX_CELL_COUNT :Array = [ 50, 50 ];
     public static const CELL_SPAWN_RATE :Array = [
-        new NumRange(5, 7, Rand.STREAM_GAME), new NumRange(6, 8, Rand.STREAM_GAME)
+        new NumRange(3, 4, Rand.STREAM_GAME), new NumRange(6, 8, Rand.STREAM_GAME)
     ];
-    public static const CELL_SPAWN_RADIUS :NumRange = new NumRange(50, 170, Rand.STREAM_GAME);
     public static const CELL_RADIUS :Number = 9;
 
     public static const BURST_RADIUS_MIN :Number = 9;

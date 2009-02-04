@@ -29,6 +29,11 @@ public class PredatorBloodMeter extends SceneObject
             UIBits.initTextField(_tf, "Predator Blood: " + _displayedBloodCount, 1.5, 0, 0xff0000);
             _lastDisplayedBloodCount = _displayedBloodCount;
         }
+
+        if (_bloodCount >= Constants.PREDATOR_BLOOD_TARGET) {
+            ClientCtx.gameMode.gameOver("Predator collected " +
+                Constants.PREDATOR_BLOOD_TARGET + " blood");
+        }
     }
 
     public function addBlood (x :Number, y :Number, count :int) :void

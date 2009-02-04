@@ -18,6 +18,8 @@ public class PreyCursor extends SceneObject
         bitmap.x = -bitmap.width * 0.5;
         bitmap.y = -bitmap.height * 0.5;
         _sprite.addChild(bitmap);
+
+        updateArteryHilite();
     }
 
     override protected function update (dt :Number) :void
@@ -127,6 +129,16 @@ public class PreyCursor extends SceneObject
         _whiteCells = [];
 
         _lastArtery = arteryType;
+        updateArteryHilite();
+    }
+
+    protected function updateArteryHilite () :void
+    {
+        if (_controlledLocally) {
+            ClientCtx.gameMode.hiliteArteries(
+                _lastArtery != Constants.ARTERY_TOP,
+                _lastArtery != Constants.ARTERY_BOTTOM);
+        }
     }
 
     protected function canCollideArtery (arteryType :int) :Boolean
