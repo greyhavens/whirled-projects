@@ -30,6 +30,11 @@ public class SharedPlayerStateClient
         return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
     
+    public static function getXP (playerId :int) :int
+    {
+        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
+    }
+    
     public static function getBloodBonded (playerId :int) :Array
     {
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) as Array;
@@ -38,6 +43,17 @@ public class SharedPlayerStateClient
     public static function getClosestUserData (playerId :int) :Array
     {
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA) as Array;
+    }
+    
+    //ATM just returns the closest user
+    public static function getTargetPlayer (playerId :int) :int
+    {
+        var userData :Array = getClosestUserData( playerId );
+        if( userData == null || userData.length == 0) {
+            log.info("getTargetPlayer()", "player", playerId, "userdata", userData);
+            return -1;
+        }
+        return int(userData[0]);
     }
     
     public static function getCurrentAction (playerId :int) :String
@@ -69,7 +85,6 @@ public class SharedPlayerStateClient
     {
         var dict :Dictionary =
             ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) as Dictionary;
-//            log.debug("playerData(), dict=" + dict)
         return (dict != null) ? dict[ix] : undefined;
     }
     
