@@ -1,12 +1,18 @@
 package bloodbloom.client {
 
 import com.whirled.contrib.simplegame.AppMode;
+import com.whirled.contrib.simplegame.ObjectDB;
+import com.whirled.contrib.simplegame.SimObject;
+import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
 import flash.display.Bitmap;
+import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
+
+import bloodbloom.client.view.*;
 
 public class GameMode extends AppMode
 {
@@ -20,6 +26,7 @@ public class GameMode extends AppMode
         super.setup();
 
         ClientCtx.gameMode = this;
+        ClientCtx.heartbeatDb = new NetObjDb();
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
@@ -43,7 +50,7 @@ public class GameMode extends AppMode
 
         // Setup game objects
         ClientCtx.beat = new Beat();
-        addObject(ClientCtx.beat);
+        ClientCtx.heartbeatDb.addObject(ClientCtx.beat);
 
         ClientCtx.bloodMeter = new PredatorBloodMeter();
         ClientCtx.bloodMeter.x = BLOOD_METER_LOC.x;
@@ -54,23 +61,6 @@ public class GameMode extends AppMode
         heart.x = Constants.GAME_CTR.x;
         heart.y = Constants.GAME_CTR.y;
         addObject(heart, ClientCtx.cellLayer);
-
-        // setup cells
-        /*var cellSpawnRadius :NumRange = new NumRange(50, 170, Rand.STREAM_GAME);
-        for (var type :int = 0; type < Constants.CELL__LIMIT; ++type) {
-            // create initial cells
-            for (var ii :int = 0; ii < Constants.INITIAL_CELL_COUNT[type]; ++ii) {
-                spawnCell(type, cellSpawnRadius.next(), false);
-            }
-
-            // spawn new cells on a timer
-            var spawnRate :NumRange = Constants.CELL_SPAWN_RATE[type];
-            var spawner :SimObject = new SimObject();
-            spawner.addTask(new RepeatingTask(
-                new VariableTimedTask(spawnRate.min, spawnRate.max, Rand.STREAM_GAME),
-                new FunctionTask(createCellSpawnCallback(type))));
-            addObject(spawner);
-        }*/
 
         // spawn cells when the heart beats
         registerListener(ClientCtx.beat, GameEvent.HEARTBEAT,
@@ -95,6 +85,8 @@ public class GameMode extends AppMode
     override public function update (dt :Number) :void
     {
         super.update(dt);
+        ClientCtx.heartbeatDb.update(dt);
+
         _modeTime += dt;
     }
 
@@ -115,6 +107,16 @@ public class GameMode extends AppMode
     {
         _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
         _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
+    }
+
+    override public function addObject (obj :SimObject,
+        displayParent :DisplayObjectContainer = null) :SimObjectRef
+    {
+        if (obj is NetObj) {
+            throw new Error("HeartBeatObjs cannot be added to GameMode");
+        } else {
+            return super.addObject(obj, displayParent);
+        }
     }
 
     protected var _playerType :int;

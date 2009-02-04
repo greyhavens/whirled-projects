@@ -2,7 +2,7 @@ package bloodbloom.client {
 
 import com.whirled.contrib.simplegame.SimObject;
 
-public class Beat extends SimObject
+public class Beat extends NetObj
 {
     public function Beat ()
     {

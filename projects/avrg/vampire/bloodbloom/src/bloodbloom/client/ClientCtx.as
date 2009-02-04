@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 import com.whirled.contrib.simplegame.resource.*;
+import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
@@ -12,11 +13,13 @@ import flash.display.Sprite;
 
 public class ClientCtx
 {
+    public static var gameCtrl :GameControl;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
 
     public static var gameMode :GameMode;
+    public static var heartbeatDb :NetObjDb;
     public static var beat :Beat;
     public static var prey :PreyCursor;
     public static var bloodMeter :PredatorBloodMeter;

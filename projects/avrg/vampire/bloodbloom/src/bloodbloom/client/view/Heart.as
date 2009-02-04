@@ -1,4 +1,4 @@
-package bloodbloom.client {
+package bloodbloom.client.view {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import mx.effects.easing.*;
+
+import bloodbloom.client.*;
 
 public class Heart extends SceneObject
 {

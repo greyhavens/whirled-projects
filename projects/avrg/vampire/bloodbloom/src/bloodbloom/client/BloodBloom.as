@@ -1,9 +1,12 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
 import flash.events.Event;
@@ -13,6 +16,8 @@ public class BloodBloom extends Sprite
 {
     public function BloodBloom ()
     {
+        ClientCtx.gameCtrl = new GameControl(this, false);
+
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
