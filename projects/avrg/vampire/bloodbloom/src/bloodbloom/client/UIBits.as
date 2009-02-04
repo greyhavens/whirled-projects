@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;

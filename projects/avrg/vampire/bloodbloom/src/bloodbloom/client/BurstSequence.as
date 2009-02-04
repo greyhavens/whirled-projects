@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObjectRef;

@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
@@ -26,6 +26,7 @@ public class Cell extends SceneObject
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
+                cell._mode == MODE_NORMAL &&
                 Collision.circlesIntersect(cell._loc, Constants.CELL_RADIUS, loc, radius)) {
                 return cell;
             }
@@ -51,7 +52,8 @@ public class Cell extends SceneObject
 
             // fire out of the heart in a random direction
             var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-            var dist :Number = Constants.CELL_BIRTH_DISTANCE.next();
+            var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[_type];
+            var dist :Number = distRange.next();
             var target :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
             addTask(new SerialTask(

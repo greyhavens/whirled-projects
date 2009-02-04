@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;

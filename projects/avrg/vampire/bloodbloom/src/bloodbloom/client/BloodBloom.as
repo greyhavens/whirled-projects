@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
@@ -81,23 +81,23 @@ public class BloodBloom extends Sprite
 
     protected static var log :Log = Log.getLog(BloodBloom);
 
-    [Embed(source="../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
     protected static const SWF_UIBITS :Class;
-    [Embed(source="../../rsrc/bg.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/bg.png", mimeType="application/octet-stream")]
     protected static const IMG_BG :Class;
-    [Embed(source="../../rsrc/artery_blue.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/artery_blue.png", mimeType="application/octet-stream")]
     protected static const IMG_ARTERY_BLUE :Class;
-    [Embed(source="../../rsrc/artery_red.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/artery_red.png", mimeType="application/octet-stream")]
     protected static const IMG_ARTERY_RED :Class;
-    [Embed(source="../../rsrc/heart.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/heart.png", mimeType="application/octet-stream")]
     protected static const IMG_HEART :Class;
-    [Embed(source="../../rsrc/red_cell.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/red_cell.png", mimeType="application/octet-stream")]
     protected static const IMG_RED_CELL :Class;
-    [Embed(source="../../rsrc/vampire_cursor.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/vampire_cursor.png", mimeType="application/octet-stream")]
     protected static const IMG_PREDATOR_CURSOR :Class;
-    [Embed(source="../../rsrc/victim_cursor.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/victim_cursor.png", mimeType="application/octet-stream")]
     protected static const IMG_PREY_CURSOR :Class;
-    [Embed(source="../../rsrc/white_cell.png", mimeType="application/octet-stream")]
+    [Embed(source="../../../rsrc/white_cell.png", mimeType="application/octet-stream")]
     protected static const IMG_WHITE_CELL :Class;
 }
 

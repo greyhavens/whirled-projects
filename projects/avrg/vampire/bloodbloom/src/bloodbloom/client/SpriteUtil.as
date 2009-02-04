@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import flash.display.Sprite;
 

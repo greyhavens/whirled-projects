@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.util.*;
@@ -8,7 +8,7 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const PREDATOR_BLOOD_TARGET :int = 80;
+    public static const PREDATOR_BLOOD_TARGET :int = 1000;
 
     public static const PREDATOR_SPEED_BASE :Number = 65;
     public static const MAX_PREDATOR_WHITE_CELLS :int = 3;
@@ -39,7 +39,10 @@ public class Constants
     ];*/
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 6, Rand.STREAM_GAME);
-    public static const CELL_BIRTH_DISTANCE :NumRange = new NumRange(65, 160, Rand.STREAM_GAME);
+    public static const CELL_BIRTH_DISTANCE :Array = [
+        new NumRange(65, 100, Rand.STREAM_GAME),
+        new NumRange(90, 140, Rand.STREAM_GAME)
+    ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
     public static const CELL_RADIUS :Number = 9;
 

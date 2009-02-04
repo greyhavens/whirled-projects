@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.*;
@@ -143,6 +143,7 @@ public class PreyCursor extends SceneObject
         var animationObj :SceneObject = new SimpleSceneObject(sprite);
         animationObj.x = Constants.GAME_CTR.x;
         animationObj.y = this.y;
+        animationObj.addTask(ScaleTask.CreateSmooth(2, 2, 1));
         animationObj.addTask(new SerialTask(
             LocationTask.CreateEaseIn(Constants.GAME_CTR.x, Constants.GAME_CTR.y, 1),
             new SelfDestructTask()));

@@ -1,4 +1,4 @@
-package bloodbloom {
+package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
