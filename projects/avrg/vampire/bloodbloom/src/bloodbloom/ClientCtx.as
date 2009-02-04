@@ -17,6 +17,7 @@ public class ClientCtx
 
     public static var gameMode :GameMode;
     public static var beat :Beat;
+    public static var prey :PreyCursor;
     public static var bloodMeter :PredatorBloodMeter;
 
     public static function createCellBitmap (type :int) :Bitmap

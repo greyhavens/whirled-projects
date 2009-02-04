@@ -58,7 +58,9 @@ public class GameMode extends AppMode
             addObject(spawner);
         }
 
-        addObject(new PreyCursor(false), _cursorLayer);
+        // cursors
+        ClientCtx.prey = new PreyCursor(false);
+        addObject(ClientCtx.prey, _cursorLayer);
         addObject(new PredatorCursor(true), _cursorLayer);
     }
 

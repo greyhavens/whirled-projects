@@ -84,10 +84,12 @@ public class CellBurst extends SceneObject
 
     override protected function update (dt :Number) :void
     {
+        var thisLoc :Vector2 = new Vector2(this.x, this.y);
+
         if (_mode == BURST) {
             // We're bursting. When we collide with red cells, we create new CellBursts;
             // When we collide with white cells, we unburst.
-            var cell :Cell = Cell.getCellCollision(new Vector2(this.x, this.y), this.radius);
+            var cell :Cell = Cell.getCellCollision(thisLoc, this.radius);
             if (cell != null) {
                 if (cell.isRedCell) {
                     CellBurst.createFromCell(cell);
@@ -96,11 +98,13 @@ public class CellBurst extends SceneObject
                 }
             }
 
-            // TODO: collide with PreyCursor
+            var preyLoc :Vector2 = new Vector2(ClientCtx.prey.x, ClientCtx.prey.y);
+            if (Collision.circlesIntersect(thisLoc, this.radius, preyLoc, Constants.CURSOR_RADIUS)) {
+                ClientCtx.gameMode.gameOver("Prey hit a blood burst!");
+            }
 
         } else {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
-            var thisLoc :Vector2 = new Vector2(this.x, this.y);
             var otherLoc :Vector2 = new Vector2();
             var bursts :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("CellBurst");
             for each (var burstRef :SimObjectRef in bursts) {
