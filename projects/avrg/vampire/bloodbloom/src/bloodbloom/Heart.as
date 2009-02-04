@@ -31,8 +31,11 @@ public class Heart extends SceneObject
         var easeFn :Function =
             (beatPhase < 0 ? mx.effects.easing.Cubic.easeIn : mx.effects.easing.Cubic.easeOut);
 
+        var t :Number = Math.abs(beatPhase);
+        t = Math.max(0, t);
+        t = Math.min(1, t);
         var scale :Number = easeFn(
-            Math.abs(beatPhase),        // time
+            t,                          // time
             SCALE_SMALL,                // initial value
             (SCALE_BIG - SCALE_SMALL),  // total change
             1);                         // duration
