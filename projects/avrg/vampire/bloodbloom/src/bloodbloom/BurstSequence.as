@@ -5,6 +5,7 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
+import flash.geom.Point;
 import flash.text.TextField;
 
 public class BurstSequence extends SceneObject
@@ -42,7 +43,8 @@ public class BurstSequence extends SceneObject
             });
 
         if (!isSequenceAlive) {
-            ClientCtx.bloodMeter.addBlood(this.x, this.y, _bursts.length * _bursts.length);
+            var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
+            ClientCtx.bloodMeter.addBlood(loc.x, loc.y, _bursts.length * _bursts.length);
             destroySelf();
 
         } else {

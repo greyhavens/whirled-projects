@@ -59,10 +59,13 @@ public class PredatorCursor extends SceneObject
             if (cell.type == Constants.CELL_RED) {
                 // create a cell burst
                 CellBurst.createFromCell(cell);
+
             } else {
                 // attach the white cell to us
                 var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
-                var loc :Point = this.displayObject.globalToLocal(new Point(cell.x, cell.y));
+                var loc :Point = new Point(cell.x, cell.y);
+                loc = cell.displayObject.parent.localToGlobal(loc);
+                loc = this.displayObject.globalToLocal(loc);
                 loc.x -= bm.width * 0.5;
                 loc.y -= bm.height * 0.5;
                 bm.x = loc.x;

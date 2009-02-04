@@ -54,7 +54,9 @@ public class PreyCursor extends SceneObject
         var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
         if (cell != null) {
             var bm :Bitmap = ClientCtx.createCellBitmap(cell.type);
-            var loc :Point = this.displayObject.globalToLocal(new Point(cell.x, cell.y));
+            var loc :Point = new Point(cell.x, cell.y);
+            loc = cell.displayObject.parent.localToGlobal(loc);
+            loc = this.displayObject.globalToLocal(loc);
             loc.x -= bm.width * 0.5;
             loc.y -= bm.height * 0.5;
             bm.x = loc.x;
