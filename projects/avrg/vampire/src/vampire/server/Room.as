@@ -3,6 +3,7 @@
 
 package vampire.server {
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.HashSet;
 import com.threerings.util.Hashable;
@@ -12,6 +13,9 @@ import com.whirled.avrg.RoomSubControlServer;
 
 import flash.events.Event;
 
+import vampire.data.Codes;
+import vampire.data.Constants;
+
 public class Room
     implements Hashable
 {
@@ -20,11 +24,7 @@ public class Room
     public function Room (roomId :int)
     {
         _roomId = roomId;
-//        _state = Codes.STATE_SEEKING;
-
         maybeLoadControl();
-        
-//        for each(_ctrl.getPlayerIds()
     }
 
     public function get roomId () :int
@@ -83,9 +83,15 @@ public class Room
         maybeLoadControl(); 
         
         var playername :String = _ctrl.getAvatarInfo( player.playerId) != null ? _ctrl.getAvatarInfo( player.playerId).name : "" + player.playerId;
+        
         log.info("Setting " + playername + " props into room");
         player.setIntoRoomProps( this );
 
+        //Broadcast the players in the room
+//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
+        
+        
+        
         // broadcast the arriving player's data using room properties
 //        var dict :Dictionary = new Dictionary();
 //        dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
@@ -108,6 +114,10 @@ public class Room
                         "playerId", player.playerId);
             return;
         }
+        
+        //Broadcast the players in the room
+        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
+        
 
 //        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
     }
@@ -122,7 +132,10 @@ public class Room
 //    }
 
 
-    public function tick (frame :int, newSecond :Boolean) :void
+    /**
+    * dt: Seconds 
+    */
+    public function tick (dt :Number) :void
     {
         // if we're shut down due to excessive errors, or the room is unloaded, do nothing
         if (isShutdown || _ctrl == null) {
@@ -130,7 +143,7 @@ public class Room
         }
 
         try {
-            _tick(frame, newSecond);
+            _tick(dt);
 
         } catch (e :Error) {
             log.error("Tick error", e);
@@ -187,7 +200,10 @@ public class Room
 //        }
 //    }
 
-
+    public function isPlayer( userId :int ) :Boolean
+    {
+        return ArrayUtil.contains( ctrl.getPlayerIds(), userId );
+    }
     internal function playerUpdated (player :Player) :void
     {
         if (_ctrl == null) {
@@ -196,7 +212,8 @@ public class Room
             return;
         }
 
-        log.debug("Updating player room props=" + player);
+        
+        ServerContext._serverLogBroadcast.log("Updating player room props=" + player);
         
 //        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + player.playerId;
 //        _ctrl.props.set(key, player.playerState.toBytes()); 
@@ -250,45 +267,10 @@ public class Room
         log.debug("Room state set", "roomId", this.roomId, "state", state);
     }
 
-    protected function _tick (frame :int, newSecond :Boolean) :void
+    protected function _tick (dt :Number) :void
     {
-//        switch(_state) {
-//        case Codes.STATE_SEEKING:
-//            seekTick(frame, newSecond);
-//            break;
-//
-//        case Codes.STATE_APPEARING:
-//            if (_transitionFrame == 0) {
-//                log.warning("In APPEAR without transitionFrame", "id", this.roomId);
-//            }
-//            // let's add a 1-second grace period on the transition
-//            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
-//                ghostFullyAppeared();
-//                _transitionFrame = 0;
-//            }
-//            break;
-//
-//        case Codes.STATE_FIGHTING:
-//            fightTick(frame, newSecond);
-//            break;
-//
-//        case Codes.STATE_GHOST_TRIUMPH:
-//        case Codes.STATE_GHOST_DEFEAT:
-//            if (_transitionFrame == 0) {
-//                log.warning("In TRIUMPH/DEFEAT without transitionFrame", "id", this.roomId);
-//            }
-//            // let's add a 1-second grace period on the transition
-//            if (frame >= _transitionFrame + Server.FRAMES_PER_SECOND) {
-//                ghostFullyGone();
-//                _transitionFrame = 0;
-//            }
-//            break;
-//        }
+        _players.forEach( function( p :Player) :void{ p.tick(dt)});
     }
-
-
-
-
 
     protected function maybeLoadControl () :void
     {
@@ -300,7 +282,8 @@ public class Room
             }
 
             // export the room state to room properties
-//            _ctrl.props.set(Codes.PROP_STATE, _state, true);
+            log.info("Starting room, setting hierarchy in props=" + ServerContext.minionHierarchy);
+            _ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes());
 //            log.debug("Export my state to new control", "state", _state);
 
             // if there's a ghost in here, re-export it too
@@ -311,6 +294,8 @@ public class Room
             var handleUnload :Function;
             handleUnload = function (evt :Event) :void {
                 _ctrl.removeEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
+                
+                _ctrl.removeEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
                 _ctrl = null;
 
                 if (_players.size() != 0) {
@@ -322,7 +307,17 @@ public class Room
             };
 
             _ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
+            
+            _ctrl.addEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
         }
+    }
+    
+    protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
+    {
+        log.debug("handleSignalReceived() " + e);
+        _players.forEach( function(p :Player) :void {
+           p.handleSignalReceived( e ); 
+        });
     }
 
     protected var _roomId :int;
@@ -330,6 +325,10 @@ public class Room
 
 //    protected var _state :String;
     protected var _players :HashSet = new HashSet();
+    
+    public var _nonplayers :HashSet = new HashSet();
+    
+//    protected var _playerEntityIds :HashSet = new HashSet();
 
     protected var _errorCount :int = 0;
 
