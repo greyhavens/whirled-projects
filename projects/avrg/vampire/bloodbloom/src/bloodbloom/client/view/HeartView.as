@@ -11,9 +11,9 @@ import mx.effects.easing.*;
 
 import bloodbloom.client.*;
 
-public class Heart extends SceneObject
+public class HeartView extends SceneObject
 {
-    public function Heart ()
+    public function HeartView ()
     {
         _sprite = new Sprite();
 
@@ -29,7 +29,7 @@ public class Heart extends SceneObject
         // get a value between -1 and 1
         // [-1, 0] -> heart is shrinking
         // [0, 1] -> heart is growing
-        var beatPhase :Number = (GameCtx.beat.pctTimeToNextBeat - 0.5) * 2;
+        var beatPhase :Number = (GameCtx.heart.pctTimeToNextBeat - 0.5) * 2;
         var easeFn :Function =
             (beatPhase < 0 ? mx.effects.easing.Cubic.easeIn : mx.effects.easing.Cubic.easeOut);
 

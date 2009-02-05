@@ -61,6 +61,7 @@ public class Constants
     public static const MSG_C_CHOOSE_PLAYER :String = "cChoosePlayer"; // int - player type
 
     public static const PROP_RAND_SEED :String = "randSeed"; // uint
+    public static const PROP_INITED :String = "inited"; // Boolean
 }
 
 }

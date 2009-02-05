@@ -11,7 +11,7 @@ public class GameCtx
 {
     public static var gameMode :GameMode;
     public static var heartbeatDb :NetObjDb;
-    public static var beat :Beat;
+    public static var heart :Heart;
     public static var prey :PreyCursor;
     public static var bloodMeter :PredatorBloodMeter;
 
@@ -23,7 +23,7 @@ public class GameCtx
     {
         gameMode = null;
         heartbeatDb = null;
-        beat = null;
+        heart = null;
         prey = null;
         bloodMeter = null;
 

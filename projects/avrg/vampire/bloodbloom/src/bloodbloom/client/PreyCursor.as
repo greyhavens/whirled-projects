@@ -138,7 +138,7 @@ public class PreyCursor extends SceneObject
         updateArteryHilite();
 
         // Deliver a white cell to the heart, to slow the beat down
-        GameCtx.beat.deliverWhiteCell();
+        GameCtx.heart.deliverWhiteCell();
 
         // animate the white cell delivery
         var sprite :Sprite = SpriteUtil.createSprite();

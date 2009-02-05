@@ -11,6 +11,7 @@ import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;
@@ -32,19 +33,7 @@ public class GameMode extends AppMode
         GameCtx.gameMode = this;
         GameCtx.heartbeatDb = new NetObjDb();
 
-        // network stuff
-        _msgMgr = (ClientCtx.isConnected ?
-            new OnlineTickedMessageManager(ClientCtx.gameCtrl,
-                false,
-                Constants.HEARTBEAT_TIME * 1000,
-                Constants.MSG_S_HEARTBEAT) :
-            new OfflineTickedMessageManager(ClientCtx.gameCtrl,
-                Constants.HEARTBEAT_TIME * 1000));
-        _msgMgr.run();
-
-        if (ClientCtx.isConnected) {
-            ClientCtx.gameCtrl.game.playerReady();
-        }
+        setupNetwork();
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
@@ -67,37 +56,62 @@ public class GameMode extends AppMode
         _modeSprite.addChild(GameCtx.effectLayer);
 
         // Setup game objects
-        GameCtx.beat = new Beat();
-        GameCtx.heartbeatDb.addObject(GameCtx.beat);
+        GameCtx.heart = new Heart();
+        GameCtx.heartbeatDb.addObject(GameCtx.heart);
 
         GameCtx.bloodMeter = new PredatorBloodMeter();
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
 
-        var heart :Heart = new Heart();
+        var heart :HeartView = new HeartView();
         heart.x = Constants.GAME_CTR.x;
         heart.y = Constants.GAME_CTR.y;
         addObject(heart, GameCtx.cellLayer);
-
-        // spawn cells when the heart beats
-        registerListener(GameCtx.beat, GameEvent.HEARTBEAT,
-            function (...ignored) :void {
-                var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
-                count = Math.min(count, Constants.MAX_CELL_COUNT - Cell.getCellCount());
-                for (var ii :int = 0; ii < count; ++ii) {
-                    var cellType :int =
-                        (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
-                            Constants.CELL_RED : Constants.CELL_WHITE);
-
-                    GameObjects.createCell(cellType, true);
-                }
-            });
 
         // cursors
         GameCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
         addObject(GameCtx.prey, GameCtx.cursorLayer);
         addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), GameCtx.cursorLayer);
+    }
+
+    protected function setupNetwork () :void
+    {
+        _msgMgr = (ClientCtx.isConnected ?
+            new OnlineTickedMessageManager(ClientCtx.gameCtrl,
+                false,
+                Constants.HEARTBEAT_TIME * 1000,
+                Constants.MSG_S_HEARTBEAT) :
+            new OfflineTickedMessageManager(ClientCtx.gameCtrl,
+                Constants.HEARTBEAT_TIME * 1000));
+        _msgMgr.run();
+
+        if (ClientCtx.isConnected) {
+            ClientCtx.gameCtrl.game.playerReady();
+
+            registerListener(
+                ClientCtx.gameCtrl.net,
+                PropertyChangedEvent.PROPERTY_CHANGED,
+                checkIsInited);
+
+            checkIsInited();
+
+            // wait for the INITED property to be true; at that point, we can seed our RNG;
+            // the game will begin receiving heartbeat messages shortly afterwards
+            function checkIsInited (...ignored) :void {
+                if (ClientCtx.gameCtrl.net.get(Constants.PROP_INITED) as Boolean) {
+                    var randSeed :uint = ClientCtx.gameCtrl.net.get(Constants.PROP_RAND_SEED) as uint;
+                    Rand.seedStream(Rand.STREAM_GAME, randSeed);
+                    unregisterListener(
+                        ClientCtx.gameCtrl.net,
+                        PropertyChangedEvent.PROPERTY_CHANGED,
+                        checkIsInited);
+                }
+            }
+
+        } else {
+            Rand.seedStream(Rand.STREAM_GAME, uint(Math.random() * uint.MAX_VALUE));
+        }
     }
 
     override protected function destroy () :void
