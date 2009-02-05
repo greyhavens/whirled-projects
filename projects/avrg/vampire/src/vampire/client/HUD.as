@@ -5,6 +5,7 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
 import com.threerings.util.StringBuilder;
+import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.net.ElementChangedEvent;
@@ -14,14 +15,16 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.text.TextField;
 import flash.utils.Timer;
 
 import vampire.client.events.ClosestPlayerChangedEvent;
+import vampire.data.Codes;
 import vampire.data.Constants;
+import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
-import vampire.data.SharedPlayerStateServer;
 
 /**
  * The main game HUD, showing e.g. blood, game notifications, and buttons to select the subgame to
@@ -35,13 +38,12 @@ public class HUD extends SceneObject
         
         setupUI();
         
-//        EventHandlers.registerListener(ClientContext.model, PlayerStateChangedEvent.NAME, playerUpdated );
-//        EventHandlers.registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
-        
-        
-//        EventHandlers.registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
+        //Listen to events that might cause us to update ourselves
+        registerListener(ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM, updateOurPlayerState );
+        registerListener( ClientContext.gameCtrl.room.props, PropertyChangedEvent.PROPERTY_CHANGED, propChanged );
         registerListener( ClientContext.gameCtrl.room.props, ElementChangedEvent.ELEMENT_CHANGED, elementChanged);
-        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
+        
+//        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
         
         log.debug("Initializing HUD");
         
@@ -63,9 +65,11 @@ public class HUD extends SceneObject
         updateOurPlayerState();
            
         
-        _checkRoomProps2ShowStatsTimer = new Timer(300, 0);
-        EventHandlers.registerListener( _checkRoomProps2ShowStatsTimer, TimerEvent.TIMER, checkPlayerRoomProps);    
-        _checkRoomProps2ShowStatsTimer.start();     
+//        _checkRoomProps2ShowStatsTimer = new Timer(300, 0);
+//        EventHandlers.registerListener( _checkRoomProps2ShowStatsTimer, TimerEvent.TIMER, checkPlayerRoomProps);    
+//        _checkRoomProps2ShowStatsTimer.start();   
+
+          
     }
     
     override protected function destroyed () :void
@@ -75,7 +79,7 @@ public class HUD extends SceneObject
     
     override public function get displayObject () :DisplayObject
     {
-        return _hud;
+        return _sprite;
     }
     
     override public function get objectName () :String
@@ -90,7 +94,12 @@ public class HUD extends SceneObject
     
     protected function closestPlayerChanged( e :ClosestPlayerChangedEvent ) :void
     {
-        _target.text = "Target: " + ClientContext.gameCtrl.room.getAvatarInfo( e.closestPlayerId ).name;
+        if( e.closestPlayerId > 0) {
+            _target.text = "Target: " + ClientContext.gameCtrl.room.getAvatarInfo( e.closestPlayerId ).name;
+        }
+        else {
+            _target.text = "Target: ";
+        }
     }
     
     protected function propChanged (e :PropertyChangedEvent) :void
@@ -113,33 +122,42 @@ public class HUD extends SceneObject
     {
         //Check if it is non-player properties changed??
         log.debug("elementChanged", "e", e);
-        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
+//        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
         
         
-        if( !isNaN( playerIdUpdated ) && playerIdUpdated == ClientContext.ourPlayerId) {
+        if( !isNaN( playerIdUpdated ) ) { 
+            if( playerIdUpdated == ClientContext.ourPlayerId) {
             
-            if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
-                showBlood( ClientContext.ourPlayerId );
+                if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD) {
+                    showBlood( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
+                    showXP( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL) {
+                    showLevel( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+                    showBloodBonds( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
+                    showAction( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE) {
+                    showTime( ClientContext.ourPlayerId );
+                }
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA) {
+                    showTarget( ClientContext.ourPlayerId );
+                }
             }
-            else if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL) {
-                showLevel( ClientContext.ourPlayerId );
-                
+            else {
+//                log.debug("  Failed to update ElementChangedEvent" + e);
             }
-            else if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
-                showBloodBonds( ClientContext.ourPlayerId );
-            }
-            else if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
-                showAction( ClientContext.ourPlayerId );
-            }
-            else if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE) {
-                showTime( ClientContext.ourPlayerId );
-            }
-        
         }
         else {
-//            log.warning("  Failed to update ElementChangedEvent" + e);
+            log.error("isNaN( " + playerIdUpdated + " ), failed to update ElementChangedEvent" + e);
         }
         
     }
@@ -170,11 +188,13 @@ public class HUD extends SceneObject
     
     protected function setupUI() :void
     {
+        _sprite = new Sprite();
         _hud = new DraggableSprite(ClientContext.gameCtrl, "HUD");
+        _sprite.addChild( _hud );
         _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
         _hud.graphics.beginFill(0xffffff);
-        _hud.graphics.drawRect(0, 0, 500, 50);
-        _hud.graphics.drawRect(290, 50, 210, 100);
+        _hud.graphics.drawRect(0, 0, 600, 50);
+        _hud.graphics.drawRect(290, 50, 260, 100);
         _hud.graphics.endFill();
         
         var startX :int = 30;
@@ -184,11 +204,21 @@ public class HUD extends SceneObject
             var button :SimpleTextButton = new SimpleTextButton( mode );
             button.x = startX;
             button.y = startY;
-            startX += 90;
+            startX += 85;
             Command.bind( button, MouseEvent.CLICK, VampireController.SWITCH_MODE, mode);
             _hud.addChild( button );
         }
         
+        
+        //Help Button
+        var help :SimpleTextButton = new SimpleTextButton( "Help" );
+        help.x = startX;
+        help.y = startY;
+        startX += 90;
+        Command.bind( help, MouseEvent.CLICK, VampireController.SHOW_INTRO);
+        _hud.addChild( help );
+        
+        //Show blood as a horizontal bar
         _blood = new Sprite();
         _hud.addChild( _blood );
         _blood.x = 180;
@@ -198,6 +228,18 @@ public class HUD extends SceneObject
         _bloodText.x = 50;
         _blood.addChild( _bloodText );
         
+        //Show xp as a horizontal bar
+        _xp = new Sprite();
+        _hud.addChild( _xp );
+        _xp.x = 320;
+        _xp.y = 35; 
+        
+        _xpText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
+        _xpText.x = 50;
+        _xp.addChild( _xpText );
+        
+        
+        //Quit button
         var quitButton :SimpleTextButton = new SimpleTextButton( "Quit" );
         quitButton.x = startX;
         button.y = startY;
@@ -206,19 +248,19 @@ public class HUD extends SceneObject
         _hud.addChild( quitButton );
         
         
-        _action = TextFieldUtil.createField("Action: ", {mouseEnabled:false, selectable:false, x:300, y:35});
+        _action = TextFieldUtil.createField("Action: ", {mouseEnabled:false, selectable:false, x:300, y:45});
         _hud.addChild( _action );
         
-        _level = TextFieldUtil.createField("Level: ", {mouseEnabled:false, selectable:false, x:300, y:55});
+        _level = TextFieldUtil.createField("Level: ", {mouseEnabled:false, selectable:false, x:300, y:65});
         _hud.addChild( _level );
         
-        _target = TextFieldUtil.createField("Target: ", {mouseEnabled:false, selectable:false, x:300, y:75, width:400});
+        _target = TextFieldUtil.createField("Target: ", {mouseEnabled:false, selectable:false, x:300, y:85, width:400});
         _hud.addChild( _target );
         
-        _bloodbonds = TextFieldUtil.createField("Bloodbonds: ", {mouseEnabled:false, selectable:false, x:300, y:95, width:300});
+        _bloodbonds = TextFieldUtil.createField("Bloodbonds: ", {mouseEnabled:false, selectable:false, x:300, y:105, width:300});
         _hud.addChild( _bloodbonds );
         
-        _time = TextFieldUtil.createField("Time: ", {mouseEnabled:false, selectable:false, x:300, y:115, width:400});
+        _time = TextFieldUtil.createField("Time: ", {mouseEnabled:false, selectable:false, x:300, y:125, width:450});
         _hud.addChild( _time );
         
         _myName = TextFieldUtil.createField("Me: Testing locally", {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
@@ -227,6 +269,13 @@ public class HUD extends SceneObject
         }
             
         _hud.addChild( _myName );
+        
+        //The target overlay
+        _targetSprite = new Sprite();
+        _sprite.addChild( _targetSprite );
+        _targetSprite.graphics.lineStyle(4, 0xcc0000);
+        _targetSprite.graphics.drawCircle(0, 0, 20);
+        _targetSprite.visible = false;
     }
     
     
@@ -240,16 +289,18 @@ public class HUD extends SceneObject
     public function updateOurPlayerState( ...ignored ) :void
     {
         if( !SharedPlayerStateClient.isProps( ClientContext.ourPlayerId )) {
-            log.debug("updatePlayerState, but no props found");
+            log.warning("updatePlayerState, but no props found");
             return;
         }
         
         
         showBlood( ClientContext.ourPlayerId );
+        showXP( ClientContext.ourPlayerId );
         showLevel( ClientContext.ourPlayerId );
         showBloodBonds( ClientContext.ourPlayerId );
         showAction( ClientContext.ourPlayerId );
         showTime( ClientContext.ourPlayerId );
+        showTarget( ClientContext.ourPlayerId );
         
     }
     
@@ -257,9 +308,10 @@ public class HUD extends SceneObject
     {
         log.debug("Showing player blood=" + SharedPlayerStateClient.getBlood( playerId ) + "/" + SharedPlayerStateClient.getMaxBlood( playerId ));
         _blood.graphics.clear();
-        _blood.graphics.lineStyle(1, 0xcc0000);
+        var bloodColor :int = SharedPlayerStateClient.isVampire( playerId ) ? 0xcc0000 : 0x0000ff;//Red or blue for vampire or thrall
+        _blood.graphics.lineStyle(1, bloodColor);
         _blood.graphics.drawRect(0, 0, 100, 10);
-        _blood.graphics.beginFill( 0xcc0000 );
+        _blood.graphics.beginFill( bloodColor );
         if( SharedPlayerStateClient.getMaxBlood( playerId ) > 0) {
             _blood.graphics.drawRect(0, 0, (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId ), 10);
         }
@@ -270,6 +322,27 @@ public class HUD extends SceneObject
             bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
         }
         _bloodText.text = bloodtext;
+        
+    }
+    
+    protected function showXP( playerId :int ) :void
+    {
+        var currentXp :int = SharedPlayerStateClient.getXP( playerId ) ;
+        var xpForNextLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId) + 1);
+        var xpForCurrentLevelLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId));
+        log.debug("Showing player xp=" + currentXp + "/" + xpForNextLevel);
+        _xp.graphics.clear();
+        var xpColor :int = 0x009900;//Green
+        _xp.graphics.lineStyle(1, xpColor);
+        _xp.graphics.drawRect(0, 0, 100, 10);
+        _xp.graphics.beginFill( xpColor );
+        if( xpForNextLevel > 0) {
+            _xp.graphics.drawRect(0, 0, (Math.max(0, (currentXp - xpForCurrentLevelLevel)) * 100.0) / (xpForNextLevel - xpForCurrentLevelLevel), 10);
+        }
+        _xp.graphics.endFill();
+        
+        var xptext :String = "" + currentXp + "/" + xpForNextLevel;
+        _xpText.text = xptext;
         
     }
     
@@ -297,24 +370,62 @@ public class HUD extends SceneObject
     {
         _action.text = "Action: " + SharedPlayerStateClient.getCurrentAction( ClientContext.ourPlayerId );
     }
+    protected function showTarget( playerId :int ) :void
+    {
+        _targetSprite.visible = false;
+        var userData :Array = SharedPlayerStateClient.getClosestUserData(playerId);
+        if( userData != null && userData.length >= 1) {
+            if( userData.length == 1) {
+                _target.text = "Target: " + userData[0];
+            }
+            else if( userData.length > 1) {
+                _target.text = "Target: " + userData[0] + " " + userData[1];
+                
+                var location :Array = userData[2] as Array;
+                if( location == null) {
+                    log.error("showTarget, but location is null");
+                    return;
+                } 
+                
+                var halfTargetAvatarHeight :Number = userData[3]*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
+                var p :Point = ClientContext.gameCtrl.local.locationToPaintable( location[0], halfTargetAvatarHeight, location[2]) as Point;
+                _targetSprite.visible = true;
+                _targetSprite.x = p.x;
+                _targetSprite.y = p.y;
+            }
+        }
+    }
     
     protected function showTime( playerId :int ) :void
     {
         var date :Date = new Date( SharedPlayerStateClient.getTime( ClientContext.ourPlayerId ) );
-        _time.text = "Time: " + date.toTimeString();
+        _time.text = "Quit last game at: " + date.toLocaleTimeString() + " " + date.toDateString();
+        
+        if( SharedPlayerStateClient.getTime( ClientContext.ourPlayerId ) == 1 ) {
+            if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
+                ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
+            } 
+        }
     }
 
-    
+    protected var _sprite :Sprite;
     protected var _hud :DraggableSprite;
     
     protected var _blood :Sprite;
     protected var _bloodText :TextField;
+    
+    protected var _xp :Sprite;
+    protected var _xpText :TextField;
+    
+    
     protected var _action :TextField;
     protected var _level :TextField;
     protected var _target :TextField;
     protected var _myName :TextField;
     protected var _bloodbonds :TextField;
     protected var _time :TextField;
+    
+    protected var _targetSprite :Sprite;
     
     protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
