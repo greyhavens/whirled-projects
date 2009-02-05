@@ -13,6 +13,10 @@ public class ServerContext
     
     public static var minionHierarchy :MinionHierarchy = new MinionHierarchy();
     
+    public static var nonPlayers :NonPlayerAvatars = new NonPlayerAvatars();
+    
+    public static var _serverLogBroadcast: AVRGAgentLogTarget;
+    
     public static function getPlayerName( playerId :int) :String
     {
         var player :Player = VServer.getPlayer(playerId);
@@ -26,5 +30,13 @@ public class ServerContext
         }
         return avatar.name;        
     }
+    
+
+    public static function trace2( msg :String ) :void
+    {
+        _serverLogBroadcast.log( msg );
+    }
+    
+
 }
 }
