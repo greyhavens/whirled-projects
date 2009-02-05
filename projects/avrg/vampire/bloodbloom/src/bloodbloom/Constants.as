@@ -55,6 +55,12 @@ public class Constants
 
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
+
+    public static const HEARTBEAT_TIME :Number = 1/30;
+    public static const MSG_S_HEARTBEAT :String = "sTick";
+    public static const MSG_C_CHOOSE_PLAYER :String = "cChoosePlayer"; // int - player type
+
+    public static const PROP_RAND_SEED :String = "randSeed"; // uint
 }
 
 }

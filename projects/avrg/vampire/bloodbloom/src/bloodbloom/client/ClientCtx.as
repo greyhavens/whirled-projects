@@ -1,17 +1,14 @@
 package bloodbloom.client {
 
-import com.threerings.flash.Vector2;
+import bloodbloom.*;
+
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.components.LocationComponent;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
-import flash.display.Sprite;
-
-import bloodbloom.*;
 
 public class ClientCtx
 {
@@ -19,6 +16,11 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
+
+    public static function get isConnected () :Boolean
+    {
+        return gameCtrl.isConnected();
+    }
 
     public static function createCellBitmap (type :int) :Bitmap
     {

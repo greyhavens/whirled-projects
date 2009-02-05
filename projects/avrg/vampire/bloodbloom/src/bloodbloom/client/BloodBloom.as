@@ -1,6 +1,7 @@
 package bloodbloom.client {
 
 import bloodbloom.*;
+import bloodbloom.server.Server;
 
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
@@ -14,8 +15,15 @@ import flash.events.Event;
 [SWF(width="700", height="500", frameRate="30")]
 public class BloodBloom extends Sprite
 {
+    public static function DEBUG_REMOVE_ME () :void
+    {
+        var c :Class = Server;
+    }
+
     public function BloodBloom ()
     {
+        DEBUG_REMOVE_ME();
+
         ClientCtx.gameCtrl = new GameControl(this, false);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);

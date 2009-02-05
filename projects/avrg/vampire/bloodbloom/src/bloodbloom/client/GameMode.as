@@ -1,8 +1,14 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+import bloodbloom.client.view.*;
+
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.SimObjectRef;
+import com.whirled.contrib.simplegame.net.OfflineTickedMessageManager;
+import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
+import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Rand;
 
@@ -10,9 +16,6 @@ import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
-
-import bloodbloom.*;
-import bloodbloom.client.view.*;
 
 public class GameMode extends AppMode
 {
@@ -28,6 +31,20 @@ public class GameMode extends AppMode
         GameCtx.init();
         GameCtx.gameMode = this;
         GameCtx.heartbeatDb = new NetObjDb();
+
+        // network stuff
+        _msgMgr = (ClientCtx.isConnected ?
+            new OnlineTickedMessageManager(ClientCtx.gameCtrl,
+                false,
+                Constants.HEARTBEAT_TIME * 1000,
+                Constants.MSG_S_HEARTBEAT) :
+            new OfflineTickedMessageManager(ClientCtx.gameCtrl,
+                Constants.HEARTBEAT_TIME * 1000));
+        _msgMgr.run();
+
+        if (ClientCtx.isConnected) {
+            ClientCtx.gameCtrl.game.playerReady();
+        }
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
@@ -83,10 +100,22 @@ public class GameMode extends AppMode
         addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), GameCtx.cursorLayer);
     }
 
+    override protected function destroy () :void
+    {
+        _msgMgr.stop();
+        super.destroy();
+    }
+
     override public function update (dt :Number) :void
     {
         super.update(dt);
-        GameCtx.heartbeatDb.update(dt);
+
+        // process our network ticks
+        _msgMgr.update(dt);
+        while (_msgMgr.unprocessedTickCount > 0) {
+            var tick :Array = _msgMgr.getNextTick();
+            GameCtx.heartbeatDb.update(Constants.HEARTBEAT_TIME);
+        }
 
         _modeTime += dt;
     }
@@ -125,6 +154,7 @@ public class GameMode extends AppMode
     protected var _gameOver :Boolean;
     protected var _arteryTop :Bitmap;
     protected var _arteryBottom :Bitmap;
+    protected var _msgMgr :TickedMessageManager;
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }
