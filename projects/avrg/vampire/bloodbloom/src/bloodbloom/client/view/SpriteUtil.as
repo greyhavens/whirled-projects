@@ -1,11 +1,9 @@
-package bloodbloom.client {
+package bloodbloom.client.view {
 
 import flash.display.Sprite;
 
 public class SpriteUtil
 {
-    public static const USE_CACHE :Boolean = true;
-
     public static function createSprite (mouseChildren :Boolean = false,
         mouseEnabled :Boolean = false) :Sprite
     {

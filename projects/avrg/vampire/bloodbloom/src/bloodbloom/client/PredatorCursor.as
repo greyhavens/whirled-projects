@@ -64,7 +64,7 @@ public class PredatorCursor extends SceneObject
                 // attach the white cell to us
                 var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
                 var loc :Point = new Point(cell.x, cell.y);
-                loc = cell.displayObject.parent.localToGlobal(loc);
+                loc = ClientCtx.cellLayer.localToGlobal(loc);
                 loc = this.displayObject.globalToLocal(loc);
                 loc.x -= bm.width * 0.5;
                 loc.y -= bm.height * 0.5;

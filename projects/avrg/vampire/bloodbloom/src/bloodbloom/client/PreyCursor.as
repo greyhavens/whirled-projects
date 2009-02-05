@@ -9,6 +9,8 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import bloodbloom.client.view.*;
+
 public class PreyCursor extends SceneObject
 {
     public function PreyCursor (controlledLocally :Boolean)
@@ -56,7 +58,7 @@ public class PreyCursor extends SceneObject
         if (cell != null) {
             var bm :Bitmap = ClientCtx.createCellBitmap(cell.type);
             var loc :Point = new Point(cell.x, cell.y);
-            loc = cell.displayObject.parent.localToGlobal(loc);
+            loc = ClientCtx.cellLayer.localToGlobal(loc);
             loc = this.displayObject.globalToLocal(loc);
             loc.x -= bm.width * 0.5;
             loc.y -= bm.height * 0.5;

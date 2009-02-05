@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import bloodbloom.client.view.*;
+
 public class BurstSequence extends SceneObject
 {
     public function BurstSequence ()

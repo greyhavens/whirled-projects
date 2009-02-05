@@ -7,6 +7,8 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
+import bloodbloom.client.view.*;
+
 public class SpSplashMode extends AppMode
 {
     override protected function setup () :void

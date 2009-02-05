@@ -1,7 +1,8 @@
 package bloodbloom.client {
 
+import bloodbloom.client.view.*;
+
 import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.ObjectDB;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -11,8 +12,6 @@ import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
-
-import bloodbloom.client.view.*;
 
 public class GameMode extends AppMode
 {
@@ -72,7 +71,7 @@ public class GameMode extends AppMode
                         (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
                             Constants.CELL_RED : Constants.CELL_WHITE);
 
-                    addObject(new Cell(cellType, true), ClientCtx.cellLayer);
+                    GameObjects.createCell(cellType, true);
                 }
             });
 

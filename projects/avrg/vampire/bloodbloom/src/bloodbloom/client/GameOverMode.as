@@ -8,6 +8,8 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.TextField;
 
+import bloodbloom.client.view.*;
+
 public class GameOverMode extends AppMode
 {
     public function GameOverMode (reason :String)

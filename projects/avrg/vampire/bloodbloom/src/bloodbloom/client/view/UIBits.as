@@ -1,4 +1,4 @@
-package bloodbloom.client {
+package bloodbloom.client.view {
 
 import com.threerings.flash.DisplayUtil;
 import com.whirled.contrib.ColorMatrix;
@@ -14,6 +14,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
+
+import bloodbloom.client.*;
 
 public class UIBits
 {

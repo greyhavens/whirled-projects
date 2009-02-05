@@ -1,32 +1,35 @@
 package bloodbloom.client {
 
+import __AS3__.vec.Vector;
+
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
+import com.whirled.contrib.simplegame.components.LocationComponent;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-
-public class Cell extends SceneObject
+public class Cell extends NetObj
+    implements LocationComponent
 {
+    public static const STATE_BIRTH :int = 0;
+    public static const STATE_NORMAL :int = 1;
+
     public static function getCellCount (cellType :int = -1) :int
     {
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        return ClientCtx.mainLoop.topMode.getObjectRefsInGroup(groupName).length;
+        return ClientCtx.heartbeatDb.getObjectRefsInGroup(groupName).length;
     }
 
     public static function getCellCollision (loc :Vector2, radius :Number, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        var cells :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup(groupName);
+        var cells :Array = ClientCtx.heartbeatDb.getObjectRefsInGroup(groupName);
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
-                cell._mode == MODE_NORMAL &&
+                cell._state == STATE_NORMAL &&
                 Collision.circlesIntersect(cell._loc, Constants.CELL_RADIUS, loc, radius)) {
                 return cell;
             }
@@ -39,14 +42,11 @@ public class Cell extends SceneObject
     {
         _type = type;
 
-        _sprite = new Sprite();
-        _sprite.addChild(ClientCtx.createCellBitmap(type));
-
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
 
         if (beingBorn) {
             // When cells are born, they burst out of the center of the heart
-            _mode = MODE_BIRTH;
+            _state = STATE_BIRTH;
             this.x = Constants.GAME_CTR.x;
             this.y = Constants.GAME_CTR.y;
 
@@ -60,23 +60,16 @@ public class Cell extends SceneObject
                 LocationTask.CreateEaseOut(target.x, target.y, Constants.CELL_BIRTH_TIME),
                 new FunctionTask(
                     function () :void {
-                        _mode = MODE_NORMAL;
+                        _state = STATE_NORMAL;
                     })));
 
-            // fade in
-            this.alpha = 0;
-            addTask(new AlphaTask(1, 0.4));
-
         } else {
-            _mode = MODE_NORMAL;
+            _state = STATE_NORMAL;
         }
     }
 
     override protected function update (dt :Number) :void
     {
-        _loc.x = this.x;
-        _loc.y = this.y;
-
         // white cells follow predators who have other white cells attached
         /*if (this.isWhiteCell) {
             var cellHemisphere :int = ClientCtx.getHemisphere(this);
@@ -97,7 +90,7 @@ public class Cell extends SceneObject
             }
         }*/
 
-        if (_mode == MODE_NORMAL) {
+        if (_state == STATE_NORMAL) {
             // if we're following somebody, move towards them
             if (this.isFollowing) {
                 var following :PredatorCursor = this.followingPredator;
@@ -122,8 +115,6 @@ public class Cell extends SceneObject
             }
 
             _loc = ClientCtx.clampLoc(_loc);
-            this.x = _loc.x;
-            this.y = _loc.y;
         }
     }
 
@@ -134,11 +125,6 @@ public class Cell extends SceneObject
         case 1:     return "Cell";
         default:    return super.getObjectGroup(groupNum - 2);
         }
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
     }
 
     public function get type () :int
@@ -154,6 +140,11 @@ public class Cell extends SceneObject
     public function get isWhiteCell () :Boolean
     {
         return _type == Constants.CELL_WHITE;
+    }
+
+    public function get state () :int
+    {
+        return _state;
     }
 
     protected function canFollow (predator :PredatorCursor) :Boolean
@@ -182,19 +173,39 @@ public class Cell extends SceneObject
         return !_followObj.isNull;
     }
 
+    public function get x () :Number
+    {
+        return _loc.x;
+    }
+
+    public function get y () :Number
+    {
+        return _loc.y;
+    }
+
+    public function set x (val :Number) :void
+    {
+        _loc.x = val;
+    }
+
+    public function set y (val :Number) :void
+    {
+        _loc.y = val;
+    }
+
+    public function get loc () :Vector2
+    {
+        return _loc;
+    }
+
     protected var _type :int;
-    protected var _mode :int;
+    protected var _state :int;
     protected var _moveCCW :Boolean;
     protected var _loc :Vector2 = new Vector2();
     protected var _followObj :SimObjectRef = SimObjectRef.Null();
 
-    protected var _sprite :Sprite;
-
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;
-
-    protected static const MODE_BIRTH :int = 0;
-    protected static const MODE_NORMAL :int = 1;
 }
 
 }

@@ -9,6 +9,8 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
+import bloodbloom.client.view.*;
+
 public class PredatorBloodMeter extends SceneObject
 {
     public function PredatorBloodMeter ()

@@ -7,15 +7,15 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Collision;
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.display.Graphics;
 
 public class CellBurst extends SceneObject
 {
     public static function createFromCell (cell :Cell, sequence :BurstSequence = null) :CellBurst
     {
         var newBurst :CellBurst = new CellBurst(cell.x, cell.y, sequence);
-        cell.db.addObject(newBurst, cell.displayObject.parent);
+        ClientCtx.gameMode.addObject(newBurst, ClientCtx.cellLayer);
         cell.destroySelf();
         return newBurst;
     }
@@ -82,10 +82,9 @@ public class CellBurst extends SceneObject
             ScaleTask.CreateEaseIn(1, 1, Constants.BURST_CONTRACT_TIME),
             new FunctionTask(
                 function () :void {
-                    var newCell :Cell = new Cell(Constants.CELL_RED, false);
+                    var newCell :Cell = GameObjects.createCell(Constants.CELL_RED, false);
                     newCell.x = thisBurst.x;
                     newCell.y = thisBurst.y;
-                    thisBurst.db.addObject(newCell, thisBurst.displayObject.parent);
                 }),
             new SelfDestructTask()));
 
