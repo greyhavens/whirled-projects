@@ -6,7 +6,7 @@ public class Constants
     /** 
     * The hourly loss of blood as a fraction of the maximum amount of blood of a vampire.
     */
-    public static const BLOOD_LOSS_HOURLY_RATE :Number = 1.0;// / 48;//After two days you lose all your blood
+    public static const BLOOD_LOSS_HOURLY_RATE_WHILE_SLEEPING :Number = 1.0;// / 48;//After two days you lose all your blood
 
     /**
     * When a vampire is fed upon, it loses this fraction of total blood.
@@ -23,8 +23,31 @@ public class Constants
     */
     public static const BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES :Number = 0.1;
     
+    /**
+    * For every unit of blood gained from feeding, how much experience is gained.
+    */
+    public static const XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT :Number = 1;
+    
+    /**
+    * Blood regenerated per second.
+    */
+    public static const THRALL_BLOOD_REGENERATION_RATE :Number = 0.5;
+    
+    /**
+    * Blood lost per second.
+    */
+    public static const VAMPIRE_BLOOD_LOSS_RATE :Number = 0.1;
     
     
+    /**
+    * Max blood non-players
+    */
+    public static const MAX_BLOOD_NONPLAYERS :Number = 30;
+    
+    /**
+    * B
+    */
+    public static const BLOOD_LOSS_FROM_THRALL_OR_NO_FROM_FEED :Number = 10;
 
 
     /** 
@@ -92,5 +115,6 @@ public class Constants
     public static const ROOM_SIGNAL_ENTITYID_REQUEST :String = "EntityId Request";
     public static const ROOM_SIGNAL_ENTITYID_REPONSE :String = "EntityId Response";
     public static const SIGNAL_CLOSEST_ENTITY :String = "Signal: Closest Entity";
+    public static const SIGNAL_PLAYER_TARGET :String = "Signal: Player Target";
 }
 }

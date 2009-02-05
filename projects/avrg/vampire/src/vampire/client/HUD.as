@@ -148,7 +148,12 @@ public class HUD extends SceneObject
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE) {
                     showTime( ClientContext.ourPlayerId );
                 }
-                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA) {
+                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
+//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
+                ) {
                     showTarget( ClientContext.ourPlayerId );
                 }
             }
@@ -276,6 +281,17 @@ public class HUD extends SceneObject
         _targetSprite.graphics.lineStyle(4, 0xcc0000);
         _targetSprite.graphics.drawCircle(0, 0, 20);
         _targetSprite.visible = false;
+        
+        _targetSpriteBlood = new Sprite();
+        _sprite.addChild( _targetSpriteBlood );
+        _targetSpriteBlood.x = -50;
+        _targetSpriteBlood.y = -30; 
+        
+        _targetSpriteBloodText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
+        _targetSpriteBloodText.x = 0;
+        _targetSpriteBloodText.y = 0;
+        _targetSpriteBlood.addChild( _targetSpriteBloodText );
+        
     }
     
     
@@ -373,27 +389,91 @@ public class HUD extends SceneObject
     protected function showTarget( playerId :int ) :void
     {
         _targetSprite.visible = false;
-        var userData :Array = SharedPlayerStateClient.getClosestUserData(playerId);
-        if( userData != null && userData.length >= 1) {
-            if( userData.length == 1) {
-                _target.text = "Target: " + userData[0];
-            }
-            else if( userData.length > 1) {
-                _target.text = "Target: " + userData[0] + " " + userData[1];
-                
-                var location :Array = userData[2] as Array;
-                if( location == null) {
-                    log.error("showTarget, but location is null");
-                    return;
-                } 
-                
-                var halfTargetAvatarHeight :Number = userData[3]*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
-                var p :Point = ClientContext.gameCtrl.local.locationToPaintable( location[0], halfTargetAvatarHeight, location[2]) as Point;
-                _targetSprite.visible = true;
-                _targetSprite.x = p.x;
-                _targetSprite.y = p.y;
-            }
+        
+        
+        var targetId :int = SharedPlayerStateClient.getTargetPlayer( playerId );
+        var targetLocation :Array = SharedPlayerStateClient.getTargetLocation( playerId );
+        _targetSpriteBlood.graphics.clear();
+         _targetSpriteBloodText.text = "";
+        if( !SharedPlayerStateClient.getTargetVisible( playerId )) {
+            return;
         }
+        
+        if( targetId > 0 && targetLocation != null) {
+            _targetSprite.visible = true;
+            _target.text = "Target: " + SharedPlayerStateClient.getTargetName( playerId );
+            
+            var targetHeight :Number = SharedPlayerStateClient.getTargetHeight( playerId );
+            var halfTargetAvatarHeight :Number = targetHeight*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
+            var p :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], halfTargetAvatarHeight, targetLocation[2]) as Point;
+            _targetSprite.visible = true;
+            _targetSprite.x = p.x;
+            _targetSprite.y = p.y;
+            
+            //Show the targets blood
+            var targetBlood :Number = SharedPlayerStateClient.getTargetBlood( playerId );
+            var targetMaxBlood :Number = SharedPlayerStateClient.getTargetMaxBlood( playerId );
+            
+//            trace("showTarget() targetBlood=" + targetBlood); 
+//            trace("showTarget() targetMaxBlood=" + targetMaxBlood);
+            
+            if( !isNaN( targetBlood ) && !isNaN( targetMaxBlood ) ) {
+                
+                
+                var targetAvatarHeight :Number = targetHeight/ClientContext.gameCtrl.local.getRoomBounds()[1];
+                var pointForBloodBar :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
+                pointForBloodBar.y = pointForBloodBar.y - 30;//Adjust to be over the player name
+                _targetSpriteBlood.x = pointForBloodBar.x;
+                _targetSpriteBlood.y = pointForBloodBar.y;
+                var bloodColor :int =  0xcc0000;
+                _targetSpriteBlood.graphics.lineStyle(1, bloodColor);
+                _targetSpriteBlood.graphics.drawRect(-50, -5, 100, 10);
+                _targetSpriteBlood.graphics.beginFill( bloodColor );
+                
+                
+                if( targetBlood > 0 && targetMaxBlood > 0) {
+                    _targetSpriteBlood.graphics.drawRect(-50, -5, (targetBlood * 100.0) / targetMaxBlood, 10);
+                }
+                _targetSpriteBlood.graphics.endFill();
+                
+                var bloodtext :String = "" + targetBlood;
+                if( bloodtext.indexOf(".") >= 0) {
+                    bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
+                }
+                _targetSpriteBloodText.text = bloodtext;
+            }
+            else {
+                _targetSpriteBloodText.text = "";
+            }
+        
+                
+                
+        }
+        else {
+            log.error("showTarget, but location is null");
+        }
+        
+//        var userData :Array = SharedPlayerStateClient.getClosestUserData(playerId);
+//        if( userData != null && userData.length >= 1) {
+//            if( userData.length == 1) {
+//                _target.text = "Target: " + userData[0];
+//            }
+//            else if( userData.length > 1) {
+//                _target.text = "Target: " + userData[0] + " " + userData[1];
+//                
+//                var location :Array = userData[2] as Array;
+//                if( location == null) {
+//                    log.error("showTarget, but location is null");
+//                    return;
+//                } 
+//                
+//                var halfTargetAvatarHeight :Number = userData[3]*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
+//                var p :Point = ClientContext.gameCtrl.local.locationToPaintable( location[0], halfTargetAvatarHeight, location[2]) as Point;
+//                _targetSprite.visible = true;
+//                _targetSprite.x = p.x;
+//                _targetSprite.y = p.y;
+//            }
+//        }
     }
     
     protected function showTime( playerId :int ) :void
@@ -426,6 +506,8 @@ public class HUD extends SceneObject
     protected var _time :TextField;
     
     protected var _targetSprite :Sprite;
+    protected var _targetSpriteBlood :Sprite;
+    protected var _targetSpriteBloodText :TextField;
     
     protected var _checkRoomProps2ShowStatsTimer :Timer;//Stupid hack, the first time a player enters a room, the 
     
