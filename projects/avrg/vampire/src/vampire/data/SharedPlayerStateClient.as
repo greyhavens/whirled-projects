@@ -25,6 +25,11 @@ public class SharedPlayerStateClient
         return Constants.MAX_BLOOD_FOR_LEVEL( getLevel(playerId) );
     }
     
+    public static function getTargetVisible (playerId :int) :Boolean
+    {
+        return Boolean(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE));
+    }
+    
     public static function getLevel (playerId :int) :int
     {
         return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
@@ -40,20 +45,40 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) as Array;
     }
     
-    public static function getClosestUserData (playerId :int) :Array
-    {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA) as Array;
-    }
+//    public static function getClosestUserData (playerId :int) :Array
+//    {
+//        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USERID) as Array;
+//    }
     
     //ATM just returns the closest user
     public static function getTargetPlayer (playerId :int) :int
     {
-        var userData :Array = getClosestUserData( playerId );
-        if( userData == null || userData.length == 0) {
-            log.info("getTargetPlayer()", "player", playerId, "userdata", userData);
-            return -1;
-        }
-        return int(userData[0]);
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID) as int;
+    }
+    
+    public static function getTargetName (playerId :int) :String
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME) as String;
+    }
+    
+    public static function getTargetHeight (playerId :int) :Number
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT) as Number;
+    }
+    
+    public static function getTargetBlood (playerId :int) :Number
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD) as Number;
+    }
+    
+    public static function getTargetMaxBlood (playerId :int) :Number
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD) as Number;
+    }
+    
+    public static function getTargetLocation (playerId :int) :Array
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION) as Array;
     }
     
     public static function getCurrentAction (playerId :int) :String
@@ -113,7 +138,8 @@ public class SharedPlayerStateClient
     public static function toStringForPlayer( playerId :int ) :String
     {
         return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", time=" + new Date(getTime( playerId )).toTimeString()
-            + ", closestUserId=" + getClosestUserData( playerId );
+//            + ", closestUserId=" + getClosestUserData( playerId )
+            ;
     }
 
 }

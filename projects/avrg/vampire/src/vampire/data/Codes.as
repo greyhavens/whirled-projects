@@ -5,7 +5,8 @@ package vampire.data
 public class Codes
 {
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
-    public static const ROOM_PROP_PLAYER_ENTITY_IDS :String = "playerEntityIds";
+//    public static const ROOM_PROP_PLAYER_ENTITY_IDS :String = "playerEntityIds";
+//    public static const ROOM_PROP_BLOOD_NON_PLAYERS :String = "bloodNP";
     
     
         /** Pplayer name.  Needed even when player is offline*/
@@ -13,6 +14,9 @@ public class Codes
     
     /** Current amount of blood*/
     public static const PLAYER_PROP_PREFIX_BLOOD :String = NetConstants.makePersistent("blood");
+    
+    /** Current amount of blood*/
+    public static const PLAYER_PROP_PREFIX_XP :String = NetConstants.makePersistent("xp");
     
     /** Max blood for the given level.  This could probably just be computed...? Possibly remove later.*/
 //    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
@@ -45,9 +49,14 @@ public class Codes
     public static const PLAYER_PROP_PREFIX_BLOODBONDED :String = NetConstants.makePersistent("bloodbonded");
     
     /** 
-    * Closest UserId, namely, your target
+    * Closest UserId.  Used for determining your target
     */
     public static const PLAYER_PROP_PREFIX_CLOSEST_USER_DATA :String = "closestUserData";
+    
+    /** 
+    * Your current target useId
+    */
+    public static const PLAYER_PROP_PREFIX_TARGET_USERID :String = "target";
     
     /** 
     * Current player action.
@@ -59,7 +68,7 @@ public class Codes
      * Whether or not this player is taking active part in the game. This property is
      * persistently stored in that player's property space.
      */
-    public static const PROP_IS_PLAYING :String = NetConstants.makePersistent("playing");
+//    public static const PROP_IS_PLAYING :String = NetConstants.makePersistent("playing");
 
 
 
@@ -85,8 +94,16 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED :int = 6;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION :int = 7;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD :int = 8;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USER_DATA :int = 9;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_XP :int = 8;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 9;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID :int = 10;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION :int = 11;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME :int = 12;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT :int = 15;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
+    
     
 }
 }
