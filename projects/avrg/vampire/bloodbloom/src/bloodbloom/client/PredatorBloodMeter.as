@@ -33,7 +33,7 @@ public class PredatorBloodMeter extends SceneObject
         }
 
         if (_bloodCount >= Constants.PREDATOR_BLOOD_TARGET) {
-            ClientCtx.gameMode.gameOver("Predator collected " +
+            GameCtx.gameMode.gameOver("Predator collected " +
                 Constants.PREDATOR_BLOOD_TARGET + " blood");
         }
     }
@@ -48,7 +48,7 @@ public class PredatorBloodMeter extends SceneObject
             var cellObj :SimpleSceneObject = new SimpleSceneObject(cellSprite);
             cellObj.x = loc.x;
             cellObj.y = loc.y;
-            ClientCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
+            GameCtx.gameMode.addObject(cellObj, this.displayObject as DisplayObjectContainer);
 
             // fly the cell to the meter, make it disappear, increase the blood count
             cellObj.addTask(new SerialTask(

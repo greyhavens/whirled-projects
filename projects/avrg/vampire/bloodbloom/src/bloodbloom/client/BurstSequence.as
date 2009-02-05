@@ -46,7 +46,7 @@ public class BurstSequence extends SceneObject
 
         if (!isSequenceAlive) {
             var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
-            ClientCtx.bloodMeter.addBlood(loc.x, loc.y, _bursts.length * _bursts.length);
+            GameCtx.bloodMeter.addBlood(loc.x, loc.y, _bursts.length * _bursts.length);
             destroySelf();
 
         } else {

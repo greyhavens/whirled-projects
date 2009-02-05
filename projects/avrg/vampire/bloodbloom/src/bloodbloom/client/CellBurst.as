@@ -20,7 +20,7 @@ public class CellBurst extends CollidableObj
             _sequence = new BurstSequence();
             _sequence.x = x;
             _sequence.y = y;
-            ClientCtx.gameMode.addObject(_sequence, ClientCtx.effectLayer);
+            GameCtx.gameMode.addObject(_sequence, GameCtx.effectLayer);
         }
 
         this.x = x;
@@ -82,14 +82,14 @@ public class CellBurst extends CollidableObj
                 }
             }
 
-            var preyLoc :Vector2 = new Vector2(ClientCtx.prey.x, ClientCtx.prey.y);
+            var preyLoc :Vector2 = new Vector2(GameCtx.prey.x, GameCtx.prey.y);
             if (Collision.circlesIntersect(_loc, this.radius, preyLoc, Constants.CURSOR_RADIUS)) {
-                ClientCtx.gameMode.gameOver("Prey hit a blood burst!");
+                GameCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
         } else if (_state == STATE_UNBURST) {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
-            var bursts :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("CellBurst");
+            var bursts :Array = GameCtx.heartbeatDb.getObjectRefsInGroup("CellBurst");
             for each (var burstRef :SimObjectRef in bursts) {
                 var burst :CellBurst = burstRef.object as CellBurst;
                 if (burst != null && burst != this && burst._state == STATE_BURST) {

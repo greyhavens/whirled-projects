@@ -35,8 +35,8 @@ public class PreyCursor extends SceneObject
     protected function updateMovement (dt :Number) :void
     {
         var targetLoc :Vector2 = new Vector2(
-            ClientCtx.gameMode.modeSprite.mouseX,
-            ClientCtx.gameMode.modeSprite.mouseY);
+            GameCtx.gameMode.modeSprite.mouseX,
+            GameCtx.gameMode.modeSprite.mouseY);
 
         var oldLoc :Vector2 = new Vector2(this.x, this.y);
 
@@ -51,14 +51,14 @@ public class PreyCursor extends SceneObject
         newLoc.addLocal(oldLoc);
 
         // clamp to game boundaries
-        newLoc = ClientCtx.clampLoc(newLoc);
+        newLoc = GameCtx.clampLoc(newLoc);
 
         // collide with cells
         var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
         if (cell != null) {
             var bm :Bitmap = ClientCtx.createCellBitmap(cell.type);
             var loc :Point = new Point(cell.x, cell.y);
-            loc = ClientCtx.cellLayer.localToGlobal(loc);
+            loc = GameCtx.cellLayer.localToGlobal(loc);
             loc = this.displayObject.globalToLocal(loc);
             loc.x -= bm.width * 0.5;
             loc.y -= bm.height * 0.5;
@@ -137,7 +137,7 @@ public class PreyCursor extends SceneObject
         updateArteryHilite();
 
         // Deliver a white cell to the heart, to slow the beat down
-        ClientCtx.beat.deliverWhiteCell();
+        GameCtx.beat.deliverWhiteCell();
 
         // animate the white cell delivery
         var sprite :Sprite = SpriteUtil.createSprite();
@@ -149,13 +149,13 @@ public class PreyCursor extends SceneObject
         animationObj.addTask(new SerialTask(
             LocationTask.CreateEaseIn(Constants.GAME_CTR.x, Constants.GAME_CTR.y, 1),
             new SelfDestructTask()));
-        ClientCtx.gameMode.addObject(animationObj, ClientCtx.cellLayer);
+        GameCtx.gameMode.addObject(animationObj, GameCtx.cellLayer);
     }
 
     protected function updateArteryHilite () :void
     {
         if (_controlledLocally) {
-            ClientCtx.gameMode.hiliteArteries(
+            GameCtx.gameMode.hiliteArteries(
                 _lastArtery != Constants.ARTERY_TOP,
                 _lastArtery != Constants.ARTERY_BOTTOM);
         }

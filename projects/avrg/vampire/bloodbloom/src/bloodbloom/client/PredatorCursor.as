@@ -12,7 +12,7 @@ public class PredatorCursor extends SceneObject
 {
     public static function getAll () :Array
     {
-        return ClientCtx.gameMode.getObjectsInGroup("PredatorCursor");
+        return GameCtx.gameMode.getObjectsInGroup("PredatorCursor");
     }
 
     public function PredatorCursor (controlledLocally :Boolean)
@@ -35,8 +35,8 @@ public class PredatorCursor extends SceneObject
     protected function updateMovement (dt :Number) :void
     {
         var targetLoc :Vector2 = new Vector2(
-            ClientCtx.gameMode.modeSprite.mouseX,
-            ClientCtx.gameMode.modeSprite.mouseY);
+            GameCtx.gameMode.modeSprite.mouseX,
+            GameCtx.gameMode.modeSprite.mouseY);
 
         var oldLoc :Vector2 = new Vector2(this.x, this.y);
 
@@ -51,7 +51,7 @@ public class PredatorCursor extends SceneObject
         newLoc.addLocal(oldLoc);
 
         // clamp to game boundaries
-        newLoc = ClientCtx.clampLoc(newLoc);
+        newLoc = GameCtx.clampLoc(newLoc);
 
         // collide with cells
         var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
@@ -64,7 +64,7 @@ public class PredatorCursor extends SceneObject
                 // attach the white cell to us
                 var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
                 var loc :Point = new Point(cell.x, cell.y);
-                loc = ClientCtx.cellLayer.localToGlobal(loc);
+                loc = GameCtx.cellLayer.localToGlobal(loc);
                 loc = this.displayObject.globalToLocal(loc);
                 loc.x -= bm.width * 0.5;
                 loc.y -= bm.height * 0.5;
@@ -75,7 +75,7 @@ public class PredatorCursor extends SceneObject
                 cell.destroySelf();
 
                 if (_whiteCells.length >= Constants.MAX_PREDATOR_WHITE_CELLS) {
-                    ClientCtx.gameMode.gameOver("Predator knocked out!");
+                    GameCtx.gameMode.gameOver("Predator knocked out!");
                 }
             }
         }

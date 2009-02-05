@@ -14,14 +14,14 @@ public class Cell extends CollidableObj
     public static function getCellCount (cellType :int = -1) :int
     {
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        return ClientCtx.heartbeatDb.getObjectRefsInGroup(groupName).length;
+        return GameCtx.heartbeatDb.getObjectRefsInGroup(groupName).length;
     }
 
     public static function getCellCollision (loc :Vector2, radius :Number, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        var cells :Array = ClientCtx.heartbeatDb.getObjectRefsInGroup(groupName);
+        var cells :Array = GameCtx.heartbeatDb.getObjectRefsInGroup(groupName);
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
@@ -113,7 +113,7 @@ public class Cell extends CollidableObj
                 _loc.y += impulse.y;
             }
 
-            _loc = ClientCtx.clampLoc(_loc);
+            _loc = GameCtx.clampLoc(_loc);
         }
     }
 
@@ -149,7 +149,7 @@ public class Cell extends CollidableObj
     protected function canFollow (predator :PredatorCursor) :Boolean
     {
         return (predator.numWhiteCells > 0 &&
-                ClientCtx.getHemisphere(predator) == ClientCtx.getHemisphere(this));
+                GameCtx.getHemisphere(predator) == GameCtx.getHemisphere(this));
     }
 
     protected function follow (predator :PredatorCursor) :void

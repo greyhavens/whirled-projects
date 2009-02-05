@@ -24,8 +24,9 @@ public class GameMode extends AppMode
     {
         super.setup();
 
-        ClientCtx.gameMode = this;
-        ClientCtx.heartbeatDb = new NetObjDb();
+        GameCtx.init();
+        GameCtx.gameMode = this;
+        GameCtx.heartbeatDb = new NetObjDb();
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
@@ -40,29 +41,29 @@ public class GameMode extends AppMode
         _arteryTop.y = 30;
         _modeSprite.addChild(_arteryTop);
 
-        ClientCtx.cellLayer = SpriteUtil.createSprite();
-        ClientCtx.cursorLayer = SpriteUtil.createSprite();
-        ClientCtx.effectLayer = SpriteUtil.createSprite();
-        _modeSprite.addChild(ClientCtx.cellLayer);
-        _modeSprite.addChild(ClientCtx.cursorLayer);
-        _modeSprite.addChild(ClientCtx.effectLayer);
+        GameCtx.cellLayer = SpriteUtil.createSprite();
+        GameCtx.cursorLayer = SpriteUtil.createSprite();
+        GameCtx.effectLayer = SpriteUtil.createSprite();
+        _modeSprite.addChild(GameCtx.cellLayer);
+        _modeSprite.addChild(GameCtx.cursorLayer);
+        _modeSprite.addChild(GameCtx.effectLayer);
 
         // Setup game objects
-        ClientCtx.beat = new Beat();
-        ClientCtx.heartbeatDb.addObject(ClientCtx.beat);
+        GameCtx.beat = new Beat();
+        GameCtx.heartbeatDb.addObject(GameCtx.beat);
 
-        ClientCtx.bloodMeter = new PredatorBloodMeter();
-        ClientCtx.bloodMeter.x = BLOOD_METER_LOC.x;
-        ClientCtx.bloodMeter.y = BLOOD_METER_LOC.y;
-        addObject(ClientCtx.bloodMeter, ClientCtx.effectLayer);
+        GameCtx.bloodMeter = new PredatorBloodMeter();
+        GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
+        GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
+        addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
 
         var heart :Heart = new Heart();
         heart.x = Constants.GAME_CTR.x;
         heart.y = Constants.GAME_CTR.y;
-        addObject(heart, ClientCtx.cellLayer);
+        addObject(heart, GameCtx.cellLayer);
 
         // spawn cells when the heart beats
-        registerListener(ClientCtx.beat, GameEvent.HEARTBEAT,
+        registerListener(GameCtx.beat, GameEvent.HEARTBEAT,
             function (...ignored) :void {
                 var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
                 count = Math.min(count, Constants.MAX_CELL_COUNT - Cell.getCellCount());
@@ -76,15 +77,15 @@ public class GameMode extends AppMode
             });
 
         // cursors
-        ClientCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
-        addObject(ClientCtx.prey, ClientCtx.cursorLayer);
-        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), ClientCtx.cursorLayer);
+        GameCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
+        addObject(GameCtx.prey, GameCtx.cursorLayer);
+        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), GameCtx.cursorLayer);
     }
 
     override public function update (dt :Number) :void
     {
         super.update(dt);
-        ClientCtx.heartbeatDb.update(dt);
+        GameCtx.heartbeatDb.update(dt);
 
         _modeTime += dt;
     }

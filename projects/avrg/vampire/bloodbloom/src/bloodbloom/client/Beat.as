@@ -12,12 +12,12 @@ public class Beat extends SimObject
 
     override protected function addedToDB () :void
     {
-        _lastBeat = ClientCtx.gameMode.modeTime;
+        _lastBeat = GameCtx.gameMode.modeTime;
     }
 
     override protected function update (dt :Number) :void
     {
-        var timeNow :Number = ClientCtx.gameMode.modeTime;
+        var timeNow :Number = GameCtx.gameMode.modeTime;
         while (timeNow >= this.nextBeat) {
             _lastBeat = this.nextBeat;
             _totalBeatTime -= Constants.BEAT_SPEED_UP;
@@ -46,13 +46,13 @@ public class Beat extends SimObject
 
     public function get curBeatOffset () :Number
     {
-        var timeNow :Number = ClientCtx.gameMode.modeTime;
+        var timeNow :Number = GameCtx.gameMode.modeTime;
         return Math.min(timeNow - _lastBeat, this.nextBeat - timeNow);
     }
 
     public function get pctTimeToNextBeat () :Number
     {
-        var timeNow :Number = ClientCtx.gameMode.modeTime;
+        var timeNow :Number = GameCtx.gameMode.modeTime;
         return 1 - ((this.nextBeat - timeNow) / _totalBeatTime);
     }
 
