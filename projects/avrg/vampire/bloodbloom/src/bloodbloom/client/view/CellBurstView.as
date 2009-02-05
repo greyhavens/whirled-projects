@@ -1,13 +1,14 @@
 package bloodbloom.client.view {
 
-import bloodbloom.client.*;
-
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
+
+import bloodbloom.*;
+import bloodbloom.client.*;
 
 public class CellBurstView extends SceneObject
 {

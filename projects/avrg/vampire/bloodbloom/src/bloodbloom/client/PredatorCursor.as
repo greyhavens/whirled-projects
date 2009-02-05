@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import bloodbloom.*;
+
 public class PredatorCursor extends SceneObject
 {
     public static function getAll () :Array

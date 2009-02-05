@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import flash.display.Sprite;
 
+import bloodbloom.*;
+
 public class GameCtx
 {
     public static var gameMode :GameMode;

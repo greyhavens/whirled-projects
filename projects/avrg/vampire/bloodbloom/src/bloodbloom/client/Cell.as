@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
+import bloodbloom.*;
+
 public class Cell extends CollidableObj
     implements NetObj
 {

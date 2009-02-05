@@ -1,4 +1,4 @@
-package bloodbloom.client {
+package bloodbloom {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.util.*;
@@ -32,11 +32,7 @@ public class Constants
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;
     public static const CELL__LIMIT :int = 2;
-    //public static const INITIAL_CELL_COUNT :Array = [ 30, 10 ];
     public static const MAX_CELL_COUNT :Number = 100;
-    /*public static const CELL_SPAWN_RATE :Array = [
-        new NumRange(3, 4, Rand.STREAM_GAME), new NumRange(6, 8, Rand.STREAM_GAME)
-    ];*/
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 6, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [

@@ -11,6 +11,8 @@ import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.display.Sprite;
 
+import bloodbloom.*;
+
 public class ClientCtx
 {
     public static var gameCtrl :GameControl;

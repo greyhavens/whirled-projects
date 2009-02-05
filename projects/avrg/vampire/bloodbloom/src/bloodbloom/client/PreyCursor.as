@@ -9,6 +9,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
+import bloodbloom.*;
 import bloodbloom.client.view.*;
 
 public class PreyCursor extends SceneObject

@@ -7,6 +7,7 @@ import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 
+import bloodbloom.*;
 import bloodbloom.client.view.*;
 
 public class SpSplashMode extends AppMode

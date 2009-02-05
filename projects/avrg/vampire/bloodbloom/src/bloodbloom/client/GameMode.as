@@ -1,7 +1,5 @@
 package bloodbloom.client {
 
-import bloodbloom.client.view.*;
-
 import com.whirled.contrib.simplegame.AppMode;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.SimObjectRef;
@@ -12,6 +10,9 @@ import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
+
+import bloodbloom.*;
+import bloodbloom.client.view.*;
 
 public class GameMode extends AppMode
 {

@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Collision;
 
+import bloodbloom.*;
+
 public class CellBurst extends CollidableObj
     implements NetObj
 {
@@ -83,7 +85,7 @@ public class CellBurst extends CollidableObj
             }
 
             var preyLoc :Vector2 = new Vector2(GameCtx.prey.x, GameCtx.prey.y);
-            if (Collision.circlesIntersect(_loc, this.radius, preyLoc, Constants.CURSOR_RADIUS)) {
+            if (collides(preyLoc, Constants.CURSOR_RADIUS)) {
                 GameCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
