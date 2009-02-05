@@ -25,10 +25,10 @@ public class Logic
         return Constants.BLOOD_FRACTION_LOST_PER_FEED * Constants.MAX_BLOOD_FOR_LEVEL( level );
     }
     
-    public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int) :Number
+    public static function bloodgGainedVampireVampireFeeding( feederLevel :int, victimLevel :int, bloodLost :Number) :Number
     {
         //Say feederLevel=5 and victimLevel=10
-        var bloodLost :Number = bloodLostPerFeed( victimLevel );//=250
+//        var bloodLost :Number = bloodLostPerFeed( victimLevel );//=250
         var bloodGained:Number = bloodLost * BLOOD_GAIN_FRACTION_FROM_V2V_FEEDING_WHEN_EQUAL_LEVEL;//=25
         
         var levelDifference :int = victimLevel - feederLevel;
@@ -48,6 +48,16 @@ public class Logic
     public static function isVampireCapableOfBeingEatenByOtherVampires( level :int, blood :Number) :Boolean
     {
         return blood >= bloodLostPerFeed( level ) + 1; 
+    }
+    
+    public static function levelGivenCurrentXp( xp :int ) :int
+    {
+        return xp/100 + 1; 
+    }
+    public static function xpNeededForLevel( level :int ) :int
+    {
+        level = Math.max(level, 1);
+        return (level - 1) * 100; 
     }
     
 }
