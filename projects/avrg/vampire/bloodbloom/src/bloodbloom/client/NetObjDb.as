@@ -12,7 +12,7 @@ public class NetObjDb extends ObjectDB
         displayParent :DisplayObjectContainer = null) :SimObjectRef
     {
         if (!(obj is NetObj)) {
-            throw new Error("Only NetObj can be added to NetObjDb");
+            throw new Error("Only NetObj's can be added to NetObjDb");
         } else {
             return super.addObject(obj, displayParent);
         }

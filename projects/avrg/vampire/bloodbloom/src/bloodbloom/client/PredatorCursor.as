@@ -58,7 +58,7 @@ public class PredatorCursor extends SceneObject
         if (cell != null) {
             if (cell.type == Constants.CELL_RED) {
                 // create a cell burst
-                CellBurst.createFromCell(cell);
+                GameObjects.createCellBurst(cell);
 
             } else {
                 // attach the white cell to us

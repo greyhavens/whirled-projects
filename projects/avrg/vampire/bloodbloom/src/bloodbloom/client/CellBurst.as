@@ -2,27 +2,18 @@ package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.Collision;
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-import flash.display.Graphics;
-
-public class CellBurst extends SceneObject
+public class CellBurst extends CollidableObj
+    implements NetObj
 {
-    public static function createFromCell (cell :Cell, sequence :BurstSequence = null) :CellBurst
-    {
-        var newBurst :CellBurst = new CellBurst(cell.x, cell.y, sequence);
-        ClientCtx.gameMode.addObject(newBurst, ClientCtx.cellLayer);
-        cell.destroySelf();
-        return newBurst;
-    }
+    public static const STATE_BURST :int = 0;
+    public static const STATE_UNBURST :int = 1;
 
     public function CellBurst (x :Number, y :Number, sequence :BurstSequence = null)
     {
-        _sprite = new Sprite();
+        super(Constants.BURST_RADIUS_MIN);
 
         _sequence = sequence;
         if (_sequence == null) {
@@ -45,36 +36,21 @@ public class CellBurst extends SceneObject
     {
         removeAllTasks();
 
-        var g :Graphics = _sprite.graphics;
-        g.clear();
-        g.lineStyle(2, 0xff0000);
-        g.drawCircle(0, 0, Constants.BURST_RADIUS_MIN);
-
-        this.alpha = 1;
-
         var thisBurst :CellBurst = this;
 
         var targetScale :Number = Constants.BURST_RADIUS_MAX / Constants.BURST_RADIUS_MIN;
         addTask(ScaleTask.CreateEaseOut(targetScale, targetScale, Constants.BURST_EXPAND_TIME));
         addTask(new SerialTask(
-            new TimedTask(Constants.BURST_COMPLETE_TIME - 0.25),
-            new AlphaTask(0, 0.25),
+            new TimedTask(Constants.BURST_COMPLETE_TIME),
             new SelfDestructTask()));
 
         _sequence.addCellBurst(this);
-        _mode = BURST;
+        _state = STATE_BURST;
     }
 
     protected function beginUnburst () :void
     {
         removeAllTasks();
-
-        var g :Graphics = _sprite.graphics;
-        g.clear();
-        g.lineStyle(2, 0xff00ff);
-        g.drawCircle(0, 0, Constants.BURST_RADIUS_MIN);
-
-        this.alpha = 1;
 
         var thisBurst :CellBurst = this;
 
@@ -89,40 +65,35 @@ public class CellBurst extends SceneObject
             new SelfDestructTask()));
 
         _sequence.removeCellBurst(this);
-        _mode = UNBURST;
+        _state = STATE_UNBURST;
     }
 
     override protected function update (dt :Number) :void
     {
-        var thisLoc :Vector2 = new Vector2(this.x, this.y);
-
-        if (_mode == BURST) {
+        if (_state == STATE_BURST) {
             // We're bursting. When we collide with red cells, we create new CellBursts;
             // When we collide with white cells, we unburst.
-            var cell :Cell = Cell.getCellCollision(thisLoc, this.radius);
+            var cell :Cell = Cell.getCellCollision(_loc, this.radius);
             if (cell != null) {
                 if (cell.isRedCell) {
-                    CellBurst.createFromCell(cell, _sequence);
+                    GameObjects.createCellBurst(cell, _sequence);
                 } else {
                     beginUnburst();
                 }
             }
 
             var preyLoc :Vector2 = new Vector2(ClientCtx.prey.x, ClientCtx.prey.y);
-            if (Collision.circlesIntersect(thisLoc, this.radius, preyLoc, Constants.CURSOR_RADIUS)) {
+            if (Collision.circlesIntersect(_loc, this.radius, preyLoc, Constants.CURSOR_RADIUS)) {
                 ClientCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
-        } else if (_mode == UNBURST) {
+        } else if (_state == STATE_UNBURST) {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
-            var otherLoc :Vector2 = new Vector2();
             var bursts :Array = ClientCtx.mainLoop.topMode.getObjectRefsInGroup("CellBurst");
             for each (var burstRef :SimObjectRef in bursts) {
                 var burst :CellBurst = burstRef.object as CellBurst;
-                if (burst != null && burst != this && burst._mode == BURST) {
-                    otherLoc.x = burst.x;
-                    otherLoc.y = burst.y;
-                    if (Collision.circlesIntersect(thisLoc, this.radius, otherLoc, burst.radius)) {
+                if (burst != null && burst != this && burst._state == STATE_BURST) {
+                    if (collidesWith(burst)) {
                         burst.beginUnburst();
                         break;
                     }
@@ -140,22 +111,13 @@ public class CellBurst extends SceneObject
         }
     }
 
-    override public function get displayObject () :DisplayObject
+    public function get state () :int
     {
-        return _sprite;
+        return _state;
     }
 
-    protected function get radius () :Number
-    {
-        return (this.scaleX * Constants.BURST_RADIUS_MIN);
-    }
-
-    protected var _sprite :Sprite;
-    protected var _mode :int;
+    protected var _state :int;
     protected var _sequence :BurstSequence;
-
-    protected static const BURST :int = 0;
-    protected static const UNBURST :int = 1;
 }
 
 }

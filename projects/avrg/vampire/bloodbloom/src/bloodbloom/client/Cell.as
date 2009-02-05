@@ -1,15 +1,12 @@
 package bloodbloom.client {
 
-import __AS3__.vec.Vector;
-
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.components.LocationComponent;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
-public class Cell extends NetObj
-    implements LocationComponent
+public class Cell extends CollidableObj
+    implements NetObj
 {
     public static const STATE_BIRTH :int = 0;
     public static const STATE_NORMAL :int = 1;
@@ -30,7 +27,7 @@ public class Cell extends NetObj
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
                 cell._state == STATE_NORMAL &&
-                Collision.circlesIntersect(cell._loc, Constants.CELL_RADIUS, loc, radius)) {
+                cell.collides(loc, radius)) {
                 return cell;
             }
         }
@@ -40,6 +37,8 @@ public class Cell extends NetObj
 
     public function Cell (type :int, beingBorn :Boolean)
     {
+        super(Constants.CELL_RADIUS);
+
         _type = type;
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
@@ -173,35 +172,9 @@ public class Cell extends NetObj
         return !_followObj.isNull;
     }
 
-    public function get x () :Number
-    {
-        return _loc.x;
-    }
-
-    public function get y () :Number
-    {
-        return _loc.y;
-    }
-
-    public function set x (val :Number) :void
-    {
-        _loc.x = val;
-    }
-
-    public function set y (val :Number) :void
-    {
-        _loc.y = val;
-    }
-
-    public function get loc () :Vector2
-    {
-        return _loc;
-    }
-
     protected var _type :int;
     protected var _state :int;
     protected var _moveCCW :Boolean;
-    protected var _loc :Vector2 = new Vector2();
     protected var _followObj :SimObjectRef = SimObjectRef.Null();
 
     protected static const SPEED_BASE :Number = 5;

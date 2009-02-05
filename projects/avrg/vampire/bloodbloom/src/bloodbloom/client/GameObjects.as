@@ -6,13 +6,27 @@ public class GameObjects
 {
     public static function createCell (type :int, beingBorn :Boolean) :Cell
     {
-        var cell :Cell = new Cell(type, beingBorn);
-        ClientCtx.heartbeatDb.addObject(cell);
+        var obj :Cell = new Cell(type, beingBorn);
+        ClientCtx.heartbeatDb.addObject(obj);
 
-        var view :CellView = new CellView(cell);
+        var view :CellView = new CellView(obj);
         ClientCtx.gameMode.addObject(view, ClientCtx.cellLayer);
 
-        return cell;
+        return obj;
+    }
+
+    public static function createCellBurst (fromCell :Cell, sequence :BurstSequence = null)
+        :CellBurst
+    {
+        var obj :CellBurst = new CellBurst(fromCell.x, fromCell.y, sequence);
+        ClientCtx.heartbeatDb.addObject(obj);
+
+        var view :CellBurstView = new CellBurstView(obj);
+        ClientCtx.gameMode.addObject(view, ClientCtx.cellLayer);
+
+        fromCell.destroySelf();
+
+        return obj;
     }
 }
 
