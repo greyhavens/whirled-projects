@@ -20,12 +20,6 @@ public class Server extends ServerObject
         _events.registerListener(ServerCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
 
-        // set up our heartbeat timer.
-        _events.registerListener(_heartbeatTimer, TimerEvent.TIMER,
-            function (...ignored) :void {
-                ServerCtx.gameCtrl.net.sendMessage(Constants.MSG_S_HEARTBEAT, null);
-            });
-
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
                 _playing = true;
@@ -39,13 +33,14 @@ public class Server extends ServerObject
                 });
 
                 // start the heartbeat ticker
-                _heartbeatTimer.start();
+                ServerCtx.gameCtrl.services.startTicker(Constants.MSG_S_HEARTBEAT,
+                    Constants.HEARTBEAT_TIME * 1000);
             });
 
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_ENDED,
             function (...ignored) :void {
                 _playing = false;
-                _heartbeatTimer.stop();
+                ServerCtx.gameCtrl.services.stopTicker(Constants.MSG_S_HEARTBEAT);
                 ServerCtx.gameCtrl.net.set(Constants.PROP_INITED, false);
             });
     }
@@ -56,7 +51,6 @@ public class Server extends ServerObject
     }
 
     protected var _playing :Boolean;
-    protected var _heartbeatTimer :Timer = new Timer(Constants.HEARTBEAT_TIME * 1000);
     protected var _events :EventHandlerManager = new EventHandlerManager();
 }
 
