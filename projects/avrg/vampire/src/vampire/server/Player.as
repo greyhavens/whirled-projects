@@ -13,6 +13,7 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.PlayerSubControlServer;
 
 import flash.utils.Dictionary;
+import flash.utils.getTimer;
 
 import vampire.data.Codes;
 import vampire.data.Constants;
@@ -487,14 +488,14 @@ public class Player
         
         //Different result depending if victim is human (playing the game or not), or vampire.
         if( !room.isPlayer(e.eatenPlayerId)) {//Vampire feeding from a non-player
-            log.warning("handleSuccessfulFeedMessage " + e);
+            ServerContext._serverLogBroadcast.log("handleSuccessfulFeedMessage " + e);
             bloodGained = bloodIncrement;
             ServerContext.nonPlayers.playerFeedsFromNonPlayer( this, e.eatenPlayerId, bloodGained);
                    
             //Update the room properties that show other players blood         
             setTargetBlood( ServerContext.nonPlayers.bloodAvailableFromNonPlayer( e.eatenPlayerId ) );
             setTargetMaxBlood( Constants.MAX_BLOOD_NONPLAYERS );
-            
+            ServerContext._serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
         }
         else {
             
@@ -554,6 +555,7 @@ public class Player
             addBlood( bloodGained );
             addXP( Constants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodGained);
         }
+        ServerContext._serverLogBroadcast.log("  setTargetVisible(true)" );
         setTargetVisible(true, true);
     }
     protected function makeSire(targetPlayerId :int ) :void
@@ -848,6 +850,32 @@ public class Player
                 }
             }
         }
+        else if( e.name == Constants.SIGNAL_TARGET_CHATTED) {
+            var fromPlayerId :int = int(e.value);
+            ServerContext._serverLogBroadcast.log("Chat received from " + fromPlayerId); 
+            if( fromPlayerId == playerId && _targetId != 0 && !room.isPlayer(_targetId)) {
+                var time :int = getTimer();
+                var aMinuteAgo :int = time - 60000;
+                
+                _chatTimesWithTarget.push( time );
+                
+                _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
+                    return chattime > aMinuteAgo;
+                });
+                
+                ServerContext._serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
+                
+                if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_MINUTE) {
+                    _chatTimesWithTarget.splice(0);
+                    ServerContext._serverLogBroadcast.log("  Chat, send feed message ");
+                    handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
+                }
+            }
+            else {
+                ServerContext._serverLogBroadcast.log("  Ignored for some reason. ");
+            }
+            
+        }
     }
     
     
@@ -1099,8 +1127,6 @@ public class Player
             return;
         }
         _isTargetVisible = targetVisible;
-
-//        updateAvatarState();
 
         // and if we're in a room, update the room properties
         if (_room != null) {
@@ -1488,8 +1514,8 @@ public class Player
     
     protected var _timeSinceLastBloodRegenerate :Number;//In seconds
 
-
-
+    
+    protected var _chatTimesWithTarget :Array = [];
 
 
 
