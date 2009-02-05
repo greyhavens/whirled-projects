@@ -3,6 +3,9 @@
 public class Constants
 {
     
+    public static const CHAT_FEEDING_MIN_CHATS_PER_MINUTE :int = 3;
+    
+    
     /** 
     * The hourly loss of blood as a fraction of the maximum amount of blood of a vampire.
     */
@@ -116,5 +119,6 @@ public class Constants
     public static const ROOM_SIGNAL_ENTITYID_REPONSE :String = "EntityId Response";
     public static const SIGNAL_CLOSEST_ENTITY :String = "Signal: Closest Entity";
     public static const SIGNAL_PLAYER_TARGET :String = "Signal: Player Target";
+    public static const SIGNAL_TARGET_CHATTED :String = "Signal: Player Target Said Something";
 }
 }
