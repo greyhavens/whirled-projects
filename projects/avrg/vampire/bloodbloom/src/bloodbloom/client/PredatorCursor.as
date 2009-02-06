@@ -25,13 +25,13 @@ public class PredatorCursor extends PlayerCursor
         super.update(dt);
 
         // collide with cells
-        /*var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
+        var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
             if (cell.type == Constants.CELL_RED) {
                 // create a cell burst
                 GameObjects.createCellBurst(cell);
 
-            } else {
+            } /*else {
                 // attach the white cell to us
                 var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
                 var loc :Point = new Point(cell.x, cell.y);
@@ -48,8 +48,8 @@ public class PredatorCursor extends PlayerCursor
                 if (_whiteCells.length >= Constants.MAX_PREDATOR_WHITE_CELLS) {
                     GameCtx.gameMode.gameOver("Predator knocked out!");
                 }
-            }
-        }*/
+            }*/
+        }
     }
 
     override public function getObjectGroup (groupNum :int) :String

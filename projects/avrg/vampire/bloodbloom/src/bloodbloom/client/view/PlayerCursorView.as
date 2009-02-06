@@ -42,18 +42,16 @@ public class PlayerCursorView extends SceneObject
         this.x = newLoc.x;
         this.y = newLoc.y;
 
-        this.x = _cursor.loc.x;
-        this.y = _cursor.loc.y;
-
         if (!newLoc.similar(_cursor.moveTarget, 0.5)) {
             // rotate towards our move target. 0 degrees == straight up
             var angle :Number =
                 90 + ((_cursor.moveTarget.subtract(newLoc).angle) * (180 / Math.PI));
+
             if (angle > 180) {
                 angle = angle - 360;
             }
 
-            addNamedTask("Rotate", RotationTask.CreateLinear(angle, 0.2), true);
+            this.rotation = angle;
         }
     }
 

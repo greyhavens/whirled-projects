@@ -33,10 +33,7 @@ public class PlayerCursor extends CollidableObj
         newLoc.scaleLocal(Math.min(targetDist, moveDist));
         newLoc.addLocal(curLoc);
 
-        // clamp to game boundaries
-        newLoc = GameCtx.clampLoc(newLoc);
-
-        return newLoc;
+        return GameCtx.clampLoc(newLoc);
     }
 
     override protected function update (dt :Number) :void

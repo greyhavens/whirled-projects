@@ -53,6 +53,11 @@ public class GameMode extends AppMode
         _modeSprite.addChild(GameCtx.cursorLayer);
         _modeSprite.addChild(GameCtx.effectLayer);
 
+        var statView :StatView = new StatView();
+        statView.x = 0;
+        statView.y = 460;
+        addObject(statView, _modeSprite);
+
         // Setup game objects
         GameCtx.heart = new Heart();
         GameCtx.netObjDb.addObject(GameCtx.heart);
@@ -135,15 +140,16 @@ public class GameMode extends AppMode
         super.update(dt);
 
         // send cursor target messages when the mouse moves.
-        if (_msgMgr.canSendMessage()) {
+        //if (this.modeTime - _lastCursorUpdate >= 0.5) {
             var mouseX :int = GameCtx.cursorLayer.mouseX;
             var mouseY :int = GameCtx.cursorLayer.mouseY;
             if (mouseX != _lastMouseX && mouseY != _lastMouseY) {
                 _msgMgr.sendMessage(CursorTargetMsg.create(_playerType, mouseX, mouseY));
                 _lastMouseX = mouseX;
                 _lastMouseY = mouseY;
+                _lastCursorUpdate = this.modeTime;
             }
-        }
+        //}
     }
 
     protected function handleGameMessage (msg :Object) :void
@@ -194,6 +200,8 @@ public class GameMode extends AppMode
     protected var _msgMgr :TickedMessageManager;
     protected var _lastMouseX :int = -1;
     protected var _lastMouseY :int = -1;
+
+    protected var _lastCursorUpdate :Number = 0;
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }
