@@ -20,6 +20,8 @@ public class GameCtx
     public static var cursorLayer :Sprite;
     public static var effectLayer :Sprite;
 
+    public static var clientFutureDelta :Number = 0;
+
     public static function init () :void
     {
         gameMode = null;
@@ -32,12 +34,8 @@ public class GameCtx
         cellLayer = null;
         cursorLayer = null;
         effectLayer = null;
-    }
 
-    public static function get clientFutureDelta () :Number
-    {
-        // How far into the future is the client?
-        return gameMode.modeTime - netObjDb.modeTime;
+        clientFutureDelta = 0;
     }
 
     // Returns a new Vector, clamped within the bounds of the game

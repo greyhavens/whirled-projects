@@ -127,6 +127,7 @@ public class GameMode extends AppMode
     {
         // process our network ticks (updates network objects)
         _msgMgr.update(dt);
+        var updateNetObjects :Boolean = _msgMgr.unprocessedTickCount > 0;
         while (_msgMgr.unprocessedTickCount > 0) {
             for each (var msg :Object in _msgMgr.getNextTick()) {
                 handleGameMessage(msg);
@@ -135,12 +136,18 @@ public class GameMode extends AppMode
             GameCtx.netObjDb.update(Constants.HEARTBEAT_TIME);
         }
 
+        if (updateNetObjects) {
+            GameCtx.clientFutureDelta = 0;
+        } else {
+            GameCtx.clientFutureDelta += dt;
+        }
+
         // update all the view objects
         _modeTime += dt;
         super.update(dt);
 
         // send cursor target messages when the mouse moves.
-        //if (this.modeTime - _lastCursorUpdate >= 0.5) {
+        if (_msgMgr.canSendMessage()) {
             var mouseX :int = GameCtx.cursorLayer.mouseX;
             var mouseY :int = GameCtx.cursorLayer.mouseY;
             if (mouseX != _lastMouseX && mouseY != _lastMouseY) {
@@ -149,7 +156,7 @@ public class GameMode extends AppMode
                 _lastMouseY = mouseY;
                 _lastCursorUpdate = this.modeTime;
             }
-        //}
+        }
     }
 
     protected function handleGameMessage (msg :Object) :void

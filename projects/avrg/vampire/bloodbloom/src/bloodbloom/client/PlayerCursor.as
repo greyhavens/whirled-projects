@@ -23,17 +23,20 @@ public class PlayerCursor extends CollidableObj
 
     public function getNextLoc (curLoc :Vector2, dt :Number) :Vector2
     {
-        if (dt <= 0 || curLoc.similar(_moveTarget, 0.5)) {
+        var moveDist :Number = this.speed * dt;
+        if (moveDist <= 0 || curLoc.equals(_moveTarget)) {
             return curLoc.clone();
         }
 
         var newLoc :Vector2 = _moveTarget.subtract(curLoc);
         var targetDist :Number = newLoc.normalizeLocalAndGetLength();
-        var moveDist :Number = this.speed * dt;
         newLoc.scaleLocal(Math.min(targetDist, moveDist));
         newLoc.addLocal(curLoc);
 
-        return GameCtx.clampLoc(newLoc);
+        // clamp to game boundaries
+        newLoc = GameCtx.clampLoc(newLoc);
+
+        return newLoc;
     }
 
     override protected function update (dt :Number) :void

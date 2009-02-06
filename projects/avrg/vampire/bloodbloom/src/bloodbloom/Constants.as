@@ -21,9 +21,9 @@ public class Constants
     public static const HEART_RADIUS :Number = 60;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
-    public static const BEAT_TIME_BASE :Number = 8 / 4;
+    public static const BEAT_TIME_BASE :Number = 12 / 4;
     public static const BEAT_TIME_MIN :Number = 1 / 4;
-    public static const BEAT_SPEED_UP :Number = 0.1 / 4;
+    public static const BEAT_SPEED_UP :Number = 0.08 / 4;
     public static const BEAT_ARTERY_SLOW_DOWN :Number = 0.6 / 4;
 
     public static const ARTERY_TOP :int = 0;
@@ -36,8 +36,8 @@ public class Constants
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 6, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
-        new NumRange(65, 100, Rand.STREAM_GAME),
-        new NumRange(90, 140, Rand.STREAM_GAME)
+        new NumRange(65, 90, Rand.STREAM_GAME),
+        new NumRange(100, 140, Rand.STREAM_GAME)
     ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
     public static const CELL_RADIUS :Number = 9;
