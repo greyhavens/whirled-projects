@@ -1,5 +1,8 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+import bloodbloom.client.view.*;
+
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -9,53 +12,19 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
-import bloodbloom.*;
-import bloodbloom.client.view.*;
-
-public class PreyCursor extends SceneObject
+public class PreyCursor extends PlayerCursor
 {
-    public function PreyCursor (controlledLocally :Boolean)
+    public function PreyCursor ()
     {
-        _controlledLocally = controlledLocally;
-        _sprite = new Sprite();
-        var bitmap :Bitmap = ClientCtx.instantiateBitmap("prey_cursor");
-        bitmap.x = -bitmap.width * 0.5;
-        bitmap.y = -bitmap.height * 0.5;
-        _sprite.addChild(bitmap);
-
         updateArteryHilite();
     }
 
     override protected function update (dt :Number) :void
     {
-        if (_controlledLocally) {
-            updateMovement(dt);
-        }
-    }
-
-    protected function updateMovement (dt :Number) :void
-    {
-        var targetLoc :Vector2 = new Vector2(
-            GameCtx.gameMode.modeSprite.mouseX,
-            GameCtx.gameMode.modeSprite.mouseY);
-
-        var oldLoc :Vector2 = new Vector2(this.x, this.y);
-
-        if (oldLoc.similar(targetLoc, 0.5)) {
-            return;
-        }
-
-        var newLoc :Vector2 = targetLoc.subtract(oldLoc);
-        var targetDist :Number = newLoc.normalizeLocalAndGetLength();
-        var moveDist :Number = this.speed * dt;
-        newLoc.scaleLocal(Math.min(targetDist, moveDist));
-        newLoc.addLocal(oldLoc);
-
-        // clamp to game boundaries
-        newLoc = GameCtx.clampLoc(newLoc);
+        super.update(dt);
 
         // collide with cells
-        var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
+        /*var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
         if (cell != null) {
             var bm :Bitmap = ClientCtx.createCellBitmap(cell.type);
             var loc :Point = new Point(cell.x, cell.y);
@@ -96,23 +65,10 @@ public class PreyCursor extends SceneObject
                 newLoc.x = (newLoc.x >= Constants.GAME_CTR.x ?
                             Constants.GAME_CTR.x - 1 : Constants.GAME_CTR.x + 1);
             }
-        }
-
-        // move!
-        this.x = newLoc.x;
-        this.y = newLoc.y;
-
-        // rotate the bitmap. 0 degrees == straight up
-        var angle :Number = newLoc.subtract(oldLoc).angle * (180 / Math.PI);
-        this.rotation = angle + 90;
+        }*/
     }
 
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
-    protected function get speed () :Number
+    override protected function get speed () :Number
     {
         var speed :Number = Math.max(
             Constants.PREY_SPEED_BASE + (Constants.PREY_SPEED_CELL_OFFSET * _redCells.length),
@@ -155,11 +111,9 @@ public class PreyCursor extends SceneObject
 
     protected function updateArteryHilite () :void
     {
-        if (_controlledLocally) {
-            GameCtx.gameMode.hiliteArteries(
-                _lastArtery != Constants.ARTERY_TOP,
-                _lastArtery != Constants.ARTERY_BOTTOM);
-        }
+        GameCtx.gameMode.hiliteArteries(
+            _lastArtery != Constants.ARTERY_TOP,
+            _lastArtery != Constants.ARTERY_BOTTOM);
     }
 
     protected function canCollideArtery (arteryType :int) :Boolean
@@ -167,8 +121,6 @@ public class PreyCursor extends SceneObject
         return _lastArtery != arteryType && _whiteCells.length > 0;
     }
 
-    protected var _controlledLocally :Boolean;
-    protected var _sprite :Sprite;
     protected var _redCells :Array = [];
     protected var _whiteCells :Array = [];
 

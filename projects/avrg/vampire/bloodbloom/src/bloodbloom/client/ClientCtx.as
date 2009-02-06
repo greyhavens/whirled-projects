@@ -9,6 +9,7 @@ import com.whirled.game.GameControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
+import flash.utils.getTimer;
 
 public class ClientCtx
 {
@@ -16,6 +17,11 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
+
+    public static function get timeNow () :Number
+    {
+        return flash.utils.getTimer() * 0.001; // returns seconds
+    }
 
     public static function get isConnected () :Boolean
     {

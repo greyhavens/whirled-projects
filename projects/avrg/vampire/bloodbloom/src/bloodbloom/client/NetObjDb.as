@@ -17,6 +17,19 @@ public class NetObjDb extends ObjectDB
             return super.addObject(obj, displayParent);
         }
     }
+
+    override public function update (dt :Number) :void
+    {
+        _modeTime += dt;
+        super.update(dt);
+    }
+
+    public function get modeTime () :Number
+    {
+        return _modeTime;
+    }
+
+    protected var _modeTime :Number = 0;
 }
 
 }

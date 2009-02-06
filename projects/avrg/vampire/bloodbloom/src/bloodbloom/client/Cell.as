@@ -1,11 +1,11 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
-
-import bloodbloom.*;
 
 public class Cell extends CollidableObj
     implements NetObj
@@ -16,20 +16,20 @@ public class Cell extends CollidableObj
     public static function getCellCount (cellType :int = -1) :int
     {
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        return GameCtx.heartbeatDb.getObjectRefsInGroup(groupName).length;
+        return GameCtx.netObjDb.getObjectRefsInGroup(groupName).length;
     }
 
-    public static function getCellCollision (loc :Vector2, radius :Number, cellType :int = -1) :Cell
+    public static function getCellCollision (obj :CollidableObj, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
         var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        var cells :Array = GameCtx.heartbeatDb.getObjectRefsInGroup(groupName);
+        var cells :Array = GameCtx.netObjDb.getObjectRefsInGroup(groupName);
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
                 cell._state == STATE_NORMAL &&
-                cell.collides(loc, radius)) {
+                cell.collidesWith(obj)) {
                 return cell;
             }
         }

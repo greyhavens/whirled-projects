@@ -2,15 +2,12 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 import bloodbloom.client.view.*;
+import bloodbloom.net.*;
 
-import com.whirled.contrib.simplegame.AppMode;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.SimObjectRef;
-import com.whirled.contrib.simplegame.net.OfflineTickedMessageManager;
-import com.whirled.contrib.simplegame.net.OnlineTickedMessageManager;
-import com.whirled.contrib.simplegame.net.TickedMessageManager;
+import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Rand;
+import com.whirled.contrib.simplegame.util.*;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Bitmap;
@@ -31,7 +28,7 @@ public class GameMode extends AppMode
 
         GameCtx.init();
         GameCtx.gameMode = this;
-        GameCtx.heartbeatDb = new NetObjDb();
+        GameCtx.netObjDb = new NetObjDb();
 
         setupNetwork();
 
@@ -57,7 +54,7 @@ public class GameMode extends AppMode
 
         // Setup game objects
         GameCtx.heart = new Heart();
-        GameCtx.heartbeatDb.addObject(GameCtx.heart);
+        GameCtx.netObjDb.addObject(GameCtx.heart);
 
         GameCtx.bloodMeter = new PredatorBloodMeter();
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
@@ -70,9 +67,8 @@ public class GameMode extends AppMode
         addObject(heart, GameCtx.cellLayer);
 
         // cursors
-        GameCtx.prey = new PreyCursor(_playerType == Constants.PLAYER_PREY);
-        addObject(GameCtx.prey, GameCtx.cursorLayer);
-        addObject(new PredatorCursor(_playerType == Constants.PLAYER_PREDATOR), GameCtx.cursorLayer);
+        GameObjects.createPlayerCursor(Constants.PLAYER_PREDATOR);
+        GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
     }
 
     protected function setupNetwork () :void
@@ -84,6 +80,7 @@ public class GameMode extends AppMode
                 Constants.MSG_S_HEARTBEAT) :
             new OfflineTickedMessageManager(ClientCtx.gameCtrl,
                 Constants.HEARTBEAT_TIME * 1000));
+        _msgMgr.addMessageType(CursorTargetMsg);
         _msgMgr.run();
 
         if (ClientCtx.isConnected) {
@@ -122,16 +119,26 @@ public class GameMode extends AppMode
 
     override public function update (dt :Number) :void
     {
-        super.update(dt);
-
-        // process our network ticks
+        // process our network ticks (updates network objects)
         _msgMgr.update(dt);
         while (_msgMgr.unprocessedTickCount > 0) {
-            var tick :Array = _msgMgr.getNextTick();
-            GameCtx.heartbeatDb.update(Constants.HEARTBEAT_TIME);
+            for each (var msg :Object in _msgMgr.getNextTick()) {
+                handleGameMessage(msg);
+            }
+
+            GameCtx.netObjDb.update(Constants.HEARTBEAT_TIME);
         }
 
+        // update all the view objects
         _modeTime += dt;
+        super.update(dt);
+    }
+
+    protected function handleGameMessage (msg :Object) :void
+    {
+        if (msg is CursorTargetMsg) {
+
+        }
     }
 
     public function gameOver (reason :String) :void
@@ -157,7 +164,7 @@ public class GameMode extends AppMode
         displayParent :DisplayObjectContainer = null) :SimObjectRef
     {
         if (obj is NetObj) {
-            throw new Error("HeartBeatObjs cannot be added to GameMode");
+            throw new Error("NetObjs cannot be added to GameMode");
         } else {
             return super.addObject(obj, displayParent);
         }

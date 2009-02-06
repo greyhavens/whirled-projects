@@ -17,7 +17,8 @@ public class BloodBloom extends Sprite
 {
     public static function DEBUG_REMOVE_ME () :void
     {
-        var c :Class = Server;
+        var c :Class;
+        c = Server;
     }
 
     public function BloodBloom ()

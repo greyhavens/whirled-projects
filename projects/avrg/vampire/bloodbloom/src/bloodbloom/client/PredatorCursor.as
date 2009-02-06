@@ -1,62 +1,31 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
-import bloodbloom.*;
-
-public class PredatorCursor extends SceneObject
+public class PredatorCursor extends PlayerCursor
 {
     public static function getAll () :Array
     {
         return GameCtx.gameMode.getObjectsInGroup("PredatorCursor");
     }
 
-    public function PredatorCursor (controlledLocally :Boolean)
+    public function PredatorCursor ()
     {
-        _controlledLocally = controlledLocally;
-        _sprite = new Sprite();
-        var bitmap :Bitmap = ClientCtx.instantiateBitmap("predator_cursor");
-        bitmap.x = -bitmap.width * 0.5;
-        bitmap.y = -bitmap.height * 0.5;
-        _sprite.addChild(bitmap);
     }
 
     override protected function update (dt :Number) :void
     {
-        if (_controlledLocally) {
-            updateMovement(dt);
-        }
-    }
-
-    protected function updateMovement (dt :Number) :void
-    {
-        var targetLoc :Vector2 = new Vector2(
-            GameCtx.gameMode.modeSprite.mouseX,
-            GameCtx.gameMode.modeSprite.mouseY);
-
-        var oldLoc :Vector2 = new Vector2(this.x, this.y);
-
-        if (oldLoc.similar(targetLoc, 0.5)) {
-            return;
-        }
-
-        var newLoc :Vector2 = targetLoc.subtract(oldLoc);
-        var targetDist :Number = newLoc.normalizeLocalAndGetLength();
-        var moveDist :Number = this.speed * dt;
-        newLoc.scaleLocal(Math.min(targetDist, moveDist));
-        newLoc.addLocal(oldLoc);
-
-        // clamp to game boundaries
-        newLoc = GameCtx.clampLoc(newLoc);
+        super.update(dt);
 
         // collide with cells
-        var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
+        /*var cell :Cell = Cell.getCellCollision(newLoc, Constants.CURSOR_RADIUS);
         if (cell != null) {
             if (cell.type == Constants.CELL_RED) {
                 // create a cell burst
@@ -80,20 +49,7 @@ public class PredatorCursor extends SceneObject
                     GameCtx.gameMode.gameOver("Predator knocked out!");
                 }
             }
-        }
-
-        // move!
-        this.x = newLoc.x;
-        this.y = newLoc.y;
-
-        // rotate the bitmap. 0 degrees == straight up
-        var angle :Number = (newLoc.subtract(oldLoc).angle * (180 / Math.PI)) + 90;
-        this.rotation = angle;
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
+        }*/
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -104,7 +60,7 @@ public class PredatorCursor extends SceneObject
         }
     }
 
-    protected function get speed () :Number
+    override protected function get speed () :Number
     {
         return Constants.PREDATOR_SPEED_BASE;
     }
@@ -114,11 +70,8 @@ public class PredatorCursor extends SceneObject
         return _whiteCells.length;
     }
 
-    protected var _controlledLocally :Boolean;
     protected var _sprite :Sprite;
     protected var _whiteCells :Array = [];
-
-    protected var _lastArtery :int = -1;
 }
 
 }

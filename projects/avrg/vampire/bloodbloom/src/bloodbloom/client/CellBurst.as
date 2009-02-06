@@ -75,7 +75,7 @@ public class CellBurst extends CollidableObj
         if (_state == STATE_BURST) {
             // We're bursting. When we collide with red cells, we create new CellBursts;
             // When we collide with white cells, we unburst.
-            var cell :Cell = Cell.getCellCollision(_loc, this.radius);
+            var cell :Cell = Cell.getCellCollision(this);
             if (cell != null) {
                 if (cell.isRedCell) {
                     GameObjects.createCellBurst(cell, _sequence);
@@ -84,14 +84,13 @@ public class CellBurst extends CollidableObj
                 }
             }
 
-            var preyLoc :Vector2 = new Vector2(GameCtx.prey.x, GameCtx.prey.y);
-            if (collides(preyLoc, Constants.CURSOR_RADIUS)) {
+            if (collidesWith(GameCtx.prey)) {
                 GameCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
         } else if (_state == STATE_UNBURST) {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
-            var bursts :Array = GameCtx.heartbeatDb.getObjectRefsInGroup("CellBurst");
+            var bursts :Array = GameCtx.netObjDb.getObjectRefsInGroup("CellBurst");
             for each (var burstRef :SimObjectRef in bursts) {
                 var burst :CellBurst = burstRef.object as CellBurst;
                 if (burst != null && burst != this && burst._state == STATE_BURST) {

@@ -1,16 +1,16 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import flash.display.Sprite;
 
-import bloodbloom.*;
-
 public class GameCtx
 {
     public static var gameMode :GameMode;
-    public static var heartbeatDb :NetObjDb;
+    public static var netObjDb :NetObjDb;
     public static var heart :Heart;
     public static var prey :PreyCursor;
     public static var bloodMeter :PredatorBloodMeter;
@@ -22,7 +22,7 @@ public class GameCtx
     public static function init () :void
     {
         gameMode = null;
-        heartbeatDb = null;
+        netObjDb = null;
         heart = null;
         prey = null;
         bloodMeter = null;
@@ -30,6 +30,12 @@ public class GameCtx
         cellLayer = null;
         cursorLayer = null;
         effectLayer = null;
+    }
+
+    public static function get clientFutureDelta () :Number
+    {
+        // How far into the future is the client?
+        return gameMode.modeTime - netObjDb.modeTime;
     }
 
     // Returns a new Vector, clamped within the bounds of the game
