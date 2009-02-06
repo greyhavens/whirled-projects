@@ -40,6 +40,8 @@ public class GameObjects
         var view :PlayerCursorView = new PlayerCursorView(obj, playerType);
         GameCtx.gameMode.addObject(view, GameCtx.cursorLayer);
 
+        GameCtx.gameMode.addObject(new MoveTargetView(obj, playerType), GameCtx.effectLayer);
+
         return obj;
     }
 }
