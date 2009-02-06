@@ -5,15 +5,19 @@ import com.whirled.contrib.simplegame.util.*;
 
 public class Constants
 {
+    public static const DEBUG_SHOW_FPS :Boolean = false;
+    public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
+    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
+
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
     public static const PREDATOR_BLOOD_TARGET :int = 1000;
 
-    public static const PREDATOR_SPEED_BASE :Number = 65;
+    public static const PREDATOR_SPEED_BASE :Number = 40;
     public static const MAX_PREDATOR_WHITE_CELLS :int = 3;
 
-    public static const PREY_SPEED_BASE :Number = 65;
+    public static const PREY_SPEED_BASE :Number = 40;
     public static const PREY_SPEED_CELL_OFFSET :Number = -10;
     public static const PREY_SPEED_MIN :Number = 15;
 
@@ -40,7 +44,7 @@ public class Constants
         new NumRange(100, 140, Rand.STREAM_GAME)
     ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
-    public static const CELL_RADIUS :Number = 9;
+    public static const CELL_RADIUS :Number = 5;
 
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 30;

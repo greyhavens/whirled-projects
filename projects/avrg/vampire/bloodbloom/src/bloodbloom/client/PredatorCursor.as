@@ -2,10 +2,7 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 
-import com.threerings.flash.Vector2;
-
 import flash.display.Bitmap;
-import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.geom.Point;
 
@@ -14,10 +11,6 @@ public class PredatorCursor extends PlayerCursor
     public static function getAll () :Array
     {
         return GameCtx.gameMode.getObjectsInGroup("PredatorCursor");
-    }
-
-    public function PredatorCursor ()
-    {
     }
 
     override protected function update (dt :Number) :void
@@ -31,24 +24,15 @@ public class PredatorCursor extends PlayerCursor
                 // create a cell burst
                 GameObjects.createCellBurst(cell);
 
-            } /*else {
+            } else {
                 // attach the white cell to us
-                var bm :Bitmap = ClientCtx.createCellBitmap(Constants.CELL_WHITE);
-                var loc :Point = new Point(cell.x, cell.y);
-                loc = GameCtx.cellLayer.localToGlobal(loc);
-                loc = this.displayObject.globalToLocal(loc);
-                loc.x -= bm.width * 0.5;
-                loc.y -= bm.height * 0.5;
-                bm.x = loc.x;
-                bm.y = loc.y;
-                _sprite.addChild(bm);
-                _whiteCells.push(bm);
                 cell.destroySelf();
-
-                if (_whiteCells.length >= Constants.MAX_PREDATOR_WHITE_CELLS) {
+                if (++_whiteCellCount >= Constants.MAX_PREDATOR_WHITE_CELLS) {
                     GameCtx.gameMode.gameOver("Predator knocked out!");
                 }
-            }*/
+
+                dispatchEvent(new GameEvent(GameEvent.ATTACHED_CELL, cell));
+            }
         }
     }
 
@@ -67,11 +51,11 @@ public class PredatorCursor extends PlayerCursor
 
     public function get numWhiteCells () :int
     {
-        return _whiteCells.length;
+        return _whiteCellCount;
     }
 
     protected var _sprite :Sprite;
-    protected var _whiteCells :Array = [];
+    protected var _whiteCellCount :int;
 }
 
 }

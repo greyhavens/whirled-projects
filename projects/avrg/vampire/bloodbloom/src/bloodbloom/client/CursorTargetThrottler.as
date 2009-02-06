@@ -19,27 +19,22 @@ public class CursorTargetThrottler extends SimObject
     {
         var newX :int = GameCtx.cursorLayer.mouseX;
         var newY :int = GameCtx.cursorLayer.mouseY;
-        if (_x != newX || _y != newY) {
-            _x = newX;
-            _y = newY;
-            _dirty = true;
-        }
 
         // If the cursor has moved, and the message won't be throttled, send it!
-        if (_dirty && !_throttle.throttleOp()) {
-            _msgMgr.sendMessage(CursorTargetMsg.create(_playerId, _x, _y));
-            _dirty = false;
+        if ((newX != _lastX || newY != _lastY) && !_throttle.throttleOp()) {
+            _msgMgr.sendMessage(CursorTargetMsg.create(_playerId, newX, newY));
+            _lastX = newX;
+            _lastY = newY;
         }
     }
 
     protected var _msgMgr :TickedMessageManager;
     protected var _playerId :int;
 
-    protected var _x :int;
-    protected var _y :int;
-    protected var _dirty :Boolean;
+    protected var _lastX :int;
+    protected var _lastY :int;
 
-    protected var _throttle :Throttle = new Throttle(10, 1 * 1000); // 10 ops/sec
+    protected var _throttle :Throttle = new Throttle(10, 1.1 * 1000); // 10 ops/sec
 }
 
 }

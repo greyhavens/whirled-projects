@@ -54,10 +54,12 @@ public class GameMode extends AppMode
         _modeSprite.addChild(GameCtx.cursorLayer);
         _modeSprite.addChild(GameCtx.effectLayer);
 
-        var statView :StatView = new StatView();
-        statView.x = 0;
-        statView.y = 460;
-        addObject(statView, _modeSprite);
+        if (Constants.DEBUG_SHOW_FPS) {
+            var statView :StatView = new StatView();
+            statView.x = 0;
+            statView.y = 460;
+            addObject(statView, _modeSprite);
+        }
 
         // Setup game objects
         GameCtx.heart = new Heart();
@@ -161,7 +163,9 @@ public class GameMode extends AppMode
                 GameCtx.prey);
             cursor.moveTarget = new Vector2(cursorTargetMsg.x, cursorTargetMsg.y);
 
-            log.info("message lag: " + Number(cursorTargetMsg.lagMs / 1000).toFixed(2));
+            if (Constants.DEBUG_SHOW_MESSAGE_LAG && cursorTargetMsg.playerId == _playerType) {
+                log.info("message lag: " + Number(cursorTargetMsg.lagMs / 1000).toFixed(2));
+            }
         }
     }
 

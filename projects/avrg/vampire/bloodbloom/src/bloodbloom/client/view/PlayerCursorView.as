@@ -10,6 +10,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 public class PlayerCursorView extends SceneObject
 {
@@ -23,11 +24,29 @@ public class PlayerCursorView extends SceneObject
         bm.y = -bm.height * 0.5;
         _sprite = SpriteUtil.createSprite();
         _sprite.addChild(bm);
+
+        registerListener(cursor, GameEvent.ATTACHED_CELL, onCellAttached);
+        registerListener(cursor, GameEvent.DETACHED_ALL_CELLS, onDetachedCells);
     }
 
     override public function get displayObject () :DisplayObject
     {
         return _sprite;
+    }
+
+    protected function onCellAttached (e :GameEvent) :void
+    {
+        var cell :Cell = e.data as Cell;
+        attachCellBitmap(cell.type, new Point(cell.x, cell.y));
+    }
+
+    protected function onDetachedCells (e :GameEvent) :void
+    {
+        for each (var bm :Bitmap in _attachedCellBitmaps) {
+            bm.parent.removeChild(bm);
+        }
+
+        _attachedCellBitmaps = [];
     }
 
     override protected function update (dt :Number) :void
@@ -64,8 +83,22 @@ public class PlayerCursorView extends SceneObject
         }
     }
 
+    protected function attachCellBitmap (cellType :int, loc :Point) :void
+    {
+        var bm :Bitmap = ClientCtx.createCellBitmap(cellType);
+        loc = GameCtx.cellLayer.localToGlobal(loc);
+        loc = this.displayObject.globalToLocal(loc);
+        loc.x -= bm.width * 0.5;
+        loc.y -= bm.height * 0.5;
+        bm.x = loc.x;
+        bm.y = loc.y;
+        _sprite.addChild(bm);
+        _attachedCellBitmaps.push(bm);
+    }
+
     protected var _cursor :PlayerCursor;
     protected var _sprite :Sprite;
+    protected var _attachedCellBitmaps :Array = [];
 
     protected static const ROTATE_SPEED :Number = 180; // 360 d/s
 }

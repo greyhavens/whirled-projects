@@ -5,6 +5,8 @@ import com.whirled.contrib.simplegame.net.Message;
 import flash.utils.ByteArray;
 import flash.utils.getTimer;
 
+import bloodbloom.*;
+
 public class CursorTargetMsg
     implements Message
 {
@@ -21,7 +23,10 @@ public class CursorTargetMsg
         msg.playerId = playerId;
         msg.x = x;
         msg.y = y;
-        msg.timestamp = flash.utils.getTimer();
+
+        if (Constants.DEBUG_SHOW_MESSAGE_LAG) {
+            msg.timestamp = flash.utils.getTimer();
+        }
 
         return msg;
     }
@@ -45,7 +50,10 @@ public class CursorTargetMsg
         ba.writeInt(playerId);
         ba.writeInt(x);
         ba.writeInt(y);
-        ba.writeInt(timestamp);
+
+        if (Constants.DEBUG_SHOW_MESSAGE_LAG) {
+            ba.writeInt(timestamp);
+        }
 
         return ba;
     }
@@ -55,7 +63,10 @@ public class CursorTargetMsg
         playerId = ba.readInt();
         x = ba.readInt();
         y = ba.readInt();
-        timestamp = ba.readInt();
+
+        if (Constants.DEBUG_SHOW_MESSAGE_LAG) {
+            timestamp = ba.readInt();
+        }
     }
 }
 
