@@ -5,7 +5,7 @@ import bloodbloom.client.*;
 
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.contrib.simplegame.tasks.RotationTask;
+import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
@@ -44,19 +44,30 @@ public class PlayerCursorView extends SceneObject
 
         if (!newLoc.similar(_cursor.moveTarget, 0.5)) {
             // rotate towards our move target. 0 degrees == straight up
-            var angle :Number =
+            var targetRotation :Number =
                 90 + ((_cursor.moveTarget.subtract(newLoc).angle) * (180 / Math.PI));
 
-            if (angle > 180) {
-                angle = angle - 360;
+            var curRotation :Number = this.rotation;
+            if (targetRotation - curRotation > 180) {
+                targetRotation -= 360;
+            } else if (targetRotation - curRotation < -180) {
+                targetRotation += 360;
             }
 
-            this.rotation = angle;
+            addNamedTask(
+                "Rotate",
+                RotationTask.CreateEaseOut(
+                    targetRotation,
+                    Math.abs((targetRotation % 360) - curRotation) / ROTATE_SPEED),
+                true);
+
         }
     }
 
     protected var _cursor :PlayerCursor;
     protected var _sprite :Sprite;
+
+    protected static const ROTATE_SPEED :Number = 180; // 360 d/s
 }
 
 }
