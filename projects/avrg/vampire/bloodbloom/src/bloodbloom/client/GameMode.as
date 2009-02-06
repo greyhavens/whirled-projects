@@ -4,6 +4,7 @@ import bloodbloom.*;
 import bloodbloom.client.view.*;
 import bloodbloom.net.*;
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
@@ -67,8 +68,8 @@ public class GameMode extends AppMode
         addObject(heart, GameCtx.cellLayer);
 
         // cursors
-        GameObjects.createPlayerCursor(Constants.PLAYER_PREDATOR);
-        GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
+        GameCtx.predator = GameObjects.createPlayerCursor(Constants.PLAYER_PREDATOR);
+        GameCtx.prey = GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
     }
 
     protected function setupNetwork () :void
@@ -132,12 +133,27 @@ public class GameMode extends AppMode
         // update all the view objects
         _modeTime += dt;
         super.update(dt);
+
+        // send cursor target messages when the mouse moves.
+        if (_msgMgr.canSendMessage()) {
+            var mouseX :int = GameCtx.cursorLayer.mouseX;
+            var mouseY :int = GameCtx.cursorLayer.mouseY;
+            if (mouseX != _lastMouseX && mouseY != _lastMouseY) {
+                _msgMgr.sendMessage(CursorTargetMsg.create(_playerType, mouseX, mouseY));
+                _lastMouseX = mouseX;
+                _lastMouseY = mouseY;
+            }
+        }
     }
 
     protected function handleGameMessage (msg :Object) :void
     {
         if (msg is CursorTargetMsg) {
-
+            var cursorTargetMsg :CursorTargetMsg = msg as CursorTargetMsg;
+            var cursor :PlayerCursor = (cursorTargetMsg.playerId == Constants.PLAYER_PREDATOR ?
+                GameCtx.predator :
+                GameCtx.prey);
+            cursor.moveTarget = new Vector2(cursorTargetMsg.x, cursorTargetMsg.y);
         }
     }
 
@@ -176,6 +192,8 @@ public class GameMode extends AppMode
     protected var _arteryTop :Bitmap;
     protected var _arteryBottom :Bitmap;
     protected var _msgMgr :TickedMessageManager;
+    protected var _lastMouseX :int = -1;
+    protected var _lastMouseY :int = -1;
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
 }

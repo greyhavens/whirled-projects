@@ -11,14 +11,11 @@ public class Heart extends NetObj
         _totalBeatTime = Constants.BEAT_TIME_BASE;
     }
 
-    override protected function addedToDB () :void
-    {
-        _lastBeat = GameCtx.gameMode.modeTime;
-    }
-
     override protected function update (dt :Number) :void
     {
-        var timeNow :Number = GameCtx.gameMode.modeTime;
+        super.update(dt);
+
+        var timeNow :Number = _liveTime;
         while (timeNow >= this.nextBeat) {
             _lastBeat = this.nextBeat;
             _totalBeatTime -= Constants.BEAT_SPEED_UP;
@@ -63,14 +60,12 @@ public class Heart extends NetObj
 
     public function get curBeatOffset () :Number
     {
-        var timeNow :Number = GameCtx.gameMode.modeTime;
-        return Math.min(timeNow - _lastBeat, this.nextBeat - timeNow);
+        return Math.min(_liveTime - _lastBeat, this.nextBeat - _liveTime);
     }
 
     public function get pctTimeToNextBeat () :Number
     {
-        var timeNow :Number = GameCtx.gameMode.modeTime;
-        return 1 - ((this.nextBeat - timeNow) / _totalBeatTime);
+        return 1 - ((this.nextBeat - _liveTime) / _totalBeatTime);
     }
 
     protected var _totalBeatTime :Number;

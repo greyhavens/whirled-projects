@@ -12,7 +12,8 @@ public class GameCtx
     public static var gameMode :GameMode;
     public static var netObjDb :NetObjDb;
     public static var heart :Heart;
-    public static var prey :PreyCursor;
+    public static var prey :PlayerCursor;
+    public static var predator :PlayerCursor;
     public static var bloodMeter :PredatorBloodMeter;
 
     public static var cellLayer :Sprite;
@@ -25,6 +26,7 @@ public class GameCtx
         netObjDb = null;
         heart = null;
         prey = null;
+        predator = null;
         bloodMeter = null;
 
         cellLayer = null;

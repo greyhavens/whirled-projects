@@ -1,18 +1,24 @@
 package bloodbloom.net {
 
+import com.whirled.contrib.simplegame.net.Message;
+
 import flash.utils.ByteArray;
 
 public class CursorTargetMsg
+    implements Message
 {
     public var playerId :int;
     public var x :int;
     public var y :int;
 
-    public function CursorTargetMsg (playerId :int, x :int, y :int)
+    public static function create (playerId :int, x :int, y :int) :CursorTargetMsg
     {
-        this.playerId = playerId;
-        this.x = x;
-        this.y = y;
+        var msg :CursorTargetMsg = new CursorTargetMsg();
+        msg.playerId = playerId;
+        msg.x = x;
+        msg.y = y;
+
+        return msg;
     }
 
     public function get name () :String

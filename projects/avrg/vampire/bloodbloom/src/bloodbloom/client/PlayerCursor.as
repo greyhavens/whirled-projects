@@ -11,6 +11,11 @@ public class PlayerCursor extends CollidableObj
         super(Constants.CURSOR_RADIUS);
     }
 
+    public function get moveTarget () :Vector2
+    {
+        return _moveTarget;
+    }
+
     public function set moveTarget (val :Vector2) :void
     {
         _moveTarget = val;

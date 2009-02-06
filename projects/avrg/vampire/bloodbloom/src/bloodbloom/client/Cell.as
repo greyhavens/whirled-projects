@@ -73,7 +73,7 @@ public class Cell extends CollidableObj
         var nextLoc :Vector2 = curLoc.clone();
         if (dt > 0) {
             if (_state == STATE_BIRTH) {
-                var elapsedTime :Number = Math.min(_objTime + dt, Constants.CELL_BIRTH_TIME);
+                var elapsedTime :Number = Math.min(_liveTime + dt, Constants.CELL_BIRTH_TIME);
                 nextLoc.x = mx.effects.easing.Cubic.easeOut(
                     elapsedTime * 1000,
                     Constants.GAME_CTR.x,

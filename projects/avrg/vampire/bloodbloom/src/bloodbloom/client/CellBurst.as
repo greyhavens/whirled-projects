@@ -71,6 +71,8 @@ public class CellBurst extends CollidableObj
 
     override protected function update (dt :Number) :void
     {
+        super.update(dt);
+
         if (_state == STATE_BURST) {
             // We're bursting. When we collide with red cells, we create new CellBursts;
             // When we collide with white cells, we unburst.
