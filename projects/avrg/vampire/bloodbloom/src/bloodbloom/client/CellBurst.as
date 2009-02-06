@@ -8,7 +8,6 @@ import com.whirled.contrib.simplegame.util.Collision;
 import bloodbloom.*;
 
 public class CellBurst extends CollidableObj
-    implements NetObj
 {
     public static const STATE_BURST :int = 0;
     public static const STATE_UNBURST :int = 1;

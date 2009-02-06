@@ -2,11 +2,9 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 
-import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.util.*;
 
-public class Heart extends SimObject
-    implements NetObj
+public class Heart extends NetObj
 {
     public function Heart ()
     {

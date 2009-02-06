@@ -1,12 +1,10 @@
 package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.SimObject;
-import com.whirled.contrib.simplegame.components.LocationComponent;
-import com.whirled.contrib.simplegame.components.ScaleComponent;
+import com.whirled.contrib.simplegame.components.*;
 import com.whirled.contrib.simplegame.util.Collision;
 
-public class CollidableObj extends SimObject
+public class CollidableObj extends NetObj
     implements LocationComponent, ScaleComponent
 {
     public function CollidableObj (radius :Number = 0)

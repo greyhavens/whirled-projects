@@ -7,8 +7,9 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
+import mx.effects.easing.Cubic;
+
 public class Cell extends CollidableObj
-    implements NetObj
 {
     public static const STATE_BIRTH :int = 0;
     public static const STATE_NORMAL :int = 1;
@@ -55,68 +56,92 @@ public class Cell extends CollidableObj
             var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
             var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[_type];
             var dist :Number = distRange.next();
-            var target :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+            _birthTarget = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
-            addTask(new SerialTask(
-                LocationTask.CreateEaseOut(target.x, target.y, Constants.CELL_BIRTH_TIME),
-                new FunctionTask(
-                    function () :void {
-                        _state = STATE_NORMAL;
-                    })));
+            addTask(After(Constants.CELL_BIRTH_TIME, new FunctionTask(
+                function () :void {
+                    _state = STATE_NORMAL;
+                })));
 
         } else {
             _state = STATE_NORMAL;
         }
     }
 
+    public function getNextLoc (curLoc :Vector2, dt :Number) :Vector2
+    {
+        var nextLoc :Vector2 = curLoc.clone();
+        if (dt > 0) {
+            if (_state == STATE_BIRTH) {
+                var elapsedTime :Number = Math.min(_objTime + dt, Constants.CELL_BIRTH_TIME);
+                nextLoc.x = mx.effects.easing.Cubic.easeOut(
+                    elapsedTime * 1000,
+                    Constants.GAME_CTR.x,
+                    _birthTarget.x - Constants.GAME_CTR.x,
+                    Constants.CELL_BIRTH_TIME * 1000);
+                nextLoc.y = mx.effects.easing.Cubic.easeOut(
+                    elapsedTime * 1000,
+                    Constants.GAME_CTR.y,
+                    _birthTarget.y - Constants.GAME_CTR.y,
+                    Constants.CELL_BIRTH_TIME * 1000);
+
+            } else if (_state == STATE_NORMAL) {
+
+                // white cells follow predators who have other white cells attached
+                /*if (this.isWhiteCell) {
+                    var cellHemisphere :int = ClientCtx.getHemisphere(this);
+
+                    if (this.isFollowing && !canFollow(this.followingPredator)) {
+                        // stop following the predator if it's left our hemisphere
+                        stopFollowing();
+                    }
+
+                    if (!this.isFollowing) {
+                        // find somebody to follow
+                        for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
+                            if (canFollow(predator)) {
+                                follow(predator);
+                                break;
+                            }
+                        }
+                    }
+                }*/
+
+                // if we're following somebody, move towards them
+                if (this.isFollowing) {
+                    var following :PredatorCursor = this.followingPredator;
+                    var followImpulse :Vector2 =
+                        new Vector2(following.x, following.y).subtractLocal(nextLoc);
+                    followImpulse.length = SPEED_FOLLOW * dt;
+                    nextLoc.x += followImpulse.x;
+                    nextLoc.y += followImpulse.y;
+
+                } else {
+                    // otherwise, move away from, and around, the heart
+                    var ctrImpulse :Vector2 = nextLoc.subtract(Constants.GAME_CTR);
+                    ctrImpulse.length = 1;
+
+                    var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+                    perpImpulse.length = 3.5;
+
+                    var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+                    impulse.length = SPEED_BASE * dt;
+
+                    nextLoc.x += impulse.x;
+                    nextLoc.y += impulse.y;
+                }
+
+                nextLoc = GameCtx.clampLoc(nextLoc);
+            }
+        }
+
+        return nextLoc;
+    }
+
     override protected function update (dt :Number) :void
     {
-        // white cells follow predators who have other white cells attached
-        /*if (this.isWhiteCell) {
-            var cellHemisphere :int = ClientCtx.getHemisphere(this);
-
-            if (this.isFollowing && !canFollow(this.followingPredator)) {
-                // stop following the predator if it's left our hemisphere
-                stopFollowing();
-            }
-
-            if (!this.isFollowing) {
-                // find somebody to follow
-                for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
-                    if (canFollow(predator)) {
-                        follow(predator);
-                        break;
-                    }
-                }
-            }
-        }*/
-
-        if (_state == STATE_NORMAL) {
-            // if we're following somebody, move towards them
-            if (this.isFollowing) {
-                var following :PredatorCursor = this.followingPredator;
-                var followImpulse :Vector2 = new Vector2(following.x, following.y).subtractLocal(_loc);
-                followImpulse.length = SPEED_FOLLOW * dt;
-                _loc.x += followImpulse.x;
-                _loc.y += followImpulse.y;
-
-            } else {
-                // otherwise, move away from, and around, the heart
-                var ctrImpulse :Vector2 = _loc.subtract(Constants.GAME_CTR);
-                ctrImpulse.length = 1;
-
-                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-                perpImpulse.length = 3.5;
-
-                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-                impulse.length = SPEED_BASE * dt;
-
-                _loc.x += impulse.x;
-                _loc.y += impulse.y;
-            }
-
-            _loc = GameCtx.clampLoc(_loc);
-        }
+        _loc = getNextLoc(_loc, dt);
+        super.update(dt);
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -178,6 +203,7 @@ public class Cell extends CollidableObj
     protected var _state :int;
     protected var _moveCCW :Boolean;
     protected var _followObj :SimObjectRef = SimObjectRef.Null();
+    protected var _birthTarget :Vector2;
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;

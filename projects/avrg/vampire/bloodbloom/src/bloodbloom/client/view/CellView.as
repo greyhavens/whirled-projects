@@ -2,6 +2,7 @@ package bloodbloom.client.view {
 
 import bloodbloom.client.*;
 
+import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -30,8 +31,10 @@ public class CellView extends SceneObject
             return;
         }
 
-        this.x = _cell.loc.x;
-        this.y = _cell.loc.y;
+        var nextLoc :Vector2 = _cell.getNextLoc(_cell.loc, GameCtx.clientFutureDelta);
+
+        this.x = nextLoc.x;
+        this.y = nextLoc.y;
     }
 
     override public function get displayObject () :DisplayObject

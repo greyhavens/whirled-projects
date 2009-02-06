@@ -1,8 +1,16 @@
 package bloodbloom.client {
 
-public interface NetObj
+import com.whirled.contrib.simplegame.SimObject;
+
+public class NetObj extends SimObject
 {
-    // Intentionally blank. This is just a marker interface.
+    override protected function update (dt :Number) :void
+    {
+        super.update(dt);
+        _objTime += dt;
+    }
+
+    protected var _objTime :Number = 0;
 }
 
 }

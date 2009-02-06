@@ -16,7 +16,7 @@ public class PlayerCursor extends CollidableObj
         _moveTarget = val;
     }
 
-    public function getNextLocation (curLoc :Vector2, dt :Number) :Vector2
+    public function getNextLoc (curLoc :Vector2, dt :Number) :Vector2
     {
         if (dt <= 0 || curLoc.similar(_moveTarget, 0.5)) {
             return curLoc.clone();
@@ -37,7 +37,7 @@ public class PlayerCursor extends CollidableObj
     override protected function update (dt :Number) :void
     {
         super.update(dt);
-        _loc = getNextLocation(_loc, dt);
+        _loc = getNextLoc(_loc, dt);
     }
 
     protected function get speed () :Number
