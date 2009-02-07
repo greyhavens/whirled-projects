@@ -82,6 +82,19 @@ public class CollidableObj extends NetObj
         _scale = val;
     }
 
+    public function clone (theClone :CollidableObj = null) :CollidableObj
+    {
+        if (theClone == null) {
+            theClone = new CollidableObj();
+        }
+
+        theClone._radius = _radius;
+        theClone._loc = _loc.clone();
+        theClone._scale = scale;
+
+        return theClone;
+    }
+
     protected var _radius :Number = 0;
     protected var _loc :Vector2 = new Vector2();
     protected var _scale :Number = 1;

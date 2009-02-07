@@ -57,14 +57,16 @@ public class PlayerCursorView extends SceneObject
         }
 
         // estimate the object's current location
-        var newLoc :Vector2 = _cursor.getNextLoc(_cursor.loc, GameCtx.clientFutureDelta);
+        _cursorClone = PlayerCursor(_cursor.clone(_cursorClone));
+        _cursorClone.updateLoc(GameCtx.clientFutureDelta);
+        var newLoc :Vector2 = _cursorClone.loc;
         this.x = newLoc.x;
         this.y = newLoc.y;
 
-        if (!newLoc.similar(_cursor.moveTarget, 0.5)) {
-            // rotate towards our move target. 0 degrees == straight up
+        if (!newLoc.similar(_lastLoc, 0.5)) {
+            // rotate towards our move direction. 0 degrees == straight up
             var targetRotation :Number =
-                90 + ((_cursor.moveTarget.subtract(newLoc).angle) * (180 / Math.PI));
+                90 + ((newLoc.subtract(_lastLoc).angle) * (180 / Math.PI));
 
             var curRotation :Number = this.rotation;
             if (targetRotation - curRotation > 180) {
@@ -81,6 +83,8 @@ public class PlayerCursorView extends SceneObject
                 true);
 
         }
+
+        _lastLoc = newLoc;
     }
 
     protected function attachCellBitmap (cellType :int, loc :Point) :void
@@ -97,8 +101,10 @@ public class PlayerCursorView extends SceneObject
     }
 
     protected var _cursor :PlayerCursor;
+    protected var _cursorClone :PlayerCursor;
     protected var _sprite :Sprite;
     protected var _attachedCellBitmaps :Array = [];
+    protected var _lastLoc :Vector2 = new Vector2();
 
     protected static const ROTATE_SPEED :Number = 180; // degrees/second
 }
