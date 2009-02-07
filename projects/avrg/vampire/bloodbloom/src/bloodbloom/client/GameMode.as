@@ -80,7 +80,7 @@ public class GameMode extends AppMode
         GameCtx.prey = GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
 
         // Throttle our target messages
-        _msgThrottler = new CursorTargetThrottler(_playerType, _msgMgr);
+        _msgThrottler = new CursorTargetUpdater(_playerType, _msgMgr);
         addObject(_msgThrottler);
     }
 
@@ -204,7 +204,7 @@ public class GameMode extends AppMode
     protected var _arteryTop :Bitmap;
     protected var _arteryBottom :Bitmap;
     protected var _msgMgr :TickedMessageManager;
-    protected var _msgThrottler :CursorTargetThrottler;
+    protected var _msgThrottler :CursorTargetUpdater;
 
     protected var _lastCursorUpdate :Number = 0;
 

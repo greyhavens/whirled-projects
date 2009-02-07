@@ -8,9 +8,9 @@ import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
 import com.whirled.game.NetSubControl;
 
-public class CursorTargetThrottler extends SimObject
+public class CursorTargetUpdater extends SimObject
 {
-    public function CursorTargetThrottler (playerId :int, msgMgr :TickedMessageManager)
+    public function CursorTargetUpdater (playerId :int, msgMgr :TickedMessageManager)
     {
         _msgMgr = msgMgr;
         _playerId = playerId;
