@@ -6,6 +6,7 @@ import bloodbloom.net.*;
 import com.threerings.util.Throttle;
 import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.net.TickedMessageManager;
+import com.whirled.game.NetSubControl;
 
 public class CursorTargetThrottler extends SimObject
 {
@@ -22,7 +23,11 @@ public class CursorTargetThrottler extends SimObject
 
         // If the cursor has moved, and the message won't be throttled, send it!
         if ((newX != _lastX || newY != _lastY) && !_throttle.throttleOp()) {
-            _msgMgr.sendMessage(CursorTargetMsg.create(_playerId, newX, newY));
+            var toPlayer :int = (Constants.DEBUG_SERVER_AGGREGATES_MESSAGES ?
+                NetSubControl.TO_SERVER_AGENT :
+                NetSubControl.TO_ALL);
+
+            _msgMgr.sendMessage(CursorTargetMsg.create(_playerId, newX, newY), toPlayer);
             _lastX = newX;
             _lastY = newY;
         }

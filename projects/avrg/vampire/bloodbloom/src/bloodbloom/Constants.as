@@ -7,7 +7,8 @@ public class Constants
 {
     public static const DEBUG_SHOW_FPS :Boolean = false;
     public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
-    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
+    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = true;
+    public static const DEBUG_SERVER_AGGREGATES_MESSAGES :Boolean = false;
 
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;

@@ -19,10 +19,10 @@ public class Server extends ServerObject
     public function Server ()
     {
         ServerCtx.gameCtrl = new GameControl(this, false);
-        /*_events.registerListener(ServerCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
+        _events.registerListener(ServerCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
 
-        _events.registerListener(_tickTimer, TimerEvent.TIMER, onTick);*/
+        _events.registerListener(_tickTimer, TimerEvent.TIMER, onTick);
 
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             function (...ignored) :void {
@@ -36,20 +36,39 @@ public class Server extends ServerObject
                     ServerCtx.gameCtrl.net.set(Constants.PROP_INITED, true);
                 });
 
-                // start the heartbeat ticker
-                _cursorTargetMsgs.clear();
-                //_tickTimer.start();
-                ServerCtx.gameCtrl.services.startTicker(Constants.MSG_S_HEARTBEAT,
-                    Constants.HEARTBEAT_TIME * 1000);
+                startTicker();
             });
 
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_ENDED,
             function (...ignored) :void {
                 _playing = false;
-                ServerCtx.gameCtrl.services.stopTicker(Constants.MSG_S_HEARTBEAT);
-                //_tickTimer.stop();
+
+                stopTicker();
                 ServerCtx.gameCtrl.net.set(Constants.PROP_INITED, false);
             });
+    }
+
+    protected function startTicker () :void
+    {
+        if (Constants.DEBUG_SERVER_AGGREGATES_MESSAGES) {
+            // if we are aggregating messages, we also run the timer
+            _cursorTargetMsgs.clear();
+            _tickTimer.start();
+        } else {
+
+            ServerCtx.gameCtrl.services.startTicker(
+                Constants.MSG_S_HEARTBEAT,
+                Constants.HEARTBEAT_TIME * 1000);
+        }
+    }
+
+    protected function stopTicker () :void
+    {
+        if (Constants.DEBUG_SERVER_AGGREGATES_MESSAGES) {
+            _tickTimer.stop();
+        } else {
+             ServerCtx.gameCtrl.services.stopTicker(Constants.MSG_S_HEARTBEAT);
+        }
     }
 
     protected function onTick (...ignored) :void
@@ -69,10 +88,12 @@ public class Server extends ServerObject
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        // Aggregate all CursorTargetMsgs received between ticks, and send each player's
-        // latest message on the next tick
-        if (!e.isFromServer() && e.name == CursorTargetMsg.NAME) {
-            _cursorTargetMsgs.put(e.senderId, e.value);
+        if (Constants.DEBUG_SERVER_AGGREGATES_MESSAGES) {
+            // Aggregate all CursorTargetMsgs received between ticks, and send each player's
+            // latest message on the next tick
+            if (!e.isFromServer() && e.name == CursorTargetMsg.NAME) {
+                _cursorTargetMsgs.put(e.senderId, e.value);
+            }
         }
     }
 

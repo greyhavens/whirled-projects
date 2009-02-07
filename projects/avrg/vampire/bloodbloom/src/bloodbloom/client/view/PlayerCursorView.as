@@ -100,7 +100,7 @@ public class PlayerCursorView extends SceneObject
     protected var _sprite :Sprite;
     protected var _attachedCellBitmaps :Array = [];
 
-    protected static const ROTATE_SPEED :Number = 180; // 360 d/s
+    protected static const ROTATE_SPEED :Number = 180; // degrees/second
 }
 
 }
