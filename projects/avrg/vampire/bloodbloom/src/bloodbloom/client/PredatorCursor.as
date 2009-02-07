@@ -2,10 +2,6 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 
-import flash.display.Bitmap;
-import flash.display.Sprite;
-import flash.geom.Point;
-
 public class PredatorCursor extends PlayerCursor
 {
     public static function getAll () :Array
@@ -54,7 +50,15 @@ public class PredatorCursor extends PlayerCursor
         return _whiteCellCount;
     }
 
-    protected var _sprite :Sprite;
+    override public function clone (theClone :CollidableObj = null) :CollidableObj
+    {
+        var cursorClone :PredatorCursor = PredatorCursor(super.clone(theClone));
+
+        cursorClone._whiteCellCount = _whiteCellCount;
+
+        return cursorClone;
+    }
+
     protected var _whiteCellCount :int;
 }
 

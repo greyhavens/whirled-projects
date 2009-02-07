@@ -40,8 +40,7 @@ public class Cell extends CollidableObj
 
     public function Cell (type :int, beingBorn :Boolean)
     {
-        super(Constants.CELL_RADIUS);
-
+        _radius = Constants.CELL_RADIUS;
         _type = type;
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);

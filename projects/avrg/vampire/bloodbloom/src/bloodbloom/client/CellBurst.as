@@ -14,7 +14,7 @@ public class CellBurst extends CollidableObj
 
     public function CellBurst (x :Number, y :Number, sequence :BurstSequence = null)
     {
-        super(Constants.BURST_RADIUS_MIN);
+        _radius = Constants.BURST_RADIUS_MIN;
 
         _sequence = sequence;
         if (_sequence == null) {

@@ -9,7 +9,7 @@ public class PlayerCursor extends CollidableObj
 {
     public function PlayerCursor ()
     {
-        super(Constants.CURSOR_RADIUS);
+        _radius = Constants.CURSOR_RADIUS;
     }
 
     public function get moveTarget () :Vector2
@@ -71,12 +71,7 @@ public class PlayerCursor extends CollidableObj
 
     override public function clone (theClone :CollidableObj = null) :CollidableObj
     {
-        if (theClone == null) {
-            theClone = new PlayerCursor();
-        }
-
-        var cursorClone :PlayerCursor = PlayerCursor(theClone);
-        super.clone(cursorClone);
+        var cursorClone :PlayerCursor = PlayerCursor(super.clone(theClone));
 
         cursorClone._moveTarget = _moveTarget.clone();
         cursorClone._moveDirection = _moveDirection.clone();

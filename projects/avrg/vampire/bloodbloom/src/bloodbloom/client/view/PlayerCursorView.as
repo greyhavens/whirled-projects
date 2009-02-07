@@ -4,6 +4,7 @@ import bloodbloom.*;
 import bloodbloom.client.*;
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -57,9 +58,16 @@ public class PlayerCursorView extends SceneObject
         }
 
         // estimate the object's current location
-        _cursorClone = PlayerCursor(_cursor.clone(_cursorClone));
-        _cursorClone.updateLoc(GameCtx.clientFutureDelta);
-        var newLoc :Vector2 = _cursorClone.loc;
+        var newLoc :Vector2;
+        if (GameCtx.clientFutureDelta > 0) {
+            _cursorClone = PlayerCursor(_cursor.clone(_cursorClone));
+            _cursorClone.updateLoc(GameCtx.clientFutureDelta);
+            newLoc = _cursorClone.loc;
+
+        } else {
+            newLoc = _cursor.loc.clone();
+        }
+
         this.x = newLoc.x;
         this.y = newLoc.y;
 
@@ -105,6 +113,8 @@ public class PlayerCursorView extends SceneObject
     protected var _sprite :Sprite;
     protected var _attachedCellBitmaps :Array = [];
     protected var _lastLoc :Vector2 = new Vector2();
+
+    protected static var log :Log = Log.getLog(PlayerCursorView);
 
     protected static const ROTATE_SPEED :Number = 180; // degrees/second
 }
