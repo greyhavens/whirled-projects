@@ -61,9 +61,9 @@ public class SharedPlayerStateClient
         return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME) as String;
     }
     
-    public static function getTargetHeight (playerId :int) :Number
+    public static function getTargetHotspot (playerId :int) :Array
     {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT) as Number;
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT) as Array;
     }
     
     public static function getTargetBlood (playerId :int) :Number

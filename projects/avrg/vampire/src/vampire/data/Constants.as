@@ -76,15 +76,15 @@ public class Constants
     public static const GAME_MODE_FEED :String = "Dancing";
     public static const GAME_MODE_EAT_ME :String = "Sitting";
     public static const GAME_MODE_FIGHT :String = "Fighting";
-    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
-    public static const GAME_MODE_HIERARCHY :String = "Hierarchy";
+//    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
+    public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
     
     public static const GAME_MODES :Array = [
                                         GAME_MODE_FEED, 
                                         GAME_MODE_EAT_ME,
                                         GAME_MODE_FIGHT, 
-                                        GAME_MODE_BLOODBOND, 
-                                        GAME_MODE_HIERARCHY
+//                                        GAME_MODE_BLOODBOND, 
+                                        GAME_MODE_HIERARCHY_AND_BLOODBONDS
                                         ];
                                         
     
@@ -92,6 +92,8 @@ public class Constants
     
     public static const NAMED_EVENT_BLOOD_UP :String = "BloodUp";//Only for testing purposes
     public static const NAMED_EVENT_BLOOD_DOWN :String = "BloodDown";//Only for testing purposes
+    public static const NAMED_EVENT_LEVEL_UP :String = "LevelUp";//Only for testing purposes
+    public static const NAMED_EVENT_LEVEL_DOWN :String = "LevelDown";//Only for testing purposes
     public static const NAMED_EVENT_FEED :String = "Feed";//Only for testing purposes
     public static const NAMED_EVENT_MAKE_SIRE :String = "MakeSire";//Only for testing purposes
     public static const NAMED_EVENT_MAKE_MINION :String = "MakeMinion";//Only for testing purposes
@@ -102,7 +104,7 @@ public class Constants
     
     public static function MAX_BLOOD_FOR_LEVEL( level :int ) :Number
     {
-        return level * 100;
+        return 100 + (level * 10);
     }
     
     public static const TIME_INTERVAL_PROXIMITY_CHECK :int = 1000;
