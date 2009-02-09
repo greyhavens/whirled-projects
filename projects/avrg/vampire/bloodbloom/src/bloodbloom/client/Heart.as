@@ -30,14 +30,21 @@ public class Heart extends NetObj
 
     protected function spawnCells () :void
     {
+        var cellCounts :Array = [];
+        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
+            cellCounts.push(Cell.getCellCount(cellType));
+        }
+
         var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
-        count = Math.min(count, Constants.MAX_CELL_COUNT - Cell.getCellCount());
         for (var ii :int = 0; ii < count; ++ii) {
-            var cellType :int =
+            cellType =
                 (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
                     Constants.CELL_RED : Constants.CELL_WHITE);
 
-            GameObjects.createCell(cellType, true);
+            if (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType]) {
+                GameObjects.createCell(cellType, true);
+                cellCounts[cellType] += 1;
+            }
         }
     }
 

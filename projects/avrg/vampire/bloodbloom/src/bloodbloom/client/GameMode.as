@@ -163,6 +163,13 @@ public class GameMode extends AppMode
                 GameCtx.prey);
             cursor.moveTarget = new Vector2(cursorTargetMsg.x, cursorTargetMsg.y);
 
+            if (Constants.CLICK_TO_MOVE && cursorTargetMsg.playerId == _playerType) {
+                var clickIndicator :ClickIndicatorView = new ClickIndicatorView();
+                clickIndicator.x = cursorTargetMsg.x;
+                clickIndicator.y = cursorTargetMsg.y;
+                addObject(clickIndicator, GameCtx.effectLayer);
+            }
+
             if (Constants.DEBUG_SHOW_MESSAGE_LAG && cursorTargetMsg.playerId == _playerType) {
                 log.info("message lag: " + Number(cursorTargetMsg.lagMs / 1000).toFixed(2));
             }

@@ -86,7 +86,7 @@ public class CellBurst extends CollidableObj
             }
 
             if (collidesWith(GameCtx.prey)) {
-                //GameCtx.gameMode.gameOver("Prey hit a blood burst!");
+                GameCtx.gameMode.gameOver("Prey hit a blood burst!");
             }
 
         } else if (_state == STATE_UNBURST) {

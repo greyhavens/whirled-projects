@@ -7,9 +7,10 @@ public class Constants
 {
     public static const DEBUG_SHOW_FPS :Boolean = false;
     public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
-    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = true;
+    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
     public static const DEBUG_SERVER_AGGREGATES_MESSAGES :Boolean = false;
-    public static const DEBUG_CLICK_TO_MOVE :Boolean = true;
+
+    public static const CLICK_TO_MOVE :Boolean = true;
 
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
@@ -38,12 +39,12 @@ public class Constants
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;
     public static const CELL__LIMIT :int = 2;
-    public static const MAX_CELL_COUNT :Number = 100;
+    public static const MAX_CELL_COUNT :Array = [ 60, 8 ];
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 6, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 90, Rand.STREAM_GAME),
-        new NumRange(100, 140, Rand.STREAM_GAME)
+        new NumRange(110, 140, Rand.STREAM_GAME)
     ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
     public static const CELL_RADIUS :Number = 5;

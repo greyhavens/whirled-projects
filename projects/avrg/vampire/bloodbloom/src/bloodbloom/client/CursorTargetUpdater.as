@@ -17,7 +17,7 @@ public class CursorTargetUpdater extends SimObject
         _msgMgr = msgMgr;
         _playerId = playerId;
 
-        if (Constants.DEBUG_CLICK_TO_MOVE) {
+        if (Constants.CLICK_TO_MOVE) {
             registerListener(GameCtx.gameMode.modeSprite, MouseEvent.CLICK,
                 function (...ignored) :void {
                     readCursorLoc();
@@ -27,7 +27,7 @@ public class CursorTargetUpdater extends SimObject
 
     override protected function update (dt :Number) :void
     {
-        if (!Constants.DEBUG_CLICK_TO_MOVE) {
+        if (!Constants.CLICK_TO_MOVE) {
             readCursorLoc();
         }
 
