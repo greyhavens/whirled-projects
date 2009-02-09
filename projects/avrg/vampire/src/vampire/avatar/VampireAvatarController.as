@@ -33,7 +33,9 @@ public class VampireAvatarController
     }
     protected function handleEntityMoved (e :ControlEvent) :void
     {
-//        trace2("\nVampireAvatarController handleEntityMoved!");
+        
+        
+        trace2("\nVampireAvatarController handleEntityMoved!, hotspot=" + _ctrl.getEntityProperty( EntityControl.PROP_HOTSPOT, e.name));
 //        trace2( playerId + " e=" + e);
         if( e.value == null) {//Only compute closest avatars when this avatar has arrived at location
             computeClosestAvatar(e);
@@ -179,9 +181,13 @@ public class VampireAvatarController
 //                trace2("     oh, its the entity in the event, " + _closestUserId + " location=" + entityLocation);
 //            }
 //            trace2("      closestLocation=" + closestLocation);
-            var entityHeight :Number = (_ctrl.getEntityProperty( EntityControl.PROP_DIMENSIONS, closestEntityId) as Array)[1];
+//            var entityHeight :Number = (_ctrl.getEntityProperty( EntityControl.PROP_DIMENSIONS, closestEntityId) as Array)[1];
+            
+            var entityHotspot :Array = _ctrl.getEntityProperty( EntityControl.PROP_HOTSPOT, closestEntityId) as Array;
+            
+            
 //            trace2("      entityHeight=" + entityHeight);
-            _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [playerId, closestUserId, _ctrl.getViewerName(closestUserId), closestLocation, entityHeight, targetLocation]);
+            _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [playerId, closestUserId, _ctrl.getViewerName(closestUserId), closestLocation, entityHotspot, targetLocation]);
         }  
         
         
