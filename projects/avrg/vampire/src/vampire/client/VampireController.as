@@ -154,17 +154,34 @@ public class VampireController extends Controller
     
     public function handleFeed() :void
     {
-        if( SharedPlayerStateClient.getCurrentAction( ClientContext.currentClosestPlayerId) == Constants.GAME_MODE_EAT_ME &&
-            SharedPlayerStateClient.isVampire( ClientContext.ourPlayerId)) {
-            
-            if( SharedPlayerStateClient.isVampire( ClientContext.currentClosestPlayerId ) && 
-                SharedPlayerStateClient.getBlood(ClientContext.currentClosestPlayerId) < 
-                Logic.bloodLostPerFeed( SharedPlayerStateClient.getLevel(ClientContext.currentClosestPlayerId)) + 1 ) {
-                        return;
-                    }
-            ClientContext.msg.sendMessage( new SuccessfulFeedMessage( ClientContext.ourPlayerId, ClientContext.currentClosestPlayerId));
-//            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_FEED, ClientContext.currentClosestPlayerId );
+        if( !SharedPlayerStateClient.isVampire( ClientContext.ourPlayerId )) {
+            trace("Only vampires are allowed to feed.");
+            return;
         }
+        
+        var model :GameModel = ClientContext.model;
+        if( model.isPlayer( model.targetPlayerId)) {
+            //Player victims must be the state "EatMe" 
+            if( SharedPlayerStateClient.getCurrentAction( model.targetPlayerId ) == Constants.GAME_MODE_EAT_ME ) {
+                
+                if( SharedPlayerStateClient.isVampire( model.targetPlayerId ) && 
+                    SharedPlayerStateClient.getBlood(model.targetPlayerId) <= 1 ) {
+                        //If the victim vampire does not have enough blood, cancel the feed.
+                        trace("Not enough blood", "targetPlayerId", model.targetPlayerId, "blood", SharedPlayerStateClient.getBlood(model.targetPlayerId));
+                            return;
+                        }
+                trace("Sending SuccessfulFeedMessage", "targetPlayerId", model.targetPlayerId);
+                ClientContext.msg.sendMessage( new SuccessfulFeedMessage( ClientContext.ourPlayerId, model.targetPlayerId));
+            }
+            
+        } 
+        else {//Just assume you sucessfully fed of a non-playing user
+            if( model.targetPlayerId > 0) {//Do you have a target?  If not, don't send a SuccessfulFeedMessage
+                trace("Sending SuccessfulFeedMessage", "targetPlayerId", model.targetPlayerId);
+                ClientContext.msg.sendMessage( new SuccessfulFeedMessage( ClientContext.ourPlayerId, model.targetPlayerId));
+            }
+        }
+        
     }
     
     public function handleHierarchyCenterSelected(playerId :int, hierarchyView :HierarchyView) :void
@@ -173,6 +190,23 @@ public class VampireController extends Controller
             return;
         }
         hierarchyView.updateHierarchy( playerId );
+    }
+    
+    public function makeSire( ... ignored ) :void
+    {
+        log.info("makeSire(" + ClientContext.model.targetPlayerId + ")" );
+        if( ClientContext.model.targetPlayerId > 0) {
+            
+            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_SIRE, ClientContext.model.targetPlayerId );
+        }
+    }
+    
+    public function makeMinion( ... ignored ) :void
+    {
+        log.info("makeMinion(" + ClientContext.model.targetPlayerId + ")" );
+        if( ClientContext.model.targetPlayerId > 0) {
+            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
+        }
     }
     
     
