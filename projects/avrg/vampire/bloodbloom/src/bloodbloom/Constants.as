@@ -17,11 +17,11 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const PREDATOR_SPEED_BASE :Number = 40;
+    public static const PREDATOR_SPEED_BASE :Number = 70;
     public static const MAX_PREDATOR_WHITE_CELLS :int = 3;
 
-    public static const PREY_SPEED_BASE :Number = 40;
-    public static const PREY_SPEED_CELL_OFFSET :Number = -10;
+    public static const PREY_SPEED_BASE :Number = 70;
+    public static const PREY_SPEED_CELL_OFFSET :Number = -15;
     public static const PREY_SPEED_MIN :Number = 15;
 
     public static const CURSOR_RADIUS :Number = 9;
