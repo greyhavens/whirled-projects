@@ -41,13 +41,11 @@ public class FeedMode extends BaseVampireMode
     
     protected function gainBlood( ... ignored ) :void
     {
-        trace("gainBlood");
         ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_BLOOD_UP );
     }
     
     protected function loseBlood( ... ignored ) :void
     {
-        trace("loseBlood");
         ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_BLOOD_DOWN );
     }
             
