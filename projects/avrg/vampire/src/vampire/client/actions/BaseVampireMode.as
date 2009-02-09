@@ -37,11 +37,11 @@ public class BaseVampireMode extends AppMode
     
     protected function setupUI() :void
     {
-        var s :Sprite = new Sprite();
-        s.graphics.beginFill(0xd0d0e3);
-        s.graphics.drawRect(0, 0, 200, 200);
-        s.graphics.endFill();
-        modeSprite.addChild( s );
+//        var s :Sprite = new Sprite();
+//        s.graphics.beginFill(0xd0d0e3);
+//        s.graphics.drawRect(0, 0, 200, 200);
+//        s.graphics.endFill();
+//        modeSprite.addChild( s );
         
 //        modeSprite.x = 100;
 //        modeSprite.y = 100;
