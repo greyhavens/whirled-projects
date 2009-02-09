@@ -1,5 +1,6 @@
 package vampire.client
 {
+import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.util.Command;
@@ -12,6 +13,8 @@ import com.whirled.net.ElementChangedEvent;
 import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
@@ -35,7 +38,9 @@ public class HUD extends SceneObject
     public function HUD()
     {
 //        super(ClientContext.gameCtrl, "HUD");
+        _sprite = new Sprite();
         
+//        log.debug("Initializing HUD");
         setupUI();
         
         //Listen to events that might cause us to update ourselves
@@ -45,7 +50,6 @@ public class HUD extends SceneObject
         
 //        registerListener( ClientContext.model, ClosestPlayerChangedEvent.CLOSEST_PLAYER_CHANGED, closestPlayerChanged);
         
-        log.debug("Initializing HUD");
         
 //        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         
@@ -152,6 +156,7 @@ public class HUD extends SceneObject
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
                          || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
                 ) {
@@ -191,17 +196,81 @@ public class HUD extends SceneObject
 //    {
 //        return _hud != null && _hud.hitTestPoint(x, y, shapeFlag);
 //    }
+    protected function findSafely (name :String) :DisplayObject
+    {
+        var o :DisplayObject = DisplayUtil.findInHierarchy(_sprite, name);
+        if (o == null) {
+            throw new Error("Cannot find object: " + name);
+        }
+        return o;
+    }
     
     protected function setupUI() :void
     {
-        _sprite = new Sprite();
+        
+        
         _hud = new DraggableSprite(ClientContext.gameCtrl, "HUD");
         _sprite.addChild( _hud );
         _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
-        _hud.graphics.beginFill(0xffffff);
-        _hud.graphics.drawRect(0, 0, 600, 50);
-        _hud.graphics.drawRect(290, 50, 260, 100);
-        _hud.graphics.endFill();
+        
+        var hudMC :MovieClip = ClientContext.instantiateMovieClip("HUD", "HUD", true);
+        _hud.addChild( hudMC );
+        
+        if( Constants.LOCAL_DEBUG_MODE) {
+            hudMC.x = 200;
+            hudMC.y = 200;
+        }
+        else {
+//            var screen :Rectangle = ClientContext.gameCtrl.local.getPaintableArea();
+//            hudMC.x = screen.width - hudMC.width/2 - 10
+//            hudMC.y = screen.height - hudMC.height/2 - 10;
+            
+            var bottomRight :Point = ClientContext.gameCtrl.local.locationToPaintable(1.0, 0, 0);
+            
+            hudMC.x = bottomRight.x - hudMC.width/2 - 10
+            hudMC.y = bottomRight.y - hudMC.height/2 - 10;
+        }
+        
+        hudMC.mouseChildren = true;
+        
+        _hudBlood = MovieClip( findSafely("HUDblood") );
+        _hudBlood.gotoAndStop(0);
+        _hudBloodBottom = _hudBlood.y + _hudBlood.height;
+        _hudBloodStartHeight = _hudBlood.height;
+        
+        _DEBUG_BLOOD_BAR_OUTLINE = new Sprite();
+        _hudBlood.parent.addChild( _DEBUG_BLOOD_BAR_OUTLINE );
+        _DEBUG_BLOOD_BAR_OUTLINE.graphics.lineStyle(1, 0xffffff);
+        _DEBUG_BLOOD_BAR_OUTLINE.graphics.drawRect(-_hudBlood.width/2, -_hudBlood.height/2, _hudBlood.width, _hudBlood.height);
+        _DEBUG_BLOOD_BAR_OUTLINE.x = _hudBlood.x;
+        _DEBUG_BLOOD_BAR_OUTLINE.y = _hudBlood.y;
+        
+        var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
+        Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED);
+        
+        var hudPrey :SimpleButton = SimpleButton( findSafely("HUDprey") );
+        Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_EAT_ME);
+        
+        var hudHierarchy :SimpleButton = SimpleButton( findSafely("HUDhierarchy") );
+        Command.bind( hudHierarchy, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS);
+        
+        var hudHelp :SimpleButton = SimpleButton( findSafely("HUDhelp") );
+        Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
+        
+        var hudClose :SimpleButton = SimpleButton( findSafely("HUDclose") );
+        Command.bind( hudClose, MouseEvent.CLICK, VampireController.QUIT);
+        
+        
+        
+        
+        
+        
+        
+        
+//        _hud.graphics.beginFill(0xffffff);
+//        _hud.graphics.drawRect(0, 0, 600, 50);
+//        _hud.graphics.drawRect(290, 50, 260, 100);
+//        _hud.graphics.endFill();
         
         var startX :int = 30;
         var startY :int = 0;
@@ -211,8 +280,8 @@ public class HUD extends SceneObject
             button.x = startX;
             button.y = startY;
             startX += 85;
-            Command.bind( button, MouseEvent.CLICK, VampireController.SWITCH_MODE, mode);
-            _hud.addChild( button );
+//            Command.bind( button, MouseEvent.CLICK, VampireController.SWITCH_MODE, mode);
+//            _hud.addChild( button );
         }
         
         
@@ -222,11 +291,11 @@ public class HUD extends SceneObject
         help.y = startY;
         startX += 90;
         Command.bind( help, MouseEvent.CLICK, VampireController.SHOW_INTRO);
-        _hud.addChild( help );
+//        _hud.addChild( help );
         
         //Show blood as a horizontal bar
         _blood = new Sprite();
-        _hud.addChild( _blood );
+//        _hud.addChild( _blood );
         _blood.x = 180;
         _blood.y = 35; 
         
@@ -236,7 +305,7 @@ public class HUD extends SceneObject
         
         //Show xp as a horizontal bar
         _xp = new Sprite();
-        _hud.addChild( _xp );
+//        _hud.addChild( _xp );
         _xp.x = 320;
         _xp.y = 35; 
         
@@ -251,30 +320,30 @@ public class HUD extends SceneObject
         button.y = startY;
         startX += 90;
         Command.bind( quitButton, MouseEvent.CLICK, VampireController.QUIT);
-        _hud.addChild( quitButton );
+//        _hud.addChild( quitButton );
         
         
         _action = TextFieldUtil.createField("Action: ", {mouseEnabled:false, selectable:false, x:300, y:45});
-        _hud.addChild( _action );
+//        _hud.addChild( _action );
         
         _level = TextFieldUtil.createField("Level: ", {mouseEnabled:false, selectable:false, x:300, y:65});
-        _hud.addChild( _level );
+//        _hud.addChild( _level );
         
         _target = TextFieldUtil.createField("Target: ", {mouseEnabled:false, selectable:false, x:300, y:85, width:400});
-        _hud.addChild( _target );
+//        _hud.addChild( _target );
         
         _bloodbonds = TextFieldUtil.createField("Bloodbonds: ", {mouseEnabled:false, selectable:false, x:300, y:105, width:300});
-        _hud.addChild( _bloodbonds );
+//        _hud.addChild( _bloodbonds );
         
         _time = TextFieldUtil.createField("Time: ", {mouseEnabled:false, selectable:false, x:300, y:125, width:450});
-        _hud.addChild( _time );
+//        _hud.addChild( _time );
         
         _myName = TextFieldUtil.createField("Me: Testing locally", {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
         if( !Constants.LOCAL_DEBUG_MODE) {
             _myName = TextFieldUtil.createField("Me: " + ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId).name, {mouseEnabled:false, selectable:false, x:20, y:35, width:150});
         }
             
-        _hud.addChild( _myName );
+//        _hud.addChild( _myName );
         
         //The target overlay
         _targetSprite = new Sprite();
@@ -284,13 +353,9 @@ public class HUD extends SceneObject
         _targetSprite.visible = false;
         
         _targetSpriteBlood = new Sprite();
-        _sprite.addChild( _targetSpriteBlood );
-        _targetSpriteBlood.x = -50;
-        _targetSpriteBlood.y = -30; 
+        _targetSprite.addChild( _targetSpriteBlood );
         
         _targetSpriteBloodText = TextFieldUtil.createField("", {mouseEnabled:false, selectable:false});
-        _targetSpriteBloodText.x = 0;
-        _targetSpriteBloodText.y = 0;
         _targetSpriteBlood.addChild( _targetSpriteBloodText );
         
     }
@@ -323,22 +388,39 @@ public class HUD extends SceneObject
     
     protected function showBlood( playerId :int ) :void
     {
-        log.debug("Showing player blood=" + SharedPlayerStateClient.getBlood( playerId ) + "/" + SharedPlayerStateClient.getMaxBlood( playerId ));
-        _blood.graphics.clear();
-        var bloodColor :int = SharedPlayerStateClient.isVampire( playerId ) ? 0xcc0000 : 0x0000ff;//Red or blue for vampire or thrall
-        _blood.graphics.lineStyle(1, bloodColor);
-        _blood.graphics.drawRect(0, 0, 100, 10);
-        _blood.graphics.beginFill( bloodColor );
         if( SharedPlayerStateClient.getMaxBlood( playerId ) > 0) {
-            _blood.graphics.drawRect(0, 0, (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId ), 10);
+            var scaleY :Number = SharedPlayerStateClient.getMaxBlood( playerId ) / Constants.MAX_BLOOD_FOR_LEVEL(1);
+            _hudBlood.scaleY = scaleY;
+//            _hudBlood.height = SharedPlayerStateClient.getMaxBlood( playerId );
+            _hudBlood.gotoAndStop( int( (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId )));
         }
-        _blood.graphics.endFill();
+        else {
+            _hudBlood.gotoAndStop(0);
+        }
+        _hudBlood.y = _hudBloodBottom - _hudBlood.height;
         
-        var bloodtext :String = "" + SharedPlayerStateClient.getBlood( playerId );
-        if( bloodtext.indexOf(".") >= 0) {
-            bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
-        }
-        _bloodText.text = bloodtext;
+        _DEBUG_BLOOD_BAR_OUTLINE.graphics.lineStyle(1, 0xffffff);
+        _DEBUG_BLOOD_BAR_OUTLINE.graphics.drawRect(-_hudBlood.width/2, -_hudBlood.height/2, _hudBlood.width, _hudBlood.height);
+        _DEBUG_BLOOD_BAR_OUTLINE.x = _hudBlood.x;
+        _DEBUG_BLOOD_BAR_OUTLINE.y = _hudBlood.y;
+        
+        
+//        log.debug("Showing player blood=" + SharedPlayerStateClient.getBlood( playerId ) + "/" + SharedPlayerStateClient.getMaxBlood( playerId ));
+//        _blood.graphics.clear();
+//        var bloodColor :int = SharedPlayerStateClient.isVampire( playerId ) ? 0xcc0000 : 0x0000ff;//Red or blue for vampire or thrall
+//        _blood.graphics.lineStyle(1, bloodColor);
+//        _blood.graphics.drawRect(0, 0, 100, 10);
+//        _blood.graphics.beginFill( bloodColor );
+//        if( SharedPlayerStateClient.getMaxBlood( playerId ) > 0) {
+//            _blood.graphics.drawRect(0, 0, (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId ), 10);
+//        }
+//        _blood.graphics.endFill();
+//        
+//        var bloodtext :String = "" + SharedPlayerStateClient.getBlood( playerId );
+//        if( bloodtext.indexOf(".") >= 0) {
+//            bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
+//        }
+//        _bloodText.text = bloodtext;
         
     }
     
@@ -381,6 +463,7 @@ public class HUD extends SceneObject
     protected function showLevel( playerId :int ) :void
     {
         _level.text = "Level: " + SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
+        showBlood( playerId );
     }
     
     protected function showAction( playerId :int ) :void
@@ -389,28 +472,35 @@ public class HUD extends SceneObject
     }
     protected function showTarget( playerId :int ) :void
     {
-//        trace("HUD showTarget()");
         _targetSprite.visible = false;
         
         
         var targetId :int = SharedPlayerStateClient.getTargetPlayer( playerId );
         var targetLocation :Array = SharedPlayerStateClient.getTargetLocation( playerId );
+        var targetHotspot :Array = SharedPlayerStateClient.getTargetHotspot( playerId );
+        trace("HUD showTarget(), targetId=" + targetId + ", targetLocation=" + targetLocation + ", targetHotspot=" + targetHotspot );
+        
         _targetSpriteBlood.graphics.clear();
          _targetSpriteBloodText.text = "";
         if( !SharedPlayerStateClient.getTargetVisible( playerId )) {
             return;
         }
         
-        if( targetId > 0 && targetLocation != null) {
+        if( targetId > 0 && targetLocation != null && targetHotspot != null && targetHotspot.length > 1) {
             _targetSprite.visible = true;
             _target.text = "Target: " + SharedPlayerStateClient.getTargetName( playerId );
             
-            var targetHeight :Number = SharedPlayerStateClient.getTargetHeight( playerId );
-            var halfTargetAvatarHeight :Number = targetHeight*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
-            var p :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], halfTargetAvatarHeight, targetLocation[2]) as Point;
-            _targetSprite.visible = true;
+            
+//            var halfTargetAvatarHeight :Number = targetHotspot*0.5/ClientContext.gameCtrl.local.getRoomBounds()[1];
+            var targetAvatarHeight :Number = targetHotspot[1]/ClientContext.gameCtrl.local.getRoomBounds()[1];
+            var p :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
+//            p.y -= targetHotspot[1];
             _targetSprite.x = p.x;
             _targetSprite.y = p.y;
+            
+            _targetSprite.visible = true;
+//            _targetSprite.x = targetHotspot[0];
+//            _targetSprite.y = targetHotspot[1] - 30;
             
             //Show the targets blood
             var targetBlood :Number = SharedPlayerStateClient.getTargetBlood( playerId );
@@ -422,12 +512,12 @@ public class HUD extends SceneObject
             if( !isNaN( targetBlood ) && !isNaN( targetMaxBlood ) ) {
                 
                 
-                var targetAvatarHeight :Number = targetHeight/ClientContext.gameCtrl.local.getRoomBounds()[1];
-                var pointForBloodBar :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
-                pointForBloodBar.y = pointForBloodBar.y - 30;//Adjust to be over the player name
-                _targetSpriteBlood.x = pointForBloodBar.x;
-                _targetSpriteBlood.y = pointForBloodBar.y;
+//                var pointForBloodBar :Point = ClientContext.gameCtrl.local.locationToPaintable( targetLocation[0], targetAvatarHeight, targetLocation[2]) as Point;
+//                pointForBloodBar.y = pointForBloodBar.y - 30;//Adjust to be over the player name
+//                _targetSpriteBlood.x = pointForBloodBar.x;
+//                _targetSpriteBlood.y = pointForBloodBar.y;
                 var bloodColor :int =  0xcc0000;
+//                _targetSpriteBlood.y = -30;
                 _targetSpriteBlood.graphics.lineStyle(1, bloodColor);
                 _targetSpriteBlood.graphics.drawRect(-50, -5, 100, 10);
                 _targetSpriteBlood.graphics.beginFill( bloodColor );
@@ -443,6 +533,9 @@ public class HUD extends SceneObject
                     bloodtext = bloodtext.slice(0, bloodtext.indexOf(".") + 3);
                 }
                 _targetSpriteBloodText.text = bloodtext;
+                
+                
+  
             }
             else {
                 _targetSpriteBloodText.text = "";
@@ -452,7 +545,7 @@ public class HUD extends SceneObject
                 
         }
         else {
-            log.error("showTarget, but location is null");
+            log.error("showTarget, but " , "location", targetLocation, "targetHotspot", targetHotspot);
         }
         
 //        var userData :Array = SharedPlayerStateClient.getClosestUserData(playerId);
@@ -493,8 +586,14 @@ public class HUD extends SceneObject
     protected var _sprite :Sprite;
     protected var _hud :DraggableSprite;
     
+    protected var _hudBlood :MovieClip;
+    protected var _hudBloodBottom :int;
+    protected var _hudBloodStartHeight :Number;
+    
     protected var _blood :Sprite;
     protected var _bloodText :TextField;
+    
+    protected var _DEBUG_BLOOD_BAR_OUTLINE :Sprite;
     
     protected var _xp :Sprite;
     protected var _xpText :TextField;

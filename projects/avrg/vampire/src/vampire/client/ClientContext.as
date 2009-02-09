@@ -4,7 +4,10 @@ package vampire.client {
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
+import com.whirled.contrib.simplegame.resource.SwfResource;
 
+import flash.display.MovieClip;
 import flash.geom.Rectangle;
 
 import vampire.data.Constants;
@@ -17,7 +20,10 @@ public class ClientContext
 {
     public static var gameCtrl :AVRGameControl;
     public static var msg :MessageManager;
+    
     public static var game :SimpleGame;
+    public static var gameResources :ResourceManager;
+    
     public static var model :GameModel;
     public static var ourPlayerId :int;
     public static var currentClosestPlayerId :int;
@@ -57,6 +63,17 @@ public class ClientContext
     public static function isPlayerProps() :Boolean
     {
         return model.time > 0;
+    }
+    
+    public static function instantiateMovieClip (rsrcName :String, className :String,
+        disableMouseInteraction :Boolean = false, fromCache :Boolean = false) :MovieClip
+    {
+        return SwfResource.instantiateMovieClip(
+            game.ctx.rsrcs,
+            rsrcName,
+            className,
+            disableMouseInteraction,
+            fromCache);
     }
     
     
