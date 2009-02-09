@@ -101,7 +101,7 @@ public class Codes
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME :int = 12;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD :int = 13;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD :int = 14;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT :int = 15;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT :int = 15;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE :int = 16;
     
     

@@ -445,6 +445,13 @@ public class Player
                 damage( 20 );
     //            setBlood( blood - 20 );
             }
+            else if( name == Constants.NAMED_EVENT_LEVEL_UP ) {
+                setLevel( level + 1 );
+            }
+            else if( name == Constants.NAMED_EVENT_LEVEL_DOWN ) {
+                setLevel( level - 1 );
+    //            setBlood( blood - 20 );
+            }
             else if( name == Constants.NAMED_EVENT_FEED ) {
                 feed(int(value));
             }
@@ -818,8 +825,14 @@ public class Player
             var closestUserId :int = int(signalArray[1]);
             var closestUserName :String = String(signalArray[2]);
             var closestUserLocation :Array = signalArray[3] as Array;
-            var closestUserHeight :Number = Number(signalArray[4]);
+            var closestUserHotspot :Array = signalArray[4] as Array;
             var targetLocation :Array = signalArray[5] as Array;
+            
+            log.debug( "   closestUserLocation " + closestUserLocation);
+            log.debug( "   closestUserHotspot " + closestUserHotspot);
+            log.debug( "   targetLocation " + targetLocation);
+            
+            
             if( closestUserId > 0 ) {
                 //Only change target if this player is not involved in an action 
                 //that requires maintaining the current target.
@@ -827,13 +840,13 @@ public class Player
                 switch( action ) {
                     
                     case Constants.GAME_MODE_FEED:
-                    case Constants.GAME_MODE_BLOODBOND:
+                    case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
                     case Constants.GAME_MODE_EAT_ME:
                         //Update the target data if our target has moved, but don't change 
                         //our target
                         if( closestUserId == targetId) {
                             setTargetLocation( closestUserLocation );
-                            setTargetHeight( closestUserHeight );
+                            setTargetHotspot( closestUserHotspot );
                             setTargetName( closestUserName );
                             setTargetVisible(true, true);
                             break;
@@ -848,7 +861,7 @@ public class Player
                             room.ctrl.sendSignal( Constants.SIGNAL_PLAYER_TARGET, [playerId, targetId]);
                         }
                         setTargetLocation( closestUserLocation );
-                        setTargetHeight( closestUserHeight );
+                        setTargetHotspot( closestUserHotspot );
                         setTargetName( closestUserName );
                         
                         var targetsBlood :Number;
@@ -1077,8 +1090,8 @@ public class Player
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME] != targetName) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME, targetName);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT] != targetHeight && !isNaN(targetHeight)) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT, targetHeight);
+        if ( !ClassUtil.isSameClass(dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT], targetHotspot) || !ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT], targetHotspot )) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HOTSPOT, targetHotspot);
         }
         if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION], targetLocation )) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION, targetLocation);
@@ -1119,6 +1132,7 @@ public class Player
     public function setLevel (level :int, force :Boolean = false) :void
     {
         // update our runtime state
+        level = Math.max( level, 1);
         if (!force && level == _level) {
             return;
         }
@@ -1180,29 +1194,15 @@ public class Player
             return;
         }
         _targetName = name;
-        
-//        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
     }
     
-    public function setTargetHeight (height :Number, force :Boolean = false) :void
+    public function setTargetHotspot (hotspot :Array, force :Boolean = false) :void
     {
         // update our runtime state
-        if (!force && _targetHeight == height) {
+        if (!force && ArrayUtil.equals(_targetHotspot, hotspot)) {
             return;
         }
-        _targetHeight = height;
-        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
+        _targetHotspot = hotspot;
     }
     
     /**
@@ -1215,13 +1215,6 @@ public class Player
             return;
         }
         _targetBlood = targetBlood;
-        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
     }
     
     public function setTargetMaxBlood (targetMaxBlood :Number, force :Boolean = false) :void
@@ -1231,13 +1224,6 @@ public class Player
             return;
         }
         _targetMaxBlood = targetMaxBlood;
-        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
     }
     
     public function setTargetLocation (location :Array, force :Boolean = false) :void
@@ -1247,13 +1233,6 @@ public class Player
             return;
         }
         _targetLocation = location;
-        
-//        updateAvatarState();
-//
-//        // and if we're in a room, update the room properties
-//        if (_room != null) {
-//            _room.playerUpdated(this);
-//        }
     }
     
     public function setClosestUserId (id :int) :void
@@ -1303,18 +1282,15 @@ public class Player
 //    }
     
     
-    public function setClosestAvatarHeight (height :Number, force :Boolean = false) :void
-    {
-        // update our runtime state
-        if (!force && time == _timePlayerPreviouslyQuit) {
-            return;
-        }
-        _targetHeight = time;
-
-        // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE, _timePlayerPreviouslyQuit, true);
-        log.info("now ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-    }
+//    public function setClosestAvatarHotspot (hotspot :Array, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        if (!force && time == _timePlayerPreviouslyQuit) {
+//            return;
+//        }
+//        _targetHotspot = time;
+//
+//    }
     
     
     public function setTime (time :Number, force :Boolean = false) :void
@@ -1443,9 +1419,9 @@ public class Player
     {
         return _targetName;
     }
-    public function get targetHeight() :Number
+    public function get targetHotspot() :Array
     {
-        return _targetHeight;
+        return _targetHotspot;
     }
     public function get targetLocation() :Array
     {
@@ -1523,7 +1499,7 @@ public class Player
     protected var _targetId :int;
     protected var _targetName :String;
     protected var _targetLocation :Array;
-    protected var _targetHeight :Number;
+    protected var _targetHotspot :Array;
     protected var _targetBlood :Number;
     protected var _targetMaxBlood :Number;
     protected var _isTargetVisible :Boolean;//Show the target overlay?
