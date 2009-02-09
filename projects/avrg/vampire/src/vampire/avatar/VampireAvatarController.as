@@ -1,6 +1,7 @@
 package vampire.avatar
 {
 import com.threerings.flash.MathUtil;
+import com.threerings.util.Log;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
 import com.whirled.EntityControl;
@@ -20,7 +21,7 @@ public class VampireAvatarController
         _ctrl = ctrl;
         
 //        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChange);
-//        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, handleChatReceived);
+        _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, handleChatReceived);
         _ctrl.addEventListener(ControlEvent.SIGNAL_RECEIVED, handleSignalReceived);
         
         _ctrl.addEventListener(ControlEvent.ENTITY_ENTERED, function( e :ControlEvent) :void{trace2("\n" + playerId + " "  + ControlEvent.ENTITY_ENTERED);computeClosestAvatar(e);});
@@ -32,13 +33,13 @@ public class VampireAvatarController
     }
     protected function handleEntityMoved (e :ControlEvent) :void
     {
-        trace2("\nVampireAvatarController handleEntityMoved!");
-        trace2( playerId + " e=" + e);
+//        trace2("\nVampireAvatarController handleEntityMoved!");
+//        trace2( playerId + " e=" + e);
         if( e.value == null) {//Only compute closest avatars when this avatar has arrived at location
             computeClosestAvatar(e);
         }
         else {
-            trace2("  e.value != null, beginning of move, so turn off targeting, sending closest == 0");
+//            trace2("  e.value != null, beginning of move, so turn off targeting, sending closest == 0");
             var userIdMoved :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name));
             var targetEntityId :String = getEntityId( _targetId );
             var targetLocation :Array = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, targetEntityId) as Array;
@@ -73,6 +74,15 @@ public class VampireAvatarController
     
     protected function handleChatReceived( e :ControlEvent) :void
     {
+        var chatterId :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name));
+        trace2( "Chat received from " + chatterId);
+        if( chatterId == _targetId) {
+            trace2( "  Broadcasting, _targetId=" + _targetId);
+            _ctrl.sendSignal( Constants.SIGNAL_TARGET_CHATTED, playerId);
+        }
+        else {
+            trace2( "  Not broadcasting...why?, _targetId=" + _targetId);
+        }
         //Not yet implemented
 //        var speakerId :int = int(e.name);
 //        trace2("avatar handleChatReceived()", "e.name", e.name, "chat", e.value, "e.target", e.target);
@@ -95,17 +105,22 @@ public class VampireAvatarController
     
     protected function computeClosestAvatar( e :ControlEvent ) :void
     {
+        if( _ctrl == null || !_ctrl.isConnected() ) {
+            log.error("computeClosestAvatar(), ctrl=" + _ctrl + ", _ctrl.isConnected()=" + _ctrl.isConnected());
+            return;
+        }
+        
 //        if( e.value == null) {
 //            return;
 //        }
         var userIdMoved :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name));
-        trace2("   computeClosestAvatar(), userIdMoved=" + userIdMoved + ", myId=" + playerId);
+//        trace2("   computeClosestAvatar(), userIdMoved=" + userIdMoved + ", myId=" + playerId);
         
         var myLocation :Array = _ctrl.getLogicalLocation();
-        trace2("   myLocation from ctrl, location=" + myLocation);
+//        trace2("   myLocation from ctrl, location=" + myLocation);
         if( userIdMoved == playerId && e != null && e.value != null) {
             myLocation = e.value as Array;
-            trace2("   oh, I'm the entity in the event, myLocation=" + myLocation);
+//            trace2("   oh, I'm the entity in the event, myLocation=" + myLocation);
         }
         var closestUserId :int = 0;
         var closestEntityId :String;
@@ -113,7 +128,7 @@ public class VampireAvatarController
         var closestLocation :Array;
         var myX :Number = myLocation[0] as Number;
         var myZ :Number = myLocation[2] as Number;
-        trace2("    me(" + myX + ", " + myZ + ")");
+//        trace2("    me(" + myX + ", " + myZ + ")");
 
         var entityLocation :Array;
         for each( var entityId :String in _ctrl.getEntityIds(EntityControl.TYPE_AVATAR)) {
@@ -125,11 +140,11 @@ public class VampireAvatarController
             }
             
             entityLocation = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, entityId) as Array;
-            trace2("     for entityUserId=" + entityUserId + ", loc=" + entityLocation);
+//            trace2("     for entityUserId=" + entityUserId + ", loc=" + entityLocation);
             
             if( entityUserId == userIdMoved && e != null && e.value != null) {
                 entityLocation = e.value as Array;
-                trace2("     oh, its the entity in the event, " + entityUserId + " location=" + entityLocation);
+//                trace2("     oh, its the entity in the event, " + entityUserId + " location=" + entityLocation);
             }
             
             if( entityLocation != null) {
@@ -147,8 +162,8 @@ public class VampireAvatarController
         }
        
         
-        trace2("    Closests userId=" + closestUserId);
-        trace2("    Closests user name=" + _ctrl.getViewerName(closestUserId));
+//        trace2("    Closests userId=" + closestUserId);
+//        trace2("    Closests user name=" + _ctrl.getViewerName(closestUserId));
         var targetEntityId :String = getEntityId( _targetId );
         var targetLocation :Array = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, targetEntityId) as Array;
         if(closestUserId == 0) {
@@ -158,14 +173,14 @@ public class VampireAvatarController
 //            trace2("     sending closestUserId=" + closestUserId);
             _closestUserId = closestUserId;  
 //            entityLocation = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, closestEntityId) as Array;
-            trace2("      for _closestUserId=" + _closestUserId + ", loc=" + entityLocation);
+//            trace2("      for _closestUserId=" + _closestUserId + ", loc=" + entityLocation);
 //            if( _closestUserId == userIdMoved && e != null && e.value != null) {
 //                entityLocation = e.value as Array;
 //                trace2("     oh, its the entity in the event, " + _closestUserId + " location=" + entityLocation);
 //            }
-            trace2("      closestLocation=" + closestLocation);
+//            trace2("      closestLocation=" + closestLocation);
             var entityHeight :Number = (_ctrl.getEntityProperty( EntityControl.PROP_DIMENSIONS, closestEntityId) as Array)[1];
-            trace2("      entityHeight=" + entityHeight);
+//            trace2("      entityHeight=" + entityHeight);
             _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [playerId, closestUserId, _ctrl.getViewerName(closestUserId), closestLocation, entityHeight, targetLocation]);
         }  
         
@@ -200,5 +215,7 @@ public class VampireAvatarController
     protected var _targetId :int;
     protected var _closestUserId :int;
     protected var _closestUserLocation :Array;
+    
+    protected static const log :Log = Log.getLog( VampireAvatarController );
 }
 }
