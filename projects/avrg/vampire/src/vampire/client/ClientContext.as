@@ -21,6 +21,8 @@ public class ClientContext
     public static var model :GameModel;
     public static var ourPlayerId :int;
     public static var currentClosestPlayerId :int;
+    
+    public static var controller :VampireController;
 
     public static function quit () :void
     {
