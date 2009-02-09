@@ -3,6 +3,7 @@ package vampire.client.actions.hierarchy
     
     
 import com.threerings.flash.SimpleTextButton;
+import com.threerings.util.Log;
 
 import flash.events.MouseEvent;
 
@@ -27,13 +28,14 @@ public class HierarchyMode extends BaseVampireMode
         var makeSireButton :SimpleTextButton = new SimpleTextButton( "Make Sire" );
         makeSireButton.x = 10;
         makeSireButton.y = 50;
-        makeSireButton.addEventListener( MouseEvent.CLICK, makeSire);
+        
+        makeSireButton.addEventListener( MouseEvent.CLICK, ClientContext.controller.makeSire);
         modeSprite.addChild( makeSireButton );
         
         var makeMinionButton :SimpleTextButton = new SimpleTextButton( "Make Minion" );
         makeMinionButton.x = 10;
         makeMinionButton.y = 80;
-        makeMinionButton.addEventListener( MouseEvent.CLICK, makeMinion);
+        makeMinionButton.addEventListener( MouseEvent.CLICK, ClientContext.controller.makeMinion);
         modeSprite.addChild( makeMinionButton );
         
         
@@ -41,19 +43,8 @@ public class HierarchyMode extends BaseVampireMode
         addObject( h, modeSprite);
     }
     
-    protected function makeSire( ... ignored ) :void
-    {
-        if( ClientContext.currentClosestPlayerId > 0) {
-            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_SIRE, ClientContext.currentClosestPlayerId );
-        }
-    }
     
-    protected function makeMinion( ... ignored ) :void
-    {
-        if( ClientContext.currentClosestPlayerId > 0) {
-            ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_MINION, ClientContext.currentClosestPlayerId );
-        }
-    }
+    protected static const log :Log = Log.getLog( HierarchyMode );
     
 }
 }

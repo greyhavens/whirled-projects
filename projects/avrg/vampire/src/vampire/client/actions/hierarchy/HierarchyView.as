@@ -71,6 +71,7 @@ package vampire.client.actions.hierarchy
         
         protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
         {
+            log.debug(Constants.DEBUG_MINION + " updateHierarchyEvent", "e", e);
             _hierarchy = e.hierarchy;
             if( _hierarchy == null) {
                 log.error("updateHierarchyEvent(), but hierarchy is null :-(");

@@ -13,12 +13,12 @@ import com.whirled.avrg.PlayerSubControlServer;
 import com.whirled.contrib.avrg.probe.ServerStub;
 import com.whirled.net.MessageReceivedEvent;
 
-import flash.utils.ByteArray;
 import flash.utils.getTimer;
 import flash.utils.setInterval;
 
 import vampire.data.Codes;
 import vampire.data.Constants;
+import vampire.data.MinionHierarchyServer;
 import vampire.net.MessageManager;
 
 public class VServer
@@ -28,14 +28,14 @@ public class VServer
     public static var log :Log = Log.getLog(VServer);
     
     
-    public static var random :Random = new Random();
+    public var random :Random = new Random();
 
-    public static function get control () :AVRServerGameControl
+    public function get control () :AVRServerGameControl
     {
         return _ctrl;
     }
 
-    public static function isAdmin (playerId :int) :Boolean
+    public function isAdmin (playerId :int) :Boolean
     {
         // we might want to make this dynamic later
         return playerId < 20
@@ -56,15 +56,8 @@ public class VServer
             log.error("AVRServerGameControl should of been initialized already");
             return;
         }
+        ServerContext.vserver = this;
         _ctrl = ServerContext.ctrl;
-        
-        //Plug the client broadcaster to the Log
-        ServerContext._serverLogBroadcast = new AVRGAgentLogTarget( _ctrl );
-        Log.addTarget( _serverLogBroadcast );
-        
-        Log.setLevel("", Log.ERROR);
-        
-        
 
 //        _ctrl.game.addEventListener(MessageReceivedEvent.MESSAGE_RECEIVED, handleMessage);
         _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
@@ -76,14 +69,16 @@ public class VServer
         _startTime = getTimer();
         _lastTickTime = _startTime;
         setInterval(tick, 2000);
+        
+        ServerContext.minionHierarchy = new MinionHierarchyServer( this );
 
-        _stub = new ServerStub(_ctrl);
+//        _stub = new ServerStub(_ctrl);
     }
 
 
     
     
-    public static function getRoom (roomId :int) :Room
+    public function getRoom (roomId :int) :Room
     {
         if (roomId == 0) {
             throw new Error("Bad argument to getRoom [roomId=0]");
@@ -91,19 +86,16 @@ public class VServer
         var room :Room = _rooms.get(roomId);
         if (room == null) {
             _rooms.put(roomId, room = new Room(roomId));
-            if( room.ctrl != null) {
-                room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
-            } 
         }
         return room;
     }
     
-    public static function isRoom( roomId :int) :Boolean
+    public function isRoom( roomId :int) :Boolean
     {
         return _rooms.containsKey( roomId );
     }
 
-    public static function getPlayer (playerId :int) :Player
+    public function getPlayer (playerId :int) :Player
     {
         return Player(_players.get(playerId));
     }
@@ -121,7 +113,11 @@ public class VServer
         //Update the non-players blood levels.
         ServerContext.nonPlayers.tick( dT_seconds );
         
+//        ServerContext.minionHierarchy.tick();
+        
         _ctrl.doBatch(function () :void {
+            
+            
             _rooms.forEach(function (roomId :int, room :Room) :void {
                 try {
                     room.tick(dT_seconds);
@@ -141,115 +137,99 @@ public class VServer
     // a message comes in from a player, figure out which Player instance will handle it
     protected function handleMessage (evt :MessageReceivedEvent) :void
     {
-        var player :Player = getPlayer(evt.senderId);
-        if (player == null) {
-            log.warning("Received message for non-existent player [evt=" + evt + "]");
-            log.warning("playerids=" + _players.keys());
-            return;
+        try {
+            var player :Player = getPlayer(evt.senderId);
+            if (player == null) {
+                log.warning("Received message for non-existent player [evt=" + evt + "]");
+                log.warning("playerids=" + _players.keys());
+                return;
+            }
+            _ctrl.doBatch(function () :void {
+                player.handleMessage(evt.name, evt.value);
+            });
         }
-        _ctrl.doBatch(function () :void {
-            player.handleMessage(evt.name, evt.value);
-        });
+        catch( err :Error ) {
+            log.error(err + "\n" + err.getStackTrace());
+        }
     }
 
     // when players enter the game, we create a local record for them
     protected function playerJoinedGame (evt :AVRGameControlEvent) :void
     {
-        log.info("playerJoinedGame() " + evt);
-        var playerId :int = int(evt.value);
-        if (_players.containsKey(playerId)) {
-            log.warning("Joining player already known", "playerId", playerId);
-            return;
+        try {
+            log.info("playerJoinedGame() " + evt);
+            var playerId :int = int(evt.value);
+            if (_players.containsKey(playerId)) {
+                log.warning("Joining player already known", "playerId", playerId);
+                return;
+            }
+    
+    
+    //        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+    
+            var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
+            if (pctrl == null) {
+                throw new Error("Could not get PlayerSubControlServer for player!");
+            }
+    //        
+    //        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
+    
+            
+            var hierarchyChanged :Boolean = false;
+            
+            _ctrl.doBatch(function () :void {
+                var player :Player = new Player(pctrl);
+                _players.put(playerId, player);
+            });
+            
+            //Keep a record of player ids to distinguish players and non-players
+            //even when the players are not actively playing.    
+            ServerContext.nonPlayers.addNewPlayer( playerId );
+            
+            log.debug("Sucessfully created Player object.");
         }
-
-
-//        log.info("!!!!!Before player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-        log.info("!!!!!Before player created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-
-        var pctrl :PlayerSubControlServer = _ctrl.getPlayer(playerId);
-        if (pctrl == null) {
-            throw new Error("Could not get PlayerSubControlServer for player!");
+        catch( err :Error ) {
+            log.error(err + "\n" + err.getStackTrace());
         }
-//        
-//        log.info("!!!!!After player created", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-        log.info("!!!!!AFter player control created", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-
-        
-        var hierarchyChanged :Boolean = false;
-        
-        _ctrl.doBatch(function () :void {
-            var player :Player = new Player(pctrl);
-            _players.put(playerId, player);
-        });
-        
-        //Keep a record of player ids to distinguish players and non-players
-        //even when the players are not actively playing.    
-        ServerContext.nonPlayers.addNewPlayer( playerId );
-        
-        log.debug("Sucessfully created Player object.");
-
     }
     
-    public static function updateHierarchyInAllRooms() :void
-    {
-        _ctrl.doBatch(function () :void {
-            var minionsBytes :ByteArray = ServerContext.minionHierarchy.toBytes();
-            
-            _rooms.forEach(  function( rkey :int, room :Room) :void {
-                if( room.ctrl != null) {
-                    room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes );    
-                }
-            });
-        });
-        
-        //Update the players data who are not in the game right now
-//        for each( var playerId :int in ServerContext.minionHierarchy.playerIds) {
-//            if( getPlayer( playerId ) == null) {//No player, so we delve into the underground database
-//                VServer.control.loadOfflinePlayer(playerId, 
-//                    function (props :PropertySpaceObject) :void {
-//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_SIRE, ServerContext.minionHierarchy.getSireId( playerId )); 
-//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_MINIONS, ServerContext.minionHierarchy.getMinionIds(playerId).toArray());
-//                    }, 
-//                    function (failureCause :String) :void { 
-//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
-//                    });
-//                
-//            }
-//        }
-        
-        
-        
-    }
+
 
     // when they leave, clean up
     protected function playerQuitGame (evt :AVRGameControlEvent) :void
     {
-        log.info("playerQuitGame(" + playerId + ")");
-        var playerId :int = int(evt.value);
-
-        var player :Player = _players.remove(playerId);
-        if (player == null) {
-            log.warning("Quitting player not known", "playerId", playerId);
-            return;
+        try {
+            log.info("playerQuitGame(" + playerId + ")");
+            var playerId :int = int(evt.value);
+    
+            var player :Player = _players.remove(playerId);
+            if (player == null) {
+                log.warning("Quitting player not known", "playerId", playerId);
+                return;
+            }
+            _ctrl.doBatch(function () :void {
+                player.shutdown();
+            });
+    
+            log.info("Player quit the game", "player", player);
+            
+    //        log.info("!!!!!After player quit the game", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
+            log.info("!!!!!After player quit the game", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
         }
-        _ctrl.doBatch(function () :void {
-            player.shutdown();
-        });
-
-        log.info("Player quit the game", "player", player);
-        
-//        log.info("!!!!!After player quit the game", "player time", _ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE));
-        log.info("!!!!!After player quit the game", "player time", new Date(_ctrl.getPlayer(playerId).props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-
+        catch( err :Error ) {
+            log.error(err + "\n" + err.getStackTrace());
+        }
     }
     
-    public static function getSireFromInvitee( playerId :int) :int
+    public function getSireFromInvitee( playerId :int) :int
     {
         log.warning("getSireFromInvitee not implemented yet, returning -1")
         return -1;
     }
     
-    public static function get rooms() :HashMap
+    public function get rooms() :HashMap
     {
         return _rooms;
     }
@@ -258,7 +238,7 @@ public class VServer
     * When a player gains blood, his sires all share a portion of the gain
     * 
     */
-    public static function playerGainedBlood( player :Player, blood :Number, sourcePlayerId :int = 0 ) :void
+    public function playerGainedBlood( player :Player, blood :Number, sourcePlayerId :int = 0 ) :void
     {
         var bloodShared :Number = Constants.BLOOD_GAIN_FRACTION_SHARED_WITH_SIRES * blood;
         var allsires :HashSet = ServerContext.minionHierarchy.getAllSiresAndGrandSires( player.playerId );
@@ -273,7 +253,7 @@ public class VServer
     
     
     
-    protected static function isPlayerOnline( playerId :int ) :Boolean
+    public function isPlayerOnline( playerId :int ) :Boolean
     {
         return _players.containsKey( playerId );
     }
@@ -303,7 +283,7 @@ public class VServer
     
     protected var _stub :ServerStub;
     
-    public static var _serverLogBroadcast :AVRGAgentLogTarget;
+
 }
 }
 

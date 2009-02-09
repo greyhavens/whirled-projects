@@ -4,14 +4,9 @@ package vampire.data
     import com.threerings.util.HashSet;
     import com.threerings.util.Log;
     import com.threerings.util.StringBuilder;
-    import com.whirled.avrg.AVRGameAvatar;
-    import com.whirled.avrg.AVRServerGameControl;
     
     import flash.utils.ByteArray;
     
-    import vampire.server.Player;
-    import vampire.server.Room;
-    import vampire.server.VServer;
     
     
 /**
@@ -19,16 +14,34 @@ package vampire.data
  * Currently only returns information of online players.
  * 
  * This is a simple DAG (directed acyclic graph).
+ * 
+ * A player joins a room, or leaves, or changes sire, this computes the sub-graph containing all
+ * players in the room and all their sires+minions.  This is essentially a list of player-sire
+ * connections (and player names).  
+ * 
+ * The hierachy is stored as a map of playerid -> [sireid, name]  
  */
 public class MinionHierarchy
 {
     
     
+    
+
+    
     public function setPlayerSire( playerId :int, sireId :int) :void
     {
-        if( playerId < 1) {
+        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
+        
+        if( playerId == sireId) {
+            log.error(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
             return;
         }
+        
+        if( playerId < 1) {
+            log.debug(Constants.DEBUG_MINION + " setPlayerSire(), playerId < 1" );
+            return;
+        }
+        
         
         if( !_playerId2Node.containsKey( playerId) ) {
             _playerId2Node.put( playerId, new Node( playerId ));
@@ -39,43 +52,138 @@ public class MinionHierarchy
         }
         
         var player :Node = _playerId2Node.get( playerId ) as Node;
-        var previousSire :Node = player.parent;
-        var sire :Node = _playerId2Node.get( sireId ) as Node;
+        
+        
+        
+//        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), _playerId2Node.keys=" + _playerId2Node.keys());
+        
+        var sire :Node = getNode( sireId );
         player.parent = sire;
         
-        if( sire != null ) {
-            sire.childrenIds.add( player.hashCode() );
-            if( sire.parent != null && sire.parent == player) {
-                sire.parent = null;
-                player.childrenIds.remove( sire.hashCode() );
-            }
-        }
+        recomputeMinions();
         
-        if( previousSire != null ) {
-            previousSire.childrenIds.remove( player.hashCode() );
-        }
+        var sires :HashSet = getAllSiresAndGrandSires( sireId );
         
-        //Testing: for safety, break all minions.
-        if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
-            log.error("Circle found, removing all minions");
-            //Remove all minions
-            for each( var childId :int in player.childrenIds) {
-                var child :Node = _playerId2Node.get( childId ) as Node;
+        if( sires.contains( playerId )) {
+            log.warning(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), circle found, removeing all children");
+            //Break the children 
+            player.childrenIds.forEach( function( minionId :int) :void {
+                var child :Node = _playerId2Node.get( minionId ) as Node;
                 if( child != null) {
                     child.parent = null;
+                    
                 }
-            }
-            player.childrenIds.clear();
+            });
             
-            if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
-                log.error("Fuck!! Circle found, removed, but still circle...!!!");    
+            sires = getAllSiresAndGrandSires( sireId );
+            if( sires.contains( playerId )) {
+                log.error(Constants.DEBUG_MINION + " DAMMIT, found a loop, removed children, but loop remains WTF, hierarchy=" + toString());
             }
             
         }
         
+//        log.debug(" setting as sire=" + sire);
+        
+//        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), hierarchy, before recompute minions=" + toString());
+//        recomputeMinions();
+        
+//        log.debug("  end hierarchy=" + this);
+        
+        
+        
+//        var previousSire :Node = player.parent;
+//        if( previousSire != null) {
+//            previousSire.parent = null;
+//        }
+        
+        
+        
+//        
+//        if( sire != null ) {
+//            sire.childrenIds.add( player.hashCode() );
+//            if( sire.parent != null && sire.parent == player) {
+//                sire.parent = null;
+//                player.childrenIds.remove( sire.hashCode() );
+//            }
+//        }
+//        
+//        if( previousSire != null ) {
+//            previousSire.childrenIds.remove( player.hashCode() );
+//        }
+//        
+//        //Testing: for safety, break all minions.
+//        if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
+//            log.error("Circle found, removing all minions");
+//            //Remove all minions
+//            for each( var childId :int in player.childrenIds) {
+//                var child :Node = _playerId2Node.get( childId ) as Node;
+//                if( child != null) {
+//                    child.parent = null;
+//                }
+//            }
+//            player.childrenIds.clear();
+//            
+//            if( getAllSiresAndGrandSires( playerId ).contains( playerId ) ) {
+//                log.error("Fuck!! Circle found, removed, but still circle...!!!");    
+//            }
+//            
+//        }
+//        
         
     }
     
+    protected function getNode( playerId :int ) :Node
+    {
+        if( _playerId2Node.containsKey( playerId )) {
+            return _playerId2Node.get( playerId ) as Node;
+        }
+        return null;
+    }
+    
+
+    
+    /**
+    * Given only sire data, recompute the minions
+    */
+    public function recomputeMinions() :void
+    {
+        _playerId2Node.forEach( function( playerId :int, node :Node) :void {
+            node.childrenIds.clear();    
+        });
+        
+        _playerId2Node.forEach( function( playerId :int, node :Node) :void {
+            if( node.parent != null) {
+                node.parent.childrenIds.add( playerId );
+            }   
+        });
+    }
+    
+    protected function getMapOfSiresAndMinions( playerId :int, results :HashMap = null ) :HashMap
+    {
+        if( results == null) {
+            results = new HashMap();
+        }
+        
+        var minions :HashSet = getAllMinionsAndSubminions( playerId );
+        var sires :HashSet = getAllSiresAndGrandSires( playerId );
+        
+        addHashData( minions, results );
+        addHashData( sires, results );
+        
+        results.put( playerId, [getPlayerName( playerId), getSireId(playerId)]);
+        
+        function addHashData( playerData :HashSet, results :HashMap ) :void
+        {
+            playerData.forEach( function( playerIdForSubTree :int ) :void {
+                if( !results.containsKey( playerIdForSubTree )) {
+                    results.put( playerIdForSubTree, [getPlayerName( playerIdForSubTree), getSireId(playerIdForSubTree)]);
+                }
+            });
+        }
+        
+        
+        return results;
+    }
     
     public function getAllMinionsAndSubminions( playerId :int, minions :HashSet = null ) :HashSet
     {
@@ -172,21 +280,33 @@ public class MinionHierarchy
         return false;
     }
 
-    public function toString() :String
+    public function toStringOld() :String
     {
-        var sb :StringBuilder = new StringBuilder();
-        for each( var playerId :int in _playerId2Node.keys()) {
-            
+        log.debug(Constants.DEBUG_MINION + " toString(), playerIds=" + playerIds);
+        var sb :StringBuilder = new StringBuilder(Constants.DEBUG_MINION + "\n MinionHierarchy, playerIds=" + playerIds);
+        for each( var playerId :int in playerIds) {
             var player :Node = _playerId2Node.get( playerId ) as Node;
             sb.append("\n");
-            sb.append("      " + playerId + " " + (_playerId2Name.containsKey(playerId) ? _playerId2Name.get(playerId) : "no key"));
+            sb.append(".      id=" + playerId + ", name= " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no key"));
             sb.append("        sire=" + getSireId( playerId ) );
             if( isHavingMinions( playerId ) ) {
                 sb.append("         minions=" + player.childrenIds.toArray() );
                 sb.append("         subminions=" + getAllMinionsAndSubminions(playerId).toArray());
             }
         }
-        return _playerId2Node.keys().length > 0 ? sb.toString() : "MinionHierarchy empty";
+        return sb.toString();
+        
+    }
+    
+    public function toString() :String
+    {
+        var sb :StringBuilder = new StringBuilder(" MinionHierarchy:");
+        for each( var playerId :int in playerIds) {
+            var player :Node = _playerId2Node.get( playerId ) as Node;
+            sb.append(" (" + playerId + ", " + (isPlayerName(playerId) ? getPlayerName(playerId) : "no name"));
+            sb.append(", " + getSireId( playerId ) + ")");
+        }
+        return sb.toString();
     }
     
     public function fromBytes (bytes :ByteArray) :void
@@ -211,7 +331,7 @@ public class MinionHierarchy
         log.debug("MinionHierarchy compress", "before", bytes.length, "after", compressSize, "%", (compressSize*100/bytes.length));
     }
     
-    public function toBytes () :ByteArray
+    public function toBytesOld () :ByteArray
     {
         var bytes :ByteArray = new ByteArray();
         
@@ -231,101 +351,30 @@ public class MinionHierarchy
         return _playerId2Node.keys();
     }
     
-    /**
-     * The hierarchy listens for important game events and modifies stuff accordingly
-     */
-//    public function serverSideSetup( ctrl :AVRServerGameControl ) :void
+    
+
+    
+
+
+    
+//    protected function loadSireIdFromDB( playerId :int ) :int
 //    {
-//        _ctrl = ctrl;
-//        
-//        _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_JOINED_GAME, playerJoinedGame);
-//        _ctrl.game.addEventListener(AVRGameControlEvent.PLAYER_QUIT_GAME, playerQuitGame);
-//        
-//        
-//        //room_ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
-//    } 
+//        log.debug("loadSireIdFromDB(" + playerId + ")");
+//        var sireId :int = -1;
+//        ServerContext.ctrl.loadOfflinePlayer(playerId, 
+//            function (props :OfflinePlayerPropertyControl) :void {
+//                sireId = int(props.get(Codes.PLAYER_PROP_PREFIX_SIRE));
+//                setPlayerSire( playerId, sireId );
+//                _changedSoUpdateRooms = true;
+//            },
+//            function (failureCause :Object) :void {
+//                log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); ;
+//            });
+//        log.debug(" loadSireIdFromDB(" + playerId + "), sireId=" + sireId);
+//        return sireId;
+//    }
     
-    public function playerEnteredRoom( player :Player, room :Room ) :void
-    {
-        
-        if( player == null || room == null) {
-            log.error("playerEnteredRoom(), player == null || room == null");
-            return;
-        }
-        
-        var avatar :AVRGameAvatar = room.ctrl.getAvatarInfo( player.playerId );
-        if( avatar == null) {
-            log.error("playerEnteredRoom(), avatar == null");
-            return;
-        }
-        
-        var avatarname :String = room.ctrl.getAvatarInfo( player.playerId).name;
-        if( avatarname == null) {
-            log.error("playerEnteredRoom(), playername == null");
-            return;
-        }
-        
-        var isHierarchyAltered :Boolean = false;
-        
-        if(!isPlayer( player.playerId )) {
-            isHierarchyAltered = true;
-        }
-        else if( !_playerId2Name.containsKey( player.playerId) || 
-            _playerId2Name.get( player.playerId) != avatarname ||
-            avatarname != player.name) {
-            isHierarchyAltered = true; 
-        }
-        else if( !isPlayerDataEqual(player) ) {
-            isHierarchyAltered = true;
-        }
-        
-        if( isHierarchyAltered ) {//Something doesn't match.  Update all the data, and propagate
-            //Update names
-            _playerId2Name.put( player.playerId,  avatarname);
-            
-            if( avatarname != player.name) {
-                player.setName( avatarname );
-            };
-            
-//            var playersConnectedBefireAlteringGraph :HashSet = getAllPlayerIdsConnected( player.playerId );
-            
-            //Update hierarchy data
-            setPlayerSire( player.playerId, player.sire );
-            var minionsToAddToServerHierarchy :Array = player.minions;
-            for each( var minionId :int in minionsToAddToServerHierarchy) {
-                setPlayerSire( minionId, player.playerId );
-            }
-            
-            //Copy hierarchy to all rooms
-            var bytes :ByteArray = toBytes();
-            log.info(Constants.DEBUG_MINION + "Updated hierarchy from player, copying to all rooms", "hierarchy",  toString() );
-            VServer.control.doBatch( function() :void {
-                VServer.rooms.forEach( function( roomId :int, room :Room) :void {
-                    log.info(Constants.DEBUG_MINION + "Setting hierarchy into room", "hierarchy",  toString() );
-                    room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, bytes);
-                });
-            });
-        }
-    }
-    
-    protected function isPlayerDataEqual( player :Player ) :Boolean
-    {
-        if( player.sire != getSireId( player.playerId) ) {
-            return false;
-        }
-        var minionsInThisHierarchy :HashSet = getMinionIds( player.playerId );
-        var minionsStoredInPlayerProps :Array = player.minions;
-        if( minionsInThisHierarchy.size() != minionsStoredInPlayerProps.length) {
-            return false;
-        }
-        
-        for each( var minionId :int in minionsStoredInPlayerProps) {
-            if( !minionsInThisHierarchy.contains(minionId)) {
-                return false;
-            }
-        }
-        return true;
-    }
+
     
     protected function getAllPlayerIdsConnected( playerId :int ) :HashSet
     {
@@ -341,17 +390,63 @@ public class MinionHierarchy
         return allConnected;
     }
     
+    public function setPlayerName( playerId :int, name :String) :Boolean
+    {
+        if( name != null && name != "") {
+            _playerId2Name.put( playerId, name );
+            log.debug(Constants.DEBUG_MINION + " setPlayerName()", "playerId", playerId, "name", name);
+            return true;
+        }
+        log.debug(Constants.DEBUG_MINION + " setPlayerName(), FAILED", "playerId", playerId, "name", name);
+        return false;
+    }
+    
+    protected function getPlayerName( playerId :int) :String
+    {
+        return _playerId2Name.get( playerId );
+    }
+    
     
     protected function isPlayer( playerId :int ) :Boolean
     {
         return _playerId2Node.containsKey( playerId );
     }
     
+    protected function isPlayerName( playerId :int ) :Boolean
+    {
+        return _playerId2Name.containsKey( playerId ) && _playerId2Name.get( playerId ) != null && _playerId2Name.get( playerId ) != "";
+    }
+    
+
+    
+
+        
+        //Update the players data who are not in the game right now
+//        for each( var playerId :int in ServerContext.minionHierarchy.playerIds) {
+//            if( getPlayer( playerId ) == null) {//No player, so we delve into the underground database
+//                _vserver.control.loadOfflinePlayer(playerId, 
+//                    function (props :PropertySpaceObject) :void {
+//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_SIRE, ServerContext.minionHierarchy.getSireId( playerId )); 
+//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_MINIONS, ServerContext.minionHierarchy.getMinionIds(playerId).toArray());
+//                    }, 
+//                    function (failureCause :String) :void { 
+//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
+//                    });
+//                
+//            }
+//        }
+        
+        
+        
+//    }
+    
+    
     protected var _playerId2Node :HashMap = new HashMap();
     public var _playerId2Name :HashMap = new HashMap();
     
-    //Only needed server-side.
-    protected var _ctrl :AVRServerGameControl;
+    
+
+
     
     protected static const log :Log = Log.getLog( MinionHierarchy );
 }
@@ -376,6 +471,11 @@ class Node implements Hashable
     public function equals (other :Object) :Boolean
     {
         return (other is Node) && (_hash === (other as Node)._hash);
+    }
+    
+    public function toString() :String
+    {
+        return "Node " + hashCode() + ", sire=" + (parent != null ? parent.hashCode() : "none" ) + ", children=" + childrenIds.toArray();
     }
     
     

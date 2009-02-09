@@ -126,7 +126,10 @@ public class Player
         
         //For testing purposes testing
         if( playerId == 35282) {
-            setLevel( 0, true);
+            setLevel(1, true);
+            setBlood( 0 );
+            setXP( 0 );
+            setTime( 1 )
         }
         
 //        if( !isVampire() ) {//If you are not a vampire, you must be fed upon.
@@ -139,7 +142,7 @@ public class Player
             setBloodBonded([]);
             setBlood( 0 );
             setXP( 0 );
-            setSire( VServer.getSireFromInvitee( _playerId ) );
+            setSire( ServerContext.vserver.getSireFromInvitee( _playerId ) );
             setTime( 1 );//O means no props loaded, 1 means new player
             
         } 
@@ -177,7 +180,7 @@ public class Player
         log.info("Logging in", "playerId", playerId, "blood", blood, "maxBlood",
                  maxBlood, "level", level, "sire", sire, "minions", minions, "time", new Date(time).toTimeString());
             
-            
+        setTargetVisible(false);//Hide the target first of all.
 //        _closestUserData = null;
         
         if (_room != null) {
@@ -232,13 +235,15 @@ public class Player
 
     public function toString () :String
     {
-        return "Player [playerId=" + _playerId + ", roomId=" +
-            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded 
+        return "Player [playerId=" + _playerId
+            + ", name=" + name 
+            + ", roomId=" +
+            (room != null ? room.roomId : "null") + ", level=" + level + ", blood=" + blood + "/" + maxBlood + ", bloodbonds=" + bloodbonded
+            + ", targetId=" + targetId 
             + ", sire=" + sire
             + ", minions=" + minions
             + ", xp=" + xp
             + ", time=" + new Date(time).toTimeString() 
-//            + ", closestUserData=" + closestUserData
             + "]";
     }
 
@@ -430,47 +435,52 @@ public class Player
     // called from Server
     public function handleMessage (name :String, value :Object) :void
     {
-        // handle messages that make (at least some) sense even if we're between rooms
-        log.debug("handleMessage() ", "name", name, "value", value);
-        if( name == Constants.NAMED_EVENT_BLOOD_UP ) {
-            addBlood(20 );
-        }
-        else if( name == Constants.NAMED_EVENT_BLOOD_DOWN ) {
-            damage( 20 );
-//            setBlood( blood - 20 );
-        }
-        else if( name == Constants.NAMED_EVENT_FEED ) {
-            feed(int(value));
-        }
-        else if( name == Constants.NAMED_EVENT_MAKE_SIRE ) {
-            makeSire(int(value));
-        }
-        else if( name == Constants.NAMED_EVENT_MAKE_MINION ) {
-            makeMinion(int(value));
-        }
-        else if( name == Constants.NAMED_EVENT_QUIT ) {
-            var now :Number = new Date().time;
-            setTime( now , true);
-        }
-        
-        else if( value is IGameMessage) {
+        try{
+            // handle messages that make (at least some) sense even if we're between rooms
+            log.debug("handleMessage() ", "name", name, "value", value);
+            if( name == Constants.NAMED_EVENT_BLOOD_UP ) {
+                addBlood(20 );
+            }
+            else if( name == Constants.NAMED_EVENT_BLOOD_DOWN ) {
+                damage( 20 );
+    //            setBlood( blood - 20 );
+            }
+            else if( name == Constants.NAMED_EVENT_FEED ) {
+                feed(int(value));
+            }
+            else if( name == Constants.NAMED_EVENT_MAKE_SIRE ) {
+                makeSire(int(value));
+            }
+            else if( name == Constants.NAMED_EVENT_MAKE_MINION ) {
+                makeMinion(int(value));
+            }
+            else if( name == Constants.NAMED_EVENT_QUIT ) {
+                var now :Number = new Date().time;
+                setTime( now , true);
+            }
             
-            if( value is RequestActionChangeMessage) {
-                handleRequestActionChange( RequestActionChangeMessage(value) );
+            else if( value is IGameMessage) {
+                
+                if( value is RequestActionChangeMessage) {
+                    handleRequestActionChange( RequestActionChangeMessage(value) );
+                }
+                else if( value is BloodBondRequestMessage) {
+                    handleBloodBondRequest( BloodBondRequestMessage(value) );
+                }
+                else if( value is FeedRequestMessage) {
+                    handleFeedRequestMessage( FeedRequestMessage(value) );
+                }
+                else if( value is SuccessfulFeedMessage) {
+                    handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
+                }
+                else {
+                    log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
+                    log.debug("  Classname=" + ClassUtil.getClassName(value) );
+                }
             }
-            else if( value is BloodBondRequestMessage) {
-                handleBloodBondRequest( BloodBondRequestMessage(value) );
-            }
-            else if( value is FeedRequestMessage) {
-                handleFeedRequestMessage( FeedRequestMessage(value) );
-            }
-            else if( value is SuccessfulFeedMessage) {
-                handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
-            }
-            else {
-                log.debug("Cannot handle IGameMessage ", "player", playerId, "type", value );
-                log.debug("  Classname=" + ClassUtil.getClassName(value) );
-            }
+        }
+        catch( err :Error ) {
+            log.error(err.getStackTrace());
         }
         
     }
@@ -480,6 +490,10 @@ public class Player
         var bloodIncrement :Number = Constants.BLOOD_LOSS_FROM_THRALL_OR_NO_FROM_FEED;
         var bloodGained :Number = 0;
         
+        if( e == null) {
+            log.error("handleSuccessfulFeedMessage, but message == null.");
+            return;
+        }
         
         if( !isVampire() || action != Constants.GAME_MODE_FEED || e.eatenPlayerId == 0) {
             log.error("handleSuccessfulFeedMessage, but not a vampire or feeding, or eaten==0.", "SuccessfulFeedMessage", e);
@@ -488,18 +502,18 @@ public class Player
         
         //Different result depending if victim is human (playing the game or not), or vampire.
         if( !room.isPlayer(e.eatenPlayerId)) {//Vampire feeding from a non-player
-            ServerContext._serverLogBroadcast.log("handleSuccessfulFeedMessage " + e);
+            ServerContext.serverLogBroadcast.log("handleSuccessfulFeedMessage " + e);
             bloodGained = bloodIncrement;
             ServerContext.nonPlayers.playerFeedsFromNonPlayer( this, e.eatenPlayerId, bloodGained);
                    
             //Update the room properties that show other players blood         
             setTargetBlood( ServerContext.nonPlayers.bloodAvailableFromNonPlayer( e.eatenPlayerId ) );
             setTargetMaxBlood( Constants.MAX_BLOOD_NONPLAYERS );
-            ServerContext._serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
+            ServerContext.serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
         }
         else {
             
-            var victim :Player = VServer.getPlayer( e.eatenPlayerId );
+            var victim :Player = ServerContext.vserver.getPlayer( e.eatenPlayerId );
             if( victim == null ) {
                 log.error("handleSuccessfulFeedMessage,no victim.", "SuccessfulFeedMessage", e);
                 return;
@@ -555,7 +569,7 @@ public class Player
             addBlood( bloodGained );
             addXP( Constants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodGained);
         }
-        ServerContext._serverLogBroadcast.log("  setTargetVisible(true)" );
+        ServerContext.serverLogBroadcast.log("  setTargetVisible(true)" );
         setTargetVisible(true, true);
     }
     protected function makeSire(targetPlayerId :int ) :void
@@ -563,16 +577,10 @@ public class Player
         log.info("makeSire(" + targetPlayerId + ")");
         ServerContext.minionHierarchy.setPlayerSire( playerId, targetPlayerId);
         
-        setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
-        setSire( ServerContext.minionHierarchy.getSireId( playerId ) ); 
-//        if( ServerContext.minionHierarchy.getSire( targetPlayerId ) == playerId) {
-//            ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, -1);    
-//        }
-
-        VServer.updateHierarchyInAllRooms();
-//        room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
-//        sendChat( ServerContext.minionHierarchy.toString() );
+        log.debug(" Setting minions=" + ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
+        setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
         
+        ServerContext.minionHierarchy.updateIntoRoomProps();
     }
     
     protected function makeMinion(targetPlayerId :int ) :void
@@ -580,17 +588,14 @@ public class Player
         log.info("makeMinion(" + targetPlayerId + ")");
         ServerContext.minionHierarchy.setPlayerSire( targetPlayerId, playerId);
         
-        setMinions( ServerContext.minionHierarchy.getMinionIds( playerId ).toArray() );
         setSire( ServerContext.minionHierarchy.getSireId( playerId ) );
         
-        VServer.updateHierarchyInAllRooms();
-//        room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes() );
-//        sendChat( ServerContext.minionHierarchy.toString() );
+        ServerContext.minionHierarchy.updateIntoRoomProps();
     }
     
     protected function feed(targetPlayerId :int ) :void
     {
-        var eaten :Player = VServer.getPlayer( targetPlayerId );
+        var eaten :Player = ServerContext.vserver.getPlayer( targetPlayerId );
         if( eaten == null) {
             log.warning("feed( " + targetPlayerId + " ), player is null");
             return;
@@ -613,7 +618,7 @@ public class Player
         }
         log.debug("Sucessful feed.");
         addBlood( bloodEaten );
-        VServer.playerGainedBlood( this, bloodEaten, targetPlayerId);
+        ServerContext.vserver.playerGainedBlood( this, bloodEaten, targetPlayerId);
         eaten.removeBlood( bloodEaten );
     }
     
@@ -622,7 +627,7 @@ public class Player
     */
     protected function handleFeedRequestMessage( e :FeedRequestMessage) :void
     {
-        var targetPlayer :Player = VServer.getPlayer( e.targetPlayer );
+        var targetPlayer :Player = ServerContext.vserver.getPlayer( e.targetPlayer );
         var isTargetVictim :Boolean = e.isTargetPlayerTheVictim;
         
         
@@ -635,7 +640,7 @@ public class Player
     */
     protected function handleBloodBondRequest( e :BloodBondRequestMessage) :void
     {
-        var targetPlayer :Player = VServer.getPlayer( e.targetPlayer );
+        var targetPlayer :Player = ServerContext.vserver.getPlayer( e.targetPlayer );
         
         if( targetPlayer == null) {
             log.debug("Cannot perform blood bond request unless both players are in the same room");
@@ -650,7 +655,7 @@ public class Player
             else {
                 log.error("You can't add a blood bond to an offline ");
                 
-//                VServer.control.loadOfflinePlayer(e.targetPlayer, 
+//                ServerContext.vserver.control.loadOfflinePlayer(e.targetPlayer, 
 //                    function (props :PropertySpaceObject) :void {
 //                        
 //                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
@@ -675,7 +680,7 @@ public class Player
             }
             else {
                 log.error("You can't remove a blood bond to an offline ");
-//                VServer.control.loadOfflinePlayer(e.targetPlayer, 
+//                ServerContext.vserver.control.loadOfflinePlayer(e.targetPlayer, 
 //                    function (props :PropertySpaceObject) :void {
 //                        
 //                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
@@ -757,24 +762,39 @@ public class Player
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
     {
         
-        log.info("\nPlayer entered room {{{", "player", toString());
-        log.debug("hierarchy=" + ServerContext.minionHierarchy);
+        log.info(Constants.DEBUG_MINION + " Player entered room {{{", "player", toString());
+        log.debug(Constants.DEBUG_MINION + " hierarchy=" + ServerContext.minionHierarchy);
         
-        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
-        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
+//        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, already on the database=" + toString());
+//        log.debug( Constants.DEBUG_MINION + " Player enteredRoom, hierarch=" + ServerContext.minionHierarchy);
         
-        var thisPlayer :Player = this;
-        _room = VServer.getRoom(int(evt.value));
-        VServer.control.doBatch(function () :void {
-            _room.playerEntered(thisPlayer);
-            ServerContext.minionHierarchy.playerEnteredRoom( this, _room);
-            updateAvatarState();
-        });
+            var thisPlayer :Player = this;
+            _room = ServerContext.vserver.getRoom(int(evt.value));
+            ServerContext.vserver.control.doBatch(function () :void {
+                try {
+                    if( _room != null) {
+//                        var minionsBytes :ByteArray = ServerContext.minionHierarchy.toBytes();
+//                        ServerContext.serverLogBroadcast.log("enteredRoom, sending hierarchy=" + ServerContext.minionHierarchy);
+//                        _room.ctrl.props.set( Codes.ROOM_PROP_MINION_HIERARCHY, minionsBytes ); 
+                           
+                        _room.playerEntered(thisPlayer);
+                        ServerContext.minionHierarchy.playerEnteredRoom( thisPlayer, _room);
+                        updateAvatarState();
+                    }
+                    else {
+                        log.error("WTF, enteredRoom called, but room == null???");
+                    }
+                }
+                catch( err:Error)
+                {
+                    log.error(err.getStackTrace());
+                }
+            });
 
-        log.debug("after _room.playerEntered");
-        log.debug("hierarchy=" + ServerContext.minionHierarchy);
-        log.info("player" + toString());
-        log.info("}}}");
+        log.debug(Constants.DEBUG_MINION + "after _room.playerEntered");
+        log.debug(Constants.DEBUG_MINION + "hierarchy=" + ServerContext.minionHierarchy);
+//        log.info("player" + toString());
+//        log.info("}}}");
         
     }
     
@@ -782,99 +802,108 @@ public class Player
     {
         //Update the target information. Propagate to the client.
         if( e.name == Constants.SIGNAL_CLOSEST_ENTITY) {
-            var signalArray :Array = e.value as Array;
-            if( signalArray != null && signalArray.length >= 2 && signalArray[0] == playerId) {
-                log.debug(name + " handleSignalReceived() " + e);
+            handleSignalClosestEntityChanged( e );
+        }
+        else if( e.name == Constants.SIGNAL_TARGET_CHATTED) {
+            handleSignalTargetChatted( e );
+        }
+    }
+    
+    protected function handleSignalClosestEntityChanged( e :AVRGameRoomEvent) :void
+    {
+        var signalArray :Array = e.value as Array;
+        if( signalArray != null && signalArray.length >= 2 && signalArray[0] == playerId) {
+            log.debug(name + " handleSignalReceived() " + e);
+            
+            var closestUserId :int = int(signalArray[1]);
+            var closestUserName :String = String(signalArray[2]);
+            var closestUserLocation :Array = signalArray[3] as Array;
+            var closestUserHeight :Number = Number(signalArray[4]);
+            var targetLocation :Array = signalArray[5] as Array;
+            if( closestUserId > 0 ) {
+                //Only change target if this player is not involved in an action 
+                //that requires maintaining the current target.
                 
-                var closestUserId :int = int(signalArray[1]);
-                var closestUserName :String = String(signalArray[2]);
-                var closestUserLocation :Array = signalArray[3] as Array;
-                var closestUserHeight :Number = Number(signalArray[4]);
-                var targetLocation :Array = signalArray[5] as Array;
-                if( closestUserId > 0 ) {
-                    //Only change target if this player is not involved in an action 
-                    //that requires maintaining the current target.
+                switch( action ) {
                     
-                    switch( action ) {
-                        
-                        case Constants.GAME_MODE_FEED:
-                        case Constants.GAME_MODE_BLOODBOND:
-                        case Constants.GAME_MODE_EAT_ME:
-                            //Update the target data if our target has moved, but don't change 
-                            //our target
-                            if( closestUserId == targetId) {
-                                setTargetLocation( closestUserLocation );
-                                setTargetHeight( closestUserHeight );
-                                setTargetName( closestUserName );
-                            }
-                            else {
-                                setTargetLocation( targetLocation );
-                            }
-                            setTargetVisible(true, true);
-                            break;
-                            
-                        default://Otherwise, change our target
-                            setTargetId( closestUserId );
-                            if( room != null) {
-                                room.ctrl.sendSignal( Constants.SIGNAL_PLAYER_TARGET, [playerId, targetId]);
-                            }
+                    case Constants.GAME_MODE_FEED:
+                    case Constants.GAME_MODE_BLOODBOND:
+                    case Constants.GAME_MODE_EAT_ME:
+                        //Update the target data if our target has moved, but don't change 
+                        //our target
+                        if( closestUserId == targetId) {
                             setTargetLocation( closestUserLocation );
                             setTargetHeight( closestUserHeight );
                             setTargetName( closestUserName );
-                            
-                            var targetsBlood :Number;
-                            var targetsMaxBlood :Number;
-                            if( room.isPlayer( closestUserId )) {
-                                var targetPlayer :Player = VServer.getPlayer(closestUserId);
-                                if( targetPlayer != null) {
-                                    targetsBlood = targetPlayer.blood;
-                                    targetsMaxBlood = targetPlayer.maxBlood;
-                                }
-                                else {
-                                    log.error("handleSignalReceived(), new target=" + closestUserId + ", should be a player, but player from server is null");
-                                }
-                            }
-                            else {//Target is non-player
-                                targetsBlood = ServerContext.nonPlayers.bloodAvailableFromNonPlayer( closestUserId );
-                                targetsMaxBlood = Constants.MAX_BLOOD_NONPLAYERS;
-                            }
-                            
-                            setTargetBlood( targetsBlood );
-                            setTargetMaxBlood( targetsMaxBlood );
                             setTargetVisible(true, true);
                             break;
-                    }
+                        }
+                        else {
+                            //Continue to below
+                        }
+                        
+                    default://Otherwise, change our target
+                        setTargetId( closestUserId );
+                        if( room != null) {
+                            room.ctrl.sendSignal( Constants.SIGNAL_PLAYER_TARGET, [playerId, targetId]);
+                        }
+                        setTargetLocation( closestUserLocation );
+                        setTargetHeight( closestUserHeight );
+                        setTargetName( closestUserName );
+                        
+                        var targetsBlood :Number;
+                        var targetsMaxBlood :Number;
+                        if( room.isPlayer( closestUserId )) {
+                            var targetPlayer :Player = ServerContext.vserver.getPlayer(closestUserId);
+                            if( targetPlayer != null) {
+                                targetsBlood = targetPlayer.blood;
+                                targetsMaxBlood = targetPlayer.maxBlood;
+                            }
+                            else {
+                                log.error("handleSignalReceived(), new target=" + closestUserId + ", should be a player, but player from server is null");
+                            }
+                        }
+                        else {//Target is non-player
+                            targetsBlood = ServerContext.nonPlayers.bloodAvailableFromNonPlayer( closestUserId );
+                            targetsMaxBlood = Constants.MAX_BLOOD_NONPLAYERS;
+                        }
+                        
+                        setTargetBlood( targetsBlood );
+                        setTargetMaxBlood( targetsMaxBlood );
+                        setTargetVisible(true, true);
+                        break;
                 }
-                else {//There is no-one closest.  That means remove the target
-                    setTargetVisible(false, true);
-                }
+            }
+            else {//There is no-one closest.  That means remove the target
+                setTargetVisible(false, true);
             }
         }
-        else if( e.name == Constants.SIGNAL_TARGET_CHATTED) {
-            var fromPlayerId :int = int(e.value);
-            ServerContext._serverLogBroadcast.log("Chat received from " + fromPlayerId); 
-            if( fromPlayerId == playerId && _targetId != 0 && !room.isPlayer(_targetId)) {
-                var time :int = getTimer();
-                var aMinuteAgo :int = time - 60000;
-                
-                _chatTimesWithTarget.push( time );
-                
-                _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
-                    return chattime > aMinuteAgo;
-                });
-                
-                ServerContext._serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
-                
-                if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_MINUTE) {
-                    _chatTimesWithTarget.splice(0);
-                    ServerContext._serverLogBroadcast.log("  Chat, send feed message ");
-                    handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
-                }
-            }
-            else {
-                ServerContext._serverLogBroadcast.log("  Ignored for some reason. ");
-            }
+    }
+    
+    protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
+    {
+        var fromPlayerId :int = int(e.value);
+        ServerContext.serverLogBroadcast.log("Chat received from " + fromPlayerId); 
+        if( fromPlayerId == playerId && targetId != 0 && !room.isPlayer(targetId)) {
+            var time :int = getTimer();
+            var aMinuteAgo :int = time - 60000;
             
+            _chatTimesWithTarget.push( time );
+            
+            _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
+                return chattime > aMinuteAgo;
+            });
+            
+            ServerContext.serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
+            
+            if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_MINUTE) {
+                _chatTimesWithTarget.splice(0);
+                ServerContext.serverLogBroadcast.log("  Chat, send feed message ");
+                handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
+            }
+        }
+        else {
+            ServerContext.serverLogBroadcast.log("  Ignored for some reason. fromPlayerId=" + fromPlayerId + ", targetId=" + targetId + ", room.isPlayer(targetId)=" + room.isPlayer(targetId));
         }
     }
     
@@ -887,17 +916,20 @@ public class Player
     protected function leftRoom (evt :AVRGamePlayerEvent) :void
     {
         var thisPlayer :Player = this;
-        VServer.control.doBatch(function () :void {
-            _room.playerLeft(thisPlayer);
-        });
-        if (_room != null) {
-            if (_room.roomId == evt.value) {
-                _room = null;
-            } else {
-                log.warning("The room we're supposedly leaving is not the one we think we're in",
-                            "ourRoomId", _room.roomId, "eventRoomId", evt.value);
+        ServerContext.vserver.control.doBatch(function () :void {
+            if (_room != null) {
+                
+                _room.playerLeft(thisPlayer);
+                
+                if (_room.roomId == evt.value) {
+                    _room = null;
+                } else {
+                    log.warning("The room we're supposedly leaving is not the one we think we're in",
+                                "ourRoomId", _room.roomId, "eventRoomId", evt.value);
+                }
             }
-        }
+            
+        });
     }
 
     protected function handleDebugRequest (request :String) :void
@@ -1016,15 +1048,12 @@ public class Player
             dict = new Dictionary(); 
         }
 
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level && !isNaN(level)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
         }
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD] != maxBlood) {
-//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MAX_BLOOD, maxBlood);
-//        }
         
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION] != action) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
@@ -1034,26 +1063,12 @@ public class Player
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
         }
         
-//        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS], minions )) {
-//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_MINIONS, minions);
-//        }
-        
-//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE] != sire) {
-//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_SIRE, sire);
-//        }
-        
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time) {
-            log.info("Setting into room props", "time", new Date(time).toTimeString());
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time && !isNaN(time)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE, time);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP] != xp && !isNaN(xp)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP, xp);
         }
-        
-//        if (!ArrayUtil.equals(dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USERID], closestUserData)) {
-//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CLOSEST_USERID, closestUserData);
-//        }
-//        
         
         //Target and closest user properties
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_ID] != targetId) {
@@ -1062,16 +1077,16 @@ public class Player
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME] != targetName) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME, targetName);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT] != targetHeight) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT] != targetHeight && !isNaN(targetHeight)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_HEIGHT, targetHeight);
         }
         if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION], targetLocation )) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION, targetLocation);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD] != targetBlood) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD] != targetBlood && !isNaN(targetBlood)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD, targetBlood);
         }
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD] != targetMaxBlood) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD] != targetMaxBlood && !isNaN(targetMaxBlood)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD, targetMaxBlood);
         }
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE] != isTargetVisible) {
@@ -1142,6 +1157,11 @@ public class Player
         // update our runtime state
         if (!force && id == _targetId) {
             return;
+        }
+        
+        //If we have a new target, reset the chatting record.
+        if( _targetId != id) {
+            _chatTimesWithTarget.splice(0);
         }
         _targetId = id;
         
@@ -1474,7 +1494,7 @@ public class Player
                 setTargetMaxBlood( Constants.MAX_BLOOD_NONPLAYERS );
             }
             else {
-                var targetPlayer :Player = VServer.getPlayer( targetId );
+                var targetPlayer :Player = ServerContext.vserver.getPlayer( targetId );
                 if( targetPlayer != null ) {
                     setTargetBlood( targetPlayer.blood );
                     setTargetMaxBlood( targetPlayer.maxBlood );

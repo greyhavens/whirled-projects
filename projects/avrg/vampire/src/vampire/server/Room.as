@@ -84,22 +84,9 @@ public class Room
         
         var playername :String = _ctrl.getAvatarInfo( player.playerId) != null ? _ctrl.getAvatarInfo( player.playerId).name : "" + player.playerId;
         
-        log.info("Setting " + playername + " props into room");
+        log.info("Setting " + playername + " props into room, player=" + player);
         player.setIntoRoomProps( this );
 
-        //Broadcast the players in the room
-//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
-        
-        
-        
-        // broadcast the arriving player's data using room properties
-//        var dict :Dictionary = new Dictionary();
-//        dict[Codes.IX_PLAYER_CUR_HEALTH] = player.health;
-//        dict[Codes.IX_PLAYER_MAX_HEALTH] = player.maxHealth;
-//        dict[Codes.IX_PLAYER_LEVEL] = player.level;
-//        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, dict, true);
-
-        // see if there's an undefeated ghost here, else make a new one
     }
 
     public function playerLeft (player :Player) :void
@@ -116,7 +103,7 @@ public class Room
         }
         
         //Broadcast the players in the room
-        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
+//        _ctrl.sendSignal(Constants.ROOM_SIGNAL_ENTITYID_REPONSE, _players.toArray().map( function( p :Player) :int { return p.playerId}));
         
 
 //        _ctrl.props.set(Codes.DICT_PFX_PLAYER + player.playerId, null, true);
@@ -213,7 +200,7 @@ public class Room
         }
 
         
-        ServerContext._serverLogBroadcast.log("Updating player room props=" + player);
+        ServerContext.serverLogBroadcast.log("Updating player room props=" + player);
         
 //        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + player.playerId;
 //        _ctrl.props.set(key, player.playerState.toBytes()); 
@@ -250,22 +237,22 @@ public class Room
 //        _minigames.clear();
     }
 
-    internal function setState (state :String) :void
-    {
-        if (_ctrl == null) {
-            log.warning("Null room control", "action", "state set", "state", state);
-            return;
-        }
-
-//        _state = state;
+//    internal function setState (state :String) :void
+//    {
+//        if (_ctrl == null) {
+//            log.warning("Null room control", "action", "state set", "state", state);
+//            return;
+//        }
 //
-//        _ctrl.props.set(Codes.PROP_STATE, state, true);
-//
-//        _players.forEach(function (player :Player) :void {
-//            player.roomStateChanged();
-//        });
-        log.debug("Room state set", "roomId", this.roomId, "state", state);
-    }
+////        _state = state;
+////
+////        _ctrl.props.set(Codes.PROP_STATE, state, true);
+////
+////        _players.forEach(function (player :Player) :void {
+////            player.roomStateChanged();
+////        });
+//        log.debug("Room state set", "roomId", this.roomId, "state", state);
+//    }
 
     protected function _tick (dt :Number) :void
     {
@@ -275,15 +262,15 @@ public class Room
     protected function maybeLoadControl () :void
     {
         if (_ctrl == null) {
-            _ctrl = VServer.control.getRoom(_roomId);
+            _ctrl = ServerContext.ctrl.getRoom(_roomId);
             
             if( _ctrl == null ) {
                 log.warning("maybeLoadControl(), but RoomSubControl is still null!!!");
             }
 
             // export the room state to room properties
-            log.info("Starting room, setting hierarchy in props=" + ServerContext.minionHierarchy);
-            _ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes());
+//            log.info("Starting room, setting hierarchy in props=" + ServerContext.minionHierarchy);
+//            _ctrl.props.set(Codes.ROOM_PROP_MINION_HIERARCHY, ServerContext.minionHierarchy.toBytes());
 //            log.debug("Export my state to new control", "state", _state);
 
             // if there's a ghost in here, re-export it too
@@ -309,6 +296,7 @@ public class Room
             _ctrl.addEventListener(AVRGameRoomEvent.ROOM_UNLOADED, handleUnload);
             
             _ctrl.addEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
+            
         }
     }
     
@@ -318,6 +306,11 @@ public class Room
         _players.forEach( function(p :Player) :void {
            p.handleSignalReceived( e ); 
         });
+    }
+    
+    public function get players() :HashSet
+    {
+        return _players;
     }
 
     protected var _roomId :int;
