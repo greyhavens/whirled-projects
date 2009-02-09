@@ -14,17 +14,20 @@ public class Cell extends CollidableObj
     public static const STATE_BIRTH :int = 0;
     public static const STATE_NORMAL :int = 1;
 
+    public static function destroyCells (cellType :int = -1) :void
+    {
+        GameCtx.netObjDb.destroyObjectsInGroup(getGroupName(cellType));
+    }
+
     public static function getCellCount (cellType :int = -1) :int
     {
-        var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        return GameCtx.netObjDb.getObjectRefsInGroup(groupName).length;
+        return GameCtx.netObjDb.getObjectRefsInGroup(getGroupName(cellType)).length;
     }
 
     public static function getCellCollision (obj :CollidableObj, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
-        var groupName :String = (cellType == -1 ? "Cell" : "Cell_" + cellType);
-        var cells :Array = GameCtx.netObjDb.getObjectRefsInGroup(groupName);
+        var cells :Array = GameCtx.netObjDb.getObjectRefsInGroup(getGroupName(cellType));
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
@@ -146,8 +149,8 @@ public class Cell extends CollidableObj
     override public function getObjectGroup (groupNum :int) :String
     {
         switch (groupNum) {
-        case 0:     return "Cell_" + _type;
-        case 1:     return "Cell";
+        case 0:     return getGroupName(_type);
+        case 1:     return getGroupName(-1);
         default:    return super.getObjectGroup(groupNum - 2);
         }
     }
@@ -196,6 +199,11 @@ public class Cell extends CollidableObj
     protected function get isFollowing () :Boolean
     {
         return !_followObj.isNull;
+    }
+
+    protected static function getGroupName (cellType :int) :String
+    {
+        return (cellType < 0 ? "Cell" : "Cell_" + cellType);
     }
 
     protected var _type :int;

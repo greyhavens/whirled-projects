@@ -86,7 +86,7 @@ public class CellBurst extends CollidableObj
             }
 
             if (collidesWith(GameCtx.prey)) {
-                // TODO: clear board
+                Cell.destroyCells();
             }
 
         } else if (_state == STATE_UNBURST) {
