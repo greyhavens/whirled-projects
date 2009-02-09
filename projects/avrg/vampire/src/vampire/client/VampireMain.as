@@ -15,6 +15,7 @@ import flash.events.MouseEvent;
 
 import vampire.data.Constants;
 import vampire.data.SharedPlayerStateClient;
+import vampire.net.MessageManager;
 import vampire.server.AVRGAgentLogTarget;
 
 [SWF(width="700", height="500")]
@@ -25,7 +26,7 @@ public class VampireMain extends Sprite
         
         
         Log.setLevel("com.threerings", Log.OFF);
-        Log.setLevel("vampire.client", Log.ERROR);
+        Log.setLevel("vampire.client", Log.DEBUG);
         
         trace("VampireMain()");
         /* Register mode classes so that they can be instatiated just by name*/
@@ -42,7 +43,7 @@ public class VampireMain extends Sprite
     }
     
     
-    protected function maybeShowIntro () :void
+    protected function beginGame () :void
     {
         if (_addedToStage && _resourcesLoaded) {
             
@@ -57,9 +58,11 @@ public class VampireMain extends Sprite
                 return;
             }
             
+            
+            ClientContext.msg = new MessageManager( ClientContext.gameCtrl );
             ClientContext.ourPlayerId = ClientContext.gameCtrl.player.getPlayerId();
             
-            var controller :VampireController = new VampireController(this);
+            ClientContext.controller = new VampireController(this);
             
             ClientContext.model = new GameModel();
             
@@ -71,7 +74,21 @@ public class VampireMain extends Sprite
             var config :Config = new Config();
             config.hostSprite = gameSprite;
             ClientContext.game = new SimpleGame( config );
-            ClientContext.game.ctx.mainLoop.pushMode( new IntroMode() );
+            
+            ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
+            
+            if( ClientContext.model.isNewPlayer() ) {
+                ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
+            }
+            
+            EventHandlers.registerListener( ClientContext.gameCtrl.player, 
+                MessageReceivedEvent.MESSAGE_RECEIVED, 
+                function( e :MessageReceivedEvent) :void {
+                    if( e.name == Constants.NAMED_EVENT_CHAT) {
+                        ClientContext.gameCtrl.local.feedback( e.value.toString() );
+                    }    
+                });
+            
             ClientContext.game.run();
             trace("  main loop");
             
@@ -87,7 +104,7 @@ public class VampireMain extends Sprite
     protected function handleResourcesLoaded () :void
     {
         _resourcesLoaded = true;
-        this.maybeShowIntro();
+        this.beginGame();
     }
 
     protected function handleResourceLoadError (err :String) :void
@@ -101,7 +118,7 @@ public class VampireMain extends Sprite
 
         _addedToStage = true;
         
-        this.maybeShowIntro();
+        this.beginGame();
     }
 
     protected function handleUnload (event :Event) :void
@@ -109,8 +126,7 @@ public class VampireMain extends Sprite
         log.info("Removed from stage - Unloading...");
 
         EventHandlers.freeAllHandlers();
-//        ClientContext.model.destroy();
-        ClientContext.model.destroy();
+        ClientContext.model.shutdown();
         ClientContext.game.shutdown();
         
         removeEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
@@ -129,22 +145,23 @@ public class VampireMain extends Sprite
         graphics.drawRect(0, 0, 700, 500);
         graphics.endFill();
         
-        addEventListener( MouseEvent.MOUSE_MOVE, mouseMove);
+        EventHandlers.registerListener(this, MouseEvent.MOUSE_MOVE, mouseMove);
+        
     }
     
     protected function setupTempEventNotifier() :void
     {
-        EventHandlers.registerListener( ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED, function( e :AVRGameRoomEvent) :void 
-                                { 
-                                    trace("!Room dispatching: " + AVRGameRoomEvent.PLAYER_ENTERED);
-                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( int(e.value)));  
-                                } );
-        EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED , function(...ignored) :void { trace("!Room dispatching: " + MessageReceivedEvent.MESSAGE_RECEIVED );} );
-        EventHandlers.registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM , function( e :AVRGamePlayerEvent) :void 
-                                { 
-                                    trace("!Player dispatching: " + AVRGamePlayerEvent.ENTERED_ROOM );
-                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( e.playerId ));
-                                });
+//        EventHandlers.registerListener( ClientContext.gameCtrl.room, AVRGameRoomEvent.PLAYER_ENTERED, function( e :AVRGameRoomEvent) :void 
+//                                { 
+//                                    trace("!Room dispatching: " + AVRGameRoomEvent.PLAYER_ENTERED);
+//                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( int(e.value)));  
+//                                } );
+//        EventHandlers.registerListener( ClientContext.gameCtrl.game, MessageReceivedEvent.MESSAGE_RECEIVED , function(...ignored) :void { trace("!Room dispatching: " + MessageReceivedEvent.MESSAGE_RECEIVED );} );
+//        EventHandlers.registerListener( ClientContext.gameCtrl.player, AVRGamePlayerEvent.ENTERED_ROOM , function( e :AVRGamePlayerEvent) :void 
+//                                { 
+//                                    trace("!Player dispatching: " + AVRGamePlayerEvent.ENTERED_ROOM );
+//                                    trace("   Player stats: " + SharedPlayerStateClient.toStringForPlayer( e.playerId ));
+//                                });
     }
     
     protected function mouseMove( e :MouseEvent ) :void
