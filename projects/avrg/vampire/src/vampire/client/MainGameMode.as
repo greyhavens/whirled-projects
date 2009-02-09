@@ -71,9 +71,9 @@ package vampire.client
             var m :AppMode;
             
             switch( action ) {
-                case Constants.GAME_MODE_BLOODBOND:
-                     m = new BloodBondMode();
-                     break;
+//                case Constants.GAME_MODE_BLOODBOND:
+//                     m = new BloodBondMode();
+//                     break;
                  
                  case Constants.GAME_MODE_FEED:
                      m = new FeedMode();
@@ -87,7 +87,7 @@ package vampire.client
                      m = new FightMode();
                      break;
                      
-                 case Constants.GAME_MODE_HIERARCHY:
+                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
                      m = new HierarchyMode();
                      break;
                      

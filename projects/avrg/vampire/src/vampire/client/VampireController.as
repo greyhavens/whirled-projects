@@ -52,8 +52,8 @@ public class VampireController extends Controller
 //        trace("handleSwitchMode, ClientContext.model.action=" + ClientContext.model.action + ", mode=" + mode);
 //        trace("handleSwitchMode, ClientContext.model.action=" + (ClientContext.model.action == null)); 
         switch(ClientContext.model.action) {
-            case Constants.GAME_MODE_HIERARCHY:
-            case Constants.GAME_MODE_BLOODBOND:
+            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+//            case Constants.GAME_MODE_BLOODBOND:
             case Constants.GAME_MODE_NOTHING:
             case null:
                 ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
@@ -72,8 +72,8 @@ public class VampireController extends Controller
     public function handleCloseMode( actionmode :BaseVampireMode) :void
     {
         switch(ClientContext.model.action) {
-            case Constants.GAME_MODE_HIERARCHY:
-            case Constants.GAME_MODE_BLOODBOND:
+            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+//            case Constants.GAME_MODE_BLOODBOND:
             case Constants.GAME_MODE_NOTHING:
             case null:
                 ClientContext.model.dispatchEvent( new ChangeActionEvent( Constants.GAME_MODE_NOTHING ) );
@@ -142,6 +142,7 @@ public class VampireController extends Controller
     
     public function handleShowIntro() :void
     {
+        trace("handleShowIntro()");
         if( ClientContext.game.ctx.mainLoop.topMode !== new IntroHelpMode() ) {
             ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode());
         }

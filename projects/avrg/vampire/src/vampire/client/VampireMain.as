@@ -2,11 +2,10 @@ package vampire.client {
 import com.threerings.util.Log;
 import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGameControl;
-import com.whirled.avrg.AVRGamePlayerEvent;
-import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.Config;
 import com.whirled.contrib.simplegame.SimpleGame;
+import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.Sprite;
@@ -14,7 +13,6 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import vampire.data.Constants;
-import vampire.data.SharedPlayerStateClient;
 import vampire.net.MessageManager;
 import vampire.server.AVRGAgentLogTarget;
 
@@ -39,11 +37,37 @@ public class VampireMain extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, handleAdded);
         addEventListener(Event.REMOVED_FROM_STAGE, handleUnload);
         
-        _resourcesLoaded = true;
+        
+        // instantiate MainLoop singleton, and load its resources.
+        var gameSprite :Sprite = new Sprite();
+        addChild( gameSprite );
+        var config :Config = new Config();
+        config.hostSprite = gameSprite;
+        ClientContext.game = new SimpleGame( config );
+        
+        loadResources();
+            
+//        _resourcesLoaded = false;
+    }
+    
+    protected function loadResources () :void
+    {
+        var rm :ResourceManager = ClientContext.game.ctx.rsrcs;
+
+        rm.queueResourceLoad("swf",   "HUD",         { embeddedClass: SWF_HUD });
+
+        rm.loadQueuedResources(
+            function () :void {
+                _resourcesLoaded = true;
+                maybeStartGame();
+            },
+            function (err :String) :void {
+                log.error("Error loading resources: " + err);
+            });
     }
     
     
-    protected function beginGame () :void
+    protected function maybeStartGame () :void
     {
         if (_addedToStage && _resourcesLoaded) {
             
@@ -65,22 +89,21 @@ public class VampireMain extends Sprite
             ClientContext.controller = new VampireController(this);
             
             ClientContext.model = new GameModel();
-            
             ClientContext.model.setup();
             
-            // instantiate MainLoop singleton
-            var gameSprite :Sprite = new Sprite();
-            addChild( gameSprite );
-            var config :Config = new Config();
-            config.hostSprite = gameSprite;
-            ClientContext.game = new SimpleGame( config );
             
+            //Push the main game mode
             ClientContext.game.ctx.mainLoop.pushMode( new MainGameMode() );
             
+            //If this player hasn't played before, automatically show the help.
             if( ClientContext.model.isNewPlayer() ) {
                 ClientContext.game.ctx.mainLoop.pushMode( new IntroHelpMode() );
             }
             
+            ClientContext.game.run();
+            
+            
+            //Show chat events
             EventHandlers.registerListener( ClientContext.gameCtrl.player, 
                 MessageReceivedEvent.MESSAGE_RECEIVED, 
                 function( e :MessageReceivedEvent) :void {
@@ -89,10 +112,7 @@ public class VampireMain extends Sprite
                     }    
                 });
             
-            ClientContext.game.run();
-            trace("  main loop");
-            
-//            setupTempEventNotifier();
+           
             
 //            addChild( new VProbe(ClientContext.gameCtrl) );
         
@@ -104,7 +124,7 @@ public class VampireMain extends Sprite
     protected function handleResourcesLoaded () :void
     {
         _resourcesLoaded = true;
-        this.beginGame();
+        maybeStartGame();
     }
 
     protected function handleResourceLoadError (err :String) :void
@@ -115,10 +135,8 @@ public class VampireMain extends Sprite
     protected function handleAdded (event :Event) :void
     {
         log.info("Added to stage: Initializing...");
-
         _addedToStage = true;
-        
-        this.beginGame();
+        maybeStartGame();
     }
 
     protected function handleUnload (event :Event) :void
@@ -183,10 +201,13 @@ public class VampireMain extends Sprite
     }
     
 
-    protected var _addedToStage :Boolean;
-    protected var _resourcesLoaded :Boolean;
+    protected var _addedToStage :Boolean = false;
+    protected var _resourcesLoaded :Boolean = false;
 
     protected static var log :Log = Log.getLog(VampireMain);
+    
+    [Embed(source="../../../rsrc/HUD.swf", mimeType="application/octet-stream")]
+    protected static const SWF_HUD :Class;
     
 }
 
