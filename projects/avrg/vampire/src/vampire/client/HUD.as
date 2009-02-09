@@ -47,7 +47,7 @@ public class HUD extends SceneObject
         
         log.debug("Initializing HUD");
         
-        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
+//        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         
 //        updateOurPlayerState();
 //        if( ClientContext.model.isState ) {
@@ -106,7 +106,7 @@ public class HUD extends SceneObject
     {
         //Check if it is non-player properties changed??
         log.debug("propChanged", "e", e);
-        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
+//        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
         if( !isNaN(playerIdUpdated) && playerIdUpdated == ClientContext.ourPlayerId) {
@@ -121,6 +121,7 @@ public class HUD extends SceneObject
     protected function elementChanged (e :ElementChangedEvent) :void
     {
         //Check if it is non-player properties changed??
+//        log.debug("elementChanged", "e", e);
         log.debug("elementChanged", "e", e);
 //        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
@@ -149,10 +150,10 @@ public class HUD extends SceneObject
                     showTime( ClientContext.ourPlayerId );
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_DISPLAY_VISIBLE
-//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
-//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION
-//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
-//                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_NAME
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_LOCATION
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_BLOOD
+                         || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_TARGET_MAXBLOOD
                 ) {
                     showTarget( ClientContext.ourPlayerId );
                 }
@@ -388,6 +389,7 @@ public class HUD extends SceneObject
     }
     protected function showTarget( playerId :int ) :void
     {
+//        trace("HUD showTarget()");
         _targetSprite.visible = false;
         
         
