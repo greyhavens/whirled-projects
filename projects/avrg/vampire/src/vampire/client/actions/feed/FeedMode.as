@@ -31,6 +31,19 @@ public class FeedMode extends BaseVampireMode
         loseBloodButton.addEventListener( MouseEvent.CLICK, loseBlood);
         modeSprite.addChild( loseBloodButton );
         
+        var addLevelButton :SimpleTextButton = new SimpleTextButton( "+Level" );
+        addLevelButton.x = getBloodButton.x + 100;
+        addLevelButton.y = getBloodButton.y
+        addLevelButton.addEventListener( MouseEvent.CLICK, gainLevel);
+        modeSprite.addChild( addLevelButton );
+        
+        var loseLevelButton :SimpleTextButton = new SimpleTextButton( "-level" );
+        loseLevelButton.x = loseBloodButton.x + 100;
+        loseLevelButton.y = loseBloodButton.y;
+        loseLevelButton.addEventListener( MouseEvent.CLICK, loseLevel);
+        modeSprite.addChild( loseLevelButton );
+        
+        
         
         var feedButton :SimpleTextButton = new SimpleTextButton( "FEED!!!!" );
         feedButton.x = 50;
@@ -47,6 +60,16 @@ public class FeedMode extends BaseVampireMode
     protected function loseBlood( ... ignored ) :void
     {
         ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_BLOOD_DOWN );
+    }
+    
+    protected function gainLevel( ... ignored ) :void
+    {
+        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_LEVEL_UP );
+    }
+    
+    protected function loseLevel( ... ignored ) :void
+    {
+        ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_LEVEL_DOWN );
     }
             
 }
