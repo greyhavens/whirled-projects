@@ -1,10 +1,8 @@
 package vampire.server
 {
-    import com.threerings.util.ArrayUtil;
     import com.threerings.util.HashMap;
     import com.threerings.util.HashSet;
     
-    import vampire.data.Codes;
     import vampire.data.Constants;
     
 public class NonPlayerAvatars
@@ -85,8 +83,8 @@ public class NonPlayerAvatars
     protected function removeNonPlayerFromAllRooms( nonplayerId :int ) :void
     {
         //Remove the nonplayer from its old room
-        if( VServer.isRoom( _nonplayer2RoomId.get( nonplayerId ))) {
-            var room :Room = VServer.getRoom( _nonplayer2RoomId.get( nonplayerId ));
+        if( ServerContext.vserver.isRoom( _nonplayer2RoomId.get( nonplayerId ))) {
+            var room :Room = ServerContext.vserver.getRoom( _nonplayer2RoomId.get( nonplayerId ));
             room._nonplayers.remove( nonplayerId );
         }
         _nonplayer2RoomId.remove( nonplayerId );
