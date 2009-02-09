@@ -20,7 +20,9 @@ public class GameCtx
     public static var cursorLayer :Sprite;
     public static var effectLayer :Sprite;
 
-    public static var clientFutureDelta :Number = 0;
+    public static var timeLeft :Number;
+
+    public static var clientFutureDelta :Number;
 
     public static function init () :void
     {
@@ -34,6 +36,8 @@ public class GameCtx
         cellLayer = null;
         cursorLayer = null;
         effectLayer = null;
+
+        timeLeft = Constants.GAME_TIME;
 
         clientFutureDelta = 0;
     }

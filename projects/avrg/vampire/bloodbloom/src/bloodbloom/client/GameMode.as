@@ -65,6 +65,11 @@ public class GameMode extends AppMode
         GameCtx.heart = new Heart();
         GameCtx.netObjDb.addObject(GameCtx.heart);
 
+        var timerView :TimerView = new TimerView();
+        timerView.x = TIMER_LOC.x;
+        timerView.y = TIMER_LOC.y;
+        addObject(timerView, GameCtx.effectLayer);
+
         GameCtx.bloodMeter = new PredatorBloodMeter();
         GameCtx.bloodMeter.x = BLOOD_METER_LOC.x;
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
@@ -86,7 +91,7 @@ public class GameMode extends AppMode
 
     protected function setupNetwork () :void
     {
-        _msgMgr = (ClientCtx.isConnected ?
+        _msgMgr = (ClientCtx.isMultiplayer ?
             new OnlineTickedMessageManager(ClientCtx.gameCtrl,
                 false,
                 Constants.HEARTBEAT_TIME * 1000,
@@ -141,6 +146,11 @@ public class GameMode extends AppMode
             }
 
             GameCtx.netObjDb.update(Constants.HEARTBEAT_TIME);
+            GameCtx.timeLeft -= Constants.HEARTBEAT_TIME;
+
+            if (GameCtx.timeLeft <= 0) {
+                gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
+            }
         }
 
         if (updateNetObjects) {
@@ -218,6 +228,7 @@ public class GameMode extends AppMode
     protected static var log :Log = Log.getLog(GameMode);
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
+    protected static const TIMER_LOC :Point = new Point(550, 25);
 }
 
 }

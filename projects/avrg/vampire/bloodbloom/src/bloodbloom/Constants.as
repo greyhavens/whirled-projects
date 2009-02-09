@@ -12,10 +12,10 @@ public class Constants
 
     public static const CLICK_TO_MOVE :Boolean = true;
 
+    public static const GAME_TIME :Number = 60 * 2;
+
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
-
-    public static const PREDATOR_BLOOD_TARGET :int = 1000;
 
     public static const PREDATOR_SPEED_BASE :Number = 40;
     public static const MAX_PREDATOR_WHITE_CELLS :int = 3;

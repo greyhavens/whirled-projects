@@ -1,5 +1,8 @@
 package bloodbloom.client {
 
+import bloodbloom.*;
+import bloodbloom.client.view.*;
+
 import com.whirled.contrib.simplegame.objects.*;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -9,9 +12,6 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.text.TextField;
 
-import bloodbloom.*;
-import bloodbloom.client.view.*;
-
 public class PredatorBloodMeter extends SceneObject
 {
     public function PredatorBloodMeter ()
@@ -19,24 +19,6 @@ public class PredatorBloodMeter extends SceneObject
         _sprite = new Sprite();
         _tf = UIBits.createText("", 1.5);
         _sprite.addChild(_tf);
-    }
-
-    override public function get displayObject () :DisplayObject
-    {
-        return _sprite;
-    }
-
-    override protected function update (dt :Number) :void
-    {
-        if (_displayedBloodCount != _lastDisplayedBloodCount) {
-            UIBits.initTextField(_tf, "Predator Blood: " + _displayedBloodCount, 1.5, 0, 0xff0000);
-            _lastDisplayedBloodCount = _displayedBloodCount;
-        }
-
-        if (_bloodCount >= Constants.PREDATOR_BLOOD_TARGET) {
-            GameCtx.gameMode.gameOver("Predator collected " +
-                Constants.PREDATOR_BLOOD_TARGET + " blood");
-        }
     }
 
     public function addBlood (x :Number, y :Number, count :int) :void
@@ -67,6 +49,24 @@ public class PredatorBloodMeter extends SceneObject
         }
 
         _bloodCount += count;
+    }
+
+    public function get bloodCount () :int
+    {
+        return _bloodCount;
+    }
+
+    override public function get displayObject () :DisplayObject
+    {
+        return _sprite;
+    }
+
+    override protected function update (dt :Number) :void
+    {
+        if (_displayedBloodCount != _lastDisplayedBloodCount) {
+            UIBits.initTextField(_tf, "Predator Blood: " + _displayedBloodCount, 1.5, 0, 0xff0000);
+            _lastDisplayedBloodCount = _displayedBloodCount;
+        }
     }
 
     protected var _sprite :Sprite;

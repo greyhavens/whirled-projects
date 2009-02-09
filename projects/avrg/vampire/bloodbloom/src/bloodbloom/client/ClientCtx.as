@@ -18,6 +18,16 @@ public class ClientCtx
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
 
+    public static function get isSinglePlayer () :Boolean
+    {
+        return (!gameCtrl.isConnected() || gameCtrl.game.seating.getPlayerIds().length == 1);
+    }
+
+    public static function get isMultiplayer () :Boolean
+    {
+        return !isSinglePlayer;
+    }
+
     public static function get timeNow () :Number
     {
         return flash.utils.getTimer() * 0.001; // returns seconds
