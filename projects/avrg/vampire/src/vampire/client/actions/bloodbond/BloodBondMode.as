@@ -14,8 +14,8 @@ import flash.events.MouseEvent;
 import vampire.client.ClientContext;
 import vampire.client.VampireController;
 import vampire.client.actions.BaseVampireMode;
+import vampire.data.Codes;
 import vampire.data.SharedPlayerStateClient;
-import vampire.data.SharedPlayerStateServer;
 [RemoteClass(alias="vampire.client.modes.BloodBondMode")]
 
 public class BloodBondMode extends BaseVampireMode
@@ -50,7 +50,7 @@ public class BloodBondMode extends BaseVampireMode
         
         if( !isNaN( playerIdUpdated ) && playerIdUpdated == ClientContext.ourPlayerId) {
             
-            if( e.index == SharedPlayerStateServer.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
+            if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
                 showBloodBonded( e.newValue as Array );
             }
         }
