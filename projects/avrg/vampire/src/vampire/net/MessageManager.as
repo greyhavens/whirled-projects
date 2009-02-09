@@ -14,21 +14,18 @@ import flash.utils.ByteArray;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
+import vampire.net.messages.SuccessfulFeedMessage;
 
 
 public class MessageManager extends EventDispatcher
 {
     internal static const log :Log = Log.getLog(MessageManager);
     
-    protected var _isUsingServerAgent :Boolean;
-    
-    public function MessageManager (gameCtrl :AbstractControl = null, isUsingServerAgent :Boolean = true)
+    public function MessageManager (gameCtrl :AbstractControl = null)
     {
-        _msgTypes = new HashMap();
-        _isUsingServerAgent = isUsingServerAgent;
         
         _gameCtrl = gameCtrl;
-        if( _gameCtrl != null && _gameCtrl.isConnected() && _isUsingServerAgent) {
+        if( _gameCtrl != null && _gameCtrl.isConnected()) {
             
             if( _gameCtrl is GameControl) {
                 log.info("MessageManager listening to GameControl.");
@@ -51,10 +48,13 @@ public class MessageManager extends EventDispatcher
             log.warning("MessageManager is not using any GameControl (or AVRG) type messaging.  Local messages only.");
         }
         
+        _msgTypes = new HashMap();
         //Move this out of here!  But to where???
         addMessageType( RequestActionChangeMessage );
         addMessageType( BloodBondRequestMessage );
         addMessageType( FeedRequestMessage );
+        addMessageType( SuccessfulFeedMessage );
+        
         
         
     }
@@ -75,19 +75,7 @@ public class MessageManager extends EventDispatcher
             log.error("sendMessage(), unknown message type: " + gameEvent);
         }
         
-        if( !_isUsingServerAgent ) {//GameControl-less local testing.  Faster for development
-            log.debug("     sending locally ");
-            var msgClass :Class = _msgTypes.get(gameEvent.name);
-            var messageToSend :IGameMessage = new msgClass();
-//            trace("creating new message type: " + messageToSend.name);
-            var bytes :ByteArray = gameEvent.toBytes();
-            bytes.position = 0;
-            messageToSend.fromBytes( bytes );
-//            trace("Message sent=" + messageToSend);
-            dispatchEvent(new MessageReceivedEvent(messageToSend.name, messageToSend, 0));
-//            dispatchEvent(new MessageReceivedEvent(messageToSend.name, messageToSend, 0));
-        }
-        else {
+        if( _gameCtrl != null && _gameCtrl.isConnected()) {
             if( _gameCtrl is GameControl) {
                 log.debug("     sending via GameControl, toPlayer=" + toPlayer);
                 (_gameCtrl as GameControl).net.sendMessage(gameEvent.name, gameEvent.toBytes());
@@ -104,6 +92,18 @@ public class MessageManager extends EventDispatcher
                 log.error("sendMessage(), _gameCtrl neither GameControl, AVRGameControl, nor AVRServerGameControl.  Message not sent.");
             }
         }
+        else {//GameControl-less local testing.  Faster for development
+            log.debug("     sending locally ");
+            var msgClass :Class = _msgTypes.get(gameEvent.name);
+            var messageToSend :IGameMessage = new msgClass();
+//            trace("creating new message type: " + messageToSend.name);
+            var bytes :ByteArray = gameEvent.toBytes();
+            bytes.position = 0;
+            messageToSend.fromBytes( bytes );
+//            trace("Message sent=" + messageToSend);
+            dispatchEvent(new MessageReceivedEvent(messageToSend.name, messageToSend, 0));
+//            dispatchEvent(new MessageReceivedEvent(messageToSend.name, messageToSend, 0));
+        }
     }
 
     /**
@@ -114,7 +114,6 @@ public class MessageManager extends EventDispatcher
     */
     protected function onMessageReceived (e :MessageReceivedEvent) :void
     {
-        trace("onMessageReceived(): " + e);
         var msgClass :Class = _msgTypes.get(e.name);
         if (msgClass != null) {
             
@@ -127,7 +126,7 @@ public class MessageManager extends EventDispatcher
             dispatchEvent(new MessageReceivedEvent(msg.name, msg, e.senderId));            
         }
         else {
-            log.error("onMessageReceived(): unknown message type=" + e.name);
+//            log.error("onMessageReceived(): unknown message type=" + e.name);
             dispatchEvent(new MessageReceivedEvent(e.name, e.value, e.senderId));
         }
         
