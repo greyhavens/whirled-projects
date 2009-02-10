@@ -18,8 +18,8 @@ public class Heart extends NetObj
         var timeNow :Number = _liveTime;
         while (timeNow >= this.nextBeat) {
             _lastBeat = this.nextBeat;
-            _totalBeatTime -= Constants.BEAT_SPEED_UP;
-            _totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
+            _totalBeatTime += Constants.BEAT_TIME_INCREASE_PER_SECOND;
+            _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_MAX);
 
             // spawn cells when the heart beats
             spawnCells();
@@ -50,9 +50,9 @@ public class Heart extends NetObj
 
     public function deliverWhiteCell () :void
     {
-        // when white cells are delivered, the beat slows down a bit
-        _totalBeatTime += Constants.BEAT_ARTERY_SLOW_DOWN;
-        _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_BASE);
+        // when white cells are delivered, the beat speeds up a bit
+        _totalBeatTime -= Constants.BEAT_TIME_DECREASE_PER_DELIVERY;
+        _totalBeatTime = Math.max(_totalBeatTime, Constants.BEAT_TIME_MIN);
     }
 
     public function get lastBeat () :Number
@@ -73,6 +73,11 @@ public class Heart extends NetObj
     public function get pctTimeToNextBeat () :Number
     {
         return 1 - ((this.nextBeat - _liveTime) / _totalBeatTime);
+    }
+
+    public function get totalBeatTime () :Number
+    {
+        return _totalBeatTime;
     }
 
     protected var _totalBeatTime :Number;

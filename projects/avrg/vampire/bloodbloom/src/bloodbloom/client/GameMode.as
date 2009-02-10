@@ -54,7 +54,7 @@ public class GameMode extends AppMode
         _modeSprite.addChild(GameCtx.cursorLayer);
         _modeSprite.addChild(GameCtx.effectLayer);
 
-        if (Constants.DEBUG_SHOW_FPS) {
+        if (Constants.DEBUG_SHOW_STATS) {
             var statView :StatView = new StatView();
             statView.x = 0;
             statView.y = 460;

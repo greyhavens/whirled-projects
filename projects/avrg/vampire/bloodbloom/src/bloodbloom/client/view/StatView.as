@@ -1,11 +1,11 @@
 package bloodbloom.client.view {
 
+import bloodbloom.client.*;
+
 import com.whirled.contrib.simplegame.objects.SceneObject;
 
 import flash.display.DisplayObject;
 import flash.text.TextField;
-
-import bloodbloom.client.*;
 
 public class StatView extends SceneObject
 {
@@ -22,7 +22,9 @@ public class StatView extends SceneObject
     override protected function update (dt :Number) :void
     {
         super.update(dt);
-        UIBits.initTextField(_tf, "FPS: " + ClientCtx.mainLoop.fps.toFixed(1), 1.3, 0, 0x0000ff);
+        var fpsString :String = "FPS=" + ClientCtx.mainLoop.fps.toFixed(1);
+        var beatTimeString :String = "Beat time=" + GameCtx.heart.totalBeatTime;
+        UIBits.initTextField(_tf, fpsString + "\n" + beatTimeString, 1.3, 0, 0x0000ff);
     }
 
     protected var _tf :TextField;

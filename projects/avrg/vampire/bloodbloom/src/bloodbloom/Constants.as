@@ -5,7 +5,7 @@ import com.whirled.contrib.simplegame.util.*;
 
 public class Constants
 {
-    public static const DEBUG_SHOW_FPS :Boolean = false;
+    public static const DEBUG_SHOW_STATS :Boolean = true;
     public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
     public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
     public static const DEBUG_SERVER_AGGREGATES_MESSAGES :Boolean = false;
@@ -24,14 +24,16 @@ public class Constants
     public static const PREY_SPEED_CELL_OFFSET :Number = -15;
     public static const PREY_SPEED_MIN :Number = 15;
 
+
     public static const CURSOR_RADIUS :Number = 9;
     public static const HEART_RADIUS :Number = 60;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
-    public static const BEAT_TIME_BASE :Number = 12 / 4;
-    public static const BEAT_TIME_MIN :Number = 1 / 4;
-    public static const BEAT_SPEED_UP :Number = 0.08 / 4;
-    public static const BEAT_ARTERY_SLOW_DOWN :Number = 0.6 / 4;
+    public static const BEAT_TIME_BASE :Number =                    16 / 4;
+    public static const BEAT_TIME_MIN :Number =                     6 / 4;
+    public static const BEAT_TIME_MAX :Number =                     16 / 4;
+    public static const BEAT_TIME_INCREASE_PER_SECOND :Number =     0.05 / 4;
+    public static const BEAT_TIME_DECREASE_PER_DELIVERY :Number =   1.5 / 4;
 
     public static const ARTERY_TOP :int = 0;
     public static const ARTERY_BOTTOM :int = 1;
@@ -41,7 +43,7 @@ public class Constants
     public static const CELL__LIMIT :int = 2;
     public static const MAX_CELL_COUNT :Array = [ 60, 8 ];
     public static const RED_CELL_PROBABILITY :Number = 0.8;
-    public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 6, Rand.STREAM_GAME);
+    public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 3, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 90, Rand.STREAM_GAME),
         new NumRange(110, 140, Rand.STREAM_GAME)
