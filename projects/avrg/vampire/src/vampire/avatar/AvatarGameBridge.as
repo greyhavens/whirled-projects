@@ -16,9 +16,11 @@ import vampire.data.Constants;
  */
 public class AvatarGameBridge
 {
-    public function AvatarGameBridge( ctrl :AvatarControl)
+    public function AvatarGameBridge( ctrl :AvatarControl, applyColorScheme :Function)
     {
         _ctrl = ctrl;
+        
+        _colorSchemeFunction = applyColorScheme;
         
 //        _ctrl.addEventListener(ControlEvent.STATE_CHANGED, handleStateChange);
         _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, handleChatReceived);
@@ -216,6 +218,7 @@ public class AvatarGameBridge
         return _state;
     }
     
+    protected var _colorSchemeFunction :Function;
     protected var _ctrl :AvatarControl;
     protected var _state :String = Constants.GAME_MODE_NOTHING;
     protected var _targetId :int;
@@ -223,5 +226,8 @@ public class AvatarGameBridge
     protected var _closestUserLocation :Array;
     
     protected static const log :Log = Log.getLog( AvatarGameBridge );
+    
+    public static const COLOR_SCHEME_VAMPIRE :String = "vampireColors";
+    public static const COLOR_SCHEME_HUMAN :String = "humanColors";
 }
 }
