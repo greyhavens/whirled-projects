@@ -1,7 +1,6 @@
 package bloodbloom {
 
 import com.threerings.flash.Vector2;
-import com.threerings.util.Name;
 import com.whirled.contrib.simplegame.util.*;
 
 public class Constants
@@ -20,7 +19,7 @@ public class Constants
     public static const PLAYER_PREY :int = 1;
 
     public static const PREDATOR_SPEED_BASE :Number = 70;
-    public static const PREDATOR_SPEED_DECREASE_PER_SECOND :Number = 3;
+    public static const PREDATOR_SPEED_DECREASE_PER_SECOND :Number = 4;
     public static const PREDATOR_SPEED_INCREASE_PER_DELIVERY :Number = 20;
     public static const PREDATOR_SPEED_MIN :Number = 20;
     public static const PREDATOR_SPEED_MAX :Number = 90;
@@ -28,7 +27,7 @@ public class Constants
 
     public static const PREY_SPEED_BASE :Number = 70;
     public static const PREY_SPEED_DECREASE_PER_CELL :Number = 15;
-    public static const PREY_SPEED_DECREASE_PER_SECOND :Number = 3;
+    public static const PREY_SPEED_DECREASE_PER_SECOND :Number = 4;
     public static const PREY_SPEED_INCREASE_PER_DELIVERY :Number = 20;
     public static const PREY_SPEED_MIN :Number = 20;
     public static const PREY_SPEED_MAX :Number = 90;
@@ -49,6 +48,7 @@ public class Constants
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;
     public static const CELL__LIMIT :int = 2;
+    public static const INITIAL_CELL_COUNT :Array = [ 4, 2 ];
     public static const MAX_CELL_COUNT :Array = [ 60, 8 ];
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 3, Rand.STREAM_GAME);

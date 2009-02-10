@@ -5,7 +5,6 @@ import bloodbloom.client.view.*;
 import bloodbloom.net.*;
 
 import com.threerings.flash.Vector2;
-import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
@@ -86,6 +85,17 @@ public class GameMode extends AppMode
         GameCtx.prey = GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
 
         registerListener(GameCtx.prey, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
+
+        // create initial cells
+        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
+            var count :int = Constants.INITIAL_CELL_COUNT[cellType];
+            for (var ii :int = 0; ii < count; ++ii) {
+                var loc :Vector2 = Cell.getBirthTargetLoc(cellType);
+                var cell :Cell = GameObjects.createCell(cellType, false);
+                cell.x = loc.x;
+                cell.y = loc.y;
+            }
+        }
 
         // Throttle our target messages
         _msgThrottler = new CursorTargetUpdater(_playerType, _msgMgr);

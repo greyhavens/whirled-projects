@@ -41,6 +41,15 @@ public class Cell extends CollidableObj
         return null;
     }
 
+    public static function getBirthTargetLoc (cellType :int) :Vector2
+    {
+         // fire out of the heart in a random direction
+        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[cellType];
+        var dist :Number = distRange.next();
+        return Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
+    }
+
     public function Cell (type :int, beingBorn :Boolean)
     {
         _radius = Constants.CELL_RADIUS;
@@ -55,11 +64,7 @@ public class Cell extends CollidableObj
             this.y = Constants.GAME_CTR.y;
 
             // fire out of the heart in a random direction
-            var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-            var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[_type];
-            var dist :Number = distRange.next();
-            _birthTarget = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
-
+            _birthTarget = getBirthTargetLoc(_type);
             addTask(After(Constants.CELL_BIRTH_TIME, new FunctionTask(
                 function () :void {
                     _state = STATE_NORMAL;
