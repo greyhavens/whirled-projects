@@ -26,6 +26,10 @@ public class TimerView extends SceneObject
         if (seconds != _lastSeconds) {
             var minString :String = String(Math.floor(seconds / 60));
             var secString :String = String(seconds % 60);
+            if (secString.length == 0) {
+                secString = "0" + secString;
+            }
+
             UIBits.initTextField(_tf, minString + ":" + secString, 1.4, 0, 0x00ff00);
 
             _lastSeconds = seconds;

@@ -23,8 +23,6 @@ public class Heart extends NetObj
 
             // spawn cells when the heart beats
             spawnCells();
-
-            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
         }
     }
 

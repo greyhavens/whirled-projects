@@ -2,8 +2,8 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 
+import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
-import com.whirled.contrib.simplegame.util.Collision;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -11,17 +11,6 @@ public class PlayerCursor extends CollidableObj
     {
         _radius = Constants.CURSOR_RADIUS;
     }
-
-    /*public function get moveTarget () :Vector2
-    {
-        return _moveTarget;
-    }
-
-    public function set moveTarget (val :Vector2) :void
-    {
-        _moveTarget = val;
-        _mode = MODE_FOLLOWING_TARGET;
-    }*/
 
     public function set moveTarget (val :Vector2) :void
     {
@@ -35,40 +24,7 @@ public class PlayerCursor extends CollidableObj
 
     public function updateLoc (dt :Number) :void
     {
-        /*var moveDist :Number = this.speed * dt;
-        if (moveDist <= 0 || (_mode == MODE_FOLLOWING_TARGET && _loc.equals(_moveTarget))) {
-            return;
-        }
-
-        var newLoc :Vector2;
-        if (_mode == MODE_FOLLOWING_TARGET) {
-            // if we're in "following target" mode, we try to move closer to the target
-            newLoc = _moveTarget.subtract(_loc);
-            var targetDist :Number = newLoc.normalizeLocalAndGetLength();
-            var actualDist :Number = Math.min(targetDist, moveDist);
-            newLoc.scaleLocal(actualDist);
-            newLoc = GameCtx.clampLoc(newLoc.addLocal(_loc));
-
-            // if we hit our target this frame, switch to "moving forward" mode
-            if (!_loc.equals(newLoc) &&
-                Collision.minDistanceFromPointToLineSegment(_moveTarget, _loc, newLoc) == 0) {
-                _mode = MODE_MOVING_FORWARD;
-                _moveDirection = newLoc.subtract(_loc).normalizeLocal();
-                moveDist -= actualDist;
-            }
-
-            _loc = newLoc;
-        }
-
-         if (_mode == MODE_MOVING_FORWARD) {
-            // move in a straight line
-            _loc.x += (_moveDirection.x * moveDist);
-            _loc.y += (_moveDirection.y * moveDist);
-            _loc = GameCtx.clampLoc(_loc);
-         }*/
-
         var moveDist :Number = this.speed * dt;
-        // move in a straight line
         _loc.x += (_moveDirection.x * moveDist);
         _loc.y += (_moveDirection.y * moveDist);
         _loc = GameCtx.clampLoc(_loc);
@@ -80,28 +36,48 @@ public class PlayerCursor extends CollidableObj
         updateLoc(dt);
     }
 
+    public function offsetSpeedPenalty (offset :Number) :void
+    {
+        _speedPenalty = Math.max(_speedPenalty + offset, 0);
+    }
+
+    public function offsetSpeedBonus (offset :Number) :void
+    {
+        _speedBonus = Math.max(_speedBonus + offset, 0);
+    }
+
     protected function get speed () :Number
     {
-        return 0;
+        return MathUtil.clamp(_speedBase + _speedBonus - _speedPenalty, _speedMin, _speedMax);
     }
 
     override public function clone (theClone :CollidableObj = null) :CollidableObj
     {
         var cursorClone :PlayerCursor = PlayerCursor(super.clone(theClone));
 
-        //cursorClone._moveTarget = _moveTarget.clone();
         cursorClone._moveDirection = _moveDirection.clone();
-        //cursorClone._mode = _mode;
+        cursorClone._speedMin = _speedMin;
+        cursorClone._speedMax = _speedMax;
+        cursorClone._speedBase = _speedBase;
+        cursorClone._speedPenalty = _speedPenalty;
+        cursorClone._speedBonus = _speedBonus;
 
         return cursorClone;
     }
 
-    //protected var _moveTarget :Vector2 = new Vector2();
-    protected var _moveDirection :Vector2 = new Vector2();
-    //protected var _mode :int;
+    protected function init (speedBase :Number, speedMin :Number, speedMax :Number) :void
+    {
+        _speedBase = speedBase;
+        _speedMin = speedMin;
+        _speedMax = speedMax;
+    }
 
-    //protected static const MODE_FOLLOWING_TARGET :int = 0;
-    //protected static const MODE_MOVING_FORWARD :int = 1;
+    protected var _moveDirection :Vector2 = new Vector2();
+    protected var _speedMin :Number = 0;
+    protected var _speedMax :Number = 0;
+    protected var _speedBase :Number = 0;
+    protected var _speedPenalty :Number = 0;
+    protected var _speedBonus :Number = 0;
 }
 
 }

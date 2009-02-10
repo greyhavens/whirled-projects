@@ -85,6 +85,8 @@ public class GameMode extends AppMode
         GameCtx.predator = GameObjects.createPlayerCursor(Constants.PLAYER_PREDATOR);
         GameCtx.prey = GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
 
+        registerListener(GameCtx.prey, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
+
         // Throttle our target messages
         _msgThrottler = new CursorTargetUpdater(_playerType, _msgMgr);
         addObject(_msgThrottler);
@@ -134,6 +136,13 @@ public class GameMode extends AppMode
     {
         _msgMgr.stop();
         super.destroy();
+    }
+
+    protected function onWhiteCellDelivered (...ignored) :void
+    {
+        GameCtx.heart.deliverWhiteCell();
+        GameCtx.prey.offsetSpeedBonus(Constants.PREY_SPEED_INCREASE_PER_DELIVERY);
+        GameCtx.predator.offsetSpeedBonus(Constants.PREDATOR_SPEED_INCREASE_PER_DELIVERY);
     }
 
     override public function update (dt :Number) :void

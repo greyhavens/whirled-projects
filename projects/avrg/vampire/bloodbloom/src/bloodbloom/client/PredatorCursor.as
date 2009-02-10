@@ -9,8 +9,20 @@ public class PredatorCursor extends PlayerCursor
         return GameCtx.netObjDb.getObjectsInGroup("PredatorCursor");
     }
 
+    public function PredatorCursor ()
+    {
+        init(
+            Constants.PREDATOR_SPEED_BASE,
+            Constants.PREDATOR_SPEED_MIN,
+            Constants.PREDATOR_SPEED_MAX);
+    }
+
     override protected function update (dt :Number) :void
     {
+        // speed decays over time
+        offsetSpeedBonus(-Constants.PREDATOR_SPEED_DECREASE_PER_SECOND * dt);
+
+        // update movement
         super.update(dt);
 
         // collide with cells
@@ -38,11 +50,6 @@ public class PredatorCursor extends PlayerCursor
         case 0:     return "PredatorCursor";
         default:    return super.getObjectGroup(groupNum - 1);
         }
-    }
-
-    override protected function get speed () :Number
-    {
-        return Constants.PREDATOR_SPEED_BASE;
     }
 
     public function get numWhiteCells () :int

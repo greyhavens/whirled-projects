@@ -11,11 +11,16 @@ public class PreyCursor extends PlayerCursor
 {
     public function PreyCursor ()
     {
+        init(Constants.PREY_SPEED_BASE, Constants.PREY_SPEED_MIN, Constants.PREY_SPEED_MAX);
+
         updateArteryHilite();
     }
 
     override protected function update (dt :Number) :void
     {
+        // speed decays over time
+        offsetSpeedBonus(-Constants.PREY_SPEED_DECREASE_PER_SECOND * dt);
+
         super.update(dt);
 
         // collide with cells
@@ -24,6 +29,7 @@ public class PreyCursor extends PlayerCursor
             cell.destroySelf();
             if (cell.type == Constants.CELL_RED) {
                 _redCellCount++;
+                offsetSpeedPenalty(Constants.PREY_SPEED_DECREASE_PER_CELL);
             } else {
                 _whiteCellCount++;
             }
@@ -56,18 +62,10 @@ public class PreyCursor extends PlayerCursor
         _lastLoc = _loc.clone();
     }
 
-    override protected function get speed () :Number
-    {
-        var speed :Number = Math.max(
-            Constants.PREY_SPEED_BASE + (Constants.PREY_SPEED_CELL_OFFSET * _redCellCount),
-            Constants.PREY_SPEED_MIN);
-
-        return speed;
-    }
-
     protected function collideArtery (arteryType :int) :void
     {
         // get rid of cells
+        offsetSpeedPenalty(-Constants.PREY_SPEED_DECREASE_PER_CELL * _redCellCount);
         _redCellCount = 0;
         _whiteCellCount = 0;
         dispatchEvent(new GameEvent(GameEvent.DETACHED_ALL_CELLS));
@@ -75,8 +73,8 @@ public class PreyCursor extends PlayerCursor
         _lastArtery = arteryType;
         updateArteryHilite();
 
-        // Deliver a white cell to the heart, to slow the beat down
-        GameCtx.heart.deliverWhiteCell();
+        // Deliver a white cell to the heart
+        dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED));
 
         // animate the white cell delivery
         /*var sprite :Sprite = SpriteUtil.createSprite();
