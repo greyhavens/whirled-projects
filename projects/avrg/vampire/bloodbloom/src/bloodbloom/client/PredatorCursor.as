@@ -6,7 +6,7 @@ public class PredatorCursor extends PlayerCursor
 {
     public static function getAll () :Array
     {
-        return GameCtx.gameMode.getObjectsInGroup("PredatorCursor");
+        return GameCtx.netObjDb.getObjectsInGroup("PredatorCursor");
     }
 
     override protected function update (dt :Number) :void

@@ -90,9 +90,7 @@ public class Cell extends CollidableObj
             } else if (_state == STATE_NORMAL) {
 
                 // white cells follow predators who have other white cells attached
-                /*if (this.isWhiteCell) {
-                    var cellHemisphere :int = ClientCtx.getHemisphere(this);
-
+                if (this.isWhiteCell) {
                     if (this.isFollowing && !canFollow(this.followingPredator)) {
                         // stop following the predator if it's left our hemisphere
                         stopFollowing();
@@ -107,7 +105,7 @@ public class Cell extends CollidableObj
                             }
                         }
                     }
-                }*/
+                }
 
                 // if we're following somebody, move towards them
                 if (this.isFollowing) {
