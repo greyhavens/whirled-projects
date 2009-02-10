@@ -5,6 +5,7 @@ import bloodbloom.client.view.*;
 import bloodbloom.net.*;
 
 import com.threerings.flash.Vector2;
+import com.threerings.util.KeyboardCodes;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;

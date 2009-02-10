@@ -9,6 +9,7 @@ public class Constants
     public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
     public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
     public static const DEBUG_SERVER_AGGREGATES_MESSAGES :Boolean = false;
+    public static const DEBUG_ENABLE_KEYBOARD_CURSOR_CONTROL :Boolean = true;
 
     public static const CLICK_TO_MOVE :Boolean = true;
 

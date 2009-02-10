@@ -41,8 +41,8 @@ public class MoveTargetView extends SceneObject
             return;
         }
 
-        this.x = _cursor.moveTarget.x;
-        this.y = _cursor.moveTarget.y;
+        //this.x = _cursor.moveTarget.x;
+        //this.y = _cursor.moveTarget.y;
     }
 
     protected var _shape :Shape;
