@@ -138,13 +138,17 @@ public class GameMode extends AppMode
             cellCounts.push(Cell.getCellCount(cellType));
         }
 
+        // don't spawn new white cells when there's a BurstSequence running
+        var burstSequenceExists :Boolean = BurstSequence.sequenceExists;
+
         var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
         for (var ii :int = 0; ii < count; ++ii) {
             cellType =
                 (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
                     Constants.CELL_RED : Constants.CELL_WHITE);
 
-            if (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType]) {
+            if ((cellType != Constants.CELL_WHITE || !burstSequenceExists) &&
+                (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType])) {
                 GameObjects.createCell(cellType, true);
                 cellCounts[cellType] += 1;
             }

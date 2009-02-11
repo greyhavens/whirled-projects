@@ -13,6 +13,11 @@ import flash.text.TextField;
 
 public class BurstSequence extends SceneObject
 {
+    public static function get sequenceExists () :Boolean
+    {
+        return (GameCtx.gameMode.getObjectRefsInGroup(GROUP_NAME).length > 0);
+    }
+
     public function BurstSequence ()
     {
         _tf = UIBits.createText("");
@@ -47,6 +52,14 @@ public class BurstSequence extends SceneObject
     public function get totalValue () :int
     {
         return _bursts.length * this.multiplier;
+    }
+
+    override public function getObjectGroup (groupNum :int) :String
+    {
+        switch (groupNum) {
+        case 0:     return GROUP_NAME;
+        default:    return super.getObjectGroup(groupNum - 1);
+        }
     }
 
     override protected function update (dt :Number) :void
@@ -84,6 +97,8 @@ public class BurstSequence extends SceneObject
     protected var _totalBursts :int;
     protected var _lastCellCount :int;
     protected var _tf :TextField;
+
+    protected static const GROUP_NAME :String = "BurstSequence";
 }
 
 }
