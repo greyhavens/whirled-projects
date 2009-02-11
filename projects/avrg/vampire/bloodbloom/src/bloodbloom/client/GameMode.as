@@ -31,11 +31,11 @@ public class GameMode extends AppMode
         setupNetwork();
 
         // Setup display layers
-        _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
-
+        GameCtx.bgLayer = SpriteUtil.createSprite();
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
         GameCtx.effectLayer = SpriteUtil.createSprite();
+        _modeSprite.addChild(GameCtx.bgLayer);
         _modeSprite.addChild(GameCtx.cellLayer);
         _modeSprite.addChild(GameCtx.cursorLayer);
         _modeSprite.addChild(GameCtx.effectLayer);
@@ -44,12 +44,13 @@ public class GameMode extends AppMode
             var statView :StatView = new StatView();
             statView.x = 0;
             statView.y = 460;
-            addObject(statView, _modeSprite);
+            addObject(statView, GameCtx.effectLayer);
         }
 
         // Setup game objects
         GameCtx.heart = new Heart();
         GameCtx.gameMode.addObject(GameCtx.heart);
+        registerListener(GameCtx.heart, GameEvent.HEARTBEAT, onHeartbeat);
 
         var timerView :TimerView = new TimerView();
         timerView.x = TIMER_LOC.x;
@@ -61,10 +62,12 @@ public class GameMode extends AppMode
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
 
+        GameCtx.bgLayer.addChild(ClientCtx.instantiateBitmap("bg"));
+
         var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
         heartMovie.x = Constants.GAME_CTR.x;
         heartMovie.y = Constants.GAME_CTR.y;
-        _modeSprite.addChild(heartMovie);
+        GameCtx.bgLayer.addChild(heartMovie);
 
         _arteryBottom = heartMovie["artery_bottom"];
         _arteryTop = heartMovie["artery_TOP"];
@@ -123,6 +126,27 @@ public class GameMode extends AppMode
     {
         //_arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
         //_arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
+    }
+
+    protected function onHeartbeat (...ignored) :void
+    {
+        // spawn new cells
+        var cellCounts :Array = [];
+        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
+            cellCounts.push(Cell.getCellCount(cellType));
+        }
+
+        var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
+        for (var ii :int = 0; ii < count; ++ii) {
+            cellType =
+                (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
+                    Constants.CELL_RED : Constants.CELL_WHITE);
+
+            if (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType]) {
+                GameObjects.createCell(cellType, true);
+                cellCounts[cellType] += 1;
+            }
+        }
     }
 
     protected var _playerType :int;

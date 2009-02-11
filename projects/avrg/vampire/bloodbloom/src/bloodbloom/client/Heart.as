@@ -22,28 +22,7 @@ public class Heart extends SimObject
             _totalBeatTime += Constants.BEAT_TIME_INCREASE_PER_SECOND;
             _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_MAX);
 
-            // spawn cells when the heart beats
-            spawnCells();
-        }
-    }
-
-    protected function spawnCells () :void
-    {
-        var cellCounts :Array = [];
-        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
-            cellCounts.push(Cell.getCellCount(cellType));
-        }
-
-        var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
-        for (var ii :int = 0; ii < count; ++ii) {
-            cellType =
-                (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
-                    Constants.CELL_RED : Constants.CELL_WHITE);
-
-            if (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType]) {
-                GameObjects.createCell(cellType, true);
-                cellCounts[cellType] += 1;
-            }
+            dispatchEvent(new GameEvent(GameEvent.HEARTBEAT));
         }
     }
 

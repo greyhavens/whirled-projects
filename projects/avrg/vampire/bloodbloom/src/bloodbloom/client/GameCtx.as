@@ -14,6 +14,7 @@ public class GameCtx
     public static var cursor :PlayerCursor;
     public static var bloodMeter :PredatorBloodMeter;
 
+    public static var bgLayer :Sprite;
     public static var cellLayer :Sprite;
     public static var cursorLayer :Sprite;
     public static var effectLayer :Sprite;
@@ -27,6 +28,7 @@ public class GameCtx
         cursor = null;
         bloodMeter = null;
 
+        bgLayer = null;
         cellLayer = null;
         cursorLayer = null;
         effectLayer = null;
