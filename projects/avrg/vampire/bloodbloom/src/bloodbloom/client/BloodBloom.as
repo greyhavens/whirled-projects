@@ -53,11 +53,9 @@ public class BloodBloom extends Sprite
     {
         var rm :ResourceManager = ClientCtx.rsrcs;
 
+        rm.queueResourceLoad("swf",   "blood",          { embeddedClass: SWF_BLOOD });
         rm.queueResourceLoad("swf",   "uiBits",         { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
-        rm.queueResourceLoad("image", "artery_blue",    { embeddedClass: IMG_ARTERY_BLUE });
-        rm.queueResourceLoad("image", "artery_red",     { embeddedClass: IMG_ARTERY_RED });
-        rm.queueResourceLoad("image", "heart",          { embeddedClass: IMG_HEART });
         rm.queueResourceLoad("image", "red_cell",       { embeddedClass: IMG_RED_CELL });
         rm.queueResourceLoad("image", "predator_cursor", { embeddedClass: IMG_PREDATOR_CURSOR });
         rm.queueResourceLoad("image", "prey_cursor",    { embeddedClass: IMG_PREY_CURSOR });
@@ -100,16 +98,12 @@ public class BloodBloom extends Sprite
 
     protected static var log :Log = Log.getLog(BloodBloom);
 
+    [Embed(source="../../../rsrc/blood.swf", mimeType="application/octet-stream")]
+    protected static const SWF_BLOOD :Class;
     [Embed(source="../../../rsrc/UI_bits.swf", mimeType="application/octet-stream")]
     protected static const SWF_UIBITS :Class;
     [Embed(source="../../../rsrc/bg.png", mimeType="application/octet-stream")]
     protected static const IMG_BG :Class;
-    [Embed(source="../../../rsrc/artery_blue.png", mimeType="application/octet-stream")]
-    protected static const IMG_ARTERY_BLUE :Class;
-    [Embed(source="../../../rsrc/artery_red.png", mimeType="application/octet-stream")]
-    protected static const IMG_ARTERY_RED :Class;
-    [Embed(source="../../../rsrc/heart.png", mimeType="application/octet-stream")]
-    protected static const IMG_HEART :Class;
     [Embed(source="../../../rsrc/red_cell.png", mimeType="application/octet-stream")]
     protected static const IMG_RED_CELL :Class;
     [Embed(source="../../../rsrc/vampire_cursor.png", mimeType="application/octet-stream")]

@@ -1,26 +1,22 @@
 package bloodbloom.client.view {
 
+import bloodbloom.client.*;
+
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import mx.effects.easing.*;
 
-import bloodbloom.client.*;
-
 public class HeartView extends SceneObject
 {
-    public function HeartView ()
+    public function HeartView (heartMovie :MovieClip)
     {
-        _sprite = new Sprite();
-
-        var heart :Bitmap = ClientCtx.instantiateBitmap("heart");
-        heart.x = -heart.width * 0.5;
-        heart.y = -heart.height * 0.5;
-        _sprite.addChild(heart);
+        _movie = heartMovie;
     }
 
     override protected function update (dt :Number) :void
@@ -48,10 +44,10 @@ public class HeartView extends SceneObject
 
     override public function get displayObject () :DisplayObject
     {
-        return _sprite;
+        return _movie;
     }
 
-    protected var _sprite :Sprite;
+    protected var _movie :MovieClip;
 
     protected static const SCALE_BIG :Number = 1.3;
     protected static const SCALE_SMALL :Number = 1;

@@ -11,8 +11,7 @@ import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
-import flash.display.Bitmap;
-import flash.filters.GlowFilter;
+import flash.display.MovieClip;
 import flash.geom.Point;
 
 public class GameMode extends AppMode
@@ -33,16 +32,6 @@ public class GameMode extends AppMode
 
         // Setup display layers
         _modeSprite.addChild(ClientCtx.instantiateBitmap("bg"));
-
-        _arteryBottom = ClientCtx.instantiateBitmap("artery_blue");
-        _arteryBottom.x = Constants.GAME_CTR.x - (_arteryBottom.width * 0.5);
-        _arteryBottom.y = 290;
-        _modeSprite.addChild(_arteryBottom);
-
-        _arteryTop = ClientCtx.instantiateBitmap("artery_red");
-        _arteryTop.x = Constants.GAME_CTR.x - (_arteryTop.width * 0.5);
-        _arteryTop.y = 30;
-        _modeSprite.addChild(_arteryTop);
 
         GameCtx.cellLayer = SpriteUtil.createSprite();
         GameCtx.cursorLayer = SpriteUtil.createSprite();
@@ -72,15 +61,19 @@ public class GameMode extends AppMode
         GameCtx.bloodMeter.y = BLOOD_METER_LOC.y;
         addObject(GameCtx.bloodMeter, GameCtx.effectLayer);
 
-        var heart :HeartView = new HeartView();
-        heart.x = Constants.GAME_CTR.x;
-        heart.y = Constants.GAME_CTR.y;
-        addObject(heart, GameCtx.cellLayer);
+        var heartMovie :MovieClip = ClientCtx.instantiateMovieClip("blood", "circulatory");
+        heartMovie.x = Constants.GAME_CTR.x;
+        heartMovie.y = Constants.GAME_CTR.y;
+        _modeSprite.addChild(heartMovie);
+
+        _arteryBottom = heartMovie["artery_bottom"];
+        _arteryTop = heartMovie["artery_TOP"];
+
+        var heartView :HeartView = new HeartView(heartMovie["heart"]);
+        addObject(heartView);
 
         // cursors
         GameCtx.cursor = GameObjects.createPlayerCursor(_playerType);
-
-        //registerListener(GameCtx.prey, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // create initial cells
         for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
@@ -128,14 +121,14 @@ public class GameMode extends AppMode
 
     public function hiliteArteries (hiliteTop :Boolean, hiliteBottom :Boolean) :void
     {
-        _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
-        _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
+        //_arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
+        //_arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
     }
 
     protected var _playerType :int;
     protected var _gameOver :Boolean;
-    protected var _arteryTop :Bitmap;
-    protected var _arteryBottom :Bitmap;
+    protected var _arteryTop :MovieClip;
+    protected var _arteryBottom :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
 
     protected static var log :Log = Log.getLog(GameMode);
