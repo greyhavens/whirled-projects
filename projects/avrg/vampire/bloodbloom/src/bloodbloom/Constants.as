@@ -30,6 +30,8 @@ public class Constants
     public static const HEART_RADIUS :Number = 60;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
+    public static const NUM_BURSTS_PER_MULTIPLIER :int = 5;
+
     public static const BEAT_TIME_BASE :Number =                    16 / 4;
     public static const BEAT_TIME_MIN :Number =                     6 / 4;
     public static const BEAT_TIME_MAX :Number =                     16 / 4;
