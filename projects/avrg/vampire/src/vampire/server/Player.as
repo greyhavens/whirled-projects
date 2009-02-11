@@ -15,6 +15,7 @@ import com.whirled.avrg.PlayerSubControlServer;
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
+import vampire.avatar.AvatarGameBridge;
 import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.Logic;
@@ -47,8 +48,16 @@ public class Player
         
         _action = Constants.GAME_MODE_NOTHING;
         
-        _level = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LEVEL));
-        log.debug("Getting level=" + _level);
+        _xp = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP));
+        
+        if( level > 1 && _xp <  Logic.levelGivenCurrentXp(_xp)) {
+            _xp = Logic.xpNeededForLevel(level);
+        }
+        
+        log.debug("Getting xp=" + _xp);
+        
+//        _level = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LEVEL));
+//        log.debug("Getting level=" + _level);
 
 
         var blood :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOOD);
@@ -112,13 +121,7 @@ public class Player
         log.debug("Getting sire=" + _sire);
         
         
-        _xp = int(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_XP));
         
-        if( level > 1 && _xp <  Logic.levelGivenCurrentXp(_xp)) {
-            _xp = Logic.xpNeededForLevel(level);
-        }
-        
-        log.debug("Getting xp=" + _xp);
         
         
         
@@ -126,7 +129,7 @@ public class Player
         
         //For testing purposes testing
         if( playerId == 35282) {
-            setLevel(1, true);
+//            setLevel(1, true);
             setBlood( 0 );
             setXP( 0 );
             setTime( 1 )
@@ -138,7 +141,7 @@ public class Player
         
         if (level == 0) {
             log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
-            setLevel(1, true);
+//            setLevel(1, true);
             setBloodBonded([]);
             setBlood( 0 );
             setXP( 0 );
@@ -299,17 +302,29 @@ public class Player
     
     public function increaseLevel() :void
     {
-        var newlevel :int = level + 1;
-        log.debug("Increasing level", "oldlevel", level, "newlevel", newlevel);
-        setLevel( newlevel );
-        setBlood( 0.1 * maxBlood );//Also updates the room
-        
-        // always update our avatar state
-        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
+        var xpNeededForNextLevel :int = Logic.xpNeededForLevel( level + 1 );
+        var missingXp :int = xpNeededForNextLevel - xp;
+        addXP( missingXp )
+//        var newlevel :int = level + 1;
+//        log.debug("Increasing level", "oldlevel", level, "newlevel", newlevel);
+//        setLevel( newlevel );
+//        setBlood( 0.1 * maxBlood );//Also updates the room
+//        
+//        // always update our avatar state
+//        updateAvatarState();
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
+    }
+    
+    public function decreaseLevel() :void
+    {
+        if( level > 1 ) {
+            var xpNeededForNextLevel :int = Logic.xpNeededForLevel( level + 1 );
+            var missingXp :int = xpNeededForNextLevel - xp;
+            addXP( missingXp )
         }
     }
     
@@ -365,18 +380,24 @@ public class Player
     
     protected function addXP( bonus :int) :void
     {
+        var currentLevel :int = Logic.levelGivenCurrentXp( xp );
         // update our runtime state
         _xp += bonus;
         // persist it, too
         _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_XP, _xp, true);
         
+        var newLevel :int = Logic.levelGivenCurrentXp( xp );
         //Check if we made a new level
-        if( _level != Logic.levelGivenCurrentXp( _xp )) {
-            _level = Logic.levelGivenCurrentXp( _xp );
-            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
+        if( newLevel > currentLevel) {
+//            _level = Logic.levelGivenCurrentXp( _xp );
+//            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
             
             _blood = 0.1 * maxBlood;
             _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, _blood, true);
+        }
+        
+        if( newLevel < currentLevel && blood > maxBlood) {
+            _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOOD, maxBlood, true);
         }
         
         // always update our avatar state
@@ -446,10 +467,10 @@ public class Player
     //            setBlood( blood - 20 );
             }
             else if( name == Constants.NAMED_EVENT_LEVEL_UP ) {
-                setLevel( level + 1 );
+                increaseLevel();
             }
             else if( name == Constants.NAMED_EVENT_LEVEL_DOWN ) {
-                setLevel( level - 1 );
+                decreaseLevel();
     //            setBlood( blood - 20 );
             }
             else if( name == Constants.NAMED_EVENT_FEED ) {
@@ -464,6 +485,9 @@ public class Player
             else if( name == Constants.NAMED_EVENT_QUIT ) {
                 var now :Number = new Date().time;
                 setTime( now , true);
+            }
+            else if( name == Constants.SIGNAL_CHANGE_COLOR_SCHEME_REQUEST ) {
+                handleChangeColorScheme( value.toString() );
             }
             
             else if( value is IGameMessage) {
@@ -814,8 +838,14 @@ public class Player
         else if( e.name == Constants.SIGNAL_TARGET_CHATTED) {
             handleSignalTargetChatted( e );
         }
+//        else if( e.name == Constants.SIGNAL_CHANGE_COLOR_SCHEME) {
+//            handleChangeColorScheme( e );
+//        }
     }
-    
+    protected function handleChangeColorScheme( newScheme :String) :void
+    {
+        room.ctrl.sendSignal(Constants.SIGNAL_CHANGE_COLOR_SCHEME, [playerId, newScheme]);
+    }
     protected function handleSignalClosestEntityChanged( e :AVRGameRoomEvent) :void
     {
         var signalArray :Array = e.value as Array;
@@ -1061,9 +1091,9 @@ public class Player
             dict = new Dictionary(); 
         }
 
-        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level && !isNaN(level)) {
-            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
-        }
+//        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL] != level && !isNaN(level)) {
+//            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL, level);
+//        }
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD] != blood && !isNaN(blood)) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD, blood);
         }
@@ -1129,25 +1159,25 @@ public class Player
     
 
     
-    public function setLevel (level :int, force :Boolean = false) :void
-    {
-        // update our runtime state
-        level = Math.max( level, 1);
-        if (!force && level == _level) {
-            return;
-        }
-        _level = level;
-
-        // persist it, too
-        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
-        
-        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
-    }
+//    public function setLevel (level :int, force :Boolean = false) :void
+//    {
+//        // update our runtime state
+//        level = Math.max( level, 1);
+//        if (!force && level == _level) {
+//            return;
+//        }
+//        _level = level;
+//
+//        // persist it, too
+//        _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_LEVEL, _level, true);
+//        
+//        updateAvatarState();
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
+//    }
     
     public function setTargetVisible (targetVisible :Boolean, force :Boolean = false) :void
     {
@@ -1366,7 +1396,8 @@ public class Player
     
     public function get level () :int
     {
-        return _level;
+        return Logic.levelGivenCurrentXp( xp );
+//        return _level;
     }
     
     public function get xp () :int
@@ -1484,7 +1515,7 @@ public class Player
     
     
     protected var _name :String;
-    protected var _level :int;
+//    protected var _level :int;
     protected var _blood :Number;
     protected var _xp :Number;
     protected var _action :String;

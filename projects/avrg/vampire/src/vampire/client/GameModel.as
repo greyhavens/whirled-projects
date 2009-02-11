@@ -304,6 +304,21 @@ public class GameModel extends EventDispatcher
         return SharedPlayerStateClient.getMinions( ClientContext.ourPlayerId );
     }
     
+    public function get blood() :Number
+    {
+        return SharedPlayerStateClient.getBlood( ClientContext.ourPlayerId );
+    }
+    
+    public function get level() :int
+    {
+        return SharedPlayerStateClient.getLevel( ClientContext.ourPlayerId );
+    }
+    
+    public function get xp() :int
+    {
+        return SharedPlayerStateClient.getXP( ClientContext.ourPlayerId );
+    }
+    
     public function get time() :int
     {
         return SharedPlayerStateClient.getTime( ClientContext.ourPlayerId );

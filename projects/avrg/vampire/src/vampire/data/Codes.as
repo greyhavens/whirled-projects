@@ -4,6 +4,12 @@ package vampire.data
     
 public class Codes
 {
+    
+    public static function playerRoomPropKey( playerId :int ) :String
+    {
+        return Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId;
+    }
+    
     public static const ROOM_PROP_MINION_HIERARCHY :String = "hierarchy";
     public static const ROOM_PROP_MINION_HIERARCHY_ALL_PLAYER_IDS :String = "hierarchyKeys";
 //    public static const ROOM_PROP_PLAYER_ENTITY_IDS :String = "playerEntityIds";
@@ -23,7 +29,7 @@ public class Codes
 //    public static const PLAYER_PROP_PREFIX_MAXBLOOD :String = NetConstants.makePersistent("maxblood");
     
     /** Current level.  This controls the max amount of blood*/
-    public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
+//    public static const PLAYER_PROP_PREFIX_LEVEL :String = NetConstants.makePersistent("level");
     
     /** 
     * Blood slowly drains away, even when you are asleep.  When starting a game, lose an amount
@@ -89,7 +95,7 @@ public class Codes
     */
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD :int = 0;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
-    public static const ROOM_PROP_PLAYER_DICT_INDEX_LEVEL :int = 2;
+//    public static const ROOM_PROP_PLAYER_DICT_INDEX_LEVEL :int = 2;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;
