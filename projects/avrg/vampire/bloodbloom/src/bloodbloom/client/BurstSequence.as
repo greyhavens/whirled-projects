@@ -57,15 +57,24 @@ public class BurstSequence extends SceneObject
             });
 
         if (!isSequenceAlive) {
-            var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
-            GameCtx.bloodMeter.addBlood(loc.x, loc.y, _bursts.length * _bursts.length);
+            if (this.totalValue > 0) {
+                var loc :Point = this.displayObject.parent.localToGlobal(new Point(this.x, this.y));
+                GameCtx.bloodMeter.addBlood(loc.x, loc.y, this.totalValue);
+            }
+
             destroySelf();
 
         } else if (_lastCellCount != _bursts.length) {
-            var text :String = String(_bursts.length);
-            if (this.multiplier > 1) {
-                text += " x" + this.multiplier;
+            var text :String;
+            if (_bursts.length == 0) {
+                text = "";
+            } else {
+                text = String(_bursts.length);
+                if (this.multiplier > 1) {
+                    text += " x" + this.multiplier;
+                }
             }
+
             UIBits.initTextField(_tf, text, 2, 0, 0x0000ff);
             _lastCellCount = _bursts.length;
         }

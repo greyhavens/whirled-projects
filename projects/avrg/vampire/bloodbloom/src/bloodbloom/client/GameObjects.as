@@ -32,12 +32,10 @@ public class GameObjects
 
     public static function createPlayerCursor (playerType :int) :PlayerCursor
     {
-        var obj :PlayerCursor = (playerType == Constants.PLAYER_PREDATOR ?
-            new PredatorCursor() :
-            new PreyCursor());
+        var obj :PlayerCursor = new PlayerCursor(playerType);
         GameCtx.gameMode.addObject(obj);
 
-        var view :PlayerCursorView = new PlayerCursorView(obj, playerType);
+        var view :PlayerCursorView = new PlayerCursorView(obj);
         GameCtx.gameMode.addObject(view, GameCtx.cursorLayer);
 
         return obj;

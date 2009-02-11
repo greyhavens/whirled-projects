@@ -57,12 +57,6 @@ public class CellBurst extends CollidableObj
 
         addTask(new SerialTask(
             ScaleTask.CreateEaseIn(1, 1, Constants.BURST_CONTRACT_TIME),
-            new FunctionTask(
-                function () :void {
-                    var newCell :Cell = GameObjects.createCell(Constants.CELL_RED, false);
-                    newCell.x = thisBurst.x;
-                    newCell.y = thisBurst.y;
-                }),
             new SelfDestructTask()));
 
         _sequence.removeCellBurst(this);
@@ -75,13 +69,19 @@ public class CellBurst extends CollidableObj
 
         if (_state == STATE_BURST) {
             // We're bursting. When we collide with red cells, we create new CellBursts;
-            // When we collide with white cells, we unburst.
-            var cell :Cell = Cell.getCellCollision(this);
-            if (cell != null) {
-                if (cell.isRedCell) {
-                    GameObjects.createCellBurst(cell, _sequence);
-                } else {
-                    beginUnburst();
+            // When we collide with white cells, or the player if he's attached to white cells,
+            // we unburst.
+            if (GameCtx.cursor.numWhiteCells > 0 && GameCtx.cursor.collidesWith(this)) {
+                beginUnburst();
+
+            } else {
+                var cell :Cell = Cell.getCellCollision(this);
+                if (cell != null) {
+                    if (cell.isRedCell) {
+                        GameObjects.createCellBurst(cell, _sequence);
+                    } else {
+                        beginUnburst();
+                    }
                 }
             }
 

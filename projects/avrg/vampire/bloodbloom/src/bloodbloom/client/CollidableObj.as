@@ -14,11 +14,6 @@ public class CollidableObj extends SimObject
         return Collision.circlesIntersect(_loc, this.radius, other._loc, other.radius);
     }
 
-    /*public function collides (otherLoc :Vector2, otherRadius :Number) :Boolean
-    {
-        return Collision.circlesIntersect(_loc, this.radius, otherLoc, otherRadius);
-    }*/
-
     public function get radius () :Number
     {
         return _radius * _scale;

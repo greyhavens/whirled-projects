@@ -7,8 +7,6 @@ import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
-import mx.effects.easing.Cubic;
-
 public class Cell extends CollidableObj
 {
     public static const STATE_BIRTH :int = 0;
@@ -83,25 +81,19 @@ public class Cell extends CollidableObj
 
             // white cells follow predators who have other white cells attached
             if (this.isWhiteCell) {
-                if (this.isFollowing && !canFollow(this.followingPredator)) {
+                if (this.isFollowing && !canFollow(this.followingCursor)) {
                     // stop following the predator if it's left our hemisphere
                     stopFollowing();
                 }
 
-                if (!this.isFollowing) {
-                    // find somebody to follow
-                    for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
-                        if (canFollow(predator)) {
-                            follow(predator);
-                            break;
-                        }
-                    }
+                if (!this.isFollowing && canFollow(GameCtx.cursor)) {
+                    follow(GameCtx.cursor);
                 }
             }
 
             // if we're following somebody, move towards them
             if (this.isFollowing) {
-                var following :PredatorCursor = this.followingPredator;
+                var following :PlayerCursor = this.followingCursor;
                 var followImpulse :Vector2 =
                     new Vector2(following.x, following.y).subtractLocal(nextLoc);
                 followImpulse.length = SPEED_FOLLOW * dt;
@@ -164,15 +156,15 @@ public class Cell extends CollidableObj
         return _state;
     }
 
-    protected function canFollow (predator :PredatorCursor) :Boolean
+    protected function canFollow (cursor :PlayerCursor) :Boolean
     {
-        return (predator.numWhiteCells > 0 &&
-                GameCtx.getHemisphere(predator) == GameCtx.getHemisphere(this));
+        return (cursor.numWhiteCells > 0 &&
+                GameCtx.getHemisphere(cursor) == GameCtx.getHemisphere(this));
     }
 
-    protected function follow (predator :PredatorCursor) :void
+    protected function follow (cursor :PlayerCursor) :void
     {
-        _followObj = predator.ref;
+        _followObj = cursor.ref;
     }
 
     protected function stopFollowing () :void
@@ -180,9 +172,9 @@ public class Cell extends CollidableObj
         _followObj = SimObjectRef.Null();
     }
 
-    protected function get followingPredator () :PredatorCursor
+    protected function get followingCursor () :PlayerCursor
     {
-        return _followObj.object as PredatorCursor;
+        return _followObj.object as PlayerCursor;
     }
 
     protected function get isFollowing () :Boolean

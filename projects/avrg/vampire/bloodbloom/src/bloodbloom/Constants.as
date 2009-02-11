@@ -12,21 +12,12 @@ public class Constants
     public static const PLAYER_PREDATOR :int = 0;
     public static const PLAYER_PREY :int = 1;
 
-    public static const PREDATOR_SPEED_BASE :Number = 70;
-    public static const PREDATOR_SPEED_DECREASE_PER_SECOND :Number = 4;
-    public static const PREDATOR_SPEED_INCREASE_PER_DELIVERY :Number = 20;
-    public static const PREDATOR_SPEED_MIN :Number = 20;
-    public static const PREDATOR_SPEED_MAX :Number = 90;
-    public static const MAX_PREDATOR_WHITE_CELLS :int = 3;
-
-    public static const PREY_SPEED_BASE :Number = 70;
-    public static const PREY_SPEED_DECREASE_PER_CELL :Number = 15;
-    public static const PREY_SPEED_DECREASE_PER_SECOND :Number = 4;
-    public static const PREY_SPEED_INCREASE_PER_DELIVERY :Number = 20;
-    public static const PREY_SPEED_MIN :Number = 20;
-    public static const PREY_SPEED_MAX :Number = 90;
-
+    public static const CURSOR_SPEED_BASE :Number = 70;
+    public static const CURSOR_SPEED_MIN :Number = 20;
+    public static const CURSOR_SPEED_MAX :Number = 70;
+    public static const CURSOR_SPEED_DECREASE_PER_CELL :Number = 15;
     public static const CURSOR_RADIUS :Number = 9;
+
     public static const HEART_RADIUS :Number = 60;
     public static const HEART_RADIUS2 :Number = HEART_RADIUS * HEART_RADIUS;
 
@@ -56,7 +47,7 @@ public class Constants
     public static const CELL_RADIUS :Number = 6;
 
     public static const BURST_RADIUS_MIN :Number = 9;
-    public static const BURST_RADIUS_MAX :Number = 30;
+    public static const BURST_RADIUS_MAX :Number = 40;
     public static const BURST_EXPAND_TIME :Number = 1.5;
     public static const BURST_COMPLETE_TIME :Number = 3;
     public static const BURST_CONTRACT_TIME :Number = 1.5;

@@ -15,12 +15,12 @@ import flash.geom.Point;
 
 public class PlayerCursorView extends SceneObject
 {
-    public function PlayerCursorView (cursor :PlayerCursor, playerType :int)
+    public function PlayerCursorView (cursor :PlayerCursor)
     {
         _cursor = cursor;
 
         var bm :Bitmap = ClientCtx.instantiateBitmap(
-            playerType == Constants.PLAYER_PREY ? "prey_cursor" : "predator_cursor");
+            cursor.playerType == Constants.PLAYER_PREY ? "prey_cursor" : "predator_cursor");
         bm.x = -bm.width * 0.5;
         bm.y = -bm.height * 0.5;
         _sprite = SpriteUtil.createSprite();
