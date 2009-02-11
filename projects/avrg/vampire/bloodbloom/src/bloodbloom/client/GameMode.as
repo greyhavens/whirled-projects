@@ -12,6 +12,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
 
 import flash.display.MovieClip;
+import flash.filters.GlowFilter;
 import flash.geom.Point;
 
 public class GameMode extends AppMode
@@ -77,6 +78,7 @@ public class GameMode extends AppMode
 
         // cursors
         GameCtx.cursor = GameObjects.createPlayerCursor(_playerType);
+        registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // create initial cells
         for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
@@ -124,8 +126,8 @@ public class GameMode extends AppMode
 
     public function hiliteArteries (hiliteTop :Boolean, hiliteBottom :Boolean) :void
     {
-        //_arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
-        //_arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
+        _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
+        _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
     }
 
     protected function onHeartbeat (...ignored) :void
@@ -147,6 +149,11 @@ public class GameMode extends AppMode
                 cellCounts[cellType] += 1;
             }
         }
+    }
+
+    protected function onWhiteCellDelivered (...ignored) :void
+    {
+        GameCtx.heart.deliverWhiteCell();
     }
 
     protected var _playerType :int;

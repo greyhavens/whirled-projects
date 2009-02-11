@@ -15,7 +15,7 @@ public class Constants
     public static const CURSOR_SPEED_BASE :Number = 70;
     public static const CURSOR_SPEED_MIN :Number = 20;
     public static const CURSOR_SPEED_MAX :Number = 70;
-    public static const CURSOR_SPEED_DECREASE_PER_CELL :Number = 15;
+    public static const CURSOR_SPEED_DECREASE_PER_CELL :Number = 0;
     public static const CURSOR_RADIUS :Number = 9;
 
     public static const HEART_RADIUS :Number = 60;
@@ -34,7 +34,8 @@ public class Constants
 
     public static const CELL_RED :int = 0;
     public static const CELL_WHITE :int = 1;
-    public static const CELL__LIMIT :int = 2;
+    public static const CELL_BONUS :int = 2;
+    public static const CELL__LIMIT :int = 3;
     public static const INITIAL_CELL_COUNT :Array = [ 4, 2 ];
     public static const MAX_CELL_COUNT :Array = [ 60, 8 ];
     public static const RED_CELL_PROBABILITY :Number = 0.8;
@@ -43,8 +44,8 @@ public class Constants
         new NumRange(65, 90, Rand.STREAM_GAME),
         new NumRange(110, 140, Rand.STREAM_GAME)
     ];
+    public static const CELL_RADII :Array = [ 6, 6, 15 ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
-    public static const CELL_RADIUS :Number = 6;
 
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 40;

@@ -54,7 +54,21 @@ public class ClientCtx
 
     public static function createCellBitmap (type :int) :Bitmap
     {
-        var bm :Bitmap = instantiateBitmap(type == Constants.CELL_RED ? "red_cell" : "white_cell");
+        var bm :Bitmap;
+        switch (type) {
+        case Constants.CELL_RED:
+            bm = instantiateBitmap("red_cell");
+            break;
+
+        case Constants.CELL_WHITE:
+            bm = instantiateBitmap("white_cell");
+            break;
+
+        case Constants.CELL_BONUS:
+            bm = instantiateBitmap("bonus_cell");
+            break;
+        }
+
         bm.x = -bm.width * 0.5;
         bm.y = -bm.height * 0.5;
         return bm;

@@ -57,9 +57,10 @@ public class BloodBloom extends Sprite
         rm.queueResourceLoad("swf",   "uiBits",         { embeddedClass: SWF_UIBITS });
         rm.queueResourceLoad("image", "bg",             { embeddedClass: IMG_BG });
         rm.queueResourceLoad("image", "red_cell",       { embeddedClass: IMG_RED_CELL });
+        rm.queueResourceLoad("image", "white_cell",     { embeddedClass: IMG_WHITE_CELL });
+        rm.queueResourceLoad("image", "bonus_cell",     { embeddedClass: IMG_BONUS_CELL });
         rm.queueResourceLoad("image", "predator_cursor", { embeddedClass: IMG_PREDATOR_CURSOR });
         rm.queueResourceLoad("image", "prey_cursor",    { embeddedClass: IMG_PREY_CURSOR });
-        rm.queueResourceLoad("image", "white_cell",     { embeddedClass: IMG_WHITE_CELL });
 
         rm.loadQueuedResources(
             function () :void {
@@ -106,12 +107,14 @@ public class BloodBloom extends Sprite
     protected static const IMG_BG :Class;
     [Embed(source="../../../rsrc/red_cell.png", mimeType="application/octet-stream")]
     protected static const IMG_RED_CELL :Class;
+    [Embed(source="../../../rsrc/white_cell.png", mimeType="application/octet-stream")]
+    protected static const IMG_WHITE_CELL :Class;
+    [Embed(source="../../../rsrc/bonus_cell.png", mimeType="application/octet-stream")]
+    protected static const IMG_BONUS_CELL :Class;
     [Embed(source="../../../rsrc/vampire_cursor.png", mimeType="application/octet-stream")]
     protected static const IMG_PREDATOR_CURSOR :Class;
     [Embed(source="../../../rsrc/victim_cursor.png", mimeType="application/octet-stream")]
     protected static const IMG_PREY_CURSOR :Class;
-    [Embed(source="../../../rsrc/white_cell.png", mimeType="application/octet-stream")]
-    protected static const IMG_WHITE_CELL :Class;
 }
 
 }
