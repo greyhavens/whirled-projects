@@ -32,7 +32,8 @@ public class SharedPlayerStateClient
     
     public static function getLevel (playerId :int) :int
     {
-        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
+        return Logic.levelGivenCurrentXp( getXP( playerId ));
+//        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL));
     }
     
     public static function getXP (playerId :int) :int
@@ -40,9 +41,14 @@ public class SharedPlayerStateClient
         return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP));
     }
     
-    public static function getBloodBonded (playerId :int) :Array
+    public static function getBloodBonded (playerId :int) :int
     {
-        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) as Array;
+        return int(playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED));
+    }
+    
+    public static function getBloodBondedName (playerId :int) :String
+    {
+        return playerData(playerId, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) as String;
     }
     
 //    public static function getClosestUserData (playerId :int) :Array
@@ -109,7 +115,7 @@ public class SharedPlayerStateClient
     protected static function playerData (playerId :int, ix :int) :*
     {
         var dict :Dictionary =
-            ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) as Dictionary;
+            ClientContext.gameCtrl.room.props.get(Codes.playerRoomPropKey(playerId)) as Dictionary;
         return (dict != null) ? dict[ix] : undefined;
     }
     
@@ -121,7 +127,7 @@ public class SharedPlayerStateClient
     
     public static function isProps( playerId :int ) :Boolean
     {
-        return ClientContext.gameCtrl.room.props.get(Codes.ROOM_PROP_PREFIX_PLAYER_DICT + playerId) != null;
+        return ClientContext.gameCtrl.room.props.get(Codes.playerRoomPropKey(playerId)) != null;
     }
     
     public static function parsePlayerIdFromPropertyName (prop :String) :int

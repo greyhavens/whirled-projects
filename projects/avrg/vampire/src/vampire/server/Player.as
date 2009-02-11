@@ -8,14 +8,15 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameAvatar;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.avrg.AVRGameRoomEvent;
+import com.whirled.avrg.OfflinePlayerPropertyControl;
 import com.whirled.avrg.PlayerSubControlServer;
 
 import flash.utils.Dictionary;
 import flash.utils.getTimer;
 
-import vampire.avatar.AvatarGameBridge;
 import vampire.data.Codes;
 import vampire.data.Constants;
 import vampire.data.Logic;
@@ -25,7 +26,12 @@ import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
 
-
+/**
+ * Actions:
+ *  When baring, your avatar goes into the  
+ * 
+ * 
+ */
 public class Player
     implements Hashable
 {
@@ -72,20 +78,20 @@ public class Player
         }
         log.debug("Getting blood="+_blood);
         
-        var bloodbonded :Object = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED);
-        if (bloodbonded != null) {
-            _bloodbonded = bloodbonded as Array;
-            if( _bloodbonded == null) {
-                log.error("Despite the bloodbonded key containing something, it's not an array.  Setting bloodbonded=[]");
-                _bloodbonded = [];
-            }
-
-        } else {
-            // bloodbonded should at least be an empty array
-//            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
-            log.debug("   setting bloodbonded=[]");
-            setBloodBonded([]);
-        }
+        _bloodbonded = int( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED));
+//        if (bloodbonded != null) {
+//            _bloodbonded = bloodbonded as Array;
+//            if( _bloodbonded == null) {
+//                log.error("Despite the bloodbonded key containing something, it's not an array.  Setting bloodbonded=[]");
+//                _bloodbonded = [];
+//            }
+//
+//        } else {
+//            // bloodbonded should at least be an empty array
+////            log.debug("Repairing player bloodbonded", "playerId", ctrl.getPlayerId());
+//            log.debug("   setting bloodbonded=[]");
+//            setBloodBonded([]);
+//        }
         log.debug("Getting bloodbonded=" + _bloodbonded);
         
         log.debug("Getting ", "time", new Date(_ctrl.props.get(Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
@@ -142,7 +148,7 @@ public class Player
         if (level == 0) {
             log.debug("Player has never player before ", "playerId", ctrl.getPlayerId());
 //            setLevel(1, true);
-            setBloodBonded([]);
+            setBloodBonded(0);
             setBlood( 0 );
             setXP( 0 );
             setSire( ServerContext.vserver.getSireFromInvitee( _playerId ) );
@@ -186,6 +192,7 @@ public class Player
         setTargetVisible(false);//Hide the target first of all.
 //        _closestUserData = null;
         
+        updateAvatarState();
         if (_room != null) {
             _room.playerUpdated(this);
         }
@@ -268,7 +275,7 @@ public class Player
         setTime( currentTime, true );
         
         log.info("before player shutdown", "time", new Date(_ctrl.props.get( Codes.PLAYER_PROP_PREFIX_LAST_TIME_AWAKE)).toTimeString());
-//        setAction( Constants.GAME_MODE_NOTHING, true );
+        setAction( Constants.GAME_MODE_NOTHING, true );
         setIntoRoomProps( room );
         _ctrl.removeEventListener(AVRGamePlayerEvent.ENTERED_ROOM, enteredRoom);
         _ctrl.removeEventListener(AVRGamePlayerEvent.LEFT_ROOM, leftRoom);
@@ -415,7 +422,7 @@ public class Player
         if (!force && action == _action) {
             return;
         }
-        
+        log.debug(playerId + " setting action==" + action)
         _action = action;
 
         // Don't bother persisting it
@@ -498,9 +505,9 @@ public class Player
                 else if( value is BloodBondRequestMessage) {
                     handleBloodBondRequest( BloodBondRequestMessage(value) );
                 }
-                else if( value is FeedRequestMessage) {
-                    handleFeedRequestMessage( FeedRequestMessage(value) );
-                }
+//                else if( value is FeedRequestMessage) {
+//                    handleFeedRequestMessage( FeedRequestMessage(value) );
+//                }
                 else if( value is SuccessfulFeedMessage) {
                     handleSuccessfulFeedMessage( SuccessfulFeedMessage(value) );
                 }
@@ -520,6 +527,9 @@ public class Player
     {
         var bloodIncrement :Number = Constants.BLOOD_LOSS_FROM_THRALL_OR_NO_FROM_FEED;
         var bloodGained :Number = 0;
+        
+        var victimId :int = -1;
+        var victimsMostRecentFeedVictimId :int = -1;
         
         if( e == null) {
             log.error("handleSuccessfulFeedMessage, but message == null.");
@@ -541,6 +551,8 @@ public class Player
             setTargetBlood( ServerContext.nonPlayers.bloodAvailableFromNonPlayer( e.eatenPlayerId ) );
             setTargetMaxBlood( Constants.MAX_BLOOD_NONPLAYERS );
             ServerContext.serverLogBroadcast.log("  targetblood=" + targetBlood + "/" + targetMaxBlood);
+            
+            victimId = e.eatenPlayerId;
         }
         else {
             
@@ -570,6 +582,9 @@ public class Player
                 //Update the room properties that show other players blood         
                 setTargetBlood( victim.blood );
                 setTargetMaxBlood( victim.maxBlood );
+                
+                victimId = victim.playerId;
+                victimsMostRecentFeedVictimId = victim.mostRecentVictimId;
             }
             else {//Human thrall.  They get 'blood' too, except it isn't blood.  It's wannabe vampire juice
 //                log.warning(" added joy ");
@@ -592,6 +607,7 @@ public class Player
                 setTargetBlood( victim.blood );
                 setTargetMaxBlood( victim.maxBlood );
                 
+                victimId = victim.playerId;
             }
             
         }
@@ -599,6 +615,21 @@ public class Player
         if( bloodGained > 0) {
             addBlood( bloodGained );
             addXP( Constants.XP_GAINED_FROM_FEEDING_PER_BLOOD_UNIT * bloodGained);
+            
+            _mostRecentVictimId = victimId;
+            
+            if( victimsMostRecentFeedVictimId == playerId && bloodbonded != _mostRecentVictimId) {
+                //Become blood bonds
+                var newBloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _mostRecentVictimId );
+                if( newBloodBondedPlayer != null ){
+                    newBloodBondedPlayer.setBloodBonded( playerId );
+                    setBloodBonded( _mostRecentVictimId );
+                }
+                else {
+                    log.error("WTF, creating blood bond from victim, but the id is bogus, newBloodBondedPlayer=" + newBloodBondedPlayer);
+                }
+            }
+            
         }
         ServerContext.serverLogBroadcast.log("  setTargetVisible(true)" );
         setTargetVisible(true, true);
@@ -633,8 +664,8 @@ public class Player
         }
         
         
-        if( eaten.action != Constants.GAME_MODE_EAT_ME) {
-            log.warning("feed( " + targetPlayerId + " ), eatee is not in mode=" + Constants.GAME_MODE_EAT_ME);
+        if( eaten.action != Constants.GAME_MODE_BARED) {
+            log.warning("feed( " + targetPlayerId + " ), eatee is not in mode=" + Constants.GAME_MODE_BARED);
             return;
         }
         
@@ -653,16 +684,16 @@ public class Player
         eaten.removeBlood( bloodEaten );
     }
     
-    /**
-    * Handle a feed request.
-    */
-    protected function handleFeedRequestMessage( e :FeedRequestMessage) :void
-    {
-        var targetPlayer :Player = ServerContext.vserver.getPlayer( e.targetPlayer );
-        var isTargetVictim :Boolean = e.isTargetPlayerTheVictim;
-        
-        
-    }
+//    /**
+//    * Handle a feed request.
+//    */
+//    protected function handleFeedRequestMessage( e :FeedRequestMessage) :void
+//    {
+//        var targetPlayer :Player = ServerContext.vserver.getPlayer( e.targetPlayer );
+//        var isTargetVictim :Boolean = e.isTargetPlayerTheVictim;
+//        
+//        
+//    }
     
     
     /**
@@ -679,12 +710,15 @@ public class Player
         }
         
         if( e.add ) {
-            addBloodBond( e.targetPlayer, e.targetPlayerName, true );
-            if( targetPlayer != null) {
-                targetPlayer.addBloodBond( playerId, ServerContext.getPlayerName(playerId), true );
-            }
-            else {
-                log.error("You can't add a blood bond to an offline ");
+            
+            setBloodBonded( e.targetPlayer )
+//            
+//            addBloodBond( e.targetPlayer, e.targetPlayerName, true );
+//            if( targetPlayer != null) {
+//                targetPlayer.addBloodBond( playerId, ServerContext.getPlayerName(playerId), true );
+//            }
+//            else {
+//                log.error("You can't add a blood bond to an offline ");
                 
 //                ServerContext.vserver.control.loadOfflinePlayer(e.targetPlayer, 
 //                    function (props :PropertySpaceObject) :void {
@@ -701,78 +735,78 @@ public class Player
 //                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
 //                    });
                 
-            }
+//            }
         }
-        else {
-            removeBloodBond( e.targetPlayer, true );
+//        else {
+//            removeBloodBond( e.targetPlayer, true );
+//            
+//            if( targetPlayer != null) {
+//                targetPlayer.removeBloodBond( playerId, true );
+//            }
+//            else {
+//                log.error("You can't remove a blood bond to an offline ");
+////                ServerContext.vserver.control.loadOfflinePlayer(e.targetPlayer, 
+////                    function (props :PropertySpaceObject) :void {
+////                        
+////                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
+////                        if( bloodbonds == null) {
+////                            bloodbonds = new Array();
+////                        }
+////                        if( ArrayUtil.contains( bloodbonds, e.targetPlayer)) {
+////                            bloodbonds.splice( ArrayUtil.indexOf( bloodbonds, e.targetPlayer), 1);
+////                        }
+////                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
+////                    }, 
+////                    function (failureCause :String) :void { 
+////                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
+////                    });
+//                
+//            }
             
-            if( targetPlayer != null) {
-                targetPlayer.removeBloodBond( playerId, true );
-            }
-            else {
-                log.error("You can't remove a blood bond to an offline ");
-//                ServerContext.vserver.control.loadOfflinePlayer(e.targetPlayer, 
-//                    function (props :PropertySpaceObject) :void {
-//                        
-//                        var bloodbonds :Array = props.getUserProps().get( Codes.PLAYER_PROP_PREFIX_BLOODBONDED) as Array;
-//                        if( bloodbonds == null) {
-//                            bloodbonds = new Array();
-//                        }
-//                        if( ArrayUtil.contains( bloodbonds, e.targetPlayer)) {
-//                            bloodbonds.splice( ArrayUtil.indexOf( bloodbonds, e.targetPlayer), 1);
-//                        }
-//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, bloodbonds); 
-//                    }, 
-//                    function (failureCause :String) :void { 
-//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
-//                    });
-                
-            }
             
-            
-        }
+//        }
     }
     
     
-    public function addBloodBond( blondbondedPlayerId :int, playerName :String, force :Boolean = false ) :void
-    {
-        if( !force && ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
-            return;
-        }
-        var bloodbonded :Array = this.bloodbonded;
-        if( !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
-            bloodbonded.push( blondbondedPlayerId );
-            bloodbonded.push( playerName );
-        }
-        
-        setBloodBonded( bloodbonded );
-        
-        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
-    }
+//    public function addBloodBond( blondbondedPlayerId :int, playerName :String, force :Boolean = false ) :void
+//    {
+//        if( !force && ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+//            return;
+//        }
+//        var bloodbonded :Array = this.bloodbonded;
+//        if( !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+//            bloodbonded.push( blondbondedPlayerId );
+//            bloodbonded.push( playerName );
+//        }
+//        
+//        setBloodBonded( bloodbonded );
+//        
+//        updateAvatarState();
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
+//    }
     
-    public function removeBloodBond( blondbondedPlayerId :int, force :Boolean = false ) :void
-    {
-        if( !force && !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
-            return;
-        }
-        var bloodbonded :Array = this.bloodbonded;
-        if( ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
-            bloodbonded.splice( ArrayUtil.indexOf( bloodbonded, blondbondedPlayerId), 2 );
-        }
-        setBloodBonded( bloodbonded );
-        
-        updateAvatarState();
-
-        // and if we're in a room, update the room properties
-        if (_room != null) {
-            _room.playerUpdated(this);
-        }
-    }
+//    public function removeBloodBond( blondbondedPlayerId :int, force :Boolean = false ) :void
+//    {
+//        if( !force && !ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+//            return;
+//        }
+//        var bloodbonded :Array = this.bloodbonded;
+//        if( ArrayUtil.contains( bloodbonded, blondbondedPlayerId) ) {
+//            bloodbonded.splice( ArrayUtil.indexOf( bloodbonded, blondbondedPlayerId), 2 );
+//        }
+//        setBloodBonded( bloodbonded );
+//        
+//        updateAvatarState();
+//
+//        // and if we're in a room, update the room properties
+//        if (_room != null) {
+//            _room.playerUpdated(this);
+//        }
+//    }
     
     
     
@@ -786,8 +820,74 @@ public class Player
     protected function handleRequestActionChange( e :RequestActionChangeMessage) :void
     {
         log.debug("handleRequestActionChange(..), e.action=" + e.action);
-        setAction( e.action );
+        switch( e.action ) {
+            case Constants.GAME_MODE_BARED:
+            
+                //If I'm feeding, just break off the feed.
+                if( action == Constants.GAME_MODE_FEED) {
+                    var victim :Player = ServerContext.vserver.getPlayer( targetId );
+                    if( victim != null && victim.targetId == playerId 
+                        && victim.action == Constants.GAME_MODE_BARED) {
+                        
+                        victim.setAction( Constants.GAME_MODE_NOTHING );
+                        setAction( Constants.GAME_MODE_NOTHING );
+                        break;    
+                    }
+                    setAction( Constants.GAME_MODE_NOTHING );
+                    break;
+                }
+                setAction( e.action );
+                break;
+                
+            case Constants.GAME_MODE_FEED:
+                //Check if the closest vampire is also closest to you, and they are in bare mode
+                
+                if( ServerContext.vserver.isPlayerOnline( targetId ) ) {
+                    
+                    var potentialVictim :Player = ServerContext.vserver.getPlayer( targetId );
+                    if( potentialVictim != null 
+                        && potentialVictim.targetId == playerId 
+                        && potentialVictim.action == Constants.GAME_MODE_BARED) {
+                            
+                        var victimAvatar :AVRGameAvatar = room.ctrl.getAvatarInfo( targetId );
+                        if( victimAvatar != null) {
+                            ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.1, victimAvatar.orientation);
+                        }
+                        
+                        setAction( Constants.GAME_MODE_MOVING_TO_FEED );
+                        break;
+                    }
+                }
+                else {
+                    
+                }
+                
+            case Constants.GAME_MODE_FIGHT:
+            default:
+                setAction( Constants.GAME_MODE_NOTHING );
+        }
+        
     }
+    
+    protected function beginFeeding() :void
+    {
+        log.debug("Begin feeding");
+        if( ServerContext.vserver.isPlayerOnline( targetId ) ) {
+                    
+            var potentialVictim :Player = ServerContext.vserver.getPlayer( targetId );
+            if( potentialVictim != null 
+                && potentialVictim.targetId == playerId 
+                && potentialVictim.action == Constants.GAME_MODE_BARED) {
+                
+                setAction( Constants.GAME_MODE_FEED );
+            }
+        }
+        else {
+            
+        }
+    }
+    
+    
 
 
     protected function enteredRoom (evt :AVRGamePlayerEvent) :void
@@ -838,10 +938,26 @@ public class Player
         else if( e.name == Constants.SIGNAL_TARGET_CHATTED) {
             handleSignalTargetChatted( e );
         }
+        else if( e.name == Constants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION) {
+            if( int(e.value) == playerId) {
+                log.debug("handleSignalArrivedAtDestination()", "e", e);
+                handleSignalArrivedAtDestination();
+            }
+        }
 //        else if( e.name == Constants.SIGNAL_CHANGE_COLOR_SCHEME) {
 //            handleChangeColorScheme( e );
 //        }
     }
+    protected function handleSignalArrivedAtDestination() :void
+    {
+        if( action == Constants.GAME_MODE_MOVING_TO_FEED) {
+            beginFeeding();
+        }
+        else {
+            log.error("WTF handleSignalArrivedAtDestination(), should be action=" + Constants.GAME_MODE_MOVING_TO_FEED + ", but we're=" + action + ", so no feeding");
+        }
+    }
+    
     protected function handleChangeColorScheme( newScheme :String) :void
     {
         room.ctrl.sendSignal(Constants.SIGNAL_CHANGE_COLOR_SCHEME, [playerId, newScheme]);
@@ -850,7 +966,7 @@ public class Player
     {
         var signalArray :Array = e.value as Array;
         if( signalArray != null && signalArray.length >= 2 && signalArray[0] == playerId) {
-            log.debug(name + " handleSignalReceived() " + e);
+//            log.debug(name + " handleSignalReceived() " + e);
             
             var closestUserId :int = int(signalArray[1]);
             var closestUserName :String = String(signalArray[2]);
@@ -858,9 +974,9 @@ public class Player
             var closestUserHotspot :Array = signalArray[4] as Array;
             var targetLocation :Array = signalArray[5] as Array;
             
-            log.debug( "   closestUserLocation " + closestUserLocation);
-            log.debug( "   closestUserHotspot " + closestUserHotspot);
-            log.debug( "   targetLocation " + targetLocation);
+//            log.debug( "   closestUserLocation " + closestUserLocation);
+//            log.debug( "   closestUserHotspot " + closestUserHotspot);
+//            log.debug( "   targetLocation " + targetLocation);
             
             
             if( closestUserId > 0 ) {
@@ -870,8 +986,9 @@ public class Player
                 switch( action ) {
                     
                     case Constants.GAME_MODE_FEED:
-                    case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-                    case Constants.GAME_MODE_EAT_ME:
+                    case Constants.GAME_MODE_MOVING_TO_FEED:
+//                    case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+                    case Constants.GAME_MODE_BARED:
                         //Update the target data if our target has moved, but don't change 
                         //our target
                         if( closestUserId == targetId) {
@@ -926,7 +1043,7 @@ public class Player
     protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
     {
         var fromPlayerId :int = int(e.value);
-        ServerContext.serverLogBroadcast.log("Chat received from " + fromPlayerId); 
+//        ServerContext.serverLogBroadcast.log("Chat received from " + fromPlayerId); 
         if( fromPlayerId == playerId && targetId != 0 && !room.isPlayer(targetId)) {
             var time :int = getTimer();
             var aMinuteAgo :int = time - 60000;
@@ -937,16 +1054,16 @@ public class Player
                 return chattime > aMinuteAgo;
             });
             
-            ServerContext.serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
+//            ServerContext.serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
             
             if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_MINUTE) {
                 _chatTimesWithTarget.splice(0);
-                ServerContext.serverLogBroadcast.log("  Chat, send feed message ");
+//                ServerContext.serverLogBroadcast.log("  Chat, send feed message ");
                 handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
             }
         }
         else {
-            ServerContext.serverLogBroadcast.log("  Ignored for some reason. fromPlayerId=" + fromPlayerId + ", targetId=" + targetId + ", room.isPlayer(targetId)=" + room.isPlayer(targetId));
+//            ServerContext.serverLogBroadcast.log("  Ignored for some reason. fromPlayerId=" + fromPlayerId + ", targetId=" + targetId + ", room.isPlayer(targetId)=" + room.isPlayer(targetId));
         }
     }
     
@@ -1027,7 +1144,25 @@ public class Player
             return;
         }
         else {
-            _ctrl.setAvatarState(_action);
+            var avatar :AVRGameAvatar = _room.ctrl.getAvatarInfo( playerId );
+            if( avatar == null) {
+                return;
+            }
+            
+            var newState :String = "Default";
+            
+            
+            if( action == Constants.GAME_MODE_BARED) {
+                newState = action;
+            }
+            
+            if( action == Constants.GAME_MODE_FEED) {
+                newState = action;
+            }
+            
+            if( newState != avatar.state ) {
+                _ctrl.setAvatarState(newState);
+            }
         }
     }
     
@@ -1102,8 +1237,12 @@ public class Player
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION, action);
         }
         
-        if (!ArrayUtil.equals( dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED], bloodbonded )) {
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED] != bloodbonded ) {
             room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED, bloodbonded);
+        }
+        
+        if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME] != bloodbondedName ) {
+            room.ctrl.props.setIn(key, Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME, bloodbondedName);
         }
         
         if (dict[Codes.ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE] != time && !isNaN(time)) {
@@ -1356,11 +1495,52 @@ public class Player
 //        setBloodBonded( _bloodbonded, true );
 //    }
     
-    public function setBloodBonded (bloodbonded :Array) :void
+    public function setBloodBonded (bloodbonded :int, force :Boolean = false) :void
     {
+        // update our runtime state
+        if (!force && bloodbonded == _bloodbonded) {
+            return;
+        }
+        
+        var oldBloodBond :int = _bloodbonded;
+        if( oldBloodBond > 0) {//Remove the blood bond from the other player.
+            if( ServerContext.vserver.isPlayerOnline( oldBloodBond )) {
+                var oldPartner :Player = ServerContext.vserver.getPlayer( oldBloodBond );
+                oldPartner.setBloodBonded( -1 );
+            }
+            else {//Load from database
+                ServerContext.ctrl.loadOfflinePlayer(oldBloodBond, 
+                    function (props :OfflinePlayerPropertyControl) :void {
+                        props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, 0);
+                    },
+                    function (failureCause :Object) :void {
+                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); ;
+                    });
+                
+                
+            }
+            
+        }
+        
         _bloodbonded = bloodbonded;
         // persist it, too
         _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED, _bloodbonded, true);
+        
+        if( _bloodbonded > 0) {//Set the name too
+            var bloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _bloodbonded );
+            if( bloodBondedPlayer != null ) {
+                _bloodbondedName = bloodBondedPlayer.name;
+                _ctrl.props.set(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME, _bloodbondedName, true);
+            }
+            else {
+                log.error("Major error: setBloodBonded( " + _bloodbonded + "), but no Player, so cannot set name");
+            }
+        }
+        
+        // and if we're in a room, update the room properties
+        if (_room != null) {
+            _room.playerUpdated(this);
+        }
     }
     
     public function setMinions (minions :Array) :void
@@ -1422,9 +1602,14 @@ public class Player
         return Constants.MAX_BLOOD_FOR_LEVEL( level );
     }
     
-    public function get bloodbonded () :Array
+    public function get bloodbonded () :int
     {
-        return _bloodbonded.slice();
+        return _bloodbonded;
+    }
+    
+    public function get bloodbondedName () :String
+    {
+        return _bloodbondedName;
     }
     
     public function get minions () :Array
@@ -1513,6 +1698,63 @@ public class Player
         }
     }
     
+    public function get mostRecentVictimId() :int
+    {
+        return _mostRecentVictimId;
+    }
+    
+    public function isVictim() :Boolean
+    {
+        if( action != Constants.GAME_MODE_BARED) {
+            return false;
+        }
+        
+        var predator :Player = ServerContext.vserver.getPlayer( targetId );
+        if( predator == null ) {
+            return false;
+        }
+        
+        if( predator.action == Constants.GAME_MODE_FEED && predator.targetId == playerId) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+    * If the avatar moves, break off the feeding/baring.
+    */
+    public function handleAvatarMoved() :void
+    {
+        if( action == Constants.GAME_MODE_MOVING_TO_FEED) {
+            return;
+        }
+        else if( action == Constants.GAME_MODE_FEED) {
+            var victim :Player = ServerContext.vserver.getPlayer( targetId );
+            if( victim != null ) {
+                victim.setTargetId(0);
+                victim.setAction( Constants.GAME_MODE_NOTHING );
+            }
+            else {
+                log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
+            }
+            setAction( Constants.GAME_MODE_NOTHING );
+        }
+        else if( action == Constants.GAME_MODE_BARED) {
+            var predator :Player = ServerContext.vserver.getPlayer( targetId );
+            if( predator != null ) {
+                predator.setTargetId(0);
+                predator.setAction( Constants.GAME_MODE_NOTHING );
+            }
+            else {
+                log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
+            }
+            setAction( Constants.GAME_MODE_NOTHING );
+        }
+        
+        
+//        setTargetId(0);
+    }
+    
     
     protected var _name :String;
 //    protected var _level :int;
@@ -1520,7 +1762,8 @@ public class Player
     protected var _xp :Number;
     protected var _action :String;
     
-    protected var _bloodbonded :Array;
+    protected var _bloodbonded :int;
+    protected var _bloodbondedName :String;
     
     protected var _sire :int;
     protected var _minions :Array;
@@ -1543,8 +1786,11 @@ public class Player
 
     
     protected var _chatTimesWithTarget :Array = [];
+    
+    /** Records who we eat, and who eats us, for determining blood bond status.*/
+    protected var _mostRecentVictimId :int;
 
-
+//    public var _currentPredatorId :int;
 
 
 

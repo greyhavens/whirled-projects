@@ -37,10 +37,15 @@ public class AvatarGameBridge
     {
         
         
-        trace2("\nVampireAvatarController handleEntityMoved!, hotspot=" + _ctrl.getEntityProperty( EntityControl.PROP_HOTSPOT, e.name));
+//        trace2("\nVampireAvatarController handleEntityMoved!, hotspot=" + _ctrl.getEntityProperty( EntityControl.PROP_HOTSPOT, e.name));
 //        trace2( playerId + " e=" + e);
         if( e.value == null) {//Only compute closest avatars when this avatar has arrived at location
             computeClosestAvatar(e);
+            //If we arrived at out destination, notify the server, who may initiate the feeding animation
+            if( int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name)) == playerId) {
+                trace2( "handleEntityMoved(), we have arrived!");
+                _ctrl.sendSignal( Constants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION, playerId);
+            }
         }
         else {
 //            trace2("  e.value != null, beginning of move, so turn off targeting, sending closest == 0");
@@ -58,11 +63,31 @@ public class AvatarGameBridge
     protected function handleSignalReceived (e :ControlEvent) :void
     {
         //Update our target 
-        if( e.name == Constants.SIGNAL_PLAYER_TARGET) {
-            var data :Array = e.value as Array;
-            if( data[0] == playerId) {
-                _targetId = data[1] as int;
-            }
+        var data :Array;
+        switch( e.name ) {
+            case Constants.SIGNAL_PLAYER_TARGET :
+                data = e.value as Array;
+                if( data[0] == playerId) {
+                    _targetId = data[1] as int;
+                }
+                break;
+            
+            case Constants.SIGNAL_CHANGE_COLOR_SCHEME:
+                data = e.value as Array;
+                if( data != null && data.length >= 2) {
+                    if( data[0] == playerId && _colorSchemeFunction != null) {
+//                        trace("calling _colorSchemeFunction from bridge");
+                        _colorSchemeFunction( data[1] );
+                    }
+                }
+                else {
+                    trace("WTF, signal " + e);
+                }
+                break    
+            default:
+//                log.debug("Ignoring signal " + e);
+                break;
+            
         }
     }
     

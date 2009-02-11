@@ -242,11 +242,11 @@ public class GameModel extends EventDispatcher
     
     public function elementChanged (e :ElementChangedEvent) :void
     {
-        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e); 
+//        log.debug(Constants.DEBUG_MINION + " elementChanged()", "e", e); 
         if( e.name == Codes.ROOM_PROP_MINION_HIERARCHY) {
                 
             _hierarchy = loadHierarchyFromProps();
-            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
+//            log.debug(Constants.DEBUG_MINION + " elementChanged", "e", e, "_hierarchy", _hierarchy);
         
             dispatchEvent( new HierarchyUpdatedEvent( _hierarchy ) );
             return;
@@ -268,13 +268,13 @@ public class GameModel extends EventDispatcher
             
             //If the action changes on the server, that means the change is forced, so change to that action.
             if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_ACTION) {
-                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
+//                log.debug("  Dispatching event=" + ChangeActionEvent.CHANGE_ACTION + " new action=" + e.newValue);
                 dispatchEvent( new ChangeActionEvent( e.newValue.toString() ) );
             }
             
         }
         else {
-            log.warning("  Failed to update ElementChangedEvent" + e);
+//            log.warning("  Failed to update ElementChangedEvent" + e);
         }
         
     }
@@ -294,9 +294,15 @@ public class GameModel extends EventDispatcher
         return ArrayUtil.contains( playerIdsInRoom(), userId );
     }
     
-    public function get bloodbonded() :Array
+    public function get bloodbonded() :int
     {
         return SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId );
+    }
+    
+    public function get bloodbondedName() :String
+    {
+        var name :String = SharedPlayerStateClient.getBloodBondedName( ClientContext.ourPlayerId );
+        return name != null ? name : "none";
     }
     
     public function get minions() :Array

@@ -51,9 +51,15 @@ public class Codes
     public static const PLAYER_PROP_PREFIX_SIRE :String = NetConstants.makePersistent("sire");
     
     /** 
-    * Player(s) currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
+    * PlayerId currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
     */
     public static const PLAYER_PROP_PREFIX_BLOODBONDED :String = NetConstants.makePersistent("bloodbonded");
+    
+    /** 
+    * Player name currently bloodbonded to you.  Bloodbonding is romantic with minor game effects.
+    */
+    public static const PLAYER_PROP_PREFIX_BLOODBONDED_NAME :String = NetConstants.makePersistent("bloodbondedName");
+    
     
     /** 
     * Closest UserId.  Used for determining your target
@@ -95,7 +101,7 @@ public class Codes
     */
     public static const ROOM_PROP_PLAYER_DICT_INDEX_CURRENT_BLOOD :int = 0;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_NAME :int = 1;
-//    public static const ROOM_PROP_PLAYER_DICT_INDEX_LEVEL :int = 2;
+    public static const ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME :int = 2;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_PREVIOUS_TIME_AWAKE :int = 3;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_MINIONS :int = 4;
     public static const ROOM_PROP_PLAYER_DICT_INDEX_SIRE :int = 5;

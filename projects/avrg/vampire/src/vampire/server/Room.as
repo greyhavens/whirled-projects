@@ -297,7 +297,20 @@ public class Room
             
             _ctrl.addEventListener(AVRGameRoomEvent.SIGNAL_RECEIVED, handleSignalReceived);
             
+            _ctrl.addEventListener(AVRGameRoomEvent.PLAYER_MOVED, handlePlayerMoved);
+            
         }
+    }
+    
+    protected function handlePlayerMoved( e :AVRGameRoomEvent ) :void
+    {
+        log.debug("handlePlayerMoved() " + e);
+        
+        _players.forEach( function(p :Player) :void {
+            if( p.playerId == int(e.value)) {
+               p.handleAvatarMoved(); 
+            }
+        });
     }
     
     protected function handleSignalReceived( e :AVRGameRoomEvent ) :void
