@@ -101,18 +101,6 @@ public class PreyCursor extends PlayerCursor
         return _lastArtery != arteryType && _whiteCellCount > 0;
     }
 
-    override public function clone (theClone :CollidableObj = null) :CollidableObj
-    {
-        var cursorClone :PreyCursor = PreyCursor(super.clone(theClone));
-
-        cursorClone._redCellCount = _redCellCount;
-        cursorClone._whiteCellCount = _whiteCellCount;
-        cursorClone._lastLoc = _lastLoc;
-        cursorClone._lastArtery = _lastArtery;
-
-        return cursorClone;
-    }
-
     protected var _redCellCount :int;
     protected var _whiteCellCount :int;
     protected var _lastLoc :Vector2 = new Vector2();

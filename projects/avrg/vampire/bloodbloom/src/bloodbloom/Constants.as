@@ -6,12 +6,6 @@ import com.whirled.contrib.simplegame.util.*;
 public class Constants
 {
     public static const DEBUG_SHOW_STATS :Boolean = true;
-    public static const DEBUG_SHOW_CURSOR_TARGET :Boolean = false;
-    public static const DEBUG_SHOW_MESSAGE_LAG :Boolean = false;
-    public static const DEBUG_SERVER_AGGREGATES_MESSAGES :Boolean = false;
-    public static const DEBUG_ENABLE_KEYBOARD_CURSOR_CONTROL :Boolean = true;
-
-    public static const CLICK_TO_MOVE :Boolean = true;
 
     public static const GAME_TIME :Number = 60 * 2;
 
@@ -72,10 +66,6 @@ public class Constants
 
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
-
-    public static const HEARTBEAT_TIME :Number = 50 / 1000;
-    public static const MSG_S_HEARTBEAT :String = "sTick";
-    public static const MSG_C_CHOOSE_PLAYER :String = "cChoosePlayer"; // int - player type
 
     public static const PROP_RAND_SEED :String = "randSeed"; // uint
     public static const PROP_INITED :String = "inited"; // Boolean

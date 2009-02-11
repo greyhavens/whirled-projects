@@ -6,7 +6,7 @@ public class PredatorCursor extends PlayerCursor
 {
     public static function getAll () :Array
     {
-        return GameCtx.netObjDb.getObjectsInGroup("PredatorCursor");
+        return GameCtx.gameMode.getObjectsInGroup("PredatorCursor");
     }
 
     public function PredatorCursor ()
@@ -55,15 +55,6 @@ public class PredatorCursor extends PlayerCursor
     public function get numWhiteCells () :int
     {
         return _whiteCellCount;
-    }
-
-    override public function clone (theClone :CollidableObj = null) :CollidableObj
-    {
-        var cursorClone :PredatorCursor = PredatorCursor(super.clone(theClone));
-
-        cursorClone._whiteCellCount = _whiteCellCount;
-
-        return cursorClone;
     }
 
     protected var _whiteCellCount :int;

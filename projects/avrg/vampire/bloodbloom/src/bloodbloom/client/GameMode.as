@@ -10,10 +10,8 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
-import com.whirled.net.PropertyChangedEvent;
 
 import flash.display.Bitmap;
-import flash.display.DisplayObjectContainer;
 import flash.filters.GlowFilter;
 import flash.geom.Point;
 
@@ -30,7 +28,6 @@ public class GameMode extends AppMode
 
         GameCtx.init();
         GameCtx.gameMode = this;
-        GameCtx.netObjDb = new NetObjDb();
 
         setupNetwork();
 
@@ -63,7 +60,7 @@ public class GameMode extends AppMode
 
         // Setup game objects
         GameCtx.heart = new Heart();
-        GameCtx.netObjDb.addObject(GameCtx.heart);
+        GameCtx.gameMode.addObject(GameCtx.heart);
 
         var timerView :TimerView = new TimerView();
         timerView.x = TIMER_LOC.x;
@@ -81,10 +78,9 @@ public class GameMode extends AppMode
         addObject(heart, GameCtx.cellLayer);
 
         // cursors
-        GameCtx.predator = GameObjects.createPlayerCursor(Constants.PLAYER_PREDATOR);
-        GameCtx.prey = GameObjects.createPlayerCursor(Constants.PLAYER_PREY);
+        GameCtx.cursor = GameObjects.createPlayerCursor(_playerType);
 
-        registerListener(GameCtx.prey, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
+        //registerListener(GameCtx.prey, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // create initial cells
         for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
@@ -96,114 +92,30 @@ public class GameMode extends AppMode
                 cell.y = loc.y;
             }
         }
-
-        // Throttle our target messages
-        _msgThrottler = new CursorTargetUpdater(_playerType, _msgMgr);
-        addObject(_msgThrottler);
     }
 
     protected function setupNetwork () :void
     {
-        _msgMgr = (ClientCtx.isMultiplayer ?
-            new OnlineTickedMessageManager(ClientCtx.gameCtrl,
-                false,
-                Constants.HEARTBEAT_TIME * 1000,
-                Constants.MSG_S_HEARTBEAT) :
-            new OfflineTickedMessageManager(ClientCtx.gameCtrl,
-                Constants.HEARTBEAT_TIME * 1000));
-        _msgMgr.addMessageType(CursorTargetMsg);
-        _msgMgr.run();
-
         if (ClientCtx.isConnected) {
             ClientCtx.gameCtrl.game.playerReady();
-
-            registerListener(
-                ClientCtx.gameCtrl.net,
-                PropertyChangedEvent.PROPERTY_CHANGED,
-                checkIsInited);
-
-            checkIsInited();
-
-            // wait for the INITED property to be true; at that point, we can seed our RNG;
-            // the game will begin receiving heartbeat messages shortly afterwards
-            function checkIsInited (...ignored) :void {
-                if (ClientCtx.gameCtrl.net.get(Constants.PROP_INITED) as Boolean) {
-                    var randSeed :uint = ClientCtx.gameCtrl.net.get(Constants.PROP_RAND_SEED) as uint;
-                    Rand.seedStream(Rand.STREAM_GAME, randSeed);
-                    unregisterListener(
-                        ClientCtx.gameCtrl.net,
-                        PropertyChangedEvent.PROPERTY_CHANGED,
-                        checkIsInited);
-                }
-            }
-
-        } else {
-            Rand.seedStream(Rand.STREAM_GAME, uint(Math.random() * uint.MAX_VALUE));
         }
-    }
-
-    override protected function destroy () :void
-    {
-        _msgMgr.stop();
-        super.destroy();
-    }
-
-    protected function onWhiteCellDelivered (...ignored) :void
-    {
-        GameCtx.heart.deliverWhiteCell();
-        GameCtx.prey.offsetSpeedBonus(Constants.PREY_SPEED_INCREASE_PER_DELIVERY);
-        GameCtx.predator.offsetSpeedBonus(Constants.PREDATOR_SPEED_INCREASE_PER_DELIVERY);
     }
 
     override public function update (dt :Number) :void
     {
-        // process our network ticks (updates network objects)
-        _msgMgr.update(dt);
-        var updateNetObjects :Boolean = _msgMgr.unprocessedTickCount > 0;
-        while (_msgMgr.unprocessedTickCount > 0) {
-            for each (var msg :Object in _msgMgr.getNextTick()) {
-                handleGameMessage(msg);
-            }
-
-            GameCtx.netObjDb.update(Constants.HEARTBEAT_TIME);
-            GameCtx.timeLeft -= Constants.HEARTBEAT_TIME;
-
-            if (GameCtx.timeLeft <= 0) {
-                gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
-            }
+        GameCtx.timeLeft -= dt;
+        if (GameCtx.timeLeft <= 0) {
+            gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
         }
 
-        if (updateNetObjects) {
-            GameCtx.clientFutureDelta = 0;
-        } else {
-            GameCtx.clientFutureDelta += dt;
+        // Move the player cursor towards the mouse
+        var moveTarget :Vector2 = new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);
+        if (!moveTarget.equals(_lastMoveTarget)) {
+            GameCtx.cursor.moveTarget = moveTarget;
+            _lastMoveTarget = moveTarget;
         }
 
-        // update all the view objects
-        _modeTime += dt;
         super.update(dt);
-    }
-
-    protected function handleGameMessage (msg :Object) :void
-    {
-        if (msg is CursorTargetMsg) {
-            var cursorTargetMsg :CursorTargetMsg = msg as CursorTargetMsg;
-            var cursor :PlayerCursor = (cursorTargetMsg.playerId == Constants.PLAYER_PREDATOR ?
-                GameCtx.predator :
-                GameCtx.prey);
-            cursor.moveTarget = new Vector2(cursorTargetMsg.x, cursorTargetMsg.y);
-
-            if (Constants.CLICK_TO_MOVE && cursorTargetMsg.playerId == _playerType) {
-                var clickIndicator :ClickIndicatorView = new ClickIndicatorView();
-                clickIndicator.x = cursorTargetMsg.x;
-                clickIndicator.y = cursorTargetMsg.y;
-                addObject(clickIndicator, GameCtx.effectLayer);
-            }
-
-            if (Constants.DEBUG_SHOW_MESSAGE_LAG && cursorTargetMsg.playerId == _playerType) {
-                log.info("message lag: " + Number(cursorTargetMsg.lagMs / 1000).toFixed(2));
-            }
-        }
     }
 
     public function gameOver (reason :String) :void
@@ -214,34 +126,17 @@ public class GameMode extends AppMode
         }
     }
 
-    public function get modeTime () :Number
-    {
-        return _modeTime;
-    }
-
     public function hiliteArteries (hiliteTop :Boolean, hiliteBottom :Boolean) :void
     {
         _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
         _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
     }
 
-    override public function addObject (obj :SimObject,
-        displayParent :DisplayObjectContainer = null) :SimObjectRef
-    {
-        if (obj is NetObj) {
-            throw new Error("NetObjs cannot be added to GameMode");
-        } else {
-            return super.addObject(obj, displayParent);
-        }
-    }
-
     protected var _playerType :int;
-    protected var _modeTime :Number = 0;
     protected var _gameOver :Boolean;
     protected var _arteryTop :Bitmap;
     protected var _arteryBottom :Bitmap;
-    protected var _msgMgr :TickedMessageManager;
-    protected var _msgThrottler :CursorTargetUpdater;
+    protected var _lastMoveTarget :Vector2 = new Vector2();
 
     protected var _lastCursorUpdate :Number = 0;
 

@@ -16,18 +16,18 @@ public class Cell extends CollidableObj
 
     public static function destroyCells (cellType :int = -1) :void
     {
-        GameCtx.netObjDb.destroyObjectsInGroup(getGroupName(cellType));
+        GameCtx.gameMode.destroyObjectsInGroup(getGroupName(cellType));
     }
 
     public static function getCellCount (cellType :int = -1) :int
     {
-        return GameCtx.netObjDb.getObjectRefsInGroup(getGroupName(cellType)).length;
+        return GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType)).length;
     }
 
     public static function getCellCollision (obj :CollidableObj, cellType :int = -1) :Cell
     {
         // returns the first cell that collides with the given circle
-        var cells :Array = GameCtx.netObjDb.getObjectRefsInGroup(getGroupName(cellType));
+        var cells :Array = GameCtx.gameMode.getObjectRefsInGroup(getGroupName(cellType));
 
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
@@ -65,8 +65,9 @@ public class Cell extends CollidableObj
 
             // fire out of the heart in a random direction
             _birthTarget = getBirthTargetLoc(_type);
-            addTask(After(Constants.CELL_BIRTH_TIME, new FunctionTask(
-                function () :void {
+            addTask(new SerialTask(
+                LocationTask.CreateEaseOut(_birthTarget.x, _birthTarget.y, Constants.CELL_BIRTH_TIME),
+                new FunctionTask(function () :void {
                     _state = STATE_NORMAL;
                 })));
 
@@ -78,66 +79,51 @@ public class Cell extends CollidableObj
     public function getNextLoc (curLoc :Vector2, dt :Number) :Vector2
     {
         var nextLoc :Vector2 = curLoc.clone();
-        if (dt > 0) {
-            if (_state == STATE_BIRTH) {
-                var elapsedTime :Number = Math.min(_liveTime + dt, Constants.CELL_BIRTH_TIME);
-                nextLoc.x = mx.effects.easing.Cubic.easeOut(
-                    elapsedTime * 1000,
-                    Constants.GAME_CTR.x,
-                    _birthTarget.x - Constants.GAME_CTR.x,
-                    Constants.CELL_BIRTH_TIME * 1000);
-                nextLoc.y = mx.effects.easing.Cubic.easeOut(
-                    elapsedTime * 1000,
-                    Constants.GAME_CTR.y,
-                    _birthTarget.y - Constants.GAME_CTR.y,
-                    Constants.CELL_BIRTH_TIME * 1000);
+        if (_state == STATE_NORMAL) {
 
-            } else if (_state == STATE_NORMAL) {
+            // white cells follow predators who have other white cells attached
+            if (this.isWhiteCell) {
+                if (this.isFollowing && !canFollow(this.followingPredator)) {
+                    // stop following the predator if it's left our hemisphere
+                    stopFollowing();
+                }
 
-                // white cells follow predators who have other white cells attached
-                if (this.isWhiteCell) {
-                    if (this.isFollowing && !canFollow(this.followingPredator)) {
-                        // stop following the predator if it's left our hemisphere
-                        stopFollowing();
-                    }
-
-                    if (!this.isFollowing) {
-                        // find somebody to follow
-                        for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
-                            if (canFollow(predator)) {
-                                follow(predator);
-                                break;
-                            }
+                if (!this.isFollowing) {
+                    // find somebody to follow
+                    for each (var predator :PredatorCursor in PredatorCursor.getAll()) {
+                        if (canFollow(predator)) {
+                            follow(predator);
+                            break;
                         }
                     }
                 }
-
-                // if we're following somebody, move towards them
-                if (this.isFollowing) {
-                    var following :PredatorCursor = this.followingPredator;
-                    var followImpulse :Vector2 =
-                        new Vector2(following.x, following.y).subtractLocal(nextLoc);
-                    followImpulse.length = SPEED_FOLLOW * dt;
-                    nextLoc.x += followImpulse.x;
-                    nextLoc.y += followImpulse.y;
-
-                } else {
-                    // otherwise, move away from, and around, the heart
-                    var ctrImpulse :Vector2 = nextLoc.subtract(Constants.GAME_CTR);
-                    ctrImpulse.length = 1;
-
-                    var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-                    perpImpulse.length = 3.5;
-
-                    var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-                    impulse.length = SPEED_BASE * dt;
-
-                    nextLoc.x += impulse.x;
-                    nextLoc.y += impulse.y;
-                }
-
-                nextLoc = GameCtx.clampLoc(nextLoc);
             }
+
+            // if we're following somebody, move towards them
+            if (this.isFollowing) {
+                var following :PredatorCursor = this.followingPredator;
+                var followImpulse :Vector2 =
+                    new Vector2(following.x, following.y).subtractLocal(nextLoc);
+                followImpulse.length = SPEED_FOLLOW * dt;
+                nextLoc.x += followImpulse.x;
+                nextLoc.y += followImpulse.y;
+
+            } else {
+                // otherwise, move away from, and around, the heart
+                var ctrImpulse :Vector2 = nextLoc.subtract(Constants.GAME_CTR);
+                ctrImpulse.length = 1;
+
+                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+                perpImpulse.length = 3.5;
+
+                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+                impulse.length = SPEED_BASE * dt;
+
+                nextLoc.x += impulse.x;
+                nextLoc.y += impulse.y;
+            }
+
+            nextLoc = GameCtx.clampLoc(nextLoc);
         }
 
         return nextLoc;

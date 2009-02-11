@@ -31,10 +31,8 @@ public class CellView extends SceneObject
             return;
         }
 
-        var nextLoc :Vector2 = _cell.getNextLoc(_cell.loc, GameCtx.clientFutureDelta);
-
-        this.x = nextLoc.x;
-        this.y = nextLoc.y;
+        this.x = _cell.loc.x;
+        this.y = _cell.loc.y;
     }
 
     override public function get displayObject () :DisplayObject

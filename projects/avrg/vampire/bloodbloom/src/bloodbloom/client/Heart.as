@@ -2,9 +2,10 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.util.*;
 
-public class Heart extends NetObj
+public class Heart extends SimObject
 {
     public function Heart ()
     {
@@ -15,8 +16,8 @@ public class Heart extends NetObj
     {
         super.update(dt);
 
-        var timeNow :Number = _liveTime;
-        while (timeNow >= this.nextBeat) {
+        _liveTime += dt;
+        while (_liveTime >= this.nextBeat) {
             _lastBeat = this.nextBeat;
             _totalBeatTime += Constants.BEAT_TIME_INCREASE_PER_SECOND;
             _totalBeatTime = Math.min(_totalBeatTime, Constants.BEAT_TIME_MAX);
@@ -80,6 +81,7 @@ public class Heart extends NetObj
 
     protected var _totalBeatTime :Number;
     protected var _lastBeat :Number = 0;
+    protected var _liveTime :Number = 0;
 }
 
 }

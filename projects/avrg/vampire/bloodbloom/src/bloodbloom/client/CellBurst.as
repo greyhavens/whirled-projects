@@ -85,13 +85,9 @@ public class CellBurst extends CollidableObj
                 }
             }
 
-            if (collidesWith(GameCtx.prey)) {
-                Cell.destroyCells();
-            }
-
         } else if (_state == STATE_UNBURST) {
             // We're unbursting. Collide with other CellBursts and contract them back into cells.
-            var bursts :Array = GameCtx.netObjDb.getObjectRefsInGroup("CellBurst");
+            var bursts :Array = GameCtx.gameMode.getObjectRefsInGroup("CellBurst");
             for each (var burstRef :SimObjectRef in bursts) {
                 var burst :CellBurst = burstRef.object as CellBurst;
                 if (burst != null && burst != this && burst._state == STATE_BURST) {

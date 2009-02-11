@@ -10,10 +10,8 @@ import flash.display.Sprite;
 public class GameCtx
 {
     public static var gameMode :GameMode;
-    public static var netObjDb :NetObjDb;
     public static var heart :Heart;
-    public static var prey :PlayerCursor;
-    public static var predator :PlayerCursor;
+    public static var cursor :PlayerCursor;
     public static var bloodMeter :PredatorBloodMeter;
 
     public static var cellLayer :Sprite;
@@ -22,15 +20,11 @@ public class GameCtx
 
     public static var timeLeft :Number;
 
-    public static var clientFutureDelta :Number;
-
     public static function init () :void
     {
         gameMode = null;
-        netObjDb = null;
         heart = null;
-        prey = null;
-        predator = null;
+        cursor = null;
         bloodMeter = null;
 
         cellLayer = null;
@@ -38,8 +32,6 @@ public class GameCtx
         effectLayer = null;
 
         timeLeft = Constants.GAME_TIME;
-
-        clientFutureDelta = 0;
     }
 
     // Returns a new Vector, clamped within the bounds of the game

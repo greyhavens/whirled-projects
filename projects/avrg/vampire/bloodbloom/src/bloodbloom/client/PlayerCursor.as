@@ -17,11 +17,6 @@ public class PlayerCursor extends CollidableObj
         _moveDirection = val.subtract(_loc).normalizeLocal();
     }
 
-    public function get moveDirection () :Vector2
-    {
-        return _moveDirection;
-    }
-
     public function updateLoc (dt :Number) :void
     {
         var moveDist :Number = this.speed * dt;
@@ -49,20 +44,6 @@ public class PlayerCursor extends CollidableObj
     protected function get speed () :Number
     {
         return MathUtil.clamp(_speedBase + _speedBonus - _speedPenalty, _speedMin, _speedMax);
-    }
-
-    override public function clone (theClone :CollidableObj = null) :CollidableObj
-    {
-        var cursorClone :PlayerCursor = PlayerCursor(super.clone(theClone));
-
-        cursorClone._moveDirection = _moveDirection.clone();
-        cursorClone._speedMin = _speedMin;
-        cursorClone._speedMax = _speedMax;
-        cursorClone._speedBase = _speedBase;
-        cursorClone._speedPenalty = _speedPenalty;
-        cursorClone._speedBonus = _speedBonus;
-
-        return cursorClone;
     }
 
     protected function init (speedBase :Number, speedMin :Number, speedMax :Number) :void

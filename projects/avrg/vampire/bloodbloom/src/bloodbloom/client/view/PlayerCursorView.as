@@ -57,16 +57,7 @@ public class PlayerCursorView extends SceneObject
             return;
         }
 
-        // estimate the object's current location
-        var newLoc :Vector2;
-        if (GameCtx.clientFutureDelta > 0) {
-            _cursorClone = PlayerCursor(_cursor.clone(_cursorClone));
-            _cursorClone.updateLoc(GameCtx.clientFutureDelta);
-            newLoc = _cursorClone.loc;
-
-        } else {
-            newLoc = _cursor.loc.clone();
-        }
+        var newLoc :Vector2 = _cursor.loc.clone();
 
         this.x = newLoc.x;
         this.y = newLoc.y;

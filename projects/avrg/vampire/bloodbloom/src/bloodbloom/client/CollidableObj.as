@@ -2,10 +2,11 @@ package bloodbloom.client {
 
 import com.threerings.flash.Vector2;
 import com.threerings.util.ClassUtil;
+import com.whirled.contrib.simplegame.SimObject;
 import com.whirled.contrib.simplegame.components.*;
 import com.whirled.contrib.simplegame.util.Collision;
 
-public class CollidableObj extends NetObj
+public class CollidableObj extends SimObject
     implements LocationComponent, ScaleComponent
 {
     public function collidesWith (other :CollidableObj) :Boolean
@@ -76,19 +77,6 @@ public class CollidableObj extends NetObj
     public function set scale (val :Number) :void
     {
         _scale = val;
-    }
-
-    public function clone (theClone :CollidableObj = null) :CollidableObj
-    {
-        if (theClone == null) {
-            theClone = CollidableObj(ClassUtil.newInstance(this));
-        }
-
-        theClone._radius = _radius;
-        theClone._loc = _loc.clone();
-        theClone._scale = scale;
-
-        return theClone;
     }
 
     protected var _radius :Number = 0;

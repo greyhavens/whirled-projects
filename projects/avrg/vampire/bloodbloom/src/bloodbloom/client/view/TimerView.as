@@ -26,7 +26,7 @@ public class TimerView extends SceneObject
         if (seconds != _lastSeconds) {
             var minString :String = String(Math.floor(seconds / 60));
             var secString :String = String(seconds % 60);
-            if (secString.length == 0) {
+            if (secString.length == 1) {
                 secString = "0" + secString;
             }
 
