@@ -138,8 +138,6 @@ public class GameMode extends AppMode
     protected var _arteryBottom :Bitmap;
     protected var _lastMoveTarget :Vector2 = new Vector2();
 
-    protected var _lastCursorUpdate :Number = 0;
-
     protected static var log :Log = Log.getLog(GameMode);
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);

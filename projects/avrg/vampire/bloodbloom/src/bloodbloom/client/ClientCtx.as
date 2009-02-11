@@ -4,8 +4,11 @@ import bloodbloom.*;
 
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
+import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.resource.*;
 import com.whirled.game.GameControl;
+import com.whirled.game.NetSubControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
@@ -17,6 +20,7 @@ public class ClientCtx
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
+    public static var msgMgr :BasicMessageManager;
 
     public static function get isSinglePlayer () :Boolean
     {
@@ -36,6 +40,16 @@ public class ClientCtx
     public static function get isConnected () :Boolean
     {
         return gameCtrl.isConnected();
+    }
+
+    public static function sendMessage (msg :Message) :void
+    {
+        if (gameCtrl.isConnected()) {
+            gameCtrl.net.sendMessage(
+                msg.name,
+                msgMgr.serializeMsg(msg),
+                NetSubControl.TO_SERVER_AGENT);
+        }
     }
 
     public static function createCellBitmap (type :int) :Bitmap

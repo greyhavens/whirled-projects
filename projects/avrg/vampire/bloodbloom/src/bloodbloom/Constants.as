@@ -51,7 +51,7 @@ public class Constants
         new NumRange(110, 140, Rand.STREAM_GAME)
     ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
-    public static const CELL_RADIUS :Number = 5;
+    public static const CELL_RADIUS :Number = 6;
 
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 30;

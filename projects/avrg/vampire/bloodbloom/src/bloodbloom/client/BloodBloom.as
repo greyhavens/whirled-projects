@@ -1,11 +1,13 @@
 package bloodbloom.client {
 
 import bloodbloom.*;
+import bloodbloom.net.*;
 import bloodbloom.server.Server;
 
 import com.threerings.util.Log;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.game.GameControl;
 
@@ -38,6 +40,9 @@ public class BloodBloom extends Sprite
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
+
+        ClientCtx.msgMgr = new BasicMessageManager();
+        ClientCtx.msgMgr.addMessageType(NewMultiplierMsg);
 
         _sg.run();
 
