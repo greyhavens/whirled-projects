@@ -40,8 +40,7 @@ public class Constants
     public static const CELL__LIMIT :int = 3;
     public static const INITIAL_CELL_COUNT :Array = [ 4, 2, 0 ];
     public static const MAX_CELL_COUNT :Array = [ 60, 8, 999 ];
-    public static const RED_CELL_PROBABILITY :Number = 0.8;
-    public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 3, Rand.STREAM_GAME);
+    public static const BEAT_CELL_BIRTH_COUNT :IntRange = new IntRange(3, 4, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 90, Rand.STREAM_GAME),
         new NumRange(190, 195, Rand.STREAM_GAME),
@@ -49,6 +48,9 @@ public class Constants
     ];
     public static const CELL_RADIUS :Number = 6;
     public static const CELL_BIRTH_TIME :Number = 0.5;
+
+    public static const WHITE_CELL_CREATION_TIME :NumRange = new NumRange(7, 7, Rand.STREAM_GAME);
+    public static const WHITE_CELL_CREATION_COUNT :IntRange = new IntRange(1, 3, Rand.STREAM_GAME);
 
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 40;

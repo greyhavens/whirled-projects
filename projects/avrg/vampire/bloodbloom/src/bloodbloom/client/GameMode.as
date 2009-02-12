@@ -55,6 +55,18 @@ public class GameMode extends AppMode
         GameCtx.gameMode.addObject(GameCtx.heart);
         registerListener(GameCtx.heart, GameEvent.HEARTBEAT, onHeartbeat);
 
+        // spawn white cells on a timer separate from the heartbeat
+        var whiteCellSpawner :SimObject = new SimObject();
+        whiteCellSpawner.addTask(new RepeatingTask(
+            new VariableTimedTask(
+                Constants.WHITE_CELL_CREATION_TIME.min,
+                Constants.WHITE_CELL_CREATION_TIME.max,
+                Rand.STREAM_GAME),
+            new FunctionTask(function () :void {
+                spawnCells(Constants.CELL_WHITE, Constants.WHITE_CELL_CREATION_COUNT.next());
+            })));
+        addObject(whiteCellSpawner);
+
         var timerView :TimerView = new TimerView();
         timerView.x = TIMER_LOC.x;
         timerView.y = TIMER_LOC.y;
@@ -168,26 +180,15 @@ public class GameMode extends AppMode
 
     protected function onHeartbeat (...ignored) :void
     {
-        // spawn new cells
-        var cellCounts :Array = [];
-        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
-            cellCounts.push(Cell.getCellCount(cellType));
-        }
+        // spawn new red cells
+        spawnCells(Constants.CELL_RED, Constants.BEAT_CELL_BIRTH_COUNT.next());
+    }
 
-        // don't spawn new white cells when there's a BurstSequence running
-        var burstSequenceExists :Boolean = BurstSequence.sequenceExists;
-
-        var count :int = Constants.BEAT_CELL_BIRTH_COUNT.next();
+    protected function spawnCells (cellType :int, count :int) :void
+    {
+        count = Math.min(count, Constants.MAX_CELL_COUNT[cellType] - Cell.getCellCount(cellType));
         for (var ii :int = 0; ii < count; ++ii) {
-            cellType =
-                (Rand.nextNumber(Rand.STREAM_GAME) <= Constants.RED_CELL_PROBABILITY ?
-                    Constants.CELL_RED : Constants.CELL_WHITE);
-
-            if ((cellType != Constants.CELL_WHITE || !burstSequenceExists) &&
-                (cellCounts[cellType] < Constants.MAX_CELL_COUNT[cellType])) {
-                GameObjects.createCell(cellType, true);
-                cellCounts[cellType] += 1;
-            }
+            GameObjects.createCell(cellType, true);
         }
     }
 
