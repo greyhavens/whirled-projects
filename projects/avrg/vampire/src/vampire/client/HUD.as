@@ -3,9 +3,9 @@ package vampire.client
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleTextButton;
 import com.threerings.flash.TextFieldUtil;
+import com.threerings.util.ClassUtil;
 import com.threerings.util.Command;
 import com.threerings.util.Log;
-import com.threerings.util.StringBuilder;
 import com.whirled.avrg.AVRGamePlayerEvent;
 import com.whirled.contrib.EventHandlers;
 import com.whirled.contrib.simplegame.objects.SceneObject;
@@ -109,7 +109,7 @@ public class HUD extends SceneObject
     protected function propChanged (e :PropertyChangedEvent) :void
     {
         //Check if it is non-player properties changed??
-        log.debug("propChanged", "e", e);
+//        log.debug("propChanged", "e", e);
 //        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
@@ -124,9 +124,10 @@ public class HUD extends SceneObject
     
     protected function elementChanged (e :ElementChangedEvent) :void
     {
+//        trace("element changed in HUD");
         //Check if it is non-player properties changed??
 //        log.debug("elementChanged", "e", e);
-        log.debug("elementChanged", "e", e);
+//        log.debug("elementChanged", "e", e);
 //        trace("Player stats: " + SharedPlayerStateClient.toStringForPlayer( ClientContext.ourPlayerId));
         //Otherwise check for player updates
         var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
@@ -140,10 +141,11 @@ public class HUD extends SceneObject
                 }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_XP) {
                     showXP( ClientContext.ourPlayerId );
+                    showBlood( ClientContext.ourPlayerId );
                 }
-                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL) {
-                    showLevel( ClientContext.ourPlayerId );
-                }
+//                else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_LEVEL) {
+//                    showLevel( ClientContext.ourPlayerId );
+//                }
                 else if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED) {
                     showBloodBonds( ClientContext.ourPlayerId );
                 }
@@ -213,29 +215,57 @@ public class HUD extends SceneObject
         _sprite.addChild( _hud );
         _hud.init( new Rectangle(0, 0, 100, 100), 10, 10, 10, 10);
         
-        var hudMC :MovieClip = ClientContext.instantiateMovieClip("HUD", "HUD", true);
-        _hud.addChild( hudMC );
+        _hudMC = ClientContext.instantiateMovieClip("HUD", "HUD", true);
+        _hud.addChild( _hudMC );
         
         if( Constants.LOCAL_DEBUG_MODE) {
-            hudMC.x = 200;
-            hudMC.y = 200;
+            _hudMC.x = 500;
+            _hudMC.y = 400;
         }
         else {
 //            var screen :Rectangle = ClientContext.gameCtrl.local.getPaintableArea();
-//            hudMC.x = screen.width - hudMC.width/2 - 10
-//            hudMC.y = screen.height - hudMC.height/2 - 10;
+//            _hudMC.x = screen.width - _hudMC.width/2 - 10
+//            _hudMC.y = screen.height - _hudMC.height/2 - 10;
             
             var bottomRight :Point = ClientContext.gameCtrl.local.locationToPaintable(1.0, 0, 0);
             
-            hudMC.x = bottomRight.x - hudMC.width/2 - 10
-            hudMC.y = bottomRight.y - hudMC.height/2 - 10;
+            _hudMC.x = bottomRight.x - _hudMC.width/2 - 10
+            _hudMC.y = bottomRight.y - _hudMC.height/2 - 10;
         }
         
-        hudMC.mouseChildren = true;
+        _hudMC.mouseChildren = true;
+        _hudMC.mouseEnabled = false;
+        
+        //Hackery to remove the invisible popup textfield stealing mouse focus
+        for( var i :int = 0; i < _hudMC.numChildren; i++) {
+            if( _hudMC.getChildAt(i) is TextField) {
+                TextField(_hudMC.getChildAt(i)).mouseEnabled = false;
+            }
+            else if( _hudMC.getChildAt(i) is MovieClip) {
+                MovieClip(_hudMC.getChildAt(i)).mouseEnabled = true;
+            }
+        }
+        
+//        _hudMC.addEventListener( MouseEvent.MOUSE_MOVE, function(e:MouseEvent):void {
+//            trace("mouse over hud");   
+//            _sprite.graphics.beginFill(0);
+//            _sprite.graphics.drawCircle(e.stageX, e.stageY, 3);
+//            _sprite.graphics.endFill();
+//            
+//            trace(ClassUtil.getClassName( e.target ));
+//        });
+//        
+//        _hudFeedback = ClientContext.instantiateMovieClip("HUD", "HUDfeedback", true);
+//        if( _hudFeedback ) {
+//            _hudFeedback.mouseEnabled = false;
+//        }
+//        else {
+//            trace("failed to make feedback");
+//        }
         
         _hudBlood = MovieClip( findSafely("HUDblood") );
         _hudBlood.gotoAndStop(0);
-        _hudBloodBottom = _hudBlood.y + _hudBlood.height;
+        _hudBloodBottom = _hudBlood.y ;//+ _hudBlood.height;
         _hudBloodStartHeight = _hudBlood.height;
         
         _DEBUG_BLOOD_BAR_OUTLINE = new Sprite();
@@ -245,14 +275,21 @@ public class HUD extends SceneObject
         _DEBUG_BLOOD_BAR_OUTLINE.x = _hudBlood.x;
         _DEBUG_BLOOD_BAR_OUTLINE.y = _hudBlood.y;
         
+        
+        _hudXP = MovieClip( findSafely("HUDxp") );
+        _hudXP.gotoAndStop(0);
+        _hudXPBottom = _hudXP.y;// + _hudXP.height;
+        _hudXPStartHeight = _hudXP.height;
+        
+        
         var hudPredator :SimpleButton = SimpleButton( findSafely("HUDpredator") );
         Command.bind( hudPredator, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_FEED);
         
         var hudPrey :SimpleButton = SimpleButton( findSafely("HUDprey") );
-        Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_EAT_ME);
+        Command.bind( hudPrey, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_BARED);
         
         var hudHierarchy :SimpleButton = SimpleButton( findSafely("HUDhierarchy") );
-        Command.bind( hudHierarchy, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS);
+        Command.bind( hudHierarchy, MouseEvent.CLICK, VampireController.SHOW_HIERARCHY, _hudMC );
         
         var hudHelp :SimpleButton = SimpleButton( findSafely("HUDhelp") );
         Command.bind( hudHelp, MouseEvent.CLICK, VampireController.SHOW_INTRO);
@@ -397,8 +434,9 @@ public class HUD extends SceneObject
         else {
             _hudBlood.gotoAndStop(0);
         }
-        _hudBlood.y = _hudBloodBottom - _hudBlood.height;
+//        _hudBlood.y = _hudBloodBottom - _hudBlood.height;
         
+        _DEBUG_BLOOD_BAR_OUTLINE.graphics.clear();
         _DEBUG_BLOOD_BAR_OUTLINE.graphics.lineStyle(1, 0xffffff);
         _DEBUG_BLOOD_BAR_OUTLINE.graphics.drawRect(-_hudBlood.width/2, -_hudBlood.height/2, _hudBlood.width, _hudBlood.height);
         _DEBUG_BLOOD_BAR_OUTLINE.x = _hudBlood.x;
@@ -426,38 +464,68 @@ public class HUD extends SceneObject
     
     protected function showXP( playerId :int ) :void
     {
-        var currentXp :int = SharedPlayerStateClient.getXP( playerId ) ;
-        var xpForNextLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId) + 1);
-        var xpForCurrentLevelLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId));
-        log.debug("Showing player xp=" + currentXp + "/" + xpForNextLevel);
-        _xp.graphics.clear();
-        var xpColor :int = 0x009900;//Green
-        _xp.graphics.lineStyle(1, xpColor);
-        _xp.graphics.drawRect(0, 0, 100, 10);
-        _xp.graphics.beginFill( xpColor );
-        if( xpForNextLevel > 0) {
-            _xp.graphics.drawRect(0, 0, (Math.max(0, (currentXp - xpForCurrentLevelLevel)) * 100.0) / (xpForNextLevel - xpForCurrentLevelLevel), 10);
-        }
-        _xp.graphics.endFill();
         
-        var xptext :String = "" + currentXp + "/" + xpForNextLevel;
-        _xpText.text = xptext;
+        var xp :int = ClientContext.model.xp;
+        
+        var level :int = Logic.levelGivenCurrentXp( xp );
+        
+        var xpNeededForNextLevel :int = Logic.xpNeededForLevel( level + 1);
+        var xpNeededForLevel :int = Logic.xpNeededForLevel( level );
+        
+        var xpOverCurrentLevelMinimum :int = xp - xpNeededForLevel;
+        var xpDifference :int = xpNeededForNextLevel - xpNeededForLevel;
+        
+        trace("xpOverCurrentLevelMinimum=" + xpOverCurrentLevelMinimum);
+        trace("xpDifference=" + xpDifference);
+        trace("Logic.xpNeededForLevel(2)=" + Logic.xpNeededForLevel(2));
+        var scaleY :Number = Number(xpDifference) / Logic.xpNeededForLevel(2);
+        _hudXP.scaleY = scaleY;
+        
+        var scaledXP :int = xpOverCurrentLevelMinimum * 100 / xpDifference;
+        _hudXP.gotoAndStop(scaledXP);
+        
+//        if( SharedPlayerStateClient.getMaxBlood( playerId ) > 0) {
+//            _hudBlood.scaleY = scaleY;
+////            _hudBlood.height = SharedPlayerStateClient.getMaxBlood( playerId );
+//            _hudBlood.gotoAndStop( int( (SharedPlayerStateClient.getBlood( playerId ) * 100.0) / SharedPlayerStateClient.getMaxBlood( playerId )));
+//        }
+//        else {
+//            _hudBlood.gotoAndStop(0);
+//        }
+        
+        
+//        var currentXp :int = SharedPlayerStateClient.getXP( playerId ) ;
+//        var xpForNextLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId) + 1);
+//        var xpForCurrentLevelLevel :int = Logic.xpNeededForLevel(SharedPlayerStateClient.getLevel(playerId));
+//        log.debug("Showing player xp=" + currentXp + "/" + xpForNextLevel);
+//        _xp.graphics.clear();
+//        var xpColor :int = 0x009900;//Green
+//        _xp.graphics.lineStyle(1, xpColor);
+//        _xp.graphics.drawRect(0, 0, 100, 10);
+//        _xp.graphics.beginFill( xpColor );
+//        if( xpForNextLevel > 0) {
+//            _xp.graphics.drawRect(0, 0, (Math.max(0, (currentXp - xpForCurrentLevelLevel)) * 100.0) / (xpForNextLevel - xpForCurrentLevelLevel), 10);
+//        }
+//        _xp.graphics.endFill();
+//        
+//        var xptext :String = "" + currentXp + "/" + xpForNextLevel;
+//        _xpText.text = xptext;
         
     }
     
     protected function showBloodBonds( playerId :int ) :void
     {
-        var bloodbondedArray :Array = SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId);
-        if( bloodbondedArray == null) {
-            _bloodbonds.text = "Bloodbonds: null" ;
-            return;
-        }
-        var sb :StringBuilder = new StringBuilder();
-        
-        for( var i :int = 0; i < bloodbondedArray.length; i += 2) {
-            sb.append(bloodbondedArray[ i + 1] + " ");
-        }
-        _bloodbonds.text = "Bloodbonds: " + sb.toString( );
+//        var bloodbondedArray :Array = SharedPlayerStateClient.getBloodBonded(ClientContext.ourPlayerId);
+//        if( bloodbondedArray == null) {
+//            _bloodbonds.text = "Bloodbonds: null" ;
+//            return;
+//        }
+//        var sb :StringBuilder = new StringBuilder();
+//        
+//        for( var i :int = 0; i < bloodbondedArray.length; i += 2) {
+//            sb.append(bloodbondedArray[ i + 1] + " ");
+//        }
+        _bloodbonds.text = "Bloodbond: " + ClientContext.model.bloodbondedName + " " + (ClientContext.model.bloodbonded > 0 ? ClientContext.model.bloodbonded : "" );
     }
     
     protected function showLevel( playerId :int ) :void
@@ -585,10 +653,17 @@ public class HUD extends SceneObject
 
     protected var _sprite :Sprite;
     protected var _hud :DraggableSprite;
+    protected var _hudMC :MovieClip;
     
     protected var _hudBlood :MovieClip;
     protected var _hudBloodBottom :int;
     protected var _hudBloodStartHeight :Number;
+    
+    protected var _hudXP :MovieClip;
+    protected var _hudXPBottom :int;
+    protected var _hudXPStartHeight :Number;
+    
+    protected var _hudFeedback :MovieClip;
     
     protected var _blood :Sprite;
     protected var _bloodText :TextField;
