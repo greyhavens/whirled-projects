@@ -9,6 +9,7 @@ import com.whirled.contrib.simplegame.tasks.*;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.text.TextField;
 
 public class CellView extends SceneObject
 {
@@ -17,6 +18,13 @@ public class CellView extends SceneObject
         _cell = cell;
         _sprite = new Sprite();
         _sprite.addChild(ClientCtx.createCellBitmap(cell.type));
+
+        if (cell.type == Constants.CELL_BONUS) {
+            var tf :TextField = UIBits.createText("x" + cell.multiplier, 1, 0, 0xffffff);
+            tf.x = -tf.width * 0.5;
+            tf.y = -tf.height * 0.5;
+            _sprite.addChild(tf);
+        }
 
         if (cell.state == Cell.STATE_BIRTH) {
             // fade in

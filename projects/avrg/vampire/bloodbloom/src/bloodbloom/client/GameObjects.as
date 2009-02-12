@@ -5,9 +5,9 @@ import bloodbloom.client.view.*;
 
 public class GameObjects
 {
-    public static function createCell (type :int, beingBorn :Boolean) :Cell
+    public static function createCell (type :int, beingBorn :Boolean, multiplier :int = 0) :Cell
     {
-        var obj :Cell = new Cell(type, beingBorn);
+        var obj :Cell = new Cell(type, beingBorn, multiplier);
         GameCtx.gameMode.addObject(obj);
 
         var view :CellView = new CellView(obj);

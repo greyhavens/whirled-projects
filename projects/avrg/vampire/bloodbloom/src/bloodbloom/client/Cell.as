@@ -40,10 +40,11 @@ public class Cell extends CollidableObj
         return null;
     }
 
-    public function Cell (type :int, beingBorn :Boolean)
+    public function Cell (type :int, beingBorn :Boolean, multiplier :int)
     {
         _radius = Constants.CELL_RADIUS;
         _type = type;
+        _multiplier = multiplier;
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
 
@@ -156,6 +157,11 @@ public class Cell extends CollidableObj
         return _state;
     }
 
+    public function get multiplier () :int
+    {
+        return _multiplier;
+    }
+
     public function get isRedCell () :Boolean
     {
         return _type == Constants.CELL_RED;
@@ -183,6 +189,7 @@ public class Cell extends CollidableObj
 
     protected var _type :int;
     protected var _state :int;
+    protected var _multiplier :int;
     protected var _moveCCW :Boolean;
 
     protected static const SPEED_BASE :Number = 5;

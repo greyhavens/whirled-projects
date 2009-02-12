@@ -141,7 +141,7 @@ public class GameMode extends AppMode
     protected function onNewMultiplier (msg :CreateBonusMsg) :void
     {
         if (msg.playerId != ClientCtx.localPlayerId) {
-            var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false);
+            var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false, msg.multiplier);
             cell.x = msg.x;
             cell.y = msg.y;
         }

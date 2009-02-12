@@ -33,14 +33,15 @@ public class BurstSequence extends SceneObject
     {
         _bursts.push(burst.ref);
         _totalBursts++;
-        _bonusMultiplier += burst.multiplier;
+        _totalMultiplier += burst.multiplier;
+        _largestMultiplier = Math.max(_largestMultiplier, burst.multiplier);
     }
 
     public function removeCellBurst (burst :RedBurst) :void
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
         _totalBursts--;
-        _bonusMultiplier -= burst.multiplier;
+        _totalMultiplier -= burst.multiplier;
     }
 
     public function get cellCount () :int
@@ -51,7 +52,7 @@ public class BurstSequence extends SceneObject
     public function get multiplier () :int
     {
         //return 1 + (_totalBursts / Constants.NUM_BURSTS_PER_MULTIPLIER);
-        return 1 + _bonusMultiplier;
+        return 1 + _totalMultiplier;
     }
 
     public function get totalValue () :int
@@ -82,8 +83,11 @@ public class BurstSequence extends SceneObject
             }
 
             if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
-                ClientCtx.sendMessage(
-                    CreateBonusMsg.create(this.x, this.y, 1, ClientCtx.localPlayerId));
+                ClientCtx.sendMessage(CreateBonusMsg.create(
+                    ClientCtx.localPlayerId,
+                    this.x,
+                    this.y,
+                    _largestMultiplier + 1));
             }
 
             destroySelf();
@@ -106,7 +110,8 @@ public class BurstSequence extends SceneObject
     }
 
     protected var _bursts :Array = [];
-    protected var _bonusMultiplier :int;
+    protected var _largestMultiplier :int;
+    protected var _totalMultiplier :int;
     protected var _totalBursts :int;
     protected var _lastCellCount :int;
     protected var _tf :TextField;

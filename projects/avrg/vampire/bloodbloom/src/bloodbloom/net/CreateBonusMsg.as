@@ -9,18 +9,18 @@ public class CreateBonusMsg
 {
     public static const NAME :String = "CreateBonus";
 
+    public var playerId :int;
     public var x :int;
     public var y :int;
-    public var size :int;
-    public var playerId :int;
+    public var multiplier :int;
 
-    public static function create (x :int, y :int, size :int, playerId :int) :CreateBonusMsg
+    public static function create (playerId :int, x :int, y :int, size :int) :CreateBonusMsg
     {
         var msg :CreateBonusMsg = new CreateBonusMsg();
+        msg.playerId = playerId;
         msg.x = x;
         msg.y = y;
-        msg.size = size;
-        msg.playerId = playerId;
+        msg.multiplier = size;
 
         return msg;
     }
@@ -31,20 +31,20 @@ public class CreateBonusMsg
             ba = new ByteArray();
         }
 
+        ba.writeInt(playerId);
         ba.writeInt(x);
         ba.writeInt(y);
-        ba.writeByte(size);
-        ba.writeInt(playerId);
+        ba.writeByte(multiplier);
 
         return ba;
     }
 
     public function fromBytes (ba :ByteArray) :void
     {
+        playerId = ba.readInt();
         x = ba.readInt();
         y = ba.readInt();
-        size = ba.readByte();
-        playerId = ba.readInt();
+        multiplier = ba.readByte();
     }
 
     public function get name () :String
