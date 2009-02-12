@@ -26,6 +26,7 @@ public class HeartView extends SceneObject
     {
         if (_showHeartbeat) {
             _movie.gotoAndPlay(1);
+            ClientCtx.audio.playSoundNamed("sfx_heartbeat");
             _showHeartbeat = false;
         }
     }

@@ -23,6 +23,11 @@ public class CellBurstView extends SceneObject
         return _sprite;
     }
 
+    override protected function addedToDB () :void
+    {
+        ClientCtx.audio.playSoundNamed("sfx_burst");
+    }
+
     override protected function update (dt :Number) :void
     {
         if (!_cellBurst.isLiveObject) {

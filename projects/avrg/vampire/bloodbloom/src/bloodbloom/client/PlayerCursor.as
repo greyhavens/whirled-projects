@@ -96,7 +96,6 @@ public class PlayerCursor extends CollidableObj
         dispatchEvent(new GameEvent(GameEvent.DETACHED_ALL_CELLS));
 
         _lastArtery = arteryType;
-        //updateArteryHilite();
 
         // Deliver a white cell to the heart
         dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED));
@@ -116,7 +115,8 @@ public class PlayerCursor extends CollidableObj
 
     protected function canCollideArtery (arteryType :int) :Boolean
     {
-        return _lastArtery != arteryType && _whiteCellCount > 0;
+        return true;
+        //return _lastArtery != arteryType && _whiteCellCount > 0;
     }
 
     protected function get speed () :Number

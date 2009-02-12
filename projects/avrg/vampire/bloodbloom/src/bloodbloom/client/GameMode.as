@@ -7,6 +7,7 @@ import bloodbloom.net.*;
 import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
+import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
@@ -90,6 +91,21 @@ public class GameMode extends AppMode
                 cell.x = loc.x;
                 cell.y = loc.y;
             }
+        }
+    }
+
+    override protected function enter () :void
+    {
+        super.enter();
+        if (_musicChannel == null) {
+            _musicChannel = ClientCtx.audio.playSoundNamed("mus_music", null, -1);
+        }
+    }
+
+    override protected function destroy () :void
+    {
+        if (_musicChannel != null) {
+            _musicChannel.audioControls.fadeOutAndStop(0.5);
         }
     }
 
@@ -185,6 +201,7 @@ public class GameMode extends AppMode
     protected var _arteryTop :MovieClip;
     protected var _arteryBottom :MovieClip;
     protected var _lastMoveTarget :Vector2 = new Vector2();
+    protected var _musicChannel :AudioChannel;
 
     protected static var log :Log = Log.getLog(GameMode);
 
