@@ -28,7 +28,7 @@ public class Constants
     public static const BEAT_TIME_BASE :Number =                    16 / 4;
     public static const BEAT_TIME_MIN :Number =                     6 / 4;
     public static const BEAT_TIME_MAX :Number =                     16 / 4;
-    public static const BEAT_TIME_INCREASE_PER_SECOND :Number =     0.05 / 4;
+    public static const BEAT_TIME_INCREASE_PER_SECOND :Number =     0.2 / 4;
     public static const BEAT_TIME_DECREASE_PER_DELIVERY :Number =   1.5 / 4;
 
     public static const ARTERY_TOP :int = 0;
@@ -51,9 +51,13 @@ public class Constants
 
     public static const WHITE_CELL_CREATION_TIME :NumRange = new NumRange(7, 7, Rand.STREAM_GAME);
     public static const WHITE_CELL_CREATION_COUNT :IntRange = new IntRange(1, 3, Rand.STREAM_GAME);
+    public static const WHITE_CELL_NORMAL_TIME :NumRange = new NumRange(5, 8, Rand.STREAM_GAME);
+    public static const WHITE_CELL_EXPLODE_TIME :Number = 4;
 
-    public static const BURST_RADIUS_MIN :Number = 9;
-    public static const BURST_RADIUS_MAX :Number = 40;
+    public static const RED_BURST_RADIUS_MIN :Number = 9;
+    public static const RED_BURST_RADIUS_MAX :Number = 40;
+    public static const WHITE_BURST_RADIUS_MIN :Number = 12;
+    public static const WHITE_BURST_RADIUS_MAX :Number = 50;
     public static const BURST_EXPAND_TIME :Number = 1.5;
     public static const BURST_COMPLETE_TIME :Number = 2;
     public static const BURST_CONTRACT_TIME :Number = 1.5;

@@ -16,16 +16,33 @@ public class GameObjects
         return obj;
     }
 
-    public static function createCellBurst (fromCell :Cell, sequence :BurstSequence = null)
-        :CellBurst
+    public static function createRedBurst (fromCell :Cell, sequence :BurstSequence = null)
+        :RedBurst
     {
-        var obj :CellBurst = new CellBurst(fromCell.type, fromCell.x, fromCell.y, sequence);
+        var obj :RedBurst = new RedBurst(fromCell, sequence);
+        obj.x = fromCell.x;
+        obj.y = fromCell.y;
         GameCtx.gameMode.addObject(obj);
+
+        fromCell.destroySelf();
 
         var view :CellBurstView = new CellBurstView(obj);
         GameCtx.gameMode.addObject(view, GameCtx.cellLayer);
 
-        fromCell.destroySelf();
+        return obj;
+    }
+
+    public static function createWhiteBurst (fromObj :CollidableObj) :WhiteBurst
+    {
+        var obj :WhiteBurst = new WhiteBurst();
+        obj.x = fromObj.x;
+        obj.y = fromObj.y;
+        GameCtx.gameMode.addObject(obj);
+
+        fromObj.destroySelf();
+
+        var view :CellBurstView = new CellBurstView(obj);
+        GameCtx.gameMode.addObject(view, GameCtx.cellLayer);
 
         return obj;
     }

@@ -11,6 +11,7 @@ public class Cell extends CollidableObj
 {
     public static const STATE_BIRTH :int = 0;
     public static const STATE_NORMAL :int = 1;
+    public static const STATE_PREPARING_TO_EXPLODE :int = 2;
 
     public static function destroyCells (cellType :int = -1) :void
     {
@@ -54,6 +55,20 @@ public class Cell extends CollidableObj
             } else if (type == Constants.CELL_WHITE) {
                 birthWhiteCell();
             }
+        }
+
+        if (type == Constants.CELL_WHITE) {
+            // white cells explode after a bit of time
+            var thisCell :Cell = this;
+            addTask(new SerialTask(
+                new TimedTask(Constants.WHITE_CELL_NORMAL_TIME.next()),
+                new FunctionTask(function () :void {
+                    _state = STATE_PREPARING_TO_EXPLODE;
+                }),
+                new TimedTask(Constants.WHITE_CELL_EXPLODE_TIME),
+                new FunctionTask(function () :void {
+                    GameObjects.createWhiteBurst(thisCell);
+                })));
         }
     }
 
@@ -105,7 +120,7 @@ public class Cell extends CollidableObj
                 _loc.subtract(Constants.GAME_CTR) :
                 Constants.GAME_CTR.subtract(_loc));
 
-            ctrImpulse.length = 1;
+            ctrImpulse.length = 2;
 
             var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
             perpImpulse.length = 3.5;

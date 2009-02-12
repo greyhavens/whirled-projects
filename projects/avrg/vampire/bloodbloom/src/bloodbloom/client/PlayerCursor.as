@@ -37,9 +37,9 @@ public class PlayerCursor extends CollidableObj
                 _whiteCellCount++;
                 dispatchEvent(new GameEvent(GameEvent.ATTACHED_CELL, cell));
 
-            } else if (cell.type == Constants.CELL_RED) {
+            } else {
                 // create a cell burst
-                GameObjects.createCellBurst(cell);
+                GameObjects.createRedBurst(cell);
             }
         }
 

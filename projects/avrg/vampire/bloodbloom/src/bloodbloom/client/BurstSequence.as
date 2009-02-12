@@ -29,26 +29,18 @@ public class BurstSequence extends SceneObject
         return _tf;
     }
 
-    public function addCellBurst (burst :CellBurst) :void
+    public function addCellBurst (burst :RedBurst) :void
     {
         _bursts.push(burst.ref);
-
-        if (burst.cellType == Constants.CELL_BONUS) {
-            _bonusMultiplier++;
-        } else {
-            _totalBursts++;
-        }
+        _totalBursts++;
+        _bonusMultiplier += burst.multiplier;
     }
 
-    public function removeCellBurst (burst :CellBurst) :void
+    public function removeCellBurst (burst :RedBurst) :void
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
-
-        if (burst.cellType == Constants.CELL_BONUS) {
-            _bonusMultiplier--;
-        } else {
-            _totalBursts--;
-        }
+        _totalBursts--;
+        _bonusMultiplier -= burst.multiplier;
     }
 
     public function get cellCount () :int

@@ -1,8 +1,9 @@
 package bloodbloom.client.view {
 
+import bloodbloom.*;
 import bloodbloom.client.*;
 
-import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.ObjectTask;
 import com.whirled.contrib.simplegame.objects.SceneObject;
 import com.whirled.contrib.simplegame.tasks.*;
 
@@ -33,6 +34,20 @@ public class CellView extends SceneObject
 
         this.x = _cell.loc.x;
         this.y = _cell.loc.y;
+
+        var newState :int = _cell.state;
+        if (_cell.isWhiteCell &&
+            newState != _lastState &&
+            newState == Cell.STATE_PREPARING_TO_EXPLODE) {
+            var colorTask :ObjectTask = ColorMatrixBlendTask.colorize(
+                0xffffff,
+                0x444444,
+                Constants.WHITE_CELL_EXPLODE_TIME);
+
+            addTask(colorTask);
+        }
+
+        _lastState = newState;
     }
 
     override public function get displayObject () :DisplayObject
@@ -42,6 +57,7 @@ public class CellView extends SceneObject
 
     protected var _cell :Cell;
     protected var _sprite :Sprite;
+    protected var _lastState :int = -1;
 }
 
 }
