@@ -23,6 +23,8 @@ public class Constants
 
     public static const NUM_BURSTS_PER_MULTIPLIER :int = 5;
 
+    public static const CREATE_BONUS_BURST_SIZE :int = 5;
+
     public static const BEAT_TIME_BASE :Number =                    16 / 4;
     public static const BEAT_TIME_MIN :Number =                     6 / 4;
     public static const BEAT_TIME_MAX :Number =                     16 / 4;
@@ -36,21 +38,22 @@ public class Constants
     public static const CELL_WHITE :int = 1;
     public static const CELL_BONUS :int = 2;
     public static const CELL__LIMIT :int = 3;
-    public static const INITIAL_CELL_COUNT :Array = [ 4, 2 ];
-    public static const MAX_CELL_COUNT :Array = [ 60, 8 ];
+    public static const INITIAL_CELL_COUNT :Array = [ 4, 2, 0 ];
+    public static const MAX_CELL_COUNT :Array = [ 60, 8, 999 ];
     public static const RED_CELL_PROBABILITY :Number = 0.8;
     public static const BEAT_CELL_BIRTH_COUNT :NumRange = new NumRange(3, 3, Rand.STREAM_GAME);
     public static const CELL_BIRTH_DISTANCE :Array = [
         new NumRange(65, 90, Rand.STREAM_GAME),
-        new NumRange(110, 140, Rand.STREAM_GAME)
+        new NumRange(110, 140, Rand.STREAM_GAME),
+        null
     ];
-    public static const CELL_RADII :Array = [ 6, 6, 15 ];
+    public static const CELL_RADII :Array = [ 6, 6, 6 ];
     public static const CELL_BIRTH_TIME :Number = 0.5;
 
     public static const BURST_RADIUS_MIN :Number = 9;
     public static const BURST_RADIUS_MAX :Number = 40;
     public static const BURST_EXPAND_TIME :Number = 1.5;
-    public static const BURST_COMPLETE_TIME :Number = 3;
+    public static const BURST_COMPLETE_TIME :Number = 2;
     public static const BURST_CONTRACT_TIME :Number = 1.5;
 
     public static const GAME_RADIUS :Number = 200;
@@ -60,9 +63,6 @@ public class Constants
 
     public static const HEMISPHERE_WEST :int = 0;
     public static const HEMISPHERE_EAST :int = 1;
-
-    public static const PROP_RAND_SEED :String = "randSeed"; // uint
-    public static const PROP_INITED :String = "inited"; // Boolean
 }
 
 }

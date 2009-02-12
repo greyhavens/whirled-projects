@@ -2,6 +2,7 @@ package bloodbloom.client {
 
 import bloodbloom.*;
 import bloodbloom.client.view.*;
+import bloodbloom.net.CreateBonusMsg;
 
 import com.threerings.util.ArrayUtil;
 import com.whirled.contrib.simplegame.SimObjectRef;
@@ -31,12 +32,23 @@ public class BurstSequence extends SceneObject
     public function addCellBurst (burst :CellBurst) :void
     {
         _bursts.push(burst.ref);
-        _totalBursts++;
+
+        if (burst.cellType == Constants.CELL_BONUS) {
+            _bonusMultiplier++;
+        } else {
+            _totalBursts++;
+        }
     }
 
     public function removeCellBurst (burst :CellBurst) :void
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
+
+        if (burst.cellType == Constants.CELL_BONUS) {
+            _bonusMultiplier--;
+        } else {
+            _totalBursts--;
+        }
     }
 
     public function get cellCount () :int
@@ -46,12 +58,14 @@ public class BurstSequence extends SceneObject
 
     public function get multiplier () :int
     {
-        return 1 + (_totalBursts / Constants.NUM_BURSTS_PER_MULTIPLIER);
+        //return 1 + (_totalBursts / Constants.NUM_BURSTS_PER_MULTIPLIER);
+        return 1 + _bonusMultiplier;
     }
 
     public function get totalValue () :int
     {
-        return _bursts.length * this.multiplier;
+        //return _bursts.length * this.multiplier;
+        return _totalBursts * this.multiplier;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -75,6 +89,11 @@ public class BurstSequence extends SceneObject
                 GameCtx.bloodMeter.addBlood(loc.x, loc.y, this.totalValue);
             }
 
+            if (_totalBursts >= Constants.CREATE_BONUS_BURST_SIZE) {
+                ClientCtx.sendMessage(
+                    CreateBonusMsg.create(this.x, this.y, 1, ClientCtx.localPlayerId));
+            }
+
             destroySelf();
 
         } else if (_lastCellCount != _bursts.length) {
@@ -82,7 +101,8 @@ public class BurstSequence extends SceneObject
             if (_bursts.length == 0) {
                 text = "";
             } else {
-                text = String(_bursts.length);
+                //text = String(_bursts.length);
+                text = String(_totalBursts);
                 if (this.multiplier > 1) {
                     text += " x" + this.multiplier;
                 }
@@ -94,6 +114,7 @@ public class BurstSequence extends SceneObject
     }
 
     protected var _bursts :Array = [];
+    protected var _bonusMultiplier :int;
     protected var _totalBursts :int;
     protected var _lastCellCount :int;
     protected var _tf :TextField;

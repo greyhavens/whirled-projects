@@ -6,45 +6,37 @@ import bloodbloom.net.*;
 import com.threerings.util.Log;
 import com.whirled.ServerObject;
 import com.whirled.contrib.EventHandlerManager;
+import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.game.GameControl;
 import com.whirled.game.StateChangedEvent;
-import com.whirled.net.MessageReceivedEvent;
 
 public class Server extends ServerObject
 {
     public function Server ()
     {
         ServerCtx.gameCtrl = new GameControl(this, false);
-        _events.registerListener(ServerCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
-            onMsgReceived);
+        ServerCtx.msgMgr = new BasicMessageManager();
+        ServerCtx.msgMgr.addMessageType(CreateBonusMsg);
 
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
-            function (...ignored) :void {
-                _playing = true;
-
-                // init properties
-                ServerCtx.gameCtrl.net.doBatch(function () :void {
-                    ServerCtx.gameCtrl.net.set(
-                        Constants.PROP_RAND_SEED,
-                        uint(Math.random() * uint.MAX_VALUE));
-                    ServerCtx.gameCtrl.net.set(Constants.PROP_INITED, true);
-                });
-            });
-
+            onGameStarted);
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_ENDED,
-            function (...ignored) :void {
-                _playing = false;
-
-                ServerCtx.gameCtrl.net.set(Constants.PROP_INITED, false);
-            });
+            onGameEnded);
     }
 
-    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    protected function onGameStarted (...ignored) :void
     {
-
+        _game = new ServerGame();
     }
 
-    protected var _playing :Boolean;
+    protected function onGameEnded (...ignored) :void
+    {
+        if (_game != null) {
+            _game.shutdown();
+        }
+    }
+
+    protected var _game :ServerGame;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static var log :Log = Log.getLog(Server);

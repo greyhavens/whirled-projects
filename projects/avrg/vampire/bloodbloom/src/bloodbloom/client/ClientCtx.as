@@ -21,6 +21,7 @@ public class ClientCtx
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
     public static var msgMgr :BasicMessageManager;
+    public static var localPlayerId :int;
 
     public static function get isSinglePlayer () :Boolean
     {

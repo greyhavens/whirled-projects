@@ -10,6 +10,7 @@ import com.whirled.contrib.simplegame.*;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
+import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.MovieClip;
 import flash.filters.GlowFilter;
@@ -96,6 +97,25 @@ public class GameMode extends AppMode
     {
         if (ClientCtx.isConnected) {
             ClientCtx.gameCtrl.game.playerReady();
+            registerListener(ClientCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
+                onMsgReceived);
+        }
+    }
+
+    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    {
+        var msg :Message = ClientCtx.msgMgr.deserializeMessage(e.name, e.value);
+        if (msg is CreateBonusMsg) {
+            onNewMultiplier(msg as CreateBonusMsg);
+        }
+    }
+
+    protected function onNewMultiplier (msg :CreateBonusMsg) :void
+    {
+        if (msg.playerId != ClientCtx.localPlayerId) {
+            var cell :Cell = GameObjects.createCell(Constants.CELL_BONUS, false);
+            cell.x = msg.x;
+            cell.y = msg.y;
         }
     }
 

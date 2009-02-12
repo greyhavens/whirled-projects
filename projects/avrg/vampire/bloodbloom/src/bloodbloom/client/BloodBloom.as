@@ -28,6 +28,8 @@ public class BloodBloom extends Sprite
         DEBUG_REMOVE_ME();
 
         ClientCtx.gameCtrl = new GameControl(this, false);
+        ClientCtx.localPlayerId =
+            (ClientCtx.isSinglePlayer ? 0 : ClientCtx.gameCtrl.game.getMyId());
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
@@ -42,7 +44,7 @@ public class BloodBloom extends Sprite
         ClientCtx.audio = _sg.ctx.audio;
 
         ClientCtx.msgMgr = new BasicMessageManager();
-        ClientCtx.msgMgr.addMessageType(NewMultiplierMsg);
+        ClientCtx.msgMgr.addMessageType(CreateBonusMsg);
 
         _sg.run();
 

@@ -19,7 +19,7 @@ public class GameObjects
     public static function createCellBurst (fromCell :Cell, sequence :BurstSequence = null)
         :CellBurst
     {
-        var obj :CellBurst = new CellBurst(fromCell.x, fromCell.y, sequence);
+        var obj :CellBurst = new CellBurst(fromCell.type, fromCell.x, fromCell.y, sequence);
         GameCtx.gameMode.addObject(obj);
 
         var view :CellBurstView = new CellBurstView(obj);

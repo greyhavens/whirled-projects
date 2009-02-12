@@ -1,19 +1,18 @@
 package bloodbloom.client {
 
-import com.threerings.flash.Vector2;
+import bloodbloom.*;
+
 import com.whirled.contrib.simplegame.SimObjectRef;
 import com.whirled.contrib.simplegame.tasks.*;
-import com.whirled.contrib.simplegame.util.Collision;
-
-import bloodbloom.*;
 
 public class CellBurst extends CollidableObj
 {
     public static const STATE_BURST :int = 0;
     public static const STATE_UNBURST :int = 1;
 
-    public function CellBurst (x :Number, y :Number, sequence :BurstSequence = null)
+    public function CellBurst (cellType :int, x :Number, y :Number, sequence :BurstSequence = null)
     {
+        _cellType = cellType;
         _radius = Constants.BURST_RADIUS_MIN;
 
         _sequence = sequence;
@@ -77,10 +76,10 @@ public class CellBurst extends CollidableObj
             } else {
                 var cell :Cell = Cell.getCellCollision(this);
                 if (cell != null) {
-                    if (cell.isRedCell) {
-                        GameObjects.createCellBurst(cell, _sequence);
-                    } else {
+                    if (cell.isWhiteCell) {
                         beginUnburst();
+                    } else {
+                        GameObjects.createCellBurst(cell, _sequence);
                     }
                 }
             }
@@ -114,6 +113,12 @@ public class CellBurst extends CollidableObj
         return _state;
     }
 
+    public function get cellType () :int
+    {
+        return _cellType;
+    }
+
+    protected var _cellType :int;
     protected var _state :int;
     protected var _sequence :BurstSequence;
 }
