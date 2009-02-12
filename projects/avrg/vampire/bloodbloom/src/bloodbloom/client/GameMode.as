@@ -83,7 +83,7 @@ public class GameMode extends AppMode
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
 
         // create initial cells
-        for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
+        /*for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
             var count :int = Constants.INITIAL_CELL_COUNT[cellType];
             for (var ii :int = 0; ii < count; ++ii) {
                 var loc :Vector2 = Cell.getBirthTargetLoc(cellType);
@@ -91,7 +91,7 @@ public class GameMode extends AppMode
                 cell.x = loc.x;
                 cell.y = loc.y;
             }
-        }
+        }*/
     }
 
     override protected function enter () :void

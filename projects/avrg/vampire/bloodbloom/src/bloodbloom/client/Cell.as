@@ -30,7 +30,7 @@ public class Cell extends CollidableObj
         for each (var cellRef :SimObjectRef in cells) {
             var cell :Cell = cellRef.object as Cell;
             if (cell != null &&
-                cell._state == STATE_NORMAL &&
+                cell.canCollide &&
                 cell.collidesWith(obj)) {
                 return cell;
             }
@@ -39,91 +39,86 @@ public class Cell extends CollidableObj
         return null;
     }
 
-    public static function getBirthTargetLoc (cellType :int) :Vector2
-    {
-         // fire out of the heart in a random direction
-        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
-        var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[cellType];
-        var dist :Number = distRange.next();
-        return Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
-    }
-
     public function Cell (type :int, beingBorn :Boolean)
     {
-        _radius = Constants.CELL_RADII[type];
+        _radius = Constants.CELL_RADIUS;
         _type = type;
 
         _moveCCW = Rand.nextBoolean(Rand.STREAM_GAME);
 
+        _state = STATE_NORMAL;
+
         if (beingBorn) {
-            // When cells are born, they burst out of the center of the heart
-            _state = STATE_BIRTH;
-            this.x = Constants.GAME_CTR.x;
-            this.y = Constants.GAME_CTR.y;
-
-            // fire out of the heart in a random direction
-            _birthTarget = getBirthTargetLoc(_type);
-            addTask(new SerialTask(
-                LocationTask.CreateEaseOut(_birthTarget.x, _birthTarget.y, Constants.CELL_BIRTH_TIME),
-                new FunctionTask(function () :void {
-                    _state = STATE_NORMAL;
-                })));
-
-        } else {
-            _state = STATE_NORMAL;
+            if (type == Constants.CELL_RED) {
+                birthRedCell();
+            } else if (type == Constants.CELL_WHITE) {
+                birthWhiteCell();
+            }
         }
     }
 
-    public function getNextLoc (curLoc :Vector2, dt :Number) :Vector2
+    protected function birthRedCell () :void
     {
-        var nextLoc :Vector2 = curLoc.clone();
-        if (_state == STATE_NORMAL) {
+        _state = STATE_BIRTH;
 
-            // white cells follow predators who have other white cells attached
-            if (this.isWhiteCell) {
-                if (this.isFollowing && !canFollow(this.followingCursor)) {
-                    // stop following the predator if it's left our hemisphere
-                    stopFollowing();
-                }
+        // When red cells are born, they burst out of the center of the heart
+        this.x = Constants.GAME_CTR.x;
+        this.y = Constants.GAME_CTR.y;
 
-                if (!this.isFollowing && canFollow(GameCtx.cursor)) {
-                    follow(GameCtx.cursor);
-                }
-            }
+        // fire out of the heart in a random direction
+        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_RED];
+        var dist :Number = distRange.next();
+        var birthTarget :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
-            // if we're following somebody, move towards them
-            if (this.isFollowing) {
-                var following :PlayerCursor = this.followingCursor;
-                var followImpulse :Vector2 =
-                    new Vector2(following.x, following.y).subtractLocal(nextLoc);
-                followImpulse.length = SPEED_FOLLOW * dt;
-                nextLoc.x += followImpulse.x;
-                nextLoc.y += followImpulse.y;
+        addTask(new SerialTask(
+            LocationTask.CreateEaseOut(birthTarget.x, birthTarget.y, Constants.CELL_BIRTH_TIME),
+            new FunctionTask(function () :void {
+                _state = STATE_NORMAL;
+            })));
+    }
 
-            } else {
-                // otherwise, move away from, and around, the heart
-                var ctrImpulse :Vector2 = nextLoc.subtract(Constants.GAME_CTR);
-                ctrImpulse.length = 1;
+    protected function birthWhiteCell () :void
+    {
+        _state = STATE_BIRTH;
 
-                var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
-                perpImpulse.length = 3.5;
+        // pick a random location on the outside of the board
+        var angle :Number = Rand.nextNumberRange(0, Math.PI * 2, Rand.STREAM_GAME);
+        var distRange :NumRange = Constants.CELL_BIRTH_DISTANCE[Constants.CELL_WHITE];
+        var dist :Number = distRange.next();
+        var loc :Vector2 = Vector2.fromAngle(angle, dist).addLocal(Constants.GAME_CTR);
 
-                var impulse :Vector2 = ctrImpulse.add(perpImpulse);
-                impulse.length = SPEED_BASE * dt;
+        this.x = loc.x;
+        this.y = loc.y;
 
-                nextLoc.x += impulse.x;
-                nextLoc.y += impulse.y;
-            }
-
-            nextLoc = GameCtx.clampLoc(nextLoc);
-        }
-
-        return nextLoc;
+        addTask(After(Constants.CELL_BIRTH_TIME,
+            new FunctionTask(function () :void {
+                _state = STATE_NORMAL;
+            })));
     }
 
     override protected function update (dt :Number) :void
     {
-        _loc = getNextLoc(_loc, dt);
+        if (_state == STATE_NORMAL) {
+            // move around the heart
+            var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
+                _loc.subtract(Constants.GAME_CTR) :
+                Constants.GAME_CTR.subtract(_loc));
+
+            ctrImpulse.length = 1;
+
+            var perpImpulse :Vector2 = ctrImpulse.getPerp(_moveCCW);
+            perpImpulse.length = 3.5;
+
+            var impulse :Vector2 = ctrImpulse.add(perpImpulse);
+            impulse.length = SPEED_BASE * dt;
+
+            _loc.x += impulse.x;
+            _loc.y += impulse.y;
+
+            _loc = GameCtx.clampLoc(_loc);
+        }
+
         super.update(dt);
     }
 
@@ -141,6 +136,11 @@ public class Cell extends CollidableObj
         return _type;
     }
 
+    public function get state () :int
+    {
+        return _state;
+    }
+
     public function get isRedCell () :Boolean
     {
         return _type == Constants.CELL_RED;
@@ -151,35 +151,14 @@ public class Cell extends CollidableObj
         return _type == Constants.CELL_WHITE;
     }
 
-    public function get state () :int
+    protected function get canCollide () :Boolean
     {
-        return _state;
+        return true;
     }
 
-    protected function canFollow (cursor :PlayerCursor) :Boolean
+    protected function get movementType () :int
     {
-        return (cursor.numWhiteCells > 0 &&
-                GameCtx.getHemisphere(cursor) == GameCtx.getHemisphere(this));
-    }
-
-    protected function follow (cursor :PlayerCursor) :void
-    {
-        _followObj = cursor.ref;
-    }
-
-    protected function stopFollowing () :void
-    {
-        _followObj = SimObjectRef.Null();
-    }
-
-    protected function get followingCursor () :PlayerCursor
-    {
-        return _followObj.object as PlayerCursor;
-    }
-
-    protected function get isFollowing () :Boolean
-    {
-        return !_followObj.isNull;
+        return (_type == Constants.CELL_WHITE ? MOVE_INWARDS : MOVE_OUTWARDS);
     }
 
     protected static function getGroupName (cellType :int) :String
@@ -190,11 +169,12 @@ public class Cell extends CollidableObj
     protected var _type :int;
     protected var _state :int;
     protected var _moveCCW :Boolean;
-    protected var _followObj :SimObjectRef = SimObjectRef.Null();
-    protected var _birthTarget :Vector2;
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;
+
+    protected static const MOVE_INWARDS :int = 0;
+    protected static const MOVE_OUTWARDS :int = 1;
 }
 
 }
