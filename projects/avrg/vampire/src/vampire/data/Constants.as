@@ -1,9 +1,13 @@
 ﻿package vampire.data
 {
+    import com.threerings.flash.Vector2;
+    
 public class Constants
 {
     
-    public static const CHAT_FEEDING_MIN_CHATS_PER_MINUTE :int = 3;
+    public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
+    
+    public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
     
     
     /** 
@@ -72,16 +76,19 @@ public class Constants
         return MAXIMUM_LEVEL_FOR_NON_VAMPIRE + 1;
     }
     
-    public static const GAME_MODE_NOTHING :String = "Nothing";
-    public static const GAME_MODE_FEED :String = "Dancing";
-    public static const GAME_MODE_EAT_ME :String = "Sitting";
+    public static const GAME_MODE_NOTHING :String = "Default";
+    public static const GAME_MODE_FEED_FROM_PLAYER :String = "Feeding";
+    public static const GAME_MODE_FEED_FROM_NON_PLAYER :String = "FeedingNonPlayer";
+    public static const GAME_MODE_MOVING_TO_FEED_ON_PLAYER :String = "MoveToFeeding";
+    public static const GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER :String = "MoveToFeedingNonPlayer";
+    public static const GAME_MODE_BARED :String = "Bared";
     public static const GAME_MODE_FIGHT :String = "Fighting";
 //    public static const GAME_MODE_BLOODBOND :String = "BloodBond";
     public static const GAME_MODE_HIERARCHY_AND_BLOODBONDS :String = "Hierarchy";
     
     public static const GAME_MODES :Array = [
-                                        GAME_MODE_FEED, 
-                                        GAME_MODE_EAT_ME,
+                                        GAME_MODE_FEED_FROM_PLAYER, 
+                                        GAME_MODE_BARED,
                                         GAME_MODE_FIGHT, 
 //                                        GAME_MODE_BLOODBOND, 
                                         GAME_MODE_HIERARCHY_AND_BLOODBONDS
@@ -109,6 +116,8 @@ public class Constants
     
     public static const TIME_INTERVAL_PROXIMITY_CHECK :int = 1000;
     
+    public static const SERVER_TICK_UPDATE_MILLISECONDS :int = 300;
+    
     public static const DEBUG_MINION :String = "miniondebug ";
     
     /**
@@ -121,6 +130,11 @@ public class Constants
     public static const ROOM_SIGNAL_ENTITYID_REPONSE :String = "EntityId Response";
     public static const SIGNAL_CLOSEST_ENTITY :String = "Signal: Closest Entity";
     public static const SIGNAL_PLAYER_TARGET :String = "Signal: Player Target";
+    public static const SIGNAL_PLAYER_ARRIVED_AT_DESTINATION :String = "Signal: Player Arrived";
     public static const SIGNAL_TARGET_CHATTED :String = "Signal: Player Target Said Something";
+    public static const SIGNAL_CHANGE_COLOR_SCHEME :String = "Signal: Change Color Scheme";
+    public static const SIGNAL_CHANGE_COLOR_SCHEME_REQUEST :String = "Signal: Change Color Scheme REQUEST";
+    
+    public static const FEEDING_AVATAR_OFFSET :Vector2 = new Vector2(15, -5);
 }
 }

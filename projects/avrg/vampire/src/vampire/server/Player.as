@@ -4,6 +4,7 @@
 package vampire.server {
 
 import com.threerings.flash.MathUtil;
+import com.threerings.flash.Vector2;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashable;
@@ -22,7 +23,6 @@ import vampire.data.Constants;
 import vampire.data.Logic;
 import vampire.net.IGameMessage;
 import vampire.net.messages.BloodBondRequestMessage;
-import vampire.net.messages.FeedRequestMessage;
 import vampire.net.messages.RequestActionChangeMessage;
 import vampire.net.messages.SuccessfulFeedMessage;
 
@@ -536,7 +536,7 @@ public class Player
             return;
         }
         
-        if( !isVampire() || action != Constants.GAME_MODE_FEED || e.eatenPlayerId == 0) {
+        if( !isVampire() || action != Constants.GAME_MODE_FEED_FROM_PLAYER || e.eatenPlayerId == 0) {
             log.error("handleSuccessfulFeedMessage, but not a vampire or feeding, or eaten==0.", "SuccessfulFeedMessage", e);
             return;
         }
@@ -820,11 +820,14 @@ public class Player
     protected function handleRequestActionChange( e :RequestActionChangeMessage) :void
     {
         log.debug("handleRequestActionChange(..), e.action=" + e.action);
+        var angleRadians :Number;
+        var degs :Number;
+        
         switch( e.action ) {
             case Constants.GAME_MODE_BARED:
             
                 //If I'm feeding, just break off the feed.
-                if( action == Constants.GAME_MODE_FEED) {
+                if( action == Constants.GAME_MODE_FEED_FROM_PLAYER) {
                     var victim :Player = ServerContext.vserver.getPlayer( targetId );
                     if( victim != null && victim.targetId == playerId 
                         && victim.action == Constants.GAME_MODE_BARED) {
@@ -839,7 +842,7 @@ public class Player
                 setAction( e.action );
                 break;
                 
-            case Constants.GAME_MODE_FEED:
+            case Constants.GAME_MODE_FEED_FROM_PLAYER:
                 //Check if the closest vampire is also closest to you, and they are in bare mode
                 
                 if( ServerContext.vserver.isPlayerOnline( targetId ) ) {
@@ -850,24 +853,88 @@ public class Player
                         && potentialVictim.action == Constants.GAME_MODE_BARED) {
                             
                         var victimAvatar :AVRGameAvatar = room.ctrl.getAvatarInfo( targetId );
-                        if( victimAvatar != null) {
-                            ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.1, victimAvatar.orientation);
+                        if( victimAvatar != null && avatar != null) {
+                            
+                            angleRadians = new Vector2( victimAvatar.x - avatar.x, victimAvatar.z - avatar.z).angle;
+                            degs = convertStandardRads2GameDegrees( angleRadians );
+                            ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.01, degs);
                         }
                         
-                        setAction( Constants.GAME_MODE_MOVING_TO_FEED );
+                        setAction( Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER );
                         break;
                     }
                 }
                 else {
-                    
+                    if( targetLocation != null && targetLocation.length >= 3 && avatar != null) {
+                        if( targetLocation[0] < avatar.x) {
+                            angleRadians = new Vector2( (targetLocation[0] + 0.16)- avatar.x, targetLocation[2] - avatar.z).angle;
+                            degs = convertStandardRads2GameDegrees( angleRadians );
+                            ctrl.setAvatarLocation( targetLocation[0] + 0.1, targetLocation[1], targetLocation[2], degs);
+                        }
+                        else {
+                            angleRadians = new Vector2( (targetLocation[0] - 0.16)- avatar.x, targetLocation[2] - avatar.z).angle;
+                            degs = convertStandardRads2GameDegrees( angleRadians );
+                            ctrl.setAvatarLocation( targetLocation[0] - 0.1, targetLocation[1], targetLocation[2], degs);
+                        }
+                        setAction( Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER );
+                        break;
+                    }
                 }
                 
             case Constants.GAME_MODE_FIGHT:
             default:
                 setAction( Constants.GAME_MODE_NOTHING );
+                if( isTargetTargetingMe && targetPlayer.action == Constants.GAME_MODE_BARED) {
+                    targetPlayer.setAction( Constants.GAME_MODE_NOTHING );
+                }
+                
+                
+        }
+        
+        function convertStandardRads2GameDegrees( rad :Number ) :Number
+        {
+            return MathUtil.toDegrees( MathUtil.normalizeRadians(rad + Math.PI / 2) );
         }
         
     }
+    
+    protected function get targetPlayer() :Player
+    {
+        if( ServerContext.vserver.isPlayerOnline( targetId )) {
+            return ServerContext.vserver.getPlayer( targetId );
+        }
+        return null;
+    }
+    
+    protected function get isTargetPlayer() :Boolean
+    {
+        return ServerContext.vserver.isPlayerOnline( targetId );
+    }
+    
+    protected function get avatar() :AVRGameAvatar
+    {
+        if( room == null || room.ctrl == null) {
+            return null;
+        }
+        return room.ctrl.getAvatarInfo( playerId );
+    }
+    
+    protected function get targetOfTargetPlayer() :int
+    {
+        if( !isTargetPlayer ) {
+            return -1;
+        }
+        return targetPlayer.targetId;
+    }
+    
+    protected function get isTargetTargetingMe() :Boolean
+    {
+        if( !isTargetPlayer ) {
+            return false;
+        }
+        return targetPlayer.targetId == playerId;
+    }
+    
     
     protected function beginFeeding() :void
     {
@@ -879,7 +946,13 @@ public class Player
                 && potentialVictim.targetId == playerId 
                 && potentialVictim.action == Constants.GAME_MODE_BARED) {
                 
-                setAction( Constants.GAME_MODE_FEED );
+                
+                var victimAvatar :AVRGameAvatar = room.ctrl.getAvatarInfo( targetId );
+                if( victimAvatar != null) {
+                    ctrl.setAvatarLocation( victimAvatar.x, victimAvatar.y, victimAvatar.z + 0.1, victimAvatar.orientation);
+                }
+                        
+                setAction( Constants.GAME_MODE_FEED_FROM_PLAYER );
             }
         }
         else {
@@ -950,11 +1023,15 @@ public class Player
     }
     protected function handleSignalArrivedAtDestination() :void
     {
-        if( action == Constants.GAME_MODE_MOVING_TO_FEED) {
+        if( action == Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER) {
             beginFeeding();
         }
+        else if(action == Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER)
+        {
+            setAction( Constants.GAME_MODE_FEED_FROM_NON_PLAYER );
+        }
         else {
-            log.error("WTF handleSignalArrivedAtDestination(), should be action=" + Constants.GAME_MODE_MOVING_TO_FEED + ", but we're=" + action + ", so no feeding");
+            log.error("WTF handleSignalArrivedAtDestination(), should be action=" + Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER + ", but we're=" + action + ", so no feeding");
         }
     }
     
@@ -985,8 +1062,8 @@ public class Player
                 
                 switch( action ) {
                     
-                    case Constants.GAME_MODE_FEED:
-                    case Constants.GAME_MODE_MOVING_TO_FEED:
+                    case Constants.GAME_MODE_FEED_FROM_PLAYER:
+                    case Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
 //                    case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
                     case Constants.GAME_MODE_BARED:
                         //Update the target data if our target has moved, but don't change 
@@ -1040,30 +1117,30 @@ public class Player
         }
     }
     
+    /**
+    * Checks if we are feeding from a non-player.  If so, every time they make X chats in a 
+    * time interval (1 minute), we get blood, and they lose blood.
+    */
     protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
     {
         var fromPlayerId :int = int(e.value);
-//        ServerContext.serverLogBroadcast.log("Chat received from " + fromPlayerId); 
-        if( fromPlayerId == playerId && targetId != 0 && !room.isPlayer(targetId)) {
-            var time :int = getTimer();
-            var aMinuteAgo :int = time - 60000;
-            
-            _chatTimesWithTarget.push( time );
-            
-            _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
-                return chattime > aMinuteAgo;
-            });
-            
-//            ServerContext.serverLogBroadcast.log("  _chatTimesWithTarget=" + _chatTimesWithTarget);
-            
-            if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_MINUTE) {
-                _chatTimesWithTarget.splice(0);
-//                ServerContext.serverLogBroadcast.log("  Chat, send feed message ");
-                handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
+        if( action == Constants.GAME_MODE_FEED_FROM_NON_PLAYER ) {
+            if( targetId == fromPlayerId ) {
+                var time :int = getTimer();
+                var aMinuteAgo :int = time - Constants.CHAT_FEEDING_TIME_INTERVAL_MILLISECS;
+                
+                _chatTimesWithTarget.push( time );
+                
+                _chatTimesWithTarget = _chatTimesWithTarget.filter( function( chattime :int, ...ignored) :Boolean {
+                    return chattime > aMinuteAgo;
+                });
+                
+                if( _chatTimesWithTarget.length >= Constants.CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL) {
+                    _chatTimesWithTarget.splice(0);
+                    handleSuccessfulFeedMessage( new SuccessfulFeedMessage( playerId, targetId));
+                }
+                
             }
-        }
-        else {
-//            ServerContext.serverLogBroadcast.log("  Ignored for some reason. fromPlayerId=" + fromPlayerId + ", targetId=" + targetId + ", room.isPlayer(targetId)=" + room.isPlayer(targetId));
         }
     }
     
@@ -1156,7 +1233,7 @@ public class Player
                 newState = action;
             }
             
-            if( action == Constants.GAME_MODE_FEED) {
+            if( action == Constants.GAME_MODE_FEED_FROM_PLAYER) {
                 newState = action;
             }
             
@@ -1696,6 +1773,13 @@ public class Player
                 }
             }       
         }
+        
+        //Some state checks
+        if( action == Constants.GAME_MODE_BARED) {
+            if( !(isTargetTargetingMe && targetPlayer.action == Constants.GAME_MODE_FEED_FROM_PLAYER)) {
+                setAction( Constants.GAME_MODE_NOTHING );
+            }
+        } 
     }
     
     public function get mostRecentVictimId() :int
@@ -1714,7 +1798,7 @@ public class Player
             return false;
         }
         
-        if( predator.action == Constants.GAME_MODE_FEED && predator.targetId == playerId) {
+        if( predator.action == Constants.GAME_MODE_FEED_FROM_PLAYER && predator.targetId == playerId) {
             return true;
         }
         return false;
@@ -1725,10 +1809,13 @@ public class Player
     */
     public function handleAvatarMoved() :void
     {
-        if( action == Constants.GAME_MODE_MOVING_TO_FEED) {
+        //Moving nullifies any action we are currently doing, except if we are heading to 
+        //feed.
+        if( action == Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER
+            || action == Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ) {
             return;
         }
-        else if( action == Constants.GAME_MODE_FEED) {
+        else if( action == Constants.GAME_MODE_FEED_FROM_PLAYER) {
             var victim :Player = ServerContext.vserver.getPlayer( targetId );
             if( victim != null ) {
                 victim.setTargetId(0);
@@ -1737,7 +1824,7 @@ public class Player
             else {
                 log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
             }
-            setAction( Constants.GAME_MODE_NOTHING );
+//            setAction( Constants.GAME_MODE_NOTHING );
         }
         else if( action == Constants.GAME_MODE_BARED) {
             var predator :Player = ServerContext.vserver.getPlayer( targetId );
@@ -1748,11 +1835,8 @@ public class Player
             else {
                 log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
             }
-            setAction( Constants.GAME_MODE_NOTHING );
         }
-        
-        
-//        setTargetId(0);
+        setAction( Constants.GAME_MODE_NOTHING );
     }
     
     
