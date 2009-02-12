@@ -25,6 +25,7 @@ public class RedBurst extends CellBurst
     {
         super(fromCell.type, Constants.RED_BURST_RADIUS_MIN, Constants.RED_BURST_RADIUS_MAX);
         _sequence = sequence;
+        _multiplier = fromCell.multiplier;
     }
 
     override protected function beginBurst () :void
@@ -59,7 +60,7 @@ public class RedBurst extends CellBurst
 
     public function get multiplier () :int
     {
-        return 0;
+        return _multiplier;
     }
 
     override protected function update (dt :Number) :void

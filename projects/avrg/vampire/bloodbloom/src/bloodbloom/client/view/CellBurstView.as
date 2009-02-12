@@ -24,7 +24,7 @@ public class CellBurstView extends SceneObject
             break;
 
         case Constants.CELL_BONUS:
-            color = 0x00ff00;
+            color = 0x0000ff;
             break;
 
         case Constants.CELL_WHITE:

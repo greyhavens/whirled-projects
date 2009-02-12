@@ -51,13 +51,11 @@ public class BurstSequence extends SceneObject
 
     public function get multiplier () :int
     {
-        //return 1 + (_totalBursts / Constants.NUM_BURSTS_PER_MULTIPLIER);
         return 1 + _totalMultiplier;
     }
 
     public function get totalValue () :int
     {
-        //return _bursts.length * this.multiplier;
         return _totalBursts * this.multiplier;
     }
 
@@ -97,7 +95,6 @@ public class BurstSequence extends SceneObject
             if (_bursts.length == 0) {
                 text = "";
             } else {
-                //text = String(_bursts.length);
                 text = String(_totalBursts);
                 if (this.multiplier > 1) {
                     text += " x" + this.multiplier;

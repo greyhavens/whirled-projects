@@ -14,13 +14,13 @@ public class CreateBonusMsg
     public var y :int;
     public var multiplier :int;
 
-    public static function create (playerId :int, x :int, y :int, size :int) :CreateBonusMsg
+    public static function create (playerId :int, x :int, y :int, multiplier :int) :CreateBonusMsg
     {
         var msg :CreateBonusMsg = new CreateBonusMsg();
         msg.playerId = playerId;
         msg.x = x;
         msg.y = y;
-        msg.multiplier = size;
+        msg.multiplier = multiplier;
 
         return msg;
     }
