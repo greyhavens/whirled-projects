@@ -26,7 +26,7 @@ public class VampireMain extends Sprite
         Log.setLevel("com.threerings", Log.OFF);
         Log.setLevel("vampire.client", Log.DEBUG);
         
-        trace("VampireMain()");
+//        trace("VampireMain()");
         /* Register mode classes so that they can be instatiated just by name*/
 //        registerClassAlias("vampire.client.modes.BloodBondMode", BloodBondMode);
 //        registerClassAlias("vampire.client.modes.FeedMode", FeedMode);
@@ -208,6 +208,9 @@ public class VampireMain extends Sprite
     
     [Embed(source="../../../rsrc/HUD.swf", mimeType="application/octet-stream")]
     protected static const SWF_HUD :Class;
+    
+    [Embed(source="../../../rsrc/JUICE___.TTF", fontFamily="JuiceEmbedded")]
+    public const JuiceEmbeddedFont:Class;
     
 }
 

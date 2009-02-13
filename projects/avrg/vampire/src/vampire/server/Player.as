@@ -79,6 +79,12 @@ public class Player
         log.debug("Getting blood="+_blood);
         
         _bloodbonded = int( _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED));
+        
+        if( _bloodbonded > 0) {
+            _bloodbondedName = _ctrl.props.get(Codes.PLAYER_PROP_PREFIX_BLOODBONDED_NAME) as String;
+        }
+        
+        
 //        if (bloodbonded != null) {
 //            _bloodbonded = bloodbonded as Array;
 //            if( _bloodbonded == null) {
@@ -329,8 +335,8 @@ public class Player
     public function decreaseLevel() :void
     {
         if( level > 1 ) {
-            var xpNeededForNextLevel :int = Logic.xpNeededForLevel( level + 1 );
-            var missingXp :int = xpNeededForNextLevel - xp;
+            var xpNeededForCurrentLevel :int = Logic.xpNeededForLevel( level );
+            var missingXp :int = -(xp - xpNeededForCurrentLevel) - 1;
             addXP( missingXp )
         }
     }
@@ -536,8 +542,18 @@ public class Player
             return;
         }
         
-        if( !isVampire() || action != Constants.GAME_MODE_FEED_FROM_PLAYER || e.eatenPlayerId == 0) {
-            log.error("handleSuccessfulFeedMessage, but not a vampire or feeding, or eaten==0.", "SuccessfulFeedMessage", e);
+        if( !isVampire() ) {
+            log.error("handleSuccessfulFeedMessage, but not a vampire ", "SuccessfulFeedMessage", e);
+            return;
+        }
+        
+        if(!(action == Constants.GAME_MODE_FEED_FROM_PLAYER || action == Constants.GAME_MODE_FEED_FROM_NON_PLAYER) ) {
+            log.error("handleSuccessfulFeedMessage, but not feeding", "SuccessfulFeedMessage", e);
+            return;
+        }
+        
+        if( e.eatenPlayerId == 0) {
+            log.error("handleSuccessfulFeedMessage, eaten==0.", "SuccessfulFeedMessage", e);
             return;
         }
         
@@ -622,6 +638,7 @@ public class Player
                 //Become blood bonds
                 var newBloodBondedPlayer :Player = ServerContext.vserver.getPlayer( _mostRecentVictimId );
                 if( newBloodBondedPlayer != null ){
+                    log.info("Creating blood bonds between " + name + " and " + newBloodBondedPlayer.name);
                     newBloodBondedPlayer.setBloodBonded( playerId );
                     setBloodBonded( _mostRecentVictimId );
                 }
@@ -953,6 +970,8 @@ public class Player
                 }
                         
                 setAction( Constants.GAME_MODE_FEED_FROM_PLAYER );
+                
+                handleSuccessfulFeedMessage( new SuccessfulFeedMessage(playerId, targetId));
             }
         }
         else {
@@ -1063,8 +1082,9 @@ public class Player
                 switch( action ) {
                     
                     case Constants.GAME_MODE_FEED_FROM_PLAYER:
+                    case Constants.GAME_MODE_FEED_FROM_NON_PLAYER:
                     case Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
-//                    case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+                    case Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
                     case Constants.GAME_MODE_BARED:
                         //Update the target data if our target has moved, but don't change 
                         //our target
@@ -1123,9 +1143,14 @@ public class Player
     */
     protected function handleSignalTargetChatted( e :AVRGameRoomEvent) :void
     {
-        var fromPlayerId :int = int(e.value);
+        log.debug("handleSignalTargetChatted, e=" + e);
+        log.debug("playerId=" + playerId);
+        log.debug("targetId=" + targetId);
+        var signalArray :Array = e.value as Array;
+        var fromPlayerId :int = int(signalArray[0]);
+        var playerChattedId :int = int(signalArray[1]);
         if( action == Constants.GAME_MODE_FEED_FROM_NON_PLAYER ) {
-            if( targetId == fromPlayerId ) {
+            if( targetId == playerChattedId ) {
                 var time :int = getTimer();
                 var aMinuteAgo :int = time - Constants.CHAT_FEEDING_TIME_INTERVAL_MILLISECS;
                 
@@ -1141,6 +1166,12 @@ public class Player
                 }
                 
             }
+            else {
+                log.debug("handleSignalTargetChatted, targetId != fromPlayerId");    
+            }
+        }
+        else {
+            log.debug("handleSignalTargetChatted, action != Constants.GAME_MODE_FEED_FROM_NON_PLAYER");
         }
     }
     
@@ -1775,8 +1806,14 @@ public class Player
         }
         
         //Some state checks
-        if( action == Constants.GAME_MODE_BARED) {
-            if( !(isTargetTargetingMe && targetPlayer.action == Constants.GAME_MODE_FEED_FROM_PLAYER)) {
+//        if( action == Constants.GAME_MODE_BARED) {
+//            if( !(isTargetTargetingMe && targetPlayer.action == Constants.GAME_MODE_FEED_FROM_PLAYER)) {
+//                setAction( Constants.GAME_MODE_NOTHING );
+//            }
+//        } 
+
+        if( action == Constants.GAME_MODE_FEED_FROM_PLAYER) {
+            if( !(isTargetTargetingMe && targetPlayer.action == Constants.GAME_MODE_BARED)) {
                 setAction( Constants.GAME_MODE_NOTHING );
             }
         } 
@@ -1811,32 +1848,42 @@ public class Player
     {
         //Moving nullifies any action we are currently doing, except if we are heading to 
         //feed.
-        if( action == Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER
-            || action == Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER ) {
-            return;
+        
+        switch( action ) {
+            
+            case Constants.GAME_MODE_MOVING_TO_FEED_ON_PLAYER:
+            case Constants.GAME_MODE_MOVING_TO_FEED_ON_NON_PLAYER:
+                break;//Don't change our state if we are moving into position
+                
+            case Constants.GAME_MODE_FEED_FROM_PLAYER:
+                var victim :Player = ServerContext.vserver.getPlayer( targetId );
+                if( victim != null ) {
+//                    victim.setTargetId(0);
+                    victim.setAction( Constants.GAME_MODE_NOTHING );
+                }
+                else {
+                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
+                }
+                setAction( Constants.GAME_MODE_NOTHING );
+                break;
+                
+            case Constants.GAME_MODE_BARED:
+                var predator :Player = ServerContext.vserver.getPlayer( targetId );
+                if( predator != null ) {
+//                    predator.setTargetId(0);
+                    predator.setAction( Constants.GAME_MODE_NOTHING );
+                }
+                else {
+                    log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
+                }
+                setAction( Constants.GAME_MODE_NOTHING );
+                break;
+                    
+                
+            case Constants.GAME_MODE_FEED_FROM_NON_PLAYER:
+            default :
+                setAction( Constants.GAME_MODE_NOTHING );
         }
-        else if( action == Constants.GAME_MODE_FEED_FROM_PLAYER) {
-            var victim :Player = ServerContext.vserver.getPlayer( targetId );
-            if( victim != null ) {
-                victim.setTargetId(0);
-                victim.setAction( Constants.GAME_MODE_NOTHING );
-            }
-            else {
-                log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
-            }
-//            setAction( Constants.GAME_MODE_NOTHING );
-        }
-        else if( action == Constants.GAME_MODE_BARED) {
-            var predator :Player = ServerContext.vserver.getPlayer( targetId );
-            if( predator != null ) {
-                predator.setTargetId(0);
-                predator.setAction( Constants.GAME_MODE_NOTHING );
-            }
-            else {
-                log.error("avatarMoved(), we shoud be breaking off a victim, but there is no victim.");
-            }
-        }
-        setAction( Constants.GAME_MODE_NOTHING );
     }
     
     

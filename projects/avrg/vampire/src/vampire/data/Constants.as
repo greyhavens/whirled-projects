@@ -4,7 +4,6 @@
     
 public class Constants
 {
-    
     public static const CHAT_FEEDING_MIN_CHATS_PER_TIME_INTERVAL :int = 3;
     
     public static const CHAT_FEEDING_TIME_INTERVAL_MILLISECS :int = 60000;//A minute
@@ -17,8 +16,9 @@ public class Constants
 
     /**
     * When a vampire is fed upon, it loses this fraction of total blood.
+    * This is only really used to create bloodbonds.
     */
-    public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.25;
+    public static const BLOOD_FRACTION_LOST_PER_FEED :Number = 0.8;
 
     /** 
     * Blood gains are shared with sires.

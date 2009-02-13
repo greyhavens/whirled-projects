@@ -68,7 +68,7 @@ public class VServer
         
         _startTime = getTimer();
         _lastTickTime = _startTime;
-        setInterval(tick, 2000);
+        setInterval(tick, Constants.SERVER_TICK_UPDATE_MILLISECONDS);
         
         ServerContext.minionHierarchy = new MinionHierarchyServer( this );
 

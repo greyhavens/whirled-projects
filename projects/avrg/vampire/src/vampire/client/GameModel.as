@@ -296,13 +296,24 @@ public class GameModel extends EventDispatcher
     
     public function get bloodbonded() :int
     {
-        return SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId );
+        if( Constants.LOCAL_DEBUG_MODE) {
+           return 1;    
+        }
+        else {
+            return SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId );
+        }
     }
     
     public function get bloodbondedName() :String
     {
-        var name :String = SharedPlayerStateClient.getBloodBondedName( ClientContext.ourPlayerId );
-        return name != null ? name : "none";
+        if( Constants.LOCAL_DEBUG_MODE) {
+            return "Bloodbond name";
+        }
+        else {
+            var name :String = SharedPlayerStateClient.getBloodBondedName( ClientContext.ourPlayerId );
+            return name != null && name.length > 0 ? name : "No bloodbond";
+        }
+        
     }
     
     public function get minions() :Array
@@ -329,6 +340,18 @@ public class GameModel extends EventDispatcher
     {
         return SharedPlayerStateClient.getTime( ClientContext.ourPlayerId );
     }
+    
+    public function get name() :String
+    {
+        if( Constants.LOCAL_DEBUG_MODE) {
+            return "Player Name";  
+        }
+        else {
+            return ClientContext.gameCtrl.room.getAvatarInfo( ClientContext.ourPlayerId).name;
+        }
+    }
+    
+    
     
     public function get targetPlayerId() :int
     {

@@ -143,7 +143,7 @@ public class SharedPlayerStateClient
     
     public static function toStringForPlayer( playerId :int ) :String
     {
-        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", time=" + new Date(getTime( playerId )).toTimeString()
+        return playerId + ", blood=" + getBlood( playerId ) + ", level=" + getLevel( playerId ) + ", action=" + getCurrentAction( playerId ) + ", bloodbonded=" + getBloodBonded( playerId ) + ", bloodbondname=" + getBloodBondedName(playerId) + ", time=" + new Date(getTime( playerId )).toTimeString()
 //            + ", closestUserId=" + getClosestUserData( playerId )
             ;
     }

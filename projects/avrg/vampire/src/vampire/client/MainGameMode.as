@@ -9,11 +9,9 @@ package vampire.client
     import flash.display.Sprite;
     
     import vampire.client.actions.NothingMode;
-    import vampire.client.actions.bloodbond.BloodBondMode;
     import vampire.client.actions.feed.EatMeMode;
     import vampire.client.actions.feed.FeedMode;
     import vampire.client.actions.fight.FightMode;
-    import vampire.client.actions.hierarchy.HierarchyMode;
     import vampire.client.events.ChangeActionEvent;
     import vampire.data.Constants;
 
@@ -27,7 +25,7 @@ package vampire.client
         override protected function enter() :void
         {
             log.debug("Starting " + ClassUtil.tinyClassName( this ));
-            
+
         }
         
         override protected function setup() :void
@@ -49,6 +47,8 @@ package vampire.client
             subgame = new SimpleGame( subgameconfig );
             subgame.run();
             subgame.ctx.mainLoop.pushMode( new NothingMode() );
+            
+            ClientContext.gameCtrl.player.setAvatarState( Constants.GAME_MODE_NOTHING );
             
             registerListener( ClientContext.model, ChangeActionEvent.CHANGE_ACTION, changeAction ); 
             
@@ -75,11 +75,11 @@ package vampire.client
 //                     m = new BloodBondMode();
 //                     break;
                  
-                 case Constants.GAME_MODE_FEED:
+                 case Constants.GAME_MODE_FEED_FROM_PLAYER:
                      m = new FeedMode();
                      break;
                        
-                 case Constants.GAME_MODE_EAT_ME:
+                 case Constants.GAME_MODE_BARED:
                      m = new EatMeMode();
                      break;
                      
@@ -87,9 +87,9 @@ package vampire.client
                      m = new FightMode();
                      break;
                      
-                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-                     m = new HierarchyMode();
-                     break;
+//                 case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+//                     m = new HierarchyMode();
+//                     break;
                      
                  default:
                      m = new NothingMode();

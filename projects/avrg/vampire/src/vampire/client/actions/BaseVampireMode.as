@@ -53,6 +53,9 @@ public class BaseVampireMode extends AppMode
         var closeButton :SimpleTextButton = new SimpleTextButton( "Close" );
         closeButton.x = modeSprite.width - 50;
         closeButton.y = 0;
+//        _events.registerListener( closeButton, MouseEvent.CLICK, function(...ignored) :void {
+//            ctx.mainLoop.popMode();    
+//        });
         Command.bind( closeButton, MouseEvent.CLICK, VampireController.CLOSE_MODE, this);
 //        Command.bind( closeButton, MouseEvent.CLICK, VampireController.SWITCH_MODE, Constants.GAME_MODE_NOTHING);
         modeSprite.addChild( closeButton );

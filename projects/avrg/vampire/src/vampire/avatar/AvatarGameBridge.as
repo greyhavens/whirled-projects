@@ -107,7 +107,7 @@ public class AvatarGameBridge
         trace2( "Chat received from " + chatterId);
         if( chatterId == _targetId) {
             trace2( "  Broadcasting, _targetId=" + _targetId);
-            _ctrl.sendSignal( Constants.SIGNAL_TARGET_CHATTED, playerId);
+            _ctrl.sendSignal( Constants.SIGNAL_TARGET_CHATTED, [playerId, chatterId] );
         }
         else {
             trace2( "  Not broadcasting...why?, _targetId=" + _targetId);

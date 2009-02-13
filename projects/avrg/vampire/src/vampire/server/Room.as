@@ -5,6 +5,7 @@ package vampire.server {
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ClassUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.HashSet;
 import com.threerings.util.Hashable;
 import com.threerings.util.Log;
@@ -12,9 +13,6 @@ import com.whirled.avrg.AVRGameRoomEvent;
 import com.whirled.avrg.RoomSubControlServer;
 
 import flash.events.Event;
-
-import vampire.data.Codes;
-import vampire.data.Constants;
 
 public class Room
     implements Hashable
@@ -91,6 +89,8 @@ public class Room
 
     public function playerLeft (player :Player) :void
     {
+        _entityLocations.remove( player.playerId );
+        
         if (!_players.remove(player)) {
             log.warning("Departing player did not exist in room", "roomId", this.roomId,
                         "playerId", player.playerId);
@@ -200,7 +200,7 @@ public class Room
         }
 
         
-        ServerContext.serverLogBroadcast.log("Updating player room props=" + player);
+//        ServerContext.serverLogBroadcast.log("Updating player room props=" + player);
         
 //        var key :String = Codes.ROOM_PROP_PREFIX_PLAYER_DICT + player.playerId;
 //        _ctrl.props.set(key, player.playerState.toBytes()); 
@@ -325,6 +325,16 @@ public class Room
     {
         return _players;
     }
+    
+    public function isPlayerPredatorInBloodBloomGame( playerId :int ) :Boolean
+    {
+        for each( var g :BloodBloomGameRecord in _bloodBloomGames) {
+            if( g.isPredator( playerId )) {
+                return true;
+            }    
+        }
+        return false;
+    }
 
     protected var _roomId :int;
     protected var _ctrl :RoomSubControlServer;
@@ -333,6 +343,10 @@ public class Room
     protected var _players :HashSet = new HashSet();
     
     public var _nonplayers :HashSet = new HashSet();
+    
+    public var _bloodBloomGames :Array = new Array();
+    
+    protected var _entityLocations :HashMap = new HashMap();
     
 //    protected var _playerEntityIds :HashSet = new HashSet();
 

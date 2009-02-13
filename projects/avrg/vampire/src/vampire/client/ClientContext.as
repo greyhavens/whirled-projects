@@ -8,6 +8,7 @@ import com.whirled.contrib.simplegame.resource.ResourceManager;
 import com.whirled.contrib.simplegame.resource.SwfResource;
 
 import flash.display.MovieClip;
+import flash.display.SimpleButton;
 import flash.geom.Rectangle;
 
 import vampire.data.Constants;
@@ -57,7 +58,7 @@ public class ClientContext
             }
         }
 
-        return "player " + playerId.toString();
+        return "Player " + playerId.toString();
     }
     
     public static function isPlayerProps() :Boolean
@@ -74,6 +75,14 @@ public class ClientContext
             className,
             disableMouseInteraction,
             fromCache);
+    }
+    
+     public static function instantiateButton (rsrcName :String, className :String) :SimpleButton
+    {
+        return SwfResource.instantiateButton(
+            game.ctx.rsrcs,
+            rsrcName,
+            className);
     }
     
     

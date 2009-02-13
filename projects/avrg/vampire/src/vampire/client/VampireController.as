@@ -1,16 +1,15 @@
 package vampire.client
 {
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import vampire.client.actions.BaseVampireMode;
 import vampire.client.actions.hierarchy.HierarchyView;
 import vampire.client.events.ChangeActionEvent;
 import vampire.data.Constants;
-import vampire.data.Logic;
 import vampire.data.SharedPlayerStateClient;
 import vampire.net.messages.BloodBondRequestMessage;
 import vampire.net.messages.FeedRequestMessage;
@@ -35,7 +34,10 @@ public class VampireController extends Controller
     public static const HIDE_INTRO :String = "HideIntro";
     public static const SHOW_INTRO :String = "ShowIntro";
     
+    public static const SHOW_HIERARCHY :String = "ShowHierarchy";
+    
     public static const FEED :String = "Feed";
+    public static const FEED_REQUEST :String = "FeedRequest";
     
     public static const HIERARCHY_CENTER_SELECTED :String = "HierarchyCenterSelected";
     
@@ -51,16 +53,16 @@ public class VampireController extends Controller
         //Some actions we don't need the agents permission
 //        trace("handleSwitchMode, ClientContext.model.action=" + ClientContext.model.action + ", mode=" + mode);
 //        trace("handleSwitchMode, ClientContext.model.action=" + (ClientContext.model.action == null)); 
-        switch(ClientContext.model.action) {
-            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
-//            case Constants.GAME_MODE_BLOODBOND:
-            case Constants.GAME_MODE_NOTHING:
-            case null:
-                ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
-                break;
-            default:
-            
-        }
+//        switch(ClientContext.model.action) {
+//            case Constants.GAME_MODE_HIERARCHY_AND_BLOODBONDS:
+////            case Constants.GAME_MODE_BLOODBOND:
+//            case Constants.GAME_MODE_NOTHING:
+//            case null:
+//                ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
+//                break;
+//            default:
+//            
+//        }
         
         if( Constants.LOCAL_DEBUG_MODE ) {
             ClientContext.model.dispatchEvent( new ChangeActionEvent( mode ) );
@@ -98,41 +100,38 @@ public class VampireController extends Controller
         ClientContext.quit();
     }
     
-    public function handleRemoveBloodBond( bloodBondedPlayerId :int) :void
+//    public function handleRemoveBloodBond( bloodBondedPlayerId :int) :void
+//    {
+//        if( !ClientContext.model.isPlayerInRoom( bloodBondedPlayerId ) ) {
+//            return;
+//        }
+//        
+//        ClientContext.gameCtrl.agent.sendMessage( 
+//            BloodBondRequestMessage.NAME, 
+//            new BloodBondRequestMessage( 
+//                ClientContext.ourPlayerId, 
+//                bloodBondedPlayerId, 
+//                ClientContext.getPlayerName(bloodBondedPlayerId),
+//                false).toBytes() );
+//    }
+    
+    public function handleAddBloodBond() :void
     {
-        if( !ClientContext.model.isPlayerInRoom( bloodBondedPlayerId ) ) {
+        if( ClientContext.model.bloodbonded == ClientContext.model.targetPlayerId
+            || ClientContext.model.targetPlayerId <= 0) {
+            log.debug("handleAddBloodBond() " + ClientContext.currentClosestPlayerId + " already bloodbonded");
             return;
         }
+        
+        log.debug("handleAddBloodBond() request to add " + ClientContext.model.targetPlayerId );
         
         ClientContext.gameCtrl.agent.sendMessage( 
             BloodBondRequestMessage.NAME, 
             new BloodBondRequestMessage( 
                 ClientContext.ourPlayerId, 
-                bloodBondedPlayerId, 
-                ClientContext.getPlayerName(bloodBondedPlayerId),
-                false).toBytes() );
-    }
-    
-    public function handleAddBloodBond() :void
-    {
-        if( ArrayUtil.contains(ClientContext.model.bloodbonded, ClientContext.ourPlayerId) ||  !ClientContext.model.isPlayerInRoom( ClientContext.currentClosestPlayerId ) ) {
-            return;
-        }
-        
-        if( !ArrayUtil.contains( SharedPlayerStateClient.getBloodBonded( ClientContext.ourPlayerId), ClientContext.currentClosestPlayerId) ) {
-            log.debug("handleAddBloodBond() request to add " + ClientContext.currentClosestPlayerId );
-            
-            ClientContext.gameCtrl.agent.sendMessage( 
-                BloodBondRequestMessage.NAME, 
-                new BloodBondRequestMessage( 
-                    ClientContext.ourPlayerId, 
-                    ClientContext.currentClosestPlayerId, 
-                    ClientContext.getPlayerName(ClientContext.currentClosestPlayerId),
-                    true).toBytes() );
-        }
-        else {
-            log.debug("handleAddBloodBond() " + ClientContext.currentClosestPlayerId + " already bloodbonded");
-        }
+                ClientContext.model.targetPlayerId, 
+                ClientContext.getPlayerName(ClientContext.model.targetPlayerId),
+                true).toBytes() );
     }
     
     public function handleHideIntro() :void
@@ -163,7 +162,7 @@ public class VampireController extends Controller
         var model :GameModel = ClientContext.model;
         if( model.isPlayer( model.targetPlayerId)) {
             //Player victims must be the state "EatMe" 
-            if( SharedPlayerStateClient.getCurrentAction( model.targetPlayerId ) == Constants.GAME_MODE_EAT_ME ) {
+            if( SharedPlayerStateClient.getCurrentAction( model.targetPlayerId ) == Constants.GAME_MODE_BARED ) {
                 
                 if( SharedPlayerStateClient.isVampire( model.targetPlayerId ) && 
                     SharedPlayerStateClient.getBlood(model.targetPlayerId) <= 1 ) {
@@ -207,6 +206,19 @@ public class VampireController extends Controller
         log.info("makeMinion(" + ClientContext.model.targetPlayerId + ")" );
         if( ClientContext.model.targetPlayerId > 0) {
             ClientContext.gameCtrl.agent.sendMessage( Constants.NAMED_EVENT_MAKE_MINION, ClientContext.model.targetPlayerId );
+        }
+    }
+    
+    public function handleShowHierarchy(_hudMC :MovieClip) :void
+    {
+//                    throw new Error("f");
+        try {
+            if( ClientContext.game.ctx.mainLoop.topMode.getObjectNamed( HierarchyView.NAME ) == null) {
+                ClientContext.game.ctx.mainLoop.topMode.addObject( new HierarchyView(_hudMC), ClientContext.game.ctx.mainLoop.topMode.modeSprite);
+            }
+        }
+        catch( err :Error ) {
+            trace( err.getStackTrace() );
         }
     }
     
