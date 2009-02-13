@@ -6,7 +6,6 @@
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/toybox/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/libraries/whirled/src/as"/>
 <compilerSourcePathEntry kind="1" linkType="1" path="/export/whirled/projects/avrg/probe/src"/>
-<compilerSourcePathEntry kind="1" linkType="1" path="fakeavrg"/>
 </compilerSourcePath>
 <libraryPath defaultLinkType="1">
 <libraryPathEntry kind="4" path="">
@@ -42,6 +41,7 @@
 </compiler>
 <applications>
 <application path="VampireAVRG.as"/>
+<application path="vampire/feeding/client/BloodBloom.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>
