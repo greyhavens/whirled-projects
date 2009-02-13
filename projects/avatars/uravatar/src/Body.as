@@ -323,6 +323,8 @@ public class Body
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
+            // The below line was originally in here, but apparently everything works without
+            // it and it fixes flickering in a remixed avatar.
             //_media.gotoAndPlay(1, _playing.current.name);
 
         } else {
