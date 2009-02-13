@@ -4,6 +4,7 @@ import bloodbloom.*;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
+import com.whirled.contrib.simplegame.SimObjectRef;
 
 public class PlayerCursor extends CollidableObj
 {
@@ -31,11 +32,11 @@ public class PlayerCursor extends CollidableObj
         // collide with cells
         var cell :Cell = Cell.getCellCollision(this);
         if (cell != null) {
-            cell.destroySelf();
             if (cell.type == Constants.CELL_WHITE) {
-                offsetSpeedPenalty(Constants.CURSOR_SPEED_DECREASE_PER_CELL);
-                _whiteCellCount++;
-                dispatchEvent(new GameEvent(GameEvent.ATTACHED_CELL, cell));
+                //_whiteCellCount++;
+                //dispatchEvent(new GameEvent(GameEvent.ATTACHED_CELL, cell));
+                cell.attachToCursor(this);
+                _attachedWhiteCells.push(cell.ref);
 
             } else {
                 // create a cell burst
@@ -85,20 +86,29 @@ public class PlayerCursor extends CollidableObj
 
     public function get numWhiteCells () :int
     {
-        return _whiteCellCount;
+        return _attachedWhiteCells.length;
     }
 
     protected function collideArtery (arteryType :int) :void
     {
         // get rid of cells
-        offsetSpeedPenalty(-Constants.CURSOR_SPEED_DECREASE_PER_CELL * _whiteCellCount);
-        _whiteCellCount = 0;
-        dispatchEvent(new GameEvent(GameEvent.DETACHED_ALL_CELLS));
+        var hadWhiteCell :Boolean;
+        for each (var cellRef :SimObjectRef in _attachedWhiteCells) {
+            if (!cellRef.isNull) {
+                hadWhiteCell = true;
+                cellRef.object.destroySelf();
+            }
+        }
+
+        _attachedWhiteCells = [];
+        //dispatchEvent(new GameEvent(GameEvent.DETACHED_ALL_CELLS));
 
         _lastArtery = arteryType;
 
         // Deliver a white cell to the heart
-        dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED));
+        if (hadWhiteCell) {
+            dispatchEvent(new GameEvent(GameEvent.WHITE_CELL_DELIVERED));
+        }
 
         // animate the white cell delivery
         /*var sprite :Sprite = SpriteUtil.createSprite();
@@ -116,7 +126,6 @@ public class PlayerCursor extends CollidableObj
     protected function canCollideArtery (arteryType :int) :Boolean
     {
         return true;
-        //return _lastArtery != arteryType && _whiteCellCount > 0;
     }
 
     protected function get speed () :Number
@@ -133,7 +142,7 @@ public class PlayerCursor extends CollidableObj
     protected var _speedPenalty :Number = 0;
     protected var _speedBonus :Number = 0;
 
-    protected var _whiteCellCount :int;
+    protected var _attachedWhiteCells :Array = [];
 
     protected var _lastLoc :Vector2 = new Vector2();
     protected var _lastArtery :int = -1;

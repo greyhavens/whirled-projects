@@ -33,7 +33,7 @@ public class BurstSequence extends SceneObject
     {
         _bursts.push(burst.ref);
         _totalBursts++;
-        _totalMultiplier += burst.multiplier;
+        _totalMultiplier *= burst.multiplier;
         _largestMultiplier = Math.max(_largestMultiplier, burst.multiplier);
     }
 
@@ -41,7 +41,7 @@ public class BurstSequence extends SceneObject
     {
         ArrayUtil.removeFirst(_bursts, burst.ref);
         _totalBursts--;
-        _totalMultiplier -= burst.multiplier;
+        _totalMultiplier /= burst.multiplier;
     }
 
     public function get cellCount () :int
@@ -49,14 +49,9 @@ public class BurstSequence extends SceneObject
         return _bursts.length;
     }
 
-    public function get multiplier () :int
-    {
-        return 1 + _totalMultiplier;
-    }
-
     public function get totalValue () :int
     {
-        return _totalBursts * this.multiplier;
+        return _totalBursts * _totalMultiplier;
     }
 
     override public function getObjectGroup (groupNum :int) :String
@@ -96,8 +91,8 @@ public class BurstSequence extends SceneObject
                 text = "";
             } else {
                 text = String(_totalBursts);
-                if (this.multiplier > 1) {
-                    text += " x" + this.multiplier;
+                if (_totalMultiplier > 1) {
+                    text += " x" + _totalMultiplier;
                 }
             }
 
@@ -108,7 +103,7 @@ public class BurstSequence extends SceneObject
 
     protected var _bursts :Array = [];
     protected var _largestMultiplier :int;
-    protected var _totalMultiplier :int;
+    protected var _totalMultiplier :int = 1;
     protected var _totalBursts :int;
     protected var _lastCellCount :int;
     protected var _tf :TextField;

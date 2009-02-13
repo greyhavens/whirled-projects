@@ -73,6 +73,17 @@ public class Cell extends CollidableObj
         }
     }
 
+    public function attachToCursor (cursor :PlayerCursor) :void
+    {
+        _attachedTo = cursor.ref;
+        _attachedOffset = new Vector2(this.x - cursor.x, this.y - cursor.y);
+    }
+
+    public function detachFromCursor () :void
+    {
+        _attachedTo = SimObjectRef.Null();
+    }
+
     protected function birthRedCell () :void
     {
         _state = STATE_BIRTH;
@@ -115,7 +126,12 @@ public class Cell extends CollidableObj
 
     override protected function update (dt :Number) :void
     {
-        if (_state == STATE_NORMAL) {
+        var cursor :PlayerCursor = _attachedTo.object as PlayerCursor;
+        if (cursor != null) {
+            _loc.x = cursor.x + _attachedOffset.x;
+            _loc.y = cursor.y + _attachedOffset.y;
+
+        } else if (_state == STATE_NORMAL) {
             // move around the heart
             var ctrImpulse :Vector2 = (this.movementType == MOVE_OUTWARDS ?
                 _loc.subtract(Constants.GAME_CTR) :
@@ -191,6 +207,8 @@ public class Cell extends CollidableObj
     protected var _state :int;
     protected var _multiplier :int;
     protected var _moveCCW :Boolean;
+    protected var _attachedTo :SimObjectRef = SimObjectRef.Null();
+    protected var _attachedOffset :Vector2;
 
     protected static const SPEED_BASE :Number = 5;
     protected static const SPEED_FOLLOW :Number = 7;

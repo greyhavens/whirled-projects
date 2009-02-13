@@ -15,7 +15,6 @@ public class Constants
     public static const CURSOR_SPEED_BASE :Number = 70;
     public static const CURSOR_SPEED_MIN :Number = 20;
     public static const CURSOR_SPEED_MAX :Number = 70;
-    public static const CURSOR_SPEED_DECREASE_PER_CELL :Number = 0;
     public static const CURSOR_RADIUS :Number = 9;
 
     public static const HEART_RADIUS :Number = 60;

@@ -20,7 +20,7 @@ public class CellView extends SceneObject
         _sprite.addChild(ClientCtx.createCellBitmap(cell.type));
 
         if (cell.type == Constants.CELL_BONUS) {
-            var text :String = "x" + String(cell.multiplier + 1);
+            var text :String = "x" + cell.multiplier;
             var tf :TextField = UIBits.createText(text, 1, 0, 0xffffff);
             tf.x = -tf.width * 0.5;
             tf.y = -tf.height * 0.5;

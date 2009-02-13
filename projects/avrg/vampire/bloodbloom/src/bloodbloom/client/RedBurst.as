@@ -83,7 +83,7 @@ public class RedBurst extends CellBurst
     }
 
     protected var _sequence :BurstSequence;
-    protected var _multiplier :int;
+    protected var _multiplier :int = 1;
     protected var _burstCompleted :Boolean;
 
     protected static const GROUP_NAME :String = "RedBurst";
