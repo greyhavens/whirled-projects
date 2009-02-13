@@ -1,6 +1,8 @@
 package vampire.avatar
 {
 import com.threerings.flash.MathUtil;
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.whirled.AvatarControl;
 import com.whirled.ControlEvent;
@@ -26,34 +28,70 @@ public class AvatarGameBridge
         _ctrl.addEventListener(ControlEvent.CHAT_RECEIVED, handleChatReceived);
         _ctrl.addEventListener(ControlEvent.SIGNAL_RECEIVED, handleSignalReceived);
         
-        _ctrl.addEventListener(ControlEvent.ENTITY_ENTERED, function( e :ControlEvent) :void{trace2("\n" + playerId + " "  + ControlEvent.ENTITY_ENTERED);computeClosestAvatar(e);});
-        _ctrl.addEventListener(ControlEvent.ENTITY_LEFT, function( e :ControlEvent) :void{trace2("\n" + playerId + " "  + ControlEvent.ENTITY_ENTERED);computeClosestAvatar(e);});
+        _ctrl.addEventListener(ControlEvent.ENTITY_ENTERED, handleEntityEntered );
+        _ctrl.addEventListener(ControlEvent.ENTITY_LEFT, handleEntityLeft );
         
         _ctrl.addEventListener(ControlEvent.ENTITY_MOVED, handleEntityMoved);
 //        trace2("\nVampireAvatarController loaded!\n");
         
     }
+    
+    protected function handleEntityEntered (e :ControlEvent) :void
+    {
+        
+        trace2("\n" + playerId + " "  + ControlEvent.ENTITY_ENTERED);
+        computeClosestAvatar(e);
+        
+    }
+    
+    protected function handleEntityLeft (e :ControlEvent) :void
+    {
+        _userLocations.remove( e.name );
+        trace2("\n" + playerId + " "  + ControlEvent.ENTITY_LEFT);
+        computeClosestAvatar(e);
+        
+        
+    }
+    
     protected function handleEntityMoved (e :ControlEvent) :void
     {
+        //We only care about avatars.
+        if( _ctrl.getEntityProperty( EntityControl.PROP_TYPE, e.name) != EntityControl.TYPE_AVATAR) {
+            return;
+        }
+        
+        var userIdMoved :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name));
         
         
 //        trace2("\nVampireAvatarController handleEntityMoved!, hotspot=" + _ctrl.getEntityProperty( EntityControl.PROP_HOTSPOT, e.name));
 //        trace2( playerId + " e=" + e);
         if( e.value == null) {//Only compute closest avatars when this avatar has arrived at location
-            computeClosestAvatar(e);
-            //If we arrived at out destination, notify the server, who may initiate the feeding animation
-            if( int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name)) == playerId) {
-                trace2( "handleEntityMoved(), we have arrived!");
-                _ctrl.sendSignal( Constants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION, playerId);
+        
+            //We only report the non-players, as the game knows where the players are
+            var actualLocation :Array = _userLocations.get( userIdMoved ) as Array;
+            if( !isPlayer( userIdMoved ) && actualLocation != null) {
+                _ctrl.sendSignal( Constants.SIGNAL_NON_PLAYER_MOVED, [userIdMoved, actualLocation]);
             }
+            
+//            computeClosestAvatar(e);
+//            //If we arrived at out destination, notify the server, who may initiate the feeding animation
+//            if( int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name)) == playerId) {
+//                trace2( "handleEntityMoved(), we have arrived!");
+//                _ctrl.sendSignal( Constants.SIGNAL_PLAYER_ARRIVED_AT_DESTINATION, playerId);
+//            }
         }
         else {
-//            trace2("  e.value != null, beginning of move, so turn off targeting, sending closest == 0");
-            var userIdMoved :int = int(_ctrl.getEntityProperty( EntityControl.PROP_MEMBER_ID, e.name));
-            var targetEntityId :String = getEntityId( _targetId );
-            var targetLocation :Array = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, targetEntityId) as Array;
-//            if( userIdMoved == 
-            _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [playerId, 0, "", null, 0, targetLocation]);    
+            
+            //Because when the entity arrives, the locaiton info is stale, this holds a record of the correct location.
+            var entityLocation :Array = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, e.name) as Array;
+            _userLocations.put( userIdMoved, entityLocation );
+            
+            
+////            trace2("  e.value != null, beginning of move, so turn off targeting, sending closest == 0");
+//            var targetEntityId :String = getEntityId( _targetId );
+//            var targetLocation :Array = _ctrl.getEntityProperty( EntityControl.PROP_LOCATION_LOGICAL, targetEntityId) as Array;
+////            if( userIdMoved == 
+//            _ctrl.sendSignal( Constants.SIGNAL_CLOSEST_ENTITY, [playerId, 0, "", null, 0, targetLocation]);    
         }
     }
     
@@ -83,12 +121,20 @@ public class AvatarGameBridge
                 else {
                     trace("WTF, signal " + e);
                 }
-                break    
+                break;
+            case Constants.SIGNAL_PLAYER_IDS:
+                _playerIds = e.value as Array;
+                break;
             default:
 //                log.debug("Ignoring signal " + e);
                 break;
             
         }
+    }
+    
+    protected function isPlayer( userId :int ) :Boolean
+    {
+        return ArrayUtil.contains( _playerIds, userId );
     }
     
     
@@ -242,6 +288,12 @@ public class AvatarGameBridge
     {
         return _state;
     }
+    
+    protected var _playerIds :Array = [];
+    
+    protected var _userLocations :HashMap = new HashMap();
+    
+    
     
     protected var _colorSchemeFunction :Function;
     protected var _ctrl :AvatarControl;
