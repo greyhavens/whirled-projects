@@ -47,7 +47,7 @@ public class CellBurstView extends SceneObject
 
     override protected function addedToDB () :void
     {
-        ClientCtx.audio.playSoundNamed("sfx_burst");
+        ClientCtx.audio.playSoundNamed("sfx_red_burst");
     }
 
     override protected function update (dt :Number) :void

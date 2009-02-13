@@ -66,7 +66,8 @@ public class BloodBloom extends Sprite
         rm.queueResourceLoad("image", "prey_cursor",    { embeddedClass: IMG_PREY_CURSOR });
 
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
-        rm.queueResourceLoad("sound", "sfx_burst",      { embeddedClass: SOUND_BURST });
+        rm.queueResourceLoad("sound", "sfx_red_burst",      { embeddedClass: SOUND_RED_BURST });
+        rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SOUND_WHITE_BURST });
         rm.queueResourceLoad("sound", "mus_music",      { embeddedClass: SOUND_MUSIC, type: "music" });
 
         rm.loadQueuedResources(
@@ -125,8 +126,10 @@ public class BloodBloom extends Sprite
 
     [Embed(source="../../../rsrc/heartbeat.mp3")]
     protected static const SOUND_HEARTBEAT :Class;
-    [Embed(source="../../../rsrc/burst.mp3")]
-    protected static const SOUND_BURST :Class;
+    [Embed(source="../../../rsrc/red_burst.mp3")]
+    protected static const SOUND_RED_BURST :Class;
+    [Embed(source="../../../rsrc/white_burst.mp3")]
+    protected static const SOUND_WHITE_BURST :Class;
     [Embed(source="../../../rsrc/music.mp3")]
     protected static const SOUND_MUSIC :Class;
 }
