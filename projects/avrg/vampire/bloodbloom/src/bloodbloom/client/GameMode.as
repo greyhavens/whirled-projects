@@ -90,9 +90,23 @@ public class GameMode extends AppMode
         var heartView :HeartView = new HeartView(heartMovie["heart"]);
         addObject(heartView);
 
-        // cursors
         GameCtx.cursor = GameObjects.createPlayerCursor(_playerType);
         registerListener(GameCtx.cursor, GameEvent.WHITE_CELL_DELIVERED, onWhiteCellDelivered);
+
+        // keep tabs on everyone else's score
+        var yOffset :Number = 0;
+        for each (var playerId :int in ClientCtx.playerIds) {
+            if (playerId != ClientCtx.localPlayerId) {
+                var scoreView :RemotePlayerScoreView = new RemotePlayerScoreView(playerId);
+                scoreView.x = SCORE_VIEWS_LOC.x;
+                scoreView.y = SCORE_VIEWS_LOC.y + yOffset;
+                addObject(scoreView, GameCtx.effectLayer);
+
+                yOffset += scoreView.height + 1;
+            }
+        }
+
+        addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
 
         // create initial cells
         /*for (var cellType :int = 0; cellType < Constants.CELL__LIMIT; ++cellType) {
@@ -172,12 +186,6 @@ public class GameMode extends AppMode
         }
     }
 
-    public function hiliteArteries (hiliteTop :Boolean, hiliteBottom :Boolean) :void
-    {
-        _arteryTop.filters = (hiliteTop ? [ new GlowFilter(0x00ff00) ] : []);
-        _arteryBottom.filters = (hiliteBottom ? [ new GlowFilter(0x00ff00) ] : []);
-    }
-
     protected function onHeartbeat (...ignored) :void
     {
         // spawn new red cells
@@ -208,6 +216,7 @@ public class GameMode extends AppMode
 
     protected static const BLOOD_METER_LOC :Point = new Point(550, 75);
     protected static const TIMER_LOC :Point = new Point(550, 25);
+    protected static const SCORE_VIEWS_LOC :Point = new Point(550, 120);
 }
 
 }

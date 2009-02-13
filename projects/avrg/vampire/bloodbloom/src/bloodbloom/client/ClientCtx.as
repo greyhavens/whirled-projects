@@ -43,6 +43,16 @@ public class ClientCtx
         return gameCtrl.isConnected();
     }
 
+    public static function get playerIds () :Array
+    {
+        return (gameCtrl.isConnected() ? gameCtrl.game.getOccupantIds() : [ 0 ]);
+    }
+
+    public static function getPlayerName (playerId :int) :String
+    {
+        return (gameCtrl.isConnected() ? gameCtrl.game.getOccupantName(playerId) : "");
+    }
+
     public static function sendMessage (msg :Message) :void
     {
         if (gameCtrl.isConnected()) {

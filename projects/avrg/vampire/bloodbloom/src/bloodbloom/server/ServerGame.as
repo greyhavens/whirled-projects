@@ -32,6 +32,7 @@ public class ServerGame
         switch (e.name) {
         // resend these messages to all the clients
         case CreateBonusMsg.NAME:
+        case CurrentScoreMsg.NAME:
             if (!_gameOver) {
                 sendMessage(e.name, e.value);
             }

@@ -45,6 +45,7 @@ public class BloodBloom extends Sprite
 
         ClientCtx.msgMgr = new BasicMessageManager();
         ClientCtx.msgMgr.addMessageType(CreateBonusMsg);
+        ClientCtx.msgMgr.addMessageType(CurrentScoreMsg);
 
         _sg.run();
 

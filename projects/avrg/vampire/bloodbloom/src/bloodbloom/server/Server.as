@@ -17,6 +17,7 @@ public class Server extends ServerObject
         ServerCtx.gameCtrl = new GameControl(this, false);
         ServerCtx.msgMgr = new BasicMessageManager();
         ServerCtx.msgMgr.addMessageType(CreateBonusMsg);
+        ServerCtx.msgMgr.addMessageType(CurrentScoreMsg);
 
         _events.registerListener(ServerCtx.gameCtrl.game, StateChangedEvent.GAME_STARTED,
             onGameStarted);
