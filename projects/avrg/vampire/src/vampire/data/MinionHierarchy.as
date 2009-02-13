@@ -23,14 +23,9 @@ package vampire.data
  */
 public class MinionHierarchy
 {
-    
-    
-    
-
-    
     public function setPlayerSire( playerId :int, sireId :int) :void
     {
-        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
+//        log.debug(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + ")");
         
         if( playerId == sireId) {
             log.error(Constants.DEBUG_MINION + " setPlayerSire(" + playerId + ", sireId=" + sireId + "), same!!!");
@@ -417,28 +412,14 @@ public class MinionHierarchy
         return _playerId2Name.containsKey( playerId ) && _playerId2Name.get( playerId ) != null && _playerId2Name.get( playerId ) != "";
     }
     
-
+    protected function isPlayerSireOrMinionOfPlayer( queryPlayerId :int, playerId :int) :Boolean
+    {
+        return getAllSiresAndGrandSires(playerId).contains(queryPlayerId) ||
+            getAllMinionsAndSubminions(playerId).contains( queryPlayerId );
+    }
     
 
         
-        //Update the players data who are not in the game right now
-//        for each( var playerId :int in ServerContext.minionHierarchy.playerIds) {
-//            if( getPlayer( playerId ) == null) {//No player, so we delve into the underground database
-//                _vserver.control.loadOfflinePlayer(playerId, 
-//                    function (props :PropertySpaceObject) :void {
-//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_SIRE, ServerContext.minionHierarchy.getSireId( playerId )); 
-//                        props.getUserProps().set(Codes.PLAYER_PROP_PREFIX_MINIONS, ServerContext.minionHierarchy.getMinionIds(playerId).toArray());
-//                    }, 
-//                    function (failureCause :String) :void { 
-//                        log.warning("Eek! Sending message to offline player failed!", "cause", failureCause); 
-//                    });
-//                
-//            }
-//        }
-        
-        
-        
-//    }
     
     
     protected var _playerId2Node :HashMap = new HashMap();
