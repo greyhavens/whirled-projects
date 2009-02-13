@@ -16,8 +16,8 @@ public class FeedingGameClient
      */
     public function FeedingGameClient ()
     {
-        if (ClassUtil.getClass(this) == FeedingGameServer) {
-            throw new Error("Use FeedingGameServer.create to create a FeedingGameClient");
+        if (ClassUtil.getClass(this) == FeedingGameClient) {
+            throw new Error("Use FeedingGameClient.create to create a FeedingGameClient");
         }
     }
 
