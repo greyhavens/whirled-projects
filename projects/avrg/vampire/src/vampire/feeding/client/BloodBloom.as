@@ -8,12 +8,13 @@ import com.whirled.contrib.simplegame.resource.ResourceManager;
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import vampire.feeding.*;
 import vampire.feeding.net.*;
 import vampire.feeding.server.Server;
 
-[SWF(width="700", height="500", frameRate="30")]
 public class BloodBloom extends FeedingGameClient
 {
     public static function DEBUG_REMOVE_ME () :void
@@ -48,7 +49,20 @@ public class BloodBloom extends FeedingGameClient
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
 
-        // TODO - if the resources aren't loaded, wait for them to load
+        // If the resources aren't loaded, wait for them to load
+        if (!_resourcesLoaded) {
+            var timer :Timer = new Timer(50);
+            timer.addEventListener(TimerEvent.TIMER, checkResourcesLoaded);
+            timer.start();
+
+            function checkResourcesLoaded (...ignored) :void {
+                if (_resourcesLoaded) {
+                    timer.removeEventListener(TimerEvent.TIMER, checkResourcesLoaded);
+                    timer.stop();
+                    maybeStartGame();
+                }
+            }
+        }
     }
 
     protected function onAddedToStage (...ignored) :void
