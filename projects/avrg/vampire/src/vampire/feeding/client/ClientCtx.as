@@ -1,31 +1,33 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-
+import com.whirled.avrg.AVRGameAvatar;
+import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.simplegame.MainLoop;
 import com.whirled.contrib.simplegame.audio.*;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
-import com.whirled.contrib.simplegame.net.Message;
 import com.whirled.contrib.simplegame.resource.*;
-import com.whirled.game.GameControl;
-import com.whirled.game.NetSubControl;
 
 import flash.display.Bitmap;
 import flash.display.MovieClip;
 import flash.utils.getTimer;
 
+import vampire.feeding.*;
+
 public class ClientCtx
 {
-    public static var gameCtrl :GameControl;
+    public static var gameCtrl :AVRGameControl;
     public static var mainLoop :MainLoop;
     public static var rsrcs :ResourceManager;
     public static var audio :AudioManager;
-    public static var msgMgr :BasicMessageManager;
-    public static var localPlayerId :int;
+    public static var msgMgr :ClientMsgMgr;
+
+    public static function get localPlayerId () :int
+    {
+        return (isSinglePlayer ? 0 : gameCtrl.player.getPlayerId());
+    }
 
     public static function get isSinglePlayer () :Boolean
     {
-        return (!gameCtrl.isConnected() || gameCtrl.game.seating.getPlayerIds().length == 1);
+        return (!gameCtrl.isConnected());
     }
 
     public static function get isMultiplayer () :Boolean
@@ -43,24 +45,16 @@ public class ClientCtx
         return gameCtrl.isConnected();
     }
 
-    public static function get playerIds () :Array
-    {
-        return (gameCtrl.isConnected() ? gameCtrl.game.getOccupantIds() : [ 0 ]);
-    }
-
     public static function getPlayerName (playerId :int) :String
     {
-        return (gameCtrl.isConnected() ? gameCtrl.game.getOccupantName(playerId) : "");
-    }
-
-    public static function sendMessage (msg :Message) :void
-    {
         if (gameCtrl.isConnected()) {
-            gameCtrl.net.sendMessage(
-                msg.name,
-                msgMgr.serializeMsg(msg),
-                NetSubControl.TO_SERVER_AGENT);
+            var avatar :AVRGameAvatar = gameCtrl.room.getAvatarInfo(playerId);
+            if (null != avatar) {
+                return avatar.name;
+            }
         }
+
+        return "";
     }
 
     public static function createCellBitmap (type :int) :Bitmap

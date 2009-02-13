@@ -3,6 +3,8 @@ package vampire.feeding {
 import com.threerings.util.ClassUtil;
 import com.whirled.avrg.AVRServerGameControl;
 
+import vampire.feeding.server.*;
+
 public class FeedingGameServer
 {
     /**
@@ -11,11 +13,13 @@ public class FeedingGameServer
      */
     public static function init (gameCtrl :AVRServerGameControl) :void
     {
-
+        vampire.feeding.server.Server.init(gameCtrl);
     }
 
     /**
      * Kicks off a new feeding game with the given players.
+     *
+     * @param roodId the room that the feeding is taking place in
      *
      * @param preyId the occupantId of the player acting as the prey, or -1 if the prey
      * is an AI player
@@ -25,10 +29,10 @@ public class FeedingGameServer
      * function gameCompleteCallback (remainingPlayerIds :Array, groupScore :int) :void
      *
      */
-    public static function create (predatorIds :Array, preyId :int,
+    public static function create (roomId :int, predatorIds :Array, preyId :int,
                                    gameCompleteCallback :Function) :FeedingGameServer
     {
-        return null;
+        return new vampire.feeding.server.Server(roomId, predatorIds, preyId, gameCompleteCallback);
     }
 
     /**
@@ -36,7 +40,7 @@ public class FeedingGameServer
      */
     public function playerLeft (playerId :int) :void
     {
-
+        // Overridden by Server
     }
 
     /**
@@ -45,6 +49,7 @@ public class FeedingGameServer
      */
     public function get gameId () :int
     {
+        // Overridden by Server
         return -1;
     }
 

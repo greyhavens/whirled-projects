@@ -19,7 +19,7 @@ public class RemotePlayerScoreView extends SceneObject
 
         updateScore(0);
         registerListener(
-            ClientCtx.gameCtrl.net,
+            ClientCtx.msgDispatcher,
             MessageReceivedEvent.MESSAGE_RECEIVED,
             onMsgReceived);
     }
@@ -31,8 +31,7 @@ public class RemotePlayerScoreView extends SceneObject
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
     {
-        var msg :CurrentScoreMsg =
-            ClientCtx.msgMgr.deserializeMessage(e.name, e.value) as CurrentScoreMsg;
+        var msg :CurrentScoreMsg = ClientCtx.getMessage(e.name, e.value) as CurrentScoreMsg;
         if (msg != null && msg.playerId == _playerId) {
             updateScore(msg.score);
         }

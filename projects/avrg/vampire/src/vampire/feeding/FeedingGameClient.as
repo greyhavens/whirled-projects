@@ -3,15 +3,19 @@ package vampire.feeding {
 import com.threerings.util.ClassUtil;
 import com.whirled.avrg.AVRGameControl;
 
-public class FeedingGameClient
+import flash.display.Sprite;
+
+import vampire.feeding.client.BloodBloom;
+
+public class FeedingGameClient extends Sprite
 {
     /**
      * Performs one-time initialization of the client. Should be called shortly after the
      * main client starts up.
      */
-    public static function init (gameCtrl :AVRGameControl) :void
+    public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {
-
+        BloodBloom.init(hostSprite, gameCtrl);
     }
 
     /**
@@ -20,7 +24,7 @@ public class FeedingGameClient
      */
     public static function create (gameId :int) :FeedingGameClient
     {
-        return null;
+        return new BloodBloom(gameId);
     }
 
     /**

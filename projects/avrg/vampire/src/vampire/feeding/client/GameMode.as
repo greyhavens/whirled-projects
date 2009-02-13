@@ -1,9 +1,5 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-import vampire.feeding.client.view.*;
-import vampire.feeding.net.*;
-
 import com.threerings.flash.Vector2;
 import com.threerings.util.Log;
 import com.whirled.contrib.simplegame.*;
@@ -11,11 +7,13 @@ import com.whirled.contrib.simplegame.audio.AudioChannel;
 import com.whirled.contrib.simplegame.net.*;
 import com.whirled.contrib.simplegame.tasks.*;
 import com.whirled.contrib.simplegame.util.*;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.MovieClip;
-import flash.filters.GlowFilter;
 import flash.geom.Point;
+
+import vampire.feeding.*;
+import vampire.feeding.client.view.*;
+import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
 {
@@ -95,7 +93,7 @@ public class GameMode extends AppMode
 
         // keep tabs on everyone else's score
         var yOffset :Number = 0;
-        for each (var playerId :int in ClientCtx.playerIds) {
+        /*for each (var playerId :int in ClientCtx.playerIds) {
             if (playerId != ClientCtx.localPlayerId) {
                 var scoreView :RemotePlayerScoreView = new RemotePlayerScoreView(playerId);
                 scoreView.x = SCORE_VIEWS_LOC.x;
@@ -104,7 +102,7 @@ public class GameMode extends AppMode
 
                 yOffset += scoreView.height + 1;
             }
-        }
+        }*/
 
         addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
 
@@ -138,17 +136,14 @@ public class GameMode extends AppMode
     protected function setupNetwork () :void
     {
         if (ClientCtx.isConnected) {
-            ClientCtx.gameCtrl.game.playerReady();
-            registerListener(ClientCtx.gameCtrl.net, MessageReceivedEvent.MESSAGE_RECEIVED,
-                onMsgReceived);
+            registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
         }
     }
 
-    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    protected function onMsgReceived (e :ClientMsgEvent) :void
     {
-        var msg :Message = ClientCtx.msgMgr.deserializeMessage(e.name, e.value);
-        if (msg is CreateBonusMsg) {
-            onNewMultiplier(msg as CreateBonusMsg);
+        if (e.msg is CreateBonusMsg) {
+            onNewMultiplier(e.msg as CreateBonusMsg);
         }
     }
 

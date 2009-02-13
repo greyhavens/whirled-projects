@@ -1,21 +1,20 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-import vampire.feeding.net.*;
-import vampire.feeding.server.Server;
-
 import com.threerings.util.Log;
+import com.whirled.avrg.AVRGameControl;
 import com.whirled.contrib.EventHandlerManager;
 import com.whirled.contrib.simplegame.*;
-import com.whirled.contrib.simplegame.net.BasicMessageManager;
 import com.whirled.contrib.simplegame.resource.ResourceManager;
-import com.whirled.game.GameControl;
 
 import flash.display.Sprite;
 import flash.events.Event;
 
+import vampire.feeding.*;
+import vampire.feeding.net.*;
+import vampire.feeding.server.Server;
+
 [SWF(width="700", height="500", frameRate="30")]
-public class BloodBloom extends Sprite
+public class BloodBloom extends FeedingGameClient
 {
     public static function DEBUG_REMOVE_ME () :void
     {
@@ -23,36 +22,54 @@ public class BloodBloom extends Sprite
         c = vampire.feeding.server.Server;
     }
 
-    public function BloodBloom ()
+    public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {
-        DEBUG_REMOVE_ME();
-
-        ClientCtx.gameCtrl = new GameControl(this, false);
-        ClientCtx.localPlayerId =
-            (ClientCtx.isSinglePlayer ? 0 : ClientCtx.gameCtrl.game.getMyId());
-
-        _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
-        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
-
         // Init simplegame
         var config :Config = new Config();
-        config.hostSprite = this;
+        config.hostSprite = hostSprite;
         _sg = new SimpleGame(config);
 
+        ClientCtx.gameCtrl = gameCtrl;
         ClientCtx.mainLoop = _sg.ctx.mainLoop;
         ClientCtx.rsrcs = _sg.ctx.rsrcs;
         ClientCtx.audio = _sg.ctx.audio;
-
-        ClientCtx.msgMgr = new BasicMessageManager();
-        ClientCtx.msgMgr.addMessageType(CreateBonusMsg);
-        ClientCtx.msgMgr.addMessageType(CurrentScoreMsg);
-
         _sg.run();
 
         loadResources();
     }
 
-    protected function loadResources () :void
+    public function BloodBloom (gameId :int)
+    {
+        DEBUG_REMOVE_ME();
+
+        ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
+        Util.initMessageManager(ClientCtx.msgMgr);
+
+        _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
+        _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
+
+        // TODO - if the resources aren't loaded, wait for them to load
+    }
+
+    protected function onAddedToStage (...ignored) :void
+    {
+        _addedToStage = true;
+        maybeStartGame();
+    }
+
+    protected function onQuit (...ignored) :void
+    {
+        _events.freeAllHandlers();
+    }
+
+    protected function maybeStartGame () :void
+    {
+        if (_addedToStage && _resourcesLoaded) {
+            ClientCtx.mainLoop.pushMode(new SpSplashMode());
+        }
+    }
+
+    protected static function loadResources () :void
     {
         var rm :ResourceManager = ClientCtx.rsrcs;
 
@@ -73,38 +90,17 @@ public class BloodBloom extends Sprite
         rm.loadQueuedResources(
             function () :void {
                 _resourcesLoaded = true;
-                maybeStartGame();
             },
             function (err :String) :void {
                 log.error("Error loading resources: " + err);
             });
     }
 
-    protected function onAddedToStage (...ignored) :void
-    {
-        _addedToStage = true;
-        maybeStartGame();
-    }
-
-    protected function onQuit (...ignored) :void
-    {
-        _sg.shutdown();
-        _events.freeAllHandlers();
-    }
-
-    protected function maybeStartGame () :void
-    {
-        if (_addedToStage && _resourcesLoaded) {
-            ClientCtx.mainLoop.pushMode(new SpSplashMode());
-        }
-    }
-
-    protected var _resourcesLoaded :Boolean;
     protected var _addedToStage :Boolean;
-
-    protected var _sg :SimpleGame;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
+    protected static var _sg :SimpleGame;
+    protected static var _resourcesLoaded :Boolean;
     protected static var log :Log = Log.getLog(BloodBloom);
 
     [Embed(source="../../../../rsrc/feeding/blood.swf", mimeType="application/octet-stream")]
