@@ -248,7 +248,9 @@ public class Body
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
-            _media.gotoAndPlay(1, _playing.current.name);
+            // Apparently the following line can be omitted with no ill side-effects and
+            // it fixes flickering in a remixed project.
+            //_media.gotoAndPlay(1, _playing.current.name);
 
         } else {
             debugMessage("Queueing " + scene.name + ".");
