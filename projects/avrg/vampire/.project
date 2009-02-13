@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>vampire</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] src</name>
+			<type>2</type>
+			<location>/export/whirled/projects/avrg/probe/src</location>
+		</link>
+		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/whirled/src/as</location>
+		</link>
+		<link>
+			<name>[source path] contrib-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/contrib/src/as</location>
+		</link>
+		<link>
+			<name>[source path] toybox-src-as</name>
+			<type>2</type>
+			<location>/export/whirled/libraries/toybox/src/as</location>
+		</link>
+	</linkedResources>
+</projectDescription>
