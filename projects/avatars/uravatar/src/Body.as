@@ -326,6 +326,7 @@ public class Body
             // The below line was originally in here, but apparently everything works without
             // it and it fixes flickering in a remixed avatar.
             //_media.gotoAndPlay(1, _playing.current.name);
+            _sceneQueue.push(scene); // and this line is added instead
 
         } else {
             log.info("Queueing " + scene.name + ".");
