@@ -1,9 +1,19 @@
 package bloodbloom {
-    import com.threerings.util.ClassUtil;
 
+import com.threerings.util.ClassUtil;
+import com.whirled.avrg.AVRServerGameControl;
 
 public class FeedingGameServer
 {
+    /**
+     * Performs one-time initialization of the server. Should be called shortly after the
+     * main server starts up.
+     */
+    public static function init (gameCtrl :AVRServerGameControl) :void
+    {
+
+    }
+
     /**
      * Kicks off a new feeding game with the given players.
      *
