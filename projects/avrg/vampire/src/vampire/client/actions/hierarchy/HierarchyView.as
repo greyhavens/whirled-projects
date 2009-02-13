@@ -93,17 +93,7 @@ package vampire.client.actions.hierarchy
             _bondIcon.x = 25;
             _bondIcon.y = 60;
             _hierarchyPanel.addChild( _bondIcon );
-            _bondText = TextFieldUtil.createField("Blood Bond mate");
-            _bondText.selectable = false;
-            _bondText.tabEnabled = false;
-            _bondText.textColor = 0xffffff;
-            _bondText.embedFonts = true;
-            _bondText.setTextFormat( getDefaultFormat() );
-            _bondText.width = 200;
-            _bondText.height = 60;
-            _bondText.x = _bondIcon.x - 20;
-            _bondText.y = _bondIcon.y - 20 ;
-            _hierarchyPanel.addChild( _bondText );
+            redoBloodBondText( "Blood Bond mate" ); 
             
             
             var lineageText :TextField = TextFieldUtil.createField("Lineage");
@@ -226,7 +216,7 @@ package vampire.client.actions.hierarchy
 //            addTargetButton.x = 220;
 //            addTargetButton.y = 60;
 //        
-//            showBloodBonded();
+            showBloodBonded();
         
         }
         
@@ -238,6 +228,28 @@ package vampire.client.actions.hierarchy
         override public function get displayObject () :DisplayObject
         {
             return _sceneObjectSprite;
+        }
+        
+        /**
+        * Using the embedded font disallows dynamically changing the text.
+        */
+        protected function redoBloodBondText( bloodbondName :String ) :void
+        {
+            if( _bondText != null && _hierarchyPanel.contains( _bondText)) {
+                _hierarchyPanel.removeChild( _bondText );
+            }
+            
+            _bondText = TextFieldUtil.createField(bloodbondName);
+            _bondText.selectable = false;
+            _bondText.tabEnabled = false;
+            _bondText.textColor = 0xffffff;
+            _bondText.embedFonts = true;
+            _bondText.setTextFormat( getDefaultFormat() );
+            _bondText.width = 200;
+            _bondText.height = 60;
+            _bondText.x = _bondIcon.x - 20;
+            _bondText.y = _bondIcon.y - 20 ;
+            _hierarchyPanel.addChild( _bondText );
         }
         
         protected function updateHierarchyEvent( e :HierarchyUpdatedEvent) :void
@@ -618,23 +630,14 @@ package vampire.client.actions.hierarchy
             if( ClientContext.model.bloodbonded <= 0 ) {
                 return;
             }
-            
-            _bondText.text = ClientContext.model.bloodbondedName;
-            
-//            while( _bloodBondedView.numChildren > 0) { _bloodBondedView.removeChildAt(0);}
-//            
-//            var button :SimpleTextButton = new SimpleTextButton( ClientContext.model.bloodbondedName );
-//            Command.bind( button, MouseEvent.CLICK, VampireController.REMOVE_BLOODBOND, ClientContext.model.bloodbonded);
-//            button.x = 20;
-//            button.y = 140;
-//            _bloodBondedView.addChild( button );
+            redoBloodBondText(ClientContext.model.bloodbondedName);
         }
         
         protected function elementChanged (e :ElementChangedEvent) :void
         {
             var playerIdUpdated :int = SharedPlayerStateClient.parsePlayerIdFromPropertyName( e.name );
             
-            if( !isNaN( playerIdUpdated ) && playerIdUpdated == ClientContext.ourPlayerId) {
+            if( playerIdUpdated == ClientContext.ourPlayerId) {
                 
                 if( e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED 
                     || e.index == Codes.ROOM_PROP_PLAYER_DICT_INDEX_BLOODBONDED_NAME) {
