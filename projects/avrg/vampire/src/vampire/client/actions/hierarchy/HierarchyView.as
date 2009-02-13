@@ -244,10 +244,12 @@ package vampire.client.actions.hierarchy
             _bondText.tabEnabled = false;
             _bondText.textColor = 0xffffff;
             _bondText.embedFonts = true;
-            _bondText.setTextFormat( getDefaultFormat() );
+            var format :TextFormat = getDefaultFormat();
+            format.align = TextFormatAlign.LEFT;
+            _bondText.setTextFormat( format );
             _bondText.width = 200;
             _bondText.height = 60;
-            _bondText.x = _bondIcon.x - 20;
+            _bondText.x = _bondIcon.x  + 20;
             _bondText.y = _bondIcon.y - 20 ;
             _hierarchyPanel.addChild( _bondText );
         }
