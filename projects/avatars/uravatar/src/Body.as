@@ -323,7 +323,7 @@ public class Body
             _sceneQueue.length = 0;
             _playing = scene;
             _playing.updateScene();
-            _media.gotoAndPlay(1, _playing.current.name);
+            //_media.gotoAndPlay(1, _playing.current.name);
 
         } else {
             log.info("Queueing " + scene.name + ".");
