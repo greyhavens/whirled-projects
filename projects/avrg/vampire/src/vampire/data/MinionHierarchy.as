@@ -412,7 +412,7 @@ public class MinionHierarchy
         return _playerId2Name.containsKey( playerId ) && _playerId2Name.get( playerId ) != null && _playerId2Name.get( playerId ) != "";
     }
     
-    protected function isPlayerSireOrMinionOfPlayer( queryPlayerId :int, playerId :int) :Boolean
+    public function isPlayerSireOrMinionOfPlayer( queryPlayerId :int, playerId :int) :Boolean
     {
         return getAllSiresAndGrandSires(playerId).contains(queryPlayerId) ||
             getAllMinionsAndSubminions(playerId).contains( queryPlayerId );
