@@ -251,6 +251,7 @@ public class Body
             // Apparently the following line can be omitted with no ill side-effects and
             // it fixes flickering in a remixed project.
             //_media.gotoAndPlay(1, _playing.current.name);
+            _sceneQueue.push(scene); // and this line is added instead
 
         } else {
             debugMessage("Queueing " + scene.name + ".");
