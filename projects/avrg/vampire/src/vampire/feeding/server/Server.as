@@ -43,7 +43,7 @@ public class Server extends FeedingGameServer
         _nameUtil = new NameUtil(_gameId);
 
         _state = STATE_WAITING_FOR_PLAYERS;
-        _playersNeedingCheckin = getPlayerIds();
+        _playersNeedingCheckin = this.playerIds;
 
         if (_roomCtrl == null) {
             log.warning("Failed to get RoomSubControl", "roomId", roomId);
@@ -85,6 +85,21 @@ public class Server extends FeedingGameServer
     override public function get gameId () :int
     {
         return _gameId;
+    }
+
+    override public function get playerIds () :Array
+    {
+        var playerIds :Array = _predatorIds.slice();
+        if (_preyId >= 0) {
+            playerIds.push(_preyId);
+        }
+
+        return playerIds;
+    }
+
+    override public function get finalScore () :int
+    {
+        return _finalScore;
     }
 
     protected function shutdown () :void
@@ -187,7 +202,7 @@ public class Server extends FeedingGameServer
     {
         if (_state == STATE_PLAYING) {
             _state = STATE_WAITING_FOR_SCORES;
-            _playersNeedingScoreUpdate = getPlayerIds();
+            _playersNeedingScoreUpdate = this.playerIds;
             sendMessage(GameOverMsg.create());
         }
     }
@@ -200,7 +215,7 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
-            _gameCompleteCallback(this, getPlayerIds(), _finalScore);
+            _gameCompleteCallback();
             shutdown();
         }
     }
@@ -213,16 +228,6 @@ public class Server extends FeedingGameServer
     protected function resendMessage (e :MessageReceivedEvent) :void
     {
         _roomCtrl.sendMessage(e.name, e.value);
-    }
-
-    protected function getPlayerIds () :Array
-    {
-        var playerIds :Array = _predatorIds.slice();
-        if (_preyId >= 0) {
-            playerIds.push(_preyId);
-        }
-
-        return playerIds;
     }
 
     protected var _gameId :int;

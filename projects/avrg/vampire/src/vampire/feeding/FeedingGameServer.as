@@ -25,9 +25,8 @@ public class FeedingGameServer
      * is an AI player
      *
      * @param gameCompleteCallback this function will be called on successful completion of
-     * a game.
-     * function gameCompleteCallback (game :FeedingGameServer, remainingPlayerIds :Array,
-     *                                groupScore :int) :void
+     * a game. It takes no parameters and returns nothing.
+     * function gameCompleteCallback () :void
      *
      */
     public static function create (roomId :int, predatorIds :Array, preyId :int,
@@ -54,6 +53,24 @@ public class FeedingGameServer
     {
         // Overridden by Server
         return -1;
+    }
+
+    /**
+     * Returns the players who are currently in the game.
+     */
+    public function get playerIds () :Array
+    {
+        // Overriden by Server
+        return null;
+    }
+
+    /**
+     * Returns the final score for this game. Valid only after the game has ended.
+     */
+    public function get finalScore () :int
+    {
+        // Overridden by Server
+        return 0;
     }
 
     /**
