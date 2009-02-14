@@ -25,6 +25,10 @@ public class BloodBloom extends FeedingGameClient
 
     public static function init (hostSprite :Sprite, gameCtrl :AVRGameControl) :void
     {
+        if (_inited) {
+            throw new Error("init has already been called");
+        }
+
         // Init simplegame
         var config :Config = new Config();
         config.hostSprite = hostSprite;
@@ -37,10 +41,16 @@ public class BloodBloom extends FeedingGameClient
         _sg.run();
 
         loadResources();
+
+        _inited = true;
     }
 
     public function BloodBloom (gameId :int)
     {
+         if (!_inited) {
+            throw new Error("FeedingGameClient.init has not been called");
+        }
+
         DEBUG_REMOVE_ME();
 
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
@@ -137,6 +147,7 @@ public class BloodBloom extends FeedingGameClient
     protected var _ready :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
+    protected static var _inited :Boolean;
     protected static var _sg :SimpleGame;
     protected static var _resourcesLoaded :Boolean;
     protected static var log :Log = Log.getLog(BloodBloom);

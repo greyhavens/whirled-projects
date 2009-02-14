@@ -36,7 +36,6 @@ public class FeedingGameClient extends Sprite
             throw new Error("Use FeedingGameClient.create to create a FeedingGameClient");
         }
     }
-
 }
 
 }

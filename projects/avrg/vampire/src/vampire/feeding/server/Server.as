@@ -17,14 +17,24 @@ public class Server extends FeedingGameServer
 {
     public static function init (gameCtrl :AVRServerGameControl) :void
     {
+        if (_inited) {
+            throw new Error("init has already been called");
+        }
+
         _gameCtrl = gameCtrl;
         _msgMgr = new BasicMessageManager();
         Util.initMessageManager(_msgMgr);
+
+        _inited = true;
     }
 
     public function Server (roomId :int, predatorIds :Array, preyId :int,
                             gameCompleteCallback :Function)
     {
+         if (!_inited) {
+            throw new Error("FeedingGameServer.init has not been called");
+        }
+
         _gameId = _gameIdCounter++;
         _predatorIds = predatorIds;
         _preyId = preyId;
@@ -170,6 +180,7 @@ public class Server extends FeedingGameServer
 
     protected var _playersNeedingCheckin :Array;
 
+    protected static var _inited :Boolean;
     protected static var _gameIdCounter :int;
     protected static var _gameCtrl :AVRServerGameControl;
     protected static var _msgMgr :BasicMessageManager = new BasicMessageManager();
