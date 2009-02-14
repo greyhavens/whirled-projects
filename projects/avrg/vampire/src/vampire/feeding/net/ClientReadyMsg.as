@@ -9,6 +9,11 @@ public class ClientReadyMsg
 {
     public static const NAME :String = "ClientReady";
 
+    public static function create () :ClientReadyMsg
+    {
+        return new ClientReadyMsg();
+    }
+
     public function toBytes (ba :ByteArray = null) :ByteArray
     {
         if (ba == null) {

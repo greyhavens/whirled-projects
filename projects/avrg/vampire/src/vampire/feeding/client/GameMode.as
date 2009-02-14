@@ -17,17 +17,17 @@ import vampire.feeding.net.*;
 
 public class GameMode extends AppMode
 {
-    public function GameMode (playerType :int)
+    public function GameMode (predatorIds :Array, preyId :int)
     {
-        _playerType = playerType;
+        GameCtx.init();
+        GameCtx.predatorIds = predatorIds;
+        GameCtx.preyId = preyId;
+        GameCtx.gameMode = this;
     }
 
     override protected function setup () :void
     {
         super.setup();
-
-        GameCtx.init();
-        GameCtx.gameMode = this;
 
         setupNetwork();
 
@@ -93,7 +93,7 @@ public class GameMode extends AppMode
 
         // keep tabs on everyone else's score
         var yOffset :Number = 0;
-        /*for each (var playerId :int in ClientCtx.playerIds) {
+        for each (var playerId :int in GameCtx.playerIds) {
             if (playerId != ClientCtx.localPlayerId) {
                 var scoreView :RemotePlayerScoreView = new RemotePlayerScoreView(playerId);
                 scoreView.x = SCORE_VIEWS_LOC.x;
@@ -102,7 +102,7 @@ public class GameMode extends AppMode
 
                 yOffset += scoreView.height + 1;
             }
-        }*/
+        }
 
         addObject(new LocalScoreReporter()); // will report our score to everyone else periodically
 

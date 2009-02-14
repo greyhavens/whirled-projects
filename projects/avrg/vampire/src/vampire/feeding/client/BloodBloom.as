@@ -45,6 +45,7 @@ public class BloodBloom extends FeedingGameClient
 
         ClientCtx.msgMgr = new ClientMsgMgr(gameId, ClientCtx.gameCtrl);
         Util.initMessageManager(ClientCtx.msgMgr);
+        _events.registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
 
         _events.registerListener(this, Event.ADDED_TO_STAGE, onAddedToStage);
         _events.registerListener(this, Event.REMOVED_FROM_STAGE, onQuit);
@@ -59,8 +60,20 @@ public class BloodBloom extends FeedingGameClient
                 if (_resourcesLoaded) {
                     timer.removeEventListener(TimerEvent.TIMER, checkResourcesLoaded);
                     timer.stop();
-                    maybeStartGame();
+                    maybeReportReady();
                 }
+            }
+        }
+    }
+
+    protected function onMsgReceived (e :ClientMsgEvent) :void
+    {
+        if (e.msg is StartGameMsg) {
+            if (!_ready) {
+                log.warning("Game started before we were ready!");
+            } else {
+                var msg :StartGameMsg = e.msg as StartGameMsg;
+                startGame(msg.predatorIds, msg.preyId);
             }
         }
     }
@@ -68,7 +81,7 @@ public class BloodBloom extends FeedingGameClient
     protected function onAddedToStage (...ignored) :void
     {
         _addedToStage = true;
-        maybeStartGame();
+        maybeReportReady();
     }
 
     protected function onQuit (...ignored) :void
@@ -76,11 +89,21 @@ public class BloodBloom extends FeedingGameClient
         _events.freeAllHandlers();
     }
 
-    protected function maybeStartGame () :void
+    protected function maybeReportReady () :void
     {
         if (_addedToStage && _resourcesLoaded) {
-            ClientCtx.mainLoop.pushMode(new SpSplashMode());
+            _ready = true;
+            if (ClientCtx.isSinglePlayer) {
+                startGame([ 0 ], -1);
+            } else {
+                ClientCtx.msgMgr.sendMessage(ClientReadyMsg.create());
+            }
         }
+    }
+
+    protected function startGame (predatorIds :Array, preyId :int) :void
+    {
+        ClientCtx.mainLoop.changeMode(new GameMode(predatorIds, preyId));
     }
 
     protected static function loadResources () :void
@@ -97,7 +120,7 @@ public class BloodBloom extends FeedingGameClient
         rm.queueResourceLoad("image", "prey_cursor",    { embeddedClass: IMG_PREY_CURSOR });
 
         rm.queueResourceLoad("sound", "sfx_heartbeat",  { embeddedClass: SOUND_HEARTBEAT });
-        rm.queueResourceLoad("sound", "sfx_red_burst",      { embeddedClass: SOUND_RED_BURST });
+        rm.queueResourceLoad("sound", "sfx_red_burst",  { embeddedClass: SOUND_RED_BURST });
         rm.queueResourceLoad("sound", "sfx_white_burst", { embeddedClass: SOUND_WHITE_BURST });
         rm.queueResourceLoad("sound", "mus_music",      { embeddedClass: SOUND_MUSIC, type: "music" });
 
@@ -111,6 +134,7 @@ public class BloodBloom extends FeedingGameClient
     }
 
     protected var _addedToStage :Boolean;
+    protected var _ready :Boolean;
     protected var _events :EventHandlerManager = new EventHandlerManager();
 
     protected static var _sg :SimpleGame;

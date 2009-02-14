@@ -1,13 +1,12 @@
 package vampire.feeding.client.view {
 
-import vampire.feeding.client.*;
-import vampire.feeding.net.CurrentScoreMsg;
-
 import com.whirled.contrib.simplegame.objects.SceneObject;
-import com.whirled.net.MessageReceivedEvent;
 
 import flash.display.DisplayObject;
 import flash.text.TextField;
+
+import vampire.feeding.client.*;
+import vampire.feeding.net.CurrentScoreMsg;
 
 public class RemotePlayerScoreView extends SceneObject
 {
@@ -18,10 +17,7 @@ public class RemotePlayerScoreView extends SceneObject
         _tf = UIBits.createText("");
 
         updateScore(0);
-        registerListener(
-            ClientCtx.msgDispatcher,
-            MessageReceivedEvent.MESSAGE_RECEIVED,
-            onMsgReceived);
+        registerListener(ClientCtx.msgMgr, ClientMsgEvent.MSG_RECEIVED, onMsgReceived);
     }
 
     override public function get displayObject () :DisplayObject
@@ -29,9 +25,9 @@ public class RemotePlayerScoreView extends SceneObject
         return _tf;
     }
 
-    protected function onMsgReceived (e :MessageReceivedEvent) :void
+    protected function onMsgReceived (e :ClientMsgEvent) :void
     {
-        var msg :CurrentScoreMsg = ClientCtx.getMessage(e.name, e.value) as CurrentScoreMsg;
+        var msg :CurrentScoreMsg = e.msg as CurrentScoreMsg;
         if (msg != null && msg.playerId == _playerId) {
             updateScore(msg.score);
         }

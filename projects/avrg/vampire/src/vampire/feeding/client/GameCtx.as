@@ -1,11 +1,11 @@
 package vampire.feeding.client {
 
-import vampire.feeding.*;
-
 import com.threerings.flash.Vector2;
 import com.whirled.contrib.simplegame.components.LocationComponent;
 
 import flash.display.Sprite;
+
+import vampire.feeding.*;
 
 public class GameCtx
 {
@@ -21,6 +21,19 @@ public class GameCtx
 
     public static var timeLeft :Number;
 
+    public static var predatorIds :Array;
+    public static var preyId :int;
+
+    public static function get playerIds () :Array
+    {
+        var playerIds :Array = predatorIds.slice();
+        if (preyId >= 0) {
+            playerIds.push(preyId);
+        }
+
+        return playerIds;
+    }
+
     public static function init () :void
     {
         gameMode = null;
@@ -34,6 +47,9 @@ public class GameCtx
         effectLayer = null;
 
         timeLeft = Constants.GAME_TIME;
+
+        predatorIds = [];
+        preyId = -1;
     }
 
     // Returns a new Vector, clamped within the bounds of the game
