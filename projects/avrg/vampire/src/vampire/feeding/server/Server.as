@@ -54,7 +54,7 @@ public class Server extends FeedingGameServer
             onMsgReceived);
     }
 
-    override public function playerLeft (playerId :int) :void
+    override public function playerLeft (playerId :int) :Boolean
     {
         if (playerId == _preyId) {
             _preyId = -1;
@@ -70,17 +70,27 @@ public class Server extends FeedingGameServer
             ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
             endGameIfReady();
         }
-    }
 
-    public function shutdown () :void
-    {
-        _timerMgr.shutdown();
-        _events.freeAllHandlers();
+        // If the last predator or prey just left the game, we're done and should shut down
+        // prematurely
+        if (_predatorIds.length == 0 || _preyId == -1) {
+            shutdown();
+            return true;
+
+        } else {
+            return false;
+        }
     }
 
     override public function get gameId () :int
     {
         return _gameId;
+    }
+
+    protected function shutdown () :void
+    {
+        _timerMgr.shutdown();
+        _events.freeAllHandlers();
     }
 
     protected function onMsgReceived (e :MessageReceivedEvent) :void
@@ -191,6 +201,7 @@ public class Server extends FeedingGameServer
         if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
             _gameCompleteCallback(getPlayerIds(), _finalScore);
+            shutdown();
         }
     }
 
