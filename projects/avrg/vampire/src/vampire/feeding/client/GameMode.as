@@ -144,6 +144,11 @@ public class GameMode extends AppMode
     {
         if (e.msg is CreateBonusMsg) {
             onNewMultiplier(e.msg as CreateBonusMsg);
+
+        } else if (e.msg is GameOverMsg) {
+            // send our final score to the server
+            ClientCtx.msgMgr.sendMessage(FinalScoreMsg.create(GameCtx.bloodMeter.bloodCount));
+            gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
         }
     }
 
@@ -158,10 +163,7 @@ public class GameMode extends AppMode
 
     override public function update (dt :Number) :void
     {
-        GameCtx.timeLeft -= dt;
-        if (GameCtx.timeLeft <= 0) {
-            gameOver("Final score: " + GameCtx.bloodMeter.bloodCount);
-        }
+        GameCtx.timeLeft = Math.max(GameCtx.timeLeft - dt, 0);
 
         // Move the player cursor towards the mouse
         var moveTarget :Vector2 = new Vector2(GameCtx.cellLayer.mouseX, GameCtx.cellLayer.mouseY);

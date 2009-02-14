@@ -43,10 +43,7 @@ public class Server extends FeedingGameServer
         _nameUtil = new NameUtil(_gameId);
 
         _state = STATE_WAITING_FOR_PLAYERS;
-        _playersNeedingCheckin = predatorIds.slice();
-        if (preyId >= 0) {
-            _playersNeedingCheckin.push(preyId);
-        }
+        _playersNeedingCheckin = getPlayerIds();
 
         if (_roomCtrl == null) {
             log.warning("Failed to get RoomSubControl", "roomId", roomId);
@@ -68,6 +65,10 @@ public class Server extends FeedingGameServer
         if (_state == STATE_WAITING_FOR_PLAYERS) {
             ArrayUtil.removeFirst(_playersNeedingCheckin, playerId);
             startGameIfReady();
+
+        } else if (_state == STATE_WAITING_FOR_SCORES) {
+            ArrayUtil.removeFirst(_playersNeedingScoreUpdate, playerId);
+            endGameIfReady();
         }
     }
 
@@ -91,6 +92,11 @@ public class Server extends FeedingGameServer
         }
 
         var name :String = _nameUtil.decodeName(e.name);
+        var msg :Message = _msgMgr.deserializeMessage(name, e.value);
+        if (msg == null) {
+            return;
+        }
+
         switch (name) {
         case ClientReadyMsg.NAME:
             if (_state != STATE_WAITING_FOR_PLAYERS) {
@@ -98,16 +104,31 @@ public class Server extends FeedingGameServer
 
             } else {
                 if (!ArrayUtil.removeFirst(_playersNeedingCheckin, e.senderId)) {
-                    logBadMessage(e, "unrecognized player");
+                    logBadMessage(e, "unrecognized player, or player already checked in");
+                } else {
+                    startGameIfReady();
                 }
-                startGameIfReady();
+            }
+            break;
+
+        case FinalScoreMsg.NAME:
+            if (_state != STATE_WAITING_FOR_SCORES) {
+                logBadMessage(e, "not waiting for scores");
+
+            } else {
+                if (!ArrayUtil.removeFirst(_playersNeedingScoreUpdate, e.senderId)) {
+                    logBadMessage(e, "unrecognized player, or player already reported score");
+                } else {
+                    _finalScore += (msg as FinalScoreMsg).score;
+                    endGameIfReady();
+                }
             }
             break;
 
         // resend these messages to all the clients
         case CreateBonusMsg.NAME:
         case CurrentScoreMsg.NAME:
-            if (this.isPlaying) {
+            if (_state == STATE_PLAYING) {
                 resendMessage(e);
             }
             break;
@@ -118,13 +139,25 @@ public class Server extends FeedingGameServer
         }
     }
 
-    protected function logBadMessage (e :MessageReceivedEvent, problemText :String = "") :void
+    protected function logBadMessage (e :MessageReceivedEvent,
+                                      problemText :String = null,
+                                      err :Error = null) :void
     {
-        log.warning(
+        var args :Array = [
             "Bad game message",
             "name", _nameUtil.decodeName(e.name),
-            "sender", e.senderId,
-            "problem", problemText);
+            "sender", e.senderId
+        ];
+
+        if (problemText != null) {
+            args.push("problem", problemText);
+        }
+
+        if (err != null) {
+            args.push(err);
+        }
+
+        log.warning.apply(null, args);
     }
 
     protected function startGameIfReady () :void
@@ -136,15 +169,28 @@ public class Server extends FeedingGameServer
         if (_playersNeedingCheckin.length == 0) {
             _state = STATE_PLAYING;
             sendMessage(StartGameMsg.create(_predatorIds, _preyId));
-            _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onGameOver).start();
+            _timerMgr.createTimer(Constants.GAME_TIME * 1000, 1, onTimeOver).start();
         }
     }
 
-    protected function onGameOver () :void
+    protected function onTimeOver () :void
     {
-        if (_state != STATE_GAME_OVER) {
+        if (_state == STATE_PLAYING) {
+            _state = STATE_WAITING_FOR_SCORES;
+            _playersNeedingScoreUpdate = getPlayerIds();
+            sendMessage(GameOverMsg.create());
+        }
+    }
+
+    protected function endGameIfReady () :void
+    {
+        if (_state != STATE_WAITING_FOR_SCORES) {
+            return;
+        }
+
+        if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
-            // TODO: report scores back to the AVRG
+            _gameCompleteCallback(getPlayerIds(), _finalScore);
         }
     }
 
@@ -158,14 +204,14 @@ public class Server extends FeedingGameServer
         _roomCtrl.sendMessage(e.name, e.value);
     }
 
-    protected function get isGameOver () :Boolean
+    protected function getPlayerIds () :Array
     {
-        return _state == STATE_GAME_OVER;
-    }
+        var playerIds :Array = _predatorIds.slice();
+        if (_preyId >= 0) {
+            playerIds.push(_preyId);
+        }
 
-    protected function get isPlaying () :Boolean
-    {
-        return _state == STATE_PLAYING;
+        return playerIds;
     }
 
     protected var _gameId :int;
@@ -177,8 +223,10 @@ public class Server extends FeedingGameServer
     protected var _events :EventHandlerManager = new EventHandlerManager();
     protected var _roomCtrl :RoomSubControlServer;
     protected var _nameUtil :NameUtil;
+    protected var _finalScore :int;
 
     protected var _playersNeedingCheckin :Array;
+    protected var _playersNeedingScoreUpdate :Array;
 
     protected static var _inited :Boolean;
     protected static var _gameIdCounter :int;
@@ -189,7 +237,8 @@ public class Server extends FeedingGameServer
 
     protected static const STATE_WAITING_FOR_PLAYERS :int = 0;
     protected static const STATE_PLAYING :int = 1;
-    protected static const STATE_GAME_OVER :int = 2;
+    protected static const STATE_WAITING_FOR_SCORES :int = 2;
+    protected static const STATE_GAME_OVER :int = 3;
 }
 
 }
