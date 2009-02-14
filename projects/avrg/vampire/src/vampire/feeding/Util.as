@@ -10,6 +10,7 @@ public class Util
     {
         mgr.addMessageType(CreateBonusMsg);
         mgr.addMessageType(CurrentScoreMsg);
+        mgr.addMessageType(ClientReadyMsg);
     }
 }
 
