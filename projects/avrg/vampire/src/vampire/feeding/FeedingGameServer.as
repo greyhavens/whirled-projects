@@ -26,7 +26,8 @@ public class FeedingGameServer
      *
      * @param gameCompleteCallback this function will be called on successful completion of
      * a game.
-     * function gameCompleteCallback (remainingPlayerIds :Array, groupScore :int) :void
+     * function gameCompleteCallback (game :FeedingGameServer, remainingPlayerIds :Array,
+     *                                groupScore :int) :void
      *
      */
     public static function create (roomId :int, predatorIds :Array, preyId :int,

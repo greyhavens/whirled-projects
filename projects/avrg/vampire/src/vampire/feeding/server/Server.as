@@ -200,7 +200,7 @@ public class Server extends FeedingGameServer
 
         if (_playersNeedingScoreUpdate.length == 0) {
             _state = STATE_GAME_OVER;
-            _gameCompleteCallback(getPlayerIds(), _finalScore);
+            _gameCompleteCallback(this, getPlayerIds(), _finalScore);
             shutdown();
         }
     }
