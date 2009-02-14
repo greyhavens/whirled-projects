@@ -41,7 +41,7 @@
 </compiler>
 <applications>
 <application path="VampireAVRG.as"/>
-<application path="vampire/feeding/client/BloodBloomStandalone.as"/>
+<application path="vampire/feeding/debug/BloodBloomStandalone.as"/>
 </applications>
 <modules/>
 <buildCSSFiles/>
